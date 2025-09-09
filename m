@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-807689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9ADB4A811
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:34:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 568E8B4A814
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D36C1188761B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:30:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500AC1896851
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5979B2BE7C0;
-	Tue,  9 Sep 2025 09:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CAC2C0286;
+	Tue,  9 Sep 2025 09:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvf15wQG"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsF2eeg3"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E22D2877DE
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAA82BEFE4
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757409671; cv=none; b=STpqOmvdqZZEDGEcqpYLL8tJtwgURYovkVRGco/UJKXFWCSAVj3oJ/WTDu/gFJSlZ512qMAmS0Ne5kgjS4kiQJyA7fjjz9WElqT2C105fYNGZtvy0TXD8w68qk7tX3RUpYY3vG7/bxDGNonGPZkeyprdcrYlYie3Ip0HKB94QLs=
+	t=1757409675; cv=none; b=c1IY/QZhawREgaIkG9NXBO1SXuHp+JIt4PpRtmaBxwgVc5HJXh1CxKeZn9MXBLZjEn2hIV4VBKEN/EJYXta6jET5czdn3AMYvDk0KECRn5AL9guCaclBmGDlWMy2GZkOH7DBe9vjoI+aSqz1M2cfVSkFuE01hR2WRiZyo33IBh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757409671; c=relaxed/simple;
-	bh=TysH0KcIDWtQmpgrnqprdLyER9+50qnr9VJO916vIuY=;
+	s=arc-20240116; t=1757409675; c=relaxed/simple;
+	bh=CG+0wRy1a928Oh0xqx0nnWkROOFbZ+qv2H3zhxvRO0g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QVN8Q2vqRFeeUSU3wZYGqvmP/QnIcsrxA9UWzuksxH1pqqF9wvqICDcEsEYrd0LkhAj5zu+jCGVK+7X3TBgWUeg4/KjUYQbVp/If2GIioh6El3EOL1GCdHBRoxereu0A6oGyy9lMMTnGAx+vlsk2KDKr0WFzJpL1QCR+EwGS1pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dvf15wQG; arc=none smtp.client-ip=209.85.214.179
+	 MIME-Version; b=ckqKMymoKNy5kY0cHIESRY3jsqTtXeAnnTAY6K/1ecHGp0hvdydoenzPh6b0e3zqd+JPDCzIaSvD9ilC4bgoL40BhR3jwDKWvMTCi140OKheCoBorDJ5JsvhqMhJLGkRZBBvH5NiU5xENZqD0PokIQB/aer2ByPWL+CB3uV3tQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsF2eeg3; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24c7848519bso54912895ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:21:09 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24458272c00so61031125ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:21:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757409669; x=1758014469; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757409673; x=1758014473; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EKDAJyjAQ049TwS7OG7Kz3OMIFj6KbuH8cGsBEe0hLg=;
-        b=dvf15wQGI5uYHdi+Hs4JOQQ5tyUrrF3HksIz5rEkPX94jws3/JEqtBFlQ6Y/a/Wk6V
-         g8Rzry9WwD+BtZEmDxSHLT3QVnWPLXUKUDyJpDEJ8+a7/fdBc16hpY4eLBpiUTCuqwFi
-         zU1RBhUJ8aGyeHqqikrPdH59VwZX71G7ARrvEG5n0D23JTT4Yv/jfoDMUk3osQuUBbQG
-         CSB/rbvuUAaUPE+6P0xTxIgmtRNM5WVjQQfaQuM7S7y/527RvBE20hp2IQEZ27r6s2k4
-         Gd8+z4kBBq+m04R4Lt+LjVkelfS+VsyM5rJrhsQqQdAP0jqC3SI8KKSAbK0tlu0K4ekR
-         Nzqg==
+        bh=MgYXDmNS5TPYvh6DaUTaZYQ5qn88r6ADOa7zbs+TQrQ=;
+        b=bsF2eeg3scYDOV+uXjBYGVowzHq0dU+DEt9O0twmiubTlpvWiF/YzcX2+B7ohkgDoA
+         KE47LMpYGAUaPILrDYCZrr25kFWxbSXS66MdCBY/3xz1YfFAwvZg+AAZZ0AqfHHNVNAJ
+         BcYF54kgh1V4RIg+OgExeLxMiDC3fsPMhtHmcwk8Ddq2NP2NOAAH/N38sXkVEL70/t+D
+         Ixi3tOW1PWOTrIVN5T3b9g3Fct3f2GSduRt1x4MPK6Ty21SENvKz0kzmF8vkm7x0nZgJ
+         P598RbTsG5gshJIWky0Gj59FCtTQ4o5IhXEXlVubBuVcQITxOcN3Fvg/Mwzrh+d9kFoq
+         vArA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757409669; x=1758014469;
+        d=1e100.net; s=20230601; t=1757409673; x=1758014473;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EKDAJyjAQ049TwS7OG7Kz3OMIFj6KbuH8cGsBEe0hLg=;
-        b=MWOPyd5M+NrI3W7ndcAjpF4abf0tZusOHbhznsliTsXGVyEF4LJ0a9po0G0YHrq5Sw
-         BCtBnEo9SmeAsGhrq0/M2NGNkAAjCQNCk7IyyEkxvqxVODFOT7ZNxyr575ESg7dKV1oA
-         czki4jWXf0KO5NNNPZEqDuThBdc9SucRCvvgxTxC5AIThP8+vcKeRNeQDLcNaELYikCA
-         hAfhoTm8lHx414x2oAK22pxxODcHxSh1fJMYhXCiagLgO+LDOixnCN8RfyFJYNz/aupk
-         B6VQ8/6Hpx8taxmxfPgUP9Y5dOsEJVP9DKJGaSEkaPRoAhH4vujsH+JJmz1ff1IXWxZ7
-         V01w==
-X-Forwarded-Encrypted: i=1; AJvYcCW00W4Q1bgNopO71wBVlgdwSZ243hlEPYDg2PwZcNTv27c5ybibC3306V1odEGZVCfLXIjDXu2APC4d8Yg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzINCXMiwpJTB5Oaw+sW1GQnHpSwr5y8qtg9sKsfUSJBs+ZdLz5
-	xgXn2vxfItVkHhcYQw4Mo9L+2R+LMmhM2pLozE4lvUPbIUswf/uVM0eL
-X-Gm-Gg: ASbGncshgZ7M+XzVjfOvLtToqXBp60+IzrDzCYQ6L0PO9HZZ2bgQBHpUFaN62oLx2Gu
-	bPkcrydOtbJ+89VZsrHIFtytE1vr6adCYcyyP0Lgs/Ml+urLmvT9P12LqHdc3k8H0qdwT+eQdzL
-	FLDax9OZOq1UauA2DgZrbEybWk6jzbIw97qfE5k/+5HFWFN6M8fTZGQae5qfyiHkeG8ofqSsV1R
-	4q9+nkirFQD/GzqP8q4QZ1XYscXGG0v+SnvPP2mi9QXn+bt9aUzfNM9woLJrxzPv7542NtIb0aK
-	AdK0rW6VzQ/Z5kh2aZW9elGQ0D0LBK2i4lpluXDiX0foVlyIBTyhShjddSg6nxrBPAJFcLfKuUY
-	iOsyRExU0jgj2Xk1eZCsUmLE3gIDPYgXwy+H+ySd8wNgpThWxmSvjWv+zDOg+fEk=
-X-Google-Smtp-Source: AGHT+IGaOl1wQ4PxTl5LanHyvvod2ptDH/j57RDM1rdkSlxdHYHqnMJKyWpfZPuecG3QE0g5+Xjegg==
-X-Received: by 2002:a17:902:dad0:b0:24c:e3bf:b469 with SMTP id d9443c01a7336-2516fbdb555mr171735475ad.15.1757409669303;
-        Tue, 09 Sep 2025 02:21:09 -0700 (PDT)
+        bh=MgYXDmNS5TPYvh6DaUTaZYQ5qn88r6ADOa7zbs+TQrQ=;
+        b=dAsdcw/hQg8rYrLWP/nCwfJRFb6mTEbJRdzKsZd8PTtOmwfkpxYTAbC0U8Mqi11/aH
+         cZT7DoQFoi4ywAP6jmJoOmV7hqutc/c2h5JHPHNzpJtI5xcn6D7rzodo2zlHpnHiIeUV
+         fhSXEjwyO13GRWJc8tqNw8k6oyEbhVyK8Z3KldYx1SQXODLwUcUZNB8PyNWkeA236jzA
+         4xjuJHOQp9SxNVxBznNq5vzA4eGFHRZi0tZmEuYKMP1T7UzzqBtX32WrfAO6tukgBBcx
+         XHlBOOe5YoMusN1qzZ9iCR2ezEqm6QkKVfL5JFC2xUSJHRuYYifU8VnzEhPeUzqNePvj
+         kh7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWNmBmuNQ0Ben5VEjlJnlvafJpyE1psCNQ3E1c1QbbYR9RjNqeZNoq0W1R9KwqxYuG1ZDYvLuiCkA9ET0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws1NQvmbq4DDTkOhE4qaNjV+1QrypgTabmZEHptejuRH0bKtlR
+	OykwPsid24S207DWROBGM1w7X5dsQwY2dXMNCKZkkco7R9aHpvCNNlnQ
+X-Gm-Gg: ASbGncsQ97jEA+WREKBhQ9FM8ZOw+ARfZMgFbat/YKwUl6b7HvIGOPWTTUGcDpW0C5Q
+	BnkinIfs0CwjnzotlixcB8BT+NONZpH9NnVrBzmlnDkcxWPVr/9ChVxe/LyMIZY8eduUg2n/9HS
+	iznIPDPTJEgypJGIbb8+OkwQtHyCDmLRDA+XiJqy/LjzOaHRH75kaahPadxR5/wnOUgMHVqM3eI
+	8bT2EaTCLnSz5aCPc1KAuDjCNCXIcT9t2bDefNkhEShCrSU2zgHedw90guFq29p5O6oVhSghsbS
+	t4NFcDAIrwldsZG8j2tB5WA9Wzsz8DsfG6yEJ/QzhfsNd3XTnCyV5Ero3LJUY9xfdWBXHd2XJiY
+	3sFnPCBVc3qynW7mW2RXpHgekKt6tOPXWJTmzPggk9xbyMBa8L3TolzhwKnhZTD10hHY9lYCf+h
+	kf//lkD+uw
+X-Google-Smtp-Source: AGHT+IFdcm+mr14A3IwT0n08p0oRz5nQAIr1eSpJ3PkFHX08AqwueO/aLVNQTRumMCN2+FK+josA3g==
+X-Received: by 2002:a17:903:19ce:b0:249:147:95bb with SMTP id d9443c01a7336-2516dfcd7ddmr127430655ad.13.1757409673219;
+        Tue, 09 Sep 2025 02:21:13 -0700 (PDT)
 Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25125d76218sm88522165ad.119.2025.09.09.02.21.06
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25125d76218sm88522165ad.119.2025.09.09.02.21.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 02:21:08 -0700 (PDT)
+        Tue, 09 Sep 2025 02:21:12 -0700 (PDT)
 From: Kuan-Wei Chiu <visitorckw@gmail.com>
 To: austin.zheng@amd.com,
 	jun.lei@amd.com,
@@ -91,9 +92,9 @@ Cc: chiahsuan.chung@amd.com,
 	amd-gfx@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH v2 1/2] drm/amd/display: Optimize reserved time candidates sorting using standard sort()
-Date: Tue,  9 Sep 2025 17:20:56 +0800
-Message-Id: <20250909092057.473907-2-visitorckw@gmail.com>
+Subject: [PATCH v2 2/2] drm/amd/display: Optimize remove_duplicates() from O(N^2) to O(N)
+Date: Tue,  9 Sep 2025 17:20:57 +0800
+Message-Id: <20250909092057.473907-3-visitorckw@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250909092057.473907-1-visitorckw@gmail.com>
 References: <20250909092057.473907-1-visitorckw@gmail.com>
@@ -105,67 +106,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace the custom bubble sort used for sorting reserved time
-candidates in with the kernel's standard sort() helper. The previous
-code had O(N^2) time complexity, while the generic kernel sort runs in
-O(N log N). This improves efficiency and removes the need for a local
-sorting implementation, while keeping functionality unchanged.
+Replace the previous O(N^2) implementation of remove_duplicates() with
+a O(N) version using a fast/slow pointer approach. The new version
+keeps only the first occurrence of each element and compacts the array
+in place, improving efficiency without changing functionality.
 
 Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 ---
 Changes from v1:
-- No changes.
+- Add early return when *list_a_size = 0 to fix a corner case.
 
-Compile test only.
+double arr1[] = {1,1,2,2,3}; int size1=5;
+remove_duplicates(arr1,&size1);
+assert(size1==3 && arr1[0]==1 && arr1[1]==2 && arr1[2]==3);
 
- .../dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c   | 23 +++++++++++--------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+double arr2[] = {1,2,3}; int size2=3;
+remove_duplicates(arr2,&size2);
+assert(size2==3 && arr2[0]==1 && arr2[1]==2 && arr2[2]==3);
+
+double arr3[] = {5,5,5,5}; int size3=4;
+remove_duplicates(arr3,&size3);
+assert(size3==1 && arr3[0]==5);
+
+double arr4[] = {}; int size4=0;
+remove_duplicates(arr4,&size4);
+assert(size4==0);
+
+ .../dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c   | 21 ++++++++++---------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
-index e763c8e45da8..2b13a5e88917 100644
+index 2b13a5e88917..1068ddc97859 100644
 --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
 +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn3.c
-@@ -2,19 +2,21 @@
- //
- // Copyright 2024 Advanced Micro Devices, Inc.
+@@ -50,18 +50,19 @@ static void set_reserved_time_on_all_planes_with_stream_index(struct display_con
  
-+#include <linux/sort.h>
-+
- #include "dml2_pmo_factory.h"
- #include "dml2_pmo_dcn3.h"
- 
--static void sort(double *list_a, int list_a_size)
-+static int cmp_double(const void *a, const void *b)
+ static void remove_duplicates(double *list_a, int *list_a_size)
  {
+-	int cur_element = 0;
 -	// For all elements b[i] in list_b[]
--	for (int i = 0; i < list_a_size - 1; i++) {
--		// Find the first element of list_a that's larger than b[i]
--		for (int j = i; j < list_a_size - 1; j++) {
--			if (list_a[j] > list_a[j + 1])
--				swap(list_a[j], list_a[j + 1]);
--		}
--	}
-+	double da = *(const double *)a;
-+	double db = *(const double *)b;
+-	while (cur_element < *list_a_size - 1) {
+-		if (list_a[cur_element] == list_a[cur_element + 1]) {
+-			for (int j = cur_element + 1; j < *list_a_size - 1; j++) {
+-				list_a[j] = list_a[j + 1];
+-			}
+-			*list_a_size = *list_a_size - 1;
+-		} else {
+-			cur_element++;
++	int j = 0;
 +
-+	if (da < db)
-+		return -1;
-+	if (da > db)
-+		return 1;
-+	return 0;
++	if (*list_a_size == 0)
++		return;
++
++	for (int i = 1; i < *list_a_size; i++) {
++		if (list_a[j] != list_a[i]) {
++			j++;
++			list_a[j] = list_a[i];
+ 		}
+ 	}
++
++	*list_a_size = j + 1;
  }
  
- static double get_max_reserved_time_on_all_planes_with_stream_index(struct display_configuation_with_meta *config, unsigned int stream_index)
-@@ -634,7 +636,8 @@ bool pmo_dcn3_init_for_pstate_support(struct dml2_pmo_init_for_pstate_support_in
- 
- 		// Finally sort the array of candidates
- 		sort(pmo->scratch.pmo_dcn3.reserved_time_candidates[stream_index],
--			pmo->scratch.pmo_dcn3.reserved_time_candidates_count[stream_index]);
-+		     pmo->scratch.pmo_dcn3.reserved_time_candidates_count[stream_index],
-+		     sizeof(double), cmp_double, NULL);
- 
- 		remove_duplicates(pmo->scratch.pmo_dcn3.reserved_time_candidates[stream_index],
- 			&pmo->scratch.pmo_dcn3.reserved_time_candidates_count[stream_index]);
+ static bool increase_mpc_combine_factor(unsigned int *mpc_combine_factor, unsigned int limit)
 -- 
 2.34.1
 
