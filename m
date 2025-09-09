@@ -1,248 +1,295 @@
-Return-Path: <linux-kernel+bounces-808988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD0BB5072D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:34:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B81B5072F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44771C24852
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:35:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0DCC7A33A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF0D35FC1B;
-	Tue,  9 Sep 2025 20:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40E233EB15;
+	Tue,  9 Sep 2025 20:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQv2U/Ue"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjjrjcNe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274D2362068;
-	Tue,  9 Sep 2025 20:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16224199931;
+	Tue,  9 Sep 2025 20:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757450058; cv=none; b=kAfquH3WWl+s3r73DgkBpoZo4Woz+c3zifO2xITd7tGdoqm1hVUqHm0F795WCXAjIxmv8ijmnN1LA7wTsLau5d8IEHOfM+TX3UddJvqgXivJZ4F5lW/NietjsLNGczK5EnJbI3MDUw7YP7LriA26AfysxQDy5zQ+/kb4x5ckcVU=
+	t=1757450268; cv=none; b=M2SemMC65wywHqQZQ9uJmVtgWGfFXT/64TJj+Bsk4f4Dx6EGb+OxheDgnrv30wd1Au3L7T2pxH7PcdYVtz+oCIpHXtvxnkmsdTidSBi3kxvccCJcqqkLaEs2NuMiiAQiALm+bOfW3/vcWx6k2n/E4aLyEMVtrhCE13KkFYrOkw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757450058; c=relaxed/simple;
-	bh=hdwNKGl7lx7063eJ2yiIHblOsSgC/pR1LbJ6lLkBads=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qIC2I14rD7wuVhR3z9VvB3T7oaerfp4GqUZuZ0VtGoeJt++qC08uDx206nzGGEjeQstrIqkK9xerrsuM4Gvw2VlpjnJd/L2S/1A/qjbOs2VQxvA0q98d+ZI1VNqsfQfM1UBJ7E9HHZhJL71gTOX+f+Ekx+KGH1q+0T+g5PeUV08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQv2U/Ue; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 903FDC4CEF8;
-	Tue,  9 Sep 2025 20:34:14 +0000 (UTC)
+	s=arc-20240116; t=1757450268; c=relaxed/simple;
+	bh=4bWV7M2yDQ7exb2uYwmh6mGflWJWZxtSE98QDqcCzDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Abd3/JL+1IA9+t3tCUiBrLEtPQ/fyEVdGrEXzDGlTLAJKUxXno13ZG/XMupHmWCCgatq5abTFf0jIzKF5KHmWVWuSfI1YWRcSWUfKY9Rm4Cj6657TwxZR7dCDLeXDfoAdPD0fdNX6cFon6zmk4xQPAq8V0MTHHYxL+3Rt542jsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjjrjcNe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6735AC4CEF4;
+	Tue,  9 Sep 2025 20:37:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757450057;
-	bh=hdwNKGl7lx7063eJ2yiIHblOsSgC/pR1LbJ6lLkBads=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=eQv2U/UeE/bjEFK3vU+6qVQEwjGD5nim1L/4Ln1UhO1QwHC6X1buEhiHGQchxU4y7
-	 B3pWVa7H4Xw/8YeAB9G9qACjvy7X/VYIb7F+OfJG4cy71yeVK57Zl8DVCLaCOD8FYF
-	 vg/p0hKqAm4WJs0JIVZUVO4MvDGwqtSPtnEPcikDkFUrNfSajUas1M3FP196j/4/XQ
-	 oc5UdPl7n80sfgL1HzFMh1I/E/OZOAHn7TaZubs9ncVz7vF7Ns3XBbfqaDrEw/llvp
-	 9NxwRtann1qA6WN9hyEfVCjJO1gj4jBxH9dsTt0rG5D48Ck0PtPdY4m000YycaJRUt
-	 p2xCh4D8CEvwQ==
-From: Andreas Kemnade <akemnade@kernel.org>
-Date: Tue, 09 Sep 2025 22:33:04 +0200
-Subject: [PATCH v2 3/3] ARM: dts: imx: e70k02: add sy7636
+	s=k20201202; t=1757450267;
+	bh=4bWV7M2yDQ7exb2uYwmh6mGflWJWZxtSE98QDqcCzDg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LjjrjcNe+b0DffQ5/rz3V/kSDN8ON8xDBFNzv9UxiatK4Or8Myqxbex5o3drB3lr5
+	 5HRh5rpXWfVoIpodCon9dv38q1dj4s3Gk9Xz2AEGdFXbe5BD9xzxT9kQHduyo7SIkc
+	 p+x3aSbacYgkMJYhKhpyKvcUmC0C8pztxpDucgJaTLmXE2ruLnibysKODZ3vz2GKNg
+	 Ks+IKprPSUY8ohkNub7aLOSB1a927tPfXOdtsIjXBMwtgoPGVeE3ob3xRQrGfDuzd8
+	 0fXZiGXMBlYd6jTAGduj9XmIlEpeUhYyohm7rdZFzH9TJkohNpOkKntbGcVJh0jPTk
+	 CM9K4gzX8+UCQ==
+Date: Tue, 9 Sep 2025 22:37:43 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel-doc: add support for handling global variables
+Message-ID: <20250909223743.0dd33b1d@foz.lan>
+In-Reply-To: <d73e68e9-321e-4685-b4fe-633cd282f526@infradead.org>
+References: <80f85eacc306e62de8c9c68712c653ba290c2ff2.1757262141.git.mchehab+huawei@kernel.org>
+	<d85e3f24-dbcd-4f28-b31f-a77661fc66fb@infradead.org>
+	<c26160b1-f1fb-41d3-a8fe-acf589ad9f7f@infradead.org>
+	<aelqggrynl7acn54tqm5ntqsynghprqtzmbkhvgf7khlbmmq6v@tf4gdfh2fvla>
+	<d73e68e9-321e-4685-b4fe-633cd282f526@infradead.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-sy7636-rsrc-v2-3-cfd9f44fd259@kernel.org>
-References: <20250909-sy7636-rsrc-v2-0-cfd9f44fd259@kernel.org>
-In-Reply-To: <20250909-sy7636-rsrc-v2-0-cfd9f44fd259@kernel.org>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alistair Francis <alistair@alistair23.me>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Andreas Kemnade <akemnade@kernel.org>
-X-Mailer: b4 0.15-dev-50721
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4885; i=akemnade@kernel.org;
- h=from:subject:message-id; bh=hdwNKGl7lx7063eJ2yiIHblOsSgC/pR1LbJ6lLkBads=;
- b=owGbwMvMwCEm/rzkS6lq2x3G02pJDBkH+q1PF74+IVA/1cjcZWn60ncPOTUqjoRejfhrtHhnl
- tOXn7uOdJSyMIhxMMiKKbL8slZw+6TyLDd4aoQ9zBxWJpAhDFycAjCR/jxGhikzDa5xJmX66kwK
- cNzEUVnkebjgiZvS1/4lqtuUz5nxz2b475O0zmqpflyX5n7LTn2uZ9/X70/acE2iLk5V/9utHdm
- qnAA=
-X-Developer-Key: i=akemnade@kernel.org; a=openpgp;
- fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Add the EPD PMIC for the e70k02 based devices as a step towards full EPD
-support.
+Em Tue, 9 Sep 2025 11:20:31 -0700
+Randy Dunlap <rdunlap@infradead.org> escreveu:
 
-Signed-off-by: Andreas Kemnade <akemnade@kernel.org>
-Acked-by: Alistair Francis <alistair@alistair23.me>
----
- arch/arm/boot/dts/nxp/imx/e70k02.dtsi              | 25 +++++++++++++++++++++-
- .../arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts | 24 +++++++++++++++++++++
- .../arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts | 24 +++++++++++++++++++++
- 3 files changed, 72 insertions(+), 1 deletion(-)
+> On 9/9/25 9:18 AM, Mauro Carvalho Chehab wrote:
+> > On Tue, Sep 09, 2025 at 08:57:07AM -0700, Randy Dunlap wrote: =20
+> >> Hi Mauro,
+> >>
+> >> On 9/9/25 12:27 AM, Randy Dunlap wrote: =20
+> >>> Hi Mauro,
+> >>>
+> >>> I have a few patch nits below, then some testing info.
+> >>>
+> >>>
+> >>> On 9/7/25 9:22 AM, Mauro Carvalho Chehab wrote: =20
+> >>>> Specially on kAPI, sometimes it is desirable to be able to
+> >>>> describe global variables that are part of kAPI.
+> >>>>
+> >>>> Documenting vars with Sphinx is simple, as we don't need
+> >>>> to parse a data struct. All we need is the variable
+> >>>> declaration and use natice C domain ::c:var: to format it
+> >>>> for us.
+> >>>>
+> >>>> Add support for it.
+> >>>>
+> >>>> Link: https://lore.kernel.org/linux-doc/491c3022-cef8-4860-a945-c9c4=
+a3b63c09@infradead.org/T/#m947c25d95cb1d96a394410ab1131dc8e9e5013f1
+> >>>> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+> >>>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> >>>> ---
+> >>>>  scripts/lib/kdoc/kdoc_output.py | 31 +++++++++++++++++++++++++++++++
+> >>>>  scripts/lib/kdoc/kdoc_parser.py | 25 ++++++++++++++++++++++++-
+> >>>>  2 files changed, 55 insertions(+), 1 deletion(-)
+> >>>> =20
+> >>
+> >> =20
+> >>> So, I grabbed some global data from 6-8 places in the kernel and put =
+them intoinit/kdoc-globals-test.c. Then I modified Documentation/core-api/k=
+ernel-api.rst
+> >>> like this at the end of that file:
+> >>>
+> >>> +
+> >>> +Kernel Globals
+> >>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> >>> +
+> >>> +.. kernel-doc:: init/kdoc-globals-test.c
+> >>> +   :identifiers:
+> >>>
+> >>> The html output says
+> >>> "Kernel Globals"
+> >>> but nothing else.
+> >>>
+> >>> My test files are attached. I dumbed down (simplified) a few
+> >>> of the globals from fancy types to just unsigned long, but that
+> >>> didn't help the output results any.
+> >>>
+> >>> What's happening?
+> >>> Thanks.
+> >>> =20
+> >>
+> >> My problems here could be from a patch mis-merge.
+> >> Maybe your patch was against a tree or previous patches that I don't h=
+ave.
+> >>
+> >> You could supply an updated patch or I can just wait until all
+> >> the patches are synchronized for further testing.
+> >> Or you could just take my sample and keep testing it. =20
+> >=20
+> > I applied it after my sphinx-build-wrapper patch series,
+> > but it doesn't touch kernel-doc. I did a rebase just to make
+> > sure, on the top of docs-next branch from Jon's tree, e.g.=20
+> > on the top of:
+> >=20
+> >     git://git.lwn.net/linux.git docs-next
+> >=20
+> > e.g. applying it after:
+> >=20
+> >     7e5a0fe4e8ae ("doc: filesystems: proc: remove stale information fro=
+m intro")
+> >=20
+> > Patch applied cleanly.
+> >=20
+> > Notice that it probably depends on some changes that Jon
+> > applied for kernel-doc after -rc1.
+> >=20
+> > If you prefer, the patch is here at global_vars branch:
+> >=20
+> > https://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-docs.git/=
+log/?h=3Dglobal_vars =20
+>=20
+> Yes, this is much better.
+>=20
+> For the simplified global data, it's very good. It produces
+> 2 complaints but the html output is still good:
+>=20
+> linux-next-20250909/Documentation/core-api/kernel-api:435: ../init/kdoc-g=
+lobals-test.c:10: WARNING: Invalid C declaration: Expected end of definitio=
+n. [error at 32]
+>   enum system_states system_state __read_mostly;
+>   --------------------------------^
+> linux-next-20250909/Documentation/core-api/kernel-api:435: ../init/kdoc-g=
+lobals-test.c:20: WARNING: Invalid C declaration: Expected end of definitio=
+n. [error at 25]
+>   char *saved_command_line __ro_after_init;
+>   -------------------------^
+>=20
+> I suspect that this is not a surprise to you.
 
-diff --git a/arch/arm/boot/dts/nxp/imx/e70k02.dtsi b/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
-index dcc3c9d488a88..b4f42f71c6c49 100644
---- a/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
-@@ -69,6 +69,14 @@ memory@80000000 {
- 		reg = <0x80000000 0x20000000>;
- 	};
- 
-+	epd_pmic_supply: regulator-epd-pmic-in {
-+		compatible = "regulator-fixed";
-+		regulator-name = "epd_pmic_supply";
-+		gpio = <&gpio2 14 GPIO_ACTIVE_HIGH>;
-+		startup-delay-us = <20000>;
-+		enable-active-high;
-+	};
-+
- 	reg_wifi: regulator-wifi {
- 		compatible = "regulator-fixed";
- 		regulator-name = "SD3_SPWR";
-@@ -133,7 +141,22 @@ touchscreen@24 {
- 		vdd-supply = <&ldo5_reg>;
- 	};
- 
--	/* TODO: SY7636 PMIC for E Ink at 0x62 */
-+	sy7636: pmic@62 {
-+		compatible = "silergy,sy7636a";
-+		reg = <0x62>;
-+		enable-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
-+		vcom-en-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
-+		epd-pwr-good-gpios = <&gpio2 13 GPIO_ACTIVE_HIGH>;
-+		vin-supply = <&epd_pmic_supply>;
-+
-+		#thermal-sensor-cells = <0>;
-+
-+		regulators {
-+			reg_epdpmic: vcom {
-+				regulator-name = "vcom";
-+			};
-+		};
-+	};
- 
- };
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts b/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
-index a2534c422a522..f8709a9524093 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
-@@ -26,6 +26,11 @@ / {
- 	compatible = "kobo,tolino-vision5", "fsl,imx6sl";
- };
- 
-+&epd_pmic_supply {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_epd_pmic_supply>;
-+};
-+
- &gpio_keys {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_gpio_keys>;
-@@ -59,6 +64,12 @@ MX6SL_PAD_FEC_RXD1__GPIO4_IO18          0x10059 /* TP_RST */
- 		>;
- 	};
- 
-+	pinctrl_epd_pmic_supply: epd-pmic-supplygrp {
-+		fsl,pins = <
-+			MX6SL_PAD_EPDC_PWRWAKEUP__GPIO2_IO14    0x40010059
-+		>;
-+	};
-+
- 	pinctrl_gpio_keys: gpio-keysgrp {
- 		fsl,pins = <
- 			MX6SL_PAD_FEC_CRS_DV__GPIO4_IO25	0x17059	/* PWR_SW */
-@@ -159,6 +170,14 @@ MX6SL_PAD_KEY_COL2__GPIO3_IO28		0x1b8b1 /* ricoh619 bat_low_int */
- 		>;
- 	};
- 
-+	pinctrl_sy7636_gpio: sy7636-gpiogrp {
-+		fsl,pins = <
-+			MX6SL_PAD_EPDC_VCOM0__GPIO2_IO03        0x40010059 /* VCOM_CTRL */
-+			MX6SL_PAD_EPDC_PWRCTRL1__GPIO2_IO08     0x40010059 /* EN */
-+			MX6SL_PAD_EPDC_PWRSTAT__GPIO2_IO13      0x17059 /* PWR_GOOD */
-+		>;
-+	};
-+
- 	pinctrl_uart1: uart1grp {
- 		fsl,pins = <
- 			MX6SL_PAD_UART1_TXD__UART1_TX_DATA 0x1b0b1
-@@ -329,6 +348,11 @@ &ricoh619 {
- 	pinctrl-0 = <&pinctrl_ricoh_gpio>;
- };
- 
-+&sy7636 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_sy7636_gpio>;
-+};
-+
- &uart1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart1>;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts b/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
-index 660620d226f71..19bbe60331b36 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
-@@ -36,6 +36,11 @@ &cpu0 {
- 	soc-supply = <&dcdc1_reg>;
- };
- 
-+&epd_pmic_supply {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_epd_pmic_supply>;
-+};
-+
- &gpio_keys {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_gpio_keys>;
-@@ -69,6 +74,12 @@ MX6SLL_PAD_GPIO4_IO18__GPIO4_IO18	0x10059 /* TP_RST */
- 		>;
- 	};
- 
-+	pinctrl_epd_pmic_supply: epd-pmic-supplygrp {
-+		fsl,pins = <
-+			MX6SLL_PAD_EPDC_PWR_WAKE__GPIO2_IO14    0x40010059
-+		>;
-+	};
-+
- 	pinctrl_gpio_keys: gpio-keysgrp {
- 		fsl,pins = <
- 			MX6SLL_PAD_GPIO4_IO25__GPIO4_IO25	0x17059	/* PWR_SW */
-@@ -169,6 +180,14 @@ MX6SLL_PAD_KEY_COL2__GPIO3_IO28		0x1b8b1 /* ricoh619 bat_low_int */
- 		>;
- 	};
- 
-+	pinctrl_sy7636_gpio: sy7636-gpiogrp {
-+		fsl,pins = <
-+			MX6SLL_PAD_EPDC_VCOM0__GPIO2_IO03       0x40010059 /* VCOM_CTRL */
-+			MX6SLL_PAD_EPDC_PWR_CTRL1__GPIO2_IO08   0x40010059 /* EN */
-+			MX6SLL_PAD_EPDC_PWR_STAT__GPIO2_IO13    0x17059 /* PWR_GOOD */
-+		>;
-+	};
-+
- 	pinctrl_uart1: uart1grp {
- 		fsl,pins = <
- 			MX6SLL_PAD_UART1_TXD__UART1_DCE_TX 0x1b0b1
-@@ -319,6 +338,11 @@ &ricoh619 {
- 	pinctrl-0 = <&pinctrl_ricoh_gpio>;
- };
- 
-+&sy7636 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_sy7636_gpio>;
-+};
-+
- &uart1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart1>;
+Not a surprise. The C domain parser is very strict with regards to=20
+C syntax.
 
--- 
-2.39.5
+On the above examples, __read_mostly and __ro_after_init are
+macros. Sphinx has no clue about what to do with them.=20
 
+We'll need something similar to what we do on structs and functions
+to strip things like this:
+
+	sub_prefixes =3D [
+...
+            (r"__deprecated +", "", 0),
+            (r"__flatten +", "", 0),
+            (r"__meminit +", "", 0),
+...
+        ]
+
+        for search, sub, flags in sub_prefixes:
+            prototype =3D KernRe(search, flags).sub(sub, prototype)
+
+to strip them for the prototype that will be used for .. :c::var.
+
+I guess we have three alternatives here:
+
+1. use the simplified version only, after being converted into a pure
+   C code without macros;
+
+2. use simplified version for :c::var: and print the complete one
+   ourselves (this is how structs are printed);
+
+3. use another c domain type that would just get a name. Then
+   output ourselves the var prototype, captured as-is.
+
+IMHO, from the above, (3) is better, but looking at:
+
+	https://www.sphinx-doc.org/en/master/usage/domains/c.html
+
+It would likely mean we'll need to use :c:macro:
+
+> For the non-simplified global data, a few of the global items are
+> completely omitted from the html output. This is the html production:
+>=20
+> Kernel Globals
+> dev_t ROOT_DEV;
+> system root device
+>=20
+> enum system_states system_state __read_mostly;
+> system state used during boot or suspend/hibernate/resume
+>=20
+> char *saved_command_line __ro_after_init;
+> kernel=E2=80=99s command line, saved from use at any later time in the ke=
+rnel.
+>=20
+> unsigned long preset_lpj;
+> lpj (loops per jiffy) value set from kernel command line using =E2=80=9Cl=
+pj=3DVALUE=E2=80=9D
+>=20
+> static atomic64_t diskseq;
+> unique sequence number for block device instances
+>=20
+>=20
+> so these are completely missing/dropped: (they have
+> initializers or use DEFINE_MUTEX())
+
+Yeah, the regex is not capturing initializers nor handling macros.
+We'll need to improve it.
+
+things like DEFINE_MUTEX() would require either a sub pattern or
+some regexes to detect them.
+
+>=20
+> /**
+>  * global loop_per_jiffy - calculated loop count needed to consume one ji=
+ffy
+>  * of time
+>  */
+> unsigned long loops_per_jiffy =3D (1<<12);
+>=20
+> // from init/version.c:
+> /**
+>  * global linux_proc_banner - text used from /proc/version file
+>  *
+>  * * first %s is sysname (e.g., "Linux")
+>  * * second %s is release
+>  * * third %s is version
+>  */
+> const char linux_proc_banner[] =3D
+> 	"%s version %s"
+> 	" (" LINUX_COMPILE_BY "@" LINUX_COMPILE_HOST ")"
+> 	" (" LINUX_COMPILER ") %s\n";
+> //char linux_proc_banner[];
+>=20
+> // from init/version-timestamp.c:
+> /**
+>  * global linux_banner - Linux boot banner, usually printed at boot time
+>  */
+> const char linux_banner[] =3D
+> 	"Linux version " UTS_RELEASE " (" LINUX_COMPILE_BY "@"
+> 	LINUX_COMPILE_HOST ") (" LINUX_COMPILER ") " UTS_VERSION "\n";
+> //const char linux_banner[];
+>=20
+> // from net/core/rtnetlink.c:
+> /**
+>  * global rtnl_mutex - historical global lock for networking control oper=
+ations.
+>  *
+>  * @rtnl_mutex is used to serialize rtnetlink requests
+>  * and protect all kernel internal data structures related to networking.
+>  *
+>  * See Documentation/networking/netdevices.rst for details.
+>  * Often known as the rtnl_lock, although rtnl_lock is a kernel function.
+>  */
+> static DEFINE_MUTEX(rtnl_mutex);
+>=20
+>=20
+> It's looking good. Thanks.
+
+Agreed.
+
+Thanks,
+Mauro
 
