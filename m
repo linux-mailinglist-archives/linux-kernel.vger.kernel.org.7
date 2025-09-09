@@ -1,113 +1,100 @@
-Return-Path: <linux-kernel+bounces-807615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 932E6B4A708
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:13:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EDB1B4A71F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FDF118955B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:12:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5595C441627
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A6528504B;
-	Tue,  9 Sep 2025 09:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqnTK/cQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FA1279DDB;
-	Tue,  9 Sep 2025 09:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA7C285CB2;
+	Tue,  9 Sep 2025 09:10:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB68275854;
+	Tue,  9 Sep 2025 09:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757409026; cv=none; b=XWrf+efwoAnPoekz2Ujqcs1toObbzgwNCfLKCLFRAOnWPZY6Kw9Z5Ye+Hyh7hCXDv7j4yVFzuzx4/V53lKnyOQ+l4r8kbNJxTOfdJQBJVgL7D41AyCgiGUi1Aa0M6eAQGu4SAFf9ZO6Y1XTNdUsIpV5bMUW/vwlDp9En0JHUHnk=
+	t=1757409055; cv=none; b=t5h2TugzjishSE8NqYk9hWn+ym7gQ0e0MFZLCQkeoZh2k36d4M2Kw0H2dOI1+S3EzogV/sLIL9gr42ctxu0nTJolw23/TGFE21ff8IW5mndIYKIKipTGN6ufPCr/+Qmqmac/3vyoPQjoqw9LRaYO7tzFIQzyZT6AlkpJDOZsr6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757409026; c=relaxed/simple;
-	bh=lT+TBUjr1IEMc1JW6nEbwDuFgBshtFR0gCTlV9HCcAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RlDlNC3nUG5rHncDt2n9cklVJvu8NJJ9my7rd8YNhpflSoVa8PFCZrzxyJKHL2frqxP7Lk8XrL3DCq2ARw8dYfIlHNZLtmTFgzFvPjkqObeUh1bNBc8mDq0N7fx0C+wN+kTq+scBfUjgRz4zUgIyMJZWq9Tg6de9g01Vk3wxrUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqnTK/cQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43510C4CEF4;
-	Tue,  9 Sep 2025 09:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757409026;
-	bh=lT+TBUjr1IEMc1JW6nEbwDuFgBshtFR0gCTlV9HCcAA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sqnTK/cQWndHfSbaZ2pd+a8nhIRu+tbohS1rrIgk8ZqUso4jSwt+Q6kgDxI3V0Cax
-	 a+tAVcn1i3O7VoeQJTEEKjI3K1RHY5XVe5LhHSNWeYzkG/Dizq57kSOjbA0vM22gmX
-	 DK24Tv47CPb0Ft0wzPzByQbEFRyGBKvB7JPOt9+xjJ9mj9eGVVXHQLbXrG+YSPzT91
-	 RcjvjQYkaEpz2Sr9HVOrCGUbvmJIV9xaN5On4vBHLsHKzBjFZdrbRxovF8eA/VVeXL
-	 13S8LxoWwanJQ0QzCs7PBuWp9zy/n89K+beE1y7d9P7UWSz+D9QNTdWuvTq1eDJ5fT
-	 y5J9ebFR0BbXw==
-Date: Tue, 9 Sep 2025 14:40:18 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Saravana Kannan <saravanak@google.com>, 
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH v2 3/5] PCI/pwrctrl: Add support for toggling PERST#
-Message-ID: <ijb6xnd5cl6v4cw5lfx5srjtzionx3iyxxg32xhljyylmplciz@dgizpuhv3c4u>
-References: <20250903-pci-pwrctrl-perst-v2-3-2d461ed0e061@oss.qualcomm.com>
- <20250908193529.GA1439341@bhelgaas>
+	s=arc-20240116; t=1757409055; c=relaxed/simple;
+	bh=hx6F/O2pbkD2iJuvkw1ZAwJxbvLKRvEnkIoGGCOGwCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eN3Y5GQ2fXMt4N0dZIe0b0EVEjGJmIpm7Yx3DT0sCsUtIKiq+pmI0AHXMqD7OwhR1SMMIl+Q6xLSUOE+BU99iVbnz7/8UGe6A1l+TpEphKIxUVxp5ypuSTbsiEho6E+pa8+EwSriATWN9CaDik/ORV/lOH40PovahVYZLCF3jfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A03615A1;
+	Tue,  9 Sep 2025 02:10:44 -0700 (PDT)
+Received: from [10.57.60.124] (unknown [10.57.60.124])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 358583F63F;
+	Tue,  9 Sep 2025 02:10:37 -0700 (PDT)
+Message-ID: <652720ae-131e-4de0-bc65-e5c1bdc46186@arm.com>
+Date: Tue, 9 Sep 2025 11:10:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250908193529.GA1439341@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] Nesting support for lazy MMU mode
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
+References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
+ <c07b8a65-7cef-4ddd-bd94-d2e275edc2a8@lucifer.local>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <c07b8a65-7cef-4ddd-bd94-d2e275edc2a8@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 08, 2025 at 02:35:29PM GMT, Bjorn Helgaas wrote:
-> On Wed, Sep 03, 2025 at 12:43:25PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > As per PCIe spec r6.0, sec 6.6.1, PERST# is an auxiliary signal provided by
-> > the system to a component as a Fundamental Reset. This signal if available,
-> > should conform to the rules defined by the electromechanical form factor
-> > specifications like PCIe CEM spec r4.0, sec 2.2.
-> > 
-> > Since pwrctrl driver is meant to control the power supplies, it should also
-> > control the PERST# signal if available.
-> 
-> Why?  Probably obvious to hardware folks, but a sentence about the
-> necessary connection between power supply and reset would help me.
-> 
-> > But traditionally, the host bridge
-> > (controller) drivers are the ones parsing and controlling the PERST#
-> > signal. They also sometimes need to assert PERST# during their own hardware
-> > initialization. So it is not possible to move the PERST# control away from
-> > the controller drivers and it must be shared logically.
-> > 
-> > Hence, add a new callback 'pci_host_bridge::toggle_perst', that allows the
-> > pwrctrl core to toggle PERST# with the help of the controller drivers. But
-> > care must be taken care by the controller drivers to not deassert the
-> > PERST# signal if this callback is populated.
-> > 
-> > This callback if available, will be called by the pwrctrl core during the
-> > device power up and power down scenarios. Controller drivers should
-> > identify the device using the 'struct device_node' passed during the
-> > callback and toggle PERST# accordingly.
-> 
-> "Toggle" isn't my favorite description because it implies that you
-> don't need to supply the new state; you're just switching from the
-> current state to the other state, and you wouldn't need to pass a
-> state.  Maybe something like "set_perst" or "set_perst_state" like we
-> do for set_cpu_online(), *_set_power_state(), etc?
-> 
+On 08/09/2025 18:56, Lorenzo Stoakes wrote:
+> On Mon, Sep 08, 2025 at 08:39:24AM +0100, Kevin Brodsky wrote:
+>> When the lazy MMU mode was introduced eons ago, it wasn't made clear
+>> whether such a sequence was legal:
+>>
+>> 	arch_enter_lazy_mmu_mode()
+>> 	...
+>> 		arch_enter_lazy_mmu_mode()
+>> 		...
+>> 		arch_leave_lazy_mmu_mode()
+>> 	...
+>> 	arch_leave_lazy_mmu_mode()
+>>
+>> It seems fair to say that nested calls to
+>> arch_{enter,leave}_lazy_mmu_mode() were not expected, and most
+>> architectures never explicitly supported it.
+>
+> This is compiling with CONFIG_USERFAULTFD at all commits and series is
+> compiling with allmodconfig plus all mm selftests are passing so from my
+> side this looks good, thanks for addressing issues and rebasing! :)
 
-Since the spec mentions the state change as 'assertion' and 'deassertion', how
-about:
+Great thank you for that extensive testing, very appreciated! Shall I
+add your Reviewed-by to the whole series?
 
-	 pci_host_bridge::perst_assert(struct pci_pwrctrl *pwrctrl, bool assert)
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+- Kevin
 
