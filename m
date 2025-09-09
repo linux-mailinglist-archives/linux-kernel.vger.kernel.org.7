@@ -1,111 +1,108 @@
-Return-Path: <linux-kernel+bounces-809122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22760B508E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:31:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26BEAB508D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB76E3BD299
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:31:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 989274E7361
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A5A25B1FF;
-	Tue,  9 Sep 2025 22:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43CB26D4C6;
+	Tue,  9 Sep 2025 22:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CCdf1nNP"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l9ecApbS"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A49131D398;
-	Tue,  9 Sep 2025 22:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827FC25DCE0
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 22:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757457072; cv=none; b=kJdGdUFDuNAb6brKQiurTxWxdeXcUWSHfuJvWUfHGuchZBVq4xQbEUKsafceNRr/VSnS/zGD0cWFJiUFKdBbveJjIKv54h+aJrDhIVh1IB2r2C4IfWVSOU0bU7Xmcb4NbAUNnrL7KSJbLPsMRn9K32i5Mq8aqk2Ay0u7sbA7CVs=
+	t=1757456548; cv=none; b=PJ86qixOoBuQAJrvVJPp1VdTdCVQ0IZqgJWc+6QHgv7lxho3G+cjTssb9LUZsbjxbqdc4oi3jzz33XvsuyKIgZZkxdKsKOwK/7TgwdK19wdli2RDv1/LnYuZ5lKimhv6PUejHgJT8GwDvKha9HHY1rkPW4dt/uWse3SJ+JDSwrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757457072; c=relaxed/simple;
-	bh=Aq7rwhGw9BxmW8+v547+5vJ3prHg5vZthWMnGnkCICw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L2l5ZWfhi7RTIlsLMSNDLL49PFGn5cHUdzY+0apj196yWI/h3NuaDYCq/4fOqUm0Qwp2e61RN9Ouht2mjU3omExVu+tx8Rw69WGsD5Cyn8n1PdlKxaohhWw5iQyOOrmRId5/Hu0Ao/DpSIqHhYua06pKlW6Xu7wq021/+wcShuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CCdf1nNP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 95C1B40E01B0;
-	Tue,  9 Sep 2025 22:21:16 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id UCc0RgvktYy9; Tue,  9 Sep 2025 22:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757456473; bh=yY+SNAV5Bd45YJHqst6VM4vZn5WuUQNd3ZiyhsJWz/8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CCdf1nNPUDsoYVTb/C0Q6De/8CNc4EDxZvesMQtGCopupd1o3Iltj2/GyB8+QFvxI
-	 ohg42ooSX/W9a0vmbWQXp42bglUrlATFZzswRKZ6F4VlCfuKhWQT4DVE3E6BKA1HNL
-	 G2mNBNq+nKRFU1fBimeT7JjQhKAi7xXFYE/14/NuanB/GZlcg8XRxijHFXAjVYO8u0
-	 JUmHWHeg3UyhzN4fYCCLLPEt68hwBATZnEuKDmsez+/IgXX7tmQe193vHwATbx26zH
-	 pUZ0Laef0Imo0i0fpYjkna33SXtZXvuNAqGZGd7RfkaACdgO7u8SbM7Hg7VJqHcAJE
-	 Ee4QTLbQGtpzzVlaJ32l9sVjtnY/I7Z2mMMInbDz46TgF3skVagCGoi9zqznUucGZA
-	 S58lJC41Zi40Ocpaq6R/EzjsZU2um7ak1IZSE3rtu59ZzorQ0YeQCYH1Wce9EJWqPv
-	 2t8lxzGz6OjVhZyXsDecEgoRficfBfCP3i9yrZICPA9pkt0pXOLfAgFIFZhyPFZ5H4
-	 j8gA0ZzXqN5O7p6z1WSbCvTAfvW6nay3y9DO2Wj9gjTg8jsKYi9WbH3S7h74NNthPA
-	 r2aZPL+fYFwtRhySB6kcogW/YYt3EH/77j0f3Cc0kDXUxISD8l5C+IhR4xyyxBqxtg
-	 srQ0W3StIumpFvJcSrVaIZ+0=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 2BA5840E00DD;
-	Tue,  9 Sep 2025 22:21:00 +0000 (UTC)
-Date: Wed, 10 Sep 2025 00:20:45 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>,
-	Michael Roth <michael.roth@amd.com>,
-	=?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
-	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nikunj A Dadhania <nikunj@amd.com>
-Subject: Re: [PATCH v7 01/22] x86/sev: Separate MSR and GHCB based
- snp_cpuid() via a callback
-Message-ID: <20250909222045.GDaMCoPUqawgEenBsF@fat_crate.local>
-References: <20250828102202.1849035-24-ardb+git@google.com>
- <20250828102202.1849035-25-ardb+git@google.com>
- <20250828153317.GJaLB2vSvuR20WzgQV@fat_crate.local>
- <fbb24767-0e06-d1d6-36e0-1757d98aca66@amd.com>
+	s=arc-20240116; t=1757456548; c=relaxed/simple;
+	bh=Y1+lVOHdJgc/PJLxgnBu4EYLxexrbOv/c65GNuXU3SY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TdZRJbH+25XfDfZkjoq/ciDjSP3VIWrAuMJU1qATXM20C4K2xrf9Wa/nTmbhMNjFNaUs6nELHfsvQaIt1DeQNcxj+baMzvwfOaggze0Ifdce/4Bxck04u74vaGFMYjTT+d5eJiUdKakhtB19iwNnSrElaKWR3aZutKXfcdoLPhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l9ecApbS; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55f5f7feeddso1134365e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:22:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757456545; x=1758061345; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=14zKoaawmL+tkb0ufqaatkUvQTDgaxwDhKzZv+iGXOM=;
+        b=l9ecApbSPZVEftWFfPIN3jzQz8mJkSbjo+On8rboD6dTjNHrROauE/PJA6RVumSbhW
+         zqR1GeyJyUJwR+6kc3WimMUcN4+L1IaQxwJGj5c/Rxhcwl1DZJSI9Wrl97CSfmd3cZai
+         fo5ShOUjdt7ba8D99afGy51VyG+V6sp1udGNggyP5b2g4E4aqZX3AM/fgYzmRwH597bk
+         JpcClhLmB8xSXFTPC4euEbp5rxc8BaROghVaaiCDI/TUhrvKKi21XhrnmTK9RG4kkzDV
+         Es6R51dYcwfq0VVDqvesgHB6ZztAe4F2E+VeDD/ys/+aJX4rZBC63Zx6OfemPFJgCCXM
+         gfJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757456545; x=1758061345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=14zKoaawmL+tkb0ufqaatkUvQTDgaxwDhKzZv+iGXOM=;
+        b=wszLgrH8AD9to8X0qZYdb3HBA+Pqvgz+Smp3i7B1kvPlRQy8lk7hAcI2q+ROWpszxt
+         xVfPRseXI2NONcpPIp3l81OovZh8LXhMsk1Dx8mBupfyKJes20lFYwl2JyOXI4swRyqx
+         Fqf4ipQITVk1V7rK8QJe377SUC87cyTdeGp2xHVX1kqq8KqbiOKteCSeAdYmOclVxwO5
+         ntsA5WdVmwJMKBw2xpWYLcJtIChNoxtc0DyqxC8X5AVgVEXjpohPU+r+YxKJh35GQfbb
+         ohNbsXr+UQpXy2V+eCFIdhtp6m9EWZ2U5vN62PyZKf780tKfFrIbRs4EIaEMO0V1paSk
+         4yOg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcCaAPdnEDhAtkaNSIusOQImFJemvUvEeMjd932iYHidECeVdDayOAoQJUQMcwNFl0wn8YhTPD2erZhao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtKebtPtig0piCNZGp3Hjf7RlI5qTBKg+9OeAbdGJfTmATyh8J
+	9rrOw/nMtoxCRyoo+IO/x0z50eNUuyMPMv7tsFDboqFwqfsT7SOPVYLmxSFMK+N3fDrYcPX0Ud7
+	hi6bHxSE0A+kBOUsEQ2WiXBiA8gcanbM=
+X-Gm-Gg: ASbGncsaXITg7yjCVlHWqjhK//W71Ema+f2mx4pfcFiuNUxViyy4dN656zE7H3NQ7B6
+	Yj45iSmLkkgosGK2L+HXvvymB7M2hYCR/60doVkQA1Zc3/uYiAFWc+JjU05TSsywELm7peP3dmz
+	Pu6SQLWtnhWt9bdYNDOFuFObeEz7Ai8/s74aUfy4lwxWh5aDIRdOGjFtWabyrWNzu0UZ1nRrPMm
+	oOP1d6jGIm0m2jJhtBxsMF7d9QLtOqALMmNjvhzSCV7CnWgmJqA6X2kx/Ufoz4ztuXcc6dOLpzr
+	AuayaV02ZR6PRkhCXi50HZfgXhFYx/Y0o9SOg0JPp9f0Om8=
+X-Google-Smtp-Source: AGHT+IFDuCYxLQfV628Z7phqsroB85psQfsmvFVoNoEg802fzEjgvQkjguzByvEJEMk6c6/YwQXKAJTtY3UGkeA4SR4=
+X-Received: by 2002:a05:6512:3b94:b0:55f:5965:e4e5 with SMTP id
+ 2adb3069b0e04-5626275d96bmr1967969e87.6.1757456544495; Tue, 09 Sep 2025
+ 15:22:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fbb24767-0e06-d1d6-36e0-1757d98aca66@amd.com>
+References: <20250829192243.678079-1-ojeda@kernel.org>
+In-Reply-To: <20250829192243.678079-1-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 10 Sep 2025 00:22:08 +0200
+X-Gm-Features: AS18NWCf2pIbJBXY_TohxQA27AKHeeu88lGrE2tNqE6BO5-_LqyV8PLVSxBYSKA
+Message-ID: <CANiq72kS2OFaW+FEgSXGYup=kC3VxxJb32f+ZDs946NGREXUnQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Error improvements
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 09, 2025 at 04:44:07PM -0500, Tom Lendacky wrote:
-> It only uses the MSR protocol for particular CPUID values in
-> snp_cpuid_postprocess(). If the CPUID leaf isn't in the CPUID table,
-> then it will set the CPUID values to all 0 and then call the
-> post-processing routine which may or may not call the HV.
-> 
-> The second call to __sev_cpuid_hv_msr() only happens if there is no
-> CPUID table - which will be the case for SEV-ES. So you can't remove the
-> second call.
+On Fri, Aug 29, 2025 at 9:23=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+>   rust: error: improve `Error::from_errno` documentation
+>   rust: error: improve `to_result` documentation
 
-This needs to be turned into a proper comment, at least, and stuck above it as
-the situation there is clear as mud. Especially after the dropping of the GHCB
-protocol call, which makes the confusion even more probable...
+Applied these two to `rust-next` since they are straightforward --
+thanks everyone!
 
-I'll do it tomorrow if you don't beat me to it today. :)
+For the last one, we can discuss it a bit more in Kangrejos.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Cheers,
+Miguel
 
