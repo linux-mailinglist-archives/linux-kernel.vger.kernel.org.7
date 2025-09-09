@@ -1,83 +1,122 @@
-Return-Path: <linux-kernel+bounces-808215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF92FB4FBF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:02:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 580AAB4FC01
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D556178782
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:02:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0990017DEAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765E231B10E;
-	Tue,  9 Sep 2025 13:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E2933CE9D;
+	Tue,  9 Sep 2025 13:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgqG2Ew1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jkUKeMv+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9D4322E;
-	Tue,  9 Sep 2025 13:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E4EF9C1;
+	Tue,  9 Sep 2025 13:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757422915; cv=none; b=AR6xZsbdUTVqraqzNLOuXNE0fr7LzLvP6RlV66w6VLy4er5MNYT0UTKciqklfMFTe94JnMAr3O9qSOQ62kpgvrmGR5iD4Qi/zqYBs5me2P+4ZDn7X7IWmbCDUSjZlFf7edITeFeKwAfLQQCIIdAxBPCgCISJw7gl+NjJjJyCBLM=
+	t=1757423078; cv=none; b=rZIf3Y31SBEuk5CFOxIQBtogMfjaoT2dWKVZ8sRS8raoJv3TcCVVfXHxfId8rT7sHRARApPCLOKYH3nDNKDnP5J75wLVPEkUu1UZGVGyjDcdmyb1Iz6Z0fZShtNci7dvkzYoFxWVdg+fq52opSXH0xGoW/2BiCpOO3+ZCdM1RVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757422915; c=relaxed/simple;
-	bh=uUpeJCJP2QyLE+ArUbXIAvL4sYHqiTHfiEps2udfhJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ElDLXKmjbybikKO1nlZS+CEaVg09JlZqNtjZUIdkDaGg3DXuhdQhlmfgNVOflP0wR1WgsrU7qGFm5+uxsKjtt+pqiB/yzl55uEpDvd2r7qxfdYC8uBk/54yoZbGiHRu/fZoxlnUpQWgfH3ER3GZoQcYnQnAk4lDM9ioX1MxIXiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgqG2Ew1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9107C4CEF4;
-	Tue,  9 Sep 2025 13:01:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757422915;
-	bh=uUpeJCJP2QyLE+ArUbXIAvL4sYHqiTHfiEps2udfhJY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FgqG2Ew1xobvoWA0AkoMC06sNum5ooz+wUgacB3toQjyanO6379YBTQyLaJCsDCgo
-	 8v3sIA6zFjUkGzEb1okiCfOqTAw9ocvtemZ9LV1X2HyFtreAKI8Ya2DqAmjYrccBL8
-	 lfopTUGVDmgHXqz+s+AcB6NAgwW6ThJFopYj+gAkqPov/odrZ88ID0KrOzGBblSffS
-	 3i9pNbiOrh0aYCfswKcYm2u9lI87IfXqvIrfoHvAibua4b8ff0DgMrg5TvYdaPzQGK
-	 7pjuh6In1clVogS5gnjZwEuiuypKPrLnoTiCAsw8Ih9bwP97PwJDhn245VEgb/1laM
-	 zGSeA8LaUiVjA==
-Date: Tue, 9 Sep 2025 14:01:50 +0100
-From: Will Deacon <will@kernel.org>
-To: Daniel Mentz <danielmentz@google.com>
-Cc: Xichao Zhao <zhao.xichao@vivo.com>, joro@8bytes.org,
-	robin.murphy@arm.com, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/arm-smmu: Remove dev_err_probe() if error is
- -ENOMEM
-Message-ID: <aMAlPrBUJ-fI0_O-@willie-the-truck>
-References: <20250821094717.573232-1-zhao.xichao@vivo.com>
- <CAE2F3rBg+m_iVpJN+raoto2YV-0g1WFC-JNtuZV=OjarHgL3RQ@mail.gmail.com>
+	s=arc-20240116; t=1757423078; c=relaxed/simple;
+	bh=2XAecwrmpL2ME82rkHSXihuD/QhtSEyswB/Tapt+0cQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SxkL6cDTbNoRFHpNwPlMfsDTgma0D0XGGwrHvuagvEir7JOC279jyyCzuTvw3E6Mpc2n4bRJzW6EUOKnN3RbezHAUUKXT1Q5ddlTzwMSyPoG4tVyJHRFZfWgw1Pqk237K1B0N6q0fmxtK9QKIXNf0AKmjVDCDbFLJzOpz+WyUbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jkUKeMv+; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757423077; x=1788959077;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2XAecwrmpL2ME82rkHSXihuD/QhtSEyswB/Tapt+0cQ=;
+  b=jkUKeMv+FRDepHrn4fdGWRqXgxlbP3Iy/X5KUVxRimHtH2VGvMnxkjew
+   hVNzeEKZtI68n9PB057yRwQOP0NH23eDBGHL9slS8cxiVy8DX3D2dZE5t
+   qrqdEIZR162nzkfcpv6/6TV2qlRCUvYzW9hXVImwc70JN8VSW2vE6opEk
+   Br5wxrJnrWVanPKdSMmGstQjgF12dSxTH8csJuiXVKn0pQVK3MCEk84eq
+   cqtTS36J3KUyEx4u68WyX70An5/nxvS0zEy6MylhLTwXTBslpL7KKEuio
+   833+ktnvdbInjp6wkTXseI/lENXcHq1an0x3vw2bt1mJlV9WVnyXMNztk
+   Q==;
+X-CSE-ConnectionGUID: CTKfm2wkSMiQiXLl4cvdUQ==
+X-CSE-MsgGUID: ikXLcoBDS3WcSDPlSh7GRQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="62332874"
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="62332874"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 06:04:36 -0700
+X-CSE-ConnectionGUID: EKr4eiYkS2q3SOwhsjGziw==
+X-CSE-MsgGUID: Jd/DxpVWSzavxrF7NxmweQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="203855368"
+Received: from abityuts-desk.ger.corp.intel.com (HELO [10.245.244.110]) ([10.245.244.110])
+  by orviesa002.jf.intel.com with ESMTP; 09 Sep 2025 06:04:35 -0700
+Message-ID: <6ca18b05-80d4-4988-bb08-3cad003e10f4@linux.intel.com>
+Date: Tue, 9 Sep 2025 16:04:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/1] usb: xhci: Queue URB_ZERO_PACKET as one TD
+To: Michal Pecio <michal.pecio@gmail.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250908130128.7ed81912.michal.pecio@gmail.com>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <20250908130128.7ed81912.michal.pecio@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAE2F3rBg+m_iVpJN+raoto2YV-0g1WFC-JNtuZV=OjarHgL3RQ@mail.gmail.com>
 
-On Tue, Aug 26, 2025 at 09:39:26AM -0700, Daniel Mentz wrote:
-> On Thu, Aug 21, 2025 at 2:48 AM Xichao Zhao <zhao.xichao@vivo.com> wrote:
-> >
-> > The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
-> > Therefore, remove the useless call to dev_err_probe(), and just
-> > return the value instead.
+On 8.9.2025 14.01, Michal Pecio wrote:
+> Hi Mathias,
 > 
-> You could mention the following commit which I believe changed the
-> -ENOMEM behavior.
+> I wanted to finish and send v2 of "Simplify TD cancellation and drop
+> some states" over the weekend, but I encountered an annoying roadblock
+> and I need your input.
 > 
-> 2f3cfd2f4b7c ("driver core: Make dev_err_probe() silent for -ENOMEM")
+> Basically, there is a bug: URB_ZERO_PACKET is queued as two TDs, and
+> when the first TD halts, the driver simply advances to the second one.
+> 
+> I found that extending the event handler to cover this case requires
+> multiple changes:
+> 
+> 1. obviously, all TDs must be cancelled, not just the current one
+> 2. they may be given back in weird order (waiting for Set Deq), so
+>     we need to store the status on urb_priv and override td->status
+> 3. xhci_invalidate_cancelled_tds() would need to recognize multiple
+>     halted TDs on the same URB as valid
+> 
+> This is doable, and I have already implemented most of it in that
+> series, but there is an alternative solution: simply stop worrying
+> about halted multi-TD URBs, because this is the only case and it
+> can be converted to pretend that it's just one TD per URB as usual.
+> 
+> If you are OK with this patch, cancellation logic will be simpler,
+> because this time there really are no remaining cases of multi-TD
+> URBs except isochronous. This is clear in xhci_urb_enqueue():
+> 
 
-Hmm, right, and now we lost the message about interrupts altogether so,
-if anything, I'd be inclined to go back to the old behaviour prior to
-97dfad194ca8 ("iommu/arm-smmu: Account for PMU interrupts") using
-dev_err() and return -ENOMEM explicitly.
+Adding the zero-length TRB to the original TD when we need to send a
+zero-length packet would simplify things, and I would otherwise fully
+support this, but the xHCI spec is pretty clear that it requires a
+dedicated TD for zero-length transactions.
 
-Will
+See xhci spec section 4.9.1:
+
+"To generate a “zero-length” USB transaction, software shall explicitly
+define a TD with a single Transfer TRB, and its TRB Transfer Length
+field shall equal ‘0’. Note that this TD may include non-Transfer TRBs,
+e.g. an Event Data or Link TRB."
+
+Thanks
+Mathias
 
