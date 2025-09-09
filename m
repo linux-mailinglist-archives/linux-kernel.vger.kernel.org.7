@@ -1,200 +1,351 @@
-Return-Path: <linux-kernel+bounces-807026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2080B49F0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:16:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE96B49F11
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6156917F808
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:16:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 297814E207A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B484524466B;
-	Tue,  9 Sep 2025 02:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="V/O99e7S"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010050.outbound.protection.outlook.com [52.101.69.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BA623BD1B;
+	Tue,  9 Sep 2025 02:18:42 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CE354723;
-	Tue,  9 Sep 2025 02:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757384204; cv=fail; b=VLDJjQY5MxR6lkd0AbF15H03DeDH1koWBbbki/9n78l6LUA6eYMRsY350VNCI6rxe6N3Wa7ELnQceFMvJkzQ9yQ3YTnt0HWLkKKTa86Lr+gA97d+6YnwfmfgXJN+5twvK8BZHTSwNJTFQMxP8doJLt8SnKO9wFyuuMtol9Ud8HU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757384204; c=relaxed/simple;
-	bh=IXRbzfMkjOePrBFVVYjmdv1nlGhrGSPCmwm2RewpuAU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=m9tIDgB04bYoZ+NvspTa4Fg5wJclT5kHO4AgV/QrhIG04LWPaEU3e49stGl5HATpXaReo+xZ0Odem20sw0oEssQUwliAuW+3tYCmR7Q46Tlz6jrTJzPBAys965n3WLvi6kRev7PebIazigbO9Ey7Q8yoo9yXcWaQqHqvjRfIDMQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=V/O99e7S; arc=fail smtp.client-ip=52.101.69.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=udkyqhMy4+u29nU+EWRLotE/5KVAtl0f2mpSkHkG4vZaxSD8SUt4T9OE5fxQpw15oxz6v7n6UhUYGRiHPucGGGTODHWxjaRdumBhwuaJk8uCphvHhr1oyHaCL6pxR0DXjFs2zBzPAeRizJwLWod1X119TyiovFlmmuqEykn3ynFjUqwO+YKf4iyrOFDq3efljtHdskygH4uiMWhRTjnwc3qqrWLzgggbxhbFmO4Vehkf+KZy1dVJAcyZCnhDEicvUC/07gwLFHM4qXJpoSoEB4jUW6eTbEkHXmbpxPc2IxdPgFZGQXzU1wlsOtY5LeOM8MY2+NcJ+T0m5AaF4frctA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RgTzoM8+cIbKe/J3aKFiluiIV3ijELj6HJYo42O7ZTU=;
- b=xyotcF6SxuVQymBDGuHL+ubGSTl0HWfWuqho8vC3Z0T1RmrPKiJ7mbID+FkYHnw02GzrONkwrJ1D7iY7dwnAYi9cLWhIMkpbyS14oKRI2hwdDIdQOB8cYr1TlxhpdvQCxPPgTS6KWtdTp7pMolZ/8wSN6A7/XXkUhjuvXZoIvj0jJRD8K3m4ocYkeTZPZ7oVAB/bOVe2G8HDZ7wHIIGQqP1k/VYwcmwAKjn8Y2cZKU8fvqgTcMEQjVDIMKm8o6q1d+b8VHxk/pPNPXVb67VTrTz+YCXKXhDZz++GdQtVYj8XVe3MPFYzf8+9z8uF+2v9H7avCZXswyynHrzn4z3TtA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RgTzoM8+cIbKe/J3aKFiluiIV3ijELj6HJYo42O7ZTU=;
- b=V/O99e7SocaV9g7cquPzaAUsfjgnN+9H6UgKkUHO69xMK9gMoY/FmmYG8RWowP43DUN1zPj1/BicavM71fLttDKAm8m2pe7xuSiCasvKi0r9rKEpK7BKS/Z4ENNHp6WS0z7Ai7sJh1wIOaFeJrnTBbSObfi1YHI4SUBJExpUnbus1m04lbFyht3LzCiNFtbl7TH0Au+Y9qQiVWAnLQSFje9yiM6jmJSq1WiY1inMv0edz07rSRl7lAVJ3ZSrsplBbJt+ll/GtWdEm/AimMbcwRKhkjhMeXEc3QO9f7l8Gw2A1WLD6S50aIBizIRwHOGQB+ApYNX6DEZUNhG+pb5dzw==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by PA4PR04MB9637.eurprd04.prod.outlook.com (2603:10a6:102:272::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.13; Tue, 9 Sep
- 2025 02:16:40 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.9115.010; Tue, 9 Sep 2025
- 02:16:39 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-CC: Clark Wang <xiaoning.wang@nxp.com>, Stanislav Fomichev <sdf@fomichev.me>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
-	<daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>
-Subject: RE: [PATCH v6 net-next 3/6] net: fec: update MAX_FL based on the
- current MTU
-Thread-Topic: [PATCH v6 net-next 3/6] net: fec: update MAX_FL based on the
- current MTU
-Thread-Index: AQHcINxDKDdiJLN/pUy7KgY02sREIbSKHZww
-Date: Tue, 9 Sep 2025 02:16:39 +0000
-Message-ID:
- <PAXPR04MB8510347524AE294B0BEB67CE880FA@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20250908161755.608704-1-shenwei.wang@nxp.com>
- <20250908161755.608704-4-shenwei.wang@nxp.com>
-In-Reply-To: <20250908161755.608704-4-shenwei.wang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PA4PR04MB9637:EE_
-x-ms-office365-filtering-correlation-id: 54efb9b2-0f5c-4022-eb5e-08ddef46e904
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|19092799006|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?xBW/Ev3nMmrGKWPmgKFXapaSlomIsMm5xprEBYIwtGmUC6NVaN+enLrNoyMq?=
- =?us-ascii?Q?BmC+oO0Aiz2cF3iCY/mdePXgbbzUv59ttexmbfFQ64i1eWdFsdkHxhGmbLx5?=
- =?us-ascii?Q?jiWLLAdJhs7P8WGFozXgEEarANbQ4z5PLnbVyKsG27VKs/JBjCz3CLADeEgb?=
- =?us-ascii?Q?C8aShsv7U5I9QJkwF3+Euy4VTVXZt5BXWHAhQsPO9NrIl8ulYVQAWdBGHMCE?=
- =?us-ascii?Q?0ic9bsOxnOsagoafZlGj3Zp7NBHywCpXSD5bJoL5kt67+BrIGzFzO5AJTsaj?=
- =?us-ascii?Q?ueh5U13Rfus8gTOsYKFBjnVPLC3ODs9bm8nv20ELTAQ2/ElAH4p76P9YD1ii?=
- =?us-ascii?Q?M5FBL5EnIY5qjr2CSt09XIqPZ0zIgcKEKgWKs1qD/ND39et+meBfRpgLhjLS?=
- =?us-ascii?Q?Z194Zk+epjRScBOtouLl6YQx2HQOSd8trmbcrWFxmfCzur7sLmVLHMoCPr1/?=
- =?us-ascii?Q?1WyHhkzFgD0izpvw4QaaOiS42F15cVqnNwIHcYM+47QPwceieCwqFRDqrDue?=
- =?us-ascii?Q?OSPdxPdzMdBFCZrdnMqVPcTjyW1pZPIdqV4/6WWSqkQzpvAgEYCtXYO1Nq+V?=
- =?us-ascii?Q?hrTV5HZEdMmv0WpXoQfXwqtrHIaPcUNS9Ft+BcDUpj7XVbmtkxQXaSrEKWMa?=
- =?us-ascii?Q?6DWGfP98Mtxcx7jdYDiEFPzShH/bnozTTrzv4J1FssQen3+Gt6Z9lHj2FASh?=
- =?us-ascii?Q?J/YmV6YDOuLbzTLjOKmcm3tniIP6AxHyqAFe4/6zcy92Qxu9hqhXSbhVy0Zd?=
- =?us-ascii?Q?nQ5G3zAgVJvM4tM+aczDmh/aZvxE45aEisU2+JSMFMFp0CP2TVNIxxv4Q6KS?=
- =?us-ascii?Q?UvIXbXHFa3kDbh5oHQQn2R7XMGkYMSSWV3iuiZcPyi1H9rLTJ1QliFcLmPl7?=
- =?us-ascii?Q?5W3CBMXJ2EfLZCPbRc3MLqD6FA98p0+M3YzEOnVmBY2uK2GZuUBS2roFLd3G?=
- =?us-ascii?Q?mR6r3xfzjOz3HQGAb5k9SrkNoH6oamIf2h1ifq2WNZifL5fcWfyUTdBdkUY0?=
- =?us-ascii?Q?SqZTRJrV46Exd+9gsUJocmE8SGnGj7MLe81vW/FVA1a1ZRE8vO83rvvBYz2y?=
- =?us-ascii?Q?04iTUE8IHzhX1kQukFNVjeEc9vZXM+NmeIHHRgo/sfM8gXwVN8VLbOa7QoBL?=
- =?us-ascii?Q?SvSeJZOZP5K61UJe0vF6/udiCSv4qUrrUZCe4tbLYO9eIiO4e5gcnVgQfQ9j?=
- =?us-ascii?Q?lrYUZFa4jUVBkEwhEVmDvGWfR6i+KDGSexcDRYgYmh4jn6Mz6fvyhL4hlZ99?=
- =?us-ascii?Q?PZzbEFpiXWi4YoQWky7EEmb9nnJle+Dnn2J1nEoC10JaxdjDZ3/24IYAdjfZ?=
- =?us-ascii?Q?DRr1w3FgR6NRgRRCbbTKYYb7/Nr0i1yYkcVV4LjPBO5UhWXDBneEu6W/YXxK?=
- =?us-ascii?Q?F9ZR42SumJ1b4ZyxrzOnhzY4LxXBTs2oOZBOqUurfWYLyFSLQzSSX5b3fvFY?=
- =?us-ascii?Q?yJDni85u7u924Cv/wWtDAj3hZcx+PNuzXNw6Wa1DKFduqKC81Q1EtBZbmvH6?=
- =?us-ascii?Q?A3dcrX2PszkTG/o=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(19092799006)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?TPY2NGguwKL0/ZKps7AH3fNp3/Aq6s3mFZIO+DOsMW1RCAVm6zvUGxgH/gKu?=
- =?us-ascii?Q?SmppOmdv/NYm+EbUS08AWaFuGVQEFYvPReRcwAj5JAxNtxrDLPxs2bZKxc84?=
- =?us-ascii?Q?rhyBUXoA3e82r8U2gbn8Y0Rik+vnUp5Wq45OAsRf0FGhJ51YVmEw/ia8O97k?=
- =?us-ascii?Q?pQXHcJ2IoBnKUUz0i+h3y2cVnXqLJUFFqLL4cPgv3osicD70RIfAP7LuxiSy?=
- =?us-ascii?Q?liV34YREQ5tqn+lrHz3W4EYgyye02p48zDx3xwxN3kyM4fAJ06IKo7B/TCnn?=
- =?us-ascii?Q?AIhqt9GcuuNd0Cvz3wnPDfZQoDVtIgaHs3/NRhqUX3aqARlMMiU4f0ZvUWS5?=
- =?us-ascii?Q?/GSgYNX/5/WrhmWSckbYOsbwLfSnLoGjHnChJbwvDGKxBWY3eqjcn1keqA/E?=
- =?us-ascii?Q?HvCm0b+PjQbYNHxr001NKl1ZJiHuW47F2SdCKPYy7GjVdBM+6ljbydXyEqS9?=
- =?us-ascii?Q?LY5xGwCrH6hmRwR/wYFKDgCjkn/u9VKO8BHbJdlK1U6Yc11J9Tcrgsnea9zV?=
- =?us-ascii?Q?b1QfyRoRPjKbzxdP8S7x0Vg8VfvNcKv7cSmIj1Xm3Gx4n+o5HODM2dVZc9jq?=
- =?us-ascii?Q?wOxkOvTr+o8GkSq4BMScSYm0Wpg8mdCwnsMTE427Z+/VDeDJzwKackO0Ch7K?=
- =?us-ascii?Q?KSzJjqS044zyFL0dAJYeB97rZU/mUn8W4ZVIPgxsyjL8EMLn/S39doQoj7ka?=
- =?us-ascii?Q?5js50QX6JAGTst9vdc55ZEZp0TV6MBBrxYiYcmOK7RvchZt+kut4xtk9DIw8?=
- =?us-ascii?Q?BSAZ7S6a9iO24vb5mw83uR8EqPibwRaXP5CcowI/1JTPfrjsxM7LKb27+e4y?=
- =?us-ascii?Q?TQQGEu5RmKgZ3NTmuxRJpCxCi7mQ/ukFeKfBWcLjpblkp+Vk8pxUherJllIV?=
- =?us-ascii?Q?1P2SMrj6omsft/v1wfYPT1XkRSJ0gDAEnTPvz6j+Z7Uop3MgsS9UcyoWuNKw?=
- =?us-ascii?Q?b01pfh+fPbLw2MZwYXk8+pZDZXwoONiggc3wS5UMHbkntTQZl56Rq2xxFcw4?=
- =?us-ascii?Q?R/dEzvR7DHsLiDMG+OT2a7fKoHE9tJKcyWd1cBgPAPEpJfi+q8l5QJZNREpJ?=
- =?us-ascii?Q?T1DlkfljyBJkPFzp2ScJ2ujB9Z4n02MPb15vE7usg2G3ggrZy4b8pi7NBRX3?=
- =?us-ascii?Q?3rKb01r+sona1C5xIoxy2iVAZHSbqZWNqmhgWZHPXow9oTkFL2tg/wEs6gml?=
- =?us-ascii?Q?Cl/sYKYWvihE0OugAbCJa4Ez0Dcg2oKlOa/zU/xk/j+h+1eS/+ryCfZjeMdx?=
- =?us-ascii?Q?5wd4+FDz2X5GkCiXUO5Qsd48b82TIobVubIxcBZbX3zJQLlfSwBFb5qjU8b1?=
- =?us-ascii?Q?ZjaM6mTOYNR+Hkt5W8inY21oobGHm5lsKs+BaIYjVxnR4IYVY/JVDoKy7Bpe?=
- =?us-ascii?Q?VmtwKyHoKEqtuES0aTQVpVy/qjHMu88Zw1e7dXkviu3cBYtEXzhmoU+4sW+9?=
- =?us-ascii?Q?PzqTpEdWnkj/hg1IhRzv7dvL8+a8ZWHKICC6PL0/sZGMaZe1DsJCWBhDVbsg?=
- =?us-ascii?Q?aQRUc9OkdIFcOchXLHYY/zoV67UbWua6fvMtDSbXsxtLTTkN5IOKmuJCrNWx?=
- =?us-ascii?Q?q5iG3CQh0W0GE83zTFw=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5A01A5B8A;
+	Tue,  9 Sep 2025 02:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757384321; cv=none; b=OsMkZonODCXMQO5ZjbBW+UYZhNXI7y13KrSH8NXeJJhzSt4xhMU4SF18gv+WoFUv/w8wTlwYjn2UlKVDKwaw1YlSkL2QPoLxxyCnTKQmilD3mFnICP9encpwiobECNTw7qwQF1Yo/A2ngnXnNF7kopem2/iUtVHNAubf238Nc8g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757384321; c=relaxed/simple;
+	bh=kfZn7BuY/5PugyPXS1cZwuzFhcThwkNkeeUezn3qrQ0=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=HFoAo8YuqRq7qRmjFiqSFFYhnapPmf8SCUS6OraBNBEYh+S3BUMQhW4c5rdHxvGNLa2224qo8tWBt66kcPVzX3/nh7HpksqFfaxZqci8EYk7DpMZUZJNq4c3gHAfY3p9aH9ePK/zmwc8BlnofVtNw+Vnsp5oireNvpli6JN0ViE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cLSD35BMcz8Xs6y;
+	Tue, 09 Sep 2025 10:18:27 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl1.zte.com.cn with SMTP id 5892IKLC035979;
+	Tue, 9 Sep 2025 10:18:20 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 9 Sep 2025 10:18:21 +0800 (CST)
+Date: Tue, 9 Sep 2025 10:18:21 +0800 (CST)
+X-Zmail-TransId: 2afb68bf8e6debe-9b27a
+X-Mailer: Zmail v1.0
+Message-ID: <20250909101821133A2885PwTNgKhQ92j9hc7c@zte.com.cn>
+In-Reply-To: <202509070012527934u0ySb3teQ4gOYKnocyNO@zte.com.cn>
+References: 20250907001101305vrTGnXaRNvtmsGkp-Ljk_@zte.com.cn,202509070012527934u0ySb3teQ4gOYKnocyNO@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54efb9b2-0f5c-4022-eb5e-08ddef46e904
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2025 02:16:39.2240
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YbbTBH1LZb3V+cuqOlQskk2SrOl+71jq96Ni8QHrq/r/MtgFATW4Y5SCEn27Yn+PAhexTR6yLnR6zhrfvghnMw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9637
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <fan.yu9@zte.com.cn>, <akpm@linux-foundation.org>
+Cc: <wang.yaxin@zte.com.cn>, <corbet@lwn.net>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSHYyIGxpbnV4LW5leHQgMi81XSB0b29scy9kZWxheXRvcDogYWRkIG1lbW9yeSB2ZXJib3NlIG1vZGUgc3VwcG9ydA==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 5892IKLC035979
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Tue, 09 Sep 2025 10:18:27 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68BF8E73.002/4cLSD35BMcz8Xs6y
 
-> Configure the MAX_FL (Maximum Frame Length) register according to the
-> current MTU value, which ensures that packets exceeding the configured MT=
-U
-> trigger an RX error.
->=20
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+> From: Fan Yu <fan.yu9@zte.com.cn>
+> 
+> The original delaytop tool always displayed detailed memory
+> subsystem breakdown, which could be overwhelming for users
+> who only need high-level overview.
+> 
+> Add flexible display control allowing users to choose their
+> preferred information granularity.
+> 
+> The new flexibility provides:
+> 1) For quick monitoring: use normal mode to reduce visual clutter
+> 2) For deep analysis: use verbose mode to see all memory subsystem details
+> 
+> Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
 > ---
->  drivers/net/ethernet/freescale/fec_main.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/freescale/fec_main.c
-> b/drivers/net/ethernet/freescale/fec_main.c
-> index 642e19187128..5b71c4cf86bc 100644
-> --- a/drivers/net/ethernet/freescale/fec_main.c
-> +++ b/drivers/net/ethernet/freescale/fec_main.c
-> @@ -1147,9 +1147,8 @@ fec_restart(struct net_device *ndev)
->  	u32 ecntl =3D FEC_ECR_ETHEREN;
->=20
->  #ifdef OPT_ARCH_HAS_MAX_FL
-> -	rcntl |=3D fep->max_buf_size << 16;
-> +	rcntl |=3D (fep->netdev->mtu + ETH_HLEN + ETH_FCS_LEN) << 16;
->  #endif
-> -
->  	if (fep->bufdesc_ex)
->  		fec_ptp_save_state(fep);
->=20
-> --
-> 2.43.0
+>  tools/accounting/delaytop.c | 128 +++++++++++++++++++++++++++---------
+>  1 file changed, 98 insertions(+), 30 deletions(-)
 
-Reviewed-by: Wei Fang <wei.fang@nxp.com>
+Reviewed-by: xu xin <xu.xin16@zte.com.cn>
 
+> 
+> diff --git a/tools/accounting/delaytop.c b/tools/accounting/delaytop.c
+> index 52718714496b..30dc95fb531a 100644
+> --- a/tools/accounting/delaytop.c
+> +++ b/tools/accounting/delaytop.c
+> @@ -69,13 +69,22 @@
+>  	int ret = fprintf(stream, fmt, ##__VA_ARGS__); \
+>  	ret >= 0; \
+>  })
+> +#define TASK_AVG(task, field) average_ms((task).field##_delay_total, (task).field##_count)
+>  #define PSI_LINE_FORMAT "%-12s %6.1f%%/%6.1f%%/%6.1f%%/%8llu(ms)\n"
+> -#define SORT_FIELD(name) \
+> +#define DELAY_FMT_DEFAULT "%8.2f %8.2f %8.2f %8.2f\n"
+> +#define DELAY_FMT_MEMVERBOSE "%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n"
+> +#define SORT_FIELD(name, modes) \
+>  	{#name, \
+>  	offsetof(struct task_info, name##_delay_total), \
+> -	offsetof(struct task_info, name##_count)}
+> +	offsetof(struct task_info, name##_count), \
+> +	modes}
+>  #define END_FIELD {NULL, 0, 0}
+> 
+> +/* Display mode types */
+> +#define MODE_TYPE_ALL	(0xFFFFFFFF)
+> +#define MODE_DEFAULT	(1 << 0)
+> +#define MODE_MEMVERBOSE	(1 << 1)
+> +
+>  /* PSI statistics structure */
+>  struct psi_stats {
+>  	double cpu_some_avg10, cpu_some_avg60, cpu_some_avg300;
+> @@ -115,6 +124,8 @@ struct task_info {
+>  	unsigned long long wpcopy_delay_total;
+>  	unsigned long long irq_count;
+>  	unsigned long long irq_delay_total;
+> +	unsigned long long mem_count;
+> +	unsigned long long mem_delay_total;
+>  };
+> 
+>  /* Container statistics structure */
+> @@ -131,6 +142,7 @@ struct field_desc {
+>  	const char *name;	/* Field name for cmdline argument */
+>  	unsigned long total_offset; /* Offset of total delay in task_info */
+>  	unsigned long count_offset; /* Offset of count in task_info */
+> +	size_t supported_modes; /* Supported display modes */
+>  };
+> 
+>  /* Program settings structure */
+> @@ -142,6 +154,7 @@ struct config {
+>  	int monitor_pid;		/* Monitor specific PID */
+>  	char *container_path;	/* Path to container cgroup */
+>  	const struct field_desc *sort_field;	/* Current sort field */
+> +	size_t display_mode;	/* Current display mode */
+>  };
+> 
+>  /* Global variables */
+> @@ -152,14 +165,15 @@ static int task_count;
+>  static int running = 1;
+>  static struct container_stats container_stats;
+>  static const struct field_desc sort_fields[] = {
+> -	SORT_FIELD(cpu),
+> -	SORT_FIELD(blkio),
+> -	SORT_FIELD(irq),
+> -	SORT_FIELD(swapin),
+> -	SORT_FIELD(freepages),
+> -	SORT_FIELD(thrashing),
+> -	SORT_FIELD(compact),
+> -	SORT_FIELD(wpcopy),
+> +	SORT_FIELD(cpu,		MODE_DEFAULT),
+> +	SORT_FIELD(blkio,	MODE_DEFAULT),
+> +	SORT_FIELD(irq,		MODE_DEFAULT),
+> +	SORT_FIELD(mem,		MODE_DEFAULT | MODE_MEMVERBOSE),
+> +	SORT_FIELD(swapin,	MODE_MEMVERBOSE),
+> +	SORT_FIELD(freepages,	MODE_MEMVERBOSE),
+> +	SORT_FIELD(thrashing,	MODE_MEMVERBOSE),
+> +	SORT_FIELD(compact,	MODE_MEMVERBOSE),
+> +	SORT_FIELD(wpcopy,	MODE_MEMVERBOSE),
+>  	END_FIELD
+>  };
+> 
+> @@ -207,7 +221,7 @@ static const char *get_name_by_field(const struct field_desc *field)
+>  }
+> 
+>  /* Generate string of available field names */
+> -static void display_available_fields(void)
+> +static void display_available_fields(size_t mode)
+>  {
+>  	const struct field_desc *field;
+>  	char buf[MAX_BUF_LEN];
+> @@ -215,6 +229,8 @@ static void display_available_fields(void)
+>  	buf[0] = '\0';
+> 
+>  	for (field = sort_fields; field->name != NULL; field++) {
+> +		if (!(field->supported_modes & mode))
+> +			continue;
+>  		strncat(buf, "|", MAX_BUF_LEN - strlen(buf) - 1);
+>  		strncat(buf, field->name, MAX_BUF_LEN - strlen(buf) - 1);
+>  		buf[MAX_BUF_LEN - 1] = '\0';
+> @@ -235,7 +251,8 @@ static void usage(void)
+>  	"  -o, --once               Display once and exit\n"
+>  	"  -p, --pid=PID            Monitor only the specified PID\n"
+>  	"  -C, --container=PATH     Monitor the container at specified cgroup path\n"
+> -	"  -s, --sort=FIELD         Sort by delay field (default: cpu)\n");
+> +	"  -s, --sort=FIELD         Sort by delay field (default: cpu)\n"
+> +	"  -M, --memverbose         Display memory detailed information\n");
+>  	exit(0);
+>  }
+> 
+> @@ -253,6 +270,7 @@ static void parse_args(int argc, char **argv)
+>  		{"processes", required_argument, 0, 'P'},
+>  		{"sort", required_argument, 0, 's'},
+>  		{"container", required_argument, 0, 'C'},
+> +		{"memverbose", no_argument, 0, 'M'},
+>  		{0, 0, 0, 0}
+>  	};
+> 
+> @@ -264,11 +282,12 @@ static void parse_args(int argc, char **argv)
+>  	cfg.output_one_time = 0;
+>  	cfg.monitor_pid = 0;	/* 0 means monitor all PIDs */
+>  	cfg.container_path = NULL;
+> +	cfg.display_mode = MODE_DEFAULT;
+> 
+>  	while (1) {
+>  		int option_index = 0;
+> 
+> -		c = getopt_long(argc, argv, "hd:n:p:oP:C:s:", long_options, &option_index);
+> +		c = getopt_long(argc, argv, "hd:n:p:oP:C:s:M", long_options, &option_index);
+>  		if (c == -1)
+>  			break;
+> 
+> @@ -325,12 +344,16 @@ static void parse_args(int argc, char **argv)
+>  			/* Show available fields if invalid option provided */
+>  			if (!field) {
+>  				fprintf(stderr, "Error: invalid sort field '%s'\n", optarg);
+> -				display_available_fields();
+> +				display_available_fields(MODE_TYPE_ALL);
+>  				exit(1);
+>  			}
+> 
+>  			cfg.sort_field = field;
+>  			break;
+> +		case 'M':
+> +			cfg.display_mode = MODE_MEMVERBOSE;
+> +			cfg.sort_field = get_field_by_name("mem");
+> +			break;
+>  		default:
+>  			fprintf(stderr, "Try 'delaytop --help' for more information.\n");
+>  			exit(1);
+> @@ -338,6 +361,25 @@ static void parse_args(int argc, char **argv)
+>  	}
+>  }
+> 
+> +/* Calculate average delay in milliseconds for overall memory */
+> +static void set_mem_delay_total(struct task_info *t)
+> +{
+> +	t->mem_delay_total = t->swapin_delay_total +
+> +		t->freepages_delay_total +
+> +		t->thrashing_delay_total +
+> +		t->compact_delay_total +
+> +		t->wpcopy_delay_total;
+> +}
+> +
+> +static void set_mem_count(struct task_info *t)
+> +{
+> +	t->mem_count = t->swapin_count +
+> +		t->freepages_count +
+> +		t->thrashing_count +
+> +		t->compact_count +
+> +		t->wpcopy_count;
+> +}
+> +
+>  /* Create a raw netlink socket and bind */
+>  static int create_nl_socket(void)
+>  {
+> @@ -611,6 +653,8 @@ static void fetch_and_fill_task_info(int pid, const char *comm)
+>  						SET_TASK_STAT(task_count, wpcopy_delay_total);
+>  						SET_TASK_STAT(task_count, irq_count);
+>  						SET_TASK_STAT(task_count, irq_delay_total);
+> +						set_mem_count(&tasks[task_count]);
+> +						set_mem_delay_total(&tasks[task_count]);
+>  						task_count++;
+>  					}
+>  					break;
+> @@ -829,27 +873,44 @@ static void display_results(void)
+>  	/* Task delay output */
+>  	suc &= BOOL_FPRINT(out, "Top %d processes (sorted by %s delay):\n",
+>  			cfg.max_processes, get_name_by_field(cfg.sort_field));
+> -	suc &= BOOL_FPRINT(out, "%5s  %5s  %-17s", "PID", "TGID", "COMMAND");
+> -	suc &= BOOL_FPRINT(out, "%7s %7s %7s %7s %7s %7s %7s %7s\n",
+> -		"CPU(ms)", "IO(ms)", "SWAP(ms)", "RCL(ms)",
+> -		"THR(ms)", "CMP(ms)", "WP(ms)", "IRQ(ms)");
+> 
+> -	suc &= BOOL_FPRINT(out, "-----------------------------------------------");
+> -	suc &= BOOL_FPRINT(out, "----------------------------------------------\n");
+> +	suc &= BOOL_FPRINT(out, "%8s  %8s  %-17s", "PID", "TGID", "COMMAND");
+> +	if (cfg.display_mode == MODE_MEMVERBOSE) {
+> +		suc &= BOOL_FPRINT(out, "%8s %8s %8s %8s %8s %8s\n",
+> +			"MEM(ms)", "SWAP(ms)", "RCL(ms)",
+> +			"THR(ms)", "CMP(ms)", "WP(ms)");
+> +		suc &= BOOL_FPRINT(out, "-----------------------");
+> +		suc &= BOOL_FPRINT(out, "-----------------------");
+> +		suc &= BOOL_FPRINT(out, "-----------------------");
+> +		suc &= BOOL_FPRINT(out, "---------------------\n");
+> +	} else {
+> +		suc &= BOOL_FPRINT(out, "%8s %8s %8s %8s\n",
+> +			"CPU(ms)", "IO(ms)", "IRQ(ms)", "MEM(ms)");
+> +		suc &= BOOL_FPRINT(out, "-----------------------");
+> +		suc &= BOOL_FPRINT(out, "-----------------------");
+> +		suc &= BOOL_FPRINT(out, "--------------------------\n");
+> +	}
+> +
+>  	count = task_count < cfg.max_processes ? task_count : cfg.max_processes;
+> 
+>  	for (i = 0; i < count; i++) {
+> -		suc &= BOOL_FPRINT(out, "%5d  %5d  %-15s",
+> +		suc &= BOOL_FPRINT(out, "%8d  %8d  %-15s",
+>  			tasks[i].pid, tasks[i].tgid, tasks[i].command);
+> -		suc &= BOOL_FPRINT(out, "%7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f\n",
+> -			average_ms(tasks[i].cpu_delay_total, tasks[i].cpu_count),
+> -			average_ms(tasks[i].blkio_delay_total, tasks[i].blkio_count),
+> -			average_ms(tasks[i].swapin_delay_total, tasks[i].swapin_count),
+> -			average_ms(tasks[i].freepages_delay_total, tasks[i].freepages_count),
+> -			average_ms(tasks[i].thrashing_delay_total, tasks[i].thrashing_count),
+> -			average_ms(tasks[i].compact_delay_total, tasks[i].compact_count),
+> -			average_ms(tasks[i].wpcopy_delay_total, tasks[i].wpcopy_count),
+> -			average_ms(tasks[i].irq_delay_total, tasks[i].irq_count));
+> +		if (cfg.display_mode == MODE_MEMVERBOSE) {
+> +			suc &= BOOL_FPRINT(out, DELAY_FMT_MEMVERBOSE,
+> +				TASK_AVG(tasks[i], mem),
+> +				TASK_AVG(tasks[i], swapin),
+> +				TASK_AVG(tasks[i], freepages),
+> +				TASK_AVG(tasks[i], thrashing),
+> +				TASK_AVG(tasks[i], compact),
+> +				TASK_AVG(tasks[i], wpcopy));
+> +		} else {
+> +			suc &= BOOL_FPRINT(out, DELAY_FMT_DEFAULT,
+> +				TASK_AVG(tasks[i], cpu),
+> +				TASK_AVG(tasks[i], blkio),
+> +				TASK_AVG(tasks[i], irq),
+> +				TASK_AVG(tasks[i], mem));
+> +		}
+>  	}
+> 
+>  	suc &= BOOL_FPRINT(out, "\n");
+> @@ -891,6 +952,13 @@ int main(int argc, char **argv)
+> 
+>  	/* Main loop */
+>  	while (running) {
+> +		/* Exit when sort field do not match display mode */
+> +		if (!(cfg.sort_field->supported_modes & cfg.display_mode)) {
+> +			fprintf(stderr, "Sort field not supported in this mode\n");
+> +			display_available_fields(cfg.display_mode);
+> +			break;
+> +		}
+> +
+>  		/* Read PSI statistics */
+>  		read_psi_stats();
+> 
+> -- 
+> 2.25.1
 
