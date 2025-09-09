@@ -1,187 +1,180 @@
-Return-Path: <linux-kernel+bounces-807514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B737B4A56B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:35:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B69B4A56C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 814DB1BC634B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:36:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73FA17A8D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EBB24A047;
-	Tue,  9 Sep 2025 08:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="X5IGy0zM"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8682723CEF9;
+	Tue,  9 Sep 2025 08:35:42 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61EA248F75
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 08:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44F24A21;
+	Tue,  9 Sep 2025 08:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757406939; cv=none; b=o4VFdCASMhFmLj5TBOHpmJaNKPIbEE2ECk+B53TE9126fX1KM2BIhLDnQyMDVfWw2AOt/BeoyxYH1crQvDS5Sj9fnJFq0a+iJwQSKfOm2WKG6dH5cwxe8LA0WZ8PP9X6wbKqIp3pBZ49W8BwW4tGrvIMvNc/LbzuJ0TQJBTkCOc=
+	t=1757406942; cv=none; b=uLPPUaeFKjncDHsm81x3oRP9gd6g4qkl3RjQHXTgihvLN0I/E8dy4Ski/lWw3DFdfzO/dWgiS/dRnXaObyeRYxjcJbQoz8e8OVEEfFbE+/mBKGUhzOJrgEY37nTEWSfGXyIhbEdYKQAuynQ1dCf0cIQWoDC5UlLT83K8RBqfjtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757406939; c=relaxed/simple;
-	bh=qEFFsG3JJ6Gj1Avf/fY6gQYPV57m4kz86xl84hx39eA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=o+XXLAZyB+W/sbP9uvl7tdBuE7yS8q/Ouz00ldsZZIiK2g064yh72YNXUibJKByfJt5kT3fhzKx+ST5GteCdSNEB5jHyaJBDtebm5PAnD13BH3eDPEIbsp/+MzDsLiLF7m+N3/wOzlBbyGCzwKRGtVvyKVxy4992BNkV0sh5fOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=X5IGy0zM; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45de287cc11so11335825e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 01:35:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757406935; x=1758011735; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6N+5/nHLfNzpH0boX8DeOhGOdzLAP79fhn+X+phaP9A=;
-        b=X5IGy0zMNsAgU5R+b6dO3NtxasTBJqGHtgt3BZgtFz3e45f4Kwx10bojcPffFUkc1k
-         gLOKfYyGtuR+84rlR6hVwWYWc65N1ZDEwH3AfL3QxPAzKAdtDfSHdBonrJAj4lSEQnFM
-         gARXENuWpM4KYTvvLxEzpp2yACAtEu1sOoefWYHnrYdGPgFIryL0TsW0Edgj24OdkmL+
-         2cFi6puviguGeWkXbdL9/2lqJ3cR0bzrsa9b1ILmbWxxiXGHRPrKNL2+q+Rpe43Jzrff
-         eHD7OHYaCoxazYuNF01mTfDCu1JovqAbpACkIxpmfFey4qgRP/WXYiT+O4PEc5yV2R3H
-         CusQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757406935; x=1758011735;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6N+5/nHLfNzpH0boX8DeOhGOdzLAP79fhn+X+phaP9A=;
-        b=R5bzt5JP/1UPYTjaOcbhxVCJi0pEsqamHh+mkmVZaSHgkKCIT5kRUOV3vA+Dstsm2m
-         ok3hLg4fbwqjl8UX/MbdpsNwA6lvO+N9IUsaummr0e2/T9jDBqh5royf0tBMuJkenmBp
-         TnHdS7OkNEBU7xTZxDxLK+ud9PQXSRHxAos+kzCgOCzG6n1bBjUyPxa19dhi4oGOUVbH
-         0gHJac6xA3t8BO3oGUceMny9bLXd/ZlAfa+1RcZAXyIwQlZTyfWxKSDagF++ldxxIR7x
-         eEte+VHCI6cgz/MJUQwW8ub2HXE0v2WCVoKF/wywZ0h+x1w6KaswIo6MsTNvMHshJbYb
-         cc3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUsvWDWl9dobh5cBD637gM39JT9jVFvT/JqCCcLvcO52ie2PA3qJzrzUIuArFDpGsdaUonamamMtDaiAE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpMY56Yu8uV425cw//Zvt0z1bhxqitasZJgHs3KrUh/rDz0AHk
-	MP8VROFHf46mwIF+p+wx6SDHQUYEw9913arx/1UYPJ8R7remcH3MqT7cacnJDruv5K0=
-X-Gm-Gg: ASbGncso0UtgV+DCzscEZO8pMWczSx+y7jw+XWrYl7UaawZPkkJx2IPMSfKGV1EcKzu
-	ii/rjcYVIwBGKBYelXU8UEQNe1SbK/YP3+NyVZqW3lObH/W2Us6TAiXEMyi9LoyFANpYQLUyul/
-	trnATs+JD9DI83lVtuwVT9KRuEQIWv2MlGBntAGOoxWDmPwFYWKOUh9Py/0knqeAlCMxoTXdZki
-	7SpQNnpW/CHwUIC3RFKp/e0FyzqSA6YFfvDqF598Ff6yGNDpdtYTKKoKpJNxpJTh+Iw2Cv+R2G/
-	96ciemyd5/VMqwxAvEhJ7M/ATxuuf92hItIFQIYU8MAkdK3d8W4KTc/nuwv3iVFd8JD72Ocj/VZ
-	rY7K0iH6TDDcx3Br7BmUi8rKd7w==
-X-Google-Smtp-Source: AGHT+IFBJ3Z0uXfcWdYuPkWDAS7urMN/Se5ouLEUwPSzoQV8nlN7XUEIwwIC+Zikwt2F+t1XNTI3SQ==
-X-Received: by 2002:a05:6000:2311:b0:3b9:14f2:7edf with SMTP id ffacd0b85a97d-3e2ffd7f634mr11493663f8f.1.1757406935303;
-        Tue, 09 Sep 2025 01:35:35 -0700 (PDT)
-Received: from localhost ([195.52.61.108])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45decf8759esm27587495e9.23.2025.09.09.01.35.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 01:35:34 -0700 (PDT)
+	s=arc-20240116; t=1757406942; c=relaxed/simple;
+	bh=EHGrgJIMU/49g/fvCbuGK+jZbVlWQLMceCgu9ynPzJA=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=lmet1335innPcLOSJculz0IeoRmI1ZeWjTE6DrVgl/3nS0wZ7RQFl5zhabL/G4KZlH9Y+u9wjXbhLU6tQbw0dqi1xIx5G32KhZVZrDT7PtVYXQJZr9yBzLFxNB9P/DWkdMDvJFDC8wXPSD4RCDyMHBt2Hz5qaPxZvNdeSRr3qqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cLcWj6pbbz1R9GS;
+	Tue,  9 Sep 2025 16:32:33 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0CA0E180044;
+	Tue,  9 Sep 2025 16:35:36 +0800 (CST)
+Received: from [10.174.178.247] (10.174.178.247) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 9 Sep 2025 16:35:35 +0800
+Subject: Re: [PATCH v2] ACPI: APEI: EINJ: Allow all types of addresses except
+ MMIO
+To: Jiaqi Yan <jiaqiyan@google.com>, <tony.luck@intel.com>,
+	<rafael@kernel.org>
+CC: <dan.j.williams@intel.com>, <bp@alien8.de>, <mchehab@kernel.org>,
+	<xueshuai@linux.alibaba.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250830030226.918555-1-jiaqiyan@google.com>
+From: Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <bc8ad4b8-c000-0298-efd1-4a332c4c7820@huawei.com>
+Date: Tue, 9 Sep 2025 16:35:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=a707a77f03150ec3fb16fcc412142aea8aa18ba4074642abf5aac27f6969;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Tue, 09 Sep 2025 10:35:26 +0200
-Message-Id: <DCO4RGJBMTRM.1XNHG5EHBPS24@baylibre.com>
-Subject: Re: [PATCH 1/3] arm64: dts: ti: k3-am62x-sk-common: Enable Main
- UART wakeup
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Kendall Willis" <k-willis@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
- <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc: <d-gole@ti.com>, <vishalm@ti.com>, <sebin.francis@ti.com>,
- <khilman@baylibre.com>, <a-kaur@ti.com>
-X-Mailer: aerc 0.20.1
-References: <20250904212827.3730314-1-k-willis@ti.com>
- <20250904212827.3730314-2-k-willis@ti.com>
-In-Reply-To: <20250904212827.3730314-2-k-willis@ti.com>
+MIME-Version: 1.0
+In-Reply-To: <20250830030226.918555-1-jiaqiyan@google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
---a707a77f03150ec3fb16fcc412142aea8aa18ba4074642abf5aac27f6969
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On 2025/8/30 11:02, Jiaqi Yan wrote:
+> EINJ driver today only allows injection request to go through for two
+> kinds of IORESOURCE_MEM: IORES_DESC_PERSISTENT_MEMORY and
+> IORES_DESC_SOFT_RESERVED. This check prevents user of EINJ to test
+> memory corrupted in many interesting areas:
+> 
+> - Legacy persistent memory
+> - Memory claimed to be used by ACPI tables or NV storage
+> - Kernel crash memory and others
+> 
+> There is need to test how kernel behaves when something consumes memory
+> errors in these memory regions. For example, if certain ACPI table is
+> corrupted, does kernel crash gracefully to prevent "silent data
+> corruption". For another example, legacy persistent memory, when managed
+> by Device DAX, does support recovering from Machine Check Exception
+> raised by memory failure, hence worth to be tested.
+> 
+> However, attempt to inject memory error via EINJ to legacy persistent
+> memory or ACPI owned memory fails with -EINVAL.
+> 
+> Allow EINJ to inject at address except it is MMIO. Leave it to the BIOS
+> or firmware to decide what is a legitimate injection target.
+> 
+> In addition to the test done in [1], on a machine having the following
+> iomem resources:
+> 
+>      ...
+>      01000000-08ffffff : Crash kernel
+>      768f0098-768f00a7 : APEI EINJ
+>      ...
+>    768f4000-77323fff : ACPI Non-volatile Storage
+>    77324000-777fefff : ACPI Tables
+>    777ff000-777fffff : System RAM
+>    77800000-7fffffff : Reserved
+>    80000000-8fffffff : PCI MMCONFIG 0000 [bus 00-ff]
+>    90040000-957fffff : PCI Bus 0000:00
+>    ...
+>    300000000-3ffffffff : Persistent Memory (legacy)
+>    ...
+> 
+> I commented __einj_error_inject during the test and just tested when
+> injecting a memory error at each start address shown above:
+> - 0x80000000 and 0x90040000 both failed with EINVAL
+> - request passed through for all other addresses
+> 
 
-On Thu Sep 4, 2025 at 11:28 PM CEST, Kendall Willis wrote:
-> The Main UART can resume from suspend to RAM states when PIN_WKUP_EN
-> is enabled. Add the necessary pins needed to wakeup the system. Add the
-> system idle states that the Main UART can wakeup the system from.
->
-> Signed-off-by: Kendall Willis <k-willis@ti.com>
+...
+
+> Changelog
+> 
+> v1 [1] -> v2:
+> - In addition to allow IORES_DESC_PERSISTENT_MEMORY_LEGACY, open the
+>    door wider and only exclude MMIO per suggestion from Tony [2]
+> - Rebased to commit 11e7861d680c ("Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm")
+> 
+> [1] https://lore.kernel.org/linux-acpi/20250825223348.3780279-1-jiaqiyan@google.com
+> [2] https://lore.kernel.org/linux-acpi/SJ1PR11MB60835824926BEE57F094DE6FFC39A@SJ1PR11MB6083.namprd11.prod.outlook.com
+
+For the Changelog, it's better to move it to below...
+
+> 
+> Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
 > ---
->  .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 24 +++++++++++++++----
->  1 file changed, 20 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/=
-boot/dts/ti/k3-am62x-sk-common.dtsi
-> index 13e1d36123d51..72801cf890d20 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> @@ -163,14 +163,26 @@ &phy_gmii_sel {
-> =20
->  &main_pmx0 {
->  	/* First pad number is ALW package and second is AMC package */
-> -	main_uart0_pins_default: main-uart0-default-pins {
-> +	main_uart0_tx_pins_default: main-uart0-tx-default-pins {
->  		bootph-all;
->  		pinctrl-single,pins =3D <
-> -			AM62X_IOPAD(0x1c8, PIN_INPUT, 0) /* (D14/A13) UART0_RXD */
->  			AM62X_IOPAD(0x1cc, PIN_OUTPUT, 0) /* (E14/E11) UART0_TXD */
->  		>;
->  	};
-> =20
-> +	main_uart0_rx_pins_default: main-uart0-rx-default-pins {
-> +		bootph-all;
-> +		pinctrl-single,pins =3D <
-> +			AM62X_IOPAD(0x1c8, PIN_INPUT, 0) /* (D14/A13) UART0_RXD */
-> +		>;
-> +	};
-> +
-> +	main_uart0_rx_pins_wakeup: main-uart0-rx-wakeup-pins {
-> +		pinctrl-single,pins =3D <
-> +			AM62X_IOPAD(0x1c8, PIN_INPUT | PIN_WKUP_EN, 0) /* (D14/A13) UART0_RXD=
- */
-> +		>;
-> +	};
-> +
->  	main_uart1_pins_default: main-uart1-default-pins {
->  		bootph-pre-ram;
->  		pinctrl-single,pins =3D <
-> @@ -342,8 +354,12 @@ &wkup_uart0 {
->  &main_uart0 {
->  	bootph-all;
->  	status =3D "okay";
-> -	pinctrl-names =3D "default";
-> -	pinctrl-0 =3D <&main_uart0_pins_default>;
-> +	pinctrl-names =3D "default", "wakeup";
 
-I think you may need to add this to the DT binding of the uart device
-as well.
+... here.
 
-Best
-Markus
+>   drivers/acpi/apei/einj-core.c | 50 +++++++++++++++++++++++++++++------
+>   1 file changed, 42 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
+> index 2561b045acc7b..904930409fdb2 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
+> @@ -656,6 +656,44 @@ static int __einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
+>   	return rc;
+>   }
+>   
+> +/* Allow almost all types of address except MMIO. */
+> +static bool is_allowed_range(u64 base_addr, u64 size)
+> +{
+> +	int i;
+> +	/*
+> +	 * MMIO region is usually claimed with IORESOURCE_MEM + IORES_DESC_NONE.
+> +	 * However, IORES_DESC_NONE is treated like a wildcard when we check if
+> +	 * region intersects with known resource. So do an allow list check for
+> +	 * IORES_DESCs that definitely or most likely not MMIO.
+> +	 */
+> +	int non_mmio_desc[] = {
+> +		IORES_DESC_CRASH_KERNEL,
+> +		IORES_DESC_ACPI_TABLES,
+> +		IORES_DESC_ACPI_NV_STORAGE,
+> +		IORES_DESC_PERSISTENT_MEMORY,
+> +		IORES_DESC_PERSISTENT_MEMORY_LEGACY,
+> +		/* Treat IORES_DESC_DEVICE_PRIVATE_MEMORY as MMIO. */
+> +		IORES_DESC_RESERVED,
+> +		IORES_DESC_SOFT_RESERVED,
+> +		IORES_DESC_CXL,
 
-> +	pinctrl-0 =3D <&main_uart0_tx_pins_default>, <&main_uart0_rx_pins_defau=
-lt>;
-> +	pinctrl-1 =3D <&main_uart0_tx_pins_default>, <&main_uart0_rx_pins_wakeu=
-p>;
-> +	wakeup-source =3D <&system_deep_sleep>,
-> +			<&system_mcu_only>,
-> +			<&system_standby>;
->  };
-> =20
->  &main_uart1 {
+Sorry, I'm not familiar with CXL, but I see the code in einj_error_inject():
 
+/*
+  * Injections targeting a CXL 1.0/1.1 port have to be injected
+  * via the einj_cxl_rch_error_inject() path as that does the proper
+  * validation of the given RCRB base (MMIO) address.
+  */
+if (einj_is_cxl_error_type(type) && (flags & SETWA_FLAGS_MEM))
+	return -EINVAL;
 
---a707a77f03150ec3fb16fcc412142aea8aa18ba4074642abf5aac27f6969
-Content-Type: application/pgp-signature; name="signature.asc"
+So eject an error for CXL memory, there is a new interface which
+means it's not handled here, do we need to remove IORES_DESC_CXL?
 
------BEGIN PGP SIGNATURE-----
-
-iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaL/mzhsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlNd
-gQEA/hNMsUFW+UdVLmVgndckJZ2RHI3dvWGZDIfL72MfMQoA/2/x9L5Jzg9n5J48
-Fc4ax/6ykv5Jx18pJrptLgYJLloP
-=LJUi
------END PGP SIGNATURE-----
-
---a707a77f03150ec3fb16fcc412142aea8aa18ba4074642abf5aac27f6969--
+Thanks
+Hanjun
 
