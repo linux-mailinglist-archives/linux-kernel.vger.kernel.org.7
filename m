@@ -1,185 +1,401 @@
-Return-Path: <linux-kernel+bounces-807707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE5DB4A823
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:35:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FF4B4A8D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2803C4E289B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:35:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85532445DF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FD82BEFE4;
-	Tue,  9 Sep 2025 09:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0R5XqjH8"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C54288C95
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F161C30C609;
+	Tue,  9 Sep 2025 09:50:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFD623A9AD;
+	Tue,  9 Sep 2025 09:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757410314; cv=none; b=hLtJyd3c5eF+YpRdKokkFVE3rB8IsfozE4vEcaXs0AdvNwvHCZcGyJGaywE3dbLWb5OpdFQY+gtNVp0jyrdrjzfxMvtnipKNioBp77N1NqyA0TUWMh3hOC51YG0nyImy3p5me0wOyH1sA7hAy2kA/M8/JBZg/MARGy86VUd977U=
+	t=1757411437; cv=none; b=HTWgQuh1PX6oNg4sO6PvTOrKR28gesA54Xp9pfTplxe5ULii+ebNAr/LutP65hxLe729OsGOXXQnyPFi+LV/zQDLmLGf7CkXN+kSwpwrOMlYg+0v0v2DrMl0LVgphs27/y8T6yXrVoDm6e4hWj8nvV18/DCBQ2KDQ62HRM3ImgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757410314; c=relaxed/simple;
-	bh=dzkf5fR/hvvNUnmVBjMoYB//K61hJfG4uP/NmeNQaT8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GnCCBkkJ/hsZ4kg3sSPqxbsIXZgYITsp/rm3bgi+3ykv1XTtgkYrl+O5D3vgAm5AQeV/6HHfOgR/pErWmmntZSmVa+F9gKOD+rT2c3Sb4aBifQODZUcu2mwdMa6K79pG05q9iBgZN5jM2AJ/yioYc5soYdsCrSozbvGnFIoucvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0R5XqjH8; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b38d47fa9dso48168381cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:31:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757410312; x=1758015112; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=065ckeLezrt6iV9YdKS4ln9vvI7mJj+bBB8ieI7yb/A=;
-        b=0R5XqjH8awl+QUY7sfhl6FnC2vMdXb3rc7Zz3H3YCJMkL7MZhUvicrnnruw3KTz5Ep
-         Jen1Yi3oLoczd900HXEX40B07W3xEB+K20oxgehLp+8eVNlyyQANnU4+SRbVY3HbKSXN
-         qJ/7Xgmp/zZwkOOmxMYMSW662VTa1GPm7nTYr/xwcG2uDSEGPK+6NplsKEPMC53mWeh0
-         oK1g92pFzLEiOcfk699/K9GfJH91zREhKTpSgQuDw8ZMN/slTRXFZ4M9dSA5klxceOMV
-         8pFGVQQvfsgFg/N+fLn3GRxcfJfYThkiLsr0R01t7JZVbI28a+xYmH7BnqNBlegta0xw
-         VR1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757410312; x=1758015112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=065ckeLezrt6iV9YdKS4ln9vvI7mJj+bBB8ieI7yb/A=;
-        b=wYo5GjeWwRijaHWqoczbSC42fc032tTd5wt2KQFjzk9mN/bacbZcwPhfleIA7CfyjV
-         8E6HJ7jXuHHiZXFUpMrhNkrMSss91puRESlFeE3RWxI45CCTMucnGs9Flg686aJFU0Ug
-         +/c5wH/xCyI0l28UutP6noF64YXthsWfhumb+N29+tX7+cYOq7z1GNQQYtlGVyBrLMJo
-         86aGoaJ2MI4mfXQftESMTVvS7H6tjdnyUWLYTVsH+H9tbVcqDkwRuY5cZkoVhB75Jdkb
-         hwHNzQ3K+NSFSIF9sEDMPNWw8Ez7FzqFHjy545YC6gQlVm7aZdaTh5qC3xJD9pekAE1o
-         +PXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQHs1GKiqv34IHtPTFYqEghtKkdmz62Q8Up4yRprJyJG++Nyc64jkfzsidN/NQNTlWUFcuJzpSD0yucPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeTeox8dZ625aIJ/h2oNn6ub7ATUk+E72ErssD+PNHPMwfa2dA
-	62ny7CjOpqIjgT02fCErSPiXMxtOgIYHdlvjjCXCUM6Y3MySVD+ct0UQ1c5Kjtzs55estUDF2Il
-	+ofzgCbJUGnDeMGcHlwQ5R3JB+NDAb9TsXVYKKLfm
-X-Gm-Gg: ASbGnctWZ4f6awg3fd/F+NZrP0FtsqatEwADdexeyv2FGOqhYSyH/PaFcsUVubzqFui
-	jIC1ZxJRACFxnM6TXAJ5qSlmp8uCoUIosQr6rQ/ZReI/b3l2y7as6a31OsvjP9Jl0Ai31INmEVY
-	ZTAqIQqOvMhyPdwJeOM7ZiOcRIrrRR3lAzb1YRPDQDry8SV9TPXz/+UDI7BUo8xGxZSWQrNizjy
-	/L+tfyGeq16nEGg8xnnILEtvEPzgAjIDGLxGk9I7prcZpsG
-X-Google-Smtp-Source: AGHT+IHO0nxuDmuQlk8jsSNewdRctWbQh5UkckZOg0pWh2QPu5oPN94aevA/mzvoj6fwDE3RRjLzjIsWEZJKIPrBaB4=
-X-Received: by 2002:a05:622a:1301:b0:4b4:921b:acdb with SMTP id
- d75a77b69052e-4b5f8393bc1mr110123651cf.17.1757410311187; Tue, 09 Sep 2025
- 02:31:51 -0700 (PDT)
+	s=arc-20240116; t=1757411437; c=relaxed/simple;
+	bh=uhxDWoptz2tBQK8hRc6j5prsq9hJfPj6Phx7JbtSAtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fB6IjNvTA2o715hGvqCOrridAyULOrUA3XWBjrcIqqc4LTjtXYO/RS1jkNBa2ffdej/qn3qcOfnLKWCLb/zBTKSzs48iQYmwSXrKP2h6tMqURdX7NomI9EhOqX8MMXTZAkV9ucxcNImfYp4fqZi9Lw6WqsrgWOdY9d8FZVI3Rms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cLdrr57Bjz9sRk;
+	Tue,  9 Sep 2025 11:32:28 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id C1oNj3b0ppI5; Tue,  9 Sep 2025 11:32:28 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cLdrr357Yz9sRh;
+	Tue,  9 Sep 2025 11:32:28 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 44FAE8B766;
+	Tue,  9 Sep 2025 11:32:28 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 6TTgvUgJ3s7h; Tue,  9 Sep 2025 11:32:28 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id F1ACD8B764;
+	Tue,  9 Sep 2025 11:32:27 +0200 (CEST)
+Message-ID: <d46498e5-db21-4a79-93b4-3869be3660d2@csgroup.eu>
+Date: Tue, 9 Sep 2025 11:32:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68bb4160.050a0220.192772.0198.GAE@google.com> <CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+ndzBcQs_kZoBA@mail.gmail.com>
- <CANn89iJaY+MJPUJgtowZOPwHaf8ToNVxEyFN9U+Csw9+eB7YHg@mail.gmail.com>
- <c035df1c-abaf-9173-032f-3dd91b296101@huaweicloud.com> <CANn89iKVbTKxgO=_47TU21b6GakhnRuBk2upGviCK0Y1Q2Ar2Q@mail.gmail.com>
- <51adf9cb-619e-9646-36f0-1362828e801e@huaweicloud.com> <CANn89iLhNzYUdtuaz9+ZHvwpbsK6gGfbCWmoic+ACQBVJafBXA@mail.gmail.com>
- <5b3daf68-7657-a96c-9322-43e5ed917174@huaweicloud.com>
-In-Reply-To: <5b3daf68-7657-a96c-9322-43e5ed917174@huaweicloud.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 9 Sep 2025 02:31:40 -0700
-X-Gm-Features: Ac12FXwGXdNomizYAg_aOwA1ioJ91JbOj7QL8eZUWHIftw5BxTpd1mRjh-8KDoU
-Message-ID: <CANn89iJ+76eE3A_8S_zTpSyW5hvPRn6V57458hCZGY5hbH_bFA@mail.gmail.com>
-Subject: Re: [syzbot] [net?] possible deadlock in inet_shutdown
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: syzbot <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, davem@davemloft.net, 
-	dsahern@kernel.org, horms@kernel.org, kuba@kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ming.lei@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, thomas.hellstrom@linux.intel.com, 
-	"yukuai (C)" <yukuai3@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] module : fix signature checker pointer arithmetic and
+ bounds check
+To: Fidal Palamparambil <rootuserhere@gmail.com>,
+ linux-modules@vger.kernel.org
+Cc: mcgrof@kernel.org, petr.pavlu@suse.com, da.gomez@kernel.org,
+ samitolvanen@google.com, linux-kernel@vger.kernel.org
+References: <20250905154550.130-1-rootuserhere@gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250905154550.130-1-rootuserhere@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 9, 2025 at 2:16=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> wr=
-ote:
->
-> Hi,
->
-> =E5=9C=A8 2025/09/08 17:40, Eric Dumazet =E5=86=99=E9=81=93:
-> > On Mon, Sep 8, 2025 at 2:34=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com=
-> wrote:
-> >>
-> >> Hi,
-> >>
-> >> =E5=9C=A8 2025/09/08 17:07, Eric Dumazet =E5=86=99=E9=81=93:
-> >>> On Mon, Sep 8, 2025 at 1:52=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.c=
-om> wrote:
-> >>>>
-> >>>> Hi,
-> >>>>
-> >>>> =E5=9C=A8 2025/09/06 17:16, Eric Dumazet =E5=86=99=E9=81=93:
-> >>>>> On Fri, Sep 5, 2025 at 1:03=E2=80=AFPM Eric Dumazet <edumazet@googl=
-e.com> wrote:
-> >>>>>>
-> >>>>>> On Fri, Sep 5, 2025 at 1:00=E2=80=AFPM syzbot
-> >>>>>> <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com> wrote:
-> >>>>>
-> >>>>> Note to NBD maintainers : I held about  20 syzbot reports all point=
-ing
-> >>>>> to NBD accepting various sockets, I  can release them if needed, if=
- you prefer
-> >>>>> to triage them.
-> >>>>>
-> >>>> I'm not NBD maintainer, just trying to understand the deadlock first=
-.
-> >>>>
-> >>>> Is this deadlock only possible for some sepecific socket types? Take
-> >>>> a look at the report here:
-> >>>>
-> >>>> Usually issue IO will require the order:
-> >>>>
-> >>>> q_usage_counter -> cmd lock -> tx lock -> sk lock
-> >>>>
-> >>>
-> >>> I have not seen the deadlock being reported with normal TCP sockets.
-> >>>
-> >>> NBD sets sk->sk_allocation to  GFP_NOIO | __GFP_MEMALLOC;
-> >>> from __sock_xmit(), and TCP seems to respect this.
-> >>> .
-> >>>
-> >>
-> >> What aboud iscsi and nvme-tcp? and probably other drivers, where
-> >> sk_allocation is GFP_ATOMIC, do they have similar problem?
-> >>
-> >
-> > AFAIK after this fix, iscsi was fine.
-> >
-> > commit f4f82c52a0ead5ab363d207d06f81b967d09ffb8
-> > Author: Eric Dumazet <edumazet@google.com>
-> > Date:   Fri Sep 15 17:11:11 2023 +0000
-> >
-> >      scsi: iscsi_tcp: restrict to TCP sockets
-> >
-> >      Nothing prevents iscsi_sw_tcp_conn_bind() to receive file descript=
-or
-> >      pointing to non TCP socket (af_unix for example).
-> >
-> >      Return -EINVAL if this is attempted, instead of crashing the kerne=
-l.
-> >
-> >      Fixes: 7ba247138907 ("[SCSI] open-iscsi/linux-iscsi-5 Initiator:
-> > Initiator code")
-> >      Signed-off-by: Eric Dumazet <edumazet@google.com>
-> >      Cc: Lee Duncan <lduncan@suse.com>
-> >      Cc: Chris Leech <cleech@redhat.com>
-> >      Cc: Mike Christie <michael.christie@oracle.com>
-> >      Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-> >      Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-> >      Cc: open-iscsi@googlegroups.com
-> >      Cc: linux-scsi@vger.kernel.org
-> >      Reviewed-by: Mike Christie <michael.christie@oracle.com>
-> >      Signed-off-by: David S. Miller <davem@davemloft.net>
-> > .
-> >
->
-> Yes, now I also agree similiar fix in nbd make sense. Perhaps can you
-> cook a patch?
 
-Sure I will send it ASAP.
+
+Le 05/09/2025 à 17:45, Fidal Palamparambil a écrit :
+> From: Fidal palamparambil <rootuserhere@gmail.com>
+> 
+> This patch fixes :
+>   - invalid module_param type (bool_enable_only → bool)
+
+Can you explain what the problem is ? Why do you say bool_enable_only is 
+invalid ? Was generalised by commit d19f05d8a8fa ("kernel/params.c: 
+generalize bool_enable_only")
+
+>   - unsafe pointer arithmetic on void *
+
+Why is it unsafe in Linux Kernel ? See https://lkml.org/lkml/2022/2/24/978
+
+>   - missing bounds check for sig_len, preventing underflow/OOB
+
+This is checked by mod_check_sig(), why check it again ?
+
+>   - export set_module_sig_enforced for consistency
+
+Consistency with what ? Can you tell which module needs it ?
+
+> 
+> Signed-off-by : Fidal Palamparambil <rootuserhere@gmail.com>
+> Signed-off-by: Fidal palamparambil <rootuserhere@gmail.com>
+
+Why a double sob ?
+
+> ---
+>   kernel/module/signing.c    |  48 ++++++++------
+>   kernel/module/signing.orig | 125 +++++++++++++++++++++++++++++++++++++
+
+Why adding this .orig file into the kernel at all ?
+
+>   2 files changed, 155 insertions(+), 18 deletions(-)
+>   create mode 100644 kernel/module/signing.orig
+> 
+> diff --git a/kernel/module/signing.c b/kernel/module/signing.c
+> index a2ff4242e623..8dda6cd2fd73 100644
+> --- a/kernel/module/signing.c
+> +++ b/kernel/module/signing.c
+> @@ -1,5 +1,6 @@
+>   // SPDX-License-Identifier: GPL-2.0-or-later
+> -/* Module signature checker
+> +/*
+> + * Module signature checker
+
+Don't mix cosmetic changes and real changes, you are making 
+bisectability more difficult.
+
+>    *
+>    * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
+>    * Written by David Howells (dhowells@redhat.com)
+> @@ -20,11 +21,11 @@
+>   #define MODULE_PARAM_PREFIX "module."
+> 
+>   static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
+> -module_param(sig_enforce, bool_enable_only, 0644);
+> +module_param(sig_enforce, bool, 0644);
+> 
+>   /*
+> - * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
+> - * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
+> + * Export sig_enforce kernel cmdline parameter to allow other subsystems to
+> + * rely on that instead of directly on CONFIG_MODULE_SIG_FORCE config.
+>    */
+>   bool is_module_sig_enforced(void)
+>   {
+> @@ -36,6 +37,7 @@ void set_module_sig_enforced(void)
+>   {
+>          sig_enforce = true;
+>   }
+> +EXPORT_SYMBOL(set_module_sig_enforced);
+> 
+>   /*
+>    * Verify the signature on a module.
+> @@ -45,44 +47,55 @@ int mod_verify_sig(const void *mod, struct load_info *info)
+>          struct module_signature ms;
+>          size_t sig_len, modlen = info->len;
+>          int ret;
+> +       const unsigned char *data = mod;
+
+Pointless change.
+
+> 
+>          pr_devel("==>%s(,%zu)\n", __func__, modlen);
+> 
+>          if (modlen <= sizeof(ms))
+>                  return -EBADMSG;
+> 
+> -       memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
+> +       memcpy(&ms, data + (modlen - sizeof(ms)), sizeof(ms));
+
+Pointless change
+
+> 
+>          ret = mod_check_sig(&ms, modlen, "module");
+>          if (ret)
+>                  return ret;
+> 
+>          sig_len = be32_to_cpu(ms.sig_len);
+> +
+> +       /* Ensure sig_len is valid to prevent underflow/oob */
+> +       if (sig_len > modlen - sizeof(ms))
+> +               return -EBADMSG;
+
+Already verified by mod_check_sig()
+
+> +
+>          modlen -= sig_len + sizeof(ms);
+>          info->len = modlen;
+> 
+> -       return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
+> +       return verify_pkcs7_signature(data, modlen, data + modlen, sig_len,
+
+pointless change
+
+>                                        VERIFY_USE_SECONDARY_KEYRING,
+>                                        VERIFYING_MODULE_SIGNATURE,
+>                                        NULL, NULL);
+>   }
+> 
+> +/*
+> + * Check signature validity of a module during load.
+> + */
+>   int module_sig_check(struct load_info *info, int flags)
+>   {
+>          int err = -ENODATA;
+>          const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
+>          const char *reason;
+> -       const void *mod = info->hdr;
+> +       const unsigned char *mod = info->hdr;
+
+info->hdr is not void*, how can this work without a cast ?
+
+>          bool mangled_module = flags & (MODULE_INIT_IGNORE_MODVERSIONS |
+>                                         MODULE_INIT_IGNORE_VERMAGIC);
+> +
+
+Unrelated cosmetic change
+
+>          /*
+> -        * Do not allow mangled modules as a module with version information
+> -        * removed is no longer the module that was signed.
+> +        * Do not allow mangled modules: a module with version info removed
+> +        * is no longer the module that was signed.
+>           */
+>          if (!mangled_module &&
+>              info->len > markerlen &&
+> -           memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
+> -               /* We truncate the module to discard the signature */
+> +           memcmp(mod + info->len - markerlen,
+> +                  MODULE_SIG_STRING, markerlen) == 0) {
+> +               /* Truncate the module to discard the signature marker */
+
+Cosmetic and pointless change.
+
+>                  info->len -= markerlen;
+>                  err = mod_verify_sig(mod, info);
+>                  if (!err) {
+> @@ -92,9 +105,8 @@ int module_sig_check(struct load_info *info, int flags)
+>          }
+> 
+>          /*
+> -        * We don't permit modules to be loaded into the trusted kernels
+> -        * without a valid signature on them, but if we're not enforcing,
+> -        * certain errors are non-fatal.
+> +        * Enforced mode: only allow modules with a valid signature.
+> +        * Non-enforced mode: certain errors are downgraded to warnings.
+>           */
+>          switch (err) {
+>          case -ENODATA:
+> @@ -106,12 +118,12 @@ int module_sig_check(struct load_info *info, int flags)
+>          case -ENOKEY:
+>                  reason = "module with unavailable key";
+>                  break;
+> -
+
+Cosmetic
+
+>          default:
+>                  /*
+> -                * All other errors are fatal, including lack of memory,
+> -                * unparseable signatures, and signature check failures --
+> -                * even if signatures aren't required.
+> +                * All other errors are fatal, including:
+> +                * - OOM
+> +                * - unparseable signatures
+> +                * - invalid signature failures
+>                   */
+>                  return err;
+>          }
+> diff --git a/kernel/module/signing.orig b/kernel/module/signing.orig
+> new file mode 100644
+> index 000000000000..a2ff4242e623
+> --- /dev/null
+> +++ b/kernel/module/signing.orig
+> @@ -0,0 +1,125 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/* Module signature checker
+> + *
+> + * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/errno.h>
+> +#include <linux/module.h>
+> +#include <linux/module_signature.h>
+> +#include <linux/string.h>
+> +#include <linux/verification.h>
+> +#include <linux/security.h>
+> +#include <crypto/public_key.h>
+> +#include <uapi/linux/module.h>
+> +#include "internal.h"
+> +
+> +#undef MODULE_PARAM_PREFIX
+> +#define MODULE_PARAM_PREFIX "module."
+> +
+> +static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
+> +module_param(sig_enforce, bool_enable_only, 0644);
+> +
+> +/*
+> + * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
+> + * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
+> + */
+> +bool is_module_sig_enforced(void)
+> +{
+> +       return sig_enforce;
+> +}
+> +EXPORT_SYMBOL(is_module_sig_enforced);
+> +
+> +void set_module_sig_enforced(void)
+> +{
+> +       sig_enforce = true;
+> +}
+> +
+> +/*
+> + * Verify the signature on a module.
+> + */
+> +int mod_verify_sig(const void *mod, struct load_info *info)
+> +{
+> +       struct module_signature ms;
+> +       size_t sig_len, modlen = info->len;
+> +       int ret;
+> +
+> +       pr_devel("==>%s(,%zu)\n", __func__, modlen);
+> +
+> +       if (modlen <= sizeof(ms))
+> +               return -EBADMSG;
+> +
+> +       memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
+> +
+> +       ret = mod_check_sig(&ms, modlen, "module");
+> +       if (ret)
+> +               return ret;
+> +
+> +       sig_len = be32_to_cpu(ms.sig_len);
+> +       modlen -= sig_len + sizeof(ms);
+> +       info->len = modlen;
+> +
+> +       return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
+> +                                     VERIFY_USE_SECONDARY_KEYRING,
+> +                                     VERIFYING_MODULE_SIGNATURE,
+> +                                     NULL, NULL);
+> +}
+> +
+> +int module_sig_check(struct load_info *info, int flags)
+> +{
+> +       int err = -ENODATA;
+> +       const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
+> +       const char *reason;
+> +       const void *mod = info->hdr;
+> +       bool mangled_module = flags & (MODULE_INIT_IGNORE_MODVERSIONS |
+> +                                      MODULE_INIT_IGNORE_VERMAGIC);
+> +       /*
+> +        * Do not allow mangled modules as a module with version information
+> +        * removed is no longer the module that was signed.
+> +        */
+> +       if (!mangled_module &&
+> +           info->len > markerlen &&
+> +           memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
+> +               /* We truncate the module to discard the signature */
+> +               info->len -= markerlen;
+> +               err = mod_verify_sig(mod, info);
+> +               if (!err) {
+> +                       info->sig_ok = true;
+> +                       return 0;
+> +               }
+> +       }
+> +
+> +       /*
+> +        * We don't permit modules to be loaded into the trusted kernels
+> +        * without a valid signature on them, but if we're not enforcing,
+> +        * certain errors are non-fatal.
+> +        */
+> +       switch (err) {
+> +       case -ENODATA:
+> +               reason = "unsigned module";
+> +               break;
+> +       case -ENOPKG:
+> +               reason = "module with unsupported crypto";
+> +               break;
+> +       case -ENOKEY:
+> +               reason = "module with unavailable key";
+> +               break;
+> +
+> +       default:
+> +               /*
+> +                * All other errors are fatal, including lack of memory,
+> +                * unparseable signatures, and signature check failures --
+> +                * even if signatures aren't required.
+> +                */
+> +               return err;
+> +       }
+> +
+> +       if (is_module_sig_enforced()) {
+> +               pr_notice("Loading of %s is rejected\n", reason);
+> +               return -EKEYREJECTED;
+> +       }
+> +
+> +       return security_locked_down(LOCKDOWN_MODULE_SIGNATURE);
+> +}
+> --
+> 2.50.1.windows.1
+> 
+> 
+
 
