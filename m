@@ -1,62 +1,61 @@
-Return-Path: <linux-kernel+bounces-809162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D5AB5096D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:56:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 551F0B50971
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3543E1C21D98
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:57:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94391683B04
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1610296BAF;
-	Tue,  9 Sep 2025 23:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE68296BB8;
+	Tue,  9 Sep 2025 23:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fs8wGUhr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2GxbR3n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1952D266EFC;
-	Tue,  9 Sep 2025 23:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B39223337;
+	Tue,  9 Sep 2025 23:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757462207; cv=none; b=dc7urvl4/wdxhyceQm4CYTGK4ErCONkQIyx7xSuQ1abfuFn+W6I2wkKyb8EOAnaNNYB5N0CmOTBtgh0iVO5WAYkY2aDgPu4mLstjQGYV4BEZK/LPGeO8eAwoDxoe0YbFND1splmtmWQ7GK/qGV7Lg+8JwuLyRjuPjNjr1QbuI90=
+	t=1757462285; cv=none; b=I9SRiFU6QYlcKI2VFjdnGj94GILhe+XyVRvXjTeIt9tu1HAI54gjmo7POO8FF3nwoJsAOI1ybagbcNkpwurBGjJooqAU671kq/BC7RFi9vl8jBc0SBmX9jg/QV4ta0zMHsTq08Cwi8hBnQVcD2Ipddaw0EObCfdre5sW0noUgis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757462207; c=relaxed/simple;
-	bh=RtMtg9jTo0dPnCXR9Ongd8bypezQi/dR6SjGeueSbhM=;
+	s=arc-20240116; t=1757462285; c=relaxed/simple;
+	bh=QiBrjwW/3uPQgkLLHTBq8e3ZkK8ZDXI6qH8ZOHqVj7U=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tejjuxHP/5R2YyD9JNHe2BopkFFue9Z2xLc1hQzd1iR32aJ6h0uxec1+bU4nvsr6KkQLPwJclNzCCr5LXJCtfBbmZxdgzirlE2vSAd9MJ03adcYFlq6IAnlaGvxpDWrRfvFo9SJ6H9+m54n1XAl6KDCc4RzjV3WBU7Ic4LvKt8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fs8wGUhr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17CFBC4CEF4;
-	Tue,  9 Sep 2025 23:56:46 +0000 (UTC)
+	 MIME-Version:Content-Type; b=qaFZXUTnexzgWlUmcRq46IZYgORf+0iK7mI6++X+Ei0kYTu6vEFjBXcbdV7s+cC+EGBDceoPuPurO8lkRkjqpACYrGDxOHPzlJwocIW6IYrFAw0Cp57ljtCyTQa0MWH1WgRd9Lbwp/1G9k2EyVcbpG1oKh9dVPCsYDhbwQugp3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2GxbR3n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A57E1C4CEF4;
+	Tue,  9 Sep 2025 23:58:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757462206;
-	bh=RtMtg9jTo0dPnCXR9Ongd8bypezQi/dR6SjGeueSbhM=;
+	s=k20201202; t=1757462285;
+	bh=QiBrjwW/3uPQgkLLHTBq8e3ZkK8ZDXI6qH8ZOHqVj7U=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fs8wGUhrX3o0Ej2360sNBrMWJpeOhmM6XmykZSWKWc5rve4fKMLdlYaVcKT1DSosc
-	 mCIZXVZmW/CgxdzPx9x8CCYk5/VukqLnVEwN/4b47GzYqg0NCcE2/FxnOWTVFlM+n0
-	 626943MC7WnEHmrOxJQ6xRt0KlfsgpxBDB/X0s9zS9IOHkI0BzNW0CvRvwmNtFZ8w0
-	 hA5OB909ONlsSiOfhsT1nAEHQ7YO0Zoa+gBnx7Ts1esg/W/snqXXEBlebPWuqZiDHc
-	 P/Cv6DG4waKcSPQrLox+e8Vkt1fshQxuf7aa9K63GZA/e3p/2cCicMReIcO9mUXV1l
-	 DkDteNlI6CdGQ==
-Date: Tue, 9 Sep 2025 16:56:45 -0700
+	b=k2GxbR3nAj6cgpjmiSRVXgpDWMnC1Q/WmGOABIedTSHa0ZLHl6IF+lVrzhCu9Pbi6
+	 ZE9rnjl5/Kzk2a0kV0u3rhEu0+r4PDzPhq0wiSXToQMSVQiaSMOY0RmKMqQAGD3MnE
+	 wX9X2uqxOQGdhKxYCP/yB77HsRNGtrG+fJ+/T1tb+FXsqBVtMlpTbdDNIbC06pnOPR
+	 t1z1GSDQx7qfy76k2/JRuxMpKkXdZlBWwTu6lklbp+jUuA7ydnsFb6epkdhHuRTR9p
+	 2ctWcYd5oBRUWETGJv8rP0Jd7ift1vXTeDJh5lSgp3b2Ja+Ve88eLb5gpQuNKqfXbw
+	 0fcR632Q8QGeg==
+Date: Tue, 9 Sep 2025 16:58:03 -0700
 From: Jakub Kicinski <kuba@kernel.org>
 To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Hubert =?UTF-8?B?V2nFm25pZXdza2k=?= <hubert.wisniewski.25632@gmail.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
  <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, stable@vger.kernel.org, kernel@pengutronix.de,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Lukas Wunner
- <lukas@wunner.de>, Russell King <linux@armlinux.org.uk>, Xu Yang
- <xu.yang_2@nxp.com>, linux-usb@vger.kernel.org
+ <pabeni@redhat.com>, Hubert =?UTF-8?B?V2nFm25pZXdza2k=?=
+ <hubert.wisniewski.25632@gmail.com>, stable@vger.kernel.org,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Lukas Wunner <lukas@wunner.de>, Russell King
+ <linux@armlinux.org.uk>, Xu Yang <xu.yang_2@nxp.com>,
+ linux-usb@vger.kernel.org
 Subject: Re: [PATCH net v1 1/1] net: usb: asix: ax88772: drop phylink use in
  PM to avoid MDIO runtime PM wakeups
-Message-ID: <20250909165645.755e52f6@kernel.org>
-In-Reply-To: <aL_UfST0Q3HrSEtM@pengutronix.de>
+Message-ID: <20250909165803.656d3442@kernel.org>
+In-Reply-To: <20250908112619.2900723-1-o.rempel@pengutronix.de>
 References: <20250908112619.2900723-1-o.rempel@pengutronix.de>
-	<DCNKVCWI6VEQ.30M6YA786ZIX2@gmail.com>
-	<aL_UfST0Q3HrSEtM@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,14 +65,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 9 Sep 2025 09:17:17 +0200 Oleksij Rempel wrote:
-> > > Fixes: e0bffe3e6894 ("net: asix: ax88772: migrate to phylink")  
-> > 
-> > It does, but v5.15 (including v5.15.191 LTS) is affected as well, from
-> > 4a2c7217cd5a ("net: usb: asix: ax88772: manage PHY PM from MAC"). I think
-> > it could also use a patch, but I won't insist.  
-> 
-> Ack, I'll try do address it later.
+On Mon,  8 Sep 2025 13:26:19 +0200 Oleksij Rempel wrote:
+> No extra phylink PM handling is required for this driver:
+> - .ndo_open/.ndo_stop control the phylink start/stop lifecycle.
 
-Any idea what the problem is there? Deadlocking on a different lock?
+Meaning the interface is never suspended when open?
 
