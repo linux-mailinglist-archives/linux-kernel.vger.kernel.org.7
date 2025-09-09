@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-807956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30698B4AB59
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:14:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E42B4AB67
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA4F91C65697
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:15:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28CDF367457
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B08341653;
-	Tue,  9 Sep 2025 11:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA5F341AD8;
+	Tue,  9 Sep 2025 11:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="aFpFFcRF"
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X3aQ1E/G"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C7D340DAC;
-	Tue,  9 Sep 2025 11:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.154.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97653341644;
+	Tue,  9 Sep 2025 11:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757416145; cv=none; b=PzWmZ/nyF7mr5eoqpA/T6adCli3V7AGOvDyv3PhXoPdDrWzJCCQ2fzVhaQboM7kyQLs/OzBJqFJhTv4a3muxaGjX+blX4GKaNMoW4ZVu5wA7ntaVez0zEOCSO1jKoApSFxjsfMvfXTdAyisQQHwvd6IdT7pnjpkrdvq68OVHwv4=
+	t=1757416147; cv=none; b=twrNlAKeS6mOCRyn42Cvik0yUAswtLflzKxJfL/LK8B/jj3wfQrGpzOWV8ggek8wjMxM92GcBiq1CiwEKziKmsYJhNd9dRQgI+Zjs8V+Ys9QT82Fvfro7KZGHs6e7kItvxJc+g6wkebiBR/y6RH5/F2bojRJBDU7ig3vLH9+XGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757416145; c=relaxed/simple;
-	bh=clLA9tWFF0dM3xcPiJ8JYCP9d84ZpF4epwkmDjKG8sY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bgPLhlnUnRDHnUg7d4Z8a+BZG2ShgHZPBfpDkACUlEGkH3BlP4Ng66SAyc+T4wkct9vORbBxBAt6E67C4Hf3sVO5z1S0uvcj3c3vWo5/SPor13PfWTmCaDiEMsan3menRWxBpBBSsxK3lGENDwPF14SesaKs41dBM2TfyyM3EjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=aFpFFcRF; arc=none smtp.client-ip=216.71.154.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1757416143; x=1788952143;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=clLA9tWFF0dM3xcPiJ8JYCP9d84ZpF4epwkmDjKG8sY=;
-  b=aFpFFcRFgVxrw0pgfcnoZS2uUDHd6OxLN1KE2dS+vlHS7IrGw+twxHyD
-   MgwLkgHbnXZIo1JpVDRXePB7HSCQMlUnQOO3bKcVTKiBQAKVkaP4uq3gP
-   vA6OQoAezXwh+5yQapgLd81suY03krx7tGMLCKuleWSLXgZO0L6FJg/mq
-   PCa2JTMQZ+2utldsp0BW2qjb+ZdsD8INV24H6salLFwktbIIp8iRQZFiv
-   evRvCuAK5TqFdaFDLM3Q6FCKZrqZGEIaqCvlmHSZJ3P6Kxfc7GMhciKhD
-   45tQJqgCy+FjnhX1jLqwXfrSkgHhoanGBUtFWWqKGVAwCmCaSwbpX6qvN
-   g==;
-X-CSE-ConnectionGUID: Ew2F+RyERl6IFxny4yDc8g==
-X-CSE-MsgGUID: VLLsjRN1S7aB6f6+LHGXdA==
-X-IronPort-AV: E=Sophos;i="6.18,251,1751212800"; 
-   d="scan'208";a="112810963"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 09 Sep 2025 19:09:03 +0800
-IronPort-SDR: 68c00acf_adlbHp1nnPv5ulJrlzstDkc3/w4XNGVvvEGzbkfRfyHILtn
- vLvcB0Me8Cdf/lazIPKZkzZuUfIxq6miMNYtOdA==
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2025 04:09:03 -0700
-WDCIronportException: Internal
-Received: from c02g55f6ml85.ad.shared (HELO C02G55F6ML85.wdc.com) ([10.224.183.46])
-  by uls-op-cesaip01.wdc.com with ESMTP; 09 Sep 2025 04:08:59 -0700
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-btrace@vger.kernel.org,
-	John Garry <john.g.garry@oracle.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 21/21] blkparse: parse zone append completions
-Date: Tue,  9 Sep 2025 13:07:23 +0200
-Message-Id: <20250909110723.75676-22-johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250909110723.75676-1-johannes.thumshirn@wdc.com>
-References: <20250909110723.75676-1-johannes.thumshirn@wdc.com>
+	s=arc-20240116; t=1757416147; c=relaxed/simple;
+	bh=k6VG5O7q00a/a+YkOEVzLXHlH/LdT+cKIq2dw6clWDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LLqh6P8AGEXHF47kb9tXVuF2KvwqJzeSI1tdSQUKgcMbFGZpADzWEJp6I9kZVV0WsGQKSua+7svGZ7P+9XwZBwC4C6ZYEzWsNnmN2ZZvHxJFt3Jylt11447wmyLr95746ChhyVebukIwGwYa1GYeaFYChic+BM+NIWCr06Vwwfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X3aQ1E/G; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-329b760080fso5348563a91.1;
+        Tue, 09 Sep 2025 04:09:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757416145; x=1758020945; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/kqIBpGmaqjfdWv2U553qBzw0kO4MEkC0nT25ifs4mA=;
+        b=X3aQ1E/GL9DBY5K8u5OkjInMPPjswUq6u1KE9oP7mldhRL6m1PD4FTqFeStQwBu92G
+         6Z++2HQ22Kl4VU3bRvIK4MED2i6d9dPASndRAo95VWpSN3ncy5wpZEIbSfbDVBJNhg6I
+         EQpO2Ei3Sn9lUsTn0nfI7uyJmxTDbDlqVmSK/Lx0KgNYNEUbkmS1sQGTHMHbUAN6sjDM
+         3MNjtoDkHip45/htElz7VvmUXZ9P34Kbc9FfJa5tRorE8nwSVwCaLzMrJ1YumUf3cvix
+         SkAMqEh/hg84YqLMfvzoNOr2fxm4IRzegkUeZ0N7ZQ6HUD0/ZmBqbG+3wrXJosqMqMCY
+         7SMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757416145; x=1758020945;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/kqIBpGmaqjfdWv2U553qBzw0kO4MEkC0nT25ifs4mA=;
+        b=xA71gvmwb6BTsatmjycywzyGuYifZ9pYwwFFhVDCMRd5BvxhtT0/fqr/0ARMBQIWRB
+         +K22I7JJcf0qtH7s97FzpZZ2BLzSEJY4BQA8Tz0PnP4aqLGxSP2XCe3TF8Mzc+YIA3EE
+         PBzRHxnuYNzOjVvpzMWt1ggCf9tWiDqh6EC+rPfYon4lRUGVTZtWzMjAMFxruZ1xNPaf
+         5EX7BTIgY/mdOIDitMs2wTIfgt63eSCBm3ImGDbqgqFC4H/cPhh/C0alr9Z3dkQkVO/H
+         BHcIVai000K0mBh5qsAi4cuPbyRT8h7EdOh79Es4k1FvgNJDXIRZRu7/D2r6CQj0uz4z
+         EISg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwwnINcwuvgtCJIWe9qBlkypGD0apXR5On2jm82EObve9wk+qLOhxVhmUgmbjndTHeUiCflm+2ej3Rj04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkJcbnb6MjkQQDq0/GueAfDEYTaaaPH0JXnGWpjv6nivkT5qVP
+	Hoev2zoq/GrWM1ydsNepYZKlhuHid8G8EY8zcW0kQPI84sSseAUV9gK3A+y0S5IT
+X-Gm-Gg: ASbGnctcf/RaD4n0S1yudViM6pvs8xLmjjLzZBY9jEd5Brdq8HDhnDaoaxwgIOyU5SA
+	27TghLG7Tn4MpxwaejZMUordw/Z/GKzM+MBJx0KgpWtS37tPqUzKF0ItGK8G2nYYWdEhIV80GeD
+	E6Gi4gcgZqBUVjXmph9oGnt1z6OlHrcvOpBATn1Ad9bm+C5NHJsECzMCFa881o/RdgyvB5G8bgb
+	z1+SOkne2eP77yp4+obOcrhmp3cV2fKjPRjLNRVJoLsHcPqkNraVGzcKRNmnhLRCzKaO/UH93U8
+	0c86AYjvS5gOLss720KmCt+0OB7sEYp9c2U+WJkSdRX6sFNhRshzcO18RSTwRBgYvVh2poIwp3D
+	m7mMajjg7mjM+0DhBb7DyveyhIa2SBBe+vI5+Kz58QYM4Q/g=
+X-Google-Smtp-Source: AGHT+IF+RlXuj41RmCzuMtvcig7RTTgQYCSvnSceofYj588/JUlAWiHFZtQEhiGnX1uyJzV23IXvsg==
+X-Received: by 2002:a17:90b:38cb:b0:32b:df0e:928f with SMTP id 98e67ed59e1d1-32d43f936ccmr15732556a91.37.1757416144774;
+        Tue, 09 Sep 2025 04:09:04 -0700 (PDT)
+Received: from localhost.localdomain ([165.204.156.251])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-329e9fd022dsm21342608a91.3.2025.09.09.04.09.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 04:09:04 -0700 (PDT)
+From: Rahul Kumar <rk0006818@gmail.com>
+To: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	rk0006818@gmail.com
+Subject: [PATCH] wireless/ti/wl1251: Replace strncpy with strscpy in fw_version
+Date: Tue,  9 Sep 2025 16:38:41 +0530
+Message-ID: <20250909110841.2904546-1-rk0006818@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,46 +88,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Parse completion of Zone Append commands in blkparse.
+strncpy is deprecated for use on NUL-terminated strings, as documented in
+Documentation/process/deprecated.rst. It NUL-pads the destination buffer
+and does not guarantee NUL termination if the source string is longer
+than the copy length
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+This patch replaces the existing strncpy() and manual NUL termination with
+strscpy(), which ensures safe copying and automatic NUL termination.
+
+Signed-off-by: Rahul Kumar <rk0006818@gmail.com>
 ---
- blkparse_fmt.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/net/wireless/ti/wl1251/acx.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/blkparse_fmt.c b/blkparse_fmt.c
-index 467c8c5..725ddbe 100644
---- a/blkparse_fmt.c
-+++ b/blkparse_fmt.c
-@@ -331,6 +331,27 @@ static void process_zoned(char *act, struct blk_io_trace2 *t,
- 			  unsigned long long elapsed, char *name)
- {
- 	switch (act[1]) {
-+	case 'A':	/* Zone Append */
-+		if (elapsed != -1ULL) {
-+			if (t_sec(t))
-+				fprintf(ofp, "%llu + %u (%8llu) [%d]\n",
-+					(unsigned long long) t->sector,
-+					t_sec(t), elapsed, t->error);
-+			else
-+				fprintf(ofp, "%llu (%8llu) [%d]\n",
-+					(unsigned long long) t->sector,
-+					elapsed, t->error);
-+		} else {
-+			if (t_sec(t))
-+				fprintf(ofp, "%llu + %u [%d]\n",
-+					(unsigned long long) t->sector,
-+					t_sec(t), t->error);
-+			else
-+				fprintf(ofp, "%llu [%d]\n",
-+					(unsigned long long) t->sector,
-+					t->error);
-+		}
-+		break;
- 	case 'P': /* Zone Plug */
- 		fprintf(ofp, "[%s]\n", name);
- 		break;
+diff --git a/drivers/net/wireless/ti/wl1251/acx.c b/drivers/net/wireless/ti/wl1251/acx.c
+index f78fc3880423..73232f7e92d1 100644
+--- a/drivers/net/wireless/ti/wl1251/acx.c
++++ b/drivers/net/wireless/ti/wl1251/acx.c
+@@ -149,15 +149,8 @@ int wl1251_acx_fw_version(struct wl1251 *wl, char *buf, size_t len)
+ 		goto out;
+ 	}
+ 
+-	/* be careful with the buffer sizes */
+-	strncpy(buf, rev->fw_version, min(len, sizeof(rev->fw_version)));
+-
+-	/*
+-	 * if the firmware version string is exactly
+-	 * sizeof(rev->fw_version) long or fw_len is less than
+-	 * sizeof(rev->fw_version) it won't be null terminated
+-	 */
+-	buf[min(len, sizeof(rev->fw_version)) - 1] = '\0';
++	/* copy firmware version safely, strscpy ensures NUL termination */
++	strscpy(buf, rev->fw_version, min(len, sizeof(rev->fw_version)));
+ 
+ out:
+ 	kfree(rev);
 -- 
-2.51.0
+2.43.0
 
 
