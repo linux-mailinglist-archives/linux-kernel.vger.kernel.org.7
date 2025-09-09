@@ -1,129 +1,125 @@
-Return-Path: <linux-kernel+bounces-809118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B93EB508D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:24:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7BBB508DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F10114E3F49
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:24:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BCC01889D45
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FD226D4C6;
-	Tue,  9 Sep 2025 22:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3259026E179;
+	Tue,  9 Sep 2025 22:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DvU2uHSn"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDguUCwp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03C7261B8D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 22:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8762571A5;
+	Tue,  9 Sep 2025 22:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757456692; cv=none; b=sTZEkEGn3SeH0JysZmOk/vTaBtjBh2wEh5WiJHuPp1h2GWeX/lms5gStFXBVIJCuL0jIWOizfLMYJIR25g4rN6vBew/fsBYKiKxPaMywDfmTNN0Vvie9GS8+Rj+CcytoYchU4lLJxQnc6f8dCBOmoGMDooJUlflkEIDS/2KeJm0=
+	t=1757456752; cv=none; b=NP8XoJnKNKhJvs2nm2yk+nDWUGT7ypYNMeVY60Md2FhS9T/eBKYw1meBpSD3XZpwSch0XLY++xjNBtowRlVkYBdI1OkqS2lEB9DgQhYTX6bj+JyCrEJ6EuDjg9TJ0kWtNejaDlTCqxwWg1cJhsq3+O/xg4HSwLuCHWoOdauBq3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757456692; c=relaxed/simple;
-	bh=TC2JZtkw5BkMX3Igl25beU/iUsWSo7CWbRuDpStlv3M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p4pldkiXVM6vx1AJUwlm73O2YQ8DqctXVmjm88THoSJthq24kpv1FWLQfj67hgMUnOoX+FlGED5eGeZ6xzCEj7jMKWP5srpWUWr4TKyJNC/jnUnf8gXWRzURjQF2W+wxP9LTJhQnrPc340qxV2bJbgoVjEXNrr4DzZ+5dDTq704=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DvU2uHSn; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-625e1dfc43dso6171408a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:24:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1757456689; x=1758061489; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fEQiOQ22rYAZhHJ5F5hChKykmBsdSQ9Mr5OeL3gCArg=;
-        b=DvU2uHSnhJEjTHzJ3lR5/zoiyYfyq3y8MKbgzy4OSpoprSBcLTtPKiA46AwT/b/9sX
-         Ik8wBZHVj5rSTHa7zjZbuiLGZJzNaZoQu/vlnQDcvmtMjlwr1OPmsqLCyHFkPdAeiiRE
-         6RzHYDqNKwv1LrYhgKX1jth1ZWVwyluhh9xoU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757456689; x=1758061489;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fEQiOQ22rYAZhHJ5F5hChKykmBsdSQ9Mr5OeL3gCArg=;
-        b=Ss/lT3l7Fas1FqJ39B5c/mvxnX0yRWYFVcHVqmdOxVnCd2p/dyjmNQ/naBodN6K4NN
-         r7loIQavwn8t5ivkpKaTk1KFdkktvkeuRwnPfi8r/k89trcu0iqX2nvpteJcioxquP2J
-         8X0dIK5+VdoLeon8SKJk3tRmxK86xuYzUrVa6bh/BhesGXW8LKBjquavM7fCY7AbeXwE
-         OAbzOG5CrsoS4Gw/HJ4lF+5YGQepVCUpKO3qNHcfFJ8y4G9tLPe0uZpkHC+35RS0tesZ
-         nRNO+vS3FANBfBZlu0Sh4GMzbCRe1JMazNqbzYVnvUArQGbGsvv8lzeBD71aWo0ux9/Q
-         momA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3bKWOMBvphIYRPiIVZ17szB34KOP2Q2mc1k0HpkaYFf1NBaw5IHwmHBZvTwxwjabMMSYAQow0QHGqgQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWeLUFvVsufab6v46B7rVK7K/yAhJX0eET6fCgh+A0cwbHNUsw
-	7OUETA2jvpsYinwfFkBdKuNK6Iz50Oa22bxrTZytJbjSdmgyLYTd25D8UCtTXOJ0i3YbmbgVVWB
-	0b2aOPps=
-X-Gm-Gg: ASbGncubDAQfEfH+ijkDv70qQ2Mpl4aGquMovZSThGbULRiM6DjaIgpY3Zy4EHe3FjM
-	3KuAd2/i3oQ9NMVAjk/oRJM1VYv3yOiB+WhCGAEx2I9FNtvYnH2g5bBJLmuSqsgrLgOmmlkBvHr
-	XCq4i6+uOENDK8Xdc9LiPm5oWGxcx4D4KzdwDz9g7MkNBtJv1XQKsE9vx2NwbzGw4PTyGnnm6kR
-	ftv3VSpnvuiMhFaAMwB3XFdGSZIVOElu6pRGBXzI/wL0CjQ42ck+AtUkQbiE9fpyMqGl4xz517z
-	iwK5bU4MmTx1Vi1k1tk+ggVUdHZpT1EE58qrIGfEHHRH0u5G34k7Izu3+R0jNH5fDZBbCgkaXFp
-	ak6Z4gdZAfaZqfOpgjaUOeAowJHDS5MOLOz/b40UDHmsakZYIpX6TgGCLqLQ7LfKqj797hC6CDB
-	wnITh7dZQ=
-X-Google-Smtp-Source: AGHT+IHlVd3spgwEiyRO7j59ZLvDRdhPmN8BBixTSaoxCJe2NnjPRKZteW1Xqj5eK0ez1AYHhO94jw==
-X-Received: by 2002:a05:6402:2794:b0:62b:8046:6560 with SMTP id 4fb4d7f45d1cf-62b80466f2emr4949660a12.32.1757456688913;
-        Tue, 09 Sep 2025 15:24:48 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c0123e8fbsm2032079a12.30.2025.09.09.15.24.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 15:24:46 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6188b6f7f15so6873009a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:24:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXuwBXQbUtImZoI8h4GyqBPw/GXPUyxcuyDNmytWKrN5Csp5rxYztdMpK3IHptMglEjbeHK1ndbFQ22rvg=@vger.kernel.org
-X-Received: by 2002:a05:6402:4412:b0:61e:a13a:27b8 with SMTP id
- 4fb4d7f45d1cf-623729cb58cmr11071027a12.1.1757456686093; Tue, 09 Sep 2025
- 15:24:46 -0700 (PDT)
+	s=arc-20240116; t=1757456752; c=relaxed/simple;
+	bh=645iNWZvifz2eZ9NwLWXL2PDwmHsJ84rWYVLdtzlJcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U0fUWnFfhu005lVoXPZgjtAPyHLINZcp1r54C0IH4hTL2ACAU6zsFU4KJL/tOmWfP1soX0aLPhEKaSOjX07Y+zuLL9ejAwyPqn3+OIC0FifMgnVSOyf0RHFAGSEgF+A+8zt2tw4XWAD1gVELyDhiseTrPfTq5dPBqNH5Pv52flg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDguUCwp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B288C4CEF4;
+	Tue,  9 Sep 2025 22:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757456752;
+	bh=645iNWZvifz2eZ9NwLWXL2PDwmHsJ84rWYVLdtzlJcw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eDguUCwpP9DVZVJwqqXIS/8y+jxOr7scjJ9bBrqVu1QLkosCL1Q5bmmUweG86WMZs
+	 WapvOtaFO0Fw14T0KpYJewJLFCHA76Ab0TaFT7asDgviu5k/H8ADlWe9OrPy8Kw1Vp
+	 +GlOVH0potqCtmkT7JGk8dRFFMFi67AP5up6zC90pM/j5RP4YTw9OQ1M3YgOvazV+q
+	 JUzlNqx+918BupWoYts7eeW05nAvLSc5m6AGmD06XxqXT1k4DmI5DycUEKNORgm+mj
+	 xD6tAQjEYLbpYjI2BRfhJLZnOKAyFsoiUeHZEb85mVW8JJY7RBnmMWpsZMie+iIIoB
+	 fXsdel/5IWekQ==
+Date: Tue, 9 Sep 2025 15:25:44 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Janne Grunau <j@jannau.net>
+Cc: Sven Peter <sven@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+	Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH v2 18/22] phy: apple: Add Apple Type-C PHY
+Message-ID: <20250909222544.GA3282617@ax162>
+References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
+ <20250906-atcphy-6-17-v2-18-52c348623ef6@kernel.org>
+ <20250908181259.GC89417@robin.jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com> <C85C32F4-BD58-460B-ACCF-F0569ED0941A@zytor.com>
-In-Reply-To: <C85C32F4-BD58-460B-ACCF-F0569ED0941A@zytor.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 9 Sep 2025 15:24:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg0bp-_kqmfaDYQLRJO30LYxEsMu3EKi65sKoi83EUZ3Q@mail.gmail.com>
-X-Gm-Features: Ac12FXyoXbbHUJtrfKhAFeDlVJsB9IiUaRxuYQBQJQyqpHDKK1GQ8JtkX5zx-HA
-Message-ID: <CAHk-=wg0bp-_kqmfaDYQLRJO30LYxEsMu3EKi65sKoi83EUZ3Q@mail.gmail.com>
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-mips@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Richard Weinberger <richard@nod.at>, 
-	Lucas Stach <l.stach@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Ankur Arora <ankur.a.arora@oracle.com>, 
-	David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Nishanth Menon <nm@ti.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
-	"Chester A. Unal" <chester.a.unal@arinc9.com>, 
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>, Andreas Larsson <andreas@gaisler.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908181259.GC89417@robin.jannau.net>
 
-On Tue, 9 Sept 2025 at 14:39, H. Peter Anvin <hpa@zytor.com> wrote:
->
-> 1 GB systems used highmem too, sadly. And 1 GB was the norm for a big chuck of the late 32-bit era.
+On Mon, Sep 08, 2025 at 08:12:59PM +0200, Janne Grunau wrote:
+> On Sat, Sep 06, 2025 at 03:43:31PM +0000, Sven Peter wrote:
+> > diff --git a/drivers/phy/apple/atc.c b/drivers/phy/apple/atc.c
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..9213485234873fcaafeb1d1d9de3ddf07767d552
+> > --- /dev/null
+> > +++ b/drivers/phy/apple/atc.c
+> > @@ -0,0 +1,2214 @@
+> 
+> [...]
+> 
+> > +static int atcphy_load_tunables(struct apple_atcphy *atcphy)
+> > +{
+> > +	int ret;
+> > +	struct {
+> > +		const char *dt_name;
+> > +		struct apple_tunable **tunable;
+> > +	} tunables[] = {
+> > +		{ "apple,tunable-fuses", &atcphy->tunables.fuses },
+> > +		{ "apple,tunable-axi2af", &atcphy->tunables.axi2af },
+> > +		{ "apple,tunable-common", &atcphy->tunables.common },
+> > +		{ "apple,tunable-lane0-usb", &atcphy->tunables.lane_usb3[0] },
+> > +		{ "apple,tunable-lane1-usb", &atcphy->tunables.lane_usb3[1] },
+> > +		{ "apple,tunable-lane0-cio", &atcphy->tunables.lane_usb4[0] },
+> > +		{ "apple,tunable-lane1-cio", &atcphy->tunables.lane_usb4[1] },
+> > +		{ "apple,tunable-lane0-dp", &atcphy->tunables.lane_displayport[0] },
+> > +		{ "apple,tunable-lane1-dp", &atcphy->tunables.lane_displayport[1] },
+> > +	};
+> > +
+> > +	for (int i = 0; i < ARRAY_SIZE(tunables); i++) {
+> > +		*tunables[i].tunable =
+> > +			devm_apple_tunable_parse(atcphy->dev, atcphy->np, tunables[i].dt_name);
+> > +		if (IS_ERR(tunables[i].tunable)) {
+> > +			dev_err(atcphy->dev, "Failed to read tunable %s: %ld\n",
+> > +				tunables[i].dt_name, PTR_ERR(tunables[i].tunable));
+> > +			return ret;
+> 
+> ret is unitialized here, could be `return PTR_ERR(tunables[i].tunable);`
+> instead
 
-Well, while on x86 1GB systems did use highmem, they'd typically not
-use very much of it.
+This could also use '%pe' to symbolically print the error name instead
+of the integer value.
 
-IOW, they'd have about 900MB as lowmem (ok, I think it was 896MB to be
-exact), with something like 120MB highmem.
+    dev_err(atcphy->dev, "Failed to read tunable %s: %pe\n",
+            tunables[i].dt_name, tunables[i].tunable);
 
-So they'd either lose a bit of memory, or they'd use the 2G:2G split.
-
-Or - and I think this is the main point - they'd stay on old kernels
-like the ancient museum pieces they are.
-
-I'm not convinced it makes sense to have a modern kernel on a museum piece.
-
-         Linus
+Cheers,
+Nathan
 
