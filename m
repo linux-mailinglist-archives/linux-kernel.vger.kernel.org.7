@@ -1,145 +1,134 @@
-Return-Path: <linux-kernel+bounces-808398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475B9B4FF41
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:23:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45190B4FF49
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F421189FB66
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:24:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2164E4E2FB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E61346A13;
-	Tue,  9 Sep 2025 14:23:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD423451B4;
-	Tue,  9 Sep 2025 14:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB0734F476;
+	Tue,  9 Sep 2025 14:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5Q6YIpp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DCD346A0D;
+	Tue,  9 Sep 2025 14:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757427814; cv=none; b=f/LCvqsIagk2A/17h/vNQzHtoTQ3pNtZc/FBsabCNtots9k00KIKfPOvkcgbgFWgGzP6Gjfi0DngUeX7B4WcQDohvPAUkp60v095+tNC4TexrdE4KG+QtucDD+sTXm7yXYDRfXv2O+0kK8ge/+c1jlinB9RvBTgBU9mZiBlz8ks=
+	t=1757427845; cv=none; b=Z9/dy8WDex94GztOk7CGDEyRXFKmZDVGqRIWMfVVGTG8DKOmxeeel9e0TnaxZZ9jd4QK7q2+BSWAk/URoT06fUGvRImpzi1T+SO7D6cMm3IpoXOciAgB55/lQIAJ2UILixZdW3uMQkGL4KFltvpPs67qvshUr+ZyL25JhYmwg9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757427814; c=relaxed/simple;
-	bh=lfKJwavK2NEanN+cL6edfbgdRn0pD99g6SQzNtIfe2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eWdj9EdP0x6SHGKe6vxtn+7t1kB/GSGyNBJQu1KRsa9vrK3too8rUN5OZBZ0ARNvF7wTHcSW4GuYqbc7q0FhFW4KPaJTuqiEGVMeqHG0LLw2z6KWgn7A+5zQIxYmmTK6A8nmsO9PonsM9azmGq/8liy+TaTl6oAxLXTxA2uukMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 906B91424;
-	Tue,  9 Sep 2025 07:23:23 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2519D3F66E;
-	Tue,  9 Sep 2025 07:23:26 -0700 (PDT)
-Date: Tue, 9 Sep 2025 15:23:23 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
-	baisheng.gao@unisoc.com,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
-	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
+	s=arc-20240116; t=1757427845; c=relaxed/simple;
+	bh=3Ghy67T7rreednlZpZASb0jQ54O5/AaKOvr8uv+5f1M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fmf0Te1u3Gd47lth3NXrS8uuokRxHP4Da2PIeESksOskVoActq2wJhQGHyni84lPZHqoDJ6vwNyUTBVBUU/7vx3/kZ4UqXLJBA8y+yP0h3MyLGssvlvXCna8ANBNAAs2OvyKweo5j2hEWBqDYosOsueC66/wybKhQodj6P6Cdyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k5Q6YIpp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD501C4CEFB;
+	Tue,  9 Sep 2025 14:24:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757427845;
+	bh=3Ghy67T7rreednlZpZASb0jQ54O5/AaKOvr8uv+5f1M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=k5Q6YIppaLP4l21CgQQhx7MpvPVxzegmVMocXQRCLlW0yxL0Wx4Mh9zzuhSfSig4n
+	 Wyl8/IN+ipJ7IrKdPIuedZgvqcd9/oTXrrfNso7QqzGphxjVWMnlEMSL3DgTmtaoQM
+	 SJP/rzI/8sWm010DwpHG6NCiXyHniHv8tQ6x4IOqUqrs1FnSd4XDkbgMqkF41JAiTW
+	 eQdzFhrBycwILMPW1yus30XzwbhZ1yIlcBYI0XLehIyTM6piUUEsledwcl4iThugdi
+	 pZR30BCsilm3c1cg8XrvKRwvcklpOHtc+9lHKnPc5MFnGlhR4BVy67G1WUBMiFFC8Z
+	 tzSvnFMFlfHyQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Lecopzer Chen <lecopzerc@nvidia.com>
-Subject: Re: [PATCH 14/33] arm_mpam: Add cpuhp callbacks to probe MSC hardware
-Message-ID: <aMA4Wz2j0Ozv0BNZ@e133380.arm.com>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-15-james.morse@arm.com>
+	Conor Dooley <conor+dt@kernel.org>
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] dt-bindings: net: Drop duplicate brcm,bcm7445-switch-v4.0.txt
+Date: Tue,  9 Sep 2025 09:23:38 -0500
+Message-ID: <20250909142339.3219200-2-robh@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822153048.2287-15-james.morse@arm.com>
+Content-Transfer-Encoding: 8bit
 
-Hi James,
+The brcm,bcm7445-switch-v4.0.txt binding is already covered by
+dsa/brcm,sf2.yaml. The listed deprecated properties aren't used anywhere
+either.
 
-While I'm here:
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/net/brcm,bcm7445-switch-v4.0.txt | 50 -------------------
+ 1 file changed, 50 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/net/brcm,bcm7445-switch-v4.0.txt
 
-On Fri, Aug 22, 2025 at 03:29:55PM +0000, James Morse wrote:
-> Because an MSC can only by accessed from the CPUs in its cpu-affinity
-> set we need to be running on one of those CPUs to probe the MSC
-> hardware.
-> 
-> Do this work in the cpuhp callback. Probing the hardware will only
-> happen before MPAM is enabled, walk all the MSCs and probe those we can
-> reach that haven't already been probed.
-> 
-> Later once MPAM is enabled, this cpuhp callback will be replaced by
-> one that avoids the global list.
-> 
-> Enabling a static key will also take the cpuhp lock, so can't be done
-> from the cpuhp callback. Whenever a new MSC has been probed schedule
-> work to test if all the MSCs have now been probed.
-> 
-> CC: Lecopzer Chen <lecopzerc@nvidia.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
->  drivers/resctrl/mpam_devices.c  | 144 +++++++++++++++++++++++++++++++-
->  drivers/resctrl/mpam_internal.h |   8 +-
->  2 files changed, 147 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index 5baf2a8786fb..9d6516f98acf 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
+diff --git a/Documentation/devicetree/bindings/net/brcm,bcm7445-switch-v4.0.txt b/Documentation/devicetree/bindings/net/brcm,bcm7445-switch-v4.0.txt
+deleted file mode 100644
+index 284cddb3118e..000000000000
+--- a/Documentation/devicetree/bindings/net/brcm,bcm7445-switch-v4.0.txt
++++ /dev/null
+@@ -1,50 +0,0 @@
+-* Broadcom Starfighter 2 integrated switch
+-
+-See dsa/brcm,bcm7445-switch-v4.0.yaml for the documentation.
+-
+-*Deprecated* binding required properties:
+-
+-- dsa,mii-bus: phandle to the MDIO bus controller, see dsa/dsa.txt
+-- dsa,ethernet: phandle to the CPU network interface controller, see dsa/dsa.txt
+-- #address-cells: must be 2, see dsa/dsa.txt
+-
+-Example using the old DSA DeviceTree binding:
+-
+-switch_top@f0b00000 {
+-	compatible = "simple-bus";
+-	#size-cells = <1>;
+-	#address-cells = <1>;
+-	ranges = <0 0xf0b00000 0x40804>;
+-
+-	ethernet_switch@0 {
+-		compatible = "brcm,bcm7445-switch-v4.0";
+-		#size-cells = <0>;
+-		#address-cells = <2>;
+-		reg = <0x0 0x40000
+-			0x40000 0x110
+-			0x40340 0x30
+-			0x40380 0x30
+-			0x40400 0x34
+-			0x40600 0x208>;
+-		interrupts = <0 0x18 0
+-				0 0x19 0>;
+-		brcm,num-gphy = <1>;
+-		brcm,num-rgmii-ports = <2>;
+-		brcm,fcb-pause-override;
+-		brcm,acb-packets-inflight;
+-
+-		...
+-		switch@0 {
+-			reg = <0 0>;
+-			#size-cells = <0>;
+-			#address-cells = <1>;
+-
+-			port@0 {
+-				label = "gphy";
+-				reg = <0>;
+-				brcm,use-bcm-hdr;
+-			};
+-			...
+-		};
+-	};
+-};
+-- 
+2.51.0
 
-[...]
-
-> @@ -511,9 +539,84 @@ int mpam_ris_create(struct mpam_msc *msc, u8 ris_idx,
->  	return err;
->  }
->  
-> -static void mpam_discovery_complete(void)
-> +static int mpam_msc_hw_probe(struct mpam_msc *msc)
-> +{
-> +	u64 idr;
-> +	int err;
-
-Redundant variable which gets removed again in the next patch?
- 
-> +
-> +	lockdep_assert_held(&msc->probe_lock);
-> +
-> +	mutex_lock(&msc->part_sel_lock);
-> +	idr = mpam_read_partsel_reg(msc, AIDR);
-> +	if ((idr & MPAMF_AIDR_ARCH_MAJOR_REV) != MPAM_ARCHITECTURE_V1) {
-> +		pr_err_once("%s does not match MPAM architecture v1.x\n",
-> +			    dev_name(&msc->pdev->dev));
-> +		err = -EIO;
-> +	} else {
-> +		msc->probed = true;
-> +		err = 0;
-> +	}
-> +	mutex_unlock(&msc->part_sel_lock);
-> +
-> +	return err;
-> +}
-
-[...]
-
-Cheers
----Dave
 
