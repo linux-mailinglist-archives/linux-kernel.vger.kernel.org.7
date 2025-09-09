@@ -1,656 +1,254 @@
-Return-Path: <linux-kernel+bounces-809087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB52B50852
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81305B50856
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 590195639B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:38:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256A8563A6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62CA264619;
-	Tue,  9 Sep 2025 21:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C9425BEF1;
+	Tue,  9 Sep 2025 21:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cExYLDtz"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="iLlu0zmi"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C96125CC40;
-	Tue,  9 Sep 2025 21:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FAD253951;
+	Tue,  9 Sep 2025 21:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757453899; cv=none; b=JcUix29nbkmeA/s0OJ2yEoaIcnDFT2N78h3KhpShSixIMu30IyRNsztEeMhJ6FwP2Mh48iHcPIeHOISeJTumOa3Cl3/3XxckVhnMERSCm/y6U8xipN9m7VZd3SLPelImR8+c4pIaLzRUX2aSyo82w+quFqu+SYr+db2TK25vIvE=
+	t=1757454005; cv=none; b=S60szVqZz4AaluEul7lLdITZZ2erYVwF+nGPOq08S6F8Vl6qCDSauq6Uk8R/kbYzD6+EsC9lTMa4ddkfmhNcq/YajyySdCP3pREl4YKfLdaDr6ViYqSA7YA/tdV9uvjjObKLBZBZEm/c6KBsE3wgo2jwX5nfjji9mlWch/PgFgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757453899; c=relaxed/simple;
-	bh=1tve5L9l/WXmdrvOgSVw0B1SnxQ9F2fHCMn4BAVU6OA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YMThsvEJrwPtIEvutcvGhSbDM3vn0J9dkjcrQ8UPUa2f1egRrFv5ZaJV83x1RFJtKARQOjZezxBcXRhWj2rAx00tjnx2AYwOPwLJsGeAWa7HC68o3aGWtjK4mtIGz1HKxpuE61224Eu/+Nu18pDlKuyjxpwuFOrPKh6fOTA/AMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cExYLDtz; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45dec026c78so17529655e9.0;
-        Tue, 09 Sep 2025 14:38:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757453895; x=1758058695; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3oc76nh6RCNtyyoFGHTzLc7SYIzzj/yp/UHrxWmPOq8=;
-        b=cExYLDtz2UkqliEDQt3D/wkoiTKBnXyKJ/rkTUSTH7Ff2Ig4UgvImMYpPaw7R/dVxa
-         MiWYYFYpq+JfhNWo01p5THCXv5ZorNEJ+m6dHWhaYRVkE6xmXE7jpv7hglcoSzfxezAg
-         UxNHg33eNI8VDNjyIh+NAFdsyevnrmI4SrkcDavbTHn+sA5oWFbKllDWnbDfT80fGpr5
-         UIC9V0+I1ezeBh2imbswjc/6+8URO438TdQ4Go9Pwb/MrUBBq7Ksjy0igL8M5JaPpR5e
-         4R5Dxpo4LK3aZy4upsWTHeh14S0353GC/IaQTAKH84HCl93V85nMiTS4zFZ1AUIEzUTU
-         5GzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757453895; x=1758058695;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3oc76nh6RCNtyyoFGHTzLc7SYIzzj/yp/UHrxWmPOq8=;
-        b=q2tbXmqvgZyrjkLhVS+6t+qRE1mJbSCAK/HFiTxKHFzVOYVdL5jZAjs03+VR/oiAlj
-         ur0AOVpjFGQxlTNHJAtgg5udvhIUa/8UOiJLiJR7WeVDlX/n6nNy0WXGPrT8QPs45hut
-         QmTJ9QrcvbMlEwEPrzC4DvVLCmLbsjM3E0YpCrFLDLoUIVX2dy/csAwfglcjRXJnKBxR
-         XqW6o35+zC2ONnsZQfc75B54X/CnakAzSJBY4Zk9ugSolySrVdeIJIGNu60ILnFVhusP
-         jXwLE/hPkGmYl2f7ctS6XVUXssJr82pymnUgibX0RzJHvDAE3r1pjn11v/w5xH/uQGYb
-         Fq1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXkT8NRilBoD/edpOCM+2sqfggyn9CCUPBqXL6cndQb6ghMwXL2QboDAzlTCJd18PaDHDQDmbvfKgge3yI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUgq1uzkAK0OJ9qSAQaO04hRNMPnp/0Am71gKw4dplDdETQzEp
-	PISpmWUsdhGgTpfrBFwRfrtJg7fzzRR+83sBjB+ipFuzQ38ds9tk+I1x0MONUC+O
-X-Gm-Gg: ASbGnctJCVS/eNs48HD6XfUkNCDZ9tyGMl7Ac/Ght1bZFNH/NP/gsNWODQGoPRP/5Aq
-	f6J90/Uucz7mBUlN3towhRxUZl80VzkmU61tukMs3DHlQlAK7qs+zfPFY0T8+PpM9Pt9KLj45jq
-	7rTu45K7bgQsJPc8LmkUDmO/vZAPwC0rd7rtMkD6MvKzr5UKStws/jPcSTeQUmJGrAw25gtjlPg
-	nZ7ZjFNI5UatNdtKudnyIpPHiLE/24In+4nejYgKK34bP655sBwiHkvL9LOHvro3LsCKe+Srsni
-	RC0HlfS6PBd/jxqoYxiHbjCx5A6qj7SxBnHSnfZq16UkgJzXg8J9CXP+ZdEXmDE83OQCgldrAEV
-	GJFZ81tbdzjx5ZatzUKwguV5DsXq7AQiavhsTT3HjjN9vR4kbgUPZ1pgAZw==
-X-Google-Smtp-Source: AGHT+IH76919hAx94tywZ8SSIo23wGjEkmjmRg4ysRmzXl+yh4qPw4dZ8uRMShfqMC+BNS4n34fpUg==
-X-Received: by 2002:a05:600c:5493:b0:45d:98be:ee9e with SMTP id 5b1f17b1804b1-45ddde6a3f0mr105795995e9.1.1757453894620;
-        Tue, 09 Sep 2025 14:38:14 -0700 (PDT)
-Received: from localhost.localdomain ([151.84.244.111])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df81cbb08sm2315165e9.2.2025.09.09.14.38.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 14:38:14 -0700 (PDT)
-From: Stefano Radaelli <stefano.radaelli21@gmail.com>
-To: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Stefano Radaelli <stefano.radaelli21@gmail.com>,
-	Judith Mendez <jm@ti.com>,
-	Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v7 3/3] arm64: dts: ti: var-som-am62p: Add support for Variscite Symphony Board
-Date: Tue,  9 Sep 2025 23:37:41 +0200
-Message-ID: <20250909213749.28098-4-stefano.radaelli21@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250909213749.28098-1-stefano.radaelli21@gmail.com>
-References: <20250909213749.28098-1-stefano.radaelli21@gmail.com>
+	s=arc-20240116; t=1757454005; c=relaxed/simple;
+	bh=TWFnwmXitpR2jrIxwlFgHzftmCNttD6LZleMP6STOl8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=F9w0Uy77aFKP92BtBxyVFDABJ+oIf2aun+mwPxQpLCce6bfsAiQiGFeb1eKGoXjV8X+vxI1GOUQ/dms/Jnq+IFeSzvafUOmiW4Lqt6a/0yuwAjXc5naBYATsYW8yHbtu6u0dJ8vT78XCbRNX0xS/5uIzpPXT3OG+5fsV8q+pUbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=iLlu0zmi; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net ([172.59.161.83])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 589LcmAf1745963
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 9 Sep 2025 14:38:49 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 589LcmAf1745963
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025082201; t=1757453930;
+	bh=d35wP3Cgy69ResBPuaBSz/HcVF3uFe2H17r48V0f8EM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=iLlu0zmirgiX0pTGzUb54KHRqrVLR14BLuI3IIHYMRvzodvhGUHYQJxvyBBAh2zMx
+	 rJBg+/ijGWNS/iiRIuOVMWtzyVDp3uwwlXjZaePALbSCZp3Wm1SYLf+o9+e0KkreG8
+	 60rBPVI4lfP9py1MvyVLbRZ1g3lqUK9nt7ZB6NARfDrOLqb0DXfiKPD/egwa7b1RAq
+	 pJ7ckPFsMlrho0F6vzsw7uXIktWTJ6vQddjyYxOLtu56BAN2NGZD8QxYpYTODUg9ld
+	 26t/cf2rSkp4iVMPrhAZ5a1JTSRZhKsilx9oNgR/W76XC/iyYNDjoLDkTj1H+wnX+K
+	 NncRWZvJVVp7Q==
+Date: Tue, 09 Sep 2025 14:38:42 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Arnd Bergmann <arnd@arndb.de>, ksummit@lists.linux.dev
+CC: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+        linux-mm@kvack.org, imx@lists.linux.dev,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Richard Weinberger <richard@nod.at>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Ankur Arora <ankur.a.arora@oracle.com>,
+        David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Ira Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>,
+        =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        "Chester A. Unal" <chester.a.unal@arinc9.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Andreas Larsson <andreas@gaisler.com>
+Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
+User-Agent: K-9 Mail for Android
+In-Reply-To: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
+References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
+Message-ID: <C85C32F4-BD58-460B-ACCF-F0569ED0941A@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Add device tree support for the Variscite Symphony carrier board with
-the VAR-SOM-AM62P system on module.
+On September 9, 2025 2:23:37 PM PDT, Arnd Bergmann <arnd@arndb=2Ede> wrote:
+>High memory is one of the least popular features of the Linux kernel=2E
+>Added in 1999 for linux-2=2E3=2E16 to support large x86 machines, there
+>are very few systems that still need it=2E I talked about about this
+>recently at the Embedded Linux Conference on 32-bit systems [1][2][3]
+>and there were a few older discussions before[4][5][6]=2E
+>
+>While removing a feature that is actively used is clearly a regression
+>and not normally done, I expect removing highmem is going to happen
+>at some point anyway when there are few enough users, but the question
+>is when that time will be=2E
+>
+>I'm still collecting information about which of the remaining highmem
+>users plan to keep updating their kernels and for what reason=2E Some
+>users obviously are alarmed about potentially losing this ability,
+>so I hope to get a broad consensus on a specific timeline for how long
+>we plan to support highmem in the page cache and to give every user
+>sufficient time to migrate to a well-tested alternative setup if that
+>is possible, or stay on a highmem-enabled LTS kernel for as long
+>as necessary=2E
+>
+>These are the assumptions I'm making, based on both what I have
+>presented in my talk and feedback I have received so far, let me
+>know if something is missing here:
+>
+>- Highmem in new kernels is almost exclusively an embedded Linux
+>  topic=2E While there were a few late 32-bit desktop and laptop
+>  systems that had more than 2GB of RAM, these were fairly short
+>  lived and have long been unsupported by both the originally
+>  shipping operating systems and most Linux distros=2E Notable
+>  Examples include Pentium 4 "Northwood" desktops (sold 2003-2004),
+>  Core Duo laptops (2006-2007), and Arm Chromebooks (rk3288,
+>  Tegra k1, Exynos 5800, sold 2014-2017)=2E Some PowerPC G4 Macs
+>  and Atom Netbooks could be upgraded to 2GB=2E
+>  There are a small number of users, but they really love these
+>  devices and want to keep them alive, especially since they
+>  mark the peak of the respective 32-bit product lines=2E
+>
+>- Within the embedded market, highmem is mostly used on ARMv7
+>  based SoCs, but a few others also need it and still get kernel
+>  updates:
+>  PowerPC 85xx, 86xx and QoriQ P1/P2/P3/P4 (produced 2003-2021)
+>  were used in some long-lived embedded systems with 2GB of RAM
+>  or more=2E Mediatek MT7621 (MIPS32r3, introduced 2014 but still
+>  sold) needs highmem to reach the upper 64MB of the 512MB physical
+>  memory=2E Ingenic JZ4780 (MIPS32, released 2012) was used in the
+>  short-lived MIPS Creator CI20 with 1GB of RAM (256MB lowmem)
+>  and probably othes=2E Sparc32/LEON seems to be limited to 192MB of
+>  lowmem as a kernel design choice=2E Vortex86DX3 supports 2GB
+>  DDR3 memory=2E
+>  The kernel also supports highmem on ARMv4, ARMv5, ARMv6,
+>  PPC4xx, PPC82xx, PPC83xx, ARC, CSKY, Microblaze and Xtensa,
+>  as well as additional MIPS SoCs,  but so far I could not find
+>  any indication of any such machine with more than 1GB that
+>  keeps getting kernel updates=2E
+>
+>- The vast majority of new embedded ARMv7 machines have 1GB of
+>  RAM or less, which on many SoCs is a physical limitation
+>  a narrow DDR3 memory interface, as well as a cost tradeoff=2E
+>  The 1GB case is interesting because that usually means having
+>  only 768MB of lowmem plus 256MB of highmem, as well as 3GB
+>  of virtual addressing=2E I expect that almost all applications
+>  on these work just as well with CONFIG_VMSPLIT_3G_OPT, changing
+>  the limit to 1GB of lowmem and 2816MB of user address space=2E
+>  The same thing should work on x86 and powerpc (CONFIG_LOWMEM_SIZE)
+>  but not on mips and sparc where the limit is not configurable=2E
+>
+>- A few Arm SoCs have sparse physical address ranges for
+>  their RAM, e=2Eg=2E range per memory controllers like the Renesas
+>  R-Car Gen 2 or Broadcom BCM4708=2E These currently require highmem
+>  even on configurations with less than 1GB RAM, until we change
+>  the way that sparsemem is handled to support rearranging the
+>  linear map to fill all of lowmem=2E This still needs more work=2E
+>
+>- ARMv7 machines with 2GB remain in production, in particular
+>  with the popular i=2EMX6Dual/Quad chip that has a 64-bit wide DDR3
+>  interface and guaranteed manufacturer support until 2035=2E
+>  This is the configuration I expect to see struggle the most=2E
+>  Setting CONFIG_VMSPLIT_2G or CONFIG_VMSPLIT_2G_OPT should work
+>  for most of the users but can break if an application runs out
+>  of virtual address space, so this does require extensive testing,
+>  and possibly user space changes=2E An example of possibly affected
+>  userspace is Firefox, which needs more address space than other
+>  applications but can perhaps be replaced with another embedded
+>  browser=2E
+> =20
+>- ARMv7 machines with 4GB and more exist and keep getting
+>  kernel upgrades, but to my knowledge are not in production any
+>  more=2E These are mainly 2010-2015 era chips based on rare
+>  out-of-order cores like A15, A17 or PJ4 that were designed for
+>  low-end servers, chromebooks and network equipment but replaced
+>  with 64-bit chips shortly after=2E We had planned to bring a
+>  CONFIG_VMSPLIT_4G_4G option to ARMv7VE to keep supporting the full
+>  memory at a performance penalty, but currently have no plan to
+>  finish this (volunteers welcome)=2E
+>  There is still some hope to keep them working with a combination
+>  of CONFIG_VMSPLIT_2G and a modified ZRAM that can use high
+>  pages without CONFIG_HIGHMEM, but whether this works depends
+>  a lot on the application=2E I expect most of these products to
+>  stop getting kernel updates in the next few years due to aging
+>  hardware and increasing cost for updating out-of-tree patches
+>  on platforms that are not fully upstream=2E I do not remember any
+>  such devices with official support beyond 2030=2E
+>
+>My proposal based on the above assumptions is to gradually phase
+>out highmem over the next 2 years for mainline kernels, obviously
+>both the individual items and the timeline are completely up for
+>debate:
+>
+>1=2E mark CONFIG_HIGHMEM as 'depends on EXPERT', updating the
+>   Kconfig description to point to the kernel summit discussion
+>   any any decisions made here=2E
+>
+>2=2E Change the ARMv7 Kconfig defaults to CONFIG_VMSPLIT_3G_OPT
+>   and HIGHMEM=3Dn, to make it more likely to find possible
+>   regressions with that, without changing much for users=2E
+>   Possibly do the same for x86 and powerpc=2E
+>
+>3=2E Start removing __GFP_HIGHMEM from in-kernel allocations
+>   other than the page cache, in particular from individual
+>   device drivers and filesystem metadata where there is
+>   already little benefit=2E
+>
+>4=2E Remove HIGHMEM as an option from platforms that are thought
+>   to no longer need it (arc, armv5, ppc4xx, ppc82xx, ppc83xx,
+>   csky, microblaze, xtensa), mainly to validate the
+>   assertion that these use only lowmem=2E
+>
+>5=2E Split highmem on zram out into a separate Kconfig option
+>   that can be enabled without CONFIG_HIGHMEM or CONFIG_EXPERT
+>
+>6=2E Finish the "densemem" replacement for sparsemem, ideally
+>   allowing both very sparse lowmem areas and a boot-time
+>   vmsplit selection instead of the compile-time one=2E
+>
+>7=2E Finally, remove the highmem pagecache option, leaving only
+>   zram and custom device drivers as a way to access high
+>   pages=2E
+>
+>That last step should wait for an LTS kernel, ideally a version
+>that the CIP project's SLTS kernel is planning to keep supporting
+>for 10 years=2E The newest SLTS kernel was 6=2E12 last year, and the
+>phb-crytal-ball suggests that the next one in December 2026 may
+>be linux-7=2E4, the one after that in December 2028 (linux-7=2E15?)
+>seems too far out to plan for but would be another option=2E
+>
+>Unless there is an easy consensus on this on the mailing list,
+>I would like to lead a discussion session at the kernel summit
+>in order to get closer to a decision=2E
+>
+>     Arnd=20
+>
+>[1] https://osseu2025=2Esched=2Ecom/event/25VmZ/32-bit-linux-support-now-=
+and-in-the-future-arnd-bergmann-linaro
+>[2] https://www=2Eyoutube=2Ecom/watch?v=3DQiOMiyGCoTw
+>[3] https://lwn=2Enet/Articles/1035727/
+>[4] https://lore=2Ekernel=2Eorg/all/0047f565-ada4-491a-b157-f2d8dfde0ac0@=
+app=2Efastmail=2Ecom/
+>[5] https://lwn=2Enet/Articles/813201/
+>[6] https://lpc=2Eevents/event/16/contributions/1183/attachments/1062/202=
+8/highmem-api-2022-09-12=2Epdf
+>
 
-The Symphony board includes
-- uSD Card support
-- USB ports and OTG
-- Additional Gigabit Ethernet interface
-- Uart interfaces
-- OV5640 Camera support
-- GPIO Expander
-- CAN, I2C and general purpose interfaces
-
-Link: https://www.variscite.it/product/single-board-computers/symphony-board/
-
-Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Reviewed-by: Judith Mendez <jm@ti.com>
----
-v6:
- - Fixed wrong pinmux for uSD, external pullup already mounted on DATA lines
-v5:
- - Update to match up with coding guidelines for device tree
-v4:
- - Moved every MCUs-related node into the SOM dtsi
-v3:
- - Change compatible string to match existing mainline format
- - Fixed underscore typo
-v2:
- - Fixed warnings and cleanup
-
- arch/arm64/boot/dts/ti/Makefile               |   1 +
- .../dts/ti/k3-am62p5-var-som-symphony.dts     | 500 ++++++++++++++++++
- 2 files changed, 501 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts
-
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index aad9177930e6..b11cbf33422d 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -38,6 +38,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am62d2-evm.dtb
- 
- # Boards with AM62Px SoC
- dtb-$(CONFIG_ARCH_K3) += k3-am62p5-sk.dtb
-+dtb-$(CONFIG_ARCH_K3) += k3-am62p5-var-som-symphony.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am62p5-verdin-nonwifi-dahlia.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am62p5-verdin-nonwifi-dev.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am62p5-verdin-nonwifi-ivy.dtb
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts b/arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts
-new file mode 100644
-index 000000000000..4bb92fde6ab8
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts
-@@ -0,0 +1,500 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Variscite Symphony carrier board for VAR-SOM-AM62P
-+ *
-+ * Link: https://www.variscite.it/product/single-board-computers/symphony-board/
-+ *
-+ * Copyright (C) 2025 Variscite Ltd. - https://www.variscite.com/
-+ *
-+ */
-+
-+/dts-v1/;
-+
-+#include "k3-am62p5-var-som.dtsi"
-+
-+/ {
-+	model = "Variscite VAR-SOM-AM62P on Symphony-Board";
-+	compatible = "variscite,var-som-am62p-symphony", "variscite,var-som-am62p", "ti,am62p5";
-+
-+	aliases {
-+		ethernet0 = &cpsw_port1;
-+		ethernet1 = &cpsw_port2;
-+		mmc0 = &sdhci0;
-+		mmc1 = &sdhci1;
-+		mmc2 = &sdhci2;
-+		serial0 = &main_uart0;
-+		serial2 = &main_uart2;
-+		serial5 = &main_uart5;
-+		serial6 = &main_uart6;
-+		spi5 = &main_spi2;
-+		usb0 = &usb0;
-+		usb1 = &usb1;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	clk_ov5640_fixed: clock-24000000 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		button-back {
-+			label = "Back";
-+			linux,code = <KEY_BACK>;
-+			gpios = <&pca9534 1 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		button-home {
-+			label = "Home";
-+			linux,code = <KEY_HOME>;
-+			gpios = <&pca9534 2 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		button-menu {
-+			label = "Menu";
-+			linux,code = <KEY_MENU>;
-+			gpios = <&pca9534 3 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+
-+		led-heartbeat {
-+			label = "Heartbeat";
-+			linux,default-trigger = "heartbeat";
-+			gpios = <&pca9534 0 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	reg_2p8v: regulator-2p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "2P8V";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		vin-supply = <&reg_3v3>;
-+		regulator-always-on;
-+	};
-+
-+	reg_1p8v: regulator-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&reg_3v3>;
-+		regulator-always-on;
-+	};
-+
-+	reg_1p5v: regulator-1p5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P5V";
-+		regulator-min-microvolt = <1500000>;
-+		regulator-max-microvolt = <1500000>;
-+		vin-supply = <&reg_3v3>;
-+		regulator-always-on;
-+	};
-+
-+	reg_sdhc1_vmmc: regulator-sdhc1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "+V3.3_SD";
-+		vin-supply = <&reg_sdhc1_vmmc_int>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		enable-active-high;
-+		gpio = <&main_gpio0 30 GPIO_ACTIVE_HIGH>;
-+		bootph-all;
-+	};
-+
-+	reg_sdhc1_vmmc_int: regulator-sdhc1-int {
-+		compatible = "regulator-fixed";
-+		regulator-name = "+V3.3_SD_INT";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_sd1_vmmc>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		enable-active-high;
-+		gpio = <&main_gpio0 53 GPIO_ACTIVE_HIGH>;
-+		bootph-all;
-+	};
-+
-+	reg_sdhc1_vqmmc: regulator-sdhci1-vqmmc {
-+		compatible = "regulator-gpio";
-+		regulator-name = "+V3.3_SD_VQMMC";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_sd1_vqmmc>;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		gpios = <&main_gpio0 56 GPIO_ACTIVE_HIGH>;
-+		states = <1800000 0x0>,
-+			 <3300000 0x1>;
-+		bootph-all;
-+	};
-+
-+	reg_ov5640_buf_en: regulator-camera-buf-en {
-+		compatible = "regulator-fixed";
-+		regulator-name = "ov5640_buf_en";
-+		gpios = <&main_gpio0 21 GPIO_ACTIVE_HIGH>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	transceiver1: can-phy {
-+		compatible = "ti,tcan1042";
-+		#phy-cells = <0>;
-+		max-bitrate = <5000000>;
-+	};
-+
-+	connector {
-+		compatible = "gpio-usb-b-connector", "usb-b-connector";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_extcon>;
-+		label = "USB-C";
-+		id-gpios = <&main_gpio1 12 GPIO_ACTIVE_HIGH>;
-+		status = "okay";
-+
-+		port {
-+			usb_con_hs: endpoint {
-+				remote-endpoint = <&typec_hs>;
-+			};
-+		};
-+	};
-+};
-+
-+&cdns_csi2rx0 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		csi0_port0: port@0 {
-+			reg = <0>;
-+			status = "okay";
-+
-+			csi2rx0_in_sensor: endpoint {
-+				remote-endpoint = <&csi2_cam0>;
-+				bus-type = <4>; /* CSI2 DPHY. */
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+			};
-+		};
-+	};
-+};
-+
-+&cpsw3g {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_rgmii1>,
-+		    <&pinctrl_rgmii2>;
-+	status = "okay";
-+};
-+
-+&cpsw3g_mdio {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_mdio1>;
-+	status = "okay";
-+
-+	cpsw3g_phy1: ethernet-phy@5 {
-+		compatible = "ethernet-phy-id0283.bc30";
-+		reg = <5>;
-+		reset-gpios = <&pca9534 5 GPIO_ACTIVE_LOW>;
-+		reset-assert-us = <10000>;
-+		reset-deassert-us = <100000>;
-+	};
-+};
-+
-+&cpsw_port2 {
-+	/*
-+	 * The required RGMII TX and RX 2ns delays are implemented directly
-+	 * in hardware via passive delay elements on the Symphony PCB.
-+	 * No delay configuration is needed in software via PHY driver.
-+	 */
-+	phy-mode = "rgmii";
-+	phy-handle = <&cpsw3g_phy1>;
-+	status = "okay";
-+};
-+
-+&dphy0 {
-+	status = "okay";
-+};
-+
-+&main_i2c0{
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c0>;
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	ov5640: camera@3c {
-+		compatible = "ovti,ov5640";
-+		reg = <0x3c>;
-+		clocks = <&clk_ov5640_fixed>;
-+		clock-names = "xclk";
-+		AVDD-supply = <&reg_2p8v>;
-+		DOVDD-supply = <&reg_1p8v>;
-+		DVDD-supply = <&reg_1p5v>;
-+		powerdown-gpios = <&main_gpio0 10 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&main_gpio0 22 GPIO_ACTIVE_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_ov5640>;
-+
-+		port {
-+			csi2_cam0: endpoint {
-+				remote-endpoint = <&csi2rx0_in_sensor>;
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+			};
-+		};
-+	};
-+
-+	/* GPIO expander */
-+	pca9534: gpio@20 {
-+		compatible = "nxp,pca9534";
-+		reg = <0x20>;
-+		gpio-controller;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_pca9534>;
-+		interrupt-parent = <&main_gpio1>;
-+		interrupts = <30 IRQ_TYPE_EDGE_FALLING>;
-+		#gpio-cells = <2>;
-+		status = "okay";
-+
-+		usb3-sel-hog {
-+			gpio-hog;
-+			gpios = <4 0>;
-+			output-low;
-+			line-name = "usb3_sel";
-+		};
-+
-+		eth-som-vselect-hog {
-+			gpio-hog;
-+			gpios = <6 0>;
-+			output-low;
-+			line-name = "eth-vselect";
-+		};
-+
-+		eth-mdio-enable-hog {
-+			gpio-hog;
-+			gpios = <7 0>;
-+			output-high;
-+			line-name = "eth-mdio-enable";
-+		};
-+	};
-+};
-+
-+&main_i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c1>;
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	rtc@68 {
-+		compatible = "dallas,ds1337";
-+		reg = <0x68>;
-+	};
-+};
-+
-+&main_mcan0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_mcan0>;
-+	phys = <&transceiver1>;
-+	status = "okay";
-+};
-+
-+&main_pmx0 {
-+	pinctrl_extcon: main-extcon-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01a8, PIN_INPUT, 7) /* (F25) MCASP0_AFSX.GPIO1_12 */
-+		>;
-+	};
-+
-+	pinctrl_i2c0: main-i2c0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01e0, PIN_INPUT_PULLUP, 0) /* (B25) I2C0_SCL */
-+			AM62PX_IOPAD(0x01e4, PIN_INPUT_PULLUP, 0) /* (A24) I2C0_SDA */
-+		>;
-+	};
-+
-+	pinctrl_i2c1: main-i2c1-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01e8, PIN_INPUT_PULLUP, 0) /* (C24) I2C1_SCL */
-+			AM62PX_IOPAD(0x01ec, PIN_INPUT_PULLUP, 0) /* (B24) I2C1_SDA */
-+		>;
-+		bootph-all;
-+	};
-+
-+	pinctrl_mcan0: main-mcan0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01dc, PIN_INPUT, 0) /* (F20) MCAN0_RX */
-+			AM62PX_IOPAD(0x01d8, PIN_OUTPUT, 0) /* (B23) MCAN0_TX */
-+		>;
-+	};
-+
-+	pinctrl_mmc1: main-mmc1-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x023c, PIN_INPUT, 0) /* (H20) MMC1_CMD */
-+			AM62PX_IOPAD(0x0234, PIN_OUTPUT, 0) /* (J24) MMC1_CLK */
-+			AM62PX_IOPAD(0x0230, PIN_INPUT, 0) /* (H21) MMC1_DAT0 */
-+			AM62PX_IOPAD(0x022c, PIN_INPUT, 0) /* (H23) MMC1_DAT1 */
-+			AM62PX_IOPAD(0x0228, PIN_INPUT, 0) /* (H22) MMC1_DAT2 */
-+			AM62PX_IOPAD(0x0224, PIN_INPUT, 0) /* (H25) MMC1_DAT3 */
-+			AM62PX_IOPAD(0x0240, PIN_INPUT, 0) /* (D23) MMC1_SDCD */
-+		>;
-+		bootph-all;
-+	};
-+
-+	pinctrl_rgmii2: main-rgmii2-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x0184, PIN_INPUT, 0) /* (E19) RGMII2_RD0 */
-+			AM62PX_IOPAD(0x0188, PIN_INPUT, 0) /* (E16) RGMII2_RD1 */
-+			AM62PX_IOPAD(0x018c, PIN_INPUT, 0) /* (E17) RGMII2_RD2 */
-+			AM62PX_IOPAD(0x0190, PIN_INPUT, 0) /* (C19) RGMII2_RD3 */
-+			AM62PX_IOPAD(0x0180, PIN_INPUT, 0) /* (D19) RGMII2_RXC */
-+			AM62PX_IOPAD(0x017c, PIN_INPUT, 0) /* (F19) RGMII2_RX_CTL */
-+			AM62PX_IOPAD(0x016c, PIN_INPUT, 0) /* (B19) RGMII2_TD0 */
-+			AM62PX_IOPAD(0x0170, PIN_INPUT, 0) /* (A21) RGMII2_TD1 */
-+			AM62PX_IOPAD(0x0174, PIN_INPUT, 0) /* (D17) RGMII2_TD2 */
-+			AM62PX_IOPAD(0x0178, PIN_INPUT, 0) /* (A19) RGMII2_TD3 */
-+			AM62PX_IOPAD(0x0168, PIN_INPUT_PULLDOWN, 0) /* (D16) RGMII2_TXC */
-+			AM62PX_IOPAD(0x0164, PIN_INPUT, 0) /* (A20) RGMII2_TX_CTL */
-+		>;
-+	};
-+
-+	pinctrl_spi2: main-spi2-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01b0, PIN_INPUT, 1) /* (G20) MCASP0_ACLKR.SPI2_CLK */
-+			AM62PX_IOPAD(0x0194, PIN_OUTPUT, 1) /* (D25) MCASP0_AXR3.SPI2_D0 */
-+			AM62PX_IOPAD(0x0198, PIN_INPUT, 1) /* (E25) MCASP0_AXR2.SPI2_D1 */
-+			AM62PX_IOPAD(0x01ac, PIN_OUTPUT, 7) /* (G23) MCASP0_AFSR.GPIO1_13 */
-+		>;
-+	};
-+
-+	pinctrl_uart0: main-uart0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x1c8, PIN_INPUT, 0)	/* (A22) UART0_RXD */
-+			AM62PX_IOPAD(0x1cc, PIN_OUTPUT, 0)	/* (B22) UART0_TXD */
-+		>;
-+		bootph-all;
-+	};
-+
-+	pinctrl_uart2: main-uart2-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x005c, PIN_INPUT_PULLUP, 2) /* (AC25) GPMC0_AD8.UART2_RXD */
-+			AM62PX_IOPAD(0x0060, PIN_OUTPUT, 2) /* (AB25) GPMC0_AD9.UART2_TXD */
-+		>;
-+	};
-+
-+	pinctrl_uart6: main-uart6-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x009c, PIN_INPUT_PULLUP, 3) /* (AD24) GPMC0_WAIT1.UART6_RXD */
-+			AM62PX_IOPAD(0x0244, PIN_OUTPUT, 1) /* (D24) MMC1_SDWP.UART6_TXD */
-+		>;
-+	};
-+
-+	pinctrl_usb1: main-usb1-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x0258, PIN_OUTPUT, 0) /* (G21) USB1_DRVVBUS */
-+		>;
-+	};
-+
-+	pinctrl_ov5640: main-ov5640-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x0028, PIN_OUTPUT, 7) /* (N20) OSPI0_D7.GPIO0_10 */
-+			AM62PX_IOPAD(0x0054, PIN_OUTPUT, 7) /* (V24) GPMC0_AD6.GPIO0_21 */
-+			AM62PX_IOPAD(0x0058, PIN_OUTPUT, 7) /* (W25) GPMC0_AD7.GPIO0_22 */
-+		>;
-+	};
-+
-+	pinctrl_pca9534: main-pca9534-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01f0, PIN_INPUT, 7) /* (C25) EXT_REFCLK1.GPIO1_30 */
-+		>;
-+	};
-+
-+	pinctrl_sd1_vmmc: main-sd1-vmmc-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x0078, PIN_OUTPUT, 7) /* (AC24) GPMC0_AD15.GPIO0_30 */
-+			AM62PX_IOPAD(0x00d8, PIN_OUTPUT, 7) /* (AE22) VOUT0_DATA8.GPIO0_53 */
-+		>;
-+		bootph-all;
-+	};
-+
-+	pinctrl_sd1_vqmmc: main-sd1-vqmmc-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x00e4, PIN_OUTPUT, 7) /* (AE21) VOUT0_DATA11.GPIO0_56 */
-+		>;
-+		bootph-all;
-+	};
-+};
-+
-+&main_spi2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_spi2>;
-+	ti,pindir-d0-out-d1-in;
-+	cs-gpios = <&main_gpio1 13 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+};
-+
-+&main_uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart0>;
-+	status = "okay";
-+};
-+
-+&main_uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart2>;
-+	status = "okay";
-+};
-+
-+&main_uart6 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart6>;
-+	status = "okay";
-+};
-+
-+&sdhci1 {
-+	/* SD Card */
-+	vmmc-supply = <&reg_sdhc1_vmmc>;
-+	vqmmc-supply = <&reg_sdhc1_vqmmc>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_mmc1>;
-+	disable-wp;
-+	bootph-all;
-+	status="okay";
-+};
-+
-+&ti_csi2rx0 {
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	usb-role-switch;
-+	status = "okay";
-+
-+	port {
-+		typec_hs: endpoint {
-+			remote-endpoint = <&usb_con_hs>;
-+		};
-+	};
-+};
-+
-+&usb1 {
-+	dr_mode = "host";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usb1>;
-+	status = "okay";
-+};
-+
-+&usbss0 {
-+	status = "okay";
-+};
-+
-+&usbss1 {
-+	status = "okay";
-+};
--- 
-2.47.3
-
+1 GB systems used highmem too, sadly=2E And 1 GB was the norm for a big ch=
+uck of the late 32-bit era=2E
 
