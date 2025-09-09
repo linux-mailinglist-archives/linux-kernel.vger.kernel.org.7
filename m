@@ -1,231 +1,144 @@
-Return-Path: <linux-kernel+bounces-807760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73146B4A8F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57AC6B4A8ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E44188995D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:53:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347301886DDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FE32D248B;
-	Tue,  9 Sep 2025 09:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C442D1F6B;
+	Tue,  9 Sep 2025 09:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="dtmKSne/"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="T9bxLVfO"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2254623A9AD;
-	Tue,  9 Sep 2025 09:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6EF2C08A2
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757411480; cv=none; b=O/VpoM8kcQ8fbqhcCxkK1CIE+vfLnhQ7H6fS49KCL+aZkNjcJnQ7q8IFXieAR0GgXgx3qoW5JM2I70V6MHWoS80T0gbP2ffJ+O59jZ6TtcKNQUWxcDZWicrdTVFv9As3cFetSJs2+l+ofgX8njmd0kS3CVZAO+tUIjH/iAdroXw=
+	t=1757411478; cv=none; b=o9SfOYXx2DFQraz8asCkS/Jk6NYDxmqU1pHnlLm4fPkxOVkpbqo6K6sQqc3u+m48ezW45b4ZiRw8MKvbXkPo1pR/ZsNUbLoT2gw82hbGkuDIYzasQ5vjIFT8Y/TSPcTO8j7cFu2fAbcn6f12YESqpAEqjsXY1o7LEsV4LQkR2F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757411480; c=relaxed/simple;
-	bh=dxAgqHYfwc+Jq/6iS88EyuM4BR3dfbdXdAyPr/Im890=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pr+H2vn/NA1N91c2SxwdVvoM521aod/PIYwO2OrYhcp5XFSeixuwC2Ox9C+YjMijVtkGRy7IxAzyWmcw0YbxQ6lV2Wd+hbPxHWYEIT1xgT6qCgCxoNNP849kIxTcGijxnAPdgeltW4/YKHeTOz5PhgpMVJL4pAV6ZCqMUVsTyMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=dtmKSne/; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=UXVb8+XVTA+K7M34tFHgxCD3hHpqzNEL7ZAPbcMEDKg=; b=dtmKSne/vV66aDS+9THZZ9GXJr
-	F/wABRDacifQCpnTsHdwECyvrgxe6K6xipEH46NCv2I2Rrz4hEbwNDRi+1g/NVeB5VdUUvNUAkFWQ
-	WQCGjt0XWpPWPDCyPxcW99olCQ5dSBwGxeSkHbqvWZFOsIb3jgXR9gv8bzaCHhuYHQOXbeUt78/Le
-	6vJ1zezscnJf5rFzCLgLM2bSPiv7s3zMQMK7KbuU9gqpFT6a0uAVpUaZigw3FyxWhrZq0k7z/6sj6
-	MQn0RUQ3fm9OqREp8ivu0k5C/zQUVjUNCEbPCoetqs4Uact9KZ6/5IyonW25lRa9C2CQe/3X12R1n
-	MpqMIHgA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uvuke-003uPR-1b;
-	Tue, 09 Sep 2025 17:50:57 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 09 Sep 2025 17:50:56 +0800
-Date: Tue, 9 Sep 2025 17:50:56 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Menglong Dong <dongml2@chinatelecom.cn>,
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	kernel test robot <oliver.sang@intel.com>, tgraf@suug.ch,
-	linux-crypto@vger.kernel.org
-Subject: [v2 PATCH] rhashtable: Use rcu_dereference_all and
- rcu_dereference_all_check
-Message-ID: <aL_4gCJibYMW0J98@gondor.apana.org.au>
-References: <20250829021436.19982-1-dongml2@chinatelecom.cn>
- <20250828222357.55fab4c2@batman.local.home>
- <d1da3939-62e6-4ad1-afcc-5710ce3f6cbd@paulmck-laptop>
- <20250901170655.0757884ad7c2afb63ced3230@kernel.org>
- <615da75d-cb2f-4e7e-9e11-6b19f03fea6c@paulmck-laptop>
- <aLlflTV_SDwMB7mq@gondor.apana.org.au>
- <c3ada9ab-0676-4d73-9feb-9f401a031a4e@paulmck-laptop>
+	s=arc-20240116; t=1757411478; c=relaxed/simple;
+	bh=EJa7vuO9thKOOMPB5lAnUhOysFC9tBG1PWSpmUvUADI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dERhOaQ/RoNbPJi+rsUn7TRjhj2zuQ7Oxj4QLR36dat2YvWNZR1Z/PVdWzXxUT8aIY2h4G93OZgrb5/4MYwp0UXboGO9BTz/3VmJLe4tQm7E1kTnoSe7TA7NctL4yFGyGls6/B78YGwcRWyUdgLpa9jyKWsTYNb2jpX5nz9B+Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=T9bxLVfO; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61d143aa4acso8669255a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:51:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1757411475; x=1758016275; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ttnhzG/W0udtzRhzi90XxZcALtTq/DsFRIfwgo9QFeM=;
+        b=T9bxLVfO9qnla7gK+DQ6KnfEp9PcZPfMI0juxYwKkIN8L+U0/9QtiM/MaP1IfBGXn8
+         H/t/poqrtPaoVd4v2pI5jPApbip5ymqBzo/QXB6oTPWTU6l6ehGqMurm/j0ueGzYk1mp
+         UyN+Uqryq1Qioo4GayF6F3vwegkDxolKkUImHyHMIVOwTPddFrkha991ZSM3WSt7vqwb
+         6WhCG4a7HJKgPKlUbtM3xtDrctarDG4ZK1XEWbvk9kgpP0lF/IQztL9vefue+4jinXqt
+         CKv+I23mTrBPw7hAgNBaBC6AhvSOMOgx/mxm5aQFarcQEUmOV8+uvi7loHgjHQzEjuyE
+         sUlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757411475; x=1758016275;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ttnhzG/W0udtzRhzi90XxZcALtTq/DsFRIfwgo9QFeM=;
+        b=ImHLR6DOsd8GyaQ1LJ6WX/cB4ypK8jiguqTeevZBwljtCdoNrsknvgkoRDQis7UmIh
+         QFs3Yzc/nW4abCdzWlypu2P5XY+ZENy1fV/hqJL04KSoYbOq/M7wneiB7UKID0iH7T3d
+         Bi5BuslwykRuoVjILR31Jjl1AZqpB+wJi127uWgJdXjWv4XV3Nj/3A9neFafm6lhdQFh
+         G20PM9QypvQCFXYR5ZwcXlywxiY8Jpu4KeYaXTqNsA86DZzKD4kGoBXlflFgv47MYpr3
+         SV96bySc+sHepJvpwx+5jXx3m+bZLqNmyYOoZNIg4v/dEnivC+fJhgyg4wTCNc2K4bhp
+         mfjg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0d4b6dHW/0dlhljsN0Ir6Zzv4rwndZHlyBJE7+ivWmfuZ3JWjU/S48CaMnoZ3wm+TutUFcsKjcIVkpp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL05nuANoSgwppjFL9JH7z5nOj/bCZxAzB29UvwvmvArYZPcd1
+	bamg6dzoZKuotgQaEn7tWxYlPpEEE8t2ABFpTZXRNsO0U0N179+d/qY3vphtpMJVzAI=
+X-Gm-Gg: ASbGncsGPR/wrzaG2fCJ3S7du1dz4kUZ6e25JA/8OexoJPMbKjVdb8/gObBtvr0c8Db
+	pXtpLUjxJTrFWvVBMgBS0TOElOgo0Hsx3Ggohlhub+K9qEvy3PCBmXanQdE9yd07Lr6rz51NcBi
+	FErU87pGIA91wvTT4I2YoZe+x7xVXb25w/S6jzEYvxKNV9MyCSvVMLJuqmhBKMcgPCKM37WlLTD
+	tGcZJieNuUX8VfYTVRUJrJI3WuYNGoKkf05sx1Mpd6jH+ICJkZoUtBA9oIKvOlNikoKm1hy7wFo
+	xvREytSx03tNe3zcr8+WQbwt9DRhsyaPymfpYEjkGgAK3D1qetuq7CweP2g7COKWXFkAdil7fMF
+	dUUIh1JvojJIGytSfbZCc0Db8
+X-Google-Smtp-Source: AGHT+IHL1A4xOak1CBPxy0OgkkpejE8KlndP1MveZHrFbWUYAt9r14ZZNm1gXyDoH8GW8mDi0O4o2A==
+X-Received: by 2002:a05:6402:1d52:b0:626:6ce5:4b8 with SMTP id 4fb4d7f45d1cf-6266ce50670mr9703104a12.32.1757411474932;
+        Tue, 09 Sep 2025 02:51:14 -0700 (PDT)
+Received: from cloudflare.com ([2a09:bac5:5063:295f::41f:a])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62bfe99febdsm923822a12.8.2025.09.09.02.51.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 02:51:14 -0700 (PDT)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: Alexei Starovoitov <ast@kernel.org>,  Daniel Borkmann
+ <daniel@iogearbox.net>,  Andrii Nakryiko <andrii@kernel.org>,  Martin
+ KaFai Lau <martin.lau@linux.dev>,  Eduard Zingerman <eddyz87@gmail.com>,
+  Song Liu <song@kernel.org>,  Yonghong Song <yonghong.song@linux.dev>,
+  John Fastabend <john.fastabend@gmail.com>,  KP Singh
+ <kpsingh@kernel.org>,  Stanislav Fomichev <sdf@fomichev.me>,  Hao Luo
+ <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>,  Mykola Lysenko
+ <mykolal@fb.com>,  Shuah Khan <shuah@kernel.org>,  bpf@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 1/5] selftests/bpf: sockmap_redir: Simplify
+ try_recv()
+In-Reply-To: <20250905-redir-test-pass-drop-v1-1-9d9e43ff40df@rbox.co> (Michal
+	Luczaj's message of "Fri, 05 Sep 2025 13:11:41 +0200")
+References: <20250905-redir-test-pass-drop-v1-0-9d9e43ff40df@rbox.co>
+	<20250905-redir-test-pass-drop-v1-1-9d9e43ff40df@rbox.co>
+Date: Tue, 09 Sep 2025 11:51:13 +0200
+Message-ID: <87ikhs54z2.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3ada9ab-0676-4d73-9feb-9f401a031a4e@paulmck-laptop>
+Content-Type: text/plain
 
-On Mon, Sep 08, 2025 at 08:23:27AM -0700, Paul E. McKenney wrote:
+On Fri, Sep 05, 2025 at 01:11 PM +02, Michal Luczaj wrote:
+> try_recv() was meant to support both @expect_success cases, but all the
+> callers use @expect_success=false anyway. Drop the unused logic and fold in
+> MSG_DONTWAIT. Adapt callers.
 >
-> I am guessing that you want to send this up via the rhashtable path.
+> Subtle change here: recv() return value of 0 will also be considered (an
+> unexpected) success.
+>
+> Signed-off-by: Michal Luczaj <mhal@rbox.co>
+> ---
+>  .../selftests/bpf/prog_tests/sockmap_redir.c       | 25 +++++++++-------------
+>  1 file changed, 10 insertions(+), 15 deletions(-)
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c b/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
+> index 9c461d93113db20de65ac353f92dfdbe32ffbd3b..c1bf1076e8152b7d83c3e07e2dce746b5a39cf7e 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
+> @@ -144,17 +144,14 @@ static void get_redir_params(struct redir_spec *redir,
+>  		*redirect_flags = 0;
+>  }
+>  
+> -static void try_recv(const char *prefix, int fd, int flags, bool expect_success)
+> +static void fail_recv(const char *prefix, int fd, int more_flags)
+>  {
+>  	ssize_t n;
+>  	char buf;
+>  
+> -	errno = 0;
+> -	n = recv(fd, &buf, 1, flags);
+> -	if (n < 0 && expect_success)
+> -		FAIL_ERRNO("%s: unexpected failure: retval=%zd", prefix, n);
+> -	if (!n && !expect_success)
+> -		FAIL("%s: expected failure: retval=%zd", prefix, n);
+> +	n = recv(fd, &buf, 1, MSG_DONTWAIT | more_flags);
+> +	if (n >= 0)
+> +		FAIL("%s: unexpected success: retval=%zd", prefix, n);
+>  }
 
-Yes I could push that along.
+This bit, which you highlighted in the description, I don't get.
 
->  * This is similar to rcu_dereference_check(), but allows protection
->  * by all forms of vanilla RCU readers, including preemption disabled,
->  * bh-disabled, and interrupt-disabled regions of code.  Note that "vanilla
->  * RCU" excludes SRCU and the various Tasks RCU flavors.  Please note
->  * that this macro should not be backported to any Linux-kernel version
->  * preceding v5.0 due to changes in synchronize_rcu() semantics prior
->  * to that version.
-> 
-> The "should not" vs. "can not" accounts for the possibility of people
-> using synchronize_rcu_mult(), but someone wanting to do that best know
-> what they are doing.  ;-)
+If we're expecting to receive exactly one byte, why treat a short read
+as a succcess? Why not make it a strict "n != 1" check?
 
-Thanks! I've incorported that into the patch:
-
----8<---
-Add rcu_dereference_all and rcu_dereference_all_check so that
-library code such as rhashtable can be used with any RCU variant.
-
-As it stands rcu_dereference is used within rashtable, which
-creates false-positive warnings if the user calls it from another
-RCU context, such as preempt_disable().
-
-Use the rcu_dereference_all and rcu_dereference_all_check calls
-in rhashtable to suppress these warnings.
-
-Also replace the rcu_dereference_raw calls in the list iterators
-with rcu_dereference_all to uncover buggy calls.
-
-Reported-by: Menglong Dong <dongml2@chinatelecom.cn>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 120536f4c6eb..448eb1f0cb48 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -713,6 +713,24 @@ do {									      \
- 				(c) || rcu_read_lock_sched_held(), \
- 				__rcu)
- 
-+/**
-+ * rcu_dereference_all_check() - rcu_dereference_all with debug checking
-+ * @p: The pointer to read, prior to dereferencing
-+ * @c: The conditions under which the dereference will take place
-+ *
-+ * This is similar to rcu_dereference_check(), but allows protection
-+ * by all forms of vanilla RCU readers, including preemption disabled,
-+ * bh-disabled, and interrupt-disabled regions of code.  Note that "vanilla
-+ * RCU" excludes SRCU and the various Tasks RCU flavors.  Please note
-+ * that this macro should not be backported to any Linux-kernel version
-+ * preceding v5.0 due to changes in synchronize_rcu() semantics prior
-+ * to that version.
-+ */
-+#define rcu_dereference_all_check(p, c) \
-+	__rcu_dereference_check((p), __UNIQUE_ID(rcu), \
-+				(c) || rcu_read_lock_any_held(), \
-+				__rcu)
-+
- /*
-  * The tracing infrastructure traces RCU (we want that), but unfortunately
-  * some of the RCU checks causes tracing to lock up the system.
-@@ -767,6 +785,14 @@ do {									      \
-  */
- #define rcu_dereference_sched(p) rcu_dereference_sched_check(p, 0)
- 
-+/**
-+ * rcu_dereference_all() - fetch RCU-all-protected pointer for dereferencing
-+ * @p: The pointer to read, prior to dereferencing
-+ *
-+ * Makes rcu_dereference_check() do the dirty work.
-+ */
-+#define rcu_dereference_all(p) rcu_dereference_all_check(p, 0)
-+
- /**
-  * rcu_pointer_handoff() - Hand off a pointer from RCU to other mechanism
-  * @p: The pointer to hand off
-diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
-index e740157f3cd7..05a221ce79a6 100644
---- a/include/linux/rhashtable.h
-+++ b/include/linux/rhashtable.h
-@@ -272,13 +272,13 @@ struct rhash_lock_head __rcu **rht_bucket_nested_insert(
- 	rcu_dereference_protected(p, lockdep_rht_mutex_is_held(ht))
- 
- #define rht_dereference_rcu(p, ht) \
--	rcu_dereference_check(p, lockdep_rht_mutex_is_held(ht))
-+	rcu_dereference_all_check(p, lockdep_rht_mutex_is_held(ht))
- 
- #define rht_dereference_bucket(p, tbl, hash) \
- 	rcu_dereference_protected(p, lockdep_rht_bucket_is_held(tbl, hash))
- 
- #define rht_dereference_bucket_rcu(p, tbl, hash) \
--	rcu_dereference_check(p, lockdep_rht_bucket_is_held(tbl, hash))
-+	rcu_dereference_all_check(p, lockdep_rht_bucket_is_held(tbl, hash))
- 
- #define rht_entry(tpos, pos, member) \
- 	({ tpos = container_of(pos, typeof(*tpos), member); 1; })
-@@ -373,7 +373,7 @@ static inline struct rhash_head *__rht_ptr(
- static inline struct rhash_head *rht_ptr_rcu(
- 	struct rhash_lock_head __rcu *const *bkt)
- {
--	return __rht_ptr(rcu_dereference(*bkt), bkt);
-+	return __rht_ptr(rcu_dereference_all(*bkt), bkt);
- }
- 
- static inline struct rhash_head *rht_ptr(
-@@ -497,7 +497,7 @@ static inline void rht_assign_unlock(struct bucket_table *tbl,
- 	for (({barrier(); }),						\
- 	     pos = head;						\
- 	     !rht_is_a_nulls(pos);					\
--	     pos = rcu_dereference_raw(pos->next))
-+	     pos = rcu_dereference_all(pos->next))
- 
- /**
-  * rht_for_each_rcu - iterate over rcu hash chain
-@@ -513,7 +513,7 @@ static inline void rht_assign_unlock(struct bucket_table *tbl,
- 	for (({barrier(); }),					\
- 	     pos = rht_ptr_rcu(rht_bucket(tbl, hash));		\
- 	     !rht_is_a_nulls(pos);				\
--	     pos = rcu_dereference_raw(pos->next))
-+	     pos = rcu_dereference_all(pos->next))
- 
- /**
-  * rht_for_each_entry_rcu_from - iterated over rcu hash chain from given head
-@@ -560,7 +560,7 @@ static inline void rht_assign_unlock(struct bucket_table *tbl,
-  * list returned by rhltable_lookup.
-  */
- #define rhl_for_each_rcu(pos, list)					\
--	for (pos = list; pos; pos = rcu_dereference_raw(pos->next))
-+	for (pos = list; pos; pos = rcu_dereference_all(pos->next))
- 
- /**
-  * rhl_for_each_entry_rcu - iterate over rcu hash table list of given type
-@@ -574,7 +574,7 @@ static inline void rht_assign_unlock(struct bucket_table *tbl,
-  */
- #define rhl_for_each_entry_rcu(tpos, pos, list, member)			\
- 	for (pos = list; pos && rht_entry(tpos, pos, member);		\
--	     pos = rcu_dereference_raw(pos->next))
-+	     pos = rcu_dereference_all(pos->next))
- 
- static inline int rhashtable_compare(struct rhashtable_compare_arg *arg,
- 				     const void *obj)
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+[...]
 
