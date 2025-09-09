@@ -1,161 +1,233 @@
-Return-Path: <linux-kernel+bounces-807770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1C78B4A8EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:55:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A88DCB4A8F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065303ACCDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:55:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0B5D361FB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4149F2D3EFB;
-	Tue,  9 Sep 2025 09:53:58 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA1B2C15A0
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9372D23B8;
+	Tue,  9 Sep 2025 09:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="he7uv1AN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1062C21D1
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757411637; cv=none; b=kOb30qn4VHkUgkjawOrkL9kfOQfUis7jMXmPJFbu7VIbBYfQ2zzLqL7/ypjOza6BX7aPLtg8x8cXAAvif0RBJFdY6fKG3uJ9306BB1TtbpqBZvSt9dr6wXPMYZu6dmBkhzIahPjD09sdlN5YTsInm+UO4e7BYWilhKn6jTp/4NU=
+	t=1757411760; cv=none; b=eZADRJPegRFDOK7J6gSmKimqIWic2xHqoKcFLi1Ru2e3xeI51P28uyGUl9cdXPLed8X03y1XZeSvj8pTH0oWDYfBu4m7AoTIHLV2ElxucX347KknoC+ruLa1ybmgtqdoLhWbnXXbhcrW9eyTL1PyUXM+qUbKJRIpkDpAgv9/BZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757411637; c=relaxed/simple;
-	bh=jddvsvw7DK9PN8pRakOPEzf8iaNd0mlQfX3YALv7OyE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EYcFmZgXkzCG2qnvcpWHvnAVQ7cydULeqWB4fZE23E5epuqzjTH1pQUJgJJWTtuTpT5SiOEfPTqC3lI6ZHugnEcs4AC1LbyasRkWkf/6vFq9eFZBU9UYh2ClAcBdUQMracwQqCLC3CthkQiAOvjh5979vGlLcU5w58kGPrK6uW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.89])
-	by gateway (Coremail) with SMTP id _____8AxztIy+b9op1IIAA--.17602S3;
-	Tue, 09 Sep 2025 17:53:54 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.89])
-	by front1 (Coremail) with SMTP id qMiowJAx_8Eu+b9oVfGJAA--.41496S2;
-	Tue, 09 Sep 2025 17:53:53 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	Xuefeng Li <lixuefeng@loongson.cn>,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH] LoongArch: Allow specify SIMD width via kernel parameters
-Date: Tue,  9 Sep 2025 17:53:39 +0800
-Message-ID: <20250909095339.4083769-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1757411760; c=relaxed/simple;
+	bh=VKk+DfPeoBviWHTSePPOcfSJ1Fx+ahLOMPVb2ffk1QY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pkcd+1U1f31WRiv4id7Bfmh6jRuMQiv0hCuDngMi7gMf2UPWqOCvJ/77xoItiJ2aIC8C8e+GvG7gHQbSQwiFNInmgIXqTKPqc854WQaXyTAqKpRAC8jCSmYltaAvU7PzlRYZaqnsHUOh/ZZdH43tmY4B1lrWzXkFfgELuMuYb60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=he7uv1AN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757411757;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uuhn5XZ+k/yXfBkz6uI/EJtHiraKm76UcsqU/6SM9xI=;
+	b=he7uv1ANAW01eUnXD+VlJxKPV9Yg/8eHB0FFOy7vX9PsI3RMRddchVeInBeXBfCt+Njqsd
+	mIZlrOJICr129i4mcdn8gv6Kn/R4KeBGOenSyIexiOOP5RkI5uCpfEj1ysuOuesGxJHpra
+	tsdiZBstVMj0VcVmxEbVH6/XjqSqP6k=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-497-d0khLK5PMra81t34qcWL9Q-1; Tue, 09 Sep 2025 05:55:55 -0400
+X-MC-Unique: d0khLK5PMra81t34qcWL9Q-1
+X-Mimecast-MFC-AGG-ID: d0khLK5PMra81t34qcWL9Q_1757411755
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b9912a07dso32781335e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:55:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757411754; x=1758016554;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uuhn5XZ+k/yXfBkz6uI/EJtHiraKm76UcsqU/6SM9xI=;
+        b=sDbmnnXwyo23oxqXEWEjj5ILkm3AoDMNbofsEMozucZ7ayOtKKS5LgXjqnKaqR0JTg
+         12KlwVk4g9FsiBWi2zgVKDcox44r54xE12alJs+ccpKYQQ3jTxl0SiqrkpFPdM/0xQo+
+         TZEnPgNyXHzTgyKhjYfjBfeHvLzIu7txz52/mkabdLdG66llfcJejZX2kwHibFTXV4pW
+         bfyQ9EmTvIzZcC9tt+C3wPMfBD8cmGzTJ+ZNciw9k5n3NgvxBkUIx6mjo2WTdOgQRfdU
+         gdaJtuKRsEiRLgc4n7Q8JTz8hCbUiJi0PRn1sZ/fuH9O/UDiydgtyK/hAAkwc9ZAbtB/
+         Lixw==
+X-Gm-Message-State: AOJu0YzsyYvOt0LtesGfSCd/LserpGiU/Rt9/A3y+43mKAQ0awPlxEK0
+	2mamRmsqUaTp6Vnz/HHdwhUzY1uFRa9rnujQlgTglV2D9JtgRpVQBUsH3ZMJfDaxWly3Z8bD4IO
+	FrdDEQZGu3QTkEaZfeVNchgVKJefEYBoeaxaKsXtwedGd4EYZ9AzP8Ee1p06+UKSszntzRokQNa
+	cJcmPz6H3BM7BQl3G91Q64pcDyX3jTJgUNlpDtlrzvWuAhgA==
+X-Gm-Gg: ASbGnculrIWf49RdfNCKmD448IhYWGOl0xQ42dm8yLfUzewEL04KzHuPnKUK2S0fqVd
+	dj6ezT1EC4PYivNNTEsJmYwql9t6fnnPYLurv9rWe2QYq/c/dMRF+XdVUM2XofV8yPsfB+m5g+P
+	oz3oet8Zg0aCLDfJFjWMCGt3FfcnL9QTPm9etFWHHPO8qyO5JUXxElj/tlQ9m8SdEg+XWphCpL7
+	CYbM+/ewt5SyZW2lVFANwql4vr8I6UZOrVtFe2wh1lslsGmcY12AdSZogmWWvVVkwjRRrtiu6pv
+	2QQVbK8p17sCsDQgIB0lUoGq08JgvEmzznxZV6fZG4N8PqgPQ8ImqSdt9iKSx45dakkoz4ogF5E
+	4nbwCr9Z3tO7LF+G8D/Y2SgXzPbYDjBE2MGsq4dGY+XRQj14s3OwTOTZ4iY/beuJSpb4=
+X-Received: by 2002:a05:600c:3510:b0:45b:8366:2a1a with SMTP id 5b1f17b1804b1-45ddde829ebmr106120625e9.11.1757411754538;
+        Tue, 09 Sep 2025 02:55:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFywLrR0DszeWqgd9Y5zxb2+w3HhCmkVKXj/s/GXP5Ci/2ssUudLpQTkEWfsIqoDp37rN0MYw==
+X-Received: by 2002:a05:600c:3510:b0:45b:8366:2a1a with SMTP id 5b1f17b1804b1-45ddde829ebmr106119935e9.11.1757411753943;
+        Tue, 09 Sep 2025 02:55:53 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f23:9c00:d1f6:f7fe:8f14:7e34? (p200300d82f239c00d1f6f7fe8f147e34.dip0.t-ipconnect.de. [2003:d8:2f23:9c00:d1f6:f7fe:8f14:7e34])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd296ed51sm228257165e9.3.2025.09.09.02.55.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 02:55:53 -0700 (PDT)
+Message-ID: <6ec933b1-b3f7-41c0-95d8-e518bb87375e@redhat.com>
+Date: Tue, 9 Sep 2025 11:55:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAx_8Eu+b9oVfGJAA--.41496S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7KF4xGr4xWry5urW7Cw1fKrX_yoW8KF4UpF
-	4qyw4fGr409Fnaga9xJr409r93XFs7C3y7ZFW7Gw4YyFn5ZryDXw1vy3sxXFnxW34fWw1f
-	uFs5AF1Y9a1kt3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9jb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
-	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y
-	6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
-	AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE
-	2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
-	C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kfnx
-	nUUI43ZEXa7IU8EeHDUUUUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 22/37] mm/cma: refuse handing out non-contiguous page
+ ranges
+To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linuxfoundation.org>
+Cc: Alexandru Elisei <alexandru.elisei@arm.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
+References: <20250901150359.867252-1-david@redhat.com>
+ <20250901150359.867252-23-david@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250901150359.867252-23-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For power saving or debugging purpose, we usually want to limit the SIMD
-(LSX/LASX) usage on a rich feature platform. So allow specify SIMD width
-via kernel parameters "simd=".
+On 01.09.25 17:03, David Hildenbrand wrote:
+> Let's disallow handing out PFN ranges with non-contiguous pages, so we
+> can remove the nth-page usage in __cma_alloc(), and so any callers don't
+> have to worry about that either when wanting to blindly iterate pages.
+> 
+> This is really only a problem in configs with SPARSEMEM but without
+> SPARSEMEM_VMEMMAP, and only when we would cross memory sections in some
+> cases.
+> 
+> Will this cause harm? Probably not, because it's mostly 32bit that does
+> not support SPARSEMEM_VMEMMAP. If this ever becomes a problem we could
+> look into allocating the memmap for the memory sections spanned by a
+> single CMA region in one go from memblock.
+> 
+> Reviewed-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
 
-Allowed values of "simd=" are any integers, and recommended values are:
-0:		Disable all SIMD features;
-128:		Enable at most 128bit SIMD features;
-256:		Enable at most 256bit SIMD features;
--1(default):	Enable as many as possible SIMD features automatically.
+@Andrew, the following fixup on top. I'm still cross-compiling it, but
+at the time you read this mail my cross compiles should have been done.
 
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+
+ From cbfa2763e1820b917ce3430f45e5f3a55eb2970f Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Tue, 9 Sep 2025 05:50:13 -0400
+Subject: [PATCH] fixup: mm/cma: refuse handing out non-contiguous page ranges
+
+Apparently we can have NUMMU configs with SPARSEMEM enabled.
+
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- arch/loongarch/kernel/cpu-probe.c | 46 +++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
+  mm/util.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/loongarch/kernel/cpu-probe.c b/arch/loongarch/kernel/cpu-probe.c
-index fedaa67cde41..cbfce2872d71 100644
---- a/arch/loongarch/kernel/cpu-probe.c
-+++ b/arch/loongarch/kernel/cpu-probe.c
-@@ -52,6 +52,48 @@ static inline void cpu_set_fpu_fcsr_mask(struct cpuinfo_loongarch *c)
- 	c->fpu_mask = ~(fcsr0 ^ fcsr1) & ~mask;
- }
- 
-+/* simd = -1/0/128/256 */
-+static unsigned int simd = -1U;
-+
-+static int __init cpu_setup_simd(char *str)
-+{
-+	get_option(&str, &simd);
-+	pr_info("Set SIMD width = %u\n", simd);
-+
-+	return 0;
-+}
-+
-+early_param("simd", cpu_setup_simd);
-+
-+static int __init cpu_final_simd(void)
-+{
-+	struct cpuinfo_loongarch *c = &cpu_data[0];
-+
-+	if (simd < 128) {
-+		c->options &= ~LOONGARCH_CPU_LSX;
-+		elf_hwcap &= ~HWCAP_LOONGARCH_LSX;
-+	}
-+
-+	if (simd < 256) {
-+		c->options &= ~LOONGARCH_CPU_LASX;
-+		elf_hwcap &= ~HWCAP_LOONGARCH_LASX;
-+	}
-+
-+	simd = 0;
-+
-+	if (c->options & LOONGARCH_CPU_LSX)
-+		simd = 128;
-+
-+	if (c->options & LOONGARCH_CPU_LASX)
-+		simd = 256;
-+
-+	pr_info("Final SIMD width = %u\n", simd);
-+
-+	return 0;
-+}
-+
-+arch_initcall(cpu_final_simd);
-+
- static inline void set_elf_platform(int cpu, const char *plat)
- {
- 	if (cpu == 0)
-@@ -134,13 +176,13 @@ static void cpu_probe_common(struct cpuinfo_loongarch *c)
- 		elf_hwcap |= HWCAP_LOONGARCH_FPU;
- 	}
- #ifdef CONFIG_CPU_HAS_LSX
--	if (config & CPUCFG2_LSX) {
-+	if ((config & CPUCFG2_LSX) && (simd >= 128)) {
- 		c->options |= LOONGARCH_CPU_LSX;
- 		elf_hwcap |= HWCAP_LOONGARCH_LSX;
- 	}
- #endif
- #ifdef CONFIG_CPU_HAS_LASX
--	if (config & CPUCFG2_LASX) {
-+	if ((config & CPUCFG2_LASX) && (simd >= 256)) {
- 		c->options |= LOONGARCH_CPU_LASX;
- 		elf_hwcap |= HWCAP_LOONGARCH_LASX;
- 	}
+diff --git a/mm/util.c b/mm/util.c
+index 248f877f629b6..6c1d64ed02211 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -1306,6 +1306,7 @@ unsigned int folio_pte_batch(struct folio *folio, pte_t *ptep, pte_t pte,
+  {
+  	return folio_pte_batch_flags(folio, NULL, ptep, &pte, max_nr, 0);
+  }
++#endif /* CONFIG_MMU */
+  
+  #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
+  /**
+@@ -1342,4 +1343,3 @@ bool page_range_contiguous(const struct page *page, unsigned long nr_pages)
+  }
+  EXPORT_SYMBOL(page_range_contiguous);
+  #endif
+-#endif /* CONFIG_MMU */
 -- 
-2.47.3
+2.50.1
+
+
+-- 
+Cheers
+
+David / dhildenb
 
 
