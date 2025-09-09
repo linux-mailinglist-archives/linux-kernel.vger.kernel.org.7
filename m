@@ -1,215 +1,186 @@
-Return-Path: <linux-kernel+bounces-808411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EDF6B4FF6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:30:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7418B4FF3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170F51C23F0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:30:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A6E64E2E42
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516E1350D43;
-	Tue,  9 Sep 2025 14:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFE43451B6;
+	Tue,  9 Sep 2025 14:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="DB9Pj+Ze"
-Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lijg5Xxh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259C23019CD;
-	Tue,  9 Sep 2025 14:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF46F32252E;
+	Tue,  9 Sep 2025 14:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757428211; cv=none; b=GvxGrHlhJbPXBQER/cSmw7qh7jLbaixO7lvXe/CenqNQzcKCJSmeRwMiqyyopl8Y9EqRIOVItZPs6sKimU9oJpIoB78VZu7qPqWh9OLzFQfrljNH1On6ROo++TAymzyLZZUyla0yGSd02ve1o6wM7oXpKFMxoEGwC8c1c6y5SjM=
+	t=1757427727; cv=none; b=BMlG3H2hi0kP/Ys2n41LVnx5GUw3+lGGoff92drqbJPcnTgKHU/a+B1u9C/eHyuMFj9P7hBYQsiQUfXbH6BtkJZRqSYF8T0YIIWjL2dV6ccplN/RRoLS6SuORksJpw8K83ITrFPThKehMJF4rL4OmnklVo81zqPy3UpKNxpyBXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757428211; c=relaxed/simple;
-	bh=tvgOl5hZ/ayhC5le0moYMV9PxbM9OE21ypsbbnW0Oe8=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=GTe+43U8/JikIxosWfIbBhbcl0mbZrpisaM5HmUsRCpfull2LgKTupP9uB0vL2YBKfe6i7aFA1gm9Hip6dZSa4KzJhTqHFBLYkILYWv1O2oPDikscJKKhjsx+9EfWmYRBKAGhh7oiN1ZPTCLhu+YunVq/i/uCYvITC40JvekxS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=DB9Pj+Ze; arc=none smtp.client-ip=23.155.224.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 5D87A82876F1;
-	Tue,  9 Sep 2025 09:21:32 -0500 (CDT)
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id Dydv_4BgXdFD; Tue,  9 Sep 2025 09:21:30 -0500 (CDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 64003828885E;
-	Tue,  9 Sep 2025 09:21:30 -0500 (CDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 64003828885E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
-	t=1757427690; bh=sOZZKfKLnTxRbyDFyhBo2Qd9/gq0gRqxnoy3tvQJljA=;
-	h=Date:From:To:Message-ID:MIME-Version;
-	b=DB9Pj+ZehN+FJ8O/SLUb9okYIsSieeKSvT/LWt4FbQ+5V2pQaLg42gexndMuKVlUh
-	 er64JXFL4ZbLss7bc+mJ4VgDZxCogFH8HSwm1pw/zryej9Sdf5VOzWHDZUcKhvzFrK
-	 CQaWzeyYBhZ94NRgpUQEg57rweuMdP97ljdhnrXc=
-X-Virus-Scanned: amavisd-new at rptsys.com
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1ojliU1CfFtx; Tue,  9 Sep 2025 09:21:30 -0500 (CDT)
-Received: from vali.starlink.edu (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 2B50882876F1;
-	Tue,  9 Sep 2025 09:21:30 -0500 (CDT)
-Date: Tue, 9 Sep 2025 09:21:27 -0500 (CDT)
-From: Timothy Pearson <tpearson@raptorengineering.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-pci <linux-pci@vger.kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, 
-	christophe leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, 
-	Shawn Anastasio <sanastasio@raptorengineering.com>
-Message-ID: <304758063.1694752.1757427687463.JavaMail.zimbra@raptorengineeringinc.com>
-In-Reply-To: <bf390f9e-e06f-4743-a9dc-e0b995c2bab2@kernel.org>
-References: <1268570622.1359844.1752615109932.JavaMail.zimbra@raptorengineeringinc.com> <2013845045.1359852.1752615367790.JavaMail.zimbra@raptorengineeringinc.com> <bf390f9e-e06f-4743-a9dc-e0b995c2bab2@kernel.org>
-Subject: Re: [PATCH v3 1/6] PCI: pnv_php: Properly clean up allocated IRQs
- on unplug
+	s=arc-20240116; t=1757427727; c=relaxed/simple;
+	bh=hcsO+0CDu8ebk5l7xQEiuvFomx6Jn3bzyePgBxbYNfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jk/CPiZn7G5spLERyV7Y5xl7EwDBsksApbYKbco6kiy/iSMIBxDBHLzOrhHlN6/bQSCEvJZVYj/TaC+lO6Qsv8lvw3ehNHzkV6IcOGXnXoUWGjsD1qhvfXI5BhlZoJfAmzbH5jRy3nN0jNER6YtWltnkq7skM0VIgNHvZRfor+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lijg5Xxh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A6D0C4CEF4;
+	Tue,  9 Sep 2025 14:22:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757427726;
+	bh=hcsO+0CDu8ebk5l7xQEiuvFomx6Jn3bzyePgBxbYNfA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Lijg5Xxhk1ndqA8YsuTfBeLqkWzIrQloB4O6QQHsC7UOsWD/DnAW4cfZ7CSNrBgPh
+	 TMjyuG7AKDCV/XwzIBXauLf1RDk7g34JLK03efmZyFBF6l5Jm5af+1T1+L2cHUWd9q
+	 EtcGOys1wz0Mmb0pB3f9HTm5hXixAl/55644e0PTGR+/yLdlZi45KFBzhdKRF04ZNt
+	 0jmryVkcm2SPC63DgbVuPwzOCw84RPbvcBHTIDL2l793Tdtwv+gZsihhlzKwCZxEHL
+	 8hvA7ydUlWyRYf0v2Dc5rpBtH/A64D/ESUQCjZo5VIooHXPh6DL9hz3F6sfbmQ2NWj
+	 ra68COBXtoOxg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>
+Cc: openbmc@lists.ozlabs.org,
+	linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: watchdog: Convert nuvoton,npcm-wdt to DT schema
+Date: Tue,  9 Sep 2025 09:21:59 -0500
+Message-ID: <20250909142201.3209482-1-robh@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC139 (Linux)/8.5.0_GA_3042)
-Thread-Topic: pnv_php: Properly clean up allocated IRQs on unplug
-Thread-Index: zJ41UwgzYhwlCvtgYnXhkcd+rlAB7A==
+Content-Transfer-Encoding: 8bit
 
+Convert the Nuvoton watchdog binding to DT schema format. It's a
+straight-forward conversion.
 
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/watchdog/nuvoton,npcm-wdt.txt    | 30 ----------
+ .../watchdog/nuvoton,npcm750-wdt.yaml         | 60 +++++++++++++++++++
+ 2 files changed, 60 insertions(+), 30 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
+ create mode 100644 Documentation/devicetree/bindings/watchdog/nuvoton,npcm750-wdt.yaml
 
------ Original Message -----
-> From: "Jiri Slaby" <jirislaby@kernel.org>
-> To: "Timothy Pearson" <tpearson@raptorengineering.com>
-> Cc: "linuxppc-dev" <linuxppc-dev@lists.ozlabs.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "linux-pci"
-> <linux-pci@vger.kernel.org>, "Madhavan Srinivasan" <maddy@linux.ibm.com>, "Michael Ellerman" <mpe@ellerman.id.au>,
-> "christophe leroy" <christophe.leroy@csgroup.eu>, "Naveen N Rao" <naveen@kernel.org>, "Bjorn Helgaas"
-> <bhelgaas@google.com>, "Shawn Anastasio" <sanastasio@raptorengineering.com>
-> Sent: Tuesday, September 9, 2025 4:00:41 AM
-> Subject: Re: [PATCH v3 1/6] PCI: pnv_php: Properly clean up allocated IRQs on unplug
+diff --git a/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt b/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
+deleted file mode 100644
+index 866a958b8a2b..000000000000
+--- a/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
++++ /dev/null
+@@ -1,30 +0,0 @@
+-Nuvoton NPCM Watchdog
+-
+-Nuvoton NPCM timer module provides five 24-bit timer counters, and a watchdog.
+-The watchdog supports a pre-timeout interrupt that fires 10ms before the
+-expiry.
+-
+-Required properties:
+-- compatible      : "nuvoton,npcm750-wdt" for NPCM750 (Poleg), or
+-                    "nuvoton,wpcm450-wdt" for WPCM450 (Hermon), or
+-                    "nuvoton,npcm845-wdt" for NPCM845 (Arbel).
+-- reg             : Offset and length of the register set for the device.
+-- interrupts      : Contain the timer interrupt with flags for
+-                    falling edge.
+-
+-Required clocking property, have to be one of:
+-- clocks          : phandle of timer reference clock.
+-- clock-frequency : The frequency in Hz of the clock that drives the NPCM7xx
+-                    timer (usually 25000000).
+-
+-Optional properties:
+-- timeout-sec : Contains the watchdog timeout in seconds
+-
+-Example:
+-
+-timer@f000801c {
+-    compatible = "nuvoton,npcm750-wdt";
+-    interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
+-    reg = <0xf000801c 0x4>;
+-    clocks = <&clk NPCM7XX_CLK_TIMER>;
+-};
+diff --git a/Documentation/devicetree/bindings/watchdog/nuvoton,npcm750-wdt.yaml b/Documentation/devicetree/bindings/watchdog/nuvoton,npcm750-wdt.yaml
+new file mode 100644
+index 000000000000..7aa30f5b5c49
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/nuvoton,npcm750-wdt.yaml
+@@ -0,0 +1,60 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/watchdog/nuvoton,npcm750-wdt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Nuvoton NPCM Watchdog
++
++maintainers:
++  - Joel Stanley <joel@jms.id.au>
++
++description:
++  Nuvoton NPCM timer module provides five 24-bit timer counters, and a watchdog.
++  The watchdog supports a pre-timeout interrupt that fires 10ms before the
++  expiry.
++
++allOf:
++  - $ref: watchdog.yaml#
++
++properties:
++  compatible:
++    oneOf:
++      - enum:
++          - nuvoton,npcm750-wdt
++          - nuvoton,wpcm450-wdt
++      - items:
++          - enum:
++              - nuvoton,npcm845-wdt
++          - const: nuvoton,npcm750-wdt
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-frequency:
++    description: Frequency in Hz of the clock that drives the NPCM timer.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
++
++    watchdog@f000801c {
++        compatible = "nuvoton,npcm750-wdt";
++        interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
++        reg = <0xf000801c 0x4>;
++        clocks = <&clk NPCM7XX_CLK_TIMER>;
++    };
+-- 
+2.51.0
 
-> On 15. 07. 25, 23:36, Timothy Pearson wrote:
->> In cases where the root of a nested PCIe bridge configuration is
->> unplugged, the pnv_php driver would leak the allocated IRQ resources for
->> the child bridges' hotplug event notifications, resulting in a panic.
->> Fix this by walking all child buses and deallocating all it's IRQ
->> resources before calling pci_hp_remove_devices.
->> 
->> Also modify the lifetime of the workqueue at struct pnv_php_slot::wq so
->> that it is only destroyed in pnv_php_free_slot, instead of
->> pnv_php_disable_irq. This is required since pnv_php_disable_irq will now
->> be called by workers triggered by hot unplug interrupts, so the
->> workqueue needs to stay allocated.
->> 
->> The abridged kernel panic that occurs without this patch is as follows:
->> 
->>    WARNING: CPU: 0 PID: 687 at kernel/irq/msi.c:292
->>    msi_device_data_release+0x6c/0x9c
->>    CPU: 0 UID: 0 PID: 687 Comm: bash Not tainted 6.14.0-rc5+ #2
->>    Call Trace:
->>     msi_device_data_release+0x34/0x9c (unreliable)
->>     release_nodes+0x64/0x13c
->>     devres_release_all+0xc0/0x140
->>     device_del+0x2d4/0x46c
->>     pci_destroy_dev+0x5c/0x194
->>     pci_hp_remove_devices+0x90/0x128
->>     pci_hp_remove_devices+0x44/0x128
->>     pnv_php_disable_slot+0x54/0xd4
->>     power_write_file+0xf8/0x18c
->>     pci_slot_attr_store+0x40/0x5c
->>     sysfs_kf_write+0x64/0x78
->>     kernfs_fop_write_iter+0x1b0/0x290
->>     vfs_write+0x3bc/0x50c
->>     ksys_write+0x84/0x140
->>     system_call_exception+0x124/0x230
->>     system_call_vectored_common+0x15c/0x2ec
->> 
->> Signed-off-by: Shawn Anastasio <sanastasio@raptorengineering.com>
->> Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
->> ---
->>   drivers/pci/hotplug/pnv_php.c | 94 ++++++++++++++++++++++++++++-------
->>   1 file changed, 75 insertions(+), 19 deletions(-)
->> 
->> diff --git a/drivers/pci/hotplug/pnv_php.c b/drivers/pci/hotplug/pnv_php.c
->> index 573a41869c15..aec0a6d594ac 100644
->> --- a/drivers/pci/hotplug/pnv_php.c
->> +++ b/drivers/pci/hotplug/pnv_php.c
-> ...
->> @@ -647,6 +702,15 @@ static struct pnv_php_slot *pnv_php_alloc_slot(struct
->> device_node *dn)
-> 
-> This is preceded by:
->         php_slot = kzalloc(sizeof(*php_slot), GFP_KERNEL);
-> 
-> Ie. php_slot is zeroed.
-> 
->>   		return NULL;
->>   	}
->>   
->> +	/* Allocate workqueue for this slot's interrupt handling */
->> +	php_slot->wq = alloc_workqueue("pciehp-%s", 0, 0, php_slot->name);
->> +	if (!php_slot->wq) {
->> +		SLOT_WARN(php_slot, "Cannot alloc workqueue\n");
-> 
-> I believe this introduced a (unlikely) NULL ptr dereference.
-> 
->> +		kfree(php_slot->name);
->> +		kfree(php_slot);
->> +		return NULL;
->> +	}
->> +
->>   	if (dn->child && PCI_DN(dn->child))
->>   		php_slot->slot_no = PCI_SLOT(PCI_DN(dn->child)->devfn);
->>   	else
-> 
-> This continues:
->         php_slot->pdev                  = bus->self;
->         php_slot->bus                   = bus;
-> 
-> 
-> And SLOT_WARN() is defined as:
-> #define SLOT_WARN(sl, x...) \
->         ((sl)->pdev ? pci_warn((sl)->pdev, x) :
-> dev_warn(&(sl)->bus->dev, x))
-> 
-> The else branch is alkays taken in the 'if' above, which still
-> dereferences NULLed (sl)->bus here.
-> 
->> @@ -843,14 +907,6 @@ static void pnv_php_init_irq(struct pnv_php_slot *php_slot,
->> int irq)
->>   	u16 sts, ctrl;
->>   	int ret;
->>   
->> -	/* Allocate workqueue */
->> -	php_slot->wq = alloc_workqueue("pciehp-%s", 0, 0, php_slot->name);
->> -	if (!php_slot->wq) {
->> -		SLOT_WARN(php_slot, "Cannot alloc workqueue\n");
-> 
-> Here, php_slot used to have both ->pdev and ->bus assigned at this point.
-> 
->> -		pnv_php_disable_irq(php_slot, true);
->> -		return;
->> -	}
->> -
-> 
-> Right?
-
-That does look like an unlikely but definitely possible dereference -- good catch!
-
-I can submit a patch to change
-
-SLOT_WARN(php_slot, "Cannot alloc workqueue\n");
-
-to
-
-dev_warn(bus->dev, "Cannot alloc workqueue\n");
-
-Would that work?
 
