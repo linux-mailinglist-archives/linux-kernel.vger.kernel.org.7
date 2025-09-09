@@ -1,149 +1,288 @@
-Return-Path: <linux-kernel+bounces-808911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A880B50665
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:27:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B40D5B5066B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 343041BC35FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:27:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC26E1C270F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100CD34DCE1;
-	Tue,  9 Sep 2025 19:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D1D2DAFBB;
+	Tue,  9 Sep 2025 19:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Qfd3jhlS"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="inGxeO/E"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93FC1531F9
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 19:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757446031; cv=none; b=aJ7SCc1ZHa89v7AG88a3Y9FEDr3yPEy7aavt+L6BLUBBw7czL5VnRj51HWwtCixzmoswhqNYPI0iHbA2RnbOsBxl1zHTA/UtXqvbhFIyhNg+yBm4sbcSeeVIUbzBuIo6r2glW7z8zD6tVtwSfI7a0W9Fvjd757Q2Znw0M9uev2E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757446031; c=relaxed/simple;
-	bh=VYA+vinZJTCo3MxWBdo6Kkp5fxblRE63PTBfl2gqpwo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TxSpgOcLhGMoSh7V4MftfuMbU1dGh6Vj7GQYLWD/AAN3LyxyoygzbHrYPHvoQQUIrjLZZ42URsGVDmcze83c9lsypislseAVy/wtMKhy8yrdY1znCEJVXuE89beEDFfqjDWvqbu7uMkB2MTjNmkBU+mliuGwKHfd2tG1Amdv354=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Qfd3jhlS; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-408929699eeso12449985ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 12:27:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757446026; x=1758050826; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kk6ys450gxJ4lTVOQzfCmrKei8xzjGcxa9u9XRsdIcg=;
-        b=Qfd3jhlSLD9mSvrQRbR91l0/D+B6XKAvD9H1InWTQp3tMQz3wEtd56KTlLSwUN2at+
-         EbC8qOdziJzeXpvFOa60AlkftUNnSzPc8eyR5hLWc7Yk6fLDCBCe3DCog4iKW6j2PZ2E
-         yyO2cGDMwWWmPZp6AO9+6uC7Dz0FPyw0OFAgAvmRTAU8bLDKbW7YdernZWt5+Yguio8K
-         PSdzWmerILfU5mr6omcYbtUmlEsGIpfOSmlOKYN2d3VoQzb8/EFAO9X1QGYrqNBNkQIS
-         XhI7SnZMrKrS25WAGlVzOvBestTEnmBoHJsKvujEGJD0IEZY6/p4BbSTTnEtQpWg/Va7
-         WzXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757446026; x=1758050826;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kk6ys450gxJ4lTVOQzfCmrKei8xzjGcxa9u9XRsdIcg=;
-        b=EmXNd9/rhAyOJtRmP1VuN9UhTR3YAdlre0Uzw0Ri6Ys3kYBlDIRUCHYzrfMW/p5Gg3
-         vB5f371u7ReLT6fxQgjN1eXyM/QSD+T/hJEYzSZgd5Yzl/5RLStTy4NJCStvRj/5tFOS
-         sdFI6WJBgKgyaEXXJHFI4ws9sN/1YFwV9u1aOqG/Y/sbE6+zgqxF/7hkzNbd+LR1GV9K
-         Hn7XIw7SkRIfa79eFyEaxPJETfZGDcl5zhlv0shItm4WN6kQve9e0CSPaxs4B5qc2208
-         sn1tepzV6mNtLhj2DMlaZkFE0WO5gYTHJ8Sye74aKBOg+jDUacdfY/N4Pr8IRKs8XP6j
-         CLjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXSvMq6XbY7dJ40KCvGt3znveKpgYjVukM2NgEcp+8AX96mIe0eeo3wm0oIhTzDkcQ0oj9RdToTpaz+fyI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcrPwG7C1laxoRWPoREPL30UbvlypW0kJayx/2Q4+kgr85v0Jd
-	eobzk1R2ohrkKr5bzu2CzTnWJlaLK2890fBbbX/WkFuQqlVddU3jFm1Y70fovXJOUAc=
-X-Gm-Gg: ASbGnctmxwpzmAx2Jcq5zhGI85PxniUs3V7EGXLanFncc6pAfOT0gBCnhPRHeDdaEFP
-	+2GNlRBWYGnydYFIEFP0UAF0CyHtwaqOwbQtsAVFemyYi+jDXAR8nQJFVFib0sq10n0PixL5TKL
-	QrJNZMWN4pkMBhf40aiQJJtt1OJKvUDW8X8+I41DEiB0x/AeKg/bM1NEw1Uyc1QHyAxi+DWz0ho
-	27/sv5t8k/k/UxDThRW93M8ZpwkeLR3DsKMZgwaubhdqOPd5KH59wHFa7rZZDCs6kKzXNG1oxvb
-	1Ko74f1LqGGwbkIn/QPUKmzt6iBlEDHilBEJfj9yP+n2kzn/LbN52bXcHA3Z7CeP6TLPiR/ViNp
-	mZDWKmSRrueIvsdoyZtw=
-X-Google-Smtp-Source: AGHT+IG2xdLWcwrKZbGGLt1EZFURQEk31YgRmy27WISlH99paYhB8KK782zuKR/plop6xaTwVwbH8Q==
-X-Received: by 2002:a05:6e02:16ce:b0:408:c77b:a7ea with SMTP id e9e14a558f8ab-408c77ba949mr130763765ab.22.1757446026524;
-        Tue, 09 Sep 2025 12:27:06 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-51076c4a18csm3003320173.55.2025.09.09.12.27.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 12:27:06 -0700 (PDT)
-Message-ID: <4918e983-9964-46a2-aee0-59c91a9c6b35@kernel.dk>
-Date: Tue, 9 Sep 2025 13:27:05 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48ABA31D36D
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 19:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757446369; cv=pass; b=t9TWKKxSvL9W8+7l361FHm3v6xK0l2eJoFHZUTuYqXIXnPJ3oYWtHgWKweO1dp0UZsc7pnaJ8syE9c1sohJNsaTpNbqk6dCaO6SMjIBFx8AuM35vp2bpHGSOb1JVlAehD65VYWFxk6kQARXdhtPZl5fmGVj1LgIuHEpFCrOgNIc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757446369; c=relaxed/simple;
+	bh=b/0TiXkZSebGeYbfFVw4o5rsTD+MXP7YKrVeN5xmCX0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OQRxAGT0vPk65t2kufOXTC9MAWbYkgFwsxPqIfsJ6moduWgYe07ljF4m05hA35FIpLGqSHJ+iuiayf12BdaEH8D1f41IYlR7X13BcTwkr7UX5qc0BeZeOf79VnY2i//l8rrCPt46t8iZTptMoBjmvda9AmVCk69yUmu6T0xei3o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=inGxeO/E; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757446283; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=f1EewJUnZ9XmqgixY7GoY5dHEBTTWj0M4NIV/Jp5wm3dN8yrJI6RPV9Y4CAgzuZuEsAwXWt/oHBsD5vAuiqxt072R8NvNqwR+NQn7euFAOFKBDB95f3m8OzySs/EdBGCHIkRBpFvOmsGciuTIV1Z9iDApsL9AU6G1IfOrzdXJjg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757446283; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=/9F66lDKavUG/pPbkbXlUrCZiKcpxmpQ3hYwz5E3cyk=; 
+	b=NrlzTzWw8dDemCOyCv3wGxWxW9oBqG+yxq7f7RbPBRwywlG0sZV/QGdWTP7R4mtw0ITKNc7xgL2n6Di1HRvAXc9u6GuBKbeLe9/yv7CSZx8vLG4l+ylX4C4AHlLW5oAtUaGgg/HM9oFqhS2/3mnaS9N4UPz4V/qGaWf+po3RZ/0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
+	dmarc=pass header.from=<nfraprado@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757446283;
+	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=/9F66lDKavUG/pPbkbXlUrCZiKcpxmpQ3hYwz5E3cyk=;
+	b=inGxeO/E0CyFIAFkTLvT/vjZW+EcldBkGYwQkkye5MjDQjmhgg8kCSodCf0xhExv
+	K0XoYMurniVCP0cMT1gAsIOeB0VyIRIkQyunr5zt5ReP2+5JpOMwEsFLKDqzHrA/B5j
+	IkiLE6aVoyUCo98GRnZcjYYZ5o6qVWu76jvwwxKc=
+Received: by mx.zohomail.com with SMTPS id 1757446281636631.7660879913486;
+	Tue, 9 Sep 2025 12:31:21 -0700 (PDT)
+Message-ID: <eab7182d8b25d87c11f2541db910c6ea3d9434e9.camel@collabora.com>
+Subject: Re: [PATCH RFC 1/5] drm: Support post-blend color pipeline API
+From: =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado" <nfraprado@collabora.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>, Maarten Lankhorst	
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,  Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger	
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
+ <angelogioacchino.delregno@collabora.com>
+Cc: Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org, 
+	harry.wentland@amd.com, leo.liu@amd.com, ville.syrjala@linux.intel.com, 
+	pekka.paalanen@collabora.com, contact@emersion.fr, mwen@igalia.com, 
+	jadahl@redhat.com, sebastian.wick@redhat.com, shashank.sharma@amd.com, 
+	agoins@nvidia.com, joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org,
+ 	xaver.hugl@gmail.com, victoria@system76.com, uma.shankar@intel.com, 
+	quic_naseer@quicinc.com, quic_cbraga@quicinc.com,
+ quic_abhinavk@quicinc.com, 	marcan@marcan.st, Liviu.Dudau@arm.com,
+ sashamcintosh@google.com, 	chaitanya.kumar.borah@intel.com,
+ mcanal@igalia.com, kernel@collabora.com, 	daniels@collabora.com,
+ dri-devel@lists.freedesktop.org, 	linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, 	linux-arm-kernel@lists.infradead.org,
+ Simona Vetter <simona.vetter@ffwll.ch>
+Date: Tue, 09 Sep 2025 15:31:17 -0400
+In-Reply-To: <4d63e90a-794f-4108-9219-19b0c0dab267@bootlin.com>
+References: 
+	<20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com>
+	 <20250822-mtk-post-blend-color-pipeline-v1-1-a9446d4aca82@collabora.com>
+	 <4d63e90a-794f-4108-9219-19b0c0dab267@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+b1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [kernel?] general protection fault in try_to_wake_up (3)
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>,
- syzbot <syzbot+034246a838a10d181e78@syzkaller.appspotmail.com>,
- andrealmeid@igalia.com, dave@stgolabs.net, dvhart@infradead.org,
- linux-kernel@vger.kernel.org, mingo@redhat.com,
- syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-References: <68b75989.050a0220.3db4df.01dd.GAE@google.com>
- <20250902214628.GL4067720@noisy.programming.kicks-ass.net>
- <20250903130712.br0G6lOq@linutronix.de>
- <a1808501-559e-4762-b0ea-f1fffd2e7f19@kernel.dk>
- <20250904162820.NS1U-oZp@linutronix.de>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <20250904162820.NS1U-oZp@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
+X-ZohoMail-Owner: <eab7182d8b25d87c11f2541db910c6ea3d9434e9.camel@collabora.com>+zmo_0_nfraprado@collabora.com
 
-On 9/4/25 10:28 AM, Sebastian Andrzej Siewior wrote:
-> On 2025-09-03 12:51:09 [-0600], Jens Axboe wrote:
->>> The syz-reproducer lists only:
->>> | timer_create(0x0, &(0x7f0000000080)={0x0, 0x11, 0x0, @thr={0x0, 0x0}}, &(0x7f0000000000))
->>> | timer_settime(0x0, 0x0, &(0x7f0000000240)={{0x0, 0x8}, {0x0, 0x9}}, 0x0)
->>> | futex(&(0x7f000000cffc), 0x80000000000b, 0x0, 0x0, &(0x7f0000048000), 0x0)
->>> | futex(&(0x7f000000cffc), 0xc, 0x1, 0x0, &(0x7f0000048000), 0x0)
->>>
->>> and that is probably why it can't come up with C-reproducer.
->>> The whole log has (filtered) the following lines:
->>>
->>> | io_uring_setup(0x85a, &(0x7f0000000180)={0x0, 0x58b9, 0x1, 0x2, 0x383})
->>> | syz_io_uring_setup(0x88f, &(0x7f0000000300)={0x0, 0xaedf, 0x0, 0x0, 0x25d}, &(0x7f0000000140)=<r0=>0x0, &(0x7f0000000280)=<r1=>0x0)
->>> | syz_memcpy_off$IO_URING_METADATA_GENERIC(r0, 0x4, &(0x7f0000000080)=0xfffffffc, 0x0, 0x4)
->>> | syz_io_uring_submit(r0, r1, &(0x7f00000001c0)=@IORING_OP_RECVMSG={0xa, 0x8, 0x1, r2, 0x0, &(0x7f0000000440)={0x0, 0x0, 0x0}, 0x0, 0x40000020, 0x1, {0x2}})
->>>
->>> This should explain the how the waiter got NULL. There is no private
->>> flag so that is how they interact with each other.
->>> Do we want this:
->>>
->>> diff --git a/kernel/futex/requeue.c b/kernel/futex/requeue.c
->>> index c716a66f86929..0c98256ebdcb7 100644
->>> --- a/kernel/futex/requeue.c
->>> +++ b/kernel/futex/requeue.c
->>> @@ -312,6 +312,8 @@ futex_proxy_trylock_atomic(u32 __user *pifutex, struct futex_hash_bucket *hb1,
->>>  	if (!top_waiter->rt_waiter || top_waiter->pi_state)
->>>  		return -EINVAL;
-> 
-> I've been poking at this today and I have one problem with my
-> explanation:
-> The io_uring code initializes its futex_q with futex_q_init. At this
-> point futex_q::rt_waiter is set to NULL and never set to something else.
-> We should bail out here instead of going further.
-> Only the PI bits set rt_waiter. Only io_uring sets task to NULL.
-> I'm hopeless, this makes no sense.
+On Fri, 2025-09-05 at 19:55 +0200, Louis Chauvet wrote:
+>=20
+>=20
+> Le 22/08/2025 =C3=A0 20:36, N=C3=ADcolas F. R. A. Prado a =C3=A9crit=C2=
+=A0:
+> > Introduce support for a post-blend color pipeline API analogous to
+> > the
+> > pre-blend color pipeline API. While the pre-blend color pipeline
+> > was
+> > configured through a COLOR_PIPELINE property attached to a
+> > drm_plane,
+> > the post-blend color pipeline is configured through a
+> > COLOR_PIPELINE
+> > property on the drm_crtc.
+> >=20
+> > Since colorops can now be attached to either a drm_plane or a
+> > drm_crtc,
+> > rework the helpers to account for both cases.
+> >=20
+> > Also introduce a new cap, DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE,
+> > to
+> > enable support for post-blend color pipelines, and prevent the now
+> > legacy GAMMA_LUT, DEGAMMA_LUT, GAMMA_LUT_SIZE and CTM properties
+> > from
+> > being exposed.
+> >=20
+> > Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> > ---
+> > =C2=A0 drivers/gpu/drm/drm_atomic.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0 32 ++++++--
+> > =C2=A0 drivers/gpu/drm/drm_atomic_uapi.c=C2=A0=C2=A0 |=C2=A0 50 +++++++=
++++++-
+> > =C2=A0 drivers/gpu/drm/drm_colorop.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 144
+> > +++++++++++++++++++++++++++++-------
+> > =C2=A0 drivers/gpu/drm/drm_connector.c=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
+=C2=A0 1 +
+> > =C2=A0 drivers/gpu/drm/drm_crtc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 77 +++++++++++++++++++
+> > =C2=A0 drivers/gpu/drm/drm_crtc_internal.h |=C2=A0=C2=A0 6 ++
+> > =C2=A0 drivers/gpu/drm/drm_ioctl.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0=C2=A0 7 ++
+> > =C2=A0 drivers/gpu/drm/drm_mode_object.c=C2=A0=C2=A0 |=C2=A0 20 +++++
+> > =C2=A0 drivers/gpu/drm/drm_plane.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 36 ++-------
+> > =C2=A0 include/drm/drm_atomic.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 20 +++++
+> > =C2=A0 include/drm/drm_atomic_uapi.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0=C2=A0 2 +
+> > =C2=A0 include/drm/drm_colorop.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 16 +++-
+> > =C2=A0 include/drm/drm_crtc.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 19 +++++
+> > =C2=A0 include/drm/drm_file.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 7 ++
+> > =C2=A0 include/uapi/drm/drm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 16 ++++
+> > =C2=A0 15 files changed, 383 insertions(+), 70 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/drm_atomic.c
+> > b/drivers/gpu/drm/drm_atomic.c
+> > index
+> > 3ab32fe7fe1cbf9057c3763d979638dce013d82b..558d389d59d9a44d3cd1048ed
+> > 365848f62b4d62d 100644
+> > --- a/drivers/gpu/drm/drm_atomic.c
+> > +++ b/drivers/gpu/drm/drm_atomic.c
+> > @@ -472,6 +472,8 @@ static void drm_atomic_crtc_print_state(struct
+> > drm_printer *p,
+> > =C2=A0=C2=A0	drm_printf(p, "\tplane_mask=3D%x\n", state->plane_mask);
+> > =C2=A0=C2=A0	drm_printf(p, "\tconnector_mask=3D%x\n", state-
+> > >connector_mask);
+> > =C2=A0=C2=A0	drm_printf(p, "\tencoder_mask=3D%x\n", state->encoder_mask=
+);
+> > +	drm_printf(p, "\tcolor-pipeline=3D%d\n",
+> > +		=C2=A0=C2=A0 state->color_pipeline ? state->color_pipeline-
+> > >base.id : 0);
+>=20
+> This could be in a separate patch / suggested to the initial series.
 
-Was on the road, and now back at least for a day or two... So I took a
-gander at this one too. One thing that puzzles me is the io_uring traces
-in that syzbot log - if they are to be trusted, it only ever submits an
-io_uring RECVMSG request? IOW, no futex usage on the io_uring side at
-all?
+Right, I'll make sure to split the changes in this commit further for
+v2.
 
-Going to try and download the disk image and kernel and see if I can
-actually run this locally.
+>=20
+> > =C2=A0=C2=A0	drm_printf(p, "\tmode: " DRM_MODE_FMT "\n",
+> > DRM_MODE_ARG(&state->mode));
+> > =C2=A0=20
+> > =C2=A0=C2=A0	if (crtc->funcs->atomic_print_state)
+> > @@ -617,9 +619,15 @@ drm_atomic_get_colorop_state(struct
+> > drm_atomic_state *state,
+> > =C2=A0=C2=A0	if (colorop_state)
+> > =C2=A0=C2=A0		return colorop_state;
+> > =C2=A0=20
+> > -	ret =3D drm_modeset_lock(&colorop->plane->mutex, state-
+> > >acquire_ctx);
+> > -	if (ret)
+> > -		return ERR_PTR(ret);
+> > +	if (colorop->plane) {
+> > +		ret =3D drm_modeset_lock(&colorop->plane->mutex,
+> > state->acquire_ctx);
+> > +		if (ret)
+> > +			return ERR_PTR(ret);
+> > +	} else {
+> > +		ret =3D drm_modeset_lock(&colorop->crtc->mutex,
+> > state->acquire_ctx);
+> > +		if (ret)
+> > +			return ERR_PTR(ret);
+> > +	}
+>=20
+> Two suggestions here:
+>=20
+> Maybe you can create `colorop_modeset_lock/unlock` helpers to avoid
+> code=20
+> repetition.
+>=20
+> Can you also change it to
+>=20
+> 	if (colorop->plane)
+> 		...
+> 	else if (colorop->crtc)
+> 		...
+> 	else
+> 		drm_err("Dangling colorop, it must be attached to a
+> plane or a CRTC")
+> 		return ERR_PTR
+>=20
+> ?
+>=20
+> This way it will avoid issues if someone add support to attach
+> colorop=20
+> to other drm parts and forgot to update locking in some places.
 
--- 
-Jens Axboe
+Yes, both suggestions sound good, I'll apply them for v2.
+
+> > diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+> > index
+> > 27cc159c1d275c7a7fe057840ef792f30a582bb7..1191b142ebaa5478376308f16
+> > 9f9ce8591580d9d 100644
+> > --- a/include/uapi/drm/drm.h
+> > +++ b/include/uapi/drm/drm.h
+> > @@ -921,6 +921,22 @@ struct drm_get_cap {
+> > =C2=A0=C2=A0 */
+> > =C2=A0 #define DRM_CLIENT_CAP_PLANE_COLOR_PIPELINE	7
+> > =C2=A0=20
+> > +/**
+> > + * DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE
+> > + *
+> > + * If set to 1 the DRM core will allow setting the COLOR_PIPELINE
+> > + * property on a &drm_crtc, as well as drm_colorop properties.
+> > + *
+> > + * Setting of these crtc properties will be rejected when this
+> > client
+> > + * cap is set:
+>=20
+> I don't know enough the uAPI of DRM, but if I understand your patch=20
+> correctly, it will not reject GAMMA_LUT/DEGAMMA_LUT/CTM, only unlist=20
+> them from the get_properties syscall. Did I overlooked something?
+
+You're right. This was originally based on v10 of the pre-blend series
+(https://lore.kernel.org/dri-devel/20250617041746.2884343-12-alex.hung@amd.=
+com/
+), which did in fact return an error when the properties were set with
+the cap enabled, but v11
+(https://lore.kernel.org/all/20250815035047.3319284-12-alex.hung@amd.com/
+) switched to just unlisting the properties, so I also updated the code
+here accordingly for this RFC, but forgot to update this text, and
+apparently so did the original series.
+
+From the discussion in another thread
+(https://lore.kernel.org/dri-devel/20250822-mtk-post-blend-color-pipeline-v=
+1-0-a9446d4aca82@collabora.com/T/#m1e8ba77ef54453b26ae70e1f1699ed17afec91e3
+) we might make these properties read-only, and in which case we'll
+have to make them listed but error when set again, so I'll wait for
+that discussion to be resolved before updating this and forwarding that
+feedback to the pre-blend series. But thanks for pointing out the
+inconsistency anyway.
+
+>=20
+> > + * - GAMMA_LUT
+> > + * - DEGAMMA_LUT
+> > + * - CTM
+> > + *
+> > + * The client must enable &DRM_CLIENT_CAP_ATOMIC first.
+> > + */
+> > +#define DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE	8
+> > +
+> > =C2=A0 /* DRM_IOCTL_SET_CLIENT_CAP ioctl argument type */
+> > =C2=A0 struct drm_set_client_cap {
+> > =C2=A0=C2=A0	__u64 capability;
+> >=20
+
+--=20
+Thanks,
+
+N=C3=ADcolas
 
