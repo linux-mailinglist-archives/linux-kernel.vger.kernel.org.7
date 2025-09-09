@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-809153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB68BB5094B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:34:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C364B5094C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20B211B27EF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:34:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 821A9681BD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B7B28B4FE;
-	Tue,  9 Sep 2025 23:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F122882B6;
+	Tue,  9 Sep 2025 23:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LL2Jixij"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CXpLEtH9"
 Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A718F2B9B9
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 23:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC7C28B7DE
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 23:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757460860; cv=none; b=cRHn5MWimMbN67Ar0C6lsq0DCc8L1tRTXFVWBZRB5qSnXojBRiAHOtyXEZD3kw4u+7Ur45xf43CUfQXeCspF7yF3orvMmQJ56/i3O9lJDOqs8ZVA1Cm0rilqgsTNm86ljZvNYYeN4YQpwhKtgJlmj/PHmLTRsXxhK0dk8P+7PPY=
+	t=1757460862; cv=none; b=hgyJcjADOP5YQkF8ErvgKGWDH92LHUGhq06+smP98bGat0ySmi1U/UbSGaJfQQjhO12+MzHDKXyNj20n0vOdMfqG1VdvWwVa68KffPwnW4zrmI25TcHKoywN7XjaYSOYCuTdb6kQzuK00BeyxP9XRhyErGs9uJIofIkMXAsCDBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757460860; c=relaxed/simple;
-	bh=VRVXvdyBXu+l8eN5OmWMKeoSEG/KMU7MEJ8tdydrdIQ=;
+	s=arc-20240116; t=1757460862; c=relaxed/simple;
+	bh=paM9mBGyRaI8AAQ1YFJDdCA9Ntl8aRb2Pn6q4fv7/iI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mRhGzAR35hH2QY7LbJ9dTBC91WPdoGRO9iOT5rkIgEYq6iD3yjIIEFVrxiZ7P+ZHiK3V0jqLEJ2RhWmdVc+5QKXk7so3BACq4djhpzCz48OgN4hlZu7ETD+DbXxM3VDE/XiDI9+7rANSCX9TB6LlcMpULeIri4ITSthZNDsqo8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LL2Jixij; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=h0KL/2C+0tyCcQ5qP1qEEnGPqNxnxQQgiiZCD3y9T9QrL5LTIAANU9GT3R3IP759BkEb6afn7D4g205UtEQ7qO+hqG3ApkwS5V/YDayFIDAMqn98//ALWrwxFuB/LdauYb7GcLKSN6VXXrlzPd0aSzgu7q6AiOYgxvf18ZhX3rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CXpLEtH9; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7724877cd7cso6940662b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 16:34:18 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77429fb6ce4so3977036b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 16:34:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757460858; x=1758065658; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757460860; x=1758065660; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K6OH97ZpoRzs/QnK0sVtwK1+CTMH7EfEmnF9tlYLf0g=;
-        b=LL2JixijHp4p1q/v1EkyCc3FzMk/nZ4MiZtAKu1dmoWb5CJS7cu0DrsGRwxF7pPqWL
-         CPn5NFgs7KpWMwO0inANqTiZE/pj8UnZJ/gdryEjO3AhkFcu4kzrtuI2DhPkLT1R6Vku
-         7XZrJVx8YGl9nhoAI00X7rn9K4pkzYV9uOb4nDSKHlagN6DqOlPs2DGW19t5Hr5PacS4
-         mQriNQrL5Tl4A/gEkuSocRdWzqhOguOF/ItnOr8xDVhi1qzPYgsCfz1ziYdrIcw2DRVk
-         S6pperryh9m+WJrATXD4TgRISM0Shq8WRJ0HNXqpXTCuln/C6+0GBZnzAtOtuo2NhK65
-         c7nw==
+        bh=9D+kUp+8/PWIFjKllG6CENhJfl0f54OgddsYmF4lYnY=;
+        b=CXpLEtH91peSjvKDBvW+CuOhHDDyNuZvWhrppc9+VIB6IKtVcTjJfXPb7Qr4Xeg+87
+         BnDXh9SI4iiJC7uoMaBA9/ou9FfqzBvMf67aK5EAVM71cI3vkc1JsiSdKlPxa6jHQhoW
+         84Ujo+TLm1gjWQjGZNRT5BANuN4V+72NuP0d8RiCsDKXt68E5HDxPDI+RI5FfpkGXcq5
+         AMBtUd4iIrZ5HQJyTTeF7jG0NnQ4K+EuE12COR1Pbj1t8ihsA/qrpboh220EVgO3MzfF
+         2ues9Ay482g9J+vPxPnpaZxdmVcC/+9X2dxlQQgb8wV2rjZY6ruOxrUBMdbYUWZZGY32
+         VeGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757460858; x=1758065658;
+        d=1e100.net; s=20230601; t=1757460860; x=1758065660;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K6OH97ZpoRzs/QnK0sVtwK1+CTMH7EfEmnF9tlYLf0g=;
-        b=RwtWKvkgKdHkDPB73BJgZMdIqhdriR7MZKFrvVkieZJTBhVNnq4KiFbSWmRRJUVsgH
-         RM2faiuJYmACJlPMs7mL9BgcQ2if9g3HLY+VpkiNeUOH2wcw6nwJfE0w1zfKvK0c7Ii7
-         bCCHIAG62MsVbxxS+yw5Ycncj/uv1OFOhnH19lgbIejO1fsuQtvgE3IbPUZth98VBT25
-         gZKeGWzJNCct50Y+y+BmNb6igHoau0S0B8KkygbMh4QIAgxGSzXk7JrCC7L7RQTBhA7v
-         6OmUheLN4fMb0kzleIzV34LINJiwYwTj59L9FJFLKm5MuYRFAisvlS2qiA69UUAUv6s8
-         EVkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxmeTf1MwlNlBnGILMiCiUY/Cke/nX21+BbLHZ4J+NRZURtatBfoOb45T4lnnUJQrm6W6lWJi1w8C7IMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXHJeQFvH9htFkX0NQlnb2WRdYH79JFFPkCegb1b16PZ2p0+Sy
-	rtqzMAfvv1nFjsG2dk8Z9WPsk3/dF5Ze1x99BM7KuRCJdtyJIdY1VRyJ+XKK+yK0Hhe/h1lSffB
-	KzMbe+A==
-X-Google-Smtp-Source: AGHT+IFIst4jd2D334Y2PkPuCO/Ean4Ij3IT9elqE1huVfZrndSK+83KyXPa67AggUAs4pMR4FIui+Zixgs=
-X-Received: from pfmm1.prod.google.com ([2002:a05:6a00:2481:b0:746:3244:f1e6])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:3e14:b0:771:d7b0:6944
- with SMTP id d2e1a72fcca58-7742dca536dmr15166038b3a.3.1757460857845; Tue, 09
- Sep 2025 16:34:17 -0700 (PDT)
-Date: Tue,  9 Sep 2025 16:34:08 -0700
+        bh=9D+kUp+8/PWIFjKllG6CENhJfl0f54OgddsYmF4lYnY=;
+        b=sYVmVSBThMRj8BWPwkb0/w+lx2GcbmusRJ3Yl81CBNXDiQrWLZRzW36JTyK58UaDdM
+         T9kPHmIp6pXdtCPpvSCoZ7A317Pl7tQWQcJZxckKjPAq1DPj9NDDgqA7Um62+Tf0ePEx
+         hC8NnLYHD4XiSqjzZ5rhgZ/l5iIsrUS15bREDBEUfhj9X7iTPBlqX5h14QOsHk3IZku9
+         UzCdjzz6BdPV3TLs3bHg5uTB+fq1M7Hgks09z7mGrRScYXnMUZBw4UytWoJBastyGwo1
+         o2xAuHg2rqRjNIEOmzdmWkFapTdQrsdu8QvRiHPV/uJCTGyKw0OWBlUpPxBpT2QR7piQ
+         Jnqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIl94VSNDkBscEG9vaAPj0fGOdfLCB+LTx0EE+sMf7X2CKHts+BOcoFJdvoGq3qch68VAkzCF92ux5ezM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqPF5zI9XceXnFvSvn4Gr5tB37oH4WvZOBS39XU3jaKNh6z9+D
+	JszFN4Cd3VQbrkzDVRNnbNjvLLYBf+L6Kcvk74onC3YBkJwqTXfSv8resPXzNFOuCY/BrVZ9MXi
+	hb5JnWQ==
+X-Google-Smtp-Source: AGHT+IH21M6CEVT6I4cbVbLFhLsLvsvyph9LaEsNMJBlcaaK/bkq0Ym1zULWMNoZDsLFG63V/okgQHCwDiw=
+X-Received: from pfbcj20.prod.google.com ([2002:a05:6a00:2994:b0:772:701:dfa4])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:14c2:b0:772:80d3:b684
+ with SMTP id d2e1a72fcca58-7742de925bemr16942717b3a.22.1757460859886; Tue, 09
+ Sep 2025 16:34:19 -0700 (PDT)
+Date: Tue,  9 Sep 2025 16:34:09 -0700
 In-Reply-To: <20250909233409.1013367-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250909233409.1013367-1-surenb@google.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250909233409.1013367-3-surenb@google.com>
-Subject: [PATCH 2/3] alloc_tag: prevent enabling memory profiling if it was
- shut down
+Message-ID: <20250909233409.1013367-4-surenb@google.com>
+Subject: [PATCH 3/3] alloc_tag: avoid warnings when freeing non-compound
+ "tail" pages
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: kent.overstreet@linux.dev, vbabka@suse.cz, mhocko@suse.com, 
@@ -85,46 +85,43 @@ Cc: kent.overstreet@linux.dev, vbabka@suse.cz, mhocko@suse.com,
 	linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Memory profiling can be shut down due to reasons like a failure during
-initialization. When this happens, the user should not be able to
-re-enable it. Current sysctrl interface does not handle this properly
-and will allow re-enabling memory profiling. Fix this by checking for
-this condition during sysctrl write operation.
+When freeing "tail" pages of a non-compount high-order page, we properly
+subtract the allocation tag counters, however later when these pages are
+released, alloc_tag_sub() will issue warnings because tags for these pages
+are NULL.
+This issue was originally anticipated by Vlastimil in his review [1] and
+then recently reported by David.
+Prevent warnings by marking the tags empty.
 
+[1] https://lore.kernel.org/all/6db0f0c8-81cb-4d04-9560-ba73d63db4b8@suse.cz/
+
+Suggested-by: David Wang <00107082@163.com>
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 ---
- lib/alloc_tag.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ mm/page_alloc.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-index 95688c4cba7a..79891528e7b6 100644
---- a/lib/alloc_tag.c
-+++ b/lib/alloc_tag.c
-@@ -767,6 +767,16 @@ struct page_ext_operations page_alloc_tagging_ops = {
- EXPORT_SYMBOL(page_alloc_tagging_ops);
- 
- #ifdef CONFIG_SYSCTL
-+static int proc_mem_profiling_handler(const struct ctl_table *table, int write,
-+				      void *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	if (!mem_profiling_support && write)
-+		return -EINVAL;
-+
-+	return proc_do_static_key(table, write, buffer, lenp, ppos);
-+}
-+
-+
- static struct ctl_table memory_allocation_profiling_sysctls[] = {
- 	{
- 		.procname	= "mem_profiling",
-@@ -776,7 +786,7 @@ static struct ctl_table memory_allocation_profiling_sysctls[] = {
- #else
- 		.mode		= 0644,
- #endif
--		.proc_handler	= proc_do_static_key,
-+		.proc_handler	= proc_mem_profiling_handler,
- 	},
- };
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 1760346bbd24..d21a411e807e 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5240,9 +5240,16 @@ static void ___free_pages(struct page *page, unsigned int order,
+ 		__free_frozen_pages(page, order, fpi_flags);
+ 	else if (!head) {
+ 		pgalloc_tag_sub_pages(tag, (1 << order) - 1);
+-		while (order-- > 0)
++		while (order-- > 0) {
++			/*
++			 * The "tail" pages of this non-compound high-order
++			 * page will have no code tags, so to avoid warnings
++			 * mark them as empty.
++			 */
++			clear_page_tag_ref(page + (1 << order));
+ 			__free_frozen_pages(page + (1 << order), order,
+ 					    fpi_flags);
++		}
+ 	}
+ }
  
 -- 
 2.51.0.384.g4c02a37b29-goog
