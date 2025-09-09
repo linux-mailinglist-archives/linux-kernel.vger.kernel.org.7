@@ -1,154 +1,74 @@
-Return-Path: <linux-kernel+bounces-808408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3567B4FF67
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:29:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBCF2B4FF68
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F82616B8D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:29:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D51281C23C88
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8D93469EC;
-	Tue,  9 Sep 2025 14:29:08 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E672345753;
+	Tue,  9 Sep 2025 14:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cglac5SI"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D6B345739
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114393451D8
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757428147; cv=none; b=iI/LYXpU3kXSMPQ84A5gWq+26DgApcbTw0Llvt2+BT+zuJyYrmFVJMglFwhQqa7BjDv0qTF+T6NnPKPtddeycZfJItTbPUAFcv3yARZZkzTxF6Y0/EApR9Z238c/V1C1TTsvyhOCQhxWMf0UM5d625FmuCFqGY4z/3I/PUHHjjw=
+	t=1757428162; cv=none; b=cYTB5j6l4zfaquoGK9eQxERYnkXY/pgTQP7ev6qOKD6DrozzQsMI8ndl4HQdKVZmURhDr+9aGgLXxTuGKWlktAKLXAa9hTrviL7tffiZh0r8y9To4+hr8Wt9O8IHpqAYN/EWXgdU8ghH/X8ZPFpZc0NnGjyUgSjZBrw8mr4vUb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757428147; c=relaxed/simple;
-	bh=hC7H+w01gLo3obgorFIHYQWZFivk41zLY1ojBAhlKVY=;
+	s=arc-20240116; t=1757428162; c=relaxed/simple;
+	bh=HSVI0c2MPcfCxfTbX663WL44nUGjRe9XBH0DR/kkG60=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TgCahb2TT87R1hKOXzS4HOKh5Fkryr/PGERAzWRLcQok9D6xFLCcBrl1PiCL8Mpz8HRVWgQ2+4qENwOR2r0SCYD5MVDqF1mpzOS4QtFAJIqeiiffVtPM38A4UUKvQL3zn0FVs1wVRNvtLaif1HPU7V3xFxyxKCtnFljlLT4DWME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uvzKz-00044I-RW; Tue, 09 Sep 2025 16:28:49 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uvzKy-000R8e-33;
-	Tue, 09 Sep 2025 16:28:48 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 9A02846A148;
-	Tue, 09 Sep 2025 14:28:48 +0000 (UTC)
-Date: Tue, 9 Sep 2025 16:28:48 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Patrik Flykt <patrik.flykt@linux.intel.com>, 
-	Dong Aisheng <b29396@freescale.com>, Fengguang Wu <fengguang.wu@intel.com>, 
-	Varka Bhadram <varkabhadram@gmail.com>, Wu Bo <wubo.oduw@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel@pengutronix.de
-Subject: Re: [PATCH 3/7] can: m_can: m_can_handle_state_errors(): fix CAN
- state transition to Error Active
-Message-ID: <20250909-nightingale-of-strange-defense-631196-mkl@pengutronix.de>
-References: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de>
- <20250812-m_can-fix-state-handling-v1-3-b739e06c0a3b@pengutronix.de>
- <DC74JEKBB6HL.1LJ53UZJ0T0Q9@baylibre.com>
- <DC74YGSPTL16.KG2SWZD4L3YV@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ojc9uq1WEX2MPbfYxddG7atk38MRjMFUSj8DCfcp9UMS2Xqwj3XnRJANe3/7XSzv/z6fQxdf0XrqFyzweR4L1xeOJlsYZFAXsoEd1E3VFyD3/1KY5TeeMa3/EuoOVBGWmWwXx7ZQEEjOfLj2Z0NfiTZRo72oBoTzVZzGcJQgr/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Cglac5SI; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HSVI0c2MPcfCxfTbX663WL44nUGjRe9XBH0DR/kkG60=; b=Cglac5SIFR5CjvspnMxpLy1ye8
+	tEKEQ8ttpuZpCBFn+6Lmi8GVjaUOM7oDnrcPldtmZ1qaFUqTK5P7obZzYfPD0ykfi7GECexhqSoYU
+	sNEZArLKw8OFDwl74/Jd5DmrF2850dKOD8Msv1ksESrOoWsNw84tVsITTWsE+PD9i2wVxF+oJM0Tv
+	4iOTlrosfIoPJgrpoiYwMIRdKdb/V563ab4UivgNT1QjAz/2kXipkay2hpXcyR+v6FZDIKXThQwoz
+	B4S/bCPhIgFuZDWEJf/H9B+1qmE2N7B5nE7S/nrycOEVvGPH3KnxChx1aFvDDbNsDsnc8954z6sOI
+	dnAUBDmw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uvzLH-00000009Efg-0Dh6;
+	Tue, 09 Sep 2025 14:29:07 +0000
+Date: Tue, 9 Sep 2025 15:29:06 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Hu Song <husong@kylinos.cn>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@gentwo.org>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/slub: Use folio_nr_pages() in __free_slab()
+Message-ID: <aMA5soNyvsEcWvlz@casper.infradead.org>
+References: <20250909074812.599030-1-husong@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="x5l5tximgvzotqsw"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DC74YGSPTL16.KG2SWZD4L3YV@baylibre.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250909074812.599030-1-husong@kylinos.cn>
 
+On Tue, Sep 09, 2025 at 03:48:11PM +0800, Hu Song wrote:
+> Use folio_nr_pages() helper instead of manual calculation (1 << order)
+> for better code readability and maintainability.
 
---x5l5tximgvzotqsw
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/7] can: m_can: m_can_handle_state_errors(): fix CAN
- state transition to Error Active
-MIME-Version: 1.0
-
-On 20.08.2025 11:09:16, Markus Schneider-Pargmann wrote:
-> >> --- a/drivers/net/can/m_can/m_can.c
-> >> +++ b/drivers/net/can/m_can/m_can.c
-
-[...]
-
-> >> +static enum can_state
-> >> +m_can_can_state_get_by_psr(const u32 psr)
-> >> +{
-> >> +	if (psr & PSR_BO)
-> >> +		return CAN_STATE_BUS_OFF;
-> >> +	if (psr & PSR_EP)
-> >> +		return CAN_STATE_ERROR_PASSIVE;
-> >> +	if (psr & PSR_EW)
-> >> +		return CAN_STATE_ERROR_WARNING;
-> >
-> > Why should m_can_handle_state_errors() should be called if none of these
-> > flags are set?
-> >
-> > m_can_handle_state_errors() seems to only be called if IR_ERR_STATE
-> > which is defined as:
-> >   #define IR_ERR_STATE	(IR_BO | IR_EW | IR_EP)
-> >
-> > This is the for the interrupt register but will the PSR register bits be
-> > set without the interrupt register being set?
->=20
-> After reading the other users of the above function, I do see why this
-> was added. I am still wondering if there is a way to return to
-> ERROR_ACTIVE once the errors are cleared from the error register.
-
-Sorry, I don't get what you mean.
-
-> Also looking at all the users added for the function above, could you
-> read the register inside the function? Currently you are adding a
-> reg variable and a read call for each call to this function.
-> m_can_handle_state_errors() also doesn't need the psr value with your
-> refactoring.
-
-That makes sense.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---x5l5tximgvzotqsw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjAOZ0ACgkQDHRl3/mQ
-kZyhlggAtZExm2Zo96ICbdvXAo84z8ofTkiGmxOgCzBIXeqY0g+rTSH4iVsI7LYw
-1qAtZGXNLsoWYAVy8h6Q6uafXvAqskl6CTgZT7Q2BPE3dM+3g4U9/aiJVu8c2P1w
-OeAbA9FOQsjfJhMW/Xz0RY3O+E36nav5vXFzGCP1CmZ7j6qZfYHDitI+PbkR5G5A
-7TjE43ZpZGI63GcBcvUbjGnc/dY3nZxeNoaFgFhT3v4cLqdU8vz/c0UxNphIQn27
-/wvGeHnwhnTO2ETkJ0KzctxT4kyFQOZGaNYJoaBNjrIhaSYAEbHBL/1jyf7HeOpx
-BiiLXsN6jQuq8rVOTSZcC3+SSoJ34Q==
-=GWZf
------END PGP SIGNATURE-----
-
---x5l5tximgvzotqsw--
+https://lore.kernel.org/linux-mm/20250829154728.3397606-10-willy@infradead.org/
 
