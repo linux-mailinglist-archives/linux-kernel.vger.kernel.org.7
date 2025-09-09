@@ -1,381 +1,184 @@
-Return-Path: <linux-kernel+bounces-808577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887D4B501C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:45:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C52B8B501C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0576717B16A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:45:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 442B3441768
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC92273803;
-	Tue,  9 Sep 2025 15:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA04278761;
+	Tue,  9 Sep 2025 15:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="fuU63Asy"
-Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ofsAOZcz"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2041.outbound.protection.outlook.com [40.107.223.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0610F10E3;
-	Tue,  9 Sep 2025 15:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.82
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757432741; cv=none; b=UvQ2XsVibGQWFuLRUGHLItJTTUYDgB3iSiKxquiulTescB+Jv1CSkjjRWrc0aZXO1tVSx4zD48izTRZSPJTNP1KMPpkToYUfvHbPeBTwSkidwIt2cEpHlOX7CvQ2jkeiuGF3ynuhW/ckT/Yi3VJBBC1Rs/X85ftxHgtAphIJqN4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757432741; c=relaxed/simple;
-	bh=0yz6aghSeYaaRKdDcRzSd6f06S1jGRsDA2q9Dz/HqU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=URzjsjczV8dwomxywESdqXhfiiYPkZznjtujLdVUP6tHP3cqJgDXPstIRz2NCoRkSh9k03LHVCXnWwmL94IEbIgOT1sMniRJ1IcNFAN5bsGTbzCVU/C/Dcepa8+6LJp/hxgCXdZpm5NnXeh+PSAP/9YUly3m9KHq4JC/Og2+Ir0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=fuU63Asy; arc=none smtp.client-ip=178.154.239.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-94.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-94.vla.yp-c.yandex.net [IPv6:2a02:6b8:c15:290e:0:640:f317:0])
-	by forward502a.mail.yandex.net (Yandex) with ESMTPS id E9F59809BE;
-	Tue, 09 Sep 2025 18:45:28 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-94.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id OjLILl4LuKo0-8eHHkWSo;
-	Tue, 09 Sep 2025 18:45:28 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1757432728;
-	bh=dIRrBjelZrgFNCTCF1oaGTQ+9cRVwzvwxL9eis2Nb8E=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=fuU63Asya9b0JbIYNjWzZzCcVMoi+Tx7cRLs4YuTE/BS5B35N6B56Ysrr7iT/TguE
-	 E2CH4qM5gHSya4oemztI7rw+OXVrG2LtmoM2te+0Tio2HcL4j809YmaSusc+AA27z9
-	 QkLj7iC1iv7ZrtQwVv1nD8Cv4IUY/8qe64AJOMJo=
-Authentication-Results: mail-nwsmtp-smtp-production-main-94.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Tue, 9 Sep 2025 18:45:24 +0300
-From: Onur <work@onurozkan.dev>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- daniel@sedlak.dev, dirk.behme@de.bosch.com, felipe_life@live.com,
- tamird@gmail.com, dakr@kernel.org, tmgross@umich.edu,
- a.hindborg@kernel.org, lossin@kernel.org, bjorn3_gh@protonmail.com,
- gary@garyguo.net, boqun.feng@gmail.com, alex.gaynor@gmail.com,
- ojeda@kernel.org
-Subject: Re: [PATCH v1] rust: refactor `to_result` to return the original
- value
-Message-ID: <20250909184524.1482d602@nimda.home>
-In-Reply-To: <CAH5fLghVt6MKfiDkmd-5DMAKA=yXQzMu3GNHAqB+HRGhyJ0tqA@mail.gmail.com>
-References: <20250909123258.29304-1-work@onurozkan.dev>
-	<CAH5fLghVt6MKfiDkmd-5DMAKA=yXQzMu3GNHAqB+HRGhyJ0tqA@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8BD25A2DA
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757432743; cv=fail; b=Wbg06vbSFbS1GUFc76PJQb/bQoZA58oGWJdUhNStGCxRMy6gC/ZNTcPur0ebAe+lpBdCL972Pez9F/Jre5FY5P3nf0GhfiZkJ9J6uOIfU0uR/vyClIWFiRMcCYCa6Ko8lzMZ2HFHZRBBORKvenBAogwAuC7/b8E+cJ+No3yXKdg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757432743; c=relaxed/simple;
+	bh=rbYo2ybpSCyTQi9KuFfkRepwNYmgnA0MYYDs0PQ4tOs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JaRZoJiwO5l804Et+7WOJ2Yl+KydN3CrVavOvTN62utuF1Zdj4IWK6nhcp7WLVXoLW3t0xfGz3gPz2nQoYtYWT5yL5iPaVhhc9OvSQAg3UFKLaweJ9TdKA3UUyE01Qpl/gQfOEJTXrVh/3QoqgWffhpQ1eMpeeMWOZCluNgJ/P8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ofsAOZcz; arc=fail smtp.client-ip=40.107.223.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GdSQgSRKoD2/KsRefDb2OSmMmlRTok0prlZhySA0HzawJ0ucFLsCQUEjaAcuXL4b3ocy8Qvw75ahgxEW3ePT2LmfJWlTWbbauqaiOfS77kJQpHI3PHxyJocBmeZIm6H12XH8ddbXTN5cjsf0otsOs5Kvrmuh6H0cPGEsDIYeeCB85c9tjEh9cGN1VKsk9PFOZeSNPALaF4o2TY4/SnsjU8T33joc2rbZnzJ8F1HiuBvkfHnvAotIBgkounO7fshwN8/nX9+c8CifRexQ5HLPVTS+fZQQyb5UwXdSCSFUJbW+ia3ErwG9AGR297TaV9tcqFN87KDmvx23w1OITE3tKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+re4CKwZ1351RNj0jhdofZlOrG3npzWzaJaNdqbEh84=;
+ b=Zs6RQsODlDw8wZciT07J4Aztvgfww4nAP/4i5WjTUGO6NkJ7ZCJdjMheHNRs6Z7N8eFwrdKA3WeQ1tDPU44DJ9easbtdE9nuf2bNuwjFTGxfbk2gnokkPUO57NgvIgGmlTJPeo4Hkut7zmlYuhiBuzGeRZFO15VLkQbCtJtywRW8WUFPbB2o32L8vaULoi+8TYDjSjLKp1xtEg048EvjoqC477ExdN9fY/ZesPxW6VXulSTM+POM4bs2Ezwxzz1O7LZ6VZ0Nx6o2h3AsqIeti7KYaQ0ISY8Itp/UwlAb4Am5l3fbA3b2/jMl+Q9CioTQ55GZaz23XVWhCO3fNOxpWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+re4CKwZ1351RNj0jhdofZlOrG3npzWzaJaNdqbEh84=;
+ b=ofsAOZczK+GmhJBHVw4tWsE+J+kBOvPN89iJu2d0pv/aWoAoqC3cMXfql3arcb1F2ktpKlyNncse8KVUIozriceuiaSjGOSfSklmNT5OIMrKbEOi4vCzPfbiRS78SsN0amAE8UUk/UJ++NzGMQ9PAroIX+bQ+WEdSP2JCEDWWow=
+Received: from BY5PR20CA0016.namprd20.prod.outlook.com (2603:10b6:a03:1f4::29)
+ by LV5PR12MB9753.namprd12.prod.outlook.com (2603:10b6:408:2b6::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
+ 2025 15:45:35 +0000
+Received: from SJ5PEPF000001CA.namprd05.prod.outlook.com
+ (2603:10b6:a03:1f4:cafe::d9) by BY5PR20CA0016.outlook.office365.com
+ (2603:10b6:a03:1f4::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.22 via Frontend Transport; Tue,
+ 9 Sep 2025 15:45:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ SJ5PEPF000001CA.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Tue, 9 Sep 2025 15:45:35 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 9 Sep
+ 2025 08:45:34 -0700
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 9 Sep
+ 2025 08:45:34 -0700
+Received: from xsjlizhih51.xilinx.com (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Tue, 9 Sep 2025 08:45:33 -0700
+From: Lizhi Hou <lizhi.hou@amd.com>
+To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
+	<jacek.lawrynowicz@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
+	<dan.carpenter@linaro.org>
+CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
+	<max.zhen@amd.com>, <sonal.santan@amd.com>, <mario.limonciello@amd.com>
+Subject: [PATCH V1] accel/amdxdna: Fix an integer overflow in aie2_query_ctx_status_array()
+Date: Tue, 9 Sep 2025 08:45:31 -0700
+Message-ID: <20250909154531.3469979-1-lizhi.hou@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CA:EE_|LV5PR12MB9753:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b0ecb52-4d0b-4882-9559-08ddefb7eab5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?m5BII0i9oabiWQKL/vCAn2ivG65IxFAHk18Sh1nZXAunoYHKNhwmDhqWpJGT?=
+ =?us-ascii?Q?HhNUC5IlIIe/4CHegHFq/pJHWa7vNuvGK+nJK3+stxnUvp8ZuA6tPE4jWAoM?=
+ =?us-ascii?Q?fnXdHX/vAzesDLiR+q9MUsvGttghFD2GwJXP/eUnh/4N2OhItiCORFS3SEl1?=
+ =?us-ascii?Q?vpstLlHbeFBH1dFSW1efI1sqI2LihuH7gISnO1f2hID2/Wm8ObAXqr8bIwej?=
+ =?us-ascii?Q?rKdOy7Ps1EHUQCBYcOT6DMvV4xDUYWaATdf2yRbCX07KyjQ60GSAuYJHJb8o?=
+ =?us-ascii?Q?Yj5V/2Ddtv/5nippgGAJkMGheJtewDooWSh1JJSVlq9euZZiuBgiIyCwooYq?=
+ =?us-ascii?Q?uwXtW9a3ov/mA/q7msEX1CRLd8jWUek3wpygJf96VrpVuRI4EgzRInM1QQYt?=
+ =?us-ascii?Q?P+ZbPeCgJRvxdcQYi+HxIJSfFQ694YDoVg1v8hq4XFP00EvNjwOjSG581B/5?=
+ =?us-ascii?Q?8qaePyh+1JXuqqIXKdKl9sdNubFM+f7khGHvZ4JXjjaDgSUCF+HFU99aXCKq?=
+ =?us-ascii?Q?RS03kyEyzBxn2SyaHA7bJsuSMbPiwYJh2g+kJig2Tj2UOS4F+qHzs7SEmyqt?=
+ =?us-ascii?Q?c+JKJRsojLccE9djDLQXJrvDL57v62cDxHDcHMmEAx6qoldEwCf+aOxuEC4K?=
+ =?us-ascii?Q?GPcBGfvWlLhgDE7XDXVr/u7YwqipBk7CotbBp1t3uh8kBYuvsjuyGf7JdF+S?=
+ =?us-ascii?Q?Yzhd/z9oFx9uhpveis+DeI5wbz5Vg1zwe27n/ey8mWn+T3/7K1F/2mj8XlWG?=
+ =?us-ascii?Q?jxrITLZT/Kkot1tq/6H2OLvl3nYDv+lIm6hcTw0fg1hGBgc45j5HT8kbmaHV?=
+ =?us-ascii?Q?Nx+LvOTEOj7MyEH1ISbPO+5oj9wVCYBcnvb+2dfecVrOUKi1Ey9rPA5/CSOC?=
+ =?us-ascii?Q?IYUYVRV8vXbCdWkbCDflxt1c4Yx9+CT+dURh+0SCRXO2xO0s0VUvvPs/0JMP?=
+ =?us-ascii?Q?+oARWq2VkhQYLIJkI6saB3AHzk89lWonHqrEhhnbudsx607E53dwLk9oW0oa?=
+ =?us-ascii?Q?wdkWX7hhGhihlHQrXzUxXY56km1i/W4nuPQtaGnrPmsqnc2/dFsUHBkDOwrx?=
+ =?us-ascii?Q?0dnI1LOlnHmbHnwBImHxIsPoSvs/v8AWZAMaGikrlIiXj0/xX0OicoxZ0Ha8?=
+ =?us-ascii?Q?qxXWM04raRS585vbv9ZGJx2fj4/qPH8uFmpjNK7F/y+cLM0KCUzA7/n1efFd?=
+ =?us-ascii?Q?pVJOQDHhrqQqqSh/zLp3/nOUQlPz3eS5tqYWFEkGYM/QMSiP8IbLDXJgbFgy?=
+ =?us-ascii?Q?cm7nZ8zt8yZpdk1NTr4uCoKEnVEYzOlumoEFo7CndJA853fVY7r+844LHPbU?=
+ =?us-ascii?Q?vtDFGpPqeNnKSd7ONNGQo6w+kqbhlTGzSf6uTqNCnZfvngDWzMYdI3kx95mD?=
+ =?us-ascii?Q?2iMzoA7jjWLL8g8fe9m6B85tSWYGYTVPTsNCw6Fl2tW4dACO+JkFE/fEiy17?=
+ =?us-ascii?Q?CedWhxjRcNAMCKdrvEtmqaj1jGvDP0vjq0IfZKrbnM7FP3utctq1ZNrmWvTX?=
+ =?us-ascii?Q?IpRR/3xZI9nEFpg+9KTlz02kJ161p5ZFau28gwzSiN9MgLtGt4L8WxdgCw?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 15:45:35.0911
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b0ecb52-4d0b-4882-9559-08ddefb7eab5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CA.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV5PR12MB9753
 
-On Tue, 9 Sep 2025 14:36:13 +0200
-Alice Ryhl <aliceryhl@google.com> wrote:
+The unpublished smatch static checker reported a warning.
 
-> On Tue, Sep 9, 2025 at 2:33=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.de=
-v> wrote:
-> >
-> > Current `to_result` helper takes a `c_int` and returns `Ok(())` on
-> > success and this has some issues like:
-> >
-> >     - Callers lose the original return value and often have to store
-> >         it in a temporary variable before calling `to_result`.
-> >
-> >     - It only supports `c_int`, which makes callers to unnecessarily
-> >         cast when working with other types (e.g. `u16` in phy
-> >         abstractions). We even have some places that ignore to use
-> >         `to_result` helper because the input doesn't fit in `c_int`
-> >         (see [0]).
-> >
-> > [0]: https://lore.kernel.org/all/20250822080252.773d6f54@nimda.home/
-> >
-> > This patch changes `to_result` to be generic and also return the
-> > original value on success.
-> >
-> > So that the code that previously looked like:
-> >
-> >     let ret =3D unsafe { bindings::some_ffi_call() };
-> >     to_result(ret).map(|()| SomeType::new(ret))
-> >
-> > can now be written more directly as:
-> >
-> >     to_result(unsafe { bindings::some_ffi_call() })
-> >         .map(|ret| SomeType::new(ret))
-> >
-> > Similarly, code such as:
-> >
-> >     let res: isize =3D $some_ffi_call();
-> >     if res < 0 {
-> >         return Err(Error::from_errno(res as i32));
-> >     }
-> >
-> > can now be used with `to_result` as:
-> >
-> >     to_result($some_ffi_call())?;
-> >
-> > Existing call sites that only care about success/failure are updated
-> > to append `.map(|_| ())` to preserve their previous semantics. They
-> > can also use the equivalent pattern:
-> >
-> >     to_result($something)?;
-> >     Ok(())
-> >
-> > This patch only fixes the callers that broke after the changes on
-> > `to_result`. I haven't included all the improvements made possible
-> > by the new design since that could conflict with other ongoing
-> > patches [1]. Once this patch is approved and applied, I am planning
-> > to follow up with creating a "good first issue" on [2] for those
-> > additional changes.
-> >
-> > [1]: https://lore.kernel.org/rust-for-linux/?q=3Dto_result
-> > [2]: https://github.com/Rust-for-Linux/linux
-> >
-> > Link:
-> > https://rust-for-linux.zulipchat.com/#narrow/channel/288089/topic/x/nea=
-r/536374456
-> > Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev> ---
-> >  rust/kernel/auxiliary.rs        |  1 +
-> >  rust/kernel/block/mq/tag_set.rs |  2 +-
-> >  rust/kernel/cpufreq.rs          |  3 ++-
-> >  rust/kernel/devres.rs           |  1 +
-> >  rust/kernel/dma.rs              |  3 +++
-> >  rust/kernel/error.rs            | 17 ++++++++++++-----
-> >  rust/kernel/miscdevice.rs       |  2 +-
-> >  rust/kernel/mm/virt.rs          |  1 +
-> >  rust/kernel/pci.rs              |  3 ++-
-> >  rust/kernel/platform.rs         |  2 +-
-> >  rust/kernel/regulator.rs        |  5 +++--
-> >  11 files changed, 28 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
-> > index 4749fb6bffef..479c0ad2a572 100644
-> > --- a/rust/kernel/auxiliary.rs
-> > +++ b/rust/kernel/auxiliary.rs
-> > @@ -43,6 +43,7 @@ unsafe fn register(
-> >          to_result(unsafe {
-> >              bindings::__auxiliary_driver_register(adrv.get(),
-> > module.0, name.as_char_ptr()) })
-> > +        .map(|_| ())
-> >      }
-> >
-> >      unsafe fn unregister(adrv: &Opaque<Self::RegType>) {
-> > diff --git a/rust/kernel/block/mq/tag_set.rs
-> > b/rust/kernel/block/mq/tag_set.rs index c3cf56d52bee..0e7883163000
-> > 100644 --- a/rust/kernel/block/mq/tag_set.rs
-> > +++ b/rust/kernel/block/mq/tag_set.rs
-> > @@ -65,7 +65,7 @@ pub fn new(
-> >                  // SAFETY: we do not move out of `tag_set`.
-> >                  let tag_set: &mut Opaque<_> =3D unsafe {
-> > Pin::get_unchecked_mut(tag_set) }; // SAFETY: `tag_set` is a
-> > reference to an initialized `blk_mq_tag_set`.
-> > -                error::to_result( unsafe {
-> > bindings::blk_mq_alloc_tag_set(tag_set.get())})
-> > +                error::to_result( unsafe {
-> > bindings::blk_mq_alloc_tag_set(tag_set.get())}).map(|_| ()) }),
-> >              _p: PhantomData,
-> >          })
-> > diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-> > index be2dffbdb546..c3fa20ce229a 100644
-> > --- a/rust/kernel/cpufreq.rs
-> > +++ b/rust/kernel/cpufreq.rs
-> > @@ -157,6 +157,7 @@ pub fn as_raw(&self) -> *mut
-> > bindings::cpufreq_policy_data { pub fn generic_verify(&self) ->
-> > Result { // SAFETY: By the type invariant, the pointer stored in
-> > `self` is valid. to_result(unsafe {
-> > bindings::cpufreq_generic_frequency_table_verify(self.as_raw()) })
-> > +            .map(|_| ())
-> >      }
-> >  }
-> >
-> > @@ -519,7 +520,7 @@ pub fn set_suspend_freq(&mut self, freq: Hertz)
-> > -> &mut Self { #[inline]
-> >      pub fn generic_suspend(&mut self) -> Result {
-> >          // SAFETY: By the type invariant, the pointer stored in
-> > `self` is valid.
-> > -        to_result(unsafe {
-> > bindings::cpufreq_generic_suspend(self.as_mut_ref()) })
-> > +        to_result(unsafe {
-> > bindings::cpufreq_generic_suspend(self.as_mut_ref()) }).map(|_| ())
-> > }
-> >
-> >      /// Provides a wrapper to the generic get routine.
-> > diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-> > index d04e3fcebafb..214cd9a0ebe0 100644
-> > --- a/rust/kernel/devres.rs
-> > +++ b/rust/kernel/devres.rs
-> > @@ -328,6 +328,7 @@ fn register_foreign<P>(dev: &Device<Bound>,
-> > data: P) -> Result // `ForeignOwnable` is released eventually.
-> >          bindings::devm_add_action_or_reset(dev.as_raw(),
-> > Some(callback::<P>), ptr.cast()) })
-> > +    .map(|_| ())
-> >  }
-> >
-> >  /// Encapsulate `data` in a [`KBox`] and [`Drop::drop`] `data`
-> > once `dev` is unbound. diff --git a/rust/kernel/dma.rs
-> > b/rust/kernel/dma.rs index 68fe67624424..f614453ddb7d 100644
-> > --- a/rust/kernel/dma.rs
-> > +++ b/rust/kernel/dma.rs
-> > @@ -34,6 +34,7 @@ unsafe fn dma_set_mask(&self, mask: DmaMask) ->
-> > Result { // - The safety requirement of this function guarantees
-> > that there are no concurrent calls //   to DMA allocation and
-> > mapping primitives using this mask. to_result(unsafe {
-> > bindings::dma_set_mask(self.as_ref().as_raw(), mask.value()) })
-> > +            .map(|_| ())
-> >      }
-> >
-> >      /// Set up the device's DMA coherent addressing capabilities.
-> > @@ -51,6 +52,7 @@ unsafe fn dma_set_coherent_mask(&self, mask:
-> > DmaMask) -> Result { // - The safety requirement of this function
-> > guarantees that there are no concurrent calls //   to DMA
-> > allocation and mapping primitives using this mask. to_result(unsafe
-> > { bindings::dma_set_coherent_mask(self.as_ref().as_raw(),
-> > mask.value()) })
-> > +            .map(|_| ())
-> >      }
-> >
-> >      /// Set up the device's DMA addressing capabilities.
-> > @@ -72,6 +74,7 @@ unsafe fn dma_set_mask_and_coherent(&self, mask:
-> > DmaMask) -> Result { to_result(unsafe {
-> >              bindings::dma_set_mask_and_coherent(self.as_ref().as_raw(),
-> > mask.value()) })
-> > +        .map(|_| ())
-> >      }
-> >  }
-> >
-> > diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-> > index db14da976722..f76afa4b7ec1 100644
-> > --- a/rust/kernel/error.rs
-> > +++ b/rust/kernel/error.rs
-> > @@ -378,12 +378,19 @@ fn from(e: core::convert::Infallible) ->
-> > Error { pub type Result<T =3D (), E =3D Error> =3D
-> > core::result::Result<T, E>;
-> >
-> >  /// Converts an integer as returned by a C kernel function to an
-> > error if it's negative, and -/// `Ok(())` otherwise.
-> > -pub fn to_result(err: crate::ffi::c_int) -> Result {
-> > -    if err < 0 {
-> > -        Err(Error::from_errno(err))
-> > +/// returns the original value otherwise.
-> > +pub fn to_result<T>(code: T) -> Result<T>
-> > +where
-> > +    T: Copy + TryInto<i32>,
-> > +{
-> > +    // Try casting into `i32`.
-> > +    let casted: crate::ffi::c_int =3D code.try_into().unwrap_or(0);
-> > +
-> > +    if casted < 0 {
-> > +        Err(Error::from_errno(casted))
-> >      } else {
-> > -        Ok(())
-> > +        // Return the original input value.
-> > +        Ok(code)
-> >      }
-> >  }
-> >
-> > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> > index 6373fe183b27..22b72ae84c03 100644
-> > --- a/rust/kernel/miscdevice.rs
-> > +++ b/rust/kernel/miscdevice.rs
-> > @@ -79,7 +79,7 @@ pub fn register(opts: MiscDeviceOptions) -> impl
-> > PinInit<Self, Error> { // the destructor of this type deallocates
-> > the memory. // INVARIANT: If this returns `Ok(())`, then the `slot`
-> > will contain a registered // misc device.
-> > -                to_result(unsafe { bindings::misc_register(slot) })
-> > +                to_result(unsafe { bindings::misc_register(slot)
-> > }).map(|_| ()) }),
-> >              _t: PhantomData,
-> >          })
-> > diff --git a/rust/kernel/mm/virt.rs b/rust/kernel/mm/virt.rs
-> > index a1bfa4e19293..5494f96e91b0 100644
-> > --- a/rust/kernel/mm/virt.rs
-> > +++ b/rust/kernel/mm/virt.rs
-> > @@ -195,6 +195,7 @@ pub fn vm_insert_page(&self, address: usize,
-> > page: &Page) -> Result { // SAFETY: By the type invariant of `Self`
-> > caller has read access and has verified that // `VM_MIXEDMAP` is
-> > set. By invariant on `Page` the page has order 0. to_result(unsafe
-> > { bindings::vm_insert_page(self.as_ptr(), address, page.as_ptr()) })
-> > +            .map(|_| ())
-> >      }
-> >  }
-> >
-> > diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-> > index 887ee611b553..6e917752cb89 100644
-> > --- a/rust/kernel/pci.rs
-> > +++ b/rust/kernel/pci.rs
-> > @@ -48,6 +48,7 @@ unsafe fn register(
-> >          to_result(unsafe {
-> >              bindings::__pci_register_driver(pdrv.get(), module.0,
-> > name.as_char_ptr()) })
-> > +        .map(|_| ())
-> >      }
-> >
-> >      unsafe fn unregister(pdrv: &Opaque<Self::RegType>) {
-> > @@ -437,7 +438,7 @@ impl Device<device::Core> {
-> >      /// Enable memory resources for this device.
-> >      pub fn enable_device_mem(&self) -> Result {
-> >          // SAFETY: `self.as_raw` is guaranteed to be a pointer to
-> > a valid `struct pci_dev`.
-> > -        to_result(unsafe {
-> > bindings::pci_enable_device_mem(self.as_raw()) })
-> > +        to_result(unsafe {
-> > bindings::pci_enable_device_mem(self.as_raw()) }).map(|_| ()) }
-> >
-> >      /// Enable bus-mastering for this device.
-> > diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-> > index 8f028c76f9fa..5a5561c7326e 100644
-> > --- a/rust/kernel/platform.rs
-> > +++ b/rust/kernel/platform.rs
-> > @@ -54,7 +54,7 @@ unsafe fn register(
-> >          }
-> >
-> >          // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
-> > -        to_result(unsafe {
-> > bindings::__platform_driver_register(pdrv.get(), module.0) })
-> > +        to_result(unsafe {
-> > bindings::__platform_driver_register(pdrv.get(), module.0)
-> > }).map(|_| ()) }
-> >
-> >      unsafe fn unregister(pdrv: &Opaque<Self::RegType>) {
-> > diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
-> > index 65f3a125348f..e17ae6e9a990 100644
-> > --- a/rust/kernel/regulator.rs
-> > +++ b/rust/kernel/regulator.rs
-> > @@ -261,6 +261,7 @@ pub fn set_voltage(&self, min_voltage: Voltage,
-> > max_voltage: Voltage) -> Result max_voltage.as_microvolts(),
-> >              )
-> >          })
-> > +        .map(|_| ())
-> >      }
-> >
-> >      /// Gets the current voltage of the regulator.
-> > @@ -291,12 +292,12 @@ fn get_internal(dev: &Device, name: &CStr) ->
-> > Result<Regulator<T>> {
-> >
-> >      fn enable_internal(&mut self) -> Result {
-> >          // SAFETY: Safe as per the type invariants of `Regulator`.
-> > -        to_result(unsafe {
-> > bindings::regulator_enable(self.inner.as_ptr()) })
-> > +        to_result(unsafe {
-> > bindings::regulator_enable(self.inner.as_ptr()) }).map(|_| ()) }
-> >
-> >      fn disable_internal(&mut self) -> Result {
-> >          // SAFETY: Safe as per the type invariants of `Regulator`.
-> > -        to_result(unsafe {
-> > bindings::regulator_disable(self.inner.as_ptr()) })
-> > +        to_result(unsafe {
-> > bindings::regulator_disable(self.inner.as_ptr()) }).map(|_| ())
->=20
-> IMO all of the new map calls in this patch should use the
->=20
-> to_result(...)?
-> Ok(())
->=20
-> syntax.
->=20
-> Alice
+drivers/accel/amdxdna/aie2_pci.c:904 aie2_query_ctx_status_array()
+warn: potential user controlled sizeof overflow
+'args->num_element * args->element_size' '1-u32max(user) * 1-u32max(user)'
 
+Even this will not cause a real issue, it is better to put a reasonable
+limitation for element_size and num_element. Add condition to make sure
+the input element_size <= 4K and num_element <= 1K.
 
-Agreed, will do it in v2.
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/dri-devel/aL56ZCLyl3tLQM1e@stanley.mountain/
+Fixes: 2f509fe6a42c ("accel/amdxdna: Add ioctl DRM_IOCTL_AMDXDNA_GET_ARRAY")
+Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+---
+ drivers/accel/amdxdna/aie2_pci.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
--Onur
+diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
+index 87c425e3d2b9..6e39c769bb6d 100644
+--- a/drivers/accel/amdxdna/aie2_pci.c
++++ b/drivers/accel/amdxdna/aie2_pci.c
+@@ -898,6 +898,12 @@ static int aie2_query_ctx_status_array(struct amdxdna_client *client,
+ 
+ 	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+ 
++	if (args->element_size > SZ_4K || args->num_element > SZ_1K) {
++		XDNA_DBG(xdna, "Invalid element size %d or number of element %d",
++			 args->element_size, args->num_element);
++		return -EINVAL;
++	}
++
+ 	array_args.element_size = min(args->element_size,
+ 				      sizeof(struct amdxdna_drm_hwctx_entry));
+ 	array_args.buffer = args->buffer;
+-- 
+2.34.1
+
 
