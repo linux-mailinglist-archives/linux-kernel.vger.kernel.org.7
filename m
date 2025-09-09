@@ -1,187 +1,569 @@
-Return-Path: <linux-kernel+bounces-808852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD06B5056A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:35:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B28FB50574
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971BF3B02A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:35:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 440C77B774E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D763F2FFDD2;
-	Tue,  9 Sep 2025 18:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEF43009C8;
+	Tue,  9 Sep 2025 18:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fKR8dC1Z"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CCAN0Ba+"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C1E214A93
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 18:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD6A2FFDC4;
+	Tue,  9 Sep 2025 18:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757442914; cv=none; b=kJvpShtOAojyC3NyhDjm9tFF21Uv9g30hDXJaYgpwIWQ6vPxNkb6EICEZIG0FkhctsJ0QiPDlVTosidVbpYO+VEbZzgDzNxfIlIgUhuR+Q+GXvPpyp3wICzLET0mjpLjZkhK1DeVAHJiSaDlt1fNi4m5thzeWdNu/NZSRUewA9U=
+	t=1757442956; cv=none; b=a2xzmiLSeGEs65RE1zGcxaPxIqBjVSUzmSaE5NI/2ZpE4vy8Thz5pLNByLNJILX9MDc0miYX7XebDXPbLeap3LUOXugu19KB1yPDWT/Dsrg7Z8JQwes5DMbGQKt+U7iWWaJMi63dIAE8pUcgKDp19QFw3sUCn59schvoQBHgU20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757442914; c=relaxed/simple;
-	bh=SP/f/OHmyENYFgXEHOPc8/Rf7ucWnwCMfoZXoYcF+Ug=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OtWDL9qsAkuq6ps5RC9Jqhun+yZDIhQACIode3ziPDc/hnvpo4evC01nVw1WtamnwmJSx9CWGQICspXMc8vRuZou3RLfBAAUbxHJMKWa8qU2Ll2KqGCT+Uz1HWrsWVkRphQsPaA4OHn6C9mR7G44ltJFC5Q9aMl3gtntUFVEf24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fKR8dC1Z; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-628f2102581so445762a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 11:35:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757442910; x=1758047710; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SwcRmJEpAdsIjXtM8gO5g337Luht7EqqgA9HVxaMN/w=;
-        b=fKR8dC1ZxKD5eQ7nCZs3VKAlInEJo8EKtOYvE3rDFMsIzkw0wjavw5+MX9zl0qT23H
-         m7/vdMni+VTvOnjDZJY/DHzbA7mbI9VLUryA8ogVsaeWbxsXKdQX7MPrVEBiZXK8+1I4
-         PnjvEmroIY5ULlBIvH9OyCDwDcHIlBigPivfFDoR7GXF50HCb3ZI+WRJozasyQD5NNXl
-         L+y2/kZUcNkOcjvIuWKqathysmv8ybpkak3eZtoZ5AFSHBGZa099BD66fDp0AW7pVjak
-         OxiHkussRUTU6cVXJ+R84bxjTxZbhY0zCor70/yWY0IZ8guEO43HHesICiYASt5+5jGS
-         yF3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757442910; x=1758047710;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SwcRmJEpAdsIjXtM8gO5g337Luht7EqqgA9HVxaMN/w=;
-        b=RlRuuyQbIlNcgYBr/ILzTkz2seAXvDrAbtfWQsG82lmn1dFXZRq0+Zgs+kWWj62iSt
-         r7Ph5aOLy/vRFVVXJlAyt4vcWMNLGBwRq5gHsp7YvAoWs7TnEmIytohi1lIq0TC+TsGS
-         uN8O9YA/5ChXkYsuZbwZykqTh+wnDe6IInMwPTHuzozFat2y8Tvonz0c/lHF8wJN3G1S
-         9nsogRgMRry8Mwc7sEs9Qd5yCkFjvglXglWdFzpk8OmCaXOzDmu9+SSAoRPMFxa2hS+Y
-         ZDuJz6RCQtkvbQ2i56pCo2fn5ayn/EDI0FkEWD0d+ii6lsWNJuTUZcKtNlz2ZeN1zA2N
-         FUyg==
-X-Forwarded-Encrypted: i=1; AJvYcCU997XapI8NKxyGjZKrdvLqIL9e0MSIU+A0r/DovyTYuA8sNE7/P2vxbc54NpXJk2r6l16b9wHxAvii9so=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwborMwiIepG3b7gYDYSn6Km+08kVyLvuKsiXbca8+SI8hgpkjj
-	v2Y7tGZo62zOEyH+n/jPAxf1kSKrP30NtJm8SzjOrwl949J5F92jTF0LfMaVrVQVG64=
-X-Gm-Gg: ASbGnctFc9A69ewA1+F9CLsP1RytTHxym8Ms6snvxG5Nx3ZA7zggu94qF/m6Y/L/twN
-	H/X2WMiydcXDbM93HZ++e06lf01PvsawIISIiRZp/mx/B2dtUZUadLL3/qvF9d2cGzryNVNvPaC
-	284B9TlCE1rph4/aE7ZFW9DcigXcSaF3hnLxRxtdqSH97qv0AbYm2+SrSGrXhEO0fV13OvQceGE
-	dsXlPXXqqUsXsph0+gxGp8qwI3Y9NmK92ZbL0HDoddSoViiU6k31LG7gNrMmwJInzxIpYOA7Y6R
-	TWNeA82ZnTu9xbbfZZeJcZgWcCm12l9HnktQXoIyUR90yKGpl7Ca5nzvHCqkKTUzmHfFiU+d2uc
-	tISjGW8jK/TKxdXi3NsIqjWEA0X0QU0uzzA==
-X-Google-Smtp-Source: AGHT+IEtJecmV/jjQmnrF4shDa6h9ku/souQrmOu0T5Vo6piPtCO7DvbXGp5/2Tji0sGHNxwh00KNw==
-X-Received: by 2002:a05:6402:1e92:b0:627:6281:e432 with SMTP id 4fb4d7f45d1cf-6276281e7c1mr4700848a12.6.1757442910428;
-        Tue, 09 Sep 2025 11:35:10 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c0123f08esm1707282a12.33.2025.09.09.11.35.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 11:35:09 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] clk: samsung: drivers for v6.18
-Date: Tue,  9 Sep 2025 20:35:04 +0200
-Message-ID: <20250909183504.104261-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1757442956; c=relaxed/simple;
+	bh=VmLCFhVhchDl1jX/l2TqA7CARzddzU6VOo1qjG49LWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IZuzAjMXPghP5uHDU6QwVxFw4R6W761kDnEek//oDjmGZQLyRoxE/Ll/0fT0rL1jpR63TP6hM1icI8yapnF9aJiDU6HTGK1Ro+2Zo3mV+rBvpQ7jVFnNMzVoMowTdLv8QphxBLSoEYo4hQ/r8zh35oQN6DJw0sILUSnysNm965s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CCAN0Ba+; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 589IZixb399087;
+	Tue, 9 Sep 2025 13:35:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757442944;
+	bh=maSH7tj15wZfBIInKmaKgzm2rhmiKoxGjtXZW5HbbrE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=CCAN0Ba+p+Rf8vZ5B25Rf9f12veIF1Z/7Yd0Tb2JFRCrTz4fXpdVf/Z+PFOirhqfa
+	 Ze5ftFD7ZDEvKR2fGcqeiwN9I6gvGUK/+abkngxbpsvVU6dStHlfk/HBFz4crasVhj
+	 A0kDc4zsw+cW8g8Yd4/Jt8Ga+32l84iI9AIP545E=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 589IZigI3901959
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 9 Sep 2025 13:35:44 -0500
+Received: from DLEE205.ent.ti.com (157.170.170.85) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 9
+ Sep 2025 13:35:43 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE205.ent.ti.com
+ (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 9 Sep 2025 13:35:44 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 589IZhTw2966705;
+	Tue, 9 Sep 2025 13:35:43 -0500
+Message-ID: <59240832-761b-4dc4-8920-b933f74be660@ti.com>
+Date: Tue, 9 Sep 2025 13:35:43 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3592; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=SP/f/OHmyENYFgXEHOPc8/Rf7ucWnwCMfoZXoYcF+Ug=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowHNYyTMtXdgVINSVVMUfHhVmyZrZSKfFw9c6L
- Pz+Jl63/jeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMBzWAAKCRDBN2bmhouD
- 18jGD/9/DW7x7Gnncm+III6OLPIJRggeJ3ahi+ZOIbPAcqzETQjteI+PC1+r+WVnJR4LgRTjnfy
- nh99rONItP2xQpqCUvO78IyTJlg55fci64+pL/81Zy0VuFeCNxKhzfudG3mVs8C3fmGO1v2V5SH
- mdpHObusWdByV49x327xv2Gdt/WR//yjaPLKQH4ALm/XaX8CqB7fEVqULhcBXoJw1gwffBkYPVE
- 2O2jXhQ6WnmvQb04PLoizDRtfAJ5FkemhjCuuvkDRxBlycZR5P+8dEH3v+R8CKUI6XcFV/KUW3M
- loomE0efVKlueZz/d+cG3v5aGtLfpCPnCTXjWbEW2ey8aqtJSZO27Jd34CkP4+Q6BnIUv4vqlGU
- NgJFFQc7IcgMicy2YaqUM1mAj5U99y13U+Ec7w52T9R4sts0SYZoQjuNd2/jCkIM/kLZLAs7PiN
- IbpQXdtUQe6OqfSS8ixhQ/UM3Gu6P1tmRukxzTt5+7thjhbYz5N5Yt67ixKFq+t+MpNhDMIRdQJ
- 68ZKfAxI7Pw1F0S2Vj/qj0oNKMO/qIhlaCjKseMfTmysXUjKYKsiZu2Xyd+WoMnAY5z0ziCEsVK
- KtI81ktQne6TXowGhZTHLfCmfvBIKdBxRcArVAz245DgcLmUnOBj9tJiX38qUjO2ib9M+UJQbgK ki7dl0vi6BLGViQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] arm64: dts: ti: Add support for Variscite
+ VAR-SOM-AM62P
+To: Stefano Radaelli <stefano.radaelli21@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Nishanth
+ Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo
+	<kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250904132240.36819-1-stefano.radaelli21@gmail.com>
+ <20250904132240.36819-3-stefano.radaelli21@gmail.com>
+ <d140fb99-d830-4aad-9312-b0eaa714e30f@ti.com> <aL_NHwomoCdJwa_1@GLaDOS>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <aL_NHwomoCdJwa_1@GLaDOS>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+Hi Stefano,
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+On 9/9/25 1:45 AM, Stefano Radaelli wrote:
+> Hi Judith,
+> 
+> On Mon, Sep 08, 2025 at 01:06:45PM -0500, Judith Mendez wrote:
+>> Hi Stefano,
+>>
+>> On 9/4/25 8:22 AM, Stefano Radaelli wrote:
+>>> Add device tree support for the Variscite VAR-SOM-AM62P system on module.
+>>> This SOM is designed to be used with various carrier boards.
+>>>
+>>> The module includes:
+>>> - AM62P Sitara MPU processor
+>>> - Up to 8GB of DDR4-3733 memory
+>>> - eMMC storage memory
+>>> - PS6522430 chip as a Power Management Integrated circuit (PMIC)
+>>> - Integrated 10/100/1000 Mbps Ethernet Transceiver Analog Devices ADIN1300
+>>> - Resistive touch panel interface controller TI TSC2046
+>>> - I2C interfaces
+>>>
+>>> Only SOM-specific peripherals are enabled by default. Carrier board
+>>> specific interfaces are left disabled to be enabled in the respective
+>>> carrier board device trees.
+>>>
+>>> Link: https://www.variscite.it/product/system-on-module-som/cortex-a53-krait/var-som-am62p-ti-sitara-am62px/
+>>>
+>>> Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
+>>> ---
+>>> v6:
+>>>    - Removed unnecessary sdhci properties
+>>> v5:
+>>>    - Update to match up with coding guidelines for device tree
+>>> v4:
+>>>    - Moved every MCUs-related node into the SOM dtsi
+>>>    - Removed unused audio node
+>>> v3:
+>>>    - Change compatible string to match existing mainline format
+>>>    - Lower case hex digits
+>>>    - Generic node names
+>>> v2:
+>>>    - Fixed warnings and cleanup
+>>>
+>>>    arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi | 385 ++++++++++++++++++
+>>>    1 file changed, 385 insertions(+)
+>>>    create mode 100644 arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi
+>>>
+>>> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi b/arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi
+>>> new file mode 100644
+>>> index 000000000000..da037993574f
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi
+>>> @@ -0,0 +1,385 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Common dtsi for Variscite VAR-SOM-AM62P
+>>> + *
+>>> + * Link: https://www.variscite.com/product/system-on-module-som/cortex-a53-krait/var-som-am62p-ti-sitara-am62px/
+>>> + *
+>>> + * Copyright (C) 2025 Variscite Ltd. - https://www.variscite.com/
+>>> + *
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +
+>>> +#include <dt-bindings/gpio/gpio.h>
+>>> +#include <dt-bindings/input/input.h>
+>>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>>> +#include <dt-bindings/leds/common.h>
+>>> +#include <dt-bindings/pwm/pwm.h>
+>>> +#include "k3-am62p5.dtsi"
+>>> +
+>>> +/ {
+>>> +	compatible = "variscite,var-som-am62p", "ti,am62p5";
+>>> +
+>>> +	wifi_pwrseq: wifi-pwrseq {
+>>> +		compatible = "mmc-pwrseq-simple";
+>>> +		post-power-on-delay-ms = <100>;
+>>> +		power-off-delay-us = <10000>;
+>>> +		reset-gpios = <&main_gpio0 54 GPIO_ACTIVE_LOW>,	/* WIFI_PWR_EN */
+>>> +			      <&main_gpio0 59 GPIO_ACTIVE_LOW>;	/* WIFI_EN */
+>>> +	};
+>>> +
+>>> +	mmc_pwrseq: mmc-pwrseq {
+>>> +		compatible = "mmc-pwrseq-emmc";
+>>> +		pinctrl-names = "default";
+>>> +		pinctrl-0 = <&pinctrl_mmc_pwrseq>;
+>>> +		reset-gpios = <&main_gpio0 49 GPIO_ACTIVE_LOW>;
+>>> +	};
+>>> +
+>>> +	memory@80000000 {
+>>> +		/* 8G RAM */
+>>> +		reg = <0x00000000 0x80000000 0x00000000 0x80000000>,
+>>> +		      <0x00000008 0x80000000 0x00000001 0x80000000>;
+>>> +		device_type = "memory";
+>>> +		bootph-pre-ram;
+>>> +	};
+>>> +
+>>> +	opp-table {
+>>> +		/* Add 1.4GHz OPP for am62p5-sk board. Requires VDD_CORE at 0v85 */
+>>> +		opp-1400000000 {
+>>> +			opp-hz = /bits/ 64 <1400000000>;
+>>> +			opp-supported-hw = <0x01 0x0004>;
+>>> +			clock-latency-ns = <6000000>;
+>>> +		};
+>>> +	};
+>>> +
+>>> +	reserved_memory: reserved-memory {
+>>> +		#address-cells = <2>;
+>>> +		#size-cells = <2>;
+>>> +		ranges;
+>>> +
+>>> +		rtos_ipc_memory_region: rtos-ipc-memory@9b500000 {
+>>> +			compatible = "shared-dma-pool";
+>>> +			reg = <0x00 0x9b500000 0x00 0x00300000>;
+>>> +			no-map;
+>>> +		};
+>>> +
+>>> +		mcu_r5fss0_core0_dma_memory_region: mcu-r5fss-dma-memory-region@9b800000 {
+>>> +			compatible = "shared-dma-pool";
+>>> +			reg = <0x00 0x9b800000 0x00 0x00100000>;
+>>> +			no-map;
+>>> +		};
+>>> +
+>>> +		mcu_r5fss0_core0_memory_region: mcu-r5fss-memory-region@9b900000 {
+>>> +			compatible = "shared-dma-pool";
+>>> +			reg = <0x00 0x9b900000 0x00 0x00f00000>;
+>>> +			no-map;
+>>> +		};
+>>
+>> Perhaps it will be a good idea to do the same refactoring as this:
+>>
+>> https://lore.kernel.org/linux-arm-kernel/20250905051846.1189612-30-b-padhi@ti.com/
+>>
+>> Meaning we drop the memory carve-outs for MCU R5SS here.
+>>
+>>
+>>> +
+>>> +		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
+>>> +			compatible = "shared-dma-pool";
+>>> +			reg = <0x00 0x9c800000 0x00 0x00100000>;
+>>> +			no-map;
+>>> +		};
+>>> +
+>>> +		wkup_r5fss0_core0_memory_region: r5f-memory@9c900000 {
+>>> +			compatible = "shared-dma-pool";
+>>> +			reg = <0x00 0x9c900000 0x00 0x01e00000>;
+>>> +			no-map;
+>>> +		};
+>>> +
+>>> +		secure_tfa_ddr: tfa@9e780000 {
+>>> +			reg = <0x00 0x9e780000 0x00 0x80000>;
+>>> +			no-map;
+>>> +		};
+>>> +
+>>> +		secure_ddr: optee@9e800000 {
+>>> +			reg = <0x00 0x9e800000 0x00 0x01800000>; /* for OP-TEE */
+>>> +			no-map;
+>>> +		};
+>>> +	};
+>>> +
+>>> +	reg_3v3: regulator-3v3 {
+>>> +		compatible = "regulator-fixed";
+>>> +		regulator-name = "On-module +V3.3";
+>>> +		regulator-min-microvolt = <3300000>;
+>>> +		regulator-max-microvolt = <3300000>;
+>>> +		regulator-always-on;
+>>> +		regulator-boot-on;
+>>> +	};
+>>> +
+>>> +	reg_1v8: regulator-1v8 {
+>>> +		compatible = "regulator-fixed";
+>>> +		regulator-name = "On-module +V1.8";
+>>> +		regulator-min-microvolt = <1800000>;
+>>> +		regulator-max-microvolt = <1800000>;
+>>> +		vin-supply = <&reg_3v3>;
+>>> +		regulator-always-on;
+>>> +		regulator-boot-on;
+>>> +	};
+>>> +
+>>> +	reg_3v3_phy: regulator-3v3-phy {
+>>> +		compatible = "regulator-fixed";
+>>> +		regulator-name = "On-module +V3.3_PHY";
+>>> +		gpios = <&main_gpio0 45 GPIO_ACTIVE_HIGH>;
+>>> +		enable-active-high;
+>>> +		regulator-always-on;
+>>> +	};
+>>> +};
+>>> +
+>>> +&cpsw3g {
+>>> +	pinctrl-names = "default";
+>>> +	pinctrl-0 = <&pinctrl_rgmii1>;
+>>> +};
+>>> +
+>>> +&cpsw3g_mdio {
+>>> +	pinctrl-names = "default";
+>>> +	pinctrl-0 = <&pinctrl_mdio1>;
+>>> +	status = "okay";
+>>> +
+>>> +	cpsw3g_phy0: ethernet-phy@4 {
+>>> +		compatible = "ethernet-phy-id0283.bc30";
+>>> +		reg = <4>;
+>>> +		reset-gpios = <&main_gpio0 46 GPIO_ACTIVE_LOW>;
+>>> +		reset-assert-us = <10000>;
+>>> +		reset-deassert-us = <100000>;
+>>> +	};
+>>> +};
+>>> +
+>>> +&cpsw_port1 {
+>>> +	/*
+>>> +	 * The required RGMII TX and RX 2ns delays are implemented directly
+>>> +	 * in hardware via passive delay elements on the SOM PCB.
+>>> +	 * No delay configuration is needed in software via PHY driver.
+>>> +	 */
+>>> +	phy-mode = "rgmii";
+>>> +	phy-handle = <&cpsw3g_phy0>;
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&main_i2c2 {
+>>> +	pinctrl-names = "default";
+>>> +	pinctrl-0 = <&pinctrl_i2c2>;
+>>> +	clock-frequency = <400000>;
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&main_i2c3 {
+>>> +	pinctrl-names = "default";
+>>> +	pinctrl-0 = <&pinctrl_i2c3>;
+>>> +	clock-frequency = <400000>;
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&main_pmx0 {
+>>> +	pinctrl_mmc_pwrseq: main-emmc-pwrseq-pins {
+>>> +		pinctrl-single,pins = <
+>>> +			AM62PX_IOPAD(0x00c8, PIN_OUTPUT, 7) /* (AB23) VOUT0_DATA4.GPIO0_49 */
+>>> +		>;
+>>> +	};
+>>> +
+>>> +	pinctrl_i2c2: main-i2c2-default-pins {
+>>> +		pinctrl-single,pins = <
+>>> +			AM62PX_IOPAD(0x00b0, PIN_INPUT_PULLUP, 1) /* (T22) GPMC0_CSn2.I2C2_SCL */
+>>> +			AM62PX_IOPAD(0x00b4, PIN_INPUT_PULLUP, 1) /* (U25) GPMC0_CSn3.I2C2_SDA */
+>>> +		>;
+>>> +	};
+>>> +
+>>> +	pinctrl_i2c3: main-i2c3-default-pins {
+>>> +		pinctrl-single,pins = <
+>>> +			AM62PX_IOPAD(0x01d0, PIN_INPUT_PULLUP, 2) /* (A23) UART0_CTSn.I2C3_SCL */
+>>> +			AM62PX_IOPAD(0x01d4, PIN_INPUT_PULLUP, 2) /* (C22) UART0_RTSn.I2C3_SDA */
+>>> +		>;
+>>> +	};
+>>> +
+>>> +	pinctrl_mdio1: main-mdio1-default-pins {
+>>> +		pinctrl-single,pins = <
+>>> +			AM62PX_IOPAD(0x0160, PIN_OUTPUT, 0) /* (F17) MDIO0_MDC */
+>>> +			AM62PX_IOPAD(0x015c, PIN_INPUT, 0) /* (F16) MDIO0_MDIO */
+>>> +		>;
+>>> +	};
+>>> +
+>>> +	pinctrl_mmc2: main-mmc2-default-pins {
+>>> +		pinctrl-single,pins = <
+>>> +			AM62PX_IOPAD(0x0120, PIN_INPUT_PULLUP, 0) /* (K24) MMC2_CMD */
+>>> +			AM62PX_IOPAD(0x0118, PIN_INPUT_PULLDOWN, 0) /* (K21) MMC2_CLK */
+>>> +			AM62PX_IOPAD(0x011c, PIN_INPUT_PULLUP, 0) /* () MMC2_CLKLB */
+>>> +			AM62PX_IOPAD(0x0114, PIN_INPUT_PULLUP, 0) /* (K23) MMC2_DAT0 */
+>>> +			AM62PX_IOPAD(0x0110, PIN_INPUT_PULLUP, 0) /* (K22) MMC2_DAT1 */
+>>> +			AM62PX_IOPAD(0x010c, PIN_INPUT_PULLUP, 0) /* (L20) MMC2_DAT2 */
+>>> +			AM62PX_IOPAD(0x0108, PIN_INPUT_PULLUP, 0) /* (L21) MMC2_DAT3 */
+>>> +		>;
+>>> +	};
+>>> +
+>>> +	pinctrl_rgmii1: main-rgmii1-default-pins {
+>>> +		pinctrl-single,pins = <
+>>> +			AM62PX_IOPAD(0x014c, PIN_INPUT, 0) /* (B15) RGMII1_RD0 */
+>>> +			AM62PX_IOPAD(0x0150, PIN_INPUT, 0) /* (B16) RGMII1_RD1 */
+>>> +			AM62PX_IOPAD(0x0154, PIN_INPUT, 0) /* (A14) RGMII1_RD2 */
+>>> +			AM62PX_IOPAD(0x0158, PIN_INPUT, 0) /* (B14) RGMII1_RD3 */
+>>> +			AM62PX_IOPAD(0x0148, PIN_INPUT, 0) /* (A16) RGMII1_RXC */
+>>> +			AM62PX_IOPAD(0x0144, PIN_INPUT, 0) /* (A15) RGMII1_RX_CTL */
+>>> +			AM62PX_IOPAD(0x0134, PIN_INPUT, 0) /* (A18) RGMII1_TD0 */
+>>> +			AM62PX_IOPAD(0x0138, PIN_INPUT, 0) /* (C17) RGMII1_TD1 */
+>>> +			AM62PX_IOPAD(0x013c, PIN_INPUT, 0) /* (A17) RGMII1_TD2 */
+>>> +			AM62PX_IOPAD(0x0140, PIN_INPUT, 0) /* (C16) RGMII1_TD3 */
+>>> +			AM62PX_IOPAD(0x0130, PIN_INPUT, 0) /* (B17) RGMII1_TXC */
+>>> +			AM62PX_IOPAD(0x012c, PIN_INPUT, 0) /* (B18) RGMII1_TX_CTL */
+>>> +		>;
+>>> +		bootph-all;
+>>> +	};
+>>> +
+>>> +	pinctrl_spi0: main-spi0-default-pins {
+>>> +		pinctrl-single,pins = <
+>>> +			AM62PX_IOPAD(0x01bc, PIN_OUTPUT, 0) /* (B21) SPI0_CLK */
+>>> +			AM62PX_IOPAD(0x01b4, PIN_OUTPUT, 0) /* (D20) SPI0_CS0 */
+>>> +			AM62PX_IOPAD(0x01c0, PIN_OUTPUT, 0) /* (B20) SPI0_D0 */
+>>> +			AM62PX_IOPAD(0x01c4, PIN_INPUT, 0) /* (C21) SPI0_D1 */
+>>> +		>;
+>>> +	};
+>>> +
+>>> +	pinctrl_uart5: main-uart5-default-pins {
+>>> +		pinctrl-single,pins = <
+>>> +			AM62PX_IOPAD(0x00ec, PIN_INPUT, 4) /* (AC21) VOUT0_DATA13.UART5_CTSn */
+>>> +			AM62PX_IOPAD(0x00e8, PIN_OUTPUT, 4) /* (AD21) VOUT0_DATA12.UART5_RTSn */
+>>> +			AM62PX_IOPAD(0x00d0, PIN_INPUT, 4) /* (AC23) VOUT0_DATA6.UART5_RXD */
+>>> +			AM62PX_IOPAD(0x00d4, PIN_OUTPUT, 4) /* (AE23) VOUT0_DATA7.UART5_TXD */
+>>> +		>;
+>>> +	};
+>>> +
+>>> +	pinctrl_bt: main-btgrp-pins {
+>>> +		pinctrl-single,pins = <
+>>> +			AM62PX_IOPAD(0x00f4, PIN_OUTPUT, 7) /* (Y20) VOUT0_DATA15.GPIO0_60 (BT_EN) */
+>>> +		>;
+>>> +	};
+>>> +
+>>> +	pinctrl_restouch: main-restouch-pins {
+>>> +		pinctrl-single,pins = <
+>>> +			AM62PX_IOPAD(0x00c4, PIN_INPUT_PULLUP, 7) /* (Y23) VOUT0_DATA3.GPIO0_48 */
+>>> +		>;
+>>> +	};
+>>> +
+>>> +	pinctrl_wifi: main-wifi-default-pins {
+>>> +		pinctrl-single,pins = <
+>>> +			AM62PX_IOPAD(0x00dc, PIN_OUTPUT, 7) /* (AC22) VOUT0_DATA9.GPIO0_54 - WIFI_PWR_EN - */
+>>> +			AM62PX_IOPAD(0x00f0, PIN_OUTPUT, 7) /* (AA20) VOUT0_DATA14.GPIO0_59 - WIFI_EN - */
+>>> +		>;
+>>> +	};
+>>> +};
+>>> +
+>>> +&mcu_pmx0 {
+>>> +	pinctrl_wkup_clkout0: wkup-clkout0-default-pins {
+>>> +		pinctrl-single,pins = <
+>>> +			AM62PX_MCU_IOPAD(0x0084, PIN_OUTPUT, 0) /* (F13) WKUP_CLKOUT0 */
+>>> +		>;
+>>> +	};
+>>> +};
+>>> +
+>>> +&main_spi0 {
+>>> +	pinctrl-names = "default";
+>>> +	pinctrl-0 = <&pinctrl_spi0>;
+>>> +	ti,pindir-d0-out-d1-in;
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&main_uart5 {
+>>> +	pinctrl-names = "default";
+>>> +	pinctrl-0 = <&pinctrl_uart5>, <&pinctrl_bt>;
+>>> +	uart-has-rtscts;
+>>> +	status = "okay";
+>>> +
+>>> +	bluetooth {
+>>> +		compatible = "nxp,88w8987-bt";
+>>> +	};
+>>> +};
+>>> +
+>>> +&sdhci0 {
+>>> +	ti,driver-strength-ohm = <50>;
+>>> +	mmc-pwrseq = <&mmc_pwrseq>;
+>>> +	bootph-all;
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&sdhci2 {
+>>> +	pinctrl-names = "default";
+>>> +	pinctrl-0 = <&pinctrl_mmc2>, <&pinctrl_wifi>;
+>>> +	bus-width = <4>;
+>>> +	non-removable;
+>>> +	keep-power-in-suspend;
+>>> +	mmc-pwrseq = <&wifi_pwrseq>;
+>>> +	ti,fails-without-test-cd;
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&usbss0 {
+>>> +	ti,vbus-divider;
+>>> +};
+>>> +
+>>> +&usbss1 {
+>>> +	ti,vbus-divider;
+>>> +};
+>>> +
+>>> +&mailbox0_cluster0 {
+>>> +	status = "okay";
+>>> +
+>>> +	mbox_r5_0: mbox-r5-0 {
+>>> +		ti,mbox-rx = <0 0 0>;
+>>> +		ti,mbox-tx = <1 0 0>;
+>>> +	};
+>>> +};
+>>> +
+>>> +&mailbox0_cluster1 {
+>>> +	status = "okay";
+>>> +
+>>> +	mbox_mcu_r5_0: mbox-mcu-r5-0 {
+>>> +		ti,mbox-rx = <0 0 0>;
+>>> +		ti,mbox-tx = <1 0 0>;
+>>> +	};
+>>> +};
+>>> +
+>>> +&mcu_r5fss0 {
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&mcu_r5fss0_core0 {
+>>> +	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
+>>> +	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+>>> +			<&mcu_r5fss0_core0_memory_region>;
+>>> +};
+>>> +
+>>> +&wkup_r5fss0 {
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&wkup_r5fss0_core0 {
+>>> +	mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
+>>> +	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+>>> +			<&wkup_r5fss0_core0_memory_region>;
+>>> +};
+>>> +
+>>> +/* mcu_gpio0 and mcu_gpio_intr are reserved for mcu firmware usage */
+>>> +&mcu_gpio0 {
+>>> +	status = "reserved";
+>>> +};
+>>
+>> And also drop the IPC stuff above.
+>>
+>>
+>>> +
+>>> +&mcu_gpio_intr {
+>>> +	status = "reserved";
+>>> +};
+>>> +
+>>> +&wkup_rtc0 {
+>>> +	status = "disabled";
+>>> +};
+>>> +
+>>> +&wkup_rti0 {
+>>> +	/* WKUP RTI0 is used by DM firmware */
+>>> +	status = "reserved";
+>>> +};
+>>> +
+>>> +&wkup_uart0 {
+>>> +	/* WKUP UART0 is used by DM firmware */
+>>> +	status = "reserved";
+>>> +};
+>>> +
+>>> +&main_uart1 {
+>>> +	/* Main UART1 is used by TIFS firmware */
+>>> +	status = "reserved";
+>>> +};
+>>
+>> And include:
+>>
+>> +#include "k3-am62p-ti-ipc-firmware.dtsi"
+>>
+>>
+>> so that this SOM can be left in a refactored state like all other DT.
+>> Of course, this means this series would have a dependency on beleswar's
+>> series:
+>> https://lore.kernel.org/linux-arm-kernel/20250905051846.1189612-1-b-padhi@ti.com/
+>>
+>> Just a suggestion here. (:
+>>
+>> ~ Judith
+> 
+> thank you very much for the review! That does make sense, you are right.
+> 
+> Would you think it makes sense to leave this refactoring for a follow‑up,
+> so that this series can go in without depending on Beleswar’s?
+> That way the patch could be merged right away, and later we include:
+> 
+> #include "k3-am62p-ti-ipc-firmware.dtsi"
+> 
+> to bring the DT in line with the others.
+> 
+> Just checking if that sounds reasonable to you. (:
 
-are available in the Git repository at:
+No Problem (:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.18
 
-for you to fetch changes up to b3b314ef13e46dce1cdd97a856bd0250dac8feb9:
-
-  clk: samsung: exynos990: Add PERIC0 and PERIC1 clock support (2025-09-07 11:12:45 +0200)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for 6.18
-
-1. Tesla FSD: Expose CSI clocks to consumers (DTS).
-
-2. Exynos990:
-   - Few fixes for fixed factor clocks, register widths and proper PLL
-     parents.
-   - Add four more clocks for the DPU and HSI0 clock for USB.
-   - Add PERIC0 and PERIC1 clock controllers (CMU), responsible for
-     providing clocks to serial engines.
-
-3. Add seven clock controllers for the new Axis ARTPEC-8 SoC.  The SoC
-   shares all main blocks, including the clock controllers, with Samsung
-   SoC, so same drivers and bindings are used.
-
-4. Cleanups: switch to determine_rate().
-
-----------------------------------------------------------------
-Brian Masney (2):
-      clk: samsung: cpu: convert from round_rate() to determine_rate()
-      clk: samsung: pll: convert from round_rate() to determine_rate()
-
-Denzeel Oliva (10):
-      clk: samsung: exynos990: Use PLL_CON0 for PLL parent muxes
-      clk: samsung: exynos990: Fix CMU_TOP mux/div bit widths
-      clk: samsung: exynos990: Replace bogus divs with fixed-factor clocks
-      dt-bindings: clock: exynos990: Extend clocks IDs
-      clk: samsung: exynos990: Add DPU_BUS and CMUREF mux/div and update CLKS_NR_TOP
-      dt-bindings: clock: exynos990: Add LHS_ACEL clock ID for HSI0 block
-      clk: samsung: exynos990: Add LHS_ACEL gate clock for HSI0 and update CLK_NR_TOP
-      clk: samsung: exynos990: Add missing USB clock registers to HSI0
-      dt-bindings: clock: exynos990: Add PERIC0 and PERIC1 clock units
-      clk: samsung: exynos990: Add PERIC0 and PERIC1 clock support
-
-Hakyeong Kim (3):
-      dt-bindings: clock: Add ARTPEC-8 clock controller
-      clk: samsung: Add clock PLL support for ARTPEC-8 SoC
-      clk: samsung: artpec-8: Add initial clock support for ARTPEC-8 SoC
-
-Inbaraj E (2):
-      dt-bindings: clock: Add CAM_CSI clock macro for FSD
-      clk: samsung: fsd: Add clk id for PCLK and PLL in CAM_CSI block
-
-Krzysztof Kozlowski (1):
-      Merge branch 'for-v6.18/dt-bindings-clk' into next/clk
-
- .../bindings/clock/axis,artpec8-clock.yaml         |  213 ++++
- .../bindings/clock/samsung,exynos990-clock.yaml    |   24 +
- drivers/clk/samsung/Makefile                       |    1 +
- drivers/clk/samsung/clk-artpec8.c                  | 1044 ++++++++++++++++
- drivers/clk/samsung/clk-cpu.c                      |   12 +-
- drivers/clk/samsung/clk-exynos990.c                | 1240 +++++++++++++++++++-
- drivers/clk/samsung/clk-fsd.c                      |   28 +-
- drivers/clk/samsung/clk-pll.c                      |  161 ++-
- drivers/clk/samsung/clk-pll.h                      |    2 +
- include/dt-bindings/clock/axis,artpec8-clk.h       |  169 +++
- include/dt-bindings/clock/fsd-clk.h                |   13 +
- include/dt-bindings/clock/samsung,exynos990.h      |  181 +++
- 12 files changed, 3032 insertions(+), 56 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml
- create mode 100644 drivers/clk/samsung/clk-artpec8.c
- create mode 100644 include/dt-bindings/clock/axis,artpec8-clk.h
 
