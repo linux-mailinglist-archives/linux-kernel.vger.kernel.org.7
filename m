@@ -1,267 +1,218 @@
-Return-Path: <linux-kernel+bounces-807240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56EB2B4A1ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:19:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79790B4A1F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A55B37A24A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:17:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2793C16928C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9FC3019B3;
-	Tue,  9 Sep 2025 06:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D293019B3;
+	Tue,  9 Sep 2025 06:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="znGGJjSt"
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PaQyXekD"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2051.outbound.protection.outlook.com [40.107.100.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA046257853
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 06:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757398747; cv=none; b=fFW4q3GMuD8dbEvCYv7JfVyAlz9e0cSazs+kOdu8sV2T6QUFawJ+g+1EGOYHQY+8jLTH4AtPisWjwGzIt7op5X/ZG7N1MvR3ASe1LJ+ipDms7/1C8OZ3OwhMDHJ8+DiAy44mL2DvF0pxaBkqxLrUza/lZCwypcpVttoHsQfecBM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757398747; c=relaxed/simple;
-	bh=L1VXCUHFXkUw4WZkL8qpqYcrzAFyAOw2NAFSE0iyzC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cI3z5/LedNEaTwCX2DzM81CthC4he6MeEbG/3eZfNfEmHbRJpA+apx8Bdmn0WnDbNp+0HjcOUd+f8HGYcVfLexlQS9ti6pb8z9ZFcvHCw17LIlRoQSipFQGIEFEaJVph+ukhdBAyGiV391LCbBJxFLWdpzRwbztGucDKw1prMYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=znGGJjSt; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-53042807be7so3977626137.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 23:19:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757398745; x=1758003545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jk+p+zHJ4oke51qSESVQoUfFkabu9tf2MtR0ttT0epY=;
-        b=znGGJjStIbyu4g3gIg+UdnXdDE5akf3+AmbtNDGVZ305SG9rhIrPr4yX0hhw4BFXvk
-         2cm8S88GyNtfOxBysBUj+EsKzaObFhdGt+TvWnDWRUJQGlvUOkDY7QixIvF2wzF+6eOM
-         BY4jF4zt784fcBb37xGjM7+ovGL9W36SCSZb5LmpiNP0K2VFX+dnj9uku7JwrzJPRoom
-         DBPJ/fk+7I0sII3rQunjawQwSJON/6SDOgmrz119v1VN0KIDhp7+N8KF4VcUKn/wCX/i
-         fRavgYq6hbZQ8gTEa4jOTq4kVOFG8TWeNqVab/IgQYjHY4ZoFfJq0N6PFMqeaRsmFvUL
-         lVNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757398745; x=1758003545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jk+p+zHJ4oke51qSESVQoUfFkabu9tf2MtR0ttT0epY=;
-        b=EwLk+zd9XVlQbq4a7NTXpUzZAMAAHQt29Pk/eBAHiTagMiHZkacy6at7eZVmwqOvzs
-         /UmO76aUTSw7uCo4EBhAmR/j8JI8OCRhBUJbVSVWb9YYCqUcfWrH7wX9x1PgNZ84rOkW
-         SWxssyRIKhUYSciPKDcNp5GI4lCo1wkCqgVVrUIGL2sio9gIITG2dD8A1gXnfoiBpyDQ
-         f9AUeiWst1A5bkunbKzF3BmkcSYasI0Zurmoqx+QP3dXPN6tGTErNCwGWzcJ29tputc8
-         xul6HFRNhv3swpztjdChY7S+Np6ax7Pxol/didKa21IEqUFNPkJ2bryYWqYOp6giEHoc
-         tRqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUS8iqMH/DHpfn6L/QYWunVWWg3xsehXKhp7OTSJXguczwEaAfQPEa8E7dr1+xzgQUCtT+/CH1Xv/rSVXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXBP9Iz3GOA5Tr+H0Z04QsQRbQwNnWfo3laaN2/P6PndBIMOSG
-	W8nqzU2msGXt5Sb5GrCQtLXdJgRk92qeLEYI2Zet4qbPs+RpCGH7HWaaitMLu8C2ggqKdng8/aa
-	p6yo32Co7Hg2wIAEptsYc1SXM6keKDdSy9KENATz6
-X-Gm-Gg: ASbGncvWsvWbcFmdbqTjZKPgyxhAjX9EX/Oi2pS6XfbeEehTgtjAjlloitunjRpvdl9
-	xpSgBl9Uf9nxm8Yu2hCIaWuN9khMuVOF3TWZTnvSqcykX27HNI5YvqR4bQpBFnu8Fzg1G5NTXPk
-	fo+Dt/JCAzonXcnunDGGiihkcXsnxOj3VpESxqPiVAIl1oQrEBEtugEwkNyp+ynCTWhSIvvMMea
-	fyylpltIPAH
-X-Google-Smtp-Source: AGHT+IHQNH5bxNKrdTFAvr26RVQCsobnfCMGnFcjjLcgm0Ualx4aeMZlCbit4BGJSHXpfyWIckep63sdStx2kGUzgpc=
-X-Received: by 2002:a05:6102:4a92:b0:522:826e:7bfe with SMTP id
- ada2fe7eead31-53d1afa279dmr3179250137.5.1757398744489; Mon, 08 Sep 2025
- 23:19:04 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C9218A93F;
+	Tue,  9 Sep 2025 06:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757398818; cv=fail; b=nzPHzjIREnZMCuYLLBdYhT8Ott2bq/do1FgDAKjQl1R2qs6dO29gtvlaVufppkt1lehTBU7eioR9/UPviKhJBDBw3uLfWROn/uQkhUomrob3SLaFf4hqYtnT20o9ykzIIWujTpUFweWTiLlAAMy+8T7/3jrwUb4TJ1DizmXFJKY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757398818; c=relaxed/simple;
+	bh=RBOiKMXLv6uE2+GYYieMzqyx5eDpUmbcURXUGi5kSY4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E58luswdPsnueF9W+v5/x4FPD3ia19Evs1ruhiUuVjMCfE4AXRcp1shU+ljX5dBJqvaW8HxoaCoaIbNsxRlTAlhiFMrkf6VJLQkKHTxFG/3jh8p6Q43XdVlhlRkmznXTLHrSHDfJV1T9FXePOnFZXNq8C6lYlYRa+WkO6bPTcH8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PaQyXekD; arc=fail smtp.client-ip=40.107.100.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DQkbzzWUGAiwelegFW1vFl13LtOPrEGwMEoLzC2cGQRTSdZz9yGaoi+8m3R/vfZPelVI6JKfov0h31fNkYv+mU4i82YPiKJrP4830Lqpz0nNVzVH9+87rLYyBWJGOIKNEaFAw/0tBXy5VPT/JI1mwLG/MjsfFvg6C6233oQfGdQAlCpzp4lnAT1jRsh/OndUzkJJPu0r/oFnPXbQt/il/O5lG3XSLgU37C2u8PcOp9OZvatzY9ZHsFgjkwf/UVg1M3qrj1R6LQmaLD7kFmxNm4rhQ74D2vX1UfsLixyLCkdj6+11nb+rQi/nSq0nLT9+a60jujSlX7rK4qYGx6TmXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K0UGYSPyT+PTQVjFy04USbvvntQIu7mNnkD9kwYJzLM=;
+ b=pCbw9IEkNBhxsCNujxWffVSQ6ETpXFpgO7XCsvVnBni5obmpY1pq9Z4HNLk4gZMkL1vqRyShln1+pyaiqU0zZ5SwusBFqei9WpLdkyUzE+Cr0kpWBncNgSNVNLLb6e5nw46ifC4ZBp03L+VwKFxjBxK5HFqueni+R8xBt5PjGZedmdBGxiNlGSx6q1BOn6YrPAv6QE2xlKO51dYfcPs9Pp2O//Q/EzHz2CRh3rGz1xLW5DeEjVtV8k0h8yoQFRy0eGHD+/tsqTH3LmCO7Gu6D+Q227gU++Bk1c0FtkEsLWSBt9OH1HmIkssP7RQ67gRg0oFs/TU6Pku5mMNUlL2KhQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K0UGYSPyT+PTQVjFy04USbvvntQIu7mNnkD9kwYJzLM=;
+ b=PaQyXekDCv+Skju0ecXsc8v8le2YPlrvJaVgJ6XyYTqMALeD1OcMuep0jOdygkt/t8etAyCF4ABuZ6SNFo227VFYwa/IX1J0zMtF4O/tLH+LR5kcsPKbLhRW5lLHG1xiCuOLRf9Us9qAFRvh7V8OMuSadO9/4t4aBu0PA+RVzhI=
+Received: from DS7PR03CA0184.namprd03.prod.outlook.com (2603:10b6:5:3b6::9) by
+ SA3PR12MB7998.namprd12.prod.outlook.com (2603:10b6:806:320::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Tue, 9 Sep
+ 2025 06:20:10 +0000
+Received: from DS2PEPF0000343B.namprd02.prod.outlook.com
+ (2603:10b6:5:3b6:cafe::3d) by DS7PR03CA0184.outlook.office365.com
+ (2603:10b6:5:3b6::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Tue,
+ 9 Sep 2025 06:20:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ DS2PEPF0000343B.mail.protection.outlook.com (10.167.18.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Tue, 9 Sep 2025 06:20:10 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 8 Sep
+ 2025 23:20:05 -0700
+Received: from r9-mach.amd.com (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Mon, 8 Sep 2025 23:20:00 -0700
+From: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+To: <broonie@kernel.org>, <alsa-devel@alsa-project.org>
+CC: <Vijendar.Mukunda@amd.com>, <Basavaraj.Hiregoudar@amd.com>,
+	<Sunil-kumar.Dommati@amd.com>, <syed.sabakareem@amd.com>, "Venkata Prasad
+ Potturu" <venkataprasad.potturu@amd.com>, Liam Girdwood
+	<lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>, Greg KH <gregkh@linuxfoundation.org>, Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.dev>, Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>, "open list:SOUND - SOC LAYER / DYNAMIC
+ AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] ASoC: amd: acp: Fix incorrect retrival of acp_chip_info
+Date: Tue, 9 Sep 2025 11:49:50 +0530
+Message-ID: <20250909061959.2881158-1-venkataprasad.potturu@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGETcx_C_UcjjPOfUip=L28P3PWjMvmSc4nZJ5ML=tScUXfk2w@mail.gmail.com>
- <20250909024538.15946-1-tuhaowen@uniontech.com>
-In-Reply-To: <20250909024538.15946-1-tuhaowen@uniontech.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Mon, 8 Sep 2025 23:18:27 -0700
-X-Gm-Features: AS18NWBpIhGUkBwXHz5Cxh0u45kdsxsLpNLylrw97iJA-XyLjU8bAzSiD3rZzTo
-Message-ID: <CAGETcx-mA1kBw+r+tJOdpdqKHZQfNHvA-JS8wXc_ZHhj23WtMg@mail.gmail.com>
-Subject: Re: [PATCH v2] PM: Add configurable sync timeout for suspend and hibernation
-To: tuhaowen <tuhaowen@uniontech.com>
-Cc: huangbibo@uniontech.com, len.brown@intel.com, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, pavel@kernel.org, rafael@kernel.org, 
-	wusamuel@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF0000343B:EE_|SA3PR12MB7998:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7590eb1f-7ddd-4eb1-e30c-08ddef68ede6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sm+bnQ4bSqG8sWY5n4kNzFw598JFGAwoEU1PP370v57XVCf7j5HOEp9F4h6P?=
+ =?us-ascii?Q?iH37kwFbNHBgy+wtIYu11ePe170R76EmNhkGv6ACBUs9LE+VFYZpWGTZK7Ph?=
+ =?us-ascii?Q?AQOhOTJLl2FFZMeMpi8q+hvsrHddVPV3N/kdV19nEF4njHKtlECG1dm1sbsu?=
+ =?us-ascii?Q?bPjDNK0gQeTYDQwRF05pGPq8hXl/I4XtopE8RFgzT1TwQuvfrJqaFmRqMHG4?=
+ =?us-ascii?Q?Ll89bx/7PeKNs5PnUtMjxTJjI+f6mHysNtPntjs/hcPK1Q1/5k6Vf0ixBRRE?=
+ =?us-ascii?Q?puTW1+R3wHUflkqXGfe7VKYVIrKtTkE98L4uUWPEQMk6R2rwOgcQK2q5MdCG?=
+ =?us-ascii?Q?cn1QiW3MdyRN9G2OnzcaELwCUZquVcDVCN+7nVyEJgWlvFIVHY03kI88W+V+?=
+ =?us-ascii?Q?JJxkBuQ+UYT5ocISf+mLeuGgVaLLDheOGmNsYk9s4Wj6xQ2u6JkFyQ4PtL73?=
+ =?us-ascii?Q?tIvqy6iDHcVP+Ap9kcAnnHQubxFqbhvCOIWKDfLhzmxevhbVpTuKsa/eEIZt?=
+ =?us-ascii?Q?17Iee+dnUmlsuLbxm92UQDIvZzvzXg/fmy8Ea3zHy2efsNFpIkXXcuSUw5Iy?=
+ =?us-ascii?Q?mhsbc2Yi1aHKRA00B9xpN0fvtA/ObaIRe8uPhKZCWvwCCg0sDNO/8wUmdTz7?=
+ =?us-ascii?Q?CeAzyXH3OloiMcCnE233TUnfFbjK7oisvpsUEom8Sl5fBIW3q+uqaEIjJk4+?=
+ =?us-ascii?Q?jCRmJ4dbjFFDnZyXSSsSWBzhKFpFdsRb7zOJCxAOCr1nJcRAcMOw+FAPrXJ6?=
+ =?us-ascii?Q?WVRQ1dtOo16zlK1ltF1dH5FOjGrQW4CfRfe+vx6NtKJhBolvmshkxwxquO7k?=
+ =?us-ascii?Q?Zad405SNta/nLyx1RlyhyUD7aDUFn1NgdPq8LMgjO/mDrNMOh3srLBhmhl7k?=
+ =?us-ascii?Q?7qaTUmFuTSrDboS9jG2zIpUd2f72F4mUTUGmOd8GRSwQAW5ZvCghEPYaSLCm?=
+ =?us-ascii?Q?DDpw22tndd+fyHtVt+tsItCcW28ueaWSqQYLzG679L2jJjlrWL4XYys0+jXf?=
+ =?us-ascii?Q?jm3QwKcBlP0Kq1cb+P8O9ry4i26p3Bvq04LIzeSbVM0kDLlTJGGeIAHHLDQ4?=
+ =?us-ascii?Q?Q5+nVQl8zktPhLEwlJKDtPDxE2VjZVGVfJEqpGGOVHuxokdSPlvkJu2pHplT?=
+ =?us-ascii?Q?/W2trZMtKFg6xG7LR9RwaUcgocpwFdqBt5sLq2nkTYtUaVDirVp5G80JPSb2?=
+ =?us-ascii?Q?Ae/AkZ3dMJK0kal0DbNygTaqwjajYdX89jPxnvUxz8CNPgb3LilShiooZLwb?=
+ =?us-ascii?Q?DsbwGlgKpZlF3dUuDZEvG1ebRG9xQmwjIJlk70BXIhz4hsWlcEZmyRCVgE47?=
+ =?us-ascii?Q?Cj07uLqaQMOBj6zIRkLn05I6HcZKk9/pj2K+/L0mdz2JBgHo8C71CuRRD7G2?=
+ =?us-ascii?Q?IVQdNSAvoshi9TucfwNyTcjip/zc0637NMgHwn6xacfEzEI+Gq9z9I+pcOW1?=
+ =?us-ascii?Q?JFIc2A4mG6GWzOrHkZ06mB+4fTCSMMxBONIPGOBoCptck6eyhXmcyOj8NjZv?=
+ =?us-ascii?Q?gUUYStm4JEbEVDInn4kvhE+PU1J9lvlWon5A?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 06:20:10.2655
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7590eb1f-7ddd-4eb1-e30c-08ddef68ede6
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF0000343B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7998
 
-On Mon, Sep 8, 2025 at 7:46=E2=80=AFPM tuhaowen <tuhaowen@uniontech.com> wr=
-ote:
->
-> Hi Saravana,
->
-> Thank you for your detailed feedback and suggestions. I appreciate you
-> taking the time to review my approach. Let me address your concerns and
-> explain the real-world issues I'm trying to solve.
->
-> > This doesn't really fix our issue where we want to abort suspend only
-> > if we have to stay awake. If there's no need to abort the suspend (to
-> > deal with some user/wake source request), then it's okay to take the
-> > time to sync and then suspend. If you abort the suspend, it's just
-> > going to get attempted again and in fact waste power.
->
-> I understand your perspective, but I'm addressing a different class of
-> problems. The key issue is user experience and system reliability when
-> sync operations become indefinitely blocked.
->
-> > I also don't understand how your patch fixes anything. If anything
-> > this makes things worse because the user might have expected their
-> > device to have hibernated only to come back hours later to see their
-> > battery dead. And even if the user is actively monitoring it, you
-> > still need to sync the file system fully before you eventually
-> > suspend. So, this doesn't really save any time or the need to sync.
->
-> This highlights exactly the problem I'm trying to solve. When a user
-> initiates suspend/hibernation, the screen goes black immediately, giving
-> the impression that the system has successfully entered sleep state.
-> However, if ksys_sync() is blocked (which can happen in several scenarios
-> I'll describe below), the system appears to be suspended but is actually
-> still running at full power consumption in the background.
->
-> The user has no way to know the system is stuck in sync - they see a
-> black screen and assume suspension succeeded. This leads to exactly the
-> scenario you mentioned: coming back hours later to find the battery dead,
-> but with the added risk of data corruption since the sync never completed=
-.
->
-> > Can you explain the actual real world issue you are trying to fix? If
-> > it's the UI hanging and not responding to keypress/mouse move, then to
-> > me it looks like those should be marked as wake sources.
->
-> Here are the specific real-world scenarios I've encountered:
->
-> 1. **Device removal during file operations**: When copying large files
->    to USB drives and then initiating suspend, if the USB device is
->    removed during the sync process, some filesystems may not properly
->    handle the device disappearance. The sync can become indefinitely
->    blocked waiting for I/O operations on a device that no longer exists.
->
-> 2. **Faulty storage devices**: Slow or failing storage devices can cause
->    sync operations to hang for extended periods, making the system appear
->    unresponsive.
->
-> I've observed stack traces like this when the block device is removed dur=
-ing sync:
->
-> ```
-> [<0>] __switch_to+0xd0/0x168
-> [<0>] iterate_supers+0x88/0x118
-> [<0>] ksys_sync+0x48/0xb8
-> [<0>] ksys_sync_helper+0x18/0xa0
-> [<0>] pm_suspend+0x260/0x3e8
-> ```
+Use dev_get_drvdata(dev->parent) instead of dev_get_platdata(dev)
+to correctly get acp_chip_info members in acp I2S driver.
+This resolves issues where some members were zero due to incorrect
+data access.
 
-This seems like a fundamental sync issue you are trying to paper
-over/work around. I think the right fix should be in the ksys_sync()
-code.
+Fixes: e3933683b25e ("ASoC: amd: acp: Remove redundant acp_dev_data structure")
 
-> In this case, ksys_sync() is permanently blocked and will never complete,
-> even though the user believes the system has suspended.
->
-> My timeout approach provides several benefits:
->
-> 1. **User feedback**: If I set a 1-minute timeout and sync doesn't
->    complete, the system fails suspend gracefully and returns control to
->    the user. This gives them clear indication that something went wrong,
->    rather than leaving them with a black screen and unknown system state.
->
-> 2. **Prevents false assumptions**: Users won't mistakenly believe their
->    system is suspended when it's actually consuming full power.
->
-> 3. **Allows recovery**: Users can investigate the issue, safely eject
->    devices, or take other corrective actions.
+Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+---
+ sound/soc/amd/acp/acp-i2s.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-If the user has closed the laptop, none of these will be noticed by
-the user. And the laptop will still consume power since it's not
-suspended and cause a dead battery hours later.
+diff --git a/sound/soc/amd/acp/acp-i2s.c b/sound/soc/amd/acp/acp-i2s.c
+index 617690362ad7..4ba0a66981ea 100644
+--- a/sound/soc/amd/acp/acp-i2s.c
++++ b/sound/soc/amd/acp/acp-i2s.c
+@@ -73,7 +73,7 @@ static int acp_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
+ 			   unsigned int fmt)
+ {
+ 	struct device *dev = cpu_dai->component->dev;
+-	struct acp_chip_info *chip = dev_get_platdata(dev);
++	struct acp_chip_info *chip = dev_get_drvdata(dev->parent);
+ 	int mode;
+ 
+ 	mode = fmt & SND_SOC_DAIFMT_FORMAT_MASK;
+@@ -199,7 +199,7 @@ static int acp_i2s_hwparams(struct snd_pcm_substream *substream, struct snd_pcm_
+ 	u32 reg_val, fmt_reg, tdm_fmt;
+ 	u32 lrclk_div_val, bclk_div_val;
+ 
+-	chip = dev_get_platdata(dev);
++	chip = dev_get_drvdata(dev->parent);
+ 	rsrc = chip->rsrc;
+ 
+ 	/* These values are as per Hardware Spec */
+@@ -386,7 +386,7 @@ static int acp_i2s_trigger(struct snd_pcm_substream *substream, int cmd, struct
+ {
+ 	struct acp_stream *stream = substream->runtime->private_data;
+ 	struct device *dev = dai->component->dev;
+-	struct acp_chip_info *chip = dev_get_platdata(dev);
++	struct acp_chip_info *chip = dev_get_drvdata(dev->parent);
+ 	struct acp_resource *rsrc = chip->rsrc;
+ 	u32 val, period_bytes, reg_val, ier_val, water_val, buf_size, buf_reg;
+ 
+@@ -516,14 +516,13 @@ static int acp_i2s_trigger(struct snd_pcm_substream *substream, int cmd, struct
+ static int acp_i2s_prepare(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
+ {
+ 	struct device *dev = dai->component->dev;
+-	struct acp_chip_info *chip = dev_get_platdata(dev);
++	struct acp_chip_info *chip = dev_get_drvdata(dev->parent);
+ 	struct acp_resource *rsrc = chip->rsrc;
+ 	struct acp_stream *stream = substream->runtime->private_data;
+ 	u32 reg_dma_size = 0, reg_fifo_size = 0, reg_fifo_addr = 0;
+ 	u32 phy_addr = 0, acp_fifo_addr = 0, ext_int_ctrl;
+ 	unsigned int dir = substream->stream;
+ 
+-	chip = dev_get_platdata(dev);
+ 	switch (dai->driver->id) {
+ 	case I2S_SP_INSTANCE:
+ 		if (dir == SNDRV_PCM_STREAM_PLAYBACK) {
+@@ -632,7 +631,7 @@ static int acp_i2s_startup(struct snd_pcm_substream *substream, struct snd_soc_d
+ {
+ 	struct acp_stream *stream = substream->runtime->private_data;
+ 	struct device *dev = dai->component->dev;
+-	struct acp_chip_info *chip = dev_get_platdata(dev);
++	struct acp_chip_info *chip = dev_get_drvdata(dev->parent);
+ 	struct acp_resource *rsrc = chip->rsrc;
+ 	unsigned int dir = substream->stream;
+ 	unsigned int irq_bit = 0;
+-- 
+2.43.0
 
-> > However, if you are really set on proving the need for a timeout and
-> > implementing it, you can always add it as a separate patch after our
-> > patch lands. You can set up a timer to call pm_system_wakeup(). Or
-> > just grab a wake source after a time period.
->
-> I appreciate this suggestion, and I'm certainly willing to coordinate our
-> approaches. However, I believe the sync timeout addresses a fundamentally
-> different problem than wakeup-event-based abortion.
->
-> Regarding your concern about sync completion after timeout, I want to
-> clarify that in my updated implementation, I've removed kthread_stop() to
-> ensure the sync operation continues in the background even after timeout.
-
-I don't think the kthread_stop() is even correct to do. You are just
-randomly killing the sync thread where data structures and locks could
-be left in a bad state.
-
-> This means:
->
-> 1. The suspend operation fails immediately with a timeout error, giving
->    the user feedback
-> 2. The sync operation continues running in the background to completion
-> 3. Data integrity is preserved while providing responsive user experience
->
-> This approach ensures that we get both the user experience benefits
-> (immediate feedback) and data safety (background sync completion).
->
-> I believe both our approaches serve different but complementary purposes:
-> - Your approach: Handle cases where wakeup events should abort sync
-> - My approach: Handle cases where sync becomes pathologically slow or
->   blocked
-
-I'm still not sold on the timeout being the right solution to your
-issue, but I'm not going to block the feature.
-
-> Would you be open to discussing how we might integrate both approaches?
-> I'm happy to work on this as a follow-up patch series after your changes
-> land, or we could explore a unified solution that handles both scenarios.
-
-I think a follow up patch is the best approach. We'll give you the
-APIs to abort as needed (timer in your case) and you can try to
-convince the community that the timeout is needed.
-
->
-> > In fact, thinking more about this, you are generally having a problem
-> > with suspend taking too long to complete. Doesn't matter if it's due
-> > to file system sync or anything else. In which case, you should just
-> > use a timer to call pm_system_wakeup() and not fix just file system
-> > sync (which happens to be the current long pole).
->
-> This is an interesting perspective. However, I believe filesystem sync
-> deserves special attention because:
->
-> 1. It's currently the most common source of indefinite hangs during
->    suspend
-
-This is not a reason for special casing for the file system.
-
-> 2. The consequences of interrupted vs. timed-out sync are different
->    (data integrity)
-
-Not really. You do realize that even in our patch we let the sync
-continue in the background, right?
-
-> 3. Sync has specific requirements for background completion that other
->    suspend operations may not have
-
-Not sure what you mean.
-
-> I'd be very interested in your thoughts on this approach and whether we
-> can find a path forward that addresses both our use cases. I really
-> appreciate your patience in this discussion and look forward to
-> continuing our collaboration on this important issue.
-
-I don't want to block your effort, but I also can't support it. So a
-unified patch doesn't seem like the right way to go. As I mentioned
-above, I'd recommend building on top of what we land.
-
-> Thanks again for taking the time to review and provide such detailed
-> feedback.
-
-Same to you!
-
-Thanks,
-Saravana
 
