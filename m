@@ -1,64 +1,51 @@
-Return-Path: <linux-kernel+bounces-807508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1AAB4A558
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:32:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B449B4A55B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71ACB1BC6A8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:33:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BD741BC6BBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB5122A4D5;
-	Tue,  9 Sep 2025 08:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A137424CEE8;
+	Tue,  9 Sep 2025 08:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y/bVgtg6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="ZMO1eSXg"
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484961E231E
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 08:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8490A24728E;
+	Tue,  9 Sep 2025 08:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757406760; cv=none; b=QarRrhlwi9pDsL8IyG0AetyEfvElrgYefpEMOON95dNLx366GrLDLEiiEjbXvpQTxWyy0Q8JOUv0wDM5qJ19Eb4TG7RUqxSPNtw3A1Q53QexQQ8vbjDSewPD74ivb3fvgEk0TprxdM0nW1Vs39GLPIa+O+N3eEZshpdhXdoRy3w=
+	t=1757406765; cv=none; b=IF53w+A9aNInl2yWLGHzWIxgUwdnG6fJYXHU0pDOK8QAjD4UaB49RAgoafUADHv8S03mv3Wvo1I49MFVsHk1sPY2aGNoNManVBPMNjqJhvYLn6ufQHiLhI91plcGV6z2KiPxP8nHE7fdYn0/6JcXJSZeitHhv+Gfy6aE4tvAKyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757406760; c=relaxed/simple;
-	bh=K7qZ76h9zFhXCt0JoNSRAZpnemtuSuxUEh9f7iex2N8=;
+	s=arc-20240116; t=1757406765; c=relaxed/simple;
+	bh=pM5dpLJ68zvYdmgTFMYPesYP2UfuiYQOL3U5MABggOs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rl/XmeCwf4xL0bwz2yVojtbWinbDFM5TJ4rGh1+x9XOp0/4NNRitnsQRj4ReBPSNEbzSG/2uIGH6qAtBpdZX/pMaVCfMXFmnF3xDTNMVuHdxS9IZX92Wul/B6oVyyTVqmPDTLY9+a3CcM998iKg5+z8J30cWiARL59YnFemsdYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y/bVgtg6; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757406759; x=1788942759;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=K7qZ76h9zFhXCt0JoNSRAZpnemtuSuxUEh9f7iex2N8=;
-  b=Y/bVgtg6CB8GmVk4z2PGv80lQCHcV/lBT/Nya161kiBuR5C+CkUBLRin
-   0KVUDuahpq006ttfmMwuxSQGNVEP6fGgreRo2aUddq0/da+pNoV2YKa+1
-   /X7yVme83WCBYweg+p4Mr2A0Segenm8OUkqslc64QkPWq/NYh2A2G0IT2
-   OWbDXaNOWvsh+4keMWWccFuKpp/+IV/QuTAEHxgclNiJLGDheA5VBJr1x
-   cV5/Ol0QQArl9QNhL6sXCnoG296rrHz2iGp5mSKZ0t/hIncbtUm/oerQ6
-   dAXr05UhS19Z8d2rTfUXgW7vdkufnA5nP+9lp+EnO8ePb8ONHMvTG620B
-   w==;
-X-CSE-ConnectionGUID: XtCkOoH6T+6KltI3qMFzQw==
-X-CSE-MsgGUID: 4HJnZCjZQ9SQyT2JhayH8A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="59828499"
-X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
-   d="scan'208";a="59828499"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 01:32:38 -0700
-X-CSE-ConnectionGUID: UAfrkDxuQr66E2lu8iOOPA==
-X-CSE-MsgGUID: ZUvTGv9DTYygBaQl3jSmZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
-   d="scan'208";a="173490191"
-Received: from unknown (HELO [10.217.180.72]) ([10.217.180.72])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 01:32:35 -0700
-Message-ID: <68b20509-7b7e-4a01-9260-62ffd8f686a8@linux.intel.com>
-Date: Tue, 9 Sep 2025 10:32:20 +0200
+	 In-Reply-To:Content-Type; b=DpFKST2eR65ZqFSlwYGSQulwXUThiJEkUaxU021aPwUlggMeRgAiZfCTjhLPsrKEXbRSYKLcFDHrs6SHW/JR25H5USbCsl7Locb5iE3mWoPDBhIkY3H7E32+8i1JLZiicGAN960dV1GJyb8GuavO/NsDC0EFbD9PoqkFuHRJNc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=ZMO1eSXg; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References
+	:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ymhLTOmvsj60mhAT0jeL59s88QrzoIS8036CDrPEKRA=; b=ZMO1eSXgPNZsMERT5izBCx132y
+	geilEU1EYgEC3dEJXfd9hY/crVdb097qrtCedZNTWSiwirJ7Obbc6VQrVGBf0DOtj/DQIvJQ6lQE2
+	g7jYeas+2cb2tAtSmKhtxbK7O9hHl/FDxfOqxjQ1sK2WfjjjXk9r4sRZsNl+xoDJ6MVM=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:59814 helo=[192.168.0.207])
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+	(Exim 4.93)
+	(envelope-from <matthias.fend@emfend.at>)
+	id 1uvtm2-004XPb-Nj; Tue, 09 Sep 2025 10:32:23 +0200
+Message-ID: <b2826079-7db5-4adf-9e2a-e372e977acf3@emfend.at>
+Date: Tue, 9 Sep 2025 10:32:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,109 +53,204 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] accel/habanalabs: Replace kmalloc_array + copy_from_user
- with memdup_array_user
-To: Thorsten Blum <thorsten.blum@linux.dev>, Koby Elbaz
- <koby.elbaz@intel.com>, Konstantin Sinyuk <konstantin.sinyuk@intel.com>,
- Oded Gabbay <ogabbay@kernel.org>,
- Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250908203540.475303-1-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Karol Wachowski <karol.wachowski@linux.intel.com>
-Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
- Gdansk - KRS 101882 - NIP 957-07-52-316
-In-Reply-To: <20250908203540.475303-1-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 1/2] media: dt-bindings: i2c: add Himax HM1246 image
+ sensor
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bsp-development.geo@leica-geosystems.com
+References: <20250526-hm1246-v2-0-6b882827a3a5@emfend.at>
+ <20250526-hm1246-v2-1-6b882827a3a5@emfend.at>
+ <aLq0jJtdaxIpN9CT@valkosipuli.retiisi.eu>
+Content-Language: de-DE
+From: Matthias Fend <matthias.fend@emfend.at>
+In-Reply-To: <aLq0jJtdaxIpN9CT@valkosipuli.retiisi.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-|Reviewed-by: Karol Wachowski <karol.wachowski@linux.intel.com>|
+Hi Sakari,
 
- W dniu 08.09.2025 o 22:35, Thorsten Blum pisze:
+Thanks for you feedback!
 
-> Replace kmalloc_array() followed by copy_from_user() with
-> memdup_array_user() to improve and simplify cs_ioctl_engine_cores(),
-> cs_ioctl_engines(), and hl_multi_cs_wait_ioctl().
->
-> Remove the unused variable 'size_to_copy' from hl_multi_cs_wait_ioctl().
->
-> No functional changes intended.
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  .../habanalabs/common/command_submission.c    | 34 +++++--------------
->  1 file changed, 9 insertions(+), 25 deletions(-)
->
-> diff --git a/drivers/accel/habanalabs/common/command_submission.c b/drivers/accel/habanalabs/common/command_submission.c
-> index dee487724918..a5e339eb7a4f 100644
-> --- a/drivers/accel/habanalabs/common/command_submission.c
-> +++ b/drivers/accel/habanalabs/common/command_submission.c
-> @@ -2481,14 +2481,10 @@ static int cs_ioctl_engine_cores(struct hl_fpriv *hpriv, u64 engine_cores,
->  	}
->  
->  	engine_cores_arr = (void __user *) (uintptr_t) engine_cores;
-> -	cores = kmalloc_array(num_engine_cores, sizeof(u32), GFP_KERNEL);
-> -	if (!cores)
-> -		return -ENOMEM;
-> -
-> -	if (copy_from_user(cores, engine_cores_arr, num_engine_cores * sizeof(u32))) {
-> +	cores = memdup_array_user(engine_cores_arr, num_engine_cores, sizeof(u32));
-> +	if (IS_ERR(cores)) {
->  		dev_err(hdev->dev, "Failed to copy core-ids array from user\n");
-> -		kfree(cores);
-> -		return -EFAULT;
-> +		return PTR_ERR(cores);
->  	}
->  
->  	rc = hdev->asic_funcs->set_engine_cores(hdev, cores, num_engine_cores, core_command);
-> @@ -2523,14 +2519,10 @@ static int cs_ioctl_engines(struct hl_fpriv *hpriv, u64 engines_arr_user_addr,
->  	}
->  
->  	engines_arr = (void __user *) (uintptr_t) engines_arr_user_addr;
-> -	engines = kmalloc_array(num_engines, sizeof(u32), GFP_KERNEL);
-> -	if (!engines)
-> -		return -ENOMEM;
-> -
-> -	if (copy_from_user(engines, engines_arr, num_engines * sizeof(u32))) {
-> +	engines = memdup_array_user(engines_arr, num_engines, sizeof(u32));
-> +	if (IS_ERR(engines)) {
->  		dev_err(hdev->dev, "Failed to copy engine-ids array from user\n");
-> -		kfree(engines);
-> -		return -EFAULT;
-> +		return PTR_ERR(engines);
->  	}
->  
->  	rc = hdev->asic_funcs->set_engines(hdev, engines, num_engines, command);
-> @@ -3013,7 +3005,6 @@ static int hl_multi_cs_wait_ioctl(struct hl_fpriv *hpriv, void *data)
->  	struct hl_ctx *ctx = hpriv->ctx;
->  	struct hl_fence **fence_arr;
->  	void __user *seq_arr;
-> -	u32 size_to_copy;
->  	u64 *cs_seq_arr;
->  	u8 seq_arr_len;
->  	int rc, i;
-> @@ -3037,19 +3028,12 @@ static int hl_multi_cs_wait_ioctl(struct hl_fpriv *hpriv, void *data)
->  		return -EINVAL;
->  	}
->  
-> -	/* allocate memory for sequence array */
-> -	cs_seq_arr =
-> -		kmalloc_array(seq_arr_len, sizeof(*cs_seq_arr), GFP_KERNEL);
-> -	if (!cs_seq_arr)
-> -		return -ENOMEM;
-> -
->  	/* copy CS sequence array from user */
->  	seq_arr = (void __user *) (uintptr_t) args->in.seq;
-> -	size_to_copy = seq_arr_len * sizeof(*cs_seq_arr);
-> -	if (copy_from_user(cs_seq_arr, seq_arr, size_to_copy)) {
-> +	cs_seq_arr = memdup_array_user(seq_arr, seq_arr_len, sizeof(*cs_seq_arr));
-> +	if (IS_ERR(cs_seq_arr)) {
->  		dev_err(hdev->dev, "Failed to copy multi-cs sequence array from user\n");
-> -		rc = -EFAULT;
-> -		goto free_seq_arr;
-> +		return PTR_ERR(cs_seq_arr);
->  	}
->  
->  	/* allocate array for the fences */
+Am 05.09.2025 um 11:59 schrieb Sakari Ailus:
+> Hi Matthias,
+> 
+> Thanks for the set.
+> 
+> On Mon, May 26, 2025 at 08:59:27AM +0200, Matthias Fend wrote:
+>> Add YAML device tree binding for Himax HM1246 image sensor.
+>>
+>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+>> ---
+>>   .../bindings/media/i2c/himax,hm1246.yaml           | 111 +++++++++++++++++++++
+>>   1 file changed, 111 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/i2c/himax,hm1246.yaml b/Documentation/devicetree/bindings/media/i2c/himax,hm1246.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..8a67de7e3ffcaa9f1acfe443b1e36fffb79dbacf
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/i2c/himax,hm1246.yaml
+>> @@ -0,0 +1,111 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +# Copyright 2025 Matthias Fend <matthias.fend@emfend.at>
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/media/i2c/himax,hm1246.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Himax HM1246-AWD 1/3.7-Inch megapixel SoC image sensor
+>> +
+>> +maintainers:
+>> +  - Matthias Fend <matthias.fend@emfend.at>
+>> +
+>> +description:
+>> +  The Himax HM1246-AWD is a 1/3.7-Inch CMOS image sensor SoC with an active
+>> +  array size of 1296 x 976. It is programmable through an I2C interface and
+>> +  connected via parallel bus.
+>> +
+>> +allOf:
+>> +  - $ref: /schemas/media/video-interface-devices.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: himax,hm1246
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    description: Input reference clock (6 - 27 MHz)
+>> +    maxItems: 1
+>> +
+>> +  reset-gpios:
+>> +    description: Active low XSHUTDOWN pin
+>> +    maxItems: 1
+>> +
+>> +  avdd-supply:
+>> +    description: Power for analog circuit (3.0 - 3.6 V)
+>> +
+>> +  iovdd-supply:
+>> +    description: Power for I/O circuit (1.7 - 3.6 V)
+>> +
+>> +  dvdd-supply:
+>> +    description: Power for digital circuit (1.5 / 1.8 V)
+>> +
+>> +  port:
+>> +    $ref: /schemas/graph.yaml#/$defs/port-base
+>> +    additionalProperties: false
+>> +    description: Parallel video output port
+>> +
+>> +    properties:
+>> +      endpoint:
+>> +        $ref: /schemas/media/video-interfaces.yaml#
+>> +        unevaluatedProperties: false
+>> +
+>> +        properties:
+>> +          bus-type:
+>> +            const: 5
+> 
+> Does the device also support e.g. Bt.656? If not, you can drop this.
+
+It is always a parallel interface. Okay, will remove it.
+> 
+> If the rest of the parallel interface parameter properties aren't
+> mandatory, what are their default values?
+
+The defaults are:
+hsync-active: 1 (high)
+vsync-active: 1 (high)
+pclk-sample: 0 (falling)
+
+Should I add the default values? The properties section of the endpoint 
+would then look like this:
+
+properties:
+   hsync-active:
+     default: 1
+
+   vsync-active:
+     default: 1
+
+   pclk-sample:
+     default: 0
+
+> 
+>> +
+>> +        required:
+>> +          - bus-type
+
+Then I should probably remove that too?
+
+>> +
+>> +    required:
+>> +      - endpoint
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - avdd-supply
+>> +  - iovdd-supply
+>> +  - dvdd-supply
+>> +  - port
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/gpio/gpio.h>
+>> +    #include <dt-bindings/media/video-interfaces.h>
+>> +
+>> +    i2c {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        sensor@24 {
+>> +            compatible =  "himax,hm1246";
+>> +            reg = <0x24>;
+>> +
+>> +            clocks = <&hm1246_clk>;
+>> +
+>> +            reset-gpios = <&gpio0 0 GPIO_ACTIVE_LOW>;
+>> +
+>> +            avdd-supply = <&hm1246_avdd>;
+>> +            iovdd-supply = <&hm1246_iovdd>;
+>> +            dvdd-supply = <&hm1246_dvdd>;
+>> +
+>> +            orientation = <2>;
+> 
+> It'd be nice to add macros for these in
+> include/dt-bindings/media/video-interfaces.h .
+
+True. However, since this is not specific to this sensor, I think it's 
+something for a separate series.
+Should I omit these properties in this example?
+
+Thanks
+  ~Matthias
+
+> 
+>> +            rotation = <0>;
+>> +
+>> +            port {
+>> +                endpoint {
+>> +                    remote-endpoint = <&isp_par_in>;
+>> +                    bus-type = <MEDIA_BUS_TYPE_PARALLEL>;
+>> +                    bus-width = <10>;
+>> +                    hsync-active = <1>; /* active high */
+>> +                    vsync-active = <1>; /* active high */
+>> +                    pclk-sample = <1>; /* sample on rising edge */
+>> +                };
+>> +            };
+>> +        };
+>> +    };
+>>
+> 
+
 
