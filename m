@@ -1,205 +1,144 @@
-Return-Path: <linux-kernel+bounces-808321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F88B4FE20
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:52:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A9CB4FE1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D84FE3A4175
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:48:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CAC01886662
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F8E340DBE;
-	Tue,  9 Sep 2025 13:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAC7345755;
+	Tue,  9 Sep 2025 13:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GWDYWPCY"
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="eVZCcOC/"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A302EDD75
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425721; cv=none; b=cu0LYTtA6ePieq2G/dwvZiP7TMO0rWZ+PKmb/CUxVAggQTDMn8oHXQYW66BHspDX3wtmpVn68dPbP8UChKUUMiwN8C2PXu2tzRNbCfXNxvB8WSYCJXy/p2iosb5ClA4KLFL9IYLXMzR8n2GQZQQEeKJ9y24sbJSB3xggCp+C78Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425721; c=relaxed/simple;
-	bh=Q/rf0hXU1P1k8eJegbrnRW6Jj+I4GLDmb1uP8AB9R9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TwVsQ9ty4VNrzA/4NnDnzAjFP4NxbROBkMcHNyTl3khmDZArkvYOCDqPrL0uiUwf/pyjfm0xsaGUzoLsQjzpQzi6gydeuOJwMCnUcwGRByy72bdYsmIg22OTgFZJVtEkFMRn5U5s3LCI1jxNf3C08AfULRBew00lSD+XQhCuiHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GWDYWPCY; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-b046f6fb230so183031366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:48:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757425718; x=1758030518; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wzdJUr2aAZ317oMLdDooM8ha31xvzXYVNa8DDq4GgnM=;
-        b=GWDYWPCYSMt0LvVvX8eSaAGnJ/OvqCNAJYi7jbA3Zqgyd8O+pPbkx2lpHrqSAkddwp
-         t6MUz4/4AbbLmO7+ePHeSqRVfZsIpMEmVb5dfo7WsKclHp9Xc2KAfN3kPnEK5ACu0b5Y
-         L3cn+OcOb9/h0iXqomBKYDH9EzDtfOx1+lPoZASVs/i7MWSlzKa5wpApYzUNxOsx0s5p
-         MIYrwTkDDaapsFTFjOiq+2Ot/IU7mrDCUekkwgKXQp3EZos7q75uRiI0mbs0ZS4FroO9
-         gLHxBsx2wv9KlONV16N9Nmn8itftZN5FqcjlTsIUEf8D2kYxX3McYnJIj+0zOq2ze5I9
-         +clg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757425718; x=1758030518;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wzdJUr2aAZ317oMLdDooM8ha31xvzXYVNa8DDq4GgnM=;
-        b=XPlOTCbDw4cjbUrcHha23TiWyIBw5BCXNmXRXkfL60O19dHt8tdMj6HB36+iBtujdQ
-         y3+aeMSmlkfAMhSoIIUwZVibOGc0Tu/GGtjG4DcS6uvyf8sBMkez5+Xca4QK6miJkURk
-         8nvH7GeoxKhrAxCYhAixwRDWyAGJWFfQ2wqJq612k7Eylivcs/SoG4RkT2NLybL2a9yj
-         1jnb5H3dX8mH2QyzQgdCcWeNw7RIZjF2e9gwKH7BY3JkZIDSQiZcvB9aMbsIjRhDB4jd
-         fkYCoSytGdN457kVtkBMEfFc8Ibcp1rch7p4EFyp9MB8soHHen8edgbCJamgYu5+GjWg
-         Scrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXN/BYUqjAyVaH2I5Ms6QHz2W1FFk+0OLNP2JFlJGkeVzqR4eYs1806coJ3+4Z+iXOavIPm5p4ZqdH88C8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFS41lHCNwf9/Sz2g0sl892LKhck4ounK/6UsjK5OYql7Ij3HR
-	y4ZRO/bf65Y0pL1x28WFXQloRvXln7W7XjhU4QzgkqjRMWQfnnacIsj2JctPrrmk6a8=
-X-Gm-Gg: ASbGnctds6b/7MU7NG589pETAeB9ttRS/U/vlmYtaiatOz/mZBINYI098s02unp80bQ
-	KTP5KDhAjxZt/d4K/JbAJBFFjPlotFTpJN9EQ/vYHZWGzZ/PGv/ko/zjwQgdHxHtpBi+QRGHpvl
-	mz5sSOBEo3SMM5ujG0w3FYp6XiuGt9IAhKHJM4GiUm8IcgnJxJGXypaJNTQG346vD9pl1ZJUmNz
-	8A1yYRe7Fq83gp33D5pKV5ra+7FAJW5HduHnT+wcGc7YxSvjgWDa7+se3jpN60JQGQQ9TfIo5J3
-	hrtnPLmMUTizHQn2HGfyIQa8iJZoz6tP06R1z2cdoQi9+RHbKjdXtGYujzY7heH8A01TVoy9Pwr
-	3kl9b/61bmdzoDUoguz2vEM4Wqg==
-X-Google-Smtp-Source: AGHT+IHgk5tFhwF30rudU5mtYNqfAuQeHF11cAlAbcY+uYtRgicaAE41/MCIBs7pCIURzp5gb19rEw==
-X-Received: by 2002:a17:907:3e09:b0:afe:6648:a243 with SMTP id a640c23a62f3a-b049307ef09mr1831123266b.3.1757425717645;
-        Tue, 09 Sep 2025 06:48:37 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b046af12536sm1492637866b.100.2025.09.09.06.48.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 06:48:37 -0700 (PDT)
-Date: Tue, 9 Sep 2025 15:48:35 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
-Subject: Re: [PATCH v3 4/4] kdb: Adapt kdb_msg_write to work with NBCON
- consoles
-Message-ID: <aMAwMz4vWC5u9OpN@pathway.suse.cz>
-References: <20250902-nbcon-kgdboc-v3-0-cd30a8106f1c@suse.com>
- <20250902-nbcon-kgdboc-v3-4-cd30a8106f1c@suse.com>
- <aL77aq4gZBsn4epT@pathway.suse.cz>
- <d73e8cc0259c140a0a49f670c6c165bb662281ed.camel@suse.com>
- <84segwjbxq.fsf@jogness.linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27E4345723;
+	Tue,  9 Sep 2025 13:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757425798; cv=pass; b=fHGMLNz/d44LCywPke2b0h0z9VUXxIrsMeGbJ4QMoUXbRweSdugayufI+jLQ7G3sokyPTIs/oh+Qx/tHTQK+TiKDMARFhaXYih8vCDiKGtHRM1nGA64TvMrKHoH/nrQT4+HzSqt7LdclBJlP24utpvaYBMEBAgNchFoJKxue88w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757425798; c=relaxed/simple;
+	bh=jbYz2cB/LRKGU7V2l1u+WyNmdeqfxloyzuSeKoimqaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nJpKY1Q/4/ST1SIE6IgW4DFniy3g4khCq7tmJFSbRZfzBCCZRehc+bv2ZHaUsRjVIvd4u7cdTonSFBR8WTPs1EIfy2JOya54CpXAL4peWD/NdNVo2E0xJXpcStiq9cJ6TEFqNL5/7KRk14XhaPwdxWEDAyO+Ktj7/upnBFrkwig=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=eVZCcOC/; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757425763; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZPAIgnVLIIrn3kDfkEgrFFCfm2FitlN2ZyePQB2nyhgAbyEcp2drvC9+bpRtQq/eOpUTetSZVspMR6q44O3rXDhJ0msylFG0B/5i5MARL5PV9j6L/izb+YWRjz3VnqMi3sfZpeU4krXpgEf3VRv9e3/8/2sop4yaxJc03trZ7SA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757425763; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=L/Ku0WQ65djtaMitZtvpBRz1mourwVgiqgk6yxreW9g=; 
+	b=NTbem7q4rgQFGLQC7p3n9d5KbbswX5gjJZgBxJsCGyHDRvd5SqLzZdK1vJ6B0s7OEdAWwbZoAr7eKL79mq6RM5c3VJXO5OwbdisgxdXAFyfBZVn6YPNqaXhlWvtRTATOMC36RamzQrawf3uaUtP9RTYxGjFsJJBK45MtOsKAYuI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757425763;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=L/Ku0WQ65djtaMitZtvpBRz1mourwVgiqgk6yxreW9g=;
+	b=eVZCcOC/CBXKqJM/FpN4NLI6W9TZQ6B05GYsrJXwlAyL2Mfa1xksWUOAvvwL+u0W
+	XhB0Kp8/w2hEGRVm0r60cY7URRfUvo+nTyaMRF/Jdb7oSO27ZpUun1TfpeHA1pfJDFU
+	+8RQAIzy70zuEm8UsAQ/MM6maRuTB88w0CfjwGX8=
+Received: by mx.zohomail.com with SMTPS id 1757425761695925.908509267311;
+	Tue, 9 Sep 2025 06:49:21 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Saravana Kannan <saravanak@google.com>, linux-pm@vger.kernel.org,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Sebin Francis <sebin.francis@ti.com>,
+ Diederik de Haas <didi.debian@cknow.org>,
+ Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
+ Peng Fan <peng.fan@oss.nxp.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Johan Hovold <johan@kernel.org>, Maulik Shah <maulik.shah@oss.qualcomm.com>,
+ Michal Simek <michal.simek@amd.com>, Konrad Dybcio <konradybcio@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 2/5] pmdomain: rockchip: Fix regulator dependency with
+ GENPD_FLAG_NO_STAY_ON
+Date: Tue, 09 Sep 2025 15:49:15 +0200
+Message-ID: <4274915.mvXUDI8C0e@workhorse>
+In-Reply-To: <20250909111130.132976-3-ulf.hansson@linaro.org>
+References:
+ <20250909111130.132976-1-ulf.hansson@linaro.org>
+ <20250909111130.132976-3-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <84segwjbxq.fsf@jogness.linutronix.de>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Tue 2025-09-09 10:03:05, John Ogness wrote:
-> On 2025-09-08, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
-> >> > --- a/kernel/debug/kdb/kdb_io.c
-> >> > +++ b/kernel/debug/kdb/kdb_io.c
-> >> > @@ -589,24 +589,40 @@ static void kdb_msg_write(const char *msg,
-> >> > int msg_len)
-> >> >  	 */
-> >> >  	cookie = console_srcu_read_lock();
-> >> >  	for_each_console_srcu(c) {
-> >> > -		if (!(console_srcu_read_flags(c) & CON_ENABLED))
-> >> > +		struct nbcon_write_context wctxt = { };
-> >> > +		short flags = console_srcu_read_flags(c);
-> >> > +
-> >> > +		if (!console_is_usable(c, flags, true))
-> >> >  			continue;
-> >> >  		if (c == dbg_io_ops->cons)
-> >> >  			continue;
-> >> > -		if (!c->write)
-> >> > -			continue;
-> >> > -		/*
-> >> > -		 * Set oops_in_progress to encourage the console
-> >> > drivers to
-> >> > -		 * disregard their internal spin locks: in the
-> >> > current calling
-> >> > -		 * context the risk of deadlock is a bigger
-> >> > problem than risks
-> >> > -		 * due to re-entering the console driver. We
-> >> > operate directly on
-> >> > -		 * oops_in_progress rather than using
-> >> > bust_spinlocks() because
-> >> > -		 * the calls bust_spinlocks() makes on exit are
-> >> > not appropriate
-> >> > -		 * for this calling context.
-> >> > -		 */
-> >> > -		++oops_in_progress;
-> >> > -		c->write(c, msg, msg_len);
-> >> > -		--oops_in_progress;
-> >> > +
-> >> > +		if (flags & CON_NBCON) {
-> >> > +			/*
-> >> > +			 * Do not continue if the console is NBCON
-> >> > and the context
-> >> > +			 * can't be acquired.
-> >> > +			 */
-> >> > +			if (!nbcon_kdb_try_acquire(c, &wctxt))
-> >> > +				continue;
-> >> > +
-> >> > +			wctxt.outbuf = (char *)msg;
-> >> > +			wctxt.len = msg_len;
-> >> 
-> >> I double checked whether we initialized all members of the structure
-> >> correctly. And I found that we didn't. We should call here:
-> >> 
-> >> 			nbcon_write_context_set_buf(&wctxt,
-> >> 						    &pmsg.pbufs-
-> >> >outbuf[0],
-> >> 						   
-> >> pmsg.outbuf_len);
+On Tuesday, 9 September 2025 13:11:21 Central European Summer Time Ulf Hansson wrote:
+> The deferred regulator retrieval for Rockchip PM domains are causing some
+> weird dependencies. More precisely, if the power-domain is powered-on from
+> the HW perspective, its corresponding regulator must not be powered-off via
+> regulator_init_complete(), which is a late_initcall_sync.
 > 
-> Nice catch.
+> Even on platforms that don't have the domain-supply regulator specified for
+> the power-domain provider, may suffer from these problems.
 > 
-> >> Sigh, this is easy to miss. I remember that I was not super happy
-> >> about this design.
-
-I looked for details. I described my concerns at
-https://lore.kernel.org/lkml/ZNY5gPNyyw9RTo4X@alley/#t
-
-> >> But the original code initialized the structure
-> >> on a single place...
-> > 
-> > Ok, so I'll need to also export nbcon_write_context_set_buf, since it's
-> > currently static inside kernel/printk/nbcon.c. I'll do it for the next
-> > version.
+> More precisely, things just happen to work before, because
+> genpd_power_off_unused() (also a late_initcall_sync) managed to power-off
+> the PM domain before regulator_init_complete() powered-off the regulator.
 > 
-> How about modifying nbcon_kdb_try_acquire() to also take @msg and
-> @msg_len. Then, on success, @wctxt is already prepared. I do not like
-> the idea of external code fiddling with the fields.
+> Ideally this fragile dependency must be fixed properly for the Rockchip PM
+> domains, but until then, let's fallback to the previous behaviour by using
+> the GENPD_FLAG_NO_STAY_ON flag.
+> 
+> Link: https://lore.kernel.org/all/20250902-rk3576-lockup-regression-v1-1-c4a0c9daeb00@collabora.com/
+> Reported-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Fixes: 0e789b491ba0 ("pmdomain: core: Leave powered-on genpds on until sync_state")
+> Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until late_initcall_sync")
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/pmdomain/rockchip/pm-domains.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
+> index 242570c505fb..1955c6d453e4 100644
+> --- a/drivers/pmdomain/rockchip/pm-domains.c
+> +++ b/drivers/pmdomain/rockchip/pm-domains.c
+> @@ -865,7 +865,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+>  	pd->genpd.power_on = rockchip_pd_power_on;
+>  	pd->genpd.attach_dev = rockchip_pd_attach_dev;
+>  	pd->genpd.detach_dev = rockchip_pd_detach_dev;
+> -	pd->genpd.flags = GENPD_FLAG_PM_CLK;
+> +	pd->genpd.flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_NO_STAY_ON;
+>  	if (pd_info->active_wakeup)
+>  		pd->genpd.flags |= GENPD_FLAG_ACTIVE_WAKEUP;
+>  	pm_genpd_init(&pd->genpd, NULL,
+> 
 
-I was thinking about another solution, e.g. an nbcon_wctxt_init()
-function. The problem is that wctxt->unsafe_takeover would need
-to get updated after acquiring the context. And might be reused
-for different consoles, ...
+Tested-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-But wait. I do not see any code using wctxt->unsafe_takeover.
+Fixes the full-SoC lockup I've observed on my RK3576 Radxa ROCK 4D,
+which before this patch would occur when the vdd_npu_s0 regulator
+was disabled.
 
-It seems that the motivation was that console drivers might
-do something else when there was an unsafe_takeover in the past,
-see https://lore.kernel.org/lkml/87cyz6ro62.fsf@jogness.linutronix.de/
-But it seems that no console driver is using it.
+Thank you!
 
-So, I would prefer to remove the "unsafe_takeover" field from
-struct nbcon_write_context and keep this kdb code as it is now.
+Kind regards,
+Nicolas Frattaroli
 
-We could always add it back when really needed.
-Alternatively, we could create an API which could read this information
-from struct wctxt.ctxt.con. But I would create this API only when
-there is an user.
 
-Best Regards,
-Petr
+
 
