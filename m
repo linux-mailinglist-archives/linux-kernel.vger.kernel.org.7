@@ -1,142 +1,171 @@
-Return-Path: <linux-kernel+bounces-807838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C5DB4AA20
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:17:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF67B4AA25
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC5CD342A18
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:17:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC52D188E77B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284C731B806;
-	Tue,  9 Sep 2025 10:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DA631C570;
+	Tue,  9 Sep 2025 10:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUf+PFLz"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TSlW3BhB"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733AE322A22;
-	Tue,  9 Sep 2025 10:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF353191B4;
+	Tue,  9 Sep 2025 10:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757412775; cv=none; b=rXBR/LjGAGSfPXZFHffYB1Rf5Zd1KlR54cNxkxKjA50PVUwPW6dPe6x1LmJi07NWnLUxjkqStQboHlgPxoZwIIvml8+Xg3/pFKlTzSOMbKls1q3sOFRYJi25RM+IyeupAhKZlrPv4fClh202HZV4t3d0Yd0zImkkebnJrWUpzeo=
+	t=1757412827; cv=none; b=hWEYjGr5FtaXfWuZVBs6BtTFJaN12DXlqMtbSftW/ppsKnFlbkYT5KbVEE/R5t+JB3ySR1zPuwhhTVs8C7ROskuJqQIZboZ1hWc7srCUkLXJg1C20r5MHdIc5hzuOO6OAoI0TcbO2F63FaeCPnJJ+YkfQ0vm29kM0q/G/J61F84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757412775; c=relaxed/simple;
-	bh=Veh10dFq34J2Gxp0IcEQ3EDcsXL/4qN9N6MaXWyrB5M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mAGaZKnjjbUq33fQXfIQggvrstnmOIeWI9DW9/OxOkqqW5RdNGbDMQ+ufwdYdr/6dTQ5RD8J7tQfwKaAjP/TG7KwLMusevYnWnifmkBHKynqnOq8pnvWYlcPi1SS2S44pB826l8L5yGZdc9tq4fsuIx7AVsfG3OHsGYFBvv/XeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TUf+PFLz; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45dcfecdc0fso46175905e9.1;
-        Tue, 09 Sep 2025 03:12:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757412772; x=1758017572; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kIgb7J1F10HYxfdjdkrY8eTpLG0sHZrvPdCfUXjCXl0=;
-        b=TUf+PFLz2FjJJAu+ZbF82d/++UXfYjOj0b/vI6DqaDSZzf2/bCDP9QGsqwRpPKtKNj
-         WW7izqW75ku3nthn0codEMl8uXlvvbgEg1PNh+6S2Py+/pVecTVeIO4Lg/WBWlAH7QsZ
-         fmb0F8MM4hxWrTT0AyKfC+YKpHgIuuRLiLeGeQ83FxKOHf8zRd+QkmPhqY9xWR5JDxJC
-         Lwr9pD5fwQotIkudBwY8jXdBTDpyt8LDnfpM0pqjF5xMw/xrER17MlF6789CRYcQJ/rA
-         j9dC0nnaaCCoefOP+3xtg1h11M2gUz0O4jM64WtjmLvOzAYQOPhgIzMFgJR/n0Gi9qI9
-         7L7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757412772; x=1758017572;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kIgb7J1F10HYxfdjdkrY8eTpLG0sHZrvPdCfUXjCXl0=;
-        b=NaTFkQpqfu/IwZ0U9GAmMIi7hcpIO44Xi6xBhT/hY0Yxgdp67sUvLfE7VrH1yE4sFx
-         DcQgFd4+jznbwj4N1eHchPL5/Ajos9SqMC0sOaQtzR8wbc486uvvbtm70RBdjtisxJnf
-         9g+y58G3MogvzxHt04UANyuCKP2iVfuu2mfMtdEvif/RK3vg+h1o+o7UqALNiBtDCNLK
-         rl/jVZPdpJ7ep+iujYwpcAIQ0Zf4XXpyZ+D00Lnj/HJBzU77bq5x5zX3nHvhVqnq5m0Y
-         hIeMouPx/X5RBxLi6rpqQ29Xa3daj0yfZoQd7VNquWcX13rDAG2f8T9q71jLNFWb6Y1b
-         LcmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYnkJ9PELBBlvLh0JFyx1l3ScJ6wQh63pw89ukfIj9qeC8RmPnr3ov2fSOC1Gk7AP6YzQJfMSZlQ8e@vger.kernel.org, AJvYcCV7BNht4Q94rurxemuRJwIDJHt3eDyUDNMHKc22Z5QUJrhuNZPmWzfYy/t0x2zU/24KcV8HY62zqRNkmu+R@vger.kernel.org, AJvYcCVgE1+KYxaOPIIgR6/zOehpNIRMus1usKcDyaa025gLeXYC6BKJSASgGZYdYsGnP9qFWyCqHOTrpbcT@vger.kernel.org, AJvYcCW7aDZNUCRjXgPkpC2epqcWKjaJ8k98Ch1zfgtFsCyf6K4lhQ8S8qCw2MFIn8JRiFPj4Q5Lw4vApTAenMOqJMHC7g==@vger.kernel.org, AJvYcCWDjDUY0JDCqinLeNsRweHrQTNZbp5OETaZedS3V0QKE8JMfvOwkEyED+mdrdYRmXEAULCfXVITF/XP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrTMA9kmLTFYbYGhZ/KMy2OSD+1fdY87HH/i4xnsXBxKNX5x4o
-	tH+jiqFVWbgoL1N+eUdQLiftD1pf90tzmzfaDQNzJe+1SBS9cdGKVQZp
-X-Gm-Gg: ASbGncvQ2L1a1QqD37XGDqY3jS7hOh3xjEjOORehwf0wxOiboZRamtCeO2Gkx6EbqTQ
-	C2fAfLd96X11NYw/m692r4xjCMjw0t+7XynQeHgQb1yKHLLqPcPwqo+nU56w95q/uPEwNpwgKVJ
-	LqZfHZ089KSCGPCKe9t/nmfYGd2yvmSiSXcZ/GYID20DoEvHII7QZ5ekcItKdFz5xNDUkmMONA9
-	JkDAYHd0GytClvy3VKLww6A+SDV5nSz+JcIdNNlE6MmTJ1KzIolunqG1JM+e1kLf3/BRtbVTL8Q
-	M7jLHBKFYLVCaY2pEWpfp6MNarHofQv0vF4NXUh6oi4MxXZU8pUfkrEL0drsnCZXGUgmf1EcALA
-	jy/U9PGleGkrTpYkDimfX6WPlOQ5ZlWWIZnp8TD1Yhhlh+HPrndkOJ17DQ+1GZg+8eNpCTuUqWa
-	LaG0+k72MnybQ++edM7RkKXAu7dw==
-X-Google-Smtp-Source: AGHT+IFVsl0KBBNudami4eVXse3EwUG6m0w7N65Hz7CHd/3ZnVXJY+5tMMekyix7eYIjIw4+THAIGw==
-X-Received: by 2002:a05:600c:1991:b0:45b:5f3d:aa3d with SMTP id 5b1f17b1804b1-45dddeee57cmr87267925e9.21.1757412771663;
-        Tue, 09 Sep 2025 03:12:51 -0700 (PDT)
-Received: from localhost (2a02-8440-7136-74e7-5ebf-4282-0e1a-b885.rev.sfr.net. [2a02:8440:7136:74e7:5ebf:4282:e1a:b885])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45de16b8b58sm130632525e9.4.2025.09.09.03.12.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 03:12:51 -0700 (PDT)
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-Date: Tue, 09 Sep 2025 12:12:27 +0200
-Subject: [PATCH v6 20/20] arm64: dts: st: support ddrperfm on
- stm32mp257f-ev1
+	s=arc-20240116; t=1757412827; c=relaxed/simple;
+	bh=mcfC+h1eStW2uUhSrWJrqUQ4K9R4hrohvIKBqKE5M9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kzlI7vGWewrGJUMTQRYL+rPhaJ4ketb50CS6Ovg2vufEzZBqBYuVqOqjn1KhRry8GmHELWIDubyh+4C/TOLqZNdE4KF/ySxANwBkjksLBQSP/uHwi8KZBbWjhVFify/YJK/IIo4syYLWtb9xYHFpwj49l1QtBnszphOTJViQNPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TSlW3BhB; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 1E9AFC8EC7C;
+	Tue,  9 Sep 2025 10:13:26 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BD17360630;
+	Tue,  9 Sep 2025 10:13:41 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 73E5D102F2894;
+	Tue,  9 Sep 2025 12:13:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757412820; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ncdmf1jhLSIzFX+n3bWuOq0zu5sbccap6rdFTbTyrp4=;
+	b=TSlW3BhBfGVHzv475bNiMhL8Bw8Af3XCJJTHeL2j78xMN8yMp46G3obLq8qYawvTQ+Z8O/
+	6qzCYGbzQEw4iyUDCgRjdPeepGT+ksqfZ2l0FwtHikXZcix/OsxLr1Rg2wLHg70jilqdlO
+	5rOAmGcIyiz4VYuU36vecgaQ+lvkfX6ApdRXwREj2aFFzfdOT/hW+BQpe7H5mYrYGSZ4Zq
+	XPvT/PKdMkxw+20IuhZprIRd1cmd0Z2uv5nhGSHYthrbUJSf7ZAShC9QKaNQuN9f15CKBm
+	6ArHqVKmlB6kCpf8WrEEY45YAgcNExhUyH1uqIBIWMCLEuQUzndLSoe7/1Px1w==
+Date: Tue, 9 Sep 2025 12:13:17 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding
+ <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jonathan
+ Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni
+ <skomatineni@nvidia.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter De
+ Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+ <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko
+ <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>,
+ linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Subject: Re: [PATCH v1 09/19] staging: media: tegra-video: vi: add flip
+ controls only if no source controls are provided
+Message-ID: <20250909121317.6f34e2f3@booty>
+In-Reply-To: <CAPVz0n0_DJh9M-h5a0bcBA8b6_7vzgOYSktGxAhFzuVncoJhmw@mail.gmail.com>
+References: <20250819121631.84280-1-clamor95@gmail.com>
+	<20250819121631.84280-10-clamor95@gmail.com>
+	<20250905175915.2d7e02a7@booty>
+	<CAPVz0n0_DJh9M-h5a0bcBA8b6_7vzgOYSktGxAhFzuVncoJhmw@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250909-b4-ddrperfm-upstream-v6-20-ce082cc801b5@gmail.com>
-References: <20250909-b4-ddrperfm-upstream-v6-0-ce082cc801b5@gmail.com>
-In-Reply-To: <20250909-b4-ddrperfm-upstream-v6-0-ce082cc801b5@gmail.com>
-To: Gatien Chevallier <gatien.chevallier@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Gabriel Fernandez <gabriel.fernandez@foss.st.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Julius Werner <jwerner@chromium.org>, 
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-X-Mailer: b4 0.15-dev-dfb17
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Clément Le Goffic <clement.legoffic@foss.st.com>
+Hello Svyatoslav,
 
-Configure DDRPERFM node on stm32mp257f-ev1 board.
-Disable the node as DDRPERFM will produce an error message if it's clock
-(shared with the DDRCTRL on STM32MP25x) is secured by common bootloaders.
+On Fri, 5 Sep 2025 19:05:16 +0300
+Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+> =D0=BF=D1=82, 5 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 18:59 Luc=
+a Ceresoli <luca.ceresoli@bootlin.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > Hello Svyatoslav,
+> >
+> > On Tue, 19 Aug 2025 15:16:21 +0300
+> > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> > =20
+> > > Add HFLIP and VFLIP from SoC only if camera sensor does not provide t=
+hose
+> > > controls.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  drivers/staging/media/tegra-video/vi.c | 9 ++++++---
+> > >  1 file changed, 6 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging=
+/media/tegra-video/vi.c
+> > > index 4f67adc395ac..61b65a2c1436 100644
+> > > --- a/drivers/staging/media/tegra-video/vi.c
+> > > +++ b/drivers/staging/media/tegra-video/vi.c
+> > > @@ -961,6 +961,7 @@ static int tegra_channel_setup_ctrl_handler(struc=
+t tegra_vi_channel *chan)
+> > >       }
+> > >  #else
+> > >       struct v4l2_subdev *subdev;
+> > > +     struct v4l2_ctrl *hflip, *vflip;
+> > >
+> > >       /* custom control */
+> > >       v4l2_ctrl_new_custom(&chan->ctrl_handler, &syncpt_timeout_ctrl,=
+ NULL);
+> > > @@ -986,11 +987,13 @@ static int tegra_channel_setup_ctrl_handler(str=
+uct tegra_vi_channel *chan)
+> > >               return ret;
+> > >       }
+> > >
+> > > -     if (chan->vi->soc->has_h_v_flip) {
+> > > +     hflip =3D v4l2_ctrl_find(subdev->ctrl_handler, V4L2_CID_HFLIP);
+> > > +     if (chan->vi->soc->has_h_v_flip && !hflip)
+> > >               v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4=
+L2_CID_HFLIP, 0, 1, 1, 0);
+> > > -             v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4=
+L2_CID_VFLIP, 0, 1, 1, 0);
+> > > -     }
+> > >
+> > > +     vflip =3D v4l2_ctrl_find(subdev->ctrl_handler, V4L2_CID_VFLIP);
+> > > +     if (chan->vi->soc->has_h_v_flip && !vflip)
+> > > +             v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4=
+L2_CID_VFLIP, 0, 1, 1, 0); =20
+> >
+> > Based on my understanding of V4L2, this should not be done.
+> > AFAIK subdevs should expose what the hardware block can do,
+> > independently from other subdevs. It is up to userspace (e.g.
+> > libcamera) to use the most appropriate control when there are redundant
+> > ones.
+> > =20
+>=20
+> This driver is video-centric, interactions are done via /dev/videoX
+> not subdevices like media-centric derivers do. Conversion is possible
+> but it is not scope of this patchset and in case such conversion takes
+> place, one who will do that, will definitely know what to do.
+> Video-centric drivers expose all controls within single video device
+> and it cannot hold duplicates of controls, this causes error. So this
+> solution exposes camera flip controls and if camera has none, SoC
+> controls are exposed.
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index c4223f06396a..c685a646a21b 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -130,6 +130,11 @@ csi_source: endpoint {
- 	};
- };
- 
-+&ddrperfm {
-+	memory-channel = <&ddr_channel>;
-+	status = "disabled";
-+};
-+
- &dcmipp {
- 	status = "okay";
- 	port {
+Sorry, forgot to think in the past. :-)
+Thanks for the clarification, it makes sense now!
 
--- 
-2.43.0
+Luca
 
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
