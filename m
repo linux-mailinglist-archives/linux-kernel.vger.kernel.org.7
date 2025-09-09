@@ -1,132 +1,168 @@
-Return-Path: <linux-kernel+bounces-808329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500D1B4FE57
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:57:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F33B4FE5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ADDE1654AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:52:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B9E3AB6D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E1A33EAE1;
-	Tue,  9 Sep 2025 13:52:02 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618DD340DB6;
+	Tue,  9 Sep 2025 13:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sGSBQjPB"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEA423C4FD;
-	Tue,  9 Sep 2025 13:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BC033CEB3;
+	Tue,  9 Sep 2025 13:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425921; cv=none; b=FYkzjxE/t1zgFgioBHhb2elI3ugj7c9CAi+CMC+YcN3gstJb0QgXm6JQPjmWyASlWD5cglhtrHfN7XuE5CsjUWw7lFJkgeOoDy5Lb6H9jiPdETolKC9q/oA9In5Kb3jk0T3Cp9wGGq8zyEqoE8BOhC9yoIqItq0fbvM/L0GcXqE=
+	t=1757425964; cv=none; b=CKv8wGDwOj7t2BBBUVv4hccX2qoP8Vo0JyLMZ0iAsLa5H6CXPDg/jbXaygvd6aix3gEoZHxwV7qPHf+PNM1TqgQt+XV8arunT4gpHwJgjoZEMotnLWMAGJGpRuHNvM7nKEpaxB/VAADMOcQ7/g+IPW3q/VbFTL7NUXhMazM5BJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425921; c=relaxed/simple;
-	bh=pixYHYgFxZH3cBa0DN9Yr2ALBfTu95zBDhEQKOqjThY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SBno9/udo0A91UFeKTA4tRJt+MFojbXfOJiG2ueXq4p/5O3MEvbUQzUut/9CZYhZ12tYxQG4ZnQ0ERzF7fEn0a5eWUUJsvo2ChNSbv3rJFcKhpER/vuZzAu/k4xXbRxXL177+pJ1Ink6N07WE2v3EMQ4pwNVDHxFWjQLfesxwRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w001.hihonor.com (unknown [10.68.25.235])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4cLlbk28D9zYl56j;
-	Tue,  9 Sep 2025 21:51:30 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w001.hihonor.com
- (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Sep
- 2025 21:51:56 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Sep
- 2025 21:51:56 +0800
-From: zhongjinji <zhongjinji@honor.com>
-To: <mhocko@suse.com>
-CC: <akpm@linux-foundation.org>, <feng.han@honor.com>, <lenb@kernel.org>,
-	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-pm@vger.kernel.org>, <liulu.liu@honor.com>,
-	<lorenzo.stoakes@oracle.com>, <pavel@kernel.org>, <rafael@kernel.org>,
-	<rientjes@google.com>, <shakeel.butt@linux.dev>, <surenb@google.com>,
-	<tglx@linutronix.de>, <zhongjinji@honor.com>
-Subject: Re: [PATCH v8 1/3] mm/oom_kill: Introduce thaw_oom_process() for thawing OOM victims
-Date: Tue, 9 Sep 2025 21:51:52 +0800
-Message-ID: <20250909135152.20477-1-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <aMAWvwQ3eJZH55mp@tiehlicka>
-References: <aMAWvwQ3eJZH55mp@tiehlicka>
+	s=arc-20240116; t=1757425964; c=relaxed/simple;
+	bh=kkqPnMFSXKC58Mmp+u95ABjAXbkgOnz1Uy3x3OPUuAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQRvtBpYOM9e9iXfJraUX9eNZMuPcplYhikp8wKh0VNWvJUmfyPN7+sId6dmsgNr+h6z1ojB3TW94+hsyjKHexX//Eu4yZajJtTrRU4+LxY3cX/qRmf3AAUpiS9nmq09BMz5KJZIDV4HpvwDQK4Ui0yVf0LgNWmkyEcoirrQSuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sGSBQjPB; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5896fLU0018487;
+	Tue, 9 Sep 2025 13:52:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:sender:subject:to; s=pp1;
+	 bh=BuPG1fP2BiwN2dlCCYD4OsW/T1NO8BqbuJE09pQ1CcM=; b=sGSBQjPB27Of
+	/SDJ5ZWMUkupMnht5upok4DeYiP8FbRmOIEX/C3BbesMgXa+z3MT33CaVsBK2uuM
+	GMkp+lEk0Kf7mf8lwunHZ4WRFiBukAZPZEb/rnMkXmDEu4Wt8U7ga/OO1ai8B1nG
+	xq338KUGXFT4dkIdFSi8HaxKu+YxAq1ZUgc8bLJYaDpCtT3iHd7bHdsJ7QvmhaB7
+	Yw15kqzyZ19tIzGZx+lmd/HQ7PSGfuCm5OxOALvn5YD1OF0XZzG9MOmfmB0KB9Ns
+	+pPw5/lt6VxtBt7fuqRAhmBJhk+QDWDjMGMB3lgOTUMKugPeiV2ppFPSIfbptWDp
+	xHXzEegnhw==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukedbd0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 13:52:34 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 589B0CSw017188;
+	Tue, 9 Sep 2025 13:52:34 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gmb7j5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 13:52:34 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 589DqU5257606626
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 9 Sep 2025 13:52:30 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8DD452004B;
+	Tue,  9 Sep 2025 13:52:30 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7B4B320043;
+	Tue,  9 Sep 2025 13:52:30 +0000 (GMT)
+Received: from p1gen4-pw042f0m (unknown [9.152.212.197])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  9 Sep 2025 13:52:30 +0000 (GMT)
+Received: from bblock by p1gen4-pw042f0m with local (Exim 4.98.2)
+	(envelope-from <bblock@linux.ibm.com>)
+	id 1uvylq-00000000VY0-1Awe;
+	Tue, 09 Sep 2025 15:52:30 +0200
+Date: Tue, 9 Sep 2025 15:52:30 +0200
+From: Benjamin Block <bblock@linux.ibm.com>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Matthew Rosato <mjrosato@linux.ibm.com>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>, Farhan Ali <alifm@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux.dev
+Subject: Re: [PATCH] iommu/s390: Make attach succeed when the device was
+ surprise removed
+Message-ID: <20250909135230.GA16134@p1gen4-pw042f0m.boeblingen.de.ibm.com>
+References: <20250904-iommu_succeed_attach_removed-v1-1-e7f333d2f80f@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a018.hihonor.com
- (10.68.17.250)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250904-iommu_succeed_attach_removed-v1-1-e7f333d2f80f@linux.ibm.com>
+Sender: Benjamin Block <bblock@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5NSBTYWx0ZWRfX/zqCp+k2nO9L
+ n8kluraprzWWkORc13LBGVR2O3mf+4G96R/CfOUG5dE7Z4L0maIDJLwblFu5DS13N56BBIlD6Nm
+ oCIDkkC6EVmL+7DtubY9hWTocH//PDaI/D8SC5ppYLVv61RQm12yurB+tHjNQ/y2sa2yO+XBcWd
+ fb7uvYdZLnQKaezH0JckNOpWpiru6y2M0XTMEDhyEbRalBFHwSaGrQFKDZfkHC2T9yFEgSo0Pk6
+ M/Arjudp7EDqdii37teHT6SH6cUxpLiJePJT70eJoxDJ4zNX9ekn75E40itgI9e8N1FS2/Z0gjZ
+ yEHl1V2ztPC94WhMCJZIxBx16tb8hsp8K6aRz4daG50SojPs7G25GkbYPZmcEbaY9L8bST2ZsH2
+ y2Ro2a+h
+X-Proofpoint-ORIG-GUID: YlekGEZfiKnv8ugEx6CF933gGtFBosBB
+X-Proofpoint-GUID: YlekGEZfiKnv8ugEx6CF933gGtFBosBB
+X-Authority-Analysis: v=2.4 cv=StCQ6OO0 c=1 sm=1 tr=0 ts=68c03123 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=8nJEP1OIZ-IA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8
+ a=f94wAlES5zcTxHjwagAA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-09_02,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060195
 
-> On Tue 09-09-25 19:41:31, zhongjinji wrote:
-> > > On Tue 09-09-25 17:06:57, zhongjinji wrote:
-> > > > OOM killer is a mechanism that selects and kills processes when the system
-> > > > runs out of memory to reclaim resources and keep the system stable.
-> > > > However, the oom victim cannot terminate on its own when it is frozen,
-> > > > because __thaw_task() only thaws one thread of the victim, while
-> > > > the other threads remain in the frozen state.
-> > > > 
-> > > > Since __thaw_task did not fully thaw the OOM victim for self-termination,
-> > > > introduce thaw_oom_process() to properly thaw OOM victims.
-> > > 
-> > > You will need s@thaw_oom_process@thaw_processes@
-> > 
-> > The reason for using thaw_oom_process is that the TIF_MEMDIE flag of the
-> > thawed thread will be set, which means this function can only be used to
-> > thaw processes terminated by the OOM killer.
+On Thu, Sep 04, 2025 at 10:59:49AM +0200, Niklas Schnelle wrote:
+> When a PCI device is removed with surprise hotplug, there may still be
+> attempts to attach the device to the default domain as part of tear down
+> via (__iommu_release_dma_ownership()), or because the removal happens
+> during probe (__iommu_probe_device()). In both cases zpci_register_ioat()
+> fails with a cc value indicating that the device handle is invalid. This
+> is because the device is no longer part of the instance as far as the
+> hypervisor is concerned.
 > 
-> Just do not set the flag inside the function. I would even say do not
-> set TIF_MEMDIE to the rest of the thread group at all. More on that
-> below
+> Currently this leads to an error return and s390_iommu_attach_device()
+> fails. This triggers the WARN_ON() in __iommu_group_set_domain_nofail()
+> because attaching to the default domain must never fail.
 > 
-> > thaw_processes has already been defined in kernel/power/process.c.
-> > Would it be better to use thaw_process instead?
+> With the device fenced by the hypervisor no DMAs to or from memory are
+> possible and the IOMMU translations have no effect. Proceed as if the
+> registration was successful and let the hotplug event handling clean up
+> the device.
 > 
-> Sorry I meant thaw_process as thaw_processes is handling all the
-> processes.
+> This is similar to how devices in the error state are handled since
+> commit 59bbf596791b ("iommu/s390: Make attach succeed even if the device
+> is in error state") except that for removal the domain will not be
+> registered later. This approach was also previously discussed at the
+> link.
 > 
-> > I am concerned that others might misunderstand the thaw_process function.
-> > thaw_process sets all threads to the TIF_MEMDIE state, so it can only be
-> > used to thaw processes killed by the OOM killer.
+> Handle both cases, error state and removal, in a helper which checks if
+> the error needs to be propagated or ignored. Avoid magic number
+> condition codes by using the pre-existing, but never used, defines for
+> PCI load/store condition codes and rename them to reflect that they
+> apply to all PCI instructions.
 > 
-> And that is the reason why it shouldn't be doing that. It should thaw
-> the whole thread group. That's it.
->  
-> > If the TIF_MEMDIE flag of a thread is not set, the thread cannot be thawed
-> > regardless of the cgroup state.
-> 
-> Why would that be the case. TIF_MEMDIE should only denote the victim
-> should be able to access memory reserves. Why the whole thread group
-> needs that? While more threads could be caught in the allocation path
-> this is a sort of boost at best. It cannot guarantee any forward
-> progress and we have kept marking only the first thread that way without
-> any issues.
+> Cc: stable@vger.kernel.org # v6.2
 
-When a process is frozen, all its threads enter __refrigerator() (in kernel/freezer.c). 
-When __thaw_task is called, the threads are woken up and check the freezing(current) 
-state (in __refrigerator). The freezing check is implemented via freezing_slow_path. 
-When TIF_MEMDIE is set for a thread, freezing_slow_path will return false, allowing 
-the thread to exit the infinite loop in __refrigerator(), and thus the thread will 
-be thawed.
+Oh, I just noticed that Niklas. You added `Cc: stable@vger.kernel.org`, but
+didn't actually include the address on the actual Cc of the mail? Was that
+intentional?
 
-The following code can explain how TIF_MEMDIE works in thread thawing.
-__refrigerator
-  for (;;) {
-    freezing = freezing(current)
-      freezing_slow_path
-        if (test_tsk_thread_flag(p, TIF_MEMDIE))
-          return false;
-    if (!freezing)
-      break;
-    schedule();
-  }
 
-Since thread_info is not shared within a thread group, TIF_MEMDIE for each thread  
-must be set so that all threads can be thawed.
-
+-- 
+Best Regards, Benjamin Block        /        Linux on IBM Z Kernel Development
+IBM Deutschland Research & Development GmbH    /   https://www.ibm.com/privacy
+Vors. Aufs.-R.: Wolfgang Wendt         /        Geschäftsführung: David Faller
+Sitz der Ges.: Böblingen     /    Registergericht: AmtsG Stuttgart, HRB 243294
 
