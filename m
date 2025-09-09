@@ -1,172 +1,124 @@
-Return-Path: <linux-kernel+bounces-807584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404D8B4A67C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:04:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18138B4A680
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D2994410D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:03:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55F195420A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3462853FD;
-	Tue,  9 Sep 2025 09:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802091FBCA7;
+	Tue,  9 Sep 2025 09:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jWzhggOo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QCzcYf2V"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FEfgeDR9"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBFC276050;
-	Tue,  9 Sep 2025 09:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232191DF738;
+	Tue,  9 Sep 2025 09:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757408566; cv=none; b=d6Q4dNZp99dBWPl0kTiTs8roED1aluHhx7gEYcVnhsI/vnh2c5tYd2xYeVwLOkK8v+X/YmIN3aIaZRfwh8PK6kImJTFinHaH6uCT3yUaDr1heBGozeGi6N6/08P8/EaVr7g+v23gGeqv/pt0p16iKue7oSFWkZCyQobaIwyP5Wg=
+	t=1757408646; cv=none; b=O2s3ujQXDIRASPNTYnjszxMAFNF8c+3XuOg9Ykwiwl0mCh8PL90qDRtKzZ1mWixHD8H+rD/EomRCiWq86IenVwtT8CUms1gRxX+XXznKHfzkSqInL57vNWjd0vfWYvwBRnvVT0LlhFBgAtUV7ZT7kzzUjABleXQXNUZcNClOPZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757408566; c=relaxed/simple;
-	bh=8GTvYOMui+wYCNSTdgCBCK/1X2KaB5V1Rb3KFy7NRs0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=EDYyPJ+PJDv2Heq793ceKBXTNGbfS42qGw5Pz6JLyzzeQGnj6BwvHbBprLfR0wmqCio608owvhvUM/mxajVp7TpsCo6RlxNK2VeL9GvuWr1+lJOy1jMISymwQcKNYye3ukKwqiAd3taRPUfzD0VtSRH2CsI4FM//j05ShbhBxK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jWzhggOo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QCzcYf2V; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 09 Sep 2025 09:02:41 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757408562;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=prll3dfJvDuM4aZZn51/P6sNN4UNGqiXVNfd41hyosc=;
-	b=jWzhggOoMtlIJiEPOPMmKSAHyTXytP7LXtCStaqGWwoo+Jy7evdqnf/eufHEH93IiPwFXq
-	ldR6KJ9Uvbx+5VvireOSTq7jfmtmQvAYxpTbj2CcLKmxC6SW9Qp3+leuGifdnYMg2aqRrj
-	bLFQv89j4quS9skDtgr5umN1+RcVOsZyn5yIKHBINB3DtTl4ckWCgEYxeowgLtjRa66IiL
-	P2OTWiNtXvgUDF8hdyehqoXeA0ZKjdx8RTpuiizctW+fi+f508Ks/m4uILot5jD43iorgC
-	BCcGwJjKkovf48rKp+la7eJb5nzdl8arli2iibF0nhI7lvAc7wgETuM6uJXz8w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757408562;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=prll3dfJvDuM4aZZn51/P6sNN4UNGqiXVNfd41hyosc=;
-	b=QCzcYf2VJiGwtC8ocbZLCWSGRRnx2Qz0fSDIbvdRhVj7V4THsv6c/Oe6uXtuRK/leSbCZd
-	KqupR4LzLbFZogBg==
-From: tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] selftests: vDSO: Fix -Wunitialized in powerpc
- VDSO_CALL() wrapper
-Cc: kernel test robot <lkp@intel.com>, thomas.weissschuh@linutronix.de,
- Thomas Gleixner <tglx@linutronix.de>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250812-vdso-tests-fixes-v2-1-90f499dd35f8@linutronix.de>
-References: <20250812-vdso-tests-fixes-v2-1-90f499dd35f8@linutronix.de>
+	s=arc-20240116; t=1757408646; c=relaxed/simple;
+	bh=0iQP6QtWjadeXzFLApRz1DQriDBa3su8a1ZXwzaArMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dkBDsrbA6pAGckc1r1mt0bDq70oe2Q8YV7hMVkIhYUbri8NSBwQb3gpymZWLLc/XUCxyzxHFgF3rfDGEx18IfXqBLhM8EBWGSKkDGhGOK/HTeChFW+KggUOel/o1GXz3VeOFvLnmzDYCaVWpJwU7/Ot+Ty5JiXojSQ/Ixv7F+U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FEfgeDR9; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NpXa+vu5fBKULSWcWQHqLrFFROyEpt4qyTDAIt4nodE=; b=FEfgeDR9N3y94fqc91GS8X3CKX
+	JAKsAe00a802RdsTP3D0LCjDvhpJ0uVCmfDe0Kh7wY8VRtiqWYEziNPcsQpoYyq+PjBzkVByulS3+
+	2jUKwEa0JuXfuUcldWyx/kb9A4eiOEPkAY5940SKPO736tP9QyxTzS23gMm0NmEwDIFs5f5okjwLa
+	tU+gRrluo4Jz15EadIcek/1ZVQ6LxoFYFa/aE5jsPV2lBHM3zQOUha0m3/Y87k8gh3fYaap5ZvWk1
+	QLn6DE/5QDIjE9uYvzmHOv/SQcCN3I+wK143A/Hyd0K8+dFvY91nMO8KVottGkQzV08agpNh0MY10
+	B6+GrbjA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uvuGc-00000005GfF-2QAJ;
+	Tue, 09 Sep 2025 09:03:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A7C8F300399; Tue, 09 Sep 2025 11:03:57 +0200 (CEST)
+Date: Tue, 9 Sep 2025 11:03:57 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: Andrey Konovalov <andreyknvl@gmail.com>, sohil.mehta@intel.com,
+	baohua@kernel.org, david@redhat.com, kbingham@kernel.org,
+	weixugc@google.com, Liam.Howlett@oracle.com,
+	alexandre.chartre@oracle.com, kas@kernel.org, mark.rutland@arm.com,
+	trintaeoitogc@gmail.com, axelrasmussen@google.com,
+	yuanchu@google.com, joey.gouly@arm.com, samitolvanen@google.com,
+	joel.granados@kernel.org, graf@amazon.com,
+	vincenzo.frascino@arm.com, kees@kernel.org, ardb@kernel.org,
+	thiago.bauermann@linaro.org, glider@google.com, thuth@redhat.com,
+	kuan-ying.lee@canonical.com, pasha.tatashin@soleen.com,
+	nick.desaulniers+lkml@gmail.com, vbabka@suse.cz,
+	kaleshsingh@google.com, justinstitt@google.com,
+	catalin.marinas@arm.com, alexander.shishkin@linux.intel.com,
+	samuel.holland@sifive.com, dave.hansen@linux.intel.com,
+	corbet@lwn.net, xin@zytor.com, dvyukov@google.com,
+	tglx@linutronix.de, scott@os.amperecomputing.com,
+	jason.andryuk@amd.com, morbo@google.com, nathan@kernel.org,
+	lorenzo.stoakes@oracle.com, mingo@redhat.com, brgerst@gmail.com,
+	kristina.martsenko@arm.com, bigeasy@linutronix.de, luto@kernel.org,
+	jgross@suse.com, jpoimboe@kernel.org, urezki@gmail.com,
+	mhocko@suse.com, ada.coupriediaz@arm.com, hpa@zytor.com,
+	leitao@debian.org, wangkefeng.wang@huawei.com, surenb@google.com,
+	ziy@nvidia.com, smostafa@google.com, ryabinin.a.a@gmail.com,
+	ubizjak@gmail.com, jbohac@suse.cz, broonie@kernel.org,
+	akpm@linux-foundation.org, guoweikang.kernel@gmail.com,
+	rppt@kernel.org, pcc@google.com, jan.kiszka@siemens.com,
+	nicolas.schier@linux.dev, will@kernel.org, jhubbard@nvidia.com,
+	bp@alien8.de, x86@kernel.org, linux-doc@vger.kernel.org,
+	linux-mm@kvack.org, llvm@lists.linux.dev,
+	linux-kbuild@vger.kernel.org, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 13/19] kasan: x86: Handle int3 for inline KASAN reports
+Message-ID: <20250909090357.GJ4067720@noisy.programming.kicks-ass.net>
+References: <36c0e5e9d875addc42a73168b8090144c327ec9f.1756151769.git.maciej.wieczor-retman@intel.com>
+ <CA+fCnZcMV0BOJyvx2nciCK2jvht-Hx0HnFtRzcc=zu+pQSOdVw@mail.gmail.com>
+ <couuy2aawztipvnlmaloadkbceewcekur5qbtzktr7ovneduvf@l47rxycy65aa>
+ <hw7xa2ooqeyjo5ypc5jluuyjlgyzimxtylj5sh6igyffsxtyaf@qajqp37h6v2n>
+ <epbqhjyfdt3daudp2wx54jsw6d7jf6ifbr3yknlfuqptz7b4uq@73n5k6b2jrrl>
+ <CA+fCnZdJckDC4AKYxLS1MLBXir4wWqNddrD0o+mY4MXt0CYhcQ@mail.gmail.com>
+ <ra5s3u5ha6mveijzwkoe2437ged5k5kacs5nqvkf4o7c2lcfzd@fishogqlatjb>
+ <20250909083425.GH4067720@noisy.programming.kicks-ass.net>
+ <20250909084029.GI4067720@noisy.programming.kicks-ass.net>
+ <xeedvhlav5rwra4pirinqcgqynth2zrixv7aknlsh2rz7lkppq@kubknviwhpfp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175740856148.1920.8183913180811982509.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xeedvhlav5rwra4pirinqcgqynth2zrixv7aknlsh2rz7lkppq@kubknviwhpfp>
 
-The following commit has been merged into the timers/vdso branch of tip:
+On Tue, Sep 09, 2025 at 10:49:53AM +0200, Maciej Wieczor-Retman wrote:
 
-Commit-ID:     9f15e0f9ef514b8e1a80707931f6d07362e8ebc4
-Gitweb:        https://git.kernel.org/tip/9f15e0f9ef514b8e1a80707931f6d07362e=
-8ebc4
-Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Tue, 12 Aug 2025 07:39:02 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 09 Sep 2025 10:57:38 +02:00
+> >Specifically, look at arch/x86/kernel/traps.h:decode_bug(), UBSan uses
+> >UD1 /0, I would suggest KASAN to use UD1 /1.
+> 
+> Okay, that sounds great, I'll change it in this patchset and write the LLVM
+> patch later.
 
-selftests: vDSO: Fix -Wunitialized in powerpc VDSO_CALL() wrapper
+Thanks! Also note how UBSAN encodes an immediate in the UD1 instruction.
+You can use that same to pass through your meta-data thing.
 
-The _rval register variable is meant to be an output operand of the asm
-statement but is instead used as input operand.
-clang 20.1 notices this and triggers -Wuninitialized warnings:
+MOD=1 gives you a single byte immediate, and MOD=2 gives you 4 bytes,
+eg:
 
-tools/testing/selftests/timers/auxclock.c:154:10: error: variable '_rval' is =
-uninitialized when used here [-Werror,-Wuninitialized]
-  154 |                 return VDSO_CALL(self->vdso_clock_gettime64, 2, clock=
-id, ts);
-      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~~
-tools/testing/selftests/timers/../vDSO/vdso_call.h:59:10: note: expanded from=
- macro 'VDSO_CALL'
-   59 |                 : "r" (_rval)                                        =
-   \
-      |                        ^~~~~
-tools/testing/selftests/timers/auxclock.c:154:10: note: variable '_rval' is d=
-eclared here
-tools/testing/selftests/timers/../vDSO/vdso_call.h:47:2: note: expanded from =
-macro 'VDSO_CALL'
-   47 |         register long _rval asm ("r3");                              =
-   \
-      |         ^
+  0f b9 49 xx -- ud1 xx(%rcx), %rcx
 
-It seems the list of input and output operands have been switched around.
-However as the argument registers are not always initialized they can not
-be marked as pure inputs as that would trigger -Wuninitialized warnings.
-Adding _rval as another input and output operand does also not work as it
-would collide with the existing _r3 variable.
-
-Instead reuse _r3 for both the argument and the return value.
-
-Fixes: 6eda706a535c ("selftests: vDSO: fix the way vDSO functions are called =
-for powerpc")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Link: https://lore.kernel.org/all/20250812-vdso-tests-fixes-v2-1-90f499dd35f8=
-@linutronix.de
-Closes: https://lore.kernel.org/oe-kbuild-all/202506180223.BOOk5jDK-lkp@intel=
-.com/
-
----
- tools/testing/selftests/vDSO/vdso_call.h | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/tools/testing/selftests/vDSO/vdso_call.h b/tools/testing/selftes=
-ts/vDSO/vdso_call.h
-index bb237d7..e720558 100644
---- a/tools/testing/selftests/vDSO/vdso_call.h
-+++ b/tools/testing/selftests/vDSO/vdso_call.h
-@@ -44,7 +44,6 @@
- 	register long _r6 asm ("r6");					\
- 	register long _r7 asm ("r7");					\
- 	register long _r8 asm ("r8");					\
--	register long _rval asm ("r3");					\
- 									\
- 	LOADARGS_##nr(fn, args);					\
- 									\
-@@ -54,13 +53,13 @@
- 		"	bns+	1f\n"					\
- 		"	neg	3, 3\n"					\
- 		"1:"							\
--		: "+r" (_r0), "=3Dr" (_r3), "+r" (_r4), "+r" (_r5),	\
-+		: "+r" (_r0), "+r" (_r3), "+r" (_r4), "+r" (_r5),	\
- 		  "+r" (_r6), "+r" (_r7), "+r" (_r8)			\
--		: "r" (_rval)						\
-+		:							\
- 		: "r9", "r10", "r11", "r12", "cr0", "cr1", "cr5",	\
- 		  "cr6", "cr7", "xer", "lr", "ctr", "memory"		\
- 	);								\
--	_rval;								\
-+	_r3;								\
- })
-=20
- #else
+When poking at LLVM, try and convince the thing to not emit that
+'operand address size prefix' byte like UBSAN does, that's just a waste
+of bytes.
 
