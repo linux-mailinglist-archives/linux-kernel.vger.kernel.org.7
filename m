@@ -1,151 +1,177 @@
-Return-Path: <linux-kernel+bounces-808718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E376FB503F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:08:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F91B503FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DC20367905
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:07:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09C01BC4A7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF9737288C;
-	Tue,  9 Sep 2025 17:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5302369325;
+	Tue,  9 Sep 2025 17:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="T4qonAxI"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOk8Nvc9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804A1258EFB;
-	Tue,  9 Sep 2025 17:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757437367; cv=pass; b=n/NWr8+QlT4xNBSHEIZCjvDQDNbkpxUwXHPRT3zTsaNT3TER92jAVcb5uEvy68EQfQ6cA3atgRn6fW+lNSYNubB0ROSaV+qVZK+DJCCRY7xzPD/qI/QkGp+95CZYdAWiRn9uL+tAL1xRsqeuxaLku76yqr7jKiMqm1xDgRvreDE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757437367; c=relaxed/simple;
-	bh=COSvmSyevD9dcT8YVmVKsH1in6CKNyug3YbUQ0z2sr4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=OQF3FjfHvC4xzcVdLo5J6yReeaHyZBLDrCC4T7WI5bzbXl9KLOzdoNUuneHK4rcNGUygen4njFOrmPxDlJ1tyQME7L34cLJSb70uHDkGV9muVLNoQpzDi4JiskXVflumTuzpaw2Sk20iNe3KghLceY5EoYrpBpIv6vVGy3c3Tek=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=T4qonAxI; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757437345; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=YKZiireURZ4Rzt5SBAidjTx9kllIK3dDKh90qaDZjKbAoGhdXjQuGjj6chCoPLGv/hZUChXsitjfDTeXJjULzptsE/Qcu4QlrCzNxbpOCB7P7YdM/TMit2hufpTanEbXfnS70GOlf3adrqno7v5FoPpk08gBDf+HxTxxr3sCVn8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757437345; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=COSvmSyevD9dcT8YVmVKsH1in6CKNyug3YbUQ0z2sr4=; 
-	b=as/lt38RK8o00QFSTR0oeSaQJxwrjfTEPzop4egSfkjOrY/5kFRwPnDLdLQD68EdbpgRAtNE3MUI6v/mEs3ribQStdqNGJZSUSwKwQFwsL7yURuvTCFqoPaBgZnQYTRoKL6Bi83oeHbYaCBMATP01OUppNyb2KDlReUe8ghOCYk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757437345;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=COSvmSyevD9dcT8YVmVKsH1in6CKNyug3YbUQ0z2sr4=;
-	b=T4qonAxIiDgskQsKS58gmPSEqNQY7IAIARPFKsoTyh9UPqpffsNSaNA/US5h9Fib
-	akoCuPkuUa+Pn71NWX45Oln1EvHKHSBceNthI9TCuzYXtMlavf/LK7uFncI4lUVaC3J
-	oH5ZwF5LLuPcEytYD1fpr0FAPgeaeblHRHgGJR+w=
-Received: by mx.zohomail.com with SMTPS id 1757437342958679.3930952067639;
-	Tue, 9 Sep 2025 10:02:22 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F46F258EFB;
+	Tue,  9 Sep 2025 17:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757437361; cv=none; b=ehMRGBnkF52pWOTE4ySdkhbwgpRY7Lp5djONigoU7iJg65ShRCAw3lWsFK8fAuaJZVagYUW0PJHgS1yz5aVaLhVnBjSNPOQA9GSks5B/qH5eDdRDCUndbMdnrZTgMNe3Cj4+HYcPZb25uJbxah5/iZbUwT2PdYopMpxV5juys38=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757437361; c=relaxed/simple;
+	bh=DtoJG7abkzsETSxv7OldiFAld+o5s9NMo3AjMGSPYiU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=p/8PhKHdf36UcZ1Xlwtd/pPdUUXE7nxAPlaaeBSefYdqDpLfE2/ztLD6z/XDsguN3odIQVnB9VH8MH0yp7k2qAy1C7jFKJtlxP9WcBanZ2qZ32xqR/i1eIHsclMaOBMa4GVoheAmhqTxBV+qhR00f/3GNDWR3Vg25TuOcYjji+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOk8Nvc9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9C1B6C4CEF4;
+	Tue,  9 Sep 2025 17:02:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757437360;
+	bh=DtoJG7abkzsETSxv7OldiFAld+o5s9NMo3AjMGSPYiU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=pOk8Nvc9eKTxgpzYthousH3T1n2zp7kP4xPq5cE8CDt7gqAg6rWFfZO0Q2bXBL2Gz
+	 P0xKzhAIrOxf4y1/u18OARMiOBdy7Cup6ing0p1MyfADxQwnYL1Q5JL3SEzhSNiodh
+	 Of5Y+HnYDqyDCsBJeIpwcd3PRuWdHldyfOSMYAm8U3VVsYgw7Flk/Fu9VQOMMcbZIk
+	 6VfnnyxFKZzT2VGDkpSu+62TcLrMTUgwY8HWozyparVjIpkvmRfzmDpQwoNrso/kWt
+	 OipFBKBpU8IyPTVE3YpH3OcJX8JUwwjUfYR7Y43u+bgCcDVHTJJl0ZGCCju6ZtVz2B
+	 apmbP/1wkqLHw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB4ACAC582;
+	Tue,  9 Sep 2025 17:02:40 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v8 0/3] arm64: dts: qcom: x1-hp-x14: Add support for
+ X1P42100 HP Omnibook X14
+Date: Tue, 09 Sep 2025 19:02:32 +0200
+Message-Id: <20250909-hp-x14-x1p-v8-0-8082ab069911@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2 2/2] rust: regulator: add devm_enable and
- devm_enable_optional
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aMBYjIo2O77Dp2VV@tardis-2.local>
-Date: Tue, 9 Sep 2025 14:02:06 -0300
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C22AAFA9-3EE4-4B99-90B9-1E748A0D45AF@collabora.com>
-References: <20250908-regulator-remove-dynamic-v2-0-e575ae2cde6a@collabora.com>
- <20250908-regulator-remove-dynamic-v2-2-e575ae2cde6a@collabora.com>
- <aL_PwXck1HsLp5wH@tardis-2.local>
- <AA8FC1A7-EE88-44FA-A0A9-A3EA5529B10D@collabora.com>
- <aMBJ805QjQcPdRol@tardis-2.local>
- <8CA69D19-754C-43F5-96CD-B7060C68B025@collabora.com>
- <aMBYjIo2O77Dp2VV@tardis-2.local>
-To: Boqun Feng <boqun.feng@gmail.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKpdwGgC/33Py2rEMAwF0F8ZvK6L5be76n+ULhw/GkMYh3gap
+ h3y71WySqCThRZXoMPVg7Q0ldTI2+VBpjSXVuoVg325kND761eiJWImnHHFDOO0H+kdJM5IUyd
+ 4ltrp6DTBg3FKudw37OMTc1/arU4/mz3Duv2XmYEyysEJpZMVnJn3OsQW+lqHVofvGzZqr135J
+ as58+cOR8dn1SlrIzjjTh2xd8TBEZuTEzDRSWx16si9ow6ORAeCUBC75DPYU0ftHXtwFDpSBgc
+ 6Ze+MOHX03nEHR6OTpQoBrPaax1PH7BxgB8esf7kALFgwIPxTZ1mWP0lsjNhhAgAA
+X-Change-ID: 20250702-hp-x14-x1p-eb32f4696d96
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757437358; l=3619;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=DtoJG7abkzsETSxv7OldiFAld+o5s9NMo3AjMGSPYiU=;
+ b=tpfJB7ah+j3pZkJKGYYIYfOfiV9l2YhBGKfAP2IE5W/bfLFmbX99IRk9NhmrMlnkbF1JcDzHC
+ TdxjL12fQ2rAtPuc8S+bvydp3msSv2vs4q/0zhqeyGkxvUrDKsS0mJN
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
+This patch series adds support for the HP Omnibook X Laptop 14-fe1xxx. [1]
 
+Since this is actually the same model as the 14-fe0xxx, but with an
+X1P-42-100 SoC (Purwa), it needs a slightly different device tree.
+To have as minimal duplicate definition as possible, the hp X14 gets 
+commonalized into a dtsi (and it stays compatible to the derived 
+device trees, like the Ultrabook G1q). 
 
-> On 9 Sep 2025, at 13:40, Boqun Feng <boqun.feng@gmail.com> wrote:
->=20
-> On Tue, Sep 09, 2025 at 01:12:51PM -0300, Daniel Almeida wrote:
->>=20
-> [...]
->>>>> These two functions are already EXPORT_SYMBOL_GPL(), so you won't =
-need
->>>>> to add rust_helper for them. Creating rust_helper_*() for them =
-will just
->>>>> export additional symbols.
->>>>=20
->>>> These are inlined (stubbed) if CONFIG_REGULATOR is not set, so we =
-need the
->>>> helpers to get around that, IIUC.
->>>>=20
->>>=20
->>> Well, then the question is why we want to compiler regulator.rs if
->>> CONFIG_REGULATOR=3Dn? Shouldn't we do:
->>=20
->> Yes, we do want to compile regulator .rs. There=C2=B4s been prior =
-discussion on
->> this (see [0] below, but also [1]).
->>=20
->=20
-> Thanks for the pointers. Well I guess we really need helper inlining
-> badly ;-)
->=20
+The supported features are the same as for the original Omnibook X14:
 
+- Keyboard (no function keys though)
+- Display
+- PWM brightness control
+- Touchpad
+- Touchscreen
+- PCIe ports (pcie4, pcie6a)
+- USB type-c, type-a
+- WCN6855 Wifi-6E
+- WCN6855 Bluetooth
+- ADSP and CDSP
+- X1 GPU
+- GPIO Keys (Lid switch)
+- Audio definition (works via USB and with internal speakers)
 
-A bit out of context now, but I don=E2=80=99t worry too much about =
-binary size. I
-don=E2=80=99t think there=E2=80=99s enough functions in helpers/*.c to =
-justify that.
+[1]: https://www.hp.com/us-en/shop/pdp/hp-omnibook-x-laptop-next-gen-ai-pc-14-fe100-14-a4nd1av-1#techSpecs
 
-What I do worry about is the indirection that might get added on the hot =
-paths,
-like requiring one extra function call (i.e.: for rust_helper_*) for =
-every mmio
-read/write, for example. That might have non-negligible impacts on =
-performance
-IMHO.
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+---
+Changes in v8:
+- rebased to next-20250909.
+- picked up reviewed-by from Konrad (Thanks!)
+- Link to v7: https://lore.kernel.org/r/20250710-hp-x14-x1p-v7-0-19c10c81713a@oldschoolsolutions.biz
 
-So yes, I do agree with you that this should be fixed.
+Changes in v7:
+- rebased to next-20250710.
+- reworded commit message for patch #2
+- picked up reviewed-by for patch #3 (thanks)
+- fixed link ref in patch #3
+- Link to v6: https://lore.kernel.org/r/20250709-hp-x14-x1p-v6-0-f45cc186a62d@oldschoolsolutions.biz
 
+Changes in v6:
+- rebased to next-20250709.
+- picked up reviewed-by for patch #1 (thanks)
+- corrected typo in patch #1
+- removed model, compatible, chassis nodes from x1-hp-omnibook-x14.dtsi
+- amended copyright strings as discussed
+- Link to v5: https://lore.kernel.org/r/20250708-hp-x14-x1p-v5-0-44c916efa973@oldschoolsolutions.biz
 
+Changes in v5:
+- rebased to next-20250708.
+- changed commit message for patch #1 to reflect what happens
+- moved gpu node into the common dtsi part (always supported now)
+- switched over to gpu_zap_shader definition in the individual parts
+- Link to v4: https://lore.kernel.org/r/20250705-hp-x14-x1p-v4-0-1c351dbeaf18@oldschoolsolutions.biz
 
-> Regards,
-> Boqun
->=20
->>>=20
->>> #[cfg(CONFIG_REGULATOR)]
->>> pub mod regulator
->>>=20
->>> in rust/kernel/lib.rs?
->>=20
-> [...]
+Changes in v4:
+- leave the qcom,jp-omnibook-x14 ABI unchanged, reuse it for the -fe0 variant
+- hacked b4 to create an easier reviewable patch: https://lore.kernel.org/all/20250705-format-harder-v1-1-55c5342be55c@oldschoolsolutions.biz
+- Link to v3: https://lore.kernel.org/r/20250703-hp-x14-x1p-v3-0-affe103b4356@oldschoolsolutions.biz
+
+Changes in v3:
+- removed copyright strings
+- amended changed commit message  
+- Link to v2: https://lore.kernel.org/r/20250702-hp-x14-x1p-v2-0-af5b588d1979@oldschoolsolutions.biz
+
+Changes in v2:
+- remove pm8010 handling
+- Link to v1: https://lore.kernel.org/r/20250702-hp-x14-x1p-v1-0-219356e83207@oldschoolsolutions.biz
+
+---
+Jens Glathe (3):
+      dt-bindings: arm: qcom: Add HP Omnibook X14 AI X1P4200 variant
+      arm64: dts: qcom: x1-hp-x14: Unify HP Omnibook X14 device tree structure
+      arm64: dts: qcom: x1-hp-x14: Add support for X1P42100 HP Omnibook X14
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi   | 1549 ++++++++++++++++++++
+ .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts     | 1544 +------------------
+ .../boot/dts/qcom/x1p42100-hp-omnibook-x14.dts     |   33 +
+ 5 files changed, 1589 insertions(+), 1540 deletions(-)
+---
+base-commit: 65dd046ef55861190ecde44c6d9fcde54b9fb77d
+change-id: 20250702-hp-x14-x1p-eb32f4696d96
+
+Best regards,
+-- 
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
 
 
