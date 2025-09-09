@@ -1,156 +1,408 @@
-Return-Path: <linux-kernel+bounces-808579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BAB7B501C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:46:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55FD5B501DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32740178D6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:46:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 483BD189BD6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8311F2750E3;
-	Tue,  9 Sep 2025 15:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0371A7253;
+	Tue,  9 Sep 2025 15:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDnnIUAO"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="ZLObGbZ8"
+Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E09274B5E
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A577A2571C2;
+	Tue,  9 Sep 2025 15:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757432763; cv=none; b=X3VW1rEsqYfs2b7Py5knf9CAxecdcZT1vq/aOmXflUjv3HQqHmeg5vYvuUQUIli5GGzNPonitks2d/ohFw8VnGhcMzx+nJwHJhBL+rkGznWQBAsqHjTabd4fxb+SABDBb4OueoswveVnfBdAnbjP6f7XhzuInkZBFIFh6plf+HY=
+	t=1757432829; cv=none; b=RX9VBZmFR4ulyGMlMFb+OgAxAN6wbCaWK8cDx1pL6akGIzXGWte8UpQkY9qXk4iI+MwEL2DnB5cZvScz99Cp8cmVNBxusivvwjkZzJzaj+P2qU6SDoPsr3D528DWgr3IeqRcuQct7lisgp+jEV+iD5l+7+e1JYthbrrrHxAw8QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757432763; c=relaxed/simple;
-	bh=eFTweerjZKoxxZ9uYEQWOOFH2mTOPUrpeBxfdknONn0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VyhYYu6Z49SYjWy0FLoTFOOczUm/MTymwt3il+DBja00HoWO6ytWFhA/bI47xxIw6eGOKQIOXbJIJdUtTscuU1+D5daZkrGJPsA41M9N3Yy9j+yNP/lds5Dr6CXwFLMzuP2uNDdvTdeCWdNSFgZU8es7bfmaoYbXcjgf8dvH/nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDnnIUAO; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-251fc032d1fso36206175ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:46:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757432761; x=1758037561; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=uNQdE5yOZswVE6LCOBdtsDcL2XOY1LZAHNkE5x3LHnI=;
-        b=lDnnIUAOtFgMexvNa+Ivr5YnQets4hc5S31jsEvw6+cEA5R2DNLzm9CfX/kGJk4kj6
-         LU6idXKFRy1wnNX4nQrmDJoOdBAy9Sn6RYi03lrWSJRqv15cODL6rtLXZYiItjEPCgft
-         g4d86WvO9foxPyddhqczIgbvevvxls6HmIjysXDuPZF4UuLYekJwUKjKK08LJ37sKD7g
-         Lj6CbqTGiGhpwkAdNQgyb8QYF56O79fWUIrix2W5StybQuKEmhlcwSX0rORNuFftWSPx
-         gQr+lIt9wi7vzbd7ZmPppyYyqzxIHbBWvlO911Hc0MSLvDry25GUkROuE2pHi9hcujYO
-         rPdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757432761; x=1758037561;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uNQdE5yOZswVE6LCOBdtsDcL2XOY1LZAHNkE5x3LHnI=;
-        b=qjjv+Etxszlu5iygQN56QlFyQvHX0/KFztMzt0OUl2CbatCeCHjZXnMtQUIQtmN07x
-         YgmTi4pu19UWtjYBxcVyhfQ6f6ZKKjC6UTZc5B2Pt/So24hAbbo+fxmWkhKLXTnT4eNj
-         GYuNbGnfZZUZtL+JwsWdET/17FZThbHon1aZpzqPrtcdWeFWOINLdRciwGAaOl/IvWls
-         sw2y7H1Cx0ncLzlnCtoYyPpqrKviDwf4PBU+KFsGeS+8rJnV0Z4OeSGhv/zyl1Ja9Du7
-         wVogjyP1Ue2+LK6la8rjLS50RYPyz+4jkXeJW4Vnh6Ur9O9neGaAVNyqsEQ+JHv7HMBE
-         +dyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWn8ANAiexleKG5jFHkKSp5z6Cg61rv6oUT4OdniOlBoIH/+BY51aT+AdvXvsAanZHaQ397WXcDv8cdiHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWe69bY1SwSiKIb5w9+VzRlol9+rda3O3y7mt4nbhuKdPsF4y+
-	R/sGqauEQ9WeajABwrJzeodsUmYa5JaRyEtHnEWQcAlmO6DYSuCf8Zez
-X-Gm-Gg: ASbGncvZtf/ifT1hGi8un8lUsh+KTKRB40axwdrcxNQOucISDOhtJ9Zcx1L2SP5aT9G
-	baQKKomsyPDXnO8QyABvvrXZoZS+A21sv2hPC4P09qEVqj0dIz0vXKtqo26oc3rlv+viNEKQGbK
-	GDAXvZfuhm6X+g1uR9Fa4YU/hMiafGMbuWEWqY/pYtaoPDCXoW56ogNYSqX3HSAUyH6g0KAbq+n
-	9uav10nc/9zDxpOxzHBP3TIoQRuBkV2gSjxL3rFI+95Yk9YUKk07sLBnbIQp/Q7wD7xuCXc1Vhv
-	TJHqV6U0GDIEFbd7KZEwoopSoTDPB4MgslEnyJwC+Xbw4JaP7rLU8TLfc2NdY7AaGIZL1ebuS7E
-	NckDLOhErxvG7VRWSGY9qNbH8MI02oqNhcCS6HHeT/F/tQTEVEtrNs0nwmYrSV9dBN+zACuxExK
-	BH9liHxA==
-X-Google-Smtp-Source: AGHT+IHEDLcvBUxgy4It5qzR9ySfj35Jxho02ojFfBjGPyU0POXrSQw6ivP4uGSFnQuh/rPMRMmzJw==
-X-Received: by 2002:a17:902:d2c2:b0:24d:3ae4:1175 with SMTP id d9443c01a7336-2516c895b06mr197733895ad.5.1757432761326;
-        Tue, 09 Sep 2025 08:46:01 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a2ab0d88asm1270235ad.111.2025.09.09.08.45.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 08:46:00 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <f03fead0-39c4-4d06-8934-bbc388d614fc@roeck-us.net>
-Date: Tue, 9 Sep 2025 08:45:58 -0700
+	s=arc-20240116; t=1757432829; c=relaxed/simple;
+	bh=QC4I+AwQKU0ub0GHPWx0DgNaz8VK/rlIRRBn4kGiSSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VQmWCugdM07K4+5AhPeMIUjkC12BPA4Eh9rbdzZL45Or3DAPT20ckRUDLL3MxMnxnRUF9FaIebdKLVruqyajTObmrrOfj98QzAtj6JQ6Sa88GT12+MkjSTZyvau2xyONpgmKbMH9u9tJT6b3+Lkj7pfIyJzEwWj2FCRLdJVgNLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=ZLObGbZ8; arc=none smtp.client-ip=178.154.239.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:b002:0:640:910e:0])
+	by forward502d.mail.yandex.net (Yandex) with ESMTPS id 8750FC0614;
+	Tue, 09 Sep 2025 18:46:57 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id pkLdLx3M9Cg0-oGa2AR8S;
+	Tue, 09 Sep 2025 18:46:56 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1757432816;
+	bh=1kmhH1nNtzU/dl2EhtLZ+nDoT8roKJ8EBjmffr8o9Hw=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=ZLObGbZ8b32VIxHhT2m0/jfXVMJCfJQvC/9J5md/Os/HIibhHC5RrBqY1MBzVEWmI
+	 1F61YAovGAOSYorKoff5NogZkjsmqTDfuXjfE64/xd1RjI6VBJRHZx11sqPYKby0OV
+	 CcLpI7ngGw4tiRVbw4NSTKnedz60VdssM8ZMNiAg=
+Authentication-Results: mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Tue, 9 Sep 2025 18:46:51 +0300
+From: Onur <work@onurozkan.dev>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, daniel@sedlak.dev, dirk.behme@de.bosch.com,
+ felipe_life@live.com, tamird@gmail.com, dakr@kernel.org, tmgross@umich.edu,
+ a.hindborg@kernel.org, lossin@kernel.org, bjorn3_gh@protonmail.com,
+ gary@garyguo.net, boqun.feng@gmail.com, alex.gaynor@gmail.com,
+ ojeda@kernel.org
+Subject: Re: [PATCH v1] rust: refactor `to_result` to return the original
+ value
+Message-ID: <20250909184651.4ba5e0bb@nimda.home>
+In-Reply-To: <C424F7A6-524C-4A37-8513-B3BA2178A709@collabora.com>
+References: <20250909123258.29304-1-work@onurozkan.dev>
+	<CAH5fLghVt6MKfiDkmd-5DMAKA=yXQzMu3GNHAqB+HRGhyJ0tqA@mail.gmail.com>
+	<C424F7A6-524C-4A37-8513-B3BA2178A709@collabora.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: watchdog: Convert nuvoton,npcm-wdt to DT
- schema
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
-Cc: openbmc@lists.ozlabs.org, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250909142201.3209482-1-robh@kernel.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250909142201.3209482-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 9/9/25 07:21, Rob Herring (Arm) wrote:
-> Convert the Nuvoton watchdog binding to DT schema format. It's a
-> straight-forward conversion.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+On Tue, 9 Sep 2025 09:53:09 -0300
+Daniel Almeida <daniel.almeida@collabora.com> wrote:
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+>=20
+>=20
+> > On 9 Sep 2025, at 09:36, Alice Ryhl <aliceryhl@google.com> wrote:
+> >=20
+> > On Tue, Sep 9, 2025 at 2:33=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.=
+dev>
+> > wrote:
+> >>=20
+> >> Current `to_result` helper takes a `c_int` and returns `Ok(())` on
+> >> success and this has some issues like:
+> >>=20
+> >>    - Callers lose the original return value and often have to store
+> >>        it in a temporary variable before calling `to_result`.
+> >>=20
+> >>    - It only supports `c_int`, which makes callers to unnecessarily
+> >>        cast when working with other types (e.g. `u16` in phy
+> >>        abstractions). We even have some places that ignore to use
+> >>        `to_result` helper because the input doesn't fit in `c_int`
+> >>        (see [0]).
+> >>=20
+> >> [0]:
+> >> https://lore.kernel.org/all/20250822080252.773d6f54@nimda.home/
+> >>=20
+> >> This patch changes `to_result` to be generic and also return the
+> >> original value on success.
+> >>=20
+> >> So that the code that previously looked like:
+> >>=20
+> >>    let ret =3D unsafe { bindings::some_ffi_call() };
+> >>    to_result(ret).map(|()| SomeType::new(ret))
+> >>=20
+> >> can now be written more directly as:
+> >>=20
+> >>    to_result(unsafe { bindings::some_ffi_call() })
+> >>        .map(|ret| SomeType::new(ret))
+> >>=20
+> >> Similarly, code such as:
+> >>=20
+> >>    let res: isize =3D $some_ffi_call();
+> >>    if res < 0 {
+> >>        return Err(Error::from_errno(res as i32));
+> >>    }
+> >>=20
+> >> can now be used with `to_result` as:
+> >>=20
+> >>    to_result($some_ffi_call())?;
+> >>=20
+> >> Existing call sites that only care about success/failure are
+> >> updated to append `.map(|_| ())` to preserve their previous
+> >> semantics. They can also use the equivalent pattern:
+> >>=20
+> >>    to_result($something)?;
+> >>    Ok(())
+> >>=20
+> >> This patch only fixes the callers that broke after the changes on
+> >> `to_result`.
+>=20
+> What exactly broke for regulator.rs <http://regulator.rs/>? It works
+> just fine.
+>=20
+> >> I haven't included all the improvements made possible by the new
+> >> design since that could conflict with other ongoing patches [1].
+> >> Once this patch is approved and applied, I am planning to follow
+> >> up with creating a "good first issue" on [2] for those additional
+> >> changes.
+> >>=20
+> >> [1]: https://lore.kernel.org/rust-for-linux/?q=3Dto_result
+> >> [2]: https://github.com/Rust-for-Linux/linux
+> >>=20
+> >> Link:
+> >> https://rust-for-linux.zulipchat.com/#narrow/channel/288089/topic/x/ne=
+ar/536374456
+> >> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev> ---
+> >> rust/kernel/auxiliary.rs        |  1 +
+> >> rust/kernel/block/mq/tag_set.rs |  2 +-
+> >> rust/kernel/cpufreq.rs          |  3 ++-
+> >> rust/kernel/devres.rs           |  1 +
+> >> rust/kernel/dma.rs              |  3 +++
+> >> rust/kernel/error.rs            | 17 ++++++++++++-----
+> >> rust/kernel/miscdevice.rs       |  2 +-
+> >> rust/kernel/mm/virt.rs          |  1 +
+> >> rust/kernel/pci.rs              |  3 ++-
+> >> rust/kernel/platform.rs         |  2 +-
+> >> rust/kernel/regulator.rs        |  5 +++--
+> >> 11 files changed, 28 insertions(+), 12 deletions(-)
+> >>=20
+> >> diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
+> >> index 4749fb6bffef..479c0ad2a572 100644
+> >> --- a/rust/kernel/auxiliary.rs
+> >> +++ b/rust/kernel/auxiliary.rs
+> >> @@ -43,6 +43,7 @@ unsafe fn register(
+> >>         to_result(unsafe {
+> >>             bindings::__auxiliary_driver_register(adrv.get(),
+> >> module.0, name.as_char_ptr()) })
+> >> +        .map(|_| ())
+> >>     }
+> >>=20
+> >>     unsafe fn unregister(adrv: &Opaque<Self::RegType>) {
+> >> diff --git a/rust/kernel/block/mq/tag_set.rs
+> >> b/rust/kernel/block/mq/tag_set.rs index c3cf56d52bee..0e7883163000
+> >> 100644 --- a/rust/kernel/block/mq/tag_set.rs
+> >> +++ b/rust/kernel/block/mq/tag_set.rs
+> >> @@ -65,7 +65,7 @@ pub fn new(
+> >>                 // SAFETY: we do not move out of `tag_set`.
+> >>                 let tag_set: &mut Opaque<_> =3D unsafe {
+> >> Pin::get_unchecked_mut(tag_set) }; // SAFETY: `tag_set` is a
+> >> reference to an initialized `blk_mq_tag_set`.
+> >> -                error::to_result( unsafe {
+> >> bindings::blk_mq_alloc_tag_set(tag_set.get())})
+> >> +                error::to_result( unsafe {
+> >> bindings::blk_mq_alloc_tag_set(tag_set.get())}).map(|_| ()) }),
+> >>             _p: PhantomData,
+> >>         })
+> >> diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
+> >> index be2dffbdb546..c3fa20ce229a 100644
+> >> --- a/rust/kernel/cpufreq.rs
+> >> +++ b/rust/kernel/cpufreq.rs
+> >> @@ -157,6 +157,7 @@ pub fn as_raw(&self) -> *mut
+> >> bindings::cpufreq_policy_data { pub fn generic_verify(&self) ->
+> >> Result { // SAFETY: By the type invariant, the pointer stored in
+> >> `self` is valid. to_result(unsafe {
+> >> bindings::cpufreq_generic_frequency_table_verify(self.as_raw()) })
+> >> +            .map(|_| ())
+> >>     }
+> >> }
+> >>=20
+> >> @@ -519,7 +520,7 @@ pub fn set_suspend_freq(&mut self, freq:
+> >> Hertz) -> &mut Self { #[inline]
+> >>     pub fn generic_suspend(&mut self) -> Result {
+> >>         // SAFETY: By the type invariant, the pointer stored in
+> >> `self` is valid.
+> >> -        to_result(unsafe {
+> >> bindings::cpufreq_generic_suspend(self.as_mut_ref()) })
+> >> +        to_result(unsafe {
+> >> bindings::cpufreq_generic_suspend(self.as_mut_ref()) }).map(|_|
+> >> ()) }
+> >>=20
+> >>     /// Provides a wrapper to the generic get routine.
+> >> diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+> >> index d04e3fcebafb..214cd9a0ebe0 100644
+> >> --- a/rust/kernel/devres.rs
+> >> +++ b/rust/kernel/devres.rs
+> >> @@ -328,6 +328,7 @@ fn register_foreign<P>(dev: &Device<Bound>,
+> >> data: P) -> Result // `ForeignOwnable` is released eventually.
+> >>         bindings::devm_add_action_or_reset(dev.as_raw(),
+> >> Some(callback::<P>), ptr.cast()) })
+> >> +    .map(|_| ())
+> >> }
+> >>=20
+> >> /// Encapsulate `data` in a [`KBox`] and [`Drop::drop`] `data`
+> >> once `dev` is unbound. diff --git a/rust/kernel/dma.rs
+> >> b/rust/kernel/dma.rs index 68fe67624424..f614453ddb7d 100644
+> >> --- a/rust/kernel/dma.rs
+> >> +++ b/rust/kernel/dma.rs
+> >> @@ -34,6 +34,7 @@ unsafe fn dma_set_mask(&self, mask: DmaMask) ->
+> >> Result { // - The safety requirement of this function guarantees
+> >> that there are no concurrent calls //   to DMA allocation and
+> >> mapping primitives using this mask. to_result(unsafe {
+> >> bindings::dma_set_mask(self.as_ref().as_raw(), mask.value()) })
+> >> +            .map(|_| ())
+> >>     }
+> >>=20
+> >>     /// Set up the device's DMA coherent addressing capabilities.
+> >> @@ -51,6 +52,7 @@ unsafe fn dma_set_coherent_mask(&self, mask:
+> >> DmaMask) -> Result { // - The safety requirement of this function
+> >> guarantees that there are no concurrent calls //   to DMA
+> >> allocation and mapping primitives using this mask.
+> >> to_result(unsafe {
+> >> bindings::dma_set_coherent_mask(self.as_ref().as_raw(),
+> >> mask.value()) })
+> >> +            .map(|_| ())
+> >>     }
+> >>=20
+> >>     /// Set up the device's DMA addressing capabilities.
+> >> @@ -72,6 +74,7 @@ unsafe fn dma_set_mask_and_coherent(&self, mask:
+> >> DmaMask) -> Result { to_result(unsafe {
+> >>             bindings::dma_set_mask_and_coherent(self.as_ref().as_raw(),
+> >> mask.value()) })
+> >> +        .map(|_| ())
+> >>     }
+> >> }
+> >>=20
+> >> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+> >> index db14da976722..f76afa4b7ec1 100644
+> >> --- a/rust/kernel/error.rs
+> >> +++ b/rust/kernel/error.rs
+> >> @@ -378,12 +378,19 @@ fn from(e: core::convert::Infallible) ->
+> >> Error { pub type Result<T =3D (), E =3D Error> =3D
+> >> core::result::Result<T, E>;
+> >>=20
+> >> /// Converts an integer as returned by a C kernel function to an
+> >> error if it's negative, and -/// `Ok(())` otherwise.
+> >> -pub fn to_result(err: crate::ffi::c_int) -> Result {
+> >> -    if err < 0 {
+> >> -        Err(Error::from_errno(err))
+> >> +/// returns the original value otherwise.
+> >> +pub fn to_result<T>(code: T) -> Result<T>
+> >> +where
+> >> +    T: Copy + TryInto<i32>,
+> >> +{
+> >> +    // Try casting into `i32`.
+> >> +    let casted: crate::ffi::c_int =3D code.try_into().unwrap_or(0);
+> >> +
+> >> +    if casted < 0 {
+> >> +        Err(Error::from_errno(casted))
+> >>     } else {
+> >> -        Ok(())
+> >> +        // Return the original input value.
+> >> +        Ok(code)
+> >>     }
+> >> }
+> >>=20
+> >> diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+> >> index 6373fe183b27..22b72ae84c03 100644
+> >> --- a/rust/kernel/miscdevice.rs
+> >> +++ b/rust/kernel/miscdevice.rs
+> >> @@ -79,7 +79,7 @@ pub fn register(opts: MiscDeviceOptions) -> impl
+> >> PinInit<Self, Error> { // the destructor of this type deallocates
+> >> the memory. // INVARIANT: If this returns `Ok(())`, then the
+> >> `slot` will contain a registered // misc device.
+> >> -                to_result(unsafe { bindings::misc_register(slot)
+> >> })
+> >> +                to_result(unsafe { bindings::misc_register(slot)
+> >> }).map(|_| ()) }),
+> >>             _t: PhantomData,
+> >>         })
+> >> diff --git a/rust/kernel/mm/virt.rs b/rust/kernel/mm/virt.rs
+> >> index a1bfa4e19293..5494f96e91b0 100644
+> >> --- a/rust/kernel/mm/virt.rs
+> >> +++ b/rust/kernel/mm/virt.rs
+> >> @@ -195,6 +195,7 @@ pub fn vm_insert_page(&self, address: usize,
+> >> page: &Page) -> Result { // SAFETY: By the type invariant of
+> >> `Self` caller has read access and has verified that //
+> >> `VM_MIXEDMAP` is set. By invariant on `Page` the page has order 0.
+> >> to_result(unsafe { bindings::vm_insert_page(self.as_ptr(),
+> >> address, page.as_ptr()) })
+> >> +            .map(|_| ())
+> >>     }
+> >> }
+> >>=20
+> >> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+> >> index 887ee611b553..6e917752cb89 100644
+> >> --- a/rust/kernel/pci.rs
+> >> +++ b/rust/kernel/pci.rs
+> >> @@ -48,6 +48,7 @@ unsafe fn register(
+> >>         to_result(unsafe {
+> >>             bindings::__pci_register_driver(pdrv.get(), module.0,
+> >> name.as_char_ptr()) })
+> >> +        .map(|_| ())
+> >>     }
+> >>=20
+> >>     unsafe fn unregister(pdrv: &Opaque<Self::RegType>) {
+> >> @@ -437,7 +438,7 @@ impl Device<device::Core> {
+> >>     /// Enable memory resources for this device.
+> >>     pub fn enable_device_mem(&self) -> Result {
+> >>         // SAFETY: `self.as_raw` is guaranteed to be a pointer to
+> >> a valid `struct pci_dev`.
+> >> -        to_result(unsafe {
+> >> bindings::pci_enable_device_mem(self.as_raw()) })
+> >> +        to_result(unsafe {
+> >> bindings::pci_enable_device_mem(self.as_raw()) }).map(|_| ()) }
+> >>=20
+> >>     /// Enable bus-mastering for this device.
+> >> diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+> >> index 8f028c76f9fa..5a5561c7326e 100644
+> >> --- a/rust/kernel/platform.rs
+> >> +++ b/rust/kernel/platform.rs
+> >> @@ -54,7 +54,7 @@ unsafe fn register(
+> >>         }
+> >>=20
+> >>         // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
+> >> -        to_result(unsafe {
+> >> bindings::__platform_driver_register(pdrv.get(), module.0) })
+> >> +        to_result(unsafe {
+> >> bindings::__platform_driver_register(pdrv.get(), module.0)
+> >> }).map(|_| ()) }
+> >>=20
+> >>     unsafe fn unregister(pdrv: &Opaque<Self::RegType>) {
+> >> diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
+> >> index 65f3a125348f..e17ae6e9a990 100644
+> >> --- a/rust/kernel/regulator.rs
+> >> +++ b/rust/kernel/regulator.rs
+> >> @@ -261,6 +261,7 @@ pub fn set_voltage(&self, min_voltage:
+> >> Voltage, max_voltage: Voltage) -> Result
+> >> max_voltage.as_microvolts(), )
+> >>         })
+> >> +        .map(|_| ())
+> >>     }
+> >>=20
+> >>     /// Gets the current voltage of the regulator.
+> >> @@ -291,12 +292,12 @@ fn get_internal(dev: &Device, name: &CStr)
+> >> -> Result<Regulator<T>> {
+> >>=20
+> >>     fn enable_internal(&mut self) -> Result {
+> >>         // SAFETY: Safe as per the type invariants of `Regulator`.
+> >> -        to_result(unsafe {
+> >> bindings::regulator_enable(self.inner.as_ptr()) })
+> >> +        to_result(unsafe {
+> >> bindings::regulator_enable(self.inner.as_ptr()) }).map(|_| ()) }
+> >>=20
+> >>     fn disable_internal(&mut self) -> Result {
+> >>         // SAFETY: Safe as per the type invariants of `Regulator`.
+> >> -        to_result(unsafe {
+> >> bindings::regulator_disable(self.inner.as_ptr()) })
+> >> +        to_result(unsafe {
+> >> bindings::regulator_disable(self.inner.as_ptr()) }).map(|_| ())
+> >=20
+> > IMO all of the new map calls in this patch should use the
+> >=20
+> > to_result(...)?
+> > Ok(())
+> >=20
+> > syntax.
+> >=20
+> > Alice
+>=20
+> FYI: A similar patch was already applied by Mark to regulator.rs, but
+> now I see the same code being submitted a) under a different patch,
+> with its own version (v1) and b) together as a single patch touching
+> a lot of code at once.
+>=20
+> I am a bit confused. Can you make sure that all code touching
+> regulator.rs is based on the regulator tree?=20
+>=20
+> =E2=80=94 Daniel
+>=20
+>=20
 
+
+Sorry for the mess, will resolve it in v2.
+
+-Onur
 
