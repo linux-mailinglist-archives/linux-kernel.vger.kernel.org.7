@@ -1,111 +1,81 @@
-Return-Path: <linux-kernel+bounces-808079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD696B4ACEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:53:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D86B4ACEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85D387B161C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:51:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DC9E1696B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B46321426;
-	Tue,  9 Sep 2025 11:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A12131B800;
+	Tue,  9 Sep 2025 11:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="Irzlj/+f"
-Received: from mail-10627.protonmail.ch (mail-10627.protonmail.ch [79.135.106.27])
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="HB7JOBq0"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F6E2417F0;
-	Tue,  9 Sep 2025 11:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E92D2417F0
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757418800; cv=none; b=GPDbSQSS0/T9/4lsombFGXTbJIBF+FTIjzqmTlwdoBFZqT935rRikQgm8NKWcBBSzI0T+1qCY8xCtyJmT/lEsxLkcEZN8ZoQH+NfJOnm9FTvZvKs/vvj/kXXvdKa4zP76D0ybBtCwF7D7UPUXSrP20NucuWhVhDn3mjSRZ6P4ic=
+	t=1757418812; cv=none; b=nJXlN2qskHl0Gb7El2TpQ0UkQ7719WWhyroAmC3OFUj1Llv3k92oLGSUkuDBGl6/Vl7fBET6OjGpbTUiJotQMtdIdzVfU70zBjkBkfGdbNjogV9aAkHGMRmOk8+Hwk2Gv/tiJ9Sjm4V7JlaMV7ZyoEjFBZr+mpDqaziaO7bjiWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757418800; c=relaxed/simple;
-	bh=7p/IFQC8oZeSqLO0B3nFKcXQ4vxxPtWVpr4nLoPMO/k=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XtytkdEQPth1VwzC05wWCk6GgqAHjJ1Pld6utCQZ3TAL8p08/0MGC5ixvZ7ax9geQFJMXA3lV6i2kFVnVPCouYz/WYWCzMmuR7nmkjXBPfjh6iV1+vbg77NVPkAngx4imFrSQbENFx57+5SpTQyDZ6iFbbkj/7goipZS6lgYFow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=Irzlj/+f; arc=none smtp.client-ip=79.135.106.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
-	s=protonmail2; t=1757418789; x=1757677989;
-	bh=lD7LJZ28elt7iNEzz4ZSyjVvQeRMRYgTPV53PvtxbB0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Irzlj/+fwS3ZT1i22FdTTv/TMBCGn4cxWe140XroU3yqw/qmiM43ju1VGdSmTPTZY
-	 DFE5Q8s0fKi50AK6bklbqNPq0cZxUNIYwvOY0YLjAYLKak9WHOkw7lmPkSTCzz3o49
-	 D+d/cTvqPkq34G2+6CaYGYbUpdSkvgHDB3JeDRy+JGcWcuX7UCr3ehG8Gt/IpEAkq2
-	 Sby9T26htePPBq93GGRFWXMO4B8JGToD1qigETFc2e6WHqgz3x4DHuZGrJqjrsXFxa
-	 u6pwD6rI391/MiEwgE978bsfjJNFKwt9wrpV3pdapXuCg2qCIpbG2SMVaqwynti8j5
-	 ERNpQ7YhJaXmA==
-Date: Tue, 09 Sep 2025 11:53:02 +0000
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-From: Sean Nyekjaer <sean@geanix.com>
-Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, rafael@kernel.org, Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, =?utf-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v4 5/5] iio: imu: inv_icm42600: use guard() to release mutexes
-Message-ID: <wl4fvd76hjf66k6pmkoce5wg5luspxjjsclxg5pdh7rjycarko@ovddl55mn77l>
-In-Reply-To: <aMAR4Jx3pWQ1_rjX@smile.fi.intel.com>
-References: <20250909-icm42pmreg-v4-0-2bf763662c5c@geanix.com> <20250909-icm42pmreg-v4-5-2bf763662c5c@geanix.com> <aMAR4Jx3pWQ1_rjX@smile.fi.intel.com>
-Feedback-ID: 134068486:user:proton
-X-Pm-Message-ID: cf527d5107a9426c6e8d871b73c77ca78b4c1d4a
+	s=arc-20240116; t=1757418812; c=relaxed/simple;
+	bh=ZXsBWUVEToRG9hwWAZ2hDQlZcigvLyFJJHvcWPbMinA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=ndvb9AZfD6eTR8veKxey/4t639nXiaCIoXamBm43+aVpFuL78lEMuW9dqpQggxs2BLgA6NAa4+3mxdoNmJIXU+hJO2Pzz4OrCP3AvtrS3xIg4ji/R0U3hUQLzQ6e30iZZXlX6p7ahekosSib3CX/w23kYtu3kjO+tAfB1uy/smc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=HB7JOBq0; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+DKIM-Signature: a=rsa-sha256; b=HB7JOBq07d27/uRMofVuysMRx3jKZ9qs285MC087RL5HNu0wBaPGA2VzmF/ipF2AX9XqytGqWILeKp3++xOFMLiyTlHtVkSd1c4nLBRpDxKEnINMBHTwshtKLnYBuv4Pvki/4/f71mPbZeHZlX8CStVVjTWjUb9MDbBjzlqMASFGjojdqXM3IdDB5yxN4R5BBsWUDaww2l3d8IYjROpEI2QKgxmJjFDOjCRgKD/0PDD/boXCtwhpnFd7iPyT9RicWijUtUoxf6R/QVPN3lOZcf/gs2HKWU8I4hL4a3mWrPPg9gWJrECpQKyZb0fr38ONjid1Tk+atU0pF5vgBm6QJA==; s=purelymail2; d=purelymail.com; v=1; bh=ZXsBWUVEToRG9hwWAZ2hDQlZcigvLyFJJHvcWPbMinA=; h=Feedback-ID:Received:Date:To:Subject:From;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1767750111;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Tue, 09 Sep 2025 11:53:22 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 09 Sep 2025 13:53:20 +0200
+Message-Id: <DCO8YZ9DEAVI.3PUDOLPOHR1T3@mentallysanemainliners.org>
+To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>
+Cc: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH 2/4] pinctrl: mediatek: Add support for eh bit
+From: "Igor Belwon" <igor.belwon@mentallysanemainliners.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250908-mt6878-pinctrl-support-v1-0-3fb78c8ab4e8@mentallysanemainliners.org> <20250908-mt6878-pinctrl-support-v1-2-3fb78c8ab4e8@mentallysanemainliners.org> <80a7339c-4742-45c1-b474-347a916b2db6@collabora.com>
+In-Reply-To: <80a7339c-4742-45c1-b474-347a916b2db6@collabora.com>
 
-On Tue, Sep 09, 2025 at 02:39:12PM +0100, Andy Shevchenko wrote:
-> On Tue, Sep 09, 2025 at 09:11:11AM +0200, Sean Nyekjaer wrote:
-> > Replace explicit mutex_lock() and mutex_unlock() with the guard() macro
-> > for cleaner and safer mutex handling.
->=20
-> ...
->=20
-> >  =09/* exit if FIFO is already on */
-> >  =09if (st->fifo.on) {
-> > -=09=09ret =3D 0;
-> > -=09=09goto out_on;
->=20
-> Probably you wanted the same comment here
->=20
-> =09/* increase FIFO on counter */
->=20
-> > +=09=09st->fifo.on++;
-> > +=09=09return 0;
-> >  =09}
->=20
-> ...
->=20
-> >  =09/* exit if there are several sensors using the FIFO */
-> >  =09if (st->fifo.on > 1) {
-> > -=09=09ret =3D 0;
-> > -=09=09goto out_off;
->=20
-> In the similar way
->=20
+On Tue Sep 9, 2025 at 9:57 AM CEST, AngeloGioacchino Del Regno wrote:
+> Il 08/09/25 21:17, Igor Belwon ha scritto:
+>> The eh bit is used for setting drive mode for i2c pins on recent SoCs.
+>> Add support for it.
+>>=20
+>> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+>
+> Noupe, this commit is not needed at all.
+>
+> I get that this may be tricky to understand... but summarizing, what the
+> downstream calls "EH" in upstream is "DRV_ADV" :-)
+>
+> Check the comments on patch [4/4] about how to change EH to DRV_ADV.
+>
+> Cheers,
+> Angelo
 
-Considered it. But isn't it obvious whats happening?
-I will be happy to add them...
+Whoops, sorry, I don't know how I missed that.
+Will change as in your comments and drop this commit.
 
-/Sean
-
-> =09/* decrease FIFO on counter */
->=20
-> > +=09=09st->fifo.on--;
-> > +=09=09return 0;
-> >  =09}
->=20
-> --
-> With Best Regards,
-> Andy Shevchenko
->=20
->=20
-
+Thanks,
+Igor
 
