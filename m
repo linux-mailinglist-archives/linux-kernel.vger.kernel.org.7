@@ -1,80 +1,74 @@
-Return-Path: <linux-kernel+bounces-808138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C783DB4FAAC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:21:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD8BB4FAAE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4D2D7B20EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:19:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50AA97B4ED7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE7932CF6B;
-	Tue,  9 Sep 2025 12:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D90732CF9C;
+	Tue,  9 Sep 2025 12:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N8wVxcKL"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="k+btDa2s"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7B332A3F0
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5136A32BF4C;
+	Tue,  9 Sep 2025 12:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757420469; cv=none; b=WOMVzvzizFEN96QU5fnyGE3kAWyB7/SmvS26RGC2oqaMlkVDz4GDG3e0R+znt1ZGgFdhmeBVrNux+vrUIZA6cghjR+qL4wgZmHXpYH9lj9ZWL58vtv8nUBQVD5roKpnkK8Bf7msRDQ+11RkMIqF5ZYfZNGTUjUWFTyEstCNnJgU=
+	t=1757420534; cv=none; b=WTOD0T2dSYg7lyjUPvkcabvm7Y8XhmyMsGltR61W+OPbJ0t3FFWluwg76FNigRaeuk1KpTSal973XFKHw2fsTu1JU7lPuOk0rw/5TmJKYs/Yb8tMN/5LBsl5DNgzoKXnUY1IDBs1huYbB/qtpSEidsYZrT+nZRhWtyR35v1AVXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757420469; c=relaxed/simple;
-	bh=BdA/OQv8n239DFtVYhXJBlllkimTnSdhMzIasDl7km0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BjL4y9zWMJmb/3M4e4XvEREzzfBj3O0/vlcUd/kTnyay4sqKW8Thvb+brug+1ZU/uWl4W5W0BFH5umXnP84kNXqdM/vLJInH7ZA89/eS+KaVpbX71vTHMrruVv6m0H3zgy70H6WUl7bcl6F+WB+ov3JyyxCTP7wCD4QmHwNqgZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N8wVxcKL; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dec026c78so12096305e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 05:21:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757420465; x=1758025265; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=e9aAVIFTB9yAV+GQAaHBwR0TWklKYdkWkTVHPifGbM8=;
-        b=N8wVxcKLYTcDq3MXozROg+/vovEbENqpWGVHHMsi+PQtLLV9+hgsGhjUwZgL8nOxnc
-         NC0V+vuvH2ah8VQCxAqmm5olcU91Bq8KL3HnTitmUOaYe7DAIxBfEQtk2pnBmDD8/VeV
-         mKEJXJVNYR01pxNNPTyEHI6dpp/oMsNKXyGPJRnAZ9Gzy6AWTOUYGEb9flzN9jLDmR9Y
-         YQD15atyKRarq4OD4ympINH+690AU06Om4+LkWALbYnTuA+SKw0G4UNmrKzxHXA9cjs0
-         YitQ1GB5zRgo4p1EKpqFygkTRnqmgmtXRtQRmgG7PCOebWfp52LPPFCRj15k6CK9/vkG
-         LZZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757420465; x=1758025265;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e9aAVIFTB9yAV+GQAaHBwR0TWklKYdkWkTVHPifGbM8=;
-        b=abf0ar9w/XlvzVrQI/cvDYudXJ2SiQIWhl070y10lfiPW3jD4kDasgL5mxlJP02SDV
-         pHOvZKVVArg9FD6Zh7yxYZLD4aYW6qjcVK/t+wbIX5cS8o6Ljw6ZIyLgeKelkvNphH3f
-         GlHYF5SJ+4PE0t6ewOohmO30v93iAiUB7LlUcajq8a/tzzgsvmQKIHyjBzBU9RlqwWWA
-         nPVB5RYLJjdLMVA2V7uh985m5DXwZXhg8GJlIq+f0FJDib0VSUD366mlE5ug9J7QV3x3
-         /AJIxLf8NarY385mVedKP4klmnMF7NThTfVoWRfP4/Jf/o+LNtAzmlyj9zLW4tcctUQR
-         lhtA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfKd1xSkXaNf7YK7EEMa/HrG4yl9WwfajRIATlRIdAVJ9UbnxOrMcZxLbMrz7RVM4TKX6SQ5u3Ehx1m7Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs3BY3HnxV4o77coOU2t1ZWUIQPC4YGYX6ndY3S8DzBiSRlUrg
-	LpFCE9CWZcCKCf9OZysEuokYEDw0ZJVYLm1HugbD4z1+McEDQr7/55NIDH9nUT6rKC6KsOweO5T
-	14OSqEKE=
-X-Gm-Gg: ASbGnctP4pw/vtFmapG89AAoPHnXoJUwf058W232odWpznrQ/ljo+EExIXCdwWEgjyn
-	9m1ghOxq5Hn5F3n8jrW/R8xoq97YUur24kckjFW5Ogb+ZDvcwM+RyqBlxwdessAf3VNi7GFfZdB
-	rUEI4GTIHCt6Nk0ISyU4XKxKJszig/7hJKkbjN2UhFu/tegalQIuR/9qae+goGdwaWjhOsmKFjQ
-	clVk/QloizYGF870i0iXrEeW4SapMWrOX2uU9DUz54O6odhrE/YImuMFB/7nTIBNVM2uQ0u0yCd
-	fuSVRSNG5+3cXIDYrIT0Ye1Gy/zSDZ1SlyctnTdmZpvU5QPYa8BgWb9dn4Sk0YUzdi/8fpbsYI5
-	8DsGGh8DcQOPYyWZOIfuq7sokKlhfk/T7R/HMKQ==
-X-Google-Smtp-Source: AGHT+IHaBOAGTfkhgFhbVLu/wHVI1hhtSVll6EktX5UfFmRzOFzoL5bcSBkBdIXzZP80OpbBKg72qA==
-X-Received: by 2002:a05:600c:45cd:b0:456:1dd2:4e3a with SMTP id 5b1f17b1804b1-45ddde6ad13mr106581125e9.3.1757420465378;
-        Tue, 09 Sep 2025 05:21:05 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b9c5c89f2sm298074835e9.14.2025.09.09.05.21.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 05:21:04 -0700 (PDT)
-Message-ID: <9f84d9e1-9404-4151-9c5e-d3a1c018aa03@linaro.org>
-Date: Tue, 9 Sep 2025 13:21:03 +0100
+	s=arc-20240116; t=1757420534; c=relaxed/simple;
+	bh=37P3XprDm+59gcb6XjJxMhBzm481r3NPs3Vo9qlxQbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sAjLANDDYJk/GLKKZ0BXqjNtN6CAWZEphuA6Yk7NrO+W4YO8n5u3fcR8pPRFcR4Z2wpn5923uRh7GDC/m+qzpXo2ca7kvFAy78ke/DFdOqDjZhnr3JNqioWWT5c6BAw4R44R5c+LGSqxJOjzrwpxdLbZFTguK343IYa7gZw206g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=k+btDa2s; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5896qZ6F022621;
+	Tue, 9 Sep 2025 12:21:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=HgXHuv
+	DQWM+e6g8HNFRsUTtYri2UfP2/XrW1ol1u7GE=; b=k+btDa2sq7CBHU/zbN/lFH
+	ghWfPvHjObHTjdwM0MbcrLvY9fXysRq63ShPfGzZUmg5uPj1TmS4uJjx77Y1Aicr
+	azRWjJMg3W9mv4Rc4oPZg3L7at/N9NCiVH7nWxiIRrEVYdeH2JiknmZWCS/h2RY5
+	jmgdMAa/9KYp+VTQfYE4GKLgLVCjLpsag2Ci8t2npNNcDlvAwN6V4Dx3Jd6cpQCk
+	icJ8pLnTkFLF8+DfyrZ5yO8TF8dM+PT5uB5bjp6+NliPvShzCOMKbhwbqDpHlFHm
+	hwOefHywbfBS8ou5242Yt348ozhsx0CjMHxUjXlwewjmmENhzBIKNQWxD67xIAbw
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmwqmvd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 12:21:58 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 589BRPBR001198;
+	Tue, 9 Sep 2025 12:21:57 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 491203arp9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 12:21:57 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 589CLvTv3146310
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 9 Sep 2025 12:21:57 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 659C358059;
+	Tue,  9 Sep 2025 12:21:57 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7A88958058;
+	Tue,  9 Sep 2025 12:21:53 +0000 (GMT)
+Received: from [9.43.86.190] (unknown [9.43.86.190])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  9 Sep 2025 12:21:53 +0000 (GMT)
+Message-ID: <a7c4342c-c72e-43ad-961f-1d4f5a57b408@linux.ibm.com>
+Date: Tue, 9 Sep 2025 17:51:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,92 +76,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] perf arm-spe: Improve --itrace options
-From: James Clark <james.clark@linaro.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>
-Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Mike Leach <mike.leach@linaro.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, George Wort <George.Wort@arm.com>,
- Graham Woodward <Graham.Woodward@arm.com>, Ben Gainey <Ben.Gainey@arm.com>,
- Michael Williams <Michael.Williams@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250908-james-perf-spe-period-v1-0-7ccd805af461@linaro.org>
- <aL9HvOl-n_IM0qiB@x1> <02cba58e-86f6-48de-a59c-6d31a29258df@linaro.org>
+Subject: Re: [PATCH for-6.18/block 08/10] blk-mq: fix potential deadlock while
+ nr_requests grown
+To: Yu Kuai <yukuai1@huaweicloud.com>, ming.lei@redhat.com, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+        johnny.chenyi@huawei.com
+References: <20250908061533.3062917-1-yukuai1@huaweicloud.com>
+ <20250908061533.3062917-9-yukuai1@huaweicloud.com>
 Content-Language: en-US
-In-Reply-To: <02cba58e-86f6-48de-a59c-6d31a29258df@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20250908061533.3062917-9-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: sLLKeMBLjgSL_T0Rfdt3xaNP907hJex5
+X-Proofpoint-ORIG-GUID: sLLKeMBLjgSL_T0Rfdt3xaNP907hJex5
+X-Authority-Analysis: v=2.4 cv=J52q7BnS c=1 sm=1 tr=0 ts=68c01be6 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=i0EeH86SAAAA:8 a=5m0jnhctum0_gvrSJaQA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNSBTYWx0ZWRfX/swE9qgZ1A1u
+ a/5X7jLp40465RnH3HV2yXx7ajiCRFN8MIjIClXY1XOjacW08Tvl9Kva6t+jB2SpO2e9XaXSYB0
+ UNZr8mTN6otBWsp15dCbzkAPX0NAc28WVB97bm2KGjXCE4mCaR8K5V1csHmC1BovAQZbbtn0Qwo
+ vM6wm2M039RKJ0XJ/svXD04CDyma4t6Tsx4/w64pUlScmSqHtClo+Yd50ZhP22llxUkUh7lVxxV
+ 9uSkVx72h6wQE+MzzMI+UajDrfA7ns1xwnjpS2iyEcSTeudVSxcSMQLhOHZ7LrCnrbgvNYxxblP
+ R7tv3BqPZIqGAbN6oUTr0sBWGkkURU4Tn5pVnqCFSis3j8w4ccrMSQ+Fz0P1e/FwL+0lFvJvwHT
+ OzWu3KdN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-09_01,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 suspectscore=0 spamscore=0 phishscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060025
 
 
 
-On 09/09/2025 10:51 am, James Clark wrote:
+On 9/8/25 11:45 AM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
+> Allocate and free sched_tags while queue is freezed can deadlock[1],
+> this is a long term problem, hence allocate memory before freezing
+> queue and free memory after queue is unfreezed.
 > 
-> On 08/09/2025 10:16 pm, Arnaldo Carvalho de Melo wrote:
->> On Mon, Sep 08, 2025 at 01:10:17PM +0100, James Clark wrote:
->>> Most people also want all the SPE samples (instructions group), not just
->>> the flagged samples that are put into the various memory groups. These
->>> should have been shown by default but weren't because the default
->>> interval type wasn't supported.
->>>
->>> Also when looking at this, it appears that the downsampling was behaving
->>> in a way that would discard samples from one group but not another.
->>> Improve that and the warning messages.
->>>
->>> I don't want to put fixes tags on these because it's only changing the
->>> defaults and the behavior, but I don't think the previous behavior was
->>> incorrect necessarily, just copied from tracing techs but not ideal for
->>> SPE.
->>
->> I keep trying to find some hardware to have in my homelab to test these
->> series, but till then I depend on people having access to such hardware
->> for acks or better, tested-by, so waiting a bit for those to appear.
->>
->> - Arnaldo
+> [1] https://lore.kernel.org/all/0659ea8d-a463-47c8-9180-43c719e106eb@linux.ibm.com/
+> Fixes: e3a2b3f931f5 ("blk-mq: allow changing of queue depth through sysfs")
 > 
-> Unfortunately I don't have any good homelab suggestions. Radxa Orion O6 
-> are the only not-super-expensive boards that have it, but it's not 
-> currently working due to some ACPI issue. AWS Gravitons also have it, 
-> but you currently need a metal instance so that's expensive too.
-> 
-> Leo should be able to have a look at this one until the hardware 
-> trickles down further.
-> 
-> Thanks
-> James
-> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-Forgot to mention that everything is available on the FVP model, but 
-unless the tests are specifically written to run there, they're too 
-slow. The BRBE branch stack test has been, but SPE and Coresight tests 
-haven't. So not very useful either unfortunately.
-
->>> Signed-off-by: James Clark <james.clark@linaro.org>
->>> ---
->>> James Clark (4):
->>>        perf arm-spe: Show instruction sample types by default
->>>        perf arm-spe: Downsample all sample types equally
->>>        perf arm-spe: Display --itrace period warnings for all sample 
->>> types
->>>        perf docs: Update SPE doc to include default instructions group
->>>
->>>   tools/perf/Documentation/perf-arm-spe.txt | 14 +++++---
->>>   tools/perf/util/arm-spe.c                 | 53 +++++++++++++++ 
->>> +---------------
->>>   2 files changed, 37 insertions(+), 30 deletions(-)
->>> ---
->>> base-commit: 75a7b9d29215c5aa813b9620f3c56817918f9f8c
->>> change-id: 20250908-james-perf-spe-period-4711a566cba4
->>>
->>> Best regards,
->>> -- 
->>> James Clark <james.clark@linaro.org>
->>>
-> 
-
+Looks good to me:
+Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
 
