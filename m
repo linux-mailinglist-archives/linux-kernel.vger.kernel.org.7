@@ -1,141 +1,99 @@
-Return-Path: <linux-kernel+bounces-806943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 431C3B49DDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:09:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F978B49DEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F31614E34B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:09:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60216444312
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A146D2BB17;
-	Tue,  9 Sep 2025 00:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB6819C540;
+	Tue,  9 Sep 2025 00:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sXirqhJ4"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="wCCn50xd"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F71F3FF1;
-	Tue,  9 Sep 2025 00:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEF6156661
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 00:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757376590; cv=none; b=ovBBWa/tvokWPb8U3Oe4fopT8NGlYbHLHOhlt+eWixDHk8whzYiAbpaA52mhtk2gzYtWNeuMbBY8PeVOp8nn2F6iESfz/oyQB8HCz19A5JkPhOsCdZL5Zh9KGjB99qovae3mtEau5BcS6u5GSgupogLvdRoPmiNA11a80v2GU6E=
+	t=1757377031; cv=none; b=qAD4gxnrTXGzSqtYbOLsrbhhNbiRTI3lhSpJqfnA+/9wFbVwhaflQ9YYYULVSP9PJ7lXVnHw4XCyciS4ViMzijZoMuaRggKLAt1XATsTtJAIjL04TDUGvk17kzcVERQifaFmEw8aRuUEZ5ai2URe4lptwOhnS4/n9KQe6hnToCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757376590; c=relaxed/simple;
-	bh=5qpzHAydp4S62bjrHIGSyXRzDlpY/6DVN+NDlvT5Qgg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eQe0y1yU+Cyq2aAf+8+WMDhZy9hrUjLicb0tvtgG2U4lselM1PDmC4BmBOvI7W5DIZE20XKHWER6er83QCVwqrpKphM1CHENe9gWN9m6OH4GfvmEJ3ZrkVGzX7ESec6yVyxmQksJeRNVD9m6XdUxPs1w92ALTD6j8rB41nRnJhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sXirqhJ4; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=h+aHil78/hTdwjpWRSPDg1emSIIAI5nuEm6ueMcFToY=; b=sXirqhJ4n5HkOTVMRcikBf7NRc
-	aqaNhA6/Qoonqz0DAQiGkZldSu4Ij+ekM0/7lvPwoo8ODOE9v29gYE1eGZvJAUSMGtoqcY9uoeFH1
-	w6S7/u4x+0zu/36b/W5ygfpKH1HfkyAipWD4+bVhrR3K15lMaXT2oMq250TBNkLOnCTR0lhnvMLMN
-	fWCTcF95La/IhcVLiDeCVUj6bprXpxhqFD7uEa0tFgPkxQZ3BYuHgN2IT/po23LTYALYs9SghQkvx
-	N4bxxIYIkDii/5DIyJccPb35tB4rCwFwVDekp7aRoGS5TmpHDdjTgbR6zx8BeaeWAsG0t/0EbvbwA
-	71XZkbwA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uvlvc-00000003A8Z-1GYt;
-	Tue, 09 Sep 2025 00:09:44 +0000
-Message-ID: <0f68d783-27e9-4150-804b-d5cb7bee57ba@infradead.org>
-Date: Mon, 8 Sep 2025 17:09:43 -0700
+	s=arc-20240116; t=1757377031; c=relaxed/simple;
+	bh=IoX4hIEVKCoABQx4yHzFSXY1x2jGQmdY4VNnVGCjkfo=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=mOrASljCk1dOynD7jcyO7i0yRA/8rfWVPaUIWNZSjivdycG4qI7rTrxmdQHmg2Y89ek2hT7j3SBV0AntTPEZytTQW+M6dXyCfeZ+xi7fHxoaNB2nkGeJVTNqVlC3+YMnTs0pZO1qu2aIYAfAEzLnQEui3Z2c4wBD/hWujPtrFtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=wCCn50xd; arc=none smtp.client-ip=43.163.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1757377025; bh=VeImF+XGbwpjSMw69GVoEDl6t9Mml9cfVbwWLDS8hVE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=wCCn50xdUoF5HFFRFzUBKMnGJ4bXmTORGiwihzP0Om1bfVxDYPjxBsv7b81vWrSTN
+	 jcQPbBETsuJPPQ7P8bJU/MVpBhosUjFmAlubXG6ZLJp7d6k3ca/jcJAqVfjMExGe1h
+	 ClzONFWWXxvxEzQcqPRnbPgzFwGLy2cFeuUARej0=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
+	id 2B512238; Tue, 09 Sep 2025 08:10:53 +0800
+X-QQ-mid: xmsmtpt1757376653tyl355y9s
+Message-ID: <tencent_31282D116C4C9408EAF6ED0ECC4478466E0A@qq.com>
+X-QQ-XMAILINFO: Mvz9QCyGvUHYZLcjfYY2JsQGyREKVVHZ9ror43ig8QkVpT8gXHMDbEnZ10SEpF
+	 Ab9eZOEMTpcXPOLwE8t2HrH7xUdj4clFZhaJSfvtbddGUphwKAGGsHSfkPaAgxzTl3IrmwgGsXNZ
+	 5mciYqPApvqX2iEzCwy2719qfNQRmakDBuWvSX3DIshtImWSKN5u0CgRUcel/q3mH6GDahGu3rGb
+	 ru9RyS2FWFlWYJy3IviJN6WfzCN7HQ8Tnvt1w3pW8+Yjf62ZgqnSFQ4m+wewYa0YkQ4A/renUWDK
+	 lu+ron8c4DDZJFtHeAblvf1+WOFrOJJOkWATI2zGlo7FwTIG7VIrDEfGnnSAdpZza1RIXbdR4+6c
+	 Uk9B4FMDyegf1nXhzYB2ktL6C6UpKRKHNissll/FpqFWoV8nYS9llxLWvS5H6kJNlaWDEb0uxk+L
+	 ulxqxH7zPaZPN8u1DjwXFuteI2dpEpxdm70J5TowWPZd119hQzuWQFxaTeF1UTcWYVlkur29qhAA
+	 QUaQ1OtyxkB/EBah3pK0bPNgMePppfKLTC4jb3m3WEUuXtKV2yQMyCXXDu14pjoAg8cINd7Uh+b5
+	 D8FnABaLPhDSmDOF9jjmtyDK7KZJclAxpasI83yjsqI+kAALgUmBse+nsvQOQMBV5dg4PbEd1qiC
+	 vi+5sVf5M3FXL91GyP1ZSVSzuuOa3uOmHlmVW7VHMvGnH0wxsShwucwwaH1/jScpadKCtMpKuwov
+	 LZU+nGYgoemxkzPXg8EhbnDy71LOHgmmdWVBbKXXd8KVytTTtwBXiTBm3nLdEZCtF115yYNxxRTQ
+	 kI/d3vYM/USVmtCyzaxspDQl5Yy8ubbbut1hbmEiApYyoDKrQXPTJ5CxnMONcTUXjP6uYT8ucK5I
+	 gJ8Fmzr/rXrhbhMUQAYSnJppHqIMLAVf49IMTiLBUfcpqMK8hG7TK1PgEwyGQSMQMwEroruNfQQg
+	 kFj91ptBk=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+f6cb41c144427dc0796a@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [serial?] general protection fault in vc_deallocate
+Date: Tue,  9 Sep 2025 08:10:53 +0800
+X-OQ-MSGID: <20250909001052.2717447-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68bf244a.050a0220.192772.0882.GAE@google.com>
+References: <68bf244a.050a0220.192772.0882.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xfs: extend removed sysctls table
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux XFS <linux-xfs@vger.kernel.org>
-Cc: David Chinner <david@fromorbit.com>, Carlos Maiolino <cem@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, "Darrick J. Wong" <djwong@kernel.org>,
- Charles Han <hanchunchao@inspur.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20250909000431.7474-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250909000431.7474-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+#syz test
 
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index 1d9abcfac4c9..6e0089b85c27 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -1341,10 +1341,10 @@ struct vc_data *vc_deallocate(unsigned int currcons)
+ 		vc_uniscr_set(vc, NULL);
+ 		kfree(vc->vc_screenbuf);
+ 		vc_cons[currcons].d = NULL;
+-	}
+-	if (vc->vc_saved_screen != NULL) {
+-		kfree(vc->vc_saved_screen);
+-		vc->vc_saved_screen = NULL;
++		if (vc->vc_saved_screen != NULL) {
++			kfree(vc->vc_saved_screen);
++			vc->vc_saved_screen = NULL;
++		}
+ 	}
+ 	return vc;
+ }
 
-On 9/8/25 5:04 PM, Bagas Sanjaya wrote:
-> Commit 21d59d00221e4e ("xfs: remove deprecated sysctl knobs") moves
-> recently-removed sysctls to the removed sysctls table but fails to
-> extend the table, hence triggering Sphinx warning:
-> 
-> Documentation/admin-guide/xfs.rst:365: ERROR: Malformed table.
-> Text in column margin in table line 8.
-> 
-> =============================   =======
->   Name                          Removed
-> =============================   =======
->   fs.xfs.xfsbufd_centisec       v4.0
->   fs.xfs.age_buffer_centisecs   v4.0
->   fs.xfs.irix_symlink_mode      v6.18
->   fs.xfs.irix_sgid_inherit      v6.18
->   fs.xfs.speculative_cow_prealloc_lifetime      v6.18
-> =============================   ======= [docutils]
-> 
-> Extend "Name" column of the table to fit the now-longest sysctl, which
-> is fs.xfs.speculative_cow_prealloc_lifetime.
-> 
-> Fixes: 21d59d00221e ("xfs: remove deprecated sysctl knobs")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/linux-next/20250908180406.32124fb7@canb.auug.org.au/
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
->  Documentation/admin-guide/xfs.rst | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/xfs.rst b/Documentation/admin-guide/xfs.rst
-> index d6f531f2c0e694..c85cd327af284d 100644
-> --- a/Documentation/admin-guide/xfs.rst
-> +++ b/Documentation/admin-guide/xfs.rst
-> @@ -355,15 +355,15 @@ None currently.
->  Removed Sysctls
->  ===============
->  
-> -=============================	=======
-> -  Name				Removed
-> -=============================	=======
-> -  fs.xfs.xfsbufd_centisec	v4.0
-> -  fs.xfs.age_buffer_centisecs	v4.0
-> -  fs.xfs.irix_symlink_mode      v6.18
-> -  fs.xfs.irix_sgid_inherit      v6.18
-> -  fs.xfs.speculative_cow_prealloc_lifetime      v6.18
-> -=============================	=======
-> +==========================================   =======
-> +  Name                                       Removed
-> +==========================================   =======
-> +  fs.xfs.xfsbufd_centisec                    v4.0
-> +  fs.xfs.age_buffer_centisecs                v4.0
-> +  fs.xfs.irix_symlink_mode                   v6.18
-> +  fs.xfs.irix_sgid_inherit                   v6.18
-> +  fs.xfs.speculative_cow_prealloc_lifetime   v6.18
-> +==========================================   =======
->  
->  Error handling
->  ==============
-> 
-> base-commit: e90dcba0a350836a5e1a1ac0f65f9e74644d7d3b
-
--- 
-~Randy
 
