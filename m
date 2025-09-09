@@ -1,621 +1,360 @@
-Return-Path: <linux-kernel+bounces-807670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5CEB4A79A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:25:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7045EB4A7C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 203BC178CC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:24:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F1DD5E3BFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2724630AACF;
-	Tue,  9 Sep 2025 09:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1797E2E0B42;
+	Tue,  9 Sep 2025 09:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bB6DUIsY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="G6aAFNBh"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4923081B7
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9EC2D876C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757409359; cv=none; b=UImEQMX/EYp5BUKie9vKxI9As8QD8W3TqMdPQRZJV/9WRFtmyJTehzWt5flW0phYq1sNS7RjFI3pXh1dfgBW5J5IgEB/YVU4IFayEslzQ9XJr9lxSY9dTs1EdSFXITKVtqtQmWqfHfdtAlupmHT2oa1lvZPJBqHr+q1hsSx3Qw4=
+	t=1757409352; cv=none; b=kw85WMYmtGYec3PMbrVHekqQau1M8g2JhZ9q8J3sPLYIPnqHOhKugvG8TB23D45DZpNjwqQjx/iqwE9dxH92maMdGeQVLxVZEL90wPKDqPYA5fsj34lJkV7QcRYJrF81l+2wS7qz4kZYbVMXFTNk0JY5VOzYzHfP8IBOkaQsKdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757409359; c=relaxed/simple;
-	bh=BgxOyBJ9Bg5qZBOHK8WEbzoUQbMQxyCN2sWef6lsA8M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WEEOphUxfmzr8+T17/q9zdaYZRjtWQl0lWjEufUZC99SNU8R+AbJBhA5UkvQN1vYd5RHz2KxkYGFwdEVEZ/wzkzyLZLwXjGAp9dw0UxLF/TJ+YvnQudOS1XCaD8jljXZ0PAjCp5FJfPq/EFbi2hZYnfHogBumx/I5ScPnB4QPwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bB6DUIsY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757409355;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/orecU0ghUgcnxxp183LW5JbxjRxIucXWqWiD0e91bg=;
-	b=bB6DUIsY4ROXjU2yqINaCWF3KDBBhRJcUFJLtVLtvzDoa54haG8lBCTQgMKl42mFBuBRYu
-	nB8C3dNCct4ux30ShrqCWLvZdKJGxw3uebikTArg7u5H4K7mTOFeU7xoHUkLrV+q+ybgqt
-	6mu9ht900tkKJ6ByUjIn/ZUNYOj7MNk=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-364-feA5sydIN3yR-ZjgN1VWEA-1; Tue,
- 09 Sep 2025 05:15:53 -0400
-X-MC-Unique: feA5sydIN3yR-ZjgN1VWEA-1
-X-Mimecast-MFC-AGG-ID: feA5sydIN3yR-ZjgN1VWEA_1757409351
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9A83A1800378;
-	Tue,  9 Sep 2025 09:15:51 +0000 (UTC)
-Received: from p16v.. (unknown [10.43.2.187])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AB20919560BA;
-	Tue,  9 Sep 2025 09:15:47 +0000 (UTC)
-From: Ivan Vecera <ivecera@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michal Schmidt <mschmidt@redhat.com>,
-	Petr Oros <poros@redhat.com>
-Subject: [PATCH net-next v6 3/5] dpll: zl3073x: Add firmware loading functionality
-Date: Tue,  9 Sep 2025 11:15:30 +0200
-Message-ID: <20250909091532.11790-4-ivecera@redhat.com>
-In-Reply-To: <20250909091532.11790-1-ivecera@redhat.com>
-References: <20250909091532.11790-1-ivecera@redhat.com>
+	s=arc-20240116; t=1757409352; c=relaxed/simple;
+	bh=STVkcjbGQD0bnhkXi0awJ4N/O75AAoIkAEKNoy3xklM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=aljxfXzx3SqRthrFKY7sEEqrMpC+lu4gSRwaBsEu829APAdbmUi/MtzjPjICrOiUVmJiks8DD6JE7wubt5GppBVIUBTOsl++ekdemhOKvmRVY2SYoHqgdVNKQqEsM302LEL2/wAYZxibIIrMqILtsTt7PjBHeXBusbdsyzCq33U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=G6aAFNBh; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3df2f4aedc7so3053378f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:15:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757409348; x=1758014148; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MIZTqFFdI7c5GSdgApLwsnSgJwJyJjuHVWKySxCM3/s=;
+        b=G6aAFNBhBZ/5OnaxmMXKOThXOuj3RmcdhVd3W8WPQROB7FZxd1Jdkf6nNA0SjJekfX
+         tbgdp8W/wjlNAMMSDQGa2YCObRGezU5oxX5PuivtYLH5NUHyhhLFZ1oxVemSQQC/9APG
+         Bqe/aBLGZW839+/bkmYjculhDrPJEkQC1mwxHMCuERdzncR4puVT5k/hZon4My+sIerR
+         9vf/UhtG4gdsIgkM3AJOmR8n5++4xFIviEy5eQPtAiC2+bTJLPOL1OGcGxWVlGeymOdK
+         iC5sZDJddFtcbL1hNJIs7SsEurzCrCetMo09oGyrmaFot8vJ5WZ/+bHsdgjnnrRWuHgP
+         qRZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757409348; x=1758014148;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MIZTqFFdI7c5GSdgApLwsnSgJwJyJjuHVWKySxCM3/s=;
+        b=GcvcXOjMTDMYU0DAHzu4/DflMYIArL7CO5eCWh8saK820SH2FACH5a/NjtP7abXhWo
+         xWE7p+oBnhF0Kd/sWDqbvG6toHCVf0+pfMhCsFWLJtt5WQUOw2joR7oWVsYxiVrLKWSC
+         6+MCLnsVlLYzX8j/j/jgjTKREvfWarPDitMqMv23u7pfn4ei91GwXmEYBrE+GPRuf/M/
+         VB274W4v36pi/nDhtpw0CHoYA6d3QbJ4JMPUOr8aRnTNWrNStOFEH8gDsb+paIXiMhOJ
+         QvVVcCMRC1Q1DnZKt9DP1tlfElC1epETx2YYo/r8fwxVOV9wedhBJqtLz7gzeEzqeNVb
+         Puiw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQI+5KLwz6wmmGLxPpCirZtft/dBKUrSCjUHZwWcGrTkQxK0KD7vc7nd+w8v8EfoW8dbODhP5+1/Wt0sI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfodxAVwclk+Cw8wp84t0lM85KajR2hKXdv8havr+R0Qn0Lx6L
+	zBF1CEVMtYpWxVAMZrZild9YceIs+iNlHgJmzhlj8z11ld6MN8clRkKAwRgbdQOJET0=
+X-Gm-Gg: ASbGncvS4OJiFfu25FtzjtmxtAfVnsEU6WiSrXsPzk3PP1yWKcIJMZckV+ArBle8RNz
+	ojOsgE9xl3Obz+BBTTgliu3OWelBI6FaRZ5Rn1WzPzBMHgTA3GVnLHfcFl5NKxZnDonc4fn7bPz
+	zbXDzd2/bfHh/LP/bTbTGXl60MLhqHaEamdR9g9gWp793rqYDl563WTjM9dpobM/yRxhz3KLQ24
+	EmUbnOQ231u0EgJF/7IIF+PFQYN0UGzTKccD0ZpaZfX1+b3oVwK4Dr9fmt6XCq7IpMCwe+Ofbiw
+	aiEUbla9LFIuihuOeilg8Ut+yb35PWSXb/nPencuSFj12opjUthetou1UmaV7SIZDLWwmlLdckS
+	4vwfhPZsEmKqvNNBnHg==
+X-Google-Smtp-Source: AGHT+IEebt0pWOlSircy048VueTsw1+cXr5WEVoP9l1+AiT3ryRkfTg5u9QKZqm+iQAcvnX+nKkItg==
+X-Received: by 2002:a05:6000:22c2:b0:3c7:308e:4dff with SMTP id ffacd0b85a97d-3e643c1b67emr7845415f8f.57.1757409347611;
+        Tue, 09 Sep 2025 02:15:47 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:c1ee:7be9:3ebb:6cc0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521c9caasm1900039f8f.19.2025.09.09.02.15.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 02:15:46 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 09 Sep 2025 11:15:30 +0200
+Subject: [PATCH 03/15] gpio: hlwd: use new generic GPIO chip API
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250909-gpio-mmio-gpio-conv-part4-v1-3-9f723dc3524a@linaro.org>
+References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
+In-Reply-To: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>, 
+ Doug Berger <opendmb@gmail.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8081;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=iTmYTpIN0EhHVtpfw10p3x+EmvoqbGnXwIDBsyAwgI8=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBov/A2XiwccfT2vsbmpFgNl+2ytz7arhOWgEJQo
+ yZ2y+hedzaJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaL/wNgAKCRARpy6gFHHX
+ ctMBEADWw+EV0P2U4YY57HCZxBhGQI8Jymslio2V/cvuO7G36gSw4j9IooHJ1Lc/vZ66kpeHZq+
+ pv2Ei149dPUSiYnWM6RIDDlaQJfih8gGzscjFniHf9M71UP/5vESKeRd+JhBlB3Jc8uyHlbvFQl
+ IsmTm5rbCEaBM5linFdBWjOsG+hyCRyP/iuwVSY1VBqLKGzFoWMgp770F9spm54j2mO+zZe/1yG
+ hcitMkrtFA7XeupJ/p596xXbKa/hJHNebFnEEjnlTVc2MbDpvVVahnX8u7LSjkrEQU36bpgUSCX
+ njBVdcuJuy0rCoyqo80IIwDG86/Gt6JgoCf+qQaVrlXGfYFIznFPxU+9+1RYZSJ+zmaGaWaht1L
+ SbTDoRM2tGNx+6rBPsoP2YVQYE6R8yoFg9uwit4N6/KvVqlb/9Acz7jvKAJKtZ/mNVogv3ShZO9
+ zOwWuxR4zqF/2XzqTITWS1a1dwsO492OSJGaClj5MdNoSXRWXwQoIhVdMv9wbwxFTOaM7gSad0o
+ H4kV94dTKnLPgRv2ClfdScpzlc6NEy6GOsfbDN8queDSIIr7zE02+z30G7CAGRcO9gqEu935HlC
+ htTpMhq504bjQ/p/Di904UnZkQO0Fb4V4FaSN65J5EvaXIa0w3rYMlcImbKbK3DnwyXM2KkUnGY
+ TH/8sEVjgkhInSA==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Add functionality for loading firmware files provided by the vendor
-to be flashed into the device's internal flash memory. The firmware
-consists of several components, such as the firmware executable itself,
-chip-specific customizations, and configuration files.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-The firmware file contains at least a flash utility, which is executed
-on the device side, and one or more flashable components. Each component
-has its own specific properties, such as the address where it should be
-loaded during flashing, one or more destination flash pages, and
-the flashing method that should be used.
+Convert the driver to using the new generic GPIO chip interfaces from
+linux/gpio/generic.h.
 
-Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-v4:
-* removed duplication of error messages into the logs
-* fixed integer overflow in zl3073x_fw_component_load()
-v3:
-* minor fixes requested by Przemek
-* reworked component loading using sscanf (thx Przemek)
-v2:
-* added additional includes
-* removed empty line
-* '*(dst+len)' -> '*(dst + len)'
-* 'Santity' -> 'Sanity'
-* fixed smatch warning about uninitialized 'rc'
----
- drivers/dpll/zl3073x/Makefile |   2 +-
- drivers/dpll/zl3073x/fw.c     | 419 ++++++++++++++++++++++++++++++++++
- drivers/dpll/zl3073x/fw.h     |  52 +++++
- 3 files changed, 472 insertions(+), 1 deletion(-)
- create mode 100644 drivers/dpll/zl3073x/fw.c
- create mode 100644 drivers/dpll/zl3073x/fw.h
+ drivers/gpio/gpio-hlwd.c | 105 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 54 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/dpll/zl3073x/Makefile b/drivers/dpll/zl3073x/Makefile
-index 9894513f67dd3..84e22aae57e5f 100644
---- a/drivers/dpll/zl3073x/Makefile
-+++ b/drivers/dpll/zl3073x/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/gpio/gpio-hlwd.c b/drivers/gpio/gpio-hlwd.c
+index 0580f6712bea9a4d510bd332645982adbc5c6a32..137f17c9ff221d524a4281fdbf91d8f27ee24182 100644
+--- a/drivers/gpio/gpio-hlwd.c
++++ b/drivers/gpio/gpio-hlwd.c
+@@ -6,6 +6,7 @@
+ // Nintendo Wii (Hollywood) GPIO driver
  
- obj-$(CONFIG_ZL3073X)		+= zl3073x.o
--zl3073x-objs			:= core.o devlink.o dpll.o flash.o prop.o
-+zl3073x-objs			:= core.o devlink.o dpll.o flash.o fw.o prop.o
+ #include <linux/gpio/driver.h>
++#include <linux/gpio/generic.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -48,7 +49,7 @@
+ #define HW_GPIO_OWNER		0x3c
  
- obj-$(CONFIG_ZL3073X_I2C)	+= zl3073x_i2c.o
- zl3073x_i2c-objs		:= i2c.o
-diff --git a/drivers/dpll/zl3073x/fw.c b/drivers/dpll/zl3073x/fw.c
-new file mode 100644
-index 0000000000000..d5418ff748866
---- /dev/null
-+++ b/drivers/dpll/zl3073x/fw.c
-@@ -0,0 +1,419 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+#include <linux/array_size.h>
-+#include <linux/build_bug.h>
-+#include <linux/dev_printk.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/netlink.h>
-+#include <linux/slab.h>
-+#include <linux/string.h>
-+
-+#include "core.h"
-+#include "flash.h"
-+#include "fw.h"
-+
-+#define ZL3073X_FW_ERR_PFX "FW load failed: "
-+#define ZL3073X_FW_ERR_MSG(_extack, _msg, ...)				\
-+	NL_SET_ERR_MSG_FMT_MOD((_extack), ZL3073X_FW_ERR_PFX _msg,	\
-+			       ## __VA_ARGS__)
-+
-+enum zl3073x_flash_type {
-+	ZL3073X_FLASH_TYPE_NONE = 0,
-+	ZL3073X_FLASH_TYPE_SECTORS,
-+	ZL3073X_FLASH_TYPE_PAGE,
-+	ZL3073X_FLASH_TYPE_PAGE_AND_COPY,
-+};
-+
-+struct zl3073x_fw_component_info {
-+	const char		*name;
-+	size_t			max_size;
-+	enum zl3073x_flash_type	flash_type;
-+	u32			load_addr;
-+	u32			dest_page;
-+	u32			copy_page;
-+};
-+
-+static const struct zl3073x_fw_component_info component_info[] = {
-+	[ZL_FW_COMPONENT_UTIL] = {
-+		.name		= "utility",
-+		.max_size	= 0x2300,
-+		.load_addr	= 0x20000000,
-+		.flash_type	= ZL3073X_FLASH_TYPE_NONE,
-+	},
-+	[ZL_FW_COMPONENT_FW1] = {
-+		.name		= "firmware1",
-+		.max_size	= 0x35000,
-+		.load_addr	= 0x20002000,
-+		.flash_type	= ZL3073X_FLASH_TYPE_SECTORS,
-+		.dest_page	= 0x020,
-+	},
-+	[ZL_FW_COMPONENT_FW2] = {
-+		.name		= "firmware2",
-+		.max_size	= 0x0040,
-+		.load_addr	= 0x20000000,
-+		.flash_type	= ZL3073X_FLASH_TYPE_PAGE_AND_COPY,
-+		.dest_page	= 0x3e0,
-+		.copy_page	= 0x000,
-+	},
-+	[ZL_FW_COMPONENT_FW3] = {
-+		.name		= "firmware3",
-+		.max_size	= 0x0248,
-+		.load_addr	= 0x20000400,
-+		.flash_type	= ZL3073X_FLASH_TYPE_PAGE_AND_COPY,
-+		.dest_page	= 0x3e4,
-+		.copy_page	= 0x004,
-+	},
-+	[ZL_FW_COMPONENT_CFG0] = {
-+		.name		= "config0",
-+		.max_size	= 0x1000,
-+		.load_addr	= 0x20000000,
-+		.flash_type	= ZL3073X_FLASH_TYPE_PAGE,
-+		.dest_page	= 0x3d0,
-+	},
-+	[ZL_FW_COMPONENT_CFG1] = {
-+		.name		= "config1",
-+		.max_size	= 0x1000,
-+		.load_addr	= 0x20000000,
-+		.flash_type	= ZL3073X_FLASH_TYPE_PAGE,
-+		.dest_page	= 0x3c0,
-+	},
-+	[ZL_FW_COMPONENT_CFG2] = {
-+		.name		= "config2",
-+		.max_size	= 0x1000,
-+		.load_addr	= 0x20000000,
-+		.flash_type	= ZL3073X_FLASH_TYPE_PAGE,
-+		.dest_page	= 0x3b0,
-+	},
-+	[ZL_FW_COMPONENT_CFG3] = {
-+		.name		= "config3",
-+		.max_size	= 0x1000,
-+		.load_addr	= 0x20000000,
-+		.flash_type	= ZL3073X_FLASH_TYPE_PAGE,
-+		.dest_page	= 0x3a0,
-+	},
-+	[ZL_FW_COMPONENT_CFG4] = {
-+		.name		= "config4",
-+		.max_size	= 0x1000,
-+		.load_addr	= 0x20000000,
-+		.flash_type	= ZL3073X_FLASH_TYPE_PAGE,
-+		.dest_page	= 0x390,
-+	},
-+	[ZL_FW_COMPONENT_CFG5] = {
-+		.name		= "config5",
-+		.max_size	= 0x1000,
-+		.load_addr	= 0x20000000,
-+		.flash_type	= ZL3073X_FLASH_TYPE_PAGE,
-+		.dest_page	= 0x380,
-+	},
-+	[ZL_FW_COMPONENT_CFG6] = {
-+		.name		= "config6",
-+		.max_size	= 0x1000,
-+		.load_addr	= 0x20000000,
-+		.flash_type	= ZL3073X_FLASH_TYPE_PAGE,
-+		.dest_page	= 0x370,
-+	},
-+};
-+
-+/* Sanity check */
-+static_assert(ARRAY_SIZE(component_info) == ZL_FW_NUM_COMPONENTS);
-+
-+/**
-+ * zl3073x_fw_component_alloc - Alloc structure to hold firmware component
-+ * @size: size of buffer to store data
-+ *
-+ * Return: pointer to allocated component structure or NULL on error.
-+ */
-+static struct zl3073x_fw_component *
-+zl3073x_fw_component_alloc(size_t size)
-+{
-+	struct zl3073x_fw_component *comp;
-+
-+	comp = kzalloc(sizeof(*comp), GFP_KERNEL);
-+	if (!comp)
-+		return NULL;
-+
-+	comp->size = size;
-+	comp->data = kzalloc(size, GFP_KERNEL);
-+	if (!comp->data) {
-+		kfree(comp);
-+		return NULL;
-+	}
-+
-+	return comp;
-+}
-+
-+/**
-+ * zl3073x_fw_component_free - Free allocated component structure
-+ * @comp: pointer to allocated component
-+ */
-+static void
-+zl3073x_fw_component_free(struct zl3073x_fw_component *comp)
-+{
-+	if (comp)
-+		kfree(comp->data);
-+
-+	kfree(comp);
-+}
-+
-+/**
-+ * zl3073x_fw_component_id_get - Get ID for firmware component name
-+ * @name: input firmware component name
-+ *
-+ * Return:
-+ * - ZL3073X_FW_COMPONENT_* ID for known component name
-+ * - ZL3073X_FW_COMPONENT_INVALID if the given name is unknown
-+ */
-+static enum zl3073x_fw_component_id
-+zl3073x_fw_component_id_get(const char *name)
-+{
-+	enum zl3073x_fw_component_id id;
-+
-+	for (id = 0; id < ZL_FW_NUM_COMPONENTS; id++)
-+		if (!strcasecmp(name, component_info[id].name))
-+			return id;
-+
-+	return ZL_FW_COMPONENT_INVALID;
-+}
-+
-+/**
-+ * zl3073x_fw_component_load - Load component from firmware source
-+ * @zldev: zl3073x device structure
-+ * @pcomp: pointer to loaded component
-+ * @psrc: data pointer to load component from
-+ * @psize: remaining bytes in buffer
-+ * @extack: netlink extack pointer to report errors
-+ *
-+ * The function allocates single firmware component and loads the data from
-+ * the buffer specified by @psrc and @psize. Pointer to allocated component
-+ * is stored in output @pcomp. Source data pointer @psrc and remaining bytes
-+ * @psize are updated accordingly.
-+ *
-+ * Return:
-+ * * 1 when component was allocated and loaded
-+ * * 0 when there is no component to load
-+ * * <0 on error
-+ */
-+static ssize_t
-+zl3073x_fw_component_load(struct zl3073x_dev *zldev,
-+			  struct zl3073x_fw_component **pcomp,
-+			  const char **psrc, size_t *psize,
-+			  struct netlink_ext_ack *extack)
-+{
-+	const struct zl3073x_fw_component_info *info;
-+	struct zl3073x_fw_component *comp = NULL;
-+	struct device *dev = zldev->dev;
-+	enum zl3073x_fw_component_id id;
-+	char buf[32], name[16];
-+	u32 count, size, *dest;
-+	int pos, rc;
-+
-+	/* Fetch image name and size from input */
-+	strscpy(buf, *psrc, min(sizeof(buf), *psize));
-+	rc = sscanf(buf, "%15s %u %n", name, &count, &pos);
-+	if (!rc) {
-+		/* No more data */
-+		return 0;
-+	} else if (rc == 1 || count > U32_MAX / sizeof(u32)) {
-+		ZL3073X_FW_ERR_MSG(extack, "invalid component size");
-+		return -EINVAL;
-+	}
-+	*psrc += pos;
-+	*psize -= pos;
-+
-+	dev_dbg(dev, "Firmware component '%s' found\n", name);
-+
-+	id = zl3073x_fw_component_id_get(name);
-+	if (id == ZL_FW_COMPONENT_INVALID) {
-+		ZL3073X_FW_ERR_MSG(extack, "unknown component type '%s'", name);
-+		return -EINVAL;
-+	}
-+
-+	info = &component_info[id];
-+	size = count * sizeof(u32); /* get size in bytes */
-+
-+	/* Check image size validity */
-+	if (size > component_info[id].max_size) {
-+		ZL3073X_FW_ERR_MSG(extack,
-+				   "[%s] component is too big (%u bytes)\n",
-+				   info->name, size);
-+		return -EINVAL;
-+	}
-+
-+	dev_dbg(dev, "Indicated component image size: %u bytes\n", size);
-+
-+	/* Alloc component */
-+	comp = zl3073x_fw_component_alloc(size);
-+	if (!comp) {
-+		ZL3073X_FW_ERR_MSG(extack, "failed to alloc memory");
-+		return -ENOMEM;
-+	}
-+	comp->id = id;
-+
-+	/* Load component data from firmware source */
-+	for (dest = comp->data; count; count--, dest++) {
-+		strscpy(buf, *psrc, min(sizeof(buf), *psize));
-+		rc = sscanf(buf, "%x %n", dest, &pos);
-+		if (!rc)
-+			goto err_data;
-+
-+		*psrc += pos;
-+		*psize -= pos;
-+	}
-+
-+	*pcomp = comp;
-+
-+	return 1;
-+
-+err_data:
-+	ZL3073X_FW_ERR_MSG(extack, "[%s] invalid or missing data", info->name);
-+
-+	zl3073x_fw_component_free(comp);
-+
-+	return -ENODATA;
-+}
-+
-+/**
-+ * zl3073x_fw_free - Free allocated firmware
-+ * @fw: firmware pointer
-+ *
-+ * The function frees existing firmware allocated by @zl3073x_fw_load.
-+ */
-+void zl3073x_fw_free(struct zl3073x_fw *fw)
-+{
-+	size_t i;
-+
-+	if (!fw)
-+		return;
-+
-+	for (i = 0; i < ZL_FW_NUM_COMPONENTS; i++)
-+		zl3073x_fw_component_free(fw->component[i]);
-+
-+	kfree(fw);
-+}
-+
-+/**
-+ * zl3073x_fw_load - Load all components from source
-+ * @zldev: zl3073x device structure
-+ * @data: source buffer pointer
-+ * @size: size of source buffer
-+ * @extack: netlink extack pointer to report errors
-+ *
-+ * The functions allocate firmware structure and loads all components from
-+ * the given buffer specified by @data and @size.
-+ *
-+ * Return: pointer to firmware on success, error pointer on error
-+ */
-+struct zl3073x_fw *zl3073x_fw_load(struct zl3073x_dev *zldev, const char *data,
-+				   size_t size, struct netlink_ext_ack *extack)
-+{
-+	struct zl3073x_fw_component *comp;
-+	enum zl3073x_fw_component_id id;
-+	struct zl3073x_fw *fw;
-+	ssize_t rc;
-+
-+	/* Allocate firmware structure */
-+	fw = kzalloc(sizeof(*fw), GFP_KERNEL);
-+	if (!fw)
-+		return ERR_PTR(-ENOMEM);
-+
-+	do {
-+		/* Load single component */
-+		rc = zl3073x_fw_component_load(zldev, &comp, &data, &size,
-+					       extack);
-+		if (rc <= 0)
-+			/* Everything was read or error occurred */
-+			break;
-+
-+		id = comp->id;
-+
-+		/* Report error if the given component is present twice
-+		 * or more.
-+		 */
-+		if (fw->component[id]) {
-+			ZL3073X_FW_ERR_MSG(extack,
-+					   "duplicate component '%s' detected",
-+					   component_info[id].name);
-+			zl3073x_fw_component_free(comp);
-+			rc = -EINVAL;
-+			break;
+ struct hlwd_gpio {
+-	struct gpio_chip gpioc;
++	struct gpio_generic_chip gpioc;
+ 	struct device *dev;
+ 	void __iomem *regs;
+ 	int irq;
+@@ -61,45 +62,44 @@ static void hlwd_gpio_irqhandler(struct irq_desc *desc)
+ 	struct hlwd_gpio *hlwd =
+ 		gpiochip_get_data(irq_desc_get_handler_data(desc));
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+-	unsigned long flags;
+ 	unsigned long pending;
+ 	int hwirq;
+ 	u32 emulated_pending;
+ 
+-	raw_spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
+-	pending = ioread32be(hlwd->regs + HW_GPIOB_INTFLAG);
+-	pending &= ioread32be(hlwd->regs + HW_GPIOB_INTMASK);
++	scoped_guard(gpio_generic_lock_irqsave, &hlwd->gpioc) {
++		pending = ioread32be(hlwd->regs + HW_GPIOB_INTFLAG);
++		pending &= ioread32be(hlwd->regs + HW_GPIOB_INTMASK);
+ 
+-	/* Treat interrupts due to edge trigger emulation separately */
+-	emulated_pending = hlwd->edge_emulation & pending;
+-	pending &= ~emulated_pending;
+-	if (emulated_pending) {
+-		u32 level, rising, falling;
++		/* Treat interrupts due to edge trigger emulation separately */
++		emulated_pending = hlwd->edge_emulation & pending;
++		pending &= ~emulated_pending;
++		if (emulated_pending) {
++			u32 level, rising, falling;
+ 
+-		level = ioread32be(hlwd->regs + HW_GPIOB_INTLVL);
+-		rising = level & emulated_pending;
+-		falling = ~level & emulated_pending;
++			level = ioread32be(hlwd->regs + HW_GPIOB_INTLVL);
++			rising = level & emulated_pending;
++			falling = ~level & emulated_pending;
+ 
+-		/* Invert the levels */
+-		iowrite32be(level ^ emulated_pending,
+-			    hlwd->regs + HW_GPIOB_INTLVL);
++			/* Invert the levels */
++			iowrite32be(level ^ emulated_pending,
++				    hlwd->regs + HW_GPIOB_INTLVL);
+ 
+-		/* Ack all emulated-edge interrupts */
+-		iowrite32be(emulated_pending, hlwd->regs + HW_GPIOB_INTFLAG);
++			/* Ack all emulated-edge interrupts */
++			iowrite32be(emulated_pending, hlwd->regs + HW_GPIOB_INTFLAG);
+ 
+-		/* Signal interrupts only on the correct edge */
+-		rising &= hlwd->rising_edge;
+-		falling &= hlwd->falling_edge;
++			/* Signal interrupts only on the correct edge */
++			rising &= hlwd->rising_edge;
++			falling &= hlwd->falling_edge;
+ 
+-		/* Mark emulated interrupts as pending */
+-		pending |= rising | falling;
++			/* Mark emulated interrupts as pending */
++			pending |= rising | falling;
 +		}
-+
-+		fw->component[id] = comp;
-+	} while (true);
-+
-+	if (rc) {
-+		/* Free allocated firmware in case of error */
-+		zl3073x_fw_free(fw);
-+		return ERR_PTR(rc);
+ 	}
+-	raw_spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
+ 
+ 	chained_irq_enter(chip, desc);
+ 
+ 	for_each_set_bit(hwirq, &pending, 32)
+-		generic_handle_domain_irq(hlwd->gpioc.irq.domain, hwirq);
++		generic_handle_domain_irq(hlwd->gpioc.gc.irq.domain, hwirq);
+ 
+ 	chained_irq_exit(chip, desc);
+ }
+@@ -116,30 +116,29 @@ static void hlwd_gpio_irq_mask(struct irq_data *data)
+ {
+ 	struct hlwd_gpio *hlwd =
+ 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
+-	unsigned long flags;
+ 	u32 mask;
+ 
+-	raw_spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
+-	mask = ioread32be(hlwd->regs + HW_GPIOB_INTMASK);
+-	mask &= ~BIT(data->hwirq);
+-	iowrite32be(mask, hlwd->regs + HW_GPIOB_INTMASK);
+-	raw_spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
+-	gpiochip_disable_irq(&hlwd->gpioc, irqd_to_hwirq(data));
++	scoped_guard(gpio_generic_lock_irqsave, &hlwd->gpioc) {
++		mask = ioread32be(hlwd->regs + HW_GPIOB_INTMASK);
++		mask &= ~BIT(data->hwirq);
++		iowrite32be(mask, hlwd->regs + HW_GPIOB_INTMASK);
 +	}
++	gpiochip_disable_irq(&hlwd->gpioc.gc, irqd_to_hwirq(data));
+ }
+ 
+ static void hlwd_gpio_irq_unmask(struct irq_data *data)
+ {
+ 	struct hlwd_gpio *hlwd =
+ 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
+-	unsigned long flags;
+ 	u32 mask;
+ 
+-	gpiochip_enable_irq(&hlwd->gpioc, irqd_to_hwirq(data));
+-	raw_spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
++	gpiochip_enable_irq(&hlwd->gpioc.gc, irqd_to_hwirq(data));
 +
-+	return fw;
-+}
++	guard(gpio_generic_lock_irqsave)(&hlwd->gpioc);
 +
-+/**
-+ * zl3073x_flash_bundle_flash - Flash all components
-+ * @zldev: zl3073x device structure
-+ * @components: pointer to components array
-+ * @extack: netlink extack pointer to report errors
-+ *
-+ * Returns 0 in case of success or negative number otherwise.
-+ */
-+static int
-+zl3073x_fw_component_flash(struct zl3073x_dev *zldev,
-+			   struct zl3073x_fw_component *comp,
-+			   struct netlink_ext_ack *extack)
-+{
-+	const struct zl3073x_fw_component_info *info;
-+	int rc;
+ 	mask = ioread32be(hlwd->regs + HW_GPIOB_INTMASK);
+ 	mask |= BIT(data->hwirq);
+ 	iowrite32be(mask, hlwd->regs + HW_GPIOB_INTMASK);
+-	raw_spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
+ }
+ 
+ static void hlwd_gpio_irq_enable(struct irq_data *data)
+@@ -173,10 +172,9 @@ static int hlwd_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
+ {
+ 	struct hlwd_gpio *hlwd =
+ 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
+-	unsigned long flags;
+ 	u32 level;
+ 
+-	raw_spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
++	guard(gpio_generic_lock_irqsave)(&hlwd->gpioc);
+ 
+ 	hlwd->edge_emulation &= ~BIT(data->hwirq);
+ 
+@@ -197,11 +195,9 @@ static int hlwd_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
+ 		hlwd_gpio_irq_setup_emulation(hlwd, data->hwirq, flow_type);
+ 		break;
+ 	default:
+-		raw_spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
+ 		return -EINVAL;
+ 	}
+ 
+-	raw_spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
+ 	return 0;
+ }
+ 
+@@ -225,6 +221,7 @@ static const struct irq_chip hlwd_gpio_irq_chip = {
+ 
+ static int hlwd_gpio_probe(struct platform_device *pdev)
+ {
++	struct gpio_generic_chip_config config;
+ 	struct hlwd_gpio *hlwd;
+ 	u32 ngpios;
+ 	int res;
+@@ -244,25 +241,31 @@ static int hlwd_gpio_probe(struct platform_device *pdev)
+ 	 * systems where the AHBPROT memory firewall hasn't been configured to
+ 	 * permit PPC access to HW_GPIO_*.
+ 	 *
+-	 * Note that this has to happen before bgpio_init reads the
+-	 * HW_GPIOB_OUT and HW_GPIOB_DIR, because otherwise it reads the wrong
+-	 * values.
++	 * Note that this has to happen before gpio_generic_chip_init() reads
++	 * the HW_GPIOB_OUT and HW_GPIOB_DIR, because otherwise it reads the
++	 * wrong values.
+ 	 */
+ 	iowrite32be(0xffffffff, hlwd->regs + HW_GPIO_OWNER);
+ 
+-	res = bgpio_init(&hlwd->gpioc, &pdev->dev, 4,
+-			hlwd->regs + HW_GPIOB_IN, hlwd->regs + HW_GPIOB_OUT,
+-			NULL, hlwd->regs + HW_GPIOB_DIR, NULL,
+-			BGPIOF_BIG_ENDIAN_BYTE_ORDER);
++	config = (typeof(config)){
++		.dev = &pdev->dev,
++		.sz = 4,
++		.dat = hlwd->regs + HW_GPIOB_IN,
++		.set = hlwd->regs + HW_GPIOB_OUT,
++		.dirout = hlwd->regs + HW_GPIOB_DIR,
++		.flags = BGPIOF_BIG_ENDIAN_BYTE_ORDER,
++	};
 +
-+	info = &component_info[comp->id];
-+
-+	switch (info->flash_type) {
-+	case ZL3073X_FLASH_TYPE_NONE:
-+		/* Non-flashable component - used for utility */
-+		return 0;
-+	case ZL3073X_FLASH_TYPE_SECTORS:
-+		rc = zl3073x_flash_sectors(zldev, info->name, info->dest_page,
-+					   info->load_addr, comp->data,
-+					   comp->size, extack);
-+		break;
-+	case ZL3073X_FLASH_TYPE_PAGE:
-+		rc = zl3073x_flash_page(zldev, info->name, info->dest_page,
-+					info->load_addr, comp->data, comp->size,
-+					extack);
-+		break;
-+	case ZL3073X_FLASH_TYPE_PAGE_AND_COPY:
-+		rc = zl3073x_flash_page(zldev, info->name, info->dest_page,
-+					info->load_addr, comp->data, comp->size,
-+					extack);
-+		if (!rc)
-+			rc = zl3073x_flash_page_copy(zldev, info->name,
-+						     info->dest_page,
-+						     info->copy_page, extack);
-+		break;
-+	}
-+	if (rc)
-+		ZL3073X_FW_ERR_MSG(extack, "Failed to flash component '%s'",
-+				   info->name);
-+
-+	return rc;
-+}
-+
-+int zl3073x_fw_flash(struct zl3073x_dev *zldev, struct zl3073x_fw *zlfw,
-+		     struct netlink_ext_ack *extack)
-+{
-+	int i, rc = 0;
-+
-+	for (i = 0; i < ZL_FW_NUM_COMPONENTS; i++) {
-+		if (!zlfw->component[i])
-+			continue; /* Component is not present */
-+
-+		rc = zl3073x_fw_component_flash(zldev, zlfw->component[i],
-+						extack);
-+		if (rc)
-+			break;
-+	}
-+
-+	return rc;
-+}
-diff --git a/drivers/dpll/zl3073x/fw.h b/drivers/dpll/zl3073x/fw.h
-new file mode 100644
-index 0000000000000..fcaa89ab075e1
---- /dev/null
-+++ b/drivers/dpll/zl3073x/fw.h
-@@ -0,0 +1,52 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef _ZL3073X_FW_H
-+#define _ZL3073X_FW_H
-+
-+/*
-+ * enum zl3073x_fw_component_id - Identifiers for possible flash components
-+ */
-+enum zl3073x_fw_component_id {
-+	ZL_FW_COMPONENT_INVALID = -1,
-+	ZL_FW_COMPONENT_UTIL = 0,
-+	ZL_FW_COMPONENT_FW1,
-+	ZL_FW_COMPONENT_FW2,
-+	ZL_FW_COMPONENT_FW3,
-+	ZL_FW_COMPONENT_CFG0,
-+	ZL_FW_COMPONENT_CFG1,
-+	ZL_FW_COMPONENT_CFG2,
-+	ZL_FW_COMPONENT_CFG3,
-+	ZL_FW_COMPONENT_CFG4,
-+	ZL_FW_COMPONENT_CFG5,
-+	ZL_FW_COMPONENT_CFG6,
-+	ZL_FW_NUM_COMPONENTS
-+};
-+
-+/**
-+ * struct zl3073x_fw_component - Firmware component
-+ * @id: Flash component ID
-+ * @size: Size of the buffer
-+ * @data: Pointer to buffer with component data
-+ */
-+struct zl3073x_fw_component {
-+	enum zl3073x_fw_component_id	id;
-+	size_t				size;
-+	void				*data;
-+};
-+
-+/**
-+ * struct zl3073x_fw - Firmware bundle
-+ * @component: firmware components array
-+ */
-+struct zl3073x_fw {
-+	struct zl3073x_fw_component	*component[ZL_FW_NUM_COMPONENTS];
-+};
-+
-+struct zl3073x_fw *zl3073x_fw_load(struct zl3073x_dev *zldev, const char *data,
-+				   size_t size, struct netlink_ext_ack *extack);
-+void zl3073x_fw_free(struct zl3073x_fw *fw);
-+
-+int zl3073x_fw_flash(struct zl3073x_dev *zldev, struct zl3073x_fw *zlfw,
-+		     struct netlink_ext_ack *extack);
-+
-+#endif /* _ZL3073X_FW_H */
++	res = gpio_generic_chip_init(&hlwd->gpioc, &config);
+ 	if (res < 0) {
+-		dev_warn(&pdev->dev, "bgpio_init failed: %d\n", res);
++		dev_warn(&pdev->dev, "failed to initialize generic GPIO chip: %d\n", res);
+ 		return res;
+ 	}
+ 
+ 	res = of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios);
+ 	if (res)
+ 		ngpios = 32;
+-	hlwd->gpioc.ngpio = ngpios;
++	hlwd->gpioc.gc.ngpio = ngpios;
+ 
+ 	/* Mask and ack all interrupts */
+ 	iowrite32be(0, hlwd->regs + HW_GPIOB_INTMASK);
+@@ -282,7 +285,7 @@ static int hlwd_gpio_probe(struct platform_device *pdev)
+ 			return hlwd->irq;
+ 		}
+ 
+-		girq = &hlwd->gpioc.irq;
++		girq = &hlwd->gpioc.gc.irq;
+ 		gpio_irq_chip_set_chip(girq, &hlwd_gpio_irq_chip);
+ 		girq->parent_handler = hlwd_gpio_irqhandler;
+ 		girq->num_parents = 1;
+@@ -296,7 +299,7 @@ static int hlwd_gpio_probe(struct platform_device *pdev)
+ 		girq->handler = handle_level_irq;
+ 	}
+ 
+-	return devm_gpiochip_add_data(&pdev->dev, &hlwd->gpioc, hlwd);
++	return devm_gpiochip_add_data(&pdev->dev, &hlwd->gpioc.gc, hlwd);
+ }
+ 
+ static const struct of_device_id hlwd_gpio_match[] = {
+
 -- 
-2.49.1
+2.48.1
 
 
