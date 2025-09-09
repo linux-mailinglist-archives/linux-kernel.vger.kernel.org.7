@@ -1,178 +1,103 @@
-Return-Path: <linux-kernel+bounces-808403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B53B4FF51
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:26:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C866DB4FF4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDEF036615A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:25:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8305E36609E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725BF3451BF;
-	Tue,  9 Sep 2025 14:25:42 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656B134572A;
+	Tue,  9 Sep 2025 14:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oykfebDO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19BB3469FA
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B541F0E2E;
+	Tue,  9 Sep 2025 14:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757427942; cv=none; b=a7O1lzX7x1i0bBVjVwSiGGJcslR16SbprwCAE1YOpqSl1E01Q0WoRLrsBMmhJnDYhr91bfuNvPWdQMmV35W45I5IeqQ5tsA8rf1alfU6g1K93Te8UWa0JASNPrE+2A8vPHkwrzjOMkTSUwz9YgON4SVbdkyWcBf3TpkMtuFzrDA=
+	t=1757427937; cv=none; b=XwFNR9lYKuh7LuyH45YaVR/vk6sdsAOLqN6EdusxDnVtyxYsVZGJZkeaMAFZ5AdVZ7pre4zHXC6C51GTg/Zg2ChUAm9KpZ6Z1w+39cScX2wZG2Pb8D/0y5P1b7Kc/aJz9bNVBOGQwh1i6R5NESvUfQGpykokxNENueKgt1yd/4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757427942; c=relaxed/simple;
-	bh=uNGcIq+ZR3PxycUsDS2PV0JGZ8EK/zbw9hMatiX9My4=;
+	s=arc-20240116; t=1757427937; c=relaxed/simple;
+	bh=KOCPAbXyhBmrq4G3esSPg3HAVWaUxAD+l+/Z/GxwYro=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mTNv9/o+X03URcsKk6V4G33at3RfPtTpba7ZEb/jVMaPhWB39HwijZO/ZEhcARzV9lR5rvu5YBXeRZOGDCXpjc4QR7of+m+TT0omDpTJJsMR/JJWXl1QyYBiIu3hhYtYkCG3eNqfYRmKaOcKqAwzHfgo+zcKAUccCQ5dYuLxTQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uvzHm-0003Rk-AN; Tue, 09 Sep 2025 16:25:30 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uvzHk-000R8L-1A;
-	Tue, 09 Sep 2025 16:25:28 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id CFBC246A13B;
-	Tue, 09 Sep 2025 14:25:27 +0000 (UTC)
-Date: Tue, 9 Sep 2025 16:25:26 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Patrik Flykt <patrik.flykt@linux.intel.com>, 
-	Dong Aisheng <b29396@freescale.com>, Fengguang Wu <fengguang.wu@intel.com>, 
-	Varka Bhadram <varkabhadram@gmail.com>, Wu Bo <wubo.oduw@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel@pengutronix.de
-Subject: Re: [PATCH 3/7] can: m_can: m_can_handle_state_errors(): fix CAN
- state transition to Error Active
-Message-ID: <20250909-faithful-devious-jaguar-99b51c-mkl@pengutronix.de>
-References: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de>
- <20250812-m_can-fix-state-handling-v1-3-b739e06c0a3b@pengutronix.de>
- <DC74JEKBB6HL.1LJ53UZJ0T0Q9@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YRQWfhgXbuVp8BwZoDjqTB3MBU2g/1S4KMKmwyI0OojcNCrfx4f//c80OpZ49szTv1APpsKQX6cRFuoO9s5XzAOcxqWUlYIZeSi6UnNwXSijmLBmKEVVVgXqUFFWhTlew65xMyB57EIHoGtPt3V6iyIYhobvfbuCAAaNWkVBAYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oykfebDO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AF22C4CEF4;
+	Tue,  9 Sep 2025 14:25:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757427937;
+	bh=KOCPAbXyhBmrq4G3esSPg3HAVWaUxAD+l+/Z/GxwYro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oykfebDOD3Pse+tzCSjCAz2s+XpsZGxDPQ/oNpP6TdYxUuVH2F8km/Wy8s6O8bmN3
+	 xVhTAeGeGcjUnd9Dk9zwOF4xjV+dkYAcHqxAipqz6Gr/TC7mVeLo6zCsEuvaaDlaug
+	 BE5n5vqVrmcC0evZDAnBfDwy6j0BOBqoS6vnK2tS5aitlBmddzJ5UIEkIa7ZFSJ463
+	 FoxbJh9p05npZAl3B+5sm+DFXCf65W6IW4mesh0TBMgrqeEVtdviNoW67oexfgaAft
+	 3SvD9ZCZCJJv3L1K4gtEYswSHx2F3Mi3Cfk4JIszfdjMFy3E0sHNOJIXvN4IpH1sEf
+	 UqUyLae88PdeA==
+Date: Tue, 9 Sep 2025 15:25:30 +0100
+From: Will Deacon <will@kernel.org>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v4 07/28] iommu/arm-smmu-v3: Move TLB range invalidation
+ into a macro
+Message-ID: <aMA42g-QWYzOwg7r@willie-the-truck>
+References: <20250819215156.2494305-1-smostafa@google.com>
+ <20250819215156.2494305-8-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f3rl4hv3iqttmmyj"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DC74JEKBB6HL.1LJ53UZJ0T0Q9@baylibre.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250819215156.2494305-8-smostafa@google.com>
 
+On Tue, Aug 19, 2025 at 09:51:35PM +0000, Mostafa Saleh wrote:
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> index 2698438cd35c..a222fb7ef2ec 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> @@ -1042,6 +1042,70 @@ static inline void arm_smmu_write_strtab_l1_desc(struct arm_smmu_strtab_l1 *dst,
+>  	WRITE_ONCE(dst->l2ptr, cpu_to_le64(val));
+>  }
+>  
+> +/**
+> + * arm_smmu_tlb_inv_build - Create a range invalidation command
+> + * @cmd: Base command initialized with OPCODE (S1, S2..), vmid and asid.
+> + * @iova: Start IOVA to invalidate
+> + * @size: Size of range
+> + * @granule: Granule of invalidation
+> + * @pgsize_bitmap: Page size bit map of the page table.
+> + * @smmu: Struct for the smmu, must have ::features
+> + * @add_cmd: Function to send/batch the invalidation command
+> + * @cmds: Incase of batching, it includes the pointer to the batch
+> + */
+> +#define arm_smmu_tlb_inv_build(cmd, iova, size, granule, pgsize_bitmap, smmu, add_cmd, cmds) \
+> +{ \
+> +	unsigned long _iova = (iova);						\
+> +	size_t _size = (size);							\
+> +	size_t _granule = (granule);						\
+> +	unsigned long end = _iova + _size, num_pages = 0, tg = 0;		\
+> +	size_t inv_range = _granule;						\
 
---f3rl4hv3iqttmmyj
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/7] can: m_can: m_can_handle_state_errors(): fix CAN
- state transition to Error Active
-MIME-Version: 1.0
+This is pretty gross and I've been (very sporadically) trying to replace
+the similar macro we have on the CPU side with static inline functions
+instead.
 
-On 20.08.2025 10:49:35, Markus Schneider-Pargmann wrote:
-> > --- a/drivers/net/can/m_can/m_can.c
-> > +++ b/drivers/net/can/m_can/m_can.c
-> > @@ -812,6 +812,10 @@ static int m_can_handle_state_change(struct net_de=
-vice *dev,
-> >  	u32 timestamp =3D 0;
-> > =20
-> >  	switch (new_state) {
-> > +	case CAN_STATE_ERROR_ACTIVE:
-> > +		/* error active state */
->=20
-> This comment and the one below don't really help IMHO.
+Can you use an inline function here too?
 
-both removed
-
-> > +		cdev->can.state =3D CAN_STATE_ERROR_ACTIVE;
-> > +		break;
-> >  	case CAN_STATE_ERROR_WARNING:
-> >  		/* error warning state */
-> >  		cdev->can.can_stats.error_warning++;
-> > @@ -841,6 +845,13 @@ static int m_can_handle_state_change(struct net_de=
-vice *dev,
-> >  	__m_can_get_berr_counter(dev, &bec);
-> > =20
-> >  	switch (new_state) {
-> > +	case CAN_STATE_ERROR_ACTIVE:
-> > +		/* error active state */
-> > +		cf->can_id |=3D CAN_ERR_CRTL | CAN_ERR_CNT;
-> > +		cf->data[1] =3D CAN_ERR_CRTL_ACTIVE;
-> > +		cf->data[6] =3D bec.txerr;
-> > +		cf->data[7] =3D bec.rxerr;
-> > +		break;
-> >  	case CAN_STATE_ERROR_WARNING:
-> >  		/* error warning state */
-> >  		cf->can_id |=3D CAN_ERR_CRTL | CAN_ERR_CNT;
-> > @@ -877,30 +888,29 @@ static int m_can_handle_state_change(struct net_d=
-evice *dev,
-> >  	return 1;
-> >  }
-> > =20
-> > +static enum can_state
-> > +m_can_can_state_get_by_psr(const u32 psr)
-> > +{
-> > +	if (psr & PSR_BO)
-> > +		return CAN_STATE_BUS_OFF;
-> > +	if (psr & PSR_EP)
-> > +		return CAN_STATE_ERROR_PASSIVE;
-> > +	if (psr & PSR_EW)
-> > +		return CAN_STATE_ERROR_WARNING;
->=20
-> Why should m_can_handle_state_errors() should be called if none of these
-> flags are set?
->=20
-> m_can_handle_state_errors() seems to only be called if IR_ERR_STATE
-> which is defined as:
->   #define IR_ERR_STATE	(IR_BO | IR_EW | IR_EP)
->=20
-> This is the for the interrupt register but will the PSR register bits be
-> set without the interrupt register being set?
-
-The IR_ERR_STATE will be set if there was a _change_ in corresponding
-PSR register's bits.
-
-With successful transmission/reception the corresponding error counter
-decrease and if a threshold is crossed the state changes.
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---f3rl4hv3iqttmmyj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjAONMACgkQDHRl3/mQ
-kZyliAf/ceMUBCHutAOryEMbbIWug1YkHAQvL7QNu0qjuqlkVtecmu8CJe0fjL7j
-/Qb6TpI/hphna8fyakI8qfElK7rICztW1AX4rpEtshqZcUrXO+f5TfMnboATUXpd
-Y5oPqTF8ZJSQJGi0SnORPJvUWlLBKtEn5PeXHNca7RDzzs4W40Z3e2EEVzd4eP3X
-ek4uxCPV6YNcy5anDWziBRj+z3oVDxWUI/jRc4gWNf0g++cRuYnEa48vCGZ1Uhg5
-ImBnZC+szUaxzXmXXNBQ4pqcdOcYs+4IVRkFnJSjG95oANj8CDSYbh4Cvl9va8ji
-J7t0rAsE2qvnycJj5XmYnZc/WOvV9A==
-=IVoy
------END PGP SIGNATURE-----
-
---f3rl4hv3iqttmmyj--
+Will
 
