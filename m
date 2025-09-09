@@ -1,107 +1,129 @@
-Return-Path: <linux-kernel+bounces-808562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3313EB5019B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:40:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5BDB501BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 325297ABA39
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:36:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB8087BF219
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3548C3570BD;
-	Tue,  9 Sep 2025 15:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF72135AACC;
+	Tue,  9 Sep 2025 15:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MUaN4oAc"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUBYwksb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41550352FF2
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E5335A291;
+	Tue,  9 Sep 2025 15:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757432066; cv=none; b=Wf4h6r0Di/23/rscEcFo4zVZM0+e4tHZnPaNFpHRqwz2xlej20yufJ1QyrgvXC1lymXFA7i8ozlwd5KgPv1LHlrRGfmy9AdOGcuMHlFcQ8pTDhcYWbULHEhxyvFMVzFCiThyC+QPY3aokGUa2MZZXx3GFhQBT5JtlaUwunZG0G0=
+	t=1757432113; cv=none; b=nbK9T+wnkVf3soNXtPSqr7/93gsBkynARDi+4keyGwLwk91HysP+EVHA0NCwkFglniPaymb23YcRK/wHtprSqwcf0G6M9kkHEuriLRLl/XtlVTwXNz8nxVPQPn3HD1NvwhJQvCskkL5ulrpHfX53gS/hnaRzEDL5WlpNMy5fFKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757432066; c=relaxed/simple;
-	bh=yn2bOh0B0Zx3GkzFvepDHj8pJ2ij4Q0s3nI3qDvTNYI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YAWJZaPhUQ9t16F++UPKWs+DuLEShJTm4CF7DDIYLKChYbsr6W1rQ0rHaDs6xXrOrI8H8CtIti5/+k/ypQtLxLZVmkltqWGQmvcJZO1TNyHKFcDa+YRYn9B/1gq7J1WAGJx0NBn4Ili/6rh3uKbL6L7axhBB82maBYuafOzCC4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MUaN4oAc; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e2e60221fso11374098b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:34:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757432064; x=1758036864; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KiRBBw+bFoLEBffFJrRthdXKHEiu9VDNF3NlsubTtkQ=;
-        b=MUaN4oAcpMz25eFJC7RUXz52xJEf8onsp+L5U6VOq4o+ouxlzzSTvLYNn3lMroB6QS
-         THqAuYDcgzTaXgEKjVyPES1FoQ2HJVKTiCBm20qhbIH3sVyzgxUPX6qpelEGjOWd61Pa
-         pJPElCoAe4Yl8WFR+BHTpNUQhN2/mknIbiCd0JLN9WORgzczZTWALiC0oyzCZQ1MNoSQ
-         7GIMmuUuuoFUxNQiUZCsfseVSMD7MWo8CKgfMB+YB9dRNA5RU2l4Mku8bxrwDbDv7iBz
-         1j37CBY4/9ZrXbkZPZkL99cE5GW2PFnK5fsQ5yWZKF5f43OYcQDrEydk8MbUxD+aAVEO
-         4r8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757432064; x=1758036864;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KiRBBw+bFoLEBffFJrRthdXKHEiu9VDNF3NlsubTtkQ=;
-        b=IxwJ5Pdu0TWi4Ld3xDqxQooyesIApCYF069oFDdF6X8ljzKC0BKlcB2WQPguNlbB6/
-         nWeh2egrPFtBTeO1SEIjorKZF73HKBrwzul36kV56Tx5MO6AUaQIG2YSHhoFT7PsrkqQ
-         Y1c8BOdenrcN0ErbJ3ipy+e9WRDLsZPh38KYYDzNIq76Q3Ria0s+DhbKCoRKm185RF6Q
-         MUujXFKsUBJiKSzIlELsMdBt3FekX2ObeS9bSbi+JGmfoDzWQCT0m4xRobOUTFgZw90Z
-         DAsQE/3GzQF0K/cZfchbl9VuJxb5Ttt30jyQGtcfSIXE+wu2JK8zRgcTOvdxaXJJpEho
-         MeHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVALIzFWeb80nTvUwOkbrE+xHw6frdOER5Fzo0OS+EzeaNJlwM/U3o6JlV4PWM2TgoteubEpVbXvZRkqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYb1jb/39iGang5w4Leem8bEVyYPbMKLbUTZyqJLfKrTTqAH76
-	OIvlgksz4kFZfogWGLp6derCQQZ0QuJhRV9jANg9fCQKBh0zwOJxt2Yrtj9Mv0kHsyfFwxvOHDx
-	slx0jwQ==
-X-Google-Smtp-Source: AGHT+IG8H/3KOfeazj5iJ04jjkBz6yIE/AOKQMDfJnt9yz4+nKfKTamhvfczManAY+AMloz39ZjJ5n1zY58=
-X-Received: from pfbna26.prod.google.com ([2002:a05:6a00:3e1a:b0:770:4b49:a1ea])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2d1d:b0:772:44e8:ce65
- with SMTP id d2e1a72fcca58-7742df243damr18055484b3a.32.1757432064361; Tue, 09
- Sep 2025 08:34:24 -0700 (PDT)
-Date: Tue, 9 Sep 2025 08:34:22 -0700
-In-Reply-To: <y4sev4v2pixrjliqzpwccgtcwkqp7lkbxvufdhqkfamhmghqe5@u4e6mrwafm7k>
+	s=arc-20240116; t=1757432113; c=relaxed/simple;
+	bh=r10iZ7zeg/sR/nZIwbyfdzbIVMfWHdFFer/db8R+TlY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RdZ0ounaGeBuFDegGT33njtZbq7GcOz209akfRZeP7rhAL7dCfmYRN5xJsVHII8M9nEmTK3e0Xa4O4glZXnkV3x9ZAWI2ZV8rq1cvEB7two1uzLITUMrX2BN+ieYosWVEb4U5rRAqKqOGkii6MO5cp2pXuLa+yZQPC58vtnU6UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUBYwksb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B82D1C4CEFC;
+	Tue,  9 Sep 2025 15:35:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757432112;
+	bh=r10iZ7zeg/sR/nZIwbyfdzbIVMfWHdFFer/db8R+TlY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nUBYwksbxZTX850YqvKjGd7Pdwnngqp+BqCfASPo3dfXxvAwOIyJrgHoIhC234V2A
+	 cJIzfqrlrDgeFbHX6SzkNsdccoAoehtMcavuuANykp1OSfYPUJjZ1oB2uVH0+I9NVT
+	 lx7I4qXxbo8boBXZfEQBz0TLQ2EHbVqXQ1ZTCirBgDfR9egR1YTYh0a3Ne2yR6PriF
+	 YD8oxCzl9At7UZyA7UN5QnpyOUqNEVwituxVHj3kFLIWloq4O/1tFy9bB4O5PDXF1M
+	 fw0QwgF/0XHCg6kfCoV96dHRVngQITRX33+JxRKdEL7YxaYVin0Ym1zy19WN/diHXr
+	 J6cYssdEUceRA==
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-74526ca79beso4940799a34.0;
+        Tue, 09 Sep 2025 08:35:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX29UMbOsd6OoYMCdW/Ubn3wqBymN26bjlAGnqRf78C+OUQtMDqYrAOeYqmn9C1CAy2F9itRJWR6G7iPFyh@vger.kernel.org, AJvYcCXBWwLig5DcZZr7FHPpkitSAJ9CihtV5xxemoVk4BclsmvF1Nvm9F5E2H70MlWIpvP4fRYhEQI15YFQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB5/lJ1cBMVzzZfYw0VnCMGBySs3LJBZUj/qNxeFpbIHVQMlH2
+	45wfJRvUEyQxF80ctdHRendbV/T58XHfjoltGAZNOzF5+YA2I7ewMN7VOcMZe0GXorgFo163ZeQ
+	AWY8VqgD0ZKRK4+eP1cn81o9Y2AUxx6c=
+X-Google-Smtp-Source: AGHT+IFY52ypMIAoRlEjnBako5mUfNmKO1ctM4His3e3+VHyOFYstPxSUTPJe7B/elUpaHufT8qYmM79UMa2SAn9RL4=
+X-Received: by 2002:a05:6830:25d3:b0:741:a5f0:bc82 with SMTP id
+ 46e09a7af769-74c74fb9225mr6102217a34.17.1757432112096; Tue, 09 Sep 2025
+ 08:35:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1752819570.git.naveen@kernel.org> <y4sev4v2pixrjliqzpwccgtcwkqp7lkbxvufdhqkfamhmghqe5@u4e6mrwafm7k>
-Message-ID: <aMBI_mKJPun0eDJl@google.com>
-Subject: Re: [RFC PATCH 0/3] KVM: SVM: Fix IRQ window inhibit handling
-From: Sean Christopherson <seanjc@google.com>
-To: Naveen N Rao <naveen@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Vasant Hegde <vasant.hegde@amd.com>, 
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250908053335.36685-1-xu.yang_2@nxp.com> <20250908053335.36685-4-xu.yang_2@nxp.com>
+In-Reply-To: <20250908053335.36685-4-xu.yang_2@nxp.com>
+From: Chanwoo Choi <chanwoo@kernel.org>
+Date: Wed, 10 Sep 2025 00:34:35 +0900
+X-Gmail-Original-Message-ID: <CAGTfZH1Mt3cYenBSHG9Uz0j6pr0Na_E6aPfrn7pKV0ah22k+WA@mail.gmail.com>
+X-Gm-Features: Ac12FXyNrhC_JrxpQlWIyq0hZrbQBd7StcRc7qJeExZMgjdtwvNrB_wOUgpGcQM
+Message-ID: <CAGTfZH1Mt3cYenBSHG9Uz0j6pr0Na_E6aPfrn7pKV0ah22k+WA@mail.gmail.com>
+Subject: Re: [RESEND v4 4/4] extcon: ptn5150: Support USB role switch via
+ connector fwnode
+To: Xu Yang <xu.yang_2@nxp.com>
+Cc: krzk@kernel.org, myungjoo.ham@samsung.com, cw00.choi@samsung.com, 
+	robh@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org, 
+	swboyd@chromium.org, heikki.krogerus@linux.intel.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	jun.li@nxp.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 09, 2025, Naveen N Rao wrote:
-> On Fri, Jul 18, 2025 at 12:13:33PM +0530, Naveen N Rao (AMD) wrote:
-> > Sean, Paolo,
-> > I have attempted to take the changes discussed in the below thread and 
-> > to convert them into a patch series:
-> > http://lkml.kernel.org/r/Z6JoInXNntIoHLQ8@google.com
-> > 
-> > I have tried to describe the changes, but the nested aspects would 
-> > definitely need a review to ensure correctness and that all aspects are 
-> > covered there.
-> > 
-> > None of these patches include patch tags since none were provided in the 
-> > discussion. I have proposed patch trailers on the individual patches.  
-> > Please take a look and let me know if that's fine.
-> > 
-> > I tested this lightly with nested guests as well and it is working fine 
-> > for me.
-> 
-> Sean, Paolo,
-> Any feedback on this - can you please take a look?
+Hi,
 
-I'm getting there, slowly.  Lot's of time sensitive things in flight right now
-both internally and upstream.  Sorry.
+Applied it. Thanks.
+
+On Mon, Sep 8, 2025 at 2:34=E2=80=AFPM Xu Yang <xu.yang_2@nxp.com> wrote:
+>
+> Since the PTN5150 is a Type-C chip, it's common to describe related
+> properties under the connector node. To align with this, the port
+> node will be located under the connector node in the future.
+>
+> To support this layout, retrieve the USB role switch using the
+> connector's fwnode. For compatibility with existing device trees,
+> keep the usb_role_switch_get() function.
+>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+>
+> ---
+> Changes in v4:
+>  - add Rb tag
+> Changes in v3:
+>  - no changes
+> Changes in v2:
+>  - improve commit message
+> ---
+>  drivers/extcon/extcon-ptn5150.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/extcon/extcon-ptn5150.c b/drivers/extcon/extcon-ptn5=
+150.c
+> index 768428d306ce..f33f80e103c2 100644
+> --- a/drivers/extcon/extcon-ptn5150.c
+> +++ b/drivers/extcon/extcon-ptn5150.c
+> @@ -352,6 +352,8 @@ static int ptn5150_i2c_probe(struct i2c_client *i2c)
+>         }
+>
+>         info->role_sw =3D usb_role_switch_get(info->dev);
+> +       if (!info->role_sw && connector)
+> +               info->role_sw =3D fwnode_usb_role_switch_get(connector);
+>         if (IS_ERR(info->role_sw))
+>                 return dev_err_probe(info->dev, PTR_ERR(info->role_sw),
+>                                      "failed to get role switch\n");
+> --
+> 2.34.1
+>
+>
+
+
+--=20
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
 
