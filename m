@@ -1,169 +1,174 @@
-Return-Path: <linux-kernel+bounces-808271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE12B4FD62
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:37:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49822B4FCB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F30695E486D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:34:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC66F4E4323
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4119352FD8;
-	Tue,  9 Sep 2025 13:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB833340D8F;
+	Tue,  9 Sep 2025 13:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="aMJvw+AE"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="yX0NCeeV"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4003314C1;
-	Tue,  9 Sep 2025 13:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4BE21FF39
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757424709; cv=none; b=RSxA0lgjV3YkXkRgaKpSxRT/FNLbEpuB7rbUDwMbDYU+69pVsDNtwTAOnVOjnwfRtIceTK2JBs/MnO1upXcJm6S18+dEF6BcIlKNbKfXI8BFjN8StM5CLr+0dVKoeL4qEPBj9gnFjkHMwtzPCdaLdnhIQ9+IKQL+Ub/VZxCjBYc=
+	t=1757424268; cv=none; b=jHAO0I7DTDyyeAKiwHDQiivnc3T9znBhCkMHFV1AqtXbkJ953zBR8Q3bEsM0nYwiBflaw0/4GkU7ODrbe93vgO/gtjtqFdc1sVzRfeebg3yCufJWY9LEOq/ab0l9bXsnkaP8d6Qy+muoex30gw+O3fW0QaGVoqriArRwDFLHI5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757424709; c=relaxed/simple;
-	bh=FlT7W0/J3zxEIOtm/dP6L7RmnHSRfjzVbrAlelngAlc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=chJqwnONRApVLDwsaDYdW271OpR8eiqVRPKeTJ1y54dD9m9hbckI+vn6kezqFK0p+ewbUimpSUX6X73kvtNW92B2j245IDLKC5ca90fFm5pDTSfKYUgfVg8ZibZ50q5TjQOo3HzczuwqlF8aPErFxujYwiYxjB9hzwIheNdLX44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=aMJvw+AE; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1757424244; bh=FlT7W0/J3zxEIOtm/dP6L7RmnHSRfjzVbrAlelngAlc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=aMJvw+AECLnus3QgnTXgdFILMEaryvHTcJR4K+tYFTAX3CW42a+/y+9mEuwV5HDo2
-	 cotkXRo9pff6+XQkfmg1g7cHptfMjzmdpuEifKGtNWyO7V/IzLLNHRgjJoB+5/R8DC
-	 d9WXpMW0PDllnmk5gITqq37ewujZKhDIHr3k2nAg=
-From: Luca Weiss <luca@lucaweiss.eu>
-Date: Tue, 09 Sep 2025 15:23:08 +0200
-Subject: [PATCH 2/2] Input: pm8941-pwrkey - Disable wakeup for resin by
- default
+	s=arc-20240116; t=1757424268; c=relaxed/simple;
+	bh=aL39VkMmivSGMWcKiJqE5dHy96jTtUDz0EmE+LQfAVc=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JiyQFsjrzgQQwdRuJuc3S04NjJiSaneA/wQa7Pka3OyyyJFk10rhvJN0PgU2rA5i3IuDX8Jgmydb9JydVi3yHbGnHdH8a5ahE0wTAjI/Zc9QnkeyfBm05ReLccVJQDL8BJcCMOLjciBzD1SUZ1Hc4FJo96tCr2DwrYOqEY7PY4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=yX0NCeeV; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-336d3e4df3eso44287121fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:24:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757424265; x=1758029065; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HhvoYavio6XW9UGp4dKzH+wlvXL0CQx3DgO+74W6ths=;
+        b=yX0NCeeVUA047Wwl9BBnoW3hMITaa7MVngj5UvwE1WL7NK0lufp4cO5pzquYqyxm4l
+         9CoMz7H8fZ545hvMiUNd+gOGxPWcoYTCMEmaqqjtE3u4YW4v7RXIKgnQqCM25MI6SJd1
+         BIDbag6ybU/9bIDZ00gSeG28gEmO5/Bvld/2qpua6JtnEVT1baNYqw6r3FrO+PGu6pKT
+         YfME2aA4uFssH0bKZGaNZkrKcXopMBiqB40PgPs2l1UwlsR8JfidLuncgLOlGBCwFE+2
+         XzI6pFfDGg2wWSMI+sIr1bCRepwE2iMnNfR/dHBbe6pwx0E8zW+nyNPYFMB2ssckbHeE
+         2t+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757424265; x=1758029065;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HhvoYavio6XW9UGp4dKzH+wlvXL0CQx3DgO+74W6ths=;
+        b=sE5HontscN/LMT8N094YEU4w28AN+Y9ofRSeqoTroJAud/nUCPJkYPWZmfOYZ5fb0A
+         opgQg4a14AFVkqI2+QaRu673urbc+hynjKQES8yn+vDvYBF0XJlmE5u32nsCgKjjO4OU
+         bfoGmLUYYMs/1mb+T0gJHT+DilgF+UvYlL0+FZ5MnubFv8HYkJXS5dpZwkWu6lptwxBy
+         gKmCL1L/HxyX3aNyMgiDM/XDgGRlvNT4j4ovuqW05Xk/LEkWcImfEd4mcBzVEhPJ5w+h
+         498ZgXCcSjsiUeGnmqBDD0HlOvM7Poyu9GIFDrpw2y/Hee4Xl/PS7yCt9KL0/wOWHcTv
+         SG6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWgEa6dkcjy7kq8BxJE5Kp5kLszz3VP7o/MM4RYKQEdG59DX2KTdyWOVEi5aLvaZJuN1CRkmlFXsm7R8YU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSxtRgDvpsYRnt+QpGDWGxRyhJCTTSLaVUY/95fTf7nWKwC033
+	85dkmXg4USA4ooJ7XWpjdI0AtwZsgiOVgERH0qPigyfBsioek7ZvJc8xsERwMZZ7hJse/pMpWlA
+	B3wBxExpdxM7vPcb68GMO2pnOvOOHyDSPelroEdUs/Q==
+X-Gm-Gg: ASbGncs3L6zMxLmhJwGBsGFfprkQ075p/Qr7Asr95IdQYcxD+kt2HrsyUJR71v/6vGf
+	mjEZJ7PYnRHuVU13I5u8lY8+vacSYBYOdqY1Zrukno4YNjY6M9R9xLt1pI7Bxi3HLLUdTNF4qXX
+	89Ju87wKbScMja21uSXXt+CRAH39mnkMVuIvX5K2R0aN7sjxjAa7MMCUjjBr7dMZZSTyuUdSZ+t
+	Q06sZrmza8g36wKzSaqjvOo6uWooYIv9pTQi/U=
+X-Google-Smtp-Source: AGHT+IGqxpMTWwovk8l5WQ5dYhWUYy4ZcII/K/jrdWFPYe7kT1CZQHo3Y8LCGp8PKQqEA3qrGlITiYRoPcmLayU54qE=
+X-Received: by 2002:a05:651c:b12:b0:336:dd88:69e0 with SMTP id
+ 38308e7fff4ca-33b57c39f8cmr32465971fa.29.1757424264537; Tue, 09 Sep 2025
+ 06:24:24 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 9 Sep 2025 08:24:23 -0500
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 9 Sep 2025 08:24:23 -0500
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <aMAn4MM_Fs8q8qwj@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-resin-wakeup-v1-2-46159940e02b@lucaweiss.eu>
-References: <20250909-resin-wakeup-v1-0-46159940e02b@lucaweiss.eu>
-In-Reply-To: <20250909-resin-wakeup-v1-0-46159940e02b@lucaweiss.eu>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Courtney Cavin <courtney.cavin@sonymobile.com>, 
- Vinod Koul <vkoul@kernel.org>
-Cc: Bhushan Shah <bshah@kde.org>, ~postmarketos/upstreaming@lists.sr.ht, 
- phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca@lucaweiss.eu>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3014; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=FlT7W0/J3zxEIOtm/dP6L7RmnHSRfjzVbrAlelngAlc=;
- b=owEBbQKS/ZANAwAKAXLYQ7idTddWAcsmYgBowCpxYxRNRMVNMYjmF7ir7BZ+PIuD6035dlrlv
- CCR3+yGisGJAjMEAAEKAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCaMAqcQAKCRBy2EO4nU3X
- VqfsD/9V9Tt7r5/HwTQYc6+73mp8hxTu4Hbv1L6FEle9aTIzUk6k0NDx86Q+g3IzKIQYqSJjuzh
- vueJF35iYxl/n6QYT+rgfy+18oBH4crDp++9QNaMKeo7LDAWApvPgZvaiasyyNOQ+Wd3wSw/2xG
- Rm7gN96lg5d4Q+tbqUhqxY6RajFrcYtjwMaej4lGIcjdfjCCs3l8uKTG1PZQjybU21wawNhbmBr
- hKhoLK36lqRurYEPUUsWZfzfK3Kjhz/nQS6wzLgCyupX9x0Es4LJk2a66FNJQZaDmUACisSsr5g
- ZM9wNexpj5UqUrCdJsCmtmITRKBYRVMkXzXQxlIRE1WkecFFC9iFPvQERExrf2nhREwm3wqWEXn
- UY7fsbe050eeB3mqd31V3KM5DN+zIA2kVv7ypeIm6KxeSboL0o5iZ3S6YtfTJcauJBCpG4x0Zid
- 2Fw+2opAmNhwzGTGV30gNtgMC8MZHpNMw4ijjQj6PKBnRmRRr1I//tQlqEH7sMGHN5wPFvGZUD8
- SISTXrHFjvpXsX7QKCsfLRidBW7v5aWkE2QmDvj+o1waos8D/dnvqGvZIzdfk/aMgDKAVNcZvve
- qvkxTTaghGqDRo+60AESnC+8jN6vZFQMcR9kbZRyz6qZgMgsO9U0VoGwBof6dpeEyNV6edvzjtc
- qWtxDx4VYSbSIYQ==
-X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
+ <20250909-gpio-mmio-gpio-conv-part4-v1-13-9f723dc3524a@linaro.org>
+ <aMAP9hAWars0T83r@smile.fi.intel.com> <CAMRc=MeLTGq8Qu2aT43tkt3vaYCSaJPJPLmaUQ1SAyD_OgVr_g@mail.gmail.com>
+ <aMAn4MM_Fs8q8qwj@smile.fi.intel.com>
+Date: Tue, 9 Sep 2025 08:24:23 -0500
+X-Gm-Features: Ac12FXwbBQSlPLH49oae8yjyXj1ugyDMbkjsHTtBWh1WBSZW49QTty0I4jg5ioo
+Message-ID: <CAMRc=Mdr4oW2d7XZ90rRr_fKC7WToz72v=_kW-s8=Urd0g8k3g@mail.gmail.com>
+Subject: Re: [PATCH 13/15] gpio: sodaville: use new generic GPIO chip API
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Keguang Zhang <keguang.zhang@gmail.com>, 
+	Alban Bedel <albeu@free.fr>, Doug Berger <opendmb@gmail.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Yixun Lan <dlan@gentoo.org>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-'Resin' (*Res*et *In*put) is usually connected to a volume down button
-on devices, which is usually not expected to wake up the device from
-suspend.
+On Tue, 9 Sep 2025 15:13:04 +0200, Andy Shevchenko
+<andriy.shevchenko@intel.com> said:
+> On Tue, Sep 09, 2025 at 01:35:04PM +0200, Bartosz Golaszewski wrote:
+>> On Tue, Sep 9, 2025 at 1:31=E2=80=AFPM Andy Shevchenko
+>> <andriy.shevchenko@intel.com> wrote:
+>> > On Tue, Sep 09, 2025 at 11:15:40AM +0200, Bartosz Golaszewski wrote:
+>
+> ...
+>
+>> > > +     config =3D (typeof(config)){
+>> >
+>> > This looks unusual. Why can't properly formed compound literal be used=
+ as in
+>> > many other places in the kernel?
+>>
+>> It is correct C
+>
+> If it compiles, it doesn't mean it's correct C, it might be non-standard.
+> Have you checked with the standard (note, I read that part in the past,
+> but I may forgot the details, so I don't know the answer to this)?
+>
 
-On the other hand, pwrkey should keep wakeup on. So do not enable wakeup
-for resin unless the "wakeup-source" property is specified in
-devicetree.
+It's a GNU extension alright but it's supported in the kernel as it evaluat=
+es
+to a simple cast.
 
-Note, that this does change behavior by turning off wakeup by default
-for 'resin' and requiring a new dt property to be added to turn it on
-again. But since this is not expected behavior in the first place, and
-most users will not expect this, I'd argue this change is acceptable.
+>> and checkpatch doesn't raise any warnings.
+>
+> checkpatch is far from being useful in the questions like this.
+> It false positively complains for for_each*() macros all over
+> the kernel, for example.
+>
+>> It's the
+>> same kind of argument as between kmalloc(sizeof(struct foo)) vs
+>> kmalloc(sizeof(f)).
+>
+> Maybe, but it introduces a new style while all other cases use the other,
+> _established_ style. So we have a precedent and the form the code is writ=
+ten
+> in is against the de facto usage of the compound literals.
+>
 
-Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
----
- drivers/input/misc/pm8941-pwrkey.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+It may not be *very* common but it's hardly new style:
 
-diff --git a/drivers/input/misc/pm8941-pwrkey.c b/drivers/input/misc/pm8941-pwrkey.c
-index d952c16f24582bfc792e335a1fc954919561fa87..53249d2c081fba8b8235393e14736494bf9b238b 100644
---- a/drivers/input/misc/pm8941-pwrkey.c
-+++ b/drivers/input/misc/pm8941-pwrkey.c
-@@ -60,6 +60,7 @@ struct pm8941_data {
- 	bool		supports_ps_hold_poff_config;
- 	bool		supports_debounce_config;
- 	bool		has_pon_pbs;
-+	bool		wakeup_source_default;
- 	const char	*name;
- 	const char	*phys;
- };
-@@ -245,7 +246,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(pm8941_pwr_key_pm_ops,
- static int pm8941_pwrkey_probe(struct platform_device *pdev)
- {
- 	struct pm8941_pwrkey *pwrkey;
--	bool pull_up;
-+	bool pull_up, wakeup;
- 	struct device *parent;
- 	struct device_node *regmap_node;
- 	const __be32 *addr;
-@@ -402,8 +403,11 @@ static int pm8941_pwrkey_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	wakeup = pwrkey->data->wakeup_source_default ||
-+		of_property_read_bool(pdev->dev.of_node, "wakeup-source");
-+
- 	platform_set_drvdata(pdev, pwrkey);
--	device_init_wakeup(&pdev->dev, 1);
-+	device_init_wakeup(&pdev->dev, wakeup);
- 
- 	return 0;
- }
-@@ -424,6 +428,7 @@ static const struct pm8941_data pwrkey_data = {
- 	.supports_ps_hold_poff_config = true,
- 	.supports_debounce_config = true,
- 	.has_pon_pbs = false,
-+	.wakeup_source_default = true,
- };
- 
- static const struct pm8941_data resin_data = {
-@@ -434,6 +439,7 @@ static const struct pm8941_data resin_data = {
- 	.supports_ps_hold_poff_config = true,
- 	.supports_debounce_config = true,
- 	.has_pon_pbs = false,
-+	.wakeup_source_default = false,
- };
- 
- static const struct pm8941_data pon_gen3_pwrkey_data = {
-@@ -443,6 +449,7 @@ static const struct pm8941_data pon_gen3_pwrkey_data = {
- 	.supports_ps_hold_poff_config = false,
- 	.supports_debounce_config = false,
- 	.has_pon_pbs = true,
-+	.wakeup_source_default = true,
- };
- 
- static const struct pm8941_data pon_gen3_resin_data = {
-@@ -452,6 +459,7 @@ static const struct pm8941_data pon_gen3_resin_data = {
- 	.supports_ps_hold_poff_config = false,
- 	.supports_debounce_config = false,
- 	.has_pon_pbs = true,
-+	.wakeup_source_default = false,
- };
- 
- static const struct of_device_id pm8941_pwr_key_id_table[] = {
+$ git grep -P "\(typeof\(.*\)\) ?\{" | wc
+    108     529    7315
 
--- 
-2.51.0
+Bart
 
+>> I guess it's personal taste but I like this version better.
+>
+> In kernel we also try to be consistent. This add inconsistency. Am I wron=
+g?
+>
+>> > > +             .dev =3D &pdev->dev,
+>> > > +             .sz =3D 4,
+>> > > +             .dat =3D sd->gpio_pub_base + GPINR,
+>> > > +             .set =3D sd->gpio_pub_base + GPOUTR,
+>> > > +             .dirout =3D sd->gpio_pub_base + GPOER,
+>> > > +     };
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
+>
 
