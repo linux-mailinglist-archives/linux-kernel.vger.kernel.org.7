@@ -1,134 +1,150 @@
-Return-Path: <linux-kernel+bounces-809106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58196B508B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:10:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69350B508B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AF691C6368E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:10:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2338567099
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69548266584;
-	Tue,  9 Sep 2025 22:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39877265CDD;
+	Tue,  9 Sep 2025 22:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAGgNJlW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iapk+F4k";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="llp0eEqC"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53451DDC33;
-	Tue,  9 Sep 2025 22:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68451DDC33;
+	Tue,  9 Sep 2025 22:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757455816; cv=none; b=XRnE4J1j311MaL6sdKjUXW47Le46mkoQTiNf7UnNgkQL0PMDTNqS7vQte8cEj9VTiG+Q0QXxTXMXe1AVHClcCrfzXnkUQm2KwFb/q4nHezcWqoteoOZldIAc9QZg2wGqsMyapUrJUpqhJQRzqQ6PTgiyMxOYZjwwvPYlBScPeRk=
+	t=1757455827; cv=none; b=Qk36LMpKoeJYDkFeVyq8hui05Q6U0BdlQvm07WbiJZy+Br2YEj/VE+VmZSoI5UtIdDieShCOtcHM0oN4P4mTCU9hJVlBUxVuNhgkhIa4sfsW8U6cq/qYTEKtIqf3K06x5ha+HUBXwOeSDsITtCi/Ki+BPCaVK9R16nIzIWEupLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757455816; c=relaxed/simple;
-	bh=wGnzp9rz/bafn3nZECaCQnKGysh656pdCdJqgpXqfFw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sdn+rEoagSXzzHWAlUI2HMMTRLKTNV1DYcATFfpIMxsTxQIYIVhikQw58Ol18rSaAE8V8HKcHD/PQl9v5cmZicf4vodY8/qjTj3LqYNr28mFWjVkkdKndqiGFGd/vE+DpbTaqzK812eUytf7uX0Qy7f+fjBBCIatf2yqT5HDXdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAGgNJlW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DA43C4AF0B;
-	Tue,  9 Sep 2025 22:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757455816;
-	bh=wGnzp9rz/bafn3nZECaCQnKGysh656pdCdJqgpXqfFw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=vAGgNJlW6cRXtE++a2OC7ND3wplPF+2YebqndWly+d7ifQu2a+YulMPK7wQay6g29
-	 6hTAdcAPuEsv0QqTLs/CBXJjM3xge0ehiY3ya/Yu/CBg8mTdIQekofbHHWMC/jBlXM
-	 Zfp4yVPidv8W84AIZfWRydlXEn4T5Lp9JOE5tQIXMIzQjrPkAoXNsMZsJTJKJfC2pZ
-	 vS5l6QcCYvMZIKuqrXM0BmM1g16hVkbJ2bzIv7Ukigv7KaWl9LdaNRH0BGbQgyHWHR
-	 6ayB9G+198DGvg5Wiqraobezbo3mlEKG7+5l0sEpgMgIQqm28ahq3cRGbb9NzC84Mz
-	 92F6AHQGUDGzw==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-62189987b54so1791452eaf.3;
-        Tue, 09 Sep 2025 15:10:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVR4CJoFNRBcy79RMArDLrnug4lnnFt6n1937ky4jotGsxYTG6VSFZmEgUKP+yLF+eBQiqeeRuKHDz2KXA=@vger.kernel.org, AJvYcCXs43cLpBtIGBuw9ycByPudwSCXSgligoKiBJqspmGlf8Ksjc+Vv1vvSH/eSgQvSIawZovkTHDHWNZldA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFrTSWwJBSNU7cvfa+n3tDwqx6aCFWS5yskPk7Hq/9H2JfWQWc
-	qdoc8mfmpJL84TgLY4Hl7Jy5xJZt0EMw8+ZuLixyfzc8q0pLbQ138LMPPu/SY0L4bxRi/JWu2Zc
-	OzYHwUcpGFace8o5w7DgxDoKsTI+vnXI=
-X-Google-Smtp-Source: AGHT+IEM8ntDLLY2copoQCXK05+MBuSWEn6ZZbBfjz1pjTQfuDLbS74UxYn+2XOsts1ndat3Y4GgL4Tsd4n7cHc17kk=
-X-Received: by 2002:a05:6820:151a:b0:61e:78bb:ff15 with SMTP id
- 006d021491bc7-62178a12d4dmr5940588eaf.1.1757455815669; Tue, 09 Sep 2025
- 15:10:15 -0700 (PDT)
+	s=arc-20240116; t=1757455827; c=relaxed/simple;
+	bh=ABHj5e8kb5++h/Z8f89+QmkiXI9fQYWM4MvUjHJQr/s=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=BdhFI//9ji1PURkvQje+diyiXmtzkPtsQAwnbNl/B0z8nPcMpSS80xEj6hYXBgw0kajEVf1v1EyFDw2WNnmDXXhfaXf/17ZhooocsYEZ/wIsEtX1xaDHNkbik70CmCMZsoh0Uqds0Oaljfa8ZqtPjQQwNAzBHiJJbuaS6EBQtlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iapk+F4k; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=llp0eEqC; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 09 Sep 2025 22:10:18 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757455820;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t7hj1423Dyvjjl2rVIgjpHUbk2Ysgh+GgeiSplhAYfg=;
+	b=iapk+F4k2+Ag8yhzJo9jWVTl5188Cs3N351Ia9ytwTCrr6Cr8U5qtUwtrUaxGgIBZaQo/b
+	Vyf/twFJokOmyVMbdM74QcWyDFx8mdqUowHoxNNmKQawoTuni6KEGs6WU6kfn3F+7zU7o2
+	c2BSHI2KkUrJDfP7LPLUPtX2Y6OY78tlv75V5EUYzBfV/5r+jEZ9NEDTf1Yx1grd1iLOuF
+	UQFrCxgZzl46MmVXiiwhaqlfikNGreocXAqe2afixIQtlq34INvSBGO/zmYFtchUzsrnM1
+	HmHQKWfkZrglUnoqPINTn1BhmElDQowcA2NjLG9Qh1yMJDahnjhQcRzlykRbXQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757455820;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t7hj1423Dyvjjl2rVIgjpHUbk2Ysgh+GgeiSplhAYfg=;
+	b=llp0eEqCpDuIag9Qm9i6NcFsQBEtGHq0XrWj8PCF45BAdQqhvkxh8BF70hxYlqaiLFvHR/
+	z5zxdjAWu+2BNJAA==
+From: "tip-bot2 for Ming Wang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/drivers] irqchip/loongson-pch-lpc: Use legacy domain for
+ PCH-LPC IRQ controller
+Cc: Ming Wang <wangming01@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250909125840.638418-1-wangming01@loongson.cn>
+References: <20250909125840.638418-1-wangming01@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908175135.4215c780@canb.auug.org.au> <CAGTfZH3JyMGvjWni1Ge+a1=4nRPL30a84DCamj1AtXRLRMgzeQ@mail.gmail.com>
- <aMBZ4zTyMZLdQWJx@yury> <14358105.O9o76ZdvQC@workhorse>
-In-Reply-To: <14358105.O9o76ZdvQC@workhorse>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Date: Wed, 10 Sep 2025 07:09:37 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH1ceu_C5QZ-v-dvTMiddaAK12z0gFnfbb-tt_n5f_fk1w@mail.gmail.com>
-X-Gm-Features: Ac12FXxkoRwmHDfYolV-0qE7Z5vDVMnr5FGJZNrdcqoTsAuzEvQv-VvCfl3ShmU
-Message-ID: <CAGTfZH1ceu_C5QZ-v-dvTMiddaAK12z0gFnfbb-tt_n5f_fk1w@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the bitmap tree with the devfreq tree
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Yury Norov <yury.norov@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <175745581874.684698.8207169683376366959.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+The following commit has been merged into the irq/drivers branch of tip:
 
-On Wed, Sep 10, 2025 at 2:42=E2=80=AFAM Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
->
-> On Tuesday, 9 September 2025 18:46:27 Central European Summer Time Yury N=
-orov wrote:
-> > > > Dropping the bitmap tree changes of this driver is fine by me. I ca=
-n
-> > > > send a rebased patch of that for the next merge window to do the mo=
-ve
-> > > > from the driver's own macro to the shared macro. The functional
-> > > > change in the devfreq tree is more important to get in.
-> > >
-> > > I think that you need to ask to drop your patch[1] on bitmap tree.
-> > > [1] 414054a0bc1f ("PM / devfreq: rockchip-dfi: switch to FIELD_PREP_W=
-M16 macro")
-> >
-> > So I did.
->
-> Thanks! Chanwoo Choi, could you pick the DFI LPDDR5 change again
-> on your side?
+Commit-ID:     c33c43f71bda362b292a6e57ac41b64342dc87b3
+Gitweb:        https://git.kernel.org/tip/c33c43f71bda362b292a6e57ac41b64342d=
+c87b3
+Author:        Ming Wang <wangming01@loongson.cn>
+AuthorDate:    Tue, 09 Sep 2025 20:58:40 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 09 Sep 2025 22:37:57 +02:00
 
-I applied again. Thanks.
+irqchip/loongson-pch-lpc: Use legacy domain for PCH-LPC IRQ controller
 
->
-> >
-> > Nicolas, please make sure resending the dropped patch
-> > rebased shortly after merge window closing. I'd like to schedule it
-> > for -rc2.
->
-> Will do. Thank you!
->
-> Kind regards,
-> Nicolas Frattaroli
->
-> >
-> > Thanks,
-> > Yury
-> >
-> > > Before fixing this merge conflict, I'll drop the patches related to p=
-atch[2].
-> > > [2] 7d9e29ed3f8e ("PM / devfreq: rockchip-dfi: add support for LPDDR5=
-")
-> > >
-> > > After resolving the merge conflict, I'll apply them again.
-> > >
-> >
->
->
->
->
+On certain Loongson platforms, drivers attempting to request a legacy
+ISA IRQ directly via request_irq() (e.g., IRQ 4) may fail. The
+virtual IRQ descriptor is not fully initialized and lacks a valid irqchip.
 
+This issue does not affect ACPI-enumerated devices described in DSDT,
+as their interrupts are properly mapped via the GSI translation path.
+This indicates the LPC irqdomain itself is functional but is not correctly
+handling direct VIRQ-to-HWIRQ mappings.
 
---=20
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+The root cause is the use of irq_domain_create_linear(). This API sets
+up a domain for dynamic, on-demand mapping, typically triggered by a GSI
+request. It does not pre-populate the mappings for the legacy VIRQ range
+(0-15). Consequently, if no ACPI device claims a specific GSI
+(e.g., GSI 4), the corresponding VIRQ (e.g., VIRQ 4) is never mapped to
+the LPC domain. A direct call to request_irq(4, ...) then fails because
+the kernel cannot resolve this VIRQ to a hardware interrupt managed by
+the LPC controller.
+
+The PCH-LPC interrupt controller is an i8259-compatible legacy device
+that requires a deterministic, static 1-to-1 mapping for IRQs 0-15 to
+support legacy drivers.
+
+Fix this by replacing irq_domain_create_linear() with
+irq_domain_create_legacy(). This API is specifically designed for such
+controllers. It establishes the required static 1-to-1 VIRQ-to-HWIRQ
+mapping for the entire legacy range (0-15) immediately upon domain
+creation. This ensures that any VIRQ in this range is always resolvable,
+making direct calls to request_irq() for legacy IRQs function correctly.
+
+Signed-off-by: Ming Wang <wangming01@loongson.cn>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ drivers/irqchip/irq-loongson-pch-lpc.c |  9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/irqchip/irq-loongson-pch-lpc.c b/drivers/irqchip/irq-loo=
+ngson-pch-lpc.c
+index 2d4c3ec..912bf50 100644
+--- a/drivers/irqchip/irq-loongson-pch-lpc.c
++++ b/drivers/irqchip/irq-loongson-pch-lpc.c
+@@ -200,8 +200,13 @@ int __init pch_lpc_acpi_init(struct irq_domain *parent,
+ 		goto iounmap_base;
+ 	}
+=20
+-	priv->lpc_domain =3D irq_domain_create_linear(irq_handle, LPC_COUNT,
+-					&pch_lpc_domain_ops, priv);
++	/*
++	 * The LPC interrupt controller is a legacy i8259-compatible device,
++	 * which requires a static 1:1 mapping for IRQs 0-15.
++	 * Use irq_domain_create_legacy to establish this static mapping early.
++	 */
++	priv->lpc_domain =3D irq_domain_create_legacy(irq_handle, LPC_COUNT, 0, 0,
++						    &pch_lpc_domain_ops, priv);
+ 	if (!priv->lpc_domain) {
+ 		pr_err("Failed to create IRQ domain\n");
+ 		goto free_irq_handle;
 
