@@ -1,142 +1,119 @@
-Return-Path: <linux-kernel+bounces-807128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AF07B4A071
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:58:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23FF8B4A073
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA70A1B26400
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:58:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C52041B2637F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3EA261388;
-	Tue,  9 Sep 2025 03:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002D12D879C;
+	Tue,  9 Sep 2025 03:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="W+sGbsYs"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED05426F2BE;
-	Tue,  9 Sep 2025 03:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757390259; cv=none; b=D8fE1eOQOOWegv9Nf55GKy+1UyMRd8LoCKzyr0Q+VNDpS6D9B0+qkOkNgBP3zfO0WhpDBJohQFnhBilYfSLqPlzu01S9tkT0nX7RCZ+2sN3xuXgJzSasKvgSwRmIONh+bOdCjsMEmc/PipHTzuibtQdiWCJioUAXGxO/3navKUY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757390259; c=relaxed/simple;
-	bh=BNJgYDcqZUv7Fqxk1JnB4446WUyPE6iu0uKhE5nbFdo=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=FXll+rErbzFoU7vJrMYMgKM/UAA3d3iJWV4/Rvrjzhl5cwyw76nh42HfNZmAPSgyz4BbUSeurXwJwrRS9OWMEnvMQROWtegaJ9IWyBAKnUwC3F6/2nL+f/nh13epwyju/E8aGuNUb1RwAsJnLTjU9kqVkNzCt2NBdPabUg7MPJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=W+sGbsYs; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id 7C33221199D2; Mon,  8 Sep 2025 20:57:37 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7C33221199D2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1757390257;
-	bh=pr/GDTJTxmpsBp6NK0FZ1QXNX62XoPBETUfz4jeiPWc=;
+	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="Wpy1PzDt"
+Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC7826F2BE
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 03:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=157.107.129.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757390295; cv=pass; b=k8J4p/FfvsJT2WOgzclx+EMV9SgX9o7Fs0ZjTj6NZxvR67iPz4LGv6g+37Al5ZA31yXU9E1x4kobipDNvkn/p985+C5enxIKZxVqPomJ2SlYgZHLwrYq4Ny9mO0Nr2YBKck+u/LbZUsuoD9aGWLVGAn+kJGVdT1Ysc2y2eGAl8M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757390295; c=relaxed/simple;
+	bh=Z+hMnG2fxpJLQmYFSwzznOnJO274LKvp98j3W0HmHis=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CKb/ihCEq2IPGRE9o5+lmd8O6GoKAaLLjNPJD5Y/7sdaWxc0Xaxs7nvk8KjnTrNwdlugLcn/Kur9Ti4UK0iayoZNV1GudAZR5ItkqrhET3N9SZo+HgUAkBhC87DgeJKi+2EW3h87/uEDPvQqJFgpCeeQRSxv13aRU0pTF8s+ycM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=Wpy1PzDt; arc=pass smtp.client-ip=157.107.129.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
+Received: from localhost (localhost [127.0.0.1])
+	by www.redadmin.org (Postfix) with ESMTP id D5F2D10A2494E;
+	Tue,  9 Sep 2025 12:58:11 +0900 (JST)
+X-Virus-Scanned: amavis at redadmin.org
+Received: from www.redadmin.org ([127.0.0.1])
+ by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id qKDmZJy3mx3X; Tue,  9 Sep 2025 12:58:08 +0900 (JST)
+Received: by www.redadmin.org (Postfix, from userid 1000)
+	id 4E49210A2494C; Tue,  9 Sep 2025 12:58:08 +0900 (JST)
+Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
+ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1757390288;
+	cv=none; b=yi2CSh0FC7Mtch7TQ0f92rVP+71Dq86VdazZ8rdP6o1ye7vS8H3Q35R4jiTQ0ertHRFp5Hyk5TYjDaoGWWR0mXEDWM5aCkFSTiZgUmb3lorXQOX+JbDb3LzU85qjyTM4TwruuZcracWKWAeD3LD6HQv3m5LpH8mJYWYRhmJ8wfg=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
+	t=1757390288; c=relaxed/relaxed;
+	bh=94M6CI9XlJchxWruMx+JgjAJfNASuGSM6Aso/eXZams=;
+	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=ikspzZeAmC+bcPI6MKarElVHN/yG49XvPIqYBm6vHCCiRIlLi38LOnrTCWCp5QufVgOQzBT0mJg3arkV56RGDdONWs+alL/YGkwTyxCdD7+94+in6IiG2D7EhQf4ZhN4otan7sp6RtJMfSZ6kRtOO3Lo8qLli8fjaJc6tYA5fOY=
+ARC-Authentication-Results: i=1; www.redadmin.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 4E49210A2494C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
+	s=20231208space; t=1757390288;
+	bh=94M6CI9XlJchxWruMx+JgjAJfNASuGSM6Aso/eXZams=;
 	h=From:To:Cc:Subject:Date:From;
-	b=W+sGbsYsqbwADbpd/aHOMIBSsFuO6WR5HwcHBpLR4dh+kehKlO0wR3Jde2Ve6YeEz
-	 MJSLJKMpWc31KRftfOHL6FFUhNUXdpN/nNMO5zLicpNOFQuUWHXsIIfgPCac0R5Bro
-	 e95I2acMOG8vyK+6eavrS03du1n1oT41/9cWwPLY=
-From: Saurabh Sengar <ssengar@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	shradhagupta@linux.microsoft.com,
-	ernis@linux.microsoft.com,
-	dipayanroy@linux.microsoft.com,
-	shirazsaleem@microsoft.com,
-	linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ssengar@microsoft.com,
-	stable@vger.kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>
-Subject: [PATCH net v2] net: mana: Remove redundant netdev_lock_ops_to_full() calls
-Date: Mon,  8 Sep 2025 20:57:33 -0700
-Message-Id: <1757390253-6891-1-git-send-email-ssengar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	b=Wpy1PzDtCS+YscHqu2OJE7KyqZTfSfggDlvaaryRHB9XISJbyE6ci8FpKpUP+2l7z
+	 SzlBIc3CdcQ1jo7gEFGziX1WftEKFOZuMdV2pPzJoCtD0VV6OTglExwSDLv70IzjTj
+	 v2N4GZvdChTuRks2JcdLbMpBXSGcGMRkgbjOYbRs=
+From: Akiyoshi Kurita <weibu@redadmin.org>
+To: gregkh@linuxfoundation.org,
+	Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Akiyoshi Kurita <weibu@redadmin.org>
+Subject: [PATCH] staging: rtl8723bs: rtw_efuse.h: simplify copyright banner
+Date: Tue,  9 Sep 2025 12:58:04 +0900
+Message-ID: <20250909035804.129904-1-weibu@redadmin.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 
-NET_SHAPER is always selected for MANA driver. When NET_SHAPER is enabled,
-netdev_lock_ops_to_full() reduces effectively to only an assert for lock,
-which is always held in the path when NET_SHAPER is enabled.
+Replace the banner-style copyright comment with a single-line comment.
+No functional changes.
 
-Remove the redundant netdev_lock_ops_to_full() call.
-
-Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
 ---
-[v2] - removed Fixes tag and stable CC
+ drivers/staging/rtl8723bs/include/rtw_efuse.h | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
- drivers/net/ethernet/microsoft/mana/mana_en.c | 10 ----------
- 1 file changed, 10 deletions(-)
-
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index 550843e2164b..f0dbf4e82e0b 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -2100,10 +2100,8 @@ static void mana_destroy_txq(struct mana_port_context *apc)
- 		napi = &apc->tx_qp[i].tx_cq.napi;
- 		if (apc->tx_qp[i].txq.napi_initialized) {
- 			napi_synchronize(napi);
--			netdev_lock_ops_to_full(napi->dev);
- 			napi_disable_locked(napi);
- 			netif_napi_del_locked(napi);
--			netdev_unlock_full_to_ops(napi->dev);
- 			apc->tx_qp[i].txq.napi_initialized = false;
- 		}
- 		mana_destroy_wq_obj(apc, GDMA_SQ, apc->tx_qp[i].tx_object);
-@@ -2256,10 +2254,8 @@ static int mana_create_txq(struct mana_port_context *apc,
- 		mana_create_txq_debugfs(apc, i);
- 
- 		set_bit(NAPI_STATE_NO_BUSY_POLL, &cq->napi.state);
--		netdev_lock_ops_to_full(net);
- 		netif_napi_add_locked(net, &cq->napi, mana_poll);
- 		napi_enable_locked(&cq->napi);
--		netdev_unlock_full_to_ops(net);
- 		txq->napi_initialized = true;
- 
- 		mana_gd_ring_cq(cq->gdma_cq, SET_ARM_BIT);
-@@ -2295,10 +2291,8 @@ static void mana_destroy_rxq(struct mana_port_context *apc,
- 	if (napi_initialized) {
- 		napi_synchronize(napi);
- 
--		netdev_lock_ops_to_full(napi->dev);
- 		napi_disable_locked(napi);
- 		netif_napi_del_locked(napi);
--		netdev_unlock_full_to_ops(napi->dev);
- 	}
- 	xdp_rxq_info_unreg(&rxq->xdp_rxq);
- 
-@@ -2549,18 +2543,14 @@ static struct mana_rxq *mana_create_rxq(struct mana_port_context *apc,
- 
- 	gc->cq_table[cq->gdma_id] = cq->gdma_cq;
- 
--	netdev_lock_ops_to_full(ndev);
- 	netif_napi_add_weight_locked(ndev, &cq->napi, mana_poll, 1);
--	netdev_unlock_full_to_ops(ndev);
- 
- 	WARN_ON(xdp_rxq_info_reg(&rxq->xdp_rxq, ndev, rxq_idx,
- 				 cq->napi.napi_id));
- 	WARN_ON(xdp_rxq_info_reg_mem_model(&rxq->xdp_rxq, MEM_TYPE_PAGE_POOL,
- 					   rxq->page_pool));
- 
--	netdev_lock_ops_to_full(ndev);
- 	napi_enable_locked(&cq->napi);
--	netdev_unlock_full_to_ops(ndev);
- 
- 	mana_gd_ring_cq(cq->gdma_cq, SET_ARM_BIT);
- out:
--- 
-2.43.0
+diff --git a/drivers/staging/rtl8723bs/include/rtw_efuse.h b/drivers/stagin=
+g/rtl8723bs/include/rtw_efuse.h
+index 669565fa1c69..d791e35db769 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_efuse.h
++++ b/drivers/staging/rtl8723bs/include/rtw_efuse.h
+@@ -1,9 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-/*************************************************************************=
+*****
+- *
+- * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
+- *
+- *************************************************************************=
+*****/
++/* Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved. */
++
+ #ifndef __RTW_EFUSE_H__
+ #define __RTW_EFUSE_H__
+=20
+@@ -95,7 +92,7 @@ void EFUSE_GetEfuseDefinition(struct adapter *padapter, u=
+8 efuseType, u8 type, v
+ u8 efuse_OneByteRead(struct adapter *padapter, u16 addr, u8 *data, bool	 b=
+PseudoTest);
+ u8 efuse_OneByteWrite(struct adapter *padapter, u16 addr, u8 data, bool	 b=
+PseudoTest);
+=20
+-void Efuse_PowerSwitch(struct adapter *padapter, u8 bWrite, u8  PwrState);
++void Efuse_PowerSwitch(struct adapter *padapter, u8 bWrite, u8 PwrState);
+=20
+ u8 EFUSE_Read1Byte(struct adapter *padapter, u16 Address);
+ void EFUSE_ShadowMapUpdate(struct adapter *padapter, u8 efuseType, bool bP=
+seudoTest);
+--=20
+2.47.3
 
 
