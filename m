@@ -1,128 +1,194 @@
-Return-Path: <linux-kernel+bounces-808762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC2EB50475
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:28:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85510B5047B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2E2816BB38
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:28:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E8147A5070
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D49535A2A8;
-	Tue,  9 Sep 2025 17:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BB83568F5;
+	Tue,  9 Sep 2025 17:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="aIblMByO"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F9132CF79
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 17:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ulduel1y"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC8635691F;
+	Tue,  9 Sep 2025 17:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757438890; cv=none; b=Cfhau6g+k1g1oLY0I4qyT/82GzXNFFo/TlP11+f4BdZf6foOeqWeEoYivkgR0od3tmwvO4RCScMxjPLwIGceSLXLiCdbpCKUboR8n+cfu7wM+1oGkcblMCIYHnW0uTc2FNsYLlfjDJ8ve+5UmUw356qyzfhVoPXPk/HegUvmxo4=
+	t=1757438979; cv=none; b=G/VjIAIha08DWsvmetAL8rZf9rMkBZe7ykjeM39ImkOgtDACz7kF3135RFReRHsSZmgWwJ7Y2hSDJX0TXX3uY4EU9K0CgF59UvcIcLIa72CTFe2QF1u/uR2Y+J6j5VDrs7e3jsJhP6wd8VFTFxI5CduKwMtJ38mq8jRgxlkIIVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757438890; c=relaxed/simple;
-	bh=26M4MA/dTjFS6RXtLeG5uBUOvfK1ST1woOlsQ4o+SDw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uYSEqbud+srwCCEZ8z0Rn2rqXaYCFMfV/XCzrxOqBXRymMH6S0xcalL959gMB1NWTLe7ePxn7JRbIEXXC5ChoiRMN9wGRDyJTHOPPYsMLkt3mB5+XAddx8r5D/lixeNonSv7Hn/meDJ2zb2+1U6KeJzPDCdZcKajW+hDQOXYrtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=aIblMByO; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b5fb2f7295so30558731cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 10:28:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1757438888; x=1758043688; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=26M4MA/dTjFS6RXtLeG5uBUOvfK1ST1woOlsQ4o+SDw=;
-        b=aIblMByO5gCK5F5m9ky91HnUwUTg2uv/odPdrlgFwPiC/8rb0v0aMjiLVLwZ3H/Yao
-         4o7sxI90335pVHWUg4mkxK6UexYML0XJ3liLmC0uh4F6fs/wFg+f/6nO4gDl319q5NT6
-         nWrtuo4ODAMqf6+bCBz7xyzsWiFVwBDqfV685M+MF/cqrG8OID/8T090gc6BGAYQtw/v
-         P7y6jNQ9WToIVd/UtyNIWIkCQVTjWgUX40tIOSaMZs3sqVil5liScnd9GpzaKITuABY/
-         FTIZ8ZMHKrJ7U1D+YZte5xQklkQAH1U0N5INJnH5OAoBU+vEtCsdETuGqvaA0C72mDwP
-         ke4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757438888; x=1758043688;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=26M4MA/dTjFS6RXtLeG5uBUOvfK1ST1woOlsQ4o+SDw=;
-        b=fwN927SJdoGk9P5pQppEYOoQ218xX3ObY8/tifCC0DxG96kU1zT5R9KwjH6izVufsz
-         mP+ewDgeKOO2N2ssFdcfAB7DN+5YIKiFeCXijUHdp6WWwWo8mMxR0bw4k9fYXgIgPhIv
-         UPRUfau5t9ej5k6TtPuCnn2rHrMPXJ5VitXiLMIaCLPuE+vbtT+IXXRTYcnFx/Ngbm+q
-         xC/4rysVZXiRtf8zY+CfZwHScZ+MyWBA50asGnm6NBlRjDi5PZkwKXW7ataZOqG0KFWS
-         IGFoZ6Uidp7aDaW2HiDO9mu8jz9B4ao3+Y++CAocu+RcMd+lwKrXi6FWNBJNnYcrxysF
-         DWFg==
-X-Forwarded-Encrypted: i=1; AJvYcCULWLSBSf6LmN8SQi5Fq3LBF6lQOC0fn8d+4ZcUyl0zDRR4ufoD0UTZbCFlVHRRXmD0rJwUp9n0fKdVPGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRZI/hCmdQhcX/E+8MY0J9CSxdYNPuCbs7EqErG4DNy8x+1PeV
-	wwDlU9SvU5BP/GfCnReLqHgOmBKz6ENbGUV4q5XaGoR3sBGqJ7sia4T6w/kSN2U2LLVq3hOcB33
-	nwpYcmwVD7PjQHlOeezd2AW4Jya/3MHNaV69XzTW64g==
-X-Gm-Gg: ASbGncs1Eb6qbfbfSxwJEH1O9MBPR7QIFHbxD6QFsNcxU6qZ/ocoxkej9bYfa3PgT1P
-	vak6ixNN/h5NWZDjY9o76B+zLmqxM+GyTgFWyEUUdefSUKqLHZ/KPM39PfTdNwVlqX6tUQ3nkQl
-	KAsd6+9JafS2uvun0+7kBxwXepTsNggPhx+fvid2GXwXYXLYNhketgx5NnjMexvn9XxsJraWcz7
-	phX4NuTosCuLaY=
-X-Google-Smtp-Source: AGHT+IE7B3CcFEssDe4XL9VRsiu2ZVtPT1/IDpeG+lIelORf8xEKlj0sqrJaLJ7LEospzMuqfY3+hEvX2rVlLb2YGYI=
-X-Received: by 2002:a05:622a:5915:b0:4b5:ec8a:a0a2 with SMTP id
- d75a77b69052e-4b5f847e52cmr164807881cf.32.1757438887951; Tue, 09 Sep 2025
- 10:28:07 -0700 (PDT)
+	s=arc-20240116; t=1757438979; c=relaxed/simple;
+	bh=X6h+qkwqhh7NJsAq+bWdQ5P4ns7PaP8xLURDSvlJljo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DWRswM9Kr0230UDbXbQ3MVo02iQ5Z0tUGv0567RJcDoal/lzLC2bevJgArNzzUxWwCxzAmwKGgq+fa8aPAQslLmpD/L4D/o27BKKkDfoQY+IAEwIJivGVO4R/+RfTkB4GCnudtA6zFlaFFiVNI4Csn+43sowQKZf5xaiROMOgFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ulduel1y; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii.localdomain (unknown [20.236.10.206])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 2BDBB211AA25;
+	Tue,  9 Sep 2025 10:29:37 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2BDBB211AA25
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757438977;
+	bh=gp/ZTt/4C0fll+DipX39N43BG3drsSk0xDimngnq7gU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ulduel1y8gp1lzs6p/K1YSYfATdGgzT7tOnqx2z00wQ2Mcm+5kFiSrjKbHNL1dKR7
+	 SsXcdo8CG0GKrchvp1b7FEAxTpHkJdO1P5JZrZcO5x2CuPHdQuHNI6cdSgJkYdVbQw
+	 3BNKjTk6P6FOjY5afJlDJwQxuUJAts3JmGECMPE4=
+Date: Tue, 9 Sep 2025 10:29:35 -0700
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: Mukesh R <mrathor@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	arnd@arndb.de
+Subject: Re: [PATCH v0 5/6] x86/hyperv: Implement hypervisor ram collection
+ into vmcore
+Message-ID: <aMBj_2ad2vGEIy9J@skinsburskii.localdomain>
+References: <20250904021017.1628993-1-mrathor@linux.microsoft.com>
+ <20250904021017.1628993-6-mrathor@linux.microsoft.com>
+ <aLoUsvfcAqGdV9Qr@skinsburskii.localdomain>
+ <69639330-7fa0-0dce-2504-8c5e3c6e9a64@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <mafs0h5xmw12a.fsf@kernel.org> <20250902134846.GN186519@nvidia.com>
- <mafs0v7lzvd7m.fsf@kernel.org> <20250903150157.GH470103@nvidia.com>
- <mafs0a53av0hs.fsf@kernel.org> <20250904144240.GO470103@nvidia.com>
- <mafs0cy7zllsn.fsf@yadavpratyush.com> <CA+CK2bAKL-gyER2abOV-f4M6HOx9=xDE+=jtcDL6YFbQf1-6og@mail.gmail.com>
- <20250909155407.GO789684@nvidia.com> <CA+CK2bAvxvXKKanKzMZYrknBnVBUGBwYmgXppdiPbotbXRkGeQ@mail.gmail.com>
- <20250909165718.GP789684@nvidia.com>
-In-Reply-To: <20250909165718.GP789684@nvidia.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 9 Sep 2025 13:27:28 -0400
-X-Gm-Features: Ac12FXyDOO8j6_d8TOe427ZRqpXdtWpY2e6HlPY_G5_tWsFdybukjZ54PUO6RWA
-Message-ID: <CA+CK2bBcX08kqmT3gKERdRDWBrfO2+N_LgQ00D3SRXv=bippHQ@mail.gmail.com>
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pratyush Yadav <me@yadavpratyush.com>, Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, 
-	graf@amazon.com, changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <69639330-7fa0-0dce-2504-8c5e3c6e9a64@linux.microsoft.com>
 
-> Yes, but lets design things to have this kind of logical code model
-> where there are specific serializations, with specific versions that
-> are at least discoverably by greping for some struct luo_xxx_ops or
-> whatever.
->
-> Let's avoid open coding versioning stuff where it is hard to find and
-> hard to later make a manifest out of
+On Thu, Sep 04, 2025 at 07:38:53PM -0700, Mukesh R wrote:
+> On 9/4/25 15:37, Stanislav Kinsburskii wrote:
+> > On Wed, Sep 03, 2025 at 07:10:16PM -0700, Mukesh Rathor wrote:
+> >> +
+> >> +/*
+> >> + * Common function for all cpus before devirtualization.
+> >> + *
+> >> + * Hypervisor crash: all cpus get here in nmi context.
+> >> + * Linux crash: the panicing cpu gets here at base level, all others in nmi
+> >> + *		context. Note, panicing cpu may not be the bsp.
+> >> + *
+> >> + * The function is not inlined so it will show on the stack. It is named so
+> >> + * because the crash cmd looks for certain well known function names on the
+> >> + * stack before looking into the cpu saved note in the elf section, and
+> >> + * that work is currently incomplete.
+> >> + *
+> >> + * Notes:
+> >> + *  Hypervisor crash:
+> >> + *    - the hypervisor is in a very restrictive mode at this point and any
+> >> + *	vmexit it cannot handle would result in reboot. For example, console
+> >> + *	output from here would result in synic ipi hcall, which would result
+> >> + *	in reboot. So, no mumbo jumbo, just get to kexec as quickly as possible.
+> >> + *
+> >> + *  Devirtualization is supported from the bsp only.
+> >> + */
+> >> +static noinline __noclone void crash_nmi_callback(struct pt_regs *regs)
+> >> +{
+> >> +	struct hv_input_disable_hyp_ex *input;
+> >> +	u64 status;
+> >> +	int msecs = 1000, ccpu = smp_processor_id();
+> >> +
+> >> +	if (ccpu == 0) {
+> >> +		/* crash_save_cpu() will be done in the kexec path */
+> >> +		cpu_emergency_stop_pt();	/* disable performance trace */
+> >> +		atomic_inc(&crash_cpus_wait);
+> >> +	} else {
+> >> +		crash_save_cpu(regs, ccpu);
+> >> +		cpu_emergency_stop_pt();	/* disable performance trace */
+> >> +		atomic_inc(&crash_cpus_wait);
+> >> +		for (;;);			/* cause no vmexits */
+> >> +	}
+> >> +
+> >> +	while (atomic_read(&crash_cpus_wait) < num_online_cpus() && msecs--)
+> >> +		mdelay(1);
+> >> +
+> >> +	stop_nmi();
+> >> +	if (!hv_has_crashed)
+> >> +		hv_notify_prepare_hyp();
+> >> +
+> >> +	if (crashing_cpu == -1)
+> >> +		crashing_cpu = ccpu;		/* crash cmd uses this */
+> >> +
+> >> +	hv_hvcrash_ctxt_save();
+> >> +	hv_mark_tss_not_busy();
+> >> +	hv_crash_fixup_kernpt();
+> >> +
+> >> +	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+> >> +	memset(input, 0, sizeof(*input));
+> >> +	input->rip = trampoline_pa;	/* PA of hv_crash_asm32 */
+> >> +	input->arg = devirt_cr3arg;	/* PA of trampoline page table L4 */
+> >> +
+> >> +	status = hv_do_hypercall(HVCALL_DISABLE_HYP_EX, input, NULL);
+> >> +	if (!hv_result_success(status)) {
+> >> +		pr_emerg("%s: %s\n", __func__, hv_result_to_string(status));
+> >> +		pr_emerg("Hyper-V: disable hyp failed. kexec not possible\n");
+> > 
+> > These prints won't ever be printed to any console as prints in NMI
+> > handler are deffered.
+> 
+> It's mostly for debug. There are different config options allowing one
+> to build kernel easily dumping to either uart, led, speaker etc... There
+> are no easy ways to debug. kernel debuggers could trap EMERGENCY printks 
+> also...  
+> 
+> Are you 100% sure printk is async even if KERN_EMERG? If yes, I'd like to 
+> propose someday to make it bypass all that for pr_emerg.
+> 
 
-Fully agreed, the versioning has to be centralized (not open coded,
-and verified in a single place) & discoverable.
+Yes, I'm quite sure. Right now this looks like is dead code.
 
->
-> Jason
->
+> 
+> > Also, how are they aligned with the notice in the comment on top of
+> > the function stating that console output would lead to synic ipi call?
+> 
+> Comment says "Hypervisor Crash". Please reread the whole block.
+> 
+
+The comment states that in case of hypervisor crash "console
+output from here would result in synic ipi hcall, which would result in
+reboot".
+So, why printing anything if it will simply lead to reboot?
+
+> > 
+> > Resetting the machine from an NMI handler is sloppy.
+> > There could be another NMI, which triggers the panic, leading to this handler.
+> > NMI handlers servicing is batched meanining that not only this handler
+> > won't output anything, but also any other prints from any other handlers
+> > executed before the same lock won't be written out to consoles.
+> > 
+> > This introduces silent machine resets for the root partition. Can the
+> > intrusive logic me moved to a tasklet?
+> 
+> I really don't think you understand what is going on here. I've tried
+> telling you at least once in the past year, there is no return from the nmi 
+> handler in case of hyp crash, and that this is panic mode, something 
+> really bad has happened! It could be memory corruption, it could be 
+> hw failure...  The hyp goes in emergency mode that just mostly loops, 
+> handling tiny number of hypercalls and msrs for support of dom0/root 
+> like windows that implements custom core collection in raw mode.
+> 
+
+I wasn't clear.
+I wasn't talking about a hypervisor crash. If it is so intrusive, that an
+attempt to print things to console may lead to reboot, then there should
+be no prints for this case.
+
+But this same logic is also used for Linux crashes, when prints can and
+should be printed to console.
+Moreover, whe same logic is used for a case when there is no crash
+kernel loaded, which as I said already leads to silent reboot if panic
+has happened in NMI handler.
+
+I believe this needs to be fixed.
+
+Stas
+
 
