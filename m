@@ -1,106 +1,118 @@
-Return-Path: <linux-kernel+bounces-808698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764D4B503B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:02:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E5DB503A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB48E1BC6005
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:01:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F41B67B7CF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E11372886;
-	Tue,  9 Sep 2025 16:57:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACC0362087;
-	Tue,  9 Sep 2025 16:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C6936209D;
+	Tue,  9 Sep 2025 16:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJU6HNCA"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2D0362982;
+	Tue,  9 Sep 2025 16:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757437062; cv=none; b=TmkBorBOOCrDiyyiKrL6hcE00cjlDakkkso57a6xzNFGEcXj/Ztjwmrj5YS+MSxKdVMMoeVCFNM38o1R6nf/+ABWtXA+0HBw5yqv/8gyX1vwlxqg8/kETxZIA2guol1beFiI2ODMuph7mgxYR3om9sgeSM9cn6ORGV/wUy+jcJk=
+	t=1757437074; cv=none; b=IgAI8L9PkFn9ibhqfFEL0aGRXrhajoJ9g4J5q0Ywbl5LdEbVQ/ysKMOmqkXjOeftq+SjPq8DopJ11Ol2LKEfvZGPl5hXzF91ga+IfqPxeNDyN8ul8xWF3l4Y5my7nbLyVhAxusXn37xd0MUPrvGmwPwqEZQAul1k27IENUbcBdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757437062; c=relaxed/simple;
-	bh=4dSZ165qmpGFOYD4MEJwykS+T7jpCQJECJirqZzh1lA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p7t3flQB8qZW71WvUS0DRJxpx9sUxgyInrLLwL+ljO+Ts71z4Yf1o9a7b3KJGccEPZALlUyruSC/FRj+RqIV2i/Ehe7hZDbe+l2BlPcX3BjSyKmttRvQm0GDo3Fc4I1xtpY1T57X6uCm5EMsigiv+DpZoqsUGZkGfiS0qsJMriE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB5762008;
-	Tue,  9 Sep 2025 09:57:31 -0700 (PDT)
-Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C76363F694;
-	Tue,  9 Sep 2025 09:57:33 -0700 (PDT)
-Message-ID: <fe25e8e0-4b3a-4427-8356-9235252db226@arm.com>
-Date: Tue, 9 Sep 2025 17:57:25 +0100
+	s=arc-20240116; t=1757437074; c=relaxed/simple;
+	bh=kJOoCHsdPAISSR4HcFlHZ0fIcM/ZbT9tK9WAAjen35Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GeA44AMt+yGWBnwIVYd3FJGL9bNgWkMFGMzYZpP4bOakYHFCwyDiX5eArqIg6syhn/qEucq3aycf2zsAYMq09dYQtrobwtRtr4H1L5K1YplpW0hWhMOC5GFCEghu5bkw9eL+ZPCSdZm5Rt5QVxAtH9GZ/7SJLc1RaAvGCdxwuV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJU6HNCA; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-772301f8ae2so4732532b3a.0;
+        Tue, 09 Sep 2025 09:57:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757437073; x=1758041873; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tcYrZ6OBHDvhQxq+aUNrUDX0E+CGMcdoNU7ZBepwhNQ=;
+        b=VJU6HNCAsZwYpVz49LDZLjPE++N+jbUE6sAyHYnhb2YfVOwzUVDQBGoaEdj82+INDW
+         +hHxUL+q6C0onN+eks7pVAStJPex+PMG+JiKJLRmz4+OUxJrQH++rW/G+jphNGP3iAbN
+         SgeXzy7Ii0H2e8/dFsx3fHzrvzaJk04NWGCB4e6SaZNLoumi7Pf9eQBx6/oHXZoGE8js
+         OCfB33ndCSwFgFn1e79a6q7kdswazdy+qzdRrMdNZu2784P4yIPrJwAqZDAsj6O0xqt9
+         9JOqrJpkDMJtbZAR11K9U6sHWlLTAmU4S9/2PmnFyK2wIgG6wjoJjY+Riqy0B3WmbLL/
+         Agrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757437073; x=1758041873;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tcYrZ6OBHDvhQxq+aUNrUDX0E+CGMcdoNU7ZBepwhNQ=;
+        b=by27UzCS391PeWDqMF44ouPZZKI7AMkufMSmQlPf3tmFx9miU4cTSNGi8SOsFClw3G
+         TiPsYXLQvwkL3Amw15esOR2B/M7Rct4rpkw2FR1w4xnH7MB5Ausqb3e5v8qw6UqStMoc
+         2jhR2gaD94lwHP0EHNObaGEiu7R+ij/Limk2cQ1V+BqVl9RPiUNAQx8wUvFX2eiubbo1
+         9UrRnyJMG3JUMlDivWHsKYLJ2I+62+WHODElk8yREo/oLKd4AWV+BaLyAnJUVOh4Eu7Y
+         0cXbUY12l+rK+GWdRNKspyrispp1LWnWwGpxALl0OTu8aW6ddXNbrPycfuNZ0XDBsd0c
+         rwYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZtcre2r/nUVrzPI59kBuOPvxz2Fdq4+kaajCIfL+WAyEY+DbwlnNpzfPOLAE/v76Nzn6OfaWTL+paZjn4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPkZlM2p70yPn4WNX9a8n/IOwyv7h7wSyB1gnKg1lvDHRhRGBf
+	7g6GcMUfVRJb0llVEOWqfzv4xmccdhcOvdD5jXNnBaYHrwljV0FboD0f
+X-Gm-Gg: ASbGncuzZV8qtqh1egN1IM2ykwEUVXi/gBcn1iR8RcZHnqWPOKHboWgAbRNlSjkQJjS
+	zfKpisC3LwsAizyotOkYZrnFgpC0UI86cx/p/qopQYQsFEqrrD8Y5tsoEkwKJwjxjyc0Lw+YilT
+	j8fK2aWSVODg/rUtYKeycjbcrz9NppS+V9E52ijuz/S6ErNWuYINx+EpGrYMrTugZIctv/s6eXD
+	s40R8VF7O4lrSZxTghOpDyqVyA7zLpHiaU4l6Zt4d8gpB/RyqdZbbDakFDgcPUwd5+kobT16wMV
+	PTxmlOhWBIzBPw6RG1eS/roskcH3PpbMXAeK6pOQrDDhRWAlln39gep5G3ptphiF6GD2JgoAvO1
+	4l/EgWruXxvrEgZCiw7j1TKT/8fnG07lEBMJoQdJgWCI=
+X-Google-Smtp-Source: AGHT+IHnhV/he9U+zS3Hc5dbTMwJzzuVpoO3Ld5KHd9kRLPX6iy5U3g7A3+m8O6Xmjz5yMK64Z/ATA==
+X-Received: by 2002:a05:6a20:3d07:b0:243:a17b:6414 with SMTP id adf61e73a8af0-25340a1bf8bmr17603538637.26.1757437072363;
+        Tue, 09 Sep 2025 09:57:52 -0700 (PDT)
+Received: from archlinux ([205.254.163.103])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774662f5185sm2615932b3a.95.2025.09.09.09.57.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 09:57:52 -0700 (PDT)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: [PATCH RESEND] fs/namespace: describe @pinned parameter in do_lock_mount()
+Date: Tue,  9 Sep 2025 22:27:44 +0530
+Message-ID: <20250909165744.8111-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/33] arm_mpam: Merge supported features during
- mpam_enable() into mpam_class
-To: Ben Horgan <ben.horgan@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-19-james.morse@arm.com>
- <b8af1782-0fb8-4e6e-8895-b229a1c67ebe@arm.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <b8af1782-0fb8-4e6e-8895-b229a1c67ebe@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Ben,
+Add a description for the @pinned parameter in do_lock_mount() to suppress
+a compiler warning. No functional changes
 
-On 29/08/2025 14:54, Ben Horgan wrote:
-> On 8/22/25 16:29, James Morse wrote:
->> To make a decision about whether to expose an mpam class as
->> a resctrl resource we need to know its overall supported
->> features and properties.
->>
->> Once we've probed all the resources, we can walk the tree
->> and produce overall values by merging the bitmaps. This
->> eliminates features that are only supported by some MSC
->> that make up a component or class.
->>
->> If bitmap properties are mismatched within a component we
->> cannot support the mismatched feature.
->>
->> Care has to be taken as vMSC may hold mismatched RIS.
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+---
+ fs/namespace.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> Intricate but, as far as I can tell, all correct.
-Yeah - its cpufeature.c all over again.
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 0a5fec7065d7..52394a2ebaf3 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2738,6 +2738,9 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ /**
+  * do_lock_mount - lock mount and mountpoint
+  * @path:    target path
++ * @pinned:  holds a reference to the mountpoint pinned during the
++ *           mount operation to prevent it from being unmounted or
++ *           moved concurrently
+  * @beneath: whether the intention is to mount beneath @path
+  *
+  * Follow the mount stack on @path until the top mount @mnt is found. If
+-- 
+2.50.1
 
-
-> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-
-
-Thanks!
-
-James
 
