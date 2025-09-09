@@ -1,135 +1,76 @@
-Return-Path: <linux-kernel+bounces-807257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C64B4A22B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:25:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7204B4A22F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DCF64E8051
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:25:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A9D51882EEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9640302745;
-	Tue,  9 Sep 2025 06:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610823019CE;
+	Tue,  9 Sep 2025 06:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KWWz+8or"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r4q9qLO3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AD53019CE;
-	Tue,  9 Sep 2025 06:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5F21FDA92
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 06:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757399121; cv=none; b=BGa1g/xDx+NpmbsgOg0mNKGj2zxhi5sE/ZQnA8i0SE+24O3HjiZxhj8Qah2RrFFnB808wbdq0sFrhB96jXkgw1RK0y+HqYmJMUobw+RcI+yaeBcZ87Epyt5J+lZHnthI/QLcvsQRye5Je26Re62cPAZ8ufSfGmkan05jeTsnq20=
+	t=1757399177; cv=none; b=kjgeQ9vxh412LqKqW5OKu/EamqS9yWvo1rd9hsAROdY7OJ1LVD6LTS0j45gdiQC36wIb6muK5ZBMIgtLe6uJCcXE/u6lGiT4KScA7TYXm+eKn/cWYLN0ztrvLloybpGJQatq0Ryk07NW9U4BoibJwwStQ6PwISH1jGcmxM6cW1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757399121; c=relaxed/simple;
-	bh=CxjfHfaKk6Pj0Ax2XdpRiA8eBdWhCbUpfYxEce74T0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hSTsJzGFNGIj3y4nF74ATGRZJkp/4S/gNFrqVbXytP05kUk3LsU/9RGt0rm0LpX/9ugFw7RVeKfGWWv2yF9oGMD60OhtSJGkyEdH0s5N/KM11LpN7mAFgCoxNeDfy7N8oQDCaVsAecYmiuUfLslZv3/qWfnKsByKsIQRjIwrN60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KWWz+8or; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588K28g9026821;
-	Tue, 9 Sep 2025 06:25:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=WFRLdfwKB+f2Hvcm3tcdJIrkbLxkBr
-	qW9aCB1YOegSg=; b=KWWz+8orQXa1+0v3ElxdEgbkowV7gbPNxTS8Y3geF7oDbP
-	vovW4oM61uu57+clFaoJg18oCkuhR1lFIH+FSunA44z9i0yhoVPuRkEaDaDOvCmi
-	NpyWWSWW8QvpVkYDWWvv7ThDV1GXnnWRJy+nm9YXP2jDAYXZPwP/azdhkx75CEQ9
-	OsT4OhjRBUaYRf34Lg24qQN9rD3ScZ8XvCM1PBTsNwBjzIOI7PS3Y3g9k2EUt9yB
-	UEivUf7CfcZ4zP3Le9exs1TQWgZsV9qlzjYrT134LX6/EgpRTMACWpXJdAaPpjkV
-	7Y0PBekL/bZ+TskWafWfQp4Re6ZF4Lp2tRpNnxjQ==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bcsnnge-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 06:25:09 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5895ax6Y011463;
-	Tue, 9 Sep 2025 06:25:08 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 490y9u9v2g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 06:25:07 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5896P3DG48824760
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 9 Sep 2025 06:25:03 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 28F4820049;
-	Tue,  9 Sep 2025 06:25:03 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 06C322004D;
-	Tue,  9 Sep 2025 06:25:03 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.133])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  9 Sep 2025 06:25:02 +0000 (GMT)
-Date: Tue, 9 Sep 2025 08:25:01 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390/nmi: Simplify return statement in
- nmi_registers_valid()
-Message-ID: <20250909062501.8968Abb-hca@linux.ibm.com>
-References: <20250908153221.383589-3-thorsten.blum@linux.dev>
- <b1bf1f70-8b4f-4e96-908a-907da1748377-agordeev@linux.ibm.com>
+	s=arc-20240116; t=1757399177; c=relaxed/simple;
+	bh=YbWIp1etHAL++R3wubMIbRxn6cnxljb60DrA25TQIDc=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=Ve/10PMXzXBzE9DvNQGOwdS8dn+DPYe/XgvgIdl1E+5FKTJMIMmeDhPXpW1irxZ9V5aXSl9GvDt5RJXcEcQFLueNF4h+gPzXLkp1LRcDqca9p2BIKM2cEwfvyTO+Dm2BNxSRrm23OEfsewgOWJ4eNIsG1lHydNMnFqZo0chVnFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r4q9qLO3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DC86C4CEF4;
+	Tue,  9 Sep 2025 06:26:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757399177;
+	bh=YbWIp1etHAL++R3wubMIbRxn6cnxljb60DrA25TQIDc=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=r4q9qLO31+rP6suBIU22lSvAgG0X1922JQYw0cn6Grt7BYx4yOFfyvdMzwyWjoX5t
+	 gqSsp4O/qw/2FPyPGBgCm1giFGvWydAlt/4IrX2SnzEGDIW7mLJURqnWLN1LACDDzY
+	 YsoXlOnz/NwBQNhaVBbjF6i6cfyQ6Z1leN7cS6bz/2dHDEuxFXQj4tEGr8iJPZfWaf
+	 s/9pCvXKssRrDQm1GXkbykOgFRsFFz6BJ8wPejWQz1Whil6ymH/RE2NARGVbR7T8ps
+	 7wHcRsgJ7hIHgmy672ujl6VtKMgjcYeHfDTZS8m3wEiJKpobJFsiox4w4mJut0ikes
+	 zJiUY87zlpC7w==
+Message-ID: <7b1a1a8848e7b0e3a596335715b2fb0e@kernel.org>
+Date: Tue, 09 Sep 2025 06:26:14 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH 2/2] drm/bridge: write full Audio InfoFrame
+In-Reply-To: <20250903-adv7511-audio-infoframe-v1-2-05b24459b9a4@oss.qualcomm.com>
+References: <20250903-adv7511-audio-infoframe-v1-2-05b24459b9a4@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, "Andrzej
+ Hajda" <andrzej.hajda@intel.com>, "David Airlie" <airlied@gmail.com>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime
+ Ripard" <mripard@kernel.org>, "Neil Armstrong" <neil.armstrong@linaro.org>, "Robert
+ Foss" <rfoss@kernel.org>, "Simona Vetter" <simona@ffwll.ch>, "Thomas
+ Zimmermann" <tzimmermann@suse.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b1bf1f70-8b4f-4e96-908a-907da1748377-agordeev@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfX6UuenHDoZcWT
- KU+V9oRAHNlnYaMjqBwZ9FW8UfrVa5Srrvg1AcEVR978NLXxvkRENYeNuWosz2oQ/naHkYDAIsA
- dfoUyeGXsMWPycHiRN+xA8zgA9ylB/yFl0Uu1EY8gkvKdRxcvKIhxehrYktkjejERWTmICuaMa7
- cmtRytL6Qty8clS4NhFfatZKQYTXFqZK1FCcWhT9xlyjZ7T5RLjn29NYVrLeLpXaJwaUhyKVfta
- 2ux73848asl27cGvp3bPAgY98fMZMUXe+qAJJaPfMIC1CDFnwoIrKR/CrqCwZMJCLxt1M/CA4PP
- K7mLGkImZPOEFXZ+sSQuWVs4FfWZemtjk5HevdWCBvWFzfVDCD1GWC74YyJyIlVRgEGJKxUimer
- PRNYFp8e
-X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68bfc845 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=NCyeNK3DE-JQ-TOlShkA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: NuLrYkicH6lIBZGHla0usWqo0XtI8Xya
-X-Proofpoint-ORIG-GUID: NuLrYkicH6lIBZGHla0usWqo0XtI8Xya
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
 
-On Mon, Sep 08, 2025 at 06:52:11PM +0200, Alexander Gordeev wrote:
-> On Mon, Sep 08, 2025 at 05:32:20PM +0200, Thorsten Blum wrote:
-> ...
-> > @@ -321,9 +321,7 @@ static bool notrace nmi_registers_valid(union mci mci)
-> >  	cr2.reg = get_lowcore()->cregs_save_area[2];
-> >  	if (cr2.gse && !mci.gs && !test_cpu_flag(CIF_MCCK_GUEST))
-> >  		return false;
-> > -	if (!mci.ms || !mci.pm || !mci.ia)
-> > -		return false;
-> > -	return true;
-> > +	return mci.ms && mci.pm && mci.ia;
-> >  }
-> >  NOKPROBE_SYMBOL(nmi_registers_valid);
+On Wed, 3 Sep 2025 19:21:29 +0300, Dmitry Baryshkov wrote:
+> Instead of writing the first byte of the infoframe (and hoping that the
+> rest is default / zeroes), hook Audio InfoFrame support into the
+> write_infoframe / clear_infoframes callbacks and use
+> drm_atomic_helper_connector_hdmi_update_audio_infoframe() to write the
+> frame.
 > 
-> This change does not make the whole function readability better.
+> [ ... ]
 
-It actually would decrease readability since every if-statement tells
-you one condition when registers are not valid. Negating the last one
-makes this harder to understand.
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
-But in general please do not send patches like this, which do not come
-with a significant improvement.
+Thanks!
+Maxime
 
