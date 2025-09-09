@@ -1,235 +1,360 @@
-Return-Path: <linux-kernel+bounces-808484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB874B5005D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:56:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8C2B50063
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCF391898DE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:57:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BEEF7B7001
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0858352074;
-	Tue,  9 Sep 2025 14:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B162A34F46F;
+	Tue,  9 Sep 2025 14:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kyL/Ba7s"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Lt1HffP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ysQTX0wS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BoJR84pS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4TVRPKxS"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0075226D1D;
-	Tue,  9 Sep 2025 14:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4C9341AD2
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757429779; cv=none; b=CXKFKoe6CHtqn/wg9+r5mQNMz0LQtqTgcQ5nK1RrRAWtqeUOlP3ZXDaCjajuKiBicLps2agN47CnZYotHzD+TcM+89hOFotjwxxxab9UmLU6d77zeIe/iu808Vol78GP+uFWrqEzCGsq/cpLWK+IebYgdMafALIFutbzTIJiY40=
+	t=1757429760; cv=none; b=GDZHTAF/7nn/0zFQqO7GWcnVV9flOl2/xPtbk8zQF8nVcz4j05jPTALByO6X4jX3B1wS3eQSmr1THoeWAq3K4Vt8ddMqYFuuW0B3q5McftH5HWwh0t9J++r6mZ//3RWJ9XNgytoQmMpeLdMgIwYEH+OQ1D+E6rFDNxmpJl/pYPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757429779; c=relaxed/simple;
-	bh=OUiEyXGSue/Qc0yE11k9Ns0FoQt2oacvNvUxDFL/e5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TwFlyNAHBBk0IsdOlVfFYVpS6B7aZV286IBETqyO7Qiny6xnSBh6cTfLeBjZAWZA7uabG6JkR/vLUXd976BAUQvw/2FnQRjSKWkb47W1KxCLKWXDPec5MeQIi/5VJeXAECvgOmh3ICTvh7IucywTeQQID6GvY6R516N2HtYz6y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kyL/Ba7s; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757429777; x=1788965777;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OUiEyXGSue/Qc0yE11k9Ns0FoQt2oacvNvUxDFL/e5E=;
-  b=kyL/Ba7sAXwbe87nnDQBqrD4uSkzTxanwn0ppyRpvKlvE8OmWJ+xkR2u
-   EBS18BafGCCxxLrp3ZvpGY89t3d9pK2edQ+BX/0nBoKOwUyjGi90CyIGe
-   oomDpsSvwdw4VIztO+2++iYtbVqIThyjY/wN17a03dM8/MyGwy1fF02a0
-   MNyY01G+qqvhmGwetd7jqfhY9UdWVHEXjkcMLX4rBlEjLl3aSCT5k57kG
-   TS5crmnX6SA38w7vXKsc78OVicn0yJYh/Eg8fTNUouMVFjLTvegyOvm6z
-   5OdHWDu9ohqNx3eOmYl4mWUSkOUsCvthl8JGYYXnNP0y5OnyHp3MWwbJy
-   Q==;
-X-CSE-ConnectionGUID: btvsHT8HT9ieNgHUUGjdvA==
-X-CSE-MsgGUID: lQLdIQ6nTIamWIOS2ZjF+g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="59862601"
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="59862601"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 07:56:16 -0700
-X-CSE-ConnectionGUID: MZ6qQ+1FTt+tZ2SdU+KwyQ==
-X-CSE-MsgGUID: LchPTtfYR7WBuVhwCI8EuA==
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 09 Sep 2025 07:56:12 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uvzlR-0004xT-2N;
-	Tue, 09 Sep 2025 14:56:09 +0000
-Date: Tue, 9 Sep 2025 22:55:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Manikanta Guntupalli <manikanta.guntupalli@amd.com>, git@amd.com,
-	michal.simek@amd.com, alexandre.belloni@bootlin.com,
-	Frank.Li@nxp.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, kees@kernel.org, gustavoars@kernel.org,
-	jarkko.nikula@linux.intel.com, linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, radhey.shyam.pandey@amd.com,
-	srinivas.goud@amd.com, shubhrajyoti.datta@amd.com,
-	manion05gk@gmail.com,
-	Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-Subject: Re: [PATCH V5 2/2] i3c: master: Add AMD I3C bus controller driver
-Message-ID: <202509092248.xJvRASTq-lkp@intel.com>
-References: <20250908112117.205270-3-manikanta.guntupalli@amd.com>
+	s=arc-20240116; t=1757429760; c=relaxed/simple;
+	bh=y6lQn3gd6ZC2UP/VV61XZ/hLy3wlHTcSEt1IO/E/Ffg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EqlmLeh4LvaQ7wNpmvDVa/phbNBjg0dcztWFEfoWzGwRJ4XCvL2JwQJXyE8UvfSlcm3K1vu8WQMTEz1WxCbFUwmmMjCu56JnLHmOtemTCnL2m2zWk60Som8vJeC5N7U2mn9wahSLWDJq5tEfKXBovKYaVqDrg4rUGJwZMwEP0qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Lt1HffP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ysQTX0wS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BoJR84pS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4TVRPKxS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B11FE342F4;
+	Tue,  9 Sep 2025 14:55:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757429756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5neFHt5JR3l5076bBzWdzlzRYQZvAlR+g6JdGulkKac=;
+	b=0Lt1HffPqLEBVBYeBfuRjJPSDPTLCLbtu9E/oF2kDs6bjKm/j/BZvXM0tNujpe/LeFT+eE
+	owwq4qqXV1S8uzA6Xq9C57CDXxGRRMj8BzeIZUqohHmRxhp5+R93kBln/3/GjdUefHBqJo
+	3jySORdGoYvuwzCjqj1Mrxi2CuOxa/k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757429756;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5neFHt5JR3l5076bBzWdzlzRYQZvAlR+g6JdGulkKac=;
+	b=ysQTX0wS9cC4FDYt1M45MyYH0umox5Fac7D2xmTW0YIbU6AqnC1fWYmvY78r9g15trg1AZ
+	n9Z/QpuyBvTmWEAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757429755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5neFHt5JR3l5076bBzWdzlzRYQZvAlR+g6JdGulkKac=;
+	b=BoJR84pSzM0rrtHZwTMd3UM4G8ceSWP45cJiO5MZFqijXfW0oSzpxfx17V7SSb2vBBHPxa
+	3K9+mp1Ey/GB9mzLMve9FOeWVxI9lx+q+vJZpyidemQL8A9GIx1oVOmgl8ea+/MFNDplBj
+	vc61aXrM+Zf8R+Lpy0buau/31d7rR0o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757429755;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5neFHt5JR3l5076bBzWdzlzRYQZvAlR+g6JdGulkKac=;
+	b=4TVRPKxSRfEseKij5yKbBjGsnF4xFtUPQpn/yucYzjtTuHFxhIFpZbWyMs40JHeeYUHIPR
+	DYGBe4BGLy4IveBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 99A871388C;
+	Tue,  9 Sep 2025 14:55:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZOw4Jfs/wGhpewAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 09 Sep 2025 14:55:55 +0000
+Message-ID: <64e0795d-c285-47d4-8282-a31d10fe1c47@suse.cz>
+Date: Tue, 9 Sep 2025 16:55:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908112117.205270-3-manikanta.guntupalli@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 04/21] slab: add sheaf support for batching kfree_rcu()
+ operations
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org
+References: <20250903-slub-percpu-caches-v7-0-71c114cdefef@suse.cz>
+ <20250903-slub-percpu-caches-v7-4-71c114cdefef@suse.cz>
+ <aL7FFpIMmXtzzSL1@pc638.lan> <6f8274da-a010-4bb3-b3d6-690481b5ace0@suse.cz>
+ <aL_uhPtztx7Ef0T2@pc636> <838888f2-7a0f-49f0-9e33-592f13b14ad3@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <838888f2-7a0f-49f0-9e33-592f13b14ad3@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-Hi Manikanta,
+On 9/9/25 12:20, Vlastimil Babka wrote:
+> On 9/9/25 11:08, Uladzislau Rezki wrote:
+>> On Mon, Sep 08, 2025 at 02:45:11PM +0200, Vlastimil Babka wrote:
+>>> 
+>>> Hm I could not find where that distinction is in the code, can you give a
+>>> hint please. In __kfree_rcu_sheaf() I do only have a GFP_NOWAIT attempt.
+>>> 
+>> For PREEMPT_RT a regular spin-lock is an rt-mutex which can sleep. We
+>> made kvfree_rcu() to make it possible to invoke it from non-sleep contexts:
+> 
+> Oh you mean it's not allocating even on !RT so there's no RT-specific code.
+> 
+>> CONFIG_PREEMPT_RT
+>> 
+>> preempt_disable() or something similar;
+>>  kvfree_rcu();
+>>   GFP_NOWAIT - lock rt-mutex
+>> 
+>> If GFP_NOWAIT semantic does not access any spin-locks then we are safe
+>> or if it uses raw_spin_locks.
+> 
+> It does access spinlocks so it's not safe. Thanks, I didn't realize that
+> aspect of kfree_rcu(). We'll need to solve this before making sheaves
+> enabled everywhere. I don't think the vma or maple tree code would
+> kfree_rcu() vma or maple_node in such a restricted context. But to be safe
+> I'll just disable the kfree rcu sheaves for PREEMPT_RT for now.
 
-kernel test robot noticed the following build warnings:
+So I came up with this fixup to avoid PREEMPT_RT troubles and make
+kvfree_rcu_barrier() work.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.17-rc5 next-20250909]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+----8<----
+From 15a8db2ef716b5db547f2d86ab30d8774333fb04 Mon Sep 17 00:00:00 2001
+From: Vlastimil Babka <vbabka@suse.cz>
+Date: Tue, 9 Sep 2025 16:18:52 +0200
+Subject: [PATCH] slub: fix issues with kfree_rcu sheaf handling
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Manikanta-Guntupalli/dt-bindings-i3c-Add-AMD-I3C-master-controller-support/20250908-192455
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250908112117.205270-3-manikanta.guntupalli%40amd.com
-patch subject: [PATCH V5 2/2] i3c: master: Add AMD I3C bus controller driver
-config: sh-randconfig-r113-20250909 (https://download.01.org/0day-ci/archive/20250909/202509092248.xJvRASTq-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 10.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250909/202509092248.xJvRASTq-lkp@intel.com/reproduce)
+Fix two issues reported by Ulad:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509092248.xJvRASTq-lkp@intel.com/
+- on PREEMPT_RT if kfree_rcu() comes from an atomic context, taking a
+  spinlock on the barn or doing a GFP_NOWAIT allocation of a new sheaf
+  might not be possible. For now just limit the usage of
+  kfree_rcu_sheaf() to !PREEMPT_RT
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/i3c/master/amd-i3c-master.c:559:68: sparse: sparse: dubious: x | !y
-   drivers/i3c/master/amd-i3c-master.c:427:13: sparse: sparse: context imbalance in 'xi3c_master_dequeue_xfer' - wrong count at exit
-   drivers/i3c/master/amd-i3c-master.c:601:9: sparse: sparse: context imbalance in 'xi3c_master_do_daa' - different lock contexts for basic block
-   drivers/i3c/master/amd-i3c-master.c:644:12: sparse: sparse: context imbalance in 'xi3c_master_send_bdcast_ccc_cmd' - wrong count at exit
-   drivers/i3c/master/amd-i3c-master.c:680:12: sparse: sparse: context imbalance in 'xi3c_master_send_direct_ccc_cmd' - wrong count at exit
-   drivers/i3c/master/amd-i3c-master.c:733:12: sparse: sparse: context imbalance in 'xi3c_master_priv_xfers' - wrong count at exit
-   drivers/i3c/master/amd-i3c-master.c:773:12: sparse: sparse: context imbalance in 'xi3c_master_i2c_xfers' - wrong count at exit
-   drivers/i3c/master/amd-i3c-master.c:926:65: sparse: sparse: shift too big (32) for type unsigned long
+- kvfree_rcu_barrier() must flush all rcu_free sheaves to deliver on its
+  promise. The usage isn't limited to destroying of a single cache. Add
+  flush_all_rcu_sheaves() to do that.
 
-vim +559 drivers/i3c/master/amd-i3c-master.c
+Reported-by: Uladzislau Rezki <urezki@gmail.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ mm/slab.h        |  1 +
+ mm/slab_common.c |  4 ++-
+ mm/slub.c        | 74 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 78 insertions(+), 1 deletion(-)
 
-   499	
-   500	static int xi3c_master_do_daa(struct i3c_master_controller *m)
-   501	{
-   502		struct xi3c_master *master = to_xi3c_master(m);
-   503		struct xi3c_cmd *daa_cmd;
-   504		struct xi3c_xfer *xfer;
-   505		u8 pid_bufs[XI3C_MAX_DEVS][8];
-   506		u8 data, last_addr = 0;
-   507		int addr, ret, i;
-   508		u8 *pid_buf;
-   509	
-   510		u64 *pid_bcr_dcr __free(kfree) = kcalloc(XI3C_MAX_DEVS, sizeof(u64),
-   511							 GFP_KERNEL);
-   512		if (!pid_bcr_dcr)
-   513			return -ENOMEM;
-   514	
-   515		xfer = xi3c_master_alloc_xfer(master, 1);
-   516		if (!xfer) {
-   517			ret = -ENOMEM;
-   518			goto err_daa_mem;
-   519		}
-   520	
-   521		for (i = 0; i < XI3C_MAX_DEVS; i++) {
-   522			addr = i3c_master_get_free_addr(m, last_addr + 1);
-   523			if (addr < 0) {
-   524				ret = -ENOSPC;
-   525				goto err_daa;
-   526			}
-   527			master->daa.addrs[i] = (u8)addr;
-   528			last_addr = (u8)addr;
-   529		}
-   530	
-   531		/* Fill ENTDAA CCC */
-   532		data = I3C_CCC_ENTDAA;
-   533		daa_cmd = &xfer->cmds[0];
-   534		daa_cmd->addr = I3C_BROADCAST_ADDR;
-   535		daa_cmd->rnw = 0;
-   536		daa_cmd->tx_buf = &data;
-   537		daa_cmd->tx_len = 1;
-   538		daa_cmd->type = XI3C_SDR_MODE;
-   539		daa_cmd->tid = XI3C_SDR_TID;
-   540		daa_cmd->continued = true;
-   541	
-   542		ret = xi3c_master_common_xfer(master, xfer);
-   543		/* DAA always finishes with CE2_ERROR or NACK_RESP */
-   544		if (ret && ret != I3C_ERROR_M2) {
-   545			goto err_daa;
-   546		} else {
-   547			if (ret && ret == I3C_ERROR_M2) {
-   548				ret = 0;
-   549				goto err_daa;
-   550			}
-   551		}
-   552	
-   553		master->daa.index = 0;
-   554	
-   555		while (true) {
-   556			struct xi3c_cmd *cmd = &xfer->cmds[0];
-   557	
-   558			pid_buf = pid_bufs[master->daa.index];
- > 559			addr = (master->daa.addrs[master->daa.index] << 1) |
-   560			       (!parity8(master->daa.addrs[master->daa.index]));
-   561	
-   562			cmd->tx_buf = (u8 *)&addr;
-   563			cmd->tx_len = 1;
-   564			cmd->addr = I3C_BROADCAST_ADDR;
-   565			cmd->rnw = 1;
-   566			cmd->rx_buf = pid_buf;
-   567			cmd->rx_len = XI3C_DAA_SLAVEINFO_READ_BYTECOUNT;
-   568			cmd->is_daa = true;
-   569			cmd->type = XI3C_SDR_MODE;
-   570			cmd->tid = XI3C_SDR_TID;
-   571			cmd->continued = true;
-   572	
-   573			ret = xi3c_master_common_xfer(master, xfer);
-   574	
-   575			/* DAA always finishes with CE2_ERROR or NACK_RESP */
-   576			if (ret && ret != I3C_ERROR_M2) {
-   577				goto err_daa;
-   578			} else {
-   579				if (ret && ret == I3C_ERROR_M2) {
-   580					xi3c_master_resume(master);
-   581					master->daa.index--;
-   582					ret = 0;
-   583					break;
-   584				}
-   585			}
-   586		}
-   587	
-   588		kfree(xfer);
-   589	
-   590		for (i = 0; i < master->daa.index; i++) {
-   591			i3c_master_add_i3c_dev_locked(m, master->daa.addrs[i]);
-   592	
-   593			pid_bcr_dcr[i] = FIELD_GET(XI3C_PID_MASK,
-   594						   get_unaligned_be64(pid_bufs[i]));
-   595			dev_info(master->dev, "Client %d: PID: 0x%llx\n", i, pid_bcr_dcr[i]);
-   596		}
-   597	
-   598		return 0;
-   599	
-   600	err_daa:
-   601		kfree(xfer);
-   602	err_daa_mem:
-   603		xi3c_master_reinit(master);
-   604		return ret;
-   605	}
-   606	
-
+diff --git a/mm/slab.h b/mm/slab.h
+index f1866f2d9b21..e82e51c44bd0 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -436,6 +436,7 @@ static inline bool is_kmalloc_normal(struct kmem_cache *s)
+ }
+ 
+ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj);
++void flush_all_rcu_sheaves(void);
+ 
+ #define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | \
+ 			 SLAB_CACHE_DMA32 | SLAB_PANIC | \
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 2d806e025685..005a4319c06a 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1973,7 +1973,7 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+ 	if (!head)
+ 		might_sleep();
+ 
+-	if (kfree_rcu_sheaf(ptr))
++	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && kfree_rcu_sheaf(ptr))
+ 		return;
+ 
+ 	// Queue the object but don't yet schedule the batch.
+@@ -2050,6 +2050,8 @@ void kvfree_rcu_barrier(void)
+ 	bool queued;
+ 	int i, cpu;
+ 
++	flush_all_rcu_sheaves();
++
+ 	/*
+ 	 * Firstly we detach objects and queue them over an RCU-batch
+ 	 * for all CPUs. Finally queued works are flushed for each CPU.
+diff --git a/mm/slub.c b/mm/slub.c
+index 9f9b7e1fa356..19cd8444ae5d 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -3895,6 +3895,80 @@ static void flush_all(struct kmem_cache *s)
+ 	cpus_read_unlock();
+ }
+ 
++static void flush_rcu_sheaf(struct work_struct *w)
++{
++	struct slub_percpu_sheaves *pcs;
++	struct slab_sheaf *rcu_free;
++	struct slub_flush_work *sfw;
++	struct kmem_cache *s;
++
++	sfw = container_of(w, struct slub_flush_work, work);
++	s = sfw->s;
++
++	local_lock(&s->cpu_sheaves->lock);
++	pcs = this_cpu_ptr(s->cpu_sheaves);
++
++	rcu_free = pcs->rcu_free;
++	pcs->rcu_free = NULL;
++
++	local_unlock(&s->cpu_sheaves->lock);
++
++	if (rcu_free)
++		call_rcu(&rcu_free->rcu_head, rcu_free_sheaf_nobarn);
++}
++
++
++/* needed for kvfree_rcu_barrier() */
++void flush_all_rcu_sheaves()
++{
++	struct slub_percpu_sheaves *pcs;
++	struct slub_flush_work *sfw;
++	struct kmem_cache *s;
++	bool flushed = false;
++	unsigned int cpu;
++
++	cpus_read_lock();
++	mutex_lock(&slab_mutex);
++
++	list_for_each_entry(s, &slab_caches, list) {
++		if (!s->cpu_sheaves)
++			continue;
++
++		mutex_lock(&flush_lock);
++
++		for_each_online_cpu(cpu) {
++			sfw = &per_cpu(slub_flush, cpu);
++			pcs = per_cpu_ptr(s->cpu_sheaves, cpu);
++
++			if (!pcs->rcu_free || !pcs->rcu_free->size) {
++				sfw->skip = true;
++				continue;
++			}
++
++			INIT_WORK(&sfw->work, flush_rcu_sheaf);
++			sfw->skip = false;
++			sfw->s = s;
++			queue_work_on(cpu, flushwq, &sfw->work);
++			flushed = true;
++		}
++
++		for_each_online_cpu(cpu) {
++			sfw = &per_cpu(slub_flush, cpu);
++			if (sfw->skip)
++				continue;
++			flush_work(&sfw->work);
++		}
++
++		mutex_unlock(&flush_lock);
++	}
++
++	mutex_unlock(&slab_mutex);
++	cpus_read_unlock();
++
++	if (flushed)
++		rcu_barrier();
++}
++
+ /*
+  * Use the cpu notifier to insure that the cpu slabs are flushed when
+  * necessary.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0
+
+
 
