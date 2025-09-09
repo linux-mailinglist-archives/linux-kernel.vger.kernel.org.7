@@ -1,175 +1,99 @@
-Return-Path: <linux-kernel+bounces-808289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0911FB4FD91
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:41:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F2A4B4FD98
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D241889D1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:38:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E9564E18BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1A834166D;
-	Tue,  9 Sep 2025 13:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131E4343216;
+	Tue,  9 Sep 2025 13:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+8otUxe"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="f9/DX6Ds"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15C321FF24
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425034; cv=none; b=t2zIlpI6vb0/IrHxTSku6Qbs0bAVea+s1qAruTKTZ3JPCyFJaAy+Zq6EfXzFK25Bo7/pIHd+EDmHFS/F3VEMhjP2zwjC+05NrntFltOCaqh10R8zRiu93U+NFkDJaOssqqN7V6Ls0hjF9LqoAElqNBQ/FtuEYWu334VLn3kFNjE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425034; c=relaxed/simple;
-	bh=1blQW6ZI4tDED7PddKag/weDoI9defs5eCmMBD39vCc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GWrybXzQXxts5oex68/yOLFE86GtYre8/RaLkFeOGcRAe7UyRNEyxH6iAC0hfuraDFfrqHbNxOvchR4vANjUjemcPLo6H3ysPVLq/0PWwQ2dlNpTmq3jsK61syxd7QVS714vgfB5qgsO5Y2x4vFXc8RFogGG4dIaFBjFvVWWV14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+8otUxe; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24b14d062acso11031365ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:37:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757425032; x=1758029832; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tObwF+Z08H79MDMKWC6zGt+hFazMP8SQpHHt/ZJ99zc=;
-        b=f+8otUxewBsC/pfPKDmc/j5jEofFX3UQndLtLA6Rm7ZBemTfzCxqqytWHxwXm0MajN
-         D+nS2FIFpVBPs43PT1pymh0+onxNRAfEACmkc0dSMKb0EW8WLPkCgisFmrv1/AqysUue
-         1GpwhedsZtvD310I5DP0UzGe73nweKnwqDgrOYRtbg8Rj4oYSy1V5U28r14iZ2ZD138k
-         b5EB3E/y3APAGw6dG7nMQWqv7LGhmY4r5oAqFAb/NxtNdFh3N4tu8P5uslXpFE5e2dnH
-         4DLOZvkLAj4Wa9JhcmZJ5mng+RkVl26Y0T+tvjN3AJtmLpjyWWmKu1iBv+YpKzyrnTOV
-         Vylg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757425032; x=1758029832;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tObwF+Z08H79MDMKWC6zGt+hFazMP8SQpHHt/ZJ99zc=;
-        b=EyD7nQhRGZcOgtAGqPuLl8P5GYepy7YNflvR8q+ww0WFOBu7HvWbe0+6KfqWmf7OWj
-         ZQwlrKj7GtUpjlft3oHv2je7HRBQ8YooN2q0KlQI1lzih0IWnmki9PHSxvtJ8JEEGg2a
-         wunXn4qdum5Hlt9vSZnVMn6+7shyKav3y4dcasdOVzwkG6O6momz6dh386t0oR6Xxkj8
-         rv3nZzbp91PdVgKZhdXSksSRJMlwu0ywxjottecWNZtrTnTxEjyTEpi9WwQt0RCuEV6l
-         ncm0Di5Ae7t+/Kx8M1fI76WedHV6Jix4JiP+RhE0jI/h28LHHA739W3HS/pJBPVhbiiG
-         F8fA==
-X-Forwarded-Encrypted: i=1; AJvYcCVloNJB21cLLEw8BzWd4qx1lJ/P1lQOnEmzXw+fQR3dixey/qzcy52t+IXfet8au3OF0/BjvePHUXb72EU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzlq+TjTnIO1588ddbzf/rV3lrvmj+g2TKBgHq7YtnnRmCDOx1G
-	PDp2MmD3tR9RWJRPwbh2lNeRGM4ZbUCO4NRqGrOMRFVqTBMNHtRK0MvtgEr/zdFu6mVRrf2LvjZ
-	zeiP7wSV54/Swjq5fIrGGCrkf/IlSGN8UNQ==
-X-Gm-Gg: ASbGncvy5QuuPRM6POSJaAjkgv5TYSs4Z7pO5nsgA+cCsZ5aLOgwMdA3dO0PJChbST7
-	ARK8dfzs0eucJepF4L3YHemcejoNyK526b9QaVjI8I7rcdNCKC1zPC2l3f1EN0wFpMUtigT+GOq
-	9DLp3gc8uJSAG4CkiImZ0+3unn0PWf4nMDL3XiTV2+qXAtXMyuEsebBDcL4IlzmvlIoQQ9sW5rE
-	PE7ncbfysDRiJU6mg==
-X-Google-Smtp-Source: AGHT+IHOvEUNBPtasBBqDVGrC3boG1QFPoLsPBUKZG/vU4sKHUOzXJ8cpzdtz7sFr+UjNvP3nBS1m8FRoIPx0JfHBlk=
-X-Received: by 2002:a17:902:f682:b0:24c:b6b6:e54c with SMTP id
- d9443c01a7336-2516e4b07f1mr82434165ad.3.1757425032140; Tue, 09 Sep 2025
- 06:37:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE757215198;
+	Tue,  9 Sep 2025 13:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757425071; cv=pass; b=ZhJ1XwM7k/Po4re3QEu8vCmm7M4PtqKYSblZenXpGcRHIcF9YBF0rxEdYTduo7JrKgFAj8u6hlcrsMoPXFVGaoR8Uiatl7r8dWiRAz5dfcddNd4z4UOC9HdkseKu5up5X5MNydBvFVFeMcUoPVH7xUsQwrcuc519Byojw+uQoJs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757425071; c=relaxed/simple;
+	bh=vDE7ir/Q7thEdsekL5zUEuO0QD6TAng9vUKCP9GpxY0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=rCihdFRcsjsQ6xqIgS62anN4FrBc4uqefV4JVcUCaYrHEByi3fHdiEDnmYvX98aWrrknUKBsUE1M2XwyH82YxBrpntT+Mc2JALcYquA2spfUKtYbAdmcPH6cyNkmv7DlFzZUAJ0YdDFafkY6zHrTDE8QR1u2o2LSlRq+9UV7exU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=f9/DX6Ds; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757425041; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=DRnPNZ9FHg1EE306zf6op9Zevb/+iQaio04QrAjfKBKqzLnOKx/Gyf8WGThBNPFwvBmIymAzpZjZXXtDliSBHCqfV8PCsLpT4ZrGaudhzzlxUY/RUV/81fJCR62sjvcNp+YkMRJ61khDrPE7zCCPcv5gg9s9DHFGbasXThQDyV8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757425041; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=vDE7ir/Q7thEdsekL5zUEuO0QD6TAng9vUKCP9GpxY0=; 
+	b=T4/bkpB4rMwgDlBai5GzPPrf4NkcBwu1w+MVr+cIyqLBEDcHoPKrj704pjbH1Xez+8GV9z5JDv8cSIY2E6RdJvw+X1OqMeSeD+ZXlKaPEPs87nEePvB6A0tHBNOvo8nW+Y1Q1b6M///3NPDCP78O40EpcW9+IOrf86DJSqoJgDY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757425041;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=vDE7ir/Q7thEdsekL5zUEuO0QD6TAng9vUKCP9GpxY0=;
+	b=f9/DX6Ds175Fx2Ou0TuHIOvCArr7HoYsjjU4d7PS+PrRtjfHpnZ3jLEWuJUN+6DA
+	ozRjAISzPSTY9wsYKHv1ZpRxBCnsn2eUx4OnqEWsCU3Y+uvQDkf+j0vJN243M78RPyI
+	GqNu0VskkGUuYIq3rRQS3GH6It+tS9fXM7Nv6xPE=
+Received: by mx.zohomail.com with SMTPS id 1757425037616341.77359567758015;
+	Tue, 9 Sep 2025 06:37:17 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250908211559.519892-1-thorsten.blum@linux.dev> <4005498b-d866-4e41-a8a4-d8228b2062e7@ursulin.net>
-In-Reply-To: <4005498b-d866-4e41-a8a4-d8228b2062e7@ursulin.net>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 9 Sep 2025 09:36:59 -0400
-X-Gm-Features: Ac12FXw7muqg4kVuUdM_LumdYu1y5udy9p_-qPeA0dWyuOGO6hI58DbsamVKYbk
-Message-ID: <CADnq5_NDrq_S7rcpr6_MY-USfVGr8-QcJ2hqnai7VEm5D_OyxQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Replace kzalloc + copy_from_user with memdup_user
-To: Tvrtko Ursulin <tursulin@ursulin.net>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v1] rust: refactor `to_result` to return the original
+ value
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <C424F7A6-524C-4A37-8513-B3BA2178A709@collabora.com>
+Date: Tue, 9 Sep 2025 10:37:01 -0300
+Cc: =?utf-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ daniel@sedlak.dev,
+ dirk.behme@de.bosch.com,
+ felipe_life@live.com,
+ tamird@gmail.com,
+ dakr@kernel.org,
+ tmgross@umich.edu,
+ a.hindborg@kernel.org,
+ lossin@kernel.org,
+ bjorn3_gh@protonmail.com,
+ gary@garyguo.net,
+ boqun.feng@gmail.com,
+ alex.gaynor@gmail.com,
+ ojeda@kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <CDBE5225-831B-4C70-BFD0-FDE034871DCA@collabora.com>
+References: <20250909123258.29304-1-work@onurozkan.dev>
+ <CAH5fLghVt6MKfiDkmd-5DMAKA=yXQzMu3GNHAqB+HRGhyJ0tqA@mail.gmail.com>
+ <C424F7A6-524C-4A37-8513-B3BA2178A709@collabora.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Tue, Sep 9, 2025 at 4:17=E2=80=AFAM Tvrtko Ursulin <tursulin@ursulin.net=
-> wrote:
->
->
-> On 08/09/2025 22:15, Thorsten Blum wrote:
-> > Replace kzalloc() followed by copy_from_user() with memdup_user() to
-> > improve and simplify ta_if_load_debugfs_write() and
-> > ta_if_invoke_debugfs_write().
-> >
-> > No functional changes intended.
-> >
-> > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> > ---
-> >   drivers/gpu/drm/amd/amdgpu/amdgpu_psp_ta.c | 20 ++++++--------------
-> >   1 file changed, 6 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp_ta.c b/drivers/gpu/d=
-rm/amd/amdgpu/amdgpu_psp_ta.c
-> > index 38face981c3e..6e8aad91bcd3 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp_ta.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp_ta.c
-> > @@ -171,13 +171,9 @@ static ssize_t ta_if_load_debugfs_write(struct fil=
-e *fp, const char *buf, size_t
-> >
-> >       copy_pos +=3D sizeof(uint32_t);
-> >
-> > -     ta_bin =3D kzalloc(ta_bin_len, GFP_KERNEL);
-> > -     if (!ta_bin)
-> > -             return -ENOMEM;
-> > -     if (copy_from_user((void *)ta_bin, &buf[copy_pos], ta_bin_len)) {
-> > -             ret =3D -EFAULT;
-> > -             goto err_free_bin;
-> > -     }
-> > +     ta_bin =3D memdup_user(&buf[copy_pos], ta_bin_len);
-> > +     if (IS_ERR(ta_bin))
-> > +             return PTR_ERR(ta_bin);
-> >
-> >       /* Set TA context and functions */
-> >       set_ta_context_funcs(psp, ta_type, &context);
-> > @@ -327,13 +323,9 @@ static ssize_t ta_if_invoke_debugfs_write(struct f=
-ile *fp, const char *buf, size
-> >               return -EFAULT;
-> >       copy_pos +=3D sizeof(uint32_t);
-> >
-> > -     shared_buf =3D kzalloc(shared_buf_len, GFP_KERNEL);
-> > -     if (!shared_buf)
-> > -             return -ENOMEM;
-> > -     if (copy_from_user((void *)shared_buf, &buf[copy_pos], shared_buf=
-_len)) {
-> > -             ret =3D -EFAULT;
-> > -             goto err_free_shared_buf;
-> > -     }
-> > +     shared_buf =3D memdup_user(&buf[copy_pos], shared_buf_len);
-> > +     if (IS_ERR(shared_buf))
-> > +             return PTR_ERR(shared_buf);
-> >
-> >       set_ta_context_funcs(psp, ta_type, &context);
-> >
->
-> More complete than the one I sent in June^1.
 
-I never received this series.  I didn't see it in patchwork either.
-Seems it never made it to amd-gfx.  Sorry I missed it. I've applied
-the applicable patches now.
+>=20
+> What exactly broke for regulator.rs <http://regulator.rs/>? It works =
+just fine.
 
->
-> Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Please excuse my weird email client here.
 
-Applied.  Thanks!
-
-Alex
-
->
-> I had some other in that series, not sure if you caught those.
->
-> Regards,
->
-> Tvrtko
->
-> 1)
-> https://lore.kernel.org/amd-gfx/20250612104430.41169-1-tvrtko.ursulin@iga=
-lia.com/
->
+=E2=80=94 Daniel=
 
