@@ -1,180 +1,107 @@
-Return-Path: <linux-kernel+bounces-807143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F3EFB4A0B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:29:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B82AB4A0B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3A2A7A5DE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:27:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06C161B23BDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A3B2E888F;
-	Tue,  9 Sep 2025 04:29:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492102D46C6;
-	Tue,  9 Sep 2025 04:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A9A2EAB60;
+	Tue,  9 Sep 2025 04:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ncqk3Z4A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83796482F2;
+	Tue,  9 Sep 2025 04:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757392167; cv=none; b=T80HuVU66cjkg22gdP+kLVWQJ/UlESxW+W5lPWjwV6ij1dem/gdAtqdBvbq16+oFC4rmhvK5LksaVOpnY7kY6E3PJSgSmpuaKYBT8tW7B1guNCfj7dHmNMBE9kgRv3YMgwSR7aAtBTUtHwJegbN0T83a0MLj2d5/6LAMq0ZO268=
+	t=1757392213; cv=none; b=fPP1Ea5nvPKO1ydar189gMOmyqTjRtU3EGH85moGVZfBefqjOTFpBlUjpPBg3b0ADTaGJrm3HEeQzOmblEeAYa1VpYmSPvx9au+N++l5I6/FkGTXw3mmaZWxJvOsClIKeMXqyhfUWIFW4NyolJHbUNf7Yb3ziJhBLxCh2r3+/ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757392167; c=relaxed/simple;
-	bh=IepMFzkXN6oJpvS5mgBFY8hpz2AT9un2uq64C9FMB3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IjwX0rCqVL3fcaQmFVL6ntEJJmwcEndty3sI9VhkWvmH7RKjM5zZ3XK4gEUCSYmXMIC1TmNyMckJIEviuppi4560MJiNw5P/KANSk4MmxWHISW88knyXIfaL3zfoJnn+NmTn1J2knLJWeP0P+vcaCAQxKBUFd4W0EK40IfVgYvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2CBE612FC;
-	Mon,  8 Sep 2025 21:29:16 -0700 (PDT)
-Received: from [10.163.72.34] (unknown [10.163.72.34])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9094F3F66E;
-	Mon,  8 Sep 2025 21:29:18 -0700 (PDT)
-Message-ID: <bc0ae013-2314-4513-a759-cbf2b922aa6a@arm.com>
-Date: Tue, 9 Sep 2025 09:59:14 +0530
+	s=arc-20240116; t=1757392213; c=relaxed/simple;
+	bh=XaDrtfjywtQdCC1M0mnTwMYse4SqpKCgiK0eeh290h8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=eoMCQ9MQTkHnVHW7lMWByRVuUHRqNPlsaUeNfOrAvzgs8KGa1jcLgRhORTU4Is+xoeBYN4mfKdMIBtY8JmHIedoo/O3ay5e9rj9fOgrZRDeCwShS7c2JDZzPgx8NMr2dJPknYFqeJuO+Vl3vaeLo8osWgHdl80GTAAsMK9FSZHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ncqk3Z4A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1C88C4CEF4;
+	Tue,  9 Sep 2025 04:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757392212;
+	bh=XaDrtfjywtQdCC1M0mnTwMYse4SqpKCgiK0eeh290h8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ncqk3Z4AmlmqjSVH+RnWKfjmcxOmt0Il6EeReuZ2UkrQhoNG95On7Le+Rvyp7HqyU
+	 nnPcmGgsRpnP/b/eej6hbxJ0dq7f0CVBWAgdX+fPc88fYU1MvcIVU84kjLyvYld84I
+	 FZSk1hn4OiSX+gk4AwzjgpMyugqhyTcWEW5wy5uGY08iYZ9xLFNxsX3VgO0qaxGXWX
+	 wMk354AtbW8VjkYR7Zgy2Xw3r2GuYOysRAFs9TXUxLHZtRMye1/QssczFR7YiRD+/A
+	 1hoNBcDWHQTiwzJ+SY9BjtpuhXKago+0rV8pjqjMfY4OcgaEyRUgsDesiegTWLBmAZ
+	 XRVkozjIbD21g==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	"# 6 . 17-rc1" <stable@vger.kernel.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 0/3] samples/damon: fix boot time enable handling fixup merge mistakes
+Date: Mon,  8 Sep 2025 21:30:08 -0700
+Message-Id: <20250909043008.8651-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250908211845.bfc7299d783c361b10ae810b@linux-foundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/2] arm64: refactor the rodata=xxx
-To: Huang Shijie <shijie@os.amperecomputing.com>, catalin.marinas@arm.com,
- will@kernel.org
-Cc: patches@amperecomputing.com, cl@linux.com,
- Shubhang@os.amperecomputing.com, corbet@lwn.net, paulmck@kernel.org,
- akpm@linux-foundation.org, rostedt@goodmis.org, Neeraj.Upadhyay@amd.com,
- bp@alien8.de, ardb@kernel.org, suzuki.poulose@arm.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, rdunlap@infradead.org
-References: <20250909033236.4099-1-shijie@os.amperecomputing.com>
- <20250909033236.4099-2-shijie@os.amperecomputing.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250909033236.4099-2-shijie@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/09/25 9:02 AM, Huang Shijie wrote:
-> As per admin guide documentation, "rodata=on" should be the default on
-> platforms. Documentation/admin-guide/kernel-parameters.txt describes
-> these options as
-> 
->    rodata=         [KNL,EARLY]
->            on      Mark read-only kernel memory as read-only (default).
->            off     Leave read-only kernel memory writable for debugging.
->            full    Mark read-only kernel memory and aliases as read-only
->                    [arm64]
-> 
-> But on arm64 platform, RODATA_FULL_DEFAULT_ENABLED is enabled by default,
-> so "rodata=full" is the default instead.
-> 
-> This patch implements the following changes:
->  - Make "rodata=on" behaviour same as the original "rodata=full".
->    This keeps align with the x86.
->  - Make "rodata=noalias" (new) behaviour same as the original "rodata=on"
->  - Drop the original "rodata=full"
-> 
-> After this patch, the "rodata=on" will be the default on arm64 platform
-> as well.
-> 
-> Different rodata options may have different performance, so record more
-> detail information here:
-> 
->  rodata=on (default)
->     This applies read-only attributes to VM areas and to the linear
->     alias of the backing pages as well. This prevents code or read-
->     only data from being modified (inadvertently or intentionally),
->     via another mapping for the same memory page.
-> 
->     But this might cause linear map region to be mapped down to base
->     pages, which may adversely affect performance in some cases.
-> 
->  rodata=off
->     This provides more block mappings and contiguous hints for linear
->     map region which would minimize TLB footprint. This also leaves
->     read-only kernel memory writable for debugging.
-> 
->  rodata=noalias
->     This provides more block mappings and contiguous hints for linear
->     map region which would minimize TLB footprint. This leaves the linear
->     alias of read-only mappings in the vmalloc space writeable, making
+On Mon, 8 Sep 2025 21:18:45 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
 
-						typo     ^^^^^^^^
->     them susceptible to inadvertent modification by software.
+> On Mon,  8 Sep 2025 20:51:41 -0700 SeongJae Park <sj@kernel.org> wrote:
 > 
-> Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt | 5 +++--
->  arch/arm64/include/asm/setup.h                  | 4 ++--
->  2 files changed, 5 insertions(+), 4 deletions(-)
+> > > > Note that the broken commits are merged into 6.17-rc1, but also
+> > > > backported to relevant stable kernels.  So this series also need to be
+> > > > merged into the stable kernels.  Hence Cc-ing stable@.
+> > > 
+> > > That's unfortunate, but the about doesn't actually tell us what this
+> > > series does.  
+> > 
+> > Good point.  The issue is that the sample modules can crash if those are
+> > enabled at boot time before DAMON is initialized, via kernel command line.
+> > 
+> > Would you prefer me sending another version of this patch series with an
+> > elaborated cover letter?
 > 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index db84a629f7b1..138e0db5af64 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6418,8 +6418,9 @@
->  	rodata=		[KNL,EARLY]
->  		on	Mark read-only kernel memory as read-only (default).
->  		off	Leave read-only kernel memory writable for debugging.
-> -		full	Mark read-only kernel memory and aliases as read-only
-> -		        [arm64]
-> +		noalias	Mark read-only kernel memory as read-only but retain
-> +			writable aliases in the direct map for regions outside
-> +			of the kernel image. [arm64]
+> Please just send out the appropriate words and I'll paste it in.
 
-Should not the arm64 specific performance implications be mentioned
-in the above documentation update as well ? But in case this appears
-too much platform specific - probably do consider adding them above
-or inside arch_parse_debug_rodata() as an in-code documentation. 
+Thank you for the guidance, Andrew.  How about below?
 
-     rodata=on (default)
-        This applies read-only attributes to VM areas and to the linear
-        alias of the backing pages as well. This prevents code or read-
-        only data from being modified (inadvertently or intentionally),
-        via another mapping for the same memory page.
+"""
+First three patches of the patch series "mm/damon: fix misc bugs in DAMON
+modules" [1] was trying to fix boot time DAMON sample modules enabling issues.
+The issues are the modules can crash if those are enabled before DAMON is
+enabled, like using boot time parameter options. The three patches were fixing
+the issues by avoiding starting DAMON before the module initialization phase.
 
-        But this might cause linear map region to be mapped down to base
-        pages, which may adversely affect performance in some cases.
+However, probably by a mistake during a merge, only half of the change is
+merged, and the part for avoiding the starting of DAMON before the module
+initialized is missed.  So the problem is not solved and thus the modules can
+still crash if enabled before DAMON is initialized.  Fix those by applying the
+unmerged parts again.
 
-     rodata=off
-        This provides more block mappings and contiguous hints for linear
-        map region which would minimize TLB footprint. This also leaves
-        read-only kernel memory writable for debugging.
+Note that the broken commits are merged into 6.17-rc1, but also backported to
+relevant stable kernels.  So this series also needs to be merged into the
+stable kernels.  Hence Cc-ing stable@.
+"""
 
-     rodata=noalias
-        This provides more block mappings and contiguous hints for linear
-        map region which would minimize TLB footprint. This leaves the linear
-        alias of read-only mappings in the vmalloc space writeable, making
-        them susceptible to inadvertent modification by software.
 
->  
->  	rockchip.usb_uart
->  			[EARLY]
-> diff --git a/arch/arm64/include/asm/setup.h b/arch/arm64/include/asm/setup.h
-> index ba269a7a3201..3d96dde4d214 100644
-> --- a/arch/arm64/include/asm/setup.h
-> +++ b/arch/arm64/include/asm/setup.h
-> @@ -21,7 +21,7 @@ static inline bool arch_parse_debug_rodata(char *arg)
->  	if (!arg)
->  		return false;
->  
-> -	if (!strcmp(arg, "full")) {
-> +	if (!strcmp(arg, "on")) {
->  		rodata_enabled = rodata_full = true;
->  		return true;
->  	}
-> @@ -31,7 +31,7 @@ static inline bool arch_parse_debug_rodata(char *arg)
->  		return true;
->  	}
->  
-> -	if (!strcmp(arg, "on")) {
-> +	if (!strcmp(arg, "noalias")) {
->  		rodata_enabled = true;
->  		rodata_full = false;
->  		return true;
-
+Thanks,
+SJ
 
