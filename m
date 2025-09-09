@@ -1,125 +1,102 @@
-Return-Path: <linux-kernel+bounces-807451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F54CB4A479
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:04:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B5DB4A47B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A17A189D184
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:04:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90ACF189FD64
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F801244EA1;
-	Tue,  9 Sep 2025 08:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAEF24469E;
+	Tue,  9 Sep 2025 08:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BtMLFa8C"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FMNNBNf7"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5A324338F;
-	Tue,  9 Sep 2025 08:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D28239E7D;
+	Tue,  9 Sep 2025 08:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757405059; cv=none; b=T1byt788xBTciSXfd9RP8rK+hyZeEp16ALpWhgDkHc3x4AfhDOsIVDYLQkSkbcszZmmx/9DZPg9I1qUoyx8LK189Hz1PMSsQpSuC3307VvF6nxLmcTlUjbEckPZGKPYcFG2OAMaW4XD0cZO1EKHZf0nRaM9o8BDuoPWmV6e6NRE=
+	t=1757405114; cv=none; b=SDl6fWxdHIlapQ2qk3oD/2QPjXPdFcbpL5sOTJAGfwdelj49ZUEoGVV8m6hraKJYgPf7JwSGCDRCy2xG0fZQKelRnTsZDBcELk+I6Hbtn43tnb4UfT+t/r/io+KhEY1BSK/CEFi9pQFYf8vU74Wgi6VNjFmoKiQhFafPoijohZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757405059; c=relaxed/simple;
-	bh=hheBO53S4cuD1hHV8+7z+fXYLzy/l5AiYW98zwt2iWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OmGpjQXDMuaV5Pcu63L9tedLRSUS9mYw5zmVsUjtIs8FVQG2IZ8xULCb+kl4e/OW4ibGsibPcnxHTouW7g3PyFf2ZaTrOyTOpArz9CfnFxyPyridtcVmhv9VmTfWUA1r0X6ZrqQwsU8NdeFQbLcqe/Q+obNUEqONYiXSAERk/bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BtMLFa8C; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757405058; x=1788941058;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=hheBO53S4cuD1hHV8+7z+fXYLzy/l5AiYW98zwt2iWs=;
-  b=BtMLFa8CxWte7EPEJYDSl4Uu4ie9Z9gzq7hGc/NXlZxpnUhewBEGr/11
-   eHgNr1P4y5Eu+A97EdAUev0bYOSo4Suyi1b6fqbfn7WXmqF93LNewtam/
-   ZiTJOUHpfrTK18pWCM56fu4815lECI+W6Ynd/Oon6/oWUWG7OdFNmAzd8
-   vgu5JTt+AA+i4ev125ziglSSjeVM1xtR/S5Y5TrR52YaQ4YIQtGTJSq9B
-   9CqGZaNEySLgcfadhhtoptzZdBlg2h1uleYHa3RSjmH49iABctMZIwbgu
-   tGOCt0fNKWByloz/6jTfBPiSw8mlgZdV6BWYxucJgmdpxG/cdvyn/yU/R
-   Q==;
-X-CSE-ConnectionGUID: uJj9OkJMQtyXS/R0SyqiVg==
-X-CSE-MsgGUID: VPoqZVzjT2u+FEV8j9uwfg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="62306729"
-X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
-   d="scan'208";a="62306729"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 01:04:17 -0700
-X-CSE-ConnectionGUID: aUhvH03JTpa8sKMWBcGqIQ==
-X-CSE-MsgGUID: PJIE3vMoSSis6CmgX1wFjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
-   d="scan'208";a="196683482"
-Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.182.53])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 01:04:14 -0700
-Date: Tue, 9 Sep 2025 16:04:11 +0800
-From: "Lai, Yi" <yi1.lai@linux.intel.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Yi Lai <yi1.lai@intel.com>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, shuah@kernel.org, wad@chromium.org,
-	luto@amacapital.net, kees@kernel.org, usama.anjum@collabora.com
-Subject: Re: [PATCH] selftests/kselftest_harness: Add
- harness-selftest.expected to TEST_FILES
-Message-ID: <aL/fe6xsyZCrJKIP@ly-workstation>
-References: <20250815091032.802171-1-yi1.lai@intel.com>
- <20250815112711-473df6c4-d0d4-452f-9411-b72491adf2af@linutronix.de>
+	s=arc-20240116; t=1757405114; c=relaxed/simple;
+	bh=pBZU3wKG151HKhMwytmvCOqvfVDL2EvNagCVejdReJI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gHujlSlIaD1TzTd5ugCZbznOKzELwr7X9TCZy3l35aEholr40IBi8iFysNpFiH+XghiQWxV+GD18Iat8YFJ09in8cjY3pSVFucza1DFkql24h4ruzRzHjil+baSIr3Yo5d1/wGjzQhUskjXtBICW5pApQKGgGzsl0XfiqpwLl0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FMNNBNf7; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-62bec18abe6so872710a12.3;
+        Tue, 09 Sep 2025 01:05:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757405111; x=1758009911; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pBZU3wKG151HKhMwytmvCOqvfVDL2EvNagCVejdReJI=;
+        b=FMNNBNf751spKcXV7Rf21Yfyn5r37WP4qrooXmNtQIdw/ZDLik/vD8Wbb0ox6E0OAK
+         Ah8jxLlttCI9qS3gFF1zJbrcBaWJw/aVm/b09ezsJ+JB5ldtgl6njP1OANUUbjSh01Cc
+         LnZtXRhMD2u70kyF2gtGCtRzJYtGrObYe7CMMUBznkdFBZ1zuU4xqSlPmQFdCTT+Jr8o
+         bPJy00d1ZiYO0jENMXaV7mkTbV3pbGnAEEnq/tLN+zTGz5C+bWJ/0KSZKgDxAPHuAkOV
+         wCFMOFtFGfQ5aSVfAR3x8rCJiL9/Xk1oRxf39+P/RuR6sD97xQwsbKojJreen9J5Sf5R
+         +G6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757405111; x=1758009911;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pBZU3wKG151HKhMwytmvCOqvfVDL2EvNagCVejdReJI=;
+        b=JoNPlPfELeER/AIINltykQAzqN7ayPEgtfeV5/IluR4DgJiL+50rKEa7W0d7ru51qA
+         u04ACTzMXWyNhvXV7SaSm3ACIq1RvXdB3e/tvxPzzBqSVF+JcriBxD64E2+2BqQjECL8
+         v9bypc65eTUnCQFtVlS3dO9DGNaSQWIhYGleQnD3CpgeR+yWFn3FmaGCt9UrWtQQFEDd
+         cBMnoEskS6lSHrfQGOejI7QkG/NUvW3jw7aVNSzNT5VYAOHcGDkcOR7H5XhwhO0Hnyro
+         m3xG/hu/oytIdJ0/Zwuq75X59DJpx+wVJC6vRChxh3V1Mi0wKzFQzBdp564Fvp/3eNY9
+         Ux5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWIvTif8WcCCsXHqgfwFGbFKn4ZScBiKLQ3gdWzKSuIjOxWvtS8USBYPAFotjNWt9LVK/VOy7gaPy1YZNkg@vger.kernel.org, AJvYcCXZ2xz+G1AS5HYUmHrK+rYuHLMTXb7Lxtty9L4ZSLEvgTW+Fcii2aW2U5iZYXwRMV5qNg/xUrxoQt+yCLiA5KhY@vger.kernel.org, AJvYcCXcFDA65q+luheX4ej3uNk/F9pA5gmaDkGwbulXBUFGT/cO49p5Bi8usVmkeh+MaFTwsCBrbxxMdx1spg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtSFSIq8OfgEM7V6iDgG7Yx9ZwZmmqxf0VuR2aKzR3A/O4xm8q
+	YX8K3N+voDKHSaHM8k8XbVhj0ZCvARjhtBdxCpSFK1NamOlgBd26U8W/3ovmVDAqpBEQW8PuZeM
+	QaXx8poZTGigWPhrWGeRjPgtg3B9uTkE=
+X-Gm-Gg: ASbGncsjA4IlcUa1xhWky3InRtLP4jwyjdzGYmqXD/jvCEI/oxUf7Q5JWFxWYzhQqaz
+	YEuh+qkjN2391EHlIRLSIzD/TNryjc2PyKAvqsizaDVSzZcail/KkTfNppfKk6PEGBwPrSOW7kV
+	/YVJv6NzpG0fTRXiklULqgkMjSNx90ZiQhyh/3030arXbXXS/KshPf2BZnO6qaL5H/Hf4Sm7dPL
+	l88eg/s
+X-Google-Smtp-Source: AGHT+IGhSr2nRdX/GwanQsM7D9csZEomcNuAEsUAg4nXEuyDiJfy9+JqqkmkYHd3CU065tr0IMpW/+pxLieFVAVPbRY=
+X-Received: by 2002:a05:6402:27d2:b0:61d:1188:42d2 with SMTP id
+ 4fb4d7f45d1cf-6237883300cmr9496366a12.28.1757405110823; Tue, 09 Sep 2025
+ 01:05:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250815112711-473df6c4-d0d4-452f-9411-b72491adf2af@linutronix.de>
+References: <20250817231753.633899-1-thorsten.blum@linux.dev>
+ <CA+=Fv5QdP-qGjUXQZ4ig1RX=0zx5c11gdrvwT9gqXNqTTqSZvA@mail.gmail.com> <99A381BA-47F7-410E-AC3C-D6EFA298DD5A@linux.dev>
+In-Reply-To: <99A381BA-47F7-410E-AC3C-D6EFA298DD5A@linux.dev>
+From: Magnus Lindholm <linmag7@gmail.com>
+Date: Tue, 9 Sep 2025 10:04:58 +0200
+X-Gm-Features: AS18NWAnvpwMcZvP7SNJjCHzW2KoVfLGZupdjP1XerZf-rEkh53eYHSLHSmar7Y
+Message-ID: <CA+=Fv5TBj1qJtqP21_WaXX6x1cgB8oerMQpeZ=hujkrWmLdokw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] alpha: Replace strcpy() with strscpy() in setup_arch()
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	linux-hardening@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 15, 2025 at 11:28:40AM +0200, Thomas Weiﬂschuh wrote:
-> On Fri, Aug 15, 2025 at 05:10:32PM +0800, Yi Lai wrote:
-> > The harness-selftest.expected is not installed in INSTALL_PATH.
-> > Attempting to execute harness-selftest.sh shows warning:
-> > 
-> > diff: ./kselftest_harness/harness-selftest.expected: No such file or
-> > directory
-> > 
-> > Add harness-selftest.expected to TEST_FILES.
-> > 
-> > Signed-off-by: Yi Lai <yi1.lai@intel.com>
-> 
-> Fixes: df82ffc5a3c1 ("selftests: harness: Add kselftest harness selftest")
-> Reviewed-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> 
-> Thanks!
 >
+> The current code feels unnecessarily inconsistent, with one line using
+> strscpy() and the next using the platform-specific strcpy().
+>
+I guess you have a point there, I believe that this already existing instance
+of strscpy came from the patch you referred to as an attempt to replace strlcpy.
+strlcpy does not have an Alpha specific implementation.
 
-Sorry for the late response. Thank you for review. I will send a v2
-patch containing the fixes tag.
 
-Regards,
-Yi Lai
+Regards
 
-> > ---
-> >  tools/testing/selftests/kselftest_harness/Makefile | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/tools/testing/selftests/kselftest_harness/Makefile b/tools/testing/selftests/kselftest_harness/Makefile
-> > index 0617535a6ce4..d2369c01701a 100644
-> > --- a/tools/testing/selftests/kselftest_harness/Makefile
-> > +++ b/tools/testing/selftests/kselftest_harness/Makefile
-> > @@ -2,6 +2,7 @@
-> >  
-> >  TEST_GEN_PROGS_EXTENDED := harness-selftest
-> >  TEST_PROGS := harness-selftest.sh
-> > +TEST_FILES := harness-selftest.expected
-> >  EXTRA_CLEAN := harness-selftest.seen
-> >  
-> >  include ../lib.mk
-> > -- 
-> > 2.43.0
-> > 
+Magnus
 
