@@ -1,79 +1,166 @@
-Return-Path: <linux-kernel+bounces-808506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BD3B500A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:08:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF92B500AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E580F1C60E0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:09:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F29DD3AF28D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E552034F465;
-	Tue,  9 Sep 2025 15:08:46 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5F6350D5C;
+	Tue,  9 Sep 2025 15:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="gEsZQx7f"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298851A294
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D6E20D4FC
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757430526; cv=none; b=OyQT9cV76aUhZq8MK58j3ruL9NE48E+MPQ8QSn+kYQ2WaWk6GyCza8LlGoBSLDR+Nukx5BqBDlVz5s55eXbQKMb8Quijmk6MmchH8WQtsQbRgZaNSULiz6Hwk+Ng8SUP9SL8V+zWLosLYMURWlMAm6s4czFoE6AdIJ3ZAGZJpI4=
+	t=1757430577; cv=none; b=CAh+frIdn2kPoxrKQ2RbCs5JOKhlUgzTmjZiLheBp3+0q/nVslNM7Vq9lg7KT8xyoC0b8Ki2tGr3sJj7tdVzk8DEpaJIP2aKvCRDmWuWBlWorJQrynSNNorawKA6LC9xWke/TgF8HOEeO3ozPBEU+l2UjPwNaDVKR+W/8KSA/ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757430526; c=relaxed/simple;
-	bh=gDa29SQjfzOTTMQ6m4Ttr0o1EEG+gBMTF7qOYNhvKDU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=byJzKeosl0R3jtJoH/U7hNfetkpEJ/mOekpj/VoDcoUrDSbaFaqXcqawlaYAmPmX8b2LJ8zYgvOj1JKpkmP+hJPK9rT3YdEoNBpqwjLpKuIQ4F3n0pH4fzm6yo+vqXWryPdn+PmnWT6FWxSQcnXVsZgDWFpWCyZK7c3DB75nIJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4155725a305so1463175ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:08:44 -0700 (PDT)
+	s=arc-20240116; t=1757430577; c=relaxed/simple;
+	bh=G+q6VqDJLdzvmfgD7q0CGOEn2+Nfgn9RD17Iuc+VVi0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JPa7conCbs8iOXDFHny+U06CFMhTPTdkOZXZvs4haNYjccDCLJjfdnwfRNXK+j+0nl5TF2nuux2yB1w9ukl7kw8HEAzc9InwfRk3ZFiSOcyuVIa8CLji8LlIzI/QbN2XQ9ME5maULpWC4jrctOFkjNtV2de8tlTnYy/S1xnXWZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=gEsZQx7f; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3f663c571ffso59586025ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:09:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757430574; x=1758035374; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KBkHzWz2WSvAv3P+4fdRCtFI9r1yFcrUi6CJvq5A8BM=;
+        b=gEsZQx7fFDPkJK6aZ1I0lahZmlTwQhO7hJeLSYqfOUsvLY34FLelVHfp4Jz33GM+DY
+         j/kP3Y/MzgbWd6zo/E7bZM24pBwzMquyNxtkgcW1QXdzpij6oaBgIOYVGIUUZ1faA2fZ
+         QoMiUrOE96g/7QgRt8cEQSvOSFqPHcz1TujNnWFkRRPyqdQj/exqViTeAF0TNxbsGTzy
+         bQYlYkKHWE3WRdOspxSRmKKxpUVzcaUHugEMWxWpaCAbWFCOrDYi9OJF3t3Y9v7+1xTg
+         VJYb5smNZeMhae/zIVBz2Y4kV3tx7fDnGd2RgjqtZVeA5+il7f46Vo9Q202F//hwDEXQ
+         5NwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757430524; x=1758035324;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1757430574; x=1758035374;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gDa29SQjfzOTTMQ6m4Ttr0o1EEG+gBMTF7qOYNhvKDU=;
-        b=exgzfhZEqjSG1uhOtzFupi+p2Nv/4iJNyX4/fE+tGVpCrAYXNAyYDFozBRTeHfqvgq
-         XLXFPpXPnYGd0Hm1d5ihMXxqEnzzXvQYq650mtfZ0bvV5GVai6lJR0wTcoDZj/2ZHnXM
-         mzYy9ZrNslaIYPwY+pjLb6BtMpybiTzP6Yh7JuSa7AZLFjSc7Kmixy1/jYt6OtbVruKL
-         YBoyAdmRocdrTbZdN4jjxTUK9YHLDc4TVagSic/pEs9qf3+56nCoNtVDe3VenoyP5YEG
-         fvJfB5282s2acAbsSFJ8ecPExO0EDwZxeydVVC1NvAwFEzONGMAyXHg5A/nXgx7CpEIi
-         iH9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWoI0GFN8Wre28AYiUf8IdWmr+xqpgUvfzYTKeMns1ESZmo7OeFmb1HJObVbI1PfsyYzXqnz95zlFTRJTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3HfNyT4VvYF/T8CZirP7ZoIAoo+o91fAzijFv/D3h1JvPOmb8
-	bbpUAXddhgHqnKqjvMkMfpmWMKZIWGTGIp+RkQSnMY1LMgxavxUaRlFLIYSPBN3vPjpwxA70z9i
-	LDYZ1wCLLUtm9pboRG/Qnr8ue6qd1Y4lX1KHs3crCMSTs4+VnioCDDBwP5t4=
-X-Google-Smtp-Source: AGHT+IHhJaQMOTIg68AbO604Z8qWTe8ZmkqU04JIBSkdUq610nQ4rpSowNkVjHMzf5xbp+onWscyqwAuhXQgkl5JKSf2i2C0qc61
+        bh=KBkHzWz2WSvAv3P+4fdRCtFI9r1yFcrUi6CJvq5A8BM=;
+        b=ZtIAc7UG6/iT1WCtGMSZX5kvQm8J29OQIKBn4UadhrJIJs+wXPXW4tbJvgCmB8pMkY
+         ESYeaPRwvVaIdaowI9pj8wnmJ6htrsUG5/CCp4NiCYOzlr682GgDQ82/C7CBEavbh1MH
+         L1ZF3pBJsSp7VYv3hpyskP2g6qsKUmc6c4NuthHeuroZG1r9MbQ0DSfMkc8WEd+dh1GN
+         IMl+sYxxyqkn/kaX66pc7wWiW+SR27bIK1zob5apWxsZY5idANY9Vz/GQYQfyQlTwyS0
+         xigMxzJlIUp01Cybsnz3fPmHQduftq+qYybxTUONeS8MHIps2L/BCifR8GCG3nQQqZr0
+         fJOg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9+2u86ihoSrnpvOmIvhwhTx6jUulzav5vsu5XTdNlm9fgjOEXQcDbVfzJIjjxBy7YyjyMWHASmajkJJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx17WIRE3Kwuzp8en+auNXZ0ipGXCdegn9/HtoiJJU95I1G255s
+	UrGCk1WdUuM/rmEovuHu3M2FgWjlKPovmXSy4/AwMTzQZc15HO3QtN+EAgujZPcgO29r1kMA1kW
+	oJp6O
+X-Gm-Gg: ASbGncv9TcbUACD6EEt826G0OW1nm0BtT/0lxHGitaIm88sSwI/6NNSFDs3A7vUPsnA
+	O533iV7vSrg3aMC1CuiwFUKIHQD8ZdSWh6poM5aiTmZKaqcPs6X2zdUX1ZkyuqVKpIdDlTQqOdU
+	XFhJgIKwCYjULHkVo+vyuCSkm25IIAeHHrQ9fI5hx6QNx3OzXLHM3hDHkyeWDViSurQppcR8AmL
+	8WfNQzzf+IimXhRgT2qJgpIjqzDcMuSMmRZv6JanSZpNOP2OWfKOrSlMQkXIYedvHL5wcbmJOsD
+	7E6Wnoo7MKVZvo7ckXYasnYIJBmMlt0ApbN2uXzIhDZ74ysT0heUQsupw13uIZYLIs3z7SqqOW1
+	jIrTtP0pH8vyrZioHN1688c3yTs2HzQ==
+X-Google-Smtp-Source: AGHT+IEaLNl8zaGVmv/a45LKfh9YWrlicYBfVn4ysOSEgq8X+b4uOPf1vxmee+GBDunypTo5Eyf8Ug==
+X-Received: by 2002:a05:6e02:1d99:b0:3fd:5836:2318 with SMTP id e9e14a558f8ab-3fd8e98d323mr176147975ab.11.1757430573191;
+        Tue, 09 Sep 2025 08:09:33 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-403952954dasm31357415ab.26.2025.09.09.08.09.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 08:09:32 -0700 (PDT)
+Message-ID: <e1161184-e2fa-49eb-8093-0b754dc362c1@kernel.dk>
+Date: Tue, 9 Sep 2025 09:09:31 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdaa:0:b0:40f:9e28:b01a with SMTP id
- e9e14a558f8ab-40f9e28b0a8mr50849865ab.30.1757430524170; Tue, 09 Sep 2025
- 08:08:44 -0700 (PDT)
-Date: Tue, 09 Sep 2025 08:08:44 -0700
-In-Reply-To: <e12c727a-403c-486b-9a34-db4028ae8451@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c042fc.050a0220.3c6139.0002.GAE@google.com>
-Subject: Re: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
- f777d1112ee597d7f7dd3ca232220873a34ad0c8
-From: syzbot <syzbot+c4b7aa0513823e2ea880@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru
-Cc: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nbd: restrict sockets to TCP and UDP
+To: Eric Dumazet <edumazet@google.com>
+Cc: "Richard W.M. Jones" <rjones@redhat.com>,
+ Josef Bacik <josef@toxicpanda.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+ Eric Dumazet <eric.dumazet@gmail.com>,
+ syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com,
+ Mike Christie <mchristi@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ linux-block@vger.kernel.org, nbd@other.debian.org
+References: <20250909132243.1327024-1-edumazet@google.com>
+ <20250909132936.GA1460@redhat.com>
+ <CANn89iLyxMYTw6fPzUeVcwLh=4=iPjHZOAjg5BVKeA7Tq06wPg@mail.gmail.com>
+ <CANn89iKdKMZLT+ArMbFAc8=X+Pp2XaVH7H88zSjAZw=_MvbWLQ@mail.gmail.com>
+ <63c99735-80ba-421f-8ad4-0c0ec8ebc3ea@kernel.dk>
+ <CANn89iJiBuJ=sHbfKjR-bJe6p12UrJ_DkOgysmAQuwCbNEy8BA@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <CANn89iJiBuJ=sHbfKjR-bJe6p12UrJ_DkOgysmAQuwCbNEy8BA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git f777d1112ee597d7f7dd3ca232220873a34ad0c8
+On 9/9/25 8:47 AM, Eric Dumazet wrote:
+> On Tue, Sep 9, 2025 at 7:37?AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 9/9/25 8:35 AM, Eric Dumazet wrote:
+>>> On Tue, Sep 9, 2025 at 7:04?AM Eric Dumazet <edumazet@google.com> wrote:
+>>>>
+>>>> On Tue, Sep 9, 2025 at 6:32?AM Richard W.M. Jones <rjones@redhat.com> wrote:
+>>>>>
+>>>>> On Tue, Sep 09, 2025 at 01:22:43PM +0000, Eric Dumazet wrote:
+>>>>>> Recently, syzbot started to abuse NBD with all kinds of sockets.
+>>>>>>
+>>>>>> Commit cf1b2326b734 ("nbd: verify socket is supported during setup")
+>>>>>> made sure the socket supported a shutdown() method.
+>>>>>>
+>>>>>> Explicitely accept TCP and UNIX stream sockets.
+>>>>>
+>>>>> I'm not clear what the actual problem is, but I will say that libnbd &
+>>>>> nbdkit (which are another NBD client & server, interoperable with the
+>>>>> kernel) we support and use NBD over vsock[1].  And we could support
+>>>>> NBD over pretty much any stream socket (Infiniband?) [2].
+>>>>>
+>>>>> [1] https://libguestfs.org/nbd_aio_connect_vsock.3.html
+>>>>>     https://libguestfs.org/nbdkit-service.1.html#AF_VSOCK
+>>>>> [2] https://libguestfs.org/nbd_connect_socket.3.html
+>>>>>
+>>>>> TCP and Unix domain sockets are by far the most widely used, but I
+>>>>> don't think it's fair to exclude other socket types.
+>>>>
+>>>> If we have known and supported socket types, please send a patch to add them.
+>>>>
+>>>> I asked the question last week and got nothing about vsock or other types.
+>>>>
+>>>> https://lore.kernel.org/netdev/CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+ndzBcQs_kZoBA@mail.gmail.com/
+>>>>
+>>>> For sure, we do not want datagram sockets, RAW, netlink, and many others.
+>>>
+>>> BTW vsock will probably fire lockdep warnings, I see GFP_KERNEL being used
+>>> in net/vmw_vsock/virtio_transport.c
+>>>
+>>> So you will have to fix this.
+>>
+>> Rather than play whack-a-mole with this, would it make sense to mark as
+>> socket as "writeback/reclaim" safe and base the nbd decision on that rather
+>> than attempt to maintain some allow/deny list of sockets?
+> 
+> Even if a socket type was writeback/reclaim safe, probably NBD would
+> not support arbitrary socket type, like netlink, af_packet, or
+> af_netrom.
+> 
+> An allow list seems safer to me, with commits with a clear owner.
+> 
+> If future syzbot reports are triggered, the bisection will point to
+> these commits.
 
-Command #1:
-This bug is already marked as fixed. No point in testing.
+That's fine too, either approach will result in fixups, at the end of
+the day. And followup related fixes to solve issues with socket types
+that we do deem useful, like the vsock one you already found.
 
-Command #2:
-This bug is already marked as fixed. No point in testing.
-
+-- 
+Jens Axboe
 
