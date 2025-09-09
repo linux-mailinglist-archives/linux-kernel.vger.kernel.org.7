@@ -1,221 +1,223 @@
-Return-Path: <linux-kernel+bounces-808787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3345FB504BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:54:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F324AB504C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0B81C26356
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:55:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618FB189E2BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FE536299D;
-	Tue,  9 Sep 2025 17:53:52 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827D735CEB7;
+	Tue,  9 Sep 2025 17:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="I86g5J2O"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A049535CECF
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 17:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757440431; cv=none; b=hZrpVf7+cl8vFIgqNPMv+Xx3ocH26V/x3PV+A2RSOoiFe9VsIbWpt5AvU6+fI/bdlOi+VkwRxoExg/BTfIcqxjR9obGDTyWmNbU4W/wxJQQhOdSpZB0vQNihspJFv2znGiV+UjRefjb0QwDFn6C21Mrc/AjYkOg36o5AuNPeFi0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757440431; c=relaxed/simple;
-	bh=37cJ0VRVY4LkRBZrQ1aDkaxTmIRzfMkMlfj/4/5OSR4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DDYt1i/gD+geOE4f/IpR1h8ozHGOI3b3HQ4h/sHw7ADZIRqXTR+bMBFkiaEvXecthMdwovJha147w0BqSsGr/gP1srAEyyzG3qHWHLmFRKjDlhtHAisNko4OnKseQzjzq273IOT/YDsOJiEwS0hPQmzp3/5m8idnsXPbuGoVNSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uw2XM-0006sB-3T
-	for linux-kernel@vger.kernel.org; Tue, 09 Sep 2025 19:53:48 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uw2XL-000SeL-0J
-	for linux-kernel@vger.kernel.org;
-	Tue, 09 Sep 2025 19:53:47 +0200
-Received: from dspam.blackshift.org (localhost [127.0.0.1])
-	by bjornoya.blackshift.org (Postfix) with SMTP id B72F446A3FC
-	for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 17:53:46 +0000 (UTC)
-Received: from hardanger.blackshift.org (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bjornoya.blackshift.org (Postfix) with ESMTPS id D1E5B46A3AA;
-	Tue, 09 Sep 2025 17:53:41 +0000 (UTC)
-Received: from hardanger.blackshift.org (localhost [::1])
-	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id eeee500c;
-	Tue, 9 Sep 2025 17:53:40 +0000 (UTC)
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Tue, 09 Sep 2025 19:53:23 +0200
-Subject: [PATCH v2 7/7] can: m_can: add optional support for reset
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D6725B1E0;
+	Tue,  9 Sep 2025 17:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757440498; cv=pass; b=EvTCrOp95xos7GNne/v/L5Igea44P+Q6WIHVpnI18Dmyx2wXRawV/O9rqPV/wTLgMya4zY52u69kO5283IQIHjj4oJUZLsqDmVIVM8k/nvbWaymILYDvlhOBp1vj2r2G5SqBRZPj9mCJWFOAzxXDjcCDTDwE0mNeExfYup5aGLk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757440498; c=relaxed/simple;
+	bh=bi3FzqBbDGwN+S84x5Yy8igL8ByIEyiiRi++2Iffi1s=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ajImKZarSLBgT2Fm8mJAa3wV/dTFMmOojj4cyUeK4JS7Goo7vFCm5LHUTLcZFbCXD9Xpy969ZYyYq0eeBT+IIEeddRkoMUWjRXCp2cxf1AB4nKhsogBR8lK0PEYKHNe6mzOURr02Ptem6RnvJgkGLHkEWvpNpZUHKz9wql4UDRA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=I86g5J2O; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757440454; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=c2sContwzi2EUk8oGNM1aMpIJKcOje4zU8RD+odgo2kVz0GPRahG3/D5LF6emOYpXphKz38P/fuHR199ijpoRFyj6A/dYpHZPySJY84ms4G37YkujynwmWZhqsQvhke/vcpwozkXRvGqt9Aa+jSpXX+X5M6/uHxdjxj6F1sSa+s=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757440454; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZexlUvzuh8BcVVQKwrBhxK1Lku6iKS7yCiVoXMY4Yas=; 
+	b=FW7NKz+QGjBssqVYhQtFdSxVeMCNf/+VsC8QHj9gHhlYIklrwauj0EIVCImJC3fruX2rCHo5OEPIDAcMc9c0R1LEpeTuM4SqbqhG5aI7+o+zWJIhT0W4C6O9NpAyvLo8w5mGOmB41fJo5bde6H6w3LlolN8NMzBZO+ujX97P5WM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757440454;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=ZexlUvzuh8BcVVQKwrBhxK1Lku6iKS7yCiVoXMY4Yas=;
+	b=I86g5J2OlK49zHbPszu2USloO12NGEFukteoHiSieOSpF5vjoKMB7x5tXyASG5bS
+	cU4CiidIXJQLE/ZDmzLRDBZqP5dDbGeWrHeXjBaL5Loey3irVV6QJq9Cy6lfUakWFOO
+	n8svMb8LbXgp8yWgtqt8MuHeo/Fx7ZfGBj71YcJw=
+Received: by mx.zohomail.com with SMTPS id 17574404525881001.4507671242769;
+	Tue, 9 Sep 2025 10:54:12 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-m_can-fix-state-handling-v2-7-af9fa240b68a@pengutronix.de>
-References: <20250909-m_can-fix-state-handling-v2-0-af9fa240b68a@pengutronix.de>
-In-Reply-To: <20250909-m_can-fix-state-handling-v2-0-af9fa240b68a@pengutronix.de>
-To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- Patrik Flykt <patrik.flykt@linux.intel.com>, 
- Dong Aisheng <b29396@freescale.com>, Varka Bhadram <varkabhadram@gmail.com>, 
- Wu Bo <wubo.oduw@gmail.com>, Markus Schneider-Pargmann <msp@baylibre.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, Marc Kleine-Budde <mkl@pengutronix.de>
-X-Mailer: b4 0.15-dev-e44bb
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3640; i=mkl@pengutronix.de;
- h=from:subject:message-id; bh=37cJ0VRVY4LkRBZrQ1aDkaxTmIRzfMkMlfj/4/5OSR4=;
- b=owEBbQGS/pANAwAKAQx0Zd/5kJGcAcsmYgBowGmiaq5cEgfZlHcB6TyW+RbFlMxuSLYs0l1DH
- GHm9JQuIB6JATMEAAEKAB0WIQSf+wzYr2eoX/wVbPMMdGXf+ZCRnAUCaMBpogAKCRAMdGXf+ZCR
- nIpwCACtqZtqehRZQFlwFDfxfwBYgVewR9U7Zk1iN+wTLEqOOhOkvjBGwpe9aJq3ZzFGhkZyvG/
- U11bg2ZNvTDEMEkz7rvg72ByzPg/uP+cDrepHvFAU8uqRwJvrM/cs7vCpVKByyVJEI4Dm6oRT8w
- KsFUyk3W9g1JxOU+c+R0To0X9tA045YqyHbFdMNTFMVrYHYslLDpDMh0qwyMacX0Pgt/qEr8CfP
- 3EDFhO6DY3Iuas917SPv/fjI/SPsxTqTclFiIjWMgaJ7i9YtLVsdAZlziHzm7dtcSEGJhEsL5LB
- xnT+a29K46xpipa+l+AMGG+ailPwrtqq+prL1/xwu+ffex5U
-X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
- fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-In some SoCs (observed on the STM32MP15) the M_CAN IP core keeps the
-CAN state and CAN error counters over an internal reset cycle. The
-STM32MP15 SoC provides an external reset, which is shared between both
-M_CAN cores.
-
-Add support for an optional external reset. Take care of shared
-resets, de-assert reset during the probe phase in
-m_can_class_register() and while the interface is up, assert the reset
-otherwise.
-
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
- drivers/net/can/m_can/m_can.c | 26 +++++++++++++++++++++++---
- drivers/net/can/m_can/m_can.h |  1 +
- 2 files changed, 24 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index 9528af8500af..93085bf1c267 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -23,6 +23,7 @@
- #include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- 
- #include "m_can.h"
- 
-@@ -1834,6 +1835,7 @@ static int m_can_close(struct net_device *dev)
- 
- 	close_candev(dev);
- 
-+	reset_control_assert(cdev->rst);
- 	m_can_clk_stop(cdev);
- 	phy_power_off(cdev->transceiver);
- 
-@@ -2076,11 +2078,15 @@ static int m_can_open(struct net_device *dev)
- 	if (err)
- 		goto out_phy_power_off;
- 
-+	err = reset_control_deassert(cdev->rst);
-+	if (err)
-+		goto exit_disable_clks;
-+
- 	/* open the can device */
- 	err = open_candev(dev);
- 	if (err) {
- 		netdev_err(dev, "failed to open can device\n");
--		goto exit_disable_clks;
-+		goto out_reset_control_assert;
- 	}
- 
- 	if (cdev->is_peripheral)
-@@ -2136,6 +2142,8 @@ static int m_can_open(struct net_device *dev)
- 	else
- 		napi_disable(&cdev->napi);
- 	close_candev(dev);
-+out_reset_control_assert:
-+	reset_control_assert(cdev->rst);
- exit_disable_clks:
- 	m_can_clk_stop(cdev);
- out_phy_power_off:
-@@ -2426,15 +2434,23 @@ int m_can_class_register(struct m_can_classdev *cdev)
- 		}
- 	}
- 
-+	cdev->rst = devm_reset_control_get_optional_shared(cdev->dev, NULL);
-+	if (IS_ERR(cdev->rst))
-+		return PTR_ERR(cdev->rst);
-+
- 	ret = m_can_clk_start(cdev);
- 	if (ret)
- 		return ret;
- 
-+	ret = reset_control_deassert(cdev->rst);
-+	if (ret)
-+		goto clk_disable;
-+
- 	if (cdev->is_peripheral) {
- 		ret = can_rx_offload_add_manual(cdev->net, &cdev->offload,
- 						NAPI_POLL_WEIGHT);
- 		if (ret)
--			goto clk_disable;
-+			goto out_reset_control_assert;
- 	}
- 
- 	if (!cdev->net->irq) {
-@@ -2463,8 +2479,10 @@ int m_can_class_register(struct m_can_classdev *cdev)
- 		 KBUILD_MODNAME, cdev->net->irq, cdev->version);
- 
- 	/* Probe finished
--	 * Stop clocks. They will be reactivated once the M_CAN device is opened
-+	 * Assert reset and stop clocks.
-+	 * They will be reactivated once the M_CAN device is opened
- 	 */
-+	reset_control_assert(cdev->rst);
- 	m_can_clk_stop(cdev);
- 
- 	return 0;
-@@ -2472,6 +2490,8 @@ int m_can_class_register(struct m_can_classdev *cdev)
- rx_offload_del:
- 	if (cdev->is_peripheral)
- 		can_rx_offload_del(&cdev->offload);
-+out_reset_control_assert:
-+	reset_control_assert(cdev->rst);
- clk_disable:
- 	m_can_clk_stop(cdev);
- 
-diff --git a/drivers/net/can/m_can/m_can.h b/drivers/net/can/m_can/m_can.h
-index bd4746c63af3..7b7600697c6b 100644
---- a/drivers/net/can/m_can/m_can.h
-+++ b/drivers/net/can/m_can/m_can.h
-@@ -86,6 +86,7 @@ struct m_can_classdev {
- 	struct device *dev;
- 	struct clk *hclk;
- 	struct clk *cclk;
-+	struct reset_control *rst;
- 
- 	struct workqueue_struct *tx_wq;
- 	struct phy *transceiver;
-
--- 
-2.51.0
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v4 1/3] rust: i2c: add basic I2C device and driver
+ abstractions
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <655ca23c-1fe6-498a-80b8-1b75044d9db3@gmail.com>
+Date: Tue, 9 Sep 2025 14:53:55 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Asahi Lina <lina+kernel@asahilina.net>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Alex Hung <alex.hung@amd.com>,
+ Tamir Duberstein <tamird@gmail.com>,
+ Xiangfei Ding <dingxiangfei2009@gmail.com>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-i2c@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <467F4F57-9452-4B68-931B-4A55A7CBC268@collabora.com>
+References: <20250820151427.1812482-1-igor.korotin.linux@gmail.com>
+ <20250820151913.1814284-1-igor.korotin.linux@gmail.com>
+ <CB269793-D165-4D22-95E5-F978C1ECC79E@collabora.com>
+ <655ca23c-1fe6-498a-80b8-1b75044d9db3@gmail.com>
+To: Igor Korotin <igor.korotin.linux@gmail.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
 
+
+> On 9 Sep 2025, at 14:19, Igor Korotin <igor.korotin.linux@gmail.com> =
+wrote:
+>=20
+> Hi Daniel
+>=20
+> On 8/27/2025 7:37 PM, Daniel Almeida wrote:
+>>> +
+>>> +        let i2c_table =3D match T::I2C_ID_TABLE {
+>>> +            Some(table) =3D> table.as_ptr(),
+>>> +            None =3D> core::ptr::null(),
+>>> +        };
+>>> +
+>>> +        let of_table =3D match T::OF_ID_TABLE {
+>>> +            Some(table) =3D> table.as_ptr(),
+>>> +            None =3D> core::ptr::null(),
+>>> +        };
+>>> +
+>>> +        let acpi_table =3D match T::ACPI_ID_TABLE {
+>>> +            Some(table) =3D> table.as_ptr(),
+>>> +            None =3D> core::ptr::null(),
+>>> +        };
+>>> +
+>>> +        // SAFETY: It's safe to set the fields of `struct =
+i2c_client` on initialization.
+>>> +        unsafe {
+>>> +            (*idrv.get()).driver.name =3D name.as_char_ptr();
+>>> +            (*idrv.get()).probe =3D Some(Self::probe_callback);
+>>> +            (*idrv.get()).remove =3D Some(Self::remove_callback);
+>>> +            (*idrv.get()).shutdown =3D =
+Some(Self::shutdown_callback);
+>>> +            (*idrv.get()).id_table =3D i2c_table;
+>>> +            (*idrv.get()).driver.of_match_table =3D of_table;
+>>> +            (*idrv.get()).driver.acpi_match_table =3D acpi_table;
+>>> +        }
+>>> +
+>>> +        // SAFETY: `idrv` is guaranteed to be a valid `RegType`.
+>>> +        to_result(unsafe { bindings::i2c_register_driver(module.0, =
+idrv.get()) })
+>>> +    }
+>>> +
+>>> +    unsafe fn unregister(idrv: &Opaque<Self::RegType>) {
+>>> +        // SAFETY: `idrv` is guaranteed to be a valid `RegType`.
+>>> +        unsafe { bindings::i2c_del_driver(idrv.get()) }
+>>> +    }
+>>> +}
+>>> +
+>>> +impl<T: Driver + 'static> Adapter<T> {
+>>> +    extern "C" fn probe_callback(idev: *mut bindings::i2c_client) =
+-> kernel::ffi::c_int {
+>>> +        // SAFETY: The I2C bus only ever calls the probe callback =
+with a valid pointer to a
+>>> +        // `struct i2c_client`.
+>>> +        //
+>>> +        // INVARIANT: `idev` is valid for the duration of =
+`probe_callback()`.
+>>> +        let idev =3D unsafe { =
+&*idev.cast::<I2cClient<device::CoreInternal>>() };
+>>> +
+>>> +        let info =3D
+>>> +            Self::i2c_id_info(idev).or_else(|| <Self as =
+driver::Adapter>::id_info(idev.as_ref()));
+>> I wonder if these should be private member functions?
+>>> +
+>>> +        from_result(|| {
+>>> +            let data =3D T::probe(idev, info)?;
+>>> +
+>>> +            idev.as_ref().set_drvdata(data);
+>>> +            Ok(0)
+>>> +        })
+>>> +    }
+>>> +
+>>> +    extern "C" fn remove_callback(idev: *mut bindings::i2c_client) =
+{
+>>> +        // SAFETY: `idev` is a valid pointer to a `struct =
+i2c_client`.
+>>> +        let idev =3D unsafe { =
+&*idev.cast::<I2cClient<device::CoreInternal>>() };
+>>> +
+>>> +        // SAFETY: `remove_callback` is only ever called after a =
+successful call to
+>>> +        // `probe_callback`, hence it's guaranteed that =
+`I2cClient::set_drvdata()` has been called
+>>> +        // and stored a `Pin<KBox<T>>`.
+>>> +        drop(unsafe { =
+idev.as_ref().drvdata_obtain::<Pin<KBox<T>>>() });
+>>> +    }
+>>> +
+>>> +    extern "C" fn shutdown_callback(idev: *mut =
+bindings::i2c_client) {
+>>> +        // SAFETY: `shutdown_callback` is only ever called for a =
+valid `idev`
+>>> +        let idev =3D unsafe { =
+&*idev.cast::<I2cClient<device::Core>>() };
+>>> +
+>>> +        T::shutdown(idev);
+>>> +    }
+>>> +
+>>> +    /// The [`i2c::IdTable`] of the corresponding driver.
+>>> +    fn i2c_id_table() -> Option<IdTable<<Self as =
+driver::Adapter>::IdInfo>> {
+>>> +        T::I2C_ID_TABLE
+>>> +    }
+>>> +
+>>> +    /// Returns the driver's private data from the matching entry =
+in the [`i2c::IdTable`], if any.
+>>> +    ///
+>>> +    /// If this returns `None`, it means there is no match with an =
+entry in the [`i2c::IdTable`].
+>>> +    fn i2c_id_info(dev: &I2cClient) -> Option<&'static <Self as =
+driver::Adapter>::IdInfo> {
+>> Again, perhaps a private member function? I=E2=80=99m trying to =
+simplify the syntax here.
+>=20
+> Can you, please, kindly clarify what do you mean? If a function is not =
+pub/pub(crate),
+> it is a private function.
+>=20
+> Thanks,
+> Igor
+>=20
+
+I mean a function that takes &self or &mut self as applicable.
+
+=E2=80=94 Daniel=
 
