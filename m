@@ -1,117 +1,209 @@
-Return-Path: <linux-kernel+bounces-808752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 413ECB50450
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:19:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D81DB50458
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBA993B832B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:19:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECF34188FBF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17364316912;
-	Tue,  9 Sep 2025 17:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7585307ADA;
+	Tue,  9 Sep 2025 17:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F9pYGj24"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWebY2Fe"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153EB31D36B;
-	Tue,  9 Sep 2025 17:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6575831CA56;
+	Tue,  9 Sep 2025 17:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757438343; cv=none; b=nkhngt5QQmQL5/GzAkHX1jR+cg7l8ntvnCKYmT/lf/2kFTTjO05U/QkS16MzvSAYmpTA6J9enryJXDm0jbgc270qadCtTbVO4xdrKAW3X0g5axE6HOm9EvbYJ/KhiwDQRHDUpQ12Sz5o44O3eo6vk4Ei3Iqzg8kIeFLYftiOlyI=
+	t=1757438349; cv=none; b=dMiIlxomCiwkuWfaPhSeSvhDjTL895sjehayMgeKsoUpt2LbyCHtovoOafYhjaGZB2ZLdXiEvDNKwTdZSCAvCnm7z/Tg/rrT8Hz9cSFPbOJ4zSpVq+d+vw1TflLisn0YdNNk1xJBig3VdFUz7YS4OPFhD6dNgf5ny29HNBk9hN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757438343; c=relaxed/simple;
-	bh=Zm7VvOOeDOR6npg9I6+moKEGxYkK+6BlGRi966Odu/U=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ZaYjStkiGJCoBsJ6qRBqU4W490lnqFmWHtXO/LTRecJbp+1gSSiGLvvi5vCnCKLW41pyEOYVIcm3lEiSnhYxZvMe09JWyOTPaxv/FKgB0T7ex854RvRep2/KMfaeYoID9XoYLkjdkuYwsspvLjH4GN4XvfcIBUmwTTXcvTxiuVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F9pYGj24; arc=none smtp.client-ip=209.85.221.169
+	s=arc-20240116; t=1757438349; c=relaxed/simple;
+	bh=bWWnGj0S+MEzFaJeOUMbJYLA0erOC190FHMhWP/fRWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ngw2Jzc2QqZERGzL7F/yRE5R+dAngWbQJWxv+D1lXId+qbzc/nPKgoD+hDbDrd0ymwpI4zrimN5256EKexZsKNQzHf4P4G85ibLvBEDg+rgMrhjFUJSYJ8XGnIeCaTS96Us9pww5oQxmwvYcL6pU+vX/YIMXtSK+VReiE8GZV5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWebY2Fe; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-544bac3caf2so4996240e0c.0;
-        Tue, 09 Sep 2025 10:19:01 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3e537dc30c7so4245997f8f.3;
+        Tue, 09 Sep 2025 10:19:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757438341; x=1758043141; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zm7VvOOeDOR6npg9I6+moKEGxYkK+6BlGRi966Odu/U=;
-        b=F9pYGj24ZXLL4W1e5RtGzDEQOorGlObpbfI+o5aJXlmYNc+CDAgxI2EhmpwImwjGI+
-         buNl6IwTCL1+RJdZkfUPyWLGMBndcbXmGk3MRr21x0Utg66JbHzRS00174rfIS0gUqgp
-         KzQnSMZxBoavw/QriOGxviZWWiAmhVSQGxIJUz+GbDihkxpdQ7apq+cHOmSMj9vSIalt
-         KMywzdhjin//k4z1GxQo2Rra1XbrorbxVbf0cTz+dm7F/usNHfd9qPbZ2KiZbrN9mava
-         wdOBIEM9uthMcGeog505rhR5tMA8VH24MBW3CH8bs2BlaONi5YJRn2L4yrOJgWld5XYY
-         Qy7w==
+        d=gmail.com; s=20230601; t=1757438346; x=1758043146; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l25EVoDFKNwGSM0isuq3f17bD+L6S3kSkSJqwpB+hRo=;
+        b=YWebY2FeTqtVOK4t5jwPcOlcGun3gKKPOATXRC9UpxkFlCr7lrm3zK0oxeyCU+xR8c
+         2FuUgSZ/1JllfNpLaWb20YCvA5Q0pXaMnOalCV83FuXZy1TCz9ej+Uoo0bNei4nH4PFI
+         cGehrzkwRSKViaZaeqULNXGb2/IOaYCKFk+htuB/Z4NFtlD45wa493cHz3rPHFhAT8ks
+         BOK+CNWNIzap0xe8CuB9j6f7DmDiFzCDHgbBZrEfUdMTqn+NXlVb5d5pGlYGcO5BnkZC
+         vJmgubudWvOeP6h7DxvUg6xx/EqL1QSrhIH7WJNALG/JcEgHd9UDGQzU7ZOx+WBul+Rw
+         4PtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757438341; x=1758043141;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Zm7VvOOeDOR6npg9I6+moKEGxYkK+6BlGRi966Odu/U=;
-        b=KZ8s91shhhrzsN2kwm0tqHLsnZTFsL8MNeFjVlllWkQmijXnR8868bc4FHO5CS/oMD
-         CpMZNIf0TKlQFDD4WcuBE2Fy7lJlnP7dI/TV9tJ6NifJ/p6u0ykGCr52EcVmtMfYjQg6
-         emEFUhIKfxM45nkLFgsqizTGPpZHvzXSXFwO8LbGjsNP6N5+iUJ5NT69MMDLI3PmhJ+O
-         3RD61aBl6xSFdLjCwh430gLfHh8QjATwC/n1SwCQlkayyYyJs3UGV7MLOjEUGOHIBFiC
-         FJkcruny4jJs6NMg12xkMFLF6VrIZyigyc6Br1QMQl9D4zfkQLdBrWqxPZnHl4YmGQBL
-         7sVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBfntsVX/uGeZa95KK5gmDEIj5joptYvuDw6oJ1Q6bi0xvYXmCu+PNgx5DuOZ7ioO6bTo/4Ul/dHBScFD4@vger.kernel.org, AJvYcCUWM4v+cTaihZ6k/AWc/tslYL0HDYtKquvu5i8TT5SBsn71PI82B15FA9uNfYmgiNx5q3C/tT0cwhcR@vger.kernel.org, AJvYcCVP2q4cvzhXQ3UGvD4+lVe1ErSWkC9Vn0dupjAUDXxKk5TR6TbPsvBhMUZA+bJbHC1IT+5vNEH7Mt9fJAY=@vger.kernel.org, AJvYcCXSrT6BRv1fB6CkF+Eh9d67ESCeWzHQzx6PyIkdP+mE7jZJevHFuPMwWWDtGSPnyXvWsQq5VJQKGWO6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP7WgCmOWImrRKOd3rUReLlRHXjE/iu+mshB2rW9QUzl2utlm2
-	oIYgXOKeB/LoULHv1F0dljvBHG1r4o9Wn9I6AVK+JveV2zSQhnPI+NnW
-X-Gm-Gg: ASbGnctAYg+6aL2bVF+W+1w9qKw/9KLcSPIOYp6+RfUjOjRtzbWo2wMNohNt1TG/ak2
-	iLEQN8NkodTsnRDGR/ExrFTor1iMyzhN95dZd8b/cvlgcsy8tZyCDZFRI6+9jtGAFK4gDxvZG7O
-	4CwntuN2UWxW8oDvpx9OaW5avEDyPmOuHHkjwc7T9ONHkHFSJR3pqM9VmNd7Jh93tm0WkWiUeuB
-	XIIUDrW09EKMIUZtn1313OKpCahHExX3hPnkPXOy0IeyRnlqgD/5GMfAvWj4DUcNzUXg0Uoz1Cj
-	iBAWN398akq6wY2EgLzgMyOuyx9bcnuexL6tjJeTEGp/R4wiwxqC8OT94dCE6jmx+T0Xzyjo50B
-	rvyQFgGoRpcvJ7jgETw==
-X-Google-Smtp-Source: AGHT+IHK+XrLR9nzLmssHwGsF3FY/vJz5YzX53asL0ZsGc/4fHjLGGtfvlof1YLUsZOQVPF3Yh2aqA==
-X-Received: by 2002:a05:6122:251c:b0:545:f7df:4769 with SMTP id 71dfb90a1353d-547923097c4mr4407967e0c.0.1757438340871;
-        Tue, 09 Sep 2025 10:19:00 -0700 (PDT)
-Received: from localhost ([2800:bf0:4580:3149:7d4:54b1:c444:6f2f])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5449bc6668esm13241166e0c.0.2025.09.09.10.18.59
+        d=1e100.net; s=20230601; t=1757438346; x=1758043146;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l25EVoDFKNwGSM0isuq3f17bD+L6S3kSkSJqwpB+hRo=;
+        b=tYCchG3wrppE9T88yxgCztnNUqV7J/zaogbm0bI+CZfglXhIMppduEanTMCCJfwOAF
+         6s5F2oMelIgi2GabFES2OoVU+G5TdgOpRZ5y4EyHk5znLkKtr4+nXIpQrHZb6hcoqgLc
+         LVjlVAE65gvaB2MS1/0XT02nuyR4MV6AEcVFOD2nZ4z982fwy/iHc1k3u373+MC5uodC
+         scSSXz/X4p4myK2KVNUMD/6EnKyLgUckkvO2R6fkeDiNq8QJcccPNyoZKFOmQ4InKAI3
+         oJjjA/tnQ3WEqdYUVoIRyh232jlxoSjxuVB7GUlVG0lJ5uYJOa7gzaqcaE2J59zRRlA/
+         DtpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMt6NLtszRFandMbWcuQzKUJlNAqX5tfXFu5akNu54ZUsKEJmAyoL6YTx4Lbom85/wRuBW9Hx0RkE=@vger.kernel.org, AJvYcCVM/YhUFl9gkn3A7Ngp0Fltq52VI4Id7S1Yrl7fdT5OBVHhiKufMdC6OL4kHfvanUZK0FfX5obq0/GnTX+O@vger.kernel.org, AJvYcCWWgScgc9P1Z8sdOKHRiSi4OD2wC8QYTnxczvhfArjVBBATNaYl4TO+Xm4G4WSy0bUWRtYpoctkE9wGFaIEYJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeWzO3RQ3ell/hzmG8pQwhZ48E7W+CECkCT80FcRZ40BL0rc0H
+	jDvstgrjshY0WMbGSg74A6yCYi3cwkxH+haFNvKc4jyPF47P2uYl7vMo
+X-Gm-Gg: ASbGncsuZI/L4mWfFskabgITwLzQDMkotdK5jeU70WBTayR7z2Xgfpt0Qv+iPuPLZ6t
+	ttYQEjN2ta7DF/S4tpW9O9ekYu0LPGncy6XVqE3/mDck6rrVjGkFKTWCBvIVP/O9HpODvlvd8nk
+	2fRwk3bKgsVDdqdDYYIKrSFQFGjvqR6cS1ZK2EJJi9tc29mQsz9ZAG8Gkw1yTPyYWRndcoK9WKJ
+	cBrHCRpqEfOFAosn6nsycYk1YI8uza/zrAhHSb+rUIzWzBXD6csUA9HTuAosIw0+fNs9N6OLKfQ
+	jmHjL/oDASRhf+3fLKbq+UEulRxT51e2SSNzjtymRoJTtUsyzLGsKaNd733inDzyF2AFvclFAJ5
+	ve5VztYiFG4mgOJ1ZWKYFHLLPEzUoJupKf4uo5FgmZ9baXyW2DGA1ntiF5zoAKi0oWAVO832zsg
+	4kTVbpvD6xlUk=
+X-Google-Smtp-Source: AGHT+IEzEqgCQjkt5PCDth2nN24b5YqmS9WtwgMI6DUL7TT1tAavecUGpN2Gj2qC/kSXsDgYKU0Lcg==
+X-Received: by 2002:a05:6000:178b:b0:3e3:24c3:6d85 with SMTP id ffacd0b85a97d-3e6428cd370mr9905453f8f.22.1757438345455;
+        Tue, 09 Sep 2025 10:19:05 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:bd1b:2400:28bc:5a7:3bb6:8f22? ([2a01:4b00:bd1b:2400:28bc:5a7:3bb6:8f22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75224eb27sm3401552f8f.62.2025.09.09.10.19.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 10:19:00 -0700 (PDT)
+        Tue, 09 Sep 2025 10:19:04 -0700 (PDT)
+Message-ID: <655ca23c-1fe6-498a-80b8-1b75044d9db3@gmail.com>
+Date: Tue, 9 Sep 2025 18:19:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 09 Sep 2025 12:18:58 -0500
-Message-Id: <DCOFWB420ZRS.2N43ZQ97QZ8UY@gmail.com>
-Cc: "Jean Delvare" <jdelvare@suse.com>, "Jonathan Corbet" <corbet@lwn.net>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, <linux-hwmon@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 3/4] dt-bindings: trivial-devices: Add sht2x sensors
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Guenter Roeck" <linux@roeck-us.net>, "Kurt Borja" <kuurtb@gmail.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250908-sht2x-v4-0-bc15f68af7de@gmail.com>
- <20250908-sht2x-v4-3-bc15f68af7de@gmail.com>
- <58e111ea-508c-4042-9ae4-d4293871e73f@roeck-us.net>
-In-Reply-To: <58e111ea-508c-4042-9ae4-d4293871e73f@roeck-us.net>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] rust: i2c: add basic I2C device and driver
+ abstractions
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Asahi Lina <lina+kernel@asahilina.net>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Hung <alex.hung@amd.com>,
+ Tamir Duberstein <tamird@gmail.com>,
+ Xiangfei Ding <dingxiangfei2009@gmail.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <20250820151427.1812482-1-igor.korotin.linux@gmail.com>
+ <20250820151913.1814284-1-igor.korotin.linux@gmail.com>
+ <CB269793-D165-4D22-95E5-F978C1ECC79E@collabora.com>
+Content-Language: en-US
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+In-Reply-To: <CB269793-D165-4D22-95E5-F978C1ECC79E@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue Sep 9, 2025 at 7:25 AM -05, Guenter Roeck wrote:
-> On Mon, Sep 08, 2025 at 10:54:51AM -0500, Kurt Borja wrote:
->> Add sensirion,sht2x trivial sensors.
->>=20
->> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
->> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
-> Applied.
->
-> Guenter
+Hi Daniel
 
-Thanks Guenter and Krzysztof!
+On 8/27/2025 7:37 PM, Daniel Almeida wrote:
+>> +
+>> +        let i2c_table = match T::I2C_ID_TABLE {
+>> +            Some(table) => table.as_ptr(),
+>> +            None => core::ptr::null(),
+>> +        };
+>> +
+>> +        let of_table = match T::OF_ID_TABLE {
+>> +            Some(table) => table.as_ptr(),
+>> +            None => core::ptr::null(),
+>> +        };
+>> +
+>> +        let acpi_table = match T::ACPI_ID_TABLE {
+>> +            Some(table) => table.as_ptr(),
+>> +            None => core::ptr::null(),
+>> +        };
+>> +
+>> +        // SAFETY: It's safe to set the fields of `struct i2c_client` on initialization.
+>> +        unsafe {
+>> +            (*idrv.get()).driver.name = name.as_char_ptr();
+>> +            (*idrv.get()).probe = Some(Self::probe_callback);
+>> +            (*idrv.get()).remove = Some(Self::remove_callback);
+>> +            (*idrv.get()).shutdown = Some(Self::shutdown_callback);
+>> +            (*idrv.get()).id_table = i2c_table;
+>> +            (*idrv.get()).driver.of_match_table = of_table;
+>> +            (*idrv.get()).driver.acpi_match_table = acpi_table;
+>> +        }
+>> +
+>> +        // SAFETY: `idrv` is guaranteed to be a valid `RegType`.
+>> +        to_result(unsafe { bindings::i2c_register_driver(module.0, idrv.get()) })
+>> +    }
+>> +
+>> +    unsafe fn unregister(idrv: &Opaque<Self::RegType>) {
+>> +        // SAFETY: `idrv` is guaranteed to be a valid `RegType`.
+>> +        unsafe { bindings::i2c_del_driver(idrv.get()) }
+>> +    }
+>> +}
+>> +
+>> +impl<T: Driver + 'static> Adapter<T> {
+>> +    extern "C" fn probe_callback(idev: *mut bindings::i2c_client) -> kernel::ffi::c_int {
+>> +        // SAFETY: The I2C bus only ever calls the probe callback with a valid pointer to a
+>> +        // `struct i2c_client`.
+>> +        //
+>> +        // INVARIANT: `idev` is valid for the duration of `probe_callback()`.
+>> +        let idev = unsafe { &*idev.cast::<I2cClient<device::CoreInternal>>() };
+>> +
+>> +        let info =
+>> +            Self::i2c_id_info(idev).or_else(|| <Self as driver::Adapter>::id_info(idev.as_ref()));
+> 
+> I wonder if these should be private member functions?
+> 
+>> +
+>> +        from_result(|| {
+>> +            let data = T::probe(idev, info)?;
+>> +
+>> +            idev.as_ref().set_drvdata(data);
+>> +            Ok(0)
+>> +        })
+>> +    }
+>> +
+>> +    extern "C" fn remove_callback(idev: *mut bindings::i2c_client) {
+>> +        // SAFETY: `idev` is a valid pointer to a `struct i2c_client`.
+>> +        let idev = unsafe { &*idev.cast::<I2cClient<device::CoreInternal>>() };
+> 
+>> +
+>> +        // SAFETY: `remove_callback` is only ever called after a successful call to
+>> +        // `probe_callback`, hence it's guaranteed that `I2cClient::set_drvdata()` has been called
+>> +        // and stored a `Pin<KBox<T>>`.
+>> +        drop(unsafe { idev.as_ref().drvdata_obtain::<Pin<KBox<T>>>() });
+>> +    }
+>> +
+>> +    extern "C" fn shutdown_callback(idev: *mut bindings::i2c_client) {
+>> +        // SAFETY: `shutdown_callback` is only ever called for a valid `idev`
+>> +        let idev = unsafe { &*idev.cast::<I2cClient<device::Core>>() };
+>> +
+>> +        T::shutdown(idev);
+>> +    }
+>> +
+>> +    /// The [`i2c::IdTable`] of the corresponding driver.
+>> +    fn i2c_id_table() -> Option<IdTable<<Self as driver::Adapter>::IdInfo>> {
+>> +        T::I2C_ID_TABLE
+>> +    }
+>> +
+>> +    /// Returns the driver's private data from the matching entry in the [`i2c::IdTable`], if any.
+>> +    ///
+>> +    /// If this returns `None`, it means there is no match with an entry in the [`i2c::IdTable`].
+>> +    fn i2c_id_info(dev: &I2cClient) -> Option<&'static <Self as driver::Adapter>::IdInfo> {
+> 
+> Again, perhaps a private member function? I’m trying to simplify the syntax here.
 
+Can you, please, kindly clarify what do you mean? If a function is not 
+pub/pub(crate),
+it is a private function.
 
---=20
- ~ Kurt
-
+Thanks,
+Igor
 
