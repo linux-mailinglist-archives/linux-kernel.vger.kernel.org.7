@@ -1,129 +1,111 @@
-Return-Path: <linux-kernel+bounces-808748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1431CB50443
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:17:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D3B0B50441
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6135F16479B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:16:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377B23B0E58
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FCC338F3D;
-	Tue,  9 Sep 2025 17:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B863375B1;
+	Tue,  9 Sep 2025 17:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AHHoIGV8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJ98/15n"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF13232C33D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 17:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7F832A815
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 17:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757438183; cv=none; b=N3Synd/fLGAaGCHDYjuoqfeV/uWzjLWe3+S2H2W2MV0SMCOTvQeN/FtY5LxALZLB3v3o/2GbGJXni19iKfrcgs39Xohcv5xoQHp/pKCO4LJMS97eTnU7p6RDVCtMWVTJuvoI2JTQz4cyHr+epA+2dBYZn1NjeOwxQ33QXPegZoU=
+	t=1757438193; cv=none; b=c5nkvPL7QidsutmZrTjxhlQU4Nn3qJ0TrzO8+Hrma5Grg6m5dq0zaFHNZsGKOvLiXAHBaWbFUCEuHuAyru1DzL/6wBltmeBcw423GU9t7er+Fup+tS/EMGdmyuMzwDOK7GsItviyV/GjQ7s2bYtJW8uoYXMiO2bvtTUOeAT4Wn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757438183; c=relaxed/simple;
-	bh=1776x5WNuqGQXUdGA1Vx2rw6TH5/YKvwrIJKYIxvYXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYaGYfOguh5NoZAVj94uyCSfYqbYHQu02bkvE7tegrdHvQXVHoJobzyzRRdCH4S7cLVpq2mHEif96MRbNFdrNF19tL5mnjTngz9U3EurXsyarbcH11N0WSNE+bG8TVRLJH5eBlNdNJ5lyjdx++i4p/uMjQl1Ugosudc1XHkC5gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AHHoIGV8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757438179;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C+QDVhIlXWVQYYj2EpRYmCRki550WcQuDpwFnUZzK9w=;
-	b=AHHoIGV8Q/ut6BC8BPpkEmFF73r7vMGpd/TRFC/54117LvHVKbhi8hIQmDTjys1DRufV2H
-	2ztRHlx31ZvRmSYoU89GKh+ieMuIMSfnBFzF6ARHaa20/y4V+IzFWOuLbr68mrqZggr17v
-	vs28z1E2SSU12OhNycpEAHY6uIUSxiI=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-627-8q5rAUrtNUyreY5zjAp-hg-1; Tue,
- 09 Sep 2025 13:16:18 -0400
-X-MC-Unique: 8q5rAUrtNUyreY5zjAp-hg-1
-X-Mimecast-MFC-AGG-ID: 8q5rAUrtNUyreY5zjAp-hg_1757438177
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6CF4A195608E;
-	Tue,  9 Sep 2025 17:16:16 +0000 (UTC)
-Received: from localhost (unknown [10.45.226.196])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E2D5A1800447;
-	Tue,  9 Sep 2025 17:16:14 +0000 (UTC)
-Date: Tue, 9 Sep 2025 18:16:13 +0100
-From: "Richard W.M. Jones" <rjones@redhat.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-	Eric Dumazet <eric.dumazet@gmail.com>,
-	syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com,
-	Mike Christie <mchristi@redhat.com>,
-	Yu Kuai <yukuai1@huaweicloud.com>, linux-block@vger.kernel.org,
-	nbd@other.debian.org, Stefan Hajnoczi <stefanha@redhat.com>,
-	Stefano Garzarella <sgarzare@redhat.com>
-Subject: Re: [PATCH] nbd: restrict sockets to TCP and UDP
-Message-ID: <20250909171613.GB2390@redhat.com>
-References: <20250909132243.1327024-1-edumazet@google.com>
- <20250909132936.GA1460@redhat.com>
- <CANn89iLyxMYTw6fPzUeVcwLh=4=iPjHZOAjg5BVKeA7Tq06wPg@mail.gmail.com>
- <CANn89iKdKMZLT+ArMbFAc8=X+Pp2XaVH7H88zSjAZw=_MvbWLQ@mail.gmail.com>
- <63c99735-80ba-421f-8ad4-0c0ec8ebc3ea@kernel.dk>
- <CANn89iJiBuJ=sHbfKjR-bJe6p12UrJ_DkOgysmAQuwCbNEy8BA@mail.gmail.com>
- <20250909151851.GB1460@redhat.com>
+	s=arc-20240116; t=1757438193; c=relaxed/simple;
+	bh=R1Ch3C0oxQlRO22Xw5yMNpS2T6gGdLKY4TKwxEE6ycA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qtUyObAaJ0B23GH5cgYSLi9A8zbSlBFcJ2LXqnaFXBfx4fmfBBItdWoJnh6tuIuecYGpNZT4gdqeloxNe4rXTun6pxJ8XnvrBHHVvHUYvBLxZr2ZMmQ6anvIxCjQ9e2WhiRbLi3gTHS1AqJzgEEqr57vZDL9yklhGSIH+L98rMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJ98/15n; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24602f6d8b6so11824285ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 10:16:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757438191; x=1758042991; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R1Ch3C0oxQlRO22Xw5yMNpS2T6gGdLKY4TKwxEE6ycA=;
+        b=GJ98/15nDhkNVPjiMm8vuasCIykhfLoG7zTfnm1CCYXYOU12uRi+luM+OsNOCFOd1i
+         tylCaXe8MWrGXvTC+Jaqz2PRsv+Dy6eZa+bG5EggqcwyvFBOtzt4RqZoSR7wf53XNyjU
+         Q1atvg26i9OySZDiOyUWlL70GMsOTG9DcIO93sXYYqr6tOLCz9zU44L7byqCka7rUW1p
+         93euC8OWbTfNojd9wk94xtIMyKaijXl7ds4L098yrOEh1SZEJHWbzrTpmbJ2+aFVpDtX
+         Vg5y3Wts3UTwjRqC/iUkedJb8gdrlV8IdspgaXm6njJoxJcQJEVR9+QJ8F4AerB+Dp9p
+         oOmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757438191; x=1758042991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R1Ch3C0oxQlRO22Xw5yMNpS2T6gGdLKY4TKwxEE6ycA=;
+        b=JpKaruB60+vxHsct26f/d/fHfDlApo2k5mgHwSEdI6Gq26y7cbHPpqqO/uyfYwKyEe
+         HkzFjqsblj/3MaGm5XpcqI+ty2JCxJL5AMyR/fteYgHVAsThGqlgCIQ9XASsR0x+ZKAn
+         kJqVuoHMngDpddepWAJv/htCBvv2FPq/nO8L+zC7z5mJmekyh1sV0D9YEQFBOjxnCSZg
+         ZfiT5p9c6iyUg561Jy33/GI7mSDs/ujmGr7keVWC5hSn2YFgQZdtWT1CZM3gH5GVdWLk
+         gcCi0+MtxhoQNC4drmkda35No8uStZ4nrjexoHQXpxl4zFmZytV/Jhy0kRKR66URMqHv
+         CrCw==
+X-Forwarded-Encrypted: i=1; AJvYcCX4+4kjBQg42gYOwXajmjvOAi2KpMUvSrEoQV0prukSk3UNsRsGaWru8dRWAHZBs8qmuLIdRPC0MnNFv2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzqEL51FT9LjJ5meX1B9CcGm/w3xhSjVwae7A197aaYciNo3cX
+	b0uFrzSkRxxWjerSTEiaoTEIusCWAdLdbM5uYQAbBwurGrqKoCP4wolzEjQYoJPtr4ib9icFuUq
+	YeBBigzUCDL5RuYKP8n3/+Qr47MJ5Kwo=
+X-Gm-Gg: ASbGncvbkJaotlUEznlJx6ta5ZSmP10bxyFwxXxC9+VDBksRdKPVkCIBEirWASzT1Mu
+	Q+awTMLy37BkxYHfuZBW92QppRDLi0DFmd7iKirvEXgsf/ImJqqVOTqNVRV3Cf9rZened3MS5Nr
+	7a5ARSSJ+ZOYFh/7S5swDJbhlXVcp7UU6msD0qBu/fQnCYqZh/7Jxr/c8lyQlewzhdBhkOqkNWt
+	gKlNFdQErm1hlm5be4qZHX3e9BSh2QY/PLuqxwHCk+WTK8YRHtXWPelsoeVYgtj59YXSHjwbuZi
+	Q+Sh9sDIZNglwxO4a55IcJwWSw==
+X-Google-Smtp-Source: AGHT+IGO94y51rM0C0I/EAdShkTaG+X6lgtWd0vdyU2lORl3sjxr1UXkjo9G/VQ5f9+lWmKV9PlSamp5i7EomS2lRWI=
+X-Received: by 2002:a17:903:1cc:b0:248:a01f:a549 with SMTP id
+ d9443c01a7336-251771d5b61mr95844105ad.11.1757438191527; Tue, 09 Sep 2025
+ 10:16:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909151851.GB1460@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250908-regulator-remove-dynamic-v2-0-e575ae2cde6a@collabora.com>
+ <20250908-regulator-remove-dynamic-v2-2-e575ae2cde6a@collabora.com>
+ <aL_PwXck1HsLp5wH@tardis-2.local> <AA8FC1A7-EE88-44FA-A0A9-A3EA5529B10D@collabora.com>
+ <aMBJ805QjQcPdRol@tardis-2.local> <CANiq72m18qUTjqjKKYgPfeEUh=vN+Jzz=ACFDcgA-JDLL_N5SA@mail.gmail.com>
+ <aMBVgrVqX2w31GhV@tardis-2.local> <3bed2164-8f68-42ed-9ab9-6fda05687535@sirena.org.uk>
+In-Reply-To: <3bed2164-8f68-42ed-9ab9-6fda05687535@sirena.org.uk>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 9 Sep 2025 19:16:17 +0200
+X-Gm-Features: AS18NWC95uheqMj0QgDVvrdAmeJKZFXIKvboMRQH-DI_w3wLatZKkT7OTw0xQ3E
+Message-ID: <CANiq72n-_GnPOaU4JD4P-oV3J1MKevPto1FDax-ihLP69g0v4w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: regulator: add devm_enable and devm_enable_optional
+To: Mark Brown <broonie@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-So I was playing with this (see commands at end if you want to try)
-and it turns out that the nbd-client program doesn't support vsock
-anyway.  Of course you could still call the kernel APIs directly to
-set up the socket, but it wouldn't be straightforward.
+On Tue, Sep 9, 2025 at 7:11=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
+e:
+>
+> The C stubs are all inlined so should have zero impact on the resulting
+> binary (as are all equivalent stubs generally).
 
-nbd-client did support Sockets Direct Protocol (SDP) but support was
-removed in 2023.
+I think Boqun may be referring to the Rust <-> C step.
 
-The userspace tools like nbdinfo (part of libnbd) work fine, but of
-course that's not relevant to the kernel NBD client.
-
-Rich.
-
-
-Commands to test vsock:
-
-  $ virt-builder fedora-42
-
-  $ nbdkit --vsock memory 1G \
-           --run '
-      qemu-system-x86_64 -machine accel=kvm:tcg \
-                         -cpu host -m 4096 \
-                         -drive file=fedora-42.img,format=raw,if=virtio \
-                         -device vhost-vsock-pci,guest-cid=3
-   '
-
-Inside the guest:
-
-  # dnf install nbdinfo
-  # nbdinfo nbd+vsock:///
-  (details of the 1G RAM disk will be shown here)
-
--- 
-Richard Jones, Virtualization Group, Red Hat http://people.redhat.com/~rjones
-Read my programming and virtualization blog: http://rwmj.wordpress.com
-virt-p2v converts physical machines to virtual machines.  Boot with a
-live CD or over the network (PXE) and turn machines into KVM guests.
-http://libguestfs.org/virt-v2v
-
+Cheers,
+Miguel
 
