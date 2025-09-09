@@ -1,253 +1,98 @@
-Return-Path: <linux-kernel+bounces-808960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F10AB506DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:17:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53D1AB506DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 490A416428A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:17:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C8D61638A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B8C362087;
-	Tue,  9 Sep 2025 20:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.com header.i=@yandex-team.com header.b="l4FamUPe"
-Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B8830215F;
+	Tue,  9 Sep 2025 20:17:34 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D96E36299D;
-	Tue,  9 Sep 2025 20:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E4D2222CB;
+	Tue,  9 Sep 2025 20:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757448956; cv=none; b=RvT7hv6AeGvYvHU5R6MuzUgXAtisUxKgxdEXGhcJ7jdGG3jPWjVI+94CbCkdOpUCI8HoXz2kSphbNR9kemZkcCSh5nDA+jOwk8NCIjdjjrj4gMWlpYUrKUS+PPzdhUbBOIumM/tglB7X6YMQA4JuiDX4SbOpGdkLdHW93ObiYaQ=
+	t=1757449054; cv=none; b=WL8hb2F7nxwvmZygzGtllEF+L4SelE51xQDG4fB3Eps4OLnrvKi6NFCCcdng0N1Si/Guj8aukmDmTWPI7h+R59zOFNfwpzfhVPOOYj/YEnXUh+Bnrs4asY1SBkutRGO/q+pAW4S7QzniYRfhSiG6ZuRdGwlEY5cXjWNI3f8TKZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757448956; c=relaxed/simple;
-	bh=XkMZUEEuvqVXTBl3/z30gLJ4zDEgFIOF6Z1PfW5frv0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mznpb4auLo8pxMusw8qH02nfMMe6WEPNEemYBKbDPoR2bztlx5J3HZ2o9Hs8z5nkO/kU792q6XUEsdBNoi9UKFWiOnihKHacvLbZ9gtFqqWVsXHCZCpO0YgpyJx9j1qFZ564H4tRI0GNYZqtmk3JO5IgfhkqGlFS1/ZYtqaInoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.com; spf=pass smtp.mailfrom=yandex-team.com; dkim=pass (1024-bit key) header.d=yandex-team.com header.i=@yandex-team.com header.b=l4FamUPe; arc=none smtp.client-ip=178.154.239.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.com
-Received: from mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:3a87:0:640:845c:0])
-	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id B39CEC01AD;
-	Tue, 09 Sep 2025 23:15:52 +0300 (MSK)
-Received: from localhost.localdomain (172.31.115.73-vpn.dhcp.yndx.net [172.31.115.73])
-	by mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id IFQqlX5GteA0-oPNV4RHQ;
-	Tue, 09 Sep 2025 23:15:52 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.com;
-	s=default; t=1757448952;
-	bh=XK7bLUEvESp+m8RqUZl4D2oF/6AN2tNxcr+b8tCSt7Y=;
-	h=Cc:Message-ID:References:Date:In-Reply-To:Subject:To:From;
-	b=l4FamUPeJH/2K/fFm2QGMJdf/TMdhmYBjUawutzSIHby3gBQ+B3lL6Wpkipkd3fLk
-	 sO7XVN91XoNbPqj1vqL3ON/aoQC2y44btVzcMZvR9PS7PeLW6Skpxltn0hYiO0//xU
-	 NrpO3fwIt5K0uRDNB2l2en+/J4pNiYdBXZUszQRk=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net; dkim=pass header.i=@yandex-team.com
-From: Andrey Ryabinin <arbn@yandex-team.com>
-To: linux-kernel@vger.kernel.org
-Cc: Alexander Graf <graf@amazon.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	James Gowans <jgowans@amazon.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Baoquan He <bhe@redhat.com>,
-	kexec@lists.infradead.org,
-	Pratyush Yadav <ptyadav@amazon.de>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	David Rientjes <rientjes@google.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Chris Li <chrisl@kernel.org>,
-	Ashish.Kalra@amd.com,
-	William Tu <witu@nvidia.com>,
-	David Matlack <dmatlack@google.com>,
-	Andrey Ryabinin <arbn@yandex-team.com>
-Subject: [PATCH v3 7/7] Documentation, kstate: Add KSTATE documentation
-Date: Tue,  9 Sep 2025 22:14:42 +0200
-Message-ID: <20250909201446.13138-8-arbn@yandex-team.com>
-X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20250909201446.13138-1-arbn@yandex-team.com>
-References: <20250909201446.13138-1-arbn@yandex-team.com>
+	s=arc-20240116; t=1757449054; c=relaxed/simple;
+	bh=wC/CbOJ72UVbeJAbQqjNs2IoxTeIAOgQrzqhM2eyU7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aOmeAX8+J+bI2E6EZkftrHvnkuLHsaMLhdgSigv6z/7duYZ0Vk3cIUqHez0dwW+1pTx541mwLVQTxNe3aU4wzstqHlX7F0uPW3pBlwPvs8AZ7tn9hw2GAgLRzC9dl0wm0W9m7N9sINgcNpbVWZIFksntISYbReRRKSRwvMgO9WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad4f0so8604422a12.0;
+        Tue, 09 Sep 2025 13:17:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757449051; x=1758053851;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ous3mP2p8adCZ2Wa9WhDA9KVTHw1CaqTv41/zoKiID8=;
+        b=KWPvkdWk4v7iCw+L0QkTlyuN1WkLaGRlrbgOfrtikG4v+eqmtKjxmeg/9wPaUE+4n7
+         NCV8NT710WQ+Uk3r2ZDxQ240fyjPA9yyCKsnEzYxYNmLEXOpvpaJ3A2cXov4bJlQLrqe
+         B3rBQy7JgEP4mDkl/oiQtsLf1dIU/7FGwRl08f4UAi0AA6PQnORIju3OA6uKGXg/jDbN
+         N4i2Lhe8HRNWMtJ3vVIDB1phyj56w3cjIxhnp6BFn8s7aVw75TtueCtbHGud6XqJg1vb
+         NfkJ7tZ3nmtM/s5DLsnPqqueHywMi/fMWgWGpDurK6rjSHVpvbUusNax/AiWsslwEFcz
+         4MCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfbX6VQOsIjzRBbHt4dQVGKCeAKSk6Iq0nGdY/28PKqa+FUqRQYhAr97e53sCqK8FOnpNdipoUI4Ll412zelca@vger.kernel.org, AJvYcCVr5eg2CrTL9DUZfO9Os3POlzrk/kZRxbBfPjukJGAuXUSxGuMe9rJa2LHGXVcjpitc0EP1/55+@vger.kernel.org, AJvYcCW445OfgR7zujU5XZc8vOl4rwX7sbXnLtdRt8dHNtu4ZGSqrnw6yj1rf8TED/kmUC3mFq5WW49oe9mqyDQ=@vger.kernel.org, AJvYcCWOQ1J8WnKdJiEzXsIn/4curiy23RHTzL4Hj5zynf4U+stW1q5q5lkvKJjucT6ssZfDp9aNVumj@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdxoSmDYD8jmMLNzAwKf/V7sooogLfAXj4lWYf3ZJSO6hKN+vu
+	fTGeysrDTN9p+uL3UeXEV62mmSwQl0usfn+pu0GT9ERPzIlZDXiX2nS4
+X-Gm-Gg: ASbGnctoiGMr1y/vqRIkQP3sLFO/ncWkSRT55LVCXNaiPMcBkpveDjHBODmfvZpZdoN
+	2RTgt4792tj+BaM5oomrakelnfoZO4FMjO1q8QKsEKxdM7ryVVZ8Mjq0ZF8IlIGzGalV0ckZV9k
+	W/P42Pk0pDivZqEMNnrTjufPv40q1X5LCZHvAK3sqRn5JeXPnu2Bl3GfHr2mR9J/yVRFau3gITd
+	OlENZ6MmcxtSBQDy5J88uSamXXKc2hUSHftRqj2B7Ab29SBHURvComBn5sPYJ+qrQeoLo5XVjG+
+	sOoD1ES419jUO0+ZRgGqJCZj/+c+t7JM7zw306KJyygkrWEmwZ+qN8T/m7/3bVpqimo+D+lOFWw
+	xWMX3x+ivstN6watMYYn/ASw=
+X-Google-Smtp-Source: AGHT+IFV5CRFWEp2fMevaM+6ovBkmyV3H9l9vbdnrIuK+4x4iQB7+nUypI7RMhnSsqpmtnAljijbBQ==
+X-Received: by 2002:a17:907:9305:b0:afe:ef8a:ac69 with SMTP id a640c23a62f3a-b04b16dd3ccmr1243959566b.43.1757449050399;
+        Tue, 09 Sep 2025 13:17:30 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:5::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b078345426fsm44716766b.106.2025.09.09.13.17.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 13:17:29 -0700 (PDT)
+Date: Tue, 9 Sep 2025 13:17:27 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Calvin Owens <calvin@wbinvd.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
+	david decotigny <decot@googlers.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, kernel-team@meta.com, 
+	stable@vger.kernel.org, jv@jvosburgh.net
+Subject: Re: [PATCH net v3 1/3] netpoll: fix incorrect refcount handling
+ causing incorrect cleanup
+Message-ID: <kmvkrqkkrbfctpramlchpwqikg2x3btb3debshabqctt7azu2j@tv4ziqd4gldh>
+References: <20250905-netconsole_torture-v3-0-875c7febd316@debian.org>
+ <20250905-netconsole_torture-v3-1-875c7febd316@debian.org>
+ <aL9A3JDyx3TxAzLf@mozart.vkv.me>
+ <20250908182958.23dc4ba0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908182958.23dc4ba0@kernel.org>
 
-Add KSTATE doc. Describe 'struct kstate_description' and information
-about versioning fields.
+On Mon, Sep 08, 2025 at 06:29:58PM -0700, Jakub Kicinski wrote:
+> On Mon, 8 Sep 2025 13:47:24 -0700 Calvin Owens wrote:
+> > I wonder if there might be a demon lurking in bonding+netpoll that this
+> > was papering over? Not a reason not to fix the leaks IMO, I'm just
+> > curious, I don't want to spend time on it if you already did :)
+> 
+> +1, I also feel like it'd be good to have some bonding tests in place
+> when we're removing a hack added specifically for bonding.
 
-Signed-off-by: Andrey Ryabinin <arbn@yandex-team.com>
----
- Documentation/core-api/index.rst  |   1 +
- Documentation/core-api/kstate.rst | 117 ++++++++++++++++++++++++++++++
- MAINTAINERS                       |   1 +
- 3 files changed, 119 insertions(+)
- create mode 100644 Documentation/core-api/kstate.rst
-
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index a8b7d1417f0a..6c0466e0bb35 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -136,6 +136,7 @@ Documents that don't fit elsewhere or which have yet to be categorized.
- .. toctree::
-    :maxdepth: 1
- 
-+   kstate
-    librs
-    liveupdate
-    netlink
-diff --git a/Documentation/core-api/kstate.rst b/Documentation/core-api/kstate.rst
-new file mode 100644
-index 000000000000..981ba162109c
---- /dev/null
-+++ b/Documentation/core-api/kstate.rst
-@@ -0,0 +1,117 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+KSTATE: Kernel state preservation framework
-+===========================================
-+
-+KSTATE (kernel state) is framework to migrate some part of the internal
-+kernel state (device driver, memory, etc) from one kernel to another across
-+kexec reboot.
-+
-+kstate_description
-+------------------
-+
-+Most kernel's state is in structs and structs could be described by
-+kstate_description. E.g.
-+
-+struct kstate_test_data {
-+	int i;
-+	unsigned long *p_ulong;
-+	char s[10];
-+	struct folio *folio;
-+};
-+
-+struct kstate_description test_state = {
-+	.name = "test",
-+	.version_id = 1,
-+	.id = KSTATE_TEST_ID,
-+	.fields = (const struct kstate_field[]) {
-+		KSTATE_BASE_TYPE(s, struct kstate_test_data, char [10]),
-+		KSTATE_POINTER(p_ulong, struct kstate_test_data),
-+		KSTATE_FOLIO(folio, struct kstate_test_data),
-+		KSTATE_END_OF_LIST()
-+	},
-+};
-+
-+Changing data structures
-+------------------------
-+
-+KSTATE saves/restores structs as a series of fields. When the kernel structs
-+are changed we may need to change the state to store more/different information.
-+
-+Versions
-+--------
-+
-+Version numbers are intended for major incompatible changes, that are not
-+backward compatible.
-+
-+Each version is associated with a series of fields saved. The state is always
-+saved as the newest version specified by ->version_id.
-+But loading state sometimes is able to load state from an older version.
-+
-+There are two version fields:
-+
-+    - version_id: the maximum version_id supported by kstate_description.
-+    - min_version_id: the minimum version_id that given kstate_description is able to understand.
-+
-+KSTATE is able to read versions from minimum_version_id to version_id.
-+
-+There are _V forms of many KSTATE_ macros to load fields for version dependent fields, e.g.
-+
-+	KSTATE_BASE_TYPE_V(i, struct kstate_test_data, int, 2),
-+
-+only loads that field for versions 2 and newer.
-+
-+Saving state will always create a section with the ‘version_id’ value and thus can’t
-+be loaded by any older kernel.
-+
-+Removing field
-+--------------
-+If field is no longer needed it could be marked deprecated using
-+KSTATE_*_DEPRECATED macro and bumping ->version_id of kstate_description:
-+
-+	KSTATE_BASE_TYPE_DEPRECATED(k, u16, 1),
-+
-+The last parameter of the macro is the last version number that have this field.
-+Old kernel will save such field, but new kernel will skip it on load. Also
-+the new kernel will not save such field (as there is nothing to save).
-+Such change is not backward compatible.
-+
-+Adding new field
-+----------------
-+
-+Addition of new field can be done as version dependent field by using _V form of
-+KSTATE_ macro:
-+	KSTATE_BASE_TYPE_V(i, struct kstate_test_data, int, 2),
-+
-+This indicates that 'test_state' only from version 2 and above have field '->i'.
-+If new kernel sees incoming 'test_state' of version 1 it will skip restoring '->i'
-+as nothing was saved. This is not backward compatible, as old kernel doesn't
-+understand the new V2 'test_state'.
-+
-+Subsections
-+-----------
-+Another option is adding subsection to kstate_description. A subsection is
-+additional kstate_description which linked to the main one:
-+
-+struct kstate_description test_state_v2 = {
-+	.name = "test_v2",
-+	.id = KSTATE_TEST_ID_V2,
-+	.fields = (const struct kstate_field[]) {
-+		KSTATE_BASE_TYPE(i, struct kstate_test_data, int),
-+		KSTATE_END_OF_LIST()
-+	},
-+};
-+
-+struct kstate_description test_state = {
-+	......
-+	.subsections = (const struct kstate_description *[]){
-+		&test_state_v2,
-+		NULL
-+	},
-+};
-+
-+
-+Subsection must have a unique ->id. If the receiving side finds a subsection
-+with unknown id it will be ignored. This make subsections suitable for backward
-+compatible changes (migrate from N+1 to N kernel) assuming old kernel is ok without
-+information in subsection.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e96da6d97e75..a9baf49cdbeb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13721,6 +13721,7 @@ F:	include/linux/ks0108.h
- KSTATE
- M:	Andrey Ryabinin <ryabinin.a.a@gmail.com>
- S:	Maintained
-+F:	Documentation/core-api/kstate.rst
- F:	include/linux/kstate.h
- F:	kernel/livupdate/kstate.c
- F:	lib/test_kstate.c
--- 
-2.49.1
-
+Do you prefer to have a separated bonding selftest, or, is it better to
+add some bond operations in the torture selftest?
 
