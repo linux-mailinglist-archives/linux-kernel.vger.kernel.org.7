@@ -1,61 +1,63 @@
-Return-Path: <linux-kernel+bounces-808641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24F5B502AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:32:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AD0B502BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DC3B4E5596
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:31:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5ABB1C6532D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E8D35337E;
-	Tue,  9 Sep 2025 16:31:25 +0000 (UTC)
-Received: from mail.grinn-global.com (mail.grinn-global.com [77.55.128.204])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6C9352FCB;
+	Tue,  9 Sep 2025 16:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tKQ/dsuP"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD01A2609FC;
-	Tue,  9 Sep 2025 16:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.55.128.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BA127877F
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757435485; cv=none; b=AXo7AO8SKKQaJy/PJRm2gcUh72PyfhksHp6Cd9S8WVDrDXsYo6DRapqMDbvheh+24hjrgTvEM2r3F3LK301f86hT1RhabdRHQ+GpANyVK00S3B/p/KE2knTi4e/Lc17E+UcBqhCn/xIHJcxycFUgrezvEdNsOyRoCgbiDapOy94=
+	t=1757435575; cv=none; b=RSG/i+Rf1BR5f3jw2VFPr18WZ5/res68q0YBSQ8dMe2mzagktNEdpABa1HJVNjAsgbA57vjL5vTryg+TQ0AxbgDCQRMdMxOa3wP9NUHgIMbeARdW/Vwwh34My69XpTC7ig5o9FybCkRSMt+DqaWRKmQszXwshavsp8JVRQKkwq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757435485; c=relaxed/simple;
-	bh=cvWnwP81mByRN/lmcdt7e+eM7oFlIL5DP6j4PPhv16E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AIZKp5IEyBVDNOte8mF6t3Ir4n3Ihd+E+W9J2+bQhQ94toMvcSKZEeEw5QCEWDfj078D4AHuU7yMi8m1i1mnzMaI/cyPlGoLzHuQnOJ/hWzDXT09PdEQ2OPCuaNUkhBTYX9ChjYaEAIOsdr4J2f67M/aFC2++RnTKNLv/jX2W4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grinn-global.com; spf=pass smtp.mailfrom=grinn-global.com; arc=none smtp.client-ip=77.55.128.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grinn-global.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grinn-global.com
-X-Virus-Scanned: by amavisd-new using ClamAV (10)
-X-Spam-Flag: NO
-X-Spam-Score: -1
-X-Spam-Level: 
-Received: from mateusz.int.grinn-global.com (f90-187.icpnet.pl [46.228.90.187])
-	by server220076.nazwa.pl (Postfix) with ESMTP id 853371BCC33;
-	Tue, 09 Sep 2025 18:31:20 +0200 (CEST)
-From: Mateusz Koza <mateusz.koza@grinn-global.com>
-To: angelogioacchino.delregno@collabora.com,
-	robh@kernel.org
-Cc: krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
+	s=arc-20240116; t=1757435575; c=relaxed/simple;
+	bh=ciEY2PaVBYP+7hoGJMbRLn9kqFFWPM7A52v8VWueBtg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hbM9VVnaxPvgwClwnRP+XjsaZJHuBIc0HOJDGPioa1D41s0m4jovRnuevEq37nSdQtdM3hKIP7qX9NCdFMx89F53UFete3yqcxblW8wD0CrKnztObLhlhMKJUh+g0qDVh6W3hjdOrVlkrDJXi8HSxHNEqSYz0+sdq2WlpJNJMIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tKQ/dsuP; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757435561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=x3f//JhIM3taFVtW9+tp/WXHFv05eY0uyCUPn/w7lIw=;
+	b=tKQ/dsuPeVjJ66SlFP7V45ZhHxgWJXPh5qn4QPu1tJKL/ymhS7IFVW6Lj9anl8AneUNvpV
+	wuSVTV9Ds6QANvdItGAuU4mJ3dEcFxkH+whL8zhNZxnfuvhJzRCZprnpxAIZvDICnfGZYp
+	Dn3oHsw7ZDSgeVMc/0QSaDEJPFN98/E=
+From: Tao Chen <chen.dylane@linux.dev>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	marcin.czarnecki@grinn-global.com,
-	b.bilas@grinn-global.com,
-	mateusz.koza@grinn-global.com,
-	andrew@lunn.ch,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v5 4/4] dt-bindings: arm: mediatek: Add grinn,genio-510-sbc
-Date: Tue,  9 Sep 2025 18:30:50 +0200
-Message-ID: <20250909163052.446723-5-mateusz.koza@grinn-global.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250909163052.446723-1-mateusz.koza@grinn-global.com>
-References: <20250909163052.446723-1-mateusz.koza@grinn-global.com>
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v2 1/2] bpf: Add lookup_and_delete_elem for BPF_MAP_STACK_TRACE
+Date: Wed, 10 Sep 2025 00:32:21 +0800
+Message-ID: <20250909163223.864120-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,36 +65,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-NA-AI-Spam-Probability: 0.56
-X-NA-AI-Is-Spam: no
+X-Migadu-Flow: FLOW_OUT
 
-Add device tree bindings support for the Grinn GenioSBC-510, a
-single-board computer based on the MediaTek Genio 510 SoC.
+The stacktrace map can be easily full, which will lead to failure in
+obtaining the stack. In addition to increasing the size of the map,
+another solution is to delete the stack_id after looking it up from
+the user, so extend the existing bpf_map_lookup_and_delete_elem()
+functionality to stacktrace map types.
 
-More details about the hardware:
-- https://grinn-global.com/products/grinn-geniosom-510
-- https://grinn-global.com/products/grinn-genioboard-edge-ai-sbc
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Mateusz Koza <mateusz.koza@grinn-global.com>
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
 ---
- Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/bpf.h   |  2 +-
+ kernel/bpf/stackmap.c | 16 ++++++++++++++--
+ kernel/bpf/syscall.c  |  8 +++++---
+ 3 files changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
-index 448241939a75..f04277873694 100644
---- a/Documentation/devicetree/bindings/arm/mediatek.yaml
-+++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
-@@ -431,6 +431,7 @@ properties:
-           - const: mediatek,mt8365
-       - items:
-           - enum:
-+              - grinn,genio-510-sbc
-               - mediatek,mt8370-evk
-           - const: mediatek,mt8370
-           - const: mediatek,mt8188
+Change list:
+ v1 -> v2:
+  - typo s/detele/delete/.(Jiri)
+  - make sure following lookup fails after deleting the stack_id with NOENT.(Jiri)
+  - use '&key' directly as the update value.(Jiri)
+  v1: https://lore.kernel.org/bpf/20250908113622.810652-1-chen.dylane@linux.dev
+
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 8f6e87f0f3a..84a41c42495 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -2703,7 +2703,7 @@ int bpf_percpu_hash_update(struct bpf_map *map, void *key, void *value,
+ int bpf_percpu_array_update(struct bpf_map *map, void *key, void *value,
+ 			    u64 flags);
+ 
+-int bpf_stackmap_copy(struct bpf_map *map, void *key, void *value);
++int bpf_stackmap_copy_and_delete(struct bpf_map *map, void *key, void *value, bool delete);
+ 
+ int bpf_fd_array_map_update_elem(struct bpf_map *map, struct file *map_file,
+ 				 void *key, void *value, u64 map_flags);
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index 3615c06b7df..bb63a74db7b 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -646,7 +646,15 @@ static void *stack_map_lookup_elem(struct bpf_map *map, void *key)
+ }
+ 
+ /* Called from syscall */
+-int bpf_stackmap_copy(struct bpf_map *map, void *key, void *value)
++static int stack_map_lookup_and_delete_elem(struct bpf_map *map, void *key,
++					    void *value, u64 flags)
++{
++	return bpf_stackmap_copy_and_delete(map, key, value, true);
++}
++
++/* Called from syscall */
++int bpf_stackmap_copy_and_delete(struct bpf_map *map, void *key, void *value,
++				 bool delete)
+ {
+ 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
+ 	struct stack_map_bucket *bucket, *old_bucket;
+@@ -663,7 +671,10 @@ int bpf_stackmap_copy(struct bpf_map *map, void *key, void *value)
+ 	memcpy(value, bucket->data, trace_len);
+ 	memset(value + trace_len, 0, map->value_size - trace_len);
+ 
+-	old_bucket = xchg(&smap->buckets[id], bucket);
++	if (delete)
++		old_bucket = bucket;
++	else
++		old_bucket = xchg(&smap->buckets[id], bucket);
+ 	if (old_bucket)
+ 		pcpu_freelist_push(&smap->freelist, &old_bucket->fnode);
+ 	return 0;
+@@ -754,6 +765,7 @@ const struct bpf_map_ops stack_trace_map_ops = {
+ 	.map_free = stack_map_free,
+ 	.map_get_next_key = stack_map_get_next_key,
+ 	.map_lookup_elem = stack_map_lookup_elem,
++	.map_lookup_and_delete_elem = stack_map_lookup_and_delete_elem,
+ 	.map_update_elem = stack_map_update_elem,
+ 	.map_delete_elem = stack_map_delete_elem,
+ 	.map_check_btf = map_check_no_btf,
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 0fbfa8532c3..d606d156c62 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -318,7 +318,7 @@ static int bpf_map_copy_value(struct bpf_map *map, void *key, void *value,
+ 	} else if (map->map_type == BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE) {
+ 		err = bpf_percpu_cgroup_storage_copy(map, key, value);
+ 	} else if (map->map_type == BPF_MAP_TYPE_STACK_TRACE) {
+-		err = bpf_stackmap_copy(map, key, value);
++		err = bpf_stackmap_copy_and_delete(map, key, value, false);
+ 	} else if (IS_FD_ARRAY(map) || IS_FD_PROG_ARRAY(map)) {
+ 		err = bpf_fd_array_map_lookup_elem(map, key, value);
+ 	} else if (IS_FD_HASH(map)) {
+@@ -1627,7 +1627,8 @@ struct bpf_map *bpf_map_inc_not_zero(struct bpf_map *map)
+ }
+ EXPORT_SYMBOL_GPL(bpf_map_inc_not_zero);
+ 
+-int __weak bpf_stackmap_copy(struct bpf_map *map, void *key, void *value)
++int __weak bpf_stackmap_copy_and_delete(struct bpf_map *map, void *key, void *value,
++					bool delete)
+ {
+ 	return -ENOTSUPP;
+ }
+@@ -2158,7 +2159,8 @@ static int map_lookup_and_delete_elem(union bpf_attr *attr)
+ 	} else if (map->map_type == BPF_MAP_TYPE_HASH ||
+ 		   map->map_type == BPF_MAP_TYPE_PERCPU_HASH ||
+ 		   map->map_type == BPF_MAP_TYPE_LRU_HASH ||
+-		   map->map_type == BPF_MAP_TYPE_LRU_PERCPU_HASH) {
++		   map->map_type == BPF_MAP_TYPE_LRU_PERCPU_HASH ||
++		   map->map_type == BPF_MAP_TYPE_STACK_TRACE) {
+ 		if (!bpf_map_is_offloaded(map)) {
+ 			bpf_disable_instrumentation();
+ 			rcu_read_lock();
 -- 
-2.43.0
+2.48.1
 
 
