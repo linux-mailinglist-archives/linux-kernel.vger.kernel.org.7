@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-808643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB675B502B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:33:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FDDB502AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF79B1628DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:32:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21DC15E1B3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A293570A7;
-	Tue,  9 Sep 2025 16:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAB5353341;
+	Tue,  9 Sep 2025 16:31:24 +0000 (UTC)
 Received: from mail.grinn-global.com (mail.grinn-global.com [77.55.128.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB42C353353;
-	Tue,  9 Sep 2025 16:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F8B450F2;
+	Tue,  9 Sep 2025 16:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.55.128.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757435486; cv=none; b=q/gRXgMkXCdnVpizk3+HceL9ucffiWg+IHvK+gnKTkN4sD/ZEzqF+gAZzzFyd0ksCs71Uv5RGzjpIaoNvwwZ0rHH8hpFWXLdsF6RBMCRiPfDcqfqCHtob9AtDbfMCLgkyoKvzbp2AeiqQLa7LuhXXVrtAFDIGQcATXGqXDUWJyY=
+	t=1757435484; cv=none; b=MEFFXYwp21H4k75yevnNBRwY2OyXVcPnqpozUdoFhieR7MFYoUBBny8uqgBCgUkLW+9uMVSQfrWAIuwNr1H7IuBfH85rwhR17B2rGaITWtzszZeOoII5RnUhoHJJW9b56RCKvfqh2NroBhEkhEnaxJL9mHKzQ+GpqnJPgU/It5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757435486; c=relaxed/simple;
-	bh=SImXMprLUa1LCwiNOuhopCscJsTy09dvhcZtj+F/D6U=;
+	s=arc-20240116; t=1757435484; c=relaxed/simple;
+	bh=IUqpVBVIqQYl49CVM3hUVMSC4giUxzJbWRYyKOQxobs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qaoDvu7apU7wRPbAUymhHtaODyJeyPA4DqCDqC2UPbU/9xeVOBlU5aRyNvF2JLEkWOd4Wp1VbZRC4sL8lZmgGYQ54KmyKPO/1vCx6HlIsfyPxC4IC6gBXCbYKYb82uokY7elmcKlfLAy3qR0vTRnB3okhhTp1tjFQ8vK1PkY+BU=
+	 MIME-Version; b=rBKbrOUMhSl0UNUx7lSZYokS3AfeWDmAnc8vWNIpEDB2SXc41gg3pUTmohQajtxvc1nE/FF1lyBXwPGzLMogwEeTVpYTp2eFLcMO8qgD1eVEcw5B6+SO4gdPqLOKCK7KxVKBYubO3YiiKc+CmtKJQDA1i0fkUnSV3F435jXawzY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grinn-global.com; spf=pass smtp.mailfrom=grinn-global.com; arc=none smtp.client-ip=77.55.128.204
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grinn-global.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grinn-global.com
@@ -33,8 +33,8 @@ X-Spam-Flag: NO
 X-Spam-Score: -1
 X-Spam-Level: 
 Received: from mateusz.int.grinn-global.com (f90-187.icpnet.pl [46.228.90.187])
-	by server220076.nazwa.pl (Postfix) with ESMTP id 0D7F61BCB25;
-	Tue, 09 Sep 2025 18:31:16 +0200 (CEST)
+	by server220076.nazwa.pl (Postfix) with ESMTP id 687F21BCC27;
+	Tue, 09 Sep 2025 18:31:18 +0200 (CEST)
 From: Mateusz Koza <mateusz.koza@grinn-global.com>
 To: angelogioacchino.delregno@collabora.com,
 	robh@kernel.org
@@ -48,11 +48,10 @@ Cc: krzk+dt@kernel.org,
 	marcin.czarnecki@grinn-global.com,
 	b.bilas@grinn-global.com,
 	mateusz.koza@grinn-global.com,
-	andrew@lunn.ch,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v5 2/4] dt-bindings: arm: mediatek: Add grinn,genio-700-sbc
-Date: Tue,  9 Sep 2025 18:30:48 +0200
-Message-ID: <20250909163052.446723-3-mateusz.koza@grinn-global.com>
+	andrew@lunn.ch
+Subject: [PATCH v5 3/4] arm64: dts: mediatek: mt8370-grinn-genio-510-sbc: Add Grinn GenioSBC-510
+Date: Tue,  9 Sep 2025 18:30:49 +0200
+Message-ID: <20250909163052.446723-4-mateusz.koza@grinn-global.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250909163052.446723-1-mateusz.koza@grinn-global.com>
 References: <20250909163052.446723-1-mateusz.koza@grinn-global.com>
@@ -63,35 +62,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-NA-AI-Spam-Probability: 0.45
+X-NA-AI-Spam-Probability: 0.51
 X-NA-AI-Is-Spam: no
 
-Add device tree bindings support for the Grinn GenioSBC-700, a
-single-board computer based on the MediaTek Genio 700 SoC.
+From: Bartosz Bilas <b.bilas@grinn-global.com>
+
+Add support for Grinn GenioSBC-510. Based on the commit introducing
+support for the Grinn GenioSBC-700, this change adds support for the
+Grinn GenioSBC-510, a single-board computer based on the MediaTek Genio
+510 SoC.
 
 More details about the hardware:
-- https://grinn-global.com/products/grinn-geniosom-700
+- https://grinn-global.com/products/grinn-geniosom-510
 - https://grinn-global.com/products/grinn-genioboard-edge-ai-sbc
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Mateusz Koza <mateusz.koza@grinn-global.com>
+Signed-off-by: Bartosz Bilas <b.bilas@grinn-global.com>
 ---
- Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/mediatek/Makefile         |  1 +
+ .../mediatek/mt8370-grinn-genio-510-sbc.dts   | 20 +++++++++++++++++++
+ 2 files changed, 21 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8370-grinn-genio-510-sbc.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
-index 19ed9448c9c2..448241939a75 100644
---- a/Documentation/devicetree/bindings/arm/mediatek.yaml
-+++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
-@@ -436,6 +436,7 @@ properties:
-           - const: mediatek,mt8188
-       - items:
-           - enum:
-+              - grinn,genio-700-sbc
-               - mediatek,mt8390-evk
-           - const: mediatek,mt8390
-           - const: mediatek,mt8188
+diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+index b37a8c65e724..4b8ee6970f40 100644
+--- a/arch/arm64/boot/dts/mediatek/Makefile
++++ b/arch/arm64/boot/dts/mediatek/Makefile
+@@ -99,6 +99,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8195-demo.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8195-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8365-evk.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8370-genio-510-evk.dtb
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt8370-grinn-genio-510-sbc.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8395-genio-1200-evk.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8390-genio-700-evk.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8390-grinn-genio-700-sbc.dtb
+diff --git a/arch/arm64/boot/dts/mediatek/mt8370-grinn-genio-510-sbc.dts b/arch/arm64/boot/dts/mediatek/mt8370-grinn-genio-510-sbc.dts
+new file mode 100644
+index 000000000000..92ff80e60974
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt8370-grinn-genio-510-sbc.dts
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2025 Grinn sp. z o.o.
++ * Author: Bartosz Bilas <bartosz.bilas@grinn-global.com>
++ */
++/dts-v1/;
++
++#include "mt8370.dtsi"
++#include "mt8390-grinn-genio-som.dtsi"
++#include "mt8390-grinn-genio-sbc.dtsi"
++
++/ {
++	model = "Grinn GenioSBC-510";
++	compatible = "grinn,genio-510-sbc", "mediatek,mt8370", "mediatek,mt8188";
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 1 0x00000000>;
++	};
++};
 -- 
 2.43.0
 
