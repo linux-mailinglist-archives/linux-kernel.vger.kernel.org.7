@@ -1,87 +1,53 @@
-Return-Path: <linux-kernel+bounces-807541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 474AFB4A5E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:48:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF80B4A5EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 28E2D4E2402
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:48:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C45331892AB5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657DB274B59;
-	Tue,  9 Sep 2025 08:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C4B272813;
+	Tue,  9 Sep 2025 08:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hsGKWoYF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="M+dxBd0n"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7672749F2
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 08:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEA81A3166;
+	Tue,  9 Sep 2025 08:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757407681; cv=none; b=YY9vKGI78cMQGr5WU3MIYlLakALsAhrUwhnpKPGP22r8Bol0M9DyasD+if/8q0SoywgrqPKndhrY7Z3pLQrotqVtVtlnMSYARNeN/NUBGwoxZz5z/Q9DvFTnZotQ72Gq1BFgGqI8+0TTtF+yX8evJ35vFMRCQ7EOu9QvwyO7378=
+	t=1757407789; cv=none; b=SY/fVUq6aRrudxOVBr9pn9IMgwrc4HzUec6C7fBr77HpjlAyDEM91tzQzRIdzMBZg2KFBEjEw31whLHcp9wVPpNwi9f8xUmGuNfIIl2tOEquo4ZM8SaoFLrV9s/t7x3tX093fLF2K9eyr0FIFtGEqcGUZLMYpbK+wJfpNA5UG+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757407681; c=relaxed/simple;
-	bh=Kx/ttkJLLKYRFVmgllThM47tiA9M6uxgKLcDhYmE1p0=;
+	s=arc-20240116; t=1757407789; c=relaxed/simple;
+	bh=U25/owoSrzhIxMHSI97lUXuNNRgb83tQCnaAv3qpKog=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B/vMfp6V/PecLog63EFPJgvxedeVGg40CQP82QU7mA3rhWrepF5YVKSOMo2Ep+ulgpVRMwuaFvhb7XB/igLp1hzsfrPQFOGI9Tizmv5kCZWNKZnDCEdCrgOC6Ydmnk6nNLN/3tZNIj6irSISHHu2z/nn3rdruTgQ/3AUIHVpX/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hsGKWoYF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5896SYi4028364
-	for <linux-kernel@vger.kernel.org>; Tue, 9 Sep 2025 08:47:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Kb0CUgscggYSZpxpcmC4xv4Mz5gALmhi0zSX0+xuhwU=; b=hsGKWoYFicuyoDCf
-	Ti04diUy7hLxVg47PJ/7DkxpbSIECaI2OEtcGzUtb5VrnzOOFWoKoY882YtZuz/6
-	4YRLVlQpTk/vS9WSKf6PrGMJfW64Q9nfN0WaMbYIkIxQF/zl+B4j19jSQMAYM1jn
-	4s29BNyiQ4LiGJQ4zRK82D4SCcd3ywYN+CxVgH4IPA3F/TYIz3LGT6IhVO23aJny
-	tmMKspzb1qCJMF4LphD2nYCni8ipUU9YVn1YmgxRGGz66lrPCIN+9+cEVq0CJufh
-	bkAHEcZcRqD72nuvTdIJMvVnZu3RWVebcGhgJWpzFaWYV4CvD9+azc7xAuDmEFcb
-	1v3FDQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490aapfv5f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:47:58 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-74910ab069bso3430466d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 01:47:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757407678; x=1758012478;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kb0CUgscggYSZpxpcmC4xv4Mz5gALmhi0zSX0+xuhwU=;
-        b=KhGYFAB41hG2pUP6ms5QBk+dtoRzIOv3KUx+q34DNWFMWEAjNz+74jxf5PCtmd3UEp
-         WtlRu+sld2wJrmM7Xe1aszaCz5TtOtQfjWq68LGu4shAshwXMOlXhCPYA+45swuk2cTk
-         C7Wc9o+KhTbmFurFb6eOPER8HqmDJAf9Cx1u/mSeXdi2oMfkJ5w6/PG3PO7FgC6ombMo
-         kXR4z0e8vqShv+L0/CKlpbdUXGiSMidFvQxtb1zEgHy7hZVkWBlpOHPb/uERUVFMkrbv
-         WbXDWy6FDSf3KBHwUAH/c5MP5c2GrhR0NkCTVOoA7br4uF0hJMK/i6CDC+9BbZJeDW4h
-         V8iA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0Byh6kLc7YcKa+l+w6cEuN1EGFnEg9JAsu3dtyoqsx0xlzP/RliCRykg+NaxkamQR+Ev/wRZxgTzdZow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDqm9sNLdV34C73H+NFdaircj5uxKpVCZiinR1ap7tnAdC389X
-	hG8H9v/CcExxAMomaW1XlaM62BT3KvDEY47tI7Z/isMw9cm4KjTgykHosHHmDg98Iyp66VzGtnz
-	052VkVZzHNICthuXNxuiAuULndLxyW8/GDYf1SLnvzW2RO/mTcCXzJUi7/Qr02dZFYAI=
-X-Gm-Gg: ASbGncvcp7A4absNS3koyj6+zcKDJqlUwif7XpxHPAk+mhkwEiX4SatWEpafCvjiTz8
-	lM30lIIwTbstmIWrkd1YJmPlr7V2sOAjhAzS2qIjRUn3pXMe+m6VBAofllQgNZLWxLrejlwLBlH
-	D6BdA/Ms9t7RYwGjssU2uFaB/zBku4ZRlmAV4jvu9mnJVYWyeW213AKk0Gkv2X5OD9xhSmiwUHa
-	hXQKXK4qIV9Th1Go1MlG9Tg0vxNJ/hDh+meI8j+sonC9uvxfFLyZ6AwdOkz7gIyZWxWgvrHKIRD
-	De7O8XkOIuCC9NhPHjpaXqq3/GXIZBNtkbmFa0wfkYgrMKHuuUYyB9IwUHK56bOE0Xm+HMidkPN
-	b/nEFB8rHZyWMrhqAUEb9Xw==
-X-Received: by 2002:ac8:574d:0:b0:4b5:e9b6:c96 with SMTP id d75a77b69052e-4b5f8485b15mr71231921cf.7.1757407677911;
-        Tue, 09 Sep 2025 01:47:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8NeMee6C0kM9sHZRCMxBaDlxp5DxwY+VBvze0KUdNj9nDNquj32l32DlypXhISIsSj6zokA==
-X-Received: by 2002:ac8:574d:0:b0:4b5:e9b6:c96 with SMTP id d75a77b69052e-4b5f8485b15mr71231871cf.7.1757407677406;
-        Tue, 09 Sep 2025 01:47:57 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b047a90387esm1308826066b.0.2025.09.09.01.47.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 01:47:56 -0700 (PDT)
-Message-ID: <a4f339f1-9490-4ff8-bd92-9b03c8f62ccc@oss.qualcomm.com>
-Date: Tue, 9 Sep 2025 10:47:55 +0200
+	 In-Reply-To:Content-Type; b=d5vn3QUfEKACgQUJhkSqSjdXPqfx4USbn0Jds4aMQiBSD4a/+2cFT8QtrC3ENst+CqmKQe6d8yumPUsAM4sTN1Zx9h5tPZP8npzE6PkwwCQSwfT576va8AZOt/Fo1yTaP/qERn/ssrzinCApl8r/w6b8TpOhX9aXz6aDb4OtH5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=M+dxBd0n; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (p5de4594b.dip0.t-ipconnect.de [93.228.89.75])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 251F12FC004A;
+	Tue,  9 Sep 2025 10:49:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1757407777;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+bppQV6AkR/A5IUC3YmhzDjEpwAY2Y3fezHekpCr7vc=;
+	b=M+dxBd0nwspH7i31hBK+NftFn+6usNMpph46Ths5SFTEKQ/OinivHZ+Yl6PfxqCvWWBls5
+	Nre9C7QVfX0T73W+EgZBvLbs0I3q6DEzqeRvLmEIZPXuVzJEH68LOZK0M1rShT+5UV5uSE
+	kQZRa9Ph/Sp/QnzkT83Ixr19QO3uj5I=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <7e640ad2-4502-4741-95bc-10045499066e@tuxedocomputers.com>
+Date: Tue, 9 Sep 2025 10:49:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,80 +55,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] phy: qcom: extract common code for DP clocks
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20250907-qcom-dp-phy-v1-0-46634a6a980b@oss.qualcomm.com>
- <20250907-qcom-dp-phy-v1-4-46634a6a980b@oss.qualcomm.com>
+Subject: Re: [PATCH v3 1/2] platform/x86: Add Uniwill laptop driver
+To: Armin Wolf <W_Armin@gmx.de>, ilpo.jarvinen@linux.intel.com,
+ hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
+ ggo@tuxedocomputers.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
+ alok.a.tiwari@oracle.com, linux-leds@vger.kernel.org, lee@kernel.org,
+ pobrn@protonmail.com
+References: <20250831192708.9654-1-W_Armin@gmx.de>
+ <20250831192708.9654-2-W_Armin@gmx.de>
+ <003d760c-0314-4ea2-b2b5-860021e0daf8@tuxedocomputers.com>
+ <8d6f8cf4-3c60-4b5b-87d1-e4fe4bce06e7@gmx.de>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250907-qcom-dp-phy-v1-4-46634a6a980b@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=eMETjGp1 c=1 sm=1 tr=0 ts=68bfe9be cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=eeBydtCU-ummJPyDYfAA:9
- a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-GUID: 6AaQOjDwjA6WawHKZ4KOje9d6FyYHfrM
-X-Proofpoint-ORIG-GUID: 6AaQOjDwjA6WawHKZ4KOje9d6FyYHfrM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAwMCBTYWx0ZWRfX78i9k295S9bm
- 8cShiWoEkx/t30prkbtP/Dse5xL8PGDo++cawliJ8OSBJt4n45EfBUTozwvd5UyyHfqFbEERrcw
- ZURGT0wYJkDfXRCn/SPDWkROVOuAILY5GC4zU2ntATEtcAw2OM9oP2mMPEj6Q8ANm2/FG3DwonB
- s2Exxl5wzI/wxkXtPowl9EVbBK3KRDo0qGH5P3yE5sNZbn0GwyFspcH01TaNv+LIILY/cCQwJ5R
- 2cM4agWOH2PAbc8rSBynUMu94bFOk5dHdpJeGT9fxCSXkUnPGA9VUTHH3dpIxv0TfdYWqf8L5XF
- 5dDxMjpZiFnWUEz16yXHsJp5OtGuObTHzwqYLn5zL4Gm5UfjTD9Ag+haPuTKIZFKJ4x6BHgnqjC
- yfFlS1ip
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 adultscore=0
- bulkscore=0 phishscore=0 spamscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060000
-
-On 9/7/25 4:52 PM, Dmitry Baryshkov wrote:
-> The combo QMP PHY and eDP PHY share DP clocks implementation. With the
-> USBC PHY gaining DP support it is going to get yet another copy of the
-> same code.
-> 
-> Extract common DP clock implementation to a separate module. In future
-> we might want to extract more common functions.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
-
-[...]
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <8d6f8cf4-3c60-4b5b-87d1-e4fe4bce06e7@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-> + *      |                     |                 |
-> + * +----v---------+  +--------v-----+  +--------v------+
-> + * | vco_divided  |  | vco_divided  |  | vco_divided   |
-> + * |    _clk_src  |  |    _clk_src  |  |    _clk_src   |
-> + * |              |  |              |  |               |
-> + * |divsel_six    |  |  divsel_two  |  |  divsel_four  |
-> + * +-------+------+  +-----+--------+  +--------+------+
+Am 05.09.25 um 20:46 schrieb Armin Wolf:
+> Am 03.09.25 um 19:08 schrieb Werner Sembach:
+>
+>> Hi,
+>>
+>> started to look into the driver regarding TUXEDO NB02 devices support, 
+>> starting with the FN-Keys:
+>>
+>> Am 31.08.25 um 21:27 schrieb Armin Wolf:
+>>> +static const struct key_entry uniwill_keymap[] = {
+>>> +    /* Reported via keyboard controller */
+>>> +    { KE_IGNORE,    UNIWILL_OSD_CAPSLOCK,                   { KEY_CAPSLOCK }},
+>>> +    { KE_IGNORE,    UNIWILL_OSD_NUMLOCK,                    { KEY_NUMLOCK }},
+>>> +
+>>> +    /* Reported when the user locks/unlocks the super key */
+>>> +    { KE_IGNORE,    UNIWILL_OSD_SUPER_KEY_LOCK_ENABLE,      { KEY_UNKNOWN }},
+>>> +    { KE_IGNORE,    UNIWILL_OSD_SUPER_KEY_LOCK_DISABLE,     { KEY_UNKNOWN }},
+>>
+>> Can you also add
+>>
+>> { KE_IGNORE,    UNIWILL_OSD_SUPER_KEY_LOCK_CHANGED,     { KEY_UNKNOWN }},
+>>
+>> ?
+>>
+>> UNIWILL_OSD_SUPER_KEY_LOCK_ENABLE and UNIWILL_OSD_SUPER_KEY_LOCK_DISABLE are 
+>> always sent in pair with UNIWILL_OSD_SUPER_KEY_LOCK_CHANGED (at least on my 
+>> test device) and without this line an unknown key event is generated (as that 
+>> is not explicitly marked as KE_IGNORE without the line).
+>
+> OK.
+I found more similar cases that probably don't happen on your devices, but i 
+will just create a patch once this got merged. I think that will be easier.
+>
+>>
+>>> +
+>>> +    /* Reported in manual mode when toggling the airplane mode status */
+>>> +    { KE_KEY,       UNIWILL_OSD_RFKILL,                     { KEY_RFKILL }},
+>>> +
+>>> +    /* Reported when user wants to cycle the platform profile */
+>>> +    { KE_IGNORE,    UNIWILL_OSD_PERFORMANCE_MODE_TOGGLE,    { KEY_UNKNOWN }},
+>> This is a physical button on the gaming devices from Uniwill, my suggestion 
+>> would be to bind it to F14 (because another ODM has a very similar key that 
+>> already sends F14 by default) and then let userspace handle it (KDE for 
+>> example has energy profiles that could be bound to it).
+>>> +
+>>> +    /* Reported when the user wants to adjust the brightness of the 
+>>> keyboard */
+>>> +    { KE_KEY,       UNIWILL_OSD_KBDILLUMDOWN,               { 
+>>> KEY_KBDILLUMDOWN }},
+>>> +    { KE_KEY,       UNIWILL_OSD_KBDILLUMUP,                 { 
+>>> KEY_KBDILLUMUP }},
+>>> +
+>>> +    /* Reported when the user wants to toggle the microphone mute status */
+>>> +    { KE_KEY,       UNIWILL_OSD_MIC_MUTE,                   { KEY_MICMUTE }},
+>>> +
+>>> +    /* Reported when the user locks/unlocks the Fn key */
+>>> +    { KE_IGNORE,    UNIWILL_OSD_FN_LOCK,                    { KEY_FN_ESC }},
+>>> +
+>>> +    /* Reported when the user wants to toggle the brightness of the 
+>>> keyboard */
+>>> +    { KE_KEY,       UNIWILL_OSD_KBDILLUMTOGGLE,             { 
+>>> KEY_KBDILLUMTOGGLE }},
+>>> +
+>>> +    /* FIXME: find out the exact meaning of those events */
+>>> +    { KE_IGNORE,    UNIWILL_OSD_BAT_CHARGE_FULL_24_H,       { KEY_UNKNOWN }},
+>>> +    { KE_IGNORE,    UNIWILL_OSD_BAT_ERM_UPDATE,             { KEY_UNKNOWN }},
+>>> +
+>>> +    /* Reported when the user wants to toggle the benchmark mode status */
+>>> +    { KE_IGNORE,    UNIWILL_OSD_BENCHMARK_MODE_TOGGLE,      { KEY_UNKNOWN }},
+>>> +
+>>> +    { KE_END }
+>>> +};
+>>
+>> Any reason for still having KEY_* defines even on the ignored events? Looking 
+>> at other drivers KE_IGNORE events usually don't have it.
+>>
+>> Best regards,
+>>
+>> Werner
+>
+> I decided to ignore UNIWILL_OSD_FN_LOCK because i do not know if the Fn + Esc 
+> key presses are filtered by the EC or also received by the OS.
 
-div6 is oddly misaligned
+Sorry for the misunderstanding.
 
-[...]
+What i meant was: Why is it for example
 
-> +static int qmp_dp_pixel_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-> +{
-> +	switch (req->rate) {
-> +	case 1620000000UL / 2:
-> +	case 2700000000UL / 2:
-> +	/* 5.4 and 8.1 GHz are same link rate as 2.7GHz, i.e. div 4 and div 6 */
+{ KE_IGNORE,    UNIWILL_OSD_FN_LOCK,                    { KEY_FN_ESC }},
 
-"(2.7 GHz / 2) == (5.4 GHz / 4) == (8.1 GHz / 6)"?
+and
 
+{ KE_IGNORE,    UNIWILL_OSD_BENCHMARK_MODE_TOGGLE,      { KEY_UNKNOWN }},
 
-anyway
+instead of just
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+{ KE_IGNORE,    UNIWILL_OSD_FN_LOCK},
 
-Konrad
+and
+
+{ KE_IGNORE,    UNIWILL_OSD_BENCHMARK_MODE_TOGGLE},
+
+?
+
+>
+> Thanks,
+> Armin Wolf
+>
 
