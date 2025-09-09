@@ -1,166 +1,100 @@
-Return-Path: <linux-kernel+bounces-807853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF5FB4AA5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D91B4A950
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187D41883031
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:21:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6582618872D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5EA31B122;
-	Tue,  9 Sep 2025 10:20:42 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73892EBB8C
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 10:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B6B3164CB;
+	Tue,  9 Sep 2025 10:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcNGCFiG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC7D3148B7;
+	Tue,  9 Sep 2025 10:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757413242; cv=none; b=s78aWrh8VDSms0Yu1UhPiBhVqkCe5yL3Gyu8LstBAo7YJcslP2FtXzLc2gbyvh6B9F3EbJcDSMlvPb2Z5z9LcMwmZrQCfPi4BWzFxH6S2wbv/aF8RAWZUcn5ReCn6uhCczw+QpD/E4LHil4aTD3X20Ro0Tqtzkt850PeBNkT1yk=
+	t=1757412236; cv=none; b=eR9426kCMB9G/dl8DSCwOcxYcT2OyFJT7dZh57uVOb0alUpTGkVWS4wAf9jZFf+X2NhBYeJkZJUIxKEGGnl0rKR8lOOXdTeclLnx7frn9ZYbuhja19JqjKNnUhhSLO1P92IBy+YSgI8NNsSSfQ90gJ6VSdeCWuVd/rGAUVquspA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757413242; c=relaxed/simple;
-	bh=AOEaSonLtPZErc53eenT+EFbdPGQtfmJuRx+JaONPkE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SMSjncdRmzXFFdcJixTVlxKRjMOmQUxzN8wIHGhQG0jJFOcf5RyGIOswO4qfRU0UweFDTOrMvJXG69uWCLIB/lqOf3VfA4jfj+xgMyv6o+7uIVvW64B+Wg0JHYt0t621ZGri3jyWseGzOwN/UIwmRck+0spP+t5fLKstEXLH1iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cLfY46PJVz9sRh;
-	Tue,  9 Sep 2025 12:03:52 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id zw6k5wfbw6r7; Tue,  9 Sep 2025 12:03:52 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cLfY44SkBz9sRg;
-	Tue,  9 Sep 2025 12:03:52 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 66B198B766;
-	Tue,  9 Sep 2025 12:03:52 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id E-gQL_c33zki; Tue,  9 Sep 2025 12:03:52 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 30CE98B764;
-	Tue,  9 Sep 2025 12:03:52 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	s=arc-20240116; t=1757412236; c=relaxed/simple;
+	bh=MX1yEKtU1XlkDkySNWFMl83sKLvqqiq1wh9vWRpHFI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AxkR3Zpq0T/F/vdMyMcazTifgpj6K1D9N9xy5wl5UAintdh5McVxQx4/YTUnBwHctVxuh+FnMknMd+G+KFPQQ0vV35GolwsnWy/s/Rf0zboDUoCX79BWJEd1tnupK/eeqZ+Bwu49QC6eGCBWFf4rrwtSP/2+nARecNWqRSNGBzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IcNGCFiG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31718C4CEF4;
+	Tue,  9 Sep 2025 10:03:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757412236;
+	bh=MX1yEKtU1XlkDkySNWFMl83sKLvqqiq1wh9vWRpHFI4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IcNGCFiGtCBdlK6h3ILvTV3+IPmzjlaTRMi9z9G1FxFYljC0M7EBZ5EmsWrmiGzp/
+	 gVMFc2QKLoySwHA70lazg0F30+jLHbFTn+WcYnAEF9eG2ETDjGzxLIjS4K6rw2c9mz
+	 2D3bGFHNjV1s57QvgcFtygPVer631Myaiuo7jQkZ3/6LxtdFWK+YrQcV/NHjIWy38H
+	 Dp4jp2uruQtJSsxQNOLAGj3TjDCw6/AdL+t68/59DknoP7AhnKnTIGNIa98YDReGXU
+	 o3BvpcNq6EerKPwmuQIloDBc5Nh8JnQIYXuBq1tBpg1hwwu+9AGk7lXlbeIP0LH4Ed
+	 BOh4I1W6SjGvA==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1uvvCc-000000001ZX-0dx4;
+	Tue, 09 Sep 2025 12:03:54 +0200
+Date: Tue, 9 Sep 2025 12:03:54 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Erhard Furtner <erhard_f@mailbox.org>
-Subject: [PATCH v2] powerpc/32: Remove PAGE_KERNEL_TEXT to fix startup failure
-Date: Tue,  9 Sep 2025 12:03:49 +0200
-Message-ID: <8e2d793abf87ae3efb8f6dce10f974ac0eda61b8.1757412205.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
+	Jia-Wei Chang <jia-wei.chang@mediatek.com>,
+	Rex-BC Chen <rex-bc.chen@mediatek.com>
+Subject: Re: [PATCH] cpufreq: mediatek: fix device leak on probe failure
+Message-ID: <aL_7ituSjf5a0p_U@hovoldconsulting.com>
+References: <20250909073819.25295-1-johan@kernel.org>
+ <CAGXv+5EcnLJHG_50mYb2YB0_q1XOztF84c9tAJJfKZxSCWuUCQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757412230; l=3895; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=AOEaSonLtPZErc53eenT+EFbdPGQtfmJuRx+JaONPkE=; b=ywqv6sdz3DMjOTmHk3oFWKHjRSP4YPTppu/hzY2nkVSPy0mIV3Pa03KSqpKs+Cy0q95UbwVC4 7DZITk8d5VSCcW209ZE+Co1DBdtVckdvzVQCqceWyMfAGH4MKw2BT0T
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXv+5EcnLJHG_50mYb2YB0_q1XOztF84c9tAJJfKZxSCWuUCQ@mail.gmail.com>
 
-PAGE_KERNEL_TEXT is an old macro that is used to tell kernel whether
-kernel text has to be mapped read-only or read-write based on build
-time options.
+On Tue, Sep 09, 2025 at 05:57:45PM +0800, Chen-Yu Tsai wrote:
+> On Tue, Sep 9, 2025 at 5:40 PM Johan Hovold <johan@kernel.org> wrote:
+> >
+> > Make sure to drop the reference to the cci device taken by
+> > of_find_device_by_node() on probe failure (e.g. probe deferral).
 
-But nowadays, with functionnalities like jump_labels, static links,
-etc ... more only less all kernels need to be read-write at some
-point, and some combinations of configs failed to work due to
-innacurate setting of PAGE_KERNEL_TEXT. On the other hand, today
-we have CONFIG_STRICT_KERNEL_RWX which implements a more controlled
-access to kernel modifications.
+> > @@ -552,6 +554,10 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
+> >  out_free_mux_clock:
+> >         clk_put(info->cpu_clk);
+> >
+> > +out_put_cci_dev:
+> > +       if (info->soc_data->ccifreq_supported)
+> > +               put_device(info->cci_dev);
+> 
+> put_device() has a check for NULL, so the if isn't really needed.
 
-Instead of trying to keep PAGE_KERNEL_TEXT accurate with all
-possible options that may imply kernel text modification, always
-set kernel text read-write at startup and rely on
-CONFIG_STRICT_KERNEL_RWX to provide accurate protection.
+I know, but this follows the pattern currently used by the driver (e.g.
+for regulator_put()) and avoids relying on the caller having cleared the
+info struct.
 
-Do this by passing PAGE_KERNEL_X to map_kernel_page() in
-__maping_ram_chunk() instead of passing PAGE_KERNEL_TEXT. Once
-this is done, the only remaining user of PAGE_KERNEL_TEXT is
-mmu_mark_initmem_nx() which uses it in a call to setibat().
-As setibat() ignores the RW/RO, we can seamlessly replace
-PAGE_KERNEL_TEXT by PAGE_KERNEL_X here as well and get rid of
-PAGE_KERNEL_TEXT completely.
+> Either way,
+> 
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Reported-by: Erhard Furtner <erhard_f@mailbox.org>
-Closes: https://lore.kernel.org/all/342b4120-911c-4723-82ec-d8c9b03a8aef@mailbox.org/
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
-v2: Revised commit message
----
- arch/powerpc/include/asm/pgtable.h | 12 ------------
- arch/powerpc/mm/book3s32/mmu.c     |  4 ++--
- arch/powerpc/mm/pgtable_32.c       |  2 +-
- 3 files changed, 3 insertions(+), 15 deletions(-)
+Thanks for reviewing.
 
-diff --git a/arch/powerpc/include/asm/pgtable.h b/arch/powerpc/include/asm/pgtable.h
-index 93d77ad5a92f..d8f944a5a037 100644
---- a/arch/powerpc/include/asm/pgtable.h
-+++ b/arch/powerpc/include/asm/pgtable.h
-@@ -20,18 +20,6 @@ struct mm_struct;
- #include <asm/nohash/pgtable.h>
- #endif /* !CONFIG_PPC_BOOK3S */
- 
--/*
-- * Protection used for kernel text. We want the debuggers to be able to
-- * set breakpoints anywhere, so don't write protect the kernel text
-- * on platforms where such control is possible.
-- */
--#if defined(CONFIG_KGDB) || defined(CONFIG_XMON) || defined(CONFIG_BDI_SWITCH) || \
--	defined(CONFIG_KPROBES) || defined(CONFIG_DYNAMIC_FTRACE)
--#define PAGE_KERNEL_TEXT	PAGE_KERNEL_X
--#else
--#define PAGE_KERNEL_TEXT	PAGE_KERNEL_ROX
--#endif
--
- /* Make modules code happy. We don't set RO yet */
- #define PAGE_KERNEL_EXEC	PAGE_KERNEL_X
- 
-diff --git a/arch/powerpc/mm/book3s32/mmu.c b/arch/powerpc/mm/book3s32/mmu.c
-index be9c4106e22f..c42ecdf94e48 100644
---- a/arch/powerpc/mm/book3s32/mmu.c
-+++ b/arch/powerpc/mm/book3s32/mmu.c
-@@ -204,7 +204,7 @@ int mmu_mark_initmem_nx(void)
- 
- 	for (i = 0; i < nb - 1 && base < top;) {
- 		size = bat_block_size(base, top);
--		setibat(i++, PAGE_OFFSET + base, base, size, PAGE_KERNEL_TEXT);
-+		setibat(i++, PAGE_OFFSET + base, base, size, PAGE_KERNEL_X);
- 		base += size;
- 	}
- 	if (base < top) {
-@@ -215,7 +215,7 @@ int mmu_mark_initmem_nx(void)
- 				pr_warn("Some RW data is getting mapped X. "
- 					"Adjust CONFIG_DATA_SHIFT to avoid that.\n");
- 		}
--		setibat(i++, PAGE_OFFSET + base, base, size, PAGE_KERNEL_TEXT);
-+		setibat(i++, PAGE_OFFSET + base, base, size, PAGE_KERNEL_X);
- 		base += size;
- 	}
- 	for (; i < nb; i++)
-diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index 15276068f657..0c9ef705803e 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -104,7 +104,7 @@ static void __init __mapin_ram_chunk(unsigned long offset, unsigned long top)
- 	p = memstart_addr + s;
- 	for (; s < top; s += PAGE_SIZE) {
- 		ktext = core_kernel_text(v);
--		map_kernel_page(v, p, ktext ? PAGE_KERNEL_TEXT : PAGE_KERNEL);
-+		map_kernel_page(v, p, ktext ? PAGE_KERNEL_X : PAGE_KERNEL);
- 		v += PAGE_SIZE;
- 		p += PAGE_SIZE;
- 	}
--- 
-2.49.0
-
+Johan
 
