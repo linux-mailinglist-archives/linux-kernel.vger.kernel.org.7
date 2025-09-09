@@ -1,118 +1,161 @@
-Return-Path: <linux-kernel+bounces-808923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3694BB50695
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:50:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E92FB5069A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E50AD16B35F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:50:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22B6316DCEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B924530597A;
-	Tue,  9 Sep 2025 19:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B288340D9D;
+	Tue,  9 Sep 2025 19:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3Q2Qku6"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="UQG/ebZv"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782C726981E;
-	Tue,  9 Sep 2025 19:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757447418; cv=none; b=mDKj4lyRWBhzJcYy9b4BTduwSpbBDeW/IELyxML2RQAk1ullU2aUzw3eU4J/DLO7uwAqc3igzeEaveMBDDn/EKmUQd/ezEY/LqeL2Njt86myrevuroxVRxtkazF7hi8f2Ct1QAfO9wKHVwYAGTGD5BYrg/3w8NvR+ZdE2kQ1Ttc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757447418; c=relaxed/simple;
-	bh=Ab/krwxEBryFIQpbwzFXZi9qd+HMlUE2gBgmoHPVehU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=plPqdP8JYUuuzcJDUGN1+SzNsUxy2O9+F58mFD91UVVljh8EgV8Ya7/ZbNMiz05EhgsZJtKRSeknoboZnanYgq3tSFGw1cjvdBDJBGOXGL0z8F6Jdq9unmEOun2RHyTbxtaysAerV2tOllrqhmJ2RWeoNccKKSaPyMjMiiqUOv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I3Q2Qku6; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-336dd55aae1so54276011fa.1;
-        Tue, 09 Sep 2025 12:50:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757447414; x=1758052214; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yM6V8elEeXq7KqJyC7/filg7rPjxfTV/y44qIQKgxpg=;
-        b=I3Q2Qku6nYamMDSq4Xe+aC6CIbZLD5iEHInTJg+ZhNRlpWm+/rzhRDYmpS7nCO8m0v
-         MizotoxohHBs5rplprYZLnLJ317TJibC/m1Nxibh2y5Gzzb5XDwSYioxfiPa3JBLxqw0
-         OzR1LFXzBxskYq4mHo4sAmJjMkl0x+7ZG3C4jkeQ54FUNfGo8GBo703OJMiEIZ8/VmbQ
-         rVeWI2ebvsTd0fyvsojgSsnzxfZCxh4G5Vt8ltg/rlifyLow6r+BT6tY48PLFx0uNWrc
-         ntlsxSQ1Ugf2MLArsHARlLVczrs8ILxw1PFExzrFp56on9XQf9Nx5AoKt0tJthh/oAda
-         S/og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757447414; x=1758052214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yM6V8elEeXq7KqJyC7/filg7rPjxfTV/y44qIQKgxpg=;
-        b=dSwZt1ySmIWKemWfVA9wkkHm3zqWvyxgt4+TBo/oVo5jCh/hCaqq3HE8v5zyBBcCu/
-         rNE0KGCo8S+n4sNQk2xP7UYIbdUtHNQyWBCWgWQmJ9yuu0Sp81PGxxV8ZkQcWvTYAl7x
-         WZGMM6MXOnFixsYJjNRCnA+YIg/7QrtbEO/JgazsMNK53n0ixSbwlHtJSb+vCYcRxftn
-         q38uNdSJq2nZE3iHPA+c/3vthhN7TtSoOWV7snvJtjN9IKNk1n30zTRM12z6TvBRuSAJ
-         h3j/rjE9YKGUFVxtVFLnIavopBEkz1dsd7K4k+/n9fGZCw7xVLqJxJjhbGEOROaQtbH+
-         86jg==
-X-Forwarded-Encrypted: i=1; AJvYcCVT7tUQWHnAr4dvGjhbfn00MZ/b9W12xzoHIrIAmJSDhK+HNQBxBjkc+0s3M4MudxTAw4xM+CrGkSA=@vger.kernel.org, AJvYcCVspL6TD8x1O0WLmIQE6W3z1KXZtLxqQAkdWlyaZIxGKdiHl6zyNtQt1/uTXcXz0/IYXpdWO5sTtI9rCTny@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzo5Lumy8lsrhyayl5T4KMBNS3uHzslkJiyALxpRC/OddN3ug7
-	9RCnaXeWoUEC/cmRD7ugtaIu0h1HzlQUzrvyPzGk+n7Wm3bwGkn/860tg0l7drvsdIPPUSQ3vdl
-	tXMKSLkRvICEiNPz+mUc1MvV7Rsw5ySU=
-X-Gm-Gg: ASbGnct0iu7Ya3/fI6diMfNnNpCFIqulrMVhglV9kS9PYSW/Km5Dg9Ivfm6Bir5Fu0D
-	ToRXYXAsm3EzSdlBw+KTdS3P1nX7TJOOYFyKR/Muf4pBX7sgVv7nuxOsv+TNEvaIV3bxyGtwu2H
-	zCgvGeG9RdFhsxmhCufriAjhLihCP1O28FuBTE7rDrIJ06LDNX/8SwfweSJIRlSnzPPXYo0KqKW
-	Wfl2jDeYF27zJ52A/BEOQ+XKxfa5hQfo33wJ+68
-X-Google-Smtp-Source: AGHT+IF48B3SpayJfOIz4IYQVTCT0C3uay/q3WzQLKowGlC90htPAr4abmLETG0lIXTQQzCexVKVKXkL621fZuf33Mw=
-X-Received: by 2002:a05:651c:20cd:10b0:337:9dfc:f4de with SMTP id
- 38308e7fff4ca-33b4b23056dmr32928121fa.7.1757447414111; Tue, 09 Sep 2025
- 12:50:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB18F302CD0;
+	Tue,  9 Sep 2025 19:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757447466; cv=pass; b=r2E1I/ez87zvz3M2wWZfw42P1BRAYPXv/GzJsBH14B6PfvgRP+ct04d/CLJImZinSzWHzeYtBULRsecYJoOpbsF8omoruM6tk9R1gGwCHkxfplJ1gyc/gXHRKrUHbjQSQdf2jEwyCvtV0tGEXo1VJu68yqqGx3b5O4GIvm4Ebls=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757447466; c=relaxed/simple;
+	bh=CgaI1ryl2lJRZTbc5uvxKQsL94BLJ/VJBanvuIHtCcs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=u6AMbqp5bLizO0YJZWnKMkxyMXg2V8pB/MvxGMXycf1MWVFTAKebOOQEKWtaHFpC1yijgnts501eFBannl4kD9Zoc/ZwhvMqX3qhqrXTPGWTzDRWSnG6SBpIPnhi5++yZrf5VxNaBZ23hPTc/BKhZS19UfqOR99Nj+lG+4S8UKI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=UQG/ebZv; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757447438; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mdXUVHaTT6B+QCx6ISABg9nUfKZdsF9aINIGyxEJTvwqOo+5K1ffYLUmvaQaowxSd3TkIMDxgTLqvjeYHW2h3IwqBzUeAqGAz8G0MGMMWtS46qlfxMSuFXQIFZIz7rvBwIRuzbC9V2UmT8fG+8UfJryj0799vMGXmIZcUt5ZoiQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757447438; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=X4kc+sqIlqwrRZbkovqf9uhYtz6iUvsGomVE2OHyz+c=; 
+	b=N8Sai4QeeZiP013Tt6PHIYLVwbFuR3ROZwlSp+cAZ2nozt6Ayt2KjLZP7pEwJ+vGPVk+TaHG/RLLxm5cquC3Mv2j0AHEEHFCloNNAEChQvfAxo6Ep570rfSVROmLoPDraJvpkqm8jAzN3iBGSGIgZvmn7uulSLUZP1isShbyl0c=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757447438;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=X4kc+sqIlqwrRZbkovqf9uhYtz6iUvsGomVE2OHyz+c=;
+	b=UQG/ebZvJr1AwVLprrByb3U8QkfhR1XqpH5VztWm8GNPYQA89udX2/gEa2SwFO4b
+	tqT0zk+K0gmWQ1F7kUEwpqRI63BgUVevqf9cabiRkIH16oKoDTMBmivHb8XyC4fxdJY
+	whZsRORpOoSFhB1JC7XbY3+2Zc0S60OOO/IDtnI4=
+Received: by mx.zohomail.com with SMTPS id 1757447437317465.8216735890609;
+	Tue, 9 Sep 2025 12:50:37 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250906034225.12401-1-akshayaj.lkd@gmail.com> <20250907105557.7bab8bfe@jic23-huawei>
-In-Reply-To: <20250907105557.7bab8bfe@jic23-huawei>
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-Date: Wed, 10 Sep 2025 01:20:02 +0530
-X-Gm-Features: Ac12FXyX_W0YfMilGyW-sdl7JZKHet0VZU0YZ2BtgcumAOi6Tgm1Ut5kNlZvL5k
-Message-ID: <CAE3SzaRrfN2bDP=LO9O3WMrGr6atgTCv+pCE0h7x6zGTJj1Uew@mail.gmail.com>
-Subject: Re: [PATCH v6] iio: light: ltr390: Implement runtime PM support
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: anshulusr@gmail.com, dlechner@baylibre.com, nuno.sa@analog.com, 
-	andy@kernel.org, shuah@kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v2 3/3] rust: lock: add a Pin<&mut T> accessor
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aL47zBoNpvjYxec5@tardis-2.local>
+Date: Tue, 9 Sep 2025 16:50:19 -0300
+Cc: Benno Lossin <lossin@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <A2534940-B847-40F6-8420-4ABEAE1D9A39@collabora.com>
+References: <20250828-lock-t-when-t-is-pinned-v2-0-b067c4b93fd6@collabora.com>
+ <20250828-lock-t-when-t-is-pinned-v2-3-b067c4b93fd6@collabora.com>
+ <DCK43W485VCY.3KE72NNMDP32D@kernel.org>
+ <BD4724FF-4AB7-4551-B71C-C22E6E709F19@collabora.com>
+ <aL47zBoNpvjYxec5@tardis-2.local>
+To: Boqun Feng <boqun.feng@gmail.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Sun, Sep 7, 2025 at 3:26=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
-wrote:
->
-> On Sat,  6 Sep 2025 09:12:19 +0530
-> Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
->
-> > Implement runtime power management for the LTR390 sensor. The device
-> > autosuspends after 1s of idle time, reducing current consumption from
-> > 100 =C2=B5A in active mode to 1 =C2=B5A in standby mode as per the data=
-sheet.
-> >
-> > Ensure that interrupts continue to be delivered with runtime PM.
-> > Since the LTR390 cannot be used as a wakeup source during runtime
-> > suspend, therefore increment the runtime PM refcount when enabling
-> > events and decrement it when disabling events or powering down.
-> > This prevents event loss while still allowing power savings when IRQs
-> > are unused.
-> >
-> > Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
->
-> One missing bit of error handling. Otherwise looks fine to me.
-> Wait a while though for other reviews before posting v7.
-Thanks Jonathan for the review. Made the necessary changes and floated
-a v7.
+Hi Boqun, sorry for the delay,
 
-Thanks,
-Akshay
+>>>> +
+>>>> +    /// Returns a pinned mutable reference to the protected data.
+>>>> +    ///
+>>>> +    /// The guard implements [`DerefMut`] when `T: Unpin`, so for =
+[`Unpin`]
+>>>> +    /// types [`DerefMut`] should be used instead of this =
+function.
+>>>> +    ///
+>>>> +    /// [`DerefMut`]: core::ops::DerefMut
+>>>> +    /// [`Unpin`]: core::marker::Unpin
+>>>> +    ///
+>>>> +    /// # Examples
+>>>> +    ///
+>>>> +    /// ```
+>>>> +    /// # use kernel::sync::{Mutex, MutexGuard};
+>>>> +    /// # use core::pin::Pin;
+>>>> +    /// struct Data;
+>>>> +    ///
+>>>> +    /// fn example(mutex: &Mutex<Data>) {
+>>>> +    ///   let mut data: MutexGuard<'_, Data> =3D mutex.lock();
+>>>> +    ///   let mut data: Pin<&mut Data> =3D data.as_mut();
+>>>> +    ///  }
+>>>=20
+>>> The formatting looks off in this one, there should be 4 spaces of
+>>> indentation here; there are also 2 spaces in front of the `}`.
+>>>=20
+>>> Also `Data` implements `Unpin`, so you're not following your own
+>>> recommendation from above :)
+>>=20
+>> I=C2=B4ll fix this :)
+>>=20
+>=20
+> If the fix is small, feel free to send a diff and I can fold it when
+> queueing (i.e. no need to resend the whole series). I'm trying to send
+> it to tip before -rc6 so there will be some more tests. Thanks!
+>=20
+> Regards,
+> Boqun
+>=20
+
+
+This should address what Benno pointed out:
+
+
+diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+index 7191804a244d..cb00fdb94ffd 100644
+--- a/rust/kernel/sync/lock.rs
++++ b/rust/kernel/sync/lock.rs
+@@ -258,13 +258,13 @@ pub(crate) fn do_unlocked<U>(&mut self, cb: impl =
+FnOnce() -> U) -> U {
+     ///
+     /// ```
+     /// # use kernel::sync::{Mutex, MutexGuard};
+-    /// # use core::pin::Pin;
+-    /// struct Data;
++    /// # use core::{pin::Pin, marker::PhantomPinned};
++    /// struct Data(PhantomPinned);
+     ///
+     /// fn example(mutex: &Mutex<Data>) {
+-    ///   let mut data: MutexGuard<'_, Data> =3D mutex.lock();
+-    ///   let mut data: Pin<&mut Data> =3D data.as_mut();
+-    ///  }
++    ///     let mut data: MutexGuard<'_, Data> =3D mutex.lock();
++    ///     let mut data: Pin<&mut Data> =3D data.as_mut();
++    /// }
+     /// ```
+     pub fn as_mut(&mut self) -> Pin<&mut T> {
+         // SAFETY: `self.lock.data` is structurally pinned.=
 
