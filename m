@@ -1,208 +1,137 @@
-Return-Path: <linux-kernel+bounces-808480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2FAB50054
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:56:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE3BB5004F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96DE04E71B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:55:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50D244E308F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFCA350822;
-	Tue,  9 Sep 2025 14:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A71B35334B;
+	Tue,  9 Sep 2025 14:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bf/l+ArI"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0WPPmYQ"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB73F350D77
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FCD341AD2;
+	Tue,  9 Sep 2025 14:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757429700; cv=none; b=hLKGmN2PcCFbjH+PE9/RhDTWOiGxDHqVQi20T/I90FpPihuw6VWslJN5kmOWujUy21A6A+V4Zvu93mPRqhaeUhx1U9CbtnxVLQLNFvGFmReCFfIo0nHU/IB79HUCsKh1XyyGgVR729WNjEM2uB7jiENH6xuf98dMdAoQmYxmW9A=
+	t=1757429678; cv=none; b=VqgdNX5xs7F6K2uhEsBLGqIyd1s1jYgHkzax+2lmK/TBorcKlvFkUtyViFEb4w5+IyANYIilx7eJHRSV9etfCfiH7RlNneievEkS9uXeXamvrukmLGhxcV6lSAiAle2KUlUvWRuuwP+I2nB3irkQHcV/ym23z9HXsgVlyrAHOLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757429700; c=relaxed/simple;
-	bh=ciGJKXOEN0Cr6JCNlySQlowtRSx6HHxITdJSUYo19sw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LxXyFM364TmFszckRvuDqMi7ndQGcqigmo66lPEvV4rYsd//8IR2PzYjLJjIbk5/vlspcHDOmb299f+3RPm1huRhAIozpDmPFU/hsN8qHZvod6qLfXSYwOiykw0X39c2Bt8ZhjV25kvK+O2wrK5jUbHchVujWlMWBqm1i+N6J8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bf/l+ArI; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1757429678; c=relaxed/simple;
+	bh=PpFwLDXJv08CFq0GZzcBAKoDITs5j/xDdEGt9D7mlxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=etvzFakBmJYZxJj3z3ekZBYJlkJkbFAxlAj9aK5ixmrh+0NV24y0NUPBUGmu+GAJaGVPcPUVTFcKJe0ffqH8PRzA2WGse+dIe+UuD8evxVWbwAOmRF36e3HIB1vSLn1dvO5YHNoEhlTx2fdN93040IcujmIOK+XRdGZ3FwqStpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N0WPPmYQ; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-624fdf51b44so3484133a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:54:58 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-772301f8a4cso7970916b3a.3;
+        Tue, 09 Sep 2025 07:54:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757429697; x=1758034497; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2GWXE+3wBOcPt7oKnTkYOal1ucKO7Pnm2lZVyHLTocM=;
-        b=Bf/l+ArI53hwS7driH1ucr3hNhu5E+EmmP7Yz/7xjgM5njSy6QRHURyoMTqgUAEo6j
-         MXGuCP65T2m/j8cUZA/mJVczpsmTm9KOFbe3o2e6dxhTdGWSMnO2PHDjNmPge5UBkTSd
-         dVlnfjikFEg1TTuk9xRtL3+D62MzHpn7fmImFYv48SCZhZrCQzMqo+VRn5+VB+FQzZux
-         MVpePLUguTrXIK6kCuquwBhH2AU5Ar2TJYdbCGBWkF6WJczevYigrvjAOThh43faZkzK
-         /AeZCqUdDHfdnEWokiFr2mrZeu+q94auRlEEHcCF0DLFoKfENI+PFI1Ae7w/Yc+hEHEb
-         zkJA==
+        d=gmail.com; s=20230601; t=1757429676; x=1758034476; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jA3Bi8d//MggMJOKR9RSAK+GhvJF/ZKePtRLYeh1gnI=;
+        b=N0WPPmYQfWXWhVlNQAVUkV5rWzEixA5ErFtdrd73zENpiZpXp6UPmr48GHGQ0obmtI
+         NhEVOhTxKRenU6YDGqt/UgKkqUqi7OLBrYmS6DVGam+zEjLa+F+4dsT4ARqNBKXNlmwR
+         mm7XQqSVfvss/6e0viZRHLOH2OSNhlsqynT3KPGhIkw7XL4tda4Q1MKhcHBk4OGoTDRx
+         yOIio+5MiYzHEysFNqkGnK++iNJEuAm+SrpNrYWis3AMvROXjMl+GbpRXMk84oodVsRV
+         huqqDp7N++EkvHlMSOnUFidyLlGoSNQdPwIOdWEshJGky7WbBAFpfW9z9iKvpCFyfx7u
+         FHWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757429697; x=1758034497;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2GWXE+3wBOcPt7oKnTkYOal1ucKO7Pnm2lZVyHLTocM=;
-        b=Xio62KLfZxq6YAg2zcc9UxwmqP/sSoAcnR1kdTleOOMfYHxWmYIkgHnaGtZEAjzM16
-         K6CK3mpjQvLxL8PHJalr8XlDPNPfUSmn982OadLjUmQluFUzBF1K4MQ+CdpmFBLYa9BV
-         URgsuunWMRLyVF6gQ/G4Nauy+mNfHf5GP6ZTNLqBUrnku6WY8gHn4VQuLvpaPDZanAhZ
-         9mwRjb0UZDwh0J/dO21NUCzQ+oMDbUOxw8B565IH8EGgz0MbTmegSwDjZKDBIIkwG+WU
-         j6nhdKIryTT1o/BDms64RhNtmvfm62G+XXfrQAVRF2R9y9kedY185XoQuefEhdJhTZe7
-         3YTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWn4QZUxo2ba7dmfg38fV6zLBzYWZZ9O5+1CZqFaQtUoIpoui2NOmn7Gid218DkX8AN+12fsHuFsurv0PU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk1e1XaMdKBuovoZDAtpXcuxQ9zI7ss70MIHIZnee4iymTPfYc
-	JgIzFDthdGJ+nQhHdIXPD7Bo4AwnxjagXOKpTElJeR9OBwxSwLYL8niFvQapcK3LH1HETHyoiu7
-	EVufVr1ckwuJLfQnMtj+fuuDiGTMYk0w=
-X-Gm-Gg: ASbGnctCynO6toth22Hz8uQgyKlkg2qSLgAwxuJYotzPVEN1gzG23QoMDDLCIaclrOk
-	J/8LCVwtRcg0y3Yor7SUR+IGQFcK2hncCjK1/NQ6idII0fTpPIUgTqR1of4vPia8Mwix5pKjs23
-	y+NGHWac5YF/6kb7SpbXmuZ7WPgJlB0ob9+q0Te07qbytveEeT+/XqVKl+x+9we9keZu8fJQQH7
-	ES9YwRhGW0xnQMft8g8GQ==
-X-Google-Smtp-Source: AGHT+IEMt+u1ClOjcV2n5CQ17ZjrpPmx/eiarEJGhF0xznnFrQSXo9j9Ba6/99ZFdT4zmW929GCRlOqIyVzGOUfqDZQ=
-X-Received: by 2002:a05:6402:23ce:b0:621:99dc:8cea with SMTP id
- 4fb4d7f45d1cf-6237cdccd25mr9687939a12.37.1757429697063; Tue, 09 Sep 2025
- 07:54:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757429676; x=1758034476;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jA3Bi8d//MggMJOKR9RSAK+GhvJF/ZKePtRLYeh1gnI=;
+        b=hGhAQN8Co7aBv6yH9kjxdge5ozUoi5nm7yTr0KfoKRmY2kCZNXZUOwRdM74kO3XJZF
+         TAp4zdk8lqAj0k+qZcs8inL1CoMkr23X/DWOCWYXApPlXNLJroctmt6Rcmq4bGpNai5F
+         rKYIq+x0ieRe67CwaXCvzNNpCFEMjN3uBGaOvXH5lFfQEmHqn/LCzu2xsrwDybVUxnp3
+         hODota/Nv2jrZYeH9FBe+WqSiy7utz3SD1I5Zkce0LXz4xyWMzSs6EUZSDQplMwMUYZO
+         iYup0dAlod8+kUuA0g3jrnLpkmQ/hpR55HdwJtPRk82hkBIjdpg4eGSatbKNmXT+Q5Il
+         wYyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1NqkrcDx6eRq04w6USPTbIDBEFTvqBy78DFHsQNfug427dDKrJfQys/rGLVz7bzZlLGyIyunKDeqd+fi7EQ==@vger.kernel.org, AJvYcCUpyNVeViA9iXwp3ID5qs4pzwNutZ6vLcjLkkwEhdtZfqiDNRh8UBr2nG+jAgV8nsA8bPuIZrTk9vTgq/A=@vger.kernel.org, AJvYcCX6ceSzs/Qfiiaw2GGYrZSQeMryAmM+99Ja9+I6Jmj5V/ZpNlDPepx0//5rxJFDxecXB6rw0NmLozPe@vger.kernel.org, AJvYcCXCUE+Qv/F5wYjg3e6GGf9tleiOXsPFRcIPn2WsS3tcCnSTtem5SPmXHvsN8D5+/hA+6k7nCENuDVaF4XI=@vger.kernel.org, AJvYcCXZGDftzFEfHQiE0qG3VYVwRUSsGOCy0I1nSGLOKF/s7WSGeltf1ZRHkuJFOacqHheQViffQPcgw0/AtKhk@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCBlbXgPqn4KZt0pXNddhlRWk1OU35hR0jZv/EePT0X7typY+c
+	h30f+3BPR91VxSC7gFfiiSaFxJyi44gXJbGP9HMsma60y5RlaI3E8Gee
+X-Gm-Gg: ASbGncukkpv8vAGzKN+nDLo6iJvGIK2E9Kp1yENcTif0F+4vTBZaWlbZeyEtEZBllJB
+	pCLhGSWJd33zMLLCpW17DLwCte2DmJsq3PoVLBZ+Ol+vmXn51+a6bMSaxtj6YONwfshKgGJNrtV
+	9QK7/VcwZU/8/7bQgofH6XKeb+ZeVdfmew6ae12xU4rSQ7h5MbxfLDtGIDjypnvX1FXVRSFDbNM
+	YHHi3RZuawqEERnywqEXeZGLMiBu4TFTdrY3tf5FF4Wxn2gDvybwFjVC8gHzDJofa9AvtaELncH
+	q9mgSIJUFH552juHOW/gZCbi9VJzFmW4jUeEH/iwynaoghaxo6+bahe8H45X54zS6jdNqR/fCeA
+	7CHkaKoaeuixfj4+I3lQZYf0=
+X-Google-Smtp-Source: AGHT+IH5mCB08NPGCHa7NzhViyJDulXvqYSo+gbL1Z9Ig9RTxI2/HO5RV9PjQ0c7VpKye/9BVb72bg==
+X-Received: by 2002:a17:902:ce89:b0:251:493c:43e6 with SMTP id d9443c01a7336-2516ef57cd4mr146245675ad.10.1757429676336;
+        Tue, 09 Sep 2025 07:54:36 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:bb68:234f:c4ea:1276])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a2742590csm613395ad.8.2025.09.09.07.54.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 07:54:35 -0700 (PDT)
+Date: Tue, 9 Sep 2025 07:54:33 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Luca Weiss <luca@lucaweiss.eu>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Courtney Cavin <courtney.cavin@sonymobile.com>, Vinod Koul <vkoul@kernel.org>, Bhushan Shah <bshah@kde.org>, 
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: input: pm8941-pwrkey: Document
+ wakeup-source property
+Message-ID: <kxgvebizxvlflu4qen3cb5v4lcuydmdixvi7624hrggo7f5u5f@zbengtjkekfj>
+References: <20250909-resin-wakeup-v1-0-46159940e02b@lucaweiss.eu>
+ <20250909-resin-wakeup-v1-1-46159940e02b@lucaweiss.eu>
+ <efb03993-0481-45ed-8f7e-8b65519a55cb@kernel.org>
+ <phctwoxml7hscwcgaipl233lotnrkgcpe7rxvhm5syoiadu3lv@ibgeib4kjyhs>
+ <9e39f1b4-63b2-4c6a-8b31-6360be1952e6@kernel.org>
+ <dcdbc6424db6953dfc39fc05e0e050ab@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905191357.78298-1-ryncsn@gmail.com> <20250905191357.78298-5-ryncsn@gmail.com>
- <bd8338cf-6723-46ef-9043-3ced8be56e62@redhat.com>
-In-Reply-To: <bd8338cf-6723-46ef-9043-3ced8be56e62@redhat.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 9 Sep 2025 22:54:20 +0800
-X-Gm-Features: AS18NWC1_9y38Nsi39iOZh1hJsvE5_7RXH2EllayI3pifDOFrHDVGEcDnTcEUrc
-Message-ID: <CAMgjq7BPk1PJn0JGo+ERnisSimG0FSuiQZHDY3bf2gBgE5rU1g@mail.gmail.com>
-Subject: Re: [PATCH v2 04/15] mm, swap: check page poison flag after locking it
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Yosry Ahmed <yosryahmed@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dcdbc6424db6953dfc39fc05e0e050ab@lucaweiss.eu>
 
-On Mon, Sep 8, 2025 at 8:40=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 05.09.25 21:13, Kairui Song wrote:
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > Instead of checking the poison flag only in the fast swap cache lookup
-> > path, always check the poison flags after locking a swap cache folio.
-> >
-> > There are two reasons to do so.
-> >
-> > The folio is unstable and could be removed from the swap cache anytime,
-> > so it's totally possible that the folio is no longer the backing folio
-> > of a swap entry, and could be an irrelevant poisoned folio. We might
-> > mistakenly kill a faulting process.
-> >
-> > And it's totally possible or even common for the slow swap in path
-> > (swapin_readahead) to bring in a cached folio. The cache folio could be
-> > poisoned, too. Only checking the poison flag in the fast path will miss
-> > such folios.
-> >
-> > The race window is tiny, so it's very unlikely to happen, though.
-> > While at it, also add a unlikely prefix.
-> >
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > ---
-> >   mm/memory.c | 22 +++++++++++-----------
-> >   1 file changed, 11 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 10ef528a5f44..94a5928e8ace 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -4661,10 +4661,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> >               goto out;
-> >
-> >       folio =3D swap_cache_get_folio(entry);
-> > -     if (folio) {
-> > +     if (folio)
-> >               swap_update_readahead(folio, vma, vmf->address);
-> > -             page =3D folio_file_page(folio, swp_offset(entry));
-> > -     }
-> >       swapcache =3D folio;
-> >
-> >       if (!folio) {
-> > @@ -4735,20 +4733,13 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> >               ret =3D VM_FAULT_MAJOR;
-> >               count_vm_event(PGMAJFAULT);
-> >               count_memcg_event_mm(vma->vm_mm, PGMAJFAULT);
-> > -             page =3D folio_file_page(folio, swp_offset(entry));
-> > -     } else if (PageHWPoison(page)) {
-> > -             /*
-> > -              * hwpoisoned dirty swapcache pages are kept for killing
-> > -              * owner processes (which may be unknown at hwpoison time=
-)
-> > -              */
-> > -             ret =3D VM_FAULT_HWPOISON;
-> > -             goto out_release;
-> >       }
-> >
-> >       ret |=3D folio_lock_or_retry(folio, vmf);
-> >       if (ret & VM_FAULT_RETRY)
-> >               goto out_release;
-> >
-> > +     page =3D folio_file_page(folio, swp_offset(entry));
-> >       if (swapcache) {
-> >               /*
-> >                * Make sure folio_free_swap() or swapoff did not release=
- the
-> > @@ -4761,6 +4752,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> >                            page_swap_entry(page).val !=3D entry.val))
-> >                       goto out_page;
-> >
-> > +             if (unlikely(PageHWPoison(page))) {
-> > +                     /*
-> > +                      * hwpoisoned dirty swapcache pages are kept for =
-killing
-> > +                      * owner processes (which may be unknown at hwpoi=
-son time)
-> > +                      */
-> > +                     ret =3D VM_FAULT_HWPOISON;
-> > +                     goto out_page;
-> > +             }
-> > +
-> >               /*
-> >                * KSM sometimes has to copy on read faults, for example,=
- if
-> >                * folio->index of non-ksm folios would be nonlinear insi=
-de the
->
-> LGTM, but I was wondering whether we just want to check that even when
+On Tue, Sep 09, 2025 at 04:41:26PM +0200, Luca Weiss wrote:
+> On 2025-09-09 16:33, Krzysztof Kozlowski wrote:
+> > On 09/09/2025 16:08, Dmitry Torokhov wrote:
+> > > > >    compatible:
+> > > > >      enum:
+> > > > > @@ -36,6 +33,11 @@ properties:
+> > > > >             pin should be configured for pull up.
+> > > > >      $ref: /schemas/types.yaml#/definitions/flag
+> > > > > 
+> > > > > +  wakeup-source:
+> > > > > +    description: |
+> > > > > +           Button can wake-up the system. Only applicable
+> > > > > for 'resin',
+> > > > > +           'pwrkey' always wakes the system by default.
+> > > > 
+> > > > 
+> > > > I'll fix existing code, so don't repeat that style.
+> > > 
+> > > If you ack I can reformat on my side to match the patch you just sent.
+> > 
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Thanks for fixing that up Krzysztof! I noticed but didn't want to deviate
+> from the style just for this description. Of course better to fix the
+> formatting in the first place.
+> 
+> @Dmitry: Maybe give this patch some time (1-2 weeks?) to gather more
+> feedback,
+> given the reasons outlined in the cover letter. Also on the driver patch.
 
-Thanks for checking the patch.
+OK, I'll hold on to this for a couple of weeks.
 
-> we just allocated a fresh folio for simplicity. The check is cheap ...
->
+Thanks.
 
-Maybe not for now? This patch expects folio_test_swapcache to filter
-out potentially irrelevant folios, so moving the check before that is
-in theory not correct.. And folio_test_swapcache check won't work for
-the fresh allocated folio here...
-
-I'm planning to remove the whole `if (swapcache)` check in phase 2, as
-all swapin will go through swap cache. By that time all checks will
-always be applied. The simplification will be done in a cleaner way.
-
-> --
-> Cheers
->
-> David / dhildenb
->
->
+-- 
+Dmitry
 
