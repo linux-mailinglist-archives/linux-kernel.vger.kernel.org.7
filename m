@@ -1,144 +1,171 @@
-Return-Path: <linux-kernel+bounces-808324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A9CB4FE1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:52:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39497B4FE40
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CAC01886662
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:50:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AB354E07B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAC7345755;
-	Tue,  9 Sep 2025 13:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2193431FF;
+	Tue,  9 Sep 2025 13:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="eVZCcOC/"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUNS3aBv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27E4345723;
-	Tue,  9 Sep 2025 13:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425798; cv=pass; b=fHGMLNz/d44LCywPke2b0h0z9VUXxIrsMeGbJ4QMoUXbRweSdugayufI+jLQ7G3sokyPTIs/oh+Qx/tHTQK+TiKDMARFhaXYih8vCDiKGtHRM1nGA64TvMrKHoH/nrQT4+HzSqt7LdclBJlP24utpvaYBMEBAgNchFoJKxue88w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425798; c=relaxed/simple;
-	bh=jbYz2cB/LRKGU7V2l1u+WyNmdeqfxloyzuSeKoimqaI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nJpKY1Q/4/ST1SIE6IgW4DFniy3g4khCq7tmJFSbRZfzBCCZRehc+bv2ZHaUsRjVIvd4u7cdTonSFBR8WTPs1EIfy2JOya54CpXAL4peWD/NdNVo2E0xJXpcStiq9cJ6TEFqNL5/7KRk14XhaPwdxWEDAyO+Ktj7/upnBFrkwig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=eVZCcOC/; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757425763; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZPAIgnVLIIrn3kDfkEgrFFCfm2FitlN2ZyePQB2nyhgAbyEcp2drvC9+bpRtQq/eOpUTetSZVspMR6q44O3rXDhJ0msylFG0B/5i5MARL5PV9j6L/izb+YWRjz3VnqMi3sfZpeU4krXpgEf3VRv9e3/8/2sop4yaxJc03trZ7SA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757425763; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=L/Ku0WQ65djtaMitZtvpBRz1mourwVgiqgk6yxreW9g=; 
-	b=NTbem7q4rgQFGLQC7p3n9d5KbbswX5gjJZgBxJsCGyHDRvd5SqLzZdK1vJ6B0s7OEdAWwbZoAr7eKL79mq6RM5c3VJXO5OwbdisgxdXAFyfBZVn6YPNqaXhlWvtRTATOMC36RamzQrawf3uaUtP9RTYxGjFsJJBK45MtOsKAYuI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757425763;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=L/Ku0WQ65djtaMitZtvpBRz1mourwVgiqgk6yxreW9g=;
-	b=eVZCcOC/CBXKqJM/FpN4NLI6W9TZQ6B05GYsrJXwlAyL2Mfa1xksWUOAvvwL+u0W
-	XhB0Kp8/w2hEGRVm0r60cY7URRfUvo+nTyaMRF/Jdb7oSO27ZpUun1TfpeHA1pfJDFU
-	+8RQAIzy70zuEm8UsAQ/MM6maRuTB88w0CfjwGX8=
-Received: by mx.zohomail.com with SMTPS id 1757425761695925.908509267311;
-	Tue, 9 Sep 2025 06:49:21 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Saravana Kannan <saravanak@google.com>, linux-pm@vger.kernel.org,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Sebin Francis <sebin.francis@ti.com>,
- Diederik de Haas <didi.debian@cknow.org>,
- Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
- Peng Fan <peng.fan@oss.nxp.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Johan Hovold <johan@kernel.org>, Maulik Shah <maulik.shah@oss.qualcomm.com>,
- Michal Simek <michal.simek@amd.com>, Konrad Dybcio <konradybcio@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH 2/5] pmdomain: rockchip: Fix regulator dependency with
- GENPD_FLAG_NO_STAY_ON
-Date: Tue, 09 Sep 2025 15:49:15 +0200
-Message-ID: <4274915.mvXUDI8C0e@workhorse>
-In-Reply-To: <20250909111130.132976-3-ulf.hansson@linaro.org>
-References:
- <20250909111130.132976-1-ulf.hansson@linaro.org>
- <20250909111130.132976-3-ulf.hansson@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0A3342CB6;
+	Tue,  9 Sep 2025 13:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757425765; cv=none; b=oqhVvs3CshdeTCPuY0RDbVvphs5x5hIK41BDryV3Gx/sjVwH+2tj2HlEu3GPvsVW8APPguY7JOKMpoghtNYntPaC2e/DJmaWkRnxmW5gHKgodyqBNWwxQ5DFAxms7YXedDw6oNjuQiy7ICoLF+j1jN2E0368/V9Rowns/MeFbvI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757425765; c=relaxed/simple;
+	bh=49gZNr2H7kccNqE5XR78ZGc2FVHa7pQDJF9bw7z2c/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7gES1ixVHh2iTribllgNkO1f0QQjApjkOWjHTgMyCZBjvogI0FcxL9ARgTQZNiUqhJ11NYcNaHOH9oYEKir+rZOS4zCNg8Bwuz/PLJnGdeCw7Fu8Lg2w8NV5m64wPGZ00YHyCHADQkVfmLyAEN3eTrjOanutRPLjf8R6HVA2hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUNS3aBv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F2CAC4CEF7;
+	Tue,  9 Sep 2025 13:49:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757425764;
+	bh=49gZNr2H7kccNqE5XR78ZGc2FVHa7pQDJF9bw7z2c/Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GUNS3aBv17s4mfY42cI+aghlpnercgKfmDtnImYtucNS6mqCKtDfNjOg7amxH+TCK
+	 lcRE+yACfehHA02LBH75TsHgCypy4X7IrXAltdoQE1cU+5/lT/mA6gHsaxgtTnb13f
+	 M2UTl1+Lq722rHyS6+Ti0VxP+8qZk+dOau/p9c2RMWfY78/iVUO2mzjsLyG6DLb12X
+	 ocIzKXKbBHI9TBREkqbp1DPYZNq4GU6GIPzALkARqLgs+PPfAdwldPFrV/44sYB6DM
+	 ykflOQV27hBIj8dmdVDne81ZDm2DHnJLUWiGMnW57Tl6x1WVcoQEL3UdT8IZrpFW2T
+	 N1nep5yJQq4EA==
+Date: Tue, 9 Sep 2025 15:49:22 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
+	Pengutronix <kernel@pengutronix.de>, linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] backlight: pwm_bl: apply the initial backlight state
+ with sane defaults
+Message-ID: <7zae3uaz5wdk2ktmg44aqdnfjglklqujtktslvlye3ssd3xvbv@qwwjiip6kgfo>
+References: <20250731-blpwm-v1-1-0171fd31bff9@pengutronix.de>
+ <n6rltuxqwybh2mwzz3hxi3tzix2c7q3mbovscobzzmkj6puo6w@gc3qnchjlagq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-
-On Tuesday, 9 September 2025 13:11:21 Central European Summer Time Ulf Hansson wrote:
-> The deferred regulator retrieval for Rockchip PM domains are causing some
-> weird dependencies. More precisely, if the power-domain is powered-on from
-> the HW perspective, its corresponding regulator must not be powered-off via
-> regulator_init_complete(), which is a late_initcall_sync.
-> 
-> Even on platforms that don't have the domain-supply regulator specified for
-> the power-domain provider, may suffer from these problems.
-> 
-> More precisely, things just happen to work before, because
-> genpd_power_off_unused() (also a late_initcall_sync) managed to power-off
-> the PM domain before regulator_init_complete() powered-off the regulator.
-> 
-> Ideally this fragile dependency must be fixed properly for the Rockchip PM
-> domains, but until then, let's fallback to the previous behaviour by using
-> the GENPD_FLAG_NO_STAY_ON flag.
-> 
-> Link: https://lore.kernel.org/all/20250902-rk3576-lockup-regression-v1-1-c4a0c9daeb00@collabora.com/
-> Reported-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Fixes: 0e789b491ba0 ("pmdomain: core: Leave powered-on genpds on until sync_state")
-> Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until late_initcall_sync")
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/pmdomain/rockchip/pm-domains.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
-> index 242570c505fb..1955c6d453e4 100644
-> --- a/drivers/pmdomain/rockchip/pm-domains.c
-> +++ b/drivers/pmdomain/rockchip/pm-domains.c
-> @@ -865,7 +865,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
->  	pd->genpd.power_on = rockchip_pd_power_on;
->  	pd->genpd.attach_dev = rockchip_pd_attach_dev;
->  	pd->genpd.detach_dev = rockchip_pd_detach_dev;
-> -	pd->genpd.flags = GENPD_FLAG_PM_CLK;
-> +	pd->genpd.flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_NO_STAY_ON;
->  	if (pd_info->active_wakeup)
->  		pd->genpd.flags |= GENPD_FLAG_ACTIVE_WAKEUP;
->  	pm_genpd_init(&pd->genpd, NULL,
-> 
-
-Tested-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-
-Fixes the full-SoC lockup I've observed on my RK3576 Radxa ROCK 4D,
-which before this patch would occur when the vdd_npu_s0 regulator
-was disabled.
-
-Thank you!
-
-Kind regards,
-Nicolas Frattaroli
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d5ajcr2dlqwa72tk"
+Content-Disposition: inline
+In-Reply-To: <n6rltuxqwybh2mwzz3hxi3tzix2c7q3mbovscobzzmkj6puo6w@gc3qnchjlagq>
 
 
+--d5ajcr2dlqwa72tk
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] backlight: pwm_bl: apply the initial backlight state
+ with sane defaults
+MIME-Version: 1.0
 
+Hello Michael,
+
+On Fri, Aug 01, 2025 at 08:32:20AM +0200, Uwe Kleine-K=F6nig wrote:
+> Hallo Michael,
+>=20
+> On Thu, Jul 31, 2025 at 10:47:18AM +0200, Michael Grzeschik wrote:
+> > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight=
+/pwm_bl.c
+> > index 237d3d3f3bb1a..5924e0b9f01e7 100644
+> > --- a/drivers/video/backlight/pwm_bl.c
+> > +++ b/drivers/video/backlight/pwm_bl.c
+> > @@ -518,13 +518,6 @@ static int pwm_backlight_probe(struct platform_dev=
+ice *pdev)
+> >  	if (!state.period && (data->pwm_period_ns > 0))
+> >  		state.period =3D data->pwm_period_ns;
+> > =20
+> > -	ret =3D pwm_apply_might_sleep(pb->pwm, &state);
+> > -	if (ret) {
+> > -		dev_err_probe(&pdev->dev, ret,
+> > -			      "failed to apply initial PWM state");
+> > -		goto err_alloc;
+> > -	}
+> > -
+> >  	memset(&props, 0, sizeof(struct backlight_properties));
+> > =20
+> >  	if (data->levels) {
+> > @@ -582,6 +575,15 @@ static int pwm_backlight_probe(struct platform_dev=
+ice *pdev)
+> >  	pb->lth_brightness =3D data->lth_brightness * (div_u64(state.period,
+> >  				pb->scale));
+> > =20
+> > +	state.duty_cycle =3D compute_duty_cycle(pb, data->dft_brightness, &st=
+ate);
+> > +
+> > +	ret =3D pwm_apply_might_sleep(pb->pwm, &state);
+> > +	if (ret) {
+> > +		dev_err_probe(&pdev->dev, ret,
+> > +			      "failed to apply initial PWM state");
+> > +		goto err_alloc;
+> > +	}
+> > +
+>=20
+> I wonder why the PWM is updated at all in .probe(). Wouldn't it be the
+> natural thing to keep the PWM configured as it was (in its reset default
+> state or how the bootloader set it up)?
+>=20
+> Orthogonal to your change, while looking at the driver I wondered about:
+>=20
+>         bl =3D backlight_device_register(dev_name(&pdev->dev), &pdev->dev=
+, pb,
+>                                        &pwm_backlight_ops, &props);
+>         if (IS_ERR(bl)) {
+>                 ret =3D dev_err_probe(&pdev->dev, PTR_ERR(bl),
+>                                     "failed to register backlight\n");
+>                 goto err_alloc;
+>         }
+>=20
+>         if (data->dft_brightness > data->max_brightness) {
+>                 dev_warn(&pdev->dev,
+>                          "invalid default brightness level: %u, using %u\=
+n",
+>                          data->dft_brightness, data->max_brightness);
+>                 data->dft_brightness =3D data->max_brightness;
+>         }
+>=20
+>         bl->props.brightness =3D data->dft_brightness;
+>         bl->props.power =3D pwm_backlight_initial_power_state(pb);
+>         backlight_update_status(bl);
+>=20
+> Shoudn't setting data->dft_brightness, bl->props.brightness and
+> bl->props.power better happen before backlight_device_register()? Also
+> calling backlight_update_status() after backlight_device_register()
+> seems wrong to me, I'd claim the backend driver shouldn't call that.
+
+Do you intend to work on this orthogonal feedback? If not, I'll put it
+on my todo list.
+
+Best regards
+Uwe
+
+--d5ajcr2dlqwa72tk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjAMFsACgkQj4D7WH0S
+/k4BWQgAuXV/ULnAxDCQ3VIqXyMJPZ9q/2BOe6oUyBZUls9TN9oBBE97kCYQT03v
+nY/10hGSr8Pf3XZ/VJfXQX7LCV/Scc0U0Ufz2Pwtb01s7zERx4SgBlHW9k/a4IB8
+UQ/BmYixfkuQoVFsNhjzgsyzR0Yul5abMKBwWme86iu3L4PWWzs0Nt8p0otOV5Yw
+HabxoMBQTTVx2MvK8u9tWB3xkinIzXxVDowWKB7FR7kQpcoCxy6XJnAI0BSwDvNV
+8YywwiaiNGdecrHj0vBDY7yTPiiT8BKAi1H3SiwFdn3cO//lnhbqzNHntPQ1N67V
+ZoGfcECUaGfqJL2w5nsRXewnLty7qA==
+=YVsb
+-----END PGP SIGNATURE-----
+
+--d5ajcr2dlqwa72tk--
 
