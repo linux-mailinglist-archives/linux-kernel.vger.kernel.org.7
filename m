@@ -1,160 +1,150 @@
-Return-Path: <linux-kernel+bounces-808495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB377B50084
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:01:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF08B5008A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C5485E4774
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:01:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C68784E313E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04ED9350D5A;
-	Tue,  9 Sep 2025 15:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF913081A4;
+	Tue,  9 Sep 2025 15:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="adX4XKgl"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YXWfFaKk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E76343D9E
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F0E2FDC22
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757430090; cv=none; b=UxsAmtCq/7ZlutWFPgJh/EmrOVdeM7OqvmMqvquGiz7OPdRShHwU+Ggtt7sSAktT5HP7bpRFFz0reW93JBbLLHThjDs0UOGD36DhAp9a307T75Wy6dn+/NnqgAKKATTc0ze2q9sWk6/LeQFthz7/pittvSGkfW+egpyyp1xOvhc=
+	t=1757430099; cv=none; b=gJVWmH1yQpYujcpTJPvTP+gVzPgqNlt3auQornmEb9c+w/Cym6J2681nJ8QcuewXfmay80vUMqfByiAoTwyZd1HIsyhUxXwEqoZ5/poXiyy/pGz7HaVGV8mg25YO+Rja3cPpXLHUaq0NotZvE6wjgtEHbB7/EZnbA/neYWRSuio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757430090; c=relaxed/simple;
-	bh=PGs7vjYd8rYyzwAYvYDRUyeAJRynaK4QGuGr+OUHhzA=;
+	s=arc-20240116; t=1757430099; c=relaxed/simple;
+	bh=4LjeH4GNzPac6D3Qy2qp8apPQ0tzCR1kJkThxZ3Q/yM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bgUGXCD8DydiD1RpNA7gNoXMg1LR5Uuwh6K9PhfOEp8Z29IGXWh+qpxTW1dtdM8wUDiCuerE0aRCKy78gltUwZAaG/TdxMkiw4ZLZwg7tczU7AMCblq+Njg7p3A+wiAdBqFyBbtz725lbI6Tp3f3vE7CvFl4/wvYlgr8Wnc8VIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=adX4XKgl; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45de6490e74so21974815e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:01:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757430087; x=1758034887; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oo2GzS1BKFjAKT93aaJtCs9JdrjrvpKho+/Kv3PPXfs=;
-        b=adX4XKgl1TNA+xb5W2UPwoWqZwh0+TQ5cgIASwkirhf0qUzDneyTjAEu3eMr7jaXpp
-         +cfskihKIMKaiGi177B8G7YIvrDUoN2gQ/HQbfpQK7z5poQdYGwkoyCppVx9sra2abGm
-         VCCcabGGOzpB2QsV+naDMhXU1P6I5dvOhDV/Bhudmb1oyq6JoO8Cm51ITd3YEXBKS22G
-         PPN4lKEU2Lhmj1On0SD2AsBdSVkomaojrLvgVvSx56OnbuS+gQgmgavPxhuEsBVA982X
-         Sm0u97qOWoUi1hwWy28gAeWkZKKBBcotDlNIhYI6j7wmK0RFNlrzVuTQg7yKD3JjK1Mx
-         WW4A==
+	 Content-Type:Content-Disposition:In-Reply-To; b=cH4Syo0tSi0DndfeE7x4VuO7IZ1eDmCRxVyVn7jNnTTb9aiKmDVaMlB/9oBC++gi3Z+SPtK4OO1YiLO68XgkJA63yIpy4XyDZpQFHvl6QTMK+u2syIhziqe+ykGLnNa2oHSd8FC38IlCZYUTNlGJbXY64bZocmIleq8qgipKqLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YXWfFaKk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5899LVZG029190
+	for <linux-kernel@vger.kernel.org>; Tue, 9 Sep 2025 15:01:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=PGW3tJNZDteIP3YWspfNxoS6
+	+2pzYXFb7hKBbebA/DM=; b=YXWfFaKkMC1+j5b1iYb6QUPrqIk7nP6cr8L/UC16
+	Cl+bpVKeRzCRGQtXdtvTpP7BVGjRCz4rswD1ScxBqUGkOAevNK3ZsQSkYVEw3296
+	odiZJzF1WEuWmus0e7fSEpl2iorE6UbrjKU+fl4Xr4uZcEvNGV65h9xmjchkFE66
+	O1o5K/6IDPWh3b19rVk9FPUdmuUOTPFV//LLoI7T7V8quO8SM62kmEbrV25Xjzy1
+	LXLq9BUMEsbVwm1avYXcKbWNlNh/gVKGmzhzq/XP2pkDIJQpOFTihbt74QfLXKt8
+	7lz7FyxIiL8uhg1gdyCk+eUDBIIMGYpvYJ+VpACymMbxZw==
+Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490db8gmen-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:01:36 +0000 (GMT)
+Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-53b17394ddaso2417188e0c.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:01:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757430087; x=1758034887;
+        d=1e100.net; s=20230601; t=1757430096; x=1758034896;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Oo2GzS1BKFjAKT93aaJtCs9JdrjrvpKho+/Kv3PPXfs=;
-        b=a60vtoh2RBqa8H2QlNv7nNeIXxZ/Q7A9rsgkob6QRlTE38P9mKCKt7jgQZQX1G6hBT
-         OZ36D0WvXQR+jNhM22ISS53/Bds+OvaSpTDnjhVJ0GWG/bz4GVICFUQH3Wj0/5vPhwb5
-         7+VKW4NQ+VRVRjGoIPFnaxnQj7CIEWkyocHeMDzTGrnRZXum1XHEmWsGHvqXtnScJ5NM
-         IDC3himRtSZtn0CeKkDnsqh73lJKoWOht6HXcpU3dHuMjZKLuUg1s1HnOKoTvwPm01bX
-         p42Wxs0dmpPbLPwbtKJAABLFxHaM61q8wyYg8SlgKer5zYyOz5QGVrOM1HbdbKg7f4Wl
-         ehiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNlhpR4/s2rw9iBdtC95VdWhNM0mf/+rUfyR41aYprnvJsyxotCNg753za9SI6Rao8hgCOU9xW+2z1nhE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwurotMgI094VWUEDVyXtSYnSahI2bS3xxgrKoFWgaMtroDw9h/
-	xKIfYQh5GzOF5EEt+ccKfCFhx9FWGriDhwyZVTc7HPOP19734Zhoh/Ga
-X-Gm-Gg: ASbGncs5moiSIEIyBAfJdhYS3Fz6VQa1+c+iqukTZ2R8Y2sIF7dKNGRaIi5Ze/jxKzC
-	KEK8gZR9WPCYeOrLmxUyerNcZwAkxedjJVW0iMUuinkq9bJPF4Eh4aRMb7Nl9FJmj/zbKK30+jS
-	P68IjRnj6R+pmLyx1mx8LkHPWAXv7+Ic6F7sBWr+uKahsnmXWq+bzlVOO6i+wBThhcbm6RCnW2n
-	GeLAIZXTW8Ibq3E4T5+VHol4pMVOhtgB/liJ+jwSMVa3J3YWGCDD3Qe5HWwuWV0xZJg6fitlZTH
-	X7AGHrTcrhbrdSDgJMPCwfJ0tyk0hX00FdRtAY9F7n7Xpeu3xIdyZ8Bkjsdv1xeDnO0TJbihWjZ
-	aAgzbGm987EzXcdDUVyubgXKKHef+4XiO2WKiv19CdLEV5FwtFBJF0Y/98yl/rjE0sJYsylwktH
-	4KKlv2SyvuenoyT4R1z/U=
-X-Google-Smtp-Source: AGHT+IErW2TZyqEDQbDkvq+unnrPg8Fy3yPvW1vBfInEWh2VajAX7rKgQG01C3JB6r+lA0fLdV97AA==
-X-Received: by 2002:a05:600c:474a:b0:45b:7d77:b592 with SMTP id 5b1f17b1804b1-45dddea4cccmr117427075e9.12.1757430082541;
-        Tue, 09 Sep 2025 08:01:22 -0700 (PDT)
-Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521bfdc6sm2963648f8f.8.2025.09.09.08.01.19
+        bh=PGW3tJNZDteIP3YWspfNxoS6+2pzYXFb7hKBbebA/DM=;
+        b=AlQfZONO0nouJzdZ0vg/BzGHfN13DOr914ygReiZrCWLB9dDERUmY8LByCK+hvg6UV
+         ktsWc3nz1hYuCHvECgSDdVL8+Qo61e8U43sTi7ZlEqpbQb0KR2HANhrGRz5aACJwxCVT
+         i7mp/1WOKwQffG127Y7tG+UFT2utymBML19BpXSJZeU1ecB+xSqEo/UAgg7bl4J9Z6lV
+         FoLCIEPLwCZgTHBdTyoXsztz2DSKh/R7XInJS31coFmqTsVClo/MyS45VjjW8EO3pkiz
+         CGwQSHngmOFmF5HukdG/GyQZfNVsXHknCbQoVrG8c6G5UPv4mJ9VgEQCSkmXOyfzcui5
+         V5gA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOiC/fyxDuUYSLB9Pp1NZEs4+4DHDsftpGDO0IEj+hheRv9gqng1uq3CmYWMgZ6St3kVMsfJO/Ml2PLIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiGcc4VSa+v90PYXBZt0RPn447Pi9QMQpuak7MnKXMKePc9SM+
+	CWp/VoZwo9kKdtMxq6aoWukXsvvRkvm7TMIfoypuNSBKPOlYpJnOo+gnp93tH3OwWNMC6WK0x5B
+	TABFV+KnqxQ7LoEORq3nLj0mybEkhZErRH+LX50KfI+IPhMtV8oVkcUcrBFkFe0oCklw=
+X-Gm-Gg: ASbGncu9wZRpZWd3ogEOQrcd4ax2L/nemMoIbQ9gYagmVaV6+o9pOcIX0pt8AJmJfep
+	smXwgRfXA0zxzKnD8vaVM2EXL/KYSF35AHHnuvtyJVLIae/5/LbNHNPa7RKnCSc0CzlMKDH+q9X
+	bXf++PfgUxq8gywXLH7yQJf/9VePKUkgUk86KxxDdeQpaUYT4H/gx7RnWz3xgnhs/9/TYYBxLDC
+	vcHj6+ZsuUbBNQs12cmPG7e/Gy70d22A4s67ggbjY1dNvjp3RZxmFn8qNICNcl53dWftmFAHxfA
+	D54OMZg9rznNfdZEf+vyGmcix4WZGgN+7fdZQBHWbEpno03boNet2X7L16jyvbu1bnbRYiqUAfN
+	iFaoocTlRcs0z2R4Z4uTZlLNW5UBUv09om8Lj08ZbFP9R/0ndJtS3
+X-Received: by 2002:a05:6122:169b:b0:52f:47de:3700 with SMTP id 71dfb90a1353d-5472aaeafbdmr3072909e0c.5.1757430092428;
+        Tue, 09 Sep 2025 08:01:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG3tVoSxr+v5y2YajVPq9Q5lmHZV/iznnupYsR5oyRCsxpu2WpDH/jpQIioCiy1sxWM2IufDg==
+X-Received: by 2002:a05:6122:169b:b0:52f:47de:3700 with SMTP id 71dfb90a1353d-5472aaeafbdmr3072611e0c.5.1757430090771;
+        Tue, 09 Sep 2025 08:01:30 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f5032be5sm39213621fa.34.2025.09.09.08.01.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 08:01:20 -0700 (PDT)
-Date: Tue, 9 Sep 2025 17:01:18 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Akhil R <akhilrajeev@nvidia.com>, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, digetx@gmail.com, jonathanh@nvidia.com, krzk+dt@kernel.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	ldewangan@nvidia.com, robh@kernel.org
-Subject: Re: [PATCH RESEND 0/2] i2c: tegra: Add Tegra256 I2C controller
- support
-Message-ID: <22ucj42wvcqr5trsv75hbb6uj4y5zhjigs46w7mxtckisodcr5@77pgwttvycpl>
-References: <20250818043345.65899-1-akhilrajeev@nvidia.com>
+        Tue, 09 Sep 2025 08:01:28 -0700 (PDT)
+Date: Tue, 9 Sep 2025 18:01:26 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Rob Clark <robin.clark@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] drm/msm/registers: Generate _HI/LO builders for reg64
+Message-ID: <pzj3qurdrz5k6h3nylqeiplfj5rnbayp7itzonxnekdrtzkii7@gh542xo2qm3b>
+References: <20250908193021.605012-1-robin.clark@oss.qualcomm.com>
+ <20250908193021.605012-5-robin.clark@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hbpzp3jncbfi5eid"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250818043345.65899-1-akhilrajeev@nvidia.com>
+In-Reply-To: <20250908193021.605012-5-robin.clark@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzMSBTYWx0ZWRfX3Iu2S1f74JsI
+ 2i9Y7C6c3RyuNUJ7XW73xGpi1NkzrEQb4B9s5H0paawYWVT/ttPK2UlhlGJZxHbhvYK9bZO+U+X
+ XiXtbrDwmA6BEjbQpNMRBiMvXCVpNyxyD2MqAxkdGtBPBPv0NK9s41Uh1Xxw1AhoTqNmlVMz+ET
+ YlSGnCCLQO01ensFG18pjMx5GfK0Xd1IBjdx0YtbThSjCFtlDPHQ5TXeFIXSTibIn+aNR+3J+PU
+ NJSNq4+g5MwWzlTJeL8vpK1/OZCcSld/xSoJvzSAUtt2ylN8i/7xSgM4lxbj4UGTt8a2lxsvpcr
+ qgjNiRuG+dR4MZcYEJFVEag3vb6n5L8fowVtVJ0O5hlcQh+or/sROU+I30Jq/HbOl2C1yQrFuuy
+ deo+PRLo
+X-Proofpoint-ORIG-GUID: rvNQdQRw6Lf1M0QqN_ymISmBUxCSBdyQ
+X-Proofpoint-GUID: rvNQdQRw6Lf1M0QqN_ymISmBUxCSBdyQ
+X-Authority-Analysis: v=2.4 cv=VIDdn8PX c=1 sm=1 tr=0 ts=68c04150 cx=c_pps
+ a=JIY1xp/sjQ9K5JH4t62bdg==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=-2mmMjQWwNZ6YRhNbUMA:9 a=CjuIK1q_8ugA:10
+ a=tNoRWFLymzeba-QzToBc:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-09_02,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
+ phishscore=0 adultscore=0 clxscore=1015 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060031
+
+On Mon, Sep 08, 2025 at 12:30:07PM -0700, Rob Clark wrote:
+> The upstream mesa copy of the GPU regs has shifted more things to reg64
+> instead of seperate 32b HI/LO reg32's.  This works better with the "new-
+> style" c++ builders that mesa has been migrating to for a6xx+ (to better
+> handle register shuffling between gens), but it leaves the C builders
+> with missing _HI/LO builders.
+> 
+> So handle the special case of reg64, automatically generating the
+> missing _HI/LO builders.
+> 
+> Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
+> ---
+>  drivers/gpu/drm/msm/registers/gen_header.py | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 
---hbpzp3jncbfi5eid
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RESEND 0/2] i2c: tegra: Add Tegra256 I2C controller
- support
-MIME-Version: 1.0
-
-On Mon, Aug 18, 2025 at 10:03:43AM +0530, Akhil R wrote:
-> This series adds support for Tegra256 I2C controllers to the Tegra I2C dr=
-iver.
->=20
-> Tegra256 consists of 8 generic I2C controllers similar to previous Tegra =
-generations,
-> but with a different parent clock frequency requiring adjusted timing par=
-ameters.
->=20
-> The changes add the "nvidia,tegra256-i2c" compatible string to device tre=
-e bindings
-> and implement the corresponding hardware feature structure with appropria=
-te timing
-> parameters and clock divisors.
->=20
-> Akhil R (2):
->   dt-bindings: i2c: nvidia,tegra20-i2c: Add Tegra256 I2C
->   i2c: tegra: Add Tegra256 support
->=20
->  .../bindings/i2c/nvidia,tegra20-i2c.yaml      |  6 +++++
->  drivers/i2c/busses/i2c-tegra.c                | 26 +++++++++++++++++++
->  2 files changed, 32 insertions(+)
-
-Hi Andi, Wolfram,
-
-Do you want me to pick up the DT bindings patch? There's currently no DT
-files that require this, so taking both through the I2C tree is fine,
-but either way works for me.
-
-Thanks,
-Thierry
-
---hbpzp3jncbfi5eid
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjAQTsACgkQ3SOs138+
-s6EeMBAAsb5QCvjIKGY18l8TqFMoUCTksq+dfSlHJJM+4LVgi4IoEq+FSwEopNk3
-YDSVQuiqvURiv8PV2rptvO966RYxrywgDXUlmpWcQS+9C4EUAhEB9SKHKOWb2tJq
-oL4LdO7NkaaC+AKWADz/WER1hrYFj71kKN9aQXfPmoBVtTCCfMijKpTSjCJ+aoVF
-6vvLvYG/018WLCfU1iB6gUG9rKFFfMDvDEV+Q2WWxbAm0xFn80jJjnTxS36A6eOS
-kzg/w4gcwvMHTIDqt33fjY4XE6dX/e+ttP8sTXFgK9ocNINKY03/MMJ+9n/c31jW
-kaBLwqxiZ0HdEImf5451WyaOKzvjaaFedqvBM5XXIeFDQ+mHXJDdtvwhYDr2d4QU
-py3nWWycW/pduNwqzlgkLJqxPTClmGjbG1xNfMVJk0NZVmobi4mIZyyph7PqkJwq
-2wEE5Kvs2ny+k8ZGaim1ZHiqTvbdYgC1A4UaU87fqx/sYbMF5QQuw0EBsZ5nMZvp
-GsIyitpvblYgXAMq3Ow3SN7IlgpOEMATRUDxkzO3iN/gpLihspvElAEUTYi012Ft
-tlR6O7V5nV8GWuylcF8XuhQEQJNsIhoQVJk4zaMpTwllSXsA7N1w7hey39lQoALv
-B+lCAFcr0SCT2o8UpXVWpOumY54UpQRiZFhk8F9DPHHTv1grZfA=
-=Eq6T
------END PGP SIGNATURE-----
-
---hbpzp3jncbfi5eid--
+-- 
+With best wishes
+Dmitry
 
