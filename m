@@ -1,151 +1,352 @@
-Return-Path: <linux-kernel+bounces-807861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D598B4AA7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:24:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60829B4AA81
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:25:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 386841640B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:24:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DBCD189B6AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6BA2D9ECF;
-	Tue,  9 Sep 2025 10:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539CC3101D2;
+	Tue,  9 Sep 2025 10:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ebe/oAfY"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jlHl9lKO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E+1XGl2m"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E473307ADA
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 10:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E50323ABB3;
+	Tue,  9 Sep 2025 10:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757413482; cv=none; b=H1bXcO1GbkjJ+t90/q5z2Thj3xvUlvzZMw33MXAZDOTxoU9WWU6lvqguMRt8h7OrxuhVHKVTnGiJcXXRDaBj/uqPC9F171tFtJr9p4GhOwOVgBEiVaU5PyUsE+o3rq/ANaTyKP4Z/IB5hOxUOAYxSgNZgRKdeUwp4xJHxLHdKos=
+	t=1757413505; cv=none; b=IRkHH95BhWo+DaANIE+i9mlivbigJhuooCCpPHBdvnE1D1SqUWOwSkWZw7cDvNmMnfc5hkLHok9eptx5e7LDNq+SqwGp3NZJdd+9IowuMKXsdnO3Mz8Sv92rZqoKpi3tAAnlIh3uUT9rgfigyu3wYlVQs7vuDI6ZT/rhBHkyo0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757413482; c=relaxed/simple;
-	bh=rvPHXqEY5dz7k/8fFAR3K9ITwPsQt4nSsuTGsFo+WfY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qoJk/prHA41x818O9zUW7xEtiolnQkM0jnNl8tpUTGTfekGH7rF18b6vR7hbVkCvy+acg7uPajis82zFwaxCImyepdQyhO4wb/xp8HuBCSikd8ZbwswJLT1L3rBdd3HjMKmU05Khl+BWmTsQipAnI6LNEPWh/yEGL15mYw8h8Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ebe/oAfY; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f720ffe34so7049079e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 03:24:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757413478; x=1758018278; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RGAlRpykk4cGfc/EkJVYQzW8Hpd+7/LR38hLx9s5w8s=;
-        b=ebe/oAfYYG//CmRfMU2LOlOpafIyJGxPZIUK3GmJsgmyNlCQ2OdL8ORN3FWPp+Z9j6
-         jF0hG5afZoF85K7KZSi2jpqsuB3R/TToxjUjSsQwTNM+5PSJxl924IXgDKyKGDo8Q5pp
-         GMdMb01gju6ejrlUoOww7rn/78YD08EiUSQcnG84C9q/T34Zfp0w1x16ddmzR9exCxyL
-         k7Aid47RLgvNZVnpnr1YNTa+RYG1d/aZ/tSPhD/JGXTo5R4j/eRmDp6/BC7Z3PbuP/Tp
-         Puk7pizRGTJndXqs9PoRZoVjljvwfkM3LUHibeIX5o9NzO9nrwsxIO1UzIChDW4obASf
-         CTRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757413478; x=1758018278;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RGAlRpykk4cGfc/EkJVYQzW8Hpd+7/LR38hLx9s5w8s=;
-        b=e6eZUvK2l7NCbEsHvlrbwOikJVu3Hu7ZklLnKsL5GrvW9ZFRyDuk2xm4tNsu6/qeFO
-         M+u3U846LV6pRqwwKAJkgQylg7J4yaPQLxCQjuQehXHOgJIQznq9KxHU9jrWSXp83LAL
-         7EBlw9cxC9O9MwTpkdWHVIkt5a1qvSklXS1KhyLsVxkN24llDDFjzS+HxRSUdlmPdDXE
-         cUQJPDeOWwmEGP+ESSSHPY+nHccNBAIU5TxSSaQ3J1n5rnl2xpsHfTWvsnOsP523T09G
-         Ku5yJlYgGweENXxU0w9j2Uwd8xB1Lhdhy0tqvfHerYxSpk20OUr5QcxekmDG17b8A+Wy
-         PvUw==
-X-Gm-Message-State: AOJu0Yxb5NtcKraYde/RAttyvweOZqazJk7puw6Gi6pXmH9s+1JhfCId
-	1Ccrb3gfvz2EDBSHevNS3LMtL/Kut7RkZEyuW18uctVIZQtq12UJ3t/mYzu8xQo1nf8KvPGUgDU
-	+J3qFHtFZU/StQtzTHfJowyEOGoCmwZycw6KfbuCZLQ==
-X-Gm-Gg: ASbGncunaZHS7QF45vVkUXdiLKBgIG9OrKT66VR3D8FIxm/tROQQKlYRCDzG9tBwcbm
-	mpZYfxgNjq+kuyISx6rYc+0oYC9TmkWGamfbqOFMgjO0ChFMCdm0261H4o9wVDad9/laiNdDLyE
-	kLlY3b5nJJ3IQa4A3vZcZPl23k1zeCtWfVe55YIuU4mwXYvQugKHjPN2FmNXd0VHMkpkAaemd/8
-	yWVpSxy4tqe0FEY4wZZuNJDdtMp43hMzwBqhOyf
-X-Google-Smtp-Source: AGHT+IHheVK/2xt8tglGhIBdTf7j12nw/P5uqJjV3LpiuGiQaAvqnuMpskHQ3hBfVBvVAh2rzbtyU9jEuUuHC5ZjRZg=
-X-Received: by 2002:a05:6512:1545:10b0:569:766:944e with SMTP id
- 2adb3069b0e04-56907669771mr449824e87.8.1757413478145; Tue, 09 Sep 2025
- 03:24:38 -0700 (PDT)
+	s=arc-20240116; t=1757413505; c=relaxed/simple;
+	bh=rWIXf/mByDS+S1k9uVyDbHglf4hRBH0qVGzyBM5dS2U=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=QuqolNzFyPuIYOSnGbIzx6xktl3y+LF/200NzrXnu8oopzRuB9X46YxvJEssCsYFXQOE1vV0z+EVxxz/QzLXd84sa0zdKXUs1bHwGJoc2XaAbmGpkmwXbG4P1nN2s8gww+97iBSS0xF4WEjhc8gOYVChj0FPbS09rd0qcNi+VF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jlHl9lKO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E+1XGl2m; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 09 Sep 2025 10:25:00 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757413501;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AvzCCb786skApJXIZwhNtJEfnReSWoRYp9/fECqcY50=;
+	b=jlHl9lKOAaJB6a4PAlLZyyP/3oqi1MoP97hwAAFHaBjhRkCQkBJB6nWb/uy5R0E6CwOuLx
+	OZW5Zk0+ETGYY5pROE4Wc8c/1R6mkp6mYtnTZn9hvsYDKHFSoHEMN2M59gxt9L2GZCLLwg
+	FZ9tbelmRUxG2cH9aYyTorBcAyb9SrgFD0fTUOyV4UkKvkeTbomlNsB3la3J6uDx7zagXA
+	cHQGjWx56vRQCJPc2D476vTgohOZJatSgA9y8RRe3cfarxTqtn2uv/FOTIKVZ1RisrKicP
+	RP/R/tCJqIj1ek6K4kquEDjSfG4LkqlWj9Mr10cyOADx3+nG+pigidOUWL0Jow==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757413501;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AvzCCb786skApJXIZwhNtJEfnReSWoRYp9/fECqcY50=;
+	b=E+1XGl2mohjq2GmIfqjtMGzL41e/L+cGDUFzGMItjYCB4mtS8Zi2oMjDtmriGRxk5PAAh5
+	b2uH7ARrCNui7BCA==
+From: "tip-bot2 for Ryan Chen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/drivers] irqchip/aspeed-scu-ic: Add support for AST2700 SCU
+ interrupt controllers
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250908011812.1033858-5-ryan_chen@aspeedtech.com>
+References: <20250908011812.1033858-5-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905090857.108240-1-marco.crivellari@suse.com>
- <20250905090857.108240-3-marco.crivellari@suse.com> <912c038e-b03d-432d-be24-54c0f90193fd-agordeev@linux.ibm.com>
-In-Reply-To: <912c038e-b03d-432d-be24-54c0f90193fd-agordeev@linux.ibm.com>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Tue, 9 Sep 2025 12:24:27 +0200
-X-Gm-Features: Ac12FXxGAtt56FkytPNkO1riyrHt-Bq4O8GOYiiN2EFSKCsbudpEACK-wt8DQvc
-Message-ID: <CAAofZF6ei2cKKHhsxO1EFAb4HMvJBpnkLc7cwqWbL3p0QdfZOg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] s390: replace use of system_wq with system_percpu_wq
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <175741350010.1920.10610091199224307074.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 8, 2025 at 1:44=E2=80=AFPM Alexander Gordeev <agordeev@linux.ib=
-m.com> wrote:
->
-> On Fri, Sep 05, 2025 at 11:08:57AM +0200, Marco Crivellari wrote:
->
-> Hi Marco,
->
-> > Currently if a user enqueue a work item using schedule_delayed_work() t=
-he
-> > used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> > WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies t=
-o
-> > schedule_work() that is using system_wq and queue_work(), that makes us=
-e
-> > again of WORK_CPU_UNBOUND.
-> >
-> > This lack of consistentcy cannot be addressed without refactoring the A=
-PI.
-> >
-> > system_wq is a per-CPU worqueue, yet nothing in its name tells about th=
-at
-> > CPU affinity constraint, which is very often not required by users. Mak=
-e
-> > it clear by adding a system_percpu_wq.
->
-> This paragraph is not exactly correct. You switch from system_wq to
-> system_percpu_wq - which are two different queues with the same
-> characteristics:
->
->         system_wq =3D alloc_workqueue("events", 0, 0);
->         system_percpu_wq =3D alloc_workqueue("events", 0, 0);
+The following commit has been merged into the irq/drivers branch of tip:
 
-Hi Alexander,
+Commit-ID:     b2a0c13f8b4fc3f6c8b279fdc4395a5fa57dda5d
+Gitweb:        https://git.kernel.org/tip/b2a0c13f8b4fc3f6c8b279fdc4395a5fa57=
+dda5d
+Author:        Ryan Chen <ryan_chen@aspeedtech.com>
+AuthorDate:    Mon, 08 Sep 2025 09:18:12 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 09 Sep 2025 12:23:29 +02:00
 
-Yes, system_percpu_wq will be in future the replacement of system_wq.
+irqchip/aspeed-scu-ic: Add support for AST2700 SCU interrupt controllers
 
-> > queue_work() / queue_delayed_work() mod_delayed_work() will now use the
-> > new per-cpu wq: whether the user still stick on the old name a warn wil=
-l
-> > be printed along a wq redirect to the new one.
-> >
-> > This patch add the new system_percpu_wq except for mm, fs and net
-> > subsystem, whom are handled in separated patches.
->
-> I do not see this patch does anything like that.
->
+AST2700 continues the multi-instance SCU interrupt controller model
+introduced in the AST2600, with four independent interrupt domains (scu-ic0
+to 3).
 
-I'm sorry for the confusion, I forgot to update the log after the
-previous change.
-There are not, indeed, the changes you mentioned.
+Unlike earlier generations which combine interrupt enable and status bits
+into a single register, AST2700 separates these into distinct IER and ISR
+registers. Support for this layout is implemented by using register offsets
+and separate chained IRQ handlers.
 
-Thanks!
---=20
+The variant table is extended to cover AST2700 IC instances, enabling
+shared initialization logic while preserving support for previous SoCs.
 
-Marco Crivellari
+[ tglx: Simplified the logic and cleaned up coding style ]
 
-L3 Support Engineer, Technology & Product
+Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250908011812.1033858-5-ryan_chen@aspeedte=
+ch.com
 
-marco.crivellari@suse.com
+---
+ drivers/irqchip/irq-aspeed-scu-ic.c | 119 +++++++++++++++++++++++----
+ 1 file changed, 102 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/irqchip/irq-aspeed-scu-ic.c b/drivers/irqchip/irq-aspeed=
+-scu-ic.c
+index 9c1fbdd..5584e0f 100644
+--- a/drivers/irqchip/irq-aspeed-scu-ic.c
++++ b/drivers/irqchip/irq-aspeed-scu-ic.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+- * Aspeed AST24XX, AST25XX, and AST26XX SCU Interrupt Controller
++ * Aspeed AST24XX, AST25XX, AST26XX, and AST27XX SCU Interrupt Controller
+  * Copyright 2019 IBM Corporation
+  *
+  * Eddie James <eajames@linux.ibm.com>
+@@ -17,26 +17,35 @@
+=20
+ #define ASPEED_SCU_IC_STATUS		GENMASK(28, 16)
+ #define ASPEED_SCU_IC_STATUS_SHIFT	16
++#define AST2700_SCU_IC_STATUS		GENMASK(15, 0)
+=20
+ struct aspeed_scu_ic_variant {
+ 	const char	*compatible;
+ 	unsigned long	irq_enable;
+ 	unsigned long	irq_shift;
+ 	unsigned int	num_irqs;
++	unsigned long	ier;
++	unsigned long	isr;
+ };
+=20
+-#define SCU_VARIANT(_compat, _shift, _enable, _num) {	\
++#define SCU_VARIANT(_compat, _shift, _enable, _num, _ier, _isr) {	\
+ 	.compatible		=3D	_compat,	\
+ 	.irq_shift		=3D	_shift,		\
+ 	.irq_enable		=3D	_enable,	\
+ 	.num_irqs		=3D	_num,		\
++	.ier			=3D	_ier,		\
++	.isr			=3D	_isr,		\
+ }
+=20
+ static const struct aspeed_scu_ic_variant scu_ic_variants[]	__initconst =3D {
+-	SCU_VARIANT("aspeed,ast2400-scu-ic",	0, GENMASK(15, 0),	7),
+-	SCU_VARIANT("aspeed,ast2500-scu-ic",	0, GENMASK(15, 0),	7),
+-	SCU_VARIANT("aspeed,ast2600-scu-ic0",	0, GENMASK(5, 0),	6),
+-	SCU_VARIANT("aspeed,ast2600-scu-ic1",	4, GENMASK(5, 4),	2),
++	SCU_VARIANT("aspeed,ast2400-scu-ic",	0, GENMASK(15, 0),	7, 0x00, 0x00),
++	SCU_VARIANT("aspeed,ast2500-scu-ic",	0, GENMASK(15, 0),	7, 0x00, 0x00),
++	SCU_VARIANT("aspeed,ast2600-scu-ic0",	0, GENMASK(5, 0),	6, 0x00, 0x00),
++	SCU_VARIANT("aspeed,ast2600-scu-ic1",	4, GENMASK(5, 4),	2, 0x00, 0x00),
++	SCU_VARIANT("aspeed,ast2700-scu-ic0",	0, GENMASK(3, 0),	4, 0x00, 0x04),
++	SCU_VARIANT("aspeed,ast2700-scu-ic1",	0, GENMASK(3, 0),	4, 0x00, 0x04),
++	SCU_VARIANT("aspeed,ast2700-scu-ic2",	0, GENMASK(3, 0),	4, 0x04, 0x00),
++	SCU_VARIANT("aspeed,ast2700-scu-ic3",	0, GENMASK(1, 0),	2, 0x04, 0x00),
+ };
+=20
+ struct aspeed_scu_ic {
+@@ -45,9 +54,16 @@ struct aspeed_scu_ic {
+ 	unsigned int		num_irqs;
+ 	void __iomem		*base;
+ 	struct irq_domain	*irq_domain;
++	unsigned long		ier;
++	unsigned long		isr;
+ };
+=20
+-static void aspeed_scu_ic_irq_handler(struct irq_desc *desc)
++static inline bool scu_has_split_isr(struct aspeed_scu_ic *scu)
++{
++	return scu->ier !=3D scu->isr;
++}
++
++static void aspeed_scu_ic_irq_handler_combined(struct irq_desc *desc)
+ {
+ 	struct aspeed_scu_ic *scu_ic =3D irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip =3D irq_desc_get_chip(desc);
+@@ -83,7 +99,34 @@ static void aspeed_scu_ic_irq_handler(struct irq_desc *des=
+c)
+ 	chained_irq_exit(chip, desc);
+ }
+=20
+-static void aspeed_scu_ic_irq_mask(struct irq_data *data)
++static void aspeed_scu_ic_irq_handler_split(struct irq_desc *desc)
++{
++	struct aspeed_scu_ic *scu_ic =3D irq_desc_get_handler_data(desc);
++	struct irq_chip *chip =3D irq_desc_get_chip(desc);
++	unsigned long bit, enabled, max, status;
++	unsigned int sts, mask;
++
++	chained_irq_enter(chip, desc);
++
++	mask =3D scu_ic->irq_enable;
++	sts =3D readl(scu_ic->base + scu_ic->isr);
++	enabled =3D sts & scu_ic->irq_enable;
++	sts =3D readl(scu_ic->base + scu_ic->isr);
++	status =3D sts & enabled;
++
++	bit =3D scu_ic->irq_shift;
++	max =3D scu_ic->num_irqs + bit;
++
++	for_each_set_bit_from(bit, &status, max) {
++		generic_handle_domain_irq(scu_ic->irq_domain, bit - scu_ic->irq_shift);
++		/* Clear interrupt */
++		writel(BIT(bit), scu_ic->base + scu_ic->isr);
++	}
++
++	chained_irq_exit(chip, desc);
++}
++
++static void aspeed_scu_ic_irq_mask_combined(struct irq_data *data)
+ {
+ 	struct aspeed_scu_ic *scu_ic =3D irq_data_get_irq_chip_data(data);
+ 	unsigned int bit =3D BIT(data->hwirq + scu_ic->irq_shift);
+@@ -97,7 +140,7 @@ static void aspeed_scu_ic_irq_mask(struct irq_data *data)
+ 	writel(readl(scu_ic->base) & ~mask, scu_ic->base);
+ }
+=20
+-static void aspeed_scu_ic_irq_unmask(struct irq_data *data)
++static void aspeed_scu_ic_irq_unmask_combined(struct irq_data *data)
+ {
+ 	struct aspeed_scu_ic *scu_ic =3D irq_data_get_irq_chip_data(data);
+ 	unsigned int bit =3D BIT(data->hwirq + scu_ic->irq_shift);
+@@ -111,6 +154,22 @@ static void aspeed_scu_ic_irq_unmask(struct irq_data *da=
+ta)
+ 	writel((readl(scu_ic->base) & ~mask) | bit, scu_ic->base);
+ }
+=20
++static void aspeed_scu_ic_irq_mask_split(struct irq_data *data)
++{
++	struct aspeed_scu_ic *scu_ic =3D irq_data_get_irq_chip_data(data);
++	unsigned int mask =3D BIT(data->hwirq + scu_ic->irq_shift);
++
++	writel(readl(scu_ic->base) & ~mask, scu_ic->base + scu_ic->ier);
++}
++
++static void aspeed_scu_ic_irq_unmask_split(struct irq_data *data)
++{
++	struct aspeed_scu_ic *scu_ic =3D irq_data_get_irq_chip_data(data);
++	unsigned int bit =3D BIT(data->hwirq + scu_ic->irq_shift);
++
++	writel(readl(scu_ic->base) | bit, scu_ic->base + scu_ic->ier);
++}
++
+ static int aspeed_scu_ic_irq_set_affinity(struct irq_data *data,
+ 					  const struct cpumask *dest,
+ 					  bool force)
+@@ -118,17 +177,29 @@ static int aspeed_scu_ic_irq_set_affinity(struct irq_da=
+ta *data,
+ 	return -EINVAL;
+ }
+=20
+-static struct irq_chip aspeed_scu_ic_chip =3D {
++static struct irq_chip aspeed_scu_ic_chip_combined =3D {
+ 	.name			=3D "aspeed-scu-ic",
+-	.irq_mask		=3D aspeed_scu_ic_irq_mask,
+-	.irq_unmask		=3D aspeed_scu_ic_irq_unmask,
+-	.irq_set_affinity	=3D aspeed_scu_ic_irq_set_affinity,
++	.irq_mask		=3D aspeed_scu_ic_irq_mask_combined,
++	.irq_unmask		=3D aspeed_scu_ic_irq_unmask_combined,
++	.irq_set_affinity       =3D aspeed_scu_ic_irq_set_affinity,
++};
++
++static struct irq_chip aspeed_scu_ic_chip_split =3D {
++	.name			=3D "ast2700-scu-ic",
++	.irq_mask		=3D aspeed_scu_ic_irq_mask_split,
++	.irq_unmask		=3D aspeed_scu_ic_irq_unmask_split,
++	.irq_set_affinity       =3D aspeed_scu_ic_irq_set_affinity,
+ };
+=20
+ static int aspeed_scu_ic_map(struct irq_domain *domain, unsigned int irq,
+ 			     irq_hw_number_t hwirq)
+ {
+-	irq_set_chip_and_handler(irq, &aspeed_scu_ic_chip, handle_level_irq);
++	struct aspeed_scu_ic *scu_ic =3D domain->host_data;
++
++	if (scu_has_split_isr(scu_ic))
++		irq_set_chip_and_handler(irq, &aspeed_scu_ic_chip_split, handle_level_irq);
++	else
++		irq_set_chip_and_handler(irq, &aspeed_scu_ic_chip_combined, handle_level_i=
+rq);
+ 	irq_set_chip_data(irq, domain->host_data);
+=20
+ 	return 0;
+@@ -148,8 +219,14 @@ static int aspeed_scu_ic_of_init_common(struct aspeed_sc=
+u_ic *scu_ic,
+ 		rc =3D PTR_ERR(scu_ic->base);
+ 		goto err;
+ 	}
+-	writel(ASPEED_SCU_IC_STATUS, scu_ic->base);
+-	writel(0, scu_ic->base);
++
++	if (scu_has_split_isr(scu_ic)) {
++		writel(AST2700_SCU_IC_STATUS, scu_ic->base + scu_ic->isr);
++		writel(0, scu_ic->base + scu_ic->ier);
++	} else {
++		writel(ASPEED_SCU_IC_STATUS, scu_ic->base);
++		writel(0, scu_ic->base);
++	}
+=20
+ 	irq =3D irq_of_parse_and_map(node, 0);
+ 	if (!irq) {
+@@ -164,7 +241,9 @@ static int aspeed_scu_ic_of_init_common(struct aspeed_scu=
+_ic *scu_ic,
+ 		goto err;
+ 	}
+=20
+-	irq_set_chained_handler_and_data(irq, aspeed_scu_ic_irq_handler,
++	irq_set_chained_handler_and_data(irq, scu_has_split_isr(scu_ic) ?
++					 aspeed_scu_ic_irq_handler_split :
++					 aspeed_scu_ic_irq_handler_combined,
+ 					 scu_ic);
+=20
+ 	return 0;
+@@ -199,6 +278,8 @@ static int __init aspeed_scu_ic_of_init(struct device_nod=
+e *node, struct device_
+ 	scu_ic->irq_enable	=3D variant->irq_enable;
+ 	scu_ic->irq_shift	=3D variant->irq_shift;
+ 	scu_ic->num_irqs	=3D variant->num_irqs;
++	scu_ic->ier		=3D variant->ier;
++	scu_ic->isr		=3D variant->isr;
+=20
+ 	return aspeed_scu_ic_of_init_common(scu_ic, node);
+ }
+@@ -207,3 +288,7 @@ IRQCHIP_DECLARE(ast2400_scu_ic, "aspeed,ast2400-scu-ic", =
+aspeed_scu_ic_of_init);
+ IRQCHIP_DECLARE(ast2500_scu_ic, "aspeed,ast2500-scu-ic", aspeed_scu_ic_of_in=
+it);
+ IRQCHIP_DECLARE(ast2600_scu_ic0, "aspeed,ast2600-scu-ic0", aspeed_scu_ic_of_=
+init);
+ IRQCHIP_DECLARE(ast2600_scu_ic1, "aspeed,ast2600-scu-ic1", aspeed_scu_ic_of_=
+init);
++IRQCHIP_DECLARE(ast2700_scu_ic0, "aspeed,ast2700-scu-ic0", aspeed_scu_ic_of_=
+init);
++IRQCHIP_DECLARE(ast2700_scu_ic1, "aspeed,ast2700-scu-ic1", aspeed_scu_ic_of_=
+init);
++IRQCHIP_DECLARE(ast2700_scu_ic2, "aspeed,ast2700-scu-ic2", aspeed_scu_ic_of_=
+init);
++IRQCHIP_DECLARE(ast2700_scu_ic3, "aspeed,ast2700-scu-ic3", aspeed_scu_ic_of_=
+init);
 
