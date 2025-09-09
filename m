@@ -1,144 +1,136 @@
-Return-Path: <linux-kernel+bounces-808432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CBCB4FF9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:38:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0A8B4FFA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A3153A759A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:38:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F869189E1E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBCF350834;
-	Tue,  9 Sep 2025 14:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE059350D5B;
+	Tue,  9 Sep 2025 14:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OBtCrRsb"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ssV9vF/B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1F735206D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13099274B35;
+	Tue,  9 Sep 2025 14:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757428657; cv=none; b=hUvStgbMNWh+FDoQ3HHko1oKjgTdrkQMlt0LLxXvgnkPt8n+608QOFCjzzKLpD89QaY8wZqQtblvyTL/hHUQ3zflwB1It7DgZPUm3OrWE2qQxt3lODyFtWsz5RE0beVq3a8mILFrPJa6x/QP2MCXaK7wft9SQC/GP9pfpQzycFk=
+	t=1757428647; cv=none; b=lnC2RxtKeUb4zfmjTzDY+JmrrHMr0OEYThRRIUtBPwRlgx5AfFhyA4enNEWSRhETgvFQCYwrgPdI93NU1OxBCGkbZIY4V3tGQ4qipFhro5JpAiY3i5Rfs1RV8Czn5v6DMOspZU1ZxCcNBA/uciTsmVK/E5xTnuoKWnikCXwkGaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757428657; c=relaxed/simple;
-	bh=hImgRP5PDSJ8tahE+RtUsG3WvwJy/+Y1BnkvJrIMRfM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q21H6ePCo4d9SMJ5aJx2vkS8LBLb6x+ljRzPYQFwRQemzHRVB4CZM6iTDwlyKyTxUJecvpeI7IxWlxeOASVRWipyCJp4vbbuGOYxZmWuf4ELp5LeICdovGgAnaVyDUN8mgzG2wVGJjPUtqDLIqfdcN8Au3jdPEt2ZhM/io4p38A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OBtCrRsb; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2ec8c7f8-cf79-4701-97dc-2d0a687f0f3b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757428643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=joBHHo2vNOa9/tISXv4x8ETwG4JXU3LtDMt2JeCyLyM=;
-	b=OBtCrRsbxfPzoj5D3rkn5kRq6++vRm4cPJxZet2JnWn0QfYPTL7nbnbOZWm5Tw3rBdC3uq
-	IQJ0BUlyseKMXmdkTRZLSkawjmyuAbFXu0zZjb8Zo/VdP0anjTSxei8fqRFe84t6u9fRD4
-	WcPczDipxB6bdThSvMIuiY+tTZsSQ+Y=
-Date: Tue, 9 Sep 2025 15:37:19 +0100
+	s=arc-20240116; t=1757428647; c=relaxed/simple;
+	bh=9B6l+1qvNym9F+Q7hWtNrLfb/xmJyDUu2VsCTOQjYKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rjztbF4fXa8gO+HWIH7UDjtotT4ZT+OyA/C96gGKSKFnZ04BKfqSs2hNh5mrXTgV0a/SF4PFpWKZQA/LolBikE3NLWgrRnCElhEe7Zf8PRHVjVsaecGBl5GMwLrOMe3hJjiKBoIKwQHRRJp+wqZdaGtXcnyOrVSwyRmsakyJdXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ssV9vF/B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9237EC4CEF8;
+	Tue,  9 Sep 2025 14:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757428646;
+	bh=9B6l+1qvNym9F+Q7hWtNrLfb/xmJyDUu2VsCTOQjYKg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ssV9vF/BGnSH78pTP1v0/PKZEau8qbV7tDq8XjNEIdU7rSA/FyiOteSSx1GaOMy5f
+	 MKNSFznYslNyMp2TYcyWE8WcMj/JEb5mTY/xGOxc+x1jiANMzF3eTHIBh1I1mmqLYV
+	 /NsJpdtcZVs1suvxRbSudOkfRrBeunS94d93Y2Hg=
+Date: Tue, 9 Sep 2025 16:37:22 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org, Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Ben Copeland <benjamin.copeland@linaro.org>
+Subject: Re: [PATCH 5.15 00/64] 5.15.192-rc1 review
+Message-ID: <2025090937-neglector-embattled-75ec@gregkh>
+References: <20250907195603.394640159@linuxfoundation.org>
+ <CA+G9fYvQw_pdKz73GRytQas+ysZzRRu7u3dRHMcOhutvcE4rHA@mail.gmail.com>
+ <2025090948-excuse-rebate-e496@gregkh>
+ <CA+G9fYvXsG1veoK-i93J2BgymNauvOU_FpO6d7BhUBnMkuZVCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v11 5/5] net: rnpgbe: Add register_netdev
-To: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
- maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
- gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
- Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
- alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
- gustavoars@kernel.org, rdunlap@infradead.org
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20250909120906.1781444-1-dong100@mucse.com>
- <20250909120906.1781444-6-dong100@mucse.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250909120906.1781444-6-dong100@mucse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYvXsG1veoK-i93J2BgymNauvOU_FpO6d7BhUBnMkuZVCA@mail.gmail.com>
 
-On 09/09/2025 13:09, Dong Yibo wrote:
-> Complete the network device (netdev) registration flow for Mucse Gbe
-> Ethernet chips, including:
-> 1. Hardware state initialization:
->     - Send powerup notification to firmware (via echo_fw_status)
->     - Sync with firmware
->     - Reset hardware
-> 2. MAC address handling:
->     - Retrieve permanent MAC from firmware (via mucse_mbx_get_macaddr)
->     - Fallback to random valid MAC (eth_random_addr) if not valid mac
->       from Fw
+On Tue, Sep 09, 2025 at 07:48:18PM +0530, Naresh Kamboju wrote:
+> On Tue, 9 Sept 2025 at 15:59, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, Sep 08, 2025 at 11:54:56PM +0530, Naresh Kamboju wrote:
+> > > On Mon, 8 Sept 2025 at 01:43, Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > This is the start of the stable review cycle for the 5.15.192 release.
+> > > > There are 64 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > >
+> > > > Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
+> > > > Anything received after that time might be too late.
+> > > >
+> > > > The whole patch series can be found in one patch at:
+> > > >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.192-rc1.gz
+> > > > or in the git tree and branch at:
+> > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> > > > and the diffstat can be found below.
+> > > >
+> > > > thanks,
+> > > >
+> > > > greg k-h
+> > >
+> > > While building Linux stable-rc 5.15.192-rc1 the arm64 allyesconfig
+> > > builds failed.
+> > >
+> > > * arm64, build
+> > >   - gcc-12-allyesconfig
+> > >
+> > > Regression Analysis:
+> > > - New regression? yes
+> > > - Reproducibility? yes
+> > >
+> > > Build regression: stable-rc 5.15.192-rc1 arm64 allyesconfig
+> > > qede_main.c:199:35: error: initialization of void from incompatible
+> > > pointer
+> > >
+> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > >
+> > > ### build log
+> > > drivers/net/ethernet/qlogic/qede/qede_main.c:199:35: error:
+> > > initialization of 'void (*)(void *, u16,  u16)' {aka 'void (*)(void *,
+> > > short unsigned int,  short unsigned int)'} from incompatible pointer
+> > > type 'void (*)(void *, void *, u8)' {aka 'void (*)(void *, void *,
+> > > unsigned char)'} [-Werror=incompatible-pointer-types]
+> > >   199 |                 .arfs_filter_op = qede_arfs_filter_op,
+> > >       |                                   ^~~~~~~~~~~~~~~~~~~
+> > >
+> > > This was reported on the Linux next-20250428 tag,
+> > > https://lore.kernel.org/all/CA+G9fYs+7-Jut2PM1Z8fXOkBaBuGt0WwTUvU=4cu2O8iQdwUYw@mail.gmail.com/
+> >
+> > Odd, I can't reproduce this here, and nothing has changed in this driver
+> > at all for this -rc cycle.  I see no one responded to the linux-next
+> > issue either, so any hints?
 > 
-> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> Please ignore this allyesconfig build failure for now on 5.15 and 5.10.
+> Seems like it is my local builder issue.
 
-[...]
+Great, thanks for letting me know,
 
-> +struct mucse_hw;
-
-why do you need this forward declaration ...> +
-> +struct mucse_hw_operations {
-> +	int (*reset_hw)(struct mucse_hw *hw);
-> +	int (*get_perm_mac)(struct mucse_hw *hw);
-> +	int (*mbx_send_notify)(struct mucse_hw *hw, bool enable, int mode);
-> +};
-> +
-> +enum {
-> +	mucse_fw_powerup,
-> +};
-> +
->   struct mucse_hw {
->   	void __iomem *hw_addr;
-> +	struct pci_dev *pdev;
-> +	const struct mucse_hw_operations *ops;
-> +	struct mucse_dma_info dma;
->   	struct mucse_mbx_info mbx;
-> +	int port;
-> +	u8 perm_addr[ETH_ALEN];
->   	u8 pfvfnum;
->   };
-
-... if you can simply move mucse_hw_operations down here?
-
->   
-> @@ -54,4 +76,7 @@ int rnpgbe_init_hw(struct mucse_hw *hw, int board_type);
->   #define PCI_DEVICE_ID_N500_DUAL_PORT 0x8318
->   #define PCI_DEVICE_ID_N210 0x8208
->   #define PCI_DEVICE_ID_N210L 0x820a
-> +
-> +#define rnpgbe_dma_wr32(dma, reg, val) \
-> +	writel((val), (dma)->dma_base_addr + (reg))
-
-[...]
-
-> @@ -48,8 +127,14 @@ static void rnpgbe_init_n210(struct mucse_hw *hw)
->    **/
->   int rnpgbe_init_hw(struct mucse_hw *hw, int board_type)
->   {
-> +	struct mucse_dma_info *dma = &hw->dma;
->   	struct mucse_mbx_info *mbx = &hw->mbx;
->   
-> +	hw->ops = &rnpgbe_hw_ops;
-> +	hw->port = 0;
-> +
-> +	dma->dma_base_addr = hw->hw_addr;
-
-not quite sure why do you need additional structure just to store the
-value that already exists in mucse_hw?
-
-> +
->   	mbx->pf2fw_mbx_ctrl = MUCSE_GBE_PFFW_MBX_CTRL_OFFSET;
->   	mbx->fwpf_mbx_mask = MUCSE_GBE_FWPF_MBX_MASK_OFFSET;
->   
+greg k-h
 
