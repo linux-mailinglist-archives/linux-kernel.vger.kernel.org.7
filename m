@@ -1,143 +1,116 @@
-Return-Path: <linux-kernel+bounces-808594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D523B50206
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:00:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04D15B50207
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3E03BF97E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:00:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9938440E84
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CB332A815;
-	Tue,  9 Sep 2025 16:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6511F4C99;
+	Tue,  9 Sep 2025 16:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="IbzZ4jat"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zTXq6smt"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFA324397A
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586E624397A;
+	Tue,  9 Sep 2025 16:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757433651; cv=none; b=ba2cZt4Z+I6vlr71eFMeHNkTh1dG+6QYkcKQ//an2LV4yZ2W97Lu9x+m7T9z65tmemprek2i15rGz1JCYW7X7Z2fBVe5UrR3iOB43N5gONtCsMWNlwiVFiJ1nWtqmZJzjErE9y4kMyo3vPxjd3xS38bNpL7Y9bpYVUfKk4LTlHY=
+	t=1757433683; cv=none; b=fpPW+chz2C/XVKcOs/sWIcoRga5gZeVtgZErMcEWFMuc+gkuhQX+IHAyWNf6xa2snWQOlt+bSsKCIxspHcNwd0tM/h174Q83gEKyoqEOkcPAKMde/PMyRwxb0j3//01fqyiyCKrs25fT7eSnzGCmsUybcYfg3UY+mHgrRdrEhog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757433651; c=relaxed/simple;
-	bh=wqY6JDSIcxawkWa1qORCwMabSdCTnaqJBzpi9+ot4R4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LVNFEoRgpV6nH+O8+wSVhzmeRChbbDrWDvhTDeHhUEaLk7PRSrIAdndjO85Rqj6EdU5e02lb50sTxK9DHBs3UEJao5mAc1m4McluZ6QU4qhot7OlXwbM6aiNYNXqy7F5ZIAftu3yS1FUE2dQRk5hkNQesxinhM65lzTHt0THi3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=IbzZ4jat; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62221568039so5402807a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 09:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1757433648; x=1758038448; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s6dBQ67zpbOF0+TmT4tU24NROF1jqu4H25mUIYv9L1U=;
-        b=IbzZ4jatVJsTOsK2zzKIRDuCtEUHSgliPIQhvPZLFteYD6KsWR1+R+4wC7PlP61a7T
-         8liTgTSsIcXmbFvbfQPkCHmULup749cCH5kuiBBGg0iuxr5a8W6W3Gf1JEnK/Xdw+quo
-         qMrBDrS5cHNbMTHgpw0JcX7UlzCaHggAI3hTxxg5s7mfAGUgLILRFdhOJrhIrvPxE1AZ
-         JKm9jRV3g+weA5mb7CzSvFijSCqYvAXWf5026gAj1LhY7MZegqvlvT5TQlsp8Xdcu32e
-         92YaN3YYeTm+j94yDiAxGfHOaGMk374lUVP2NIjVj/xFbf9nAqiAgGoNEtnA93b1fTPJ
-         8/1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757433648; x=1758038448;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s6dBQ67zpbOF0+TmT4tU24NROF1jqu4H25mUIYv9L1U=;
-        b=h9k6x0nvVufOLktRet2zkonNHI31utsX1Wv2AT0yNxKx0qybnsguC9Chx7jUZ+oxSs
-         b4xIulge992NATZentsh/VoJY9bnhTugK+DPyrMU/DU/ayXczitW4YFWuEuTJIgPTfiw
-         2529sov3prvJRansZvGbcf4pjUnkwxCDId+vtQ3UK/sknijXZjUUYgftWdjfbS30+gXU
-         HjJCb4EO207CIjUIvADRyqUtNfBUbaNXt4hn2oFaeEkK3nThZLdI5jbt9qH7XsFDkrzH
-         Mx4u3YvzGVTzJMbaoknSch+g0SZWie6b3baXHkyWMkEXTiVgelorzAqeUr9QQY8FxBvr
-         PObw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaPJTn/k/TQaU4JvzezjxYPGXJdctTNc/u44sNB4hCDHYNN0JmXFFROXBw5Se+/MfM3AdT2xlT0O8dJPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM9Ux1lhKcJfTuWtAqM6HUe/hOWvBxcXOmJRaliBmdScwB/gFA
-	KSRg3qEVZJCYGQdonQYwjb17n+yIjFDlqVF8eplbnZZW6Hxdn/zJQtpQPAJHlf/JwRDsMuS5s0m
-	YYJVhlXzl8VMjafSgit8h9HTn7oBMH0QwrS3Kw/C1Pw==
-X-Gm-Gg: ASbGncsc64FIR6VJ5wENyDLJ9SuP5G3x+vWOacf9oon1ZIbVb8+z3jvdZP/iodDgOOq
-	3pXFP7THi54+R+T1Bd2PzsiFqDdRX3IHV13LE2fcANuFrtX/j1w9lpP7xnpKT9jlEXBq6vDGKVW
-	RhP8Xs/mxFOdcC2OaywyLD69C/UcCliGi+h41CIknoY1TLNUqJibYUCFVTiPdMVFoEPhmC/MA/2
-	Y8XUAP8xGe0Q/MK
-X-Google-Smtp-Source: AGHT+IEGhp/dQBeWCDHgeIQ5hgwB4IsLD3LLWFhZJ6j5zqWsSmd02imgRzV4N2JOE9Yr9y40F4QSN1J6RMfyUMzQQJg=
-X-Received: by 2002:a05:6402:50d0:b0:62a:768c:220f with SMTP id
- 4fb4d7f45d1cf-62a768c24e4mr4866745a12.11.1757433647609; Tue, 09 Sep 2025
- 09:00:47 -0700 (PDT)
+	s=arc-20240116; t=1757433683; c=relaxed/simple;
+	bh=zSttbFfUJbT1dbYvt8ZmIXvptbSmiISm7HofeLAq/Mg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L4WKjuEFHHez/2BkUj6tlGe9vPIru27Zr4AIyG3RL+//rEKY7kD1pIJVhXD1lytHRbzbOLWAzScrKxAge1ovXvooDLOrlURDVuIHZ4H0aJpUaGXiKMVckYmhZVvwetdQJ5Nip4wvPuKGKOpjXd2qPow9tN8WYVG6God+/+B6kBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zTXq6smt; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=1AmmQtJpgAtvBwqwiCJRi6SPMvAwCEB308R+UkiJ9V0=; b=zTXq6smtxdu8pNaXVD07tNonvc
+	tQ7gRxoLmEJEX8aqMs0cHrDoo2ymzUZ5v2mFTtCFmdJBeHb4/AaU18avWqywM+7BNIG8M5rSMjVaq
+	LYmYa3au4B02A5JjBRDDQ66O6/WafnxjPmYUZ+r4/dUJEH+UYiiT7j0RAsONgQ1nW6N9Grr5N7I20
+	cCKFtUGMZuM1Dkot0/sZpm42CTZfEH2cneRar8BU6Nwt1hsGEKCLII5iV4q3ABRf14IuPxdXvm/q3
+	Vb2uIxpGiuDJv8qepNFa3LgOkrFkqXY8bOxmMfYph1HywOE4HKmzc6qoR5MLwQndDPdc9DUhbIb+R
+	PzExahEQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uw0mW-00000008NHJ-2xnM;
+	Tue, 09 Sep 2025 16:01:20 +0000
+Message-ID: <78605ac1-e385-4a93-b656-aca2753fa172@infradead.org>
+Date: Tue, 9 Sep 2025 09:01:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822081941.989520-1-philipp.reisner@linbit.com>
- <20250908142457.GA341237@unreal> <CADGDV=XNrmNo5gNZ1cX4eGUi+0xgAcQzra+pNHNGuQbc0DrpKA@mail.gmail.com>
- <20250909153133.GA882933@ziepe.ca>
-In-Reply-To: <20250909153133.GA882933@ziepe.ca>
-From: Philipp Reisner <philipp.reisner@linbit.com>
-Date: Tue, 9 Sep 2025 18:00:36 +0200
-X-Gm-Features: Ac12FXw3kv7hAy2mmPNYyG5bNfUvsjfQVpp6_6gub_6zOYFmE4QKhzg7VGQ76qc
-Message-ID: <CADGDV=VZK4oXM=h4PzYOm_PJihMKdQUkrADOiw6EaC4kCssAcQ@mail.gmail.com>
-Subject: Re: [PATCH V2] rdma_rxe: call comp_handler without holding cq->cq_lock
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Leon Romanovsky <leon@kernel.org>, Zhu Yanjun <yanjun.zhu@linux.dev>, linux-rdma@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch 03/12] rseq: Provide static branch for time slice
+ extensions
+To: Thomas Gleixner <tglx@linutronix.de>,
+ K Prateek Nayak <kprateek.nayak@amd.com>, LKML <linux-kernel@vger.kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Prakash Sangappa <prakash.sangappa@oracle.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+References: <20250908225709.144709889@linutronix.de>
+ <20250908225752.744169647@linutronix.de>
+ <0f28cc54-1f84-4f28-bd61-ee9e0b9d0d0c@amd.com>
+ <94f08403-31f5-43ee-871d-5e0ebcfd3b6c@infradead.org> <87v7lrvn82.ffs@tglx>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <87v7lrvn82.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 9, 2025 at 5:31=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrote=
-:
->
-> On Tue, Sep 09, 2025 at 04:48:19PM +0200, Philipp Reisner wrote:
-> > On Mon, Sep 8, 2025 at 4:25=E2=80=AFPM Leon Romanovsky <leon@kernel.org=
-> wrote:
-> > >
-> > > On Fri, Aug 22, 2025 at 10:19:41AM +0200, Philipp Reisner wrote:
-> > > > Allow the comp_handler callback implementation to call ib_poll_cq()=
-.
-> > > > A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe driver=
-.
-> > > > And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock deadl=
-ock.
-> > >
-> > > Can you please be more specific about the deadlock?
-> > > Please write call stack to describe it.
-> > >
-> > Instead of a call stack, I write it from top to bottom:
-> >
-> > The line numbers in the .c files are valid for Linux-6.16:
-> >
-> > 1  rxe_cq_post()                      [rxe_cq.c:85]
-> > 2   spin_lock_irqsave()               [rxe_cq.c:93]
-> > 3   cq->ibcq.comp_handler()           [rxe_cq.c:116]
-> > 4    some_comp_handler()
-> > 5     ib_poll_cq()
-> > 6      cq->device->ops.poll_cq()      [ib_verbs.h:4037]
-> > 7       rxe_poll_cq()                 [rxe_verbs.c:1165]
-> > 8        spin_lock_irqsave()          [rxe_verbs.c:1172]
-> >
-> > In line 8 of this call graph, it deadlocks because the spinlock
-> > was already acquired in line 2 of the call graph.
->
-> Is this even legal in verbs? I'm not sure you can do pull cq from a
-> interrupt driven comp handler.. Is something already doing this intree?
->
 
-The file drivers/infiniband/sw/rdmavt/cq.c has this comment:
-/*
-* The completion handler will most likely rearm the notification
-* and poll for all pending entries.  If a new completion entry
-* is added while we are in this routine, queue_work()
-* won't call us again until we return so we check triggered to
-* see if we need to call the handler again.
-*/
 
-Also, Intel and Mellanox cards and drivers allow calling ib_poll_cq()
-from the completion handler.
+On 9/9/25 5:12 AM, Thomas Gleixner wrote:
+> On Mon, Sep 08 2025 at 21:11, Randy Dunlap wrote:
+>> On 9/8/25 8:10 PM, K Prateek Nayak wrote:
+>>> Hello Thomas,
+>>>
+>>> On 9/9/2025 4:29 AM, Thomas Gleixner wrote:
+>>>> +#ifdef CONFIG_RSEQ_SLICE_EXTENSION
+>>>> +DEFINE_STATIC_KEY_TRUE(rseq_slice_extension_key);
+>>>> +
+>>>> +static int __init rseq_slice_cmdline(char *str)
+>>>> +{
+>>>> +	bool on;
+>>>> +
+>>>> +	if (kstrtobool(str, &on))
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	if (!on)
+>>>> +		static_branch_disable(&rseq_slice_extension_key);
+>>>> +	return 0;
+>>>
+>>> I believe this should return "1" signalling that the cmdline was handled
+>>> correctly to avoid an "Unknown kernel command line parameters" message.
+>>
+>> Good catch. I agree.
+>> Thanks.
+> 
+> It seems I can't get that right ever ....
 
-The problem exists only with the RXE driver.
+Yeah, it's bass-ackwards.
+
+I guess that's partly why we have early_param() and friends.
+
+-- 
+~Randy
+
 
