@@ -1,171 +1,108 @@
-Return-Path: <linux-kernel+bounces-808717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0E1B50400
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:09:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B115EB503F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E09BF1C24F69
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:06:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648F64E058F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C9E36932B;
-	Tue,  9 Sep 2025 17:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A7C265CB3;
+	Tue,  9 Sep 2025 17:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/87GPao"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3+ngas/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CC7353346;
-	Tue,  9 Sep 2025 17:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE971316911;
+	Tue,  9 Sep 2025 17:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757437361; cv=none; b=n87DqnxBMNDRtRktUChO30nVcrDvfef91gJFBVjxFsJ5UAPsKzW1Lbp3yzhHjhXr5+aO2eW1yt8omteGtxBVTLTuUktE2ddKFqhREYsNf7EHgP9QorMIJiWotujwCo5OcrsYDv3ub6Ccy2XMB3udkIO19iisUjMuhMINOf3Cot0=
+	t=1757437429; cv=none; b=gvbNre2Buj8GFAU5xvlQ1hwc2eg2t3V62J1X+Qj8PnuToOHK1VJOUNBc/9CxOVektRZRWHFgp82vuG/5Ih5H3iDu1tfbE4RU/XdTyqMIkX/xFM74e0LlWImYAZtjX4vStiORVFzZYgbbXHrJ9XiFg/s4dfd4O2Qx/SBuLLjDUog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757437361; c=relaxed/simple;
-	bh=xcp+tKNjmqCe8/fUJkftuyIP1q4+ZYkFesPzKaHhOnU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SqyrtYC2hGEzpELLkK4ohfvOoBQoA/q0Yf5aoIW8quVNMCXMYbGPaiU0Mc+TQ2Qs7zuupjLNV/O7mmrG/QT0i2QCfZtYflKYlzaFTiTnWILBuhtDnV5Hr8uXAkFE5rnc5seSQkcVy98X5uYGW0gzL+2eSA3EV4MP2XKNAibyNOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/87GPao; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C74ADC4CEFB;
-	Tue,  9 Sep 2025 17:02:40 +0000 (UTC)
+	s=arc-20240116; t=1757437429; c=relaxed/simple;
+	bh=0ePioIJRedWiKF0fn+IJE4meuWisJGQBNojm9/VTE8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GQ3/88L6byKP57dVRunNIZYOdq3jv2bb1JmuiG30iunxDIQC0v0tyEgC0Y02dZzJalipu+3dZz79D63T3Htc5+ucgoeZ2jVh4hrwl/tZWVG8Wk0YkKbDPz2r/YPcrrV86uj+Rro5ywLtlV24Hj+1ICYeUcdpCKiaSiR9UI+xYVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3+ngas/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5D7AC4CEF4;
+	Tue,  9 Sep 2025 17:03:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757437360;
-	bh=xcp+tKNjmqCe8/fUJkftuyIP1q4+ZYkFesPzKaHhOnU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=b/87GPao64Iwz6PtBlMUonoSrnvJYg3SvRS2xSB1zHvjbf7V/8TUh+0+KxtXef2gO
-	 6kzV7SIMcm/SQNPtpwUIoWfcNCEoPl/a95wZVffiwyHaKqmJd29yIjGNv/gzgoAD9x
-	 dTFDkqi+0zv5pormnBtvUF2/qVnjD/Hr2UkpPxzXHsJ62R7aKhnkAgS0pijag/uJZ+
-	 pZkax4ti5pcZ9D1JVrpjo8Wu6BE6uYHJRF/Fw9rIetmhTRQPv0WlAyeSV6dBCMH3HU
-	 1b4xu1tz7+VfUe5TzwbQMcrDiTjdEyIE+Kq6suzAo9cFaG+XJ7mLwEKT6WcFkEsl56
-	 YfFcfIIbaEeyA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B89C8CAC58C;
-	Tue,  9 Sep 2025 17:02:40 +0000 (UTC)
-From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
-Date: Tue, 09 Sep 2025 19:02:35 +0200
-Subject: [PATCH v8 3/3] arm64: dts: qcom: x1-hp-x14: Add support for
- X1P42100 HP Omnibook X14
+	s=k20201202; t=1757437429;
+	bh=0ePioIJRedWiKF0fn+IJE4meuWisJGQBNojm9/VTE8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q3+ngas/LmfCKgPZgS169nXNhfUMi1tMAVKGAMExa9X/38EsL7MfulBUMkwfZZoTe
+	 EF6V/mhI34Ox2QTO9s9jc+vlIXF1iuc7UwoqLnxIiQguFuweWprRw9rDy817jTfk4M
+	 +22dYEsWWFJ4SmAw6+NxxjrOaTJgppaHnzoQ6sq0bZ0+t4O/hmpBdDCb7sk0blDggh
+	 GMPw7BByEmf61rxXpP8B25vPJW51PtIaDk4RgueiveFEskvx7pnKkwrWw3TkkflV8B
+	 JJxHYM0pcgdmUCgJCUMDnq5/i3ijSytnVEEweecUgcNsdSmlPYQcO2xSxFkJcaRF+c
+	 0HJX8bWWEnw5w==
+Date: Tue, 9 Sep 2025 18:03:44 +0100
+From: Will Deacon <will@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mostafa Saleh <smostafa@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alim.akhtar@samsung.com, Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Subject: Re: [PATCH] soc: samsung: exynos-pmu: Fix for CONFIG_DEBUG_PREEMPT
+Message-ID: <aMBd8NT78_Svcy71@willie-the-truck>
+References: <20250905162446.88987-1-smostafa@google.com>
+ <19a6f296-eb40-49cf-9571-2d7964cd3313@kernel.org>
+ <aLshJ11k3c2T-MRs@google.com>
+ <84332e77-cfd2-4090-a3c0-114a9eb5422a@kernel.org>
+ <aL_-N43BTtQynMS_@willie-the-truck>
+ <52222467-4fc0-4a53-9682-a935ec8f1a44@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-hp-x14-x1p-v8-3-8082ab069911@oldschoolsolutions.biz>
-References: <20250909-hp-x14-x1p-v8-0-8082ab069911@oldschoolsolutions.biz>
-In-Reply-To: <20250909-hp-x14-x1p-v8-0-8082ab069911@oldschoolsolutions.biz>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757437358; l=3070;
- i=jens.glathe@oldschoolsolutions.biz; s=20240919;
- h=from:subject:message-id;
- bh=gkE50asqfUsj7CUt5FI+dEtY0Mkl8MW0/zY71Nx6hkE=;
- b=+AGEavGtPiQPEa9/a7wcWa1bN1OD/OdGtIP+Rlrz6+WG9uDb3zWSDN3lRfn8wae5PLPFt/eHc
- gKZdaPXXh//AfpoTttayScbEJKbmEevicr8t8kGq+HGKnrfB5eR7X5k
-X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
- pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
-X-Endpoint-Received: by B4 Relay for
- jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
-X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Reply-To: jens.glathe@oldschoolsolutions.biz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <52222467-4fc0-4a53-9682-a935ec8f1a44@kernel.org>
 
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+On Tue, Sep 09, 2025 at 05:43:16PM +0200, Krzysztof Kozlowski wrote:
+> On 09/09/2025 12:15, Will Deacon wrote:
+> > Krzysztof,
+> > 
+> > On Sat, Sep 06, 2025 at 09:07:02AM +0200, Krzysztof Kozlowski wrote:
+> >> On 05/09/2025 19:43, Mostafa Saleh wrote:
+> >>>>>
+> >>>>> As this value is only read once, it doesn't require to be stable, so
+> >>>>
+> >>>> Why it does not need to be stable? Onlining wrong CPU number is not
+> >>>> desired...
+> >>>>
+> >>>>> just use "raw_smp_processor_id" instead.
+> >>>>
+> >>>> You might be just hiding some other real issue, because above stacktrace
+> >>>> is from gs101_cpuhp_pmu_online() which IRQs disabled and preemption
+> >>>> disabled. Provide analysis of the warning, instead of just making it
+> >>>> disappear.
+> >>>
+> >>> Not sure I understand, how is preemption disabled? that wouldn't fire
+> >>> in that case.
+> >>
+> >> Because there is explicit preempt_disable().
+> > 
+> > Where do you see that?
+> 
+> I did look at the code.
+> 
+> All the calls I saw (including calltrace from commit msg) were under raw
+> spinlock and raw spinlock does:
+> 
+> preempt_disable();
 
-These laptops are the same as the already known 14-fe0xxx models, but
-with a Purwa SoC, SKU number 14-fe1xxx. [1]
+The backtrace doesn't contain a raw spinlock. As Peter subsequently
+pointed out, the reported issue has been fixed in linux-next and there's
+a raw spinlock there but since the report is from vanilla -rc4, it
+doesn't have that fix.
 
-The supported features are the same as for the original Omnibook X14:
-
-- Keyboard (no function keys though)
-- Display
-- PWM brightness control
-- Touchpad
-- Touchscreen
-- PCIe ports (pcie4, pcie6a)
-- USB type-c, type-a
-- WCN6855 Wifi-6E
-- WCN6855 Bluetooth
-- ADSP and CDSP
-- X1 GPU
-- GPIO Keys (Lid switch)
-- Audio definition (works via USB and with internal speakers)
-
-[1]: https://www.hp.com/us-en/shop/pdp/hp-omnibook-x-laptop-next-gen-ai-pc-14-fe100-14-a4nd1av-1#techSpecs
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
----
- arch/arm64/boot/dts/qcom/Makefile                  |  2 ++
- .../boot/dts/qcom/x1p42100-hp-omnibook-x14.dts     | 33 ++++++++++++++++++++++
- 2 files changed, 35 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 0e4e0e0b833bbc62026c37875974a89b303e3b8e..c1471b5a8530fb1d788fcd75c4ccfed8fa03e6a1 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -338,5 +338,7 @@ x1p42100-asus-zenbook-a14-el2-dtbs	:= x1p42100-asus-zenbook-a14.dtb x1-el2.dtbo
- dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-asus-zenbook-a14.dtb x1p42100-asus-zenbook-a14-el2.dtb
- x1p42100-crd-el2-dtbs	:= x1p42100-crd.dtb x1-el2.dtbo
- dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-crd.dtb x1p42100-crd-el2.dtb
-+x1p42100-hp-omnibook-x14-el2-dtbs := x1p42100-hp-omnibook-x14.dtb x1-el2.dtbo
-+dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-hp-omnibook-x14.dtb x1p42100-hp-omnibook-x14-el2.dtb
- x1p42100-lenovo-thinkbook-16-el2-dtbs	:= x1p42100-lenovo-thinkbook-16.dtb x1-el2.dtbo
- dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-lenovo-thinkbook-16.dtb x1p42100-lenovo-thinkbook-16-el2.dtb
-diff --git a/arch/arm64/boot/dts/qcom/x1p42100-hp-omnibook-x14.dts b/arch/arm64/boot/dts/qcom/x1p42100-hp-omnibook-x14.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..6696cab2de3ec899d7ae5498f2f4b75e2131a19c
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/x1p42100-hp-omnibook-x14.dts
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+/dts-v1/;
-+
-+#include "x1p42100.dtsi"
-+#include "x1e80100-pmics.dtsi"
-+#include "x1-hp-omnibook-x14.dtsi"
-+/delete-node/ &pmc8380_6;
-+/delete-node/ &pmc8380_6_thermal;
-+
-+/ {
-+	model = "HP Omnibook X 14-fe1";
-+	compatible = "hp,omnibook-x14-fe1", "qcom,x1p42100";
-+	chassis-type = "laptop";
-+};
-+
-+&gpu_zap_shader {
-+	firmware-name = "qcom/x1p42100/hp/omnibook-x14/qcdxkmsucpurwa.mbn";
-+};
-+
-+&remoteproc_adsp {
-+	firmware-name = "qcom/x1p42100/hp/omnibook-x14/qcadsp8380.mbn",
-+			"qcom/x1p42100/hp/omnibook-x14/adsp_dtbs.elf";
-+
-+	status = "okay";
-+};
-+
-+&remoteproc_cdsp {
-+	firmware-name = "qcom/x1p42100/hp/omnibook-x14/qccdsp8380.mbn",
-+			"qcom/x1p42100/hp/omnibook-x14/cdsp_dtbs.elf";
-+
-+	status = "okay";
-+};
-
--- 
-2.48.1
-
-
+Will
 
