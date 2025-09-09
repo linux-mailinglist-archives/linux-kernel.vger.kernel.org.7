@@ -1,173 +1,149 @@
-Return-Path: <linux-kernel+bounces-808221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF1BB4FC0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:06:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923A8B4FC10
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71C51C237EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:07:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2451174259
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEFC33EB1A;
-	Tue,  9 Sep 2025 13:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB581340D98;
+	Tue,  9 Sep 2025 13:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rwth-aachen.de header.i=@rwth-aachen.de header.b="lXYXjcMn"
-Received: from mail-out-4.itc.rwth-aachen.de (mail-out-4.itc.rwth-aachen.de [134.130.5.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cd3zxPP6"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B40B3314C1;
-	Tue,  9 Sep 2025 13:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.130.5.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA67333EAEB
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757423193; cv=none; b=e5bRoVrzlXAfmGgtF83f+fnRCfFMf/ddtmUDCWCg/Yo12UR8SB1e/OgZVdCII6CcBZUX5ESgy5OkKMcV/usNZeOfp7zHaWMU7dSjuJWm/bulAa2Wg4GHm5/3ZS7m17dwDVvw8WGaC1d3TPsgkiK1su/UcA6CbQVeMGG23eZdun8=
+	t=1757423195; cv=none; b=I/tNLf7v4trzbQCm2MorxrAWDZwpVdw7o3ZKVSo6MD2IXDWlTyuw7tQHhAKyn8DLI0aG71VWQbwFEr4JEFDCVMwmnxA9LvE3a5oDavDmt2sYPvpRl9czLxgQe3/5xgGc3dPqzSXl4HqwmnKmaLqd0ATW3Dtvhv61hiZ6NmL3v+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757423193; c=relaxed/simple;
-	bh=O14MT3OexWqSwE6jX8bgZKElE6VAnUMMz4AXWZjD7xk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sPSu6BodTlT/Ws/YHkHCNgh4outl0GApRNia3eCQbdnjgIVknlr6T8ZBIMSJK8P9LJms9gd/VESwUPf2yPNzQpPGQLWNnmMeep8A2tix9f2W1Elw2e7+P9V2j9Fo3BCuiVNvfhSV0zxZPwULcNd7T3zZ77GBOBIC5tRFg5bShhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rwth-aachen.de; spf=pass smtp.mailfrom=rwth-aachen.de; dkim=pass (2048-bit key) header.d=rwth-aachen.de header.i=@rwth-aachen.de header.b=lXYXjcMn; arc=none smtp.client-ip=134.130.5.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rwth-aachen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rwth-aachen.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=rwth-aachen.de; i=@rwth-aachen.de; q=dns/txt;
-  s=20240516-RWTH; t=1757423190; x=1788959190;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=O14MT3OexWqSwE6jX8bgZKElE6VAnUMMz4AXWZjD7xk=;
-  b=lXYXjcMn+amozPOZf1PeKL3bmuIyZZJx8VuVXnPBDCErjJnppjnGwp0k
-   f79xdbYk3re/LJfaNfVtjwsp3lOej0JXz8/AWXTiTDoLVRVFlDf/gNesf
-   1zklWR727TdpZ4LVrh61IA9ZWfZiN5UE8Q+qXbIjYrH5PnrQ3p6BlUH0G
-   ZeEyQZWOybJBj6rugLv8INvKqOczbO+Fdm99B1wclttayAW+XJoSlvthI
-   pMGW6JlVlcjxxmsQPXmB5bz3nZrelcb5ZcrMgEmcbKyPih+bYQitZQq5i
-   wOaR0qukQKRFwThDN7VaC1zjlDcdmhQgUvdbHcaOQJGM0509XXJvmZnII
-   w==;
-X-CSE-ConnectionGUID: BAjXdRxMRHOmUpuF/WAxHw==
-X-CSE-MsgGUID: 8nctHbJ+RlC6+eGCBY8/Ag==
-X-IPAS-Result: =?us-ascii?q?A2AaEACAnnto/5oagoZaHAEBATwBAQQEAQECAQEHAQEVg?=
- =?us-ascii?q?VMCiXuRcQOUBYcuhGQPAQEBAQEBAQEBCAEUPQQBAYITgnQCjBIoNwYOAQIEA?=
- =?us-ascii?q?QEBAQMCAwEBAQEBAQEBAQEBCwEBBgEBAQEBAQYFgSGFNVOGWgEBAQECASMPA?=
- =?us-ascii?q?QVBBQsJAhgCAiYCAlYGDgcBAYJ+gksklEubS3qBMoEB3jiBSiMJAYERLgGFb?=
- =?us-ascii?q?IJkAYFtg3+EdzaBVUSBFSeDAz6ELYNxgmkEgiKBFopXhhOHfAlJeHgsAVUTF?=
- =?us-ascii?q?wsHBYEgQwOBDyNLBS0dgSd+hBiEKCtPgiJ1gRBpQRk/g1MeBm0PBoEYGkoCA?=
- =?us-ascii?q?gIFAkNFd0ACAQttPTcJCxuXWROBaTECAS4KCy8DkySCcAGvaTQHgjiBZ4FeB?=
- =?us-ascii?q?pZZiR4GQpdfkwqZBqkUAgQCBAUCGIF+gX9xgzdRFwIPji0WxWeBMgIHAQoBA?=
- =?us-ascii?q?QMJjlKBfAEB?=
-IronPort-Data: A9a23:HAko+K+1YcrWZsWk5/KSDrUDWH6TJUtcMsCJ2f8bNWPcYEJGY0x3n
- TRJXW2POPiMa2Kkcttzb9yz/EwEvJTQm9NlTAtl+ytEQiMRo6IpJzg4wmTYYnnOdJ2TFCqLy
- +1EN7Es+ehtFie0Si+Fa+an9T8lk/nRF9IQMcacUghpXwhoVSw9vhxqnu89k+ZAjMOwa++3k
- YqaT/b3Zhn8hVaYDkpOs/je8Ew27ayr0N8llgVWic5j7Qe2e0Y9Ucp3yZGZdxPQXoRSF+imc
- OfPpJnR1n/Z5RokFuS+mb/9dEAQKpaKVeRZoiMLM0QKqkEqSh0ais7XBtJFAatko2nhc+RK9
- Tl4ncfYpTEBY/eQwrRNC3G0JAklVUFO0OevzXFSKqV/xWWeG5fn660G4E3boeT0984vaVyi+
- 8D0JxgnRxKzi9im5YibbexRntkNa/bCLKMA7yQIITHxVZ7KQLjZXLnK6M8dx211j4ZUAureI
- sMVLzZiBPjCS0QUZhFOU8p4xrnu3ySjG9FbgAv9Sa4f+GnWywo31rXwPdzVc8GRSMN9hFmEp
- ifP9m/5DxdcONH3JT+tqCL027SRxHyqMG4UPO2+/eJKin/Q/Gg4Vl4benCRkKn+o0HrDrqzL
- GRRoELCt5Ma+1amQdr9dxm5pmOUsBkBXdZZD+w97keK0KW8ywKYAHUUCz1MctorsOcoSjEwk
- FyEhdXkAXpoqrL9YXOS8a3SrjSoPjQUKykGZCkZXSMK5tDipMc4iRenZtMlD6+xhc/kHyrzw
- hiRpS0lmrMcy8UM0s2T4VXImTW3vbDUSw8+5kPaUn/Nxgp9ZYWofZ2o7XDU6vFPKIvfRV6E1
- FAN3cif6uwECouCvC+AWuMAGPeu/fntGCfBmkIqEZ47sjCs/WOzVZ5f7Ss4J0pzNMsAPzjzb
- yf7vQRK/55VFHind6l6Z8S2EctC5afpD8XNWfnOf9VTZd53eRPv1CtpfFOWmW7glkcEnqQ2O
- JPdesGpZV4TDal3ijW/VuEay5ckwyk/wSXYQpWT5xOl3LaXTH2YU7EINB2JdO9RxK+Nox/98
- NtFMcaOjRJFX4XWbiDR8IMXa1kOKHU6CZneoMtTcueJJRBvXmomDpf5y7EmYYo+qKtVvv/S+
- W26XEpRyV65jnrCQS2Oa3Z+ePbyRpxXs302J2ovMEyu1nxlZpyghJrzbLMtYqUn+fwm1qQxR
- r8fZNmAR/1DDDjKk9gAUaTAQEVZXEzDrWqz0+CNOVDTo7YIq9T1x+LZ
-IronPort-HdrOrdr: A9a23:2BZ1U6H3IWKAxSgZpLqE+ceALOsnbusQ8zAXPo5KJyC9Ffbo8v
- xG/c5rtyMc5wx6ZJhNo7290cq7MBDhHPxOgLX5VI3KNGLbUQCTQ72Kg7GP/9StIU3DytI=
-X-Talos-CUID: =?us-ascii?q?9a23=3AivFpomtKtnli3IPuAW8Bxz2/6IsPW3/twE3ABnW?=
- =?us-ascii?q?YLmNUUKC7DmC56IN7xp8=3D?=
-X-Talos-MUID: 9a23:Av+LFggw9dJnXc50FOa/5MMpZMFj/4SkKgM3lb5Y+MSrHgZBa3C0g2Hi
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.16,324,1744063200"; 
-   d="scan'208";a="280536179"
-Received: from rwthex-s2-a.rwth-ad.de ([134.130.26.154])
-  by mail-in-4.itc.rwth-aachen.de with ESMTP; 09 Sep 2025 15:05:18 +0200
-Received: from [IPV6:2a00:8a60:c000:1:6109:d098:ebb8:aa0]
- (2a00:8a60:c000:1:6109:d098:ebb8:aa0) by rwthex-s2-a.rwth-ad.de
- (2a00:8a60:1:e500::26:154) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Tue, 9 Sep
- 2025 15:05:17 +0200
-Message-ID: <03b0cd37-4b05-4b5e-a395-5e5d405e1b20@rwth-aachen.de>
-Date: Tue, 9 Sep 2025 15:05:17 +0200
+	s=arc-20240116; t=1757423195; c=relaxed/simple;
+	bh=TuyvGeybEDFvhkMzdveNDYGLiqIQ0+8InSIJvHMcT7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cqHoATqPUTXsqhiHBijYbFsAghgFPwM0o03s6+ADieiKXaZrctqx9RvTFiKjeY5iK7diHJHBYh2RIjrPEEpJPD8Epym/VRuyPrXfVhZak1ehVWq/AItf5kEE+ubG5N1iPzPxQOiQZXbxPn4B04kPBCl2M9mJ0ZfE/JExDN+BrCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cd3zxPP6; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24b150fb800so14187625ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757423193; x=1758027993; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TCRhKSwPG7CAUIvZCPIlLSCZ3YprR/xiUPz/bvHEoWk=;
+        b=cd3zxPP6ADkU4AnxPU5nGSUjj5ECWngRACTcdZV1HYiYB7yA2FjqgICSVjfWPotLL2
+         7+967tJfjkl4TzKkXhDHErk8bGD+J4CiVVStKyBpDxrKsgJpIGRdhPY0wJ53ZLT9vS0M
+         hQzh2Nkes57THV/quViOuDekFjLYtlaMS5JGSOyTXWqrJCq0BBAaPof/yFSr9arMTwHI
+         L8G/tffogUoVQRm6sXR5ZqWDG4KtOmF75oU0CQo5p2SDq8s0feUgRjVMF0Ty3lgOzxVo
+         e/KgIxfF65bGE3JJooukcBcglsJUjCi1B1DDT2qL2YA2AsxpvmnOnC27W/YL2Topa+yL
+         JSgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757423193; x=1758027993;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TCRhKSwPG7CAUIvZCPIlLSCZ3YprR/xiUPz/bvHEoWk=;
+        b=bsjRXlFYahTJ26Pm3L4gfVNcSrkhZ5rjk2OlCFPxSgUI7olDYm5RP2PE5hqYRsLWNJ
+         D/0CeCoP3GukJ4Nb2/IcgkxorOcDYWprRm2ttqde6vyuB+gwFajeYk9mYqflgrAi4ELN
+         CkDOWJ3a9PmWFbw84cZqaUv4RDke22fy40/DlJ0Pv1W55XRJ0gyAxF32qEDLQf0zfPTh
+         1RCkXlB07dgLOxHTl5XgNqs1JSzEuVyiIdlEUMAdejQTSnehax4QE/IDajSUM0Nwt0Zd
+         B/Qpz/JnD27/XTVJPdiD5lZxm5aiPWzvVinLscLN5JmryqWnPD2+2vCtfnRSIXwxObaI
+         J1pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5z1dqRm0qNNsO+nBvbSLySSrSGUA3aCeh2/3zJRJOwjTPhxUdX02KVHb4Qh7l8nUp1fM54RwWEiV1Yek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9Le8A6xmUmOXmMZBopfIyO1c1BfIxXuRtjBi+/OgVlZzmunY7
+	oWM+fn/m9Z5rSZydbAwu3QwBdZ01JEb23CApphWrhebRDJn8ah1NiNpCal37LtEkkYGVS1dTcxo
+	6bJJN6QF0cOfgy+ZIsuVS0pnSS5lWICMMbQ==
+X-Gm-Gg: ASbGncvo61ZpEbs3CIqyz1j+uDwOPvwSMoHCmIo5vcUX5HiOua39ucFOD4mgGZ1xL2d
+	aysU5Iuj8Xkgo3zkGUdw9sh549/+ybo2aeFQ0xTIzpuaDqgZojjPWkOrRpmymx6dJc65vpO1c9i
+	jf57rQI7WJ0ZKNd1Wd/60Qu3SS/IP+QkMG7ImpPv4hFIzKqmCSs20ygQYGNpWB8htBPOMNYKQFR
+	dt3d/Y=
+X-Google-Smtp-Source: AGHT+IHa8baY6Pl1flgTs6pP2dTZu9WNTAlY3N3JvHJNZ3zkp6rEoHwCNUfHmb5TxMZbd3mIXJZz9XbwZBZNyfQuoI8=
+X-Received: by 2002:a17:902:8ec5:b0:24d:5f38:ab67 with SMTP id
+ d9443c01a7336-2517653b8f5mr64653695ad.11.1757423192955; Tue, 09 Sep 2025
+ 06:06:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] samples: rust: add a USB driver sample
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Daniel Almeida <daniel.almeida@collabora.com>, Danilo Krummrich
-	<dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
-	<alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
-	<gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
-	<bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
- Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
- Gross <tmgross@umich.edu>, Michal Wilczynski <m.wilczynski@samsung.com>, Igor
- Korotin <igor.korotin.linux@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<rust-for-linux@vger.kernel.org>, <linux-usb@vger.kernel.org>
-References: <20250825-b4-usb-v1-2-7aa024de7ae8@collabora.com>
- <2025090618-smudgy-cringing-a7a4@gregkh>
- <D8EAF874-4FED-42EE-8FD8-E89B6CB0086A@collabora.com>
- <2025090601-iron-glitter-c77d@gregkh>
- <831C4AE2-6964-4699-9E74-E4B721B87B17@collabora.com>
- <DCLQZZHU42HN.4Y4PP0PPR10O@kernel.org>
- <9657C897-087E-4544-849B-964E99D95A50@collabora.com>
- <DCLTJMIAMCVL.35U236MMS5CCK@kernel.org>
- <85B643A9-1657-43ED-BE98-BE7E502D08DA@collabora.com>
- <3aca9e74-b67c-4bfe-a206-9a6eecdf76ab@rwth-aachen.de>
- <2025090916-dill-elated-3d68@gregkh>
-Content-Language: en-US
-From: Simon Neuenhausen <simon.neuenhausen@rwth-aachen.de>
-In-Reply-To: <2025090916-dill-elated-3d68@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: RWTHEX-S2-B.rwth-ad.de (2a00:8a60:1:e500::26:155) To
- rwthex-s2-a.rwth-ad.de (2a00:8a60:1:e500::26:154)
+References: <20250908213156.565861-2-thorsten.blum@linux.dev>
+In-Reply-To: <20250908213156.565861-2-thorsten.blum@linux.dev>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 9 Sep 2025 09:06:21 -0400
+X-Gm-Features: Ac12FXwSeHW2KQ319aeqOCaDVZwYWCXWouptpaWLQeAEdAJOVtD4BE9k9jsqKMo
+Message-ID: <CADnq5_PwxJ5ErFrMzAo1ocK=rQi81G9iLMPpPM9T51_txrp3yg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdkfd: Replace kzalloc + copy_from_user with memdup_user
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-(Sorry for sending this again. I forgot to hit reply all, since I'm 
-pretty new to this.)
+Applied.  thanks!
 
-On 09.09.25 14:14, Greg Kroah-Hartman wrote:
+Alex
 
-> On Tue, Sep 09, 2025 at 01:19:12PM +0200, Simon Neuenhausen wrote:
->> Hi,
->>
->>> On 06.09.25 17:46, Daniel Almeida wrote:
->>> As I said to Greg above, I’m here to help if anyone wants to write a 
->>> USB
->>> driver. Those interested
->> are free to reach out to me and we will work together to merge the 
->> required
->> abstractions with a real user in mind. Hopefully this encourages 
->> others to
->> join in this work 🙂
->> I had planned on writing a USB driver for TI nspire calculators, that 
->> would
->> make them mountable as USB mass storage devices, since they use a
->> proprietary USB protocol, that usually requires paid software from 
->> TI. At
->> the time I gave up on that, due to the lack of USB support in RFL, but I
->> could revive the effort using this.
-> usb-storage is really just SCSI, so if you want to try to do this, you
-> are going to have to write a scsi driver for the calculator.  Not
-> something you probably really want to do 🙁
-AFAIK it's not actually SCSI, but some custom USB protocol, that doesn't 
-work on blocks, but files and directories directly. It also allows 
-taking screenshots and performing firmware updates.
-> Odd are this would be a much simpler userspace program instead, as you
-> can control USB devices directly from userspace, no kernel driver
-> needed.
-
-Yes, a userspace program using FUSE would probably be simpler, since 
-there's already exists "libnspire" for interacting with nspire 
-calculators in userspace.
-
-As I said, it's gimmicky.
-
-
-Greetings
-
-Simon
+On Mon, Sep 8, 2025 at 5:49=E2=80=AFPM Thorsten Blum <thorsten.blum@linux.d=
+ev> wrote:
+>
+> Replace kzalloc() followed by copy_from_user() with memdup_user() to
+> improve and simplify kfd_ioctl_set_cu_mask().
+>
+> Return early if an error occurs and remove the obsolete 'out' label.
+>
+> No functional changes intended.
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  drivers/gpu/drm/amd/amdkfd/kfd_chardev.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/a=
+md/amdkfd/kfd_chardev.c
+> index 828a9ceef1e7..5d58a7bf309a 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+> @@ -521,15 +521,10 @@ static int kfd_ioctl_set_cu_mask(struct file *filp,=
+ struct kfd_process *p,
+>                 cu_mask_size =3D sizeof(uint32_t) * (max_num_cus/32);
+>         }
+>
+> -       minfo.cu_mask.ptr =3D kzalloc(cu_mask_size, GFP_KERNEL);
+> -       if (!minfo.cu_mask.ptr)
+> -               return -ENOMEM;
+> -
+> -       retval =3D copy_from_user(minfo.cu_mask.ptr, cu_mask_ptr, cu_mask=
+_size);
+> -       if (retval) {
+> +       minfo.cu_mask.ptr =3D memdup_user(cu_mask_ptr, cu_mask_size);
+> +       if (IS_ERR(minfo.cu_mask.ptr)) {
+>                 pr_debug("Could not copy CU mask from userspace");
+> -               retval =3D -EFAULT;
+> -               goto out;
+> +               return PTR_ERR(minfo.cu_mask.ptr);
+>         }
+>
+>         mutex_lock(&p->mutex);
+> @@ -538,7 +533,6 @@ static int kfd_ioctl_set_cu_mask(struct file *filp, s=
+truct kfd_process *p,
+>
+>         mutex_unlock(&p->mutex);
+>
+> -out:
+>         kfree(minfo.cu_mask.ptr);
+>         return retval;
+>  }
+> --
+> 2.51.0
+>
 
