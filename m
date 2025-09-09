@@ -1,218 +1,107 @@
-Return-Path: <linux-kernel+bounces-808380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ECDDB4FF0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:15:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D78B4FF01
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 147D43A73D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CC4717E665
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14615340DAE;
-	Tue,  9 Sep 2025 14:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBCE3314B9;
+	Tue,  9 Sep 2025 14:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/shuU2w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhiBoWcV"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1E6274FFD;
-	Tue,  9 Sep 2025 14:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D8A18FC97;
+	Tue,  9 Sep 2025 14:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757427173; cv=none; b=nrvMUpEBzcVAec+gf1mxkUnSZ+DaP9n8vBNRc9saHGXli1SGteJ3z4kWEwYif5QWveWk2+w9fi4RxjN1yDRkVQUKJlLylA+KWC+/FTE6//4QESoEH//zPbm73/xczRJfnjIlxN60F/YyNWdUgzBpehB/WwR4F+0qDugVS8JnW8Q=
+	t=1757427196; cv=none; b=GiTSTe9GyytYDY0kHzGlBOOGye5jjilEI69iwA81JPqtw2zXr/woFmFyJD5KEsLk3c73TIXqCgbsChmyiZeqYav3OHZyUsnAD9mI8fOqqkIJmsQgFGc8b+3TCGIY+sXbkP55z7OLj3U1bpo4zv1mzr0MLCMmWKojuBBoGdP+oIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757427173; c=relaxed/simple;
-	bh=AX9MMeSgETU6qD9Ntz+/92wH3f8ROfXy7XhXey8zuzI=;
+	s=arc-20240116; t=1757427196; c=relaxed/simple;
+	bh=kq3Q2sxONlf8LnQ3OGj9fGWpP44LKtbnldqLnii+nVY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VEYxk6WrFBH0mwPQzMgXQuqpMREx7FMT2JRoU1YMiIk7hUgmVJKgD6M4guyElysZl1G+KA1DKysP8D+r8H0PfTHRIy3y9ohl+CWzcxhjCNQeltm64a17IpPi5Om8u/tb8zPtuiZatVIzVT68UFkAjs/Bz2pDjX6esfA9kPZfDE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/shuU2w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6180CC4CEF4;
-	Tue,  9 Sep 2025 14:12:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757427172;
-	bh=AX9MMeSgETU6qD9Ntz+/92wH3f8ROfXy7XhXey8zuzI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t/shuU2w3GDrK9uP/4gYzJi3MfUQO8VdHq0Qr4lIrT/C2DILDr/VBq4BZYyo1txz+
-	 62Fj3YAYoqIqTpRCY3SUkOlz/i+aK+YyDovMendCLJkpg/ShBGLVhYcBjn/FmA8Q7/
-	 vGvyY3Ywv/yDsED0SsTU/0eut0NF60qZGmyOsFhxuQzTLdCsOrfELgm7dkwpMFFovm
-	 10G6sKosQ5rRg+JTy5NKVMwJw66kQyurqclErDnWao5WD0qTcbQERaNOK+ktYbCzEu
-	 LYRa839E484K2LW9AXuNEC5ABQGoNAR2shXZcgdm8y5P9sCUumNMnzOyhhjXN0FpEP
-	 oz5YNA1jFy4Bw==
-Date: Tue, 9 Sep 2025 15:12:45 +0100
-From: Will Deacon <will@kernel.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 02/28] KVM: arm64: Donate MMIO to the hypervisor
-Message-ID: <aMA13Sowq91XEqP9@willie-the-truck>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-3-smostafa@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WG5Ck0zUtRTYvTGdvcyFJzHu3vo9g63rKY7xH3mcqYTTIlkTCWEljYWhysCJ+9bsgYl03yOZixrbFwfrC+fMYxla84T/w2LafxKyxf/L40XmrF9RhyOF1hzL4J+jeM1p9grIKKcAjjy0AR+12EXKPwIWEhNeIm2Rbk0mAMCVgAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhiBoWcV; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b47475cf8ecso3736569a12.0;
+        Tue, 09 Sep 2025 07:13:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757427194; x=1758031994; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5J6q6a+zn1xLbdiNAjeG4Vukow5CdpqBkODFgamTiUk=;
+        b=AhiBoWcVqRkEX/QvEg+oHhwVLLbeH+nwPq5S4YSqFfzRXKurOzmpG/DISlu1P1r0FA
+         hkgbFRbAzbYHIIExlkDCtYd8PjAChVnAG/hO4DNyAXzEiQMfBGbipPjiY2cmw5iCYGOp
+         +wrYsJUSVj7Y3lcUnoGx7rkdrLYvIsnHUDvrpokx+6ErQoN6lOnyL1Autxlmxb09ujKl
+         N6dV8QnaoT9ETYWTezIqw0Hd66cXgGDRnDgx29zIHrC8ksq28lOiGZcJHGR1L3aE5TL5
+         khjDIojMKS9dKcrV470MfjNj71/j5PMJPBOCVtGdtCDFUfEsPzQDL9Oe7VzbPF7LTybp
+         owbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757427194; x=1758031994;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5J6q6a+zn1xLbdiNAjeG4Vukow5CdpqBkODFgamTiUk=;
+        b=banQsOwlkB/WNEwJ+qHWuupZcNBn6DY/u5OA4Pfy50QXXzDPR0G+sJFcQDWpOksd+j
+         Az9aaCpfSEtklsH36WbcVaKP3HrlcjvFdoKwB/gx1S3KJfyGDcEMPlyENqfgFEgKUkIA
+         PvSLva0nb2PAcjWQl5RWZrSE3WYP8YU9oG4tkB0h1wg3W/AymwjHMtP51lhQo/K7p2Vt
+         7ZYOEziT+Co18xZv8mze888dpY14O4kUQ5JpRCb0DKiVkZjsRUq+OTFbVIII2c4PJvEL
+         wE8Qp/L2u9PALP2ofmJGexqR6wCEcTe8k982W6M1aDNTE4TeSMdvYIPBQbLC3yubhVNd
+         V17g==
+X-Forwarded-Encrypted: i=1; AJvYcCUtOiLyrv9AuAHLHa9ZXYTmw7sDVMN5C3rNP2lW/v45BOa8JvEnF6LHPgauW6SjC8R3MKp0sfY5SOb/jAf9@vger.kernel.org, AJvYcCVMOYOGzgFO17B880p5sM1WJBPiqfx6OI1Ux2P7lzabu2UOIQBkwx4lFTSTnP90TbxQ7Hy96v2QNlfL@vger.kernel.org, AJvYcCVSBIHcBZCoxtHIaqiARYUWBvjmdOMt9Lg75Kz5egd7LMQrO/0tbYal6w/4SrRdEbz56cCqIvINBiFhonL0Ew==@vger.kernel.org, AJvYcCWWlAwODD+ea/JHPxAs67zFGFYtDyzkfifl3JEZMNcNjmTdPUpqdPcdlD5dykYUKDteXlAfpnbCeDfZdrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzPg5aahrfG54TPLAM2H1hQh3IVK+sYBpyeIp075cl2lN2Gv4J
+	HR1bmcA80IXMLvYHj3QIy5kQtWLWqOHiIJ/apBLnLZZIlcsWygsF0YgU
+X-Gm-Gg: ASbGncv36KE3xUNNuMyvv7No+naYQmD8fkFP5qdt2N84q9mEjbd0rE9eKV/MvHCyS62
+	4UI1Uj8+vbWN6m1wf3yyQDzvf0iXzJjcMqusZeO3Vwh7kxqRNPpAagm89wJ7beFNAA1mGPLeL6y
+	3JfbSdKwCyRDThgCtSP8Qf9vmA89Er6SqiTad1JMEztH0RIpf3qNYSpEySwCOr6boijGru2Kqqe
+	UmFwR23zN+eX0GVkRvrvvNKJTTwgVWnEVKCSvWEcKLGlSuQlm2lBHMtkfNvDV0hpPywD/904rO1
+	leoLbbc0qDhVkmv5F8KOzG2oaZIxE35gXMRkx6s2kLvrmrmDr0zGe1rDDslhYDHjA9o+DxEmWE+
+	4l7pnssYFsKPwgdYClIapwv4=
+X-Google-Smtp-Source: AGHT+IEkwrtBYdpezIiaqwPwiNlJ+8D7PNnqPSNJlp8Hs8avSR7Xn5/TXBsO0RzbBf21bAweQKmP2g==
+X-Received: by 2002:a17:90b:1d46:b0:32b:989c:aac0 with SMTP id 98e67ed59e1d1-32d43f1667emr12262528a91.11.1757427193997;
+        Tue, 09 Sep 2025 07:13:13 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:bb68:234f:c4ea:1276])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3298520c7d0sm28003547a91.3.2025.09.09.07.13.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 07:13:13 -0700 (PDT)
+Date: Tue, 9 Sep 2025 07:13:11 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Courtney Cavin <courtney.cavin@sonymobile.com>, Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Luca Weiss <luca@lucaweiss.eu>
+Subject: Re: [PATCH] dt-bindings: input: qcom,pm8941-pwrkey: Fix formatting
+ of descriptions
+Message-ID: <dcbulusmsq6g57ymj7zax6gkeuupwrfekuyrotawxw32fadzhb@wum2hzys5gx4>
+References: <20250909140331.69756-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250819215156.2494305-3-smostafa@google.com>
+In-Reply-To: <20250909140331.69756-2-krzysztof.kozlowski@linaro.org>
 
-On Tue, Aug 19, 2025 at 09:51:30PM +0000, Mostafa Saleh wrote:
-> Add a function to donate MMIO to the hypervisor so IOMMU hypervisor
-> drivers can use that to protect the MMIO of IOMMU.
-> The initial attempt to implement this was to have a new flag to
-> "___pkvm_host_donate_hyp" to accept MMIO. However that had many problems,
-> it was quite intrusive for host/hyp to check/set page state to make it
-> aware of MMIO and to encode the state in the page table in that case.
-> Which is called in paths that can be sensitive to performance (FFA, VMs..)
+On Tue, Sep 09, 2025 at 04:03:32PM +0200, Krzysztof Kozlowski wrote:
+> Property descriptions should indent with two spaces and they do not need
+> to preserve formatting.
 > 
-> As donating MMIO is very rare, and we don’t need to encode the full state,
-> it’s reasonable to have a separate function to do this.
-> It will init the host s2 page table with an invalid leaf with the owner ID
-> to prevent the host from mapping the page on faults.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
-> Also, prevent kvm_pgtable_stage2_unmap() from removing owner ID from
-> stage-2 PTEs, as this can be triggered from recycle logic under memory
-> pressure. There is no code relying on this, as all ownership changes is
-> done via kvm_pgtable_stage2_set_owner()
-> 
-> For error path in IOMMU drivers, add a function to donate MMIO back
-> from hyp to host.
-> 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> ---
->  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  2 +
->  arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 64 +++++++++++++++++++
->  arch/arm64/kvm/hyp/pgtable.c                  |  9 +--
->  3 files changed, 68 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> index 52d7ee91e18c..98e173da0f9b 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> @@ -37,6 +37,8 @@ int __pkvm_host_share_hyp(u64 pfn);
->  int __pkvm_host_unshare_hyp(u64 pfn);
->  int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages);
->  int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enum kvm_pgtable_prot prot);
-> +int __pkvm_host_donate_hyp_mmio(u64 pfn);
-> +int __pkvm_hyp_donate_host_mmio(u64 pfn);
->  int __pkvm_hyp_donate_host(u64 pfn, u64 nr_pages);
->  int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages);
->  int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages);
-> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> index 861e448183fd..c9a15ef6b18d 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> @@ -799,6 +799,70 @@ int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enum kvm_pgtable_prot prot)
->  	return ret;
->  }
->  
-> +int __pkvm_host_donate_hyp_mmio(u64 pfn)
-> +{
-> +	u64 phys = hyp_pfn_to_phys(pfn);
-> +	void *virt = __hyp_va(phys);
-> +	int ret;
-> +	kvm_pte_t pte;
-> +
-> +	host_lock_component();
-> +	hyp_lock_component();
-> +
-> +	ret = kvm_pgtable_get_leaf(&host_mmu.pgt, phys, &pte, NULL);
-> +	if (ret)
-> +		goto unlock;
-> +
-> +	if (pte && !kvm_pte_valid(pte)) {
-> +		ret = -EPERM;
-> +		goto unlock;
-> +	}
 
-Shouldn't we first check that the pfn is indeed MMIO? Otherwise, testing
-the pte for the ownership information isn't right.
+Applied, thank you.
 
-> +	ret = kvm_pgtable_get_leaf(&pkvm_pgtable, (u64)virt, &pte, NULL);
-> +	if (ret)
-> +		goto unlock;
-> +	if (pte) {
-> +		ret = -EBUSY;
-> +		goto unlock;
-> +	}
-> +
-> +	ret = pkvm_create_mappings_locked(virt, virt + PAGE_SIZE, PAGE_HYP_DEVICE);
-> +	if (ret)
-> +		goto unlock;
-> +	/*
-> +	 * We set HYP as the owner of the MMIO pages in the host stage-2, for:
-> +	 * - host aborts: host_stage2_adjust_range() would fail for invalid non zero PTEs.
-> +	 * - recycle under memory pressure: host_stage2_unmap_dev_all() would call
-> +	 *   kvm_pgtable_stage2_unmap() which will not clear non zero invalid ptes (counted).
-> +	 * - other MMIO donation: Would fail as we check that the PTE is valid or empty.
-> +	 */
-> +	WARN_ON(host_stage2_try(kvm_pgtable_stage2_set_owner, &host_mmu.pgt, phys,
-> +				PAGE_SIZE, &host_s2_pool, PKVM_ID_HYP));
-> +unlock:
-> +	hyp_unlock_component();
-> +	host_unlock_component();
-> +
-> +	return ret;
-> +}
-> +
-> +int __pkvm_hyp_donate_host_mmio(u64 pfn)
-> +{
-> +	u64 phys = hyp_pfn_to_phys(pfn);
-> +	u64 virt = (u64)__hyp_va(phys);
-> +	size_t size = PAGE_SIZE;
-> +
-> +	host_lock_component();
-> +	hyp_lock_component();
-
-Shouldn't we check that:
-
-  1. pfn is mmio
-  2. pfn is owned by hyp
-  3. The host doesn't have something mapped at pfn already
-
-?
-
-> +	WARN_ON(kvm_pgtable_hyp_unmap(&pkvm_pgtable, virt, size) != size);
-> +	WARN_ON(host_stage2_try(kvm_pgtable_stage2_set_owner, &host_mmu.pgt, phys,
-> +				PAGE_SIZE, &host_s2_pool, PKVM_ID_HOST));
-> +	hyp_unlock_component();
-> +	host_unlock_component();
-> +
-> +	return 0;
-> +}
-> +
->  int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages)
->  {
->  	return ___pkvm_host_donate_hyp(pfn, nr_pages, PAGE_HYP);
-> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-> index c351b4abd5db..ba06b0c21d5a 100644
-> --- a/arch/arm64/kvm/hyp/pgtable.c
-> +++ b/arch/arm64/kvm/hyp/pgtable.c
-> @@ -1095,13 +1095,8 @@ static int stage2_unmap_walker(const struct kvm_pgtable_visit_ctx *ctx,
->  	kvm_pte_t *childp = NULL;
->  	bool need_flush = false;
->  
-> -	if (!kvm_pte_valid(ctx->old)) {
-> -		if (stage2_pte_is_counted(ctx->old)) {
-> -			kvm_clear_pte(ctx->ptep);
-> -			mm_ops->put_page(ctx->ptep);
-> -		}
-> -		return 0;
-> -	}
-> +	if (!kvm_pte_valid(ctx->old))
-> +		return stage2_pte_is_counted(ctx->old) ? -EPERM : 0;
-
-Can this code be reached for the guest? For example, if
-pkvm_pgtable_stage2_destroy() runs into an MMIO-guarded pte on teardown?
-
-Will
+-- 
+Dmitry
 
