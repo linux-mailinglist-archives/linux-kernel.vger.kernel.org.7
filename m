@@ -1,344 +1,308 @@
-Return-Path: <linux-kernel+bounces-807236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D08B4A1E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:17:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 472F4B4A1EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D2E34E21A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:17:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18B2916B472
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AD53019B0;
-	Tue,  9 Sep 2025 06:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421E8302160;
+	Tue,  9 Sep 2025 06:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OvGsUOVB"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwHrR08l"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A44315D36
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 06:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F71D315D36;
+	Tue,  9 Sep 2025 06:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757398625; cv=none; b=Q3yxiKJAz33QCtBmXH+0ZOAqrnlmuu9PWGRLk6GFWqbFaCCH/4W/xWKNLZ78AkxgkUXbJrIHzl37BTKbfLMTOBa19z7+5UqdW9F8z4B7i9wr6DEqO5xBPbFrVKmD6DgRDq6vwkw1uf4PUx99dVIe7w2P3U3ujTOUEDwjuVxMuIA=
+	t=1757398635; cv=none; b=jbCLoyjAmOKtulNm7dR8aPQ1+EBkuBey4eFVVPcpYbOKT+QHemx0f5bVZaLvJtM0HaGfnuhumHaA7qt5sG8GN84yNbylQNuaaJWx2QF70AwDtmhHqeO8u4BgVRMdp977DVtxY98zq9/L/qZcimGJ94iGhvaWN6HL7lDzoxMQJC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757398625; c=relaxed/simple;
-	bh=hALvXcW0oJUmimPdYd7PF8+rKUVIsZZwasv1RGxnogk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MYB4LcgAJ//nwyq2Jdw76YVdqpK7hW4/8QHMedjcvBuv37rgEGmrBtRE0DKwJ8X6jbOjOWpUyWLxCm6yGc6d7IRW3apxHC52bxhHQd6Ylnikrl/LZMGDWhNiaKDZcbUGo2aghxX1fGiY2y9yeJk373o0uwFm4YjP9Zx22STKkZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OvGsUOVB; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-746c06937c3so2405380a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 23:17:00 -0700 (PDT)
+	s=arc-20240116; t=1757398635; c=relaxed/simple;
+	bh=yoHhQ9CgBx7px++zQ5XjK1tbH2Daas08llkbF8aNblQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u3E56BybowBwo0zUVMu2BhRUJC/yh/MeM9vwcPQkNYPe9udAmBQ1D+EL21kG3uFfQElGNTQv2bXagOgtogpTVYsVqI/6buz/LK13tCYMDEinPDkz9mq5zcRrJOSBIdV5M+3i9rzz9/zbhNZH60GwqPzBgHL4rHLKEhCsl9TaqKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iwHrR08l; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3df2f4aedc7so2956900f8f.2;
+        Mon, 08 Sep 2025 23:17:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757398620; x=1758003420; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yo6ffDWub4okELhRpitpTPAQAp1vCcd2HCwvbQ9oskY=;
-        b=OvGsUOVBsLDHqr+aQtxV+1rP/6dl2yW60SBymG1oTbu+0kcHFTgXw1/AOcJZeHFsF1
-         QxGu4RkvUmm2uR4nthAHNitRH1qJBCb4/j08wBle3xm+mmCBx3IcYwOWYIlI+bcZJ6ko
-         5R1frCp5mDVr8PspOSIRVUuaeIBpdiIJEZ0MO1nTiTsjg1nibYAR3VlVID3Rmq+ja2pY
-         5veGT/Cb7M2n9KunuHfn1knazrcSbztJopJUSwaOj4GcU6Xhx2WEcAqy/LfnGPu4tK8l
-         Rhn+tk27nlZlaCfK30zvuj1nU7sS8dyDUY8YfyPTA1tajFYTIeKkm4m1cY24twKe2zv/
-         G+eg==
+        d=gmail.com; s=20230601; t=1757398632; x=1758003432; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2FFPJcPGJNDsgjdC7NcMD9qGE/tE0wRplyMDk1rByxg=;
+        b=iwHrR08lZPRQ9pnoiEPqGeGqDjWm8urrvpOWVOF9ggdMR5CCW3QXGv3iVD36jmdRFe
+         G4yLgm1HHBW3+N+xFXHMUX8ALt7Aj1xQ02Sr9MeeyD1GpZu/zE02gZIgnYcZPwHD77GD
+         gMUtwTwFBaGDOq58bKHn3SVeTGA63YKL3+KhbuQMlcpN2ouxK9zqKEOCLhdOaUcjiY4K
+         lwJv4Yd7czDUroB6xc5529Bn22/gtmR6eVcm7YJYRlBuzSr9H7MIyStSpbxtOgRKl83c
+         zF/wLXvzXNmsgTHBA7EAISD4LgnANXp426QIVL2gSMq95iON7Ce4Zqks7edtvYg/I/q8
+         YaNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757398620; x=1758003420;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yo6ffDWub4okELhRpitpTPAQAp1vCcd2HCwvbQ9oskY=;
-        b=OWfwuKErCd0otSY/2WxbLntfV5U70445DqdT/F9QslPsFabXsmUUaxfJcVB28VCJsK
-         b9hDTL47+GzaFXtbWD7+7H0QhtBjMLK89AtifjiLAz/MZdydH0n7DhjL8TFBiIF9UH0y
-         ga7rQIdAG6Dx9vx83O0/X+wrcYozLEzlxLIx1yDYvQR+7/O9LicoDuE1YjrrHF/8VWoO
-         nIlDPPkH9IGRpSRiucYLWH9/uhCmaErI8KX5aL4aJzWd1VMJJPZd6iQQGYlzdfd9dYAM
-         mkDRSuW4FXteWt2WllK65lGNDYby9lgjPZSaxPAh1mHT3d/Ut64FrHhwcm+jblirB8ZH
-         XRYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV14i/Qj7CIWXYS5a6yh4u9oE3dG35UYiAIN+bwZzl+W6wgv/HOha7ZYaWqvafqXxdQ8wyAXfAWK0geaj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxutBvUqmSEHfEutq44pcSQva98Fex7Abi1mXPp9pK08tGlule5
-	Y85mAEBx2FReBEoYP9JBFTiL5zmgEknOfpLlrUAnONH2du+TSRmQ7OQImuXXO07BYzppHYWGjNp
-	BnjNB2URTbk0vmTI/pRiCJfmQvVz7gJmPVpMwR0YUOA==
-X-Gm-Gg: ASbGnctdBRQJEvC71h8jJ/4ie97wrDYhJvq36lqjBudML2al0yI2R6Y9r9nNd0ym50s
-	D/qxL8Qq25dNbYgUZNSseMq6H0rqD/r6NMSZYufGusxe8tozD4/hFC++Iafp4zpeuBqrPPM/Xvc
-	6SguKfYz4EvWB0nuC3f0PS2hzFej/tEnfZvsDwvy3/HKZZMammnHUudTwiT8Ufsjg2YFPCDJAnv
-	l57Xcqz
-X-Google-Smtp-Source: AGHT+IFdWd1+vb/Rl4PyiuASXINuF9rhsbEjXGlN27AUAvNG+S3/oT+E/Sl0ISuJwz6n95Ct9NcfS1g0fMrD6zw15s0=
-X-Received: by 2002:a05:6830:26d9:b0:745:5fcc:e70b with SMTP id
- 46e09a7af769-746d92f6d9emr5801485a34.14.1757398619808; Mon, 08 Sep 2025
- 23:16:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757398632; x=1758003432;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2FFPJcPGJNDsgjdC7NcMD9qGE/tE0wRplyMDk1rByxg=;
+        b=ZtlAr/XrTavLClzCcBvOAprODW0G+y/mZI6+0cN3A9Qd9lHQKEMXuCEALoEX8Oze01
+         q29rsUF6jK/B4oIvhio2SOEL9GCpN5jWqCRkq9UGRehunlAf5xJlI+ym9WMroHRh00Rs
+         kY1Xbn15pnrLfLHokbmAYeM2QGipP+R8VNIHMVd7BWr/Ow6HbJSpFc8Lfh6/lz770DHB
+         d3JI3QSAU6inAs1T3ZiXeKKLea09Mez5mt/BxwB6UJEx3pnMZ4/EIoRysGTVqSCgr2/N
+         s/yD7P8ENYaX10dAXHktP0Tb6URYp19TjBwyzpACjB1RYE1mj2NCV48kpIf3Rtj69JKY
+         6SWg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/0hkTP+oAwbdpsjkCELAh97+h34IgfBOu64949ojiogCmfm4FOHmzmAxKfkTLGYUNlTw3HKTkyWwRsmE=@vger.kernel.org, AJvYcCVmb95hqOg5WAYpzQBM7BTfwJOOjULl/1WW6Wh5Ia7hze3E2Bg8eLIjnsB0QHEOx4/G0omTsKSFF/99Q1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPf01cdiqFNm2yp7Y+yEsnC803zRqDP05NZJVqn02tM6EyeOBD
+	R3r2pfpjuILelnA0I96wwh/+N8zAA0gWFhwJVAA5cxnfsrGgNaSlY0gQh/lmdGwL
+X-Gm-Gg: ASbGncvm96ptgSSJyRynCnd990YHPj5NUoMKZs9XJY4VzrIoKEoy0Qh/2JGg+jqp42O
+	g2kqbrmFHO4cxq5qrdAkAwqooCTaDRphupHcppUdJsK15IQuDxVU38fVyklveNi4oDNGgkl+MWC
+	HQlmUsYGk4I6jDdzyMa6FmRM/2AbPgnP7gsfw6UCwh+TvcErdehOLaLmqbP9gSVg4pY5tfvO2PB
+	FRNiWFX3bT3JuJfG6cLm9bfqTGx6UwcvfVvpE2yyxiEtLWNeFhdj95PY0CWeqdeCaoNyvbZ+vyw
+	dBLC6l/0Utw23ORa74hiT9pPNScmR/cm3HiipBpa1joPsWbJz/I3xNHIDwuiZJH+tPhxWSmVi5+
+	mTJVf8ESCaaCuIONHZbgo9MLbJtwVW5Ob/KGHrGi9NQbtMswvdN1qc4+F
+X-Google-Smtp-Source: AGHT+IFRsjA4jE5CQ530QLjZI5/Qn+p26X75xpQcc4lXNl3iHmepdOFyHFjbdzj17gqaz1pQxgFZIw==
+X-Received: by 2002:adf:a345:0:b0:3e7:27b9:40f3 with SMTP id ffacd0b85a97d-3e727c88694mr5794698f8f.15.1757398631565;
+        Mon, 08 Sep 2025 23:17:11 -0700 (PDT)
+Received: from pc.. ([105.160.50.66])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521bfdc6sm1204949f8f.8.2025.09.08.23.17.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Sep 2025 23:17:10 -0700 (PDT)
+From: Erick Karanja <karanja99erick@gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Julia Lawall <julia.lawall@inria.fr>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Erick Karanja <karanja99erick@gmail.com>
+Subject: [PATCH] ALSA: spi: Replace lock/unlock patterns with guard
+Date: Tue,  9 Sep 2025 09:17:02 +0300
+Message-ID: <20250909061702.350164-1-karanja99erick@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-0-ce7a1a774803@oss.qualcomm.com>
- <aL-uOEByKImuvIYF@sumit-X1>
-In-Reply-To: <aL-uOEByKImuvIYF@sumit-X1>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Tue, 9 Sep 2025 08:16:48 +0200
-X-Gm-Features: Ac12FXy83iDtr2MlreSn2K-a4Ho9ZbQ2XYunPWu-01PDMz9YAYPkq_r6L4oHrE8
-Message-ID: <CAHUa44FQVQ1AE3nSjCjcB07XGowYPN6srwG2dknT76qqdtEV+g@mail.gmail.com>
-Subject: Re: [PATCH v7 00/11] Trusted Execution Environment (TEE) driver for
- Qualcomm TEE (QTEE)
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Apurupa Pattapu <quic_apurupa@quicinc.com>, 
-	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org, 
-	Sumit Garg <sumit.garg@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 9, 2025 at 6:34=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org> w=
-rote:
->
-> On Tue, Aug 12, 2025 at 05:35:29PM -0700, Amirreza Zarrabi wrote:
-> > This patch series introduces a Trusted Execution Environment (TEE)
-> > driver for Qualcomm TEE (QTEE). QTEE enables Trusted Applications (TAs)
-> > and services to run securely. It uses an object-based interface, where
-> > each service is an object with sets of operations. Clients can invoke
-> > these operations on objects, which can generate results, including othe=
-r
-> > objects. For example, an object can load a TA and return another object
-> > that represents the loaded TA, allowing access to its services.
-> >
-> > Kernel and userspace services are also available to QTEE through a
-> > similar approach. QTEE makes callback requests that are converted into
-> > object invocations. These objects can represent services within the
-> > kernel or userspace process.
-> >
-> > Note: This patch series focuses on QTEE objects and userspace services.
-> >
-> > Linux already provides a TEE subsystem, which is described in [1]. The
-> > tee subsystem provides a generic ioctl interface, TEE_IOC_INVOKE, which
-> > can be used by userspace to talk to a TEE backend driver. We extend the
-> > Linux TEE subsystem to understand object parameters and an ioctl call s=
-o
-> > client can invoke objects in QTEE:
-> >
-> >   - TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF_*
-> >   - TEE_IOC_OBJECT_INVOKE
-> >
-> > The existing ioctl calls TEE_IOC_SUPPL_RECV and TEE_IOC_SUPPL_SEND are
-> > used for invoking services in the userspace process by QTEE.
-> >
-> > The TEE backend driver uses the QTEE Transport Message to communicate
-> > with QTEE. Interactions through the object INVOKE interface are
-> > translated into QTEE messages. Likewise, object invocations from QTEE
-> > for userspace objects are converted into SEND/RECV ioctl calls to
-> > supplicants.
-> >
-> > The details of QTEE Transport Message to communicate with QTEE is
-> > available in [PATCH 12/12] Documentation: tee: Add Qualcomm TEE driver.
-> >
-> > You can run basic tests with following steps:
-> > git clone https://github.com/quic/quic-teec.git
-> > cd quic-teec
-> > mkdir build
-> > cmake .. -DCMAKE_TOOLCHAIN_FILE=3DCMakeToolchain.txt -DBUILD_UNITTEST=
-=3DON
-> >
-> > https://github.com/quic/quic-teec/blob/main/README.md lists dependencie=
-s
-> > needed to build the above.
-> >
-> > More comprehensive tests are availabe at
-> > https://github.com/qualcomm/minkipc.
-> >
-> > root@qcom-armv8a:~# qtee_supplicant &
-> > root@qcom-armv8a:~# qtee_supplicant: process entry PPID =3D 378
-> > Total listener services to start =3D 4
-> > Opening CRequestTABuffer_open
-> > Path /data/
-> > register_service ::Opening CRegisterTABufCBO_UID
-> > Calling TAbufCBO Register
-> > QTEE_SUPPLICANT RUNNING
-> >
-> > root@qcom-armv8a:~# smcinvoke_client -c /data 1
-> > Run callback obj test...
-> > Load /data/tzecotestapp.mbn, size 52192, buf 0x1e44ba0.
-> > System Time: 2024-02-27 17:26:31
-> > PASSED - Callback tests with Buffer inputs.
-> > PASSED - Callback tests with Remote and Callback object inputs.
-> > PASSED - Callback tests with Memory Object inputs.
-> > TEST PASSED!
-> > root@qcom-armv8a:~#
-> > root@qcom-armv8a:~# smcinvoke_client -m /data 1
-> > Run memory obj test...
-> > Load /data/tzecotestapp.mbn, size 52192, buf 0x26cafba0.
-> > System Time: 2024-02-27 17:26:39
-> > PASSED - Single Memory Object access Test.
-> > PASSED - Two Memory Object access Test.
-> > TEST PASSED!
-> >
-> > This series has been tested for QTEE object invocations, including
-> > loading a TA, requesting services from the TA, memory sharing, and
-> > handling callback requests to a supplicant.
-> >
-> > Tested platforms: sm8650-mtp, sm8550-qrd, sm8650-qrd, sm8650-hdk
-> >
-> > [1] https://www.kernel.org/doc/Documentation/tee.txt
-> >
-> > Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-> >
->
-> At this point, I think this series is ready to be applied to linux-next.
+Replace lock/unlock patterns with guard.This simplifies control
+flow especially with conditional jumps and improves code readability.
 
-There are still some warnings in "[PATCH v9 06/11] firmware: qcom:
-scm: add support for object invocation"
+Generated-by: Coccinelle SmPL
 
-/Jens
+Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+---
+ sound/spi/at73c213.c | 99 ++++++++++++++++++--------------------------
+ 1 file changed, 41 insertions(+), 58 deletions(-)
 
->
-> > Changes in v7:
-> > - Updated copyrights.
-> > - Updated Acked-by: tags.
-> > - Fixed kernel bot errors.
-> > - Link to v6:
-> >   https://lore.kernel.org/r/20250713-qcom-tee-using-tee-ss-without-mem-=
-obj-v6-0-697fb7d41c36@oss.qualcomm.com
-> >
-> > Changes in v6:
-> > - Relocate QTEE version into the driver's main service structure.
-> > - Simplfies qcomtee_objref_to_arg() and qcomtee_objref_from_arg().
-> > - Enhanced the return logic of qcomtee_object_do_invoke_internal().
-> > - Improve comments and remove redundant checks.
-> > - Improve helpers in qcomtee_msh.h to use GENMASK() and FIELD_GET().
-> > - updated Tested-by:, Acked-by:, and Reviewed-by: tags
-> > - Link to v5:
-> >   https://lore.kernel.org/r/20250526-qcom-tee-using-tee-ss-without-mem-=
-obj-v5-0-024e3221b0b9@oss.qualcomm.com
-> >
-> > Changes in v5:
-> > - Remove references to kernel services and public APIs.
-> > - Support auto detection for failing devices (e.g., RB1, RB4).
-> > - Add helpers for obtaining client environment and service objects.
-> > - Query the QTEE version and print it.
-> > - Move remaining static variables, including the object table, to struc=
-t
-> >   qcomtee.
-> > - Update TEE_MAX_ARG_SIZE to 4096.
-> > - Add a dependancy to QCOM_TZMEM_MODE_SHMBRIDGE in Kconfig
-> > - Reorganize code by removing release.c and qcom_scm.c.
-> > - Add more error messages and improve comments.
-> > - updated Tested-by:, Acked-by:, and Reviewed-by: tags
-> > - Link to v4: https://lore.kernel.org/r/20250428-qcom-tee-using-tee-ss-=
-without-mem-obj-v4-0-6a143640a6cb@oss.qualcomm.com
-> >
-> > Changes in v4:
-> > - Move teedev_ctx_get/put and tee_device_get/put to tee_core.h.
-> > - Rename object to id in struct tee_ioctl_object_invoke_arg.
-> > - Replace spinlock with mutex for qtee_objects_idr.
-> > - Move qcomtee_object_get to qcomtee_user/memobj_param_to_object.
-> > - More code cleanup following the comments.
-> > - Cleanup documentations.
-> > - Update MAINTAINERS file.
-> > - Link to v3: https://lore.kernel.org/r/20250327-qcom-tee-using-tee-ss-=
-without-mem-obj-v3-0-7f457073282d@oss.qualcomm.com
-> >
-> > Changes in v3:
-> > - Export shm_bridge create/delete APIs.
-> > - Enable support for QTEE memory objects.
-> > - Update the memory management code to use the TEE subsystem for all
-> >   allocations using the pool.
-> > - Move all driver states into the driver's main service struct.
-> > - Add more documentations.
-> > - Link to v2: https://lore.kernel.org/r/20250202-qcom-tee-using-tee-ss-=
-without-mem-obj-v2-0-297eacd0d34f@quicinc.com
-> >
-> > Changes in v2:
-> > - Clean up commit messages and comments.
-> > - Use better names such as ubuf instead of membuf or QCOMTEE prefix
-> >   instead of QCOM_TEE, or names that are more consistent with other
-> >   TEE-backend drivers such as qcomtee_context_data instead of
-> >   qcom_tee_context.
-> > - Drop the DTS patch and instantiate the device from the scm driver.
-> > - Use a single structure for all driver's internal states.
-> > - Drop srcu primitives and use the existing mutex for synchronization
-> >   between the supplicant and QTEE.
-> > - Directly use tee_context to track the lifetime of qcomtee_context_dat=
-a.
-> > - Add close_context() to be called when the user closes the tee_context=
-.
-> > - Link to v1: https://lore.kernel.org/r/20241202-qcom-tee-using-tee-ss-=
-without-mem-obj-v1-0-f502ef01e016@quicinc.com
-> >
-> > Changes in v1:
-> > - It is a complete rewrite to utilize the TEE subsystem.
-> > - Link to RFC: https://lore.kernel.org/all/20240702-qcom-tee-object-and=
--ioctls-v1-0-633c3ddf57ee@quicinc.com
-> >
-> > ---
-> > Amirreza Zarrabi (11):
-> >       tee: allow a driver to allocate a tee_device without a pool
-> >       tee: add close_context to TEE driver operation
-> >       tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
-> >       tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
-> >       tee: increase TEE_MAX_ARG_SIZE to 4096
->
-> >       firmware: qcom: scm: add support for object invocation
-> >       firmware: qcom: tzmem: export shm_bridge create/delete
->
-> Bjorn/Konrad,
->
-> Since majority of this series belong to TEE subsystem, are you folks
-> fine to ack these patches for Jens to pick them up for next?
->
-> -Sumit
->
-> >       tee: add Qualcomm TEE driver
-> >       qcomtee: add primordial object
-> >       qcomtee: enable TEE_IOC_SHM_ALLOC ioctl
-> >       Documentation: tee: Add Qualcomm TEE driver
->
->
->
-> >
-> >  Documentation/tee/index.rst              |   1 +
-> >  Documentation/tee/qtee.rst               |  96 ++++
-> >  MAINTAINERS                              |   7 +
-> >  drivers/firmware/qcom/qcom_scm.c         | 128 +++++
-> >  drivers/firmware/qcom/qcom_scm.h         |   7 +
-> >  drivers/firmware/qcom/qcom_tzmem.c       |  63 ++-
-> >  drivers/tee/Kconfig                      |   1 +
-> >  drivers/tee/Makefile                     |   1 +
-> >  drivers/tee/qcomtee/Kconfig              |  11 +
-> >  drivers/tee/qcomtee/Makefile             |   9 +
-> >  drivers/tee/qcomtee/async.c              | 183 ++++++
-> >  drivers/tee/qcomtee/call.c               | 820 +++++++++++++++++++++++=
-++++
-> >  drivers/tee/qcomtee/core.c               | 920 +++++++++++++++++++++++=
-++++++++
-> >  drivers/tee/qcomtee/mem_obj.c            | 169 ++++++
-> >  drivers/tee/qcomtee/primordial_obj.c     | 116 ++++
-> >  drivers/tee/qcomtee/qcomtee.h            | 185 +++++++
-> >  drivers/tee/qcomtee/qcomtee_msg.h        | 300 ++++++++++
-> >  drivers/tee/qcomtee/qcomtee_object.h     | 316 +++++++++++
-> >  drivers/tee/qcomtee/shm.c                | 150 +++++
-> >  drivers/tee/qcomtee/user_obj.c           | 692 +++++++++++++++++++++++
-> >  drivers/tee/tee_core.c                   | 127 ++++-
-> >  drivers/tee/tee_private.h                |   6 -
-> >  include/linux/firmware/qcom/qcom_scm.h   |   6 +
-> >  include/linux/firmware/qcom/qcom_tzmem.h |  15 +
-> >  include/linux/tee_core.h                 |  54 +-
-> >  include/linux/tee_drv.h                  |  12 +
-> >  include/uapi/linux/tee.h                 |  56 +-
-> >  27 files changed, 4423 insertions(+), 28 deletions(-)
-> > ---
-> > base-commit: 2674d1eadaa2fd3a918dfcdb6d0bb49efe8a8bb9
-> > change-id: 20241202-qcom-tee-using-tee-ss-without-mem-obj-362c66340527
-> >
-> > Best regards,
-> > --
-> > Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-> >
-> >
+diff --git a/sound/spi/at73c213.c b/sound/spi/at73c213.c
+index a0a7f90b6146..944bc3d56e4c 100644
+--- a/sound/spi/at73c213.c
++++ b/sound/spi/at73c213.c
+@@ -275,7 +275,7 @@ static int snd_at73c213_pcm_trigger(struct snd_pcm_substream *substream,
+ 	struct snd_at73c213 *chip = snd_pcm_substream_chip(substream);
+ 	int retval = 0;
+ 
+-	spin_lock(&chip->lock);
++	guard(spinlock)(&chip->lock);
+ 
+ 	switch (cmd) {
+ 	case SNDRV_PCM_TRIGGER_START:
+@@ -292,8 +292,6 @@ static int snd_at73c213_pcm_trigger(struct snd_pcm_substream *substream,
+ 		break;
+ 	}
+ 
+-	spin_unlock(&chip->lock);
+-
+ 	return retval;
+ }
+ 
+@@ -358,30 +356,30 @@ static irqreturn_t snd_at73c213_interrupt(int irq, void *dev_id)
+ 	int next_period;
+ 	int retval = IRQ_NONE;
+ 
+-	spin_lock(&chip->lock);
++	scoped_guard (spinlock, &chip->lock) {
+ 
+-	block_size = frames_to_bytes(runtime, runtime->period_size);
+-	status = ssc_readl(chip->ssc->regs, IMR);
+-
+-	if (status & SSC_BIT(IMR_ENDTX)) {
+-		chip->period++;
+-		if (chip->period == runtime->periods)
+-			chip->period = 0;
+-		next_period = chip->period + 1;
+-		if (next_period == runtime->periods)
+-			next_period = 0;
+-
+-		offset = block_size * next_period;
+-
+-		ssc_writel(chip->ssc->regs, PDC_TNPR,
+-				(long)runtime->dma_addr + offset);
+-		ssc_writel(chip->ssc->regs, PDC_TNCR,
+-				runtime->period_size * runtime->channels);
+-		retval = IRQ_HANDLED;
+-	}
++		block_size = frames_to_bytes(runtime, runtime->period_size);
++		status = ssc_readl(chip->ssc->regs, IMR);
++
++		if (status & SSC_BIT(IMR_ENDTX)) {
++			chip->period++;
++			if (chip->period == runtime->periods)
++				chip->period = 0;
++			next_period = chip->period + 1;
++			if (next_period == runtime->periods)
++				next_period = 0;
+ 
+-	ssc_readl(chip->ssc->regs, IMR);
+-	spin_unlock(&chip->lock);
++			offset = block_size * next_period;
++
++			ssc_writel(chip->ssc->regs, PDC_TNPR,
++					(long)runtime->dma_addr + offset);
++			ssc_writel(chip->ssc->regs, PDC_TNCR,
++					runtime->period_size * runtime->channels);
++			retval = IRQ_HANDLED;
++		}
++
++		ssc_readl(chip->ssc->regs, IMR);
++	}
+ 
+ 	if (status & SSC_BIT(IMR_ENDTX))
+ 		snd_pcm_period_elapsed(chip->substream);
+@@ -401,7 +399,7 @@ static int snd_at73c213_mono_get(struct snd_kcontrol *kcontrol,
+ 	int mask = (kcontrol->private_value >> 16) & 0xff;
+ 	int invert = (kcontrol->private_value >> 24) & 0xff;
+ 
+-	mutex_lock(&chip->mixer_lock);
++	guard(mutex)(&chip->mixer_lock);
+ 
+ 	ucontrol->value.integer.value[0] =
+ 		(chip->reg_image[reg] >> shift) & mask;
+@@ -410,8 +408,6 @@ static int snd_at73c213_mono_get(struct snd_kcontrol *kcontrol,
+ 		ucontrol->value.integer.value[0] =
+ 			mask - ucontrol->value.integer.value[0];
+ 
+-	mutex_unlock(&chip->mixer_lock);
+-
+ 	return 0;
+ }
+ 
+@@ -431,13 +427,13 @@ static int snd_at73c213_mono_put(struct snd_kcontrol *kcontrol,
+ 		val = mask - val;
+ 	val <<= shift;
+ 
+-	mutex_lock(&chip->mixer_lock);
++	scoped_guard (mutex, &chip->mixer_lock) {
+ 
+-	val = (chip->reg_image[reg] & ~(mask << shift)) | val;
+-	change = val != chip->reg_image[reg];
+-	retval = snd_at73c213_write_reg(chip, reg, val);
++		val = (chip->reg_image[reg] & ~(mask << shift)) | val;
++		change = val != chip->reg_image[reg];
++		retval = snd_at73c213_write_reg(chip, reg, val);
+ 
+-	mutex_unlock(&chip->mixer_lock);
++	}
+ 
+ 	if (retval)
+ 		return retval;
+@@ -473,7 +469,7 @@ static int snd_at73c213_stereo_get(struct snd_kcontrol *kcontrol,
+ 	int mask = (kcontrol->private_value >> 24) & 0xff;
+ 	int invert = (kcontrol->private_value >> 22) & 1;
+ 
+-	mutex_lock(&chip->mixer_lock);
++	guard(mutex)(&chip->mixer_lock);
+ 
+ 	ucontrol->value.integer.value[0] =
+ 		(chip->reg_image[left_reg] >> shift_left) & mask;
+@@ -487,8 +483,6 @@ static int snd_at73c213_stereo_get(struct snd_kcontrol *kcontrol,
+ 			mask - ucontrol->value.integer.value[1];
+ 	}
+ 
+-	mutex_unlock(&chip->mixer_lock);
+-
+ 	return 0;
+ }
+ 
+@@ -514,29 +508,20 @@ static int snd_at73c213_stereo_put(struct snd_kcontrol *kcontrol,
+ 	val1 <<= shift_left;
+ 	val2 <<= shift_right;
+ 
+-	mutex_lock(&chip->mixer_lock);
++	guard(mutex)(&chip->mixer_lock);
+ 
+ 	val1 = (chip->reg_image[left_reg] & ~(mask << shift_left)) | val1;
+ 	val2 = (chip->reg_image[right_reg] & ~(mask << shift_right)) | val2;
+ 	change = val1 != chip->reg_image[left_reg]
+ 		|| val2 != chip->reg_image[right_reg];
+ 	retval = snd_at73c213_write_reg(chip, left_reg, val1);
+-	if (retval) {
+-		mutex_unlock(&chip->mixer_lock);
+-		goto out;
+-	}
++	if (retval)
++		return retval;
+ 	retval = snd_at73c213_write_reg(chip, right_reg, val2);
+-	if (retval) {
+-		mutex_unlock(&chip->mixer_lock);
+-		goto out;
+-	}
+-
+-	mutex_unlock(&chip->mixer_lock);
++	if (retval)
++		return retval;
+ 
+ 	return change;
+-
+-out:
+-	return retval;
+ }
+ 
+ #define snd_at73c213_mono_switch_info	snd_ctl_boolean_mono_info
+@@ -549,7 +534,7 @@ static int snd_at73c213_mono_switch_get(struct snd_kcontrol *kcontrol,
+ 	int shift = (kcontrol->private_value >> 8) & 0xff;
+ 	int invert = (kcontrol->private_value >> 24) & 0xff;
+ 
+-	mutex_lock(&chip->mixer_lock);
++	guard(mutex)(&chip->mixer_lock);
+ 
+ 	ucontrol->value.integer.value[0] =
+ 		(chip->reg_image[reg] >> shift) & 0x01;
+@@ -558,8 +543,6 @@ static int snd_at73c213_mono_switch_get(struct snd_kcontrol *kcontrol,
+ 		ucontrol->value.integer.value[0] =
+ 			0x01 - ucontrol->value.integer.value[0];
+ 
+-	mutex_unlock(&chip->mixer_lock);
+-
+ 	return 0;
+ }
+ 
+@@ -583,14 +566,14 @@ static int snd_at73c213_mono_switch_put(struct snd_kcontrol *kcontrol,
+ 		val = mask - val;
+ 	val <<= shift;
+ 
+-	mutex_lock(&chip->mixer_lock);
++	scoped_guard (mutex, &chip->mixer_lock) {
+ 
+-	val |= (chip->reg_image[reg] & ~(mask << shift));
+-	change = val != chip->reg_image[reg];
++		val |= (chip->reg_image[reg] & ~(mask << shift));
++		change = val != chip->reg_image[reg];
+ 
+-	retval = snd_at73c213_write_reg(chip, reg, val);
++		retval = snd_at73c213_write_reg(chip, reg, val);
+ 
+-	mutex_unlock(&chip->mixer_lock);
++	}
+ 
+ 	if (retval)
+ 		return retval;
+-- 
+2.43.0
+
 
