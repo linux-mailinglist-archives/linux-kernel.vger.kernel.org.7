@@ -1,162 +1,115 @@
-Return-Path: <linux-kernel+bounces-807204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF884B4A18C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:49:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DCA5B4A196
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65C814E106E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B13A0188B34F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9AD2FFDEC;
-	Tue,  9 Sep 2025 05:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D318B2FABFE;
+	Tue,  9 Sep 2025 05:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLaGt75c"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k1hZ9Gb4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c13Tzwde"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF21B2FB08E;
-	Tue,  9 Sep 2025 05:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CB41E7C12;
+	Tue,  9 Sep 2025 05:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757396970; cv=none; b=FWn8Ctf8VVu7wg5pHe9aX0uimbRrSCABFxIRKtDo76jAt7uGbPWiE1snjEKv9msfP/RDpvEd2Gnwqry+3uoRguzMmjlql9+mJt18+MhHCMJ8f1mg0GkBmq38rHhku/pFL7I+tWLzdDGXGvxwV6sbVvwnHR6ncrHOKehe9v8vpEg=
+	t=1757397047; cv=none; b=jc11l0Q8lwrMGyEqMFLtSZbdRvvM17DAZ8tIevZhwp2oi0BYU7O4XPZiL5Xdo3H95u5ZYD3/VCJG+4dwh8p1uGog+FSiQC3NxpQWavKA2pr4epoNOaMwIXoZboOgCQbrLX7uptlqyVMOjw7tb9OFvVqe97GWM2lMLYPcFjcrtPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757396970; c=relaxed/simple;
-	bh=TJ5lxHVYWBSBJTcjNqsWmR5Ye/X+58ulc0qIwXZUCB4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NuvLbEFolcnJ0viiclOXXs+qGPVNHrmRTI8be1hbHQ+16LUXbj/HgcsP6089axcBCJ4m/58f76QORoR4PLfLl2ZXC6OtXOXR340at+ksMbDy6o1m0tc9NUbl8g3Ap1Y6FKcDX051bJftoD2QqmyudAkj5j81N2uEOOkA4z1nOL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLaGt75c; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-560888dc903so3128790e87.2;
-        Mon, 08 Sep 2025 22:49:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757396967; x=1758001767; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O708xsZOBgWwFjnWY+qzmKxcC8D6pc1i2hZ7VtZjolY=;
-        b=XLaGt75cRocNlp9Vk28Cpi8DcgbUs8BmlS6mhUiEmxKadSag3TK6akdjCI02YXljd0
-         /2UfCcCQzxCyToDBr6xSR9AUyFmDcH2XjC7/Gx6UvHh3q4JiASiA8JFEdzdHdwsNXbI+
-         r9eYp4KE2YWLDp/8sB2k36iHcI3mtHnAed6KjnplpqLpMzRmSAYVaBlNSgcPaNmPd0of
-         MfQUKuK7z34xJ2M6CeJeESibI6FfY1m9+IpdRYl7mOKH/4Moq2fKd5/x0z2uLEB4GvdY
-         t3OYxiHT0v8CczT7llJkgxJd8Q822fVIQEXDjFBjaYpf4d89IW7mmoWCwd4GEMDYGeE8
-         0I3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757396967; x=1758001767;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O708xsZOBgWwFjnWY+qzmKxcC8D6pc1i2hZ7VtZjolY=;
-        b=uKGc5pWjx697DvccGHCkR6PDVVWOJJL2svCOzPRj1HRX4gE+6+O6vRqR/WLsYZwv+Y
-         Jigj9JxhLs2iQwgQl5pKdKafeD7sItXcbR1NnQiRMrWos+Pj6fOD4a/nCKqaL4g0mjwy
-         tWrVJmfF52oSuSnOu+FBVAL2jPr+zkhJKZfE2R367rDm9qRsOFLrx7aLHvjY3eMqn06e
-         1tAuUsE7rkhuG/G60L4D5OeunB1HubW8ZYQQT/7dA6HrQO2gbU2Q4ojylLSQ/v4y3K/C
-         TH3tBqAeZv3/wkTmZrohnEp0qhw0nTozR9YjJiEOkZpd8KK7oavyQo9bMYApgjWg2YEt
-         Fh6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVnyokYFfUpORC0Cmf2HWpiRvUIuzkaJvL6PqOFLu3ImTut1GKAjV5ZImC0MlmrqMEuZpyOwelt9Pn/@vger.kernel.org, AJvYcCXWzHiDs/UkXorAqcc4Ly9XbXwdq5uznLYZd8z53mVjW07eA388QVzboCLu5M3bMRYv2/a8dy/TI7SUjr1V@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS8ZNwPTytMPhrYnnuDBvZognWqn0IgTNUUFgbI2CvCfirNyx1
-	JtdT7uBPv6ZRJl6RZMVPnfMo2SEJXH3hHgsY65lg3RwIM+stUJNKRf7n
-X-Gm-Gg: ASbGnctjV2bmRv8IbwznK96xRaqdISuVEyg4qIfcSI9TLtbbF3gxbvJ1glMqQ1OmKTL
-	6j8LI+HgM/LdzVqOUhZ7W+8RCgtY1GQ8J4JIPtAlutJAtTsCHAvWxFIzSBMbe83O99CHaipQWy/
-	n5L2qOxe5zQQMHtq4z70QERoCuREFLT8mJaulKRGKMKKFPWpZgUZTjjy7cfoz0zCIJpT/t0UYc1
-	ByM1nCrCcmGFl1zdMcSHCAQHrbw2CHRaJ7jVHudfvtnFnSUuxAt2QN+SC5i6ZY2Ex8rmjFInaor
-	3cfm1Z/HN4pq307OUpoGIdiDm1gClJg2NvrmfuGtBkPaMcDeSU3xK9I7mZ+7dr1Xn8ixGVcGkpu
-	SVdQy/ytxVpJjoA==
-X-Google-Smtp-Source: AGHT+IHecHO2xPhzrJIeLz2v8/7ReBgk/mWsEMMAwzRCz1+7h/xAITyrMXhn/4A96LuLtvug+daQFA==
-X-Received: by 2002:a05:6512:a92:b0:55f:4423:f52 with SMTP id 2adb3069b0e04-562636d7a39mr3712088e87.37.1757396966818;
-        Mon, 08 Sep 2025 22:49:26 -0700 (PDT)
-Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5680c4246e6sm277329e87.14.2025.09.08.22.49.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 22:49:26 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Nick Dyer <nick@shmanahar.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Henrik Rydberg <rydberg@bitmath.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] input: touchscreen: atmel_mxt_ts: add support for generic touchscreen configurations
-Date: Tue,  9 Sep 2025 08:49:03 +0300
-Message-ID: <20250909054903.11519-3-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250909054903.11519-1-clamor95@gmail.com>
-References: <20250909054903.11519-1-clamor95@gmail.com>
+	s=arc-20240116; t=1757397047; c=relaxed/simple;
+	bh=jPKmrBEAzWx3yEFQSPIXDJ5SIx1GI4BCpMAnMsYaMLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WqBPPrZwMWeAzFSYns1tPmogF5BdIJQhlzvyXohUJvt+Q74+2uqc0ayf7rWanRuaGZqs+ufwuJAfzlR8TAWwCMRmqow4aITH4hitEMaHP58DRBPRGFZ227yNG5CqLcHqCafKcwBJSXBm/TjDeY1fYQA+TwCfk6dQeVANYhebJBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k1hZ9Gb4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c13Tzwde; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 9 Sep 2025 07:50:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757397043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sdoYceIEVIRq3JbUcPPGyO0ETu/LZJ0mlmTiG+3Ebjs=;
+	b=k1hZ9Gb4fhxvBSc7F1OH+RhH3T80kB9JpmLg8RS1B3jE5c0f0f46SuGMvABIr5xYqWGQlF
+	lSuWDWfsHl2mN+2uPJDML3brhr60wRmvPv7r4UcSLpyXlp2pS69uMjPes7mFt/NdGU+jGw
+	0shxbFSCQUm/iIp8FWHEliPfb0qKv6AUrXUZCcvyc1zbjLNajSjmXx2SMCr5WA4c0xCGbm
+	RBPb8ZIEVs5IUHUMiNAtSK6kvJVjgYP9om7XXFnJeJEj3VpSWYuoOX7FxtcTKnl37XYwTF
+	cot3Cw4PyxMxNNQbfYAMH6s8vTmGJIgefl6DbXVAQg+zyf5XUm/837dhoT2ufQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757397043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sdoYceIEVIRq3JbUcPPGyO0ETu/LZJ0mlmTiG+3Ebjs=;
+	b=c13TzwdeSZF7BCmeD9V5BKPtL4MI+HHKJYiYLQpo85GEMsCaH1XVamxsMMTcPQwnt+21tj
+	Chb3VuuhsWghD4CA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Nicolas Schier <nsc@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH 2/2] kbuild: userprogs: also inherit byte order and ABI
+ from kernel
+Message-ID: <20250909074959-97a9ef88-ab55-4446-b107-e48cd9d4d268@linutronix.de>
+References: <20250813-kbuild-userprogs-bits-v1-0-2d9f7f411083@linutronix.de>
+ <20250813-kbuild-userprogs-bits-v1-2-2d9f7f411083@linutronix.de>
+ <20250827075334-3332c08d-66f3-427d-b0b2-4460e779f261@linutronix.de>
+ <20250827224935.GB414199@ax162>
+ <20250828083747-e819430a-986f-4f71-bbc8-e402e339c9a2@linutronix.de>
+ <20250903223131.GA2264021@ax162>
+ <aL0W9xvpktaLE9m2@levanger>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aL0W9xvpktaLE9m2@levanger>
 
-This provides support for generic touchscreen configuration options like
-swapped-x-y, min-x, min-y, size-x, size-y, etc.
+On Sun, Sep 07, 2025 at 07:24:07AM +0200, Nicolas Schier wrote:
+> On Wed, Sep 03, 2025 at 03:31:31PM -0700, Nathan Chancellor wrote:
+> > On Mon, Sep 01, 2025 at 11:51:03AM +0200, Thomas Weißschuh wrote:
+> > > Exactly. The normal cases can be handled generically. For example the kconfig
+> > > below works for architectures which only differ in byte order and 32bit/64bit,
+> > > which are most of them. MIPS should require more logic.
+> > > Also I'm ignoring x32, as it is never the kernel's native ABI.
+> > > 
+> > >  config CC_CAN_LINK
+> > >         bool
+> > > +       default $(cc_can_link_user,$(m64-flag) -mlittle-endian) if 64BIT && CPU_LITTLE_ENDIAN
+> > > +       default $(cc_can_link_user,$(m64-flag) -mbig-endian) if 64BIT && CPU_BIG_ENDIAN
+> > >         default $(cc_can_link_user,$(m64-flag)) if 64BIT
+> > > +       default $(cc_can_link_user,$(m32-flag) -mlittle-endian) if CPU_LITTLE_ENDIAN
+> > > +       default $(cc_can_link_user,$(m32-flag) -mbig-endian) if CPU_BIG_ENDIAN
+> > >         default $(cc_can_link_user,$(m32-flag))
+> > > 
+> > > 
+> > > > Feels like that could get complicated quickly but this would probably be
+> > > > the objectively most robust and "hands off" option.
+> > > 
+> > > Agreed.
+> > 
+> > Nicolas might feel differently but this does not seem terrible to me,
+> > especially with a macro to wrap the common logic, which is where I felt
+> > like things could get unwieldy. Feel free to send an RFC if it is not
+> > too much work.
+> 
+> yes, at a first glance this looks ok to me, too.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/input/touchscreen/atmel_mxt_ts.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+Ack. I'll take a shot at this, but it I might only get around to it next cycle.
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 322d5a3d40a0..fc624101147e 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -19,6 +19,7 @@
- #include <linux/firmware.h>
- #include <linux/i2c.h>
- #include <linux/input/mt.h>
-+#include <linux/input/touchscreen.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/of.h>
-@@ -355,6 +356,8 @@ struct mxt_data {
- 	enum mxt_suspend_mode suspend_mode;
- 
- 	u32 wakeup_method;
-+
-+	struct touchscreen_properties prop;
- };
- 
- struct mxt_vb2_buffer {
-@@ -888,8 +891,7 @@ static void mxt_proc_t9_message(struct mxt_data *data, u8 *message)
- 
- 		/* Touch active */
- 		input_mt_report_slot_state(input_dev, MT_TOOL_FINGER, 1);
--		input_report_abs(input_dev, ABS_MT_POSITION_X, x);
--		input_report_abs(input_dev, ABS_MT_POSITION_Y, y);
-+		touchscreen_report_pos(input_dev, &data->prop, x, y, true);
- 		input_report_abs(input_dev, ABS_MT_PRESSURE, amplitude);
- 		input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, area);
- 	} else {
-@@ -1010,8 +1012,7 @@ static void mxt_proc_t100_message(struct mxt_data *data, u8 *message)
- 			id, type, x, y, major, pressure, orientation);
- 
- 		input_mt_report_slot_state(input_dev, tool, 1);
--		input_report_abs(input_dev, ABS_MT_POSITION_X, x);
--		input_report_abs(input_dev, ABS_MT_POSITION_Y, y);
-+		touchscreen_report_pos(input_dev, &data->prop, x, y, true);
- 		input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, major);
- 		input_report_abs(input_dev, ABS_MT_PRESSURE, pressure);
- 		input_report_abs(input_dev, ABS_MT_DISTANCE, distance);
-@@ -2212,6 +2213,8 @@ static int mxt_initialize_input_device(struct mxt_data *data)
- 				     0, 255, 0, 0);
- 	}
- 
-+	touchscreen_parse_properties(input_dev, true, &data->prop);
-+
- 	/* For T15 and T97 Key Array */
- 	if (data->T15_reportid_min || data->T97_reportid_min) {
- 		for (i = 0; i < data->t15_num_keys; i++)
--- 
-2.48.1
 
+Thomas
 
