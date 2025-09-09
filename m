@@ -1,97 +1,106 @@
-Return-Path: <linux-kernel+bounces-808696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7FC2B503AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:02:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 764D4B503B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BCFE189D9B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:00:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB48E1BC6005
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DD8362071;
-	Tue,  9 Sep 2025 16:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RMD74kV8"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B951436CE19;
-	Tue,  9 Sep 2025 16:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E11372886;
+	Tue,  9 Sep 2025 16:57:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACC0362087;
+	Tue,  9 Sep 2025 16:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757437051; cv=none; b=HUHRvpNEqmsO3LdHgIiuuChrp42SEANoSvylVvU++BzQCX7dYL942rM9jiwkQxA+T0J2dLuxju7z4/fKoCaOtrxfRsp2zZGMObc0mhlte+0o0y4TRE5SNBQPpyAavp65mxLcQ7vsjazYu5ABJHmGPkoWIaV3FwBsXLwQRNLoZCs=
+	t=1757437062; cv=none; b=TmkBorBOOCrDiyyiKrL6hcE00cjlDakkkso57a6xzNFGEcXj/Ztjwmrj5YS+MSxKdVMMoeVCFNM38o1R6nf/+ABWtXA+0HBw5yqv/8gyX1vwlxqg8/kETxZIA2guol1beFiI2ODMuph7mgxYR3om9sgeSM9cn6ORGV/wUy+jcJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757437051; c=relaxed/simple;
-	bh=HVmUZ+Kf9fN2pSWhKRRh4CN/CjjrHWPGz82cE6IRqns=;
-	h=From:To:Subject:Date:Message-Id; b=BmKa7fIn/BLcn+wKYx6pb5+/CQ+lh5BOYDbgUHnLKF3n4PLy/rfjNgf0blAEbqbrNNJruwlRrdkMEy07u61LL1wMyvDvM+MtdwSYju6sObnCB0l4XOz06nFEojMAgesjFqbKKwyrhQVfDWSXpp13vh+Fs0h88B1EqaAyjcysQNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=RMD74kV8; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
-	by linux.microsoft.com (Postfix) with ESMTPSA id E2D7F2119CB4;
-	Tue,  9 Sep 2025 09:57:28 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E2D7F2119CB4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1757437048;
-	bh=lme8K4Nr1+yoqaz7H6lvUNp0A2O6Va0RIFe2JGydUTE=;
-	h=From:To:Subject:Date:From;
-	b=RMD74kV8g9ic+OtmzX19t+LcdSJGDKWM+owfdL/97U9Rv2f17n/HsuVdRDK6OM4OG
-	 hfscUIZphxW4NztwU18/7Y96smpq2BtQ86ZSLWuhmyIQt8XLwnqjGi7QvFo4hNSD1J
-	 ipB3HSpms4C9ET8HhqVHPDC1oXI2wBW+8h4LwogU=
-From: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	drawat.floss@gmail.com,
-	kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	deller@gmx.de,
-	arnd@arndb.de,
-	soci@c64.rulez.org,
-	rdunlap@infradead.org,
-	gonzalo.silvalde@gmail.com,
-	bartosz.golaszewski@linaro.org,
-	mhklinux@outlook.com,
-	ssengar@linux.microsoft.com,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-hyperv@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-Subject: [RFC 0/3] fbdev: remove Hyper-V framebuffer driver
-Date: Tue,  9 Sep 2025 09:57:24 -0700
-Message-Id: <1757437044-2170-1-git-send-email-ptsm@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1757437062; c=relaxed/simple;
+	bh=4dSZ165qmpGFOYD4MEJwykS+T7jpCQJECJirqZzh1lA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p7t3flQB8qZW71WvUS0DRJxpx9sUxgyInrLLwL+ljO+Ts71z4Yf1o9a7b3KJGccEPZALlUyruSC/FRj+RqIV2i/Ehe7hZDbe+l2BlPcX3BjSyKmttRvQm0GDo3Fc4I1xtpY1T57X6uCm5EMsigiv+DpZoqsUGZkGfiS0qsJMriE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB5762008;
+	Tue,  9 Sep 2025 09:57:31 -0700 (PDT)
+Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C76363F694;
+	Tue,  9 Sep 2025 09:57:33 -0700 (PDT)
+Message-ID: <fe25e8e0-4b3a-4427-8356-9235252db226@arm.com>
+Date: Tue, 9 Sep 2025 17:57:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/33] arm_mpam: Merge supported features during
+ mpam_enable() into mpam_class
+To: Ben Horgan <ben.horgan@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-19-james.morse@arm.com>
+ <b8af1782-0fb8-4e6e-8895-b229a1c67ebe@arm.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <b8af1782-0fb8-4e6e-8895-b229a1c67ebe@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This series removes the Hyper-V framebuffer driver. The Hyper-V DRM
-driver is available since kernel version 5.14 and provides full KMS
-support along with fbdev emulation via the DRM fbdev helpers. This makes
-the hyperv_fb driver redundant. So remove hyperv_fb driver.
+Hi Ben,
 
-Prasanna Kumar T S M (3):
-  drivers: video: fbdev: Remove hyperv_fb driver
-  drm: hyprev: Remove reference to hyperv_fb driver
-  drivers: hv: vmbus_drv: Remove reference to hpyerv_fb
+On 29/08/2025 14:54, Ben Horgan wrote:
+> On 8/22/25 16:29, James Morse wrote:
+>> To make a decision about whether to expose an mpam class as
+>> a resctrl resource we need to know its overall supported
+>> features and properties.
+>>
+>> Once we've probed all the resources, we can walk the tree
+>> and produce overall values by merging the bitmaps. This
+>> eliminates features that are only supported by some MSC
+>> that make up a component or class.
+>>
+>> If bitmap properties are mismatched within a component we
+>> cannot support the mismatched feature.
+>>
+>> Care has to be taken as vMSC may hold mismatched RIS.
 
- MAINTAINERS                               |    1 -
- drivers/gpu/drm/Kconfig                   |    3 +-
- drivers/gpu/drm/hyperv/hyperv_drm_proto.c |   15 +-
- drivers/hv/vmbus_drv.c                    |    4 +-
- drivers/video/fbdev/Kconfig               |    8 -
- drivers/video/fbdev/Makefile              |    1 -
- drivers/video/fbdev/hyperv_fb.c           | 1386 ---------------------
- 7 files changed, 8 insertions(+), 1410 deletions(-)
- delete mode 100644 drivers/video/fbdev/hyperv_fb.c
+> Intricate but, as far as I can tell, all correct.
+Yeah - its cpufeature.c all over again.
 
---
-2.49.0
 
+> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+
+
+Thanks!
+
+James
 
