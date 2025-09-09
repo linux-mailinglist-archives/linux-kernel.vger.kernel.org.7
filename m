@@ -1,178 +1,181 @@
-Return-Path: <linux-kernel+bounces-807653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD82B4A797
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:25:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6F5B4A7B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D4321893602
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:21:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBEBC4E7ECD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E55287503;
-	Tue,  9 Sep 2025 09:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F87D2D6E5C;
+	Tue,  9 Sep 2025 09:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Uhvcxmn6"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="iH0gXyKH"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AC528724E
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561872D640F
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757409332; cv=none; b=grcHYQhqDqOQt0d1MPRFcce4rlzc7V2eVVKnTxZEoVJae1IoWkSc+9nrFUAUZSlM4ygWD4JZu/V+12UuyhQOEiYiQadYq/ECdDk3mxen18pouoNZPav2FZbZlYkAPMtJxnhIPtTAojFXEUlUO2kiwuQjiPF5l4mzsb7UpVUqo8Q=
+	t=1757409346; cv=none; b=qLVAy8z5KgY+WNECoZTEKy5XidRi4B48Fs/YWQeChTmzIdg9wsg383zMXVl6rXuGLrsuuSEE2hN2RvSqwP8vNF4nE76uLHjxcM1VdU9SVNIDieM7ykUyvNsfW037F9LU/YmMabFQX1uL60gi7HKHXVp6UZwyV70ByCQWcgq59Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757409332; c=relaxed/simple;
-	bh=4XCHGFp+ERicI+7LiLzM+de5NgDQ3VodGXUFPKTOXa4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oYzDF1I6DfemI88wtrkA0J9ZSg7lhRJu3o4RCFKtOWKnlBBsHi5gkr7Xw63y8zmV84HUhXATcb+7KdEhJ1yFNSVjdNZ+ToJvTYLO449yZC4PuZzZSAF/5ERwXpT6qkQPpicrGDilhdvoxVmaJWM09cIEFKUgwfHs5FL4WKmlbmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Uhvcxmn6; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb7ace3baso927639966b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:15:29 -0700 (PDT)
+	s=arc-20240116; t=1757409346; c=relaxed/simple;
+	bh=sVPlOFYsePlUlVyNjlOXy8QPDA01db/Wvcm9y2+eUf8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mHrBiY7nu1+FGDGZcnL/FGH6CiQqUWV9M8Wf7HF4abJBIIAmL00qR07Su+LcjkN2Mcrde8Hy+AGrfyPyiUEs82I6WGOoJiZbugvasMnaKveqShkTOx5egMo40QJXLYgOBHHhpuKBYrxppuvb/u3FXwrFA6uDiRk4ysAytcXCuOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=iH0gXyKH; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3e5190bca95so1860748f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:15:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757409328; x=1758014128; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mp+RkJYLdE1Crh5KxPBrwpIKJDPei8RPqdYJQLcuk0c=;
-        b=Uhvcxmn63mKqWVfAshIl4vtaIYDzsfxHcV3yubXIw9ALR4Qlge5vCmzFjCs2m979Mz
-         2h5C+5qdim6qrXBh2pOrfMmQ3pMepEPjEGVxwUEgUakT1msQ8gBjJM4w0M8Mbrm1g1R2
-         E50ftXebOnDKyvfNH7gzstyge9l5591jdOG2k9tDgcSi4k3Jorv3cCBnipa3864DSeUm
-         VITEuvM6NVUatwOOJUFWTnPBN+yBDhtwqmavakk7yepWRlZi0tEsnuuRC73+ZYSz+vYK
-         CvDsHXs3NaNd3gRjFaZidP9XeRngSxA4zPH44gAKOyB4r2FPPm5kCSiF1enwXUZBALZn
-         5L4A==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757409342; x=1758014142; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tP+ETbVnBSQFrRZK3WwBGuGE5HSVEMwxjNtKrFEHY8A=;
+        b=iH0gXyKHBnyb9tjp6vpWY6VlMKF9VjNqWlXcNzWKwy2TsIqGZBr9gVvwaerHG7s3YL
+         llS6Po+PrsliYsRPf36fLQELla1i8Ez23T1TnmL/NiS/kbZNYaaTQmanlMyb4kSLoDFo
+         oYu6GwgL8kAiWfxCUXMrc6pUl9pSxc9schRCdYfXEch3LrPfGpHBw2cKWX/6WmSwik47
+         gMuMFr0YQ4Ce47tGt6UpXP4iTdtp/iA/DHKBjCRSVCKZSGlIxuKcc4cJ9vdjathWgh4F
+         kWeCRbMfrYHHdMagV7naFnIfMjWaFCh0X8yy6XOLcb9mDk9Vrzrc9tqDDIZAorgPDnoQ
+         MdPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757409328; x=1758014128;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mp+RkJYLdE1Crh5KxPBrwpIKJDPei8RPqdYJQLcuk0c=;
-        b=otFnzJUcA+wrcHsoAhb13q3Ep6hYf1axY7ja6WqgApkN01AEZpmhoJKGKwriLVyblm
-         t+8F6i4R2OOxJOhcOaUYXrGPGtEgU7BA4HNw5AQzjzelBIEGIlJcYk5RUed7l/en3vBi
-         vNGOxC+w1r70H65OfNY2YGK3QCweXPLzbGh6iaZNTTSq7ylewwS73vCAAoBl2IUIuqUu
-         AZHNpXPhT8oXAFQohU+2n9FZexqvQzD4V9q8XU+4Dm8KorhD04wUtwhfstNj4R3r22oj
-         i8qxWSix4IPCB2jyCE6rnqEeZlUx/Yxja0i8SOqWyWcx/f1+5Zwf8Xd5YgMsFVkla9zF
-         Z0/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWxoHYHnsI75m2HOWZ3XGk85dVOV+5zverDyYMrCv5F7+PYD/04J9SQqnBGAQObHQOJbKiM2y3fDfCuDvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysHx/23ibsFmXMXeox6d5YbbPv266jabJM7atzm1fVMFxNOvom
-	3P+eHbZgnHyXhXK1VjWjne9nvPk/KM7Ourb79vm1ZfvN0K5XlXI3R4HapzOtZ7+Oa+U=
-X-Gm-Gg: ASbGncsFzVD4OgjpFCFvWxyd5bI4QI/VAl408PNFKo9qkrqMOPQpUVausRdqfaIeXAn
-	Tcc5Gx3nTkl1LNA68m4wopRk3dDsHjBtpu75KVnvCfCSpQ1HT2Ukx/PEF8Glv5Kc47zQxvHSxiC
-	UuTmqNBxLrtcuS15z5cG+zvPGVNqCMXrAfNBtlIuouU0kNkXdEtEfuoOUUoOHGp/qN/8WuiDT4U
-	NWN471e8ZEebtgRUXxZQ2qoJECzEYLDpRsUvZXIRhl49teAPHNeZHe2APnS2qC87k63WCodHsMf
-	lGskwCRm0BI7sZl+0hdjmrI3eKL7W5FGrNAX3wC7/HU7vqbUcYkTFBQUjduD0CgLGasDdqb0kLW
-	re+slwovMMdTjIDFwCpCzK8M5Xs6yYzoLAg==
-X-Google-Smtp-Source: AGHT+IHUbvikxhHUTGxZjrj/IiuBOao2wd7cJlQ7Lb/Yre+ntGCxGyZdytPfWHiAGIqSj5PfiD+38Q==
-X-Received: by 2002:a17:907:a03:b0:afe:be04:5ce2 with SMTP id a640c23a62f3a-b04b17c3124mr1010187766b.64.1757409328276;
-        Tue, 09 Sep 2025 02:15:28 -0700 (PDT)
-Received: from localhost (109-81-31-43.rct.o2.cz. [109.81.31.43])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b04190700a4sm2235051066b.63.2025.09.09.02.15.27
+        d=1e100.net; s=20230601; t=1757409342; x=1758014142;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tP+ETbVnBSQFrRZK3WwBGuGE5HSVEMwxjNtKrFEHY8A=;
+        b=fQR990G4/606exr8uWacV4qXsRoqBhNPCYaSqZ0hgEZW7JLJ38DCYIkdxZtK18NDAD
+         ++I9m1ZOgWW6x3o6mYSIAQfWzKl3NAMXR+2EEgkDHtq1ZGrJIL7ReSf8KtxX7FCcwHXz
+         H90vOwtHZjOt5iBQxVVj4eZe7Jf91+bwgJNxZc/AyuMYjhojV70sjOhwkAjYS9INlf0h
+         qssiGPnLjbQD48TvL2EtNfHGjPhoVtNwQeLug3v6DtMYDtvgT3GBa4v3S/dUg3N2A3JQ
+         /jovmNK+nGQK3BQSGb7sw1FvMu2szChVrfzQ1lhOTv5la2l3zFv+7dIoub/Zb7M4SI6M
+         ktgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbuKHY9gVB5f/rMJfd9JVCn2wfyHtZ9oIHkrelmWiF+Zh25VpiWub1IepKWb3vbSfTR6b8xVp4r2BWgg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnDf+bXMYPIGYHRreF/zWz1XfFEmlHNvFv9lBJNBdOYXX7UPk9
+	SNlLV12K83nHY0UcoxIiCfzPWr5pJW8YYgD1/d1azZ0yHSTNLvYZ5KVRL9p9a0xVsII=
+X-Gm-Gg: ASbGncsciMlLklcImaX3CBtEw0MAIQd+TxkTf9wVoJc3k10sq9DRHxYY2/p3s9awk0Z
+	p68wFao6hF7/KE0nhhf470yU2pL4f8Xi4LmQhvny7i0L4BN7FgZJ4uJnp1GHgu2Q0Sa60PMqqZd
+	ShHQqKh0qF2Wvz+OJBNdzqXIKCFSv9WTJsF8HGmsGFKx9SUASgxgvBAMwqVKP4eWbW+QxdAhGjs
+	mUcOfbPjZOXWlnqCSZ2VHCxY6kWSa8PEoG/VJ7FmuD8SHXVBtQ3tf+lVGZ6pd22eMaQIkJ/NPme
+	XIsY9/rUTUrMk56s5FWWmm0t8+aQdIqaqbDi8KfqzVt/K4oY6IZz1/wQgXrZJP0SuMcC5XOj4Vv
+	2kNnlG0iqQg7GJgCO2Q==
+X-Google-Smtp-Source: AGHT+IFxM+HICQsKhDaBX2Rk22xBRkSqIHTShzXPmAQzNiNBdQoOhni1m43entJS3MAB8D5d0TZglQ==
+X-Received: by 2002:a05:6000:3106:b0:3e6:116a:8fed with SMTP id ffacd0b85a97d-3e64bde97a5mr9793821f8f.45.1757409341378;
+        Tue, 09 Sep 2025 02:15:41 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:c1ee:7be9:3ebb:6cc0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521c9caasm1900039f8f.19.2025.09.09.02.15.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 02:15:27 -0700 (PDT)
-Date: Tue, 9 Sep 2025 11:15:26 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: zhongjinji <zhongjinji@honor.com>
-Cc: rientjes@google.com, shakeel.butt@linux.dev, akpm@linux-foundation.org,
-	tglx@linutronix.de, liam.howlett@oracle.com,
-	lorenzo.stoakes@oracle.com, surenb@google.com, lenb@kernel.org,
-	rafael@kernel.org, pavel@kernel.org, linux-mm@kvack.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	liulu.liu@honor.com, feng.han@honor.com
-Subject: Re: [PATCH v8 1/3] mm/oom_kill: Introduce thaw_oom_process() for
- thawing OOM victims
-Message-ID: <aL_wLqsy7nzP_bRF@tiehlicka>
-References: <20250909090659.26400-1-zhongjinji@honor.com>
- <20250909090659.26400-2-zhongjinji@honor.com>
+        Tue, 09 Sep 2025 02:15:40 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 00/15] gpio: replace legacy bgpio_init() with its
+ modernized alternative - part 4
+Date: Tue, 09 Sep 2025 11:15:27 +0200
+Message-Id: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909090659.26400-2-zhongjinji@honor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC/wv2gC/x2MywqAIBBFf0Vm3YCKIfUr0cJqsln4QCOC6N+TN
+ od7Fvc8UKkwVRjFA4UurpxiE9UJWA8XPSFvzUFL3ctBGvSZE4bQ8K81xQuzK6fBntRurV6c1Qb
+ aPxfa+f7b0/y+HxskalRrAAAA
+X-Change-ID: 20250904-gpio-mmio-gpio-conv-part4-5e1f772ba724
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>, 
+ Doug Berger <opendmb@gmail.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2606;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=sVPlOFYsePlUlVyNjlOXy8QPDA01db/Wvcm9y2+eUf8=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBov/Ays28j7tkwm0rJbaeX4j6Qex2lOj/LqMAOK
+ 1PDzm34psOJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaL/wMgAKCRARpy6gFHHX
+ ciEyD/4rjlTpLHFFOAETzbM8BZ7x3WlTsL5ofRL45hTWSkD3Bsd0OZjcixkAe0OHW2e3zFw2szF
+ KeXpnt2sCS7J2vacxQtg0jH2fWZAf5bZ+OoGUTAieReshYzmxRi1YJFUgIrAX33d2SDzSvQrZvR
+ VCG+aKnwtsgLIS3bpQ1AqNCIuxAy4Ry9lCAY3GF9UpNsbYioHxmLpykb53ferurCzD0dP9d2FfA
+ qniXI92yE/VlFaWTo+gqGjUntxHg8iOH4ZhmUCDpE+Jd4zHfEBtw+OfWRmZkRnTp79FeNdacHx5
+ p6k4r4XWU7dQ7BVOwC7MAvwAE8H7OI0viWBqD/6NVLyk6JNskJqsOwu8e94Ddt2gGDw0ARDpeD+
+ I7mJlpyD/qmL48+7obrP2XRtew+5bs1uUUL9Agv17b6I59tLZFIO+8lix4XEyj9/Fg2w8cNkyZY
+ c24JWXw0s0j+0JaiJKzZ5d6j7Bt4uYvxV2CCUoJ7bN1qi60NyHcPYrP2AwQ8sZKU1xtPedwTG+O
+ KxwLrf9Cweg0/cRvkk6QQ82ss5f+Y7QsEwe7HuuKRKPRU9azoXk5BTPKu4ym9w5yjZDgjO+RreU
+ OYdfHdNscHAHrLf43/UNtW2sSEmvItWokNn8tfM/e/oZXWUa6NjPf7lUXt62Wdv9ck60Df/2/bM
+ oqEJP5tTEFOaNGA==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Tue 09-09-25 17:06:57, zhongjinji wrote:
-> OOM killer is a mechanism that selects and kills processes when the system
-> runs out of memory to reclaim resources and keep the system stable.
-> However, the oom victim cannot terminate on its own when it is frozen,
-> because __thaw_task() only thaws one thread of the victim, while
-> the other threads remain in the frozen state.
-> 
-> Since __thaw_task did not fully thaw the OOM victim for self-termination,
-> introduce thaw_oom_process() to properly thaw OOM victims.
+Here's the final part of the generic GPIO chip conversions. Once all the
+existing users are switched to the new API, the final patch in the
+series removes bgpio_init(), moves the gpio-mmio fields out of struct
+gpio_chip and into struct gpio_generic_chip and adjusts gpio-mmio.c to
+the new situation.
 
-You will need s@thaw_oom_process@thaw_processes@
+Down the line we could probably improve gpio-mmio.c by using lock guards
+and replacing the - now obsolete - "bgpio" prefix with "gpio_generic" or
+something similar but this series is already big as is so I'm leaving
+that for the future.
 
-I would also add the caller in this patch.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (15):
+      gpio: loongson1: allow building the module with COMPILE_TEST enabled
+      gpio: loongson1: use new generic GPIO chip API
+      gpio: hlwd: use new generic GPIO chip API
+      gpio: ath79: use new generic GPIO chip API
+      gpio: ath79: use the generic GPIO chip lock for IRQ handling
+      gpio: xgene-sb: use generic GPIO chip register read and write APIs
+      gpio: brcmstb: use new generic GPIO chip API
+      gpio: mt7621: use new generic GPIO chip API
+      gpio: mt7621: use the generic GPIO chip lock for IRQ handling
+      gpio: menz127: use new generic GPIO chip API
+      gpio: sifive: use new generic GPIO chip API
+      gpio: spacemit-k1: use new generic GPIO chip API
+      gpio: sodaville: use new generic GPIO chip API
+      gpio: mmio: use new generic GPIO chip API
+      gpio: move gpio-mmio-specific fields out of struct gpio_chip
 
-> Signed-off-by: zhongjinji <zhongjinji@honor.com>
+ drivers/gpio/Kconfig            |   2 +-
+ drivers/gpio/TODO               |   5 -
+ drivers/gpio/gpio-ath79.c       |  88 +++++-----
+ drivers/gpio/gpio-brcmstb.c     | 112 +++++++------
+ drivers/gpio/gpio-hlwd.c        | 105 ++++++------
+ drivers/gpio/gpio-loongson1.c   |  40 +++--
+ drivers/gpio/gpio-menz127.c     |  31 ++--
+ drivers/gpio/gpio-mlxbf2.c      |   2 +-
+ drivers/gpio/gpio-mmio.c        | 350 +++++++++++++++++++++-------------------
+ drivers/gpio/gpio-mpc8xxx.c     |   5 +-
+ drivers/gpio/gpio-mt7621.c      |  80 ++++-----
+ drivers/gpio/gpio-sifive.c      |  73 +++++----
+ drivers/gpio/gpio-sodaville.c   |  20 ++-
+ drivers/gpio/gpio-spacemit-k1.c |  28 +++-
+ drivers/gpio/gpio-xgene-sb.c    |   5 +-
+ include/linux/gpio/driver.h     |  44 -----
+ include/linux/gpio/generic.h    |  67 +++++---
+ 17 files changed, 548 insertions(+), 509 deletions(-)
+---
+base-commit: 65dd046ef55861190ecde44c6d9fcde54b9fb77d
+change-id: 20250904-gpio-mmio-gpio-conv-part4-5e1f772ba724
 
-Other than that looks good to me. With the above fixed feel free to add
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  include/linux/freezer.h |  2 ++
->  kernel/freezer.c        | 19 +++++++++++++++++++
->  2 files changed, 21 insertions(+)
-> 
-> diff --git a/include/linux/freezer.h b/include/linux/freezer.h
-> index b303472255be..19a4b57950cd 100644
-> --- a/include/linux/freezer.h
-> +++ b/include/linux/freezer.h
-> @@ -47,6 +47,7 @@ extern int freeze_processes(void);
->  extern int freeze_kernel_threads(void);
->  extern void thaw_processes(void);
->  extern void thaw_kernel_threads(void);
-> +extern void thaw_oom_process(struct task_struct *p);
->  
->  static inline bool try_to_freeze(void)
->  {
-> @@ -80,6 +81,7 @@ static inline int freeze_processes(void) { return -ENOSYS; }
->  static inline int freeze_kernel_threads(void) { return -ENOSYS; }
->  static inline void thaw_processes(void) {}
->  static inline void thaw_kernel_threads(void) {}
-> +static inline void thaw_oom_process(struct task_struct *p) {}
->  
->  static inline bool try_to_freeze(void) { return false; }
->  
-> diff --git a/kernel/freezer.c b/kernel/freezer.c
-> index 6a96149aede9..17970e0be8a7 100644
-> --- a/kernel/freezer.c
-> +++ b/kernel/freezer.c
-> @@ -206,6 +206,25 @@ void __thaw_task(struct task_struct *p)
->  		wake_up_state(p, TASK_FROZEN);
->  }
->  
-> +/*
-> + * thaw_oom_process - thaw the OOM victim process
-> + * @p: process to be thawed
-> + *
-> + * Sets TIF_MEMDIE for all threads in the process group and thaws them.
-> + * Threads with TIF_MEMDIE are ignored by the freezer.
-> + */
-> +void thaw_oom_process(struct task_struct *p)
-> +{
-> +	struct task_struct *t;
-> +
-> +	rcu_read_lock();
-> +	for_each_thread(p, t) {
-> +		set_tsk_thread_flag(t, TIF_MEMDIE);
-> +		__thaw_task(t);
-> +	}
-> +	rcu_read_unlock();
-> +}
-> +
->  /**
->   * set_freezable - make %current freezable
->   *
-> -- 
-> 2.17.1
-
+Best regards,
 -- 
-Michal Hocko
-SUSE Labs
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
