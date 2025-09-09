@@ -1,339 +1,322 @@
-Return-Path: <linux-kernel+bounces-807369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2381B4A389
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:29:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5135BB4A38B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72D293BB890
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:29:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B4FA64E156C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7081D2EB87F;
-	Tue,  9 Sep 2025 07:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E412307AE1;
+	Tue,  9 Sep 2025 07:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyCQOyQd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="S74u19D+"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012055.outbound.protection.outlook.com [52.101.66.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B397220687;
-	Tue,  9 Sep 2025 07:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757402978; cv=none; b=ujH5AEin3o6eH0HyNxrrWSWTeKhLB43NvIGIsVJ3vVrqFiEZdKxRx6PvjkGqGQukll8Ys5qWUsAzesWpzxIT21fdMRlZzW77TRFHOvppw79m6OKBaBtQUdfHiB0FGRJrJfYxmBPDW7H8Fz2NG38+uSF7WUaN7ZUN+Fc9tU9+REU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757402978; c=relaxed/simple;
-	bh=eOXxHeTvjKv0CA0uVr+x06ld7tUBMbROfdkDUJSVBdo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pNY7abd9pyffJg3MQ8CgVICWOd5PJv+f2f7qGFpjyMn1OrA95TK2A67BSTFsjE81VgfCc5F4Ux7vU4V/PnKuLn/dwfZFUi1pmHVvAF7Uk8Nb1HRdr2p2fe3uNbFQ+gvSBVTPptCHlO+URgqGvk7GmYxoWgRI8+BzpIke03on3Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyCQOyQd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D885C4CEF5;
-	Tue,  9 Sep 2025 07:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757402978;
-	bh=eOXxHeTvjKv0CA0uVr+x06ld7tUBMbROfdkDUJSVBdo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=DyCQOyQdgsfjremiekroOGSRGrhElKd4Eb+dOYVWHJWksUVENk5Ls1We+oiFf322A
-	 OcJWAT2wpMuQ04inVppIlnVKFalJ/Xidfb6VSep6jLzQeMgCSYOIbN6ctQNRY0SIhw
-	 4RDPbPkDx4G3OANvQ+4h46J4TTmRCFTAQ9QmbcdcLDhfxRmmPzstOJrkSGDon5TLse
-	 rgepuBQrDXVHdt+5DmoIyotRLZzx8Pz77QuuMafDWjhFrLbyx3JiGoTucM81M/zPny
-	 7aFHJcallOiobwa9E6TorH2VjK4bBOtFgoM1NViGjG2/w2ReEHaRY9vLNcSQ+xDiLA
-	 pKY2KMB5FCQpg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B13CCAC58C;
-	Tue,  9 Sep 2025 07:29:38 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Tue, 09 Sep 2025 15:29:12 +0800
-Subject: [PATCH v4 2/2] clk: amlogic: add video-related clocks for S4 SoC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEF83081A3;
+	Tue,  9 Sep 2025 07:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757403023; cv=fail; b=HEtlxVdaV2/fD3edgj70O1hHUVOGVIcQBaBwBALTJ6TvpShrY5jHEZPUCRPOrikRAl35v6Pt/JJAE4wQX5STGIlVvFXdYQ517hTxYFI7aOEFx87btqMA938ou2MJqj7Wc9TXDEMBzRu2ETq+L5GO6Ve7NbwZPePauRD+1WpqOeU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757403023; c=relaxed/simple;
+	bh=E7Hf5VCZEqNBtcwc5ArzxAvODWPipBuyS5dXfYgOyQw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MjU5db3x1K2J56jqzrMpxVvxF24PUj8OMsmVnbqIqtP9Rf4lIEQRvU4PXgvzI6aS9g0nr8057+egpTAB5r9A5YOugKom58o7rxhkiK0ecH2OUcXZRxJknYAZyoYmvHY5Xc+TRJ/6so1ghlrwkYobHpScguKciZNpFMvFtIv6LT8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=S74u19D+; arc=fail smtp.client-ip=52.101.66.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h3yvWZBk9r+khT0XBtHKlsTKO+BfM7w2azakPnY0Ar2E50HmQh50WqDlA/91pu8oifkihc9ojw2rvCRhXnH5QwMj/oKAVXvuZZ8TSEwClxg7KW6LLXqqES0isXUoe+IWAa4W3If1rAK8a9ypX5wX0h1bs+jegVbTKlKzVH8kDbA7TN8PY33c1dE4ngs8Lgub7b7C7wDwn/8YmuCqir1a/4eMh6XiqP8mpCzv2TdftbpToNBAkJ9o6BgwVKqh2nfM3gfiQd87J987j91R4Hh3+ip0wxXhTyGv3GAMf1GEv/9yyVs5Y9FAOTCt//bmgzg5NzfDap2ZzN/9CS9q3o1mlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fr2kPHkrILfv3jTzpfO5iIdTlYFfcSS+Dhp0VwJ0e1M=;
+ b=VifW7IfX4rG6cIBGzubIERsZoRJZ6h0Ky8oNtfX7iF359hwYU4lugxnXCGf6mTLgHhZh6EyGjnGYHLwNuNJtnJ0Oj0r+TL6N87ZXZBAX5xI7uf2IMJYuHI8UGnR42BJhoW/3PrAwPz2iev/ttjznIdD+8M2iYwZyXHSUeAtcdt1cE0926VrxrgDkRcqjEwLXgfvL2HyQTN2XkbbVaL0O1e2klg5gbXqNFtLqNbnEIODEgWsMGOHn0y1zqbEe5QYFyBQrpGeEHpLK5kWw4XXELK08/DmdMmXJbX60S7HezoDGCdl885tUpTIOp6NOrciDgQUJI1+iBYnmcST8nyZq7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.206) smtp.rcpttodomain=google.com smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fr2kPHkrILfv3jTzpfO5iIdTlYFfcSS+Dhp0VwJ0e1M=;
+ b=S74u19D+/MRQqPQh2Lx83G/7V37f65Jec0oyO3ueplrlalL5/uE/WPLKF8HMTMaUk+Ep+QtwziF592v850wpP6T1YZ10Jmdpt/qhmivhOeyqwv/RkucuWHD7boUzfEcjzFFPcXSNJIPg0QyqtCwRU53lRa140KquTMsjUQ9XrSJ4Jviaugs26x/p5YgrkktIZpiwNkxAEI+VtRtdkyOcF/0LX7UFRsx88xE5qt0E1CQZLfvtxqT9dy5CtB/IlQ1PpiW1eSKRbFS1kXMvH0QDQ2LA8/1fLGRwb8pl1DOMs15RWhzGUdw9SiS/Z9i3yaTK0W83VHsQnhXKBtLPzyszVA==
+Received: from AM8P251CA0010.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:21b::15)
+ by PA1PR10MB8642.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:440::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
+ 2025 07:30:11 +0000
+Received: from AMS0EPF0000019D.eurprd05.prod.outlook.com
+ (2603:10a6:20b:21b:cafe::69) by AM8P251CA0010.outlook.office365.com
+ (2603:10a6:20b:21b::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.22 via Frontend Transport; Tue,
+ 9 Sep 2025 07:30:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.206) by
+ AMS0EPF0000019D.mail.protection.outlook.com (10.167.16.249) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Tue, 9 Sep 2025 07:30:11 +0000
+Received: from RNGMBX3003.de.bosch.com (10.124.11.208) by eop.bosch-org.com
+ (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 9 Sep
+ 2025 09:30:01 +0200
+Received: from [10.34.219.93] (10.34.219.93) by smtp.app.bosch.com
+ (10.124.11.208) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 9 Sep
+ 2025 09:30:00 +0200
+Message-ID: <45f6f6e0-bd1e-41e7-8c8e-bb556644a873@de.bosch.com>
+Date: Tue, 9 Sep 2025 09:29:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
+To: Matthew Maurer <mmaurer@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	"Alex Gaynor" <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+	<bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, "Danilo
+ Krummrich" <dakr@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Sami
+ Tolvanen <samitolvanen@google.com>, Timur Tabi <ttabi@nvidia.com>, Benno
+ Lossin <lossin@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
+ <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
+Content-Language: en-GB
+From: Dirk Behme <dirk.behme@de.bosch.com>
+In-Reply-To: <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-add_video_clk-v4-2-5e0c01d47aa8@amlogic.com>
-References: <20250909-add_video_clk-v4-0-5e0c01d47aa8@amlogic.com>
-In-Reply-To: <20250909-add_video_clk-v4-0-5e0c01d47aa8@amlogic.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757402973; l=7142;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=hxUpNyutlY08PsI4fM0HrJ0LK2pJdLtd3LRl8Z/JKsE=;
- b=piwS9s3BANi/UZtaoaH1gL63mepZecjIs8aHH2ZVulh6L1UjpvphHMnahn9RD2L5IdzFjEE8R
- dX40+D+rm0PDe1Lc1vgs0FK/In/kobGJO5Z4b7rNF2DMHEKHKNXFz9z
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS0EPF0000019D:EE_|PA1PR10MB8642:EE_
+X-MS-Office365-Filtering-Correlation-Id: e1e6ac3a-47b9-4727-f918-08ddef72b601
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013|7053199007|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MlJvcTFDdk5LUXg2T0dHZXBYRW9yVXBNd0NpcWhUdk93bWhSZ0VtQXpLUnEv?=
+ =?utf-8?B?NFkrQ3NyMmV2ZHJBZkg5Z2U1WUVDcHpLT0xoeFBiRzVON1N0cDJ6b0F6RlNH?=
+ =?utf-8?B?WnVkTnRwUElHczl1NEdnc0J0L3NvTmxoQlZySGVnMTkySER4YlRyVWJwRmhl?=
+ =?utf-8?B?Mm5nTzRLbFN4c2pGS1VxTkx6QldoY2l5Y0xkQXZIR3BBaHpYdUJrbi9Vbjkw?=
+ =?utf-8?B?MkErbzdiU0FtWEEyNlRFcGNpbWJhV2VCMG9ZZDVycDVSODBZeEJOWUlMb2w5?=
+ =?utf-8?B?YUo0QU5ETTlHeU93WTJFV01BZVRJTGxwVGZZRTdLUHY4STR3WEh1MkFYd01T?=
+ =?utf-8?B?WmZyZFE0Qm1KM1dVRmJkcVpPRmNvUzJrQTd0cnBCLzNSUEhZdnhwUmV3Tnl1?=
+ =?utf-8?B?am96UGpOVVpLK0REYXRyRU9DN2pCTEROOHQ5Qk5IMjEzanlvUEhScmdVV3Jp?=
+ =?utf-8?B?dHJ2bzNZQTJINGR1Z3B6SGoyM3ZXUXVoTnZJcmdjZlpFUVh4bTQyampwZTBW?=
+ =?utf-8?B?TGJQS1JqbnRpTFQvbzV3cWlWdmtZbWhKSFZZRUV5MG92T3hMeVllV3U3NVFO?=
+ =?utf-8?B?azkyR1JadHJZL0ZpNkdickExNHBvanVQc2x2M2t4alBvV2dPZzBrekF2dzN1?=
+ =?utf-8?B?UnRrNTQ4eVgwcDJXWTZ3NDdnUm9JTFZlWVRJN3U0QStqTW4va3J2ZE5TZzBC?=
+ =?utf-8?B?dE9yV0FFNENFeE5mY2dNc1ZYdnVQUjhCekczMG9sQXBJUFZzNGZKT2ZmTEJX?=
+ =?utf-8?B?b1pvL1RscVdiajliYW9wNUNScHlGdzZ5MkMzSUE0ZTBWZXVNbG9zV254eUlC?=
+ =?utf-8?B?KzlIdTgrYjhhY1lUbWxFbm1KdURjWituVmpJYWFoVDB4WXRYdlJNdG4weEUy?=
+ =?utf-8?B?aUtxMTNreDZtOWZVQ1JYU2RvWXByYnhIZXF2ZHJrMmZTeHdTejhJZDdVVEtk?=
+ =?utf-8?B?K0NtcGtndHV4UGZTZlpRNm1ZeWo3YjFXQXF4bHRCMkZJMDljMDRXejM3R3B6?=
+ =?utf-8?B?YUx4VllyL2RqSUtia1RZclh1MjlEQlRUNTlkK0NDNS9XM0hXM2R1YW4rVnpR?=
+ =?utf-8?B?TTJzakxsaU1hL055YnkwMjVzQlhRNnRiNE5Ocm00ajFleEM2OUZKc2x3aFZF?=
+ =?utf-8?B?c2dYUGh5MDdnZ0ZSclBhT05HRlgwOXd4TVUzaCt0Q0JGVFlxaWhmTmY0Q3M2?=
+ =?utf-8?B?dVRvZlMzTDdabTRCbUFTZ0pvdzBxeXN2K1JzY0VvMTlPQU9xaWRqTXBPUWho?=
+ =?utf-8?B?d2RQcHR6ZE05VnRDUExIU1k3SHpIT0NrdytNTWo0aVFEV281R3ljRjlyN3pD?=
+ =?utf-8?B?QUFEb0lVV0o5K2hVWTJPZzBBUTY4Z0l5ODUzbHJva3dmWCtmY29yNGllYno3?=
+ =?utf-8?B?SENiVU5yY3dsbmwwaTZULyt0SElSR3lhTjNSOUlWUVFoT3czNkhLMmJiVjNr?=
+ =?utf-8?B?QzRFK2haK3p1bm5yd3hldDhETGpRWUlXcjlHY0hHeUdWSG1RMUkrdXEwK3VO?=
+ =?utf-8?B?WXM5S1BkQmxMOHgxQ0g4NDFxc1E5dUg1SFk4WmlOVWUwZ0VsajE1K2p1OTB6?=
+ =?utf-8?B?RFkzeFMrOGRjUDBON1gwK3prbllVYjZJR1pTOUtibGVvQmJIWmRRTWxSZDB6?=
+ =?utf-8?B?T0U4QnhpajdlTzFNVkp4WWdvcjJITFJSak5saytCTG9FTVJidXNSaFBtUGZ3?=
+ =?utf-8?B?dkJyK0kxUzZjNUUyZ1JHN0pERlJPZmRnRlM3ZDhKcFVYQndPTmEyWi9IdUVN?=
+ =?utf-8?B?Q3lPU2UwVkFJRXE5azEyblgzQVlxTUFDeHoxWFFLREM5SmRSZ3d3Vk1ockVz?=
+ =?utf-8?B?N3pBZGFVSFFPdVJXYzkvNWtWa3c2WENwUGFqWGhpYVRWdDBlYmFRWVloZWdn?=
+ =?utf-8?B?QitIU216c0ZCYXhRMVFaVU13RThLeXJqUzdpUDBudmR4NENmR0MweGVEWXlF?=
+ =?utf-8?B?RlJJb3VMa1NXTEw0MnY2ZkVNeE9oTUZhOVNaK01scnZaYjNxRzAxOHpVa0tz?=
+ =?utf-8?B?T3k5ZVhmSlI0TWFBTVMwMFFLajQrYlhweUFTUzY0aldIVUx4OWpRUXo3RlRv?=
+ =?utf-8?B?d0ZDc0JPYnZhV3BHcW1Ud2pJUU1lVUJiWHhKQT09?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 07:30:11.4640
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1e6ac3a-47b9-4727-f918-08ddef72b601
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF0000019D.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR10MB8642
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+On 04/09/2025 23:13, Matthew Maurer wrote:
+> Extends the `debugfs` API to support creating read-only files. This
+> is done via the `Dir::read_only_file` method, which takes a data object
+> that implements the `Writer` trait.
+> 
+> The file's content is generated by the `Writer` implementation, and the
+> file is automatically removed when the returned `File` handle is
+> dropped.
+> 
+> Signed-off-by: Matthew Maurer <mmaurer@google.com>
+> ---
+>  rust/kernel/debugfs.rs          | 148 +++++++++++++++++++++++++++++++++++++++-
+>  rust/kernel/debugfs/entry.rs    |  42 ++++++++++++
+>  rust/kernel/debugfs/file_ops.rs | 128 ++++++++++++++++++++++++++++++++++
+>  rust/kernel/debugfs/traits.rs   |  33 +++++++++
+>  4 files changed, 350 insertions(+), 1 deletion(-)
+> 
+> diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
+> index 65be71600b8eda83c0d313f3d205d0713e8e9510..b28665f58cd6a17e188aef5e8c539f6c7433a3b0 100644
+> --- a/rust/kernel/debugfs.rs
+> +++ b/rust/kernel/debugfs.rs
+> @@ -8,12 +8,18 @@
+>  // When DebugFS is disabled, many parameters are dead. Linting for this isn't helpful.
+>  #![cfg_attr(not(CONFIG_DEBUG_FS), allow(unused_variables))]
+>  
+> -#[cfg(CONFIG_DEBUG_FS)]
+>  use crate::prelude::*;
+>  use crate::str::CStr;
+>  #[cfg(CONFIG_DEBUG_FS)]
+>  use crate::sync::Arc;
+> +use core::marker::PhantomPinned;
+> +use core::ops::Deref;
+> +
+> +mod traits;
+> +pub use traits::Writer;
+>  
+> +mod file_ops;
+> +use file_ops::{FileOps, ReadFile};
+>  #[cfg(CONFIG_DEBUG_FS)]
+>  mod entry;
+>  #[cfg(CONFIG_DEBUG_FS)]
+> @@ -53,6 +59,34 @@ fn create(name: &CStr, parent: Option<&Dir>) -> Self {
+>          Self()
+>      }
+>  
+> +    /// Creates a DebugFS file which will own the data produced by the initializer provided in
+> +    /// `data`.
+> +    fn create_file<'a, T, E: 'a>(
+> +        &'a self,
+> +        name: &'a CStr,
+> +        data: impl PinInit<T, E> + 'a,
+> +        file_ops: &'static FileOps<T>,
+> +    ) -> impl PinInit<File<T>, E> + 'a
+> +    where
+> +        T: Sync + 'static,
+> +    {
+> +        let scope = Scope::<T>::new(data, move |data| {
+> +            #[cfg(CONFIG_DEBUG_FS)]
+> +            if let Some(parent) = &self.0 {
+> +                // SAFETY: Because data derives from a scope, and our entry will be dropped before
+> +                // the data is dropped, it is guaranteed to outlive the entry we return.
+> +                unsafe { Entry::dynamic_file(name, parent.clone(), data, file_ops) }
+> +            } else {
+> +                Entry::empty()
+> +            }
+> +        });
+> +        try_pin_init! {
+> +            File {
+> +                scope <- scope
+> +            } ? E
+> +        }
+> +    }
+> +
+>      /// Create a new directory in DebugFS at the root.
+>      ///
+>      /// # Examples
+> @@ -79,4 +113,116 @@ pub fn new(name: &CStr) -> Self {
+>      pub fn subdir(&self, name: &CStr) -> Self {
+>          Dir::create(name, Some(self))
+>      }
+> +
+> +    /// Creates a read-only file in this directory.
+> +    ///
+> +    /// The file's contents are produced by invoking [`Writer::write`] on the value initialized by
+> +    /// `data`.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// # use kernel::c_str;
+> +    /// # use kernel::debugfs::Dir;
+> +    /// # use kernel::prelude::*;
+> +    /// # let dir = Dir::new(c_str!("my_debugfs_dir"));
+> +    /// let file = KBox::pin_init(dir.read_only_file(c_str!("foo"), 200), GFP_KERNEL)?;
+> +    /// // "my_debugfs_dir/foo" now contains the number 200.
+> +    /// // The file is removed when `file` is dropped.
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+> +    pub fn read_only_file<'a, T, E: 'a>(
+> +        &'a self,
+> +        name: &'a CStr,
+> +        data: impl PinInit<T, E> + 'a,
+> +    ) -> impl PinInit<File<T>, E> + 'a
+> +    where
+> +        T: Writer + Send + Sync + 'static,
+> +    {
+> +        let file_ops = &<T as ReadFile<_>>::FILE_OPS;
+> +        self.create_file(name, data, file_ops)
+> +    }
+> +}
+> +
+> +#[pin_data]
+> +/// Handle to a DebugFS scope, which ensures that attached `data` will outlive the provided
+> +/// [`Entry`] without moving.
+> +/// Currently, this is used to back [`File`] so that its `read` and/or `write` implementations
+> +/// can assume that their backing data is still alive.
+> +struct Scope<T> {
+> +    // This order is load-bearing for drops - `_entry` must be dropped before `data`.
+> +    #[cfg(CONFIG_DEBUG_FS)]
+> +    _entry: Entry,
+> +    #[pin]
+> +    data: T,
+> +    // Even if `T` is `Unpin`, we still can't allow it to be moved.
+> +    #[pin]
+> +    _pin: PhantomPinned,
+> +}
+> +
+> +#[pin_data]
+> +/// Handle to a DebugFS file, owning its backing data.
+> +///
+> +/// When dropped, the DebugFS file will be removed and the attached data will be dropped.
+> +pub struct File<T> {
+> +    #[pin]
+> +    scope: Scope<T>,
+> +}
+> +
+> +#[cfg(not(CONFIG_DEBUG_FS))]
+> +impl<'b, T: 'b> Scope<T> {
+> +    fn new<E: 'b, F>(data: impl PinInit<T, E> + 'b, init: F) -> impl PinInit<Self, E> + 'b
+> +    where
+> +        F: for<'a> FnOnce(&'a T) -> Entry + 'b,
 
-Add video encoder, demodulator and CVBS clocks.
+Inspired by Greg's & Danilo's discussion I tried building with
+CONFIG_DEBUG_FS disabled. And get
 
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
----
- drivers/clk/meson/s4-peripherals.c | 203 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 203 insertions(+)
+error[E0412]: cannot find type `Entry` in this scope
+   --> rust/kernel/debugfs.rs:351:37
+    |
+351 |         F: for<'a> FnOnce(&'a T) -> Entry + 'b,
+    |                                     ^^^^^ not found in this scope
 
-diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index 6d69b132d1e1..b855e8f1fc04 100644
---- a/drivers/clk/meson/s4-peripherals.c
-+++ b/drivers/clk/meson/s4-peripherals.c
-@@ -44,6 +44,7 @@
- #define CLKCTRL_VDIN_MEAS_CLK_CTRL                 0x0f8
- #define CLKCTRL_VAPBCLK_CTRL                       0x0fc
- #define CLKCTRL_HDCP22_CTRL                        0x100
-+#define CLKCTRL_CDAC_CLK_CTRL                      0x108
- #define CLKCTRL_VDEC_CLK_CTRL                      0x140
- #define CLKCTRL_VDEC2_CLK_CTRL                     0x144
- #define CLKCTRL_VDEC3_CLK_CTRL                     0x148
-@@ -1126,6 +1127,22 @@ static struct clk_regmap s4_cts_encp_sel = {
- 	},
- };
- 
-+static struct clk_regmap s4_cts_encl_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = CLKCTRL_VIID_CLK_DIV,
-+		.mask = 0xf,
-+		.shift = 12,
-+		.table = s4_cts_parents_val_table,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cts_encl_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_hws = s4_cts_parents,
-+		.num_parents = ARRAY_SIZE(s4_cts_parents),
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static struct clk_regmap s4_cts_vdac_sel = {
- 	.data = &(struct clk_regmap_mux_data){
- 		.offset = CLKCTRL_VIID_CLK_DIV,
-@@ -1205,6 +1222,22 @@ static struct clk_regmap s4_cts_encp = {
- 	},
- };
- 
-+static struct clk_regmap s4_cts_encl = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = CLKCTRL_VID_CLK_CTRL2,
-+		.bit_idx = 3,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cts_encl",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_cts_encl_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static struct clk_regmap s4_cts_vdac = {
- 	.data = &(struct clk_regmap_gate_data){
- 		.offset = CLKCTRL_VID_CLK_CTRL2,
-@@ -2735,6 +2768,165 @@ static struct clk_regmap s4_gen_clk = {
- 	},
- };
- 
-+/* CVBS DAC */
-+static struct clk_regmap s4_cdac_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CLKCTRL_CDAC_CLK_CTRL,
-+		.mask = 0x3,
-+		.shift = 16,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cdac_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "xtal", },
-+			{ .fw_name = "fclk_div5" },
-+		},
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap s4_cdac_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CLKCTRL_CDAC_CLK_CTRL,
-+		.shift = 0,
-+		.width = 16,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cdac_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_cdac_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_cdac = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = CLKCTRL_CDAC_CLK_CTRL,
-+		.bit_idx = 20,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cdac",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_cdac_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_demod_core_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.mask = 0x3,
-+		.shift = 9,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "demod_core_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "xtal" },
-+			{ .fw_name = "fclk_div7" },
-+			{ .fw_name = "fclk_div4" }
-+		},
-+		.num_parents = 3,
-+	},
-+};
-+
-+static struct clk_regmap s4_demod_core_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.shift = 0,
-+		.width = 7,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "demod_core_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_demod_core_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_demod_core = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.bit_idx = 8
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "demod_core",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_demod_core_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+/* CVBS ADC */
-+static struct clk_regmap s4_adc_extclk_in_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.mask = 0x7,
-+		.shift = 25,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "adc_extclk_in_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "xtal" },
-+			{ .fw_name = "fclk_div4" },
-+			{ .fw_name = "fclk_div3" },
-+			{ .fw_name = "fclk_div5" },
-+			{ .fw_name = "fclk_div7" },
-+			{ .fw_name = "mpll2" },
-+			{ .fw_name = "gp0_pll" },
-+			{ .fw_name = "hifi_pll" }
-+		},
-+		.num_parents = 8,
-+	},
-+};
-+
-+static struct clk_regmap s4_adc_extclk_in_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.shift = 16,
-+		.width = 7,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "adc_extclk_in_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_adc_extclk_in_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_adc_extclk_in = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.bit_idx = 24
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "adc_extclk_in",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_adc_extclk_in_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static const struct clk_parent_data s4_pclk_parents = { .hw = &s4_sys_clk.hw };
- 
- #define S4_PCLK(_name, _reg, _bit, _flags) \
-@@ -3028,6 +3220,17 @@ static struct clk_hw *s4_peripherals_hw_clks[] = {
- 	[CLKID_HDCP22_SKPCLK_SEL]	= &s4_hdcp22_skpclk_sel.hw,
- 	[CLKID_HDCP22_SKPCLK_DIV]	= &s4_hdcp22_skpclk_div.hw,
- 	[CLKID_HDCP22_SKPCLK]		= &s4_hdcp22_skpclk.hw,
-+	[CLKID_CTS_ENCL_SEL]		= &s4_cts_encl_sel.hw,
-+	[CLKID_CTS_ENCL]		= &s4_cts_encl.hw,
-+	[CLKID_CDAC_SEL]		= &s4_cdac_sel.hw,
-+	[CLKID_CDAC_DIV]		= &s4_cdac_div.hw,
-+	[CLKID_CDAC]			= &s4_cdac.hw,
-+	[CLKID_DEMOD_CORE_SEL]		= &s4_demod_core_sel.hw,
-+	[CLKID_DEMOD_CORE_DIV]		= &s4_demod_core_div.hw,
-+	[CLKID_DEMOD_CORE]		= &s4_demod_core.hw,
-+	[CLKID_ADC_EXTCLK_IN_SEL]	= &s4_adc_extclk_in_sel.hw,
-+	[CLKID_ADC_EXTCLK_IN_DIV]	= &s4_adc_extclk_in_div.hw,
-+	[CLKID_ADC_EXTCLK_IN]		= &s4_adc_extclk_in.hw,
- };
- 
- static const struct meson_clkc_data s4_peripherals_clkc_data = {
+And giving it some Entry (for my 1.81.0)
 
--- 
-2.42.0
+error: hidden lifetime parameters in types are deprecated
+   --> rust/kernel/debugfs.rs:352:37
+    |
+352 |         F: for<'a> FnOnce(&'a T) -> Entry + 'b,
+    |                                     ^^^^^ expected lifetime parameter
 
-
+Dirk
 
