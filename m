@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-808618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 486FDB50259
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:19:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F007B5025D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A003BA32A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:19:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0AB91C61ED4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F73352084;
-	Tue,  9 Sep 2025 16:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8465350D6C;
+	Tue,  9 Sep 2025 16:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5sXPnEK"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kcmnc1GC"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93C133A01A;
-	Tue,  9 Sep 2025 16:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613C32676DE;
+	Tue,  9 Sep 2025 16:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757434749; cv=none; b=WuhPg/wYHCTw0iY57Q0xFW96tArbHo6NCs9nR/EpbWCog5QtcAcFczzyx8+2q637cVRtmaW3WR4x/ugXzs0juDAj8qBbK1Q9mnJvWbmD67VDZ4lysJ9c2fMfmF4/PWIvqAY4DRCpoeaApkdEpmt8ENlv/oqiB2UxUyY3/tJ1sho=
+	t=1757434821; cv=none; b=uplQFROWHr+mFLRrwHgKzpR3tz1ibFTGQLRnucJk/nMbwSjDpdVKAdT9Yn0WHRsThdGLP5TchMbdCdoKZrgliwae6/arnmUm4p5cTgEdWN6Alq7uRDKg+eGYX0w5s9YFV35+VGF5h6X0XxUYbOleaShgE5n/7Ea5XPWUGByLcCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757434749; c=relaxed/simple;
-	bh=5+oqeQqKcOcNexLLWSaNP8FwXROd5N6zTPNxd1c9umA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G88c48Hn1Jm8F9M4dJnitjW9nutfSXjeOUQpcKLWKsLHIbMYFulMEqywqX5y+UiKLza8lX3oqLywAh4iMLbVqdfDllGOFrcl+ZNpc7CaTKZwKZDEmEhJ7mz6fpyBTjT3iL1uMQpnfc4ww0b337Qx25EE9hw6sBSDZc1efgfwx0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5sXPnEK; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24cb39fbd90so48719015ad.3;
-        Tue, 09 Sep 2025 09:19:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757434747; x=1758039547; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QAi4h7GkC5BQfTMRwYsmkT5Tfbmlnk4jobHVH0SykIo=;
-        b=l5sXPnEKk0LR4ccF5FAyPuiQk+wurRvsvDXs1X0iddwlzLdEjYMTxcjMGS9eKnI7zi
-         aNQ1FvCd1sMVhQoCf9hn26YyZQwAKfw1Jh93nwiPAnx/GMt/Wp6+ikk38/EGekNXovKK
-         PT5XzQ2UKt0p4hMhfGHUXN/iG11wKGac5C8modnQkovLw4IBLvMKwbQgTIWf5BSAWNR8
-         l6IJQQYWZzBfUVyLakn8D1aHkyA6MlOmRtmkE+mTJv0qzOQlPD+VD1OceGSl+yv/vGhI
-         61k78fUajVWYTCrzjyK1ZzxeoO1cZXofkqAqH+hVc5gU9qkC8y4gpwdiV2hWBGY5pyaw
-         cOVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757434747; x=1758039547;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QAi4h7GkC5BQfTMRwYsmkT5Tfbmlnk4jobHVH0SykIo=;
-        b=Au0Q5iGpZQWuRQY/8e4t5tIqj6SQC8h8Zib90QLO11f5xAkdNaO5QVLgtMoOn5GbNc
-         NbrUD/1mNZVdr7ZmHltdtXa36KwZpqtlSnEO8U6rJa0VuuqSxbt0Tohg2F2HN+QN7Xs1
-         eiJSMxo80LkivaP+QazavfHV0FePYAV2xwaKVZd3Da2enebCatIBBqgb1K3bqLVrxrnX
-         SbVVm7f/4bJgBkdhclBi+YQ5OryRmG69mQVMFRw4yxdXoXNCeTtzQG/DW1jHwn3NIW3S
-         H2//F4os7WW6M1IdMuJwie5kPulFg4o7R2mLz9ZS2Y6WviLmCVvTpyb2UcSpFcpCrcUb
-         NXrw==
-X-Forwarded-Encrypted: i=1; AJvYcCU47gN6Saqg0e5qDpS1CA8SrFfbO2nVYOTNloJUeSjlIxZK+Ur+HTsMty+F73ZiJjtiuG43oh9ojAsp1QI=@vger.kernel.org, AJvYcCVHUqV14pSVroZq4gzVuVtrTXe/PomOg20hpSm7VPOIR/JofGtdKhGagnOSqWVN2gbFwuswdQKPrQE=@vger.kernel.org, AJvYcCWFyOBc1fBHoqwm/tWyKjX6CescWsHpe/V1qD8zsE52XZEd9Xrh28hFM8DuaehRwUGTgBMtYf/NOy52@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJvwtC1N9oOCsA+qLmy8MRAB+e+VsGtuJZr5V8DLYMxcyS3eo3
-	G618Yw2RboWKGJtInP/oqbhjSzf/GTtP3iI3y9b982rjRpjZ64dcwjWe
-X-Gm-Gg: ASbGncshLozy3pywiRQ2Og6lVL0Kpfe63crFzOvK5I9s2hROYyYP3FSf5g03zMCCWLq
-	412dNpswb0582pUURlaTLHrwkxRml1qmwF55b5Nb2ulMw/hBVHoXRXCOsR5TC/3nimFXlNKmyqi
-	5ZJ8lEC7qnOLn6S1fKVl/BEO1ko1OkgMtRpNRallBZSwiTfQmHaI86LpJUhtgNC+B0+N7ZC0cEQ
-	pzX60J0winKTTGKMLeyP6TCSokJFPdrWocWGN29Xo0lW4eKUgX/HJdQQ9IF+Wkjp96thQN4fdwM
-	3KDdxGimsS3QFtPjTCQy8+EQHYqUy4YFPQJsrnTiOc+MpB+MAOc26JQdEIcbZVkKFw3sQg6dIUM
-	rlEV3ZCQLHNx8TGsmebtDIXE=
-X-Google-Smtp-Source: AGHT+IFc01xMg0RhYt92nNhZiu4xLaJuYGnO9/E2/g5lUU+8IKkN3wggu++B8oAay63yya0pPMnlBQ==
-X-Received: by 2002:a17:902:f78f:b0:240:3eb9:5363 with SMTP id d9443c01a7336-2516e69aedamr146484675ad.27.1757434746918;
-        Tue, 09 Sep 2025 09:19:06 -0700 (PDT)
-Received: from localhost ([104.28.247.70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a27422decsm2241595ad.4.2025.09.09.09.19.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 09:19:06 -0700 (PDT)
-From: Ryan Zhou <ryanzhou54@gmail.com>
-To: stern@rowland.harvard.edu
-Cc: Thinh.Nguyen@synopsys.com,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	rafael@kernel.org,
-	royluo@google.com,
-	ryanzhou54@gmail.com
-Subject: [PATCH v2] drvier: usb: dwc3: Fix runtime PM trying to activate child device xxx.dwc3 but parent is not active
-Date: Wed, 10 Sep 2025 00:19:01 +0800
-Message-Id: <20250909161901.10733-1-ryanzhou54@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <385dccf3-234a-4f83-9610-81ac30bf1466@rowland.harvard.edu>
-References: <385dccf3-234a-4f83-9610-81ac30bf1466@rowland.harvard.edu>
+	s=arc-20240116; t=1757434821; c=relaxed/simple;
+	bh=DZrzh3YrIPCMm+fmI9j9QYQyXWS+KJz5vNz1swKkAZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M9JuMh07Zq2QNi+l2Jj1bJUm8qNQky8yRB+xawEmMq1+mOt2q3XH+F48iNzF8xeJk+6DxJQc0/YahQSQm3yngSY0y+kHnleAiJ7GAw5Tbw7K+vBhnd7sC1UhoFw5Y7GPd0aA3QBazZux8oclLd3dkUrzHextqpu3pn5jCK/f5TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kcmnc1GC; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B178640E015C;
+	Tue,  9 Sep 2025 16:20:17 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id JWkyA880veGD; Tue,  9 Sep 2025 16:20:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1757434814; bh=JXykKyxBLHPVAEdl8ppaWAN7HuPa8yfNHgz3CX8cwqU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kcmnc1GCRz9SHgxzzrXJ63GQDbBvJcdzZtKmen8BLUqe2LJS+m9Br8OammWEpS0Ia
+	 tElg+Gy16W/i17ZoG6U1z31PNB66l/wIg3qPgbLDniEYspZ3QAct1na/8mC1P3xjxG
+	 q50ZN2hf1+L74xulicSh/PdfGXKR6LvOyPv39orm4N1BK0cfU9Bg4HyEljgMFzNIDT
+	 dUNX8U6W53J9zF658boiBukyD7u2P3/mOqzATPSzQNdm1kaDAh8JBrwWkamEcGrYMr
+	 LsurNyA91GCLYpMMr8g1Jxl65wECTdLNkvl0U3tYrZmcrbKxWul4NTfeSsWRQXcmvg
+	 F0OwvmfByKCM4jx/x155nHi/2CDzhl6uqxGz9z1vKEQ3XijEi10Wu0Xqpm2iY6j/ip
+	 AHPV3gaSxzwvSsEKJ52qWK3Xm/Ys6KXZenjmUKL3oyUAhp4DwWQdRozm1Ru1Hmldgv
+	 wR35iE9/jibplztA8xr7rxtff48fsvEzPp1JUeDqPUFw/whH2ANUq1cl/1rLxN3LN6
+	 i5e3CL9UB2kAj06nFmbA7bL2FJ+lfRO4aQHLtvTSq8B6GwAg3DykheyJEKTowehsnX
+	 fhIvKU5e8/KPncZa0+gg585jgNOOldGsWDtSFN4XL7sP5FYZxo1454MdTuhk6xvxP8
+	 9MpMWVGymPDe+d6nV1jkQcOo=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id D60D140E015F;
+	Tue,  9 Sep 2025 16:19:31 +0000 (UTC)
+Date: Tue, 9 Sep 2025 18:19:30 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Babu Moger <babu.moger@amd.com>, corbet@lwn.net, tony.luck@intel.com,
+	Dave.Martin@arm.com, james.morse@arm.com, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, kas@kernel.org, rick.p.edgecombe@intel.com,
+	akpm@linux-foundation.org, paulmck@kernel.org, frederic@kernel.org,
+	pmladek@suse.com, rostedt@goodmis.org, kees@kernel.org,
+	arnd@arndb.de, fvdl@google.com, seanjc@google.com,
+	thomas.lendacky@amd.com, pawan.kumar.gupta@linux.intel.com,
+	perry.yuan@amd.com, manali.shukla@amd.com, sohil.mehta@intel.com,
+	xin@zytor.com, Neeraj.Upadhyay@amd.com, peterz@infradead.org,
+	tiala@microsoft.com, mario.limonciello@amd.com,
+	dapeng1.mi@linux.intel.com, michael.roth@amd.com,
+	chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+	kvm@vger.kernel.org, peternewman@google.com, eranian@google.com,
+	gautham.shenoy@amd.com
+Subject: Re: [PATCH v18 00/33] x86,fs/resctrl: Support AMD Assignable
+ Bandwidth Monitoring Counters (ABMC)
+Message-ID: <20250909161930.GBaMBTku_VgKUpTs2V@fat_crate.local>
+References: <cover.1757108044.git.babu.moger@amd.com>
+ <107058d3-9c2d-4cd4-beba-d65b7c6bd9a0@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <107058d3-9c2d-4cd4-beba-d65b7c6bd9a0@intel.com>
 
-Issue description:During the wake-up sequence, if the system invokes
- dwc3->resume and detects that the parent device of dwc3 is in a
-runtime suspend state, the system will generate an error: runtime PM
-trying to activate child device xxx.dwc3 but parent is not active.
+On Tue, Sep 09, 2025 at 09:03:13AM -0700, Reinette Chatre wrote:
+> When I checked tip/master did not include x86/urgent yet but when it does (and
+> tip/master thus includes x86/cache and x86/urgent), could you please
+> merge your series on top of tip/master to ensure all conflicts can be resolved
+> cleanly and ready to provide conflict resolutions to Boris if needed?
 
-Solution:At the dwc3->resume entry point, if the dwc3 controller
-is detected in a suspended state, the function shall return
-immediately without executing any further operations.
+Thanks, just give it a test but no rebasing anymore - I'm going through the
+set. If there are conflicts, we do enough patch tetris in tip to catch them
+and handle them upfront - you guys don't have to worry about it.
 
-Signed-off-by: Ryan Zhou <ryanzhou54@gmail.com>
----
- drivers/usb/dwc3/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thx.
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 370fc524a468..06a6f8a67129 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -2687,6 +2687,9 @@ int dwc3_pm_resume(struct dwc3 *dwc)
- 	struct device *dev = dwc->dev;
- 	int		ret = 0;
- 
-+	if (pm_runtime_suspended(dev))
-+		return ret;
-+
- 	pinctrl_pm_select_default_state(dev);
- 
- 	pm_runtime_disable(dev);
 -- 
-2.25.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
