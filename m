@@ -1,121 +1,195 @@
-Return-Path: <linux-kernel+bounces-807441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2F8B4A466
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:00:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7818B4A467
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3469B189C886
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:00:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 621EC7A510D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C4D242D9E;
-	Tue,  9 Sep 2025 08:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D8A24503F;
+	Tue,  9 Sep 2025 08:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SC5DxzuB"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ob+6CPee"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDF023ABB3;
-	Tue,  9 Sep 2025 08:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B2723ABB3;
+	Tue,  9 Sep 2025 08:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757404820; cv=none; b=A3lzlScR+QTPamY2MlETz8keKcc0ZFI3m/XQrxR7wstBHZ6fqO0TdkWzPb8eeUtFtrfC+gepz8bHIhCqa+FNbKpo+Vr3jfAwlGZ6MDsfFMqO61rgLZfMd5hExhaTghAq8ZbqVki4eGK5Zu3ngWqcr1AY5gVFMKEjzmaCMgR6zDI=
+	t=1757404823; cv=none; b=AcfFug4i41zKBqLNs2JL3Q8n9pNnVw1NNMwgJRGUbEdjr/bqLVUg0iXf5dmCoF9p/kYpqCmwf0gAlB0Gt+QnFTVlyqL6uSobFUxfCYJwRMRNl+nsYCb2qLyDHe1i0W9ucKOuXgeanzje6/tlpkoamEChbCn657rqHMGrIgdPOxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757404820; c=relaxed/simple;
-	bh=oCLEvvVWTE44t3aDmRT7ZhIFJug4E7QdqqWFMsbwgXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k3D/4eG1hmvGO6W7ow0daqN9j7Cv5Flo6tTVcNYqyGPaZ0Mcv7Y0jyEDywGVPxbIE/rNDNIcnNObluQ84ZBgQkPFHu8/1Wi2saxHWsdPwXcsUXEducfjG3GLyqSuJH37Di64sgcXsc0VRjnr990R1Ri1bXJZ6Alv7NuvsU/41GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SC5DxzuB; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757404816;
-	bh=oCLEvvVWTE44t3aDmRT7ZhIFJug4E7QdqqWFMsbwgXQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SC5DxzuB36zfuF0hEiz3OhRCrqpP0wmu3sK9sAFfUcEYCc3enPHy5uzCpayPzsahX
-	 luKZrCwgKkPO2OIRlPpv985qyqGnM7o9WplsuAv9P9tzrGoaBmEtkJ3U/IWFEbgNOc
-	 3soqSytqBwAbuZEEmCdS5BZAbR+ZDCZlrdqOfP5jam0YXop0NPSF8N+dxPvYuzJunW
-	 1gnimL7jrpMY55dWa+j4noaPqrYgzyCusZY2NZiByZ+qUuvdD9nzWp9Ie+RMs9GnID
-	 o6QKTnBdcQTPtCntZUN7WmkjHv8jruvk2SEZ3kXVNjKh9WRRJdpIwIPjA/pkU33T/d
-	 ZeDvUeefzgvuQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 65F3A17E0C96;
-	Tue,  9 Sep 2025 10:00:16 +0200 (CEST)
-Message-ID: <493794af-a1e8-4a4e-a253-2b6b703df53b@collabora.com>
-Date: Tue, 9 Sep 2025 10:00:15 +0200
+	s=arc-20240116; t=1757404823; c=relaxed/simple;
+	bh=K7GblolWpH5vXVt7lV0OwPq0/5beVmtAVKdl40YTYVI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=W3XXeaMCRIQYoBQO2vEEX6MwMZ61I3qzQ2TTFdrpOM53qpNFKDfIoHimMkj6SLyTTAxk/fYC+BdJON6nx+2ibdZX8hRDbGPiO64+YwSWtyQ9YNwlO0TN2UU/7LQZdHIpk/Ypo2XulqCDEGcvtLjpZyoFswlfdfcdQqxmlDHfqd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ob+6CPee; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9383C4CEF5;
+	Tue,  9 Sep 2025 08:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757404822;
+	bh=K7GblolWpH5vXVt7lV0OwPq0/5beVmtAVKdl40YTYVI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ob+6CPeeInY7cEDDkLJkolERb1xruKi8RF2xolA3kA3KbGl+f1j4eHFnnB/FIpA3E
+	 WGSSxLBq9AL+Wncf73XRrwALw7eckgNr6JjvUF/IYXphwn/PH4Z/3WZ69YK1XiTCr1
+	 BEhynHQs4Ez+Plfb9/qgPBdgEGgHVpgkrWZPkDqZx0yFBAmGM5eE99BN9sDa8XnzpF
+	 D0e+MpU4dMGo+o9G3tzQlFjPaPe/V0swBQ/SLNMmi3wjUaIViKYaMGc2oLmiPee/xH
+	 vSpdnsRsjhYHXpQS3b0rTUNV0xNxrRdZt2js02hBb+vnDWkCxL/HoDjGbuFh0b59xF
+	 G8ujjvYOmi+oQ==
+Date: Tue, 9 Sep 2025 17:00:17 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ "Naveen N . Rao" <naveen@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
+ <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, David
+ Hildenbrand <david@redhat.com>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren
+ Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ linux-perf-users@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 05/18] x86/hw_breakpoint: introduce
+ arch_reinstall_hw_breakpoint() for atomic context
+Message-Id: <20250909170017.dae27d8be77f9ec634e0d56c@kernel.org>
+In-Reply-To: <aL5ns7h1NaoD9LPg@mdev>
+References: <20250904002126.1514566-1-wangjinchao600@gmail.com>
+	<20250904002126.1514566-6-wangjinchao600@gmail.com>
+	<20250904063832.GT4067720@noisy.programming.kicks-ass.net>
+	<aL5ns7h1NaoD9LPg@mdev>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] pinctrl: mediatek: Add debounce times for MT6878
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Sean Wang <sean.wang@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20250908-mt6878-pinctrl-support-v1-0-3fb78c8ab4e8@mentallysanemainliners.org>
- <20250908-mt6878-pinctrl-support-v1-3-3fb78c8ab4e8@mentallysanemainliners.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250908-mt6878-pinctrl-support-v1-3-3fb78c8ab4e8@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Il 08/09/25 21:17, Igor Belwon ha scritto:
-> MT6878 uses different debounce times than other SoCs. Add them to the
-> EINT driver.
+On Mon, 8 Sep 2025 13:20:51 +0800
+Jinchao Wang <wangjinchao600@gmail.com> wrote:
 
-The only reason why I can't give you a R-b for this is that you forgot to add
-your S-o-b...
-
-Cheers,
-Angelo
-
-> ---
->   drivers/pinctrl/mediatek/mtk-eint.c | 5 +++++
->   drivers/pinctrl/mediatek/mtk-eint.h | 1 +
->   2 files changed, 6 insertions(+)
+> On Thu, Sep 04, 2025 at 08:38:32AM +0200, Peter Zijlstra wrote:
+> > On Thu, Sep 04, 2025 at 08:21:02AM +0800, Jinchao Wang wrote:
+> > > Introduce arch_reinstall_hw_breakpoint() to update hardware breakpoint
+> > > parameters (address, length, type) without freeing and reallocating the
+> > > debug register slot.
+> > > 
+> > > This allows atomic updates in contexts where memory allocation is not
+> > > permitted, such as kprobe handlers.
+> > > 
+> > > Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> > > ---
+> > >  arch/x86/include/asm/hw_breakpoint.h |  1 +
+> > >  arch/x86/kernel/hw_breakpoint.c      | 50 ++++++++++++++++++++++++++++
+> > >  2 files changed, 51 insertions(+)
+> > > 
+> > > diff --git a/arch/x86/include/asm/hw_breakpoint.h b/arch/x86/include/asm/hw_breakpoint.h
+> > > index 0bc931cd0698..bb7c70ad22fe 100644
+> > > --- a/arch/x86/include/asm/hw_breakpoint.h
+> > > +++ b/arch/x86/include/asm/hw_breakpoint.h
+> > > @@ -59,6 +59,7 @@ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+> > >  
+> > >  
+> > >  int arch_install_hw_breakpoint(struct perf_event *bp);
+> > > +int arch_reinstall_hw_breakpoint(struct perf_event *bp);
+> > >  void arch_uninstall_hw_breakpoint(struct perf_event *bp);
+> > >  void hw_breakpoint_pmu_read(struct perf_event *bp);
+> > >  void hw_breakpoint_pmu_unthrottle(struct perf_event *bp);
+> > > diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
+> > > index b01644c949b2..89135229ed21 100644
+> > > --- a/arch/x86/kernel/hw_breakpoint.c
+> > > +++ b/arch/x86/kernel/hw_breakpoint.c
+> > > @@ -132,6 +132,56 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +/*
+> > > + * Reinstall a hardware breakpoint on the current CPU.
+> > > + *
+> > > + * This function is used to re-establish a perf counter hardware breakpoint.
+> > > + * It finds the debug address register slot previously allocated for the
+> > > + * breakpoint and re-enables it by writing the address to the debug register
+> > > + * and setting the corresponding bits in the debug control register (DR7).
+> > > + *
+> > > + * It is expected that the breakpoint's event context lock is already held
+> > > + * and interrupts are disabled, ensuring atomicity and safety from other
+> > > + * event handlers.
+> > > + */
+> > > +int arch_reinstall_hw_breakpoint(struct perf_event *bp)
+> > > +{
+> > > +	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+> > > +	unsigned long *dr7;
+> > > +	int i;
+> > > +
+> > > +	lockdep_assert_irqs_disabled();
+> > > +
+> > > +	for (i = 0; i < HBP_NUM; i++) {
+> > > +		struct perf_event **slot = this_cpu_ptr(&bp_per_reg[i]);
+> > > +
+> > > +		if (*slot == bp)
+> > > +			break;
+> > > +	}
+> > > +
+> > > +	if (WARN_ONCE(i == HBP_NUM, "Can't find a matching breakpoint slot"))
+> > > +		return -EINVAL;
+> > > +
+> > > +	set_debugreg(info->address, i);
+> > > +	__this_cpu_write(cpu_debugreg[i], info->address);
+> > > +
+> > > +	dr7 = this_cpu_ptr(&cpu_dr7);
+> > > +	*dr7 |= encode_dr7(i, info->len, info->type);
+> > > +
+> > > +	/*
+> > > +	 * Ensure we first write cpu_dr7 before we set the DR7 register.
+> > > +	 * This ensures an NMI never see cpu_dr7 0 when DR7 is not.
+> > > +	 */
+> > > +	barrier();
+> > > +
+> > > +	set_debugreg(*dr7, 7);
+> > > +	if (info->mask)
+> > > +		amd_set_dr_addr_mask(info->mask, i);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(arch_reinstall_hw_breakpoint);
+> > 
+> > Yeah, I think not. For one this is an almost verbatim copy of
+> > arch_install_hw_breakpoint() with zero re-use. Surely you've been taught
+> > better?
+> I introduced this to modify bp_addr in atomic context in my RFC series.
+> I thought it was clearer to split the introduction and refactor.
+> And then It was used in the wprobe series, so I left it as introduced
+> in the RFC series.
 > 
-> diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
-> index 9f175c73613f84b47c0160947f32da7aca7d5a18..c8c5097c11c4d14eb41bdd7f9cb93b4a5756d2b2 100644
-> --- a/drivers/pinctrl/mediatek/mtk-eint.c
-> +++ b/drivers/pinctrl/mediatek/mtk-eint.c
-> @@ -66,6 +66,11 @@ const unsigned int debounce_time_mt6795[] = {
->   };
->   EXPORT_SYMBOL_GPL(debounce_time_mt6795);
->   
-> +const unsigned int debounce_time_mt6878[] = {
-> +	156, 313, 625, 1250, 20000, 40000, 80000, 160000, 320000, 640000, 0
-> +};
-> +EXPORT_SYMBOL_GPL(debounce_time_mt6878);
-> +
->   static void __iomem *mtk_eint_get_offset(struct mtk_eint *eint,
->   					 unsigned int eint_num,
->   					 unsigned int offset)
-> diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
-> index fc31a4c0c77bf28b106943e9292d0dcc425c4922..3cdd6f6310cd0da5aa74623c5f1dbe8f8495d689 100644
-> --- a/drivers/pinctrl/mediatek/mtk-eint.h
-> +++ b/drivers/pinctrl/mediatek/mtk-eint.h
-> @@ -52,6 +52,7 @@ struct mtk_eint_pin {
->   extern const unsigned int debounce_time_mt2701[];
->   extern const unsigned int debounce_time_mt6765[];
->   extern const unsigned int debounce_time_mt6795[];
-> +extern const unsigned int debounce_time_mt6878[];
->   
->   struct mtk_eint;
->   
-> 
+> I agree your suggestion is right. I am willing to refactor after wprobe.
 
+I'm OK to refactor it to reuse arch_install_hw_breakpoint().
+My point is to have CONFIG_HAVE_REINSTALL_HW_BREAKPOINT so that
+we can easily implement the dependency for other features which
+requires this feature in Kconfig level.
+
+> > And why would we want to export guts like this?
+> I wanted to introduce a real-time stack corruption debugging tool,
+> which needs a helper to change bp_addr in atomic context (kprobe handler).
+> And wprobe needs it also.
+
+I agree with Peter, it should not expose the architecture
+dependent code directly. Instead, we need a wrapper.
+
+Thank you,
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
