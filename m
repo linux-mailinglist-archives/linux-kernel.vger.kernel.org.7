@@ -1,150 +1,338 @@
-Return-Path: <linux-kernel+bounces-808428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC24B4FF9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:37:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 850A9B4FF94
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A7881C24B73
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:37:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3D94160ACF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C070622A7E2;
-	Tue,  9 Sep 2025 14:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="i90iwT/3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC87334DCFE
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08B834A314;
+	Tue,  9 Sep 2025 14:36:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8128322DBD
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757428584; cv=none; b=Cm/Ez1HD245hk8id/b0sdh+F6/al+ehh74U2NDMjMu4wfuzVJtezT7Tb5UyrCNIGTg6jTOfD5N5/bNs+501BkkeC14YSjlDvBiqHjEBHQs10FITN8Znedz5kbd6jrM9wcGH1n9Rr8hRFOp2amMl0Gq1fgETWipkJzOaAUwxAbIQ=
+	t=1757428581; cv=none; b=QWj5SfIBHUPHXaUA505jQyIc6ELuzEnqlgSBfx/yl63G2tMlhKwhhbX3/ecCYx4mxUadL7TgQjTyvUc1zjG7MLRLHZl6Q5VhE6d00h6NY+AF3bLGisk9lMKcWMRzm/dtFBdz6DF5hBmg5mY1ONZ3Wg8SuhqZGIyaY75vaniFs/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757428584; c=relaxed/simple;
-	bh=j4FzMmoXD8KnnKWCCxb99YcZ8DatoQzx7/AfR5ZkKlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gTeWKtvaBD6Gt/ZrmB631m0FjzJ5MPYkWCMWcCnX7WwhQDelenhyv/TxGRArWnN67il0s0Pg9G820wRqKKm1v0Ks6EVGdzqoJ05FdBn0BWB0E2CP+UMbJbYrAkV16YNJ6RPwBClqucfyO9vu2SOixWlfkGyxwvQ++suzo+6S25o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=i90iwT/3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5899LTVQ029178
-	for <linux-kernel@vger.kernel.org>; Tue, 9 Sep 2025 14:36:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zXGegGJ48SCtTO4w0PCDokld7WbWJN8IL1FLEXJw6Qs=; b=i90iwT/3Lg15lvDO
-	+hri2zsxcEqjOzAZ0dNzp6OusuJQuoQKWBDb1KWRd9w88Lm8SY1lDq8wIa+rQD4y
-	oiOdvSoQuBbAt/AzRceXd00+w91Ez6MsljUDLN9AggtMb9BgtaASur2oj7zeA/8G
-	Zyd9qdfz1g5fOP4lyCIMSr29WLTSfRowpvK80fEdAyiClC5yMRPH31dlyvYXi0c4
-	Nq3cYiSYnHQllm450Yny+7ygiYWyo5lRKPSnMsFk1Kvs+GsVs4p/vl72GkOkrSiv
-	K1/cUPOMN1KLqyYqxazY6wxU3j3Ihn6pJMn53cN8qPfSYT68lD0ET1R0hTa+2P4n
-	8DMhEw==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490db8ghvy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 14:36:21 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-71ff3e1256cso137104486d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:36:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757428581; x=1758033381;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zXGegGJ48SCtTO4w0PCDokld7WbWJN8IL1FLEXJw6Qs=;
-        b=FbXsWgjHrfPpuan1sXIQPQhPgMhD5PG4th6WEpN2+2MfSKZpoYBGUcyQP2UUqYRhvo
-         xFO8MMPcfujI+tDfSt5HYes0O+SwwOhOYl+2AwmsajHE7iyB3CjUh4pHJD2OCNri27Pg
-         KhfUd8k4eTfvHOPfFqW+kriIgPoY/zcZfTvDNr/fdOK3dXHGD0qMBP2qcUlTuPOdQ1ZS
-         RqHfchhOzaMfHn0Vw1uzRghAKgDtW412YshQD/rhRpNNdrbZh59GYnmyzN7++X14OatN
-         W69IK/QWeG3xJgkONdm/41IMFiN2KqSjshIN5VKhgmpI76Oj3e19RiPTDu51y3/wR1jy
-         +Xdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNsaiE/VQVRGTTgIOytn6nwEk8d5z+EmLoyBRu9jfqrZF3J3GdzP8nmR16L1aWfz+fA+F44Mlw7CRaYDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsPNbKAvOCo3XgOQXjkdKb4JXbnYNG9jcaddRa64NKvyhi89x+
-	6z3MWKuJ/9x7faNt9+BspUPRaMm7MvsloRX2NcnfqolUm7iNPJPBXZGIDE32CEpY0j/AKXsptMW
-	M/aX4XaYyhCl4T38lfh1SR8MJwhPuWgPKewlGFtD5BkUDeshp7FubgWlC0DKmvRcL1TA=
-X-Gm-Gg: ASbGncv/cCiylK24cKJ10k0W9mXnnltSmYz4rjCeNjcfz2peNELbczd6qoij60Ze5TE
-	4AlSA3y7GU8OdIHKkn37Ge1Obx6kaNyYhNnky657y26b4U23rGBuNH0hKMFMI/jwRfS5Q2mlXMo
-	pFx+bI/4q3M6SP0gbPOYcMnuTlMn00ejfnW2qh7F2U7a3LTwJ5UHdsW+0A+JHNRn6ojtbC+eWCn
-	SsYRaZxdp85OIzZqTAaYXcdbqXn5ot3DuUEv8IgxWAMeJtqvpwuepGC5SoQBz3F/2RRGrVh+CRg
-	phossICm79YZCyWIZR9u93DeIA2aIVPHmTS3Qo320gIfiR9kIJseFDheMKm8ca6J4Max2ZwKz8L
-	luLrCQZTZVot0yFDUdB5/rt3y0brPmByt8Nf+dEL1+bRO0VesWaRE
-X-Received: by 2002:ad4:5cea:0:b0:721:2fac:ba84 with SMTP id 6a1803df08f44-7391bf469c7mr138686566d6.14.1757428579885;
-        Tue, 09 Sep 2025 07:36:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF77zne3M2caVk1ttaE+RHTc/idA8A8JOQgAJqG37QNc5KMMVGPSFhdpJNJlTAki4xuMukecA==
-X-Received: by 2002:ad4:5cea:0:b0:721:2fac:ba84 with SMTP id 6a1803df08f44-7391bf469c7mr138686186d6.14.1757428579379;
-        Tue, 09 Sep 2025 07:36:19 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5680c424708sm567120e87.8.2025.09.09.07.36.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 07:36:18 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Dmitry Baryshkov <lumag@kernel.org>, Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/bridge: ite-it6263: Support HDMI vendor specific infoframe
-Date: Tue,  9 Sep 2025 17:36:14 +0300
-Message-ID: <175742856369.1251022.15056942229474893550.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250908-it6263-vendor-specific-infoframe-v2-1-3f2ebd9135ad@nxp.com>
-References: <20250908-it6263-vendor-specific-infoframe-v2-1-3f2ebd9135ad@nxp.com>
+	s=arc-20240116; t=1757428581; c=relaxed/simple;
+	bh=1Umuf4upW+1VXFRm4vnDYX56KY3jeasenowD3GeyOmQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=guuw625/dJp+4Ba68eovEAcFZILaGiO1hpoVFjYkw+E25sc1m+74CzZ+ggFdwj+gQQmnTM21pkXtZ1L9ozex8aCIyfKbwm6w2T+yE1Nb79I69oD6m/pilRf+e5dzhW1HtXUf3RqQHCnv1KoaRxkzLbDN0kd6CkEB9Ea3W4Sk01g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DE7B1424;
+	Tue,  9 Sep 2025 07:36:09 -0700 (PDT)
+Received: from [10.1.33.194] (unknown [10.1.33.194])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 64A9D3F66E;
+	Tue,  9 Sep 2025 07:36:16 -0700 (PDT)
+Message-ID: <8c363997-7b8d-4b54-b9b0-1a1b6a0e58ed@arm.com>
+Date: Tue, 9 Sep 2025 15:36:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/6] arm64: support FEAT_BBM level 2 and large block
+ mapping when rodata=full
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, Dev Jain <dev.jain@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Ard Biesheuvel <ardb@kernel.org>, scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20250829115250.2395585-1-ryan.roberts@arm.com>
+ <e722e49a-d982-4b58-98f7-6fef3d0a4468@arm.com>
+ <dd242f5b-8bbe-48e8-8d5f-be6a835a8841@arm.com>
+ <aeb76956-f980-417f-b4e7-fe0503bb5a2b@os.amperecomputing.com>
+ <612940d2-4c8e-459c-8d7d-4ccec08fce0a@os.amperecomputing.com>
+ <1471ea27-386d-4950-8eaa-8af7acf3c34a@arm.com>
+ <f8cf1823-1ee9-4935-9293-86f58a9e2224@arm.com>
+ <bf1aa0a4-08de-443f-a1a3-aa6c05bab38c@os.amperecomputing.com>
+ <39c2f841-9043-448d-b644-ac96612d520a@os.amperecomputing.com>
+ <d7cd4004-bacf-47b0-9cd8-f99125e02238@arm.com>
+ <fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzMSBTYWx0ZWRfX5E5lGd5fwvjf
- Ot0Uxe026bHjb08jeHoOYfpXEmQ+GTYx8I/1l+xVtsh1DsDY+rb5HaKlXEJSZxjlG/Cwld7jz6F
- Cyk1kAys9NHQROsMAn7BIYRs597EkJ6yRmm9QFYcXiVhXuuAXC1/DzAMqum9DleuTsAS6gQHQ1k
- kEnRHJw3W7p0fn370pUI8ylP+ASsV6Tvgd1vMiF51ZOcBtIV9HHMBsSF8pfVdxlr+YDV/PmWhVN
- YObsXbObWMpvl4E+KxyhtNWuijrC0b+RMADqAqjLPQt9QWwn0T0gClyiPWel6ytQHh5rzlqW8ZR
- l0Evy5OGRcW7LyT1XL4pFM1uc7PVrrp0l9ceGiKq6liVV0Wcctcg/Kx/P+Hl/8okrdpOT4bHFWz
- he2htrwW
-X-Proofpoint-ORIG-GUID: pd0QRIGFGLsUptI6aaOFn8pvtobdsqwE
-X-Proofpoint-GUID: pd0QRIGFGLsUptI6aaOFn8pvtobdsqwE
-X-Authority-Analysis: v=2.4 cv=VIDdn8PX c=1 sm=1 tr=0 ts=68c03b65 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=Rpg_6oIlysUL7RbACEAA:9 a=QEXdDO2ut3YA:10
- a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_02,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
- phishscore=0 adultscore=0 clxscore=1015 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060031
 
-On Mon, 08 Sep 2025 14:05:48 +0800, Liu Ying wrote:
-> IT6263 supports HDMI vendor specific infoframe.  The infoframe header
-> and payload are configurable via NULL packet registers.  The infoframe
-> is enabled and disabled via PKT_NULL_CTRL register.  Add the HDMI vendor
-> specific infoframe support.
+On 08/09/2025 19:31, Yang Shi wrote:
 > 
 > 
+> On 9/8/25 9:34 AM, Ryan Roberts wrote:
+>> On 04/09/2025 22:49, Yang Shi wrote:
+>>>
+>>> On 9/4/25 10:47 AM, Yang Shi wrote:
+>>>>
+>>>> On 9/4/25 6:16 AM, Ryan Roberts wrote:
+>>>>> On 04/09/2025 14:14, Ryan Roberts wrote:
+>>>>>> On 03/09/2025 01:50, Yang Shi wrote:
+>>>>>>>>>> I am wondering whether we can just have a warn_on_once or something
+>>>>>>>>>> for the
+>>>>>>>>>> case
+>>>>>>>>>> when we fail to allocate a pagetable page. Or, Ryan had
+>>>>>>>>>> suggested in an off-the-list conversation that we can maintain a cache
+>>>>>>>>>> of PTE
+>>>>>>>>>> tables for every PMD block mapping, which will give us
+>>>>>>>>>> the same memory consumption as we do today, but not sure if this is
+>>>>>>>>>> worth it.
+>>>>>>>>>> x86 can already handle splitting but due to the callchains
+>>>>>>>>>> I have described above, it has the same problem, and the code has been
+>>>>>>>>>> working
+>>>>>>>>>> for years :)
+>>>>>>>>> I think it's preferable to avoid having to keep a cache of pgtable memory
+>>>>>>>>> if we
+>>>>>>>>> can...
+>>>>>>>> Yes, I agree. We simply don't know how many pages we need to cache, and it
+>>>>>>>> still can't guarantee 100% allocation success.
+>>>>>>> This is wrong... We can know how many pages will be needed for splitting
+>>>>>>> linear
+>>>>>>> mapping to PTEs for the worst case once linear mapping is finalized. But it
+>>>>>>> may
+>>>>>>> require a few hundred megabytes memory to guarantee allocation success. I
+>>>>>>> don't
+>>>>>>> think it is worth for such rare corner case.
+>>>>>> Indeed, we know exactly how much memory we need for pgtables to map the
+>>>>>> linear
+>>>>>> map by pte - that's exactly what we are doing today. So we _could_ keep a
+>>>>>> cache.
+>>>>>> We would still get the benefit of improved performance but we would lose the
+>>>>>> benefit of reduced memory.
+>>>>>>
+>>>>>> I think we need to solve the vm_reset_perms() problem somehow, before we can
+>>>>>> enable this.
+>>>>> Sorry I realise this was not very clear... I am saying I think we need to
+>>>>> fix it
+>>>>> somehow. A cache would likely work. But I'd prefer to avoid it if we can
+>>>>> find a
+>>>>> better solution.
+>>>> Took a deeper look at vm_reset_perms(). It was introduced by commit
+>>>> 868b104d7379 ("mm/vmalloc: Add flag for freeing of special permsissions"). The
+>>>> VM_FLUSH_RESET_PERMS flag is supposed to be set if the vmalloc memory is RO
+>>>> and/or ROX. So set_memory_ro() or set_memory_rox() is supposed to follow up
+>>>> vmalloc(). So the page table should be already split before reaching vfree().
+>>>> I think this why vm_reset_perms() doesn't not check return value.
+>> If vm_reset_perms() is assuming it can't/won't fail, I think it should at least
+>> output a warning if it does?
+> 
+> It should. Anyway warning will be raised if split fails. We have somehow
+> mitigation.
+> 
+>>
+>>>> I scrutinized all the callsites with VM_FLUSH_RESET_PERMS flag set.
+>> Just checking; I think you made a comment before about there only being a few
+>> sites that set VM_FLUSH_RESET_PERMS. But one of them is the helper,
+>> set_vm_flush_reset_perms(). So just making sure you also followed to the places
+>> that use that helper?
+> 
+> Yes, I did.
+> 
+>>
+>>>> The most
+>>>> of them has set_memory_ro() or set_memory_rox() followed.
+>> And are all callsites calling set_memory_*() for the entire cell that was
+>> allocated by vmalloc? If there are cases where it only calls that for a portion
+>> of it, then it's not gurranteed that the memory is correctly split.
+> 
+> Yes, all callsites call set_memory_*() for the entire range.
+> 
+>>
+>>>> But there are 3
+>>>> places I don't see set_memory_ro()/set_memory_rox() is called.
+>>>>
+>>>> 1. BPF trampoline allocation. The BPF trampoline calls
+>>>> arch_protect_bpf_trampoline(). The generic implementation does call
+>>>> set_memory_rox(). But the x86 and arm64 implementation just simply return 0.
+>>>> For x86, it is because execmem cache is used and it does call
+>>>> set_memory_rox(). ARM64 doesn't need to split page table before this series,
+>>>> so it should never fail. I think we just need to use the generic
+>>>> implementation (remove arm64 implementation) if this series is merged.
+>> I know zero about BPF. But it looks like the allocation happens in
+>> arch_alloc_bpf_trampoline(), which for arm64, calls bpf_prog_pack_alloc(). And
+>> for small sizes, it grabs some memory from a "pack". So doesn't this mean that
+>> you are calling set_memory_rox() for a sub-region of the cell, so that doesn't
+>> actually help at vm_reset_perms()-time?
+> 
+> Took a deeper look at bpf pack allocator. The "pack" is allocated by
+> alloc_new_pack(), which does:
+> bpf_jit_alloc_exec()
+> set_vm_flush_reset_perms()
+> set_memory_rox()
+> 
+> If the size is greater than the pack size, it calls:
+> bpf_jit_alloc_exec()
+> set_vm_flush_reset_perms()
+> set_memory_rox()
+> 
+> So it looks like bpf trampoline is good, and we don't need do anything. It
+> should be removed from the list. I didn't look deep enough for bpf pack
+> allocator in the first place.
+> 
+>>
+>>>> 2. BPF dispatcher. It calls execmem_alloc which has VM_FLUSH_RESET_PERMS set.
+>>>> But it is used for rw allocation, so VM_FLUSH_RESET_PERMS should be
+>>>> unnecessary IIUC. So it doesn't matter even though vm_reset_perms() fails.
+>>>>
+>>>> 3. kprobe. S390's alloc_insn_page() does call set_memory_rox(), x86 also
+>>>> called set_memory_rox() before switching to execmem cache. The execmem cache
+>>>> calls set_memory_rox(). I don't know why ARM64 doesn't call it.
+>>>>
+>>>> So I think we just need to fix #1 and #3 per the above analysis. If this
+>>>> analysis look correct to you guys, I will prepare two patches to fix them.
+>> This all seems quite fragile. I find it interesting that vm_reset_perms() is
+>> doing break-before-make; it sets the PTEs as invalid, then flushes the TLB, then
+>> sets them to default. But for arm64, at least, I think break-before-make is not
+>> required. We are only changing the permissions so that can be done on live
+>> mappings; essentially change the sequence to; set default, flush TLB.
+> 
+> Yeah, I agree it is a little bit fragile. I think this is the "contract" for
+> vmalloc users. You allocate ROX memory via vmalloc, you are required to call
+> set_memory_*(). But there is nothing to guarantee the "contract" is followed.
+> But I don't think this is the only case in kernel.
+> 
+>>
+>> If we do that, then if the memory was already default, then there is no need to
+>> do anything (so no chance of allocation failure). If the memory was not default,
+>> then it must have already been split to make it non-default, in which case we
+>> can also gurrantee that no allocations are required.
+>>
+>> What am I missing?
+> 
+> The comment says:
+> Set direct map to something invalid so that it won't be cached if there are any
+> accesses after the TLB flush, then flush the TLB and reset the direct map
+> permissions to the default.
+> 
+> IIUC, it guarantees the direct map can't be cached in TLB after TLB flush from
+> _vm_unmap_aliases() by setting them invalid because TLB never cache invalid
+> entries. Skipping set direct map to invalid seems break this. Or "changing
+> permission on live mappings" on ARM64 can achieve the same goal?
 
-Applied to drm-misc-next, thanks!
+Here's my understanding of the intent of the code:
 
-[1/1] drm/bridge: ite-it6263: Support HDMI vendor specific infoframe
-      commit: f50b969bafafb2810a07f376387350c4c0d72a21
+Let's say we start with some memory that has been mapped RO. Our goal is to
+reset the memory back to RW and ensure that no TLB entry remains in the TLB for
+the old RO mapping. There are 2 ways to do that:
 
-Best regards,
--- 
-With best wishes
-Dmitry
+Approach 1 (used in current code):
+1. set PTE to invalid
+2. invalidate any TLB entry for the VA
+3. set the PTE to RW
+
+Approach 2:
+1. set the PTE to RW
+2. invalidate any TLB entry for the VA
+
+The benefit of approach 1 is that it is guarranteed that it is impossible for
+different CPUs to have different translations for the same VA in their
+respective TLB. But for approach 2, it's possible that between steps 1 and 2, 1
+CPU has a RO entry and another CPU has a RW entry. But that will get fixed once
+the TLB is flushed - it's not really an issue.
+
+(There is probably also an obscure way to end up with 2 TLB entries (one with RO
+and one with RW) for the same CPU, but the arm64 architecture permits that as
+long as it's only a permission mismatch).
+
+Anyway, approach 2 is used when changing memory permissions on user mappings, so
+I don't see why we can't take the same approach here. That would solve this
+whole class of issue for us.
+
+Thanks,
+Ryan
+
+
+> 
+> Thanks,
+> Yang
+> 
+>> Thanks,
+>> Ryan
+>>
+>>
+>>> Tested the below patch with bpftrace kfunc (allocate bpf trampoline) and
+>>> kprobes. It seems work well.
+>>>
+>>> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/
+>>> kprobes.c
+>>> index 0c5d408afd95..c4f8c4750f1e 100644
+>>> --- a/arch/arm64/kernel/probes/kprobes.c
+>>> +++ b/arch/arm64/kernel/probes/kprobes.c
+>>> @@ -10,6 +10,7 @@
+>>>
+>>>   #define pr_fmt(fmt) "kprobes: " fmt
+>>>
+>>> +#include <linux/execmem.h>
+>>>   #include <linux/extable.h>
+>>>   #include <linux/kasan.h>
+>>>   #include <linux/kernel.h>
+>>> @@ -41,6 +42,17 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+>>>   static void __kprobes
+>>>   post_kprobe_handler(struct kprobe *, struct kprobe_ctlblk *, struct pt_regs
+>>> *);
+>>>
+>>> +void *alloc_insn_page(void)
+>>> +{
+>>> +       void *page;
+>>> +
+>>> +       page = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
+>>> +       if (!page)
+>>> +               return NULL;
+>>> +       set_memory_rox((unsigned long)page, 1);
+>>> +       return page;
+>>> +}
+>>> +
+>>>   static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
+>>>   {
+>>>          kprobe_opcode_t *addr = p->ainsn.xol_insn;
+>>> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+>>> index 52ffe115a8c4..3e301bc2cd66 100644
+>>> --- a/arch/arm64/net/bpf_jit_comp.c
+>>> +++ b/arch/arm64/net/bpf_jit_comp.c
+>>> @@ -2717,11 +2717,6 @@ void arch_free_bpf_trampoline(void *image, unsigned int
+>>> size)
+>>>          bpf_prog_pack_free(image, size);
+>>>   }
+>>>
+>>> -int arch_protect_bpf_trampoline(void *image, unsigned int size)
+>>> -{
+>>> -       return 0;
+>>> -}
+>>> -
+>>>   int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
+>>>                                  void *ro_image_end, const struct
+>>> btf_func_model *m,
+>>>                                  u32 flags, struct bpf_tramp_links *tlinks,
+>>>
+>>>
+>>>> Thanks,
+>>>> Yang
+>>>>
+>>>>>
+>>>>>> Thanks,
+>>>>>> Ryan
+>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Yang
+>>>>>>>
+>>>>>>>> Thanks,
+>>>>>>>> Yang
+>>>>>>>>
+>>>>>>>>> Thanks,
+>>>>>>>>> Ryan
+>>>>>>>>>
+>>>>>>>>>
+> 
 
 
