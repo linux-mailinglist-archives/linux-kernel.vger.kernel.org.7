@@ -1,117 +1,288 @@
-Return-Path: <linux-kernel+bounces-807350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF97B4A34B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:17:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD91B4A354
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 086381B228B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89FCD3AC8DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6869924339D;
-	Tue,  9 Sep 2025 07:17:41 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF313256C76;
+	Tue,  9 Sep 2025 07:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="F0ob7Eiz"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5460239E70
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 07:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998311BDCF;
+	Tue,  9 Sep 2025 07:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757402261; cv=none; b=FdQffXF1Lnm5z4HR5hgIar6AG7U1R8tXcVVXinYnqpWrphtAQo2sNzJbyOSUHihx7yXLg7JTPtBpya6RpICSBsuqn33Mf4b/Y18usCbCNiJlP1gRF8DJh5/wKBouqINgA1Zz0r2IE89MpQ3ZWhf6tyqBm1L6mwol1KSrWl96+Go=
+	t=1757402307; cv=none; b=Ft+SB9Rn21QVLv9KmAoIEUXtfFM3qA4YYQDNeelnuGRj8/xrr/wCyq921kx9KfeQv9pv1S3mUeEu3h1VAxK6ZoAb66JghUvysEjFt/zvDu2JFqeNkgZGkWRTSrWIfq9OwRhDrS3+xplT8Yc7OAR9fP44Yr2j0GrGJkenS3fKD8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757402261; c=relaxed/simple;
-	bh=xcbuBAIcV7PYG4iVvgt6Hx4JudC8RwH/H+Q+eNBFY44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CfmfBwIzSWytLzvLO7NDCFeyu9OfVn2eeNStY2FWzYg2kc1kqOZNF1CfJFavcpQwqn2ip4DWFj1iWxkEoz/1h4ZksmWBaYGqN76tJhMm761Fc63SlS27IIKX3fqQyM4ZOBzS0jd8Hku6mEcnkNxMkVRQB4IsF1cdKrAyzS900Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uvsbO-0003x4-SX; Tue, 09 Sep 2025 09:17:18 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uvsbN-000Nkg-0l;
-	Tue, 09 Sep 2025 09:17:17 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uvsbN-00DwzJ-0J;
-	Tue, 09 Sep 2025 09:17:17 +0200
-Date: Tue, 9 Sep 2025 09:17:17 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Hubert =?utf-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	stable@vger.kernel.org, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Lukas Wunner <lukas@wunner.de>,
-	Russell King <linux@armlinux.org.uk>, Xu Yang <xu.yang_2@nxp.com>,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH net v1 1/1] net: usb: asix: ax88772: drop phylink use in
- PM to avoid MDIO runtime PM wakeups
-Message-ID: <aL_UfST0Q3HrSEtM@pengutronix.de>
-References: <20250908112619.2900723-1-o.rempel@pengutronix.de>
- <DCNKVCWI6VEQ.30M6YA786ZIX2@gmail.com>
+	s=arc-20240116; t=1757402307; c=relaxed/simple;
+	bh=9eCmkdDPqy64lacKVevoRSp4xze/FmSgeGGhW6m4y+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hh5vT87nTsDeH7K6qbtB+3XA9W3j3h5NZkytIaa1kBRYCPxBpnCYbhctgQ2t3QvPic6oXXe2Ptgt6IH/bFBzpPlCtBJ59AEvic9x/kQKahIW6AfLjyfe9uE8K4wm+25R30a68+OmEQa1y9ktJjOFYrO955ES5WnyU6q5ioW3D84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=F0ob7Eiz; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 588Mpv1T022960;
+	Tue, 9 Sep 2025 07:18:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=hjqHTV
+	qv4LgPJB3gW/Ooz87fYzFgcaYeFzD2uFG8HMg=; b=F0ob7Eiz9eb2KDQ8G3cm3x
+	YQDXEY7hHjwDzY9ZyA0i/fB6JKyMDOo4ss3tP+U1EuFrM0cYoJIo5HcT8ftxAQLO
+	aIwQt+GROaAW0NXUfGVQVj/4XhTlUTuGlTeD7zVUudSyK5NxuzykiesVPIRPGfvH
+	V0301T8EWP6zdx3DibL9/5xvxivP88JzFmwTCHBro/MNNN7le4r8A1p414PD5lhI
+	8qeD4q0ue9aiShoY7uuu3xG9E/vTdEKYA8Fu+LFF29kXgDCcNhc6pz9cI3oK3IHZ
+	3JhRlXecQUObvv2i8Js0QdacrqL4hStZqb49iaKosl9rDQUiJBD5dgE0wNMxNmrQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycu08a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 07:18:06 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5897I5Qi029500;
+	Tue, 9 Sep 2025 07:18:05 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xycu088-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 07:18:05 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5895mrMd020458;
+	Tue, 9 Sep 2025 07:18:04 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 490yp0t14a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 07:18:04 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5897I03551970330
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 9 Sep 2025 07:18:00 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4DD8E20040;
+	Tue,  9 Sep 2025 07:18:00 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 052B220043;
+	Tue,  9 Sep 2025 07:17:57 +0000 (GMT)
+Received: from [9.43.21.165] (unknown [9.43.21.165])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  9 Sep 2025 07:17:56 +0000 (GMT)
+Message-ID: <fe1b474b-a9d7-482c-b713-28eb2af37329@linux.ibm.com>
+Date: Tue, 9 Sep 2025 12:47:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DCNKVCWI6VEQ.30M6YA786ZIX2@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] powerpc/ftrace: support
+ CONFIG_FUNCTION_GRAPH_RETVAL
+To: Aditya Bodkhe <adityab1@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, rostedt@goodmis.org, mhiramat@kernel.org,
+        mark.rutland@arm.com, Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+References: <20250909045615.50251-1-adityab1@linux.ibm.com>
+Content-Language: en-US
+From: Hari Bathini <hbathini@linux.ibm.com>
+In-Reply-To: <20250909045615.50251-1-adityab1@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: vXfCZE_0cvAGRpCPEF7y3HQIaait3uaS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfX4H8nU5jqR/6X
+ Q+/KacEVOef2pVLC93c4ikI3mQefj7T9YNDy+dbLppsDqyGv4dOE4/a9UTAL8P/quXQlpJlrNsJ
+ w3IYK552YAmyX7P52Ry20HNG2OMJZydFsGVkHJ1k6kKMBcFU+xMIxvH8QmUWDfKZG6YdLEbbnyw
+ pG3SB2MtVzLedl0gYRjxzxpbtqyi4HnuiZ3XnLSSndfIV3E8OA8QWxKlUJGj7RLcWGw8oUt6sWr
+ ANDDtyI1YDyVd7ktxIL/AIOKyRmGjQqeCF8O0SWHdoE4gDtXqrjin54ZmxA//LBgcvPFQIBhe3c
+ 8nO9Zbqz4kL59J3MM/+6qW/pWaTsoPASCQhICxSK8cHGm90uzyfYuVMu5ZHlCELfBe4z+8cMvAC
+ lF2Dls9d
+X-Proofpoint-GUID: zXW5mYf8BmCY4BVrdt7wGSVf0siSEgGW
+X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68bfd4ae cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=1UX6Do5GAAAA:8 a=dNnesIPfpvp5sUh9fRYA:9 a=QEXdDO2ut3YA:10
+ a=Et2XPkok5AAZYJIKzHr1:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060235
 
-On Mon, Sep 08, 2025 at 07:00:09PM +0200, Hubert Wiśniewski wrote:
-> On Mon Sep 8, 2025 at 1:26 PM CEST, Oleksij Rempel wrote:
-> > Drop phylink_{suspend,resume}() from ax88772 PM callbacks.
-> >
-> > MDIO bus accesses have their own runtime-PM handling and will try to
-> > wake the device if it is suspended. Such wake attempts must not happen
-> > from PM callbacks while the device PM lock is held. Since phylink
-> > {sus|re}sume may trigger MDIO, it must not be called in PM context.
-> >
-> > No extra phylink PM handling is required for this driver:
-> > - .ndo_open/.ndo_stop control the phylink start/stop lifecycle.
-> > - ethtool/phylib entry points run in process context, not PM.
-> > - phylink MAC ops program the MAC on link changes after resume.
+
+
+On 09/09/25 10:26 am, Aditya Bodkhe wrote:
+> commit a1be9ccc57f0 ("function_graph: Support recording and printing the
+> return value of function") introduced support for function graph return
+> value tracing.
 > 
-> Thanks for the patch! Applied to v6.17-rc5, it fixes the problem for me.
+> Additionally, commit a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with
+> ftrace_regs") further refactored and optimized the implementation,
+> making `struct fgraph_ret_regs` unnecessary.
 > 
-> Tested-by: Hubert Wiśniewski <hubert.wisniewski.25632@gmail.com>
-
-Thank you for testing!
-
-> > Fixes: e0bffe3e6894 ("net: asix: ax88772: migrate to phylink")
+> This patch enables the above modifications for powerpc all, ensuring that
+> function graph return value tracing is available on this architecture.
 > 
-> It does, but v5.15 (including v5.15.191 LTS) is affected as well, from
-> 4a2c7217cd5a ("net: usb: asix: ax88772: manage PHY PM from MAC"). I think
-> it could also use a patch, but I won't insist.
+> In this patch we have redefined two functions:
+> - 'ftrace_regs_get_return_value()' - the existing implementation on
+> ppc returns -ve of return value based on some conditions not
+> relevant to our patch.
+> - 'ftrace_regs_get_frame_pointer()' - always returns 0 in current code .
+> 
+> We also allocate stack space to equivalent of 'SWITCH_FRAME_SIZE',
+> allowing us to directly use predefined offsets like 'GPR3' and 'GPR4'
+> this keeps code clean and consistent with already defined offsets .
+> 
+> After this patch, v6.14+ kernel can also be built with FPROBE on powerpc
+> but there are a few other build and runtime dependencies for FPROBE to
+> work properly. The next patch addresses them.
+> 
 
-Ack, I'll try do address it later.
+Looks good to me.
 
-Best Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Reviewed-by: Hari Bathini <hbathini@linux.ibm.com>
+
+> Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Signed-off-by: Aditya Bodkhe <adityab1@linux.ibm.com>
+> ---
+> 
+> Changelog:
+> v2 -> v3:
+> - Rebase on Linux 6.17-rc4
+> 
+> v2:https://lore.kernel.org/all/20250722085648.1640-1-adityab1@linux.ibm.com/
+> 
+> v1 -> v2:
+> - Added explanation for redefining ftrace_regs_get_return_value()
+> and ftrace_regs_get_frame_pointer()
+> - Explained why stack space equivalent to 'SWITCH_FRAME_SIZE' is allocated.
+> 
+> v1:https://lore.kernel.org/all/20250528134820.74121-1-adityab1@linux.ibm.com/
+> 
+> ---
+>   arch/powerpc/Kconfig                     |  1 +
+>   arch/powerpc/include/asm/ftrace.h        | 15 +++++++++
+>   arch/powerpc/kernel/trace/ftrace_entry.S | 42 ++++++++++++++----------
+>   3 files changed, 41 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 93402a1d9c9f..451d0e140051 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -246,6 +246,7 @@ config PPC
+>   	select HAVE_FUNCTION_ARG_ACCESS_API
+>   	select HAVE_FUNCTION_DESCRIPTORS	if PPC64_ELF_ABI_V1
+>   	select HAVE_FUNCTION_ERROR_INJECTION
+> +	select HAVE_FUNCTION_GRAPH_FREGS
+>   	select HAVE_FUNCTION_GRAPH_TRACER
+>   	select HAVE_FUNCTION_TRACER		if !COMPILE_TEST && (PPC64 || (PPC32 && CC_IS_GCC))
+>   	select HAVE_GCC_PLUGINS			if GCC_VERSION >= 50200   # plugin support on gcc <= 5.1 is buggy on PPC
+> diff --git a/arch/powerpc/include/asm/ftrace.h b/arch/powerpc/include/asm/ftrace.h
+> index 82da7c7a1d12..6ffc9c9cf4e3 100644
+> --- a/arch/powerpc/include/asm/ftrace.h
+> +++ b/arch/powerpc/include/asm/ftrace.h
+> @@ -50,6 +50,21 @@ static __always_inline struct pt_regs *arch_ftrace_get_regs(struct ftrace_regs *
+>   		asm volatile("mfmsr %0" : "=r" ((_regs)->msr));	\
+>   	} while (0)
+>   
+> +#undef ftrace_regs_get_return_value
+> +static __always_inline unsigned long
+> +ftrace_regs_get_return_value(const struct ftrace_regs *fregs)
+> +{
+> +	return arch_ftrace_regs(fregs)->regs.gpr[3];
+> +}
+> +#define ftrace_regs_get_return_value ftrace_regs_get_return_value
+> +
+> +#undef ftrace_regs_get_frame_pointer
+> +static __always_inline unsigned long
+> +ftrace_regs_get_frame_pointer(const struct ftrace_regs *fregs)
+> +{
+> +	return arch_ftrace_regs(fregs)->regs.gpr[1];
+> +}
+> +
+>   static __always_inline void
+>   ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs,
+>   				    unsigned long ip)
+> diff --git a/arch/powerpc/kernel/trace/ftrace_entry.S b/arch/powerpc/kernel/trace/ftrace_entry.S
+> index 3565c67fc638..6599fe3c6234 100644
+> --- a/arch/powerpc/kernel/trace/ftrace_entry.S
+> +++ b/arch/powerpc/kernel/trace/ftrace_entry.S
+> @@ -409,23 +409,31 @@ EXPORT_SYMBOL(_mcount)
+>   _GLOBAL(return_to_handler)
+>   	/* need to save return values */
+>   #ifdef CONFIG_PPC64
+> -	std	r4,  -32(r1)
+> -	std	r3,  -24(r1)
+> +	stdu	r1, -SWITCH_FRAME_SIZE(r1)
+> +	std	r4, GPR4(r1)
+> +	std	r3, GPR3(r1)
+> +	/* Save previous stack pointer (r1) */
+> +	addi	r3, r1, SWITCH_FRAME_SIZE
+> +	std	r3, GPR1(r1)
+>   	/* save TOC */
+> -	std	r2,  -16(r1)
+> -	std	r31, -8(r1)
+> +	std	r2,  24(r1)
+> +	std	r31, 32(r1)
+>   	mr	r31, r1
+> -	stdu	r1, -112(r1)
+> -
+> +	/* pass ftrace_regs/pt_regs to ftrace_return_to_handler */
+> +	addi	r3, r1, STACK_INT_FRAME_REGS
+>   	/*
+>   	 * We might be called from a module.
+>   	 * Switch to our TOC to run inside the core kernel.
+>   	 */
+>   	LOAD_PACA_TOC()
+>   #else
+> -	stwu	r1, -16(r1)
+> -	stw	r3, 8(r1)
+> -	stw	r4, 12(r1)
+> +	stwu	r1, -SWITCH_FRAME_SIZE(r1)
+> +	stw	r4, GPR4(r1)
+> +	stw	r3, GPR3(r1)
+> +	addi	r3, r1, SWITCH_FRAME_SIZE
+> +	stw	r3, GPR1(r1)
+> +	/* pass ftrace_regs/pt_regs to ftrace_return_to_handler */
+> +	addi	r3, r1, STACK_INT_FRAME_REGS
+>   #endif
+>   
+>   	bl	ftrace_return_to_handler
+> @@ -435,15 +443,15 @@ _GLOBAL(return_to_handler)
+>   	mtlr	r3
+>   
+>   #ifdef CONFIG_PPC64
+> -	ld	r1, 0(r1)
+> -	ld	r4,  -32(r1)
+> -	ld	r3,  -24(r1)
+> -	ld	r2,  -16(r1)
+> -	ld	r31, -8(r1)
+> +	ld	r4,  GPR4(r1)
+> +	ld	r3,  GPR3(r1)
+> +	ld	r2,  24(r1)
+> +	ld	r31, 32(r1)
+> +	ld	r1,  0(r1)
+>   #else
+> -	lwz	r3, 8(r1)
+> -	lwz	r4, 12(r1)
+> -	addi	r1, r1, 16
+> +	lwz	r3, GPR3(r1)
+> +	lwz	r4, GPR4(r1)
+> +	addi	r1, r1, SWITCH_FRAME_SIZE
+>   #endif
+>   
+>   	/* Jump back to real return address */
+
 
