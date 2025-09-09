@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-808007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3FCB4AC0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:31:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6A3B4AC0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D46D3B4BD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:31:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9B141B24559
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC85322A35;
-	Tue,  9 Sep 2025 11:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB21322DC9;
+	Tue,  9 Sep 2025 11:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="pAyB/mtD";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="cxJ1C0Uu"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="WGaJ3Qmw";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="d5Z2oeLJ"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970D6322531;
-	Tue,  9 Sep 2025 11:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC654322C8E;
+	Tue,  9 Sep 2025 11:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757417454; cv=fail; b=ZR6iyExShmrnz94lAiO7rKZlecpKwgkkcYca6eeSMvgVcF/JlBcy2bxb8hX8eutO/8AZQlJfe/l6SxIoTi4rTmucK2ZqwwdaHlinCXYMARoimP3+ViDmt4RqLiQav99vERkKD08hK+HxMWO11QBJK48qyWFimEGogrvJZWgQwtg=
+	t=1757417458; cv=fail; b=NdyQ9S1g9GsWZ4d2oJL80AVze/OUSgFNtpcVTws2TrLbpQZJgHdariSvzhsygKK0l50uQz6Kye5PkyhKvNYXDCRdyOfsdnOCRrVtNwB57XvZ+rVif4gq7o3llCMV75QSdweafEHlOJLEKXk/qa10oq3JAwMbbGCFXy3pv3cu45Q=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757417454; c=relaxed/simple;
-	bh=1CXFuIug/yMLtcH2kEgCQcxzk39tVwXaIoGV0g95s7Q=;
+	s=arc-20240116; t=1757417458; c=relaxed/simple;
+	bh=wJhnQMsUsI9rAjc0BNjA1XOBKL7QbUrGwXxQp9Iz5Lc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O0krqU9eT/w0SvZFm+gGu4cFycp5rx0537l6hFeYz9qL7lxBFrQUOOZooPKUmHjVK+5/Kf4F62t3PEOFQ5C4XRh4hBDeqbS+xGpcqEZQjeOp1w07adEGYXW2tIbaJmYrfdWXOj4FxWYdBbumDqLVhqtCkWi/TJZsN76AO1vUwig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=pAyB/mtD; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=cxJ1C0Uu; arc=fail smtp.client-ip=67.231.152.168
+	 MIME-Version:Content-Type; b=XKfCUe4f/QWz371ZofczBaSmU7vgZdsNTOX/2zCiIlyyCQqikKB76ckF889ZOpzT9r0cx9NUPeGJFzQEN/GvfD5C0nSin+VNto/iNdpXsNGm8rO8SlPVobecxjQS1n5vraPXBjRHGe2e2kocybyAd6rW+g6+W7JtFaMC3R+4Hx0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=WGaJ3Qmw; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=d5Z2oeLJ; arc=fail smtp.client-ip=67.231.149.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5894chE14162663;
-	Tue, 9 Sep 2025 06:30:49 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 588KTW2W1253433;
+	Tue, 9 Sep 2025 06:30:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=CPaObkdmYNBB+lBLl2984mLFb2yavzxJczSJv86UtP0=; b=
-	pAyB/mtD4Kev0ipQc6SCAN6MGuWyiK5sk+/wHkkYJVXJj2RQVSdB6eprB0QISzpW
-	YfzNLgNa7cdE+obTJGilqlgxjT8fvHaWjN5Prrld5/jwg3uzyxx21BuJ9z5GElB4
-	uIboXxTxEHs11EbujGl0MzKiwkxHD9bPSs5Kf88J87ZBisAOe/XdwvTFp0j6/yEM
-	gzldAJHSFg9soNnTAoon2w2YS5b7T6zABFaUWpj8gV0w3+EcLEjeIPqQwswu4489
-	70wjBAD9yygsw+FianUlZPs1tYe5Xw5bqVPRQ3CI332WF8KGyXsmfXGZ/BNiVqJy
-	4Ank89c4l6/8U19B7/JsHw==
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12on2107.outbound.protection.outlook.com [40.107.237.107])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 491upq9k42-1
+	PODMain02222019; bh=h4Dfr0hD8yE9FJXgyaN7BRfYnhLiGIoENqRcYFsQiR4=; b=
+	WGaJ3QmwjI/anX0aUGQIYpwQcIVtNdhos+lz5ic+i2F/kCGwhS7J/ke285GjADs+
+	Fovu+3jfiZQz7TNWupkO7zvDjkk9tm+dAwrUD+uUlcY1Jf0CzgY8SzS3vW6FALD8
+	Pt7ArYbbYqkitMwgUm4oMVe+5gJplvUQf57VZbAn4WWrXb9iURmJLrDcYBgKOYKU
+	JvukzKv1ZTIzqSY5fSnWMYEblZfFHdjAOHytK4+HoJ333fVLV9pI8t3CnKgxH05m
+	JJtE7GA46D6GoOPr8f6k0S5mJe2wr9jvULd6S6kW7deERVAcozZddfDN+zjZr0ps
+	Dq97OmJOWo/ucq3Rp5GDQw==
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2092.outbound.protection.outlook.com [40.107.94.92])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 49227r91wv-1
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 06:30:49 -0500 (CDT)
+	Tue, 09 Sep 2025 06:30:54 -0500 (CDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=itwvrcQIlv+QQ8XzKJ5Y3O9bfBOf7/ePuJZA0k6Y3wAOitB18Ucdmxs7DEKHB578+kv/THbpu1szYzQ/CzEXtfsW4ZwS6x6JCxJMaNxZjq/9TDI3MpeyEtePsHtpRMj85yLrFNliwDeDHByf+1GzRh0jQAG0+v67wpfudvRPIiE3IhmOM1U0SoeQ6c4F8qOZoMNemdMYMezYgGKnsUz17nPcZz76QxtWlQGhPNyekL8YmQducX/tkPwWffOABBQhCXGLKSv77cCqkRfwpwf90pL30iIPW74Nqf6RFMAuRVURM3v5Fl+9athmY4pJNP0VN7NwTGgKUc3jo89oIMGwtA==
+ b=o4tiH3l1kshLi5l0sjUkD1a/RchNrTh0BHaLcqjdPNvU4aXxznkgUzBY0+hHomPo5qk7A/xATwLk6W51QJLZr546xf9feJLh+Ar1zx6dsu5E5rS/byHhVUa5ZIhUCjh6iasY3+HLpTIdioBv82OHQTss72jsdBM8HbuwzogLt0RvcbHA0GNyg17SO1bpDjD8HQPBzYJ7m1t1yr/k3o/gX4K0fmWXYqOZerpLNFLO9+8M0LG5NS+Q3pRwYxw6AODs8V2mipTCn4bWvqsuxk707de80V3S3QE+4B7i5f7QFEcdrxFxwU7WRaSwX8qICNrK/RDObhXEXfFDbFyxMV2C2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CPaObkdmYNBB+lBLl2984mLFb2yavzxJczSJv86UtP0=;
- b=CWDQ2xDY+lmJrlAS8eZn8sItV6MrX/H98ykb4Q3RdhEquYaBkzzWHV41FKWzLBhteDj5bQz0Kei5fprBGBEPTnPDSRWtGCkBT4v2pWX1wkwB3DoqPl6lsW/XsLYwBy4/Rp++fTFLG0AeR/HvrcKXA1maPOqE+XcecBIA+k7ci9mxL23tksyJIMKQVAacN1iMTV3t0GDQlCPO2U1aP2M4Dt6RArA1M8a0KsNRj1ehlhc4kMS0tl2nJTgoVXAXg6oLL7i7FEPdHjS0OdD3gVzy8oQXgcjCO23rhItYKhYCtI7MgtFIYLja1UBFVmDD+FuZZXpli4wKFTVAU9iVycvvew==
+ bh=h4Dfr0hD8yE9FJXgyaN7BRfYnhLiGIoENqRcYFsQiR4=;
+ b=ILhNnBHVNv3IVMesaBtVvCHS9mOU9ZPqpaeih4p+7XJToFnLUO8tnMkmkfZUC40tEt0qfP+ht47VsNMLEpagaWV6MhXc4dch3tm0ZPt7L7UlQ3h5k+xCykPVz5bXXtMYX9d/DucuBMRXibmajhp56ETPExudtlkKs9LI7f95juymLJk+p/p12YTc8IYKmvn+ZgbgNpLSAnI3TwYEGxz5rf8euV75xnPiMNCtGsFbaClniTTKSxTEPwrOdB3BRPsJ4JjzQoOLbBtv3m8Lew24pRMC8kMEURVCvYHJ5ZUGd1c3ANCfJmIQzS161JCsfTHtydJDu9QCRGxDQFL29exOuw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  84.19.233.75) smtp.rcpttodomain=cirrus.com
  smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
@@ -63,18 +63,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CPaObkdmYNBB+lBLl2984mLFb2yavzxJczSJv86UtP0=;
- b=cxJ1C0UuwFpN2NLUWXlSu7sj3xN/gMSNBZ0bQ7jJmTbi/WKtzdTKcooCOxPuipMdqJtgmV1O806y9momcxuInU+2gvjxW2kFp8Uxdxa7kJLIuT5zIOOXS/17dSgysB84bAahjHwalNKsAKFa3Zvp/LGJed/XXRi61NNbNZMDhdA=
-Received: from BY5PR17CA0026.namprd17.prod.outlook.com (2603:10b6:a03:1b8::39)
- by IA1PR19MB7964.namprd19.prod.outlook.com (2603:10b6:208:44f::6) with
+ bh=h4Dfr0hD8yE9FJXgyaN7BRfYnhLiGIoENqRcYFsQiR4=;
+ b=d5Z2oeLJ83w5qetOmuSGHp+yjFKH361hjkI3NRcDRHqk3dnrcn+LtaKkUjYO08ofFkHDHZVmTao0ejKVHAMUpwyF51IvqqCNkorYv93/8cOvalCzh6tIVO3ZjPLfYX+PhMNcSyiqzz/M47xfQ1HrXvAXV9nbSmj6BqLQ4l2j+j0=
+Received: from MW4PR03CA0304.namprd03.prod.outlook.com (2603:10b6:303:dd::9)
+ by MN0PR19MB5756.namprd19.prod.outlook.com (2603:10b6:208:377::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
- 2025 11:30:45 +0000
-Received: from SJ5PEPF000001D6.namprd05.prod.outlook.com
- (2603:10b6:a03:1b8:cafe::be) by BY5PR17CA0026.outlook.office365.com
- (2603:10b6:a03:1b8::39) with Microsoft SMTP Server (version=TLS1_3,
+ 2025 11:30:46 +0000
+Received: from CO1PEPF000066EC.namprd05.prod.outlook.com
+ (2603:10b6:303:dd:cafe::32) by MW4PR03CA0304.outlook.office365.com
+ (2603:10b6:303:dd::9) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Tue,
- 9 Sep 2025 11:30:43 +0000
+ 9 Sep 2025 11:30:45 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
  smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
@@ -83,22 +83,22 @@ Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
  receiver=protection.outlook.com; client-ip=84.19.233.75;
  helo=edirelay1.ad.cirrus.com;
 Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- SJ5PEPF000001D6.mail.protection.outlook.com (10.167.242.58) with Microsoft
+ CO1PEPF000066EC.mail.protection.outlook.com (10.167.249.8) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.13
- via Frontend Transport; Tue, 9 Sep 2025 11:30:41 +0000
+ via Frontend Transport; Tue, 9 Sep 2025 11:30:44 +0000
 Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 4467840654E;
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 465EF40654F;
 	Tue,  9 Sep 2025 11:30:40 +0000 (UTC)
 Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.24])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 329F682025A;
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 40332820247;
 	Tue,  9 Sep 2025 11:30:40 +0000 (UTC)
 From: Richard Fitzgerald <rf@opensource.cirrus.com>
 To: broonie@kernel.org
 Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
         patches@opensource.cirrus.com
-Subject: [PATCH v2 4/6] ASoC: cs-amp-lib-test: Add tests for cs_amp_get_vendor_spkid()
-Date: Tue,  9 Sep 2025 12:30:37 +0100
-Message-Id: <20250909113039.922065-5-rf@opensource.cirrus.com>
+Subject: [PATCH v2 5/6] ASoC: cs-amp-lib: Add HP-specific EFI variable for calibration data
+Date: Tue,  9 Sep 2025 12:30:38 +0100
+Message-Id: <20250909113039.922065-6-rf@opensource.cirrus.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250909113039.922065-1-rf@opensource.cirrus.com>
 References: <20250909113039.922065-1-rf@opensource.cirrus.com>
@@ -111,303 +111,171 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D6:EE_|IA1PR19MB7964:EE_
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066EC:EE_|MN0PR19MB5756:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 2d4ca1c8-4f0d-488c-acad-08ddef944f39
+X-MS-Office365-Filtering-Correlation-Id: 04317a88-1fc1-4db4-c7e8-08ddef9450fd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|61400799027|36860700013;
+	BCL:0;ARA:13230040|82310400026|61400799027|376014|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lZ1adSxfhSR1KUe+nDC/qOzqvFNEubYxJWUpD6P6cAM+sYQTBOA5qYxa/Ptf?=
- =?us-ascii?Q?IM9DfFIedJtaWNWiCuoe9hVDxwKG4444q2rMng8vw3DYMKYG66WpW5vYnfWq?=
- =?us-ascii?Q?XaVslk/41jfeBKZDjRZt8c1iRHGhmCnH4RC94gIq9NTv09hA1/cL0JOUVYSL?=
- =?us-ascii?Q?pbJB/4JWJbmU9E5u82orH/kx671wO/TFGDe/outxCg1sfQWyG2dKOf3VE7Hs?=
- =?us-ascii?Q?qhZcB9jr4I5bpzLSiDKgljBIaiJ6zdNItZ7hb5CvygAjTlYeA1MG0kTAmGto?=
- =?us-ascii?Q?OOVmBSpww9SYvev3NVlGy2vX1l8Eq2jygLQ2VAx8J4Uosoar+IS2Ip/mT2AI?=
- =?us-ascii?Q?t1H82VeViucJKGbm7fGGR3TRdY0y8z5OU7rnD0TboBTyhxYzvONgkR26NG1O?=
- =?us-ascii?Q?sGyHFmMJOe17qtRFLUOgM9BHh7E7KJ/PfkebI6OeI7XkeFv+9wKSmaMZewtu?=
- =?us-ascii?Q?XDYN6qJ+IRCfzlezu6tkYtjfRI3xoGxiUpvihGp0UQ61DOwAnwpXzXn0sQGh?=
- =?us-ascii?Q?BTGCX/UmE+cQzQtD/w5THiJauGQzT6sG48iu8+TWLf/NAt+CGftH0U0MeUJt?=
- =?us-ascii?Q?ARs6hV3ZxAAUuZHMiwB1WZc56EvvhjP4clxxgQnA2H5mol4Umfdgy9vM0sRi?=
- =?us-ascii?Q?smfwV9166ZLWXhGnwkGHX37QDZmDcMjRtSW9Ap+P2BcQ1EU/ngY/JW6ctN8X?=
- =?us-ascii?Q?8E2z5Tn7LSQmDPIuKi820A1+7ybZxffpRawLPPx59BwPDMODf0hGdgTuXvEJ?=
- =?us-ascii?Q?rHps/6etC0Xx3wzyjTAXClDDQ2i7uAf1FRrf93/gUulUP8Ptlere7RdSB/eO?=
- =?us-ascii?Q?ZJ9hNpiZbP7QXuqzuRneaeFeTy+z5/K20iJ0MoSzPglRUWqimiCKHs5r56yz?=
- =?us-ascii?Q?sK/TminFjp3VYciU9sCZEcg8MsrogsnHjLGqnY93e15M7b7GQhjnORcNqG5X?=
- =?us-ascii?Q?7WuZWcQewAwsFaywp7dw/XcTVwvi+Su7XE5nCcQhIMPlIKdaOgrQAuSqNxIj?=
- =?us-ascii?Q?E6sbysdXynNxtI9mjuiDKBmun0DN4HPD5237I5vABafs02zv57WM5OEUBC1N?=
- =?us-ascii?Q?VTOiStjx5oPbdKCdFSD+v9HrtX+Cxhvp7wVv60+t8THuMpwL7W1xL4Eq/5a3?=
- =?us-ascii?Q?oDa144mjvp8/rrXgqwOQ5tJ/00TdqsyjO0x+s4cXkoSzEV9OleG5D/Y2mKjo?=
- =?us-ascii?Q?8eqAF7HuXIFl7Xg9hmrNFS66ocdln4MaWGeyQVbme6+BBj3sE/PQf+3qUOd3?=
- =?us-ascii?Q?Cr2mXAOmVZcaQXKuHYOPq8qj12jOuaoHpJhiBMJe2r8RZp7otwaTNiIAA91I?=
- =?us-ascii?Q?02WiT37/+jgiWo7ZMgawJEHTVN77olysvElQHlAOy1h/dES2syMpwEUeK9bj?=
- =?us-ascii?Q?AddNCE3a0DJ6A9EYfwklbk9IH25da0iJZ7D1lsouziKbLTtXPIZEFAQr9FSP?=
- =?us-ascii?Q?AucZMzmXRBltCULvVcDy6eHTKzh4arGZ53JOVhLFLggmpmPC1ubFK4WBMC9T?=
- =?us-ascii?Q?bCATaCBng6XkWURQSaCA77LrAztaqW8ZASJH?=
+	=?us-ascii?Q?wM4Vuhyn42SW8RI/iC5xc+mFosWrP8kcfxN9XDC8VeY6ID4HKLZwBbEcCuZB?=
+ =?us-ascii?Q?LcMbPk/QtmiuGAjGiyB/Cw7jhj/ttt/W1e4LnDmNz0z6HXFQJSsKrM1UJ8Mk?=
+ =?us-ascii?Q?m70QfgSGd0krE8VxYZRklfxefDwlTPUbNDrcW/Al4X5FW9VdHyi3mSSwLXek?=
+ =?us-ascii?Q?PbaeYXWXtQ5CaY15XntWS1rqWPLZ/BDGR6osxOIGs15eKSu3ahZ7UqGNXrIa?=
+ =?us-ascii?Q?uI7dzd4WRGUIdOTbLEUo3fW4+Vk4bMT4bQgzY8rK6TLbz5qrt5ZzxTmmN9tx?=
+ =?us-ascii?Q?7cQ+CIMUThkEHgxCQxFfDQGZwQM3PX6pCZh7EOsQZGKaBB1pfZ2Z4Lx7OBHD?=
+ =?us-ascii?Q?bDnRy+jBxqijh87wbWUcs+4fMjGl21Sj1nkycik2CdTco6V3JnCNSukO32ui?=
+ =?us-ascii?Q?3czyJJWpf0mnjsKE0gVTqUMpC3FWa3ZerpQQGXglJp/6pHDe/bptPZSFE/J/?=
+ =?us-ascii?Q?+2F5k5HgqvcPlEOC6eXIQh6RzX71jD+6hW7Nhk0fkSPGjJhr1VCFrK4PZ7+V?=
+ =?us-ascii?Q?3I31Bhf4jf2GHixSyrdmC7YPLEFRP0iIazzRqiSN/AEGQHXrrn0HSp/696CZ?=
+ =?us-ascii?Q?/pMLKpMMyUPYSjpikpZErQsZ2l1pr66J+AVP8qkLZRqxknvEAS5pvgF6MDif?=
+ =?us-ascii?Q?0pQ7wr7Z6Np1LiybH2nAXsSrplzO2HhJ2AVoFwff1Rp9mO9kXk13TLjFk3Pb?=
+ =?us-ascii?Q?Jh7/iz0ZcQ1+weAwo8nw2QKBCqwtJq5nTFxG63mLCPVgi2cvh+qwjU6PHBS8?=
+ =?us-ascii?Q?caBR+QJES9UX0RrMR1PLboO7Z8CrxDxdLjF+aeFinHHO8ndNa2uc0ZxghfAz?=
+ =?us-ascii?Q?mktRibDyqHu7UI3kuoQ4kJib7W+mmAdW77WGehPK+IAY671P5huUN/NidBlj?=
+ =?us-ascii?Q?Pe4QM7PDc9bnxckYzpUwPM9wUoXX/YnpP17d+9lDQx8aPO5g7T/aiYEK5QqZ?=
+ =?us-ascii?Q?iXf9uCWXb9bvvjoLFs1MFFJvUGYL5x51RbJBCANLdj/u7fSyKeQwmc7G5dtN?=
+ =?us-ascii?Q?8hqap+f+gY7BDjjCl+MxdR/hoaYNlPQIOAOoy9tgsQlNPY3ak6H56uhMZac1?=
+ =?us-ascii?Q?W6VNif+YlnMhrCqPT+yY0a3ynGGylVbumgKVDrSpnXjzf4+EKZmXue2dy3cL?=
+ =?us-ascii?Q?qjm08V1DwHxLjrxh02bOkFPJCGNgawAmQ0wPmOkXsds2+Tr0JuYXauI1xP6j?=
+ =?us-ascii?Q?rXgQMyIN5KOMrM4Ss/Kishz7mCsrs9WVrEMcj/cENJm7C/e3qy5DlEzd171K?=
+ =?us-ascii?Q?Gncp6Wx6oW5VCO4CGy6mpRI07EeVb7GOtu6X80YpfVFDDLsXCWsqDw1gZnRU?=
+ =?us-ascii?Q?JtWiGLijqqmTFmDGYfTM9e+TVTm7wDuJ4Igq5HaVBMU2ei33vvoYJO7rvPkL?=
+ =?us-ascii?Q?WGQqqpURuIquqKZzeTPozrBxGVQ54itefjWOj/gAZYCDg40REhDpJeTu019S?=
+ =?us-ascii?Q?AjwrO2wkFwOWSBIzdQrVzHDBgS4uqfwnVUHGNIv7KluLR32XFAP56qJMcFjc?=
+ =?us-ascii?Q?HbhcmMBN4QY5GXqVH7Q3MUO0K6fzqGTBX7Dd?=
 X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(376014)(61400799027)(36860700013);DIR:OUT;SFP:1102;
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(61400799027)(376014)(36860700013);DIR:OUT;SFP:1102;
 X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 11:30:41.6507
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 11:30:44.6326
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d4ca1c8-4f0d-488c-acad-08ddef944f39
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04317a88-1fc1-4db4-c7e8-08ddef9450fd
 X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-SJ5PEPF000001D6.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-CO1PEPF000066EC.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR19MB7964
-X-Authority-Analysis: v=2.4 cv=DMuP4zNb c=1 sm=1 tr=0 ts=68c00fe9 cx=c_pps
- a=uh+8t3r8MFU2BVWJWTlZiQ==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR19MB5756
+X-Authority-Analysis: v=2.4 cv=f+FIBPyM c=1 sm=1 tr=0 ts=68c00fee cx=c_pps
+ a=odStxYl4fA30BBTO3gVnUA==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=yJojWOMRYYMA:10 a=RWc_ulEos4gA:10 a=w1d2syhTAAAA:8 a=VFd6b9-Wlax7agovK-8A:9
-X-Proofpoint-GUID: gqqzkLOpm0HSHhSnZ_ZDviKPzgGtFQf2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA5MDExNCBTYWx0ZWRfX0Nbqbql5VZAP
- tZWN2aP12jDoq6Duz0jLNnhIzdhyd9vGzMx1X9ZbFYPid40ock/1Jv4QlBhNxA8nq6E1bBHitHj
- 4uhXZBDzZLaPPh/GvTeojK92uiZ4Sn4BXM0UjAiJex+oeBYWQU2hNxlDbpdr7F8+tuXDrN6bwcN
- aoTUr7n3yalLMk/dIbNgoU3mYErGiqmMF3tPAcWAkPfFFUOSU9ZemCxuNuSlYJvU/OZdDNmYMG4
- Jh6HGYxtfLUSaiGMueNgR5QbhD09lsOP9txpfEThEwUDOUYhsc7xeNAB2cW0qoCslgW38mwi58Q
- +tnUAJ9Rp3bDIQiRbVhBY9aexL3Lyox5BVJ51esBiVuagAQMPPvMe0NESG0AW8=
-X-Proofpoint-ORIG-GUID: gqqzkLOpm0HSHhSnZ_ZDviKPzgGtFQf2
+ a=yJojWOMRYYMA:10 a=RWc_ulEos4gA:10 a=w1d2syhTAAAA:8 a=gujROYcaeV9tRZqipvkA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA5MDExNCBTYWx0ZWRfXxqhM+72YUPRY
+ F+OR7X+AhJWkIiy2gQ3x/+X23K8KvX5w+2ruEfjcas6+bpFk+7Ql+Y5t8YYo6HoQemIhtTcMcBd
+ IbVDSIhN1pF2gxXZ+qaN45MlUvyPOk7BWd1tUmbQgr8g9aR4upn+9a94Qb+oVWUdCmKodwUXn/X
+ wownFcs+b5smTjJfZpuWHuzuV+PF0YBsI9998j2itvWDuDZXydUZMoyMmKMb9u9vSkzIbbTXpTz
+ HgZcXMkf38gk4VxCEKUeUdw2LVyiiZwcLhp/ARZgVqnmiQMeVzkcgRoEF9I4tlzbkfb788QAg1X
+ YbN+fvp8nTtwK/qExuz8NkyPFwa5ZNfTZuDIDjDQsEAKaSwmu2owOYnzyjiuJM=
+X-Proofpoint-GUID: -6db9WgYa5wOpHTCQkc7iAlIE4CEH0hc
+X-Proofpoint-ORIG-GUID: -6db9WgYa5wOpHTCQkc7iAlIE4CEH0hc
 X-Proofpoint-Spam-Reason: safe
 
-Add test cases for cs_amp_get_vendor_spkid() for the Lenovo speaker ID
-UEFI variable.
+Search for an HP-specific EFI variable for calibration before falling
+back to the normal Cirrus Logic EFI variable.
 
-This is a simple set of cases:
-- EFI variable is not found
-- EFI variable size is larger than the expect 1 byte
-- EFI variable has invalid value 0
-- Lenovo UEFI variable valid values are interpreted correctly
-- HP UEFI variable valid values are interpreted correctly
+Future HP models will use an HP-defined EFI variable for storage of
+amp calibration data. The content is the same as the normal Cirrus
+Logic EFI variable.
+
+The first step in cs_amp_get_cal_efi_buffer() is to get the size of
+the EFI variable, so this has been made a loop that walks through an
+array of possible variables.
+
+A small change is needed to the KUnit test, which is included in this
+patch. Originally the cs_amp_lib_test_get_efi_variable() hook function
+asserted that the passed name and GUID matched the Cirrus Logic EFI
+variable. Obviously this will fail because the code now tries the HP
+definition first. The function has been changed to return EFI_NOT_FOUND
+instead, which emulates the normal behaviour of trying to get the HP
+variable on a system that has the Cirrus variable.
 
 Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 ---
- sound/soc/codecs/cs-amp-lib-test.c | 196 +++++++++++++++++++++++++++++
- 1 file changed, 196 insertions(+)
+ sound/soc/codecs/cs-amp-lib-test.c |  5 ++--
+ sound/soc/codecs/cs-amp-lib.c      | 37 ++++++++++++++++++++++++------
+ 2 files changed, 33 insertions(+), 9 deletions(-)
 
 diff --git a/sound/soc/codecs/cs-amp-lib-test.c b/sound/soc/codecs/cs-amp-lib-test.c
-index f53650128fc3..e7492afa041e 100644
+index e7492afa041e..c090498cbf78 100644
 --- a/sound/soc/codecs/cs-amp-lib-test.c
 +++ b/sound/soc/codecs/cs-amp-lib-test.c
-@@ -19,6 +19,14 @@
- #include <linux/random.h>
- #include <sound/cs-amp-lib.h>
+@@ -204,8 +204,9 @@ static efi_status_t cs_amp_lib_test_get_efi_variable(efi_char16_t *name,
+ 	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, guid);
+ 	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, size);
  
-+#define LENOVO_SPEAKER_ID_EFI_NAME L"SdwSpeaker"
-+#define LENOVO_SPEAKER_ID_EFI_GUID \
-+	EFI_GUID(0x48df970e, 0xe27f, 0x460a, 0xb5, 0x86, 0x77, 0x19, 0x80, 0x1d, 0x92, 0x82)
-+
-+#define HP_SPEAKER_ID_EFI_NAME L"HPSpeakerID"
-+#define HP_SPEAKER_ID_EFI_GUID \
-+	EFI_GUID(0xc49593a4, 0xd099, 0x419b, 0xa2, 0xc3, 0x67, 0xe9, 0x80, 0xe6, 0x1d, 0x1e)
-+
- KUNIT_DEFINE_ACTION_WRAPPER(faux_device_destroy_wrapper, faux_device_destroy,
- 			    struct faux_device *)
+-	KUNIT_EXPECT_MEMEQ(test, name, expected_name, sizeof(expected_name));
+-	KUNIT_EXPECT_MEMEQ(test, guid, &expected_guid, sizeof(expected_guid));
++	if (memcmp(name, expected_name, sizeof(expected_name)) ||
++	    efi_guidcmp(*guid, expected_guid))
++		return -EFI_NOT_FOUND;
  
-@@ -642,6 +650,185 @@ static void cs_amp_lib_test_write_cal_data_test(struct kunit *test)
- 	KUNIT_EXPECT_EQ(test, entry->value, data.calStatus);
- }
+ 	if (!buf) {
+ 		*size = priv->cal_blob->size;
+diff --git a/sound/soc/codecs/cs-amp-lib.c b/sound/soc/codecs/cs-amp-lib.c
+index 9b51d056d863..8434d5196107 100644
+--- a/sound/soc/codecs/cs-amp-lib.c
++++ b/sound/soc/codecs/cs-amp-lib.c
+@@ -28,6 +28,24 @@
+ #define HP_SPEAKER_ID_EFI_GUID \
+ 	EFI_GUID(0xc49593a4, 0xd099, 0x419b, 0xa2, 0xc3, 0x67, 0xe9, 0x80, 0xe6, 0x1d, 0x1e)
  
-+static void cs_amp_lib_test_spkid_lenovo_not_present(struct kunit *test)
-+{
-+	struct cs_amp_lib_test_priv *priv = test->priv;
-+	struct device *dev = &priv->amp_dev->dev;
++#define HP_CALIBRATION_EFI_NAME L"SmartAmpCalibrationData"
++#define HP_CALIBRATION_EFI_GUID \
++	EFI_GUID(0x53559579, 0x8753, 0x4f5c, 0x91, 0x30, 0xe8, 0x2a, 0xcf, 0xb8, 0xd8, 0x93)
 +
-+	kunit_activate_static_stub(test,
-+				   cs_amp_test_hooks->get_efi_variable,
-+				   cs_amp_lib_test_get_efi_variable_none);
++static const struct cs_amp_lib_cal_efivar {
++	efi_char16_t *name;
++	efi_guid_t *guid;
++} cs_amp_lib_cal_efivars[] = {
++	{
++		.name = HP_CALIBRATION_EFI_NAME,
++		.guid = &HP_CALIBRATION_EFI_GUID,
++	},
++	{
++		.name = CIRRUS_LOGIC_CALIBRATION_EFI_NAME,
++		.guid = &CIRRUS_LOGIC_CALIBRATION_EFI_GUID,
++	},
++};
 +
-+	KUNIT_EXPECT_EQ(test, -ENOENT, cs_amp_get_vendor_spkid(dev));
-+}
+ static int cs_amp_write_cal_coeff(struct cs_dsp *dsp,
+ 				  const struct cirrus_amp_cal_controls *controls,
+ 				  const char *ctl_name, u32 val)
+@@ -146,12 +164,17 @@ static struct cirrus_amp_efi_data *cs_amp_get_cal_efi_buffer(struct device *dev)
+ 	unsigned long data_size = 0;
+ 	u8 *data;
+ 	efi_status_t status;
+-	int ret;
++	int i, ret;
 +
-+static efi_status_t cs_amp_lib_test_get_efi_variable_lenovo_d0(efi_char16_t *name,
-+							       efi_guid_t *guid,
-+							       unsigned long *size,
-+							       void *buf)
-+{
-+	struct kunit *test = kunit_get_current_test();
-+
-+	if (efi_guidcmp(*guid, LENOVO_SPEAKER_ID_EFI_GUID) ||
-+	    memcmp(name, LENOVO_SPEAKER_ID_EFI_NAME, sizeof(LENOVO_SPEAKER_ID_EFI_NAME)))
-+		return EFI_NOT_FOUND;
-+
-+	KUNIT_ASSERT_EQ(test, *size, 1);
-+	*size = 1;
-+	*(u8 *)buf = 0xd0;
-+
-+	return EFI_SUCCESS;
-+}
-+
-+static efi_status_t cs_amp_lib_test_get_efi_variable_lenovo_d1(efi_char16_t *name,
-+							       efi_guid_t *guid,
-+							       unsigned long *size,
-+							       void *buf)
-+{
-+	struct kunit *test = kunit_get_current_test();
-+
-+	if (efi_guidcmp(*guid, LENOVO_SPEAKER_ID_EFI_GUID) ||
-+	    memcmp(name, LENOVO_SPEAKER_ID_EFI_NAME, sizeof(LENOVO_SPEAKER_ID_EFI_NAME)))
-+		return EFI_NOT_FOUND;
-+
-+	KUNIT_ASSERT_EQ(test, *size, 1);
-+	*size = 1;
-+	*(u8 *)buf = 0xd1;
-+
-+	return EFI_SUCCESS;
-+}
-+
-+static efi_status_t cs_amp_lib_test_get_efi_variable_lenovo_00(efi_char16_t *name,
-+							       efi_guid_t *guid,
-+							       unsigned long *size,
-+							       void *buf)
-+{
-+	struct kunit *test = kunit_get_current_test();
-+
-+	KUNIT_ASSERT_EQ(test, 0, efi_guidcmp(*guid, LENOVO_SPEAKER_ID_EFI_GUID));
-+	KUNIT_ASSERT_EQ(test, *size, 1);
-+	*size = 1;
-+	*(u8 *)buf = 0;
-+
-+	return EFI_SUCCESS;
-+}
-+
-+static void cs_amp_lib_test_spkid_lenovo_d0(struct kunit *test)
-+{
-+	struct cs_amp_lib_test_priv *priv = test->priv;
-+	struct device *dev = &priv->amp_dev->dev;
-+
-+	kunit_activate_static_stub(test,
-+				   cs_amp_test_hooks->get_efi_variable,
-+				   cs_amp_lib_test_get_efi_variable_lenovo_d0);
-+
-+	KUNIT_EXPECT_EQ(test, 0, cs_amp_get_vendor_spkid(dev));
-+}
-+
-+static void cs_amp_lib_test_spkid_lenovo_d1(struct kunit *test)
-+{
-+	struct cs_amp_lib_test_priv *priv = test->priv;
-+	struct device *dev = &priv->amp_dev->dev;
-+
-+	kunit_activate_static_stub(test,
-+				   cs_amp_test_hooks->get_efi_variable,
-+				   cs_amp_lib_test_get_efi_variable_lenovo_d1);
-+
-+	KUNIT_EXPECT_EQ(test, 1, cs_amp_get_vendor_spkid(dev));
-+}
-+
-+static void cs_amp_lib_test_spkid_lenovo_illegal(struct kunit *test)
-+{
-+	struct cs_amp_lib_test_priv *priv = test->priv;
-+	struct device *dev = &priv->amp_dev->dev;
-+
-+	kunit_activate_static_stub(test,
-+				   cs_amp_test_hooks->get_efi_variable,
-+				   cs_amp_lib_test_get_efi_variable_lenovo_00);
-+
-+	KUNIT_EXPECT_LT(test, cs_amp_get_vendor_spkid(dev), 0);
-+}
-+
-+static efi_status_t cs_amp_lib_test_get_efi_variable_buf_too_small(efi_char16_t *name,
-+								   efi_guid_t *guid,
-+								   unsigned long *size,
-+								   void *buf)
-+{
-+	return EFI_BUFFER_TOO_SMALL;
-+}
-+
-+static void cs_amp_lib_test_spkid_lenovo_oversize(struct kunit *test)
-+{
-+	struct cs_amp_lib_test_priv *priv = test->priv;
-+	struct device *dev = &priv->amp_dev->dev;
-+
-+	kunit_activate_static_stub(test,
-+				   cs_amp_test_hooks->get_efi_variable,
-+				   cs_amp_lib_test_get_efi_variable_buf_too_small);
-+
-+	KUNIT_EXPECT_LT(test, cs_amp_get_vendor_spkid(dev), 0);
-+}
-+
-+static efi_status_t cs_amp_lib_test_get_efi_variable_hp_30(efi_char16_t *name,
-+							   efi_guid_t *guid,
-+							   unsigned long *size,
-+							   void *buf)
-+{
-+	struct kunit *test = kunit_get_current_test();
-+
-+	if (efi_guidcmp(*guid, HP_SPEAKER_ID_EFI_GUID) ||
-+	    memcmp(name, HP_SPEAKER_ID_EFI_NAME, sizeof(HP_SPEAKER_ID_EFI_NAME)))
-+		return EFI_NOT_FOUND;
-+
-+	KUNIT_ASSERT_EQ(test, *size, 1);
-+	*size = 1;
-+	*(u8 *)buf = 0x30;
-+
-+	return EFI_SUCCESS;
-+}
-+
-+static efi_status_t cs_amp_lib_test_get_efi_variable_hp_31(efi_char16_t *name,
-+							   efi_guid_t *guid,
-+							   unsigned long *size,
-+							   void *buf)
-+{
-+	struct kunit *test = kunit_get_current_test();
-+
-+	if (efi_guidcmp(*guid, HP_SPEAKER_ID_EFI_GUID) ||
-+	    memcmp(name, HP_SPEAKER_ID_EFI_NAME, sizeof(HP_SPEAKER_ID_EFI_NAME)))
-+		return EFI_NOT_FOUND;
-+
-+	KUNIT_ASSERT_EQ(test, *size, 1);
-+	*size = 1;
-+	*(u8 *)buf = 0x31;
-+
-+	return EFI_SUCCESS;
-+}
-+
-+static void cs_amp_lib_test_spkid_hp_30(struct kunit *test)
-+{
-+	struct cs_amp_lib_test_priv *priv = test->priv;
-+	struct device *dev = &priv->amp_dev->dev;
-+
-+	kunit_activate_static_stub(test,
-+				   cs_amp_test_hooks->get_efi_variable,
-+				   cs_amp_lib_test_get_efi_variable_hp_30);
-+
-+	KUNIT_EXPECT_EQ(test, 0, cs_amp_get_vendor_spkid(dev));
-+}
-+
-+static void cs_amp_lib_test_spkid_hp_31(struct kunit *test)
-+{
-+	struct cs_amp_lib_test_priv *priv = test->priv;
-+	struct device *dev = &priv->amp_dev->dev;
-+
-+	kunit_activate_static_stub(test,
-+				   cs_amp_test_hooks->get_efi_variable,
-+				   cs_amp_lib_test_get_efi_variable_hp_31);
-+
-+	KUNIT_EXPECT_EQ(test, 1, cs_amp_get_vendor_spkid(dev));
-+}
-+
- static int cs_amp_lib_test_case_init(struct kunit *test)
- {
- 	struct cs_amp_lib_test_priv *priv;
-@@ -737,6 +924,15 @@ static struct kunit_case cs_amp_lib_test_cases[] = {
- 	/* Tests for writing calibration data */
- 	KUNIT_CASE(cs_amp_lib_test_write_cal_data_test),
++	/* Find EFI variable and get size */
++	for (i = 0; i < ARRAY_SIZE(cs_amp_lib_cal_efivars); i++) {
++		status = cs_amp_get_efi_variable(cs_amp_lib_cal_efivars[i].name,
++						 cs_amp_lib_cal_efivars[i].guid,
++						 &data_size, NULL);
++		if (status == EFI_BUFFER_TOO_SMALL)
++			break;
++	}
  
-+	/* Test cases for speaker ID */
-+	KUNIT_CASE(cs_amp_lib_test_spkid_lenovo_not_present),
-+	KUNIT_CASE(cs_amp_lib_test_spkid_lenovo_d0),
-+	KUNIT_CASE(cs_amp_lib_test_spkid_lenovo_d1),
-+	KUNIT_CASE(cs_amp_lib_test_spkid_lenovo_illegal),
-+	KUNIT_CASE(cs_amp_lib_test_spkid_lenovo_oversize),
-+	KUNIT_CASE(cs_amp_lib_test_spkid_hp_30),
-+	KUNIT_CASE(cs_amp_lib_test_spkid_hp_31),
-+
- 	{ } /* terminator */
- };
+-	/* Get real size of UEFI variable */
+-	status = cs_amp_get_efi_variable(CIRRUS_LOGIC_CALIBRATION_EFI_NAME,
+-					 &CIRRUS_LOGIC_CALIBRATION_EFI_GUID,
+-					 &data_size, NULL);
+ 	if (status != EFI_BUFFER_TOO_SMALL)
+ 		return ERR_PTR(-ENOENT);
  
+@@ -165,8 +188,8 @@ static struct cirrus_amp_efi_data *cs_amp_get_cal_efi_buffer(struct device *dev)
+ 	if (!data)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	status = cs_amp_get_efi_variable(CIRRUS_LOGIC_CALIBRATION_EFI_NAME,
+-					 &CIRRUS_LOGIC_CALIBRATION_EFI_GUID,
++	status = cs_amp_get_efi_variable(cs_amp_lib_cal_efivars[i].name,
++					 cs_amp_lib_cal_efivars[i].guid,
+ 					 &data_size, data);
+ 	if (status != EFI_SUCCESS) {
+ 		ret = -EINVAL;
 -- 
 2.39.5
 
