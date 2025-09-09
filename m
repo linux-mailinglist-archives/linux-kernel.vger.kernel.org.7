@@ -1,135 +1,231 @@
-Return-Path: <linux-kernel+bounces-809093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 773EEB50862
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:47:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB07FB50865
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35436566433
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:47:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F1DC4E7C51
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5B626059E;
-	Tue,  9 Sep 2025 21:47:12 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFB7263C8A;
+	Tue,  9 Sep 2025 21:52:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B2422156B;
-	Tue,  9 Sep 2025 21:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E232609DC
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 21:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757454431; cv=none; b=M6STA8Tp9P9n3xJES34mfIFcGyjQq3i8rf40esmf0CE9eMvhk+X+VHiMDlhokCeyZmC1h5exyRC94dQ4uaha1NjXI0epykuqBExlxqxonQKD9FRxG5bG49Oxr+YOWb+QzUrgp5BxqjCso4Zv+yyefmzR9Gtg6W6eYzOisyXbbu8=
+	t=1757454725; cv=none; b=KfU471q8ooRN9YpJTvqTC31OxRAcpO5DqUdEMXFnvL8TiqAGb0uFkEgZzVjJnk5FbLIiXT14iGK2VXhom2cMmCoja2qNhD6de0iDttTzLbJJo+FYu5LMlIlGyzzm8Yc8tfqaS6EvFvztWYpFj4VdhAFpGd4bSrWwmHAbrTc4yy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757454431; c=relaxed/simple;
-	bh=5UNVEqM0SA3LiwvwtQD9PCp1Z2RCknate6LOsHyQXXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QoKUPVwdLobloTPKdR46bI2rWllqTQcuiBPMfQmPcccmLqCgdhXKY2IAOLqdDzNsTVaWc5gjKHFIfLXX8I0sDSC+z8LwYI7NYyylDVRYkdrCCGFn1/SY+OizLTVqvzX+p2ATVhKBEdhx4BtvpbtBBg0Iw51UmOWpUekw/D5xO5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 8E31F140119;
-	Tue,  9 Sep 2025 21:47:06 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id F1A102F;
-	Tue,  9 Sep 2025 21:47:02 +0000 (UTC)
-Date: Tue, 9 Sep 2025 17:47:50 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev,
- joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
- kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- jstultz@google.com, qperret@google.com, will@kernel.org,
- aneesh.kumar@kernel.org, kernel-team@android.com,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 06/24] tracing: Add events to trace remotes
-Message-ID: <20250909174750.72be9bbc@gandalf.local.home>
-In-Reply-To: <20250821081412.1008261-7-vdonnefort@google.com>
-References: <20250821081412.1008261-1-vdonnefort@google.com>
-	<20250821081412.1008261-7-vdonnefort@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757454725; c=relaxed/simple;
+	bh=VRKGqPYdPm2RiNkLDyzrA8n4qc370r0yadDPgwWixCs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iyzPm/tefj1003JPURYZi0TBPnOPnJ6cuV2h0Sn6mDYtwke85mjX6rrz5lBHOHcndgjLC5uLDhctxSW2cXPvI4txs+6tVMhrPl+yyiK9jfpb6LJGvpXUvr3nO7hjaxGbYwN4toIbVuaj9IzFvab7ItoaiXxbOGL9ItKcIdiU5gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-40babea9468so32834375ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 14:52:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757454723; x=1758059523;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vi8P1TS2Ynjge+umvIGVgtajiUURacZtN0BcVRDn4bw=;
+        b=IGIZi0s7YQiPLyhkzEK04Pv+Zn+ufgPWcg3jmhKNY28+0DujxhRaN/7eyep+WKX2Sz
+         QIyrwQO14QxefEe4uJIHAXD3g0Zprw0a6HFIJImYB2i+8QH0KyLo8ulzqrt7NNM3RpI3
+         BjvAA9GueReMRa082OUtW+hLT1okvnkGJiqPtXi1RU0f+nXHaFiVzLpHpB3uKlbBf0sL
+         4CCexwjizsjQQUFr3DeTEpUa7altQXpUk0OYmX+VA0ylV6UsamKxFSpWbEnk055uScKM
+         fpiZO0VAJ7PJwB3uFLLsQP/2VrsJWryHitZ50YTzGlXbZCMJtPwoNQGPWYNBGuM111D1
+         r+qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXTdWqho4zuYPIUpSKe7EzrGaAmocyjqgXbBGx5Z0LakWWGeAFbM2zJrcgfyuzuX5mjijzNGFl+d/L5Ac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG1RlYxElTfq09jyKryZ9u3V6UHHDhhJwKGV6bYt0JJuFYt3gK
+	wtzhogX4V/vwEiJoH7rA1UCSBEca+jScMd2L7GSlNlfo3V84OJlLDTR7Yl1tzJ7K7JTVa0OgTTz
+	Z8BeR2iudRZRRYvDXxEoJwrxXaQ7CZFD6PlmSQuCb6quntgrvs8SSemj+hYw=
+X-Google-Smtp-Source: AGHT+IFXhUfwBgzOgjvRLI1Zl8rHtjLLfyTQ/RQcAwkLXAYWLhRa9IKYEjD/7YhyjehBc09jkchZNISGDCiy4EOVAqzjhhpcxsDC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 7ej5srhi7m6dgtzrcpzb7hsqh8cx9fhr
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: F1A102F
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+a22/GqU1qf8xhKUjNZ3RQSMe8o75J0/I=
-X-HE-Tag: 1757454422-816481
-X-HE-Meta: U2FsdGVkX1+MvwcffwkTYY4ptHTCjtVWAhsGAZBNw+vbcSDhGOmJ57KfO9RcRgJyDZ7EMrHLo//as4KF2ZC7464Edt85xLb32cnKLFN690CNFKswW4Bz3sjDMJN1RrqzpF7mk143fnM1ZtLJSfThUbqWXcvj3Zg1Lu9AxVbp41YNt6DG5haSE/V1tiaKAj/2e0X+WCTO9Lf0X6lRMxGO8TRxXK/mlnv8xXdxBXd8kCltiEIFf0LsNw5Ycq2HHG8zVEfoFYFr57k1wrlzWpuzmMY7SvwVs+bIvAvytdIqtaLvCHQR1r90l/Clh7yLvQbsvk1lSpG27MYvzlTzDWhENKoRw42PjCZq
+X-Received: by 2002:a05:6e02:2198:b0:405:b792:32f0 with SMTP id
+ e9e14a558f8ab-405b79234cemr140795505ab.32.1757454722899; Tue, 09 Sep 2025
+ 14:52:02 -0700 (PDT)
+Date: Tue, 09 Sep 2025 14:52:02 -0700
+In-Reply-To: <aMCaeA5qKzPbKwLt@linux.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c0a182.050a0220.2ff435.0005.GAE@google.com>
+Subject: Re: [syzbot] [kvmarm?] KASAN: invalid-access Read in __kvm_pgtable_walk
+From: syzbot <syzbot+31156cb24a340d8e2c05@syzkaller.appspotmail.com>
+To: catalin.marinas@arm.com, joey.gouly@arm.com, kvmarm@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	maz@kernel.org, oliver.upton@linux.dev, suzuki.poulose@arm.com, 
+	syzkaller-bugs@googlegroups.com, will@kernel.org, yuzenghui@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 21 Aug 2025 09:13:54 +0100
-Vincent Donnefort <vdonnefort@google.com> wrote:
+Hello,
 
-> @@ -265,16 +272,19 @@ static struct trace_remote_iterator *trace_remote_iter(struct trace_remote *remo
->  static bool trace_remote_iter_next(struct trace_remote_iterator *iter)
->  {
->  	struct trace_buffer *trace_buffer = iter->remote->trace_buffer;
-> +	struct ring_buffer_event *rb_evt;
->  	int cpu = iter->cpu;
->  
->  	if (cpu != RING_BUFFER_ALL_CPUS) {
->  		if (ring_buffer_empty_cpu(trace_buffer, cpu))
->  			return false;
->  
-> -		if (!ring_buffer_peek(trace_buffer, cpu, &iter->ts, &iter->lost_events))
-> +		rb_evt = ring_buffer_peek(trace_buffer, cpu, &iter->ts, &iter->lost_events);
-> +		if (!rb_evt)
->  			return false;
->  
->  		iter->evt_cpu = cpu;
-> +		iter->evt = (struct remote_event_hdr *)&rb_evt->array[1];
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: invalid-access Read in __kvm_pgtable_walk
 
-Hmm, shouldn't this use ring_buffer_event_data(rb_evt) instead?
+==================================================================
+BUG: KASAN: invalid-access in __kvm_pgtable_visit arch/arm64/kvm/hyp/pgtable.c:161 [inline]
+BUG: KASAN: invalid-access in __kvm_pgtable_walk+0x110/0x2d0 arch/arm64/kvm/hyp/pgtable.c:237
+Read at addr f0f0000007d02000 by task syz.2.17/4041
+Pointer tag: [f0], memory tag: [fe]
 
-If the events get big, then it would be array[2]. But the
-ring_buffer_event_data() hides that detail.
+CPU: 1 UID: 0 PID: 4041 Comm: syz.2.17 Not tainted syzkaller #0 PREEMPT 
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+ show_stack+0x18/0x24 arch/arm64/kernel/stacktrace.c:499 (C)
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x78/0x90 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0x108/0x61c mm/kasan/report.c:482
+ kasan_report+0x88/0xac mm/kasan/report.c:595
+ report_tag_fault arch/arm64/mm/fault.c:326 [inline]
+ do_tag_recovery arch/arm64/mm/fault.c:338 [inline]
+ __do_kernel_fault+0x170/0x1c8 arch/arm64/mm/fault.c:380
+ do_bad_area+0x68/0x78 arch/arm64/mm/fault.c:480
+ do_tag_check_fault+0x34/0x44 arch/arm64/mm/fault.c:853
+ do_mem_abort+0x44/0x94 arch/arm64/mm/fault.c:929
+ el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:481
+ el1h_64_sync_handler+0x50/0xac arch/arm64/kernel/entry-common.c:597
+ el1h_64_sync+0x6c/0x70 arch/arm64/kernel/entry.S:591
+ __kvm_pgtable_visit arch/arm64/kvm/hyp/pgtable.c:161 [inline] (P)
+ __kvm_pgtable_walk+0x110/0x2d0 arch/arm64/kvm/hyp/pgtable.c:237 (P)
+ _kvm_pgtable_walk arch/arm64/kvm/hyp/pgtable.c:260 [inline]
+ kvm_pgtable_walk+0xd0/0x164 arch/arm64/kvm/hyp/pgtable.c:283
+ kvm_pgtable_stage2_destroy_range+0x3c/0x70 arch/arm64/kvm/hyp/pgtable.c:1584
+ stage2_destroy_range arch/arm64/kvm/mmu.c:924 [inline]
+ kvm_stage2_destroy+0x74/0xd0 arch/arm64/kvm/mmu.c:935
+ kvm_free_stage2_pgd+0x5c/0xc0 arch/arm64/kvm/mmu.c:1116
+ kvm_uninit_stage2_mmu+0x1c/0x34 arch/arm64/kvm/mmu.c:1023
+ kvm_arch_flush_shadow_all+0x6c/0x84 arch/arm64/kvm/nested.c:1113
+ kvm_flush_shadow_all virt/kvm/kvm_main.c:343 [inline]
+ kvm_mmu_notifier_release+0x30/0x84 virt/kvm/kvm_main.c:884
+ mmu_notifier_unregister+0x5c/0x11c mm/mmu_notifier.c:815
+ kvm_destroy_vm+0x148/0x2b0 virt/kvm/kvm_main.c:1287
+ kvm_put_kvm virt/kvm/kvm_main.c:1344 [inline]
+ kvm_vm_release+0x80/0xb0 virt/kvm/kvm_main.c:1367
+ __fput+0xcc/0x2dc fs/file_table.c:468
+ ____fput+0x14/0x20 fs/file_table.c:496
+ task_work_run+0x78/0xd4 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ do_notify_resume+0x13c/0x16c arch/arm64/kernel/entry-common.c:155
+ exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:173 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:182 [inline]
+ el0_svc+0x108/0x10c arch/arm64/kernel/entry-common.c:880
+ el0t_64_sync_handler+0xa0/0xe4 arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x1a4/0x1a8 arch/arm64/kernel/entry.S:596
 
->  		return true;
->  	}
->  
-> @@ -286,7 +296,8 @@ static bool trace_remote_iter_next(struct trace_remote_iterator *iter)
->  		if (ring_buffer_empty_cpu(trace_buffer, cpu))
->  			continue;
->  
-> -		if (!ring_buffer_peek(trace_buffer, cpu, &ts, &lost_events))
-> +		rb_evt = ring_buffer_peek(trace_buffer, cpu, &ts, &lost_events);
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xfaf0000007d026c0 pfn:0x47d02
+flags: 0x1fffc0000000000(node=0|zone=0|lastcpupid=0x7ff|kasantag=0xf)
+raw: 01fffc0000000000 ffffc1ffc0375788 ffffc1ffc0374788 0000000000000000
+raw: faf0000007d026c0 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
-Ditto.
+Memory state around the buggy address:
+ fff0000007d01e00: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 fa fa
+ fff0000007d01f00: fa fa fa fa fa fc fc fc fc fc fc fc fe fe fe fe
+>fff0000007d02000: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+                   ^
+ fff0000007d02100: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+ fff0000007d02200: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+==================================================================
+Unable to handle kernel paging request at virtual address fff6011cc11c0000
+Mem abort info:
+  ESR = 0x000000009600002b
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x2b: level -1 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x0000002b, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+swapper pgtable: 4k pages, 52-bit VAs, pgdp=0000000042978000
+[fff6011cc11c0000] pgd=0000000000000000
+Internal error: Oops: 000000009600002b [#1]  SMP
+Modules linked in:
+CPU: 1 UID: 0 PID: 4041 Comm: syz.2.17 Tainted: G    B               syzkaller #0 PREEMPT 
+Tainted: [B]=BAD_PAGE
+Hardware name: linux,dummy-virt (DT)
+pstate: 21402009 (nzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : __kvm_pgtable_visit arch/arm64/kvm/hyp/pgtable.c:163 [inline]
+pc : __kvm_pgtable_walk+0x110/0x2d0 arch/arm64/kvm/hyp/pgtable.c:237
+lr : __kvm_pgtable_visit arch/arm64/kvm/hyp/pgtable.c:207 [inline]
+lr : __kvm_pgtable_walk+0xb4/0x2d0 arch/arm64/kvm/hyp/pgtable.c:237
+sp : ffff8000897ab910
+x29: ffff8000897ab910 x28: f9f0000012c1dc80 x27: 0000000000000000
+x26: 0000000000000003 x25: 0000000000000004 x24: fffffffffffff000
+x23: 0000000000001000 x22: ffff80008292e9c8 x21: fff6011cc11c1000
+x20: ffff8000897abbd8 x19: fff6011cc11c0000 x18: 00000000ffffffff
+x17: 0000000000000000 x16: 0000000000000000 x15: ffff800081b63cd0
+x14: fbf0000003145d00 x13: 0000000000000001 x12: 0000000000000001
+x11: 00000042f216d964 x10: fbf0000003145d00 x9 : 0000000000000005
+x8 : 0000000000000070 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : 0000004e80000000 x4 : fff6011cc11c0008 x3 : 0000004ec0000000
+x2 : ffff8000897abc10 x1 : 0000004e80800000 x0 : 000000000000000c
+Call trace:
+ __kvm_pgtable_visit arch/arm64/kvm/hyp/pgtable.c:161 [inline] (P)
+ __kvm_pgtable_walk+0x110/0x2d0 arch/arm64/kvm/hyp/pgtable.c:237 (P)
+ __kvm_pgtable_visit arch/arm64/kvm/hyp/pgtable.c:207 [inline]
+ __kvm_pgtable_walk+0xb4/0x2d0 arch/arm64/kvm/hyp/pgtable.c:237
+ __kvm_pgtable_visit arch/arm64/kvm/hyp/pgtable.c:207 [inline]
+ __kvm_pgtable_walk+0xb4/0x2d0 arch/arm64/kvm/hyp/pgtable.c:237
+ __kvm_pgtable_visit arch/arm64/kvm/hyp/pgtable.c:207 [inline]
+ __kvm_pgtable_walk+0xb4/0x2d0 arch/arm64/kvm/hyp/pgtable.c:237
+ _kvm_pgtable_walk arch/arm64/kvm/hyp/pgtable.c:260 [inline]
+ kvm_pgtable_walk+0xd0/0x164 arch/arm64/kvm/hyp/pgtable.c:283
+ kvm_pgtable_stage2_destroy_range+0x3c/0x70 arch/arm64/kvm/hyp/pgtable.c:1584
+ stage2_destroy_range arch/arm64/kvm/mmu.c:924 [inline]
+ kvm_stage2_destroy+0x74/0xd0 arch/arm64/kvm/mmu.c:935
+ kvm_free_stage2_pgd+0x5c/0xc0 arch/arm64/kvm/mmu.c:1116
+ kvm_uninit_stage2_mmu+0x1c/0x34 arch/arm64/kvm/mmu.c:1023
+ kvm_arch_flush_shadow_all+0x6c/0x84 arch/arm64/kvm/nested.c:1113
+ kvm_flush_shadow_all virt/kvm/kvm_main.c:343 [inline]
+ kvm_mmu_notifier_release+0x30/0x84 virt/kvm/kvm_main.c:884
+ mmu_notifier_unregister+0x5c/0x11c mm/mmu_notifier.c:815
+ kvm_destroy_vm+0x148/0x2b0 virt/kvm/kvm_main.c:1287
+ kvm_put_kvm virt/kvm/kvm_main.c:1344 [inline]
+ kvm_vm_release+0x80/0xb0 virt/kvm/kvm_main.c:1367
+ __fput+0xcc/0x2dc fs/file_table.c:468
+ ____fput+0x14/0x20 fs/file_table.c:496
+ task_work_run+0x78/0xd4 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ do_notify_resume+0x13c/0x16c arch/arm64/kernel/entry-common.c:155
+ exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:173 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:182 [inline]
+ el0_svc+0x108/0x10c arch/arm64/kernel/entry-common.c:880
+ el0t_64_sync_handler+0xa0/0xe4 arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x1a4/0x1a8 arch/arm64/kernel/entry.S:596
+Code: f9400e83 eb01007f 54000789 a9401682 (f9400260) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	f9400e83 	ldr	x3, [x20, #24]
+   4:	eb01007f 	cmp	x3, x1
+   8:	54000789 	b.ls	0xf8  // b.plast
+   c:	a9401682 	ldp	x2, x5, [x20]
+* 10:	f9400260 	ldr	x0, [x19] <-- trapping instruction
 
-> +		if (!rb_evt)
->  			continue;
->  
->  		if (ts >= iter->ts)
-> @@ -294,14 +305,18 @@ static bool trace_remote_iter_next(struct trace_remote_iterator *iter)
->  
->  		iter->ts = ts;
->  		iter->evt_cpu = cpu;
-> +		iter->evt = (struct remote_event_hdr *)&rb_evt->array[1];
 
-Ditto.
+Tested on:
 
--- Steve
+commit:         2d047827 KVM: arm64: vgic: fix incorrect spinlock API ..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git fixes
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a4b562580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=58f92aa8be80d71
+dashboard link: https://syzkaller.appspot.com/bug?extid=31156cb24a340d8e2c05
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
 
->  		iter->lost_events = lost_events;
->  	}
->  
->  	return iter->ts != U64_MAX;
->  }
->  
-> +static struct remote_event *trace_remote_find_event(struct trace_remote *remote, unsigned short id);
-> +
->  static int trace_remote_iter_print(struct trace_remote_iterator *iter)
->  {
-> +	struct remote_event *evt;
->  	unsigned long usecs_rem;
->  	u64 ts = iter->ts;
->  
+Note: no patches were applied.
 
