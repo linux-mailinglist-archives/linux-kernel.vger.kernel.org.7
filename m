@@ -1,58 +1,65 @@
-Return-Path: <linux-kernel+bounces-808037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7AEB4AC69
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:42:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11249B4AC6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1CB14E6A2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D9464E66BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990E3322742;
-	Tue,  9 Sep 2025 11:41:41 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EFD311C13;
+	Tue,  9 Sep 2025 11:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hgAsutnV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bG4V1zRE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1564B322A0B;
-	Tue,  9 Sep 2025 11:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C94322774
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757418101; cv=none; b=AWRgcu5Ko8FRGawrumG1mGIv8HlVl/EIkNIguhgMZNqLK0P760S2j9jv7gF/212XsdKbPQdGqPHhMT41tM7wZn7YB+KR9wA8lPBhrOJ8DKjnJT0tiFhsv5XcZe7o8NTygsmMgfUj04j8CYxpZwusWGArqdMmYViBoBhGbPBuTa8=
+	t=1757418140; cv=none; b=MieS23EizNlvn+ftNOdEwo/gXEuNwVrgW3U1z3qaCRdDvrDz2IYT72ehAajsCGbMPWZIowiulFOar4yjmLFSq7KAFddWAHNPGfpWNTOKGoVFMm5g1WGNa2JvVq6YRXM0tbxRsX2fT6tthTnJ3WSA++inu/37hgXxuT0PD8HctfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757418101; c=relaxed/simple;
-	bh=C+uf5IBluj9YQrfhI/M2G92uJiB6N+3560JE03SQbwk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pKmekVBs0WCIxvVobKpzLn3beByZ9i7XttLeRDf0OKOQLG96ugwM9FfMh35TkV9ordpe0GyEc9+i5M5lqT1IsphilVjv4JcKHp6eJX6fudEm1QmsE/410BStaQgEWe+SUd556kxu2aH+/33DPm7F/plmo7yz7ZjMP7KoRs4EJXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w012.hihonor.com (unknown [10.68.27.189])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4cLhjK61cwzYlVrN;
-	Tue,  9 Sep 2025 19:41:09 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w012.hihonor.com
- (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Sep
- 2025 19:41:36 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Sep
- 2025 19:41:35 +0800
-From: zhongjinji <zhongjinji@honor.com>
-To: <mhocko@suse.com>
-CC: <akpm@linux-foundation.org>, <feng.han@honor.com>, <lenb@kernel.org>,
-	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-pm@vger.kernel.org>, <liulu.liu@honor.com>,
-	<lorenzo.stoakes@oracle.com>, <pavel@kernel.org>, <rafael@kernel.org>,
-	<rientjes@google.com>, <shakeel.butt@linux.dev>, <surenb@google.com>,
-	<tglx@linutronix.de>, <zhongjinji@honor.com>
-Subject: Re: [PATCH v8 1/3] mm/oom_kill: Introduce thaw_oom_process() for thawing OOM victims
-Date: Tue, 9 Sep 2025 19:41:31 +0800
-Message-ID: <20250909114131.13519-1-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <aL_wQkwBZ7uLM2ND@tiehlicka>
-References: <aL_wQkwBZ7uLM2ND@tiehlicka>
+	s=arc-20240116; t=1757418140; c=relaxed/simple;
+	bh=pESf0H2EQZAIly01z/Z3mZH6pJ2lQ+6yP2paj9rDL5Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NP7dhPRXrJAfXnG1rbZ8mz7FQ9Pl5MtNmp730t5zRrVfoD415zEMWvdxzDksGY4QsEilU175d4egrGde+YsQ3K4cjOxyPeq2G6IJBj1fgvim5qVi2B8kwwKRu4piv4ON7q3ookBJNwG7odjIIDTnFoFAHywOxbchNxElNWEbAfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hgAsutnV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bG4V1zRE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757418136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ASATldV2WbHYCpMK/iv3KbFGige9vefNNw7rHuky/LI=;
+	b=hgAsutnV8Yd+6my2jEv8es98beCtabcjPzglUPwMI7fxayNFDv3p8Vus3iPaYYd3F1PcHF
+	qP0BfoHiiHulNfE3xG2urdLr0kKD8jHG4ltlSy1TOLVqzGIlxOathpUOPIJAx6P4FWUwha
+	7YykWGNIAc7MINuDcvbiFuI0pmQcMNV+D+7w8LiPR6XSFgdWCm9mPewBYTYHcHOxqo9aGp
+	1C6q+u/FR+2Er4xwFihAr3OpJj/4t4fA9nRfheuIUC8pFbwMCWqZeojCWEJXIGm+/oPJ0C
+	Gxs+/Hn11dnhIbosx30+3v2PTo4Z1QvGjX6ZKEOIRv/X5GWS6sam0xdxsaZk9g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757418136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ASATldV2WbHYCpMK/iv3KbFGige9vefNNw7rHuky/LI=;
+	b=bG4V1zRElQ7Cz98o+5t3NvIhqJrD+00GkMTv6Mod8nE8gbmNXZmN1kmJqsWnrPHJOqKcUM
+	ztZtn1nydWQuhDDg==
+To: Haofeng Li <920484857@qq.com>, John Stultz <jstultz@google.com>
+Cc: linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Haofeng
+ Li <13266079573@163.com>, Haofeng Li <lihaofeng@kylinos.cn>
+Subject: Re: [PATCH] timekeeping: Move debug sleep time accounting outside
+ spinlock
+In-Reply-To: <tencent_6FBD7FB2B5EDA57B1481766C52482D033008@qq.com>
+References: <tencent_6FBD7FB2B5EDA57B1481766C52482D033008@qq.com>
+Date: Tue, 09 Sep 2025 13:42:15 +0200
+Message-ID: <874itbx36w.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,88 +67,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-ClientProxiedBy: w010.hihonor.com (10.68.28.113) To a018.hihonor.com
- (10.68.17.250)
 
-> On Tue 09-09-25 17:06:57, zhongjinji wrote:
-> > OOM killer is a mechanism that selects and kills processes when the system
-> > runs out of memory to reclaim resources and keep the system stable.
-> > However, the oom victim cannot terminate on its own when it is frozen,
-> > because __thaw_task() only thaws one thread of the victim, while
-> > the other threads remain in the frozen state.
-> > 
-> > Since __thaw_task did not fully thaw the OOM victim for self-termination,
-> > introduce thaw_oom_process() to properly thaw OOM victims.
-> 
-> You will need s@thaw_oom_process@thaw_processes@
+On Tue, Sep 09 2025 at 18:23, Haofeng Li wrote:
+> @@ -1986,7 +1988,8 @@ void timekeeping_resume(void)
+>  	timekeeping_update_from_shadow(&tk_core, TK_CLOCK_WAS_SET);
+>  	raw_spin_unlock_irqrestore(&tk_core.lock, flags);
+>  
+> -	touch_softlockup_watchdog();
 
-The reason for using thaw_oom_process is that the TIF_MEMDIE flag of the
-thawed thread will be set, which means this function can only be used to
-thaw processes terminated by the OOM killer.
+Removing this is related to the problem at hand in which way and how is
+that even correct to begin with?
 
-thaw_processes has already been defined in kernel/power/process.c.
-Would it be better to use thaw_process instead?
+Thanks,
 
-I am concerned that others might misunderstand the thaw_process function.
-thaw_process sets all threads to the TIF_MEMDIE state, so it can only be
-used to thaw processes killed by the OOM killer.
-
-If the TIF_MEMDIE flag of a thread is not set, the thread cannot be thawed
-regardless of the cgroup state. Should we add a function to set the TIF_MEMDIE
-state for all threads, like the implementation below?
-
--/*
-- * thaw_oom_process - thaw the OOM victim process
-- * @p: process to be thawed
-- *
-- * Sets TIF_MEMDIE for all threads in the process group and thaws them.
-- * Threads with TIF_MEMDIE are ignored by the freezer.
-- */
--void thaw_oom_process(struct task_struct *p)
-+void thaw_process(struct task_struct *p)
- {
-        struct task_struct *t;
-
-        rcu_read_lock();
-        for_each_thread(p, t) {
--               set_tsk_thread_flag(t, TIF_MEMDIE);
-                __thaw_task(t);
-        }
-        rcu_read_unlock();
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 52d285da5ba4..67b65b249757 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -753,6 +753,17 @@ static inline void queue_oom_reaper(struct task_struct *tsk)
- }
- #endif /* CONFIG_MMU */
-
-+void mark_oom_victim_die(struct task_struct *p)
-+{
-+       struct task_struct *t;
-+
-+       rcu_read_lock();
-+       for_each_thread(p, t) {
-+               set_tsk_thread_flag(t, TIF_MEMDIE);
-+       }
-+       rcu_read_unlock();
-+}
-+
- /**
-  * mark_oom_victim - mark the given task as OOM victim
-  * @tsk: task to mark
-@@ -782,7 +793,8 @@ static void mark_oom_victim(struct task_struct *tsk)
-         * if it is frozen because OOM killer wouldn't be able to free
-         * any memory and livelock.
-         */
--       thaw_oom_process(tsk);
-+       mark_oom_victim_die(tsk);
-+       thaw_process(tsk);
-
-> I would also add the caller in this patch.
->
-> > Signed-off-by: zhongjinji <zhongjinji@honor.com>
-> 
-> Other than that looks good to me. With the above fixed feel free to add
-> Acked-by: Michal Hocko <mhocko@suse.com>
+        tglx
 
