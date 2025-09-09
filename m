@@ -1,179 +1,234 @@
-Return-Path: <linux-kernel+bounces-807285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C686AB4A287
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:43:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDE1B4A28B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 830DD446DD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:43:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72316178A81
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC36D3043B2;
-	Tue,  9 Sep 2025 06:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0395D304BB5;
+	Tue,  9 Sep 2025 06:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cfo+f3oe";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fOu2OQhD";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zKJkMxhV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="G9SrgBRr"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ayS5u/WY"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72289303A24
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 06:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9674E303A24;
+	Tue,  9 Sep 2025 06:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757400233; cv=none; b=fOWLR/Y/0FiPVLlL7SDCBj9JL/oHxFBEuWv0Q2Vmp/xr1VqQxsRz3eSl8ylZirG65trrmS8LMaveUgCwLbzwnMTF6jkxiPxjhapordKq5WWJ+KIToGI38l4spCUpuo0s88MsA2K/MNT/OdVbrxF2IYvbbiwxNg1dftHke9OfXgM=
+	t=1757400291; cv=none; b=qIBQoPUarSY3pn8L+BaABpDDWRt30SRpfGqYWXTTXTdZzzzU9xzZrxpTwMg4vFKv09uAc6jVjD1ficUmlZDepdZgKraeKxp794Dnv8q82YbcL/XkXOejEljGktYgb2+HGj8F60+jg+bMj4QL0ur7hTyrgOXsioQI/D5EyxoD+DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757400233; c=relaxed/simple;
-	bh=RCW5GgCArVSwPic7glqYC7RlTKSqQK8WdmS+A/Xg6rk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sZxLURuAGhRzzT8UIRN7fj7qnBGCI5ryyaxpWuGYM1qpGBi7C7nibVpVFjpq0C7Bu5SWuyFwXibxlpxTq9NZZIOq/L01gV1hCmS1x2Q/WHZSTiuHud7qvaYpz0BsEiFK7zUMhXjAJNiF6Hw1Vo+Dhk6ytWXir+8zDRQ5YNHFCEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cfo+f3oe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fOu2OQhD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zKJkMxhV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=G9SrgBRr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B636E20395;
-	Tue,  9 Sep 2025 06:43:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757400222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mv9rmhdL0uNXK3cxzdO4tHRw+ROK7mOEB36x9Me9aq8=;
-	b=cfo+f3oecUouQ0KpQpEYlBA+qvvM+4RXBYZWKAMcl5dVBnthBqad3LiltENna7TfHyAi9t
-	23npTRN621x0COFSDVQYZ5d4Hvm2BFVgLtgXqHCJKBW8VNdcJn2SxpcNVAJXEiXlHRqr3I
-	nglpNrhZqbQR8OPVCsZfs7fVQ4HjFTY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757400222;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mv9rmhdL0uNXK3cxzdO4tHRw+ROK7mOEB36x9Me9aq8=;
-	b=fOu2OQhDBImqqKc3sWvwXYtWxuDYmQfFKBmwY1QQV+fKw9AwXatlCLMmC8c5iBl8+UUpYC
-	stnfGGTjixrm21Bg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757400221; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mv9rmhdL0uNXK3cxzdO4tHRw+ROK7mOEB36x9Me9aq8=;
-	b=zKJkMxhVPb/f5q4ETbALAoFXWY39YJkcaulAOOAGinGnNHonPCiGtr4+GGSAxiNvVNEZ9d
-	PcbraGBKU56lthg1FnAk8kqd8pAvpeF6nz5zVwTmZs2XPvGsOE/4R+UwQ/FEt1ghopn+8U
-	Mfg8Ut98YtGpmIl+tf19Wr0hldnS1Js=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757400221;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mv9rmhdL0uNXK3cxzdO4tHRw+ROK7mOEB36x9Me9aq8=;
-	b=G9SrgBRrpo48ggyq2wAOhnOLmwjJivBbHWSOnmmLOyEWMCfH/bDyeIWpvaoreRdSnHagZT
-	wFk+g/rPpGUiqPBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 304431388C;
-	Tue,  9 Sep 2025 06:43:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /nTWCZ3Mv2jjVQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 09 Sep 2025 06:43:41 +0000
-Date: Tue, 09 Sep 2025 08:43:40 +0200
-Message-ID: <87ecsgxh0j.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Mark Brown <broonie@kernel.org>
-Cc: "Xu, Baojun" <baojun.xu@ti.com>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"13916275206@139.com" <13916275206@139.com>,
-	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-	"Ding, Shenghao" <shenghao-ding@ti.com>,
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"Yi, Ken" <k-yi@ti.com>,
-	"Lo, Henry" <henry.lo@ti.com>,
-	"Chen, Robin" <robinchen@ti.com>,
-	"Ji, Jesse" <jesse-ji@ti.com>,
-	"Wang, Will" <will-wang@ti.com>,
-	"jim.shil@goertek.com" <jim.shil@goertek.com>,
-	"toastcheng@google.com" <toastcheng@google.com>,
-	"chinkaiting@google.com" <chinkaiting@google.com>
-Subject: Re: [EXTERNAL] Re: [PATCH v4 1/2] ASoC: tas2781: Add tas2118, tas2x20, tas5825 support
-In-Reply-To: <071e0e04-e2cb-480d-8207-f6ba87cb56b5@sirena.org.uk>
-References: <20250830061459.24371-1-baojun.xu@ti.com>
-	<993d7fe7-5206-45a9-acb6-0d610a3a2136@sirena.org.uk>
-	<12aa63e694c94213aeb6b48959d02b45@ti.com>
-	<b70314db-357f-4c39-a9b4-088d8ebed2b0@sirena.org.uk>
-	<67fafc23d16d4790821321643a87385f@ti.com>
-	<071e0e04-e2cb-480d-8207-f6ba87cb56b5@sirena.org.uk>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1757400291; c=relaxed/simple;
+	bh=BDKycTUwTBeKQKRluCkT3DPIymY/FMY43y7sb2PDs88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rdIQfUORBcISiuQg26bMicC/CwqL8g9z7wpnFToMyfmiE1VqYh2q6ebf0fMi6jE8OJir917xytt0ZC4dOdeFiFDRz5F6PydNzghHkF3eUa+7P7m0Apc2hqNL4/MGY+FCdCwYjE69P0dNns5zfOMezHtui4CR/Ylv5KbUTrNKyVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ayS5u/WY; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5894WgNp018625;
+	Tue, 9 Sep 2025 06:44:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=uBLjCOwnHU964fvJBI7vvKbJb0b/nT
+	LHEbtejXkxQzk=; b=ayS5u/WYEiqpPCx+4e4Wv7QzcKztqXyS0dm8jZfMLx3RVs
+	4mDp2hXul02JCk4baAa6E9yhekPJeziWb+K1A5cOJgNXH265oxpAnLJiWWrKzn+5
+	ngc0gPIWJl2DmgvZvjDTksRfI8oS8ruCtUqbfpiHprFcaYJ/A4ZcIzmCoY6PLPbk
+	3apq9wAxB2G1JFmaPAQoe2HB3G/ETmMBfIrGot37KAFo4avDbFdHEGMGcV8SaBP+
+	dzj7MU4g8VzYl6tE/ObZJU/hKzngL8B2niKDegNhV6p6GcQ5sXmaUI3vGRywdz+w
+	Jx3g86Aih5QN4/uDRRhna+Oa2Bja6pBFiXcLtxhA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490acqwvy2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 06:44:41 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5896hWE0020389;
+	Tue, 9 Sep 2025 06:44:41 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490acqwvxy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 06:44:40 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5895FeT5011447;
+	Tue, 9 Sep 2025 06:44:40 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 490y9u9x8f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 06:44:40 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5896ic5d20906318
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 9 Sep 2025 06:44:38 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 55EC72004B;
+	Tue,  9 Sep 2025 06:44:38 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C22DE20043;
+	Tue,  9 Sep 2025 06:44:35 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  9 Sep 2025 06:44:35 +0000 (GMT)
+Date: Tue, 9 Sep 2025 12:14:33 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v5 09/12] generic: Add sudden shutdown tests for multi
+ block atomic writes
+Message-ID: <aL_M0X9Ca8LgTIR1@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1755849134.git.ojaswin@linux.ibm.com>
+ <2b523de842ada3ac7759cedae80485ae201d7e5d.1755849134.git.ojaswin@linux.ibm.com>
+ <12281f45-c42f-4d1e-bcff-f14be46483a8@oracle.com>
+ <aLsYj1tqEbH5RpAu@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <674aa21b-4c47-4586-abdc-5198840fcea5@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	TAGGED_RCPT(0.00)[dt];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[ti.com,linux.intel.com,139.com,alsa-project.org,vger.kernel.org,gmail.com,kernel.org,goertek.com,google.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -1.80
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <674aa21b-4c47-4586-abdc-5198840fcea5@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: hlJNVGE8zaucDNy5To4XIVb1Ahby6_-n
+X-Authority-Analysis: v=2.4 cv=Mp1S63ae c=1 sm=1 tr=0 ts=68bfccd9 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=PEgcr33_ple8PDClfvMA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: ze8yp7tACzv9G3BeG3yV5h3TO4P0_Pb0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAwMCBTYWx0ZWRfX52wRCosIwHJV
+ nlxFtNoqq7hN2gOo5dmtR/Slkf0BzYr1fqmcT3VZWCXT3URjafd14iGDp+NMDZFie0CAnmWr4ZH
+ i0aN41d3veSfBMmFHb2yIIcps7LMgIEN+RfFVGX7Lhg+iDtFUqZHn/Um4I6M7R9ZrxttOMLsXo4
+ qX6X8z1GeJXmvTuvALrhnksSb2YSFfKiFfrBIxV1RryY/Am8Zv6fwdzUREVJKQ9H6EFWi2peXWW
+ dqqzW3HZDsNNKYK7UUoQvRmJ98dzvioWXfhVUl5hX2eWP/ThsdtPJ4yOMrXqZSkU9/uEilBpL0N
+ SY+UG4YO/xNGxzfImakGN7QAWfTg0fEG09MXXYiafe32atDr4ILTvusaLCWcwKSLvEWmtEOptKf
+ SidT8eaX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 clxscore=1015 phishscore=0 spamscore=0
+ adultscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060000
 
-On Mon, 08 Sep 2025 19:10:28 +0200,
-Mark Brown wrote:
-> 
-> On Mon, Sep 08, 2025 at 06:22:51AM +0000, Xu, Baojun wrote:
-> 
-> > > > Or need to create patches on tree broonie/linux.git?
-> 
-> > >   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-6.18
-> 
-> > This patch is also relative (shares the same include/sound/tas5825-tlv.h)
-> > with another commit on next/linux-next.git:
-> > https://patch.msgid.link/20250810122358.1575-1-baojun.xu@ti.com (ALSA: hda: Add TAS5825 support)
-> > However, it was not merged into broonie/sound.git yet, should I wait for it?
-> 
-> OK, it's probably easiest to just apply these directly to Takashi's
-> tree:
-> 
-> Acked-by: Mark Brown <broonie@kernel.org>
+On Mon, Sep 08, 2025 at 03:27:57PM +0100, John Garry wrote:
+> On 05/09/2025 18:06, Ojaswin Mujoo wrote:
+> > On Tue, Sep 02, 2025 at 04:49:26PM +0100, John Garry wrote:
+> > > On 22/08/2025 09:02, Ojaswin Mujoo wrote:
+> > > > ---
+> > > >    tests/generic/1230     | 397 +++++++++++++++++++++++++++++++++++++++++
+> > > >    tests/generic/1230.out |   2 +
+> > > >    2 files changed, 399 insertions(+)
+> > > >    create mode 100755 tests/generic/1230
+> > > >    create mode 100644 tests/generic/1230.out
+> > > > 
 
-OK, applied both patches now to for-next branch.
+<...>
 
+> > > > +
+> > > > +	bytes_written=$(tail -n 1 $tmp.aw | cut -d" " -f4)
+> > > > +	echo "# Bytes written in 0.2s: $bytes_written" >> $seqres.full
+> > > > +
+> > > > +	filesize=$((bytes_written * 3))
+> > > > +	echo "# Setting \$filesize=$filesize" >> $seqres.full
+> > > > +
+> > > > +	rm $tmp.aw
+> > > > +	sleep 0.5
+> > > > +
+> > > > +	_scratch_cycle_mount
+> > > > +
+> > > > +}
+> > > > +
+> > > > +create_mixed_mappings() {
+> > > 
+> > > Is this same as patch 08/12?
+> > 
+> > I believe you mean the [D]SYNC tests, yes it is the same.
+> 
+> then maybe factor out the test, if possible. I assume that this sort of
+> approach is taken for xfstests.
+> 
 
-thanks,
+I'm not sure what you mean by factor out the *test*. We are testing
+different things there and the only thing common in the tests is
+creation of mixed mapping files and the check to ensure we didn't tear
+data.
 
-Takashi
+In case you mean to factor out the create_mixed_mappings() helper into
+common/rc, sure I can do that but I'm unsure if at this point it would
+be very useful for other tests.
+
+> > 
+> > > 
+> > > > +	local file=$1
+> > > > +	local size_bytes=$2
+> > > > +
+> > > > +	echo "# Filling file $file with alternate mappings till size $size_bytes" >> $seqres.full
+> > > > +	#Fill the file with alternate written and unwritten blocks
+> > > > +	local off=0
+> > > > +	local operations=("W" "U")
+> > > > +
+> > > > +	for ((i=0; i<$((size_bytes / blksz )); i++)); do
+> > > > +		index=$(($i % ${#operations[@]}))
+> > > > +		map="${operations[$index]}"
+> > > > +
+
+<...>
+
+> > > > +# Loop 20 times to shake out any races due to shutdown
+> > > > +for ((iter=0; iter<20; iter++))
+> > > > +do
+> > > > +	echo >> $seqres.full
+> > > > +	echo "------ Iteration $iter ------" >> $seqres.full
+> > > > +
+> > > > +	echo >> $seqres.full
+> > > > +	echo "# Starting data integrity test for atomic writes over mixed mapping" >> $seqres.full
+> > > > +	test_data_integrity_mixed
+> > > > +
+> > > > +	echo >> $seqres.full
+> > > > +	echo "# Starting data integrity test for atomic writes over fully written mapping" >> $seqres.full
+> > > > +	test_data_integrity_writ
+> > > > +
+> > > > +	echo >> $seqres.full
+> > > > +	echo "# Starting data integrity test for atomic writes over fully unwritten mapping" >> $seqres.full
+> > > > +	test_data_integrity_unwrit
+> > > > +
+> > > > +	echo >> $seqres.full
+> > > > +	echo "# Starting data integrity test for atomic writes over holes" >> $seqres.full
+> > > > +	test_data_integrity_hole
+> > > > +
+> > > > +	echo >> $seqres.full
+> > > > +	echo "# Starting filesize integrity test for atomic writes" >> $seqres.full
+> > > 
+> > > what does "Starting filesize integrity test" mean?
+> > 
+> > Basically other tests already truncate the file to a higher value and
+> > then perform the shut down test. Here we actually do append atomic
+> > writes since we want to also stress the i_size update paths during
+> > shutdown to ensure that doesn't cause any tearing with atomic writes.
+> > 
+> > I can maybe rename it to:
+> > 
+> > 
+> > echo "# Starting data integrity test for atomic append writes" >> $seqres.full
+> > 
+> > Thanks for the review!
+> > 
+> 
+> It's just the name "integrity" that throws me a bit..
+
+So I mean integrity as in writes are not tearing after the shutdown.
+That's how we have worded the other sub-tests above.
+
+Regards,
+ojaswin
 
