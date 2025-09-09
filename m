@@ -1,134 +1,105 @@
-Return-Path: <linux-kernel+bounces-808401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45190B4FF49
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:24:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04DE6B4FF47
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2164E4E2FB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:24:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FB7C1C21098
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB0734F476;
-	Tue,  9 Sep 2025 14:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8A73451B6;
+	Tue,  9 Sep 2025 14:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5Q6YIpp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oJcGfFr1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s2ddDEaT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DCD346A0D;
-	Tue,  9 Sep 2025 14:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613A83451D8
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757427845; cv=none; b=Z9/dy8WDex94GztOk7CGDEyRXFKmZDVGqRIWMfVVGTG8DKOmxeeel9e0TnaxZZ9jd4QK7q2+BSWAk/URoT06fUGvRImpzi1T+SO7D6cMm3IpoXOciAgB55/lQIAJ2UILixZdW3uMQkGL4KFltvpPs67qvshUr+ZyL25JhYmwg9g=
+	t=1757427836; cv=none; b=Thq5/DyRjKPC1qa+rcAN1Cr2OJPiZUuaEJ/lEFdZ7JsG1igMbwL12qv38UOGfjUBspJUxf/Kn1rjI2C7vRN2MKjjWt+y9xSsTSDw4YYJMumvXY1w9ijEZ6FTvCsHYQvd5tghIilwQwuHVIx7jIVd61SOag2rQ42CGh7uG293jVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757427845; c=relaxed/simple;
-	bh=3Ghy67T7rreednlZpZASb0jQ54O5/AaKOvr8uv+5f1M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fmf0Te1u3Gd47lth3NXrS8uuokRxHP4Da2PIeESksOskVoActq2wJhQGHyni84lPZHqoDJ6vwNyUTBVBUU/7vx3/kZ4UqXLJBA8y+yP0h3MyLGssvlvXCna8ANBNAAs2OvyKweo5j2hEWBqDYosOsueC66/wybKhQodj6P6Cdyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k5Q6YIpp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD501C4CEFB;
-	Tue,  9 Sep 2025 14:24:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757427845;
-	bh=3Ghy67T7rreednlZpZASb0jQ54O5/AaKOvr8uv+5f1M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=k5Q6YIppaLP4l21CgQQhx7MpvPVxzegmVMocXQRCLlW0yxL0Wx4Mh9zzuhSfSig4n
-	 Wyl8/IN+ipJ7IrKdPIuedZgvqcd9/oTXrrfNso7QqzGphxjVWMnlEMSL3DgTmtaoQM
-	 SJP/rzI/8sWm010DwpHG6NCiXyHniHv8tQ6x4IOqUqrs1FnSd4XDkbgMqkF41JAiTW
-	 eQdzFhrBycwILMPW1yus30XzwbhZ1yIlcBYI0XLehIyTM6piUUEsledwcl4iThugdi
-	 pZR30BCsilm3c1cg8XrvKRwvcklpOHtc+9lHKnPc5MFnGlhR4BVy67G1WUBMiFFC8Z
-	 tzSvnFMFlfHyQ==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] dt-bindings: net: Drop duplicate brcm,bcm7445-switch-v4.0.txt
-Date: Tue,  9 Sep 2025 09:23:38 -0500
-Message-ID: <20250909142339.3219200-2-robh@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757427836; c=relaxed/simple;
+	bh=M5svAHzkipeo6JblunyqQxlNE3zvU2z9UULrfqp3VrA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=n83tJDSj85Xb5hi881eu5rITsQKBX+20ZUMNHotfjsgoASRKVu/WeENe8cSlgEGhJ9anW6cvsDEZ6wbk13lqT3QNrpaKJkT4lKbho1UpWdM7GQ6GPtWzdoMxfdylw+WwZzCHyTDq6gUDNN1MUGM8ekQl5icObPtorUCwWQz8Exw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oJcGfFr1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s2ddDEaT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757427831;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M5svAHzkipeo6JblunyqQxlNE3zvU2z9UULrfqp3VrA=;
+	b=oJcGfFr1rksMzLrazCvGv06Z9ENMD7YoYPf/ZmgTE7wLZo2vYifaG0hiue8LE5jWcXkeOW
+	8f2QOArwzb1/Mgi+5iloPynO1/BTHZ78ga1ud5Vyt/hG8s1JAVrkCk7PUrLhSOLitwFAhf
+	eMaxlALJD5gobhYRFQPYKrG7dz4siXDoPASGyC9P/ZJCccPNxy6LNA9z2C3nwrEEFXiQsA
+	5DPZZ0hYO/6YUjgCR7/3YyV8BhINlFosiAKg/GKlY8FdMk6FU72ttjr8puQoMg3u3OHBWt
+	MPtjbC8g9v4bMnqGStylHR7UMm/4Lxo5JRam/+/vtJRqeofIF/S8x/8H+0etFQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757427831;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M5svAHzkipeo6JblunyqQxlNE3zvU2z9UULrfqp3VrA=;
+	b=s2ddDEaTcNXlPd99azukgVLOZVpiBp1MrlrZfj5tbC9Ti6XWSHKJK55ZnN+TPJeHXW2yaj
+	QWL9JyvHuPAJHBCA==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Marcos Paulo de Souza <mpdesouza@suse.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Steven Rostedt <rostedt@goodmis.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, Jason Wessel
+ <jason.wessel@windriver.com>, Daniel Thompson <danielt@kernel.org>,
+ Douglas Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org,
+ kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v3 4/4] kdb: Adapt kdb_msg_write to work with NBCON
+ consoles
+In-Reply-To: <aMAwMz4vWC5u9OpN@pathway.suse.cz>
+References: <20250902-nbcon-kgdboc-v3-0-cd30a8106f1c@suse.com>
+ <20250902-nbcon-kgdboc-v3-4-cd30a8106f1c@suse.com>
+ <aL77aq4gZBsn4epT@pathway.suse.cz>
+ <d73e8cc0259c140a0a49f670c6c165bb662281ed.camel@suse.com>
+ <84segwjbxq.fsf@jogness.linutronix.de> <aMAwMz4vWC5u9OpN@pathway.suse.cz>
+Date: Tue, 09 Sep 2025 16:29:50 +0206
+Message-ID: <84h5xbk8ll.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The brcm,bcm7445-switch-v4.0.txt binding is already covered by
-dsa/brcm,sf2.yaml. The listed deprecated properties aren't used anywhere
-either.
+On 2025-09-09, Petr Mladek <pmladek@suse.com> wrote:
+> The problem is that wctxt->unsafe_takeover would need to get updated
+> after acquiring the context. And might be reused for different
+> consoles, ...
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/net/brcm,bcm7445-switch-v4.0.txt | 50 -------------------
- 1 file changed, 50 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/net/brcm,bcm7445-switch-v4.0.txt
+You are right. I think it is best to make nbcon_write_context_set_buf()
+available.
 
-diff --git a/Documentation/devicetree/bindings/net/brcm,bcm7445-switch-v4.0.txt b/Documentation/devicetree/bindings/net/brcm,bcm7445-switch-v4.0.txt
-deleted file mode 100644
-index 284cddb3118e..000000000000
---- a/Documentation/devicetree/bindings/net/brcm,bcm7445-switch-v4.0.txt
-+++ /dev/null
-@@ -1,50 +0,0 @@
--* Broadcom Starfighter 2 integrated switch
--
--See dsa/brcm,bcm7445-switch-v4.0.yaml for the documentation.
--
--*Deprecated* binding required properties:
--
--- dsa,mii-bus: phandle to the MDIO bus controller, see dsa/dsa.txt
--- dsa,ethernet: phandle to the CPU network interface controller, see dsa/dsa.txt
--- #address-cells: must be 2, see dsa/dsa.txt
--
--Example using the old DSA DeviceTree binding:
--
--switch_top@f0b00000 {
--	compatible = "simple-bus";
--	#size-cells = <1>;
--	#address-cells = <1>;
--	ranges = <0 0xf0b00000 0x40804>;
--
--	ethernet_switch@0 {
--		compatible = "brcm,bcm7445-switch-v4.0";
--		#size-cells = <0>;
--		#address-cells = <2>;
--		reg = <0x0 0x40000
--			0x40000 0x110
--			0x40340 0x30
--			0x40380 0x30
--			0x40400 0x34
--			0x40600 0x208>;
--		interrupts = <0 0x18 0
--				0 0x19 0>;
--		brcm,num-gphy = <1>;
--		brcm,num-rgmii-ports = <2>;
--		brcm,fcb-pause-override;
--		brcm,acb-packets-inflight;
--
--		...
--		switch@0 {
--			reg = <0 0>;
--			#size-cells = <0>;
--			#address-cells = <1>;
--
--			port@0 {
--				label = "gphy";
--				reg = <0>;
--				brcm,use-bcm-hdr;
--			};
--			...
--		};
--	};
--};
--- 
-2.51.0
+> But wait. I do not see any code using wctxt->unsafe_takeover.
+>
+> It seems that the motivation was that console drivers might
+> do something else when there was an unsafe_takeover in the past,
+> see https://lore.kernel.org/lkml/87cyz6ro62.fsf@jogness.linutronix.de/
+> But it seems that no console driver is using it.
+>
+> So, I would prefer to remove the "unsafe_takeover" field from
+> struct nbcon_write_context and keep this kdb code as it is now.
 
+No one is using it because the nbcon drivers are still implementing the
+"hope and pray" model on unsafe takeovers. The flag is an important part
+of the API to allow drivers to maximize their safety.
+
+I think it is too early to remove the flag when there are still so few
+nbcon drivers in existance.
+
+John
 
