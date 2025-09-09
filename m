@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-808290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 824F8B4FD9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:42:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8ED6B4FD95
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2520F4E38AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:38:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7171189C9B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061F434DCC6;
-	Tue,  9 Sep 2025 13:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXVF3yf9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD6F3431FD;
+	Tue,  9 Sep 2025 13:37:51 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551B9341ABD;
-	Tue,  9 Sep 2025 13:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31F733EB12;
+	Tue,  9 Sep 2025 13:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425036; cv=none; b=tUQlMlNX68aTVRecr/47rTVksrQTnpuukELzKodtZU8NgHsnFT4KcthaeYfK/uLylTqWhNBsQLjZ2l9Yoo5k7ekhu3NWVo5tYTOOQzWsX/QWYAoncBZEAanZ2mJEC3eDI6KPEk3sDEsahYQJQKG4/jpOIIy8eBxpI3y84udopng=
+	t=1757425071; cv=none; b=MOWx7a9F2h7xzl4tqrqaZ7Nxb0ES0cJHzblVqb91y/POqmCcSSAX3BSdzGe30Epoa9Tw/SJr8E+6ANx8sS7JhEfcq04S1nHZn1c3Qj4RRo3scDVWIJfZLH0cM/Bng2DTsTO0y9LajPs1AMqQuv9TBn/oCNW1b8nr2pxy72x3TmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425036; c=relaxed/simple;
-	bh=31mOWd8+i/1YkiYaOgcvUkmjuR7GoBD5Ed0MeKEuOFo=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=uJixg82tKDwnW55ZMmN11jQRif2ydEO8esVava4wEZdScSBonpF3Sv/aOKlABv1dfZzlcMk+Qn1/hLk6Dqg7NG0je3YFyd2ZFrkxoIe7h7kd8d0QAgS/0GmypZ/1dDwm93SeWkdSyUFe8OabmdUmMzSMOXkcbU3eOnA12/XnYE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BXVF3yf9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABEE4C4CEF4;
-	Tue,  9 Sep 2025 13:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757425035;
-	bh=31mOWd8+i/1YkiYaOgcvUkmjuR7GoBD5Ed0MeKEuOFo=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=BXVF3yf9YngGzwiQotWaE4Rx6byZFIleDiFn32GZnBJJycd+usgkvBcEjrfraU96O
-	 OLTqsYuQ/7Ml956/i1KRFTRDv3ny65maB8g2Qe9iG1w94gWkJpNT2tofdbPoe2tXH7
-	 opsMO0H97xnzvR7WoO7CbjNuFHu4L7lYCDl0vQEf4fIFRrRX5pXgXj6qyMEvJi35rf
-	 DF9JVkUOLuzzd4k1pKuBWFVkqfOQpB4frNdfuxprHgWoaLw3EH4vIWgZC9Vp9SjlhZ
-	 PV/YJisDuvITkYhqnPjVVPk0BAnO3xPs8gzW5kLJnw74J8pKUJwjCAajxeYcZSXdz0
-	 HpfFO1hkpa2pg==
-Date: Tue, 09 Sep 2025 08:37:15 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1757425071; c=relaxed/simple;
+	bh=W8CrvuxacbP1I8gYlmWv/RUJjIlSXHD10AO8XMDXJQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lbcnNhS+5U2ZXZVm1KwmrziL9R2/N4U1m6ZSTlNOTrY/bxCDaTKMrxIpBArQ87Fp2RvhkUAtrlPYNMQ/+YwcOdgU+ZW0K+QkJ1XL7JLBVXOapgQW35qjTTpAJop1P13fLSTO5aE6sMDCVKT0KGW6ggrCRhmYGiQngMxX8+eRTRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from gentoo.org (gentoo.cern.ch [IPv6:2001:1458:202:227::100:45])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: amadio)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 6AD8A340EFF;
+	Tue, 09 Sep 2025 13:37:48 +0000 (UTC)
+Date: Tue, 9 Sep 2025 15:37:44 +0200
+From: Guilherme Amadio <amadio@gentoo.org>
+To: Ian Rogers <irogers@google.com>
+Cc: acme@kernel.org, namhyung@kernel.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: Problem with perf report --gtk
+Message-ID: <aMAtqNq55TZEuaKn@gentoo.org>
+References: <aMACaOmneDrG8_pQ@gentoo.org>
+ <CAP-5=fVA_Cduf9NvFAJezcNcg0JDNGa5q7m_mRBWNAYGEUo8bw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
- Russell King <linux@armlinux.org.uk>, 
- "Chester A. Unal" <chester.a.unal@arinc9.com>, devicetree@vger.kernel.org, 
- Sean Wang <sean.wang@mediatek.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Srinivas Kandagatla <srini@kernel.org>, linux-mediatek@lists.infradead.org, 
- "David S. Miller" <davem@davemloft.net>, 
- Heiner Kallweit <hkallweit1@gmail.com>, Simon Horman <horms@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, 
- DENG Qingfang <dqfext@gmail.com>, linux-arm-kernel@lists.infradead.org, 
- netdev@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>, 
- Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
- Vladimir Oltean <olteanv@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-In-Reply-To: <20250909004343.18790-5-ansuelsmth@gmail.com>
-References: <20250909004343.18790-1-ansuelsmth@gmail.com>
- <20250909004343.18790-5-ansuelsmth@gmail.com>
-Message-Id: <175742464480.3063209.323009363144312411.robh@kernel.org>
-Subject: Re: [net-next PATCH v16 04/10] dt-bindings: mfd: Document support
- for Airoha AN8855 Switch SoC
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fVA_Cduf9NvFAJezcNcg0JDNGa5q7m_mRBWNAYGEUo8bw@mail.gmail.com>
 
-
-On Tue, 09 Sep 2025 02:43:35 +0200, Christian Marangi wrote:
-> Document support for Airoha AN8855 Switch SoC. This SoC expose various
-> peripherals like an Ethernet Switch, a NVMEM provider and Ethernet PHYs.
+On Tue, Sep 09, 2025 at 06:04:42AM -0700, Ian Rogers wrote:
+> On Tue, Sep 9, 2025 at 3:33 AM Guilherme Amadio <amadio@gentoo.org> wrote:
+> >
+> > Hi Arnaldo, Namhyung,
+> >
+> > Since sometime we have a bug in Gentoo's bugzilla about perf report --gtk not
+> > working¹: https://bugs.gentoo.org/937869
+> >
+> > I know this feature is not used very much, but I thought I'd report in
+> > any case. The problem is easily reproducible as shown below:
+> >
+> >
+> > $ perf record -a -g -- sleep 1
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 1.818 MB perf.data (6648 samples) ]
+> > $ LD_DEBUG=symbols perf report --gtk 2>&1 | grep '(fatal)'
+> >     288067:     /usr/libexec/perf-core/libperf-gtk.so: error: symbol lookup error: undefined symbol: hashmap_find (fatal)
+> > $ perf report --gtk
+> > GTK browser requested but could not find libperf-gtk.so
+> >
+> > I tried this with perf 6.16, but this bug seems to have been there since
+> > at least 6.12.
+> >
+> > Please let me know if it's better to file problems at https://bugzilla.kernel.org/.
 > 
-> It does also support i2c and timers but those are not currently
-> supported/used.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../bindings/mfd/airoha,an8855.yaml           | 175 ++++++++++++++++++
->  1 file changed, 175 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/airoha,an8855.yaml
-> 
+> Thanks for letting us know Guilherme! I suspect I broke things when
+> trying to fix python things. The code linking libperf-gtk.so is:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/Makefile.perf?h=perf-tools-next#n809
+> The hashmap symbols are part of the perf-util library:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/Build?h=perf-tools-next#n197
+> So maybe there needs to be a libbpf -lbpf for your case? Alternatively
+> we may need to reorder the libraries here:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/Makefile.perf?h=perf-tools-next#n464
+> like:
+> PERFLIBS += $(LIBPERF_BENCH) $(LIBPERF_TEST) $(LIBPERF_UI) $(LIBPERF_UTIL)
+> becomes:
+> PERFLIBS += $(LIBPERF_BENCH) $(LIBPERF_TEST) $(LIBPERF_UTIL) $(LIBPERF_UI)
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Thank you for the suggestion, but just changing the order of linking or
+linking libbpf doesn't seem to fix the issue. I still see:
 
-yamllint warnings/errors:
+$ nm -D libperf-gtk.so | grep hashmap
+                 U hashmap_find
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/airoha,an8855.yaml:
-	Error in referenced schema matching $id: http://devicetree.org/schemas/net/airoha,an8855-mdio.yaml
-	Tried these paths (check schema $id if path is wrong):
-	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/airoha,an8855-mdio.yaml
-	/usr/local/lib/python3.13/dist-packages/dtschema/schemas/net/airoha,an8855-mdio.yaml
+at the end of the build. The function is in util/hashmap.c, so the
+problem might be more involved than just the linking order.
 
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/airoha,an8855.example.dtb: soc@1 (airoha,an8855): mdio: {'compatible': ['airoha,an8855-mdio'], '#address-cells': 1, '#size-cells': 0, 'ethernet-phy@1': {'compatible': ['ethernet-phy-idc0ff.0410', 'ethernet-phy-ieee802.3-c22'], 'reg': [[1]], 'nvmem-cells': [[3], [4], [5], [6]], 'nvmem-cell-names': ['tx_a', 'tx_b', 'tx_c', 'tx_d'], 'phandle': 1}, 'ethernet-phy@2': {'compatible': ['ethernet-phy-idc0ff.0410', 'ethernet-phy-ieee802.3-c22'], 'reg': [[2]], 'nvmem-cells': [[7], [8], [9], [10]], 'nvmem-cell-names': ['tx_a', 'tx_b', 'tx_c', 'tx_d'], 'phandle': 2}} should not be valid under {'description': "Can't find referenced schema: http://devicetree.org/schemas/net/airoha,an8855-mdio.yaml#"}
-	from schema $id: http://devicetree.org/schemas/mfd/airoha,an8855.yaml#
-Documentation/devicetree/bindings/mfd/airoha,an8855.example.dtb: /example-0/mdio/soc@1/mdio: failed to match any schema with compatible: ['airoha,an8855-mdio']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250909004343.18790-5-ansuelsmth@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Best regards,
+-Guilherme
 
