@@ -1,109 +1,89 @@
-Return-Path: <linux-kernel+bounces-807492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C324BB4A51C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:22:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81049B4A509
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B081618850FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:21:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597DE179397
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD11257ACF;
-	Tue,  9 Sep 2025 08:19:59 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093B42522BA;
+	Tue,  9 Sep 2025 08:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pyAO/z+B"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D35253355
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 08:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740D814A4DB;
+	Tue,  9 Sep 2025 08:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757405999; cv=none; b=GhSTxih0HOGM32IxGX9voBMWkaJXBPVt5sEr964hon8MVUdNdA85kzLE7rvxBgP8ROcp3bdzMQ6nd1QCCB3V3o6F6txROYBMsg6gUUV05eobaJhysmf4aW0GjZwY/B/KBZiaVyy3mO0+Tquh99LSRqDI4XwQ9oakMQ2NbnlYk8k=
+	t=1757405991; cv=none; b=eeuM1x2Mh2iYemvvMX5efBssrQiqZnbU5ekE0mhxYbT/UySN1wmthjVSjHYdgGUjlFSCxMIuOq3SVnJd4DTSRlwfoS44bwMl64heSOEyemHd7QAWtmXogOCJibcYfF9OcssYji7ymI8JjZOG07tB612ZlxurpQ3p6zeccIFd2w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757405999; c=relaxed/simple;
-	bh=mM/ZjWAVbUUkql8H1oFghgabuM9jKXe/SwcEiQbRuBU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IGcFpFJcsMnnMjGtHCCZ6TGK6HpmNGBMmbEz7eiVATU6zYvIHJxaIojm7iP2NAqKX1cmQufL53Oa3VnIVi0EnuwsA8+viy4WWat0o4OOG6wf6VnWhYAowbqAMKFqfXnDHs20c+WFZC/eyxkDlvFbWn2jvj4htsyLSOuJNAKgJL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: c039b8f08d5511f0b29709d653e92f7d-20250909
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED
-	SA_LOWREP, SA_EXISTED, SN_UNTRUSTED, SN_LOWREP, SN_EXISTED
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD
-	CIE_GOOD_SPF, GTI_FG_BS, GTI_C_CI, GTI_FG_IT, GTI_RG_INFO
-	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
-	ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:b1e419d6-c164-4e88-81de-838cb3fc5ba1,IP:15,
-	URL:0,TC:0,Content:-5,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,AC
-	TION:release,TS:20
-X-CID-INFO: VERSION:1.1.45,REQID:b1e419d6-c164-4e88-81de-838cb3fc5ba1,IP:15,UR
-	L:0,TC:0,Content:-5,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:20
-X-CID-META: VersionHash:6493067,CLOUDID:5b9a6df3204e70fc12a8c2585deda649,BulkI
-	D:2509091619500BZNL3X6,BulkQuantity:0,Recheck:0,SF:17|19|24|38|44|66|78|10
-	2,TC:nil,Content:0|50,EDM:5,IP:-2,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil
-	,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
-	TF_CID_SPAM_ULS
-X-UUID: c039b8f08d5511f0b29709d653e92f7d-20250909
-X-User: cuitao@kylinos.cn
-Received: from ctao-ubuntu.. [(39.156.73.13)] by mailgw.kylinos.cn
-	(envelope-from <cuitao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1619689536; Tue, 09 Sep 2025 16:19:48 +0800
-From: cuitao <cuitao@kylinos.cn>
-To: chenhuacai@kernel.org,
-	loongarch@lists.linux.dev
-Cc: kernel@xen0n.name,
-	linux-kernel@vger.kernel.org,
-	cuitao <cuitao@kylinos.cn>
-Subject: [PATCH v3] LoongArch: Add a check for the return value when creating the kobj
-Date: Tue,  9 Sep 2025 16:19:40 +0800
-Message-ID: <20250909081940.1851044-1-cuitao@kylinos.cn>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1757405991; c=relaxed/simple;
+	bh=c9HI6QHEnx4SZmGcYwto+EmPcdziqlGyEZf+Cvq1mkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QesZ12RBa6KeCHpV9LMSx0TqZCUIII0RNMCXDmC/Ip3tBaj2vQdgApnhL9SsjTc/7h/LPAxBYXPTMdTrAwQTf/NyfowioiEirOc2APEJa332kSgrg0fSw+SIBZ9gavVY9VFodH9FtpJmyWcVYRAcR+RFVvojhAJp+h9S4jtNrtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pyAO/z+B; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757405987;
+	bh=c9HI6QHEnx4SZmGcYwto+EmPcdziqlGyEZf+Cvq1mkc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pyAO/z+B9A0tdgO4emayr/NiYrJcJRQI4Dod2Ftt632RBsne1+oB5UP0IO8AsehjS
+	 mjWQYW/240W8yhsF+j0KS50iFDENcV2W56CpyFAlr2mZPDQzVJAlKGEAyFpQt7NTfy
+	 IqrZvV8UWvSyBPo7yi254UJVb99vk9vd5KEVTDtLhwbAr2xvVZDh7C4++egbt2p65a
+	 X7azCkGgLWyHKtL1w4JDL6TrBgGClw1FODsVbcRBPceqaHAYjNoZ351SK9gFyFxfhw
+	 Vbw5e7Ncj70IfJoCjceCBnksZRJ0IdeM5qkB4Hucr3Hto1gSYYnefCHTIxK50Ci1iX
+	 V1ExwHuuLAXSQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1B7B117E0100;
+	Tue,  9 Sep 2025 10:19:47 +0200 (CEST)
+Message-ID: <2dcd7668-5928-4376-b4de-e38302dda3a5@collabora.com>
+Date: Tue, 9 Sep 2025 10:19:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] dt-bindings: arm: mediatek: Add
+ grinn,genio-510-sbc
+To: Mateusz Koza <mateusz.koza@grinn-global.com>, robh@kernel.org
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ marcin.czarnecki@grinn-global.com, b.bilas@grinn-global.com, andrew@lunn.ch,
+ Conor Dooley <conor.dooley@microchip.com>
+References: <20250908130620.2309399-1-mateusz.koza@grinn-global.com>
+ <20250908130620.2309399-5-mateusz.koza@grinn-global.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250908130620.2309399-5-mateusz.koza@grinn-global.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add a check for the return value of kobject_create_and_add to ensure
-that the kobj allocation succeeds.
+Il 08/09/25 15:05, Mateusz Koza ha scritto:
+> Add device tree bindings support for the Grinn GenioSBC-510, a
+> single-board computer based on the MediaTek Genio 510 SoC.
+> 
+> More details about the hardware:
+> - https://grinn-global.com/products/grinn-geniosom-510
+> - https://grinn-global.com/products/grinn-genioboard-edge-ai-sbc
+> 
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Mateusz Koza <mateusz.koza@grinn-global.com>
 
-Signed-off-by: cuitao <cuitao@kylinos.cn>
----
-v3: Removed the unnecessary debug prints.
-https://lore.kernel.org/all/CAAhV-H5CjH8i81dGNxaVrzdVUiTwqMUYeuBifQ0wSW_Mw9wSTw@mail.gmail.com/
----
- arch/loongarch/kernel/env.c | 3 +++
- 1 file changed, 3 insertions(+)
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-diff --git a/arch/loongarch/kernel/env.c b/arch/loongarch/kernel/env.c
-index c0a5dc9aeae2..e9a7ea3bc5c8 100644
---- a/arch/loongarch/kernel/env.c
-+++ b/arch/loongarch/kernel/env.c
-@@ -109,6 +109,9 @@ static int __init boardinfo_init(void)
- 	struct kobject *loongson_kobj;
- 
- 	loongson_kobj = kobject_create_and_add("loongson", firmware_kobj);
-+	if (!loongson_kobj) {
-+		return -ENOMEM;
-+	}
- 
- 	return sysfs_create_file(loongson_kobj, &boardinfo_attr.attr);
- }
--- 
-2.48.1
 
 
