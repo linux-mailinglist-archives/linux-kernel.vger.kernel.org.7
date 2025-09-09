@@ -1,219 +1,253 @@
-Return-Path: <linux-kernel+bounces-808569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D4BB50196
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:39:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C35B501A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B182C3B9EC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:39:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 793D5188736F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22A430F52C;
-	Tue,  9 Sep 2025 15:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B14223E34C;
+	Tue,  9 Sep 2025 15:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZeNwSRUy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="wtV6en51"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7C326FDBB
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5725F13774D;
+	Tue,  9 Sep 2025 15:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757432324; cv=none; b=Tq6r8a/y0KkmQdRE8ukqst4pORLWTkFz3kCCy/M5mt4BkOmSPiyXtiRktAM4ME+eeqBZ2EbTqp4d0Y4ece/3bMmKXXmKCXrcCMhwQLd/PoN5n0W7oJutODPVkmv4KvSmreTKpbClQPxNFAn9lhi3+zdgQwAU8ppILLqE7vP+yMM=
+	t=1757432396; cv=none; b=WXkDenU/1Mm8+HlZ0UP1lnsHGr6/ttHyeRQ6vHLfAXYYvuLJPUquz34hn/uuqKxveuoReBJIOo5+e/Ua0Fl+4fMyIkcVgjDB9o77m5dZYRwtXtG39/nVDnX6yjgz0EFEjVfMPOA4XtLbHFLzH3zAVoTUjTcBbi0mBWXSaOAOfHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757432324; c=relaxed/simple;
-	bh=H59vSg6yqfeTagI2KSz0Mh1AfpBoCyroWytvOOs3WK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xo8qoFxLtzY87AL8Mnf0s/TD5bUVTIQawzlwOvKXeU2r2GIyfvucAqn891lKfMdh4wViB0it0mxPyyxSU2EPsF0uILhjPeupi8Qdr/H+fksq8sg9vGsjbtI4JCHrlgZwnnWgLLvlYt3ajtT8T6xQkFRy8/IhTz5mtV+E7m4dhhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZeNwSRUy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8F07C4AF09
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:38:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757432323;
-	bh=H59vSg6yqfeTagI2KSz0Mh1AfpBoCyroWytvOOs3WK4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZeNwSRUyi9tF9LsPemQ+0THBknwkv8YOxgR7tleEpBzdPsaACKTvX3/TSLmqwVPZc
-	 doSr+a62KpXTOE9kA7z+bvAKQhaKOLVunEewU68i/MsfvHrd8jiPBITcEMe3yzLiar
-	 Fyk6jdXPZN4F53RViFM96NMa0toe0bXjYRB3mFSxc9+eAYeYqrQCoXV7Xzrjf2XNC+
-	 Bk4bCla7U31Bo5+5/+7QM6Mx64S84FvK/MJmIp1BvkyGnPSBC8Xu48UOeC9fIpag+D
-	 xH9p8aP3hdMIdtQo5yr0AmEfdycPmwjE6sue7UgdQoU/Ary3CGUs3g+TbVL3upndGB
-	 /BZvGTDGSKU1Q==
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-407a4e744ddso335715ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:38:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWqsnXtw7ORqE0akWsHWII12C8QfZyCzdnC0LDITGw7ywZaNgEOSl+n7gKw/LPLX6hMMdK9mQ+rnK/zHag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKkKvfUE0lfuzMFe2bcWaMFQradqTcf9+0EbrRHOkOxKHvSK/Y
-	R5Mw3v/WLIlURGD4pEjE/VHJtZQsSXrrgCEyuaqa1X9vdGVQjY8FB2B6hT5XXOId5rnYqL3ayvN
-	MZM69UTSTHIzvrRRLu1B7jJziagaw0jJlCza30ty4
-X-Google-Smtp-Source: AGHT+IGBqVO3oKD8XjGxL3juBwWFjRrPmj4mgsVkHCfdV6oZc06DcMQABIJXslbc8xt54PHxByce6Tv2wQ2REfxHIBc=
-X-Received: by 2002:a05:6e02:219a:b0:40b:590b:7d98 with SMTP id
- e9e14a558f8ab-40b590b7e67mr11544725ab.8.1757432322295; Tue, 09 Sep 2025
- 08:38:42 -0700 (PDT)
+	s=arc-20240116; t=1757432396; c=relaxed/simple;
+	bh=+ozRznCUnYe3hIE4F/MJBXqFwWY29ua0Eli0zW59EtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qy03oj6XQTo69gcX1ymjN4ehaAFMJF9VKsegwPGO263dzrtUrianEMGHf51PeqZqfQBSGfmY9zeWI2KqN4j+qNz5J3SFQFqukJIkkV0vtwEa0hH2SxwxAuzb052KEspAmB1lHnnf6bTEzdy4OEyja1Kib7vXDCfuM3QEpcYOfSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=wtV6en51; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 8B09F4E40957;
+	Tue,  9 Sep 2025 15:39:52 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 62EA160630;
+	Tue,  9 Sep 2025 15:39:52 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6EEC2102F28E7;
+	Tue,  9 Sep 2025 17:39:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757432391; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ts/SJluN6cQdUcCgVD3HQ7ETDwWBAUQodwnr68auTBU=;
+	b=wtV6en51mclGmP5+mmQyZ21Zbg/GIh6mfEa/I9Q9yhw+lxzDl31FxvDetR72unXo8KSYWR
+	fFsvxflfrD5KpTxM2euZDli9Wgzv3Is27i2JjKVXgkuow/qpJwMUb82Mk6Lw6bbKmdYOgW
+	ghcFm1RshpaRjJqbiHWK/afodrh3XPL6SbYn3z6oqMe0mJ9W3U8BTpQE+ntC0uf8hvPv/k
+	m++qUygy8A6Jo6Z/HXaL+LvOmstEj+e5xQURF04IHForwStJ5Lxd0npxS2atgqDWuGQyuw
+	uqISDZrI9Q8hJNuC/upW6T0YSymLtxR6ZqiGDfXmB4OpemRR4fD/IhOYxG2dIw==
+Date: Tue, 9 Sep 2025 17:39:33 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>
+Cc: Simona Vetter <simona@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, Jagan
+ Teki <jagan@amarulasolutions.com>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Daniel Thompson <danielt@kernel.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ Paul Kocialkowski <contact@paulk.fr>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, =?UTF-8?B?SGVy?=
+ =?UTF-8?B?dsOp?= Codina <herve.codina@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, Paul
+ Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: Re: [PATCH v5 10/10] drm/bridge: hotplug-bridge: add driver to
+ support hot-pluggable DSI bridges
+Message-ID: <20250909173933.20fc5d6a@booty>
+In-Reply-To: <20250909172907.09157d70@booty>
+References: <20241231-hotplug-drm-bridge-v5-0-173065a1ece1@bootlin.com>
+	<20241231-hotplug-drm-bridge-v5-10-173065a1ece1@bootlin.com>
+	<ourjepuvkhzpemhak3t6do3or6shrj4cq2plhii4afgej4qhkk@p6tvptupr3ey>
+	<20250102130140.59363125@booty>
+	<20250909172907.09157d70@booty>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909065349.574894-1-liulei.rjpt@vivo.com> <CAMgjq7Ca6zOozixPot3j5FP_6A8h=DFc7yjHKp2Lg+qu7gNwMA@mail.gmail.com>
-In-Reply-To: <CAMgjq7Ca6zOozixPot3j5FP_6A8h=DFc7yjHKp2Lg+qu7gNwMA@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 9 Sep 2025 08:38:29 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuN7cw2TBKvjPZQER8Yh586pwahMSSou5P0=TFL+vtd1=Q@mail.gmail.com>
-X-Gm-Features: Ac12FXyeFnTZyXJdqqEHEE7Eg5jvsdu3zTidMhrtm5s_2H33PC3oRecmiAsko9Q
-Message-ID: <CAF8kJuN7cw2TBKvjPZQER8Yh586pwahMSSou5P0=TFL+vtd1=Q@mail.gmail.com>
-Subject: Re: [PATCH v0 0/2] mm: swap: Gather swap entries and batch async release
-To: Kairui Song <ryncsn@gmail.com>
-Cc: Lei Liu <liulei.rjpt@vivo.com>, Michal Hocko <mhocko@suse.com>, 
-	David Rientjes <rientjes@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Chen Yu <yu.c.chen@intel.com>, 
-	Hao Jia <jiahao1@lixiang.com>, "Kirill A. Shutemov" <kas@kernel.org>, 
-	Usama Arif <usamaarif642@gmail.com>, Oleg Nesterov <oleg@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Fushuai Wang <wangfushuai@baidu.com>, 
-	"open list:MEMORY MANAGEMENT - OOM KILLER" <linux-mm@kvack.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" <cgroups@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Sep 9, 2025 at 12:31=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> On Tue, Sep 9, 2025 at 3:04=E2=80=AFPM Lei Liu <liulei.rjpt@vivo.com> wro=
-te:
-> >
->
-> Hi Lei,
->
-> > 1. Problem Scenario
-> > On systems with ZRAM and swap enabled, simultaneous process exits creat=
-e
-> > contention. The primary bottleneck occurs during swap entry release
-> > operations, causing exiting processes to monopolize CPU resources. This
-> > leads to scheduling delays for high-priority processes.
-> >
-> > 2. Android Use Case
-> > During camera launch, LMKD terminates background processes to free memo=
-ry.
-> > Exiting processes compete for CPU cycles, delaying the camera preview
-> > thread and causing visible stuttering - directly impacting user
-> > experience.
-> >
-> > 3. Root Cause Analysis
-> > When background applications heavily utilize swap space, process exit
-> > profiling reveals 55% of time spent in free_swap_and_cache_nr():
-> >
-> > Function              Duration (ms)   Percentage
-> > do_signal               791.813     **********100%
-> > do_group_exit           791.813     **********100%
-> > do_exit                 791.813     **********100%
-> > exit_mm                 577.859        *******73%
-> > exit_mmap               577.497        *******73%
-> > zap_pte_range           558.645        *******71%
-> > free_swap_and_cache_nr  433.381          *****55%
-> > free_swap_slot          403.568          *****51%
->
-> Thanks for sharing this case.
->
-> One problem is that now the free_swap_slot function no longer exists
-> after 0ff67f990bd4. Have you tested the latest kernel? Or what is the
-> actual overhead here?
->
-> Some batch freeing optimizations are introduced. And we have reworked
-> the whole locking mechanism for swap, so even on a system with 96t the
-> contention seems barely observable with common workloads.
->
-> And another series is further reducing the contention and the overall
-> overhead (24% faster freeing for phase 1):
-> https://lore.kernel.org/linux-mm/20250905191357.78298-1-ryncsn@gmail.com/
->
-> Will these be helpful for you? I think optimizing the root problem is
-> better than just deferring the overhead with async workers, which may
-> increase the overall overhead and complexity.
+Hello,
 
-+100.
++Cc: Dmitry's current e-mail address
 
-Hi Lei,
+I replied to such an old thread that is had an old address for Dmitry.
 
-This CC list is very long :-)
+On Tue, 9 Sep 2025 17:29:07 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
 
-Is it similar to this one a while back?
+> Hello Dmitry, Maxime, DRM maintainers,
+> 
+> On Thu, 2 Jan 2025 13:01:40 +0100
+> Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+> 
+> > Hi Dmitry,
+> > 
+> > On Tue, 31 Dec 2024 17:29:52 +0200
+> > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> >   
+> > > On Tue, Dec 31, 2024 at 11:40:04AM +0100, Luca Ceresoli wrote:    
+> > > > This driver implements the point of a DRM pipeline where a connector allows
+> > > > removal of all the following bridges up to the panel.
+> > > > 
+> > > > The DRM subsystem currently allows hotplug of the monitor but not preceding
+> > > > components. However there are embedded devices where the "tail" of the DRM
+> > > > pipeline, including one or more bridges, can be physically removed:
+> > > > 
+> > > >  .------------------------.
+> > > >  |   DISPLAY CONTROLLER   |
+> > > >  | .---------.   .------. |
+> > > >  | | ENCODER |<--| CRTC | |
+> > > >  | '---------'   '------' |
+> > > >  '------|-----------------'
+> > > >         |
+> > > >         |               HOTPLUG
+> > > >         V              CONNECTOR
+> > > >    .---------.        .--.    .-.        .---------.         .-------.
+> > > >    | 0 to N  |        | _|   _| |        | 1 to N  |         |       |
+> > > >    | BRIDGES |--DSI-->||_   |_  |--DSI-->| BRIDGES |--LVDS-->| PANEL |
+> > > >    |         |        |  |    | |        |         |         |       |
+> > > >    '---------'        '--'    '-'        '---------'         '-------'
+> > > > 
+> > > >  [--- fixed components --]  [----------- removable add-on -----------]
+> > > > 
+> > > > This driver supports such a device, where the final segment of a MIPI DSI
+> > > > bus, including one or more bridges, can be physically disconnected and
+> > > > reconnected at runtime, possibly with a different model.
+> > > > 
+> > > > The add-on supported by this driver has a MIPI DSI bus traversing the
+> > > > hotplug connector and a DSI to LVDS bridge and an LVDS panel on the add-on.
+> > > > Hovever this driver is designed to be as far as possible generic and
+> > > > extendable to other busses that have no native hotplug and model ID
+> > > > discovery.
+> > > > 
+> > > > This driver does not itself add and remove the bridges or panel on the
+> > > > add-on: this needs to be done by other means, e.g. device tree overlay
+> > > > runtime insertion and removal. The hotplug-bridge gets notified by the DRM
+> > > > bridge core after a removable bridge gets added or before it is removed.
+> > > > 
+> > > > The hotplug-bridge role is to implement the "hot-pluggable connector" in
+> > > > the bridge chain. In this position, what the hotplug-bridge should ideally
+> > > > do is:
+> > > > 
+> > > >  * communicate with the previous component (bridge or encoder) so that it
+> > > >    believes it always has a connected bridge following it and the DRM card
+> > > >    is always present
+> > > >  * be notified of the addition and removal of the following bridge and
+> > > >    attach/detach to/from it
+> > > >  * communicate with the following bridge so that it will attach and detach
+> > > >    using the normal procedure (as if the entire pipeline were being created
+> > > >    or destroyed, not only the tail)
+> > > >  * instantiate two DRM connectors (similarly to what the DisplayPort MST
+> > > >    code does):
+> > > >    - a DSI connector representing the video lines of the hotplug connector;
+> > > >      the status is always "disconnected" (no panel is ever attached
+> > > >      directly to it)
+> > > >    - an LSVD connector representing the classic connection to the panel;
+> > > >      this gets added/removed whenever the add-on gets
+> > > >      connected/disconnected; the status is always "connected" as the panel
+> > > >      is always connected to the preceding bridge      
+> > > 
+> > > I'd rather have just a single connector. MST connectors can be added and
+> > > gone as there is fit, so should be your LVDS panel-related connector.    
+> > 
+> > The plan we discussed at LPC 2024 is to eventually get rid of the first
+> > connector (see "Roadmap and current status" in the cover letter), so
+> > you can consider this legacy code. However the current implementation
+> > won't work without this connector, so it is still there for the time
+> > being. Pointing this out in a note in the commit message of this patch
+> > would probably be useful to avoid future misunderstanding, so I'm
+> > adding one for v6.  
+> 
+> Reviving this old thread for a specific question I need to clarify.
+> Before starting a work that I consider far from trivial I'd like to
+> make sure the requirement is clear.
+> 
+> There was a precise request by both Dmitry and (IIRC) Maxime to remove
+> the "always present, never connected" DSI connector.
+> 
+> [Recap of previous discussion: skip if unneeded]
+> 
+> The current status is that the hotplug-bridge, which can start without
+> an add-on plugged, adds a DSI connector unconditionally:
+> 
+>   # modetest -c  | grep -i '^[a-z0-9]'
+>   Connectors:
+>   id    encoder status          name        size (mm)     modes   encoders
+>   38    0       disconnected    DSI-1       0x0           0       37
+> 
+> That DSI connector status is always "unconnected" (in my implementation
+> at least) because it does never a panel _directly_ attached, only a
+> further bridge.
+> 
+> Then when the add-on is plugged, which contains a DSI-to-LVDS bridge, a
+> new LVDS connector is added:
+> 
+>   # modetest -c  | grep -i '^[a-z0-9]'
+>   Connectors:
+>   id    encoder status          name        size (mm)     modes   encoders
+>   38    0       disconnected    DSI-1       0x0           0       37
+>   39    0       connected       LVDS-1      344x194       1       37
+> 
+> The LVDS connector has a panel attached and provides the modes, so it
+> is "the connector" in the DRM logic. It is always in "connected" status
+> because it drives a panel that is always tied to the DSI-to-LVDS bridge.
+> It is removed when the add-on is removed and so the removable bridge(s)
+> disappear(s).
+> 
+> The request is to get rid of the DSI connector, because it is not a DRM
+> connector in the classic DRM sense (DRM connector ~= a modes +
+> connection status provider). That would mean without addon plugged
+> there is no DRM connector at all.
+> 
+> However for user space to be able to always have a card we need the
+> card to be populated even before the addon is plugged and to persist
+> after its removal. So, a card without any connectors.
+> 
+> [End of recap of previous discussion]
+> 
+> Now comes the question!
+> 
+> Based on the above, I understand that:
+> 
+>  * Current DRM code won't populate a card without at least a DRM
+>    connector
+>  * We now need to change the DRM code to allow populating a card,
+>    and expose it to user space, without a DRM connector
+>  * The previous bullet is a prerequisite to get rid of DSI connector as
+>    requested
+> 
+> Is my understanding correct?
+> 
+> Best regards,
+> Luca
+> 
 
-https://lore.kernel.org/linux-mm/20240213-async-free-v3-1-b89c3cc48384@kern=
-el.org/
-
-I ultimately abandoned this approach and considered it harmful. Yes, I
-can be as harsh as I like for my own previous bad ideas. The better
-solution is as Kairui did, just remove the swap slot caching
-completely. It is the harder path to take and get better results. I
-recall having a discussion with Kairui on this and we are aligned on
-removing the swap slot caching eventually . Thanks Kairui for the
-heavy lifting of actually removing the swap slot cache. I am just
-cheerleading on the side :-)
-
-So no, we are not getting the async free of swap slot caching again.
-We shouldn't need to.
-
-Chris
 
 
-
-
->
->
-> > swap_entry_free         393.863          *****50%
-> > swap_range_free         372.602           ****47%
-> >
-> > 4. Optimization Approach
-> > a) For processes exceeding swap entry threshold: aggregate and isolate
-> > swap entries to enable fast exit
-> > b) Asynchronously release batched entries when isolation reaches
-> > configured threshold
-> >
-> > 5. Performance Gains (User Scenario: Camera Cold Launch)
-> > a) 74% reduction in process exit latency (>500ms cases)
-> > b) ~4% lower peak CPU load during concurrent process exits
-> > c) ~70MB additional free memory during camera preview initialization
-> > d) 40% reduction in camera preview stuttering probability
-> >
-> > 6. Prior Art & Improvements
-> > Reference: Zhiguo Jiang's patch
-> > (https://lore.kernel.org/all/20240805153639.1057-1-justinjiang@vivo.com=
-/)
-> >
-> > Key enhancements:
-> > a) Reimplemented logic moved from mmu_gather.c to swapfile.c for clarit=
-y
-> > b) Async release delegated to workqueue kworkers with configurable
-> > max_active for NUMA-optimized concurrency
-> >
-> > Lei Liu (2):
-> >   mm: swap: Gather swap entries and batch async release core
-> >   mm: swap: Forced swap entries release under memory pressure
-> >
-> >  include/linux/oom.h           |  23 ++++++
-> >  include/linux/swapfile.h      |   2 +
-> >  include/linux/vm_event_item.h |   1 +
-> >  kernel/exit.c                 |   2 +
-> >  mm/memcontrol.c               |   6 --
-> >  mm/memory.c                   |   4 +-
-> >  mm/page_alloc.c               |   4 +
-> >  mm/swapfile.c                 | 134 ++++++++++++++++++++++++++++++++++
-> >  mm/vmstat.c                   |   1 +
-> >  9 files changed, 170 insertions(+), 7 deletions(-)
-> >
-> > --
-> > 2.34.1
-> >
-> >
->
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
