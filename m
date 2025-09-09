@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-808284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1696FB4FD63
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:37:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF90B4FD85
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D1C1C4E2E75
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:37:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD711889C97
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D64A342CA7;
-	Tue,  9 Sep 2025 13:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656DE345755;
+	Tue,  9 Sep 2025 13:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XiO9CFMS"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hoisQODg"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85193375AE
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D4B342C89
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425000; cv=none; b=TxAY9NUo2VHDdFIXwN9GVLWKmQXi+7X4CPWt48EVwshEvGl1rKAjGUVIxUQTIRu8kHfjD5AH61Cy71hk3Su6x9OJJH/gk2ONuBkbK+MTRIkv818iJT9wRrqqDHo+O8Tl+CHk2Yk/5TwYw0maeUY/lrCPQ37Ci0+RkUukU58bgCw=
+	t=1757425002; cv=none; b=he6T4s7jb+IZMypX/20RNW7ZigCopzFA48/dfs9LPT86KZPJyc1d7DQEUcucpVhBpqPtfvNBim+iwjfcv2War9BTcMgKlpStyr9uFqcqtjBdiQ5rrPjl1MkQ87qOz1PxOfLQNP5AYCPHY6/cfVNZP8PBmKovFwgUouLlu8FJiFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425000; c=relaxed/simple;
-	bh=WI82kuEYUQ/DPEWsSvq70ZbnanfAbLU9MPBdQKjIz5Q=;
+	s=arc-20240116; t=1757425002; c=relaxed/simple;
+	bh=/Lhwto5s1ginBRFK1K461SpzI0kY9fIX6onz0SIu1pA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WrpEpHkeKeW29zDAhXhetZKhFr2bnWlrMTCK3YtXbNXHGVl100o+pSnz0dEJ+lOXf3gq0nvU7kCEMO5lDyBUH6enrNgZ7W0GpC9471ZLAgyq14V/ZHqpwa+SvgarBdVaGqtwecFduYQL+m4isYajpUthTUd8zKV4X2JOrfGg9Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XiO9CFMS; arc=none smtp.client-ip=209.85.221.74
+	 To:Cc:Content-Type; b=JSeiDcAqiWU9GjT67UsHeeCorgD/sE5oTcvC+rpELGKbjbHDHFkGMwiW+n15Zg1BOO6URSLvkIswrD2b/nq5g7YABFi1eaD1eJoF3xef4EVp+fWSrsxwfnkbSSncEBkrYeKuL5EY6learATatg12L0DBCPBmMePJSeCz5KBGF/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hoisQODg; arc=none smtp.client-ip=209.85.218.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3e4a8e6df10so1813306f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:36:38 -0700 (PDT)
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b044a42959dso469652466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:36:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757424997; x=1758029797; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757424998; x=1758029798; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A3K2CGHvkwip2S9fXZslbCnN2dA9eSP+jmcVGuT7SlY=;
-        b=XiO9CFMSmdqbQFkM7mfH32LxM2v/LFNSETGrXBi2K3v9LlCbiS3aHdP/2rEfBIna6g
-         dXYBXRQiwj2uenaPPps0DC++SIG/Gq7nyGB69UMi/WMLIC5aztTlWGz8sTIp6d7vZm1c
-         QIj+YxGkp7GNs+Oe14OACW0yI002hMJqOSY5eHbnKwD6rdku7ntQSwovwXrjVkjrhQEi
-         PWKyRYZ1GZGD158u40Lg8z5pq1BnDPZE7hBhe4O4d8HK6TiWfzm0zZnWYq1PiD3NJ340
-         lVe6H003cojdl/7BzZF0aiTBRO17rAJt0neiPsHOeIGaL8NW2XwtZ82lM2h8Fd3lfjcl
-         PVTA==
+        bh=MmbSiSnFwTIoU/JLu47n8SFv5vhZb2klpFQfcVoTQdo=;
+        b=hoisQODganKj576fIsZYv7zrOaZOz/kS+mzFu4bpEU59byiVAZYThzzy5PAjVcx/ag
+         Q3yFyUIDjw1fAys7FlenQSq/hpxKYnARx9pBQiv/0yjUnXZ/gSluTxDIDoiH4N6hKmE9
+         J2GrJEZWYgA88R2nFQpu2Mj1A1hLhZjObJMmzePMXvN8bTLgWZzEIGC5ju/VE0dVR/l1
+         x4kgXGnp7SDQVxICXpOA68Qswp+oL2xMXzzWePBDTiAq7P+Ycp7WT7EmovAUnjgESruR
+         51MixevmPHoO5IfTAh4eKRVQHHwhPzzut8mvODa8A37IbvPbud/L2jw74IdIo4FXgKbX
+         AnFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757424997; x=1758029797;
+        d=1e100.net; s=20230601; t=1757424998; x=1758029798;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A3K2CGHvkwip2S9fXZslbCnN2dA9eSP+jmcVGuT7SlY=;
-        b=nbpi3nayNmaAmiF8ABVrupepIyYWujsWUXlwO9rZ9pGYXKk/sQ9aLLecQWvbGYLyRI
-         7b9j7BOEqRcwr6VdzWWjMwpfWVQwXA6ivML86GxAPx2tNHPa+0shIONrq8hrCL+O6/bS
-         783wE0x/uZfcnMYX1Gse2OdeINwo/F1F0bJVRR/OfJ3YdobvYy/rR/ATopn2gcMzGa/j
-         FIecHfn3TpbPl+EfmMMYVmP99Mbm665cXQTW3aLD0Mc8c4OctNxdUxOTi4ANc78VmtUM
-         Xq7aT48XWY+kUQfy5nH+lKToHrAheqOeSqMENvOLoWoCQcfPS/IekxyyaNnHf4Hbg7AH
-         2+ng==
-X-Forwarded-Encrypted: i=1; AJvYcCUWzGViTlVMkOaFLdByDZhLvtFIY3BzIndsB9bYuhNpVTeIYZFCifFH+4mNSoz+S4S/cSJS6eLVphoUd44=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw/6PDj5i08mitp1Z3d37KhgMzWWzRTRllkyRpF0clkao+qqS7
-	n7ziEQ4dC5ebptRKpcl/KtOEMSZnnEZ8zjxkFNFMuGc4tCLAUkXDrUMAh4lxKVwJDB08wPXfELS
-	oyybSvvYOo2SRZxQngA==
-X-Google-Smtp-Source: AGHT+IGELjPGrMVoKzyVUw7RU0RDMDA/udhduYMsi2Ny05IaHAZWA9G7vbWFWV28nhJqeqUpd5PBZtW0fZu0Yc0=
-X-Received: from wmsr5.prod.google.com ([2002:a05:600c:8b05:b0:45d:e24a:b2c0])
+        bh=MmbSiSnFwTIoU/JLu47n8SFv5vhZb2klpFQfcVoTQdo=;
+        b=PvfgsRXiMA+iENets/ZS8Ud1LwJ237EccrSW6R2DV06WxikI6daXpyylc3vOcguP6D
+         IzSsF7zsvFCivXpcFVpU5uqbfsjfJmkFd8/PNh9MyGbLAuxJLtrLyhydiN1CMfGG5HuP
+         2ov24dIydJLga8ZIzR4sR2IGLaaYz5MFaN+oxEszSMFnuLMT0/0M1xE4VmQMFExpxZKw
+         ZS1Sp6MN5MLQbcVE7muKq/0HBrAX0vEbN7dCVKVl3/U0ol/8yMrStDnAcYLwKo/ZX8Oi
+         bUkyg3tLfrBiaKlBcHFXZqGRGoJj6ojzpuxlr7ubU8JyatWTdXNEx8eNc7RO1keiaOxp
+         uqJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdQblW3qfQK6PpVetXWP8LPsu2WhSn6BSow4VUnerUQlfvVWWaHvx2b26OPTgnB/uIyLdK3u6r2Dn4Y+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAB2djVnbObIL2bCdWpLVn+Lnk3Dd/18sS2RYXQkSvS+42peco
+	pPAOia1f0i42Q2BVAz7RBR2UZ+gt1d8NEEo6K6bQMADHVxozY4qvmt9q6x9J3bOkmNT7vgd7LKV
+	agclH01bfJKluRWcgUw==
+X-Google-Smtp-Source: AGHT+IFAFV8+5PF+ACjxRZtS035sPxF/aJB68T82HGLHJTP0jManXfiLAOmflSk4J9V4JiFGh4CY21p9NhaMWQs=
+X-Received: from ejcwb15.prod.google.com ([2002:a17:907:d50f:b0:b04:b988:644c])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:584c:0:b0:3c8:29eb:732e with SMTP id ffacd0b85a97d-3e6441e514cmr9781857f8f.59.1757424996971;
- Tue, 09 Sep 2025 06:36:36 -0700 (PDT)
-Date: Tue, 09 Sep 2025 13:36:22 +0000
+ 2002:a17:907:7e97:b0:b04:590a:a5b5 with SMTP id a640c23a62f3a-b04b1480b35mr1159064666b.24.1757424998120;
+ Tue, 09 Sep 2025 06:36:38 -0700 (PDT)
+Date: Tue, 09 Sep 2025 13:36:23 +0000
 In-Reply-To: <20250909-vmbo-defer-v2-0-9835d7349089@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,22 +73,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250909-vmbo-defer-v2-0-9835d7349089@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10349; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=WI82kuEYUQ/DPEWsSvq70ZbnanfAbLU9MPBdQKjIz5Q=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBowC1ihsTIK0KfmYoahEtBClUCqBDpZSy4eSBFW
- bn6h/piDMWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaMAtYgAKCRAEWL7uWMY5
- Rg3OEACk8y9W/LM++xVMHDgjaYE0tPI91cweb2VqlDz/FHHEbJyCXHYd4I1FmJqEEpJjOq8bqKu
- 6ZuD1M0R4/c7f33VUiduDBgSdKAehQ+qoJsMR1bxN812IuFv4OlqTTW7kyJSC85DKH75rvAimzJ
- +FW/7RTsE9z15EVuhNxWw+XE1fiydOtL+dJJa5LG5EcSDKzcSHgU9BwMRL0DHxgy9fXvtbWqBK8
- 5OVp8yPx9igDr31b0iC4jPA20LjBSGenGjmnNHnZBxsubgvNR6s7xS7rW5eOTQYEc4ChvaU6s3A
- aaF+EOZcjk0Lgq1MxRWSR95VNaEAzJkTFs4QvsKrLyYVCtXspZtaiMYFgVjpx8l8b6FwkamhQzT
- YXZRTFDCsZbocLyKll9Ie2eOTe9FQKFvChHeUltbEgigLbsVsG2kOyFy3PSzJDT6BZP85BPkRu1
- 0zHWZBrOWMIjzB+Kith0F/hY01kp8aEqjHbtSVzfkecKYW/L8mHfXMOhh4z3iwUpbu4+aR8NO18
- viHv5hj9IcIEbYFVEDA6CNVnrsdPRrWZBhImFyeoLegHuzR6+u8wUHVESGYZ+RMraseqlLyyrMX
- 6IwAIWGGJoJP+3m0PWup08/LqNaTLjpoPasBUkGi/yBl6TzlrN27zy28HOTi4eAePPKyEfJwhSo Vcs8YIidK1Al+Vw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9052; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=/Lhwto5s1ginBRFK1K461SpzI0kY9fIX6onz0SIu1pA=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBowC1iqBKdGP913iBnrFCBvAIMxLF+7dvDJhtb2
+ Vee9/V2NAaJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaMAtYgAKCRAEWL7uWMY5
+ RkphD/wP6DfltzHI35xh9b46K2Va3My+E/65DQgQrsGjn8TnLx0MNvKWfTFhCKUJ7Yf4s3xNI0o
+ hgqT3PsMCIjk1bvG3r1c2MH3ghPLrHKTbrVBDkcwj9eV6jRKHv8c+jr4JrjyISA+mezUEnzuVqX
+ FUXuV6d+SplJlxzYudj2Q/Yfv36GLy4IAw+AVCv5hNGiSPbxaLVZ2JEJqlNcEoQJBoxmX9mCK8Z
+ /HFEKGc8/ZlANMl9QAZQ6pYi5Z9hAxaU1bzVJRJGSYVRsa+YfaeSKvUdwRZNFwMmLsjGoE0c2mt
+ tXqsqlBD/qdD6DXHqBfVNWcliItpZ17a4Podaojbn6djlv+QgbQ9DduO+JJPpbnU1UNHa2RxRpI
+ vHRxQQcs4v0T1EGB7jmR49iqmmi9TjmbKRNJee2YZhpPcIY9wgj8fO09urMOKUACbizl3kVZAsO
+ l9BBQ9ARwKox0AljkS9YJ2kwMFbydO8ZwyalgvYEoIO/UhOIxBel9uaolFWzuzo6F+f22ylS0TT
+ 8QnI2rh92RwoqgqC+t8nJBM848s95+SW/wfhV2iaOJYm34TJKrfejU8e+RsnGOHXCQnX/B/G5xc
+ HpfFNrYDrxIMpzlQ9c/0s6jj4Aoks5WfgPVGDJsz/MOQ28iF0ucIYXRdKEfagqIRcvX7BbKzRy/ 6PXqXitUFAi/Elg==
 X-Mailer: b4 0.14.2
-Message-ID: <20250909-vmbo-defer-v2-1-9835d7349089@google.com>
-Subject: [PATCH v2 1/2] drm/gpuvm: add deferred vm_bo cleanup
+Message-ID: <20250909-vmbo-defer-v2-2-9835d7349089@google.com>
+Subject: [PATCH v2 2/2] panthor: use drm_gpuva_unlink_defer()
 From: Alice Ryhl <aliceryhl@google.com>
 To: Danilo Krummrich <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
 	"=?utf-8?q?Thomas_Hellstr=C3=B6m?=" <thomas.hellstrom@linux.intel.com>
@@ -100,322 +100,258 @@ Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripar
 	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-When using GPUVM in immediate mode, it is necessary to call
-drm_gpuvm_unlink() from the fence signalling critical path. However,
-unlink may call drm_gpuvm_bo_put(), which causes some challenges:
+Instead of manually deferring cleanup of vm_bos, use the new GPUVM
+infrastructure for doing so.
 
-1. drm_gpuvm_bo_put() often requires you to take resv locks, which you
-   can't do from the fence signalling critical path.
-2. drm_gpuvm_bo_put() calls drm_gem_object_put(), which is often going
-   to be unsafe to call from the fence signalling critical path.
-
-To solve these issues, add a deferred version of drm_gpuvm_unlink() that
-adds the vm_bo to a deferred cleanup list, and then clean it up later.
-
-The new methods take the GEMs GPUVA lock internally rather than letting
-the caller do it because it also needs to perform an operation after
-releasing the mutex again. This is to prevent freeing the GEM while
-holding the mutex (more info as comments in the patch). This means that
-the new methods can only be used with DRM_GPUVM_IMMEDIATE_MODE.
+To avoid manual management of vm_bo refcounts, the panthor_vma_link()
+and panthor_vma_unlink() methods are changed to get and put a vm_bo
+refcount on the vm_bo. This simplifies the code a lot. I preserved the
+behavior where panthor_gpuva_sm_step_map() drops the refcount right away
+rather than letting panthor_vm_cleanup_op_ctx() do it later.
 
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- drivers/gpu/drm/drm_gpuvm.c | 174 ++++++++++++++++++++++++++++++++++++++++++++
- include/drm/drm_gpuvm.h     |  26 +++++++
- 2 files changed, 200 insertions(+)
+ drivers/gpu/drm/panthor/panthor_mmu.c | 113 ++++++----------------------------
+ 1 file changed, 19 insertions(+), 94 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-index 78a1a4f095095e9379bdf604d583f6c8b9863ccb..5aa8b3813019705f70101950af2d8fe4e648e9d0 100644
---- a/drivers/gpu/drm/drm_gpuvm.c
-+++ b/drivers/gpu/drm/drm_gpuvm.c
-@@ -876,6 +876,27 @@ __drm_gpuvm_bo_list_add(struct drm_gpuvm *gpuvm, spinlock_t *lock,
- 	cond_spin_unlock(lock, !!lock);
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+index 6dec4354e3789d17c5a87fc8de3bc86764b804bc..fd9ed88a4259e5fb88e5acffcf6d8a658cc7115d 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.c
++++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+@@ -181,20 +181,6 @@ struct panthor_vm_op_ctx {
+ 		u64 range;
+ 	} va;
+ 
+-	/**
+-	 * @returned_vmas: List of panthor_vma objects returned after a VM operation.
+-	 *
+-	 * For unmap operations, this will contain all VMAs that were covered by the
+-	 * specified VA range.
+-	 *
+-	 * For map operations, this will contain all VMAs that previously mapped to
+-	 * the specified VA range.
+-	 *
+-	 * Those VMAs, and the resources they point to will be released as part of
+-	 * the op_ctx cleanup operation.
+-	 */
+-	struct list_head returned_vmas;
+-
+ 	/** @map: Fields specific to a map operation. */
+ 	struct {
+ 		/** @map.vm_bo: Buffer object to map. */
+@@ -1081,47 +1067,18 @@ void panthor_vm_free_va(struct panthor_vm *vm, struct drm_mm_node *va_node)
+ 	mutex_unlock(&vm->mm_lock);
  }
  
-+/**
-+ * drm_gpuvm_bo_is_dead() - check whether this vm_bo is scheduled for cleanup
-+ * @vm_bo: the &drm_gpuvm_bo
-+ *
-+ * When a vm_bo is scheduled for cleanup using the bo_defer list, it is not
-+ * immediately removed from the evict and extobj lists if they are protected by
-+ * the resv lock, as we can't take that lock during run_job() in immediate
-+ * mode. Therefore, anyone iterating these lists should skip entries that are
-+ * being destroyed.
-+ *
-+ * Checking the refcount without incrementing it is okay as long as the lock
-+ * protecting the evict/extobj list is held for as long as you are using the
-+ * vm_bo, because even if the refcount hits zero while you are using it, freeing
-+ * the vm_bo requires taking the list's lock.
-+ */
-+static bool
-+drm_gpuvm_bo_is_dead(struct drm_gpuvm_bo *vm_bo)
-+{
-+	return !kref_read(&vm_bo->kref);
-+}
-+
- /**
-  * drm_gpuvm_bo_list_add() - insert a vm_bo into the given list
-  * @__vm_bo: the &drm_gpuvm_bo
-@@ -1081,6 +1102,9 @@ drm_gpuvm_init(struct drm_gpuvm *gpuvm, const char *name,
- 	INIT_LIST_HEAD(&gpuvm->evict.list);
- 	spin_lock_init(&gpuvm->evict.lock);
+-static void panthor_vm_bo_put(struct drm_gpuvm_bo *vm_bo)
++static void panthor_vm_bo_free(struct drm_gpuvm_bo *vm_bo)
+ {
+ 	struct panthor_gem_object *bo = to_panthor_bo(vm_bo->obj);
+-	struct drm_gpuvm *vm = vm_bo->vm;
+-	bool unpin;
+-
+-	/* We must retain the GEM before calling drm_gpuvm_bo_put(),
+-	 * otherwise the mutex might be destroyed while we hold it.
+-	 * Same goes for the VM, since we take the VM resv lock.
+-	 */
+-	drm_gem_object_get(&bo->base.base);
+-	drm_gpuvm_get(vm);
+-
+-	/* We take the resv lock to protect against concurrent accesses to the
+-	 * gpuvm evicted/extobj lists that are modified in
+-	 * drm_gpuvm_bo_destroy(), which is called if drm_gpuvm_bo_put()
+-	 * releases sthe last vm_bo reference.
+-	 * We take the BO GPUVA list lock to protect the vm_bo removal from the
+-	 * GEM vm_bo list.
+-	 */
+-	dma_resv_lock(drm_gpuvm_resv(vm), NULL);
+-	mutex_lock(&bo->base.base.gpuva.lock);
+-	unpin = drm_gpuvm_bo_put(vm_bo);
+-	mutex_unlock(&bo->base.base.gpuva.lock);
+-	dma_resv_unlock(drm_gpuvm_resv(vm));
  
-+	INIT_LIST_HEAD(&gpuvm->bo_defer.list);
-+	spin_lock_init(&gpuvm->bo_defer.lock);
-+
- 	kref_init(&gpuvm->kref);
- 
- 	gpuvm->name = name ? name : "unknown";
-@@ -1122,6 +1146,8 @@ drm_gpuvm_fini(struct drm_gpuvm *gpuvm)
- 		 "Extobj list should be empty.\n");
- 	drm_WARN(gpuvm->drm, !list_empty(&gpuvm->evict.list),
- 		 "Evict list should be empty.\n");
-+	drm_WARN(gpuvm->drm, !list_empty(&gpuvm->bo_defer.list),
-+		 "VM BO cleanup list should be empty.\n");
- 
- 	drm_gem_object_put(gpuvm->r_obj);
+-	/* If the vm_bo object was destroyed, release the pin reference that
+-	 * was hold by this object.
+-	 */
+-	if (unpin && !drm_gem_is_imported(&bo->base.base))
++	if (!drm_gem_is_imported(&bo->base.base))
+ 		drm_gem_shmem_unpin(&bo->base);
+-
+-	drm_gpuvm_put(vm);
+-	drm_gem_object_put(&bo->base.base);
++	kfree(vm_bo);
  }
-@@ -1217,6 +1243,9 @@ drm_gpuvm_prepare_objects_locked(struct drm_gpuvm *gpuvm,
  
- 	drm_gpuvm_resv_assert_held(gpuvm);
- 	list_for_each_entry(vm_bo, &gpuvm->extobj.list, list.entry.extobj) {
-+		if (drm_gpuvm_bo_is_dead(vm_bo))
-+			continue;
-+
- 		ret = exec_prepare_obj(exec, vm_bo->obj, num_fences);
- 		if (ret)
- 			break;
-@@ -1460,6 +1489,9 @@ drm_gpuvm_validate_locked(struct drm_gpuvm *gpuvm, struct drm_exec *exec)
+ static void panthor_vm_cleanup_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+ 				      struct panthor_vm *vm)
+ {
+-	struct panthor_vma *vma, *tmp_vma;
+-
+ 	u32 remaining_pt_count = op_ctx->rsvd_page_tables.count -
+ 				 op_ctx->rsvd_page_tables.ptr;
  
- 	list_for_each_entry_safe(vm_bo, next, &gpuvm->evict.list,
- 				 list.entry.evict) {
-+		if (drm_gpuvm_bo_is_dead(vm_bo))
-+			continue;
-+
- 		ret = ops->vm_bo_validate(vm_bo, exec);
- 		if (ret)
- 			break;
-@@ -1560,6 +1592,7 @@ drm_gpuvm_bo_create(struct drm_gpuvm *gpuvm,
+@@ -1134,16 +1091,12 @@ static void panthor_vm_cleanup_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+ 	kfree(op_ctx->rsvd_page_tables.pages);
  
- 	INIT_LIST_HEAD(&vm_bo->list.entry.extobj);
- 	INIT_LIST_HEAD(&vm_bo->list.entry.evict);
-+	INIT_LIST_HEAD(&vm_bo->list.entry.bo_defer);
+ 	if (op_ctx->map.vm_bo)
+-		panthor_vm_bo_put(op_ctx->map.vm_bo);
++		drm_gpuvm_bo_put_deferred(op_ctx->map.vm_bo);
  
- 	return vm_bo;
+ 	for (u32 i = 0; i < ARRAY_SIZE(op_ctx->preallocated_vmas); i++)
+ 		kfree(op_ctx->preallocated_vmas[i]);
+ 
+-	list_for_each_entry_safe(vma, tmp_vma, &op_ctx->returned_vmas, node) {
+-		list_del(&vma->node);
+-		panthor_vm_bo_put(vma->base.vm_bo);
+-		kfree(vma);
+-	}
++	drm_gpuvm_bo_deferred_cleanup(&vm->base);
  }
-@@ -1621,6 +1654,113 @@ drm_gpuvm_bo_put(struct drm_gpuvm_bo *vm_bo)
- }
- EXPORT_SYMBOL_GPL(drm_gpuvm_bo_put);
  
-+static void
-+drm_gpuvm_bo_defer_locked(struct kref *kref)
-+{
-+	struct drm_gpuvm_bo *vm_bo = container_of(kref, struct drm_gpuvm_bo,
-+						  kref);
-+	struct drm_gpuvm *gpuvm = vm_bo->vm;
-+
-+	if (!drm_gpuvm_resv_protected(gpuvm)) {
-+		drm_gpuvm_bo_list_del(vm_bo, extobj, true);
-+		drm_gpuvm_bo_list_del(vm_bo, evict, true);
-+	}
-+
-+	list_del(&vm_bo->list.entry.gem);
-+}
-+
-+static void
-+drm_gpuvm_bo_defer(struct kref *kref)
-+{
-+	struct drm_gpuvm_bo *vm_bo = container_of(kref, struct drm_gpuvm_bo,
-+						  kref);
-+
-+	mutex_lock(&vm_bo->obj->gpuva.lock);
-+	drm_gpuvm_bo_defer_locked(kref);
-+	mutex_unlock(&vm_bo->obj->gpuva.lock);
-+
-+	/*
-+	 * It's important that the GEM stays alive for the duration in which we
-+	 * hold the mutex, but the instant we add the vm_bo to bo_defer,
-+	 * another thread might call drm_gpuvm_bo_deferred_cleanup() and put
-+	 * the GEM. Therefore, to avoid kfreeing a mutex we are holding, we add
-+	 * the vm_bo to bo_defer *after* releasing the GEM's mutex.
-+	 */
-+	drm_gpuvm_bo_list_add(vm_bo, bo_defer, true);
-+}
-+
-+/**
-+ * drm_gpuvm_bo_put_deferred() - drop a struct drm_gpuvm_bo reference with
-+ * deferred cleanup
-+ * @vm_bo: the &drm_gpuvm_bo to release the reference of
-+ *
-+ * This releases a reference to @vm_bo.
-+ *
-+ * This might take and release the GEMs GPUVA lock. You should call
-+ * drm_gpuvm_bo_deferred_cleanup() later to complete the cleanup process.
-+ *
-+ * Returns: true if vm_bo is being destroyed, false otherwise.
-+ */
-+bool
-+drm_gpuvm_bo_put_deferred(struct drm_gpuvm_bo *vm_bo)
-+{
-+	if (!vm_bo)
-+		return false;
-+
-+	drm_WARN_ON(vm_bo->vm->drm, !drm_gpuvm_immediate_mode(vm_bo->vm));
-+
-+	return !!kref_put(&vm_bo->kref, drm_gpuvm_bo_defer);
-+}
-+EXPORT_SYMBOL_GPL(drm_gpuvm_bo_put_deferred);
-+
-+/**
-+ * drm_gpuvm_bo_deferred_cleanup() - clean up BOs in the deferred list
-+ * deferred cleanup
-+ * @gpuvm: the VM to clean up
-+ *
-+ * Cleans up &drm_gpuvm_bo instances in the deferred cleanup list.
-+ */
-+void
-+drm_gpuvm_bo_deferred_cleanup(struct drm_gpuvm *gpuvm)
-+{
-+	const struct drm_gpuvm_ops *ops = gpuvm->ops;
-+	struct drm_gpuvm_bo *vm_bo;
-+	struct drm_gem_object *obj;
-+	LIST_HEAD(bo_defer);
-+
-+	spin_lock(&gpuvm->bo_defer.lock);
-+	list_replace_init(&gpuvm->bo_defer.list, &bo_defer);
-+	spin_unlock(&gpuvm->bo_defer.lock);
-+
-+	if (list_empty(&bo_defer))
-+		return;
-+
-+	if (drm_gpuvm_resv_protected(gpuvm)) {
-+		dma_resv_lock(drm_gpuvm_resv(gpuvm), NULL);
-+		list_for_each_entry(vm_bo, &bo_defer, list.entry.bo_defer) {
-+			drm_gpuvm_bo_list_del(vm_bo, extobj, false);
-+			drm_gpuvm_bo_list_del(vm_bo, evict, false);
-+		}
-+		dma_resv_unlock(drm_gpuvm_resv(gpuvm));
-+	}
-+
-+	while (!list_empty(&bo_defer)) {
-+		vm_bo = list_first_entry(&bo_defer,
-+			struct drm_gpuvm_bo, list.entry.bo_defer);
-+		obj = vm_bo->obj;
-+
-+		list_del(&vm_bo->list.entry.bo_defer);
-+		if (ops && ops->vm_bo_free)
-+			ops->vm_bo_free(vm_bo);
-+		else
-+			kfree(vm_bo);
-+
-+		drm_gpuvm_put(gpuvm);
-+		drm_gem_object_put(obj);
-+	}
-+}
-+EXPORT_SYMBOL_GPL(drm_gpuvm_bo_deferred_cleanup);
-+
- static struct drm_gpuvm_bo *
- __drm_gpuvm_bo_find(struct drm_gpuvm *gpuvm,
- 		    struct drm_gem_object *obj)
-@@ -1948,6 +2088,40 @@ drm_gpuva_unlink(struct drm_gpuva *va)
- }
- EXPORT_SYMBOL_GPL(drm_gpuva_unlink);
+ static struct panthor_vma *
+@@ -1232,7 +1185,6 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+ 		return -EINVAL;
  
-+/**
-+ * drm_gpuva_unlink_defer() - unlink a &drm_gpuva with deferred vm_bo cleanup
-+ * @va: the &drm_gpuva to unlink
-+ *
-+ * Similar to drm_gpuva_unlink(), but uses drm_gpuvm_bo_put_deferred() and takes
-+ * the lock for the caller.
-+ */
-+void
-+drm_gpuva_unlink_defer(struct drm_gpuva *va)
-+{
-+	struct drm_gem_object *obj = va->gem.obj;
-+	struct drm_gpuvm_bo *vm_bo = va->vm_bo;
-+	bool should_defer_bo;
-+
-+	if (unlikely(!obj))
-+		return;
-+
-+	drm_WARN_ON(vm_bo->vm->drm, !drm_gpuvm_immediate_mode(vm_bo->vm));
-+
-+	mutex_lock(&obj->gpuva.lock);
-+	list_del_init(&va->gem.entry);
-+
-+	/*
-+	 * This is drm_gpuvm_bo_put_deferred() except we already hold the mutex.
-+	 */
-+	should_defer_bo = kref_put(&vm_bo->kref, drm_gpuvm_bo_defer_locked);
-+	mutex_unlock(&obj->gpuva.lock);
-+	if (should_defer_bo)
-+		drm_gpuvm_bo_list_add(vm_bo, bo_defer, true);
-+
-+	va->vm_bo = NULL;
-+}
-+EXPORT_SYMBOL_GPL(drm_gpuva_unlink_defer);
-+
- /**
-  * drm_gpuva_find_first() - find the first &drm_gpuva in the given range
-  * @gpuvm: the &drm_gpuvm to search in
-diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
-index 727b8f336fad0d853998e4379cbd374155468e18..1f80389e14312f552a8abc95d12f52f83beb9be8 100644
---- a/include/drm/drm_gpuvm.h
-+++ b/include/drm/drm_gpuvm.h
-@@ -152,6 +152,7 @@ void drm_gpuva_remove(struct drm_gpuva *va);
+ 	memset(op_ctx, 0, sizeof(*op_ctx));
+-	INIT_LIST_HEAD(&op_ctx->returned_vmas);
+ 	op_ctx->flags = flags;
+ 	op_ctx->va.range = size;
+ 	op_ctx->va.addr = va;
+@@ -1243,7 +1195,9 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
  
- void drm_gpuva_link(struct drm_gpuva *va, struct drm_gpuvm_bo *vm_bo);
- void drm_gpuva_unlink(struct drm_gpuva *va);
-+void drm_gpuva_unlink_defer(struct drm_gpuva *va);
- 
- struct drm_gpuva *drm_gpuva_find(struct drm_gpuvm *gpuvm,
- 				 u64 addr, u64 range);
-@@ -331,6 +332,22 @@ struct drm_gpuvm {
+ 	if (!drm_gem_is_imported(&bo->base.base)) {
+ 		/* Pre-reserve the BO pages, so the map operation doesn't have to
+-		 * allocate.
++		 * allocate. This pin is dropped in panthor_vm_bo_free(), so
++		 * once we call drm_gpuvm_bo_create(), GPUVM will take care of
++		 * dropping the pin for us.
  		 */
- 		spinlock_t lock;
- 	} evict;
-+
-+	/**
-+	 * @bo_defer: structure holding vm_bos that need to be destroyed
-+	 */
-+	struct {
-+		/**
-+		 * @bo_defer.list: &list_head storing &drm_gpuvm_bos that need
-+		 * to be destroyed
-+		 */
-+		struct list_head list;
-+
-+		/**
-+		 * @bo_defer.lock: spinlock to protect the bo_defer list
-+		 */
-+		spinlock_t lock;
-+	} bo_defer;
- };
+ 		ret = drm_gem_shmem_pin(&bo->base);
+ 		if (ret)
+@@ -1263,9 +1217,6 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
  
- void drm_gpuvm_init(struct drm_gpuvm *gpuvm, const char *name,
-@@ -714,6 +731,12 @@ struct drm_gpuvm_bo {
- 			 * &drm_gpuvms evict list.
- 			 */
- 			struct list_head evict;
-+
-+			/**
-+			 * @list.entry.bo_defer: List entry to attach to
-+			 * the &drm_gpuvms bo_defer list.
-+			 */
-+			struct list_head bo_defer;
- 		} entry;
- 	} list;
- };
-@@ -746,6 +769,9 @@ drm_gpuvm_bo_get(struct drm_gpuvm_bo *vm_bo)
+ 	preallocated_vm_bo = drm_gpuvm_bo_create(&vm->base, &bo->base.base);
+ 	if (!preallocated_vm_bo) {
+-		if (!drm_gem_is_imported(&bo->base.base))
+-			drm_gem_shmem_unpin(&bo->base);
+-
+ 		ret = -ENOMEM;
+ 		goto err_cleanup;
+ 	}
+@@ -1282,16 +1233,6 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+ 	mutex_unlock(&bo->base.base.gpuva.lock);
+ 	dma_resv_unlock(panthor_vm_resv(vm));
  
- bool drm_gpuvm_bo_put(struct drm_gpuvm_bo *vm_bo);
+-	/* If the a vm_bo for this <VM,BO> combination exists, it already
+-	 * retains a pin ref, and we can release the one we took earlier.
+-	 *
+-	 * If our pre-allocated vm_bo is picked, it now retains the pin ref,
+-	 * which will be released in panthor_vm_bo_put().
+-	 */
+-	if (preallocated_vm_bo != op_ctx->map.vm_bo &&
+-	    !drm_gem_is_imported(&bo->base.base))
+-		drm_gem_shmem_unpin(&bo->base);
+-
+ 	op_ctx->map.bo_offset = offset;
  
-+bool drm_gpuvm_bo_put_deferred(struct drm_gpuvm_bo *vm_bo);
-+void drm_gpuvm_bo_deferred_cleanup(struct drm_gpuvm *gpuvm);
+ 	/* L1, L2 and L3 page tables.
+@@ -1339,7 +1280,6 @@ static int panthor_vm_prepare_unmap_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+ 	int ret;
+ 
+ 	memset(op_ctx, 0, sizeof(*op_ctx));
+-	INIT_LIST_HEAD(&op_ctx->returned_vmas);
+ 	op_ctx->va.range = size;
+ 	op_ctx->va.addr = va;
+ 	op_ctx->flags = DRM_PANTHOR_VM_BIND_OP_TYPE_UNMAP;
+@@ -1387,7 +1327,6 @@ static void panthor_vm_prepare_sync_only_op_ctx(struct panthor_vm_op_ctx *op_ctx
+ 						struct panthor_vm *vm)
+ {
+ 	memset(op_ctx, 0, sizeof(*op_ctx));
+-	INIT_LIST_HEAD(&op_ctx->returned_vmas);
+ 	op_ctx->flags = DRM_PANTHOR_VM_BIND_OP_TYPE_SYNC_ONLY;
+ }
+ 
+@@ -2033,26 +1972,13 @@ static void panthor_vma_link(struct panthor_vm *vm,
+ 
+ 	mutex_lock(&bo->base.base.gpuva.lock);
+ 	drm_gpuva_link(&vma->base, vm_bo);
+-	drm_WARN_ON(&vm->ptdev->base, drm_gpuvm_bo_put(vm_bo));
+ 	mutex_unlock(&bo->base.base.gpuva.lock);
+ }
+ 
+-static void panthor_vma_unlink(struct panthor_vm *vm,
+-			       struct panthor_vma *vma)
++static void panthor_vma_unlink(struct panthor_vma *vma)
+ {
+-	struct panthor_gem_object *bo = to_panthor_bo(vma->base.gem.obj);
+-	struct drm_gpuvm_bo *vm_bo = drm_gpuvm_bo_get(vma->base.vm_bo);
+-
+-	mutex_lock(&bo->base.base.gpuva.lock);
+-	drm_gpuva_unlink(&vma->base);
+-	mutex_unlock(&bo->base.base.gpuva.lock);
+-
+-	/* drm_gpuva_unlink() release the vm_bo, but we manually retained it
+-	 * when entering this function, so we can implement deferred VMA
+-	 * destruction. Re-assign it here.
+-	 */
+-	vma->base.vm_bo = vm_bo;
+-	list_add_tail(&vma->node, &vm->op_ctx->returned_vmas);
++	drm_gpuva_unlink_defer(&vma->base);
++	kfree(vma);
+ }
+ 
+ static void panthor_vma_init(struct panthor_vma *vma, u32 flags)
+@@ -2084,12 +2010,12 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
+ 	if (ret)
+ 		return ret;
+ 
+-	/* Ref owned by the mapping now, clear the obj field so we don't release the
+-	 * pinning/obj ref behind GPUVA's back.
+-	 */
+ 	drm_gpuva_map(&vm->base, &vma->base, &op->map);
+ 	panthor_vma_link(vm, vma, op_ctx->map.vm_bo);
 +
- struct drm_gpuvm_bo *
- drm_gpuvm_bo_find(struct drm_gpuvm *gpuvm,
- 		  struct drm_gem_object *obj);
++	drm_gpuvm_bo_put_deferred(op_ctx->map.vm_bo);
+ 	op_ctx->map.vm_bo = NULL;
++
+ 	return 0;
+ }
+ 
+@@ -2128,16 +2054,14 @@ static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+ 		 * owned by the old mapping which will be released when this
+ 		 * mapping is destroyed, we need to grab a ref here.
+ 		 */
+-		panthor_vma_link(vm, prev_vma,
+-				 drm_gpuvm_bo_get(op->remap.unmap->va->vm_bo));
++		panthor_vma_link(vm, prev_vma, op->remap.unmap->va->vm_bo);
+ 	}
+ 
+ 	if (next_vma) {
+-		panthor_vma_link(vm, next_vma,
+-				 drm_gpuvm_bo_get(op->remap.unmap->va->vm_bo));
++		panthor_vma_link(vm, next_vma, op->remap.unmap->va->vm_bo);
+ 	}
+ 
+-	panthor_vma_unlink(vm, unmap_vma);
++	panthor_vma_unlink(unmap_vma);
+ 	return 0;
+ }
+ 
+@@ -2154,12 +2078,13 @@ static int panthor_gpuva_sm_step_unmap(struct drm_gpuva_op *op,
+ 		return ret;
+ 
+ 	drm_gpuva_unmap(&op->unmap);
+-	panthor_vma_unlink(vm, unmap_vma);
++	panthor_vma_unlink(unmap_vma);
+ 	return 0;
+ }
+ 
+ static const struct drm_gpuvm_ops panthor_gpuvm_ops = {
+ 	.vm_free = panthor_vm_free,
++	.vm_bo_free = panthor_vm_bo_free,
+ 	.sm_step_map = panthor_gpuva_sm_step_map,
+ 	.sm_step_remap = panthor_gpuva_sm_step_remap,
+ 	.sm_step_unmap = panthor_gpuva_sm_step_unmap,
 
 -- 
 2.51.0.384.g4c02a37b29-goog
