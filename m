@@ -1,124 +1,216 @@
-Return-Path: <linux-kernel+bounces-808964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30DBB506E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:22:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43906B506E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F57E7A9A4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6FA4E34BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BFF32CF92;
-	Tue,  9 Sep 2025 20:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9073314CB;
+	Tue,  9 Sep 2025 20:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvlNrdGE"
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="IkyrOxuq"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275F91FE44A;
-	Tue,  9 Sep 2025 20:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2713B307AC4
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 20:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757449345; cv=none; b=qbdwFiQqxBWopsvQstym85nnBR7etSILnPmpEpMw69EWsWCRaJBl7c0NfBP2fP07H9BU+1TeNDzLYBPispdK2CPnDj7QxfuFdlO1Lai+b5rlCcGWPdJMpVSmNa1dRpRxaKJuWhOYobiRfkilo7hv8jo4lnxfZcAXxJ/gv03XE+s=
+	t=1757449362; cv=none; b=E0ZTZ9fSyMOH1PQ2yr4NWkdKZs2paEM2W5OcuQeTPvlZeOrNEjUROpe0PhHZU8QPGNbUYlQg7P+Ife1nSGh2h96AnHWwHdqMYjGHQlzOG7L9HBCNaUMznopCm/mHzRwZQAqjqr1Nx963xI8UlmkCy2l2Wp1lj2dWwY8Kk0DLBxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757449345; c=relaxed/simple;
-	bh=ID6pc4ieMZRwL9bHUbpq0RM92o7os70kNlOhQTkWy1o=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=AlcgdQPEOiQmxj5mft/JnbRSmCXWyJ+bV/3FPkq1cVWfHXBPIAymbho+qQ3Ct1kvDFpp/lmo7qO3JDH2MHcbB9RvGVONePryvOlVEbU7V/+02CIDzyUfJz+xr3n7NrkHqJ+RBrdKUSVSkHztOPZS70eKD9GF9S2ktXJ9MnYj/HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvlNrdGE; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-52eb6872bd2so2671251137.3;
-        Tue, 09 Sep 2025 13:22:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757449343; x=1758054143; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ID6pc4ieMZRwL9bHUbpq0RM92o7os70kNlOhQTkWy1o=;
-        b=PvlNrdGEYdSQn0pu9fbcgf2ReYuMsEsvIoSdtdvZoVf7KmpIaQYBybGMOjhmYamuFs
-         X6uJn2fanbtGP/VwChwHa50GC/LVC6gDpJtvmkLg9+bYI9OwPo1DisYuZ1FhPdMvk8GR
-         2QZjuN91tEjytinDW7H7z8ZRXsWvWF17AIUPEp8AwS4im7wMQfOxbvR4497WLuhj9eqZ
-         L8YXCSPRmN2puBK5u1sGM63oRzITThB4dniHvCD6sjlcxtQzNXuM/917w8lprL35Xzt2
-         ZTquaYWoCwHdtNjjr3S2VjycO1gHArR0qhDzSo5+mFjJQwjNClJx/Kpg7lpFdg99iUdh
-         DLXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757449343; x=1758054143;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ID6pc4ieMZRwL9bHUbpq0RM92o7os70kNlOhQTkWy1o=;
-        b=ibrvGQ/2m3BcEwx92xl5P3N4rwh+lXpscYGI/KaidgwR8F5/pvjGifxFcgdHFiez0W
-         WfE8E6MNdigZZlU+ocTx9QIT7qwrnot9IIZ/foPe+sZSGcoS0jSAoiGzUINRkGd8K6H4
-         ieXU1i/P5jLSzkEsYChcbUnbEe4UE9vEKmTfAUL6BprAbHQTVvKYuU4A7hO2GmOuwmC9
-         k5GCEzn0HOxB1+e3CvVPOaKGRayVrkS2gHVYlklDGHtlahhlLJrlIEKqG22qYKinfH2b
-         lxa/lb0SPlFyjRFLfQnt/Fwt3rmiYyqYMR5d6KK94/zTVLAvKJtXHf7C1ItEoKvHU5dx
-         St7A==
-X-Forwarded-Encrypted: i=1; AJvYcCW3iXbyNU7MFWHMj8ZtyjlTmM7cVOC7Wfu8tbzwYEJp7sM/gaPoWiWjC4TRMS8IjRkEEWc9rumHK3X2A51D@vger.kernel.org, AJvYcCX5IIv1GJsh3X7w4Qtr4wlPKJaoexQ7lleRc1DS8p4bJFV6ZB0Fw95dqijTnSWd2BuTpptNQGDCNeRt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxbWDGor2xMKTjquMLgcPQLF+br5jAsICg2tYL+fZ0SyEY2hoR
-	K5LkJjsYxG1ICn1w0/MJ28tu4l8s5jRtI1XTL5RgT4lwgZ0SmyzxrORCbr45nTSn
-X-Gm-Gg: ASbGnctY5rQzZ5TuXre78g4toD2fUcKM+2h9kHbGru3vYfI6U8dJQ/k7coRb2hqfvGs
-	usociNnPGkRl9jdP7+xTycCEaBszEYJHra+ONpgknFPehzNzalAnn64loBx5ebzcCaXxOfQQcnD
-	ADMlmuXj7/s5hXKHsVPAZdqS+MijAVOILSCqJOmG4fKi43Xct87m+jJ+ciDLRjT7iYv1YVkGEV9
-	JIuqwfxOg2S47JYHQx7CqpCo1zGsLmZgRaAJJOsUwe9HARoA5mW0KRHBsiR4Sq5BCldyrk5qlOU
-	rR98tIxC42ZPKrwtKAo6XoPE6KGvt7SazByzohYG4NxObBCOp3IPg+YfCjTAh7duLLmj0wb6GPB
-	ntgq0fTT9HCtXLN3puiNpaaTFDPp9hL5Cb6rbltMODTE=
-X-Google-Smtp-Source: AGHT+IET0cEihoPzYDrli9hVnvOSOkquH6jtJx5NYH/GU0N8fQUT9tj3olQPNw7rngs0uDi4EVYuzQ==
-X-Received: by 2002:a05:6102:3586:b0:537:f1db:7694 with SMTP id ada2fe7eead31-53d100706d0mr3965895137.15.1757449342913;
-        Tue, 09 Sep 2025 13:22:22 -0700 (PDT)
-Received: from ehlo.thunderbird.net ([2804:18:93c:9509:7066:6bc:183f:9270])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8982751bf54sm8612711241.21.2025.09.09.13.22.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 13:22:22 -0700 (PDT)
-Date: Tue, 09 Sep 2025 17:22:17 -0300
-From: =?ISO-8859-1?Q?Eric_Gon=E7alves?= <ghatto404@gmail.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-CC: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v1_1/3=5D_arm64=3A_dts=3A_qcom=3A_sm82?=
- =?US-ASCII?Q?50-samsung-r8q=3A_Move_common_parts_to_dtsi?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <9e1e68e9-8bf1-4529-a2c0-3ecb2474d8d1@oss.qualcomm.com>
-References: <20250905190931.27481-1-ghatto404@gmail.com> <20250905190931.27481-2-ghatto404@gmail.com> <9e1e68e9-8bf1-4529-a2c0-3ecb2474d8d1@oss.qualcomm.com>
-Message-ID: <8155F2C9-1E99-457E-B4C8-9C9081D679B1@gmail.com>
+	s=arc-20240116; t=1757449362; c=relaxed/simple;
+	bh=j/6fyTntaQ6oHvCPqHXXtCXsIY2tT3B17DcVLU+R5RY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=es4ZUya1yTe3+O22j1nVvvl+CekWYFRwczYyTPLE3m7XjETbl8r7z8tnjvWtQT1Ypn7B/pV4h2T5gOVrVGg31oH6//tmk8B/Obf69/VSa2m9tIbZchACYCS7ZRltZNmwPHDSrDNYYKEAEcS38r9qT6Uz05ErcI8Uz5iWfbd0cSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=IkyrOxuq; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+Date: Tue, 9 Sep 2025 22:22:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1757449345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jYE/ue6mADXQrf7ouwlsqqjbpynWqExFMHTfxRWVhAg=;
+	b=IkyrOxuqH8EDnr5p1a+FjxAvbR039kgBV4FDoQo1wJcLHFjIx35XQOOMgc3T0zKys1K9D+
+	ihpu6/AfUfJEPZpDZoseBrdlgmjNfWrPSkB0GhT/dGNXLfH7/EtLJijRrQIdl7UCi52Txb
+	rQecZgCu1beEGaeMYBvVqep2it3D8oE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] ARM: dts: samsung: Add cache information to the
+ Exynos542x SoC
+Message-ID: <20250909202035.GA10879@localhost>
+References: <20240730091322.5741-1-linux.amoon@gmail.com>
+ <CGME20240730091412eucas1p18feced3968a5f87dc8fe05f78d5c7659@eucas1p1.samsung.com>
+ <20240730091322.5741-2-linux.amoon@gmail.com>
+ <09e9cf0b-27fd-46b8-8631-87d798afd19e@samsung.com>
+ <CANAwSgT_TOFwP80+H8-CdXDLLu+u2XZMr2dnxcsSDe8S5yeYCw@mail.gmail.com>
+ <a41a6143-ef2e-4d86-b102-eaf442985173@kernel.org>
+ <CANAwSgSbSgXwOQLrVrHD7jpDe0=Bq7r2K8p0JjvZJMPpVNq4XQ@mail.gmail.com>
+ <d72d7927-079a-4a82-a298-db9ed70a816f@kernel.org>
+ <CANAwSgSgK5hmcLg7sChAs7QL0x7wufHpWDZJFyw6tMiiOuDZeg@mail.gmail.com>
+ <CANAwSgRTM4OSnXKZWWzxi2cW8QwWLKJz2xmUThyLkdkq71rH1g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANAwSgRTM4OSnXKZWWzxi2cW8QwWLKJz2xmUThyLkdkq71rH1g@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
+Hi Anand,
 
+Thanks for working on this!
 
-On September 8, 2025 1:00:29 PM GMT-03:00, Konrad Dybcio <konrad=2Edybcio@=
-oss=2Equalcomm=2Ecom> wrote:
->On 9/5/25 9:09 PM, Eric Gon=C3=A7alves wrote:
->> Move common parts of the device tree to a separate dtsi in preparation =
-for
->> adding other Samsung devices from the S20, Tab S7 or Note 20 families,
->> creating sm8250-samsung-common=2Edtsi=2E Also add support for UFS, USB =
-and
->> GPIO keys=2E
->>=20
->> Signed-off-by: Eric Gon=C3=A7alves <ghatto404@gmail=2Ecom>
->> ---
->
->FWIW next time try:
->
->git config diff=2ErenameLimit 999999
->
->so that moving code around will hopefully generate a smaller diff
->
->Reviewed-by: Konrad Dybcio <konrad=2Edybcio@oss=2Equalcomm=2Ecom>
->
->Konrad
-will do, thanks!
+On Tue, Sep 09, 2025 at 07:29:31PM +0530, Anand Moon wrote:
+[ ... ]
+> > > >>>> On 30.07.2024 11:13, Anand Moon wrote:
+> > > >>>>> As per the Exynos 5422 user manual add missing cache information to
+> > > >>>>> the Exynos542x SoC.
+> > > >>>>>
+> > > >>>>> - Each Cortex-A7 core has 32 KB of instruction cache and
+> > > >>>>>       32 KB of L1 data cache available.
+> > > >>>>> - Each Cortex-A15 core has 32 KB of L1 instruction cache and
+> > > >>>>>       32 KB of L1 data cache available.
+> > > >>>>> - The little (A7) cluster has 512 KB of unified L2 cache available.
+> > > >>>>> - The big (A15) cluster has 2 MB of unified L2 cache available.
+> > > >>>>>
+> > > >>>>> Features:
+> > > >>>>> - Exynos 5422 support cache coherency interconnect (CCI) bus with
+> > > >>>>>    L2 cache snooping capability. This hardware automatic L2 cache
+> > > >>>>>    snooping removes the efforts of synchronizing the contents of the
+> > > >>>>>    two L2 caches in core switching event.
+> > > >>>>>
+> > > >>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > > >>>>
+> > > >>>>
+> > > >>>> The provided values are not correct. Please refer to commit 5f41f9198f29
+> > > >>>> ("ARM: 8864/1: Add workaround for I-Cache line size mismatch between CPU
+> > > >>>> cores"), which adds workaround for different l1 icache line size between
+> > > >>>> big and little CPUs. This workaround gets enabled on all Exynos542x/5800
+> > > >>>> boards.
+> > > >>>>
+> > > >>> Ok, I have just referred to the Exynos 5422 user manual for this patch,
+> > > >>> This patch is just updating the cache size for CPU for big.litle architecture..
+
+I do not have access to the 5422 manual unfortunately, but if I add
+some prints in the code from the commit Marek referenced:
+
+```diff
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -173,6 +173,7 @@ void check_cpu_icache_size(int cpuid)
+        asm("mrc p15, 0, %0, c0, c0, 1" : "=r" (ctr));
+ 
+        size = 1 << ((ctr & 0xf) + 2);
++       pr_warn("CPU%u: icache line size: %u, size %u\n", cpuid, icache_size, size);
+        if (cpuid != 0 && icache_size != size)
+                pr_info("CPU%u: detected I-Cache line size mismatch, workaround enabled\n",
+                        cpuid);
+```
+
+Then we get in dmesg:
+
+CPU0: icache line size: 64, size 32
+CPU1: icache line size: 32, size 32
+CPU2: icache line size: 32, size 32
+CPU3: icache line size: 32, size 32
+CPU4: icache line size: 32, size 64
+CPU5: icache line size: 32, size 64
+CPU6: icache line size: 32, size 64
+CPU7: icache line size: 32, size 64
+
+I interpret this as that the i-cache-line-size property of CPU4, 5, 6
+and 7 (i.e. cpu@0, cpu@1, cpu@2 and cpu@4) should be 64 instead of 32.
+
+Not sure about the other properties..
+
+> Here's an article that provides detailed insights into the cache feature.
+> [0] http://jake.dothome.co.kr/cache4/
+> 
+> The values associated with L1 and L2 caches indicate their respective sizes,
+> as specified in the ARM Technical Reference Manual (TRM) below.
+> 
+> Cortex-A15 L2 cache controller
+> [0] https://developer.arm.com/documentation/ddi0503/i/programmers-model/programmable-peripherals-and-interfaces/cortex-a15-l2-cache-controller
+> 
+> Cortex-A7 L2 cache controller
+> [1] https://developer.arm.com/documentation/ddi0503/i/programmers-model/programmable-peripherals-and-interfaces/cortex-a7-l2-cache-controller
+> 
+> These changes help define a fixed cache size, ensuring that active pages
+> are mapped correctly within the expected cache boundaries.
+> 
+> Here is the small test case using perf
+> Before
+> 
+> $ sudo perf stat -e L1-dcache-loads,L1-dcache-load-misses ./fact
+> 
+> Simulated Cache Miss Time (avg): 4766632 ns
+> Factorial(10) = 3628800
+> 
+>  Performance counter stats for './fact':
+> 
+>             926328      armv7_cortex_a15/L1-dcache-loads/
+>      <not counted>      armv7_cortex_a7/L1-dcache-loads/
+>                          (0.00%)
+>              16510      armv7_cortex_a15/L1-dcache-load-misses/ #
+> 1.78% of all L1-dcache accesses
+>      <not counted>      armv7_cortex_a7/L1-dcache-load-misses/
+>                                (0.00%)
+> 
+>        0.008970031 seconds time elapsed
+> 
+>        0.000000000 seconds user
+>        0.009673000 seconds sys
+> 
+> After
+> $ sudo perf stat -e L1-dcache-loads,L1-dcache-load-misses ./fact
+> Simulated Cache Miss Time (avg): 4623272 ns
+> Factorial(10) = 3628800
+> 
+>  Performance counter stats for './fact':
+> 
+>             930570      armv7_cortex_a15/L1-dcache-loads/
+>      <not counted>      armv7_cortex_a7/L1-dcache-loads/
+>                          (0.00%)
+>               4755      armv7_cortex_a15/L1-dcache-load-misses/ #
+> 0.51% of all L1-dcache accesses
+>      <not counted>      armv7_cortex_a7/L1-dcache-load-misses/
+>                                (0.00%)
+> 
+>        0.011068250 seconds time elapsed
+> 
+>        0.000000000 seconds user
+>        0.010793000 seconds sys
+
+I tried out the same test on my odroid-xu4, but was not able to
+reliably get the same improvement. Cache misses varied between around
+0.8 % to around 2.8 %. This was with a desktop UI installed and
+though, will try it out in a headless installation in the next few
+days, and perhaps try it on exynos5800 as well.
+
+Might be worth also testing on both small and big cores, like:
+
+$ sudo taskset -c 0,1,2,3 perf stat -e L1-dcache-loads,L1-dcache-load-misses ./fact
+$ sudo taskset -c 4,5,6,7 perf stat -e L1-dcache-loads,L1-dcache-load-misses ./fact
+
+Best regards,
+Henrik Grimler
 
