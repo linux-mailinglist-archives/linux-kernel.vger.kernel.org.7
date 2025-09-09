@@ -1,348 +1,143 @@
-Return-Path: <linux-kernel+bounces-808593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7BC0B50204
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:00:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D523B50206
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 548A63BF1D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3E03BF97E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EEC26FA6F;
-	Tue,  9 Sep 2025 16:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CB332A815;
+	Tue,  9 Sep 2025 16:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XuUt0nQ0"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="IbzZ4jat"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB4924397A
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFA324397A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757433630; cv=none; b=Mm3eelTjH3/IJ6eSLkFyAz/83tD35avqf9SsSUwsYGRjnhO7dVSorjUyJ2Butn8m/QPXxoUaHvTXRfwLFejACx9DS7Ouy3pHgD5KT3NjRXXAmFa7xfSKn2BzlhaQtXT7Bu4oPSr0+kezaFauu+A/bVn9jgudQ9VnN8ftoKSj8eI=
+	t=1757433651; cv=none; b=ba2cZt4Z+I6vlr71eFMeHNkTh1dG+6QYkcKQ//an2LV4yZ2W97Lu9x+m7T9z65tmemprek2i15rGz1JCYW7X7Z2fBVe5UrR3iOB43N5gONtCsMWNlwiVFiJ1nWtqmZJzjErE9y4kMyo3vPxjd3xS38bNpL7Y9bpYVUfKk4LTlHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757433630; c=relaxed/simple;
-	bh=OT68X7ddtT7YFMXudE4r9KbWAxtMHUHmMLhE1LeEVW0=;
+	s=arc-20240116; t=1757433651; c=relaxed/simple;
+	bh=wqY6JDSIcxawkWa1qORCwMabSdCTnaqJBzpi9+ot4R4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JG3SP6iiGZMvUBCrxLNu48uyBbXlBqBvkBWy7COPXQ+xEC7J9E0DEfcEsaEVpJISRFTpEp7jWLWCPxsSPrRB/pZ2TMIXkxvpuztaH3ozmKlq+3ziNoDZJLieoceJnMIqG0WEIFaZO5kBTUHTJmTmSRfMF9HK/0x3V95IiaURZjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XuUt0nQ0; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2445805aa2eso56648825ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 09:00:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=LVNFEoRgpV6nH+O8+wSVhzmeRChbbDrWDvhTDeHhUEaLk7PRSrIAdndjO85Rqj6EdU5e02lb50sTxK9DHBs3UEJao5mAc1m4McluZ6QU4qhot7OlXwbM6aiNYNXqy7F5ZIAftu3yS1FUE2dQRk5hkNQesxinhM65lzTHt0THi3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=IbzZ4jat; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62221568039so5402807a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 09:00:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757433628; x=1758038428; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tDeRj9T/YQzmrKmM9KG2qMZkdT5Vx7PWmyDh+IIGUIY=;
-        b=XuUt0nQ04A4f6D7FrlWxFwXkG0t9QPoCJ5GSQe74f43BsASKr2olwVT6wsMzzkXZOp
-         ctquSdO8C5G1V7aXgnMxO9+lW5lMDg6aFNmdSmjB4O5lYe0Axgs5ooiZdq4bbCLRXYfi
-         RvtIWv9vMtVKif8lBEn3hcGHJS0ohZZUwp5hqw7GUiI0VCJzP7AkOkl3B8lSLc8YiiXG
-         a7webfx69Bwor7CFsxW+mGMB/PBxHKTmvFoVMZO1LaUGpbblW37UrHMsjN/Pl+yD+M+3
-         VkpggPTeQs1kv7WxbPkuSPLyjDCjlYTXnYnKXMPyOP+cmz5IeYDeQdnBjfDKtbR2QWZ1
-         mo4A==
+        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1757433648; x=1758038448; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s6dBQ67zpbOF0+TmT4tU24NROF1jqu4H25mUIYv9L1U=;
+        b=IbzZ4jatVJsTOsK2zzKIRDuCtEUHSgliPIQhvPZLFteYD6KsWR1+R+4wC7PlP61a7T
+         8liTgTSsIcXmbFvbfQPkCHmULup749cCH5kuiBBGg0iuxr5a8W6W3Gf1JEnK/Xdw+quo
+         qMrBDrS5cHNbMTHgpw0JcX7UlzCaHggAI3hTxxg5s7mfAGUgLILRFdhOJrhIrvPxE1AZ
+         JKm9jRV3g+weA5mb7CzSvFijSCqYvAXWf5026gAj1LhY7MZegqvlvT5TQlsp8Xdcu32e
+         92YaN3YYeTm+j94yDiAxGfHOaGMk374lUVP2NIjVj/xFbf9nAqiAgGoNEtnA93b1fTPJ
+         8/1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757433628; x=1758038428;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tDeRj9T/YQzmrKmM9KG2qMZkdT5Vx7PWmyDh+IIGUIY=;
-        b=pK1iEay9q3rOvvqlS8DqgvfzHNlU+ikhNEIAcfxDbet2xTj0F2NV/NbTa97Rczaqrt
-         y/4FJfZB7a8ebOGF9ydDsSWENbccFrHe3SKBRN/mT+YdCYVkQeaFg5aB8RsItK2sV+Xg
-         cS1ix4mkaqtI0w4vblUqvH1H257HkBqJh4DPmRgcB3ae1NPTJM8wFcGBS1NMkOO6rw+F
-         NcvmfAHbKxacbhmg/nixw8qlwz6iSm66tATFlg24QzQnkGHJaZ5qeI2oPE0WJh2mn08U
-         yY+RzzwB7cDVBvfeGKf80P1xl9RvcXlq5lp0vnT8SMgML8wshEMoSL5S42py/wwT2Phj
-         nXIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQPLLX9IqIoDM96xB8Yos0ZSo58CTQ4lm+p/6Ppr7F/6Xi/us6D7OyQzmpizpuHHbScAcYwy0DRcAiGh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4Ohai5yoEW96EPU0+33Yf6JGRvRM2LYV5qIL6I237JaDkXHpO
-	jng3gZzLkIdbr/fGZLHNX0oczpI60PL7XBPKr/fH6yBlIsInnt0Oib7xIl56fYiZVDEIMpmGnDw
-	jkzLgrndq09DSlhRSiKZ0CUzq+MNMcqndGeHH+KpnmQ==
-X-Gm-Gg: ASbGncvF3Yr22m21f5WgMEY5QDB4a77pEvR18OdSg+OcQ+FEFtbljkf1QVH4RT1foil
-	7eZ8qfvPWGH8YamY3NpT4TI3N0fDBjnLKf6FXeYX1LePjPgbkFFuazp3sIB1xw4o8BsZMLsseDj
-	Q6GodRIXWhGRphW+4AU73q61rYgZYbzh53fXdYuquz5/aEeJM0uZ57CmvsDvKKGpGokTWAlU9gD
-	5opjTsNjGuvDZk5PZo1sTyvfpuprnW6rfBbSNgjgU0olRyIsJJZssX57MdUL/M3qH83ekQbK8pF
-	Gapce2U=
-X-Google-Smtp-Source: AGHT+IGZzH61MIaUFy8zJVfSBVL1H82O2zYUWCN/hlLSbHubgLtxnw5msVUplQ4ZU+h2eJj/ZD4md9riteaJJn13d+Y=
-X-Received: by 2002:a17:902:eccf:b0:24c:b69f:e4be with SMTP id
- d9443c01a7336-2516e97ed9fmr184003715ad.6.1757433627187; Tue, 09 Sep 2025
- 09:00:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757433648; x=1758038448;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s6dBQ67zpbOF0+TmT4tU24NROF1jqu4H25mUIYv9L1U=;
+        b=h9k6x0nvVufOLktRet2zkonNHI31utsX1Wv2AT0yNxKx0qybnsguC9Chx7jUZ+oxSs
+         b4xIulge992NATZentsh/VoJY9bnhTugK+DPyrMU/DU/ayXczitW4YFWuEuTJIgPTfiw
+         2529sov3prvJRansZvGbcf4pjUnkwxCDId+vtQ3UK/sknijXZjUUYgftWdjfbS30+gXU
+         HjJCb4EO207CIjUIvADRyqUtNfBUbaNXt4hn2oFaeEkK3nThZLdI5jbt9qH7XsFDkrzH
+         Mx4u3YvzGVTzJMbaoknSch+g0SZWie6b3baXHkyWMkEXTiVgelorzAqeUr9QQY8FxBvr
+         PObw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaPJTn/k/TQaU4JvzezjxYPGXJdctTNc/u44sNB4hCDHYNN0JmXFFROXBw5Se+/MfM3AdT2xlT0O8dJPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM9Ux1lhKcJfTuWtAqM6HUe/hOWvBxcXOmJRaliBmdScwB/gFA
+	KSRg3qEVZJCYGQdonQYwjb17n+yIjFDlqVF8eplbnZZW6Hxdn/zJQtpQPAJHlf/JwRDsMuS5s0m
+	YYJVhlXzl8VMjafSgit8h9HTn7oBMH0QwrS3Kw/C1Pw==
+X-Gm-Gg: ASbGncsc64FIR6VJ5wENyDLJ9SuP5G3x+vWOacf9oon1ZIbVb8+z3jvdZP/iodDgOOq
+	3pXFP7THi54+R+T1Bd2PzsiFqDdRX3IHV13LE2fcANuFrtX/j1w9lpP7xnpKT9jlEXBq6vDGKVW
+	RhP8Xs/mxFOdcC2OaywyLD69C/UcCliGi+h41CIknoY1TLNUqJibYUCFVTiPdMVFoEPhmC/MA/2
+	Y8XUAP8xGe0Q/MK
+X-Google-Smtp-Source: AGHT+IEGhp/dQBeWCDHgeIQ5hgwB4IsLD3LLWFhZJ6j5zqWsSmd02imgRzV4N2JOE9Yr9y40F4QSN1J6RMfyUMzQQJg=
+X-Received: by 2002:a05:6402:50d0:b0:62a:768c:220f with SMTP id
+ 4fb4d7f45d1cf-62a768c24e4mr4866745a12.11.1757433647609; Tue, 09 Sep 2025
+ 09:00:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908151840.509077218@linuxfoundation.org>
-In-Reply-To: <20250908151840.509077218@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 9 Sep 2025 21:30:15 +0530
-X-Gm-Features: AS18NWC6IvddbOLNpzm0eJCZ4FAnP80ysOBODFHUVbcwjOBxuVRlrvBxFv48o7I
-Message-ID: <CA+G9fYvg-eNjmQVC4Sj2EgFcuiZnSHUyCcrTtE6rg2oYpKjc1w@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/101] 6.1.151-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, achill@achill.org
+References: <20250822081941.989520-1-philipp.reisner@linbit.com>
+ <20250908142457.GA341237@unreal> <CADGDV=XNrmNo5gNZ1cX4eGUi+0xgAcQzra+pNHNGuQbc0DrpKA@mail.gmail.com>
+ <20250909153133.GA882933@ziepe.ca>
+In-Reply-To: <20250909153133.GA882933@ziepe.ca>
+From: Philipp Reisner <philipp.reisner@linbit.com>
+Date: Tue, 9 Sep 2025 18:00:36 +0200
+X-Gm-Features: Ac12FXw3kv7hAy2mmPNYyG5bNfUvsjfQVpp6_6gub_6zOYFmE4QKhzg7VGQ76qc
+Message-ID: <CADGDV=VZK4oXM=h4PzYOm_PJihMKdQUkrADOiw6EaC4kCssAcQ@mail.gmail.com>
+Subject: Re: [PATCH V2] rdma_rxe: call comp_handler without holding cq->cq_lock
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Leon Romanovsky <leon@kernel.org>, Zhu Yanjun <yanjun.zhu@linux.dev>, linux-rdma@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 8 Sept 2025 at 21:35, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Tue, Sep 9, 2025 at 5:31=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrote=
+:
 >
-> This is the start of the stable review cycle for the 6.1.151 release.
-> There are 101 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> On Tue, Sep 09, 2025 at 04:48:19PM +0200, Philipp Reisner wrote:
+> > On Mon, Sep 8, 2025 at 4:25=E2=80=AFPM Leon Romanovsky <leon@kernel.org=
+> wrote:
+> > >
+> > > On Fri, Aug 22, 2025 at 10:19:41AM +0200, Philipp Reisner wrote:
+> > > > Allow the comp_handler callback implementation to call ib_poll_cq()=
+.
+> > > > A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe driver=
+.
+> > > > And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock deadl=
+ock.
+> > >
+> > > Can you please be more specific about the deadlock?
+> > > Please write call stack to describe it.
+> > >
+> > Instead of a call stack, I write it from top to bottom:
+> >
+> > The line numbers in the .c files are valid for Linux-6.16:
+> >
+> > 1  rxe_cq_post()                      [rxe_cq.c:85]
+> > 2   spin_lock_irqsave()               [rxe_cq.c:93]
+> > 3   cq->ibcq.comp_handler()           [rxe_cq.c:116]
+> > 4    some_comp_handler()
+> > 5     ib_poll_cq()
+> > 6      cq->device->ops.poll_cq()      [ib_verbs.h:4037]
+> > 7       rxe_poll_cq()                 [rxe_verbs.c:1165]
+> > 8        spin_lock_irqsave()          [rxe_verbs.c:1172]
+> >
+> > In line 8 of this call graph, it deadlocks because the spinlock
+> > was already acquired in line 2 of the call graph.
 >
-> Responses should be made by Wed, 10 Sep 2025 15:18:27 +0000.
-> Anything received after that time might be too late.
+> Is this even legal in verbs? I'm not sure you can do pull cq from a
+> interrupt driven comp handler.. Is something already doing this intree?
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.151-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
 
+The file drivers/infiniband/sw/rdmavt/cq.c has this comment:
+/*
+* The completion handler will most likely rearm the notification
+* and poll for all pending entries.  If a new completion entry
+* is added while we are in this routine, queue_work()
+* won't call us again until we return so we check triggered to
+* see if we need to call the handler again.
+*/
 
-While running booting Juno-r2 device with Linux stable-rc 6.1.151-rc2
-kernel found this RCU info followed by boot hang.
+Also, Intel and Mellanox cards and drivers allow calling ib_poll_cq()
+from the completion handler.
 
-Regression Analysis:
-- Reproducibility? Validation is in progress
-
-Boot regression: stable-rc  6.1.151-rc2 juno-r2 cpuidle_enter_state hang
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-### Boot log
-[  975.847953] rcu: INFO: rcu_preempt self-detected stall on CPU
-[  975.853724] rcu: \t3-...!: (5249 ticks this GP)
-idle=25dc/1/0x4000000000000002 softirq=1901/1901 fqs=0
-[  975.862973] \t(t=5253 jiffies g=2077 q=8479 ncpus=6)
-[  975.867862] rcu: rcu_preempt kthread timer wakeup didn't happen for
-5253 jiffies! g2077 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
-[  975.879192] rcu: \tPossible timer handling issue on cpu=5 timer-softirq=408
-[  975.886079] rcu: rcu_preempt kthread starved for 5259 jiffies!
-g2077 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=5
-[  975.896453] rcu: \tUnless rcu_preempt kthread gets sufficient CPU
-time, OOM is now expected behavior.
-[  975.905601] rcu: RCU grace-period kthread stack dump:
-[  975.910658] task:rcu_preempt     state:I stack:0     pid:16
-ppid:2      flags:0x00000008
-[  975.919035] Call trace:
-[  975.921482]  __switch_to+0x154/0x1f8
-[  975.925075]  __schedule+0x494/0x8a0
-[  975.928577]  schedule+0x84/0xe8
-[  975.931729]  schedule_timeout+0xac/0x19c
-[  975.935662]  rcu_gp_fqs_loop+0x1f4/0x808
-[  975.939598]  rcu_gp_kthread+0x70/0x238
-[  975.943359]  kthread+0xe8/0x1cc
-[  975.946509]  ret_from_fork+0x10/0x20
-[  975.950096] rcu: Stack dump where RCU GP kthread last ran:
-[  975.955589] Task dump for CPU 5:
-[  975.958819] task:swapper/5       state:R  running task     stack:0
-   pid:0     ppid:1      flags:0x00000008
-[  975.968764] Call trace:
-[  975.971210]  __switch_to+0x154/0x1f8
-[  975.974798]  ct_idle_enter+0x10/0x1c
-[  975.978384]  0xffff00097edb0640
-[  975.981541] CPU: 3 PID: 0 Comm: swapper/3 Not tainted 6.1.151-rc2 #1
-[  975.987912] Hardware name: ARM Juno development board (r2) (DT)
-[  975.993843] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[  976.000823] pc : cpuidle_enter_state+0x16c/0x444
-[  976.005456] lr : cpuidle_enter_state+0x160/0x444
-[  976.010086] sp : ffff80000aaa3d70
-[  976.013403] x29: ffff80000aaa3d70 x28: ffff80000a2de000 x27: ffff80000a2a5638
-[  976.020566] x26: 0000000000000001 x25: ffff0008222b4898 x24: 000000e33511dfc8
-[  976.027727] x23: 000000e334d58fb4 x22: 0000000000000001 x21: 0000000000000001
-[  976.034888] x20: ffff0008222b4880 x19: ffff00097ed72640 x18: 0000000000000219
-[  976.042049] x17: 000000040044ffff x16: 00500072b5503510 x15: 0000000000000000
-[  976.049210] x14: ffff80000a9020dc x13: ffff80000aaa0000 x12: ffff80000aaa4000
-[  976.056372] x11: 1ada3b6729410000 x10: 0000000000000000 x9 : 0000000000000000
-[  976.063532] x8 : 00000000000000e0 x7 : 00000072b5503510 x6 : 0000000000300000
-[  976.070693] x5 : 0000000000000000 x4 : 0000000000000000 x3 : ffff80000aaa3dd0
-[  976.077854] x2 : ffff80000aaa3d08 x1 : ffff80000905fdec x0 : ffff80000905fa90
-[  976.085015] Call trace:
-[  976.087462]  cpuidle_enter_state+0x16c/0x444
-[  976.091746]  cpuidle_enter+0x44/0x5c
-[  976.095331]  do_idle+0x1f4/0x2c4
-[  976.098571]  cpu_startup_entry+0x40/0x44
-[  976.102507]  secondary_start_kernel+0x12c/0x150
-[  976.107053]  __secondary_switched+0xb0/0xb4
-[  976.111251] Task dump for CPU 4:
-[  976.114482] task:swapper/4       state:R  running task     stack:0
-   pid:0     ppid:1      flags:0x00000008
-[  976.124427] Call trace:
-[  976.126873]  __switch_to+0x154/0x1f8
-[  976.130462]  psci_enter_idle_state+0x5c/0x7c
-[  976.134747]  cpuidle_enter_state+0x118/0x444
-[  976.139028]  cpuidle_enter+0x44/0x5c
-[  976.142613]  do_idle+0x1f4/0x2c4
-[  976.145852]  cpu_startup_entry+0x40/0x44
-[  976.149788]  secondary_start_kernel+0x12c/0x150
-[  976.154333]  __secondary_switched+0xb0/0xb4
-[  976.158530] Task dump for CPU 5:
-[  976.161761] task:rcu_preempt     state:R  running task     stack:0
-   pid:16    ppid:2      flags:0x00000008
-[  976.171705] Call trace:
-[  976.174152]  __switch_to+0x154/0x1f8
-[  976.177739]  0x0
-[ 1039.195951] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-[ 1039.202056] rcu: \t5-...!: (0 ticks this GP) idle=e028/0/0x0
-softirq=1512/1512 fqs=1 (false positive?)
-[ 1039.211296] \t(detected by 2, t=21087 jiffies, g=2077, q=8483 ncpus=6)
-[ 1039.217746] Task dump for CPU 5:
-[ 1039.220974] task:swapper/5       state:R  running task     stack:0
-   pid:0     ppid:1      flags:0x00000008
-[ 1039.230911] Call trace:
-[ 1039.233355]  __switch_to+0x154/0x1f8
-[ 1039.236938]  ct_idle_enter+0x10/0x1c
-[ 1039.240518]  0xffff00097edb0640
-[ 1039.243661] rcu: rcu_preempt kthread timer wakeup didn't happen for
-15764 jiffies! g2077 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
-[ 1039.255073] rcu: \tPossible timer handling issue on cpu=5 timer-softirq=408
-[ 1039.261957] rcu: rcu_preempt kthread starved for 15770 jiffies!
-g2077 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=5
-[ 1039.272411] rcu: \tUnless rcu_preempt kthread gets sufficient CPU
-time, OOM is now expected behavior.
-[ 1039.281555] rcu: RCU grace-period kthread stack dump:
-[ 1039.286609] task:rcu_preempt     state:I stack:0     pid:16
-ppid:2      flags:0x00000008
-[ 1039.294977] Call trace:
-[ 1039.297420]  __switch_to+0x154/0x1f8
-[ 1039.301001]  __schedule+0x494/0x8a0
-[ 1039.304495]  schedule+0x84/0xe8
-[ 1039.307641]  schedule_timeout+0xac/0x19c
-[ 1039.311567]  rcu_gp_fqs_loop+0x1f4/0x808
-[ 1039.315496]  rcu_gp_kthread+0x70/0x238
-[ 1039.319249]  kthread+0xe8/0x1cc
-[ 1039.322391]  ret_from_fork+0x10/0x20
-[ 1039.325971] rcu: Stack dump where RCU GP kthread last ran:
-[ 1039.331459] Task dump for CPU 5:
-[ 1039.334686] task:swapper/5       state:R  running task     stack:0
-   pid:0     ppid:1      flags:0x00000008
-[ 1039.344622] Call trace:
-[ 1039.347065]  __switch_to+0x154/0x1f8
-[ 1039.350646]  ct_idle_enter+0x10/0x1c
-[ 1039.354225]  0xffff00097edb0640
-[ 1039.412051] sd 2:0:0:0: [sda] Synchronizing SCSI cache
-[ 1039.417488] sd 2:0:0:0: [sda] Synchronize Cache(10) failed: Result:
-hostbyte=0x01 driverbyte=DRIVER_OK
-
-- https://qa-reports.linaro.org/api/testruns/29825860/log_file/
-- https://lkft.validation.linaro.org/scheduler/job/8439988#L2145
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/32QLuLpnnwp9AnZEJVgmvKIFxXT
-- https://storage.tuxsuite.com/public/linaro/lkft/builds/32QLrp4K8PORz7gTLeqeiSIGTKL/config
-- https://storage.tuxsuite.com/public/linaro/lkft/builds/32QLrp4K8PORz7gTLeqeiSIGTKL/
-
-## Build
-* kernel: 6.1.151-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* git commit: e60b159208e69c485efd270b6bd1fedd07e1aaad
-* git describe: v6.1.149-153-ge60b159208e6
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.149-153-ge60b159208e6
-
-## Test Regressions (compared to v6.1.149-51-gcdcdd968ff27)
-
-## Metric Regressions (compared to v6.1.149-51-gcdcdd968ff27)
-
-## Test Fixes (compared to v6.1.149-51-gcdcdd968ff27)
-
-## Metric Fixes (compared to v6.1.149-51-gcdcdd968ff27)
-
-## Test result summary
-total: 231778, pass: 215616, fail: 4719, skip: 11160, xfail: 283
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 133 total, 133 passed, 0 failed
-* arm64: 41 total, 41 passed, 0 failed
-* i386: 21 total, 21 passed, 0 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 32 total, 31 passed, 1 failed
-* riscv: 11 total, 11 passed, 0 failed
-* s390: 14 total, 14 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 33 total, 33 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-futex
-* kselftest-intel_pstate
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* modules
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+The problem exists only with the RXE driver.
 
