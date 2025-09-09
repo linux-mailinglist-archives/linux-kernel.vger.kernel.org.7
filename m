@@ -1,243 +1,297 @@
-Return-Path: <linux-kernel+bounces-807899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02943B4AADE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:42:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 401B4B4AADF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E65E81C2831B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:43:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9B06448459
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9518231AF15;
-	Tue,  9 Sep 2025 10:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B7831B13F;
+	Tue,  9 Sep 2025 10:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="ceHDnpKi"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gun9NEwL"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1946728DB3;
-	Tue,  9 Sep 2025 10:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757414561; cv=pass; b=oTGbTLtL20nJa7CunJmAmTuMliBXIowCf5l7227l4fZ1sZHQrnOhP7cTPSJRF5wunbWiOqWkEOS3zH4RPvF+lXtyfxeM//WCeeNaSFvcb4w7MJEvDwB/Wb3PVVRBsY9inkM2LEAy2GXXl2GQ6WgeUW+5KTNReYYhIo3pASNSiMs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757414561; c=relaxed/simple;
-	bh=FC7bW83OEVRCIUjlMXx2dOA12vDeV+6yDp6CGr0Dtfo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fEZ94VMap8ZEcRLFqsfReMXYkKzRBNmP+RI+j6Oh5tYrisALqnsC1ctugwSLElZ4E0uwkYhPcOW0eiFa4XD+lelc0flc5IA3uQZ6mLgot2+u1eH8kltgYrgIZJqxmT1lfu9Q165Ws1OVSW57hMW6rDI/pNQnaO8wVo/1qMh9Ruk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=ceHDnpKi; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
-ARC-Seal: i=1; a=rsa-sha256; t=1757414534; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=e4KVhUIBwKrZGOBIdxXOJt26FrhCR+d4zMF1+q3RnW0uUoZnVid80gVGEyzzwdrU+HheL7rXMvD4sh/YzVS+Dp0AlvNsd9xU3Jm6WoYqqNPs9eL2NoEnRLQJ0SMK5Uqapz+bbM0VKz2AF0Hl7X3J369VIc3lBCh6U38RYK2ccxU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757414534; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=zla5rRyWRpNUcW0IeCuac8C2OfPcUBBMpzB/j62xmDU=; 
-	b=Y+cDTA6MUjEGzIgDqJMjgYQ6HWFv9Y1Mc4qd3b++VjUWTQ/0ufidPYUZVy8yxN2/mdg0HlebimhjKmnQkUNvTRdI5s6Jqt1QxFYk20XXtiOBx4V2Txp8xMnkq/JAe7wf6OYAjPpOThcqrBncFwagkdNzU14CQO+igLOTnps4VfM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=yukuai.org.cn;
-	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
-	dmarc=pass header.from=<hailan@yukuai.org.cn>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757414534;
-	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=zla5rRyWRpNUcW0IeCuac8C2OfPcUBBMpzB/j62xmDU=;
-	b=ceHDnpKiXivtZwdDGuaMgHhrCLfdv1i92XlanB5VB86+hRgWvvutvw5Evl+5F8Ft
-	wsrcwVOhRx0y9ujPwspCFiAVObjVKM+vIekjngbLz5/OysQrfCkxkFHmTtZQGRbpco4
-	rTWaWAhBtZOz5GxaTYwNrYBwTiiNbfMbpfNZdBVU=
-Received: by mx.zohomail.com with SMTPS id 1757414531847661.167349591676;
-	Tue, 9 Sep 2025 03:42:11 -0700 (PDT)
-Message-ID: <b85a8730-78f0-4933-a415-815e6ceefe5f@yukuai.org.cn>
-Date: Tue, 9 Sep 2025 18:42:05 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935872749E2;
+	Tue,  9 Sep 2025 10:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757414573; cv=none; b=NYSJvoIEv8+R+BAs2EkrmiiBZFj8tIEC4Kk7yhq1IhymLLavjC2bxK+K+m1V/a8IHhFble98RDNyAe1Pz5u+IYtNIMb5tdAaKOcC9kc3ujezoIb5y74inne8XtEZTTlgwQEjgF9wgdcQg0PDrG0f1qYoZO4qFXGexUUoRlobVp4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757414573; c=relaxed/simple;
+	bh=OmjSehNn7erBpvi0zosL7YlZzfaNRjX4KmOvOrUFn5c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r+zMwIkQ07q4fUAoSeW0/Xj36lfTEcadO3uUiM9apmgpm5diPNbDohxU36BIfAnD1pUK7ZxHYNj4nBMkMSovKHGoDP8iEB9bQw5PfZZs1fEDGXNo7Glniv5vZMb/eUuZy2qpa5m48tXUkGqY8KS7yCQTx/Vr1IZQux9zijKkstg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gun9NEwL; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45de6490e74so18951105e9.2;
+        Tue, 09 Sep 2025 03:42:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757414570; x=1758019370; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4PtVBJUdObJJIpLH+F+6ZRgKDnXKtJwhSlNz3Z/GfiA=;
+        b=Gun9NEwLfIfecOJXNW1LB6ousKtJ/rNa2ldtGcWlNK8HmF4YxBquyK0U5qlSxOQJpw
+         xDX+yjEeuNqGpWOgDnKEmwAsBzy+5PIVr//tVMDgR3gl7JtXBI6OpFH8L/NCKpdQlLj1
+         AIktql1XUhdM6Tip9RJHd1p4SFC26yC7/I6qAUHXzaS7bQGInzcNBOIL3HxtLqqUBA9d
+         1j8yGNlDFRcjAsC92WeL1AB5hny/d5ooV/R1bgGSjRefoSjmi/hyHP1itVX/u7M6D+fg
+         0dW7VrPG2t2pAVr9bxo8zJ3QtHm+7emHCdaG9ek6bb8a5+sXRmqDEc3/ap8bI2XsNxyu
+         8sdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757414570; x=1758019370;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4PtVBJUdObJJIpLH+F+6ZRgKDnXKtJwhSlNz3Z/GfiA=;
+        b=Ler+Udegu6pGdM0h4IQ9IQynbveDslFcK1sJJDbVTVKJs3Rsa38jpFomrhBMq+JW2R
+         WJFS46zzCHP3IwV/1K1Ikicljl+wdNIVKCeiwnrGeZngg92xqQeMDoO3xmfi2Ohq/ER5
+         XlY2i334ljtVz7iFmP7i2D923MxYe7rjC7qpGn0XhBIQS+aF3gGMeHegioFs60v3cqJQ
+         OiIlEuzI/zVLq55ZZ80CM1nuG3B/Z/1XOqC7gl2ehSUV4b821SLbrhvwIDc8+9fLpXK3
+         aOEU03rg2lv9a9y1kLf8M2wpYPurYc7NtjJd5JgJAXQCSDEQvjqoGsayFyqff2hA2sQa
+         RUPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUP0Ow8QzrP7gH1uiEtDaSQ2tuHmR7zeXctE+nzmxS8tcnMjgpgUkYx+r6opOQlKv3aFWm5Bam3oZki@vger.kernel.org, AJvYcCUiBZF0dWlatbsRoT9oJYqMhu57WosAvXCsiVv3rF+Yznx4v3plIazIk/d4JOBi3A5b5l6o/8UF1RD/ejvuIvktjfE=@vger.kernel.org, AJvYcCXtJ00faoyDW4cNbGlCXaxJpgiDYEuufIB2fZkOaa7R9KQ4jQSyzmuf3pS0CYg6CnxuI0Y+osgHJ9tGtuzY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO6yM+1m34fTtMdDKf8q90pEwf4+hd465lB0xfeQ+R87mbZtYP
+	qBOj8a5b24mKUfAtmL+p7bADvWHnJIdHQ0QhPsTzqa4wa44TiaSwFLWK
+X-Gm-Gg: ASbGncvmvgsoIVhj4lYdo+gH04t/9fugaXPP8rQZi5JPSvtPq3IoaBhihH0dA0P1mwg
+	u2JF/JC+0n0/l/7EuktStICyzB07FYYY16rPmML77u2DaRt2+QiqEi1IQ3lrO+D4Rk91zzcpNyE
+	L06x//ABxOMyPj+QS4Qc+3QTScKar+q/ALhKB+VS/SIL+3d978Xm3aFLOFeKn8t/p+krvr+F6VD
+	7YkX1/pt33ZsZFyhe2/qiiPOj2cnhTCrMuyO9nR9IDBMEGDNNFAzBPLiqsrrJfzRd88uynojbux
+	aYdGbsGTHGQvQSrWWxHgjfEaC0UIcBHBkr2Fny6yaHN4Pr4KEMntTYP5C3vsT8DAxME/dJAxuyK
+	KFU7CvAMBnfsWn85xQDiy5vK11OpiMjUNSF1Nggv9enD6cU4phMx0TeNw4VvcpVPQ6evArwU9M9
+	XWRg==
+X-Google-Smtp-Source: AGHT+IHeuEQn28kCIYU8gWVJoj3GISootcJAUteMoQ3nWTZPv/W9yyaxYuJwHORuQNEn7xnu/jlS0w==
+X-Received: by 2002:a05:600c:1390:b0:45a:236a:23ba with SMTP id 5b1f17b1804b1-45ddded76a6mr91247765e9.22.1757414569402;
+        Tue, 09 Sep 2025 03:42:49 -0700 (PDT)
+Received: from biju.lan (host86-139-30-37.range86-139.btcentralplus.com. [86.139.30.37])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75215c51csm2137411f8f.0.2025.09.09.03.42.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 03:42:49 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v3] pinctrl: renesas: rzg2l: Drop the unnecessary pin configurations
+Date: Tue,  9 Sep 2025 11:42:44 +0100
+Message-ID: <20250909104247.3309-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-6.18/block 04/10] blk-mq: convert to serialize
- updating nr_requests with update_nr_hwq_lock
-To: Nilay Shroff <nilay@linux.ibm.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- ming.lei@redhat.com, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250908061533.3062917-1-yukuai1@huaweicloud.com>
- <20250908061533.3062917-5-yukuai1@huaweicloud.com>
- <9708abeb-7677-4c0e-931b-7ca5fe0a0242@linux.ibm.com>
- <329ca336-21f6-e686-0446-b3ae9a46f4c9@huaweicloud.com>
- <f57ebcf8-9225-4e3d-86d2-cac7f9cacb54@linux.ibm.com>
- <43d25899-6b1a-c0e1-c3f5-8e2a560c93d5@huaweicloud.com>
- <d15faae0-40bb-41f0-bef1-f2ad48543110@linux.ibm.com>
- <7544e26c-502a-75fc-7147-721a98bb0e80@huaweicloud.com>
- <7fe7bfd3-d6c0-4485-aaa1-2c1629cb1784@linux.ibm.com>
-From: Yu Kuai <hailan@yukuai.org.cn>
-In-Reply-To: <7fe7bfd3-d6c0-4485-aaa1-2c1629cb1784@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-Hi,
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-在 2025/9/9 18:11, Nilay Shroff 写道:
->
-> On 9/9/25 3:06 PM, Yu Kuai wrote:
->> Hi,
->>
->> 在 2025/09/09 17:26, Nilay Shroff 写道:
->>>
->>> On 9/9/25 12:46 PM, Yu Kuai wrote:
->>>> Hi,
->>>>
->>>> 在 2025/09/09 14:52, Nilay Shroff 写道:
->>>>>
->>>>> On 9/9/25 12:08 PM, Yu Kuai wrote:
->>>>>> Hi,
->>>>>>
->>>>>> 在 2025/09/09 14:29, Nilay Shroff 写道:
->>>>>>>
->>>>>>> On 9/8/25 11:45 AM, Yu Kuai wrote:
->>>>>>>> From: Yu Kuai <yukuai3@huawei.com>
->>>>>>>>
->>>>>>>> request_queue->nr_requests can be changed by:
->>>>>>>>
->>>>>>>> a) switching elevator by update nr_hw_queues
->>>>>>>> b) switching elevator by elevator sysfs attribute
->>>>>>>> c) configue queue sysfs attribute nr_requests
->>>>>>>>
->>>>>>>> Current lock order is:
->>>>>>>>
->>>>>>>> 1) update_nr_hwq_lock, case a,b
->>>>>>>> 2) freeze_queue
->>>>>>>> 3) elevator_lock, cas a,b,c
->>>>>>>>
->>>>>>>> And update nr_requests is seriablized by elevator_lock() already,
->>>>>>>> however, in the case c), we'll have to allocate new sched_tags if
->>>>>>>> nr_requests grow, and do this with elevator_lock held and queue
->>>>>>>> freezed has the risk of deadlock.
->>>>>>>>
->>>>>>>> Hence use update_nr_hwq_lock instead, make it possible to allocate
->>>>>>>> memory if tags grow, meanwhile also prevent nr_requests to be changed
->>>>>>>> concurrently.
->>>>>>>>
->>>>>>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->>>>>>>> ---
->>>>>>>>      block/blk-sysfs.c | 12 +++++++++---
->>>>>>>>      1 file changed, 9 insertions(+), 3 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
->>>>>>>> index f99519f7a820..7ea15bf68b4b 100644
->>>>>>>> --- a/block/blk-sysfs.c
->>>>>>>> +++ b/block/blk-sysfs.c
->>>>>>>> @@ -68,13 +68,14 @@ queue_requests_store(struct gendisk *disk, const char *page, size_t count)
->>>>>>>>          int ret, err;
->>>>>>>>          unsigned int memflags;
->>>>>>>>          struct request_queue *q = disk->queue;
->>>>>>>> +    struct blk_mq_tag_set *set = q->tag_set;
->>>>>>>>            ret = queue_var_store(&nr, page, count);
->>>>>>>>          if (ret < 0)
->>>>>>>>              return ret;
->>>>>>>>      -    memflags = blk_mq_freeze_queue(q);
->>>>>>>> -    mutex_lock(&q->elevator_lock);
->>>>>>>> +    /* serialize updating nr_requests with switching elevator */
->>>>>>>> +    down_write(&set->update_nr_hwq_lock);
->>>>>>>>      
->>>>>>> For serializing update of nr_requests with switching elevator,
->>>>>>> we should use disable_elv_switch(). So with this change we
->>>>>>> don't need to acquire ->update_nr_hwq_lock in writer context
->>>>>>> while running blk_mq_update_nr_requests but instead it can run
->>>>>>> acquiring ->update_nr_hwq_lock in the reader context.
->>>>>>>
->>>>>>> So the code flow should be,
->>>>>>>
->>>>>>> disable_elv_switch  => this would set QUEUE_FLAG_NO_ELV_SWITCH
->>>>>>> ...
->>>>>>> down_read ->update_nr_hwq_lock
->>>>>>> acquire ->freeze_lock
->>>>>>> acquire ->elevator_lock;
->>>>>>> ...
->>>>>>> ...
->>>>>>> release ->elevator_lock;
->>>>>>> release ->freeze_lock
->>>>>>>
->>>>>>> clear QUEUE_FLAG_NO_ELV_SWITCH
->>>>>>> up_read ->update_nr_hwq_lock
->>>>>>>
->>>>>> Yes, this make sense, however, there is also an implied condition that
->>>>>> we should serialize queue_requests_store() with itself, what if a
->>>>>> concurrent caller succeed the disable_elv_switch() before the
->>>>>> down_read() in this way?
->>>>>>
->>>>>> t1:
->>>>>> disable_elv_switch
->>>>>>            t2:
->>>>>>            disable_elv_switch
->>>>>>
->>>>>> down_read    down_read
->>>>>>
->>>>> I believe this is already protected with the kernfs internal
->>>>> mutex locks. So you shouldn't be able to run two sysfs store
->>>>> operations concurrently on the same attribute file.
->>>>>
->>>> There really is no such internal lock, the call stack is:
->>>>
->>>> kernfs_fop_write_iter
->>>>    sysfs_kf_write
->>>>     queue_attr_store
->>>>
->>>> There is only a file level mutex kernfs_open_file->lock from the top
->>>> function kernfs_fop_write_iter(), however, this lock is not the same
->>>> if we open the same attribute file from different context.
->>>>
->>> Oh yes this lock only protects if the same fd is being written
->>> concurrently. However if we open the same sysfs file from different process
->>> contexts then fd would be different and so this lock wouldn't protect
->>> the simultaneous update of sysfs attribute. Having said that,
->>> looking through the code again it seems that q->nr_requests update
->>> is protected with ->elevator_lock (including both the elevator switch
->>> code and your proposed changes in this patchset). So my question is
->>> do we really need to synchronize nr_requests update code with elevator
->>> swiupdate_nr_hwq_locktch code? So in another words what if we don't at
->>> all use ->update_nr_hwq_lock in queue_requests_store?
->> 1) lock update_nr_hwq_lock, then no one can change nr_queuests
->> 2) checking input nr_reqeusts
->> 3) if grow, allocate memory
->>
->> Main idea here is we can checking if nr_requests grow and then allocate
->> mermory, without concern that nr_requests can be changed after memory
->> allocation.
->>
-> If nr_requests changes after memory allocation we're still good because
-> eventually we'd only have one consistent value of nr_requests. For
-> instance, if process A is updating nr_requests to 128 and sched switch
-> is updating nr_requests to 256 simultaneously then we'd either see
-> nr_requests set to 128 or 256 in the end depending on who runs last.
-> We wouldn't get into a situation where we find some inconsistent update
-> to nr_requests, isn't it?
+There is no need to reconfigure the pin if the pin's configuration values
+are same as the reset values. E.g.: PS0 pin configuration for NMI function
+is PMC = 1 and PFC = 0 and is same as that of reset values. Currently the
+code is first setting it to GPIO HI-Z state and then again reconfiguring
+to NMI function leading to spurious IRQ. Drop the unnecessary pin
+configurations from the driver.
 
-Then we'll have to allocate memory for every input nr_requests now, we don't
-know for sure if tag will grow in advance this way. And even with this, we
-still have to hold read lock before allocating memory, to prevent nr hctxs
-to change.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2->v3:
+ * Dropped extra space before the == operator.
+ * Moved spinlock acquire before reading pfc value.
+ * Make sure it is configured for function in PMC register for
+   skipping GPIO switch.
+v1->v2:
+ * Updated commit header and description.
+ * Added check in rzg2l_pinctrl_set_pfc_mode() to avoid unnecessary
+   configuration
+ * Updated rzg2l_pinctrl_pm_setup_pfc() to make changes minimal
+ Logs:
+ 
+ STR using SLEEP button:
+ root@smarc-rzg3e:~# cat /proc/interrupts | grep SLEEP
+129:          0          0          0          0 rzv2h-icu   0 Edge      SLEEP
+root@smarc-rzg3e:~# [  103.459191] PM: suspend entry (deep)
+[  103.462898] Filesystems sync: 0.000 seconds
+[  103.468988] Freezing user space processes
+[  103.474815] Freezing user space processes completed (elapsed 0.001 seconds)
+[  103.481817] OOM killer disabled.
+[  103.485056] Freezing remaining freezable tasks
+[  103.490977] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+[  103.498387] printk: Suspending console(s) (use no_console_suspend to debug)
+NOTICE:  BL2: v2.10.5(release):2.10.5/rz_soc_dev-169-g1410189b0
+NOTICE:  BL2: Built : 12:53:12, Jul 15 2025
+NOTICE:  BL2: SYS_LSI_MODE: 0x13e06
+NOTICE:  BL2: SYS_LSI_DEVID: 0x8679447
+NOTICE:  BL2: SYS_LSI_PRR: 0x0
+NOTICE:  BL2: Booting BL31
+[  103.556250] renesas-gbeth 15c30000.ethernet end0: Link is Down
+[  103.568430] Disabling non-boot CPUs ...
+[  103.573306] psci: CPU3 killed (polled 0 ms)
+[  103.579244] psci: CPU2 killed (polled 4 ms)
+[  103.585717] psci: CPU1 killed (polled 0 ms)
+[  103.590320] Enabling non-boot CPUs ...
+[  103.590529] Detected VIPT I-cache on CPU1
+[  103.590577] GICv3: CPU1: found redistributor 100 region 0:0x0000000014960000
+[  103.590616] CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
+[  103.591462] CPU1 is up
+[  103.591560] Detected VIPT I-cache on CPU2
+[  103.591583] GICv3: CPU2: found redistributor 200 region 0:0x0000000014980000
+[  103.591605] CPU2: Booted secondary processor 0x0000000200 [0x412fd050]
+[  103.592176] CPU2 is up
+[  103.592275] Detected VIPT I-cache on CPU3
+[  103.592298] GICv3: CPU3: found redistributor 300 region 0:0x00000000149a0000
+[  103.592319] CPU3: Booted secondary processor 0x0000000300 [0x412fd050]
+[  103.593020] CPU3 is up
+[  103.607003] dwmac4: Master AXI performs fixed burst length
+[  103.607903] renesas-gbeth 15c30000.ethernet end0: No Safety Features support found
+[  103.607923] renesas-gbeth 15c30000.ethernet end0: IEEE 1588-2008 Advanced Timestamp supported
+[  103.611435] renesas-gbeth 15c30000.ethernet end0: configuring for phy/rgmii-id link mode
+[  103.626991] dwmac4: Master AXI performs fixed burst length
+[  103.627881] renesas-gbeth 15c40000.ethernet end1: No Safety Features support found
+[  103.627896] renesas-gbeth 15c40000.ethernet end1: IEEE 1588-2008 Advanced Timestamp supported
+[  103.631423] renesas-gbeth 15c40000.ethernet end1: configuring for phy/rgmii-id link mode
+[  103.824301] OOM killer enabled.
+[  103.827439] Restarting tasks: Starting
+[  103.831759] Restarting tasks: Done
+[  103.835223] random: crng reseeded on system resumption
+[  103.840452] PM: suspend exit
 
->> BTW, I think this sysfs attr is really a slow path, and it's fine to
->> grab the write lock.
->>
-> Yep you're right. But I think we should avoid locks if possible.
+root@smarc-rzg3e:~# [  106.180406] renesas-gbeth 15c30000.ethernet end0: Link is Up - 1Gbps/Full - flow control rx/tx
 
-Yes, we should avoid locks, but we should also keep code as simple
-as possible, I think.
+root@smarc-rzg3e:~# cat /proc/interrupts | grep SLEEP
+129:          1          0          0          0 rzv2h-icu   0 Edge      SLEEP
+root@smarc-rzg3e:~#
 
-Thanks,
-Kuai
+STR using cmdline:
+root@smarc-rzg3e:~# echo deep > /sys/power/mem_sleep
+echo mem > /sys/power/stateroot@smarc-rzg3e:~# echo mem > /sys/power/state
+[ 1196.663529] PM: suspend entry (deep)
+[ 1196.667543] Filesystems sync: 0.000 seconds
+[ 1196.673064] Freezing user space processes
+[ 1196.679409] Freezing user space processes completed (elapsed 0.002 seconds)
+[ 1196.686556] OOM killer disabled.
+[ 1196.689910] Freezing remaining freezable tasks
+[ 1196.696144] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+[ 1196.703737] printk: Suspending console(s) (use no_console_suspend to debug)
+NOTICE:  BL2: v2.10.5(release):2.10.5/rz_soc_dev-169-g1410189b0
+NOTICE:  BL2: Built : 12:53:12, Jul 15 2025
+NOTICE:  BL2: SYS_LSI_MODE: 0x13e06
+NOTICE:  BL2: SYS_LSI_DEVID: 0x8679447
+NOTICE:  BL2: SYS_LSI_PRR: 0x0
+NOTICE:  BL2: Booting BL31
+[ 1196.747763] renesas-gbeth 15c30000.ethernet end0: Link is Down
+[ 1196.760273] Disabling non-boot CPUs ...
+[ 1196.764975] psci: CPU3 killed (polled 0 ms)
+[ 1196.771159] psci: CPU2 killed (polled 4 ms)
+[ 1196.777676] psci: CPU1 killed (polled 0 ms)
+[ 1196.780129] Enabling non-boot CPUs ...
+[ 1196.780343] Detected VIPT I-cache on CPU1
+[ 1196.780391] GICv3: CPU1: found redistributor 100 region 0:0x0000000014960000
+[ 1196.780430] CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
+[ 1196.781219] CPU1 is up
+[ 1196.781315] Detected VIPT I-cache on CPU2
+[ 1196.781337] GICv3: CPU2: found redistributor 200 region 0:0x0000000014980000
+[ 1196.781358] CPU2: Booted secondary processor 0x0000000200 [0x412fd050]
+[ 1196.781867] CPU2 is up
+[ 1196.781966] Detected VIPT I-cache on CPU3
+[ 1196.781988] GICv3: CPU3: found redistributor 300 region 0:0x00000000149a0000
+[ 1196.782010] CPU3: Booted secondary processor 0x0000000300 [0x412fd050]
+[ 1196.782643] CPU3 is up
+[ 1196.798955] dwmac4: Master AXI performs fixed burst length
+[ 1196.799861] renesas-gbeth 15c30000.ethernet end0: No Safety Features support found
+[ 1196.799881] renesas-gbeth 15c30000.ethernet end0: IEEE 1588-2008 Advanced Timestamp supported
+[ 1196.803386] renesas-gbeth 15c30000.ethernet end0: configuring for phy/rgmii-id link mode
+[ 1196.818938] dwmac4: Master AXI performs fixed burst length
+[ 1196.819832] renesas-gbeth 15c40000.ethernet end1: No Safety Features support found
+[ 1196.819848] renesas-gbeth 15c40000.ethernet end1: IEEE 1588-2008 Advanced Timestamp supported
+[ 1196.823391] renesas-gbeth 15c40000.ethernet end1: configuring for phy/rgmii-id link mode
+[ 1197.020126] OOM killer enabled.
+[ 1197.023265] Restarting tasks: Starting
+[ 1197.027513] Restarting tasks: Done
+[ 1197.030980] random: crng reseeded on system resumption
+[ 1197.036203] PM: suspend exit
+root@smarc-rzg3e:~# echo deep > /sys/power/mem_sleep[ 1199.390705] renesas-gbeth 15c30000.ethernet end0: Link is Up - 1Gbps/Full - flow control rx/tx
+root@smarc-rzg3e:~# cat /proc/interrupts | grep SLEEP
+129:          1          0          0          0 rzv2h-icu   0 Edge      SLEEP
+root@smarc-rzg3e:~#
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
->
-> Thanks,
-> --Nilay
->
->
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index f524af6f586f..c7eb5566b340 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -541,9 +541,16 @@ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
+ 				       u8 pin, u8 off, u8 func)
+ {
+ 	unsigned long flags;
+-	u32 reg;
++	u32 reg, pfc;
+ 
++	/* Switching to GPIO is not required if reset value is same as func */
++	reg = readb(pctrl->base + PMC(off));
+ 	spin_lock_irqsave(&pctrl->lock, flags);
++	pfc = readl(pctrl->base + PFC(off));
++	if ((reg & BIT(pin)) && (((pfc >> (pin * 4)) & PFC_MASK) == func)) {
++		spin_unlock_irqrestore(&pctrl->lock, flags);
++		return;
++	}
+ 
+ 	/* Set pin to 'Non-use (Hi-Z input protection)'  */
+ 	reg = readw(pctrl->base + PM(off));
+@@ -557,9 +564,8 @@ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
+ 	writeb(reg & ~BIT(pin), pctrl->base + PMC(off));
+ 
+ 	/* Select Pin function mode with PFC register */
+-	reg = readl(pctrl->base + PFC(off));
+-	reg &= ~(PFC_MASK << (pin * 4));
+-	writel(reg | (func << (pin * 4)), pctrl->base + PFC(off));
++	pfc &= ~(PFC_MASK << (pin * 4));
++	writel(pfc | (func << (pin * 4)), pctrl->base + PFC(off));
+ 
+ 	/* Switch to Peripheral pin function with PMC register */
+ 	reg = readb(pctrl->base + PMC(off));
+@@ -3113,11 +3119,18 @@ static void rzg2l_pinctrl_pm_setup_pfc(struct rzg2l_pinctrl *pctrl)
+ 		pm = readw(pctrl->base + PM(off));
+ 		for_each_set_bit(pin, &pinmap, max_pin) {
+ 			struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
++			u32 pfc_val, pfc_mask;
+ 
+ 			/* Nothing to do if PFC was not configured before. */
+ 			if (!(cache->pmc[port] & BIT(pin)))
+ 				continue;
+ 
++			pfc_val = readl(pctrl->base + PFC(off));
++			pfc_mask = PFC_MASK << (pin * 4);
++			/* Nothing to do if reset value of the pin is same as cached value */
++			if ((cache->pfc[port] & pfc_mask) == (pfc_val & pfc_mask))
++				continue;
++
+ 			/* Set pin to 'Non-use (Hi-Z input protection)' */
+ 			pm &= ~(PM_MASK << (pin * 2));
+ 			writew(pm, pctrl->base + PM(off));
+@@ -3127,8 +3140,8 @@ static void rzg2l_pinctrl_pm_setup_pfc(struct rzg2l_pinctrl *pctrl)
+ 			writeb(pmc, pctrl->base + PMC(off));
+ 
+ 			/* Select Pin function mode. */
+-			pfc &= ~(PFC_MASK << (pin * 4));
+-			pfc |= (cache->pfc[port] & (PFC_MASK << (pin * 4)));
++			pfc &= ~pfc_mask;
++			pfc |= (cache->pfc[port] & pfc_mask);
+ 			writel(pfc, pctrl->base + PFC(off));
+ 
+ 			/* Switch to Peripheral pin function. */
+-- 
+2.43.0
+
 
