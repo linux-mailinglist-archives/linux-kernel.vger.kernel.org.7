@@ -1,168 +1,235 @@
-Return-Path: <linux-kernel+bounces-807129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127B7B4A072
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:58:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F58B4A076
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF16D4E1F6B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:58:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A61D4E0AA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049E22BE7DB;
-	Tue,  9 Sep 2025 03:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SjD6QwI5"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75C11A9F83
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 03:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4383F9FB;
+	Tue,  9 Sep 2025 04:00:02 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9324F264636
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 03:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757390294; cv=none; b=LftqmfDA8qKXRER8jrs7egO9ew4sJSxRCMoWDctYMbLgHnlxutstRCoRR64O38zyXFYHMhXJOTGCqWUNFiL7IG7hiso4CfZinVuZy3BM5o2yldZETmedZsYH3OuWbcOEa/ntRBj5XEPK1C7WIBwWmFsxFE/ToS9JROYtr1dHMxo=
+	t=1757390401; cv=none; b=MuY0/18oRLJESZ7ggt+Sqy+FBTKRjJYqfcSMKZWLaLA0NJWCBYxx1RlYsd3R6fI9ElG1gFJ0rq9L9LzMzj81OzxNIOInVj7ASTwh7YKLU5aSoC9I+fS7bYpz55f3K4Rm9juXzqFZEGoiKhsbfco5KHaLuQ65necPoiCNSapiG5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757390294; c=relaxed/simple;
-	bh=3W04uNffKxHWTFWhi8r7WWFHCsqpZkkDP8v1I5cMI3w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=K8+nXdTam1fkh9oC2Qz+o5IbS5MCvcTbGq93hDaaTzIjxbXBUUbpHOt4ON0+UfX6KtNk/KEwwn84uMOfS6aYKswqCg0kRNeZ7eAifvDftT3TkPVhDU0ffChlg23cUrQISsaApqZTTvVgEuJPkEk0mVJRgCe3UCL8RkuEZm+9wHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SjD6QwI5; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4ee87cc81eso4689716a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 20:58:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757390292; x=1757995092; darn=vger.kernel.org;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bUnrLWRutqzOL+PCyKRj9Q46Et1xm9b1y7m2qf+g92Q=;
-        b=SjD6QwI5ifxP0rjRroMM8xVq2KFow3u/zZaSI2Gsav2zMtP9m4MquozRrFBNKntk7P
-         2N3hUYutMBizx8p44RhDz4jQlSnCzJOl7upW0d6IvasFGrA1G/g176DUsnA0HbRLSbuo
-         o6qRFxSPBJzTChQ3a6c8loBpTmtqUSH+yfeinIHuUbqZVViEQNLN57PJ7iWgI5ugVxNg
-         oNe5m++lcBHSMSLLB/uhjBHkDY8kA3UyjsabKSzE2t/RNkrQSs700ZigXDJeL021RZCL
-         VNu1186/sfrRMlEZTlINw1d6GzAAg0gEdPr2dpnjuj/YU75f9Xn549qz8CSeJCvMo8AH
-         3bBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757390292; x=1757995092;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bUnrLWRutqzOL+PCyKRj9Q46Et1xm9b1y7m2qf+g92Q=;
-        b=q+udbQqxNFhCPFpMTTfAoShqIr3cmZdUkf83nU4a2mkI58+0OFHQq/5QBtzhb2b1uY
-         yb8+KHdGkaXnnOkUiDj76uByL2ljScUvR6hSyNFYmQsKEv/kOZVCU26LBRvwT7QjM594
-         QzU6UZp58SamZ+gtR7JEJZ6ugqPiK6jaBKsZgCIQ0cZg5u+dhTP/iWOVA12QQW2zDJOZ
-         2I6IEShge+Cc1qIZvuckBoNuKdcII4nWOtf2hVTX2sjv84MF8AowkcjNR8mH2iw01K5s
-         JMF0VF58A4+sHyUABh0dWmRLRggyfwZDHIMhhhIYGHRZsUSAqktHRr29HuTgtvVRdV3v
-         Me0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVPuQ3pGqbM3vuVVoTCpimNF2EnI7mLpbv5i4aPPMUnuDluuQHPtoKIjr3/wN9ibpUaohLpIoFOZpEGW60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuPIHFnVq7UF+6WSQ6zvOn9Eme6iKCRgAqJKU2zZyqQzzUoo9Y
-	tMsYHzt1U7kMV8BUnSL6DDSmVGYmLVHCJkxrUmo0kht+T+mLq6bX54aPPY2S3kBuyw==
-X-Gm-Gg: ASbGncv98TJZxhLp7+HyBWMvwT4AUZzV0WZOz3G4SDgbbNyokoIywXnvtfDBqvr5f/+
-	Ty0fzYthvFuHAGrQXScWr17YSZvnlu/RPQIodf0HGjYvo64jlXWQnjnnVmOf32/08p95S2ReVCw
-	gPZ3DowMydVczZm2aDlQuG+MwZDggmqGl8EV3GvptKwYxiXGeA845GgWtiQUqIQHjGqxhyKKZLm
-	u8PTqjR/C7yPbX+05LQhxRf5PguaXV+bFhujnQLgrtLmiZcoeG83qtrstK9D/bmMI+KmNPThyM1
-	FwPs7oMqqaGX0BOQcXpzwpA+FnmY3awKLVMKTPQtRu6ZKfG6l7RoZJafBGFVMl+jXvOMkF6KtRR
-	3wN1MDZOZ6t9NA9bIJjiMsc7qdfi0eGI06QMQuu1GBNkHbBHVwwvNtTer1/AqhcwJwvTmdK6/jE
-	PvL0Eews7UK4VU1Y0=
-X-Google-Smtp-Source: AGHT+IE2HU3rozS4ETlQvEW7d81Yt0dZ8iVRFlB/nUMKl4iPk9Nx6LlYXBKTNE0JT6pVc/CJRLudrw==
-X-Received: by 2002:a17:902:e843:b0:24c:7f2f:d9e6 with SMTP id d9443c01a7336-2516d81a032mr124973235ad.10.1757390291759;
-        Mon, 08 Sep 2025 20:58:11 -0700 (PDT)
-Received: from bsegall-glaptop.localhost (c-76-132-13-32.hsd1.ca.comcast.net. [76.132.13.32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b16429692sm187133545ad.122.2025.09.08.20.58.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 20:58:11 -0700 (PDT)
-From: Benjamin Segall <bsegall@google.com>
-To: Aaron Lu <ziqianlu@bytedance.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,  Peter Zijlstra
- <peterz@infradead.org>,  Valentin Schneider <vschneid@redhat.com>,
-  Chengming Zhou <chengming.zhou@linux.dev>,  Josh Don
- <joshdon@google.com>,  Ingo Molnar <mingo@redhat.com>,  Vincent Guittot
- <vincent.guittot@linaro.org>,  Xi Wang <xii@google.com>,
-  linux-kernel@vger.kernel.org,  Juri Lelli <juri.lelli@redhat.com>,
-  Dietmar Eggemann <dietmar.eggemann@arm.com>,  Steven Rostedt
- <rostedt@goodmis.org>,  Mel Gorman <mgorman@suse.de>,  Chuyi Zhou
- <zhouchuyi@bytedance.com>,  Jan Kiszka <jan.kiszka@siemens.com>,  Florian
- Bezdeka <florian.bezdeka@siemens.com>,  Songtang Liu
- <liusongtang@bytedance.com>,  Chen Yu <yu.c.chen@intel.com>,  Matteo
- Martelli <matteo.martelli@codethink.co.uk>,  Michal Koutn??
- <mkoutny@suse.com>,  Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v4 3/5] sched/fair: Switch to task based throttle model
-In-Reply-To: <20250904110504.GG42@bytedance> (Aaron Lu's message of "Thu, 4
-	Sep 2025 19:05:04 +0800")
-References: <20250829081120.806-1-ziqianlu@bytedance.com>
-	<20250829081120.806-4-ziqianlu@bytedance.com>
-	<20250903145124.GM4067720@noisy.programming.kicks-ass.net>
-	<14be66aa-e088-4267-ac10-d04d600b1294@amd.com>
-	<xm26o6rrtgav.fsf@google.com> <20250904081611.GE42@bytedance>
-	<da9141b1-d717-493f-939f-85e23d46e7ba@amd.com>
-	<20250904110504.GG42@bytedance>
-Date: Mon, 08 Sep 2025 20:58:09 -0700
-Message-ID: <xm26frcwtgz2.fsf@google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1757390401; c=relaxed/simple;
+	bh=OE18OxMrs1NopGdlKsIqB/3zyZA0Oh1NV6NM0txIROY=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PaPnZuDVDKoVckBId1W1nu01Avua2qz233eBbNlNV29Svuf5ny0zbCma2+grPa1C7cF9PffmFIoeHRbHEg3BLa3kjDmhi18jk+Zio5YuMuGClaMSIstbB2UtorOF7Vx6WkuhALBRmS7gQVPn3zj5krBUN0Z0a9Z8su/02awoHGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Cxf9Mzpr9oSDYIAA--.17198S3;
+	Tue, 09 Sep 2025 11:59:47 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJAxT+Ywpr9oez2JAA--.41171S3;
+	Tue, 09 Sep 2025 11:59:45 +0800 (CST)
+Subject: Re: [PATCH v1 2/3] objtool/LoongArch: Fix unreachable instruction
+ warnings about EFISTUB
+To: Josh Poimboeuf <jpoimboe@kernel.org>, Huacai Chen <chenhuacai@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250901081904.GB4067720@noisy.programming.kicks-ass.net>
+ <82c913b9-4403-cde9-0542-5bd6e04415f5@loongson.cn>
+ <wt4qpgi5isj5m6wq33pomvm6borvafuzktekc7lgtoitscar5q@brixzj3lccbw>
+ <ccbb40c1-5f2d-77e9-e8d2-52f2fdbad645@loongson.cn>
+ <CAAhV-H5qhKepa-8sz3_AC=_RCChbVeEmnHKESMqpiJ0phMORbg@mail.gmail.com>
+ <52056c29-4f21-83c9-db1f-ebd1875a3675@loongson.cn>
+ <CAAhV-H47VKERJCKRi7uAS7OmCWaE4yxZ07Hwz_si2DMVRDrsag@mail.gmail.com>
+ <ybv2ndrzbqztkctzwhfphpdqrqbxlougs75glm22rcuzdmnrfp@lqwcms3j2d55>
+ <4thrzifl6ntk7kdf65egt4srzkbrxqoqf7yzmasblwvaq3qwmt@vigfgpbxzjkq>
+ <CAAhV-H53DkR6oK1chXQtoczqxYBCU-FMKrD99bjEvfXapND1Vw@mail.gmail.com>
+ <itoqfhz4pxaf7aclzajkxcdsxe5akxhgahzj4dp24leh7w334k@epnvcxdga75p>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <49ceb19c-6107-d026-3ae6-ae897d1fcae4@loongson.cn>
+Date: Tue, 9 Sep 2025 11:59:44 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <itoqfhz4pxaf7aclzajkxcdsxe5akxhgahzj4dp24leh7w334k@epnvcxdga75p>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAxT+Ywpr9oez2JAA--.41171S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxWw4ktr48AFykXr13AF47trc_yoWrKr4rpF
+	ZFkF9Fyr4DGry8Xr97tw4j9r1aq3yDWF42qa4UWa40kFyqqr1Iqwn7Zr4UCF9xWw4kAFW0
+	qF17JrWavFyjy3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
+	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8m9aDUUUUU==
 
-Aaron Lu <ziqianlu@bytedance.com> writes:
+On 2025/9/6 上午12:04, Josh Poimboeuf wrote:
+> On Fri, Sep 05, 2025 at 12:36:16PM +0800, Huacai Chen wrote:
+>> Hi, Josh,
+>>
+>> On Fri, Sep 5, 2025 at 5:46 AM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>>>
+>>> On Thu, Sep 04, 2025 at 10:39:30AM -0700, Josh Poimboeuf wrote:
+>>>> On Thu, Sep 04, 2025 at 11:59:30AM +0800, Huacai Chen wrote:
+>>>>> This is from RISC-V code.
+>>>>>
+>>>>> __HEAD
+>>>>> SYM_CODE_START(_start)
+>>>>>          /*
+>>>>>           * Image header expected by Linux boot-loaders. The image header data
+>>>>>           * structure is described in asm/image.h.
+>>>>>           * Do not modify it without modifying the structure and all bootloaders
+>>>>>           * that expects this header format!!
+>>>>>           */
+>>>>> #ifdef CONFIG_EFI
+>>>>>          /*
+>>>>>           * This instruction decodes to "MZ" ASCII required by UEFI.
+>>>>>           */
+>>>>>          c.li s4,-13
+>>>>>          j _start_kernel
+>>>>> #else
+>>>>>          /* jump to start kernel */
+>>>>>          j _start_kernel
+>>>>>          /* reserved */
+>>>>>          .word 0
+>>>>> #endif
+>>>>>
+>>>>> The HEAD section has instructions, if you change it into a data
+>>>>> section then it loses the "x" attribute.
+>>>
+>>> Actually, the "x" attribute isn't needed for vmlinux.  The vmlinux
+>>> linker script places it in the text region regardless.
+>>>
+>>> Moving the data to a data section should be really simple, something
+>>> like the below.
+>>>
+>>> And yes, even the above RISC-V code can be in a data section.  Those
+>>> instructions are part of the 'struct riscv_image_header' data structure.
+>> This may work but also look strange (code in data section), it is more
+>> like a "workaround". :)
+> 
+> The "strange" part of the code is the intermixing of code and data.  If
+> they can't be separated, then they are part of a data structure and
+> belong in a data section.
 
-> On Thu, Sep 04, 2025 at 03:21:06PM +0530, K Prateek Nayak wrote:
->> Hello Aaron,
->> 
->> On 9/4/2025 1:46 PM, Aaron Lu wrote:
->> > @@ -8722,15 +8730,6 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
->> >  	if (unlikely(se == pse))
->> >  		return;
->> >  
->> > -	/*
->> > -	 * This is possible from callers such as attach_tasks(), in which we
->> > -	 * unconditionally wakeup_preempt() after an enqueue (which may have
->> > -	 * lead to a throttle).  This both saves work and prevents false
->> > -	 * next-buddy nomination below.
->> > -	 */
->> > -	if (unlikely(throttled_hierarchy(cfs_rq_of(pse))))
->> > -		return;
->> 
->> I think we should have a:
->> 
->> 	if (task_is_throttled(p))
->> 		return;
->> 
->> here. I can see at least one possibility via prio_changed_fair()
->
-> Ah right. I didn't realize wakeup_preempt() can be called for a throttled
-> task, I think it is not expected. What about forbid that :)
-> (not tested in anyway, just to show the idea and get feedback)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index cb93e74a850e8..f1383aede764f 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -13135,7 +13135,11 @@ static void task_fork_fair(struct task_struct *p)
->  static void
->  prio_changed_fair(struct rq *rq, struct task_struct *p, int oldprio)
->  {
-> -	if (!task_on_rq_queued(p))
-> +	/*
-> +	 * p->on_rq can be set for throttled task but there is no need to
-> +	 * check wakeup preempt for throttled task, so use p->se.on_rq instead.
-> +	 */
-> +	if (!p->se.on_rq)
->  		return;
->  
->  	if (rq->cfs.nr_queued == 1)
->
->> where a throttled task might reach here. Rest looks good. I'll
->> still wait on Ben for the update_cfs_group() bits :)
+I tried the following minimal changes, put the image header into
+the section .head.data, do not link efistub lib.a into vmlinux.o,
+just link efistub lib.a into vmlinux, no other changes, they have
+same effect with patch #1 and #2, what do you think?
 
+----->8-----
+diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
+index a3a9759414f4..919c1970ce14 100644
+--- a/arch/loongarch/Makefile
++++ b/arch/loongarch/Makefile
+@@ -164,7 +164,6 @@ CHECKFLAGS += $(shell $(CC) $(KBUILD_CPPFLAGS) 
+$(KBUILD_CFLAGS) -dM -E -x c /dev
+  endif
 
-Yeah, I think I agree with all of these (this patch and the previous
-patch); the preempt ones are subjective but I'd probably default to "no
-special case needed for throttle". Removing the check in
-update_cfs_group() I think is correct, unless we want to freeze
-everything, yeah. (And that seems dangerous in its own way)
+  libs-y += arch/loongarch/lib/
+-libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
+
+  drivers-y              += arch/loongarch/crypto/
+
+diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
+index e3865e92a917..c42500d9fad8 100644
+--- a/arch/loongarch/kernel/head.S
++++ b/arch/loongarch/kernel/head.S
+@@ -17,7 +17,7 @@
+
+  #include "efi-header.S"
+
+-       __HEAD
++       __HEADDATA
+
+  _head:
+         .word   IMAGE_DOS_SIGNATURE     /* "MZ", MS-DOS header */
+diff --git a/arch/loongarch/kernel/vmlinux.lds.S 
+b/arch/loongarch/kernel/vmlinux.lds.S
+index 08ea921cdec1..fc35ef349aba 100644
+--- a/arch/loongarch/kernel/vmlinux.lds.S
++++ b/arch/loongarch/kernel/vmlinux.lds.S
+@@ -38,6 +38,7 @@ SECTIONS
+         . = VMLINUX_LOAD_ADDRESS;
+
+         _text = .;
++       HEAD_DATA_SECTION
+         HEAD_TEXT_SECTION
+
+         . = ALIGN(PECOFF_SEGMENT_ALIGN);
+diff --git a/include/asm-generic/vmlinux.lds.h 
+b/include/asm-generic/vmlinux.lds.h
+index ae2d2359b79e..0f95fb1649f3 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -645,6 +645,14 @@ defined(CONFIG_AUTOFDO_CLANG) || 
+defined(CONFIG_PROPELLER_CLANG)
+                 *(.static_call.text)                                    \
+                 __static_call_text_end = .;
+
++/* Section used for early init (in .S files) */
++#define HEAD_DATA  KEEP(*(.head.data))
++
++#define HEAD_DATA_SECTION                                              \
++       .head.data : AT(ADDR(.head.data) - LOAD_OFFSET) {               \
++               HEAD_DATA                                               \
++       }
++
+  /* Section used for early init (in .S files) */
+  #define HEAD_TEXT  KEEP(*(.head.text))
+
+diff --git a/include/linux/init.h b/include/linux/init.h
+index a60d32d227ee..4e5be09c42cd 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -98,6 +98,7 @@
+
+  /* For assembly routines */
+  #define __HEAD         .section        ".head.text","ax"
++#define __HEADDATA     .section        ".head.data","aw"
+  #define __INIT         .section        ".init.text","ax"
+  #define __FINIT                .previous
+
+diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+index 51367c2bfc21..c664bfb9b15f 100755
+--- a/scripts/link-vmlinux.sh
++++ b/scripts/link-vmlinux.sh
+@@ -69,6 +69,12 @@ vmlinux_link()
+                 libs="${KBUILD_VMLINUX_LIBS}"
+         fi
+
++       if [ "${SRCARCH}" = "loongarch" ]; then
++               if is_enabled CONFIG_EFI_STUB; then
++                       libs="${libs} drivers/firmware/efi/libstub/lib.a"
++               fi
++       fi
++
+         if is_enabled CONFIG_GENERIC_BUILTIN_DTB; then
+                 objs="${objs} .builtin-dtbs.o"
+         fi
+
+Thanks,
+Tiezhu
+
 
