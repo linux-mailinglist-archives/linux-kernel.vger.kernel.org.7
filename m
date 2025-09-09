@@ -1,500 +1,181 @@
-Return-Path: <linux-kernel+bounces-807077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63894B49FC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:13:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA00B49FC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA98A3AEB75
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:13:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1BA04E13E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 03:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D4125D535;
-	Tue,  9 Sep 2025 03:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489AA25A645;
+	Tue,  9 Sep 2025 03:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZkJgk/s"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qodm2IXg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0137D25A645;
-	Tue,  9 Sep 2025 03:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00FB1F130A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 03:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757387579; cv=none; b=iX7DiMC2UAXmbFtV56t1pOG7/SChYhw9yFFbVuXcU1Nr9vT8DIeKUes7q5mynV6jSpMIml20y8wQJlBLbu6lchjod/yuChCXjO8rc2fU2KkKleTjYuaaOG678seCFSew4RBquedbXH7+t3UYoc87srS/MTX6dbpZyZSQWazV8aE=
+	t=1757387611; cv=none; b=hNHNd0aJ/vGh3/7dJL6I/cQej3m7+vfV8Wtog7fVMfaPRMDPeMERTr8O/rY63h/xOWAag52KPGEyIt92MMb10N9TD7wv4s1y/sPp+iSz9mQg78EHnRuOGODpjN+ypbuW3+4eLBE1KWf296ajHvE3sH9+17BJKcJDttXqkZFzbTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757387579; c=relaxed/simple;
-	bh=CurPdoWNDepeCLZSFHWBNAWnJKW3VNY3kWe+KMfJx4Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dkq/KRZAvUaS3s1uzSeaav7+Tj/myHDCt6bzlaMM7bh01HX96Os863rM9zGAXXty10L4DKF7FjRwk2w5DC5YEL8Rom6Xt2bv8TgCouEa4iJmqa5b9TBX92RHsx5kz9dZhDuHwm/PpfQJYYe+7Ge31naqZpvFjNOeNBUu+9M1y2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZkJgk/s; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24cb39fbd90so43262625ad.3;
-        Mon, 08 Sep 2025 20:12:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757387577; x=1757992377; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ozJmTecCZaQaVpHG3vtWBfEpvgoJz+sihTYv5zJXl0c=;
-        b=bZkJgk/sRKVis3gLgpRXl4MyM8E7AgpernSw/RytTotK11LCsCF4i97yg48jp3cUM9
-         2o/QgNfBea33xkf+wEB0keqy+UVsLl9Xwl5NWghZmhVGr3yYIS5+BnghgiEqbwKqkJQ1
-         FeKX5J+JIa66abdFC0UZR+BcHDa7/W8Es279/UN/OfCsyrGUWmLTleeTZhoD5dyqFYpl
-         2Jm2l/5aQdgDFjdbUy2iV7LVrXc8XxQkdQMaQeBAp4DlT5Uqj6c3ldkgIT/84cxVFiBZ
-         po9c5xEG13oc7ncHsqZP1e5FcA3OAjsCkMJNh3O/XRmuoY5ECXxZgSMCrlWwMAXuMwsJ
-         o+Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757387577; x=1757992377;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ozJmTecCZaQaVpHG3vtWBfEpvgoJz+sihTYv5zJXl0c=;
-        b=IiatkGbDiS82oHL6pv5Ox7EV7dtNGvG4aI0x4pvCHJtK5wVGZ1CftoH05ZWlIjY03O
-         VSEM8CmTFdWwhmOKg66bw5OhHW9SbcCWOEjJNeV2bb3Ls3WeflaSWWzt3JqJpLjsHO1T
-         nSQJC1zzDwTg1r4vJ/xsrVGdNfWOKQ7YBvT3hwgQFfe3vubF5zKsy23LosOlFw6Yi0JS
-         9ZZPnj7FxDcrdON7QrOmhnzuvHFViMYDjoFD4PpHDmaKaRWUtyQ7tj33SONGn2fNmKmJ
-         RK19xk+DFsZltye1VJoQDfZ3+P+1WfyRWlIgBT4G137euQR4eD2gbtgCeBGM4y3pspfk
-         72LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8rTZ9zNZxUTwHl92p4UFDUQF4O8taJs7UQIkK1jXLLDX9rwccQSnTpvxgFKWxsd07riCVvcyoE/eumywAuA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuaxtZ1cAXDebEaPf9KE5sdxIPydqMQ22fPiHZFCWjs24hdcnG
-	SIyl+/ejLtj+zn0nL5gUeCzckTp9BAQAr1j21u9w+uo0c+edHlapauG6r+1E8oiaPNhy9Q==
-X-Gm-Gg: ASbGncv9xjt3bG6zeFMK2LuIqjLSxhPvm16u/cCj96WSVWCbLs5txetbY5EWZu1o8o0
-	jjCr3JSn47CAFFpTgFR+FoPTQBee/shWHOPPk1wVAH7YtdFSYsntZQJYj3ASIgHSysYXeMrM/w6
-	2/ECwhsOywlmOOS8ziMJnI3vbMmCDimeHLUY9xsExzm/vZbOmuho1FnYVWIDadu1FZUAU2q1IeO
-	Ve8QP7Serq8uLc16X3E3vL3IrUgK7755Sh7jRnNDA/99nEU4YSfKq5DesBbU2VX4yr2lrPUOLjN
-	a8J9ms1VUPiaVnXqw6yImS0TbAtuPMI/ufijVmOHXTfUizIhXd4giO+bYtDhnBd4P3jLNMcXmWU
-	ZSUybYgaz/cg4idlO8XAeJwnvPvcjKGKGfkZrsgQ=
-X-Google-Smtp-Source: AGHT+IGeZORxj2TuzssvraEhzbXNcBD2iJdBD9DzMPy020ZixZWGl1UBAyFIC/nQ9V+MAdCEn08cbg==
-X-Received: by 2002:a17:902:d4c5:b0:251:a3b3:1580 with SMTP id d9443c01a7336-251a3b32022mr146712775ad.6.1757387576624;
-        Mon, 08 Sep 2025 20:12:56 -0700 (PDT)
-Received: from nyaos.. ([38.207.136.22])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24df9e881casm100456855ad.62.2025.09.08.20.12.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 20:12:56 -0700 (PDT)
-From: ChenMiao <chenmiao.ku@gmail.com>
-To: Linux Kernel <linux-kernel@vger.kernel.org>,
-	Linux OpenRISC <linux-openrisc@vger.kernel.org>,
-	Stafford Horne <shorne@gmail.com>
-Cc: chenmiao <chenmiao.ku@gmail.com>
-Subject: [PATCH 1/1] openrisc: Add the basic static ftrace support
-Date: Tue,  9 Sep 2025 03:12:48 +0000
-Message-ID: <20250909031248.591433-2-chenmiao.ku@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250909031248.591433-1-chenmiao.ku@gmail.com>
-References: <20250909031248.591433-1-chenmiao.ku@gmail.com>
+	s=arc-20240116; t=1757387611; c=relaxed/simple;
+	bh=ottD7mxoZqXzW+xlD2Ywt/8ARzZMWkFYuTnoE++zsW0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VNcZFw9HpAycKtzQdsRJTudSeAiSxgFSsbNltmt5jdKAkEgycaAR0+epjdREwICkxWhM7Oz3zF898AA9pmIMcEtaj+hnUdAuhOlSsUXAsQlmn+cvOfWPQKDdxQjnWA/EdskjdYrdurXkr2RQWP/qpvWlDIIFJY0pFBVmCIqYq2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qodm2IXg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 494F9C4CEF8
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 03:13:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757387611;
+	bh=ottD7mxoZqXzW+xlD2Ywt/8ARzZMWkFYuTnoE++zsW0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qodm2IXge5tpFcZosOrhbmlWVzSn+yt/w9RwAknQ2DYklO2IvpMFfUp7Sdpw+G2Ja
+	 uEg6it377QKC1Dx4+YwnoqwAAGtRjxBLU7bQolKqLvWtovBrYA0hk/UDL87eVY2xfo
+	 xAXtS+8Qi15qpc9ZQSGVwLH21oDl745W5/N93Nw+Jx0VfsEkJWL8SE/gSZQAIg/3DN
+	 HZ/8s+ZHmZn+oqA1SPrdFj2NyTc/HJu5elBvoiCNxc+pg9gKSOw2I7I9/pBVvgGkAR
+	 +rZOHYKeoCIyqBZCmnLUK5QpdkfCu3CvYyl3MuErjngzJ223f9dLwCv6m5gKuN7MhZ
+	 P9khaoEutoIDw==
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aff0775410eso90625066b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 20:13:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVeU+qB2bq9Lq1mNYaGS2DjW+b62Q1rwi4jHZD5FoYnyumnnRc8jxRpPDo26d03evSk+Ye0b40Io7PcBPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuebA+vR9OpESFzBUEpNpBwEqR1A9CZUsv+wW9j8Nwd3HB7tPD
+	x0YwzUwgrayEKfOhOjzLd+2atshyHYJQzKsTQluf3G8+M/WifC/EAEbgQYN5xe5GI7zuQlLmAD1
+	clOpd3azvraAws2k+qSrfBWm3m3sEqYg=
+X-Google-Smtp-Source: AGHT+IHDIzbBeuTrN9C/W9PYYylmD7SBKmmU8PRnhIjfPCAKWGKw7Ya9urIBhs1fvPzVgALZvYxEPgczh7Wn/qD90EA=
+X-Received: by 2002:a17:906:ef04:b0:af9:8739:10ca with SMTP id
+ a640c23a62f3a-b0493282aecmr1472056566b.28.1757387609793; Mon, 08 Sep 2025
+ 20:13:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250909023448.1820120-1-cuitao@kylinos.cn>
+In-Reply-To: <20250909023448.1820120-1-cuitao@kylinos.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 9 Sep 2025 11:13:17 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7ECnVeOgf93SEXLHLc4wvhQMjQXDbGKCR-KXKWf8Vgtg@mail.gmail.com>
+X-Gm-Features: Ac12FXwXwHys7zQAyWM-ogTTO7qfQJvtIZ0LCTS-5oA4JyuHePgMeYjFf0z-gtw
+Message-ID: <CAAhV-H7ECnVeOgf93SEXLHLc4wvhQMjQXDbGKCR-KXKWf8Vgtg@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: Added detection of return values of some steps
+ in the system init process
+To: cuitao <cuitao@kylinos.cn>
+Cc: loongarch@lists.linux.dev, kernel@xen0n.name, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: chenmiao <chenmiao.ku@gmail.com>
+Hi, Cuitao,
 
-This patch contains basic ftrace support for OR1K platform.
-Specifically, function tracer (HAVE_FUNCTION_TRACER), function graph
-tracer (HAVE_FUNCTION_GRAPH_TRACER), and a frame pointer test
-(HAVE_FUNCTION_GRAPH_FP_TEST) are implemented following the
-instructions in Documentation/trace/ftrace-design.txt.
+Don't over-design!
 
-Note that the functions in both ftrace.c and setup.c should not be
-hooked with the compiler's -pg option: to prevent infinite self-
-referencing for the former, and to ignore early setup stuff for the
-latter.
+On Tue, Sep 9, 2025 at 10:35=E2=80=AFAM cuitao <cuitao@kylinos.cn> wrote:
+>
+> Check the return value after early_memremap_ro and kobject_create_and_add=
+,
+> and check whether the memory allocation was successful after kstrdup
+>
+> Signed-off-by: cuitao <cuitao@kylinos.cn>
+> ---
+>  arch/loongarch/kernel/env.c | 30 ++++++++++++++++++++++++++----
+>  1 file changed, 26 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/loongarch/kernel/env.c b/arch/loongarch/kernel/env.c
+> index c0a5dc9aeae2..eaa9e054209c 100644
+> --- a/arch/loongarch/kernel/env.c
+> +++ b/arch/loongarch/kernel/env.c
+> @@ -23,7 +23,13 @@ EXPORT_SYMBOL(loongson_sysconf);
+>  void __init init_environ(void)
+>  {
+>         int efi_boot =3D fw_arg0;
+> -       char *cmdline =3D early_memremap_ro(fw_arg1, COMMAND_LINE_SIZE);
+> +       char *cmdline;
+> +
+> +       cmdline =3D early_memremap_ro(fw_arg1, COMMAND_LINE_SIZE);
+ early_memremap_ro() is "return ((void __iomem *)TO_CACHE(phys_addr))"
+on LoongArch, there is no chance to return NULL.
 
-Currently, dynamic ftrace has not been implemented yet. Directly
-porting the existing dynamic ftrace would require significant effort.
-If we want to minimally support dynamic ftrace, some APIs have changed,
-making it temporarily unsuccessful to port.
+> +       if (!cmdline) {
+> +               pr_err("Failed to map command line memory\n");
+> +               return;
+> +       }
+>
+>         if (efi_boot)
+>                 set_bit(EFI_BOOT, &efi.flags);
+> @@ -46,10 +52,18 @@ static int __init init_cpu_fullname(void)
+>
+>         /* Parsing cpuname from DTS model property */
+>         root =3D of_find_node_by_path("/");
+After 7b937cc243e5b1df8780a0aa743ce800df6c6 ("of: Create of_root if no
+dtb provided by firmware"), there is no chance to have no root.
 
-By enabling the built-in kselftest option and some necessary configs,
-you can refer to the detailed steps provided in the link below for testing.
+> +       if (!root) {
+> +               pr_warn("Failed to find root device node\n");
+> +               return -ENODEV;
+> +       }
+>         ret =3D of_property_read_string(root, "model", &model);
+>         if (ret =3D=3D 0) {
+>                 cpuname =3D kstrdup(model, GFP_KERNEL);
+> -               loongson_sysconf.cpuname =3D strsep(&cpuname, " ");
+> +               if (cpuname) {
+> +                       loongson_sysconf.cpuname =3D strsep(&cpuname, " "=
+);
+> +               } else {
+> +                       pr_warn("Failed to allocate memory for cpuname\n"=
+);
+Have a cpuname in the model string is not mandatory, print a warning for wh=
+at?
 
-Link: https://github.com/ChenMiaoi/GSoC-2025-Final-Report/tree/main/tests/ftrace-test
+> +               }
+>         }
+>         of_node_put(root);
+>
+> @@ -67,14 +81,18 @@ static int __init fdt_cpu_clk_init(void)
+>         struct device_node *np;
+>
+>         np =3D of_get_cpu_node(0, NULL);
+> -       if (!np)
+> +       if (!np) {
+> +               pr_warn("Failed to get CPU node\n");
+The same, this is not mandatory.
 
-Test Environment:
-- Hardware: QEMU emulated OR1K
-- Kernel Version: 6.17.0-rc3-dirty
-- Configs: CONFIG_FTRACE=y,CONFIG_FUNCTION_TRACER=y,
-  CONFIG_RING_BUFFER_BENCHMARK=y,CONFIG_FTRACE_SELFTEST=y,
-  CONFIG_FTRACE_STARTUP_TEST=y,CONFIG_EVENT_TRACE_STARTUP_TEST=y,
-  CONFIG_EVENT_TRACE_TEST_SYSCALLS=y,CONFIG_TIMER_TRACER=y,
-  CONFIG_OSNOISE_TRACER=y,CONFIG_TRACER_MAX_TRACE=y,
-  CONFIG_TRACE_EVENT_INJECT=y
-- Toolchain: or1k-none-linux-musl-gcc 15.1.0
+>                 return -ENODEV;
+> +       }
+>
+>         clk =3D of_clk_get(np, 0);
+>         of_node_put(np);
+>
+> -       if (IS_ERR(clk))
+> +       if (IS_ERR(clk)) {
+> +               pr_warn("Failed to get CPU clock\n");
+The same, this is not mandatory.
 
-Test Result:
-cat trace
-tracer: function
-entries-in-buffer/entries-written: 72039/30671200   #P:1
 
-                          _-----=> irqs-off/BH-disabled
-                         / _----=> need-resched
-                        | / _---=> hardirq/softirq
-                        || / _--=> preempt-depth
-                        ||| / _-=> migrate-disable
-                        |||| /     delay
-     TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTIO
-        | |         |   |||||     |         |
-     bash-142     [000] .....   290.910000: ksys_read <-sys_read
-     bash-142     [000] .....   290.910000: fdget_pos <-ksys_read
-     bash-142     [000] .....   290.910000: vfs_read <-ksys_read
-     bash-142     [000] .....   290.910000: sys_pselect6 <-_syscall_return
-     bash-142     [000] .....   290.910000: get_timespec64 <-sys_pselect6
-     bash-142     [000] .....   290.910000: poll_select_set_timeout <-sys_pselect6
-     bash-142     [000] .....   290.910000: set_user_sigmask <-sys_pselect6
-     bash-142     [000] .....   290.910000: core_sys_select <-sys_pselect6
+Huacai
 
-This change combines techniques from:
-- commit 819e50e25d0c ("arm64: Add ftrace support")
-- commit 10626c32e382 ("riscv/ftrace: Add basic support")
-
-Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
----
- arch/openrisc/Kconfig                   |   1 +
- arch/openrisc/configs/or1ksim_defconfig |   2 +-
- arch/openrisc/configs/virt_defconfig    |   1 +
- arch/openrisc/include/asm/ftrace.h      |  29 ++++
- arch/openrisc/kernel/Makefile           |   7 +
- arch/openrisc/kernel/entry-ftrace.S     | 185 ++++++++++++++++++++++++
- arch/openrisc/kernel/ftrace.c           |  35 +++++
- 7 files changed, 259 insertions(+), 1 deletion(-)
- create mode 100644 arch/openrisc/include/asm/ftrace.h
- create mode 100644 arch/openrisc/kernel/entry-ftrace.S
- create mode 100644 arch/openrisc/kernel/ftrace.c
-
-diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
-index 9156635dd264..a274e95a84cb 100644
---- a/arch/openrisc/Kconfig
-+++ b/arch/openrisc/Kconfig
-@@ -26,6 +26,7 @@ config OPENRISC
- 	select GENERIC_CPU_DEVICES
- 	select HAVE_ARCH_JUMP_LABEL
- 	select HAVE_ARCH_JUMP_LABEL_RELATIVE
-+	select HAVE_FUNCTION_TRACER
- 	select HAVE_PCI
- 	select HAVE_UID16
- 	select HAVE_PAGE_SIZE_8KB
-diff --git a/arch/openrisc/configs/or1ksim_defconfig b/arch/openrisc/configs/or1ksim_defconfig
-index 769705ac24d5..12a2e31e6363 100644
---- a/arch/openrisc/configs/or1ksim_defconfig
-+++ b/arch/openrisc/configs/or1ksim_defconfig
-@@ -7,7 +7,6 @@ CONFIG_EXPERT=y
- # CONFIG_TIMERFD is not set
- # CONFIG_EVENTFD is not set
- # CONFIG_AIO is not set
--# CONFIG_KALLSYMS is not set
- CONFIG_BUILTIN_DTB_NAME="or1ksim"
- CONFIG_HZ_100=y
- CONFIG_JUMP_LABEL=y
-@@ -49,3 +48,4 @@ CONFIG_SERIAL_OF_PLATFORM=y
- # CONFIG_DNOTIFY is not set
- CONFIG_TMPFS=y
- CONFIG_NFS_FS=y
-+CONFIG_STACK_TRACER=y
-diff --git a/arch/openrisc/configs/virt_defconfig b/arch/openrisc/configs/virt_defconfig
-index a93a3e1e4f87..08cfcdd60033 100644
---- a/arch/openrisc/configs/virt_defconfig
-+++ b/arch/openrisc/configs/virt_defconfig
-@@ -106,3 +106,4 @@ CONFIG_UNICODE=y
- CONFIG_PRINTK_TIME=y
- CONFIG_DYNAMIC_DEBUG=y
- CONFIG_FTRACE=y
-+CONFIG_STACK_TRACER=y
-diff --git a/arch/openrisc/include/asm/ftrace.h b/arch/openrisc/include/asm/ftrace.h
-new file mode 100644
-index 000000000000..d7691a351ee7
---- /dev/null
-+++ b/arch/openrisc/include/asm/ftrace.h
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (C) 2017 Andes Technology Corporation
-+ * Copyright (C) 2025 Chen Miao
-+ */
-+
-+#include "linux/export.h"
-+#include <asm/insn-def.h>
-+
-+#ifndef __ASM_OPENRISC_FTRACE_H
-+#define __ASM_OPENRISC_FTRACE_H
-+
-+#if defined(CONFIG_FUNCTION_GRAPH_TRACER) && defined(CONFIG_FRAME_POINTER)
-+#define HAVE_FUNCTION_GRAPH_FP_TEST
-+#endif
-+
-+#define MCOUNT_ADDR ((unsigned long)_mcount)
-+#define MCOUNT_INSN_SIZE OPENRISC_INSN_SIZE
-+
-+#ifndef __ASSEMBLER__
-+extern void _mcount(void);
-+
-+#ifdef CONFIG_FUNCTION_GRAPH_TRACER
-+extern void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr,
-+			   unsigned long frame_pointer);
-+#endif /* ifdef CONFIG_FUNCTION_GRAPH_TRACER */
-+
-+#endif /* __ASSEMBLER__ */
-+
-+#endif /* __ASM_OPENRISC_FTRACE_H */
-diff --git a/arch/openrisc/kernel/Makefile b/arch/openrisc/kernel/Makefile
-index 19e0eb94f2eb..9a4ef72380ed 100644
---- a/arch/openrisc/kernel/Makefile
-+++ b/arch/openrisc/kernel/Makefile
-@@ -3,12 +3,19 @@
- # Makefile for the linux kernel.
- #
- 
-+ifdef CONFIG_FTRACE
-+CFLAGS_REMOVE_ftrace.o = -pg
-+CFLAGS_REMOVE_setup.o = -pg
-+endif
-+
- always-$(KBUILD_BUILTIN)	:= vmlinux.lds
- 
- obj-y	:= head.o setup.o or32_ksyms.o process.o dma.o \
- 	   traps.o time.o irq.o entry.o ptrace.o signal.o \
- 	   sys_call_table.o unwinder.o cacheinfo.o
- 
-+obj-$(CONFIG_FUNCTION_TRACER) += entry-ftrace.o
-+obj-$(CONFIG_FUNCTION_GRAPH_TRACER) += ftrace.o
- obj-$(CONFIG_JUMP_LABEL)	+= jump_label.o
- obj-$(CONFIG_SMP)		+= smp.o sync-timer.o
- obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
-diff --git a/arch/openrisc/kernel/entry-ftrace.S b/arch/openrisc/kernel/entry-ftrace.S
-new file mode 100644
-index 000000000000..27acbbfe40f6
---- /dev/null
-+++ b/arch/openrisc/kernel/entry-ftrace.S
-@@ -0,0 +1,185 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (C) 2017 Andes Technology Corporation
-+ * Copyright (C) 2025 Chen Miao
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/linkage.h>
-+#include <linux/cfi_types.h>
-+#include <asm/ftrace.h>
-+
-+	.text
-+
-+	.macro SAVE_ABI_STATE
-+	l.addi	r1, r1, -8         /* Allocate 8 bytes stack space */
-+	l.sw		0(r1), r2          /* Save frame pointer (r2) */
-+	l.sw		4(r1), r9          /* Save return address (r9) */
-+	l.addi	r2, r1, 8          /* Set new frame pointer */
-+	.endm
-+
-+	.macro SAVE_RET_ABI_STATE
-+	l.addi	r1, r1, -16
-+	l.sw		0(r1), r2
-+	l.sw		4(r1), r9
-+	l.sw		8(r1), r11         /* Save function return value (r11) */
-+	l.sw		12(r1), r3
-+	l.addi	r2, r1, 16
-+	.endm
-+
-+	.macro RESTORE_ABI_STATE
-+	l.lwz		r9, 4(r1)          /* Restore return address (r9) */
-+	l.lwz		r2, 0(r1)          /* Restore frame pointer (r2) */
-+	l.addi	r1, r1, 8          /* Free stack space */
-+	.endm
-+
-+	.macro RESTORE_RET_ABI_STATE
-+	l.lwz		r3, 12(r1)
-+	l.lwz		r11, 8(r1)         /* Restore function return value (r11) */
-+	l.lwz		r9, 4(r1)
-+	l.lwz		r2, 0(r1)
-+	l.addi	r1, r1, 16
-+	.endm
-+
-+	.macro LOAD_FUNCTION reg func
-+	l.movhi	\reg, hi(\func)
-+	l.ori		\reg, \reg, lo(\func)
-+	l.lwz		\reg, 0(\reg)
-+	.endm
-+
-+/*
-+ * void ftrace_stub(void)
-+ * {
-+ *    return;
-+ * }
-+ */
-+SYM_TYPED_FUNC_START(ftrace_stub)
-+	l.jr	r9
-+	 l.nop
-+SYM_FUNC_END(ftrace_stub)
-+
-+#if CONFIG_FUNCTION_GRAPH_TRACER
-+SYM_TYPED_FUNC_START(return_to_handler)
-+	/*
-+	 * void return_to_handler(void)
-+	 * {
-+	 *    save all state needed by the API
-+	 *    void (*original_return_point)(void) = ftrace_return_to_handler();
-+	 *    restore all state needed by the ABI
-+	 *
-+	 *    original_return_point();
-+	 * }
-+	 */
-+#ifdef HAVE_FUNCTION_GRAPH_FP_TEST
-+	l.or		r27, r2, r2
-+#endif
-+	SAVE_RET_ABI_STATE
-+#ifdef HAVE_FUNCTION_GRAPH_FP_TEST
-+	l.or		r3, r27, r27
-+#endif
-+
-+	LOAD_FUNCTION r17 ftrace_return_to_handler
-+	l.jalr	r17
-+	 l.nop
-+
-+	l.or		r19, r0, r11
-+
-+	RESTORE_RET_ABI_STATE
-+
-+	l.jalr	r19
-+	 l.nop
-+SYM_FUNC_END(return_to_handler)
-+#endif
-+
-+SYM_TYPED_FUNC_START(_mcount)
-+	/*
-+	 * void mcount(void)
-+	 * {
-+	 *    if (ftrace_trace_function != ftrace_stub)
-+	 *        goto do_trace;
-+	 *    return;
-+	 */
-+	LOAD_FUNCTION r15, ftrace_stub
-+
-+#if CONFIG_FUNCTION_GRAPH_TRACER
-+	/*
-+	 *    extern void (*ftrace_graph_return)(...);
-+	 *    extern void (*ftrace_graph_entry)(...);
-+	 *    if (ftrace_graph_return != ftrace_stub ||
-+	 *        ftrace_graph_entry != ftrace_graph_entry_stub)
-+	 *        ftrace_graph_caller();
-+	 */
-+	LOAD_FUNCTION r17, ftrace_graph_return
-+	l.sfne	r17, r15
-+	l.bf		do_ftrace_graph_caller
-+	 l.nop
-+
-+	LOAD_FUNCTION r19, ftrace_graph_entry
-+	LOAD_FUNCTION r21, ftrace_graph_entry_stub
-+	l.sfne	r21, r19
-+	l.bf		do_ftrace_graph_caller
-+	 l.nop
-+#endif
-+
-+	LOAD_FUNCTION r29, ftrace_trace_function
-+	l.sfne	r29, r15
-+	l.bf		do_trace
-+	 l.nop
-+
-+	l.jr		r9
-+	 l.nop
-+
-+#if CONFIG_FUNCTION_GRAPH_TRACER
-+	/*
-+	 * void ftrace_graph_caller(void)
-+	 * {
-+	 *    save all state needed by the ABI
-+	 *    unsigned long *frompc = &...;
-+	 *    unsigned long selfpc = <return address> - MCOUNT_INSN_SIZE;
-+	 *    passing frame pointer up is optional -- see below
-+	 *    prepare_ftrace_return(frompc, selfpc, frame_pointer);
-+	 *    restore all state needed by the ABI
-+	 * }
-+	 */
-+do_ftrace_graph_caller:
-+	l.addi	r3, r2, -4
-+	l.or		r4, r1, r1
-+#ifdef HAVE_FUNCTION_GRAPH_FP_TEST
-+	l.lwz		r5, -8(r2)
-+#endif
-+	SAVE_ABI_STATE
-+
-+	/*
-+	 * DO NOT USE LOAD_FUNCTION r23 prepare_ftrace_return instead of bare asm
-+	 * because the prepare_ftrace_return's address already store in the r23,
-+	 * if use l.lwz r23, 0(r23), it will load the first insn of r23.
-+	 */
-+	l.movhi	r23, hi(prepare_ftrace_return)
-+	l.ori		r23, r23, lo(prepare_ftrace_return)
-+	l.jalr	r23
-+	 l.nop
-+
-+	RESTORE_ABI_STATE
-+
-+	l.jr		r9
-+	 l.nop
-+#endif
-+
-+	/*
-+	 * do_trace:
-+	 *    save all need ABI state
-+	 *    ftrace_trace_function(ra_to_caller, ra_to_caller_of_caller);
-+	 *    restore ABI state
-+	 */
-+do_trace:
-+	l.lwz		r4, -4(r2)
-+	l.or		r3, r9, r9
-+
-+	SAVE_ABI_STATE
-+	l.jalr	r29
-+	 l.nop
-+	RESTORE_ABI_STATE
-+
-+	l.jr		r9
-+	 l.nop
-+SYM_FUNC_END(_mcount)
-+EXPORT_SYMBOL(_mcount)
-diff --git a/arch/openrisc/kernel/ftrace.c b/arch/openrisc/kernel/ftrace.c
-new file mode 100644
-index 000000000000..2b92bd580230
---- /dev/null
-+++ b/arch/openrisc/kernel/ftrace.c
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2013 Linaro Limited
-+ * Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
-+ * Copyright (C) 2017 Andes Technology Corporation
-+ * Copyright (C) 2025 Chen Miao
-+ */
-+
-+#include <linux/ftrace.h>
-+
-+#ifdef CONFIG_FUNCTION_GRAPH_TRACER
-+/*
-+ * Most of this function is copied from arm64. However, the main porting work
-+ * referred to RISC-V.
-+ */
-+void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr,
-+			   unsigned long frame_pointer)
-+{
-+	return;
-+	unsigned long return_hooker = (unsigned long)&return_to_handler;
-+	unsigned long old;
-+
-+	if (unlikely(atomic_read(&current->tracing_graph_pause)))
-+		return;
-+
-+	/*
-+	 * We don't suffer access faults, so no extra fault-recovery assembly
-+	 * is needed here.
-+	 */
-+	old = *parent;
-+
-+	if (!function_graph_enter(old, self_addr, frame_pointer, parent))
-+		*parent = return_hooker;
-+}
-+#endif /* CONFIG_FUNCTION_GRAPH_TRACER */
--- 
-2.45.2
-
+>                 return -ENODEV;
+> +       }
+>
+>         cpu_clock_freq =3D clk_get_rate(clk);
+>         clk_put(clk);
+> @@ -109,6 +127,10 @@ static int __init boardinfo_init(void)
+>         struct kobject *loongson_kobj;
+>
+>         loongson_kobj =3D kobject_create_and_add("loongson", firmware_kob=
+j);
+> +       if (!loongson_kobj) {
+> +               pr_warn("loongson: Firmware registration failed.\n");
+> +               return -ENOMEM;
+> +       }
+>
+>         return sysfs_create_file(loongson_kobj, &boardinfo_attr.attr);
+>  }
+> --
+> 2.33.0
+>
 
