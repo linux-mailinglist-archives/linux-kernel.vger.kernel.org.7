@@ -1,148 +1,161 @@
-Return-Path: <linux-kernel+bounces-808530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9879FB500F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:23:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9777EB50116
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6A41C6024E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88BFE1C20776
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67282352065;
-	Tue,  9 Sep 2025 15:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98A5352FC6;
+	Tue,  9 Sep 2025 15:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RDNm9P9G"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbm4IJy3"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484822FD1D8;
-	Tue,  9 Sep 2025 15:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA09352FDE;
+	Tue,  9 Sep 2025 15:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757431425; cv=none; b=QW16m9BnMlIBDZWf0uJZlsF3FarJC/skw4GXMOf3x1p8nyb6p1fdG/BmatCY1iRzvKz5ntEAh45BOwQ/B3+mUHDYmE32HoUhLlWyX28I1TCcBuZLEkd1nB92I3wpHAaljofFj+G07GRcqKb7dT4LPrx2hE7Nav8sPsL6zv7keJQ=
+	t=1757431586; cv=none; b=s+H3YWDBOEEDQlMsYSDFHdP62OggHj2yse8hbj7mqtgWiRttLLfOEBKZN6+t4gNpAsu7tVGDtvlX3dSEEXig1rftkt1Eh4yyJ9jfP+2MBaLVV7rx+lerN94F6hmjnQYlqpPHk3AfduMahuVeqvRT3BF92yjqqU4vVNKTdTQQidc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757431425; c=relaxed/simple;
-	bh=SLlUlILh1hTMb1ZtLm8YDiPPGN4Dwn9bxfXJ89kIE9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eYrzSZboUaNWaPGEIRX5jKeawWDiMCO2uZi5PlvwBNQMcZ5Ff/SUX08kbweGNpm80qnDaSsutVKdk53ZHm0y6TKPcy4tX2jkO1DGj9/5OhW1v69P1LDnNjKN5KrfAfBHtOTMV9jzNmZndAebzlbIZsETUwD5KTXuIXrByTdWN/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RDNm9P9G; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757431424; x=1788967424;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SLlUlILh1hTMb1ZtLm8YDiPPGN4Dwn9bxfXJ89kIE9M=;
-  b=RDNm9P9GC3x0+NB7KxiD5wo1fhjpa8ZgOxLLCEURAl2W0YfsaYMzXOch
-   KiUH62b0LTODJBg3g0HYQX4vw5ZKCGOExZ2riik5tkJLF31uSWrUsRjgh
-   0oXwNiI4VnsxujdE4GpWJXy/XCnqnTJAIgNmacG0mRFk/whwqpRZs+KTv
-   Hz+/tZw6iZAXa8T6pVrbHQIMrYHeCQZS6+P5qnzSvZX/SSLWqF3Qq0tOg
-   1PSFu8YhxT+Hr5ltBFzI5b7ApA5m0YjZ30atOgA+n0GTO+mCTM32GCP4s
-   tkVuZ58RKz+YZv1d5I6IWj9cyzV3g3ukHCeppLnHPFN9OFEIFnAtppPt/
-   Q==;
-X-CSE-ConnectionGUID: as5/7XIkQRaLLr3WQgOKmQ==
-X-CSE-MsgGUID: 1obGUrXoR3OSp7Z4xojI9Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="70415476"
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="70415476"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 08:23:43 -0700
-X-CSE-ConnectionGUID: AOSl9d51QoWpMbTKKW4/dQ==
-X-CSE-MsgGUID: Jg9ft4mRR9mMAIiQfrEFIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="210262320"
-Received: from spandruv-mobl4.amr.corp.intel.com (HELO [10.125.110.144]) ([10.125.110.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 08:23:43 -0700
-Message-ID: <4be5db34-aadb-49e3-9a94-49d39c8bd31d@intel.com>
-Date: Tue, 9 Sep 2025 08:23:42 -0700
+	s=arc-20240116; t=1757431586; c=relaxed/simple;
+	bh=ACvYPivQ1a8I17yD0UYeNvhtUQ6DCC5FT/ARS5wLzjU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZHaz+ZUz3xyMCBpJHzNyGdUwtviJIN3y0XNBpGkTJEZSc5RPfUF2+xX7m0PLndzUBw0Smnkz1KKuTMEw9uvnIqjGmDlFlbAF32HXfnNtDUm4oDR1MgjjoB7mqpdZ94ecYNShw8X/Adc+WNtTwblO3lenUYyvpqYEoF9N7jhW/7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbm4IJy3; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b04ba58a84fso468911266b.2;
+        Tue, 09 Sep 2025 08:26:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757431583; x=1758036383; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ACvYPivQ1a8I17yD0UYeNvhtUQ6DCC5FT/ARS5wLzjU=;
+        b=gbm4IJy3e6UL0LePmt9IYTk6xg7Web5uUChIe2d0VFFTocIbyESexp4E3qo0a5E/2r
+         LYCSsGiYIQS7A62g96pNHMCvKytJ7PVmCJqPbkRUimKHz4IgLBiMoTHEARQz6qJQZqu+
+         8pVAU1C1alnAV5+6Jj7WfW+S/xJDIz2UfojQASTLC9HEubjhS3+dc5ub8n1LIgXLnp4u
+         OFabA9hczR37by4FdGrVjMewGsiUR8SdJEKEJo+EO82vqUp8MR0KjmJLMq6pUYMv4EiE
+         6sOYZ5GMRgMXWaVXVcWj+kXUVozhMqh+77RwUC3dFzud5ce4pgUoufZotUrIHdNtHqXz
+         v75A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757431583; x=1758036383;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ACvYPivQ1a8I17yD0UYeNvhtUQ6DCC5FT/ARS5wLzjU=;
+        b=YJE0IbLiKR+0lQmElVJOuzvJj4IJatTbD3VYBdSLOcg1QVjK9+kDBf/RsiF82OMRPy
+         HK6wrg9BTG1zPtShQjE24LzhS7MkFlsjQSs8AbXXl3VvAF37J50q/H3LL5we/4KOD6ts
+         LbPGzE1tg6GUUu5LaHqF4C/zdVcYxCdaY1xV9yraN6DyOPwuvosLB66bjMDWIwrKcP/R
+         rV//a/kJJdLjltDrFcJ3P6IoCeRkQ1ZnrtU5moFbCQkRsLaFZNZSKSIEGEydzy3o+Bdq
+         41+hCkke4sxywse0agItExB6IWfiTPx/hKQqdTy83nv/5wekLyc1M/A7gTkuXUBvaS64
+         OpZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCS06AqZq/XRc6x5DhiFkgNeZeSLjHUSshB7Nue4mnNcK8rF/oc6jph8OCc9ol9QBMRhE9/BQI5aSm@vger.kernel.org, AJvYcCXUwpadPkSSA5xwMp5wFHP1+a+GyONbeii9L2VjpTYM59SS0D/P+dfadK6aYqm41SbzZdLdgaGYoggnpg==@vger.kernel.org, AJvYcCXrgZ6GZmup4qhv/ZkVZkbkQbPegLnTSK8bjHrHFOJSjR8hYsbfLYik4NsvMqlcaCYkGQGShKdMMwGmZzeg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX9azzr8OHxlJfIOIAzEDzKOwRHPgwTZVD8m5llj1V4sK357Rf
+	y3gROWs/qCe/qxsThOHxBaBOlB/4F6NoDF4PtMCu1Z1qhp3nbG+yg0lgoIa7TCqtsVZiFgJAioO
+	wev9K5QZ7eNWS1yrVaRgZUCKbet+qW3A=
+X-Gm-Gg: ASbGncurmSBkYa4cTMu/e9vJ9vJqWSeXWBqZOGhSI8mQPJ0LCVTozS/XJxjE0Gnrvdl
+	0ELEyhoBNcQoAIlkY5RKLU4Bz26b37BNxDTwHW27TUpVU/2fe+Fkw/JbZT5Lc6A8CcCAFuPWmBe
+	T6ddgBO/5A0HuX+NEszzbpj32dTrqBbuU95lxHmlLfvYCf8L2jEIxHUwHfOCv2bCgQ6p+J5Ky37
+	2RGKy8i6Q==
+X-Google-Smtp-Source: AGHT+IGZg15DrtF72G9h9dyt21xSsowFAKz71cJqtEpccOZC9aRv/EPnYIUJriaKNXq/eDdw8hEDX9pZ4E1DPi0ePuo=
+X-Received: by 2002:a17:907:8687:b0:b04:5200:5ebe with SMTP id
+ a640c23a62f3a-b04b173704cmr1239828766b.54.1757431582431; Tue, 09 Sep 2025
+ 08:26:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 00/12] TDX: Enable Dynamic PAMT
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- pbonzini@redhat.com, seanjc@google.com, dave.hansen@linux.intel.com,
- rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, kai.huang@intel.com,
- yan.y.zhao@intel.com, chao.gao@intel.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, kvm@vger.kernel.org, x86@kernel.org,
- linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
- <2537ad07-6e49-401b-9ffa-63a07740db4a@intel.com>
- <p5tqgxmmwnw2ie6ea2q7b2v7ivbsebyjpucm6csrvl2eghuzw5@bods3pzhyslj>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <p5tqgxmmwnw2ie6ea2q7b2v7ivbsebyjpucm6csrvl2eghuzw5@bods3pzhyslj>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
+ <20250909-gpio-mmio-gpio-conv-part4-v1-13-9f723dc3524a@linaro.org>
+ <aMAP9hAWars0T83r@smile.fi.intel.com> <CAMRc=MeLTGq8Qu2aT43tkt3vaYCSaJPJPLmaUQ1SAyD_OgVr_g@mail.gmail.com>
+ <aMAn4MM_Fs8q8qwj@smile.fi.intel.com> <CAMRc=Mdr4oW2d7XZ90rRr_fKC7WToz72v=_kW-s8=Urd0g8k3g@mail.gmail.com>
+ <aMAve1MbONmKVjjg@smile.fi.intel.com> <aMAv3STeZUdSQ14p@smile.fi.intel.com>
+ <CAMRc=MeA87p0QAzq_3MACQM90MhN0eRccr7u-VzcfyP8b90AaQ@mail.gmail.com>
+ <aMAzZAbNwrRTgFi-@smile.fi.intel.com> <CAMRc=Mfn7atHTqKc9nMTQ19ZserqeNi3skb-QhG3CVdEhmr0gg@mail.gmail.com>
+ <CAHp75VdDAJO3+NPp29GnqL=C5m7tdWbyYvNFax=Dh+dG49YAnA@mail.gmail.com>
+In-Reply-To: <CAHp75VdDAJO3+NPp29GnqL=C5m7tdWbyYvNFax=Dh+dG49YAnA@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 9 Sep 2025 18:25:45 +0300
+X-Gm-Features: Ac12FXzLAWj8jy-m4m9ZPXb_pPgfqX2JAuL57q-duTifXdjD_POsau2MIQgkxqI
+Message-ID: <CAHp75VffDLfvdVhnzZk6V6a9eXq4R0ZBYLUw3S=g0ABqozhWFQ@mail.gmail.com>
+Subject: Re: [PATCH 13/15] gpio: sodaville: use new generic GPIO chip API
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>, Doug Berger <opendmb@gmail.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Yixun Lan <dlan@gentoo.org>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/9/25 04:16, Kiryl Shutsemau wrote:
-> Dynamic PAMT pages are stored into PAMT_2M entry and you cannot have 2M
-> page and have Dynamic 4K entries stored there at the same time.
+On Tue, Sep 9, 2025 at 6:15=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Tue, Sep 9, 2025 at 5:05=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
+> > On Tue, Sep 9, 2025 at 4:02=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@intel.com> wrote:
+> > > On Tue, Sep 09, 2025 at 03:56:41PM +0200, Bartosz Golaszewski wrote:
+> > > > On Tue, Sep 9, 2025 at 3:47=E2=80=AFPM Andy Shevchenko
+> > > > <andriy.shevchenko@intel.com> wrote:
 
-That sounds like a TDX module implementation bug to me.
+...
 
-Worst possible case, the TDX module could double the
-'sysinfo_tdmr->pamt_2m_entry_size' and use the other half for more pointers.
+> > > > > TBH, I think those 6 all made the same mistake, i.e. thinking of =
+the compound
+> > > > > literal as a cast. Which is not!
+> > > >
+> > > > What do you suggest?
+> > >
+> > > Write it in less odd way :-)
+> > >
+> > > foo =3D (struct bar) { ... };
+> >
+> > I don't get your reasoning. typeof() itself is well established in the
+> > kernel and doesn't
+> >
+> > foo =3D (struct bar){ ... };
+> >
+> > evaluate to the same thing as
+> >
+> > foo =3D (typeof(foo)){ ... };
+> >
+> > ? Isn't it still the same compound literal?
+>
+> It makes it so, but typeof() usually is used for casts and not for
+> compound literals. That's (usage typeof() for compound literals) what
+> I am against in this case.
 
-> And it is going to be very wasteful. With huge pages, in most cases, you
-> only need dynamic PAMT for control pages. You will have a lot of memory
-> sitting in stash with zero use.
+FWIW, brief googling showed that nobody (okay, I haven't found yet
+reddit/SO/GCC or LLVM documentation) uses typeof() for compound
+literals. So, this makes me feel right, that the form of typeof() is
+weird and works due to unknown reasons. Any pointers to the
+documentation you read about it?
 
-I think it's going to be hard to convince me without actual data on this
-one.
+> > > > And are we not allowed to use C99 features now anyway?
+> > >
+> > > It's fine, it's not about the C standard number.
 
-Even then, we're talking about 0.4% of system memory. So how much code
-and complexity are we talking about in order to save a *maximum* of 0.4%
-of system memory?
+E.g., https://gcc.gnu.org/onlinedocs/gcc-15.1.0/gcc/Compound-Literals.html
+(8.1.0 is the same).
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
