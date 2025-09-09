@@ -1,82 +1,159 @@
-Return-Path: <linux-kernel+bounces-807323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A55AB4A2F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:07:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E149FB4A2FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E242F16588B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:07:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8959A189A19A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CAE259CB6;
-	Tue,  9 Sep 2025 07:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C46259CB6;
+	Tue,  9 Sep 2025 07:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T16KC8ml"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ukjneAtH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C143304BCC
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 07:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4865522A7E4;
+	Tue,  9 Sep 2025 07:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757401653; cv=none; b=BfNHF7mZEksVboaIx75KFjgsoGhK+TmRWFrfJWWc8wq4zS59wYQZemONYNQRCXAnf/ElN6QZ8pgZQJeMnRhZ8zhnrMmRiJix3Ai1s1JdOqo3QRFi83rGlaSjWhuBotVhA/7kjPG34Jsumry9nKPrJPCtPpBK2zcnisb90XUvua8=
+	t=1757401683; cv=none; b=Q0iXWdC8RWnIqBRIhZs8KmRm8eYSVxlciUCvXU6fo9NJkoOw8jYoWECw79X3711csxj2XMc5TieIasWnBwN+8kjcDNyQQlimtPX7T6yK0/HfcpASqBG/491J29sPfmy+cRAvjz3iQgc2SfY405LIZFV7TGhVQpqJqqHZahQ9oh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757401653; c=relaxed/simple;
-	bh=57+0YQziYqecPHtLajoeNZmbiHa2zO1UhUeucPIkHpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qoUEWD1Uslz22hNgmL1Ct+nr4sRhfbnf64WQlBB72s+/yRt+IpF8giXivpoXsCxZWH6lBA9WwenVzEDZuBg/vtxCW0b2Yw1S0CpiGsEJfMayjMe08XBzKUeQyDutKFb75FM1rNBXCYp5CIvO6+XKhQDhECTddGLf5+Qihp/GGzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T16KC8ml; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 9 Sep 2025 00:07:15 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757401640;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1sCkCgaiG1tA44yfM5L2ANo4vr5hbJ7W7Dhy275RGto=;
-	b=T16KC8mlkc5FGJYRuNmRzyykNMCR64eNY9Ro4AI2qiVGUT9isxX9alIMp3XWcO7yseGGfg
-	BnOhQMDKGXI7yO4Cpi9xkcifSVD8E2ML6BOsNywRtslYQYzYHm9KCO91uDTv60onUenJMg
-	9kPyXnW9BljanSa6ge2DE3kT/RI9Ezw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Jinqian Yang <yangjinqian1@huawei.com>
-Cc: yuzenghui@huawei.com, maz@kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, liuyonglong@huawei.com,
-	wangzhou1@hisilicon.com
-Subject: Re: [PATCH v2 1/3] KVM: arm64: Make ID_AA64MMFR1_EL1.HCX writable
- from userspace
-Message-ID: <aL_SIwQiz3QO1fKe@linux.dev>
-References: <20250909034415.3822478-1-yangjinqian1@huawei.com>
- <20250909034415.3822478-2-yangjinqian1@huawei.com>
+	s=arc-20240116; t=1757401683; c=relaxed/simple;
+	bh=aj2KpD4+D1Pv7BWU9Ys+UXE2/agJe+1Sc8aoXRD/NEM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LoYPMJ6mWkzVZZJ1+vWNI21vpRAB6GG6ZaBPcsn+cLeLW4PtGQGj+b2VTB2emXBZUKhwDQ37ENisJtWFCf6mnWFvbbF2l/7XH9C6US4+4ittZhpu2Ej0pIin+C24qkWaoSBCtCW6guBTw5Fr2hKEVyWm3egzmfoJu1uqr4tFDw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ukjneAtH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A346DC4CEF5;
+	Tue,  9 Sep 2025 07:07:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757401682;
+	bh=aj2KpD4+D1Pv7BWU9Ys+UXE2/agJe+1Sc8aoXRD/NEM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ukjneAtHr4rv2iTB26j2H2YR0uGvEnrtBXWv+MbT9v9c97Au4GKfDNOkrDMPR7BB/
+	 DpWzkccAwuC+MZr30j41B9SbQ+LRevfwFiHU7kNsljDxO0l41mnmnlX+dPdLe5mzB4
+	 eZoMFU7klHV6AYnPJVpPHXzYJu5OK//ldyeyRlTcSpoLLGb1vqS/6zdWD+M8ISwO9O
+	 2h2LnJNBIG8rtH8HHb5ONLNsPBulyEGmOP4TdE9nM/NbMq/rwLvLwVVEVlsP6Q2cvb
+	 /as9EESgprvDcdiSWInY3oKrleU6aRXp5qBFBNqcFn/OHQ8ILbXAGR7CfF7leBLp6A
+	 PsZmkpUi59vcg==
+From: Manivannan Sadhasivam <mani@kernel.org>
+Subject: [PATCH v9 0/4] PCI: dwc: Add ECAM support with iATU configuration
+Date: Tue, 09 Sep 2025 12:37:49 +0530
+Message-Id: <20250909-controller-dwc-ecam-v9-0-7d5b651840dd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909034415.3822478-2-yangjinqian1@huawei.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEXSv2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyLHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwML3eT8vJKi/Jyc1CLdlPJk3dTkxFxdk2TzZGNDY7OUVEMTJaDOgqL
+ UtMwKsKnRsbW1AMwfPRBlAAAA
+X-Change-ID: 20250908-controller-dwc-ecam-4c7c3136de14
+To: Jingoo Han <jingoohan1@gmail.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Jonathan Chocron <jonnyc@amazon.com>
+Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3664; i=mani@kernel.org;
+ h=from:subject:message-id; bh=aj2KpD4+D1Pv7BWU9Ys+UXE2/agJe+1Sc8aoXRD/NEM=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBov9JNJTCYtxcExe9VsEp0xEbF+F+VktLwYnHZX
+ d1peW9ne3mJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaL/STQAKCRBVnxHm/pHO
+ 9QoQB/wIKCYqFWkrm/M1gyG3ecHPFbPz7fMgl0ztBtlwoJEHhKG2g7dT3KHwp3tLFkeWWWZGMSG
+ Kw1Sw44858gPqxmo2GPX5iOfh6lE1O8IUrwxHgcnKqSz20lXogewXUjh/up9Cv5teh1nj6XuW4z
+ QZxQYnUzPdBYymu89UNLrD6QSpY+k1gYxDtcyt2nYWkpeE+mDnQl7WurFJhU2o83LR2jRS/wVC1
+ +tc+H/I+2VCk7mTBt2PUjv4laJWpepIsBz7b1q+agdFt09K6CwlRX0QQ5DlDInuVTtyjhZbPZOb
+ zEab39W8mKQJba5efHV5iAu0QtwuqO4F2rBM4WhFnDd7M+ej
+X-Developer-Key: i=mani@kernel.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-On Tue, Sep 09, 2025 at 11:44:13AM +0800, Jinqian Yang wrote:
-> Allow userspace to downgrade HCX in ID_AA64MMFR1_EL1. Userspace can
-> only change this value from high to low.
-> 
-> Signed-off-by: Jinqian Yang <yangjinqian1@huawei.com>
+The current implementation requires iATU for every configuration
+space access which increases latency & cpu utilization.
 
-I'm not sure our quality of emulation is that great in this case. We
-have no way of trapping the register and it is always stateful. Better
-yet, our RESx infrastructure doesn't account for the presence of
-FEAT_HCX and we happily merge the contents with the host's HCRX.
+Designware databook 5.20a, section 3.10.10.3 says about CFG Shift Feature,
+which shifts/maps the BDF (bits [31:16] of the third header DWORD, which
+would be matched against the Base and Limit addresses) of the incoming
+CfgRd0/CfgWr0 down to bits[27:12]of the translated address.
 
-We should make a reasonable attempt at upholding the architecture before
-allowing userspace to de-feature FEAT_HCX.
+Configuring iATU in config shift mode enables ECAM feature to access the
+config space, which avoids iATU configuration for every config access.
 
-Thanks,
-Oliver
+Add cfg_shft_mode into struct dw_pcie_ob_atu_cfg to enable config shift mode.
+
+As DBI comes under config space, this avoids remapping of DBI space
+separately. Instead, it uses the mapped config space address returned from
+ECAM initialization. Change the order of dw_pcie_get_resources() execution
+to acheive this.
+
+Enable the ECAM feature if the config space size is equal to size required
+to represent number of buses in the bus range property.
+
+ELBI registers are optional registers which are part of dwc. So move
+ELBI resource mapping to dwc. Also change the dtbinding and devicetree
+to make the elbi registers as optional one. Having ELBI as the required
+one is making the ecam feature complicated.
+
+The ELBI registers falls after the DBI space, PARF_SLV_DBI_ELBI register
+gives us the offset from which ELBI starts. so use this offset and cfg
+win to map these regions instead of doing the ioremap again.
+
+On root bus, we have only the root port. Any access other than that
+should not go out of the link and should return all F's. Since the iATU
+is configured for the buses which starts after root bus, block the
+transactions starting from function 1 of the root bus to the end of
+the root bus (i.e from dbi_base + 4kb to dbi_base + 1MB) from going
+outside the link through ECAM blocker through PARF registers.
+
+Increase the configuration size to 256MB as required by the ECAM feature
+and also move config space, DBI, iATU to upper space and use lower space
+entirely for BAR region.
+
+Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
+---
+Changes in v9:
+ - Splitted the ECAM enablement change to avoid bisect hole and excluded pcie-al
+   driver from DWC ECAM since it uses its own ECAM mechanism.
+ - Squashed the patches 2 and 3 as patch 2 won't work without 3.
+
+For the rest of the history, please refer v8 changeset:
+https://lore.kernel.org/linux-pci/20250828-ecam_v4-v8-0-92a30e0fa02d@oss.qualcomm.com
+
+---
+Krishna Chaitanya Chundru (4):
+      PCI: dwc: Add support for ELBI resource mapping
+      PCI: dwc: Prepare the driver for enabling ECAM mechanism using iATU 'CFG Shift Feature'
+      PCI: qcom: Prepare for the DWC ECAM enablement
+      PCI: dwc: Support ECAM mechanism by enabling iATU 'CFG Shift Feature'
+
+ drivers/pci/controller/dwc/Kconfig                |   1 +
+ drivers/pci/controller/dwc/pci-exynos.c           |  62 ++++-----
+ drivers/pci/controller/dwc/pcie-al.c              |   1 +
+ drivers/pci/controller/dwc/pcie-designware-host.c | 148 ++++++++++++++++++++--
+ drivers/pci/controller/dwc/pcie-designware.c      |  10 +-
+ drivers/pci/controller/dwc/pcie-designware.h      |   7 +
+ drivers/pci/controller/dwc/pcie-qcom-ep.c         |  15 +--
+ drivers/pci/controller/dwc/pcie-qcom.c            |  85 +++++++++++--
+ 8 files changed, 262 insertions(+), 67 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250908-controller-dwc-ecam-4c7c3136de14
+
+Best regards,
+-- 
+Manivannan Sadhasivam <mani@kernel.org>
+
 
