@@ -1,135 +1,152 @@
-Return-Path: <linux-kernel+bounces-808455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB53B4FFEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:47:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4860B4FFF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E26D25E2A17
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:47:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C57281779CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8DE2DA75F;
-	Tue,  9 Sep 2025 14:47:45 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F8725487C;
+	Tue,  9 Sep 2025 14:48:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7857621323C;
-	Tue,  9 Sep 2025 14:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1DF2288E3
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757429265; cv=none; b=DWwovnNgOPnVWhX+XSLg13kfUhOC9oYufSF50MB1Zl6n+WIhWgWrOoxi9o30v/18NGV1KmgODsfs4zXPpwOdxArOIIYY33nvMtHuyvFqkKseZl87OHc41kxIIijKim1ccRdghm6PDhoXFU6NYwqCEg0lLWL2KIq1GOFZCpYHD6U=
+	t=1757429298; cv=none; b=GfXcm5YH+ZsTh7AmddxHIvkAiaPjnxshE9xdsBBuOD1qiDbwE2EH53T/JAqWPQ4j7zgJsHu7saPSDCYTDnC1kiWuaYu2DnZeygoka50mHLttVoml9/JIwzwrAoZMMBj++5dvgLs5/yCrfX7P1lF+jr16XU6z7L+74XAsI3vyxfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757429265; c=relaxed/simple;
-	bh=0fGRb6AXdpQw9S8Sy3BAcuqQEjUyKwC9HyYR5gjbJL8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FXEU4z65ZTH32l2GOSnS4blDEn3qD75FuMp/DRX2i8YdRth6+8TTkOnaSA7Fns+mNRmErPecmeQhlSfMRVaaV9vDn/OUKzzGmZIxNa3M2IgYZxxray0u1XBm1Oa+S1IXwuDQjJSmS1dVo7oCGGNFYChJXwH6Ez8IaYopgX3SAdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w003.hihonor.com (unknown [10.68.17.88])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4cLmr15WXTzYl9B5;
-	Tue,  9 Sep 2025 22:47:13 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w003.hihonor.com
- (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Sep
- 2025 22:47:40 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Sep
- 2025 22:47:39 +0800
-From: zhongjinji <zhongjinji@honor.com>
-To: <mhocko@suse.com>
-CC: <akpm@linux-foundation.org>, <feng.han@honor.com>, <lenb@kernel.org>,
-	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-pm@vger.kernel.org>, <liulu.liu@honor.com>,
-	<lorenzo.stoakes@oracle.com>, <pavel@kernel.org>, <rafael@kernel.org>,
-	<rientjes@google.com>, <shakeel.butt@linux.dev>, <surenb@google.com>,
-	<tglx@linutronix.de>, <zhongjinji@honor.com>
-Subject: Re: [PATCH v8 1/3] mm/oom_kill: Introduce thaw_oom_process() for thawing OOM victims
-Date: Tue, 9 Sep 2025 22:47:35 +0800
-Message-ID: <20250909144735.6166-1-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <aMAzkQQ4XAFh9xlm@tiehlicka>
-References: <aMAzkQQ4XAFh9xlm@tiehlicka>
+	s=arc-20240116; t=1757429298; c=relaxed/simple;
+	bh=XzfVWNSC6ZAx32wU0veENsGQOFRetaqmUgN8wfJrWpc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/5sWDPYbK0tEfLxPlKSgRI51EhGUGsrLhppuoOW4QZkKeqii9W62wQtfq3o/X/9UIzBgjiLWdYRSX1+RwJBSyc0MuWPO6cpb3ByftBiLZNEoJJIsBJ2dhkJkx2tIUECvc1LGGaI6dTuYQcyuhkwA2y2tb8Crp6XmPY18GjWmQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uvzdh-00089t-Gk; Tue, 09 Sep 2025 16:48:09 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uvzdf-000REu-2H;
+	Tue, 09 Sep 2025 16:48:07 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 500A546A1A8;
+	Tue, 09 Sep 2025 14:48:07 +0000 (UTC)
+Date: Tue, 9 Sep 2025 16:48:06 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Patrik Flykt <patrik.flykt@linux.intel.com>, 
+	Dong Aisheng <b29396@freescale.com>, Fengguang Wu <fengguang.wu@intel.com>, 
+	Varka Bhadram <varkabhadram@gmail.com>, Wu Bo <wubo.oduw@gmail.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel@pengutronix.de
+Subject: Re: [PATCH 4/7] can: m_can: m_can_chip_config(): bring up interface
+ in correct state
+Message-ID: <20250909-spiked-adamant-raccoon-90a315-mkl@pengutronix.de>
+References: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de>
+ <20250812-m_can-fix-state-handling-v1-4-b739e06c0a3b@pengutronix.de>
+ <DC74S0QJQ0JV.39VRZ1Y5JSEWS@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a018.hihonor.com
- (10.68.17.250)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eda5myf3wxj5q6sz"
+Content-Disposition: inline
+In-Reply-To: <DC74S0QJQ0JV.39VRZ1Y5JSEWS@baylibre.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-> > > On Tue 09-09-25 19:41:31, zhongjinji wrote:
-> > > > > On Tue 09-09-25 17:06:57, zhongjinji wrote:
-> > > > > > OOM killer is a mechanism that selects and kills processes when the system
-> > > > > > runs out of memory to reclaim resources and keep the system stable.
-> > > > > > However, the oom victim cannot terminate on its own when it is frozen,
-> > > > > > because __thaw_task() only thaws one thread of the victim, while
-> > > > > > the other threads remain in the frozen state.
-> > > > > > 
-> > > > > > Since __thaw_task did not fully thaw the OOM victim for self-termination,
-> > > > > > introduce thaw_oom_process() to properly thaw OOM victims.
-> > > > > 
-> > > > > You will need s@thaw_oom_process@thaw_processes@
-> > > > 
-> > > > The reason for using thaw_oom_process is that the TIF_MEMDIE flag of the
-> > > > thawed thread will be set, which means this function can only be used to
-> > > > thaw processes terminated by the OOM killer.
-> > > 
-> > > Just do not set the flag inside the function. I would even say do not
-> > > set TIF_MEMDIE to the rest of the thread group at all. More on that
-> > > below
-> > > 
-> > > > thaw_processes has already been defined in kernel/power/process.c.
-> > > > Would it be better to use thaw_process instead?
-> > > 
-> > > Sorry I meant thaw_process as thaw_processes is handling all the
-> > > processes.
-> > > 
-> > > > I am concerned that others might misunderstand the thaw_process function.
-> > > > thaw_process sets all threads to the TIF_MEMDIE state, so it can only be
-> > > > used to thaw processes killed by the OOM killer.
-> > > 
-> > > And that is the reason why it shouldn't be doing that. It should thaw
-> > > the whole thread group. That's it.
-> > >  
-> > > > If the TIF_MEMDIE flag of a thread is not set, the thread cannot be thawed
-> > > > regardless of the cgroup state.
-> > > 
-> > > Why would that be the case. TIF_MEMDIE should only denote the victim
-> > > should be able to access memory reserves. Why the whole thread group
-> > > needs that? While more threads could be caught in the allocation path
-> > > this is a sort of boost at best. It cannot guarantee any forward
-> > > progress and we have kept marking only the first thread that way without
-> > > any issues.
-> > 
-> > When a process is frozen, all its threads enter __refrigerator() (in kernel/freezer.c). 
-> > When __thaw_task is called, the threads are woken up and check the freezing(current) 
-> > state (in __refrigerator). The freezing check is implemented via freezing_slow_path. 
-> > When TIF_MEMDIE is set for a thread, freezing_slow_path will return false, allowing 
-> > the thread to exit the infinite loop in __refrigerator(), and thus the thread will 
-> > be thawed.
-> > 
-> > The following code can explain how TIF_MEMDIE works in thread thawing.
-> > __refrigerator
-> >   for (;;) {
-> >     freezing = freezing(current)
-> >       freezing_slow_path
-> >         if (test_tsk_thread_flag(p, TIF_MEMDIE))
-> >           return false;
-> >     if (!freezing)
-> >       break;
-> >     schedule();
-> >   }
-> 
-> OK, I see. We could deal with that by checking tsk_is_oom_victim()
-> instead of TIF_MEMDIE
 
-Thank you, this looks great. It seems that oom_reserves_allowed implies
-that tsk_is_oom_victim is not always effective (in page_alloc.c).
-I will check it.
+--eda5myf3wxj5q6sz
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 4/7] can: m_can: m_can_chip_config(): bring up interface
+ in correct state
+MIME-Version: 1.0
+
+On 20.08.2025 11:00:51, Markus Schneider-Pargmann wrote:
+> > diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_ca=
+n.c
+> > index b485d2f3d971..310a907cbb7e 100644
+> > --- a/drivers/net/can/m_can/m_can.c
+> > +++ b/drivers/net/can/m_can/m_can.c
+> > @@ -1607,6 +1607,7 @@ static int m_can_chip_config(struct net_device *d=
+ev)
+> >  static int m_can_start(struct net_device *dev)
+> >  {
+> >  	struct m_can_classdev *cdev =3D netdev_priv(dev);
+> > +	u32 reg_psr;
+> >  	int ret;
+> > =20
+> >  	/* basic m_can configuration */
+> > @@ -1617,7 +1618,8 @@ static int m_can_start(struct net_device *dev)
+> >  	netdev_queue_set_dql_min_limit(netdev_get_tx_queue(cdev->net, 0),
+> >  				       cdev->tx_max_coalesced_frames);
+> > =20
+> > -	cdev->can.state =3D CAN_STATE_ERROR_ACTIVE;
+> > +	reg_psr =3D m_can_read(cdev, M_CAN_PSR);
+> > +	cdev->can.state =3D m_can_can_state_get_by_psr(reg_psr);
+>=20
+> Previous patch makes sense for use here. But how is the state set back
+> in operation after mcan was in an error state? Maybe I missed the path
+> back to CAN_STATE_ERROR_ACTIVE somewhere?
+
+Sorry, I don't exactly get what you mean here.
+
+> Also CAN_STATE_ERROR_ACTIVE is set in resume() as well, should that also
+> read the PSR instead?
+
+see next patch :)
+
+> Ans lastly I don't like the function name, because of the repeated can,
+> maybe something like m_can_error_state_by_psr()?
+
+It's m_can_state_get_by_psr() now.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--eda5myf3wxj5q6sz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjAPiMACgkQDHRl3/mQ
+kZzywAf/WPSc70nEf3JBlQRZpqQaextMDsmozEvirHn9QavcoFM2vbAJFLzpmnFq
+OIcv3o7F78vIm4Odj9FTVZz17lmQa4ObuigCCngm9YWo+jPwODlJbqKllXnGYJrh
+yToNoAsEdp8Yh8U7rrzturX+1o92T69zmZPOW5ESEyJrRGrEmdPUO1ZX+lljMl2r
+wy1uNbW9Z1qFoDGUV7aVJdQh4WffLoPs4ziqR/ZElNM9jWGgv/zhPkvr5Og7X5x2
+nplvFjxfJigip8YA7lFA4uW8swQ7k5Y+fuofchMQMrQPfZq4mgOZQKjJfOr+MGJc
+p8+gTq4TOY97s4bTg9/LthysdECeeg==
+=+ni9
+-----END PGP SIGNATURE-----
+
+--eda5myf3wxj5q6sz--
 
