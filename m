@@ -1,206 +1,132 @@
-Return-Path: <linux-kernel+bounces-808824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2FFAB50527
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:25:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13C3B5052D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 134B04E298A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:25:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C674E8584
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4430D352FFE;
-	Tue,  9 Sep 2025 18:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2F535A2A1;
+	Tue,  9 Sep 2025 18:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gfxLZN+S"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD5F35942;
-	Tue,  9 Sep 2025 18:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="M4xfNQdO"
+Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55387352FF1;
+	Tue,  9 Sep 2025 18:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757442321; cv=none; b=QZ/8W5UI7sJZSBM1Kll0k/dx7v7g+nOpRTFfHBp0TT1htAum2lVHmg+lR2WotSyNqO896AwYV3IDfAPkTa3sObz2o3DJVd/tZYZo7vOso8BMOuPcdJGBnvR7av1OfGFoO7n60OjGu0WZJkdNwAr1imqEmB+Ekp9qum1GwkEt6BU=
+	t=1757442358; cv=none; b=WTCV36kCBHU9A90IAmHY6FJ3EaBoNJKzjEfM7/qVEdIc0UEYnhSscYCLCW917M0UmbII30v+lg6cZBXdZei6NqHxLGe8HqNYAL8ne4MSFNKlFsMiiuAzzFsf4aQZvMaEw/z//4Ucy/tHRaJ2JVZKGOA2pXtEYlf2q86XkTEp/Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757442321; c=relaxed/simple;
-	bh=7W1NU86YgYwuRNRQ3nC/1yP5VbhkioIjALJMcMFiogo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jzwxl2eG2+KlAnj8SHtFZeVhB1MeLUsBFEMoFJfHTZ+ZSQ7hSHYHQaOLpyrIsHIg9AgLESaIA4zAYIxxdDdqwLo3UX5W90V6T0Xs14AL52HMd4h0CEWg74fARSeSBxQLKKzGNQOTgX3B+kelzvqevlR/tBNn4EwexIgq9HQGuVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gfxLZN+S; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 90448211AA25;
-	Tue,  9 Sep 2025 11:25:18 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 90448211AA25
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1757442319;
-	bh=1hoA3dBgdIbJBi75fbtaCF4eMDYRur2MvxM0Dn6pPsc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gfxLZN+SNW4Cmu0AfiGj5kHKKqKuQITwsmZMdDN4rTENRgkNgVuYpuQ6aKlWtch78
-	 I2RNx8DwxNCULh4d5f5Tpb4JRLwBjxUwpSrqlF6ad7kuEgqnilcsQ54LZwxhwUTj5t
-	 AoUew+GHFXTtbjcuzswY63cPvD8m7i3wFbzFRIBM=
-Message-ID: <4c9c60c2-104a-658b-ec37-85518f13198e@linux.microsoft.com>
-Date: Tue, 9 Sep 2025 11:25:18 -0700
+	s=arc-20240116; t=1757442358; c=relaxed/simple;
+	bh=p3Ohv1fZUmfCQVAA0toEUAgo0lV/B2uu7TCDi209wfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xs8nZv1xrq3ACzY0zt8O4vAxccE7c39GaI0shD9HDdSNgygxEInVzpocH6wavqcaCL1A/7u2MDqs5P0+/ShIgsYygO9MwpNnua7WVa7hg7RR+XVAOcB73Cob4PX2i8Z1wopNVIy3+q56kQNP362+8ZKADd0JpUoKJdgUEi7FXIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=M4xfNQdO; arc=none smtp.client-ip=178.154.239.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0f:571a:0:640:23e3:0])
+	by forward502a.mail.yandex.net (Yandex) with ESMTPS id CEEB682051;
+	Tue, 09 Sep 2025 21:25:52 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id mPOnUF6MsW20-zWvmpWr5;
+	Tue, 09 Sep 2025 21:25:51 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1757442352;
+	bh=9ktIWNUwdxv7QOVyYgdiUzdyk5SrWsr9kqXmnB4DsM8=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=M4xfNQdOUn5/YwO7xUZvQeZnPNHLnGlu3+rtXvTNjJD+FxtWpeVSfTXA5rzjgDlJw
+	 PO2R1dSogUF4UuAbu+D8W2p0U82KWP0/9WhdW9y2+nVIro3NjLeqUOLaqsZOdXF02n
+	 oUdY6OiuVJ/5TAy7b2ISMaZmijDGYOV7izErC/8Y=
+Authentication-Results: mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Tue, 9 Sep 2025 21:25:48 +0300
+From: Onur <work@onurozkan.dev>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ daniel@sedlak.dev, dirk.behme@de.bosch.com, felipe_life@live.com,
+ tamird@gmail.com, dakr@kernel.org, tmgross@umich.edu, aliceryhl@google.com,
+ a.hindborg@kernel.org, lossin@kernel.org, bjorn3_gh@protonmail.com,
+ gary@garyguo.net, boqun.feng@gmail.com, alex.gaynor@gmail.com,
+ ojeda@kernel.org
+Subject: Re: [PATCH v2 1/1] rust: refactor to_result to return the original
+ value
+Message-ID: <20250909212548.2e1aff9f@nimda.home>
+In-Reply-To: <20250909204308.74ccedf4@nimda.home>
+References: <20250909170013.16025-1-work@onurozkan.dev>
+	<20250909170013.16025-2-work@onurozkan.dev>
+	<CANiq72=kWpxpo23JUYTqxwpsY=E0uUvCHgotRuepZpL-qUqXqw@mail.gmail.com>
+	<20250909204308.74ccedf4@nimda.home>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v0 5/6] x86/hyperv: Implement hypervisor ram collection
- into vmcore
-Content-Language: en-US
-To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
- hpa@zytor.com, arnd@arndb.de
-References: <20250904021017.1628993-1-mrathor@linux.microsoft.com>
- <20250904021017.1628993-6-mrathor@linux.microsoft.com>
- <aLoUsvfcAqGdV9Qr@skinsburskii.localdomain>
- <69639330-7fa0-0dce-2504-8c5e3c6e9a64@linux.microsoft.com>
- <aMBj_2ad2vGEIy9J@skinsburskii.localdomain>
-From: Mukesh R <mrathor@linux.microsoft.com>
-In-Reply-To: <aMBj_2ad2vGEIy9J@skinsburskii.localdomain>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 9/9/25 10:29, Stanislav Kinsburskii wrote:
-> On Thu, Sep 04, 2025 at 07:38:53PM -0700, Mukesh R wrote:
->> On 9/4/25 15:37, Stanislav Kinsburskii wrote:
->>> On Wed, Sep 03, 2025 at 07:10:16PM -0700, Mukesh Rathor wrote:
->>>> +
->>>> +/*
->>>> + * Common function for all cpus before devirtualization.
->>>> + *
->>>> + * Hypervisor crash: all cpus get here in nmi context.
->>>> + * Linux crash: the panicing cpu gets here at base level, all others in nmi
->>>> + *		context. Note, panicing cpu may not be the bsp.
->>>> + *
->>>> + * The function is not inlined so it will show on the stack. It is named so
->>>> + * because the crash cmd looks for certain well known function names on the
->>>> + * stack before looking into the cpu saved note in the elf section, and
->>>> + * that work is currently incomplete.
->>>> + *
->>>> + * Notes:
->>>> + *  Hypervisor crash:
->>>> + *    - the hypervisor is in a very restrictive mode at this point and any
->>>> + *	vmexit it cannot handle would result in reboot. For example, console
->>>> + *	output from here would result in synic ipi hcall, which would result
->>>> + *	in reboot. So, no mumbo jumbo, just get to kexec as quickly as possible.
->>>> + *
->>>> + *  Devirtualization is supported from the bsp only.
->>>> + */
->>>> +static noinline __noclone void crash_nmi_callback(struct pt_regs *regs)
->>>> +{
->>>> +	struct hv_input_disable_hyp_ex *input;
->>>> +	u64 status;
->>>> +	int msecs = 1000, ccpu = smp_processor_id();
->>>> +
->>>> +	if (ccpu == 0) {
->>>> +		/* crash_save_cpu() will be done in the kexec path */
->>>> +		cpu_emergency_stop_pt();	/* disable performance trace */
->>>> +		atomic_inc(&crash_cpus_wait);
->>>> +	} else {
->>>> +		crash_save_cpu(regs, ccpu);
->>>> +		cpu_emergency_stop_pt();	/* disable performance trace */
->>>> +		atomic_inc(&crash_cpus_wait);
->>>> +		for (;;);			/* cause no vmexits */
->>>> +	}
->>>> +
->>>> +	while (atomic_read(&crash_cpus_wait) < num_online_cpus() && msecs--)
->>>> +		mdelay(1);
->>>> +
->>>> +	stop_nmi();
->>>> +	if (!hv_has_crashed)
->>>> +		hv_notify_prepare_hyp();
->>>> +
->>>> +	if (crashing_cpu == -1)
->>>> +		crashing_cpu = ccpu;		/* crash cmd uses this */
->>>> +
->>>> +	hv_hvcrash_ctxt_save();
->>>> +	hv_mark_tss_not_busy();
->>>> +	hv_crash_fixup_kernpt();
->>>> +
->>>> +	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
->>>> +	memset(input, 0, sizeof(*input));
->>>> +	input->rip = trampoline_pa;	/* PA of hv_crash_asm32 */
->>>> +	input->arg = devirt_cr3arg;	/* PA of trampoline page table L4 */
->>>> +
->>>> +	status = hv_do_hypercall(HVCALL_DISABLE_HYP_EX, input, NULL);
->>>> +	if (!hv_result_success(status)) {
->>>> +		pr_emerg("%s: %s\n", __func__, hv_result_to_string(status));
->>>> +		pr_emerg("Hyper-V: disable hyp failed. kexec not possible\n");
->>>
->>> These prints won't ever be printed to any console as prints in NMI
->>> handler are deffered.
->>
->> It's mostly for debug. There are different config options allowing one
->> to build kernel easily dumping to either uart, led, speaker etc... There
->> are no easy ways to debug. kernel debuggers could trap EMERGENCY printks 
->> also...  
->>
->> Are you 100% sure printk is async even if KERN_EMERG? If yes, I'd like to 
->> propose someday to make it bypass all that for pr_emerg.
->>
-> 
-> Yes, I'm quite sure. Right now this looks like is dead code.
-> 
->>
->>> Also, how are they aligned with the notice in the comment on top of
->>> the function stating that console output would lead to synic ipi call?
->>
->> Comment says "Hypervisor Crash". Please reread the whole block.
->>
-> 
-> The comment states that in case of hypervisor crash "console
-> output from here would result in synic ipi hcall, which would result in
-> reboot".
-> So, why printing anything if it will simply lead to reboot?
-> 
->>>
->>> Resetting the machine from an NMI handler is sloppy.
->>> There could be another NMI, which triggers the panic, leading to this handler.
->>> NMI handlers servicing is batched meanining that not only this handler
->>> won't output anything, but also any other prints from any other handlers
->>> executed before the same lock won't be written out to consoles.
->>>
->>> This introduces silent machine resets for the root partition. Can the
->>> intrusive logic me moved to a tasklet?
->>
->> I really don't think you understand what is going on here. I've tried
->> telling you at least once in the past year, there is no return from the nmi 
->> handler in case of hyp crash, and that this is panic mode, something 
->> really bad has happened! It could be memory corruption, it could be 
->> hw failure...  The hyp goes in emergency mode that just mostly loops, 
->> handling tiny number of hypercalls and msrs for support of dom0/root 
->> like windows that implements custom core collection in raw mode.
->>
-> 
-> I wasn't clear.
-> I wasn't talking about a hypervisor crash. If it is so intrusive, that an
-> attempt to print things to console may lead to reboot, then there should
-> be no prints for this case.
+On Tue, 9 Sep 2025 20:43:08 +0300
+Onur =C3=96zkan <work@onurozkan.dev> wrote:
 
-The line after the print is reboot!! 
-Ah, forget it! heck with the prints... 
+> On Tue, 9 Sep 2025 19:17:56 +0200
+> Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
+>=20
+> > On Tue, Sep 9, 2025 at 7:01=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.=
+dev>
+> > wrote:
+> > >
+> > > This patch only fixes the callers that broke after the changes on
+> > > `to_result`. I haven't included all the improvements made possible
+> > > by the new design since
+> >=20
+> > I think Daniel asked in the previous version what you mean by
+> > "callers that broke" here -- it is a bit confusing, since it seems
+> > this is a fix (and thus needs to be prioritized).
+> >=20
+> > Is that the case?
+> >=20
+> > Thanks!
+> >=20
+> > Cheers,
+> > Miguel
+>=20
+> What I meant is that the change on `to_result` signature introduced a
+> breaking change so I had to update its callers accordingly.
+>=20
+> The fix I mentioned in this version is a different matter.
+>=20
+> Before the rebase, the regulator module had a get_voltage function
+> like this:
+>=20
+> 	let voltage =3D unsafe {...};
+>=20
+> 	if voltage < 0 {
+>     		Err(...)
+> 	} else {
+>     		Ok(Voltage::from_microvolts(voltage))
+> 	}
+>=20
+> But on the regulator/for-next branch, a patch was applied that changed
+> it to:
+>=20
+> 	let voltage =3D unsafe {...};
+> 	to_result(voltage).map(|()| Voltage::from_microvolts(voltage))
+>=20
+> That change was incompatible with v1 (due to the different signature
+> of to_result), which fails to build with my patch. This version (v2)
+> fixes the issue introduced in v1.
+>=20
+> Sorry for the confusion, I hope it's more clear now.
+>=20
+> Thanks,
+> Onur
 
-> But this same logic is also used for Linux crashes, when prints can and
-> should be printed to console.
-
-check the panic function to figure when/where it prints, then check
-where the nmi is called from. that will help.
-
-> Moreover, whe same logic is used for a case when there is no crash
-> kernel loaded, which as I said already leads to silent reboot if panic
-> has happened in NMI handler.
-> 
-> I believe this needs to be fixed.
-> 
-> Stas
-> 
-
+If I am not mistaken the way I prepared v2 is also not correct. I guess
+the fix for regulator/for-next should be a separate patch.
 
