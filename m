@@ -1,84 +1,108 @@
-Return-Path: <linux-kernel+bounces-808177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81572B4FB82
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:42:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924BEB4FB85
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4E385E2FA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:42:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 627A84E70F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA4533473D;
-	Tue,  9 Sep 2025 12:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BB0337687;
+	Tue,  9 Sep 2025 12:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ile70M0m"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fzJ6XM8X"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAFB2C21EF;
-	Tue,  9 Sep 2025 12:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65F933471A;
+	Tue,  9 Sep 2025 12:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757421724; cv=none; b=PWZnS1uqtTdNr6Npb4j8SVl8RppUYQug6oDGgSDGHSs6JOr6COmxPYNEqbjy7K5CQhJVbOyO7PCH1CUVRNOdNFnO0sbNgN3xWwHDsN9/c8ZjOq86o7HpP71oggLkd7n+5hh+sNb/K5sHrWX/UTPgcVuNuF7MHIWhrhkSrViT1vI=
+	t=1757421757; cv=none; b=CW/zqTKAhsL9MfcHmrMbs3cmIRWdBCuG/BsQrgHDShAF2NfGXcLI+DaQdaoXete+kQVWc1ckpQikZ7G7Idv0XzZKi373MQwkXIq7Khgqgxeq6j5g69U5Pexjy9SoBRtR68oDY5I1soeDq9tadIVlyXA8ILcVbDRGFv9mqBF+Atc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757421724; c=relaxed/simple;
-	bh=3MiBzhsdL4dafE7452zyti+ngiEllOLG1c1BBv3fe5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m6jJHRXXw+WTSsim7GtfRHb3Namlaxb5SQqHlSFPB8KhIAQ9OCbgmp1tSPL3ffFSaZdNSyBAxFRmi7eQrfddT1yMmY/UC2rHYU8M9z5V1dB0CW5mJLG8FmQE3xCkRF93tM4pSSDIUFut9lo1PwFqAlpaXhGDwyu3n7FoodrCRjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ile70M0m; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <769fc59b-c248-40ff-87ba-41a18a8c5ec1@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757421709;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eNVwcYcMRQa2515eB4UJUkPtT4gHNKDrzy0mKQWPvAs=;
-	b=Ile70M0mf52PIUGjzBw+nrcoW2N4tqvyUqLur6rY21Y4NOTH/Iz2Vz52p7VCrBUD4g0bYe
-	VC2a6N7CpBMlE1xoKD83Swdt7UAZrB1CtMvS47j1fWCUPGsX0jBawiGgqW7VohisdvDAlf
-	Z6YKv7/K1OeT1hbbjSRaCvAm+GjueZg=
-Date: Tue, 9 Sep 2025 13:41:45 +0100
+	s=arc-20240116; t=1757421757; c=relaxed/simple;
+	bh=9zPf5jL7xmZ67FUpEk8TkOzrdoR4idKVHK+kNa92STc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XizJ9awDbxXXstQVUeXHHhlC9EE1RdZ5RMCnmfIZJh9dbF1Koa4u86vnXCfMmimF/lE37FTvneaXIlwrZ7b8fopqZtCDUVr4hXC//50mJ1yQpkzOh1QfsW06BsSbKvfwbicTuVfS6SiJRcr89yhVvd99ilKznDgAEcLIvhAeYI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fzJ6XM8X; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757421756; x=1788957756;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9zPf5jL7xmZ67FUpEk8TkOzrdoR4idKVHK+kNa92STc=;
+  b=fzJ6XM8X4Fp+9P1tRrcTtT3n+MxAoSx7OD2kJRgk77LYDNF2t/6c1Zbe
+   NOCk+qn5jjdSq+lPENLrm1GysF7isPmQbqcBnQpU7h+Rjc5owzlrKMdmZ
+   sXcvxuG24mSbn5MObB5BoXimCze73Ui954oBjkNeI3cwsMsiOgCNnPCK+
+   SgLBcRHohB8X9Xomu1l1V3a9zLkM1vMQhiKQeG5nKahUKV/TpfX5vWfXa
+   JHEzVbv7V/UWUTEWvvffTPectvaA9oW0lStZaQQY/zH+K0R3EtBguKfkI
+   Jek4YnWKz8miuIWHwVILQt76bQQ2vkwyI8eF5IP2nvU+IdIsagSfQ+huT
+   A==;
+X-CSE-ConnectionGUID: Fo+9NhfRS6KlbbWyRT1jPw==
+X-CSE-MsgGUID: 7T8Jw91LQSiRI8mZgCz2aQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="70399526"
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="70399526"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 05:42:35 -0700
+X-CSE-ConnectionGUID: 2JeZ+tDQRHCHo0k+18CNwg==
+X-CSE-MsgGUID: gVZOWNMWSfaN7JIfJjTJZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="172667391"
+Received: from abityuts-desk.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.244.84])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 05:42:31 -0700
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 0/3] perf/core: Fix address filter match with backing files
+Date: Tue,  9 Sep 2025 15:42:19 +0300
+Message-ID: <20250909124222.222945-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v11 2/5] net: rnpgbe: Add n500/n210 chip support
- with BAR2 mapping
-To: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
- maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
- gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
- Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
- alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
- gustavoars@kernel.org, rdunlap@infradead.org
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20250909120906.1781444-1-dong100@mucse.com>
- <20250909120906.1781444-3-dong100@mucse.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250909120906.1781444-3-dong100@mucse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Content-Transfer-Encoding: 8bit
 
-On 09/09/2025 13:09, Dong Yibo wrote:
-> Add hardware initialization foundation for MUCSE 1Gbe controller,
-> including:
-> 1. Map PCI BAR2 as hardware register base;
-> 2. Bind PCI device to driver private data (struct mucse) and
->     initialize hardware context (struct mucse_hw);
-> 3. Reserve board-specific init framework via rnpgbe_init_hw.
-> 
-> Signed-off-by: Dong Yibo <dong100@mucse.com>
+Hi
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Here are 3 small fixes stemming from a report that Intel PT address filters
+did not work in Docker containers:
+
+  https://lore.kernel.org/linux-perf-users/aBCwoq7w8ohBRQCh@fremen.lan
+
+
+Adrian Hunter (3):
+      perf/core: Fix address filter match with backing files
+      perf/core: Fix MMAP event path names with backing files
+      perf/core: Fix MMAP2 event device with backing files
+
+ kernel/events/core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+
+Regards
+Adrian
 
