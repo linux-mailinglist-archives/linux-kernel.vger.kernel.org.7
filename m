@@ -1,135 +1,216 @@
-Return-Path: <linux-kernel+bounces-807906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A17B4AAF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:54:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE2CB4AAF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31FC31BC5153
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63F543BD600
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A69331CA66;
-	Tue,  9 Sep 2025 10:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809F131C59D;
+	Tue,  9 Sep 2025 10:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BcRes0yl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fEUsxDew"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDC631CA45
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 10:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A953A28AAEB;
+	Tue,  9 Sep 2025 10:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757415261; cv=none; b=RC7BSMsGOdjMXn9tVyvzebLmcQGE6/XQ4ydmnC65enmtpD4jxsTYuJpvHqlAo2PoZcu3LFkTuhRms+uh7CEl1nyTHrqrSMwo5459NOsTL6oa9koc/w22cxgb5dsHA8+a4XlgFEoHhMrCrZboGLlAKuM34wfthg71QUzUxn3wD9s=
+	t=1757415354; cv=none; b=Sxm3B5kadhOJwDt+ahvQAa0aXDiUu9b4GMRF3pdvOh0Em/CHgjG0yoBAk6EAxg5NLNRtw+h8yFYf0wTggXI5rBbU3IBmYstqufikpO8KQtU8MntJTJwse8tyF1hUR9KHTmr1F4SoWhBBHYKt0vYQm0AoV8f6C4cQPc51TzkFtTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757415261; c=relaxed/simple;
-	bh=HM2NMJxMcYEfNGGq/oJ04HVM1ReMtP0pTKiI9lNtLO0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NqOwM3bUUVgeQobuIvGCqkxR6IUd+z5hJsDH2mJU2Lj9p5Jm1jiWNHn4xXggOusGwzRwu+rnz0d+/vNFCUXt2MpGrxy8+mDEYyecbYwczpLbVd7a4NfpQWOof6Zbsli3gy1Pbkzg2mCf4EeaG8hmVZi9QYjO3gxEnxHZBhxPzqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BcRes0yl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757415258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S2SErD9VoCde/QEnC3d+sTghHLcsV0IuUj/e7Q9rJMM=;
-	b=BcRes0yl1sEsk6gNBEk73KaX6oTAXjgZvryAyx11tNKxrmI2X1D7SW3lAFoKBu417BCuvR
-	MNVWg0GFCrS8MSwI3t6XMbDrUtvaFfELazOlesJZJApOEW0qmiXegVr46hvVl3gYLx71zF
-	QEMVko7HYozTMiGRYotpwyt/CYziNHY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-604-VnVLJLHQMAqJzPedlYzqkA-1; Tue, 09 Sep 2025 06:54:15 -0400
-X-MC-Unique: VnVLJLHQMAqJzPedlYzqkA-1
-X-Mimecast-MFC-AGG-ID: VnVLJLHQMAqJzPedlYzqkA_1757415254
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45ddbfd44aaso27547425e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 03:54:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757415254; x=1758020054;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S2SErD9VoCde/QEnC3d+sTghHLcsV0IuUj/e7Q9rJMM=;
-        b=IYAPP0x5Pb4lAhxXhMKEvhxK+Euozr8z5O4QBmjj8MwLhGvhvwD0tuCER5mT625Z/A
-         masu0d7bsC91IXPbePoz6hb95WYcYUBXaorsq0bMoVrfR5dFULbBb1LkCtY+pT0d4i31
-         Fffv7pix2At7zAjasRnYG7KfggHWDfVxv2Q6sVS4Y95xbXlu8dw5koHA80LpcAMNdL2x
-         uBxKuRIxPu0TdnM5T6mGecAcUw2uMow3TycNwMCtN1PLb3Sh5wOAmZDIRQOefNN/eeKv
-         Q/TqWqRdl8uXumIGpeLh4WEIjA8rLambWvurhKhyOMlB+legW+/JnymE/KWvBX49/p09
-         Sl8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Y/mDVUyeRT5y8gyUxx9Rtwat4Q7CSPBeJVFaxhfGh75odZOe0HAvGnhOFnxYUFdtw7hrmXHw5pxEwk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWKRwYwV6kX008vgAgW67IknnS7l+0ZTW6QofN9g3GjYlrylw0
-	dPNclM7bfdUxgAysQwjeLpeGfv+tR5TEy/bC+EQKFCCYzEGrkU7niq8LAfEJ8yhOTrOWCIyGkpx
-	FnmlQ5cWHO5rSEF0QifgySePj4p8dmDmNdpDOOj14Ra5QDg4eMhBCKzkiHvOWBgB++A==
-X-Gm-Gg: ASbGncumMx/xuRo1H5UibpdMTo5PMFF4bvDOAydDa6IkI1EffNfJ/wDs9R9zFfv+HiW
-	bIlkgycXYq9tEZ3S5nawRP3PgkAfd7p2gyPYeLPJdrbVNNVs8WVDCP11gqvPzkiGr/Kh45BwYnm
-	mXvBvs4RA5cZobjroZgL3DvSMjh66NnkohL2EduTACHwH3t7asKJQtjDisi9eTctTYqyCTlGhOP
-	VQJ6qU1zcUrG3cZzMwb1gyM8oE8taGmhfJDHnwr12c73IgIghxvUZMbdYfdqTAs8OulZLb5NKZ5
-	8L2Oc0hiJU1st0YWJvoaZeOJFCWQ6yNfY+0TEQ152rQk8ywpELYeWGA7PDqiG42aU6bJMiRyzYC
-	yzVpEFQUHeTc=
-X-Received: by 2002:a05:6000:40cc:b0:3cd:edee:c7f8 with SMTP id ffacd0b85a97d-3e646257898mr10576943f8f.29.1757415254078;
-        Tue, 09 Sep 2025 03:54:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHaDykjIB4jgP7Ave7E3MW1xUfG9vBdncrD27nwwsMpPlkFkaSDsK+O0VNW6P6FuPNrXfZBbA==
-X-Received: by 2002:a05:6000:40cc:b0:3cd:edee:c7f8 with SMTP id ffacd0b85a97d-3e646257898mr10576920f8f.29.1757415253634;
-        Tue, 09 Sep 2025 03:54:13 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521ca22esm2336206f8f.18.2025.09.09.03.54.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 03:54:13 -0700 (PDT)
-Message-ID: <d918e832-c2ef-4fc8-864f-407bbcf06073@redhat.com>
-Date: Tue, 9 Sep 2025 12:54:11 +0200
+	s=arc-20240116; t=1757415354; c=relaxed/simple;
+	bh=t4xjMCmtXze7NBEqy2auJC+EDzUCTi7i/+obAuFDZtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ipKQp1d4V6KiltAqtZFJ4kLf5dH2k419YwjEa3ZVrwgfQFBnEteqC2ZapCwLQi3AfkerEgayM2rkmagQ/7U/9Fq4aeRw/Gp60Y2nD0FeNIuVt5IXJ0HSlKyT3+Uep64PQA/rfhvl7121QX7HO7MxcvXjGal+Q0i+nQ5G2XvMZBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fEUsxDew; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757415352; x=1788951352;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t4xjMCmtXze7NBEqy2auJC+EDzUCTi7i/+obAuFDZtc=;
+  b=fEUsxDewbuGSKmR83j07gqdb0qz9g8yoF4IkpapI8iA5i8a5QeuxW+E9
+   puraN9cUS9LmqNEBM3UN+Hn+zz/49yYel1Wb1Xnb06q1M01vdbHqfDh8a
+   qJ5Oyp5uT6D0pLyU3dl43taXVZoLasciwaAWcthJaxqcWiPVxG+biasMl
+   z5h8/z6UcEju3la49lh0g3VnkLnHhJy+NlIuqmBo6GyDJR34WRpVlrewe
+   VPWH1ePqD1MYkuBNugW2oiQeV8z0PlXPUOtebP5GtBVLsH19mPF8bgsJm
+   8F5e5JSC6lipyEqrfw3CbQaW5q52AFpJ6BpsFdX3zM13CNj8HtLwpotok
+   A==;
+X-CSE-ConnectionGUID: BMPUfVFJRIqYQfiWE5fZvg==
+X-CSE-MsgGUID: 70ubjb2GRw++4RPvbkmrmw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="59553004"
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="59553004"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 03:55:50 -0700
+X-CSE-ConnectionGUID: I8OU58cNS9GpVw+prZJQBw==
+X-CSE-MsgGUID: KUHdfZS4T2iTfjVtSyQe1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="177405867"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 09 Sep 2025 03:55:47 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uvw0n-0004lT-1g;
+	Tue, 09 Sep 2025 10:55:45 +0000
+Date: Tue, 9 Sep 2025 18:55:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: T Pratham <t-pratham@ti.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	Kamlesh Gurudasani <kamlesh@ti.com>,
+	Manorit Chawdhry <m-chawdhry@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Praneeth Bajjuri <praneeth@ti.com>,
+	Vishal Mahaveer <vishalm@ti.com>,
+	Kavitha Malarvizhi <k-malarvizhi@ti.com>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] crypto: ti: Add support for AES-CCM in DTHEv2
+ driver
+Message-ID: <202509091806.ibkQZYuz-lkp@intel.com>
+References: <20250908140928.2801062-5-t-pratham@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 1/2] rds: ib: Increment i_fastreg_wrs before bailing
- out
-To: =?UTF-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>,
- Allison Henderson <allison.henderson@oracle.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>
-Cc: stable@vger.kernel.org, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
- linux-kernel@vger.kernel.org
-References: <20250903163140.3864215-1-haakon.bugge@oracle.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250903163140.3864215-1-haakon.bugge@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908140928.2801062-5-t-pratham@ti.com>
 
-On 9/3/25 6:31 PM, Håkon Bugge wrote:
-> We need to increment i_fastreg_wrs before we bail out from
-> rds_ib_post_reg_frmr().
+Hi Pratham,
 
-Elaborating a bit more on the `why` could help the review.
+kernel test robot noticed the following build errors:
 
-> 
-> Fixes: 1659185fb4d0 ("RDS: IB: Support Fastreg MR (FRMR) memory registration mode")
-> Fixes: 3a2886cca703 ("net/rds: Keep track of and wait for FRWR segments in use upon shutdown")
-> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+[auto build test ERROR on herbert-cryptodev-2.6/master]
+[also build test ERROR on next-20250909]
+[cannot apply to herbert-crypto-2.6/master linus/master v6.17-rc5]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-[...]
-@@ -178,9 +181,11 @@ static int rds_ib_post_reg_frmr(struct rds_ib_mr *ibmr)
->  	 * being accessed while registration is still pending.
->  	 */
->  	wait_event(frmr->fr_reg_done, !frmr->fr_reg);
-> -
->  out:
-> +	return ret;
->  
-> +out_inc:
-> +	atomic_inc(&ibmr->ic->i_fastreg_wrs);
+url:    https://github.com/intel-lab-lkp/linux/commits/T-Pratham/crypto-ti-Add-support-for-AES-XTS-in-DTHEv2-driver/20250908-221357
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+patch link:    https://lore.kernel.org/r/20250908140928.2801062-5-t-pratham%40ti.com
+patch subject: [PATCH v2 4/4] crypto: ti: Add support for AES-CCM in DTHEv2 driver
+config: xtensa-allyesconfig (https://download.01.org/0day-ci/archive/20250909/202509091806.ibkQZYuz-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250909/202509091806.ibkQZYuz-lkp@intel.com/reproduce)
 
-The existing error path on ib_post_send() is left untouched. I think it
-would be cleaner and less error prone to let it use the above label, too.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509091806.ibkQZYuz-lkp@intel.com/
 
-/P
+All errors (new ones prefixed by >>):
 
+   drivers/crypto/ti/dthev2-aes.c: In function 'dthe_aes_set_ctrl_key':
+>> drivers/crypto/ti/dthev2-aes.c:258:29: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+     258 |                 ctrl_val |= FIELD_PREP(DTHE_AES_CTRL_CCM_L_MASK,
+         |                             ^~~~~~~~~~
+
+
+vim +/FIELD_PREP +258 drivers/crypto/ti/dthev2-aes.c
+
+   186	
+   187	static void dthe_aes_set_ctrl_key(struct dthe_tfm_ctx *ctx,
+   188					  struct dthe_aes_req_ctx *rctx,
+   189					  u32 *iv_in)
+   190	{
+   191		struct dthe_data *dev_data = dthe_get_dev(ctx);
+   192		void __iomem *aes_base_reg = dev_data->regs + DTHE_P_AES_BASE;
+   193		u32 ctrl_val = 0;
+   194	
+   195		writel_relaxed(ctx->key[0], aes_base_reg + DTHE_P_AES_KEY1_0);
+   196		writel_relaxed(ctx->key[1], aes_base_reg + DTHE_P_AES_KEY1_1);
+   197		writel_relaxed(ctx->key[2], aes_base_reg + DTHE_P_AES_KEY1_2);
+   198		writel_relaxed(ctx->key[3], aes_base_reg + DTHE_P_AES_KEY1_3);
+   199	
+   200		if (ctx->keylen > AES_KEYSIZE_128) {
+   201			writel_relaxed(ctx->key[4], aes_base_reg + DTHE_P_AES_KEY1_4);
+   202			writel_relaxed(ctx->key[5], aes_base_reg + DTHE_P_AES_KEY1_5);
+   203		}
+   204		if (ctx->keylen == AES_KEYSIZE_256) {
+   205			writel_relaxed(ctx->key[6], aes_base_reg + DTHE_P_AES_KEY1_6);
+   206			writel_relaxed(ctx->key[7], aes_base_reg + DTHE_P_AES_KEY1_7);
+   207		}
+   208	
+   209		if (ctx->aes_mode == DTHE_AES_XTS) {
+   210			size_t key2_offset = ctx->keylen / sizeof(u32);
+   211	
+   212			writel_relaxed(ctx->key[key2_offset + 0], aes_base_reg + DTHE_P_AES_KEY2_0);
+   213			writel_relaxed(ctx->key[key2_offset + 1], aes_base_reg + DTHE_P_AES_KEY2_1);
+   214			writel_relaxed(ctx->key[key2_offset + 2], aes_base_reg + DTHE_P_AES_KEY2_2);
+   215			writel_relaxed(ctx->key[key2_offset + 3], aes_base_reg + DTHE_P_AES_KEY2_3);
+   216	
+   217			if (ctx->keylen > AES_KEYSIZE_128) {
+   218				writel_relaxed(ctx->key[key2_offset + 4], aes_base_reg + DTHE_P_AES_KEY2_4);
+   219				writel_relaxed(ctx->key[key2_offset + 5], aes_base_reg + DTHE_P_AES_KEY2_5);
+   220			}
+   221			if (ctx->keylen == AES_KEYSIZE_256) {
+   222				writel_relaxed(ctx->key[key2_offset + 6], aes_base_reg + DTHE_P_AES_KEY2_6);
+   223				writel_relaxed(ctx->key[key2_offset + 7], aes_base_reg + DTHE_P_AES_KEY2_7);
+   224			}
+   225		}
+   226	
+   227		if (rctx->enc)
+   228			ctrl_val |= DTHE_AES_CTRL_DIR_ENC;
+   229	
+   230		if (ctx->keylen == AES_KEYSIZE_128)
+   231			ctrl_val |= DTHE_AES_CTRL_KEYSIZE_16B;
+   232		else if (ctx->keylen == AES_KEYSIZE_192)
+   233			ctrl_val |= DTHE_AES_CTRL_KEYSIZE_24B;
+   234		else
+   235			ctrl_val |= DTHE_AES_CTRL_KEYSIZE_32B;
+   236	
+   237		// Write AES mode
+   238		ctrl_val &= DTHE_AES_CTRL_MODE_CLEAR_MASK;
+   239		switch (ctx->aes_mode) {
+   240		case DTHE_AES_ECB:
+   241			ctrl_val |= AES_CTRL_ECB_MASK;
+   242			break;
+   243		case DTHE_AES_CBC:
+   244			ctrl_val |= AES_CTRL_CBC_MASK;
+   245			break;
+   246		case DTHE_AES_CTR:
+   247			ctrl_val |= AES_CTRL_CTR_MASK;
+   248			ctrl_val |= DTHE_AES_CTRL_CTR_WIDTH_128B;
+   249			break;
+   250		case DTHE_AES_XTS:
+   251			ctrl_val |= AES_CTRL_XTS_MASK;
+   252			break;
+   253		case DTHE_AES_GCM:
+   254			ctrl_val |= AES_CTRL_GCM_MASK;
+   255			break;
+   256		case DTHE_AES_CCM:
+   257			ctrl_val |= AES_CTRL_CCM_MASK;
+ > 258			ctrl_val |= FIELD_PREP(DTHE_AES_CTRL_CCM_L_MASK,
+   259					       (iv_in[0] & DTHE_AES_CCM_L_FROM_IV_MASK));
+   260			ctrl_val |= DTHE_AES_CTRL_CCM_M_MAXVAL;
+   261			break;
+   262		}
+   263	
+   264		if (iv_in) {
+   265			ctrl_val |= DTHE_AES_CTRL_SAVE_CTX_SET;
+   266			for (int i = 0; i < AES_IV_WORDS; ++i)
+   267				writel_relaxed(iv_in[i],
+   268					       aes_base_reg + DTHE_P_AES_IV_IN_0 + (DTHE_REG_SIZE * i));
+   269		}
+   270	
+   271		writel_relaxed(ctrl_val, aes_base_reg + DTHE_P_AES_CTRL);
+   272	}
+   273	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
