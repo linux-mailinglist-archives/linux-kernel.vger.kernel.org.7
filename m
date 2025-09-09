@@ -1,161 +1,131 @@
-Return-Path: <linux-kernel+bounces-807762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75169B4A8FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:56:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FBCB4A919
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EADC188F35F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:54:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39A907BEB64
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A972D5A10;
-	Tue,  9 Sep 2025 09:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E506B2D6605;
+	Tue,  9 Sep 2025 09:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zMXqczCx"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hVq5xB0t";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ARzOCHq3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682422D47FE
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 09:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA722D4B66;
+	Tue,  9 Sep 2025 09:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757411523; cv=none; b=h2/BoehplrBzDwazrI7BfFBUzcB2WJG38HCZB3fW7FhtKACfGNHxkohsfl6TeD/XBmCAjXGUNx9WXFhle2+HC9NKhlW+ErHZPlTawHoDyQlp0J2QZ0rRbo8u1ZJfuHBF/mj8sNFsZ19B7TaluqMJ5VM4auc+ha3dPgWl2NbYD/s=
+	t=1757411524; cv=none; b=Q0O1UuUrhm1YRgU+uh0ZqD+tOgZqCu3cLNS1opinyU0fDLG1NSuwxHkwZ2rFExatV5vX9P3eYqFEylAx1CU4YcSZ5ywjusUwjx47LOr30SpEdYGPqvWz6NOUhs9jD9fMMDeqRlBqedF9Z/iFIp6Xigjn/NX9wLqacCyfDuCqvPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757411523; c=relaxed/simple;
-	bh=/nAB+7McT31ZFyxcHGz5vvCMmup4DoT7EB2iLR5nwcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dfzccz/yWtLKcsr8WfWs7/8jdVMLPUcyrWJJ68wpubVXptoBFOXmA1abpq4AI9/ZWeuJZXHbIXgJHtEQ2HcjiUj4ukyw5/Sjo4cOvPvTNO+fEz7pF0nLmTkafL+B2emvq7b7wq7WmhQn4N+EWdz+dKRHbevwjQtLSIVCGBiaqQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zMXqczCx; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45ddddbe31fso18478805e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 02:52:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757411519; x=1758016319; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iFGYAxN7KhpHBrugmRev4scw5IytGj3RswCGCmkqFTw=;
-        b=zMXqczCxMtTTyM5JSRPxXKvJJHpRbuZeX5NYNEkg0JCl15iOEjgThVeSd5OuAjB3Vq
-         mXmjPHO2mO9DIaR12JJcdHIBGhwipemNXWSJkpA63ynCK6Mp3KfWTRv4poUJa3kJZ80p
-         tLqhP0runi0iuyAtc8eq1+QXg16v4Bq6QDc2aZxpEaETMQuBPwR53lVWXzDrSZa0DDQo
-         0vLkVNgJX+m/CpNeDFsJXaBLJu9ZxOaGsm7Ewuo3eAJ45IzOpB46bERd7Ukf1yUyMLcC
-         9DsZaodNEnIOJ+uEVPVKhXv8xlSUK7NlBJgukhTr00T9zuwP7acksLWVJUVnWXnO8ayX
-         2M/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757411519; x=1758016319;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iFGYAxN7KhpHBrugmRev4scw5IytGj3RswCGCmkqFTw=;
-        b=U3i1R4xDHYMOkUs7PioDEAxUwWWzXtGepImlxKSTsUtjaHkwUiC+ZpMbdsXllkh+Me
-         wsnLn9ilcXg3G9WRPhDMA4P2X/9RjpAeDUAjxbgF3t6ZkI8MuPigZxNuclpeklCiuVW3
-         HiZ+kAv8bvUkenv4/Atj1Ij39/JsuiAruBDx5wvo20KJVCZRj8shSTmA/raXrP9HlqRf
-         Ajgu13p/eO/7jYfZ6SfMRxv58MnQEYIyI3Hez56NFYpeyO2R84O0Ug4b1i9iL2PzoThH
-         HqqAxB3qnveNNzvzsAlYb0YGyXewyQYVE9r0w/QgrxGW0Yqoe4KRK0qZ0bB1KyKls4kF
-         hyOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmA971hBA9klo1KB2qkr0HE62MhyZcURgvYPNsqZ3zm99cZcaXnZC75mdCu86Vy6yXnW1S9p3LDR8/4gs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuAO8OgFe7xCqOagHcDjfBiqbhbPXGBv33dRdM0qXPfp6PNOQV
-	4tmgTRAIOKb22u6YMCdMI5nPclgMOImzDEYxBq2gFQXC89YVOQ2t88fGVzKnpwGPl3E=
-X-Gm-Gg: ASbGncvJwxjjs4TJqNYhGSL+xs8eLTl0+rcgUpEGWvuRHGl5CEVPJIKJahQH+Fj2XP8
-	EQ0OWdtGVRzREhjFp3OdAIw8yOOBRIYGnT5uqRqEzAYYQ6dQdWhTbSYpk3d+JcffM7YEbCyay0n
-	ohzJ7Y9NEULvSY8VBviPhpt/D7sn+24sr1De+vzpQxONpRoWpHhHU/OXQcUHgyYbOH1T3LdOpwu
-	TYd1fL71+86jc8nvI5TSc3kXCL0ehV8qvaev1AzLxsfJIX4Nb7L8qD+dsFFI/+izy/CFOQSHZSr
-	SotdAAD1v7MbWenDSK1fMmPp+92UAmpGm2JEoH2ePsEZbIRMglO3LP16ofOga2UhTJw8WqVHgHa
-	FotHmFNiFZdNSqSg7pE38cIfB5qo=
-X-Google-Smtp-Source: AGHT+IESmYHdHard1McUHhkFXGOst3hEfh+qWrJbkAkYlZD2XyacUZJFctXBns93b9p1corUeRwWcg==
-X-Received: by 2002:a05:6000:22c3:b0:3de:78c8:11fc with SMTP id ffacd0b85a97d-3e6497c0668mr9559747f8f.63.1757411518659;
-        Tue, 09 Sep 2025 02:51:58 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75223ea15sm1916533f8f.47.2025.09.09.02.51.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 02:51:58 -0700 (PDT)
-Message-ID: <02cba58e-86f6-48de-a59c-6d31a29258df@linaro.org>
-Date: Tue, 9 Sep 2025 10:51:56 +0100
+	s=arc-20240116; t=1757411524; c=relaxed/simple;
+	bh=7SbH784b9dn3tZhEB6RZBofvTLsnnd9wVrSACaDfTV0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=RA6DlO9YPzcD7sJPwKlj9+SGGCkxiSJb0tY/DBLbWj5RgxvllKWnM6zzTxcd6NFeCX3ualpQ3mx79OTZW8cGJKsSiFI8CKOrAfPzjGYnrQyIHGQeZPkjmF8ylfBmwRNwsMd+gr3FkGaAKki/XzNz/n5tT26g2Hze3loFtJGrWLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hVq5xB0t; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ARzOCHq3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 09 Sep 2025 09:51:59 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757411520;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Imt5LeJHKsdko2mt6/SdLhFWi+KJddkQpHLarvrcEt0=;
+	b=hVq5xB0toZQmV/wurOUCZhaJ3ASzHRvl5Xzd5a9SSMdwlbV50NHQpJo8FQtXirVJgqOun9
+	UD0R9YYGpWBAqInoDzAj9mZHKmF2x3VmB/6bnk2GJ9ZTzEGuc2IzkGxf6hlQoIcbiBblMb
+	yz3uBxE7a9HShAtoOKZCY/TcJ1SrEq4FSU0A2DuywruNsdjDXg+k6hwcxC/fj8dotveItD
+	caEJN+xWfkxkKOg55OHbgcKRJenmuQm4DHkHP5qk6WA5AXeyZBEoj4+xZhqlc6ZRXuWheq
+	fj3ktSevfZ5J/1UNOqUU2R83gekkB9JjA9h3mo1E6IooKGt8bYiPg9n9SY0dPg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757411520;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Imt5LeJHKsdko2mt6/SdLhFWi+KJddkQpHLarvrcEt0=;
+	b=ARzOCHq3bMvOPYUq/0PM7jGO3OU+ay1LhbtczXDdewdJ4a9iOd0tvz5rWniyazhACQH04O
+	/klsSeaBkjEeBHAA==
+From: "tip-bot2 for Dan Carpenter" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/drivers] irqchip/gic-v5: Fix loop in
+ gicv5_its_create_itt_two_level() cleanup path
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Zenghui Yu <yuzenghui@huawei.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250908082745.113718-3-lpieralisi@kernel.org>
+References: <20250908082745.113718-3-lpieralisi@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] perf arm-spe: Improve --itrace options
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>
-Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Mike Leach <mike.leach@linaro.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, George Wort <George.Wort@arm.com>,
- Graham Woodward <Graham.Woodward@arm.com>, Ben Gainey <Ben.Gainey@arm.com>,
- Michael Williams <Michael.Williams@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250908-james-perf-spe-period-v1-0-7ccd805af461@linaro.org>
- <aL9HvOl-n_IM0qiB@x1>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <aL9HvOl-n_IM0qiB@x1>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <175741151932.1920.14765779051949167224.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+The following commit has been merged into the irq/drivers branch of tip:
 
+Commit-ID:     bfcd1fdaae92faa8cae880eb4c3aaaa60c54bf0d
+Gitweb:        https://git.kernel.org/tip/bfcd1fdaae92faa8cae880eb4c3aaaa60c5=
+4bf0d
+Author:        Dan Carpenter <dan.carpenter@linaro.org>
+AuthorDate:    Mon, 08 Sep 2025 10:27:44 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 09 Sep 2025 11:51:09 +02:00
 
-On 08/09/2025 10:16 pm, Arnaldo Carvalho de Melo wrote:
-> On Mon, Sep 08, 2025 at 01:10:17PM +0100, James Clark wrote:
->> Most people also want all the SPE samples (instructions group), not just
->> the flagged samples that are put into the various memory groups. These
->> should have been shown by default but weren't because the default
->> interval type wasn't supported.
->>
->> Also when looking at this, it appears that the downsampling was behaving
->> in a way that would discard samples from one group but not another.
->> Improve that and the warning messages.
->>
->> I don't want to put fixes tags on these because it's only changing the
->> defaults and the behavior, but I don't think the previous behavior was
->> incorrect necessarily, just copied from tracing techs but not ideal for
->> SPE.
-> 
-> I keep trying to find some hardware to have in my homelab to test these
-> series, but till then I depend on people having access to such hardware
-> for acks or better, tested-by, so waiting a bit for those to appear.
-> 
-> - Arnaldo
->   
+irqchip/gic-v5: Fix loop in gicv5_its_create_itt_two_level() cleanup path
 
-Unfortunately I don't have any good homelab suggestions. Radxa Orion O6 
-are the only not-super-expensive boards that have it, but it's not 
-currently working due to some ACPI issue. AWS Gravitons also have it, 
-but you currently need a metal instance so that's expensive too.
+The "i" variable in gicv5_its_create_itt_two_level() needs to be signed
+otherwise it can cause a forever loop in the function's cleanup path.
 
-Leo should be able to have a look at this one until the hardware 
-trickles down further.
+[ lpieralisi: Reworded commit message ]
 
-Thanks
-James
+Fixes: 57d72196dfc8 ("irqchip/gic-v5: Add GICv5 ITS support")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+Link: https://lore.kernel.org/all/20250908082745.113718-3-lpieralisi@kernel.o=
+rg
 
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->> James Clark (4):
->>        perf arm-spe: Show instruction sample types by default
->>        perf arm-spe: Downsample all sample types equally
->>        perf arm-spe: Display --itrace period warnings for all sample types
->>        perf docs: Update SPE doc to include default instructions group
->>
->>   tools/perf/Documentation/perf-arm-spe.txt | 14 +++++---
->>   tools/perf/util/arm-spe.c                 | 53 ++++++++++++++++---------------
->>   2 files changed, 37 insertions(+), 30 deletions(-)
->> ---
->> base-commit: 75a7b9d29215c5aa813b9620f3c56817918f9f8c
->> change-id: 20250908-james-perf-spe-period-4711a566cba4
->>
->> Best regards,
->> -- 
->> James Clark <james.clark@linaro.org>
->>
+---
+ drivers/irqchip/irq-gic-v5-its.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-it=
+s.c
+index 81d813c..dcdf8bc 100644
+--- a/drivers/irqchip/irq-gic-v5-its.c
++++ b/drivers/irqchip/irq-gic-v5-its.c
+@@ -191,9 +191,9 @@ static int gicv5_its_create_itt_two_level(struct gicv5_it=
+s_chip_data *its,
+ 					  unsigned int num_events)
+ {
+ 	unsigned int l1_bits, l2_bits, span, events_per_l2_table;
+-	unsigned int i, complete_tables, final_span, num_ents;
++	unsigned int complete_tables, final_span, num_ents;
+ 	__le64 *itt_l1, *itt_l2, **l2ptrs;
+-	int ret;
++	int i, ret;
+ 	u64 val;
+=20
+ 	ret =3D gicv5_its_l2sz_to_l2_bits(itt_l2sz);
 
