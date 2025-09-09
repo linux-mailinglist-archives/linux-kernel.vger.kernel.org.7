@@ -1,163 +1,135 @@
-Return-Path: <linux-kernel+bounces-808120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 971FCB4F4B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:11:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5200AB4F542
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7D51C20F69
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:11:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04F4D1C26463
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA546334736;
-	Tue,  9 Sep 2025 12:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B5732A828;
+	Tue,  9 Sep 2025 12:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3hQ08YAK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EF54OqdQ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wVrefgRv"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D11C334721;
-	Tue,  9 Sep 2025 12:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9481D32C33E
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757419801; cv=none; b=BeG6joRRhFWy6KMZhNSeunyOP2yKuwa6NhAS+TUb6MA2t7gGnQLiede5wtEmgusIw6QWXZSPGddhq4Pc/MaY0nAef7Nwzsz8SGVSgJTEYM38su6/5U5xmLvVdeyq/sJunP8G8HhwkOiFV0ZSXd5+zPd0y1SHALH5wOoZrx+D8U4=
+	t=1757419832; cv=none; b=dc5AL/SMZXNMTvv8OK57wOrWm1Tta2lzzModR4PE70HAXF0fOveL7QjesJwoR2dP9nwXFZ70W1u63knJ3JK2+kHuWH9dN6Ppna/bKb9VjhWuE/PkWXgWdIZNhTKOIYueZW3+x7wK1o0ignDOKgFn+hvWeXL0MdsFsFRySmQHye4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757419801; c=relaxed/simple;
-	bh=ZpyqmiC40ldkjRGX3fADN1vsciccfqjyLP8hJRTcf+o=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=R6o7znqxjLtA0tvuZ1wUUPvNDcFB80gtYbsx+6TpjlgSSieEN2HqNxN6MxYDb/7I504QsLLBWdaBi9l5q4FdnDa3VtDsljsLFZ1ibDgd2gf7aWxw2J7UM32nz96jENFNyp/FypM9Pe/PMwUCmcnJjuxwSwV+Ag4xAdK+on4t5Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3hQ08YAK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EF54OqdQ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 09 Sep 2025 12:09:56 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757419797;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XKuU83a+Mz+NZ8SuF8Wuapxhsm4UuLYA1FkVBoZH5sM=;
-	b=3hQ08YAKZgVuaSyB3ZETnoTiGj1b3PZrGp6IGS5JIfGfvM9Dx2NCPRDk1NOfwMWSz7kNIq
-	Jj7YWX7FNuU6PoC7jhuIabfFDPAth1OaRUzSKvpDiAzVSgKJ7ZlgfrL5d1tC7qRhlmL5yS
-	ofIJGMCNRXK0m+ntbCyDtdJjugJdyNQ7KYjDBPH6/H02dGDZgY2yfHbfscABDlWSaiyN1I
-	3V45xJ//Hc3nkJQf75k62g/JdqE84nCiaegH+spCWWwEmrLMzyHx6fxjKiqAMiljAOth+w
-	dMHbT3/ebZiAsN40xvAJhvkpOpDxAiQtWYUYGxHTjXM1wlFNKA3p1mtfTIVDRQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757419797;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XKuU83a+Mz+NZ8SuF8Wuapxhsm4UuLYA1FkVBoZH5sM=;
-	b=EF54OqdQ1GLHammiUlG3JwFn4wbtWGKCJgcOKdheWhj3ptgn5xyXz8Xur2C11S017kDpD1
-	43OMnjvHzJb6FHCg==
-From: "tip-bot2 for Xiongfeng Wang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/urgent] hrtimers: Unconditionally update target CPU base
- after offline timer migration
-Cc: Frederic Weisbecker <frederic@kernel.org>,
- Xiongfeng Wang <wangxiongfeng2@huawei.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250805081025.54235-1-wangxiongfeng2@huawei.com>
-References: <20250805081025.54235-1-wangxiongfeng2@huawei.com>
+	s=arc-20240116; t=1757419832; c=relaxed/simple;
+	bh=POQ+KrDMZzWUCA/637U0YCLhbicOSpe5n5QI1q7mb84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eLTUPAak61rqiOE2pJGtqEl8Xj3heuBn9AIBiwTRuG83LWkfht7TrNyZI3rISp/Nd7Wt42aDCoT3F2Nrz9yeAuhnmVxpZMM1Y4IPBx6UrXFCK00r1KHqmHH+jYHOG6MqK9OgiKjR9zbAv82UEOFiRo391XJ7oeMl3vFAlBKovPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wVrefgRv; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45cb6180b60so35288815e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 05:10:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757419829; x=1758024629; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6WMhFn1C+Yx6W2wpeHv5vlp4fLrLgkTAzBM0vbXLgCo=;
+        b=wVrefgRvUT8rRksfSnZreHt72dTzRAG1hwOmA/voNnx3pQRdIyTucOh8F3JgnBEnQR
+         FXuob5wOyqr1ePi37m3pC93uH4FcGa6TfSfXV3AIek0PO+7ocy9KKjuyEVWa883/ouYm
+         uWff02aV5psLyt7EH+k+ka6bP1bUqmzpmIiw6YXuyNO5khxA43k2RnzLHzblNad1k3tq
+         bWoTBwT8Wyyl3he6/Y5MNq+7m+/qjI/N350lgZpDe4uAHD6HELALy/WIAtmWX4K+uqRr
+         dAZy9jT0baNPYftmSq3NqUij6L/OvOVnaQjre8crBwcM2hjrpNZhyAAuwB/M8c8k0/uB
+         uKUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757419829; x=1758024629;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6WMhFn1C+Yx6W2wpeHv5vlp4fLrLgkTAzBM0vbXLgCo=;
+        b=jKHURS9Dj0b3JlgFRE44mk3u9/N1S0yilCm9S+/DPQX6TbnFV6vROHdvdKN5LRN2H7
+         ng80SZTtB3AxJY9QrHSkXcqBxxZYwqLTmMTHmXs0fN1PqRHuFrcDy+F+X/8tXLpBDebk
+         KA0l0CmlPWBIFIxupdJZtDL/NeN2JJnR6UDVd6ta7rdHMqCiKDe3vSiBWe68TVRC2+5G
+         mM/rgSW6c9NnNrub5YXxVomsF1kAlM29Qv6vVTcYgAFo7GAaextdFeZoRemUVEaB5BGa
+         bjN4scrrhmA5+WuBbkIKdo+94dFO+CctL00iDleFg1jZcKayX7Z2RmGbzvF5gmyAm/Ro
+         OtyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFzXGxk3+aLhJibjxZYIDkeRgdu3tQQo08L4aX+HSfWB+Cs9fm72jfczLLZU1xwrkFDj89S+TMEdvWY1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4WuG6WwTbMGXHNl0K+4r0kF4Fl+Eyv1JCPEoujWXq++lCtJoM
+	UCZKvkWzdBS3V9yfqOUHrdOJpMIDESZX7D4E1VEXytFRPn9fpZI9DYmy76BxyRrtrQ==
+X-Gm-Gg: ASbGncs18rSHg99VMcwcatDwbZmzqUEdoY5YX307U71btyVP1+L1nacq+EafeOyHiLP
+	5bM3uMqPcuc8c5aHKK/GHPj0Ezy5Yy5kSrRTFUCUO6SrDUNVSR6ZHnyEmYVnaVlPU7KxNZP1rI2
+	xY5Yn2fpuL/mWyZmeSftF0dRzcVd9s4UKo6zQChMpn2eEp8tXagYVUmh+/XCFL9zCCmmGfzhyQf
+	/jFNWKSbQwHqh7BRQCB7Ln9G+vAX8FRE05+l7ZHPxxlPAARQbLWv21eM8vrW7stDmb1rX9obGNk
+	tTGRYVjkFHwIuw0JyxTqt6ohSdTHJ5+Gtf4m4MO26pIhBbbDJ6FOB/WDSv8JfiRYtyzLpgP+cmE
+	U3F/M7YlHEBwJCvG14QyT5kG1swLasuababzjpxZHKCbMa3hAAbEvDtK/RMzlq+o0/BYs1w==
+X-Google-Smtp-Source: AGHT+IEC0Y6r4tWAAX1HWCsbBwXYE/aB19u5wg0kytabUISZq9YPIfqob+aeZg0wKmLtsUPhiNDWVA==
+X-Received: by 2002:a5d:61c5:0:b0:3e7:17d4:38ad with SMTP id ffacd0b85a97d-3e717d43c09mr7390502f8f.55.1757419828720;
+        Tue, 09 Sep 2025 05:10:28 -0700 (PDT)
+Received: from google.com (211.29.195.35.bc.googleusercontent.com. [35.195.29.211])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd2304e16sm234800165e9.7.2025.09.09.05.10.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 05:10:28 -0700 (PDT)
+Date: Tue, 9 Sep 2025 13:10:25 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+	linux-trace-kernel@vger.kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, jstultz@google.com,
+	qperret@google.com, will@kernel.org, aneesh.kumar@kernel.org,
+	kernel-team@android.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 04/24] tracing: Add reset to trace remotes
+Message-ID: <aMAZMaZJ1_Eny5Ku@google.com>
+References: <20250821081412.1008261-1-vdonnefort@google.com>
+ <20250821081412.1008261-5-vdonnefort@google.com>
+ <20250908193757.079aae76@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175741979600.1920.7864362737734843483.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908193757.079aae76@gandalf.local.home>
 
-The following commit has been merged into the timers/urgent branch of tip:
+On Mon, Sep 08, 2025 at 07:37:57PM -0400, Steven Rostedt wrote:
+> On Thu, 21 Aug 2025 09:13:52 +0100
+> Vincent Donnefort <vdonnefort@google.com> wrote:
+> 
+> > @@ -400,7 +436,9 @@ static int trace_remote_init_tracefs(const char *name, struct trace_remote *remo
+> >  	    !trace_create_file("buffer_size_kb", TRACEFS_MODE_WRITE, remote_d, remote,
+> >  			       &buffer_size_kb_fops) ||
+> >  	    !trace_create_file("trace_pipe", TRACEFS_MODE_READ, remote_d, remote,
+> > -			       &trace_pipe_fops))
+> > +			       &trace_pipe_fops) ||
+> > +	    !trace_create_file("trace", 0200, remote_d, remote,
+> > +			       &trace_fops))
+> >  		goto err;
+> >  
+> >  	percpu_d = tracefs_create_dir("per_cpu", remote_d);
+> > @@ -422,7 +460,9 @@ static int trace_remote_init_tracefs(const char *name, struct trace_remote *remo
+> >  		}
+> >  
+> >  		if (!trace_create_cpu_file("trace_pipe", TRACEFS_MODE_READ, cpu_d, remote, cpu,
+> > -					   &trace_pipe_fops))
+> > +					   &trace_pipe_fops) ||
+> > +		    !trace_create_cpu_file("trace", 0200, cpu_d, remote, cpu,
+> > +					   &trace_fops))
+> >  			goto err;
+> >  	}
+> 
+> I wonder if we should name the file "reset" to not be confusing to users
+> when they cat the file and it doesn't produce any output.
 
-Commit-ID:     e895f8e29119c8c966ea794af9e9100b10becb88
-Gitweb:        https://git.kernel.org/tip/e895f8e29119c8c966ea794af9e9100b10b=
-ecb88
-Author:        Xiongfeng Wang <wangxiongfeng2@huawei.com>
-AuthorDate:    Tue, 05 Aug 2025 16:10:25 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 09 Sep 2025 14:05:16 +02:00
+My idea was to keep the exact same interface as the rest of the tracing. I could
+keep that /trace file for compatibility and add /reset?
 
-hrtimers: Unconditionally update target CPU base after offline timer migration
+"cat trace" could also just returns a text like *** not supported *** ?
 
-When testing softirq based hrtimers on an ARM32 board, with high resolution
-mode and NOHZ inactive, softirq based hrtimers fail to expire after being
-moved away from an offline CPU:
-
-CPU0				CPU1
-				hrtimer_start(..., HRTIMER_MODE_SOFT);
-cpu_down(CPU1)			...
-				hrtimers_cpu_dying()
-				  // Migrate timers to CPU0
-				  smp_call_function_single(CPU0, returgger_next_event);
-  retrigger_next_event()
-    if (!highres && !nohz)
-        return;
-
-As retrigger_next_event() is a NOOP when both high resolution timers and
-NOHZ are inactive CPU0's hrtimer_cpu_base::softirq_expires_next is not
-updated and the migrated softirq timers never expire unless there is a
-softirq based hrtimer queued on CPU0 later.
-
-Fix this by removing the hrtimer_hres_active() and tick_nohz_active() check
-in retrigger_next_event(), which enforces a full update of the CPU base.
-As this is not a fast path the extra cost does not matter.
-
-[ tglx: Massaged change log ]
-
-Fixes: 5c0930ccaad5 ("hrtimers: Push pending hrtimers away from outgoing CPU =
-earlier")
-Co-developed-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250805081025.54235-1-wangxiongfeng2@huawe=
-i.com
----
- kernel/time/hrtimer.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 30899a8..e8c4793 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -787,10 +787,10 @@ static void retrigger_next_event(void *arg)
- 	 * of the next expiring timer is enough. The return from the SMP
- 	 * function call will take care of the reprogramming in case the
- 	 * CPU was in a NOHZ idle sleep.
-+	 *
-+	 * In periodic low resolution mode, the next softirq expiration
-+	 * must also be updated.
- 	 */
--	if (!hrtimer_hres_active(base) && !tick_nohz_active)
--		return;
--
- 	raw_spin_lock(&base->lock);
- 	hrtimer_update_base(base);
- 	if (hrtimer_hres_active(base))
-@@ -2295,11 +2295,6 @@ int hrtimers_cpu_dying(unsigned int dying_cpu)
- 				     &new_base->clock_base[i]);
- 	}
-=20
--	/*
--	 * The migration might have changed the first expiring softirq
--	 * timer on this CPU. Update it.
--	 */
--	__hrtimer_get_next_event(new_base, HRTIMER_ACTIVE_SOFT);
- 	/* Tell the other CPU to retrigger the next event */
- 	smp_call_function_single(ncpu, retrigger_next_event, NULL, 0);
-=20
+> 
+> -- Steve
 
