@@ -1,109 +1,151 @@
-Return-Path: <linux-kernel+bounces-808905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 938B3B50653
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:22:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2743CB50656
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3587854272A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:22:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEF4D169194
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B50350D79;
-	Tue,  9 Sep 2025 19:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9484B3570CB;
+	Tue,  9 Sep 2025 19:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sjzUsVGa"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdJ79Am2"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDC21DFE12
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 19:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8E62DE715;
+	Tue,  9 Sep 2025 19:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757445714; cv=none; b=ServkpTQsmPlFLgvkmEPC6wEk1IyaxPGHpPMkVEoT0CnuUX4FEXw9+CJqa2ZdzhSoqEocH/5JfAjeaqHsHPE02WqI8xoVZERaIYa6JcsvWBZnXHvcsRNQiuAEYQsRuidaP1v2VDlcpZXEgg0D3YE+dRYjx7gy9loiTlt+vRa7dE=
+	t=1757445730; cv=none; b=IPxhFMbDBzJNi1SR5aBiuco5Id/uXidBRV8Oit6ny2HRysngE5AL/sQjSjr+3ErOUcSHBn+HU+v/zunpKwE5JJxCCkUhsndvOgRXkLMtv1UBcR1mbex4VXWk8xnHes/CR3JEvMuOyuF35FuYmPMXJ27VUoQSwcHJYdfIIATCyjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757445714; c=relaxed/simple;
-	bh=fjVbGT5+mmdI08QzcGTzfyG2j4oQQ62dkfCBLhBCX20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uztG1f2uQhfWpoEt4ogAbt7el3V/GIY3uS9+bSHWudZ63x/7NSLCksuMPyFzmMjBOGsavUMvsLedW7pF/17KaDPzOH9S02CM+Ryp7cSs49LC/UYRwVA7xVv3dzyotL28A1YaVEVCpK72msFQdM8IcbCcOmG4hnweifIOAdVvFBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sjzUsVGa; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 9 Sep 2025 12:21:21 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757445700;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EhDQjk6n0b5bB/spcc+8InBhRg7fkfv65TLASLNaXE4=;
-	b=sjzUsVGa+0Di1xSEmIyz3313s89ajDdufhXMbunOadULSjuGrqlV1+dUTeKDCX0cEMdtg3
-	mq2f5ijUy/Y1oS9jDCXjYtvQ2whw5Zh6dd+VIEnk5BPwyjuhfN7VxxPrY8YCBpOBjpNU8S
-	TR20eItydveGrPGMF/97uWA74Xnm5tE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Lei Liu <liulei.rjpt@vivo.com>
-Cc: Michal Hocko <mhocko@suse.com>, David Rientjes <rientjes@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
-	Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Chen Yu <yu.c.chen@intel.com>, Hao Jia <jiahao1@lixiang.com>, 
-	"Kirill A. Shutemov" <kas@kernel.org>, Usama Arif <usamaarif642@gmail.com>, 
-	Oleg Nesterov <oleg@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Fushuai Wang <wangfushuai@baidu.com>, "open list:MEMORY MANAGEMENT - OOM KILLER" <linux-mm@kvack.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" <cgroups@vger.kernel.org>
-Subject: Re: [PATCH v0 0/2] mm: swap: Gather swap entries and batch async
- release
-Message-ID: <fszpgct7ywqy6qq3qnjflol3theovmgnau2wgdqqdxin4q7ezm@zumgw533hxon>
-References: <20250909065349.574894-1-liulei.rjpt@vivo.com>
+	s=arc-20240116; t=1757445730; c=relaxed/simple;
+	bh=Q5QpLMKuG98x6OxTFrFdeeark0xreCQr1lQs5ENXKeU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UKG2BtU5JyuBze0pYv0MIyHC2lGtZhOWX2lOWLhq1AmpY/HUhzTLye/eiQyY+66lKU7S1OA4dhKnGYhLExjGPMq5TWDNKmHxOHFdIPK5/bPElUSEXkFoOzFZq1bGqa+NupD7D8RVtcPHs+I0uLVfQFsm31ZT8rlHa7k03YhL0a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VdJ79Am2; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-625e1ef08eeso6690407a12.1;
+        Tue, 09 Sep 2025 12:22:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757445726; x=1758050526; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yflQyxEc1T9Y3WrQFfO9sDGa6EOwcXTzNdDwj6cExFk=;
+        b=VdJ79Am2mTjwUQ62wOqQDion5rIgyb7Ee172A+BUYKpygAUc9hEXNEN/NYvrK24Zj5
+         qB8z5sJ0pO8lP1QkxS4CShZH/eBTwkB/QV6Utn5KIbg/+nxM/XSvqTfC8HmwDdT50ePa
+         LJPJWvwqFlYadWs69i88QWSdNhJ+H9ebBEd8CMneY/MNr2Qywknv7QN9HcPksz4JLiij
+         10oszfSz64icF+7Zna43Xeyy5tAvJivxLHUAARK8AolKGEfSK7BVPRpi4YQDba3lOZxu
+         hTmm1Uug/2aejJQt/yVNY0fsnGzZzTl2Tn508dN4Ilq7XIbY2ec8eCsnINof1aHgPa7G
+         0lUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757445726; x=1758050526;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yflQyxEc1T9Y3WrQFfO9sDGa6EOwcXTzNdDwj6cExFk=;
+        b=JKBNKzEffujaCyE3Pf37LCGAram8XJgN18xsGoy57F/C3VUoDkU4cJyK4EGNuUAfCu
+         LpC/FgQ8grBf/uZwVLchK6FGOgE2JKv/EKJL1slgmGZdXCOd4/co9xtupru9lU6aTlE7
+         Rsbnw04uMWvx/ez9rrlEnSwlhPN9WPrAeR7j9Xox2ieu+E6d6WuSQRMru6t7FoPCLM5M
+         h2bgPQxju4sXPnf30D8QNxEdLqXAJroVH5A9dyfcK1EDEthuNvO2oH6T+uvJJN86NV23
+         dlkU1a+zmJEZBdflzzgyguRpEX6hdtZCu6is8PSJ36+5TWfjK1gHV2Bbu8mejECTc79i
+         Pnfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVe4N4nVQxH6jIG2HRw7ZzhqZ5ZF7jHnNowksIPe7m8/O4Lv86dNn0ZTLp2xeV7o+RZddCifdLpE8C9@vger.kernel.org, AJvYcCXa73wOxlbHupP7Xf+gSSIBlWjCbQrodduYXfjWukX7pCRnrKbWyQMiyznIhJaIYMpX/3zcf2kApxOY6Tl4xw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfbPO1K/eO0OLqK+xbgik8NHEDQ37zPvuqPfXY/VMew5g5aW+E
+	VArTuLRohuDPMx4pWDEzprqZlSBa+tiiu3J4z48HnX5VBo0iSGPlForUuHhG5Q==
+X-Gm-Gg: ASbGncuXK2BBcrSrkGfy5xiUdF+POyVxcwVWxBSYqQogpcm3sWaaduWAT3PRIARZsgA
+	cOKck8kUIr+3eC+PWwB1JwqYLcizHHRrOdtNXL7T/Fjhh2EyCOeggxLp5V5ncHl4PUQcka21V/a
+	ydNhPmlI/YKBTBuABaumMyvlyKkvI//k0dDeJHko4e7d/5IJugON7l5YKDhs0DOlwOSDCLkF1eq
+	jHN2TBCA6IVg1Duy+XtNrfggw36t9M+dZQx+08q9EMUCXOhdqyHiEkJ5IjgVfw70QCKaz2vbJ15
+	DeY1u9TPTj5b32PLLFBN0Cnl/w6RKjWkWGlLxjBhhYu9sCku5YZahgL6VhlANjJrhRmL+WA/Z/+
+	PcbQ68cI8rvrYyVqQUCT3BKErn4ToUwI=
+X-Google-Smtp-Source: AGHT+IG5KSxnJMO5PMScPv+jlBGBlCaMFuTpg0hk96B5oJG6y0HgEUUQvyR+vdcGyqyROm/RzB535g==
+X-Received: by 2002:a05:6402:518f:b0:628:a4fb:3b44 with SMTP id 4fb4d7f45d1cf-628a4fb3d21mr7307419a12.1.1757445726428;
+        Tue, 09 Sep 2025 12:22:06 -0700 (PDT)
+Received: from [127.0.1.1] ([46.53.240.27])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-62c01ae5f75sm1847142a12.46.2025.09.09.12.22.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 12:22:06 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v2 0/3] starqltechn: fix max77705 device irqs
+Date: Tue, 09 Sep 2025 22:22:02 +0300
+Message-Id: <20250909-starqltechn-correct_max77705_nodes-v2-0-e4174d374074@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909065349.574894-1-liulei.rjpt@vivo.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFp+wGgC/42Q0W6EIBBFf8XwXFrBKupT/6PZEBZGJRF0BzQ2G
+ /+9rJvaPvbxTu7cM3fuJABaCKTN7gRhtcFOPgn+khE9KN8DtSZpwnNe5nWR0xAV3sYIevBUT4i
+ go3RqE0LkpfSTgUAZq7jR3DQdCJKCZoTObgfk8/LUCLclseJz+ItK5B/QGSpEIyqZLNgDSutmn
+ FZw4COFontn4topVVbtysnfo88kdibRdIW0PgLiMkeZnGa0vqd5XTcaoGqKyrRr8Yi5qgCpnnM
+ 2tlkyLRv1sMU3p0JaJ48Wgw1xwq/jcys7apzEfzxpZTSnZcdV1xhWGGU+eqfs+Jqg5LLv+zekr
+ UeGmgEAAA==
+To: Chanwoo Choi <cw00.choi@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757445725; l=1901;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=Q5QpLMKuG98x6OxTFrFdeeark0xreCQr1lQs5ENXKeU=;
+ b=rVnp+GNhFskyI4xHF4FLDqIOjL+OuR20RhqMEEx/dMMBw//I0YGMw+YMf2Z+PghCDws0mnFLI
+ 69/y0QhSuSlALZqq32Fz0r+eFL2ycEKLoHqeM68e2igA/j48ykRU3u3
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-On Tue, Sep 09, 2025 at 02:53:39PM +0800, Lei Liu wrote:
-> 1. Problem Scenario
-> On systems with ZRAM and swap enabled, simultaneous process exits create
-> contention. The primary bottleneck occurs during swap entry release
-> operations, causing exiting processes to monopolize CPU resources. This
-> leads to scheduling delays for high-priority processes.
-> 
-> 2. Android Use Case
-> During camera launch, LMKD terminates background processes to free memory.
+For max77705 charger and fuelgauge subdevice, use max77705 interrupt
+controller.
 
-How does LMKD trigger the kills? SIGKILL or cgroup.kill?
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v2:
+- run dt_binding_check, dtbs_check
+- make interrupt-cells 1
+- add patch to delete unused address-cells and size-cells
+- add binding patch for interrupt-cells
+- Link to v1: https://lore.kernel.org/r/20250831-starqltechn-correct_max77705_nodes-v1-0-5f2af9d13dad@gmail.com
 
-> Exiting processes compete for CPU cycles, delaying the camera preview
-> thread and causing visible stuttering - directly impacting user
-> experience.
+---
+Dzmitry Sankouski (3):
+      dt-bindings: max77705: add interrupt-controller node
+      arm64: dts: qcom: sdm845-starqltechn: remove (address|size)-cells
+      arch: arm64: dts: qcom: sdm845-starqltechn: fix max77705 interrupts
 
-Since the exit/kill is due to low memory situation, punting the memory
-freeing to a low priority async mechanism will help in improving user
-experience. Most probably the application (camera preview here) will get
-into global reclaim and will compete for CPU with the async memory
-freeing.
+ Documentation/devicetree/bindings/mfd/maxim,max77705.yaml | 14 ++++++++++++++
+ arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts   | 14 +++++++-------
+ 2 files changed, 21 insertions(+), 7 deletions(-)
+---
+base-commit: be5d4872e528796df9d7425f2bd9b3893eb3a42c
+change-id: 20250830-starqltechn-correct_max77705_nodes-1162dc2d9fe7
+prerequisite-change-id: 20250830-max77705_77976_charger_improvement-e3f417bfaa56:v2
+prerequisite-patch-id: 534eff3c30a7b998f90f7be9537ff54c7f68543b
+prerequisite-patch-id: 60362587901a812e50ab0e9a2cf25eeea769ef9c
+prerequisite-patch-id: 9692af6383d95fca0c8030b9110d4b06aa0631e2
+prerequisite-patch-id: e1b7fc49030ad771c3fae33dc59595cbfecfd17b
+prerequisite-patch-id: efdf7936ffca1f97fc550118ae9a2a0795828f88
+prerequisite-patch-id: bc2ce3683ecab7a91fe2ca00d35798d0f4ea5f80
+prerequisite-patch-id: 2547b245dce99798d36835b1d729b21b6d1906e5
+prerequisite-patch-id: 30d3ca50e1b09abd360ddf33982223cce24c6859
+prerequisite-patch-id: deac1d76b95764903b7b6c937d7d4b43ed9f74ed
+prerequisite-change-id: 20250831-max77705-fix_interrupt_handling-0889cee6936d:v3
+prerequisite-patch-id: 4c30e8bca26067f7b96f7571086398cc86c6f71d
 
-What we really need is faster memory freeing and we should explore all
-possible ways. As others suggested fix/improve the bottleneck in the
-memory freeing path. In addition I think we should explore parallelizing
-this as well.
+Best regards,
+-- 
+Dzmitry Sankouski <dsankouski@gmail.com>
 
-On Android, I suppose most of the memory is associated with single or
-small set of processes and parallelizing memory freeing would be
-challenging. BTW is LMKD using process_mrelease() to release the killed
-process memory? 
 
