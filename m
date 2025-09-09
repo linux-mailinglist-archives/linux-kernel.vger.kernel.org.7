@@ -1,224 +1,220 @@
-Return-Path: <linux-kernel+bounces-809094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD79B50864
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:52:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04D70B50889
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C03A1BC6370
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:52:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC36566D97
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA490261B60;
-	Tue,  9 Sep 2025 21:51:59 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE22265CC8;
+	Tue,  9 Sep 2025 22:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U7gXYCJW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D2122A817;
-	Tue,  9 Sep 2025 21:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF198244665;
+	Tue,  9 Sep 2025 22:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757454719; cv=none; b=VijKM8N7f5E1a2OGPL6/ZN724WMb/cfn5DyepTp4ahkAFpipObjAsVMUnlpnqoYan9cywm1SXTZeLA1Pf3Qwt94Wzj7DJAwLwX6LBb00TORmFiznMqPTgO7bSHQcYn82GSmoU8zxkZg8ZPtgLx3HaH6EEP2qxlb2xq9xDMaYofY=
+	t=1757455210; cv=none; b=Seq0pPr4LUY4nYp/TbD4uFdeF8JGZFCGp4bq1so//ki9CfCuo0qwUekZ2Dm++X6ZuwXdHRp2zSJPpZZvINT8/+cxsbBTuxGGtAzMr3yvdz2IX+zmPTPw8PHXKvDPW5ADAbeHTgCCXdS6C8z5CqhyKY3g9dkJ0oqVFOc9RrKcI2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757454719; c=relaxed/simple;
-	bh=bjUkjTH9OdxS0DCNUZKqxku7vJbh17gd1/TPchE6Ctg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xr7L3+0l3cQhN1CGp6oXzrTlWvb0HKBGNn9osKgOdHHn0/KY7Pg5z41XpLpCWFG0RREHFTeOFkAS72bsCS25LsCAgEpkzTRqhtVmIZCdQ59cAKyiY7hbB5t8ZTt7D5+MWDHR+fVdUMJoPrznSn1P1MFp82P6DHnaeZAYn3nri8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 37F7411AC15;
-	Tue,  9 Sep 2025 21:51:55 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id B3CED20025;
-	Tue,  9 Sep 2025 21:51:51 +0000 (UTC)
-Date: Tue, 9 Sep 2025 17:52:40 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev,
- joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
- kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- jstultz@google.com, qperret@google.com, will@kernel.org,
- aneesh.kumar@kernel.org, kernel-team@android.com,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 07/24] tracing: Add events/ root files to trace
- remotes
-Message-ID: <20250909175240.4db7c0eb@gandalf.local.home>
-In-Reply-To: <20250821081412.1008261-8-vdonnefort@google.com>
-References: <20250821081412.1008261-1-vdonnefort@google.com>
-	<20250821081412.1008261-8-vdonnefort@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757455210; c=relaxed/simple;
+	bh=3MEHUK/+TcOWsAEbKAhaeb7droOEVMg1d8lQHuKDljY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=H68aFdZzSkdmQ0MvffGz2Vm8ndyuO/dJ3OC190juTSFwfrHrtdbOTY3XerYh8w1rcFuiVh/KRIC4E4BkYxRswerftNc002D2OKWAKrUCAzPWLL3xI8VBLYmiMVPMgT+i1UG5f8ycDZf5HfpEzxyS+wITdQO90bA+QTzSlhqZjqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U7gXYCJW; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757455209; x=1788991209;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=3MEHUK/+TcOWsAEbKAhaeb7droOEVMg1d8lQHuKDljY=;
+  b=U7gXYCJW/B3nowEnMyP7tbUuhUJemqtYNjY2ZJ1r50N4FFALWcvc/Vwm
+   /bm90zYUX4N3sk7R5Xl3LFGkMgZ7rvn6RI8Ugxv7m87fzTDyQkrvjpPxw
+   NuymSP/4UuLNPIYPE4iXCvq6RgkaWiZHHLNDsFPJu/Cp6EAWOTBYxrjI4
+   g4ehNoZzo3zlgV57ubRhkdxa1EiUnHSmZk0uLh+NuG9g+NnMRTRx1FzxJ
+   pL4m3G/VqvqcKDG8CVC+g469nrGV/0Gre8E0rt5gztUp+urupj8edz/Ut
+   BEfZAJxzR+y33k9/HaSWhSVlbaIgcKMWLEAcrVDq1XjQ6G6npQWwGAUbC
+   w==;
+X-CSE-ConnectionGUID: ZymuJ1TrQ+a85k4q1+fwfA==
+X-CSE-MsgGUID: gGxzLhBCRNa2AzHt8t1bpA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="63584609"
+X-IronPort-AV: E=Sophos;i="6.18,252,1751266800"; 
+   d="scan'208";a="63584609"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 15:00:07 -0700
+X-CSE-ConnectionGUID: vQSzBUM+RkCBUdEKy7pqxQ==
+X-CSE-MsgGUID: idV5QM8zSBa4OiHDcFgJCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,252,1751266800"; 
+   d="scan'208";a="172780949"
+Received: from orcnseosdtjek.jf.intel.com (HELO [10.166.28.70]) ([10.166.28.70])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 15:00:07 -0700
+From: Jacob Keller <jacob.e.keller@intel.com>
+Subject: [PATCH RFC net-next 0/7] ice: implement live migration driver for
+ E800 series hardware
+Date: Tue, 09 Sep 2025 14:57:49 -0700
+Message-Id: <20250909-e810-live-migration-jk-migration-tlv-v1-0-4d1dc641e31f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: a6dhj43w5f1j4i5ea6e1kz1oidpsfdiz
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: B3CED20025
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19NE8UX9pout0gmp8nK4qQdOWNA+46veZ8=
-X-HE-Tag: 1757454711-688199
-X-HE-Meta: U2FsdGVkX1+5T2tCPQ+moXus8fA3OM8acJeM+WEPmFi/qhIBWOI3c1MIrGa8HCGVuEPNTJpPFnstSsHWuAqGhXNajKOEStbjgqTlnZzV/TGwuesdpTEnH/czE+NNgquHlm6dtXATZx3Ygwq3Ay3ZH2ovgcIxKBk5xyiyIAO31TrYvniPp/wSl2JSupBAhRGenJEdGZ6RLnX6LTapu3t5pEqVwyIfG0Y6oBvF4w8lI5adQVgM/ZDhHkx6yFiV+1aOk0521araOy7Rc5SDUxEzZxgrGaxDaxU1Ko+DPWVghsinHexkE24dcer7txlzXEnZBK0ctKUzoE9rmB/+jnGhiIx7KKmW664l
+X-B4-Tracking: v=1; b=H4sIAN6iwGgC/43PwU7DMAwG4FeZcibITuLRckJC4gG4Ig4ldbZA1
+ 6I2ioamvjteLq16qnL6I+v77ZuaeIw8qefDTY2c4xSHXgI+HJQ/N/2JdWwlKwOGAC1orhB0FzP
+ rSzyNTZJ5/f2zCqnL2lrP5LFFsE4J9TtyiNdS86He317vfz0n3fM1qU8J5zilYfwra2QsY6XRg
+ d3XmFGDdkTUYO2Qq+ol9om7Rz9cSkE2KxTdTtQIWtU1Ah19Y9uwRe2CytuJWkFly1C5RkzELeo
+ W9Ah7N3WChpoCQgjeAG9RWtAazE6U7ucTtJYsfBl6WqPzPP8DioNkqj0CAAA=
+X-Change-ID: 20250130-e810-live-migration-jk-migration-tlv-33ce5c1d1034
+To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Alex Williamson <alex.williamson@redhat.com>, 
+ Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, 
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>, 
+ Kevin Tian <kevin.tian@intel.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ kvm@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ Jacob Keller <jacob.e.keller@intel.com>, 
+ Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+X-Mailer: b4 0.15-dev-c61db
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5432;
+ i=jacob.e.keller@intel.com; h=from:subject:message-id;
+ bh=3MEHUK/+TcOWsAEbKAhaeb7droOEVMg1d8lQHuKDljY=;
+ b=owGbwMvMwCWWNS3WLp9f4wXjabUkhowDi1NceL0Y0+7P1pF9/TywhfPx6qIH6668nuMjtWVW3
+ tm/T2qrOkpZGMS4GGTFFFkUHEJWXjeeEKb1xlkOZg4rE8gQBi5OAZgIix3DP7WG+wFT18vm95wJ
+ FvroycMmaOA4d/mc57s7zJ0yl90PjmH4H6OxebvWPqEac5vFDPOqftw+7Fp5oFj619oT6o08RRW
+ P2QE=
+X-Developer-Key: i=jacob.e.keller@intel.com; a=openpgp;
+ fpr=204054A9D73390562AEC431E6A965D3E6F0F28E8
 
-On Thu, 21 Aug 2025 09:13:55 +0100
-Vincent Donnefort <vdonnefort@google.com> wrote:
+This series implements the QEMU/KVM live migration support for the ice E800
+series hardware. It is a long-overdue followup to the version from Yahui
+back in 2023. That version itself is an evolution of the original v1
+protocol from some years before that.
 
+This version is a significant rework and complete replaces the
+virtchnl message based approach with one based on the PF serializing state
+via a custom Type-Length-Value format.
 
-> diff --git a/kernel/trace/trace_remote.c b/kernel/trace/trace_remote.c
-> index 822cdd76e334..5065b162c8ef 100644
-> --- a/kernel/trace/trace_remote.c
-> +++ b/kernel/trace/trace_remote.c
-> @@ -710,10 +710,118 @@ static int remote_event_callback(const char *name, umode_t *mode, void **data,
->  	return 0;
->  }
->  
-> +static ssize_t remote_events_dir_enable_write(struct file *filp, const char __user *ubuf,
-> +					      size_t count, loff_t *ppos)
-> +{
-> +	struct trace_remote *remote = file_inode(filp)->i_private;
-> +	u8 enable;
-> +	int i, ret;
-> +
-> +	ret = kstrtou8_from_user(ubuf, count, 10, &enable);
-> +	if (ret)
-> +		return ret;
-> +
-> +	guard(mutex)(&remote->lock);
-> +
-> +	for (i = 0; i < remote->nr_events; i++) {
-> +		struct remote_event *evt = &remote->events[i];
-> +
-> +		trace_remote_enable_event(remote, evt, enable);
-> +	}
-> +
-> +	return count;
-> +}
-> +
-> +static const struct file_operations remote_events_dir_enable_fops = {
-> +	.write = remote_events_dir_enable_write,
+This solution significantly reduces the impact a VF can have on the payload
+size, as the size is no longer based directly on messages sent by the VF.
+It also ensures that other data such as host-based RSS and MSI-X is sent,
+which previously was ignored since there were no equivalent virtchnl
+messages.
 
-Hmm, why not a read as well? Or is it too difficult to figure out what is
-enabled and what isn't.
+Finally, replay can now be ordered to safely restore Tx and Rx queues
+without needing hacks to the virtchnl initialization flows, and the driver
+now only holds migration data for a short limited time while suspending,
+rather than requiring we save every virtchnl message the VF sends for the
+life time of the VF.
 
-For the main trace buffer, it's:
+To test this, I used QEMU/KVM:
 
- 0 - all disabled
- 1 - all enabled
- X - some disabled some enabled
+  echo 2 >/sys/class/net/enp175s0f0np0/device/sriov_numvfs
 
+  echo "0000:af:01.0" >/sys/bus/pci/drivers/iavf/unbind
+  echo "0000:af:01.1" >/sys/bus/pci/drivers/iavf/unbind
 
-> +};
-> +
-> +static ssize_t
-> +remote_events_dir_header_page_read(struct file *filp, char __user *ubuf, size_t cnt, loff_t *ppos)
-> +{
-> +	struct trace_seq *s;
-> +	int ret;
-> +
-> +	s = kmalloc(sizeof(*s), GFP_KERNEL);
-> +	if (!s)
-> +		return -ENOMEM;
-> +
-> +	trace_seq_init(s);
-> +
-> +	ring_buffer_print_page_header(NULL, s);
-> +	ret = simple_read_from_buffer(ubuf, cnt, ppos, s->buffer, trace_seq_used(s));
-> +	kfree(s);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct file_operations remote_events_dir_header_page_fops = {
-> +	.read = remote_events_dir_header_page_read,
-> +};
-> +
-> +static ssize_t
-> +remote_events_dir_header_event_read(struct file *filp, char __user *ubuf, size_t cnt, loff_t *ppos)
-> +{
-> +	struct trace_seq *s;
-> +	int ret;
-> +
-> +	s = kmalloc(sizeof(*s), GFP_KERNEL);
-> +	if (!s)
-> +		return -ENOMEM;
-> +
-> +	trace_seq_init(s);
-> +
-> +	ring_buffer_print_entry_header(s);
-> +	ret = simple_read_from_buffer(ubuf, cnt, ppos, s->buffer, trace_seq_used(s));
-> +	kfree(s);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct file_operations remote_events_dir_header_event_fops = {
-> +	.read = remote_events_dir_header_event_read,
-> +};
-> +
-> +static int remote_events_dir_callback(const char *name, umode_t *mode, void **data,
-> +				      const struct file_operations **fops)
-> +{
-> +	if (!strcmp(name, "enable")) {
-> +		*mode = 0200;
+  modprobe ice_vfio_pci
 
-As 0200 is a bit strange.
+  echo "8086 1889" >/sys/bus/pci/drivers/ice-vfio-pci/new_id
 
--- Steve
+I've tested with QEMU using the "enable-migration=on" and
+"x-pre-copy-dirty-page-tracking=off" settings, as we do not currently
+support dirty page tracking.
 
+The initial host QEMU instance is launched as usual, while the target QEMU
+instance is launched with the -incoming tcp:localhost:4444 option.
 
-> +		*fops = &remote_events_dir_enable_fops;
-> +		return 1;
-> +	}
-> +
-> +	if (!strcmp(name, "header_page")) {
-> +		*mode = TRACEFS_MODE_READ;
-> +		*fops = &remote_events_dir_header_page_fops;
-> +		return 1;
-> +	}
-> +
-> +	if (!strcmp(name, "header_event")) {
-> +		*mode = TRACEFS_MODE_READ;
-> +		*fops = &remote_events_dir_header_event_fops;
-> +		return 1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int trace_remote_init_eventfs(const char *remote_name, struct trace_remote *remote,
->  				     struct remote_event *evt)
->  {
->  	struct eventfs_inode *eventfs = remote->eventfs;
-> +	static struct eventfs_entry dir_entries[] = {
-> +		{
-> +			.name		= "enable",
-> +			.callback	= remote_events_dir_callback,
-> +		}, {
-> +			.name		= "header_page",
-> +			.callback	= remote_events_dir_callback,
-> +		}, {
-> +			.name		= "header_event",
-> +			.callback	= remote_events_dir_callback,
-> +		}
-> +	};
->  	static struct eventfs_entry entries[] = {
->  		{
->  			.name		= "enable",
-> @@ -729,7 +837,8 @@ static int trace_remote_init_eventfs(const char *remote_name, struct trace_remot
->  	bool eventfs_create = false;
->  
->  	if (!eventfs) {
-> -		eventfs = eventfs_create_events_dir("events", remote->dentry, NULL, 0, NULL);
-> +		eventfs = eventfs_create_events_dir("events", remote->dentry, dir_entries,
-> +						    ARRAY_SIZE(dir_entries), remote);
->  		if (IS_ERR(eventfs))
->  			return PTR_ERR(eventfs);
->  
+To initiate migration you can issue the migration command from the QEMU
+console:
+
+  migrate tcp:localhost:4444
+
+I've tested with and without traffic, and I tried to cover a wide variety
+of VF settings and configuration.
+
+REVIEWER NOTES AND REQUESTS:
+
+  I am sending this as RFC to the netdev and VFIO mailing lists, as I am
+  uncertain what the preferred path for merging is. I am also awaiting
+  testing from Intel's virtualization team.
+
+  I've managed to reduce the overall patch series size as much as possible
+  by sending many of the cleanups ahead of time. These have finally all
+  merged into net-next.
+
+  This work is based on the original live migration patches from Yahui.
+  However, the ice driver implementation is entirely rewritten. The VFIO
+  driver code is still primarily Yahui's, with some minor alterations and
+  cleanups applied.
+
+  I decided to separate the deferred reset logic in the VFIO driver to its
+  own patch, and am open to alternative suggestions for resolving this
+  potential deadlock. I saw a similar deferred logic in other drivers. I
+  have thus far not come up with a better solution.
+
+  The biggest remaining gap on the ice driver side is that I don't have a
+  good idea how to best plan for future VF enhancements. Currently, all the
+  existing configuration and features now work. However, a future feature
+  might require new migration data, and I don't have a good idea how to
+  make the driver safely disable such features until they're supported
+  within the migration.
+
+  The TLV format does allow for extension, (both with a full version field
+  and with passing the set of known TLVs). However, the driver likely could
+  use some sort of infrastructure so that new VF virtchnl commands or
+  features get blocked by default until they are confirmed to work with
+  migration. Suggestions on how best to implement that are welcome.
+
+Link: https://lore.kernel.org/netdev/20231121025111.257597-1-yahui.cao@intel.com/
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+---
+Jacob Keller (7):
+      ice: add basic skeleton and TLV framework for live migration support
+      ice: implement device suspension for live migration
+      ice: add migration TLV for basic VF information
+      ice: add migration TLVs for queue and interrupt state
+      ice: add remaining migration TLVs
+      ice-vfio-pci: add ice VFIO PCI live migration driver
+      ice-vfio-pci: implement PCI .reset_done handling
+
+ drivers/net/ethernet/intel/ice/ice.h               |    2 +
+ drivers/net/ethernet/intel/ice/ice_hw_autogen.h    |    8 +
+ drivers/net/ethernet/intel/ice/ice_vf_lib.h        |    2 +
+ .../net/ethernet/intel/ice/virt/migration_tlv.h    |  495 +++++
+ include/linux/net/intel/ice_migration.h            |   49 +
+ drivers/net/ethernet/intel/ice/ice_main.c          |   16 +
+ drivers/net/ethernet/intel/ice/ice_vf_lib.c        |    3 +
+ drivers/net/ethernet/intel/ice/virt/migration.c    | 2147 ++++++++++++++++++++
+ drivers/net/ethernet/intel/ice/virt/queues.c       |   21 +
+ drivers/vfio/pci/ice/main.c                        |  764 +++++++
+ MAINTAINERS                                        |    7 +
+ drivers/net/ethernet/intel/ice/Makefile            |    1 +
+ drivers/vfio/pci/Kconfig                           |    2 +
+ drivers/vfio/pci/Makefile                          |    2 +
+ drivers/vfio/pci/ice/Kconfig                       |    8 +
+ drivers/vfio/pci/ice/Makefile                      |    4 +
+ 16 files changed, 3531 insertions(+)
+---
+base-commit: 3b4296f5893d3a4e19edfc3800cb79381095e55f
+change-id: 20250130-e810-live-migration-jk-migration-tlv-33ce5c1d1034
+
+Best regards,
+--  
+Jacob Keller <jacob.e.keller@intel.com>
 
 
