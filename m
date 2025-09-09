@@ -1,338 +1,220 @@
-Return-Path: <linux-kernel+bounces-808426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850A9B4FF94
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:36:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F113B4FF9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3D94160ACF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:36:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 945A6161FAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08B834A314;
-	Tue,  9 Sep 2025 14:36:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8128322DBD
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757428581; cv=none; b=QWj5SfIBHUPHXaUA505jQyIc6ELuzEnqlgSBfx/yl63G2tMlhKwhhbX3/ecCYx4mxUadL7TgQjTyvUc1zjG7MLRLHZl6Q5VhE6d00h6NY+AF3bLGisk9lMKcWMRzm/dtFBdz6DF5hBmg5mY1ONZ3Wg8SuhqZGIyaY75vaniFs/Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757428581; c=relaxed/simple;
-	bh=1Umuf4upW+1VXFRm4vnDYX56KY3jeasenowD3GeyOmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=guuw625/dJp+4Ba68eovEAcFZILaGiO1hpoVFjYkw+E25sc1m+74CzZ+ggFdwj+gQQmnTM21pkXtZ1L9ozex8aCIyfKbwm6w2T+yE1Nb79I69oD6m/pilRf+e5dzhW1HtXUf3RqQHCnv1KoaRxkzLbDN0kd6CkEB9Ea3W4Sk01g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DE7B1424;
-	Tue,  9 Sep 2025 07:36:09 -0700 (PDT)
-Received: from [10.1.33.194] (unknown [10.1.33.194])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 64A9D3F66E;
-	Tue,  9 Sep 2025 07:36:16 -0700 (PDT)
-Message-ID: <8c363997-7b8d-4b54-b9b0-1a1b6a0e58ed@arm.com>
-Date: Tue, 9 Sep 2025 15:36:15 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EAD34F495;
+	Tue,  9 Sep 2025 14:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="XGV8I87z"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012013.outbound.protection.outlook.com [52.101.66.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F347274B35;
+	Tue,  9 Sep 2025 14:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757428641; cv=fail; b=gK9NcOXgwMgRJHuFVpHsFp1Fumek338fmvdI/mCl4Zbs/6GALbZ4EkKLsqkGlTyv22JEfod+hhGG7akfuflhi6a5hOfEnmuEXr4l22beLF6VEkmTZn1BipBVArfi/LfiATyMZzBzn5xPpm9hB13hBFw4h28ZN1FPnYbd9YTDpPI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757428641; c=relaxed/simple;
+	bh=CwXfrmcSXsIXEZa0ZpO2vP+K9oKlJVlTIVXil3oXlN8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RU/gVFLNxpoReRi2GyGq++S2ceGxO6OV/53eZ436k4f2pCigqAtsb7tLebNlDdsvSjAK7S5Bdd3DecZSbkofHFHl8ERUEeqedPevm6b6dG0q+qdL8CuKwQaoDJYBj5qwoUS1ePpxV7OGVtm7LFI0mtnyG++w40rpCeTSMVHv7Xo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=XGV8I87z; arc=fail smtp.client-ip=52.101.66.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ckIThclTKeKGjAcMOcRMsha5JixZzH/7RUwehPtQyA5iUpxfgJLTz5jKb0xQ66oN4QmJBiY1jzatXz6OU8YOcD1OTl4hmEYUzfNOSzSi9jmfw/lqFMSMJjipjnRNhMiGcAz7Kg26spjydCwFRLT3sSnCFrZfuqlwBozAjHydddbQVK5UK/R0lsQ20bj0cZ/4PXt9pWAg7+oyIYylpLAeaePsP7pGUezRms8s6mIo0jRIJSe41HqNHdLvsz/J5lRv1znrsf496i+EbCaT3G5RBVnX9vXUUult7eYtdKuPdPesfVU9lFRjxJmin0qagwIpfwUu0JXWZtRYoXNO1Iyurw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IVowVX7s4OoaKjyG+yHfBqF/OOSZLrfZUDPihnEl+Rc=;
+ b=i0ga0RrCDa+2r0StGIhfQ0CRcAP4aPfIYoabNI4olgD3eI5Fg5Sit133eSKT0qG3O3obYgMPDANJEnMuEzO3p1gAH+qadtYktMmbAsBNVriM/UN5csVUjqDLpHAq2HosHpxsm+J/n+40ZTKY5X0RdcXvydw+i7zvySfsmeUmpDWSGj36lakG/d7TOpLpjlgDGadLEknTpDn+1RluovVvC0aVegD3SBzgu4Ju0N9DZErz6Xxw8EZ6VbFV4azmMbhH/Y0j3SFlMl9ylJj8NTol/aiqBH80wVe5q/1H3yGsKzmhxkfgbN6f6kBkbjS7i1afNdEIFyUTABv2hdjtYDpwLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IVowVX7s4OoaKjyG+yHfBqF/OOSZLrfZUDPihnEl+Rc=;
+ b=XGV8I87zbKR5H2wbY8ihEKzZpInbNEm0S/MC2x5FcJizH8e1akRiiHxfhONkYDwnDJuwLscEeFR5bZmTm8IeIvYssXc0RghgKoW2yk7XZdRzy7eoSv+5tw3OXxsv6Qp8dCB9xn+VEIMR5LtSZy5yxaykWQ1SIhyyZOJItYH32bAHj+wKRiuYvC+c5+BgHEYsei9JMiS1CMaNA056JhhROC+MZergSTv0OcdxaJKGOB0Sf0khD34c/tEfWxe7epBQPg6Pu+Mmcj2ZFYuaN0Jz3Xwe1KjDZ2g+SgTUNLmkonHvEzkgHkkLODm39Z8zXXD2919wK7AS8M0B0yTYrpdjQQ==
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
+ by AM8PR04MB7299.eurprd04.prod.outlook.com (2603:10a6:20b:1d4::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.15; Tue, 9 Sep
+ 2025 14:37:11 +0000
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612%4]) with mapi id 15.20.9115.010; Tue, 9 Sep 2025
+ 14:37:11 +0000
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+CC: Clark Wang <xiaoning.wang@nxp.com>, Stanislav Fomichev <sdf@fomichev.me>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, Andrew Lunn
+	<andrew@lunn.ch>, Frank Li <frank.li@nxp.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
+ Fastabend <john.fastabend@gmail.com>
+Subject: RE: [PATCH v6 net-next 1/6] net: fec: use a member variable for
+ maximum buffer size
+Thread-Topic: [PATCH v6 net-next 1/6] net: fec: use a member variable for
+ maximum buffer size
+Thread-Index: AQHcINw7S4DTsdIUOUyGePXr1GhdXLSKHJCAgADPe7A=
+Date: Tue, 9 Sep 2025 14:37:11 +0000
+Message-ID:
+ <PAXPR04MB9185336929DC3D5E5B858ED0890FA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+References: <20250908161755.608704-1-shenwei.wang@nxp.com>
+ <20250908161755.608704-2-shenwei.wang@nxp.com>
+ <PAXPR04MB851097411AD8CF1B4250517B880FA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+In-Reply-To:
+ <PAXPR04MB851097411AD8CF1B4250517B880FA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|AM8PR04MB7299:EE_
+x-ms-office365-filtering-correlation-id: b28c56a8-422d-4da3-968c-08ddefae5cb1
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|19092799006|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?6WUvpKGDOfJq/hZJBpIxiDbEi0yFz9IAkTEZXMXUKgAdqmVehS83CWcJ9/3n?=
+ =?us-ascii?Q?ntTcdIXmBtrNIfJz+QbTsAIkCp6M4+dJS9GdLEdzwc7v7yaOXB8lu4rSY1wd?=
+ =?us-ascii?Q?PwJOZHk7B6suME+Pa/e63bKJuwkLPIQycs8GSkVVN5K+LKThsbZ/mnyUWFuk?=
+ =?us-ascii?Q?IodeorRBmjdiSSINo9Bd1+zaI/wXxAKXfxyjNwNoTBzfhBpkAxKv2fNUctV7?=
+ =?us-ascii?Q?6h8gOHeQggdBFTljU4ko92YBTuKgPY62WvvMvTIm92UfXj0buCi8O2YeAXAE?=
+ =?us-ascii?Q?rPMvEkkcn58zN2fxvdqOSL3JBlQBLy5Pj5IGZYerMdK5XI6IXm2oNcU7dor8?=
+ =?us-ascii?Q?YE4iyYlmX+IQeIKjPXXtT3lznwFXc2TxgYacXGt2+IZ/WLF/Mk7f0/A6XLXx?=
+ =?us-ascii?Q?KRAnZePXNSzY6d6S5OacaBHQr1M2aJeUMWTa9f61ep5zI4+q8Lq+1kJay7Ya?=
+ =?us-ascii?Q?/rqvGiEH1KuZgM7nX4+2V/L9J+lkwUPddfrYSEhfHyLpSh1qi613egArktUS?=
+ =?us-ascii?Q?zLDXMMay2Baj87uHM9PPxNWFLsgmoVogBR4TMJrWLYg4U+oIG82LnJDYvTkB?=
+ =?us-ascii?Q?aGALYbweLf3tjKFFVwBbEjIAz9PH2ZKyZ+SAURGKXMKFRk4d5YaYDC+XmbEk?=
+ =?us-ascii?Q?8QSCloqDrgplojHrNoAW4YzPNuCZzWdpXD/v56OXXnFR3gw4TuKk11/3p7PB?=
+ =?us-ascii?Q?Ndioo1wOHo4cyKtxHGtTN3+axkV502iChIEn2taYQfVL6ET+O5LaxHCkapQy?=
+ =?us-ascii?Q?FWDV4c2zIBnc2EgLgHSRMgbE5NDVDEt/3vvXsFvLR1Rx9WVLMjFe3cg+trQu?=
+ =?us-ascii?Q?SW2fuwuemWu6SvHkWcggX71IW6a768d++0XPKR0OCf3lLeruTQdWvTJViuVz?=
+ =?us-ascii?Q?SINsAVjC16JrnL5z9Pvo9gp6kURGsMf+co5LY7/Yuq8Sw32U3uXUwSK6TFaS?=
+ =?us-ascii?Q?VmxCqs72TYKW8p7DjujP/546hzQDbofunJQ8oGDdAfRFNdYM6B8c0EHtBzMg?=
+ =?us-ascii?Q?qGu/wkf8upWjtlKsk/MzjbqHz88kcTZr94QTOCfbdkduq5vsJeUJW9+XT1Pb?=
+ =?us-ascii?Q?SA9kFiCmISgVj+lgisfpfVmWpEm3dABUckL3UdXrHeg9nYgp+7Y0qIarpvTp?=
+ =?us-ascii?Q?HGxPoPWbIud//oibUNsvTVRCAYcxCbqxyejh7b99FGrnnhp1PtRWRwmTjYgC?=
+ =?us-ascii?Q?LS0Y42bJnbbIhDkGRqt4FAxE2616avwXh1ee1qHNmC9gl4TGPGRugqtvenNx?=
+ =?us-ascii?Q?0FjvRq/9DIPv5+yMAgJBBGcN+LJE6UR2EmB07lVRa0K5F1PP0iIR7pO4pxpb?=
+ =?us-ascii?Q?DOjRDcjnB23OovPsQQCF+tX1bQhpFLbzVmu8nbP8z1nutdOCzNqA2XFAqprn?=
+ =?us-ascii?Q?lndn+raSV3Dy0UmnOKsL7gLUsSE97W9lXDalAdUw/PY96bGtSl7gCMshUucE?=
+ =?us-ascii?Q?QLQ+ZieTAFPPrbEedr9CvxAwsdxIZp0pKU/Tq79pSDblvFTAFRvdHqlTYk4k?=
+ =?us-ascii?Q?G0Yk9IrcMXN6DHQ=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(19092799006)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?+NPpr6a+Kz70rTjHSGrCAX77LT27b55ADHrxuMRTKHcnP5E8FfIVbxi6ZMfp?=
+ =?us-ascii?Q?Qs9vuk5S4H57gCA3dWm6wMBBT7O1hq1FziiMHjQW4CHKm3GD05PV9vFN3oEx?=
+ =?us-ascii?Q?Is7gqZOuE89n6dfsQPCadil/ajBshnAuuIw4LfhG7zl4qXggP4CaEn0weoYO?=
+ =?us-ascii?Q?awBxFH1preFO38u7W8NNdxfER0wvsYW1U4AHqLi3wHdezezcLw7Pzgn7FgUi?=
+ =?us-ascii?Q?mXOcDodz0reRNOPydjiUCeLyE9v1BI2YHtUZbPNwGgkuGiH1ecXWj7hIydp3?=
+ =?us-ascii?Q?ateZ0eHz/NxYcuhs/6GI2QSCksM6tqqUQnRmsDj3vURtAFaWPNmYE2QwGB4i?=
+ =?us-ascii?Q?gn7RJkeEb4MfGhlgyehr8EFEqIOt4EH28Q+XDq9D06xTyb1eOR7PE1h3B6qt?=
+ =?us-ascii?Q?oxrsIr0xu1xsLXcot+Z6WYZ8WJ8s0neFJhKJrN3B/0+v6m2CT3BULU0k7OaU?=
+ =?us-ascii?Q?PFMx/UKNK4dBh45Oc9ZxlkB01WQ4Ee23kFWc5ybCiYiXsFOHCB8zI6to6Fs/?=
+ =?us-ascii?Q?7DsBJtogHy6Mrr6wetLFWl7ZX3RH4FYvK8BoOSf0MPGCAxR6IP0BdpoQbhy5?=
+ =?us-ascii?Q?22s+DcOrYH2A5LhvHsVis37ujsXg375icKq0nVlV0fCrEvmPDhidjeTENaX8?=
+ =?us-ascii?Q?b9xRuJ+QDfnYObtTpX5rF0X/ehHA1xPrKOlBqM/CZVSO0703S3DxMicSP41B?=
+ =?us-ascii?Q?iM9Ea5cIZVFydxTA77klphPH5jgGbO6OjfkkFklt2N4Tjv7IhWfq30Dd4NVv?=
+ =?us-ascii?Q?LEnC2JocohTx7qtgMNrqXAiTUP/C4BV/wtTTf0xyJF/K1TVWHrXGtJ6fCJvM?=
+ =?us-ascii?Q?FyLsXmVQUSOdTFtDmoE0pkspZf6sdP+bwovxKIcfv6616uAkX3qz92ua5J55?=
+ =?us-ascii?Q?2jGBeTqm9a1MlpXy3jLWp2rrvDjUSJMcH1vx5j2cOZCG8ZBbdoJor9eKuxTy?=
+ =?us-ascii?Q?JsnvWMnkpBiTKRmToRaXWcnxLylhr3C13wKUQW1CTlAkoJFVEHquCdm1VBWi?=
+ =?us-ascii?Q?2t/bZ0yo7trlJb+sOn5tKx1sl7UOprmBNCaI0PVcQ9IIo7UNoDp/F3U6Sbpn?=
+ =?us-ascii?Q?7ZHaWyrLxFEJ0BFUbGdgFWfze6z/4QrtbGfIR2Bd0wWtagTJTKZrs7iR/PQS?=
+ =?us-ascii?Q?f+3hUKZ/W9C9Uxr/cT7Lc3UNuCsW8ViG1R1UcjC0ydaTLLFH5gpuiI4Xtbkt?=
+ =?us-ascii?Q?B3jq4xMKRuiQmb+Y0y2TmJTyMjFZA7kCClmfNJvegVxBmRWwwxCg8ZUr0ad8?=
+ =?us-ascii?Q?fkO2GYI/5B8AAIh8Q8FMxMjTIKSODz3asGVYDvqXbbd8QnW7cRgiQtx3lrhE?=
+ =?us-ascii?Q?l8x/SrIYQG7eDNEG8LfFo7WNi1CKV8m3R8VIpRTav2ANsRXRapdMm/SnNlYT?=
+ =?us-ascii?Q?KDWZYccqdZ8L2Y9f7E0dPgAhAOeZBAHk3nuwbS6gg80lKJUU2LcQzka4aRcn?=
+ =?us-ascii?Q?nRkcnN5OElO3u11FGhmKymehQpqE/fsZ3cGnetIJCyYqVyId/1eCV+WM3u+S?=
+ =?us-ascii?Q?10J99p9/sG1zFwIyKtt8971web0xvKzyvAQJdKbwAuKv5F6pmgsR6u4Xxv0K?=
+ =?us-ascii?Q?bdqu0ppvN6Avkgm971Y=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/6] arm64: support FEAT_BBM level 2 and large block
- mapping when rodata=full
-Content-Language: en-GB
-To: Yang Shi <yang@os.amperecomputing.com>, Dev Jain <dev.jain@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Ard Biesheuvel <ardb@kernel.org>, scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20250829115250.2395585-1-ryan.roberts@arm.com>
- <e722e49a-d982-4b58-98f7-6fef3d0a4468@arm.com>
- <dd242f5b-8bbe-48e8-8d5f-be6a835a8841@arm.com>
- <aeb76956-f980-417f-b4e7-fe0503bb5a2b@os.amperecomputing.com>
- <612940d2-4c8e-459c-8d7d-4ccec08fce0a@os.amperecomputing.com>
- <1471ea27-386d-4950-8eaa-8af7acf3c34a@arm.com>
- <f8cf1823-1ee9-4935-9293-86f58a9e2224@arm.com>
- <bf1aa0a4-08de-443f-a1a3-aa6c05bab38c@os.amperecomputing.com>
- <39c2f841-9043-448d-b644-ac96612d520a@os.amperecomputing.com>
- <d7cd4004-bacf-47b0-9cd8-f99125e02238@arm.com>
- <fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b28c56a8-422d-4da3-968c-08ddefae5cb1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2025 14:37:11.4384
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gWdjjDq+TgMOvquyqJguDnWy9JjNmgHbD1/yffwB7/nfhul6wTIARFMOv2i6py3+asrzR7WvRyfiG/bDwLmpRw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7299
 
-On 08/09/2025 19:31, Yang Shi wrote:
-> 
-> 
-> On 9/8/25 9:34 AM, Ryan Roberts wrote:
->> On 04/09/2025 22:49, Yang Shi wrote:
->>>
->>> On 9/4/25 10:47 AM, Yang Shi wrote:
->>>>
->>>> On 9/4/25 6:16 AM, Ryan Roberts wrote:
->>>>> On 04/09/2025 14:14, Ryan Roberts wrote:
->>>>>> On 03/09/2025 01:50, Yang Shi wrote:
->>>>>>>>>> I am wondering whether we can just have a warn_on_once or something
->>>>>>>>>> for the
->>>>>>>>>> case
->>>>>>>>>> when we fail to allocate a pagetable page. Or, Ryan had
->>>>>>>>>> suggested in an off-the-list conversation that we can maintain a cache
->>>>>>>>>> of PTE
->>>>>>>>>> tables for every PMD block mapping, which will give us
->>>>>>>>>> the same memory consumption as we do today, but not sure if this is
->>>>>>>>>> worth it.
->>>>>>>>>> x86 can already handle splitting but due to the callchains
->>>>>>>>>> I have described above, it has the same problem, and the code has been
->>>>>>>>>> working
->>>>>>>>>> for years :)
->>>>>>>>> I think it's preferable to avoid having to keep a cache of pgtable memory
->>>>>>>>> if we
->>>>>>>>> can...
->>>>>>>> Yes, I agree. We simply don't know how many pages we need to cache, and it
->>>>>>>> still can't guarantee 100% allocation success.
->>>>>>> This is wrong... We can know how many pages will be needed for splitting
->>>>>>> linear
->>>>>>> mapping to PTEs for the worst case once linear mapping is finalized. But it
->>>>>>> may
->>>>>>> require a few hundred megabytes memory to guarantee allocation success. I
->>>>>>> don't
->>>>>>> think it is worth for such rare corner case.
->>>>>> Indeed, we know exactly how much memory we need for pgtables to map the
->>>>>> linear
->>>>>> map by pte - that's exactly what we are doing today. So we _could_ keep a
->>>>>> cache.
->>>>>> We would still get the benefit of improved performance but we would lose the
->>>>>> benefit of reduced memory.
->>>>>>
->>>>>> I think we need to solve the vm_reset_perms() problem somehow, before we can
->>>>>> enable this.
->>>>> Sorry I realise this was not very clear... I am saying I think we need to
->>>>> fix it
->>>>> somehow. A cache would likely work. But I'd prefer to avoid it if we can
->>>>> find a
->>>>> better solution.
->>>> Took a deeper look at vm_reset_perms(). It was introduced by commit
->>>> 868b104d7379 ("mm/vmalloc: Add flag for freeing of special permsissions"). The
->>>> VM_FLUSH_RESET_PERMS flag is supposed to be set if the vmalloc memory is RO
->>>> and/or ROX. So set_memory_ro() or set_memory_rox() is supposed to follow up
->>>> vmalloc(). So the page table should be already split before reaching vfree().
->>>> I think this why vm_reset_perms() doesn't not check return value.
->> If vm_reset_perms() is assuming it can't/won't fail, I think it should at least
->> output a warning if it does?
-> 
-> It should. Anyway warning will be raised if split fails. We have somehow
-> mitigation.
-> 
->>
->>>> I scrutinized all the callsites with VM_FLUSH_RESET_PERMS flag set.
->> Just checking; I think you made a comment before about there only being a few
->> sites that set VM_FLUSH_RESET_PERMS. But one of them is the helper,
->> set_vm_flush_reset_perms(). So just making sure you also followed to the places
->> that use that helper?
-> 
-> Yes, I did.
-> 
->>
->>>> The most
->>>> of them has set_memory_ro() or set_memory_rox() followed.
->> And are all callsites calling set_memory_*() for the entire cell that was
->> allocated by vmalloc? If there are cases where it only calls that for a portion
->> of it, then it's not gurranteed that the memory is correctly split.
-> 
-> Yes, all callsites call set_memory_*() for the entire range.
-> 
->>
->>>> But there are 3
->>>> places I don't see set_memory_ro()/set_memory_rox() is called.
->>>>
->>>> 1. BPF trampoline allocation. The BPF trampoline calls
->>>> arch_protect_bpf_trampoline(). The generic implementation does call
->>>> set_memory_rox(). But the x86 and arm64 implementation just simply return 0.
->>>> For x86, it is because execmem cache is used and it does call
->>>> set_memory_rox(). ARM64 doesn't need to split page table before this series,
->>>> so it should never fail. I think we just need to use the generic
->>>> implementation (remove arm64 implementation) if this series is merged.
->> I know zero about BPF. But it looks like the allocation happens in
->> arch_alloc_bpf_trampoline(), which for arm64, calls bpf_prog_pack_alloc(). And
->> for small sizes, it grabs some memory from a "pack". So doesn't this mean that
->> you are calling set_memory_rox() for a sub-region of the cell, so that doesn't
->> actually help at vm_reset_perms()-time?
-> 
-> Took a deeper look at bpf pack allocator. The "pack" is allocated by
-> alloc_new_pack(), which does:
-> bpf_jit_alloc_exec()
-> set_vm_flush_reset_perms()
-> set_memory_rox()
-> 
-> If the size is greater than the pack size, it calls:
-> bpf_jit_alloc_exec()
-> set_vm_flush_reset_perms()
-> set_memory_rox()
-> 
-> So it looks like bpf trampoline is good, and we don't need do anything. It
-> should be removed from the list. I didn't look deep enough for bpf pack
-> allocator in the first place.
-> 
->>
->>>> 2. BPF dispatcher. It calls execmem_alloc which has VM_FLUSH_RESET_PERMS set.
->>>> But it is used for rw allocation, so VM_FLUSH_RESET_PERMS should be
->>>> unnecessary IIUC. So it doesn't matter even though vm_reset_perms() fails.
->>>>
->>>> 3. kprobe. S390's alloc_insn_page() does call set_memory_rox(), x86 also
->>>> called set_memory_rox() before switching to execmem cache. The execmem cache
->>>> calls set_memory_rox(). I don't know why ARM64 doesn't call it.
->>>>
->>>> So I think we just need to fix #1 and #3 per the above analysis. If this
->>>> analysis look correct to you guys, I will prepare two patches to fix them.
->> This all seems quite fragile. I find it interesting that vm_reset_perms() is
->> doing break-before-make; it sets the PTEs as invalid, then flushes the TLB, then
->> sets them to default. But for arm64, at least, I think break-before-make is not
->> required. We are only changing the permissions so that can be done on live
->> mappings; essentially change the sequence to; set default, flush TLB.
-> 
-> Yeah, I agree it is a little bit fragile. I think this is the "contract" for
-> vmalloc users. You allocate ROX memory via vmalloc, you are required to call
-> set_memory_*(). But there is nothing to guarantee the "contract" is followed.
-> But I don't think this is the only case in kernel.
-> 
->>
->> If we do that, then if the memory was already default, then there is no need to
->> do anything (so no chance of allocation failure). If the memory was not default,
->> then it must have already been split to make it non-default, in which case we
->> can also gurrantee that no allocations are required.
->>
->> What am I missing?
-> 
-> The comment says:
-> Set direct map to something invalid so that it won't be cached if there are any
-> accesses after the TLB flush, then flush the TLB and reset the direct map
-> permissions to the default.
-> 
-> IIUC, it guarantees the direct map can't be cached in TLB after TLB flush from
-> _vm_unmap_aliases() by setting them invalid because TLB never cache invalid
-> entries. Skipping set direct map to invalid seems break this. Or "changing
-> permission on live mappings" on ARM64 can achieve the same goal?
 
-Here's my understanding of the intent of the code:
 
-Let's say we start with some memory that has been mapped RO. Our goal is to
-reset the memory back to RW and ensure that no TLB entry remains in the TLB for
-the old RO mapping. There are 2 ways to do that:
+> -----Original Message-----
+> From: Wei Fang <wei.fang@nxp.com>
+> Sent: Monday, September 8, 2025 9:12 PM
+> To: Shenwei Wang <shenwei.wang@nxp.com>
+> Cc: Clark Wang <xiaoning.wang@nxp.com>; Stanislav Fomichev
+> <sdf@fomichev.me>; imx@lists.linux.dev; netdev@vger.kernel.org; linux-
+> kernel@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; Andrew Lunn
+> <andrew@lunn.ch>; Frank Li <frank.li@nxp.com>; Andrew Lunn
+> <andrew+netdev@lunn.ch>; David S. Miller <davem@davemloft.net>; Eric
+> Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo
+> Abeni <pabeni@redhat.com>; Alexei Starovoitov <ast@kernel.org>; Daniel
+> Borkmann <daniel@iogearbox.net>; Jesper Dangaard Brouer
+> <hawk@kernel.org>; John Fastabend <john.fastabend@gmail.com>
+> Subject: RE: [PATCH v6 net-next 1/6] net: fec: use a member variable for
+> maximum buffer size
+>=20
+> > @@ -253,9 +253,7 @@ MODULE_PARM_DESC(macaddr, "FEC Ethernet MAC
+> > address");  #if defined(CONFIG_M523x) || defined(CONFIG_M527x) ||
+> > defined(CONFIG_M528x) || \
+> >      defined(CONFIG_M520x) || defined(CONFIG_M532x) ||
+> > defined(CONFIG_ARM) || \
+> >      defined(CONFIG_ARM64)
+> > -#define	OPT_FRAME_SIZE	(PKT_MAXBUF_SIZE << 16)
+> > -#else
+> > -#define	OPT_FRAME_SIZE	0
+> > +#define	OPT_ARCH_HAS_MAX_FL
+>=20
+> In the fec driver, I noticed that the expression "#if defined (CONFIG_M52=
+3x) ||
+> defined(CONFIG_M527x) || ..." is used in four different places. I think w=
+e could
+> add a separate patch to define a new macro to replace these occurrences. =
+This
+> new macro should be more generic than OPT_ARCH_HAS_MAX_FL.
+>=20
 
-Approach 1 (used in current code):
-1. set PTE to invalid
-2. invalidate any TLB entry for the VA
-3. set the PTE to RW
-
-Approach 2:
-1. set the PTE to RW
-2. invalidate any TLB entry for the VA
-
-The benefit of approach 1 is that it is guarranteed that it is impossible for
-different CPUs to have different translations for the same VA in their
-respective TLB. But for approach 2, it's possible that between steps 1 and 2, 1
-CPU has a RO entry and another CPU has a RW entry. But that will get fixed once
-the TLB is flushed - it's not really an issue.
-
-(There is probably also an obscure way to end up with 2 TLB entries (one with RO
-and one with RW) for the same CPU, but the arm64 architecture permits that as
-long as it's only a permission mismatch).
-
-Anyway, approach 2 is used when changing memory permissions on user mappings, so
-I don't see why we can't take the same approach here. That would solve this
-whole class of issue for us.
+That is outside the scope of this patch and should be addressed in a follow=
+-up=20
+cleanup patch later.
 
 Thanks,
-Ryan
+Shenwei
 
-
-> 
-> Thanks,
-> Yang
-> 
->> Thanks,
->> Ryan
->>
->>
->>> Tested the below patch with bpftrace kfunc (allocate bpf trampoline) and
->>> kprobes. It seems work well.
->>>
->>> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/
->>> kprobes.c
->>> index 0c5d408afd95..c4f8c4750f1e 100644
->>> --- a/arch/arm64/kernel/probes/kprobes.c
->>> +++ b/arch/arm64/kernel/probes/kprobes.c
->>> @@ -10,6 +10,7 @@
->>>
->>>   #define pr_fmt(fmt) "kprobes: " fmt
->>>
->>> +#include <linux/execmem.h>
->>>   #include <linux/extable.h>
->>>   #include <linux/kasan.h>
->>>   #include <linux/kernel.h>
->>> @@ -41,6 +42,17 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
->>>   static void __kprobes
->>>   post_kprobe_handler(struct kprobe *, struct kprobe_ctlblk *, struct pt_regs
->>> *);
->>>
->>> +void *alloc_insn_page(void)
->>> +{
->>> +       void *page;
->>> +
->>> +       page = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
->>> +       if (!page)
->>> +               return NULL;
->>> +       set_memory_rox((unsigned long)page, 1);
->>> +       return page;
->>> +}
->>> +
->>>   static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
->>>   {
->>>          kprobe_opcode_t *addr = p->ainsn.xol_insn;
->>> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
->>> index 52ffe115a8c4..3e301bc2cd66 100644
->>> --- a/arch/arm64/net/bpf_jit_comp.c
->>> +++ b/arch/arm64/net/bpf_jit_comp.c
->>> @@ -2717,11 +2717,6 @@ void arch_free_bpf_trampoline(void *image, unsigned int
->>> size)
->>>          bpf_prog_pack_free(image, size);
->>>   }
->>>
->>> -int arch_protect_bpf_trampoline(void *image, unsigned int size)
->>> -{
->>> -       return 0;
->>> -}
->>> -
->>>   int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
->>>                                  void *ro_image_end, const struct
->>> btf_func_model *m,
->>>                                  u32 flags, struct bpf_tramp_links *tlinks,
->>>
->>>
->>>> Thanks,
->>>> Yang
->>>>
->>>>>
->>>>>> Thanks,
->>>>>> Ryan
->>>>>>
->>>>>>> Thanks,
->>>>>>> Yang
->>>>>>>
->>>>>>>> Thanks,
->>>>>>>> Yang
->>>>>>>>
->>>>>>>>> Thanks,
->>>>>>>>> Ryan
->>>>>>>>>
->>>>>>>>>
-> 
-
+> >  #endif
+> >
+> >  /* FEC MII MMFR bits definition */
 
