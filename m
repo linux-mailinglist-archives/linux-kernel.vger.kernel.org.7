@@ -1,59 +1,71 @@
-Return-Path: <linux-kernel+bounces-807840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69CBCB4AA28
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:18:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C46B4AA2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44F67340763
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:17:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1EF61C23DA8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D73231C59A;
-	Tue,  9 Sep 2025 10:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFEF31CA74;
+	Tue,  9 Sep 2025 10:14:32 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48636308F38;
-	Tue,  9 Sep 2025 10:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716BA31A573;
+	Tue,  9 Sep 2025 10:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757412842; cv=none; b=FbfXqG/+71R31BlBhFg4syJBPsfaebx5oTOGu6MDwv4o3HpahzUp9hs6yg8Omcfb92rUFWD03YlRoaaamF45CMMBbTmPNLtGIoBIKqbS4WCrBTr+VvCFvEYlWHEpRAv+kH7wbmWCJ7f8J8iBfZQZ3rG0fSiPqghYP0ET5PDHfXc=
+	t=1757412872; cv=none; b=TQttMfR0rY9FBjEXKvThbbHODQScO1A+d5PHWr0153tRYBjS6z1jQYFD9rv/vzZz7OpV5jX38w2Y9GCMFF5KjH4dN88gm7ZLGqOPeQffS3OeTqxX7rxy8M7p5O9EOfPST6XCmgEDs5EIYiv/ZXL06UfzjV48X+c6/ND1JE7GG7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757412842; c=relaxed/simple;
-	bh=rDOvX1jXD3xLt+87NPZeuOJJsiKulXU/pJNwH4i3Ol8=;
+	s=arc-20240116; t=1757412872; c=relaxed/simple;
+	bh=ym80XdqDh0Lyk6nkO25aoerkSsuVfLPsaJi31FE8O70=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KoD1MuHCKb0qY0Q6fsM/tRMCakj/UQ0ITg4C6uALvdvEvhjkRCgH1+eapHmBjZVE0WyFXInMqKBxTBsMAdPryZmofKdtW0a3PZiXT/pn53PCCqw9t7X6N8TJ0MDTIKLYtm/kz99md8fwY4PWjdPQT1mitTTLwZHK01LPUy1Sffs=
+	 Content-Type:Content-Disposition:In-Reply-To; b=W5SAFiHxoJbeURjU75th6b7ZrGXbwtO7Ju6sE/PpkU5p13LeC5/2pkI86zCA2ReSd7xAAo/qyAMtDVGWlaUUInQy1eBFmM5Jk7Zkr3LHnfE2N75udE+5t7Ym6TtevqQqQlxa/6BTL8LJ899P7xjbupobAUlaflCnT7T2j8RoBog=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11D11113E;
-	Tue,  9 Sep 2025 03:13:51 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 101DC3F66E;
-	Tue,  9 Sep 2025 03:13:59 -0700 (PDT)
-Date: Tue, 9 Sep 2025 11:13:57 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	George Wort <George.Wort@arm.com>,
-	Graham Woodward <Graham.Woodward@arm.com>,
-	Ben Gainey <Ben.Gainey@arm.com>,
-	Michael Williams <Michael.Williams@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] perf arm-spe: Improve --itrace options
-Message-ID: <20250909101357.GB12516@e132581.arm.com>
-References: <20250908-james-perf-spe-period-v1-0-7ccd805af461@linaro.org>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BEA6113E;
+	Tue,  9 Sep 2025 03:14:21 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 013613F66E;
+	Tue,  9 Sep 2025 03:14:23 -0700 (PDT)
+Date: Tue, 9 Sep 2025 11:14:20 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+	baisheng.gao@unisoc.com,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH 06/33] ACPI / PPTT: Add a helper to fill a cpumask from a
+ cache_id
+Message-ID: <aL/9/KSH35ou8Mgj@e133380.arm.com>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-7-james.morse@arm.com>
+ <aK7ju2caTjqf1+VN@e133380.arm.com>
+ <2e4c3c00-b248-421e-8ff1-d24b7b03be1a@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,32 +74,107 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250908-james-perf-spe-period-v1-0-7ccd805af461@linaro.org>
+In-Reply-To: <2e4c3c00-b248-421e-8ff1-d24b7b03be1a@arm.com>
 
-On Mon, Sep 08, 2025 at 01:10:17PM +0100, James Clark wrote:
-> Most people also want all the SPE samples (instructions group), not just
-> the flagged samples that are put into the various memory groups. These
-> should have been shown by default but weren't because the default
-> interval type wasn't supported.
+Hi,
+
+On Thu, Aug 28, 2025 at 04:58:16PM +0100, James Morse wrote:
+> Hi Dave,
 > 
-> Also when looking at this, it appears that the downsampling was behaving
-> in a way that would discard samples from one group but not another.
-> Improve that and the warning messages.
+> On 27/08/2025 11:53, Dave Martin wrote:
+> > On Fri, Aug 22, 2025 at 03:29:47PM +0000, James Morse wrote:
+> >> MPAM identifies CPUs by the cache_id in the PPTT cache structure.
+> >>
+> >> The driver needs to know which CPUs are associated with the cache,
+> >> the CPUs may not all be online, so cacheinfo does not have the
+> >> information.
+> > 
+> > Nit: cacheinfo lacking the information is not a consequence of the
+> > driver needing it.
+> > 
+> > Maybe split the sentence:
+> > 
+> > -> "[...] associated with the cache. The CPUs may not [...]"
 > 
-> I don't want to put fixes tags on these because it's only changing the
-> defaults and the behavior, but I don't think the previous behavior was
-> incorrect necessarily, just copied from tracing techs but not ideal for
-> SPE.
+> Sure,
+
+OK
+
+> >> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> >> index 660457644a5b..cb93a9a7f9b6 100644
+> >> --- a/drivers/acpi/pptt.c
+> >> +++ b/drivers/acpi/pptt.c
+> >> @@ -971,3 +971,65 @@ int find_acpi_cache_level_from_id(u32 cache_id)
+
+[...]
+
+> >> + * acpi_pptt_get_cpumask_from_cache_id() - Get the cpus associated with the
+> >> + *					   specified cache
+> >> + * @cache_id: The id field of the unified cache
+> >> + * @cpus: Where to build the cpumask
+> >> + *
+> >> + * Determine which CPUs are below this cache in the PPTT. This allows the property
+> >> + * to be found even if the CPUs are offline.
+> >> + *
+> >> + * The PPTT table must be rev 3 or later,
+> >> + *
+> >> + * Return: -ENOENT if the PPTT doesn't exist, or the cache cannot be found.
+> >> + * Otherwise returns 0 and sets the cpus in the provided cpumask.
+> >> + */
+> >> +int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id, cpumask_t *cpus)
+> >> +{
+
+[...]
+
+> >> +	/*
+> >> +	 * If we found the cache first, we'd still need to walk from each cpu.
+> >> +	 */
+> >> +	for_each_possible_cpu(cpu) {
+
+[...]
+
+> > Again, it feels like we are repeating the same walk multiple times to
+> > determine how deep the table is (on which point the table is self-
+> > describing anyway), and then again to derive some static property, and
+> > then we are then doing all of that work multiple times to derive
+> > different static properties, etc.
+> > 
+> > Can we not just walk over the tables once and stash the derived
+> > properties somewhere?
 > 
-> Signed-off-by: James Clark <james.clark@linaro.org>
+> That is possible - but its a more invasive change to the PPTT parsing code.
+> Before the introduction of the leaf flag, the search for a processor also included a
+> search to check if the discovered node was a leaf.
+> 
+> I think this is trading time - walking over the table multiple times, against the memory
+> you'd need to de-serialise the tree to find the necessary properties quickly. I think the
+> reason Jeremy L went this way was because there may never be another request into this
+> code, so being ready with a quick answer was a waste of memory.
+> 
+> MPAM doesn't change this - all these things are done up front during driver probing, and
+> the values are cached by the driver.
 
-I ran the commands below, and the results are good for me.
+I guess that's true.
 
-  ./perf report
-  ./perf report --itrace=i100i
-  ./perf report --itrace=i100iM
-  ./perf report --itrace=i100ib
-  ./perf report --itrace=i100ibM
+> > I'm still getting my head around this parsing code, so I'm not saying
+> > that the approach is incorrect here -- just wondering whether there is
+> > a way to make it simpler.
+> 
+> It's walked at boot, and on cpu-hotplug. Neither are particularly performance critical.
 
-Tested-by: Leo Yan <leo.yan@arm.com>
+Do we do this only for unknown late secondaries (e.g., that haven't
+previously come online?)  I haven't gone to track this down but, if not,
+this cuts across the assertion that "there may never be another request
+into this code".
+
+cpu hotlug is slow in practice, but gratuitous cost on this path should
+still be avoided where feasible.
+
+> I agree that as platforms get bigger, there will be a tipping point ... I don't think
+> anyone has complained yet!
+
+Ack -- when in ACPI, do as the ACPI folks do, I guess.
+
+Cheers
+---Dave
 
