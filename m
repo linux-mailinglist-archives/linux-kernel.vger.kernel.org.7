@@ -1,94 +1,96 @@
-Return-Path: <linux-kernel+bounces-806975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18B1B49E4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:48:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD4DB49E4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA94445073
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:47:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EBE13A769E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD931FECBA;
-	Tue,  9 Sep 2025 00:47:26 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A189720DD72;
+	Tue,  9 Sep 2025 00:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFvbb6Hn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E3817A5BE;
-	Tue,  9 Sep 2025 00:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88081DDC2B;
+	Tue,  9 Sep 2025 00:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757378845; cv=none; b=oOREr6dtTZImbb6pcTIf1s71v+wU/pO1PonQIkD2h+IRa9t60kku7nWfY9zVXYOpujPFi6dtLlBkPi22e79wXAuFbRr1DadjFCqeYmpqb5Ngd1EJ0OaGtKo+Oo7TnagNT+4nq9q2KxtsH7+yW3Ww95YrRMEIlJ8i+AJLRF92H+E=
+	t=1757378868; cv=none; b=gFX0ZjdTcFeTiB7wJO+FvPa8oPu6i1Qo2KxTeUC7Cz2PB4QF8ZY1omhCeto2fa9uzhirRySXTf9wISzdQurfw3PNf9PAe8xx9eWCwtRx7umqeZzK3cRSKynnwLzMeVCUlM+o/C9x5UGcFcNmfTlOZaSA/EyerePRQc7OXGZhR30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757378845; c=relaxed/simple;
-	bh=H8CU6DSuTlyKuz+uXCF5+9KV7UMV6QpKxqjSFd705lU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lPtb2d0bQycuQD/DSqUEnmbNiE+14RYcxpbv8HFhyRVuJdewKzNV2wWah2KfTGcjaMoZVH2SujeFgkzqLnj9I+BZq3u/r8e08QLpxoamn1S14mCun80FUoY2aiZ+jkhp11j8RGDe9mM59Nl+nOWFAJTYmWfKyROysDNRBTn3Hcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8308ce108d1611f0b29709d653e92f7d-20250909
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:abcc27a3-7beb-415a-b184-63a807d6f293,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:da68fd040d7950670556a72e52599e09,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 8308ce108d1611f0b29709d653e92f7d-20250909
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1981216402; Tue, 09 Sep 2025 08:47:07 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 58A05E009007;
-	Tue,  9 Sep 2025 08:47:07 +0800 (CST)
-X-ns-mid: postfix-68BF790B-1929853
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 3578EE009006;
-	Tue,  9 Sep 2025 08:47:06 +0800 (CST)
-Message-ID: <2571f264-62ea-4e2c-96f0-a61b6f7dcde7@kylinos.cn>
-Date: Tue, 9 Sep 2025 08:47:05 +0800
+	s=arc-20240116; t=1757378868; c=relaxed/simple;
+	bh=zy06io68iOVZYCgiZwnvNmFkyT+ulKg9fSvGqjcKcN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tJ96WGyGEQks4ygxgIQCo8qyYocopK0WbXMQ/vwMdLZp1F549EWwGxaFEWDxIrhUf5o7WwCy1Nzsn06fsT5vJfRO4/zxNpDOhsNys62Uvwpt5KMEsKRerSDLufFCXuhUt5TTAGTgwQFF4wg3BmxIruB+ec5HrfTpWnEWEfIlriU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFvbb6Hn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 692AFC4CEF1;
+	Tue,  9 Sep 2025 00:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757378867;
+	bh=zy06io68iOVZYCgiZwnvNmFkyT+ulKg9fSvGqjcKcN8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lFvbb6HnpVHha2QYxeYIX0bkE+3dooJdy12p2Y1WtCqf+8KJ2KHtE8W/upyI42rJq
+	 W/bR3/vsaW/Yk6P2f5oIysRasonAGlc4I9+H8t0TDGRUpXjqdhrZIXpv4CAcE9/fDe
+	 I/x9x+Sam2B7yFFYLzM0HLaPcTnawzik3KVS05svRPTW26kcYZU1V0zZ414hoytHqW
+	 iSKhYPWLpHvp2ZHT/0mlk/0I5lEfE1y5myFH79/klACkDgPJIiyL3Ftb8lm7NRNK1a
+	 RRcmX/+pgIEtlIzsfGQOsSfAHeFJ4tdTWzI+rr0N/sV9gnAt1sCOm1i8LQAowH65eA
+	 +20GqpgsNGG4w==
+Date: Mon, 8 Sep 2025 19:47:46 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Xue <xxm@rock-chips.com>,
+	linux-rockchip@lists.infradead.org,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>, devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: PCI: dwc: rockchip: Add RK3528 variant
+Message-ID: <175737886558.2322312.14140565713141816216.robh@kernel.org>
+References: <20250906135246.19398-1-ziyao@disroot.org>
+ <20250906135246.19398-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] cpufreq: intel_pstate: Rearrange freq QoS updates
- using __free()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Jonathan Cameron <jonathan.cameron@huawei.com>
-References: <5028967.GXAFRqVoOG@rafael.j.wysocki>
- <3026597.e9J7NaK4W3@rafael.j.wysocki>
- <a6104009-d0ad-4d76-9079-0e81e74cd32a@kylinos.cn>
- <CAJZ5v0i+GBpv_mGnYMbNjr2d1pvXJ_NqYCp8+pgOTNpCTuue8A@mail.gmail.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <CAJZ5v0i+GBpv_mGnYMbNjr2d1pvXJ_NqYCp8+pgOTNpCTuue8A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250906135246.19398-2-ziyao@disroot.org>
 
 
-=E5=9C=A8 2025/9/9 02:10, Rafael J. Wysocki =E5=86=99=E9=81=93:
->> I also noticed that in this driver some places use one naming style an=
-d
->> others use another, so it might be worth unifying the style here.
-> Well, I'm not sure about this.
->
-> I guess it may be confusing sometimes, but then I'm not sure if that
-> justifies the code churn that would result from changing it.
+On Sat, 06 Sep 2025 13:52:44 +0000, Yao Zi wrote:
+> RK3528 ships a PCIe Gen2x1 controller that operates in RC mode only.
+> Since the SoC has no separate MSI controller, the one integrated in the
+> DWC PCIe IP must be used, and thus its interrupt scheme is similar to
+> variants found in RK3562 and RK3576.
+> 
+> Older BSP code claimed its integrated MSI controller supports only 8
+> MSIs[1], but this has been changed in newer BSP[2] and testing proves
+> the controller works correctly with more than 8 MSIs allocated,
+> suggesting the controller should be compatible with the RK3568 variant.
+> Let's document its compatible string.
+> 
+> Link: https://github.com/rockchip-linux/kernel/blob/792a7d4273a5/drivers/pci/controller/dwc/pcie-dw-rockchip.c#L1610-L1613 # [1]
+> Link: https://github.com/rockchip-linux/kernel/blob/1ba51b059f25/drivers/pci/controller/dwc/pcie-dw-rockchip.c#L904-L906 # [2]
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Agreed =E2=80=94 there are quite a lot of places that would need to be ch=
-anged,=20
-and perhaps it=E2=80=99s better to keep the current style as is.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
