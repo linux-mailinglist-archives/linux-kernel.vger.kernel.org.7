@@ -1,121 +1,111 @@
-Return-Path: <linux-kernel+bounces-807415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA51B4A410
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A07D5B4A415
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB90017B276
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:43:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ABD917BA9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124943081D0;
-	Tue,  9 Sep 2025 07:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E50305940;
+	Tue,  9 Sep 2025 07:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bf0CkDob"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEYpH0i6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C503081D1;
-	Tue,  9 Sep 2025 07:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07081FF1C4
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 07:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757403799; cv=none; b=tuxjl0PSALLcmt5nkQW79HQgKRt3caN68jPU8DFkRptzG2CCN4U8NKwOpygtQ/IIi8lXLJza0XIuXtMUNVZ3c4WKE5AtVAteV0XWIU32pWg+VGoCnx4b0PpCLHJ3qQrSj0dbARAiJZxaFgNuEvkWQ5L9RIApYWpQ6nHMr5pNtVg=
+	t=1757403865; cv=none; b=qruoGPuRMNhvRhHY3YK30+K42oiCt2E30Vgu2TOh1ix1bn0YKg4sJzsUyldzlKxoyXB1pJ7kt9MvGiQy8yKfQkgHPzBFWcQZAl4reIOY8sDjHlCzyG8Z3sZG3svl6xvz79XyEFdOsl9DusAex1NGjVD8yeZTpcxIzNkdOyLG7zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757403799; c=relaxed/simple;
-	bh=yua/wpv2PRKHIi8YtGOAbHnQH2z90+tQ6zj/5Nq7KV4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZZ3AEbrgwWWgT0aZ8vDXOFa1fkl2yJyl/RidLJ8xVEnI1MJFJxXbX1UR2F4xODBAu1cX/7ZJF/QrG58ywouZcjcApskzhz6NATAQnf9wk7QsF0Y/XkQMlKH+hky5BDUrH7e2KhZCV5fcvFtp28XoMwJQhQSafAPporppus4XiL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bf0CkDob; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f68d7a98aso6221850e87.3;
-        Tue, 09 Sep 2025 00:43:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757403793; x=1758008593; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AS7VNoPE31hVbngNYKGN2vb4znQT5BywBU8nWd9Q2tk=;
-        b=Bf0CkDobTFk65le/6tASoywSLn8JVrwSt65SM0imMDwqbrFAcbcVzYVtRLymnMYIsQ
-         AsQiPv44ldRKrIap2rrptChsewI0EY74+TVR1AL6Tqnq8WJLA1gxuauSz7MEdNjCg1Kn
-         zMeFA6s4JoGAP6VXMmDjJyGygbDUoA5vxqF8kTODLiEkVkC/KUMC/FuoFmWzS9wHU0Rc
-         R9MMvspg33hcfaScPqzZAuRjOqoOG004cJ9fJZwrNUJfpSJ5Ob4tfbs8HKQGNTHw37CU
-         MBZigEp8m/9CVsGKRIHa7SUK+wTGtMUCpylaOOatuBgMqg7A2Af0ENnMH5F77gcpxAzd
-         tDnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757403793; x=1758008593;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AS7VNoPE31hVbngNYKGN2vb4znQT5BywBU8nWd9Q2tk=;
-        b=j7hCmGFvPIdj9QzVPR9+8UqLir6/obnE43tTVkiuj5RYcBXt7K5nUGQlOA2GdewXwE
-         qwNtQWtpd/snBf6RmrcflBKnVAv+zHmVEjZMWY3XSNi+aVn6eeTMCCe8wil455JCaAJz
-         ZMPO5UsDo+wXgJ4oqY7o6IUUrrT9Q26v6iiVrPb82ZyUjjdcIX/cNof+EiUeZZp8T/2h
-         +/sO+X6cXlICq0/Fn8o3sVxDc9li0T+0KdAj7rJdaoJgbAcZkl+bk0y7pX3C8MIDh/mP
-         H13vZ6wokyxtxcwnxHXVlbS3ryeFEMJpRqjYT4R/3xDeyhzVVlMdSdx1nJkoM+tTsPUE
-         bm4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVvtnXyNNq8ldoUeeisIoBRdsSx7hZTvTasA3Wse5JYZ4+b2OB8pVRw7ck6YtfURV9UeOQXQ2IDrAweUA==@vger.kernel.org, AJvYcCXJ242kWUgRxfbFLAgvCfdZDPF+wED2wAR2knd6jiypvS8AvVDdA1/NacKwd12JvYlc/4MBXGk93lOEJ0tV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvEmbuOCTmS6vATqCWyvFfPXwNvlpAaaeQy8RPalQNu/boqeTO
-	1CVYGRreHdpRW7LEhhECGgiTNLEKs5DBPXDjCdpFN+3VQJr72/EPgabD
-X-Gm-Gg: ASbGnctIS83whFeqVsgj8ya4HE5RakPIq4/tzD8KiFabSqheL+pRl9VMgV7N64/Jbsk
-	hbhXAChoY5B/SP+eLg2MGvDkPtE+QWsDfbJnZ1pFC4UgT6/snWnYGaWxkEBBITmyUs+h1/Kx7rR
-	JQxpV411YJVwahyrN99ZSTXG6r+icFZw3e9XANFpIiCHtwTMzb930T5cgawAbt29rUkFwNwuIWE
-	ohuSL+8ayt42VOVIcFMy2yA7SiyqjL+ojEPvQm6QvmT3t575tAgLNUTq7Pvk8SWZs/7d5vtFf9k
-	3A2r2imoRSDWc+1GPMbX9jSNfxbtHFACF6sFIyRI2iXUDqpMOR9KgrwZLf6ozaeBwrbiK88yc5j
-	XwH30Ql6Lk+yV9Vs5Bw0vwUx9vjRvpZ6R1Aw=
-X-Google-Smtp-Source: AGHT+IFVQZHqLjAbCZi2TcAKzcKwotgrbVRy+JcaKxU5U4GsAo4FHGFmFmjOR5+4JFXb0wcxlhDOtQ==
-X-Received: by 2002:a05:6512:3a8a:b0:55f:3ef4:a0f0 with SMTP id 2adb3069b0e04-5625fed2778mr3793700e87.24.1757403792554;
-        Tue, 09 Sep 2025 00:43:12 -0700 (PDT)
-Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5681795d633sm333731e87.68.2025.09.09.00.43.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 00:43:12 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Lee Jones <lee@kernel.org>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Helge Deller <deller@gmx.de>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/1] video: backlight: lp855x_bl: set correct eprom start for LP8556
-Date: Tue,  9 Sep 2025 10:43:04 +0300
-Message-ID: <20250909074304.92135-2-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250909074304.92135-1-clamor95@gmail.com>
-References: <20250909074304.92135-1-clamor95@gmail.com>
+	s=arc-20240116; t=1757403865; c=relaxed/simple;
+	bh=4WyM0AdWxEAbZ8DBkgh+c8d/r+Xm5rEvrCtPJsPTlpE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qyH6CFpr1jzDyd6VHrmKr6NP+oJKH5rFvGbk3Xul8bX+zSuLoTqPlBTHCTS2W74ZIpzLHYuRupy9/7Q0eKWH6kmJMfS5ASozGIvyz+7i2wATHQ3PWa6kXZEbPt5vVCe+VJ1DS7KViahxFibV8sRRi5qsglhigeQ8rT0LsOUvaiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEYpH0i6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 951F9C4CEF5
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 07:44:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757403865;
+	bh=4WyM0AdWxEAbZ8DBkgh+c8d/r+Xm5rEvrCtPJsPTlpE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OEYpH0i6l649sXqKc7zhL56RIdpDIPMHKjmui0rkCoC4hOYHZh0qm+T38gG0uP1LV
+	 2/8rItXgZgc+VaVb9nGNoEd0dzMZQ2oa+lmpzSJRh3VN0oMEuQXsDjafwcJGe9QR7Y
+	 2BxJmHxMlVgKU6eiKlV3G/Wa1+pIeFArbbnm4GlKoBHilIecpDHv6ER/f5uR2OuwKY
+	 sr6KIT96cDJGbLhmeU/va5qQStKyLzbuTSi5tCIOvkOh3iOXIMp1nQqNN+pUzUaBeS
+	 ODlIukMm1se8U/C+2ACnd32u+89CrzOQbG4dIUoe51yi80LsGH4VPD41SeGw7CZokW
+	 8iGuPj84nkH0w==
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b04770a25f2so714094466b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 00:44:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXCavsScfWr+sfVLlC13d5bWEwh2C88qojDuzToeM8OJf/rQn0iCF1flqmYUCoUY+wXviK83WMF9tQNfz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxer9WZ4iqQaL0LUV3YoLT4yFn0FE1nNkLt5onTEjXbcFq6PWUo
+	xgmIijjVdzH3tw5JOsuJPw01n54o3KAIo/D9fjQLOLh9zFblslRyS6wp3PkzRWaW8vav/FvYLAS
+	kvhfJtvykh3g5HXFGIc3230joc7XlgE8=
+X-Google-Smtp-Source: AGHT+IHMhZ+oLMqWLCOD2Z5j9DT/R+U7Agd45tjcYW8JTzXUWCyeZprCu8hKKpGzLPh+gIG5bE+thw8uQfSoC1ZxlYs=
+X-Received: by 2002:a17:907:940c:b0:afd:be7d:725 with SMTP id
+ a640c23a62f3a-b04b17030b3mr994408066b.61.1757403864156; Tue, 09 Sep 2025
+ 00:44:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250909071942.1846204-1-cuitao@kylinos.cn>
+In-Reply-To: <20250909071942.1846204-1-cuitao@kylinos.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 9 Sep 2025 15:44:11 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5CjH8i81dGNxaVrzdVUiTwqMUYeuBifQ0wSW_Mw9wSTw@mail.gmail.com>
+X-Gm-Features: Ac12FXxf3LaqCs7jXp6D00GcZbiMdW49-LZI3fByvD8rGcT0rmebhzAWov6mjzY
+Message-ID: <CAAhV-H5CjH8i81dGNxaVrzdVUiTwqMUYeuBifQ0wSW_Mw9wSTw@mail.gmail.com>
+Subject: Re: [PATCH v2] LoongArch: Add a check for the return value when
+ creating the kobj
+To: cuitao <cuitao@kylinos.cn>
+Cc: loongarch@lists.linux.dev, kernel@xen0n.name, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-According to LP8556 datasheet eprom region starts at 0x98 so adjust value
-in the driver accordingly.
+On Tue, Sep 9, 2025 at 3:20=E2=80=AFPM cuitao <cuitao@kylinos.cn> wrote:
+>
+> Add a check for the return value of kobject_create_and_add to ensure
+> that the kobj allocation succeeds.
+>
+> Signed-off-by: cuitao <cuitao@kylinos.cn>
+> ---
+> v2: Removed the unnecessary modifications.
+> https://lore.kernel.org/all/CAAhV-H7ECnVeOgf93SEXLHLc4wvhQMjQXDbGKCR-KXKW=
+f8Vgtg@mail.gmail.com/
+> ---
+>  arch/loongarch/kernel/env.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/arch/loongarch/kernel/env.c b/arch/loongarch/kernel/env.c
+> index c0a5dc9aeae2..f4ae894f4219 100644
+> --- a/arch/loongarch/kernel/env.c
+> +++ b/arch/loongarch/kernel/env.c
+> @@ -109,6 +109,10 @@ static int __init boardinfo_init(void)
+>         struct kobject *loongson_kobj;
+>
+>         loongson_kobj =3D kobject_create_and_add("loongson", firmware_kob=
+j);
+> +       if (!loongson_kobj) {
+> +               pr_warn("loongson: Firmware registration failed.\n");
+The check is useful but the warning is unnecessary, because it is not
+fatal for system use.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/video/backlight/lp855x_bl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Huacai
 
-diff --git a/drivers/video/backlight/lp855x_bl.c b/drivers/video/backlight/lp855x_bl.c
-index 7075bfab59c4..d191560ce285 100644
---- a/drivers/video/backlight/lp855x_bl.c
-+++ b/drivers/video/backlight/lp855x_bl.c
-@@ -22,7 +22,7 @@
- #define LP855X_DEVICE_CTRL		0x01
- #define LP855X_EEPROM_START		0xA0
- #define LP855X_EEPROM_END		0xA7
--#define LP8556_EPROM_START		0xA0
-+#define LP8556_EPROM_START		0x98
- #define LP8556_EPROM_END		0xAF
- 
- /* LP8555/7 Registers */
--- 
-2.48.1
-
+> +               return -ENOMEM;
+> +       }
+>
+>         return sysfs_create_file(loongson_kobj, &boardinfo_attr.attr);
+>  }
+> --
+> 2.48.1
+>
 
