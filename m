@@ -1,62 +1,109 @@
-Return-Path: <linux-kernel+bounces-807732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDBFB4A87E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:44:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8EDDB4A895
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18DD217D6E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:44:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21F5E7BC820
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE30630DD2E;
-	Tue,  9 Sep 2025 09:40:09 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F3C2D12ED;
+	Tue,  9 Sep 2025 09:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ERAKr2/0"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC10309DC4;
-	Tue,  9 Sep 2025 09:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA56289E07;
+	Tue,  9 Sep 2025 09:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757410809; cv=none; b=fpwj3m87SArCokiRrT/DtpBMHvufX7JhaTj0gY9GqF2Jm76jsRKfgQf06m2GbYumIJeTmWKAGEOte7o50uvoXSHQHyV41jCZ8K5noQ4X5lj7WbpP1/d1xi8EkXZ1EsN44IFOaWKjLD6gJhr6uxoNVx0MGsswZ6eRAhJp3+7F9vY=
+	t=1757410891; cv=none; b=Z+gf+PCwC0ggEZlWLumKpQI8Y/PG4is3/yqcNncv5ac6Vcu20d1ZUnkJSyRtyH+lP5yBA3HXapVd2YZYp4Rx9Nb+yL+ZMUjweRAsIMFNdEehu9QLMF8ESEW6DVlnc+LJxTuOBBJAkUZWzN7tPBq9rfkxpEnzT6UfK0Cic0qlQFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757410809; c=relaxed/simple;
-	bh=1BLxtqNy/iOf9XPghIOmJi8qyxLBt+poztV5tfMoCPA=;
+	s=arc-20240116; t=1757410891; c=relaxed/simple;
+	bh=XGImaqgs6nLNHFeDHZDbEaE8FAiY9Huh697LpTyTsTs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFTR7LtbRZM5fiK7k6P12iwOyBtms1SDVW9YAkwvKN8eE+ql0oCQ1wBVg/fe2EQViU3ZNm848O9rWD9bu/+fbUM1yNrjU2t7oxDl3TXea7dc8bVeq26Jq2rPT4soaoz0yEzIcg1cyCQWR6+ZCvDcEIqnSCbOrTs7jdIFIdkuHMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.18.168])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id DECA3340EC3;
-	Tue, 09 Sep 2025 09:40:03 +0000 (UTC)
-Date: Tue, 9 Sep 2025 17:39:58 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	Alban Bedel <albeu@free.fr>, Doug Berger <opendmb@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 12/15] gpio: spacemit-k1: use new generic GPIO chip API
-Message-ID: <20250909093958-GYA1207638@gentoo.org>
-References: <20250909-gpio-mmio-gpio-conv-part4-v1-0-9f723dc3524a@linaro.org>
- <20250909-gpio-mmio-gpio-conv-part4-v1-12-9f723dc3524a@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A+i2dOwmFn1OmMQH1EY/UP07my2hAaBcr1s2LSm44RJWb58vmGKFhWIsM28cpKEUEX2LwtCm9bNQL7huq7JhiZnxQOFDYNBcszJQEHMNkVyO1NQTsT1MpDaMLe5hqkoISSuRKaaAktCFD5UX/ZhxoBFewa+1LDqJqp4aQakJ7zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ERAKr2/0; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58983LO1017978;
+	Tue, 9 Sep 2025 09:40:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=zWcQIXAgSZE3jCftx8qMBMf1VpUurI
+	YqH9HodqEjE0k=; b=ERAKr2/0b+85Gl0gJGPChBwQF66LW3Oi2PTpVHT0S9O3cT
+	Ogh6Obsb22mSDB6RKtFvicQxQH7Em5A8oD0I5nxAwaNb8/uo3nlQzflgWHoDaI73
+	HJYbO2EM++BmL63dYswiKyf3DCl4sC43LQKUJvgYSzJoqo9flhIr4HpJX5FgSugx
+	nxkpTZzhMCKXzjU82MrRkLPjYDbZe873Vx7Wql1XT2f1I7N0MW1XZjVRPa59K2LD
+	VV7jPCPICsB1PgyR4Skp/kJKJN0V5UfeoBSNtFq2eg9a3cWAGVbhYaW2tp1HOhpP
+	+lYn2f2O6UcFcD/48WOX69CsC02e71Jd9O9OLeiA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490acqxs3x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 09:40:44 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5899HIXj021030;
+	Tue, 9 Sep 2025 09:40:43 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490acqxs3v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 09:40:43 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5896bOAX008428;
+	Tue, 9 Sep 2025 09:40:42 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109pjf7r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Sep 2025 09:40:42 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5899eexO52167112
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 9 Sep 2025 09:40:40 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 604B32004D;
+	Tue,  9 Sep 2025 09:40:40 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8D98620043;
+	Tue,  9 Sep 2025 09:40:38 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.87.149.210])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  9 Sep 2025 09:40:38 +0000 (GMT)
+Date: Tue, 9 Sep 2025 11:40:37 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
+Message-ID: <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
+References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
+ <20250908073931.4159362-3-kevin.brodsky@arm.com>
+ <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,118 +112,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250909-gpio-mmio-gpio-conv-part4-v1-12-9f723dc3524a@linaro.org>
+In-Reply-To: <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: CdA-H8SVNxdbZ5nTnrwiW_1I0UR-iy8D
+X-Authority-Analysis: v=2.4 cv=Mp1S63ae c=1 sm=1 tr=0 ts=68bff61c cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=xmnICLmBNk8AszDsb_MA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: uTrJRk-Nt5us74ILiXCJ7SL_HOQZhnLx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAwMCBTYWx0ZWRfXy71df+5jjUw/
+ ntr+yICfUeQPRObSlyN3Yh1y4xhRnHGHhZFfRZCcvuRAacCykIbiLJkHQ30eUBJKOGl10TSIS42
+ +3nIeLTG23/y6JszEVZ1Ed+b1iNk9DDxZsvwkIfCXfzVoNJXgV1cawSe1+N/vBFlEkK7ENOmW+P
+ 5QFev+/ePpqxVRniHssrBkwoaFfvkZZLW/2f9hVQyEtzMR8VsnBMkGYw6WFkufIgIXN5VkhAYVQ
+ X+97jjddjBhYGKbSAHhaXMbOCL2qCKM7v5sv/V5bw5Wl8DJ9XDeAuCQ/41VgYzOkHMOtqD+ztQw
+ 0x/7e9psYHEV7vlYlvzJw+aRJnWLrm5gVwmA8e51Z46BZm3hlJcuLkZtLVQrCNNUZn7EXpW7Hgp
+ /9u+P9X3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 clxscore=1011 phishscore=0 spamscore=0
+ adultscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060000
 
+On Tue, Sep 09, 2025 at 11:07:36AM +0200, David Hildenbrand wrote:
+> On 08.09.25 09:39, Kevin Brodsky wrote:
+> > arch_{enter,leave}_lazy_mmu_mode() currently have a stateless API
+> > (taking and returning no value). This is proving problematic in
+> > situations where leave() needs to restore some context back to its
+> > original state (before enter() was called). In particular, this
+> > makes it difficult to support the nesting of lazy_mmu sections -
+> > leave() does not know whether the matching enter() call occurred
+> > while lazy_mmu was already enabled, and whether to disable it or
+> > not.
+> > 
+> > This patch gives all architectures the chance to store local state
+> > while inside a lazy_mmu section by making enter() return some value,
+> > storing it in a local variable, and having leave() take that value.
+> > That value is typed lazy_mmu_state_t - each architecture defining
+> > __HAVE_ARCH_ENTER_LAZY_MMU_MODE is free to define it as it sees fit.
+> > For now we define it as int everywhere, which is sufficient to
+> > support nesting.
+...
+> > {
+> > + lazy_mmu_state_t lazy_mmu_state;
+> > ...
+> > - arch_enter_lazy_mmu_mode();
+> > + lazy_mmu_state = arch_enter_lazy_mmu_mode();
+> > ...
+> > - arch_leave_lazy_mmu_mode();
+> > + arch_leave_lazy_mmu_mode(lazy_mmu_state);
+> > ...
+> > }
+> > 
+> > * In a few cases (e.g. xen_flush_lazy_mmu()), a function knows that
+> >    lazy_mmu is already enabled, and it temporarily disables it by
+> >    calling leave() and then enter() again. Here we want to ensure
+> >    that any operation between the leave() and enter() calls is
+> >    completed immediately; for that reason we pass LAZY_MMU_DEFAULT to
+> >    leave() to fully disable lazy_mmu. enter() will then re-enable it
+> >    - this achieves the expected behaviour, whether nesting occurred
+> >    before that function was called or not.
+> > 
+> > Note: it is difficult to provide a default definition of
+> > lazy_mmu_state_t for architectures implementing lazy_mmu, because
+> > that definition would need to be available in
+> > arch/x86/include/asm/paravirt_types.h and adding a new generic
+> >   #include there is very tricky due to the existing header soup.
+> 
+> Yeah, I was wondering about exactly that.
+> 
+> In particular because LAZY_MMU_DEFAULT etc resides somewehere compeltely
+> different.
+> 
+> Which raises the question: is using a new type really of any benefit here?
+> 
+> Can't we just use an "enum lazy_mmu_state" and call it a day?
 
-On 11:15 Tue 09 Sep     , Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Convert the driver to using the new generic GPIO chip interfaces from
-> linux/gpio/generic.h.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Thanks for converting this
+I could envision something completely different for this type on s390,
+e.g. a pointer to a per-cpu structure. So I would really ask to stick
+with the current approach.
 
-Reviewed-by: Yixun Lan <dlan@gentoo.org>
-
-> ---
->  drivers/gpio/gpio-spacemit-k1.c | 28 ++++++++++++++++++++--------
->  1 file changed, 20 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-spacemit-k1.c b/drivers/gpio/gpio-spacemit-k1.c
-> index 3cc75c701ec40194e602b80d3f96f23204ce3b4d..9e57f43d3d13ad28fcd3327ecdc3f359691a44c9 100644
-> --- a/drivers/gpio/gpio-spacemit-k1.c
-> +++ b/drivers/gpio/gpio-spacemit-k1.c
-> @@ -6,6 +6,7 @@
->  
->  #include <linux/clk.h>
->  #include <linux/gpio/driver.h>
-> +#include <linux/gpio/generic.h>
->  #include <linux/init.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
-> @@ -38,7 +39,7 @@
->  struct spacemit_gpio;
->  
->  struct spacemit_gpio_bank {
-> -	struct gpio_chip gc;
-> +	struct gpio_generic_chip chip;
->  	struct spacemit_gpio *sg;
->  	void __iomem *base;
->  	u32 irq_mask;
-> @@ -72,7 +73,7 @@ static irqreturn_t spacemit_gpio_irq_handler(int irq, void *dev_id)
->  		return IRQ_NONE;
->  
->  	for_each_set_bit(n, &pending, BITS_PER_LONG)
-> -		handle_nested_irq(irq_find_mapping(gb->gc.irq.domain, n));
-> +		handle_nested_irq(irq_find_mapping(gb->chip.gc.irq.domain, n));
->  
->  	return IRQ_HANDLED;
->  }
-> @@ -143,7 +144,7 @@ static void spacemit_gpio_irq_print_chip(struct irq_data *data, struct seq_file
->  {
->  	struct spacemit_gpio_bank *gb = irq_data_get_irq_chip_data(data);
->  
-> -	seq_printf(p, "%s-%d", dev_name(gb->gc.parent), spacemit_gpio_bank_index(gb));
-> +	seq_printf(p, "%s-%d", dev_name(gb->chip.gc.parent), spacemit_gpio_bank_index(gb));
->  }
->  
->  static struct irq_chip spacemit_gpio_chip = {
-> @@ -165,7 +166,7 @@ static bool spacemit_of_node_instance_match(struct gpio_chip *gc, unsigned int i
->  	if (i >= SPACEMIT_NR_BANKS)
->  		return false;
->  
-> -	return (gc == &sg->sgb[i].gc);
-> +	return (gc == &sg->sgb[i].chip.gc);
->  }
->  
->  static int spacemit_gpio_add_bank(struct spacemit_gpio *sg,
-> @@ -173,7 +174,8 @@ static int spacemit_gpio_add_bank(struct spacemit_gpio *sg,
->  				  int index, int irq)
->  {
->  	struct spacemit_gpio_bank *gb = &sg->sgb[index];
-> -	struct gpio_chip *gc = &gb->gc;
-> +	struct gpio_generic_chip_config config;
-> +	struct gpio_chip *gc = &gb->chip.gc;
->  	struct device *dev = sg->dev;
->  	struct gpio_irq_chip *girq;
->  	void __iomem *dat, *set, *clr, *dirin, *dirout;
-> @@ -187,9 +189,19 @@ static int spacemit_gpio_add_bank(struct spacemit_gpio *sg,
->  	dirin	= gb->base + SPACEMIT_GCDR;
->  	dirout	= gb->base + SPACEMIT_GSDR;
->  
-> +	config = (typeof(config)){
-> +		.dev = dev,
-> +		.sz = 4,
-> +		.dat = dat,
-> +		.set = set,
-> +		.clr = clr,
-> +		.dirout = dirout,
-> +		.dirin = dirin,
-> +		.flags = BGPIOF_UNREADABLE_REG_SET | BGPIOF_UNREADABLE_REG_DIR,
-> +	};
-> +
->  	/* This registers 32 GPIO lines per bank */
-> -	ret = bgpio_init(gc, dev, 4, dat, set, clr, dirout, dirin,
-> -			 BGPIOF_UNREADABLE_REG_SET | BGPIOF_UNREADABLE_REG_DIR);
-> +	ret = gpio_generic_chip_init(&gb->chip, &config);
->  	if (ret)
->  		return dev_err_probe(dev, ret, "failed to init gpio chip\n");
->  
-> @@ -221,7 +233,7 @@ static int spacemit_gpio_add_bank(struct spacemit_gpio *sg,
->  	ret = devm_request_threaded_irq(dev, irq, NULL,
->  					spacemit_gpio_irq_handler,
->  					IRQF_ONESHOT | IRQF_SHARED,
-> -					gb->gc.label, gb);
-> +					gb->chip.gc.label, gb);
->  	if (ret < 0)
->  		return dev_err_probe(dev, ret, "failed to register IRQ\n");
->  
-> 
 > -- 
-> 2.48.1
+> Cheers
 > 
+> David / dhildenb
 
--- 
-Yixun Lan (dlan)
+Thanks!
 
