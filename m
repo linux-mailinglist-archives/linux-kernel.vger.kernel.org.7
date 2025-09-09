@@ -1,126 +1,109 @@
-Return-Path: <linux-kernel+bounces-808238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A33B4FCAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:23:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2CEB4FD61
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C39BF4E3772
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:23:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C2F217AB24
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F9C30DD01;
-	Tue,  9 Sep 2025 13:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA069352FCD;
+	Tue,  9 Sep 2025 13:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XGQ1gNTm"
-Received: from mail-qt1-f202.google.com (mail-qt1-f202.google.com [209.85.160.202])
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="PBKxQNAD"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25E521FF39
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4C9338F36;
+	Tue,  9 Sep 2025 13:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757424175; cv=none; b=MM79iLtquDZoDZcYQMzh5mUcoFaZQ3QcuGZnwt+f05LB9GA/MtOrjc6Rbo5glw2ujRAZ2izpaeJExCrI4LlrpPiVItcwMCvQqGAk5RWqhwta5UxyWhZBPiF9SCzJf6CIEgLZyMX7sx8bxE/e8Cw4nBWtJ6CLJ8wOkguvOjoj5pY=
+	t=1757424709; cv=none; b=oR2LWQpO59dY72MxJNrSKRuWTwW2SscndO8vtW1ECj7qBjtuuC5qi6IMUVR1PF616vs9k3IS2FghUSF6vQpEYOKMw1QKsUs0dE+/6Zea73cL09ZwWBlSGndA2yT8bRHAIG8WPqrGc+B1+XwCvdWLxbaj8V0Pqvy6La7NsFFWhxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757424175; c=relaxed/simple;
-	bh=kAoIWg0eouVwlZINqB9hM9ZgDWPys75E8dPDrrUOVRI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CjPuNO0iHR++lPOBKdFxVqxiAfLwDTfdTypxnBsm7T53PVEvBGsBR1/RNsuq8jlPFmFY7b6yzNCNDYRRb4DM9kmCkFz4SKM1nAM+efDax7VWZEo2p6Wi8o3CH8j+EIKrPDIXx9PHBVO0LPJazZ2Q72IOpsWzCp32QVy7ZCiT+y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XGQ1gNTm; arc=none smtp.client-ip=209.85.160.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com
-Received: by mail-qt1-f202.google.com with SMTP id d75a77b69052e-4b5e5f80723so121450731cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:22:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757424172; x=1758028972; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uchVPC5V5AnCU++0LQSE31dfyzhx8FL2wjNsKVYAXlI=;
-        b=XGQ1gNTmJSgz5hjFPrtuVBGnqeKdf1jj/8mf/pZNeqdhyJkwTnWjQEnqraShpxMxti
-         CU6WcZm1JHOrnR3D0MTiTAriv9nU1GeFNJDODjehxQNuzMwpevMhw0Zff5VURVLXM2dv
-         5c9LKOSP1QfwHX9DgylFmNR5nYunILLJaANmrr387Lb84helrD1k3uK3NszUBAzT8oWT
-         qKKRIVELjQXlqwK64Md4qW9tjMuYBGZUrd3U9HyBJ73/uXZo8phM1oMkN8p7bxDVylka
-         tU9ldJnU9FbIaYZdYylBhFCA8xad0mdklE4HKWvs02u1Ls3WkAGFj/YH1pYERjm9UJkJ
-         2rHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757424172; x=1758028972;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uchVPC5V5AnCU++0LQSE31dfyzhx8FL2wjNsKVYAXlI=;
-        b=Y0MIHF/6W0nnt13JmvRst0+awwiEyr4hl5xUENNe8HepWQPV2TwlL8JQNcsi5WoRux
-         46lGFPDpkm1BQqoKO1NERNryWUTRfLPgTp+cW0WrIYajcshVdsYCsnDJu2ah4/BgkZ/v
-         rxBhf3NMzty8CWGlc4iarZusx/f64m5oyZRR8Kc9vJEKdFCPcqTtG31Mp0s4BwWYdx6B
-         bsDmQj3fcmQEcqz7oNw80ddLYkUfiVbTcCYqiLHQwo0C0KE/zv2j/qzOgstbWqxDcKEf
-         oSLURl02UsFGy54B8xf288V3v53tnV1P+T3gFzYJKFC7HumPv7DdA3NzXkxLldZwQGZ6
-         ncmw==
-X-Gm-Message-State: AOJu0Yzgc/AQW25Uc8XwzTgMR6a+tfsC11RP9L5Qh1RJyr9g+LwzqBD2
-	7sSYkaLV0CQFApOsH3mDZmBtq2H6nRRgqewDG47eawtEfksmiUxHlQgg0dBJ1CbxdK6YlGeAhnc
-	JDeCM7HuhGk0msQ==
-X-Google-Smtp-Source: AGHT+IGYpVQiEzn9QHE1zn1hAW5xwDjdaQLoTNKxPgWkv7gyao/+uTsXb3LQmW5bD0GeIq3wlXcgPuI+F3/c5w==
-X-Received: from qtz5.prod.google.com ([2002:ac8:5945:0:b0:4b0:a157:1d5b])
- (user=edumazet job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:622a:4b14:b0:4b0:da5c:de57 with SMTP id d75a77b69052e-4b5f844d1fbmr103893091cf.54.1757424171653;
- Tue, 09 Sep 2025 06:22:51 -0700 (PDT)
-Date: Tue,  9 Sep 2025 13:22:43 +0000
+	s=arc-20240116; t=1757424709; c=relaxed/simple;
+	bh=MUCkbJyci6FlxOeX9Fzjxr+SBdqQ4dJ0Fs8P02ob960=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IswKTC42rle8MeHHx27W8w1u3gUzSEAwVOuhbXIe3Z9cwIgwC/7dCilJ00ZmjhrIA2ixnW5dEQo5SVIP4+1CEuYqaPp0Hp9Gfx3BdYKA7z8EvTb00Jk/UOxvvrrc9A1dMvXNGuh64Ym66fhcOvz8w56HvSHQPQ6hxq9XCjUJMQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=PBKxQNAD; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1757424243; bh=MUCkbJyci6FlxOeX9Fzjxr+SBdqQ4dJ0Fs8P02ob960=;
+	h=From:Subject:Date:To:Cc;
+	b=PBKxQNADQ1wU6hYpRa7M7VdzBma9YLrFHpez0aowA3ahvnfpgTeS6mXrlQSUYrG1b
+	 zS3TxQ9K1zJV/h2cubSfFFvlNZmcfXloZQIe58tl+naz2Kb8yrjFKvLFuMhZUzGRwE
+	 sW0Bnz8qhllDRSKcr9USFk4hIInpKNtOXZA8kD7U=
+From: Luca Weiss <luca@lucaweiss.eu>
+Subject: [PATCH 0/2] Disable wakeup for resin keys by default
+Date: Tue, 09 Sep 2025 15:23:06 +0200
+Message-Id: <20250909-resin-wakeup-v1-0-46159940e02b@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250909132243.1327024-1-edumazet@google.com>
-Subject: [PATCH] nbd: restrict sockets to TCP and UDP
-From: Eric Dumazet <edumazet@google.com>
-To: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
-	Eric Dumazet <eric.dumazet@gmail.com>, Eric Dumazet <edumazet@google.com>, 
-	syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com, 
-	Mike Christie <mchristi@redhat.com>, "Richard W.M. Jones" <rjones@redhat.com>, 
-	Yu Kuai <yukuai1@huaweicloud.com>, linux-block@vger.kernel.org, nbd@other.debian.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADoqwGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwNL3aLU4sw83fLE7NTSAt3UpGRz87RUc9MkC0MloJaCotS0zAqwcdG
+ xtbUA5Z+Zpl4AAAA=
+X-Change-ID: 20250909-resin-wakeup-ebc77fe75b81
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Courtney Cavin <courtney.cavin@sonymobile.com>, 
+ Vinod Koul <vkoul@kernel.org>
+Cc: Bhushan Shah <bshah@kde.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+ phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Luca Weiss <luca@lucaweiss.eu>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1088; i=luca@lucaweiss.eu;
+ h=from:subject:message-id; bh=MUCkbJyci6FlxOeX9Fzjxr+SBdqQ4dJ0Fs8P02ob960=;
+ b=owEBbQKS/ZANAwAKAXLYQ7idTddWAcsmYgBowCpIkgdumpvnEx7661RFD2SDQD1asBdsiAyQE
+ dH3YqS4EfyJAjMEAAEKAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCaMAqSAAKCRBy2EO4nU3X
+ VsJfD/91TVsLO+puct88Pzhp7w8pLhpBCjTzDH+DW1SQ7TqOLtahwwU/SkrEsV9NR59ZTY8fu7d
+ PS/aGx94LGR4BBTiBmUZg4v7/7ArV7UcgYxe4ciN+K3v2/YqITWhw/p2s6nSeacAaZB3OyMleOF
+ s8LJYyBgmQtbU0vbmfImAKB1Gp3MjdrzhOQPbNlw3wsLNFtGlrff8C+iDxe80sdCVDitSevM13d
+ jr/of0DjCjm0muzqBDXXkKzmmpcKeN2o329yPhTi8mRHYEe8D2JmgY68PD0XMT2kuID9TXRS8Yt
+ 4HTJNwwTt8ldL19IlzNFlywsI3gyEUHrtAXXZ1tIT8bpwi3y7HGwzaGoneXSxLEm7JRi0dJHQi3
+ G/6+fP257ciUH4CYHHo5pKlfVbeKS2foS3nvzG4z+wTcMSsguftu+EWumDTBwEPQ2JMjjbRAK5y
+ qbvYKbfp3IMYm1eA+gCLwmGsw3HmXw+vQe0wcV44h6lBGQJNiq6tSTkXdspJlcSGL1RuE+LIkZY
+ JZZRenBmfMBPVnUd7B6hdw0o5aXnXjkgL4iJONswLeliODO6pQTG3DVIY+9Nha5+TnfAc76/0Or
+ pnYfwPTiMTtkvMl41zW7xLHYWp/PJE/Xnaj6H9UjqcsnPNFH04bc3vb77qejx43lSyF4g56DYV7
+ 0BhwgsiEfArok1w==
+X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-Recently, syzbot started to abuse NBD with all kinds of sockets.
+'Resin' (*Res*et *In*put) on Qualcomm PMICs is usually connected to
+volume down buttons on devices, which are usually not expected to wake
+up the device from suspend.
 
-Commit cf1b2326b734 ("nbd: verify socket is supported during setup")
-made sure the socket supported a shutdown() method.
+On the other hand, pwrkey should keep wakeup on.
 
-Explicitely accept TCP and UNIX stream sockets.
+Note, that this does change behavior by turning off wakeup by default
+for 'resin' and requiring a new dt property to be added to turn it on
+again. But since this is not expected behavior in the first place, and
+most users will not expect this, I'd argue this change is acceptable.
 
-Fixes: cf1b2326b734 ("nbd: verify socket is supported during setup")
-Reported-by: syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/netdev/CANn89iJ+76eE3A_8S_zTpSyW5hvPRn6V57458hCZGY5hbH_bFA@mail.gmail.com/T/#m081036e8747cd7e2626c1da5d78c8b9d1e55b154
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Mike Christie <mchristi@redhat.com>
-Cc: Richard W.M. Jones <rjones@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: linux-block@vger.kernel.org
-Cc: nbd@other.debian.org
+Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 ---
- drivers/block/nbd.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Luca Weiss (2):
+      dt-bindings: input: pm8941-pwrkey: Document wakeup-source property
+      Input: pm8941-pwrkey - Disable wakeup for resin by default
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 6463d0e8d0cef71e73e67fecd16de4dec1c75da7..87b0b78249da3325023949585f4daf40486c9692 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1217,6 +1217,14 @@ static struct socket *nbd_get_socket(struct nbd_device *nbd, unsigned long fd,
- 	if (!sock)
- 		return NULL;
- 
-+	if (!sk_is_tcp(sock->sk) &&
-+	    !sk_is_stream_unix(sock->sk)) {
-+		dev_err(disk_to_dev(nbd->disk), "Unsupported socket: should be TCP or UNIX.\n");
-+		*err = -EINVAL;
-+		sockfd_put(sock);
-+		return NULL;
-+	}
-+
- 	if (sock->ops->shutdown == sock_no_shutdown) {
- 		dev_err(disk_to_dev(nbd->disk), "Unsupported socket: shutdown callout must be supported.\n");
- 		*err = -EINVAL;
+ .../bindings/input/qcom,pm8941-pwrkey.yaml          | 21 ++++++++++++++++++---
+ drivers/input/misc/pm8941-pwrkey.c                  | 12 ++++++++++--
+ 2 files changed, 28 insertions(+), 5 deletions(-)
+---
+base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+change-id: 20250909-resin-wakeup-ebc77fe75b81
+
+Best regards,
 -- 
-2.51.0.384.g4c02a37b29-goog
+Luca Weiss <luca@lucaweiss.eu>
 
 
