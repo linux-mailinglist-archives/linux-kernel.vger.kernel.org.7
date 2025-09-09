@@ -1,153 +1,130 @@
-Return-Path: <linux-kernel+bounces-807197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7009B4A175
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:47:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ECA3B4A176
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D9007AAF04
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 358B34E2200
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 05:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A80A2F1FDC;
-	Tue,  9 Sep 2025 05:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB472F8BC5;
+	Tue,  9 Sep 2025 05:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ClG7FGkY"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="nOWvEa0n"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B4DF9C1;
-	Tue,  9 Sep 2025 05:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6F42EBDF0
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 05:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757396816; cv=none; b=jK9cyeA3AInU5V3gUnNItZtfh8wYdxo4+s81VLpnVZiwfF44su0wDTwvczzJK3tHVlLu+yKJnIXOA3rjDd6uKAFhVoKFLDJEGLNDoitgJoXtssXvuPBwV6jUO/anwTbAf3XzvOXZUi9pM9J/2ufLWZvVbYn89tKq8OfVrru/a1g=
+	t=1757396837; cv=none; b=dLZ3WK60zrBmitgTf+M4X2wNV24g0oWSDWDiGhnlZzUBZ9RnnaV8llM2wcu+zHanfdl6hP6uPpv9tzMV07RJVJQPF6Q6s7DAGBp1Pf/qLPGsb1nOgkHKYTs8QlyQ8JaY1ndNHS7fhYSnCfpHFhl1uKJ+nKh1znpikcCBMN6esA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757396816; c=relaxed/simple;
-	bh=Jz3M6If6dytU/qgoG3Aqg4qIxo2nPl0Sg5nSVHm09vI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dkzs2zi626/iBg2DbtLEMjxI1D0V9Uw+hthkb/a1F/2yNNuok3688aCYngTrlryPYa9LfyIIiir0AF1iR5zIjQREPW3MKrqA9IfWP2IWY0mkBEG1gaWg6/9uw3iKjpTFey5fqeka2xArXwN5gJ1Eov3b69x5RAVzaVJ3pMbwYpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ClG7FGkY; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5895kVxH217479;
-	Tue, 9 Sep 2025 00:46:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757396791;
-	bh=yjJby7j9yt/5+ggjhTawrBW65UMydPYpCjdJvSOfSss=;
-	h=From:To:CC:Subject:Date;
-	b=ClG7FGkYrrZ+zYbEBaa27ZHWY53bSj6x0WAKPrKB+OqR6v3IKWTbAEww1RcLTzc79
-	 SZ8zgidrlJtYLfNYTM2RTb0sGuBzDTdwOvy6OzgMUsxOIsbZXub8W0xhNVjP2IPjm1
-	 gqowYtuBss3nCqdJ179D1rq4NFzAHX4pICsg2A44=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5895kU4E3553049
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 9 Sep 2025 00:46:30 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 9
- Sep 2025 00:46:29 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 9 Sep 2025 00:46:30 -0500
-Received: from hkshenoy.dhcp.ti.com (hkshenoy.dhcp.ti.com [172.24.235.208])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5895kMi32114917;
-	Tue, 9 Sep 2025 00:46:23 -0500
-From: Harikrishna Shenoy <h-shenoy@ti.com>
-To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@gmail.com>, <airlied@gmail.com>, <simona@ffwll.ch>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <sjakhade@cadence.com>, <yamonkar@cadence.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>, <u-kumar1@ti.com>,
-        <s-jain1@ti.com>
-CC: <h-shenoy@ti.com>
-Subject: [PATCH v4] dt-bindings: drm/bridge: MHDP8546 bridge binding changes for DSC
-Date: Tue, 9 Sep 2025 11:16:22 +0530
-Message-ID: <20250909054622.1439487-1-h-shenoy@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757396837; c=relaxed/simple;
+	bh=pNFLJBWaBI/4oOG7dhwpGC6SsZk9hVfRXeYkyZRJWhk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LS4zFz47bEekWulJirKLFCRcz/Gq6mMpDCIjaUJG2bN1F5o9Bx/IBNNRPkcE4yeQFfZmulPARmPH2UF4vtf3SMCG1tDT9+Ou25aCwyAeobQR3Q/ngZkrin1ICp1b9UgBPq2urYIJZ2QhhsCkb5ms+8MGWDCIkmd3jbEU+ioEMe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=nOWvEa0n; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
+	by cmsmtp with ESMTPS
+	id vqCRulRbojzfwvrCEu5aKY; Tue, 09 Sep 2025 05:47:14 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id vrCDux2tlrez1vrCDuG63P; Tue, 09 Sep 2025 05:47:13 +0000
+X-Authority-Analysis: v=2.4 cv=F65XdrhN c=1 sm=1 tr=0 ts=68bfbf61
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ftbTpB0QAGd6IXrwbd+wdafHWdUigT/c1X1z9SsHSFQ=; b=nOWvEa0nmGoB43DuqXYy0xRSKC
+	Gf1l6+nJARY0FE6Xj52zWE/e840mvLgKfgS7URxEQ4UrCMUlDHlHktvtUrBcbOLQY7YnQpkivv4p2
+	8vfgnzRKdXesJFgJqfaeHvm38GY+nJFV9iN2HFFgSM05flh4BmUCWbSL1r+B0oxl3/Nlr3rw+CETi
+	LcJXwwVL/gxLYlIgJOAWmtd22ObC64yqkouk3ULZSQuRYBzxg+WK5jblCvVfgLQ3iGJrLC+J2SLWy
+	ocPOVKA4aTs4k6/WyTDPk9vzHkW/t+SN3IAakmhvB+O/SFSz+WxIpy1EyhLcn0F0vBGp+aUfkI7db
+	WY/byp6w==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:44608 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uvrCC-00000001kTV-1MGZ;
+	Mon, 08 Sep 2025 23:47:12 -0600
+Message-ID: <57940525-7e4e-4f65-92d0-19d8ae244ba1@w6rz.net>
+Date: Mon, 8 Sep 2025 22:47:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.16 000/183] 6.16.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250907195615.802693401@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250907195615.802693401@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1uvrCC-00000001kTV-1MGZ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:44608
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 17
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfGYulynHciaREifRP4udOz8OkLRiNhrWA4NfkBL+p/dui7Q/OxnVnU96kzSj5AzrOpliIh4STiK0SzcTpb1fXriJ+6mQo7iuRVZahmjXP7lO0nnh5MHP
+ sG95zO+IGXsBibgnI25GELOiJqehRHTxDFOgV76WgRBW/5m1oE+/RpjxyyFXcWW6+zTZd41GMnrPQ/oGbHGUxMQQpa5wjdgNhQM=
 
-From: Swapnil Jakhade <sjakhade@cadence.com>
+On 9/7/25 12:57, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.16.6 release.
+> There are 183 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.6-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Add binding changes for DSC(Display Stream Compression) in the MHDP8546
-DPI/DP bridge.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
-Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
----
-Changelog v3 -> v4:
--Remove maxItems as item list is mentioned for reg-names, resolves 
-dt_bindings_check warning.
-Log link- <https://gist.github.com/h-shenoy/5391ea514bb58a6cba3f39248d20916b>
-Link to v3- https://lore.kernel.org/all/20250908054609.1113360-1-h-shenoy@ti.com/
-
- .../bindings/display/bridge/cdns,mhdp8546.yaml | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
-index c2b369456e4e..b40630de6d89 100644
---- a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
-@@ -27,6 +27,8 @@ properties:
-           Register block for DSS_EDP0_INTG_CFG_VP registers in case of TI J7 SoCs.
-       - description:
-           Register block of mhdptx sapb registers.
-+      - description:
-+          Register block for mhdptx DSC encoder registers.
- 
-   reg-names:
-     minItems: 1
-@@ -34,6 +36,7 @@ properties:
-       - const: mhdptx
-       - const: j721e-intg
-       - const: mhdptx-sapb
-+      - const: dsc
- 
-   clocks:
-     maxItems: 1
-@@ -100,18 +103,25 @@ allOf:
-       properties:
-         reg:
-           minItems: 2
--          maxItems: 3
-+          maxItems: 4
-         reg-names:
-           minItems: 2
--          maxItems: 3
-+          items:
-+            - const: mhdptx
-+            - const: j721e-intg
-+            - const: mhdptx-sapb
-+            - const: dsc
-     else:
-       properties:
-         reg:
-           minItems: 1
--          maxItems: 2
-+          maxItems: 3
-         reg-names:
-           minItems: 1
--          maxItems: 2
-+          items:
-+            - const: mhdptx
-+            - const: mhdptx-sapb
-+            - const: dsc
- 
- required:
-   - compatible
--- 
-2.34.1
+Tested-by: Ron Economos <re@w6rz.net>
 
 
