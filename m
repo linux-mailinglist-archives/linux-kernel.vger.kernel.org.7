@@ -1,147 +1,262 @@
-Return-Path: <linux-kernel+bounces-808032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E6C4B4AC55
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:40:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3EEB4AC59
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8DC71BC2F84
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:40:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D2594E2AF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C026E322775;
-	Tue,  9 Sep 2025 11:39:34 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD70322A0B;
+	Tue,  9 Sep 2025 11:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="Mdkmplj7"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F87D322745
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757417974; cv=none; b=ihikj75r33lkXXRwAPgccv4Ft6pZ6rTnan0YFXkkKFdM7gUR73/7jMfARwytuJzybbKO72OZD+/QF8J9gWBN3PRcgomSy0ezoJH8HvyjN4if3Bpu5WnE6/AOFeYhvV6pzsg05Qx0+1quX3xjqrXFda9/asMOsEceC6jMdsRprPA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757417974; c=relaxed/simple;
-	bh=mtfgJC6mRhWeUBamsoa21BCrYCeBPdeJ0l1lldAejIA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tN3ZIX8qc1MT2p1UsSoJUC/ZDTYBRln+x1T9NHR9ZPrE1B97BDoRNdFoaOmqSeKQ/ODhuVMCAxvCyFiOYEdIMg2SMPiAKVHAhuVOJqgLw1Ugzb0UYmdRcP1oRrz/OywzZqtepaKY9wD4OVnPKGbpVoWSP114aNP1k+mgE5ckufg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-8875640a843so729238139f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 04:39:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757417971; x=1758022771;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0DR1NbwOuCzEmWu0AkP/aduI1He0ADmflanoaSiOmxk=;
-        b=terN77yraAudNxl2Fdod7QEapMQlEQ6aHe7cHXhqymqVgXCWKRWghix80bX8JE0j93
-         lx+8CCR6pB79JLBgcGdLorAF1LQTTLoC2OB/MyyBK7v52uwmNfz+pGvAT5z8PdKdA6ms
-         CHFILjEbeUHJq8+PjukjwzRUW47m79g4/viOLlPaHzQaZ+ikG02JiYzoQP9K+KB2DHBv
-         ZGCSqMxCDD9xsDOIyyIcKsuTqxvSj3QfPBvyhRuYbu6/A8dpZ2KCAyYGOwQ8KriY1jR4
-         th0mLGxqLonVNnrXswO5uDH8z09QH4tPYjjqBaH8i0ocMuT3Q9+1mDAhijo353mw8X2j
-         hdTw==
-X-Gm-Message-State: AOJu0YyTlPhbMEx3OKJhBXm+JQfm7RGO2zUNoGdj89pgCeW2jbYKJ8PT
-	yD8AdrSV3b6l2UU+cuBp5uO285EP3EJTx+eYn5mIu2thTNkwJzbt5J7+6fiYgHd+KCv2xRAu3z0
-	M0IW8WYdaoPtHai2mCg8yxBjeYt0vorxOcgrX6X7RTbVDMBWU3SRjc9rQx3H6ng==
-X-Google-Smtp-Source: AGHT+IF62rkxMyBfjOX8r3B7ezx1SAJDtsbixOyF1uN6h+vq0suHWhPGowKv7zE5VUYKTqLk5spLkMq/1EwguJXacmhYt/7RATzz
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C8432255A;
+	Tue,  9 Sep 2025 11:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757418034; cv=pass; b=GRDonhkMFdPT8Qqn5jQEYdoAHJ+xmmEQuQhnkf7ZMGbtFlSRPkqjbxZ1X3T4BPL1iSGWdRxtdlpTPj8vMydTlnfzVR2bpsnNg7ud7jUnLqf4nuuY42gL8g85LuVRb5nB5/1wx52vlfUiEMNEUJcqjK0IdMmvJt2JOA1NXm2EtQg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757418034; c=relaxed/simple;
+	bh=yyH7QXAmga8o9wPBkSK0dhxZ1ZIsY8aNE12IRqdxdfE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J5IT+2e/UcZbm3jyyL8B4mC3+KbL/MPeuv573G4G8WuG8sTvlyp2nueRleA/dpsJk6b2bLoU02dxnB6dI1WfDNiGm5jnjg7vdEd/eOWYuo2i5SssjETbnIwuSnK1muVb7T7lJG6ourtc9pYJ4s6nAEMJpgEsW9sI+0XCOjMoAJE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=Mdkmplj7; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757418007; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mR86WgNDJqm43kd30guAp2bJpPVNH/BT6nkeYpDZzS1ORtrOjSmo+ZOR/wzvyilYD+qzoMb9+fRz9xnagSmOpuyI2PYbpo/Ib3INKzS+4jcgnvBRPc2EF6kOWbghJTlva6RbJ20T9ZSOhavTJ33RRsBiAWHTmOqqwOK9WeAlzXc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757418007; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=AKWUdCalq5DHy3CQODfUq4gtyG6Ka3mIdSwhVwGWp2Q=; 
+	b=bo+vzUYHG9MJQK4YrDvVjL0t+wlzJoasp1ALS9t4j4wGCp7L7auxhZbVlJHMZBz7JbxjpN0InAy/xVn1Msc2hJs5yzZ/nwky7zm2rnB/RIhi8TxSPLjr9DndAkc397CPHUyJFjWw4YhPX2pVvGgB4Sb12ViSIA4WLfZS6+T5KOU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757418007;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=AKWUdCalq5DHy3CQODfUq4gtyG6Ka3mIdSwhVwGWp2Q=;
+	b=Mdkmplj7jW+S3Tq/XJlTuR/ujV2l/R5gsbdJ76/rZSvz4MUtFPOCvBZdc237oOzU
+	vb5ix2ya7nDM791RnGrRt/lqlc5CEOkSW0Bj26HqxY4HSVLm0BhLDv4vjouD9xjFr5D
+	0wjN1Yjd2IQCer0XDKeuZ3sTFdJUoHMjMnZ93SQY=
+Received: by mx.zohomail.com with SMTPS id 1757418005705920.7142783931457;
+	Tue, 9 Sep 2025 04:40:05 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>
+Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	kernel@collabora.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	James Clark <james.clark@linaro.org>
+Subject: [PATCH RESEND v2] perf/headers: Document PERF_PMU_CAP capability flags
+Date: Tue,  9 Sep 2025 13:39:37 +0200
+Message-ID: <20250909-perf-pmu-cap-docs-v2-1-3c451f7b0b2e@collabora.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b06:b0:3f3:4562:ca92 with SMTP id
- e9e14a558f8ab-3fd8e98d28cmr172816265ab.10.1757417971719; Tue, 09 Sep 2025
- 04:39:31 -0700 (PDT)
-Date: Tue, 09 Sep 2025 04:39:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c011f3.050a0220.2ff435.0003.GAE@google.com>
-Subject: [syzbot] [trace?] WARNING in tracepoint_add_func (3)
-From: syzbot <syzbot+eb730f6ee28e001e5a2e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    d69eb204c255 Merge tag 'net-6.17-rc5' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14f67162580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fecbb496f75d3d61
-dashboard link: https://syzkaller.appspot.com/bug?extid=eb730f6ee28e001e5a2e
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a6f2a6d6a06c/disk-d69eb204.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3767a1bdccea/vmlinux-d69eb204.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2387e35c8e78/bzImage-d69eb204.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+eb730f6ee28e001e5a2e@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 20575 at kernel/tracepoint.c:294 tracepoint_add_func+0xbf2/0xea0 kernel/tracepoint.c:294
-Modules linked in:
-CPU: 0 UID: 0 PID: 20575 Comm: syz.3.1826 Tainted: G          I         syzkaller #0 PREEMPT(full) 
-Tainted: [I]=FIRMWARE_WORKAROUND
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:tracepoint_add_func+0xbf2/0xea0 kernel/tracepoint.c:294
-Code: 54 12 fe ff 90 0f 0b 90 0f b6 74 24 43 31 ff bb ea ff ff ff e8 1f 0d fe ff 80 7c 24 44 00 0f 84 77 fb ff ff e8 2f 12 fe ff 90 <0f> 0b 90 e9 69 fb ff ff e8 21 12 fe ff 48 8b 44 24 10 48 8d 78 18
-RSP: 0018:ffffc90004b3fb48 EFLAGS: 00010287
-RAX: 000000000000128b RBX: ffffffffffffffef RCX: ffffc9000cf8c000
-RDX: 0000000000080000 RSI: ffffffff81bcf8a1 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffffffff8e645aa0 R15: ffffffff81c3bd00
-FS:  00007f88b35446c0(0000) GS:ffff8881246bd000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b33600ff8 CR3: 000000004752c000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- tracepoint_probe_register_prio+0xbc/0x100 kernel/tracepoint.c:464
- register_trace_prio_sched_switch include/trace/events/sched.h:220 [inline]
- register_pid_events kernel/trace/trace_events.c:2390 [inline]
- event_pid_write.isra.0+0x480/0x7f0 kernel/trace/trace_events.c:2461
- vfs_write+0x29d/0x11d0 fs/read_write.c:684
- ksys_write+0x12a/0x250 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f88b278ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f88b3544038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f88b29c5fa0 RCX: 00007f88b278ebe9
-RDX: 000000000000fdf3 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00007f88b2811e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f88b29c6038 R14: 00007f88b29c5fa0 R15: 00007ffc283ad408
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Over the years, capability flags for perf PMUs were introduced in a=0D
+piecemeal fashion whenever a new driver needed to signal to the perf=0D
+core some limitation or special feature.=0D
+=0D
+Since one more undocumented flag that can have its meaning inferred from=0D
+the commit message and implementation never seems that bad, it's=0D
+understandable that this resulted in a total of 11 undocumented=0D
+capability flags, which authors of new perf PMU drivers are expected to=0D
+set correctly for their particular device.=0D
+=0D
+Since I am in the process of becoming such an author of a new perf=0D
+driver, it feels proper to pay it forward by documenting all=0D
+PERF_PMU_CAP_ constants, so that no future person has to go through an=0D
+hour or two of git blame + reading perf core code to figure out which=0D
+capability flags are right for them.=0D
+=0D
+Add comments in kernel-doc format that describes each flag. This follows=0D
+the somewhat verbose "Object-like macro documentation" format, and can=0D
+be verified with=0D
+=0D
+	./scripts/kernel-doc -v -none include/linux/perf_event.h=0D
+=0D
+The current in-tree kernel documentation does not include a page on the=0D
+perf subsystem, but once it does, these comments should render as proper=0D
+documentation annotation. Until then, they'll also be quite useful for=0D
+anyone looking at the header file.=0D
+=0D
+Reviewed-by: James Clark <james.clark@linaro.org>=0D
+Reviewed-by: Ian Rogers <irogers@google.com>=0D
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>=0D
+---=0D
+Changes in v2:=0D
+- Fixed the description of PERF_PMU_CAP_NO_INTERRUPT and expanded it to=0D
+  make it clearer for driver authors whether this flag is right for them=0D
+- Made PERF_PMU_CAP_NO_EXCLUDE docs mention the precise attributes the=0D
+  flag concerns itself with, as suggested by Peter Zijlstra=0D
+- Link to v1: https://lore.kernel.org/r/20250618-perf-pmu-cap-docs-v1-1-0d3=
+4387d6e47@collabora.com=0D
+---=0D
+ include/linux/perf_event.h | 85 ++++++++++++++++++++++++++++++++++++++++++=
+++++=0D
+ 1 file changed, 85 insertions(+)=0D
+=0D
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h=0D
+index ec9d96025683958e909bb2463439dc69634f4ceb..d0e6b66cfd268bdad742b707633=
+792f26352a428 100644=0D
+--- a/include/linux/perf_event.h=0D
++++ b/include/linux/perf_event.h=0D
+@@ -294,16 +294,101 @@ struct perf_event_pmu_context;=0D
+ /**=0D
+  * pmu::capabilities flags=0D
+  */=0D
++=0D
++/**=0D
++ * define PERF_PMU_CAP_NO_INTERRUPT - \=0D
++ *    PMU is incapable of generating samples=0D
++ *=0D
++ * On CPU PMU hardware, a PMU driver is only capable of generating sample =
+data=0D
++ * in the form of &struct perf_sample_data if the hardware is capable of=0D
++ * generating hardware interrupts. If such interrupt capability is missing=
+,=0D
++ * this flag should be set.=0D
++ *=0D
++ * Uncore drivers, i.e. drivers for hardware performance counters that are=
+ not=0D
++ * closely entwined with CPUs and their model of execution, should also se=
+t=0D
++ * this flag, as they are not able to generate meaningful sample data, eve=
+n if=0D
++ * they do use an interrupt for some purpose.=0D
++ */=0D
+ #define PERF_PMU_CAP_NO_INTERRUPT	0x0001=0D
++/**=0D
++ * define PERF_PMU_CAP_NO_NMI - \=0D
++ *    PMU is guaranteed to not generate non-maskable interrupts=0D
++ */=0D
+ #define PERF_PMU_CAP_NO_NMI		0x0002=0D
++/**=0D
++ * define PERF_PMU_CAP_AUX_NO_SG - \=0D
++ *    PMU does not support using scatter-gather as the output=0D
++ *=0D
++ * The PERF_PMU_CAP_AUX_NO_SG flag indicates that the PMU does not support=
+=0D
++ * scatter-gather for its output buffer, and needs a larger contiguous buf=
+fer=0D
++ * to output to.=0D
++ */=0D
+ #define PERF_PMU_CAP_AUX_NO_SG		0x0004=0D
++/**=0D
++ * define PERF_PMU_CAP_EXTENDED_REGS - \=0D
++ *    PMU is capable of sampling extended registers=0D
++ *=0D
++ * Some architectures have a concept of extended registers, e.g. XMM0 on x=
+86=0D
++ * or VG on arm64. If the PMU is capable of sampling these registers, then=
+ the=0D
++ * flag PERF_PMU_CAP_EXTENDED_REGS should be set.=0D
++ */=0D
+ #define PERF_PMU_CAP_EXTENDED_REGS	0x0008=0D
++/**=0D
++ * define PERF_PMU_CAP_EXCLUSIVE - \=0D
++ *    PMU can only have one scheduled event at a time=0D
++ *=0D
++ * Certain PMU hardware cannot track several events at the same time. Such=
+=0D
++ * hardware must set PERF_PMU_CAP_EXCLUSIVE in order to avoid conflicts.=0D
++ */=0D
+ #define PERF_PMU_CAP_EXCLUSIVE		0x0010=0D
++/**=0D
++ * define PERF_PMU_CAP_ITRACE - PMU traces instructions=0D
++ *=0D
++ * Some PMU hardware does instruction tracing, in that it traces execution=
+ of=0D
++ * each instruction. Setting this capability flag makes the perf core gene=
+rate=0D
++ * a %PERF_RECORD_ITRACE_START event, recording the profiled task's PID an=
+d TID,=0D
++ * to allow tools to properly decode such traces.=0D
++ */=0D
+ #define PERF_PMU_CAP_ITRACE		0x0020=0D
++/**=0D
++ * define PERF_PMU_CAP_NO_EXCLUDE - \=0D
++ *    PMU is incapable of excluding events based on context=0D
++ *=0D
++ * The PERF_PMU_CAP_NO_EXCLUDE flag, when set, makes the perf core reject =
+any=0D
++ * request for an event that has one of the attributes=0D
++ * perf_event_attr::exclude_{user,kernel,hv,idle,host,guest} set.=0D
++ *=0D
++ * Drivers for PMU hardware that cannot distinguish between these differen=
+t=0D
++ * execution contexts should set this flag.=0D
++ */=0D
+ #define PERF_PMU_CAP_NO_EXCLUDE		0x0040=0D
++/**=0D
++ * define PERF_PMU_CAP_AUX_OUTPUT - PMU non-AUX events generate AUX data=0D
++ *=0D
++ * Drivers for PMU hardware that supports non-AUX events which generate da=
+ta for=0D
++ * AUX events should set PERF_PMU_CAP_AUX_OUTPUT. This flag tells the perf=
+ core=0D
++ * to schedule non-AUX events together with AUX events, so that this data =
+isn't=0D
++ * lost.=0D
++ */=0D
+ #define PERF_PMU_CAP_AUX_OUTPUT		0x0080=0D
++/**=0D
++ * define PERF_PMU_CAP_EXTENDED_HW_TYPE - \=0D
++ *    PMU supports PERF_TYPE_HARDWARE and PERF_TYPE_HW_CACHE=0D
++ */=0D
+ #define PERF_PMU_CAP_EXTENDED_HW_TYPE	0x0100=0D
++/**=0D
++ * define PERF_PMU_CAP_AUX_PAUSE - \=0D
++ *    PMU can pause and resume AUX area traces based on events=0D
++ */=0D
+ #define PERF_PMU_CAP_AUX_PAUSE		0x0200=0D
++/**=0D
++ * define PERF_PMU_CAP_AUX_PREFER_LARGE - PMU prefers contiguous output bu=
+ffers=0D
++ *=0D
++ * The PERF_PMU_CAP_AUX_PREFER_LARGE capability flag is a less strict vari=
+ant of=0D
++ * %PERF_PMU_CAP_AUX_NO_SG. PMU drivers for hardware that doesn't strictly=
+=0D
++ * require contiguous output buffers, but find the benefits outweigh the=0D
++ * downside of increased memory fragmentation, may set this capability fla=
+g.=0D
++ */=0D
+ #define PERF_PMU_CAP_AUX_PREFER_LARGE	0x0400=0D
+ =0D
+ /**=0D
+=0D
+---=0D
+base-commit: 1d07605c859ee3f483f07acd461452d9e505c58c=0D
+change-id: 20250618-perf-pmu-cap-docs-a13e4ae939ac=0D
+=0D
+Best regards,=0D
+-- =0D
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>=0D
+=0D
 
