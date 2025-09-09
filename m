@@ -1,200 +1,99 @@
-Return-Path: <linux-kernel+bounces-808325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE9EB4FE45
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:55:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B58BB4FE1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F83F16BD17
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:50:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 214417B7D03
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C935F34575B;
-	Tue,  9 Sep 2025 13:49:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501BF3451D0;
-	Tue,  9 Sep 2025 13:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ABC341678;
+	Tue,  9 Sep 2025 13:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Slrf5eT9"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACFE23C4FD;
+	Tue,  9 Sep 2025 13:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425799; cv=none; b=MZkEU+Ak94265E9uElSdEx9EErM+PU6riCdh++zvlMcoCLdT4Z3nt6n5yYgcshbg61wmE5q2p6yTCpTBqMZL66UIXcfoB1Ph08WBHnplURVk7vzD/K91CjeYZJFvMJK5/Ny6yxBaD8bMHr47APNU2aCQPMnVOE9GaHNzAGnXmpY=
+	t=1757425826; cv=none; b=gV4CeiPzksrosf6qBKNPYG253m/gseEV7g5qnVCooLGGRFQQw8cL32kKDIfwsZk6Ui/6p39Zb2Vh96Fl+iC9LmjZoSpkshSaKRtKh0m3UXvD6iTMsqvfkCYXOjOpo7Qmiyq/T5kpX6ZXBFZVxavqgFMCTraXZZy4MvC4fpylv+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425799; c=relaxed/simple;
-	bh=ox3PrAh+a33VGhYFNAvHhhMpvTjkSB7kiqY6tVIvUkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GgFxpbAnNJMmjredmznEeZCkaAZRwSbyUHmu0Uq7FLUusvkxGJk5Vk8V80FjJrvMgUquJA7kSr9oDeKFfiTskk+JGxATUr0icCKbXXfl2w7u59Uhn1KV8dlTgAdo3laWB0Ieed1Od58MRE/4YmDWr39efOm9/B5YRxG3IDgu/6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F1831424;
-	Tue,  9 Sep 2025 06:49:48 -0700 (PDT)
-Received: from [10.44.160.77] (e126510-lin.lund.arm.com [10.44.160.77])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E3393F694;
-	Tue,  9 Sep 2025 06:49:49 -0700 (PDT)
-Message-ID: <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
-Date: Tue, 9 Sep 2025 15:49:46 +0200
+	s=arc-20240116; t=1757425826; c=relaxed/simple;
+	bh=q+zUY/vk2UrM9H6v7dFhvCFkTobyJtpwX6RNiDWTzMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eKeoy5CCQF7bYPlPmfLULW9PC2bAUK9R56RpQP2KNAf+O+d4O8WCPjLoJVYcDXzSawoI9bjfdWUGuI1QhQJXR8pWZub/H0fcfBqx4CNtdy/YO+khIv+KaZLMW+R1Vzx2g2ZiIdyp3Ct5QJw1c763KXtMazjA4fcyRRxkF2ZkO64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Slrf5eT9; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=Szz+6SE1IvU4V5JqB9CbABoeZaRwNuKkUjBl+HR3CW8=; b=Sl
+	rf5eT9DQ1Hc9h1g3TRf5gDELo/8bYpbpiC1zUuXSWu0YGHx+u36bQ9rfqPIrYIzZ6axfb9b21yu1H
+	YV1DxGu0/zVURUAFhwhNt7G5JAp93zBjawfY4iFzUGpFPGO3lNqv7tezk8EXXrUXCJ1CRIF9VTWUN
+	t+rCqg6NJLA7tYc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uvyjY-007noZ-ID; Tue, 09 Sep 2025 15:50:08 +0200
+Date: Tue, 9 Sep 2025 15:50:08 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: Rob Herring <robh@kernel.org>, netdev@vger.kernel.org,
+	mschmidt@redhat.com, poros@redhat.com,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH net-next] dt-bindings: dpll: Add per-channel Ethernet
+ reference property
+Message-ID: <350cecaf-9e41-4c34-8bc0-4b1c93b0ddfe@lunn.ch>
+References: <20250815144736.1438060-1-ivecera@redhat.com>
+ <20250820211350.GA1072343-robh@kernel.org>
+ <5e38e1b7-9589-49a9-8f26-3b186f54c7d5@redhat.com>
+ <CAL_JsqKui29O_8xGBVx9T2e85Dy0onyAp4mGqChSuuwABOhDqA@mail.gmail.com>
+ <bc39cdc9-c354-416d-896f-c2b3c3b64858@redhat.com>
+ <CAL_JsqL5wQ+0Xcdo5T3FTyoa2csQ9aW8ZxxMxVOhRJpzc7fGhA@mail.gmail.com>
+ <4dc015f7-63ad-4b44-8565-795648332ada@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
-To: David Hildenbrand <david@redhat.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
-References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
- <20250908073931.4159362-3-kevin.brodsky@arm.com>
- <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
- <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
- <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
- <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
- <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <4dc015f7-63ad-4b44-8565-795648332ada@redhat.com>
 
-On 09/09/2025 13:54, David Hildenbrand wrote:
-> On 09.09.25 13:45, Alexander Gordeev wrote:
->> On Tue, Sep 09, 2025 at 12:09:48PM +0200, David Hildenbrand wrote:
->>> On 09.09.25 11:40, Alexander Gordeev wrote:
->>>> On Tue, Sep 09, 2025 at 11:07:36AM +0200, David Hildenbrand wrote:
->>>>> On 08.09.25 09:39, Kevin Brodsky wrote:
->>>>>> arch_{enter,leave}_lazy_mmu_mode() currently have a stateless API
->>>>>> (taking and returning no value). This is proving problematic in
->>>>>> situations where leave() needs to restore some context back to its
->>>>>> original state (before enter() was called). In particular, this
->>>>>> makes it difficult to support the nesting of lazy_mmu sections -
->>>>>> leave() does not know whether the matching enter() call occurred
->>>>>> while lazy_mmu was already enabled, and whether to disable it or
->>>>>> not.
->>>>>>
->>>>>> This patch gives all architectures the chance to store local state
->>>>>> while inside a lazy_mmu section by making enter() return some value,
->>>>>> storing it in a local variable, and having leave() take that value.
->>>>>> That value is typed lazy_mmu_state_t - each architecture defining
->>>>>> __HAVE_ARCH_ENTER_LAZY_MMU_MODE is free to define it as it sees fit.
->>>>>> For now we define it as int everywhere, which is sufficient to
->>>>>> support nesting.
->>>> ...
->>>>>> {
->>>>>> + lazy_mmu_state_t lazy_mmu_state;
->>>>>> ...
->>>>>> - arch_enter_lazy_mmu_mode();
->>>>>> + lazy_mmu_state = arch_enter_lazy_mmu_mode();
->>>>>> ...
->>>>>> - arch_leave_lazy_mmu_mode();
->>>>>> + arch_leave_lazy_mmu_mode(lazy_mmu_state);
->>>>>> ...
->>>>>> }
->>>>>>
->>>>>> * In a few cases (e.g. xen_flush_lazy_mmu()), a function knows that
->>>>>>      lazy_mmu is already enabled, and it temporarily disables it by
->>>>>>      calling leave() and then enter() again. Here we want to ensure
->>>>>>      that any operation between the leave() and enter() calls is
->>>>>>      completed immediately; for that reason we pass
->>>>>> LAZY_MMU_DEFAULT to
->>>>>>      leave() to fully disable lazy_mmu. enter() will then
->>>>>> re-enable it
->>>>>>      - this achieves the expected behaviour, whether nesting
->>>>>> occurred
->>>>>>      before that function was called or not.
->>>>>>
->>>>>> Note: it is difficult to provide a default definition of
->>>>>> lazy_mmu_state_t for architectures implementing lazy_mmu, because
->>>>>> that definition would need to be available in
->>>>>> arch/x86/include/asm/paravirt_types.h and adding a new generic
->>>>>>     #include there is very tricky due to the existing header soup.
->>>>>
->>>>> Yeah, I was wondering about exactly that.
->>>>>
->>>>> In particular because LAZY_MMU_DEFAULT etc resides somewehere
->>>>> compeltely
->>>>> different.
->>>>>
->>>>> Which raises the question: is using a new type really of any
->>>>> benefit here?
->>>>>
->>>>> Can't we just use an "enum lazy_mmu_state" and call it a day?
->>>>
->>>> I could envision something completely different for this type on s390,
->>>> e.g. a pointer to a per-cpu structure. So I would really ask to stick
->>>> with the current approach.
+> > > Yesterday I was considering the implementation from the DPLL driver's
+> > > perspective and encountered a problem when the relation is defined from
+> > > the Ethernet controller's perspective. In that case, it would be
+> > > necessary to enumerate all devices that contain a “dpll” property whose
+> > > value references this DPLL device.
+> > 
+> > Why is that?
+> 
+> Because the DPLL driver has to find a mac-address of the ethernet
+> controller to generate clock identity that is used for DPLL device
+> registration.
 
-This is indeed the motivation - let every arch do whatever it sees fit.
-lazy_mmu_state_t is basically an opaque type as far as generic code is
-concerned, which also means that this API change is the first and last
-one we need (famous last words, I know). 
+Maybe this API is the wrong way around? Maybe what you want is that
+the MAC driver says to the DPLL driver: hey, you are my clock
+provider, here is an ID to use, please start providing me a clock?
 
-I mentioned in the cover letter that the pkeys-based page table
-protection series [1] would have an immediate use for lazy_mmu_state_t.
-In that proposal, any helper writing to pgtables needs to modify the
-pkey register and then restore it. To reduce the overhead, lazy_mmu is
-used to set the pkey register only once in enter(), and then restore it
-in leave() [2]. This currently relies on storing the original pkey
-register value in thread_struct, which is suboptimal and most
-importantly doesn't work if lazy_mmu sections nest. With this series, we
-could instead store the pkey register value in lazy_mmu_state_t
-(enlarging it to 64 bits or more).
+So it is the MAC driver which will follow the phandle, and then make a
+call to bind the dpll to the MAC, and then provide it with the ID?
 
-I also considered going further and making lazy_mmu_state_t a pointer as
-Alexander suggested - more complex to manage, but also a lot more flexible.
-
->>> Would that integrate well with LAZY_MMU_DEFAULT etc?
->>
->> Hmm... I though the idea is to use LAZY_MMU_* by architectures that
->> want to use it - at least that is how I read the description above.
->>
->> It is only kasan_populate|depopulate_vmalloc_pte() in generic code
->> that do not follow this pattern, and it looks as a problem to me.
-
-This discussion also made me realise that this is problematic, as the
-LAZY_MMU_{DEFAULT,NESTED} macros were meant only for architectures'
-convenience, not for generic code (where lazy_mmu_state_t should ideally
-be an opaque type as mentioned above). It almost feels like the kasan
-case deserves a different API, because this is not how enter() and
-leave() are meant to be used. This would mean quite a bit of churn
-though, so maybe just introduce another arch-defined value to pass to
-leave() for such a situation - for instance,
-arch_leave_lazy_mmu_mode(LAZY_MMU_FLUSH)?
-
->
-> Yes, that's why I am asking.
->
-> What kind of information (pointer to a per-cpu structure) would you
-> want to return, and would handling it similar to how
-> pagefault_disable()/pagefault_enable() e.g., using a variable in
-> "current" to track the nesting level avoid having s390x to do that?
-
-The pagefault_disabled approach works fine for simple use-cases, but it
-doesn't scale well. The space allocated in task_struct/thread_struct to
-track that state is wasted (unused) most of the time. Worse, it does not
-truly enable states to be nested: it allows the outermost section to
-store some state, but nested sections cannot allocate extra space. This
-is really what the stack is for.
-
-- Kevin
+	Andrew
 
