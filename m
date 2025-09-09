@@ -1,120 +1,141 @@
-Return-Path: <linux-kernel+bounces-808813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52181B5050C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:14:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19800B50511
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 074713B373C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:14:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B98E24E8444
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C48E343D9C;
-	Tue,  9 Sep 2025 18:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC55A23506A;
+	Tue,  9 Sep 2025 18:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c9KiSISo"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SJx+rwUX"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41ADB25B1E0
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 18:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CA0241CB2
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 18:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757441663; cv=none; b=ZBn8IwEUYd7pGBWlMXCVvX0AFNs4DSCDDWbYAZia7PpwYvnlnm8SiXiL3CetZ4LjShuJtpp2aOW9RXTR9UeUjJBMNt5FOwAfqr9CU1lA2ZEBdsSKYxvJwja/WmFaVkGGP4i39tLTuZmQhmSvRJoerqYr2NY4OimVcZq6I8n2Lx8=
+	t=1757441741; cv=none; b=CbzByGOi+3slcIeqfwS+vqED9PbsjA7ohvV42HJ+cy9CW205I0TE/8l8ACZMz0FmSV7hjhctP3SmN2UOFs07gAZZNuQeWu6ibgcUvsu87VVpTpc59HSxsxlCWQBU2V/In8ezQlbyUXcVdIJePB/aDCo8Vp6HdmW0lXLwFy+LUnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757441663; c=relaxed/simple;
-	bh=XKMYR0rZFryWAt82cmAKlov8m+wRjbLtNvTpIjuR2A0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=EWvvRCnM+VHzWX9ItyMEZwhY6ge7pVJMh2YH84SGnrQypwod490rA1+RriDmxJ2DC4ANnK3xgRMWZ8szVLQJGAwG9nZG6IIA/WXOmVmwlzYUjwLDFmdI3z2BGWCwDgUqQ/5E321CmVgMUczAoINA5r88hAuSSU+W1wjXCkn2UC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c9KiSISo; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b471737e673so9152596a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 11:14:22 -0700 (PDT)
+	s=arc-20240116; t=1757441741; c=relaxed/simple;
+	bh=exedlLvITN9/vJuP/FdvPQYmK+plc+a+7q/mF8fe0Yc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VGeRDLZwQFLL1URVWmTZK2kbTGDwE6BuggWdal6AL9XBfXirSYNMIkFPyTScUdFxMp1R8Aib1O2Yxr00tYWFzFXdFb9MQXk62pFahthbS+XKGmIiwetTBY+R3qH0noG70FN8NSKQBxqDFv62+9dI+Sgh9fAcEK5spoFHEfZxS2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SJx+rwUX; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-629f06935e6so479384a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 11:15:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757441661; x=1758046461; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tvNduM9s7//sCfdhyoE/HdBETl81FPFKvCYM9u9MkSs=;
-        b=c9KiSISoxYnAJI8f8bNQZNUJQI4UwUFwJ9HJv6QqFwwDRGQH7FIXYL8EoVOoQWQ1lZ
-         SDNmEeIWXnIaOq+DkgUI5zG4RMDzFRGXAFiK8ayeLgiw+8Kw3qVdJVA/1U5KIu2mpSiI
-         BiiVbKNh1APWw/Owlz/2hYa2eACNWM9Tbgsk26wG5WATOIG9nsliewzrC/tWIeWj7bl5
-         +2CdmYMv0IiKYxZxeZtpQbP20nab3njbv53ADgKqM7sxxmGsqPbP0rxFwtvqI6unS8uZ
-         zWOi8lT/aw8g/PJBSluUlcr7Sis5cbd4Rkz24MWshf+7arJS5XLJYp5BkbQLFBuxHDUP
-         xC6w==
+        d=linaro.org; s=google; t=1757441738; x=1758046538; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PBCxs/7M6xfLd9qlHkD5LH9iyxl1Swq15DboEeeZsxw=;
+        b=SJx+rwUX9yfiFAj1KvSatqaHGWybiVxCPqPIKejl2InOLkeZ9kZveXI2eHfGQI4xEL
+         pOPndjqweUopNU6dDpQZN6fx3l/A4cDTnBp/6JWgQ0yWlWMiQNzhJEdhaQQbHHgUOheY
+         qH9jriAEFsZge3tn2c3N4aJB2moWhbYKCuQJcYd4v8j9xYbyEmVNPMX0prCmN+vexkRR
+         7jdjrqqCeg0c+D5M5nF4Qun5VsShKE3k+Dk7fc3fbkDJqnfcoC3VCXy2no745HtGDzbJ
+         yblSmUStSmeMP6rO/u6ZzewdLdxrw/7HCgE/pZV3AQucIQ2I1I8qxpMvX63Gfv4UVm5I
+         I2sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757441661; x=1758046461;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tvNduM9s7//sCfdhyoE/HdBETl81FPFKvCYM9u9MkSs=;
-        b=lf2TI6z0e3ZtmMQC9zKUfQeWWQStQeioBNnVML8Ysgv+hapT00wGJr+cDof0USOlrE
-         V2fgqlDUOYUxj8Oe5r2BiplR856mYhVYtwP+yzJKxr9KtBGzkStPK9HMi6xWI69y6y+Y
-         9iUIYTvyUkeij9dti/oCOP1U4bPTQoNUUmSVvugCpzPEFfgnBYrVntt2qPIHB6+qu1wa
-         L/qvaABNmvKST08Z2WIjFvoovH4AxAVtQPLhSRc09lOQugCNwX3WRl36keu2+rH+8x9u
-         kaKeqBoJQW4DG0ZTlBcne2ReOMenes5xKvw+oPQT6vQKCHdp3c2unchFlSqY8PTTWdEb
-         Wtvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfmNWL/5POTkKXfwOR3bNSoD4j/WZuyipqZRQHm5aW2hMeRBfOiMKXeyvEibxlJ3ywnbeV4Cb6UzsjPaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqQ+0BwzT1JfzupInNOgcA97vy6fxmmrI8yLR3hoFHwtAajlMb
-	czfdwHX3Y7pYI0/Mpu7F/xNk8knzLb0qFuAdAGjAKBtpVfBSe11qDleX3wI8iXnhZsuEMhiqlRs
-	L9U4D3GJqlQ==
-X-Google-Smtp-Source: AGHT+IFOLpvhmDvGxk6t715bqYf6V40EcsZUuZVEqhl6096A5aJmAvnCAulGYXhst0wLjI2umouHZmOWzc2q
-X-Received: from pjoo15.prod.google.com ([2002:a17:90b:582f:b0:329:ec3d:72ad])
- (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:914c:b0:246:6d1:de66
- with SMTP id adf61e73a8af0-2533fab7223mr16781966637.17.1757441661606; Tue, 09
- Sep 2025 11:14:21 -0700 (PDT)
-Date: Tue, 09 Sep 2025 18:14:20 +0000
+        d=1e100.net; s=20230601; t=1757441738; x=1758046538;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PBCxs/7M6xfLd9qlHkD5LH9iyxl1Swq15DboEeeZsxw=;
+        b=m8GJ0h9cTeok873od/DGSZSAstrcQWT/Y4lMsW+iC9CTSAOHiOyWRz6OfB3p7QvPmb
+         3sLiKaMHVkVG+8ckC1kL1v/7Mxwhjat5d8/KPww/07GKCgRTS93ZUrsuVsdUmwaQW8qn
+         pYm1ewvOf0llFA0NIhb/KTRmfhVS2us4GBorAXBux9/29OapTVIeNeIAwpd2HNO6FEF6
+         VgTrszKg0biYMCEeppgB1wh7L+/BKXmMbTgNQeDMAx62Sf5kTKx/fVB/B0zTf1MZNN+D
+         FL/Fdb4EkTybUfi8TrTrj0woldwWeSBDJhyFdxYiHhTv3i8GhXgaHJxYUCG0vbIKC1sm
+         YeDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWM/s3w447VeBUX6gfgoxCjY9D3UtuUJzsSqZntxLpI9PSn59PTSOsk/16ythI9udvTkvkwUiFGOxqKU58=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3lJXSRxbHnZG65BxxvLMPnGLveBM93EAxZAmoQ5mj32XTa6/0
+	oc/UqdlGZtDi14bMBXP/d8Do1PorWa87ipec3bCPd+wVs3Ta7vG8N3u5BA7AU/ngv/g=
+X-Gm-Gg: ASbGncurLc8+dcFHGX6/bkxEUysZiXnERtIJwlDXacJknOv4lhHivgE/f/I5gzmbdv0
+	g3nV1gyb8VpAAiSCnA1lxSe/9b5mTfJ4OeVCQvBiEQhpleZpZEVcOSh8jgaomhLxSjgVdccNtSz
+	Qb4JdUniwXjJra/OCKQlRoSzz3Dy5TfdLXEoS8t+bNgK7g0G677x3Lat3roVdUTbXapQJieZyvQ
+	knSkeoGPHli80gSKoHfPcxuxyhSyT5mcXdvizD4UAyHFfj1Vefud/GurCEB6hzcMZR0Lp1QiEMV
+	LThLAT2l0hlUE0pcfRLg+8sk22ZkGBTia3LSfXks0hcLPS17eB65lHQ3u93GWWQHYiJRcU31v5L
+	64/6DeevoJTQTgB37Eezg60uHc8zn3TD8oQ==
+X-Google-Smtp-Source: AGHT+IEQ2F6W6lJU+eKVYT6fItRYtyC7QmFyKhp/cnqaIUUNWUC2CzeosjFeorX5cB5p9TcCDGLQEQ==
+X-Received: by 2002:a05:6402:27d1:b0:620:1c6d:e6dd with SMTP id 4fb4d7f45d1cf-62374d5900dmr5618009a12.0.1757441737628;
+        Tue, 09 Sep 2025 11:15:37 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c018f90cesm1602669a12.44.2025.09.09.11.15.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 11:15:37 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] w1: drivers for v6.18
+Date: Tue,  9 Sep 2025 20:15:34 +0200
+Message-ID: <20250909181534.101604-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAHtuwGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDSwNL3ZT85KLUXF1DE8tEEwtTI0NDIwsloOKCotS0zAqwQdGxtbUAMDC jAVgAAAA=
-X-Change-Id: 20250909-docrem-149a48521128
-X-Developer-Key: i=mmaurer@google.com; a=ed25519; pk=2Ezhl7+fEjTOMVFpplDeak2AdQ8cjJieLRVJdNzrW+E=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757441660; l=1361;
- i=mmaurer@google.com; s=20250429; h=from:subject:message-id;
- bh=XKMYR0rZFryWAt82cmAKlov8m+wRjbLtNvTpIjuR2A0=; b=565KgAzEoPasOdaJ+pLXjqvOtQDtjOyYrVdW5SBIneocC/D2PFTKb0bGSsDIlakO8inXipOp7
- zaigKZE71GmDv3gBO0vPhHLkmIR02UghKhqKtVaw6RXZ3ehKuaqEFtF
-X-Mailer: b4 0.14.2
-Message-ID: <20250909-docrem-v1-1-dcc69059a5cb@google.com>
-Subject: [PATCH] rust: kconfig: Don't require RUST_IS_AVAILABLE for rustc-option
-From: Matthew Maurer <mmaurer@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Matthew Maurer <mmaurer@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1149; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=exedlLvITN9/vJuP/FdvPQYmK+plc+a+7q/mF8fe0Yc=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowG7GyliUoVu7vT1sEz7Pbhge0UD/+CD7MDP9h
+ 1aH0PHxCaOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMBuxgAKCRDBN2bmhouD
+ 1wKXD/4k6lD7uuTvL0XA+u61RPpFFKgJlplhs8SIN7DsZvU9gmMVkb45MfMMgDt9OKH79d0gMFZ
+ EX9AMtBNfObZOvGEA3Muv8QPwXll0qTgFAhQMFkYAMFrFtgHAe591RdTjxNUCqOvxzscvAh+AYN
+ NVjayZ1kNrXcjuI7DlHCBMQnxvOMfXuWhOPKTgjIyDE6sRbt5W0rO7CHL4o3JklG+e7Hkq0iMBY
+ kciAWxqZqoIP2m+cZqcfP+Xni1pQEpJ/QObQHC8vpxXZ3eGiBW/maYqM4YPOdwK6jbLX/gv8Z1j
+ TGvwjowCzTx924c/X3YbR42kXZXp0/UhhRHUs78JCtxw1Ayuil5O7DVev+1xiJAjzQZZGcpkz6Y
+ rJ7MSre18eBE3NfO/hD0oADXQxkEJXNJcEUsqpaIyq2vm6HU+B61A1IP0siYz4unQ8tlefaHDEB
+ gzJ3TjkBqgWlMaap+3d0EMMnGTR++Y5+dprK8iWp9iECorqoRX+ftALByLZbZ+aVU+6tBqyKTsd
+ 23Y0YxM+wt47hqUAZg3UllJSTZGcOcDSCEXVb6VgNZ11SaCUiqJQlqk8y1IMlupbgXYm1ZMz/5V
+ FraZxTWbEy6qQVttswpQ3hNhz+jeX5+LQ6E+NUV5OuNLD5vkwn4iQ0kw37xMNGR1WIhX7+ywVq1 T6gvSItv3UUpxMA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-The final version of this macro does not fail in the absence of an
-invokable `$(RUSTC)`, so we don't need to be careful not to invoke it.
+Hi Greg,
 
-Link: https://lore.kernel.org/all/CAGSQo01mQfcU1EiW53be1hcts0c1p-HQAab_HBk6VcVmhq3n2Q@mail.gmail.com/
-Signed-off-by: Matthew Maurer <mmaurer@google.com>
----
- scripts/Kconfig.include | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
-index 33193ca6e8030e659d6b321acaea1acd42c387a4..7d9a0b4f66a9667b2cdc9d7e87c582487476f311 100644
---- a/scripts/Kconfig.include
-+++ b/scripts/Kconfig.include
-@@ -70,8 +70,6 @@ rustc-llvm-version := $(shell,$(srctree)/scripts/rustc-llvm-version.sh $(RUSTC))
- 
- # $(rustc-option,<flag>)
- # Return y if the Rust compiler supports <flag>, n otherwise
--# Calls to this should be guarded so that they are not evaluated if
--# CONFIG_RUST_IS_AVAILABLE is not set.
- # If you are testing for unstable features, consider testing RUSTC_VERSION
- # instead, as features may have different completeness while available.
- rustc-option = $(success,trap "rm -rf .tmp_$$" EXIT; mkdir .tmp_$$; $(RUSTC) $(1) --crate-type=rlib /dev/null --out-dir=.tmp_$$ -o .tmp_$$/tmp.rlib)
-
----
-base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
-change-id: 20250909-docrem-149a48521128
+Just two minor improvements.
 
 Best regards,
--- 
-Matthew Maurer <mmaurer@google.com>
+Krzysztof
 
+
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-w1.git tags/w1-drv-6.18
+
+for you to fetch changes up to 25fb0ea986dc10e05f3f4b43cabde4d1853a1fd7:
+
+  w1: matrox: Remove some deadcode in matrox_w1_remove() (2025-08-31 14:14:07 +0200)
+
+----------------------------------------------------------------
+1-Wire bus drivers for v6.18
+
+1. Correct missing interrupts in IMX 1-Wire Devicetree bindings.
+
+2. Drop old, dead code from Matrox driver.
+
+----------------------------------------------------------------
+Christophe JAILLET (1):
+      w1: matrox: Remove some deadcode in matrox_w1_remove()
+
+Fabio Estevam (1):
+      dt-bindings: w1: imx: Add an entry for the interrupts property
+
+ Documentation/devicetree/bindings/w1/fsl-imx-owire.yaml |  4 ++++
+ drivers/w1/masters/matrox_w1.c                          | 10 +++-------
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
