@@ -1,98 +1,150 @@
-Return-Path: <linux-kernel+bounces-808759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716D4B50469
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:26:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E7CB50470
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 309B93A6D4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:26:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D895E16F8EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF213570D3;
-	Tue,  9 Sep 2025 17:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9303570D5;
+	Tue,  9 Sep 2025 17:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Wjx32i4A"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="RKEuQvvy"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6DD3568F2
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 17:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7C426E16C;
+	Tue,  9 Sep 2025 17:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757438796; cv=none; b=hU3HN7H/XGxIK0e59whrDUwjoA1z80QLxgNxv9Ei9W4p6P9JyZXN4LQXr7FjwsjnRIcUhhhW4+AFUv3C5/Pd0oFugCQfCTCuyVgyQFQXEJqfAN+FH4GKdrGmcoK+jtbbxKFZ2EVijYESNFunDWGssiLYLdmypPF6UiT6pZUYKPY=
+	t=1757438831; cv=none; b=KOpWzNtAV4JvZ5Wrlxl9G1XkwiLmlA7/tl8un7Oy0Rv0mn6LRcJafb3y2Ce+CrDQl9Eq3XwroQYdzePPpdz1MCwV6rQLA/XDNrc3P3RT+60WEgMF8RQL2ST9ojXhTslXNvymkYW/6a1LQwbqt30Ck+z02KJcD4NWehDfURCw9F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757438796; c=relaxed/simple;
-	bh=fYwwelCpjz0TKSvgunEd+NMziwStEViYCA4Flr+qADY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LCeYZzdlkOZ5bCSNNVDy+JGHs9sRnpoPM1sRvjYsv6qFyD/kENXexZy73gGILpMpy6XPIatz0af4I7KqXKewiwvdc03OeYVKB53hXjzp3/3pvbRbeZ6EXu1zNI0ePEQWg0YdTheVyfx8jx7/M8alNiD+VblrxcsT+cxdAkdj4Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Wjx32i4A; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0b8c5619-455b-4a9f-bab5-ec10ae0f2184@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757438783;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZM23rJaFMUQOdytqcrD9TWG8M7I3bEgVDd8tdlcZtwg=;
-	b=Wjx32i4ADe/Drt2X3vlWrZirvIcRj6p5YnD9myOHdeO1k8GLL6pTVHYCWIc/d6vi6gSX0H
-	R14Pwa4qc3oIPEeYb0aqrG5plQZa36cjmbQGBwvDG3ibO2ukuCVne51r2eioV1zPquP06V
-	cdqWwmaStnx3snRzM/9ioZGDrWwys1o=
-Date: Tue, 9 Sep 2025 10:26:09 -0700
+	s=arc-20240116; t=1757438831; c=relaxed/simple;
+	bh=VCNfAPp7Sy7myyBcab3liNIt34iixbHkF53kYAnr4xc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kSK7yYRkzLa4kTHkGU7f3CaUolvMPvmsayyytyQ5DZpbIGfuU71LyeD5gE/kMglvZo8M0nn005HeTRf2Do8uzwo2ff/YlQmoKmDs3iK0oQlbMxOrP75ZrSB0xloIits/JHPQW2JKmH8sNahBay/JPfUX71Isik6KHe4SmvQ/gcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=RKEuQvvy; arc=none smtp.client-ip=212.227.126.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1757438795; x=1758043595; i=christian@heusel.eu;
+	bh=lxQbLs2Dv79VQGRhhMh8gXDo7JU3ntY3xU8qIpmceN0=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=RKEuQvvyZZ5NvCIn4HjE1jTQsmxBlTg1sgz7mTz0F0YdiqstWBdC3Gpr6gW6+YZr
+	 NZvyQHIdnWDda9K7GxyH4BI9h39CZJacT3u+Nmj0KYz86NylxR2RuuJjAxOkKvFy/
+	 /VVSW50BqXBbsVfqUm0hin9Z730+6MFz3QFlNUGRO8u2XOo+I/tHKgJns1rza1sLl
+	 VCJKmRLKLFbncoeA/hJAFRWEHjquLEltM5oy3TgBfxefzZncHLam9MvU/RtvDaesL
+	 xjqm57KGkOjc2VI4vgbE8niYkPcawuqFUxfAYNnA027MAkRogESAYb8xagOw1NX/q
+	 k3y8ohTCOH1Aw7lN5A==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([147.142.151.221]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MjjGV-1uYlij3Vsp-00h5Bz; Tue, 09 Sep 2025 19:26:34 +0200
+Date: Tue, 9 Sep 2025 19:26:31 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+Subject: Re: [PATCH 6.16 000/183] 6.16.6-rc1 review
+Message-ID: <04e6007c-d217-414c-9851-1b5fdf0600e3@heusel.eu>
+References: <20250907195615.802693401@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH RFC net-next 3/5] selftests: drv-net: Test XDP head
- adjustment with bpf_dynptr
-To: Nimrod Oren <noren@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@fomichev.me>, Mohsin Bashir
- <mohsin.bashr@gmail.com>, Dragos Tatulea <dtatulea@nvidia.com>,
- Tariq Toukan <tariqt@nvidia.com>, Carolina Jubran <cjubran@nvidia.com>,
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- Amery Hung <ameryhung@gmail.com>
-References: <20250909085236.2234306-1-noren@nvidia.com>
- <20250909085236.2234306-4-noren@nvidia.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <20250909085236.2234306-4-noren@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="grsuunuw4s6wploc"
+Content-Disposition: inline
+In-Reply-To: <20250907195615.802693401@linuxfoundation.org>
+X-Provags-ID: V03:K1:h45XGEMGJhtj3IMOWYcKSTkQmvDIYCaowrPkzM2Y50ci8Rqf3Vv
+ fE2JNic27if6tPKEU6f6WW6LtuuZwhULqsgUP5jKHK7hjXO5b0oEJwLQjRGSNvjzYWNcKN6
+ R1G7/W5aBZNcBZOeiWfytpFFOQyK7ixgnozm3QnnTpM30jvEpBRAxDRbhOLR9sgbc0H4rji
+ 6hIz5W9gR74jaQmVKZiIA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Febgp2Sd73Q=;mT0QiTtnzcGJ0QhaRfjQB//nM6E
+ qob8q3SqQXbzg5xrJQfjiXT8d2oEct+OgRb4kowJ+iTb71I05N1HQn+PkIm8m+ParfwF2JHB6
+ C3tbTnswxXsuxy8EAOqavPDKXviClOV+piXaFUtPNMq3gqqh1gB7Ma9SloHcbcoG7u5h9lgGg
+ 0PVZ5MNUPDImnXE6sZHaiL4ce6sw0jHV6OXJjTiTvj5ZYcQgWY6sOPh/T5nrz/HRe0fIlKJ4M
+ OT9ApigJ3AqkUTMTjk++Jb90oB/1epqzfzuLMZk9CFHyfhNvmpJtmMjbbgjgEbnPF+cyFfr7t
+ r1hR4AOtVKhhPXWNM8u8SoZ+PclBWTAd0hNtRiEcUrj+WWKb02IdILsKP2FYuErH6eLCZ0zxb
+ mA1Vu8dphMRtmTJhxIaUcnTKoIKPna29Nkn/yjeperVtxyjaAiZYXaPrwiSirpntXSDgiIs10
+ UOhqv0HKeu6ntCOlt/oJkN/sQBn6h8e4NrfagsvSPfqor+7ixdrGB6tBPPT/OTuRd6RzCnogL
+ WQj/0OVwMkQmLVEwEadahsYZn44WFeD5K9a4IN2vNdJVYW4yJfCVAaff6McYa7O0rE0Wrrg5f
+ 9kTC//YY2ZLAPwtrNLFWDMsQ5gaZn1pPm0yJ6/mM1CRNecjl/0uSr+P/8BUxCXSiDejlVpuou
+ KHya53aNeHnK732y22ofa2NQvDU6VjKyBua/xgNo0ySYPsRTdr55Bsq6FBlZDRpmtR9DkfQSS
+ XD9U3mDckcfa/SyDY5JK8K3iwQRlNrzh6ptxYYBH/8DnnS/qeSQ3s9+fTWip27l1Gv9y5tTGy
+ WSjLnApICfPp4SwotqlEw22f5Aj0tNWTPrwO+hKgji7yYj2Fz5vK7aG6sAQD9Hu/mIFRFoBGB
+ jWI7+StwUESx8nFQFdGKVUWzpqPAv0PnNjVOCCC2IcgyIGyQD2xGBYyPU4G5wgCOqIgdjEmni
+ 1rzTuSExN39PMs+bdAaBmGJBbTncEPDhqUw/DlV7pr1L1IwBcoYuMA3qs4DXKOQrnQiW7Hi4W
+ QzZ1PP9VwPxyA5HoTLhols9kEoi1+NF0KGU5M9ADXU2smF9kAMk64SOMfShID49r1E4ffsr4l
+ /0EEt7Cu+hZJoAIVvcw4pvAJzcsraZF08qBHyOC49A/eOVEZoR3aKtXOe8K8Id0TIMd/mvmX8
+ e7icRcr1gGcUeKgQ3QZtp4XPOFZQ6DFLFPnaCGOTTPvGgsp0t9uQIYEQ54n6eZuMgQm404Jgu
+ TlAexqybcK98nMzdSY3VN8dGBbFiJW3hRTG1DxuL3fBtmYXzzHAxdIzuDIaij5xPfD80v16s7
+ hH1NNtixf1E5vE9saHJKP/VmxwJxKgFdSNcWDIdckNHeFlnBfpJpuoXlMBxoj18gSByD8CNdd
+ ZiRqQ9odTXti2Moqz2L9+SYUlXYjq0CUff0YCeZnDNFXNo6Xy6CJdRjjbi4BkSff3VNKvQITG
+ hcEnAkVSQjk6nqHfS1aKHBbFkjLmxNTBDumH/iPb1YrohK9whllmF2FrXo6VPcYyGPIOLHJkE
+ pKPUFb7k2NzOCVus7FFFeEq6toPjnZ369VXXkE9oDOYqkGNykNlWxOTfoObBPprBOTarIj4a2
+ N8gm2C1eY+hia9828y82zREF6mLeZjrOoGCnzt3PUNaS/sR7f8q1S4WSu+YF+Iyh4NEwz3UwT
+ /NI4hLzNDmYrxxPqegBBagvzJ5iwqWqOuOhoMgY6JDR+jYy8xWPMd/YXaf+QhAkIlr4q2ympT
+ pcBTsCvLAebUx6xqp1BV59TiX8uI6EwmeHyP5GxxGy+RIS6csx4yTpNM=
 
-On 9/9/25 1:52 AM, Nimrod Oren wrote:
-> +	if (bpf_dynptr_read(tmp_buff, hdr_len, &ptr, 0, 0) < 0)
->   		return -1;
->   
-> -	if (bpf_xdp_store_bytes(ctx, 0, tmp_buff, hdr_len) < 0)
-> +	if (bpf_dynptr_write(&ptr, offset, tmp_buff, hdr_len, 0) < 0)
 
-Instead of bpf_dynptr_read() and then bpf_dynptr_write(), try to use 
-bpf_dynptr_copy(). I think you have also noticed that Amery is also modifying 
-xdp_native.bpf.c to test the linear access (i.e. data/data_end) with the 
-bpf_xdp_pull_data addition. Not sure if xdp_native.bpf.c wants to keep testing 
-both (data/data_end and dynptr). In the bpf selftests, it does want to have test 
-coverage for both and have some existing selftests for that.
+--grsuunuw4s6wploc
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH 6.16 000/183] 6.16.6-rc1 review
+MIME-Version: 1.0
 
-> +		return -1;
-> +
-> +	if (bpf_xdp_adjust_head(ctx, offset) < 0)
->   		return -1;
->   
->   	return 0;
+On 25/09/07 09:57PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.16.6 release.
+> There are 183 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
+> Anything received after that time might be too late.
 
+Tested-by: Christian Heusel <christian@heusel.eu>
+
+Tested on the following hardware:
+
+* a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU
+* a Framework Laptop with a Ryzen AI 5 340
+* a Framework Desktop
+* a Steam Deck (LCD Edition)
+
+--grsuunuw4s6wploc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmjAY0cACgkQwEfU8yi1
+JYUnUg//XLkJSUzKP4+zK8prxCSoilDul9VXaLSocPc2t0EfYCJjmKEJ2LWV8kuX
+HBHuqH7bwouvi9IgCxPKGqug83TWA3LeSnJviQt+ykm7w44zWOoA+r7o+4AxeQBb
+HZyalTYYfwPXVmOlY8vHNNBQErHkNo4MPgLRyV/LPszEv08OGJ/ojgsdZ28Vao9N
+HjytdkT3HtiM8P3JclJpN5HCWRv9DL6f0MJerFCgpCoqwuI+hjlHcXdlawZNRfUy
+M7Hfu8V+CHRHNqZ06xFGRdcMD6le96Mm6Sz4r8nLK13THjabl0MCHD2wyCO3r2tL
+f+9sTH98oEHfqjMR7jUpaECGEqLiTNG8DIzTP641U6TO5GBPavIS4m2SjrUWd8Zy
+8sF+FIvrrk2s5RHn3tCNpE2I5HiT1aKj/DNOjPDxKH7qjdZlw1V1ztpVv2ydKvBs
+vLPOsirtx8hQB18XY+hjuX85OVPvph3MDB00t1T8Z4YzRrihqgeapA/TVhIVSC/Z
+vTzEO671gReQPG240OfclTn4E0Ru93S3JlLcFFgbzFb1l/dw6/CB4q0dK//gonj7
+vIg+z/yjV2rhY9WfLSPSeM00DzqqJb+fE6cfefMwDxnmhg6l0F8SSs3iGorhvtyJ
+zmyIh36ygImPD9wuyZZK00pla042pjci0V4zjA9eIf0wCpOZLZw=
+=qh7l
+-----END PGP SIGNATURE-----
+
+--grsuunuw4s6wploc--
 
