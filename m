@@ -1,118 +1,149 @@
-Return-Path: <linux-kernel+bounces-808699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E5DB503A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:01:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDD1B503A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F41B67B7CF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:59:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96AA9542596
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C6936209D;
-	Tue,  9 Sep 2025 16:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJU6HNCA"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2D0362982;
-	Tue,  9 Sep 2025 16:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43103728A1;
+	Tue,  9 Sep 2025 16:57:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBA4334717;
+	Tue,  9 Sep 2025 16:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757437074; cv=none; b=IgAI8L9PkFn9ibhqfFEL0aGRXrhajoJ9g4J5q0Ywbl5LdEbVQ/ysKMOmqkXjOeftq+SjPq8DopJ11Ol2LKEfvZGPl5hXzF91ga+IfqPxeNDyN8ul8xWF3l4Y5my7nbLyVhAxusXn37xd0MUPrvGmwPwqEZQAul1k27IENUbcBdk=
+	t=1757437076; cv=none; b=KJti0Ud/SaBpbJOUhXu2GHz4m22tNAEeJZFcv2ao8i7svjLpiCRcAoBY9V03hqIfSWw0582quVTOIpOZO8IEKTC90TQGEbFKsT6SIW0E+i0xFN4QmzYLM3dhEcq3ql6160PsRl7owwkopfqTCe2OL7oSdHE1MgxxjPZp2CiYKPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757437074; c=relaxed/simple;
-	bh=kJOoCHsdPAISSR4HcFlHZ0fIcM/ZbT9tK9WAAjen35Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GeA44AMt+yGWBnwIVYd3FJGL9bNgWkMFGMzYZpP4bOakYHFCwyDiX5eArqIg6syhn/qEucq3aycf2zsAYMq09dYQtrobwtRtr4H1L5K1YplpW0hWhMOC5GFCEghu5bkw9eL+ZPCSdZm5Rt5QVxAtH9GZ/7SJLc1RaAvGCdxwuV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJU6HNCA; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-772301f8ae2so4732532b3a.0;
-        Tue, 09 Sep 2025 09:57:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757437073; x=1758041873; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tcYrZ6OBHDvhQxq+aUNrUDX0E+CGMcdoNU7ZBepwhNQ=;
-        b=VJU6HNCAsZwYpVz49LDZLjPE++N+jbUE6sAyHYnhb2YfVOwzUVDQBGoaEdj82+INDW
-         +hHxUL+q6C0onN+eks7pVAStJPex+PMG+JiKJLRmz4+OUxJrQH++rW/G+jphNGP3iAbN
-         SgeXzy7Ii0H2e8/dFsx3fHzrvzaJk04NWGCB4e6SaZNLoumi7Pf9eQBx6/oHXZoGE8js
-         OCfB33ndCSwFgFn1e79a6q7kdswazdy+qzdRrMdNZu2784P4yIPrJwAqZDAsj6O0xqt9
-         9JOqrJpkDMJtbZAR11K9U6sHWlLTAmU4S9/2PmnFyK2wIgG6wjoJjY+Riqy0B3WmbLL/
-         Agrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757437073; x=1758041873;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tcYrZ6OBHDvhQxq+aUNrUDX0E+CGMcdoNU7ZBepwhNQ=;
-        b=by27UzCS391PeWDqMF44ouPZZKI7AMkufMSmQlPf3tmFx9miU4cTSNGi8SOsFClw3G
-         TiPsYXLQvwkL3Amw15esOR2B/M7Rct4rpkw2FR1w4xnH7MB5Ausqb3e5v8qw6UqStMoc
-         2jhR2gaD94lwHP0EHNObaGEiu7R+ij/Limk2cQ1V+BqVl9RPiUNAQx8wUvFX2eiubbo1
-         9UrRnyJMG3JUMlDivWHsKYLJ2I+62+WHODElk8yREo/oLKd4AWV+BaLyAnJUVOh4Eu7Y
-         0cXbUY12l+rK+GWdRNKspyrispp1LWnWwGpxALl0OTu8aW6ddXNbrPycfuNZ0XDBsd0c
-         rwYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZtcre2r/nUVrzPI59kBuOPvxz2Fdq4+kaajCIfL+WAyEY+DbwlnNpzfPOLAE/v76Nzn6OfaWTL+paZjn4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPkZlM2p70yPn4WNX9a8n/IOwyv7h7wSyB1gnKg1lvDHRhRGBf
-	7g6GcMUfVRJb0llVEOWqfzv4xmccdhcOvdD5jXNnBaYHrwljV0FboD0f
-X-Gm-Gg: ASbGncuzZV8qtqh1egN1IM2ykwEUVXi/gBcn1iR8RcZHnqWPOKHboWgAbRNlSjkQJjS
-	zfKpisC3LwsAizyotOkYZrnFgpC0UI86cx/p/qopQYQsFEqrrD8Y5tsoEkwKJwjxjyc0Lw+YilT
-	j8fK2aWSVODg/rUtYKeycjbcrz9NppS+V9E52ijuz/S6ErNWuYINx+EpGrYMrTugZIctv/s6eXD
-	s40R8VF7O4lrSZxTghOpDyqVyA7zLpHiaU4l6Zt4d8gpB/RyqdZbbDakFDgcPUwd5+kobT16wMV
-	PTxmlOhWBIzBPw6RG1eS/roskcH3PpbMXAeK6pOQrDDhRWAlln39gep5G3ptphiF6GD2JgoAvO1
-	4l/EgWruXxvrEgZCiw7j1TKT/8fnG07lEBMJoQdJgWCI=
-X-Google-Smtp-Source: AGHT+IHnhV/he9U+zS3Hc5dbTMwJzzuVpoO3Ld5KHd9kRLPX6iy5U3g7A3+m8O6Xmjz5yMK64Z/ATA==
-X-Received: by 2002:a05:6a20:3d07:b0:243:a17b:6414 with SMTP id adf61e73a8af0-25340a1bf8bmr17603538637.26.1757437072363;
-        Tue, 09 Sep 2025 09:57:52 -0700 (PDT)
-Received: from archlinux ([205.254.163.103])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774662f5185sm2615932b3a.95.2025.09.09.09.57.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 09:57:52 -0700 (PDT)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Subject: [PATCH RESEND] fs/namespace: describe @pinned parameter in do_lock_mount()
-Date: Tue,  9 Sep 2025 22:27:44 +0530
-Message-ID: <20250909165744.8111-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757437076; c=relaxed/simple;
+	bh=XtpKUL7dVJ7Md2unjp6HHAK1hOa95mxETgDpcYTK2l8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wqo6RCKf+WJCXCYN49Ajy9ynUTpCwMbaaDV26ryJ/M7b4ClMD4PnjvZSBZs739dV7KKYsyqums68i4SRgo7mK43RQNrvRZ05eYaHgjZUDsyYN+06xFV3HCNHxHszBfWGvnROvLBs1YiAqGy+hidDzTelAHO6P6bDO4yO+9DMgOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 92E1C2008;
+	Tue,  9 Sep 2025 09:57:45 -0700 (PDT)
+Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C2EC3F694;
+	Tue,  9 Sep 2025 09:57:47 -0700 (PDT)
+Message-ID: <3a3520f7-654b-420f-a8e8-ca57f92e21fe@arm.com>
+Date: Tue, 9 Sep 2025 17:57:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 19/33] arm_mpam: Reset MSC controls from cpu hp callbacks
+To: Ben Horgan <ben.horgan@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-20-james.morse@arm.com>
+ <1c20a5b2-2afe-4084-9494-a994e1a275b7@arm.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <1c20a5b2-2afe-4084-9494-a994e1a275b7@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add a description for the @pinned parameter in do_lock_mount() to suppress
-a compiler warning. No functional changes
+Hi Ben,
 
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
----
- fs/namespace.c | 3 +++
- 1 file changed, 3 insertions(+)
+On 27/08/2025 17:19, Ben Horgan wrote:
+> On 8/22/25 16:30, James Morse wrote:
+>> When a CPU comes online, it may bring a newly accessible MSC with
+>> it. Only the default partid has its value reset by hardware, and
+>> even then the MSC might not have been reset since its config was
+>> previously dirtyied. e.g. Kexec.
+>>
+>> Any in-use partid must have its configuration restored, or reset.
+>> In-use partids may be held in caches and evicted later.
+>>
+>> MSC are also reset when CPUs are taken offline to cover cases where
+>> firmware doesn't reset the MSC over reboot using UEFI, or kexec
+>> where there is no firmware involvement.
+>>
+>> If the configuration for a RIS has not been touched since it was
+>> brought online, it does not need resetting again.
+>>
+>> To reset, write the maximum values for all discovered controls.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 0a5fec7065d7..52394a2ebaf3 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2738,6 +2738,9 @@ static int attach_recursive_mnt(struct mount *source_mnt,
- /**
-  * do_lock_mount - lock mount and mountpoint
-  * @path:    target path
-+ * @pinned:  holds a reference to the mountpoint pinned during the
-+ *           mount operation to prevent it from being unmounted or
-+ *           moved concurrently
-  * @beneath: whether the intention is to mount beneath @path
-  *
-  * Follow the mount stack on @path until the top mount @mnt is found. If
--- 
-2.50.1
+>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+>> index bb62de6d3847..c1f01dd748ad 100644
+>> --- a/drivers/resctrl/mpam_devices.c
+>> +++ b/drivers/resctrl/mpam_devices.c
 
+>> @@ -849,8 +850,115 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
+
+>> +static void mpam_reset_ris_partid(struct mpam_msc_ris *ris, u16 partid)
+>> +{
+>> +	u16 bwa_fract = MPAMCFG_MBW_MAX_MAX;
+>> +	struct mpam_msc *msc = ris->vmsc->msc;
+>> +	struct mpam_props *rprops = &ris->props;
+>> +
+>> +	mpam_assert_srcu_read_lock_held();
+>> +
+>> +	mutex_lock(&msc->part_sel_lock);
+>> +	__mpam_part_sel(ris->ris_idx, partid, msc);
+>> +
+>> +	if (mpam_has_feature(mpam_feat_cpor_part, rprops))
+>> +		mpam_reset_msc_bitmap(msc, MPAMCFG_CPBM, rprops->cpbm_wd);
+>> +
+>> +	if (mpam_has_feature(mpam_feat_mbw_part, rprops))
+>> +		mpam_reset_msc_bitmap(msc, MPAMCFG_MBW_PBM, rprops->mbw_pbm_bits);
+>> +
+>> +	if (mpam_has_feature(mpam_feat_mbw_min, rprops))
+>> +		mpam_write_partsel_reg(msc, MBW_MIN, 0);
+>> +
+>> +	if (mpam_has_feature(mpam_feat_mbw_max, rprops))
+>> +		mpam_write_partsel_reg(msc, MBW_MAX, bwa_fract);
+
+> MPAMCFG_MBW_MAX_MAX can be used directly instead of bwa_fract.
+
+Without the second user, yes.
+
+
+>> +
+>> +	if (mpam_has_feature(mpam_feat_mbw_prop, rprops))
+>> +		mpam_write_partsel_reg(msc, MBW_PROP, bwa_fract);
+
+> Shouldn't this reset to 0? STRIDEM1 is a cost.
+
+Heh, this is just a copy and paste of the last value, because it clears the 'enable' bit,
+and the spec says "there is no setting of the STRIDEM1 control field that disables the
+effects of proportional-stride".
+
+Yes - zero would be better.
+
+
+Thanks,
+
+James
 
