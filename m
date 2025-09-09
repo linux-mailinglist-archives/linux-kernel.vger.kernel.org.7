@@ -1,171 +1,376 @@
-Return-Path: <linux-kernel+bounces-808647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E2BB502C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:34:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE94B502BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C60DD360DB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:33:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CE4A5424E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EF22DCF6B;
-	Tue,  9 Sep 2025 16:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iB/1DIwD"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677AE274B29
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6899F3D984;
+	Tue,  9 Sep 2025 16:32:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40C4223337
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757435630; cv=none; b=C3m+QuQj0rm7p9sf6XkTNBh40tr1tUaDkzysapwsJ+3V4s0C5jMDnhn12/avEJdOIPhJkWgwD/Up+H2Dn+m9OFfj3VqDoehZlroxXZdhICnO3Br/yvMYKBlHu2ymSFlVLVAKG6lFtw4GIFh4GEFHugz6U5wYPZTmW6trga+Qvbs=
+	t=1757435562; cv=none; b=SwiNFPjaD29MUxl1pOb/27skY8PDlOUD8la9HcH3EPayyCI6soxJYucmdFrJevdkPdd9Sgnz/2Nud7x4arBADkafvsVPIAI6szYKsi8n5nblW0nSPEPy4D8p+M+JiuIeNBehFPkWCFjC1hjwYup/vv17f5fh0y7Gfxfu4+tCR6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757435630; c=relaxed/simple;
-	bh=WFdnUqV4hxxpkPOjvjzf5tq25E07YEPwR7vxyUNJK0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iXlyHWWJIyLGRHmbam8IFYLH6HFbdZNOJb2mtaJRQwBVWcrys5LESe4g/Q/dbL3wJxqML2fM9sSRvXyhsXKM7n8yiFI77U/OEy67xgh7YDvBsVpZYW9IrcAznH/Qa8SarnmZYb5tlG/fRQiegz02nko+hDwYnq/HPbuDawWe2+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iB/1DIwD; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757435616;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Al0hvK+RUU6ek3CWk5iv4s8AREKcqh06zDhA8knnZdg=;
-	b=iB/1DIwDKMXqbvO+/XekJUPu0XZM/s+VJL8ItzWLB/SH672cI+SuYi7DXX7rd1Iln9/Eri
-	swSgq+ooyM+sQY7tNkXsX9thm9rUoziX0johgNM3ZJwkwt8fxvtg0g073w3+ksZ8NtlF2V
-	eSQnUpOHakTXrRSWVYdR7alx13aBF7M=
-From: Tao Chen <chen.dylane@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next v2 2/2] selftests/bpf: Add stacktrace map lookup_and_delete_elem test case
-Date: Wed, 10 Sep 2025 00:32:22 +0800
-Message-ID: <20250909163223.864120-2-chen.dylane@linux.dev>
-In-Reply-To: <20250909163223.864120-1-chen.dylane@linux.dev>
-References: <20250909163223.864120-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1757435562; c=relaxed/simple;
+	bh=2jIIVaEkGqVJKVhMDHrOmr1/Cu6jH4ATEk64r36eSAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KHQLbSSzsXSAbNJ0cerXdv64ftytaVBpV3iFggpObMREKZZunzMy0qSSTDOUnwni1BGKzZYB56Z/Xla0cQbQBZoocndcMVMOIhBxrnnptj3YMQZXr7t8yZ/lLYWbj5dLoZjROrXk9Nt3CGA8wWMxwLcWasYtr6N3rLMltM0gcL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E47DF1424;
+	Tue,  9 Sep 2025 09:32:30 -0700 (PDT)
+Received: from [10.1.33.194] (unknown [10.1.33.194])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70AD03F66E;
+	Tue,  9 Sep 2025 09:32:37 -0700 (PDT)
+Message-ID: <1cfda234-1339-4d83-bd87-b219fbd72664@arm.com>
+Date: Tue, 9 Sep 2025 17:32:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/6] arm64: support FEAT_BBM level 2 and large block
+ mapping when rodata=full
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, Dev Jain <dev.jain@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Ard Biesheuvel <ardb@kernel.org>, scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20250829115250.2395585-1-ryan.roberts@arm.com>
+ <e722e49a-d982-4b58-98f7-6fef3d0a4468@arm.com>
+ <dd242f5b-8bbe-48e8-8d5f-be6a835a8841@arm.com>
+ <aeb76956-f980-417f-b4e7-fe0503bb5a2b@os.amperecomputing.com>
+ <612940d2-4c8e-459c-8d7d-4ccec08fce0a@os.amperecomputing.com>
+ <1471ea27-386d-4950-8eaa-8af7acf3c34a@arm.com>
+ <f8cf1823-1ee9-4935-9293-86f58a9e2224@arm.com>
+ <bf1aa0a4-08de-443f-a1a3-aa6c05bab38c@os.amperecomputing.com>
+ <39c2f841-9043-448d-b644-ac96612d520a@os.amperecomputing.com>
+ <d7cd4004-bacf-47b0-9cd8-f99125e02238@arm.com>
+ <fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com>
+ <8c363997-7b8d-4b54-b9b0-1a1b6a0e58ed@arm.com>
+ <4aa4eedc-550f-4538-a499-504dc925ffc2@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <4aa4eedc-550f-4538-a499-504dc925ffc2@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-...
-test_stacktrace_map:PASS:compare_stack_ips stackmap vs. stack_amap 0 nsec
-test_stacktrace_map:PASS:stack_key_map lookup 0 nsec
-test_stacktrace_map:PASS:stackmap lookup and detele 0 nsec
-test_stacktrace_map:PASS:stackmap lookup deleted stack_id 0 nsec
- #397     stacktrace_map:OK
-...
+On 09/09/2025 16:32, Yang Shi wrote:
+> 
+> 
+> On 9/9/25 7:36 AM, Ryan Roberts wrote:
+>> On 08/09/2025 19:31, Yang Shi wrote:
+>>>
+>>> On 9/8/25 9:34 AM, Ryan Roberts wrote:
+>>>> On 04/09/2025 22:49, Yang Shi wrote:
+>>>>> On 9/4/25 10:47 AM, Yang Shi wrote:
+>>>>>> On 9/4/25 6:16 AM, Ryan Roberts wrote:
+>>>>>>> On 04/09/2025 14:14, Ryan Roberts wrote:
+>>>>>>>> On 03/09/2025 01:50, Yang Shi wrote:
+>>>>>>>>>>>> I am wondering whether we can just have a warn_on_once or something
+>>>>>>>>>>>> for the
+>>>>>>>>>>>> case
+>>>>>>>>>>>> when we fail to allocate a pagetable page. Or, Ryan had
+>>>>>>>>>>>> suggested in an off-the-list conversation that we can maintain a cache
+>>>>>>>>>>>> of PTE
+>>>>>>>>>>>> tables for every PMD block mapping, which will give us
+>>>>>>>>>>>> the same memory consumption as we do today, but not sure if this is
+>>>>>>>>>>>> worth it.
+>>>>>>>>>>>> x86 can already handle splitting but due to the callchains
+>>>>>>>>>>>> I have described above, it has the same problem, and the code has been
+>>>>>>>>>>>> working
+>>>>>>>>>>>> for years :)
+>>>>>>>>>>> I think it's preferable to avoid having to keep a cache of pgtable
+>>>>>>>>>>> memory
+>>>>>>>>>>> if we
+>>>>>>>>>>> can...
+>>>>>>>>>> Yes, I agree. We simply don't know how many pages we need to cache,
+>>>>>>>>>> and it
+>>>>>>>>>> still can't guarantee 100% allocation success.
+>>>>>>>>> This is wrong... We can know how many pages will be needed for splitting
+>>>>>>>>> linear
+>>>>>>>>> mapping to PTEs for the worst case once linear mapping is finalized.
+>>>>>>>>> But it
+>>>>>>>>> may
+>>>>>>>>> require a few hundred megabytes memory to guarantee allocation success. I
+>>>>>>>>> don't
+>>>>>>>>> think it is worth for such rare corner case.
+>>>>>>>> Indeed, we know exactly how much memory we need for pgtables to map the
+>>>>>>>> linear
+>>>>>>>> map by pte - that's exactly what we are doing today. So we _could_ keep a
+>>>>>>>> cache.
+>>>>>>>> We would still get the benefit of improved performance but we would lose
+>>>>>>>> the
+>>>>>>>> benefit of reduced memory.
+>>>>>>>>
+>>>>>>>> I think we need to solve the vm_reset_perms() problem somehow, before we
+>>>>>>>> can
+>>>>>>>> enable this.
+>>>>>>> Sorry I realise this was not very clear... I am saying I think we need to
+>>>>>>> fix it
+>>>>>>> somehow. A cache would likely work. But I'd prefer to avoid it if we can
+>>>>>>> find a
+>>>>>>> better solution.
+>>>>>> Took a deeper look at vm_reset_perms(). It was introduced by commit
+>>>>>> 868b104d7379 ("mm/vmalloc: Add flag for freeing of special permsissions").
+>>>>>> The
+>>>>>> VM_FLUSH_RESET_PERMS flag is supposed to be set if the vmalloc memory is RO
+>>>>>> and/or ROX. So set_memory_ro() or set_memory_rox() is supposed to follow up
+>>>>>> vmalloc(). So the page table should be already split before reaching vfree().
+>>>>>> I think this why vm_reset_perms() doesn't not check return value.
+>>>> If vm_reset_perms() is assuming it can't/won't fail, I think it should at least
+>>>> output a warning if it does?
+>>> It should. Anyway warning will be raised if split fails. We have somehow
+>>> mitigation.
+>>>
+>>>>>> I scrutinized all the callsites with VM_FLUSH_RESET_PERMS flag set.
+>>>> Just checking; I think you made a comment before about there only being a few
+>>>> sites that set VM_FLUSH_RESET_PERMS. But one of them is the helper,
+>>>> set_vm_flush_reset_perms(). So just making sure you also followed to the places
+>>>> that use that helper?
+>>> Yes, I did.
+>>>
+>>>>>> The most
+>>>>>> of them has set_memory_ro() or set_memory_rox() followed.
+>>>> And are all callsites calling set_memory_*() for the entire cell that was
+>>>> allocated by vmalloc? If there are cases where it only calls that for a portion
+>>>> of it, then it's not gurranteed that the memory is correctly split.
+>>> Yes, all callsites call set_memory_*() for the entire range.
+>>>
+>>>>>> But there are 3
+>>>>>> places I don't see set_memory_ro()/set_memory_rox() is called.
+>>>>>>
+>>>>>> 1. BPF trampoline allocation. The BPF trampoline calls
+>>>>>> arch_protect_bpf_trampoline(). The generic implementation does call
+>>>>>> set_memory_rox(). But the x86 and arm64 implementation just simply return 0.
+>>>>>> For x86, it is because execmem cache is used and it does call
+>>>>>> set_memory_rox(). ARM64 doesn't need to split page table before this series,
+>>>>>> so it should never fail. I think we just need to use the generic
+>>>>>> implementation (remove arm64 implementation) if this series is merged.
+>>>> I know zero about BPF. But it looks like the allocation happens in
+>>>> arch_alloc_bpf_trampoline(), which for arm64, calls bpf_prog_pack_alloc(). And
+>>>> for small sizes, it grabs some memory from a "pack". So doesn't this mean that
+>>>> you are calling set_memory_rox() for a sub-region of the cell, so that doesn't
+>>>> actually help at vm_reset_perms()-time?
+>>> Took a deeper look at bpf pack allocator. The "pack" is allocated by
+>>> alloc_new_pack(), which does:
+>>> bpf_jit_alloc_exec()
+>>> set_vm_flush_reset_perms()
+>>> set_memory_rox()
+>>>
+>>> If the size is greater than the pack size, it calls:
+>>> bpf_jit_alloc_exec()
+>>> set_vm_flush_reset_perms()
+>>> set_memory_rox()
+>>>
+>>> So it looks like bpf trampoline is good, and we don't need do anything. It
+>>> should be removed from the list. I didn't look deep enough for bpf pack
+>>> allocator in the first place.
+>>>
+>>>>>> 2. BPF dispatcher. It calls execmem_alloc which has VM_FLUSH_RESET_PERMS set.
+>>>>>> But it is used for rw allocation, so VM_FLUSH_RESET_PERMS should be
+>>>>>> unnecessary IIUC. So it doesn't matter even though vm_reset_perms() fails.
+>>>>>>
+>>>>>> 3. kprobe. S390's alloc_insn_page() does call set_memory_rox(), x86 also
+>>>>>> called set_memory_rox() before switching to execmem cache. The execmem cache
+>>>>>> calls set_memory_rox(). I don't know why ARM64 doesn't call it.
+>>>>>>
+>>>>>> So I think we just need to fix #1 and #3 per the above analysis. If this
+>>>>>> analysis look correct to you guys, I will prepare two patches to fix them.
+>>>> This all seems quite fragile. I find it interesting that vm_reset_perms() is
+>>>> doing break-before-make; it sets the PTEs as invalid, then flushes the TLB,
+>>>> then
+>>>> sets them to default. But for arm64, at least, I think break-before-make is not
+>>>> required. We are only changing the permissions so that can be done on live
+>>>> mappings; essentially change the sequence to; set default, flush TLB.
+>>> Yeah, I agree it is a little bit fragile. I think this is the "contract" for
+>>> vmalloc users. You allocate ROX memory via vmalloc, you are required to call
+>>> set_memory_*(). But there is nothing to guarantee the "contract" is followed.
+>>> But I don't think this is the only case in kernel.
+>>>
+>>>> If we do that, then if the memory was already default, then there is no need to
+>>>> do anything (so no chance of allocation failure). If the memory was not
+>>>> default,
+>>>> then it must have already been split to make it non-default, in which case we
+>>>> can also gurrantee that no allocations are required.
+>>>>
+>>>> What am I missing?
+>>> The comment says:
+>>> Set direct map to something invalid so that it won't be cached if there are any
+>>> accesses after the TLB flush, then flush the TLB and reset the direct map
+>>> permissions to the default.
+>>>
+>>> IIUC, it guarantees the direct map can't be cached in TLB after TLB flush from
+>>> _vm_unmap_aliases() by setting them invalid because TLB never cache invalid
+>>> entries. Skipping set direct map to invalid seems break this. Or "changing
+>>> permission on live mappings" on ARM64 can achieve the same goal?
+>> Here's my understanding of the intent of the code:
+>>
+>> Let's say we start with some memory that has been mapped RO. Our goal is to
+>> reset the memory back to RW and ensure that no TLB entry remains in the TLB for
+>> the old RO mapping. There are 2 ways to do that:
+> 
+> 
+> 
+>>
+>> Approach 1 (used in current code):
+>> 1. set PTE to invalid
+>> 2. invalidate any TLB entry for the VA
+>> 3. set the PTE to RW
+>>
+>> Approach 2:
+>> 1. set the PTE to RW
+>> 2. invalidate any TLB entry for the VA
+> 
+> IIUC, the intent of the code is "reset direct map permission *without* leaving a
+> RW+X window". The TLB flush call actually flushes both VA and direct map together.
+> So if this is the intent, approach #2 may have VA with X permission but direct
+> map may be RW at the mean time. It seems break the intent.
 
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- .../selftests/bpf/prog_tests/stacktrace_map.c | 22 ++++++++++++++++++-
- .../selftests/bpf/progs/test_stacktrace_map.c |  8 +++++++
- 2 files changed, 29 insertions(+), 1 deletion(-)
+Ahh! Thanks, it's starting to make more sense now.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-index 84a7e405e91..7d38afe5cfc 100644
---- a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-+++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-@@ -3,7 +3,7 @@
- 
- void test_stacktrace_map(void)
- {
--	int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd;
-+	int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd, stack_key_map_fd;
- 	const char *prog_name = "oncpu";
- 	int err, prog_fd, stack_trace_len;
- 	const char *file = "./test_stacktrace_map.bpf.o";
-@@ -11,6 +11,9 @@ void test_stacktrace_map(void)
- 	struct bpf_program *prog;
- 	struct bpf_object *obj;
- 	struct bpf_link *link;
-+	__u32 stack_id;
-+	char val_buf[PERF_MAX_STACK_DEPTH *
-+		sizeof(struct bpf_stack_build_id)];
- 
- 	err = bpf_prog_test_load(file, BPF_PROG_TYPE_TRACEPOINT, &obj, &prog_fd);
- 	if (CHECK(err, "prog_load", "err %d errno %d\n", err, errno))
-@@ -41,6 +44,10 @@ void test_stacktrace_map(void)
- 	if (CHECK_FAIL(stack_amap_fd < 0))
- 		goto disable_pmu;
- 
-+	stack_key_map_fd = bpf_find_map(__func__, obj, "stack_key_map");
-+	if (CHECK_FAIL(stack_key_map_fd < 0))
-+		goto disable_pmu;
-+
- 	/* give some time for bpf program run */
- 	sleep(1);
- 
-@@ -68,6 +75,19 @@ void test_stacktrace_map(void)
- 		  "err %d errno %d\n", err, errno))
- 		goto disable_pmu;
- 
-+	err = bpf_map_lookup_elem(stack_key_map_fd, &key, &stack_id);
-+	if (CHECK(err, "stack_key_map lookup", "err %d errno %d\n", err, errno))
-+		goto disable_pmu;
-+
-+	err = bpf_map_lookup_and_delete_elem(stackmap_fd, &stack_id, &val_buf);
-+	if (CHECK(err, "stackmap lookup and delete",
-+		  "err %d errno %d\n", err, errno))
-+		goto disable_pmu;
-+
-+	err = bpf_map_lookup_elem(stackmap_fd, &stack_id, &val_buf);
-+	CHECK((!err || errno != ENOENT), "stackmap lookup deleted stack_id",
-+	      "err %d errno %d\n", err, errno);
-+
- disable_pmu:
- 	bpf_link__destroy(link);
- close_prog:
-diff --git a/tools/testing/selftests/bpf/progs/test_stacktrace_map.c b/tools/testing/selftests/bpf/progs/test_stacktrace_map.c
-index 47568007b66..3bede76c151 100644
---- a/tools/testing/selftests/bpf/progs/test_stacktrace_map.c
-+++ b/tools/testing/selftests/bpf/progs/test_stacktrace_map.c
-@@ -38,6 +38,13 @@ struct {
- 	__type(value, stack_trace_t);
- } stack_amap SEC(".maps");
- 
-+struct {
-+	__uint(type, BPF_MAP_TYPE_ARRAY);
-+	__uint(max_entries, 1);
-+	__type(key, __u32);
-+	__type(value, __u32);
-+} stack_key_map SEC(".maps");
-+
- /* taken from /sys/kernel/tracing/events/sched/sched_switch/format */
- struct sched_switch_args {
- 	unsigned long long pad;
-@@ -64,6 +71,7 @@ int oncpu(struct sched_switch_args *ctx)
- 	/* The size of stackmap and stackid_hmap should be the same */
- 	key = bpf_get_stackid(ctx, &stackmap, 0);
- 	if ((int)key >= 0) {
-+		bpf_map_update_elem(&stack_key_map, &val, &key, 0);
- 		bpf_map_update_elem(&stackid_hmap, &key, &val, 0);
- 		stack_p = bpf_map_lookup_elem(&stack_amap, &key);
- 		if (stack_p)
--- 
-2.48.1
+Though on first sight it seems a bit mad to me to form a tlb flush range that
+covers all the direct map pages and all the lazy vunmap regions. Is that
+intended to be a perf optimization or something else? It's not clear from the
+history.
+
+
+Could this be split into 2 operations?
+
+1. unmap the aliases (+ tlbi the aliases).
+2. set the direct memory back to default (+ tlbi the direct map region).
+
+The only 2 potential problems I can think of are;
+
+ - Performance: 2 tlbis instead of 1, but conversely we probably avoid flushing
+a load of TLB entries that we didn't really need to.
+
+ - Given there is now no lock around the tlbis (currently it's under
+vmap_purge_lock) is there a race where a new alias can appear between steps 1
+and 2? I don't think so, because the memory is allocated to the current mapping
+so how is it going to get re-mapped?
+
+
+Could this solve it?
+
+
+
+> 
+> Thanks,
+> Yang
+> 
+>>
+>> The benefit of approach 1 is that it is guarranteed that it is impossible for
+>> different CPUs to have different translations for the same VA in their
+>> respective TLB. But for approach 2, it's possible that between steps 1 and 2, 1
+>> CPU has a RO entry and another CPU has a RW entry. But that will get fixed once
+>> the TLB is flushed - it's not really an issue.
+>>
+>> (There is probably also an obscure way to end up with 2 TLB entries (one with RO
+>> and one with RW) for the same CPU, but the arm64 architecture permits that as
+>> long as it's only a permission mismatch).
+>>
+>> Anyway, approach 2 is used when changing memory permissions on user mappings, so
+>> I don't see why we can't take the same approach here. That would solve this
+>> whole class of issue for us.
+>>
+>> Thanks,
+>> Ryan
+>>
+>>
+>>> Thanks,
+>>> Yang
+>>>
+>>>> Thanks,
+>>>> Ryan
+>>>>
+>>>>
+>>>>> Tested the below patch with bpftrace kfunc (allocate bpf trampoline) and
+>>>>> kprobes. It seems work well.
+>>>>>
+>>>>> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/
+>>>>> kprobes.c
+>>>>> index 0c5d408afd95..c4f8c4750f1e 100644
+>>>>> --- a/arch/arm64/kernel/probes/kprobes.c
+>>>>> +++ b/arch/arm64/kernel/probes/kprobes.c
+>>>>> @@ -10,6 +10,7 @@
+>>>>>
+>>>>>    #define pr_fmt(fmt) "kprobes: " fmt
+>>>>>
+>>>>> +#include <linux/execmem.h>
+>>>>>    #include <linux/extable.h>
+>>>>>    #include <linux/kasan.h>
+>>>>>    #include <linux/kernel.h>
+>>>>> @@ -41,6 +42,17 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+>>>>>    static void __kprobes
+>>>>>    post_kprobe_handler(struct kprobe *, struct kprobe_ctlblk *, struct pt_regs
+>>>>> *);
+>>>>>
+>>>>> +void *alloc_insn_page(void)
+>>>>> +{
+>>>>> +       void *page;
+>>>>> +
+>>>>> +       page = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
+>>>>> +       if (!page)
+>>>>> +               return NULL;
+>>>>> +       set_memory_rox((unsigned long)page, 1);
+>>>>> +       return page;
+>>>>> +}
+>>>>> +
+>>>>>    static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
+>>>>>    {
+>>>>>           kprobe_opcode_t *addr = p->ainsn.xol_insn;
+>>>>> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+>>>>> index 52ffe115a8c4..3e301bc2cd66 100644
+>>>>> --- a/arch/arm64/net/bpf_jit_comp.c
+>>>>> +++ b/arch/arm64/net/bpf_jit_comp.c
+>>>>> @@ -2717,11 +2717,6 @@ void arch_free_bpf_trampoline(void *image, unsigned int
+>>>>> size)
+>>>>>           bpf_prog_pack_free(image, size);
+>>>>>    }
+>>>>>
+>>>>> -int arch_protect_bpf_trampoline(void *image, unsigned int size)
+>>>>> -{
+>>>>> -       return 0;
+>>>>> -}
+>>>>> -
+>>>>>    int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
+>>>>>                                   void *ro_image_end, const struct
+>>>>> btf_func_model *m,
+>>>>>                                   u32 flags, struct bpf_tramp_links *tlinks,
+>>>>>
+>>>>>
+>>>>>> Thanks,
+>>>>>> Yang
+>>>>>>
+>>>>>>>> Thanks,
+>>>>>>>> Ryan
+>>>>>>>>
+>>>>>>>>> Thanks,
+>>>>>>>>> Yang
+>>>>>>>>>
+>>>>>>>>>> Thanks,
+>>>>>>>>>> Yang
+>>>>>>>>>>
+>>>>>>>>>>> Thanks,
+>>>>>>>>>>> Ryan
+>>>>>>>>>>>
+>>>>>>>>>>>
+> 
 
 
