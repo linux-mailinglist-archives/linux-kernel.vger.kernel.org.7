@@ -1,200 +1,272 @@
-Return-Path: <linux-kernel+bounces-807555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75025B4A621
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:56:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A76B4A626
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4A94E62D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:56:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC4411886B07
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D287F275AFB;
-	Tue,  9 Sep 2025 08:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D616183CC3;
+	Tue,  9 Sep 2025 08:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fu32bpPb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MZfrfxNb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WMq/y6jl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5652749C8
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 08:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BBB274B59;
+	Tue,  9 Sep 2025 08:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757408173; cv=none; b=bQJnHXxsMgcIDH+biGsObNaejZ3yPvtT7DkAqGVFhFxq8VtVSdV92iNg1wrbI8f1fTUbVI4ogemFmvLQA9HKRmZbGN8Lg7OHMWndE5N3iH9xVMyFoxZgk6xOonK19oz4myDhQU+W1I6bcPl7p0bwjKNbIHonPByKu18P4J19+GU=
+	t=1757408204; cv=none; b=ummbIUY03XK9q5dqxvYnfLFSVW9DIjfOopJbaYvNxVPsHMK1Ub9wsdQXdZhgLpV85AKppE8fJb6oFs0soeW4YDFAgOgIMbHBEo0phG1I4fgkuIcqcF0mEx95Ftu6ihhmg6RpiesMGaz1BMe6qgiIrGkZhclMSEQVywgOIsk640w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757408173; c=relaxed/simple;
-	bh=HEr1BW2CyFXSjAp5IHF1LeICiVM9EMNs83h9onsJJ40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LvAwCW911nOoFy8/1UCMyZd48Buvdjxytq/Fzz6AOHw3sEHuonAdZ6ZqxQlIcQf+rNjt3SWhnL/08apzNbKjVAJzwqo9codg5b0Nn6BPEK2Ok+baj0Nq1fjtv38UGeuOz5/zhV4u4qoyqIxINejbkrGNOsY9ISs0M/GpWdbri0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fu32bpPb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5896Sje9023508
-	for <linux-kernel@vger.kernel.org>; Tue, 9 Sep 2025 08:56:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FCzw1uK2cApp7VoxRq8nIM7edWjezcrHv5GLBEAENTI=; b=Fu32bpPb1qDD0kt5
-	7KNTHaBpEDpvqtdQSdELmxstGrZAtUyZNJxX3hkfEWNyIEIWzIH/juJl5u3USICt
-	ExqQRugwoY5MVbHLHvtTjU7IcDEaaLUO3/UirbkK4WmYCN1xnSde/ZJpwHYe0fQu
-	bUnkPNFHOcrAkpVC7/B3PFXoJlLsMK1RzYDg44iw3mwD66xj2NFNQBnrErwtybYk
-	pNzUeswF1no8kEZ7j8LMikCCW/Nd8sOyg3kMN5PtWnWvxK72QsulfyV3QJcYkZAL
-	ykkGOw3tZ0yHqzeTjIRUSXVF69qucFr7CwI34MN4tljVfEhjIxhLxaLet93jlUCL
-	lw0a1w==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490db8fm8m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:56:10 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-74910ab069bso3440906d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 01:56:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757408170; x=1758012970;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FCzw1uK2cApp7VoxRq8nIM7edWjezcrHv5GLBEAENTI=;
-        b=HxF2Ot1ej+Mka4vJDKVNnZqo53zgE4uRMpuurQ94W0MgBjn7L7Z9R+4Bi4NfHG8GA3
-         qCcKTMnxy2DdegcEsICWLda5Ncq6jNE8qkpfx71ZDjb+rTlFRsLjJPcF9oypNVBe3Sro
-         +9XAHmFCLN2iL4OsOKY7KKNvG0p6h9x/jno2Bxk3VLUINxrSmnobZcorY4394uO92i84
-         r+qNPESLyVqfahdho5Q4i45eKleev4jvTXcuRLu182KXWICKs/yjKolvkNAtRTZSlXj+
-         /4xTnX30Eoc0VQcPmfRAHjf8TylCVFhl8fTTm9tBm5xlF/7qFSmTVpV/JYMlnCA99QaS
-         vfrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJSrQa2NjeQbD/Iro256bnRpA2F5LPSJSgf4RwM2FZOM5nnLIFrHuNhytJdatXuXmbQwci7gPdenmfDHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5THOOsyitywKpEoyHnDLtqvTFa7IKsI+d8qptWcwgiCBy3lMQ
-	BFkyn5768haW9Rht+FwkCgmwEWOYuba1veDHaazLDbiaJ3XQ0UaT9wtTqoaU4JLnGedQCp9TwX9
-	U6jEc32SuGf6OQ9xtTw7lTsULLlEXDvAtuFpjNyNICtu5m2Bp+srHTlgvbA4291vJzpo=
-X-Gm-Gg: ASbGnctiaxHNkxA/GWVTKC3PCnvL+9IQlQa8BdDo73PFGjBnTJ6pCy0HN21ZFPRfTmV
-	nX+GBRl1G6MCEr0sTJ6GuFFpu/EKM/veG21k6h0h4S5wIDl7SLp/p4Y4YWw/MKQSwmpmVzf/BJU
-	nbRdvRf8yaAMw42DEzyVb0Dcq2Gw5ILtIwiteZUPJojjNczHssZM4aGT0/d2iwmDKRL+GtGW7yQ
-	K/XwuNJ0c7RR4NTSwN4zJ+/pSxbHURc02ojyvFvTqE1B0hYNg1HFh3XzUSBGZ8mQH1z1R9l1s+G
-	dulemlhLA1StgbByL4ptwCHBhNSUQ/2x0h2HwMBClLOHLTUHj8xmFKc4EoozyU2ZnMBIbv6Wpav
-	P7L2F8mK05PvxaA6E7z8FpQ==
-X-Received: by 2002:a05:6214:2601:b0:70d:fce4:1103 with SMTP id 6a1803df08f44-73923522d01mr76507166d6.2.1757408168988;
-        Tue, 09 Sep 2025 01:56:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFomYED4Eza1A+e/BtNTXXoKFDMJfCxthpkjrk2o70p/W1ZuHNFlj0kbfmL3qCOaJ0P4xf/8Q==
-X-Received: by 2002:a05:6214:2601:b0:70d:fce4:1103 with SMTP id 6a1803df08f44-73923522d01mr76506916d6.2.1757408168393;
-        Tue, 09 Sep 2025 01:56:08 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c0123f3ffsm809455a12.27.2025.09.09.01.56.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 01:56:07 -0700 (PDT)
-Message-ID: <67de95ac-38d4-452f-8285-c2da89aa725b@oss.qualcomm.com>
-Date: Tue, 9 Sep 2025 10:56:05 +0200
+	s=arc-20240116; t=1757408204; c=relaxed/simple;
+	bh=bSiy09kl9vyBr+AH5RmpBVSDADwDgC+UflcI34VjgSg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Gpef1+EblezuKUB8vRbMbGzAfDSzac8RbSJACUc6FRYk2UX4ugH89npP9k5AlQovPvy84iBgCtZ8M7vGSZ3fuJXnb9zgKlF8iBjbTK0FhfySaAojk+ApSz/5Jk2pafdR/cW17zc6Q6UZatZFlYZtMQMXAkdt57h+0n3DJ6mVG5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MZfrfxNb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WMq/y6jl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 09 Sep 2025 08:56:35 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757408200;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fFgQaAUTRKuWJ6/OEEh5Vi2Nhkq6AMZy+lG9lZxuLbw=;
+	b=MZfrfxNbH58B4rKx5rPlaf/4XFXmbOSKg1NLdsV1eBrrsaPURAmW1qvZguWEbsrmYR4WGb
+	qCQxhkI+oCNo2fALVRp6Qonfk1/ckY8ZVIzYAZ6Fjkb5JTJaGQPmRfxYN/tN/nfe0BfbsQ
+	+wQeuf5yhca2KlwvDyI5k7e6mNNzjP8DbGApcpMkiXvToRg06VsVyoaJX3DHFN4CyYUk2u
+	nCRa1K3rsVGQeCu0snMcsM6GigByRN6Cc8u6YYrFmSC7R/LAQKaY2TiKAPGyUn3RY3EJ9J
+	+Do0cc/Sz0ip5Ggfh+MR6oeQZ8TsnOAm4IgcMqHTsYqmdHj5s6C+WK0n77k9pw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757408200;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fFgQaAUTRKuWJ6/OEEh5Vi2Nhkq6AMZy+lG9lZxuLbw=;
+	b=WMq/y6jlBv3btEtEKp6eSVsBDjNLmjp4YIBTcbNz+5BUbB4V4hb2nW9Mu66kWYKtvIk2K5
+	qZpiX7cj8CoI6jCA==
+From: tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] hrtimer: Remove hrtimer_clock_base::get_time
+Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To:
+ <20250812-hrtimer-cleanup-get_time-v1-8-b962cd9d9385@linutronix.de>
+References:
+ <20250812-hrtimer-cleanup-get_time-v1-8-b962cd9d9385@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/8] arm64: dts: qcom: x1e80100-crd: Add charge limit
- nvmem
-To: fenglin.wu@oss.qualcomm.com, Sebastian Reichel <sre@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
-        David Collins <david.collins@oss.qualcomm.com>,
-        =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250826-qcom_battmgr_update-v3-0-74ea410ef146@oss.qualcomm.com>
- <20250826-qcom_battmgr_update-v3-8-74ea410ef146@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250826-qcom_battmgr_update-v3-8-74ea410ef146@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzMSBTYWx0ZWRfXz4YSzBONthGv
- WzDGptggQcg8fONpTNXTVH+DkJE32B85zZBbPHcIQ+CDN4DgnYrpnYqhVR0TIKhqRjXR9H2PO2R
- 7ZQ0mrP/jIfWFURnQQYTbmXQ/BKV9dQxMuBhNsrJBMXRnuvggD2nT8vHVSzCPomDnTp061pgwfb
- Srp8KJesUHdFdbembQq6pxzDstgxrPqu+Z0afMOjfC142BeBAZa0xypfYw8E7WmQclVUvLaNAQ3
- nqgPNR7j2IkLrO0fc8j3tbSctb3qA71x99Nf98IGXGLStOLA8l/1+lcva3h4TmWn0OmqTqODOGr
- K1HDkoZJ3lrZNfOsLxJnoUuXBGTryJjuGW/WIKe6OnmvqEE4EpEK4/99oQIbcbB+CFN8uDRZdXX
- 0gk4VHka
-X-Proofpoint-ORIG-GUID: WbTFDlvGVh-aaBDZvupJ6aYF3XgL6LWe
-X-Proofpoint-GUID: WbTFDlvGVh-aaBDZvupJ6aYF3XgL6LWe
-X-Authority-Analysis: v=2.4 cv=VIDdn8PX c=1 sm=1 tr=0 ts=68bfebaa cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=B-3kHGih9VurzyBn-70A:9
- a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_06,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
- phishscore=0 adultscore=0 clxscore=1015 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060031
+Message-ID: <175740819618.1920.2252980357348613724.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/26/25 9:18 AM, Fenglin Wu via B4 Relay wrote:
-> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-> 
-> Add nvmem cells for getting charge control thresholds if they have
-> been set previously.
-> 
-> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/x1-crd.dtsi         |  2 ++
->  arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi | 20 ++++++++++++++++++++
->  2 files changed, 22 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1-crd.dtsi b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-> index c9f0d505267081af66b0973fe6c1e33832a2c86b..8c3d30dd936ef9b12867971f5f237dd12484072d 100644
-> --- a/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-> @@ -82,6 +82,8 @@ pmic-glink {
->  				    <&tlmm 123 GPIO_ACTIVE_HIGH>,
->  				    <&tlmm 125 GPIO_ACTIVE_HIGH>;
->  
-> +		nvmem-cells = <&charge_limit_en>, <&charge_limit_end>, <&charge_limit_delta>;
-> +		nvmem-cell-names = "charge_limit_en", "charge_limit_end", "charge_limit_delta";
+The following commit has been merged into the timers/core branch of tip:
 
-1 a line would be preferred, and we try to keep a newline between
-the last property and the following subnodes (i.e. before the
-comment in this case), please adjust accordingly.
+Commit-ID:     c37fc72e2662a01662cc9f7bbcbb91fd387f4b4b
+Gitweb:        https://git.kernel.org/tip/c37fc72e2662a01662cc9f7bbcbb91fd387=
+f4b4b
+Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+AuthorDate:    Tue, 12 Aug 2025 08:08:16 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 09 Sep 2025 10:53:30 +02:00
 
+hrtimer: Remove hrtimer_clock_base::get_time
 
->  		/* Left-side rear port */
->  		connector@0 {
->  			compatible = "usb-c-connector";
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-> index c02fd4d15c9649c222caaafa5ed2c777a10fb4f5..abf7afe5127d7b8b572513234e00009ce837837d 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-> @@ -239,6 +239,26 @@ reboot_reason: reboot-reason@48 {
->  			};
->  		};
->  
-> +		pmk8550_sdam_15: nvram@7e00 {
-> +			compatible = "qcom,spmi-sdam";
-> +			reg = <0x7e00>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges = <0 0x7e00 0x100>;
-> +
-> +			charge_limit_en: charge-limit-en@73 {
-> +				reg = <0x73 0x1>;
-> +			};
-> +
-> +			charge_limit_end: charge-limit-end@75 {
-> +				reg = <0x75 0x1>;
-> +			};
-> +
-> +			charge_limit_delta: charge-limit-delta@75 {
-> +				reg = <0x76 0x1>;
-> +			};
+The get_time() callbacks always need to match the bases clockid.
+Instead of maintaining that association twice in hrtimer_bases,
+use a helper.
 
-These addresses look in line with the SDAM assignment document.
+Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250812-hrtimer-cleanup-get_time-v1-8-b962=
+cd9d9385@linutronix.de
+---
+ include/linux/hrtimer.h        |  5 +----
+ include/linux/hrtimer_defs.h   |  2 +--
+ kernel/time/hrtimer.c          | 34 ++++++++++++++++++++++++---------
+ kernel/time/timer_list.c       |  2 +--
+ scripts/gdb/linux/timerlist.py |  2 +--
+ 5 files changed, 26 insertions(+), 19 deletions(-)
 
-Konrad
+diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
+index e655502..2cf1bf6 100644
+--- a/include/linux/hrtimer.h
++++ b/include/linux/hrtimer.h
+@@ -154,10 +154,7 @@ static inline s64 hrtimer_get_expires_ns(const struct hr=
+timer *timer)
+ 	return ktime_to_ns(timer->node.expires);
+ }
+=20
+-static inline ktime_t hrtimer_cb_get_time(const struct hrtimer *timer)
+-{
+-	return timer->base->get_time();
+-}
++ktime_t hrtimer_cb_get_time(const struct hrtimer *timer);
+=20
+ static inline ktime_t hrtimer_expires_remaining(const struct hrtimer *timer)
+ {
+diff --git a/include/linux/hrtimer_defs.h b/include/linux/hrtimer_defs.h
+index 84a5045..aa49ffa 100644
+--- a/include/linux/hrtimer_defs.h
++++ b/include/linux/hrtimer_defs.h
+@@ -41,7 +41,6 @@
+  * @seq:		seqcount around __run_hrtimer
+  * @running:		pointer to the currently running hrtimer
+  * @active:		red black tree root node for the active timers
+- * @get_time:		function to retrieve the current time of the clock
+  * @offset:		offset of this clock to the monotonic base
+  */
+ struct hrtimer_clock_base {
+@@ -51,7 +50,6 @@ struct hrtimer_clock_base {
+ 	seqcount_raw_spinlock_t	seq;
+ 	struct hrtimer		*running;
+ 	struct timerqueue_head	active;
+-	ktime_t			(*get_time)(void);
+ 	ktime_t			offset;
+ } __hrtimer_clock_base_align;
+=20
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 30899a8..4ce754a 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -59,6 +59,7 @@
+ #define HRTIMER_ACTIVE_ALL	(HRTIMER_ACTIVE_SOFT | HRTIMER_ACTIVE_HARD)
+=20
+ static void retrigger_next_event(void *arg);
++static ktime_t __hrtimer_cb_get_time(clockid_t clock_id);
+=20
+ /*
+  * The timer bases:
+@@ -76,42 +77,34 @@ DEFINE_PER_CPU(struct hrtimer_cpu_base, hrtimer_bases) =3D
+ 		{
+ 			.index =3D HRTIMER_BASE_MONOTONIC,
+ 			.clockid =3D CLOCK_MONOTONIC,
+-			.get_time =3D &ktime_get,
+ 		},
+ 		{
+ 			.index =3D HRTIMER_BASE_REALTIME,
+ 			.clockid =3D CLOCK_REALTIME,
+-			.get_time =3D &ktime_get_real,
+ 		},
+ 		{
+ 			.index =3D HRTIMER_BASE_BOOTTIME,
+ 			.clockid =3D CLOCK_BOOTTIME,
+-			.get_time =3D &ktime_get_boottime,
+ 		},
+ 		{
+ 			.index =3D HRTIMER_BASE_TAI,
+ 			.clockid =3D CLOCK_TAI,
+-			.get_time =3D &ktime_get_clocktai,
+ 		},
+ 		{
+ 			.index =3D HRTIMER_BASE_MONOTONIC_SOFT,
+ 			.clockid =3D CLOCK_MONOTONIC,
+-			.get_time =3D &ktime_get,
+ 		},
+ 		{
+ 			.index =3D HRTIMER_BASE_REALTIME_SOFT,
+ 			.clockid =3D CLOCK_REALTIME,
+-			.get_time =3D &ktime_get_real,
+ 		},
+ 		{
+ 			.index =3D HRTIMER_BASE_BOOTTIME_SOFT,
+ 			.clockid =3D CLOCK_BOOTTIME,
+-			.get_time =3D &ktime_get_boottime,
+ 		},
+ 		{
+ 			.index =3D HRTIMER_BASE_TAI_SOFT,
+ 			.clockid =3D CLOCK_TAI,
+-			.get_time =3D &ktime_get_clocktai,
+ 		},
+ 	},
+ 	.csd =3D CSD_INIT(retrigger_next_event, NULL)
+@@ -1253,7 +1246,7 @@ static int __hrtimer_start_range_ns(struct hrtimer *tim=
+er, ktime_t tim,
+ 	remove_hrtimer(timer, base, true, force_local);
+=20
+ 	if (mode & HRTIMER_MODE_REL)
+-		tim =3D ktime_add_safe(tim, base->get_time());
++		tim =3D ktime_add_safe(tim, __hrtimer_cb_get_time(base->clockid));
+=20
+ 	tim =3D hrtimer_update_lowres(timer, tim, mode);
+=20
+@@ -1588,6 +1581,29 @@ static inline int hrtimer_clockid_to_base(clockid_t cl=
+ock_id)
+ 	}
+ }
+=20
++static ktime_t __hrtimer_cb_get_time(clockid_t clock_id)
++{
++	switch (clock_id) {
++	case CLOCK_REALTIME:
++		return ktime_get_real();
++	case CLOCK_MONOTONIC:
++		return ktime_get();
++	case CLOCK_BOOTTIME:
++		return ktime_get_boottime();
++	case CLOCK_TAI:
++		return ktime_get_clocktai();
++	default:
++		WARN(1, "Invalid clockid %d. Using MONOTONIC\n", clock_id);
++		return ktime_get();
++	}
++}
++
++ktime_t hrtimer_cb_get_time(const struct hrtimer *timer)
++{
++	return __hrtimer_cb_get_time(timer->base->clockid);
++}
++EXPORT_SYMBOL_GPL(hrtimer_cb_get_time);
++
+ static void __hrtimer_setup(struct hrtimer *timer,
+ 			    enum hrtimer_restart (*function)(struct hrtimer *),
+ 			    clockid_t clock_id, enum hrtimer_mode mode)
+diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
+index b03d0ad..488e47e 100644
+--- a/kernel/time/timer_list.c
++++ b/kernel/time/timer_list.c
+@@ -102,8 +102,6 @@ print_base(struct seq_file *m, struct hrtimer_clock_base =
+*base, u64 now)
+ 	SEQ_printf(m, "  .index:      %d\n", base->index);
+=20
+ 	SEQ_printf(m, "  .resolution: %u nsecs\n", hrtimer_resolution);
+-
+-	SEQ_printf(m,   "  .get_time:   %ps\n", base->get_time);
+ #ifdef CONFIG_HIGH_RES_TIMERS
+ 	SEQ_printf(m, "  .offset:     %Lu nsecs\n",
+ 		   (unsigned long long) ktime_to_ns(base->offset));
+diff --git a/scripts/gdb/linux/timerlist.py b/scripts/gdb/linux/timerlist.py
+index 9844567..ccc24d3 100644
+--- a/scripts/gdb/linux/timerlist.py
++++ b/scripts/gdb/linux/timerlist.py
+@@ -56,8 +56,6 @@ def print_base(base):
+     text +=3D " .index:      {}\n".format(base['index'])
+=20
+     text +=3D " .resolution: {} nsecs\n".format(constants.LX_hrtimer_resolut=
+ion)
+-
+-    text +=3D " .get_time:   {}\n".format(base['get_time'])
+     if constants.LX_CONFIG_HIGH_RES_TIMERS:
+         text +=3D "  .offset:     {} nsecs\n".format(base['offset'])
+     text +=3D "active timers:\n"
 
