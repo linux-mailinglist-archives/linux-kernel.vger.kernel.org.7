@@ -1,109 +1,86 @@
-Return-Path: <linux-kernel+bounces-808305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C69B4FDA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:43:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EBA8B4FDA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978197B36F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:41:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E687B188652A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A12353341;
-	Tue,  9 Sep 2025 13:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WW7uhxoV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182ED343216;
+	Tue,  9 Sep 2025 13:39:52 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD2E3431E3;
-	Tue,  9 Sep 2025 13:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92BC340DA7;
+	Tue,  9 Sep 2025 13:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425245; cv=none; b=usu+F5lmqCwp0LREkCwMZZRDm7Fv7V/CtYbKvon6hDANBbY0oIOuk/MkYXAOCwGx/s7TkE34uWFuFJUGMqfZ9zc6ZGgusrQEl3hW8M3ctN3OueaL3kM7g6X4GzpyVxWKh8cRsiY8gZTx4I4W4t1OGARGVjUy1K5ejiBX/cuxKAo=
+	t=1757425191; cv=none; b=Lp4ocI2BiBRYkBKaPV0aSDncboX1AkUaf42uApSLG7Ohhav7slBNgGvLtpe0az60M4zMdczYyLmv++KJ6LZoo/9Na0ybEVeDDVXIU/5SWirVnuU0AsBiIpBz3cQLlj/7NQexz0zT2ovqnBcjuHVAswIzxC7D800+Ji5GyEAmEQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425245; c=relaxed/simple;
-	bh=TOKivSYM8AaGjR0sjfOBNZldzL9uNMrmIjNBs/jU5RA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fnLwaRfUCyPIcnEZQr1cuLxxFc61JvuAmK/8LGkrMr2i3gE9bO8Jsv8r+8r3hGlhQFtawLJ3Zfq8M9SyqLg3kMMLlA4UKOXHvqU5bo1EAfXYjnr3rz3VihSCHq74FlfnIQiFYdvr50c4hmfh7PlvZdR1EgUBCnjTQxshPDK0xUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WW7uhxoV; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757425243; x=1788961243;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=TOKivSYM8AaGjR0sjfOBNZldzL9uNMrmIjNBs/jU5RA=;
-  b=WW7uhxoVB7QPgwqIb+11dZUg0iX6qtQ0iWtJrvQMt8RIs4+W5NNnxVAV
-   iim+eGH+JPHm3NP8Dghn1kUDSOg+RthFrpvh2wP7pDG80hMi9IZJ7vZce
-   hHLdrNkpyTbZX0rMOQFDyxrNEb5mXwlcAjQOL2F7ppTYlQCqNjczb9YtC
-   jJ6d//FQk+h7u+pl6uK34uE+ZQUCovAKsz94VkddglZt++zp5ea3H7Iyu
-   YvIkfuvYjb2b2Kcn7IH941RifvTznm+6uldur2aMcSFmwsPoE9xjlC2nU
-   B87i3VGKcSgqCb556cuBpVwPDNRpCpR/NRw6n7mlbh5X+d6P291vP29QU
-   Q==;
-X-CSE-ConnectionGUID: E6O9lpPPSUeOCoJzQrf9rQ==
-X-CSE-MsgGUID: 7gNU33OKQP6ZfrrQ3yml8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="59854826"
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="59854826"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 06:40:43 -0700
-X-CSE-ConnectionGUID: d5jyn5U6RTqDwtadbZsjtg==
-X-CSE-MsgGUID: 3dTjMfjGQGi/s8TDcuomyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
-   d="scan'208";a="204075081"
-Received: from lucas-s2600cw.jf.intel.com ([10.165.21.196])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 06:40:42 -0700
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/xe/hwmon: Use devm_mutex_init()
-Date: Tue,  9 Sep 2025 06:40:26 -0700
-Message-ID: <175742518952.1517056.6092120545087383831.b4-ty@intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <989e96369e9e1f8a44b816962917ec76877c912d.1757252520.git.christophe.jaillet@wanadoo.fr>
-References: <989e96369e9e1f8a44b816962917ec76877c912d.1757252520.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1757425191; c=relaxed/simple;
+	bh=zXP0vgpsslX+xoM+R5u5Z8Qq+cPpKOIF09oVF2DyXdk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NOdB3h1uOxDRR+TnUOoGJIE0R3FWW1O+rJv9OSpiw2EPXM67Vpm9Wziw2YJWP/xyIFdmXPwLYlTwXv+QkIQ1QxWfUcI/j2nCYPsSeqHaO4nAqNDixmBFX+56MqI4Xx9ZbxQ7EBJ88VMnWLl5BarLlBghBzpXb50i1Zvt020N1V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 324285951B;
+	Tue,  9 Sep 2025 13:39:44 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 900C62002A;
+	Tue,  9 Sep 2025 13:39:40 +0000 (UTC)
+Date: Tue, 9 Sep 2025 09:40:28 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev,
+ joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+ kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ jstultz@google.com, qperret@google.com, will@kernel.org,
+ aneesh.kumar@kernel.org, kernel-team@android.com,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 04/24] tracing: Add reset to trace remotes
+Message-ID: <20250909094028.3265b751@gandalf.local.home>
+In-Reply-To: <aMAZMaZJ1_Eny5Ku@google.com>
+References: <20250821081412.1008261-1-vdonnefort@google.com>
+	<20250821081412.1008261-5-vdonnefort@google.com>
+	<20250908193757.079aae76@gandalf.local.home>
+	<aMAZMaZJ1_Eny5Ku@google.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 900C62002A
+X-Stat-Signature: wfa3mdrmcbzi14spidjppaqea6aw3qp1
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+E8T0HTQskMKNFMQEhwq4iyvDU75kvHts=
+X-HE-Tag: 1757425180-933823
+X-HE-Meta: U2FsdGVkX1+Wwks7b6yVoepNeV7TOzWudjuaDH2HvpSyApAYLfX3FbQwoINlsSIJNvKZcFkkzCa70xLZ8yV4M3RgoVBTMxN5wkAN4Tvsgw8YtAsvBOUnzzaGQoIagJtU8jlbuWu7YwTn4neLH9QVlsUmEnxOFj+Ce+XWBl2YeuaS2Co2nBtPDT2dppC4tUtOJR/BNg+CfKupetaSNKi+SIEiMtMc+wVlYX5nkohak+WdMCO/O577kVmfRGQBv0yYCqWaEXG1hBinQi1qPSUlt1pVhygCIsWRDJWGDRHVLOLUYn/A+q+kGxNNxzOWFpeRPlmy68ip0z5ZjM1JDFzumCv8TLnOFVx7
 
+On Tue, 9 Sep 2025 13:10:25 +0100
+Vincent Donnefort <vdonnefort@google.com> wrote:
 
-On Sun, 07 Sep 2025 15:42:17 +0200, Christophe JAILLET wrote:
-> Use devm_mutex_init() instead of hand-writing it.
+> > I wonder if we should name the file "reset" to not be confusing to users
+> > when they cat the file and it doesn't produce any output.  
 > 
-> This saves some LoC, improves readability and saves some space in the
-> generated .o file.
+> My idea was to keep the exact same interface as the rest of the tracing. I could
+> keep that /trace file for compatibility and add /reset?
 > 
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   36884	  10296	     64	  47244	   b88c	drivers/gpu/drm/xe/xe_hwmon.o
-> 
-> [...]
+> "cat trace" could also just returns a text like *** not supported *** ?
 
-Applied to drm-xe-next, thanks!
+If it's never going to be supported, I rather not add it. It not being
+there is a sure way of knowing it's not supported. Just adding it because
+the normal system has it is actually worse if it doesn't behave the same.
 
-[1/1] drm/xe/hwmon: Use devm_mutex_init()
-      commit: 7b77941724628e6171a286edbf04d67a1f1c1459
-
-Best regards,
--- 
-Lucas De Marchi
-
+-- Steve
 
