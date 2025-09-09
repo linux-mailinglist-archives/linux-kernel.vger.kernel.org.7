@@ -1,166 +1,201 @@
-Return-Path: <linux-kernel+bounces-808604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3659B50234
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:13:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5FCB50235
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C522D7AA33D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:11:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648193B53EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9880338F32;
-	Tue,  9 Sep 2025 16:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D91D33EB15;
+	Tue,  9 Sep 2025 16:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Kn2NOuvD"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="X69xpkj0"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D457A3594E;
-	Tue,  9 Sep 2025 16:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757434384; cv=none; b=hAQfA3/QeMSkHe4PsPiOr7rJQm5TOnAptWzrMFevIQejhcm3BMiVCiGJ97+ifIYVH4dalq7j45FBGLaV43x/f1y0PWpMGxbePwX643Pv3G7eBo4BKdUhQXyGtZtmu099jRhm0diyMxXxjp+B3IJJAZGB4r7TM82IGG6ezxrI4mw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757434384; c=relaxed/simple;
-	bh=zF+pibFWFF+py+h3GHMhUcPWe6XzCW0OIVU4fGG31Sc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+EgDsyR4okaBmi1Rwlupjc1P78VWUrZldbFv+p2v4kJvhS0cYjv4JEWubx2c14cW12hBVbFTluvlRpl5TioqlKJLkbaWbMxtwfNNUulflo8kYyeVIHRQWV3oZA3ndVGl0AZ5ksuhhIehaM4Ocbwb43MHGKsLmFK/uwz9sngFFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Kn2NOuvD reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5515540E01B0;
-	Tue,  9 Sep 2025 16:12:53 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id WjqufeJ0WJTY; Tue,  9 Sep 2025 16:12:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757434367; bh=R6cxdKUTP067b/7o2F/e5uNSuLE+BTpfOFxYXHQQkFI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kn2NOuvDOy8qA+j1Q/vTeTO7R77GC4i0Ukib8EUb2wmZoacKVuBBgqRCERAj8gN1/
-	 FwW2WldBidmRNCtsWqhq+CvnCI2cLrIO7UWHurN0/OXaD6hzSSvXfCUFIGs1RIcjl+
-	 5mad77mhIhzMtq5UrrgkS7qjr2/GDoasLQWh7dEQpGqEL7Fxp2EFlkQl+dHajy7aS2
-	 5lOGgUBONF990KX89fnDfXsWw/hElN8aCgpwPcvVqgroat89w5wRY9Gv6Dm1tlTDd9
-	 H9Ksr0+DgAJnYgzGVtfNhP/kBI2RNSgMw+AKk//8qWBSaHmQAffltBeF+odAPo+kJ7
-	 jU3zHrjjLdMIEyow9s2n2l/q41zJny82p86eLCx5GE8cKQN0h0b5i/WEii0qlyGXfv
-	 /KeykfLmCCwujLO+DpxzXKK0JiXkC+qg0gISuHPC9UBPjwGkVDcqzx6zsGaVV3TMY7
-	 lMqRzEIBcfSuIxhQVBSHvPLlieDwUX5iL8exZPvgW7MB5i7NvUdBzeGRNxf8Jx7Nn9
-	 qOUogClBFvGfZc5NFWEt9ZcKijH1ADF+qOyi6i2V6LBmhVWnh+DsDkkMi+xzZFzOVs
-	 bVSmHA1seIl+yQjLwjScUfNqOZsZ8+1LuMHP4rrbYssLcQoM/mUCN5ULCnjElcoVsO
-	 cNSzloV0TZma0UIFT3fUEQKU=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 2365440E0176;
-	Tue,  9 Sep 2025 16:12:17 +0000 (UTC)
-Date: Tue, 9 Sep 2025 18:12:10 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-pm@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>,
-	Li Ming <ming.li@zohomail.com>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Ying Huang <huang.ying.caritas@gmail.com>,
-	Yao Xingtao <yaoxt.fnst@fujitsu.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Nathan Fontenot <nathan.fontenot@amd.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Robert Richter <rrichter@amd.com>,
-	Benjamin Cheatham <benjamin.cheatham@amd.com>,
-	PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>,
-	Zhijian Li <lizhijian@fujitsu.com>
-Subject: Re: [PATCH 1/6] dax/hmem, e820, resource: Defer Soft Reserved
- registration until hmem is ready
-Message-ID: <20250909161210.GBaMBR2rN8h6eT9JHe@fat_crate.local>
-References: <20250822034202.26896-1-Smita.KoralahalliChannabasappa@amd.com>
- <20250822034202.26896-2-Smita.KoralahalliChannabasappa@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2B236124;
+	Tue,  9 Sep 2025 16:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757434405; cv=pass; b=uW3j4l4pDGn92vL1jegqlH9WlAjtcEARBRg9GEu9u7CTSmPntlJy//WZfRXwtlacme2I2K7BXJAP0XyeAXsEYtC9jwXOpruS2ygPbwRcg/tiDvcMOgykTpkViyoSI0qosNYBW/jyFxkoBdblxOmGJbD3LT/0FJT0ncjrPftmtv4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757434405; c=relaxed/simple;
+	bh=16EcF/iYO/Q987hJE3vHax7ubkQSrv8htSNhM9tPQZU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=smPs+USByiLi9YrXX+Zg3JlBhMNcEkS2SyYgiPdKpfK4uvVmZ374EL6Ym+NCtu+pVdG6vAAcf9DVrcW39Sd1dvYNUSo0rSvp7t3ApzIVL6+sUBluSuzprc3HtzLLeZry+g8/BsL3JkBjrEtWkGraUHdYJ+vjeZo0OW1Ya6zT7DY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=X69xpkj0; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757434389; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=atUOZXQRSK/DXAWNftmQAt+h4rUMp7ZFthyhYEiHJPW2lCDaWP6qrHtL38oHxHOZ6DJH9zcMU44SUlS76/+tt66YJWxmON8MCv7xsotUBNyu6JlAorxlV2LLg6ZZA3vo6kUBiYZ9/5onYt0UtRDHTIt+crRG+cZDb9DWBGYbLbQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757434389; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=16EcF/iYO/Q987hJE3vHax7ubkQSrv8htSNhM9tPQZU=; 
+	b=WGJl16zmiD7maN9N/i2zdiuHDUWG4CvGtTuYTnNmsscEskvCjniktK7jIi4k8KEytZ3sMMl5z1hzuYHO8J3ZV74DXGvq7untiEfdY89qkcDMztgqa1IvN6516bzOoJNydSVido7OYkml/aCWcorpiBwp6U5Xpp8OaUd9FcyG8CE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757434389;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=16EcF/iYO/Q987hJE3vHax7ubkQSrv8htSNhM9tPQZU=;
+	b=X69xpkj0nSvR+fDAGJZ5Y0sGMkD3puMrdA0CpKk1GhitMVY6HiH9xC7iMAL9RvnT
+	nfpqraHaeTRkNcUkRmSkGIEfAVphdHm+4Wb3zmGIz1qmCYajR+R3iomjvZ2kRWetJOj
+	0ewet1cjx+WH2A9kz/jJoK/5JhCr6DY4JewvrPTw=
+Received: by mx.zohomail.com with SMTPS id 1757434387476350.1436464211441;
+	Tue, 9 Sep 2025 09:13:07 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250822034202.26896-2-Smita.KoralahalliChannabasappa@amd.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v2 2/2] rust: regulator: add devm_enable and
+ devm_enable_optional
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aMBJ805QjQcPdRol@tardis-2.local>
+Date: Tue, 9 Sep 2025 13:12:51 -0300
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <8CA69D19-754C-43F5-96CD-B7060C68B025@collabora.com>
+References: <20250908-regulator-remove-dynamic-v2-0-e575ae2cde6a@collabora.com>
+ <20250908-regulator-remove-dynamic-v2-2-e575ae2cde6a@collabora.com>
+ <aL_PwXck1HsLp5wH@tardis-2.local>
+ <AA8FC1A7-EE88-44FA-A0A9-A3EA5529B10D@collabora.com>
+ <aMBJ805QjQcPdRol@tardis-2.local>
+To: Boqun Feng <boqun.feng@gmail.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Fri, Aug 22, 2025 at 03:41:57AM +0000, Smita Koralahalli wrote:
-> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-> index c3acbd26408b..aef1ff2cabda 100644
-> --- a/arch/x86/kernel/e820.c
-> +++ b/arch/x86/kernel/e820.c
-> @@ -1153,7 +1153,7 @@ void __init e820__reserve_resources_late(void)
->  	res =3D e820_res;
->  	for (i =3D 0; i < e820_table->nr_entries; i++) {
->  		if (!res->parent && res->end)
-> -			insert_resource_expand_to_fit(&iomem_resource, res);
-> +			insert_resource_late(res);
->  		res++;
->  	}
->
 
-Btw, this doesn't even build and cover letter doesn't say what it applies
-ontop so I applied it on my pile of tip/master.
 
-kernel/resource.c: In function =E2=80=98region_intersects_soft_reserve=E2=
-=80=99:
-kernel/resource.c:694:36: error: =E2=80=98soft_reserve_resource=E2=80=99 =
-undeclared (first use in this function); did you mean =E2=80=98devm_relea=
-se_resource=E2=80=99?
-  694 |         ret =3D __region_intersects(&soft_reserve_resource, start=
-, size, flags,
-      |                                    ^~~~~~~~~~~~~~~~~~~~~
-      |                                    devm_release_resource
-kernel/resource.c:694:36: note: each undeclared identifier is reported on=
-ly once for each function it appears in
-make[3]: *** [scripts/Makefile.build:287: kernel/resource.o] Error 1
-make[2]: *** [scripts/Makefile.build:556: kernel] Error 2
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:2011: .] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
+> On 9 Sep 2025, at 12:38, Boqun Feng <boqun.feng@gmail.com> wrote:
+>=20
+> On Tue, Sep 09, 2025 at 12:04:35PM -0300, Daniel Almeida wrote:
+>> Hi Boqun, thanks for chiming in!
+>>=20
+>>> On 9 Sep 2025, at 03:57, Boqun Feng <boqun.feng@gmail.com> wrote:
+>>>=20
+>>> On Mon, Sep 08, 2025 at 08:10:28PM -0300, Daniel Almeida wrote:
+>>>> A lot of drivers only care about enabling the regulator for as long =
+as
+>>>> the underlying Device is bound. This can be easily observed due to =
+the
+>>>> extensive use of `devm_regulator_get_enable` and
+>>>> `devm_regulator_get_enable_optional` throughout the kernel.
+>>>>=20
+>>>> Therefore, make this helper available in Rust. Also add an example
+>>>> noting how it should be the default API unless the driver needs =
+more
+>>>> fine-grained control over the regulator.
+>>>>=20
+>>>> Suggested-by: Danilo Krummrich <dakr@kernel.org>
+>>>> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+>>>> ---
+>>>> rust/helpers/regulator.c | 10 +++++++++
+>>>> rust/kernel/regulator.rs | 58 =
++++++++++++++++++++++++++++++++++++++++++++++++-
+>>>> 2 files changed, 67 insertions(+), 1 deletion(-)
+>>>>=20
+>>>> diff --git a/rust/helpers/regulator.c b/rust/helpers/regulator.c
+>>>> index =
+cd8b7ba648ee33dd14326c9242fb6c96ab8e32a7..11bc332443bd064f4b5afd350ffc045b=
+adff9076 100644
+>>>> --- a/rust/helpers/regulator.c
+>>>> +++ b/rust/helpers/regulator.c
+>>>> @@ -40,4 +40,14 @@ int rust_helper_regulator_is_enabled(struct =
+regulator *regulator)
+>>>> return regulator_is_enabled(regulator);
+>>>> }
+>>>>=20
+>>>> +int rust_helper_devm_regulator_get_enable(struct device *dev, =
+const char *id)
+>>>> +{
+>>>> + return devm_regulator_get_enable(dev, id);
+>>>> +}
+>>>> +
+>>>> +int rust_helper_devm_regulator_get_enable_optional(struct device =
+*dev, const char *id)
+>>>> +{
+>>>> + return devm_regulator_get_enable_optional(dev, id);
+>>>> +}
+>>>> +
+>>>=20
+>>> These two functions are already EXPORT_SYMBOL_GPL(), so you won't =
+need
+>>> to add rust_helper for them. Creating rust_helper_*() for them will =
+just
+>>> export additional symbols.
+>>=20
+>> These are inlined (stubbed) if CONFIG_REGULATOR is not set, so we =
+need the
+>> helpers to get around that, IIUC.
+>>=20
+>=20
+> Well, then the question is why we want to compiler regulator.rs if
+> CONFIG_REGULATOR=3Dn? Shouldn't we do:
 
-Also, I'd do this resource insertion a bit differently:
+Yes, we do want to compile regulator .rs. There=E2=80=99s been prior =
+discussion on
+this (see [0] below, but also [1]).
 
-insert_resource_expand_to_fit(struct resource *new)
-{
-	struct resource *root =3D &iomem_resource;
+>=20
+> #[cfg(CONFIG_REGULATOR)]
+> pub mod regulator
+>=20
+> in rust/kernel/lib.rs?
 
-	if (new->desc =3D=3D IORES_DESC_SOFT_RESERVED)
-		root =3D &soft_reserve_resource;
+This was the original approach, but this is incorrect behavior (again, =
+see
+[0]). The right thing to do is to call the stubs if CONFIG_REGULATOR is =
+not
+set, not make the regulator API unavailable.
 
-	return __insert_resource_expand_to_fit(root, new);
-}
+>=20
+>> In fact, doing the change you proposed will result in Intel=C2=B4s =
+bot
+>> complaining. Same for all other functions defined in the helper C =
+file.
+>>=20
+>=20
+> With above, we probably can remove the whole helper file for =
+regulator.
 
-and rename the current insert_resource_expand_to_fit() to the __ variant.
+Given the above, we cannot remove the file, and we must also add the =
+devm
+helpers as they are in the current patch.
 
-It looks like you want to intercept all callers of
-insert_resource_expand_to_fit() instead of defining a separate set which =
-works
-on the soft-reserve thing.
+=E2=80=94 Daniel
 
-Oh well, the resource code is yucky already.
+[0] =
+https://lore.kernel.org/rust-for-linux/a1b3561d-f5de-4474-85ef-1525a6c36bc=
+5@arm.com/T/#mdf9d4005ee99929d0009ccc988efbc0789164b6d
 
---=20
-Regards/Gruss,
-    Boris.
+[1] =
+https://lore.kernel.org/rust-for-linux/25e9a9b6-4d81-4731-98fa-add40ccd4aa=
+b@sirena.org.uk/
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
+
+
 
