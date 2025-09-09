@@ -1,97 +1,115 @@
-Return-Path: <linux-kernel+bounces-807984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F94B4ABB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:24:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92625B4AB9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A7DE3BA692
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:21:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 865AF4E2A6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8693218B7;
-	Tue,  9 Sep 2025 11:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C543931E106;
+	Tue,  9 Sep 2025 11:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="otpGLfTQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="spnzCgdC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805BB32039E;
-	Tue,  9 Sep 2025 11:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2898E2F5E;
+	Tue,  9 Sep 2025 11:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757416886; cv=none; b=njHF3qeBLQDk6cDzkmF2fwPXH2P3qiFxkoO3F7uIrP7uCyP8Wf5YYXlN7mPhvpR4UaI83blRCabQYGsj166MbqQ3oAu1eAqUyu2Y+luf4iieboJnFI/cIs3mGJv0j6g05yqoGOSzYXLm8rlxSY5vlaW7lSbXCb/iZQp74IR4IvI=
+	t=1757416905; cv=none; b=A9AfEqrXRfMV2tXN1kO4CDkJSaBC94QXaKYp8cdgBs0KUbwXkJsn8JZCpbBeUVk6PcI4X5XazgpMuDzwU/JU3QyZ0rbqzOdYpjsHP0wJcJZEw+YGTLIXYj8F4Lsxi6p9o9yj99d87mlB7I8ykn/sZjNmRpCsi9sgpnTMVeS6e1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757416886; c=relaxed/simple;
-	bh=nvzb1Lrog6KFya3P8bFG+W+kS1eOa6Dc9362cZxvL8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QQXI4/5DlZFulGlhgtI3CqzDCNqALk9UD42zza44MOw8hPBU0Z9QoBlLS5qxraKQIfss02hIRgJJMK7mV9Rc4aBjUT0/hX0JWBomAAs3NAWtkbxOUIgRLOBvqr1LqOBipvbImjWM3CrulsisES9Tk3PwfVk3oEW1vy8mEKtGtzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otpGLfTQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DD44C4CEF4;
-	Tue,  9 Sep 2025 11:21:22 +0000 (UTC)
+	s=arc-20240116; t=1757416905; c=relaxed/simple;
+	bh=WGVbI7np7xhsccUcZ2mq8FQt+c4KbxvQmTFbkCyFxsU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZN4hKr87Vf52TExEKG7mG335twiUQTQHwISXzN0jJ2aL6rB/o3uJgqWjUezXgJILUYgH6LpSI0eHUd6EbL5CD4n+UsXMKX12W3msz80ivhfU0+tZm9U+N8AIkHB4GV5irBEDoGKMKwUTCtr20kuocjG2qFUAxWsTsEUXgWZIvco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=spnzCgdC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F9EDC4CEF4;
+	Tue,  9 Sep 2025 11:21:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757416886;
-	bh=nvzb1Lrog6KFya3P8bFG+W+kS1eOa6Dc9362cZxvL8Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=otpGLfTQdb/Ve1vlpJY4gn9XqzwuGKs9DhRlYhbnetcMNxS2sOoE2na6DOLz5eTds
-	 15p0LEEf+9jRMweaqwWKbsEqm3ruCPV4PyFMFZMX3jVT1U5WdMy254jDlc3h0zT1G+
-	 nd5ksqkVceZXVYqa1CMkL1qJMY7XlSg6A5Nal6cJz1ust4UWf/e26VwyJq29lEMLk1
-	 0BgPMCmecREu4P628h5HR0rt6YiWs96mjA7UthGxFe5VTw6oOHoM3fKTRAuJkPGiOc
-	 42dqeF6zhfGg85lbnngVuLWN0a7QfEyK/HAZX82TCDqrH2SZ/kV420s0HiR+TSOFrN
-	 FOFP2ZQNhtmRA==
-Date: Tue, 9 Sep 2025 12:21:19 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, achill@achill.org
-Subject: Re: [PATCH 6.16 000/183] 6.16.6-rc1 review
-Message-ID: <89b8c0bf-3879-40f3-a078-0112ea9334d1@sirena.org.uk>
-References: <20250907195615.802693401@linuxfoundation.org>
+	s=k20201202; t=1757416904;
+	bh=WGVbI7np7xhsccUcZ2mq8FQt+c4KbxvQmTFbkCyFxsU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=spnzCgdCWnXyXf6fPVwUl5AFWzK/6O6noknQOaiNR743uSzQ4li/wAT8TINQ8Zb8h
+	 2HmJNNYdO8hH+26KkHtfTZ8jgJ65/zTew228hvgi8OSovHBKFDJPs+7sHTClAUFRhM
+	 z6vXpNscUiyQYg3nbezYFN1d65jc4mHeYM7SqA5wKSSGZFRxTw9CQsiZIfCQ/eH+Tv
+	 c14Mtwbke+oIyH6nT4sdxMXMh/KKCzRYN7nDwU2nHk/5mL+7ORoShsLuBIYW74ZLWU
+	 xpJlKzqNR4wURL4jPeSwKM3AJX50gJD2ZOCG/UdgoMb7YQ/TIO0sor3B43Gin6CiOX
+	 UoTjIseNn4tgg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uvwPu-00000004ewP-13PZ;
+	Tue, 09 Sep 2025 11:21:42 +0000
+Date: Tue, 09 Sep 2025 12:21:41 +0100
+Message-ID: <86ikhrdg6y.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau
+ <j@jannau.net>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	James Clark
+ <james.clark@linaro.org>
+Subject: Re: [PATCH 14/25] genirq: Update request_percpu_nmi() to take an affinity
+In-Reply-To: <877by8vu0v.ffs@tglx>
+References: <20250908163127.2462948-1-maz@kernel.org>
+	<20250908163127.2462948-15-maz@kernel.org>
+	<877by8vu0v.ffs@tglx>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="A3RAOnqIS4luGgUQ"
-Content-Disposition: inline
-In-Reply-To: <20250907195615.802693401@linuxfoundation.org>
-X-Cookie: Ma Bell is a mean mother!
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, mark.rutland@arm.com, will@kernel.org, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Tue, 09 Sep 2025 10:45:36 +0100,
+Thomas Gleixner <tglx@linutronix.de> wrote:
+> 
+> On Mon, Sep 08 2025 at 17:31, Marc Zyngier wrote:
+> > @@ -2564,13 +2566,14 @@ int request_percpu_nmi(unsigned int irq, irq_handler_t handler,
+> >  	    !irq_supports_nmi(desc))
+> >  		return -EINVAL;
+> >  
+> > -	/* The line cannot already be NMI */
+> > -	if (irq_is_nmi(desc))
+> > +	/* The line cannot be NMI already if the new request covers all CPUs */
+> > +	if (irq_is_nmi(desc) &&
+> > +	    (!affinity || cpumask_equal(affinity, cpu_possible_mask)))
+> >  		return -EINVAL;
+> 
+> This check looks odd. What makes sure that the affinities do not
+> overlap?
 
---A3RAOnqIS4luGgUQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The following patch in the series does, at the point of adding the new
+irqaction to the list. This is modelled after the current handling of
+shared interrupts.
 
-On Sun, Sep 07, 2025 at 09:57:07PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.16.6 release.
-> There are 183 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+	M.
 
-Tested-by: Mark Brown <broonie@kernel.org>
-
---A3RAOnqIS4luGgUQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjADa4ACgkQJNaLcl1U
-h9Dhowf9Eb1w7U3LavnuZEd7/dX4zcwNYL3PCLoCIQ8xRjhxEwUiWp1xoTZD6ijt
-NDK8KGyqHCr2apiRpnbqG8WcqHcqsBwleNSsSUY6xoApxUAWV22bBWXLoO265YI2
-SeS3FTs9BKWii0/inbXclRX8+O+9+IMP1DP3bNPsoczcp7yLXuVfhioUaC8cI8d/
-x/4ufnzuNzs6YMhveCHpndifbMCWgZlXycLFLhFHK5m/s1xY5oPqsuviwp0KIL8W
-aWRPlFSTIXjPrHw0L64eHeLU6iV8WwrpzRZzVChum21VXVZVaBUENyqjcFELq15X
-BBPec7TeMuYM36ipX9zPfBX0x9ObQQ==
-=nP4s
------END PGP SIGNATURE-----
-
---A3RAOnqIS4luGgUQ--
+-- 
+Without deviation from the norm, progress is not possible.
 
