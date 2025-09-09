@@ -1,282 +1,126 @@
-Return-Path: <linux-kernel+bounces-808486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE91B50067
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:58:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F277BB5006C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 330ED1C61880
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:58:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4437160D70
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3621B350831;
-	Tue,  9 Sep 2025 14:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57CB34DCFE;
+	Tue,  9 Sep 2025 14:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyBnTsH3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ty9fQXAc"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DC4255E27;
-	Tue,  9 Sep 2025 14:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C8E1F0E2E
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757429884; cv=none; b=cVcJkYK4wjRY2PFWYJ9NTGjcNOUzh24LYJ8TS3UOBs/NnJkKZoaKR6a1wtDGKX5GpkfUVlneJgOemXXJgetZXSFJ4dQPavvIle/99cEbwLvzGrPJxHout5XlrbbKO5Z2O7CxFr9HXqGllZ0tnZi3YW0G9cwWvJr+2EvH/150j3c=
+	t=1757429928; cv=none; b=QEr200WL4zpYBOwt1uDfMxc4Gs0rNcMwvyNPBCpF6W/Tq4mordbj1J+waKzdbjfwGYJKbccZmAHeldnE6lmIVQkZ3SbYfxVmkTmnsjGWxy4B8FyNJ5AFXwtpl9SFwGeKFhH6Xtd8fNrTqzav86eeakgpXHDB2lJ/bEz2trOcpNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757429884; c=relaxed/simple;
-	bh=AhYS1yMvT6UZY4gb3lSyTd7YEFXttTdUlw02kjzCzS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ip9A31ulW3us8exbqzvhE7rx0IjNd84cgMXnEV6t+WM9DgeECGzP0eu/QLlr+QZezKZAJ4M9w2PO5taxc+K3cK4S87PleKJki2GTFs+xzp3agnbtELrwEpwL5I5E7rgiNR48DfzLDrdOAtXgiFQueeyXc2BOOh88LDfzfsqR/Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyBnTsH3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76645C4CEF4;
-	Tue,  9 Sep 2025 14:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757429883;
-	bh=AhYS1yMvT6UZY4gb3lSyTd7YEFXttTdUlw02kjzCzS8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CyBnTsH3dRriP5kf2uS4+LiBcDagW9pxeN1obzP2gB0inxfxry/Tr2XjeGKUW34To
-	 T99k4lgGErOmGZ+5GPVORAWpL1vSJxJzxC80p4snLHbce4fxgizBofDswGSn5old7D
-	 gsiKG/wfauBHy+4x1ZIExll1W9M82wPu3zCrUo+lfQAd3CcPj5c6dr1Nx9ben30pVO
-	 sOLnRlunffd1xDbIzaJA6scW5bDrqNTizK5Nh2kNnJnjpJwmtDzYqVpXtlsjVarJFb
-	 YR8rsjMrb/2ZA1eH63dxmDTji8CxLgKB1K7qXwXE8HrAo/lfm1Lyf9HQ3Km/dHirQA
-	 rOZ2YeIhs9v1w==
-Date: Tue, 9 Sep 2025 09:58:00 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>, 
-	Sumit Garg <sumit.garg@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Apurupa Pattapu <quic_apurupa@quicinc.com>, 
-	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org, 
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v9 06/11] firmware: qcom: scm: add support for object
- invocation
-Message-ID: <67c676glro2asxtavghtvczdjcvtxlb5yd6rg2y5ln7ahj2gfq@yqtkle5tnal6>
-References: <20250901-qcom-tee-using-tee-ss-without-mem-obj-v9-0-a2af23f132d5@oss.qualcomm.com>
- <20250901-qcom-tee-using-tee-ss-without-mem-obj-v9-6-a2af23f132d5@oss.qualcomm.com>
+	s=arc-20240116; t=1757429928; c=relaxed/simple;
+	bh=GPXq7GLxQi+GK9C9f/V23ZUAplO/KiiJUwnq8p2H+lY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gDFqCWjuf3BcEDIUIN3UZJxEBtKjDGx13K+WaoxOWoHgpe8AF76v7K1MGgjbl8BvMR+Pk0kfoD5qYV+zwWRsZpk34d5Cv4EcB4EpA4xnEoIfahG6XgBGR+0kDH3ggH8YM1LRxDpYkhpZ8kSM19AlVJj4xfSPSj9FVvtBbCJNyi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ty9fQXAc; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7ae31caso961889366b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:58:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757429925; x=1758034725; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6m8UfLRkwYkCoRG9q4AW4F/X1zLc8k+fkHHKjv2oYWI=;
+        b=Ty9fQXAc/1EmQunP0B4G1cSg0S5LG+0I0eeAJUOWjgkdJrrWkgLS1LW7aMennvWvak
+         ZnNaW5Eo5SczahS4mB0wOlPRNwMXNpmu0G0phua57B89U0jWkrHWKIDOGSxas7YXnIdR
+         /27SCwCXVOQoB2XgQXLpP8ZKiJu189mTOmta+vYQ+cHSUqE/zWOHP7Unn2w2lEeznIof
+         Y6wWhlOr+igmjKz4aK9HNO16NNsQNZ43ynQfNd+qmDskrsjrNGL2qU/AcDyV2KxFWle2
+         khZ0gCQazRoEqsz+TFrbQ7OLzBKIfGSRlMCNd77x3zq4ppsnKZi8XBvyjh/6SXI28gQ4
+         OJAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757429925; x=1758034725;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6m8UfLRkwYkCoRG9q4AW4F/X1zLc8k+fkHHKjv2oYWI=;
+        b=K0uYZCQ/NVkqFGh5UUrE0VA4jFWdnViAme89AQEfiuRrDZCBulM2yskQLnEoMNo2H/
+         J63DD7AazYfr4w+O4VmKnJyPpPzG0bv/1jz2uWghFt1OG1kHhxaMzTQ9ISqEMrcjeFqP
+         d08k5hhukUrkjpmDVQO37gn7OCQ4vUGMRwxQv7HETlhFmawGHGHmXuITHoOvoEnPzCDD
+         LtXvtULELUY6/uGPE4E+pyrX1+oLzZMQUalbxcRGzQcetZJncJL3EHJKh7MG8uPUzLnx
+         1CAxImfbDfiVDs0Q4c95ty6jZ5zE5qZTqQbdexpmZVJBjQC/g/sNxJQoJK/gT9ZHVP8X
+         yFfg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9hxg3xK0ssdDD83Dx1MU2gvuCDCVutgezhB5PZVj53ukIn0mLLB52AxpYJKeJJ6ridoc9ecQ8DrgzyE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypIg4VwoQpJYHkn1X6VHdykdamwglyUL94EV1SK/AV3EaWxm+g
+	YnJ+ypYQ6vYKc4QUfzqsXSP5i0Ll8qHCtb70/KlBbRqiaGllj7y4b51igjwLlZFMdzOmSq/Tj+A
+	nHn59YbqCNF2m5AqK6j4+PoRtX7CXww8=
+X-Gm-Gg: ASbGncufM83V83pnJ4tcbnmiIbGzHY9mjUEcytmT5ILFxBZ2xf+eyhRBIXK9gyZSR6B
+	HnRqdSoEbyhtNMTd+6saK6i2hBJCqXVgARSaGqfbD57hsrOj1LELDKMPM8BcAskyY5aQYG7VsPM
+	ELtcKAGBwTZXKeKkQwwaOtgOtWP4uANTuVOqAGGfShC9AAdWv3fZHXWkPkwf/BcjHKUozvjXJ7e
+	r8GNWa10kdG2zzsXeIFeg==
+X-Google-Smtp-Source: AGHT+IFWy3IZpvbKMW0rMWL9k3GfHz9yi8+0YGLSFX8InBG0mqrVOBpoQPrpe/jA576SWjVAzPg+gM9DAa/5Tc1gW4U=
+X-Received: by 2002:a17:907:d2a:b0:ae1:a6a0:f2fe with SMTP id
+ a640c23a62f3a-b04b1542faemr1056559566b.36.1757429924635; Tue, 09 Sep 2025
+ 07:58:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901-qcom-tee-using-tee-ss-without-mem-obj-v9-6-a2af23f132d5@oss.qualcomm.com>
+References: <20250905191357.78298-1-ryncsn@gmail.com> <20250905191357.78298-6-ryncsn@gmail.com>
+ <0bbda135-068a-45bd-afd6-3f5cdf4e570d@redhat.com>
+In-Reply-To: <0bbda135-068a-45bd-afd6-3f5cdf4e570d@redhat.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 9 Sep 2025 22:58:07 +0800
+X-Gm-Features: AS18NWDGLlwdkrvwzMJL7zTY0JXDCsXG30VSD6e-dpjxVCyt6CGtodppdyFsSnU
+Message-ID: <CAMgjq7CsKYWzAD0Ev7q0cocQO8kOYLmhgLD0wk6AX-HUzWFJZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 05/15] mm, swap: always lock and check the swap cache
+ folio before use
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Yosry Ahmed <yosryahmed@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 01, 2025 at 09:55:53PM -0700, Amirreza Zarrabi wrote:
-> Qualcomm TEE (QTEE) hosts Trusted Applications (TAs) and services in
-> the secure world, accessed via objects. A QTEE client can invoke these
-> objects to request services. Similarly, QTEE can request services from
-> the nonsecure world using objects exported to the secure world.
-> 
-> Add low-level primitives to facilitate the invocation of objects hosted
-> in QTEE, as well as those hosted in the nonsecure world.
-> 
-> If support for object invocation is available, the qcom_scm allocates
-> a dedicated child platform device. The driver for this device communicates
-> with QTEE using low-level primitives.
-> 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Tested-by: Harshal Dev <quic_hdev@quicinc.com>
-> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-> ---
->  drivers/firmware/qcom/qcom_scm.c       | 124 +++++++++++++++++++++++++++++++++
->  drivers/firmware/qcom/qcom_scm.h       |   7 ++
->  include/linux/firmware/qcom/qcom_scm.h |   6 ++
->  3 files changed, 137 insertions(+)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index edeae6cdcf31..739ee9819549 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -2094,6 +2094,127 @@ static int qcom_scm_qseecom_init(struct qcom_scm *scm)
->  
->  #endif /* CONFIG_QCOM_QSEECOM */
->  
-> +/**
-> + * qcom_scm_qtee_invoke_smc() - Invoke a QTEE object.
-> + * @inbuf: start address of memory area used for inbound buffer.
-> + * @inbuf_size: size of the memory area used for inbound buffer.
-> + * @outbuf: start address of memory area used for outbound buffer.
-> + * @outbuf_size: size of the memory area used for outbound buffer.
-> + * @result: result of QTEE object invocation.
-> + * @response_type: response type returned by QTEE.
-> + *
-> + * @response_type determines how the contents of @inbuf and @outbuf
-> + * should be processed.
-> + *
-> + * Return: On success, return 0 or <0 on failure.
-> + */
-> +int qcom_scm_qtee_invoke_smc(phys_addr_t inbuf, size_t inbuf_size,
-> +			     phys_addr_t outbuf, size_t outbuf_size,
-> +			     u64 *result, u64 *response_type)
-> +{
-> +	struct qcom_scm_desc desc = {
-> +		.svc = QCOM_SCM_SVC_SMCINVOKE,
-> +		.cmd = QCOM_SCM_SMCINVOKE_INVOKE,
-> +		.owner = ARM_SMCCC_OWNER_TRUSTED_OS,
-> +		.args[0] = inbuf,
-> +		.args[1] = inbuf_size,
-> +		.args[2] = outbuf,
-> +		.args[3] = outbuf_size,
-> +		.arginfo = QCOM_SCM_ARGS(4, QCOM_SCM_RW, QCOM_SCM_VAL,
-> +					 QCOM_SCM_RW, QCOM_SCM_VAL),
-> +	};
-> +	struct qcom_scm_res res;
-> +	int ret;
-> +
-> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (response_type)
-> +		*response_type = res.result[0];
-> +
-> +	if (result)
-> +		*result = res.result[1];
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(qcom_scm_qtee_invoke_smc);
-> +
-> +/**
-> + * qcom_scm_qtee_callback_response() - Submit response for callback request.
-> + * @buf: start address of memory area used for outbound buffer.
-> + * @buf_size: size of the memory area used for outbound buffer.
-> + * @result: Result of QTEE object invocation.
-> + * @response_type: Response type returned by QTEE.
-> + *
-> + * @response_type determines how the contents of @buf should be processed.
-> + *
-> + * Return: On success, return 0 or <0 on failure.
-> + */
-> +int qcom_scm_qtee_callback_response(phys_addr_t buf, size_t buf_size,
-> +				    u64 *result, u64 *response_type)
-> +{
-> +	struct qcom_scm_desc desc = {
-> +		.svc = QCOM_SCM_SVC_SMCINVOKE,
-> +		.cmd = QCOM_SCM_SMCINVOKE_CB_RSP,
-> +		.owner = ARM_SMCCC_OWNER_TRUSTED_OS,
-> +		.args[0] = buf,
-> +		.args[1] = buf_size,
-> +		.arginfo = QCOM_SCM_ARGS(2, QCOM_SCM_RW, QCOM_SCM_VAL),
-> +	};
-> +	struct qcom_scm_res res;
-> +	int ret;
-> +
-> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (response_type)
-> +		*response_type = res.result[0];
-> +
-> +	if (result)
-> +		*result = res.result[1];
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(qcom_scm_qtee_callback_response);
-> +
-> +static void qcom_scm_qtee_free(void *data)
-> +{
-> +	struct platform_device *qtee_dev = data;
-> +
-> +	platform_device_unregister(qtee_dev);
-> +}
-> +
-> +static void qcom_scm_qtee_init(struct qcom_scm *scm)
-> +{
-> +	struct platform_device *qtee_dev;
-> +	u64 result, response_type;
-> +	int ret;
-> +
-> +	/*
-> +	 * Probe for smcinvoke support. This will fail due to invalid buffers,
-> +	 * but first, it checks whether the call is supported in QTEE syscall
-> +	 * handler. If it is not supported, -EIO is returned.
-> +	 */
-> +	ret = qcom_scm_qtee_invoke_smc(0, 0, 0, 0, &result, &response_type);
-> +	if (ret == -EIO)
-> +		return;
-> +
-> +	/* Setup QTEE interface device. */
-> +	qtee_dev = platform_device_register_data(scm->dev, "qcomtee",
-> +						 PLATFORM_DEVID_NONE, NULL, 0);
-> +	if (IS_ERR(qtee_dev)) {
-> +		dev_err(scm->dev, "qcomtee: register failed: %d\n",
-> +			PTR_ERR(qtee_dev));
+On Mon, Sep 8, 2025 at 10:08=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+>
+> >
+> >               folio_lock(folio);
+> > +             if (!folio_matches_swap_entry(folio, entry)) {
+> > +                     folio_unlock(folio);
+> > +                     folio_put(folio);
+> > +                     continue;
+> > +             }
+> > +
+>
+> I wonder if we should put that into unuse_pte() instead. It checks for
+> other types of races (like the page table entry getting modified) already=
+.
 
-This isn't going to fail, and all expected paths that it would fail will
-be -ENOMEM which already printed a warning. So, I'd suggest that you
-resolve the LKP build warning by dropping the print.
+Doing this earlier here might help to avoid the folio_wait_writeback
+below? And checking the folio right after locking seems to follow the
+convention more strictly.
 
-> +		return;
-> +	}
-> +
-> +	ret = devm_add_action_or_reset(scm->dev, qcom_scm_qtee_free, qtee_dev);
-> +	if (ret)
-> +		dev_err(scm->dev, "qcomtee: add action failed: %d\n", ret);
+I'm fine either way though as there should be almost no difference.
 
-The only possible error here is -ENOMEM, so you can skip the print.
-
-Regards,
-Bjorn
-
-> +}
-> +
->  /**
->   * qcom_scm_is_available() - Checks if SCM is available
->   */
-> @@ -2326,6 +2447,9 @@ static int qcom_scm_probe(struct platform_device *pdev)
->  	ret = qcom_scm_qseecom_init(scm);
->  	WARN(ret < 0, "failed to initialize qseecom: %d\n", ret);
->  
-> +	/* Initialize the QTEE object interface. */
-> +	qcom_scm_qtee_init(scm);
-> +
->  	return 0;
->  }
->  
-> diff --git a/drivers/firmware/qcom/qcom_scm.h b/drivers/firmware/qcom/qcom_scm.h
-> index 0e8dd838099e..a56c8212cc0c 100644
-> --- a/drivers/firmware/qcom/qcom_scm.h
-> +++ b/drivers/firmware/qcom/qcom_scm.h
-> @@ -156,6 +156,13 @@ int qcom_scm_shm_bridge_enable(struct device *scm_dev);
->  #define QCOM_SCM_SVC_GPU			0x28
->  #define QCOM_SCM_SVC_GPU_INIT_REGS		0x01
->  
-> +/* ARM_SMCCC_OWNER_TRUSTED_OS calls */
-> +
-> +#define QCOM_SCM_SVC_SMCINVOKE			0x06
-> +#define QCOM_SCM_SMCINVOKE_INVOKE_LEGACY	0x00
-> +#define QCOM_SCM_SMCINVOKE_CB_RSP		0x01
-> +#define QCOM_SCM_SMCINVOKE_INVOKE		0x02
-> +
->  /* common error codes */
->  #define QCOM_SCM_V2_EBUSY	-12
->  #define QCOM_SCM_ENOMEM		-5
-> diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
-> index 0f667bf1d4d9..a55ca771286b 100644
-> --- a/include/linux/firmware/qcom/qcom_scm.h
-> +++ b/include/linux/firmware/qcom/qcom_scm.h
-> @@ -175,4 +175,10 @@ static inline int qcom_scm_qseecom_app_send(u32 app_id,
->  
->  #endif /* CONFIG_QCOM_QSEECOM */
->  
-> +int qcom_scm_qtee_invoke_smc(phys_addr_t inbuf, size_t inbuf_size,
-> +			     phys_addr_t outbuf, size_t outbuf_size,
-> +			     u64 *result, u64 *response_type);
-> +int qcom_scm_qtee_callback_response(phys_addr_t buf, size_t buf_size,
-> +				    u64 *result, u64 *response_type);
-> +
->  #endif
-> 
-> -- 
-> 2.34.1
-> 
+> --
+> Cheers
+>
+> David / dhildenb
+>
+>
 
