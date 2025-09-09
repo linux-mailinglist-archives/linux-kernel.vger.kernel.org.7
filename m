@@ -1,133 +1,142 @@
-Return-Path: <linux-kernel+bounces-809126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7191AB508F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:41:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8900B508F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CB7C1BC7181
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:42:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0EB27B2C7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60CC26C3AE;
-	Tue,  9 Sep 2025 22:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC4526E710;
+	Tue,  9 Sep 2025 22:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="B4Fabnsr"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RQRMKuW5"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49AD26056E
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 22:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19BB24BD04;
+	Tue,  9 Sep 2025 22:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757457695; cv=none; b=iokWYZbchbVnMgy0SH/ApAirWGceq5Lx6Aodi/EWDe9Wv3oNZpsOZR4JLz7WUjqankpFDHHyBu170WBHosrkvAjr8xwWpPoBZkrOBOaK5EUsBq6dnZsdmLtJjyLWtNmOlwX2/4U24xN1qSkXb0mv20hvvashY2pYj8Ruvwr/B8U=
+	t=1757457702; cv=none; b=qZLK+cXN/1fscb9JPlgqGNah71jKx+O1ovIQsK55jV/sOXwKjHrMt23Ox/wTGNtwZRg8Tg3Q3jxlGHSIKzXynWxInpIXncl+QD+5gwIicrwfnEfkjSL+zss5IS5kcyvsT1kZn3/0D5dDORczl9z2pC7QI/CXac/8AygJDWMJUNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757457695; c=relaxed/simple;
-	bh=felhpwGkEtZLE8TEqp7N70sxaxzcLapntYvYD9bzU9E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oPxcD2W3O/wW3AOfVsOel+B6wnCwUCoBlFvwnkopPPmhD3LlKkXBjZ2ea6UNaLloh5NxMY3uPLXD0yB8sIUV1L6wYBBEyc5Pe+ojjhlHsKx3KRW2W/ENBVOBtAhyk8BlTdmd019g71ZUomdoosoacJN5QouGlSBI7NRfX1es9Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=B4Fabnsr; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24b1622788dso43133645ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:41:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1757457693; x=1758062493; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u1ipfyK9b5YmSa8JFsuC7Jixb/D0wPo4LPC95p6875o=;
-        b=B4FabnsrV0xjhoPDIfyWnGnbDuSG06Ce2afTMm6MHm3srC1ULh5yTRAN5PgzI12GWO
-         /Yqe69TACqx9wCJ9PqCxQPwS929IZdKGaRTxI586sl6pXz4KfPQ3rp/QDyeeatBq5dwE
-         3XWLHFFJnivdVhhyHuzcjw7iED86H2sLSaXOoGMQ5CpWjcxLWRVH/o3R21TB48cudXco
-         uhhfC3/2rsMv1x/vCtBNb6u+/cTlcFoh43B99uyOQjRsGZ9IFDarfxrNVrLxa2kP6o74
-         EjIv0ojMQ6vXEeO7J8tHPlmAvcYIGLX3jY8+hw2kykXXdDqK+kMWF0/6RGZZGsNkxdJe
-         q1Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757457693; x=1758062493;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u1ipfyK9b5YmSa8JFsuC7Jixb/D0wPo4LPC95p6875o=;
-        b=PDYO/09MOSQ/2QKSdlmsrN4JcywGVf5AIjqasU3+4zqyrySHFxFmNrVIj8N8sksAQ/
-         Sl4vYegj7AZNCJJcSWRqtThpcxxuuKfbHUuyM+Ul4ZK4lgBj9WffW9bqddh1nmgYCZdr
-         rU7f9Xo3RiAg1kG33P1fy11BSqkREjsw3U0YTwrutuR31BUnQelMybOYN9RLNBPvVnBh
-         dXAHIKBtmjMw66sCrI7R9iOabCEua4E6ULatWhiTqfup4HYXgAxXM00V8dbD4d4Tv4iW
-         BkIA3oT9hLRwEHOpzuawARhDMUdADBLkkpc2XLMU2SpGhMb06cvEw5eopMUxf5soHO4W
-         XUrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcLd1Npwsjzw7IF4hWH/ySrn/v+HDHbekYtpIhgkXfgaB0ZgdU3RauTBO8b1Z06VEekgwCf2Ob+fUd+F4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkVJiLnjlAIu3pHbfoYray3Vq6UjN7bQI55Wl2by58R4JNx27O
-	j3aWCwWVbGi/EAs1xzh7+J7PkJUXC33BUsPYhYF3ZInfn2YUaTliBT1DmaAoYcBANuc=
-X-Gm-Gg: ASbGnctkQKgCMcV94+YEBahhuEx3Ivzkck646cFmW2gcMosVy7nbA4TylWCJS+v2joS
-	aeYL7RsQbf9PuVLFYLrY20P4jQuX784mZR9GjtSJ9zlUAq/jqgQlp1+NZqx8NaQP4G/izy7opSN
-	bd4kegchtc8ZnggwGoM11Wfq6ZaxIHoEPvKWfFhbPS3CzuHjr2GRj1V3FFfX5Cv07QqMCdyxJfD
-	ZRZvohGD3oyvwE+hAEddnoqdA9AZb9Bm8mr5NE0RVLEtyRZ3PljjGRwkyO+B8wuVnyIkWvOxeM/
-	d9I1mdLjdhNs9wCFvWfHjaGI6K7cVUEHMCR/8J0nxLZA0wKW7lxviWmu1Z/VQ9zkWAjlNgBmKnc
-	4o1a7s9XEbrMxkzBC/KzSqxvQBkvbq6kG4K1PzZtVyIk/Mg//ltm43uk=
-X-Google-Smtp-Source: AGHT+IHckWZ4Zmqgngr3HglCZr4AquYHliN4dZVtohCeeipZhQom/qfD2zWCfOQFtVElwxlYywtNXA==
-X-Received: by 2002:a17:903:380f:b0:24b:164d:4e61 with SMTP id d9443c01a7336-2516d531c06mr160527835ad.13.1757457692920;
-        Tue, 09 Sep 2025 15:41:32 -0700 (PDT)
-Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a27422e30sm8043835ad.23.2025.09.09.15.41.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 15:41:32 -0700 (PDT)
-From: Samuel Holland <samuel.holland@sifive.com>
-To: Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>
-Cc: linmin@eswincomputing.com,
-	Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: [PATCH] cache: sifive_ccache: Optimize cache flushes
-Date: Tue,  9 Sep 2025 15:41:27 -0700
-Message-ID: <20250909224131.276800-1-samuel.holland@sifive.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1757457702; c=relaxed/simple;
+	bh=H6LomDyj+J3yxYD5h5TBecfKUq9QqHn/h5WlZa7yhJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Y325JfN23LqpCizgZVUcO0ZBykWKMjCghZaDHTBzYLNXlADVFfr5alwXsVWKOju6ITZXClVmEquGCkzOURm+jYegwD0N2jKV5gjAi+zBAHAHi4k3iV4D6HpitKOIvG5rzGwjGv5IvYGujmHThzU2LZIz20/9n5fbFjOVWZnXswU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RQRMKuW5; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 589MfWwZ006957;
+	Tue, 9 Sep 2025 17:41:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757457692;
+	bh=WbwmokaiQsTOA7B8SevyBawIpYDSQ2xVw9i3NB7U0TY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=RQRMKuW53IAl6gwVfRHjJpiVC2x7WLzRuZlbOppN46g7Rvqibe02AAfRmue/nyofm
+	 Vr+59yamY19i/i3S8voot2fKW9wEPjFwtumgioGfOQBG1GS0qgmSTqEVu3+i6Ujrvt
+	 gy5k3O05OcIdW4ao6kv600Gj1/QiVmt6m6RMscRw=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 589MfWfn689483
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 9 Sep 2025 17:41:32 -0500
+Received: from DLEE204.ent.ti.com (157.170.170.84) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 9
+ Sep 2025 17:41:31 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE204.ent.ti.com
+ (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 9 Sep 2025 17:41:31 -0500
+Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 589MfVHJ3725550;
+	Tue, 9 Sep 2025 17:41:31 -0500
+Message-ID: <433c4594-8081-45cf-bbc8-a4816e8559f4@ti.com>
+Date: Tue, 9 Sep 2025 17:41:31 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] arm64: dts: ti: k3-am62: Support Main UART wakeup
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <d-gole@ti.com>, <vishalm@ti.com>, <sebin.francis@ti.com>,
+        <msp@baylibre.com>, <khilman@baylibre.com>, <a-kaur@ti.com>
+References: <20250904212827.3730314-1-k-willis@ti.com>
+Content-Language: en-US
+From: Kendall Willis <k-willis@ti.com>
+In-Reply-To: <20250904212827.3730314-1-k-willis@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Fence instructions are required only at the beginning and the end of
-a flush operation, not separately for each cache line being flushed.
-Speed up cache flushes by about 15% by removing the extra fences.
+On 9/4/25 16:28, Kendall Willis wrote:
+> This series adds wakeup support for the Main UART in the device tree of
+> the TI AM62 family of devices. It defines the specific pins and pinctrl
+> states needed to wakeup the system from the Main UART via I/O
+> daisy-chaining. The wakeup-source property is configured to describe the
+> low power modes the system can wakeup from using the Main UART.
+> 
+> Dependencies
+> ------------
+> This series is dependent on the following series [1] to be merged into
+> the kernel. The series adds the system idle states that are available on
+> the SoCs. The system idle states are used when configuring the
+> wakeup-source property.
+> 
+> This series is also dependent on the following patch [2] to be merged
+> into the kernel. The patch integrates the PIN_WKUP_EN macro which
+> enables the WKUP_EN bit.
 
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
----
+Series also depends on this series [1] for DT bindings of pinctrl.
 
- drivers/cache/sifive_ccache.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+[1] https://lore.kernel.org/all/20250904212455.3729029-1-k-willis@ti.com/
 
-diff --git a/drivers/cache/sifive_ccache.c b/drivers/cache/sifive_ccache.c
-index e1a283805ea7f..a86800b123b9e 100644
---- a/drivers/cache/sifive_ccache.c
-+++ b/drivers/cache/sifive_ccache.c
-@@ -151,16 +151,16 @@ static void ccache_flush_range(phys_addr_t start, size_t len)
- 	if (!len)
- 		return;
- 
--	mb();
-+	mb(); /* complete earlier memory accesses before the cache flush */
- 	for (line = ALIGN_DOWN(start, SIFIVE_CCACHE_LINE_SIZE); line < end;
- 			line += SIFIVE_CCACHE_LINE_SIZE) {
- #ifdef CONFIG_32BIT
--		writel(line >> 4, ccache_base + SIFIVE_CCACHE_FLUSH32);
-+		writel_relaxed(line >> 4, ccache_base + SIFIVE_CCACHE_FLUSH32);
- #else
--		writeq(line, ccache_base + SIFIVE_CCACHE_FLUSH64);
-+		writeq_relaxed(line, ccache_base + SIFIVE_CCACHE_FLUSH64);
- #endif
--		mb();
- 	}
-+	mb(); /* issue later memory accesses after the cache flush */
- }
- 
- static const struct riscv_nonstd_cache_ops ccache_mgmt_ops __initconst = {
--- 
-2.47.2
+> 
+> Implementation
+> --------------
+> This series is intended to be implemented along with the following
+> series:
+> 
+> 1. "pmdomain: ti_sci: Handle wakeup constraint if device has pinctrl
+>     wakeup state": Patch which skips setting constraints for wakeup sources
+>     that use pinctrl state 'wakeup'.
+> 
+> 2. "serial: 8250: omap: Add wakeup support": Implements
+>     wakeup from the UARTs for TI K3 SoCs
+> 
+> 3. "arm64: dts: ti: k3-am62: Support Main UART wakeup": (this series)
+>     implements the functionality to wakeup the system from the Main UART
+> 
+> Testing
+> -------
+> Tested on a SK-AM62B-P1 board with all series and dependencies
+> implemented. Suspend/resume verified with the Main UART wakeup source
+> by entering a keypress on the console.
+> 
+> [1] https://lore.kernel.org/linux-arm-kernel/20250812-topic-am62-dt-partialio-v6-15-v2-2-25352364a0ac@baylibre.com/
+> [2] https://lore.kernel.org/all/20250904112538.529857-4-a-kaur@ti.com/
+> 
+> Kendall Willis (3):
+>    arm64: dts: ti: k3-am62x-sk-common: Enable Main UART wakeup
+>    arm64: dts: ti: k3-am62a7-sk: Enable Main UART wakeup
+>    arm64: dts: ti: k3-am62p5-sk: Enable Main UART wakeup
+> 
+>   arch/arm64/boot/dts/ti/k3-am62a7-sk.dts       | 24 +++++++++++++++----
+>   arch/arm64/boot/dts/ti/k3-am62p5-sk.dts       | 24 +++++++++++++++----
+>   .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 24 +++++++++++++++----
+>   3 files changed, 60 insertions(+), 12 deletions(-)
+> 
+> 
+> base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
 
-base-commit: 9dd1835ecda5b96ac88c166f4a87386f3e727bd9
-branch: up/ccache-flush-opt
 
