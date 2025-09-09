@@ -1,115 +1,101 @@
-Return-Path: <linux-kernel+bounces-807503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3072CB4A543
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:29:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B4FB4A545
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFBCE166A55
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:29:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E603BAAF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACDA246335;
-	Tue,  9 Sep 2025 08:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6759C1E5207;
+	Tue,  9 Sep 2025 08:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URtjggut"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iJXsWSjQ"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F1223C8C5;
-	Tue,  9 Sep 2025 08:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111DE12CDA5
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 08:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757406559; cv=none; b=hfniY724hS3rgVGxVOXUw2XdDszo9VgWRICSg3mAFJGySFFcUjyZD9E8C1RQLFzqQJ2f0wnzZKTU0dM6DyqCK3VpngmbLF9zaRVElnTyq537Krqsg6Cw2uHIcRIPSzUDgqSckn1dGdaXzR3FF5ldjBhGnJgoiPcMV92NH8+B2y0=
+	t=1757406646; cv=none; b=TWxSj/NfixfR5gPKE9sT/CjQsD7glZP0KMC09EViqj2/GgrrK2PTNEaX8VZuE3UEFc+TWfYfJIeMivMgIsil+fUBYcJH9h+fp4iW6nSQuuZQzQR/8xLj0ObmBlRz+uC27VV4FYljvkudFKA1Vhx4AfkSVeHkhzWO08zeEXwqVuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757406559; c=relaxed/simple;
-	bh=Yh0QysXYdu44lUy6HVpVPDaMU/piHe2LJbyO836FVh8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=WMz5fqHwQf1EiXHcBOANjYwlN4oDXYmd8QMrkWUc3f41KN4ZWpzPEw/U3Yi1TPGbHlRhvQTDLKlJ1Amic/8s+pnQoWWXGvpHQhQeQxpXEGD4iTKoXaWJFNId3fARfhcIXAoMpAlenJHZX2H/I0+sQ8j56bxsIAShXRP4XIy7pKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URtjggut; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76883C4CEF4;
-	Tue,  9 Sep 2025 08:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757406558;
-	bh=Yh0QysXYdu44lUy6HVpVPDaMU/piHe2LJbyO836FVh8=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=URtjggutOq+snpRI8DWcj/wT6jEcKVeqIgfJp74GVk38LPmJhACes+TO8VO1/6PYI
-	 PGBiYKZSPqZ69ifSkR4HjOrZP5i46DHuvzHSCDV8KRFbxZThlw5Q3riJunIBag+D1P
-	 dVC+TVo3fhXrdqroYFHp8Hgs5zbf43wPvHmG7k7xOY0ASiur6/pK4gyriTTDep0NKH
-	 2FQcHtPTRo5uf1ucHPNl8OTlqFJqKAQ2RUn+317kSAA7AjrUxpETi9i16+0e9P5ZDc
-	 FsJYJaGj2tLjHRk3qGsSqAqqdEdP0bNx119dgNzvQqyOegKE1rxeodU7iPV0mjck0I
-	 lW+IaymR/TtLg==
+	s=arc-20240116; t=1757406646; c=relaxed/simple;
+	bh=JPLDQsmT60bOnD3Qjr7KUuABgQpFakte+CC6435negc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=smqwNTsZBF3Kc9/ts7/J2QjsVsuWiDPPVu4VNo1llRo3oPpP1UPXEeuxQrB0rD6dn90T6aZtf/zgBVcoUFAW3ZliD2Rm2+fZ5kncOOF7GUtHfqA2kqULJopTA5CWUKHhR1gUPxpJ9JUk7UaIEMem7V4r9gEF743v3NtQXl41Tl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iJXsWSjQ; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9a88d32f-b94a-4955-818c-e0848241994d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757406641;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=io6XUAtRaEqzKt03f6FT8cXm/79xlUlznTttZ8UFs5o=;
+	b=iJXsWSjQxOnAFV4/FTwlY3LbSXu5dqSYuGTp9o4932zyIK/o5NvSZVvHs6f9AKf4MhguLw
+	MsBZlSpcM6G37WcNnytUaAYfThcNpVp6SCTnqxAaUlVkDXn+YzjdK4dEF2L6KAQKE5e6Lh
+	NGBWe+6PKyoyYMkK8elIjoDU3fweJ+8=
+Date: Tue, 9 Sep 2025 16:30:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Subject: Re: [PATCH] mm/slub: Use folio_nr_pages() in __free_slab()
+To: Oscar Salvador <osalvador@suse.de>, Hu Song <husong@kylinos.cn>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter
+ <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250909074812.599030-1-husong@kylinos.cn>
+ <aL_emHbGN3xA5i_c@localhost.localdomain>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ye Liu <ye.liu@linux.dev>
+In-Reply-To: <aL_emHbGN3xA5i_c@localhost.localdomain>
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 09 Sep 2025 10:29:13 +0200
-Message-Id: <DCO4MP8YT3A8.2PFXX7VJ1STD@kernel.org>
-Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
-Cc: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Sami Tolvanen" <samitolvanen@google.com>, "Timur Tabi" <ttabi@nvidia.com>,
- "Benno Lossin" <lossin@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-To: "Dirk Behme" <dirk.behme@de.bosch.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
- <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
- <45f6f6e0-bd1e-41e7-8c8e-bb556644a873@de.bosch.com>
-In-Reply-To: <45f6f6e0-bd1e-41e7-8c8e-bb556644a873@de.bosch.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue Sep 9, 2025 at 9:29 AM CEST, Dirk Behme wrote:
-> On 04/09/2025 23:13, Matthew Maurer wrote:
->> +#[cfg(not(CONFIG_DEBUG_FS))]
->> +impl<'b, T: 'b> Scope<T> {
->> +    fn new<E: 'b, F>(data: impl PinInit<T, E> + 'b, init: F) -> impl Pi=
-nInit<Self, E> + 'b
->> +    where
->> +        F: for<'a> FnOnce(&'a T) -> Entry + 'b,
->
-> Inspired by Greg's & Danilo's discussion I tried building with
-> CONFIG_DEBUG_FS disabled. And get
->
-> error[E0412]: cannot find type `Entry` in this scope
->    --> rust/kernel/debugfs.rs:351:37
->     |
-> 351 |         F: for<'a> FnOnce(&'a T) -> Entry + 'b,
->     |                                     ^^^^^ not found in this scope
->
-> And giving it some Entry (for my 1.81.0)
->
-> error: hidden lifetime parameters in types are deprecated
->    --> rust/kernel/debugfs.rs:352:37
->     |
-> 352 |         F: for<'a> FnOnce(&'a T) -> Entry + 'b,
->     |                                     ^^^^^ expected lifetime paramet=
-er
 
-Yeah, I caught this as well and fixed it up on my end with the following di=
-ff:
+在 2025/9/9 16:00, Oscar Salvador 写道:
+> On Tue, Sep 09, 2025 at 03:48:11PM +0800, Hu Song wrote:
+>> Use folio_nr_pages() helper instead of manual calculation (1 << order)
+>> for better code readability and maintainability.
+>>
+>> Signed-off-by: Hu Song <husong@kylinos.cn>
+>> ---
+>>  mm/slub.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/mm/slub.c b/mm/slub.c
+>> index d257141896c9..eba25461641a 100644
+>> --- a/mm/slub.c
+>> +++ b/mm/slub.c
+>> @@ -2719,7 +2719,7 @@ static void __free_slab(struct kmem_cache *s, struct slab *slab)
+>>  {
+>>  	struct folio *folio = slab_folio(slab);
+>>  	int order = folio_order(folio);
+>> -	int pages = 1 << order;
+>> +	int pages = folio_nr_pages(folio);
+> Sure nothing might happen, but I find a bit weird that folio_nr_pages()
+> returns a 'long' and we store it in an 'int' type.
+> And then sure we handle that to mm_account_reclaimed_pages() which gets
+> 'unsigned long', but that's another story.
+>
+>  
+Maybe also correct the int->unsigned long conversion.:)
+>
+-- 
+Thanks,
+Ye Liu
 
-diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
-index ecfcce845d3f..1f25777743db 100644
---- a/rust/kernel/debugfs.rs
-+++ b/rust/kernel/debugfs.rs
-@@ -348,7 +348,7 @@ pub struct File<T> {
- impl<'b, T: 'b> Scope<T> {
-     fn new<E: 'b, F>(data: impl PinInit<T, E> + 'b, init: F) -> impl PinIn=
-it<Self, E> + 'b
-     where
--        F: for<'a> FnOnce(&'a T) -> Entry + 'b,
-+        F: for<'a> FnOnce(&'a T) + 'b,
-     {
-         try_pin_init! {
-             Self {
 
