@@ -1,96 +1,84 @@
-Return-Path: <linux-kernel+bounces-807036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CD00B49F28
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:23:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07947B49F2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D2BC7B586D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:21:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2531BC3F4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3649E258CDC;
-	Tue,  9 Sep 2025 02:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGDFUtKy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB762459DD;
+	Tue,  9 Sep 2025 02:23:33 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A797256C84;
-	Tue,  9 Sep 2025 02:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C9F2236F0;
+	Tue,  9 Sep 2025 02:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757384565; cv=none; b=ib3hw/rbf8e7Hcw/XCvq9vDjbMy28odc2OgezJpHj17v+qiWxlC5s5/DNnw2UuIjhncJkXhxw22+7ZVsjLMLCE5KjuNyg4ZlTX6vZautlsYnutibna3szqdlHqqc9VeWxexghn2P/892UcbcXZPzwHAPyD3EKN1R0p+mHlOiM9Y=
+	t=1757384613; cv=none; b=eeXZ+m0hYsX93x9UOL3kiq3iX/d/caRnXfKOG6RmoBKuvXtk4jA2KFE3EvCcbsK3QiyoXAPEctP7InHwJLWdlka9LGUWBiylL2NKHjbKojgRuhDZGfn7O4BLb1fMRt/mKOx+aS/GYYbfrqkGL5V6QFRhHyS8FpW8xQqWB+3jq08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757384565; c=relaxed/simple;
-	bh=CB5KTCrWLMEdIF9ZzZSCMis1Zik0Tvcul4qLyUj2Xrw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iDMnZiWQi/iRHcpTdGsBVVKxkwlOJHCgX2r0hg+y6/lkBLWLMrent4pFbU6HkSYhg21Zbs5Xz0+P4ygDL7gFzVZAgw5R7kweg8bk6Nqfe2exM3cI56BSoIWuMPftWD4KCQjcILznOvCaKKQyFhAhfo5GHZtxcLmDM9atK9DdLTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGDFUtKy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01951C4CEF8;
-	Tue,  9 Sep 2025 02:22:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757384565;
-	bh=CB5KTCrWLMEdIF9ZzZSCMis1Zik0Tvcul4qLyUj2Xrw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tGDFUtKyB2aBLklonbKqRX1K/OAwoFApnAAISTqDhc3Z65P5N01TsAk+x46RRDyER
-	 SjzbfPnU3GKG/8DK9KPAeuhuV+j/XMIEkoX/Eqd+KdhETEkjrDTWpCKSXQ7Kp+q6DM
-	 iWx3/E8YYW57igz2Rew49DmXqvQyH+SuJf0uqBLXP+41qQJFy0GkF+nvwcdNha86wu
-	 ewGzVsz4Rmf8PlY55nv79k4NwScDJdlzghmCojMoz+3Dp528wuX3W0kn0Lu3QYqKKt
-	 NyFbKoSuZANRagwvcx12ZXolv4MHUPCCaKTT0NxhHS4SQsEG9IlRjPjpdguqOMqyZE
-	 i4w+y9XloLzJg==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	"# 6 . 17-rc1" <stable@vger.kernel.org>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 3/3] samples/damon/mtier: avoid starting DAMON before initialization
-Date: Mon,  8 Sep 2025 19:22:38 -0700
-Message-Id: <20250909022238.2989-4-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250909022238.2989-1-sj@kernel.org>
-References: <20250909022238.2989-1-sj@kernel.org>
+	s=arc-20240116; t=1757384613; c=relaxed/simple;
+	bh=UkWhHdd9NUv+uIyG7x3woimdUTovmLF3qGi6a3dM1hI=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=TIcdiO5g8/+ML0BQYLsXg7eI7+rLYgfaDi6LOE65SgQNa/tmBE9Rz6ZuE7dn5jAr5jyc0Qv3Fr8yTXX0LR/YNiPYQ4yhs3ijam+nkBJL2SsUBFgjelcNkIVCejbopEUmxN9q6HKOcpL/LDWYUSax1NLZMDpgNErfXr5UbL++ILw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cLSKk2ytPz5PM37;
+	Tue, 09 Sep 2025 10:23:22 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 5892N8wD035468;
+	Tue, 9 Sep 2025 10:23:08 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 9 Sep 2025 10:23:09 +0800 (CST)
+Date: Tue, 9 Sep 2025 10:23:09 +0800 (CST)
+X-Zmail-TransId: 2afb68bf8f8d85e-a2c12
+X-Mailer: Zmail v1.0
+Message-ID: <20250909102309375p7Qo7NCj--86aJ6-hj3r1@zte.com.cn>
+In-Reply-To: <20250907001417537vSx6nUsb3ILqI0iQ-WnGp@zte.com.cn>
+References: 20250907001101305vrTGnXaRNvtmsGkp-Ljk_@zte.com.cn,20250907001417537vSx6nUsb3ILqI0iQ-WnGp@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <fan.yu9@zte.com.cn>, <akpm@linux-foundation.org>
+Cc: <wang.yaxin@zte.com.cn>, <corbet@lwn.net>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSHYyIGxpbnV4LW5leHQgNC81XSB0b29scy9kZWxheXRvcDogSW1wcm92ZSBlcnJvciBoYW5kbGluZyBmb3IgbWlzc2luZyBQU0kgc3VwcG9ydA==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 5892N8wD035468
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Tue, 09 Sep 2025 10:23:22 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68BF8F9A.000/4cLSKk2ytPz5PM37
 
-Commit 964314344eab ("samples/damon/mtier: support boot time enable
-setup") is somehow incompletely applying the origin patch [1].  It is
-missing the part that avoids starting DAMON before module
-initialization.  Probably a mistake during a merge has happened.  Fix it
-by applying the missed part again.
+> From: Fan Yu <fan.yu9@zte.com.cn>
+> 
+> Enhanced display logic to conditionally show PSI information only
+> when successfully read, with helpful guidance for users to enable
+> PSI support (psi=1 cmdline parameter).
+> 
+> Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+> ---
+>  tools/accounting/delaytop.c | 182 +++++++++++++++++++++++-------------
+>  1 file changed, 116 insertions(+), 66 deletions(-)
 
-[1] https://lore.kernel.org/20250706193207.39810-4-sj@kernel.org
-
-Fixes: 964314344eab ("samples/damon/mtier: support boot time enable setup")
-Cc: <stable@vger.kernel.org> # 6.17-rc1
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- samples/damon/mtier.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/samples/damon/mtier.c b/samples/damon/mtier.c
-index 7ebd352138e4..beaf36657dea 100644
---- a/samples/damon/mtier.c
-+++ b/samples/damon/mtier.c
-@@ -208,6 +208,9 @@ static int damon_sample_mtier_enable_store(
- 	if (enabled == is_enabled)
- 		return 0;
- 
-+	if (!init_called)
-+		return 0;
-+
- 	if (enabled) {
- 		err = damon_sample_mtier_start();
- 		if (err)
--- 
-2.39.5
+Reviewed-by: xu xin <xu.xin16@zte.com.cn>
 
