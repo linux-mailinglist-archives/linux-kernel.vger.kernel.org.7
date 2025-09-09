@@ -1,374 +1,302 @@
-Return-Path: <linux-kernel+bounces-808899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE0CB505EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:11:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB5CB505F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 099641B28024
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 711223B0080
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579A4362087;
-	Tue,  9 Sep 2025 19:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28DF3168FC;
+	Tue,  9 Sep 2025 19:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ThZ58WVQ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Y/4qNqLL"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="bvk7wa4o"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4730336207B
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 19:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757445049; cv=fail; b=YlGL6L5XnW2TnPHHJiQrW8O01oP8hU+bAEkTfl7r7LtngBBzmYKjLCAy/JhbKA/Kr6NLLZCGiFqkFTVb1wW3pPeCP5WQgK75lEnl1V4QeO8QFPJSrr7s44a8R8w/gVfLKRzqSX4dz1m0ksT97LND3/+PcpDXSdye9DUu+JZZa+I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757445049; c=relaxed/simple;
-	bh=4B+RvnnklJY0mC+IjH1SYi7n7o41+laps5PIGOL/aAQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CAqZEEDzwTNGCUjseG7L0Dj4gLxuayxQDaIJwWXyEbDHQ0DSQTUDSesTilSvPkbdfv7WqPq/aXmSJaQ1UUG3BPt6YxOwUBU/JtFNPKVXFuObc+k3vQotIkWmn1Jrrh8Zgn3yigKtNCAQ5Wx9hCpZhGuuXg0oH3bCHP63Y18zyDQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ThZ58WVQ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Y/4qNqLL; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 589Fu10L017787;
-	Tue, 9 Sep 2025 19:10:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=Yx87GtOve6aUoX2ryo3xamI/rt+J4lPAQ95taV+yLdE=; b=
-	ThZ58WVQWrTTFrNnVsC7/YzChVRjHbgSWRa0ACFxbgIyS7bb29DEQxuudYGG8tYZ
-	awjat91zw4aX1Q3GC9D5w/5mjPnE6yDC02g5QFDVBU6SLkjDUYvhtCpC4SvnzXMC
-	EZkwXoIUdBadQJzdFtzR4koVnfTHBrDb0ancOMpwfIRUEVtwbpSu90Ud/9ccrkaD
-	n17uflCDWXgD7mDsRZkmav+ss7QGuA9+yXmV6p2U27GwXEHdJOhI3m5o9KyGil2X
-	ggatBkj7+M8XuRmfjYQN4gtEiJ8m/i7D1qoh9s9Z3kRzEwRxw17zbzmz4ux5QW9+
-	TT6utWlI6RiWfXGFihqVzw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4921m2tr34-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 09 Sep 2025 19:10:17 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 589HNQnu032845;
-	Tue, 9 Sep 2025 19:10:16 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2070.outbound.protection.outlook.com [40.107.243.70])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 490bdb1900-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 09 Sep 2025 19:10:16 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pdjZxjpXi213vTrmv15Wt0Rn+hahV/qzfH5ZyEn/sBzFKIURjFuB/wACwLSbZC+cfmO9ChCXrEwqjk/wCSSxdLzQXqDwP46F2ut9Xxs8luYKwvXUz5YDZoELs+naJhIgiy977nnMkM0UBXt9BiZZ+KgldqRwJk0WZdZ2WYb7Vqmv3s85kNDZsg/LQs3J14oOdusv0rwhK8EGz5CGqavmcPA8iDnrWKooUCEH0zkAP2PoEWeaI7xw7ElGVcvBVcGD+GM1Vfx1OhH95W9f18TgWXf8i+43anLUFlnsBdT2t3b8NynVYCpKFBtcKgJtSMkmKRHGj6r23K3A5sg9AmcVyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yx87GtOve6aUoX2ryo3xamI/rt+J4lPAQ95taV+yLdE=;
- b=ao/Bi+mtInVdQ5qIGn/DMctNqlKROSo0Q6maVygFAwKeUmi6o2XyJX2skDzbxu9GdHrx5onEYLrZEEoGUovsgCkgDgIE5lnr6aq8TFPwnoFXngJTAbJzvleG8sPbMcOm6zagMEJXDy+rj7iUBvRVOefgai0dYSYUwPGrZiIAxn8Xym5qij4g7UCUv/uLiNi6pqs7tOC93d23GJ16e0moAJ0mEZL+O3d7CdbTA1ATn8NHlyqsUJ0+cya9lwSL+t+WEkAAq6fOIGOAEQe+9Sy1jRUDYhYoS/0qIZCRbKsvttLiG3jM9owjdr4odg0wVbAMnpx7kNNNhObFfCVcTUI96Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yx87GtOve6aUoX2ryo3xamI/rt+J4lPAQ95taV+yLdE=;
- b=Y/4qNqLLa/GONvYedNlt0ONBG+y6LJEBmvNIpHxsxt99ZKHSNeTAFoIEUGogkQ5hs6B156U37UGPD7VJlYZFyvGH6/SXFiMqkiRdVPYWY7GRih0Q3aoPNTxwmHZ+47N5fCzgivIGumu5Zrw/85cNzJWRgHgakI8WSWTWwUnMr8Y=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by SN4PR10MB5558.namprd10.prod.outlook.com (2603:10b6:806:201::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
- 2025 19:10:12 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%5]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
- 19:10:12 +0000
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: maple-tree@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
-        Charan Teja Kalla <quic_charante@quicinc.com>,
-        shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com,
-        bhe@redhat.com, baohua@kernel.org, chrisl@kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Subject: [PATCH v1 9/9] mm: Use unmap_desc struct for freeing page tables.
-Date: Tue,  9 Sep 2025 15:09:45 -0400
-Message-ID: <20250909190945.1030905-10-Liam.Howlett@oracle.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250909190945.1030905-1-Liam.Howlett@oracle.com>
-References: <20250909190945.1030905-1-Liam.Howlett@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: YQZPR01CA0157.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:8c::6) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C983A3019D0;
+	Tue,  9 Sep 2025 19:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757445243; cv=none; b=ELE7+z/RLpZdVXNSpynXKKUOg3MShqTZWLk59fq71xQDXFuTtIecDlqNr71+Fd1UplNRpggPpgGDRktJ6Zc3ol0nfBuPLIQ2lTUIgVFXc8CxDiTqqusr9l3Yhl7XbMGe1RgN7EOJWtscnZkoIHJHoyfa3kPhgSKOQmhguhxzdvc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757445243; c=relaxed/simple;
+	bh=cLT7Fh+31UoPpula9NRXuzPBF3PSz27rAIBxf3ZAKcI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OSOo7CkPHmXtyYYxCKD45SJpeD1lyLsPunjKHaRQeT3c0ZNgbb1xTt6cNnOCjnP67qcbw4zyTG4zU9asBtg8o4fa3HBrefpU6xZ3xlRTZkiRvlmIbMbMOiLQehZeQXVFW/gc2nsBxKkjSKxsGUY3seSE1l4AcNAOGrJq2lP+YBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=bvk7wa4o; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (p5de4594b.dip0.t-ipconnect.de [93.228.89.75])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 7B4B62FC0052;
+	Tue,  9 Sep 2025 21:13:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1757445236;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1JRIvqcv/zz6QLi+ryFNU95kpIHeA6gbiLcJYEwwq48=;
+	b=bvk7wa4oDkpkwJeWqWST7GE3pppWgn11zD+l59iYhpZAl9n+UCA1T30tIoIPSVlM5QJKru
+	yYME0RUAyC/gtV9hC1Esh9BhSVc2XPA8sptdFqpWcTMFQZRZ7O8uOanloeez/gr53a/Wtk
+	pl/f04QMVE4x/SAqOASeV3WtTpS+2pw=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <cb7d0111-927f-40fe-b0f7-73e3a5136746@tuxedocomputers.com>
+Date: Tue, 9 Sep 2025 21:13:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|SN4PR10MB5558:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d41bbe8-0904-49c3-5544-08ddefd48060
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FawFjkFQVoxt5J/EaQkI09GroptaLOuZO1gxiygxCBq3J9aXFstQnmbo8QVQ?=
- =?us-ascii?Q?mtKr9yv69Kur4qOtIRY5AUtkcLS9Chvi0a1Uqu8PznfhND5JqxqPwHcyuVy7?=
- =?us-ascii?Q?jcikaCg+d8QDSgl8RPnbfNmG8yzF3xGxlg1ffzFAUw7a5NPkgNX5bxm3s8fq?=
- =?us-ascii?Q?OIrGI9hMKHVVRdcWzrglsMdoFsZjpWe6XT9pNjC2qALNcFfBkDUYBRXMvfZa?=
- =?us-ascii?Q?TyXZew0kIzoPcfcdFYIBeGOIb2uO7KNuDv2rkwprsF5Zn/Ha+KVFlE4nFoRM?=
- =?us-ascii?Q?Em64b4hCBfBflGKPMCFbo2LueWbd24gevMg6cqA4Rv+G0ClI1CN8wIb7ODXy?=
- =?us-ascii?Q?3N6K39HT0k65g5tq3PPgi2UScJqhAMYsFqkIIXaI6OBRYQ/eLKLbIFI5VMfG?=
- =?us-ascii?Q?5AQ4+eTEWEQHVerbCWYdj4Y0wpyb6EDIuNN3M9YyRWLzT42xldLhxupR62/+?=
- =?us-ascii?Q?xHEZn7gngn32pBGy1RrAMlNSP39000Pe+IUsenMVCWuYXmhoVPWQLcbIt4of?=
- =?us-ascii?Q?19g+h0+CjTvOIAcMtMjrZEnHqmADgK8HUp0/OIgP4nPb852HZwiMOLvn555I?=
- =?us-ascii?Q?BDXGm8ZAd3grWXe73CJsJvDvkQqlUdPE4mlIP3pnu+R7VYX95EzUl12bEooc?=
- =?us-ascii?Q?Ozjv2wNg5wHq9U37onHXnLJsjsUnBuUJYcnv+cylhK1e+ZkpfHF9cWzklqv3?=
- =?us-ascii?Q?HTreplq7e18g1ULx94zI7xzkTHlb8i9IH3AuAQEu2PRI8CRNE/wEdTQiYScU?=
- =?us-ascii?Q?oiCN79JYRqT+dxk74wxKs/NGo029Wr+fb3PDXyBqhG4T2Vq8uLJdQrQ6QDmk?=
- =?us-ascii?Q?ztFmJ7wXed1IL0+xjUvgWAYR/wouuS0PTEGQhELHBJTNHTAcC4TWMVSyUZ1A?=
- =?us-ascii?Q?hI+q4G5iUrfheKXjWtM7ukEQtwAIG2FuzeuPOpFNstLCT16e4MqMX7I4c5Ld?=
- =?us-ascii?Q?TqsF8qU6nXRujSA0obWBHvbJcbwSY3Cex2ExOz2zujG2f4donmkb3tzwr0ys?=
- =?us-ascii?Q?xpuiG54lsHgF+ASNKXN7qVzCFSeOE7TEs0a+BnCF4Zoz2nAY60ALLfMYmY8S?=
- =?us-ascii?Q?9ZsWQH/H7rPHQWcdfj59Oe1MY9xJS63XtU2Vz4H0PEhMawD2ClGDOJQBFjb3?=
- =?us-ascii?Q?pxePbRDz25rR7Pwq0x3syk1As9kxUiWyC59Cmkh6g15TR92IK7xKXbgGky36?=
- =?us-ascii?Q?EtdtOfcFvAfwFDNweuxB/hvg/HolI7TX9vd8BIs8ypapo7QB2TZHB7kQMqZM?=
- =?us-ascii?Q?L9kLE4BCvWvEdGCsaa0Azry+qP9Ap+Kgznha+5yDoDQ/gm+05SiOGjf5QxKE?=
- =?us-ascii?Q?jRbHAFQP6mv7lgIECLrRXgbiMw8tHa24Ihl6/Gp2hxM/OmBLHShErGqRtosk?=
- =?us-ascii?Q?qkl3ym0Gbw5rBFmPPw22PYgZ+jmXiGYzWzIQfSFyZtnLxnIrlND0H+7UKyNl?=
- =?us-ascii?Q?KMc2aArFM2Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?76iN2fZl9lwsfZ9mfjP/b+XfNmXgizlIHcu699r/RCENXsg26ZS8cmvuJ1TT?=
- =?us-ascii?Q?84jxpDydeE5pD6ocixMH9S97pW/nTvkbyMbvVy7dVl0aREHQBzSgyqf/Cjln?=
- =?us-ascii?Q?BzH6EpsY28s2NoQqeMbvQRybhuwHkw5/PurY7KDMgPBEXdaUjDo4HYAOgvl/?=
- =?us-ascii?Q?jI9JaIrbubOUV1xX/L6pWW03c8tAlOVVxtowuEVwtF7Or0xZhrG+VwDUOHj6?=
- =?us-ascii?Q?0HON88r0TYQqnErF5hUdchliV7K4XDKfkp6A21QK9HiR5eGttGwmc5Rg80LC?=
- =?us-ascii?Q?IG/hozxm4JEGj8IgK8o+OrCpWTF6SFBBB/9MJ6xn3cBKhPpLTKrsyC22V4Qj?=
- =?us-ascii?Q?zzIj6cyLx4AmDpYi7ZTXYNO4RIS4fk7rqCVTA5gOM4zxlV7xeqOY3eOMZAZ9?=
- =?us-ascii?Q?PKDWN/4epDrGLHpBS4om55PbeR2p6uyqRmJal/qdd7iVLGAzg6sPJCIjAGFd?=
- =?us-ascii?Q?QIVuChKndkoopaPvQeZoJYqlvtmX1BsrB4eD8kW6qpzIPSVGC/UYd+9aad88?=
- =?us-ascii?Q?62ojVB5Bv4FKDYhXfzf1CWzPQofdiP91P0JDtUxpF7b+9IaroQ9tR8LrMmuR?=
- =?us-ascii?Q?D1plPvHXz9E1T+UM1lfvYAOdrxaloWx10StTIFWq2OeQpW2SV+Ap9aBsHTF4?=
- =?us-ascii?Q?cJCMdlHhFVsGI4e5Fpkko1gWRQjmf6Lgtic7bqTIhh6og0ODXJBhVzQhHUSx?=
- =?us-ascii?Q?Zvdd8NZZxrUcL1N3SxxBm093E31sjM6VAF7K7fpxCVr9FIZqrZrVXRQyv3Ay?=
- =?us-ascii?Q?k/piusGqJRr6OJ0YVV0BVB2G1Z2j/nd8QBiL5TxBIlqbTaCHzVWttjPhe7t/?=
- =?us-ascii?Q?mkeSZhnBUgT2sLebmv96IbZsILBeRumQgeRySeHb0fxuBNouYzxKniIk1GNG?=
- =?us-ascii?Q?SCv/Cm5qdvW4N8zQe04MO5u9OxuvKvHXC+DZCYMxJYFiDIPrPXac0LlttbJj?=
- =?us-ascii?Q?f++B0OYNQrnTxxGQEft1qXtj6JlG1scsKAfOT4ISREabc5kFwi23mAeqDcNn?=
- =?us-ascii?Q?jbohdG1ppOASVm6VNSn6TCy7IxONJFvzTSgCQGSCMfyLe+wM7PHKNJwqHckr?=
- =?us-ascii?Q?iwU2sZCIn/YrgBWnbCyTm1+uh8Y/pm8giS4/I8U3N3Imz9xPqcwbpmmyvk/u?=
- =?us-ascii?Q?w09jj+Ev+zrksyMNXJZfS2fNk5aXDD8HeWpExrKnVr722vUGlJnm4qLGrOk+?=
- =?us-ascii?Q?5ciRty6chuaYp9BX9p6n3sym6TpSdTPywU6pPhq2pATGOGMTr49ljnidBByw?=
- =?us-ascii?Q?xkeKY3VjxXg0rf3SDGEAPNZW96Ru510tTrar8yzkc9TcGiUhyXPwuJq1GFuY?=
- =?us-ascii?Q?64Ak0yQ0NHLIkx4SpNcI5VDElrJqexyEekHODvaSldlFH9tNWfetgw6u7Oed?=
- =?us-ascii?Q?pwc+KyfFuta9b/nVYoXJ/VECYpbiFivR8F/Z0648i2/5Fqq8wUMsUWn/LRzp?=
- =?us-ascii?Q?jt/fZtXFGMQ6nmolwaxKI3xgp+FWjbBhcFGFqDVir2JItd2Xu5UawgswZxD2?=
- =?us-ascii?Q?Ht9P4bzAyiBhN1KN7IpltM1w9NmVsWTFB2vUUhAsCDmOFrW/zxQEURye3exj?=
- =?us-ascii?Q?4laDUzq2WJnrQX/+lBQKEZ0xQ6sA4McyNighpWA7GryaKwegYAXVG4vT0DF2?=
- =?us-ascii?Q?4g=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	EFCO/nKt2Af2kV8JBUk0AUWqMGzH1CTZXl5UGxdsViES/tCrqGP4c4VeUvlkypv7v/QXjPjbzh4pDXGz+LmtXNuzHeq+9HipEz+4WePiky+xirXFyVkKb+9vcLrWNDHnMMnGCqEqgFlU9kZBaSZQnmndtyCT8TCB6RFuRNuj7RfwkOl/yj9NQWab6nDu/lDmbaI6neHxgj4jdVoBn0x/9M+qzIb7h2xEh9OLIcT1kY6m3M0AGhA6UsG4nobDTFLtSG8WI9DwaIvPHrHOZzMcpK4QSkJUmNTtPKGeTA58Oz3xtUMI/uXXefsiknQguR8FPhSBVsk83LnIj7uyL4ThmWvvSx3Ag1/vzH/zOCBf1+VSaVY2wRARvbK0HKhm31QL5ffvBzndmZnYB4G+iCjV/rNeterF6QrJ0uxrfFXrGNHwXsNq1T/CPZhiioIVfR74tqo9pXr5+xctOSR7yQTsFmS+TvDm6iJAOP3Gbw6nQD7ht3JUSTfqwI+uTKNPqQ/aZQjZBHU2wQ2wm755PXYGbwEzrox1ICDtzyRP9mVTpcYAhVSeahu7hlc2pHi//DAdQXIE+QQrBGdmkJVkgAHZ6y2L+uDFROoo6uc27/+S0NI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d41bbe8-0904-49c3-5544-08ddefd48060
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 19:10:12.3458
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HUoVO/TxUH9pgDsNWjaY0kptmM+/iZfcwK3Mz2oKuS9OZS6QVmbFdi4zlSo9waeOzjYMli3/JqLVqnuP5R7a7A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR10MB5558
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_03,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
- bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509090188
-X-Proofpoint-GUID: vKRiWJhKKDU962EsRloS99Rs9FSykU0f
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE1MSBTYWx0ZWRfX+uGZ2Ca2nveN
- V85m9f/DKb+EZ7BQC6D8nNNdic4wQxkl/Y9mXXZDJi6MKqyrQTm8vF1ExUVEqcOadkPXFfksRTT
- g3Dcscrm7OzEWq5pKhDae5nqfSSjdsNWQaaL27wBdGtqq8ai/XrtNWQp8feGzf0LtqkGgUIzTvX
- F7ABvkcmzFH7ThC7YgCUgHRO9cr0OxLBXgbRJzK2VFt3AwvlfI5MePe617OA3f5TYpwsGU7jwxs
- sqtM1p6qUa60l8QpKLmKgc/O1mPcTpYrcloiFvJ2VhKdl0+hJuvS46+SDX//oYWmyv7GaaFrJub
- LSkpa2osPhJ8QJVd4LQk85KVLBmd/i32f2SzjivZr665ORuXO0gwE4N7fjGUmbxzcIfEnld0SaF
- XtLwOmDO
-X-Authority-Analysis: v=2.4 cv=Dp5W+H/+ c=1 sm=1 tr=0 ts=68c07b99 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=yJojWOMRYYMA:10
- a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=ao0Za0JyZWCtd7aAlgYA:9
-X-Proofpoint-ORIG-GUID: vKRiWJhKKDU962EsRloS99Rs9FSykU0f
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] platform/x86: Add Uniwill laptop driver
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: Armin Wolf <W_Armin@gmx.de>, ilpo.jarvinen@linux.intel.com,
+ hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
+ ggo@tuxedocomputers.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
+ alok.a.tiwari@oracle.com, linux-leds@vger.kernel.org, lee@kernel.org,
+ pobrn@protonmail.com
+References: <20250831192708.9654-1-W_Armin@gmx.de>
+ <20250831192708.9654-2-W_Armin@gmx.de>
+ <cf5b6334-7558-4115-92e4-28b4b531490a@tuxedocomputers.com>
+ <8400b8c2-5ee6-47db-889a-e3224010357d@gmx.de>
+ <8cffb232-052a-4eff-84ea-af6254b837f9@tuxedocomputers.com>
+Content-Language: en-US
+In-Reply-To: <8cffb232-052a-4eff-84ea-af6254b837f9@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Pass through the unmap_desc to free_pgtables() because it almost has
-everything necessary and is already on the stack.
 
-Updates testing code as necessary.
+Am 09.09.25 um 11:18 schrieb Werner Sembach:
+> Hi,
+>
+> Am 08.09.25 um 18:29 schrieb Armin Wolf:
+>>>> +static ssize_t fn_lock_show(struct device *dev, struct device_attribute 
+>>>> *attr, char *buf)
+>>>> +{
+>>>> +    struct uniwill_data *data = dev_get_drvdata(dev);
+>>>> +    unsigned int value;
+>>>> +    int ret;
+>>>> +
+>>>> +    ret = regmap_read(data->regmap, EC_ADDR_BIOS_OEM, &value);
+>>>> +    if (ret < 0)
+>>>> +        return ret;
+>>>> +
+>>>> +    return sysfs_emit(buf, "%s\n", str_enable_disable(value & 
+>>>> FN_LOCK_STATUS));
+>>>> +}
+>>>> +
+>>>> +static DEVICE_ATTR_RW(fn_lock);
+>>>
+>>> The fn_lock register value does not automatically get updated by pressing 
+>>> the fn+esc key (unlicke the super_key_lock), so the driver needs to do that 
+>>> manually.
+>>>
+>>> Another posibility is: uniwill sometimes have a "config" and an "immediate" 
+>>> value for a setting, waybe we have the config value here (and have the 
+>>> immediate value for the super_key_lock)
+>>>
+>>> Also I realized: The value here is preserved on hot, but not on cold 
+>>> reboots, maybe this should be initialized by the driver for consistency?
+>>>
+>> fn_lock should not change when the users presses Fn + ESC, instead this 
+>> setting controls whether the EC will enter Fn lock mode when the user presses
+>> this key combination.
+>
+> At least on my device Fn + ESC does toggle the Fn lock regardless of this 
+> setting. How I love these Uniwill inconsistencies ...
+>
+> I talked with Christoffer and he said that the "Intel Project" line from 
+> Uniwill does behave differently at multiple locations
+>
+> If the devices really behave differently we have the first mutually exclusive 
+> feature here: FN Lock Enable vs FN Lock Toggle
 
-No functional changes intended.
+Thinking about how to name this to make it consistent and clear by name only 
+what is happening, my idea would be:
 
-Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
----
- mm/internal.h                    |  5 +----
- mm/memory.c                      | 21 ++++++++++-----------
- mm/mmap.c                        |  6 +++---
- mm/vma.c                         |  7 ++-----
- tools/testing/vma/vma_internal.h | 11 ++---------
- 5 files changed, 18 insertions(+), 32 deletions(-)
+- fn_lock_toggle_enable (for the behavior on your device)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 1239944f2830a..f22329967e908 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -445,10 +445,7 @@ bool __folio_end_writeback(struct folio *folio);
- void deactivate_file_folio(struct folio *folio);
- void folio_activate(struct folio *folio);
- 
--void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
--		   struct vm_area_struct *start_vma, unsigned long floor,
--		   unsigned long ceiling, unsigned long tree_max,
--		   bool mm_wr_locked);
-+void free_pgtables(struct mmu_gather *tlb, struct unmap_desc *desc);
- 
- void pmd_install(struct mm_struct *mm, pmd_t *pmd, pgtable_t *pte);
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index 8d4d976311037..98c5ffd28a109 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -387,15 +387,14 @@ void free_pgd_range(struct mmu_gather *tlb,
-  * The tree_max differs from the ceiling when a dup_mmap() failed and the tree
-  * has unrelated data to the mm_struct being torn down.
-  */
--void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
--		   struct vm_area_struct *vma, unsigned long floor,
--		   unsigned long ceiling, unsigned long tree_max,
--		   bool mm_wr_locked)
-+void free_pgtables(struct mmu_gather *tlb, struct unmap_desc *desc)
- {
- 	struct unlink_vma_file_batch vb;
-+	struct ma_state *mas = desc->mas;
-+	struct vm_area_struct *vma = desc->first;
- 
- 	/* underflow can happen and is fine */
--	WARN_ON_ONCE(tree_max - 1 > ceiling - 1);
-+	WARN_ON_ONCE(desc->tree_max - 1 > desc->last_pgaddr - 1);
- 
- 	tlb_free_vmas(tlb);
- 
-@@ -407,13 +406,13 @@ void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
- 		 * Note: USER_PGTABLES_CEILING may be passed as ceiling and may
- 		 * be 0.  This will underflow and is okay.
- 		 */
--		next = mas_find(mas, tree_max - 1);
-+		next = mas_find(mas, desc->tree_max - 1);
- 
- 		/*
- 		 * Hide vma from rmap and truncate_pagecache before freeing
- 		 * pgtables
- 		 */
--		if (mm_wr_locked)
-+		if (desc->mm_wr_locked)
- 			vma_start_write(vma);
- 		unlink_anon_vmas(vma);
- 
-@@ -425,16 +424,16 @@ void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
- 		 */
- 		while (next && next->vm_start <= vma->vm_end + PMD_SIZE) {
- 			vma = next;
--			next = mas_find(mas, tree_max - 1);
--			if (mm_wr_locked)
-+			next = mas_find(mas, desc->tree_max - 1);
-+			if (desc->mm_wr_locked)
- 				vma_start_write(vma);
- 			unlink_anon_vmas(vma);
- 			unlink_file_vma_batch_add(&vb, vma);
- 		}
- 		unlink_file_vma_batch_final(&vb);
- 
--		free_pgd_range(tlb, addr, vma->vm_end,
--			floor, next ? next->vm_start : ceiling);
-+		free_pgd_range(tlb, addr, vma->vm_end, desc->first_pgaddr,
-+			       next ? next->vm_start : desc->last_pgaddr);
- 		vma = next;
- 	} while (vma);
- }
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 6011f62b0a294..9908481452780 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1311,10 +1311,10 @@ void exit_mmap(struct mm_struct *mm)
- 	 */
- 	mm_flags_set(MMF_OOM_SKIP, mm);
- 	mmap_write_lock(mm);
-+	unmap.mm_wr_locked = true;
- 	mt_clear_in_rcu(&mm->mm_mt);
--	vma_iter_set(&vmi, vma->vm_end);
--	free_pgtables(&tlb, &vmi.mas, vma, FIRST_USER_ADDRESS,
--		      USER_PGTABLES_CEILING, USER_PGTABLES_CEILING, true);
-+	vma_iter_set(&vmi, unmap.tree_reset);
-+	free_pgtables(&tlb, &unmap);
- 	tlb_finish_mmu(&tlb);
- 
- 	/*
-diff --git a/mm/vma.c b/mm/vma.c
-index ad64cd9795ef3..ba155a539d160 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -476,16 +476,13 @@ void remove_vma(struct vm_area_struct *vma)
- void unmap_region(struct unmap_desc *desc)
- {
- 	struct mm_struct *mm = desc->first->vm_mm;
--	struct ma_state *mas = desc->mas;
- 	struct mmu_gather tlb;
- 
- 	tlb_gather_mmu(&tlb, mm);
- 	update_hiwater_rss(mm);
- 	unmap_vmas(&tlb, desc);
--	mas_set(mas, desc->tree_reset);
--	free_pgtables(&tlb, mas, desc->first, desc->first_pgaddr,
--		      desc->last_pgaddr, desc->tree_max,
--		      desc->mm_wr_locked);
-+	mas_set(desc->mas, desc->tree_reset);
-+	free_pgtables(&tlb, desc);
- 	tlb_finish_mmu(&tlb);
- }
- 
-diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-index d73ad4747d40a..435c5a24480bc 100644
---- a/tools/testing/vma/vma_internal.h
-+++ b/tools/testing/vma/vma_internal.h
-@@ -892,17 +892,10 @@ static inline void unmap_vmas(struct mmu_gather *tlb, struct unmap_desc *unmap)
- 	(void)unmap;
- }
- 
--static inline void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
--		   struct vm_area_struct *vma, unsigned long floor,
--		   unsigned long ceiling, unsigned long tree_max,
--		   bool mm_wr_locked)
-+static inline void free_pgtables(struct mmu_gather *tlb, struct unmap_desc *desc)
- {
- 	(void)tlb;
--	(void)mas;
--	(void)vma;
--	(void)floor;
--	(void)ceiling;
--	(void)mm_wr_locked;
-+	(void)desc;
- }
- 
- static inline void mapping_unmap_writable(struct address_space *)
--- 
-2.47.2
+- fn_lock_enable (for the behavior on my devices)
 
+- super_key_toggle_enable (for the behavior on your device)
+
+- super_key_enable (for the behavior on my devices)
+
+- touchpad_toggle_enable (for the behavior on your device)
+
+There is no touchpad_enable as this is handled by userspace.
+
+>
+>> Additionally, some models seem to allow users to change those settings inside 
+>> the BIOS itself, so i am against overwriting the
+>> boot configuration when loading the driver.
+> That's probably what's sets the value on cold boot.
+>>>> +static ssize_t super_key_lock_show(struct device *dev, struct 
+>>>> device_attribute *attr, char *buf)
+>>>> +{
+>>>> +    struct uniwill_data *data = dev_get_drvdata(dev);
+>>>> +    unsigned int value;
+>>>> +    int ret;
+>>>> +
+>>>> +    ret = regmap_read(data->regmap, EC_ADDR_SWITCH_STATUS, &value);
+>>>> +    if (ret < 0)
+>>>> +        return ret;
+>>>> +
+>>>> +    return sysfs_emit(buf, "%s\n", str_enable_disable(!(value & 
+>>>> SUPER_KEY_LOCK_STATUS)));
+>>>> +}
+>>>> +
+>>>> +static DEVICE_ATTR_RW(super_key_lock);
+>>>
+>>> I did not know what "super_key_lock" was supposed to mean at first, a more 
+>>> fitting name would be super_key_enable imho.
+>>>
+>>> Cold vs hot reboot volatility not tested, but wouldn't hurt to initialize 
+>>> imho as i don't trust uniwill to be consistent in this point across multiple 
+>>> device generations.
+>>>
+>> This sysfs attribute controls whether or not the super key can be locked 
+>> using a key combination i forgot about. Initializing those settings
+>> is something best done by userspace, i suggest to use a udev rule for that.
+>
+> No again, at least on the devices i have here: the key combination is fn+f9, 
+> but not present on all devides (the fn functions get shifted quite around on 
+> different uniwill devices anyway)
+>
+> The combination still works when this is set to disable and just sets it to 
+> enable.
+>
+>>
+>>>> +
+>>>> +static ssize_t touchpad_toggle_store(struct device *dev, struct 
+>>>> device_attribute *attr,
+>>>> +                     const char *buf, size_t count)
+>>>> +{
+>>>> +    struct uniwill_data *data = dev_get_drvdata(dev);
+>>>> +    unsigned int value;
+>>>> +    int ret;
+>>>> +
+>>>> +    ret = sysfs_match_string(uniwill_enable_disable_strings, buf);
+>>>> +    if (ret < 0)
+>>>> +        return ret;
+>>>> +
+>>>> +    if (ret)
+>>>> +        value = 0;
+>>>> +    else
+>>>> +        value = TOUCHPAD_TOGGLE_OFF;
+>>>> +
+>>>> +    ret = regmap_update_bits(data->regmap, EC_ADDR_OEM_4, 
+>>>> TOUCHPAD_TOGGLE_OFF, value);
+>>>> +    if (ret < 0)
+>>>> +        return ret;
+>>>> +
+>>>> +    return count;
+>>>> +}
+>>>> +
+>>>> +static ssize_t touchpad_toggle_show(struct device *dev, struct 
+>>>> device_attribute *attr, char *buf)
+>>>> +{
+>>>> +    struct uniwill_data *data = dev_get_drvdata(dev);
+>>>> +    unsigned int value;
+>>>> +    int ret;
+>>>> +
+>>>> +    ret = regmap_read(data->regmap, EC_ADDR_OEM_4, &value);
+>>>> +    if (ret < 0)
+>>>> +        return ret;
+>>>> +
+>>>> +    return sysfs_emit(buf, "%s\n", str_enable_disable(!(value & 
+>>>> TOUCHPAD_TOGGLE_OFF)));
+>>>> +}
+>>>> +
+>>>> +static DEVICE_ATTR_RW(touchpad_toggle);
+>>> What exactly does this do? Seems like a noop on my testing devices. Also is 
+>>> touchpad disable not already handled by userspace?
+>>
+>> This settings controls whether or not the user can disable the internal 
+>> touchpad using a specific key combination.
+>
+> Ok, this function seems to be not present on non Intel project devices from 
+> Uniwill. Here the touchpad toggle just sends a key combination (Super + 
+> Control + KEY_ZENKAKUHANKAKU or F24 depending on kernel version) and lets 
+> userspace handle the rest.
+>
+> Never mind then.
+>
+>>>> +static const struct hwmon_ops uniwill_ops = {
+>>>> +    .visible = 0444,
+>>>> +    .read = uniwill_read,
+>>>> +    .read_string = uniwill_read_string,
+>>>> +};
+>>>
+>>> .visible should hide gpu temp sensor on devices that don't have a dgpu and 
+>>> therefore not gpu temp sensor (the value is stuck at 0 on these devices)
+>>>
+>>> also the number of fan might also not always be exactly 2
+>>>
+>> I see, i will introduce separate feature flags for each sensor.
+> thanks
+>>>> +static int __init uniwill_init(void)
+>>>> +{
+>>>> +    const struct dmi_system_id *id;
+>>>> +    int ret;
+>>>> +
+>>>> +    id = dmi_first_match(uniwill_dmi_table);
+>>>> +    if (!id) {
+>>>> +        if (!force)
+>>>> +            return -ENODEV;
+>>>> +
+>>>> +        /* Assume that the device supports all features */
+>>>> +        supported_features = UINT_MAX;
+>>>
+>>> in the future there might be mutually exclusive feature (for example when 
+>>> Uniwil repurposes EC registers)
+>>>
+>>> my suggestion would be to have a "force_supported_features" in addition that 
+>>> overwrites the supported_features list (also for devices that are in the list)
+>>>
+>>> so something like:
+>>>
+>>> if (!id && !force)
+>>>
+>>>     return -ENODEV
+>>>
+>>> if (force)
+>>>
+>>>     supported_features = force_supported_features
+>>>
+>>> else
+>>>
+>>>     supported_features = (uintptr_t)id->driver_data;
+>>>
+>> Interesting idea, but i would prefer to keep the individual feature bit 
+>> definitions private. Because of this i suggest we
+>> look into this idea once we actually encounter such a situation where we have 
+>> conflicting feature bits.
+>
+> Then maybe just have all the features as separate module parameters?
+>
+> On this note: Maybe also do the FN Key handling based on a feature bit? Not 
+> that i see a particular reason why you wouldn't want to have it, but for 
+> consistency and debugging reasons (and also if sometimes ins the future an 
+> incompatibility arises here because Uniwill repurposed a wmi event or something).
+>
+> Just thinking out loud.
+>
+>>
+>> Thanks,
+>> Armin Wolf
+>
+> Best regards,
+>
+> Werner
+>
 
