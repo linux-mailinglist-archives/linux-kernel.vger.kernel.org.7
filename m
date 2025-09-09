@@ -1,92 +1,113 @@
-Return-Path: <linux-kernel+bounces-808754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307F8B50454
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:19:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 078CEB50447
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A242E16450B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2FB03AE937
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A67D32C33C;
-	Tue,  9 Sep 2025 17:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A20308F0C;
+	Tue,  9 Sep 2025 17:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="ZUv0t9YL"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZdHAeo6"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F8E31D384;
-	Tue,  9 Sep 2025 17:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757438385; cv=pass; b=ruMjWc7InXnJJnI0/Ukvlw+UmCrmN2JPNtbLr6zJeEMXuhiD68YS6KQkw9UpPELXgiyMp3dKXDjhmMbo3xKwzJsa0bK6lnwaK6mjKYmB8EsR0U9EibHwVtl1w0d5N5B+DT9bVzhneG0F8dB3sgHgrekxFLhTYvGztHshUlM/cQE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757438385; c=relaxed/simple;
-	bh=6s7rAoDzB1ZmdBThLTPc5cIsdvIyxx4bJvCbPL+uRQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=abwk7eWbzTquYdzKZDWVXU6q9zK8v/omN/ZWgSZGmcLacAqtYXAqxmpjkiXHbFtRze7I0a4ZcH5eZeXOd3+7NnRDaYftgo9H5F00yGXYsbHlTInRgRK/EacvvWElGqpRH4wmo6WozJmqdJ0lTOw/mmWVKidvtZq7r9Xu+Z5XUA8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=ZUv0t9YL; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
-ARC-Seal: i=1; a=rsa-sha256; t=1757438217; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=chM6LFDKVM3oGT0Rxz/4CoW9UyDdeCRynMGcfGp8LhBDsz1Vs8AvtodB9ZfoEeCUgXF/Lwa2SCfzz4kdDnSL16O+5sPf2GtobGGpENIlJkV2g7fMUc/hrUaxZGPGDz+Pz6hg/Q6Ucu3nzk1LypUraSTD50kAd8mGMJqwNc6+x48=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757438217; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=6s7rAoDzB1ZmdBThLTPc5cIsdvIyxx4bJvCbPL+uRQk=; 
-	b=J2L4m86XC3ks+5u9xpGvaDxi2jGRRR3JqpezhnAdThPbRBvs6QstOcr+edB8RbFGvzu7UvVa4o01a2hODY+kYNAEUo4/5lNd6Ln6YJj30tfy5U2Ftl6viJ5FIU95bj6ZAabUHdkcouWpmzfdL/kSvQWlUMUH1Ab0TQuuzhWHcjI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=yukuai.org.cn;
-	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
-	dmarc=pass header.from=<hailan@yukuai.org.cn>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757438217;
-	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=6s7rAoDzB1ZmdBThLTPc5cIsdvIyxx4bJvCbPL+uRQk=;
-	b=ZUv0t9YLcXJmna3pE+KQjxKvJuQNh1Yu3pNbbnJg+aO34xRGJ4tsLLQUKMuQZ4MW
-	kjCppifTa6KlUG0DfjvMCg+Kh+oe2qzf2gtWoIT1UYWZsKHPtPMXVV3hzRpOeNMX3wx
-	6zmYHoq4rGVXAlUyRLry1DmPknto6e4DAuBoQez0=
-Received: by mx.zohomail.com with SMTPS id 1757438214195641.9733379534401;
-	Tue, 9 Sep 2025 10:16:54 -0700 (PDT)
-Message-ID: <5c37dd28-3719-4b4b-b91c-37fab8ce65bd@yukuai.org.cn>
-Date: Wed, 10 Sep 2025 01:16:44 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE2F17A300
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 17:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757438291; cv=none; b=s/Z5YSWQ9NtZCQZnAO7cK0yM15Xck1yyOgaseErqCjd4d7O5oUVUFYNCe48boK65mTIqmwomQmDAe5Sda5/2l3g++kx/X4smHN9bxwot4oOwmHVnviJUVOwrXa38+uwPWe+5axB3HG/5CmyNfwyCAqH7kTqehDe/BKHO0U2vOeE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757438291; c=relaxed/simple;
+	bh=eANuCz33lH1bMwsj7oCJ47IYyMj8B04J6bOmhdmvkOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZBfiBHXo4SR4BlbR2fGxZtk60kImuDJntzDh2Dxs+6A2I8S7NF8zeiTw7W8XHkW2giU8dgh0mlGgosSeNlrip43x9Z3J8QPG4m1XPhEXAFrQ6s1RShcFri5P2EgHGVmGdcnQ5ZGrCA5EwXPylSeTZFpJseEkA8fqHSe89VHTHds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZdHAeo6; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32b7e7e81f6so523291a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 10:18:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757438289; x=1758043089; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eANuCz33lH1bMwsj7oCJ47IYyMj8B04J6bOmhdmvkOs=;
+        b=HZdHAeo6jft2YL/jmzfXkBErUCLaVlF1vBhemzMsBp85HUzujkGiA1NPDcXZZYZyc+
+         R4sz0juItQ4ZlAuaPugh9xe5SSa0eVYlF78AKOJqbYfOU7yMVs9UC9SGi4fajnta+MFe
+         ab43cH53kjj8K8klu5cgMrxnM34c3xtMrLOewYpcYNRTNWpDvTkbnZ3GgaEXU4uPl8Lm
+         MTlNLG4qu5ODB0LArv44HtqfpboYGLUpZvKlU7ERi89oo39zX4fD/8zY4SddRYqq0M2h
+         PzUJU47oEoZzjaqqv5qcjfGKVl4e6FV8Uzdt4LwnTamiSQVKa5q+T3eBaGm1XEEZzYAE
+         nIZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757438289; x=1758043089;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eANuCz33lH1bMwsj7oCJ47IYyMj8B04J6bOmhdmvkOs=;
+        b=RtGvm21c1bxuIae5OXLWoY9nc3kvkkLTzmwO/gC1kZ4QagjNuiabAM8ow0htzNh/CM
+         C48mGaFWG2fmYsS9lj88SuAytXn1jimBx1KRM/wby8mbo+Nl9zQFaBNDrlIs00awzFRo
+         5+NKQE+3BPSJMiq6O+SQySgdlZIHboScK7sLuyNhEGyi3EnLGQdv/6EIPl7mPxBSm25C
+         f4tT2uwZJiPbg5GZLop7hGOzZLPyFjjJ50QUAyzvnBc9CGStLXv6VZ6kRth0AyAyiv4I
+         slQZy4A8Cadc7QWoCIzL7KdhzkCcvWmvkJ82h3P8jmY0h5wBmEorahQ2Jlilb2Fl4CeH
+         9Qqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVA/DK7vQqtVt3OuQHAehuRVz6SuF8Cid/RtYbaz9InDtCAuPUoYNiOsjqNS03emc3htlEmCXAvbxiOK8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8mJ8LoVdbMhyhceI3W5b2fw91UC2fnqJAolnrJsJU1QeoBOnT
+	526B979IEVFzQvmo7c/zjtd/Ayv71HlmrsEAQXTm6m573KjV90cLCEaaoZ1jTq4EX8IMloOZjAx
+	cUMSajTF1n4+oGkfqNXS7zzuUoONK33Y=
+X-Gm-Gg: ASbGnct1z7bX0mj9BRcQu6OD2a5Iuz9I90I0rIKdbsuF/MTr9yiR9XZ39oYPsf8Cd8i
+	2kgDZctjBgoOmhz5nhLp81jkcIUo+uIL2p0p3BY3y/PZ7+L/AKSnNHaKwoBoi4JXYyCN8EYVGKH
+	Gm3xFqk9j93Ey0W+/hvx8ZLFz0HfM7ArINoNBGA9kZzeqyciQ+Vhn008o9k2fgl7CSUV+ZFToRc
+	IQH1iBs+7vAYv9x8UGHALQ2X/unzO/hLBmaM2flonRtrklRSEVceb9FZy2vygVgRHQgmT+SRDIM
+	HEBfSaf42XzoOUiSo2EHhPcIWhZ6mx1HopZS
+X-Google-Smtp-Source: AGHT+IGZvxHwMJuJTTKpdzQ2seSpBVyMgSszDRBCdloTBJkjA+PRzY0NWCEouBfzawrB0YlxcoPbJsyhaKtUMdZErKs=
+X-Received: by 2002:a17:90b:4b07:b0:32b:aed4:aa2e with SMTP id
+ 98e67ed59e1d1-32d43f8eaa9mr8987250a91.3.1757438289039; Tue, 09 Sep 2025
+ 10:18:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-6.18/block 00/16] block: fix reordered IO in the case
- recursive split
-To: Jens Axboe <axboe@kernel.dk>, Yu Kuai <yukuai1@huaweicloud.com>,
- hch@infradead.org, colyli@kernel.org, hare@suse.de, dlemoal@kernel.org,
- tieren@fnnas.com, bvanassche@acm.org, tj@kernel.org, josef@toxicpanda.com,
- song@kernel.org, yukuai3@huawei.com, satyat@google.com, ebiggers@google.com,
- kmo@daterainc.com, akpm@linux-foundation.org, neil@brown.name
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250905070643.2533483-1-yukuai1@huaweicloud.com>
- <165f4091-c6c9-40f7-9b41-e89bfdd948cf@kernel.dk>
-From: Yu Kuai <hailan@yukuai.org.cn>
-In-Reply-To: <165f4091-c6c9-40f7-9b41-e89bfdd948cf@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+References: <20250909170013.16025-1-work@onurozkan.dev> <20250909170013.16025-2-work@onurozkan.dev>
+In-Reply-To: <20250909170013.16025-2-work@onurozkan.dev>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 9 Sep 2025 19:17:56 +0200
+X-Gm-Features: AS18NWArfz-SKR6eBoIPN5tsQPjXO3WdMRNjKjDTQlv9bzevnMWFofEbcB04VyM
+Message-ID: <CANiq72=kWpxpo23JUYTqxwpsY=E0uUvCHgotRuepZpL-qUqXqw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] rust: refactor to_result to return the original value
+To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	daniel@sedlak.dev, dirk.behme@de.bosch.com, felipe_life@live.com, 
+	tamird@gmail.com, dakr@kernel.org, tmgross@umich.edu, aliceryhl@google.com, 
+	a.hindborg@kernel.org, lossin@kernel.org, bjorn3_gh@protonmail.com, 
+	gary@garyguo.net, boqun.feng@gmail.com, alex.gaynor@gmail.com, 
+	ojeda@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Sep 9, 2025 at 7:01=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.dev>=
+ wrote:
+>
+> This patch only fixes the callers that broke after the changes on `to_res=
+ult`.
+> I haven't included all the improvements made possible by the new design s=
+ince
 
-在 2025/9/9 23:28, Jens Axboe 写道:
-> Can you spin a new version with the commit messages sorted out and with
-> the missing "if defined" for BLK_CGROUP fixed up too? Looks like this is
-> good to go.
+I think Daniel asked in the previous version what you mean by "callers
+that broke" here -- it is a bit confusing, since it seems this is a
+fix (and thus needs to be prioritized).
 
-That's great! I'll do this first thing in the morning.
+Is that the case?
 
-Thanks,
-Kuai
+Thanks!
 
+Cheers,
+Miguel
 
