@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-807963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F4DB4AB81
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:19:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840B8B4AB75
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A49AF44157A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:16:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23A961618BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CADC32BF25;
-	Tue,  9 Sep 2025 11:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3BC32BF5B;
+	Tue,  9 Sep 2025 11:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DuLQFk05"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uuAI8+kr"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BFA326D55
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7611632A3C2
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757416302; cv=none; b=eTwzMuJUhC9RYVY9PcwCAHCExpzg0SV8p1QhlDQty2oiBHsa4v93dOjWXe8dY/W0i1ZetID6A8kQW/+aTxhejWj2dUIbSP55AioJZEIy1iAKiyBR0inXupKJVCvf4CpLAb+euV8kt5HoGfKAm1fAUnTMKOcSMg2DTtXECEnJSCI=
+	t=1757416304; cv=none; b=MY8EFfkkZfHFSx0V0fGgsEOpv5NbuMpPvO67xD82HN7MldSnROMhOhBYrg3dEHJnL2DRP0rMo854s3M1+E+R/8Ee6ZvwL4kklvOXjR9Hr5NX1Y364NX4dPVZpfj5eGNVQrVcAxIGgj6llPCnukmAo/yZO+l2+d+ZA7+MXCJI0A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757416302; c=relaxed/simple;
-	bh=VvUp9qnNE7LRT6dFMEFfaf+OTUSJqg4fih88UVXdmOM=;
+	s=arc-20240116; t=1757416304; c=relaxed/simple;
+	bh=qX2XQlnL77P0KB6EClM0+xTAM+le4yDduPWYxg1F5ZA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DcTMaioQNbTwZZWiZOXojeLW6YIPDXuruJDtgsyCes/ERUq1T+vocZOQID71opbcc8SHKxqeoUJw+4FFsr5PrWOX/t2KKgZVpo3Q046KRn1Bmb7RTzh9D2DqdEfU/IWtB8owPk2b7nyZzZVnQdnntAvE4VEjwLPGaz6SZqko3RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DuLQFk05; arc=none smtp.client-ip=209.85.167.41
+	 MIME-Version; b=TPGcfDiTbAyF1mIGbNV0GGuYJ4yWPV3sgOisH5nWL/+KI+PMREA8gtS3og0/6txnTW0cRItae1TppxxRjvz0pjKMpO5H7GMLj55JWLVmJHq28FTbRMmkneIKTqddE8T71WvdZ3mmioLWlKH5Rlkygv5PZIYdpaALBmq+SU9L7M0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uuAI8+kr; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55f7039a9fdso5618460e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 04:11:40 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f6b0049fbso6235594e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 04:11:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757416299; x=1758021099; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757416300; x=1758021100; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=euHGryHJ8QWDxT7cesCDLU1KtKBsI9gmyEIIx1smyRQ=;
-        b=DuLQFk05D+BPKDPUDpp2569BQoR8/S75dTvna+F3aeNY35eq3z544ToC3I7nxQK6NR
-         OWWlIYgJ9t8di+7aaCkfYClEh4pdqvYe6fD6zvyibNuZHyec3zN41lgNzEo7ogbFI6an
-         ZhiBHkBFZWf8dlLeDfPey66TuwQ+Kg/r91v6olnwVJ+r+6Gez7tSOCAj11ib0XXNl8j4
-         DtDq3rD/0eZHPgzWOIM3SM2Gpz0SZB+2jNUkAeeb1UsrqMpT/t3IT2xnLhzLv/StZY5B
-         Crj2iZtWaAjItfrELWHI0yPzxYxzX2MalV0gYUmbMuj5ay13M9hLidDSrJskyYaWk2ck
-         QLtQ==
+        bh=7s4ue+vxLshDaVNog/qaeHRfYjor1s3xeCpGVICPA0U=;
+        b=uuAI8+kr6UZrPmjAi2JGqIXdQhh8kzvyBETXnFVd/rchL+995Q8kDzBZfYdR0m6oQ5
+         IysC6wrN9/l6r7cHhbfbTiAycr3ojx493iByx6XlgS50dzcv9O288iSamqMuuEvHQUXy
+         KC8sVTWScjQgGU0vYIUcmodQdoYDUsGfnRS93Sr6xFtjQvw9VEp3Vvca9KJBAcarsr5W
+         V3wMjAaDNHR/m6YSHHwUsJYtI2uSV/OkbLAPJAurqynpJwM5ZRbDK8KZOkTylUP15Guk
+         y8833WK5DN2PVhSteql9nSnHbZjKhWR+Qta4P6YJgVaLRXFYhy7iprbgswtjjA3/N2i6
+         2V1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757416299; x=1758021099;
+        d=1e100.net; s=20230601; t=1757416300; x=1758021100;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=euHGryHJ8QWDxT7cesCDLU1KtKBsI9gmyEIIx1smyRQ=;
-        b=u4lqrPeNlHELctDcr1xFB8nmkfClnI1redKa75NpV+n2ZzsT4Yb9H0hzx8U+dFuIyk
-         kPoGFolsVpYvWj9b1kpYhjfKILywV2iXzUWUkg9ziSElREiwxUYBVac+YYMKmB/B4QNb
-         KVmh7Pxt/1qu92MKcH3et/seBCzdT/BpbSUnV5BG4z7YBP2pbrt9qR4jbTf6iP7hUTx0
-         pZs7wKaz86z+duDLMxJ6J3qeHbfSXo2vWCU+2AGBgYTotU/DeMeypoQALH5sBrK6w0Yf
-         gDtDJV85V2Eyat6KK7DeEgMznU0d3tLiQBYWU/7kW85OJ/f7hC8VgpJhWSuinqnNY2cP
-         TAjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcBmRsvWs6BfQwRFZmiyb0YEtXtY651uSZ2MS+zLlfHoOobH2fD+6PVI9W/xLPnZaOKzQwXeiNJfzh6WI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhbZhJ+b7JwZg01cu30gf4FlvYGEa/dLMU5E7HZ9uJxTv6R9qm
-	q1jTSRT44fgydM+DAHSrWRjXaxZsf6yLhswvCLEz6NMnvjw81p0VH6JbVoayzMGZc1c=
-X-Gm-Gg: ASbGncvYobcq2V1AjoyULxcMiAbjBIXXLZUrDdmMtlsTrql0RHcsVyUyWh3hpr0+oWt
-	MC9kfHkofl5RTWCpoY7oI4N68ErsZY+XJsX48hJIu0yVADLm6GPgIp4eCQdlWeIPMrgISQIiFws
-	9L0hPeAElZockQ6z3Np11oyfdn2PuSBfGHsQm6iw0m6vX6YViQgA48+LfWEHcPsQLkJSAzm8qMv
-	eC36IXj7s6gQqSPFXU9XutbE7E7rkvaGYwn2p/lHpAdgzCmufdfHKyUBCgSR30rCueYHQwy+BYS
-	veVBfe5ycA5//WtO6uIHgOJoCu849xhkJlanjpb1dguOlMuktADcsgZScPy7RASqP+nI0wuXje+
-	R+19TCabnnisnyok5D6mhUMDcWEn0c0BGVWYaMWy9J0xsO1kKoQ9e9EzlNxMRpoQo03w0Is6SYr
-	UJ5aaHL1c=
-X-Google-Smtp-Source: AGHT+IFfaEg7KARMsiLKzyUcPFhDsGf7F+a3gcOB6C+SVsQx9Fu2a+sXO0Qgm1wWuW8uSP6aIC1C1A==
-X-Received: by 2002:a05:6512:108a:b0:55f:4db1:e450 with SMTP id 2adb3069b0e04-56260e3b836mr3025626e87.22.1757416299071;
-        Tue, 09 Sep 2025 04:11:39 -0700 (PDT)
+        bh=7s4ue+vxLshDaVNog/qaeHRfYjor1s3xeCpGVICPA0U=;
+        b=CcqlV4KaBeXZwJlcjEgWpwkVvG0H8zk2m3QDRh7aEKmZgqCOSYK08riFCZk44A1LhQ
+         0MqRsqk5RplXeA9tElgLdnj+03yWVt09SD2nnr3ASsRfn4JUog4KbkGnEw5xFMfvp2bt
+         unprX/Cje2HCYK/xOlaUw9LboLazAB8vuWSKgXKARzsZTEmFeq1D2BseMi5/m56wc9Pg
+         BvPYBGhxUV1I/HLDy8QK3X01AVuWSdpRBcxXs2NlcCkT/HfRPW24FUVQpgFOVOeUWjuc
+         8JuPYQ3CSUOSkD+HfK2w1eH1GxHB7pj2t5gu5CzD7RGY3pOWJto4v91TtGGTFtq9e3wt
+         eFAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmSIpdLNHA6ueOV1d4WBz2dB6gqPaD0JO16pcg0A3e2UbM+hWjPOn8UmDE0Ua/Zw2Xwh2oHfTGB5b9ir4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8YKUgfwBP187J8Z4MOJt0qW/AoD1E5QIkdRCP0Yi+ZBNCt18k
+	YCcyDrnycuWuUeFfE9Vpz4RTkBrpjVygLNrh/G3fbsAR/y4BVPapWhmUKOfUFRHIGEHlBZdWYMD
+	tayEi
+X-Gm-Gg: ASbGncsMKROniZeiRF55ZAKpMXacZ6+YUFGNMRf7qJDX3LMOL15LzerV8jWYqMbi975
+	Ylb4riW/5vS2NVloDX/HVNJS7HAswGz2yFxIUf4io46UcBehsShoWWmWZc+ebIE7yQwFJCerZZ4
+	qmnFtrAsCuDfyunF+0C6LvLSSBUdcWtrE4lHvsflcsvfC3471M2WdPrrDuKljSXpm+qMGhqTmhI
+	cB+xzGmSO+/G64wrSB8VNDazueEbtwTaAHfMyI38MI+w9AL7716/HIXytVqUlj85jWlyweAK6Y5
+	gIS8GJkRLBbbtb+wrwe5HUG7WabCfbDToVl0x6zN0jomrPRH7tv8RnViWd5wC4TUMoKgoZkgUZr
+	tngaKRB3qbyG7vjKX9SXKBxaUse7lNv66sOTFdeo40RqHjP8hxYMVy4Vk9wW2F8r2GhOQY1RUx1
+	CAo+oa2h0=
+X-Google-Smtp-Source: AGHT+IH3If1E1wmdYnnMVHOIWDwlC5uh1BOrgxWYASzxhPPmZmGZqHrDzK8CUhRE0KdKbGrCF4Hbhg==
+X-Received: by 2002:a05:6512:10ca:b0:55f:5942:43ca with SMTP id 2adb3069b0e04-56260f37a43mr3913159e87.20.1757416300440;
+        Tue, 09 Sep 2025 04:11:40 -0700 (PDT)
 Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-568190f8040sm445440e87.148.2025.09.09.04.11.37
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-568190f8040sm445440e87.148.2025.09.09.04.11.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 04:11:38 -0700 (PDT)
+        Tue, 09 Sep 2025 04:11:40 -0700 (PDT)
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: Geert Uytterhoeven <geert@linux-m68k.org>,
 	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
@@ -97,9 +98,9 @@ Cc: Stephen Boyd <sboyd@kernel.org>,
 	Ulf Hansson <ulf.hansson@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] pmdomain: renesas: rcar-gen4-sysc: Don't keep unused PM domains powered-on
-Date: Tue,  9 Sep 2025 13:11:23 +0200
-Message-ID: <20250909111130.132976-5-ulf.hansson@linaro.org>
+Subject: [PATCH 5/5] pmdomain: renesas: rmobile-sysc: Don't keep unused PM domains powered-on
+Date: Tue,  9 Sep 2025 13:11:24 +0200
+Message-ID: <20250909111130.132976-6-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250909111130.132976-1-ulf.hansson@linaro.org>
 References: <20250909111130.132976-1-ulf.hansson@linaro.org>
@@ -118,7 +119,7 @@ invoked for it.
 This may not happen at all, if we wait for a consumer device to be probed,
 leading to wasting energy. There are ways to enforce the ->sync_state()
 callback to be invoked, through sysfs or via the probe-defer-timeout, but
-none of them in its current form are a good fit for rcar-gen4-sysc PM
+none of them in its current form are a good fit for rmobile-sysc PM
 domains.
 
 Let's therefore opt-out from this behaviour of genpd for now, by using the
@@ -130,20 +131,22 @@ Fixes: 0e789b491ba0 ("pmdomain: core: Leave powered-on genpds on until sync_stat
 Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until late_initcall_sync")
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/pmdomain/renesas/rcar-gen4-sysc.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pmdomain/renesas/rmobile-sysc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pmdomain/renesas/rcar-gen4-sysc.c b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-index 5aa7fa1df8fe..7434bf42d215 100644
---- a/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-+++ b/drivers/pmdomain/renesas/rcar-gen4-sysc.c
-@@ -251,6 +251,7 @@ static int __init rcar_gen4_sysc_pd_setup(struct rcar_gen4_sysc_pd *pd)
- 		genpd->detach_dev = cpg_mssr_detach_dev;
- 	}
+diff --git a/drivers/pmdomain/renesas/rmobile-sysc.c b/drivers/pmdomain/renesas/rmobile-sysc.c
+index 8eedc9a1d825..a6bf7295e909 100644
+--- a/drivers/pmdomain/renesas/rmobile-sysc.c
++++ b/drivers/pmdomain/renesas/rmobile-sysc.c
+@@ -100,7 +100,8 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
+ 	struct generic_pm_domain *genpd = &rmobile_pd->genpd;
+ 	struct dev_power_governor *gov = rmobile_pd->gov;
  
-+	genpd->flags |= GENPD_FLAG_NO_STAY_ON;
- 	genpd->power_off = rcar_gen4_sysc_pd_power_off;
- 	genpd->power_on = rcar_gen4_sysc_pd_power_on;
+-	genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
++	genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP |
++		GENPD_FLAG_NO_STAY_ON;
+ 	genpd->attach_dev = cpg_mstp_attach_dev;
+ 	genpd->detach_dev = cpg_mstp_detach_dev;
  
 -- 
 2.43.0
