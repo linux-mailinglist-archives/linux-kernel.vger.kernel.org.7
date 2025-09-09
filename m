@@ -1,186 +1,351 @@
-Return-Path: <linux-kernel+bounces-808439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FD32B4FFBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:42:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 165DDB4FFC5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6D543AF866
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:42:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFDA85E04DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C4534F476;
-	Tue,  9 Sep 2025 14:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9365C350D64;
+	Tue,  9 Sep 2025 14:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCQL2Znh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HUyasn3+"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013026.outbound.protection.outlook.com [52.101.72.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427D31A9F97;
-	Tue,  9 Sep 2025 14:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757428934; cv=none; b=TlyZvn/DihlY52Lcw2zq79a6kozvuEPaKoK8dtpGBOhqylNU1suVbH1ylVRNLW1StQkIMTSQVV24rE8cwdXNrxkX2ypAIrQvmon6nFPT1XvLFE/effeiZ1lbYVwWzCrS5s4XgXpD9aDIUBc8yI9PiQqkmDSFj6UsQZOVkQj4kos=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757428934; c=relaxed/simple;
-	bh=sy3MVAHHpVBPpi9qQNA8uh94iv/9KGticKB2B5S88ec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MZy9nI38aA8/IF/zLHNVdAMVSy9ZSKuZ8MxucN+xz07/B5A24q2i+i8n8w0DuwEG+mjRJdDSER4Z2Z0wMu4SWNTNkdQOMtYA+pdtzuExUggWtqaoIWVnd/UpJs0qsLDQPZ7pBl7SVStshYH6CVrriIhfxdtLBxKeZB8sRgQxX70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCQL2Znh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40F32C4CEF4;
-	Tue,  9 Sep 2025 14:42:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757428933;
-	bh=sy3MVAHHpVBPpi9qQNA8uh94iv/9KGticKB2B5S88ec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lCQL2ZnhtslW9yIQkfsmJg5+75EuysNXo3JTQ4SrgE1/+t3v8/6IPMz2mL7oWf6rN
-	 ub6dSGyAlU1XvFdylPw3uNCRbFnUCI73OxHBkok6B5jJ6boGar/3XTJYoVRwWv1Pf2
-	 W71AFuxaSdbRtE8a087jq8srbxCTVwd8Jzqzs5eJMrmCdx/uCqmC23WI6l+KC9JUjr
-	 8qbSO4M9fOHflSchEpJw3dcK1Hleffm9dRG8KWW4B5bA70t3slOZyKf1qZjOdlU6Wk
-	 KEPt1IJXiK32JX9QP5z/ca8ONKh5i1F/gMzwE4EcHnzZmFAwTGlZIPBgTh//oUckBz
-	 GvL3cKSxlZRFg==
-Date: Tue, 9 Sep 2025 15:42:07 +0100
-From: Will Deacon <will@kernel.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 10/28] KVM: arm64: iommu: Shadow host stage-2 page
- table
-Message-ID: <aMA8vz0v0Vn-02QP@willie-the-truck>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-11-smostafa@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3AA350830;
+	Tue,  9 Sep 2025 14:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757428998; cv=fail; b=UgePa97wE9/miiYbsfdBQsmCZ7Xmvou/lFepPkAnITfUru0VzkSrAIqkNGffpTxs/LL1AOprbMOGmEi39NArPzKrjgja753mRDhHKvQlNr25vyPFEFd3uyS0uwpHHafvTym6Cxz9f2LZnCN6At93+JD895ydYNGyswpp1s4n9wA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757428998; c=relaxed/simple;
+	bh=Sj7KmO/pHjWjZLbKPB/NohZ8g9x+Dl/FEy9JjKVDSgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tAT/EU/+MbVW/AqIcE1F1txX656lh2EOrqoeEGxlUs7xzCw81mpeTsHJDURJOjTZl6gDoKJ51uTApYVZsI6K+8J2zQ8XCGzZqpmpgGFok2P2xabKOXjxknn/njA2dAvA37ozfPo9+dww2zhgs2N6jFsrEOjoOGFZN91X5RauKz8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HUyasn3+; arc=fail smtp.client-ip=52.101.72.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bj7T7ipRZ+y1K+rMrHo1RkcJ+oMO44n3f27Xii6UTPwliImsiZV7CCGHNMU8kEK0rwNkaNnR5TxHfa6+uF7cxU1WfCLURNnuwBghW/wH0uRusE0eNlm/+0xN67HRit1m32PI+GdTZcXOMjYzFUoGztS56MXsx+Oq10ahmWAL0JYJXFZpgU7hyMlSw2e5qCoBLsyNT8eXg2R4ia3QcIVjxq1OBhnMQAgP/yeat/5/g9vt1veE8dMGpxuORA/5wSdwHJYwNSQEpabY37rkSdUW/zkLgbvgE5kaHtHDST5LVKSQ+eGthHsoooMf1GlnwJ97xHsAFGNKuDhdn6+m37Y2jg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U3g12yxo6AUZ+3qDGXeBtpVoN4DkyT2WQsJMEPjbQiQ=;
+ b=hQ71V+abVQxbLj9UiZ9K3e7toRcNA47LtTXb8FbNRvmMJIg3zJAfzJ9jAuQiwVtIkfTgxAt9XyRodKcvFvXUd2NDx5v491ikQsBZj/htQ3llDj3d25vt0DE9DGgWciLx+0ircv1BODWbPYGa1tnFNkYBWwr32y8rn1wmY0sJMclwkBAr/lhRCAItFC8b1/DI9SOLCqsieNCSye+tbNfuS6ZZQaQzjfNoo+IB1SlCQ2o2UXBxvyrU3oox8hRF+NSRBHMK2gWX3O6DGpVboVLvf98HOj0dc3n7CwcaENG23fxwSXHecW62ZgA8aKO9brj847B4lFw5GRXgebTr4bJ3yw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U3g12yxo6AUZ+3qDGXeBtpVoN4DkyT2WQsJMEPjbQiQ=;
+ b=HUyasn3+gbM2SDhIrIwlxasdEmZQMjjkmC9pPMMYHr2Z8TzrDgugNwKQCdK9zJmo6rdgaX3TBalCWUc/QawrVuUwzX83q6iXso698Ewsqbur2kJx0TMsPpDAkBwQNUivNoKfiqEZaMho0QL8aC1MKcJWwhSdmb+zieRKE8artIHLOSqzugxjTbB+SPe00iEDBySe6u+QdJdDXrAYKVLkYAwhaLAAZ+6OGfu5GekHs+mFI6eWDcLoNtaXyomO8W2swHaVko6VNiu2Dr5FabGI2EMe0s0AEzBpluRIYLd+Piv1qKzm1oBaqOaoN+xOcr8OKVkgnJYpNMdU33hL+qIwbA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by AS8PR04MB8452.eurprd04.prod.outlook.com (2603:10a6:20b:348::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.12; Tue, 9 Sep
+ 2025 14:43:09 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd%5]) with mapi id 15.20.9115.010; Tue, 9 Sep 2025
+ 14:43:08 +0000
+Date: Tue, 9 Sep 2025 10:42:57 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] dmaengine: add support for device_link
+Message-ID: <aMA88W/rDxFesEx+@lizhi-Precision-Tower-5810>
+References: <20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de>
+ <20250903-v6-16-topic-sdma-v1-9-ac7bab629e8b@pengutronix.de>
+ <aLhUv+mtr1uZTCth@lizhi-Precision-Tower-5810>
+ <20250909120309.5zgez5exbvxn5z3y@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909120309.5zgez5exbvxn5z3y@pengutronix.de>
+X-ClientProxiedBy: SJ0PR05CA0005.namprd05.prod.outlook.com
+ (2603:10b6:a03:33b::10) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819215156.2494305-11-smostafa@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AS8PR04MB8452:EE_
+X-MS-Office365-Filtering-Correlation-Id: fdbfb70e-2bf6-4be9-4285-08ddefaf3141
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|52116014|7416014|376014|1800799024|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9oU1hK2eUekQkI2Fx4eZWkNJ3kjcVuXr9bC2YL4T8rJQZDTJEiEBCWC9GWca?=
+ =?us-ascii?Q?NboU7X2UgY484BNAfujegDIBc5WD37hpeYY3/ynyuHb6ONYyiaN5U/UBwnJ1?=
+ =?us-ascii?Q?pRNdRKUDuZN+OxY/zPFDozcomYxilxitLwfjuEQ5OPyYOKtteGo9D08angZB?=
+ =?us-ascii?Q?D53Q6yutUSnHzBxvvYlXmqypOziTDbvwJ3ox+cpOoZu5ghVQ3EnLSVgoubzm?=
+ =?us-ascii?Q?lkUrU/UNnFDazaHtjUc5bleW2XBrj8h8aIuoJuxWwJcxsjgOTjf6sFDNuk1F?=
+ =?us-ascii?Q?s5oo6tAW0iP+VWctzHX6sa3jKOGv5SzhrNPu7rAjddMR9xgZXX1w06BiErhk?=
+ =?us-ascii?Q?3uM4H0S8nw6Me0j9MBj3K2zsoLtduIRe5pazepzf5aHE2yL5SJ7YmvZRsWJq?=
+ =?us-ascii?Q?15b69cNj1gfb6Asfoqx7dzIal95zbxT0aP6Nvy/sWFeJrnrH1bIDRJbSQ+ku?=
+ =?us-ascii?Q?kOsf7cqL52O3wRa/ItIvIziZWcHCeihb/9e9jBcFD4eF/H3b2JmgoFZeirlH?=
+ =?us-ascii?Q?vggFvQyF91g/kn4eQdSvPBiN3ZRErXLCNmjerDVpEoe8TBEdDS/mtAbVl4/c?=
+ =?us-ascii?Q?fzExWiXXiZNr1YgtJRPRe8VIWOvdeAIt+3mwTO47CLxs8KG2vQC5JQBCzpFg?=
+ =?us-ascii?Q?X1FSBGbc24vgPfP6UKSh5x3GtWaOas9vk8RdwSdvbIUA4MrYabp/JabNFT+z?=
+ =?us-ascii?Q?pqTpXOdmg61vrzcFqIaBTtuvMOjL0lPc04KSiHnewFmx8xXZEwCV2dKW/kPh?=
+ =?us-ascii?Q?TK69hTXrVe6jt1grHmhy1TQo8ikNpOTTlR4ZEOAvsbAYOy7xYMP0wGAhonKz?=
+ =?us-ascii?Q?PHjDSkBlukyO6QLlU9W/0Zi80y9felHtICdcuzs9RxgNJUWsqfAI8sW18/nS?=
+ =?us-ascii?Q?3kcBUEoNw1Tp2HtBNMXu5z4jpkIfyJu+9p3W8d8+XmK4X30SlJPezHp+GNYy?=
+ =?us-ascii?Q?gSA8mabprSK6VJQlMJaSkv0++mLLg6jC0Lp88x1KORvT6iYQKdk2Bqcn4S/n?=
+ =?us-ascii?Q?cGnt42l/AbOVEXftvVoW6LhJkLd5nARBK8JR+OiDca9Eu6vKnh1QJz6lndA8?=
+ =?us-ascii?Q?4xCyA4tg4Zm/36CfQR1MAsqh7DPl+f6ZMLyJuxOfMTFch9NxWYkAU2Mue2SF?=
+ =?us-ascii?Q?dYR0nwtDkxAplYTrgbAp06OWqtO6MQuF2karFRLzUSQZyoL9R7VKfHDu0bPV?=
+ =?us-ascii?Q?/TgC5ExKaSvnJILPqN9pDcO8OqV0H1ZgO+eE4WMFGt5+aOKazKKP4i75h8NK?=
+ =?us-ascii?Q?22unt2FU7taQFbc+8xdllDRFgSq/fIvFmNtl23CBDxSOZu8r0Stx5/P8VR5M?=
+ =?us-ascii?Q?6tgH6SH5t8lp6QHm9H1oFyGG3u6eHNe8f/0nsEiRVAJrOnj9rR+/EO/9wHu9?=
+ =?us-ascii?Q?LwnrNXazuC/+3Qzyhqq1pKsgcEgANN/eSK7dQJPg62OpjeiNRUYVnRAQf2F0?=
+ =?us-ascii?Q?k6PVN+d5ilNaLG8gie/lQeCvdXf1HZpjjYZvYObSRL9LCmgd+uhDpK1h8av/?=
+ =?us-ascii?Q?/n2KGsNHrkF1AMg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(52116014)(7416014)(376014)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3dRIj6tseGvDwduO3JlbwwrbChtjM1min7czpM7eslNXiZpoz+pQiDiZcCpe?=
+ =?us-ascii?Q?hO92ovuRt+YyB6VEAaVuhXpvMLJU6OjYJV77rDax+TqbVJ15thE92uk+KbZ5?=
+ =?us-ascii?Q?7rZg7CEJMY1sf3P4uZ0q4xtCZWjK77SNfIh7AheI3Qrd5vX0DtedrMV+v4i9?=
+ =?us-ascii?Q?n2xvQuPsy+eQKUwDpiOS/WjiyBZob9zX3H5Zi5Sg38hsunmloo74aIITwt/b?=
+ =?us-ascii?Q?E1pL/svgRTFmkEhIacLDcMicaUDywyENQXQV9/a/AYkux3IkZiSvBTr3bV+v?=
+ =?us-ascii?Q?qMm/pEN9dV79g2wA7bRpImJ/dz8Gf/219elb6iNRG8P9YKMUScSYKSqwmPVf?=
+ =?us-ascii?Q?4ZXx0LL8pmqtoa1l7U/tl8bDEmYT/J5I0FDOgSKAYntc6exaLb4G2vaZPZDZ?=
+ =?us-ascii?Q?nXhIE4nhxifLBVa0Ym9+LuZa+yUrXzltL6TR9VM9x9Y9J9B1MJhTwVLuMike?=
+ =?us-ascii?Q?JZ6ejQs2q6fUuH9YGIbqcHW4DmWY6ueCWIBLqPfEHwxhovwj1xbpodiwpVUz?=
+ =?us-ascii?Q?KasFxNNM4TQClD4klWxODgcA0eG641p38f+/7cBbeH1i0+v7c18nxoA7jz8S?=
+ =?us-ascii?Q?nCU9+lCPbWePo2zl7n/jPuQxbJ6PQo+w86sUyFR2eNDiJmSPoFzGhIdrGNWW?=
+ =?us-ascii?Q?EOqnHXWLRauCV4oSDVQrpJA4YsNkJhuK0Tb6Kb5Zp0wpFmTI0LQSN6yFLuLc?=
+ =?us-ascii?Q?Vlf1lUJc3CyniH8rypQckMG8poaqe9BQLjVD4S+e+wREveK4BErvjUWoWCUL?=
+ =?us-ascii?Q?cmGA62z4Y8Z9iVgWSAeC+HlZrI7I2BMMBWh+2vkA7pCXPlqSCWVvfeV5zPsF?=
+ =?us-ascii?Q?E/1CKvdnWINaklZi/NzMmVLBLRCg4Pp71+Cr65A8WwSV85kz6L41jjSlYTUR?=
+ =?us-ascii?Q?3rYpskPMgn9Asbt4Pr3O4l0PaETzR60tSrjfO3gTFKWd/ug2tsKgXI5vX4k6?=
+ =?us-ascii?Q?FVNKFO8PFMd9vpSlYzDBdR81ocOgPZ5TkFmj8LQZlXwhmJScPVrhPv0N1xJx?=
+ =?us-ascii?Q?KfwC+KejI4wDS5gHGLSO+LuD4hx5qW2X+zwCzTQkF8sC+GzjN5AOGw/7sOhM?=
+ =?us-ascii?Q?PbDTx91w6ym6LF+ceYBrG57XwMB8S3xBblMU65M4xfbICndy/zafCxRBRVPP?=
+ =?us-ascii?Q?SNzxVeil5pYawWCnCCd3QMFk1pHOxcva7aw6OPJqr93GRd7KGWybBt+lIAgJ?=
+ =?us-ascii?Q?rCb6PUIxOt3TYCjLF5SMlSM8UKcZD7J6wQwIhw0/G+zP+cZ95PKcuPjBw69C?=
+ =?us-ascii?Q?0BsYxrHjHCqqJAd3zdTH7yvmSVdSSQwKaJkyENxBHULKH0y9rR9hDna39/U3?=
+ =?us-ascii?Q?xOIrEYG4mMp5Wpv83fQdZoPuggP/r2NixmXfvnkrzatKPn8PqIpQY7oSOzvL?=
+ =?us-ascii?Q?n9Tpb0mKfbo8Niyniz/ChmO4ZP+SQHETY7Rvb0y9QaqgvrufdfeyY+HD/M1b?=
+ =?us-ascii?Q?4kr09rUet2wkSE29aZerLmd6eovomcV0K4ei74BXvrvhkPqzv39w6tsq3E8m?=
+ =?us-ascii?Q?PHDyfX4qBagLSUg3Z4cZ83ZEbPMCIlAKBKETAyk82WTjuLDHnmvsII1G++CT?=
+ =?us-ascii?Q?P9S+E4tZ84RfORXvKC12vdWTqz7xeJ2eBHrsoJNs?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdbfb70e-2bf6-4be9-4285-08ddefaf3141
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 14:43:08.4773
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AUzRgzEXZe9lAM9Ewo0IY/adC66Xa7AnfDZqwI5WkPtFloBDq2eaAajrgrMciaFCi4UdxrROE/GwDR8yapHinQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8452
 
-On Tue, Aug 19, 2025 at 09:51:38PM +0000, Mostafa Saleh wrote:
-> Create a shadow page table for the IOMMU that shadows the
-> host CPU stage-2 into the IOMMUs to establish DMA isolation.
-> 
-> An initial snapshot is created after the driver init, then
-> on every permission change a callback would be called for
-> the IOMMU driver to update the page table.
-> 
-> For some cases, an SMMUv3 may be able to share the same page
-> table used with the host CPU stage-2 directly.
-> However, this is too strict and requires changes to the core hypervisor
-> page table code, plus it would require the hypervisor to handle IOMMU
-> page faults. This can be added later as an optimization for SMMUV3.
-> 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> ---
->  arch/arm64/kvm/hyp/include/nvhe/iommu.h |  4 ++
->  arch/arm64/kvm/hyp/nvhe/iommu/iommu.c   | 83 ++++++++++++++++++++++++-
->  arch/arm64/kvm/hyp/nvhe/mem_protect.c   |  5 ++
->  3 files changed, 90 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/iommu.h b/arch/arm64/kvm/hyp/include/nvhe/iommu.h
-> index 1ac70cc28a9e..219363045b1c 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/iommu.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/iommu.h
-> @@ -3,11 +3,15 @@
->  #define __ARM64_KVM_NVHE_IOMMU_H__
->  
->  #include <asm/kvm_host.h>
-> +#include <asm/kvm_pgtable.h>
->  
->  struct kvm_iommu_ops {
->  	int (*init)(void);
-> +	void (*host_stage2_idmap)(phys_addr_t start, phys_addr_t end, int prot);
->  };
->  
->  int kvm_iommu_init(void);
->  
-> +void kvm_iommu_host_stage2_idmap(phys_addr_t start, phys_addr_t end,
-> +				 enum kvm_pgtable_prot prot);
->  #endif /* __ARM64_KVM_NVHE_IOMMU_H__ */
-> diff --git a/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c b/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
-> index a01c036c55be..f7d1c8feb358 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
-> @@ -4,15 +4,94 @@
->   *
->   * Copyright (C) 2022 Linaro Ltd.
->   */
-> +#include <linux/iommu.h>
-> +
->  #include <nvhe/iommu.h>
-> +#include <nvhe/mem_protect.h>
-> +#include <nvhe/spinlock.h>
->  
->  /* Only one set of ops supported */
->  struct kvm_iommu_ops *kvm_iommu_ops;
->  
-> +/* Protected by host_mmu.lock */
-> +static bool kvm_idmap_initialized;
-> +
-> +static inline int pkvm_to_iommu_prot(enum kvm_pgtable_prot prot)
-> +{
-> +	int iommu_prot = 0;
-> +
-> +	if (prot & KVM_PGTABLE_PROT_R)
-> +		iommu_prot |= IOMMU_READ;
-> +	if (prot & KVM_PGTABLE_PROT_W)
-> +		iommu_prot |= IOMMU_WRITE;
-> +	if (prot == PKVM_HOST_MMIO_PROT)
-> +		iommu_prot |= IOMMU_MMIO;
+On Tue, Sep 09, 2025 at 02:03:09PM +0200, Marco Felsch wrote:
+> Hi Frank,
+>
+> On 25-09-03, Frank Li wrote:
+> > On Wed, Sep 03, 2025 at 03:06:17PM +0200, Marco Felsch wrote:
+> > > Add support to create device_links between dmaengine suppliers and the
+> > > dma consumers. This shifts the device dep-chain teardown/bringup logic
+> > > to the driver core.
+> > >
+> > > Moving this to the core allows the dmaengine drivers to simplify the
+> > > .remove() hooks and also to ensure that no dmaengine driver is ever
+> > > removed before the consumer is removed.
+> > >
+> > > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > > ---
+> >
+> > Thank you work for devlink between dmaengine and devices. I have similar
+> > idea.
+> >
+> > This patch should be first patch.
+>
+> I can shuffle it of course!
+>
+> > The below what planned commit message in my local tree.
+>
+> Okay, so you focused on runtime PM handling. Not quite sure if I can
+> test this feature with the SDMA engine. I also have limited time for
+> this feature.
+>
+> Is it okay for you and the DMA maintainers to add the runtime PM feature
+> as separate patch (provided by NXP/Frank)?
 
-This looks a little odd to me.
+we can support runtime pm later.
 
-On the CPU side, the only different between PKVM_HOST_MEM_PROT and
-PKVM_HOST_MMIO_PROT is that the former has execute permission. Both are
-mapped as cacheable at stage-2 because it's the job of the host to set
-the more restrictive memory type at stage-1.
+>
+> > Implementing runtime PM for DMA channels is challenging. If a channel
+> > resumes at allocation and suspends at free, the DMA engine often remains on
+> > because most drivers request a channel at probe.
+> >
+> > Tracking the number of pending DMA descriptors is also problematic, as some
+> > consumers append new descriptors in atomic contexts, such as IRQ handlers,
+> > where runtime resume cannot be called.
+> >
+> > Using a device link simplifies this issue. If a consumer requires data
+> > transfer, it must be in a runtime-resumed state, ensuring that the DMA
+> > channel is also active by device link. This allows safe operations, like
+> > appending new descriptors. Conversely, when the consumer no longer requires
+> > data transfer, both it and the supplier (DMA channel) can enter a suspended
+> > state if no other consumer is using it.
+> >
+> > Introduce the `create_link` flag to enable this feature.
+> >
+> > also suggest add create_link flag to enable this feature in case some
+> > side impact to other dma-engine. After some time test, we can enable it
+> > default.
+>
+> What regressions do you have in mind? I wouldn't hide the feature behind
+> a flag because this may slow done the convert process, because no one is
+> interessted in, or has no time for testing, ...
 
-Carrying that over to the SMMU would suggest that we don't care about
-IOMMU_MMIO at stage-2 at all, so why do we need to set it here?
+Unlike other devices, like phys, regulator, mailbox..., which auto create
+devlink at probe. I am not clear why dma skip this one. So I think there
+should be some reason behind. Maybe other people, rob or Vinod Koul know
+the reason.
 
-> +	/* We don't understand that, might be dangerous. */
-> +	WARN_ON(prot & ~PKVM_HOST_MEM_PROT);
-> +	return iommu_prot;
-> +}
-> +
-> +static int __snapshot_host_stage2(const struct kvm_pgtable_visit_ctx *ctx,
-> +				  enum kvm_pgtable_walk_flags visit)
-> +{
-> +	u64 start = ctx->addr;
-> +	kvm_pte_t pte = *ctx->ptep;
-> +	u32 level = ctx->level;
-> +	u64 end = start + kvm_granule_size(level);
-> +	int prot =  IOMMU_READ | IOMMU_WRITE;
-> +
-> +	/* Keep unmapped. */
-> +	if (pte && !kvm_pte_valid(pte))
-> +		return 0;
-> +
-> +	if (kvm_pte_valid(pte))
-> +		prot = pkvm_to_iommu_prot(kvm_pgtable_stage2_pte_prot(pte));
-> +	else if (!addr_is_memory(start))
-> +		prot |= IOMMU_MMIO;
+static const struct supplier_bindings of_supplier_bindings[] = {
+        ...
+	{ .parse_prop = parse_dmas, .optional = true, },
 
-Why do we need to map MMIO regions pro-actively here? I'd have thought
-we could just do:
+If remove "optional = true", devlink will auto create. I am not sure why
+set true here.
 
-	if (!kvm_pte_valid(pte))
-		return 0;
+>
+> > >  drivers/dma/dmaengine.c | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > >
+> > > diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+> > > index 758fcd0546d8bde8e8dddc6039848feeb1e24475..a50652bc70b8ce9d4edabfaa781b3432ee47d31e 100644
+> > > --- a/drivers/dma/dmaengine.c
+> > > +++ b/drivers/dma/dmaengine.c
+> > > @@ -817,6 +817,7 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+> > >  	struct fwnode_handle *fwnode = dev_fwnode(dev);
+> > >  	struct dma_device *d, *_d;
+> > >  	struct dma_chan *chan = NULL;
+> > > +	struct device_link *dl;
+> > >
+> > >  	if (is_of_node(fwnode))
+> > >  		chan = of_dma_request_slave_channel(to_of_node(fwnode), name);
+> > > @@ -858,6 +859,13 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+> > >  	/* No functional issue if it fails, users are supposed to test before use */
+> > >  #endif
+> > >
+> > > +	dl = device_link_add(dev, chan->device->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
+> >
+> > chan->device->dev is dmaengine devices. But some dmaengine's each channel
+> > have device, consumer should link to chan's device, not dmaengine device
+> > because some dmaengine support per channel clock\power management.
+>
+> I get your point. Can you give me some pointers please? To me it seems
+> like the dma_chan_dev is only used for sysfs purpose according the
+> dmaengine.h.
 
-	prot = pkvm_to_iommu_prot(kvm_pgtable_stage2_pte_prot(pte);
-	kvm_iommu_ops->host_stage2_idmap(start, end, prot);
-	return 0;
+Not really, there are other dma engineer already reuse it for other purpose.
+So It needs update kernel doc for dma_chan_dev.
 
-but I think that IOMMU_MMIO is throwing me again...
+>
+> > chan's device's parent devices is dmaengine devices. it should also work
+> > for sdma case
+>
+> I see, this must be tested of course.
+> > >         if (chan->device->create_devlink) {
+> >                 u32 flags = DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_CONSUMER;
+>
+> According device_link.rst: using DL_FLAG_STATELESS and
+> DL_FLAG_AUTOREMOVE_CONSUMER is invalid.
+>
+> >                 if (pm_runtime_active(dev))
+> >                         flags |= DL_FLAG_RPM_ACTIVE;
+>
+> This is of course interessting, thanks for the hint.
+>
+> > When create device link (apply channel), consume may active.
+>
+> I have read it as: "resue the supplier and ensure that the supplier
+> follows the consumer runtime state".
+>
+> >                 dl = device_link_add(chan->slave, &chan->dev->device, flags);
+>
+> Huh.. you used the dmaengine device too?
 
-Will
+/**
+ * struct dma_chan_dev - relate sysfs device node to backing channel device
+ * @chan: driver channel device
+ * @device: sysfs device
+ * @dev_id: parent dma_device dev_id
+ * @chan_dma_dev: The channel is using custom/different dma-mapping
+ * compared to the parent dma_device
+ */
+struct dma_chan_dev {
+	struct dma_chan *chan;
+	struct device device;
+	int dev_id;
+	bool chan_dma_dev;
+};
+
+struct dma_chan {
+	struct dma_device *device; /// this one should be dmaengine
+	struct dma_chan_dev *dev; /// this one is pre-chan device.
+}
+
+Frank
+>
+> Regards,
+>   Marco
+>
+>
+> >         }
+> >
+> > Need update kernel doc
+> >
+> > diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+> > index bb146c5ac3e4c..ffb3a8f0070ba 100644
+> > --- a/include/linux/dmaengine.h
+> > +++ b/include/linux/dmaengine.h
+> > @@ -323,7 +323,8 @@ struct dma_router {
+> >   * @cookie: last cookie value returned to client
+> >   * @completed_cookie: last completed cookie for this channel
+> >   * @chan_id: channel ID for sysfs
+> > - * @dev: class device for sysfs
+> > + * @dev: class device for sysfs, also use for pre channel runtime pm and
+> > + *       use custom/different dma-mapping
+> >
+> > Frank
+> >
+> >
+> > > +	if (!dl) {
+> > > +		dev_err(dev, "failed to create device link to %s\n",
+> > > +			dev_name(chan->device->dev));
+> > > +		return ERR_PTR(-EINVAL);
+> > > +	}
+> > >  	chan->name = kasprintf(GFP_KERNEL, "dma:%s", name);
+> > >  	if (!chan->name)
+> > >  		return chan;
+> > >
+> > > --
+> > > 2.47.2
+> > >
+> >
 
