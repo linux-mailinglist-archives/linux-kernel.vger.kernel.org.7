@@ -1,182 +1,165 @@
-Return-Path: <linux-kernel+bounces-808601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772AFB50226
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:08:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD88B50228
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B695E31F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:08:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FB444E8055
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91713314C1;
-	Tue,  9 Sep 2025 16:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6581433437D;
+	Tue,  9 Sep 2025 16:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RMUDHvIY"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="0mtn3BHD"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541D431815E
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9F02EDD52;
+	Tue,  9 Sep 2025 16:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757434093; cv=none; b=iCv2IN4q003nI5Tl3S0TiJ43if+1dOFeYyPBFdt8+bdYfaIhtCSB94DFmG5E2KI27kq/8isaabmwWQYeTsghfwm5Ip1d9KcoFiF5K2XoPZj9IxPqRwRb4PjgnQQkRoADS2s+ZXXaiL83HUnzKwymL2FHfPVqbaxeL0UAwdLvk8M=
+	t=1757434107; cv=none; b=VRxec2n+5uFonT6w3S6BtoGRKIJNY3ybfLh7voD3Z4aPB5pEmEdBKIPH88CHjpaGDtGECHCJG3fv0v3c4UZoy9zLD5xWIqEHIpppMCUSsvxF5E0HUiTaAEx69hkqMM2/UD2b26uBukrT1YveasYlAvLmqRD5TJ9fdyf2YZgryVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757434093; c=relaxed/simple;
-	bh=6U4jBPfP+4hqpr9Ns80fHNJ6S3WC/wxAlNqw9CepAoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mRL00rhcvAD87KfhpUxY0E/0aYugmbw1hR13ur4fm7j6y/PF/EbfzqE6vrW5iauhbK6Q/3mumilGgRsSnFL2G17hMqTWlyoVGVTtjUPMp4F1hLYYzg7bUUOjeUOaB7FQNDow4d4XT+ifVyGHB6jTb19sl0gJoQWgWwJ8QFkMIQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RMUDHvIY; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 589G3Fq8028539;
-	Tue, 9 Sep 2025 16:08:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=yCzij3
-	lwPXWu6sDllPHsxlKV1DFXRLK5f2LdkRAekRk=; b=RMUDHvIYarO1NPovxTczAe
-	k5kcMSb813GbwXwDV6i4ZK6LkfrpQy9OPMQNkzLid/8iOJ6UFiFTB4v662KJj/Dd
-	58SKurn/jRaW9EbkWjd9mvj/oL3ZGkWTdv+F9AdhVcOdqo/Imn0V379zX6kGhInN
-	KQFzFw3Y26OWLJ7o+VadH3+AiWiIWFLwNOzEwZCgrAhljE3ADExSzJvwl7KmSDYw
-	Fwa5plZVDKk3OKh/MWTFoUZfTSyVwKrHnu5upR4CqRtOBsGoeqjh97OR+9ZUWk7H
-	JDeAyo5z0C7YZvO+lfYx3MaH6X5fDTu+DuamWysIUvPbfo/my5hNE1zNthV3lImw
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukee3pa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 16:08:04 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 589F1qF6001188;
-	Tue, 9 Sep 2025 16:08:03 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 491203bpx7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 16:08:03 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 589G81EU33817068
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 9 Sep 2025 16:08:01 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6E31020040;
-	Tue,  9 Sep 2025 16:08:01 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EB0812004B;
-	Tue,  9 Sep 2025 16:08:00 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.87.128.215])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Tue,  9 Sep 2025 16:08:00 +0000 (GMT)
-Date: Tue, 9 Sep 2025 18:07:57 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard
- <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Christian Borntraeger
- <borntraeger@de.ibm.com>
-Subject: Re: [PATCH v1] mm/gup: fix handling of errors from
- arch_make_folio_accessible() in follow_page_pte()
-Message-ID: <20250909180757.1114d727@p-imbrenda>
-In-Reply-To: <20250908094517.303409-1-david@redhat.com>
-References: <20250908094517.303409-1-david@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757434107; c=relaxed/simple;
+	bh=cA9M2c+NwIj2R5SNaIYS+Uj81/D0soHwTzFXUWCg/9c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fYzjAxih5Ni3xUIN1BGmwjzG+MnYRtxf4U+recS0/yeYJ3EQERuyS6M0PccPpiCI//jBWbTLvOSpS1RzkqHdY5SyOX3CN+1SeoHkURtJDKVdxXqlj8SdpVsqvH6c3giskLv7b1uIJZDigMLCNqwKLlfOT3Fc/sdU2GW5/60/dZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=0mtn3BHD; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1757434106; x=1788970106;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=cA9M2c+NwIj2R5SNaIYS+Uj81/D0soHwTzFXUWCg/9c=;
+  b=0mtn3BHDvXBdLSoHILRObME1FvConHbfJpLX5Iz0yr1lNS9qtSBZpGXf
+   fZ/iqNU16yCS0DKy1JVQrzZWldCKbw3NDxrH6eV6OLRLnzIF9Ed2g+OTS
+   L1BK2RY8OT29qG2UtnEqRYlVTun3Q/bwzKWgu5ZcFCwwT02lsZQR4bgHn
+   fPQWSHLYAdATiu5jKHhx+BVL1Vv0q7LcDE1ncL1ocFnfqRZONW7qgYWuM
+   3p4Vg5peFTY2Zq6Er1X+CgW+WP4xqgRvm6kTVtmjnp0k/C4QvfXRKPCs9
+   kBPDv9PK7iIzB8Ifku2Hu7ybQrf7OwPPVAv2avR6L9y4mRpfmQJqILMRM
+   A==;
+X-CSE-ConnectionGUID: U3r+KmqaRGWFfKqUCS3uWA==
+X-CSE-MsgGUID: IXZNLDIGTJK36sEJeagksA==
+X-IronPort-AV: E=Sophos;i="6.18,251,1751266800"; 
+   d="scan'208";a="277647069"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2025 09:08:25 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Tue, 9 Sep 2025 09:07:55 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Tue, 9 Sep 2025 09:07:55 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
+Subject: [PATCH] ARM: dts: microchip: sama7d65: Add GPIO buttons and LEDs
+Date: Tue, 9 Sep 2025 09:08:38 -0700
+Message-ID: <20250909160842.392075-1-Ryan.Wanner@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5NSBTYWx0ZWRfX0lWyfEZGUS5w
- LXY1c5sfuf2PvmgsPHWuzkS83RGsrAWpM95nq+N1tKo5UF9U1zi/qyS98B9Hrdtgd1vd4oX+MDw
- 6T2KHaGz34IVzW2xyMI/VgeytPjmtz/W1yF0ZnuXiMeUho0dUtN+zS/YAwgpqrTs7YdjO+tT24t
- yAdj5SMIAFUOcJvRoThf7tu33NkqVNw/wY3iIc/DXVjYak9T9G0zxVgnvWup4U89NMJU8XID02F
- SRy8zxIXVOoCZbA9ncIax4x19FS1Zjl9EAxURUNtvQY/I/fnoNp2xTgIZqGkRjmQSpgzTRNdxAE
- 1acb1XLGrt1uWX+Km/KDVO831wf7CYoG4gRzGAHNbMzX5PO6sn+wPJ61we+6JaY2RJoHEZVIc3b
- zY4ew97r
-X-Proofpoint-ORIG-GUID: vj4YCukf9maoZjMYBKZeshE7HQm4n5R6
-X-Proofpoint-GUID: vj4YCukf9maoZjMYBKZeshE7HQm4n5R6
-X-Authority-Analysis: v=2.4 cv=StCQ6OO0 c=1 sm=1 tr=0 ts=68c050e4 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8
- a=Z4Rwk6OoAAAA:8 a=9jRdOu3wAAAA:8 a=Ikd4Dj_1AAAA:8 a=FgLdBiW5u0QFqUhnriMA:9
- a=CjuIK1q_8ugA:10 a=HkZW87K1Qel5hWWM3VKY:22 a=ZE6KLimJVUuLrTuGpvhn:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_02,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 malwarescore=0 bulkscore=0 clxscore=1011 adultscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060195
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon,  8 Sep 2025 11:45:17 +0200
-David Hildenbrand <david@redhat.com> wrote:
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-> In case we call arch_make_folio_accessible() and it fails, we would
-> incorrectly return a value that is "!= 0" to the caller, indicating that
-> we pinned all requested pages and that the caller can keep going.
-> 
-> follow_page_pte() is not supposed to return error values, but instead
-> "0" on failure and "1" on success -- we'll clean that up separately.
-> 
-> In case we return "!= 0", the caller will just keep going pinning
-> more pages. If we happen to pin a page afterwards, we're in trouble,
-> because we essentially skipped some pages in the requested range.
-> 
-> Staring at the arch_make_folio_accessible() implementation on s390x, I
-> assume it should actually never really fail unless something unexpected
-> happens (BUG?). So let's not CC stable and just fix common code to do
-> the right thing.
-> 
-> Clean up the code a bit now that there is no reason to store the
-> return value of arch_make_folio_accessible().
-> 
-> Fixes: f28d43636d6f ("mm/gup/writeback: add callbacks for inaccessible pages")
+Add the USER button as a GPIO input as well as add the LEDs and enable
+the blue LED as a heartbeat.
 
-Ooops!
+Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+---
+ .../dts/microchip/at91-sama7d65_curiosity.dts | 49 +++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-thanks for finding and fixing this
-
-Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: Peter Xu <peterx@redhat.com>
-> Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  mm/gup.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index d27b6b9818a18..c969259d095c9 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2920,12 +2920,9 @@ static int gup_fast_pte_range(pmd_t pmd, pmd_t *pmdp, unsigned long addr,
->  		 * see Documentation/core-api/pin_user_pages.rst for
->  		 * details.
->  		 */
-> -		if (flags & FOLL_PIN) {
-> -			ret = arch_make_folio_accessible(folio);
-> -			if (ret) {
-> -				gup_put_folio(folio, 1, flags);
-> -				goto pte_unmap;
-> -			}
-> +		if ((flags & FOLL_PIN) && arch_make_folio_accessible(folio)) {
-> +			gup_put_folio(folio, 1, flags);
-> +			goto pte_unmap;
->  		}
->  		folio_set_referenced(folio);
->  		pages[*nr] = page;
+diff --git a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+index f091cc40a9f0..2fe34c59d942 100644
+--- a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
++++ b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+@@ -11,6 +11,7 @@
+ #include "sama7d65-pinfunc.h"
+ #include "sama7d65.dtsi"
+ #include <dt-bindings/mfd/atmel-flexcom.h>
++#include <dt-bindings/input/input.h>
+ #include <dt-bindings/pinctrl/at91.h>
+ 
+ / {
+@@ -26,6 +27,42 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_key_gpio_default>;
++
++		button {
++			label = "PB_USER";
++			gpios = <&pioa PIN_PC10 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_PROG1>;
++			wakeup-source;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_led_gpio_default>;
++
++		led-red {
++			label = "red";
++			gpios = <&pioa PIN_PB17 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
++		};
++
++		led-green {
++			label = "green";
++			gpios = <&pioa PIN_PB15 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
++		};
++
++		led-blue {
++			label = "blue";
++			gpios = <&pioa PIN_PA21 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "heartbeat";
++		};
++	};
++
+ 	memory@60000000 {
+ 		device_type = "memory";
+ 		reg = <0x60000000 0x40000000>;
+@@ -352,6 +389,18 @@ pinctrl_i2c10_default: i2c10-default {
+ 		bias-pull-up;
+ 	};
+ 
++	pinctrl_key_gpio_default: key-gpio-default {
++		pinmux = <PIN_PC10__GPIO>;
++		bias-pull-up;
++	};
++
++	pinctrl_led_gpio_default: led-gpio-default {
++		pinmux = <PIN_PB15__GPIO>,
++			 <PIN_PB17__GPIO>,
++			 <PIN_PA21__GPIO>;
++		bias-pull-up;
++	};
++
+ 	pinctrl_sdmmc1_default: sdmmc1-default {
+ 		cmd-data {
+ 			pinmux = <PIN_PB22__SDMMC1_CMD>,
+-- 
+2.43.0
 
 
