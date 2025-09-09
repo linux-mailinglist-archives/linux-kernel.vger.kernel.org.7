@@ -1,127 +1,114 @@
-Return-Path: <linux-kernel+bounces-809132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4A92B50901
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:51:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA719B50903
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295095E6EBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:51:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9436C4649D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E85271475;
-	Tue,  9 Sep 2025 22:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F242741A0;
+	Tue,  9 Sep 2025 22:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UdoVy+P2"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G90SVAff"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6DF24C077;
-	Tue,  9 Sep 2025 22:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51A726AEC;
+	Tue,  9 Sep 2025 22:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757458288; cv=none; b=bQ5DDC454cIrakykoxvSM9nRMkzO+Yiv/5Rz6HAeVOeAUKCNIns+D6RiHjp3Z6I5rRrPBwk15v3RPryWbHpKKSfuVdJA6WgsC8cSyxybMy4FvftOnm6/fqvNoP6NAAXztIxHzE+d8Cp1Ay6zjd51ooyLM/qQWVcwyf7r4XTsMbc=
+	t=1757458663; cv=none; b=iP2Sjkzzz61zCyg0gn8yfeCLxuAJHv3fEn2kVDt1n03z+P1A4CsSGqRyweUrDlgBstVQ3gkC7qsia0QqMcUqGsx6r5jauAmTBoVvwcbrhYCMJQ38sWU23mNKuq1lcL3z2H6S0qT5V+f4COUCkWVZfWPe1Sx+yACN/gxocXSSq54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757458288; c=relaxed/simple;
-	bh=hVkbApMjSIvOcQPTbhTfbGDhsk7uuR0NkY2ZCWwukDk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E9ZMxD9pxnl3hU2exaGfMa2lHjP2O3dC5sHADQ5WWpJRlPszzGvL+Gun/P/n1dprCPRLAMbSI8OH5lPYQ+724B3RZo9UM+fsJOlBmQnAgoxS+aOx/fz+CKrv1wrbx+tjTVqqWG02kVEzyF6s9SGrBFcIAqYjqCxWaHflG8eCPI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UdoVy+P2; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 589L0XYK030992;
-	Tue, 9 Sep 2025 22:51:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=R5/kwEtBv6MTG8QxbIi61njmmPO+O
-	S//mRuQfHWca5w=; b=UdoVy+P2j8q2+G5QqOP27sNDZMBD6oSmauiFdAXJidAi9
-	FF+pGO6LcgWpIkEp7J450itXC4rI0nDCOea5NVAS0Yq5wCQfYJ/FG4DuPWX2VOso
-	qJIpI1qxk1tcHmIld/cvHFP9Nk/knRRcTbxWugzu3CgYWrzVTxiAHP1rQlxTmQop
-	8nLiAF+G9SnURoFSSnWYg2T5QOPCKYsIEDx9YuMut33JWl373jRjCgCSdM7K2QOn
-	T5Y1ITjlze+9ZlcaHXs7EGidF+VE2NSnocol5su/5JvQ0CkhThk9iM6y6KfLMeOk
-	INfIO4swdFWvs6cbzh/JEnoMoyi8geEgaABKGXxpA==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4921peb2en-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 09 Sep 2025 22:51:14 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 589Mb1n4002987;
-	Tue, 9 Sep 2025 22:51:13 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 490bdgrsyb-1;
-	Tue, 09 Sep 2025 22:51:13 +0000
-From: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
-To: peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com,
-        ranjani.sridharan@linux.intel.com, broonie@kernel.org,
-        linux-sound@vger.kernel.org, sound-open-firmware@alsa-project.org
-Cc: linux-kernel@vger.kernel.org, lgirdwood@gmail.com, daniel.baluta@nxp.com
-Subject: [PATCH] ASoC: SOF: ipc3-dtrace: fix potential integer overflow in allocation
-Date: Tue,  9 Sep 2025 15:51:11 -0700
-Message-ID: <20250909225111.3740029-1-samasth.norway.ananda@oracle.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1757458663; c=relaxed/simple;
+	bh=1qrMDdgRVUTxlcehEiCAg8EBNYG4zIVOPgE34DWrMyk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oHQf/XmZwHo4m0Visvl55IMaY5SG05B0n1CIdTq6UsDuIvheqJhe1L0+44K5dW1GGr9AyYPMXXlLUDIxTBvnkjvP73coBA9jDETxWbCeMpo/xG4HQuie8J1ZRQ+FoPE1OZknoHY0MNcPR71k2vxPkJj5Mor3BAzqGBvkrIFrkpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G90SVAff; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757458662; x=1788994662;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1qrMDdgRVUTxlcehEiCAg8EBNYG4zIVOPgE34DWrMyk=;
+  b=G90SVAffrHxWRXLymomgzNzukzi98cUNp5J1Jhh9tuTNO/EQsK2QQAnd
+   EwdGtlSJ9iIcFrcMsbsvtz9HesxJiDJX9bOC5TNREXcpK0ZASSdFdi4XA
+   hsKA5IYakHDV8haRF1PliM8Bit0U/5dmSofmByYN70IuKMDcpS7IO+Uio
+   VZlvkwXGxrfmQ4UW4mLaAVtSS3j0N/QD/96xoRjLGO8de0frbD2Jw3u4H
+   YL/Sj/lmUrsdYvDJhK9PBMYVsGquHc93ek2HnNVhLtfqgKQ4YN4cfjGvA
+   pVB+bvbk0hZiWGaAbj8IoOzu1m/Xh6GYqBsm46rMoXPXg/3T5F05fdfeB
+   A==;
+X-CSE-ConnectionGUID: zEUdadQ9SVq2kHaanT33cQ==
+X-CSE-MsgGUID: h4X09MMJRle87KF1eBtG5A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="59699528"
+X-IronPort-AV: E=Sophos;i="6.18,252,1751266800"; 
+   d="scan'208";a="59699528"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 15:57:41 -0700
+X-CSE-ConnectionGUID: ixjKb18jT5GYZr3kVdO0XQ==
+X-CSE-MsgGUID: VoglGF7sQFWJVbMp24c6Ew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,252,1751266800"; 
+   d="scan'208";a="173131049"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO [10.245.244.230]) ([10.245.244.230])
+  by fmviesa006.fm.intel.com with ESMTP; 09 Sep 2025 15:57:40 -0700
+Message-ID: <e29fa12b-55e4-4ab1-b623-11feb447bdf7@linux.intel.com>
+Date: Wed, 10 Sep 2025 01:57:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_03,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 suspectscore=0
- bulkscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509090223
-X-Proofpoint-GUID: KcywZnWSITHM6LfDXmryhOSK9Aq_v1Fy
-X-Proofpoint-ORIG-GUID: KcywZnWSITHM6LfDXmryhOSK9Aq_v1Fy
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE1MiBTYWx0ZWRfX6hwg8mXDOpd2
- aFbw+LhEfVmJZ2z0kKVgvuNnJ4oBkRQ/3HcV+L2FLi9JuTsQ86VD+cTeWDNB1iEVI3YaPBeMNVg
- jg9KlP3fWGA6AoCiwY/rvKlS7tAgZfh6TVUvB4tmn0LN/yNjsoNCub+PzlJQFVPdxgrnSi/zA0Y
- CoIvyuFvtZETQ1LCs4xpG1dUa+TtH54Kzibw4CxXz3rgne3Tiz9EtMKwMv7Y+Vr7CmYFR4xQQV5
- cNJIV3/u4KoNK2HoJqOW34Pz1WpLeC141uttaquANuc584inmgyGt60DmDwIRDygMLUMwLmO3KE
- shWjYgtlDwnSGGP6SLTyWqpCHk3ev3nwUVNu31NmUJB8+MkaHNqBL8DDdT/qv59vyLbLmNeT8WX
- qp2ddQDrjfamfGsRejz6un8ssItotg==
-X-Authority-Analysis: v=2.4 cv=b9Oy4sGx c=1 sm=1 tr=0 ts=68c0af62 b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=mtaZG1nP8qNN4-AM54QA:9 cc=ntf
- awl=host:12084
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/1] usb: xhci: Queue URB_ZERO_PACKET as one TD
+To: Michal Pecio <michal.pecio@gmail.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250908130128.7ed81912.michal.pecio@gmail.com>
+ <6ca18b05-80d4-4988-bb08-3cad003e10f4@linux.intel.com>
+ <20250909193859.73127f85.michal.pecio@gmail.com>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <20250909193859.73127f85.michal.pecio@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Fix a potential integer overflow vulnerability in trace_filter_parse()
-where the allocation size calculation could overflow.
+On 9.9.2025 20.38, Michal Pecio wrote:
+> On Tue, 9 Sep 2025 16:04:33 +0300, Mathias Nyman wrote:
+>> Adding the zero-length TRB to the original TD when we need to send a
+>> zero-length packet would simplify things, and I would otherwise fully
+>> support this, but the xHCI spec is pretty clear that it requires a
+>> dedicated TD for zero-length transactions.
+> 
+> You are right of course, an empty TRB in a TD would simply send no
+> data, or maybe it's a TRB Error, I'm not sure.
+> 
+> But this is not what this patch is about - the trick is to use an
+> *unchained* TRB, which is a separate TD from HW's perspective, and
+> to count it as part of the same TD from the driver's perspective.
 
-The issue occurs when:
-1. capacity is calculated by adding TRACE_FILTER_ELEMENTS_PER_ENTRY in a
-   loop for each entry found in the input string.
-2. capacity * sizeof(**out) multiplication could overflow if many
-   entries are present in the input.
-3. This results in a smaller allocation than expected, leading to
-   potential buffer overflow.
+Ok, I see.
+The whole TD without completion flag does worry me a bit.
 
-Replace kmalloc() with kmalloc_array() which provides built-in overflow
-checking and will safely fail the allocation if overflow would occur,
-preventing memory corruption.
+We need to make sure stop/stald mid TD cases work, and  urb length is
+set correctly.
 
-Signed-off-by: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
----
- sound/soc/sof/ipc3-dtrace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Control URBs are like that and they work fine. They can halt on any
+> TRB (which are all unchained, per spec) and the whole URB goes out.
+> 
+> This bug is (probably?) low impact, but it bothers me because it's
+> a design flaw: either non-isoc multi-TD URBs are supported, or they
+> are not. One or another part of the driver needs to adapt.
 
-diff --git a/sound/soc/sof/ipc3-dtrace.c b/sound/soc/sof/ipc3-dtrace.c
-index e5c8fec173c4..6ec391fd39a9 100644
---- a/sound/soc/sof/ipc3-dtrace.c
-+++ b/sound/soc/sof/ipc3-dtrace.c
-@@ -126,7 +126,7 @@ static int trace_filter_parse(struct snd_sof_dev *sdev, char *string,
- 		capacity += TRACE_FILTER_ELEMENTS_PER_ENTRY;
- 		entry = strchr(entry + 1, entry_delimiter[0]);
- 	}
--	*out = kmalloc(capacity * sizeof(**out), GFP_KERNEL);
-+	*out = kmalloc_array(capacity, sizeof(**out), GFP_KERNEL);
- 	if (!*out)
- 		return -ENOMEM;
- 
--- 
-2.50.1
+There is a risk that this is one of those "cure is worse than the
+disease" cases.
 
+Thanks
+Mathias
 
