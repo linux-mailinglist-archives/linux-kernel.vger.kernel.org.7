@@ -1,95 +1,172 @@
-Return-Path: <linux-kernel+bounces-807375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1067DB4A391
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:32:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F7D0B4A3A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297361888CB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:32:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A531D1BC76FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2605C304BC9;
-	Tue,  9 Sep 2025 07:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4M0GeqG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9D33081AA;
+	Tue,  9 Sep 2025 07:33:53 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7C521FF23;
-	Tue,  9 Sep 2025 07:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC46B2DA753;
+	Tue,  9 Sep 2025 07:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757403124; cv=none; b=IQpuwSb8dciAjH3Nrn9bwDV7mhOjND7ny/jOchf/qthxu0RCb7aZAxqWz7nWfcwyC8KBVYU0ihLcN6XRY/8mrWVP3s3gzcmR9HSiEl0YLlqAiAO9kgyc6g9pPU4UEiCDpVGr7wxW4CeDzBU3rrhq+FmYd+eoYjAppt8Lxr4FPEg=
+	t=1757403232; cv=none; b=LYF4yPT+hStPFjTKE/9P0w30facw8X+kxb+C9Q5C/RM1Z34gopcuOzrxuESsh5o6spHM2DJXp5rpPzgFv85PzOGq86NSJdJbe1GAVR7EURp/1NgsAO3UbYBu8sq9r3OBOH5V86WrxShDkMMjeEeh0zE0XCXNGFhlFMdwWnguLNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757403124; c=relaxed/simple;
-	bh=tCqoK8+8l4HoLkfeBErfXAHZKgNG8757+5Zhpl8dWMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rJH4Em4mKoyYHTY6tWZ5ouLLYx69U4k9zeRruoGWubrjP+tijBuHZ+EkkXLeV1nBHiDxS2DLsNdoNWwMnFlF9gRdEfRQnaJZ6Ecrq+wHUOB/MtRzShUUA0GdTnE3JxEYs1MO+oQgH4CcJRVf7wq88t6Zr5kp20d0GXHrxUelNfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4M0GeqG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC92C4CEF4;
-	Tue,  9 Sep 2025 07:32:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757403124;
-	bh=tCqoK8+8l4HoLkfeBErfXAHZKgNG8757+5Zhpl8dWMM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n4M0GeqGSsSX4Y4S8pxZFZK160Z82Y5c9E88to32tLpfDcHEe8Jyc5M41+Ue5wiLz
-	 ybGlrvBEEAb1rNOJFSEfGReZX2U/TODKG/aTaIiWKbpmFVbN8q+H7G++bffxdVf2Ov
-	 GJJFB7CCV0gPK/UgsesYJK5Yy+yFxlr5j2m0wrutZKVLsnga+B242mn7w5npkheNZM
-	 6ns4/i9sSL5BJrUpD1k+rqbG4b+73mv7+MbzTIqF0g3kZDRl5bVMwvrCOg2S9gTk1h
-	 ERWB8SM3F0XIuAsPLPeQczW1jmnO2FTAIAWwsRNsT7mj0jlZgkbb1XSxBtWsN+A7Gk
-	 QLFsMSou3UJXQ==
-Date: Tue, 9 Sep 2025 09:32:01 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Richard Genoud <richard.genoud@bootlin.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Aswath Govindraju <a-govindraju@ti.com>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 1/2] dt-bindings: usb/ti,am62-usb.yaml: Add
- ti,lane-reverse property
-Message-ID: <20250909-curvy-happy-pug-eeffda@kuoka>
-References: <20250908162052.355341-1-richard.genoud@bootlin.com>
- <20250908162052.355341-2-richard.genoud@bootlin.com>
+	s=arc-20240116; t=1757403232; c=relaxed/simple;
+	bh=s5WDRABbopl64JiQZLMuXdSfEZhS/v30YCdeutDBtx8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YZP9W/rAdZ+PNRQNt87VN9z5yeGE9HyZkFZym9UwWpErYr8hVucz9cSAw4lm5LJRbyhzZnSQ2fgUZh3pgB4oSkE9nFL1rdKIg/nGrz+VbTDwAmzg1Bm15ZyOskN46AlKS+h39aYHm4DBLgw89xF4A2w5ef6T4JHcZKxf3Y9N0y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cLb884cZtz2TTD5;
+	Tue,  9 Sep 2025 15:30:32 +0800 (CST)
+Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 29C88180043;
+	Tue,  9 Sep 2025 15:33:47 +0800 (CST)
+Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.189.55) by
+ kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 9 Sep 2025 15:33:45 +0800
+From: Fan Gong <gongfan1@huawei.com>
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
+	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
+	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
+ Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
+	<shijing34@huawei.com>, Luo Yang <luoyang82@h-partners.com>, Meny Yossefi
+	<meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>, Lee Trager
+	<lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Vadim Fedorenko
+	<vadim.fedorenko@linux.dev>, Suman Ghosh <sumang@marvell.com>, Przemek
+ Kitszel <przemyslaw.kitszel@intel.com>, Joe Damato <jdamato@fastly.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next v05 00/14] net: hinic3: Add a driver for Huawei 3rd gen NIC - sw and hw initialization
+Date: Tue, 9 Sep 2025 15:33:25 +0800
+Message-ID: <cover.1757401320.git.zhuyikai1@h-partners.com>
+X-Mailer: git-send-email 2.51.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250908162052.355341-2-richard.genoud@bootlin.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemf100013.china.huawei.com (7.202.181.12)
 
-On Mon, Sep 08, 2025 at 06:20:51PM +0200, Richard Genoud wrote:
-> On some designs, the D+ and D- lines are swapped (on purpose or not).
-> The PHY can handle that with the LANE_REVERSE bit.
-> 
-> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
-> ---
->  Documentation/devicetree/bindings/usb/ti,am62-usb.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml b/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml
-> index f6e6d084d1c5..ba894d610af0 100644
-> --- a/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml
-> +++ b/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml
-> @@ -36,6 +36,11 @@ properties:
->      items:
->        - const: ref
->  
-> +  ti,lane-reverse:
-> +    description:
-> +      Should be present if D+ and D- lanes have to be swapped.
-> +    type: boolean
+This is [3/3] part of hinic3 Ethernet driver initial submission.
+With this patch hinic3 becomes a functional Ethernet driver.
 
-What is not working with existing data-lanes property?
+The driver parts contained in this patch:
+Memory allocation and initialization of the driver structures.
+Management interfaces initialization.
+HW capabilities probing, initialization and setup using management
+interfaces.
+Net device open/stop implementation and data queues initialization.
+Register VID:DID in PCI id_table.
+Fix netif_queue_set_napi usage.
 
-Plus, lanes are swapped per port, not for entire device, no?
+Changes:
 
-Best regards,
-Krzysztof
+PATCH 03 V01: https://lore.kernel.org/netdev/cover.1756195078.git.zhuyikai1@h-partners.com
+
+PATCH 03 V02: https://lore.kernel.org/netdev/cover.1756378721.git.zhuyikai1@h-partners.com
+* Remove extra memset 0 after kzalloc (Vadim Fedorenko)
+* Remove another init function in hinic3_init_hwdev/hwif/nic_io (Vadim Fedorenko)
+* Create a new separate patch of fixing code style (Vadim Fedorenko)
+* Use bitmap_free instead of kfree (ALOK TIWARI)
+* Add prefix "hinic3" to non-static functions and parse_* functions (Vadim Fedorenko)
+* Init func_tbl_cfg to {} (Vadim Fedorenko)
+* Extract endianess improvement from queue pair resource initialization (Vadim Fedorenko)
+* Use kmalloc_array before overwrite rss_hkey on the very next line (Vadim Fedorenko)
+* Remove extra key copy about hinic3_rss_set_hash_key (Vadim Fedorenko)
+* Use netdev_rss_key_fill instead of static rss hash key for safety (Eric Dumazet)
+
+PATCH 03 V03: https://lore.kernel.org/netdev/cover.1756524443.git.zhuyikai1@h-partners.com
+* Modify get_hwif_attr function for improving readability (Vadim Fedorenko)
+* Add HINIC3_PCIE_LINK_DOWN errorcode to init_hwif_attr error handling (Vadim Fedorenko)
+
+PATCH 03 V04: https://lore.kernel.org/netdev/cover.1757057860.git.zhuyikai1@h-partners.com
+* Use pci_enable_msix_range instead of pci_alloc_irq_vectors (Jakub Kicinski)
+* Move defensive codes to place that they are set/loaded (Jakub Kicinski)
+* Code format fixes: remove empty lines between error handling path (Jakub Kicinski)
+* Remove redundant waiting sleep in hinic3_rx_tx_flush (Jakub Kicinski)
+* Use ethtool_rxfh_indir_default for standalizing codes (Jakub Kicinski)
+* Use netif_get_num_default_rss_queues instead of driver-local logic (Jakub Kicinski)
+* Use netif_set_real_num_queues to set both TX and RX queues (Jakub Kicinski)
+
+PATCH 03 V05:
+* Merge comm_cmd_clear_doorbell & comm_cmd_clear_resource (Vadim Fedorenko)
+* Merge hinic3_enable/disable_doorbell to hinic3_toggle_doorbel (Vadim Fedorenko)
+* Update hinic3_Nic_io initialization commit message (Vadim Fedorenko)
+
+Fan Gong (14):
+  hinic3: HW initialization
+  hinic3: HW management interfaces
+  hinic3: HW common function initialization
+  hinic3: HW capability initialization
+  hinic3: Command Queue flush interfaces
+  hinic3: Nic_io initialization
+  hinic3: Queue pair endianness improvements
+  hinic3: Queue pair resource initialization
+  hinic3: Queue pair context initialization
+  hinic3: Tx & Rx configuration
+  hinic3: Add Rss function
+  hinic3: Add port management
+  hinic3: Fix missing napi->dev in netif_queue_set_napi
+  hinic3: Fix code style (Missing a blank line before return)
+
+ drivers/net/ethernet/huawei/hinic3/Makefile   |   2 +
+ .../ethernet/huawei/hinic3/hinic3_hw_cfg.c    | 168 ++++
+ .../ethernet/huawei/hinic3/hinic3_hw_cfg.h    |   4 +
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.c   | 361 ++++++++
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |  21 +
+ .../ethernet/huawei/hinic3/hinic3_hw_intf.h   | 115 +++
+ .../net/ethernet/huawei/hinic3/hinic3_hwdev.c | 541 ++++++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.c  | 269 ++++++
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.h  |  16 +
+ .../net/ethernet/huawei/hinic3/hinic3_irq.c   |   2 +-
+ .../net/ethernet/huawei/hinic3/hinic3_lld.c   |   9 +-
+ .../net/ethernet/huawei/hinic3/hinic3_main.c  |   8 +-
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.c  |  21 +
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.h  |   2 +
+ .../huawei/hinic3/hinic3_mgmt_interface.h     | 119 +++
+ .../huawei/hinic3/hinic3_netdev_ops.c         | 425 ++++++++-
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.c   | 152 +++
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.h   |  20 +
+ .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |   5 +
+ .../ethernet/huawei/hinic3/hinic3_nic_io.c    | 870 +++++++++++++++++-
+ .../ethernet/huawei/hinic3/hinic3_nic_io.h    |  39 +-
+ .../huawei/hinic3/hinic3_pci_id_tbl.h         |   9 +
+ .../net/ethernet/huawei/hinic3/hinic3_rss.c   | 336 +++++++
+ .../net/ethernet/huawei/hinic3/hinic3_rss.h   |  14 +
+ .../net/ethernet/huawei/hinic3/hinic3_rx.c    | 226 ++++-
+ .../net/ethernet/huawei/hinic3/hinic3_rx.h    |  38 +-
+ .../net/ethernet/huawei/hinic3/hinic3_tx.c    | 184 +++-
+ .../net/ethernet/huawei/hinic3/hinic3_tx.h    |  30 +-
+ 28 files changed, 3920 insertions(+), 86 deletions(-)
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_mgmt.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_pci_id_tbl.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_rss.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_rss.h
+
+
+base-commit: b1c92cdf5af3198e8fbc1345a80e2a1dff386c02
+-- 
+2.43.0
 
 
