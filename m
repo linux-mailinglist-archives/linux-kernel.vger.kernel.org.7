@@ -1,172 +1,190 @@
-Return-Path: <linux-kernel+bounces-807384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A63F0B4A3AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:35:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E0D8B4A3E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C0374E8377
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:35:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3983B1889435
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3470130BBA9;
-	Tue,  9 Sep 2025 07:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F613115A3;
+	Tue,  9 Sep 2025 07:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jESmtp7Q"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CAnx/uxW"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878AE309EF8;
-	Tue,  9 Sep 2025 07:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A592139D
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 07:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757403241; cv=none; b=ejNIAhHItDQeIJzB9CQ0ejHyI4My3lwdOw/s2dQoIsMsIpBPWfodbXEVP8CVf7O/6+mmF+eSL3l6zv13zvgmS2QSXaNZJhpNTCl8mCFNR5D0k3HvWwdw2Dqqs6M1vZYF9VhmODNbYIJe3C8iCPF4PQM5t/8ub5vE3GJz4YgQ3Os=
+	t=1757403254; cv=none; b=pPVXVJ4m4lzDWaf5KpyYHmSoOICitgg+ccPuptk+eCHur/gbJ1CWkbsCSDq75Q8/GOMy85iUvOvJfVxkOPw8YnBdoiKowvFyKENkq9w76TNUob0rG5DTBVgC64JdBw8mf8CePjeZDrVRl+oX0N3Ge1pv8vuV5969P483MdlFfo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757403241; c=relaxed/simple;
-	bh=veQ9/3VO6iMznCoUt98pm7IfBkLnXS6jvf70DOTw9Hs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oPDq32zAg1g0DGvSuBkGlzFjeg8EilEAiawsWHLRP+Rv8t3+sMKXEIz2jfyKd2uiCtCmD/GWi9d+OmTKnBV0MQap5WcYuRuWkm3BKe45GHaKgx9kfU2ENwEjSpdfTrD9K6VIGF45uTV1CzhJ5uDuONMcgkCoBBMj9H9uw9+KSVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jESmtp7Q; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-33ca74c62acso19248101fa.1;
-        Tue, 09 Sep 2025 00:33:58 -0700 (PDT)
+	s=arc-20240116; t=1757403254; c=relaxed/simple;
+	bh=xcF1+MEKiAWyH9x4MCi0tNb/KeZNSRVxlLDPwVgV2eE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=kG/dMPr53XcGoyT/Sa8IOPlCSXqzmgPa6Dl4PRH/lv39HHXD/1uZPS3Fz7c+aGKUdlJtZpbzbpFeqQHS+A+fqmiWmNqaXYML42iRkkqgTiVZee3liV8kNWyxzhHbRFdryeNfyysftWpleuXs5z9Zzvozy6dAVOsala3+viGW63I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CAnx/uxW; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-62105d21297so7781791a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 00:34:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757403237; x=1758008037; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DQrz/QPYOHYsP4Cfl9B2GTYZm08Xl/E70LbUu7rauuk=;
-        b=jESmtp7QEs/YsbwX803onOtqul2n6igf9BVV2X7AUeuoINAtk7pLd++R1ThKG9yS5b
-         EWisFPgOSGF4KpRRUizo9aVGKFdE6FDF49DcuVjbMpEqWEdMi/VX9hbTFngqZzd0+c0b
-         Yts8ybo27twlnYwwqDBJfGts7zDxD+L9gkaPbbKmiKEVe58YcGE3a0nXmj5GqBklWrQ+
-         5T5hNq85V4/LxU4JGTGz8g/3EN8RUO+6PD1ad7EPdX1yz1GoTS1NKoc0SyQQt+EPZkaQ
-         wyQRm48nYJWBFn4X6kF95XmzlSb/o+ynU2lta8z+XKxPW+eKA5/qKoqEpYCy4A8TFPmX
-         WS4A==
+        d=linaro.org; s=google; t=1757403251; x=1758008051; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5rg/RhV2e1lLuIc3WSHEgsNCRdRmHci46R41Lm59lsc=;
+        b=CAnx/uxWXdMFelJ8qG35f9qp0Wbj0xvDdjm4QCXOymidSdgMuD1a97CMOiluJeaEES
+         vObZ/YnX69Rcv/66QOHrGXlh3Y7jPQMi6iqPAg1UjoEChFxPV0/qusknYP6W0Mkww53n
+         vJjmPA4uvNLMWVYRRFpFWkA79OpbCmrOtYEU9aMM4oz1FNEcQcjDHs+v5yfccnXdgk9I
+         MusuXp9HHObF84KikgWl7TNcMZyrZlJL+2wo0B34nKdLPSTvWNZDPAn31uSTgDPvxJ7b
+         yeZifwK8cMGl23nxzxBPA0pa6ZCtCu4lXKXpUhpGRBG7P8rkSIVSRPMofvqdw0jh9iUQ
+         lIAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757403237; x=1758008037;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757403251; x=1758008051;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DQrz/QPYOHYsP4Cfl9B2GTYZm08Xl/E70LbUu7rauuk=;
-        b=R6VmQkVS97S/JaWV97KuK+EhdRpmjHUDWWJQuJo0lzFzL/7RQC2n3i2+FjAsz1K62C
-         8j18T5jK6frmQVqxIbk4fcJvpELkovMtH8n0aoBXQ4vJ/fOD269xhSJCqTLtT3urXitA
-         idabJD1ZGdQ9GtDkHFLAGIh1m5gnAT98jMwOe7bF2d8nkzM2Y1V+ncdHDG0n5D5S1tUI
-         GeS+/urD3KZS6me5Z/PhQAIfbMqSF5T2lnDnmshKmN6zO96KHxoezc8f91V1moulztWL
-         xQ/3vuuXpnOo619mF2+jiv17lV/X1kwrIu4dR+Hdb4C1RWXHgIhPnClBqj2+VwKOKwCs
-         ge4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUKPyiFwTjW6ZMkPDMbuV5rG/MJEASHlEnKN8flRv9wFTQ+X5IpmawbhpbqeQdwvrUb5lkkkqRPHfJtY/8=@vger.kernel.org, AJvYcCV30+Zz6Rh70VVXwaRQfOrz0pbPuQCXWYRNog2ONKuRebuhrWdL+npyzwgN255mfwfsrRT33fPj7kbhGhQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwp0HXZd4Nsham1d1umJea5dfI4gGkJ3V9iT1JEJuI48drPmgE
-	ueRgB+XhUIuA2PQvPBOjgW1Ufhh+eJrHsaN79pZ9ga9pKhqy9S9+VA6G
-X-Gm-Gg: ASbGncvFgs+C6WgnoAKTLZ+HmK7e4sNeqQLoDShnMpkFcdN2z+Be+v9ctRMqD4FHRZM
-	53/IgXeO2T74O3T2GA1hLSlFkf2Uwt9tSfnN890KhjRY89hxLR/ssMMYS11THMyDIpy+aj244Zj
-	/xvjuT+ZqkWmo78wh/lQfYxhEO3BkhZ+yvniRifmdlOh1xHaDIwfekXuNTfkau50G4QRCdNUHMK
-	8VdyyQhI5XTo9rzxttKeieBC6fkOTWUBTm5Lk1WkTdzXo6IPpoRtMPhMFdGpEyQ+4GkIJNKaagE
-	xWjjerJTJ3jNp0yOMzG5X31MfQVzmFcNak/YWAir0CwTTS5mSM1u1L3+jEY2Xs7a9BW7/SNxGAZ
-	RS3Q9X6BRA2wcXWf0olElOsTH
-X-Google-Smtp-Source: AGHT+IG7b409ZZaz9WYBpWBHJXflu4ExPWhaJ6oRz2uN0iqNOX7r4BIF3k+etTXLQ89f4RpIzZD6Hw==
-X-Received: by 2002:a05:651c:3254:20b0:336:8369:d028 with SMTP id 38308e7fff4ca-33b553ae52dmr25007991fa.43.1757403236352;
-        Tue, 09 Sep 2025 00:33:56 -0700 (PDT)
-Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4c91a6bsm37542721fa.21.2025.09.09.00.33.55
+        bh=5rg/RhV2e1lLuIc3WSHEgsNCRdRmHci46R41Lm59lsc=;
+        b=GPhY+TepNPjiJSW3qqyRt23JVCC406WA+fQXeoaHTRpzPoPPplS8irrzkYVxm6LVeV
+         u3SxJw+epklmhd+5lf4XON2s0/OBDYi27Ms30gc2/Lv/Ed1tTq/FLiemjc4nt7Ux3htL
+         XjVbvncqsu4GP1ypYCW8dPBL5ESdbECAWcqv5cUBdC0qm/bEM16IJextFSkuO1YUSnjr
+         7liSiXKOiqXCl+OryY+ofYt7j6V9VqVZFj8mmVbDNKbtc1GwAVa00jmnpDdCvc//3NUw
+         +3rdoTrUGM1nhxV/QpobdxTgu/6r9xqCKPmAX9d4FyuSWXm39YCS+3kaQUvYaLcz3HDH
+         /X4g==
+X-Forwarded-Encrypted: i=1; AJvYcCX/b0vsxR4He1JTuda6xY6lANHHS0JrBFvJJRetJfbFHsdbLl6QwpUOHUjA2lSBJVnXn9J45HrhnR2x5Sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWpWZQ/iVFYQK/WaBO0vAxpGx1Lc2BcAMfDC6UKtqAt49mwZQI
+	PgIcsWuQNwX/cqJh4J/Tqe2WdbxXfKqNr+TXQ2d6gIoFBh12lnGJ/C54rxm9Mzwy7ao=
+X-Gm-Gg: ASbGncuDL1tl1OJT3q3Cy5MVANmC+YRwxT79TQtZNSO8G9KJzLAcYWxzMmEaHECSbrF
+	+l7eay8aTZfan5Kqoy/dbey4veOcgzBmYQ/4EYobs6gAcjGjzGJhRsWQSEK4WRpy7WbvymI+3AW
+	nfuwJzQpDOOasbfeG32CyOe8Qzpjm6KZ90eAWHeHshUQBAvXMTqTVyXTR4oERImQ/JVus05rUQ/
+	H8o1/hKw2/AFG7GT2TiNOxo5QNhAhGRougWayTQeBevF1KB7k9ykbl0xMNiCLYnRB8EN4eQ5K9F
+	FVsmJz55qW8lDX3kswMLcSBdINv/iI1YtoL+Bs1+vWSbnH/AReCFuYwc8dLlGL3DDo0drSddmpQ
+	9B+P53QNyF36KKI6ho1DowS6m2eIzHXJrvQ==
+X-Google-Smtp-Source: AGHT+IEoui16Wu4c8S3L4aHsSGtceBy3SbjTMaW7kjjsQ9z2Qa3g8mOzn+XgsCcLq1MlKKPXh9Gwyg==
+X-Received: by 2002:a05:6402:2553:b0:617:b28c:e134 with SMTP id 4fb4d7f45d1cf-6236d2ca6cfmr10693352a12.0.1757403250815;
+        Tue, 09 Sep 2025 00:34:10 -0700 (PDT)
+Received: from hackbox.lan ([86.121.170.194])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c6a264285sm226976a12.2.2025.09.09.00.34.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 00:33:55 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] gpu/drm: tegra: dsi: make SOL delay calculation mode independent
-Date: Tue,  9 Sep 2025 10:33:34 +0300
-Message-ID: <20250909073335.91531-2-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250909073335.91531-1-clamor95@gmail.com>
-References: <20250909073335.91531-1-clamor95@gmail.com>
+        Tue, 09 Sep 2025 00:34:10 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Tue, 09 Sep 2025 10:33:34 +0300
+Subject: [PATCH v3 2/3] phy: qcom: edp: Make the number of clocks flexible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250909-phy-qcom-edp-add-missing-refclk-v3-2-4ec55a0512ab@linaro.org>
+References: <20250909-phy-qcom-edp-add-missing-refclk-v3-0-4ec55a0512ab@linaro.org>
+In-Reply-To: <20250909-phy-qcom-edp-add-missing-refclk-v3-0-4ec55a0512ab@linaro.org>
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Sibi Sankar <quic_sibis@quicinc.com>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: Johan Hovold <johan@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>, stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2533; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=xcF1+MEKiAWyH9x4MCi0tNb/KeZNSRVxlLDPwVgV2eE=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBov9hl9iMYgZprCt2bHiMuwgd4ZPePSdJzf62ZJ
+ eLdCNWJWCGJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaL/YZQAKCRAbX0TJAJUV
+ VqEmD/91wM0XInBFmJjGixObCmJt3LI6LtRwaMv7DYq8yi7Urs/r7nnqxLAWlld/oCqPy5X7R6r
+ Z9DqqQY5lkXKkB0ZB3rzG+B1/47QzK7Af2ZemX/wcxrYjBF1yfUiny+o0GQMZOigHxCuIOOL4uE
+ voV59gKu4yfUMRO0Rr5tDsMFn78XK62mqEAHPvR7Iqk2u95696YDkDTsWthBfjUo8HZPLT12AH1
+ z/oV2pg5T4RLoc/dVqdsS6gA5jJnvbqAONH/02oR8cMBurgK3cjE4CdvbZq6AxMr5vF/7hmns8N
+ u+RKa03rubq3Skz60I+yCGEPjj64MyMwL1EvgkXSBHEkDfYtxcncR7Y2FQccds8vbZ/tIS/mkaT
+ 6WkgvTpyqda2PrF34ySWs5W5kULwBbBJhphbQzTZAGg+utlHIKy2lOava9Pw2KY/KxYPioEezGH
+ wnvMdE5kT8Zu2npz5RHpEKJUXXWJsH523G5ev6a/vfh1TTTt92Okll7cR36c9qAN5jkDD7V85mU
+ 4kHQKPwFFC4edr33nBvpYMEEtcIWGk6i73T2tBZlm4SRA9/ufooi5bKGiMATnmV7A1+oF2owvZl
+ pEaAI3/75mejOyR03EJXciZLY7WlLX+ssdHJCdfuEGmWIv+nUA6+XWnXXTKHTmeIo6ELKMAXZEk
+ +uObN4KalA/p8Hg==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Move SOL delay calculation outside of video mode conditions.
+On X Elite, the DP PHY needs another clock called ref, while all other
+platforms do not.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+The current X Elite devices supported upstream work fine without this
+clock, because the boot firmware leaves this clock enabled. But we should
+not rely on that. Also, even though this change breaks the ABI, it is
+needed in order to make the driver disables this clock along with the
+other ones, for a proper bring-down of the entire PHY.
+
+So in order to handle these clocks on different platforms, make the driver
+get all the clocks regardless of how many there are provided.
+
+Cc: stable@vger.kernel.org # v6.10
+Fixes: db83c107dc29 ("phy: qcom: edp: Add v6 specific ops and X1E80100 platform support")
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
- drivers/gpu/drm/tegra/dsi.c | 41 +++++++++++++++----------------------
- 1 file changed, 17 insertions(+), 24 deletions(-)
+ drivers/phy/qualcomm/phy-qcom-edp.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index 924611061cfa..aab555a2eb68 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -560,11 +560,6 @@ static void tegra_dsi_configure(struct tegra_dsi *dsi, unsigned int pipe,
- 		tegra_dsi_writel(dsi, hact << 16 | hbp, DSI_PKT_LEN_2_3);
- 		tegra_dsi_writel(dsi, hfp, DSI_PKT_LEN_4_5);
- 		tegra_dsi_writel(dsi, 0x0f0f << 16, DSI_PKT_LEN_6_7);
--
--		/* set SOL delay (for non-burst mode only) */
--		tegra_dsi_writel(dsi, 8 * mul / div, DSI_SOL_DELAY);
--
--		/* TODO: implement ganged mode */
- 	} else {
- 		u16 bytes;
+diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
+index f1b51018683d51df064f60440864c6031638670c..ca9bb9d70e29e1a132bd499fb9f74b5837acf45b 100644
+--- a/drivers/phy/qualcomm/phy-qcom-edp.c
++++ b/drivers/phy/qualcomm/phy-qcom-edp.c
+@@ -103,7 +103,9 @@ struct qcom_edp {
  
-@@ -586,28 +581,26 @@ static void tegra_dsi_configure(struct tegra_dsi *dsi, unsigned int pipe,
- 		value = MIPI_DCS_WRITE_MEMORY_START << 8 |
- 			MIPI_DCS_WRITE_MEMORY_CONTINUE;
- 		tegra_dsi_writel(dsi, value, DSI_DCS_CMDS);
-+	}
+ 	struct phy_configure_opts_dp dp_opts;
  
--		/* set SOL delay */
--		if (dsi->master || dsi->slave) {
--			unsigned long delay, bclk, bclk_ganged;
--			unsigned int lanes = state->lanes;
--
--			/* SOL to valid, valid to FIFO and FIFO write delay */
--			delay = 4 + 4 + 2;
--			delay = DIV_ROUND_UP(delay * mul, div * lanes);
--			/* FIFO read delay */
--			delay = delay + 6;
--
--			bclk = DIV_ROUND_UP(mode->htotal * mul, div * lanes);
--			bclk_ganged = DIV_ROUND_UP(bclk * lanes / 2, lanes);
--			value = bclk - bclk_ganged + delay + 20;
--		} else {
--			/* TODO: revisit for non-ganged mode */
--			value = 8 * mul / div;
--		}
-+	/* set SOL delay */
-+	if (dsi->master || dsi->slave) {
-+		unsigned long delay, bclk, bclk_ganged;
-+		unsigned int lanes = state->lanes;
- 
--		tegra_dsi_writel(dsi, value, DSI_SOL_DELAY);
-+		/* SOL to valid, valid to FIFO and FIFO write delay */
-+		delay = 4 + 4 + 2;
-+		delay = DIV_ROUND_UP(delay * mul, div * lanes);
-+		/* FIFO read delay */
-+		delay = delay + 6;
+-	struct clk_bulk_data clks[2];
++	struct clk_bulk_data *clks;
++	int num_clks;
 +
-+		bclk = DIV_ROUND_UP(mode->htotal * mul, div * lanes);
-+		bclk_ganged = DIV_ROUND_UP(bclk * lanes / 2, lanes);
-+		value = bclk - bclk_ganged + delay + 20;
-+	} else {
-+		value = 8 * mul / div;
- 	}
-+	tegra_dsi_writel(dsi, value, DSI_SOL_DELAY);
+ 	struct regulator_bulk_data supplies[2];
  
- 	if (dsi->slave) {
- 		tegra_dsi_configure(dsi->slave, pipe, mode);
+ 	bool is_edp;
+@@ -218,7 +220,7 @@ static int qcom_edp_phy_init(struct phy *phy)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = clk_bulk_prepare_enable(ARRAY_SIZE(edp->clks), edp->clks);
++	ret = clk_bulk_prepare_enable(edp->num_clks, edp->clks);
+ 	if (ret)
+ 		goto out_disable_supplies;
+ 
+@@ -885,7 +887,7 @@ static int qcom_edp_phy_exit(struct phy *phy)
+ {
+ 	struct qcom_edp *edp = phy_get_drvdata(phy);
+ 
+-	clk_bulk_disable_unprepare(ARRAY_SIZE(edp->clks), edp->clks);
++	clk_bulk_disable_unprepare(edp->num_clks, edp->clks);
+ 	regulator_bulk_disable(ARRAY_SIZE(edp->supplies), edp->supplies);
+ 
+ 	return 0;
+@@ -1092,11 +1094,9 @@ static int qcom_edp_phy_probe(struct platform_device *pdev)
+ 	if (IS_ERR(edp->pll))
+ 		return PTR_ERR(edp->pll);
+ 
+-	edp->clks[0].id = "aux";
+-	edp->clks[1].id = "cfg_ahb";
+-	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(edp->clks), edp->clks);
+-	if (ret)
+-		return ret;
++	edp->num_clks = devm_clk_bulk_get_all(dev, &edp->clks);
++	if (edp->num_clks < 0)
++		return dev_err_probe(dev, edp->num_clks, "failed to parse clocks\n");
+ 
+ 	edp->supplies[0].supply = "vdda-phy";
+ 	edp->supplies[1].supply = "vdda-pll";
+
 -- 
-2.48.1
+2.45.2
 
 
