@@ -1,191 +1,161 @@
-Return-Path: <linux-kernel+bounces-808281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8D4B4FD86
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:40:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6951DB4FD88
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E3175E4BCF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8366C167333
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B900F34DCC5;
-	Tue,  9 Sep 2025 13:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05965342C98;
+	Tue,  9 Sep 2025 13:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dN6L6Nl1"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bpV1lJvt"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1293451A3;
-	Tue,  9 Sep 2025 13:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38EB4215198
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757424951; cv=none; b=Vvo7Ntkupk9RIiRF/cuBJ1O+ABnKvdk2kJP+DnrJ5vi5d1M+JT/NH1xJqkavquiS4Pt4bHYqGk3C3ZvcfkJIuC6JdvdwrbmkkLtpMS1ry3IrTuMH+7gVKbnqCdt2BLatIlHtI2sx7dpADAvCW6rQmjALrU5dc8qZd0hpCEuTMiM=
+	t=1757424999; cv=none; b=aL4gwR7lc4H+SYa9nNBB0hVxKcXBClDu90KxfDuqBs7el21cS9PsarSJ1rWLvhaS6FWvX7/T7vEDg/YtocqGTdMV3fvQTb4CgDfnT4IYJMY2CzXOXmOL1W/LkL25n6rFr1dT7QtRpl+ZAiX80ZcgoYJNBCxzMaT+uyip9ieEfdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757424951; c=relaxed/simple;
-	bh=0uqewsNJRppxmhLbRxkhsb06qh232+OirkSTxVQyuak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=deKxD3i6yhzLNz8tD4nyAFaHh7e1TPwkD3if5PC8x6QbTeteYfZKYcUE0F1sx/dE0MLxbvryyqN6ogQ4+hqsDJu2cAXUOb1WMbaFGzlVvWZTfg33BZR7ctsPR6lHqz2CyJfqlY+ECCv0sOub8+Nj3HuOGuq7WYuJLbw+k89bhuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dN6L6Nl1; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6229f5ed47fso4809289a12.1;
-        Tue, 09 Sep 2025 06:35:48 -0700 (PDT)
+	s=arc-20240116; t=1757424999; c=relaxed/simple;
+	bh=GeUdJBt+v1KLgbpRUvyZgBAL3FGBKi3BqI0ivCr3XSw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=iBh7JfW26uWANzQUHu5bIm+m7hM6d71vc+qWR7sNhZWk855ZX+1DUTQmBoTuASbb2BFHwgcP473I9CRDdE/BFM1aR9VojRetRQ0X4w6/KwprQqPsAbqoOjUQ1sc2HALq8feDmSRgZ3PJMTi5CZQ9urfbLjAiNP9c7c3TDpOQkjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bpV1lJvt; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3e26b5e3f41so2380773f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:36:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757424947; x=1758029747; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q/DFjvabh+Crv2HI1L5X9lsS0Izjk3JHWzvsY2mfML8=;
-        b=dN6L6Nl1pVM8uR0zQyW/sx98qoLNa5xjWbAKXDCJGeSoX9N8j70gnWrgaGulIUjSaw
-         OFHMZzY61OpWM3ZoXImDuvkMlzy+O0SOpWj69jIPj+KusSthAxdnD2Brk5Es6f//c2B2
-         93UAQGRsy+GdaxS2RLVgzKNJA+IDiFQ2TBbm9SJ67vaaYrUmoRY6uiTTdskKTDWUMQ5J
-         GQmPwMHWukYToMeSwfI3nvFfTUZXGMNG0ail1CEszKIrqoruTfNeF2TU/UkYrFgJRcvd
-         /2A5AfBnAiJ0Q5TDlASa+a2UkvadisdDsvdcjpgdmJPf8elf2v36hjKureWAPs5sRwKn
-         qMbg==
+        d=google.com; s=20230601; t=1757424995; x=1758029795; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kXmltCaa+AaoNYSNTm6MtPTiMQ0YZbzrD/4xtNxBMMM=;
+        b=bpV1lJvta3dfswwRvwsoePBn68HkR/UorsZUHHbGQBD51gGfCCABPexhuKNzxcvv3j
+         9RNdd/LMC0rWtLZ4JfFkphOYCpqTFRm13Mg9Lgxwy+CRlbR26vTTmm1xHI56YqgfxbWC
+         JwrK1k/lGSBq5zKSFcaicVQOgbw+EASgtdSEdG6rnQaWVqHfM7nwGTKjiMvQVMJ5c5Mp
+         aMhR62eLtOUCYryF4b/taF01Uw2skUOPQJykXgVakLd3X05DfEz+GI2wE5V+SocjPIDM
+         bD5lL4V7V5tDFnF1IEkB4mq7g4tvBPTST9ONm6o4Qjo7tJI3uDRcJ1XlDQWIrjEZmkom
+         lIZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757424947; x=1758029747;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q/DFjvabh+Crv2HI1L5X9lsS0Izjk3JHWzvsY2mfML8=;
-        b=JYUqkqy0iDapfRXkLyRySGYQC3gzl278jK+PiVpELZ8QZZRZICbrHDqYNOZN4Xr589
-         vM1W/tZsCWqNfXFFcg89DcaKybogrLRVnJmUL2M1qJzZQ463yKIkVoZd8IKvNlSJkICI
-         4e5HQaQUQjGLt1s7AjoDqQExHVMbDGN7jYZuzblpcmfufWp8k8WudbkaAl27qwKPGhq8
-         3GJg/+bS42av1xxE7QxsYwCDQkcSGJZjWV8ifWeVAxcToqBoSLrYpIHPfmTdnNyhYgpH
-         h5QV4PQqjatUdvvBLUk0q/u5F/021peWoU6C3cqVAiuMq2EXQ1vxmrI9scZlxLoNngJZ
-         m9HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUK3gn88gploEkVeGZ9Pf8qAVGt9x5/m19qU98whUBf9BiaQw0HyvRNG7wrjQgUVEARW6iVb3n+QLeaKOlo@vger.kernel.org, AJvYcCUKseGbXvDpktAyPDsynjR8QOf1NaEmivSLmYz0tG4tKf2kjW9fPjDA3fBN6efEKYNRnjCj6gHfWvYHvfuWjY6u3w==@vger.kernel.org, AJvYcCUxlJsqC5fHiJZaAxUjxPcoeHKmAr/hDrSf8PZHz4U0V2svs8uXZFVxl5AqSOjO6jB5eqDha8NapqmI1h9e@vger.kernel.org
-X-Gm-Message-State: AOJu0YyreBdPG1yqFt8Uytp3mKJiLay8fvHNsplWNOpLqnGSTiC2070f
-	ZJW3tntP1X/HrqywKziLn+Hx/np1ghrx/1jLApoNY+u75K2CmdLa5KyZ3FeCB57Ufu5BdzRW59Z
-	lMBgImIzn43RhglsvVQiwDFvt1YAyVa4=
-X-Gm-Gg: ASbGncsySZYjo+70/8kvvmsEUezfk8nuDaYlXSxwrF7pU5yPnTNFuZmAnURb7z2ZWN/
-	ZieGnk9yF5Z/c7dvIpXfmlgPi2IauFu7gF6ZMXjWRyo9wLveSXtZFWTkPrVvoVjejkSf70ThfAC
-	p2cMNWFFx5FeEImnpvDfTbVqz5+1nnTrCFpCWfqqL7FelgcnHjGtxiQ2QV9c6MFRoEbYwnmYE9M
-	fTWQzo=
-X-Google-Smtp-Source: AGHT+IGL5tn8Jf0e3o9yUCm2+CbPk2HiFscLaxC8amo2qQeERvPZHlpWN7h3oq+c5wj50rCLKXrsJliEBfTo+xGAy0w=
-X-Received: by 2002:a05:6402:27d3:b0:62b:ae0f:11cf with SMTP id
- 4fb4d7f45d1cf-62bae0f287amr2866455a12.19.1757424947274; Tue, 09 Sep 2025
- 06:35:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757424995; x=1758029795;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kXmltCaa+AaoNYSNTm6MtPTiMQ0YZbzrD/4xtNxBMMM=;
+        b=LRJ9ClNcxznZFul+PjDxVeDObDrjclGPykSXOa3SJOvaINB2htjtdab2TDtbJG7ccg
+         4SEW5OjIjci3Mt7ZYYcj8LNguthG1H3qa0T/J7X/SVmpPdqHqB1lWzp/iDuqHAddvb8a
+         5UvX8W/+PaTwvaZdWg/ik4eopRJObswQyJBr9fXKn9/2pPpyb0jef/eVaDhwO/ZFI2Kk
+         YVLNIbaWDhRAkR+bdQPnA2P29y6RYvWX7dsz4XX6SapzVY8hcXbnS0fcAJiHCT8rD6Ta
+         0CyEDDXVRScvylKlv8sSThzmm+tCD8lfMglDrzXZ888cblOt8D6jrCTsl6GujGJA7ENw
+         eqEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9CdeqREyguiMxeUH7aCCEotFCqqwFrLSycUx9oG+90qtcaMsVGv6H5fxCDAQXyPYN0bmMpM7F3ZDvfng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMb/oSS9nyx776LL6ZsyBhDE1WbQdSdYj4EferXvn9tsoHjwKz
+	Ab5C5fNe7u/PE5oO8g33N7lE+HSFwR4HSq43D1bMPvJL4+0gxJI3rYhtD6iSzNo/D0yADc0AnO7
+	+VK8fXUpTD/EJbNsTQg==
+X-Google-Smtp-Source: AGHT+IGpd7wVDU7QaP3WDSMkWRZay0a703HdaORpePC2ExBYXtfISIk0y/IycXtdZ8Fxh2p+uKHUoHh4HXK5Hec=
+X-Received: from wrp30.prod.google.com ([2002:a05:6000:41fe:b0:3e7:5322:fa12])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:adf:a2de:0:b0:3e6:e931:b3e7 with SMTP id ffacd0b85a97d-3e6e931f910mr6330514f8f.61.1757424995549;
+ Tue, 09 Sep 2025 06:36:35 -0700 (PDT)
+Date: Tue, 09 Sep 2025 13:36:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250909124222.222945-1-adrian.hunter@intel.com> <20250909124222.222945-3-adrian.hunter@intel.com>
-In-Reply-To: <20250909124222.222945-3-adrian.hunter@intel.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 9 Sep 2025 15:35:36 +0200
-X-Gm-Features: AS18NWAymEKtcCowmWVyxkQJgVDpF4mASLmZGIlnJDFe4PeOlMb9bOj0SXJwX9o
-Message-ID: <CAOQ4uxgSb2cOj0-H5oCrkXPcD=_i81qvRnS0S+UdLLWEdYRjhA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] perf/core: Fix MMAP event path names with backing files
-To: Adrian Hunter <adrian.hunter@intel.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Ian Rogers <irogers@google.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAFUtwGgC/23MQQ6CMBCF4auQWTumLVbAlfcwLApMyyRCSWsaD
+ endraxd/i953w6RAlOEW7VDoMSR/VpCnSoYZ7M6Qp5KgxJKi05oTMvgcSJLAWtrbCemVkmroRy 2QJbfB/boS88cXz58DjvJ3/qXSRIFNoakqVs1XJvL3XnvnnQe/QJ9zvkLO1FwoaUAAAA=
+X-Change-Id: 20250905-vmbo-defer-3faf90d821f5
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2470; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=GeUdJBt+v1KLgbpRUvyZgBAL3FGBKi3BqI0ivCr3XSw=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBowC1dGqdohxONBkmeGDCsxY+w9d40QZKFJNsMn
+ blUuB2WgMKJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaMAtXQAKCRAEWL7uWMY5
+ Rjl0D/9V49VT0Tbg6rT/l8FP+PvPvgDkL+20mqG6MQUaTYe15pW4fvIT38lA36TeEmLzYOOblJ/
+ iNZu+LQs1SUSMY0XT3Lpd47Gd6suiwvO8aCo2+xsyMBmiA22jM4Wl7Ug+o/pWTMgOTv7kPqWsYI
+ 9x4izNqiAEeQW15SlpoGt2eVDbkqvz/JyZ3v9Y9Rmcv0TGs74YALbMW1Sozp/0EOgR2lAgklLyj
+ uND73E1B+Kw+ObTcou+8WkikX7Kbg513yQdvJaAxWADEV8E2hALAYpGItOduFdNaM/HFtjvfLjE
+ AGKeTZH0ZXRvlWPqCisAwJDw+gxUJvjvTkvuM79FioAaULVwmuPgjg65Xb8gMDT+UbyNexjQx5L
+ QixxOGM6gEm/QVF4zWdmTfRnLpvuEn9G4VNNP5hALbxXKcN5iRBUCHbvCsmKntReOi4opHZmgDv
+ 71XTIAdFgQAHThObOuzMfbtU+V8qpbn9pVPxCkA+lbphh/HowtYrMVhR7v7DzJoQfvGIPQAqjkv
+ nURbgyocHZ0MTNQeBhzmPrSoBCM6ZkXE6V7gvNnLPzmhZAhXY2HwB2UfwDl1BerLCFZ4mYlTSa4
+ jnOsP21rmP/tkucFd1XQgh72IZGyLGk2zz8jvTFEOfJqz6tf/UgnPqEEtxTN69KhW7y/rw7vAGw D8A+EpkPjoC26qw==
+X-Mailer: b4 0.14.2
+Message-ID: <20250909-vmbo-defer-v2-0-9835d7349089@google.com>
+Subject: [PATCH v2 0/2] Defer vm_bo cleanup in GPUVM with DRM_GPUVM_IMMEDIATE_MODE
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
+	"=?utf-8?q?Thomas_Hellstr=C3=B6m?=" <thomas.hellstrom@linux.intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Sep 9, 2025 at 2:42=E2=80=AFPM Adrian Hunter <adrian.hunter@intel.c=
-om> wrote:
->
-> Some file systems like FUSE-based ones or overlayfs may record the backin=
-g
-> file in struct vm_area_struct vm_file, instead of the user file that the
-> user mmapped.
->
-> Since commit def3ae83da02f ("fs: store real path instead of fake path in
-> backing file f_path"), file_path() no longer returns the user file path
-> when applied to a backing file.  There is an existing helper
-> file_user_path() for that situation.
->
-> Use file_user_path() instead of file_path() to get the path for MMAP
-> and MMAP2 events.
->
-> Example:
->
->   Setup:
->
->     # cd /root
->     # mkdir test ; cd test ; mkdir lower upper work merged
->     # cp `which cat` lower
->     # mount -t overlay overlay -olowerdir=3Dlower,upperdir=3Dupper,workdi=
-r=3Dwork merged
->     # perf record -e intel_pt//u -- /root/test/merged/cat /proc/self/maps
->     ...
->     55b0ba399000-55b0ba434000 r-xp 00018000 00:1a 3419                   =
-    /root/test/merged/cat
->     ...
->     [ perf record: Woken up 1 times to write data ]
->     [ perf record: Captured and wrote 0.060 MB perf.data ]
->     #
->
->   Before:
->
->     File name is wrong (/cat), so decoding fails:
->
->     # perf script --no-itrace --show-mmap-events
->              cat     367 [016]   100.491492: PERF_RECORD_MMAP2 367/367: [=
-0x55b0ba399000(0x9b000) @ 0x18000 00:02 3419 489959280]: r-xp /cat
->     ...
->     # perf script --itrace=3De | wc -l
->     Warning:
->     19 instruction trace errors
->     19
->     #
->
->   After:
->
->     File name is correct (/root/test/merged/cat), so decoding is ok:
->
->     # perf script --no-itrace --show-mmap-events
->                  cat     364 [016]    72.153006: PERF_RECORD_MMAP2 364/36=
-4: [0x55ce4003d000(0x9b000) @ 0x18000 00:02 3419 3132534314]: r-xp /root/te=
-st/merged/cat
->     # perf script --itrace=3De
->     # perf script --itrace=3De | wc -l
->     0
->     #
->
-> Fixes: def3ae83da02f ("fs: store real path instead of fake path in backin=
-g file f_path")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+There are two main ways that GPUVM might be used:
 
-Feel free to add
-Acked-by: Amir Goldstein <amir73il@gmail.com>
+* staged mode, where VM_BIND ioctls update the GPUVM immediately so that
+  the GPUVM reflects the state of the VM *including* staged changes that
+  are not yet applied to the GPU's virtual address space.
+* immediate mode, where the GPUVM state is updated during run_job(),
+  i.e., in the DMA fence signalling critical path, to ensure that the
+  GPUVM and the GPU's virtual address space has the same state at all
+  times.
 
-Thanks,
-Amir.
+Currently, only Panthor uses GPUVM in immediate mode, but the Rust
+drivers Tyr and Nova will also use GPUVM in immediate mode, so it is
+worth to support both staged and immediate mode well in GPUVM. To use
+immediate mode, we must manage the vm_bos and vas during the fence
+signalling critical path.
 
-> ---
->  kernel/events/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 184f3dc7b03b..e203b8d90fd2 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -9416,7 +9416,7 @@ static void perf_event_mmap_event(struct perf_mmap_=
-event *mmap_event)
->                  * need to add enough zero bytes after the string to hand=
-le
->                  * the 64bit alignment we do later.
->                  */
-> -               name =3D file_path(file, buf, PATH_MAX - sizeof(u64));
-> +               name =3D d_path(file_user_path(file), buf, PATH_MAX - siz=
-eof(u64));
->                 if (IS_ERR(name)) {
->                         name =3D "//toolong";
->                         goto cpy_name;
-> --
-> 2.48.1
->
+The first part of that work was the introduction of a fence signalling
+safe mutex for the GEMs GPUVA list in commit e7fa80e2932c ("drm_gem: add
+mutex to drm_gem_object.gpuva").
+
+This is series the second part of that work: Dropping a vm_bo object in
+the fence signalling critical path is problematic for two reasons:
+
+* When using DRM_GPUVM_RESV_PROTECTED, you cannot remove the vm_bo from
+  the extobj/evicted lists during the fence signalling path.
+* Dropping a vm_bo could lead to the GEM object getting destroyed.
+  The requirement that GEM object cleanup is fence signalling safe is
+  dubious and likely to be violated in practice.
+
+Panthor already has its own custom implementation of postponing vm_bo
+cleanup. Take inspiration from that by moving the logic into GPUVM, and
+adjust Panthor to use the new GPUVM logic.
+
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v2:
+- Fix missing kfree in Panthor.
+- Rework mutex_lock() calls to be less confusing.
+- Add note about resv lock in drm_gpuvm_bo_is_dead() docs.
+- Link to v1: https://lore.kernel.org/r/20250905-vmbo-defer-v1-0-7ae1a382b674@google.com
+
+---
+Alice Ryhl (2):
+      drm/gpuvm: add deferred vm_bo cleanup
+      panthor: use drm_gpuva_unlink_defer()
+
+ drivers/gpu/drm/drm_gpuvm.c           | 174 ++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_mmu.c | 113 ++++------------------
+ include/drm/drm_gpuvm.h               |  26 +++++
+ 3 files changed, 219 insertions(+), 94 deletions(-)
+---
+base-commit: 7156602d56e5ad689ae11e03680ab6326238b5e3
+change-id: 20250905-vmbo-defer-3faf90d821f5
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
