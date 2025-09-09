@@ -1,125 +1,192 @@
-Return-Path: <linux-kernel+bounces-808279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95A9B4FD83
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:40:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59CEB4FD82
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2512E5E1436
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:36:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D0543444A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4313C346A0E;
-	Tue,  9 Sep 2025 13:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B34E343D82;
+	Tue,  9 Sep 2025 13:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="t/q64CUl"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcTL97WP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2D533CEB3
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DE733CEB3;
+	Tue,  9 Sep 2025 13:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757424913; cv=none; b=oBb0MGMI4iI6ir57DZyPB87amH/wzuyK9xVcro3+SKHA7aCv+Jeub2WjPNeXlTmFYboDRLErd20cJHGkJ0nDVDpNah214r3Cg4/5hi3cm13KA7Evcu5nGZO1uv/L0tHJwGynq/TTmtA/ZJTWHFqWqr8KhVk0VW0WwGFMnFFGWB0=
+	t=1757424936; cv=none; b=a35kh62Xa3IqAyw78O7jbJNAaBL96a/SsNvXmRj4qo2A1XK0csrBgGnXLx6t1cUG/T4OQmt++/srq5Ps56vf4LmekJrjMT1VmljqVocmqBLnES6oC33va2vsagfmnaknGczFqrVbxhA6pKQmOwVDtWGBzvr0alhx1rsvn6ltBTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757424913; c=relaxed/simple;
-	bh=0GySI8s0uwrV1hGtS7+LpGdYoB33k/6ufezuMNnALcc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Qe98gtThlBL8dGt/s8IXwSPhJ4B2BJA/gfxygRohQNyhcwifHLUGQ9XfR99ovDvHB1RbFzIOt3+2PGKpMZU2eTpyUGB5+SPo09wt5lS127Cz9JqQEBBpHu6ompUmwcKF1w/KJbLT7wBOOKgQaA5z5l2CQmrUC/J66aha6L9gjI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=t/q64CUl; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-8876462a34aso153031539f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 06:35:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757424910; x=1758029710; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=91VEMk1sFfOijh/hYnCmgtoVp/4AL0xjKu6h1vpW3GI=;
-        b=t/q64CUltJgiwgcP3jHR/mLdhQ3s2R0XmqtXjwhmw89RSJqBOCLTGUdDPR0iq3SIq9
-         O9GygxbYw/bJRHAfjQokyKt+xC/ADyM6vNDTSJQCN63B/o4EN01Gvw6yJR7cN0G3+KVp
-         y8Z/kryUFcJoqIUsbOI4+L9adDHT8/A/5GzXkBAAdpJ1l8uOIIFd83W379if/Yp3RQ0F
-         R6psk88p5iMUNMNrE0xdE/LnTqylLWWCUGImQxx/2QmwwAlOxX192K3jcFV8XfTDZk3D
-         VWqS2uZNeJULSeYPPBPrenUWQJgxD6Y43L/pBE5N38tVn4njGS9qtUkO+N50+vcFXkdP
-         5m+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757424910; x=1758029710;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=91VEMk1sFfOijh/hYnCmgtoVp/4AL0xjKu6h1vpW3GI=;
-        b=GyifhiRZfsZlaWHrgMRikxdg6wa3jPRYyNug5Y4DI1Vmab/pv9ndm1jXVKaWdHe/uD
-         LdhP7VKGWvfYeCgPu7myonLifYQo8JDaA6RLzj/CLGxMExL2HRbo07zYsFvWQtT0w2Rk
-         /KSAlkdHzIIPvNvX4ZE1xi1ZdAenvr/vR1VjriLk5CILlUMJ00SbM+HM+FqT7JSl0yu0
-         pvRPZ8ERQ0FP29TH3+Uzmmj6f4H89AYCPKrUh2Njrk7kvsPqVGocJ9hxFkx+yCYogJbF
-         yyWLrE03eZFxS6eveL5qUimTgfkFvzFtW5flsvnc1G9HuRYd8B2p2xvYVKjopPRrrecl
-         YGww==
-X-Forwarded-Encrypted: i=1; AJvYcCUvAuGTH3YrC8uAoqDykNc4QguIuLHJTYRWnD/H4khW11kAhw6eusz5oknNHFVxDklNKASlDum6itHmRTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXJLG9c4JZQjv2GC9zzpmxw2ncG9fpGDNj00eXfYMnDLnXDjlD
-	9hJV/OaejAYKxvPWPWJ2dOWNlExtzG/PQATdAqPyc9gl0WZA3I1A2FeTxzGSn2762/b1U5bpO+q
-	C/LOP
-X-Gm-Gg: ASbGnct6GEvdv3lmVmzS2b5cypClcQVAm6Ns3KB4tJxTazPiVe8U3KhOWF39yJDGsDN
-	imAILuLcQscierxljIjq/YtKSsm0C6rYsV6pJbhE59utuLplkApwHWU8cCrNm1s5tWBbxxsglD+
-	6cf4LfB7OvT7ZfK7n0Wed1iL4CYCJ3mAdQwBxS9st28eqA8dvegIemQjw7HSoSnAwOiKRYubtnA
-	WZ5A9x2gzM1YbWOgxGS0mYwY185uJWB74vH8oL4dXOOR2dKR98QoVjNFFyRX/i6WrvO3MPzGcD9
-	Bn0tCTDq03SIGj3BfFP9oT6nTj0cWtgCL+eKwiuY0a4qNDHMesBV36EwyWgChFaLvP/ONwvZZyl
-	y9p0sMB4fRvxrFwthqcCpmE9P
-X-Google-Smtp-Source: AGHT+IFBZSrPB2kXk+dHxClCODH7SV3vFFWuaBjUmLycLqklhqrG1sLBrZU038RkcnSLpfJJElR64A==
-X-Received: by 2002:a05:6e02:218d:b0:40e:de9f:28ea with SMTP id e9e14a558f8ab-40ede9f2ad6mr42285195ab.19.1757424910342;
-        Tue, 09 Sep 2025 06:35:10 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50d8f31cc59sm9880910173.48.2025.09.09.06.35.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 06:35:09 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250904170902.2624135-1-csander@purestorage.com>
-References: <20250904170902.2624135-1-csander@purestorage.com>
-Subject: Re: [PATCH v2 0/5] io_uring: avoid uring_lock for
- IORING_SETUP_SINGLE_ISSUER
-Message-Id: <175742490970.76494.10067269818248850302.b4-ty@kernel.dk>
-Date: Tue, 09 Sep 2025 07:35:09 -0600
+	s=arc-20240116; t=1757424936; c=relaxed/simple;
+	bh=q/TuvV+VDTC7OJJrPjtPHnQkCgkRMuerUtgEffTRbWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EysxYSI0wDsBiirCaEGxgqP3eKI1HC2CSW8/tkhjaU/csZVYttWiL3CLPF1vsHYYdeUEUhwsKVcJIuxqxi13ICpegyoK1xhAEhWKPPliQCzWC78MhS2NAPBtHdPAUJAiB9OWWAHqJTRrvKRySIY/5tTL8D9w6h/s9JXL4hZHgb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcTL97WP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3746C4CEF4;
+	Tue,  9 Sep 2025 13:35:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757424935;
+	bh=q/TuvV+VDTC7OJJrPjtPHnQkCgkRMuerUtgEffTRbWA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bcTL97WPR30sJwWuiSSqWApQD3S2RkrDhgHXI/NUtmB/Qbx79IoewRux7JBjHLXuE
+	 qV1JPKzQyAg3VfeB5Iv5i5S97Wcw9PE8s0kVjFOUNcIlMzD98XcaFxHWClBOI4zEfm
+	 JcKbnftr3tV4HzDSsyWHz/7R/7yBHHJp1OjlXduvp+RdPMperEUAQS7nDStvNFIqp4
+	 I/KxkT5IsCvKHDZPdFYOko6p3SEK+Wu/AIb20FcnbWekybYaTO5PG4tgUs98oFAZfg
+	 3KdyzeBhN6NcHcplOThx+NvgbzJX2unkWIYybQTbuIQRzsILCWhnj+Q9UMf49f+3zx
+	 mhIXybEdmXhAw==
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74526ca7a46so2202549a34.2;
+        Tue, 09 Sep 2025 06:35:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVjoD+H3CYWVvlkx/8i1rMVDcmUOFbdMCvdmtQlIOA23NDSHexFS/p5eMFPOmYrQlH5ljyT6cd7F48=@vger.kernel.org, AJvYcCXLhj2s5Ce5sDj0/UIYtouMbkfNFhuThD2G/Ojj5AK0imZWt2ZfLKRADbLhGy9dB+cRP6J7kXtBpbJP9YY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFtDpITpCQot5rFYd1ykFlQsQ+Kc2u+r9oNvp60EzkVI5YYR/G
+	TPc/afKQMbxl6oC5tG0sxNfpQ1tsckVf9JWzXf+Ms1dsPGxCL8hWk8s6oI3gVS9vidCGRh3GlBa
+	2dTOJEqUrejt7wpFeXozp5OVbBXNu5TM=
+X-Google-Smtp-Source: AGHT+IHoy2mCBTxWELrYMkWJAMOCdDAUsD/1GZxzrEjUjQiP0ZRkn3VaAyZ2ZxlO09WOGQdD0Fwn08QuYUjAg3qtdNs=
+X-Received: by 2002:a05:6870:3509:b0:308:51fe:ea07 with SMTP id
+ 586e51a60fabf-32262631adbmr5057727fac.1.1757424935050; Tue, 09 Sep 2025
+ 06:35:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+References: <20250908075443.208570-1-aboorvad@linux.ibm.com> <0b59d09e-a508-4bca-a110-ab2b12c2284a@arm.com>
+In-Reply-To: <0b59d09e-a508-4bca-a110-ab2b12c2284a@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 9 Sep 2025 15:35:24 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jP5pwev09wQSTq=HDrdW6Er0niSWWkPB5RLXdYhV0-dw@mail.gmail.com>
+X-Gm-Features: Ac12FXwffpTVnydBkt37R3v4F8sg6i8IRB2SgIi3TxGqpa7FsuQr9tRNNpCkCZc
+Message-ID: <CAJZ5v0jP5pwev09wQSTq=HDrdW6Er0niSWWkPB5RLXdYhV0-dw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] cpuidle: menu: Add residency threshold for
+ non-polling state selection
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Aboorva Devarajan <aboorvad@linux.ibm.com>, rafael@kernel.org, daniel.lezcano@linaro.org, 
+	gautam@linux.ibm.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 9, 2025 at 3:32=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 9/8/25 08:54, Aboorva Devarajan wrote:
+> > On virtualized PowerPC (pseries) systems, where only one polling state
+> > (Snooze) and one deep state (CEDE) are available, selecting CEDE when
+> > the predicted idle duration exceeds the target residency of the CEDE
+> > state can hurt performance. In such cases, the entry/exit overhead of
+> > CEDE outweighs the power savings, leading to unnecessary state transiti=
+ons
+> > and higher latency.
+> >
+> > Menu governor currently contains a special-case rule that prioritizes
+> > the first non-polling state over polling, even when its target residenc=
+y
+> > is much longer than the predicted idle duration. On PowerPC/pseries,
+> > where the gap between the polling state (Snooze) and the first non-poll=
+ing
+> > state (CEDE) is large, this behavior causes performance regressions.
+> >
+> > This patch refines the special case by adding an extra requirement:
+> > the first non-polling state may only be chosen if its
+> > target_residency_ns is below the defined RESIDENCY_THRESHOLD_NS. If thi=
+s
+> > condition is not met, the non-polling state is not selected, and pollin=
+g
+> > state is retained instead.
+> >
+> > This change is limited to the single special-case condition for the fir=
+st
+> > non-polling state. The general state selection logic in the menu govern=
+or
+> > remains unchanged.
+> >
+> > Performance improvement observed with pgbench on PowerPC (pseries)
+> > system:
+> > +---------------------------+------------+------------+------------+
+> > | Metric                    | Baseline   | Patched    | Change (%) |
+> > +---------------------------+------------+------------+------------+
+> > | Transactions/sec (TPS)    | 495,210    | 536,982    | +8.45%     |
+> > | Avg latency (ms)          | 0.163      | 0.150      | -7.98%     |
+> > +---------------------------+------------+------------+------------+
+> > CPUIdle state usage:
+> > +--------------+--------------+-------------+
+> > | Metric       | Baseline     | Patched     |
+> > +--------------+--------------+-------------+
+> > | Total usage  | 12,735,820   | 13,918,442  |
+> > | Above usage  | 11,401,520   | 1,598,210   |
+> > | Below usage  | 20,145       | 702,395     |
+> > +--------------+--------------+-------------+
+> >
+> > Above/Total and Below/Total usage percentages which indicates
+> > mispredictions:
+> > +------------------------+-----------+---------+
+> > | Metric                 | Baseline  | Patched |
+> > +------------------------+-----------+---------+
+> > | Above % (Above/Total)  | 89.56%    | 11.49%  |
+> > | Below % (Below/Total)  | 0.16%     | 5.05%   |
+> > | Total cpuidle miss (%) | 89.72%    | 16.54%  |
+> > +------------------------+-----------+---------+
+> >
+> > The results show that restricting non-polling state selection to
+> > cases where its residency is within the threshold reduces misprediction=
+s,
+> > lowers unnecessary state transitions, and improves overall throughput.
+> >
+> > Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+> > ---
+> >
+> > v2: https://lore.kernel.org/all/20250317060357.29451-1-aboorvad@linux.i=
+bm.com/
+> >
+> > Changes in v2 -> v3:
+> >   - Modifed the patch following Rafael's feedback, incorporated a resid=
+ency threshold check
+> >     (s->target_residency_ns < RESIDENCY_THRESHOLD_NS) as suggested.
+> >   - Updated commit message accordingly.
+> > ---
+> >  drivers/cpuidle/governors/menu.c | 8 +++++---
+> >  1 file changed, 5 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governo=
+rs/menu.c
+> > index b2e3d0b0a116..d25b04539109 100644
+> > --- a/drivers/cpuidle/governors/menu.c
+> > +++ b/drivers/cpuidle/governors/menu.c
+> > @@ -316,11 +316,13 @@ static int menu_select(struct cpuidle_driver *drv=
+, struct cpuidle_device *dev,
+> >
+> >               if (s->target_residency_ns > predicted_ns) {
+> >                       /*
+> > -                      * Use a physical idle state, not busy polling, u=
+nless
+> > -                      * a timer is going to trigger soon enough.
+> > +                      * Use a physical idle state instead of busy poll=
+ing
+> > +                      * if the next timer doesn't expire soon and its
+> > +                      * target residency is below the residency thresh=
+old.
+> >                        */
+> >                       if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLIN=
+G) &&
+> > -                         s->target_residency_ns <=3D data->next_timer_=
+ns) {
+> > +                         s->target_residency_ns <=3D data->next_timer_=
+ns &&
+> > +                         s->target_residency_ns < RESIDENCY_THRESHOLD_=
+NS) {
+> >                               predicted_ns =3D s->target_residency_ns;
+> >                               idx =3D i;
+> >                               break;
+>
+> To me that seems the least intrusive way the issue for your platform.
+> Rafael, can you live with this?
 
-On Thu, 04 Sep 2025 11:08:57 -0600, Caleb Sander Mateos wrote:
-> As far as I can tell, setting IORING_SETUP_SINGLE_ISSUER when creating
-> an io_uring doesn't actually enable any additional optimizations (aside
-> from being a requirement for IORING_SETUP_DEFER_TASKRUN). This series
-> leverages IORING_SETUP_SINGLE_ISSUER's guarantee that only one task
-> submits SQEs to skip taking the uring_lock mutex in the submission and
-> task work paths.
-> 
-> [...]
+Yes, it's fine.
 
-Applied, thanks!
-
-[1/5] io_uring: don't include filetable.h in io_uring.h
-      commit: 5d4c52bfa8cdc1dc1ff701246e662be3f43a3fe1
-[2/5] io_uring/rsrc: respect submitter_task in io_register_clone_buffers()
-      commit: 2f076a453f75de691a081c89bce31b530153d53b
-[3/5] io_uring: clear IORING_SETUP_SINGLE_ISSUER for IORING_SETUP_SQPOLL
-      commit: 6f5a203998fcf43df1d43f60657d264d1918cdcd
-[4/5] io_uring: factor out uring_lock helpers
-      commit: 7940a4f3394a6af801af3f2bcd1d491a71a7631d
-[5/5] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-      commit: 4cc292a0faf1f0755935aebc9b288ce578d0ced2
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
