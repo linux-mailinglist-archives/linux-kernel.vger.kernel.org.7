@@ -1,137 +1,179 @@
-Return-Path: <linux-kernel+bounces-808666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8674B5030B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:46:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A519AB5030D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E68D73A8750
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:46:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A03E01896926
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E81A248F5E;
-	Tue,  9 Sep 2025 16:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7562E3568F1;
+	Tue,  9 Sep 2025 16:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KEttwVdH"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhI8ujF9"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7275F19DF5F;
-	Tue,  9 Sep 2025 16:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA96287241
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 16:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757436411; cv=none; b=m3Cb0jhLyuxXTxFtYt1N/mOgUDG2fYpEYP75ooFtsYG/PHARp0cJSY3P1d+u9zFV19XTvgK4bfHF5NTcU0lPCzXTOpliLdudtjYE/AFlDwhFPd/ji+cW5RAVcJ8D51SmI1tOPnEjP5+Z5/IK5/Pho5iM/1b4PkRiY9XDdbc7bnw=
+	t=1757436413; cv=none; b=eOkSFgk1D4nQbmnA0qvKDZNAgQZ8MZZJRIGTp0xsfVreiBU2q0dp3JaN2kEI13va8pZrv9aQ2vDDomdNyye3pg5x5Q0JWZ4svrENeRFyrcvc3+u1EiGDq9Jm3vOtabHNWGKRtp7vKPJiWvDoGJnJH1iYpUWjsV7rwWGlzPvIDzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757436411; c=relaxed/simple;
-	bh=QgIYeufilVMaZPW5PjHtCNwEpEe12k2ooZbak7yW2W8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G7LxB6Xn+rRmH4bfSKnZ5oJm3a4gE0dXefCpFYYuRQ5tK8hPcWMxrmHaTPomjEnMuwdIMYM8COj8j3OwDPKEHf/Q0hKgo5Sbr69heW72wKhjxhusU5DZt+L5JC8BUN9zdRb63uZeHItsqgaqqTiklkuP8lTwtRJMpF2GKoM5sgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KEttwVdH; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 9 Sep 2025 12:46:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757436407;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j+qxWL9ciWsFKbxGdri5NqQLUVz4iV2qrMUc7/7Rqno=;
-	b=KEttwVdHN4u1Rqaqy0n/0ljJ7PEg2qSm7rX8XchH8aMt6ei99Cwj16DB6hzinK48vvdfgO
-	rr+xPZagp55x/QS4un+1+0+QT+dFDSpjrIDTwt4Vup8bNfLDHIeYqaFRRceBmysFnqaU3Y
-	1TyO+vlQZLYzi6Vt58cpKn1dvC6PHw4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: akpm@linux-foundation.org, amaindex@outlook.com, 
-	anna.schumaker@oracle.com, boqun.feng@gmail.com, fthain@linux-m68k.org, 
-	geert@linux-m68k.org, ioworker0@gmail.com, joel.granados@kernel.org, 
-	jstultz@google.com, leonylgao@tencent.com, linux-kernel@vger.kernel.org, 
-	linux-m68k@lists.linux-m68k.org, longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com, 
-	mingzhe.yang@ly.com, oak@helsinkinet.fi, peterz@infradead.org, rostedt@goodmis.org, 
-	senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
- pointers
-Message-ID: <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
-References: <20250909145243.17119-1-lance.yang@linux.dev>
+	s=arc-20240116; t=1757436413; c=relaxed/simple;
+	bh=xOS9U4orWtLOAiOSXJArCP/d29jMdQiYMgl/bpHnYJY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=I1td37ZSXBJT0OXPo5KbO4z9VS5JyrSEZHYehGUfJZOYkm2tjGHnUVcvqCEOe/p5l9dZZcBEa5L1jlDsg0oyZapXhnBEk0Y6YyNShCJdGa+wXCwqSEWlGLPx6jUa+Vxv25ofeAkebgz6c2+2onfG2lrT/8lJhwOnCg94fTPJ7mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QhI8ujF9; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b0466e52cb0so71356266b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 09:46:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757436410; x=1758041210; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=An/UGM3uulfdmqhXwqkD0P+EkKuQ13f2Cvm0p4+pPss=;
+        b=QhI8ujF9sU9xMR2WlMirr9trcZrFVhVaj0z+7w5X8TxV0cxlnMbN7v63BGYOmeH/6D
+         ecB0f7oFlbmj7dsPcMVN1ZEw3b8i8SmRWGmZrrp04ZTQiSSOIokyOI8+M5KG+5LdzEvs
+         wGyXgRRSiuFZ2PtYUSlYf4+xtNMkxhXSB65X4cycx4tTFA6WIYFlUAaJQvi3r8qWAQeZ
+         S41vaJEfm3m+HtaP6wOxX+fkZA1NshLPKTBBTCHi4lGsIuT/06p5HNr3DCs2NK5olUh5
+         RnxQsGP1+MJyyK1006UAul/KR7dXv947rXh9vsYq5xCCX2UA0AsAFwu5NeHWSTCGvkJS
+         EECg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757436410; x=1758041210;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=An/UGM3uulfdmqhXwqkD0P+EkKuQ13f2Cvm0p4+pPss=;
+        b=xHiY9D8Dvo8ND2qvpCqXF5BFk6Y6ZdQLKRia2GjAlCcXCy9fmsxi+zQ2sTnbXd/TIp
+         PxFnoRyrOY7ht6y/Y/7jMvBgqr+4LIOgEolDG8r26lDqEo+cu9tlTMagFxyabGrXnLd7
+         92EYk2BVFLs4DzJjA1TztHgI1t90tli3H0uq96gJdGLHR6h/9iINAyjKXLnw2mb7dMFK
+         +2VZ/JRboDZINqAaZ4kKsk/bbOmIzxgM1y7636hJD8Gl/+qCo6cl3oYKfwfPqSjX8bl1
+         /NicePI+Rtl5lGYhZnvVl/iBeLHbC5z2Y1Ep/PuXPZGW2nHFJgjML+OHnb9DLCR2jjB7
+         cMdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVifYqn6Gs1p5LfAaTp2VyrilKvp4z4fEYpUUG2yyrNobbfNHCjH8Ohgg3nl+KE+i3LC7HFX2upwYloTmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxunhodouz8C8Nf37SpSSp+SU880VxtAJsW+oM3XtMAD+DKvOku
+	gc5a4vQvQQJp9UsgrlNyez/UfXI5aHL2eDwsDU4sN2c7hrPFXI40kqq6
+X-Gm-Gg: ASbGncvJSSdqcknQWy2NPX9/PmRwL/Hy7cv5Aaw1+ou786IXFyPfSH5i7L+L7tBpi38
+	ccE/79YNZsBYVs9459fY+vIQsIVeHv/PGZ/jaaxz0kqdmanrHtJA/Xvqkpa1wJuqmgdtcBvknr7
+	c8LoRzWXhBYLdSexPKZsHB/s2nELzwiVSMWtVhcYFvho6+VIllD310aQoFDRNQPbILc1bxU1Y4t
+	W4QSQuCEODGMPUzMOK1oC5T4OH6MlrXJ7Bfth5bRubPjDCzgGxgoWwcwzBeJn8QCAoGQcOhrD5n
+	qpBHzcFVXvlmLufmq/DSqBaesEl4LJRq5Ndlt1MOanXbwLZvG4WcwiXKxFnqf3yZiY97zSMiqtG
+	LijwantcvH+pufYj9C30BDNszlWehRdub+TZ2BYXYYm7MDuPcATM++J/mtnuQBUcmP19xJncdtV
+	X5gPtbI4fLr4Gb
+X-Google-Smtp-Source: AGHT+IHgU65qLc/NcklTM+mE0N1sMtmYf7VTT9q3rLDCvOakZCDNg+jICHyjwFoJVf+tQW1o8rWAFw==
+X-Received: by 2002:a17:907:3d8c:b0:afe:c1c1:1bf4 with SMTP id a640c23a62f3a-b04b147d883mr499451366b.5.1757436409737;
+        Tue, 09 Sep 2025 09:46:49 -0700 (PDT)
+Received: from ?IPV6:2001:a61:2a86:3e01:58a2:d498:9ee2:37ce? ([2001:a61:2a86:3e01:58a2:d498:9ee2:37ce])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b078334b3c0sm16100366b.68.2025.09.09.09.46.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 09:46:49 -0700 (PDT)
+Message-ID: <d1d1756a-2f6d-4b81-bd6d-50ddf7f39996@gmail.com>
+Date: Tue, 9 Sep 2025 18:46:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909145243.17119-1-lance.yang@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: "Daniel v. Kirschten" <danielkirschten@gmail.com>
+Subject: [PATCH v2] kernel/module: avoid panic when loading corrupt module
+To: mcgrof@kernel.org
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 09, 2025 at 10:52:43PM +0800, Lance Yang wrote:
-> From: Lance Yang <lance.yang@linux.dev>
-> 
-> The blocker tracking mechanism assumes that lock pointers are at least
-> 4-byte aligned to use their lower bits for type encoding.
-> 
-> However, as reported by Eero Tamminen, some architectures like m68k
-> only guarantee 2-byte alignment of 32-bit values. This breaks the
-> assumption and causes two related WARN_ON_ONCE checks to trigger.
+If the kernel attempts loading a corrupted module where the
+.gnu.linkonce.this_module section is not marked as WRITE,
+the corresponding this_module struct will be remapped read-only
+in the module loading process. This causes a kernel panic later -
+specifically the first time that struct is being written to after the remap.
+(Currently, this happens in complete_formation at kernel/module/main.c:3265,
+when the module state is set to COMING,
+but this doesn't really matter and of course might also change in the future.)
 
-Isn't m68k the only architecture that's weird like this?
+This panic also causes problems down the line:
+after this panic has occurred, all further attempts
+to add or remove modules will freeze the process attempting to do so.
+I did not investigate this further.
 
-> To fix this, the runtime checks are adjusted to silently ignore any lock
-> that is not 4-byte aligned, effectively disabling the feature in such
-> cases and avoiding the related warnings.
-> 
-> Thanks to Geert Uytterhoeven for bisecting!
-> 
-> Reported-by: Eero Tamminen <oak@helsinkinet.fi>
-> Closes: https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com
-> Fixes: e711faaafbe5 ("hung_task: replace blocker_mutex with encoded blocker")
-> Cc: <stable@vger.kernel.org>
-> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Signed-off-by: Lance Yang <lance.yang@linux.dev>
-> ---
-> v1 -> v2:
->  - Pick RB from Masami - thanks!
->  - Update the changelog and comments
->  - https://lore.kernel.org/lkml/20250823050036.7748-1-lance.yang@linux.dev/
-> 
->  include/linux/hung_task.h | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
-> index 34e615c76ca5..c4403eeb7144 100644
-> --- a/include/linux/hung_task.h
-> +++ b/include/linux/hung_task.h
-> @@ -20,6 +20,10 @@
->   * always zero. So we can use these bits to encode the specific blocking
->   * type.
->   *
-> + * Note that on architectures where this is not guaranteed, or for any
-> + * unaligned lock, this tracking mechanism is silently skipped for that
-> + * lock.
-> + *
->   * Type encoding:
->   * 00 - Blocked on mutex			(BLOCKER_TYPE_MUTEX)
->   * 01 - Blocked on semaphore			(BLOCKER_TYPE_SEM)
-> @@ -45,7 +49,7 @@ static inline void hung_task_set_blocker(void *lock, unsigned long type)
->  	 * If the lock pointer matches the BLOCKER_TYPE_MASK, return
->  	 * without writing anything.
->  	 */
-> -	if (WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK))
-> +	if (lock_ptr & BLOCKER_TYPE_MASK)
->  		return;
->  
->  	WRITE_ONCE(current->blocker, lock_ptr | type);
-> @@ -53,8 +57,6 @@ static inline void hung_task_set_blocker(void *lock, unsigned long type)
->  
->  static inline void hung_task_clear_blocker(void)
->  {
-> -	WARN_ON_ONCE(!READ_ONCE(current->blocker));
-> -
->  	WRITE_ONCE(current->blocker, 0UL);
->  }
->  
-> -- 
-> 2.49.0
-> 
+The kernel's module building toolchain will not produce such module files.
+However, there's only a single bit difference on-disk
+between a correct module file and one which triggers this panic.
+Also, there are modules which aren't produced by the kernel's module toolchain.
+(Yes, we don't necessarily need to fully support such modules,
+but we shouldn't panic when loading them either.)
+
+Note that from a security point of view, this bug is irrelevant:
+the problematic remap of this_module as readonly
+only happens after all security checks have already passed.
+If an attacker is in the position to insert arbitrary modules into the kernel,
+then it doesn't matter anymore that it's possible to cause a panic too.
+And even in the hypothetical scenario where an attacker
+can trigger this panic but can't insert custom modules,
+the worst that could happen is a DoS
+caused by future module insertion / removal attempts.
+
+Signed-off-by: Daniel Kirschten <danielkirschten@gmail.com>
+---
+
+I hope that the wording is clear enough now about this not being a security bug.
+What do you think?
+
+In my first submisison of this patch (on 06/06/2024),
+I was told to add this check to userspace kmod too.
+If I find the time, I will do so, but I think that won't help as much
+because there are of course other ways for userspace to load a module,
+such as any alternative insmod implementation (for example busybox).
+
+Regarding your "next-level university assignment":
+I feel knowing whether the kernel toolchain can or cannot produce such modules
+is a bit beside the point: _if_ such a module is encountered,
+the kernel's going to panic, and it's not going to care where the module came from.
+Also I'm a bit stumped by your wording "university assignment" here.
+Still, I recognize that it would be goot to be certain
+that the official tools don't produce broken modules.
+So, I debugged the module build system a bit and found out the following:
+
+add_header in scripts/mod/modpost.c:1834-1843 is responsible
+for arranging for the .gnu.linkonce.this_module section to exist:
+The C code this function emits defines the symbol __this_module
+with two attributes: `visibility("default")` and `section(".gnu.linkonce.this_module")`.
+In particular, __this_module is not marked const or anything similar,
+and there definitely is no (supported) way
+for the user to add custom modifiers to this symbol.
+When gcc compiles that file, the resulting section is marked WRITE and ALLOC.
+This seems to be default behaviour of gcc / ld,
+but I couldn't find explicit documentation about this.
+I even tried digging in gcc's source code to find hard proof,
+but as expected gcc turns out to be quite convoluted, so eventually I gave up.
+
+  kernel/module/main.c | 6 ++++++
+  1 file changed, 6 insertions(+)
+
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index c66b26184936..c415c58b9462 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -2092,6 +2092,12 @@ static int elf_validity_cache_index_mod(struct load_info *info)
+  		return -ENOEXEC;
+  	}
+  
++	if (!(shdr->sh_flags & SHF_WRITE)) {
++		pr_err("module %s: .gnu.linkonce.this_module must be writable\n",
++		       info->name ?: "(missing .modinfo section or name field)");
++		return -ENOEXEC;
++	}
++
+  	if (shdr->sh_size != sizeof(struct module)) {
+  		pr_err("module %s: .gnu.linkonce.this_module section size must match the kernel's built struct module size at run time\n",
+  		       info->name ?: "(missing .modinfo section or name field)");
+-- 
+2.39.5
 
