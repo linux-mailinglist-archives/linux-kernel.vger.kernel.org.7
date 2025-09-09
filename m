@@ -1,174 +1,95 @@
-Return-Path: <linux-kernel+bounces-807014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3B9B49EEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:02:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07986B49EEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 674B44E52B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:02:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B4A97AF34E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1885E22A1D5;
-	Tue,  9 Sep 2025 02:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBBB23F41A;
+	Tue,  9 Sep 2025 02:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="mwh+wD9p"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bQfHnx6f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DEA747F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 02:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E2E1F4C8C;
+	Tue,  9 Sep 2025 02:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757383339; cv=none; b=PnyKWB6g0z63dDH8EDkkUYm6/4QmQPyyirJVqHeHOLSPYRpvlmXyC8fImFLIgjB4Q3Yu+YE91MwuzmtfRg2kjXsDDKGTgeVHlEK+g/coWKWcLDe/E+yJWZzdsJ20QJ2yekUpK9UdbI54hGoM4y7doITQ2HoC0AwyPGNa374B/rw=
+	t=1757383370; cv=none; b=SeXvvaZ+7KAXqg4AXB718ftjpMVpzSWe0wjo9XLsi174wDptrH1iYsc82n/+VcFWUheefH2cdQkhYD2jd5CkF6LaY7ntRjTFtRjulqvJw/xGF8rJdEK+IMeENF2dbZHdZxcA1KRVmn7joGUOrjXaBern0kerpko9RYrXPkYEhrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757383339; c=relaxed/simple;
-	bh=mNrzLpRNDZAr8L4KEo6CtqFNIMGoxZ8/i9fpKSQyI2E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ic6u4CUh2tgl69EQ0lzuw4BPDK16imjwr0uUxZenUTsrCUmvP4iPxSxLp9rbq+7jyb335kyV07X2oJG2BXhfO1PKWgx74Y8jd0TbhPqoZd3IiQFsTV8zJDgXU7OHN0nwjC9mesD2cpICo95HApWQECNE+5fBd3QqVwEaR3YK6V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=mwh+wD9p; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1757383337;
-	bh=zcmpcw0mekrXcR6rkLebx4OWUdSHyk73nm9XQs6nR5E=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=mwh+wD9pqb74xXaSeUW0Fy4iOx+0uACLhjsiWm+anmJ9h85Kmbz1NMEAHsXYtQWVH
-	 IKCeXHS5cncmv/E1+oAd3eDpkO9aoc2Y8jSca6um59hYQNYspm8As1xpC5954/PgYA
-	 KeT3BBkec8hgk7HOa9qB4WdsDrAXR/HxCoq9GuRQ=
-Received: from [127.0.0.1] (2607-8700-5500-e873-0000-0000-0000-1001.16clouds.com [IPv6:2607:8700:5500:e873::1001])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 18F2866983;
-	Mon,  8 Sep 2025 22:02:13 -0400 (EDT)
-Message-ID: <6f0857ec48e7d1aab55f5e1cc923d9b5086af6c2.camel@xry111.site>
-Subject: Re: [PATCH] drm/amd/display/dml2: Guard
- dml21_map_dc_state_into_dml_display_cfg with DC_FP_START
-From: Xi Ruoyao <xry111@xry111.site>
-To: Alex Hung <alex.hung@amd.com>, Alex Deucher <alexander.deucher@amd.com>,
-  Christian =?ISO-8859-1?Q?K=F6nig?=	 <christian.koenig@amd.com>
-Cc: amd-gfx@lists.freedesktop.org, Huacai Chen <chenhuacai@kernel.org>, WANG
- Xuerui <kernel@xen0n.name>, Mingcong Bai <jeffbai@aosc.io>,
- dri-devel@lists.freedesktop.org, 	loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, Asiacn <710187964@qq.com>,  Austin Zheng
- <Austin.Zheng@amd.com>, Harry Wentland <Harry.Wentland@amd.com>, Wenjing
- Liu	 <wenjing.liu@amd.com>
-Date: Tue, 09 Sep 2025 10:02:12 +0800
-In-Reply-To: <25fcd3b5c1a415deb8358714279a7d532e26ed47.camel@xry111.site>
-References: <20250825085211.34396-1-xry111@xry111.site>
-		 <0f6b54fa-720f-43b7-ad74-91c2c5700dad@amd.com>
-	 <25fcd3b5c1a415deb8358714279a7d532e26ed47.camel@xry111.site>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1757383370; c=relaxed/simple;
+	bh=c5J+iIMRm2kgguzDoOwH0NIHbsCxHv+R42DDyiYg0Pw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=YhIWvCrNJWgDtQZ0m1YydL7mLi15GQ2SPETDbjG4OZpznbY8x5bN9kpLy3bWj5Vyyq699OhftgNarBrtNUGlrAUWNvjBfVY4T9zHkYqXzfH2BO9pb+mXVTYOWzsJQwZ9dUU0pBPfEoJ5al9I0rPYyvyTaq4zqLqtbiwB6+yuypM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bQfHnx6f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66513C4CEF1;
+	Tue,  9 Sep 2025 02:02:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1757383369;
+	bh=c5J+iIMRm2kgguzDoOwH0NIHbsCxHv+R42DDyiYg0Pw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bQfHnx6f4Rd++MMzXx4qgIhsJbsEpEKKQX2LoB8hcv1eLKSTsJqoO+P48jWA6fUbX
+	 SWVr0MltkJjI4H5jIHt+/3pA6qiaZIF3x2v6qK45wR7zPmJXe+TmYgIRT7CEz0Y0Va
+	 pg7E8qshmdjwufRFKKCZ/NnlQVRVbE7TImnvZdxQ=
+Date: Mon, 8 Sep 2025 19:02:48 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Dev Jain <dev.jain@arm.com>
+Cc: david@redhat.com, shuah@kernel.org, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, npache@redhat.com,
+ ryan.roberts@arm.com, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] selftests/mm: uffd-stress fixes
+Message-Id: <20250908190248.d2d6de27715fefc4e89afb10@linux-foundation.org>
+In-Reply-To: <1634f29f-81a6-46f7-86d4-c9eac953d4f1@arm.com>
+References: <20250826070705.53841-1-dev.jain@arm.com>
+	<1634f29f-81a6-46f7-86d4-c9eac953d4f1@arm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-09-09 at 09:47 +0800, Xi Ruoyao wrote:
-> On Mon, 2025-09-08 at 14:18 -0600, Alex Hung wrote:
-> >=20
-> >=20
-> > On 8/25/25 02:52, Xi Ruoyao wrote:
-> > > dml21_map_dc_state_into_dml_display_cfg calls (the call is usually
-> > > inlined by the compiler) populate_dml21_surface_config_from_plane_sta=
-te
-> > > and populate_dml21_plane_config_from_plane_state which may use FPU.=
-=C2=A0 In
-> > > a x86-64 build:
-> > >=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 $ objdump --disassemble=3Ddml21_map_dc_state=
-_into_dml_display_cfg \
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 > drivers/gpu/drm/amd/display/dc/dml2/dml21/=
-dml21_translation_helper.o |
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 > grep %xmm -c
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 63
-> > >=20
-> > > Thus it needs to be guarded with DC_FP_START.=C2=A0 But we must note =
-that the
-> > > current code quality of the in-kernel FPU use in AMD dml2 is very muc=
-h
-> > > problematic: we are actually calling DC_FP_START in dml21_wrapper.c
-> > > here, and this translation unit is built with CC_FLAGS_FPU.=C2=A0 Str=
-ictly
-> > > speaking this does not make any sense: with CC_FLAGS_FPU the compiler=
- is
-> > > allowed to generate FPU uses anywhere in the translated code, perhaps
-> > > out of the DC_FP_START guard.=C2=A0 This problematic pattern also occ=
-urs in
-> > > at least dml2_wrapper.c, dcn35_fpu.c, and dcn351_fpu.c.=C2=A0 Thus we=
- really
-> >=20
-> > Let me share Austin's comments below:
-> >=20
-> > "
-> > Both CC_FLAGS_FPU and DC_FP_START are required for FPU usage.
-> >=20
-> > CC_FLAGS_FPU allows the compiler to generate FPU code whereas=20
-> > DC_FP_START ensures that the FPU registers don't get tainted during run=
-time.
->=20
-> But the correct pattern would be: isolating the code using FPU into its
-> own translation unit, say xxx_fp.c, then call DC_FP_START in another
-> translation unit (for which CC_FLAGS_FPU is NOT used) before calling the
-> routines in xxx_fp.c.
->=20
-> It's because there's generally no way to guarantee the compiler only
-> generate FP code in the range of DC_FP_START ... DC_FP_END if
-> CC_FLAGS_FPU is used.=C2=A0 The compiler can generate FPU code in situati=
-ons
-> we don't intend to use (and don't anticipate) FPU, for example if a
-> "counting number of ones in a word" pattern is detected when the code is
-> built for LoongArch, the compiler can invoke FPU to use a popcount
-> instruction with CC_FLAGS_FPU.=C2=A0 (That doesn't really happen now but =
-it
-> may happen in the future.)
->=20
-> And the correct pattern is already used by, for example
-> dcn10_resource.c:
->=20
-> =C2=A0=C2=A0=C2=A0 DC_FP_START();
-> =C2=A0=C2=A0=C2=A0 voltage_supported =3D dcn_validate_bandwidth(dc, conte=
-xt, validate_mode);
-> =C2=A0=C2=A0=C2=A0 DC_FP_END();
->=20
-> Here dcn_validate_bandwidth is in dcn_calcs.c where CC_FLAGS_FPU is in-
-> effect, but dcn10_resource.c itself is not built with CC_FLAGS_FPU.
+On Mon, 8 Sep 2025 13:52:05 +0530 Dev Jain <dev.jain@arm.com> wrote:
 
-And the correct pattern is already documented and explained in
-dcn20_fpu.c:
+> 
+> On 26/08/25 12:37 pm, Dev Jain wrote:
+> > This patchset ensures that the number of hugepages is correctly set in the
+> > system so that the uffd-stress test does not fail due to the racy nature of
+> > the test. Patch 1 corrects the hugepage constraint in the run_vmtests.sh
+> > script, whereas patch 2 corrects the constraint in the test itself.
+> >
+> > Dev Jain (2):
+> >    selftests/mm/uffd-stress: Make test operate on less hugetlb memory
+> >    selftests/mm/uffd-stress: Stricten constraint on free hugepages before
+> >      the test
+> >
+> >   tools/testing/selftests/mm/run_vmtests.sh | 2 +-
+> >   tools/testing/selftests/mm/uffd-stress.c  | 2 +-
+> >   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> Hi Andrew,
+> 
+> I wanted to make a v2 of this series to replace 10 with min(32, nrcpus - 1)
 
- * 4. Developers **must not** use DC_FP_START/END in this file, but they ne=
-ed
- *    to ensure that the caller invokes it before access any function avail=
-able
- *    in this file. For this reason, public functions in this file must inv=
-oke
- *    dc_assert_fp_enabled();
- *
- * Let's expand a little bit more the idea in the code pattern. To fully
- * isolate FPU operations in a single place, we must avoid situations where
- * compilers spill FP values to registers due to FP enable in a specific C
- * file. Note that even if we isolate all FPU functions in a single file an=
-d
- * call its interface from other files, the compiler might enable the use o=
-f
- * FPU before we call DC_FP_START. Nevertheless, it is the programmer's
- * responsibility to invoke DC_FP_START/END in the correct place. To highli=
-ght
- * situations where developers forgot to use the FP protection before calli=
-ng
- * the DC FPU interface functions, we introduce a helper that checks if the
- * function is invoked under FP protection. If not, it will trigger a kerne=
-l
- * warning.
+That sounds line a one-line change?  Send a one-line change ;)
 
---=20
-Xi Ruoyao <xry111@xry111.site>
+> (see computation of nr_parallel in uffd-stress.c) but I see that it has
+> been pulled into mm-new, and on top of that, the following patch makes
+> things complicated to just revert my commits in mm-new and make v2 on top of that -
+> https://lore.kernel.org/all/20250830033424.8C44FC4CEF0@smtp.kernel.org/
+> 
+> So shall I just send a new separate patch based off mm-new?
+
+Or just resend the whole series based on mainline or something?
 
