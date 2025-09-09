@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-808582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4289DB501DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:48:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35595B501E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625221899FA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:48:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 524A17AA038
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB64226E6F5;
-	Tue,  9 Sep 2025 15:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CAD27466A;
+	Tue,  9 Sep 2025 15:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1ibc6zE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="TCqAfMX7"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E4D260578;
-	Tue,  9 Sep 2025 15:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3871A7253;
+	Tue,  9 Sep 2025 15:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757432899; cv=none; b=tGqPF/fyJTJys6CmnzL3Nf9SZz2DKhalE47joZuPxC0hWmUN6Jo9gw7DLC2sL3pCyeCpUCYJSbEfrSLcfidJdrKDzX4d60Mo1f8gIDPE3rCMewDKnl31hBbiAmg0/RAjIdRm51swJGtwzDFp01iu+awO3pgLs6WURw1hORAerGM=
+	t=1757432949; cv=none; b=HjtN28VBjNQNxYWz00NPe6zb6ofmj91ntcfuqSzRqZCNVK8i1ltwAVZYZX+JjSf9nuSgQ/YXmCl6bIGtkmD/uQwY2yHiJxqmYJAGWkiZTCYrdQD7rk67oqNkAjSyejx0kjxMqyyzG4zCpiPKZjVX3u7A+y5ZyyS+5UqbASUWbgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757432899; c=relaxed/simple;
-	bh=tRrIg15HEYoHjQLRwxjOEm2FO9KzuZ6msqcICp3U2hQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RHG9SNTIhO+NhGtCdV/z3BwbwqAPYbXjdOzJunQ/+N+VPoiNHimmxu8bWu6D+UOhgsGV7xxtxQWSO8+Y1DRFLQkEYwBa+UMvCQrmqB+3aMlwitmeL6cTrxmz+1AcqtzwmRIh3tr+4mqa8lmR9kYchzT2vy5sU52JoGp9DRlxeww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1ibc6zE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A912BC4CEF4;
-	Tue,  9 Sep 2025 15:48:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757432898;
-	bh=tRrIg15HEYoHjQLRwxjOEm2FO9KzuZ6msqcICp3U2hQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Q1ibc6zEluBEvCOoC4ymVsgcZFF1QxEdd6VDMWfVzC9CZ5kimA6B45nzSKvauUG0k
-	 sHvi/WdZdHPJlZxzhImPPQGAPU5rdEkNNcpRBXxwH/qXK88NVmQ4PaaWoI9Twg6ADz
-	 1MjD8642aTo5SQKzauBNK+ARhWiBRY9gSJ+TfReozV3+KW350Kk5tRu2ESqpG6dnS1
-	 +iB2H13oAdT5CXcCYwqd+OfLzxRtKN2OU+ZBb8XBt88gohTL3GhGTaQiv0nqXbuU1F
-	 w3iZmhrUhc3dlc26p+xDkd0HbntZ/bfRXIFrlVPqK20KI1w+dGA+DpYyJXtICyfTeo
-	 /BWiUr+1AXRGw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 09 Sep 2025 11:48:08 -0400
-Subject: [PATCH] nfsd: switch the default for NFSD_LEGACY_CLIENT_TRACKING
- to "n"
+	s=arc-20240116; t=1757432949; c=relaxed/simple;
+	bh=dHDWslSUN5qjeF54dGcCHKAmPaXKcOdd8JVtArwQHwk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QQi20OQx52Zyblt8hU4fXV1/SzGPq7lDEAdmqlm6YgOsTe4Exf87k7bTpITuWv+rVuxOOvQsxQu+9X7wU//gLFaNhRozKls710nhYHOaccqAZG9iPPE04I0b+64+7G9dnkJLOwu8Ed6VseINSLbc4J+CJjHrJif5PGIhalGXrZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=TCqAfMX7; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 29FD9A09D7;
+	Tue,  9 Sep 2025 17:48:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=kH++1lRd3b590KtsiJ2D
+	GXmZpkwvUsmHCqZRXED4GfU=; b=TCqAfMX7NO3TWA7vFyNOiUSla1GlfKUSPtYl
+	wdZ1JPQSS9MvP/QTzGcSyKx5FDr6B4yim9+RftMGuqx6UwkA1dIrKdEZOS5F6hPL
+	j44u9gRKE5TiDng3lY8jOy2yKXjJyEhoUjz8Vd8YHyy1Wtve1JZFVGRMM0LPrs4i
+	H6K45Z0WiVV0iXf5Vu82DWR/0Ic+BIRhRs//mCd1DgCi21DGLhpjOdfLZgKJp7H8
+	tElGF6gUYcFHQFeidp+GZWrHvca5RLG+3YBCXxBR66d0VZtpwT4GlThNLlLFLUDO
+	AmcfISk945iKEsVEhxhHTl54lSRGMhkxEzUFXd42MMrnpgsnAAu4HOq+DfzQT90e
+	q8FLU/owU0Vdg+BgWRTVz1NkT4+Mb3M9CJQ9BT7UrOKH5djtTDrOehSVwUkYEP64
+	LDtlSKJliHgY6rzunur9xFXINR5UOPN6aI4BRv8fwoHXeuNd8YaaMP7Y7uHRyIzW
+	jMs2abbwkYXHfQAAqwvyhDgknrb1YEblPDZpQJhOHGxThXaGiu6cNMS/F2erw3Er
+	QqIIJBWFHUaaCCBFq0iDvbS0wplWphEXyHA65mdnbLcpsYUNd9YQcXzZYeSBLdtT
+	Rxzs2iVkHQaot20y4TWUphcn/oYuiMJMi9YA4Vw6RIEetZfDdhWlntaampQP/EML
+	GvjVSdQ=
+Message-ID: <b48844bc-07f3-4fc1-8486-8968bf6d2362@prolan.hu>
+Date: Tue, 9 Sep 2025 17:48:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-nfsd-6-18-v1-1-c87fe3b85ca2@kernel.org>
-X-B4-Tracking: v=1; b=H4sIADhMwGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDSwNL3by04hRdM11DC9205GSjxLS0JEMLIwMloPqCotS0zAqwWdGxtbU
- AhzYrDlsAAAA=
-X-Change-ID: 20250909-nfsd-6-18-fcc2affb1820
-To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=963; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=tRrIg15HEYoHjQLRwxjOEm2FO9KzuZ6msqcICp3U2hQ=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBowEw6SjeDyclDxEirK+PN1lq7afNKxjlghSbif
- wD2SEOjwKiJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaMBMOgAKCRAADmhBGVaC
- FZIcEAC54DJ8Rj0sHb07l6MgT4YCigfETQr2fM47HVjhtau0URYv3GySFs8NNhpcFV45yAZX+Uw
- noUPXWQTtN2UYcuhh5Ytix55lMg4ykbHUfXTG9GhBl4h3BgrUC3w+Fx+4SieZTBrXsm+Tnw+s2b
- ivzdw3Bncn/fb5Fb/pTW4P3bpU8xhg9b8N+ZoivbGCDUMuvuZKLE+FqmnZrmWJW6+cB33VvSLx+
- B4aHC+v00F5plHQwO1rabox6zaqD98wZ9ZbOZaVu4aYZkauxxIHdlYb9U9iMSQQSUJ1gk83YRnD
- 64fvKCeJLsTo4Lw3bg/kTMgnpVfKKCXL/eqKBPxxjosN6wDzLXJ+dNRUFWZWgWuoHdz/qLvni21
- 29QpiH76bLRs4YSQ0RoLR17DIhFgUb4Tm2BRlFb6AoX98+MNq5oiUb2AdphwMMvm0x5qTvc98oa
- Bhjs6Zuy20EUyR8l7kf+YZkZh7fVJp/D9yWI3dZQMvlST9CNkZX+ilSYRtYePGSyaDtrLpcjw4P
- byFqVF/t7qKRCS1mTeW95BxkObinTixr+47Uc94J44fp2pPkxEs1vlzGGgStpGOLybW3WL2VcWz
- rX376t8uTnmCyykhy5JYbAdfvGiOv+Aneh1hhOfF4za3H4SQHY1V6YFMZjQ7PoyM8JOMjkxg3pL
- SzEjRpQqn1QftAg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] ARM: dts: imx53-usbarmory: Replace license text
+ comment with SPDX identifier
+To: Andrej Rosano <andrej.rosano@reversec.com>, Andrej Rosano
+	<andrej@inversepath.com>, Andrea Barisani <andrea@inversepath.com>
+CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Conor Dooley
+	<conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Rob Herring
+	<robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>
+References: <20250814-imx-misc-dts-lic-v2-0-faff7db49a5f@prolan.hu>
+ <20250814-imx-misc-dts-lic-v2-2-faff7db49a5f@prolan.hu>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <20250814-imx-misc-dts-lic-v2-2-faff7db49a5f@prolan.hu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: sinope.intranet.prolan.hu (10.254.0.237) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155E627464
 
-We added this Kconfig option a little over a year ago. Switch the
-default to "n" in preparation for its eventual removal.
+Hi,
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2025. 08. 14. 9:47, Bence Csókás wrote:
+> Replace verbatim license text with a `SPDX-License-Identifier`.
+> 
+> The comment header mis-attributes this license to be "X11", but the
+> license text does not include the last line "Except as contained in this
+> notice, the name of the X Consortium shall not be used in advertising or
+> otherwise to promote the sale, use or other dealings in this Software
+> without prior written authorization from the X Consortium.". Therefore,
+> this license is actually equivalent to the SPDX "MIT" license (confirmed
+> by text diffing).
+> 
+> Cc: Andrej Rosano <andrej@inversepath.com>
+> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
 
-diff --git a/fs/nfsd/Kconfig b/fs/nfsd/Kconfig
-index e134dce45e350cde8b78bfac2dbed4b638d9ec7d..df09c5cefb7c1f5124b7963f52bb67254d5c08b6 100644
---- a/fs/nfsd/Kconfig
-+++ b/fs/nfsd/Kconfig
-@@ -164,7 +164,7 @@ config NFSD_V4_SECURITY_LABEL
- config NFSD_LEGACY_CLIENT_TRACKING
- 	bool "Support legacy NFSv4 client tracking methods (DEPRECATED)"
- 	depends on NFSD_V4
--	default y
-+	default n
- 	help
- 	  The NFSv4 server needs to store a small amount of information on
- 	  stable storage in order to handle state recovery after reboot. Most
++To: Andrea Barisani <andrea@inversepath.com>
 
----
-base-commit: 737a649eb793bcb88852e905870aaf67d2925f16
-change-id: 20250909-nfsd-6-18-fcc2affb1820
+Andrej, Andrea, do you agree with this?
 
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
+Thanks,
+Bence
 
 
