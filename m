@@ -1,148 +1,131 @@
-Return-Path: <linux-kernel+bounces-808431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF853B4FFA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:39:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07460B4FFAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0D901C24FAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:38:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6226C1C24D76
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C7135208A;
-	Tue,  9 Sep 2025 14:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="uMSbsfVL"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B443451B6;
+	Tue,  9 Sep 2025 14:38:47 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5D635206D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4458274B35
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757428651; cv=none; b=D+gnk8RUXh8hPXJbKoHorf1FfVe7FU9Mqb+1qWSN2j4SpCKIZWKrKdNGbJcZQTvo3S6SfR42OdrRA9j8gw0CTGY8sDY6z6/IleW1GRSOKFWl7N8LHpdDZ0i24V7y+6RMM7eTJ1p9S1CFlbVOEWsJqF6uqCnRHUg3hHnQH3HYTz0=
+	t=1757428727; cv=none; b=EcvTS5Nkl4qFBl/YTmAbYFMr39UresrY2ii1r5mT1CjRAPB4z6h3w0fL+otYQvWK+BsakwvCQ1CQjP9TEatL9LVJU/XczvT1zjRYNngIwUfopDK0MN9tYfx8g+gloIjkEoJV+I1NEAIiP+AgCrM+77EXyzTlnIG40VizSlGIuUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757428651; c=relaxed/simple;
-	bh=FLvfa7fq92v+sqqn62k81V/o5eNgNqP5wcAxdiLtk/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KXAmpIx0zkSeRgU96zShgQfaFuoABygPdfUnPLSe66TtIvIUmWiS9Gdna60mAYMAxRxlDhw3NzJOQDQZBzoRUKgYVjCPCEThEFMmsUWkBtWaojZkhmhttp4CpgiWiWO2usFuQ5Xsbl5q6RI7wdkF/iBlT9CtFxRwERn0GT03RMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=uMSbsfVL; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-4023132bd4aso16958815ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:37:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757428649; x=1758033449; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GJnzswevlDUuq/OfoxD0pVudGLoTsCpDMKvJC+rT6Cg=;
-        b=uMSbsfVLIICn9znjJfaJzX0EzI9htlDDlvRX+uXbaSpQjgcfX1TG4lJgO4PLITIrpo
-         pMLon5sn5DYWkRWHWLkJhskWwKSGklfeQOuQAP++62MRXfUpPjkNWZVEy5qNLDcJfZZh
-         R7oNxauWVw+rlIDhJu7vGa+oITK9XoWuiYLCRDcfQOegAYvy2z3c3WNk20L6wqoT/ofg
-         yuLMogVaeSnK8F1ValpoPBDhno2wnwAJA1VfIsznZhO7gjZQ4US6EjhiiGeLvXSsXxtN
-         Wxim49H8gM81f3Fte3cFNFbNXhTYdLwh+2aMrDIz1uCuaiTVp15oPqxaCeoRF/fJS66R
-         d8Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757428649; x=1758033449;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJnzswevlDUuq/OfoxD0pVudGLoTsCpDMKvJC+rT6Cg=;
-        b=mKrWec3Y20wEM5BPsrMeHfd9+iRa4piG5JfjpKVWYZKOFTl2Cbv0Bd3bcSCR6dBL1+
-         0kWpt+G73VnFq2jCqbU4W6LRWY3Tk+Eh00aOX08L4xVqjauJcPUIC275A+KxDKzoPizu
-         hPF1Lwf+gcaXdvgGqY9oliLvbeIxcg3jTMOltDhfotpTVz5u+wEV2EIJ/KUer5/rFecp
-         0s7omN4XkmB7vV50FHHzuIGnq/svDjpLEoaCKawzSnA0vZhVdCYpGxgNLGGIe5OGnd67
-         Q3VlM1VAG0byUh+FLKMSdZnwBBd62oJqRTjnl7bvevVy1dOlc0B23YeOwClRzE//o8b7
-         jWlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNwjeVfVg+ZAga8f5ArEH6Yr10zQRXKm0YJjBehzf+t1zzSrpreouFrReJDqNtFdoju72M9yveDoCLiJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3rHs5ymhgPIIsvY/EB/H61TwtdfU504xBo01uWOiPrf/XReFd
-	Lg3qs0DDE22wewZlUFnDsJSi5QR2eDMpbC9EUBiX7EnC8DWboNGl4s3QB5isC2BZQYI=
-X-Gm-Gg: ASbGnctnG0qhxb3JM3XLr1v70ry7cmq3EflXJkLuErnOpxg3YL+aoMsBUpoRRiZZsvk
-	ewK+TJeX4qQqzsc2qgYJtrXwwdurOD1TKLQ5RkUl4Ld+aNmVqFrj2I4RE6YA6qK6i9XDoF0HP2c
-	bdgr1bOQDhWJ4iugf+P/aZJXwY3Mb6HRxHJBx2MmW7IboB6fhTeeHk6AwBxm9242UiZiq+9+dvd
-	AVQGM28lJa3WlrvT/6vyiUWh5wyLOkN6QaQG5zJKrO6S3nT8ikkKbZIQ8cB8Q+H3xOQXetAy43C
-	fQEJzLV5KZS9hKKcwaFS/hGcbDRXM9fPbX2f5BHhHk68tk6PSvnH6Sgqhrr6V9yO80DCFVzDe+e
-	CnxYsCNeVi/0jrBvZC0hUI5OG5AmZ4A==
-X-Google-Smtp-Source: AGHT+IFFRSb/tnom+YwXf9uhxtCm5e69yWnLr+MwUSsv+r9w/hXHhYam53Z1HpV1oSqQ0qe9EVHAew==
-X-Received: by 2002:a05:6e02:1a63:b0:414:cb8e:a801 with SMTP id e9e14a558f8ab-414cb8ebdffmr10529905ab.29.1757428648340;
-        Tue, 09 Sep 2025 07:37:28 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50ece96399csm9130641173.20.2025.09.09.07.37.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 07:37:27 -0700 (PDT)
-Message-ID: <63c99735-80ba-421f-8ad4-0c0ec8ebc3ea@kernel.dk>
-Date: Tue, 9 Sep 2025 08:37:27 -0600
+	s=arc-20240116; t=1757428727; c=relaxed/simple;
+	bh=tJbcx/bk9C54Jm57BJ+fi7rGBD0k9Ovd/v5P+snaFx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJeUi4LFV7dl6FM+dUK9Bf+noh6YPcXmOSbfqetLftQiTE9wbNRX3FVc/NOohUmbhLKQNlJpKx3Z8MlJCNqtgMwln+J0dC+SlmpGjFNuCGwyWyJs45JHsJn86g5kvZiB4fGvnRn9r054sthvf2yQ7DPr7klyOkwWqjroDK1AEII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uvzUT-0006Ij-GW; Tue, 09 Sep 2025 16:38:37 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uvzUR-000REA-2b;
+	Tue, 09 Sep 2025 16:38:35 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 70BAE46A182;
+	Tue, 09 Sep 2025 14:38:35 +0000 (UTC)
+Date: Tue, 9 Sep 2025 16:38:35 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Patrik Flykt <patrik.flykt@linux.intel.com>, 
+	Dong Aisheng <b29396@freescale.com>, Fengguang Wu <fengguang.wu@intel.com>, 
+	Varka Bhadram <varkabhadram@gmail.com>, Wu Bo <wubo.oduw@gmail.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel@pengutronix.de
+Subject: Re: [PATCH 3/7] can: m_can: m_can_handle_state_errors(): fix CAN
+ state transition to Error Active
+Message-ID: <20250909-curly-rousing-hyrax-d4eb4c-mkl@pengutronix.de>
+References: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de>
+ <20250812-m_can-fix-state-handling-v1-3-b739e06c0a3b@pengutronix.de>
+ <DC74JEKBB6HL.1LJ53UZJ0T0Q9@baylibre.com>
+ <DC74YGSPTL16.KG2SWZD4L3YV@baylibre.com>
+ <20250909-nightingale-of-strange-defense-631196-mkl@pengutronix.de>
+ <20250909-bulky-wolverine-of-artistry-49749f-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nbd: restrict sockets to TCP and UDP
-To: Eric Dumazet <edumazet@google.com>, "Richard W.M. Jones"
- <rjones@redhat.com>
-Cc: Josef Bacik <josef@toxicpanda.com>,
- linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
- Eric Dumazet <eric.dumazet@gmail.com>,
- syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com,
- Mike Christie <mchristi@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- linux-block@vger.kernel.org, nbd@other.debian.org
-References: <20250909132243.1327024-1-edumazet@google.com>
- <20250909132936.GA1460@redhat.com>
- <CANn89iLyxMYTw6fPzUeVcwLh=4=iPjHZOAjg5BVKeA7Tq06wPg@mail.gmail.com>
- <CANn89iKdKMZLT+ArMbFAc8=X+Pp2XaVH7H88zSjAZw=_MvbWLQ@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CANn89iKdKMZLT+ArMbFAc8=X+Pp2XaVH7H88zSjAZw=_MvbWLQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ghylx5zynkmh56yl"
+Content-Disposition: inline
+In-Reply-To: <20250909-bulky-wolverine-of-artistry-49749f-mkl@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 9/9/25 8:35 AM, Eric Dumazet wrote:
-> On Tue, Sep 9, 2025 at 7:04 AM Eric Dumazet <edumazet@google.com> wrote:
->>
->> On Tue, Sep 9, 2025 at 6:32 AM Richard W.M. Jones <rjones@redhat.com> wrote:
->>>
->>> On Tue, Sep 09, 2025 at 01:22:43PM +0000, Eric Dumazet wrote:
->>>> Recently, syzbot started to abuse NBD with all kinds of sockets.
->>>>
->>>> Commit cf1b2326b734 ("nbd: verify socket is supported during setup")
->>>> made sure the socket supported a shutdown() method.
->>>>
->>>> Explicitely accept TCP and UNIX stream sockets.
->>>
->>> I'm not clear what the actual problem is, but I will say that libnbd &
->>> nbdkit (which are another NBD client & server, interoperable with the
->>> kernel) we support and use NBD over vsock[1].  And we could support
->>> NBD over pretty much any stream socket (Infiniband?) [2].
->>>
->>> [1] https://libguestfs.org/nbd_aio_connect_vsock.3.html
->>>     https://libguestfs.org/nbdkit-service.1.html#AF_VSOCK
->>> [2] https://libguestfs.org/nbd_connect_socket.3.html
->>>
->>> TCP and Unix domain sockets are by far the most widely used, but I
->>> don't think it's fair to exclude other socket types.
->>
->> If we have known and supported socket types, please send a patch to add them.
->>
->> I asked the question last week and got nothing about vsock or other types.
->>
->> https://lore.kernel.org/netdev/CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+ndzBcQs_kZoBA@mail.gmail.com/
->>
->> For sure, we do not want datagram sockets, RAW, netlink, and many others.
-> 
-> BTW vsock will probably fire lockdep warnings, I see GFP_KERNEL being used
-> in net/vmw_vsock/virtio_transport.c
-> 
-> So you will have to fix this.
 
-Rather than play whack-a-mole with this, would it make sense to mark as
-socket as "writeback/reclaim" safe and base the nbd decision on that rather
-than attempt to maintain some allow/deny list of sockets?
+--ghylx5zynkmh56yl
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 3/7] can: m_can: m_can_handle_state_errors(): fix CAN
+ state transition to Error Active
+MIME-Version: 1.0
 
--- 
-Jens Axboe
+On 09.09.2025 16:31:29, Marc Kleine-Budde wrote:
+> > > Also looking at all the users added for the function above, could you
+> > > read the register inside the function? Currently you are adding a
+> > > reg variable and a read call for each call to this function.
+> > > m_can_handle_state_errors() also doesn't need the psr value with your
+> > > refactoring.
+> >=20
+> > That makes sense.
+>=20
+> I'm also preparing the driver to have error handling for all register
+> reads...so I'll have to return in case of an error and pass the state
+> via a pointer.
 
+This has to wait until a later patch.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--ghylx5zynkmh56yl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjAO+gACgkQDHRl3/mQ
+kZwNFAf/SxdJiEB4XBelMF6fV6G8aPDd0EYMka2gwKCymQSTVykivv5gfJH+MkQb
+jXxjKS8fheQ1bYxbiFTqp6tcPjEuGbaquQj3Ds6w1DDaqYoGx11c7/HWv7w/D6GS
+MBCfMGNJqN8m8cVYVsEMivp+2jIHmzm8VIllH4KmkyTZ1lYLVJoJlKAo2zSX1TVB
+OKFQ7QArRO1vtpT2Fn9CiAU1fQp0DyeS0erQrHfjsfGdsJGMnUmUHu3YdenIPGzt
+mv7/AUuTELlBJrYPkHVtPNyW5NnuwjgFfZ2gWjcxl8F/e8LYEXTIe5kxmH0C0fAn
+PfuY4//X7OdD1g/KzxSVhGggrM7LxQ==
+=6GXS
+-----END PGP SIGNATURE-----
+
+--ghylx5zynkmh56yl--
 
