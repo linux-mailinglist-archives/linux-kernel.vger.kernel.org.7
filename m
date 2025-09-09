@@ -1,126 +1,94 @@
-Return-Path: <linux-kernel+bounces-807028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834AEB49F13
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:19:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 139F3B49F19
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FC1B4E2883
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:19:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFA387AC6AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832D9248F5E;
-	Tue,  9 Sep 2025 02:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BAntUjAd"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E59E2441B8;
+	Tue,  9 Sep 2025 02:20:38 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC641A5B8A;
-	Tue,  9 Sep 2025 02:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FBB235057;
+	Tue,  9 Sep 2025 02:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757384329; cv=none; b=BLjrl1Uazw/2vgzkLIiXY+Phlfvp+2ef5+yut+yyEiZjN3f5DY1A8hvprLFGw/xIoBuU4imll988Cmh0KZ2F+/ihiDDOh5HmftEhpP/6cCXvj93fFO4yWhZBv5cJTPLcF5DI1B7pmXGRL5zUcaDUwO9+xcFqzIImFddxsvP3rjY=
+	t=1757384437; cv=none; b=o1aqeB/ssZiqqLRElfeHYhclJCwlLr4PAlXeVCIqP1scKWC2gK1wXVG1On+8rWjzVf11l1weCtgWfUnPGPsSv1LPlqH+yOcvYwZOPgiTT7c09BHkT/kI5ZHqH6qGhUSJDtEjyX17vh5f08+EnYVW9rgDkSzXfW00J1rFE+zpU6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757384329; c=relaxed/simple;
-	bh=WGDFdrUIO57RFhL1Hx4aXR5epVMihSnh5sl8CIbKJtw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=em/4yS26MUqWibdqDTYe0Ah7B3I+dfxvdvHYuxpmrV/dUF3cQ4MtsUo4f1NG7zeaaUm3c2C20hH6WZCy2yZSC+JFLj0qQSQNT4snVbu5uw7nj34VTrFj5+zMGp9KcAq/PFlC7ygTRMNIkfxaTxHgnGWalQG8L+quy10t6Hi+fX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BAntUjAd; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=IofV6huNpOfUH9kOcfLlUEgXZUkpn9/vanabM6dcCKQ=; b=BAntUjAdRiibQDvNg0XKZqYZBb
-	uGS+5AXqc8fqzISX1z2qOliaasU/p2spviAOv2gCoHCzu97fImJnVGPbIO7+5qiq5vXH2z0APUrdR
-	0VW1qMpeX7crDrwIVBJZODZV4jCTTBKqII6TYICsRMGUxmON4eBFjWj5XPinAFI06lVEmEDrSKTz+
-	QO1O7ml6iv0vOLAcZV+SHb12MXaDF8f/u9FsI93hm/p0JmCxZZskvruXz3v52f5bciGWbaiu/5gLB
-	GaLecD5nPNIqM4Qw7M9T1obxoelYO+4sm9ghb2Jv05lXF70+cxI3mB2pT7npQJ9RwWaT+74+RcTJ0
-	t8OVHqqw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uvnwL-00000003eGh-0Sp2;
-	Tue, 09 Sep 2025 02:18:37 +0000
-Message-ID: <b23d3799-f8c3-4bd3-82ae-df9c3e965555@infradead.org>
-Date: Mon, 8 Sep 2025 19:18:36 -0700
+	s=arc-20240116; t=1757384437; c=relaxed/simple;
+	bh=K3qINbirh6FDIbTYUhLVpKdmK8G3sNMs6+rri6XXFTk=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=D93IFzZKtlM8pE664RT5iSxqF+6+rtmDiB08BwKwn8UuCNUb2WcX83C8wt2kfZaALsr+i44qOxeBMqdqOigBsLLT2CHGUReafstEmRjusYKln+zfG3RPlgX001HxY54xJ00qyfVMkWnUZQag17yI4DHaT8sM9PAzl/HshdBcwyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cLSGR6Js3z8Xs6w;
+	Tue, 09 Sep 2025 10:20:31 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl1.zte.com.cn with SMTP id 5892KBMP039301;
+	Tue, 9 Sep 2025 10:20:11 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 9 Sep 2025 10:20:12 +0800 (CST)
+Date: Tue, 9 Sep 2025 10:20:12 +0800 (CST)
+X-Zmail-TransId: 2afc68bf8edc5ff-979be
+X-Mailer: Zmail v1.0
+Message-ID: <20250909102012483SxyAVZnrCtXCkrr-tphl9@zte.com.cn>
+In-Reply-To: <20250907001338580EURha20BxWFmBSrUpS8D1@zte.com.cn>
+References: 20250907001101305vrTGnXaRNvtmsGkp-Ljk_@zte.com.cn,20250907001338580EURha20BxWFmBSrUpS8D1@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: x86: Fix hypercalls docs section number order
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux KVM <kvm@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>
-Cc: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Wanpeng Li <wanpengli@tencent.com>
-References: <20250909003952.10314-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250909003952.10314-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <fan.yu9@zte.com.cn>, <akpm@linux-foundation.org>
+Cc: <wang.yaxin@zte.com.cn>, <corbet@lwn.net>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSHYyIGxpbnV4LW5leHQgMy81XSB0b29scy9kZWxheXRvcDogYWRkIGludGVyYWN0aXZlIG1vZGUgd2l0aCBrZXlib2FyZCBjb250cm9scw==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 5892KBMP039301
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Tue, 09 Sep 2025 10:20:31 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68BF8EEF.001/4cLSGR6Js3z8Xs6w
 
-
-
-On 9/8/25 5:39 PM, Bagas Sanjaya wrote:
-> Commit 4180bf1b655a79 ("KVM: X86: Implement "send IPI" hypercall")
-> documents KVM_HC_SEND_IPI hypercall, yet its section number duplicates
-> KVM_HC_CLOCK_PAIRING one (which both are 6th). Fix the numbering order
-> so that the former should be 7th.
+> From: Fan Yu <fan.yu9@zte.com.cn>
 > 
-> Fixes: 4180bf1b655a ("KVM: X86: Implement "send IPI" hypercall")
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
-Yep. Thanks.
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
+> The original delaytop only supported static output with limited
+> interaction. Users had to restart the tool with different command-line
+> options to change sorting or display modes, which disrupted continuous
+> monitoring and reduced productivity during performance investigations.
+> 
+> Adds real-time interactive controls through keyboard input:
+> 1) Add interactive menu system with visual prompts
+> 2) Support dynamic sorting changes without restarting
+> 3) Enable toggle of memory verbose mode with 'M' key
+> 
+> The interactive mode transforms delaytop from a static monitoring tool
+> into a dynamic investigation platform, allowing users to adapt the
+> view in real-time based on observed performance patterns.
+> 
+> Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
 > ---
->  Documentation/virt/kvm/x86/hypercalls.rst | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/virt/kvm/x86/hypercalls.rst b/Documentation/virt/kvm/x86/hypercalls.rst
-> index 10db7924720f16..521ecf9a8a361a 100644
-> --- a/Documentation/virt/kvm/x86/hypercalls.rst
-> +++ b/Documentation/virt/kvm/x86/hypercalls.rst
-> @@ -137,7 +137,7 @@ compute the CLOCK_REALTIME for its clock, at the same instant.
->  Returns KVM_EOPNOTSUPP if the host does not use TSC clocksource,
->  or if clock type is different than KVM_CLOCK_PAIRING_WALLCLOCK.
->  
-> -6. KVM_HC_SEND_IPI
-> +7. KVM_HC_SEND_IPI
->  ------------------
->  
->  :Architecture: x86
-> @@ -158,7 +158,7 @@ corresponds to the APIC ID a2+1, and so on.
->  
->  Returns the number of CPUs to which the IPIs were delivered successfully.
->  
-> -7. KVM_HC_SCHED_YIELD
-> +8. KVM_HC_SCHED_YIELD
->  ---------------------
->  
->  :Architecture: x86
-> @@ -170,7 +170,7 @@ a0: destination APIC ID
->  :Usage example: When sending a call-function IPI-many to vCPUs, yield if
->  	        any of the IPI target vCPUs was preempted.
->  
-> -8. KVM_HC_MAP_GPA_RANGE
-> +9. KVM_HC_MAP_GPA_RANGE
->  -------------------------
->  :Architecture: x86
->  :Status: active
-> 
-> base-commit: a6ad54137af92535cfe32e19e5f3bc1bb7dbd383
+>  tools/accounting/delaytop.c | 166 ++++++++++++++++++++++++++----------
+>  1 file changed, 121 insertions(+), 45 deletions(-)
 
--- 
-~Randy
+Reviewed-by: xu xin <xu.xin16@zte.com.cn>
 
