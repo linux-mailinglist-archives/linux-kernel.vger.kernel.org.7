@@ -1,168 +1,106 @@
-Return-Path: <linux-kernel+bounces-807339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ACFEB4A32C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:13:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02090B4A32E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7B941BC6CD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:13:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 822C23A6E92
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE1A306B33;
-	Tue,  9 Sep 2025 07:13:14 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5333305972;
+	Tue,  9 Sep 2025 07:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="TEW/akYE"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108333074AD
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 07:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA941F63CD;
+	Tue,  9 Sep 2025 07:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757401993; cv=none; b=H1tbDsM+qXGKFUlZDbwDBhX73rvOd5zt+wA1yETQoxLmUknfu5ANh/gcRUXC31kJjjw45Z9eLLyKvVuivr/gVbEzPs1ES8dPj7V2sBUj3rQ4F3tKI8wH3zLxuPCzHeQhBjcOTVzLgnq+QK2uGXYWtCKIg+JQyYMqsRthpBRzizg=
+	t=1757402046; cv=none; b=PlYqI32ZzryzGtB1DKJGstoeEymvIqjzopnTQNo4nXXOb8KefIiUBYKyN7ih8iOoxvttMFg1Nj16yzlgOq5kdQ7rw5lYHKQ9CkOI4RaTENGPfNY5xzU5LLHncNBVbApcBsYRp1FIqdsD9JmUSrV0tt1BOTJZcFRngBbnisDBWDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757401993; c=relaxed/simple;
-	bh=8UsXHnbkZ9Q6dr30czoTDR0JzOYoJQiyrQa3Hb9+4C4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XObh4x5t0vj0bRZ0HI4GZFN/H3DEd1bbAuMhRm9Hkzvm2k0yYANrHCHsQ/YOP7qvihT/paOye9eLaOUahyZo6U6xTLCYWTHBpt8fJrrpjRx5hIVtIHo7zTYHsCjsQr/NUIqaxgskBC87Y+XpymmV2mmGkAwEIbRDZB0Kx7QaZTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-544aa9b536eso3874626e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 00:13:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757401991; x=1758006791;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vZ62va/ZZRlPICIZ7sjQCyrFeKO9neZKpvCI6L9xzFk=;
-        b=rTcrE8V8NksAfZws29qD15oUCtQ+BTXBFsMk/icMvz+eoja4AcfT948FakYZUCdhds
-         znvyuTAfmzCf0JWRlHDIrt6E60ipCH+KnjanY2mkvusKEZFNj5GYCCMT12tfDiqUuhAY
-         3P8QpXjDH8vPKzHo2Dd7L6HQfQUmpOqLWr23rTBDw8AvpEmuZXgp6QSzFA1IPjhy7jh7
-         fF0iqoblUMuQCbcQdAWVuTVC3D3a/Etl4AWmC4wLsTlhOs/5Xcsdjyq7vCiwVQLg++Cu
-         zG1Suw5TLz6zotdX+LwwX13zp6bP+fw+wk59Ki/w8AFHa0pakmCiv6uZB6M+tkxQdPna
-         oSWw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7ZQDIWysCRfuhiltTmweBhc5DdKdADbhj1pAKbKfPkp2HyWgzsxsDOeuTDPdJ83q3+SSnZrINNd7Bv2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymDeiOU9LFMUhdNyMX/PrBMn7dzPm1Cby3ZKYJSXDATHT9zuVY
-	fcqpOQ0/g52kEHsZGaZyvQq+XBDjckcVCTyXMX5e37+oOm9ghVFedAxdAz0nqpgp
-X-Gm-Gg: ASbGncsRTGX33GFOfBYljigIkhFtiSa4lILWPlcCo5A5QcPCFKhl2mVEdQfNcHPpNOf
-	lwK+QkCh7iaILQNRuDywQa2P9cPMGfiUj7ZYFItYNbS7w7Q3oRH13sGEwNnhiUr5B3MSC3qiN8H
-	MNrXCg+BR3a+ESm+sbo1Hx2SkgYfQ7IECZB+Bhecn+2q3IpCiYyEye9thQ9+BfuIwHYR+261Y+x
-	4H/g7laxjHoFVl5neHJrvF8+zjbG1mJR69QNS2CJ/an1NB1cQ7Scen0tVJQZDZLtuwA4D1uZqQw
-	oZ7zoH1H/Yd27GcBWGgWTirOzsSIZLZRdYAsn4TYYw8bWdARG+5TnUjwOwZFbWqmJdkBX+lyZpM
-	zGBcn258xmUroVBM/iWelLv+QM8dgbv/CI4hKzhlkCYlCjCq1Fr0YYKIHNVUw
-X-Google-Smtp-Source: AGHT+IFO8CZe17LizJ29ll83AQJ8rJBqS/TKG+dIl3Hb0G8m2wGkvd0oDOEMhbloJxs5xF/zJYopCA==
-X-Received: by 2002:a05:6122:3128:b0:539:4097:794a with SMTP id 71dfb90a1353d-5473caaf29amr2975650e0c.12.1757401990756;
-        Tue, 09 Sep 2025 00:13:10 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54491318ecbsm12802582e0c.11.2025.09.09.00.13.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 00:13:10 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-89018e9f902so3024169241.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 00:13:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXowZK+bw2ViEHrgCL4kKNWfoP5W7H36S4Ezcv9qZPl0Qgmm1TBK68wmLPef4ru34yFkyGGrNccjRL8cLE=@vger.kernel.org
-X-Received: by 2002:a05:6102:2910:b0:536:7bfa:22bc with SMTP id
- ada2fe7eead31-53d0c7958femr3979296137.4.1757401990302; Tue, 09 Sep 2025
- 00:13:10 -0700 (PDT)
+	s=arc-20240116; t=1757402046; c=relaxed/simple;
+	bh=RLT21W40QQic9U+kLXEBvc/R94byG6Ag6xJ9Xg4gz4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oowjIzaiEayDVoBRPHCLlMm9cQFKpCiyMwlccrcsdjlFBnhyksx96nvTBQrASFp9ok7D1WPsISs/UultW5g4bJG3kl6NNJfY89A+O9jYSv41A3i1fCsnqYvBCWe+FBcz9sangfNxYES8G/UYPFK7ryDmmGkok7Bf2QcfMkhZ0xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=TEW/akYE; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=xYnn6eq9zDJfEhefiTAt9k41NDwuDU+EuoU6E1ypT30=; b=TEW/akYEAvobwhIwNwLHv1OxsP
+	TRvqluGtzgOR/IiAz81Ld1z7p+3NwOuRxtoTDzhgrNzF8lPVlbe5GmVwmDd9YupEcWQtoUuatEIzM
+	998FaTxhLFWOIlVKDaSG+TCicA4A68/EfPtXUMNML4HI+j+7Dq0JPy6zJr+mu2BKYQwXytm+/pTy0
+	gPRk2F4bj6M3Vv8ykYlxo1PgAFWix22zQoH7JUnCGDRI6agb2naeYKPzkOsMStQbcSvFM/8n86tCb
+	2Xi+0hTV4n5mIBa9X8aAMu9W8pXWAFeD4UlWPwcgEOcOBN57mThT67qAVlrHginNntb8fMq6XQ+aN
+	K1eI9LHg==;
+Date: Tue, 9 Sep 2025 09:13:50 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Andreas Kemnade <akemnade@kernel.org>, Lee Jones <lee@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alistair Francis <alistair@alistair23.me>, Liam
+ Girdwood <lgirdwood@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: sy7636a: Add missing gpio pins
+ and supply
+Message-ID: <20250909091350.7732243e@akair>
+In-Reply-To: <20250909004458.GA2311693-robh@kernel.org>
+References: <20250906-sy7636-rsrc-v1-0-e2886a9763a7@kernel.org>
+	<20250906-sy7636-rsrc-v1-1-e2886a9763a7@kernel.org>
+	<288f0cf1-1ee4-4eba-b059-641120bb93f3@kernel.org>
+	<c879f3e1-f64c-4cbd-97ec-646d06488d8e@sirena.org.uk>
+	<20250909004458.GA2311693-robh@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901020033.60196-1-jefflessard3@gmail.com>
- <aLbOU0vIXX22uVvf@smile.fi.intel.com> <F8CD496B-97D7-4C69-926F-4137F3006AA1@gmail.com>
- <A8F9D18F-7C12-42B3-A9F5-AAEE1AC29C2C@gmail.com>
-In-Reply-To: <A8F9D18F-7C12-42B3-A9F5-AAEE1AC29C2C@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 9 Sep 2025 09:12:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX4wn5F6K6MHheQqOqb933v0JAVaRP1gaK=FW+bTx8A4A@mail.gmail.com>
-X-Gm-Features: AS18NWDYispOvcd3F_GwPLSnd16ldhUSiqVP9-dZeJf6op1KA0U5NB5KO3Z6CL8
-Message-ID: <CAMuHMdX4wn5F6K6MHheQqOqb933v0JAVaRP1gaK=FW+bTx8A4A@mail.gmail.com>
-Subject: Re: [PATCH 0/5] auxdisplay: linedisp: support attribute attachment to
- auxdisplay devices
-To: =?UTF-8?Q?Jean=2DFran=C3=A7ois_Lessard?= <jefflessard3@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org, 
-	Andy Shevchenko <andriy.shevchenko@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Jean-Fran=C3=A7ois,
+Am Mon, 8 Sep 2025 19:44:58 -0500
+schrieb Rob Herring <robh@kernel.org>:
 
-On Mon, 8 Sept 2025 at 20:50, Jean-Fran=C3=A7ois Lessard
-<jefflessard3@gmail.com> wrote:
-> Le 2 septembre 2025 13 h 44 min 45 s HAE, "Jean-Fran=C3=A7ois Lessard" <j=
-efflessard3@gmail.com> a =C3=A9crit :
-> >Le 2 septembre 2025 07 h 00 min 35 s HAE, Andy Shevchenko <andriy.shevch=
-enko@intel.com> a =C3=A9crit :
-> >>On Sun, Aug 31, 2025 at 10:00:24PM -0400, Jean-Fran=C3=A7ois Lessard wr=
-ote:
-> >>> This series modernizes the auxdisplay line display (linedisp) library=
- to
-> >>> enable seamless integration with auxdisplay parent devices while
-> >>> maintaining backward compatibility.
-> >>>
-> >>> The key improvement is adding attach/detach APIs that allow linedisp =
-sysfs
-> >>> attributes to be bound directly to their parent auxdisplay devices av=
-oiding
-> >>> child device proliferation and enabling a uniform 7-segment userspace
-> >>> interface across different driver architectures.
-> >>>
-> >>> This series introduces attachment infrastructure for linedisp devices=
-.
-> >>> The first consumer of this API will be the TM16XX driver series.
-> >>> See the related patch series:
-> >>>   auxdisplay: Add TM16xx 7-segment LED matrix display controllers dri=
-ver
-> >>>
-> >>> Changes include:
-> >>> 1. Encapsulate container_of() usage with to_linedisp() helper functio=
-n for
-> >>>    cleaner context retrieval
-> >>> 2. Improve message display behavior with static padding when message =
-length
-> >>>    is smaller than display width
-> >>> 3. Add 'num_chars' read-only attribute for userspace capability disco=
-very
-> >>> 4. Add attach/detach API for sysfs attributes binding to parent devic=
-es
-> >>> 5. Document all linedisp sysfs attributes in ABI documentation
-> >>>
-> >>> All existing linedisp_register() users remain unaffected. The new API=
-s
-> >>> enable drivers like TM16XX to integrate 7-segment functionality withi=
-n
-> >>> their LED class device hierarchy while providing a uniform 7-segment =
-API.
-> >>>
-> >>> Thanks to Andy Shevchenko for early feedback and guidance.
-> >>
-> >>Overall LGTM, only one question about spin lock vs. mutex. The rest is =
-simple
-> >>nit-picks. I'll also wait for Geert's review / Acks.
-> >
-> >Agreed. I will wait for Geert's feedback before submitting V2.
->
-> Do you have any feedback on this patch series?
-> Or would you prefer to review V2 instead?
+> On Mon, Sep 08, 2025 at 03:34:00PM +0100, Mark Brown wrote:
+> > On Sat, Sep 06, 2025 at 02:01:25PM +0200, Krzysztof Kozlowski wrote:  
+> > > On 06/09/2025 11:09, Andreas Kemnade wrote:  
+> >   
+> > > > +  en-gpios:  
+> >   
+> > > enable-gpios, unless it is something else, but then please explain in
+> > > the description.  
+> >   
+> > > > +    description:
+> > > > +      If EN pin is not hardwired, specify it here to have it set up.
+> > > > +    maxItems: 1  
+> > 
+> > It seems reasonable to name the property after the pin on the device?  
+> 
+> Yes, but in general we've standardized on reset, enable, powerdown, etc. 
+> rather than all the possible variations of those names. At least with 
+> 'reset', standardizing it has bought us the ability to handle it with 
+> the reset framework rather than every driver implementing its own GPIO 
+> twiddling.
+> 
+ok, then I will do
+EN -> enable-gpios
+VCOM_EN -> vcom-en-gpios (as is)
 
-Sorry, I haven't gotten to reviewing your series yet.
-Please don't let me block you, and continue with V2.
-Thanks!
+Regards,
+Andreas
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
