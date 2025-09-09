@@ -1,71 +1,81 @@
-Return-Path: <linux-kernel+bounces-808680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DC05B5035F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0405DB50363
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E3955E644F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:56:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A31E3B557D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFC535CEC2;
-	Tue,  9 Sep 2025 16:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2BE35E4E2;
+	Tue,  9 Sep 2025 16:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJwIUKQ5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UdSgX1nH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCE5340DB3;
-	Tue,  9 Sep 2025 16:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7098435CEDC;
+	Tue,  9 Sep 2025 16:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757437001; cv=none; b=LG1z3ZmZSyPbNBGwM1uz6WM8pAC5EU6WyDW8rivMbw3b98xXFmwtT69kI2wByldjQARv6Odt8HL68rwZvLMjlY6x8taTuzeCb4sg+h7tkHjrRfNHwmjNGqPhX3WgicH2cpmvq+6pLG7QPI731h1eHmOgWwwozzQm9Bop257fGy8=
+	t=1757437003; cv=none; b=qSi6t6Qg1CjGYkbyy85mnLPWvCwytPGJcC9OgtjL+ygRyC0lSDh1Wdd4oItUGSqipeNk+LC7Do7GkIpdvF5Yip4+be1P9oAiHt34b7y/TovPXq46/dnxCebyyTlYLBOriOd2a8UOlsrU0Vy2kMtfR5qI8u3vTwi1o38n27ZHPTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757437001; c=relaxed/simple;
-	bh=SHZRdBfB+U++Xz+OoSe5NzvGgCUOwZHF1QKzN2t6TZw=;
+	s=arc-20240116; t=1757437003; c=relaxed/simple;
+	bh=+r8mDA4yCkz2ncRANEB55SO7yWNFR6rNQqrLvvJyUZQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SWNkiBT5VNUZb5I4reJu/M+OYvoYMCYcUSJltb96vxjilPBhfqMWWqPSQddd5wlqsoCy4XceXyIq50nP+7Iriq3hIGoTLJFvXi2m19keGOcMYR2mwWOC/aS+nyH0E7CQK7YRaOZU7Hj4RrAxfeQwjQWg4LJWi1INVtSXmYbNb0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJwIUKQ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E485C4CEF4;
-	Tue,  9 Sep 2025 16:56:39 +0000 (UTC)
+	 MIME-Version:Content-Type; b=GOilEJ3rs/B8rJRP/bu1kpS+HvNDVUQ73FAt1n7jpLagPb8uVbl/XxUgnX98cjiLUkKMgChZFDiSkVeMzlA4HFFRpIVZyGHKdxq9i7oH5mvUoOOt6BDPFptqBAj5oKZONIAW07o8BoHhg4/4q1vKBTQSC4NsoCH9ISJufND8Doc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UdSgX1nH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA42C4CEF8;
+	Tue,  9 Sep 2025 16:56:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757437000;
-	bh=SHZRdBfB+U++Xz+OoSe5NzvGgCUOwZHF1QKzN2t6TZw=;
+	s=k20201202; t=1757437003;
+	bh=+r8mDA4yCkz2ncRANEB55SO7yWNFR6rNQqrLvvJyUZQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tJwIUKQ5XOXwLhu1BqktKXk6rqS5JXwnK2H6RJJrHZWDqCoH8v89Y3ok1y/4uasTQ
-	 8Z2+PtGOh4UdETFi4qgR5r5+s/L67R2Z6AEtWa+8B1ySKW4CdEJZPKDTIqnJnJVqr/
-	 kZ+Lb8jAJxUIQrF5ZUbtxzjuVkqzm/u2dHM64lK5KDipHwAsLok7TrvwOGYCf4G+J2
-	 RBso9JD8kNjGma51M9iHeJioxR+LcSzUlVqaBtGLn0JbL9M+pOMRy8x5SyMhO9mC8M
-	 3M3dNOdTLhWjOKgY5fs4zxCeigDSKvCBxkd+ZmYlya1BYjuR32Aut32ln8cEkqZrQA
-	 OJ8CFrzZesLgw==
+	b=UdSgX1nHM0h+DGszo8LEfSvtH6HX4Fvhat9I04nfz2X95jYFW67ar/ho2cIvvEK0x
+	 mfDHom8P1x01fUtsJDdfOHrUYtwynjhhE5uOx2ekZAvOQ3OTNnruzYN8JhhPPt0XhU
+	 ZCRbdtvDRVFc8n0lKUEC+DJRvWJiSupdMTpGJ7XMkgGFd/mWNh+eeWI/I6dg4IwJNY
+	 NI3NvPkVUXMau5Zr3JouEo4KLi1XcpKadxCRGtDVcFGMrc77rLnyL4LL6d5paLwr4r
+	 gGq9WiQr//pT1vo10cQ0zUOnVOArMpF3FpQhyF+sj+cT8BRUxLrFvvnLVC5TkG68rf
+	 7oyzk/13kYkNg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
+To: Douglas Anderson <dianders@chromium.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
 	David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Xilin Wu <wuxilin123@gmail.com>,
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Christopher Obbard <christopher.obbard@linaro.org>
+Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>,
+	Rui Miguel Silva <rui.silva@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
 	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: (subset) [PATCH v2 0/3] Support for Adreno X1-85 Speedbin along with new OPP levels
-Date: Tue,  9 Sep 2025 11:56:29 -0500
-Message-ID: <175743699552.2735486.15514580662913662588.b4-ty@kernel.org>
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Konrad Dybcio <quic_kdybcio@quicinc.com>
+Subject: Re: [PATCH v7] arm64: dts: qcom: x1e78100-t14s-oled: Add eDP panel
+Date: Tue,  9 Sep 2025 11:56:30 -0500
+Message-ID: <175743699546.2735486.13197597490732571884.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250701-x1e-speedbin-b4-v2-0-a8a7e06d39fb@oss.qualcomm.com>
-References: <20250701-x1e-speedbin-b4-v2-0-a8a7e06d39fb@oss.qualcomm.com>
+In-Reply-To: <20250814-wip-obbardc-qcom-t14s-oled-panel-v7-1-89966ae886a3@linaro.org>
+References: <20250814-wip-obbardc-qcom-t14s-oled-panel-v7-1-89966ae886a3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,21 +86,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 01 Jul 2025 21:50:43 +0530, Akhil P Oommen wrote:
-> This series adds gpu speedbin support for Adreno X1-85 GPU along with
-> additional OPP levels. Because the higher OPPs require GPU ACD feature,
-> this series has dependency on the GPU ACD support series [1] which is
-> now available in v6.16-rc1.
+On Thu, 14 Aug 2025 21:16:19 +0100, Christopher Obbard wrote:
+> Add the Samsung ATNA40YK20 eDP panel to the device tree for the
+> Snapdragon T14s OLED model.
 > 
-> The device tree change has a dependency on both driver and the
-> dt-bindings update. So those 2 should be picked before the DT change.
 > 
-> [...]
 
 Applied, thanks!
 
-[3/3] arm64: dts: qcom: x1e80100: Update GPU OPP table
-      commit: be6f43c64ca0f7929904f31c2a034c81093eb5c0
+[1/1] arm64: dts: qcom: x1e78100-t14s-oled: Add eDP panel
+      commit: e696e7aa439f1134ca5f91d6c86b332b72e57d9c
 
 Best regards,
 -- 
