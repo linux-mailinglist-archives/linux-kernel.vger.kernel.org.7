@@ -1,195 +1,160 @@
-Return-Path: <linux-kernel+bounces-807442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7818B4A467
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:00:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22CEB4A469
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 621EC7A510D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:59:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 413007A52D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 07:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D8A24503F;
-	Tue,  9 Sep 2025 08:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF8224338F;
+	Tue,  9 Sep 2025 08:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ob+6CPee"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DOlcoyBH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NEfLVv7t";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DOlcoyBH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NEfLVv7t"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B2723ABB3;
-	Tue,  9 Sep 2025 08:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B090D241665
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 08:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757404823; cv=none; b=AcfFug4i41zKBqLNs2JL3Q8n9pNnVw1NNMwgJRGUbEdjr/bqLVUg0iXf5dmCoF9p/kYpqCmwf0gAlB0Gt+QnFTVlyqL6uSobFUxfCYJwRMRNl+nsYCb2qLyDHe1i0W9ucKOuXgeanzje6/tlpkoamEChbCn657rqHMGrIgdPOxU=
+	t=1757404834; cv=none; b=tU9mKcYMBwSDI5m1DGHyw7yunK7oUi0YdVGqym/2aDM33qi58YE4XqUlsXqoLg9H4eqQKl5ymw84Sxi/BL40C4xGBMNfDuOD9k/gPQ1f2jwhe+q2j1opVOmuZsPlzxu8306371l4TSXZI331aBL0CEfT8B1yF3sUdDCMoF6T3lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757404823; c=relaxed/simple;
-	bh=K7GblolWpH5vXVt7lV0OwPq0/5beVmtAVKdl40YTYVI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=W3XXeaMCRIQYoBQO2vEEX6MwMZ61I3qzQ2TTFdrpOM53qpNFKDfIoHimMkj6SLyTTAxk/fYC+BdJON6nx+2ibdZX8hRDbGPiO64+YwSWtyQ9YNwlO0TN2UU/7LQZdHIpk/Ypo2XulqCDEGcvtLjpZyoFswlfdfcdQqxmlDHfqd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ob+6CPee; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9383C4CEF5;
-	Tue,  9 Sep 2025 08:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757404822;
-	bh=K7GblolWpH5vXVt7lV0OwPq0/5beVmtAVKdl40YTYVI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ob+6CPeeInY7cEDDkLJkolERb1xruKi8RF2xolA3kA3KbGl+f1j4eHFnnB/FIpA3E
-	 WGSSxLBq9AL+Wncf73XRrwALw7eckgNr6JjvUF/IYXphwn/PH4Z/3WZ69YK1XiTCr1
-	 BEhynHQs4Ez+Plfb9/qgPBdgEGgHVpgkrWZPkDqZx0yFBAmGM5eE99BN9sDa8XnzpF
-	 D0e+MpU4dMGo+o9G3tzQlFjPaPe/V0swBQ/SLNMmi3wjUaIViKYaMGc2oLmiPee/xH
-	 vSpdnsRsjhYHXpQS3b0rTUNV0xNxrRdZt2js02hBb+vnDWkCxL/HoDjGbuFh0b59xF
-	 G8ujjvYOmi+oQ==
-Date: Tue, 9 Sep 2025 17:00:17 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jinchao Wang <wangjinchao600@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Andrew Morton
- <akpm@linux-foundation.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- "Naveen N . Rao" <naveen@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
- <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, David
- Hildenbrand <david@redhat.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren
- Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- linux-perf-users@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/18] x86/hw_breakpoint: introduce
- arch_reinstall_hw_breakpoint() for atomic context
-Message-Id: <20250909170017.dae27d8be77f9ec634e0d56c@kernel.org>
-In-Reply-To: <aL5ns7h1NaoD9LPg@mdev>
-References: <20250904002126.1514566-1-wangjinchao600@gmail.com>
-	<20250904002126.1514566-6-wangjinchao600@gmail.com>
-	<20250904063832.GT4067720@noisy.programming.kicks-ass.net>
-	<aL5ns7h1NaoD9LPg@mdev>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757404834; c=relaxed/simple;
+	bh=Rg/2hVeYTpEtcMeCtgcqQY8MOdlO0uZYax8gwXLF8Oo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NZDcrbPH7DvXaqBwOpF7z7VWNajZBx9hNc/WGOj2rB+eSedosbd4WbTr0SRc4Lh0pnDs2i94gmv3kLiIQ+ttVtdwlJMzHP8/Q2PDfgugR3OBFA7tGPeXpPAit4vVgZrYpfSbYZf2NtNyCGmTX87xuPP8xEZCJtcGErZtaofSr/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DOlcoyBH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NEfLVv7t; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DOlcoyBH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NEfLVv7t; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CFAA42A00C;
+	Tue,  9 Sep 2025 08:00:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757404830; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CvUkPTxLnNWcwdRJR5b+fZTc1llU3CirdTSgIFnoxGk=;
+	b=DOlcoyBHTMsysprimbITprbGAngs268qJe2ViwrT7luCpfo7boReGo70C9EQ3+Z7OOuS2t
+	+ZeAKGqsD8TU+7zTJNseLXNUMD3j3Z8GORmNuOL3T0+O01rLRIxMciL1bjN4fxR4/3e8hf
+	Lod4jNtj1B1DxRJFi1msN3QnnkGhtNQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757404830;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CvUkPTxLnNWcwdRJR5b+fZTc1llU3CirdTSgIFnoxGk=;
+	b=NEfLVv7t47IZL6oJO+HxOtv4VjIdCpB+QWn/oSohjX8DrYioUZGEPWFSAAGcjA25G3wJXh
+	8AuClsUqLg3iGjDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757404830; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CvUkPTxLnNWcwdRJR5b+fZTc1llU3CirdTSgIFnoxGk=;
+	b=DOlcoyBHTMsysprimbITprbGAngs268qJe2ViwrT7luCpfo7boReGo70C9EQ3+Z7OOuS2t
+	+ZeAKGqsD8TU+7zTJNseLXNUMD3j3Z8GORmNuOL3T0+O01rLRIxMciL1bjN4fxR4/3e8hf
+	Lod4jNtj1B1DxRJFi1msN3QnnkGhtNQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757404830;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CvUkPTxLnNWcwdRJR5b+fZTc1llU3CirdTSgIFnoxGk=;
+	b=NEfLVv7t47IZL6oJO+HxOtv4VjIdCpB+QWn/oSohjX8DrYioUZGEPWFSAAGcjA25G3wJXh
+	8AuClsUqLg3iGjDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4E8221388C;
+	Tue,  9 Sep 2025 08:00:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jUiAEJ7ev2hIbgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 09 Sep 2025 08:00:30 +0000
+Date: Tue, 9 Sep 2025 10:00:24 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Hu Song <husong@kylinos.cn>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@gentwo.org>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/slub: Use folio_nr_pages() in __free_slab()
+Message-ID: <aL_emHbGN3xA5i_c@localhost.localdomain>
+References: <20250909074812.599030-1-husong@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909074812.599030-1-husong@kylinos.cn>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On Mon, 8 Sep 2025 13:20:51 +0800
-Jinchao Wang <wangjinchao600@gmail.com> wrote:
-
-> On Thu, Sep 04, 2025 at 08:38:32AM +0200, Peter Zijlstra wrote:
-> > On Thu, Sep 04, 2025 at 08:21:02AM +0800, Jinchao Wang wrote:
-> > > Introduce arch_reinstall_hw_breakpoint() to update hardware breakpoint
-> > > parameters (address, length, type) without freeing and reallocating the
-> > > debug register slot.
-> > > 
-> > > This allows atomic updates in contexts where memory allocation is not
-> > > permitted, such as kprobe handlers.
-> > > 
-> > > Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
-> > > ---
-> > >  arch/x86/include/asm/hw_breakpoint.h |  1 +
-> > >  arch/x86/kernel/hw_breakpoint.c      | 50 ++++++++++++++++++++++++++++
-> > >  2 files changed, 51 insertions(+)
-> > > 
-> > > diff --git a/arch/x86/include/asm/hw_breakpoint.h b/arch/x86/include/asm/hw_breakpoint.h
-> > > index 0bc931cd0698..bb7c70ad22fe 100644
-> > > --- a/arch/x86/include/asm/hw_breakpoint.h
-> > > +++ b/arch/x86/include/asm/hw_breakpoint.h
-> > > @@ -59,6 +59,7 @@ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
-> > >  
-> > >  
-> > >  int arch_install_hw_breakpoint(struct perf_event *bp);
-> > > +int arch_reinstall_hw_breakpoint(struct perf_event *bp);
-> > >  void arch_uninstall_hw_breakpoint(struct perf_event *bp);
-> > >  void hw_breakpoint_pmu_read(struct perf_event *bp);
-> > >  void hw_breakpoint_pmu_unthrottle(struct perf_event *bp);
-> > > diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
-> > > index b01644c949b2..89135229ed21 100644
-> > > --- a/arch/x86/kernel/hw_breakpoint.c
-> > > +++ b/arch/x86/kernel/hw_breakpoint.c
-> > > @@ -132,6 +132,56 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
-> > >  	return 0;
-> > >  }
-> > >  
-> > > +/*
-> > > + * Reinstall a hardware breakpoint on the current CPU.
-> > > + *
-> > > + * This function is used to re-establish a perf counter hardware breakpoint.
-> > > + * It finds the debug address register slot previously allocated for the
-> > > + * breakpoint and re-enables it by writing the address to the debug register
-> > > + * and setting the corresponding bits in the debug control register (DR7).
-> > > + *
-> > > + * It is expected that the breakpoint's event context lock is already held
-> > > + * and interrupts are disabled, ensuring atomicity and safety from other
-> > > + * event handlers.
-> > > + */
-> > > +int arch_reinstall_hw_breakpoint(struct perf_event *bp)
-> > > +{
-> > > +	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
-> > > +	unsigned long *dr7;
-> > > +	int i;
-> > > +
-> > > +	lockdep_assert_irqs_disabled();
-> > > +
-> > > +	for (i = 0; i < HBP_NUM; i++) {
-> > > +		struct perf_event **slot = this_cpu_ptr(&bp_per_reg[i]);
-> > > +
-> > > +		if (*slot == bp)
-> > > +			break;
-> > > +	}
-> > > +
-> > > +	if (WARN_ONCE(i == HBP_NUM, "Can't find a matching breakpoint slot"))
-> > > +		return -EINVAL;
-> > > +
-> > > +	set_debugreg(info->address, i);
-> > > +	__this_cpu_write(cpu_debugreg[i], info->address);
-> > > +
-> > > +	dr7 = this_cpu_ptr(&cpu_dr7);
-> > > +	*dr7 |= encode_dr7(i, info->len, info->type);
-> > > +
-> > > +	/*
-> > > +	 * Ensure we first write cpu_dr7 before we set the DR7 register.
-> > > +	 * This ensures an NMI never see cpu_dr7 0 when DR7 is not.
-> > > +	 */
-> > > +	barrier();
-> > > +
-> > > +	set_debugreg(*dr7, 7);
-> > > +	if (info->mask)
-> > > +		amd_set_dr_addr_mask(info->mask, i);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(arch_reinstall_hw_breakpoint);
-> > 
-> > Yeah, I think not. For one this is an almost verbatim copy of
-> > arch_install_hw_breakpoint() with zero re-use. Surely you've been taught
-> > better?
-> I introduced this to modify bp_addr in atomic context in my RFC series.
-> I thought it was clearer to split the introduction and refactor.
-> And then It was used in the wprobe series, so I left it as introduced
-> in the RFC series.
+On Tue, Sep 09, 2025 at 03:48:11PM +0800, Hu Song wrote:
+> Use folio_nr_pages() helper instead of manual calculation (1 << order)
+> for better code readability and maintainability.
 > 
-> I agree your suggestion is right. I am willing to refactor after wprobe.
+> Signed-off-by: Hu Song <husong@kylinos.cn>
+> ---
+>  mm/slub.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/slub.c b/mm/slub.c
+> index d257141896c9..eba25461641a 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2719,7 +2719,7 @@ static void __free_slab(struct kmem_cache *s, struct slab *slab)
+>  {
+>  	struct folio *folio = slab_folio(slab);
+>  	int order = folio_order(folio);
+> -	int pages = 1 << order;
+> +	int pages = folio_nr_pages(folio);
 
-I'm OK to refactor it to reuse arch_install_hw_breakpoint().
-My point is to have CONFIG_HAVE_REINSTALL_HW_BREAKPOINT so that
-we can easily implement the dependency for other features which
-requires this feature in Kconfig level.
+Sure nothing might happen, but I find a bit weird that folio_nr_pages()
+returns a 'long' and we store it in an 'int' type.
+And then sure we handle that to mm_account_reclaimed_pages() which gets
+'unsigned long', but that's another story.
 
-> > And why would we want to export guts like this?
-> I wanted to introduce a real-time stack corruption debugging tool,
-> which needs a helper to change bp_addr in atomic context (kprobe handler).
-> And wprobe needs it also.
-
-I agree with Peter, it should not expose the architecture
-dependent code directly. Instead, we need a wrapper.
-
-Thank you,
+ 
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Oscar Salvador
+SUSE Labs
 
