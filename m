@@ -1,343 +1,171 @@
-Return-Path: <linux-kernel+bounces-808867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939B7B505A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:55:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA0DB505A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2B51888D08
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:56:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0DD14E8109
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80758303A3C;
-	Tue,  9 Sep 2025 18:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006342E2F1A;
+	Tue,  9 Sep 2025 18:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OqpfVYqu"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2069.outbound.protection.outlook.com [40.107.92.69])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EeNyAp52";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L7YpAC0k"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B994225DD1E;
-	Tue,  9 Sep 2025 18:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757444140; cv=fail; b=adp4czLZhQB3FkIsmuty8RZL9f2PfUfVkEM8wFwc+quSvGn8bSSIWYYjVj2yWB/ieRmUPUf5QMnz/w2117acCITBqlNtI3NBScGqcUwK/xCequdC4OzGo6uH1S1YNZdnTwk3v+Pz1/Avp/SHHs7oh4+7jOwruFEyqbunpdKdVBQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757444140; c=relaxed/simple;
-	bh=kvQWgChtoPvrhNaixp6uz1opplnJwkDtMOsqsQPUgi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=NBZ/rOR5+XWbfuN0IiFupUVd6dPcaCS9HDf3NNk/sTi25TmPuVushHTMHEU7kDVsBp7GZ1oeVdFHni96g7H2eufXUlqYBXljSRFBTOw0TmlHH7TXm9V4YO6WFLYuSh35qrTwAlKVDRXloIdXJMRwfh4LWuPl9qAZse+1agUj38E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OqpfVYqu; arc=fail smtp.client-ip=40.107.92.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YQDpDwtMaAnC6j6jiJq/lg2uJbtExNguOkL/S5RKBLA1s/kL5ALfQOo/iGKErhaRQu2XzRdmJJHVoXfHyozbRh2pGRvpuGUrUKmIsllf72SlfiyboRlMo3vWTWAW30mSZU01n1ywhFSW+RLpu1rV5ULclhyQUtcgTGLpoZDh+Y3BmnDa2m7FDRBaRBus5NyHsxl00wICjfxaLYXJL+2nL7fT+QWpFdFdNPlDxhTJnhD6ELZUf2OnhXpo79doWbpv7Yp3pHi17U1AP0QOJjTp1OKgFRlEt6STWOAhcn8+d8vdnwd2rel1glegU7wLnzw1eJPsqVWFCrVgSrs/xEig1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vReqUyvTo2HhCK/RasjZl1s/QjFGS+ED3m0E4cATpWA=;
- b=Wns/cI/w1099JD3GEkrb8Wgmk5Xd9SsiwiJRhPEnaZMYvrGrvhtstE5KVfWh5KAgRaL+/P8ME5YVgUrTsviHEe9mM5uQ08HkUYeBMrSt9s0r4J74Uy4tOZqABfQdkINdFO8PDgEBvZIRqzi7pGNlTldQ8tG5OUtKDwN9jB7Zrs/NLU4eqdocMt8WVWl7yzP7GpwrG5wZnRIz/wHNwM1fwGVWHLotPFJ1UM4vNQvT0qV2+tHmh2XGff2aS3Sd9vYy9Ewdb7FDGpNqr+ODMJYH8vbB10ZZqm0wMsQWQQyYmYk3EHt1qDE9NAUmxurraRDDtxIG9pYIMzAPKff6IitDOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vReqUyvTo2HhCK/RasjZl1s/QjFGS+ED3m0E4cATpWA=;
- b=OqpfVYquB+XvmsQpQJ1V5O1XKJY+YOeW7d/Lk2yyercW6uLLVPfxede7u+ZcFlWXmwUKmYsJ01WBGFwr2fMmoyeHyhY+/LgbYMXHrEBy1K9WlQPZZlnBNe4mq0WcYGS37DjzJnwkWZGrgB842mjHUtmGNXAZVT/JpB9l3093B1LaJbesGAU50FjRyci0Hbl23fDOUSvvCswCCmHR0uWZEqFppn7JI28HwfhmPmw9e70hrV4EN46lse95UmU5Ihumm9SUW1RCFpfqp79VjoHEBBKQ6Dhfew2j38XwrnSXCPCbdXbsVfic/yunvrhusIU6PwTx2IRf5tTR+Aoi5MALQA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB8044.namprd12.prod.outlook.com (2603:10b6:8:148::14)
- by DM6PR12MB4106.namprd12.prod.outlook.com (2603:10b6:5:221::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
- 2025 18:55:34 +0000
-Received: from DS0PR12MB8044.namprd12.prod.outlook.com
- ([fe80::49af:9ef0:2373:1515]) by DS0PR12MB8044.namprd12.prod.outlook.com
- ([fe80::49af:9ef0:2373:1515%6]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
- 18:55:34 +0000
-Date: Tue, 9 Sep 2025 14:55:32 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	dakr@kernel.org, Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] nova-core: bitstruct: Move bitfield-specific code
- from register! into new macro
-Message-ID: <20250909185532.GA4167211@joelbox2>
-References: <20250903215428.1296517-1-joelagnelf@nvidia.com>
- <20250903215428.1296517-2-joelagnelf@nvidia.com>
- <DCN39JCF1DIJ.3JESSN7N9WJBP@nvidia.com>
- <3ef9e2c2-560e-4b58-96f8-a6db4236fe0e@nvidia.com>
- <DCNX57PKVO6C.2MYEGBZ26OQ59@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DCNX57PKVO6C.2MYEGBZ26OQ59@nvidia.com>
-X-ClientProxiedBy: BN9PR03CA0799.namprd03.prod.outlook.com
- (2603:10b6:408:13f::24) To DS0PR12MB8044.namprd12.prod.outlook.com
- (2603:10b6:8:148::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1E3279DAA
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 18:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757444178; cv=none; b=Gq2+j7+NSl+sh9pCaleVkwSGDTj2iIheA4MsIr44opY6xkXyfITsEz4fuLYOUxV9P9/dkyxLdaPm9+fuJku0JlnA6cz1FoHdHEeWoJBOlO34NTgKAXxB991crFJNntg4ofqaQ4Xst58bi1DkMvFl4lodfDVmbcW2ltJxfeK55Hw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757444178; c=relaxed/simple;
+	bh=YBOspn80gYu2Ny7c8YCSvC6+X86jWPP+JoPuTjScNtk=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=Mf+IXKCM6q6I/AuPGQre2za4A+z+ELAoPpQvdXPn/3HVZX+pD7+CjW/9VksXs/yFVehBB1KfrCa0Bl0bJwD3V9PZ6/p+HLZhbLMFmFmmIIaZmtSW8N2GnUq5AmedHHi7cBz02OE2U2gZnTQpPp/6TnL6upRPnuj3iyh/9w2ouvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EeNyAp52; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L7YpAC0k; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757444172;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=Nx1gCbcj7lbw9Vzy12X8YyMZZTze1zyskZjJdCKqgKo=;
+	b=EeNyAp52yDpdJOJ44QfOOjf35W6mhRJTFDXMdg2GAp4iRy5X/UfAylHzQGRGwoWHV4+bWJ
+	mASDMSW5sujAKfBMIwpfhSgfql+DFUj/tzg7BPQbH+tg6uIljY3nv8Jw5U/e87Z7v+0iR/
+	Xoxijo7ieFxAtQCGOdREFrNeWIQURv1VCL/9NhiOz8raHSqsts37afdra0kDSuRWoHaCNT
+	nbGTBBsrHvWAuSUj0GuQPRJLuQMYboQTHiGIskwy5/T5lo/D50wMUCkHoYkpAMmHuR+HC6
+	Mr5mNNihjz3Ilej5AkzsbRVsKjozBvowVaOjUfZPBsMp4xHqvFqDqF+y7Rnjhg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757444172;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=Nx1gCbcj7lbw9Vzy12X8YyMZZTze1zyskZjJdCKqgKo=;
+	b=L7YpAC0kBIrep3uy7E63ut12+8D7D8I9op4I09+lG8/XpvXySSB0xFNiOoNmABEvLGTVO/
+	ffGcDK1OXnRIPCBg==
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jens Axboe
+ <axboe@kernel.dk>
+Cc: Peter Zijlstra <peterz@infradead.org>, syzbot
+ <syzbot+034246a838a10d181e78@syzkaller.appspotmail.com>,
+ andrealmeid@igalia.com, dave@stgolabs.net, dvhart@infradead.org,
+ linux-kernel@vger.kernel.org, mingo@redhat.com,
+ syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [kernel?] general protection fault in try_to_wake_up (3)
+In-Reply-To: <20250904162820.NS1U-oZp@linutronix.de>
+Date: Tue, 09 Sep 2025 20:56:11 +0200
+Message-ID: <878qinv4j8.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB8044:EE_|DM6PR12MB4106:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7f125959-4218-42d1-6184-08ddefd2752b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z1pxSUp0KzczWWZnNEw1K2hRTzVxOFRLaWhRUjM3ZHhNUGk5NEtBR1pYSkdw?=
- =?utf-8?B?WFpyTWpKZzRBeTRnZGVpdUxGZVQyVDRqQzJhOUlpNkZFTXowR3kwemdtVG9C?=
- =?utf-8?B?LzAwRE1tWlBvbnFzYVplQmplWFdiUWdDazNCSFI3b3RZS2Vva1MyVkVkNEdm?=
- =?utf-8?B?Wklhb2ZWMTNJU0dwdTFpc2lORVVoNk9RY0xub1hVVkp6N3BaRG53cktGQnZj?=
- =?utf-8?B?QTdXRXVpSS9ZRG02NzkrSUZ6dEo1R3V6UmE0Q29JTXBOcnI3dnhCZFJTWEU3?=
- =?utf-8?B?cXh3Y09KSlpreG5CNjFvRC9oSUJKS1I2T2tCUlBBZ1FDbHRmcjlZaDhEZlpj?=
- =?utf-8?B?Tmp0RGVxZGVVdWZhVCtsL0pla3h2SitqNVpHcGplM3hjVm1sZytZdDhZdENV?=
- =?utf-8?B?aTBqbUZLUWd0SGRCTHlZcUF6cHJ5NTZNbmRHblV4V1pjTnJyU0lsRHlZdUF1?=
- =?utf-8?B?ZkxhUHZncUxrNk9ZbjRGYmxmNXYzeEZzL005TjBIaFZXbis3YVpvSzZIQXo1?=
- =?utf-8?B?UGZvSEJhL2N5NW0wTnJ4VHMxcC82NWE1UkdoTlRXb09FTmZYMlN0UlJpYVg4?=
- =?utf-8?B?VjF0djBnWlJqOHlQUE9ZSSt6ZEw4RFd2cGFjUmdsSU1hc0FLU2gzOXZKc3BO?=
- =?utf-8?B?YXFjRmFKM2w3ZmVNWEVna0JmYjBZZW9pQ0hVWkYzSUIzbkU5cjZxdUxYTTNz?=
- =?utf-8?B?RENRVGp5T0hDYkVjOERFbnBiTUh4QlhYUUd1V2YyZThyZjNqSFJkaDRuclVx?=
- =?utf-8?B?L2lYWVZSMUZJQmN1T0dDa0ZsR0dhS1dsYUdRWWhES09TUXluT3NoU3M4MWx1?=
- =?utf-8?B?Qks0ZEpWclBkSkVidXdXL1d1N1F3UzhUd3Q1M3U0SEtmeDZrRTFLMVFtWGJj?=
- =?utf-8?B?UXNXdHVNMW4wMGlWczNWdDE2SlhwOUkzYThNV1F5dTVtaC9uQnJlOVhtdnQv?=
- =?utf-8?B?SmZrZHFVZGw5cUxONE9OOU5ob2ZjTk1PczFxS2xESnlYTm41TWxRNjFjVXR4?=
- =?utf-8?B?M0lpM1Z2YkE3UEtSVW9NRG5SVHczOTRGSzc4c0ZXNnB1WVdIOVVadVZGUnVl?=
- =?utf-8?B?VHA4NW5UZE9ocTRiSGJpT1Y5RzRjNlloWFhDdWpEUzhpaElwNWVjekdZMWc1?=
- =?utf-8?B?L29nc0hRdkNZRUZkYTF3elJjY3U5ell2Q0Q5MG1odUttRzF4cmFPVm40YjhI?=
- =?utf-8?B?TFR6cFRhNzlmU3RDV29VVUpCWXRWTkpVa1V4SDk1cjFDMEVyYzlQUnFZVVRZ?=
- =?utf-8?B?SGpoUUhseGVQZit4TTRvNVE0NkNscit4MzV5ejZzVHFpem5wOTRZaEtxNXFh?=
- =?utf-8?B?eWpqZnl2eXhwRXdaY205SXVYUkE0VzFwVXBSdUxiUE11Si8rL2I0WFlWZFRk?=
- =?utf-8?B?V0dUVE5QK1doV1JUSmJGemhTV3lrdk5Ic0xiZXROdzJjOXpYamUwWlh5Zkdo?=
- =?utf-8?B?NjlzckI1NTdJZzNIZmJZbXpYRlNld29PS29nVzNHZGlIejNoK3l3QmpPNlZK?=
- =?utf-8?B?aTRnZEVsSWxTUXJCbnJFeHUyN3Z5akFQR1IwWWMrRXVFQ2tQSS81ZVRLUEVM?=
- =?utf-8?B?M1V5TWhTNERKc3d2U1d1aURIdGFVcWNpbU5Rc3RGcXVSeG80aVBscXN1TnRh?=
- =?utf-8?B?aklncjNhdFFETVAxN0VWUmV0MzkvMk12ZGg1a2ZramRieXc2WGVmbEFxSXI4?=
- =?utf-8?B?eUZCTHRXZDltQjJCS2RNQ1VlSldSUjlVdGZWblN0UmNkb2svTEhTV3VUOUNL?=
- =?utf-8?B?WnpQLzlXSGs4WWZZOERVNzNpeThidGhIN2ZzcjFJcElGaG5PRlBVTUFqQWx6?=
- =?utf-8?B?QVpBbWFWdXVQM0VVSkk1cTNvb3k3b0gvdkJoWmE3ZEJyOGRmdGRETVBKQ0dY?=
- =?utf-8?B?TWt6Y1ZPVE1UREd1bHhYelU2MXJFSEU3UmZ2SmFTTm5YYUw4T2JSZXRXY3l1?=
- =?utf-8?Q?HGvlGvpwrQo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8044.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZUp2MnNnakF4b0FmcTFiSkNqaXVJWGFsQ2lSWDFxS2NGR1JuSkcyWlpvSFdo?=
- =?utf-8?B?bldwcHpQUGlVSHJjOTRPSDNVRnp6T2NUU0FxSUlZbFFzOENLS0lrZWhXUnNX?=
- =?utf-8?B?OFluWGdqdERqcXZTZ0ZEWDI4ZTNmblR4VytVNWJySDR1Zm5pOHdSYTQvaFBD?=
- =?utf-8?B?ck05eVRSTWJ1aXFnNTJzZHlVcTA0QjNSK2VWblNRRnJMSk01Wk80NWM5Ukkr?=
- =?utf-8?B?Z2Z1MEpHZG4zb2xhdE92OTBRRTJ0MEpHRlVXWjhWc3pQak45SVJJa2VlOXlU?=
- =?utf-8?B?a1QvQmM4ODlOcWRFM2lzZExCNUIrUEV6a1ptQWNpRG5Cb3NFRERvVjBHTmMz?=
- =?utf-8?B?NXFOazNpZHZKSTZjMGhlOEFFVE9VMW9ReVMxNmgveXRpTTJheDREZ3h3Sk55?=
- =?utf-8?B?dHR2Z0gvSzhSZTVRNStUc2F0M0JJektuT2xKQTZKZkVraE9rVlQxeGlIQmU0?=
- =?utf-8?B?aXpCKzZ5djB3Q25WR254ODNGdm04eDFVR0t2REwrLzVRRWhzTHgwMGM3bUZi?=
- =?utf-8?B?Z1NpNCtZQTAvM0RJODdFOGUwbjdYclFwUXlQQlpxemcwaVBMdHJlUGQ2dGN4?=
- =?utf-8?B?V3drNmVFWHh4ZVBmY080dXVsM3RsMDN0bG9jK0g0bWpPbVlEZGgzZ2ZtajJZ?=
- =?utf-8?B?MWdvdWQ2SHZBN3RKL0N4aDFyY2I3WHFML1d6dUlTcUNPTGZwNzQ0eG5yVzBU?=
- =?utf-8?B?U1p2T0gvNnRxZmJwVGpwVkNGN0lwWWlkdU9mZGFzZ20vOE4vYy9WZmVQTUhX?=
- =?utf-8?B?N0wrS2FxMzZSN25CY0tUbCtpV3ZsdmYwR2c1QkZmYTBmSGZJTkhtVXNlTTFi?=
- =?utf-8?B?c2I2Ulh1aC91OVVMRGJYODBXRUkwbFJObEY3ejBzUkRuSFdCSTZjTEJHOElM?=
- =?utf-8?B?NjBDYThQSndyQTRvUXFsVmF5NEtHZk41ZUkwdWY1d1l2Z05XUVF0a1BGeSt3?=
- =?utf-8?B?eENGZnRVSWo0VG5sOC9BMkhYaThhV2FDaWdnckZBeTdaQWlIV1VPL0M1anNZ?=
- =?utf-8?B?WklnSmhKY1BKZHhwc3RhbDJvRHVTSHRHUmptYVduaGd2VUpBN2diUmNpY3JZ?=
- =?utf-8?B?aVpRQXJpUEsyQVVNcEFjZGYzL3k5SGRlWVNFVnBWSlBmL3ZmcXF4c2tCSmxQ?=
- =?utf-8?B?aVpGVVpSazNLQjV5TkJXM3dnQ1Z5ay9YeHU1a0wrcmMzS2ZhcVJ1RlVDcmMw?=
- =?utf-8?B?S0FDT3JuZlhYNW9yK0pjR0FUdUlLTXQzdXM2bWVQQzI3WklYdzNqVW9odzRR?=
- =?utf-8?B?RDV5TTVWU1hhTHRSTjNjVnNxQzNVV1lHS3h2QkM5VlVKSnJJY0x4WDJPdDJZ?=
- =?utf-8?B?SHFsVUNybmhtNlFLWmVRa3U3bzJiM2JQTzFkUFA0Y3p5NHI1ZklCN0VMYW5u?=
- =?utf-8?B?ajhGM1hUc0lVemx6bng2TnRaZnZDRlgyLytSamUyb3ZtMmJxek1oYzdOWEYy?=
- =?utf-8?B?dUowL3pUMWhISk9HQzlTdi9rL1F5QkJ1OXR5eVZwUURUbjVXYllyQ25ZbHJo?=
- =?utf-8?B?ajF4K2NZc0U0bUNEejlPaUVOVUhWUGd6Nmw0VzFKakk1cEExbFNRWmxJVkV0?=
- =?utf-8?B?VUpkcnRLVGhWbUh6eXRWdGFlNVNESkR2akNROU9vYWhOQUJUZjhGZzlnOEhS?=
- =?utf-8?B?QndJeUo5dlkwcmU4L25ha2ZSdG9Id3Y5OW5jRzk2ek1pNEpJakNnZkJNQzZF?=
- =?utf-8?B?N3pkZ1E4WkxRaU1JdkQ4UmY0VlE0Y2VWVDFiaGlmWmVGdEo4dkJKeGxYbWlw?=
- =?utf-8?B?dmpEcGxoTWZrbjNGclYxeG9EeVNMYW1pV2MrTnNFQUtqU082L3ZFdmMrNk1G?=
- =?utf-8?B?UkIwanNvVkxyZnhLUGtDL0pHbGQ3S25BOXRYaWlGcFpRUlNjOHpycnc2ZUx3?=
- =?utf-8?B?K1ErcHc1T0o3TFpOWW1CUWNzaXFpUnpVem9CblpObDJZeGJQUkQ2M2V5dTRY?=
- =?utf-8?B?eUliTkJidEI5L3ZwM0xYRkx1alBUYnVyWHg5VXVGM1dQTEVvem5CMWdZOW9Y?=
- =?utf-8?B?MDNrNXJBMmRvcTl1Y2JVQXM1M0xWcmJJSU83RmNXb2FKcUVVNmpOZnd3RFRU?=
- =?utf-8?B?MVRNNStab3VqYktEYXJlcnBGdnNIUVVKa3laN2p4ZTV0VGJMakY2RlFJS283?=
- =?utf-8?Q?GNSnHO2Lar18BTBVn6iKfOv3K?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f125959-4218-42d1-6184-08ddefd2752b
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8044.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 18:55:34.5935
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cV0mfGZPmtdRs5121QGsk/gHMK7O49Lui26NJMN5DNsEbRJQxyOwkoDuz6MxNP9/nAf9xRXmRDMMcVRgVs6msw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4106
+Content-Type: text/plain
 
-On Tue, Sep 09, 2025 at 11:37:15AM +0900, Alexandre Courbot wrote:
-> On Tue Sep 9, 2025 at 2:16 AM JST, Joel Fernandes wrote:
-> > Hi Alex,
-> >
-> > On 9/7/2025 11:12 PM, Alexandre Courbot wrote:
-> >> On Thu Sep 4, 2025 at 6:54 AM JST, Joel Fernandes wrote:
-> >>> The bitfield-specific into new macro. This will be used to define
-> >>> structs with bitfields, similar to C language.
-> >>>
-> >>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> >>> ---
-> >>>  drivers/gpu/nova-core/bitstruct.rs   | 271 +++++++++++++++++++++++++++
-> >>>  drivers/gpu/nova-core/nova_core.rs   |   3 +
-> >>>  drivers/gpu/nova-core/regs/macros.rs | 247 +-----------------------
-> >>>  3 files changed, 282 insertions(+), 239 deletions(-)
-> >>>  create mode 100644 drivers/gpu/nova-core/bitstruct.rs
-> >>>
-> >>> diff --git a/drivers/gpu/nova-core/bitstruct.rs b/drivers/gpu/nova-core/bitstruct.rs
-> >>> new file mode 100644
-> >>> index 000000000000..1dd9edab7d07
-> >>> --- /dev/null
-> >>> +++ b/drivers/gpu/nova-core/bitstruct.rs
-> >>> @@ -0,0 +1,271 @@
-> >>> +// SPDX-License-Identifier: GPL-2.0
-> >>> +//
-> >>> +// bitstruct.rs — Bitfield library for Rust structures
-> >>> +//
-> >>> +// A library that provides support for defining bit fields in Rust
-> >>> +// structures. Also used from things that need bitfields like register macro.
-> >>> +///
-> >>> +/// # Syntax
-> >>> +///
-> >>> +/// ```rust
-> >>> +/// bitstruct! {
-> >>> +///     struct ControlReg {
-> >> 
-> >> The `struct` naming here looks a bit confusing to me - as of this patch,
-> >> this is a u32, right? And eventually these types will be limited to primitive types,
-> >> so why not just `ControlReg: u32 {` ?
-> >
-> > This is done in a later patch. This patch is only code movement, in later patch
-> > we add precisely the syntax you're describing when we add storage types, and
-> > update the register! macro. In this patch bitstruct is only u32.
-> 
-> My point was, is the `struct` keyword needed at all? Isn't it a bit
-> confusing since these types are technically not Rust structs?
+On Thu, Sep 04 2025 at 18:28, Sebastian Andrzej Siewior wrote:
+> On 2025-09-03 12:51:09 [-0600], Jens Axboe wrote:
+>> > The syz-reproducer lists only:
+>> > | timer_create(0x0, &(0x7f0000000080)={0x0, 0x11, 0x0, @thr={0x0, 0x0}}, &(0x7f0000000000))
+>> > | timer_settime(0x0, 0x0, &(0x7f0000000240)={{0x0, 0x8}, {0x0, 0x9}}, 0x0)
+>> > | futex(&(0x7f000000cffc), 0x80000000000b, 0x0, 0x0, &(0x7f0000048000), 0x0)
+>> > | futex(&(0x7f000000cffc), 0xc, 0x1, 0x0, &(0x7f0000048000), 0x0)
+>> > 
+>> > and that is probably why it can't come up with C-reproducer.
+>> > The whole log has (filtered) the following lines:
+>> > 
+>> > | io_uring_setup(0x85a, &(0x7f0000000180)={0x0, 0x58b9, 0x1, 0x2, 0x383})
+>> > | syz_io_uring_setup(0x88f, &(0x7f0000000300)={0x0, 0xaedf, 0x0, 0x0, 0x25d}, &(0x7f0000000140)=<r0=>0x0, &(0x7f0000000280)=<r1=>0x0)
+>> > | syz_memcpy_off$IO_URING_METADATA_GENERIC(r0, 0x4, &(0x7f0000000080)=0xfffffffc, 0x0, 0x4)
+>> > | syz_io_uring_submit(r0, r1, &(0x7f00000001c0)=@IORING_OP_RECVMSG={0xa, 0x8, 0x1, r2, 0x0, &(0x7f0000000440)={0x0, 0x0, 0x0}, 0x0, 0x40000020, 0x1, {0x2}})
+>> > 
+>> > This should explain the how the waiter got NULL. There is no private
+>> > flag so that is how they interact with each other.
 
-Now that bitstruct has changed to bitfield, I would really insist on leaving
-'struct' in there.
+I'm not really seeing how they overlap though and it actually reproduces
+occasionally without any of the other syz programs which are showing up
+in that bisect log.
 
-So it will look like this:
+The problem is that it's hard to reproduce here. I've only seen it three
+times within several hours.
 
-//! bitfield! {
-//!     struct ControlReg {
-//!         3:0       mode        as u8 ?=> Mode;
-//!         7         state       as bool => State;
-//!     }
-//! }
+So I thought I try and run qemu without -enable-kvm to change the timing,
+but that does not even boot at all. It reliably dies at random places
+during boot, but always with an 'Oops: int3:':
 
-Sounds reasonable?
+[   64.184144][    C1] Oops: int3: 0000 [#1] SMP KASAN NOPTI
+[   64.185081][    C1] CPU: 1 UID: 0 PID: 994 Comm: kworker/u10:3 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+[   64.185369][    C1] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[   64.185681][    C1] Workqueue: events_unbound call_usermodehelper_exec_work
+[   64.187063][    C1] RIP: 0010:kmem_cache_alloc_node_noprof+0x90/0x330
+[   64.187445][    C1] Code: ff 2e 2e 2e 31 c0 4c 89 f7 44 89 ee e8 39 3c 0b 00 45 31 ed 4d 85 f6 0f 84 02 01 00 00 85 c0 0f 85 fa 00 00 00 89 5c 24 04 0f <1f> 44 00 00 48 c7 44 24 10 00 00 00 00 65 48 8b 05 73 fd e2 0f 49
+[   64.187574][    C1] RSP: 0018:ffffc900056ff538 EFLAGS: 00000246
+[   64.187743][    C1] RAX: 0000000000000000 RBX: 00000000ffffffff RCX: cc07f7dd94535100
+[   64.187866][    C1] RDX: ffff888046a63900 RSI: 0000000000000cc0 RDI: ffff888040414500
+[   64.187968][    C1] RBP: 0000000000000cc0 R08: 0000000000000000 R09: ffffffff82107f5d
+[   64.188066][    C1] R10: dffffc0000000000 R11: ffffed1008d4c721 R12: 0000000000000000
+[   64.188165][    C1] R13: 0000000000000000 R14: ffff888040414500 R15: ffffffff8182bd72
+[   64.188303][    C1] FS:  0000000000000000(0000) GS:ffff8880ecec2000(0000) knlGS:0000000000000000
+[   64.188414][    C1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   64.188501][    C1] CR2: 0000000000000000 CR3: 000000000d7a6000 CR4: 00000000000006f0
+[   64.188711][    C1] Call Trace:
+[   64.188929][    C1]  <TASK>
+[   64.189286][    C1]  dup_task_struct+0x52/0x860
+[   64.189569][    C1]  copy_process+0x545/0x3ae0
+[   64.190275][    C1]  kernel_clone+0x224/0x7c0
+[   64.190691][    C1]  user_mode_thread+0xdd/0x140
+[   64.191352][    C1]  call_usermodehelper_exec_work+0x5c/0x230
+[   64.191873][    C1]  worker_thread+0x8a0/0xda0
 
-> I agree the `: u32` can be introduced later, the original `register!`
-> macro did not specify any type information so there is indeed no reason
-> to add it in this patch.
+[   36.676800][    C1] Oops: int3: 0000 [#1] SMP KASAN NOPTI
+[   36.677774][    C1] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+[   36.678176][    C1] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[   36.678477][    C1] RIP: 0010:kmem_cache_alloc_noprof+0x83/0x310
+[   36.679809][    C1] Code: 00 e8 81 75 7e ff 2e 2e 2e 31 c0 4c 89 f7 89 ee e8 92 47 0b 00 45 31 ed 4d 85 f6 0f 84 fe 00 00 00 85 c0 0f 85 f6 00 00 00 0f <1f> 44 00 00 48 c7 44 24 08 00 00 00 00 65 48 8b 05 d0 08 e3 0f 49
+[   36.680000][    C1] RSP: 0018:ffffc9000012f190 EFLAGS: 00000246
+[   36.680185][    C1] RAX: 0000000000000000 RBX: 0000000000000dc0 RCX: 3fbc2ecf0c9c3500
+[   36.680309][    C1] RDX: ffff88801b698000 RSI: 0000000000000dc0 RDI: ffff888040ad2000
+[   36.680411][    C1] RBP: 0000000000000dc0 R08: 0000000000000000 R09: ffffffff82107f5d
+[   36.680511][    C1] R10: dffffc0000000000 R11: ffffed1008d3f94c R12: 1ffff92000025e48
+[   36.680611][    C1] R13: 0000000000000000 R14: ffff888040ad2000 R15: ffffffff8252e407
+[   36.680749][    C1] FS:  0000000000000000(0000) GS:ffff8880ecec2000(0000) knlGS:0000000000000000
+[   36.680862][    C1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   36.680948][    C1] CR2: 0000000000000000 CR3: 000000000d7a6000 CR4: 00000000000006f0
+[   36.681175][    C1] Call Trace:
+[   36.681398][    C1]  <TASK>
+[   36.681784][    C1]  __kernfs_new_node+0xd7/0x690
+[   36.681877][    C1]  kernfs_new_node+0x102/0x210
+[   36.681877][    C1]  kernfs_create_dir_ns+0x44/0x130
+[   36.681877][    C1]  sysfs_create_dir_ns+0x123/0x280
+[   36.681877][    C1]  ? __pfx_rt_mutex_slowunlock+0x10/0x10
+[   36.681877][    C1]  ? __pfx_sysfs_create_dir_ns+0x10/0x10
+[   36.681877][    C1]  ? rt_spin_unlock+0x65/0x80
+[   36.681877][    C1]  kobject_add_internal+0x5a5/0xb50
+[   36.681877][    C1]  kobject_add+0x155/0x220
 
-Yep.
+Both are decoded to:
 
-> >
-> >> 
-> >>> +///         3:0       mode        as u8 ?=> Mode;
-> >>> +///         7:4       state       as u8 => State;
-> >>> +///     }
-> >>> +/// }
-> >>> +/// ```
-> >> 
-> >> As this will move to the kernel crate, it is particularly important to
-> >> make sure that this example can compile and run - so please provide
-> >> simple definitions for `Mode` and `State` to make sure the kunit tests
-> >> will pass after patch 4 (in the current state I'm pretty sure they won't).
-> >
-> > Good catch. This will blow up the example though. I will change it to no_run
-> > like the register! macro did if that's Ok.
-> 
-> If you reduce `State` to 1 bit and change its type to `bool`, and limit
-> `Mode` to two or three variants, the example should remain short. I
-> think it is valuable to provide a complete working example here as the
-> syntax is not obvious at first sight.
+arch_static_branch at arch/x86/include/asm/jump_label.h:36
+(inlined by) kfence_alloc at include/linux/kfence.h:121
+(inlined by) slab_alloc_node at mm/slub.c:4213
 
-Ok, so it will look like this, still about 40 lines more, but that works for me.
+which is kfence_allocation_key. Decoding the code shows:
 
-@@ -7,11 +7,54 @@
- //!
- //! # Syntax
- //!
--//! ```no_run
-+//! ```rust
-+//! #[derive(Debug, Clone, Copy)]
-+//! enum Mode {
-+//!     Low = 0,
-+//!     High = 1,
-+//!     Auto = 2,
-+//! }
-+//!
-+//! impl TryFrom<u8> for Mode {
-+//!     type Error = u8;
-+//!     fn try_from(value: u8) -> Result<Self, Self::Error> {
-+//!         match value {
-+//!             0 => Ok(Mode::Low),
-+//!             1 => Ok(Mode::High),
-+//!             2 => Ok(Mode::Auto),
-+//!             _ => Err(value),
-+//!         }
-+//!     }
-+//! }
-+//!
-+//! impl From<Mode> for u32 {
-+//!     fn from(mode: Mode) -> u32 {
-+//!         mode as u32
-+//!     }
-+//! }
-+//!
-+//! #[derive(Debug, Clone, Copy)]
-+//! enum State {
-+//!     Inactive = 0,
-+//!     Active = 1,
-+//! }
-+//!
-+//! impl From<bool> for State {
-+//!     fn from(value: bool) -> Self {
-+//!         if value { State::Active } else { State::Inactive }
-+//!     }
-+//! }
-+//!
-+//! impl From<State> for u32 {
-+//!     fn from(state: State) -> u32 {
-+//!         state as u32
-+//!     }
-+//! }
-+//!
- //! bitfield! {
- //!     struct ControlReg {
- //!         3:0       mode        as u8 ?=> Mode;
--//!         7:4       state       as u8 => State;
-+//!         7         state       as bool => State;
- //!     }
- //! }
- //! ```
+  21:	85 c0                	test   %eax,%eax
+  23:	0f 85 f6 00 00 00    	jne    0x11f
+  29:*	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)		<-- trapping instruction
+  2e:	48 c7 44 24 08 00 00 	movq   $0x0,0x8(%rsp)
 
- thanks,
+which is clearly an intact NOP sequence. So with qemu plain the static
+branch patching seems to be unhappy....
 
-  - Joel
+Oh well....
+
+
 
 
