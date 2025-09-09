@@ -1,292 +1,254 @@
-Return-Path: <linux-kernel+bounces-809091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE808B5085E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:44:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0913B5085C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786FF3B07AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:44:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8A911C240E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE2B260587;
-	Tue,  9 Sep 2025 21:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740B625CC58;
+	Tue,  9 Sep 2025 21:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gzZCQWvG"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Q5TZh0mR"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2068.outbound.protection.outlook.com [40.107.100.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE316253951
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 21:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757454262; cv=none; b=lNY2fVZj6Rnd3nWo+vrfgEMiyMu/Tv5eg1suK2xyy7enc4IuhXk6YpFinRRzfNiw4b3z6piMCXIqT2M89qJ9kTYfzMrg4w1Omz2iAVzM7hiq7v5jeeoqJCIlQhAhIK+jU01VUuZIe84iOhLOJDEZzYqVaS8nE8cfhLZbk3ucIIg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757454262; c=relaxed/simple;
-	bh=Ouc86iuD2u/uoicrSLE4J2FL5645bILq558AbjHR74Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fr+mZItg6+48by8fh+JIZeD0azkVqfr/6pJL4mkkfq2HxfbtFyFj5fT71ExFkNLIB+jFXVr5WoenTBtHVVdVdxWxB/fz4GNxw7UewWg6Wmmu2oUPynNtNScoPJfxNw5+UO8dDmwGEsPHzePzk12Ex2J6GQhBuiQZ3RiuNGCPnhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gzZCQWvG; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61d14448c22so1541a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 14:44:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757454259; x=1758059059; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cORFDYgvyY2ZoZSCiHszBh/KszgVx6wKBPF6YytGcNM=;
-        b=gzZCQWvGcPFroqpTEzLCkHCbz7waXNnVDkH6WPPEunqTx+NZoR4mYTxtEqboq4GLzS
-         hkGx9wpJRy2R5oIAyfYoCbGWDfD28mBOZzhC5/K+CkKhk9K/2l+F/IKlLfiOSz1Qo8Ni
-         V8Mnk4+ueNzNUBc6NFeLI2cjCh4phG6SmjGUIeRp1Ek9FZOLzVx1g1+V1/RwjhR3PzRu
-         ZAEOG8Hibj1xq1E+L7YZ+quWmh9g/59AwA5yZhQ+gkYSk7c7SkGGW8cMv5Xqh5VP2EAM
-         lzJi7a0iztf1dXww9cJzZ4vS8Ofz7LTcfJy/RI9jV1H1oT20xVlfbUc7UB30U/Ewa0dh
-         hy3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757454259; x=1758059059;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cORFDYgvyY2ZoZSCiHszBh/KszgVx6wKBPF6YytGcNM=;
-        b=NWv7uZqTy/tQbFNYTN80wfAoQWiXbQojVH6cD7KbfNXoVKz4kdL1Ts/n/UInoJgnHh
-         1zIVQ4bL9bDUijgB2ksU4YNjpHxNV1qCglPd5vusSPAoAyDH2A3Pd+TCzjIR8u5mr7/V
-         u4XJzcuwPZnpkTYLhasl7QHd6uuqZxmYGQsiE0v69csvJ9fxY+My6Hf8+DKqIXzF4pR1
-         /Dbr/pdjYaE/eGBvH/ZPOqJfDTX6lEZHqIs+uFJXy/Jnhrwh8Ux0Ipjy3NLywf4+Qcqi
-         hwedOaT5Yovtco01zekgOH5tELIcpOH/NFyiIR5Srt/mX+RB27csY1EW5oWkx3XlNE3X
-         8fpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNVvDtp3UyFAcHnnzl+cxIh640Rlr+Rt+FHgDsPdpPi/qMHwlScLtdOHsdsjDtztBZLJXOt7Degu6uLXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwNlXw5cljvMll2PZKnF2ec3YZMjE9HjZTkXWEYYt0tFPBVKjg
-	xSfRp/qmGnvibWJpvwh0MFOruBkA22L0chr5zf9ht6GhB7IDnyoQ2ba5MJMrVcdA+Z8h3VMYpY9
-	Lup30fWR12zY5h/RK4hPBdZFSdKQQSze8dP+r5cr6
-X-Gm-Gg: ASbGncsECtGzNZwX9O+DK1sAK8CMyz0u41pMQjNIOgU5PZw5rnCfuKcxJkMeQAaKh0c
-	rca7hcV8MUBcWIvhsA44WpzVDYN8kt7tmYGeJ67rdu8IGW72Sx4qbmdO86vQBSuWbvvI8Wy5KfU
-	/FYX72P/M6y5nUwRXx5SSuqCXiIuKBiG7LilYjTQogi9oy859/4R6pMErNy4t4BL6ZgrIqzdBVn
-	Bn77naL5ClGtXNh2j4qwB8E9VizaO04xlAI8cywsUw7
-X-Google-Smtp-Source: AGHT+IHHjSzf3NV2oNZ+4jCL+Q3CGiZLU++ghIuFZUaAwP39HPwBNCyTkdmKOXeri3KEzlLXlrupijbAwtkieYahwpc=
-X-Received: by 2002:aa7:d392:0:b0:623:27a7:25fc with SMTP id
- 4fb4d7f45d1cf-62d4e6c02d0mr6933a12.5.1757454258460; Tue, 09 Sep 2025 14:44:18
- -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E775C253951;
+	Tue,  9 Sep 2025 21:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757454255; cv=fail; b=mji1z5BYeSwW1F78H7Dk3px46e5008EoHR0pZ5Bg8WhbdYRH4TqU+Z8BMMWIKP6fVWFMv03b2RGerJA0tvdjK3JEmuySz1gP5nUJdWI+xVVRymf6A/+SXKfWL9Y5Z1vBmVyoIqekfEQq5eia+6QnrRpk0ppBzGe7YYGm5/DzYBE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757454255; c=relaxed/simple;
+	bh=+YWfx+HhtLNhWuyAaNWAwKbFJzkBCZuy3UIF1HldTH8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZzwFftBx2gxphzZ4DQ6j7+I9RBWR/OdzmmDM19bNPR3A3ELu9QSklU2hBCLrEKixnLXWFjJekI6HV4FwylUuulEaYDDPFRSX6x9wgmwKKmi7Dy4zG9v2jx6RuSfPJIblHSxZALV6jIQaZNfaas7DfD4omH7WI03uO//2Nvr+GZI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Q5TZh0mR; arc=fail smtp.client-ip=40.107.100.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OdNERtjfCF39RH41/y+LeO5ch2P9Z6vUcg6SqBFVScTtV5418e/4ZwX/G94+hd2Bn0OF228tC14h8DC57cwseM/gjI2sPoBqZiDs+lkR/g3yhzlBFwGPtgyzwQZfDQIbxV/XfbKIty/XFglXzqK6cISFwUkmFXex4DeluD1PDXct1IdKahp3Va6B2u4aiHgBi4jBLQvgrLb6cy7IdZeMsm6IgYWKRtHzDzfnAbuSItn3Fm8CSMcfHKWihzz8Y3iaLhBQ9fpJXb5lnT3HI9l0zwHAxGWXzXAoVRtrwKIkPiIDfOD65dDvpFstLPP2uhGvszPmhkP+8YAnJZYuRjMe1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4O8OLcB4pXBE9PuO2a6rEKbbM3jhnQKHyWwIulLwEDw=;
+ b=rXY9pPimACFuRqTffU8zaht/bjqpffAZYMiADlQO94uoI8vE2YpjMdrDBEThLKaGaOoNpXSZTMDCroBw8xmDMxj4QQbSGWNe4wqA+C+zNTF4mfcDbAHMHTQfdDrIRgpQcYGmoqiU6KH/oAQL5LCI8thc6Mkxk7e0I7+tcrZcisTSePGIbmDZFC96/UNZmLe+ysH3rP0vCm7p0w+SKIROQCbhhXU+sYDuxANQFl+Vq9s2Zal61KOmbANK94BYfgjYiSJr9JOK1lqw/b/LiYeZ6p8vGpoDxZAjaoK2e6YAFE+sDADqvdCAMMJLht//A4rlKYLxPsEFoRky/B/Sq7iWtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4O8OLcB4pXBE9PuO2a6rEKbbM3jhnQKHyWwIulLwEDw=;
+ b=Q5TZh0mRsqlI/rN3eHkyGKYW6CLFtFPjZb0OlBpDGHn2ATX2v71Udefj37pTBuWl6r2vRDBAyqv20x5yi/zrERbZdF4vQvy/h1Ru8LhSCkNX0bmAkSF8q+FP5yoZmRSsl2lAgafnTP/c8Y9ABh0fOAMJ4joT/lD35PLNEo/vq8U=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by IA1PR12MB6410.namprd12.prod.outlook.com (2603:10b6:208:38a::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
+ 2025 21:44:11 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%3]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
+ 21:44:09 +0000
+Message-ID: <fbb24767-0e06-d1d6-36e0-1757d98aca66@amd.com>
+Date: Tue, 9 Sep 2025 16:44:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v7 01/22] x86/sev: Separate MSR and GHCB based snp_cpuid()
+ via a callback
+Content-Language: en-US
+To: Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb+git@google.com>,
+ Michael Roth <michael.roth@amd.com>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
+ <joro@8bytes.org>
+Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
+ Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Kevin Loughlin <kevinloughlin@google.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Nikunj A Dadhania <nikunj@amd.com>
+References: <20250828102202.1849035-24-ardb+git@google.com>
+ <20250828102202.1849035-25-ardb+git@google.com>
+ <20250828153317.GJaLB2vSvuR20WzgQV@fat_crate.local>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <20250828153317.GJaLB2vSvuR20WzgQV@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0037.namprd04.prod.outlook.com
+ (2603:10b6:806:120::12) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909190945.1030905-1-Liam.Howlett@oracle.com> <20250909190945.1030905-8-Liam.Howlett@oracle.com>
-In-Reply-To: <20250909190945.1030905-8-Liam.Howlett@oracle.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 9 Sep 2025 14:44:05 -0700
-X-Gm-Features: AS18NWDp7h4tRRYW9-ZNijDGSt7aO40ogQOfSscUNHcKVszsllLYH7lJ_PsLcVQ
-Message-ID: <CAJuCfpG4D4ikZO1c8zN7HNgLTAco1ggk21rg9AUFwoztA95qSA@mail.gmail.com>
-Subject: Re: [PATCH v1 7/9] mm: Introduce unmap_desc struct to reduce function arguments
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, maple-tree@lists.infradead.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Charan Teja Kalla <quic_charante@quicinc.com>, shikemeng@huaweicloud.com, 
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com, baohua@kernel.org, 
-	chrisl@kernel.org, Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|IA1PR12MB6410:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc8a9820-52c3-4dec-ea8e-08ddefea0249
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b0lqZDdqTDRXZi9zVmJHOFREUjBKdnhzTHdmUTFiNGtpUTdBbk5ka05WaElu?=
+ =?utf-8?B?ZDZQM2o2eXJydnJrR0ZYRmdiM21WTmtPa3Z1c3paT2JscEJkcHdIZ2VCZk9x?=
+ =?utf-8?B?SHNROVdqRnI5ZzJYNU5xYjRMOFZNSElxQzZsQ3ZXSjhFN0NmYkQyRmRFdXhP?=
+ =?utf-8?B?M3RVRHBTeko2YnBJdEVzSHZZd2taVG5MR2VoRER0d0x5SVlLMTBEdUp1VlBC?=
+ =?utf-8?B?Y2xSKytRWVRMclNiWkNzOEtBRE0rZCttN095NFhnSHlrTXZKdCt0c2kwdlM1?=
+ =?utf-8?B?SVVrTWx0aHo4dWthVThCTml4aTJhVzUzZTdVM2tGbVV0d3BoVWxWWHlTSzM1?=
+ =?utf-8?B?QXZhQS9tREFCekVaRGJYVDRDdkpZRXNJWTNaZDU0UThoZEdUQ05YRTZxcHpw?=
+ =?utf-8?B?S1RJaVpRUEVRZHBFWnVFalhmZGdvYjJXM2RoYVNXeG1UVVArbzBONmxkMFBG?=
+ =?utf-8?B?K1ZDUDRObmJ1alBIMCs0VThCb3pJZ2JEYmwrVjhMRlNicnBTelByR3BjOVdT?=
+ =?utf-8?B?Mk1sVkVZM0gwNW1SMUk4MjZoVkFKaW5sSTNBSWVjUEkzZTRyRFl1dkxrTXUr?=
+ =?utf-8?B?dElzN2JTaXQrSXRSWTBZdEhjbXErUUlsc24vL0llbDNoQnkzZjAycENNOXlr?=
+ =?utf-8?B?VitHNDhMcFFyb0cvNGwzbFNUY1dwNlV5YU1jaDllVGRYYnpjQ25zQTViN1pL?=
+ =?utf-8?B?T1h5bmg0cmJQV2JxTWRUWjdzSmtYZ1VaVTIyTEJJWno5SVFQZGZzUGZ1d2ll?=
+ =?utf-8?B?T0lYWHg2SXlYWGtEQjJRMkwyenhKSW5BdThmYngrbEQwVFFIN0J4TXlVSHBR?=
+ =?utf-8?B?VGdCUTJUN2U1R01hOWhtYkRMTDRhNVAxRVhnWVcrU0oxbTFLQkRRd01vNTQv?=
+ =?utf-8?B?UWhBK3h0cFhlU3RDanpMMXY0ODZVWFVORE5nOWN0djBWQWR4RnBFR3hVTFpn?=
+ =?utf-8?B?cllGVWtIY1dOWE1rUHl4U29RSFpTOHlRUjlid2hxQS9oU2lqbmErd0JUUUNS?=
+ =?utf-8?B?dEdmVlY3OWJyNWNRU0xuTW54Vm0rQ21iQUswU29kU3ZBQ1FaeSt6QXc2a1J1?=
+ =?utf-8?B?aGEyWnIreFBiRDBiOU1zQlJEUTJwZEVNcWdhNHpJc3ZXWGJhQzdmVUtKYVdk?=
+ =?utf-8?B?Q2ZjR0hwUk91UTNlQ3Y4MHBxck9uYkJmU0UzeERsNUxpWkxiY05kWmQ0RURD?=
+ =?utf-8?B?UmNZcEhvbVlzMVBwVnNNZE1WZW5HcERVcGI4UE96Q3hVcTNuMmNnV1B0U0sr?=
+ =?utf-8?B?dEJCbnN1SUt0RVpzOTJMRUdUWjE2UXRWb05GS0JQbUdtaVJpMXQyU0RYWlU2?=
+ =?utf-8?B?OHcyQ21GVmUzQ0VCQkx3QmZTYVNXbHZnKzJlVW9BSkpKUHFaa1R2YUdnTjRu?=
+ =?utf-8?B?NlZiMWF6RkUzSWhqSzZEQmJYbWtRSi9wV25wVHROa2tpTE1rWW91T0ZXcVFm?=
+ =?utf-8?B?bGVPMUozYlkrT0lzcTdoSzZYRUcyTFliNVMxNVlKb01rcnVFcFlBVFVHdFJK?=
+ =?utf-8?B?cFNFbTJKTjFJR0dLd1JFSTVWTTltNVZRaTE0d3piOUVkQzFNT3g0WDRQN3dI?=
+ =?utf-8?B?d3FnZE93L0h5b2xWdEhBSjlFYVNEWkd2VWk4eldoa2xwM0R1OXpoMmVhNG1q?=
+ =?utf-8?B?UG9yZDlyZncxWlJiOU9icytxelBuQ2Q0N1pReDUvS25HK2ttSEs2b3hMV2tx?=
+ =?utf-8?B?dFhlUXpKRFk3MUxmd3ZqSTNuS1RaejZQZDJuMG1qYXpXQ3lkbzhGR1hudXBS?=
+ =?utf-8?B?amd1NEtkTFVNakZ4WVNERHFxVlFkZDhjNHkwOEU2dUZpR0pJVW5Bck80b3ha?=
+ =?utf-8?B?QW5NRzF5ckl4QVh6WTcyazFRMnczQ0VpRE5Wdmx1V2h4SUQ0MFhGcGlXOGZI?=
+ =?utf-8?B?ZWx6QUZ3MFVhQURwcUlJVnJhYWw5WnJxdmdaZlFlZXBGeFgrOWRxOWl2R1hI?=
+ =?utf-8?Q?ZEvYJW5+xWg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Tk41SE9IeVNmK2VHQWNwaU1wYXcxYlYzbU1ldjB3VWFzUGpTandWZCtORC9D?=
+ =?utf-8?B?ajJFcTlDVmxsQnJQUEhzcHdDWkNhU3NZZ2Q5YzBnK0taRUJSZVJFUEpIWmRE?=
+ =?utf-8?B?bnlZemVXbnAwREwreSs2ZC9TNDViaEZhNGJMZ1hUdlJFdzdld0huM1Vlek14?=
+ =?utf-8?B?Z2wxSjVGMkV0TnVMWVJhckNwSE9UVWJVYUw1cDh4TTBQRWFsYUZZTXA0M1NQ?=
+ =?utf-8?B?bkNkdmM5UDNwN3JJSHpDR2luMm1hbHFhWXRDNWVQTFBuZHFNajBlK0RvSjdH?=
+ =?utf-8?B?TFVxc01tSC9ZWXRORURCUXd0Y0hZMTlYVW1RTmlWZWowMWQrZlVnUFl2ZUdq?=
+ =?utf-8?B?MGUvVHQxNG9qenhJWVVsWFhaaDU2UWE1eGt2eGx6YlpodlpOdzFkd0JaTDF0?=
+ =?utf-8?B?Tkw4R2lueStkTm9od1dKR214OFhvN25VZjV1N0tLWFhYWDY3VDlWRWJSa2cr?=
+ =?utf-8?B?K1FwUUlKWkc2dGNOY0JTWGt3ZGZybUZOdloyVnVnL2piM0FHNU15WVBNNytW?=
+ =?utf-8?B?VUQ1czJISVQ3SVZwamV3YWpjRWxoY2NZS00zSHNTek44alhISDZWeEY2S3ZV?=
+ =?utf-8?B?RXFsYjFKTnYxNFA0cDkvQWpRbmZtVUdZa254LzRqeHc2U3BLLzVHMmgvSjR6?=
+ =?utf-8?B?aTB0aTN3OGFMRy9ORFJvUzNhQVYyNnc5KzU1dVI4NjlhWkxOQmtENlpvTFVE?=
+ =?utf-8?B?OEJpeUhMV1plUml1Sk9BdmYzK0ZmZmEzSUdZL3dqbzRWK0Q5K2ZySys1d0hU?=
+ =?utf-8?B?MG5YRE92RjdDVW1oQjJMZEg5NVpXZkd2aUIwT0tmNUE1VDRCQTlQSkREbG1M?=
+ =?utf-8?B?aEswekFzdjdLNlZXVkdzNkxKUHdpbjVVVjhrVFdaY0l2TFNPOFBRRGV3QzRY?=
+ =?utf-8?B?eDQwM2N6RGFFclNPMlZib3pVQm4yUTdPemhMZTBoQlZyVWhHQ0ZocWx2MDFL?=
+ =?utf-8?B?aEJ4MFZoMU4xTVRIS2dwaUg0YmI1V3lKeHR4RU9HYXVWcmVHc3lzNHhZMlhY?=
+ =?utf-8?B?YU1jL2UyOXVqOXdoSEJiNFlYVlJLKyswc2huS1VzU2VYaDN0VWx0c3l1VmMv?=
+ =?utf-8?B?c2s2L0thY0FBcVNZbFlRaHdrVEVZTkhaa3IzNlBkOUxnMkJNcW9kZFY3RWF5?=
+ =?utf-8?B?aVdwV2tQdk1mTEpVenlpdFEycU9VLzYxcHdoS1l6T3UrQVg1ZnhLeGRjMWhZ?=
+ =?utf-8?B?RGRweTZyMndiekxUODI3T2tUcFdzSmtoWTFVWXhIODFTdW50SVhJV2NXTnQz?=
+ =?utf-8?B?dG5nQ2d1b1pCZ2dvSGs3aFNTUTZvRStERnNuQmIydWtFOXZOT2laVmIvc0NS?=
+ =?utf-8?B?S2tlUDBlK2hYdWQ1Z1dSdThlYnN0MHFaK1VybEx3RXlUY2xvTzE2bWU5ZWY5?=
+ =?utf-8?B?aC9WTlJnNC96NnU0TkE5RW5sRE1LSDJ2S0ZQUk95NDRyN3JaQmdwbVlkQTQ5?=
+ =?utf-8?B?RU5yaGpNQllDRnVCS0lhOEZhMnF6SkNuaS9nVUZmNU1CUSsxOW91MHU3c1oz?=
+ =?utf-8?B?OWNES1RlSFkyUTc2VmFhTzQveVpuQmY3ZzB0Z0xucUluaTJmTCtvOXFpclVB?=
+ =?utf-8?B?K05LRzY1Z3VOUG1GRzlrMUd3WE8rOE41S1U4aUdmVXlST2MybXR1UWo0MUlJ?=
+ =?utf-8?B?WmEwaWJyQUtsMmxYK1ZxNXdDU0doOHVMaWdTZmhaemhlY1h1MjF2TTUvelFp?=
+ =?utf-8?B?MkY3QVdVbzhjM1EyRExsVjZYVlZRSWs3WVJ0eXNZdmZ3SFc5VzdhYXAzK09V?=
+ =?utf-8?B?L0tTTE5OT1RsUDdDT0FaMktxb0VEWitkOXdlbTZYUDhVZjJLYlJBM3pGWTh6?=
+ =?utf-8?B?SkRtTzk5N3pQcnREbHZYYlhONEVrQTZxaWtOQWRhaTR1V2syZ1ZNL0wvUmZF?=
+ =?utf-8?B?MXI3eTlNMmZ6V0lZTVVEeWNnNmJ3b3ZmbklLdFpiYWo4SWh2SWliWVYzSFBa?=
+ =?utf-8?B?TUsvZkRsbmQ3UENQcExDdlM1azZsN0RhWHlKYU9lSFhVdzNkWDFWVkw4Ym9a?=
+ =?utf-8?B?SlhkL1FKMXFidFJ0UWt4Q2hZUXg0MUJXcDF3WDhHUXlUYlRIakt3aWo2cVJm?=
+ =?utf-8?B?ejlqVDNydGtkY0wrdTVHK3kxeUhvQU15L2ZxMVJ0VWZlb2Q5QTllOVFaU1Jp?=
+ =?utf-8?Q?oygGYU7QFHVG7aBU5CWA1qi4N?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc8a9820-52c3-4dec-ea8e-08ddefea0249
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 21:44:09.8612
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RfLv5kDenXtMGomMvX2qXx0XrgbR7E9SUhsgU2/xNvGiDqO/XNwmkjyE9Np/dpc20eYW/EHyM/h8U3x68i6sJg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6410
 
-On Tue, Sep 9, 2025 at 12:11=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> The unmap_region code uses a number of arguments that could use better
-> documentation.  With the addition of a descriptor for unmap (called
-> unmap_desc), the arguments can be more self-documenting and increase the
-> descriptions within the declaration.
->
-> No functional change intended
->
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+On 8/28/25 10:33, Borislav Petkov wrote:
+> + Joerg and Mike to doublecheck me.
+> 
+> On Thu, Aug 28, 2025 at 12:22:04PM +0200, Ard Biesheuvel wrote:
+>> @@ -648,7 +611,7 @@ void __head do_vc_no_ghcb(struct pt_regs *regs, unsigned long exit_code)
+>>  	leaf.fn = fn;
+>>  	leaf.subfn = subfn;
+>>  
+>> -	ret = snp_cpuid(NULL, NULL, &leaf);
+>> +	ret = snp_cpuid(snp_cpuid_hv_msr, NULL, &leaf);
+>>  	if (!ret)
+>>  		goto cpuid_done;
+>>  
+> 
+> So this code becomes now:
+> 
 > ---
->  mm/mmap.c | 12 ++++++++----
->  mm/vma.c  | 27 ++++++++++++---------------
->  mm/vma.h  | 35 ++++++++++++++++++++++++++++++++---
->  3 files changed, 52 insertions(+), 22 deletions(-)
->
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index aa4770b8d7f1e..5c9bd3f20e53f 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1883,11 +1883,15 @@ __latent_entropy int dup_mmap(struct mm_struct *m=
-m, struct mm_struct *oldmm)
->                 if (max) {
->                         vma_iter_set(&vmi, 0);
->                         tmp =3D vma_next(&vmi);
-> +                       UNMAP_REGION(unmap, &vmi, /* first vma =3D */ tmp=
-,
-> +                                    /* min vma addr =3D */ 0,
-> +                                    /* max vma addr =3D */ max,
-> +                                    /* prev =3D */ NULL, /* next =3D */ =
-NULL);
-> +
-> +                       /* Don't free the pgtables higher than the failur=
-e */
-> +                       unmap.tree_max =3D max;
+>         ret = snp_cpuid(snp_cpuid_hv_msr, NULL, &leaf);
+>         if (!ret)
+>                 goto cpuid_done;
+> 
+> <--- tries to find the CPUID leaf in the CPUID table
+> <--- otherwise uses the MSR protocol to read CPUID from HV and massage it
 
-Sorry, the naming still feels confusing... tree_max is described as /*
-Maximum for the vma tree search */ and here we set it to /* Don't free
-the pgtables higher than the failure */.
+It only uses the MSR protocol for particular CPUID values in
+snp_cpuid_postprocess(). If the CPUID leaf isn't in the CPUID table,
+then it will set the CPUID values to all 0 and then call the
+post-processing routine which may or may not call the HV.
 
->                         flush_cache_mm(mm);
-> -                       unmap_region(&vmi.mas, /* vma =3D */ tmp,
-> -                                    /*vma_min =3D */ 0, /* vma_max =3D *=
-/ max,
-> -                                    /* pg_max =3D */ max, /* prev =3D */=
- NULL,
-> -                                    /* next =3D */ NULL);
-> +                       unmap_region(&unmap);
->                         charge =3D tear_down_vmas(mm, &vmi, tmp, max);
->                         vm_unacct_memory(charge);
->                 }
-> diff --git a/mm/vma.c b/mm/vma.c
-> index 4c850ffd83a4b..c92384975cbb2 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -473,22 +473,20 @@ void remove_vma(struct vm_area_struct *vma)
->   *
->   * Called with the mm semaphore held.
->   */
-> -void unmap_region(struct ma_state *mas, struct vm_area_struct *vma,
-> -               unsigned long vma_min, unsigned long vma_max, unsigned lo=
-ng pg_max,
-> -               struct vm_area_struct *prev, struct vm_area_struct *next)
-> +void unmap_region(struct unmap_desc *desc)
->  {
-> -       struct mm_struct *mm =3D vma->vm_mm;
-> +       struct mm_struct *mm =3D desc->first->vm_mm;
-> +       struct ma_state *mas =3D desc->mas;
->         struct mmu_gather tlb;
->
->         tlb_gather_mmu(&tlb, mm);
->         update_hiwater_rss(mm);
-> -       unmap_vmas(&tlb, mas, vma, vma_min, vma_max, vma_max,
-> -                  /* mm_wr_locked =3D */ true);
-> -       mas_set(mas, vma->vm_end);
-> -       free_pgtables(&tlb, mas, vma, prev ? prev->vm_end : FIRST_USER_AD=
-DRESS,
-> -                     next ? next->vm_start : USER_PGTABLES_CEILING,
-> -                     pg_max,
-> -                     /* mm_wr_locked =3D */ true);
-> +       unmap_vmas(&tlb, mas, desc->first, desc->vma_min, desc->vma_max,
-> +                  desc->vma_max, desc->mm_wr_locked);
-> +       mas_set(mas, desc->tree_reset);
-> +       free_pgtables(&tlb, mas, desc->first, desc->first_pgaddr,
-> +                     desc->last_pgaddr, desc->tree_max,
-> +                     desc->mm_wr_locked);
->         tlb_finish_mmu(&tlb);
->  }
->
-> @@ -2414,15 +2412,14 @@ static int __mmap_new_file_vma(struct mmap_state =
-*map,
->
->         error =3D mmap_file(vma->vm_file, vma);
->         if (error) {
-> +               UNMAP_REGION(unmap, vmi, vma, vma->vm_start, vma->vm_end,
-> +                            map->prev, map->next);
->                 fput(vma->vm_file);
->                 vma->vm_file =3D NULL;
->
->                 vma_iter_set(vmi, vma->vm_end);
->                 /* Undo any partial mapping done by a device driver. */
-> -               unmap_region(&vmi->mas, vma, vma->vm_start, vma->vm_end,
-> -                            map->next ? map->next->vm_start : USER_PGTAB=
-LES_CEILING,
-> -                            map->prev, map->next);
+The second call to __sev_cpuid_hv_msr() only happens if there is no
+CPUID table - which will be the case for SEV-ES. So you can't remove the
+second call.
+
+Thanks,
+Tom
+
+> 
+>         if (ret != -EOPNOTSUPP)
+>                 goto fail;
+> 
+>         if (__sev_cpuid_hv_msr(&leaf))
+>                 goto fail;
+> 
+> <--- and now it tries to do the same - do CPUID over MSR protocol.
+> 
+> This flow made sense before your change because it'll try to use the GHCB
+> protocol but you're zapping that now so, IOW, you can zap that second call
+> too:
+> 
+> 
+> diff --git a/arch/x86/boot/startup/sev-shared.c b/arch/x86/boot/startup/sev-shared.c
+> index ed88dfe7605e..fbfdfe0dce70 100644
+> --- a/arch/x86/boot/startup/sev-shared.c
+> +++ b/arch/x86/boot/startup/sev-shared.c
+> @@ -612,16 +612,9 @@ void __head do_vc_no_ghcb(struct pt_regs *regs, unsigned long exit_code)
+>  	leaf.subfn = subfn;
+>  
+>  	ret = snp_cpuid(snp_cpuid_hv_msr, NULL, &leaf);
+> -	if (!ret)
+> -		goto cpuid_done;
 > -
-> +               unmap_region(&unmap);
->                 return error;
->         }
->
-> diff --git a/mm/vma.h b/mm/vma.h
-> index b0ebc81d5862e..4edd5d26ffcfc 100644
-> --- a/mm/vma.h
-> +++ b/mm/vma.h
-> @@ -152,6 +152,37 @@ struct vma_merge_struct {
->
->  };
->
-> +struct unmap_desc {
-> +       struct  ma_state *mas;        /* the maple state point to the fir=
-st vma */
-> +       struct vm_area_struct *first; /* The first vma */
-> +       unsigned long first_pgaddr;   /* The first pagetable address to f=
-ree */
-> +       unsigned long last_pgaddr;    /* The last pagetable address to fr=
-ee */
-> +       unsigned long vma_min;        /* The min vma address */
-> +       unsigned long vma_max;        /* The max vma address */
-> +       unsigned long tree_max;       /* Maximum for the vma tree search =
-*/
-> +       unsigned long tree_reset;     /* Where to reset the vma tree walk=
- */
-> +       bool mm_wr_locked;            /* If the mmap write lock is held *=
-/
-> +};
-> +
-> +#define UNMAP_REGION(name, _vmi, _vma, _vma_min, _vma_max, _prev, _next)=
-      \
-
-Maybe DEFINE_UNMAP_REGION() similar to DEFINE_PER_CPU() or DEFINE_SPINLOCK(=
-)?
-
-> +       struct unmap_desc name =3D {                                     =
-     \
-> +               .mas =3D &(_vmi)->mas,                                   =
-       \
-> +               .first =3D _vma,                                         =
-       \
-> +               .first_pgaddr =3D _prev ?                                =
-       \
-> +                       ((struct vm_area_struct *)_prev)->vm_end :       =
-     \
-> +                       FIRST_USER_ADDRESS,                              =
-     \
-> +               .last_pgaddr =3D _next ?                                 =
-       \
-> +                       ((struct vm_area_struct *)_next)->vm_start :     =
-     \
-> +                       USER_PGTABLES_CEILING,                           =
-     \
-> +               .vma_min =3D _vma_min,                                   =
-       \
-> +               .vma_max =3D _vma_max,                                   =
-       \
-> +               .tree_max =3D _next ?                                    =
-       \
-> +                       ((struct vm_area_struct *)_next)->vm_start :     =
-     \
-> +                       USER_PGTABLES_CEILING,                           =
-     \
-> +               .tree_reset =3D _vma->vm_end,                            =
-       \
-> +               .mm_wr_locked =3D true,                                  =
-       \
-> +       }
-> +
->  static inline bool vmg_nomem(struct vma_merge_struct *vmg)
->  {
->         return vmg->state =3D=3D VMA_MERGE_ERROR_NOMEM;
-> @@ -260,9 +291,7 @@ int do_vmi_munmap(struct vma_iterator *vmi, struct mm=
-_struct *mm,
->
->  void remove_vma(struct vm_area_struct *vma);
->
-> -void unmap_region(struct ma_state *mas, struct vm_area_struct *vma,
-> -               unsigned long min, unsigned long max, unsigned long pg_ma=
-x,
-> -               struct vm_area_struct *prev, struct vm_area_struct *next)=
-;
-> +void unmap_region(struct unmap_desc *desc);
->
->  /* We are about to modify the VMA's flags. */
->  __must_check struct vm_area_struct
-> --
-> 2.47.2
->
+> -	if (ret != -EOPNOTSUPP)
+> -		goto fail;
+> -
+> -	if (__sev_cpuid_hv_msr(&leaf))
+> +	if (ret && ret != -EOPNOTSUPP)
+>  		goto fail;
+>  
+> -cpuid_done:
+>  	regs->ax = leaf.eax;
+>  	regs->bx = leaf.ebx;
+>  	regs->cx = leaf.ecx;
+> 
 
