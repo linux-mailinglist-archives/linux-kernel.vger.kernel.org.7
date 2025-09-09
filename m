@@ -1,124 +1,300 @@
-Return-Path: <linux-kernel+bounces-808502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9EFB5009C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:04:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA6B5B5009F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05A9E1C631A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:04:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A673D4E723D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FF634F465;
-	Tue,  9 Sep 2025 15:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1793345736;
+	Tue,  9 Sep 2025 15:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E68h6YW7"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioE++mz5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DB9322DBD
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED72D352066;
+	Tue,  9 Sep 2025 15:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757430223; cv=none; b=XbfLLCmSGU3GfcXw6/x7l6AxsMMB4C7nxuNC/m7IjdljmSB//oHzhouu6tKXhjUYNS/TepALvtj/U4qnW24T830bcQIbIH5UwVGSRr7d4jcKGLw4AGOMEq8GBO5cv6nMcdOuJYy87eRLWtHvPnIwmYuK1kD31f95I5I7pR20A7c=
+	t=1757430215; cv=none; b=eugnPdWyeQ7LuUYbTlUf3CU8rS5F7hMjj3YUOA1fns734VJctlMfDTs8kyyg8cdYfLMHKKY4ZRNPu9b3eCZIsUubo8VmqsW0KyN8lAJ+e6Vfo8irqnbFKGgkkJcLIPQATpc13XumK0BQcPX+rKPb/5t5DWZkA0cXHvuRIWUB8Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757430223; c=relaxed/simple;
-	bh=s2eOuFXnk4JEiosXfEmmNMiAHYoyrWK0QGfId2hIEv0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l8YkLH8OqOlNHlmu7oRc+dbRnInrsaE9krODIW8J+Mn5LaD6cvNd+cyEeFA9Gvdh41lPoL+X5eqzM/ePILKHNOGJfthZYqrcWL2DpfJQVtUv3Y3ZqAzzuSpzuJtM8FgMUYRktkPRfhuka/40vdQAqQbYhg6NWRgWVD3ISKKDyvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E68h6YW7; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-56088927dcbso7071501e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 08:03:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757430219; x=1758035019; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s2eOuFXnk4JEiosXfEmmNMiAHYoyrWK0QGfId2hIEv0=;
-        b=E68h6YW7+KTZBCHDJqe2/6a1rAOw+MsGwXSE1sYM8xX9vNA0ZndSQPZgxgYLDW1YPb
-         yi51Y8MxmLHY1W5EGii7BxNhm0Fj9GUPZZfjEyHmodOR0hIhGKYdl7SGWjzWwI1uRWjz
-         MAwzwhPjUKR1YmhVZ1wjysWkHy5ngeP5DIuAoqpu5h/KDvI9jBt9mHSmxT2AMXP7z5nh
-         KUPIZ5AfcQr/oBlx8cR0n6a7H0fGSnoXejteuU8Xa0LrBWsNbvVx5+kVknna5A6RcgBu
-         hLNoYIrrd8gsNNduAXaRTQaR7MK+Aot9tHmUYqP7XNs6Tnogi4Lnx8CZxJEMMkm0Ligy
-         txTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757430219; x=1758035019;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s2eOuFXnk4JEiosXfEmmNMiAHYoyrWK0QGfId2hIEv0=;
-        b=vDbSBjAohyMT0LpEv3yzGTrYWfQojqqFENZWkP0LAe0ODGTagWDCc5StywkRsl4dXK
-         ZOD/t9LNmkiQFKVhMfiClXSMr0gpMp+GlH4F66I2S/rKO88v3YV/NTaoWumdN4FDulA6
-         Dbpqlo93hYOXTeKG3jHHNWzZwgKUyUegu4LjQgiXBTc3ZFvApf2I+S2xSnWke3z5Woff
-         UIDIJBNGClTspB275a4y3bYOE+sNonIU+VUUaw3BW9b6nbl2fmkysKvECIFWuqv+Ai+4
-         NOc/+GTvq0L/2Ade757ZF2787X5hzcdUbSXQA4QwA8vCmipq5YVFUXywPfzfhdwKeJAZ
-         q6GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIhQBPZYRqJk5Y9kPPj/2N4+kCm1MIX5JAaOT2GaJnliv/NEuzgIKc80oek8OXxu/Eh1ycqBM0vT6t2Wg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytudixiWnwvkM4VTPGuoQhasWwGoCgxOfuJ/mdtlFUHHOk5Hpe
-	fBi2bxu7GKmiZIJlsBn5oCzxZ3lUCColoEi6LgbrCzywxEtcG5N17/ReVrmkkf5OEreeM4kOMfy
-	XdaBBtNeKk0wCSjWeP0eZNc3kCL5YHBQwyv3c4cwoZg==
-X-Gm-Gg: ASbGncsp4M3lolWTxDP/0Zv8RnwQfAEQs5/KevwfSN+dSaPLbFeWTmyXh2bH4Zvc6gg
-	6tVr+fmt9YN+A0p0yJtpL4tB3Ome6z7pUW+3DNvlILvwySIiNKpHPrDjAN1fLSMaTLMkc9Pda89
-	VVPS7k7AlZ8kj/u2fTL276GYuGVCy6YDtMxD0pS0Mio+0hvfQS6/vFTJ9BsJZYYP+a8QB74Qlpp
-	2Bi7g96/HRjjrwlarX6PRYP1k81wRLI0kSAvwzRzatjpHijkHY=
-X-Google-Smtp-Source: AGHT+IFtHjCXW/IC9j6GEwjcF/4gyccj2LPR8G94RV0BH7HbnXztEbz95W8S/ObWmv6rhWZ8btdWEU414oiNIQRprWI=
-X-Received: by 2002:a05:651c:b12:b0:336:dd88:69e0 with SMTP id
- 38308e7fff4ca-33b57c39f8cmr33976541fa.29.1757430217780; Tue, 09 Sep 2025
- 08:03:37 -0700 (PDT)
+	s=arc-20240116; t=1757430215; c=relaxed/simple;
+	bh=7TvrYBicwc1qY4ysRF7W20klhiPgGx5P3bsI+4oFUmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tSEBxEJJsH6jehkpA/GUuG7W5tP/M7y9qwwQQqZR6FPyJBzHCkQKYg3KSL9E2i1Unw3fuMIkbFjKfx0W5zlQ+vXx8/YJUsAO/k4B+z3D4v+PUo2WVdE5MIq0RJS9v/f3vTzPGzk4pov7+SCB2he/MshUFQ7yP2LNwY9gbYFtiN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioE++mz5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E73E4C4CEFA;
+	Tue,  9 Sep 2025 15:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757430214;
+	bh=7TvrYBicwc1qY4ysRF7W20klhiPgGx5P3bsI+4oFUmk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ioE++mz5L8p0NLmlPKMWtvlL96Wdvy1ac0IQDFGRKJz3AsoUYmYma3ssXNZvFKb3u
+	 VPT+5H6aHvXtLDhuOxMluIXw0CTXtgqPnbMDJfbNJgHuq1dDOiNaCwfRCB8BcczzdN
+	 2KnQFMoPSkUeCTRC+pbgVJSYDSqPOMq8pRJ7esSBt75/HMtToc67kUoB9mje0Ghmy9
+	 u1N6zc9dDA3nTDLTjWN0utAM5dgCuvnreOzoy530L+nTrkNcf3IpNgi6qzjo7XvNRj
+	 GSEzesiKzDafKk/e+9c1cS4mDQyf77eouRngsFm/TUS4Igkyk+9T/QGz8XYRVFVBz1
+	 gWmD2yiZCJG0A==
+Date: Tue, 9 Sep 2025 10:03:31 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>, 
+	Sumit Garg <sumit.garg@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Apurupa Pattapu <quic_apurupa@quicinc.com>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org, 
+	Sumit Garg <sumit.garg@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kuldeep Singh <quic_kuldsing@quicinc.com>
+Subject: Re: [PATCH v9 00/11] Trusted Execution Environment (TEE) driver for
+ Qualcomm TEE (QTEE)
+Message-ID: <rvz274v27t54iktoa6uds5hyrs5ujkmahdl4o635gkah7cw277@jf4fjp5wb7ci>
+References: <20250901-qcom-tee-using-tee-ss-without-mem-obj-v9-0-a2af23f132d5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905090130.101724-1-marco.crivellari@suse.com>
- <20250905090130.101724-2-marco.crivellari@suse.com> <3e007a66-419d-4933-942e-4e5cdfb06887@suse.com>
-In-Reply-To: <3e007a66-419d-4933-942e-4e5cdfb06887@suse.com>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Tue, 9 Sep 2025 17:03:26 +0200
-X-Gm-Features: Ac12FXwvtgAzWLuGL3iHfQ_lIqD5ZbleIVuFHOnTDiKTdfJQEhR8WxsPlf8W5bM
-Message-ID: <CAAofZF5rA1VKDDNUYrxu=i6i81iLBa0GNOUCrQbUMAjZxrxmiA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] module: replace use of system_wq with system_percpu_wq
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Luis Chamberlain <mcgrof@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901-qcom-tee-using-tee-ss-without-mem-obj-v9-0-a2af23f132d5@oss.qualcomm.com>
 
-On Tue, Sep 9, 2025 at 12:37=E2=80=AFPM Petr Pavlu <petr.pavlu@suse.com> wr=
-ote:
+On Mon, Sep 01, 2025 at 09:55:47PM -0700, Amirreza Zarrabi wrote:
+> This patch series introduces a Trusted Execution Environment (TEE)
+> driver for Qualcomm TEE (QTEE). QTEE enables Trusted Applications (TAs)
+> and services to run securely. It uses an object-based interface, where
+> each service is an object with sets of operations. Clients can invoke
+> these operations on objects, which can generate results, including other
+> objects. For example, an object can load a TA and return another object
+> that represents the loaded TA, allowing access to its services.
+> 
+> Kernel and userspace services are also available to QTEE through a
+> similar approach. QTEE makes callback requests that are converted into
+> object invocations. These objects can represent services within the
+> kernel or userspace process.
+> 
+> Note: This patch series focuses on QTEE objects and userspace services.
+> 
+> Linux already provides a TEE subsystem, which is described in [1]. The
+> tee subsystem provides a generic ioctl interface, TEE_IOC_INVOKE, which
+> can be used by userspace to talk to a TEE backend driver. We extend the
+> Linux TEE subsystem to understand object parameters and an ioctl call so
+> client can invoke objects in QTEE:
+> 
+>   - TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF_*
+>   - TEE_IOC_OBJECT_INVOKE
+> 
+> The existing ioctl calls TEE_IOC_SUPPL_RECV and TEE_IOC_SUPPL_SEND are
+> used for invoking services in the userspace process by QTEE.
+> 
+> The TEE backend driver uses the QTEE Transport Message to communicate
+> with QTEE. Interactions through the object INVOKE interface are
+> translated into QTEE messages. Likewise, object invocations from QTEE
+> for userspace objects are converted into SEND/RECV ioctl calls to
+> supplicants.
+> 
+> The details of QTEE Transport Message to communicate with QTEE is
+> available in [PATCH 12/12] Documentation: tee: Add Qualcomm TEE driver.
+> 
+> You can run basic tests with following steps:
+> git clone https://github.com/quic/quic-teec.git
+> cd quic-teec
+> mkdir build
+> cmake .. -DCMAKE_TOOLCHAIN_FILE=CMakeToolchain.txt -DBUILD_UNITTEST=ON
+> 
+> https://github.com/quic/quic-teec/blob/main/README.md lists dependencies
+> needed to build the above.
+> 
+> More comprehensive tests are availabe at
+> https://github.com/qualcomm/minkipc.
+> 
+> root@qcom-armv8a:~# qtee_supplicant &
+> root@qcom-armv8a:~# qtee_supplicant: process entry PPID = 378
+> Total listener services to start = 4
+> Opening CRequestTABuffer_open
+> Path /data/
+> register_service ::Opening CRegisterTABufCBO_UID
+> Calling TAbufCBO Register
+> QTEE_SUPPLICANT RUNNING
+>  
+> root@qcom-armv8a:~# smcinvoke_client -c /data 1
+> Run callback obj test...
+> Load /data/tzecotestapp.mbn, size 52192, buf 0x1e44ba0.
+> System Time: 2024-02-27 17:26:31
+> PASSED - Callback tests with Buffer inputs.
+> PASSED - Callback tests with Remote and Callback object inputs.
+> PASSED - Callback tests with Memory Object inputs.
+> TEST PASSED!
+> root@qcom-armv8a:~#
+> root@qcom-armv8a:~# smcinvoke_client -m /data 1
+> Run memory obj test...
+> Load /data/tzecotestapp.mbn, size 52192, buf 0x26cafba0.
+> System Time: 2024-02-27 17:26:39
+> PASSED - Single Memory Object access Test.
+> PASSED - Two Memory Object access Test.
+> TEST PASSED!
+> 
+> This series has been tested for QTEE object invocations, including
+> loading a TA, requesting services from the TA, memory sharing, and
+> handling callback requests to a supplicant.
+> 
+> Tested platforms: sm8650-mtp, sm8550-qrd, sm8650-qrd, sm8650-hdk
+> 
+> [1] https://www.kernel.org/doc/Documentation/tee.txt
+> 
+> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+> 
+> Changes in v9:
+> - Remove unnecessary logging in qcom_scm_probe().
+> - Replace the platform_device_alloc()/add() sequence with
+>   platform_device_register_data().
+> - Fixed sparse warning.
+> - Fixed documentation typo.
+> - Link to v8:
+>   https://lore.kernel.org/r/20250820-qcom-tee-using-tee-ss-without-mem-obj-v8-0-7066680f138a@oss.qualcomm.com
+> 
+> Changes in v8:
+> - Check if arguments to qcom_scm_qtee_invoke_smc() and
+>   qcom_scm_qtee_callback_response() are NULL.
+> - Add CPU_BIG_ENDIAN as a dependency to Kconfig.
+> - Fixed kernel bot errors.
+> - Link to v7:
+>   https://lore.kernel.org/r/20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-0-ce7a1a774803@oss.qualcomm.com
+> 
+> Changes in v7:
+> - Updated copyrights.
+> - Updated Acked-by: tags.
+> - Fixed kernel bot errors.
+> - Link to v6:
+>   https://lore.kernel.org/r/20250713-qcom-tee-using-tee-ss-without-mem-obj-v6-0-697fb7d41c36@oss.qualcomm.com
+> 
+> Changes in v6:
+> - Relocate QTEE version into the driver's main service structure.
+> - Simplfies qcomtee_objref_to_arg() and qcomtee_objref_from_arg().
+> - Enhanced the return logic of qcomtee_object_do_invoke_internal().
+> - Improve comments and remove redundant checks.
+> - Improve helpers in qcomtee_msh.h to use GENMASK() and FIELD_GET().
+> - updated Tested-by:, Acked-by:, and Reviewed-by: tags
+> - Link to v5:
+>   https://lore.kernel.org/r/20250526-qcom-tee-using-tee-ss-without-mem-obj-v5-0-024e3221b0b9@oss.qualcomm.com
+> 
+> Changes in v5:
+> - Remove references to kernel services and public APIs.
+> - Support auto detection for failing devices (e.g., RB1, RB4).
+> - Add helpers for obtaining client environment and service objects.
+> - Query the QTEE version and print it.
+> - Move remaining static variables, including the object table, to struct
+>   qcomtee.
+> - Update TEE_MAX_ARG_SIZE to 4096.
+> - Add a dependancy to QCOM_TZMEM_MODE_SHMBRIDGE in Kconfig
+> - Reorganize code by removing release.c and qcom_scm.c.
+> - Add more error messages and improve comments.
+> - updated Tested-by:, Acked-by:, and Reviewed-by: tags
+> - Link to v4: https://lore.kernel.org/r/20250428-qcom-tee-using-tee-ss-without-mem-obj-v4-0-6a143640a6cb@oss.qualcomm.com
+> 
+> Changes in v4:
+> - Move teedev_ctx_get/put and tee_device_get/put to tee_core.h.
+> - Rename object to id in struct tee_ioctl_object_invoke_arg.
+> - Replace spinlock with mutex for qtee_objects_idr.
+> - Move qcomtee_object_get to qcomtee_user/memobj_param_to_object.
+> - More code cleanup following the comments.
+> - Cleanup documentations.
+> - Update MAINTAINERS file.
+> - Link to v3: https://lore.kernel.org/r/20250327-qcom-tee-using-tee-ss-without-mem-obj-v3-0-7f457073282d@oss.qualcomm.com
+> 
+> Changes in v3:
+> - Export shm_bridge create/delete APIs.
+> - Enable support for QTEE memory objects.
+> - Update the memory management code to use the TEE subsystem for all
+>   allocations using the pool.
+> - Move all driver states into the driver's main service struct.
+> - Add more documentations.
+> - Link to v2: https://lore.kernel.org/r/20250202-qcom-tee-using-tee-ss-without-mem-obj-v2-0-297eacd0d34f@quicinc.com
+> 
+> Changes in v2:
+> - Clean up commit messages and comments.
+> - Use better names such as ubuf instead of membuf or QCOMTEE prefix
+>   instead of QCOM_TEE, or names that are more consistent with other
+>   TEE-backend drivers such as qcomtee_context_data instead of
+>   qcom_tee_context.
+> - Drop the DTS patch and instantiate the device from the scm driver.
+> - Use a single structure for all driver's internal states.
+> - Drop srcu primitives and use the existing mutex for synchronization
+>   between the supplicant and QTEE.
+> - Directly use tee_context to track the lifetime of qcomtee_context_data.
+> - Add close_context() to be called when the user closes the tee_context.
+> - Link to v1: https://lore.kernel.org/r/20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com
+> 
+> Changes in v1:
+> - It is a complete rewrite to utilize the TEE subsystem.
+> - Link to RFC: https://lore.kernel.org/all/20240702-qcom-tee-object-and-ioctls-v1-0-633c3ddf57ee@quicinc.com
+> 
+> ---
+> Amirreza Zarrabi (11):
+>       tee: allow a driver to allocate a tee_device without a pool
+>       tee: add close_context to TEE driver operation
+>       tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
+>       tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
+>       tee: increase TEE_MAX_ARG_SIZE to 4096
+>       firmware: qcom: scm: add support for object invocation
+>       firmware: qcom: tzmem: export shm_bridge create/delete
 
-Hi Petr,
+These two patches are for code maintained by me, the rest by Jens. So we
+will have to dance to get this merged.
 
-> If I understand the cover letter and its linked discussion correctly,
-> the aim is to eventually move users to unbound workqueues unless they
-> really need to use per-CPU workqueues.
+Is there are reason why these two are in the middle of the series? Do
+they need to come after the first 5 but before the next 3?
 
-Yes, correct. This first round is just a 1:1 conversion keeping the
-old behavior.
-But later yes, the aim is to let per-cpu just who needs to be per-cpu.
+Regards,
+Bjorn
 
-> The two work items queued by the dups.c code can run anywhere. I don't
-> see a reason why they need to be bound to a specific CPU.
-
-> If it helps, I believe you can already update this code to use the new
-> system_dfl_wq.
-
-Cool, I will send the v2 converting directly from system_wq to system_dfl_w=
-q.
-
-Thank you!
-
---=20
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
-
-marco.crivellari@suse.com
+>       tee: add Qualcomm TEE driver
+>       tee: qcom: add primordial object
+>       tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
+>       Documentation: tee: Add Qualcomm TEE driver
+> 
+>  Documentation/tee/index.rst              |   1 +
+>  Documentation/tee/qtee.rst               |  96 ++++
+>  MAINTAINERS                              |   7 +
+>  drivers/firmware/qcom/qcom_scm.c         | 124 +++++
+>  drivers/firmware/qcom/qcom_scm.h         |   7 +
+>  drivers/firmware/qcom/qcom_tzmem.c       |  63 ++-
+>  drivers/tee/Kconfig                      |   1 +
+>  drivers/tee/Makefile                     |   1 +
+>  drivers/tee/qcomtee/Kconfig              |  12 +
+>  drivers/tee/qcomtee/Makefile             |   9 +
+>  drivers/tee/qcomtee/async.c              | 182 ++++++
+>  drivers/tee/qcomtee/call.c               | 820 +++++++++++++++++++++++++++
+>  drivers/tee/qcomtee/core.c               | 915 +++++++++++++++++++++++++++++++
+>  drivers/tee/qcomtee/mem_obj.c            | 169 ++++++
+>  drivers/tee/qcomtee/primordial_obj.c     | 113 ++++
+>  drivers/tee/qcomtee/qcomtee.h            | 185 +++++++
+>  drivers/tee/qcomtee/qcomtee_msg.h        | 304 ++++++++++
+>  drivers/tee/qcomtee/qcomtee_object.h     | 316 +++++++++++
+>  drivers/tee/qcomtee/shm.c                | 150 +++++
+>  drivers/tee/qcomtee/user_obj.c           | 692 +++++++++++++++++++++++
+>  drivers/tee/tee_core.c                   | 127 ++++-
+>  drivers/tee/tee_private.h                |   6 -
+>  include/linux/firmware/qcom/qcom_scm.h   |   6 +
+>  include/linux/firmware/qcom/qcom_tzmem.h |  15 +
+>  include/linux/tee_core.h                 |  54 +-
+>  include/linux/tee_drv.h                  |  12 +
+>  include/uapi/linux/tee.h                 |  56 +-
+>  27 files changed, 4415 insertions(+), 28 deletions(-)
+> ---
+> base-commit: 33bcf93b9a6b028758105680f8b538a31bc563cf
+> change-id: 20241202-qcom-tee-using-tee-ss-without-mem-obj-362c66340527
+> 
+> Best regards,
+> -- 
+> Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+> 
 
