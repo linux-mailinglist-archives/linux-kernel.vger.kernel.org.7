@@ -1,159 +1,134 @@
-Return-Path: <linux-kernel+bounces-808262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A024AB4FD3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:35:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A95B4FD44
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C49D6440773
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:33:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 810DD4E07F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7683451D0;
-	Tue,  9 Sep 2025 13:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854D5340DA1;
+	Tue,  9 Sep 2025 13:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="zkfV0cig"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dycQUxrK"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C31340DA1;
-	Tue,  9 Sep 2025 13:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803AA21B196;
+	Tue,  9 Sep 2025 13:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757424603; cv=none; b=d8nZe4509xNiromWdS+DDa1pZQ5RtuLekdJ5y4EDCqZpISTWJFM4/sJ1LXpAA6mUEqOj7qRXAUdrEx6eDFWwEiLs6a0JQyZhmTE5SF6hlgv3nlXuoDNP3PHgvbxkDnR59pO3ErcMzjOEq0+ft5FdgHYDPxoHj67a+fy3MB61pjI=
+	t=1757424663; cv=none; b=Aim0BPK1YlP9MLbXEMBwFbWgHx+WAQZf3ywAdG2/8yU1iBKoUWrUhrtp0CxUXKrZ9NY1kwIFM9SbjLq7v5m61poER+YGXhotMjOqLbdPiozvAuysdmPgwK60cKaFgBkBMCTEmKqJBoP0TkhRfQh7/uK3JzSQb7wRVnu3PFW4h9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757424603; c=relaxed/simple;
-	bh=9JB02UF9mdc5Y8964Zvp8h3Q+OXw9e9iOppUU3WlSkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=POwf/Krbkd1YosriWPugHG4OfK7UT05OWiD2jGeUReNKv7+NIoc1WYPN6xxQMhRJ5Ql1TeopsQIJjix/IH+3yX23dCY+QwNvOre5g53/CrodwiHZIoYKuwAnxhvP38WbxM6DYhEA0zCnSYVFuvoP14EwwvH3sXEFxgtkUNoE0F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=zkfV0cig; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Fe2CylzU02/cCqzp45eY392Cx75sRoZT1uPdLFqj/ic=; b=zkfV0cigs49B1J2Jk+T6gofH75
-	J6/mR1g7h+Dea28BHMKBrCr8qZnGhmnRH/PwlyuouXbiiFDTuxQNn3jBtpYYawsM+fjxHzE6Yt1C7
-	QJF84Wykf45iP9//1cf2BBXxeweV6K5vLWrg4nYzinB9Pjt6ncMDsA/tel3NB4TEV8k5tf+6oq5FP
-	RCJtDZ0mcfZlWh4hUaXCWcZ1/Ja1i/d0/Ygcw5Jsd9tLGJK9hA3NYCs+IChO9TCRfim1jErkwt+2H
-	ROU1IDownhQKl8jx9sE+YoCUdIr71sZ9ZGfYOGZodFZCZ6zAyn+e+3RqyNt1xUY1S5lyWITPPFEqc
-	BlA4XhwQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51586)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uvyPh-000000008CU-0SyU;
-	Tue, 09 Sep 2025 14:29:37 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uvyPZ-000000000RX-0dBo;
-	Tue, 09 Sep 2025 14:29:29 +0100
-Date: Tue, 9 Sep 2025 14:29:29 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>, Simon Horman <horms@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	s=arc-20240116; t=1757424663; c=relaxed/simple;
+	bh=j4yCC6gNIuYGKygrC0j+ROF1XiTBwIfsY3yiaplkHjM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cFOgkJO6TNWpSwPW2UOn4KoRENoIUo3YdZYsuwrOEVoR24cw7retR/XxsBdWLXDQeialgxRExiEqWricCcecUPXGo9x96BrtK+9GBf2TIRsFT/u2Ow3NlAmAVnswmlHLNzSBzqJD8xOifZ9PkFPUU1aEJCTQHlaOegYxfOahJQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dycQUxrK; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-329e47dfa3eso4906315a91.1;
+        Tue, 09 Sep 2025 06:31:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757424662; x=1758029462; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dG6XF2PIOMDeR4MOZBWi65Kf7chBzQecby0CPXw5mi8=;
+        b=dycQUxrKJMMjcAG6Pve5sZAE/lG2SqaFus3xnsHNAJjQdi2qeQRngVR4rjEb9fpq+U
+         /KupFc2JZb9znzOTDKKiQaZd1aPLUOEYoOA3zy1vzWn36hQsymUH19prqC/J6FfD2wzD
+         rdAfS2XR7CwIDIVnVXA9HgIUvmpLWojG+V3U88lLYt3gCRU96WesMj3VTfFuJJNLiC8v
+         MgVupoTvcYZ+MHmqBneXVX8o4MOZ2dgxCJMW73uPqOYfZ6D2NoNviWlkScQz2PxN/6Py
+         QyxzF9yU41RBQwwqI21Iuw+8mUj4s8W7HAroJtJqh3AoIW6d1Oq0HC7n2QW/yk9KKig1
+         NvGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757424662; x=1758029462;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dG6XF2PIOMDeR4MOZBWi65Kf7chBzQecby0CPXw5mi8=;
+        b=MZ/lQ5V99mdSN3JPPLVkA4cElGj9fEPVXrxC/xCJbtpCvwTLewtTb7KcJ5Q64SUatD
+         InTjodDzSbPs7f8567DqDUocw2wdkfolNI1GcQv2b7WYi9DRfS3oQjHvrr4jQgUtnjP/
+         7UeFLk3VZK42AB20zed3fkr5PjokOMSs18aBWsljpUsSgIZn4nXh1olgPSTaiOe64Uex
+         lCBHhOZDzFn4ipkKMXRthJ4oWcFuPfwZZP9SDqeErm8UJcIACVhW1bztuu2an9qLH++o
+         zTrNJr1DCD1cgAy3+ev7TRtWmPZS6C7uNMRTnFiGZghK/ZJaWJj+7woFHSPvJ+lfeP5f
+         eW/w==
+X-Forwarded-Encrypted: i=1; AJvYcCX2+JQ2Z1OQOaIGPWE8oryiPTAtSpAJ0+GyPIiwz7qMtrUCEXkIK26zFNMC7i1yTZnfSDyEdshOXMjY@vger.kernel.org, AJvYcCX6X36sweroOAi6GztUvoR3yzpESKa/CWxoEwq7QeTsejyytkhhSM4VaJwlNCe09Yg2sNVXBth2WTo4CFG3@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFPP6DPeZvdvQg7lLbD1YhxKtpeIY/GMopEGEbJLOepkKUilwt
+	c2Z8igg1q7Mv5sUu8UCqrvA3PQL2v1fJMcwfZsJ/eMp8oVv4e0ljb7fx
+X-Gm-Gg: ASbGnctbmz8aLRmVCb6D3N/4r12wH1DASkTCVJ41kwe8meYkJw+XJwhO3vydd/cfYEz
+	fR5hwgataUSJ0im/tUAz21/jYA07Yq8ni9sSKNdr4/tG0r7Czke7B81huaGRsI2E7X2Gj+M4cO/
+	hJkdPx6VLfsaer0nOx81vWc6PQygy5Vw5yxJOw5lFcR6OpzJteckfzeHx3R3TFeyzp5J3x+CVos
+	HaxSJ+vjpUCNyc0Jik9YY838YreeVxCbjn2Ihn3BfVFFH/jXHOVrr3ManKBFWXaf3fo36nBUjot
+	NVYRdDCu0GEeROJfG2/2z3m+1377zQ4YDB0BjSkyUj0psUi5LqFg78CjsNKZhWl/RZ2dM0varzh
+	ChIequRr7SPQQa6OaEFYAs4lsJiSqU/bkJ7/X954L
+X-Google-Smtp-Source: AGHT+IFvzCSi3Jx1813Qml8IRiQpzQZCTcshHHIDJ588+57HfZOE6WtTLDZVN3MrY4AiWuNHBrHx4Q==
+X-Received: by 2002:a17:90b:5584:b0:32b:cb05:849a with SMTP id 98e67ed59e1d1-32d43f936fbmr14109516a91.29.1757424661526;
+        Tue, 09 Sep 2025 06:31:01 -0700 (PDT)
+Received: from localhost.localdomain ([240e:3a6:1c4b:13c0:db95:4539:1490:64d2])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dab173060sm810778a91.5.2025.09.09.06.30.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 06:31:00 -0700 (PDT)
+From: WeiHao Li <cn.liweihao@gmail.com>
+To: heiko@sntech.de,
+	robh@kernel.org
+Cc: krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH v16 06/10] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-Message-ID: <aMAruQYXL7m8upS1@shell.armlinux.org.uk>
-References: <20250909004343.18790-1-ansuelsmth@gmail.com>
- <20250909004343.18790-7-ansuelsmth@gmail.com>
- <aL_uqX90oP_3hbK6@shell.armlinux.org.uk>
- <68c00db1.050a0220.7d5a6.50b8@mx.google.com>
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	WeiHao Li <cn.liweihao@gmail.com>
+Subject: [PATCH v2 0/4] Fix USB controller support for RK3368
+Date: Tue,  9 Sep 2025 21:29:54 +0800
+Message-ID: <20250909132958.26423-1-cn.liweihao@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68c00db1.050a0220.7d5a6.50b8@mx.google.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 09, 2025 at 01:21:18PM +0200, Christian Marangi wrote:
-> On Tue, Sep 09, 2025 at 10:08:57AM +0100, Russell King (Oracle) wrote:
-> > On Tue, Sep 09, 2025 at 02:43:37AM +0200, Christian Marangi wrote:
-> > > +static void an8855_phylink_get_caps(struct dsa_switch *ds, int port,
-> > > +				    struct phylink_config *config)
-> > > +{
-> > > +	struct an8855_priv *priv = ds->priv;
-> > > +	u32 reg;
-> > > +	int ret;
-> > > +
-> > > +	switch (port) {
-> > > +	case 0:
-> > > +	case 1:
-> > > +	case 2:
-> > > +	case 3:
-> > > +	case 4:
-> > > +		__set_bit(PHY_INTERFACE_MODE_GMII,
-> > > +			  config->supported_interfaces);
-> > > +		__set_bit(PHY_INTERFACE_MODE_INTERNAL,
-> > > +			  config->supported_interfaces);
-> > > +		break;
-> > > +	case 5:
-> > > +		phy_interface_set_rgmii(config->supported_interfaces);
-> > > +		__set_bit(PHY_INTERFACE_MODE_SGMII,
-> > > +			  config->supported_interfaces);
-> > > +		__set_bit(PHY_INTERFACE_MODE_2500BASEX,
-> > > +			  config->supported_interfaces);
-> > > +		break;
-> > > +	}
-> > > +
-> > > +	config->mac_capabilities = MAC_ASYM_PAUSE | MAC_SYM_PAUSE |
-> > > +				   MAC_10 | MAC_100 | MAC_1000FD | MAC_2500FD;
-> > > +
-> > > +	ret = regmap_read(priv->regmap, AN8855_CKGCR, &reg);
-> > > +	if (ret)
-> > > +		dev_err(ds->dev, "failed to read EEE LPI timer\n");
-> > > +
-> > > +	config->lpi_capabilities = MAC_100FD | MAC_1000FD;
-> > > +	/* Global LPI TXIDLE Threshold, default 60ms (unit 2us) */
-> > > +	config->lpi_timer_default = FIELD_GET(AN8855_LPI_TXIDLE_THD_MASK, reg) *
-> > > +				    AN8855_TX_LPI_UNIT;
-> > 
-> > You're not filling in config->lpi_interfaces, which means phylink won't
-> > LPI won't be functional.
-> > 
-> 
-> Thanks for pointing this out, I notice lpi_interfaces is also not set on
-> other DSA driver that were converted to the new EEE handling, for
-> example mt7530.
-> 
-> I assume EEE is also half broken there and the required change wasn't
-> notice at times?
+This series fixs USB controller support for the Rockchip RK3368 SoC.
 
-Without checking (sorry, I'm busy, so I'm not going to), I have no
-idea. What I can say is that phylink won't call the enable/disable
-tx_lpi methods unless it is managing the EEE state, and to do that
-it needs _all_ the LPI properties to be correctly populated.
+Key changes:
+ - Update phy-rockchip-inno-usb2 driver to preperly handle RK3368 usb
+   phy initialization and configuration.
+ - Add usb PHY node to rk3368.dtsi with correct clocks and register
+   mapping.
+ - Add missing OHCI node, add missing attribute for usb host node.
+ - Add dt-bindings document.
 
-A lot of other switches (e.g. Marvell DSA) doesn't need that level
-of management.
+The following changes since v1:
+ - Remove the duplicate structure member I accidentally added.
+
+These changes were tested on a RK3368-based board [1]. Both of USB ports
+can emumerate device (HID and mass storage).
+
+Main code changes come from the rockchip downstream source [2].
+
+[1] https://ieiao.github.io/wiki/embedded-dev/rockchip/rk3368
+[2] https://github.com/rockchip-linux/kernel
+
+Tested-by: WeiHao Li <cn.liweihao@gmail.com>
+Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
+
+WeiHao Li (4):
+  phy: rockchip: inno-usb2: Add usb2 phy support for RK3368
+  arm64: dts: rockchip: Add USB2.0 PHY for RK3368
+  dt-bindings: phy: rockchip,inno-usb2phy: Document rk3368 usb phy
+  arm64: dts: rockchip: Add phys attribute of USB host node for RK3368
+
+ .../bindings/phy/rockchip,inno-usb2phy.yaml   |  2 +
+ arch/arm64/boot/dts/rockchip/rk3368.dtsi      | 47 +++++++++++++++++-
+ drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 48 +++++++++++++++++++
+ 3 files changed, 95 insertions(+), 2 deletions(-)
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.47.2
+
 
