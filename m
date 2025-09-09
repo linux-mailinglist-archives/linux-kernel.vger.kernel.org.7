@@ -1,161 +1,123 @@
-Return-Path: <linux-kernel+bounces-807995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37651B4ABCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:28:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C20BEB4ABED
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C701B21738
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:28:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E014E1B217D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11343218B0;
-	Tue,  9 Sep 2025 11:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338AE32142C;
+	Tue,  9 Sep 2025 11:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJn1ukRo"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmodOF5C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13643203B2;
-	Tue,  9 Sep 2025 11:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA79320386
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757417273; cv=none; b=aaaDYB7KTKJC7vmJY95HeAGs3WjoWcn0H0+rwPxRwGABYfdJUejf7PhGZFw3nT4DNTbFgeWkmH7vGe08CmiyLWjOAAT+ycC+/oao43emJANEXU0kHJRfWfvjg+Seoqt+HmuVvwrYLqj6Aqxpv6q6DUm2yo7/xmU7vsGpaO35M8U=
+	t=1757417337; cv=none; b=Mq+vZ244R6O2+B+OjPedByg0h87UNcWki16qDtZbmrhbaP3uC/6bmiKe+NdsTyUjiwIE932QCiw2Y37GU+s7KWoekYo4yAOfKMqKoOoElSv6aCQC63X48PD/SvHbCsiSaprnAm4zs7QknUgc76XysZWAjLOdt3UGfqkBYN8iku0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757417273; c=relaxed/simple;
-	bh=A+spwf9giZNualmJC8d8fBymJLQpsxrX03XtlOMqg6k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VK/8qixxvLWJviJTNjgyeQcM3rwUbliafDawcDcLwruaApi2H5Zrtkrt3/uLc25Ftbf6wF1aa3CP7HO+QuqrH5VjUE0yDXUJGTtE0QKsk+S8RQEYIfI5/IE1BAXb8F5kEBL9KqGnaEbfBJGWgG/WYzHMsSHSMBbQN1n7KjZSOQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJn1ukRo; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-25634c5ebdeso22983385ad.0;
-        Tue, 09 Sep 2025 04:27:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757417271; x=1758022071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VS4aMorio+3l9gYgCOIcE22uRBh0zhWFTybVIbMV5C0=;
-        b=bJn1ukRo6lx8bsyp/QKra418pX11gXH5oaC41XfPiea+VYqi7PfB5zjo0uFptKcHzK
-         yp9bty5nQTG1DUBoOYsIXQGJ45SUgSgIp9UK+/5AeHtMo5EH37NQMyZ7v2+Gms8vUujC
-         KDp66Td2LMZJ+xon3xj/u2hbHIYr5Efk/zogFQH12ucQpdKcmTp95NAyXl8CqUnKCB1n
-         6oiksoXAbFocMc/KSzhCavXudwKqzVAFs+v2oXVR8apxCFbvPAoGPV6h4rzKv+cddzI+
-         Ws7q3YBuHikZWytS2d6Noua5ss8Rl4L0IZbrz+/yNWU8UrGIGVfmwMoNu8xrz3YZXPYI
-         Pswg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757417271; x=1758022071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VS4aMorio+3l9gYgCOIcE22uRBh0zhWFTybVIbMV5C0=;
-        b=TwJr/eB8ifrAuyu96OdbbKv/I7Rr303ydzURoBNQwJkeNdSJG+ImAkmFOsuH23KtFI
-         1NyibjaWDiS8AC19sFp0BPBBIOSQ2NyNuxYvxzT6dwyd7yG1j3mffLGaIAnguzrtrsF4
-         4acyY1Y6PZ27bgjl2T0x6eCg/v/1PaE5j3OW8iWwfUnZyIJkTdagrVGwk3j4ghW61mkx
-         qimMC+oT18CYruNWKSU2MnWZv330Gf92T3SE0nY+jFdb1l70DLq1uzBaKN2gDmqShXNE
-         D4M8IYH9k6+SfSDMdkh16pOv1OuTHh3JiuY9u2VGLBEU30BK4JlKEodvZC6MzqdYLRsX
-         ojZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVk/YWBVVyG3BKMlRCLS0PLe9Hhu8LOJTctabwq6ScZ22d6Ym+h/mJ15zYWBXHeNIdbCpfjfKbh7KXABuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxryXzqBQDbnPAtt1jLAHhEOiYA3JTx38rMepUzr29t9XPoW3vY
-	nTxPMbdG3qq/ByZrWtK78ZTYwOTEKHlUBf20gkODTxEF2dbVNUB/z6jgDUBQJU4vpOlUSfkBABt
-	V+OyVTyyO/Tj/zsFUJg4GQJKl8Q/xOkM=
-X-Gm-Gg: ASbGncvnie+Mg22gUtrLe6oiKgWDflnVjUv4WSmYhme/eQy/QIz7ftVCwrBWLxGAElq
-	/MvfF3OwvGTVR+GKBqU/ll1i6iKxLxCgsagV54rp0MWK+xfwGaYHZezKb28vtt45HLhV438RK6G
-	IEnAXxjrLbwvp9IZ51DyozwmZ4+XTqTL9ZnUiW/g75DfH0zg/aZAs7QM/20qn6+j7gobsQOOqln
-	UzAmOQ8voQyXDdafA==
-X-Google-Smtp-Source: AGHT+IGCo15pHw5bTlF71hUjAxEN80UMU5dmiwy5hCQ6dx98nr1+5mKER/CEy+RvWz01+K0qBI62qEdKodmVbQISfaQ=
-X-Received: by 2002:a17:902:f64e:b0:24c:be1f:c1f7 with SMTP id
- d9443c01a7336-25170e4187fmr136972095ad.39.1757417271090; Tue, 09 Sep 2025
- 04:27:51 -0700 (PDT)
+	s=arc-20240116; t=1757417337; c=relaxed/simple;
+	bh=Egw7h0VZpXs5tgL5vzoN8ns5makVBNBrNokzbdRQY4s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=HN0sbP9yZ38BBBY0sXub/zcYEybDrc8o65ffXj2dtr30JKS/fhcDSCAXG6rlNNQp/rALhUQQ1TmY8oBc1gUel4lMSBeyAC+oE5lTdv7V8Ncbm/FMSCi9O6l9gPncH2XN3n0dVoNWhuHDnBktx2aS8cswd2p46OXKEv4eQcbETkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmodOF5C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8ECCC4CEF7;
+	Tue,  9 Sep 2025 11:28:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757417337;
+	bh=Egw7h0VZpXs5tgL5vzoN8ns5makVBNBrNokzbdRQY4s=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=dmodOF5CRBsUowJYyvBF7Rl5d0dMoS4w9lQosU6NaAmAnlUkAPLqP7CTgn+R1IkQm
+	 Y4jH4wDOD/q97SKkqakLlH5lgCZt70GqyHm0A0XRH6mC0zbIcChzR7rdNZxH+Qy7Ky
+	 HZ6ZfUvLg7rG3CSR2+AaX+R0dH+vNCWPC6IWMti+62S+46xVrCafM2Ou1Sjb2m6FGk
+	 LBc9j0/mVT2OWzCca0YS6FuLtOAFlEL/UV+invbrWccRwAO7boygmZ2fwT06ClsZug
+	 QxYxA5Pfx/W1TfNav+xCyobizXYfMtSMYMvVEbKF8zCsl70KwtXad3VipKEUb3z+vC
+	 IeH1qSVLT8eWw==
+From: Maxime Ripard <mripard@kernel.org>
+Date: Tue, 09 Sep 2025 13:27:43 +0200
+Subject: [PATCH v3 24/39] drm/mediatek: Switch to
+ drm_atomic_get_new_crtc_state()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904101131.1258532-1-amarkuze@redhat.com>
-In-Reply-To: <20250904101131.1258532-1-amarkuze@redhat.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 9 Sep 2025 13:27:39 +0200
-X-Gm-Features: Ac12FXzdO8eVygYNvnxz24V9EASyaLUfVuSS8A5TvDX8MDjQRRcCoQGvYTSo5uc
-Message-ID: <CAOi1vP_mEt00rGSOx6aHiN9=f2OQWCJx7Xzf8BeuVYDSdGdZjg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ceph/mdsc: Move CEPH_CAP_PIN reference when
- r_parent is updated
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Slava.Dubeyko@ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250909-drm-no-more-existing-state-v3-24-1c7a7d960c33@kernel.org>
+References: <20250909-drm-no-more-existing-state-v3-0-1c7a7d960c33@kernel.org>
+In-Reply-To: <20250909-drm-no-more-existing-state-v3-0-1c7a7d960c33@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1747; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=Egw7h0VZpXs5tgL5vzoN8ns5makVBNBrNokzbdRQY4s=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBkH+HUqU3i/bM45HMOb3/izYaNgp5Mx61n3h3Z/GhPld
+ v2673m1YyoLgzAng6yYIssTmbDTy9sXVznYr/wBM4eVCWQIAxenAExEL4Sx4YLQmvt+bz9w9Zoc
+ Svwvd28OQ1Jv4as9/6ebrtaoiIn6df3Mh7tTlLhzdHmLFobM3j3nNGPDqtWnn7t5rHzM1fKb94B
+ A9Ql7gWuGd7+6ebnXBz86P3P+rtdOf07w+U9Id9kkU8zrlOUMAA==
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-On Thu, Sep 4, 2025 at 12:11=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> =
-wrote:
->
-> When the parent directory lock is not held, req->r_parent can become stal=
-e and is updated to point to the correct inode.
-> However, the associated CEPH_CAP_PIN reference was not being adjusted.
-> The CEPH_CAP_PIN is a reference on an inode that is tracked for accountin=
-g purposes.
-> Moving this pin is important to keep the accounting balanced. When the pi=
-n was not moved from the old parent to the new one, it created two problems=
-:
-> The reference on the old, stale parent was never released, causing a refe=
-rence leak.
-> A reference for the new parent was never acquired, creating the risk of a=
- reference underflow later in ceph_mdsc_release_request().
-> This patch corrects the logic by releasing the pin from the old parent an=
-d acquiring it for the new parent when r_parent is switched.
-> This ensures reference accounting stays balanced.
->
-> Signed-off-by: Alex Markuze <amarkuze@redhat.com>
-> Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> ---
->  fs/ceph/mds_client.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index ce0c129f4651..4e5926f36e8d 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -3053,12 +3053,19 @@ static struct ceph_msg *create_request_message(st=
-ruct ceph_mds_session *session,
->          */
->         if (!parent_locked && req->r_parent && path_info1.vino.ino &&
->             ceph_ino(req->r_parent) !=3D path_info1.vino.ino) {
-> +               struct inode *old_parent =3D req->r_parent;
->                 struct inode *correct_dir =3D ceph_get_inode(mdsc->fsc->s=
-b, path_info1.vino, NULL);
->                 if (!IS_ERR(correct_dir)) {
->                         WARN_ONCE(1, "ceph: r_parent mismatch (had %llx w=
-anted %llx) - updating\n",
-> -                                 ceph_ino(req->r_parent), path_info1.vin=
-o.ino);
-> -                       iput(req->r_parent);
-> +                                 ceph_ino(old_parent), path_info1.vino.i=
-no);
-> +                       /*
-> +                        * Transfer CEPH_CAP_PIN from the old parent to t=
-he new one.
-> +                        * The pin was taken earlier in ceph_mdsc_submit_=
-request().
-> +                        */
-> +                       ceph_put_cap_refs(ceph_inode(old_parent), CEPH_CA=
-P_PIN);
-> +                       iput(old_parent);
->                         req->r_parent =3D correct_dir;
-> +                       ceph_get_cap_refs(ceph_inode(req->r_parent), CEPH=
-_CAP_PIN);
->                 }
->         }
->
-> --
-> 2.34.1
->
+The mediatek atomic_check implementation uses the deprecated
+drm_atomic_get_existing_crtc_state() helper.
 
-Folded into "ceph: fix client race condition validating r_parent before
-applying state" and queued up for 6.17-rc6.
+This hook is called as part of the global atomic_check, thus before the
+states are swapped. The existing state thus points to the new state, and
+we can use drm_atomic_get_new_crtc_state() instead.
 
-Thanks,
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-mediatek@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+---
+ drivers/gpu/drm/mediatek/mtk_plane.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-                Ilya
+diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/mediatek/mtk_plane.c
+index cbc4f37da8ba81ff9c8b3b58f66363837ffc21ec..d4486a63a6e01f02b6777522440dee8e39d51bf1 100644
+--- a/drivers/gpu/drm/mediatek/mtk_plane.c
++++ b/drivers/gpu/drm/mediatek/mtk_plane.c
+@@ -120,11 +120,12 @@ static int mtk_plane_atomic_async_check(struct drm_plane *plane,
+ 	ret = mtk_crtc_plane_check(new_plane_state->crtc, plane,
+ 				   to_mtk_plane_state(new_plane_state));
+ 	if (ret)
+ 		return ret;
+ 
+-	crtc_state = drm_atomic_get_existing_crtc_state(state, new_plane_state->crtc);
++	crtc_state = drm_atomic_get_new_crtc_state(state,
++						   new_plane_state->crtc);
+ 
+ 	return drm_atomic_helper_check_plane_state(plane->state, crtc_state,
+ 						   DRM_PLANE_NO_SCALING,
+ 						   DRM_PLANE_NO_SCALING,
+ 						   true, true);
+
+-- 
+2.50.1
+
 
