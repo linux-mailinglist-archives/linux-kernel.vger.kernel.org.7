@@ -1,168 +1,314 @@
-Return-Path: <linux-kernel+bounces-808330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F33B4FE5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:57:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A39AB4FE34
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B9E3AB6D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:52:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C0A17A672C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618DD340DB6;
-	Tue,  9 Sep 2025 13:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA63340DA1;
+	Tue,  9 Sep 2025 13:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sGSBQjPB"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="TxNTNkWF"
+Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020082.outbound.protection.outlook.com [52.101.191.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BC033CEB3;
-	Tue,  9 Sep 2025 13:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757425964; cv=none; b=CKv8wGDwOj7t2BBBUVv4hccX2qoP8Vo0JyLMZ0iAsLa5H6CXPDg/jbXaygvd6aix3gEoZHxwV7qPHf+PNM1TqgQt+XV8arunT4gpHwJgjoZEMotnLWMAGJGpRuHNvM7nKEpaxB/VAADMOcQ7/g+IPW3q/VbFTL7NUXhMazM5BJc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757425964; c=relaxed/simple;
-	bh=kkqPnMFSXKC58Mmp+u95ABjAXbkgOnz1Uy3x3OPUuAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RQRvtBpYOM9e9iXfJraUX9eNZMuPcplYhikp8wKh0VNWvJUmfyPN7+sId6dmsgNr+h6z1ojB3TW94+hsyjKHexX//Eu4yZajJtTrRU4+LxY3cX/qRmf3AAUpiS9nmq09BMz5KJZIDV4HpvwDQK4Ui0yVf0LgNWmkyEcoirrQSuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sGSBQjPB; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5896fLU0018487;
-	Tue, 9 Sep 2025 13:52:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:sender:subject:to; s=pp1;
-	 bh=BuPG1fP2BiwN2dlCCYD4OsW/T1NO8BqbuJE09pQ1CcM=; b=sGSBQjPB27Of
-	/SDJ5ZWMUkupMnht5upok4DeYiP8FbRmOIEX/C3BbesMgXa+z3MT33CaVsBK2uuM
-	GMkp+lEk0Kf7mf8lwunHZ4WRFiBukAZPZEb/rnMkXmDEu4Wt8U7ga/OO1ai8B1nG
-	xq338KUGXFT4dkIdFSi8HaxKu+YxAq1ZUgc8bLJYaDpCtT3iHd7bHdsJ7QvmhaB7
-	Yw15kqzyZ19tIzGZx+lmd/HQ7PSGfuCm5OxOALvn5YD1OF0XZzG9MOmfmB0KB9Ns
-	+pPw5/lt6VxtBt7fuqRAhmBJhk+QDWDjMGMB3lgOTUMKugPeiV2ppFPSIfbptWDp
-	xHXzEegnhw==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukedbd0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 13:52:34 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 589B0CSw017188;
-	Tue, 9 Sep 2025 13:52:34 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gmb7j5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Sep 2025 13:52:34 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 589DqU5257606626
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 9 Sep 2025 13:52:30 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8DD452004B;
-	Tue,  9 Sep 2025 13:52:30 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7B4B320043;
-	Tue,  9 Sep 2025 13:52:30 +0000 (GMT)
-Received: from p1gen4-pw042f0m (unknown [9.152.212.197])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  9 Sep 2025 13:52:30 +0000 (GMT)
-Received: from bblock by p1gen4-pw042f0m with local (Exim 4.98.2)
-	(envelope-from <bblock@linux.ibm.com>)
-	id 1uvylq-00000000VY0-1Awe;
-	Tue, 09 Sep 2025 15:52:30 +0200
-Date: Tue, 9 Sep 2025 15:52:30 +0200
-From: Benjamin Block <bblock@linux.ibm.com>
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Matthew Rosato <mjrosato@linux.ibm.com>, Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>, Farhan Ali <alifm@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev
-Subject: Re: [PATCH] iommu/s390: Make attach succeed when the device was
- surprise removed
-Message-ID: <20250909135230.GA16134@p1gen4-pw042f0m.boeblingen.de.ibm.com>
-References: <20250904-iommu_succeed_attach_removed-v1-1-e7f333d2f80f@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A377342C80
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 13:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757426015; cv=fail; b=S4rwz1xseeFHr8CzDbkdo4oTVjLV8vPakhFMBStbGZs68mZU3HMuZKFPlPqiW13TdingAQfW8MNNQ9FsIp4N9xw8j4EFBtyj3mSMyP+ey+R8J96aw9TmFdisZpXFy6AHdUqHkWj3oKyQ6ACHRN+wnCcXpLfvIXHx5tE4JELWIR8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757426015; c=relaxed/simple;
+	bh=d3ZrDC2/Pmptb0jKDx+sBYXNkiCSLYylp3oiI3EXFd0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MNszCFYxr2cCEQxCjluu8clrTNf4f2BaElcLWOjrtG2/0LuubnOx/0v2ZCpOOydSE+hNefFsDIiPB2zZ5XuQp0gXJzy8aCRRAWnSOsivrb6/rn4eyIMGqI3inVR8HjqRczF5INIYtof+NCvlt+g89yw0QffJkd2fIiE7vgCLV3c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=TxNTNkWF; arc=fail smtp.client-ip=52.101.191.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GWb4GPULsprFH1ddrw89GoOP+aCwIq6Ev1UmDLmY0V1qsn6ngNcdj3lmway8+k5pf2kV+YPwmXZnmB63+XdD8PPIeKc1K+F5nFJROW3KpnLD1LJW5H/CziV0hBw0fTVjDzQq5dz/tZJyq5SwiMEIStBDljuZnAqgPlOkXpfe0lD/rQWz1XmoFVg8eWemQz5Xrbm4KZInl3YAhFdXsDofBoxq1XN3bk0RAwhJL/45X+glZTb1/bWuTmyr5dGkGIOygUAInPf64mH/IJLM3rljrG5bhEc5XF7duh+Ham4omyxovsfk+ffLgHbmcgUg1jJg+clH3D8SoNim7IwfIfVOOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IlaYC2bSj81KGqVJwbuLNubUVRgDa/3NxS37VRbQe+k=;
+ b=Z8LX6I+IPE+JAxlk3a925c4BJXtlHPdPkpVxbtu0/NwBgaqgFTsUGZ16RZvVqKUuN6We/mlDZ9fYAJbWbBNAasxiUcN4F3dP4clUEDAvfzBNC2144flTzDHBCxSAwhOQ8nHje1VD/cSFME5Pzglfoevg4hA5Zepkx/LPNt002f0o3ahRyUu5jDKsfFg0AiT7in2Wo1X+Eu7py7h5FAiQZ+HsXK+0NkbiHdTnDH/nJeB2xxZy8Mkusox05Qixe4mNzbMPgfxhZ3hlvtQkqyAn5rzSAY/rysyBzgVrfuhZESXVPlZDOQgmcFMQrVF0HKbMVFLXgUjgK1cUvz9LKj5OLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IlaYC2bSj81KGqVJwbuLNubUVRgDa/3NxS37VRbQe+k=;
+ b=TxNTNkWFviphfgMkZGr0eBHigCK1kdzMKjDMKLPJoGdiWr2aBFTGcu6rW5Irbh+QqsYKhr9yT1uUy6F/bUn2JUyP24F3YcFzTyqbCudofoTDtxYCihUwyuHNQWwSNgo/5YZVf2mA8eiyFnGtvfFy1EKBilNDomDFbOnGK4kN+O39UNfA/KuJ46rI6ldPkUn/wIFPWrbo0M57nIC+XIsoGIIpaLfrHDcrpKwuY20Ik/q5Wh9PT8z8W+u8kKcjj4cj6/rnoGviMJHa8/iUem/TnkOEHWlAFkeylGW69gUAYp23N9eMhEUAggBL4nxD7uhF0CNt5A4ZoYEcqatGOLQLFQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT2PR01MB6548.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:6f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
+ 2025 13:53:29 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
+ 13:53:28 +0000
+Message-ID: <5911c934-db16-433b-a1b8-c5367e420248@efficios.com>
+Date: Tue, 9 Sep 2025 09:53:27 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V4 15/36] rseq: Record interrupt from user space
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
+ <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, x86@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
+References: <20250908212737.353775467@linutronix.de>
+ <20250908212926.225746125@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20250908212926.225746125@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR0101CA0203.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:67::11) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250904-iommu_succeed_attach_removed-v1-1-e7f333d2f80f@linux.ibm.com>
-Sender: Benjamin Block <bblock@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5NSBTYWx0ZWRfX/zqCp+k2nO9L
- n8kluraprzWWkORc13LBGVR2O3mf+4G96R/CfOUG5dE7Z4L0maIDJLwblFu5DS13N56BBIlD6Nm
- oCIDkkC6EVmL+7DtubY9hWTocH//PDaI/D8SC5ppYLVv61RQm12yurB+tHjNQ/y2sa2yO+XBcWd
- fb7uvYdZLnQKaezH0JckNOpWpiru6y2M0XTMEDhyEbRalBFHwSaGrQFKDZfkHC2T9yFEgSo0Pk6
- M/Arjudp7EDqdii37teHT6SH6cUxpLiJePJT70eJoxDJ4zNX9ekn75E40itgI9e8N1FS2/Z0gjZ
- yEHl1V2ztPC94WhMCJZIxBx16tb8hsp8K6aRz4daG50SojPs7G25GkbYPZmcEbaY9L8bST2ZsH2
- y2Ro2a+h
-X-Proofpoint-ORIG-GUID: YlekGEZfiKnv8ugEx6CF933gGtFBosBB
-X-Proofpoint-GUID: YlekGEZfiKnv8ugEx6CF933gGtFBosBB
-X-Authority-Analysis: v=2.4 cv=StCQ6OO0 c=1 sm=1 tr=0 ts=68c03123 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=8nJEP1OIZ-IA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8
- a=f94wAlES5zcTxHjwagAA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_02,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060195
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB6548:EE_
+X-MS-Office365-Filtering-Correlation-Id: a1e4d460-6779-4cfd-32db-08ddefa84152
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eVppaXVBcHE3dUJZRzF0cWhiMGR3aGFuaWdHUkRiU3lJUmZicXZGeXZlZTkz?=
+ =?utf-8?B?VUtZTUF4UGxEaHkvdnVOQkovMkZZRXZOck1ETG4yOWwvdEt6OFlKYmpkN215?=
+ =?utf-8?B?MXg1ZU1hUUdqMW1GVCtsVndxTEUxcjN3V2Z2dW51N1Z3Z3VZK0JVc1NEVGt1?=
+ =?utf-8?B?U0RWRUVVMlROWWNUSnYrTWg0L1JnTld5RUZoOTlXWGpLOEZUZ1I0ejhCaUFY?=
+ =?utf-8?B?b0kyVERMYVVtWEFCb1QwK01nODgwOXVnU0lHSHE2WThmNTNDYTNad3NuNGMv?=
+ =?utf-8?B?ZVRmOUdnakl0dEd3TDhNSU81a3hpNjVpaXJFMG9nbFJkNGtoYzVqOUZjT1RE?=
+ =?utf-8?B?TXpVR0JQYUhKb1VjejFJM0ZLaVpQSkFpaXN0RjFaY2hOQ0d0NTdQUDFIbE5o?=
+ =?utf-8?B?cGFzUkRSUjFuakdSVFFqWVlrTEZnZnpiOWpXTkJOR0lLclk2L2tkU1lSVStp?=
+ =?utf-8?B?N0MwdnhkY0MxTEg2SVhzTTVJV2FPbm56MWhjSFUrUTZaOU10NjZFWnNGYnlM?=
+ =?utf-8?B?b0xpamxNalFnNTVYcWROdGxleUYzbGtTTmc1U2dyN2JtWk9CRmtmMHZiSnU5?=
+ =?utf-8?B?cFpJRG1sbGMwdDBmbGd6N3RqUDM4MisveDZZblNzRGQveE80bWpLazByMFl0?=
+ =?utf-8?B?SlIvcHEzWTZaMnZEUkRWWE9kSjQycnBMNFByVTZHS2N2YVNxZndUNFRFb1FT?=
+ =?utf-8?B?YVhNeElndHdLZDV6N2x2YWJsQUNhU0lyVXhwemhJUDluc28zTk5EWDNsRUp1?=
+ =?utf-8?B?Ry9EdjYzOC9NRTRPQi9lNUxtVkwyZHJrWGFWamszaWdqQm9rNnFXNzhPVlZs?=
+ =?utf-8?B?TTl3Mm5oY1ZGckhpNkJ0UjVNM2pGUkR2MzFJNC9NRFloT0ZKWG5id0ROZmls?=
+ =?utf-8?B?SjhoUEV5cFZId1lXTUVTUCtvSWdsdWh3RURETDRlV2VZa2hRakRQWDdqd3p1?=
+ =?utf-8?B?amJ3QU80bEZSQjJaeHNvNmp2d0Z1Q0Fod2dMNUh3aVRqN2prNjJQRG9SRjN5?=
+ =?utf-8?B?cDB6a0xhK0djUHBnSUhDdDNNa0h0Mk1SeGpQODlKdXJTbExtb0NDL1RUUUJL?=
+ =?utf-8?B?U0hMUVJwZFRNRm1yT0V0OHdZVkR6aC81VEgrODl4M3ZGZ2RrMWlPUU9qSVBW?=
+ =?utf-8?B?WmZQc1dFNDJVSkJyY3laVE1TS3dsODJuT1pKWllUaUk2WUdOYmJGdjY1cm8z?=
+ =?utf-8?B?bG1SQktCMktLeFp0YmUxbEk3OVQ5Y0dLRlBCZDZlbi9wU3BqaXBMTDMzY1B3?=
+ =?utf-8?B?TkEwRFBnTEIxMlliQy95NVgwTGpEWERVbVpUNzZRV20zbDRzTUU0WGF0Uytl?=
+ =?utf-8?B?RHhCQlB3RElORjliOWh3bnB6MFZVNVI1V3hrZ0pVZFk1TExPUjBFUWg5SzM3?=
+ =?utf-8?B?Uk16M2lrRVhjUm9rbjFUSERiOW5XNGZrUVlvM0RmQjhmVmRJMVV2WGVLYllC?=
+ =?utf-8?B?QTFKUVp1MDlZQVpKUVgxUVI3cjdmN1NHMXhoQjZ3QU9mRTF4R0xkNlpNa0g4?=
+ =?utf-8?B?VUJ5WENRODJzSmJwY1lXdXZxSysrZnJ3bXQyL0dURXA0SUFVeitScXdlRnNN?=
+ =?utf-8?B?T3cxalM1cHQ2em9JZUR6T2dvb2E3bmJPeDRDODd4bmNFa05BZnQ1enVhWVdE?=
+ =?utf-8?B?ODlwVXcrRndjb1N5ak9iNW5yYWVienB2Rm5nd3hvWnp5SVdhems4a2hodE9I?=
+ =?utf-8?B?bS96dUxrMWdjcFpGN3ZLTUJUQnhWWG1scHQvL0poOHlFNS9rempVZy9IcDU4?=
+ =?utf-8?B?UGZCVE4wSkZZOXdnR1FKRk96ekEvTmVYSWs1bFV6VEFyQWFPYmlFR3pCelVm?=
+ =?utf-8?Q?fb9ntKr2hR4Kzz+gQHaWJZ5eGJ3wUSjzfuAfU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Qmt3MXYrb3RnTVQyZ1k0MWhXQTN5Wmp6TW5ZeVNyUkFYVEk5c01VNkYyUm5r?=
+ =?utf-8?B?dmt0L1RpdlFCNVdUM21GUlo3bnBFTkQyaWx2WkVEakpoYW1LRjdDMkxHcWg4?=
+ =?utf-8?B?d1F5bFpMODNrcXAxYVdRNktuOFNiS2tXTEJuYnZRWTlNOUJYeC9BQ0pWR3pQ?=
+ =?utf-8?B?Qm1LYk1RTWp1M0tEc3Nta1ZHTDJNSmFhSEJINDU0K3RoVzcwaHdxclEvMCtE?=
+ =?utf-8?B?Qi81bzVOWHVzZlhBSXBscUt5ZE1NRDZZUng4cEd0ODZVQmRVSm9XRUlMSWVk?=
+ =?utf-8?B?aytnOHhuNEI3SDMwZ1RMTU5tNFFKOURCcXE4NlpyRWIyQWo3aGVRQkVMZXpE?=
+ =?utf-8?B?SUdlclRuN2ZqNlVqcDJBQmRMaFZDc3ZrTWNHckgxWjFycGF0VzRoTEdKYzVR?=
+ =?utf-8?B?WXFwamJhTklGS28rLytlMGF1b05TaTV6Y1ZHOVFqMXRZbjFGRFBvMXR6SXRo?=
+ =?utf-8?B?RjBrYjNlV2VzRFFaNk43UFMyem5LR1ZGQXdYUktERGFnWWhtclYxWFZFTXBu?=
+ =?utf-8?B?YnlyMzB1Wk5UeW1YeHJkaGo1OWsxdzhPLzJtUGN2Mi9zcDFuNStRNDJHK3Vr?=
+ =?utf-8?B?K0Q1TGd3M1JKaVN1a1UrYVBmK3pKUk0rTWtCVnpuc1lwaHlkd21iUk0zQVgx?=
+ =?utf-8?B?S2RrajdJOVZkUnYrVjI2Wk5PbFlZMG9oYnNUV3NSMG1NSWVIanhJMDlCY1FS?=
+ =?utf-8?B?VENnMlQ0anFtbVhGQk9kK0NCTGdoenJsWkwzQ3J3NGM1MDE2bHdwd3pRSitH?=
+ =?utf-8?B?SHlJbWhOVi9nd05JRHYxSGl5L0VWS1hQU0xWL0U2TzZyb1pHRVN2aFJMa1NS?=
+ =?utf-8?B?OUVhdEJxSE5xMVVXT2h0and4WFJRRmxZRTcyZjdxQS9Rd2Z0NjEycGxicmdN?=
+ =?utf-8?B?L2ZZL0pBUlRkSW1jckFJK243VFRqd1hVTm5kRHVuMU4zTGNCOGlyQXFHMG1H?=
+ =?utf-8?B?YWJVQjFYQi9vTjV5dktjTDJLTlpRVDEwdnEwaHpDSnE0cm5PUU55OHpZSEV1?=
+ =?utf-8?B?UHlDSEd6amhRSkxvOENTWVdyakRXVnFNcGhldk92WnJqUXVFbEFLTGJqTEtG?=
+ =?utf-8?B?dm1GaVlhNGpYVk0xZE1BRm5LTVFDZjhNTC9qakJBcmE3V3BIQzU1blBmeUta?=
+ =?utf-8?B?TVh5eE9qc2p6OVVkRnJsK3Z1ZW5INVkwMkhERkx3SkgrYVhMRXVicWFMQnJk?=
+ =?utf-8?B?NTdmMC9JNjN6R1RvcThxMUxjY25lNS9jU055amYrQWZEWHQ0MzJCSEJwMnlE?=
+ =?utf-8?B?d3A0VGhqQnRGQUw1UGZFUFFDQ2tNRVpQVTVRK3ZNQ0w4S1dKSi9ZNll0MGh0?=
+ =?utf-8?B?QStsMVQ1cEw0eVByTEhtdnZQQlJMbmVsQVh4RnJXWlozT1REYnFNNkh6QlpL?=
+ =?utf-8?B?VWZlclN5Qzc5WXdiak5zMGh1Uk1FS3YyZ3grOEdCN3R1MDB6MmF2N1JXZFk5?=
+ =?utf-8?B?REhBQXhiL1NMaGZLM3pDZUorQkQ0Vk42aFBsVUllWjA3ZVdwTVp3bUxHbzVJ?=
+ =?utf-8?B?TWhNQXRaU01JRUdUK0ZKV3dJWUN2MlhmV0hLVTdaZlFoZDFTUUpwclVPMFAv?=
+ =?utf-8?B?eVlvNUVEK0pacU85RDJFUWJBV3Y4bUJabVZCUTVHZmF0YkZ2akZmL2JkcWtI?=
+ =?utf-8?B?Zi9md2tybnNNTUgzVnBXZjJrak10VTNYNTdXQmxORzcxYlpuSytPSm85NHM5?=
+ =?utf-8?B?c05sdENxTi9KbUx0Q2RQbFU5K2JFcGpuQU4xUlNCOTlLcDUyd1p1UnY1Ulgw?=
+ =?utf-8?B?Tzlxeit6MUU1WFJWNVE4WS9BZ2dLVUN4ejdnd2JrbGxhN3dDdmdEMnRaSnlv?=
+ =?utf-8?B?RCs4SU5wRk9iTFVyY1pZS3RvMU95MTNwNzhCOUJBM1NDbjN6bktWcVVVWUJR?=
+ =?utf-8?B?cm5WRnoyNHpLYWlBdm5GRnNUN3k2NXdSUTFkR29xTFBLZTF1bUp5Mk43UVRF?=
+ =?utf-8?B?K1o1cDBkbHVtcldLNXFXM05mczJWcU5qUE1mMVFuMTVGRWY4STBDVUZzZDFT?=
+ =?utf-8?B?TkJtRUtNYXJCcUJ4MWpldWdFdmlpYURPbWhyNURlamYvZ080VDVQR0hGdGk2?=
+ =?utf-8?B?VHNqbU9DNXhBdXAyM1QzM0RuRll0QXVOblBmaDFOV2xRV2xobWw5YTFEUEk3?=
+ =?utf-8?B?UmNNWU95ZEhxY2p5SUw2VDZEcUl6ejVkWEJ2UVAvaWloaEJyWTlzWmkrbWlF?=
+ =?utf-8?Q?TaPfgwNY7UmiCQTdnN+cvkI=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1e4d460-6779-4cfd-32db-08ddefa84152
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 13:53:28.8954
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5HsOrbqawH3Cm5rllaM6/ix5JkRYQBbrXExO1Bblj961urr9W2UHec+FANvzPlQ1ojRFkDN9rILJ3HUFBadWyRcpFgwzr5zhIxI+5LGUpzk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB6548
 
-On Thu, Sep 04, 2025 at 10:59:49AM +0200, Niklas Schnelle wrote:
-> When a PCI device is removed with surprise hotplug, there may still be
-> attempts to attach the device to the default domain as part of tear down
-> via (__iommu_release_dma_ownership()), or because the removal happens
-> during probe (__iommu_probe_device()). In both cases zpci_register_ioat()
-> fails with a cc value indicating that the device handle is invalid. This
-> is because the device is no longer part of the instance as far as the
-> hypervisor is concerned.
+On 2025-09-08 17:31, Thomas Gleixner wrote:
+> For RSEQ the only relevant reason to inspect and eventually fixup (abort)
+> user space critical sections is when user space was interrupted and the
+> task was scheduled out.
 > 
-> Currently this leads to an error return and s390_iommu_attach_device()
-> fails. This triggers the WARN_ON() in __iommu_group_set_domain_nofail()
-> because attaching to the default domain must never fail.
+> If the user to kernel entry was from a syscall no fixup is required. If
+> user space invokes a syscall from a critical section it can keep the
+> pieces as documented.
 > 
-> With the device fenced by the hypervisor no DMAs to or from memory are
-> possible and the IOMMU translations have no effect. Proceed as if the
-> registration was successful and let the hotplug event handling clean up
-> the device.
+> This is only supported on architectures which utilize the generic entry
+> code. If your architecture does not use it, bad luck.
 > 
-> This is similar to how devices in the error state are handled since
-> commit 59bbf596791b ("iommu/s390: Make attach succeed even if the device
-> is in error state") except that for removal the domain will not be
-> registered later. This approach was also previously discussed at the
-> link.
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 > 
-> Handle both cases, error state and removal, in a helper which checks if
-> the error needs to be propagated or ignored. Avoid magic number
-> condition codes by using the pre-existing, but never used, defines for
-> PCI load/store condition codes and rename them to reflect that they
-> apply to all PCI instructions.
+> ---
+>   include/linux/irq-entry-common.h |    3 ++-
+>   include/linux/rseq.h             |   16 +++++++++++-----
+>   include/linux/rseq_entry.h       |   18 ++++++++++++++++++
+>   include/linux/rseq_types.h       |    2 ++
+>   4 files changed, 33 insertions(+), 6 deletions(-)
 > 
-> Cc: stable@vger.kernel.org # v6.2
+> --- a/include/linux/irq-entry-common.h
+> +++ b/include/linux/irq-entry-common.h
+> @@ -4,7 +4,7 @@
+>   
+>   #include <linux/context_tracking.h>
+>   #include <linux/kmsan.h>
+> -#include <linux/rseq.h>
+> +#include <linux/rseq_entry.h>
+>   #include <linux/static_call_types.h>
+>   #include <linux/syscalls.h>
+>   #include <linux/tick.h>
+> @@ -281,6 +281,7 @@ static __always_inline void exit_to_user
+>   static __always_inline void irqentry_enter_from_user_mode(struct pt_regs *regs)
+>   {
+>   	enter_from_user_mode(regs);
+> +	rseq_note_user_irq_entry();
+>   }
+>   
+>   /**
+> --- a/include/linux/rseq.h
+> +++ b/include/linux/rseq.h
+> @@ -31,11 +31,17 @@ static inline void rseq_sched_switch_eve
+>   
+>   static __always_inline void rseq_exit_to_user_mode(void)
+>   {
+> -	if (IS_ENABLED(CONFIG_DEBUG_RSEQ)) {
+> -		if (WARN_ON_ONCE(current->rseq.event.has_rseq &&
+> -				 current->rseq.event.events))
+> -			current->rseq.event.events = 0;
+> -	}
+> +	struct rseq_event *ev = &current->rseq.event;
+> +
+> +	if (IS_ENABLED(CONFIG_DEBUG_RSEQ))
+> +		WARN_ON_ONCE(ev->sched_switch);
 
-Oh, I just noticed that Niklas. You added `Cc: stable@vger.kernel.org`, but
-didn't actually include the address on the actual Cc of the mail? Was that
-intentional?
+OK. Now I'm confused.
+
+It is perfectly legal to issue a system call from userspace as long
+as it's not from within an rseq critical section.
+
+That system call can be scheduled out, and can set the ev->sched_switch.
+
+This would cause the rseq_exit_to_user_mode from system call to
+hit this.
+
+What is disallowed is only issuing a system call from a rseq critical
+section. The other parts of rseq (updates of cpu id and mm cid) still
+have to happen when returning from a system call.
+
+What am I missing ?
+
+Thanks,
+
+Mathieu
+
+> +
+> +	/*
+> +	 * Ensure that event (especially user_irq) is cleared when the
+> +	 * interrupt did not result in a schedule and therefore the
+> +	 * rseq processing did not clear it.
+> +	 */
+> +	ev->events = 0;
+>   }
+>   
+>   /*
+> --- /dev/null
+> +++ b/include/linux/rseq_entry.h
+> @@ -0,0 +1,18 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _LINUX_RSEQ_ENTRY_H
+> +#define _LINUX_RSEQ_ENTRY_H
+> +
+> +#ifdef CONFIG_RSEQ
+> +#include <linux/rseq.h>
+> +
+> +static __always_inline void rseq_note_user_irq_entry(void)
+> +{
+> +	if (IS_ENABLED(CONFIG_GENERIC_IRQ_ENTRY))
+> +		current->rseq.event.user_irq = true;
+> +}
+> +
+> +#else /* CONFIG_RSEQ */
+> +static inline void rseq_note_user_irq_entry(void) { }
+> +#endif /* !CONFIG_RSEQ */
+> +
+> +#endif /* _LINUX_RSEQ_ENTRY_H */
+> --- a/include/linux/rseq_types.h
+> +++ b/include/linux/rseq_types.h
+> @@ -12,6 +12,7 @@ struct rseq;
+>    * @all:		Compound to initialize and clear the data efficiently
+>    * @events:		Compound to access events with a single load/store
+>    * @sched_switch:	True if the task was scheduled out
+> + * @user_irq:		True on interrupt entry from user mode
+>    * @has_rseq:		True if the task has a rseq pointer installed
+>    */
+>   struct rseq_event {
+> @@ -22,6 +23,7 @@ struct rseq_event {
+>   				u16		events;
+>   				struct {
+>   					u8	sched_switch;
+> +					u8	user_irq;
+>   				};
+>   			};
+>   
+> 
 
 
 -- 
-Best Regards, Benjamin Block        /        Linux on IBM Z Kernel Development
-IBM Deutschland Research & Development GmbH    /   https://www.ibm.com/privacy
-Vors. Aufs.-R.: Wolfgang Wendt         /        Geschäftsführung: David Faller
-Sitz der Ges.: Böblingen     /    Registergericht: AmtsG Stuttgart, HRB 243294
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
