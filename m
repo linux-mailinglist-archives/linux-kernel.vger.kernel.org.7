@@ -1,120 +1,105 @@
-Return-Path: <linux-kernel+bounces-808573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C7A9B501AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:42:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2143AB501B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 446097A6693
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:39:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEC6A188758B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 15:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0C22641F9;
-	Tue,  9 Sep 2025 15:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012F426D4FB;
+	Tue,  9 Sep 2025 15:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXslSKOp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6oF+5hL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA10525C81E
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 15:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7E325B31C;
+	Tue,  9 Sep 2025 15:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757432425; cv=none; b=leMka2tR27vmXB1fXw1rKqg+vub947C4q8yuJFn+PQMlmL2IW0X0N1KC7O26fMALgVvKXlDZMnGrkxzyE3/cAg865zdfjd1aRTFLT4qQZEgjuosUPnQao2W0c70o4jkpv51NPg7OY17PxwNfKC1PTqc25xzYT9rY0c39Ggc3is4=
+	t=1757432566; cv=none; b=iu6RGaGWU6z1vDWeYkZeYuQRsV0XtvFwyduuhsr0ZFz661BnIn4KCiOiv7hy3RrL+OUlcfjPn0C+bR+eZ3A7NoNliZSU200GoeiQIoP7gxkbpD72YdvAZjvTinwfdmASf8QdJc0RtJa7wViir44S0jl9Izmt0r5eKChBqwCdWXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757432425; c=relaxed/simple;
-	bh=J+P+ERGtyQIPqKHoHTRunn1D/v4lU1nzFD4xwAWeJEk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NgsrIqx0/YkWVSS+EVQdA2VXi+fR2QYUZ+OtqTA4BxsydavBb+XTH+a710Td5xEfX8z7ErzPZ5s58hHwgqoozYaF+cyEactJwonaNU8Sbi/bnuMrBi+PQTBmaIkmpe6ITrs/R7moUfy2a+nPGqDnybENmglg/oYJ4DGyEx7FkQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YXslSKOp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DD52C4CEF4;
-	Tue,  9 Sep 2025 15:40:22 +0000 (UTC)
+	s=arc-20240116; t=1757432566; c=relaxed/simple;
+	bh=iq/pvz8Ld8+XdgGpue9AiLpnbu11vXcJXE2lOLzf1b8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=o7MF9Tic9ReQZ73VWXoNnhg3vTHgGlbtvB5oV64X6Afi4byFoxWz4wd8pSFEB7ylhfy2AQtfR4fbYyPbye3qg1PYnOwHaALOTQj/1/vw7/YkiOfU0BjXYu8XjnMPydpcvrFPBEcdZEcc17tLtt1wHIUdQhYnHrCVOpMYHOrRNXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6oF+5hL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7294CC4CEF4;
+	Tue,  9 Sep 2025 15:42:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757432425;
-	bh=J+P+ERGtyQIPqKHoHTRunn1D/v4lU1nzFD4xwAWeJEk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=YXslSKOpOjN++5UFXUYxNV490+NFjX291NvrK3OsZheHLjV2yS1bWPcGMqzcImcz2
-	 NOc8KlRHnla4/PGZ/HqtrTIyv7hdBGYEm7b48WdAgJ1Uoott2Pd9/NHmqISuWWj+Pa
-	 HNuOPgSc7Qiy+8mN4a7jIoHWLJosYqgMVgDL2MmHZJslXSv/YI+N6SeCIx9xyPiTAu
-	 f5ypmAzDDRNFUD/dg/J9TwOMMHl5bIoIf5ytrhq8p/O4ddYNGX6igaKvDYQlqfAkgy
-	 oDKZdeNHzNDHH3w2hgUmQ63xi0GgV2AVgW0tsEmvAKSHsrCWo7Fj5fJk+SfkZCpNUk
-	 JgoAWFI0onM2g==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  Alexander Graf <graf@amazon.com>,
-  Mike Rapoport <rppt@kernel.org>,  Changyuan Lyu <changyuanl@google.com>,
-  Andrew Morton <akpm@linux-foundation.org>,  Baoquan He <bhe@redhat.com>,
-  Pasha Tatashin <pasha.tatashin@soleen.com>,  Thomas =?utf-8?Q?Wei=C3=9Fs?=
- =?utf-8?Q?chuh?=
- <thomas.weissschuh@linutronix.de>,  Chris Li <chrisl@kernel.org>,  Jason
- Miu <jasonmiu@google.com>,  David Matlack <dmatlack@google.com>,  David
- Rientjes <rientjes@google.com>,  linux-kernel@vger.kernel.org,
-  kexec@lists.infradead.org,  linux-mm@kvack.org
-Subject: Re: [RFC PATCH 1/4] kho: introduce the KHO array
-In-Reply-To: <20250909152814.GL789684@nvidia.com>
-References: <20250909144426.33274-1-pratyush@kernel.org>
-	<20250909144426.33274-2-pratyush@kernel.org>
-	<20250909152814.GL789684@nvidia.com>
-Date: Tue, 09 Sep 2025 17:40:21 +0200
-Message-ID: <mafs0ldmnk522.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=k20201202; t=1757432565;
+	bh=iq/pvz8Ld8+XdgGpue9AiLpnbu11vXcJXE2lOLzf1b8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=S6oF+5hLP47hMCnJrxBSvt7EoWRkoF8h6dya+vKpws0OSoJvDp7u9GFdWtiDfq4B6
+	 8q48hkLEIh5GxPOQmeEffv8GE8gpAQBDeHhdd7t4aVjaEq9QXwQ9C7zO4cnmvD4HHn
+	 2MxuoJjflM+rNns4md5UkHvCRRxg4gDuz1ZKKukt4wLC+XSeXgw6tJwKVkaug1rwu/
+	 ZPzBl5w8be7m+VAI81beBppwHx4/jSKBTIMQqGvae3ZMui6JIOhZUPrf4Y2NZuZFqC
+	 4yyeEm37RhmMdxLPeeAWyFbNnmBC4aqzHYkCMhto9HpCYYu8tBLBv/ZX7QURI6GM86
+	 AGQID4MxgivHA==
+Date: Tue, 9 Sep 2025 17:42:39 +0200
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] geneve: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <aMBK78xT2fUnpwE5@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Jason,
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-On Tue, Sep 09 2025, Jason Gunthorpe wrote:
+Move the conflicting declaration to the end of the corresponding
+structure. Notice that `struct ip_tunnel_info` is a flexible
+structure, this is a structure that contains a flexible-array
+member.
 
-> On Tue, Sep 09, 2025 at 04:44:21PM +0200, Pratyush Yadav wrote:
->> The KHO Array is a data structure that behaves like a sparse array of
->> pointers. It is designed to be preserved and restored over Kexec
->> Handover (KHO), and targets only 64-bit platforms. It can store 8-byte
->> aligned pointers. It can also store integers between 0 and LONG_MAX. It
->> supports sparse indices, though it performs best with densely clustered
->> indices.
->
-> That is a bit of an understatement, it looks like worst case cost is
-> 4k per entry. I would expect better efficiency than this if we are
-> serious about supporting sparsity..
->
-> I think you need to encode the start pos within the entries in some
-> way so worst case cost is bounded to more like 16/24 byte per entry.
->
-> For instance if the page was broken up into an array of structs like
->
-> struct entries_block {
->   u64 flags:1;
->   u64 num_entries:13
->   u64 pos_increment:50;
->   u64 entries[]; // contiguous pos
-> };
+Fix the following warning:
 
-Right, good idea. I can look into this. But only if we get an agreement
-that this whole idea is worth pursuing. I don't want to waste time on
-something that will not make it in at a fundamental level :-)
+drivers/net/geneve.c:56:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-I think another idea can be run-length encoding to make this even more
-efficient. But I have stayed away from that so far since I think that
-can get tricky and bug-prone to create and parse.
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ drivers/net/geneve.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-PS: do you know if bitfield layout is reliable for serialization? Can
-different compiler versions move them around? I always thought they can.
-If not, I can also use them in memfd code since they make the code
-neater.
-
->
-> And if a high 64 bit pos can't be represented with pos_increment then
-> you'd have flags = X and entries[0] == pos instead.
->
-> Jason
-
+diff --git a/drivers/net/geneve.c b/drivers/net/geneve.c
+index 54384f9b3872..77b0c3d52041 100644
+--- a/drivers/net/geneve.c
++++ b/drivers/net/geneve.c
+@@ -53,7 +53,6 @@ struct geneve_dev_node {
+ };
+ 
+ struct geneve_config {
+-	struct ip_tunnel_info	info;
+ 	bool			collect_md;
+ 	bool			use_udp6_rx_checksums;
+ 	bool			ttl_inherit;
+@@ -61,6 +60,9 @@ struct geneve_config {
+ 	bool			inner_proto_inherit;
+ 	u16			port_min;
+ 	u16			port_max;
++
++	/* Must be last --ends in a flexible-array member. */
++	struct ip_tunnel_info	info;
+ };
+ 
+ /* Pseudo network device */
 -- 
-Regards,
-Pratyush Yadav
+2.43.0
+
 
