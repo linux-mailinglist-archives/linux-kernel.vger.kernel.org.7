@@ -1,240 +1,174 @@
-Return-Path: <linux-kernel+bounces-808338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 965BBB4FE85
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:01:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59EB9B4FE7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0763177EC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:00:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719793BDDFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FDC343208;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DEB343D80;
 	Tue,  9 Sep 2025 13:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DADNZxuy"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDjwuCbW"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF1332253D;
-	Tue,  9 Sep 2025 13:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78011341655;
+	Tue,  9 Sep 2025 13:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757426392; cv=none; b=e9NIrMEKPjMcamwLYPdSg6VheE/80PdlLJ/QdL4SMItmJe1gfoSPQs7C2SEp7y3/j6tKVX8mHTcFkHMWe9voZ7EC+hXe81HIvVEQTDpdwL40gUIyIHpqSuyYaRwsLYrRGhx6+Pi+kbjk2GOsW8bUtEVdKCasnBVKxYCrSU9ecYs=
+	t=1757426393; cv=none; b=TU32aj2s1gEMr4YpuZe9Ex91DLVNrDM8CgmcethW8Z+6DKwQBMI3l4+h798fmh/QhK5IzgXxXuQS/qNmXpC+7eySpwOsw9OIvAv2fDtcwx8hASiRAJgpPpcSn55GE8DLtBr0qvIHpDlWQ6xhg9e8o6NYjfVbvzOVQGjoCIwGxFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757426392; c=relaxed/simple;
-	bh=zccPcrAxl+3uLnZ3nZHwdrV86xu6wlzs/i+B3xa0BkE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dLO/zZZ0NVk5/RXOiBL+O70GRBpbzaVxWrVw9bCCFXilhLZ4LBXDCfS7vJ9dXJe3MwOqyC78pIPZnJZhTVMVUZYh+afhcBI25V5hq8mOHLaFuJ7w0Pl4KQizRTgeenZO4WN3ZVgOK5bgVMU0iyBZRrgX5DHNxOkDUBTS/1VcsmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DADNZxuy; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1757426393; c=relaxed/simple;
+	bh=Ooi38CTO9y94G7kQWU2w8H927jPS8s7RIsep5Zxzgus=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wtc620269ME3udern3k2T4Azae4f8u6ytnVWr4Eo2qs6MpRHDzgll558jeURIesAXwm/ypIFoihXfFJEnuDkSRtrhRovZGc22IgmWsyxgoZ4Pp1IYWMfyDPwJ5w3b7PvBgEr8ts/IL85dwXH9P42PMvR3NKXlPXIbixQ+0ITTpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HDjwuCbW; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-62105d21297so8430627a12.0;
-        Tue, 09 Sep 2025 06:59:50 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b04ba3de760so393743866b.0;
+        Tue, 09 Sep 2025 06:59:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757426389; x=1758031189; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vl21Ac/hRl5KaWEXAXbzKsLXJ9UhwUEd+pnm8CY14SY=;
-        b=DADNZxuyNbQDB4UOClkpGGtoJi0kGYvgQszmAhWJJAqUY2IKTVK0vuEomEYS/D3pnW
-         2Z8Riu6XDsr8264/hUUBBuCp6HNcRVqWihTYKK5wxInXnjFgQMizkoYt+UtvwxUaUZz9
-         MOtanxhhU89dj9fI8XIGVWDUhQR/0OQOx3uQo7xCq5Jj0oIcUAHAoowAU+9WrATD5pbo
-         0Z8O6d0tCmsTZsks8wbZSKwdR0BlwfU466bYjwvEmTN0EWDtZSDoSjV51AIEAqjQZyem
-         v6MAXuA1qWuBuvUhLmHNV+fDVEvgduxL72lIoPzcUEHdzwOGqQjMj6kFf4yQIp6GxfK6
-         0ugg==
+        d=gmail.com; s=20230601; t=1757426390; x=1758031190; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ePGprLaaKlvYdjB1fqLw5+HQREvzO/LGGScF1pi9CXY=;
+        b=HDjwuCbWwCpY61GXyPIAugHU8caS7kuI2RSlBlraC+o08NLJ7kiU4YZsx8awdoMMeo
+         g3SDbQo6JhC6Fv+5YXNglDHaB+uhzhSwL5ppv6HtA6cEyG04o8nGjrhKpAq2Amla9nH/
+         Qy/G6IwZbNIJMnJic5wtHi8pgIRUk1cIBpeIux7CkJf6KwAMWm0P0BTKCESDLk3FHSlq
+         9TKK4AL/UWx7UW45IAT+B8ma/zVdtLmuWqMgpC42XFFyF3OJyquhYku/QIgLBpajVT7x
+         fdt0qDjRROJCefzkdf7kdghc/+Oab6U03FDVVGC5JGMyz2A3kkRIIGl6hZu/pMV3M4K0
+         K/ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757426389; x=1758031189;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1757426390; x=1758031190;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vl21Ac/hRl5KaWEXAXbzKsLXJ9UhwUEd+pnm8CY14SY=;
-        b=O0G1Nzka8QGnvX+paxNuYDUzpXkMUi8BRRG2Lfs8U9c3Pt/9jRmxuPZbTK+NcuWdll
-         9iqJAXy5TkifAC1oFW13OQO2ws2cecvMR5KIm/CAZ5FfnDMZ97PwDJ32VQQXhwvI3iEA
-         6ndcb3MWq/lxJHmkRb5wG2SJ3koRedi9HaZpNglf6u4rlOhGLNb+Bzzuuq8DdbmCfplQ
-         wqsGilYWew5j7b+/3eczJkGCSQIHida1qdeCA3NV+X8CTrTvmgz+tyxYpZ8OoPwyOX2a
-         iPcyJPX4fMzRXxeXFiKqIDvFGTGsUHfXeJ4Q8x75fU88Y1S6hwxz95Ev32Ka7FBkgrg/
-         e6hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvNzQK59wyuatEy/8Ga8CuBkORrr1VTX3Y6HlHTrnc222vfESZ3ioQYhryykUNzWch5XIehSDPD9TP@vger.kernel.org, AJvYcCWlg6rNYZFzjchiI/ihzDxCK/oBRIErFFz321oSLcPqjieOtYfjWf6yZafWqL3dSJ9mALIpN4bXrA5Mbbkr@vger.kernel.org, AJvYcCXZ8TCMy/M1nR45m0h2nNtcek9zJJgQr++e4tw2/ocE4aAxjJu+ScEsT8ZgbPoHt/775UPnfVJqUZwKBLNNBXoMe/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxROIbvY50IkMnssHPt3IQ8/C++xF1GJsZlvPOl5D1iye5IyjbD
-	U5O9ZCIZUKfN9yaRQ4vdYgQWdvem+ROReTECPlJ/CyjXaqvc6fl55IefwYY0e2F4/q1+/3IJJh7
-	oXxxnwb0Es0uK+w0wDp8NKIASwQSyLoD2IGma
-X-Gm-Gg: ASbGncusppNz0QkeiuOJ0tioMo2R/ZdNKDjKQ4QckVsgjNywcWkThonGw5ioHwe0UYo
-	kWT26H+C+S7hm3mcBp/YMMownfOu8rPJw9nYLJnFa3sdh9sn9JNvqp+5obucIRnWJ/Wo/q1wBNa
-	xqjpJAzBRplG+/3HGIHZdcFo9OlFFKiJkyGauw4d+0BS3uTKxgKjVXGtv+sywCiQPaVP8uw/5+y
-	EziDx9rAvDhsgdy
-X-Google-Smtp-Source: AGHT+IHdzYdKi432+CbqXD4bpTGkg+RAdUX/BeDAoijH6nRbojp/RI1EEY0yOSR4vLDMODWDNeuQsigNZI6gn2G14Hw=
-X-Received: by 2002:a05:6402:42cc:b0:61c:d457:e542 with SMTP id
- 4fb4d7f45d1cf-623775e56cemr11270735a12.17.1757426388676; Tue, 09 Sep 2025
- 06:59:48 -0700 (PDT)
+        bh=ePGprLaaKlvYdjB1fqLw5+HQREvzO/LGGScF1pi9CXY=;
+        b=gWUp4KvUFFdAKuujMCcqzh4oAHqA6BQ6T/bCEpPWwnEFVEyAwzBMErQLrg0DxZRQb2
+         SXsH89bBsGPtCRCQw8xyeTlh7ilIvjCz7lVA7YnbGZPmZd9Fk/UTP5T7mBoGykkOYdWv
+         mv/ogt5qERJLOmRDSQuYGcSvafjg+TQt85lFnDMTIuwddmeyDhD23Y+Qp/zh26dTGydV
+         Twz4/L7CjD8rCRTDIFt98ggyBQEB4tnkriYBe8mjmhg1gfI7x8VGo5x86YwTk2yGKdyM
+         xUMjTqXYMd9Fs7Omh8R2lYso07Xm+wVW5JwqRq6807VPBgErXetALDe5DV9v9aUY11TI
+         o5ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlRh4z6Q52A7LFm2Sa1q789PqNy2tHaYG5md55H3lZ88ICFI1mLlO1MxXAyW+aNNX16wa4xnjchZtKvhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl6Mcg77bDBIMKOV6J3RUf9wdYfGkvOchrh+io3Y7XhsrJLVwg
+	OeBNeZTPP/Exix08ZssLnLqh18FkbJga1FhlFSoLfEWXZj3Z/0nf2k0e6pp3hA==
+X-Gm-Gg: ASbGncubh/ckVhdrew/co+KjX6FH+5kSRdlIBeN6XZZMEI/f7y/6nkhiECOzDfswbG1
+	1LoJx7yYrbZOqJtc34HnJqYG5R6ZpWGM0JGgaUY4iIkt2EJBxa/QCVRGzxu5jUdxrNdQw1F8D2j
+	C77TFDGeUS2kZOlT9sq5fe3+3UqByGyiPU15NYZw3huPDTOnEfZUR3U8NVi9J0bpLkuJa50zfjs
+	ibv74xM6cr95Buia/culzOm3q0oUNLUEjN6clRYnGpBGt/6N4emwLZVFzUDE5v7oJGu3BeeqS6M
+	POXjTh8plGe2JD40dCJoTUBfTNR87ThTAcsUVnpySttQI4CcfPoDD6NhrjDA9GbdMUhF6VfKViq
+	oOzgN3s21FrchP55tzcMX+8vAtymApjz/zBff6vKU1P8=
+X-Google-Smtp-Source: AGHT+IFd6xSrfSOMRB1k4N6UPhFDL3Utq+jDImuzRF1t5QZe5NxqNQTSpldDZv2NOSpYDZdQzqOJUw==
+X-Received: by 2002:a17:907:9806:b0:b04:7123:1c85 with SMTP id a640c23a62f3a-b04b16673c6mr1133222566b.41.1757426389487;
+        Tue, 09 Sep 2025 06:59:49 -0700 (PDT)
+Received: from avt74j0.fritz.box ([2a02:8109:8617:d700:4bd8:5793:1d49:8ea3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b043fd772bcsm1942173966b.14.2025.09.09.06.59.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 06:59:49 -0700 (PDT)
+From: Martin Hecht <mhecht73@gmail.com>
+To: linux-media@vger.kernel.org
+Cc: sakari.ailus@linux.intel.com,
+	michael.roeder@avnet.eu,
+	martin.hecht@avnet.eu,
+	Martin Hecht <mhecht73@gmail.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] media: i2c: alvium: cleanup media bus formats
+Date: Tue,  9 Sep 2025 15:59:37 +0200
+Message-ID: <20250909135938.2841635-1-mhecht73@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730091322.5741-1-linux.amoon@gmail.com> <CGME20240730091412eucas1p18feced3968a5f87dc8fe05f78d5c7659@eucas1p1.samsung.com>
- <20240730091322.5741-2-linux.amoon@gmail.com> <09e9cf0b-27fd-46b8-8631-87d798afd19e@samsung.com>
- <CANAwSgT_TOFwP80+H8-CdXDLLu+u2XZMr2dnxcsSDe8S5yeYCw@mail.gmail.com>
- <a41a6143-ef2e-4d86-b102-eaf442985173@kernel.org> <CANAwSgSbSgXwOQLrVrHD7jpDe0=Bq7r2K8p0JjvZJMPpVNq4XQ@mail.gmail.com>
- <d72d7927-079a-4a82-a298-db9ed70a816f@kernel.org> <CANAwSgSgK5hmcLg7sChAs7QL0x7wufHpWDZJFyw6tMiiOuDZeg@mail.gmail.com>
-In-Reply-To: <CANAwSgSgK5hmcLg7sChAs7QL0x7wufHpWDZJFyw6tMiiOuDZeg@mail.gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Tue, 9 Sep 2025 19:29:31 +0530
-X-Gm-Features: Ac12FXy25GJOdSBU_JfQSnoFhbd7dDaA744zBKRa5JcRhilE7Rzjj8NE0zapeR0
-Message-ID: <CANAwSgRTM4OSnXKZWWzxi2cW8QwWLKJz2xmUThyLkdkq71rH1g@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] ARM: dts: samsung: Add cache information to the
- Exynos542x SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof, Marek,
+This patch removes MEDIA_BUS_FMT_RBG888_1X24 and MEDIA_BUS_FMT_BGR888_1X24
+as of that formats are not supported by Alvium currently.
+The missing and supported MEDIA_BUS_FMT_RGB565_1X16 has been added.
 
-On Tue, 30 Jul 2024 at 20:32, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Hi Krzysztof,
->
-> On Tue, 30 Jul 2024 at 18:53, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On 30/07/2024 15:20, Anand Moon wrote:
-> > > Hi Krzysztof,
-> > >
-> > > On Tue, 30 Jul 2024 at 17:57, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >>
-> > >> On 30/07/2024 14:06, Anand Moon wrote:
-> > >>> Hi Marek,
-> > >>>
-> > >>> On Tue, 30 Jul 2024 at 17:14, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> > >>>>
-> > >>>>
-> > >>>> On 30.07.2024 11:13, Anand Moon wrote:
-> > >>>>> As per the Exynos 5422 user manual add missing cache information to
-> > >>>>> the Exynos542x SoC.
-> > >>>>>
-> > >>>>> - Each Cortex-A7 core has 32 KB of instruction cache and
-> > >>>>>       32 KB of L1 data cache available.
-> > >>>>> - Each Cortex-A15 core has 32 KB of L1 instruction cache and
-> > >>>>>       32 KB of L1 data cache available.
-> > >>>>> - The little (A7) cluster has 512 KB of unified L2 cache available.
-> > >>>>> - The big (A15) cluster has 2 MB of unified L2 cache available.
-> > >>>>>
-> > >>>>> Features:
-> > >>>>> - Exynos 5422 support cache coherency interconnect (CCI) bus with
-> > >>>>>    L2 cache snooping capability. This hardware automatic L2 cache
-> > >>>>>    snooping removes the efforts of synchronizing the contents of the
-> > >>>>>    two L2 caches in core switching event.
-> > >>>>>
-> > >>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > >>>>
-> > >>>>
-> > >>>> The provided values are not correct. Please refer to commit 5f41f9198f29
-> > >>>> ("ARM: 8864/1: Add workaround for I-Cache line size mismatch between CPU
-> > >>>> cores"), which adds workaround for different l1 icache line size between
-> > >>>> big and little CPUs. This workaround gets enabled on all Exynos542x/5800
-> > >>>> boards.
-> > >>>>
-> > >>> Ok, I have just referred to the Exynos 5422 user manual for this patch,
-> > >>> This patch is just updating the cache size for CPU for big.litle architecture..
-> > >>>
-> > >>
-> > >> Let me get it right. Marek's comment was that you used wrong values.
-> > >> Marek also provided rationale for this. Now your reply is that you
-> > >> update cache size? Sorry, I fail how you address Marek's comment.
-> > >>
-> > >> Do not repeat what the patch is doing. We all can see it. Instead
-> > >> respond to the comment with some sort of arguments.
-> > >>
-> > >
-> > > Ok, If I am not wrong  icache_size is hard-coded in the above commit.
-> > >
-> > > +#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
-> > > +.globl icache_size
-> > > +       .data
-> > > +       .align  2
-> > > +icache_size:
-> > > +       .long   64
-> > > +       .text
-> > > +#endif
-> > >
-> > > In the check_cpu_icache_size function, we read the control reg
-> > > and recalculate the icache_size.
-> > > if there mismatch we re-apply the Icache_size,
-> > >
-> > > So dts passed values do not apply over here,
-> >
-> > So you provide incorrect values in terms of them being ignored? Then do
-> > not provide at all.
-> >
-> I will drop the icache and dcache values and just pass the L2_a7 and
-> L2_a15, value
-> Is this ok for you?
->
-> Earlier, I have tried to verify this information in /sys and /proc
-> to verify the changes as ARM does not populate this information.
->
-Here's an article that provides detailed insights into the cache feature.
-[0] http://jake.dothome.co.kr/cache4/
+Signed-off-by: Martin Hecht <mhecht73@gmail.com>
+---
+changes since v1:
+ - subject changed because typo
 
-The values associated with L1 and L2 caches indicate their respective sizes,
-as specified in the ARM Technical Reference Manual (TRM) below.
+ drivers/media/i2c/alvium-csi2.c | 28 +++++++++-------------------
+ drivers/media/i2c/alvium-csi2.h |  3 +--
+ 2 files changed, 10 insertions(+), 21 deletions(-)
 
-Cortex-A15 L2 cache controller
-[0] https://developer.arm.com/documentation/ddi0503/i/programmers-model/programmable-peripherals-and-interfaces/cortex-a15-l2-cache-controller
+diff --git a/drivers/media/i2c/alvium-csi2.c b/drivers/media/i2c/alvium-csi2.c
+index c63af96d3b31..743b300fba4c 100644
+--- a/drivers/media/i2c/alvium-csi2.c
++++ b/drivers/media/i2c/alvium-csi2.c
+@@ -94,19 +94,9 @@ static const struct alvium_pixfmt alvium_csi2_fmts[] = {
+ 		.bay_fmt_regval = -1,
+ 		.is_raw = 0,
+ 	}, {
+-		/* RBG888_1X24 */
+-		.id = ALVIUM_FMT_RBG888_1X24,
+-		.code = MEDIA_BUS_FMT_RBG888_1X24,
+-		.colorspace = V4L2_COLORSPACE_SRGB,
+-		.fmt_av_bit = ALVIUM_BIT_RGB888,
+-		.bay_av_bit = ALVIUM_BIT_BAY_NONE,
+-		.mipi_fmt_regval = MIPI_CSI2_DT_RGB888,
+-		.bay_fmt_regval = -1,
+-		.is_raw = 0,
+-	}, {
+-		/* BGR888_1X24 */
+-		.id = ALVIUM_FMT_BGR888_1X24,
+-		.code = MEDIA_BUS_FMT_BGR888_1X24,
++		/* RGB888_3X8 */
++		.id = ALVIUM_FMT_RGB888_3X8,
++		.code = MEDIA_BUS_FMT_RGB888_3X8,
+ 		.colorspace = V4L2_COLORSPACE_SRGB,
+ 		.fmt_av_bit = ALVIUM_BIT_RGB888,
+ 		.bay_av_bit = ALVIUM_BIT_BAY_NONE,
+@@ -114,15 +104,15 @@ static const struct alvium_pixfmt alvium_csi2_fmts[] = {
+ 		.bay_fmt_regval = -1,
+ 		.is_raw = 0,
+ 	}, {
+-		/* RGB888_3X8 */
+-		.id = ALVIUM_FMT_RGB888_3X8,
+-		.code = MEDIA_BUS_FMT_RGB888_3X8,
++		/* RGB565_1X16 */
++		.id = ALVIUM_FMT_RGB565_1X16,
++		.code = MEDIA_BUS_FMT_RGB565_1X16,
+ 		.colorspace = V4L2_COLORSPACE_SRGB,
+-		.fmt_av_bit = ALVIUM_BIT_RGB888,
++		.fmt_av_bit = ALVIUM_BIT_RGB565,
+ 		.bay_av_bit = ALVIUM_BIT_BAY_NONE,
+-		.mipi_fmt_regval = MIPI_CSI2_DT_RGB888,
++		.mipi_fmt_regval = MIPI_CSI2_DT_RGB565,
+ 		.bay_fmt_regval = -1,
+-		.is_raw = 0,
++		.is_raw = 0,
+ 	}, {
+ 		/* Y8_1X8 */
+ 		.id = ALVIUM_FMT_Y8_1X8,
+diff --git a/drivers/media/i2c/alvium-csi2.h b/drivers/media/i2c/alvium-csi2.h
+index 978af44f76c7..0f1af5e5355c 100644
+--- a/drivers/media/i2c/alvium-csi2.h
++++ b/drivers/media/i2c/alvium-csi2.h
+@@ -224,9 +224,8 @@ enum alvium_mipi_fmt {
+ 	ALVIUM_FMT_YUYV8_2X8,
+ 	ALVIUM_FMT_YUYV10_1X20,
+ 	ALVIUM_FMT_RGB888_1X24,
+-	ALVIUM_FMT_RBG888_1X24,
+-	ALVIUM_FMT_BGR888_1X24,
+ 	ALVIUM_FMT_RGB888_3X8,
++	ALVIUM_FMT_RGB565_1X16,
+ 	ALVIUM_FMT_Y8_1X8,
+ 	ALVIUM_FMT_SGRBG8_1X8,
+ 	ALVIUM_FMT_SRGGB8_1X8,
+-- 
+2.43.0
 
-Cortex-A7 L2 cache controller
-[1] https://developer.arm.com/documentation/ddi0503/i/programmers-model/programmable-peripherals-and-interfaces/cortex-a7-l2-cache-controller
-
-These changes help define a fixed cache size, ensuring that active pages
-are mapped correctly within the expected cache boundaries.
-
-Here is the small test case using perf
-Before
-
-$ sudo perf stat -e L1-dcache-loads,L1-dcache-load-misses ./fact
-
-Simulated Cache Miss Time (avg): 4766632 ns
-Factorial(10) = 3628800
-
- Performance counter stats for './fact':
-
-            926328      armv7_cortex_a15/L1-dcache-loads/
-     <not counted>      armv7_cortex_a7/L1-dcache-loads/
-                         (0.00%)
-             16510      armv7_cortex_a15/L1-dcache-load-misses/ #
-1.78% of all L1-dcache accesses
-     <not counted>      armv7_cortex_a7/L1-dcache-load-misses/
-                               (0.00%)
-
-       0.008970031 seconds time elapsed
-
-       0.000000000 seconds user
-       0.009673000 seconds sys
-
-After
-$ sudo perf stat -e L1-dcache-loads,L1-dcache-load-misses ./fact
-Simulated Cache Miss Time (avg): 4623272 ns
-Factorial(10) = 3628800
-
- Performance counter stats for './fact':
-
-            930570      armv7_cortex_a15/L1-dcache-loads/
-     <not counted>      armv7_cortex_a7/L1-dcache-loads/
-                         (0.00%)
-              4755      armv7_cortex_a15/L1-dcache-load-misses/ #
-0.51% of all L1-dcache accesses
-     <not counted>      armv7_cortex_a7/L1-dcache-load-misses/
-                               (0.00%)
-
-       0.011068250 seconds time elapsed
-
-       0.000000000 seconds user
-       0.010793000 seconds sys
-
-Thanks
--Anand
 
