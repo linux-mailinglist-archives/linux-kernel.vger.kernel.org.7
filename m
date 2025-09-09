@@ -1,120 +1,147 @@
-Return-Path: <linux-kernel+bounces-807039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F6DB49F2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:24:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E1BB49F2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D045A7AA58E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:22:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AD6B1BC57E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01E72472A2;
-	Tue,  9 Sep 2025 02:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2F82472A2;
+	Tue,  9 Sep 2025 02:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XP46+QMs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hZaGVsCc"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A9F23A9B0
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 02:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B1F2236F0;
+	Tue,  9 Sep 2025 02:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757384668; cv=none; b=mKCqI9Phr0zFjck5wjIh6E3ElGFPWCktKR2Bb/M3NP8Yw8fq3Nh39Xf4PaH6casTzN5fSa/FWS3IOH0JawDPnEfdu/8O2HOsJDWuUGMbsaUJ6p8DZ1IGKUR3tcKctVNBIX6LNfA5nyutBL2nXfYkc8d906/kfD6lu2F43c99haE=
+	t=1757384659; cv=none; b=H9P/6lryC42eFRxBWErxx3l02Zg0UdTVZQqUpMeTUvAlFIPE/EjzREWXZDC41NJCLknATb7MrL9xE8Kpcp4FSDq1oUe1I8h82GdddsAOQRUJsGTuOt+byNtyef88A+88xIxhfLVW9JTUl5gXYcZXjZCh507gUqvePtD80zwN2yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757384668; c=relaxed/simple;
-	bh=rXblcU4RJo1epq/Ugyh9sei8B9zyUqPVXquk+rYm3w8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3/TPF2rMDDzsX4cXihE18/4tAvzjR0iCnwaEHM812hyrYN9gI1rFFHdRlw4lUkhmXgmpCsd2Q6ivFnnQKa4WkLuckV5u04HcoQQ3q2Sllso5COx6p5wG/fGCyJuV8xZQEnCdl/lGLFTmDyYtfqQkUpkGL7/qqoMG7lK91OKDpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XP46+QMs; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757384666; x=1788920666;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rXblcU4RJo1epq/Ugyh9sei8B9zyUqPVXquk+rYm3w8=;
-  b=XP46+QMs8c52gJdFaJT/zALpacsjH+zD5xZVTnuTtSsLUutZOe5q80RX
-   KcVGFmnpSbvoDjmPMsdaDealUmjg4k677/nQQ4ZkenV+hpA1fgh0TVvrT
-   1/AqJHdogyvJDTqH3H9htTJdANLbEjOGmcRLmCg4KPUd8mSYhOkk+QkJ1
-   iqJGE0+wSwjAHy7OWJY3A9QK4QQnToWdAmC31thyCP0tR+7L7oQKJi3Di
-   d8RrjQpdnjRi1+O9hVWdGxb9k2/LNttghayDndYJmKQQJ8QGkzxD49BQV
-   4gxU/GhdN5qkFZTtvE1YhklsZk8qbljrnP8Im3ZsnvJh5VYnbuBQb8jfI
-   g==;
-X-CSE-ConnectionGUID: yz8WHhz0TRuJiEdB5obAiA==
-X-CSE-MsgGUID: WCXiFN6UTbeDY9Vu6NMJmg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="77114454"
-X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
-   d="scan'208";a="77114454"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 19:24:25 -0700
-X-CSE-ConnectionGUID: 2RIKdZ4lTKC0lKLdgcJ3sA==
-X-CSE-MsgGUID: RQqgG6QqSDWXZELyXXpfVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
-   d="scan'208";a="177302420"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 08 Sep 2025 19:24:21 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uvo1q-0004LD-3A;
-	Tue, 09 Sep 2025 02:24:18 +0000
-Date: Tue, 9 Sep 2025 10:23:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, jgg@nvidia.com,
-	nicolinc@nvidia.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	robin.murphy@arm.com, will@kernel.org, joro@8bytes.org,
-	kevin.tian@intel.com, jsnitsel@redhat.com, vasant.hegde@amd.com,
-	iommu@lists.linux.dev, santosh.shukla@amd.com,
-	sairaj.arunkodilkar@amd.com, jon.grimm@amd.com,
-	prashanthpra@google.com, wvw@google.com, wnliu@google.com,
-	gptran@google.com, kpsingh@google.com,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: Re: [PATCH v4] iommu/amd: Add support for hw_info for iommu
- capability query
-Message-ID: <202509090900.HNQfwn5v-lkp@intel.com>
-References: <20250904193112.7418-1-suravee.suthikulpanit@amd.com>
+	s=arc-20240116; t=1757384659; c=relaxed/simple;
+	bh=3f884xCri4OCK90kiIIvM+z4asmXOsZ1RSRgK/oHszY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DpxW8baEchDkUT9vKc5zv6jNxG+zl9bJNSAQQEzwIPsvFE+8kZP7IT4Ec9C/HnchGByTVTKSOWTQKbjYW06qq/EuqF18wj+m7DiTs1OJ3+VnCcCJfsQDWSmhGGK6D+iivnwW7Ava1dfxCW3XJAcbKxl1OPIkIq129mc8j4eDA8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hZaGVsCc; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5892O885186010;
+	Mon, 8 Sep 2025 21:24:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757384648;
+	bh=IEgr5tNDDBISJ6Mfe2ROy7COOynN6nLSGh/JDvk/TmU=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=hZaGVsCcBUdNYjAfCJY2HfHwxN0MGJbSIwXko2+HNbmYKMtBt1C+ZDFEc716/1Yby
+	 M852lgbmzT6/ixQTeTT/JJp3f6qnWfRAKvtKQ4RaUBXUv/XveShvNkzr+bt9/TL/w9
+	 bLgvGiym55dvTqNVzkMnZ0b6bAt6aOMz62B7WGRc=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5892O8sE3387810
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 8 Sep 2025 21:24:08 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 8
+ Sep 2025 21:24:07 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 8 Sep 2025 21:24:07 -0500
+Received: from [10.24.68.177] (akashdeep-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.177])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5892O2uw1857858;
+	Mon, 8 Sep 2025 21:24:03 -0500
+Message-ID: <62f0c51c-3c04-4735-93c6-84766cf0e2a5@ti.com>
+Date: Tue, 9 Sep 2025 07:54:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904193112.7418-1-suravee.suthikulpanit@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/4] arm64: dts: ti: k3-am62p5-sk: Remove the unused
+ cfg in USB1_DRVVBUS
+To: Kendall Willis <k-willis@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <afd@ti.com>, <vigneshr@ti.com>, <d-gole@ti.com>, <u-kumar1@ti.com>,
+        <sebin.francis@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <vishalm@ti.com>
+References: <20250905051448.2836237-1-a-kaur@ti.com>
+ <20250905051448.2836237-2-a-kaur@ti.com>
+ <5f5d78e2-5aec-4412-b900-3281c391a444@ti.com>
+Content-Language: en-US
+From: Akashdeep Kaur <a-kaur@ti.com>
+In-Reply-To: <5f5d78e2-5aec-4412-b900-3281c391a444@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Suravee,
+Hi Kendall,
 
-kernel test robot noticed the following build errors:
+On 09/09/25 02:51, Kendall Willis wrote:
+> On 9/5/25 00:14, Akashdeep Kaur wrote:
+>> After the SoC has entered the DeepSleep low power mode, USB1 can be used
+>> to wakeup the SoC based on USB events triggered by USB devices. This
+>> requires that the pin corresponding to the Type-A connector remains 
+>> pulled
+>> up even after the SoC has entered the DeepSleep low power mode.
+>> For that, either DeepSleep pullup configuration can be selected or the 
+>> pin
+>> can have the same configuration that it had when SoC was in active mode.
+>> But, in order for DeepSleep configuration to take effect, the DeepSleep
+>> control bit has to be enabled.
+> 
+> The last sentence wording is confusing because it sounds like a 
+> DeepSleep control bit still needs to be enabled which is not seen in the 
+> patch. If possible, drop this sentence and do the same for the other 
+> similar patch in this series.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.17-rc5 next-20250908]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Sounds good! Removed.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Suravee-Suthikulpanit/iommu-amd-Add-support-for-hw_info-for-iommu-capability-query/20250905-033352
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250904193112.7418-1-suravee.suthikulpanit%40amd.com
-patch subject: [PATCH v4] iommu/amd: Add support for hw_info for iommu capability query
-config: x86_64-rhel-9.4-func (https://download.01.org/0day-ci/archive/20250909/202509090900.HNQfwn5v-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250909/202509090900.HNQfwn5v-lkp@intel.com/reproduce)
+Regards,
+Akashdeep Kaur
+> 
+>> Remove the unnecessary DeepSleep state configuration from USB1_DRVBUS 
+>> pin,
+>> as the DeepSleep control bit is not set and the active configuration is
+>> sufficient to keep the pin pulled up. This simplifies the setup and 
+>> removes
+>> redundant configuration.
+>>
+>> This reverts commit 115290c112952db27009668aa7ae2f29920704f0.
+>>
+>> Reviewed-by: Dhruva Gole <d-gole@ti.com>
+>> Signed-off-by: Akashdeep Kaur <a-kaur@ti.com>
+> 
+> Verified USB disconnect, USB connect, and USB remote wakeup on AM62P SKEVM.
+> 
+> Tested-by: Kendall Willis <k-willis@ti.com>
+> 
+>> ---
+>>   arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/ 
+>> boot/dts/ti/k3-am62p5-sk.dts
+>> index 899da7896563..e8f0ac2c55e2 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+>> +++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+>> @@ -360,7 +360,7 @@ AM62PX_IOPAD(0x01b0, PIN_OUTPUT, 2) /* (G20) 
+>> MCASP0_ACLKR.UART1_TXD */
+>>       main_usb1_pins_default: main-usb1-default-pins {
+>>           pinctrl-single,pins = <
+>> -            AM62PX_IOPAD(0x0258, PIN_INPUT | PIN_DS_PULLUD_ENABLE | 
+>> PIN_DS_PULL_UP, 0) /* (G21) USB1_DRVVBUS */
+>> +            AM62PX_IOPAD(0x0258, PIN_INPUT, 0) /* (G21) USB1_DRVVBUS */
+>>           >;
+>>       };
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509090900.HNQfwn5v-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld: drivers/iommu/amd/iommu.o:(.rodata+0x25a8): undefined reference to `amd_iommufd_hw_info'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
