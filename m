@@ -1,161 +1,122 @@
-Return-Path: <linux-kernel+bounces-807056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D742FB49F59
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:46:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31356B49F5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 04:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DF3B170AB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:46:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA8117B17BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC112512F5;
-	Tue,  9 Sep 2025 02:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d92lNrJc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B11B2566F2;
+	Tue,  9 Sep 2025 02:46:57 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F70C2AE99;
-	Tue,  9 Sep 2025 02:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411BC1F790F;
+	Tue,  9 Sep 2025 02:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757385998; cv=none; b=sjsh5nsodtx05SfJETaBShpysf2n+6J/nofy6Am/MEAuxmgZCbKhqzXMkW20xYqwJDKnvFNkEk7ViMdOIIWNzC4cZiKGf8IB3S5RSoZPdnUekQL1D8HcT7MqJnPSlnSkO1kRUtZtctnEbeN3zGjFB9q7hbNDsrBB9m4qwsDK7CM=
+	t=1757386016; cv=none; b=aCK3LE3IrZPKtnIxreBpCwCoYBLYHZcwUb3WD+0yFMQjkbUPAhTXy5hUNibiaSu/zlv8HdnvwhaNy99BiCBK+cnVw+wu684969MOJQCvnlELyQ2uAjDPYcVvRQKhQDbO+rDO84XQM3s9dGbDTgUmhleoLhy3TRik2chhVYE1b4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757385998; c=relaxed/simple;
-	bh=VxqzwwDMmggUPxDs4iUk/QJ7RrWb0r/ma1DnZipoOL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sN22RICgw9u6lfr7TlZfAi0X0+hBXg5Zkuf4LPaUBxABWBGFPC7UnCaNMpxQMJpxAhbErswfzg6s7MKtA8e2EoJtHzTJ7P2Cl6aQqlY9N1nCnxw2FFUivwi/VmwbRj9qae5Yxyh5JCY8V2ZuGi600/zJD4NpZq5kKTcK7+f36xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d92lNrJc; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757385997; x=1788921997;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=VxqzwwDMmggUPxDs4iUk/QJ7RrWb0r/ma1DnZipoOL8=;
-  b=d92lNrJciUakkSHAoPdFZdLI9zGnxHdyTW8HEe3HIJYUFPYQF4Y4jQEC
-   GzY/lvIXYIuPlARkj4TotwmnnoN3j3QCfzjrr9wdxOkayH02DwlInxlj0
-   Mu3VtMI0MKHTegdsDW2z0h6fxXaU1rcGo2ofjNZrRFEEFlPG9hOcPCSqW
-   Tl5I6j5XQnK6qu1iDa7a+vsLEvv5pZRHVTSqIv1UlrrmN6SSgEQMWQ9iO
-   3Cx+mt5ezEPxAe3g+3lXkJ43cw9oFmXPBNlANSO6iK/SwysyUdlUYUmvV
-   uajs18Vo5KtjFjj77Jzuf0FPU4dQsYzVYsrBN2mn546t4IiagnWGhtzQF
-   Q==;
-X-CSE-ConnectionGUID: 7uHtTdNrS9KJRqB3F1xf5Q==
-X-CSE-MsgGUID: yYMRfgFqSs6CnW8yAGai9Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="77116180"
-X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
-   d="scan'208";a="77116180"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 19:46:36 -0700
-X-CSE-ConnectionGUID: AYacolEkQjSGPIlZWaLtBg==
-X-CSE-MsgGUID: NofuoqEfRvKhagpN/BQnXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
-   d="scan'208";a="172221910"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 19:46:34 -0700
-Message-ID: <ea1603bc-68f2-44cd-8cdf-ec5969486dea@linux.intel.com>
-Date: Tue, 9 Sep 2025 10:46:31 +0800
+	s=arc-20240116; t=1757386016; c=relaxed/simple;
+	bh=GwLTDI9kp0MLkEOAPbnNI+ASeR21lSfwdNUGaRNVNqY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WS66bY+YeePTl+sCByx5LlxdfIW3WARK5xAFQy8+2WVazO0nxBTX+B2wJLl9tQn1oPr5f4d+nSLOiobUdcHM5JHjlP/i9iXvxAjkDw7REFFilcRAfHNbGE/H3IXuKEp2mo4d+j2grAYTocA6+fEw6rkr6KesobGkMio+y40+Xe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cLSqd5Mg4ztTdb;
+	Tue,  9 Sep 2025 10:45:49 +0800 (CST)
+Received: from kwepemh100012.china.huawei.com (unknown [7.202.181.97])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1D9E8140147;
+	Tue,  9 Sep 2025 10:46:45 +0800 (CST)
+Received: from huawei.com (10.175.103.91) by kwepemh100012.china.huawei.com
+ (7.202.181.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Sep
+ 2025 10:46:44 +0800
+From: Wang ShaoBo <bobo.shaobowang@huawei.com>
+To: <bhelgaas@google.com>, <helgaas@kernel.org>
+CC: <leijitang@huawei.com>, <linux-hardening@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<akpm@linux-foundation.org>, <christian.brauner@ubuntu.com>
+Subject: [PATCH v2] PCI: Fix the int overflow in proc_bus_pci_write()
+Date: Tue, 9 Sep 2025 10:46:43 +0800
+Message-ID: <20250909024643.1017710-1-bobo.shaobowang@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] KVM: x86/mmu: Return -EAGAIN if userspace
- deletes/moves memslot during prefault
-To: Yan Zhao <yan.y.zhao@intel.com>, seanjc@google.com
-Cc: pbonzini@redhat.com, reinette.chatre@intel.com,
- rick.p.edgecombe@intel.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20250822070305.26427-1-yan.y.zhao@intel.com>
- <20250822070347.26451-1-yan.y.zhao@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250822070347.26451-1-yan.y.zhao@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemh100012.china.huawei.com (7.202.181.97)
 
+Following testcase can trigger a softlockup BUG.
+syscall(__NR_pwritev, /*fd=*/..., /*vec=*/..., /*vlen=*/...,
+        /*pos_l=*/0x80010000, /*pos_h=*/0x100);
 
+watchdog: BUG: soft lockup - CPU#19 stuck for 26s! [test:470]
+Modules linked in:
+CPU: 19 UID: 0 PID: 470 Comm: test Not tainted 6.17.0-rc4-00201-gd69eb204c255 #159 PREEMPT(voluntary)
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+RIP: 0010:_raw_spin_unlock_irq+0xf/0x20
+Code: 0f 1f 44 00 00 e9 51 18 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa c6 07 00 fb 65 ff 0d c1 78 35 010
+RSP: 0018:ffffc900016b7d70 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00000000818d3878
+RDX: 0000000000000cfc RSI: 0000000000000046 RDI: ffffffff835d76e8
+RBP: ffff8880606c6000 R08: 0000000000000004 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 00000000818d3878 R14: 0000000080010000 R15: ffff888020898d68
+FS:  000000002472d880(0000) GS:ffff8880bbd9c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000218c3878 CR3: 00000000206ae000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ pci_user_write_config_dword+0x66/0xc0
+ proc_bus_pci_write+0x135/0x240
+ proc_reg_write+0x50/0x90
+ vfs_writev+0x1d9/0x340
+ ? getname_flags.part.0+0x20/0x1d0
+ ? do_sys_openat2+0x88/0xd0
+ do_pwritev+0x85/0xc0
+ do_syscall_64+0xa4/0x260
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-On 8/22/2025 3:03 PM, Yan Zhao wrote:
-> From: Sean Christopherson <seanjc@google.com>
->
-> Return -EAGAIN if userspace attempts to delete or move a memslot while also
-> prefaulting memory for that same memslot, i.e. force userspace to retry
-> instead of trying to handle the scenario entirely within KVM.  Unlike
-> KVM_RUN, which needs to handle the scenario entirely within KVM because
-> userspace has come to depend on such behavior, KVM_PRE_FAULT_MEMORY can
-> return -EAGAIN without breaking userspace as this scenario can't have ever
-> worked (and there's no sane use case for prefaulting to a memslot that's
-> being deleted/moved).
->
-> And also unlike KVM_RUN, the prefault path doesn't naturally gaurantee
+The pos_l parameter for pwritev syscall may be an integer negative value,
+which will make the variable pos in proc_bus_pci_write() negative and
+variable cnt a very large number.
 
-gaurantee -> guarantee
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wang ShaoBo <bobo.shaobowang@huawei.com>
+---
+ drivers/pci/proc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> forward progress.  E.g. to handle such a scenario, KVM would need to drop
-> and reacquire SRCU to break the deadlock between the memslot update
-> (synchronizes SRCU) and the prefault (waits for the memslot update to
-> complete).
->
-> However, dropping SRCU creates more problems, as completing the memslot
-> update will bump the memslot generation, which in turn will invalidate the
-> MMU root.  To handle that, prefaulting would need to handle pending
-> KVM_REQ_MMU_FREE_OBSOLETE_ROOTS requests and do kvm_mmu_reload() prior to
-> mapping each individual.
->
-> I.e. to fully handle this scenario, prefaulting would eventually need to
-> look a lot like vcpu_enter_guest().  Given that there's no reasonable use
-> case and practically zero risk of breaking userspace, punt the problem to
-> userspace and avoid adding unnecessary complexity to the prefualt path.
-
-prefualt -> prefault
-
->
-> Note, TDX's guest_memfd post-populate path is unaffected as slots_lock is
-> held for the entire duration of populate(), i.e. any memslot modifications
-> will be fully serialized against TDX's flavor of prefaulting.
->
-> Reported-by: Reinette Chatre <reinette.chatre@intel.com>
-> Closes: https://lore.kernel.org/all/20250519023737.30360-1-yan.y.zhao@intel.com
-> Debugged-by: Yan Zhao <yan.y.zhao@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-Two typos above.
-
-Otherwise,
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
-> ---
->   arch/x86/kvm/mmu/mmu.c | 10 ++++++++--
->   1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 92ff15969a36..f31fad33c423 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -4653,10 +4653,16 @@ static int kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
->   	/*
->   	 * Retry the page fault if the gfn hit a memslot that is being deleted
->   	 * or moved.  This ensures any existing SPTEs for the old memslot will
-> -	 * be zapped before KVM inserts a new MMIO SPTE for the gfn.
-> +	 * be zapped before KVM inserts a new MMIO SPTE for the gfn.  Punt the
-> +	 * error to userspace if this is a prefault, as KVM's prefaulting ABI
-> +	 * doesn't need provide the same forward progress guarantees as KVM_RUN.
->   	 */
-> -	if (slot->flags & KVM_MEMSLOT_INVALID)
-> +	if (slot->flags & KVM_MEMSLOT_INVALID) {
-> +		if (fault->prefetch)
-> +			return -EAGAIN;
-> +
->   		return RET_PF_RETRY;
-> +	}
->   
->   	if (slot->id == APIC_ACCESS_PAGE_PRIVATE_MEMSLOT) {
->   		/*
+diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
+index 9348a0fb8084..2fc3340ff79e 100644
+--- a/drivers/pci/proc.c
++++ b/drivers/pci/proc.c
+@@ -113,9 +113,9 @@ static ssize_t proc_bus_pci_write(struct file *file, const char __user *buf,
+ {
+ 	struct inode *ino = file_inode(file);
+ 	struct pci_dev *dev = pde_data(ino);
+-	int pos = *ppos;
+-	int size = dev->cfg_size;
+-	int cnt, ret;
++	unsigned int pos = *ppos;
++	unsigned int cnt, size = dev->cfg_size;
++	int ret;
+ 
+ 	ret = security_locked_down(LOCKDOWN_PCI_ACCESS);
+ 	if (ret)
+-- 
+2.25.1
 
 
