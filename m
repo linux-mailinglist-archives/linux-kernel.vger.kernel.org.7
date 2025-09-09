@@ -1,188 +1,524 @@
-Return-Path: <linux-kernel+bounces-808764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E94B5047D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:31:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C8CB5047F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1C2A443452
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:31:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E956361459
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 17:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917EF31C587;
-	Tue,  9 Sep 2025 17:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA6C31C587;
+	Tue,  9 Sep 2025 17:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hgSpbic4"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A18221FC6;
-	Tue,  9 Sep 2025 17:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757439065; cv=none; b=o8lY63L/7GBhe7WuIPxC2/LlJNYTb1byjCuEqZzLx1kdVVHj2EESg4SrUFh2Cozchglo5wozFE+AIW8ssA9CXWhJPogcBNQ1lDEzBAcyMdEAwBJ/xQbqXuYpyOLv9BP1YgvUbzh1EUfrIFiUm1JKk4LneyhnZzTdYRkvu17tqr8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757439065; c=relaxed/simple;
-	bh=hpbphitZzxT7Lzmwms0t3ddnEbm0t3rxc//e9Hcmai8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lu6cV9FpkhOOmlzofckTZ7IJPNnjltRvmO/CsYGpATsWoAagfdbqdEx8KTslBKvyVjygj6BWQ3aXHHWHNM1PfcpVgcRCeaLhmLOb7BYAtVeF6g2dRamL3a0C218RX6wnehsSh54aa1f/U0rLWlDWMbMzgSsubHVyaR1w5faRfgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hgSpbic4; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.64.209.95] (unknown [40.65.108.177])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 81CF1211AA24;
-	Tue,  9 Sep 2025 10:31:03 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 81CF1211AA24
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1757439063;
-	bh=J2qTojvRk7OPmNiAAcO3WvuqvhnkyKekHvuuzYCSD50=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hgSpbic4NcbmQl7FMgQ6t5nkms5Z97eIv+wUfRHG61y55OBXBnVMduJOkCL64kifI
-	 FXsu7oIvNK4pEn/kvpzuit99ln8LsY5vS1O6QtJrnJBwY4Iq1OxCa3L2pbpsBBUAIQ
-	 XD06sZksQ9nmU96EOl4KeowBDczJG0UsgBEvmMt4=
-Message-ID: <680083da-ccc5-4241-94cc-952daf5e070e@linux.microsoft.com>
-Date: Tue, 9 Sep 2025 10:31:02 -0700
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="u3fhGHu7"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2106.outbound.protection.outlook.com [40.107.244.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99010221FC7
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 17:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.106
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757439148; cv=fail; b=tmCRTAqFK7WHk87Y9g4MLYRVrftPoCFko105GzG50iHZbzuilpAsOqsdjR/tY1fmkUsCU71HGFFUbhzWHBkmLY0WbImmqLjAN4TWCu/U1MNeCMbqZzTiLm5oXtTbcBvuMI4PoC1mHacy9cGyLCqvfXlDXck0jh/LW3DBCJ84Byc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757439148; c=relaxed/simple;
+	bh=jynW1ou1kdt3zh8q9MrBM6Cl96ZCqir2PvoJrc09mSc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XfU8+8YPgvm1r9rgB54KvkQ6sSZcnBAAvEy29sPgyrZ73U7VPZDyqpsBjhVjrzYFB4pu+M6pPgvgmFYYSyYCNmziovao2jhlnjpOI/gwxjEGrxfjxS+D7jUW5NaNkdwI2cnMiLOJsjfhd+izjSYtWn75k6FCV2d9fyxP2wdSVyk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=u3fhGHu7; arc=fail smtp.client-ip=40.107.244.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pGCOpKDcnLDnV4QTjNlceKiFerYx6QRwOTP0l67tY46P4EtRBEpNetgtiUrQRth+vrFfM0g3ULV5Xx/DBdneww+xfOGqFGuXMFs+TTcbftlqUUJfa4HthjyBjwkaj+czk2XkbXr/5vVSvPF5TPts6uwSCcee+tpK4oV0OF0F9FFM1IwLMjgNDkZ/+QZx6HGTbpFWUA3l59cH1E9M0fPzntYa0/YHeCMdJ2Lhkh5rHj8YhcWXUmZw6nDm9GNcE5szoZ24SUqCz7LQK8HxLdvhOrhfAoPPNqOLgn63DBlmGok2TpHl2liNXVGArnSABMTt4IaT0OnlTp5oaf8Uypghzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HIJM7Rsy+LHfCDH4V3QvO+BN+/b7lu9p+8TF+tCXBoM=;
+ b=XiXYbTbJy8nu06aW6DbVOr4Qoeq7OrZX2E16mCcbon1TTzVNgTzZ+1inf4F2/jdK5u49am5/i54r9kEmXwkAOwujZD4FwVE3lmY59Jo9+B9XLi30HqIwjuQo2Nd0xYuCmdjcxMApJNaRU5YctoiboL1wHANz5WdwMuj2siszs/MkH8SLOhkz+WcngeGsTneIDihA00tWbAKukGqAu4k9hJSOfJ8tNgOns+aAIRUebVvn2JYCmLpER1jmleZPA2FW53Hfa4nOtJ1wA9WlzMp4YzWrRMpZpfMjJbqoYmBYcuZQZw77MKKvKVZ3VYNUasmP8MmByEQncUQS7mARuDQoNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HIJM7Rsy+LHfCDH4V3QvO+BN+/b7lu9p+8TF+tCXBoM=;
+ b=u3fhGHu70ME0VeIGFLw0HWlVjQyGic8LpPrGW6cEG7GDDANyvFOQIdkzV6K2pfQmZRBj1d+ozdpMq6165Rsj5TGfl9UO1n7oWCfWgxlO2PcQELztiDBPmEVMKM36h9MTZp84X7APn4qz5ZFrisKuSzjxuoInQABdBfTL5l96BQI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
+ SA3PR01MB7988.prod.exchangelabs.com (2603:10b6:806:304::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.22; Tue, 9 Sep 2025 17:32:23 +0000
+Received: from CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460%2]) with mapi id 15.20.9094.018; Tue, 9 Sep 2025
+ 17:32:23 +0000
+Message-ID: <55a79826-48e3-41c0-8dbd-b6398e7e49a6@os.amperecomputing.com>
+Date: Tue, 9 Sep 2025 10:32:19 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/6] arm64: support FEAT_BBM level 2 and large block
+ mapping when rodata=full
+To: Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Ard Biesheuvel <ardb@kernel.org>, scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20250829115250.2395585-1-ryan.roberts@arm.com>
+ <e722e49a-d982-4b58-98f7-6fef3d0a4468@arm.com>
+ <dd242f5b-8bbe-48e8-8d5f-be6a835a8841@arm.com>
+ <aeb76956-f980-417f-b4e7-fe0503bb5a2b@os.amperecomputing.com>
+ <612940d2-4c8e-459c-8d7d-4ccec08fce0a@os.amperecomputing.com>
+ <1471ea27-386d-4950-8eaa-8af7acf3c34a@arm.com>
+ <f8cf1823-1ee9-4935-9293-86f58a9e2224@arm.com>
+ <bf1aa0a4-08de-443f-a1a3-aa6c05bab38c@os.amperecomputing.com>
+ <39c2f841-9043-448d-b644-ac96612d520a@os.amperecomputing.com>
+ <d7cd4004-bacf-47b0-9cd8-f99125e02238@arm.com>
+ <fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com>
+ <8c363997-7b8d-4b54-b9b0-1a1b6a0e58ed@arm.com>
+ <4aa4eedc-550f-4538-a499-504dc925ffc2@os.amperecomputing.com>
+ <1cfda234-1339-4d83-bd87-b219fbd72664@arm.com>
+Content-Language: en-US
+From: Yang Shi <yang@os.amperecomputing.com>
+In-Reply-To: <1cfda234-1339-4d83-bd87-b219fbd72664@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BYAPR06CA0052.namprd06.prod.outlook.com
+ (2603:10b6:a03:14b::29) To CH0PR01MB6873.prod.exchangelabs.com
+ (2603:10b6:610:112::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] mshv: Ignore second stats page map result failure
-To: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
- Praveen K Paladugu <praveenkpaladugu@gmail.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- mhklinux@outlook.com, decui@microsoft.com, paekkaladevi@linux.microsoft.com
-References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1756428230-3599-3-git-send-email-nunodasneves@linux.microsoft.com>
- <efc78065-3556-410a-866f-961a7f1fc1ac@linux.microsoft.com>
- <874a2370-84f1-4cec-bb06-a13fe11b49ca@linux.microsoft.com>
- <7b4fafc7-cf89-45f6-ac5c-59a4c9f53f79@linux.microsoft.com>
- <23d93b71-86cc-4c01-9264-b049cfec39e0@linux.microsoft.com>
- <6252578f-df25-4510-bc18-8f593739fb83@gmail.com>
- <bd12701b-9093-481e-b420-a19eb9e7c262@linux.microsoft.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <bd12701b-9093-481e-b420-a19eb9e7c262@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|SA3PR01MB7988:EE_
+X-MS-Office365-Filtering-Correlation-Id: e0f3a267-964d-4bdb-a926-08ddefc6d601
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eVlqa0kxVDdyN0JZOWxMb0dxaS9iTEZ4SFNxVjgwenE3UkZvMGMzSm50LzIz?=
+ =?utf-8?B?VFJmU0pocDR2M3BSMG9jaVgyUVpZWmx2ZFZqOHhqY0l6Vm84QVBXMktrbGZz?=
+ =?utf-8?B?NTRkbWpYSHdBNWZmc2lINi9TTmsxZEF0OUQrbnlVQ3pjRWtJenNvRzhFYWNC?=
+ =?utf-8?B?eGxXdXFZNUl4TEFzQnExWUJFUEg2UVZRaWxvZ0F6aVVSRGhTSGpqSDdqQ0pa?=
+ =?utf-8?B?eE9IbnJkMWpBaERSWS9Edjhlc2ZjS3FteUwwVVZiOE1xMnR4ZTBZMmNETkE3?=
+ =?utf-8?B?R29BQlNTWnpGZGR6d2lkTHhYU0RSL1lxZEI3TTZNS2xYVVVxUFZUamYrVEhD?=
+ =?utf-8?B?T3YramZ1ak9vUzBEbU9HbTlXeHRrV1VmMlk1MGhiWEJRNEQ5am5BVWlacTly?=
+ =?utf-8?B?TzR4cXBsODFWaWZvRzNDWlFmcktCZG1tRm9BdXBHb2NtWlFMSVN1TURzTkZs?=
+ =?utf-8?B?OG5VZVA1WkNJamwvTGlPMTBmSnM3TU04d2VRRHFrc05wQTgzVlVZN2tGUmZQ?=
+ =?utf-8?B?M24vWC9LbGhkQ1NDcjA5OGNmRko1dFZuRE9DWkFNcTZXaGNZS2JQTTNmcDBy?=
+ =?utf-8?B?UUJXTU5CQjhKVk9HYjRjYS9mYVJEU1E4T0ZzL0Q1UFJ2Um5HU2ZuaWFsQWhQ?=
+ =?utf-8?B?NHVwamxxSnFvU1FmV0J3djZPY0VWQ285aC9sN1FFR25QakVPM2pZTWsvaGZQ?=
+ =?utf-8?B?MnpjQXJlbzQySlVSanY5V3psUnBWcmppZTBxR20vRk9RaExkTEg3ejdOYVI0?=
+ =?utf-8?B?MzVWRXVZalVic2k1ZzZ0RDhtWnE5K1k3Vm9Va0svVFptcVhFeFc3MzdtNEZs?=
+ =?utf-8?B?eG9BQnNGTGdEcTVCU0l0MWQwWjlKVGZNdVdEeXlRU21rM0RQMlVEQXRtdWRQ?=
+ =?utf-8?B?MHBlTW12QU5oSCtqbDFrSklOekRaTGZOZEhyVWoyNUNZUm44NDk0TDRpWVlG?=
+ =?utf-8?B?MDZ3ZVQ2VUNFZkQ5Ykh1cDVPdE84ZUpma0M1cldTckJZUWJ6UlN3eVlMRitH?=
+ =?utf-8?B?N1kxR1JMU1FFMHMxdjJHT255d1g1OXNhcjhJK0t5MFZQUUZ1TzZDVWgwTThk?=
+ =?utf-8?B?MmM4THhjZHprMFlhbGMzTXU0YTRab3BrYUtkLzU2bm1Pb3Q2Y3o2RUsrbm5D?=
+ =?utf-8?B?U2o1NEdXSkNrV3g2YWhTeWZ6K0s4Z2Q2d2ZOUHYxT01iMFBtSXgwaVhHOElN?=
+ =?utf-8?B?dVhxdmF3WlJRckJab2tKZ0tVUW1oZDN6NXp2K0lLVUxLUmNyMnhCZno5K1Fm?=
+ =?utf-8?B?RmNxNWtuNXkzeU1admoyUloyVkQwMGViMzRMeGtpejFuLzIvbjE0dVVWYjJt?=
+ =?utf-8?B?M1BPaXBWdzZNVTN5ME0wYUNvZ05yeXBWazlRMUtBUGtTSk9JOHQ5MzJCVk51?=
+ =?utf-8?B?dmVYQXpwcjMyS3J6cEF5bi80SXVnRG1Mb3pzdWEraTZGOE5GZzZLYXFLTnFh?=
+ =?utf-8?B?bnVOeWdMaDBaa0t5cmNjK2pqQ0JKbmNoTlBoSEZCR2JOS1ZrMWNuRytUb1dT?=
+ =?utf-8?B?Z1FHUDkvM25JUmQ4d2k5NSsyQTJ1bE0rd3dISk1rUzQwSko3MG5wU3cvVWhj?=
+ =?utf-8?B?N1BkRE9WMFNDU1NNTHRUWmd1NzIzZnhRakQwQldyWDROZzlHMnJPOEoxS3NW?=
+ =?utf-8?B?UjA0N1pzRDR4aGt4cmZqVmNvb0FyNWp1ZDZwTFJQZm1mMlFrYkVkVkVzRXVm?=
+ =?utf-8?B?MFg3UmQ5ZnhjSUdITVBUREhqbW9IOUtCbW5Mb2huM1FQYUdyN3hYTTV3Tk5N?=
+ =?utf-8?B?ejVyVjFHcTIrZVJuR0VETmtJSFBFZDhGYW1peEJnY0RwTnRXU2d0WGpiTVpj?=
+ =?utf-8?B?dm9XTy9aNk9ZMWpuWTR3WjY2aVZRbVFwNHNnK0tFTDdGR0dYWXlXeVhtY0FN?=
+ =?utf-8?B?bEkyRkNiVmQ0amtmUjBEcVBsa3dTOENlb1FxU2lXNWpMSU10dm1veitmSFo2?=
+ =?utf-8?B?OUdHSU1NVWdHdUd1MnUvV1RLVUY4QzBCRzU1WFE5Nm5rVjZYNDJzMkFKa3BN?=
+ =?utf-8?B?aDdkWXRPbU1nPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RzliUFhlWTMrQkhoWThEdW9MTlcyVTRVTXE1eUUwZmNyT2ZTQ1VjcFpWT1o1?=
+ =?utf-8?B?ZzhSZGNKeGx6N1lvVm9tYW1DL0JYeFZMN0dJenFrVkFnTEdMdzZDZTRiL1hB?=
+ =?utf-8?B?dmVVeHBBN0lXclFnbVZ2Q2g5MjhaYWtFcFl2dGd1RFZDc3A3K1k3SkJZd25M?=
+ =?utf-8?B?cW10RlFSOTByckJLNHJoMDJSUDY3TWthWHd2SWt2MURQbi9qUWNiZ2FCeTAx?=
+ =?utf-8?B?NW85dFNxVFRZNEVnVEhva1RubmY3cFlXTERWcHNRQWNncHpwRmRmbGo4cWpa?=
+ =?utf-8?B?NDc4dStTTkl4UTUydjFjaXA4R3Z1Mm5xZU5zTEw5djZZaVVRdnhTbUF6Tjdz?=
+ =?utf-8?B?L2hqci9lYytwZkF3WS9ReWhHVXRBa1IvZVVldkVxMVVQckJidzNjakFKOWhp?=
+ =?utf-8?B?dE1aOEtuQlYyVVJGanphQzRtOE1BK2grRHJLeFhMSS9GUUNyL3I1bU9yZHhy?=
+ =?utf-8?B?bEpEelRLNDJMY0t5bThwU21OdW42aFZZVW1lNHBld3FNN0gyQ3A3UnRlaHdQ?=
+ =?utf-8?B?OGFGS05xcmQ2dlJXK0h1aHIvZEVnd09nRFJZdmhiZ0UwNzIvS29tS2pLMW5M?=
+ =?utf-8?B?eUprTDVwNGVQbmdnTEpqeGJJRGRzYWFVSlZaYlJHZGFNTDUvenJVRkZtNjJG?=
+ =?utf-8?B?NXdjQk5GcWhkTTkra01FS2pvUGl1SmxnMWZZZEtEbWZPVHM5ZE90TGIwZHNx?=
+ =?utf-8?B?YzhDVkt6TlMxWUU1TkJmRWl5ODkwa0Q2dG9LRlRHNkh5TlRUdTc0K1d0WlZZ?=
+ =?utf-8?B?b1N6NFFYSDdiOUxvcDU1SGNMQ2xyUVZqNDBMWGlaN2V3eW44Skd4aGZaVlps?=
+ =?utf-8?B?RjVLajBNbW5ENnBWY1hCVGdWYU5VZUdPRWR4OFM2RGN1a1YzNloySXpTdjhO?=
+ =?utf-8?B?RThpYVpLTThxODNjRlVDMElHLzBKMDV0VDJlKzgvOXIvckRVUHNjbmJpWGJJ?=
+ =?utf-8?B?V3IraHlmejZoZHYrWjlKL0tUYXU3OXg3M0FnQTVMRUQwQ3hoS3hxSlJIMGRu?=
+ =?utf-8?B?L2JoUUhKSDlpMG12amE4b2gyK3oyZTNnSDY4ZDVYSDcyMEk3eERoa3VZSGF3?=
+ =?utf-8?B?UnBSUU1tSDkvMkkyWEtOdnVSQUlrVTBzRUEvUWY2RGpkdjlXYkVXMnNDaE14?=
+ =?utf-8?B?MWcwSy9OVTdzWVdrb2dPR0Q4UDNQc2l2U2lHY2l6ZGJrYnJTVW1RNmxNSHhk?=
+ =?utf-8?B?UmhWYm1HODJWOWNFbHY1RXFWaEF0QjMxck4vQnlFV1JOM2tVR015SmtXNFZs?=
+ =?utf-8?B?eWVxVDJkSlN0Vm80RFBwcTZ4R254UWQ3R0ZVU3NEV1dwMHgrOW5ZYWV2MUhu?=
+ =?utf-8?B?RXNOa29yYnBSaWxmNXNYcXRhUm1aa09mdHZEbWtzUmI3SG0vOGJjaVNSRVhC?=
+ =?utf-8?B?NWV5enJJeU5TSWlrYkxvWVM4Vy9VeThCZ2xKcmh6WTBVK0taVDMzTVlEOVNH?=
+ =?utf-8?B?cGxFNWw1cnB2QzlmOTUxRUt2TStWZGU3L09zdXVOU0Z2K2ZYeTloUEQzQkVa?=
+ =?utf-8?B?MTZBb0dKNndLeDVWOE5VWFYwOWZBb2VIUGZwZm4rMGptZm83WGx6RkM2cFJ4?=
+ =?utf-8?B?R09KdFUvVVk5NDhyQnpFTHhJNmNjeEFyNGsrZE8xTGx2T09PVXVBK1c2SDhO?=
+ =?utf-8?B?aGw2ckJJRnZYajJTRWt5WVN3L09WSk9SNjhzd0R5djUyVU55eC81N3hWbC9h?=
+ =?utf-8?B?OWZMbEM5bENLdHUzTDVYZ3dJZFFoc0pIUEZ4QVlGY0p1Q2JTeXVpamIzV1h4?=
+ =?utf-8?B?RjZsR1d4VTNZVDV6cUZxdGY2cW5pS1F6M0ozZCtwMVJrZUlMOVZzTllkcTJ3?=
+ =?utf-8?B?MlFUZU83NENPc3BEOTVQNzJpOXFOOGtRMjgyMmhpMVRHZUFld3R5MCtUUURT?=
+ =?utf-8?B?MlpmRjJFNXlCSnhPWHJFZW0yaEorbGFzTTlOZTBMZkIrOWJLZzlrQm1YWFUv?=
+ =?utf-8?B?c2t0WGlaM3lqYWVUV3p4OUZ3bUcyVVM1bmFDUWJDOTRYWXN6bkVKVlhNc3dp?=
+ =?utf-8?B?amxuRVFsV2ZSQUNNTWZhUDR4TGp3UXVRaVhGS3dDdTBWcnczbW9JK1QzanJ4?=
+ =?utf-8?B?eFdjMUc5N011RzByWkJ0cFk5VW85SVdXakYra3h2cnI0ajlBRDdWUTJnbXgv?=
+ =?utf-8?B?MDh0aThmc2ZKTWxXV0ZLbG9jWWs0VTNRSms0bThMNVJ6SWI4RW9jS3ZTZVp2?=
+ =?utf-8?Q?qhSzMMEj6tK627qeVpQAmaE=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e0f3a267-964d-4bdb-a926-08ddefc6d601
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 17:32:23.1603
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tZoOPc2zWPNW1DcdMTBQla2BT/eYCo7UPi85OiHEY0oHo/7yUXKWOYkaTNumSq5BqD1Nrc3GA302iCVjlBRPLvhazC4TzC3665Pg0SjuugM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR01MB7988
 
-On 9/9/2025 9:27 AM, Easwar Hariharan wrote:
-> On 9/9/2025 7:52 AM, Praveen K Paladugu wrote:
+
+
+On 9/9/25 9:32 AM, Ryan Roberts wrote:
+> On 09/09/2025 16:32, Yang Shi wrote:
 >>
->>
->> On 9/8/2025 1:06 PM, Nuno Das Neves wrote:
->>> On 9/8/2025 10:22 AM, Easwar Hariharan wrote:
->>>> On 9/8/2025 10:04 AM, Nuno Das Neves wrote:
->>>>> On 9/5/2025 12:21 PM, Easwar Hariharan wrote:
->>>>>> On 8/28/2025 5:43 PM, Nuno Das Neves wrote:
->>>>>>> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+>> On 9/9/25 7:36 AM, Ryan Roberts wrote:
+>>> On 08/09/2025 19:31, Yang Shi wrote:
+>>>> On 9/8/25 9:34 AM, Ryan Roberts wrote:
+>>>>> On 04/09/2025 22:49, Yang Shi wrote:
+>>>>>> On 9/4/25 10:47 AM, Yang Shi wrote:
+>>>>>>> On 9/4/25 6:16 AM, Ryan Roberts wrote:
+>>>>>>>> On 04/09/2025 14:14, Ryan Roberts wrote:
+>>>>>>>>> On 03/09/2025 01:50, Yang Shi wrote:
+>>>>>>>>>>>>> I am wondering whether we can just have a warn_on_once or something
+>>>>>>>>>>>>> for the
+>>>>>>>>>>>>> case
+>>>>>>>>>>>>> when we fail to allocate a pagetable page. Or, Ryan had
+>>>>>>>>>>>>> suggested in an off-the-list conversation that we can maintain a cache
+>>>>>>>>>>>>> of PTE
+>>>>>>>>>>>>> tables for every PMD block mapping, which will give us
+>>>>>>>>>>>>> the same memory consumption as we do today, but not sure if this is
+>>>>>>>>>>>>> worth it.
+>>>>>>>>>>>>> x86 can already handle splitting but due to the callchains
+>>>>>>>>>>>>> I have described above, it has the same problem, and the code has been
+>>>>>>>>>>>>> working
+>>>>>>>>>>>>> for years :)
+>>>>>>>>>>>> I think it's preferable to avoid having to keep a cache of pgtable
+>>>>>>>>>>>> memory
+>>>>>>>>>>>> if we
+>>>>>>>>>>>> can...
+>>>>>>>>>>> Yes, I agree. We simply don't know how many pages we need to cache,
+>>>>>>>>>>> and it
+>>>>>>>>>>> still can't guarantee 100% allocation success.
+>>>>>>>>>> This is wrong... We can know how many pages will be needed for splitting
+>>>>>>>>>> linear
+>>>>>>>>>> mapping to PTEs for the worst case once linear mapping is finalized.
+>>>>>>>>>> But it
+>>>>>>>>>> may
+>>>>>>>>>> require a few hundred megabytes memory to guarantee allocation success. I
+>>>>>>>>>> don't
+>>>>>>>>>> think it is worth for such rare corner case.
+>>>>>>>>> Indeed, we know exactly how much memory we need for pgtables to map the
+>>>>>>>>> linear
+>>>>>>>>> map by pte - that's exactly what we are doing today. So we _could_ keep a
+>>>>>>>>> cache.
+>>>>>>>>> We would still get the benefit of improved performance but we would lose
+>>>>>>>>> the
+>>>>>>>>> benefit of reduced memory.
+>>>>>>>>>
+>>>>>>>>> I think we need to solve the vm_reset_perms() problem somehow, before we
+>>>>>>>>> can
+>>>>>>>>> enable this.
+>>>>>>>> Sorry I realise this was not very clear... I am saying I think we need to
+>>>>>>>> fix it
+>>>>>>>> somehow. A cache would likely work. But I'd prefer to avoid it if we can
+>>>>>>>> find a
+>>>>>>>> better solution.
+>>>>>>> Took a deeper look at vm_reset_perms(). It was introduced by commit
+>>>>>>> 868b104d7379 ("mm/vmalloc: Add flag for freeing of special permsissions").
+>>>>>>> The
+>>>>>>> VM_FLUSH_RESET_PERMS flag is supposed to be set if the vmalloc memory is RO
+>>>>>>> and/or ROX. So set_memory_ro() or set_memory_rox() is supposed to follow up
+>>>>>>> vmalloc(). So the page table should be already split before reaching vfree().
+>>>>>>> I think this why vm_reset_perms() doesn't not check return value.
+>>>>> If vm_reset_perms() is assuming it can't/won't fail, I think it should at least
+>>>>> output a warning if it does?
+>>>> It should. Anyway warning will be raised if split fails. We have somehow
+>>>> mitigation.
+>>>>
+>>>>>>> I scrutinized all the callsites with VM_FLUSH_RESET_PERMS flag set.
+>>>>> Just checking; I think you made a comment before about there only being a few
+>>>>> sites that set VM_FLUSH_RESET_PERMS. But one of them is the helper,
+>>>>> set_vm_flush_reset_perms(). So just making sure you also followed to the places
+>>>>> that use that helper?
+>>>> Yes, I did.
+>>>>
+>>>>>>> The most
+>>>>>>> of them has set_memory_ro() or set_memory_rox() followed.
+>>>>> And are all callsites calling set_memory_*() for the entire cell that was
+>>>>> allocated by vmalloc? If there are cases where it only calls that for a portion
+>>>>> of it, then it's not gurranteed that the memory is correctly split.
+>>>> Yes, all callsites call set_memory_*() for the entire range.
+>>>>
+>>>>>>> But there are 3
+>>>>>>> places I don't see set_memory_ro()/set_memory_rox() is called.
 >>>>>>>
->>>>>>> Some versions of the hypervisor do not support HV_STATUS_AREA_PARENT and
->>>>>>> return HV_STATUS_INVALID_PARAMETER for the second stats page mapping
->>>>>>> request.
+>>>>>>> 1. BPF trampoline allocation. The BPF trampoline calls
+>>>>>>> arch_protect_bpf_trampoline(). The generic implementation does call
+>>>>>>> set_memory_rox(). But the x86 and arm64 implementation just simply return 0.
+>>>>>>> For x86, it is because execmem cache is used and it does call
+>>>>>>> set_memory_rox(). ARM64 doesn't need to split page table before this series,
+>>>>>>> so it should never fail. I think we just need to use the generic
+>>>>>>> implementation (remove arm64 implementation) if this series is merged.
+>>>>> I know zero about BPF. But it looks like the allocation happens in
+>>>>> arch_alloc_bpf_trampoline(), which for arm64, calls bpf_prog_pack_alloc(). And
+>>>>> for small sizes, it grabs some memory from a "pack". So doesn't this mean that
+>>>>> you are calling set_memory_rox() for a sub-region of the cell, so that doesn't
+>>>>> actually help at vm_reset_perms()-time?
+>>>> Took a deeper look at bpf pack allocator. The "pack" is allocated by
+>>>> alloc_new_pack(), which does:
+>>>> bpf_jit_alloc_exec()
+>>>> set_vm_flush_reset_perms()
+>>>> set_memory_rox()
+>>>>
+>>>> If the size is greater than the pack size, it calls:
+>>>> bpf_jit_alloc_exec()
+>>>> set_vm_flush_reset_perms()
+>>>> set_memory_rox()
+>>>>
+>>>> So it looks like bpf trampoline is good, and we don't need do anything. It
+>>>> should be removed from the list. I didn't look deep enough for bpf pack
+>>>> allocator in the first place.
+>>>>
+>>>>>>> 2. BPF dispatcher. It calls execmem_alloc which has VM_FLUSH_RESET_PERMS set.
+>>>>>>> But it is used for rw allocation, so VM_FLUSH_RESET_PERMS should be
+>>>>>>> unnecessary IIUC. So it doesn't matter even though vm_reset_perms() fails.
 >>>>>>>
->>>>>>> This results a failure in module init. Instead of failing, gracefully
->>>>>>> fall back to populating stats_pages[HV_STATS_AREA_PARENT] with the
->>>>>>> already-mapped stats_pages[HV_STATS_AREA_SELF].
+>>>>>>> 3. kprobe. S390's alloc_insn_page() does call set_memory_rox(), x86 also
+>>>>>>> called set_memory_rox() before switching to execmem cache. The execmem cache
+>>>>>>> calls set_memory_rox(). I don't know why ARM64 doesn't call it.
+>>>>>>>
+>>>>>>> So I think we just need to fix #1 and #3 per the above analysis. If this
+>>>>>>> analysis look correct to you guys, I will prepare two patches to fix them.
+>>>>> This all seems quite fragile. I find it interesting that vm_reset_perms() is
+>>>>> doing break-before-make; it sets the PTEs as invalid, then flushes the TLB,
+>>>>> then
+>>>>> sets them to default. But for arm64, at least, I think break-before-make is not
+>>>>> required. We are only changing the permissions so that can be done on live
+>>>>> mappings; essentially change the sequence to; set default, flush TLB.
+>>>> Yeah, I agree it is a little bit fragile. I think this is the "contract" for
+>>>> vmalloc users. You allocate ROX memory via vmalloc, you are required to call
+>>>> set_memory_*(). But there is nothing to guarantee the "contract" is followed.
+>>>> But I don't think this is the only case in kernel.
+>>>>
+>>>>> If we do that, then if the memory was already default, then there is no need to
+>>>>> do anything (so no chance of allocation failure). If the memory was not
+>>>>> default,
+>>>>> then it must have already been split to make it non-default, in which case we
+>>>>> can also gurrantee that no allocations are required.
+>>>>>
+>>>>> What am I missing?
+>>>> The comment says:
+>>>> Set direct map to something invalid so that it won't be cached if there are any
+>>>> accesses after the TLB flush, then flush the TLB and reset the direct map
+>>>> permissions to the default.
+>>>>
+>>>> IIUC, it guarantees the direct map can't be cached in TLB after TLB flush from
+>>>> _vm_unmap_aliases() by setting them invalid because TLB never cache invalid
+>>>> entries. Skipping set direct map to invalid seems break this. Or "changing
+>>>> permission on live mappings" on ARM64 can achieve the same goal?
+>>> Here's my understanding of the intent of the code:
+>>>
+>>> Let's say we start with some memory that has been mapped RO. Our goal is to
+>>> reset the memory back to RW and ensure that no TLB entry remains in the TLB for
+>>> the old RO mapping. There are 2 ways to do that:
+>>
+>>
+>>> Approach 1 (used in current code):
+>>> 1. set PTE to invalid
+>>> 2. invalidate any TLB entry for the VA
+>>> 3. set the PTE to RW
+>>>
+>>> Approach 2:
+>>> 1. set the PTE to RW
+>>> 2. invalidate any TLB entry for the VA
+>> IIUC, the intent of the code is "reset direct map permission *without* leaving a
+>> RW+X window". The TLB flush call actually flushes both VA and direct map together.
+>> So if this is the intent, approach #2 may have VA with X permission but direct
+>> map may be RW at the mean time. It seems break the intent.
+> Ahh! Thanks, it's starting to make more sense now.
+>
+> Though on first sight it seems a bit mad to me to form a tlb flush range that
+> covers all the direct map pages and all the lazy vunmap regions. Is that
+> intended to be a perf optimization or something else? It's not clear from the
+> history.
+
+I think it should be mainly performance driven. I can't see how come two 
+TLB flushes (for vmap and direct map respectively) don't work if I don't 
+miss something.
+
+>
+>
+> Could this be split into 2 operations?
+>
+> 1. unmap the aliases (+ tlbi the aliases).
+> 2. set the direct memory back to default (+ tlbi the direct map region).
+>
+> The only 2 potential problems I can think of are;
+>
+>   - Performance: 2 tlbis instead of 1, but conversely we probably avoid flushing
+> a load of TLB entries that we didn't really need to.
+
+The two tlbis should work. But performance is definitely a concern. It 
+may be hard to justify how much performance impact caused by over flush, 
+but multiple TLBIs is definitely not preferred, particularly on some 
+large scale machines. We have experienced some scalability issues with 
+TLBI due to the large core count on Ampere systems.
+>
+>   - Given there is now no lock around the tlbis (currently it's under
+> vmap_purge_lock) is there a race where a new alias can appear between steps 1
+> and 2? I don't think so, because the memory is allocated to the current mapping
+> so how is it going to get re-mapped?
+
+Yes, I agree. I don't think the race is real. The physical pages will 
+not be freed until vm_reset_perms() is done. The VA may be reallocated, 
+but it will be mapped to different physical pages.
+
+>
+>
+> Could this solve it?
+
+I think it could. But the potential performance impact (two TLBIs) is a 
+real concern.
+
+Anyway the vmalloc user should call set_memory_*() for any RO/ROX 
+mapping, set_memory_*() should split the page table before reaching 
+vm_reset_perms() so it should not fail. If set_memory_*() is not called, 
+it is a bug, it should be fixed, like ARM64 kprobes.
+
+It is definitely welcome to make it more robust, although the warning 
+from split may mitigate this somehow. But I don't think this should be a 
+blocker for this series IMHO.
+
+Thanks,
+Yang
+
+>
+>
+>
+>> Thanks,
+>> Yang
+>>
+>>> The benefit of approach 1 is that it is guarranteed that it is impossible for
+>>> different CPUs to have different translations for the same VA in their
+>>> respective TLB. But for approach 2, it's possible that between steps 1 and 2, 1
+>>> CPU has a RO entry and another CPU has a RW entry. But that will get fixed once
+>>> the TLB is flushed - it's not really an issue.
+>>>
+>>> (There is probably also an obscure way to end up with 2 TLB entries (one with RO
+>>> and one with RW) for the same CPU, but the arm64 architecture permits that as
+>>> long as it's only a permission mismatch).
+>>>
+>>> Anyway, approach 2 is used when changing memory permissions on user mappings, so
+>>> I don't see why we can't take the same approach here. That would solve this
+>>> whole class of issue for us.
+>>>
+>>> Thanks,
+>>> Ryan
+>>>
+>>>
+>>>> Thanks,
+>>>> Yang
+>>>>
+>>>>> Thanks,
+>>>>> Ryan
+>>>>>
+>>>>>
+>>>>>> Tested the below patch with bpftrace kfunc (allocate bpf trampoline) and
+>>>>>> kprobes. It seems work well.
 >>>>>>
->>>>>> What's the impact of this graceful fallback? It occurs to me that if a stats
->>>>>> accumulator, in userspace perhaps, expected to get stats from the 2 pages,
->>>>>> it'd get incorrect values.
+>>>>>> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/
+>>>>>> kprobes.c
+>>>>>> index 0c5d408afd95..c4f8c4750f1e 100644
+>>>>>> --- a/arch/arm64/kernel/probes/kprobes.c
+>>>>>> +++ b/arch/arm64/kernel/probes/kprobes.c
+>>>>>> @@ -10,6 +10,7 @@
 >>>>>>
->>>>> This is going out of scope of this series a bit but I'll explain briefly.
->>>>>
->>>>> When we do add the code to expose these stats to userspace, the SELF and
->>>>> PARENT pages won't be exposed separately, there is no duplication.
->>>>>
->>>>> For each stat counter in the page, we'll expose either the SELF or PARENT
->>>>> value, depending on whether there is anything in that slot (whether it's zero
->>>>> or not).
->>>>>
->>>>> Some stats are available via the SELF page, and some via the PARENT page, but
->>>>> the counters in the page have the same layout. So some counters in the SELF
->>>>> page will all stay zero while on the PARENT page they are updated, and vice
->>>>> versa.
->>>>>
->>>>> I believe the hypervisor takes this strange approach for the purpose of
->>>>> backward compatibility. Introducing L1VH created the need for this SELF/PARENT
->>>>> distinction.
->>>>>
->>>>> Hope that makes some kind of sense...it will be clearer when we post the mshv
->>>>> debugfs code itself.
->>>>>
->>>>> To put it another way, falling back to the SELF page won't cause any impact
->>>>> to userspace because the distinction between the pages is all handled in the
->>>>> driver, and we only read each stat value from either SELF or PARENT.
->>>>>
->>>>> Nuno
->>>>
->>>> Thank you for that explanation, it sorta makes sense.
->>>>
->>>> I think it'd be better if this patch is part of the series that exposes the stats
->>>> to userspace, so that it can be reviewed in context with the rest of the code in
->>>> the driver that manages the pick-and-choose of a stat value from the SELF/PARENT
->>>> page.
->>>>
->>> Good idea, I think I'll do that. Thanks!
->>>
->>>> Unless there's an active problem now in the upstream kernel that this patch solves?
->>>> i.e. are the versions of the hypervisor that don't support the PARENT stats
->>>> page available in the wild?
->>>>
->>> I thought there was, but on reflection, no it doesn't solve a problem that exists in
->>> the code today.
->>>
->>> Nuno
->>>
->>
->> The usecases for stats exposed by the hypervisor are:
->> 1) used within the kernel by root scheduler
->> 2) exposed to userspace via debugfs.
->>
->> I thought we are addressing the first use-case here (patch1 in this series). If root scheduler support was upstreamed then this patchset does solve a problem in upstream code.
->>
-> 
-> Sorry about the long context, I couldn't figure out a good spot to snip.
-> 
-> Thanks for calling that out. I think root scheduler support has been upstreamed if I'm reading
-> root_scheduler_init() right, Nuno can confirm.
-> 
-Correct. But the user of the PARENT == SELF workaround is L1VH, which doesn't support root
-scheduler today. So technically the fix doesn't do anything if we're just talking about the stats
-mapping used by the root scheduler code.
-
-> With the series applied, I don't see any of the code that picks and chooses the stats from
-> the PARENT/SELF pages even for the kernel case, rather there's a straight memcpy of the
-> stats pages in the create_vp ioctl.
-> 
-This memcpy:
-memcpy(vp->vp_stats_pages, stats_pages, sizeof(stats_pages));
-
-Is not copying the contents of the pages. It's copying array of pointers to the SELF and PARENT
-pages:
-
-struct mshv_vp{
-/* ... */
-	struct hv_stats_page *vp_stats_pages[2];
-/* ... */
-};
-
-> Is the kernel usage with the root scheduler somehow immune from the problem userspace would
-> face with the duplicated pages? If not, I'd say that it's an argument for dropping patch 1
-> and 2, instead of including patch 2, or to fold them together. We don't want a state in the
-> upstream kernel where a commit introduces a known problem just to be solved by the following
-> commit.
-> 
-Yes, it's immune. Nothing is being accumulated and therefore double-counted. There's a signal
-value in the stats page which is used to determine if the dispatch thread is blocked. It's
-just a boolean. See mshv_vp_dispatch_thread_blocked().
-
-Thanks
-Nuno
-
-> Thanks,
-> Easwar (he/him)
+>>>>>>     #define pr_fmt(fmt) "kprobes: " fmt
+>>>>>>
+>>>>>> +#include <linux/execmem.h>
+>>>>>>     #include <linux/extable.h>
+>>>>>>     #include <linux/kasan.h>
+>>>>>>     #include <linux/kernel.h>
+>>>>>> @@ -41,6 +42,17 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+>>>>>>     static void __kprobes
+>>>>>>     post_kprobe_handler(struct kprobe *, struct kprobe_ctlblk *, struct pt_regs
+>>>>>> *);
+>>>>>>
+>>>>>> +void *alloc_insn_page(void)
+>>>>>> +{
+>>>>>> +       void *page;
+>>>>>> +
+>>>>>> +       page = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
+>>>>>> +       if (!page)
+>>>>>> +               return NULL;
+>>>>>> +       set_memory_rox((unsigned long)page, 1);
+>>>>>> +       return page;
+>>>>>> +}
+>>>>>> +
+>>>>>>     static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
+>>>>>>     {
+>>>>>>            kprobe_opcode_t *addr = p->ainsn.xol_insn;
+>>>>>> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+>>>>>> index 52ffe115a8c4..3e301bc2cd66 100644
+>>>>>> --- a/arch/arm64/net/bpf_jit_comp.c
+>>>>>> +++ b/arch/arm64/net/bpf_jit_comp.c
+>>>>>> @@ -2717,11 +2717,6 @@ void arch_free_bpf_trampoline(void *image, unsigned int
+>>>>>> size)
+>>>>>>            bpf_prog_pack_free(image, size);
+>>>>>>     }
+>>>>>>
+>>>>>> -int arch_protect_bpf_trampoline(void *image, unsigned int size)
+>>>>>> -{
+>>>>>> -       return 0;
+>>>>>> -}
+>>>>>> -
+>>>>>>     int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
+>>>>>>                                    void *ro_image_end, const struct
+>>>>>> btf_func_model *m,
+>>>>>>                                    u32 flags, struct bpf_tramp_links *tlinks,
+>>>>>>
+>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Yang
+>>>>>>>
+>>>>>>>>> Thanks,
+>>>>>>>>> Ryan
+>>>>>>>>>
+>>>>>>>>>> Thanks,
+>>>>>>>>>> Yang
+>>>>>>>>>>
+>>>>>>>>>>> Thanks,
+>>>>>>>>>>> Yang
+>>>>>>>>>>>
+>>>>>>>>>>>> Thanks,
+>>>>>>>>>>>> Ryan
+>>>>>>>>>>>>
+>>>>>>>>>>>>
 
 
