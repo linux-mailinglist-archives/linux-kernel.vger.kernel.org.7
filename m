@@ -1,223 +1,114 @@
-Return-Path: <linux-kernel+bounces-809129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F276B508F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:44:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A32EB508F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B59917F5DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:44:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21A851BC73FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FD126F285;
-	Tue,  9 Sep 2025 22:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FBF26F299;
+	Tue,  9 Sep 2025 22:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GTRrEs6B"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mrihJUNS"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D690624BD04
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 22:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3365F24BD04;
+	Tue,  9 Sep 2025 22:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757457875; cv=none; b=k08S1ip1R0OK4bn/zst1z9jEEKTnnaJNlU8jyWsvSNOtkbVSTfHz1zZtZoNlhRCee/da0ZPVRkVn4tyTJ9Gu978NN97qdNBj0U34okAbKPUfVO/3ST47KOJLyBI5DkmSnuRQJCbyeTBKcrAfHePeAdtlAl2dQKiYTQn37ONhO8U=
+	t=1757457865; cv=none; b=rnAoqVUNYmSenkPVMXWHEdgsc/yhEOo4K5Yp/exiIhsFPx4DYgvQ5eZWVsHcoeAT3fslhSwZn1g/bX4qXDmRp+gIKZc7vGrdrXQoOqlxf7TbqSJCA4XkOpBWrr/UFabP/cDJcE2kKeS9p8B4514gpZPBqRO/42JxrW/NUr3US5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757457875; c=relaxed/simple;
-	bh=fHEIhXL5J/DwZVzuOIC1PVUyNE5gy9b51HvDo9CjZp4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZG5JZjPKbixvkyyk2mwLuDYwPA1GRYKu4iz3+soozPJe89u33fGb17mwm+9DsQIRYgbpoNBnp7tLlygovPLFHnC8SrJUsNqlNVB8JhmvXCCUFZHo7Dj7NsHjMfJ/xaSWfNL7eIK6Nplq7IeyJd/gD7BOY2j85PcFWV/QsguTtcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GTRrEs6B; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-329b760080fso6062727a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:44:33 -0700 (PDT)
+	s=arc-20240116; t=1757457865; c=relaxed/simple;
+	bh=mHOW0pMk6jXzf0q9hguFi3MmSKENuF1wCLmMMrRosro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VkjRqwMjzV3TO3KLDHtOEmVzAFED4pqlwdhQuZfvdoWWybCY/0/wrd8O6UMK4RP4tgnGdog9ND6SiqtNZa80a6aENs144LtL6a+/2uOLh8waucAIVKQ3ZuV4q3o2yeHWLgaEIpZrUUxYX0/1CvkosZlqK4pdnaupMeaMD/1tAds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mrihJUNS; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-72631c2c2fbso65763026d6.1;
+        Tue, 09 Sep 2025 15:44:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757457873; x=1758062673; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z4yfBU9AYetve95lMaxYZGTwSsv9zgxSypdrW9Vf/Ik=;
-        b=GTRrEs6BpR+Bmqfzjf1h0+Re6XcSROBq82MLaOf8VHAEicRlpwGiEcfaU4jfj+m2ZU
-         IwQeZuL30xUZbFTaHFP5BUgF0BRnUqazM6OqmkD/0H6YVDd/CKp1RCf/t5xCW32GO81F
-         HvwBlgDFhYoQeD5EGvhbNTYeB4bDZU6K9gAqA=
+        d=gmail.com; s=20230601; t=1757457863; x=1758062663; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zDhSKvwOmcaLxH03f1pk2vtgPBVH47yS/bZ5KVlu6Vo=;
+        b=mrihJUNSErSdzPU2+UtEz3KCf2uz24pw4GxtnBwSmGbBEKS+opypnXC4nyhu70VNCy
+         UeMfipKFhRq0nbtVh0kdT9vKsDj62/aHqojR1vbSgfKVnlJ/8TDS9lfv1zb2K8wjuQ+B
+         pJ/50Vki+cLp07IhkmPGNanfrHphnzLGigeF8AUABpXFjHS6vG9IzpY5toKvD43SJbhd
+         wwMYIR9Pc1Vnb+kreIrMKpO1n9EPx48WQRcj+xVssdz47+QydttJXGtaA+0K0KHqUD1o
+         4kADHJts3LLKEx5145Z5/QenY2LkSrjFuAxlJUqSMBPlrlhal4NC8XyPbIM8wyDRCgLQ
+         qNxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757457873; x=1758062673;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z4yfBU9AYetve95lMaxYZGTwSsv9zgxSypdrW9Vf/Ik=;
-        b=OglbP50OAwMKrQkouRYbtfQNxotHElNKqrv9sZ/gaHmmO/U8XRUs/Em7m3sHmH6lzf
-         T8wkA1drM6mpAzUYIS1YurDW1AMrbf2PlKZKOAyWBtNIbHSD7z5fRhWB2evvDUCguULF
-         zmfhsZ26OLFZWLvrQSye6Ipoqgvdf5Ul+CJ/tzu0+tkIgcSyqCQXkGGcDZctwMC/b8ic
-         0lb22UROWDWlDLNvsYj9jmD1FcbesPnqVOwcEDWTtfPOdkvwtBPXtzx86063A+ZsVa7p
-         hXgjhKZa70S7KfNs90LD+t2M4eSBpr9YtCz4H7zei4tzw3ko0fYfUnIbbnQMLf4sjGrm
-         zbPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEWabzAPbKw88vZwidzrNEhLM/VuF2qbns5GigmF/9tTLI2T1Ann4D3V6r9fiRe2iDBHEOqiNhCssM9Cw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrfHweHT1AEBkKQe3da6cx0mR1svo06UcNShJjDIT+7IpFM5mG
-	ls61fvp7MGsqW7gJShkckKm4DPFHiFwlj8lCwDxPB8J8TCvhhtrdoTHYdwBHOdr4tzOx4arXe1Q
-	MVAg=
-X-Gm-Gg: ASbGncszu09vKZwPX+FhngnbyoUSot27eT5eP9agrL625Rg1bLnW1oUd4FKQJ170xiD
-	t1EkZMVCKrmN//N5FxX1NmzmxU3N2/mDXPelUiHwkmm9YzmrAI4s9pmjaH+Ejkku0LnxGJ4R9Bb
-	2IwP99hxtv7zyB+GIwQOpEIGxmk9fzxqihfMl8BtDRm5mZ0tjNtMaGmMp/+hFzHgZaANagmHNvr
-	8D1+egmWmE6vZnpyAiS+AKZ6OfC31Cs9NXsqYfkmKzPv1C+owbLHfGRvdRO33EpskXgRoQzztOk
-	W6AOAUieKcISuBHdWFec90tlJOgCL2gPZksxd+difslBJL30wn1NqyI3IFiLzt5BuF3LC6IcuQ9
-	N6hvzyJUhQrfJzlA4fDQNfZoXcbRL8UqgtwW+hdbOqT2R4ezvTTpJZK3eEi2b5exQ8ffm5QtoVW
-	qb
-X-Google-Smtp-Source: AGHT+IGY64YiG6x4PUk/zr64N7ouqs2Xo6feJbv/kzsCKIYgXdBLwpqw7OPh2W9iN+OTgRT3xaikpg==
-X-Received: by 2002:a17:90b:1e4a:b0:32b:6964:1474 with SMTP id 98e67ed59e1d1-32d43f00776mr20239666a91.15.1757457873217;
-        Tue, 09 Sep 2025 15:44:33 -0700 (PDT)
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com. [209.85.215.175])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32da897e2dbsm1356666a91.1.2025.09.09.15.44.32
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1757457863; x=1758062663;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zDhSKvwOmcaLxH03f1pk2vtgPBVH47yS/bZ5KVlu6Vo=;
+        b=rqEjbnZ0wcN6S0lsaDbk6/SQBQ0m4rphezsFGP/LhpDQStXm/XmOZ/ZbNRa7eappEk
+         afa93sd84lmKgLGT9KY9ufFJ9pL1/aTFqju2aga06WyJ/1/9uY0l85i5oWPeCZfKjDoW
+         xz5nsiaJU6gLgehvodlno0lwPdfDAAqf55kQeAvdUsC6CSSM1BhZ9E+5CSPcV6T9nL+J
+         +vIuluV9+72t8kdJnm47rMPY2hVHQHC3+5GuxutIvC1Xg2xQuI4BIuT1+9xayPKftAAr
+         p7+YBu17YZU4gpulKUcg1agsV+stnF335lzE7c7xxkInrvURqYM7FAcpA5iStfGvA3ZS
+         HvhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMBgKKHO54FzvLQxNvgU0/9+IF17CGmHkoML3ZHAP3vtEFC7XRPCkfEBFNovI72ZLdU1oBtJ7Xf6Drfvo=@vger.kernel.org, AJvYcCWVO9KNyI8uduyh5M9du2tLrMhskApU3qNePDY19Lsz/kqo1/y9CtEKYDFjud1vSUaqxszYAqWpez5fcg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzPujYqqr2naAonhuS8mKWOzokbMdlnUqr6e8SZttsw/oNKfqM
+	FtPL+TM6NkClr56S7FhSuBE6NsFqkaAlLtIX5ck4QSJ4eyWp5TwilmsC
+X-Gm-Gg: ASbGncsRf4cHRqM3BmvZhIl7ViJkKcQt6s/rqpaaLbOuhDnrlLyUxbPIoVUQqWVIjZD
+	sUvmBPWkVhACtvieuBwAFTCPhLc5eYky8SmCFRn4EM4yZfYC3U/C+CO4aksh+dwWJcQCdQ+I6Uo
+	COuIbe8sCKM6nTkf63V3BGvhU+5gIGecIe4xeXxaQJ5adUsZ+FFntNL6EPnHS0SI7OWtSKq+Nt+
+	1USlQFHunK9bOP1HW4+eqPu1uWUH4Z27v6vsn2Ofsff7sAckXzxjQk5nTdrRsTVv1U2FdU6t/IV
+	mkc4aBdcipVraNqhOcLCzR/tBQNkjEnJWrJiixdN7q8qzLwGK7T3gJuq/1gIF73b6umektJq/dd
+	3RWkXnjCd7GtcW3jbImHOkb3EITtsPhGECOpcQdwpd8co7EzZCB0HDgewWbx+
+X-Google-Smtp-Source: AGHT+IFftb/s6C99gnlarVoH+qdpuolMtVHzqbJlBSqjc/snF8vYB08V9lXx7WoABVfHLRj6HTJuRQ==
+X-Received: by 2002:a05:620a:2954:b0:815:6a98:a1ab with SMTP id af79cd13be357-8156a98a43fmr1267976485a.70.1757457863073;
+        Tue, 09 Sep 2025 15:44:23 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b535deb92sm191239185a.0.2025.09.09.15.44.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 15:44:33 -0700 (PDT)
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b52047b3f19so3663844a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:44:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVUp+K5xk9HGB4MhGW3HrLVe/zRYXWXjgAZeN3K8VR25ghbfu78qT+mBsic9VQcuiDA36SSPHR9Kl+jVN4=@vger.kernel.org
-X-Received: by 2002:a17:903:b0e:b0:249:f16:f086 with SMTP id
- d9443c01a7336-251718dbaf3mr161248035ad.42.1757457871970; Tue, 09 Sep 2025
- 15:44:31 -0700 (PDT)
+        Tue, 09 Sep 2025 15:44:22 -0700 (PDT)
+Message-ID: <4ba5dff8-9f07-4750-8f42-42f885646964@gmail.com>
+Date: Tue, 9 Sep 2025 15:44:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAD=FV=XWhDtFWegUUeACxcrSTFh7kbmwVFy3sioboh2fgk3Evw@mail.gmail.com>
- <20250909193641.236527-1-john.ripple@keysight.com>
-In-Reply-To: <20250909193641.236527-1-john.ripple@keysight.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 9 Sep 2025 15:44:19 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WwYYQ67j9vTV-xYLcALPN3J3nj56PvEOOhMQ1T3sqJuQ@mail.gmail.com>
-X-Gm-Features: Ac12FXw1reTwaSFLkM9n4dHmDjCjlmvWRm6UTmr6JNR-KB3ItUYGPK10m1cxbG8
-Message-ID: <CAD=FV=WwYYQ67j9vTV-xYLcALPN3J3nj56PvEOOhMQ1T3sqJuQ@mail.gmail.com>
-Subject: Re: [PATCH V2] drm/bridge: ti-sn65dsi86: Add support for DisplayPort
- mode with HPD
-To: John Ripple <john.ripple@keysight.com>
-Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com, 
-	andrzej.hajda@intel.com, blake.vermeer@keysight.com, 
-	dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se, 
-	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com, 
-	matt_laubhan@keysight.com, mripard@kernel.org, neil.armstrong@linaro.org, 
-	rfoss@kernel.org, simona@ffwll.ch, tzimmermann@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: linux-next: unexpected files in the broadcom tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250910083713.4c5ef7d2@canb.auug.org.au>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20250910083713.4c5ef7d2@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 9/9/25 15:37, Stephen Rothwell wrote:
+> Hi all,
+> 
+> While fetching the broadcom tree, I noticed that the following unexpected
+> files were present:
+> 
+>    arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts.orig
+>    arch/arm64/boot/dts/broadcom/rp1-common.dtsi.orig
+> 
+> They are introduced in commit
+> 
+>    b00f5cbb7abb ("arm64: dts: broadcom: Enable USB devicetree entries for Rpi5")
+> 
 
-On Tue, Sep 9, 2025 at 12:36=E2=80=AFPM John Ripple <john.ripple@keysight.c=
-om> wrote:
->
-> Hi,
->
-> >> +static int ti_sn65dsi86_read(struct ti_sn65dsi86 *pdata, unsigned int=
- reg,
-> >> +                            unsigned int *val)
-> >
-> >This is reading a byte, right? So "val" should be an "u8 *". Yeah,
-> >that means you need a local variable to adjust for the generic regmap
-> >call, but it makes a cleaner and more obvious API to the users in this
-> >file.
->
-> The regmap_read function takes in an "unsigned int *" as the "val"
-> parameter and I'm using it to return u32 values (which could probably
-> be u8 instead). Would it be better to leave this as the more generic
-> int type or change it to u8 so its more specific to this driver?
-> If this function gets used elsewhere in this file at some point, I'm
-> not sure everything that could be read would be single bytes.
-
-Sure, the "regmap_read" takes "unsigned int *" because it's a generic
-API. ...but we initialize the regmap API with:
-
-  .reg_bits =3D 8,
-  .val_bits =3D 8,
-
-In other words, each read/write is 8-byte AKA 1 byte. So you're not
-returning 32-bit values, but 8-bit values.
-
-There's already a 16-bit version of this function:
-ti_sn65dsi86_read_u16(). Reading that function and yours next to each
-other makes it seem (at first glance) like yours is returning 32-bits.
-It's not. It would be much more documenting showing that it returns
-8-bits. If we need a 32-bit version for some reason we'll have to
-actually write that up.
-
-
-> >> @@ -1219,12 +1246,28 @@ static void ti_sn_bridge_hpd_enable(struct drm=
-_bridge *bridge)
-> >>          */
-> >>
-> >>         pm_runtime_get_sync(pdata->dev);
-> >> +
-> >> +       /* Enable HPD and PLL events. */
-> >> +       regmap_write(pdata->regmap, SN_IRQ_EVENTS_EN_REG,
-> >> +                    PLL_UNLOCK_EN |
-> >> +                    HPD_REPLUG_EN |
-> >> +                    HPD_REMOVAL_EN |
-> >> +                    HPD_INSERTION_EN |
-> >> +                    IRQ_HPD_EN);
-> >
-> >* Shouldn't this be `regmap_update_bits()` to just update the bits
-> >related to HPD?
-> >
-> >* why enable "PLL_UNLOCK_EN" when you don't handle it?
-> >
-> >* I also don't think your IRQ handler handles "replug" and "irq_hpd",
-> >right? So you shouldn't enable those either?
->
-> The IRQ_HPD_EN documentation said:
-> "When IRQ_EN and IRQ_HPD_EN is enabled, the DSIx6 will assert the
-> IRQ whenever the eDP generates a IRQ_HPD event. An IRQ_HPD event
-> is defined as a change from INSERTION state to the IRQ_HPD state."
->
-> I thought that meant the IRQ_HPD_EN needed to be enabled to get any irqs,
-> but when I tried removing the IRQ_HPD_EN and it doesn't seem to change
-> anything, so I'm not sure what the documentation is trying to say.
-
-IRQ_HPD is defined in the spec. It's basically an "attention"
-interrupt from the panel to ti-sn65dsi86. It (and replug) are a
-temporary deassertion of HPD while a display is connected.
-
-See "Figure 17. HPD State Diagram" for a description of all these
-things. Note that the min/max values there are (I think) because
-sn65dsi86's HPD timings are implemented by a very inaccurate ring
-oscillator.
-
-If you see that "replug" or "irq_hpd" are needed then your interrupt
-handler should do something with them.
-
-
-> >> @@ -1309,6 +1352,32 @@ static int ti_sn_bridge_parse_dsi_host(struct t=
-i_sn65dsi86 *pdata)
-> >>         return 0;
-> >>  }
-> >>
-> >> +static irqreturn_t ti_sn_bridge_interrupt(int irq, void *private)
-> >> +{
-> >> +       struct ti_sn65dsi86 *pdata =3D private;
-> >> +       struct drm_device *dev =3D pdata->bridge.dev;
-> >
-> >I'm unsure if accessing "dev" here without any sort of locking is
-> >safe... It feels like, in theory, "detach" could be called and race
-> >with the IRQ handler? Maybe you need a spinlock to be sure?
->
-> I tested a spinlock added to the ti-sn65dsi86 structure that gets used
-> in the ti_sn_bridge_detach and ti_sn_bridge_interrupt functions and it
-> seems to work. Is there another spinlock created somewhere that I could
-> use instead? Is using the spin lock in the interrupt and detach functions
-> the correct way to do it?
-
-In this case you could probably use a mutex since you're running a
-threaded IRQ handler and sleeping is allowed. You could probably
-create a new mutex for this case.
-
-I assume you'd need some sort of boolean variable instead of just
-checking if "bridge.dev" is non-NULL? "bridge.dev" is set by the DRM
-core before your attach is called (and cleared after detach). Maybe
-just have a boolean about whether HPD is enabled and only send the
-event if HPD is enabled? Then use the mutex to protect access to that
-boolean between the IRQ handler and the HPD enable/disable code?
-
--Doug
+Now fixed, thanks Stephen!
+-- 
+Florian
 
