@@ -1,126 +1,656 @@
-Return-Path: <linux-kernel+bounces-808488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F277BB5006C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:58:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59FE6B5006B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4437160D70
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:58:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D601C6228D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57CB34DCFE;
-	Tue,  9 Sep 2025 14:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D8734F476;
+	Tue,  9 Sep 2025 14:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ty9fQXAc"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HzyQuQM0"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C8E1F0E2E
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201A51F0E2E;
+	Tue,  9 Sep 2025 14:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757429928; cv=none; b=QEr200WL4zpYBOwt1uDfMxc4Gs0rNcMwvyNPBCpF6W/Tq4mordbj1J+waKzdbjfwGYJKbccZmAHeldnE6lmIVQkZ3SbYfxVmkTmnsjGWxy4B8FyNJ5AFXwtpl9SFwGeKFhH6Xtd8fNrTqzav86eeakgpXHDB2lJ/bEz2trOcpNg=
+	t=1757429913; cv=none; b=fERIjMxuBPaeMPZaqCqHLKjrKE+8vLm645mc3Pdqem6yHVglM5ikITO3nRE/rFhAY/zJDZNxo2I0YJVCQqzx4OUOBdv1cVJrOBU0xUsa46D4U47zocZPio9dJSna6cM7DA8t6KsppckZhQAc/OLfwS+Pmfqg7vHjWHd4BkMDZPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757429928; c=relaxed/simple;
-	bh=GPXq7GLxQi+GK9C9f/V23ZUAplO/KiiJUwnq8p2H+lY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gDFqCWjuf3BcEDIUIN3UZJxEBtKjDGx13K+WaoxOWoHgpe8AF76v7K1MGgjbl8BvMR+Pk0kfoD5qYV+zwWRsZpk34d5Cv4EcB4EpA4xnEoIfahG6XgBGR+0kDH3ggH8YM1LRxDpYkhpZ8kSM19AlVJj4xfSPSj9FVvtBbCJNyi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ty9fQXAc; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7ae31caso961889366b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:58:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757429925; x=1758034725; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6m8UfLRkwYkCoRG9q4AW4F/X1zLc8k+fkHHKjv2oYWI=;
-        b=Ty9fQXAc/1EmQunP0B4G1cSg0S5LG+0I0eeAJUOWjgkdJrrWkgLS1LW7aMennvWvak
-         ZnNaW5Eo5SczahS4mB0wOlPRNwMXNpmu0G0phua57B89U0jWkrHWKIDOGSxas7YXnIdR
-         /27SCwCXVOQoB2XgQXLpP8ZKiJu189mTOmta+vYQ+cHSUqE/zWOHP7Unn2w2lEeznIof
-         Y6wWhlOr+igmjKz4aK9HNO16NNsQNZ43ynQfNd+qmDskrsjrNGL2qU/AcDyV2KxFWle2
-         khZ0gCQazRoEqsz+TFrbQ7OLzBKIfGSRlMCNd77x3zq4ppsnKZi8XBvyjh/6SXI28gQ4
-         OJAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757429925; x=1758034725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6m8UfLRkwYkCoRG9q4AW4F/X1zLc8k+fkHHKjv2oYWI=;
-        b=K0uYZCQ/NVkqFGh5UUrE0VA4jFWdnViAme89AQEfiuRrDZCBulM2yskQLnEoMNo2H/
-         J63DD7AazYfr4w+O4VmKnJyPpPzG0bv/1jz2uWghFt1OG1kHhxaMzTQ9ISqEMrcjeFqP
-         d08k5hhukUrkjpmDVQO37gn7OCQ4vUGMRwxQv7HETlhFmawGHGHmXuITHoOvoEnPzCDD
-         LtXvtULELUY6/uGPE4E+pyrX1+oLzZMQUalbxcRGzQcetZJncJL3EHJKh7MG8uPUzLnx
-         1CAxImfbDfiVDs0Q4c95ty6jZ5zE5qZTqQbdexpmZVJBjQC/g/sNxJQoJK/gT9ZHVP8X
-         yFfg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9hxg3xK0ssdDD83Dx1MU2gvuCDCVutgezhB5PZVj53ukIn0mLLB52AxpYJKeJJ6ridoc9ecQ8DrgzyE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypIg4VwoQpJYHkn1X6VHdykdamwglyUL94EV1SK/AV3EaWxm+g
-	YnJ+ypYQ6vYKc4QUfzqsXSP5i0Ll8qHCtb70/KlBbRqiaGllj7y4b51igjwLlZFMdzOmSq/Tj+A
-	nHn59YbqCNF2m5AqK6j4+PoRtX7CXww8=
-X-Gm-Gg: ASbGncufM83V83pnJ4tcbnmiIbGzHY9mjUEcytmT5ILFxBZ2xf+eyhRBIXK9gyZSR6B
-	HnRqdSoEbyhtNMTd+6saK6i2hBJCqXVgARSaGqfbD57hsrOj1LELDKMPM8BcAskyY5aQYG7VsPM
-	ELtcKAGBwTZXKeKkQwwaOtgOtWP4uANTuVOqAGGfShC9AAdWv3fZHXWkPkwf/BcjHKUozvjXJ7e
-	r8GNWa10kdG2zzsXeIFeg==
-X-Google-Smtp-Source: AGHT+IFWy3IZpvbKMW0rMWL9k3GfHz9yi8+0YGLSFX8InBG0mqrVOBpoQPrpe/jA576SWjVAzPg+gM9DAa/5Tc1gW4U=
-X-Received: by 2002:a17:907:d2a:b0:ae1:a6a0:f2fe with SMTP id
- a640c23a62f3a-b04b1542faemr1056559566b.36.1757429924635; Tue, 09 Sep 2025
- 07:58:44 -0700 (PDT)
+	s=arc-20240116; t=1757429913; c=relaxed/simple;
+	bh=u8ijUomr0bOnM7IBFhzHBf38r9OrZQZRjHK6Z0EfN/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aAvAbgfORJOpD+3f4W62iVVaJj8CHw46H8wqCSoxk37UnfVh0960IU9wm/5mzh8N/H/i5BpHooegLdZbvZ4LR8XfUaHjbLktp08qc/BceVUWWCbSzfP4tsH1d1UzenzOLtlNRy3VAKqm8Kmi4DabJGvPKJKraUvUAUskZyJIDlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HzyQuQM0; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 589EwQDH4126289;
+	Tue, 9 Sep 2025 09:58:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757429906;
+	bh=QuCNocEOd3QBTdRIfp3vRKjRs/1OlK64CIIiXJoMXd0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=HzyQuQM0iiibp1GxP81KH/Md1vj5vDhCnne7h9ltQBrsfA5v9dOJdoFwCIwnNHtd6
+	 h1j4DWWjC33EntGnoUJoSwIpiVz3MqAvM17xKW19FdtcYOrK2bR0GhjQkl+TtFnMJ8
+	 M6SbDujhfGjGTsnpmLKKYDJSBRM1RMp6A5uUqxBI=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 589EwQ3n3857324
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 9 Sep 2025 09:58:26 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 9
+ Sep 2025 09:58:26 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 9 Sep 2025 09:58:26 -0500
+Received: from [10.247.30.162] (ula0226330.dhcp.ti.com [10.247.30.162])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 589EwPkA2507864;
+	Tue, 9 Sep 2025 09:58:26 -0500
+Message-ID: <b1f8bbaf-d8f8-497a-b2a3-febfb0493b73@ti.com>
+Date: Tue, 9 Sep 2025 09:58:25 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905191357.78298-1-ryncsn@gmail.com> <20250905191357.78298-6-ryncsn@gmail.com>
- <0bbda135-068a-45bd-afd6-3f5cdf4e570d@redhat.com>
-In-Reply-To: <0bbda135-068a-45bd-afd6-3f5cdf4e570d@redhat.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 9 Sep 2025 22:58:07 +0800
-X-Gm-Features: AS18NWDGLlwdkrvwzMJL7zTY0JXDCsXG30VSD6e-dpjxVCyt6CGtodppdyFsSnU
-Message-ID: <CAMgjq7CsKYWzAD0Ev7q0cocQO8kOYLmhgLD0wk6AX-HUzWFJZQ@mail.gmail.com>
-Subject: Re: [PATCH v2 05/15] mm, swap: always lock and check the swap cache
- folio before use
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Yosry Ahmed <yosryahmed@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] counter: ti-dmtimer-cap : capture driver support for
+ OMAP DM timer
+To: Gokul Praveen <g-praveen@ti.com>, <j-keerthy@ti.com>, <vigneshr@ti.com>,
+        <wbg@kernel.org>, <linux-kernel@vger.kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <u-kumar1@ti.com>, <n-francis@ti.com>
+References: <20250909080042.36127-1-g-praveen@ti.com>
+ <20250909080042.36127-3-g-praveen@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250909080042.36127-3-g-praveen@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Sep 8, 2025 at 10:08=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
->
-> >
-> >               folio_lock(folio);
-> > +             if (!folio_matches_swap_entry(folio, entry)) {
-> > +                     folio_unlock(folio);
-> > +                     folio_put(folio);
-> > +                     continue;
-> > +             }
-> > +
->
-> I wonder if we should put that into unuse_pte() instead. It checks for
-> other types of races (like the page table entry getting modified) already=
-.
+On 9/9/25 3:00 AM, Gokul Praveen wrote:
+> Enable capture driver support for OMAP DM timer hardware.
+> 
+> DM timer hardware supports capture feature.It can be used
+> to timestamp events (falling/rising edges) detected on input signal.
+> 
+> The timer IO pin can also be configured in PWM mode but this
+> driver supports simple independent capture functionality.
+> 
+> It is assumed that the capture signal is active else both duty cycle
+> and period returned by driver will not be valid.
+> 
+> Signed-off-by: Gokul Praveen <g-praveen@ti.com>
+> ---
+> BOOT LOGS:
+> https://gist.github.com/GokulPraveen2001/581fa07b2e93f30dea9f6188a97b944b
+> 
+> TIMER CAPTURE DTSO:
+> 
+> &{/} {
+> 
+>         main_cap10: dmtimer-main-cap-10 {
+>                 compatible = "ti,omap-dmtimer-cap";
+>                 ti,timers = <&main_timer10>;
+>                 pinctrl-0 = <&maindmtimer1_pins_default>,<&main_timer10_ctrl_config>;
+>                 pinctrl-names = "default";
+>         };
+> 
+> };
+> 
+> &main_timer10{
+>         status = "okay";
+> };
+> 
+> /*MAIN_TIMERIO1*/
+> &main_pmx0 {
+>      maindmtimer1_pins_default: maindmtimer1-default-pins {
+>          pinctrl-single,pins = <
+>              J784S4_IOPAD(0x0ec, PIN_INPUT, 0) /* (AN37) TIMER_IO1:Input mode for Capture*/
+>          >;
+>      };
+> 
+> };
+> 
+> /*Sets in CAP mode using MAIN TIMER IOX(X=1 here) CTRL MMR REGISTERS*/
+> &main_timerio_input {
+>         main_timer10_ctrl_config: main-timer10-ctrl-config {
+>                 pinctrl-single,pins = <
+>                         J784S4_IOPAD(0x28,0,0x1)>; /*  MAIN_TIMER_10 will use MAIN_TIMERIO1 pin(maindmtimer1-default-pins) for capture*/
+>         };
+> };
+> ---
+>   drivers/counter/Kconfig          |  13 +
+>   drivers/counter/Makefile         |   1 +
+>   drivers/counter/ti-dmtimer-cap.c | 455 +++++++++++++++++++++++++++++++
+>   3 files changed, 469 insertions(+)
+>   create mode 100644 drivers/counter/ti-dmtimer-cap.c
+> 
+> diff --git a/drivers/counter/Kconfig b/drivers/counter/Kconfig
+> index d30d22dfe577..bec07cf15779 100644
+> --- a/drivers/counter/Kconfig
+> +++ b/drivers/counter/Kconfig
+> @@ -121,6 +121,19 @@ config STM32_TIMER_CNT
+>   	  To compile this driver as a module, choose M here: the
+>   	  module will be called stm32-timer-cnt.
+>   
+> +config TI_DMTIMER_CAPTURE
+> +	tristate "OMAP Dual-Mode Timer Capture support"
+> +	depends on OMAP_DM_TIMER || COMPILE_TEST
+> +	help
+> +	  Select this option to use the Texas Instruments OMAP DM Timer
+> +	  driver in capture mode.
+> +
+> +	  It can be used to timestamp events (falling/rising edges) detected
+> +	  on Timer input signal.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called ti-dmtimer-cap.
+> +
+>   config TI_ECAP_CAPTURE
+>   	tristate "TI eCAP capture driver"
+>   	depends on ARCH_OMAP2PLUS || ARCH_DAVINCI_DA8XX || ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
+> diff --git a/drivers/counter/Makefile b/drivers/counter/Makefile
+> index fa3c1d08f706..7c2d226fe984 100644
+> --- a/drivers/counter/Makefile
+> +++ b/drivers/counter/Makefile
+> @@ -17,3 +17,4 @@ obj-$(CONFIG_FTM_QUADDEC)	+= ftm-quaddec.o
+>   obj-$(CONFIG_MICROCHIP_TCB_CAPTURE)	+= microchip-tcb-capture.o
+>   obj-$(CONFIG_INTEL_QEP)		+= intel-qep.o
+>   obj-$(CONFIG_TI_ECAP_CAPTURE)	+= ti-ecap-capture.o
+> +obj-$(CONFIG_TI_DMTIMER_CAPTURE)	+=ti-dmtimer-cap.o
+> diff --git a/drivers/counter/ti-dmtimer-cap.c b/drivers/counter/ti-dmtimer-cap.c
+> new file mode 100644
+> index 000000000000..dedfb15faa10
+> --- /dev/null
+> +++ b/drivers/counter/ti-dmtimer-cap.c
+> @@ -0,0 +1,455 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * DM timer Capture Driver
 
-Doing this earlier here might help to avoid the folio_wait_writeback
-below? And checking the folio right after locking seems to follow the
-convention more strictly.
+Add proper copyright.
 
-I'm fine either way though as there should be almost no difference.
+> + */
+> +
+> +#include <clocksource/timer-ti-dm.h>
+> +#include <linux/atomic.h>
+> +#include <linux/counter.h>
+> +#include <linux/clk.h>
+> +#include <linux/err.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_data/dmtimer-omap.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/slab.h>
+> +#include <linux/time.h>
+> +
+> +#define TIMER_DRV_NAME "CAP_OMAP_DMTIMER"
+> +/* Timer signals */
+> +#define TIMER_CLOCK_SIG 0
+> +#define TIMER_INPUT_SIG 1
+> +
+> +/**
+> + * struct cap_omap_dmtimer_counter - Structure representing a cap counter
+> + *				  corresponding to omap dm timer.
+> + * @counter:		Capture counter
+> + * @enabled:		Tracks the enable status of omap dm timer.
+> + * @mutex:			Mutex to protect cap apply state
+> + * @dm_timer:		Pointer to omap dm timer.
+> + * @pdata:			Pointer to omap dm timer ops.
+> + * @dm_timer_pdev:	Pointer to omap dm timer platform device
+> + */
+> +struct cap_omap_dmtimer_counter {
+> +	struct counter_device counter;
+> +	bool enabled;
+> +	/* Mutex to protect cap apply state */
+> +	struct mutex mutex;
+> +	struct omap_dm_timer *dm_timer;
+> +	const struct omap_dm_timer_ops *pdata;
+> +	struct platform_device *dm_timer_pdev;
+> +};
 
-> --
-> Cheers
->
-> David / dhildenb
->
->
+Random missing newlines everywhere.
+
+> +/**
+> + * cap_omap_dmtimer_start() - Start the cap omap dm timer in capture mode
+> + * @omap:	Pointer to cap omap dm timer counter
+> + */
+> +static void cap_omap_dmtimer_start(struct cap_omap_dmtimer_counter *omap)
+> +{
+> +	u32 ret;
+> +	struct device *dev = &omap->dm_timer_pdev->dev;
+> +
+> +	ret = omap->pdata->start(omap->dm_timer);
+> +	if (ret)
+> +		dev_err(dev, "%d: Failed to start timer.\n", ret);
+> +}
+> +
+> +/**
+> + * cap_omap_dmtimer_is_enabled() -  Detect if the timer capture is enabled.
+> + * @omap:	Pointer to cap omap dm timer counter
+> + *
+> + * Return true if capture is enabled else false.
+> + */
+> +static bool cap_omap_dmtimer_is_enabled(struct cap_omap_dmtimer_counter *omap)
+> +{
+> +	u32 status;
+> +
+> +	status = omap->pdata->get_cap_status(omap->dm_timer);
+> +
+> +	return !!(status & OMAP_TIMER_CTRL_ST);
+> +}
+> +
+> +static int cap_omap_dmtimer_clk_get_freq(struct counter_device *counter,
+> +				 struct counter_signal *signal, u64 *freq)
+> +{
+> +	struct cap_omap_dmtimer_counter *omap = counter_priv(counter);
+> +	struct clk *fclk;
+> +
+> +	fclk = omap->pdata->get_fclk(omap->dm_timer);
+> +	if (!fclk) {
+> +		dev_err(counter->parent, "invalid dmtimer fclk\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	*freq = clk_get_rate(fclk);
+> +	if (!(*freq)) {
+> +		dev_err(counter->parent, "invalid dmtimer fclk rate\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +/**
+> + * cap_omap_dmtimer_apply() - Changes the state of the cap omap dm timer counter.
+> + * @counter:Pointer to capture counter.
+> + *
+> + * Return 0 if successfully changed the state else appropriate error.
+> + */
+> +static int cap_omap_dmtimer_apply(struct counter_device *counter)
+> +{
+> +	struct cap_omap_dmtimer_counter *omap = counter_priv(counter);
+> +	struct device *dev = &omap->dm_timer_pdev->dev;
+> +	int ret = 0;
+> +
+> +	/* Ensure that the timer is in stop mode so that the configs can be changed. */
+> +	if (cap_omap_dmtimer_is_enabled(omap)) {
+> +		ret = omap->pdata->stop(omap->dm_timer);
+> +		if (ret)
+> +			dev_err(dev, "%d: Failed to stop timer.\n", ret);
+> +	}
+> +
+> +	ret = omap->pdata->set_cap(omap->dm_timer, true, true);
+> +	if (ret) {
+> +		dev_err(dev, "%d: Failed to set timer capture configuration.\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	cap_omap_dmtimer_start(omap);
+> +
+> +	return ret;
+> +}
+> +
+> +static int cap_omap_dmtimer_capture(struct counter_device *counter,
+> +					struct counter_count *count, u64 *duty_cycle)
+> +{
+> +	struct cap_omap_dmtimer_counter *omap = counter_priv(counter);
+> +	*duty_cycle = 0;
+> +
+> +	if (!omap->enabled) {
+> +		dev_err(counter->parent, "Timer is disabled.\n");
+> +		omap->pdata->stop(omap->dm_timer);
+> +		return 0;
+> +	}
+> +
+> +	*duty_cycle = omap->pdata->read_cap(omap->dm_timer, false);
+> +
+> +	*duty_cycle = *duty_cycle > 0 ? *duty_cycle : 0;
+> +
+> +	return *duty_cycle;
+> +}
+> +
+> +static int cap_omap_dmtimer_period(struct counter_device *counter,
+> +					struct counter_signal *signal, u64 *freq)
+> +{
+> +	struct cap_omap_dmtimer_counter *omap = counter_priv(counter);
+> +	u64 clk_freq = 0;
+> +	u64 period = 0;
+> +	*freq = 0;
+> +
+> +	if (!omap->enabled) {
+> +		dev_err(counter->parent, "Timer is disabled.\n");
+> +		omap->pdata->stop(omap->dm_timer);
+> +		return 0;
+> +	}
+> +
+> +	period = omap->pdata->read_cap(omap->dm_timer, true);
+> +	cap_omap_dmtimer_clk_get_freq(counter, signal, &clk_freq);
+> +
+> +	if (period > 0)
+> +		*freq = clk_freq/period;
+> +
+> +	return *freq+1;
+> +}
+> +static int cap_omap_dmtimer_enable_read(struct counter_device *counter,
+> +				struct counter_count *count, u8 *enable)
+> +{
+> +	struct cap_omap_dmtimer_counter *omap = counter_priv(counter);
+> +
+> +	*enable = omap->enabled;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cap_omap_dmtimer_count_read(struct counter_device *counter,
+> +			       struct counter_count *count, u64 *val)
+> +{
+> +	struct cap_omap_dmtimer_counter *omap = counter_priv(counter);
+> +
+> +	*val = omap->pdata->read_counter(omap->dm_timer);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cap_omap_dmtimer_count_write(struct counter_device *counter,
+> +				struct counter_count *count, u64 val)
+> +{
+> +	struct cap_omap_dmtimer_counter *omap = counter_priv(counter);
+> +
+> +	if (val > U32_MAX)
+> +		return -ERANGE;
+> +
+> +	omap->pdata->write_counter(omap->dm_timer, val);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cap_omap_dmtimer_enable_write(struct counter_device *counter,
+> +				 struct counter_count *count, u8 enable)
+> +{
+> +	struct cap_omap_dmtimer_counter *omap = counter_priv(counter);
+> +
+> +	if (enable == omap->enabled)
+> +		goto out;
+
+Return 0. Seems very odd code style quirks like this and well everywhere in this patch..
+
+> +
+> +	if (enable)
+> +		cap_omap_dmtimer_apply(counter);
+> +	else
+> +		omap->pdata->stop(omap->dm_timer);
+> +
+> +	omap->enabled = enable;
+> +out:
+> +	return 0;
+> +}
+> +
+> +static int cap_omap_dmtimer_function_read(struct counter_device *counter,
+> +				  struct counter_count *count,
+> +				  enum counter_function *function)
+> +{
+> +	*function = COUNTER_FUNCTION_INCREASE;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cap_omap_dmtimer_action_read(struct counter_device *counter,
+> +				struct counter_count *count,
+> +				struct counter_synapse *synapse,
+> +				enum counter_synapse_action *action)
+> +{
+> +	*action = (synapse->signal->id == TIMER_CLOCK_SIG) ?
+> +		   COUNTER_SYNAPSE_ACTION_RISING_EDGE :
+> +		   COUNTER_SYNAPSE_ACTION_NONE;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct counter_ops cap_omap_dmtimer_ops = {
+> +	.count_read = cap_omap_dmtimer_count_read,
+> +	.count_write = cap_omap_dmtimer_count_write,
+> +	.function_read = cap_omap_dmtimer_function_read,
+> +	.action_read = cap_omap_dmtimer_action_read,
+> +};
+> +
+> +static const enum counter_function cap_omap_dmtimer_functions[] = {
+> +	COUNTER_FUNCTION_INCREASE,
+> +};
+> +
+> +static struct counter_comp cap_omap_dmtimer_clock_ext[] = {
+> +	COUNTER_COMP_SIGNAL_U64("frequency", cap_omap_dmtimer_clk_get_freq, NULL),
+> +};
+> +
+> +static struct counter_signal cap_omap_dmtimer_signals[] = {
+> +	{
+> +		.id = TIMER_CLOCK_SIG,
+> +		.name = "Clock Signal",
+> +		.ext = cap_omap_dmtimer_clock_ext,
+> +		.num_ext = ARRAY_SIZE(cap_omap_dmtimer_clock_ext),
+> +	},
+> +	{
+> +		.id = TIMER_INPUT_SIG,
+> +		.name = "Input Signal",
+> +	},
+> +};
+> +
+> +/* Counter will increase at rising edges of a clock */
+> +static const enum counter_synapse_action cap_omap_dmtimer_clock_actions[] = {
+> +	COUNTER_SYNAPSE_ACTION_RISING_EDGE,
+> +};
+> +
+> +/* No trigger here */
+> +static const enum counter_synapse_action cap_omap_dmtimer_input_actions[] = {
+> +	COUNTER_SYNAPSE_ACTION_NONE,
+> +};
+> +
+> +static struct counter_synapse cap_omap_dmtimer_synapses[] = {
+> +	{
+> +		.actions_list = cap_omap_dmtimer_clock_actions,
+> +		.num_actions = ARRAY_SIZE(cap_omap_dmtimer_clock_actions),
+> +		.signal = &cap_omap_dmtimer_signals[TIMER_CLOCK_SIG],
+> +	},
+> +	{
+> +		.actions_list = cap_omap_dmtimer_input_actions,
+> +		.num_actions = ARRAY_SIZE(cap_omap_dmtimer_input_actions),
+> +		.signal = &cap_omap_dmtimer_signals[TIMER_INPUT_SIG],
+> +	},
+> +};
+> +
+> +static struct counter_comp cap_omap_dmtimer_count_ext[] = {
+> +	COUNTER_COMP_CAPTURE(cap_omap_dmtimer_capture, NULL),
+> +	COUNTER_COMP_ENABLE(cap_omap_dmtimer_enable_read, cap_omap_dmtimer_enable_write),
+> +	COUNTER_COMP_FREQUENCY(cap_omap_dmtimer_period),
+> +};
+> +
+> +static struct counter_count cap_omap_dmtimer_counts[] = {
+> +	{
+> +		.name = "Timestamp Counter",
+> +		.functions_list = cap_omap_dmtimer_functions,
+> +		.num_functions = ARRAY_SIZE(cap_omap_dmtimer_functions),
+> +		.synapses = cap_omap_dmtimer_synapses,
+> +		.num_synapses = ARRAY_SIZE(cap_omap_dmtimer_synapses),
+> +		.ext = cap_omap_dmtimer_count_ext,
+> +		.num_ext = ARRAY_SIZE(cap_omap_dmtimer_count_ext),
+> +	},
+> +};
+> +
+> +static int cap_omap_dmtimer_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct device *dev = &pdev->dev;
+> +	struct dmtimer_platform_data *timer_pdata;
+> +	const struct omap_dm_timer_ops *pdata;
+> +	struct platform_device *timer_pdev;
+> +	struct omap_dm_timer *dm_timer;
+> +	struct device_node *timer;
+> +	struct cap_omap_dmtimer_counter *omap;
+> +	struct counter_device *counter_dev;
+> +	int ret = 0;
+> +
+> +	timer = of_parse_phandle(np, "ti,timers", 0);
+> +	if (!timer) {
+> +		dev_err(&pdev->dev, "Unable to find Timer node\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	timer_pdev = of_find_device_by_node(timer);
+> +	if (!timer_pdev) {
+> +		dev_err(&pdev->dev, "Unable to find Timer pdev\n");
+> +		ret = -ENODEV;
+> +		goto err_find_timer_pdev;
+> +	}
+> +	timer_pdata = dev_get_platdata(&timer_pdev->dev);
+> +	if (!timer_pdata) {
+> +		dev_dbg(&pdev->dev,
+> +			"dmtimer pdata structure NULL, deferring probe\n");
+> +		ret = -EPROBE_DEFER;
+> +		dev_err_probe(&pdev->dev, ret, "Probe deferred\n");
+> +		goto err_platdata;
+> +	}
+> +
+> +	pdata = timer_pdata->timer_ops;
+> +
+> +	if (!pdata || !pdata->request_by_node ||
+> +	    !pdata->free ||
+> +	    !pdata->enable ||
+> +	    !pdata->disable ||
+> +	    !pdata->get_fclk ||
+> +	    !pdata->start ||
+> +	    !pdata->stop ||
+> +	    !pdata->set_load ||
+> +	    !pdata->set_match ||
+> +	    !pdata->set_cap ||
+> +	    !pdata->get_cap_status ||
+> +		!pdata->read_cap ||
+
+tab vs space issues in several spots, fix your editor.
+
+> +	    !pdata->set_prescaler ||
+> +		!pdata->write_counter) {
+> +		dev_err(&pdev->dev, "Incomplete dmtimer pdata structure\n");
+> +		ret = -EINVAL;
+> +		goto err_platdata;
+> +	}
+> +
+> +	dm_timer = pdata->request_by_node(timer);
+> +	if (!dm_timer) {
+> +		ret = -EPROBE_DEFER;
+> +		goto err_request_timer;
+> +	}
+> +
+> +    /* struct cap_omap_dmtimer_counter *omap */
+> +	counter_dev = devm_counter_alloc(dev, sizeof(*omap));
+> +	if (!counter_dev) {
+> +		dev_err(&pdev->dev, "Unable to allocate dmtimercounter\n");
+> +		ret = -ENOMEM;
+> +		goto err_alloc_omap;
+> +	}
+> +	omap = counter_priv(counter_dev);
+> +
+> +	counter_dev->name = TIMER_DRV_NAME;
+> +	counter_dev->parent = dev;
+> +	counter_dev->ops = &cap_omap_dmtimer_ops;
+> +	counter_dev->signals = cap_omap_dmtimer_signals;
+> +	counter_dev->num_signals = ARRAY_SIZE(cap_omap_dmtimer_signals);
+> +	counter_dev->counts = cap_omap_dmtimer_counts;
+> +	counter_dev->num_counts = ARRAY_SIZE(cap_omap_dmtimer_counts);
+> +	mutex_init(&omap->mutex);
+> +	omap->pdata = pdata;
+> +	omap->dm_timer = dm_timer;
+> +	omap->dm_timer_pdev = timer_pdev;
+> +
+> +	if (pm_runtime_active(&omap->dm_timer_pdev->dev))
+> +		omap->pdata->stop(omap->dm_timer);
+> +
+> +	of_node_put(timer);
+
+Why free down here, move this up right after its last use.
+
+> +
+> +	platform_set_drvdata(pdev, counter_dev);
+> +
+> +	ret = devm_counter_add(dev, counter_dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to add counter\n");
+> +
+> +	return 0;
+> +
+> +err_alloc_omap:
+> +	pdata->free(dm_timer);
+> +err_request_timer:
+> +
+
+Unused label?
+
+Andrew
+
+> +err_platdata:
+> +	put_device(&timer_pdev->dev);
+> +err_find_timer_pdev:
+> +
+> +	of_node_put(timer);
+> +
+> +	return ret;
+> +}
+> +
+> +static void cap_omap_dmtimer_remove(struct platform_device *pdev)
+> +{
+> +	struct counter_device *counter = platform_get_drvdata(pdev);
+> +	struct cap_omap_dmtimer_counter *omap = counter_priv(counter);
+> +
+> +	counter_unregister(counter);
+> +
+> +	if (pm_runtime_active(&omap->dm_timer_pdev->dev))
+> +		omap->pdata->stop(omap->dm_timer);
+> +
+> +	omap->pdata->free(omap->dm_timer);
+> +
+> +	put_device(&omap->dm_timer_pdev->dev);
+> +
+> +	mutex_destroy(&omap->mutex);
+> +
+> +}
+> +
+> +static const struct of_device_id cap_omap_dmtimer_of_match[] = {
+> +	{.compatible = "ti,omap-dmtimer-cap"},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, cap_omap_dmtimer_of_match);
+> +
+> +static struct platform_driver cap_omap_dmtimer_driver = {
+> +	.driver = {
+> +		.name = "omap-dmtimer-cap",
+> +		.of_match_table = cap_omap_dmtimer_of_match,
+> +	},
+> +	.probe = cap_omap_dmtimer_probe,
+> +	.remove = cap_omap_dmtimer_remove,
+> +};
+> +module_platform_driver(cap_omap_dmtimer_driver);
+> +
+> +MODULE_AUTHOR("Gokul Praveen <g-praveen@ti.com>");
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("OMAP CAP Driver using Dual-mode Timers");
+> +MODULE_IMPORT_NS("COUNTER");
+
 
