@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-809151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D5BAB50949
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:34:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 656B0B5094A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 281315411B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:34:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7E03A789A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2318D2877E0;
-	Tue,  9 Sep 2025 23:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82763289E06;
+	Tue,  9 Sep 2025 23:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FRHSjRuW"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NiUJjQD9"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3891B2B9B9
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 23:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893D228853A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 23:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757460855; cv=none; b=Uh5fQ3xlepxkNsnCN4FTcHqt+32gzxl2Z+5NzIf8QoaAdx2aXcvrTmEF4+0qVo8TjzSzIZ4UqB64r/RdYVLbOLfPM9vIRLOGPrx5/roS/7EniJRoTu74s/PoTLqcwHgy3jKCFUm9DcZ3iZ4GFpC1fWJOm1/+NV7byZ7Axujt8xQ=
+	t=1757460858; cv=none; b=fU+WB/CeDaF6txzF8h/Bz8eFyNDcP0pYutXTbmnX9g435BcrmHLAaI5a/xIeALoMqUL2SBFwGL2JPB8CG6Bz6EFjHahT7MfxNTIvrboTu/Yb2StnOMj5sBXcLSl3PnZUl26HJlkqChkUmrVdxwRC6u4gvJ27NSU5Owd7FMrzdqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757460855; c=relaxed/simple;
-	bh=aU0USlCcTiMH13AEurHM1ttiDB6pDNnBlhK6LZetq2g=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=B464IALCTwCi2xTQEQvvs0vimu+aNmkmZ9mIv5YfMd+EKKh/HQuAQaSUag+fsAA1fCV1nAWf51kGJ+u/8GF5+47NUnF/fO7VE7W0FOZkKhQPrZDB+Nn9UZMrObCmPYOuUKwasNhy4C7x3y0mVmfy2K5wmnUryoQpj1Uh9wWf+wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FRHSjRuW; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1757460858; c=relaxed/simple;
+	bh=z45BL1hbRzWmiV9tDqYSyXHWrtt4agT84wCssQaRrK4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=aXcSsct1TUhO+3qXDB0WIAeQtyxpnkkrfXioiH0ocCyibfbnoDN38nyGy1BbSpGM74uTA2K4ClsshDiBxvxlQIOiPyP5ZvaZOvIE6kFplSDvCYVeezDpWkdfvrtDQ7WheYyGsQQdTiqBcjx1RPsRoD7ep8HsMXejET42SomTDlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NiUJjQD9; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24caf28cce0so145727045ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 16:34:13 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7724688833bso6470954b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 16:34:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757460853; x=1758065653; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BXSTG2Hw61qjXt22u9sHybV2+YxgWVuc3hF7N60zsf0=;
-        b=FRHSjRuWFh2OIu1ZsMYwqZyV5VRUbpa9z9srSdO4+KNqHN7JUWoQGDs/T7uF+EJW+P
-         1yXexTSfKpz6h2fcIfYh0srXJb7P7kFDEbff98uJzTmrS5qCFzUZ4kdsrsCKy6wPThGq
-         T+C3AlQH7zhobR39fSL4y8MAcpnE/F4e0Sokw4x41Gr7d+fmLA6TqwgTctb1whg+ML4K
-         bNLYs+u/V0rDuSsX6tzr4T1wJKGnKvyoxTVVSSP43rh26LtRJZqeCM+4eYAAwAVrCBdY
-         6tKIxcjAG1vSOW8rNT8/SAM4PkK7cgjCwv5ttFZCgrvEA54GKdyTt2cEGoczbLC/nUIG
-         ZEsA==
+        d=google.com; s=20230601; t=1757460856; x=1758065656; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p94KfP38ehFFAQzIc4UYzAxhmkH/aHIfMEPOUg/9po0=;
+        b=NiUJjQD9ooyqUoJyU1rod/PXOitAUnLpI4TZg9sMGhB1i3qQVzuJ/ApUJtaPwYggZo
+         PoLaFLMHVBjGhOp0G3sX09TZM+DH49H2e2NgAjj+2WoiRbzWqt8el1ZMnSJPRfgx7Rnb
+         c0KZW82+2a1A+9Vd2Iu2P2XMLLXQH0/lUftnTa3GJek2NEaURmex4hOqDV5vn8mxxFaA
+         pNBqFlajs/9Cido1qGG6Uox/UaGjc+8Y2WjkfBQj7MP3X4RDYdyi6kpy72TCKnewlCo1
+         ZScMvc0zPvep++lxtieATHfs2ncRik+eJMRoYF04mC5T7xIhgmTMa9W7QlhgkGOonf50
+         dBVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757460853; x=1758065653;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BXSTG2Hw61qjXt22u9sHybV2+YxgWVuc3hF7N60zsf0=;
-        b=Ukgji/Yb6z5BnHT5gns+F3N7btAbEg2MafwomgNpjKGSX8H/eZacVIa2N80EVMW2Zc
-         Zu+fCM5Zs9X+cYcIR95ADyWO79zzSv4R6vSRCs/IMGbBK5MIuNH149Yr76lsNoRbB63W
-         mx91z77X01nQTuBKPTIh7wnrqKSTZviIPaQOH84JT0LFU/JiriexM5adZJYWVesJFzu+
-         ENiuG+1rY9wwdPDPEHl5HvIGfR6QzazCsIBY3TWzkmHOCQCig5Q7mXIkAmioQPIjsG07
-         GvhPvodDKN5HSzxX/5fJP0bCXvwGpmiWSoCzwwSi2A9uCmfaXRG1V5zWKzLLgSgAlonc
-         cSow==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ+L7/YEzoDFT6c9+iq5qMC41TskmrFv9Mxtp2p/mWRvW2rD85ak8spKPKZT5J3h0clJskFHAMG6J3B9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztBktWQZC4xBClvnPTtqSju0pbH1fO1TzdEkEKrNQS6bdXd03B
-	A/gV1BvviwJ3HbmkDZTSORyO17Sw3Zw6Wxb27H7ipTvr1UZ2Qefu0vaTnyJoy1OBeEyHxxs295f
-	OyOG2mg==
-X-Google-Smtp-Source: AGHT+IFJgHZa3+zvruFKL+nbXgevHIEGRIktfPiZlMC9mp0yCbO3eiifrGu9e5eBy2AJJ5ymyuaa+Bx3oq4=
-X-Received: from pjyd16.prod.google.com ([2002:a17:90a:dfd0:b0:32d:851f:b1f0])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e848:b0:246:d70e:ea82
- with SMTP id d9443c01a7336-2516ef591e9mr226436865ad.5.1757460853523; Tue, 09
- Sep 2025 16:34:13 -0700 (PDT)
-Date: Tue,  9 Sep 2025 16:34:06 -0700
+        d=1e100.net; s=20230601; t=1757460856; x=1758065656;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p94KfP38ehFFAQzIc4UYzAxhmkH/aHIfMEPOUg/9po0=;
+        b=oeVv04kRUwPvlDWpjVPyf3EJXqy/a2+QX3n2Tql4v+hjvunPlbkMpmh8odzIYeGDzf
+         tvXs7gA7SZbKHTmUYQ2AT/qCj5YnMfGCjS1y/PEu8oYhSnxWN2izCw7G0ttj+DAwtKnu
+         ItAt9vqXEYnyVKcIavoES+gWSnR8+BU8X1w0AbQ2pw+L38G7cGAAOaBupzs2Xdahivo+
+         oDL0GgcSoRDhwll28pkxtp42qVIjxaZxlat+sqUkwjPct+dFsIbg+/Vx93Zdr4nc62t2
+         3eN5uJeJvwTTa6MpmIQ0vhZUhnR9rxZFSrF27EFrkCfIqNKls2gCZvd43fGl6jH3uGU3
+         EBcw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1dCefXD5LRB93IV/43FgfFgdBTKvfqSBWL3g37f9hk7pweOWkJkaOXzHn9YAmWPWYkAxLU8YE1wp8guc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+ZaiqWM6SSQekyAeNF7Z14fw/XCshfO9SP3BZaskYM7pWbC7K
+	N0OLEMP7Vo4b8u2ujGlJjglvuIqEKBg03YkqGYF6Qwn3I8fNLjWbeRTnOjgT89o8ayjyWpPaCTG
+	l8ROMbQ==
+X-Google-Smtp-Source: AGHT+IHe9jU/ZXDF3VrMHA2zefxE/BkTlf3fesT6KUXKBfH1fEUS5JMtiAufZ6h2wVl/I0nMlsowMm3ygQk=
+X-Received: from pfbbm11.prod.google.com ([2002:a05:6a00:320b:b0:76e:8d8d:6652])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:3c8f:b0:76b:ec81:bcc9
+ with SMTP id d2e1a72fcca58-7742ddf0f22mr17694356b3a.21.1757460855691; Tue, 09
+ Sep 2025 16:34:15 -0700 (PDT)
+Date: Tue,  9 Sep 2025 16:34:07 -0700
+In-Reply-To: <20250909233409.1013367-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250909233409.1013367-1-surenb@google.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250909233409.1013367-1-surenb@google.com>
-Subject: [PATCH 0/3] Minor fixes for memory allocation profiling
+Message-ID: <20250909233409.1013367-2-surenb@google.com>
+Subject: [PATCH 1/3] alloc_tag: use release_pages() in the cleanup path
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: kent.overstreet@linux.dev, vbabka@suse.cz, mhocko@suse.com, 
@@ -81,22 +84,32 @@ Cc: kent.overstreet@linux.dev, vbabka@suse.cz, mhocko@suse.com,
 	linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Over the last couple months I gathered a few reports of minor issues
-in memory allocation profiling which are addressed in this patchset.
+When bulk-freeing an array of pages use release_pages() instead of freeing
+them page-by-page:
 
-Patchset is based on mm-new.
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+---
+ lib/alloc_tag.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Suren Baghdasaryan (3):
-  alloc_tag: use release_pages() in the cleanup path
-  alloc_tag: prevent enabling memory profiling if it was shut down
-  alloc_tag: avoid warnings when freeing non-compound "tail" pages
-
- lib/alloc_tag.c | 17 ++++++++++++++---
- mm/page_alloc.c |  9 ++++++++-
- 2 files changed, 22 insertions(+), 4 deletions(-)
-
-
-base-commit: f4e8f46973fe0c0f579944a37e96ba9efbe00cca
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index e9b33848700a..95688c4cba7a 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -438,9 +438,10 @@ static int vm_module_tags_populate(void)
+ 		if (nr < more_pages ||
+ 		    vmap_pages_range(phys_end, phys_end + (nr << PAGE_SHIFT), PAGE_KERNEL,
+ 				     next_page, PAGE_SHIFT) < 0) {
++			release_pages_arg arg = { .pages = next_page };
++
+ 			/* Clean up and error out */
+-			for (int i = 0; i < nr; i++)
+-				__free_page(next_page[i]);
++			release_pages(arg, nr);
+ 			return -ENOMEM;
+ 		}
+ 
 -- 
 2.51.0.384.g4c02a37b29-goog
 
