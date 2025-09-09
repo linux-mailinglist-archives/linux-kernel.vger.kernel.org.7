@@ -1,297 +1,351 @@
-Return-Path: <linux-kernel+bounces-807544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB764B4A5F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:50:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB8D7B4A5FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78CDE4E4530
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:50:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E9B84E26AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEC62737E6;
-	Tue,  9 Sep 2025 08:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2AE275847;
+	Tue,  9 Sep 2025 08:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lb/aek8y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="ltDOABSV"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA48A23AB90;
-	Tue,  9 Sep 2025 08:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757407819; cv=fail; b=On0BkOjDg8HG0PFes19lqYnLSjzAI2AmfulH7Xj1qksAlVD+mhopO8bEoyuAGN49aGHOpOJzi5Z1qckZEdr/QWSThobz4Lah6AmAYPocUoZHnKKCFB8DltCQ0tO6X0df9kkQpg1aUvvmg3VvWgEKNojNC9n0xS2+CPcLFxCPsoY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757407819; c=relaxed/simple;
-	bh=rQDKiv2ZjAMywqF5PAW/aC/H5f+mp90uRMZAC2XK+u8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IjrFJ9u1XsPOqr5GdgoFDB7Ta+2T5P7TdxuB8dOfAzihpo4f3y+Dis+yXjviwTsoBxRrDmUKUe5y7sWXDtdIVY6Dx+w7OxOxXk1dCGRJhMpces8NQAPfbkOB6zo4qpFTmjpjLEzlgp/pQtauNVLXx6KZgIjOt8m2GhKk29/zYbM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lb/aek8y; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757407818; x=1788943818;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=rQDKiv2ZjAMywqF5PAW/aC/H5f+mp90uRMZAC2XK+u8=;
-  b=Lb/aek8ynHXL+X2507iRnWtaHeJ03WeerxAVtJFynjr3F6ESRFVSEUZS
-   HUYSFStiz/+7VwwPzXMyQ7D4B9aGusrDaWVRR2BQZIjpUsQh+O9tJEss4
-   8sY0iaqvYu1dx4UXHR3+pXrGkFDlVn7ZDNmAU6ukHNi2NMQ8o6I1Rucu1
-   TAvLrmQaN1vB9bAEGTZDvdIUQpzN7GiXo5p7VdgZYpVmNaqoGTmhIelY5
-   VmjWNFx1LSGWZ+wBOLwL1nrx+WVtJfxZC+kLihWO5zuYtXMXFo7GSeiDK
-   ABe6C/Ru4U7ertNORSHj0y5LQtP9FXR88yvfl5AnurzYUHQD6nP81ottE
-   Q==;
-X-CSE-ConnectionGUID: FvTyOUBVQIq2tfgnEgZ6qg==
-X-CSE-MsgGUID: falYu5DxQLKp2ro1HxnXRg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="58723317"
-X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
-   d="scan'208";a="58723317"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 01:50:17 -0700
-X-CSE-ConnectionGUID: s+D5nECRTk2xz1MJ6JZOCw==
-X-CSE-MsgGUID: w0kHetB4T+WPq9fMFqD8Ig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
-   d="scan'208";a="172295204"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 01:50:15 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 9 Sep 2025 01:50:14 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Tue, 9 Sep 2025 01:50:14 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (40.107.95.46) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 9 Sep 2025 01:50:14 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vVDZNd7745nt+LmrQgMpm9OAxYfC7N6iT/RBHAM5q/mnemJF1o7Su/kC3DJl2097XSu6sOQrRbv80D2QhDQXMBLgyBEATBqAefmlNKKOx9VPSZqIuG2IfhvlXtOjPF+OgXIasn0sPiI9KdbgotV5S/vU6I2ES+lyq5S8/7AcMS65HEOOMYuqH594MPZxsKWKqS8HT9D2+GyaCxoboxS2BY4emBNzNCRIngZQAVSo6U+1k2CP2C6rB1kApVaH/ebPX4kMB0TaQUotpc91sADu8cOzsIFcQHAjrowqTlfHBdUjM8jmejHvY8ZIPVBriFcGloSpyG37o3FY5EBToBIsYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G+0FpqfXm8Wo4jiPA9d/magNB/aiw1qqIac3pLFvB90=;
- b=p1g9+SCO8yo7vVhx+PmOWW1FaZ39iHKZpJWt2X0ZEtjox0uALf3YhBPPM6lDk0iFhl/ORlOfQKZb+6sQ4NSTqidNBmGiMe4MTGiBl2dlWCII58nf35T2qd4ifgn28sEq5168DwPMPVvdP3iqOa8jwZyQOWtsN9e9Qnlv1PmbgzPQ7XDb4wZtMmU1Dy9klbP4ZrQ79idLfkqEtsqOjpmD/8FbRtl9ozrKnrVczoihQH/aZuFDemkucf4reJzEDjj11t8e0m37gZp4uzb23zQYSnScuYcGn/XBDiVZdLepIPLU8laqu6xhuUvghSKm1rNG5WTa4JmxwTm7P/taPB3C9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN2PR11MB3934.namprd11.prod.outlook.com (2603:10b6:208:152::20)
- by DS7PR11MB6013.namprd11.prod.outlook.com (2603:10b6:8:70::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
- 2025 08:50:10 +0000
-Received: from MN2PR11MB3934.namprd11.prod.outlook.com
- ([fe80::45fd:d835:38c1:f5c2]) by MN2PR11MB3934.namprd11.prod.outlook.com
- ([fe80::45fd:d835:38c1:f5c2%3]) with mapi id 15.20.9094.021; Tue, 9 Sep 2025
- 08:50:10 +0000
-Date: Tue, 9 Sep 2025 10:49:53 +0200
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-CC: Andrey Konovalov <andreyknvl@gmail.com>, <sohil.mehta@intel.com>,
-	<baohua@kernel.org>, <david@redhat.com>, <kbingham@kernel.org>,
-	<weixugc@google.com>, <Liam.Howlett@oracle.com>,
-	<alexandre.chartre@oracle.com>, <kas@kernel.org>, <mark.rutland@arm.com>,
-	<trintaeoitogc@gmail.com>, <axelrasmussen@google.com>, <yuanchu@google.com>,
-	<joey.gouly@arm.com>, <samitolvanen@google.com>, <joel.granados@kernel.org>,
-	<graf@amazon.com>, <vincenzo.frascino@arm.com>, <kees@kernel.org>,
-	<ardb@kernel.org>, <thiago.bauermann@linaro.org>, <glider@google.com>,
-	<thuth@redhat.com>, <kuan-ying.lee@canonical.com>,
-	<pasha.tatashin@soleen.com>, <nick.desaulniers+lkml@gmail.com>,
-	<vbabka@suse.cz>, <kaleshsingh@google.com>, <justinstitt@google.com>,
-	<catalin.marinas@arm.com>, <alexander.shishkin@linux.intel.com>,
-	<samuel.holland@sifive.com>, <dave.hansen@linux.intel.com>, <corbet@lwn.net>,
-	<xin@zytor.com>, <dvyukov@google.com>, <tglx@linutronix.de>,
-	<scott@os.amperecomputing.com>, <jason.andryuk@amd.com>, <morbo@google.com>,
-	<nathan@kernel.org>, <lorenzo.stoakes@oracle.com>, <mingo@redhat.com>,
-	<brgerst@gmail.com>, <kristina.martsenko@arm.com>, <bigeasy@linutronix.de>,
-	<luto@kernel.org>, <jgross@suse.com>, <jpoimboe@kernel.org>,
-	<urezki@gmail.com>, <mhocko@suse.com>, <ada.coupriediaz@arm.com>,
-	<hpa@zytor.com>, <leitao@debian.org>, <wangkefeng.wang@huawei.com>,
-	<surenb@google.com>, <ziy@nvidia.com>, <smostafa@google.com>,
-	<ryabinin.a.a@gmail.com>, <ubizjak@gmail.com>, <jbohac@suse.cz>,
-	<broonie@kernel.org>, <akpm@linux-foundation.org>,
-	<guoweikang.kernel@gmail.com>, <rppt@kernel.org>, <pcc@google.com>,
-	<jan.kiszka@siemens.com>, <nicolas.schier@linux.dev>, <will@kernel.org>,
-	<jhubbard@nvidia.com>, <bp@alien8.de>, <x86@kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-mm@kvack.org>, <llvm@lists.linux.dev>,
-	<linux-kbuild@vger.kernel.org>, <kasan-dev@googlegroups.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v5 13/19] kasan: x86: Handle int3 for inline KASAN reports
-Message-ID: <xeedvhlav5rwra4pirinqcgqynth2zrixv7aknlsh2rz7lkppq@kubknviwhpfp>
-References: <cover.1756151769.git.maciej.wieczor-retman@intel.com>
- <36c0e5e9d875addc42a73168b8090144c327ec9f.1756151769.git.maciej.wieczor-retman@intel.com>
- <CA+fCnZcMV0BOJyvx2nciCK2jvht-Hx0HnFtRzcc=zu+pQSOdVw@mail.gmail.com>
- <couuy2aawztipvnlmaloadkbceewcekur5qbtzktr7ovneduvf@l47rxycy65aa>
- <hw7xa2ooqeyjo5ypc5jluuyjlgyzimxtylj5sh6igyffsxtyaf@qajqp37h6v2n>
- <epbqhjyfdt3daudp2wx54jsw6d7jf6ifbr3yknlfuqptz7b4uq@73n5k6b2jrrl>
- <CA+fCnZdJckDC4AKYxLS1MLBXir4wWqNddrD0o+mY4MXt0CYhcQ@mail.gmail.com>
- <ra5s3u5ha6mveijzwkoe2437ged5k5kacs5nqvkf4o7c2lcfzd@fishogqlatjb>
- <20250909083425.GH4067720@noisy.programming.kicks-ass.net>
- <20250909084029.GI4067720@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250909084029.GI4067720@noisy.programming.kicks-ass.net>
-X-ClientProxiedBy: DU2PR04CA0244.eurprd04.prod.outlook.com
- (2603:10a6:10:28e::9) To MN2PR11MB3934.namprd11.prod.outlook.com
- (2603:10b6:208:152::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B21A274B3C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 08:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757407912; cv=none; b=iWTiQaKSBAhA5U8fXCuizf0yREYMtOrkRRT3vSkO/McAcbJ+nYDYDcYRBi9r9fjCYXbu0EnACwVB6yaBuwFgTyGiDuPQoU2vdyPw4n5wNF3fR5idUKkYIjMFCPOzl4xXcQTH/8htmWwYkKkGumPfHtP1bthkE+k1un58uGlUkj0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757407912; c=relaxed/simple;
+	bh=V2LD4c2YqvvZsVb5vESU9/gd6wD8GomVEn03Q1TEoGs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BszzMzrhzX2epx6M3x1jdiyJdFAN5V9SPep/q1MBab6s3tWAaA0sN2zH08DdUmP/Zfw8D4RN9SIRWri7A760vDLKHVBaDceRv9EWZ+8Bgw43TGJrGlgzbGZUjRM3xt7v9iau5fX31NcMHn3/63R8apl4FjQysRi1qCC/Yt4asBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=ltDOABSV; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45de6ab6ce7so11659865e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 01:51:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1757407908; x=1758012708; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tHOTfsWdn/6gtCaqm3kyodB2aISE9a8blixZBCDKEC0=;
+        b=ltDOABSVqTsGV825nIpTAAJaEfXwjAihqfxwt+ds5dPG2f7IcAXwblMDzYza4tVg7n
+         cuFVFYQFg913RoAqnOxsEXVioHGHwcW98bduwLB7xJyqjQQW+yxS7W41kKxXBL+7E7E+
+         XVZeCXnQcH4+TwFNmvVsnUaAHVM/A5D5/7z0Dos8AEkf9XkkCkUZFbtMNXp3dpjlebnG
+         uzQinEK+Y3JM+3Ant/c1t5wophlzUbUgtSlbJ5FBBLvaJDoRXYVOoJ7elEd9+aofWESG
+         uMyQ5QYcKVLo/aoYeTeta42vhnnLYhhqdfihh2/O9fWAqNiJo3rrGAx65Kb8LirUTdWx
+         PKDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757407908; x=1758012708;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tHOTfsWdn/6gtCaqm3kyodB2aISE9a8blixZBCDKEC0=;
+        b=DBktStrtZ125Jw8YbxejsMGEycH/UC8WZ7A32e0e273Eo8YqB1Gjx+qaCoDuaEKv5k
+         0EF9GZc3QD6F9QtoTO8DVfvtb6Z+60eaQzWGpMOo8znZYMgVnl/ErC4oGw6E5jZ0mf5n
+         XUa20NM1L+6+HqRMveqAl963buGBG8N3dr16JoaOH+cOh8jjdhutcCI6NtwuC2WKQ4A5
+         HB3ogxVKusFD83QS74atqDs/QjqPO86bt1jUdssnkcPATcGboJQolKFPzdg85IRvKd0Q
+         m0NWRZV03y6I9pQXvSsU3LuI7DeHJFXrtLUKbUPRVsY8w3ehRTSCVKoA+65KA2YgC9l3
+         A+sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTJtKYaExLsO44IhLpxKquCWLUMDoCJeHWfIzsy4v6dqgHIWhbOCNmsBebBDNyoyLlA1mcRhScMWxa4cI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrmvyFn8QLL8ccXVTm5CmDe2KUoR/zZBA9M5r84k9Sm2Zuaw3t
+	uLDjINn1Pofk7JjBwpFk6FcCXWasin/ljrclqOmZkXI+4BDybGPRs+phE7HKJjU1GLY=
+X-Gm-Gg: ASbGnctbZUoRqt9A7kLIveUO2fRq2+ocE6b2lfLxFGpDSt9NB8boGr5N6BZ8/AJZ4Lt
+	eQxAlNzgHTtwJ5wFFK5CGUlxUfT5hzmGP6j97qymbNjf251T+fxMkvtWcLkXab/K0eMUcs1Qqhh
+	fiGRMhN8tjQj0fc4mK/zYK4j8b+VAHU6hScBn3Dk3SvHgW/jXG6xZSO27uret6ppIiIbYz9gAf9
+	xPSCj2ZQ11Y05yiOdBDIaHeurmWAGUDa9Hh7d/T2lwGEvZBxwFglDfsFy2ibnx3LfeYLA2nAbkM
+	/UI8aapYh+mVF68in8ImuCFiCO97S6AvCuecLYLox3v6x5XZsOiaVz+iRGp11k7gsNIGTsPI27t
+	lXwfhrEXzEYizlGGylrAXRDUJCYMsWj3+b6Ffzw7+owrXU5g17atO3HQP8g==
+X-Google-Smtp-Source: AGHT+IEPSBuO9Gho/ytg2wOmIg3pXkxG0F3RZPO+7vrq2Q8pxjaaLAsoZ56SGlT+JonILgddvkWrgA==
+X-Received: by 2002:a05:600c:4fcd:b0:45d:dae8:b137 with SMTP id 5b1f17b1804b1-45dddec8468mr90281295e9.22.1757407908240;
+        Tue, 09 Sep 2025 01:51:48 -0700 (PDT)
+Received: from [127.0.1.1] ([2a02:c7c:8a3e:8c00:8286:d205:8f5a:7f5e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8ab14esm518120955e9.21.2025.09.09.01.51.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 01:51:47 -0700 (PDT)
+From: Harrison Carter <hcarter@thegoodpenguin.co.uk>
+Date: Tue, 09 Sep 2025 09:50:04 +0100
+Subject: [PATCH] dt-bindings: leds: as3645: Convert to DT schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR11MB3934:EE_|DS7PR11MB6013:EE_
-X-MS-Office365-Filtering-Correlation-Id: b64eeb11-3e99-45ba-14a4-08ddef7de25c
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024|27256017;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?MDZyK05qRmVhY1JjOURxeUVKbTZ4amI1eURDZkQ3YXdFRVRlSEhETjJnUTJv?=
- =?utf-8?B?U3pPT0JHUzNuN0d4QTVuUVhDTHBRay91WUhYZ0dNbWNUMHhDNmZpdzYxbWNh?=
- =?utf-8?B?UWdFWnp1eTVNWTFhendiNmcyNlNoTUhSVEQ1T2k1Ym1vVGN1T1Rzc0U0VStQ?=
- =?utf-8?B?SU9Lb0l3c25sRE5oRjlBYjlRUHQrOTJGWi92VWFiS2dXcXVRQXhUY0RSNVZz?=
- =?utf-8?B?MnNXZG1XWjhERG94NEdpd0lUYy8rWmxUUGZ3OHg2WjZyQWR5WTlZdWUxaktV?=
- =?utf-8?B?UWdWR3lRNmZhcWxrL3Q2dEN0TjBDdmUzUHRzVFdiS2J1NHJrQ0w0SnRDc3Y2?=
- =?utf-8?B?M3piSllOaWVJWFdKK3ZrQllocEJhS0U0b0dQaENTRzljRUpnQms4YThEK1ZS?=
- =?utf-8?B?eGUzWEZhNkdsUkFVSE83K3pjK1ZIS0NLblE2dWNTZUZKcThMaGJJSTgvdmhh?=
- =?utf-8?B?N1pMaHdHZGhTREUwSUVrWTNVVUdIcE12c2o3bkx6ZUp1ZGZveDZXUHNvOUhk?=
- =?utf-8?B?UlpSTUgrdCtVd2RkbnJ2OCtiNkdremgvaGs2cGs2cGFOVHlIK3BZNnhoSnVS?=
- =?utf-8?B?OVVQVmFyUDU4R3dWeER6dWY3dGhKMTZsWDF2STEvdmk4UFI0WXFiQ1pscTM2?=
- =?utf-8?B?aC9iVTBMYStRWk5XMEtmTkg1MHRyMCtnMTQ1bHBYYmpRTmRzR1hVS3NUYjZW?=
- =?utf-8?B?aW1YNG9vZFUrbDNtQm5OejJIZldnQmxuaFdpa3hyc3BtZkEzOVNxTjVOUWRB?=
- =?utf-8?B?OVA0aDlLNEU2NW1TQm5ob29EK0NxaFVOWExuZ1BJVmNEZ2lMaEp4NlZLaTgv?=
- =?utf-8?B?RFB3OTkySlVybGVNKytSZTFUSkhUYVdYM2JlNFNud0h0bmtIUnlBSWhvZnlD?=
- =?utf-8?B?VlM4SEZHY1kzaWJYSklYUUdldWJHT2hjL0c5UDFITmt6TzE3Lzg4d0tqaVRR?=
- =?utf-8?B?K01wamRiRzdQaUxjbnczZG05UGlKUUQ2V3dGTFRmWC9JSTMzTVBVWHB6RU1B?=
- =?utf-8?B?LzVHRG5USHhreFVoTWF3VE9BUjBHdWVseldMUlpRbzlXMjRTSUxQOXFHRmpw?=
- =?utf-8?B?K1lpUGNBM3VGamp0ZDU4eEljZmtrNHlnWWlvNDQ2Y0cxY2J6Z0xFbUl4anZr?=
- =?utf-8?B?cTFIcUF0NmVzRlZHOWpTZGpHMWc0MGEveS85TnVaYi9UbGVuSXV4Y2pDSjI2?=
- =?utf-8?B?UUZnNDdqMnVDZ0FEWmlrMStLdVEyaXBtTlhvZENlSE54SmRzaGFCSGtWSGkx?=
- =?utf-8?B?ZVlPcEI2cFliTDVXTmc3OXpobUw2OVBPUkIrMW9sdk84U3ZscHR1RGhDR2Y3?=
- =?utf-8?B?UTVJVjduUjd4cmxhRno2amdmalRPdERWUDZueVZDOHlsT0Y3dXFWQVJRYnNL?=
- =?utf-8?B?Q2I1TVhac1pzTDE4WCtpSjA3Z0FoTElRWmZYcVNDdVZZZXBURGpsUlo2dnJr?=
- =?utf-8?B?SXdDaW5JVTJkdmVxV2VxUW41Z1ZhUFpDWjdwODJsOCtUbGhOQ0h6NTR2WTdo?=
- =?utf-8?B?eElKTFFnYmVNczNQNFVtNmxwZGFyS25tYzRNTlNteHdwWW1SVm1ZYUpxdXBG?=
- =?utf-8?B?bGVqWkJLK01VZERaNis2TVFCdjJJNy9WNDM4TUpNb1E1SFJ2SGpBV3JLQjF6?=
- =?utf-8?B?SkFlL1dOM0Z3T3NSeXFRR2NzS2dDRVpKRVFHL0RVQjA4WEF3alExRy9XN25u?=
- =?utf-8?B?c0F5YVdHb1JVR1E2dDBnbzlwWWdzRVFHblFVWHRzSUE5aUhGUnF5M0VtV0Iw?=
- =?utf-8?B?R1lIMnBTdmNFU2Z6c3FGMXdkSEFsMk1yRDBNbTIyeEpHS0JhcFE5RUZEUDVI?=
- =?utf-8?B?NXZEUERWVXF2ZjNQa1lpbEZZL01SQ3BIZTFHQXM3bCtITUh6TmkwN1ByUWVW?=
- =?utf-8?B?dzhRMjFHNzhXZncxYmh5YXVzYTdrQ0tmTnJWQWl0VnBTWTNRbXFQd2ljVUpP?=
- =?utf-8?B?VE9aMG40SVlHdWQ2TktWanU3M0FKQVBORUlWaVFucmY0aGpuTEpxeFFTZC9w?=
- =?utf-8?B?QVYzeDVxNG5BPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR11MB3934.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(27256017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZW8veU1ocmE4bVFvaDkyWkNWMHp0OTQyM3NXQTlXRDJ1aGJOMEw4RDFxc1Iw?=
- =?utf-8?B?UTBsMmZkazIzeVpxbFRQUll0blRhNUpkUFpaeVBkZ0hPK2NRSHpVaGJHTVFz?=
- =?utf-8?B?S2ZvYjNoQlRLR2NicVFYaDBRNjAzaGtvdmQ5aklSN2NBVUlrNkRzV3Y1MmxP?=
- =?utf-8?B?NnJ0TjlWQjI5KzNhNTJKTFNKU2Z1K2MwbUxVdlluZ3ZJUFJNTWMrQ0FOTUdN?=
- =?utf-8?B?cisvSFRtRENMenhmSW1QcktZUURqb0RDYmcrbjZjMU10aGxsODgvVE0raTl3?=
- =?utf-8?B?Tk5RTW5Qa0UyZGk4WGlMVlFEbHJiRTk0Tm0vRkxhOGhRVUFFL1VSVG5jZmFw?=
- =?utf-8?B?M0RSZHJIRWRSa0RsWU1PcURJb25xN2ZNMTFleGRpc2ZKc1ZjdlVpaTJYL2xH?=
- =?utf-8?B?Nkt3VnlxQ295QlNCU2tBTFJKT2F0R1l4aUlKbHBYZ3JiZUFlVUxDMWVUTDZC?=
- =?utf-8?B?aEwvOFlMTHc4WVQ3OEQ2S3BtTW4yTXAxVmRwY0FYYWgweW10VENYVVJYYUc2?=
- =?utf-8?B?UG1CTU1ERHpiZVNBVmVzRHllVi84R3daOFpRN3h1Wk01R0NoUWRBZVhSa1JD?=
- =?utf-8?B?SzZsWHJTTjJuOWN4cE1vbzQ4bjNlSm8wNGRXOFJIeFhLWncyRnd4QmpZRGN3?=
- =?utf-8?B?WG9NVGtGQm9vZmdCK1pDU3Y3RUdWeW00VzBoQ3MrMlIyVEtyMDF0SDJSOU5t?=
- =?utf-8?B?bklkWUNTTXU4MzVOTWc1cFNpQlBBZHJZNVIrNndaVDRiVGt5NjkweHZiWllh?=
- =?utf-8?B?Tys1QzNwbXFES0k2YlpITEJOeHk1MjZCWGxCb2dsazJySFNHbmFGa3FMWFlT?=
- =?utf-8?B?cFc2SU1nMnRlMFB3SjQwcUpCWUVLMi9scm9rQ1AwQVlBQ3c5VHM5T1hOZTZq?=
- =?utf-8?B?aW9LN3RVMzhvdEtGTlU4NERKMW1PcDNMVDZORG5oQzd4UW9vdkJyUmRyVzJ1?=
- =?utf-8?B?eEx0ZHBLS2U4ODdMbkp4UTZ3Vlh2QmlkZ1FxdGlHTVo1ZU5td0h6dkpMTVZy?=
- =?utf-8?B?WjBYZjJFclBtd1B4T0JNa2JiQzJCZU1nbzRXcnFIWEhkcldoSlJhckV6b1NU?=
- =?utf-8?B?bFNVRVFlNVdWQ2lKZy8xYlRZWGNMUHV1WG13Y3hmMTlFZHM2ajFNeElKNDhL?=
- =?utf-8?B?cnl2elVUOC9tQ2dwQW8wQ2U5YkRId1FQY3NPWnhLNGpNVFQ4UnRTQWRudHhu?=
- =?utf-8?B?V01IV0ljU2VVaGgydzhtdjlweUFpN0dYM2J4M2g0TXJuaWtXaVpPZDU4K2ZR?=
- =?utf-8?B?V2xvRTFBeTY0dzVlTUljQU4zWlhTNXd6QXlWa2xGVWZVSVROcER1MHU2ZG5T?=
- =?utf-8?B?T3hWZzdubmFaR1RmcHlJd0V0VGtybGE3WkVPSXRyZlptSjhMY09GTnludC9x?=
- =?utf-8?B?enJPK2IzcmpHTmdQUWtnUUJ0dTZVMmhqOXZ1N2pzOXlQbFB3NjBxTHNJc0pm?=
- =?utf-8?B?eVRSZWU3Y3cxbGpOcmlWK1FsbUdXSnJ4b2Q2Ym14VnRVeUVkVkxhOUdZc1gw?=
- =?utf-8?B?aFFJOXFkM0RnT2RlQkhXZ2phVHJ5VkROVUlXbXFScUtaVFFpQkRDRHJDYTQr?=
- =?utf-8?B?Qi95cHN0aHJOdkhkUlR5Q0xLQzNjV25hemErOWhCWFp3a0ptWk4xMVpEOVNX?=
- =?utf-8?B?ejJtTFNRZGg1dmpaVWM2TmxRVS9DbW01SWdFdUVZTXd5MGJSeWI1cGZRZy9M?=
- =?utf-8?B?Tm02VnJmaHBISWpYTFVVV1RPNXo5U2ZUOVJwZ0t1bGRtdDVaV285VXBTMlFX?=
- =?utf-8?B?cjhVREZBSk9OcXBxSzNxbnEyaXhTL1lFOFBhZFNjblBGNW9tQmNuTXFCbnRK?=
- =?utf-8?B?UFJLR2Z3S0o2QnN3NjFzVWtROUZpMWxSZmtERTVQM0k5NnJnc0RyTFNsemRi?=
- =?utf-8?B?K05jRTJtLzduRFU4VlgwVGV5R0RTdjkwNE9NamZ0UERYUWtKUE1XbytGM29R?=
- =?utf-8?B?VmgzS2s3dkJFaXF3M0QvVWoyVEdpWlFMaFNpbDA3Sm1KWHhWTjdHZmRGd1VJ?=
- =?utf-8?B?WmhvSmxKVmJyT3NsUnpoc0F3VVlhVlBLZmZYZ25LczhLTkVhdTY4eFh6T2FY?=
- =?utf-8?B?WlQrU2F5VnVMZzV4N3FSdXdxNjlNU040YmNkTCtCQ2xxYlpsYXpYdThxMXVl?=
- =?utf-8?B?RnlBNmN3SmUrSzdvRlBYVDNGYjRaN1dRTGg1L3JwMkpmMmExTHF2Z3pvbTdL?=
- =?utf-8?Q?v0tmgP7WgJhKgtbhhXFiOOo=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b64eeb11-3e99-45ba-14a4-08ddef7de25c
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR11MB3934.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 08:50:10.5487
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lMNZzrut4Ym3tP8atNJcvlHmlCUDvzf4SPAjtd+Ziv0z7aeGTHOog3KNFKHU+sS5QHjqCMlMOCICTFMx2fpCWMrO0DDXbmu4QFEVXpIiFUo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6013
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250909-ams-txt-to-dt-schema-v1-1-8a30c25c8295@thegoodpenguin.co.uk>
+X-B4-Tracking: v=1; b=H4sIADvqv2gC/x3MPQqAMAxA4atIZgOxalGvIg6lRpvBH5oignh3i
+ +M3vPeAchRWGIoHIl+icuwZVVmAD25fGWXOBkOmpZ4suk0x3QnTgXNC9YE3h64zFRNT7RsLOT0
+ jL3L/23F63w8xQxsIZgAAAA==
+X-Change-ID: 20250906-ams-txt-to-dt-schema-a821e0e03c46
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Harrison Carter <hcarter@thegoodpenguin.co.uk>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757407907; l=6995;
+ i=hcarter@thegoodpenguin.co.uk; s=20250904; h=from:subject:message-id;
+ bh=V2LD4c2YqvvZsVb5vESU9/gd6wD8GomVEn03Q1TEoGs=;
+ b=rBNQmeJz2PGwDsJGqsOXX1epHswRma8CnJWbRuPlFCb/5p6jTQoQIf6sw7hPS2IOHOXk5e2xF
+ vO8j5IPQsetDeZKfN9rMtlGcGk8POnv+7EMXTif4JMkRYPWHczIEqIu
+X-Developer-Key: i=hcarter@thegoodpenguin.co.uk; a=ed25519;
+ pk=xn5ghTMMWQniDtZih4xwKCTAaBHDozflTmqNKtaKo6s=
 
-On 2025-09-09 at 10:40:29 +0200, Peter Zijlstra wrote:
->On Tue, Sep 09, 2025 at 10:34:25AM +0200, Peter Zijlstra wrote:
->> On Tue, Sep 09, 2025 at 10:24:22AM +0200, Maciej Wieczor-Retman wrote:
->> > On 2025-09-08 at 22:19:05 +0200, Andrey Konovalov wrote:
->> > >On Mon, Sep 8, 2025 at 3:09 PM Maciej Wieczor-Retman
->> > ><maciej.wieczor-retman@intel.com> wrote:
->> > >>
->> > >> >>I recall there were some corner cases where this code path got called in outline
->> > >> >>mode, didn't have a mismatch but still died due to the die() below. But I'll
->> > >> >>recheck and either apply what you wrote above or get add a better explanation
->> > >> >>to the patch message.
->> > >> >
->> > >> >Okay, so the int3_selftest_ip() is causing a problem in outline mode.
->> > >> >
->> > >> >I tried disabling kasan with kasan_disable_current() but thinking of it now it
->> > >> >won't work because int3 handler will still be called and die() will happen.
->> > >>
->> > >> Sorry, I meant to write that kasan_disable_current() works together with
->> > >> if(!kasan_report()). Because without checking kasan_report()' return
->> > >> value, if kasan is disabled through kasan_disable_current() it will have no
->> > >> effect in both inline mode, and if int3 is called in outline mode - the
->> > >> kasan_inline_handler will lead to die().
->> > >
->> > >So do I understand correctly, that we have no way to distinguish
->> > >whether the int3 was inserted by the KASAN instrumentation or natively
->> > >called (like in int3_selftest_ip())?
->> > >
->> > >If so, I think that we need to fix/change the compiler first so that
->> > >we can distinguish these cases. And only then introduce
->> > >kasan_inline_handler(). (Without kasan_inline_handler(), the outline
->> > >instrumentation would then just work, right?)
->> > >
->> > >If we can distinguish them, then we should only call
->> > >kasan_inline_handler() for the KASAN-inserted int3's. This is what we
->> > >do on arm64 (via brk and KASAN_BRK_IMM). And then int3_selftest_ip()
->> > >should not be affected.
->> > 
->> > Looking at it again I suppose LLVM does pass a number along metadata to the
->> > int3. I didn't notice because no other function checks anything in the x86 int3
->> > handler, compared to how it's done on arm64 with brk.
->> > 
->> > So right, thanks, after fixing it up it shouldn't affect the int3_selftest_ip().
->> 
->> Seriously guys, stop using int3 for this. UBSAN uses UD1, why the heck
->> would KASAN not do the same?
->
->Specifically, look at arch/x86/kernel/traps.h:decode_bug(), UBSan uses
->UD1 /0, I would suggest KASAN to use UD1 /1.
+Convert the ams,as3645a.txt to DT Schema format.
 
-Okay, that sounds great, I'll change it in this patchset and write the LLVM
-patch later.
+maintainer: set to what I found in MAINTAINERS
 
+Signed-off-by: Harrison Carter <hcarter@thegoodpenguin.co.uk>
+---
+ .../devicetree/bindings/leds/ams,as3645a.txt       |  85 --------------
+ .../devicetree/bindings/leds/ams,as3645a.yaml      | 130 +++++++++++++++++++++
+ 2 files changed, 130 insertions(+), 85 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+deleted file mode 100644
+index 4af2987b25e92394ebd46456e30002d3ae3a6101..0000000000000000000000000000000000000000
+--- a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
++++ /dev/null
+@@ -1,85 +0,0 @@
+-Analog devices AS3645A device tree bindings
+-
+-The AS3645A flash LED controller can drive two LEDs, one high current
+-flash LED and one indicator LED. The high current flash LED can be
+-used in torch mode as well.
+-
+-Ranges below noted as [a, b] are closed ranges between a and b, i.e. a
+-and b are included in the range.
+-
+-Please also see common.txt in the same directory.
+-
+-
+-Required properties
+-===================
+-
+-compatible	: Must be "ams,as3645a".
+-reg		: The I2C address of the device. Typically 0x30.
+-#address-cells	: 1
+-#size-cells	: 0
+-
+-
+-Required properties of the flash child node (0)
+-===============================================
+-
+-reg: 0
+-flash-timeout-us: Flash timeout in microseconds. The value must be in
+-		  the range [100000, 850000] and divisible by 50000.
+-flash-max-microamp: Maximum flash current in microamperes. Has to be
+-		    in the range between [200000, 500000] and
+-		    divisible by 20000.
+-led-max-microamp: Maximum torch (assist) current in microamperes. The
+-		  value must be in the range between [20000, 160000] and
+-		  divisible by 20000.
+-ams,input-max-microamp: Maximum flash controller input current. The
+-			value must be in the range [1250000, 2000000]
+-			and divisible by 50000.
+-
+-
+-Optional properties of the flash child node
+-===========================================
+-
+-function	:  See Documentation/devicetree/bindings/leds/common.txt.
+-color		:  See Documentation/devicetree/bindings/leds/common.txt.
+-label		:  See Documentation/devicetree/bindings/leds/common.txt (deprecated).
+-
+-
+-Required properties of the indicator child node (1)
+-===================================================
+-
+-reg: 1
+-led-max-microamp: Maximum indicator current. The allowed values are
+-		  2500, 5000, 7500 and 10000.
+-
+-Optional properties of the indicator child node
+-===============================================
+-
+-function	:  See Documentation/devicetree/bindings/leds/common.txt.
+-color		:  See Documentation/devicetree/bindings/leds/common.txt.
+-label		:  See Documentation/devicetree/bindings/leds/common.txt (deprecated).
+-
+-
+-Example
+-=======
+-
+-#include <dt-bindings/leds/common.h>
+-
+-	as3645a@30 {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		reg = <0x30>;
+-		compatible = "ams,as3645a";
+-		led@0 {
+-			reg = <0x0>;
+-			flash-timeout-us = <150000>;
+-			flash-max-microamp = <320000>;
+-			led-max-microamp = <60000>;
+-			ams,input-max-microamp = <1750000>;
+-			function = LED_FUNCTION_FLASH;
+-		};
+-		led@1 {
+-			reg = <0x1>;
+-			led-max-microamp = <10000>;
+-			function = LED_FUNCTION_INDICATOR;
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.yaml b/Documentation/devicetree/bindings/leds/ams,as3645a.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..f956c20cc8fb379f370ad785a3d75f27d0cfa032
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/ams,as3645a.yaml
+@@ -0,0 +1,130 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/ams,as3645a.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices AS3645A LED Controller
++
++maintainers:
++  - Sakari Ailus <sakari.ailus@iki.fi>
++
++description: |
++  The AS3645A flash LED controller can drive two LEDs, one high current
++  flash LED and one indicator LED. The high current flash LED can be
++  used in torch mode as well.
++
++properties:
++  compatible:
++    const: ams,as3645a
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  reg:
++    maxItems: 1
++
++  led@0:
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        const: 0
++
++      flash-timeout-us:
++        minimum: 100000
++        maximum: 850000
++        description: |
++          Flash timeout in microseconds. Must be divisible by 50000
++
++      flash-max-microamp:
++        minimum: 200000
++        maximum: 500000
++        description: |
++          Maximum flash current in microamperes. Must be divisible by 20000
++
++      led-max-microamp:
++        minimum: 20000
++        maximum: 160000
++        description: |
++          Maximum torch (assist) current in microamperes Must be divisible by 20000
++
++      ams,input-max-microamp:
++        minimum: 1250000
++        maximum: 2000000
++        description: |
++          Maximum flash controller input current. Must be divisible by 50000
++
++    required:
++      - reg
++      - flash-timeout-us
++      - flash-max-microamp
++      - led-max-microamp
++      - ams,input-max-microamp
++
++  led@1:
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        const: 1
++
++      led-max-microamp:
++        enum:
++          - 2500
++          - 5000
++          - 7500
++          - 10000
++        description: |
++          Maximum indicator current. The allowed values are 2500, 5000, 7500 and 10000.
++
++    required:
++      - reg
++      - led-max-microamp
++
++required:
++  - compatible
++  - reg
++  - "#size-cells"
++  - "#address-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    i2c{
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        as3645a@30 {
++            compatible = "ams,as3645a";
++            #address-cells = <1>;
++            #size-cells = <0>;
++            reg = <0x30>;
++
++            led@0 {
++                reg = <0>;
++                flash-timeout-us = <150000>;
++                flash-max-microamp = <320000>;
++                led-max-microamp = <60000>;
++                ams,input-max-microamp = <1750000>;
++                function = LED_FUNCTION_FLASH;
++            };
++
++            led@1 {
++                reg = <1>;
++                led-max-microamp = <10000>;
++                function = LED_FUNCTION_INDICATOR;
++            };
++        };
++    };
++...
+
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250906-ams-txt-to-dt-schema-a821e0e03c46
+
+Best regards,
 -- 
-Kind regards
-Maciej Wieczór-Retman
+Harrison Carter <hcarter@thegoodpenguin.co.uk>
+
 
