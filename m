@@ -1,133 +1,126 @@
-Return-Path: <linux-kernel+bounces-808351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4417FB4FED7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:08:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7E8B4FEAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 247E57BAB5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:03:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BACEA1B25077
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2854B3451D9;
-	Tue,  9 Sep 2025 14:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DE72DF703;
+	Tue,  9 Sep 2025 14:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VIX29CZO"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WSxzIayO"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65B72356BA
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7ED231836
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 14:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757426635; cv=none; b=BxP64CW8Sl169DEgLO9+HKGfdC5RuyILr8r7u1iBmQg5Wae1R7ussFsCPHWa3be9CDZsxSzXuOsLZxEt7mL+8eX5zS8uDUfUUn/skTNjVCh3KJHyZ8erjVQpvjKKDNvYEDuvPcc0y6gsCoBvKNoqtLSwe1/JvkpSc87Y/G3tBpo=
+	t=1757426701; cv=none; b=L6O6uNnNyWeU4m8i6uOnSL9bjnWACa7lVE56UvDJKkTF3rAWSobY0ZJ9yf4h1E/4DVMaNTXkOFVYNdJT3BZifdoJNkpHK/118OLfEEFPEZo5exGvMJjVViwYhhnAGrG+6389YH/+bNrcOvrb+RPaNS46wJ1N4FqTKmNFjQre4WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757426635; c=relaxed/simple;
-	bh=J1iHTeiWgzsI9TOKXMSPaiARrb+BL0MsqyKSqGCw3KE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lO0uDx7bbRjXZoN6kkhdYGwe7gs0oGrpm4bcHAFm+m+cTO+S+euj1VWSPJUr99VWTRrk108E7z0+VLW6l1PtYU8TM0LReLocYqw/+5n5mGlxzWYriMZ0BJrd9gFSMEI1VQ82yOTskH2CEwTQL33ZG/iOiKIIMZJFPg0wIzy9FaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VIX29CZO; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45dd505a1dfso34043855e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:03:53 -0700 (PDT)
+	s=arc-20240116; t=1757426701; c=relaxed/simple;
+	bh=2mB0x9tUEIQ5MxbhPdxec5L9gQv7/jA9btpwr+y5T4c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kilml8GQGO5LXwxAMZoii9xexXWQ92z0GnE4AsEFLTFYiUXLQODMgr46LagRRuyeaAvktfp0/SwQYxj0Un7kXbGzF8zEfeKDQMqktnJ+7eIEpxJqtHWbCgmQCe1PFDf+MzV6izll48YoW2nY0T09GHnkI3GPCIIEAYN5bynwJqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WSxzIayO; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b5ed9d7e96so39066561cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 07:04:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757426632; x=1758031432; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7czbVid6QRsjlwt+fbJOY83TMvm3D218edlo4P0mSo4=;
-        b=VIX29CZOHX6QxDwCK4rR3x2VG+wKMskd+pE/0xRq4AsQcPZvM0ceskwVJhaen90Tj/
-         xrFxolmgya2ZSY8l2ogSMjPJLw0zQIHUWXoAUS87MHq679mknScJoWPphOZEt9s3TfXh
-         MGsFeS4dF7g7NBISoYPKABGARcZ2JXjHlV2d1+iUjbCpW/Oamg4hclQqxvpJePztdgBi
-         Ho45LwOy9erQuSxJiGwZuchEJ8BcTwLG7NLshNZ2vSb7W/Vl2LHkVgSu1C5+UrdtTGR/
-         BQJqQ+mFGS2Il+z045A/lVK3iU9QZQpuuEIcdNqsE75H4PqJUfE5OFx6wrwkHuixxr0M
-         EyNQ==
+        d=google.com; s=20230601; t=1757426699; x=1758031499; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oe3MS4NWrw5pSnT/UHkzhsJzbgIdx98+KXeSp06EODM=;
+        b=WSxzIayO3nGzNEwh4j0iQ5k9SXm9ibsrfH/kPY/2YxCBz0/Hf+rQJmlZAozyIzgF+H
+         CCA3OQ75cvinG12oBsQ6f81kdrZ/gKHp6+l4qjOWfS9z2gcBG/L078bBYsBbcLDT+X4Y
+         LfpTkau9QZjvzzuNNJvA5hZ3Rp6UMJGSZwamyJ8B+p63uYK4qn9WZ8ZvAhFP3nnryqIi
+         hlxiDyeBUA6R6iH6jBbwE530iBHJJXGmUJQhlfaopXbjZ2rMEt2Uwqnj6YB4tauBAd4D
+         N02BIO3F/3GMNFGHSkAQ1C/7pZFSN8qa4WKPw06naLQbefGDQCqBZrLCeM8OZpLEol9f
+         jxqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757426632; x=1758031432;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7czbVid6QRsjlwt+fbJOY83TMvm3D218edlo4P0mSo4=;
-        b=jdydGLadV8nuZwEfw2GO1p+gtm9Z7eA7it9VZfkeX7LU0KgwMbB2bzv58aVXkwEnQC
-         Ex5X1syYppxmEk1p4/3cfhW9zzcC6RqJnj1MCc9EbsbxZ7ZhBUPiB1M40lttzbtVdn6G
-         ZYMfzcc70+o9gWQABU/ZPyldXCj3zmSXbXmdC9WlgXKNAqdnM75uF3rGCAvZaScp4nwI
-         8N6FXTfp0mGb4e7e1SRBLxottOZBHCS9boxhlVEgFuYXfcvlZOlgAv306bFBVi+R8lH7
-         JPDcQ7H0uABRJ9LW74Hgar4zXyUAojy80y3lkFFTUtDitKdVEM151MufY2vzVuiKe2Y2
-         vJGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYLL7GwQST+fQMNCn9VwcY8I2kV0GEmtgORdmrTGlkzO3f/Hy/UOtgxdlhbpWaQK/i5u2ouAe+HWFOAKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBwTxVtXxoKHEy2jFlUn5Z/7FrOABQTnAomU7q6AjV9ILoGwzR
-	VtrCmp82m/qIjr33DGWPIYdlpN8yssqF5lozEmfmzQa03/eJOjR6ujsWkyz6udY2o00=
-X-Gm-Gg: ASbGncssabCVXngFMPSVLFv9f1tOux5ZKhfiY7+NjWF18cIIMXDtNkL0sP1DKJtSCIu
-	Hjuc41b1KYwHBjSFj0yVPifXBrvbpxbcLosx6xgvcbnEWTnNJ6QWDHjhHtqYzI87xdqbBlamNHR
-	QSVNWbOK6GzVPnSAnLcrfaU/QmJ9c9wwNTKrcEb6g34fTuJ2F1s+FG0NePSSdJ439c8lqm+D2m2
-	GMCfVRTdWRDWvTkKOBNFCNGRPukmW3/kVbrtMC9O9laX61+RNlC09HJqIfHZSQbHjFkvAKjwqt1
-	Y1WWp0/QTT0TGoskAMKb4wHr2z6CEJvc8Oo4VQc9L9XBz1Gs5ez3jUwMox3pP9YtF1mA9TXAKnL
-	wP+b9Lz1+V6EapM5pPBQfCqFZU8B/qMtU1faNguVxDGh34ya2Smt4imaKD6BtKn+6laGuE2Jo97
-	0GdyWPVJiHatkr+CjkIGg=
-X-Google-Smtp-Source: AGHT+IFzn0c/ZENYPqzsIDea2ndHdK4KGIQ+jsE0Z5szl/BL4biM07CIyHZ1+ufaLZRPjZ/hkQF40A==
-X-Received: by 2002:a05:600c:4711:b0:450:d37d:7c with SMTP id 5b1f17b1804b1-45dddecd454mr96743385e9.21.1757426630421;
-        Tue, 09 Sep 2025 07:03:50 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b9ab7c7dbsm309084955e9.11.2025.09.09.07.03.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Sep 2025 07:03:49 -0700 (PDT)
-Message-ID: <ad5a58a6-2545-4429-9388-e8ad84319570@linaro.org>
-Date: Tue, 9 Sep 2025 15:03:47 +0100
+        d=1e100.net; s=20230601; t=1757426699; x=1758031499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oe3MS4NWrw5pSnT/UHkzhsJzbgIdx98+KXeSp06EODM=;
+        b=N8GhRd0qM47/g5CbP8UpklAyx53enaI9GXk9LTeY53fgqvBuYvO7mK1E8ClxQ9uwzX
+         ouHgv0rOh7LYOd5nreYylRNi/HoSUClUgfsnFX+cBUcJ1UBWmhACYVh772vXISQHG4EJ
+         SAbL7eiS8QFRfbqgtY0f0u/IFojll9OjRXNJ/8AlfhE3m6OYpGiGuv+OMxIIEuq2KUd7
+         aaLsA7dA1r415fOo2QRRG8HLuAO+W61dcTZMlimWrGpFJCoumLEEJiR6ghStZDu+41oa
+         ElcuP2xRwynXG29udfbQiM80IRRdIEao+La5/qlui4bx49byxtjU11b8FyH3E8jlYOyS
+         I8Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxWNxRVQCLVtAnGbfkVV27hgBZY31nDVapTaZnhDLciddlu3YwkAPjI4nVfh3Gk6vj6aJMXZm3OeRo3W4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPRbGD7UlWJ0O9FkR1HJw5uIhvl5kxwVIaIy+3IKiDPZGcf/bN
+	xeXzZ6T8ixMTct1Ns4yKdMcgx5z2oshy/7rsr6r0ZnKb8+ahO/eQ4AAMxUxBX6AGSv4CUc7uyTT
+	G+m6yjzAee6ShFzRhoQVwi5NwYpHWnWQ6rTNvOGCW
+X-Gm-Gg: ASbGncu7dS7UJQqKuz4aIWM7Jj2Rk3R0ZOXy9LE39Y62na8HT5+oWowCIJHScUloQle
+	bJKFpPawqULh9ZE+AKlW7ImJJtiVwy0jdyeO3dorPAXLlihpfeME2D5b3v+tGVvp9aXBJaAl69P
+	zEde9g7so6gODP8QOM4VS6aO6qcXwzU/hmgIO4FRCbHRXSNABEbhCYxIGXSpIx8basQBPfMNRsx
+	yTkTsjJXjs6o0Kxan+rQBr/078ebD9fEDWebOzB8RL1if/i
+X-Google-Smtp-Source: AGHT+IEEJs5ATIhb/+q+aJw0Fa+x8WJDtjNWkOr2z/Gq3RIHYs/0Zof9ATeSU5qk43EzE1eKqSxCu5/hSladqbzUtB8=
+X-Received: by 2002:a05:622a:1:b0:4b3:4e8e:9e32 with SMTP id
+ d75a77b69052e-4b5f8382644mr139813601cf.3.1757426696511; Tue, 09 Sep 2025
+ 07:04:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/11] media: iris: Enable Secure PAS support with
- IOMMU managed by Linux
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250820115659.kkngraove46wemxv@hu-mojha-hyd.qualcomm.com>
- <aKXQAoXZyR6SRPAA@linaro.org>
- <f25b6cb4-666d-e3e1-0540-b2d7fad86407@quicinc.com>
- <aKguXNGneBWqSMUe@linaro.org>
- <20250822150611.ryixx2qeuhyk72u3@hu-mojha-hyd.qualcomm.com>
- <aKiaKwkpdKHSH9YS@linaro.org>
- <20250822164030.6gubbs24raeg6kbx@hu-mojha-hyd.qualcomm.com>
- <aKooCFoV3ZYwOMRx@linaro.org>
- <20250825111956.5x4dn3uguo4xmtss@hu-mojha-hyd.qualcomm.com>
- <aL6Sg9dExKfepRKM@linaro.org>
- <20250909121956.rjbysoylwybgsago@hu-mojha-hyd.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250909121956.rjbysoylwybgsago@hu-mojha-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250909132243.1327024-1-edumazet@google.com> <20250909132936.GA1460@redhat.com>
+In-Reply-To: <20250909132936.GA1460@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 9 Sep 2025 07:04:45 -0700
+X-Gm-Features: Ac12FXyw6AFwM8QYIvqrqv7UIhW5n9GY5UElWWm_-QForGN8qFcrvQqZyLC1MGI
+Message-ID: <CANn89iLyxMYTw6fPzUeVcwLh=4=iPjHZOAjg5BVKeA7Tq06wPg@mail.gmail.com>
+Subject: Re: [PATCH] nbd: restrict sockets to TCP and UDP
+To: "Richard W.M. Jones" <rjones@redhat.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
+	Eric Dumazet <eric.dumazet@gmail.com>, 
+	syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com, 
+	Mike Christie <mchristi@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>, 
+	linux-block@vger.kernel.org, nbd@other.debian.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/09/2025 13:19, Mukesh Ojha wrote:
->> Have you continued working on this to unblock adding the IOMMU needed
->> for the IRIS firmware?
-> We are discussing on this internally and if this can be taken along with
-> non-pixel case or not, will come back on this.
-> 
-> If it takes too much, will drop video support for now in next version.
+On Tue, Sep 9, 2025 at 6:32=E2=80=AFAM Richard W.M. Jones <rjones@redhat.co=
+m> wrote:
+>
+> On Tue, Sep 09, 2025 at 01:22:43PM +0000, Eric Dumazet wrote:
+> > Recently, syzbot started to abuse NBD with all kinds of sockets.
+> >
+> > Commit cf1b2326b734 ("nbd: verify socket is supported during setup")
+> > made sure the socket supported a shutdown() method.
+> >
+> > Explicitely accept TCP and UNIX stream sockets.
+>
+> I'm not clear what the actual problem is, but I will say that libnbd &
+> nbdkit (which are another NBD client & server, interoperable with the
+> kernel) we support and use NBD over vsock[1].  And we could support
+> NBD over pretty much any stream socket (Infiniband?) [2].
+>
+> [1] https://libguestfs.org/nbd_aio_connect_vsock.3.html
+>     https://libguestfs.org/nbdkit-service.1.html#AF_VSOCK
+> [2] https://libguestfs.org/nbd_connect_socket.3.html
+>
+> TCP and Unix domain sockets are by far the most widely used, but I
+> don't think it's fair to exclude other socket types.
 
-For preference I'd rather get something that can be applied to -next so 
-that we can enable PIL loading on current kernels instead of waiting an 
-indeterminate time for an iommu non-pixel resolution.
+If we have known and supported socket types, please send a patch to add the=
+m.
 
-i.e. we are better of with stuff that works now instead of gating 
-ourselves forever on a fix that may be months or years off.
+I asked the question last week and got nothing about vsock or other types.
 
----
-bod
-the optimist
+https://lore.kernel.org/netdev/CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+ndzBcQ=
+s_kZoBA@mail.gmail.com/
+
+For sure, we do not want datagram sockets, RAW, netlink, and many others.
 
