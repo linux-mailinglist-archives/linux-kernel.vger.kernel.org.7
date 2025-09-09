@@ -1,132 +1,167 @@
-Return-Path: <linux-kernel+bounces-808126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 093F1B4FA11
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:14:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F15B4FA09
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1454E46DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:13:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 475764E2CC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AE232CF92;
-	Tue,  9 Sep 2025 12:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69F432BF4B;
+	Tue,  9 Sep 2025 12:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="BM/ws7gy"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I6ZbdsjJ"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CB7304BB5;
-	Tue,  9 Sep 2025 12:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757419986; cv=pass; b=h2BgbtToAfrNGc8ZOALbTeyeUEd9HVD7KoBLXToclyq1oOTMh5XCOMMpwalmE5Rq0EeuapZsjr7+uMkwtNV4XhjnU5OnDhSiFSsKntEpzlRT0oTUuSPwqQMBJx8j9V2dVrEOy9Jxey000YnwjoiFJsV2SbcjN5gK9LUMR9tl8k4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757419986; c=relaxed/simple;
-	bh=qRTm08wogJ6IEQYYX7Nk2zH1EbLuhk9DI/DPby6mwQ0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=SgoL0OYjvB0BPmYVQDshoM0ZBM5AlW4FOlykY83ENNn1eeH7ZyB6AHF61Rh/7bv69euDAh6NmmzbvK/2knc5g/Or4deDPvKjTmr7rrb9NESYk0fliEDimCsumlxthot+sWGA9PYPKca+56QXmbS2Q2arARKUxO2G0fnrTpBJeCQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=BM/ws7gy; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757419961; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cZa6GESQ97dMg+rynhdCMUAoIPsAuEcDQg0rWghvSxu1jKqvfYcYxqW/xE1hXuc4r/VQVzxTHrFdDlcb031kAnMPENwN5hMtFXCgpLxABC9WzsIWsebsvBQQ64d65ZsArTj1qdBpOMoHq3gddgCUKfytObT5BvfNEKiWwnVEzFk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757419961; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=qRTm08wogJ6IEQYYX7Nk2zH1EbLuhk9DI/DPby6mwQ0=; 
-	b=azFE/VIRrRK5vv5Eebiu89uHK6509YStWkplsKOQ3aMG/lDG6nXvUb9ZOOtYFfL+ex8o9kZcjGEFFK3RJ6Ffqx4ieqwGsaUbEIu3m223mnz7TXl7meelAYxpRERJTT/y8e2Jkw0MaP3JmS4x1jimdcbK0E6ULjFPNJ26JFwpAdM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757419961;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=qRTm08wogJ6IEQYYX7Nk2zH1EbLuhk9DI/DPby6mwQ0=;
-	b=BM/ws7gycQgRHCFozthJdHDoQ36qwU3lBS0AOSxzZW4PuCrsSi1cJ1SP4j6rDldR
-	Ev0k+SeeWreurDcv20q5a1uNqy1NrMmtuH0wA6UnxmmIIKm8hn0XQmu54xS8ezQR8Jg
-	gZVusSraG8T22r+UKG47R5TjFP7Q9cIgSJOCXGUE=
-Received: by mx.zohomail.com with SMTPS id 1757419958375181.19043421461697;
-	Tue, 9 Sep 2025 05:12:38 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6586232C311
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 12:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757419958; cv=none; b=JOHh/IcqLkbD0gX92wJckTmZh4o+DIP7EquH3PLRNjvFJgISnzkCdOmPTEikb83zGDiRKBCDg/V3uVz3O1gmXhsCqaatY0hcCb0hN5HgoArHoM2R4gOAWrzCwemUkzGswosW1JtW/F4WotJMf6+t09bbudwMawtas3P3VT93PKQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757419958; c=relaxed/simple;
+	bh=UMuLi+2sTu67SCflOdJc4PIQVaIvN944yy3ZwdMulbA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=crfh7z+atFGbrAqAGLrwpnO2E5TygviLnU/IkpXvRQuGLABEojizRvex0bGP4F4ljdHT2hMyXzW0cRRd4PaB/454ujA++AsoQ9bcM1WKlaAriJevmi07hlqnKv4n7Nf+AYfKpQhtFk2JzWYZiZ/oekSMq7ee+2s61UaKhgcIapQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I6ZbdsjJ; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-401078bfacdso31156345ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 05:12:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757419955; x=1758024755; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nkBEP56Uel40DX62RGXYLGaihWp1S3NRQH+BuVUs8SU=;
+        b=I6ZbdsjJjG5t9ErKwRQBb4eRgd54dCyVm4ldsfZA9MtP6IrDM2lwWhYRtvEZFpr5Ux
+         MwHqYdG7meQBgRmXtp1aqPOWI5v2+DUF8lq+qizuPHq/pWM5aYNbcKL/14TEte57VNW1
+         6ciQRXw8JPfs9+hRU5NZaX9T0WMkPe81JmE7gjSxv2rDlIFQQ5ngYiYtayKhtm6KGHVg
+         GnhagMKSkEvYZslyQcucn9E4e8K0tzDcJ8MyAiPsTWlGP5p/rh0HfHdfKGz7WJb4NeBz
+         oVNIVn/qbinOX44+9sNgnBQSvKhVoi4xxIFLVBX2erRujIEeH2YM3SjC3AtsQb3mgdXh
+         ph7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757419955; x=1758024755;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nkBEP56Uel40DX62RGXYLGaihWp1S3NRQH+BuVUs8SU=;
+        b=vs21hpXeqS99qreLXm/PToPClETv6EqbLVABFa3s5BWBMY87IYoBtmIxFAPYWjnrNv
+         egMQmVQvLvyaush83lKV5Lr5CxKv+x7rQDMTEmE66fdwEpFELYAQc3sM9/D3aW/oTvfu
+         z8jCPdDRBZARqkmZbFo6O1N1YVSTGbTPsjSiiL41HYXy65+GDyvWravOAoNJ2GJTbVfC
+         V0IsM0+4bfazwk+vOD8HxKoxPTw8+49A6oI/ztuKQ3slRuQvpVFGqIzQYxvFXVj1bacA
+         D4nEJrWCiI3fLE/D/oZfx8KONs7VBGxEoyXz73DO3utFY7L5mqn1Tic8aptNyYsKiq0b
+         th0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWSoBXouxL7ITv6n53I9UvACIXGL9WaLjwPe6yWYfN8Lu7tAFUtEsc1agembPX0bEf+mliZ+OCg8xJq974=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYwmMz+YpcSdrDgjEUk6TmdlCr4xvileq9vqyxeEE+djVYw9sg
+	osJhpwsd6/R9BnO+TuMvMezE+75tevRWWB0LZwsSeXe4/d+53EenaAaDrgRnyeSzzZxwy5fGlQG
+	NojLJcwbD/9BeY0Xz3qMnAnPUh7Xvcis=
+X-Gm-Gg: ASbGncuTR0HF0Byg7GLNXBSndir9fE8ewAZLMsb9inZXTUtCbvDRGoxYYnp7hUFAcBD
+	Iw+mJ0O8YMAwN1VNXLDb9maMIufJVH+4yJnlvLeaR35YBeE50hv9QIRkufM9aj8iymy6x++VnIV
+	RMwbTsN8IpzH5qPMhWUOyRFrH/a2pw9MHdicTa384Bjpn1CHI5Gqs7s4G1kqWNqGIl9N5Iolix5
+	BWG4w==
+X-Google-Smtp-Source: AGHT+IHttMERFW0A/KHZaBTOGR8TX/BI3COHvJIGooI6xnbMAbIF1hB7QCYj6I7hnqG3mC5gXf0qcw8Her+804dvKeo=
+X-Received: by 2002:a05:6e02:2701:b0:409:58ec:2491 with SMTP id
+ e9e14a558f8ab-40958ec2739mr74890145ab.7.1757419955264; Tue, 09 Sep 2025
+ 05:12:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH 2/2] samples: rust: add a USB driver sample
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <3aca9e74-b67c-4bfe-a206-9a6eecdf76ab@rwth-aachen.de>
-Date: Tue, 9 Sep 2025 09:12:21 -0300
-Cc: Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Michal Wilczynski <m.wilczynski@samsung.com>,
- Igor Korotin <igor.korotin.linux@gmail.com>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-usb@vger.kernel.org
+MIME-Version: 1.0
+References: <20250908070124.2647038-1-rk0006818@gmail.com> <87tt1djtot.fsf@bootlin.com>
+ <93578759.11447.1757322260340.JavaMail.zimbra@nod.at> <mafs08qinn92v.fsf@kernel.org>
+In-Reply-To: <mafs08qinn92v.fsf@kernel.org>
+From: Rahul Kumar <rk0006818@gmail.com>
+Date: Tue, 9 Sep 2025 17:42:23 +0530
+X-Gm-Features: Ac12FXzyioeKzeThxh8TxpOTJ5aYFfR6XxhutZ-VkjdtOnAXx2DXjKhkM9XUvkQ
+Message-ID: <CAKY2RybqkE74EADTPnCUHAXpJLJmM9skPXQ6S3UOq8TK_y9EQA@mail.gmail.com>
+Subject: Re: [PATCH v2] mtd: sm_ftl: replace strncpy with memcpy
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Richard Weinberger <richard@nod.at>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd <linux-mtd@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-kernel-mentees@lists.linux.dev, 
+	Shuah Khan <skhan@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <77E6BE1A-B928-4A36-98C4-74FB4A7C19C0@collabora.com>
-References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
- <20250825-b4-usb-v1-2-7aa024de7ae8@collabora.com>
- <2025090618-smudgy-cringing-a7a4@gregkh>
- <D8EAF874-4FED-42EE-8FD8-E89B6CB0086A@collabora.com>
- <2025090601-iron-glitter-c77d@gregkh>
- <831C4AE2-6964-4699-9E74-E4B721B87B17@collabora.com>
- <DCLQZZHU42HN.4Y4PP0PPR10O@kernel.org>
- <9657C897-087E-4544-849B-964E99D95A50@collabora.com>
- <DCLTJMIAMCVL.35U236MMS5CCK@kernel.org>
- <85B643A9-1657-43ED-BE98-BE7E502D08DA@collabora.com>
- <3aca9e74-b67c-4bfe-a206-9a6eecdf76ab@rwth-aachen.de>
-To: Simon Neuenhausen <simon.neuenhausen@rwth-aachen.de>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
 
-Greg,
+Hi all,
 
-> On 9 Sep 2025, at 08:19, Simon Neuenhausen =
-<simon.neuenhausen@rwth-aachen.de> wrote:
->=20
-> Hi,
->=20
->> On 06.09.25 17:46, Daniel Almeida wrote:
->=20
->> As I said to Greg above, I=E2=80=99m here to help if anyone wants to =
-write a USB driver. Those interested
-> are free to reach out to me and we will work together to merge the =
-required abstractions with a real user in mind. Hopefully this =
-encourages others to join in this work :)
-> I had planned on writing a USB driver for TI nspire calculators, that =
-would make them mountable as USB mass storage devices, since they use a =
-proprietary USB protocol, that usually requires paid software from TI. =
-At the time I gave up on that, due to the lack of USB support in RFL, =
-but I could revive the effort using this.
->=20
-> I'll admit that this is pretty gimmicky, but if it helps to get this =
-merged, I would be happy to do it.
->=20
-> Greetings
->=20
-> Simon Neuenhausen
+Thanks a lot for the detailed feedback on my patch. I understand now
+that this change does not add much value, and I=E2=80=99ll keep your points=
+ in
+mind for future contributions. I really appreciate the guidance.
 
-We apparently have a user :)
+Best,
+Rahul
 
-Would you be ok if I continue this work? I can look into gadget zero as =
-you and
-Alan said.
-
-=E2=80=94 Daniel=
+On Tue, Sep 9, 2025 at 5:15=E2=80=AFPM Pratyush Yadav <pratyush@kernel.org>=
+ wrote:
+>
+> On Mon, Sep 08 2025, Richard Weinberger wrote:
+>
+> > ----- Urspr=C3=BCngliche Mail -----
+> >> Von: "Miquel Raynal" <miquel.raynal@bootlin.com>
+> >> An: "Rahul Kumar" <rk0006818@gmail.com>
+> >>> -   strncpy(buf, sm_attr->data, sm_attr->len);
+> >>> -   return sm_attr->len;
+> >>> +   memcpy(buf, sm_attr->data, sm_attr->len);
+> >>> +   buf[sm_attr->len] =3D '\0';
+> >>> +   return sm_attr->len + 1;
+> >>
+> >> Are we sure the buffer is always sm_attr->len + 1 long?
+>
+> Yeah, that was what I was wondering on the original patch too. Poking
+> around the code, I see in dev_attr_show() that:
+>
+>         if (dev_attr->show)
+>                 ret =3D dev_attr->show(dev, dev_attr, buf);
+>         if (ret >=3D (ssize_t)PAGE_SIZE) {
+>                 printk("dev_attr_show: %pS returned bad count\n",
+>                                 dev_attr->show);
+>         }
+>
+> So I suppose the buffer is PAGE_SIZE long, though the show() API is
+> kinda poor for not reporting the size explicitly. If we do really want
+> to make this safer, I suppose this is what should be checked for. The
+> strncpy with length being limited to the string length instead of buffer
+> length is completely useless.
+>
+> Anyway, here sm_attr->data is (SM_SMALL_PAGE - SM_CIS_VENDOR_OFFSET + 1)
+> bytes long, which should add up to 168 bytes, which is perfectly safe to
+> just copy.
+>
+> >
+> > Can we please just stop messing with perfectly fine code?
+> > I'm sick of the war on string functions.
+> > First we had to replace everything with strncpy(), then strlcpy(),
+> > then strscpy(), ...
+>
+> I had a similar reaction initally too. But TBH if the patch made the
+> code actually safer I reckon it would be fine. Long term, these kind of
+> things can help prevent unexpected bugs. But here we don't even know how
+> large buf is so there is no point in using any of the fancy string
+> functions. A plain strcpy(buf, str) is just as "safe" as a
+> strncpy(buf, str, strlen(str)), or any other fancy variation.
+>
+> So yeah, I don't think this patch does much...
+>
+> That said, Rahul you seem like a new contributor. I would say don't be
+> too discouraged. Not every patch ends up going through. I have had my
+> fair share of rejected patches. Take this as a learning and keep looking
+> for other improvements :-)
+>
+> >
+> > Don't get me wrong, I'm all for hardening code paths where
+> > strings are arbitrary input, but in many of these cases all strings
+> > are no input or already sanitized.
+>
+> --
+> Regards,
+> Pratyush Yadav
 
