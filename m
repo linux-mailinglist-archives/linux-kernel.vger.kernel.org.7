@@ -1,87 +1,85 @@
-Return-Path: <linux-kernel+bounces-806956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-806957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00C2B49E0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:34:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C53B49E0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 02:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36FC37A4895
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:32:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 342D34E3E15
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 00:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3870B1DDC2B;
-	Tue,  9 Sep 2025 00:34:07 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59696208961;
+	Tue,  9 Sep 2025 00:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhlXHeuQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F40214286
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 00:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95D81F12E0;
+	Tue,  9 Sep 2025 00:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757378046; cv=none; b=QHFXODSQtRuyQ2U7NpEENxA58cKISyF4sj51m6GPFU4LozDz6eGTUATKBlpd0x3FZYVYFIXHqHj0oZhgCBjwsE7ZGUN3o2YoXJgnXqbNagEFCJszOJbdrWNlpkEo0bZWCHTXMvvnYcecBqUQrpAWpHHV1ghlpcOBSVSbFWK9cnI=
+	t=1757378047; cv=none; b=gmf0kJJrwI03r74vpjvxcQSyexVIGosLIPmFDGe1iWYZAMzNjxeMgIwV2ErhXhSF33rS8L5pIPCbWrroymO4xHIW9BO4D4JkX5yj7DEtQP+L8EiIx80mWfN9tUOr12Vv71Zdsdv0huz9EwgQvANIrVDX/zhrhuDwd8eURpr6eWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757378046; c=relaxed/simple;
-	bh=K3+lL9PqlDmEMzbUay2kC34xUshRy/GX1qHBB8iJdq8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eHU6VZmpUcDKcyyHQ86iamRT5QBvQwVNUvBtLINyeRxyGmUGT/IEjgdrlRt4FQxzKGbRLKLNXIKUsKBNm6Aon1Iji/OCjBLCSVTJ0vFIgwhmEXpUwz7r8DrNdBDBd0BiVttUH6pQzgcx3j38w/dhu4bmi/GpjQu5lzVfCUaotZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-88a930b80bdso27082239f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Sep 2025 17:34:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757378044; x=1757982844;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u4I5RM6+E507Ql78W74jhu8G/RkWwhi1oNqPYDJ7lm8=;
-        b=PfQFIKe2cYL66BczPDF+EIqU2mOkOUafTPjZOHVMQEQ1ku2NUX8tTV9mEZdWK6RAVE
-         U4gGwm+TGr3e8WfGrB7Bm0XdoigiqyWHFItA25OUOWzfnvABqZsBfyJMqhS+A9/V73yB
-         2139lrSVYviIWgDsVHlvbM9uO209gjzw5T6N7cvaacDDU/kcASmNqHhsQBYg08WDBsaj
-         1xQKxq5q/ED8Nd3vFzjuz7uI+lVeCOWTT3xUFybp8poKn9rXjCzeDw/l2GdOIAp7xrtq
-         6gv2ehD6jPbtvuLKHIbuDyYQnIuGoXHQc5UgDMCZeDpKPrSKHTFX1oJYtBQmERIRpeUC
-         n72w==
-X-Forwarded-Encrypted: i=1; AJvYcCUSajNsX9MIn1y0PHgoo0d6zPZMFDS7X0E2Xn8ROgEJ9PWym5jSVp5lmCHOHVcKwh9csSPQJy8+Ax8Vg7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL3vKOpzxXBwGMQwtEjUM8lliUnCqL9tnRkh4RvC2cRCP4o0rK
-	0w/i+OBtOZN5gh5TYIkAOjHVdjoc7wX/YRuyZvX5XyWX6ZKGZdlPQqIBLIG0/d8bhCd08qpY3eu
-	Wk+MxVfb6Gl/MU+B3wNhpqg172XoPrh3ChDgK7zCndxBNvi+yd2ODgSRaDLQ=
-X-Google-Smtp-Source: AGHT+IFUG2Lbi2ZtCx+LhTwyId11/6fZ1A9ihMm4fmSLUzH7AvG6ggzSZHu5unzF37b3pjPOztBGstTNDEViV9pfBWVQveEM94Fl
+	s=arc-20240116; t=1757378047; c=relaxed/simple;
+	bh=kIlv7QbzYjMgSwCBteRli8sNX4QzCCtBptBcgT5oOPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bo3SzonhBQdLmRcWlgrFK2hpSHYF9SYeqWGMdeyRI3hqWbqAIyXvowLY1XwqBAZdA5vAAbWnszr7JeuDkHn18OTqLLdMfwe080ANADVdYMkiyQzlaW95N+/1LTEIcXGyOoYSQTBv7UQXXcUB3OSdNPlO7ELkqwhWshxBiHSZcBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhlXHeuQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D48C4CEF1;
+	Tue,  9 Sep 2025 00:34:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757378047;
+	bh=kIlv7QbzYjMgSwCBteRli8sNX4QzCCtBptBcgT5oOPY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OhlXHeuQg/FbLmSazvb/q+WT5wZq0bM/SbOFD0i9lLCn5AjwlpMg4hSG57YM1QTpE
+	 EDNivgEg9GxQNuAae4aNPp/l2oI5inaOXK3c7ktYmAeYQaweAvTxtPcHNnGWi/BtWL
+	 4a68szBvMjRlKjemWt4JONgSNgSf62Z8SQvrl/YTKourv7S3ryguvWISptRNrfLq6U
+	 YW0ZUYif/g+X2Ltxx4F8RxgjBSwujkjhwIemWoLxh8lLPvE3upk5ylgc3IBzk1nLqm
+	 4fMFRh2STmgQZppQOhCcI4EMvvDXrufDso0gKJ4IuNtoKZTFhZlO8+t/NmUObEsi8s
+	 2gIuU7LYZlV5A==
+Date: Mon, 8 Sep 2025 17:34:05 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Vadim
+ Fedorenko <vadim.fedorenko@linux.dev>, Junhui Liu
+ <junhui.liu@pigmoral.tech>, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, Troy Mitchell
+ <troy.mitchell@linux.spacemit.com>, Vivian Wang <uwu@dram.page>
+Subject: Re: [PATCH net-next v9 2/5] net: spacemit: Add K1 Ethernet MAC
+Message-ID: <20250908173405.08aec56d@kernel.org>
+In-Reply-To: <fbcc1ec3-7ff6-4891-97e3-9763355326f7@iscas.ac.cn>
+References: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
+	<20250905-net-k1-emac-v9-2-f1649b98a19c@iscas.ac.cn>
+	<20250905153500.GH553991@horms.kernel.org>
+	<0605f176-5cdb-4f5b-9a6b-afa139c96732@iscas.ac.cn>
+	<20250905160158.GI553991@horms.kernel.org>
+	<45053235-3b01-42d8-98aa-042681104d11@iscas.ac.cn>
+	<20250905165908.69548ce0@kernel.org>
+	<fbcc1ec3-7ff6-4891-97e3-9763355326f7@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:144a:b0:3f6:554f:f839 with SMTP id
- e9e14a558f8ab-3fd89ce42f0mr143617105ab.26.1757378044608; Mon, 08 Sep 2025
- 17:34:04 -0700 (PDT)
-Date: Mon, 08 Sep 2025 17:34:04 -0700
-In-Reply-To: <tencent_31282D116C4C9408EAF6ED0ECC4478466E0A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bf75fc.a00a0220.eb3d.0037.GAE@google.com>
-Subject: Re: [syzbot] [serial?] general protection fault in vc_deallocate
-From: syzbot <syzbot+f6cb41c144427dc0796a@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Sun, 7 Sep 2025 16:22:44 +0800 Vivian Wang wrote:
+> "dstats" is meant for tunnels. This doesn't look like the right thing to
+> use, and no other pcpu_stat_type gives me tx_dropped. Do you think I
+> should use dstats anyway?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+f6cb41c144427dc0796a@syzkaller.appspotmail.com
-Tested-by: syzbot+f6cb41c144427dc0796a@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         3e8e5822 Add linux-next specific files for 20250908
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14fdf562580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=69cfefa929ab96f7
-dashboard link: https://syzkaller.appspot.com/bug?extid=f6cb41c144427dc0796a
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=170cd87c580000
-
-Note: testing is done by a robot and is best-effort only.
+You can use dstats
 
