@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-808635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85815B502A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:30:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E63BBB502A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFF393B919F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:30:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2D7B540E13
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 16:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C143353359;
-	Tue,  9 Sep 2025 16:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D869035337B;
+	Tue,  9 Sep 2025 16:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QAmfNHPA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nE6B5w0v"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4174352FE1;
-	Tue,  9 Sep 2025 16:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C3735334E;
+	Tue,  9 Sep 2025 16:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757435405; cv=none; b=NacV2R+Qvbl/Ad7GLtFTVk+LbexspdyEXdh0bQFvO8AGp9bMaIq2/m29GU7cNRZwdyJHRUmQfjqroYaX865FUV3+yC3U089BCjZoomkI66EPDaWWYZfyz2VI/EKqUhkfSiIRph3fNIV/bY2bV0IhLSE96jRv8BvyK0vVirr5b3k=
+	t=1757435407; cv=none; b=B4Clmt/dZjTfmAkSduXz5TVeQLLCMDxTjEcCGw6AQZ9JnIOT11nX6u3ho/lawROJz8MbzOy45JgXoY24LbK0QctGUBctf3G7DBgi4FqTcZrI0dNZUiJaLjI416OdaIRS0erxUdECXgi9XAsfNR7C6cZmDNpFsm2jsJaIHVXS3O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757435405; c=relaxed/simple;
-	bh=5i9KU6eO8qxun6e1/OngWs8fYDThzf/EXL86OZ2DRP4=;
+	s=arc-20240116; t=1757435407; c=relaxed/simple;
+	bh=1FrTFQegLMPf4rExfQJSq3w/87niSAf4DZz4h61zS/w=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Hb2eoKq5jGHB4h9jM5LVwS6Qa4BtUS6IO9jjxsPS92fcFQSdKvZE52LNrvM5sgk3+LAprMhfOXQunFFeM1xNADbf0iNQj0qms6tjK3xP2wc3ocvxIABb+/d4HVa++JI/i4MqZ+KZSYEzVIkl3sOioHEKi0rFhM/DR60kL/ob+Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QAmfNHPA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2A73C4CEF4;
-	Tue,  9 Sep 2025 16:30:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757435404;
-	bh=5i9KU6eO8qxun6e1/OngWs8fYDThzf/EXL86OZ2DRP4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=QAmfNHPAIxtVqxdx/0bKgPE9mNpF8jXLCeLfvbqg2or/4GnCceD+qmoDQS9s/iWZI
-	 Pj66XFvCpRMSDmVWiXuxfRq09oVmcxpasghCJmnKNka/78CelEowvr7UGGUqFVNzLk
-	 zsAgmK9LJe02NVh9e1g807bo7vhJRKQVxVhk7N3IfAXzHeI4rixKu8swkroR5FpkZL
-	 4EOJb++51/Yg4nSW+gWq/BRuLpdnVu+NbNNpOhP7pVdpck73KxUX2xnuUIS31BS6XK
-	 4aSNFub4p/3hmEGPuL7TA58iLz09pFQ3p8Jlt3wA4gDW2ki7DvgQORRHLYxObPrVFt
-	 oJv9y7q6avvBA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBE4F383BF6C;
+	 In-Reply-To:To:Cc; b=eSX4HzrukqIw6d5G6xcfAQnGMgIhklboMAj2M3EIVeQT6sw/ygLqmQznH5gmBXZ7m8tw9G7oFrcr5DTdc0bH5bwYOw3a9IjXVsgX/1tY0bqqBtKIxrMdpGDFT7fkjSsqkD7X3bFmfYm3CzcmXbL82BbREv6A69ipMKrntNuuYOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nE6B5w0v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2080C4CEFC;
 	Tue,  9 Sep 2025 16:30:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757435406;
+	bh=1FrTFQegLMPf4rExfQJSq3w/87niSAf4DZz4h61zS/w=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=nE6B5w0v/sgqM11ozGC28AQMUao7r8u/u85YbLptE9mfKcOOUq8M+g2Hthsb1JjGC
+	 ImDzhdRW5kl0YgcMSKPnt2C/MtY9sal2zKFk4kzoLyBBItmTIbAI40ozxa7kIGbliK
+	 vWOgDhbUQhcA787HP+3qLotwfcNmKSli8KUt/AorMeRg+y1aEHAd78kKYTrp7vkKJ0
+	 cyQ1O4pE73fjmOiPMfCEEGGdpqOFWkBj41QQVrHXsbXxIjjeRJFjPLldIc9eENNK+m
+	 gls/zwh1vyA/d1zZYEd8d//qR6CONzbHdLvhFinNEBjlpNRWkWm3rreMh4GrzYbEvB
+	 ukyIjc0Epanjw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33EE0383BF6C;
+	Tue,  9 Sep 2025 16:30:11 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v2] selftests/bpf: Fix incorrect array size
- calculation
+Subject: Re: [pull-request] mlx5-next updates 2025-09-09
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175743540576.739384.5785409430836758847.git-patchwork-notify@kernel.org>
-Date: Tue, 09 Sep 2025 16:30:05 +0000
-References: <20250909124721.191555-1-jiayuan.chen@linux.dev>
-In-Reply-To: <20250909124721.191555-1-jiayuan.chen@linux.dev>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: dan.carpenter@linaro.org, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
- shuah@kernel.org, jiapeng.chong@linux.alibaba.com, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+ <175743541000.739384.14810234356517103146.git-patchwork-notify@kernel.org>
+Date: Tue, 09 Sep 2025 16:30:10 +0000
+References: <1757413460-539097-1-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <1757413460-539097-1-git-send-email-tariqt@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, saeedm@nvidia.com,
+ leon@kernel.org, mbloch@nvidia.com, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+This pull request was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue,  9 Sep 2025 20:47:04 +0800 you wrote:
-> The loop in bench_sockmap_prog_destroy() has two issues:
+On Tue, 9 Sep 2025 13:24:20 +0300 you wrote:
+> Hi,
 > 
-> 1. Using 'sizeof(ctx.fds)' as the loop bound results in the number of
->    bytes, not the number of file descriptors, causing the loop to iterate
->    far more times than intended.
+> The following pull-request contains a common mlx5 update
+> patch for your *net-next* tree.
+> Please pull and let me know of any problem.
 > 
-> 2. The condition 'ctx.fds[0] > 0' incorrectly checks only the first fd for
->    all iterations, potentially leaving file descriptors unclosed. Change
->    it to 'ctx.fds[i] > 0' to check each fd properly.
+> Regards,
+> Tariq
 > 
 > [...]
 
 Here is the summary with links:
-  - [bpf-next,v2] selftests/bpf: Fix incorrect array size calculation
-    https://git.kernel.org/bpf/bpf-next/c/f85981327a90
+  - [pull-request] mlx5-next updates 2025-09-09
+    https://git.kernel.org/netdev/net-next/c/3b4296f5893d
 
 You are awesome, thank you!
 -- 
