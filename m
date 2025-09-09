@@ -1,177 +1,251 @@
-Return-Path: <linux-kernel+bounces-808082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4888FB4ACF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:55:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 124EFB4ACF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11D83466D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:54:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE6933469EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD689321F23;
-	Tue,  9 Sep 2025 11:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCB6322524;
+	Tue,  9 Sep 2025 11:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="MKxJp5ki";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k/KfuZm7"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TeG50QHd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2BD30ACE8
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1CB322A3B
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757418893; cv=none; b=gpSMShqSzD+fhDRqz4jFZzau1jXkIAtCnitQoreo/cI9DjifHB48evM7dcM66hVRWu+zaC1s6gMq0OiykkOJ1ENyTXg2ozMsrj2qogSAE8aFrbLngDIPj/xhAvcr48ZlngjfAEuaStr0eF7WWW/DUs5M9LrniiAc7IzUdH/R9lc=
+	t=1757418908; cv=none; b=Ct4yBHb6Uq9qOdpiKBn8cuPcXImYIyFsMYUqL1iyPPjl05ITB4EVM3M28rdGuAwRXx8q6Mk+WKHmV1hdiUS+f5A6Bxl3bANMO8XwCcnFd2BhfXqAXSw/PowS76+15R70Tys857dnN1s3X3D8026oV33TcoERvsOj9o5jZdn1bag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757418893; c=relaxed/simple;
-	bh=6iXD5m0xbJJ9yI3fFImUYVSx/Zs/cga4QJHzGSzB/10=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=swHtqaqCzPjZ2ItDj3EH0YKcRpAU6K2TaAnqqKnweCJMhUNLUEtZgrwtQlImxPkaoPEgcueoOoZjog0e50CiV1BZPiEHom5bjMpqbBOERChva1JoEuAgnREaRnnCof19emevFc1c/iZCakmXV1k1YnesfNpYgEBvll8btk/Q0Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=MKxJp5ki; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k/KfuZm7; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 0E90814000E9;
-	Tue,  9 Sep 2025 07:54:51 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Tue, 09 Sep 2025 07:54:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1757418891; x=1757505291; bh=Xg
-	llFUx1hMJXZthKN6RSylNEPxNp90PjmGPFYCczU3c=; b=MKxJp5kiaP89vLxg22
-	BOn2h0ywmis0W9knLLvxaGguspj1X7X+/7R94Doj3VQvQC/qyWWfq/uay1MryUK7
-	LLeLQLN6fyE1elg07CMRvpEX7E/+doRX6IskuWB3ZkjzdNHycdGZUj7jMewHuw7w
-	f+8Jl44ECgmO1ktauce3xwuIFMAMujRh8DBYj2BrKMUDQXkVKUTjpATwxSzlUDjz
-	/mYvjJtYPbrv5VDCAVRC9iHjGbDX0HIewM2yG82lql5UxxkzjljwbycDoa3Pan/H
-	gcYnSKRP9c/n0fUWZIRNOy8G+Rff7xhbS0dQFfFL3wTaLInnKfgE6P+NeoXMekZY
-	66eQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1757418891; x=1757505291; bh=XgllFUx1hMJXZthKN6RSylNEPxNp
-	90PjmGPFYCczU3c=; b=k/KfuZm7zAtskYp6dq5+d9FFBiL4NmLmgcKo2gl7PjN+
-	xRLrZD8wJ2SPtXdSPMpH5EkgP8pmwUHK/UOXkA/AuI4o9eIjXscvBQyo7UyXIUYf
-	F0xd9aUcbAc4DYR7c+5aC1K+kzHj7k83M9LvrqSVoDS0LjZ1VlsJyuCh9qKgujEZ
-	SczBhQKu4vXqXb9q92DEA+e+A1NZv8d3km+UhiGj+rzaEmd+K33qOLsv0rN0JUd3
-	Ve26ty/i4eh4hoeEZ1rt0JjKOxoVaS5FmWEDtPR/0CGfSCNfwlAwg5cT0YdA0mwI
-	VCWQyK/tDxorjlzDo7Srb8KrxQhRlfl1QJ+ojjva1Q==
-X-ME-Sender: <xms:ihXAaAkqbFOIv3rIpWZwCV5q5O3LbQALK0RmlDCt_fTMtKTs8jFv8w>
-    <xme:ihXAaHFJlQiWPSEgiJLcEluQskKXzVqPbVosgNMaCQEV1I2BTv6TZ27vNPZh63jnB
-    peqFoD5TTBdqy4z848>
-X-ME-Received: <xmr:ihXAaJgSOKqGwFM3T6r1NZqrmAhx1xhvd5oTRFeZe0DXwDTZNzHIAyNMnLkUJo8vGDbdI6o2fJ_434H6P9o9RbFgs_HqEa92LGL6zg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdefhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomheplfgrnhhnvgcuifhr
-    uhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpeefheeltd
-    ehfeetjeefvdehteeutddtteelgeduueetjeevteeifeeuvdefffdvieenucffohhmrghi
-    nhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepjhesjhgrnhhnrghurdhnvghtpdhnsggprhgtphhtthhopedufedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhvvghnsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehjsehjrghnnhgruhdrnhgvthdprhgtphhtthhopehjohhroheske
-    gshihtvghsrdhorhhgpdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgr
-    rhhordhorhhgpdhrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpth
-    htohepjhhovghrghdrrhhovgguvghlsegrmhgurdgtohhmpdhrtghpthhtohepfihilhhl
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgsihhnrdhmuhhrphhhhiesrghrmh
-    drtghomh
-X-ME-Proxy: <xmx:ihXAaMgCH-4IFoKCggPJRdhxxW_c-NLDQP3qwgZ79ru41V7mdDxhig>
-    <xmx:ihXAaEkeMt5QMGal3ky7Tqn-Mqao_QI1w6eu2PeUcljYnqXN1j8JmA>
-    <xmx:ihXAaIYOVL61-M9FdeLfj571KiOEpwuA0qVoWP8Ib6h-KZNLxAU7EQ>
-    <xmx:ihXAaPwSP2fXcwlz-ZgHq9sKh5xvsk87k3wSg6sfg7Hgze-xfsY8pw>
-    <xmx:ixXAaEHyLufroOn5rObo_ro8rYL8z--t8DvyYpvhnUrNEtlSWLzGoYdE>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 9 Sep 2025 07:54:49 -0400 (EDT)
-From: Janne Grunau <j@jannau.net>
-Date: Tue, 09 Sep 2025 13:54:43 +0200
-Subject: [PATCH] iommu/io-pgtable-dart: Fix off by one error in table index
- check
+	s=arc-20240116; t=1757418908; c=relaxed/simple;
+	bh=n3roE3wnuKqzyleSHBlIEL/FSEFVLLwIySux4aCO80Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ONuEZ6m09eWo83VilkxCRacOsnZtqqlZjyF8cmmBnfwQJ9VQsEF79k19hF5p7U7YkI2UydwgHyUvn3JdYf8ueynutM8RI01T96sHPaZ+Of7Oc5BjClTF2BFdwFSI7HeBh+i9eyPTzwzX1ITYsf7nKAEo6Lf3tn4eBx1OhKo17zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TeG50QHd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757418905;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wOh5IdHecYmXNJFyfTY+5ofA8ReFnlDB1RFePKgZiG8=;
+	b=TeG50QHdfQmlrDtNV7kIrTfhhxbITLcjscvi0ij4ixwB4EIZGcFrProR6cw9fQfpGzPy7e
+	UTXEvKHWmGFtbOB5wXCKC+wmkrJhWXErmYdF+1BTY5B40LJv6CAvYZ0a+kTLsAr72z13Nb
+	tMDDazEBrc3AzL2EyIYSYXp0Pn9EOEM=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-247-7kZbUY32PyuautzhAPa7cw-1; Tue, 09 Sep 2025 07:55:04 -0400
+X-MC-Unique: 7kZbUY32PyuautzhAPa7cw-1
+X-Mimecast-MFC-AGG-ID: 7kZbUY32PyuautzhAPa7cw_1757418903
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3da4c617a95so4812799f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 04:55:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757418903; x=1758023703;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wOh5IdHecYmXNJFyfTY+5ofA8ReFnlDB1RFePKgZiG8=;
+        b=llL9qGOrjqLhAJlmbvrsCJliFed9SLcSXqSHUz9P7HJyl5TZJVmx5cq3YYb16hGnBM
+         tHs0xhjZx5i5ayfpA7D9jYRyiSBGLH2v20NTi1m87bDWgmEcRtfPNP/aJZJR2jh+qaBz
+         UCKbrPOWTFg7SDTZo7Z50y7EipUlNEOkzgmFFl6lnOlHhiPCOhci6ZSc5T4TrnYbWDNs
+         7Yarfh081wdFLrIWdy2e59Cns857KFjilozu5k23Zl7K1C18vy7OzBuydUvWUhNVEEP/
+         pSsOxxwZ/nV05rpWykemLyGSXuzbf01z1+bP42lrziad/hCyStMLYMpXJ4ZEKw89uRmw
+         DYfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWx6aQEDDfHRQs5kqWfMM6tbJV6gd+QYRI+wODdONJJIum+jL+xK8ThTZbxw/o5iVOjieWvPzSYuYrB3EE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx729c3GBv7hGagzm6XWQnnA9kgI7+9n6w3Tg7OPg/odxZakLn7
+	PRj72C6BU3pIqWw823xijm3cpkAtP7c/+wfTKgqNFuYB7klC/lvMQ5517GqF45q0KXGE9WwRErZ
+	CLN0DWBw+wN7zy7kO6jdgW492PGV9FyLGSXqUiWKQ5SN0VY3y+gLfbhi1xGABlo8T6w==
+X-Gm-Gg: ASbGncuRcB3Z3O30Ymn4GNctIQ9vCmVdPBDjXfUHzTj2AFhpnCVSMG1nrOZGfl+gmYN
+	UtvzH3bDsEprcgVoWZwHsFh4bq6l9PTw+r6oOdvMKeqyE5wifvJw63FN4JmrnvwDeMqKsvTU9nA
+	0pwLNmkDP8rReDOCe9xSawBEiE7mQdo7dqXlkDVpKpu0YPOhknYWCFznqLGQCREG2vkBF1rfmT/
+	ex4bX+PeTchgKrgWlnfChcTmLB4z9CbDLHsUw3viQ5fCgRSW70QNgT4LcWitjbY+H1eNtrWsg8I
+	yJ7gbtHV3Iwni+yYJ8qgc0caG8H9hNLe5X8iauHVbjPK82rZf40NOHxAcHhaS7D94rrGuyqxcbf
+	bEhpDmAyb2rS8/9WcEZz0nimEyoFp+mDA18nDv15z8fDziqRW4HAJnBuaQj8mf1diD/c=
+X-Received: by 2002:a5d:5f82:0:b0:3e7:42ae:d3dd with SMTP id ffacd0b85a97d-3e742aed713mr7769544f8f.53.1757418903207;
+        Tue, 09 Sep 2025 04:55:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+ZfFXrc3J/ZXb10wuImf1IN/WN2zT9Bnd5gvpLTDU+4GYxL8KyTu1AXUf0+6BD7rUQ8++xA==
+X-Received: by 2002:a5d:5f82:0:b0:3e7:42ae:d3dd with SMTP id ffacd0b85a97d-3e742aed713mr7769489f8f.53.1757418902733;
+        Tue, 09 Sep 2025 04:55:02 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f23:9c00:d1f6:f7fe:8f14:7e34? (p200300d82f239c00d1f6f7fe8f147e34.dip0.t-ipconnect.de. [2003:d8:2f23:9c00:d1f6:f7fe:8f14:7e34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75223898csm2497249f8f.39.2025.09.09.04.55.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 04:55:02 -0700 (PDT)
+Message-ID: <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
+Date: Tue, 9 Sep 2025 13:54:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
+References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
+ <20250908073931.4159362-3-kevin.brodsky@arm.com>
+ <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
+ <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
+ <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
+ <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-iommu-dart-tbl-check-fix-v1-1-c800a0375660@jannau.net>
-X-B4-Tracking: v=1; b=H4sIAIMVwGgC/x2MSQqAMAwAvyI5G6gVhfoV8dA2UYMrrYog/t3ic
- QZmHogchCM02QOBL4myrQmKPAM/2nVgFEoMWulKGWVQtmU5kWw48HAz+pH9hL3cqEuqLFHtXG8
- g5XvgpP91273vB7vYJAZqAAAA
-X-Change-ID: 20250909-iommu-dart-tbl-check-fix-23d5add6bbf9
-To: Sven Peter <sven@kernel.org>, Neal Gompa <neal@gompa.dev>, 
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Hector Martin <marcan@marcan.st>
-Cc: Joerg Roedel <joerg.roedel@amd.com>, asahi@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, 
- Janne Grunau <j@jannau.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2070; i=j@jannau.net;
- s=yk2024; h=from:subject:message-id;
- bh=6iXD5m0xbJJ9yI3fFImUYVSx/Zs/cga4QJHzGSzB/10=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhowDoh3bfa+euaByMivv3/Kd+8yeirNcuFa7ZNsUc84+p
- Q6ZioiojlIWBjEuBlkxRZYk7ZcdDKtrFGNqH4TBzGFlAhnCwMUpABPhN2X4p+03de+iP49CTjDf
- an/B9UrtnKxKhVRyRGSSw/OcLpaOl4wMt1IePKoXWPlA66bcbsHdupYcn64m6Nm4M/2qPJ/yWHQ
- lBwA=
-X-Developer-Key: i=j@jannau.net; a=openpgp;
- fpr=8B336A6BE4E5695E89B8532B81E806F586338419
 
-The check for the dart table index allowed values of
-(1 << data->tbl_bits) while only as many entries are initialized in
-apple_dart_alloc_pgtable. This results in an array out of bounds access
-when data->tbl_bits is at its maximal value of 2. When data->tbl_bits is
-0 or 1 an unset (initialized to zero) data->pgd[] entry is used. In both
-cases the value is used as pointer to read page table entries and
-results in dereferencing invalid pointers.
-There is no prior check that the passed iova is inside the iommu's IAS
-so invalid values can be passed from driver's calling iommu_map().
+On 09.09.25 13:45, Alexander Gordeev wrote:
+> On Tue, Sep 09, 2025 at 12:09:48PM +0200, David Hildenbrand wrote:
+>> On 09.09.25 11:40, Alexander Gordeev wrote:
+>>> On Tue, Sep 09, 2025 at 11:07:36AM +0200, David Hildenbrand wrote:
+>>>> On 08.09.25 09:39, Kevin Brodsky wrote:
+>>>>> arch_{enter,leave}_lazy_mmu_mode() currently have a stateless API
+>>>>> (taking and returning no value). This is proving problematic in
+>>>>> situations where leave() needs to restore some context back to its
+>>>>> original state (before enter() was called). In particular, this
+>>>>> makes it difficult to support the nesting of lazy_mmu sections -
+>>>>> leave() does not know whether the matching enter() call occurred
+>>>>> while lazy_mmu was already enabled, and whether to disable it or
+>>>>> not.
+>>>>>
+>>>>> This patch gives all architectures the chance to store local state
+>>>>> while inside a lazy_mmu section by making enter() return some value,
+>>>>> storing it in a local variable, and having leave() take that value.
+>>>>> That value is typed lazy_mmu_state_t - each architecture defining
+>>>>> __HAVE_ARCH_ENTER_LAZY_MMU_MODE is free to define it as it sees fit.
+>>>>> For now we define it as int everywhere, which is sufficient to
+>>>>> support nesting.
+>>> ...
+>>>>> {
+>>>>> + lazy_mmu_state_t lazy_mmu_state;
+>>>>> ...
+>>>>> - arch_enter_lazy_mmu_mode();
+>>>>> + lazy_mmu_state = arch_enter_lazy_mmu_mode();
+>>>>> ...
+>>>>> - arch_leave_lazy_mmu_mode();
+>>>>> + arch_leave_lazy_mmu_mode(lazy_mmu_state);
+>>>>> ...
+>>>>> }
+>>>>>
+>>>>> * In a few cases (e.g. xen_flush_lazy_mmu()), a function knows that
+>>>>>      lazy_mmu is already enabled, and it temporarily disables it by
+>>>>>      calling leave() and then enter() again. Here we want to ensure
+>>>>>      that any operation between the leave() and enter() calls is
+>>>>>      completed immediately; for that reason we pass LAZY_MMU_DEFAULT to
+>>>>>      leave() to fully disable lazy_mmu. enter() will then re-enable it
+>>>>>      - this achieves the expected behaviour, whether nesting occurred
+>>>>>      before that function was called or not.
+>>>>>
+>>>>> Note: it is difficult to provide a default definition of
+>>>>> lazy_mmu_state_t for architectures implementing lazy_mmu, because
+>>>>> that definition would need to be available in
+>>>>> arch/x86/include/asm/paravirt_types.h and adding a new generic
+>>>>>     #include there is very tricky due to the existing header soup.
+>>>>
+>>>> Yeah, I was wondering about exactly that.
+>>>>
+>>>> In particular because LAZY_MMU_DEFAULT etc resides somewehere compeltely
+>>>> different.
+>>>>
+>>>> Which raises the question: is using a new type really of any benefit here?
+>>>>
+>>>> Can't we just use an "enum lazy_mmu_state" and call it a day?
+>>>
+>>> I could envision something completely different for this type on s390,
+>>> e.g. a pointer to a per-cpu structure. So I would really ask to stick
+>>> with the current approach.
+>>
+>> Would that integrate well with LAZY_MMU_DEFAULT etc?
+> 
+> Hmm... I though the idea is to use LAZY_MMU_* by architectures that
+> want to use it - at least that is how I read the description above.
+> 
+> It is only kasan_populate|depopulate_vmalloc_pte() in generic code
+> that do not follow this pattern, and it looks as a problem to me.
 
-Fixes: 74a0e72f03ff ("iommu/io-pgtable-dart: Add 4-level page table support")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/asahi/aMACFlJjrZHs_Yf-@stanley.mountain/
-Signed-off-by: Janne Grunau <j@jannau.net>
----
-Based on today's iommu/master (9bffaa5ceb26) [1]
+Yes, that's why I am asking.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git
----
- drivers/iommu/io-pgtable-dart.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+What kind of information (pointer to a per-cpu structure) would you want 
+to return, and would handling it similar to how 
+pagefault_disable()/pagefault_enable() e.g., using a variable in 
+"current" to track the nesting level avoid having s390x to do that?
 
-diff --git a/drivers/iommu/io-pgtable-dart.c b/drivers/iommu/io-pgtable-dart.c
-index 9a63c80a2786bf70fc2544b1f96d2e4c8591c2f8..54d287cc0dd1b8bb07eb437a23ae0e493645a80d 100644
---- a/drivers/iommu/io-pgtable-dart.c
-+++ b/drivers/iommu/io-pgtable-dart.c
-@@ -177,7 +177,7 @@ static dart_iopte *dart_get_last(struct dart_io_pgtable *data, unsigned long iov
- 	int level = data->levels;
- 	int tbl = dart_get_index(data, iova, level);
- 
--	if (tbl > (1 << data->tbl_bits))
-+	if (tbl >= (1 << data->tbl_bits))
- 		return NULL;
- 
- 	ptep = data->pgd[tbl];
-@@ -246,7 +246,7 @@ static int dart_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
- 
- 	tbl = dart_get_index(data, iova, level);
- 
--	if (tbl > (1 << data->tbl_bits))
-+	if (tbl >= (1 << data->tbl_bits))
- 		return -ENOMEM;
- 
- 	ptep = data->pgd[tbl];
-
----
-base-commit: 9bffaa5ceb26d73344b1a16b745f363fb2a6f6b4
-change-id: 20250909-iommu-dart-tbl-check-fix-23d5add6bbf9
-
-Best regards,
 -- 
-Janne Grunau <j@jannau.net>
+Cheers
+
+David / dhildenb
 
 
