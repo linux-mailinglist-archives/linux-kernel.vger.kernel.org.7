@@ -1,57 +1,49 @@
-Return-Path: <linux-kernel+bounces-807756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D41B4A8CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:52:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C22B4A8D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E800D3ADA55
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:52:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE3B016ADD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E8B308F32;
-	Tue,  9 Sep 2025 09:50:00 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC059309DDC;
+	Tue,  9 Sep 2025 09:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sVcn1K7t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEDD3081D7;
-	Tue,  9 Sep 2025 09:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F958307AEA;
+	Tue,  9 Sep 2025 09:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757411399; cv=none; b=FnRhnibPMMgVhFYW35y4/MfYy2AzgFKneWzaWrhDBQdPloEn2PuYapIgcHezL0Y5XpXKwA8bgg5vycwe/Yr//aW80HmziuxnH01W/Egbfp2FhZaooWDLbGveRxcruIXUDd9x+0oZJ9+T2AGZM4aeZFgzyHw4rKuF74Hv9w/u7bg=
+	t=1757411404; cv=none; b=jzVZ/ftASLhgitufLXuFtWMERwuMaUhzx133LOSR5z3Wlop9+8egM96XaPWLm5ittAgjBpK4K6kNh0rVXYodtheohUKnnnz+SdZBymbMS9W3QPnVwtb7c4u9h4B+Cn4QnoiTfNdpVOEQghFZTZda81XRetRsF/UEbTQtH2SyHxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757411399; c=relaxed/simple;
-	bh=wEV85phRpWANT882n8tmkdgXk2TdLjOwnPk9a6vwZiQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i7i0Nh6DwtQLbE2VUcdiIxMNIl1coc3JIPfxg0tXlBh7fRtTYW601iJqVHsQzRZAl3W17cx7SsqSqJxtsogRfnBZZI8M6cANjkHaX178+xv/hnzoMfhfua2Po1tosVRnrmF0nGf1FatDUVtBecFQPfUUbUmNQm5wPeJZCKQ5ewI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (gentoo.cern.ch [IPv6:2001:1458:202:227::100:45])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: amadio)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 43C5D340F14;
-	Tue, 09 Sep 2025 09:49:57 +0000 (UTC)
-From: Guilherme Amadio <amadio@gentoo.org>
-To: namhyung@kernel.org
-Cc: acme@kernel.org,
-	adrian.hunter@intel.com,
-	irogers@google.com,
-	jolsa@kernel.org,
-	kan.liang@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	mingo@kernel.org,
-	peterz@infradead.org
-Subject: perf --help triggers an assertion
-Date: Tue,  9 Sep 2025 11:49:53 +0200
-Message-ID: <20250909094953.106706-1-amadio@gentoo.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250701201027.1171561-3-namhyung@kernel.org>
-References: <20250701201027.1171561-3-namhyung@kernel.org>
+	s=arc-20240116; t=1757411404; c=relaxed/simple;
+	bh=/EtGdIHS39Iac8fH0acLYR2zMPwIstesB2+6J8P3RI8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=qd2TCz/y2lgE0ph4gStRy7AvZGSWEg0ts26pJ7F/ReFNT9KthhwfFZF7qqYTBfyU4A7M5XzMGGckGgJoC3PQnkPXRsPI/uSkxj18oRy2OorpwCf5YadUWYE/HxfphlshKp5v9vD/DUuUQlQ/nCZieZPKNNWh1y333xr0FE+CoI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sVcn1K7t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F79EC4CEF4;
+	Tue,  9 Sep 2025 09:50:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757411402;
+	bh=/EtGdIHS39Iac8fH0acLYR2zMPwIstesB2+6J8P3RI8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=sVcn1K7tUbl8/87lFHnqgElZU1UZyjTLemrjxGr1Q+8zOI9TmAvnwHwK8XkI4Ue9H
+	 7epBMbqeAfv8lOFGQla8QzrDvJO9Yc26DznwDa6fnPfOu3XZA/c49TgF0btfNf7u/R
+	 k7t4mvpLLaOlIokQujGBECWIddU5YjUq7N5m9w8b9tkl3Xm3P6kwENZehxyQKlvwon
+	 4pfFmw8UMdhhdyFvLNm5VXRHNiDSWuqxTM35kbPIUxFLqQokxq3jVK/Gi9lUT1rNTK
+	 gFxsgBtyMv2WqULmpmzSFpplJBxc3ZHHW782yjyWAnIWHZv+xLN2Yenh2Fl94kIYqo
+	 9JnBnnrKNB0Pg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33ADF383BF69;
+	Tue,  9 Sep 2025 09:50:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,83 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v6] selftests: net: add test for ipv6
+ fragmentation
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175741140600.605175.15205546890528795882.git-patchwork-notify@kernel.org>
+Date: Tue, 09 Sep 2025 09:50:06 +0000
+References: <20250903154925.13481-1-bacs@librecast.net>
+In-Reply-To: <20250903154925.13481-1-bacs@librecast.net>
+To: Brett A C Sheffield <bacs@librecast.net>
+Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net, edumazet@google.com,
+ gregkh@linuxfoundation.org, horms@kernel.org, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, shuah@kernel.org,
+ willemb@google.com
 
-Hi Namhyung,
+Hello:
 
-I was updating perf's package in Gentoo Linux and noticed some problems
-which were not there before. I tested with the version below and the problem
-still seems to be there. perf --help triggers an assertion (see below).
-Looking in the list, it seems related to the patch below:
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-https://lore.kernel.org/linux-perf-users/20250701201027.1171561-3-namhyung@kernel.org/
+On Wed,  3 Sep 2025 15:46:01 +0000 you wrote:
+> Add selftest for the IPv6 fragmentation regression which affected
+> several stable kernels.
+> 
+> Commit a18dfa9925b9 ("ipv6: save dontfrag in cork") was backported to
+> stable without some prerequisite commits.  This caused a regression when
+> sending IPv6 UDP packets by preventing fragmentation and instead
+> returning -1 (EMSGSIZE).
+> 
+> [...]
 
-Cheers,
--Guilherme
+Here is the summary with links:
+  - [net-next,v6] selftests: net: add test for ipv6 fragmentation
+    https://git.kernel.org/netdev/net-next/c/aeb8d48ea92e
 
-The problem:
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-gentoo perf $ ./perf --help
-perf: help.c:104: exclude_cmds: Assertion `cmds->names[ci] == NULL' failed.
-Aborted                    (core dumped) ./perf --help
 
-Some extra information:
-
-gentoo perf $ ./perf version
-perf version 6.17.rc5.gf777d1112ee5
-gentoo perf $ ./perf test subcmd
- 69: libsubcmd help tests                                            :
- 69.1: Load subcmd names                                             : Ok
- 69.2: Uniquify subcmd names                                         : Ok
- 69.3: Exclude duplicate subcmd names                                : Ok
-gentoo perf $ ./perf bad-command
-perf: 'bad-command' is not a perf-command. See 'perf --help'.
-gentoo perf $ ./perf --help
-perf: help.c:104: exclude_cmds: Assertion `cmds->names[ci] == NULL' failed.
-Aborted                    (core dumped) ./perf --help
-gentoo perf $ gdb run --args ./perf --help
-GNU gdb (Gentoo 16.3 vanilla) 16.3
-Copyright (C) 2024 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
-Type "show copying" and "show warranty" for details.
-This GDB was configured as "x86_64-pc-linux-gnu".
-Type "show configuration" for configuration details.
-For bug reporting instructions, please see:
-<https://bugs.gentoo.org/>.
-Find the GDB manual and other documentation resources online at:
-    <http://www.gnu.org/software/gdb/documentation/>.
-
-For help, type "help".
-Type "apropos word" to search for commands related to "word"...
-Reading symbols from ./perf...
-(gdb) run
-Starting program: /home/amadio/src/linux/tools/perf/perf --help
-[Thread debugging using libthread_db enabled]
-Using host libthread_db library "/usr/lib64/libthread_db.so.1".
-perf: help.c:104: exclude_cmds: Assertion `cmds->names[ci] == NULL' failed.
-
-Program received signal SIGABRT, Aborted.
-__pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at pthread_kill.c:44
-44	      return INTERNAL_SYSCALL_ERROR_P (ret) ? INTERNAL_SYSCALL_ERRNO (ret) : 0;
-(gdb) bt
-#0  __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at pthread_kill.c:44
-#1  0x00007ffff74c1656 in __pthread_kill_internal (threadid=<optimized out>, signo=signo@entry=6) at pthread_kill.c:89
-#2  0x00007ffff74c166d in __GI___pthread_kill (threadid=<optimized out>, signo=signo@entry=6) at pthread_kill.c:100
-#3  0x00007ffff747509c in __GI_raise (sig=sig@entry=6) at ../sysdeps/posix/raise.c:26
-#4  0x00007ffff747637e in __GI_abort () at abort.c:77
-#5  0x00007ffff746e023 in __assert_fail_base (fmt=<optimized out>, assertion=assertion@entry=0x555555974d03 "cmds->names[ci] == NULL", 
-    file=file@entry=0x555555974cfc "help.c", line=line@entry=104, function=function@entry=0x555555974dc8 <__PRETTY_FUNCTION__.0> "exclude_cmds")
-    at assert.c:118
-#6  0x00007ffff746e075 in __assert_fail (assertion=0x555555974d03 "cmds->names[ci] == NULL", file=0x555555974cfc "help.c", line=104, 
-    function=0x555555974dc8 <__PRETTY_FUNCTION__.0> "exclude_cmds") at assert.c:127
-#7  0x0000555555693813 in exclude_cmds (cmds=0x55555614e5e0 <other_cmds>, excludes=0x55555614e5c0 <main_cmds>) at help.c:104
-#8  0x0000555555693eb3 in load_command_list (prefix=0x555555954071 "perf-", main_cmds=0x55555614e5c0 <main_cmds>, 
-    other_cmds=0x55555614e5e0 <other_cmds>) at help.c:252
-#9  0x00005555555e9987 in cmd_help (argc=1, argv=0x7fffffffd1a0) at builtin-help.c:458
-#10 0x0000555555685d45 in run_builtin (p=0x555556130de0 <commands+192>, argc=1, argv=0x7fffffffd1a0) at perf.c:349
-#11 0x0000555555685fe1 in handle_internal_command (argc=1, argv=0x7fffffffd1a0) at perf.c:401
-#12 0x0000555555686142 in run_argv (argcp=0x7fffffffcfac, argv=0x7fffffffcfa0) at perf.c:445
-#13 0x0000555555686493 in main (argc=1, argv=0x7fffffffd1a0) at perf.c:553
-(gdb) quit
 
