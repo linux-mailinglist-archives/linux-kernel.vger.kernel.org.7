@@ -1,142 +1,223 @@
-Return-Path: <linux-kernel+bounces-809127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8900B508F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:41:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F276B508F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0EB27B2C7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:40:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B59917F5DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC4526E710;
-	Tue,  9 Sep 2025 22:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FD126F285;
+	Tue,  9 Sep 2025 22:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RQRMKuW5"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GTRrEs6B"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19BB24BD04;
-	Tue,  9 Sep 2025 22:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D690624BD04
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 22:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757457702; cv=none; b=qZLK+cXN/1fscb9JPlgqGNah71jKx+O1ovIQsK55jV/sOXwKjHrMt23Ox/wTGNtwZRg8Tg3Q3jxlGHSIKzXynWxInpIXncl+QD+5gwIicrwfnEfkjSL+zss5IS5kcyvsT1kZn3/0D5dDORczl9z2pC7QI/CXac/8AygJDWMJUNI=
+	t=1757457875; cv=none; b=k08S1ip1R0OK4bn/zst1z9jEEKTnnaJNlU8jyWsvSNOtkbVSTfHz1zZtZoNlhRCee/da0ZPVRkVn4tyTJ9Gu978NN97qdNBj0U34okAbKPUfVO/3ST47KOJLyBI5DkmSnuRQJCbyeTBKcrAfHePeAdtlAl2dQKiYTQn37ONhO8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757457702; c=relaxed/simple;
-	bh=H6LomDyj+J3yxYD5h5TBecfKUq9QqHn/h5WlZa7yhJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Y325JfN23LqpCizgZVUcO0ZBykWKMjCghZaDHTBzYLNXlADVFfr5alwXsVWKOju6ITZXClVmEquGCkzOURm+jYegwD0N2jKV5gjAi+zBAHAHi4k3iV4D6HpitKOIvG5rzGwjGv5IvYGujmHThzU2LZIz20/9n5fbFjOVWZnXswU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RQRMKuW5; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 589MfWwZ006957;
-	Tue, 9 Sep 2025 17:41:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757457692;
-	bh=WbwmokaiQsTOA7B8SevyBawIpYDSQ2xVw9i3NB7U0TY=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=RQRMKuW53IAl6gwVfRHjJpiVC2x7WLzRuZlbOppN46g7Rvqibe02AAfRmue/nyofm
-	 Vr+59yamY19i/i3S8voot2fKW9wEPjFwtumgioGfOQBG1GS0qgmSTqEVu3+i6Ujrvt
-	 gy5k3O05OcIdW4ao6kv600Gj1/QiVmt6m6RMscRw=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 589MfWfn689483
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 9 Sep 2025 17:41:32 -0500
-Received: from DLEE204.ent.ti.com (157.170.170.84) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 9
- Sep 2025 17:41:31 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE204.ent.ti.com
- (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 9 Sep 2025 17:41:31 -0500
-Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 589MfVHJ3725550;
-	Tue, 9 Sep 2025 17:41:31 -0500
-Message-ID: <433c4594-8081-45cf-bbc8-a4816e8559f4@ti.com>
-Date: Tue, 9 Sep 2025 17:41:31 -0500
+	s=arc-20240116; t=1757457875; c=relaxed/simple;
+	bh=fHEIhXL5J/DwZVzuOIC1PVUyNE5gy9b51HvDo9CjZp4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZG5JZjPKbixvkyyk2mwLuDYwPA1GRYKu4iz3+soozPJe89u33fGb17mwm+9DsQIRYgbpoNBnp7tLlygovPLFHnC8SrJUsNqlNVB8JhmvXCCUFZHo7Dj7NsHjMfJ/xaSWfNL7eIK6Nplq7IeyJd/gD7BOY2j85PcFWV/QsguTtcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GTRrEs6B; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-329b760080fso6062727a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:44:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757457873; x=1758062673; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z4yfBU9AYetve95lMaxYZGTwSsv9zgxSypdrW9Vf/Ik=;
+        b=GTRrEs6BpR+Bmqfzjf1h0+Re6XcSROBq82MLaOf8VHAEicRlpwGiEcfaU4jfj+m2ZU
+         IwQeZuL30xUZbFTaHFP5BUgF0BRnUqazM6OqmkD/0H6YVDd/CKp1RCf/t5xCW32GO81F
+         HvwBlgDFhYoQeD5EGvhbNTYeB4bDZU6K9gAqA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757457873; x=1758062673;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z4yfBU9AYetve95lMaxYZGTwSsv9zgxSypdrW9Vf/Ik=;
+        b=OglbP50OAwMKrQkouRYbtfQNxotHElNKqrv9sZ/gaHmmO/U8XRUs/Em7m3sHmH6lzf
+         T8wkA1drM6mpAzUYIS1YurDW1AMrbf2PlKZKOAyWBtNIbHSD7z5fRhWB2evvDUCguULF
+         zmfhsZ26OLFZWLvrQSye6Ipoqgvdf5Ul+CJ/tzu0+tkIgcSyqCQXkGGcDZctwMC/b8ic
+         0lb22UROWDWlDLNvsYj9jmD1FcbesPnqVOwcEDWTtfPOdkvwtBPXtzx86063A+ZsVa7p
+         hXgjhKZa70S7KfNs90LD+t2M4eSBpr9YtCz4H7zei4tzw3ko0fYfUnIbbnQMLf4sjGrm
+         zbPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEWabzAPbKw88vZwidzrNEhLM/VuF2qbns5GigmF/9tTLI2T1Ann4D3V6r9fiRe2iDBHEOqiNhCssM9Cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrfHweHT1AEBkKQe3da6cx0mR1svo06UcNShJjDIT+7IpFM5mG
+	ls61fvp7MGsqW7gJShkckKm4DPFHiFwlj8lCwDxPB8J8TCvhhtrdoTHYdwBHOdr4tzOx4arXe1Q
+	MVAg=
+X-Gm-Gg: ASbGncszu09vKZwPX+FhngnbyoUSot27eT5eP9agrL625Rg1bLnW1oUd4FKQJ170xiD
+	t1EkZMVCKrmN//N5FxX1NmzmxU3N2/mDXPelUiHwkmm9YzmrAI4s9pmjaH+Ejkku0LnxGJ4R9Bb
+	2IwP99hxtv7zyB+GIwQOpEIGxmk9fzxqihfMl8BtDRm5mZ0tjNtMaGmMp/+hFzHgZaANagmHNvr
+	8D1+egmWmE6vZnpyAiS+AKZ6OfC31Cs9NXsqYfkmKzPv1C+owbLHfGRvdRO33EpskXgRoQzztOk
+	W6AOAUieKcISuBHdWFec90tlJOgCL2gPZksxd+difslBJL30wn1NqyI3IFiLzt5BuF3LC6IcuQ9
+	N6hvzyJUhQrfJzlA4fDQNfZoXcbRL8UqgtwW+hdbOqT2R4ezvTTpJZK3eEi2b5exQ8ffm5QtoVW
+	qb
+X-Google-Smtp-Source: AGHT+IGY64YiG6x4PUk/zr64N7ouqs2Xo6feJbv/kzsCKIYgXdBLwpqw7OPh2W9iN+OTgRT3xaikpg==
+X-Received: by 2002:a17:90b:1e4a:b0:32b:6964:1474 with SMTP id 98e67ed59e1d1-32d43f00776mr20239666a91.15.1757457873217;
+        Tue, 09 Sep 2025 15:44:33 -0700 (PDT)
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com. [209.85.215.175])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32da897e2dbsm1356666a91.1.2025.09.09.15.44.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 15:44:33 -0700 (PDT)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b52047b3f19so3663844a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:44:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVUp+K5xk9HGB4MhGW3HrLVe/zRYXWXjgAZeN3K8VR25ghbfu78qT+mBsic9VQcuiDA36SSPHR9Kl+jVN4=@vger.kernel.org
+X-Received: by 2002:a17:903:b0e:b0:249:f16:f086 with SMTP id
+ d9443c01a7336-251718dbaf3mr161248035ad.42.1757457871970; Tue, 09 Sep 2025
+ 15:44:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] arm64: dts: ti: k3-am62: Support Main UART wakeup
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <d-gole@ti.com>, <vishalm@ti.com>, <sebin.francis@ti.com>,
-        <msp@baylibre.com>, <khilman@baylibre.com>, <a-kaur@ti.com>
-References: <20250904212827.3730314-1-k-willis@ti.com>
-Content-Language: en-US
-From: Kendall Willis <k-willis@ti.com>
-In-Reply-To: <20250904212827.3730314-1-k-willis@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <CAD=FV=XWhDtFWegUUeACxcrSTFh7kbmwVFy3sioboh2fgk3Evw@mail.gmail.com>
+ <20250909193641.236527-1-john.ripple@keysight.com>
+In-Reply-To: <20250909193641.236527-1-john.ripple@keysight.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 9 Sep 2025 15:44:19 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WwYYQ67j9vTV-xYLcALPN3J3nj56PvEOOhMQ1T3sqJuQ@mail.gmail.com>
+X-Gm-Features: Ac12FXw1reTwaSFLkM9n4dHmDjCjlmvWRm6UTmr6JNR-KB3ItUYGPK10m1cxbG8
+Message-ID: <CAD=FV=WwYYQ67j9vTV-xYLcALPN3J3nj56PvEOOhMQ1T3sqJuQ@mail.gmail.com>
+Subject: Re: [PATCH V2] drm/bridge: ti-sn65dsi86: Add support for DisplayPort
+ mode with HPD
+To: John Ripple <john.ripple@keysight.com>
+Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com, 
+	andrzej.hajda@intel.com, blake.vermeer@keysight.com, 
+	dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se, 
+	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com, 
+	matt_laubhan@keysight.com, mripard@kernel.org, neil.armstrong@linaro.org, 
+	rfoss@kernel.org, simona@ffwll.ch, tzimmermann@suse.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/4/25 16:28, Kendall Willis wrote:
-> This series adds wakeup support for the Main UART in the device tree of
-> the TI AM62 family of devices. It defines the specific pins and pinctrl
-> states needed to wakeup the system from the Main UART via I/O
-> daisy-chaining. The wakeup-source property is configured to describe the
-> low power modes the system can wakeup from using the Main UART.
-> 
-> Dependencies
-> ------------
-> This series is dependent on the following series [1] to be merged into
-> the kernel. The series adds the system idle states that are available on
-> the SoCs. The system idle states are used when configuring the
-> wakeup-source property.
-> 
-> This series is also dependent on the following patch [2] to be merged
-> into the kernel. The patch integrates the PIN_WKUP_EN macro which
-> enables the WKUP_EN bit.
+Hi,
 
-Series also depends on this series [1] for DT bindings of pinctrl.
+On Tue, Sep 9, 2025 at 12:36=E2=80=AFPM John Ripple <john.ripple@keysight.c=
+om> wrote:
+>
+> Hi,
+>
+> >> +static int ti_sn65dsi86_read(struct ti_sn65dsi86 *pdata, unsigned int=
+ reg,
+> >> +                            unsigned int *val)
+> >
+> >This is reading a byte, right? So "val" should be an "u8 *". Yeah,
+> >that means you need a local variable to adjust for the generic regmap
+> >call, but it makes a cleaner and more obvious API to the users in this
+> >file.
+>
+> The regmap_read function takes in an "unsigned int *" as the "val"
+> parameter and I'm using it to return u32 values (which could probably
+> be u8 instead). Would it be better to leave this as the more generic
+> int type or change it to u8 so its more specific to this driver?
+> If this function gets used elsewhere in this file at some point, I'm
+> not sure everything that could be read would be single bytes.
 
-[1] https://lore.kernel.org/all/20250904212455.3729029-1-k-willis@ti.com/
+Sure, the "regmap_read" takes "unsigned int *" because it's a generic
+API. ...but we initialize the regmap API with:
 
-> 
-> Implementation
-> --------------
-> This series is intended to be implemented along with the following
-> series:
-> 
-> 1. "pmdomain: ti_sci: Handle wakeup constraint if device has pinctrl
->     wakeup state": Patch which skips setting constraints for wakeup sources
->     that use pinctrl state 'wakeup'.
-> 
-> 2. "serial: 8250: omap: Add wakeup support": Implements
->     wakeup from the UARTs for TI K3 SoCs
-> 
-> 3. "arm64: dts: ti: k3-am62: Support Main UART wakeup": (this series)
->     implements the functionality to wakeup the system from the Main UART
-> 
-> Testing
-> -------
-> Tested on a SK-AM62B-P1 board with all series and dependencies
-> implemented. Suspend/resume verified with the Main UART wakeup source
-> by entering a keypress on the console.
-> 
-> [1] https://lore.kernel.org/linux-arm-kernel/20250812-topic-am62-dt-partialio-v6-15-v2-2-25352364a0ac@baylibre.com/
-> [2] https://lore.kernel.org/all/20250904112538.529857-4-a-kaur@ti.com/
-> 
-> Kendall Willis (3):
->    arm64: dts: ti: k3-am62x-sk-common: Enable Main UART wakeup
->    arm64: dts: ti: k3-am62a7-sk: Enable Main UART wakeup
->    arm64: dts: ti: k3-am62p5-sk: Enable Main UART wakeup
-> 
->   arch/arm64/boot/dts/ti/k3-am62a7-sk.dts       | 24 +++++++++++++++----
->   arch/arm64/boot/dts/ti/k3-am62p5-sk.dts       | 24 +++++++++++++++----
->   .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 24 +++++++++++++++----
->   3 files changed, 60 insertions(+), 12 deletions(-)
-> 
-> 
-> base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
+  .reg_bits =3D 8,
+  .val_bits =3D 8,
 
+In other words, each read/write is 8-byte AKA 1 byte. So you're not
+returning 32-bit values, but 8-bit values.
+
+There's already a 16-bit version of this function:
+ti_sn65dsi86_read_u16(). Reading that function and yours next to each
+other makes it seem (at first glance) like yours is returning 32-bits.
+It's not. It would be much more documenting showing that it returns
+8-bits. If we need a 32-bit version for some reason we'll have to
+actually write that up.
+
+
+> >> @@ -1219,12 +1246,28 @@ static void ti_sn_bridge_hpd_enable(struct drm=
+_bridge *bridge)
+> >>          */
+> >>
+> >>         pm_runtime_get_sync(pdata->dev);
+> >> +
+> >> +       /* Enable HPD and PLL events. */
+> >> +       regmap_write(pdata->regmap, SN_IRQ_EVENTS_EN_REG,
+> >> +                    PLL_UNLOCK_EN |
+> >> +                    HPD_REPLUG_EN |
+> >> +                    HPD_REMOVAL_EN |
+> >> +                    HPD_INSERTION_EN |
+> >> +                    IRQ_HPD_EN);
+> >
+> >* Shouldn't this be `regmap_update_bits()` to just update the bits
+> >related to HPD?
+> >
+> >* why enable "PLL_UNLOCK_EN" when you don't handle it?
+> >
+> >* I also don't think your IRQ handler handles "replug" and "irq_hpd",
+> >right? So you shouldn't enable those either?
+>
+> The IRQ_HPD_EN documentation said:
+> "When IRQ_EN and IRQ_HPD_EN is enabled, the DSIx6 will assert the
+> IRQ whenever the eDP generates a IRQ_HPD event. An IRQ_HPD event
+> is defined as a change from INSERTION state to the IRQ_HPD state."
+>
+> I thought that meant the IRQ_HPD_EN needed to be enabled to get any irqs,
+> but when I tried removing the IRQ_HPD_EN and it doesn't seem to change
+> anything, so I'm not sure what the documentation is trying to say.
+
+IRQ_HPD is defined in the spec. It's basically an "attention"
+interrupt from the panel to ti-sn65dsi86. It (and replug) are a
+temporary deassertion of HPD while a display is connected.
+
+See "Figure 17. HPD State Diagram" for a description of all these
+things. Note that the min/max values there are (I think) because
+sn65dsi86's HPD timings are implemented by a very inaccurate ring
+oscillator.
+
+If you see that "replug" or "irq_hpd" are needed then your interrupt
+handler should do something with them.
+
+
+> >> @@ -1309,6 +1352,32 @@ static int ti_sn_bridge_parse_dsi_host(struct t=
+i_sn65dsi86 *pdata)
+> >>         return 0;
+> >>  }
+> >>
+> >> +static irqreturn_t ti_sn_bridge_interrupt(int irq, void *private)
+> >> +{
+> >> +       struct ti_sn65dsi86 *pdata =3D private;
+> >> +       struct drm_device *dev =3D pdata->bridge.dev;
+> >
+> >I'm unsure if accessing "dev" here without any sort of locking is
+> >safe... It feels like, in theory, "detach" could be called and race
+> >with the IRQ handler? Maybe you need a spinlock to be sure?
+>
+> I tested a spinlock added to the ti-sn65dsi86 structure that gets used
+> in the ti_sn_bridge_detach and ti_sn_bridge_interrupt functions and it
+> seems to work. Is there another spinlock created somewhere that I could
+> use instead? Is using the spin lock in the interrupt and detach functions
+> the correct way to do it?
+
+In this case you could probably use a mutex since you're running a
+threaded IRQ handler and sleeping is allowed. You could probably
+create a new mutex for this case.
+
+I assume you'd need some sort of boolean variable instead of just
+checking if "bridge.dev" is non-NULL? "bridge.dev" is set by the DRM
+core before your attach is called (and cleared after detach). Maybe
+just have a boolean about whether HPD is enabled and only send the
+event if HPD is enabled? Then use the mutex to protect access to that
+boolean between the IRQ handler and the HPD enable/disable code?
+
+-Doug
 
