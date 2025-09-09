@@ -1,169 +1,145 @@
-Return-Path: <linux-kernel+bounces-808858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9108B50581
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:44:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0489BB50585
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 20:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F8553AA1A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:44:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99A914E2A76
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 18:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9965E301022;
-	Tue,  9 Sep 2025 18:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D02301470;
+	Tue,  9 Sep 2025 18:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BlJB3gnO"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LAxG5VzH"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A422301011
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 18:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D00D219A7D
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 18:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757443470; cv=none; b=AemIhL0XQbVlSz7N53ov0ILfG4ER1oVhAgzcarOM8C/+gKaHzU3S/c1qwgOdPblZoupVgTZTdresXzCdnvK427GE+qLiSaz+X6wEk3kvqN14sh5E8mzGbfV+tU315HxWT49G0OqPbZJpoOEuEiVTfY2bcFBhOImSpa3WazXu2+Y=
+	t=1757443567; cv=none; b=g2YZyKYfGS36wAubKviTNc70e8z/t8px/5X4DornvtbfBwKgpO6CULNkmXxgij7ekPPQf8wtPMSSX6Sli2ItcziKZnk8LiuL3qpa5FWAZcb9uP+FIQzgQxs60dsq1hiaJ79yFm0k5vsqrxBMeneb/uJBMcIoN8oW4q3yp1NubC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757443470; c=relaxed/simple;
-	bh=X77ck/mpcS1PAaSmFhykBwNjo66AqN0J6jvfwxhu4AQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pPteXU33AHzTlCWYWn80wrABtpBcLjNzA6ddOoaU5vu6/r1ydxKM1t3FB/A+Ep25WzC6SVLns2ARKnGapYpd6jyiypIewUTd366xIAtvSfBxntyD+2ozLlBEUndEqOZCiTiK1zuJTqPtK1R3Xp/81laCDxzl35FJ2kR8nLMJ2fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BlJB3gnO; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 589FtjZk014532;
-	Tue, 9 Sep 2025 18:44:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=IWOZ/MveQGGxyYuOsjNd57QH01BWP
-	X4a/YbbD/2Wk+w=; b=BlJB3gnOhm7zcxOUTuC3crwT7IbaExiui/D2JlzUPhk8m
-	N+HzS/As/ZbNy0MU3kft6LekYuOo2zj8OiHonvRMKLalZlCBdhQHRQ0O4b8fKtuC
-	HG6PKf7kJaWG23yydGWKV4cbxRg6lbi82pWm7+TyEDk3qtcFMvx8GDZAdD8bddc3
-	51LdVXsWjJwiE1nq8jAMt90AgfiUaIJZ4eY1TYPw6ZiaVrDU/mEBqp99tA4+5Vrx
-	xw2E9JUN24wh59ahKB4rUx8ihUNErlHTQYYEuwfg5wcJISpmBs0G0L18POAWISAY
-	qZ2VtyH3ziZXfFPvaNV5KrtCJcDTLBnjWwfrxnOSg==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4921d1jse9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 09 Sep 2025 18:44:05 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 589H8kg0033216;
-	Tue, 9 Sep 2025 18:44:05 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 490bdb0db7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 09 Sep 2025 18:44:05 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 589Ii43G004503;
-	Tue, 9 Sep 2025 18:44:04 GMT
-Received: from brm-x62-16.us.oracle.com (brm-x62-16.us.oracle.com [10.80.150.37])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 490bdb0daf-1;
-	Tue, 09 Sep 2025 18:44:04 +0000
-From: Jane Chu <jane.chu@oracle.com>
-To: harry.yoo@oracle.com, osalvador@suse.de, liushixin2@huawei.com,
-        muchun.song@linux.dev, david@redhat.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: jane.chu@oracle.com
-Subject: [PATCH] mm/hugetlb: fix copy_hugetlb_page_range() to use ->pt_share_count
-Date: Tue,  9 Sep 2025 12:43:57 -0600
-Message-ID: <20250909184357.569259-1-jane.chu@oracle.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1757443567; c=relaxed/simple;
+	bh=96PWMU27/jrXI2PVjuNvBWIsi+qKgC6GLk3JCeyEiAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=knj9KRbzSemiFbSsj2PCDp2nKSoOkTQdiXXs1nFUwuqvrMNc2YPUja93REfrpipBCK5FXqb/65PVGkF2CBZ28N1+nKqOReV/mF6fj4V5ejiA8AVOammVz2aDRJGPgzvfDNVgA75y4vOBndPWspNYfghi3UEZ4Wklnlmi1JOmxxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LAxG5VzH; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b04962540a0so94700166b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 11:46:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757443563; x=1758048363; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sbgtE9csO6Cvgxlo8b8Cy8qgsxjaxLMfDvbV/GRdzeA=;
+        b=LAxG5VzHV79ivAapLxx8qvj5C6R9vJ0oenYiGuG1kYc/0UkToCZ7R90/wubKRcmNY3
+         JNxnghhA2/ebzIE4gscYjcILh1WlDw5OW2fRLD0Jtjha00yDbS3OLNCcTHJt1WMHmL62
+         9XCFORCImaN+bhfZPXoUJqkj3ZlAerI8iI2sktfRnULDZ7I0Cw8cec3lzj5hoVco1f9v
+         4d3zXsEwaDc+xFvoC0LEYrZLj5Mn7whx4Z2E8KOIpyJqc/KwZiRXfMYOb2Wmp0XJIUIA
+         87RQYj06zeOwzMSzXigd3KEHpBbs2xoH8ONFBV7Rhp48CO4iehboaEGBfd1NnyDSMHQz
+         NeKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757443563; x=1758048363;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sbgtE9csO6Cvgxlo8b8Cy8qgsxjaxLMfDvbV/GRdzeA=;
+        b=sBhbW4bdn4LjtXHhSPRNia/UusBXqx+05r9BparLt65jKIblgxyfMmahwkbV4P77Ny
+         TgRIdcmTUhj+rFnXCezciVm5VTM2rsXCWMNnctPbaLF6ZJIZ5bDRHHXmfoNWpumPyNJT
+         j4VFQAj3pPOA36PmBujee58LiB5AW97CUqjF07Hors7lj7i2UiV8paesz8B60LT2wLel
+         xf6VFHbd1FKpe9MtPAnI2DTafpT8r5kEnaDHt3zT93mfOOhWkFVXfN4Y1asf+8gCFpkL
+         3ONYFCxhwo1domH+ckZCzFnj9R1rRKok99RsETEFyKQO/0jMSvqEAGjUyPqGETHxiQNf
+         wfig==
+X-Forwarded-Encrypted: i=1; AJvYcCUNsIYIeRXkbZhIigR2KbxpdqNGxRj9rLdvecgtYPSXxHBAHJdNDHHcuQJcCfJ52P+lLuDGWR5QCUzOLzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1p4lkX0C4ZtPmIc0bF5EPSvJSoybWmkl7t95mWcMX+L83TgAM
+	TsZ/w7fjlvEMCL2gZ0Qqn87DNmh4A3Hw16Sj9GugfM0GhQbocVYy0Q62/tXM52/g+cc=
+X-Gm-Gg: ASbGncudf9YcIyl30dLBUALtxI9MsNmsikHTt4hO9h+8crV6i6DrUj2vO9Yr/3mi7c4
+	sRD06CPtcczONEihNzzeSQHGpJHIriZhYNMnYJMZH3/sChLrMbigYnHIyqVyHX1O4e+Lw8LfV/A
+	d4y0SB1NU82yN/nIKp15lg6k8ihhwMt/bpEy79gPmp31M+Ob9GjskoSSqQKb0t6aDb+RInPdQlL
+	e9Rd+8JkkY9VwoS7YBrOqkz2ZT23FMGbQ2dwc5QHH8HiwyjLdQRbLcdiNIF9GC0bYjNErPAWX52
+	cZjG2CquVH3629z+MD46gaFGzMekSssLHgla6MnUYaOY3e9oElIdTYNXgcg4K4FziAx5jdfTUSp
+	MxwqN9TWPI4WeAWdqbSBesj7cskJegy7I3w/AGmcNaz6dPSNzRlIz0NM=
+X-Google-Smtp-Source: AGHT+IF9qmGIbHHgyLkF+cuxfT/tBA4kZKk5q6FFmJEiexmBUNMRyqAXcs52z+BMBR9gWhKpKR+C/Q==
+X-Received: by 2002:a17:907:60cc:b0:afe:ee31:4b93 with SMTP id a640c23a62f3a-b04b10a4accmr652443266b.0.1757443562945;
+        Tue, 09 Sep 2025 11:46:02 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0783046d34sm35399566b.6.2025.09.09.11.46.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 11:46:02 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	soc@lists.linux.dev
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] ARM: dts: samsung: dts for v6.18
+Date: Tue,  9 Sep 2025 20:45:58 +0200
+Message-ID: <20250909184559.105777-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1462; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=96PWMU27/jrXI2PVjuNvBWIsi+qKgC6GLk3JCeyEiAg=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowHXnwqcshQhMcnuW6z945CPT+bxhcKDTjVPRJ
+ pSWTYWfHrmJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMB15wAKCRDBN2bmhouD
+ 1zUdD/wN+EBFSwGSxuGwG1tuhq5rNoCYRiolY1hHazJfxBx0abVi8Ilgrp0VoAWG5kZW8Jq+wTc
+ QTTQoqHCyv4RKvO0jKM5gNCEWFMw1fhyO8k393+Ct+aGDCpbP1IbZZtfx3t3Zzs4D1gCXDH6T40
+ jVWun62rnKoj3YKcyvic0Whd7ABzCRfNuXmDvgCLdEW9rqPUBNty/kpShQZTc3Md3Oqm5z1guUI
+ OeVkU4ZKuX0IQBoZZQ8ODIVf1SiRtMyr289ULGsTBe713UsZfTBwxL4XVlVaZ7qA5PUSVJtioCV
+ CL74u9paL/IB/6h8/KCxN5r0pIaKHU/NLrOEqpgg7NycD5m595Uwaw5FuB6F5fphQ8WaDLVuSC/
+ 7e58lPDbPHOKQ6fpTTlGGPJegDmTDrp4pnRmKCTzwnO2EjayT7tKpjvrlBg+OqnZOM0qfi0vsP8
+ sHaza3Vm1GXFIQmaMkedoebzzjDUmVBG9WyxtnJEMbbuxZesUK35A00qjAvo1pBWm3+3mrHMDc9
+ 6XlBUm67Sk18/hrFeDi+Of/AMke7AWftXc4n+ZBRgYEcYj5gc4UdLzL3TyXT9PS7v3hiRhRf4+c
+ dKLibr+/ix3V32BBRNSWoDGZ4AoUaLQPboAZxi1xy8y8FsWOW0nOTxOCcKm6JaORP4XrrTruBCv VxkqT4s/l9dTxDQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_03,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
- bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509090184
-X-Proofpoint-ORIG-GUID: WRSfngHTR2VCUKNIEOx5Re1gBizfe0Mp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE1MCBTYWx0ZWRfX7xwTxW1qSJZ0
- 0IivqUUG1PWFnEgAEN0RWu1g8KqZhe2NiIx6rz4n7+JJ1aYaUfXuHrRsdAXYxUwp6PzkIv0Qjz0
- NJdsrWRlaEGBt1WhdBfuhYyExr0YuMhwpJFNWHJ3NB8YLfzYk54qsNW5gcEiT8bnxQpws5sQQh7
- ceh4VqxwTYFUa9sItnzOb3luiTwmz3LCABn1nLSgEdLfZYD3eb6WfY6wH0t7+lHb0igL0PluI90
- M0D/yKwUhj0sZ4v5iJ4vFTprw3v/zwA2h1pwq8+X8skhueE9h7AnfNWV0iztMQFS8gDyfYU5zdg
- N05Bk5xIFBtMc0gakmMNqEXYTVm5P1g1TwWDY9jQmhhz5iXEbo1dCNDPF2Dslo3CxS309vDDKsO
- 1tE2oa8z
-X-Authority-Analysis: v=2.4 cv=d6P1yQjE c=1 sm=1 tr=0 ts=68c07575 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=mG3bTaASnfPRmh1c64YA:9
-X-Proofpoint-GUID: WRSfngHTR2VCUKNIEOx5Re1gBizfe0Mp
 
-commit 59d9094df3d79 introduced ->pt_share_count dedicated to
-hugetlb PMD share count tracking, but omitted fixing
-copy_hugetlb_page_range(), leaving the function relying on
-page_count() for tracking that no longer works.
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-When lazy page table copy for hugetlb is disabled (commit bcd51a3c679d),
-fork()'ing with hugetlb PMD sharing quickly lockup -
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-[  239.446559] watchdog: BUG: soft lockup - CPU#75 stuck for 27s!
-[  239.446611] RIP: 0010:native_queued_spin_lock_slowpath+0x7e/0x2e0
-[  239.446631] Call Trace:
-[  239.446633]  <TASK>
-[  239.446636]  _raw_spin_lock+0x3f/0x60
-[  239.446639]  copy_hugetlb_page_range+0x258/0xb50
-[  239.446645]  copy_page_range+0x22b/0x2c0
-[  239.446651]  dup_mmap+0x3e2/0x770
-[  239.446654]  dup_mm.constprop.0+0x5e/0x230
-[  239.446657]  copy_process+0xd17/0x1760
-[  239.446660]  kernel_clone+0xc0/0x3e0
-[  239.446661]  __do_sys_clone+0x65/0xa0
-[  239.446664]  do_syscall_64+0x82/0x930
-[  239.446668]  ? count_memcg_events+0xd2/0x190
-[  239.446671]  ? syscall_trace_enter+0x14e/0x1f0
-[  239.446676]  ? syscall_exit_work+0x118/0x150
-[  239.446677]  ? arch_exit_to_user_mode_prepare.constprop.0+0x9/0xb0
-[  239.446681]  ? clear_bhb_loop+0x30/0x80
-[  239.446684]  ? clear_bhb_loop+0x30/0x80
-[  239.446686]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+are available in the Git repository at:
 
-There are two options to resolve the potential latent issue:
-  1. remove the PMD sharing awareness from copy_hugetlb_page_range(),
-  2. fix it.
-This patch opts for the second option.
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-6.18
 
-Fixes: 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared
-count")
+for you to fetch changes up to d19b1773362adfe8c0d5ccc4faf6aea0249976a6:
 
-Signed-off-by: Jane Chu <jane.chu@oracle.com>
----
- mm/hugetlb.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+  ARM: dts: samsung: smdk5250: add sromc node (2025-09-08 09:35:51 +0200)
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 753f99b4c718..8ca5b4f7805f 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5594,18 +5594,13 @@ int copy_hugetlb_page_range(struct mm_struct *dst, struct mm_struct *src,
- 			break;
- 		}
- 
--		/*
--		 * If the pagetables are shared don't copy or take references.
--		 *
--		 * dst_pte == src_pte is the common case of src/dest sharing.
--		 * However, src could have 'unshared' and dst shares with
--		 * another vma. So page_count of ptep page is checked instead
--		 * to reliably determine whether pte is shared.
--		 */
--		if (page_count(virt_to_page(dst_pte)) > 1) {
-+#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
-+		/* If the pagetables are shared don't copy or take references. */
-+		if (ptdesc_pmd_pts_count(virt_to_ptdesc(dst_pte)) > 0) {
- 			addr |= last_addr_mask;
- 			continue;
- 		}
-+#endif
- 
- 		dst_ptl = huge_pte_lock(h, dst, dst_pte);
- 		src_ptl = huge_pte_lockptr(h, src, src_pte);
--- 
-2.43.5
+----------------------------------------------------------------
+Samsung DTS ARM changes for v6.18
 
+1. Drop S3C2416 SoC from bindings, because it was removed from kernel
+   in 2023.
+
+2. Add Ethernet attached via SROM controller (memory bus) on SMDK5250.
+   This wasn't tested, but code should work just like it is working on
+   Exynos5410-based boards.
+
+----------------------------------------------------------------
+Henrik Grimler (3):
+      ARM: dts: samsung: exynos5410: use multiple tuples for sromc ranges
+      ARM: dts: samsung: exynos5250: describe sromc bank memory map
+      ARM: dts: samsung: smdk5250: add sromc node
+
+Krzysztof Kozlowski (1):
+      dt-bindings: arm: samsung: Drop S3C2416
+
+ .../bindings/arm/samsung/samsung-boards.yaml       |  6 ----
+ arch/arm/boot/dts/samsung/exynos5250-smdk5250.dts  | 37 ++++++++++++++++++++++
+ arch/arm/boot/dts/samsung/exynos5250.dtsi          |  9 ++++++
+ arch/arm/boot/dts/samsung/exynos5410.dtsi          |  8 ++---
+ 4 files changed, 50 insertions(+), 10 deletions(-)
 
