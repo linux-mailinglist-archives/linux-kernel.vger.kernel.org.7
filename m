@@ -1,155 +1,95 @@
-Return-Path: <linux-kernel+bounces-807263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B61B4A23F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:29:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E9DB4A245
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B87FC16D384
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22DA618847FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 06:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91EC303A1F;
-	Tue,  9 Sep 2025 06:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE671F3BA4;
+	Tue,  9 Sep 2025 06:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODPEczKa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LNLn8D6l"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF303235074;
-	Tue,  9 Sep 2025 06:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E18302CB5
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 06:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757399374; cv=none; b=GCpckla+wgpFELiNz/tPWQPHrqqLgNLjLKGL7dA4RC8i+XgB59T94W9xIwRu7xHDqKuaos1OhdwnZON2Q6+0fAqff/NZU8VH2cJd7u1k/4dNQhpOrrhYghYJjQoKLm+RnO889xAwRMOdFzN9gdsxhTdb3zz0SgbF22d/Hx6bPdI=
+	t=1757399446; cv=none; b=ra825PE6Fel3ElixN+DckAFBBUcHSB/QqEiWZQA5mPbN3fWFJTeJMdbyYf41banbXzxIFCcLcrk3Wxj+p88rMidsU7Rb92y0vbeZfgjnc7ZaZ0lFs/AulytH+5igycKQsTjzJA7hBjC5cStChKlWsemqYyrXM/HL3TYCpvgNbzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757399374; c=relaxed/simple;
-	bh=RSVuLnwfn6lKemssdBwmkRTtO64cdfYMqOYTLPlQs3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gfar64rKewtwRmUjN84mhJB7eA7yilT9ZgpV7aIw2vsy+ma8vw6yCHGhA3rKCPXCabMGoBGwTEhJtEDiYzrkYvPZf70wr8oldmIKOyahkXY0c8VVRmXoYaJUW1ADb+yG4Zd9SPGtZhQ0Gv+Sk+38exiGgYibScrYz2UdyoKFJMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODPEczKa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51560C4CEF4;
-	Tue,  9 Sep 2025 06:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757399373;
-	bh=RSVuLnwfn6lKemssdBwmkRTtO64cdfYMqOYTLPlQs3s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ODPEczKa/AlXKhw6F8c9TO09Io1SaxNo2XlIOUAggPIbGDm87relJQDwAsvfXFd7P
-	 rzIHU+XrDwvKXq4U+1b4yJVDvOJBp/lSFUBg+od9u0qR+S5uCy0m2bClTkMA33SBYx
-	 NXn7fg6brMGNc1u/FUII/nK7/oPS70XAGvEeGNLPuiTHBV4U6QqWkrj/Q2PyiGnujU
-	 5RaqwplwO5CHfsdCRSX0KyHGS3p7+50u6GJQANsnvNtLaV/B3eorVx4hq1sn3FgVT5
-	 6g3Vc/sebHYaIwlAfYy+zBitJas0cE1IYEoJhEclbmmxrUlIEy2T+eQxyye0p+SyM5
-	 7XaiAU2f3FKDA==
-Message-ID: <898bf39e-1b34-40e9-bdfa-ec4eca1c3f7d@kernel.org>
-Date: Tue, 9 Sep 2025 08:29:21 +0200
+	s=arc-20240116; t=1757399446; c=relaxed/simple;
+	bh=Sc0AlrHEuuqIDsAMjno5tS1ebxOGfZrnDqw+DIZdtmg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Dxl2CMA/VBDW/dhhqCdYV8aPPNvKPUaBRDLtZUjlaW4OVk7d2WE3ayy01D/L8Ci64OdO7d28CcyNBeozE4sXbaRxGJXZxn64NhSSvdiLe1xY7SCGBtoRInMxW0MY+I8+eX1TpP3TeK1sKTFfXLUCSK6bMpRzCrUPWGvYhWZPWyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LNLn8D6l; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757399445; x=1788935445;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=Sc0AlrHEuuqIDsAMjno5tS1ebxOGfZrnDqw+DIZdtmg=;
+  b=LNLn8D6lOw5FWUXuLag7lIo/of3PdNG2RIOoB+ZZcahdaeO/h8lAIJV9
+   jF+7SkW1eIhUr2AsfzZd0vE0GxL1yR3TJzMXmueNNYZyrCGCcARXmsBq1
+   rfEhZtxYeWxn7cyP+bdditI6Yv8XUTilYA0Jso1BJTDkgzlOckzr5Go9w
+   2K2f3YazYxb+jNOyKtDEQG+dshTW8q5w/+OFi366ubcF2y2t+wbc9ny+L
+   9b8UY7Rv8v9rY0zMHX/i1KHWBgGxk5hWLV4zhe58neOMHdMyGdt4FlqwB
+   JLPBfkkYN7k+fWBRmtdVMxdB98c37iKNj0A/E2Tkdk8/TFsXzI0rBddM8
+   A==;
+X-CSE-ConnectionGUID: 0IJ0eIrWQmeGix/VzS3PqA==
+X-CSE-MsgGUID: OROnWuWoQ6mNWC7hqt3qNA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="59819189"
+X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
+   d="scan'208";a="59819189"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 23:30:40 -0700
+X-CSE-ConnectionGUID: 8b7+0R3bTxiChmjdVHjtog==
+X-CSE-MsgGUID: 8IU7RMyxTCiPoIYkgKZcgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,250,1751266800"; 
+   d="scan'208";a="172875206"
+Received: from carterle-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.247])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2025 23:30:37 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Lucas Moreno <lucasgabmoreno@gmail.com>, dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [BUG] Lenovo D330-10IGL: Blank screen issues with DSI display
+ on Gemini Lake
+In-Reply-To: <CAND3jMbggtne5+SL7h8Ojkv2yV1oqrBCTB2X55WB+_dkUJu5gg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <CAND3jMbggtne5+SL7h8Ojkv2yV1oqrBCTB2X55WB+_dkUJu5gg@mail.gmail.com>
+Date: Tue, 09 Sep 2025 09:30:33 +0300
+Message-ID: <44b90c861a01e509a52a31598d6b842cc6e67821@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 03/14] dt-bindings: arm: mediatek: mmsys: Add
- assigned-clocks/rates properties
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
- andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
- conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
- edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
- jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
- krzk+dt@kernel.org, kuba@kernel.org,
- kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
- linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
- maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
- mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
- p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
- sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
- tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-4-ariel.dalessandro@collabora.com>
- <20250821-electric-kestrel-of-awe-cb89dc@kuoka>
- <1cf0b296-adaa-4c80-864c-9b78f09cd3e3@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <1cf0b296-adaa-4c80-864c-9b78f09cd3e3@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 08/09/2025 21:19, Ariel D'Alessandro wrote:
-> Krzysztof,
-> 
-> On 8/21/25 3:43 AM, Krzysztof Kozlowski wrote:
->> On Wed, Aug 20, 2025 at 02:12:51PM -0300, Ariel D'Alessandro wrote:
->>> Current, the DT bindings for MediaTek mmsys controller is missing the
->>> assigned-clocks and assigned-clocks-rates properties. Add these and
->>
->> No, they do not miss them. I don't understand why you are adding these.
-> 
-> The reason I added these is due to the following check error:
-> 
-> $ make -j$(nproc) CHECK_DTBS=y mediatek/mt8173-elm.dtb
->    DTC [C] arch/arm64/boot/dts/mediatek/mt8173-elm.dtb
-> [...]
-> arch/arm64/boot/dts/mediatek/mt8173-elm.dtb: syscon@14000000 
-> (mediatek,mt8173-mmsys): 'assigned-clock-rates', 'assigned-clocks' do 
-> not match any of the regexes: '^pinctrl-[0-9]+$'
-> 	from schema $id: 
-> http://devicetree.org/schemas/arm/mediatek/mediatek,mmsys.yaml#
+On Thu, 04 Sep 2025, Lucas Moreno <lucasgabmoreno@gmail.com> wrote:
+> I'm writing to report a recurring issue with the DSI display on my
+> Lenovo D330-10IGL. The screen randomly goes blank. I've observed this
+> problem across multiple Linux operating systems and kernel versions,
+> which suggests it's a driver-level issue.
 
-This is looking like missing clocks or other unevaluated property by the
-binding.
+Please file a bug over at [1].
+
+Thanks,
+Jani.
 
 
-Best regards,
-Krzysztof
+[1] https://drm.pages.freedesktop.org/intel-docs/how-to-file-i915-bugs.html
+
+
+-- 
+Jani Nikula, Intel
 
