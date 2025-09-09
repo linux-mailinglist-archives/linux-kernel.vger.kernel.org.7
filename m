@@ -1,86 +1,89 @@
-Return-Path: <linux-kernel+bounces-808093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFDEB4AD1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:01:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD5CB4AD1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 14:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E67DC1892EA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:01:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00AFF7A4041
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 12:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79BA32BF4C;
-	Tue,  9 Sep 2025 12:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D61326D75;
+	Tue,  9 Sep 2025 12:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="trduvV8S"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSHQanX7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD3F1990A7;
-	Tue,  9 Sep 2025 12:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05DF2C029C;
+	Tue,  9 Sep 2025 12:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757419266; cv=none; b=Ndkytqad6vpGoGJOgY1tVTCf8+BYTZKgKKF6N6YZghTiZIu/+G6SobF4Q029a9yoDfRaeH0w56rUACTWwyJPLlFAYoHbs46N8OnTIqkUXnIJ6ZdRvilySM+NtzC2uVsK2FMONp8F85kPxVHdmJ3NuJLPfgAnFUD1ziUUltCnV6Q=
+	t=1757419279; cv=none; b=uAkT30acip3qLCpxSbzuQehTw7r8PqRZcgJQTZtMqbgB108ugyUDDtMJS1fbNQIYC6UjcFXjgoh0TcTn0zNioR4bF6haL5n8IsiWVzaqhJgN4prkxc+q4gYkmHyigNfxOp7BL+hX8lyfYFhfAVyIinGEjVTajzKToXKKa4v9iL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757419266; c=relaxed/simple;
-	bh=GsRw9kcoqC0RweQ17HhBaWV8BGWXyQ0tiZcO3Mpi2bM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=r1CVx0YntQqMEGjSiY7+bozY/1HHQvhTrNn5bcge+g3aj3MX42K/hYT4mj0gsWMZfcxHwF2YXIC+pB11afBCcfBjFkuTDBz3kBOoLlmM2GXBq/sML51GdEcMx8Yc2Ee4yalO83tCTovZVsI/AE75FPVY2BdT9s6/cZ36co2ok6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=trduvV8S; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=GsRw9kcoqC0RweQ17HhBaWV8BGWXyQ0tiZcO3Mpi2bM=;
-	t=1757419263; x=1758628863; b=trduvV8SN1ymoYOq31qNKqp9Kip85OQRevWiw23owiuHwya
-	+gupfSZoX/uJ47bXf9i88u5LhotNrYsMtSI4R7abXRSy1f08TxpnsywPvJmZBjiZYQtf3/Fb77wLV
-	3jkDg6OVYY2WPDL4hZJ+xV26qK9hmu4CvA7Lv1XfxQ1NJ9NuhjWxm2943MGXagAUD+z96PNzHCiy5
-	5/+sZMB0ASzmCziYkFrV7rozXKY/A3UbFSkmmSU9dicnAJ2sdk1cVvXvP+UTURmOhRCIndfQ6fGry
-	nUZgW428Xe4pubE6e1buG5LXGDLIwJ2ID1Jr0bW1JuwLCIP2W0phZl99HkMP/DkQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uvx1v-0000000AEYk-3AwV;
-	Tue, 09 Sep 2025 14:01:00 +0200
-Message-ID: <c536fa6aa022e50fb849b84cc33443ade7f53930.camel@sipsolutions.net>
-Subject: Re: [PATCH] wifi: cfg80211: Fix page fault in
- __cfg80211_connect_result()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: James Guan <guan_yufei@163.com>
-Cc: kuba@kernel.org, kuniyu@google.com, shaw.leon@gmail.com,
- kees@kernel.org, 	linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 09 Sep 2025 14:00:59 +0200
-In-Reply-To: <20250909063213.1055024-1-guan_yufei@163.com>
-References: <20250909063213.1055024-1-guan_yufei@163.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1757419279; c=relaxed/simple;
+	bh=mo6AUvUZ17yTMm1pVi/4T+mFBtewK+GFSPajZk+ut6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OKu5TZkJnwm8psYf25D1lwFzZbcrsEXJWtPvGgYo4HNVcoo8wWHq+kh/WffCz5pKJRSnbNFlnQctdEpXkgYFB0WW09LTywhMjdf8RMpzatCAxbfb4ArZwFscIRvjB3FiozzI/CfWix3Zyt7FGu48WYpedK/JOG5QaR+Nrh6RhSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSHQanX7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71D58C4CEF4;
+	Tue,  9 Sep 2025 12:01:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757419278;
+	bh=mo6AUvUZ17yTMm1pVi/4T+mFBtewK+GFSPajZk+ut6g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HSHQanX7DQgZ9w3geUPDEB3Np/9wwMkVAQF5Oiot4K0kzKK0+dCiEs4NpytQLl7/3
+	 l1W46zWi6tkM+jE9pySgeh+7gMIToEBuZ4IisTHyVaqYtaTWDmEszWS8EzNva3GlBV
+	 +9jpaPmBQ437eHkJizE6gis/qIlV1hhwh50yzly3Hl2orU9qbYlM/kkx8xM/LpzQNL
+	 Jaq0jQNeW9cvoLiehL3TY3ilYVORLmtkAXHT1bR17a+RKizKJIxOmtfFHG8n91h05X
+	 z2h7qiul/cDWl0uq2MSEvHKfYhArXvDLfcdTYuajIc6hbJaQIrmALnGwoF9hbX0ZzF
+	 V13dB4mqkacVg==
+Date: Tue, 9 Sep 2025 13:01:13 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>
+Subject: Re: [PATCH net-next 2/2] net/mlx5e: Add stale counter for PCIe
+ congestion events
+Message-ID: <20250909120113.GB14415@horms.kernel.org>
+References: <1757237976-531416-1-git-send-email-tariqt@nvidia.com>
+ <1757237976-531416-3-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1757237976-531416-3-git-send-email-tariqt@nvidia.com>
 
-On Tue, 2025-09-09 at 14:32 +0800, James Guan wrote:
-> When I attempted to connect to a virt_wifi device using iw on 6.17-rc5,
-> a page fault occurred in __cfg80211_connect_result(), preventing successf=
-ul
-> connection.
->=20
-> The page fault is triggered because virt_wifi_connect_complete() sets
-> requested_bss to NULL when no BSSID is specified.
->=20
-> This patch fixes the bug by adding a check for a NULL connected_addr
-> before calling ether_addr_copy() in __cfg80211_connect_result().
+On Sun, Sep 07, 2025 at 12:39:36PM +0300, Tariq Toukan wrote:
+> From: Dragos Tatulea <dtatulea@nvidia.com>
+> 
+> This ethtool counter is meant to help with observing how many times the
+> congestion event was triggered but on query there was no state change.
+> 
+> This would help to indicate when a work item was scheduled to run too
+> late and in the meantime the congestion state changed back to previous
+> state.
+> 
+> While at it, do a driveby typo fix in documentation for
+> pci_bw_inbound_high.
+> 
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 
-That might fix the bug, but it makes no sense to have a connection
-without an address of the AP that you connected to ...
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-johannes
 
