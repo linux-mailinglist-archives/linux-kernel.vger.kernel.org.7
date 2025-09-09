@@ -1,89 +1,83 @@
-Return-Path: <linux-kernel+bounces-809043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56FABB507D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:12:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1A9B507FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 23:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06BD1B223DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:12:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C576C1B25C81
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013362571BC;
-	Tue,  9 Sep 2025 21:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C0C258CE5;
+	Tue,  9 Sep 2025 21:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cywXSafV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="N4vrECvh"
+Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CBC253951;
-	Tue,  9 Sep 2025 21:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E0A1C68F;
+	Tue,  9 Sep 2025 21:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757452344; cv=none; b=bgL+LyruDP1mIxRlg5KKiKXWR58HoH6/arVRYcIcgA76R6rqGIlpFH+FWNbVb9F+dM8J+Jt877EBnLamF4d5dSiSwPTUC1F7x/+U8wMp6efvO4nK3rAKJrMslTVYXbcJV2gLoCfG9lo2I43FGKR2dFC4P2s3z7zPOXVwROKimbk=
+	t=1757452841; cv=none; b=NkCaVSbRsqBeSJ6ebdPTOpbIQkaQmbKvYM+PHvkGxKFuBKzoL/aPAGH+7vfJoW6SKMXK6M1N5sZeED4PtXBA4AHIrIdij+nSLbviaTee1oduuSQRrVkhvk1sGLXsemOkUdxksdLjuwrVjuA3mufEHuc0YaiE6+9fz5jaoN+q4pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757452344; c=relaxed/simple;
-	bh=c3SyJQ57FSqB3XnVUxPYlihJ10MSLpFeLzzdFD6BwHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r6it4Te/ioN1S/AlF2cQ/0ModkWQeAZ6H8HJlsHDLWpSR0H+Dvx7kIGkSrvWaCJROtERCgLvkkWvDmb6dUtn24aJJCBkJ9S7txb4yTxI/Glw8NS5qgTpliXQY03MIsy+i3IbVn/ExgL9frZ+UHXN5hVWKmLMyKHNYpLW2uI/EEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cywXSafV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1B48C4CEF4;
-	Tue,  9 Sep 2025 21:12:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757452343;
-	bh=c3SyJQ57FSqB3XnVUxPYlihJ10MSLpFeLzzdFD6BwHY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cywXSafVp9YvJ6T7ky6frjfZ2//mKk/FKatrTOn2PAfJZdOVf8ZoYIlsFzRDu8EeB
-	 2KPXlF3n2H5wi9gL7RTADWCl3l+Y5vXuu+cEFu5CrP9CmtOhHZWmlQfLNk0Y0UYt/M
-	 VZssDnBLX4AFwtFtINZqms5bQet5efAxPGmNxmbUvjtnp31XJ/lteY0pC82kgbWh/2
-	 8x2UgllauKBlfgimppmKGLms6UVq9zLJyynJThNBZqztwm71Db4CpgRTQtAtkihmee
-	 bL1dEDObCUKzXNNcW9JuHJIKCwt5VX3KTAs2AqUW5cyuwyrzvoBKo5DghfegsTTiNL
-	 chdSjRm/sCm6Q==
-Date: Tue, 9 Sep 2025 14:12:21 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Nimrod Oren <noren@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard
- Brouer <hawk@kernel.org>, "John Fastabend" <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@fomichev.me>, Mohsin Bashir
- <mohsin.bashr@gmail.com>, Dragos Tatulea <dtatulea@nvidia.com>, Tariq
- Toukan <tariqt@nvidia.com>, Carolina Jubran <cjubran@nvidia.com>,
- <netdev@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
-Subject: Re: [PATCH RFC net-next 0/5] selftests: drv-net: Convert XDP
- program to bpf_dynptr
-Message-ID: <20250909141221.4a10bfa5@kernel.org>
-In-Reply-To: <20250909085236.2234306-1-noren@nvidia.com>
-References: <20250909085236.2234306-1-noren@nvidia.com>
+	s=arc-20240116; t=1757452841; c=relaxed/simple;
+	bh=9pkNsjM+7U141mU4y8J+TOh3saFNJU2p+mbbgMx1efc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u2tmDPWxINm1pTkTYMHde7TRsFUFdsTn8YL914lf6yDk6Btqd/6lf7npLIf9wBz1SLqRkeTjRdDzkmXgbXUwJEdJVOwxV+TDMua2xjT9mssO/T7P48lZQ1oApokLCEqWqoyo5gDnfUKuwdQBBQ61CErXW9ymekkK5HdpJhFU634=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=N4vrECvh; arc=none smtp.client-ip=195.181.215.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
+	t=1757452389; bh=9pkNsjM+7U141mU4y8J+TOh3saFNJU2p+mbbgMx1efc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=N4vrECvhOOordgqYN3J47ijQR+8LEqkAadjSB22Q2aQ4RMjPFRXppoJE56K11B8k2
+	 FCBm8gJKyZ7MQgPlcMOhspOjdV6i92zyjsbCAr9R09yl5xlnTqdbKpWiyWZHjm8xjC
+	 w+IyqJ3czc6g1KP0jPk3mNsqstIKqIL7dmCCGWTk=
+From: =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megi@xff.cz>
+To: linux-kernel@vger.kernel.org
+Cc: Ondrej Jirman <megi@xff.cz>,
+	Ping-Ke Shih <pkshih@realtek.com>,
+	linux-wireless@vger.kernel.org (open list:REALTEK WIRELESS DRIVER (rtw89))
+Subject: [PATCH] net: wireless: rtw89: Sleep while waiting for firmware init
+Date: Tue,  9 Sep 2025 23:12:51 +0200
+Message-ID: <20250909211255.1486851-1-megi@xff.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 9 Sep 2025 11:52:31 +0300 Nimrod Oren wrote:
-> In cases where the program does not return XDP_PASS, I believe dynptr has
-> an advantage since it avoids an extra copy. Conversely, when the program
-> returns XDP_PASS, bpf_xdp_pull_data may be preferable, as the copy will
-> be performed in any case during skb creation.
-> 
-> It may make sense to split the work into two separate programs, allowing us
-> to test both solutions independently. Alternatively, we can consider a
-> combined approach, where the more fitting solution is applied for each use
-> case. I welcome feedback on which direction would be most useful.
+From: Ondrej Jirman <megi@xff.cz>
 
-Ideally we'd make the BPF code work in either mode. But not sure it's
-achievable given the verification complexity. Failing that we can have
-two BPF objects and parameterize the test cases.
+This avoids RCU stalls caused by waiting up to 400ms for firmware init.
 
-It'd be neat if we could capture if the pull actually pulled anything
-for a given case, so that we only bother re-running with the dynptr when
-we'd end up with different packet geometry. But only if it doesn't make
-the test code too complex. 
+Signed-off-by: Ondrej Jirman <megi@xff.cz>
+---
+ drivers/net/wireless/realtek/rtw89/fw.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtw89/fw.c b/drivers/net/wireless/realtek/rtw89/fw.c
+index 16e59a4a486e..2c034b764a0a 100644
+--- a/drivers/net/wireless/realtek/rtw89/fw.c
++++ b/drivers/net/wireless/realtek/rtw89/fw.c
+@@ -109,9 +109,9 @@ int rtw89_fw_check_rdy(struct rtw89_dev *rtwdev, enum rtw89_fwdl_check_type type
+ 	u8 val;
+ 	int ret;
+ 
+-	ret = read_poll_timeout_atomic(mac->fwdl_get_status, val,
+-				       val == RTW89_FWDL_WCPU_FW_INIT_RDY,
+-				       1, FWDL_WAIT_CNT, false, rtwdev, type);
++	ret = read_poll_timeout(mac->fwdl_get_status, val,
++				val == RTW89_FWDL_WCPU_FW_INIT_RDY,
++				1, FWDL_WAIT_CNT, false, rtwdev, type);
+ 	if (ret) {
+ 		switch (val) {
+ 		case RTW89_FWDL_CHECKSUM_FAIL:
+-- 
+2.51.0
+
 
