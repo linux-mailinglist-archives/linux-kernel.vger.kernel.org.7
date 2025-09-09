@@ -1,107 +1,134 @@
-Return-Path: <linux-kernel+bounces-809105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F02B508B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:04:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58196B508B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87071C626CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:04:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AF691C6368E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 22:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23EB265CC0;
-	Tue,  9 Sep 2025 22:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69548266584;
+	Tue,  9 Sep 2025 22:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dZ2Hstc7"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAGgNJlW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF0A23A9AC
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 22:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53451DDC33;
+	Tue,  9 Sep 2025 22:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757455468; cv=none; b=WgYEWMzXW+KGIyTYNO6HmNzvm5PDw+PJWQUUdIZUj10a4cEmfr1pl6Ym3vX2NBlPpJOSbicnhBmViXUk93I1hZgBOxP82hTTRlZM4dBC8UJCY1kBFTFZdblghYyII8n2Sk2wC9iO4//3pnIexfnRFaWBP/TTNB+8rRwRWK5fKuc=
+	t=1757455816; cv=none; b=XRnE4J1j311MaL6sdKjUXW47Le46mkoQTiNf7UnNgkQL0PMDTNqS7vQte8cEj9VTiG+Q0QXxTXMXe1AVHClcCrfzXnkUQm2KwFb/q4nHezcWqoteoOZldIAc9QZg2wGqsMyapUrJUpqhJQRzqQ6PTgiyMxOYZjwwvPYlBScPeRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757455468; c=relaxed/simple;
-	bh=vJE7SAtMU597GHTC8LkC90WpJdQrYFWukdI48tYxJKQ=;
+	s=arc-20240116; t=1757455816; c=relaxed/simple;
+	bh=wGnzp9rz/bafn3nZECaCQnKGysh656pdCdJqgpXqfFw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kjq6yrJel10Ll6VXG4EE2cPn47GykDoidzRTBTveonAxZcZZelJHJohQOdKrixp2FzGtz1KuF993MFycRNMOvajLGvaJkDk4aPSV3oBqR817y7dCGK2Cvk6dRWwlKeYMFomOTn8DOEcYQ5YIVy+Gdkvlf1IRH6vIqY1Txrurk24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dZ2Hstc7; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55fc2236ce0so1148771e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 15:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757455460; x=1758060260; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vJE7SAtMU597GHTC8LkC90WpJdQrYFWukdI48tYxJKQ=;
-        b=dZ2Hstc7zFsxKirwsahBNJrBqdtCUAK9fJirHm/3fOOwd0qOEd2XwKN0QBoWU44Z44
-         Oeh7BQv3bl/hwzidSpHpiF1SzFxq41gNGgmkWZBgMp535o5wgaY/X2edOExE0nT5uYkU
-         IWiSFbCX5lA+5Q9U3DW5aQLH8d/9u8FHuNIJV/bR7Dstp2K74ZHx0WDBdd4Oz2NVN0qP
-         6Ml/YjEg/3pMj0GHMzrLhDeFEcc6qmuk+3s0wj5eUNpc8A8aazPzTYx1ntOYgdOyygwp
-         TK4ZYlJMYS1wfw2ARThHca5RfNm4a9gXfsB5cvO9TDbtAMVY3U0KKDnrayUx/niwo+ld
-         NTrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757455460; x=1758060260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vJE7SAtMU597GHTC8LkC90WpJdQrYFWukdI48tYxJKQ=;
-        b=q+celoYh2itRZBDryrm74zq4kK62ZrCvOpI+lj6cz2Dpo39iboU54OWf/Vz1/Dsbxm
-         TG1h+jnXM4ykLue6BTaYN8mDm2301SSDGvWQRIe5nlWkByI60CleA0oYVJsmsTQXS6xU
-         +DNLm+F2VoLBeI/gjXpUs28uRM9KLOfJ5rs/vd+IgN6f8o78/Vq9OXz84feiSedCIZYi
-         iyNvjRDjGUdOSiNHwliA1GwAi/CY/oqFaSPDS4dgda83taVeLeb8kZMDlcvlK5AHDuwi
-         wWGyAsUDecGego05b7IjxbWngu/HhbdNpRGaFeBOHHTj+Bt7yRnoKnRP0N+hWwmAWx3e
-         w60Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVWor9w0DJ/kcmdXMK7bzIdyoZ3cQtiew58TlCztdfYSZMW9A9JFnzVryCCCGxUKXcWKH56kxa1WWh3WwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNeOMVStbqchCSHxexvT3yoTRredH9HELVaEKm15PKpZyF3k6g
-	jSzy97wj13SxGHvs81ys6H+J8vKFmOMqK4c9ed8wlDw/CS9FRHY4uL1AQBzhHBWA9stAJrf6Io3
-	fRFBUYVkFrEif0UqRf5g2YSF8SoeF0Oc=
-X-Gm-Gg: ASbGnctFcLa2AIxZhbec6zQHFt9H1+NJxKDAWYrpWPvxCAiH6MNxPskME7jIWYmh+qh
-	fdsn0NE5c2NIKuXXIXnrEIA5zA/j1yYbp5gf77JlK+XMjNx4By2Wc4uLNF0k8fG7pPuSt+Dp227
-	Uv2SzSQWieQ6EWky7TC/hDQ5iFmShr/sXmwFXpFXZVgG695KPhQhXBiRmADyhBtcD1zRnMwibo2
-	gsF/jy1hlxXv4GPd6c3b6bomvJlcjDLlSF/tZBwHAb9EB6PYcEaykc+/6hDtU5uuM9/lkVNhkuD
-	cF4H6RwEPGQU3axFY3wfjLd6uz8Oo3zKZZlq
-X-Google-Smtp-Source: AGHT+IGaa3tKhTEeaj82Fyo2xoHmCsDsP1VnOtUkctEIYGUN0qmz9E5woHXIzyMUU0VsfLfEZBQ0b8TrzmrdoI/zncM=
-X-Received: by 2002:a05:6512:3ca4:b0:55f:4a0d:3f50 with SMTP id
- 2adb3069b0e04-56262a40f6amr2161481e87.7.1757455460118; Tue, 09 Sep 2025
- 15:04:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=sdn+rEoagSXzzHWAlUI2HMMTRLKTNV1DYcATFfpIMxsTxQIYIVhikQw58Ol18rSaAE8V8HKcHD/PQl9v5cmZicf4vodY8/qjTj3LqYNr28mFWjVkkdKndqiGFGd/vE+DpbTaqzK812eUytf7uX0Qy7f+fjBBCIatf2yqT5HDXdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAGgNJlW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DA43C4AF0B;
+	Tue,  9 Sep 2025 22:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757455816;
+	bh=wGnzp9rz/bafn3nZECaCQnKGysh656pdCdJqgpXqfFw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=vAGgNJlW6cRXtE++a2OC7ND3wplPF+2YebqndWly+d7ifQu2a+YulMPK7wQay6g29
+	 6hTAdcAPuEsv0QqTLs/CBXJjM3xge0ehiY3ya/Yu/CBg8mTdIQekofbHHWMC/jBlXM
+	 Zfp4yVPidv8W84AIZfWRydlXEn4T5Lp9JOE5tQIXMIzQjrPkAoXNsMZsJTJKJfC2pZ
+	 vS5l6QcCYvMZIKuqrXM0BmM1g16hVkbJ2bzIv7Ukigv7KaWl9LdaNRH0BGbQgyHWHR
+	 6ayB9G+198DGvg5Wiqraobezbo3mlEKG7+5l0sEpgMgIQqm28ahq3cRGbb9NzC84Mz
+	 92F6AHQGUDGzw==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-62189987b54so1791452eaf.3;
+        Tue, 09 Sep 2025 15:10:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVR4CJoFNRBcy79RMArDLrnug4lnnFt6n1937ky4jotGsxYTG6VSFZmEgUKP+yLF+eBQiqeeRuKHDz2KXA=@vger.kernel.org, AJvYcCXs43cLpBtIGBuw9ycByPudwSCXSgligoKiBJqspmGlf8Ksjc+Vv1vvSH/eSgQvSIawZovkTHDHWNZldA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFrTSWwJBSNU7cvfa+n3tDwqx6aCFWS5yskPk7Hq/9H2JfWQWc
+	qdoc8mfmpJL84TgLY4Hl7Jy5xJZt0EMw8+ZuLixyfzc8q0pLbQ138LMPPu/SY0L4bxRi/JWu2Zc
+	OzYHwUcpGFace8o5w7DgxDoKsTI+vnXI=
+X-Google-Smtp-Source: AGHT+IEM8ntDLLY2copoQCXK05+MBuSWEn6ZZbBfjz1pjTQfuDLbS74UxYn+2XOsts1ndat3Y4GgL4Tsd4n7cHc17kk=
+X-Received: by 2002:a05:6820:151a:b0:61e:78bb:ff15 with SMTP id
+ 006d021491bc7-62178a12d4dmr5940588eaf.1.1757455815669; Tue, 09 Sep 2025
+ 15:10:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908-num-v5-0-c0f2f681ea96@nvidia.com>
-In-Reply-To: <20250908-num-v5-0-c0f2f681ea96@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 10 Sep 2025 00:04:04 +0200
-X-Gm-Features: AS18NWBzPuHqngmTpgXNZpIRD-OdqL2Y5OEaYpGUN_Vn-7watZfMYtmQRtqbWzI
-Message-ID: <CANiq72mYzgx0dB+yO4BFBRCNEKBcONx56Jp=h7HKVXzkbRn_Sg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] rust: add `Alignment` type
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org
+References: <20250908175135.4215c780@canb.auug.org.au> <CAGTfZH3JyMGvjWni1Ge+a1=4nRPL30a84DCamj1AtXRLRMgzeQ@mail.gmail.com>
+ <aMBZ4zTyMZLdQWJx@yury> <14358105.O9o76ZdvQC@workhorse>
+In-Reply-To: <14358105.O9o76ZdvQC@workhorse>
+From: Chanwoo Choi <chanwoo@kernel.org>
+Date: Wed, 10 Sep 2025 07:09:37 +0900
+X-Gmail-Original-Message-ID: <CAGTfZH1ceu_C5QZ-v-dvTMiddaAK12z0gFnfbb-tt_n5f_fk1w@mail.gmail.com>
+X-Gm-Features: Ac12FXxkoRwmHDfYolV-0qE7Z5vDVMnr5FGJZNrdcqoTsAuzEvQv-VvCfl3ShmU
+Message-ID: <CAGTfZH1ceu_C5QZ-v-dvTMiddaAK12z0gFnfbb-tt_n5f_fk1w@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the bitmap tree with the devfreq tree
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 8, 2025 at 3:26=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.c=
-om> wrote:
+Hi,
+
+On Wed, Sep 10, 2025 at 2:42=E2=80=AFAM Nicolas Frattaroli
+<nicolas.frattaroli@collabora.com> wrote:
 >
-> prerequisite-message-id: <20250808-falcondma_256b-v1-1-15f911d89ffd@nvidi=
-a.com>
-> prerequisite-patch-id: 2439f5f9b560ee4867716f0018b5326dcd72cda3
+> On Tuesday, 9 September 2025 18:46:27 Central European Summer Time Yury N=
+orov wrote:
+> > > > Dropping the bitmap tree changes of this driver is fine by me. I ca=
+n
+> > > > send a rebased patch of that for the next merge window to do the mo=
+ve
+> > > > from the driver's own macro to the shared macro. The functional
+> > > > change in the devfreq tree is more important to get in.
+> > >
+> > > I think that you need to ask to drop your patch[1] on bitmap tree.
+> > > [1] 414054a0bc1f ("PM / devfreq: rockchip-dfi: switch to FIELD_PREP_W=
+M16 macro")
+> >
+> > So I did.
+>
+> Thanks! Chanwoo Choi, could you pick the DFI LPDDR5 change again
+> on your side?
 
-I guess you had this in your branch but is not actually needed, right?
+I applied again. Thanks.
 
-Cheers,
-Miguel
+>
+> >
+> > Nicolas, please make sure resending the dropped patch
+> > rebased shortly after merge window closing. I'd like to schedule it
+> > for -rc2.
+>
+> Will do. Thank you!
+>
+> Kind regards,
+> Nicolas Frattaroli
+>
+> >
+> > Thanks,
+> > Yury
+> >
+> > > Before fixing this merge conflict, I'll drop the patches related to p=
+atch[2].
+> > > [2] 7d9e29ed3f8e ("PM / devfreq: rockchip-dfi: add support for LPDDR5=
+")
+> > >
+> > > After resolving the merge conflict, I'll apply them again.
+> > >
+> >
+>
+>
+>
+>
+
+
+--=20
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
 
