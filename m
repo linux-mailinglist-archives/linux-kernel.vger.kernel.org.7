@@ -1,86 +1,77 @@
-Return-Path: <linux-kernel+bounces-807463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2EC1B4A49D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:09:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1AEB4A4AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 10:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D4EA1B2166A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:09:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2429616E575
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 08:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5913F246335;
-	Tue,  9 Sep 2025 08:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4B524677C;
+	Tue,  9 Sep 2025 08:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c9P1qOg8"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v58coxXk"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298B9247284
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 08:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B2727453;
+	Tue,  9 Sep 2025 08:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757405318; cv=none; b=if7glpHopfkJQHojtkf666Z2NvdSxZQ+2juTOehHWMg2+R4vJxgXVFneCvKaV7vWdv9JNCyjeF7ymNSZ2hb1AJ61m3KM2iJ68XQgXFlg/JNtp2jXsslHneR32cQ50jfMi/pDkiRuW9JyNIv4Tp4onq45uq3xUMYXG//n5/JSTLQ=
+	t=1757405528; cv=none; b=tlS9JjV5fsTGdegWO+s3Hmpqn/eTZRUePMXp4X/cUCtxWBmi4EFh9ZWfozqrgYcqEVCoteIhy/vpBE27LSxQnmiL2ZT9dlLsvkrcmasr7hUmASrxzrLApP9x5PU9i8D+K5i+iMHBBGg9tUig8rw7vKpL9/oTBmcBkfgsA3gCb2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757405318; c=relaxed/simple;
-	bh=Hmu9KwXDkZaoAeYjfvjgDpFGYIXfNrE+7BfpMSVwxvw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=IwUTFmuF7rSeCOw7zxF+Y0y6t1z6W21EgeGtuBqGL/ADv0Gy70VgNSWYlnCmt5iE0o6sU96hd87Vz+9V9bd2GCPHMgGFmpuapt4lM2qS9iIfGgJIiMI9vBI4FhRNmg/ScVFMf1HF0Sv8U9HB1kDmWlB6NBvU1kOE98eAtmztr4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c9P1qOg8; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757405304;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZeCy6rDe75jPH1TgHGyr4cgF59Lim6HqxL9skz46sME=;
-	b=c9P1qOg84FL7MhdmiPZ+ysoISwjx10XIdVx051pe0kt4Ug9g1kICNVyfYSANmX9dbT4OJW
-	mJbwSWoogwWjKnO7zRjpU9jdb+2IVjb8PqdhrABq+DctZ4xsyl1R4MB6yt2c+/NkQSZvNh
-	LtAS8dsFT1233SVKLMZTu5FiE0y14Co=
+	s=arc-20240116; t=1757405528; c=relaxed/simple;
+	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=apE3Rf83JLgRXq7cbXJw22SmMGbqDHqr+J07nXh7w1UfK+FiJNmXt3ZGf/AbNSsam7QGNGA6izZImvjYfsT6Q5QQrjmRm7GQ6VUeMSESDbWb2Byb64ef7+MjuCcz7Oh2gMfv0pJZadX2nb+qmUnyUHa632r9TLoJhMLQI00oxSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=v58coxXk; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=v58coxXkYgaEBoHivjjRT2+OQx
+	Xf8KDsIK/Ft56pjHHeQJewm2wikQEOGlXWjAYkH00w+KMEDeI2H2BMvnItY3iJ0W18u+1r4sG3pEm
+	bIM5+dYbshxz+J4XTkvRwXNpmKGotM5ytxYOPMIgJ7r0R6BF2HwU9KwmCn/hgaL3IvyuHNdoy5X4j
+	fvjj2v9GoIHmP8iXetWIJm8Xhfto00RDItq9vCn9tpJIzTbx1XZfHV/sYWW8PLHjAhgky04Y+aO03
+	y7wom7sjw/U4U0my6KuNhqSwFMlNBYf/8Wr0UrW+kIwGggoMgVWYtD7jBU6+Cf0WNSlf+7QVxMniF
+	wUQoc1lg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uvtSH-00000005Tmq-0j4b;
+	Tue, 09 Sep 2025 08:11:57 +0000
+Date: Tue, 9 Sep 2025 01:11:57 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: hch@infradead.org, colyli@kernel.org, hare@suse.de, dlemoal@kernel.org,
+	tieren@fnnas.com, bvanassche@acm.org, axboe@kernel.dk,
+	tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
+	yukuai3@huawei.com, satyat@google.com, ebiggers@google.com,
+	kmo@daterainc.com, akpm@linux-foundation.org, neil@brown.name,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, linux-raid@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+Subject: Re: [PATCH for-6.18/block 02/16] block: initialize bio issue time in
+ blk_mq_submit_bio()
+Message-ID: <aL_hTVPaYJ4CR3J-@infradead.org>
+References: <20250905070643.2533483-1-yukuai1@huaweicloud.com>
+ <20250905070643.2533483-3-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH] s390/nmi: Simplify return statement in
- nmi_registers_valid()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <20250909062501.8968Abb-hca@linux.ibm.com>
-Date: Tue, 9 Sep 2025 10:08:10 +0200
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- linux-s390@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <87A2F1E0-17E4-4C28-823A-3D6C3379DF41@linux.dev>
-References: <20250908153221.383589-3-thorsten.blum@linux.dev>
- <b1bf1f70-8b4f-4e96-908a-907da1748377-agordeev@linux.ibm.com>
- <20250909062501.8968Abb-hca@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905070643.2533483-3-yukuai1@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 9. Sep 2025, at 08:25, Heiko Carstens wrote:
-> On Mon, Sep 08, 2025 at 06:52:11PM +0200, Alexander Gordeev wrote:
->> 
->> This change does not make the whole function readability better.
-> 
-> It actually would decrease readability since every if-statement tells
-> you one condition when registers are not valid. Negating the last one
-> makes this harder to understand.
+Looks good:
 
-Ah my bad, that makes sense. I didn't take the whole function into
-account.
-
-Thanks,
-Thorsten
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
 
