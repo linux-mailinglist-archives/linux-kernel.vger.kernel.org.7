@@ -1,89 +1,131 @@
-Return-Path: <linux-kernel+bounces-808925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-808927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3328B50699
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:50:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36A3B5069C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 21:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C258D1C64387
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:51:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC6F3B5707
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 19:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916F435AAD1;
-	Tue,  9 Sep 2025 19:50:41 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B488531CA54;
+	Tue,  9 Sep 2025 19:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8e8D5D/"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69C0352FE5
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 19:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F82C26981E;
+	Tue,  9 Sep 2025 19:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757447441; cv=none; b=gzKaJfaB8PpHsrmcuj2KtofZ265goUV3h+KYb2D1ordnO4J0KkvhCIfUq38tog2s3p3aSR8dIuwh1sRiqBb5jsCrE1q+jH6rQqNEfpRGA2UT/JZqZ1b2Zu+f/8qc81dJ4XKQzIBcxDSW6pqMKvU2RiLZlABKttzkQfi1C0jp1rI=
+	t=1757447581; cv=none; b=cs3pm6z7zApSwtg6bEBNTFavFvLYaHU58a59uGZC5f61k4z/NFNhqe/jfPHpUDCqsdrnhp8tT1p+hxk68des1LzCL7/87LVnZN9SigW8cu8+jwsHP6PU3YjrSjMxLqgQylVIp6RtnFGMCKLvA0j6u7+cwpHHqUKR0Mp9x9huCsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757447441; c=relaxed/simple;
-	bh=boebRLjC3MqhTM6FRyewhM4YpgC8hJFcovwAtYZ+hkI=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=JPsq2ijEm/xtAGv1QZ+1gERmpMMVonZaE23NloOuyaN3FKbRxqIwNJgM5pUb3TGuiHbV4cHeaS5R144Y3lvWPRlLWrRMZyeN01QrpgO5s2gxilEiG2GfLNeD4hHHE7Toey4Kkfdsq9bcghDj6hb7K7zswdQuWQkynKy0nnS56Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 3C79D2E52E9;
-	Tue,  9 Sep 2025 21:50:31 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id IJOKrqkLy_x5; Tue,  9 Sep 2025 21:50:31 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id DF7D62E5308;
-	Tue,  9 Sep 2025 21:50:30 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id rXMUa9oNKVkg; Tue,  9 Sep 2025 21:50:30 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id B79F52E52E9;
-	Tue,  9 Sep 2025 21:50:30 +0200 (CEST)
-Date: Tue, 9 Sep 2025 21:50:30 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: Rahul Kumar <rk0006818@gmail.com>
-Cc: pratyush <pratyush@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, 
-	linux-mtd <linux-mtd@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-kernel-mentees <linux-kernel-mentees@lists.linux.dev>, 
-	Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <589829523.18235.1757447430401.JavaMail.zimbra@nod.at>
-In-Reply-To: <CAKY2RybqkE74EADTPnCUHAXpJLJmM9skPXQ6S3UOq8TK_y9EQA@mail.gmail.com>
-References: <20250908070124.2647038-1-rk0006818@gmail.com> <87tt1djtot.fsf@bootlin.com> <93578759.11447.1757322260340.JavaMail.zimbra@nod.at> <mafs08qinn92v.fsf@kernel.org> <CAKY2RybqkE74EADTPnCUHAXpJLJmM9skPXQ6S3UOq8TK_y9EQA@mail.gmail.com>
-Subject: Re: [PATCH v2] mtd: sm_ftl: replace strncpy with memcpy
+	s=arc-20240116; t=1757447581; c=relaxed/simple;
+	bh=CsixC0K8zNhIwiOrqP/b8XCHm4MvJ8dDWMEqAK/UNtc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sPqECFpvjeDIoNTkKKCLiOZWRqnvgNIZ0XkSwi76IkicuvCdJZl4FYzoRSe67Cfhl2QSVk+Kl6M3souaUVMWONBkgcmiD5C/yxMBbj6D6LCe0590bpIIuGmszX5JsK2hMEzvYGVv6tijV5n8+y2rl2A0mAaQyKmMB+4h7rxfJP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8e8D5D/; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45dd513f4ecso37515715e9.3;
+        Tue, 09 Sep 2025 12:52:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757447578; x=1758052378; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+r3BrdGJOKGEJrMKSCJlBVSV/J2DmL71xrAl2k6S+r4=;
+        b=C8e8D5D/6tw14GrBgLNv2hG7r9nD1CcSLq4vV5NSrQc4UIBknAqc+ya6k5rRP7N0cz
+         KOWGmrIEHsZEiRx7r81lwyfTF8u9NYXRyH/tNpBGxpV74LnUlji+67D4W31nhv3RmKON
+         bR2S9GXApws8mB3OI5Tf9lNnoBkDgTwE3kjKRAGYdRjWb24PhFkNBKKixJgCwAszroDH
+         8IdQ0uXBCZ9Z1elvIpwS6hM26oLqUNIgM9SFlyW5mazep0J4fpzwEFDl+6ezQlwSYqzi
+         ZYHb+suARZayBRVSwUtUbJAMNaSoLZnx0Y2yko+T5d5/6Z3BG3Jdv6xPqSf7Ub2KucHn
+         LAmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757447578; x=1758052378;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+r3BrdGJOKGEJrMKSCJlBVSV/J2DmL71xrAl2k6S+r4=;
+        b=mkGV3z3pWv3fTuihqSP7HSQVACl65e8939vNdrUNcApBWFzR6PEUeaBu8tvodOYsGn
+         3/duDpDAP/u4dHXDBCv5A26mTjwNZhYycWQJLYUyuNRYr044KAbflLcx/dLpu80fNAw0
+         ESjnzQlzi08Jj3/oKgQGjNXg75N8wuZkHFg1vdW+Y9A8g24x0Ee4olesveP3Mu+ZZ5DG
+         /QcimTiTflP0M/BvYuisb6b6AkizzTa+vv/JjI9U+KD6hmsyexg/VV2+N5E/K9wQ9I9a
+         mJB8BBI0khmJnZgVfvT2rTsfj900mTAVXMO/KepN/2YZr2XcbUEfTEpEW9O7j2MU5sr5
+         jaYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjXYVVWGgU1yKWb6PDjv1UwvKBf+PiFskx76+Xl1w5T5l5+zpXlDBnc/H3LBgJYeEPPZIVDQRntzhwZ34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjaB7bTQHbrh3jOuWIDt8A1CXBCUvbOwJDw/DDK1j1mNhrG9Jg
+	/i5BGFaAAqxi7iUfLutQekdEtlB/BNYBHS7dM8fX2r8g3fY6+t6dZy3ZwPvmdr5wJHSFrw==
+X-Gm-Gg: ASbGncvcXY96B+L1q+jBy+oO8cgI3J2vc8f/ttibtUQTZacTVB3ACbZ+jeJqjDBb9/R
+	kR/XSC/oTsaPxsQysNrtDFZyGcB8THYJ+BruzhL+vRE7QN7dhlN76tHMS1PBGd2IzrNi41biXih
+	yJuliS8c760cjiTvj3kNjQti+05yC/XnE6ktm5WnD1I80DQpdJ3wr/HfxelNbuJZE40LVRlk5VY
+	wWTKUC+XW5MD+4sKUtSjjW5SzlLHvdKpLGq15Vk2RbLFYGjxhrhbqGj/CdkMjEAE5927CC5+oro
+	jU0rottppOBlzdJCHpf00kT5DATyurlx4dWdwOsnhiyPtQepO20jtkWx19hooIKIbKvqb7flnQX
+	KA2BrbiTdUfTKdJXapqZEqHaHJ0vqmlgj6MhSls+UyqseTV/1/MMTHfNjpo4Jpu88L+wc6Gr4qE
+	2OBkU3gPTi0AN/VEeFCgt82XvVC3eY8RxOFPTrDJFlHwHyPmTnWWw=
+X-Google-Smtp-Source: AGHT+IFGz9bTH/U6S00xqzrGEx2mluuca2mQTygiN7ZqzUbCLvb8BcMFZ6DExHs4XoKoYZ3AQfEKZg==
+X-Received: by 2002:a05:600c:314b:b0:45d:e111:de7e with SMTP id 5b1f17b1804b1-45de111df85mr101124655e9.19.1757447577451;
+        Tue, 09 Sep 2025 12:52:57 -0700 (PDT)
+Received: from ip-10-0-150-200.eu-west-1.compute.internal (ec2-52-49-196-232.eu-west-1.compute.amazonaws.com. [52.49.196.232])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75223885csm3776757f8f.36.2025.09.09.12.52.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 12:52:57 -0700 (PDT)
+From: Fred Griffoul <griffoul@gmail.com>
+To: kvm@vger.kernel.org
+Cc: Fred Griffoul <fgriffo@amazon.co.uk>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: nVMX: Mark APIC access page dirty when syncing vmcs12 pages
+Date: Tue,  9 Sep 2025 19:52:28 +0000
+Message-ID: <20250909195228.1412595-1-griffoul@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF141 (Linux)/8.8.12_GA_3809)
-Thread-Topic: sm_ftl: replace strncpy with memcpy
-Thread-Index: VA8ZEQcKf8WO20Yg9PP2GrFtA20LJQ==
+Content-Transfer-Encoding: 8bit
 
-Rahul,
+From: Fred Griffoul <fgriffo@amazon.co.uk>
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Rahul Kumar" <rk0006818@gmail.com>
-> Thanks a lot for the detailed feedback on my patch. I understand now
-> that this change does not add much value, and I=E2=80=99ll keep your poin=
-ts in
-> mind for future contributions. I really appreciate the guidance.
+For consistency with commit 7afe79f5734 ("KVM: nVMX: Mark vmcs12's APIC
+access page dirty when unmapping"), which marks the page dirty during
+unmap operations, also mark it dirty during vmcs12 page synchronization.
 
-I hope my comment wasn't too demotivating.
-You are *very* welcome to improve the code.
-One of the major problems in open-source projects is that
-we're short on review power. That's why sometimes maintainers (including me=
-)
-react grumpily when code is changed just for the sake of change.
+Signed-off-by: Fred Griffoul <fgriffo@amazon.co.uk>
+---
+ arch/x86/kvm/vmx/nested.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thanks,
-//richard
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index b8ea1969113d..02aee6dd1698 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -3916,10 +3916,10 @@ void nested_mark_vmcs12_pages_dirty(struct kvm_vcpu *vcpu)
+ 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+ 	gfn_t gfn;
+ 
+-	/*
+-	 * Don't need to mark the APIC access page dirty; it is never
+-	 * written to by the CPU during APIC virtualization.
+-	 */
++	if (nested_cpu_has2(vmcs12, SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES)) {
++		gfn = vmcs12->apic_access_addr >> PAGE_SHIFT;
++		kvm_vcpu_mark_page_dirty(vcpu, gfn);
++	}
+ 
+ 	if (nested_cpu_has(vmcs12, CPU_BASED_TPR_SHADOW)) {
+ 		gfn = vmcs12->virtual_apic_page_addr >> PAGE_SHIFT;
+-- 
+2.43.0
+
 
