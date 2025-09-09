@@ -1,138 +1,133 @@
-Return-Path: <linux-kernel+bounces-807916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E02B4AB0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:04:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32CEB4AB11
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 13:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA3A5443DF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:04:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FFF44E2577
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477FF31CA75;
-	Tue,  9 Sep 2025 11:04:14 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FC031E106;
+	Tue,  9 Sep 2025 11:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="SGYvA8fa"
+Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFB72D77E6
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Sep 2025 11:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C5D28AAEB;
+	Tue,  9 Sep 2025 11:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757415853; cv=none; b=WCk3IhWJxMOm1DGpWc+duube3EAb+6PL7zSvEUlBZibALPjDewBx3HKvxQ9eXcWew0U5jWVS8DOWFGa3R8uivRIHP0AbSut4/TYXhscu4WliX33Zns/Mhb6gPOLgG5DTcIaaERiXH9JAjT6dBo3d0+w8w15nPY81DT6BRYR4azQ=
+	t=1757415987; cv=none; b=GJwEbpIHO2uxDBOh6i6zP9k8GtE9TYQcGnvURqXxBu9VIoTamEAaYI3PYE8pOegxHOqCLCIJrwhQD49U1Qz7LWwnOwpB63LeOXZoAjKlJWRC61Mn2kVY8rXF47qBxGbTnpMFCkvm4lZ872fPZC9Fv7svV+bG23YH8u4XPkFKhdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757415853; c=relaxed/simple;
-	bh=B8c2377KZdS+EHZcUQDQTlAZiq6HWEeL9hg1Ganu0hc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rUKYOwon3WdigUVj/SQimC7bbilS5BpSu5hbK19WtsDiiFB9nqYVh8yzFARbJjpNX6I0mDlQ5Hv7WksWENWR/ocp4NKNfWScEqpD8gLwztW2tY2tt0DUKljmoZ99f4LbR8Fce89wSkNJpfMAKAFKqOZkK/mjrXjVumOatU2imE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uvw8m-0003MR-3W; Tue, 09 Sep 2025 13:04:00 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uvw8k-000PEq-1b;
-	Tue, 09 Sep 2025 13:03:58 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 31F2A469DDC;
-	Tue, 09 Sep 2025 11:03:58 +0000 (UTC)
-Date: Tue, 9 Sep 2025 13:03:57 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
-	Alex Tran <alex.t.tran@gmail.com>, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	horms@kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] docs: networking: can: change bcm_msg_head frames
- member to support flexible array
-Message-ID: <20250909-victorious-micro-copperhead-24eaa0-mkl@pengutronix.de>
-References: <20250904031709.1426895-1-alex.t.tran@gmail.com>
- <a7c707b7-61e1-4c40-8708-f3331da96d34@hartkopp.net>
- <c649a695-caeb-4c20-b983-9035c396e145@redhat.com>
+	s=arc-20240116; t=1757415987; c=relaxed/simple;
+	bh=BrQJkG3M6/o5DS3+3WjfFokEzXUDWFakzUkZ3U/06Oo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Io/XV9EVQ8RpgnepBXKD3yLcgKvef4NbHEphNQvi2/VAiuqM7Xu1Y2X9w4dLeywrVV6SnNCNj6j3W1X83OiFfRivbSjsH+NfgHoOVMnZo7tMNnomZ6zgnGMHP6Kq2hoM4Ep2a72tZHmxJ5VDanM2gLO8s5MJSh7d7d6G1Hamh9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=SGYvA8fa; arc=none smtp.client-ip=216.71.153.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1757415985; x=1788951985;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BrQJkG3M6/o5DS3+3WjfFokEzXUDWFakzUkZ3U/06Oo=;
+  b=SGYvA8faaofGFD0CY6ltpW9Uo7l2eqYLytRjMqFuB+0MDzbWzKJdnk9Y
+   nvrum9uf99sRDVbRko+M0QdewFMMW5X34w1EpHTkQ6WTjfSBaSfCAUcT1
+   m+OB9cXc85lu3+hmu0p+dbB5zkUMSuk7dgKERswrSfw/gQAUHl+HIrbHL
+   +PSOwL++lNlJ/JEYPxetc15FsLWJJuW/Ou1BNGp8ty93RRNG+Egj9eyq0
+   EMbSyeda2xWrACMmDixyL3jZYrDtaixBOsY7ACzoLlXwB5SZl73yi+Kxo
+   +U6GGYgBXFQv9duhhG0puI0UqntDKRzdkaIptiC1yUlYsjxCMxQkhkvvk
+   Q==;
+X-CSE-ConnectionGUID: tGmk0HTjRvy9fzN/QsfGCQ==
+X-CSE-MsgGUID: W3qatkL0QYGKRIJdE+k/gA==
+X-IronPort-AV: E=Sophos;i="6.18,251,1751212800"; 
+   d="scan'208";a="113316886"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 09 Sep 2025 19:06:18 +0800
+IronPort-SDR: 68c00a2a_ByTrFhvdo2Nx3oTJn/H2Ta9C+4RqJW89ZNAdwdUKQVOCImq
+ U2R1fzwtFCel1pSbRuxwjGJz1iho+7qvA7GKy6A==
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2025 04:06:19 -0700
+WDCIronportException: Internal
+Received: from c02g55f6ml85.ad.shared (HELO C02G55F6ML85.wdc.com) ([10.224.183.46])
+  by uls-op-cesaip01.wdc.com with ESMTP; 09 Sep 2025 04:06:14 -0700
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-btrace@vger.kernel.org,
+	John Garry <john.g.garry@oracle.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH 00/16] block: add blktrace support for zoned block device commands
+Date: Tue,  9 Sep 2025 13:05:55 +0200
+Message-Id: <20250909110611.75559-1-johannes.thumshirn@wdc.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mcbodx5e3hand5vz"
-Content-Disposition: inline
-In-Reply-To: <c649a695-caeb-4c20-b983-9035c396e145@redhat.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+This patch series extends the kernel blktrace infrastructure to support
+tracing zoned block device commands. Zoned block devices (e.g., ZAC/ZBC and
+ZNS) introduce command types such as zone open, close, reset, finish, and
+zone append. These are currently not visible in blktrace, making it difficult
+to debug and analyze I/O workloads on zoned devices.
 
---mcbodx5e3hand5vz
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1] docs: networking: can: change bcm_msg_head frames
- member to support flexible array
-MIME-Version: 1.0
+The patches in this series utilize the new trace points for these zone
+management operations, and propagate the necessary context to the blktrace
+logging path. These additions are designed to be backward-compatible, and are
+only active when zoned devices are in use.
 
-On 09.09.2025 12:35:46, Paolo Abeni wrote:
-> On 9/4/25 8:25 AM, Oliver Hartkopp wrote:
-> > On 04.09.25 05:17, Alex Tran wrote:
-> >> The documentation of the 'bcm_msg_head' struct does not match how
-> >> it is defined in 'bcm.h'. Changed the frames member to a flexible arra=
-y,
-> >> matching the definition in the header file.
-> >>
-> >> See commit 94dfc73e7cf4 ("treewide: uapi: Replace zero-length arrays w=
-ith
-> >> flexible-array members")
-> >>
-> >> Bug 217783 <https://bugzilla.kernel.org/show_bug.cgi?id=3D217783>
-> >>
-> >> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
-> >=20
-> > Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
->=20
-> @Mark, @Oliver: I assume you want us to apply this patch directly to the
-> net tree, am I correct?
+In order to not break the user-space ABI, a new ioctl was introduced to request
+the new version of the blk_io_trace with extended 'action' field.
 
-I'll take it.
+The user-space tools in the blktrace suite are updated in a separate patch
+series to interpret and display the new trace events.
 
-> If so, @Alex: please use a formal 'Fixes:' tag for the blamed commit and
-> 'Link: to reference the bz entry, thanks!
+Johannes Thumshirn (16):
+  blktrace: split do_blk_trace_setup into two functions
+  blktrace: add definitions for blk_user_trace_setup2
+  blktrace: pass blk_user_trace2 to setup functions
+  blktrace: add definitions for struct blk_io_trace2
+  blktrace: factor out recording a blktrace event
+  blktrace: only calculate trace length once
+  blktrace: split out relaying a blktrace event
+  blktrace: change the internal action to 64bit
+  blktrace: remove struct blk_io_trace from __blk_add_trace
+  blktrace: differentiate between blk_io_trace versions
+  blktrace: untangle if/else sequence in __blk_add_trace
+  blktrace: add block trace commands for zone operations
+  blktrace: expose ZONE APPEND completions to blktrace
+  blktrace: trace zone management operations
+  blktrace: trace zone write plugging operations
+  blktrace: handle BLKTRACESETUP2 ioctl
 
-Will do.
+ block/ioctl.c                     |   1 +
+ include/linux/blktrace_api.h      |   3 +-
+ include/uapi/linux/blktrace_api.h |  50 ++++
+ include/uapi/linux/fs.h           |   1 +
+ kernel/trace/blktrace.c           | 458 +++++++++++++++++++++++-------
+ 5 files changed, 404 insertions(+), 109 deletions(-)
 
-Marc
+-- 
+2.51.0
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---mcbodx5e3hand5vz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjACZoACgkQDHRl3/mQ
-kZwXkQf/UEh23x6d+laA+YYWTD4yIXfk/XOixd7eGpRJzaYl3wRVjM36gzRioI7H
-kMIchzpl2QmrzKSvA+j5KTwfSkpotYAt4BMJA+X622lnoV2N3Up2KcsHAqwwbsYq
-SPSm6NZbc+Pj4jKl+hFt7i7Yp/rnqJcM0LI061o1/rSU41WKPmj4e1iD0Uxc+OrM
-QCd2Epdfd+p5QZUstr7yDErKUoxhoh38TkzqnX/22kmopWg+bfW3rEuqzyyT/3ev
-20xX3Cb/GIoDDfisKfshlJwXlW5x3p2oADRUfykxmg9ghUoalO249XZYZ8owKMgy
-Sjd0AC8KOBt87W/tXWdbO3FxQnvhEQ==
-=3Dg+
------END PGP SIGNATURE-----
-
---mcbodx5e3hand5vz--
 
