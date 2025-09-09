@@ -1,401 +1,229 @@
-Return-Path: <linux-kernel+bounces-807758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-807708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4FF4B4A8D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:52:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25008B4A84E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 11:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85532445DF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:52:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B64601889B80
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Sep 2025 09:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F161C30C609;
-	Tue,  9 Sep 2025 09:50:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFD623A9AD;
-	Tue,  9 Sep 2025 09:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC9C2C0276;
+	Tue,  9 Sep 2025 09:36:23 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D732BEFE0;
+	Tue,  9 Sep 2025 09:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757411437; cv=none; b=HTWgQuh1PX6oNg4sO6PvTOrKR28gesA54Xp9pfTplxe5ULii+ebNAr/LutP65hxLe729OsGOXXQnyPFi+LV/zQDLmLGf7CkXN+kSwpwrOMlYg+0v0v2DrMl0LVgphs27/y8T6yXrVoDm6e4hWj8nvV18/DCBQ2KDQ62HRM3ImgI=
+	t=1757410583; cv=none; b=lh4yAQmJvOdJmWuQyiQG+WOQ9xV/UX6tjtA8xaBVq+wFe3k4jurYgJEqg7kL9zybDd/LPYEbpXqlGgs09AntbYCrj2zJPGQkX5vUk7Hu99GN1wpI8iguRb+ZyxySJVSLTgYb8PRhzHyyYDLWQ70jnErplhUGyLkKa79KvRy1iLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757411437; c=relaxed/simple;
-	bh=uhxDWoptz2tBQK8hRc6j5prsq9hJfPj6Phx7JbtSAtk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fB6IjNvTA2o715hGvqCOrridAyULOrUA3XWBjrcIqqc4LTjtXYO/RS1jkNBa2ffdej/qn3qcOfnLKWCLb/zBTKSzs48iQYmwSXrKP2h6tMqURdX7NomI9EhOqX8MMXTZAkV9ucxcNImfYp4fqZi9Lw6WqsrgWOdY9d8FZVI3Rms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cLdrr57Bjz9sRk;
-	Tue,  9 Sep 2025 11:32:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id C1oNj3b0ppI5; Tue,  9 Sep 2025 11:32:28 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cLdrr357Yz9sRh;
-	Tue,  9 Sep 2025 11:32:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 44FAE8B766;
-	Tue,  9 Sep 2025 11:32:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 6TTgvUgJ3s7h; Tue,  9 Sep 2025 11:32:28 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id F1ACD8B764;
-	Tue,  9 Sep 2025 11:32:27 +0200 (CEST)
-Message-ID: <d46498e5-db21-4a79-93b4-3869be3660d2@csgroup.eu>
-Date: Tue, 9 Sep 2025 11:32:27 +0200
+	s=arc-20240116; t=1757410583; c=relaxed/simple;
+	bh=P9O2Fk+lvzyaJHVRCl8W2a66c9AQA/ityzFxTEeAzvk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=hJ2EJWXj1+lDWZ+QIjPTj0XV1xFD5BF3kMaCEb5OyGjseIFr4JN0vzBVvf/tSFLXQ8EHaqjn12IxTAXIoalMMch9flyYyEe8GwfHNunIbxVjvC6OohZ7TnCYYYck/fZIdY7G1lFHEMDbSVSQGM/OYjR7sLRGMdIEzLGSNEDajZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cLdxG0lWvzYQv8m;
+	Tue,  9 Sep 2025 17:36:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 96FBB1A19DF;
+	Tue,  9 Sep 2025 17:36:16 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgDnMY4O9b9oHH6lBw--.26435S3;
+	Tue, 09 Sep 2025 17:36:16 +0800 (CST)
+Subject: Re: [PATCH for-6.18/block 04/10] blk-mq: convert to serialize
+ updating nr_requests with update_nr_hwq_lock
+To: Nilay Shroff <nilay@linux.ibm.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ ming.lei@redhat.com, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250908061533.3062917-1-yukuai1@huaweicloud.com>
+ <20250908061533.3062917-5-yukuai1@huaweicloud.com>
+ <9708abeb-7677-4c0e-931b-7ca5fe0a0242@linux.ibm.com>
+ <329ca336-21f6-e686-0446-b3ae9a46f4c9@huaweicloud.com>
+ <f57ebcf8-9225-4e3d-86d2-cac7f9cacb54@linux.ibm.com>
+ <43d25899-6b1a-c0e1-c3f5-8e2a560c93d5@huaweicloud.com>
+ <d15faae0-40bb-41f0-bef1-f2ad48543110@linux.ibm.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <7544e26c-502a-75fc-7147-721a98bb0e80@huaweicloud.com>
+Date: Tue, 9 Sep 2025 17:36:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] module : fix signature checker pointer arithmetic and
- bounds check
-To: Fidal Palamparambil <rootuserhere@gmail.com>,
- linux-modules@vger.kernel.org
-Cc: mcgrof@kernel.org, petr.pavlu@suse.com, da.gomez@kernel.org,
- samitolvanen@google.com, linux-kernel@vger.kernel.org
-References: <20250905154550.130-1-rootuserhere@gmail.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250905154550.130-1-rootuserhere@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <d15faae0-40bb-41f0-bef1-f2ad48543110@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnMY4O9b9oHH6lBw--.26435S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxKrWkGw1rWF15CF47Cr48WFg_yoW7Xr47pF
+	Z5Ja9Fk3y0qw18Zw1jvw17W34Utw1Igw17Wr48tF17Jrnrtwnaqr18Xr1jgrW8Ars7Jr1j
+	q3W5tFW7ZryDZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfU52NtDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+Hi,
 
-
-Le 05/09/2025 à 17:45, Fidal Palamparambil a écrit :
-> From: Fidal palamparambil <rootuserhere@gmail.com>
+在 2025/09/09 17:26, Nilay Shroff 写道:
 > 
-> This patch fixes :
->   - invalid module_param type (bool_enable_only → bool)
-
-Can you explain what the problem is ? Why do you say bool_enable_only is 
-invalid ? Was generalised by commit d19f05d8a8fa ("kernel/params.c: 
-generalize bool_enable_only")
-
->   - unsafe pointer arithmetic on void *
-
-Why is it unsafe in Linux Kernel ? See https://lkml.org/lkml/2022/2/24/978
-
->   - missing bounds check for sig_len, preventing underflow/OOB
-
-This is checked by mod_check_sig(), why check it again ?
-
->   - export set_module_sig_enforced for consistency
-
-Consistency with what ? Can you tell which module needs it ?
-
 > 
-> Signed-off-by : Fidal Palamparambil <rootuserhere@gmail.com>
-> Signed-off-by: Fidal palamparambil <rootuserhere@gmail.com>
+> On 9/9/25 12:46 PM, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2025/09/09 14:52, Nilay Shroff 写道:
+>>>
+>>>
+>>> On 9/9/25 12:08 PM, Yu Kuai wrote:
+>>>> Hi,
+>>>>
+>>>> 在 2025/09/09 14:29, Nilay Shroff 写道:
+>>>>>
+>>>>>
+>>>>> On 9/8/25 11:45 AM, Yu Kuai wrote:
+>>>>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>>>>
+>>>>>> request_queue->nr_requests can be changed by:
+>>>>>>
+>>>>>> a) switching elevator by update nr_hw_queues
+>>>>>> b) switching elevator by elevator sysfs attribute
+>>>>>> c) configue queue sysfs attribute nr_requests
+>>>>>>
+>>>>>> Current lock order is:
+>>>>>>
+>>>>>> 1) update_nr_hwq_lock, case a,b
+>>>>>> 2) freeze_queue
+>>>>>> 3) elevator_lock, cas a,b,c
+>>>>>>
+>>>>>> And update nr_requests is seriablized by elevator_lock() already,
+>>>>>> however, in the case c), we'll have to allocate new sched_tags if
+>>>>>> nr_requests grow, and do this with elevator_lock held and queue
+>>>>>> freezed has the risk of deadlock.
+>>>>>>
+>>>>>> Hence use update_nr_hwq_lock instead, make it possible to allocate
+>>>>>> memory if tags grow, meanwhile also prevent nr_requests to be changed
+>>>>>> concurrently.
+>>>>>>
+>>>>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>>>>>> ---
+>>>>>>     block/blk-sysfs.c | 12 +++++++++---
+>>>>>>     1 file changed, 9 insertions(+), 3 deletions(-)
+>>>>>>
+>>>>>> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+>>>>>> index f99519f7a820..7ea15bf68b4b 100644
+>>>>>> --- a/block/blk-sysfs.c
+>>>>>> +++ b/block/blk-sysfs.c
+>>>>>> @@ -68,13 +68,14 @@ queue_requests_store(struct gendisk *disk, const char *page, size_t count)
+>>>>>>         int ret, err;
+>>>>>>         unsigned int memflags;
+>>>>>>         struct request_queue *q = disk->queue;
+>>>>>> +    struct blk_mq_tag_set *set = q->tag_set;
+>>>>>>           ret = queue_var_store(&nr, page, count);
+>>>>>>         if (ret < 0)
+>>>>>>             return ret;
+>>>>>>     -    memflags = blk_mq_freeze_queue(q);
+>>>>>> -    mutex_lock(&q->elevator_lock);
+>>>>>> +    /* serialize updating nr_requests with switching elevator */
+>>>>>> +    down_write(&set->update_nr_hwq_lock);
+>>>>>>     
+>>>>> For serializing update of nr_requests with switching elevator,
+>>>>> we should use disable_elv_switch(). So with this change we
+>>>>> don't need to acquire ->update_nr_hwq_lock in writer context
+>>>>> while running blk_mq_update_nr_requests but instead it can run
+>>>>> acquiring ->update_nr_hwq_lock in the reader context.
+>>>>>
+>>>>> So the code flow should be,
+>>>>>
+>>>>> disable_elv_switch  => this would set QUEUE_FLAG_NO_ELV_SWITCH
+>>>>> ...
+>>>>> down_read ->update_nr_hwq_lock
+>>>>> acquire ->freeze_lock
+>>>>> acquire ->elevator_lock;
+>>>>> ...
+>>>>> ...
+>>>>> release ->elevator_lock;
+>>>>> release ->freeze_lock
+>>>>>
+>>>>> clear QUEUE_FLAG_NO_ELV_SWITCH
+>>>>> up_read ->update_nr_hwq_lock
+>>>>>
+>>>>
+>>>> Yes, this make sense, however, there is also an implied condition that
+>>>> we should serialize queue_requests_store() with itself, what if a
+>>>> concurrent caller succeed the disable_elv_switch() before the
+>>>> down_read() in this way?
+>>>>
+>>>> t1:
+>>>> disable_elv_switch
+>>>>           t2:
+>>>>           disable_elv_switch
+>>>>
+>>>> down_read    down_read
+>>>>
+>>> I believe this is already protected with the kernfs internal
+>>> mutex locks. So you shouldn't be able to run two sysfs store
+>>> operations concurrently on the same attribute file.
+>>>
+>>
+>> There really is no such internal lock, the call stack is:
+>>
+>> kernfs_fop_write_iter
+>>   sysfs_kf_write
+>>    queue_attr_store
+>>
+>> There is only a file level mutex kernfs_open_file->lock from the top
+>> function kernfs_fop_write_iter(), however, this lock is not the same
+>> if we open the same attribute file from different context.
+>>
+> Oh yes this lock only protects if the same fd is being written
+> concurrently. However if we open the same sysfs file from different process
+> contexts then fd would be different and so this lock wouldn't protect
+> the simultaneous update of sysfs attribute. Having said that,
+> looking through the code again it seems that q->nr_requests update
+> is protected with ->elevator_lock (including both the elevator switch
+> code and your proposed changes in this patchset). So my question is
+> do we really need to synchronize nr_requests update code with elevator
+> swiupdate_nr_hwq_locktch code? So in another words what if we don't at
+> all use ->update_nr_hwq_lock in queue_requests_store?
 
-Why a double sob ?
+1) lock update_nr_hwq_lock, then no one can change nr_queuests
+2) checking input nr_reqeusts
+3) if grow, allocate memory
 
-> ---
->   kernel/module/signing.c    |  48 ++++++++------
->   kernel/module/signing.orig | 125 +++++++++++++++++++++++++++++++++++++
+Main idea here is we can checking if nr_requests grow and then allocate
+mermory, without concern that nr_requests can be changed after memory
+allocation.
 
-Why adding this .orig file into the kernel at all ?
+BTW, I think this sysfs attr is really a slow path, and it's fine to
+grab the write lock.
 
->   2 files changed, 155 insertions(+), 18 deletions(-)
->   create mode 100644 kernel/module/signing.orig
+Thanks,
+Kuai
 > 
-> diff --git a/kernel/module/signing.c b/kernel/module/signing.c
-> index a2ff4242e623..8dda6cd2fd73 100644
-> --- a/kernel/module/signing.c
-> +++ b/kernel/module/signing.c
-> @@ -1,5 +1,6 @@
->   // SPDX-License-Identifier: GPL-2.0-or-later
-> -/* Module signature checker
-> +/*
-> + * Module signature checker
-
-Don't mix cosmetic changes and real changes, you are making 
-bisectability more difficult.
-
->    *
->    * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
->    * Written by David Howells (dhowells@redhat.com)
-> @@ -20,11 +21,11 @@
->   #define MODULE_PARAM_PREFIX "module."
-> 
->   static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
-> -module_param(sig_enforce, bool_enable_only, 0644);
-> +module_param(sig_enforce, bool, 0644);
-> 
->   /*
-> - * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-> - * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
-> + * Export sig_enforce kernel cmdline parameter to allow other subsystems to
-> + * rely on that instead of directly on CONFIG_MODULE_SIG_FORCE config.
->    */
->   bool is_module_sig_enforced(void)
->   {
-> @@ -36,6 +37,7 @@ void set_module_sig_enforced(void)
->   {
->          sig_enforce = true;
->   }
-> +EXPORT_SYMBOL(set_module_sig_enforced);
-> 
->   /*
->    * Verify the signature on a module.
-> @@ -45,44 +47,55 @@ int mod_verify_sig(const void *mod, struct load_info *info)
->          struct module_signature ms;
->          size_t sig_len, modlen = info->len;
->          int ret;
-> +       const unsigned char *data = mod;
-
-Pointless change.
-
-> 
->          pr_devel("==>%s(,%zu)\n", __func__, modlen);
-> 
->          if (modlen <= sizeof(ms))
->                  return -EBADMSG;
-> 
-> -       memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
-> +       memcpy(&ms, data + (modlen - sizeof(ms)), sizeof(ms));
-
-Pointless change
-
-> 
->          ret = mod_check_sig(&ms, modlen, "module");
->          if (ret)
->                  return ret;
-> 
->          sig_len = be32_to_cpu(ms.sig_len);
-> +
-> +       /* Ensure sig_len is valid to prevent underflow/oob */
-> +       if (sig_len > modlen - sizeof(ms))
-> +               return -EBADMSG;
-
-Already verified by mod_check_sig()
-
-> +
->          modlen -= sig_len + sizeof(ms);
->          info->len = modlen;
-> 
-> -       return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-> +       return verify_pkcs7_signature(data, modlen, data + modlen, sig_len,
-
-pointless change
-
->                                        VERIFY_USE_SECONDARY_KEYRING,
->                                        VERIFYING_MODULE_SIGNATURE,
->                                        NULL, NULL);
->   }
-> 
-> +/*
-> + * Check signature validity of a module during load.
-> + */
->   int module_sig_check(struct load_info *info, int flags)
->   {
->          int err = -ENODATA;
->          const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
->          const char *reason;
-> -       const void *mod = info->hdr;
-> +       const unsigned char *mod = info->hdr;
-
-info->hdr is not void*, how can this work without a cast ?
-
->          bool mangled_module = flags & (MODULE_INIT_IGNORE_MODVERSIONS |
->                                         MODULE_INIT_IGNORE_VERMAGIC);
-> +
-
-Unrelated cosmetic change
-
->          /*
-> -        * Do not allow mangled modules as a module with version information
-> -        * removed is no longer the module that was signed.
-> +        * Do not allow mangled modules: a module with version info removed
-> +        * is no longer the module that was signed.
->           */
->          if (!mangled_module &&
->              info->len > markerlen &&
-> -           memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
-> -               /* We truncate the module to discard the signature */
-> +           memcmp(mod + info->len - markerlen,
-> +                  MODULE_SIG_STRING, markerlen) == 0) {
-> +               /* Truncate the module to discard the signature marker */
-
-Cosmetic and pointless change.
-
->                  info->len -= markerlen;
->                  err = mod_verify_sig(mod, info);
->                  if (!err) {
-> @@ -92,9 +105,8 @@ int module_sig_check(struct load_info *info, int flags)
->          }
-> 
->          /*
-> -        * We don't permit modules to be loaded into the trusted kernels
-> -        * without a valid signature on them, but if we're not enforcing,
-> -        * certain errors are non-fatal.
-> +        * Enforced mode: only allow modules with a valid signature.
-> +        * Non-enforced mode: certain errors are downgraded to warnings.
->           */
->          switch (err) {
->          case -ENODATA:
-> @@ -106,12 +118,12 @@ int module_sig_check(struct load_info *info, int flags)
->          case -ENOKEY:
->                  reason = "module with unavailable key";
->                  break;
-> -
-
-Cosmetic
-
->          default:
->                  /*
-> -                * All other errors are fatal, including lack of memory,
-> -                * unparseable signatures, and signature check failures --
-> -                * even if signatures aren't required.
-> +                * All other errors are fatal, including:
-> +                * - OOM
-> +                * - unparseable signatures
-> +                * - invalid signature failures
->                   */
->                  return err;
->          }
-> diff --git a/kernel/module/signing.orig b/kernel/module/signing.orig
-> new file mode 100644
-> index 000000000000..a2ff4242e623
-> --- /dev/null
-> +++ b/kernel/module/signing.orig
-> @@ -0,0 +1,125 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/* Module signature checker
-> + *
-> + * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/errno.h>
-> +#include <linux/module.h>
-> +#include <linux/module_signature.h>
-> +#include <linux/string.h>
-> +#include <linux/verification.h>
-> +#include <linux/security.h>
-> +#include <crypto/public_key.h>
-> +#include <uapi/linux/module.h>
-> +#include "internal.h"
-> +
-> +#undef MODULE_PARAM_PREFIX
-> +#define MODULE_PARAM_PREFIX "module."
-> +
-> +static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
-> +module_param(sig_enforce, bool_enable_only, 0644);
-> +
-> +/*
-> + * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-> + * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
-> + */
-> +bool is_module_sig_enforced(void)
-> +{
-> +       return sig_enforce;
-> +}
-> +EXPORT_SYMBOL(is_module_sig_enforced);
-> +
-> +void set_module_sig_enforced(void)
-> +{
-> +       sig_enforce = true;
-> +}
-> +
-> +/*
-> + * Verify the signature on a module.
-> + */
-> +int mod_verify_sig(const void *mod, struct load_info *info)
-> +{
-> +       struct module_signature ms;
-> +       size_t sig_len, modlen = info->len;
-> +       int ret;
-> +
-> +       pr_devel("==>%s(,%zu)\n", __func__, modlen);
-> +
-> +       if (modlen <= sizeof(ms))
-> +               return -EBADMSG;
-> +
-> +       memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
-> +
-> +       ret = mod_check_sig(&ms, modlen, "module");
-> +       if (ret)
-> +               return ret;
-> +
-> +       sig_len = be32_to_cpu(ms.sig_len);
-> +       modlen -= sig_len + sizeof(ms);
-> +       info->len = modlen;
-> +
-> +       return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-> +                                     VERIFY_USE_SECONDARY_KEYRING,
-> +                                     VERIFYING_MODULE_SIGNATURE,
-> +                                     NULL, NULL);
-> +}
-> +
-> +int module_sig_check(struct load_info *info, int flags)
-> +{
-> +       int err = -ENODATA;
-> +       const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
-> +       const char *reason;
-> +       const void *mod = info->hdr;
-> +       bool mangled_module = flags & (MODULE_INIT_IGNORE_MODVERSIONS |
-> +                                      MODULE_INIT_IGNORE_VERMAGIC);
-> +       /*
-> +        * Do not allow mangled modules as a module with version information
-> +        * removed is no longer the module that was signed.
-> +        */
-> +       if (!mangled_module &&
-> +           info->len > markerlen &&
-> +           memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
-> +               /* We truncate the module to discard the signature */
-> +               info->len -= markerlen;
-> +               err = mod_verify_sig(mod, info);
-> +               if (!err) {
-> +                       info->sig_ok = true;
-> +                       return 0;
-> +               }
-> +       }
-> +
-> +       /*
-> +        * We don't permit modules to be loaded into the trusted kernels
-> +        * without a valid signature on them, but if we're not enforcing,
-> +        * certain errors are non-fatal.
-> +        */
-> +       switch (err) {
-> +       case -ENODATA:
-> +               reason = "unsigned module";
-> +               break;
-> +       case -ENOPKG:
-> +               reason = "module with unsupported crypto";
-> +               break;
-> +       case -ENOKEY:
-> +               reason = "module with unavailable key";
-> +               break;
-> +
-> +       default:
-> +               /*
-> +                * All other errors are fatal, including lack of memory,
-> +                * unparseable signatures, and signature check failures --
-> +                * even if signatures aren't required.
-> +                */
-> +               return err;
-> +       }
-> +
-> +       if (is_module_sig_enforced()) {
-> +               pr_notice("Loading of %s is rejected\n", reason);
-> +               return -EKEYREJECTED;
-> +       }
-> +
-> +       return security_locked_down(LOCKDOWN_MODULE_SIGNATURE);
-> +}
-> --
-> 2.50.1.windows.1
-> 
+> Thanks
+> --Nilay
+> .
 > 
 
 
