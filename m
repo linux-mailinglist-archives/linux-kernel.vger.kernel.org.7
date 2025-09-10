@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-809527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C540B50EB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:04:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D396B50E88
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEC8C166B17
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:04:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18214833F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B48F305058;
-	Wed, 10 Sep 2025 07:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D35A303A1A;
+	Wed, 10 Sep 2025 06:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="FGTa1YfD"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="X+03SsaU"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DEC1798F;
-	Wed, 10 Sep 2025 07:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119EF2773C9
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 06:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757487859; cv=none; b=hgxVeHzeFRtgVSjr5friIKSgZ7MBNvDRgl47p/DVvUVQuOqaT9rS71kuqSNcbe8s2H8kZNORsoYJIxUwWR+6yY9YOU7ielwnvMm5m4a1zpUgaW6trZMvaCWSouw9Vs5Cg8ZHGj4f7Qo8w9YuTcmp9Zy2v76zKc+zYv9HHdydyUA=
+	t=1757487233; cv=none; b=e+yVMPkA9XY+xJCsgcrHAec8H5J5DwlCU2UqPfWxc2nEsfpy7NoRw5UbyIdE+TRh8DtmA30s+oDKLcfu1neDdYBLxnT/tQ7ZX9Asyek2UcrxRQ+qvlaQT1VTFmhJIcJG8lElge5eak3KGMFzVh3efpev0QMkxlshXZPS17pUHzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757487859; c=relaxed/simple;
-	bh=zM3tYwg3Esfkyecquj5JgIVI41Ms90wXl7Y4pNYPqPI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UPD5byMNHJ5wkvYisn31o6lMTF4DmWWP9jxx3zdDQ0kqmRSl2guwwDfYvjAoZrl0LAZjbstM3qhuMBKxmOZIwkgG4YzJ7R1y4jY2rRAcRV5T4qbagr/TZjoJlmYKK/G5GPPvfiVVPmWXpnOY+vZVRTnD1DDdoVLKhJzZwi9KJFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=FGTa1YfD; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=5Z
-	ZPzeDrpMYxgza36PsQIam3kvrpjmthexLESEAuMpY=; b=FGTa1YfDvwqofxGC2V
-	Vu+jHroYvAKZp2+GibLSM6Xem2Ss/GVhEqNjQ0tF9rromIc03viww0F112QNTR5f
-	6SBadZFv/OVvYtYr2wiSIDZIolm3ss3tF5+CZJcwZTjNsKq4KeMXq0SStY9DJcOi
-	5D7F9Cm1DOiuV4eIaFuPxJ/to=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgBHu3tdIMFoTs1DBA--.44176S2;
-	Wed, 10 Sep 2025 14:53:18 +0800 (CST)
-From: Shawn Guo <shawnguo2@yeah.net>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Qais Yousef <qyousef@layalina.io>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shawn Guo <shawnguo@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] cpufreq: cap the default transition delay at 10 ms
-Date: Wed, 10 Sep 2025 14:53:12 +0800
-Message-ID: <20250910065312.176934-1-shawnguo2@yeah.net>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757487233; c=relaxed/simple;
+	bh=ahBCd4v3Y3Hy+9eZhfS/meSLZLldCa8IFQTVi71bMhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UoA82VhgtxVJm71X1Bf1VK8YkxTtj+d5aiJmnkJjctdssIbfqIOwvLALKDyUfz0O0pfat0kQkZP/PiwBrUiZjN/mxK2+AzUPlRAcv8kjvMlF7aCJH8Wo4OZwo4ZIEjkuKIDRgfaOqhNCI94gs9djvrf/l1zlYJyXxbI2h1d3AIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=X+03SsaU; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=3QtE
+	MO80KSRXHHcQR8iUtZcbvRTUZ2MQ4g/xitu0XMA=; b=X+03SsaUtrd32NsYB/ek
+	Utpb54jRVdJDLObVVwoDyiusfnS9O2OyeGgQiBpDjgotrjKW/0x5pZScoBm6XFSa
+	moWMpTEnJzn845L+uck2N1Pv8KtIBPdx+MXXg/YRTJ289Ms4Emvu8qc3otno6ane
+	OgePiIUXNIV76JoX8RyBMwC0B2u0YVIgV7Jt0v2QMtBwVrB3nVKW02con7gKwmLF
+	pdCYGFN/U9HXgYqk6RNRe+f4LZp/uDhZS6T+etrY7nL8zBYQg90JUdISfCWI8A3+
+	J+S48TZAzOcQtmu5BtZtw0MfR/LaAYZYhuG97/alxh2IJiuS6Ygd7nkR3RWHnK6v
+	cA==
+Received: (qmail 500977 invoked from network); 10 Sep 2025 08:53:45 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Sep 2025 08:53:45 +0200
+X-UD-Smtp-Session: l3s3148p1@OJ+94Ww+VOwgAwDPXyerAKQ7QDbxBzog
+Date: Wed, 10 Sep 2025 08:53:44 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Durai.ManickamKR@microchip.com
+Cc: Frank.li@nxp.com, linux-i3c@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Balamanikandan.Gunasundar@microchip.com,
+	Nicolas.Ferre@microchip.com
+Subject: Re: [PATCH 2/4] i3c: master: add Microchip SAMA7D65 I3C HCI master
+ driver
+Message-ID: <aMEgeHLnrDyGjYM3@shikoro>
+References: <20250909111333.170016-1-durai.manickamkr@microchip.com>
+ <20250909111333.170016-3-durai.manickamkr@microchip.com>
+ <aMCZw2v8Ey6aGbqk@lizhi-Precision-Tower-5810>
+ <3229da67-9d67-47ff-9f01-0d71bfabb6a6@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Mc8vCgBHu3tdIMFoTs1DBA--.44176S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Aw4UKw48Aw4UZF4UWr13CFg_yoW8urykpF
-	W5W3y2yr18Xa1ktws2vw48u34Fva1DA34akFyjkwnYv3y3J3ZYvF1UKFWUKrZ5Zr4DGan0
-	qF1jy3ZrJF48Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UtwIgUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgDEZWjA+a16GgAAsv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3229da67-9d67-47ff-9f01-0d71bfabb6a6@microchip.com>
 
-From: Shawn Guo <shawnguo@kernel.org>
+Hi Durai,
 
-A regression is seen with 6.6 -> 6.12 kernel upgrade on platforms where
-cpufreq-dt driver sets cpuinfo.transition_latency as CPUFREQ_ETERNAL (-1),
-due to that platform's DT doesn't provide the optional property
-'clock-latency-ns'.  The dbs sampling_rate was 10000 us on 6.6 and
-suddently becomes 6442450 us (4294967295 / 1000 * 1.5) on 6.12 for these
-platforms, because that the 10 ms cap for transition_delay_us was
-accidentally dropped by the commits below.
+> 1. To introduce a Microchip SoC specific macro to add Microchip specific 
+> I3C changes to the existing driver. But in this approach, if suppose we 
+> have a changes in the i3c-hci driver, we have to adapt the changes to 
+> our IP also during every kernel updation and I donot know whether this 
+> is accepted by the i3c-hci driver maintainer.
+> 
+> 2. Otherwise, creating a separate platform driver by reusing the 
+> existing i3c-hci driver.
 
-  commit 37c6dccd6837 ("cpufreq: Remove LATENCY_MULTIPLIER")
-  commit a755d0e2d41b ("cpufreq: Honour transition_latency over transition_delay_us")
-  commit e13aa799c2a6 ("cpufreq: Change default transition delay to 2ms")
+Usually, 2) is the way to go for the reason you gave above. If there are
+fixes to the core part, you don't need to sync with your driver.
+Maintenance burden is lower for most of the times.
 
-It slows down dbs governor's reacting to CPU loading change
-dramatically.  Also, as transition_delay_us is used by schedutil governor
-as rate_limit_us, it shows a negative impact on device idle power
-consumption, because the device gets slightly less time in the lowest OPP.
+If the hardware is so different that the modifications to the core
+driver turn out to be more complex (and harder to maintain) than a
+seperate driver, then 1) can be an option.
 
-Fix the regressions by adding the 10 ms cap on transition delay back.
+Without knowing your hardware, from the description above I'd think you
+can reuse the existing HCI core driver. It is mainly about not using
+stuff like DMA. Maybe that can be handled with newly introduced quirk
+flags.
 
-Cc: stable@vger.kernel.org
-Fixes: 37c6dccd6837 ("cpufreq: Remove LATENCY_MULTIPLIER")
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
----
- drivers/cpufreq/cpufreq.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+> I raised a query few weeks back to decide which approach to proceed 
+> before sending this patch to upstream. But i have received comments like 
+> "its upto us to decide which is best way". I dont have much idea on 
+> which is best way to proceed and maintain.So, I have decided to go with 
+> approach 2.
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index fc7eace8b65b..36e0c85cb4e0 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -551,8 +551,13 @@ unsigned int cpufreq_policy_transition_delay_us(struct cpufreq_policy *policy)
- 
- 	latency = policy->cpuinfo.transition_latency / NSEC_PER_USEC;
- 	if (latency)
--		/* Give a 50% breathing room between updates */
--		return latency + (latency >> 1);
-+		/*
-+		 * Give a 50% breathing room between updates.
-+		 * And cap the transition delay to 10 ms for platforms
-+		 * where the latency is too high to be reasonable for
-+		 * reevaluating frequency.
-+		 */
-+		return min(latency + (latency >> 1), 10 * MSEC_PER_SEC);
- 
- 	return USEC_PER_MSEC;
- }
--- 
-2.43.0
+Your patch looks like approach 1), though? You don't hook into the HCI
+driver or am I overlooking this?
+
+
+> >> Features tested and supported :
+> >>     Standard CCC commands.
+> >>     I3C SDR mode private transfers in PIO mode.
+> >>     I2C transfers in PIO mode.
+> >>     Pure bus mode and mixed bus mode.
+> >>
+> >> Signed-off-by: Durai Manickam KR <durai.manickamkr@microchip.com>
+
+Please delete lines you don't quote anymore (here, the whole driver).
+
+Happy hacking,
+
+   Wolfram
 
 
