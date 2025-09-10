@@ -1,158 +1,153 @@
-Return-Path: <linux-kernel+bounces-809268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38629B50ADE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:10:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7EE5B50AE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEEF64630B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:10:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7011C3AB934
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD3823507C;
-	Wed, 10 Sep 2025 02:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C3F2367C1;
+	Wed, 10 Sep 2025 02:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ah8HW70j"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="iBR5npDu"
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA68722FE18;
-	Wed, 10 Sep 2025 02:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABD52356C6
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757470232; cv=none; b=HYFXT2lRF9mb33rNwYKvjQv/ikMnGx3TTYqew249jMwHB/6YXuY84mMfe1jNpXbzvKZay0ZnrjcE5OTrit77J7bJDya9a3RxauRbOoO0ckNhBsuKFXRyB5/v+hTgROKPMyuvkfNmtsiiKg6WE/SOZ5ln1QWwfz9uLSAVPV/Ebo0=
+	t=1757470351; cv=none; b=JdpeCwpq9eZFu0ZwQEcbTOUOHPmyW0l/VVy0LQaMNYRf97wxKYvbRh7bt0aTo0Yb0IF7oKsXJqfI+yM7CprQ3WI69Kupp9WjyIr/nT14rY8LNG457RZu5A6j6fH09jA/WMt7zsR8KsKrXsUEJk78jwNeXs30H9TivJtoeGXu3E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757470232; c=relaxed/simple;
-	bh=+sDUkA3o71u4xm0yCZaBibtMSUQ/NK+r5JUrUR+q7Ew=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fIPPFDr6Ag5l4+vZ0jJAjwNpjcZ68FhxVKmCdxEKoKIDPtSUOggJY+aGdM4fguZliDTESKkZxJHk/F7OlS+p7BYA2/8Bcypb+cOzvmbKY4YctqjNOkW1XkKazHCpYtdGROEv3wYR5fHevrz3Tbc1y9jL5DyRYJjk2/mRhc0D1pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ah8HW70j; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b548745253so88293971cf.0;
-        Tue, 09 Sep 2025 19:10:30 -0700 (PDT)
+	s=arc-20240116; t=1757470351; c=relaxed/simple;
+	bh=i/ZrTEb1zaDJxW36CE3QTF6qXM0oKKYNei/9YnXXPso=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kllifz67jf0xJXI6CPUuAggedI2SxNWMncqdduGiDRDup8HYnnfqSdCAiNC8MVLOeHjt4n5bgnQ+7xwZtSOzmbMt4DeIfJRs8dYztYcvOEj7RvqMCX0L0APZ62aUVWuEtJ6JJUHmlrsELCM8SYBf6XveutMhGnCRRamwEe1eztI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=iBR5npDu; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-62190d14a96so1094205eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 19:12:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757470230; x=1758075030; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/8dXK+URwMz/QYwLwmlxkiqTgmS0zDdGrSZfnYxwO4o=;
-        b=ah8HW70jQ+ObeAxiUDARjVjetj1gzYjI18vEL0mmaYs1/fSvDRzzsq9DMA1+Wj0l3K
-         CgvtNzLSaOJLGmArbscuNM09fQq/YQVp1vWzIwREYVBetDGoqNrwe7PNnoBcm7YLYz2V
-         hIAGBHMYquKTtgi+cb5k4iWEREBQOyCA1Aeqa/il3VN1HOGcDoNNco36UPcuppgMcyZD
-         MVzRHCJORwdJTWkX6bJm9ev/d9OLcotTistvUqLGawVo70l9i2UnkBtBUkG/iJFlVR70
-         AnH2r1tD0qx5r/ye/hhAN9JaMmjKG/WNDa7TxjeTNis+wGKFYHK1azKACjhqU/bGaHmc
-         bGzA==
+        d=gateworks.com; s=google; t=1757470349; x=1758075149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i/ZrTEb1zaDJxW36CE3QTF6qXM0oKKYNei/9YnXXPso=;
+        b=iBR5npDubxUgiKe+sGUNbhfwKTlOrDkxy4a1g5c3tY7EQkpMv9O9iWqVVBEScaDVze
+         jH16y4FFQ4LgWfql5K+chfKZbajPwqNF0U3jMRbJb3TVuFE+UgFgMN8JVcuHLIx43pV2
+         c1Bkg4ga9Vz1ee/JW2i8aky3zseLOvTbLk5GaPncA9FhykpOZMMQ1fSGDg7G9eUkKdMj
+         mH3opWo7W6+hKIo45qmbWMqqmiy52nHT1qZPBZ10oW1GwLmvKTqoSlHxfAz/ttTsALVn
+         QqbjkkJf9JOnVCP0mFyPIrFNhod7VEKf2sMoRmzlAzRyhAXWnfZMcCJn/GBLhdBOkkgc
+         ZybA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757470230; x=1758075030;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757470349; x=1758075149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/8dXK+URwMz/QYwLwmlxkiqTgmS0zDdGrSZfnYxwO4o=;
-        b=B9ubKGJLz3tOTExCmz4Ghd4TJ3Pr6LtijILXHyefJg1vGJMBY9yD4m1FifqH3xQ/Fd
-         2IRyC26dhzKdv/+KSAPSlW9+gj76+mcJIRtw/zzfiqky4YbhUdrylueYee4HMft3BV7w
-         Ku6H6V1H0HkMoQhN0XnxxbxrA/EsaIQQLwSjU7sSe/OFZN7ZUmnqgpvkXNu+JzJQb52h
-         tQ3Cfo9Fr5snIDXfRHlMBy0YScTecOODsnSDOudeBYrEvPUoWdeKYAp+si+y4gnfAkxC
-         O7kyCwz2Q7n4KyBTO4diOLvhN6Cozx3TwGWlSavpNkv7Xywc6Se1XlfOFsp20mlHax+1
-         8DyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8i1i86IQms5NhydqQ87mvtDCVh9ccLbl3ES4JUfD/QF+ZAJo/Q3X1DeFYbqOaqpSYp+NNAUh75JF1e1Bn@vger.kernel.org, AJvYcCVDtD7uw4MT59jDfSoXFhPDp9HVJtlXhMMtAMd0QAumRT5PzJBSwk+tkaZ6elzy+IXBWYKwoxdEd+Lp@vger.kernel.org, AJvYcCXLXWglWhS/WE5nyuOngr50WjjqipaWMg5SK0d2iIWXqrDnwhHHZK9baSGyKiL7hhNgT4MdILjvf112@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWoeO/Cfg6xdDmrWobVlm8jG04qgpnS88JNR5SbExBi14hiwCH
-	quUHPOH4v69vN7hTksv+pLGQQE5Qgo7hgVIW4zzb9yrCrWIu5Wp2MGLI
-X-Gm-Gg: ASbGncu+3kEbuVcNEQx00Fwb324Ka0x6aJaTMM15Idzm1Wbst7nZG55XPVKaOFk8aMc
-	WMRAY7Ca4ocrDMQK5g73uKi/aBN5UhhgUe2Gp5KTjMnde86SWw/HF38BwpzVa/hrI0TWXdSCWKL
-	H0PMmvTYPFoHBRd6+w4BTPiZgT5Mv8F6rzLLp9ZfpfD6fjzzrt3IV4HRozfjcnGWr90BBQiOaUZ
-	6dm2VjmBba9+vN8XEoEXxCyPdIM3KolBV6uF6VQ0GfiRewUGP8v002J89X6v9+Vf2mvfFrlIltc
-	28OpkmpJBIuc9o9HJyP0J9fNnaXNEj9/TlYbXqv40UGJu6nw6Xu46nvGHxWNgtbkwCYIEKkz1uK
-	l9w/2JtT9v4Ykho1Tsi2R8rZ2YgYrvL48
-X-Google-Smtp-Source: AGHT+IEQT6CbOd2QsWi0+OjHaJf57cY/Drb66adJD+cAQ0n8TdhI1gbx+/J0LeyepotKxmQzV1314g==
-X-Received: by 2002:ac8:57d6:0:b0:4b4:2d3a:8902 with SMTP id d75a77b69052e-4b5f836707emr165034461cf.5.1757470229614;
-        Tue, 09 Sep 2025 19:10:29 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b5ed71ad8sm210106585a.50.2025.09.09.19.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 19:10:29 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: kwilczynski@kernel.org,
-	u.kleine-koenig@baylibre.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	arnd@arndb.de,
-	bwawrzyn@cisco.com,
-	bhelgaas@google.com,
-	unicorn_wang@outlook.com,
-	conor+dt@kernel.org,
-	18255117159@163.com,
-	inochiama@gmail.com,
-	kishon@kernel.org,
-	krzk+dt@kernel.org,
-	lpieralisi@kernel.org,
-	mani@kernel.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	robh@kernel.org,
-	s-vadapalli@ti.com,
-	tglx@linutronix.de,
-	thomas.richard@bootlin.com,
-	sycamoremoon376@gmail.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	sophgo@lists.linux.dev,
-	rabenda.cn@gmail.com,
-	chao.wei@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	fengchun.li@sophgo.com
-Subject: [PATCH v2 7/7] riscv: sophgo: dts: enable PCIe for SG2042_EVB_V2.0
-Date: Wed, 10 Sep 2025 10:10:20 +0800
-Message-Id: <023eb6dbd2d9d808c3992e954ad7eb3840da8260.1757467895.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1757467895.git.unicorn_wang@outlook.com>
-References: <cover.1757467895.git.unicorn_wang@outlook.com>
+        bh=i/ZrTEb1zaDJxW36CE3QTF6qXM0oKKYNei/9YnXXPso=;
+        b=jFOhRrDfpRmRKwlEN+v1vs+llxfQmbD/fT32/zQQbBWtJimukPTzUEJCgfJI33E2x7
+         zt7NOveAh6mVnB4hMplvau/XTDVczB95gRngceQaSCn10iavHHpx57Z0IRkMdZkv4QKS
+         Ri+7ds4y6aLAl7N0NNqSdcbKWTblZJtJtc0CbXxaymUBXMwsAwoAiHLt82vvzWhz3acR
+         9nSEPeVqmNCzGXR5n4k/9wIV6Tf0kwxXaTl+WIq6FARiUsxee92Lmh6UYuG4UJC3yIpQ
+         IxDWbaBCcfPtI5PKLgXmiKHZIKJqeWH8U1eFd2epmslpNPAu0i7F25LfLZLxBd1H+0Ug
+         RDdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBkViprfxlRvIFyjVXBtZYo829tE/LQ+zb0h6LXlRxkuEmd0/iIWojSPukeI+lLy6pl86LYabkuafDXg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm1Ki8wqV2MDfoFCPXzr0+nw6R5i37C1mAJ6c8uSZG7CzDBBSS
+	PCLCGxFGzYNdwEMhtB4NvJ09pDwLEEZM/aEZ9W+7vE2kJLh7z4KnEmB1M3SQdsnXArAaAH8VFj6
+	oYNtmi3EFChS8L3M53R/PkDwonm8RzeQhSbbxpMxrIg0yeQcpVb/p
+X-Gm-Gg: ASbGnctWD4RHlYva8hEdtSOSvhRuriKafilExqUMIoU7rypEGO0kSfO6F9jkcn45Ik3
+	Qjxrm09aJnKhm8W8+TVQV8rinFbDqZxgPO3/U9d8LcDw7T9oC2t7/Ha4z3LMdTRReWYmQUm8FY8
+	RSBjcHzTFP8Y4DQ7osOFJn2MW3fnWznDcySY/BsLvlR4gt8fWftOJs1KD3KsTiE3fdA0TCD/tBm
+	ejHQSg=
+X-Google-Smtp-Source: AGHT+IGYzcv+KGeo8D/B/3mzm8u727rEyHjHkqpXMnOV+fGyUvGB1T/ymTmP3km0I0jXSqieUCPPm6rwERicf/XL/fc=
+X-Received: by 2002:a05:6820:624:b0:621:72dc:3dee with SMTP id
+ 006d021491bc7-62178987debmr5886756eaf.0.1757470349286; Tue, 09 Sep 2025
+ 19:12:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250815-imx9-dts-v1-0-e609eb4e3105@nxp.com> <20250815-imx9-dts-v1-8-e609eb4e3105@nxp.com>
+ <CAJ+vNU2hro_ZoRvmQ9yowKsX25AnrgZdGMn2D-RCkyJA02CEhA@mail.gmail.com> <20250909043327.GD20475@nxa18884-linux.ap.freescale.net>
+In-Reply-To: <20250909043327.GD20475@nxa18884-linux.ap.freescale.net>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Tue, 9 Sep 2025 19:12:18 -0700
+X-Gm-Features: Ac12FXzv-yx0rHpHYzRFsf11y5WuQG_up-EtuFq-TzQXC2JvCVAePG_zRuL6PxU
+Message-ID: <CAJ+vNU3=mwZFBqQRNz4i28EjWXX6=Nf7iAsYPEBgpqkQw4wgtA@mail.gmail.com>
+Subject: Re: [PATCH 08/13] arm64: dts: imx95-19x19-evk: Add phy supply for netc
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chen Wang <unicorn_wang@outlook.com>
+On Mon, Sep 8, 2025 at 8:22=E2=80=AFPM Peng Fan <peng.fan@oss.nxp.com> wrot=
+e:
+>
+> Hi Tim,
+>
+> On Mon, Sep 08, 2025 at 04:43:25PM -0700, Tim Harvey wrote:
+> >On Fri, Aug 15, 2025 at 4:50=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrot=
+e:
+> >>
+> >> Add phy supply for netc emdio on board.
+> >>
+> >>
+> >
+> >Hi Peng,
+> >
+> >I'm not sure where you are with regards to this patch but it indicates
+> >to me that you may have the enetc_port2 10G port with the AQR113 PHY
+> >working on the imx95-19x19-evk with upstream Linux. If so I would be
+> >interested in knowing what other patches you have for that. I'm seeing
+> >the interface fail to register with:
+> >nxp_enetc4 0002:00:10.0 eth2: PHY has no common interfaces
+> >
+> >I'm wondering if there is some support missing from enetc or the
+> >aquantia phy required to work with 10gbase-r.
+>
+> Thanks for raising this.
+>
+> This is just to add the missing pieces of device tree.
+>
 
-Enable PCIe controllers for Sophgo SG2042_EVB_V2.0 board,
-which uses SG2042 SoC.
+Hi Peng,
 
-Signed-off-by: Han Gao <rabenda.cn@gmail.com>
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
----
- arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Ok, but phy-supply is not currently valid for netc_emdio
 
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts b/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
-index 46980e41b886..0cd0dc0f537c 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
-+++ b/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
-@@ -152,6 +152,18 @@ phy0: phy@0 {
- 	};
- };
- 
-+&pcie_rc0 {
-+	status = "okay";
-+};
-+
-+&pcie_rc1 {
-+	status = "okay";
-+};
-+
-+&pcie_rc2 {
-+	status = "okay";
-+};
-+
- &pinctrl {
- 	emmc_cfg: sdhci-emmc-cfg {
- 		sdhci-emmc-wp-pins {
--- 
-2.34.1
+> For 10g port, it is still not ready for upstream.
+>
 
+For 10G it looks like at least the XPCS support is missing. Do you
+know if anyone at NXP is working on this or if and when it is
+scheduled?
+
+Best Regards,
+
+Tim
+
+
+> For 10g port, it is still not ready for upstream.
+>
+> You could only use the rgmii-id port. This change itself does not break
+> the rgmii-id port.
+>
+> Thanks,
+> Peng
+>
+> >
+> >Best Regards,
+> >
+> >Tim
 
