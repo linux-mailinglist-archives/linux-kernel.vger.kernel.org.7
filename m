@@ -1,113 +1,131 @@
-Return-Path: <linux-kernel+bounces-810928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61965B52199
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:10:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC5D7B521A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3272C1C24C99
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:11:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8270D3BD352
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31FB2EF655;
-	Wed, 10 Sep 2025 20:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B744C2F0670;
+	Wed, 10 Sep 2025 20:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KFXwlq//";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9cIp2XSP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wYzwEVRQ"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5252BB1D;
-	Wed, 10 Sep 2025 20:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390412EE610
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757535021; cv=none; b=iDJ0ZI98y2TCJySuF0l9iTgVzuoQMjdJTidMItU5+S5WBC5I5P7HYYfEHIS1gPjrtrKnhLj5UxU56SPOe0hS94J2FARNduOhfpos9jLAYawoAX07HdiC1lXJD/RcklvFBHhFKtd+5tkqxDgJ4LMgevtIQDQ4hDk9HS1qY8aSZzg=
+	t=1757535072; cv=none; b=AbxQ9RfAJnNRZ3I0swZ5B8Tza/8Qtsv8ocs16t/1U0P4QN3NuaszNFeeAkz7LJX8MV39lK0MvP9+ivkjkVHsipsg+BSXlCo9GZYoKOSg1eo/NWof4bvbmiv+yvvvxhfdI+s+rIEtozdcGVEKGUO5fTySwnPIG8H0A3ukJUnb/RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757535021; c=relaxed/simple;
-	bh=mjnlmH46vqpUybfgGI0GS2mBSC0pyBMO3eFuAUlJV7U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pa0paYQx7W81ePzKtD48iXAheb8JC++Pw1rwudYNSat6K4QM9dGIakX+9w3nB0Ltjr5q3H4lSPk1+zbGu+Ofpdst4bINzMC6QmrWLoZVX3e+Up9niYCbAI5M/9GEXZiE2sDI6Ye4Y71hbhGDnw9M1tSYwXwDxRLYNKD59gemDmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KFXwlq//; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9cIp2XSP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757535016;
+	s=arc-20240116; t=1757535072; c=relaxed/simple;
+	bh=ylKTcQHSRL5RMvOHqG8C6MhC6SqMyvQve4rvJ7Q9Xzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n74Ql9AAdMbacow4xf4UnRYJENiATXQoYqf8se6uqTlqRQMFL6oaDILO4bGI3+cLnT7D1lwYRCBcLdFZe55dVXsZCog4nERKF9hDBCj46HG7sRT2u6ih3aOPKpGBZp7KakhcnxSV5wj2RJ1iyz+COnPug4QmrL6K//sKzR5WqaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wYzwEVRQ; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 10 Sep 2025 13:10:46 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757535057;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=U6mXI0MTVp+bH+g5mA/2NKnCLozHXgMVpvTCY2YWC3M=;
-	b=KFXwlq//dUndcehlpb7inmHGwD1eHjIW42/VrrODS7bVJHHTp342kxF5EFXbIQn51ulmZT
-	arD+8qvvbdeuWYzJx7Bb1DsHeulrrVJX9T04IIfa8DyXcVuafQogDKdCDLA9JTEL+cfz52
-	4JA25jbkgFjzQEqbmZhNl3eX8FoocLxWPX//lqjhHUvtzu7KG0Gq7O/4jyGhQTDctwpt3e
-	N+7Q9xZO97I621SvXSO/vSjkkhzsaYkKZB+uNo7T1dv0lctARoP1MH/LRs09OskEUW8Wem
-	+uRxsDlVJeTpw2Qnz2deHiMUL+8JVpK+liKPUBATeaKGuUrP0lPHO3sdQWac/Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757535016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U6mXI0MTVp+bH+g5mA/2NKnCLozHXgMVpvTCY2YWC3M=;
-	b=9cIp2XSP1UIAp4oO9SV5sxJh/Ku64vQiWZeqLjc7gqy1cXzCvd7jQkABSMMjXxo4i20v9j
-	k/BcSLjVuzI115CQ==
-To: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- x86@kernel.org
-Cc: Naveen rao <naveen.rao@amd.com>, Sairaj Kodilkar <sarunkod@amd.com>, "H.
- Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)"
- <peterz@infradead.org>, "Xin Li (Intel)" <xin@zytor.com>, Pawan Gupta
- <pawan.kumar.gupta@linux.intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Babu Moger
- <babu.moger@amd.com>, Suravee Suthikulpanit
- <suravee.suthikulpanit@amd.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
- stable@vger.kernel.org, Naveen N
- Rao <naveen@kernel.org>
-Subject: Re: [PATCH v5 1/4] x86/cpu/topology: Always try
- cpu_parse_topology_ext() on AMD/Hygon
-In-Reply-To: <20250901170418.4314-2-kprateek.nayak@amd.com>
-References: <20250901170418.4314-1-kprateek.nayak@amd.com>
- <20250901170418.4314-2-kprateek.nayak@amd.com>
-Date: Wed, 10 Sep 2025 22:10:15 +0200
-Message-ID: <87o6rirrvc.ffs@tglx>
+	bh=hroFfDYim2M+I/skY/6mfFB67MLHNWA5J2KjItQQBug=;
+	b=wYzwEVRQKupEK0mCQ9z8hXiGFJmQcdgWnSF2QejHrWUqwPc9FmKhqCW8nLgEiBdbTXahBI
+	C0nyztrs4gxTVU0gdhZCitVEdqtLNht7iWU+G5fa/ysQ4BRBtKRFuCzKrwUamQKF9m7dKA
+	Md7kHIiRsVdnyAQ0xIaDbBPdwTre8vk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Lei Liu <liulei.rjpt@vivo.com>, Michal Hocko <mhocko@suse.com>, 
+	David Rientjes <rientjes@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Chen Yu <yu.c.chen@intel.com>, Hao Jia <jiahao1@lixiang.com>, 
+	"Kirill A. Shutemov" <kas@kernel.org>, Usama Arif <usamaarif642@gmail.com>, 
+	Oleg Nesterov <oleg@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Fushuai Wang <wangfushuai@baidu.com>, "open list:MEMORY MANAGEMENT - OOM KILLER" <linux-mm@kvack.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" <cgroups@vger.kernel.org>
+Subject: Re: [PATCH v0 0/2] mm: swap: Gather swap entries and batch async
+ release
+Message-ID: <qisfqncqgkgxh2nj5axafunlfjen6oiciobcrmpus6l3xwrbyj@blxv73pbhzez>
+References: <20250909065349.574894-1-liulei.rjpt@vivo.com>
+ <fszpgct7ywqy6qq3qnjflol3theovmgnau2wgdqqdxin4q7ezm@zumgw533hxon>
+ <CAJuCfpFaTj8PsXkoYRQKQ0sOu+mKikUAE8Wbcx+YpZXZ4M7cMA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpFaTj8PsXkoYRQKQ0sOu+mKikUAE8Wbcx+YpZXZ4M7cMA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 01 2025 at 17:04, K. Prateek Nayak wrote:
-> Unconditionally call cpu_parse_topology_ext() on AMD and Hygon
-> processors to first parse the topology using the XTOPOLOGY leaves
-> (0x80000026 / 0xb) before using the TOPOEXT leaf (0x8000001e).
->
-> While at it, break down the single large comment in parse_topology_amd()
-> to better highlight the purpose of each CPUID leaf.
->
-> Cc: stable@vger.kernel.org # Only v6.9 and above; Depends on x86 topology rewrite
-> Link: https://lore.kernel.org/lkml/1529686927-7665-1-git-send-email-suravee.suthikulpanit@amd.com/ [1]
-> Link: https://lore.kernel.org/lkml/20080818181435.523309000@linux-os.sc.intel.com/ [2]
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537 [3]
-> Suggested-by: Naveen N Rao (AMD) <naveen@kernel.org>
-> Fixes: 3986a0a805e6 ("x86/CPU/AMD: Derive CPU topology from CPUID function 0xB when available")
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> ---
-> Changelog v4..v5:
->
-> o Made a note on only targeting versions >= v6.9 for stable backports
->   since the fix depends on the x86 topology rewrite. (Boris)
+On Tue, Sep 09, 2025 at 12:48:02PM -0700, Suren Baghdasaryan wrote:
+> On Tue, Sep 9, 2025 at 12:21 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >
+> > On Tue, Sep 09, 2025 at 02:53:39PM +0800, Lei Liu wrote:
+> > > 1. Problem Scenario
+> > > On systems with ZRAM and swap enabled, simultaneous process exits create
+> > > contention. The primary bottleneck occurs during swap entry release
+> > > operations, causing exiting processes to monopolize CPU resources. This
+> > > leads to scheduling delays for high-priority processes.
+> > >
+> > > 2. Android Use Case
+> > > During camera launch, LMKD terminates background processes to free memory.
+> >
+> > How does LMKD trigger the kills? SIGKILL or cgroup.kill?
+> 
+> SIGKILL
+> 
+> >
+> > > Exiting processes compete for CPU cycles, delaying the camera preview
+> > > thread and causing visible stuttering - directly impacting user
+> > > experience.
+> >
+> > Since the exit/kill is due to low memory situation, punting the memory
+> > freeing to a low priority async mechanism will help in improving user
+> > experience. Most probably the application (camera preview here) will get
+> > into global reclaim and will compete for CPU with the async memory
+> > freeing.
+> >
+> > What we really need is faster memory freeing and we should explore all
+> > possible ways. As others suggested fix/improve the bottleneck in the
+> > memory freeing path. In addition I think we should explore parallelizing
+> > this as well.
+> >
+> > On Android, I suppose most of the memory is associated with single or
+> > small set of processes and parallelizing memory freeing would be
+> > challenging. BTW is LMKD using process_mrelease() to release the killed
+> > process memory?
+> 
+> Yes, LMKD has a reaper thread which wakes up and calls
+> process_mrelease() after the main LMKD thread issued SIGKILL.
+> 
 
-Shouldn't that be backported? I think so, so leave that v6.9 and above
-comment out. The stable folks will notice that it does not apply to pre
-6.9 kernels and send you a nice email asking you to provide a solution
-for pre 6.9 stable kernels.
-
-Thanks,
-
-        tglx
+Thanks Suren. I remember Android is planning to use Apps in cgroup. Is
+that still the plan? I am actually looking into cgroup.kill, beside
+sending SIGKILL, putting the processes of the target cgroup in the oom
+reaper list. In addition, making oom reaper able to reap processes in
+parallel. I am hoping that functionality to be useful to Android as
+well.
+> >
 
