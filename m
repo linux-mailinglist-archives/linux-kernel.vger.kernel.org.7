@@ -1,116 +1,101 @@
-Return-Path: <linux-kernel+bounces-810331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB00B518E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:07:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 189FBB518E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F74D3B30F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:05:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428093B8E90
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8025324B11;
-	Wed, 10 Sep 2025 14:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530FA326D73;
+	Wed, 10 Sep 2025 14:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuiKFF0x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dofEW7af"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5A1322A13;
-	Wed, 10 Sep 2025 14:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA36322A13;
+	Wed, 10 Sep 2025 14:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757513083; cv=none; b=k+OlbdEnTJ+x2li1jIAgKrx6YLp34Cz9DJZUDCgZ1U6zMTZepqwGH0HpqgITrhSLjL3EDcVnjW3ZtnKZ+PC57YzU10GOtxDujC5WC9sxsD3/lAHeRG8r33f8e/etT3jQ60gK4ZnkT/rTxBnWWWqKWyF5wmH7FFs9FIoGy0k+Cek=
+	t=1757513101; cv=none; b=E7KYKkddd3zkZkMhB4yXmMfHDHOEPsunDDQ4FOsFJRjt5Kdh29roXxS+ngFwelHyF3IbsXnf+4+mbY+AiH09K0OheawTuOE8FqzXjqg593rydy+NEfw5mK60KtdMEJEIJFpRF6GrGtrsGMhs4wMkRti/nDE21WU2atB0bgDqTXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757513083; c=relaxed/simple;
-	bh=ATU9dgy3b9wKc6pd3WupmwqCzZ6dSzE/gRNOxa3liac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YwgYCbaD8gBatHGK2cP0wCSNgsr0X68bNigoptVPJb0e/RHYicdkJYp1Ayi+eWmx04/qCO408ccxCxreqH6j3u6FyW4EcJFpFbuTgrhniMGYusBgSjUIxwoDT6R3fF5Sj0HcwZ87HpWnMD/xi2SshumqmLe2qpsM3tOBUnWV3Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuiKFF0x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3187EC4CEEB;
-	Wed, 10 Sep 2025 14:04:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757513082;
-	bh=ATU9dgy3b9wKc6pd3WupmwqCzZ6dSzE/gRNOxa3liac=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TuiKFF0xpk3X+MqrLNA03Tjd1x7v08zWrg8CB705EqXfVLqhv1ZU2Ln5ps8FJ2urP
-	 AGqAFuOSOGb8STcC55uqzD0UIEP8JWC/4CLb0P9N4aclCYyrn/OOZ1+hp60YOkTgSc
-	 TUlKmrIHN8yMXDvlcoqzaiPUONcGjDxGuWRYU68yjidvQ6tGir9Xik11UVsvZ+BJMK
-	 szC/U6TDZjv2hd7VhHMac5tpyicmF9Tokzf+TpT2+cf+4xfrcJS/MU3A/lYOvyavBR
-	 7Y4Tpy6PRR8/1fmo6FU0C7WmwADq3pTv72jCG4gaLLFTvKOeEd8jkkEZ2yP3TWs3Vs
-	 +ZEYZO68uYkbg==
-Message-ID: <b44ca395-102e-4780-949d-9d656ba18ec0@kernel.org>
-Date: Wed, 10 Sep 2025 16:04:35 +0200
+	s=arc-20240116; t=1757513101; c=relaxed/simple;
+	bh=Ue/nhc+rd9GaJbE14Zs0vWlm6GxxSExENpYlLQYUyQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NNsiK2gnYoz/J5srbCEhNn14SUxJmk5L2kv3OWIJiiQLe1LdBAPgUz3SpSGf9TA3b0L59xka/MC123BAtycwvbOpwGJtAAQlDP5YuDvQxiIVDVWuTFaQ4x1X9YW48LkzDFgy/5FhYBmTwHSPJbbRL7teaUDvo3JrHwWyzcqd1Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dofEW7af; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mKSB+4xL7cCmeYE/ZtEdtCjsvm7CIgVIfr0teJIjFAU=; b=dofEW7af/ejhmNipPt2aD1zjQc
+	r/T1X53PF0e+BEfGBFGmptVoarxZBEN1Hr7xriD76R1w+M+nvAcyFt2PcHdzuHg+TQmoMQFUdBQaA
+	jm/o6jj1rPqB5i/QW6QVLU4W6O2YAUS0S3TvZPMLDfVQol1YTS76QR+/j8xxBFEpwnMLWAqId4scS
+	bdUpC9Pcr4BH4JRwC/mCjcKWJe0ye/ZaEnL2OllK0B+92NxsmXiDMXLQP/kJYOtEetOYDdThozbzr
+	U+eiVsgCMI71Rea2iE366+z3/3jQiRamjgJEHnieliGZegYbRdaVVmJTC4g6lcXbzYemC7sUUzZ3A
+	gI/iBz2w==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uwLRO-0000000A1bz-3lAQ;
+	Wed, 10 Sep 2025 14:04:54 +0000
+Date: Wed, 10 Sep 2025 15:04:54 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, ksummit@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+	linux-mm@kvack.org, imx@lists.linux.dev,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Richard Weinberger <richard@nod.at>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ankur Arora <ankur.a.arora@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Ira Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	"Chester A. Unal" <chester.a.unal@arinc9.com>,
+	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+	Andreas Larsson <andreas@gaisler.com>
+Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
+Message-ID: <aMGFhuHyQwtwyF7B@casper.infradead.org>
+References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
+ <CACRpkdb=E-_6fZ+4mX5FJas9C5Njp3Gwrygs-cAfWNdbP594cw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] rust: drm: Introduce the Tyr driver for Arm Mali GPUs
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Daniel Stone <daniels@collabora.com>, Rob Herring <robh@kernel.org>,
- Beata Michalska <beata.michalska@arm.com>,
- Carsten Haitzler <carsten.haitzler@foss.arm.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Ashley Smith <ashley.smith@collabora.com>,
- Steven Price <steven.price@arm.com>, Jeffrey Vander Stoep
- <jeffv@google.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org, kernel@collabora.com
-References: <20250910-tyr-v3-1-dba3bc2ae623@collabora.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250910-tyr-v3-1-dba3bc2ae623@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb=E-_6fZ+4mX5FJas9C5Njp3Gwrygs-cAfWNdbP594cw@mail.gmail.com>
 
-On 9/10/25 3:51 PM, Daniel Almeida wrote:
-> diff --git a/drivers/gpu/drm/tyr/Kconfig b/drivers/gpu/drm/tyr/Kconfig
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..de910b2cba3a48e0b238eb0f66279758c02dfb6f
-> --- /dev/null
-> +++ b/drivers/gpu/drm/tyr/Kconfig
-> @@ -0,0 +1,17 @@
-> +# SPDX-License-Identifier: GPL-2.0 or MIT
-> +
-> +config DRM_TYR
-> +	tristate "Tyr (Rust DRM support for ARM Mali CSF-based GPUs)"
-> +	depends on DRM=y
-> +	depends on RUST
-> +	depends on ARM || ARM64 || COMPILE_TEST
-> +	depends on !GENERIC_ATOMIC64  # for IOMMU_IO_PGTABLE_LPAE
+On Wed, Sep 10, 2025 at 03:10:05PM +0200, Linus Walleij wrote:
+> This is is done so that we can unmap *most* of the kernel
+> memory but *keep* the VMALLOC area, so that e.g. exceptions
+> can still execute and save to stack when they occur, and we can
+> call into the kernel to execute said exceptions.
+> 
+> This in practice means the area 0xf1000000-0xffffffff
+> which also includes the high exception vectors that must for
+> natural reasons also be kept in the mapping.
+> What we have mapped today (all of the time) is
+> 0xc0000000-0xffffffff.
+> 
+> A minimal 256 MB mapping from 0xf0000000-0xffffffff
+> should be able to cover this.
 
-For the Nova drivers I did add
-
-	default n
-
-as long as the driver is work in progress.
-
-> +	help
-> +	  Rust DRM driver for ARM Mali CSF-based GPUs.
-> +
-> +	  This driver is for Mali (or Immortalis) Valhall Gxxx GPUs.
-> +
-> +	  Note that the Mali-G68 and Mali-G78, while Valhall architecture, will
-> +	  be supported with the panfrost driver as they are not CSF GPUs.
-> +
-> +	  if M is selected, the module will be called tyr.
-
-I also did add
-
-	This driver is work in progress and may not be functional.
-
-to make it clear what people will get.
+Can I ask where the MMIO (PCI?) window lives?
 
