@@ -1,102 +1,177 @@
-Return-Path: <linux-kernel+bounces-809898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B55EB51348
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:54:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF70B5134A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A38D4E145A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:54:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1371168982
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941A530EF69;
-	Wed, 10 Sep 2025 09:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EA531197C;
+	Wed, 10 Sep 2025 09:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="xTqxp6Ow"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjfThhHa"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFCA31D368;
-	Wed, 10 Sep 2025 09:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0A331D368;
+	Wed, 10 Sep 2025 09:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757498069; cv=none; b=UtW9hENQdXbBKeTIrIPS7TfmnvRBwc9EZAmdht244c2eAuNBXxRAdPcwKqq2O9TP0jhOYREI9K0guYMHUNe+ZZeLbPcMJ5iHSvG1ewGgruRy9knbKyjzyUvki32F+HEsRjRmejgDajDAPKLCpz/gquvHIHqVoJiZHGkqi6C2CQk=
+	t=1757498088; cv=none; b=YfLqbDMS34rOCBk19wLm2LeTYtBfil5tMU7U63b0xLElMS1zZ9sDJCF9eaitioWGhLmv2jymA6p/3orxjjaN8O1m3clwBBXV2bLo/YxRnoZ8Ch7N5p+1JF60AnRtSD4sPzBOGlruB3xvz9lvp9f+NvK7qoPNh2S7MMTUO9dwpoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757498069; c=relaxed/simple;
-	bh=RPu7WsZ5NmBmE6ci+vyI3oNBk7WRxIuT+Ot6ieeYCx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k+F+kAnuLBEND6F04xjT8yXhWQ4JRTF+TbezFSGxgSLDAnzZPRGzjkI+H2nU3fDn0KUwACBz/CuOVGSjHqz2yKk/ufPTe9jSGyWef4stGhl4X4rzhr/yA1kOvDLuTAnJMQNngTZrjdbwDAhc2YT+cyctpLyAW2lr/d8CfOjmnmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=xTqxp6Ow; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CbOznHuhs5/ugJSEwIjdNH3VAb730l41QuxA3+q9mXU=; b=xTqxp6Ow9cgpUV/PeEhDmB33mP
-	/LCtfSn+ZjDf+o7B7LkXc367ytAiP2ndAY91dp3Xv1t4Hg4SD3YHIoY98bCyzGP5OpyWI5BiSfaR5
-	OsDGMBfFdIJ1rYpeogw+JTsKTXOYlAKpRjdMX+BUpGFvMOoC5k8QL/Q9y5pyCUOChYC3Y4zWf1J26
-	A6bLilJn/8W/4lkwoiFr/Sd5VLg6bPMY8utdZn22KyQoeXOOhoAFevFLAiKKXBnOwVFXrvCWdk82H
-	BVWzgx9+acsgfO9S8jDI46HMA1UcgfjbEZAUC1GxXf3LBcLRkZuJUaTEEVuV53ULU8q6W3U72WV/I
-	MMV/qmvg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57354)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uwHWk-000000001TB-2ep1;
-	Wed, 10 Sep 2025 10:54:10 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uwHWf-000000001IX-2ewf;
-	Wed, 10 Sep 2025 10:54:05 +0100
-Date: Wed, 10 Sep 2025 10:54:05 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: yicongsrfy@163.com
-Cc: andrew@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	hkallweit1@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, pabeni@redhat.com, yicong@kylinos.cn
-Subject: Re: [PATCH] net: phy: avoid config_init failure on unattached PHY
- during resume
-Message-ID: <aMFKvS-Dm0hhJVnO@shell.armlinux.org.uk>
-References: <aMEzv50VmUb2eUMQ@shell.armlinux.org.uk>
- <20250910091703.3575924-1-yicongsrfy@163.com>
+	s=arc-20240116; t=1757498088; c=relaxed/simple;
+	bh=KNkOR0Z9qGvk9oDedwcGOrAW6Cbf+ee9mMU+W/a+YNM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=sCIOcwck4GYJAE+XsSEmMjFSn5jgb/vJZPxK+9oUYBdfm8XxPvFtu2bypxAfB+PhsPwcvL9air1gHO9GOkHhVFd+VV/LWSrtbWCfzFbCI/GsyiR1tdd8hfXlR4u1vgG8XkbWlK29i/z22IwlQe1nsNxEk9d2ZjCAPC4ITCBj1Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kjfThhHa; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24b2de2e427so46553805ad.2;
+        Wed, 10 Sep 2025 02:54:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757498086; x=1758102886; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fjDGSSxl1bgO/LE+E1oRlyEFsW9DteTvLANxRnkvDNs=;
+        b=kjfThhHaUBOL87Hlgls4UES900Zv6Oc6FtribngfPFFmZJarMKxqUFdtiT7ycrkrqc
+         jjdQZcL/qYH66QaZMNsXBmoHxEZUqn5Creij/IpuG3hmkzp99XaSi3PvijiWYkMvmlg9
+         B4BC0aExci9ExlAcDzEL8qn8ZQNk/mLQ0BkHa1e9LInrArhfRhUacEqu6YdWfNo4ZbU6
+         cI+5h3x5JWiIuF1ygHlFrnFszmdsUMsTs4haJGgrDBiSQHCAn/a9I94YE41RC6hPMD4U
+         JWwG5hE8zKojNeRcr6vhF4R3Mfc4sgUcGQGAWuS1Q6AQso8aS4wo/q6Pc/Crc1PyfKUW
+         Ppiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757498086; x=1758102886;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fjDGSSxl1bgO/LE+E1oRlyEFsW9DteTvLANxRnkvDNs=;
+        b=s3KcTvbdlLIZVu20YVXEyd1X23EdqlZVtbl3Ba4+kD19VxooLSOE1ce7y3gH3Iitiz
+         e9vZFWHopNmGvRbkrDxUmWH7fv9EXCodBwslwrR/TJWInpB0b964vycY3uJPWvs2rEpQ
+         yl1w59C37evtZDbjMiaomgTYiustEC6nat8Ru9AqOfpcOMxs9/16k7TfF0qHvKOODUj4
+         Z1EqwapwBJndRowhr6CEUzRra5nvvK9QGpAElDN1cVWlv5WQiKtSMwx+Iflu0nImflf3
+         AP8v163GRRfYi2zE1MiNxDOQvZlYGN5N9+GWHW75u+Oh0A6LieQ7DvKJC603j7u33Jiz
+         5GmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWZXLhwcffSXf3ML9PCgMl+Qft6HbW+6ZS1dlXe1Pj9qT0N5qd3UEfKIcikel8dkixUDvfpvzLiY3mtQfFAD4tgMX7@vger.kernel.org, AJvYcCVfSpS0sqQXMpR7+wWciKW/++oGpKcD3rpkHAy5NxSnNfp7YZKj1kNPmeLJCc9xwUT5YphksZ2zNRJs29U=@vger.kernel.org, AJvYcCX8sUDZ03eapldFrnhKY/M0X0IM++Gk/cm7PM7VhNVgBaQAuNUd6HJ+8h69GpUrQv1D7290gWpRprYq7n2pAZxGOg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEH5mzladAb2MlcjFX2wOQxHoTCEmiwV6SCN9VIG8MMnzoHcyS
+	ReGtHwWNQbCOPy+mTwPIt4fikAQoZozsKEr4kyXhsDwPtuzGu0NzjdRO
+X-Gm-Gg: ASbGnctrzKbwKWZwcScErTQbRXcKMmLCclylyZzvNpg7+W8UaIwt11jmNXWNUb8wOTN
+	7JZprzgMtTEKV3KwT+pa+JrIFoyNPVT06/GpXVIKkHe6PqPkXN3q7GDXQfJRcasdayHxDD0pZGq
+	K5rV+s2hs/oVylolYsi+XQ/eGpAokppuRwgJFjXgbH1mAteNsfCmqhql06qg5OCKKc/x6YfCh0r
+	AS/jmr8FAJimFndVAgZ0QhtX9cjKQgzwDCVAT7gE+LJTf0XITNpZ29M0kbUpAA0jPStoH3oLlNj
+	4xZgT7Mh5ug7hbgrr+cqWAsvUQtPuYsKh9xrlw9sNPY8Nim3iNXj+J8pqA2S6fn1jyQoUgFuj5x
+	NHNqAYCHqGjPxltV9sspQI2tPYFLnuVkuG6Q=
+X-Google-Smtp-Source: AGHT+IEehJ5C2SQUPQ7Bd8LiQM6dU3/TuGbQPJS5Qg6w1+VDRG8A11HZd7aW9ORjaQ+YrxZYqL3kzg==
+X-Received: by 2002:a17:903:3d06:b0:258:2476:77db with SMTP id d9443c01a7336-25824767953mr100948585ad.42.1757498085855;
+        Wed, 10 Sep 2025 02:54:45 -0700 (PDT)
+Received: from [127.0.0.1] ([2403:2c80:17::10:4006])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a2a344af8sm21714385ad.78.2025.09.10.02.54.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 02:54:45 -0700 (PDT)
+Message-ID: <e82bc49b-a1fe-419a-8a5e-fda70603d2e3@gmail.com>
+Date: Wed, 10 Sep 2025 17:54:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910091703.3575924-1-yicongsrfy@163.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/18] x86/hw_breakpoint: introduce
+ arch_reinstall_hw_breakpoint() for atomic context
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, "Naveen N . Rao"
+ <naveen@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ linux-perf-users@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904002126.1514566-1-wangjinchao600@gmail.com>
+ <20250904002126.1514566-6-wangjinchao600@gmail.com>
+ <20250904063832.GT4067720@noisy.programming.kicks-ass.net>
+ <aL5ns7h1NaoD9LPg@mdev> <20250909170017.dae27d8be77f9ec634e0d56c@kernel.org>
+ <f73e6e8c-282e-4d3d-9dc9-49f13b20a255@gmail.com>
+Content-Language: en-US
+In-Reply-To: <f73e6e8c-282e-4d3d-9dc9-49f13b20a255@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10, 2025 at 05:17:03PM +0800, yicongsrfy@163.com wrote:
-> Then, because `phydev->interface != PHY_INTERFACE_MODE_SGMII`, it attempts
-> to enter `ytphy_rgmii_clk_delay_config` to configure the RGMII tx/rx delay.
-> However, since this PHY device is not associated with any GMAC and is not
-> connected via an RGMII interface, the function returns `-EOPNOTSUPP`.
 
-It seems the problem is this code:
+On 9/9/25 16:39, Jinchao Wang wrote:
+>
+> On 9/9/25 16:00, Masami Hiramatsu (Google) wrote:
+>> On Mon, 8 Sep 2025 13:20:51 +0800
+>> Jinchao Wang <wangjinchao600@gmail.com> wrote:
+>>>> ...
+>>>>
+>>>> Yeah, I think not. For one this is an almost verbatim copy of
+>>>> arch_install_hw_breakpoint() with zero re-use. Surely you've been 
+>>>> taught
+>>>> better?
+>>> I introduced this to modify bp_addr in atomic context in my RFC series.
+>>> I thought it was clearer to split the introduction and refactor.
+>>> And then It was used in the wprobe series, so I left it as introduced
+>>> in the RFC series.
+>>>
+>>> I agree your suggestion is right. I am willing to refactor after 
+>>> wprobe.
+>> I'm OK to refactor it to reuse arch_install_hw_breakpoint().
+>> My point is to have CONFIG_HAVE_REINSTALL_HW_BREAKPOINT so that
+>> we can easily implement the dependency for other features which
+>> requires this feature in Kconfig level.
+>>
+>>>> And why would we want to export guts like this?
+>>> I wanted to introduce a real-time stack corruption debugging tool,
+>>> which needs a helper to change bp_addr in atomic context (kprobe 
+>>> handler).
+>>> And wprobe needs it also.
+>> I agree with Peter, it should not expose the architecture
+>> dependent code directly. Instead, we need a wrapper.
+>>
+>> Thank you,
+> Understood, I will use the wrapper instead.
+>
+>
+Hi Masami,
+I would like to ask for your advice regarding a development workflow issue.
 
-        /* set rgmii delay mode */
-        if (phydev->interface != PHY_INTERFACE_MODE_SGMII) {
-                ret = ytphy_rgmii_clk_delay_config(phydev);
+I have a patch series that refactors |arch_reinstall_hw_breakpoint|, which
+I know you are using in your |wprobe| series. My new feature, 
+|kstackwatch|, is
+dependent on my patches and also on your wrapper patch for 
+|modify_wide_hw_breakpoint_local|.
 
-which assumes that phydev->interface will be either SGMII or one of
-the RGMII modes. This is not the case with a PHY that has been
-freshly probed unless phydev->interface is set in the probe function.
+Since we are working on different subsystems with different maintainers,
+I am concerned about how to handle the dependencies between our patches 
+to avoid
+introducing trouble.
 
-I see the probe function decodes the PHYs operating mode and
-configures stuff based on that. Maybe, as it only supports RGMII
-and SGMII, it should also initialise phydev->interface to the initial
-operating condition of the PHY if other code in the driver relies
-upon this being set to either SGMII or one of the RGMII types.
+What is the best practice for this type of cross-subsystem dependency?
+Should one of us carry all the patches until they are merged, or is there a
+standard procedure for this situation?
+
+Thank you for your guidance.
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks,
+Jinchao
+
 
