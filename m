@@ -1,154 +1,179 @@
-Return-Path: <linux-kernel+bounces-809822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C842B5127D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:29:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8DCB51281
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A89481CF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF12B1C219B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CE3313E0A;
-	Wed, 10 Sep 2025 09:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CD730596B;
+	Wed, 10 Sep 2025 09:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="ZhxPSqLj"
-Received: from fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.72.182.33])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b71AZ6bt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B18A313544;
-	Wed, 10 Sep 2025 09:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.72.182.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771612417C3
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757496532; cv=none; b=ZE50O22Y3pZ657K3qQ9V327ZPZ2pgb1D0wbebPx0vpw4jvMtBn0Nmc8SgmX7wqajaUnJJxPtD1V1i0CN9gtOKXtrgmEjmkv2ec4w3qB3pTLLbvUzs95P5UK9ejltKZaUcR93TTzeSiqf9tjoXbFjvcHS5ww7C+7lJXzwWJH6HBE=
+	t=1757496659; cv=none; b=L2pShdoLXV+J5B/QnfjRGgOkGLgCe6hFpCh+rFN+D7kGeFLT8w/5mQh+P4b4EI+E70dwmGnS6NLtnaJouj8g9Nz4gOg/W3/5wVm2rFuIHk8sfKaaVuqjRK8N/nw4txc5f1f8jvVwXhjx0/nyU/BE1WzqMBcbMBHoa1bzqKiAB2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757496532; c=relaxed/simple;
-	bh=8M1NClmvgIt+dhiZcZXDzCJ1AB1iwZ1egz2MFeaVKyw=;
-	h=From:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=QTUeqEE+xCD3eEvy0ovmbGp+KNRKgdBGoS3V/GnqlpgLSBqo3N9B+YpsMfjCq98Su63QDSJzWg4Nw21Mxk/v6EJVhVolFJERS3lXn5mMFCO3lrReAYT9UoHTTlAd62jKrzt6GpUFQrgTLZG9h8d3Koey004vwPqMgXtSH4joPvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=ZhxPSqLj; arc=none smtp.client-ip=3.72.182.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1757496529; x=1789032529;
-  h=from:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=UYBeIk1Sgl6VARFAnYk+1Npq0eTLyrVghsS0KiRYD80=;
-  b=ZhxPSqLjvcFSH7Nn25m6NEGkNESDX6JV2WbMCqIW7JBpVf88V6t6ypTu
-   cpxL9Q3Mpm3xH48feges+VAZ8Iw12VjVxhcRiLJxR3T9z3c/ireBMTVKa
-   BiOEL4xESeMyhlx580sNNcSfw+dQaVOIEkta9K2eKpmgBgIQ4eQIpX5FH
-   Ny7DDE2HRtkjiVOuxZ3rlWLTk6XrGb4FaaS2pQujxalWnWll8y9JalupK
-   nAPj1vpgkOwCXqNj0qGsO+au9OLYtamHOMVssjNw9WHn6Jwm6zZopGfVm
-   Pn9Z8YbYhirV1Gtb5kIO5GwmW9WQoTneIoWmoardngyEPsO9w8xzCM41F
-   A==;
-X-CSE-ConnectionGUID: u/IpeAocSuWjQ6qjoMuysA==
-X-CSE-MsgGUID: s0vP7LJQR2CHqKOPqmdAug==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751241600"; 
-   d="scan'208";a="1890739"
-Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
-  by internal-fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 09:28:38 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [54.240.197.225:14793]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.16.14:2525] with esmtp (Farcaster)
- id 2040ec64-2b97-42f5-bda1-4ba39ea8b2d5; Wed, 10 Sep 2025 09:28:38 +0000 (UTC)
-X-Farcaster-Flow-ID: 2040ec64-2b97-42f5-bda1-4ba39ea8b2d5
-Received: from EX19D008EUC003.ant.amazon.com (10.252.51.205) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 10 Sep 2025 09:28:38 +0000
-Received: from EX19D008EUC001.ant.amazon.com (10.252.51.165) by
- EX19D008EUC003.ant.amazon.com (10.252.51.205) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 10 Sep 2025 09:28:37 +0000
-Received: from EX19D008EUC001.ant.amazon.com ([fe80::9611:c62b:a7ba:aee1]) by
- EX19D008EUC001.ant.amazon.com ([fe80::9611:c62b:a7ba:aee1%3]) with mapi id
- 15.02.2562.020; Wed, 10 Sep 2025 09:28:37 +0000
-From: "Heyne, Maximilian" <mheyne@amazon.de>
-CC: "Heyne, Maximilian" <mheyne@amazon.de>, "Matthieu Baerts (NGI0)"
-	<matttbe@kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>,
-	Thomas Dreibholz <dreibh@simula.no>, Mat Martineau <martineau@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Mat Martineau
-	<mathew.j.martineau@linux.intel.com>, Matthieu Baerts
-	<matthieu.baerts@tessares.net>, "David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "mptcp@lists.01.org" <mptcp@lists.01.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 5.10] mptcp: pm: kernel: flush: do not reset ADD_ADDR limit
-Thread-Topic: [PATCH 5.10] mptcp: pm: kernel: flush: do not reset ADD_ADDR
- limit
-Thread-Index: AQHcIjVJBuGE8H44G0WWr6MpfYiLLg==
-Date: Wed, 10 Sep 2025 09:28:37 +0000
-Message-ID: <20250910-nicety-alert-0e004251@mheyne-amazon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="iso-8859-1"
+	s=arc-20240116; t=1757496659; c=relaxed/simple;
+	bh=a21Cu+J0U06Xk6062QwlPqOlBDs91JVnwm8k0OIr77g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HVu0YC1G1T6dCf4XXYvMkWhp8mt08Hvwfwc8z69o/OwOnMBNAVF2VDAZLmEckFCtn8HZK/8SIBU750L3n5sayhi+v4QXpKgE2ky82NZWt1Uyxx+U8ORYanLjSZjzBZmHmLIb9hGDFh5FYdMXuwQ/ayF9RlJfflpaiXDv3b6WocI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b71AZ6bt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757496656;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2qzBA9zUbwBtQk09XBYRmyAB+zZC5CxWhnXgvnYd3No=;
+	b=b71AZ6btBzU5G/vro5L9zD41LROOiFpW1X87rVTJdSxvhM4v1NWC7PoHBO2jTfXfU1OTnK
+	hKYfaFBHbfPXShzHpqGcigzVDY1NSAZ01RIcdOh7jL6CBftwaomFH0nH+OEes2DaC/38Pj
+	e7QZYWbaDY2eWuOSTdUsfsp3e0SVHAs=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-554-emuWtDjoM0adJFIChP0qJg-1; Wed, 10 Sep 2025 05:30:55 -0400
+X-MC-Unique: emuWtDjoM0adJFIChP0qJg-1
+X-Mimecast-MFC-AGG-ID: emuWtDjoM0adJFIChP0qJg_1757496654
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3dc3f943e6eso4076014f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:30:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757496654; x=1758101454;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2qzBA9zUbwBtQk09XBYRmyAB+zZC5CxWhnXgvnYd3No=;
+        b=OW7x3CVz8NOIzY/AjOW58kcfYJa8OiWW2lRRRpJdhJoTQmHsNBZizgHv67CPYvARiy
+         Ihr/BMs1sUnhVvjZmamlb97kATL92X/1vNR62EvvmFDhEDQKxoK9ams4uzn6AcI+mu6g
+         LKqzFqAorJsIJ1JJoIM7JN58nh1o+F2gqII+7nuj/ReoLRCEUj3erV2T+zu86we8mJbC
+         MIe3kldTnr+hu8/6HTW+HAYVOnVDUgpo5qI7P6NN8v0cRWjQE5TaffyKNwquxT0xsouk
+         EctNOsMD+HfoiQNXNYsnGQ7/3Btn3WZQZPfPVWgdVZLrSMwluVX0uJeHnO2xLm7eyHjI
+         KHwQ==
+X-Gm-Message-State: AOJu0Yw47/xLyMqnDMHsPUcaCYhd6SqLWSRP/bPZc/cwnkgBcFxzEp/S
+	uHf3Mke2F+HGBmsopJcxwxHlVfIc7gHHuIFTvCb3ED4erHNGU2OE1fnAr4UCtCZ19SYxPPDUppc
+	N4KhH3/zcmIS44KOeQ5fyveBef5na1+HeKfDk3bORBX2vmflPm/fEUl1t1/BtKrJywL74HQwIpx
+	Lv5dNZrTLENAImp5axsP66gELOGrfMC7ILeLQKy7MLK6Asqw==
+X-Gm-Gg: ASbGncsv+E4tCjnpIK9ltl16CJXukWGBGVOWMiNqdWgCMFFJjgBXOkq3V+o7x7GTVrS
+	eCmUTJlQKF58skMREtPfKIrT/Zc9v5YdDygPpmo3ARg3gXbS/9wLjly8eaVuZJdRl+AOkpoU6hX
+	B0nV+D00DKiwjUVnYAKLaN5ORqQ6boMMZJq0nzDwzpZRmPxcQsk4wgRZQs90zUZfY80StX06DqG
+	1Rzf/CNc2ZWaq0DIRJ9k672irGpktGwHoeEtf62+7vlkxp46kS6o8HXS2APKUaF79f5A5IigWp8
+	7b3CZ4cCTbj8nL+rpzClo/oW0oQb3RpmIUo49YDC/wBBxWRo5slykvqlSbPuM2xV2/u/JgrSsB1
+	HsYJWnEpHdFokroj3ImTDX/FN
+X-Received: by 2002:adf:e611:0:b0:3e7:42aa:1b3 with SMTP id ffacd0b85a97d-3e742aa0327mr9054286f8f.27.1757496654013;
+        Wed, 10 Sep 2025 02:30:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEi3IitV0wCKvn7oRCPMLTVb77zHfNWhPGpq1wNihRoL3dQO3S5kiGmSFpyN3gxcJUcHXYIQ==
+X-Received: by 2002:adf:e611:0:b0:3e7:42aa:1b3 with SMTP id ffacd0b85a97d-3e742aa0327mr9054232f8f.27.1757496653393;
+        Wed, 10 Sep 2025 02:30:53 -0700 (PDT)
+Received: from localhost (p200300d82f179c00d650ab5f74c22175.dip0.t-ipconnect.de. [2003:d8:2f17:9c00:d650:ab5f:74c2:2175])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45df8247bdesm20861465e9.14.2025.09.10.02.30.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 02:30:52 -0700 (PDT)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Peter Xu <peterx@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Shuah Khan <shuah@kernel.org>
+Subject: [PATCH v1] selftests/mm: gup_tests: option to GUP all pages in a single call
+Date: Wed, 10 Sep 2025 11:30:51 +0200
+Message-ID: <20250910093051.1693097-1-david@redhat.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+We recently missed detecting an issue during early testing because
+the default (!all) tests would not trigger it and even when running
+"all" tests it only would happen sometimes because of races.
 
-commit 68fc0f4b0d25692940cdc85c68e366cae63e1757 upstream.
+So let's allow for an easy way to specify "GUP all pages in a single
+call", extend the test matrix and extend our default (!all) tests.
 
-A flush of the MPTCP endpoints should not affect the MPTCP limits. In
-other words, 'ip mptcp endpoint flush' should not change 'ip mptcp
-limits'.
+By GUP'ing all pages in a single call, with the default size of 128MiB
+we'll cover multiple leaf page tables / PMDs on architectures with sane
+THP sizes.
 
-But it was the case: the MPTCP_PM_ATTR_RCV_ADD_ADDRS (add_addr_accepted)
-limit was reset by accident. Removing the reset of this counter during a
-flush fixes this issue.
-
-Fixes: 01cacb00b35c ("mptcp: add netlink-based PM")
-Cc: stable@vger.kernel.org
-Reported-by: Thomas Dreibholz <dreibh@simula.no>
-Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/579
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Link: https://patch.msgid.link/20250815-net-mptcp-misc-fixes-6-17-rc2-v1-2-=
-521fe9957892@kernel.org
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-[adjusted patch by removing WRITE_ONCE to take into account the missing
- commit 72603d207d59 ("mptcp: use WRITE_ONCE for the pernet *_max")]
-Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
-For some reason only the corresponding selftest patch was backported and
-it's now failing on 5.10 kernels. I tested that with this patch the
-selftest is succeeding again.
----
- net/mptcp/pm_netlink.c | 1 -
- 1 file changed, 1 deletion(-)
+ tools/testing/selftests/mm/gup_test.c     | 2 ++
+ tools/testing/selftests/mm/run_vmtests.sh | 8 +++++---
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-index 32379fc706cac..c31a1dc69f835 100644
---- a/net/mptcp/pm_netlink.c
-+++ b/net/mptcp/pm_netlink.c
-@@ -869,7 +869,6 @@ static void __flush_addrs(struct pm_nl_pernet *pernet)
- static void __reset_counters(struct pm_nl_pernet *pernet)
- {
- 	pernet->add_addr_signal_max =3D 0;
--	pernet->add_addr_accept_max =3D 0;
- 	pernet->local_addr_max =3D 0;
- 	pernet->addrs =3D 0;
- }
--- =
-
-2.47.3
-
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+diff --git a/tools/testing/selftests/mm/gup_test.c b/tools/testing/selftests/mm/gup_test.c
+index bdeaac67ff9aa..8900b840c17a7 100644
+--- a/tools/testing/selftests/mm/gup_test.c
++++ b/tools/testing/selftests/mm/gup_test.c
+@@ -139,6 +139,8 @@ int main(int argc, char **argv)
+ 			break;
+ 		case 'n':
+ 			nr_pages = atoi(optarg);
++			if (nr_pages < 0)
++				nr_pages = size / psize();
+ 			break;
+ 		case 't':
+ 			thp = 1;
+diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
+index 9e88cc25b9df2..6240e579b3ba5 100755
+--- a/tools/testing/selftests/mm/run_vmtests.sh
++++ b/tools/testing/selftests/mm/run_vmtests.sh
+@@ -138,7 +138,7 @@ run_gup_matrix() {
+                     # -n: How many pages to fetch together?  512 is special
+                     # because it's default thp size (or 2M on x86), 123 to
+                     # just test partial gup when hit a huge in whatever form
+-                    for num in "-n 1" "-n 512" "-n 123"; do
++                    for num in "-n 1" "-n 512" "-n 123" "-n -1"; do
+                         CATEGORY="gup_test" run_test ./gup_test \
+                                 $huge $test_cmd $write $share $num
+                     done
+@@ -313,9 +313,11 @@ if $RUN_ALL; then
+     run_gup_matrix
+ else
+     # get_user_pages_fast() benchmark
+-    CATEGORY="gup_test" run_test ./gup_test -u
++    CATEGORY="gup_test" run_test ./gup_test -u -n 1
++    CATEGORY="gup_test" run_test ./gup_test -u -n -1
+     # pin_user_pages_fast() benchmark
+-    CATEGORY="gup_test" run_test ./gup_test -a
++    CATEGORY="gup_test" run_test ./gup_test -a -n 1
++    CATEGORY="gup_test" run_test ./gup_test -a -n -1
+ fi
+ # Dump pages 0, 19, and 4096, using pin_user_pages:
+ CATEGORY="gup_test" run_test ./gup_test -ct -F 0x1 0 19 0x1000
+-- 
+2.50.1
 
 
