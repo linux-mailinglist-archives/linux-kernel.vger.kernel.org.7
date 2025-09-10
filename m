@@ -1,233 +1,372 @@
-Return-Path: <linux-kernel+bounces-810748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7951FB51EC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:21:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C1C4B51ECB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1ECA00909
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:21:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16CB8581686
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5713F2AD0C;
-	Wed, 10 Sep 2025 17:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454F9322A08;
+	Wed, 10 Sep 2025 17:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="EUHijJpT"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b6x5avp9"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7652426F2AA
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 17:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567B726D4F9;
+	Wed, 10 Sep 2025 17:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757524864; cv=none; b=tI3RRxYKaj+WlXwY5mhD3zMVN1xo2MlZHUOcFw3rUkSi0bzKitSWcqHmTAUEH36OfQ/zueYDrdPuKOeKnnUZUOZipfs57KAVQhK361ORPUzOlZwLEXazXFPvEi8S2DPkScLjletc9r5G+jhoy2plQLtdWqwjFKwm7Xbo0rP575A=
+	t=1757524898; cv=none; b=Jnzi2axwgKU8Q3YbX2FNUqztm7Kidly18c9WtNTedRPk3yUZMF/gqqkzvkW4tr+3usZXk4EDfbMoAvkoieYI82J6mVI6rjkW/dp+BEVl6QIyafUcC7bRgrhJzCaJrERrEhG/h1dqyb2cLERTTgvQlIYy0yIr1mwq3Jc/XBlixhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757524864; c=relaxed/simple;
-	bh=kCEO0YTt6Ohy/VkqnyZfNYD2LFwpNyBrnjm/fgenpuw=;
+	s=arc-20240116; t=1757524898; c=relaxed/simple;
+	bh=RhMZzzYltdKFB5qM+3pAwKbhueJllywcPAsvUkS/hCI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hsE7F0PC4SRPV6DDT3ZM6ItK94IRbMdDOUiP6z0Og/4mNNmdlGZgM5HdtC1xZMkKjeAs8mWwzi2xpHxOeI7NMlDt2LUC5SwJCY55r1uUiOoFvWIOjGM/hPWVM4rK7PDSkFIToYuDUy1IrmoagFUC2co9d4CVC8HpCcifjvBToV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=EUHijJpT; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-560880bb751so7050063e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:21:01 -0700 (PDT)
+	 To:Cc:Content-Type; b=akGIxro7HwaWy4yjEuvxobpRZGn1S7juBGSXtT2pyr8gbFAHqJlf5oenjC3TzM2BeAuZMgBJ8XZq9NRp5NwLAaBkyA6/REzRvESZfMN0wQmNuzeRLTuQpN1D57M/O5HoQWDNUkHdgaZefjIiTkzBUQIaUMNPU6AqhGdExzipxh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b6x5avp9; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6237202020bso7979723a12.3;
+        Wed, 10 Sep 2025 10:21:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1757524859; x=1758129659; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757524894; x=1758129694; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D4y7C8S2xJQZYsJ9c9ADBNgi86RVk7zzkb8x6ic0x2s=;
-        b=EUHijJpTq43g5hvq97u8EwhMATDVfLOt84qJGU9gO1B4furajZcfjDDfFPygIYZqgD
-         d2whZGR+HnFEaXByX0bPQrU1zcTegv7s7HsHCpxW5JTgf7ElAikHJP3M5DCjoAXgM7iY
-         VokNSg7dGuBkAFVtpTsQEF1iTHFNZXNbm5V0q6E+E6plHWXdRb/Y05MUyN8+LNyGJJ//
-         kfm9V/jxmBJcW6UIPQBFHrL+8LBKMp8ub856t+4CtRg0QMSylW6NTNzOuPef04C4UK0D
-         bN8AqxmBz7RindiWh6bMc+vNFUinlPnCXpr8Djl19B0c+GDx48vJYF3/OJA4tgB/nJFH
-         p1bA==
+        bh=fawpfDcReCPiexHLQmJUihCOqOpAI9vERWwTnUBX3Jg=;
+        b=b6x5avp9Psa1GISFy/Yic0ReQ1j+h1XuFtuwU5HBnVN2wEAtes0BTjOwXN1/GS5aQB
+         GOFGL65syg8O5oEoLkZuuv5mBsesF5zk1pChzCy01jGVccx8Ay7wsjrlfqSCfPE79ONM
+         w4pAsdmuPz37Q2Zec9sDTx2DVGiuDMvtk9kYHMZxQXSeyZtG+I81xZ3Ah5wB+nmbwM7H
+         8esfGHEjZLKIrOiBHx8DmgkGJjnZvqWzsDWPoonFQ1d5esLXeFXZ3sEdnCwvttwJKh4d
+         vkp1a1uqf+dR7nS/OOMApHO+4KynDKgt50TUv1gnowLDOs7PK0ZCcM2bzz1D5WATj/mm
+         eFJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757524859; x=1758129659;
+        d=1e100.net; s=20230601; t=1757524894; x=1758129694;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D4y7C8S2xJQZYsJ9c9ADBNgi86RVk7zzkb8x6ic0x2s=;
-        b=oIbSimtPpHTRbp4rBLgNcHpcZB3dR5fqhQzjB9AkFxkUpxszNTQ+6Y438vsebRKT7Y
-         PFPt2+ti6Adu7rtJ+QDYjkszFe5x+H9jAmFz5e8vVVXwKMD75LBOJxGwUUB/YiZfbPf1
-         Ah0RrAgaKiP7UVuOegNpxCbaDYTSA+Q7zBtYW1qNo5bBIumUvj7XsrWPfwvcSdwPTpkU
-         mCPvPRF/H6PG6ZVrjv+h+jbBTiTNhlqIBBbHurbFuPzJBU0OoIn0qyuYcbqluxop1ZZW
-         gkwS+ENvQM1NOt6uyPhXPBFeqk5ZpnAK56Tn8gKlWwZIXYk+WAxdRWM1lZD6CVrYlxv7
-         m3pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTYi5c8GKiB1dtgbvrDDlhOKf0d1YKqcModhPty/05uBnsAIHAkHvMyxPJr1pazdtVS2VL/33H7F4c9Hk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw55UQFKVqAALpxCpn9CDYYXnBRD6Tiyz+akEqSXvC4BIFmRQeg
-	TRVvEdtJedGeIdAeuq5t4uN5lw/kFgSjHixWp+LMrgtuKUcIALaxkL2XuvnoOimaw5+RPvleJ8D
-	4VjDCRlu7f807E/ihMb+68F2D0O7JyE3Kop0nt2TzdA==
-X-Gm-Gg: ASbGncsBMY9Nh10SoWCcZXRi1fDQR1H6Us17JSEW5qWwYM6JgYvlXHEN0i8tQEY5CvB
-	U+HrytOG6mZNxBW7tVlbZXRUSbUeodfPKKmgEJLnobvNKoyRgoT+ary6QCxV2Ve82ikPBVWjIBE
-	zNYuBaPNPsQBWCPhvrVgHnim6kM73tlTJviPV92LrD65ICZ27Z7zwqSzh2xD3XBryrcU4BfY781
-	lmMKRrkry2xuQZFRp8=
-X-Google-Smtp-Source: AGHT+IEMC5CgIT7ZKhbb9e4OnXDYYVwccWgf2cqpuCV1m2eXMNd148ZBrJvXPaZEKu+blEhZhrwZCup0EV+3UQHRlvM=
-X-Received: by 2002:a05:6512:33d2:b0:560:95c0:a523 with SMTP id
- 2adb3069b0e04-56262667e77mr5945448e87.35.1757524859373; Wed, 10 Sep 2025
- 10:20:59 -0700 (PDT)
+        bh=fawpfDcReCPiexHLQmJUihCOqOpAI9vERWwTnUBX3Jg=;
+        b=v7VOmT3fq0o2zi1eR+CkbX+YuSnmR2JhXhhLD/lkYHaojSx7p7M21DXGqq+vhk1bEY
+         yz7K+G+OXIDC4C6COzsenXbZg+vUnp4qYSsc57s9P0cfvPgY8wlOQI4ftfB+3oNfO7oO
+         4jF8Y8j50gSLjcsBUCIR12dLe1udNdbEshEX/uQhDvo8agsmf+di3mlS2v4PLZMAiBxj
+         bfhS1jg73NHpGc5oxaqluemuV17QQnWmK/IvCLornlQugxQ+gnS6wLaK7L1sBHCj8V8z
+         W8C2xXlqVTOJSfUJmm12cejjjKnjHXSO9k3YB9U49Wc7cZSZCacMIrp/3KVEUFg4u8OH
+         RuFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFWXuVbccaeOlf4+mxSRXMfBjSnbgmfv4nEDjw6ptP2h+FP5A0VoC29eCtjskoqq9ZXhuDuZkX@vger.kernel.org, AJvYcCVdJHHwEulZsOk0kyoPWGF55+RIwsbBA9l7x1lMd/BhfNZj47otHv23FvxpHkbgsm9TLySjmVjqlz5nGhbxoQ==@vger.kernel.org, AJvYcCVh22BPo8cd59RgomHdKhV/0CUsQvZ/cTkHRXs6RJ3fhoMr1boQoyo5ZY2kM2NZaRHqa0Klr8bFY04MXgU=@vger.kernel.org, AJvYcCWPVKtnqjfoZFmqxsdxHbQu9UfCj1Oo+hdk6Npmm7D9+tZqBLP5knmrUK0pNDEsbI2UmcO5D+F86LMz@vger.kernel.org, AJvYcCWnE9use5+QoCtAmLcddJ+UqH/FSQa/MtIfzGTuezdqMvFm/9Xa+5Fc1u5QCnhLq3C87UJr7DPEG8WnEz7f@vger.kernel.org, AJvYcCWs1QPegX1U68dgqCOYQ6zxTaq+QAlIQZDnvGFAGnwd504mG66YbEuI5FWeKovX4vI0afV30Q8p@vger.kernel.org, AJvYcCXa4VI2CrsPkxMyRz05prIClTqxdZ8bOC7vd94kEQIWrXNDIlhpySoOsHG4tkRm6N7w7PnZlyFa83sa4gEsu82J@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt4rPXv7QZqlGoQizoDGKf4bmrojBig6063g6wjQ0HKErV1P+b
+	j2zGZGY276GFTCAf+UOsnlUFiuyyje+yU4hvKc7rdNJNQUgYDLmHiDFjM5SQZrf7nZ8XObIaZD0
+	G5v+BzSjaCaOdQWuAri8ueHpaS4cf6hQ=
+X-Gm-Gg: ASbGncv0pjY4m4Z3wPCkPMFByCIMKjKXwM4gyj6OrSMa9+UYknGB2RYnPekqRhOvoAt
+	bzIQ6D5RhLKy+UfcjAxq4rjEL5J9gluQy02qSK7jnXSgtEGKtCtRZKW7SmvU/UDhKhulurbXbLe
+	JRgovQZKjseuNVPwUq/M2wo4APNWD979GTdWDjmXTiYpLBcfvVYjEzRFclUs45gwi9SNKHMv8ch
+	sjuaEs81P66xfLf0g==
+X-Google-Smtp-Source: AGHT+IGzSM48OmUPGzUeRKEcJYruA5utreW1EjHGV7gmdERENFp7O15TXDw7VLk6zyBAsqAOGPzeKl/ZVy5+N52X/B4=
+X-Received: by 2002:a05:6402:24c9:b0:61d:3bca:f2fc with SMTP id
+ 4fb4d7f45d1cf-62378366920mr12218960a12.31.1757524894224; Wed, 10 Sep 2025
+ 10:21:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910093347.75822-1-tianruidong@linux.alibaba.com>
-In-Reply-To: <20250910093347.75822-1-tianruidong@linux.alibaba.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Wed, 10 Sep 2025 22:50:47 +0530
-X-Gm-Features: Ac12FXyVWt78cRqW1T3y7uW90ELz685Wecbof4GuJH9AJDtvZCte0fSBKlzx1OU
-Message-ID: <CAK9=C2UnN0VFnGCRSHaYrwzjHFu-PfWpWkBzNfJNW9wwM8UOvw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/5] riscv: Handle synchronous hardware error exception
-To: Ruidong Tian <tianruidong@linux.alibaba.com>
-Cc: xueshuai@linux.alibaba.com, palmer@dabbelt.com, paul.walmsley@sifive.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, james.morse@arm.com, tony.luck@intel.com, 
-	cleger@rivosinc.com, hchauhan@ventanamicro.com
+References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org> <20250910-work-namespace-v1-27-4dd56e7359d8@kernel.org>
+In-Reply-To: <20250910-work-namespace-v1-27-4dd56e7359d8@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 10 Sep 2025 19:21:22 +0200
+X-Gm-Features: AS18NWAeQzw8A2L3MeKKv5VLNvqBS6WiA4GMVCa0r-bsvToYY4x-puEFtCSLPAg
+Message-ID: <CAOQ4uxgtQQa-jzsnTBxgUTPzgtCiAaH8X6ffMqd+1Y5Jjy0dmQ@mail.gmail.com>
+Subject: Re: [PATCH 27/32] nsfs: support file handles
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
+	Lennart Poettering <mzxreary@0pointer.de>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 10, 2025 at 3:04=E2=80=AFPM Ruidong Tian
-<tianruidong@linux.alibaba.com> wrote:
+On Wed, Sep 10, 2025 at 4:39=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 >
-> Hi all,
-> This patch series introduces support for handling synchronous hardware er=
-rors
-> on RISC-V, laying the groundwork for more robust kernel-mode error recove=
-ry.
->
-> 1. Background
-> Hardware error reporting mechanisms typically fall into two categories:
-> asynchronous and synchronous.
->
-> - Asynchronous errors (e.g., memory scrubbing errors) repoted by a asynch=
-ronous
-> exceptions or a interrupt, are usually handled by GHES subsystems. For in=
-stance,
-> ARM uses SDEI, and a similar SSE specification is being proposed for RISC=
--V.
-> - Synchronous errors (e.g., reading poisoned data) cause the processor co=
-re to
-> take a precise exception. This is known as a Synchronous External Abort (=
-SEA)
-> on ARM, a Machine Check Exception (MCE) on x86, and is designated as trap=
- with
-> mcause 19 on RISC-V.
->
-> Discussions within the RVI PRS TG have already led to proposals[0] to UEF=
-I for
-> standardizing two notification methods, SSE and Hardware Error Exception,
-> on RISC-V.
-> This series focuses on implementing Hardware Error Exception notification=
- to
-> handle synchronous errors. Himanshu Chauhan has already started working o=
-n SSE[1].
->
-> 2. Motivation
-> While a synchronous hardware errors occurring in kernel context (e.g., du=
-ring
-> get_user, put_user, CoW, etc.). The kernel requires a fixup mechanism (vi=
-a
-> extable) to recover from such errors and prevent a system panic. However,=
- the
-> APEI/GHES subsystem, being asynchronous, cannot directly leverage the syn=
-chronous
-> extable fixup path.
->
-> By handling the synchronous exception directly, we enable the use of this=
- fixup
-> mechanism, allowing the kernel to gracefully recover from hardware errors
-> encountered during kernel execution. This brings RISC-V's error handling
-> capabilities closer to the robustness found on ARM[2] and x86[3].
->
-> 3. What This Patch Series Does
-> This initial series lays the foundational infrastructure. It primarily:
-> - Introduces a new exception handler for synchronous hardware errors (mca=
-use=3D19).
-> - Establishes the core exception path, which is a prerequisite for kernel
->   context error recovery.
->
-> Please note that this version does not yet implement the full kernel fixu=
-p logic
-> for recovery. That functionality is planned for the next formal version.
->
-> Some adaptations for GHES are included, based on the work from Himanshu C=
-hauhan[1]
->
-> 4. Future Plans
-> - Implement full kernel fixup support to handle and recover from errors i=
-n
->   some kernel context[2].
-> - Add support for handling "double trap" scenarios.
->
-> 5. Testing Methodology
->
-> test program: ras-tools: https://kernel.googlesource.com/pub/scm/linux/ke=
-rnel/git/aegl/ras-tools/
-> qemu: https://github.com/winterddd/qemu
-> offcial opensbi and edk2:
->
-> - Run qemu:
-> qemu-system-riscv64 -M virt,pflash0=3Dpflash0,pflash1=3Dpflash1,acpi=3Don=
-,aia=3Daplic-imsic
->  -cpu max -m 64G -smp 64 -device virtio-gpu-pci -full-screen -device qemu=
--xhci
->  -device usb-kbd -device virtio-rng-pci
->  -blockdev node-name=3Dpflash0,driver=3Dfile,read-only=3Don,filename=3DRI=
-SCV_VIRT_CODE.fd
->  -blockdev node-name=3Dpflash1,driver=3Dfile,filename=3DRISCV_VIRT_VARS.f=
-d
->  -bios fw_dynamic.bin -device virtio-net-device,netdev=3Dnet0
->  -netdev user,id=3Dnet0,hostfwd=3Dtcp::2223-:22
->  -kernel Image -initrd rootfs
->  -append "rdinit=3D/sbin/init earlycon verbose debug strict_devmem=3D0 no=
-kaslr"
->  -monitor telnet:127.0.0.1:5557,server,nowait -nographic
->
-> - Run ras-tools:
-> ./einj_mem_uc -j -k single &
-> $ 0: single   vaddr =3D 0x7fff86ff4400 paddr =3D 107d11b400
->
-> - Inject poison
-> telnet localhost 5557
-> poison_enable on
-> poison_add 0x107d11b400
->
-> - Read poison
-> echo trigger > ./trigger_start
-> $ triggering ...
-> $ signal 7 code 3 addr 0x7fff86ff4400
->
-> [0]: https://lists.riscv.org/g/tech-prs/topic/risc_v_ras_related_ecrs/113=
-685653
-> [1]: https://patchew.org/linux/20250227123628.2931490-1-hchauhan@ventanam=
-icro.com/
-> [2]: https://lore.kernel.org/lkml/20241209024257.3618492-1-tongtiangen@hu=
-awei.com/
-> [3]: https://github.com/torvalds/linux/blob/9dd1835ecda5b96ac88c166f4a873=
-86f3e727bd9/arch/x86/kernel/cpu/mce/core.c#L1514
->
-> Himanshu Chauhan (2):
->   riscv: Define ioremap_cache for RISC-V
->   riscv: Define arch_apei_get_mem_attribute for RISC-V
->
-> Ruidong Tian (3):
->   acpi: Introduce SSE and HEE in HEST notification types
->   riscv: Introduce HEST HEE notification handlers for APEI
->   riscv: Add Hardware Error Exception trap handler
->
+> A while ago we added support for file handles to pidfs so pidfds can be
+> encoded and decoded as file handles. Userspace has adopted this quickly
+> and it's proven very useful.
 
-Himanshu had already sent-out RFC v1 way back in Feb 2025 [1] which
-did not receive any comments or feedback.
+> Pidfd file handles are exhaustive meaning
+> they don't require a handle on another pidfd to pass to
+> open_by_handle_at() so it can derive the filesystem to decode in.
+>
+> Implement the exhaustive file handles for namespaces as well.
 
-Instead of sending out a half-baked series, it will be helpful if you
-can review Himanshu's series.
+I think you decide to split the "exhaustive" part to another patch,
+so better drop this paragraph?
 
-Regards,
-Anup
+I am missing an explanation about the permissions for
+opening these file handles.
 
-[1] https://patchew.org/linux/20250227123628.2931490-1-hchauhan@ventanamicr=
-o.com/
+My understanding of the code is that the opener needs to meet one of
+the conditions:
+1. user has CAP_SYS_ADMIN in the userns owning the opened namespace
+2. current task is in the opened namespace
+
+But I do not fully understand the rationale behind the 2nd condition,
+that is, when is it useful?
+And as far as I can tell, your selftest does not cover this condition
+(only both true or both false)?
+
+I suggest to start with allowing only the useful and important
+cases, so if cond #1 is useful enough, drop cond #2 and we can add
+it later if needed and then your selftests already cover cond #1 true and f=
+alse.
+
+>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+After documenting the permissions, with ot without dropping cond #2
+feel free to add:
+
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+
+> ---
+>  fs/nsfs.c                | 176 +++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  include/linux/exportfs.h |   6 ++
+>  2 files changed, 182 insertions(+)
+>
+> diff --git a/fs/nsfs.c b/fs/nsfs.c
+> index 6f8008177133..a1585a2f4f03 100644
+> --- a/fs/nsfs.c
+> +++ b/fs/nsfs.c
+> @@ -13,6 +13,12 @@
+>  #include <linux/nsfs.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/mnt_namespace.h>
+> +#include <linux/ipc_namespace.h>
+> +#include <linux/time_namespace.h>
+> +#include <linux/utsname.h>
+> +#include <linux/exportfs.h>
+> +#include <linux/nstree.h>
+> +#include <net/net_namespace.h>
+>
+>  #include "mount.h"
+>  #include "internal.h"
+> @@ -417,12 +423,182 @@ static const struct stashed_operations nsfs_stashe=
+d_ops =3D {
+>         .put_data =3D nsfs_put_data,
+>  };
+>
+> +struct nsfs_fid {
+> +       u64 ns_id;
+> +       u32 ns_type;
+> +       u32 ns_inum;
+> +} __attribute__ ((packed));
+> +
+> +#define NSFS_FID_SIZE (sizeof(struct nsfs_fid) / sizeof(u32))
+> +
+> +static int nsfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+> +                         struct inode *parent)
+> +{
+> +       struct nsfs_fid *fid =3D (struct nsfs_fid *)fh;
+> +       struct ns_common *ns =3D inode->i_private;
+> +       int len =3D *max_len;
+> +
+> +       /*
+> +        * TODO:
+> +        * For hierarchical namespaces we should start to encode the
+> +        * parent namespace. Then userspace can walk a namespace
+> +        * hierarchy purely based on file handles.
+> +        */
+> +       if (parent)
+> +               return FILEID_INVALID;
+> +
+> +       if (len < NSFS_FID_SIZE) {
+> +               *max_len =3D NSFS_FID_SIZE;
+> +               return FILEID_INVALID;
+> +       }
+> +
+> +       len  =3D NSFS_FID_SIZE;
+> +
+> +       fid->ns_id =3D ns->ns_id;
+> +       fid->ns_type =3D ns->ops->type;
+> +       fid->ns_inum =3D inode->i_ino;
+> +       *max_len =3D len;
+> +       return FILEID_NSFS;
+> +}
+> +
+> +static struct dentry *nsfs_fh_to_dentry(struct super_block *sb, struct f=
+id *fh,
+> +                                       int fh_len, int fh_type)
+> +{
+> +       struct path path __free(path_put) =3D {};
+> +       struct nsfs_fid *fid =3D (struct nsfs_fid *)fh;
+> +       struct user_namespace *owning_ns =3D NULL;
+> +       struct ns_common *ns;
+> +       int ret;
+> +
+> +       if (fh_len < NSFS_FID_SIZE)
+> +               return NULL;
+> +
+> +       switch (fh_type) {
+> +       case FILEID_NSFS:
+> +               break;
+> +       default:
+> +               return NULL;
+> +       }
+> +
+> +       scoped_guard(rcu) {
+> +               ns =3D ns_tree_lookup_rcu(fid->ns_id, fid->ns_type);
+> +               if (!ns)
+> +                       return NULL;
+> +
+> +               VFS_WARN_ON_ONCE(ns->ns_id !=3D fid->ns_id);
+> +               VFS_WARN_ON_ONCE(ns->ops->type !=3D fid->ns_type);
+> +               VFS_WARN_ON_ONCE(ns->inum !=3D fid->ns_inum);
+> +
+> +               if (!refcount_inc_not_zero(&ns->count))
+> +                       return NULL;
+> +       }
+> +
+> +       switch (ns->ops->type) {
+> +#ifdef CONFIG_CGROUPS
+> +       case CLONE_NEWCGROUP:
+> +               if (!current_in_namespace(to_cg_ns(ns)))
+> +                       owning_ns =3D to_cg_ns(ns)->user_ns;
+> +               break;
+> +#endif
+> +#ifdef CONFIG_IPC_NS
+> +       case CLONE_NEWIPC:
+> +               if (!current_in_namespace(to_ipc_ns(ns)))
+> +                       owning_ns =3D to_ipc_ns(ns)->user_ns;
+> +               break;
+> +#endif
+> +       case CLONE_NEWNS:
+> +               if (!current_in_namespace(to_mnt_ns(ns)))
+> +                       owning_ns =3D to_mnt_ns(ns)->user_ns;
+> +               break;
+> +#ifdef CONFIG_NET_NS
+> +       case CLONE_NEWNET:
+> +               if (!current_in_namespace(to_net_ns(ns)))
+> +                       owning_ns =3D to_net_ns(ns)->user_ns;
+> +               break;
+> +#endif
+> +#ifdef CONFIG_PID_NS
+> +       case CLONE_NEWPID:
+> +               if (!current_in_namespace(to_pid_ns(ns))) {
+> +                       owning_ns =3D to_pid_ns(ns)->user_ns;
+> +               } else if (!READ_ONCE(to_pid_ns(ns)->child_reaper)) {
+> +                       ns->ops->put(ns);
+> +                       return ERR_PTR(-EPERM);
+> +               }
+> +               break;
+> +#endif
+> +#ifdef CONFIG_TIME_NS
+> +       case CLONE_NEWTIME:
+> +               if (!current_in_namespace(to_time_ns(ns)))
+> +                       owning_ns =3D to_time_ns(ns)->user_ns;
+> +               break;
+> +#endif
+> +#ifdef CONFIG_USER_NS
+> +       case CLONE_NEWUSER:
+> +               if (!current_in_namespace(to_user_ns(ns)))
+> +                       owning_ns =3D to_user_ns(ns);
+> +               break;
+> +#endif
+> +#ifdef CONFIG_UTS_NS
+> +       case CLONE_NEWUTS:
+> +               if (!current_in_namespace(to_uts_ns(ns)))
+> +                       owning_ns =3D to_uts_ns(ns)->user_ns;
+> +               break;
+> +#endif
+> +       default:
+> +               return ERR_PTR(-EOPNOTSUPP);
+> +       }
+> +
+> +       if (owning_ns && !ns_capable(owning_ns, CAP_SYS_ADMIN)) {
+> +               ns->ops->put(ns);
+> +               return ERR_PTR(-EPERM);
+> +       }
+> +
+> +       /* path_from_stashed() unconditionally consumes the reference. */
+> +       ret =3D path_from_stashed(&ns->stashed, nsfs_mnt, ns, &path);
+> +       if (ret)
+> +               return ERR_PTR(ret);
+> +
+> +       return no_free_ptr(path.dentry);
+> +}
+> +
+> +/*
+> + * Make sure that we reject any nonsensical flags that users pass via
+> + * open_by_handle_at().
+> + */
+> +#define VALID_FILE_HANDLE_OPEN_FLAGS \
+> +       (O_RDONLY | O_WRONLY | O_RDWR | O_NONBLOCK | O_CLOEXEC | O_EXCL)
+> +
+> +static int nsfs_export_permission(struct handle_to_path_ctx *ctx,
+> +                                  unsigned int oflags)
+> +{
+> +       if (oflags & ~(VALID_FILE_HANDLE_OPEN_FLAGS | O_LARGEFILE))
+> +               return -EINVAL;
+> +
+> +       /* nsfs_fh_to_dentry() is performs further permission checks. */
+> +       return 0;
+> +}
+> +
+> +static struct file *nsfs_export_open(struct path *path, unsigned int ofl=
+ags)
+> +{
+> +       /* Clear O_LARGEFILE as open_by_handle_at() forces it. */
+> +       oflags &=3D ~O_LARGEFILE;
+> +       return file_open_root(path, "", oflags, 0);
+> +}
+> +
+> +static const struct export_operations nsfs_export_operations =3D {
+> +       .encode_fh      =3D nsfs_encode_fh,
+> +       .fh_to_dentry   =3D nsfs_fh_to_dentry,
+> +       .open           =3D nsfs_export_open,
+> +       .permission     =3D nsfs_export_permission,
+> +};
+> +
+>  static int nsfs_init_fs_context(struct fs_context *fc)
+>  {
+>         struct pseudo_fs_context *ctx =3D init_pseudo(fc, NSFS_MAGIC);
+>         if (!ctx)
+>                 return -ENOMEM;
+>         ctx->ops =3D &nsfs_ops;
+> +       ctx->eops =3D &nsfs_export_operations;
+>         ctx->dops =3D &ns_dentry_operations;
+>         fc->s_fs_info =3D (void *)&nsfs_stashed_ops;
+>         return 0;
+> diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+> index cfb0dd1ea49c..3aac58a520c7 100644
+> --- a/include/linux/exportfs.h
+> +++ b/include/linux/exportfs.h
+> @@ -122,6 +122,12 @@ enum fid_type {
+>         FILEID_BCACHEFS_WITHOUT_PARENT =3D 0xb1,
+>         FILEID_BCACHEFS_WITH_PARENT =3D 0xb2,
+>
+> +       /*
+> +        *
+> +        * 64 bit namespace identifier, 32 bit namespace type, 32 bit ino=
+de number.
+> +        */
+> +       FILEID_NSFS =3D 0xf1,
+> +
+>         /*
+>          * 64 bit unique kernfs id
+>          */
+>
+> --
+> 2.47.3
+>
 
