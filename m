@@ -1,168 +1,138 @@
-Return-Path: <linux-kernel+bounces-810512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4052B51B9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:29:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF37B51B9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94C6D7A81B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:27:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5B5D467BBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5C0223DF1;
-	Wed, 10 Sep 2025 15:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD9031A056;
+	Wed, 10 Sep 2025 15:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HhAxLoDd"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2063.outbound.protection.outlook.com [40.107.237.63])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0UVzIKkM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Vf9KIWCy"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F5B286439;
-	Wed, 10 Sep 2025 15:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757518119; cv=fail; b=i3GrW6FKNIiSApT+PaIEwKZeIERqA+wDMY3WJYd5N6n+39xAwI9OeBh5Zrdr3TwkFejpL2xTSnzEi0B8uaZBbwJT3qEPgS5X8ztJMjdWTYy7wzmXPa87xbHdhs9ZLORfto+oB4DkRpGM7ddbbIjgjP8zbOtZyyw9Bit6TOS8nC8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757518119; c=relaxed/simple;
-	bh=LQpfVDljiU2i+ZSB0i5HKUkDH/tkwTqdhnyBHA7UnHU=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YxNW+yszVmG84mBiHD6vXzaeUBmDsRD5MhP3tiXRqfkZJJI4+vV9f1aMyaFC34pMIMiKQR81jbl9tEzogm3nkwFJWg87tBM1XYuzyQrwx+urrLVAmeKxza1oRMhll88QkPwMbvexgPhrdQ3h4A8aZOgS+MNC7msa/eWiZGNMjyo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HhAxLoDd; arc=fail smtp.client-ip=40.107.237.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BBCO6N6xs99w6N6jaH9HILFmyOQFbOz08m93c4y0vUa2Ct+yjo8n81kwWSE7nZ08lMZ8KSyQOQnnCRKbrqT5MZ5AOzBSkfitCI8/S1F6Vv/tgm/o0vrlrcLgULojtBoZ667dFIPK3BXn5XpCRVNnL7NyQiJjCwEJPKCoU4+XaBbVA2WTE9svnBu1Ydy6Ql0nUs+bH39c0q8uOEc5wYJtC/cOeE5hhi8ctLIWL8ndjauM296zmBwlDkvrNUVRXBWwEUregwr6ED+fzYGytyCnz51s2ygN12pGLTvJIysW4bPiwGyPFl6WiktiHqPtGUGhzseeky3Ues6WZ/CDrJyj0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IXmoMLThRzyPa8vvWey5ilbWgJ3JZXCCn6jiIovhACo=;
- b=eP6rjotzwSNthxbLD3MEyTRdIAPdfzz2S+3kG66h2weoIlYnoDCjpLczz+8q2/wblQvZcwKzElhvVVu6VgdGOvzRciV6oDCR/LeyNXsYQZEiKk3O/92SvxrDgFBPBaTRhQknoz2TYHXTYC5nP/iMoYF9sbG9+CgMAlDIeWBb5qn/1curcD0b61WqMFjvkBuFYExllwonBHXInqpm3P6BBq1r8j3uDgmmiS4Y86VobHCZ+oeYUtO+Zqb2cRNHcJhPekCDxbLollFB7Lbm7p2BmtgLNlH79weKhRSjwy6O0SoBMiu0C2JiR2zWX1B1P9NhzM7u5nmrfsx0e9pLj95ssA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IXmoMLThRzyPa8vvWey5ilbWgJ3JZXCCn6jiIovhACo=;
- b=HhAxLoDdOBUgEKYmqlT1hwaZGwzOkNfdrA9EAU5Ch5Xc0VG+KJDIVqg/wKqf4V7gDY9qcpqhqUUZ6xG6KI3FoDjHXUPLR3oaA45FRElt0WpLP6juLrTlI2fHvJ9yzR9GtilT4Y069h8fSMVQ8ZdT21l4i8rdrcxlnF8xSmGJyow=
-Received: from SJ0PR03CA0108.namprd03.prod.outlook.com (2603:10b6:a03:333::23)
- by CYXPR12MB9425.namprd12.prod.outlook.com (2603:10b6:930:dc::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 15:28:34 +0000
-Received: from MWH0EPF000A6732.namprd04.prod.outlook.com
- (2603:10b6:a03:333:cafe::a9) by SJ0PR03CA0108.outlook.office365.com
- (2603:10b6:a03:333::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Wed,
- 10 Sep 2025 15:28:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- MWH0EPF000A6732.mail.protection.outlook.com (10.167.249.24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Wed, 10 Sep 2025 15:28:34 +0000
-Received: from localhost (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 10 Sep
- 2025 08:28:33 -0700
-From: Nathan Lynch <nathan.lynch@amd.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: Vinod Koul <vkoul@kernel.org>, Wei Huang <wei.huang2@amd.com>, "Mario
- Limonciello" <mario.limonciello@amd.com>, Bjorn Helgaas
-	<bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>
-Subject: Re: [PATCH RFC 10/13] dmaengine: sdxi: Add PCI driver support
-In-Reply-To: <20250905200520.GA1321712@bhelgaas>
-References: <20250905200520.GA1321712@bhelgaas>
-Date: Wed, 10 Sep 2025 10:28:31 -0500
-Message-ID: <87ldmm499c.fsf@AUSNATLYNCH.amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B51223DF1;
+	Wed, 10 Sep 2025 15:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757518141; cv=none; b=kTJc+BFzOC1pusfhWT/Gf58+c6GkBVmBgwOi6TONKNZV5vKeTwbgYBftQ3Ci87nHfvyN5vNPFDVJ3SIT1NKukzitJEQEswo2+UAmsb3g51vRuNF9frosaVoKvgszHswqxIZZ1Pn4SP9wVmX61NXEJ/CzTdaG1TBhlJ2wCzz8BSs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757518141; c=relaxed/simple;
+	bh=Au2nT8WTdMSVo0LlpbRIzVo18Sbjm4DWP3sYOxTT6Ac=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=OMn/Mu8rS1F4UdJ6GjbCm8Q7tZYS9lEoFhtQVUIz0zhSPmn1V4M0MbbG2qfUY1j4V7yuS+mi0S45l9DI+cTgLoGeUje0tT50PKx1Yl4JTmrnh4O8DHZF+fdQMhPjdeDoYjU/g/9TrcqflmqkakmyzKGTRE1FD5+WkC5RnLSrKeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0UVzIKkM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Vf9KIWCy; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 10 Sep 2025 15:28:56 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757518138;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=Lk93qa4jSTMoC9Z+oKsAX4E36iEr5EO0s7iabVExIiU=;
+	b=0UVzIKkMTnybKXG9yJMzMZ2acqTVoJUlvUw8HqXyUfy1PfEYZKvzFnxZVr//93up64MKP4
+	Bun4lCMBCfYXIhAL9Ql3uygdAWlepnmkHRZWJzq2roMFfNXlhhaneMwDxXdL4t2VoUDBzS
+	7QzO8xM05iXu8YnypKTgdUbNwpgvv/ZX22q57dhZ1NZqWtK9XU2P8ayEeF6CFpPyl3t7wP
+	iGWjX4jLQ08kYgb/ExUxF70laLhy0ysrmh/rtaxl4jLgBVxNhx1skD/xT2BV3xolgwIl6J
+	YziQPUL30fKQBIoV8wi86x6F2lyUkpfCPm5tobnQCxo4SIC0F4kGTR6MA9Q4fw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757518138;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=Lk93qa4jSTMoC9Z+oKsAX4E36iEr5EO0s7iabVExIiU=;
+	b=Vf9KIWCyXv/KD/AflsrPxJQ7BunTz0NLi2JIZxoBnWoqvgM5xZRbrUFjr7I0dMCrApXkek
+	NkuFLZoZBuxWBECA==
+From: "tip-bot2 for Tom Lendacky" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/sev] x86/startup/sev: Document the CPUID flow in the boot
+ #VC handler
+Cc: Tom Lendacky <thomas.lendacky@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A6732:EE_|CYXPR12MB9425:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2aa8fef-eea9-4fdb-e394-08ddf07eb4b1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?h3Td3fksz5L5x66e5Rhpn3o7zHPXLawiwPFKQbIbgu2cn9ozM1fDupBQ53YP?=
- =?us-ascii?Q?5t8IVh1TokhhT04TtGyZOyZQXqWl2MLFM9uvrfWX3d2wqunURZTsZgIynDzv?=
- =?us-ascii?Q?ZfphFYqiC7P9woew2aXNTdTGrDc9GBp24vS8JhEQ3b1gR6VT89ZpWbiAXyzy?=
- =?us-ascii?Q?edaH9cTtPW2bukV3GrEAdLBGx0cXrijKNLCTW8FgjTgD2ADS/4E8Imrj/n8J?=
- =?us-ascii?Q?XgBYDUu1OwPVsFxNQh5Jvp5lDBmWw8+sled2qTjC95eWm11OehYW+s4XieFA?=
- =?us-ascii?Q?9qICgIqMh5FwUJSBgXtiLeYRSZv/ns8kkvfLuM3fCDSeEytg9iCPZso6vhbo?=
- =?us-ascii?Q?ur6cGiIv7X4PKHoS8OTh/bbbCvXEJDPu7TZHbovgpDDMJjR5ayKvygsVn+n0?=
- =?us-ascii?Q?JjI8JJoX0XbuKCYcH7YsLAcBIYDfVMOEhcELOvPhaHvJxtcPPi4DwafRaclh?=
- =?us-ascii?Q?KO/tSBluZEEZIjNSsjaRb7WWpd9clvi+uc82GihKzAXA1Xpz9zoqotr2jpIs?=
- =?us-ascii?Q?3ihbDa3ngwgz+TQcOfxEsyRxjexy1FUqPiYQ2bPhMgnJ2GCQTzJSD4FFVCZW?=
- =?us-ascii?Q?Yqbe7Q7IIdk16tGil3qMUbCOwcONDqmAsCyA7xNaKmAmWClqKSojbEe9bqzi?=
- =?us-ascii?Q?fzti35iZtMuvSDPZ4iqmbIwn+cxHpMrIl+RkJuMJVeQsR5K6qsO69E0khwuS?=
- =?us-ascii?Q?A3Gwb77dGg8dNSs2qrBpZAHo56Zg+VAZcwm11rVKpmpcrgGq4Mj6K2/6DCsA?=
- =?us-ascii?Q?eU7ZCOdLeeJZAeRjeNFiQEhadXvPOG4yfTfH15kEcx743VH6VQ5hwXNJQdf0?=
- =?us-ascii?Q?GRMgU0ZYn7CnyBWN3w0jTHYGTU62yG3wJ7OqrU7EVE2E+zi5B5lOoRXEp9ft?=
- =?us-ascii?Q?1f1IT9cgLy1g6a4RUUtzpAc0NEOPe469SvsIUDfCjyPzmongfXGxrxBVuQMF?=
- =?us-ascii?Q?Oi6DiEvtmEDvETGfvydGTkUMa2rcXOtcjx01sPiJw/TSBQJ/RseOLAHrxwld?=
- =?us-ascii?Q?Jso1zX0u4uj4P2y4LH1WUw3BfygM7ph6Lsufsjcv/7jkaa+lUMBlsksWw7lk?=
- =?us-ascii?Q?2z39APWscb6c9QZWYlE/8z7BTfx5nvajBVwLRitGvEm4t5U92Or7J9W656xQ?=
- =?us-ascii?Q?eDxnUxetGTIoCMT5j+z2MRKvy+hdIwC+82GJvEv1sVeuizhLrGHqcKX66Njd?=
- =?us-ascii?Q?T3HyGFR8+qNc+sktJMFRk3x5kC8fycySsCNDRkPiow5uyLiFDHHNH0O+YkmC?=
- =?us-ascii?Q?ey/DDZlJUWl0F5BqVqleKezgZJG2AQtav73WAi2C7HZRuju84J4s5HUH9ci4?=
- =?us-ascii?Q?s1QIz3E5ZDfC2RYPuWDUZG/C0+ZHixNXNz/LhQMOjrcMnIZK2kGgTdyKW99w?=
- =?us-ascii?Q?c4RNG4/tG99kONzMtPpjX8VzvaCLlSp4kaNHLtZWiiC35R09BEXQlfnjjNN8?=
- =?us-ascii?Q?fbDtvhSOIQG/jj3uOgpGYTSUiyHOrelB3dNXfb8Z+3t/YfjYyc3B/wz4TrbQ?=
- =?us-ascii?Q?0pyn01SWMVxBTz3uq985QhKFXo91irPtuDMs?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 15:28:34.3248
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2aa8fef-eea9-4fdb-e394-08ddf07eb4b1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A6732.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9425
+Message-ID: <175751813665.709179.10650994909607119389.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Bjorn Helgaas <helgaas@kernel.org> writes:
-> On Fri, Sep 05, 2025 at 01:48:33PM -0500, Nathan Lynch via B4 Relay wrote:
->> +static int sdxi_pci_init(struct sdxi_dev *sdxi)
->> +{
->> +	struct pci_dev *pdev = sdxi_to_pci_dev(sdxi);
->> +	struct device *dev = &pdev->dev;
->> +	int dma_bits = 64;
->> +	int ret;
->> +
->> +	ret = pcim_enable_device(pdev);
->> +	if (ret) {
->> +		sdxi_err(sdxi, "pcim_enbale_device failed\n");
->
-> s/pcim_enbale_device/pcim_enable_device/
+The following commit has been merged into the x86/sev branch of tip:
 
-Will fix.
+Commit-ID:     8d73829b78ca1a0e6eb93380f3bf5193d58c281c
+Gitweb:        https://git.kernel.org/tip/8d73829b78ca1a0e6eb93380f3bf5193d58=
+c281c
+Author:        Tom Lendacky <thomas.lendacky@amd.com>
+AuthorDate:    Wed, 10 Sep 2025 17:19:28 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 10 Sep 2025 17:23:24 +02:00
 
->
->> +		return ret;
->> +	}
->> +
->> +	pci_set_master(pdev);
->> +	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(dma_bits));
->
-> I don't see the point of "dma_bits" over using 64 here.
+x86/startup/sev: Document the CPUID flow in the boot #VC handler
 
-Agreed.
+Document the CPUID reading the different SEV guest types do - the SNP
+one which relies on the presence of a CPUID table and the SEV-ES one,
+which reads the CPUID supplied by the hypervisor.
+
+The intent being to clarify the two back-to-back, similar CPUID
+invocations.
+
+No functional changes.
+
+  [ bp: Turn into a proper patch. ]
+
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/fbb24767-0e06-d1d6-36e0-1757d98aca66@amd.com
+---
+ arch/x86/boot/startup/sev-shared.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/arch/x86/boot/startup/sev-shared.c b/arch/x86/boot/startup/sev-s=
+hared.c
+index 08cc156..4e22ffd 100644
+--- a/arch/x86/boot/startup/sev-shared.c
++++ b/arch/x86/boot/startup/sev-shared.c
+@@ -458,6 +458,13 @@ void do_vc_no_ghcb(struct pt_regs *regs, unsigned long e=
+xit_code)
+ 	leaf.fn =3D fn;
+ 	leaf.subfn =3D subfn;
+=20
++	/*
++	 * If SNP is active, then snp_cpuid() uses the CPUID table to obtain the
++	 * CPUID values (with possible HV interaction during post-processing of
++	 * the values). But if SNP is not active (no CPUID table present), then
++	 * snp_cpuid() returns -EOPNOTSUPP so that an SEV-ES guest can call the
++	 * HV to obtain the CPUID information.
++	 */
+ 	ret =3D snp_cpuid(snp_cpuid_hv_msr, NULL, &leaf);
+ 	if (!ret)
+ 		goto cpuid_done;
+@@ -465,6 +472,10 @@ void do_vc_no_ghcb(struct pt_regs *regs, unsigned long e=
+xit_code)
+ 	if (ret !=3D -EOPNOTSUPP)
+ 		goto fail;
+=20
++	/*
++	 * This is reached by a SEV-ES guest and needs to invoke the HV for
++	 * the CPUID data.
++	 */
+ 	if (__sev_cpuid_hv_msr(&leaf))
+ 		goto fail;
+=20
 
