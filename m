@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-809657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962FFB51076
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:06:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D576EB5107C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC3EC16DCC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:05:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF8877BB108
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECEB31282D;
-	Wed, 10 Sep 2025 08:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E102311C38;
+	Wed, 10 Sep 2025 08:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XOJHhG2v";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bhV8GnZN";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XOJHhG2v";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bhV8GnZN"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YPw5IO+o";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sgSvKRdD";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YPw5IO+o";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sgSvKRdD"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBC0312827
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949E2311973
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491309; cv=none; b=VcBBx/X0TGf1xmRIdUZZAmT8+OcMh1kdTjh96jHTUdFIb3I687ctn2mLNGS3jG09ie2BL7cnvndEWeMUF0fvF0D1ixSPYzpaKNiEgPoG09rKO+HHUK4E1iMw0GAD5gOgU34ewB2esoveVqPbK/OZOwuWKEu38JKT1YQFxAK1VYg=
+	t=1757491304; cv=none; b=rJXiSCOI9m9rs4aS44BGlGeRaSHC9HSiwyFGcYd9sWv1WnYyYx/Y3x2hNB+T0zc/HpCAASjNOsyN2FEf1XeeDhpWplvToDVs6CFF1BXk/BfPV3uzvcjL6Iut8p5aXMn0YdyKl346UMk2QOaVhAvM7ae5peEeKBaDfDVB8Ujv6v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491309; c=relaxed/simple;
-	bh=IbW3Hwc2yVi+Ksjat79Bt0c8mqQegJtd4O77r1T6JHg=;
+	s=arc-20240116; t=1757491304; c=relaxed/simple;
+	bh=8zhwdOkNAvH6snya/EkLPN9kkVJJEEo+XjxQ5KsrJ7Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WRMs7teGrCqiRDsz2JbqOsR2dtyKY+YxOa24aLRwMWuHC8nWYInRCsHmbKUrwwd8l1pfajQUTDdcQVLSt8zMrJMN4pJT32SfSUEc1Ib3hzVNejUn83dfTFTZ1uGjPLsFG4KNhbI5bCy9P0uC4Ho8E0ekWU6j/WquLDCjk6epyoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XOJHhG2v; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bhV8GnZN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XOJHhG2v; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bhV8GnZN; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:To:Cc; b=U4zXqHpEHoiCTZiwyTg+TiOqZRzjUIVanD40OynWlkX9IUZAl8Adz+ck2WUJhLyT9GI+df23HDgAf4XX3sy6RAcRrXP34L5W/fQ503AlQjQphOx6LXTFzE9Ou4djLnW6dOw2E2sHyVxcerA+9uEvsLnM1tSfrJx6NyVhqK2EA/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YPw5IO+o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sgSvKRdD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YPw5IO+o; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sgSvKRdD; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 52F8B34C65;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5304A5CB34;
 	Wed, 10 Sep 2025 08:01:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1757491267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yjD49SbUXnEu+0JzrLTF+521Hhj3syJQd2OSJQchv9c=;
-	b=XOJHhG2vZC0MBDIR8MKa611bMkqdlds+kx5f2bVvAK7EafB0g36SkYhXp3kG8oqctrpgSV
-	3M3EhLAgK6fqbyKh4Wq9YzldQn3iaG2tc7CXpjIPAlr3rQVNDOT0KH0cdLcWvU8Qdb0vk4
-	wEGb4g3fR8/JvKoGU7VZM3eI7L3pjoI=
+	bh=JknvsOxfmdGK99z5Y7Du3/KRq6UYdu6X7lKlwYsXCV8=;
+	b=YPw5IO+oJdz5rFhGGiXcLxntBg4dQtv/AZfDa58nfUW0pulrlTBA78HLoJ8DalVdbjN3AJ
+	C0egF1mCnxK3hEeFFci2DMnofdQigpmjOllksLUOJifn1F9oZDsgEoSbaLzbMkhxOmzqkE
+	fcLhoNGshkR+ZB083dHYP3RKv71CQ98=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1757491267;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yjD49SbUXnEu+0JzrLTF+521Hhj3syJQd2OSJQchv9c=;
-	b=bhV8GnZNs78mOmK/I+PAZDXMSRDwlJbqkgYKgIw7ozPEpkoL2S+VIXoYn6D9VO0Yo1w2fo
-	vR9SeuVIChwey9BQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XOJHhG2v;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=bhV8GnZN
+	bh=JknvsOxfmdGK99z5Y7Du3/KRq6UYdu6X7lKlwYsXCV8=;
+	b=sgSvKRdDq2XsiiXk/7Crr8DG5iWigMyXMXUcR0U8vCxpaJ7jxU3b7OtFGpoLxNh6s3912i
+	WhVESaxaLatiyjAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1757491267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yjD49SbUXnEu+0JzrLTF+521Hhj3syJQd2OSJQchv9c=;
-	b=XOJHhG2vZC0MBDIR8MKa611bMkqdlds+kx5f2bVvAK7EafB0g36SkYhXp3kG8oqctrpgSV
-	3M3EhLAgK6fqbyKh4Wq9YzldQn3iaG2tc7CXpjIPAlr3rQVNDOT0KH0cdLcWvU8Qdb0vk4
-	wEGb4g3fR8/JvKoGU7VZM3eI7L3pjoI=
+	bh=JknvsOxfmdGK99z5Y7Du3/KRq6UYdu6X7lKlwYsXCV8=;
+	b=YPw5IO+oJdz5rFhGGiXcLxntBg4dQtv/AZfDa58nfUW0pulrlTBA78HLoJ8DalVdbjN3AJ
+	C0egF1mCnxK3hEeFFci2DMnofdQigpmjOllksLUOJifn1F9oZDsgEoSbaLzbMkhxOmzqkE
+	fcLhoNGshkR+ZB083dHYP3RKv71CQ98=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1757491267;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yjD49SbUXnEu+0JzrLTF+521Hhj3syJQd2OSJQchv9c=;
-	b=bhV8GnZNs78mOmK/I+PAZDXMSRDwlJbqkgYKgIw7ozPEpkoL2S+VIXoYn6D9VO0Yo1w2fo
-	vR9SeuVIChwey9BQ==
+	bh=JknvsOxfmdGK99z5Y7Du3/KRq6UYdu6X7lKlwYsXCV8=;
+	b=sgSvKRdDq2XsiiXk/7Crr8DG5iWigMyXMXUcR0U8vCxpaJ7jxU3b7OtFGpoLxNh6s3912i
+	WhVESaxaLatiyjAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1185313B06;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2542513A54;
 	Wed, 10 Sep 2025 08:01:07 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gK7/A0MwwWgGJAAAD6G6ig
+	id wLDRCEMwwWgGJAAAD6G6ig
 	(envelope-from <vbabka@suse.cz>); Wed, 10 Sep 2025 08:01:07 +0000
 From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 10 Sep 2025 10:01:18 +0200
-Subject: [PATCH v8 16/23] tools/testing: include maple-shim.c in maple.c
+Date: Wed, 10 Sep 2025 10:01:19 +0200
+Subject: [PATCH v8 17/23] testing/radix-tree/maple: Hack around kfree_rcu
+ not existing
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,7 +99,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-slub-percpu-caches-v8-16-ca3099d8352c@suse.cz>
+Message-Id: <20250910-slub-percpu-caches-v8-17-ca3099d8352c@suse.cz>
 References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
 In-Reply-To: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
 To: Suren Baghdasaryan <surenb@google.com>, 
@@ -109,85 +109,86 @@ Cc: Roman Gushchin <roman.gushchin@linux.dev>,
  Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
  Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org, 
  linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
- maple-tree@lists.infradead.org, vbabka@suse.cz
+ maple-tree@lists.infradead.org, vbabka@suse.cz, 
+ Pedro Falcato <pfalcato@suse.de>
 X-Mailer: b4 0.14.2
-X-Spamd-Result: default: False [-4.51 / 50.00];
+X-Spamd-Result: default: False [-4.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz];
-	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLfsjnp7neds983g95ihcnuzgq)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email]
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz,suse.de];
+	R_RATELIMIT(0.00)[to_ip_from(RLwn5r54y1cp81no5tmbbew5oc)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.cz:mid,suse.cz:email]
 X-Spam-Flag: NO
 X-Spam-Level: 
-X-Rspamd-Queue-Id: 52F8B34C65
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+X-Spam-Score: -4.30
 
-There's some duplicated code and we are about to add more functionality
-in maple-shared.h that we will need in the userspace maple test to be
-available, so include it via maple-shim.c
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
 
-Co-developed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+liburcu doesn't have kfree_rcu (or anything similar). Despite that, we
+can hack around it in a trivial fashion, by adding a wrapper.
+
+The wrapper only works for maple_nodes because we cannot get the
+kmem_cache pointer any other way in the test code.
+
+Link: https://lore.kernel.org/all/20250812162124.59417-1-pfalcato@suse.de/
+Suggested-by: Pedro Falcato <pfalcato@suse.de>
 Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- tools/testing/radix-tree/maple.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ tools/testing/shared/maple-shared.h | 11 +++++++++++
+ tools/testing/shared/maple-shim.c   |  6 ++++++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
-index c0543060dae2510477963331fb0ccdffd78ea965..4a35e1e7c64b7ce347cbd1693beeaacb0c4c330e 100644
---- a/tools/testing/radix-tree/maple.c
-+++ b/tools/testing/radix-tree/maple.c
-@@ -8,14 +8,6 @@
-  * difficult to handle in kernel tests.
-  */
+diff --git a/tools/testing/shared/maple-shared.h b/tools/testing/shared/maple-shared.h
+index dc4d30f3860b9bd23b4177c7d7926ac686887815..2a1e9a8594a2834326cd9374738b2a2c7c3f9f7c 100644
+--- a/tools/testing/shared/maple-shared.h
++++ b/tools/testing/shared/maple-shared.h
+@@ -10,4 +10,15 @@
+ #include <time.h>
+ #include "linux/init.h"
  
--#define CONFIG_DEBUG_MAPLE_TREE
--#define CONFIG_MAPLE_SEARCH
--#define MAPLE_32BIT (MAPLE_NODE_SLOTS > 31)
--#include "test.h"
--#include <stdlib.h>
--#include <time.h>
--#include <linux/init.h>
--
- #define module_init(x)
- #define module_exit(x)
- #define MODULE_AUTHOR(x)
-@@ -23,7 +15,9 @@
- #define MODULE_LICENSE(x)
- #define dump_stack()	assert(0)
- 
--#include "../../../lib/maple_tree.c"
-+#include "test.h"
++void maple_rcu_cb(struct rcu_head *head);
++#define rcu_cb		maple_rcu_cb
 +
-+#include "../shared/maple-shim.c"
- #include "../../../lib/test_maple_tree.c"
++#define kfree_rcu(_struct, _memb)		\
++do {                                            \
++    typeof(_struct) _p_struct = (_struct);      \
++                                                \
++    call_rcu(&((_p_struct)->_memb), rcu_cb);    \
++} while(0);
++
++
+ #endif /* __MAPLE_SHARED_H__ */
+diff --git a/tools/testing/shared/maple-shim.c b/tools/testing/shared/maple-shim.c
+index 9d7b743415660305416e972fa75b56824211b0eb..16252ee616c0489c80490ff25b8d255427bf9fdc 100644
+--- a/tools/testing/shared/maple-shim.c
++++ b/tools/testing/shared/maple-shim.c
+@@ -6,3 +6,9 @@
+ #include <linux/slab.h>
  
- #define RCU_RANGE_COUNT 1000
+ #include "../../../lib/maple_tree.c"
++
++void maple_rcu_cb(struct rcu_head *head) {
++	struct maple_node *node = container_of(head, struct maple_node, rcu);
++
++	kmem_cache_free(maple_node_cache, node);
++}
 
 -- 
 2.51.0
