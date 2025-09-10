@@ -1,130 +1,153 @@
-Return-Path: <linux-kernel+bounces-810170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D670B516D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:26:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569E3B516DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD6CB3A6B47
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D81172DDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C07D319858;
-	Wed, 10 Sep 2025 12:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1FA3191DE;
+	Wed, 10 Sep 2025 12:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQEP+c2v"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="moTNvFDW"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CDA23E335;
-	Wed, 10 Sep 2025 12:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130E92749E2
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757507199; cv=none; b=R6qNl2Qe51R7uNIxYB2MQiToAXsHxKU7jUwEjvVv18T7gX5zEwyeOM5s79nbGc/G7zVdJnyeVNFbOVJKRrpEPFJYZQnZFAMTNuhuvMSzJCyoU4zramxF2n0UCTQ21sysm3ufM0cIAH9cDDhkv+uDDAls95scWUSNcK0VV3o1SW4=
+	t=1757507305; cv=none; b=IsyNNGySSEE2fMB22G4iY7rz/tJIMnNURXIr1f5yokOSrg3GFaOuwhQA8lbYgnS7nPwuhqdkfVaHwVZ9VcHlfakJ1EilQoAX22+5Z9rYmT+mwpw+nf5GE8fK4chbG/g88jYhZZIV8eJlWNk/pJuAd7o+1J69gFPXpytt+IKtCAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757507199; c=relaxed/simple;
-	bh=5+oqeQqKcOcNexLLWSaNP8FwXROd5N6zTPNxd1c9umA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hER0+jXSJGBioGFClLxdH4e1lD1rKQAX6tP4UMEC5m8EF6nG2A0rbo7GfRuq9C4u2lMSLll+iOyphscl3NKpYslwxXxosgtJ3X+5rkC6/l2bQqgscWuSBhhTaKU5326tYYxyvnHYwDgEerCFxI60UMsc6NOqNpyUDxz/HtgTFyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QQEP+c2v; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-772679eb358so6325092b3a.1;
-        Wed, 10 Sep 2025 05:26:37 -0700 (PDT)
+	s=arc-20240116; t=1757507305; c=relaxed/simple;
+	bh=6iRbUz6HNcivZBZXhhr6c48doSj9UQKZZWm65LBXZeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DIqkXxoDGSqJ5wYzNSRikAJZivLWGpJ0OEd77MN7j0dtsRzVT2ah0XyKcgjiy39kRi5xG1HEIDeHltrYKqN42SJVhCPRp0FaQzx248YmUCvz67ou6P0h89j/MuuEXDRMymGskGVCoi34MOtex39YyM6rMFVwCVMY9QSUkAXbOt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=moTNvFDW; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45df656889cso8141745e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 05:28:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757507197; x=1758111997; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1757507302; x=1758112102; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QAi4h7GkC5BQfTMRwYsmkT5Tfbmlnk4jobHVH0SykIo=;
-        b=QQEP+c2vEis8MHIARWYPUAw2eAe9Ksji+83NNeacr+y6/b9vpcm5qiLRcIJBhLXwc1
-         lof0vdSxtYPg5CTe+G+K6fd7RJ7tUz7yNoFsdRai23ASVQnn5dU0pDZAtSawjKiV4htz
-         xy6MRXaQ+9hAuX1Pz5odJQgc8+tL0N4OQuUCw3dhkkVu2YLGBd53vlyxVVoDhECz7GGE
-         MYfn8Ryw7/Ft2dYcSPCynL7Ln0SIOP+IbzOBybNijAUQLclZEzm7TrpgoDHiHPRqAC3D
-         Ltd8tyGv/wWPxasoP/V7WnXmfuhR4baGHJfCD7DBlVVkTcrH8qW8ui8C0gg0C7E03Kkq
-         6pgQ==
+        bh=/llJ8V5aprdAFv039Ka3XSsdbWtR5dUVaUyCb0W042g=;
+        b=moTNvFDWNhajhYCwS5l4XLZHeOr2Ed2m08qkmA3tk2kQq0HfhV64O2xxqzqsza1Aql
+         JzX2XYNcfFRUSC7kckVXIPAdSd6lqPsFVFQcTWca6q2r7tWnwwhCuWcnve5/0eIIy+h1
+         YTd9NYYRUVlPxJps5dzEzw5CgJZneb/b6m673P0BSzJ8dC3asIpHbJ5c0bdzgKOP1SgE
+         IEox/uxg0s0x7HZqxSEV0ziS0tPOfr3PVIUJ/iID+KcCV77b3kQ7o579r1sLeUczfDRL
+         cj4yy3a+6cgDkzTULX7j7mOfzWfZ5+HWJEHJ1SFiUSptehvIT3BH4cMvNnI3y+ivEFJ9
+         uoyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757507197; x=1758111997;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757507302; x=1758112102;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QAi4h7GkC5BQfTMRwYsmkT5Tfbmlnk4jobHVH0SykIo=;
-        b=SlIMaMD3+YqDENK7a/JoYGqEiqHS1sF+RhphsvUDlhrvchCEVTiAjwdiN8iCcNUWAs
-         HM/23ZaJFjzEsNEeJrVTdy1LVcOTwkkCgMit7ml1jbwDBM+jL+h0uxMjRTsZxrhRdbz6
-         ZPnCK6rKpmOToAOsvvZJWNw/Zr3XHRV3vkeYX3Tn9+km/yevtGY8/Qsos+rn1H3XbdCh
-         kCUo2Gv9aRNNrUCTnzjnHJIksB+fRdde5L1rCgFllHQ9B6/nnJHwN5YDjhAE1QGC+2qc
-         L6xJj2ZjbXXWOHpPuK9MPXsowYRBzFzelReNz0OHw35/gyHeAuTYS/RW7x3TmeHzgxS5
-         Zbfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKqTNFzy7wjfdi6mZZvVd6W22UqQIZxVVA/ZwG/17fz+lrFSfZVQalJYZH3mQJdktnVIaWyVTy7+Nuo2o=@vger.kernel.org, AJvYcCUy4hDOxslEbBOjr3iZElFyBCo/xmqgUWEsLue64gxWocitHf59LhGiL1lci8wMKPRJx98AxZK6In0=@vger.kernel.org, AJvYcCXw94NpWsQCb3Sf53PKYMi1HJftDTM3wehEQAWf9UABmke3MfQaTLb+4OBBSTo0IeLPeqYq6EPSM2jM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHulLNU9TGtlQui/sS/PHErWJSPdOPhVbmCl04UzPwsvrclxtd
-	eRI3LChbNJm67gwlyWQ2Vv/l12XuiZ5iEDFK5lTq0dQJCoIIScOXB7Ik
-X-Gm-Gg: ASbGncsbBxfy1PDRd9aZMMKHZq4Dym8dL2wVM2PpOgVar7YpvZH1HKKbP7zNpswuZUR
-	OstdrcAPh4m/J+PvmzVHLOl7dzeMEAIqyZWu0iS+hb+TPx6kGwxiAjNigjicCuT+TPj+LVP9pdM
-	U/LtSk57MmNlJZLFsQ2chnAL9ROCB58kQc3Iu7znzlu9aqfCH+Gs5DnnZXWPN0dxoDSv+LFYkTN
-	MpoZyuzqqF4Q2YrYWlqox/AocQd3ls9eVEXDliT0o37bkV2SgFTg2nnXP1EznxMwsBkP7fczqlD
-	Ye5f+vOMNEnmDKUPUFTxw70KxVo+T1w8rUBuYkMcWwPzsMvEwPrevkTNjaVfgzqp/Oud1CUWex+
-	zdB+p28GvGE7sErS/No9ihsY=
-X-Google-Smtp-Source: AGHT+IEL+glbAe4f7mR6m2MbjJRehY217dc+1T/qJfFPi9e3ces+GtynNKFxecJgYJ+s46Lx0V236Q==
-X-Received: by 2002:a05:6a00:928d:b0:771:e434:6c7d with SMTP id d2e1a72fcca58-7742dcce97dmr19901041b3a.12.1757507197186;
-        Wed, 10 Sep 2025 05:26:37 -0700 (PDT)
-Received: from localhost ([2a09:bac5:3981:263c::3cf:19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-775fbbc320dsm1290652b3a.96.2025.09.10.05.26.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 05:26:36 -0700 (PDT)
-From: Ryan Zhou <ryanzhou54@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: Thinh.Nguyen@synopsys.com,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	rafael@kernel.org,
-	royluo@google.com,
-	ryanzhou54@gmail.com,
-	stern@rowland.harvard.edu
-Subject: [PATCH v3] drvier: usb: dwc3: Fix runtime PM trying to activate child device xxx.dwc3 but parent is not active
-Date: Wed, 10 Sep 2025 20:26:30 +0800
-Message-Id: <20250910122630.8435-1-ryanzhou54@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <2025090959-italicize-silly-f628@gregkh>
-References: <2025090959-italicize-silly-f628@gregkh>
+        bh=/llJ8V5aprdAFv039Ka3XSsdbWtR5dUVaUyCb0W042g=;
+        b=iQs27d64gVLUpz9V8isH0V42lIHyPxg7+UnrTXHBQCpMVDuKFGjJ9duCdGmNUDVv+f
+         goScOCMR1tuJrBBq2XgAEwHOL9H3vBPLabN8Td3oQgvgLu0N+hTgNWCnL+NsyP1UctmS
+         QBobefKHYHAEU8RbhbSp/GtSkcqzFBZyR6gpXiAIRx1e16MOeaCy1jMEcDg1JBobt/td
+         ieZ5ErA1n2RH7Nymq5VvhyNnZFnto3M0iA9JVBqXBo37W/OfHCoLXJu2KVLt4Ij2JpX+
+         yGz9wQPGxar7NEpksE0uXuuG/H5JLBlp2+TaArhHHmE0W1Xgbqc06nVohVXgkv1DVuQz
+         4P/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUlibOshd+8wozWZXmi5YTJWn56HTmnzk4mJV5O6oNI/isHVUEdn8ueDqpfumXYeUHozV4W6wQ9gcjdk48=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+WAVU0vP9jPlwIVau/rvwrLDj84C5wbUGKQq0ToqpQwhQP0C+
+	Qnbh2wmZYIuzogwXUkbODf/ShltW9f7KTVpldWRyrWyTuv4tq4BLESbDIaRo9+rp4KLNCvrbVod
+	lpas7qIYZLBXen5PEKg689/8Dg/K9Q+yFOXayk8fg
+X-Gm-Gg: ASbGncsIkAlZkTAEX/7KXr45mrbagBOph9AYrv4ZUMzjvfcWpEd2KJ0tlSNsuYRnrJE
+	HhaOzGjs6cwiCr3197qPU4wgj9KBx7MAjnwoXSSe68hnSY5FoARqgtAU+6qonX0n2fLhlOvNWR6
+	Lq7IGyHgXo1kd7nti/kux3qNVCCKx0ENO6bC3xGuXwLXHfkNVI2BJYbKAFodeKqdRGYbhuXwGgB
+	tLx9ws/Ew/i0S8pBpGpX6zDrJHGJUwb5C/bG5eTIlrF4FgLARaQ4n6z4+00wOmLiq4i
+X-Google-Smtp-Source: AGHT+IEq9O3ERwBV1bYCD+HGg+BbVyCIq5fLNlsBzLj9IwTx5FL6jJtPrmUlaDuCrfISHoE17NfIUKFnAKXMMOjoSgE=
+X-Received: by 2002:a05:6000:2285:b0:3e7:4334:2afe with SMTP id
+ ffacd0b85a97d-3e743342e6cmr12660961f8f.5.1757507302140; Wed, 10 Sep 2025
+ 05:28:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250905171209.944599-1-lossin@kernel.org> <20250905171209.944599-2-lossin@kernel.org>
+ <CAH5fLgjD+S0nBvDMuTfMYd6-o-3f=xGztk+jZQRhm1_vmNiHAw@mail.gmail.com>
+ <DCP1ZX3ASX86.2LS8OQBF4DPL9@kernel.org> <CAH5fLghfeWZ1FYdgQKQ7aBftHEGgXPYZ9WTWueTSZxxtaaRB1A@mail.gmail.com>
+ <DCP44KG3HEKL.35ANJWT161W6M@kernel.org>
+In-Reply-To: <DCP44KG3HEKL.35ANJWT161W6M@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 10 Sep 2025 14:28:10 +0200
+X-Gm-Features: AS18NWD0FBwqqEl2G5VaaKSePEClUp1I2lUWpw29y5tah7QMoK9mQ9yF-5sIObs
+Message-ID: <CAH5fLgjZnnPRLn8LpaXrQ4hbqig07+N=7q7b0E+9JL1hnXCOVg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] rust: pin-init: add pin projections to `#[pin_data]`
+To: Benno Lossin <lossin@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Tejun Heo <tj@kernel.org>, Tamir Duberstein <tamird@gmail.com>, 
+	Dirk Behme <dirk.behme@gmail.com>, Alban Kurti <kurti@invicto.ai>, Fiona Behrens <me@kloenk.dev>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Issue description:During the wake-up sequence, if the system invokes
- dwc3->resume and detects that the parent device of dwc3 is in a
-runtime suspend state, the system will generate an error: runtime PM
-trying to activate child device xxx.dwc3 but parent is not active.
+On Wed, Sep 10, 2025 at 2:18=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
+ote:
+>
+> On Wed Sep 10, 2025 at 12:54 PM CEST, Alice Ryhl wrote:
+> > On Wed, Sep 10, 2025 at 12:38=E2=80=AFPM Benno Lossin <lossin@kernel.or=
+g> wrote:
+> >>
+> >> On Wed Sep 10, 2025 at 12:23 PM CEST, Alice Ryhl wrote:
+> >> > On Fri, Sep 5, 2025 at 7:12=E2=80=AFPM Benno Lossin <lossin@kernel.o=
+rg> wrote:
+> >> >> +    (make_pin_projections:
+> >> >> +        @vis($vis:vis),
+> >> >> +        @name($name:ident),
+> >> >> +        @impl_generics($($impl_generics:tt)*),
+> >> >> +        @ty_generics($($ty_generics:tt)*),
+> >> >> +        @decl_generics($($decl_generics:tt)*),
+> >> >> +        @where($($whr:tt)*),
+> >> >> +        @pinned($($(#[$($p_attr:tt)*])* $pvis:vis $p_field:ident :=
+ $p_type:ty),* $(,)?),
+> >> >> +        @not_pinned($($(#[$($attr:tt)*])* $fvis:vis $field:ident :=
+ $type:ty),* $(,)?),
+> >> >> +    ) =3D> {
+> >> >> +        $crate::macros::paste! {
+> >> >> +            #[doc(hidden)]
+> >> >> +            $vis struct [< $name Projection >] <'__pin, $($decl_ge=
+nerics)*> {
+> >> >
+> >> > I'm not sure we want $vis here. That's the visibility of the origina=
+l
+> >> > struct, but I don't think we want it to be pub just because the stru=
+ct
+> >> > is.
+> >>
+> >> Why shouldn't it be pub if the original is pub? I don't really
+> >> understand the concern, since the fields themselves will still have th=
+e
+> >> correct visibility. Additionally, there is the `___pin_phantom_data`
+> >> field that's always private, so you cannot construct this outside of t=
+he
+> >> module.
+> >
+> > I mean, for instance, it's going to mean that every single struct that
+> > wraps Opaque in a private field will get a useless pub function called
+> > project that will appear in html docs.
+>
+> It's `#[doc(hidden)]` :)
+>
+> > Pin-project limits the visibility to pub(crate) when the struct is pub.
+>
+> I think I would have to look inside the `vis` to recreate that behavior,
+> so I'd rather do it as a future patch. Thoughts?
 
-Solution:At the dwc3->resume entry point, if the dwc3 controller
-is detected in a suspended state, the function shall return
-immediately without executing any further operations.
+You could make the struct and method always pub(crate)?
 
-Signed-off-by: Ryan Zhou <ryanzhou54@gmail.com>
----
- drivers/usb/dwc3/core.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 370fc524a468..06a6f8a67129 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -2687,6 +2687,9 @@ int dwc3_pm_resume(struct dwc3 *dwc)
- 	struct device *dev = dwc->dev;
- 	int		ret = 0;
- 
-+	if (pm_runtime_suspended(dev))
-+		return ret;
-+
- 	pinctrl_pm_select_default_state(dev);
- 
- 	pm_runtime_disable(dev);
--- 
-2.25.1
-
+Alice
 
