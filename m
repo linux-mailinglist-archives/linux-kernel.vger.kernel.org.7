@@ -1,159 +1,111 @@
-Return-Path: <linux-kernel+bounces-810730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2510DB51E82
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:04:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C40FB51E86
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBC7A4840E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52CC81C85CCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E0229A31D;
-	Wed, 10 Sep 2025 17:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BBE2980C2;
+	Wed, 10 Sep 2025 17:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j5tvGL5U"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VlM8pALg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E361A2387;
-	Wed, 10 Sep 2025 17:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E477285411;
+	Wed, 10 Sep 2025 17:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757523853; cv=none; b=AJQ48A5KsgYD/rqiQiycUf1qT2fElYDMQA3bi0MbRArkW4p6UWVoQfHcNyYwNBxjmX8SfWTtnfyJsf5tti/pZF/4Tx4j+czUPxAoOHnlP/2H4fOJlFmEb47l9tNY6VgJ7IWntX8KnoUJdtLAktxnYCURRSbpgBqZCdGsEFISEBs=
+	t=1757523877; cv=none; b=rzmhHf5jZj1lT9tENfzEYnVunF/clL505RYA7qeaeUJvnvW/YFslTxxDrxzbMqRr5+6pMxzDIUnPEnvb/O4k4Zpvnl4LOvFO2hsWHyhoYlel5IOxWWZ0yj6oev3/Pu8V0GsuByioGb8Uto/be9QAdeffTliz1NbEOMu4/Zsvnlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757523853; c=relaxed/simple;
-	bh=8NxnRH/NqFBuV2JRnBAgXpAgLSBJuz9+bNobY8EfMaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iqKv9R8HID7RZiwh/zUwsTF+MNXEtgGZaEdTzCLqlNh+24g4yqXoseENVCV1pkZk3FS92mmF7yQJjSJN4c6iY+b6HPbO8c1Z2ChsB3o00gLSYOE8g0WEuciTAL271FOmVYmHpGCKNKcj5duIN7zX6FueZeI5A3t3HZ3OVM0Kgl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j5tvGL5U; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e94d678e116so7248701276.2;
-        Wed, 10 Sep 2025 10:04:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757523850; x=1758128650; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iAhi2nhP6RcwyawffhfphrfKgf6fcZyr9ahN0hYRF7o=;
-        b=j5tvGL5U2mkWsQ4Sn2/ZpX+ch0M3yJjZf4WnS7QJphh808EAmCkMzShZrCdkdyTH3G
-         diRCpFjQn7v2sBaT4+Htm4DQbJf2P8M93rALPGL+OyN4x10EW7GkWegevkbkTl85BTiE
-         qoZL9bG1iBXpg3dgh3ylg7PziR3fn75/goL7a5TUrCjzt5PvBF44fhI6nwwwD6GGj4QL
-         b2/23Qx7+Wc/eDeZ+LjYx7FO5RFepFRTJeneanr70INkQpWJsElXuatHqdwrLZayj5kp
-         7ye+D+xD4WkUYnR18yx7APuv+33vtItdK/mMIJzIqsEKGaBGeIB9ClBVIFie/6PZFjLt
-         5P4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757523850; x=1758128650;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iAhi2nhP6RcwyawffhfphrfKgf6fcZyr9ahN0hYRF7o=;
-        b=Z9sdwQqgDtCBRLjS3rLQkKMme1/ZETdwKnCgRukjk7ZwISEKgI/5zHCZ2YU+3n4VKy
-         TvNRX6nYUFjp4Qkm3sFkzY+jkCH+UAp0/+gAtzaEPtqFNF0TwdakbVmIIS0UPapz026l
-         YkpMLuCyzkdCI0MVuWFWZ857COUC/XcqPSh4FK1eIHFqH0qG09ovmNDXE8QaJvYZ56Z1
-         5h+1Y5i114Xsh47wBulSGixWq8QJiq4nX1o0c8anM/1Yar9woIgZsDJBSm2mQALKiT+7
-         Gl2gyUyP+yBGYWBBy/se/023NbAIZITy6GvVYwb0/bhqiTImvQ0oxeYffRp/biwVu8wZ
-         Aa6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUEo75YS5JnT00ILcQcO1XgW93bXmWh/0AIORGaRMzwec6OpcuvVegTlT9ThMHDhxiW1pu/pyWQCSlopT4=@vger.kernel.org, AJvYcCUq7GEuXxnOkU6syy/XYm3CnSR6Hda6nehQhP5s3oVdVIQWs4hJHZXfjA0lWVfNbAlV7nARgjIpYVQzww==@vger.kernel.org, AJvYcCXUTephv8VGVNlr2dFNEOlpQZYm1QkxQRQiFBPSr2FE0YC47je1T4TCf50Aqe6Vci+QBNs27Tuwq3KP@vger.kernel.org, AJvYcCXXJUyi3mPbzbH8MjtNE/CkJdTjv1EWzERxKaURD0TLboptFaYsvmYj4b+FC+zfagZYRBSdtGONgJFYoIXOcA==@vger.kernel.org, AJvYcCXsQ9M82UcAgeMZAymahjZzg0wieWwRVe+imdEwcmvwPDIQ1rVv/6s3QAnZekdrbNIoBU2RNtFi5kBdamYN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMhJQpYNXWAPO1PIuPqhCfFFoB4kos6Rz+P27muNEFWu1y4cDb
-	6Pw/CJ5D12REUzU1k8IDR+AMy5+eOs0tNSaWzWYbHl7Vr4mzaMIupFAnPRPrJ/hZkJN0Kzbt63c
-	Oih+lIrEqx4wRQliT21kjIyBxZRKGPI0=
-X-Gm-Gg: ASbGncsmo2pmthuvv/vnRiqFPCy07LPg+Xg2i+tVRT4TRtlZQ8fTgNhjL0VbBGfzUxY
-	ML27sJrkl8/RBtcb7ZPdrPQzyAmzAQ88VJdPOcwdlv7Es4zkhLd+OQgjKzCJLNAj5PvoFi9OTm1
-	lfV7mo+mHAT8/nUIGpuN5ZnLYvmf82NTu7WVAN+g2hf5nOfcLwJ3OYCsAi+E1wM40ZQZAyKvd7x
-	oPvDRulrKlGO3yhV3k=
-X-Google-Smtp-Source: AGHT+IEfnhT9ZSnLfrxKenO2m0z1nuzfqS7vviy8OiPv+Dkiyq8OrSHh9+vCeh+cYF0spuidfc9qnQhd9ZCiFqloKVc=
-X-Received: by 2002:a05:690e:250b:10b0:5fa:ccca:7c27 with SMTP id
- 956f58d0204a3-6102c30b9f6mr12766300d50.8.1757523850376; Wed, 10 Sep 2025
- 10:04:10 -0700 (PDT)
+	s=arc-20240116; t=1757523877; c=relaxed/simple;
+	bh=jvJwuh/KqHkn4fHv0K+i/0piQ3f6u3ZXk9iz3QN96ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LCuOOtT+mu4PayRGexzCj6KUfTZVdF7oP1YROxwJggZKcfK6g0L6XkPMUWEfv7yDkdO2eUAQepkz3DKtg1vSE5oBaLhWHAJy2LTac2ccaIPkT4FRq8NJuX5WToJ7xdXYh4UhBS7ME7fnjfoLL2dfvNrIbdalGpXMi9uCK7kX7IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VlM8pALg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD8FC4CEEB;
+	Wed, 10 Sep 2025 17:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757523876;
+	bh=jvJwuh/KqHkn4fHv0K+i/0piQ3f6u3ZXk9iz3QN96ts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VlM8pALgJpwL5qxEepukh1ayIbag/+tsa5YKTd65UbUIu4B8vRolKJtdMBoMz2cUU
+	 L6QrBZqKyY/9iD3Tkyen9W364PFNNYEa2o3zFO3J2cZw3EmX2gWud6S3Zv15bVckoh
+	 +A0TVadVVX+iDkr6uYEni5typLkGABiCNbeV46h7oyzL3ZTqdMuTHji9OvHqUcUQfN
+	 vFddgFEoPGOkHCLEMaxbLr/In6fru2kldcAVxzJSnCWI1OGmD6N7RRMXcPXeFXAAhl
+	 kO0LQCjVgAKdyxSpy9+uM41qB7U5op8+dRPNCgZrlbu3BF1qytNs+jUGW2QzpUcKni
+	 iCKRecCn2u0rQ==
+Date: Wed, 10 Sep 2025 20:04:33 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 3/4] tpm: Allow for exclusive TPM access when using
+ /dev/tpm<n>
+Message-ID: <aMGvoXduH9sK0noi@kernel.org>
+References: <cover.1756833527.git.noodles@meta.com>
+ <37c3349265f9b9ef834a996fa6808a7512875376.1756833527.git.noodles@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-leds-v5-0-bb90a0f897d5@vinarskis.com> <20250910-leds-v5-4-bb90a0f897d5@vinarskis.com>
-In-Reply-To: <20250910-leds-v5-4-bb90a0f897d5@vinarskis.com>
-From: Steev Klimaszewski <threeway@gmail.com>
-Date: Wed, 10 Sep 2025 12:04:00 -0500
-X-Gm-Features: Ac12FXwb-SXXuwNDs7DFnPiik28LYopuJH_w6GUXGeVeKXumFwg8fkQlWOaiNp0
-Message-ID: <CAOvMTZhxJ3atv62ui5+ahNKV1vb7JXnwwm4xxvg5p=o5p2HnDQ@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] arm64: dts: qcom: sc8280xp-x13s: enable camera
- privacy indicator
-To: Aleksandrs Vinarskis <alex@vinarskis.com>
-Cc: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, 
-	Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Daniel Thompson <danielt@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37c3349265f9b9ef834a996fa6808a7512875376.1756833527.git.noodles@meta.com>
 
-Hi Aleksandrs,
-
-On Wed, Sep 10, 2025 at 7:01=E2=80=AFAM Aleksandrs Vinarskis <alex@vinarski=
-s.com> wrote:
->
-> Leverage newly introduced 'leds' and 'led-names' properties to pass
-> indicator's phandle and function to v4l2 subnode. The latter supports
-> privacy led since couple of years ago under 'privacy-led' designation.
-> Unlike initially proposed trigger-source based approach, this solution
-> cannot be easily bypassed from userspace, thus reducing privacy
-> concerns.
->
-> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
+On Tue, Sep 02, 2025 at 06:27:10PM +0100, Jonathan McDowell wrote:
+> From: Jonathan McDowell <noodles@meta.com>
+> 
+> There are situations where userspace might reasonably desire exclusive
+> access to the TPM, or the kernel's internal context saving + flushing
+> may cause issues, for example when performing firmware upgrades. Extend
+> the locking already used for avoiding concurrent userspace access to
+> prevent internal users of the TPM when /dev/tpm<n> is in use.
+> 
+> The few internal users who already hold the open_lock are changed to use
+> tpm_internal_(try_get|put)_ops, with the old tpm_(try_get|put)_ops
+> functions changing to obtain read access to the open_lock.  We return
+> -EBUSY when another user has exclusive access, rather than adding waits.
+> 
+> Signed-off-by: Jonathan McDowell <noodles@meta.com>
 > ---
->  arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b=
-/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> index 637430719e6d7d3c0eeb4abf2b80eea1f8289530..3b3f7137689a6fa292ffe4fec=
-8c1d1f20ee525bc 100644
-> --- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> +++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> @@ -83,14 +83,11 @@ leds {
->                 pinctrl-names =3D "default";
->                 pinctrl-0 =3D <&cam_indicator_en>;
->
-> -               led-camera-indicator {
-> -                       label =3D "white:camera-indicator";
-> +               privacy_led: privacy-led {
+>  drivers/char/tpm/tpm-chip.c       | 53 +++++++++++++++++++++++++------
+>  drivers/char/tpm/tpm-dev-common.c |  8 ++---
+>  drivers/char/tpm/tpm.h            |  2 ++
+>  drivers/char/tpm/tpm2-space.c     |  5 ++-
+>  4 files changed, 52 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index ba906966721a..3d69ccff4c2a 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -144,7 +144,7 @@ void tpm_chip_stop(struct tpm_chip *chip)
+>  EXPORT_SYMBOL_GPL(tpm_chip_stop);
+>  
+>  /**
+> - * tpm_try_get_ops() - Get a ref to the tpm_chip
+> + * tpm_internal_try_get_ops() - Get a ref to the tpm_chip
+>   * @chip: Chip to ref
+>   *
+>   * The caller must already have some kind of locking to ensure that chip is
+> @@ -154,7 +154,7 @@ EXPORT_SYMBOL_GPL(tpm_chip_stop);
+>   *
+>   * Returns -ERRNO if the chip could not be got.
+>   */
+> -int tpm_try_get_ops(struct tpm_chip *chip)
+> +int tpm_internal_try_get_ops(struct tpm_chip *chip)
 
-Should this now be privacy_led: privacy { ?
+I'd rather name the new function e.g., tpm_try_get_ops_locked.
 
->                         function =3D LED_FUNCTION_INDICATOR;
->                         color =3D <LED_COLOR_ID_WHITE>;
->                         gpios =3D <&tlmm 28 GPIO_ACTIVE_HIGH>;
-> -                       linux,default-trigger =3D "none";
->                         default-state =3D "off";
-> -                       /* Reuse as a panic indicator until we get a "cam=
-era on" trigger */
->                         panic-indicator;
->                 };
->         };
-> @@ -685,6 +682,9 @@ camera@10 {
->                 pinctrl-names =3D "default";
->                 pinctrl-0 =3D <&cam_rgb_default>;
->
-> +               leds =3D <&privacy_led>;
-> +               led-names =3D "privacy";
-> +
->                 clocks =3D <&camcc CAMCC_MCLK3_CLK>;
->
->                 orientation =3D <0>;      /* Front facing */
->
-> --
-> 2.48.1
->
+Like both from the perspective of more localized patch and also
+that "locked" documents more tan "internal".
 
-v5 does not turn the led on here on my X13s whereas v3 did (and v4 was
-not tested)
+BR, Jarkko
 
