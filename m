@@ -1,124 +1,116 @@
-Return-Path: <linux-kernel+bounces-810217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B1DB5175A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:55:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C39B5176D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4387E545B67
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:55:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F9547A230F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB3B31C576;
-	Wed, 10 Sep 2025 12:55:37 +0000 (UTC)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DBE31C56B;
+	Wed, 10 Sep 2025 12:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJvNoHxO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC141268C40;
-	Wed, 10 Sep 2025 12:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CA2268C40;
+	Wed, 10 Sep 2025 12:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757508936; cv=none; b=aWMBE6DAfa1NExcSp474LnqLk5kzXrwTKX8cAMl3TAvYwABLOUrYsWkEm2pgCZD0a6QBi4Za4y8kFJeEFmaBl9AnRK/rvK245x6mrLag1boD2xzOpaNfDv5wA3SHdnlThD9rpym0Qvp6jVXdOcnaKGJpOSjGRHYvi0EKUCzn18I=
+	t=1757509060; cv=none; b=QQ3jdqBYs1Z1CRjh6RPBzFzjFCaje4Jbv6E/BbQ3S6n5G42XoAcEZKL8lF2MWaUB3VdnaxsEfFKqiIcCqzrSonQKcnVM+TKTJEgwj0YnMtujDqnQ76JHMpV3SWsuFnq6xhncxj2+ICIAS7/Tt10GqfTgov/k9cLHmn//bmbvHQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757508936; c=relaxed/simple;
-	bh=VRd6OHvO1zviiH8/zWIWyTR5W4kJN7wrHP1CDmkx7/Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dlfu7KuzkHxbA2vwvCv2UlU/UdxLq9a+clbtCDo7l1oVQeyhU3vHHZhdAY7uhm0KEishNsZF6XEnKaR6vqpbQrtijZK4fOp7MVDAP9h8JcP+tedBtnBijAzQFoBG1JqOS+4Vg9YJTjSuXm9gydXPMYBKoUsRldISDedxV3j/3Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f6f7edf45so6328838e87.2;
-        Wed, 10 Sep 2025 05:55:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757508932; x=1758113732;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=czL3Mu97JDNqFcpEdZAJCI1Ps8ECPwFG6/c6zc3mY50=;
-        b=ON0RIMNHEUTyjiSRN+iICiJRQlNCgYoJqAShlhncIvgzCfZgLPyE6ey69iucfQzKAo
-         FyIhKALCWVLFiG3gkUckN9q6jMF65wTT06Pf8WOEaIZ5k2g4dDUmwGyl/oeVkirPqmp+
-         QRi4KP8x0r3S+PqKoX12bapG6bYsYksi5sOApmQtupwlnA4MHLaTDJjMNnYxf9MvHyrq
-         +GPaUzz4kSreuWdnmoavawUiKCnqC39167QHrTZhr8GMHk1OzmpPjPGzxQi1ZCQqu1ib
-         whIAHT7YaQFReLIYV8dwvTdhljB1KaVbZl69+5vzCwhn1FqBYOZNdnOR3m1f/yBFvC6C
-         at5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV3f1ESDo3QHMDkc8+suTa7MTZUQZVYea45jJpzXa8mwV6X+1pQ33YmiPvbaN3raEK/S5Ez3jv/Gd/1@vger.kernel.org, AJvYcCVp2IXGfvq1K6PPZ3C1g+gouEjyvfiBVr3b3AKeXaUHAPvEsX4qLf4kNhjrZ55Sb5nZU9gXWIr7IB6fxYAM@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCmD+arBIHxPg5pZ2ioCIqpPG+pK6hbgeM7NzWlgnxPW/zpOlF
-	yK9fKHIrs/bX5rotq3bDQfHikGB0uN5YEHS8dWFQrTqK6uPe5jgElpQ/6VOfa+qs
-X-Gm-Gg: ASbGnctBYnm6BIgby9RNsSVnOombPRdQNPhXilyYAGQZ7FBGnmbCjAcTkaNBNSSNX+S
-	0DG5pQQbpgi6AlZOI/liKStm2Oqph9P2m9yNG5DPAxcRkuW4hEHQun/9UjEUkOSjV2HGivcN0pC
-	u19py6ksQ/eNsx9EMDmZ85XkkgtKT4CyMy1RRylGC+DI3ZPliuE0iDy+uCPAwq7yJ37ZSrTjqDw
-	G/cyIm4QMO/ybHptr82QbJ5Mp8/Q0RMJUKqSmCRX+DXWuw4VAtyDlCz1fqSrg3OO4793v97hT/D
-	5tFfW1mYxgIlzq/nujtvl+pYE7X3DJTr2ltjNExxr49TLKi+xez0B9UXufH+IFwhKAOf+uM1xrH
-	9vkiJF8KajLcA+lP/4qhMZqOzdhN0mgjzNlFO3LuZOoid9RwBRaR390w=
-X-Google-Smtp-Source: AGHT+IFjK7k+qNIsVGIYTcf5KnM26QmoPlf5SayWVKRB0VSkAOhf4S8EpAXUsDGfoDZE84O4Ge7tbg==
-X-Received: by 2002:a05:6512:33d3:b0:55f:394e:3b with SMTP id 2adb3069b0e04-562603a1135mr5454310e87.10.1757508931740;
-        Wed, 10 Sep 2025 05:55:31 -0700 (PDT)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56818067eb7sm1223254e87.106.2025.09.10.05.55.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 05:55:31 -0700 (PDT)
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-336dd55aae1so60593731fa.1;
-        Wed, 10 Sep 2025 05:55:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxczxCZVy3Zc0KPDw8AwQZn0AlCKD/EI4MSZ7MqUQuQzjPic4mmlR1vSdg042UHcfX/bNwNfY69lD0GZXK@vger.kernel.org, AJvYcCXaDaoTbN1IxN7j5OPz6OsfqdgJJViXyWzWWkCsT6g09+thn/R6SjxErLnVrVj4/OAnpTtE17fcDdsc@vger.kernel.org
-X-Received: by 2002:a2e:a54c:0:b0:336:e199:6d95 with SMTP id
- 38308e7fff4ca-33b4e07f1e7mr46456191fa.17.1757508930395; Wed, 10 Sep 2025
- 05:55:30 -0700 (PDT)
+	s=arc-20240116; t=1757509060; c=relaxed/simple;
+	bh=1IJBsOCxQ1L3077p7oe87GW8Hq3crtK2WhBTwePnDD8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oqHVoMDHr+OC//iD/LTer48D00jpiZZrqboh7T86GgXfOcFxfzwvHX+IVSXHq8TONpRzlU46FHiXKATzEY5qon7snRSlvgGJCTz9maMUdKBUXQBYWj2DOIxSjkyVXtcVE2xcHcoysnLW3dXNo/MFMpt5OU+z75v/15HQ0Y1PGBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJvNoHxO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92992C4CEF0;
+	Wed, 10 Sep 2025 12:57:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757509059;
+	bh=1IJBsOCxQ1L3077p7oe87GW8Hq3crtK2WhBTwePnDD8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=SJvNoHxOhjX5B6rLHD9g8vtU0mMxXxuywr4RlJtexJ+W4ho08JwKv7sZV7Bv7Z/nM
+	 OtVbEYaOe5W8zF9BvPJxo5fQ23rD5CPy84EivNqRDwd2wWHtL2L6lq3oiemKKH3VLw
+	 CQAhqzVqVcQdvfVDrstjgcWEcFUOSoPx/iFqkG++UuWP8OowVRotNlPOecmsWyYqgs
+	 Twp8jSqa6FAQ7Bnl1G3AA5bkaPoSNpzVLRillqQ+qFIbbnlwsI7G/IUgMuu5oZtG6l
+	 nN2nm3tC1rwttCdz+cYC8LrfSsx2MLXTiAmoH493Ux/UOdlk3f2iz4dPegZaUMTip6
+	 Lx4Ca38rjDDkQ==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Date: Wed, 10 Sep 2025 14:55:40 +0200
+Subject: [PATCH net-next] tools: ynl: rst: display attribute-set doc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901120020.181414-1-amadeus@jmu.edu.cn>
-In-Reply-To: <20250901120020.181414-1-amadeus@jmu.edu.cn>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 10 Sep 2025 20:55:16 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66wnhyv0x31bO2S1fWeJZzeQgdEze7ChcFb0VGjq5AjJQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxzgckCvK2PU-Ug8oHKsMc01hfEJlK1a7HMQ13AEF91phM76xhzrUy-R_I
-Message-ID: <CAGb2v66wnhyv0x31bO2S1fWeJZzeQgdEze7ChcFb0VGjq5AjJQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] arm64: dts: allwinner: a523: drop redundant status=okay
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250910-net-next-ynl-attr-doc-rst-v1-1-0bbc77816174@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAEt1wWgC/zWMywqDMBAAf0X27EISTaD9FfHgY9sulCibRRTJv
+ xsED3OYw8wJiYQpwbs6QWjjxEssYusKpt8Qv4Q8FwdnnDcvazCSFnbFI/5xUBWclwklKY7B+sa
+ FpnWth9KvQh/e73cHTwZ9zhcuA1+3dQAAAA==
+X-Change-ID: 20250910-net-next-ynl-attr-doc-rst-b61532634245
+To: Jonathan Corbet <corbet@lwn.net>, 
+ Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: linux-doc@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1737; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=1IJBsOCxQ1L3077p7oe87GW8Hq3crtK2WhBTwePnDD8=;
+ b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDIOlh6sXGgqHbTr4MGDRZ/fxHb7BnpUNEyal3G16GySm
+ P5c00mrOkpZGMS4GGTFFFmk2yLzZz6v4i3x8rOAmcPKBDKEgYtTACYiNpnhn/JD/tQNIquvzTfg
+ t5wiV5FfXbm07FPqo/AE9d4jv63SlBn+SqrGMX0OELrsqzorpn/f3RsdbHPjiqeW8cfblVttWXK
+ cHwA=
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On Mon, Sep 1, 2025 at 8:01=E2=80=AFPM Chukun Pan <amadeus@jmu.edu.cn> wrot=
-e:
->
-> Device nodes are enabled by default, so no need for
-> status=3D"okay" property.
->
+Some attribute-set have a documentation (doc:), but it was not displayed
+in the RST / HTML version. Such field can be found in ethtool, netdev,
+tcp_metrics and team YAML files.
 
-Fixes: 35ac96f79664 ("arm64: dts: allwinner: Add Allwinner A523 .dtsi file"=
-)
+Only the 'name' and 'attributes' fields from an 'attribute-set' section
+were parsed. Now the content of the 'doc' field, if available, is added
+as a new paragraph before listing each attribute. This is similar to
+what is done when parsing the 'operations'.
 
-Will be added when applying.
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Note: this patch can be applied without conflicts on top of net-next and
+docs-next. To be honest, it is not clear to me who is responsible for
+applying it :)
+---
+ tools/net/ynl/pyynl/lib/doc_generator.py | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
-> ---
->  arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/=
-boot/dts/allwinner/sun55i-a523.dtsi
-> index 6b6f2296bdff..cdf844eb8e05 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-> @@ -218,7 +218,6 @@ wdt: watchdog@2050000 {
->                         interrupts =3D <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks =3D <&osc24M>, <&rtc CLK_OSC32K>;
->                         clock-names =3D "hosc", "losc";
-> -                       status =3D "okay";
->                 };
->
->                 uart0: serial@2500000 {
-> --
-> 2.25.1
->
->
+diff --git a/tools/net/ynl/pyynl/lib/doc_generator.py b/tools/net/ynl/pyynl/lib/doc_generator.py
+index 403abf1a2edaac6936d0e9db0623cd3e07aaad8e..3a16b8eb01ca0cf61a5983d3bd6a866e04c75844 100644
+--- a/tools/net/ynl/pyynl/lib/doc_generator.py
++++ b/tools/net/ynl/pyynl/lib/doc_generator.py
+@@ -289,6 +289,10 @@ class YnlDocGenerator:
+         for entry in entries:
+             lines.append(self.fmt.rst_section(namespace, 'attribute-set',
+                                               entry["name"]))
++
++            if "doc" in entry:
++                lines.append(self.fmt.rst_paragraph(entry["doc"], 0) + "\n")
++
+             for attr in entry["attributes"]:
+                 if LINE_STR in attr:
+                     lines.append(self.fmt.rst_lineno(attr[LINE_STR]))
+
+---
+base-commit: deb105f49879dd50d595f7f55207d6e74dec34e6
+change-id: 20250910-net-next-ynl-attr-doc-rst-b61532634245
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
