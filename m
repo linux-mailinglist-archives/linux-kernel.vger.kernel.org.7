@@ -1,117 +1,148 @@
-Return-Path: <linux-kernel+bounces-811071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCE8B523E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:56:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41C9B523ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 200161C84632
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:56:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E3F9175CD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B36311C15;
-	Wed, 10 Sep 2025 21:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33291311C27;
+	Wed, 10 Sep 2025 21:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b+lVxidn"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y4yZzaBp"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9E3310628
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 21:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D86E3101A2
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 21:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757541377; cv=none; b=OsdrPDVe8JvZfhJTolKVDzSE7NSvMSjr8+DbzQxgHdKuLZTkL5yAHwA3jOkbq13878HaWo1aVtSFF6yOM/voNVE0F5MwfAH/YBVsHC8dWB7MqIBIekDCBX/t+AuqV3EmgXdtUPPnrutfFSCoGKRBRPOAwUKynCQ6uWBolleEjwI=
+	t=1757541499; cv=none; b=j3XvjOKsSneX/GhD649GgONgIATwxH8bdZ6LHLIij7f6zrk8x/NOQd77Lh0U1WuArrrWr7TOJhHrTKw0fcGrrVZmqBdt+mPojCi9UsECmAGZ/Az8WAnCNtVVELfHCJj9AT12Lm9GmgL06RMBh6N5pkL3ki4R24kfEUqieeXQGaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757541377; c=relaxed/simple;
-	bh=1K0L7vy0m6oAWABtFjIMxHjGZLkeAdVFiL8lxzfzoUc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=B4NoZ0TyNiqvK/X4TtAHKgJL/yr9CrufJ/FpMTRu3CeIa54moSE4LxO+2rTMc4y+AUklb1QpwSKSR+atdSwTH0iK7EmnAz2nRdaKEBBs5V32kS8I1k3Hq+ePGmImUgtdcGXsCPZseFDid7b1gwhB86wTAZho8/0orga5fFU5sTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b+lVxidn; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-625e1ef08eeso83112a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:56:14 -0700 (PDT)
+	s=arc-20240116; t=1757541499; c=relaxed/simple;
+	bh=j7pl9XXhdsCQAwARPPrGx688mBvn56VXJjv7N3QOlEk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EE9ZLZjIonPTSYfuk5/qQBGLiVhQO56PlgmGqdfmuCdYZEQoBgUGyktfbxebPr0dV90GECO/VKMp6rjLUKT9kAUOXHLGAZBIgbSSkJMNQ8mYj2aGuwpbNSqOTEF1C/ZHowgymT+xWXaK+/iCSkusNXNZiojaABLMVR6MdB057oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y4yZzaBp; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24b2d018f92so31955ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:58:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757541373; x=1758146173; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g9d1QV8DriomeYuygow3J7NXcF+FjsYxyafVX+X7WJo=;
-        b=b+lVxidnV+8U0kRBo9XFjy4fq9sWGM/85Iru9AQR6vmi353pV/OUyC4YhQcxqhAEXz
-         1k3RY9B9dwNUkio/BpjrLqBl8MpPirM/BEJd/6B64vf6Qp//pJ66hPdIjRxTB59FA8qe
-         mIr62K2Rp+NVV6LRYvBt/MxzBxA5GfhRpv+urZuLKlJpnAiliZqbiVZ4tp8kerbaw3gx
-         fJhKoSg1xjq1ergfMYvhdyamD7cSNTtKvZE/TryF/ZkWIAYYIHBayW4w7uMskUohi104
-         CHmNCBlP7cie8QN8jNa4wlssLoJB/bWxXfQ3tsfftqnXCcdIRmMDeqaCQrUGtaBkG6yq
-         KG2g==
+        d=google.com; s=20230601; t=1757541497; x=1758146297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mNdDRzKVh+fbCQLnYIIu8p5ojZ83V5zU4hVRTP5bI5Y=;
+        b=Y4yZzaBpOucQ71O6Dd6TdaXSX7RnV7VzhYexY89HZRhEweXy0ZZtPFNAGTabtjIwK7
+         pr40abNSFuWmF7yzbpxzDl6gby3u/a3dc/y8FmGbJX5EmtOBp8y/A9nQPN0qASrwgkZw
+         jilALEIT/BQlsgyO6zbpUOansF0I69p66XMX7keKXyqjFnrnxK0XiCUjuQDqkGuD08pu
+         M/3DM7Xvn+wfBm5WfljPZLZoalu8bx02Y7v9V/fIp4Cr3h5I5M4olWDei3/EWOB3nLTQ
+         uzfKPg6iz2OIgWVwiiVfSG+Pwq79/i0vZpb7bbGigBDkUPChijCDM51v0LLx/+zqf+qv
+         92uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757541373; x=1758146173;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g9d1QV8DriomeYuygow3J7NXcF+FjsYxyafVX+X7WJo=;
-        b=AoQbJHr7dXHUjGKFsxUl36C90T0o2+R+gMlVCnn8WDK6Ruq4ffLIUHY3C3wQd1Voh8
-         unWbx5crQtDrghraC2gT+PbUkcEgwRudwXB11pBZowHx6qCoteyc4pi1eymY/mk5tRDT
-         t4Q4URDghYmGkJ0Je2hAZOT1Yc/eG9z0VG/qv56OcFcvlICjwRAEtZsTCbwlajssW+lx
-         +2W1A5gdhVR1RZiXOnpl4lVg7TjRk3Wp2pQrnyFsDnnPeYWqr8H5e/ELIwTc1R/kaq5O
-         7ieUgJrKlLlW1PbzSZxRmWW/gc6xe5dLwz2dzwDUOSJyu0cBIUDYUYYYntiXXyirNcLJ
-         KjDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUUUIy9+Qrv7I0N88/SyW7Zuz9I3lbL1v8rFKzh7IeGyj9E3h26z1SGdTdOwDELs0lasha8UNqLPQcLxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMOUCDyn2cEPuKToOH1/PuIv5VrVxtgf3KVp9ikqfCwrQHHQu9
-	f1YzpeiVNS/+07zpshoxieq/Dj2uDtz+he1wnhcZ5wi5twGGCClw4B8Hmf6ngcfu9Uo=
-X-Gm-Gg: ASbGncspp3pEzbIjeQuxentRV82wjTlW6tZLcHAzgvrxVGiBAUPJUrlxIXbu78pUNlr
-	E3VwFcf3gYAaGI5mhMN98MJ///Kaaq1ItI5uAiIz9ct8SScztzqylAlammQCJa+Lu856vzjMJP4
-	dYd0ZLvEk/xDtm71WM+6mskfBm4e/cm7QA8MTYCrXN8K1oNNwjyv+okN0bz1A9R5ALj+oHBap1x
-	KlEAkCZMbQ5UbHqQ8m07yErqfGiZ+bYvKXZOpjC6kFKu8IHOW9jaWC+svadyuH/78tJVwhiLxVK
-	1meL6DwYsa+N/ijuKlsHDjTeGbe7cH/jRDuRI7BRZPuyiSlGmJp3Wt2S6NSkk2XmNDgItgtGn3W
-	Hv/JzukeNadtFl6xRUOFFk0JOVQSdfKfuD32Nz0X/KYVSlpgiUJXv7Nbx2tVjCTHdGKSkCwJan2
-	/VDjK6B4s=
-X-Google-Smtp-Source: AGHT+IGBsR+U1n4WFqO8g+vB4ERFu4ybrDNCTovC+1KY6W1/R7uSZEcXa89aKrlY6FwBWGiHJP9Ndw==
-X-Received: by 2002:a05:6402:50d2:b0:629:c417:ee5c with SMTP id 4fb4d7f45d1cf-629c417f146mr10662130a12.32.1757541373118;
-        Wed, 10 Sep 2025 14:56:13 -0700 (PDT)
-Received: from [192.168.0.51] (217-62-96-139.cable.dynamic.v4.ziggo.nl. [217.62.96.139])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62ebfe0ac03sm69476a12.16.2025.09.10.14.56.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 14:56:12 -0700 (PDT)
-Message-ID: <1206e86e-488c-4c58-9e67-2313a678a5a0@gmail.com>
-Date: Wed, 10 Sep 2025 23:56:11 +0200
+        d=1e100.net; s=20230601; t=1757541497; x=1758146297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mNdDRzKVh+fbCQLnYIIu8p5ojZ83V5zU4hVRTP5bI5Y=;
+        b=H7H4BLDiU9PN1L6MaFmaNR0XLOu/vTAOkf12nU17xRtGZnxY7HgZgs2sps/FqERKva
+         qgNtD3x6E9Wp7htdUWp+BvLHfdTiSbkzf9sWS7+Z8QwFTCu8v9Cwmh8qmIEkoMRltEEq
+         auOMLq2L0WSmuiz6ItY54gdn+q/piG4mF7r5s9h+QT+PoG3EDrbgZQYPAH9o1nbQRagA
+         SsXH3/rws+VN6jI1ft7pYTFGx9P4/dBD6YBmO4hALaVhxRLj+wujfDPkxp/OYtr9IJL9
+         ZdLoGzbYkwBl+D+HRWlc1spH3DB859v2H8b8PbbHSmn9IAEfLMvpPZLrFovemX8+m6//
+         LHKg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3/44DGCZKwqMGFXExqrSH6Nnk2r9nMiaP09vW0WHbsOrYoN5g90TjsMYQgbUtbLZpjfoObiVMlle+uxg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLFnbUY4yb6h67b4ypD3emaJXzapHwDVSJah5hI6i8oVXTficU
+	Iek/Tp9UMwicPHUONJBd/102MaUg78cjwOzb5wOml+fg4jzJ6ZkKMah90j2H+MBTF2pMS6FwKom
+	oJ+AJS4tqp3N6o3PKCu8Kk26KW+2c8Wn9kYnb5h66
+X-Gm-Gg: ASbGncu1Z1ATAnjU0YjC5yEpUGNDrwYGZFGN8glfXGARKfMWs6Ln1Gpm7ABBvo9311m
+	9JLiLiO8TxW7c3uvuDwmKK+fSiAC2rcTEblXAO/2RkIBIr1++OdbaKIwij3bw7UJoHA3f4bEn/9
+	aDglG6GB1avHtbhREZimMX7rGFewDSyj0JAgPFJ/0i7gDPvXBUAdZvaEBOuglxGbgLcHAWL8Q2Y
+	AJADsz1oT01sU3rUEprc9v+jecVqqvKue7PdY/nudhk
+X-Google-Smtp-Source: AGHT+IEH6cRYjS/H4UkebncduhV5SqeLugTSt+pUOgu5WRqiICr3JjsSOdXXMEsz+rjxO5AscA4visSN2D+r+MgsGDs=
+X-Received: by 2002:a17:903:1a67:b0:249:2f1e:5d0c with SMTP id
+ d9443c01a7336-25a7eafc3d9mr5940505ad.7.1757541497060; Wed, 10 Sep 2025
+ 14:58:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: richard@nod.at
-Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org,
- alexander.sverdlin@gmail.com, andreas@gaisler.com, ankur.a.arora@oracle.com,
- arnd@arndb.de, chester.a.unal@arinc9.com, christophe.leroy@csgroup.eu,
- dave@sr71.net, david@redhat.com, geert+renesas@glider.be, heiko@sntech.de,
- imx@lists.linux.dev, ira.weiny@intel.com, ksummit@lists.linux.dev,
- l.stach@pengutronix.de, linus.walleij@linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linuxppc-dev@lists.ozlabs.org, lorenzo.stoakes@oracle.com, nm@ti.com,
- rppt@kernel.org, sergio.paracuellos@gmail.com, surenb@google.com,
- vbabka@suse.cz, willy@infradead.org
-References: <640041197.22387.1757536385810.JavaMail.zimbra@nod.at>
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-Content-Language: en-US
-From: =?UTF-8?Q?Ren=C3=A9_Herman?= <rene.herman@gmail.com>
-In-Reply-To: <640041197.22387.1757536385810.JavaMail.zimbra@nod.at>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250828205930.4007284-1-irogers@google.com> <aMHbIGRFeQlq9ABx@google.com>
+In-Reply-To: <aMHbIGRFeQlq9ABx@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 10 Sep 2025 14:58:05 -0700
+X-Gm-Features: Ac12FXweAPm2rEaL-lypGqnYe4BTRKYfusZ0zI1g_R5qT3kAjhqD0e1kQf6qMoc
+Message-ID: <CAP-5=fXN5oe7tLCnuBnoYKm68GhuMXP00AjszRyPc_XpDkacxQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/15] Legacy hardware/cache events as json
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Andi Kleen <ak@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	bpf@vger.kernel.org, Atish Patra <atishp@rivosinc.com>, 
+	Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
+	Vince Weaver <vincent.weaver@maine.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> In the past I saw that programs such as the Java Runtime (JRE) ran
-> into address space limitations due to a 2G/2G split on embedded
-> systems. Reverting to a 3G/1G split fixed the problems.
-Believe you guys are talking specifically ARM so FWIW, but I remember 
-for x86 that at least initially Wine and things such as VMware were 
-affected by the more creative PAGE_OFFSET choices.
+On Wed, Sep 10, 2025 at 1:10=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+> A nit.  Can we have one actual event and an alias of it?
+>
+> I think 'branch-instructions' will be the actual event and 'branches'
+> will be the alias.  Then the description will be like
+>
+>   branch-instructions
+>       [Retired branch instructions.  Unit: cpu_atom]
+>   ...
+>
+>   branches
+>       [This event is an alias of branch-instructions.]
+>
+> The same goes to 'cycles' and 'cpu-cycles'.
 
-Both will have been as a matter of plain bugs and are supposedly long 
-fixed (and I in fact believe I recall such fixing for VMware). Never had 
-or as far as I recall heard of other issues back then.
+Similar 'cs' and 'context-switches' in
+tools/perf/pmu-events/arch/common/common/software.json.
 
-Rene.
+So there are a few different ways to do this:
+
+1) In perf list detect two events have the same encoding and list them toge=
+ther.
+2) In the json have a new aliases list then either:
+2.1) gets expanded in jevents.py as part of the build,
+2.2) passes into the pmu-events.c and the C code is updated to use an
+alias list associated with each event.
+
+Option (1) will have something like quadratic complexity, but a fast
+perf list isn't a particular goal I've heard of.
+Option (2.2) will mean the existing binary searches for events will
+become a binary search for an event and then linear searches through
+the aliases. To make this not a slowdown we'd likely need more lookup
+tables to avoid the linear searches.
+Option (2.1) feels the most plausible. I was hoping the json and the
+sysfs layout would kind of match, this would be true after the
+jevents.py expands the aliases. This option is already kind of already
+done in the legacy cache case as the
+tools/perf/pmu-events/make_legacy_cache.py is making this. We'd still
+need option (1) with this.
+
+Anyway, I'm not sure these downsides are countered by a slightly
+smaller hardware.json and software.json, or maybe we should just go
+with option 1 if the perf list output is all you care about. Let me
+know if you see a different way of making it happen. I don't think the
+vendors will be particularly happy for their upstream formats to
+change given other tools will rely on them.
+
+Thanks,
+Ian
 
