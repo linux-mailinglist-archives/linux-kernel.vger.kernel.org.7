@@ -1,93 +1,133 @@
-Return-Path: <linux-kernel+bounces-811073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BA5B523F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:59:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FA2B5240B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25F8F1C8554B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:59:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7AED5839E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61CE311C21;
-	Wed, 10 Sep 2025 21:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7049D2D77EF;
+	Wed, 10 Sep 2025 22:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4Xu4S9R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wzJ8J6O+"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2068324C068;
-	Wed, 10 Sep 2025 21:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7781531F9
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 22:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757541562; cv=none; b=taV/2sCPMW5Z3bkKcUxxXb5PX63ZG+CezIPiqdCUygQMWL7LKUAF/nhkDlVkaoNx5GheKqZx/lIl9Lw0JkL8b3XYQZyknSIU9V7VGi0vrJE37aUH/2CM4XcBJC+ADEWDcCXytzqHCypzePdsQwjn+ClnNpTRPqzXhQmfcJcFz1Y=
+	t=1757541835; cv=none; b=B70LxJzD7ILrQYnCGMRzlRqB31iwlS2X2NfoFGd42fb86O0sitsam3HtzNxKg4Qna3gD4LAfW549+cOcXRb7m4aZRyU3Y0ve9T8ixQXIvxQgyuUuT8Aqdb8hSflixCo93XFqoYi9Jal44E2iBZbUz5MjXIMq9uThA1zxJUU1kZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757541562; c=relaxed/simple;
-	bh=jnJrw4KvMaS+1IPKppeQ27NtdlHsDVhqXF9fQR8RGgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EuNWT1QFS4Smy0zHIKJGIG/gpWo57K+7TqUl5SjDyrx03n9J3iCDnEACivGDuOPTQEhrihfaJLwwJk+5lRB29AxdkczAYRqBtjruSmsngNs6ZpSzi6H2gnIWfcv4Xjqoni6tQ7XvMlYjo918AXLCsWZw+UvkhkmU20eH2+oGHBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4Xu4S9R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09D91C4CEEB;
-	Wed, 10 Sep 2025 21:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757541561;
-	bh=jnJrw4KvMaS+1IPKppeQ27NtdlHsDVhqXF9fQR8RGgU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l4Xu4S9Rx2yS1fg0DyEmfsdAATj6pBjYSTrWyIO+bkMb7V9O9rrNnImNLLBLz9S5X
-	 WiJm40QSMq2rrTfu8zhLmQ8O5lvjpMz7mGYoFJJ7smLkUnD6fx84/X1tEom3Fp3fGx
-	 xqI+PQN9c0XYGvYmJHu5QWE/pgfcKrjny1rJ5ssLyi7EQFSeQnfaBXA9KN8MVkFhck
-	 q6x9t/fE+muCSwNHgf/Bgc0FZMrjZfyCurERST7CAEtZLGK1ZzT6IxXg2N7OzXWwye
-	 NGHYqMBxENG75DZ8SafyMzOYWhwVzMg3rGZ8zYyfJvLBFBmDv/Vh1z+ItGJk4D3FXV
-	 33C07vnV5U5Gw==
-Date: Wed, 10 Sep 2025 22:59:17 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Erick Karanja <karanja99erick@gmail.com>
-Cc: ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
-	linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, julia.lawall@inria.fr
-Subject: Re: [PATCH] spi: Replace lock/unlock patterns to guard
-Message-ID: <ddb8f91b-3110-4d17-afcb-fa9199e128ac@sirena.org.uk>
-References: <20250910213537.553673-1-karanja99erick@gmail.com>
+	s=arc-20240116; t=1757541835; c=relaxed/simple;
+	bh=aE5uCNhs1u3g6pohgmpcLJXBRFNPdmYKr1kSz8VgOU4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ZnIIshDHrOPUBloqb3Y81k5mw7XceT2N0YoRYdJ97E7wDWrMdt1LWf9QvYe2Dw+PfulwR+yl9LcZo1PicTzTocAFezIRioQ4Q5BeOx/wxgUVF8nUNmeY1meuBLinrnO0Qop/9u0CE/SfHFW6OdOY0B8VYRHnp9zFyMVQVS1Iim8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wzJ8J6O+; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b47173afd90so146267a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:03:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757541833; x=1758146633; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pk6OURjfr3XUwz7xuUVoE1kFuuE2okareB/QgbX6n30=;
+        b=wzJ8J6O+iJeCoVwPfGt6MM+rxF9oxVertipMQA+WEzBFku6n7fEOqr1Px/2r1KA4Qw
+         jSy21/DY3DA+SwIEzkWSpsdzpXJ8bPHjCvJIUtwGJjwNQ5AwgLT3uXwPKVAbheJ4xTIp
+         G3fSycYFMFC3GeimkdqmjYhaigSzQnrXpBBeZZDtSDFBMtRXQwQ8iw02Eo9ipo+wQpXV
+         JSH5YOcm5v2KKkZVBjp9TxsJIrjXPZIsu0eI9qKyDbMShHFLdzVdRp+YYXmWSM9pLmv7
+         yB2B6Xpm7OT1h+sGQ1s7rCxO/1Y8RNzr+0Sp6yxj8od3Noz2vQk3HMCh9GVR/mR4TjLM
+         40QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757541833; x=1758146633;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pk6OURjfr3XUwz7xuUVoE1kFuuE2okareB/QgbX6n30=;
+        b=uLAqBwVFR7+Uin912+oihYzvVBbLADVQDxO/wTjxcZuR53N+Wy8xwcz9XnAHAsaDlr
+         pxLN/CRi1eLdMjXsA5IWfro22innokj7J0+PCWJpYcNSnlEy/wSGrpR0CUJCpSbj52R0
+         AGPxRVRXsZbipvpMnYlVHwUfng/mQJTgqVzEVVIhamA9Dic4aYKPb5Rj01sGBLbHUjbb
+         /BH4m1bFK1ilZdlVkBh+/Lc86KkMZIOfyWcTT/ROLiNS2bI3hwqQzFUbP5aAXn73r7s5
+         DWxdvMKhI0syklKEh3p2oS53o2qiLaADONkh0sqRk3auhKLJKHVxA3CrYbFnHTHqcidC
+         pMzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRdrZ8naAAch5rFnVFbD4mKIjvFmWcAZfWHI8JjTaUVy2p4Qw3nb7fW2A6J9YYV89E3YEAMr9B7bN2+wA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc/1+q0qvBwAURk6Q1EFeb5DFx75dCRNYXUNg5zqXu6HtqZEb/
+	RuUuNUtK9enBRGncB7bED/uFcyJerb5zbEXIwOcvSmpbTpnELhXiPmT3QbTynbTMNnGNOBevJVi
+	dsnTLMg==
+X-Google-Smtp-Source: AGHT+IENXCH4SuSphP+WfGGDSdjGmLGhnHOBJ/boJsiqZ+MqMV4PbdSmBjtFRZdUumVba4F8E0AnJQ71O+s=
+X-Received: from pjbsb16.prod.google.com ([2002:a17:90b:50d0:b0:32b:92ac:cfb9])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4f:b0:32d:3713:5a4f
+ with SMTP id 98e67ed59e1d1-32d43ef6e16mr23388863a91.3.1757541833526; Wed, 10
+ Sep 2025 15:03:53 -0700 (PDT)
+Date: Wed, 10 Sep 2025 15:03:51 -0700
+In-Reply-To: <20250718001905.196989-3-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="g4o6fT5DfXvnE0Lv"
-Content-Disposition: inline
-In-Reply-To: <20250910213537.553673-1-karanja99erick@gmail.com>
-X-Cookie: I think my career is ruined!
+Mime-Version: 1.0
+References: <20250718001905.196989-1-dapeng1.mi@linux.intel.com> <20250718001905.196989-3-dapeng1.mi@linux.intel.com>
+Message-ID: <aMH1xwsK1eTjJh71@google.com>
+Subject: Re: [PATCH v2 2/5] KVM: selftests: Add timing_info bit support in vmx_pmu_caps_test
+From: Sean Christopherson <seanjc@google.com>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>, 
+	Zide Chen <zide.chen@intel.com>, Das Sandipan <Sandipan.Das@amd.com>, 
+	Shukla Manali <Manali.Shukla@amd.com>, Yi Lai <yi1.lai@intel.com>, 
+	Dapeng Mi <dapeng1.mi@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Fri, Jul 18, 2025, Dapeng Mi wrote:
+> A new bit PERF_CAPABILITIES[17] called "PEBS_TIMING_INFO" bit is added
+> to indicated if PEBS supports to record timing information in a new
+> "Retried Latency" field.
+> 
+> Since KVM requires user can only set host consistent PEBS capabilities,
+> otherwise the PERF_CAPABILITIES setting would fail, so add
+> pebs_timing_info bit into "immutable_caps" to block host inconsistent
+> PEBS configuration and cause errors.
 
---g4o6fT5DfXvnE0Lv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please explain the removal of anythread_deprecated.  AFAICT, something like this
+is accurate:
 
-On Thu, Sep 11, 2025 at 12:35:37AM +0300, Erick Karanja wrote:
-> Replace lock/unlock pattern with guard cleanup macro.
-> This simplifies the code flow path by replacing the conditional
-> jump with an early return.
+Opportunistically drop the anythread_deprecated bit.  It isn't and likely
+never was a PERF_CAPABILITIES flag, the test's definition snuck in when
+the union was copy+pasted from the kernel's definition.
 
-Seriously, please fix your subject lines to follow the style for the
-subsystem and distinguish between the patches.
-
---g4o6fT5DfXvnE0Lv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjB9LQACgkQJNaLcl1U
-h9A+4wf/ehY93JmhJYn6SG0Nl6s/Hcg+5EtbWr6R2/2du+TYhzuWW0AUYqMrpvQH
-eFc6rauyPxfpqBgaKaGEot5JftJdgjts6rR6gWFMYvTgp9fXnYu8FFvzq0waKTrf
-U5jb6d0A4qqF6B1HBtNg51TtCd2lyS4I7InrYiurYiWCAy+x2a2Cun12AVfu58sX
-ZRTtz31xzJgC5tv7jaPYJczW2rqJ8dzfeni4tu71WIIA+uujMtAB6XsFQ5zY9OO/
-YX45VL+mfqs6gzzSgvgwe0tNI6Pu8BCHvEHC3NxCR8iEL8IyDFPiEiNiQnxBiQwJ
-rqgqPdZOsLayTPIUjigHH6s6l31u1Q==
-=m26Q
------END PGP SIGNATURE-----
-
---g4o6fT5DfXvnE0Lv--
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> Tested-by: Yi Lai <yi1.lai@intel.com>
+> ---
+>  tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c b/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c
+> index a1f5ff45d518..f8deea220156 100644
+> --- a/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c
+> +++ b/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c
+> @@ -29,7 +29,7 @@ static union perf_capabilities {
+>  		u64 pebs_baseline:1;
+>  		u64	perf_metrics:1;
+>  		u64	pebs_output_pt_available:1;
+> -		u64	anythread_deprecated:1;
+> +		u64	pebs_timing_info:1;
+>  	};
+>  	u64	capabilities;
+>  } host_cap;
+> @@ -44,6 +44,7 @@ static const union perf_capabilities immutable_caps = {
+>  	.pebs_arch_reg = 1,
+>  	.pebs_format = -1,
+>  	.pebs_baseline = 1,
+> +	.pebs_timing_info = 1,
+>  };
+>  
+>  static const union perf_capabilities format_caps = {
+> -- 
+> 2.34.1
+> 
 
