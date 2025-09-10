@@ -1,115 +1,109 @@
-Return-Path: <linux-kernel+bounces-810735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7DF4B51E92
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:07:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06825B51EA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 743E61C878D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:08:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08F597B3FC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2692D1911;
-	Wed, 10 Sep 2025 17:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4062DECD6;
+	Wed, 10 Sep 2025 17:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="rhkC4LkV"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhVqs87O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4296A2C11C0
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 17:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E96B26B777;
+	Wed, 10 Sep 2025 17:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757524052; cv=none; b=CXYm7yR0pxCmMe30z/QCtEdzZafs2CdVoTC9CeKvjKjzi/2g9qQ2tomWVZMQ9Pc7Do6FTeGFOf9ZjLDFlWaZAWTBHxmyx6Nd+GhuiAyaPFkH4CALH8Y7d4MkBOqicP8EDgZ1prP6sQ5lWoHRkamGCGMgqnZbG9wUm12rhvpRals=
+	t=1757524232; cv=none; b=CP21uNW4lENkM5X14Cyyjg3XQIFjKT7pjWMUONKA2Cq7195+OgSS4tOvxDod2cYu0S0c/bvU7htRZFaJvyN3f8hlSYCO/cDU3RhKITDAB8dfbMAOmhWoMBKm3P+5/LWX3kFMMU30AdbiGZ+Fy9WlPS4/Xeia4Mir//XoSLhbLuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757524052; c=relaxed/simple;
-	bh=N4gPPS/3dSviDV+nJ9aMHOkSB0mRiMcb3pe0ijxcYPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kxd8DyssVSPonQ5xsjqdydGNb+TAkSB0PnTVUpD2QOXQTh0K2Q4vhALkqCHyv6nyVdjBq+DYA3QFtBsyprQFi5FZpHislrv5tiIHNmJof1WXJyc+xMiAeTwQqn8Ma5ggwLL9PZQXOnjGDuoiDBmcqqSR+pGFmRSDGu0xRGqHB6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=rhkC4LkV; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45dd505a1dfso45281145e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:07:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1757524048; x=1758128848; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gekjhcGuFAvCdvKdCIZQrxRikZ2Ctx9B6SPOTCwdqxo=;
-        b=rhkC4LkV9HgSetgiQBBzpRSSpgSYZRb8GKm4It+rCmJMSWa0PpFISTr4dLKqlm6Xix
-         HVp43ELa8ujo4gi3CNfEUdrPr+T/nwyKXGCJYqT8peaXgsKGnhRc0Jgiv54TKhAmK/0x
-         bIi3ayuNEoIiQchKnFjzvLgdBeoQkp3BAN5iqner4Yjx7QQVFhZOD313LCcOOUSl/gE/
-         0xE+9J0ItcTgn0ArHXRTmG7FKPEpaMOjfr9FxKAvr5NdJF3TdpAu6gh4pSlvWAtv9Wnf
-         Y03MzoALIRhpDWpgzC9zmODMVQMI6z4Figwx71tgZYaklgDpkICVxIFJNY+Kt3HDdNBL
-         I8ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757524048; x=1758128848;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gekjhcGuFAvCdvKdCIZQrxRikZ2Ctx9B6SPOTCwdqxo=;
-        b=uP5ulSSEOZ2DlYcAyP7ORV2BDoNVOOmYpw2yNKKJW7N+2fS0cXTz2D5aayfF/9NOeT
-         SsGOwREdKb5l3Uc0II0LlFvkuS4CPKJvazCkceBLXSbHxusHxWol/BBJZaYKgb6vhe2b
-         5MXJGE2tVvBwIQFKjE2UqSJ/CxJiUZMvdItwxLCOlCcNK+XMZtZ5rS+0mAGILa4hXNUb
-         YOhGhgj4UzgLBUu2EE4aC7T25Ot4oRfGP5lskNVkql8ZX5g84XJPYHaFcXkxe1MG7am9
-         8BH9fHDXD5ytaQ0JoUVvYXMtAO0gFQ1RW++bYCBMmuhMqej019SvNLj40h+/wkeVTNt5
-         988w==
-X-Forwarded-Encrypted: i=1; AJvYcCWH1omxBSIfN+YGN4MpZnivrzz4+sP3GB7G19+nzmKY+tA20Jktr9YAkeI8h7UbgQJfUKY4AkN1uG6Lrvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKqhajYcziYQTJqm8e1kcrzCVyhppNdmlJBUEt85qeIZ9bsuNf
-	6tvL/5Gol458m23u5rpxDlLx/KUar0wgcNgo4omZ3JrWpZ0SDfgtqyCv17hnt86P8Wg=
-X-Gm-Gg: ASbGncsX/Otq9cFYpzKMrZUMM4Iv+Bvyd/ztYgT9nZKrE6+9X3wTmYNHgWumn5v35KV
-	oQL342QCgnc8nfpOqoAuS6HZuRmN6y2X04/DPST+dhH7DoVGUqwarMnVNCnVpKUxiODhRVBg4EV
-	5+o3hh3PTP4swCFBAQD7X1x0dIstdMkDvJcCBKzhnVXbWPXBRsctfx/eyil1R0GCg+wg0CukI4c
-	8gcR5FiRxSPXi5PY7kVJeK/Bq90+uUuFTeq+oaG2Z0kU5UwZCG+NHmve6wNK6T89G34nBxXP/Gp
-	FsgL51f94+lP6Uy4dOI1vYUZwVYJBeky2TR1n78k/2HgC5Bb59Phc6d0pOhWIU8bETNsuFmiN7S
-	cN4uOnfImVFzBJlhBo2OS+17TD+6+3DZnlFna9fwx
-X-Google-Smtp-Source: AGHT+IE8ICbq+Y0pNELl5MS1Ijotr4nvX+Ht9YB0UVmmnGjj1nmt8pLLDUc5Zs7zq66i3nLkc7Fh/g==
-X-Received: by 2002:a05:6000:26d2:b0:3df:b9e7:35ba with SMTP id ffacd0b85a97d-3e6440f0674mr13101716f8f.57.1757524048387;
-        Wed, 10 Sep 2025 10:07:28 -0700 (PDT)
-Received: from hapmop ([2a02:c7c:8a3e:8c00:27ad:58c1:9156:5215])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e752238755sm7374432f8f.32.2025.09.10.10.07.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 10:07:28 -0700 (PDT)
-From: Harrison Carter <hcarter@thegoodpenguin.co.uk>
-To: robh@kernel.org
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	hcarter@thegoodpenguin.co.uk,
-	krzk+dt@kernel.org,
-	lee@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	pavel@kernel.org,
-	sakari.ailus@linux.intel.com
-Subject: 
-Date: Wed, 10 Sep 2025 18:07:27 +0100
-Message-ID: <20250910170727.548880-1-hcarter@thegoodpenguin.co.uk>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250910150527.GA54174-robh@kernel.org>
-References: <20250910150527.GA54174-robh@kernel.org>
+	s=arc-20240116; t=1757524232; c=relaxed/simple;
+	bh=PW76yThY2gj9z7rD5xixHiYA1fdwTSwz1aZ0Fy8V/Q8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=KcQCaNSY1oDbzPTgC24bPP+bYEyEt56lvn5wNt0W7dScSkIli/skkOD838i+Xn/iP7LsNTm3jDlK2PyIkiSwxlWZ5lSrtjpf+x9bCufy/hMS9ewBH4UaQd4DaxngvRjt9+Y5qj3jU77/f4mQFbAJM5Rfg9rDTk4lCsUc2/3760w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhVqs87O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41DCFC4CEEB;
+	Wed, 10 Sep 2025 17:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757524232;
+	bh=PW76yThY2gj9z7rD5xixHiYA1fdwTSwz1aZ0Fy8V/Q8=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=XhVqs87O5vwpjXJZuz/l3R+3PlT9EsG9htJigQx5KGKzbC4D0lzNDRopdYC/X+6bm
+	 VwK3Wz2+9nQ2XeUK9tKarluTxL1WDOWZMLy3Aph5g3z6tnNu6UfawqXGNmleALZLnd
+	 x/IAitRwky2u3Iez09gP4tFErPpSXTB8ZdsXoRJgPNGftLhPZWc3V32M8EKq5+Qt37
+	 GOdroyHfcUbRIz2mt56P5tVJ4CwgFOfSXqtLpH2q4lyCqZGzXKdx6rah1KwQayDw17
+	 SdrdvsjRxMkqMVKpHRpnqcWyqRCcSmPKITQelQx1xrwAu1HRKatnM+0CjGYqT4AdUO
+	 66mywoU8R44ew==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 10 Sep 2025 19:10:27 +0200
+Message-Id: <DCPACBXOKLNF.1ZWCPVR4F9PFQ@kernel.org>
+Subject: Re: [PATCH v11 2/7] rust: debugfs: Add support for read-only files
+Cc: "Dirk Behme" <dirk.behme@de.bosch.com>, "Matthew Maurer"
+ <mmaurer@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "Sami Tolvanen"
+ <samitolvanen@google.com>, "Timur Tabi" <ttabi@nvidia.com>, "Benno Lossin"
+ <lossin@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
+ <20250904-debugfs-rust-v11-2-7d12a165685a@google.com>
+ <45f6f6e0-bd1e-41e7-8c8e-bb556644a873@de.bosch.com>
+ <DCO4MP8YT3A8.2PFXX7VJ1STD@kernel.org>
+ <2025091014-explicit-grafted-e849@gregkh>
+ <ef5c0c7b-3fb3-4099-966c-62cf08d9b2b4@kernel.org>
+ <2025091027-granny-squatted-c5b5@gregkh>
+ <17254fe7-3dea-411b-b6a7-fa368ec548e7@kernel.org>
+In-Reply-To: <17254fe7-3dea-411b-b6a7-fa368ec548e7@kernel.org>
 
-Subject: Quick clarification
+On Wed Sep 10, 2025 at 5:43 PM CEST, Danilo Krummrich wrote:
+> On 9/10/25 5:36 PM, Greg Kroah-Hartman wrote:
+>> I've pushed these to driver-core-testing if you could fix it up as I
+>> don't know what the other change was?
+>
+> Sure, will do.
 
-Hi Rob,
+* rust: debugfs: Add initial support for directories
+* rust: debugfs: Add support for read-only files
 
-Thanks for looking it over. Just to clarify on your
-comments:
+    [ Fixup build failure when CONFIG_DEBUGFS=3Dn. - Danilo ]
 
-1. Is this to stop duplicating things that are clearly 
-    described in the variable names?
-2. Should I keep the "Must be dvisible by X" parts of the 
-    description?
+* rust: debugfs: Add support for writable files
 
-Cheers,
+    [ Fix up Result<()> -> Result. - Danilo ]
 
-HarryC
+* rust: debugfs: Add support for callback-based files
+
+    [ Fix up Result<(), Error> -> Result. - Danilo ]
+
+* samples: rust: Add debugfs sample driver
+
+    [ Change ACPI ID "LNUXDEBF" to "LNUXBEEF". - Danilo ]
+
+* rust: debugfs: Add support for scoped directories
+
+    [ Fix up Result<(), Error> -> Result; fix spurious backtick in
+      doc-comment. - Danilo ]
+
+* samples: rust: Add scoped debugfs sample driver
+
+    [ Rename "scoped_debugfs" -> "debugfs_scoped", fix up
+      Result<(), Error> -> Result. - Danilo ]
 
