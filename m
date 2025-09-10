@@ -1,117 +1,158 @@
-Return-Path: <linux-kernel+bounces-810258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B098B517E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:29:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8FB1B517E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36E6317E3BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:29:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F8383B0DBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE37130649B;
-	Wed, 10 Sep 2025 13:29:13 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD57B28751A;
+	Wed, 10 Sep 2025 13:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NzbxX17/"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F411D1F03F3;
-	Wed, 10 Sep 2025 13:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FDF28DF07
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757510953; cv=none; b=Zkm+WfCUOHr9v2AW45WPSvNBVxNZZseDWRTeLhaJzaHuB7MmCphEgbZ7ak8DyPKct++q62xOdFAmfH6qzhn9SsUnWLhKvjJznXRoXc5iXZw+2ZuJMUrAFxbjImhJPZjKPVwMY/b/w5pXCsCXNBl6A43VuNw+TZ2cXmo27H0Cd7M=
+	t=1757510981; cv=none; b=jGiodLXvaXOOGn7Ae24e9CeWEiuVgZqpOEtPy2shVpiwJsn/kle6BQ3dCFuhvhUS5YrAlxT2I7xXbEB8ueQrAhbMON33VwnubtxAwuCUrRsug9B08KOI3WoTO1NkBJzU8UAlYzKGX+pzT8NB8X5Zsf/VboIRI5+57QJuW+gvYtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757510953; c=relaxed/simple;
-	bh=tOdTP+KhNsuVkhx/qtPZrGHgD4gbeXaG62qOwGAYqF8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ksYvBoNvtMP98oM6nXo2nQ2EJLrpIsKYaJF8YbZA5LFBvEe5JDsYynwk3ZYsZgXtAqp0omZC8Xugi4UmD1SmWg2Be+9zadQtzEp9FypVqoewALal6HZPR1t2bO3fGSDJyOOTcdMWar5uMTnjkc2fAPsJH9gON93DQkQ99OG1ORo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMM24251Qz6GDBJ;
-	Wed, 10 Sep 2025 21:27:56 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id CBE391404FD;
-	Wed, 10 Sep 2025 21:29:08 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 10 Sep
- 2025 15:29:07 +0200
-Date: Wed, 10 Sep 2025 14:29:06 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
-	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
-	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
-	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v11 18/23] PCI/AER: Dequeue forwarded CXL error
-Message-ID: <20250910142906.000079d6@huawei.com>
-In-Reply-To: <20250827013539.903682-19-terry.bowman@amd.com>
-References: <20250827013539.903682-1-terry.bowman@amd.com>
-	<20250827013539.903682-19-terry.bowman@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757510981; c=relaxed/simple;
+	bh=ummYQlHD+Zi9f47ks9lb05+8D8/hSZq4RnitAF5O7u8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZymurcbgeZNzvnBRQQItdsdDFNjTf1QUo6H5E56pM6etpdgohGRvPpen9vY5hJ/f0Rdld2xJRPRvqi6Gs58lJYOR5hsZsw2aONKrMKq/lmxlXsRO3MmNUI8x9TV+wQi4bfLb4HpX910TY9ao+cyxmCCyA4inUWrSi6if4LMLexo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NzbxX17/; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3d3ff4a4d6fso4342270f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 06:29:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757510977; x=1758115777; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=qlKGaH1d3s0RHZ4omQFOWJ+FEfeUfvKfp8hqseleBdI=;
+        b=NzbxX17/5esenJJ7V5bJGlb0yuqpeiXJnnFgS5nLFDyHAsPqFwkmfQVkFZmF9EruyQ
+         Cu2EMGGzbUqzYo5dJLjTUklAzVLeLnMRL9wYMu4GI5TebxegS/QzxPBYH49wwjkf5zUZ
+         LyxX4EcC3fwp4g3/IBo2v17qXBALIMUYx+svRmNbXJAUEoxFfptYgKZEIKTHMI+YeHVC
+         8pc20hZzgO406rgAuuvoYq3vPsrafaW8yz744QOjm2WVQNiX3Xd4DwNNOUjwrUMJwgzG
+         aw3ewFWXkWobJEDBGJFunKHALD5t+JbzocfflfF9XS6TkI03xH1heMsFk4hwyl0rA4Qb
+         4GoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757510977; x=1758115777;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qlKGaH1d3s0RHZ4omQFOWJ+FEfeUfvKfp8hqseleBdI=;
+        b=FMeJSFQG1/ab88p6pBP1EqLAdaUvyoHKK3UcOh/iXnr1cZePyt4s4GBvMorJrn8f/a
+         fxNnOfPMN3MJ+MlpD3/lIeHHVmsz4NbFFx8hh15bbNb6KGNZcJCO5id1vbND6KucSZz2
+         edC+aKPiiTs4XXC2VVq3H6xyfxcDpFbgwGXtaqTpwuMfNkWbfqwKOIJNQ7ltlZx9bY5A
+         zCk64B/AIHGMbhAHMZ6WBkDIkzqZJNZoTTvfajMQL7wCydqSXsgeZ55F3zYndmE2dqrR
+         au+I+khi/gs3/Ib0tyyydPQDIHBfuohfMkixpkbtzj3Ud1niabuUJHrfKcDOLy/stIxK
+         rDEA==
+X-Gm-Message-State: AOJu0YxBaJjtpexirPiXu2q5H2Po5j9Fqjjy+ki9R3SzZF1cwRQmZgbQ
+	Ws4DaPaF15Amu7TCkcePwAAsbPZRi0if+cbTyoD21m6yK8TxfR4nX7qJgiF3/Dafzqc=
+X-Gm-Gg: ASbGnctKHq+RhAUCg64NxQ7OZqFv7wjUZDOyYG+jt4RJcvbXxX+SH1BvgquEQRU/I1T
+	fPlo5OAn414gPnk4QlJW9yXERuK3IYaTInIUKZ5hySkAJoDBDVl1BFU4yLiOz2O7t8Djh56Xoop
+	TsJsnvCvCMZgvjjvYLAp6rpfkfqE6gukr1QiE1z2+C1ypXGT78oU3MzRNO8XexMFd1mfXPgZdWK
+	9HZulPshLRJCn2iaG3y69lNbWqYq46L7A7AQJ3q8IzdG+lMseIPWUL/ABlxZRPCwKDx2OqJ18nl
+	Kg6XG/cuK9cI9iKyIRJPjUGA4JIzhpIvD0194cAn70NCBZggKSWqTidww2hPg4lmzEZ9lOXB8pG
+	PYNMfLeJlgLcqnJdipL/PiDvY4uVF4oQQNUKfmZ8uoNFGZQ==
+X-Google-Smtp-Source: AGHT+IGqaolibMl01HDsfx6w/vwOU7QUB/JY1ULsIM13HTYf1eE/9UqxSorRgHaJZ96041ndQjfP8g==
+X-Received: by 2002:a05:6000:2389:b0:3b7:9929:871c with SMTP id ffacd0b85a97d-3e642f90df2mr10709983f8f.37.1757510977136;
+        Wed, 10 Sep 2025 06:29:37 -0700 (PDT)
+Received: from [10.20.0.214] (ivokam.ddns.nbis.net. [109.121.139.111])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df81fcb04sm28019515e9.8.2025.09.10.06.29.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 06:29:36 -0700 (PDT)
+Message-ID: <b669a4a9-ce0e-4906-96c9-689d69a66c23@suse.com>
+Date: Wed, 10 Sep 2025 16:29:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/15] x86/mce: Separate global and per-CPU quirks
+To: Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org,
+ Tony Luck <tony.luck@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+ Smita.KoralahalliChannabasappa@amd.com, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+ linux-acpi@vger.kernel.org
+References: <20250908-wip-mca-updates-v6-0-eef5d6c74b9c@amd.com>
+ <20250908-wip-mca-updates-v6-5-eef5d6c74b9c@amd.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+Autocrypt: addr=nik.borisov@suse.com; keydata=
+ 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
+In-Reply-To: <20250908-wip-mca-updates-v6-5-eef5d6c74b9c@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 26 Aug 2025 20:35:33 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
 
-> The AER driver is now designed to forward CXL protocol errors to the CXL
-> driver. Update the CXL driver with functionality to dequeue the forwarded
-> CXL error from the kfifo. Also, update the CXL driver to begin the protocol
-> error handling processing using the work received from the FIFO.
+
+On 8.09.25 г. 18:40 ч., Yazen Ghannam wrote:
+> Many quirks are global configuration settings and a handful apply to
+> each CPU.
 > 
-> Update function cxl_proto_err_work_fn() to dequeue work forwarded by the
-> AER service driver. This will begin the CXL protocol error processing with
-> a call to cxl_handle_proto_error().
+> Move the per-CPU quirks to vendor init to execute them on each online
+> CPU. Set the global quirks during BSP-only init so they're only executed
+> once and early.
 > 
-> Introduce logic to take the SBDF values from 'struct cxl_proto_error_info'
-> and use in discovering the erring PCI device. The call to pci_get_domain_bus_and_slot()
-> will return a reference counted 'struct pci_dev *'. This will serve as
-> reference count to prevent releasing the CXL Endpoint's mapped RAS while
-> handling the error. Use scope base __free() to put the reference count.
-> This will change when adding support for CXL port devices in the future.
-> 
-> Implement cxl_handle_proto_error() to differentiate between Restricted CXL
-> Host (RCH) protocol errors and CXL virtual host (VH) protocol errors.
-> Maintain the existing RCH handling. Export the AER driver's pcie_walk_rcec()
-> allowing the CXL driver to walk the RCEC's secondary bus.
-> 
-> VH correctable error (CE) processing will call the CXL CE handler. VH
-> uncorrectable errors (UCE) will call cxl_do_recovery(), implemented as a
-> stub for now and to be updated in future patch. Export pci_aer_clean_fatal_status()
-> and pci_clean_device_status() used to clean up AER status after handling.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> Tested-by: Tony Luck <tony.luck@intel.com>
+> Reviewed-by: Tony Luck <tony.luck@intel.com>
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
 
-One additional comment.
 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index d775ed37a79b..2c9827690cb3 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -2328,6 +2328,7 @@ void pcie_clear_device_status(struct pci_dev *dev)
->  	pcie_capability_read_word(dev, PCI_EXP_DEVSTA, &sta);
->  	pcie_capability_write_word(dev, PCI_EXP_DEVSTA, sta);
->  }
-> +EXPORT_SYMBOL_NS_GPL(pcie_clear_device_status, "CXL");
-
-Not seeing this as CXL specific. I don't think the namespace is appropriate.
-
->  #endif
-
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
 
