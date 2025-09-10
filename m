@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-809345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D46FB50C3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:13:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D713AB50C3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A08188EE61
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:14:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C983460A06
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47662517AC;
-	Wed, 10 Sep 2025 03:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794492580EE;
+	Wed, 10 Sep 2025 03:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwKQHOgc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KABHcOun"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038E5247299;
-	Wed, 10 Sep 2025 03:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C118F4A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 03:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757474007; cv=none; b=HRLBQ/E72xmAPGVnjxGmSJFrbT3IA72blI5lVipZh4jtXyz2h6Yz7j6xys2OE1DW9JWsv5DMnHnQH7YullHVQmAuDvsMdKYyRtKU1WXSiwOkL9nslPqHR9i1hwigZUkxQJGHeGdT4MAaPV8GsCvmfM6n3OTGFe4GQDw/Q3SpYmc=
+	t=1757474063; cv=none; b=SqLAeZo1NLn3BOmOn10TgfT1b3UFH/L0a5uWwCT2KTR0PfKzusnjCjkrqeE45A5gxgWdNbNoRqEhG7WR7qcVhCE8jqX5Rz9fPzGJ4QWFMvOWpvZY6P0uOX2sWKF91LEgVLsot+Xnj6567lFT04GdDh8nIpf36k++LRDFY/iGbHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757474007; c=relaxed/simple;
-	bh=Pm+tVoUwjsA1EAA14sQc9PYEDvzSFjODCNF1ByORv/g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ECaCIZxnhppatosIB5q5/6WXqQzpqVW33Gy5SnxRcluwysJ9rzp1ddCxJD7Nc3662fTwmlSzocbGBPVoiAcI3ZoDwgQGOfcbMQbwAkA1kLOSIlJzDNwJu0ce+fIoJdtpQvTlDxeg6LaYVJRgWVxLrR3+YQhJJLCtXYmXP0rEWIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwKQHOgc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65B71C4CEFD;
-	Wed, 10 Sep 2025 03:13:26 +0000 (UTC)
+	s=arc-20240116; t=1757474063; c=relaxed/simple;
+	bh=TcwTT74aQaPaV63W1C7OeqMDunCWPhOwjwEsGuRKoKA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TyHKtqFd1eIFy5wfJHcehZ980+0m3AO2anyontkKZkPrGDdJPpm0zqRDqA7Bk7cp0sR9lkm86seROXggufHTXuMZVm+FD/+qwea8vC4SwHx6wGkHMHodYO/Sn+IRJPiJySLwXdC0o9E4dMpN4nwSJQvI8uoPEzHkWTq58s2aEgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KABHcOun; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4421BC4CEF0;
+	Wed, 10 Sep 2025 03:14:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757474006;
-	bh=Pm+tVoUwjsA1EAA14sQc9PYEDvzSFjODCNF1ByORv/g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JwKQHOgcf777aQEPMWA1WrboOrS0WJ9xBNTk2ujVU3wGr7PX/oCNY6p85pH8BM3dS
-	 xClDgmz0qxYktDS+4GM25/Dg0eXG8Z20zfzVPhFEUmlp4O3IFzCugO84lFN8oqyoao
-	 daCL+WnYpZNQUPfeHgrthGVuS1BtaQTQUk2epgIgJxgZ+4KPIH7kVvOcuCXXCFaipu
-	 6jukJhwClmjWrs4Q1AcDjVd513AM+Rhy7Y2aAg8ApyQwyMDZiiTisR6K6k5Ve8+llU
-	 Ix7RAD6kX6KXknMl9Rhth46PUafNDNVcomFE4y6kfVFpcpiIDqSXh7Y//3mqrc1YI9
-	 zojDG9vU3zEyw==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-621b8b0893bso7946130a12.2;
-        Tue, 09 Sep 2025 20:13:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJuPIpZedBLwdYNhf9GhvRk2vMW3ysmRZOsnnNlNV55KTm2SVpfLQnXh2r8VgLvurT6gmCGM4DPywbp4XgftQ=@vger.kernel.org, AJvYcCWkFzTEwgeNU5NU8Xmt0vY8j/2/Z9JtmE8jLVLMFVwXc+KtlMa/x+v+R1xIOqvbU/inOx54KftickdXHrx6@vger.kernel.org, AJvYcCX8IL1uZJ/sHfJGUs5tBirBNHDTMQfCM9IxNKcKgzg1PBdoxNj+lNZw6qwcZc1XHemNTy5vFoqIM20K3w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyEZxyi773tuHyIx1YCbQ9/aQb7zb1cNXvTJV+TcMYhivOLvDl
-	ic89En0XTbMB/EUxOXgUDseFcp9XgOsFNyZwCvTzLmihLdAI2CnJFEKvNCizpXUnlmiRwZp4gc6
-	RHXkeU4krZ4FxdRoOcZ0KfebYdrxQQgM=
-X-Google-Smtp-Source: AGHT+IHqycEiu4p+jBhCmy7YhtpJP/ZZ92m6j6qfjhy5tcYiXfH2wUPch79IEIxrqACD0IcLf1ov3Yg9ClqN+2u50j4=
-X-Received: by 2002:a05:6402:24cd:b0:61c:9852:bbb0 with SMTP id
- 4fb4d7f45d1cf-6237ebc6f49mr11799208a12.19.1757474005005; Tue, 09 Sep 2025
- 20:13:25 -0700 (PDT)
+	s=k20201202; t=1757474063;
+	bh=TcwTT74aQaPaV63W1C7OeqMDunCWPhOwjwEsGuRKoKA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KABHcOun1fxqcw3tG8NUUO83OuhFEK5DBYCADvm5MMT6Cru3LTtfsldFv3IADKp/D
+	 IGCWOTNHR1i5NviYpacgIfrN+sMIi5omdZKeabU26YVruspNDCjr79DWCt+kGgpN19
+	 0ePH7yrG4+HRhdaGTNFLd8ZB26zTx2WGJ6WJ44x7JvesO1TodiZQUzW7+Zu2KXHOEN
+	 j7a7jz+9d/4NqJFPC0gSbE8PbtTq8FTbL8s+1ui6RPl5psyfOD3QpUiUbi6MNf7tG3
+	 XlrrJfeFu/0wEE+wbX4tlEsvIcSf8298CD388zkXg72fu1IpUEtYl453JyBPJYyQdF
+	 BY1fOqk3RTtFQ==
+From: SeongJae Park <sj@kernel.org>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <zhouchengming@bytedance.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] mm: remove unused zpool layer
+Date: Tue,  9 Sep 2025 20:14:21 -0700
+Message-Id: <20250910031421.166611-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250909151345.GE1474@cmpxchg.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909190356.870000-1-colin.i.king@gmail.com>
-In-Reply-To: <20250909190356.870000-1-colin.i.king@gmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 10 Sep 2025 11:13:13 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6C9BdQ3uXaKpasLTPFQqNRuA8JTsCE6ONF07fshVJMYQ@mail.gmail.com>
-X-Gm-Features: Ac12FXw581urdYIvQB1ULdc6-tFqmQR-SAoJRKh5X4BecvRc9gtCLNy2ySC10Cc
-Message-ID: <CAAhV-H6C9BdQ3uXaKpasLTPFQqNRuA8JTsCE6ONF07fshVJMYQ@mail.gmail.com>
-Subject: Re: [PATCH][next] gpio: loongson-64bit: Fix a less than zero check on
- an unsigned int struct field
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Yao Zi <ziyao@disroot.org>, linux-gpio@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi, Colin,
+On Tue, 9 Sep 2025 16:13:45 +0100 Johannes Weiner <hannes@cmpxchg.org> wrote:
 
-On Wed, Sep 10, 2025 at 3:04=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> Currently the error check from the call to platform_get_irq is always
-> false because an unsigned int chip->irq.parents[i] is being used to
-> to perform the less than zero error check. Fix this by using the int
-> variable ret to perform the check.
->
-> Fixes: 03c146cb6cd1 ("gpio: loongson-64bit: Add support for Loongson-2K03=
-00 SoC")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/gpio/gpio-loongson-64bit.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-loongson-64bit.c b/drivers/gpio/gpio-loong=
-son-64bit.c
-> index f84f8c537249..24b7219db34a 100644
-> --- a/drivers/gpio/gpio-loongson-64bit.c
-> +++ b/drivers/gpio/gpio-loongson-64bit.c
-> @@ -267,10 +267,13 @@ static int loongson_gpio_init_irqchip(struct platfo=
-rm_device *pdev,
->                 return -ENOMEM;
->
->         for (i =3D 0; i < data->intr_num; i++) {
-> -               chip->irq.parents[i] =3D platform_get_irq(pdev, i);
-> -               if (chip->irq.parents[i] < 0)
-> -                       return dev_err_probe(&pdev->dev, chip->irq.parent=
-s[i],
-> +               int ret;
-> +
-> +               ret =3D platform_get_irq(pdev, i);
-> +               if (ret < 0)
-> +                       return dev_err_probe(&pdev->dev, ret,
-Then this line becomes short enough, and the "return ..." can be in one lin=
-e.
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+> On Fri, Aug 29, 2025 at 12:07:28PM -0700, SeongJae Park wrote:
+> > On Fri, 29 Aug 2025 17:15:27 +0100 Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > 
+> > > With zswap using zsmalloc directly, there are no more in-tree users of
+> > > this code. Remove it.
+> > > 
+> > > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> > [...]
+> > > --- a/Documentation/admin-guide/mm/zswap.rst
+> > > +++ b/Documentation/admin-guide/mm/zswap.rst
+> > [...]
+> > >  When a swap page is passed from swapout to zswap, zswap maintains a mapping
+> > > -of the swap entry, a combination of the swap type and swap offset, to the zpool
+> > > -handle that references that compressed swap page.  This mapping is achieved
+> > > -with a red-black tree per swap type.  The swap offset is the search key for the
+> > > -tree nodes.
+> > 
+> > Nit.  s/red-black tree/xarray/ ?
+> 
+> Yeah, I just kept the changes scoped to the removal of zpool.
 
->                                              "failed to get IRQ %d\n", i)=
-;
-> +               chip->irq.parents[i] =3D ret;
->         }
->
->         for (i =3D 0; i < data->intr_num; i++) {
-> --
-> 2.51.0
->
+Makes sense to me :)
+
+> 
+> But this file indeed needs a general update beyond the changes in this
+> series. I'll send a separate patch to clean this up.
+
+Looking forward to!
+
+> 
+> > Acked-by: SeongJae Park <sj@kernel.org>
+> 
+> Thanks SJ
+
+:)
+
+
+Thanks,
+SJ
 
