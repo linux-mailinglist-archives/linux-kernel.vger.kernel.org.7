@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-809252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F570B50A9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:01:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C80B50A69
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC6577AC168
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:59:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CDDC3AB335
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6072144D7;
-	Wed, 10 Sep 2025 02:01:08 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8866354F81;
-	Wed, 10 Sep 2025 02:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92A12153E7;
+	Wed, 10 Sep 2025 01:44:39 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D6F212550
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757469668; cv=none; b=jCt1M6yl/WHdHgcw0z4luzmG/V7xM6NXxxPZSfu2V0qu4fzPQ8/Y/ULtTuCpKrdT1FHkNGp7BfH1SXzaqfpGnIcHY8CzIzN/ffUiYfgCQjj4/FLyZJpMTxmgLXqmNpzujlr8cV70I8js84B3k9fNmT/xYqNp3MckH9fEugZoqoc=
+	t=1757468679; cv=none; b=nOU1Fu4yhtU//DiQ3B1EED8VPjXAnCOtNAzdy6S04xqOz9gA19SRWrLIRZTgd5nXEbmLtnoZvc6+9xXBkhHx5Lvil8bs04khQcInWTvJ73oxMvjVGfINCQteSwmWwJNc0J5CXwq4n/1JWiZkN94Lk2o0kvRJRY4zxuD4MFaj4mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757469668; c=relaxed/simple;
-	bh=nrgJ3fiPQ7FVQoDDJSgixRhiDEvwPwCA2HNWaKt8QF4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tb9pxtW8LWGTaaER5xTwBPDs+3aLDbiTIjA+rWR6EhVysJaYkAMCAZkTl4XRCc06/4zvyVcH/tjZYPtUASt9Nx7rt4sT3jREfDMfPCd07nF4opSnSkCJR31nN+DqeUpFvjb+3Nihp5YkYeEz3mcOIc7k9Hz7gmpsEU1qFDkA9io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cM3hv5tbkz13NYt;
-	Wed, 10 Sep 2025 09:57:03 +0800 (CST)
-Received: from dggpemf100009.china.huawei.com (unknown [7.185.36.128])
-	by mail.maildlp.com (Postfix) with ESMTPS id AE3ED180488;
-	Wed, 10 Sep 2025 10:01:03 +0800 (CST)
-Received: from huawei.com (10.67.175.29) by dggpemf100009.china.huawei.com
- (7.185.36.128) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 10 Sep
- 2025 10:01:02 +0800
-From: Wang Tao <wangtao554@huawei.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <graf@amazon.com>, <kvm@vger.kernel.org>, <mingo@redhat.com>,
-	<nh-open-source@amazon.com>, <peterz@infradead.org>, <sieberf@amazon.com>,
-	<vincent.guittot@linaro.org>, <tanghui20@huawei.com>,
-	<zhangqiao22@huawei.com>
-Subject: Re: [PATCH] sched/fair: Only increment deadline once on yield
-Date: Wed, 10 Sep 2025 01:43:53 +0000
-Message-ID: <20250910014353.1015060-1-wangtao554@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <7eed0c3d-6a78-4724-b204-a3b99764d839@amazon.com>
-References: <7eed0c3d-6a78-4724-b204-a3b99764d839@amazon.com>
+	s=arc-20240116; t=1757468679; c=relaxed/simple;
+	bh=i00BFgtIu6IdpJE7LsvCBK5BDWvu2nf2fWobmXdUGaw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uST89IMPl+s4I0LD6PjyAkJx5rhAeoEkUxj77ezQ90/r6JXxVPTUSfuq5tbw+Xy/5xL6FAwF3D9fDWetQ+mGqalPihpK2VezPSHAIuNOzzbuff7qyuBj4Gxo4sPTJ1VU8YiZ+HrydpDeLZAAuvxKPzQyE+dhXP1A8B5ZMf+J0aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee368c0d7f7d41-8a631;
+	Wed, 10 Sep 2025 09:44:25 +0800 (CST)
+X-RM-TRANSID:2ee368c0d7f7d41-8a631
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from Z04181454368174 (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee868c0d7f6ae6-95c01;
+	Wed, 10 Sep 2025 09:44:25 +0800 (CST)
+X-RM-TRANSID:2ee868c0d7f6ae6-95c01
+From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+To: gregkh@linuxfoundation.org
+Cc: arnd@arndb.de,
+	linux-kernel@vger.kernel.org,
+	zhangjiao2@cmss.chinamobile.com
+Subject: Re: [PATCH] char: misc: Make the code for allocating minor in misc_register more concise
+Date: Wed, 10 Sep 2025 09:44:20 +0800
+Message-ID: <20250910014421.2837-1-zhangjiao2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.50.1.windows.1
+In-Reply-To: <2025090910-tactile-devourer-1070@gregkh>
+References: <2025090910-tactile-devourer-1070@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,13 +56,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf100009.china.huawei.com (7.185.36.128)
 
-Picking up this dead thread again.
+>> On Tue, Sep 09, 2025 at 04:58:35PM +0800, zhangjiao2 wrote:
+>> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+>>
+>> There is no need to check the registered misc dev in misc_list.
+>> If misc_minor_alloc failed, it meens the minor is already alloced
+>> and the misc dev is linked in misc_list.
+>>
+>> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+>> ---
+>>  drivers/char/misc.c | 32 +++++++-------------------------
+>>  1 file changed, 7 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/drivers/char/misc.c b/drivers/char/misc.c
+>> index a0aae0fc7926..fc2f5e8b2f95 100644
+>> --- a/drivers/char/misc.c
+>> +++ b/drivers/char/misc.c
+>> @@ -211,6 +211,7 @@ int misc_register(struct miscdevice *misc)
+>>  	dev_t dev;
+>>  	int err = 0;
+>>  	bool is_dynamic = (misc->minor == MISC_DYNAMIC_MINOR);
+>> +	int minor = 0;
+>>
+>>  	if (misc->minor > MISC_DYNAMIC_MINOR) {
+>>  		pr_err("Invalid fixed minor %d for miscdevice '%s'\n",
+>> @@ -221,32 +222,13 @@ int misc_register(struct miscdevice *misc)
+>>  	INIT_LIST_HEAD(&misc->list);
+>>
+>>  	mutex_lock(&misc_mtx);
+>> -
+>> -	if (is_dynamic) {
+>> -		int i = misc_minor_alloc(misc->minor);
+>> -
+>> -		if (i < 0) {
+>> -			err = -EBUSY;
+>> -			goto out;
+>> -		}
+>> -		misc->minor = i;
+>> -	} else {
+>> -		struct miscdevice *c;
+>> -		int i;
+>> -
+>> -		list_for_each_entry(c, &misc_list, list) {
+>> -			if (c->minor == misc->minor) {
+>> -				err = -EBUSY;
+>> -				goto out;
+>> -			}
+>> -		}
+>> -
+>> -		i = misc_minor_alloc(misc->minor);
+>> -		if (i < 0) {
+>> -			err = -EBUSY;
+>> -			goto out;
+>> -		}
+>> +	minor = misc_minor_alloc(misc->minor);
+>> +	if (minor < 0) {
+>> +		err = -EBUSY;
+>> +		goto out;
+>>  	}
+>> +	if (is_dynamic)
+>> +		misc->minor = minor;
+>>
+>>  	dev = MKDEV(MISC_MAJOR, misc->minor);
+>>
 
-Has this patch been applied to the mainline or other branch? 
+> Does this pass the new test suite for the misc code allocation logic
+> that we now have in the tree?  Or do we need to write a new test-case
+> for this codepath?
 
-Thanks.
+ I didn't take this new test suite, can you do it for me? I don't think there's 
+ a need to write a new test-case for this codepath. 
+
+thanks,
+
+zhang jiao
+
+
 
