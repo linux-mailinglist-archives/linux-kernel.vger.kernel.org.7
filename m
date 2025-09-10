@@ -1,191 +1,162 @@
-Return-Path: <linux-kernel+bounces-811052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 505F3B52374
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:25:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8361B52376
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5AE618970F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:25:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DF1B46797E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0153101A7;
-	Wed, 10 Sep 2025 21:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9203101A5;
+	Wed, 10 Sep 2025 21:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i3S6fLUu"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NRiNfYa/"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A6F30F7F2
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 21:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C1424C068
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 21:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757539473; cv=none; b=SHnMT4qapm0vIHkkHYGrKiN6FiUbOzV9HVUxu0z+UloT5K3bV8HDd/ly7veZu0kGy6HIF8o9Lq4DIXxs5j27wl4VF6TbHldOLdTrSPyp5DgT7xLEPwCtQqeodOopAES1aCRIYWkiwHcn/hUvYOT/SeGuxOFF/M4HOhnncQKx2F0=
+	t=1757539724; cv=none; b=rQ2fHjhDCYg14sE+Pb+LoFwbvmp0pu5FV7jVImAPUCwa2fY+U956d7Gh89tMDe60Zg2n4ANXM5pSGaMDVKQAK022lmTuTCFssSTxv15TYxdAzLsb17Vd/uUAVW8XBsLYoUAWP7Oq0ZFJVZvwa6zk9KoViLDGF3C++Bc2tCZvaCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757539473; c=relaxed/simple;
-	bh=9IQRtSHr1628ofW6kQUbKbDpJQ94kMCTSCn5PHWbJt4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Dotjvu6npetmlhwIcQy7JjQHNgpdwMrnZ1xOSGYUgNIUQcag2qUs52arWPVwHfMioX8sXiqnOh+/6LQoRUOMiuBBJHZ5xqf/60hnFSYWQUa+raHE9YrsATvlJ5dDWbXctsmvFCaq/VCIuXYvHR1+Aqo1E4lJNlJ19sHHspOteqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i3S6fLUu; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24458345f5dso101549905ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:24:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757539471; x=1758144271; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7K25irIRP6gkMb+usONBcKAqyqrONPXTNhVmIFHvEbQ=;
-        b=i3S6fLUuNx1KvSnpCJigdRmsDqCke664+0KYvxaAfKghNKGpYouhXHkGlrfs3K2F5q
-         XnGT1vPsRFpnE0KhEGGk6lrEdyYcFHBcubvDTt1tmNi8WimfEIP1wyv4JfymW0WyXJYP
-         4MGL6p/c5RF4SQEuKU8dQ8ToQarXyLdBkMdseasGOHgGzkzEpInLpn49u/DtOGOjTQMR
-         nrg+vOdyhTOTyWXvJP5Xi5utkw6/ZfCi0CHrjlBkjf6cJ9tHakiDv+oq7hKvQ6CLk5dI
-         6zcyt2EI2uCR2shtYmpe+bO82178LG8QpqwItmi0ZFAvqpdEljbB/lcyHZuvq8qQ7e33
-         ujeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757539471; x=1758144271;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7K25irIRP6gkMb+usONBcKAqyqrONPXTNhVmIFHvEbQ=;
-        b=h1Ic4vsCAFyDhme1mbrgDUsQG54hr7wh0F/aJbBz6jZLTiRW4Gz4zhhJETfx+Ry+Rq
-         XD9wk5xwx2PtovXFR4Lh6E1q/fUnA3FY4GxDCeWLh/eX/U5s/iRbko8XUTj9WfaouMpB
-         YrU7BH45PMVfLpjnoHDH4ApI39mzjeJmJJHtVLm+l3vNNWuKL2blRCo1QvuRH6jZ7um/
-         IEee/JZ6yzZfmTM0JvTNzcaTvDLbsjllq/H7DNM1rSPnd2BApjBG2X2tgRApmKEIX3sS
-         CAXBHFrp6FMWxuCR3H+4TuyONKxnQSL4BM+R52xJye5dsrDOVx44OmJnmFF8pSy2I6oW
-         fIkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfmDhpegvG2NGN2Z4+lFTPPQTdzO/BJ5GVYa+jMSotZqRUk46CxovOS+4VvcsnDZAcuVpEdkzSdua8moQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGnQo32CmAxDUvEoi3HpNIZgtq3MFwCE4LtiQmJ+p45IvNblFp
-	FbtMIk8fcMF9CnegZZ5aBC5RdZXEQA9xyHoihb2mlxEM0xpUdOM6lJRECMWbLSi0KkmbR1K0l2s
-	FGTuI+g==
-X-Google-Smtp-Source: AGHT+IELnivaoN7uLl4I6Rm5FrgSDDRAim2bOXj5yg5qLtdGI08FzJyUExDTu6fZz4/zzccXrCwowFnFk+4=
-X-Received: from pjbsw12.prod.google.com ([2002:a17:90b:2c8c:b0:327:7070:5b73])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:240b:b0:250:a6ae:f4aa
- with SMTP id d9443c01a7336-2516f24000cmr219432165ad.25.1757539471255; Wed, 10
- Sep 2025 14:24:31 -0700 (PDT)
-Date: Wed, 10 Sep 2025 14:24:29 -0700
-In-Reply-To: <20250908201750.98824-5-john.allen@amd.com>
+	s=arc-20240116; t=1757539724; c=relaxed/simple;
+	bh=t6O931K8869ApsmjxLyrhCtwrI59VcYbXNZNNCszP0k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JuiA0NNfyLcloyXdXCsaX+KAZY1nSt5bKdn4Xqzen1Q/g2wCQuvuirRdW0+su7Lst8jxnhPs2xOWg7UiMLwlyrGP4bh17Am0gOT7JKxGOug2AWoTLz8waTbMFO5WIrK85O/3GSU65uKnCgHYP/yfavL+6G89xxZYVdfeO7wiYHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NRiNfYa/; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757539718;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=76rkMmrLBE5cgKVf8Stc6cW/bIVamvRDkmkQVeGehPY=;
+	b=NRiNfYa/8xcAoU3mIIjqu3WP/FewGZ2woJN39FenOVd9vuX/2dRKZPc/KmFXkcBVjXfyxf
+	jsw7eaDTogqNZTtQZtxqbaqJAZrWCTYLfdl+lBuJhib7ou7Y4ktGDLcrfPEWsf1V0Bk051
+	0F0nDw5GSW/I1qnJUt4sZiLUmd/kdrA=
+From: Matthew Schwartz <matthew.schwartz@linux.dev>
+To: chiahsuan.chung@amd.com,
+	alexander.deucher@amd.com,
+	harry.wentland@amd.com,
+	simona@ffwll.ch,
+	airlied@gmail.com,
+	sunpeng.li@amd.com
+Cc: amd-gfx@lists.freedesktop.org,
+	zaeem.mohamed@amd.com,
+	mario.limonciello@amd.com,
+	misyl@froggi.es,
+	linux-kernel@vger.kernel.org,
+	Matthew Schwartz <matthew.schwartz@linux.dev>
+Subject: [PATCH] drm/amd/display: Only restore backlight after amdgpu_dm_init or dm_resume
+Date: Wed, 10 Sep 2025 14:27:53 -0700
+Message-ID: <20250910212753.3167295-1-matthew.schwartz@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250908201750.98824-1-john.allen@amd.com> <20250908201750.98824-5-john.allen@amd.com>
-Message-ID: <aMHsjTjog6SqPRpD@google.com>
-Subject: Re: [PATCH v4 4/5] KVM: SVM: Add MSR_IA32_XSS to the GHCB for
- hypervisor kernel
-From: Sean Christopherson <seanjc@google.com>
-To: John Allen <john.allen@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	pbonzini@redhat.com, dave.hansen@intel.com, rick.p.edgecombe@intel.com, 
-	mlevitsk@redhat.com, weijiang.yang@intel.com, chao.gao@intel.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com, 
-	tglx@linutronix.de, thomas.lendacky@amd.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 08, 2025, John Allen wrote:
-> When a guest issues a cpuid instruction for Fn0000000D_x0B_{x00,x01}, KVM=
- will
-> be intercepting the CPUID instruction and will need to access the guest
-> MSR_IA32_XSS value. For SEV-ES, the XSS value is encrypted and needs to b=
-e
-> included in the GHCB to be visible to the hypervisor.
->=20
-> Signed-off-by: John Allen <john.allen@amd.com>
-> ---
-> v2:
->   - Omit passing through XSS as this has already been properly
->     implemented in a26b7cd22546 ("KVM: SEV: Do not intercept
->     accesses to MSR_IA32_XSS for SEV-ES guests")
-> v3:
->   - Move guest kernel GHCB_ACCESSORS definition to new series.
+On clients that utilize AMD_PRIVATE_COLOR properties for HDR support,
+brightness sliders can include a hardware controlled portion and a
+gamma-based portion. This is the case on the Steam Deck OLED when using
+gamescope with Steam as a client.
 
-Except that broke _this_ series.
+When a user sets a brightness level while HDR is active, the gamma-based
+portion and/or hardware portion are adjusted to achieve the desired
+brightness. However, when a modeset takes place while the gamma-based
+portion is in-use, restoring the hardware brightness level overrides the
+user's overall brightness level and results in a mismatch between what
+the slider reports and the display's current brightness.
 
-arch/x86/kvm/svm/sev.c: In function =E2=80=98sev_es_sync_from_ghcb=E2=80=99=
-:
-arch/x86/kvm/svm/sev.c:3293:39: error: implicit declaration of function =E2=
-=80=98ghcb_get_xss=E2=80=99;
-                                       did you mean =E2=80=98ghcb_get_rsi=
-=E2=80=99? [-Wimplicit-function-declaration]
- 3293 |                 vcpu->arch.ia32_xss =3D ghcb_get_xss(ghcb);
-      |                                       ^~~~~~~~~~~~
-      |                                       ghcb_get_rsi
-  AR      drivers/base/built-in.a
-  AR      drivers/built-in.a
+To avoid overriding gamma-based brightness, only restore HW backlight
+level after boot or resume. This ensures that the backlight level is
+set correctly after the DC layer resets it while avoiding interference
+with subsequent modesets.
 
-> v4:
->   - Change logic structure to be more intuitive.
-> ---
->  arch/x86/kvm/svm/sev.c | 5 +++++
->  arch/x86/kvm/svm/svm.h | 1 +
->  2 files changed, 6 insertions(+)
->=20
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index f4381878a9e5..33c42dd853b3 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -3310,6 +3310,11 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm =
-*svm)
->  		vcpu->arch.cpuid_dynamic_bits_dirty =3D true;
->  	}
-> =20
-> +	if (kvm_ghcb_xss_is_valid(svm)) {
-> +		vcpu->arch.ia32_xss =3D ghcb_get_xss(ghcb);
+Fixes: 7875afafba84 ("drm/amd/display: Fix brightness level not retained over reboot")
+Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4551
+Signed-off-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 11 +++++++++--
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  7 +++++++
+ 2 files changed, 16 insertions(+), 2 deletions(-)
 
-Honestly, I think the ghcb_get_xxx() helpers do more harm than good.  For s=
-et()
-and if_valid(), I'm totally on board with a wrapper.  For get(), unless we =
-WARN
-on trying to read an invalid field, I just don't see the point.  Ugh, and w=
-e
-_can't_ WARN, at least not in KVM, because of the whole TOCTOU mess.
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 7808a647a306c..3651315760759 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -2037,6 +2037,8 @@ static int amdgpu_dm_init(struct amdgpu_device *adev)
+ 
+ 	dc_hardware_init(adev->dm.dc);
+ 
++	adev->dm.restore_backlight = true;
++
+ 	adev->dm.hpd_rx_offload_wq = hpd_rx_irq_create_workqueue(adev);
+ 	if (!adev->dm.hpd_rx_offload_wq) {
+ 		drm_err(adev_to_drm(adev), "failed to create hpd rx offload workqueue.\n");
+@@ -3407,6 +3409,7 @@ static int dm_resume(struct amdgpu_ip_block *ip_block)
+ 		dc_set_power_state(dm->dc, DC_ACPI_CM_POWER_STATE_D0);
+ 
+ 		dc_resume(dm->dc);
++		adev->dm.restore_backlight = true;
+ 
+ 		amdgpu_dm_irq_resume_early(adev);
+ 
+@@ -9922,7 +9925,8 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
+ 			acrtc->hw_mode = new_crtc_state->mode;
+ 			crtc->hwmode = new_crtc_state->mode;
+ 			mode_set_reset_required = true;
+-			set_backlight_level = true;
++			if (dm->restore_backlight)
++				set_backlight_level = true;
+ 		} else if (modereset_required(new_crtc_state)) {
+ 			drm_dbg_atomic(dev,
+ 				       "Atomic commit: RESET. crtc id %d:[%p]\n",
+@@ -9979,13 +9983,16 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
+ 	 * to fix a flicker issue.
+ 	 * It will cause the dm->actual_brightness is not the current panel brightness
+ 	 * level. (the dm->brightness is the correct panel level)
+-	 * So we set the backlight level with dm->brightness value after set mode
++	 * So we set the backlight level with dm->brightness value after initial
++	 * set mode. Use restore_backlight flag to avoid setting backlight level
++	 * for every subsequent mode set.
+ 	 */
+ 	if (set_backlight_level) {
+ 		for (i = 0; i < dm->num_of_edps; i++) {
+ 			if (dm->backlight_dev[i])
+ 				amdgpu_dm_backlight_set_level(dm, i, dm->brightness[i]);
+ 		}
++		dm->restore_backlight = false;
+ 	}
+ }
+ 
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+index b937da0a4e4a0..6aae51c1beb36 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+@@ -610,6 +610,13 @@ struct amdgpu_display_manager {
+ 	 */
+ 	u32 actual_brightness[AMDGPU_DM_MAX_NUM_EDP];
+ 
++	/**
++	 * @restore_backlight:
++	 *
++	 * Flag to indicate whether to restore backlight after modeset.
++	 */
++	bool restore_backlight;
++
+ 	/**
+ 	 * @aux_hpd_discon_quirk:
+ 	 *
+-- 
+2.51.0
 
-Case in point, this and the xcr0 check can elide setting cpuid_dynamic_bits=
-_dirty
-if XCR0/XSS isn't actually changing, but then this
-
-	if (kvm_ghcb_xcr0_is_valid(svm) && vcpu->arch.xcr0 !=3D ghcb_get_xcr0(ghcb=
-)) {
-		vcpu->arch.xcr0 =3D ghcb_get_xcr0(ghcb);
-		vcpu->arch.cpuid_dynamic_bits_dirty =3D true;
-	}
-
-looks wonky unless the reader knows that ghcb_get_xcr0() is just reading a =
-struct
-field, which obviously isn't terribly difficult to figure out, but the macr=
-os
-make it more than a bit annoying.
-
-Argh, even worse, that check is technically subject to a TOCTOU bug as well=
-.  It
-just doesn't matter in practice because the guest can only hose it self, e.=
-g. by
-swizzling XCR0/XSS.  But it's still flawed.
-
-And for both XCR0/XSS, KVM lets the guest throw garbage into vcpu->arch.xcr=
-0 and
-now vcpu->arch.xss.  Maybe that's not problematic in practice, but I'd rath=
-er not
-find out the hard way.
-
-Lastly, open coding the write to cpuid_dynamic_bits_dirty and vcpu->arch.xc=
-r0 is
-just gross.
-
-So to avoid a rather pointless dependency for CET, which I'm trying my darn=
-dest
-to land in 6.18, I'm going to put together a separate fixup patch and repla=
-ce
-this patchh to end up with code that does:
-
-	if (kvm_ghcb_xcr0_is_valid(svm)
-		__kvm_set_xcr(vcpu, 0, kvm_ghcb_get_xcr0(ghcb));
-
-	if (kvm_ghcb_xss_is_valid(svm))
-		__kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(ghcb));
 
