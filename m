@@ -1,145 +1,96 @@
-Return-Path: <linux-kernel+bounces-810678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2086BB51DD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:35:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32FDCB51DC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 576D17B5AFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:29:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7C351788F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF98242935;
-	Wed, 10 Sep 2025 16:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A516325BEE1;
+	Wed, 10 Sep 2025 16:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="Say0G9DA"
-Received: from pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.12.53.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rr5h2gXi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFA31459F6
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.12.53.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083DE329F38;
+	Wed, 10 Sep 2025 16:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757521886; cv=none; b=MicrEQaLxnw1m/KMaOovNBTXOxLlzc8pfnt+cPc4fHvGtGEWuRy/1oNVq43tKwHooJPYMt4Mzec9XlOg9ljapXoIBG9Msr4qA2TnnmKXwmf+GeALRxyzQtF2dNzyMLgt2pFAKNBsjxUMcL1wCjFyq2/Wf2JpYIIRzcTWje1xFaI=
+	t=1757521945; cv=none; b=omRNLQHbP7R0Q9qA8EgSn2iUrhqvnik8dDQ0/UwZOUO9fDhnX12yRbMP5uCrgu6qeISNRPAmCJva2k4EegV6kUpA5UxXdqkoXDEkcmajKvvCNwcpVJXZH89nDRsc9h5c3a8kflc4ITa/bFzCp0Dh2kT5kOnk24jZ5CGBr5cKnNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757521886; c=relaxed/simple;
-	bh=l131YWzWK5bU+fUSajucDC6Cousg2qnil2n4OuWdDSs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rDLDV0HsYXGkoiKh5HQv3s38fC9sREI2Kc+NHEkg97DqjptW90upjNaIqKrTd3invur98drdq9lPW3KFXeJuOUn/D8wfdsgiIBgxS3CrTg0a+Dlp/8GLiK8hY1USsQuCqBN2nmwtdhKKsSP+h39pAEgnzj6fGumkUasLpHfRxxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=Say0G9DA; arc=none smtp.client-ip=52.12.53.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1757521885; x=1789057885;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=KrTGWU5jgNL2Yex8GuGQCQTTzsuf4kgKWTk1ruEDz8Q=;
-  b=Say0G9DAecqNSrfyGvEXhu3Cx746Rfnj+qcu9BkALlpYRrrqaB1ejPXF
-   6dw5K9PTU09N/d9513WJi92F0qmrk4JSNlLDkSBy4UNNn/a5E1PJzKwa4
-   KXuUY86/bu7qlDcX4C04ClfsKTmQqpmn5STOiF92IqcOWbOwaDqNiWMAS
-   o+xd8Vb8lIlY6tq+UhEbjnPp3AqLp6sqcUu3xeuReSh51ItSJxUsCTt4X
-   4yDrNMy13j1gTsRwy2Dn05jRmx8CMIONl/2HDIUze92lAzVTdxeVJRP9J
-   wZNupfzIshXaAMwrqBTbscHNoYkmQ8Xt7ndhmqJDvSVPSz59NNEy6Ny98
-   g==;
-X-CSE-ConnectionGUID: h9F3vohiSnSI31kY0ffszA==
-X-CSE-MsgGUID: BLs8tLXxSh+45GlVNn7aoA==
-X-IronPort-AV: E=Sophos;i="6.18,254,1751241600"; 
-   d="scan'208";a="2659304"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
-  by internal-pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 16:31:24 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:32617]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.37.248:2525] with esmtp (Farcaster)
- id 03010344-ed65-4286-b33c-177a1cba4abf; Wed, 10 Sep 2025 16:31:24 +0000 (UTC)
-X-Farcaster-Flow-ID: 03010344-ed65-4286-b33c-177a1cba4abf
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 10 Sep 2025 16:31:23 +0000
-Received: from 80a9970eed1e.amazon.com (10.106.101.45) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 10 Sep 2025 16:31:23 +0000
-From: Justinien Bouron <jbouron@amazon.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Petr Mladek
-	<pmladek@suse.com>, Mario Limonciello <mario.limonciello@amd.com>, "Marcos
- Paulo de Souza" <mpdesouza@suse.com>, Alexander Graf <graf@amazon.com>,
-	Justinien Bouron <jbouron@amazon.com>, Steven Chen
-	<chenste@linux.microsoft.com>, Yan Zhao <yan.y.zhao@intel.com>,
-	<kexec@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: Gunnar Kudrjavets <gunnarku@amazon.com>
-Subject: [PATCH] kexec_core: Remove superfluous page offset handling in segment loading
-Date: Wed, 10 Sep 2025 09:31:16 -0700
-Message-ID: <20250910163116.49148-1-jbouron@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1757521945; c=relaxed/simple;
+	bh=WJ4WgkR/oVSTrlta7qBuOlEgKvSTav5ph5RoX1ymhRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cZC8frjR5QQB3RWte2I1Egud/xnfEbBRVMVqruNJx0cJ5er4fZ33VSErmgpWRILG95DQBTrHAhshwNqaxTJC8N34O4R073WboePA1ncMWSkz/DvuaY6+qBaHLEucw83GoG/SEcp0X1yrDAVW+yP/oT19iZZthZ2MdkgM11bq/jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rr5h2gXi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B136FC4CEEB;
+	Wed, 10 Sep 2025 16:32:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757521944;
+	bh=WJ4WgkR/oVSTrlta7qBuOlEgKvSTav5ph5RoX1ymhRw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rr5h2gXiF5tnw9s8QkH6j1V8V3O7Ac8k0aVyFGk7IHb1o8gzO/xElnXaPiYcPXl3k
+	 h6ZLwUCIt7FreRdMreZTRT0QlAPeRlW76m17KXoIS+Pz/R06DAvH3Fm/pC0rPbJi74
+	 xiSm2wvRJ12l2tQJobAMEBDdMKwYMhR52+To8A5Vab3B8llc8WM66Lkos54sXxHWf0
+	 7CsZr+SZPj7W6yc92+aZPGKQRJTnkyOsKjhqE1gFwrsOxe5q60+vNG5zAushhyGvdv
+	 NSB6m9ciIQ2SIA0/YbBZafdTFC9M/GzUs5NAxwXez6V/RSoSyF5sl3fJS9x3uBs8dc
+	 QZg8W3ovead3g==
+Date: Wed, 10 Sep 2025 17:32:19 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dixit Parmar <dixitparmar19@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Gerald Loacker
+ <gerald.loacker@wolfvision.net>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] iio: magnetometer: cleanup unused
+ IIO_CHAN_INFO_PROCESSED handling
+Message-ID: <20250910173219.60fec37c@jic23-huawei>
+In-Reply-To: <20250910-iio_chan_617_rc5-v1-0-924091d374be@gmail.com>
+References: <20250910-iio_chan_617_rc5-v1-0-924091d374be@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D031UWC001.ant.amazon.com (10.13.139.241) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Kexec does not accept segments for which the destination address is not
-page aligned. Therefore there is no need for page offset handling when
-loading segments.
+On Wed, 10 Sep 2025 19:36:48 +0530
+Dixit Parmar <dixitparmar19@gmail.com> wrote:
 
-Signed-off-by: Justinien Bouron <jbouron@amazon.com>
-Reviewed-by: Gunnar Kudrjavets <gunnarku@amazon.com>
----
- kernel/kexec_core.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+> This series cleans up dead code in the magnetometer drivers by
+> removing unused handling for IIO_CHAN_INFO_PROCESSED. None of these
+> drivers set this bit in info_mask_* fields, so the cases are never
+> reached.
+> These changes reduce code paths, improve readability, and make the
+> switch statements easier to maintain. No functional changes are
+> intended.
+> 
+> Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+> ---
+> Dixit Parmar (2):
+>       iio: magnetometer: als31300: remove unused IIO_CHAN_INFO_PROCESSED handling
+>       iio: magnetometer: tmag5273: remove unused IIO_CHAN_INFO_PROCESSED handling
+> 
+>  drivers/iio/magnetometer/als31300.c | 1 -
+>  drivers/iio/magnetometer/tmag5273.c | 1 -
+>  2 files changed, 2 deletions(-)
+> ---
+> base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+> change-id: 20250910-iio_chan_617_rc5-59be964d7451
+> 
+> Best regards,
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 31203f0bacaf..7d4c9eebea79 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -761,9 +761,7 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
- 	while (mbytes) {
- 		size_t uchunk, mchunk;
- 
--		ptr += maddr & ~PAGE_MASK;
--		mchunk = min_t(size_t, mbytes,
--				PAGE_SIZE - (maddr & ~PAGE_MASK));
-+		mchunk = min_t(size_t, mbytes, PAGE_SIZE);
- 		uchunk = min(ubytes, mchunk);
- 
- 		if (uchunk) {
-@@ -815,6 +813,7 @@ static int kimage_load_normal_segment(struct kimage *image, int idx)
- 	mbytes = segment->memsz;
- 	maddr = segment->mem;
- 
-+
- 	if (image->segment_cma[idx])
- 		return kimage_load_cma_segment(image, idx);
- 
-@@ -840,9 +839,7 @@ static int kimage_load_normal_segment(struct kimage *image, int idx)
- 		ptr = kmap_local_page(page);
- 		/* Start with a clear page */
- 		clear_page(ptr);
--		ptr += maddr & ~PAGE_MASK;
--		mchunk = min_t(size_t, mbytes,
--				PAGE_SIZE - (maddr & ~PAGE_MASK));
-+		mchunk = min_t(size_t, mbytes, PAGE_SIZE);
- 		uchunk = min(ubytes, mchunk);
- 
- 		if (uchunk) {
-@@ -905,9 +902,7 @@ static int kimage_load_crash_segment(struct kimage *image, int idx)
- 		}
- 		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
- 		ptr = kmap_local_page(page);
--		ptr += maddr & ~PAGE_MASK;
--		mchunk = min_t(size_t, mbytes,
--				PAGE_SIZE - (maddr & ~PAGE_MASK));
-+		mchunk = min_t(size_t, mbytes, PAGE_SIZE);
- 		uchunk = min(ubytes, mchunk);
- 		if (mchunk > uchunk) {
- 			/* Zero the trailing part of the page */
--- 
-2.43.0
+Good find. Applied to the togreg  branch of iio.git and pushed out as testing.
 
+Thanks,
+
+Jonathan
 
