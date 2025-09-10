@@ -1,186 +1,139 @@
-Return-Path: <linux-kernel+bounces-810118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55018B51629
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:56:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACFBB51635
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CE73565198
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06D61487A9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A59C313526;
-	Wed, 10 Sep 2025 11:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB07311C1B;
+	Wed, 10 Sep 2025 11:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="QMrR7Z56"
-Received: from mail-4317.protonmail.ch (mail-4317.protonmail.ch [185.70.43.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqiA+Gmq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731F528725B;
-	Wed, 10 Sep 2025 11:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F8C28641D;
+	Wed, 10 Sep 2025 11:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757505356; cv=none; b=kxpIXU3mlrAAbb0CV3CY8Rr5X5aFU7YkE8F6JuRTl5gk3q0AJu5XoUyCiGLfLyqpBIzDly10xT9LQyaUcD+4EIAxdYex0WC1sZA0gd+AJzVa/fRPhsAoBwzh/zw0APYWGWvv2GPu71BJ0Q4g+W2VGj0eZJsuUdjbFU5gJXBbau4=
+	t=1757505417; cv=none; b=ugRwe+NaUSUObH8j4h5THLz2af/+uAOAquRnfFbubzSBZcxcdsVOFYCWcl5qmFSAlLtCa4RsaaP0W3rg7QkrDl1tqsOWumJJowLbJx78FYO5HuvKaMq9peXCsxq7M0JJ279ifd2PdaCChbhK+RtFrf05dRJUCaT+GtoOH16eEGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757505356; c=relaxed/simple;
-	bh=ubMvjrek87GeaqHNL5HP9x3C5ADG973j0x4E0albOnY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N6YABajCqQolm6yDajDNhhJ+ZqUFW5H8WTkb/0X4NBgWk7SJb5Eifts1w8UUuidxZuTdqCZGk/5biY4eMgKeo3D2NFGfQzH6eWdAtl0SsRjyAZLkHrdy0XRmYcAc0P3rI2IUn7L+4SUmdW1eBiI5hwYgVvHb87AS+h3rmUHg8JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=QMrR7Z56; arc=none smtp.client-ip=185.70.43.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
-	s=protonmail; t=1757505346; x=1757764546;
-	bh=ubMvjrek87GeaqHNL5HP9x3C5ADG973j0x4E0albOnY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=QMrR7Z5676anBLe7AwxaKKijBhSvwv6m7yQv47t5NC0444eC2kKw96q59+2x85mFe
-	 A4mAQw0X3jevbu76dbFKC3xOgN/Zrwk8jJIDb4s4iOdW1Xpt8fQtuUtlSrjI5gccLb
-	 eRbazy2nfu5l/mYqS1JGe6+2nTtbI6L/ndnwGis5bQyXf3qUgsX//x9egZqwYILnBJ
-	 bwi8GPNx97ApOCR90PTnIaSU5/FmZaqjRV3ahwTbHlzlqR8QFcXOvxIVbFGRv/g67W
-	 mLrqzq/YvJXsd1hsb/nj1K+dw6Btw4sulGlb+srUcJCcpvaLcytbzeTZl1N+bY00f/
-	 yxOUX9S8oDY5w==
-Date: Wed, 10 Sep 2025 11:55:42 +0000
-To: Hans de Goede <hansg@kernel.org>
-From: Aleksandrs Vinarskis <alex@vinarskis.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Daniel Thompson <danielt@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, threeway@gmail.com, Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v4 1/4] dt-bindings: leds: add generic LED consumer documentation
-Message-ID: <5bgdfKv1_vrZKbzrkfF_zm8JDGoS_IdEmDcQzC2KmzhywBdjgOV1ULxep6DscsKudeIo4LdKRCGcAhPn3u1n-XMhT8m2U2EMifIZ0r39og0=@vinarskis.com>
-In-Reply-To: <c6c80870-386b-473d-b643-bcd64c86c692@kernel.org>
-References: <20250910-leds-v4-0-1fc320488233@vinarskis.com> <20250910-leds-v4-1-1fc320488233@vinarskis.com> <c6c80870-386b-473d-b643-bcd64c86c692@kernel.org>
-Feedback-ID: 158356072:user:proton
-X-Pm-Message-ID: 79dbae72426f9ad4c136f124bd92c930930dc852
+	s=arc-20240116; t=1757505417; c=relaxed/simple;
+	bh=9ymga6d+xv8j2APww0Z/VEc6qtPLFWr7mQjdN8gX8RM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r4lZH8VA2OxsL9+ovSS26T2aT2GHMIO7jt8otRTix2g3gUUa7ximj9Q/SkY7iX+uVf4GgsXEJ8mIwUnJp+vMnurMsiykZWLOYwLXwfc6YCJW0B9AjCKtDH5guFkwJl34HZYncZ148EjWV04ji8e1JjJFL/+hdbOYrYdvXWF8b7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqiA+Gmq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67E04C4CEFA;
+	Wed, 10 Sep 2025 11:56:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757505416;
+	bh=9ymga6d+xv8j2APww0Z/VEc6qtPLFWr7mQjdN8gX8RM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YqiA+GmqqhYgg0itian0rbYsCFVPGM9Egu0JUmUqX093g1cVrdsg7s8kTUiBm7Qlu
+	 grOO6lNJ3YlDyfajdDdYCfx6pkrTecHGyHU/c6J7qW0PaZ/5sE+j4UoL4YOAR4oFlr
+	 92o8tpLBgz1IjiAKyjQ0WEEBqUbBOzXnAwppQaL2BOzHQd4BfINfZLckG2KeE1jZKe
+	 8WJvRrmnwc5drlTICVo3H2q88Ujd24eUMyHYVn1Weyedms++nxfjlf3KMAcCjDwVsF
+	 Jq8W22o1iUnU6MRIlgkQ+rBz/GUFJr+jTzJ0AdR5vni7Mi1YGVBq01WwNJaUFuwVuG
+	 2XJsx9c8w9zKQ==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-61ff7638f4eso2171407eaf.2;
+        Wed, 10 Sep 2025 04:56:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVXpiJEbD9zHIQp1KHw/XCF4miNg/TnlppabYOjAwn381/uJVpircMPuIJa7vxYOf7UHZcRmO7TGcc=@vger.kernel.org, AJvYcCWPh1wLMRfPXDB7hk7Y69WRUTb02rXiKZJMMj7kWCfEqMHJR5rCbkpnMVcAR/o34eBmFE7rwLEpV57f/Zc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWBPYsDhlTWpBGeUcUvrwSES6011HgA6616wL1SQXMn9mFO/HC
+	KLtIx2tSx+vhvUmJe26jdzgQ3Gr5ELw9yv+46VbfUgLFFHVw9lcumptdkj0o+PBIEDiJcdwCe0o
+	doxgqN6PNPyxs0TZRbAw+IP76TPZ4FDE=
+X-Google-Smtp-Source: AGHT+IEPM1a3/h0NZNKINJv3q89lj3PFZw+5DYNu3Jjh/KH0qG/1navRKm57c2tZ4rOPudorQm2yrVrFBAuExP2dVZ4=
+X-Received: by 2002:a05:6820:509:b0:621:7820:a28 with SMTP id
+ 006d021491bc7-62178aa41fdmr6304612eaf.8.1757505415725; Wed, 10 Sep 2025
+ 04:56:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250909094335.1097103-1-treapking@chromium.org>
+In-Reply-To: <20250909094335.1097103-1-treapking@chromium.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 10 Sep 2025 13:56:44 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jNytfP8W2XSyBNLe8OsD=O9M7WWvhtxdwXA-5KxwKfbg@mail.gmail.com>
+X-Gm-Features: Ac12FXwIdkUAXuV0Z_RMIKC4_3hVl_Mzmpc41M487V2P5XFC8LuYAr1_yA-4Te4
+Message-ID: <CAJZ5v0jNytfP8W2XSyBNLe8OsD=O9M7WWvhtxdwXA-5KxwKfbg@mail.gmail.com>
+Subject: Re: [PATCH] PM: sleep: Don't wait for SYNC_STATE_ONLY device links
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Hsin-Te Yuan <yuanhsinte@chromium.org>, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Chen-Yu Tsai <wenst@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 9, 2025 at 11:44=E2=80=AFAM Pin-yen Lin <treapking@chromium.org=
+> wrote:
+>
+> Device links with DL_FLAG_SYNC_STATE_ONLY should not affect suspend
+> and resume, and functions like device_reorder_to_tail() and
+> device_link_add() doesn't try to reorder the consumers with such flag.
+>
+> However, dpm_wait_for_consumers() and dpm_wait_for_suppliers() doesn't
+> check this flag before triggering dpm_wait, leading to potential hang
+> during suspend/resume.
 
+Have you seen this happen or is it just a theory?
 
+> Add DL_FLAG_SYNC_STATE_ONLY in dpm_wait_for_consumers() and
+> dpm_wait_for_suppliers() to fix this.
 
+The above sentence is incomplete AFAICS.
 
+> Fixes: 05ef983e0d65a ("driver core: Add device link support for SYNC_STAT=
+E_ONLY flag")
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> ---
+>
+>  drivers/base/power/main.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 2ea6e05e6ec90..3271f4af2cb65 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -282,7 +282,8 @@ static void dpm_wait_for_suppliers(struct device *dev=
+, bool async)
+>          * walking.
+>          */
+>         list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_nod=
+e)
+> -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+> +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
+> +                   !device_link_test(link, DL_FLAG_SYNC_STATE_ONLY))
 
-On Wednesday, September 10th, 2025 at 13:50, Hans de Goede <hansg@kernel.or=
-g> wrote:
+This should use a check like device_link_flag_is_sync_state_only(),
+which is different from the above one, for consistency with
+device_reorder_to_tail().
 
->=20
->=20
-> Hi Aleksandrs,
->=20
-> Thank you for your continued work on this.
->=20
-> One small remark below.
->=20
-> On 10-Sep-25 1:07 PM, Aleksandrs Vinarskis wrote:
->=20
-> > Introduce common generic led consumer binding, where consumer defines
-> > led(s) by phandle, as opposed to trigger-source binding where the
-> > trigger source is defined in led itself.
-> >=20
-> > Add already used in some schemas 'leds' parameter which expects
-> > phandle-array. Additionally, introduce 'led-names' which could be used
-> > by consumers to map LED devices to their respective functions.
-> >=20
-> > Signed-off-by: Aleksandrs Vinarskis alex@vinarskis.com
-> > ---
-> > .../devicetree/bindings/leds/leds-consumer.yaml | 67 ++++++++++++++++++=
-++++
-> > 1 file changed, 67 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/leds/leds-consumer.yaml =
-b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..045b7a4fcd3bdcfb19a02fe=
-4435b40445c168115
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
-> > @@ -0,0 +1,67 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/leds/leds-consumer.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Common leds consumer
-> > +
-> > +maintainers:
-> > + - Aleksandrs Vinarskis alex@vinarskis.com
-> > +
-> > +description:
-> > + Some LED defined in DT are required by other DT consumers, for exampl=
-e
-> > + v4l2 subnode may require privacy or flash LED. Unlike trigger-source
-> > + approach which is typically used as 'soft' binding, referencing LED
-> > + devices by phandle makes things simpler when 'hard' binding is desire=
-d.
-> > +
-> > + Document LED properties that its consumers may define.
-> > +
-> > +select: true
-> > +
-> > +properties:
-> > + leds:
-> > + oneOf:
-> > + - type: object
-> > + - $ref: /schemas/types.yaml#/definitions/phandle-array
-> > + description:
-> > + A list of LED device(s) required by a particular consumer.
-> > + items:
-> > + maxItems: 1
-> > +
-> > + led-names:
-> > + description:
-> > + A list of device name(s). Used to map LED devices to their respective
-> > + functions, when consumer requires more than one LED.
-> > +
-> > +additionalProperties: true
-> > +
-> > +examples:
-> > + - |
-> > + #include <dt-bindings/gpio/gpio.h>
-> > + #include <dt-bindings/leds/common.h>
-> > +
-> > + leds {
-> > + compatible =3D "gpio-leds";
-> > +
-> > + privacy_led: privacy-led {
-> > + color =3D <LED_COLOR_ID_RED>;
-> > + default-state =3D "off";
-> > + function =3D LED_FUNCTION_INDICATOR;
-> > + gpios =3D <&tlmm 110 GPIO_ACTIVE_HIGH>;
-> > + };
-> > + };
-> > +
-> > + i2c {
-> > + #address-cells =3D <1>;
-> > + #size-cells =3D <0>;
-> > +
-> > + v4l2_node: camera@36 {
-> > + reg =3D <0x36>;
-> > +
-> > + leds =3D <&privacy_led>;
-> > + led-names =3D "privacy-led";
->=20
->=20
-> This should probable be:
->=20
-> led-names =3D "privacy";
->=20
-> Now without the "-led".
+>                         dpm_wait(link->supplier, async);
+>
+>         device_links_read_unlock(idx);
+> @@ -339,7 +340,8 @@ static void dpm_wait_for_consumers(struct device *dev=
+, bool async)
+>          * unregistration).
+>          */
+>         list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_nod=
+e)
+> -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+> +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
+> +                   !device_link_test(link, DL_FLAG_SYNC_STATE_ONLY))
 
-Ah of course, seems I messed my rebasing, thanks for spotting it.
-Re-spinning.
+And same here.
 
-Alex
-
->=20
-> Regards,
->=20
-> Hans
+>                         dpm_wait(link->consumer, async);
+>
+>         device_links_read_unlock(idx);
+> --
 
