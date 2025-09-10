@@ -1,99 +1,78 @@
-Return-Path: <linux-kernel+bounces-809224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EEF8B50A2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA86AB50A31
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 805D01C2685E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146FA1C2689E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0131F152D;
-	Wed, 10 Sep 2025 01:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA331EF091;
+	Wed, 10 Sep 2025 01:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="SqYRlq6F"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tExNPPiF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E681EB5E3;
-	Wed, 10 Sep 2025 01:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A611EF36E;
+	Wed, 10 Sep 2025 01:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757467416; cv=none; b=aV23aMBTTvUZPozMpUZ3Ra8hwhwuUM5Sqazoa2oZljup4FfzENe1LQKJmHDohfBlR9i0xTZNWZP+JQBvqD+tX6kj5PQN74D4MHfgo1iHAXbZMbK9vv+1pHizdJfh3/YvYfFDs2EHauYM+qyHmc+sGZl9HxS2R6TNQFREGTxzdJc=
+	t=1757467432; cv=none; b=YKNMuh6q0U9/DxcD15lZkFyEyFJbI8IS4VqQlJUIgKh1YSZDc+T0xbWrVmEXoqrDIPXS+ldOCBOn/yUrSNaMG6vpExgd0lfm6i/H1VIBQPmvcrx2hCijZtCKQ8JTVfDYhEFwdUoOER6a9zeMgIrasMfPwVNNmo6PZEPOWxuXqsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757467416; c=relaxed/simple;
-	bh=IH5BvaC5Gcab7Nl2e5r8t+42BjuaxZeLzuTy3FjoX2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OXk1XshKCkTONfG6gqRLyddc/vqx+jFY3JdR+lsHrS/+2a8V0T8SnC+6XOFC11DMURwNXxGxJwp1KJ9QqhJPkDyQbQbzIR9j49MEjjlT6HfbGDma7NeJLZMA/4EKYKtxt1tBfxUGrNAHTJfzN7qDi7BDa7Pt/ldfYRCuZzPEdRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=SqYRlq6F; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757467405; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ETfF3nXwktUoBLCMUHpmxOuNXOkjj20h9ToOxP0Cp2M=;
-	b=SqYRlq6FBKO1/MT3inJUSAmB4plbaA7Y7gN0chTR8szcfG/Enpl9WS7dQKCdQWhnhuGcyq++LEXp4jtC1+8BWLlFDKwds/53nMz2f1aMS1dv4v51NKw3IGeqGQWiKDl8N5M0doF1khU/+/4fJh5fD4dp5OqVSQqz4SCFIIHFsQU=
-Received: from 30.74.144.128(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wng1uuh_1757467404 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 10 Sep 2025 09:23:24 +0800
-Message-ID: <b9f26954-fea6-44f8-b71a-44e5b4b070e9@linux.alibaba.com>
-Date: Wed, 10 Sep 2025 09:23:23 +0800
+	s=arc-20240116; t=1757467432; c=relaxed/simple;
+	bh=8Tph3Mdng0klOn3Y7UpTZVK/JtvnHHum+iG72VMnspM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QCpsBFZi+DxgO4REF0JXyrjlAuK6bv+2DimSWnAiOJqp2RrcZ12Ksgi7+FEqAmU6+UDxC9rkidiGgyUA+h26m8eaeo2AuQQbn+xF4Hnm6UGauWn5CB31OKrh/TvMqySyEv1+6s2qsGaJAhRYgbkM/GJvRX4QwiZNod9BjUZcUio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tExNPPiF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D14CC4CEF4;
+	Wed, 10 Sep 2025 01:23:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757467431;
+	bh=8Tph3Mdng0klOn3Y7UpTZVK/JtvnHHum+iG72VMnspM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tExNPPiFHMwuxddzWPTWgm651z4v/NJZkD/AAtjg4KxZOKoIdT015ARZcACsVcngk
+	 7hFeRdrFeu8uq6v+oRRnJzElaCO8fupkYokVkj8phVf9sNwpxLEcvoeMzdckYLKodU
+	 aDbcLvbAiOWkl7r7QULUbhzuO0DKxdBADGglN7CM0Nzj+icV6Rxn5z2Jd9+MI1hMlh
+	 b46r+8bWhUdZ+ONBBIAAxoAtSHQG7fczIpvuqj7Eukw3I91zFzc5uHqTP5woqYEzer
+	 DlKGL714K9dp3CukOWspPbF9aAdIr18w/CXvBtolTbrTAhyzgXDU/tOTkn5HRremzk
+	 LdGUD+YgihIvQ==
+Date: Tue, 9 Sep 2025 18:23:50 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky
+ <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+ <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Jianbo Liu
+ <jianbol@nvidia.com>
+Subject: Re: [PATCH net 1/3] net/mlx5e: Harden uplink netdev access against
+ device unbind
+Message-ID: <20250909182350.3ab98b64@kernel.org>
+In-Reply-To: <1757326026-536849-2-git-send-email-tariqt@nvidia.com>
+References: <1757326026-536849-1-git-send-email-tariqt@nvidia.com>
+	<1757326026-536849-2-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mm: remove PROT_EXEC req from file-collapse
- tests
-To: Zach O'Keefe <zokeefe@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250909190534.512801-1-zokeefe@google.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250909190534.512801-1-zokeefe@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Mon, 8 Sep 2025 13:07:04 +0300 Tariq Toukan wrote:
+> +	struct net_device *netdev = mlx5_uplink_netdev_get(dev);
+> +	struct mlx5e_priv *priv;
+> +	int err;
+> +
+> +	if (!netdev)
+> +		return 0;
 
-
-On 2025/9/10 03:05, Zach O'Keefe wrote:
-> As of v6.8 commit 7fbb5e188248 ("mm: remove VM_EXEC requirement for THP eligibility")
-> thp collapse no longer requires file-backed mappings be created with
-> PROT_EXEC.
-> 
-> Remove the overly-strict dependency from thp collapse tests so we test
-> the least-strict requirement for success.
-> 
-> Signed-off-by: Zach O'Keefe <zokeefe@google.com>
-> ---
-
-LGTM.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
->   tools/testing/selftests/mm/khugepaged.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/mm/khugepaged.c b/tools/testing/selftests/mm/khugepaged.c
-> index a18c50d51141..3fe7ef04ac62 100644
-> --- a/tools/testing/selftests/mm/khugepaged.c
-> +++ b/tools/testing/selftests/mm/khugepaged.c
-> @@ -394,7 +394,7 @@ static void *file_setup_area(int nr_hpages)
->   		perror("open()");
->   		exit(EXIT_FAILURE);
->   	}
-> -	p = mmap(BASE_ADDR, size, PROT_READ | PROT_EXEC,
-> +	p = mmap(BASE_ADDR, size, PROT_READ,
->   		 MAP_PRIVATE, finfo.fd, 0);
->   	if (p == MAP_FAILED || p != BASE_ADDR) {
->   		perror("mmap()");
-
+Please don't call in variable init functions which require cleanup 
+or error checking.
 
