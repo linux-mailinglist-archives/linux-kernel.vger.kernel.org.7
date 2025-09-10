@@ -1,192 +1,153 @@
-Return-Path: <linux-kernel+bounces-810523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9E4B51BC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB774B51BCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5677954605C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FF47545D04
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E91321F4C;
-	Wed, 10 Sep 2025 15:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E712322DCD;
+	Wed, 10 Sep 2025 15:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PWGyUj04";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="swB7uzEb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PWGyUj04";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="swB7uzEb"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rhQLMmvm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CD2264A77
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77809327A3A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757518493; cv=none; b=sgkoMGj97t2nPpXrnBggoXFzvSUL1YLiIBoi2BvAdej5CrKTlBWZwmcJkIQcWJGKjFTS3bcQ3Q18QrfitjU/rEamSzdKBEAYnWTp0waxcaRIf6mc4faS4xsk6DOy9rjVZGf0NLzQ5IBQfyLovq6LDIXkaiaIoImgv/CM2uff5Zs=
+	t=1757518496; cv=none; b=f4NrjabjfteL9CJiO64K6H234oYnG3RiZM5m1c6FyuQSr4IgaJt9GAc63NS3SrRrjCx7un5U4JpiunUl7YGOyAM5bmvzEmUcaW34i9xSZmB8mwnw1B7WAw/FQlo0md1bJb8JRoN3odRNdZ2vpS4ANjK7lo/8MY2DU0fuAEhTJVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757518493; c=relaxed/simple;
-	bh=OABbPnjsoirvMYSq5Q/9Yv08rPKleDSQijiwvxAQW08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G+hV0W7tNogUgHJLnhgUwfEnDAz4GJsHwjXVxpbCSKsokehc3LzJgoL54hHdq2C4uxJ/LcrGr4EqRV9DjkAmFA8hnjSseWIR6dyMQfzesWcQND0u+DL2+TTQFHGQR3Mfi7BSung4X9jhoLwv/DfPlBLqxc9q5FFTmKd/iBPaAgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PWGyUj04; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=swB7uzEb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PWGyUj04; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=swB7uzEb; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7A58E613C2;
-	Wed, 10 Sep 2025 15:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757518485; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g0PBoFpxn2QKQExHoWjxYXzd2TdEfo3Q6mtB7Saqzzw=;
-	b=PWGyUj04Qw9F2PDZMd19D/t3tWqDdG9AbJHIM1l4v93fCmoy3z25bW2L7Dpbfg05UudqiG
-	4HVnNXi7FxQEFenC/3N229oDFzmdochy0eZo7AXETx0RA25yu7GlDDFWxYY+1sUAgszuqe
-	dUN4sxleBqNbLZ7y2kGyMm2zvSEyDKE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757518485;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g0PBoFpxn2QKQExHoWjxYXzd2TdEfo3Q6mtB7Saqzzw=;
-	b=swB7uzEbU0s8yhfPp9+Vw8GterYdrCl/wRUz6/N4uQeaSk1I78a+sM0s7rljovka0Klpre
-	DyNvahstIaNfr4CQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757518485; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g0PBoFpxn2QKQExHoWjxYXzd2TdEfo3Q6mtB7Saqzzw=;
-	b=PWGyUj04Qw9F2PDZMd19D/t3tWqDdG9AbJHIM1l4v93fCmoy3z25bW2L7Dpbfg05UudqiG
-	4HVnNXi7FxQEFenC/3N229oDFzmdochy0eZo7AXETx0RA25yu7GlDDFWxYY+1sUAgszuqe
-	dUN4sxleBqNbLZ7y2kGyMm2zvSEyDKE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757518485;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g0PBoFpxn2QKQExHoWjxYXzd2TdEfo3Q6mtB7Saqzzw=;
-	b=swB7uzEbU0s8yhfPp9+Vw8GterYdrCl/wRUz6/N4uQeaSk1I78a+sM0s7rljovka0Klpre
-	DyNvahstIaNfr4CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6122B13301;
-	Wed, 10 Sep 2025 15:34:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Txa1F5WawWhUOQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 10 Sep 2025 15:34:45 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 237FEA0A2D; Wed, 10 Sep 2025 17:34:37 +0200 (CEST)
-Date: Wed, 10 Sep 2025 17:34:37 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 03/32] block: use extensible_ioctl_valid()
-Message-ID: <g4wrfq6kcejrgpf4twsku55pe2xfl34nxekg2y73esodxhprnk@gavy3kiw27sz>
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-3-4dd56e7359d8@kernel.org>
+	s=arc-20240116; t=1757518496; c=relaxed/simple;
+	bh=ylywEWdpuWY9ksOD7npdckXIkyDG0CoNTtEKj9xRWlw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tSZaLVzvPUdDe/pyzlH1cG4CBDAhtki5IaAsh+DkBxPccshOv/TM5ZRRNtqC8tXSXdFhF/QlIfuYgjllwB+wm4SrIlqmUGoFYg0OTmuuufEpoNtTDTIkZdg7E9YIRpomcGwpGdBrsKMFbzG7gru+46MAqgODHISWfZkkU3W4f5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rhQLMmvm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 557A1C4CEEB;
+	Wed, 10 Sep 2025 15:34:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757518496;
+	bh=ylywEWdpuWY9ksOD7npdckXIkyDG0CoNTtEKj9xRWlw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rhQLMmvm6dRoXeNpFCfCLVpoY7KvfC8BQX1DDVQqPnV+bvyH28j+DR3zV5mNbG15k
+	 qII2i91velnS0+nJmr0iQjTnd1tzaXScjDorFCIqvs0rH/xxjofCBUdJWiHvW4F+G6
+	 ugswwcbJzFRZGRl2CqG1tCXrMAenb8EFyarnsSanweQl1BsoXWnzlZ/+Pac0y+5Kdl
+	 wHduKm9o9OU3V/y5/Cuv7Wh1LpDiBF7l3vJPhld6lR4lX2gTvzJhWWoTcgnVQr3dD/
+	 SpRiF5H8Shzux16IcqivEpu60ih9iK6IJKRCPO/N1gpPtAz/wIT8YFOZ01/9O4SnXb
+	 F5ocWTAWcmZKw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Alexander Graf <graf@amazon.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Changyuan Lyu <changyuanl@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Chris Li <chrisl@kernel.org>,
+	Jason Miu <jasonmiu@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	kexec@lists.infradead.org,
+	linux-mm@kvack.org
+Subject: [PATCH] kho: make sure folio being restored is actually from KHO
+Date: Wed, 10 Sep 2025 17:34:40 +0200
+Message-ID: <20250910153443.95049-1-pratyush@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910-work-namespace-v1-3-4dd56e7359d8@kernel.org>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLbyy5b47ky7xssyr143sji8pp)];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.30
+Content-Transfer-Encoding: 8bit
 
-On Wed 10-09-25 16:36:48, Christian Brauner wrote:
-> Use the new extensible_ioctl_valid() helper which is equivalent to what
-> is done here.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+When restoring a folio using kho_restore_folio(), no sanity checks are
+done to make sure the folio actually came from a kexec handover. The
+caller is trusted to pass in the right address. If the caller has a bug
+and passes in a wrong address, an in-use folio might be "restored" and
+returned, causing all sorts of memory corruption.
 
-Looks good. Feel free to add:
+Harden the folio restore logic by stashing in a magic number in
+page->private along with the folio order. If the magic number does not
+match, the folio won't be touched. page->private is an unsigned long.
+The union kho_page_info splits it into two parts, with one holding the
+order and the other holding the magic number.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
+---
+ kernel/kexec_handover.c | 29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-								Honza
+diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
+index ecd1ac210dbd7..68eb3c28abe41 100644
+--- a/kernel/kexec_handover.c
++++ b/kernel/kexec_handover.c
+@@ -32,6 +32,22 @@
+ #define PROP_PRESERVED_MEMORY_MAP "preserved-memory-map"
+ #define PROP_SUB_FDT "fdt"
+ 
++#define KHO_PAGE_MAGIC 0x4b484f50U /* ASCII for 'KHOP' */
++
++/*
++ * KHO uses page->private, which is an unsigned long, to store page metadata.
++ * Use it to store both the magic and the order.
++ */
++union kho_page_info {
++	unsigned long page_private;
++	struct {
++		unsigned int order;
++		unsigned int magic;
++	};
++};
++
++static_assert(sizeof(union kho_page_info) == sizeof(((struct page *)0)->private));
++
+ static bool kho_enable __ro_after_init;
+ 
+ bool kho_is_enabled(void)
+@@ -210,16 +226,16 @@ static void kho_restore_page(struct page *page, unsigned int order)
+ struct folio *kho_restore_folio(phys_addr_t phys)
+ {
+ 	struct page *page = pfn_to_online_page(PHYS_PFN(phys));
+-	unsigned long order;
++	union kho_page_info info;
+ 
+ 	if (!page)
+ 		return NULL;
+ 
+-	order = page->private;
+-	if (order > MAX_PAGE_ORDER)
++	info.page_private = page->private;
++	if (info.magic != KHO_PAGE_MAGIC || info.order > MAX_PAGE_ORDER)
+ 		return NULL;
+ 
+-	kho_restore_page(page, order);
++	kho_restore_page(page, info.order);
+ 	return page_folio(page);
+ }
+ EXPORT_SYMBOL_GPL(kho_restore_folio);
+@@ -341,10 +357,13 @@ static void __init deserialize_bitmap(unsigned int order,
+ 		phys_addr_t phys =
+ 			elm->phys_start + (bit << (order + PAGE_SHIFT));
+ 		struct page *page = phys_to_page(phys);
++		union kho_page_info info;
+ 
+ 		memblock_reserve(phys, sz);
+ 		memblock_reserved_mark_noinit(phys, sz);
+-		page->private = order;
++		info.magic = KHO_PAGE_MAGIC;
++		info.order = order;
++		page->private = info.page_private;
+ 	}
+ }
+ 
 
-> ---
->  block/blk-integrity.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/block/blk-integrity.c b/block/blk-integrity.c
-> index 056b8948369d..609d75d6a39b 100644
-> --- a/block/blk-integrity.c
-> +++ b/block/blk-integrity.c
-> @@ -58,16 +58,14 @@ int blk_rq_count_integrity_sg(struct request_queue *q, struct bio *bio)
->  int blk_get_meta_cap(struct block_device *bdev, unsigned int cmd,
->  		     struct logical_block_metadata_cap __user *argp)
->  {
-> -	struct blk_integrity *bi = blk_get_integrity(bdev->bd_disk);
-> +	struct blk_integrity *bi;
->  	struct logical_block_metadata_cap meta_cap = {};
->  	size_t usize = _IOC_SIZE(cmd);
->  
-> -	if (_IOC_DIR(cmd)  != _IOC_DIR(FS_IOC_GETLBMD_CAP) ||
-> -	    _IOC_TYPE(cmd) != _IOC_TYPE(FS_IOC_GETLBMD_CAP) ||
-> -	    _IOC_NR(cmd)   != _IOC_NR(FS_IOC_GETLBMD_CAP) ||
-> -	    _IOC_SIZE(cmd) < LBMD_SIZE_VER0)
-> +	if (extensible_ioctl_valid(cmd, FS_IOC_GETLBMD_CAP, LBMD_SIZE_VER0))
->  		return -ENOIOCTLCMD;
->  
-> +	bi = blk_get_integrity(bdev->bd_disk);
->  	if (!bi)
->  		goto out;
->  
-> 
-> -- 
-> 2.47.3
-> 
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.47.3
+
 
