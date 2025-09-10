@@ -1,129 +1,154 @@
-Return-Path: <linux-kernel+bounces-810324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 385EBB518C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:05:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B070EB518F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DB5A5E6D1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:03:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30EE9446688
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCEF322DAB;
-	Wed, 10 Sep 2025 14:03:30 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F64322A04;
+	Wed, 10 Sep 2025 14:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="IHYKNoZY"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4E33218C9;
-	Wed, 10 Sep 2025 14:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757513009; cv=none; b=OppHyfvRvf0JWvihpyQXSVNFFwWv6yPLXFR4TLC0l1v2TMMoUF25UTroWcrr6E2rBG77H/u24ALAPTbB6SCUxOboTS0dGhm7Tw9391esvGfke/a0x4oo5FXPRZtSzf7IWZCLNNDGdwQsV0MMfcnnMT/iaQeJk2Xs7tnrqO1fr/M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757513009; c=relaxed/simple;
-	bh=TQDrVeY3489/FH/73wZC6CHaQ0RWriZ2IW3o9GYBPSE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZmXvWz2X5hcgqevx4w296gtVekX1nHUBUcKonlLOtrB30b6nwpebSfp54O9aBg6R4bcQSEPoYIkohIbn3RksTkFGzlnk21KFkcl/wNQ0hYEj5evDU+EvSo8ft098dwPUt3Qi0rwc/I4nsU3on7ET92iJVfJKMPy+heM4xBG1fOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMMkB0cgMz6K5xZ;
-	Wed, 10 Sep 2025 21:59:14 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id AD2FF1402F7;
-	Wed, 10 Sep 2025 22:03:24 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 10 Sep
- 2025 16:03:23 +0200
-Date: Wed, 10 Sep 2025 15:03:22 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: Dave Jiang <dave.jiang@intel.com>, <linux-cxl@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<gost.dev@samsung.com>, <a.manzanares@samsung.com>, <vishak.g@samsung.com>,
-	<neeraj.kernel@gmail.com>, <cpgs@samsung.com>
-Subject: Re: [PATCH V2 05/20] nvdimm/region_label: Add region label updation
- routine
-Message-ID: <20250910150322.00001ea4@huawei.com>
-In-Reply-To: <158453976.61757055783236.JavaMail.epsvc@epcpadp2new>
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d@epcas5p4.samsung.com>
-	<20250730121209.303202-6-s.neeraj@samsung.com>
-	<534936cc-4ecc-46e5-8196-bc3992e086ab@intel.com>
-	<158453976.61757055783236.JavaMail.epsvc@epcpadp2new>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A793A322745;
+	Wed, 10 Sep 2025 14:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757513162; cv=pass; b=RseXRxCzlO9OVseJj3DBWofR9XiOd8Kz8LHOE9hG8fYNOkhsJIdNQ9OBmF5CD3p0CKcw/1vEDHXc6+cGzD8zmTnFwHiRdFVA1/o9Wj0pRK5TQexojKzpedWuGLPbYfN9biQTM6CGGd2IlLzdETfmJAUrk+i1V/jhi6J7D0xJQ4g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757513162; c=relaxed/simple;
+	bh=FONkIWI0n7lG/bUtRih9a715N9XA1/QgoWiRIL6pOMc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Led4Xyg2zycabojrGQIylF/V68hg5lc9vHaERYY4+CSab6Q15AeOec+7KOqV7L3j4NQdn9tK3CdUyH9c9xtM1TDkJWnVaJUuN/L7A1iXV1bRtezbUDcH6ZrK21P/FFVY1KO2E/9ZDMvDsUw4nLWiiD1e1sTJqKcjsutw4Pj9Pe0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=IHYKNoZY; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757513088; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=VEkyJDxuAQfVsvKhIxBruPEvS+E+Faq6lkb8StCuTHDG4il/MJXRcIahNdDe1K9l5asGM6fNcHpp2dATLpTDdixJydv1Eav7Ciq7KRQ57d64AIcR9G9MzobjDNJWa735TFRzENggkAWdoogP0hXnRRQvmnhic10HgfMoJOI0qqw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757513088; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=QEeqIWIF/AD2zfk8ywdiI9kgEblpq8FH1YjniWeVCN4=; 
+	b=P9BxtulcIUGD/6FoPkulfuuR84JV4Ri/6txauWEhPar814ZnGKTiquSh/essihNHEQbflrG4B1II2xYvbvqlCLvtwTc27q7uJsa6RzH4frCk8k+iYr2hMphCwl+2BMJFaXmesNFLrkU20dt2cWy9mIGCBaIpcPsipJH3cRPNWPM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757513088;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=QEeqIWIF/AD2zfk8ywdiI9kgEblpq8FH1YjniWeVCN4=;
+	b=IHYKNoZY4zf4ISQCHWYEleElg0zyYX0fAY3flK0zslYU4qZregRMacfv+qxcfwpQ
+	1x+1iaYapTxzAjxF38sg0OhTVRo1GLDfKW55tsC3QwJKNIhZiomEvEjFNt5Ia3ldCpT
+	ecLwFY4c1qFjQXhURNFG3nBQQ/aFvg2+LOYp7AEA=
+Received: by mx.zohomail.com with SMTPS id 1757513084822538.2895524618148;
+	Wed, 10 Sep 2025 07:04:44 -0700 (PDT)
+Message-ID: <28049fe0-0ae7-4b40-9f95-1513e317547f@collabora.com>
+Date: Wed, 10 Sep 2025 11:04:29 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 07/14] dt-bindings: display: mediatek,ufoe: Add
+ mediatek,gce-client-reg property
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+ andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
+ broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
+ conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
+ edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
+ jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
+ krzk+dt@kernel.org, kuba@kernel.org,
+ kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
+ linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
+ maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
+ mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
+ p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
+ sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
+ tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-8-ariel.dalessandro@collabora.com>
+ <20250821-wandering-vermilion-pigeon-b8c9f0@kuoka>
+Content-Language: en-US
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+In-Reply-To: <20250821-wandering-vermilion-pigeon-b8c9f0@kuoka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-ZohoMailClient: External
 
-On Thu, 4 Sep 2025 19:42:31 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
+Krzysztof,
 
-> On 15/08/25 02:55PM, Dave Jiang wrote:
-> >
-> >
-> >On 7/30/25 5:11 AM, Neeraj Kumar wrote:  
-> >> Added __pmem_region_label_update region label update routine to update
-> >> region label.
-> >>
-> >> Also used guard(mutex)(&nd_mapping->lock) in place of mutex_lock() and
-> >> mutex_unlock()
-> >>
-> >> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>  
-> >
-> >Subject, s/updation/update/ ?  
+On 8/21/25 3:50 AM, Krzysztof Kozlowski wrote:
+> On Wed, Aug 20, 2025 at 02:12:55PM -0300, Ariel D'Alessandro wrote:
+>> Current, the DT bindings for Mediatek UFOe (Unified Frame Optimization
+>> engine) is missing the mediatek,gce-client-reg property. Add it and
 > 
-> Thanks Dave, Sure. Will fix it in next patch-set
+> Why is it missing? If the binding is complete, it cannot be missing...
+
+Due to the following error:
+
+$ make -j$(nproc) CHECK_DTBS=y mediatek/mt8173-elm.dtb
+   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+   DTC [C] arch/arm64/boot/dts/mediatek/mt8173-elm.dtb
+[...]
+arch/arm64/boot/dts/mediatek/mt8173-elm.dtb: ufoe@1401a000 
+(mediatek,mt8173-disp-ufoe): 'mediatek,gce-client-reg' does not match 
+any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: 
+http://devicetree.org/schemas/display/mediatek/mediatek,ufoe.yaml#
+
 > 
-
-Hi Neeraj,
- 
-Really small process point.  We all get too many emails, so
-when replying crop out anything that doesn't need more discussion.
-Where you are just saying you agree, leave that for the change logs of the
-next version (and appropriate thanks can go there as well).
-
-I know not replying can feel little rude, but trust me when I say all
-or almost all who review a lot appreciate efficiency!
-
-It also makes it a lot harder to miss the more substantial replies.
-
-> >> +int nd_pmem_region_label_update(struct nd_region *nd_region)
-> >> +{
-> >> +	int i, rc;
-> >> +
-> >> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
-> >> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
-> >> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
-> >> +
-> >> +		/* No need to update region label for non cxl format */
-> >> +		if (!ndd->cxl)
-> >> +			continue;  
-> >
-> >Would there be a mix of different nd mappings? I wonder if you can just 'return 0' if you find ndd->cxl on the first one and just skip everything.  
+>> update the example as well.
+>>
+>> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+>> ---
+>>   .../bindings/display/mediatek/mediatek,ufoe.yaml      | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml
+>> index 61a5e22effbf2..ecb4c0359fec3 100644
+>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,ufoe.yaml
+>> @@ -64,6 +64,14 @@ properties:
+>>         - port@0
+>>         - port@1
+>>   
+>> +  mediatek,gce-client-reg:
+>> +    description: The register of client driver can be configured by gce with
+>> +      4 arguments defined in this property, such as phandle of gce, subsys id,
+>> +      register offset and size. Each GCE subsys id is mapping to a client
 > 
-> When we create cxl region with two mem device, then we will have two separate
-> nd_mapping for both mem devices. But Yes, I don't see difference in both device
-> nd_mapping characters. So instead of "continue", I will just "return 0".
-> 
+> Don't explain what DT syntax is. We all know, so that's completely
+> redundant description. Explain the purpose. Explain Arguments with sechema - items.
 
-This for instance is good discussion and well worth the reply!
+Although I agree with your suggestions, this is exactly how the rest of 
+the Mediatek DT bindings describe this node. This patch is based on the 
+other +20 files, which describe the node in the same way.
 
-Good discussion is great, but reducing the noise is key to keeping
-things manageable.
+Regards,
 
-Jonathan
+-- 
+Ariel D'Alessandro
+Software Engineer
 
-p.s. I'm having a full day or reviewing code so getting a little grumpier
-than I was first thing this morning when I might not have given this feedback!
+Collabora Ltd.
+Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
+Registered in England & Wales, no. 5513718
+
 
