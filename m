@@ -1,92 +1,111 @@
-Return-Path: <linux-kernel+bounces-810006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD7BB5148D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:53:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 022FEB5148F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EF2F3AD24C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC731B2051B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094553148BB;
-	Wed, 10 Sep 2025 10:53:00 +0000 (UTC)
-Received: from bregans-1.gladserv.net (bregans-1.gladserv.net [185.128.211.58])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AC43126DA;
+	Wed, 10 Sep 2025 10:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kbu+gJtU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47D4303A1A;
-	Wed, 10 Sep 2025 10:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.211.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF03C303A1A;
+	Wed, 10 Sep 2025 10:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757501579; cv=none; b=M9QD/jiKwcq5o+j5L1w16o5fo9jJR/ycbwZy1qqf0rq786/WJhV2Fxq3wBWy+vgIPPGChXWUo0e6gI27e410amdhsTo+wXmX2G8zXRCGG4LkkMHw9O3Bl7B+0Zsu+MF23Z6wtt6f9Zo+yQ+Eqhkb21Q6dAzGSWf8VD7EYWihEYI=
+	t=1757501656; cv=none; b=YV0hhk4CKcYw2RF46LSxSCGcG4Bn7/U+CvvxqIARGGKV080OFlg80x0OOTv6L4SC8flEjWhWVmhlkqMjUDPwibxBj4ywo+77DjZMtn+ZKUvUWPXI8I9gmJIKijHOujO6iDUdwtggV3yLaVJHHW0xY4P1W0YNiGBU6GZ5qKQO+ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757501579; c=relaxed/simple;
-	bh=M2tVr9V7sTtDbdHpdZaBkHBTk5Cpio2uctKlvKnJzwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hcpX+ZPKjpF9sOjK8RCHiEZ+dyBopGOgNZ6a5YDmrah77cMXRyaIAK8HzpWQZC9kcqhs21IHWrrimRY0uMZi2wCWsJWyRPHVfNjJxjbtim4WjlMmox1N1jaTOpqYwTLLlcUfwGT0rrglHjYy4BUHbmkIFekIMoMnMSYtFcwmYzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.211.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
-Date: Wed, 10 Sep 2025 12:52:41 +0200
-From: Brett A C Sheffield <bacs@librecast.net>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: stable@vger.kernel.org, regressions@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, Simona Vetter <simona@ffwll.ch>,
-	Helge Deller <deller@gmx.de>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
-	Murad Masimov <m.masimov@mt-integration.ru>,
-	Yongzhen Zhang <zhangyongzhen@kylinos.cn>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 1/1] Revert "fbdev: Disable sysfb device registration
- when removing conflicting FBs"
-Message-ID: <aMFYeV4UdD7NnrSC@karahi.gladserv.com>
-References: <20250910095124.6213-3-bacs@librecast.net>
- <20250910095124.6213-5-bacs@librecast.net>
- <87frcuegb7.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1757501656; c=relaxed/simple;
+	bh=AcyUcFaxXzjSHC3sR+EMGV3sR47MnuEgabNIEIn/ym4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fYjNJSXWxLQCpTDE9JqFmRct9RvX6IVMGHdHAN8QM8ADQbWufEX4xq1TRMqpNhydeRIEtTES/VKuZ/TANpd9WFqMdMluawf/bjD5Qf+wg1VClMnZS7TMsZ2t7mMDEatU8McSsKvS5RzSbnx/SMVHjdaQBiGUcWww8n6sPUXuqjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kbu+gJtU; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757501655; x=1789037655;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=AcyUcFaxXzjSHC3sR+EMGV3sR47MnuEgabNIEIn/ym4=;
+  b=kbu+gJtUyL/3AnVD4FgdP2Dq0ciWtdHhYpOmAuhEqzqy9Ws8iMccVz+p
+   KBZPvTF8I1yJcTh8xBL3tgXS7dMtrG0E+ocbpIhmDeBFZ20IeklJneRVP
+   xOjzsJAiE+LeGZ9omAKajYbbbwGeSL8/i+GYzJz/hUm4236q1B/HAY2hC
+   RSGxvfWcespM3j1iY8H4TlIkBCgLdZQUX5A77AxfYy43fhcuzgr7/rQUQ
+   ENeEQl5rokY38+G1fl7Cdzu2BPSM675jpAZVxH+hKFx92PSV1/7+Fodt1
+   vQP0t40Jc1IHQ+Mceidxj7nYXg6BEVu2DROZyuMOIJ9Pz8nUx5pfZ7Mzk
+   w==;
+X-CSE-ConnectionGUID: mShK+J40TACUkU9PZixkOw==
+X-CSE-MsgGUID: VP8eviKcSC+wrjvX6rk++w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="59914886"
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="59914886"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 03:54:13 -0700
+X-CSE-ConnectionGUID: jxDKXNUDRlKtnC8BmAPr8g==
+X-CSE-MsgGUID: ScYaLDjDSDyhIEjrJDIy5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="173194608"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.72])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 03:54:10 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 12/19] docs: Makefile: document latex/PDF PAPER=
+ parameter
+In-Reply-To: <52411bce7bf0d068bfc8e33b35db3259c3ae0c64.1756969623.git.mchehab+huawei@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1756969623.git.mchehab+huawei@kernel.org>
+ <52411bce7bf0d068bfc8e33b35db3259c3ae0c64.1756969623.git.mchehab+huawei@kernel.org>
+Date: Wed, 10 Sep 2025 13:54:07 +0300
+Message-ID: <d20b612ee510c65dcd60183eda5068b164294759@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87frcuegb7.fsf@minerva.mail-host-address-is-not-set>
+Content-Type: text/plain
 
-On 2025-09-10 12:46, Javier Martinez Canillas wrote:
-> Brett A C Sheffield <bacs@librecast.net> writes:
-> 
-> Hello Brett,
-> 
-> > This reverts commit 13d28e0c79cbf69fc6f145767af66905586c1249.
-> >
-> > Commit ee7a69aa38d8 ("fbdev: Disable sysfb device registration when
-> > removing conflicting FBs") was backported to 5.15.y LTS. This causes a
-> > regression where all virtual consoles stop responding during boot at:
-> >
-> > "Populating /dev with existing devices through uevents ..."
-> >
-> > Reverting the commit fixes the regression.
-> >
-> > Signed-off-by: Brett A C Sheffield <bacs@librecast.net>
-> > ---
-> 
-> In the other email you said:
-> 
-> > Newer stable kernels with this
-> > patch (6.1.y, 6.6.y, 6.12,y, 6.15.y, 6.16.y) and mainline are unaffected.
-> 
-> But are you proposing to revert the mentioned commit in mainline too
-> or just in the 5.15.y LTS tree ?
+On Thu, 04 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> While the build system supports this for a long time, this was
+> never documented. Add a documentation for it.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  Documentation/Makefile | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/Documentation/Makefile b/Documentation/Makefile
+> index 4736f02b6c9e..0e1d8657a5cc 100644
+> --- a/Documentation/Makefile
+> +++ b/Documentation/Makefile
+> @@ -126,4 +126,6 @@ dochelp:
+>  	@echo
+>  	@echo  '  make DOCS_CSS={a .css file} adds a DOCS_CSS override file for html/epub output.'
+>  	@echo
+> +	@echo  '  make PAPER={a4|letter} Specifies the paper size used for LaTeX/PDF output.'
+> +	@echo
+>  	@echo  '  Default location for the generated documents is Documentation/output'
 
-Only the 5.15.y tree. Sorry - that could have been clearer.  There's no
-regression anywhere else. Mainline and other stable kernels are all ok.
+The Sphinx make mode 'sphinx-build -M help' provides all of this and
+more...
 
-Cheers,
+BR,
+Jani.
 
 
-Brett
+-- 
+Jani Nikula, Intel
 
