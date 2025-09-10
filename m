@@ -1,79 +1,83 @@
-Return-Path: <linux-kernel+bounces-810050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D367BB51536
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:14:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E438B5153B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40F817A5853
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:12:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10BF2167BCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5673191BF;
-	Wed, 10 Sep 2025 11:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D7E26FD97;
+	Wed, 10 Sep 2025 11:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cbhzhbfA"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cdPJSWuG"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2074.outbound.protection.outlook.com [40.107.243.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAB830E0D9
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757502856; cv=none; b=rpZp3AtpfcvRj2Mo+Z9fuRnKBhIjwXDyAyGCv/73bsG4d7P5jFJArfgaoutjUTprYktDfj7iKBekXKoL6AZx1998r24390gowiPft8yUogJT5wCk0e5eXV0dtc+EbA7FeUfAnn67AZKg6o2MriwQ0AY0AqCsd4PygoN8aaNH0kQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757502856; c=relaxed/simple;
-	bh=4OBZ2ZfKsExYLPiXZhnyp4Ky5O+dJ7H0S4S55ZV3fVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=arPywQRKQKOVMMRl/PEVLOwe7lAMwZJuJU3RA4EsS/Mv9l/tORPhD86ybqoNMSD1L+/osJita2hBZsBItbdomx6Yqq5wYE5h5Mv/9tvRLRgbA4h0CZvRP2r0hOvuuFL6xFXxtqkE//+jmhqctlza8H1u+Eb7h4AdqTe7evv3PeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cbhzhbfA; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45cb5492350so44095975e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:14:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757502853; x=1758107653; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:cc:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=U3OQu9v7444v/noKKraVi4jc91DRs3isyorMMbC0SUY=;
-        b=cbhzhbfALaQnnWzjVxOUJel//fGecYdcGBFeUwvaOTeyowf26l8mQOS8fyyeZ6h8kO
-         ixUxTNzm7m0VqhL70rAgSAg3fz+HMsjZY6w8eA6EHe4+kkJwhksvrXbxta3h3JLzysSY
-         F6ROmmjY1S6Cug2sEVTTQRn9BWFF2H8ZWen0RKuD/Ch0HZ+RWnYTTNB1709cB3PwrBmp
-         YORw7OchwmTpkiI9SijTxi25KTiwFhsY6KMAW8xHaximR7Quli3Tg/pNBxvgFKx4H1pX
-         tNDQ4+CoYJO8+jazN817aVSsUiUyqL0uO5r9YPXYgLSZWVQFe94eXFguxegOtaiWjHPz
-         m9Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757502853; x=1758107653;
-        h=content-transfer-encoding:in-reply-to:cc:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U3OQu9v7444v/noKKraVi4jc91DRs3isyorMMbC0SUY=;
-        b=jKe364IOA4T3mhJjkN82HqHN0PwtbuTeoNMLQJU7f1JMFeZU2H9Jpd6IZpqqJzQbuc
-         QM7ERH5bowuUnhZeF96btxU5lw+Gls7fr4Ri2uaW26a3IhZXTfquXpbInSAVzr9Af+KK
-         V8BhpzRBxcU+Ra6ngU6tcHVshMg0zZLlzxujOE2uiE+6i9aJEzluKYATahXevrqBzS1X
-         RFxA1mhgEkyNIqL/9Gc/Kq35Bf/qi73UJiFB51qkKaPMaJRFh6B/vvu5vl5SaOPf7ugW
-         SBf/voMKY9nAYBm6HURq6ZNdA3C6xM1XQQ3Sv0D22326hRguz6FGXbe6O3pDUxRYBUuQ
-         hBcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZjXu2vab8nLeSJNObwmyxmgIVktsuqOT0O1qnLmBtD+JdCshW+6Hvz8dJ7KlnugU2dFASJQ0Ku5FRbgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR17UbqXuYCizcT5l9OnKYSzihjrQd19GB2MovWWKo3INF0wQ/
-	35nrWreCA+YlhbabPbiEe43IjyKPO5ZrRXoE2Y6c8C8RSt/vHT6SS+S7A20v0uskonM=
-X-Gm-Gg: ASbGncspAcfws8j9eY7Q7D3EKXSO9WLjNXO7VdS75abknaT60TrLKo/MT045Xb3eCiF
-	8jbeivzxBLPEfBvgR24UdLwdchsivdvOTHEwQYdcpMwq3steWIUAQDkkiVPK+fCDiCspYIhvx0c
-	KXqnlLnidjoB7q+624zY8O0saQmE/rckbQVYRuJ1XEUEzFfsh7P7OgxjZ74xkTUK2BMhjNI1EVl
-	d+RuPKRJ+Ek8uSkP2DkEX9mK+JRMqQOPJUQ+4kh3c5FWQ2BxzLmVK/WXskv8uxgPPTelPd6TPrW
-	KpPTsKz0EqIVxst4bdBFh3o0wtSL0Jf3xI5c6d3Qq+ZBcMfiYPjeEDjWK8Ui7ckEejaYE0UbIWN
-	QF3ZOSOsTE0cEymGAiNt6fLIrAm7bTPm3xyXZDA==
-X-Google-Smtp-Source: AGHT+IE9s13i7j3TkMJ++FVCyif8BAKmecMcfB9JJQFyKeNZbnaim6+3ufJHKPlruBr5wa8K36udJw==
-X-Received: by 2002:a05:600c:4692:b0:459:db7b:988e with SMTP id 5b1f17b1804b1-45dddeb907dmr132007665e9.13.1757502853033;
-        Wed, 10 Sep 2025 04:14:13 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521bf85esm6721413f8f.1.2025.09.10.04.14.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 04:14:12 -0700 (PDT)
-Message-ID: <21d108f2-db8e-457a-bbef-89d18e8d7601@linaro.org>
-Date: Wed, 10 Sep 2025 12:14:11 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9E425FA1D;
+	Wed, 10 Sep 2025 11:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757502922; cv=fail; b=D+zD2xeoW41O15+l2+Jy0kG+8eFQEfuYIcQxyIx4FOdRO/vShqSl7UdxoXcezl7ZUhdO8yjDxaLRGSn6hvr/kCD3VErv0Q1UxChcKIMGhUOSS4wnruclbx2oNfCKxAJXOKsZAYunt43XnRGfeFqAA9dHVVgKI0xapdtOaM+v0FM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757502922; c=relaxed/simple;
+	bh=Q/575BUW+F+kjkOTRG3CHifRoUKPy6AK82sizh2lgaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TGoOU1uDxAOMhkrTKTgB3Dx9ZEn5n+GWhoPzz000uHMs9y6MR4AW5EfOdn5Eza3oluFetXAPbVQSJTHUL+y0GOwwtJr2TitZILsKDH1aqthI+zrzlFFddMy0OCkkGCxd10mXx+cVa9DD+hlMkE45F2nCNPyiUtJp8oUoHyCuHXg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cdPJSWuG; arc=fail smtp.client-ip=40.107.243.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O+7n6U2E7OYCYp+xpaqr1fF6ZwLxyk8RvMaBj3N8JiedfSYZbHHVmz2YZa+vShVMLM6Rf4+P+SfARMCXJJvNY5iWAgQDFOlZ4tJCr2WOvgOk3X0Quv0ltnce3YyVMJeHZOo0POYOOprL6L7qAVVtArIi6V5RYd9H/U3pBi/yl0SfiU+A0EGuCNU9uWj5di6mVY3xLiQaIHhwm7NDukAOHgZJy8XQIL81bZUsbtIwr+pByEC/v6iZEWEpDIvFz7rSwWxvLtJhVy/6kfMuLbLM1R48fq1ff/C5PSPbGy6/UsNY7ZomltKqsY48AWy9jzU49+PCSpRPGuclC+VdV/yYNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Pdkr507djNLM5gYA+3uzP1wSRUhn5taWd3QEr/QuFfU=;
+ b=fqz1id6oRhlXZJ1Mq/PIkxBHbmXVUFUjf9oE0dZi79EyjqO1Bb6GqPlKc84di0PLstMFO8Ejro5ZZERk3CSy+1Wh6dQ09VkgVXRQ9h4L3TpAdJyGoEVorhS6/wbyBN6dvQsHyB7GxqxSkwkR6nImHzxjpXqs3DlMEiBkLVWqxyfxf6sF9vTgwlDtfMw0b4WWTBZjDU1P+v9Dn7onlmtYW71n7oN5vcE5cxz9gnzZWrq8llNOBQfsjsQrym6bhn/OBRpNqczlziS5GS3k7I0s3NzcRq4F/QRcqNAOyaQx/hRB+KW9XVVpL0Yh3m53umnf+m8kWNXHeK+pZhnUPYYYBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Pdkr507djNLM5gYA+3uzP1wSRUhn5taWd3QEr/QuFfU=;
+ b=cdPJSWuGQJs7CQHdLbRnU6igStHGUs2Um0sr7/kZqYGpYjLkYucqh1+aUo/yCAjgQPshdLbVIoc4IDoZQDZrCpVXwr9YWX4Y8s+M5R9lT2+Og41Wf0y08BItaxDIP7+ZujSUhBjK7PXPjfrpzsVzC8lTS2Pai/2RLKROIu/x2RE=
+Received: from MW4P220CA0003.NAMP220.PROD.OUTLOOK.COM (2603:10b6:303:115::8)
+ by DS0PR12MB8526.namprd12.prod.outlook.com (2603:10b6:8:163::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 11:15:16 +0000
+Received: from MWH0EPF000989E8.namprd02.prod.outlook.com
+ (2603:10b6:303:115:cafe::e6) by MW4P220CA0003.outlook.office365.com
+ (2603:10b6:303:115::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.22 via Frontend Transport; Wed,
+ 10 Sep 2025 11:15:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ MWH0EPF000989E8.mail.protection.outlook.com (10.167.241.135) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Wed, 10 Sep 2025 11:15:15 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 10 Sep
+ 2025 04:15:07 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 10 Sep
+ 2025 04:15:06 -0700
+Received: from [10.85.34.232] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Wed, 10 Sep 2025 04:15:02 -0700
+Message-ID: <e61943a6-0005-4146-a5bd-485d3b32e709@amd.com>
+Date: Wed, 10 Sep 2025 16:45:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,67 +85,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/15] Legacy hardware/cache events as json
-To: Ian Rogers <irogers@google.com>
-References: <20250828205930.4007284-1-irogers@google.com>
+Subject: Re: [patch 06/12] rseq: Implement sys_rseq_slice_yield()
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, <linux-arch@vger.kernel.org>, Peter Zilstra
+	<peterz@infradead.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, Prakash Sangappa
+	<prakash.sangappa@oracle.com>, Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Sebastian Andrzej Siewior
+	<bigeasy@linutronix.de>
+References: <20250908225709.144709889@linutronix.de>
+ <20250908225752.936257349@linutronix.de>
 Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Xu Yang <xu.yang_2@nxp.com>,
- Thomas Falcon <thomas.falcon@intel.com>, Andi Kleen <ak@linux.intel.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- bpf@vger.kernel.org, Atish Patra <atishp@rivosinc.com>,
- Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>,
- Vince Weaver <vincent.weaver@maine.edu>
-In-Reply-To: <20250828205930.4007284-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250908225752.936257349@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E8:EE_|DS0PR12MB8526:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71f228b9-d56e-4dca-61ea-08ddf05b51c2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dkxqd0ttRVFDTTBnNlJhZEYzZnExanZod2JmT3Zhb0ZITzcvUUc4dmRaK3pB?=
+ =?utf-8?B?eWJEdStxV2dTMGgySUxLTFh1a2JuV2k0YURUNFVQanJsYzBnQUpHVjlQMERK?=
+ =?utf-8?B?ZjZLZ20rM1NNQzJlMFB4eDJSWExCcHBVOFhqS0tzc2x4ekZad0RFQmxmY3RU?=
+ =?utf-8?B?ajVPUHhnMmQyM1ZaRHRQZ0g0bjRUazEzVXdBbThDQWRQbUJxQXZpZUNTNytX?=
+ =?utf-8?B?Q0lxWGZ5SER0d3VUaVZwa0ZFcVFnM3lhRzJKcHFWTlB0TW9wb25FS3FqTzhl?=
+ =?utf-8?B?Z1phVytCRkROWE5ONFhkdFEvZk9Td3hRUWRFS05ObFl1SUpjY3l4QjNGNHlU?=
+ =?utf-8?B?dzdleEpsclFzcG5zT0R2OVJha1JMVjBjVGRKQWlSZGZoTVBlTFNkdksxalJ2?=
+ =?utf-8?B?YXFSbC96TTFqUUpFbHQwL1JrZld3elMydDF6OGtmb0xYajJXZVJUVWRKT2JG?=
+ =?utf-8?B?ZGVXUGdWbnVmRjZGdXV4OHY3dFA5WjAwQ3p1cnFVTUg3T1YwRzYrRmgyaU1X?=
+ =?utf-8?B?TW5UUVhIdWxJSHhSeTBTMmNoTWM0RVZlaDVJYVJwRVVNc3pBYmZUeElKQzB4?=
+ =?utf-8?B?VHVVakxIdGpiU0MvZTBzR0RSY0V0TEJCUXRWbiswV2xzbzhlRmZUa3hwTnFV?=
+ =?utf-8?B?dDZ6ZjRER3J4aERrdDNub2dyN1VFbW9lcWc3QWsrNFVrYXlYRFRGSUZjQWd6?=
+ =?utf-8?B?eTE4clo4REFnUWVTdWRiS0NhOUIzSTU3MzYzNWdNRFgzdmhEeEYzZTVNemNT?=
+ =?utf-8?B?bEI5cXViNGxZeFRZTFN6V3YrU2dZNWtNOENPVlJzdkhDQWVnK1hNUDBlK3h5?=
+ =?utf-8?B?ckEwdWxUa1Q0NEdJNVV5QUJIREIyUXRyc0JkSElMZFVWYVM5b25VaVI5Vmk1?=
+ =?utf-8?B?aXhwS0piTndnM1dWUXBleVVxWlNRWUZRMktBaDJtVHBNbWZ4NnROU0Nlempx?=
+ =?utf-8?B?N1FvcHh3Qm1VeDhzWnk5MEpjWmg5VTJUTGE1ejBsM0xlaHhMVVYxdmNiajlN?=
+ =?utf-8?B?dVFHcEFheXV5Q2hneE0xR1pzOFdmQkx1bVd2VW5UNWRTZkdVZ2pNaWl5eWtw?=
+ =?utf-8?B?UzlMY3l3VWs2TVlqdzZ4L0dLUUtVaWF5VGtGNjk4dWw5M2pFQzB6MEVrZGpv?=
+ =?utf-8?B?MnJheFphai9zTjhrc2xSVzB4b2pTd3h2TEJlMUtQT3JhRVFKc0I1eVJWWUxV?=
+ =?utf-8?B?Ym9uaWlFd0FrVllNTk54eXlRT1VGa2c3b0RKVHFIOHNQVFRkd1FXSU54ek4x?=
+ =?utf-8?B?V25xWnAzNVMwN1BjMjRRTWpPRWMxSDhnZWtLRElBQlNNK1R5RTlzWE9Rb0pW?=
+ =?utf-8?B?WnRLb25EdCtqZ0JhRGt6Q2NDSmJGdlJodE9FUC8rNWlFenFwZkpUMDlrVzJl?=
+ =?utf-8?B?S0xWRVZ5YkFOanVjUWlVdmEwb0k3OVAya2NGeDUyWE9HZHZteGlFN3IxL0dK?=
+ =?utf-8?B?STJySGtRSmQxR0RzRDMvSDY0R3duUlpUOGNsZDB4WC9BajJGa2VoWUJVbU1J?=
+ =?utf-8?B?T2FkSy9MVU9pdTJIdFVZQi9tVnBBNElNV1UvQUVvZHY3OUJDQkF4UDIwZWV2?=
+ =?utf-8?B?NUdRTWRZRzhFMnFvM3o3Vmt3Zmoxa3NzQlR6SEJxc2dyU0JIbTZBYWp6VUdm?=
+ =?utf-8?B?aG9ZaXhIVUpPcHJUS2pON3lYYW1MOHhnbVZjbzFSWHNuT3AzTHdXR3NUZjh4?=
+ =?utf-8?B?dmhXMTc4YjNFbUdTL24xQVh1RlAzWUJjZE0zUUJaYTJXZnFKU21Wa3ZlYjg4?=
+ =?utf-8?B?ejVXYzZ3Y0ZwK2xwaHpISlBHZVBjbXdSN0xpcUgzcTl2WUsrbUhSdEQyU2Rq?=
+ =?utf-8?B?eitWcWtyYmhVYk1NaTB3bFoxbWMwUk56U1BZOGVuR3ZoNkROaU9HdzNPNE9Q?=
+ =?utf-8?B?VGRBV29wUmtoSzFZTjFocGZQTTYyWGMvZ0VyN2dvbEFSSGtiZmRSWWJxaGVP?=
+ =?utf-8?B?RFRKUm9Hdk5mN244S0NkckJxWmxLZVJTcnZzN3FiNVRPWU5VZE00MHAvRTNq?=
+ =?utf-8?B?QXQ1Z0NPMTl5dzQwMEpZeVNGcVo2T05Hc1pqVjN6bWp5bWpldTJDM0VYbUow?=
+ =?utf-8?Q?t7PW5O?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 11:15:15.9522
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71f228b9-d56e-4dca-61ea-08ddf05b51c2
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989E8.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8526
 
+Hello Thomas,
 
+On 9/9/2025 4:30 AM, Thomas Gleixner wrote:
+> --- a/kernel/rseq.c
+> +++ b/kernel/rseq.c
+> @@ -542,6 +542,15 @@ int rseq_slice_extension_prctl(unsigned
+>  	return -EFAULT;
+>  }
+>  
 
-On 28/08/2025 9:59 pm, Ian Rogers wrote:
-> Mirroring similar work for software events in commit 6e9fa4131abb
-> ("perf parse-events: Remove non-json software events"). These changes
-> migrate the legacy hardware and cache events to json.  With no hard
-> coded legacy hardware or cache events the wild card, case
-> insensitivity, etc. is consistent for events. This does, however, mean
-> events like cycles will wild card against all PMUs. A change doing the
-> same was originally posted and merged from:
-> https://lore.kernel.org/r/20240416061533.921723-10-irogers@google.com
-> and reverted by Linus in commit 4f1b067359ac ("Revert "perf
-> parse-events: Prefer sysfs/JSON hardware events over legacy"") due to
-> his dislike for the cycles behavior on ARM with perf record. Earlier
-> patches in this series make perf record event opening failures
-> non-fatal and hide the cycles event's failure to open on ARM in perf
-> record, so it is expected the behavior will now be transparent in perf
-> record on ARM. perf stat with a cycles event will wildcard open the
-> event on all PMUs.
+nit.
 
-Hi Ian,
+Perhaps a small note here to highlight how need_resched() is true
+for tasks who had the slice extension granted. Something like:
 
-Briefly testing perf record and perf stat seem to work now. i.e "perf 
-record -e cycles" doesn't fail and just skips the uncore cycles event. 
-And "perf stat" now includes the uncore cycles event which I think is 
-harmless.
+/**
+ * sys_rseq_slice_yield - yield the current processor if a task granted with
+ * slice extension is done with the critical work before being forced out.
+ *
+ * This syscall entry work ensures NEED_RESCHED is set if the task was granted
+ * a slice extension before arriving here.
+ *
+ * Return: 1 if the task successfully yielded the CPU within the granted slice.
+ *	   0 if the slice extension was either never granted or was revoked by
+ *	   going over the granted extension.
+ */
 
-But there are a few perf test failures. For example "test event parsing":
+> +SYSCALL_DEFINE0(rseq_slice_yield)
+> +{
+> +	if (need_resched()) {
+> +		schedule();
+> +		return 1;
+> +	}
+> +	return 0;
+> +}
 
-   evlist after sorting/fixing: 'arm_cmn_0/cycles/,{cycles,cache-
-     misses,branch-misses}'
-   FAILED tests/parse-events.c:1589 wrong number of entries
-   Event test failure: test 57 '{cycles,cache-misses,branch-
-     misses}:e'running test 58 'cycles/name=name/'
-
-The tests "Perf time to TSC" and "Use a dummy software event to keep 
-tracking" are using libperf to open the cycles event as a sampling event 
-which now fails. It seems like we've fixed Perf record to ignore this 
-failure, but we didn't think about libperf until now.
-
-Thanks
-James
+-- 
+Thanks and Regards,
+Prateek
 
 
