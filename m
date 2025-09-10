@@ -1,160 +1,130 @@
-Return-Path: <linux-kernel+bounces-809739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0A0B51167
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:34:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68267B51170
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84076486D96
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:34:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E0B37AA126
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFC730F801;
-	Wed, 10 Sep 2025 08:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DA730FF2A;
+	Wed, 10 Sep 2025 08:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DDaixZFO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPMJJ5L0"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9948228B501
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A142D23B6;
+	Wed, 10 Sep 2025 08:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757493254; cv=none; b=RO+h8mMif96VFqvPcnTX24CMftyWjxcf0esBOvlxvjLgRZ/VZeRTGA7Stl9mXLTdLq2izQvQAvLhFcd8IT+UaLFps5X/G2zgR7I29OrNEMN+IIPdgM26aGi6KL7019mng9+8sTj36SuvBxW6qxdqFve//UUZ7rFV036mtGVRChk=
+	t=1757493290; cv=none; b=BMkORPhqBFtMeAoRqDGicBWg9jPa3m0FRqgFDLx8XPcaki8RTCF0UuOVPVyBRnl7lyfUZ1pNtIm6dJMAnopKDoMSBeycQ4lYmL3YfwJo64hUOJK4KUpgago7+4STZruXxWJm6C2GLlzIhvnQTtnh+RUZ/ciwjOzD/JSFlEObxfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757493254; c=relaxed/simple;
-	bh=uNe1ei6a9Sb1+j34arhysm88BnViKlUeFkNkrxOClGI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FWMbP3RJaEgHJXChDrz9ENccwUqV0GUK0u0/vxbOqjzKvO9AWeEJK0yMr9GtNDV2QXUCvWpPx5aDBRG07nORuzCbuNwr3FK9Mf/D+3HWS4HHsm2QDFzOj9s/WQ8bqiEv8FHI6URUrLnZSC9PIcphyf0+s2d9SIRy6TPVUVyKbPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DDaixZFO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757493251;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Amy5eP+TPpCVu2gnynuIcytRxwDWLIJGmgKp9e+fkkw=;
-	b=DDaixZFOuXjGPfrfaRMKb2gh31+asQhrLA7lp/JfdVeoCDunPAJ4J8czuzaxwTj0lIdDRj
-	YBkpmd41f700OFQIIQrXwKrLMLdugv8nmtK4gkREQvfVWlHPmZbQb1kSvn1fh7lIE/clhz
-	XuzeVGpDxaZNcu/UmYYfP9dKphQA6dQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-149-Axja5x8PMDaqNS8SA0yf8w-1; Wed, 10 Sep 2025 04:34:10 -0400
-X-MC-Unique: Axja5x8PMDaqNS8SA0yf8w-1
-X-Mimecast-MFC-AGG-ID: Axja5x8PMDaqNS8SA0yf8w_1757493249
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3e753e78902so853788f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:34:09 -0700 (PDT)
+	s=arc-20240116; t=1757493290; c=relaxed/simple;
+	bh=xcnQqscGKsKb6v/bCxaWU5aNlfSk+7RftDAfiQybNIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gDRASNL83F6GSRdXFOE/WjOqq7P9fhzo2PEbCmeEmjfpQ/d76TERYmPE5yXfoNC4mPU4LZDnMcWGoiEePiVgdTR+O6aSA++uVFHfnWSUo5LPcyKWNmhRLSDHE4f6EnkJnoZO+g+7QhvExphIyPcQcIBIUjP9Fubz2dbSiTt/GSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WPMJJ5L0; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45de1f2cdeeso21548035e9.0;
+        Wed, 10 Sep 2025 01:34:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757493287; x=1758098087; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lvxtkN58s90JpLuJgBRzi7rdiBNppM/NXoJyMRiUo58=;
+        b=WPMJJ5L0Or45drR/nmYinu3JNiok5ntx/s2hbw8mnoPTn8a3yJ2CihgOamLTMovU2I
+         mNQGjmS/HXOcc0hbvIIIc9WwOn+D+fbCQgZZ5x/9+o1CUPfeAT70ve9dsWA+tFvCUobm
+         CpP+/PShbMs6K0NtqAikfktuvqcgQmi8FbDezvSnRCazcByrM/ens0MS9gx7nAaLdjU0
+         hA+NMSaq06hvX67cDPpsqYzo64CeCRzpAVaXSpcQc7yMQfO9XFV+Yko51qkkxserbvOc
+         nfl0A56lbxYnMHMjjnUH/EHg57oLh7EW5Xxco9xPYxdXgsuK8ClFXy0dOvspCsUftFGL
+         hcGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757493249; x=1758098049;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Amy5eP+TPpCVu2gnynuIcytRxwDWLIJGmgKp9e+fkkw=;
-        b=bzVvjhdYwHJD6eCVSkyzN+yv/hCEA/7spD2zMlaLnmdX5TWPsNym1fofSgyEynz5fi
-         vVgwsbgGxAN9WI9zDa/xKZMsq3S7YWPNElpZWWuzvRJ8f6KfUBGPNddtzwN3S/f2EnIm
-         WPRJP1+ZL6Hwb16kylvltXxXXs0EL0P3ycyGhlqRGNdw7MkNAifG4QX5mlSAqFqgAFcO
-         cgnX8iJNQJm/DxOgJC7LOUuouDxNbpc9cNCkEYksolJPq3RuNTpO3kHst1cwL8uo+DPq
-         VP8hz4ZedtP90gyZWueCrQVaYlH7F2X3fyGtYC1rWekgvLbClsbjM51znSbAntjJNWPX
-         VW0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXu7OB8lEWUO0YtF6RrjsxD6SnSPCcaFm1UGVoJ1LmBKhEkE4zEJXSpsdB9gDZfZ/mY87JQVSNeM9X8WV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTG1zlbg8jANwHZg0ZlbMYA+BINbehDPy41hM5UNxA6ze1LILA
-	isr9tacL0aXZ9k7HG557hVv1+HbxTdvaWp6tgf39wSMNHNktBb4YXzT+3YfXV7Z74E07SdcAuvE
-	vQN2o6sV1wE0zl72esR6LV4DLQq5omDUIvDthqv5rOqZZpiqiWKA5HMG3ldoMRZsQ0g==
-X-Gm-Gg: ASbGncsZY+8GNIrD8VV5Ig0WuPn20qtxjDvofhn3eGmj3iwkifVr3SJWrMU1Jh/Ih/V
-	Sp5g2Ba8UF04xMFmHKbDXowM+CWk97HNzkLIdHvAJPjr19M6Ks9a5w2rBCltGBAuVPpIXWCQWYO
-	//RJEXJO4yL/D3jG79Np6shq2fixwvL9EWNbYP4sm4kdYbkAMbgoa1i5vosz9F36Yj7HF5iUyTE
-	wOJM41XTkDy5TK3MK2UfVCKTZEi/FW4TI6nSzGKhna3U61J4VwJsXztHK65aPqLpV8ryUlqTM/x
-	b92yha+m9yD78mb364twN/7CCBnZZH4TkVA=
-X-Received: by 2002:a05:6000:2405:b0:3de:daf2:edca with SMTP id ffacd0b85a97d-3e641e3b009mr11927987f8f.21.1757493248829;
-        Wed, 10 Sep 2025 01:34:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEESRtO3VhGKSJcJh71t22NBy80LBauADrI4j1BdKqoBklXHwQ8jjnI6nP/m8EGktQBpwx0Kw==
-X-Received: by 2002:a05:6000:2405:b0:3de:daf2:edca with SMTP id ffacd0b85a97d-3e641e3b009mr11927965f8f.21.1757493248419;
-        Wed, 10 Sep 2025 01:34:08 -0700 (PDT)
-Received: from fedora (g3.ign.cz. [91.219.240.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521bf85esm6098839f8f.1.2025.09.10.01.34.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 01:34:07 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Khushit Shah <khushit.shah@nutanix.com>
-Cc: "seanjc@google.com" <seanjc@google.com>, "pbonzini@redhat.com"
- <pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shaju
- Abraham <shaju.abraham@nutanix.com>
-Subject: Re: [BUG] [KVM/VMX] Level triggered interrupts mishandled on
- Windows w/ nested virt(Credential Guard) when using split irqchip
-In-Reply-To: <376ABCC7-CF9A-4E29-9CC7-0E3BEE082119@nutanix.com>
-References: <7D497EF1-607D-4D37-98E7-DAF95F099342@nutanix.com>
- <87a535fh5g.fsf@redhat.com>
- <D373804C-B758-48F9-8178-393034AF12DD@nutanix.com>
- <87wm69dvbu.fsf@redhat.com>
- <376ABCC7-CF9A-4E29-9CC7-0E3BEE082119@nutanix.com>
-Date: Wed, 10 Sep 2025 10:34:07 +0200
-Message-ID: <87ms72g0zk.fsf@redhat.com>
+        d=1e100.net; s=20230601; t=1757493287; x=1758098087;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lvxtkN58s90JpLuJgBRzi7rdiBNppM/NXoJyMRiUo58=;
+        b=LnoPstT0O4lOZNFkq+n711jQ2esx/L/hDFvm4C8vv2Zr4uyFqeFAmoZ+Zo/xpJKuXT
+         nRWCijmbyX7WUUdhwlTayAGVNCvp9IH3zM9z0/OKuFJp8TDciG5dVqDQ3CeuH1qM4iyG
+         P+aP+I3wUbCn6b0Ld6SwsV+Q/+DGy/oIB5akSCJSNRb1D3ROd35hNe7vdd2Js+AJZV+J
+         Pmw5G11Eboilik/PACdtG/0+6l2OvOefTsuLbtOpCZwcxt0K1/FWtuBjxOzrEMEa7iJl
+         rGcADLNCI/tvhtN0gq4jZXf7Oe/VICoJ1PA3159ufa2gly2LHU0ElbbjpZDdMFSBMome
+         ZXww==
+X-Forwarded-Encrypted: i=1; AJvYcCUcdoRKNh6izjQG0dCOmZuPS4k4oaWkvvZmMs4Qk0WtsUcbDWt2alAE/uoyHOwAcDUUKVGPEpaUnuLv@vger.kernel.org, AJvYcCV+nXHnfjTmnVP2UX1DuZ1r843JKAgbbEjuShfABR8BBrw+8xRuuN7Vy5ycbAhaJIjh2B67p9Mtez4n@vger.kernel.org, AJvYcCW9Gq7exrYsBdqC6UxzcwrvXEfS/RWGiOMIcdTArVI5NbyotXBDG0WkMhT56e9TebTXTea+0vPx7TOkK2/ftgjI4Q==@vger.kernel.org, AJvYcCWVtXQSvewn5afiOmzMWrMYjbtBOfQpflBe+8VQAa3I8tfst0cIst+2OxUtg50fs+S6WjpC7fdRH63T@vger.kernel.org, AJvYcCXu8b4G1pY2HMpK8uFYZqwhDWo2LNZCFG1jOJ+BnyaSeff1NKg0gRicsTqIhq1THRwmzURUI/sI/jPz7dcN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm2Gehi4Mni0y/IAaM/1FcfA8zXQDeSJjysv7emT62guOMklcz
+	KxYPYJP9bRt+UOFsu25nPLQUrmuJ7J5weD/Fy7HxnKiBqwyNTRil7J4u
+X-Gm-Gg: ASbGncuC5DhXuth1seC6Tvod2O2wr+Kh4buIUU1RdUIStnjnXBa7Q8xw+9xUgsfl75S
+	9jWB/VCTil9OE6rbC+R3xzz+cJb7Td9jEPJYXy9Q3mMsWYOLd8TDVVm6ix+qpcIZxk858AA0vph
+	bO7OwApBbO5CQ3RqRKW09t/gfBg+jIBLBWMAdD7QHrw3ZwyhqpNzuIXndlGiwZv3/BtnLQNOswP
+	OoKxvQG52Dcrd3xD8r/7eWJAonvxk5d6L7IwyrcP0h1iBRUqRin4EPWgh0JJVQebL2F3WRPIfpf
+	i1wIji9JpOqYJatEtbX8REW+9P8H4iHLfj/8pppk36ycjsjnH2IsfDLvRX1UbaqbwRkVrYlLdE7
+	X2jPck9ZvB9wW/Oe2HLf6i1JIJnlH4L9f1vp7VOYv2hHtkO/5zVWRy8TTstQ1uNzvb5uAexVebH
+	SPYJxlSWf7nYVIKKm8nT/fKxMxiZzsuzHxgQcDDnlM8Cqhcw5lca3kPFOLYEN5qbA=
+X-Google-Smtp-Source: AGHT+IEQEEKz1G0RJ7Rv5RJrQMqTp7wb9aYAHyNKeRkV5T6QpUQaKrLWSe8p8sLtVzT2+/GsKFY/hg==
+X-Received: by 2002:a05:600c:870f:b0:45b:8453:d7e with SMTP id 5b1f17b1804b1-45de072e865mr136738135e9.6.1757493287542;
+        Wed, 10 Sep 2025 01:34:47 -0700 (PDT)
+Received: from ?IPV6:2a02:8440:7135:4f4c:9000:7072:695b:3ef? (2a02-8440-7135-4f4c-9000-7072-695b-03ef.rev.sfr.net. [2a02:8440:7135:4f4c:9000:7072:695b:3ef])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df81e1e00sm19751505e9.10.2025.09.10.01.34.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 01:34:47 -0700 (PDT)
+Message-ID: <e40e858f-091f-4059-a379-7aa25835c3ce@gmail.com>
+Date: Wed, 10 Sep 2025 10:34:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 12/20] dt-bindings: perf: stm32: introduce DDRPERFM
+ dt-bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+ Julius Werner <jwerner@chromium.org>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Jonathan Corbet <corbet@lwn.net>, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+References: <20250909-b4-ddrperfm-upstream-v6-0-ce082cc801b5@gmail.com>
+ <20250909-b4-ddrperfm-upstream-v6-12-ce082cc801b5@gmail.com>
+ <20250910-encouraging-masterful-dodo-3d1f60@kuoka>
+Content-Language: en-US
+From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
+In-Reply-To: <20250910-encouraging-masterful-dodo-3d1f60@kuoka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Khushit Shah <khushit.shah@nutanix.com> writes:
+On 10/09/2025 09:57, Krzysztof Kozlowski wrote:
+> On Tue, Sep 09, 2025 at 12:12:19PM +0200, Clément Le Goffic wrote:
+>> From: Clément Le Goffic <clement.legoffic@foss.st.com>
+>>
+>> DDRPERFM is the DDR Performance Monitor embedded in STM32MPU SoC.
+>> It allows to monitor DDR events that come from the DDR Controller
+>> such as read or write events.
+> 
+> Also:
+> 
+> A nit, subject: drop second/last, redundant "dt-bindings". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
->> On 8 Sep 2025, at 5:12=E2=80=AFPM, Vitaly Kuznetsov <vkuznets@redhat.com=
-> wrote:
->>=20
+Oops, it will be fixed in next version.
 
-...
-
->> Also, I've just recalled I fixed (well, 'workarounded') an issue similar
->> to yours a while ago in QEMU:
->>=20
->> commit 958a01dab8e02fc49f4fd619fad8c82a1108afdb
->> Author: Vitaly Kuznetsov <vkuznets@redhat.com>
->> Date:   Tue Apr 2 10:02:15 2019 +0200
->>=20
->>    ioapic: allow buggy guests mishandling level-triggered interrupts to =
-make progress
->>=20
->> maybe something has changed and it doesn't work anymore?
->
-> This is really interesting, we are facing a very similar issue, but the i=
-nterrupt storm only occurs when using split-irqchip.=20
-> Using kernel-irqchip, we do not even see consecutive level triggered inte=
-rrupts of the same vector. From the logs it is=20
-> clear that somehow with kernel-irqchip, L1 passes the interrupt to L2 to =
-service, but with split-irqchip, L1 EOI=E2=80=99s without=20
-> servicing the interrupt. As it is working properly on kernel-irqchip, we =
-can=E2=80=99t really point it as an Hyper-V issue. AFAIK,=20
-> kernel-irqchip setting should be transparent to the guest, can you think =
-of anything that can change this?
-
-The problem I've fixed back then was also only visible with split
-irqchip. The reason was:
-
-"""
-in-kernel IOAPIC implementation has commit 184564efae4d ("kvm: ioapic: cond=
-itionally delay
-irq delivery duringeoi broadcast")
-"""
-
-so even though the guest cannot really distinguish between in-kernel and
-split irqchips, the small differences in implementation can make a big
-difference in the observed behavior. In case we re-assert improperly
-handled level-triggered interrupt too fast, the guest is not able to
-make much progress but if we let it execute for even the tiniest
-fraction of time, then the forward progress happens.=20
-
-I don't exactly know what happens in this particular case but I'd
-suggest you try to atrificially delay re-asserting level triggered
-interrupts and see what happens.
-
---=20
-Vitaly
-
+Best regards,
+Clément
 
