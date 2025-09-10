@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-809230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F3FFB50A41
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE474B50A44
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE27189957A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:30:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C495189875A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7780F1F5617;
-	Wed, 10 Sep 2025 01:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12191FDA82;
+	Wed, 10 Sep 2025 01:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIJH+jl6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqTpSUiO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08451D5174;
-	Wed, 10 Sep 2025 01:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FC11F5617;
+	Wed, 10 Sep 2025 01:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757467803; cv=none; b=TdHFiA2g8JwLEb4cCE2IQizou2RBGLPhn2omG9hyh9AG4n8AZRqOLPGEsZl8W3My46uCPn75GQWIBC8OsMeWfABd8lRhvyBEjsrXxk+tkFVpGNbHFCSfNLYeudRpM+gKEsvZS9lLt57TpZLMsFhh2NOs6piagHMp6Vhh5i8gwPQ=
+	t=1757467816; cv=none; b=KqktmlIWcRADEYlm50v0F+VPKo7LO3J4WU33gHy6oc1A8bPkN3JwjgjIWgOOoGmfVkbc/9wZ3xVdNPH2tHScQsrqFFIocCINCD1c+Q/5Amleb7QrYCx6diT2kCKmvYvgKzcZWBxz+/Mm2zcUiJwHCTgAoUdRGzQzcJl939FEy84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757467803; c=relaxed/simple;
-	bh=fMzUZ89rUIrB3BdUFoSRAOSzYorBCqeFF+aJ+HQat84=;
+	s=arc-20240116; t=1757467816; c=relaxed/simple;
+	bh=n7RRcM2VmdxAHDAqCP2wBOJtykDyB6WRXj2rYpHA37g=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=TqsH9e33j167HelfwTGJ96eczsG9x2oqnyCTaGmG13tjavatonCoPhaa4cSNzZq+1rKH7RbTQkgZw0stSSnoSB/R0e3DQfjwFtvJzcwKSzcVUImbbwhaMrmvCQJQI0ECgiDnjis1r3JuV34LI0C5JYgLKGYvw3zZhmR49m8IxpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIJH+jl6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63043C4CEF4;
-	Wed, 10 Sep 2025 01:30:03 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Y/5FTmXcYsv31sIMG7oMkUwq9AM2bZgRFwLzDqQ3tBaWas3aqze3GRod3ozBy+j9JJVwk8v0w0lZYLbskwmXtiwPSe17vewy+5j3aO+VTEAW+jytnbQF5MRzhT5+DbDyTh0VqQ4mhtYYjfM9/fRgT06VGaEgEvK/IPGQm1aJlz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqTpSUiO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2292C4CEF8;
+	Wed, 10 Sep 2025 01:30:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757467803;
-	bh=fMzUZ89rUIrB3BdUFoSRAOSzYorBCqeFF+aJ+HQat84=;
+	s=k20201202; t=1757467814;
+	bh=n7RRcM2VmdxAHDAqCP2wBOJtykDyB6WRXj2rYpHA37g=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FIJH+jl63Sz0OwwkPHIQI7XYV1UB11zkmfiKz4S5tm8dzyWnFVXhh8YJQ866GEtQ5
-	 oVXer4P+9Mc48t/bBkfu9NT1MhpuXHK9LKOUsblQkTdn8+KNCDMlyM4fdWqnKf2YfD
-	 jmmlhxg2b1sb+ous78+K+RD1Zhvmdd8dGNdwdazx4J2tX5Qw6auF891aSd+XT9iyfg
-	 e5v9b/ks0hB1I71/zo1wyYwBw3MgsSwT9UfP2KjHNfFM8SgqbOrmchjQl++nFLZqyh
-	 Hl3pDD4nu/yL6Kcz66UgZVZsSipktH0nw1nZJ0U6SCUez7HuZqbaAUTDgJlik+vhGH
-	 6hYY3ZJ03865A==
+	b=sqTpSUiOxUHy5n8InPp5zSQp1YzPHXj++ljC1mEw4+cuerVQkvzd/LO3kZoEBKDEB
+	 9LC1ZPczZH6Va8Jnl3VnTRG4DIRV4DT1NUaZgbyQ8GRVdN8cShRXlBcuY6cstnQo6u
+	 Ze5v62xPT+OkMU+zOK2tyFHNfIrHk+8+T00xmtD2nDZfzVzBaD+DvzFQdjk/UNfmvI
+	 yalzrdi+K0Oxm4sHZm3DrzSrZvaickG0Abz8f/SJOGYv4CoYqKk8NK6MHitoAiHwrv
+	 uulMZu3f+a1sLGA2qnxEf2FEMPKqtf+z8RTaIvmf2Imz1XUYYsdYBFMpDW6rSmE3Ay
+	 mMNKVbalfUxyw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE4BB383BF69;
-	Wed, 10 Sep 2025 01:30:07 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBDB3383BF69;
+	Wed, 10 Sep 2025 01:30:18 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,58 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net] net: dev_ioctl: take ops lock in hwtstamp lower
- paths
+Subject: Re: [PATCH net-next] net: phy: aquantia: delete
+ aqr_firmware_read_fingerprint() prototype
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175746780652.866782.7996733446987433045.git-patchwork-notify@kernel.org>
-Date: Wed, 10 Sep 2025 01:30:06 +0000
-References: <20250907080821.2353388-1-cjubran@nvidia.com>
-In-Reply-To: <20250907080821.2353388-1-cjubran@nvidia.com>
-To: Carolina Jubran <cjubran@nvidia.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, sdf@fomichev.me, kuniyu@google.com,
- kory.maincent@bootlin.com, kees@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, cratiu@nvidia.com, dtatulea@nvidia.com
+ <175746781774.866782.16029878229611252912.git-patchwork-notify@kernel.org>
+Date: Wed, 10 Sep 2025 01:30:17 +0000
+References: <20250908134313.315406-1-vladimir.oltean@nxp.com>
+In-Reply-To: <20250908134313.315406-1-vladimir.oltean@nxp.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Sun, 7 Sep 2025 11:08:21 +0300 you wrote:
-> ndo hwtstamp callbacks are expected to run under the per-device ops
-> lock. Make the lower get/set paths consistent with the rest of ndo
-> invocations.
+On Mon,  8 Sep 2025 16:43:13 +0300 you wrote:
+> This is a development artifact of commit a76f26f7a81e ("net: phy:
+> aquantia: support phy-mode = "10g-qxgmii" on NXP SPF-30841 (AQR412C)").
+> This function name isn't used. Instead we have aqr_build_fingerprint()
+> in aquantia_main.c.
 > 
-> Kernel log:
-> WARNING: CPU: 13 PID: 51364 at ./include/net/netdev_lock.h:70 __netdev_update_features+0x4bd/0xe60
-> ...
-> RIP: 0010:__netdev_update_features+0x4bd/0xe60
-> ...
-> Call Trace:
-> <TASK>
-> netdev_update_features+0x1f/0x60
-> mlx5_hwtstamp_set+0x181/0x290 [mlx5_core]
-> mlx5e_hwtstamp_set+0x19/0x30 [mlx5_core]
-> dev_set_hwtstamp_phylib+0x9f/0x220
-> dev_set_hwtstamp_phylib+0x9f/0x220
-> dev_set_hwtstamp+0x13d/0x240
-> dev_ioctl+0x12f/0x4b0
-> sock_ioctl+0x171/0x370
-> __x64_sys_ioctl+0x3f7/0x900
-> ? __sys_setsockopt+0x69/0xb0
-> do_syscall_64+0x6f/0x2e0
-> entry_SYSCALL_64_after_hwframe+0x4b/0x53
-> ...
-> </TASK>
-> ....
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,net] net: dev_ioctl: take ops lock in hwtstamp lower paths
-    https://git.kernel.org/netdev/net/c/686cab5a18e4
+  - [net-next] net: phy: aquantia: delete aqr_firmware_read_fingerprint() prototype
+    https://git.kernel.org/netdev/net-next/c/051b62b71e2e
 
 You are awesome, thank you!
 -- 
