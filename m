@@ -1,137 +1,195 @@
-Return-Path: <linux-kernel+bounces-811131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12288B524C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:41:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DCFB524CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68A0C7A5C22
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:40:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4208C1C219BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFFA30F936;
-	Wed, 10 Sep 2025 23:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231BD2773DA;
+	Wed, 10 Sep 2025 23:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LR8+Idjh"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bnUwSVJL"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB3A21ABB9;
-	Wed, 10 Sep 2025 23:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CFD268C73
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757547698; cv=none; b=E80PaQ9OHltPXRuNjYr+JzQIIzgExQ4wFqzPzqAisZu5jmp/wXUR7MXkis7c1YPB3yMVFL4/8VtMBVitR0Rl0CWOtBfdJNpUtjFPi25KdFOUc4bGmQV5Ux9/Zq0JROeCCVo1AjGsPeK6hd9xWDcvemgnBaAmduLTWXMjQZVbqRk=
+	t=1757548265; cv=none; b=A7uByoZlGr9CbfFFQxIrI4zAg8RqKoY+EKscy98hQUJRnBcBulKVYh3Noi+g5XqW2pK7ctcDesbwUp5z/yj7HIO+VCNFWzkBharGW8vyHTlURj/e7qXnvzkHOS1IjnCITeNZnffdxxRaeOqDwyCcnjQgKSvPQpg10IaOyHzVnik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757547698; c=relaxed/simple;
-	bh=/CIC7CwmIJL1HWJm+gFKpQIYWIydgvlXQgBo8aAnR68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eWcg7EgILLSddfzHAIo6FiRBwmKJDq6VRuOUTABNJE/jlR/VUaIoyKqdAPRqHI0DydSsTsgnRjGqoqAhl27HJC5wdeECsHYYiAmdHGa8YM2nfefz4DJgH+VKsJ4LMnst/hzU6liBcZHdUdKNvfoK5sd4ERk0DJQVFlvTA0g31UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LR8+Idjh; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24b2de2e427so632945ad.2;
-        Wed, 10 Sep 2025 16:41:36 -0700 (PDT)
+	s=arc-20240116; t=1757548265; c=relaxed/simple;
+	bh=lT9wxRvvCIPJxXs5LthvBDL+Ph0L298VM/1LfR7jVG0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NmSv5GjrcnqlWOj9jvIIQMHK8Txi4ZcGm8jnPa6FUEbaccNaKoV/jIMHuRwl/oYpX4h59iwrZWOztHfu1Ez8b4vyqX6/6fGZgaHx6cuCxcWOTSBS1YiAyGYllSfq+VxzPfO/SBnkFMQKJkgpKofpSmo7Hv2nDz9s0ADnCxMNtdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bnUwSVJL; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7741ef59d18so102098b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:51:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757547696; x=1758152496; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/CIC7CwmIJL1HWJm+gFKpQIYWIydgvlXQgBo8aAnR68=;
-        b=LR8+IdjhqKUZwWG0xyghMkN9bGftbeLhCNN2ftE9g6FAHf0CuyEsePiuhol+JWqhcz
-         yT3sgZYj3BevIP2YGyZL3Ifw5BaAau4ZGo/TxSt1HRfgAJCpiTi4FOIQ8fsLG44R97x6
-         XSc+hQEovjoN8biOJMVRuREgBA5V1mLBH8GK1EKH+LamoQ11l+zZQDnyJCGdXWuqAU8V
-         bM4SEuvS7KXXD/xdUmt7V7U1e80q41L0BLVlnc+pVnFhoml4OP0SPSTwPjwvcSklw5p2
-         qNRX9Osbf303+0QCczqrgoncZrFRsWRaWgNxPfjVxeHT+3PJqmuVYU4Kq58TRmEk/LBT
-         +quw==
+        d=google.com; s=20230601; t=1757548263; x=1758153063; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QdKgArnQrwIFW/ARGiTdXi98XW2fxSfLYpo+hZTfmQ8=;
+        b=bnUwSVJLUtj2MFS3euLw2onzuMQ/6FNfJ2ARXFaJK5kJHgVMKe/5ol4QRmL8wu6tE4
+         req5OdeIiAoesKCd80kflOkEVoRLbJAbB9X13RL06Sc6/ZBxSpY8IsUzn38OHKHllUoZ
+         /75muWmqasU02L0zIMR9EXji4nRVRtDMR6ScjRXVoxt4Ose5EDh04Mnl8hjsbvVxvNAp
+         NcsCJoInJMFa5kkObalGB+u7c2ffMApV2zW4diO9AWE7JvKoU3KqdYXNVONYt7vensRk
+         2s3baYwCHVjdxZ+/WjrruwMabaXGxxEMiH09VCObeP7kraK3e01242eyZuNwSy/bczio
+         f+3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757547696; x=1758152496;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/CIC7CwmIJL1HWJm+gFKpQIYWIydgvlXQgBo8aAnR68=;
-        b=mR6hw0ZQOYxE135IW9onVE6GoI36C/cfp1lKH7h8ql3WsQwHZ/LfS5pLe5K/jkizGm
-         83ju4PhS3eYm9SGZ5AB23szO7kCUyu8UboJ7exGRJxxzjRAzaarRmeP1zngyfqcTtBir
-         4SDXpSD3wohWe5bevqgoIdTzEZZPp9GxQm40mreDquuLUNjFkZKWsxg83JOL/2VphpQI
-         qc1g4IJ5n9pAH3HFq3QZ5zO5s2MQv9yW1BEVUQOsLaGo0WhkpqKXHjXSPB1jB3Aytf9k
-         ZNGL2nerw+s1wxbVUCTVtkBvNOKfibgDw3qoNv6gxBuKuql4244alKgMsD8YREFxR/qX
-         tC9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUPuq1+2asozDDqd0BtV2lX8WPKes+Kb9PAJ1KtSvrigEjP5Kv6YB2hzePKX76yQKaXTQkIiNBC+Cw=@vger.kernel.org, AJvYcCW58Gju0tDSGK5XVYvvOD3YaWAMXxMuAOp1WIk2Q54Uf5OtxybEY007pWfhL1Fp5luo0OU8UpZltxO4fF3i@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2FhlFerLcdnHiysVsUdy0HexvzSYT/e6EZuiufw7KOIgntecv
-	MxDN7K41fJw0xMUdF09oKMmD2cFdguF97NerNXOlMGMhCpT5zhHEjZ57
-X-Gm-Gg: ASbGncsoWgl1s+4z9Qo0Ew78YkXZzprf5CYIzlASwMUf9jLG5mcIDV4zP6VDdGo1FT3
-	xW/5ZzMlmPs09lSqzWdQr9WLN9ruLoHOnigqgK6hEH4jNU9g9YVSXRXfNjQ6udY8UAfETcXpLdD
-	jH6tw1uEFqbFobCzmC4U4U91EiA6GlFLEAeGw0NXL1qyN3ibSGOGSzKBg39h7cMydTEeAx5VwNr
-	f3KLYE4XtlWZBWFVGCO54Mz4woddWp/p+SMwufPUDINNQJ8XU03jiEa60a8biy3mp+D8KrBcitf
-	oUIhYMTAh2UlASYAcNL+8z1+/QnhWrbalfvTK7brE36XNJj3PKok7qEQm2Mz890F+8QYLjV/eJN
-	1D7JCxiaz2wqG6fOabLvhmlV+Gg==
-X-Google-Smtp-Source: AGHT+IHU2zlntDNV6h4NG6CW9V6x20J9LTc0sJI2cj9065qL+Weta1oYP+ihM44ibqxT3EDmV8tEbg==
-X-Received: by 2002:a17:903:3d0c:b0:25b:dcbf:43a2 with SMTP id d9443c01a7336-25bdcbf45e7mr7234665ad.52.1757547695955;
-        Wed, 10 Sep 2025 16:41:35 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25be6fc0f23sm4297075ad.48.2025.09.10.16.41.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 16:41:35 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id DD5B041FA3A1; Thu, 11 Sep 2025 06:41:31 +0700 (WIB)
-Date: Thu, 11 Sep 2025 06:41:31 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux GFS2 <gfs2@lists.linux.dev>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	"Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-	Bernd Schubert <bschubert@ddn.com>,
-	Jeff Layton <jlayton@kernel.org>, James Morse <james.morse@arm.com>,
-	Chen Linxuan <chenlinxuan@uniontech.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3] Documentation: gfs2: Consolidate GFS2 docs into its
- own subdirectory
-Message-ID: <aMIMq_8i4LUe9yOX@archie.me>
-References: <20250909014606.15043-1-bagasdotme@gmail.com>
- <874itbv23b.fsf@trenco.lwn.net>
- <aMC4LIltHWlpF9iY@archie.me>
- <CAHc6FU709iYrAVB+2DeL8+AkCMtgwtqC-7ikx+f=wqYPAZfjmg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1757548263; x=1758153063;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QdKgArnQrwIFW/ARGiTdXi98XW2fxSfLYpo+hZTfmQ8=;
+        b=Wqar49eXuv8M0HGwFpbs+tJeSW1B1RhFcxqkwu2e85810UYF0RFYrdGXKEnl/RgHhp
+         GfFACVqJYRJDDGBkW4lFC9BZ7mxwbhD9N+HXSzS1B7BzvlgUHGP4wzR0prNBFZMrQtMn
+         5nnLTGXdIa3fzBrgREf9Ma5JEHh/etHr9kRCgwdWfFQdtla+Ox+YdNeJBODXLgkvDDY7
+         /CCcq0GaHkOcpBbzXysm1DoFQlMgu7dFdoSfqffA/zqzTTXeFYbbR81q7YxxqBBidZTX
+         Qm8Q0yPtIJ3UI20xZGnRfP70wT6L7l+SJz64FRq72V4sMSVUluOg0aj0wYZ638fiDoqD
+         7W7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVVMOVW9AIunUasp2UDaxpeQhlv9oaKcX2oR3fD2ntUGMvIJNTUtZZGLVAtswAaC0OqUXlVirUVZLo/KNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4pZAOA/wp7daAbqmFLsrEWrG8559set8xdc0B6vfV5v1Zx3U/
+	CHBIXVAnw+Ttwbw4J5t2UNkWmoROd3NTQf985UxDd+HHAXTvyFZUd95m3sRPPHrGGKHuRFZXTvu
+	9aQ+Adg==
+X-Google-Smtp-Source: AGHT+IHAOPoqLqzW42pDcQ2iL3CgvV4MYVB044aGs9+gV2plwshaHJewVBH05WXowEYEqUEjkGVyJvd+7wQ=
+X-Received: from pgma18.prod.google.com ([2002:a63:1a52:0:b0:b49:dc77:f407])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:4321:b0:24d:d206:699c
+ with SMTP id adf61e73a8af0-2534519d154mr25197522637.53.1757548263178; Wed, 10
+ Sep 2025 16:51:03 -0700 (PDT)
+Date: Wed, 10 Sep 2025 16:51:01 -0700
+In-Reply-To: <20250718001905.196989-4-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OVswxxCfIJEK97dT"
-Content-Disposition: inline
-In-Reply-To: <CAHc6FU709iYrAVB+2DeL8+AkCMtgwtqC-7ikx+f=wqYPAZfjmg@mail.gmail.com>
+Mime-Version: 1.0
+References: <20250718001905.196989-1-dapeng1.mi@linux.intel.com> <20250718001905.196989-4-dapeng1.mi@linux.intel.com>
+Message-ID: <aMIO5ZLNur5JkdYl@google.com>
+Subject: Re: [PATCH v2 3/5] KVM: Selftests: Validate more arch-events in pmu_counters_test
+From: Sean Christopherson <seanjc@google.com>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>, 
+	Zide Chen <zide.chen@intel.com>, Das Sandipan <Sandipan.Das@amd.com>, 
+	Shukla Manali <Manali.Shukla@amd.com>, Yi Lai <yi1.lai@intel.com>, 
+	Dapeng Mi <dapeng1.mi@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Fri, Jul 18, 2025, Dapeng Mi wrote:
+> Clearwater Forest introduces 5 new architectural events (4 topdown
+> level 1 metrics events and LBR inserts event). This patch supports
+> to validate these 5 newly added events. The detailed info about these
+> 5 events can be found in SDM section 21.2.7 "Pre-defined Architectural
+>  Performance Events".
+> 
+> It becomes unrealistic to traverse all possible combinations of
+> unavailable events mask (may need dozens of minutes to finish all
+> possible combination validation). So only limit unavailable events mask
+> traverse to the first 8 arch-events.
 
---OVswxxCfIJEK97dT
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Split these into separate patches.  Buring a meaningful change like this in a big
+patch that seemingly just adds architectural collateral is pure evil.
+> @@ -612,15 +620,19 @@ static void test_intel_counters(void)
+>  			pr_info("Testing arch events, PMU version %u, perf_caps = %lx\n",
+>  				v, perf_caps[i]);
+>  			/*
+> -			 * To keep the total runtime reasonable, test every
+> -			 * possible non-zero, non-reserved bitmap combination
+> -			 * only with the native PMU version and the full bit
+> -			 * vector length.
+> +			 * To keep the total runtime reasonable, especially after
+> +			 * the total number of arch-events increasing to 13, It's
+> +			 * impossible to test every possible non-zero, non-reserved
+> +			 * bitmap combination. Only test the first 8-bits combination
+> +			 * with the native PMU version and the full bit vector length.
+>  			 */
+>  			if (v == pmu_version) {
+> -				for (k = 1; k < (BIT(NR_INTEL_ARCH_EVENTS) - 1); k++)
+> +				int max_events = min(NR_INTEL_ARCH_EVENTS, 8);
 
-On Wed, Sep 10, 2025 at 01:25:13PM +0200, Andreas Gruenbacher wrote:
-> Sure, I can take it. Can you please send your v4 patch to gfs2@lists.linu=
-x.dev?
+Too arbitrary, and worse, bad coverage.  And honestly, even iterating over 255
+(or 512?) different values is a waste of time.  Ha!  And test_arch_events() is
+buggy, it takes unavailable_mask as u8 instead of a u32.  I'll slot in a patch
+to fix that.
 
-Of course! I will prepare it shortly.
+As for the runtime, I think it's time to throw in the towel in terms of brute
+forcing the validation space, and just test a handful of hopefully-interesting
+values, e.g.
 
---=20
-An old man doll... just what I always wanted! - Clara
+---
+ .../selftests/kvm/x86/pmu_counters_test.c     | 38 +++++++++++--------
+ 1 file changed, 23 insertions(+), 15 deletions(-)
 
---OVswxxCfIJEK97dT
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMIMqwAKCRD2uYlJVVFO
-o1nWAPwJPNLFwTgriVEqnN7Jlnjk/u/i7R58qvOBwAL7J96sXQD9FuoTv+2Yb5va
-sQrdnSCbUPZOLQWc88YU2k3Z+dgK1AQ=
-=eyoj
------END PGP SIGNATURE-----
-
---OVswxxCfIJEK97dT--
+diff --git a/tools/testing/selftests/kvm/x86/pmu_counters_test.c b/tools/testing/selftests/kvm/x86/pmu_counters_test.c
+index cfeed0103341..09ad68675576 100644
+--- a/tools/testing/selftests/kvm/x86/pmu_counters_test.c
++++ b/tools/testing/selftests/kvm/x86/pmu_counters_test.c
+@@ -577,6 +577,26 @@ static void test_intel_counters(void)
+ 		PMU_CAP_FW_WRITES,
+ 	};
+ 
++	/*
++	 * To keep the total runtime reasonable, test only a handful of select,
++	 * semi-arbitrary values for the mask of unavailable PMU events.  Test
++	 * 0 (all events available) and all ones (no events available) as well
++	 * as alternating bit sequencues, e.g. to detect if KVM is checking the
++	 * wrong bit(s).
++	 */
++	const uint32_t unavailable_masks[] = {
++		0x0,
++		0xffffffffu,
++		0xf0f0f0f0u,
++		0x0f0f0f0fu,
++		0xaaaaaaaau,
++		0xa0a0a0a0u,
++		0x0a0a0a0au,
++		0x55555555u,
++		0x50505050u,
++		0x05050505u,
++	};
++
+ 	/*
+ 	 * Test up to PMU v5, which is the current maximum version defined by
+ 	 * Intel, i.e. is the last version that is guaranteed to be backwards
+@@ -614,16 +634,7 @@ static void test_intel_counters(void)
+ 
+ 			pr_info("Testing arch events, PMU version %u, perf_caps = %lx\n",
+ 				v, perf_caps[i]);
+-			/*
+-			 * To keep the total runtime reasonable, test every
+-			 * possible non-zero, non-reserved bitmap combination
+-			 * only with the native PMU version and the full bit
+-			 * vector length.
+-			 */
+-			if (v == pmu_version) {
+-				for (k = 1; k < (BIT(NR_INTEL_ARCH_EVENTS) - 1); k++)
+-					test_arch_events(v, perf_caps[i], NR_INTEL_ARCH_EVENTS, k);
+-			}
++
+ 			/*
+ 			 * Test single bits for all PMU version and lengths up
+ 			 * the number of events +1 (to verify KVM doesn't do
+@@ -632,11 +643,8 @@ static void test_intel_counters(void)
+ 			 * ones i.e. all events being available and unavailable.
+ 			 */
+ 			for (j = 0; j <= NR_INTEL_ARCH_EVENTS + 1; j++) {
+-				test_arch_events(v, perf_caps[i], j, 0);
+-				test_arch_events(v, perf_caps[i], j, -1u);
+-
+-				for (k = 0; k < NR_INTEL_ARCH_EVENTS; k++)
+-					test_arch_events(v, perf_caps[i], j, BIT(k));
++				for (k = 1; k < ARRAY_SIZE(unavailable_masks); k++)
++					test_arch_events(v, perf_caps[i], j, unavailable_masks[k]);
+ 			}
+ 
+ 			pr_info("Testing GP counters, PMU version %u, perf_caps = %lx\n",
+-- 
 
