@@ -1,250 +1,161 @@
-Return-Path: <linux-kernel+bounces-809891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B06B51331
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A14BDB5132D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A23431C262FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A521F1C24ED8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430DF314A9A;
-	Wed, 10 Sep 2025 09:51:39 +0000 (UTC)
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4C525F797;
+	Wed, 10 Sep 2025 09:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ISuvdleM"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18A2313278;
-	Wed, 10 Sep 2025 09:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C2D1DFF7
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497898; cv=none; b=ZaholRv/d06yhplFk0bIwP5VagLzG41iolUM0MssehyYzW0dLalLdiQA4HTuom4uSKASLk6b6XQzj6/r6mxuo72OKUxMlS1kBgph0BBhn2l6N1/mgd+mBPE1LJnyKQ6hAfiiGQemRAAYZufGURz5g9LyOgjdFuE/HCn3XIoJzZI=
+	t=1757497865; cv=none; b=TcuxBd130jyEgfVn50YM0PIb/VuNT11w6/7RDB/GHRlfPvcSj678PspfA7V6WGjizxVvswwSuW+GzFzHV04tDSmdiDfp9ZkiLOodxQHKUpAMuE+5GaVnKyxkK4TZjJsf+FrD+kAcWPl832CF1yiakki+/VjC9cBr3LYMQBfOsP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497898; c=relaxed/simple;
-	bh=g9x6VZQTetCeyBhUn510phGdtnEIi5P5nT8aETR0j+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q3t+tuA6j+o2f4Qsqi4vngM7JZGlesE63Q5mQxVFfXVFXV2B4Rm2WmFV8aEsumcBJEyM7ko1ZTeWvPezFrD9fOrpe+8RPEScMPvdaUs47q+P+HTqkXnzpClw8NtRvKzkJpkp+Sl3X2DidcgfP9kXtrm8oCnnNDaz6YDNAEWqSGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip2t1757497820tb0cecf54
-X-QQ-Originating-IP: Ahtj5ExDDHnKTkw5w5uex1NY/uHgHf+Fq+CUTE4cJ1g=
-Received: from [IPV6:240f:10b:7440:1:e5ed:636d ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 10 Sep 2025 17:50:15 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3479308026066286794
-Message-ID: <2DB98035A3401FCC+ed53497a-f817-422b-a1fc-16f72d166032@radxa.com>
-Date: Wed, 10 Sep 2025 18:50:14 +0900
+	s=arc-20240116; t=1757497865; c=relaxed/simple;
+	bh=1Ekj0qCIIDmPMKd7MKdQz0vD6mXZnE9z0aNJq7133j4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OP/Gt4hOqOXzjBXATcD4lQZWmgGs2h8NhmBr0kuUq9uIqjDWeiFYM5kK5wTerNcWAWDKy0zDdYdtZrkgs8RWFObp0mHL6V9USODqjAWyIps3zf9gXtCrvO2fsEaTEdZSoMiDE+iHosauGZB/3jpiYeby8BM86qAC4tDyV48MjVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ISuvdleM; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so5439829b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:51:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1757497863; x=1758102663; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZDb/LrvnV1UIDhd01+52KAVilWExL2afxMFnYseaFZk=;
+        b=ISuvdleMbsmRKn6KmvXN4USv6uhGR66YT9h382pyJwJbtWgu948UkOn3dlSG/6XeHP
+         IYAafl/bPCHqp8CTJrOiQuCmLFIV60zAJYcBrdp04SXYdb99MPu+Fr/qfI5S9zGdW4N3
+         4mQm775gY6eTwlvC96OYWFMUrtIswM7uCQmmXjCKcvdcL5sEYY+IPdoHdcGwa0xx70z1
+         7wFBnhrhkH3nm+9D1CHORNiFulMQAotPJaLDXR5EXwBZQ6uOSjoV/rM2qa9HMw/drEbh
+         xvzQMDrBo8i/wlSowN+BkYwD3eKr85BZMRbxcJrrfk64N+vmDv1Ask1gZ830MzdN9wOB
+         o3Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757497863; x=1758102663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZDb/LrvnV1UIDhd01+52KAVilWExL2afxMFnYseaFZk=;
+        b=UHQhhHkTp+U2YB3gRapljO1XySmT0lGiVqfBSkC9LniyEiyeP3a6CVF9hCrmz2L5Dk
+         ZIG4kP1US5hySIAJs9SLNZ4n9mwGgQ2jkitGc+8ZHvx4+BqIxSyTeBES+XOCDCUc8qjx
+         zCj+QyXCNrdVMjeZFsmjnnLN2uFBZ02eHVppyT3MLMj8Mz4QACPdhbxWIOZVGbNHqLsM
+         3b1ZcKni3+uRZzr7oYUnNV7IWeXZ7xxbhlwafgZdusq1lZ2graEPq2rOiFwd/hMRq49E
+         eMt80dsOasAceXe1vRj+VcSMzYWxZVJtHBQSSQ5PWFOgOhUblKoizcvFSZ50j0qzX5zU
+         s8RQ==
+X-Gm-Message-State: AOJu0Yyk1hrYzDyM7wux9m9jLvLQyyfBtIEM/GOttF+AZxoAsJuEPqI4
+	LdkSGwb8+Wet4/PorO/y2lLYW8CAf8HRlhWt0NMeJ+EuKqKijKpo6l4WX4JO5+9zpg==
+X-Gm-Gg: ASbGncvqKBEF6WBGqQ0bdCduY1ESZ7OGTn3xWImzmqaamsPq/KVoOmQAFRwCJ0LPkCP
+	4m16H9xh3W12npD9RDEIOz4qvmXh3lHkyxpcSdICAXN3R7fuBkUAUTEQGU0AVvijMi5PHpKqzkr
+	JniagVSa1awCTip7wXJcAKXOVSOGmnPn0W9PDROYZDuClfz5piY4V+ArdhqdyAtxh+948lOty/l
+	L6GDk59sGLfsKR81tp+9impoxbl6FpTG4buGEd/0D0vqSe2+nvYknn6enSfD9ar6NoR3UGn0tSq
+	5v9K9Twv4WrPsZAs3O1Ny5YmCaBbd3i0wgXtrsZUvq/i26SYrWXQcMmIVzcVLflzPhCE65Gchj0
+	Ps1g1E9CpoQdhh22Bjr25KwBawqv8klaoV8anOG9IGVRwrinoYVHWh0b/TO7kSitct3RFAJzpWq
+	I=
+X-Google-Smtp-Source: AGHT+IE5fbZk9PGJMqaSZD8J9XfW9t0gxKPoo40ttIreXkGM+ffknrv3gbosZgxIPdQC14TL9joIHg==
+X-Received: by 2002:a05:6a20:734b:b0:251:8a26:2648 with SMTP id adf61e73a8af0-2533fd94dacmr22855595637.14.1757497862561;
+        Wed, 10 Sep 2025 02:51:02 -0700 (PDT)
+Received: from 5CG4011XCS-JQI.bytedance.net ([61.213.176.57])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b548b81f5acsm1850623a12.1.2025.09.10.02.50.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 02:51:02 -0700 (PDT)
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 0/4] Task based throttle follow ups
+Date: Wed, 10 Sep 2025 17:50:40 +0800
+Message-Id: <20250910095044.278-1-ziqianlu@bytedance.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add Radxa E24C
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Jonas Karlman <jonas@kwiboo.se>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>,
- Chukun Pan <amadeus@jmu.edu.cn>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250727144409.327740-1-jonas@kwiboo.se>
- <a443fca9-e660-4a7a-b637-ec840ac8ed1e@kwiboo.se>
- <AF1546E3BE23C6D5+08234a44-4321-45da-9c74-5690f3437e03@radxa.com>
- <3331537.aV6nBDHxoP@diego>
-Content-Language: en-US
-From: FUKAUMI Naoki <naoki@radxa.com>
-In-Reply-To: <3331537.aV6nBDHxoP@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Nnd5cAEgLcFhFw/bNYysLmQwF1vVz16UWeJHPgs7QRj2en9xSG82Xwe4
-	4G8byxhpPkYesWwYytyfSN0gaMo1k1s6cKsnIM8v6NOEk5zrXR+kSVR8JiVJ218/UYsWx87
-	aPZ9bVfZ8rnyKnPM+ru3ismJkAUn6MJldKa3mTcN86QfP0lnRqXQnwzuJ7fYsPVW7b233A6
-	1pqNm3vfcnU1GlI80Tl/2BsJvTioltvo8FhX7dgyOYgo7wQnuXoukMV2fXIboThJS4t3Nno
-	WVpytz8p6vA+2iTADAWzprTA+YSURfSiQoXFYmgwRPvmTCvNUP+4fwTOAy9wfeGKWI1U2lw
-	sdv3xIOZyZs/oAbhd0T4TyyHmLaTwOgezfe7R3xlfpMI2zfD4vYJFOuHoP35dOVcKQewMRx
-	yYr1UPdfPnJXR7keexIXsmKHDkxE5F4QH2uRwIHWf3Tj1q1mPcwLYOBhrGiU4a8xdt+vjkr
-	Uhf2owa/LqNgxcoAFab9qxYUJSVXTFxxIkCshd92tA8Ae6GGZX2qmih4/ZHQaZwGCJq6S2B
-	o3h98zCTyLevDoByGYieqi1sV1xhUce3MYZJCIhe3FJ3Ub04liBtt88VBR+aL0Q4qXPuwc+
-	y6AJrkY27THJTh34tzmYjq6iOPEGkJ+PDhI69FtyJ9FPJaSve6m7P/hrJjW8E4GO0VXRoRt
-	gvry7D9P2K12GL33vlf5a2aFm8kV6GXwyldyBQmurAbZfFrLdDHjVKzdiMxqRyxg3S+LtDI
-	ppeaiO1gxEpLpQXIKvN/zlO+b4MvVdl4P/0m6OgaZJN++leua2RXNvRgCI81UAJ754TlJ69
-	xBBarUhn6w/ESQ2cptjnYwc3CxP63oclZkO9pcs218c+pe22R5+BJaflAw/77IO9KU3wH1u
-	Def0vmkiwnGz9bVGVME7GV6I7p/oEz26Xanawswz3Emp2wLKiyZvP94hw6AVt7SLwa7c/Oo
-	AaXVVkmHxJe6VkGZ7I6yMggWCPesRvp9RJ5RSaRxD0XQLqDTmyKgfbSHYLl8fGeYfl3E0Yf
-	jHcORROg==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
 
-Hi Heiko,
+Peter noticed the inconsistency in load propagation for throttled cfs_rq
+and Ben pointed out several other places regarding throttled cfs_rq that
+could be no longer needed after task based throttle model.
 
-On 9/10/25 17:07, Heiko Stübner wrote:
-> Am Mittwoch, 10. September 2025, 04:43:30 Mitteleuropäische Sommerzeit schrieb FUKAUMI Naoki:
->> Hi Jonas, Heiko,
->>
->> On 9/10/25 04:36, Jonas Karlman wrote:
->>> On 9/9/2025 5:39 PM, Heiko Stübner wrote:
->>>> Am Dienstag, 9. September 2025, 16:48:25 Mitteleuropäische Sommerzeit schrieb Jonas Karlman:
->>>>> On 9/9/2025 2:28 PM, FUKAUMI Naoki wrote:
->>>>>> Hi Jonas,
->>>>>>
->>>>>> On 7/27/25 23:44, Jonas Karlman wrote:
->>>>>>> The Radxa E24C is a compact, high-performance network computer
->>>>>>> developed by Radxa, based on the Rockchip RK3528A SoC.
->>>>>>>
->>>>>>> Add initial device tree for the Radxa E24C.
->>>>>>>
->>>>>>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
->>>>>>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
->>>>>>> ---
->>>>>>> Schematics: https://dl.radxa.com/e/e24c/docs/radxa_e24c_v1200_schematic.pdf
->>>>>>> ---
->>>>>>>     arch/arm64/boot/dts/rockchip/Makefile         |   1 +
->>>>>>>     .../boot/dts/rockchip/rk3528-radxa-e24c.dts   | 519 ++++++++++++++++++
->>>>>>>     2 files changed, 520 insertions(+)
->>>>>>>     create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-radxa-e24c.dts
->>>>>>>
->>>>>>> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
->>>>>>> index 0662fcf00628..dc62fd5305be 100644
->>>>>>> --- a/arch/arm64/boot/dts/rockchip/Makefile
->>>>>>> +++ b/arch/arm64/boot/dts/rockchip/Makefile
->>>>>>> @@ -92,6 +92,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399pro-rock-pi-n10.dtb
->>>>>>>     dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3528-armsom-sige1.dtb
->>>>>>>     dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3528-nanopi-zero2.dtb
->>>>>>>     dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3528-radxa-e20c.dtb
->>>>>>> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3528-radxa-e24c.dtb
->>>>>>>     dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3528-rock-2a.dtb
->>>>>>>     dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3528-rock-2f.dtb
->>>>>>>     dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3562-evb2-v10.dtb
->>>>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e24c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e24c.dts
->>>>>>> new file mode 100644
->>>>>>> index 000000000000..225f2b0c5339
->>>>>>> --- /dev/null
->>>>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e24c.dts
->>>>>>> @@ -0,0 +1,519 @@
->>>>>>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->>>>>>> +
->>>>>>> +/dts-v1/;
->>>>>>> +
->>>>>>> +#include <dt-bindings/input/input.h>
->>>>>>> +#include <dt-bindings/leds/common.h>
->>>>>>> +#include "rk3528.dtsi"
->>>>>>> +
->>>>>>> +/ {
->>>>>>> +	model = "Radxa E24C";
->>>>>>> +	compatible = "radxa,e24c", "rockchip,rk3528";
->>>>>>> +
->>>>>>> +	aliases {
->>>>>>> +		ethernet0 = &gmac1;
->>>>>>> +		i2c0 = &i2c0;
->>>>>>> +		i2c1 = &i2c1;
->>>>>>> +		i2c5 = &i2c5;
->>>>>>> +		mmc0 = &sdhci;
->>>>>>> +		mmc1 = &sdmmc;
->>>>>>> +		rtc0 = &hym8563;
->>>>>>> +		rtc1 = &rk805;
->>>>>>> +		serial0 = &uart0;
->>>>>>> +	};
->>>>>>> +
->>>>>>> +	chosen {
->>>>>>> +		stdout-path = "serial0:1500000n8";
->>>>>>> +	};
->>>>>>> +
->>>>>>> +	adc-keys {
->>>>>>> +		compatible = "adc-keys";
->>>>>>> +		io-channels = <&saradc 0>;
->>>>>>> +		io-channel-names = "buttons";
->>>>>>> +		keyup-threshold-microvolt = <1800000>;
->>>>>>> +		poll-interval = <100>;
->>>>>>> +
->>>>>>> +		button-maskrom {
->>>>>>> +			label = "MASKROM";
->>>>>>> +			linux,code = <KEY_SETUP>;
->>>>>>> +			press-threshold-microvolt = <0>;
->>>>>>> +		};
->>>>>>> +	};
->>>>>>> +
->>>>>>> +	gpio-keys {
->>>>>>> +		compatible = "gpio-keys";
->>>>>>> +		pinctrl-names = "default";
->>>>>>> +		pinctrl-0 = <&gpio0_a0_user>;
->>>>>>> +
->>>>>>> +		button-user {
->>>>>>> +			gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_LOW>;
->>>>>>> +			label = "USER";
->>>>>>> +			linux,code = <BTN_1>;
->>>>>>
->>>>>> I prefer to assign BTN_0 to the 1st button :)
->>>>>
->>>>> The E20C (and other RK boards) already use BTN_1 for user button, it
->>>>> only seem to be the recently added E54C that is using BTN_0.
->>>>>
->>>>> For consistency I suggest we keep using BTN_1 for this user button and
->>>>> possible fixup E54C, if you want to use same button for all variants.
->>>>
->>>> Yep, that would also keep the amount of userspace-facing changes
->>>> minimal.
->>>
->>> I mixed up e54c and e52c so my statement was not fully correct above,
->>> however there is a mixed use of BTN_1 and BTN_0 for user button:
->>>
->>> - rk3588s-nanopi-r6c/r6s uses BTN_1, added in v6.9-rc1
->>> - rk3588-friendlyelec-cm3588-nas uses BTN_1, added in v6.11-rc1
->>> - rk3582-radxa-e52c uses BTN_0, added in v6.14-rc1
->>> - rk3528-radxa-e20c uses BTN_1, added in v6.15-rc1
->>> - rk3576-nanopi-m5 uses BTN_1, added in v6.17-rc1
->>>
->>> Majority seem to be using BTN_1 for a user button.
->>
->> If we can unify to BTN_1 even if it breaks backward compatibility, I
->> wouldn't be opposed to it.
->>
->> (I remember a "sync with others" patch being rejected in the past, but I
->> might be remembering it wrong.)
-> 
-> you remember correctly :-) .
-> 
-> Changing the reported key just for "syncing" is generally not desired.
-> It'd be like your "a" key reporting "z" with a new kernel version, even
-> if the label on the key states "z" since the beginning [0]
-> 
-> So any adaptation always is on a case-by-case basis.
-> 
-> My hunch right now is that we might be able to adapt the button
-> on that rk3582 board, because I assume due to the lottery soc
-> (disabled cores and/or disabled gpu/...) it might not be overly
-> spread out in the wild?
+To ease discussing and reviewing, I've come up with this follow up
+series which implements the individual changes.
 
-Since the E52C is a "network computer," it may be in greater demand than 
-other RK3582 boards with HDMI. (This is just my guess, and I don't know 
-the exact number.)
-However, I support changing the E52C's User button to BTN_1.
+Patch1 deals with load propagation. According to Peter and Prateek's
+discussion, previously, load propagation for throttled cfs_rq happened
+on unthrottle time but now with per-task throttle, it's no longer the
+case so load propagation should happen immediately or we could lose this
+propagated part.
 
-Similarly, I think it would be better to align the "Maskrom" button with 
-KEY_SETUP instead of KEY_VENDOR. Only rk3582-radxa-e52c.dts and 
-rk3588s-nanopi-r6.dtsi use KEY_VENDOR.
-The latter may have a relatively large user base, but how many people 
-actually use the Maskrom button in Linux userland?
+Patch2 made update_cfs_group() to continue function for cfs_rqs in
+throttled hierarchy so that cfs_rq's entity can get an up2date weight. I
+think this is mostly useful when a cfs_rq in throttled hierarchy still
+has tasks running and on tick/enqueue/dequeue, update_cfs_group() can
+update this cfs_rq's entity weight.
 
-Best regards,
+Patch3 removed special treatment of tasks in throttled hierarchy,
+including: dequeue_entities(), check_preempt_wakeup_fair() and
+yield_task_to_fair().
 
---
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
+Patch4 inhibited load balancing to a throttled cfs_rq to make hackbench
+happy.
 
-> [0] https://xkcd.com/1172/ ;-)
-> 
-> 
-> 
-> 
-> 
+I think patch1 is needed for correctness, patch2-4 is open for
+discussion as there are pros/cons doing things either way. Comments are
+welcome, thanks.
 
+BTW, I also noticed there is the task_is_throttled sched class callback
+and in fair, it is task_is_throttled_fair(). IIUC, it is used by core
+scheduling to find a matching cookie task to run on the sibling SMT CPU.
+For this reason, it doesn't seem very useful if we find it a task that
+is to be throttled so I kept the current implementation; but I guess
+this is also two folded if that to be throttled task is holding some
+kernel resources. Anyway, I didn't write a patch to change it in this
+series, but feel free to let me know if it should be changed.
+
+Aaron Lu (4):
+  sched/fair: Propagate load for throttled cfs_rq
+  sched/fair: update_cfs_group() for throttled cfs_rqs
+  sched/fair: Do not special case tasks in throttled hierarchy
+  sched/fair: Do not balance task to a throttled cfs_rq
+
+ kernel/sched/fair.c | 50 ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 31 insertions(+), 19 deletions(-)
+
+
+base-commit: 5b726e9bf9544a349090879a513a5e00da486c14
+-- 
+2.39.5
 
 
