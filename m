@@ -1,283 +1,160 @@
-Return-Path: <linux-kernel+bounces-809738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31261B51164
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:34:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA0A0B51167
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 022734E1CA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:34:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84076486D96
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C0930F801;
-	Wed, 10 Sep 2025 08:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFC730F801;
+	Wed, 10 Sep 2025 08:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbIX6kPf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DDaixZFO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBE9309EEF
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9948228B501
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757493241; cv=none; b=UxKXF50RXreRowoW2b+QqMxDy0YbfbbAXkP3t70qb4Ya+3gu7zLURykpkV+2qsrr9H1JKtvMSVcGMZAeh+eml8LVG6x6b75ppWzp8NQTVfOL9DT2RhaLs58F35+F/iSU1Sp0zrzmoiuY+fAri3RuAMX41AVa5plmaOQPeGpom9Q=
+	t=1757493254; cv=none; b=RO+h8mMif96VFqvPcnTX24CMftyWjxcf0esBOvlxvjLgRZ/VZeRTGA7Stl9mXLTdLq2izQvQAvLhFcd8IT+UaLFps5X/G2zgR7I29OrNEMN+IIPdgM26aGi6KL7019mng9+8sTj36SuvBxW6qxdqFve//UUZ7rFV036mtGVRChk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757493241; c=relaxed/simple;
-	bh=TIzmDeWrxXGOrqQJgO1ho+rcXE2ljlXUJJkwn0dTGHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EpKraGVys4j+o+qUqSnOt/fu+c9FGhtOICDudxakpkVMNEajeHqD3VaELy2W85uL0h6nvWegxsjylQlFAWVGsNlo0wA2RuIuqssGH/ekFu30KgQLyIszL3eVFM9vvjbj1eAruCWND1KGAKnaySC3DLmsYNw9B4YhXJD4gEWzAR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LbIX6kPf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6918C4CEF0;
-	Wed, 10 Sep 2025 08:34:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757493241;
-	bh=TIzmDeWrxXGOrqQJgO1ho+rcXE2ljlXUJJkwn0dTGHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LbIX6kPfTWCHRwzEHakmKpRsdirCgbhj3mfsmYjdto68chBZ0Fh+gQtHYghhqYKCo
-	 AgGn1wp585shNvcF3d78F4ZtsXXVIaFM+3isuN27vcRFcYbDQJ97PJgjnY6zDtSjl0
-	 LsRME7H3a8o651quDGsb8TlQjZk8vT4hFX9vAtoZLeoiQiQvrsqwq0fQ+MgDPQCvIk
-	 fk8jjcIEQHra+jlXYLK8jAFkM89HFNhJFTAhSaTWKjHgO/hi3JI86bcvkN91cSDGXp
-	 QDzJfUZeXVD/FIgW5Ub8GAgNs7dl+FVt7iUUPsyegOVVnf6F/w0bxoI7Vl5hvOrR48
-	 CmCr0KZdmkg9A==
-Date: Wed, 10 Sep 2025 10:33:58 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Jocelyn Falempe <jfalempe@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Javier Martinez Canillas <javierm@redhat.com>, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 2/3] drm/panic: Add kunit tests for drm_panic
-Message-ID: <20250910-fascinating-hungry-lemur-1d9f49@houat>
-References: <20250908090341.762049-1-jfalempe@redhat.com>
- <20250908090341.762049-3-jfalempe@redhat.com>
+	s=arc-20240116; t=1757493254; c=relaxed/simple;
+	bh=uNe1ei6a9Sb1+j34arhysm88BnViKlUeFkNkrxOClGI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FWMbP3RJaEgHJXChDrz9ENccwUqV0GUK0u0/vxbOqjzKvO9AWeEJK0yMr9GtNDV2QXUCvWpPx5aDBRG07nORuzCbuNwr3FK9Mf/D+3HWS4HHsm2QDFzOj9s/WQ8bqiEv8FHI6URUrLnZSC9PIcphyf0+s2d9SIRy6TPVUVyKbPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DDaixZFO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757493251;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Amy5eP+TPpCVu2gnynuIcytRxwDWLIJGmgKp9e+fkkw=;
+	b=DDaixZFOuXjGPfrfaRMKb2gh31+asQhrLA7lp/JfdVeoCDunPAJ4J8czuzaxwTj0lIdDRj
+	YBkpmd41f700OFQIIQrXwKrLMLdugv8nmtK4gkREQvfVWlHPmZbQb1kSvn1fh7lIE/clhz
+	XuzeVGpDxaZNcu/UmYYfP9dKphQA6dQ=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-149-Axja5x8PMDaqNS8SA0yf8w-1; Wed, 10 Sep 2025 04:34:10 -0400
+X-MC-Unique: Axja5x8PMDaqNS8SA0yf8w-1
+X-Mimecast-MFC-AGG-ID: Axja5x8PMDaqNS8SA0yf8w_1757493249
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3e753e78902so853788f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:34:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757493249; x=1758098049;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Amy5eP+TPpCVu2gnynuIcytRxwDWLIJGmgKp9e+fkkw=;
+        b=bzVvjhdYwHJD6eCVSkyzN+yv/hCEA/7spD2zMlaLnmdX5TWPsNym1fofSgyEynz5fi
+         vVgwsbgGxAN9WI9zDa/xKZMsq3S7YWPNElpZWWuzvRJ8f6KfUBGPNddtzwN3S/f2EnIm
+         WPRJP1+ZL6Hwb16kylvltXxXXs0EL0P3ycyGhlqRGNdw7MkNAifG4QX5mlSAqFqgAFcO
+         cgnX8iJNQJm/DxOgJC7LOUuouDxNbpc9cNCkEYksolJPq3RuNTpO3kHst1cwL8uo+DPq
+         VP8hz4ZedtP90gyZWueCrQVaYlH7F2X3fyGtYC1rWekgvLbClsbjM51znSbAntjJNWPX
+         VW0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXu7OB8lEWUO0YtF6RrjsxD6SnSPCcaFm1UGVoJ1LmBKhEkE4zEJXSpsdB9gDZfZ/mY87JQVSNeM9X8WV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTG1zlbg8jANwHZg0ZlbMYA+BINbehDPy41hM5UNxA6ze1LILA
+	isr9tacL0aXZ9k7HG557hVv1+HbxTdvaWp6tgf39wSMNHNktBb4YXzT+3YfXV7Z74E07SdcAuvE
+	vQN2o6sV1wE0zl72esR6LV4DLQq5omDUIvDthqv5rOqZZpiqiWKA5HMG3ldoMRZsQ0g==
+X-Gm-Gg: ASbGncsZY+8GNIrD8VV5Ig0WuPn20qtxjDvofhn3eGmj3iwkifVr3SJWrMU1Jh/Ih/V
+	Sp5g2Ba8UF04xMFmHKbDXowM+CWk97HNzkLIdHvAJPjr19M6Ks9a5w2rBCltGBAuVPpIXWCQWYO
+	//RJEXJO4yL/D3jG79Np6shq2fixwvL9EWNbYP4sm4kdYbkAMbgoa1i5vosz9F36Yj7HF5iUyTE
+	wOJM41XTkDy5TK3MK2UfVCKTZEi/FW4TI6nSzGKhna3U61J4VwJsXztHK65aPqLpV8ryUlqTM/x
+	b92yha+m9yD78mb364twN/7CCBnZZH4TkVA=
+X-Received: by 2002:a05:6000:2405:b0:3de:daf2:edca with SMTP id ffacd0b85a97d-3e641e3b009mr11927987f8f.21.1757493248829;
+        Wed, 10 Sep 2025 01:34:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEESRtO3VhGKSJcJh71t22NBy80LBauADrI4j1BdKqoBklXHwQ8jjnI6nP/m8EGktQBpwx0Kw==
+X-Received: by 2002:a05:6000:2405:b0:3de:daf2:edca with SMTP id ffacd0b85a97d-3e641e3b009mr11927965f8f.21.1757493248419;
+        Wed, 10 Sep 2025 01:34:08 -0700 (PDT)
+Received: from fedora (g3.ign.cz. [91.219.240.17])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521bf85esm6098839f8f.1.2025.09.10.01.34.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 01:34:07 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Khushit Shah <khushit.shah@nutanix.com>
+Cc: "seanjc@google.com" <seanjc@google.com>, "pbonzini@redhat.com"
+ <pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shaju
+ Abraham <shaju.abraham@nutanix.com>
+Subject: Re: [BUG] [KVM/VMX] Level triggered interrupts mishandled on
+ Windows w/ nested virt(Credential Guard) when using split irqchip
+In-Reply-To: <376ABCC7-CF9A-4E29-9CC7-0E3BEE082119@nutanix.com>
+References: <7D497EF1-607D-4D37-98E7-DAF95F099342@nutanix.com>
+ <87a535fh5g.fsf@redhat.com>
+ <D373804C-B758-48F9-8178-393034AF12DD@nutanix.com>
+ <87wm69dvbu.fsf@redhat.com>
+ <376ABCC7-CF9A-4E29-9CC7-0E3BEE082119@nutanix.com>
+Date: Wed, 10 Sep 2025 10:34:07 +0200
+Message-ID: <87ms72g0zk.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="2gnzefsek5tf3ojl"
-Content-Disposition: inline
-In-Reply-To: <20250908090341.762049-3-jfalempe@redhat.com>
-
-
---2gnzefsek5tf3ojl
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/3] drm/panic: Add kunit tests for drm_panic
-MIME-Version: 1.0
 
-Hi,
+Khushit Shah <khushit.shah@nutanix.com> writes:
 
-On Mon, Sep 08, 2025 at 11:00:30AM +0200, Jocelyn Falempe wrote:
-> Add kunit tests for drm_panic.
-> They check that drawing the panic screen doesn't crash, but they
-> don't check the correctness of the resulting image.
->=20
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> ---
->=20
-> v2:
->  * Add a few checks, and more comments in the kunit tests. (Maxime Ripard=
-).
->=20
->  MAINTAINERS                            |   1 +
->  drivers/gpu/drm/drm_panic.c            |   4 +
->  drivers/gpu/drm/tests/drm_panic_test.c | 198 +++++++++++++++++++++++++
->  3 files changed, 203 insertions(+)
->  create mode 100644 drivers/gpu/drm/tests/drm_panic_test.c
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 402fe14091f1..e9be893d6741 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8480,6 +8480,7 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kern=
-el.git
->  F:	drivers/gpu/drm/drm_draw.c
->  F:	drivers/gpu/drm/drm_draw_internal.h
->  F:	drivers/gpu/drm/drm_panic*.c
-> +F:	drivers/gpu/drm/tests/drm_panic_test.c
->  F:	include/drm/drm_panic*
-> =20
->  DRM PANIC QR CODE
-> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-> index 1e06e3a18d09..d89812ff1935 100644
-> --- a/drivers/gpu/drm/drm_panic.c
-> +++ b/drivers/gpu/drm/drm_panic.c
-> @@ -986,3 +986,7 @@ void drm_panic_exit(void)
->  {
->  	drm_panic_qr_exit();
->  }
-> +
-> +#ifdef CONFIG_DRM_KUNIT_TEST
-> +#include "tests/drm_panic_test.c"
-> +#endif
-> diff --git a/drivers/gpu/drm/tests/drm_panic_test.c b/drivers/gpu/drm/tes=
-ts/drm_panic_test.c
-> new file mode 100644
-> index 000000000000..d5d20dd2aa7c
-> --- /dev/null
-> +++ b/drivers/gpu/drm/tests/drm_panic_test.c
-> @@ -0,0 +1,198 @@
-> +// SPDX-License-Identifier: GPL-2.0 or MIT
-> +/*
-> + * Copyright (c) 2025 Red Hat.
-> + * Author: Jocelyn Falempe <jfalempe@redhat.com>
-> + *
-> + * KUNIT tests for drm panic
-> + */
-> +
-> +#include <drm/drm_fourcc.h>
-> +#include <drm/drm_panic.h>
-> +
-> +#include <kunit/test.h>
-> +
-> +#include <linux/units.h>
-> +#include <linux/vmalloc.h>
-> +
-> +/* Check the framebuffer color only if the panic colors are the default =
-*/
-> +#if (CONFIG_DRM_PANIC_BACKGROUND_COLOR =3D=3D 0 && \
-> +	CONFIG_DRM_PANIC_FOREGROUND_COLOR =3D=3D 0xffffff)
-> +#define DRM_PANIC_CHECK_COLOR
-> +#endif
-> +
-> +struct drm_test_mode {
-> +	const int width;
-> +	const int height;
-> +	const u32 format;
-> +	void (*draw_screen)(struct drm_scanout_buffer *sb);
-> +	const char *fname;
-> +};
-> +
-> +/*
-> + * Run all tests for the 3 panic screens: user, kmsg and qr_code
-> + */
-> +#define DRM_TEST_MODE_LIST(func) \
-> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_XRGB8888, func) \
-> +	DRM_PANIC_TEST_MODE(300, 200, DRM_FORMAT_XRGB8888, func) \
-> +	DRM_PANIC_TEST_MODE(1920, 1080, DRM_FORMAT_XRGB8888, func) \
-> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB565, func) \
-> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB888, func) \
-> +
-> +#define DRM_PANIC_TEST_MODE(w, h, f, name) { \
-> +	.width =3D w, \
-> +	.height =3D h, \
-> +	.format =3D f, \
-> +	.draw_screen =3D draw_panic_screen_##name, \
-> +	.fname =3D #name, \
-> +	}, \
-> +
-> +static const struct drm_test_mode drm_test_modes_cases[] =3D {
-> +	DRM_TEST_MODE_LIST(user)
-> +	DRM_TEST_MODE_LIST(kmsg)
-> +	DRM_TEST_MODE_LIST(qr_code)
-> +};
-> +#undef DRM_PANIC_TEST_MODE
-> +
-> +static int drm_test_panic_init(struct kunit *test)
-> +{
-> +	struct drm_scanout_buffer *priv;
-> +
-> +	priv =3D kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
-> +	KUNIT_ASSERT_NOT_NULL(test, priv);
-> +
-> +	test->priv =3D priv;
-> +
-> +	drm_panic_set_description("Kunit testing");
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Test drawing the panic screen, using a memory mapped framebuffer
-> + * Set the whole buffer to 0xa5, and then check that all pixels have been
-> + * written.
-> + */
-> +static void drm_test_panic_screen_user_map(struct kunit *test)
-> +{
-> +	struct drm_scanout_buffer *sb =3D test->priv;
-> +	const struct drm_test_mode *params =3D test->param_value;
-> +	char *fb;
-> +	int fb_size;
-> +
-> +	sb->format =3D drm_format_info(params->format);
-> +	fb_size =3D params->width * params->height * sb->format->cpp[0];
-> +
-> +	fb =3D vmalloc(fb_size);
-> +	KUNIT_ASSERT_NOT_NULL(test, fb);
-> +
-> +	memset(fb, 0xa5, fb_size);
-> +
-> +	iosys_map_set_vaddr(&sb->map[0], fb);
-> +	sb->width =3D params->width;
-> +	sb->height =3D params->height;
-> +	sb->pitch[0] =3D params->width * sb->format->cpp[0];
-> +
-> +	params->draw_screen(sb);
-> +
-> +#ifdef DRM_PANIC_CHECK_COLOR
-> +	{
-> +		int i;
-> +
-> +		for (i =3D 0; i < fb_size; i++)
-> +			KUNIT_ASSERT_TRUE(test, fb[i] =3D=3D 0 || fb[i] =3D=3D 0xff);
-> +	}
-> +#endif
+>> On 8 Sep 2025, at 5:12=E2=80=AFPM, Vitaly Kuznetsov <vkuznets@redhat.com=
+> wrote:
+>>=20
 
-I'm not really fond of the ifdef here. Could you turn this into a
-function, and return that it's valid if the colors don't match what you
-expect?
+...
 
-> +	vfree(fb);
-> +}
-> +
-> +/*
-> + * Test drawing the panic screen, using a list of pages framebuffer
-> + * No checks are performed
+>> Also, I've just recalled I fixed (well, 'workarounded') an issue similar
+>> to yours a while ago in QEMU:
+>>=20
+>> commit 958a01dab8e02fc49f4fd619fad8c82a1108afdb
+>> Author: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> Date:   Tue Apr 2 10:02:15 2019 +0200
+>>=20
+>>    ioapic: allow buggy guests mishandling level-triggered interrupts to =
+make progress
+>>=20
+>> maybe something has changed and it doesn't work anymore?
+>
+> This is really interesting, we are facing a very similar issue, but the i=
+nterrupt storm only occurs when using split-irqchip.=20
+> Using kernel-irqchip, we do not even see consecutive level triggered inte=
+rrupts of the same vector. From the logs it is=20
+> clear that somehow with kernel-irqchip, L1 passes the interrupt to L2 to =
+service, but with split-irqchip, L1 EOI=E2=80=99s without=20
+> servicing the interrupt. As it is working properly on kernel-irqchip, we =
+can=E2=80=99t really point it as an Hyper-V issue. AFAIK,=20
+> kernel-irqchip setting should be transparent to the guest, can you think =
+of anything that can change this?
 
-What are you testing then if you aren't checking anything?
+The problem I've fixed back then was also only visible with split
+irqchip. The reason was:
 
-> + */
-> +static void drm_test_panic_screen_user_page(struct kunit *test)
-> +{
-> +	struct drm_scanout_buffer *sb =3D test->priv;
-> +	const struct drm_test_mode *params =3D test->param_value;
-> +	int fb_size;
-> +	struct page **pages;
-> +	int i;
-> +	int npages;
-> +
-> +	sb->format =3D drm_format_info(params->format);
-> +	fb_size =3D params->width * params->height * sb->format->cpp[0];
-> +	npages =3D DIV_ROUND_UP(fb_size, PAGE_SIZE);
-> +
-> +	pages =3D kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
-> +	KUNIT_ASSERT_NOT_NULL(test, pages);
-> +
-> +	for (i =3D 0; i < npages; i++) {
-> +		pages[i] =3D alloc_page(GFP_KERNEL);
-> +		KUNIT_ASSERT_NOT_NULL(test, pages[i]);
+"""
+in-kernel IOAPIC implementation has commit 184564efae4d ("kvm: ioapic: cond=
+itionally delay
+irq delivery duringeoi broadcast")
+"""
 
-KUNIT_ASSERT_* return immediately, so you're leaking the pages array
-here.
+so even though the guest cannot really distinguish between in-kernel and
+split irqchips, the small differences in implementation can make a big
+difference in the observed behavior. In case we re-assert improperly
+handled level-triggered interrupt too fast, the guest is not able to
+make much progress but if we let it execute for even the tiniest
+fraction of time, then the forward progress happens.=20
 
-Maxime
+I don't exactly know what happens in this particular case but I'd
+suggest you try to atrificially delay re-asserting level triggered
+interrupts and see what happens.
 
---2gnzefsek5tf3ojl
-Content-Type: application/pgp-signature; name="signature.asc"
+--=20
+Vitaly
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaME36wAKCRAnX84Zoj2+
-dsRiAYC5khdLWr61N0wCIL8Z0JdvL2/H6uiHCllT4PmoI/zN8feUSsQrKc3Mwbnm
-ukk1xOYBfRMVwXLBUjztbTGCJ/K1ZXzEalXG0mgCIXfc7CJem8tyRIkib58DPHIe
-NGLgHovX6g==
-=du/g
------END PGP SIGNATURE-----
-
---2gnzefsek5tf3ojl--
 
