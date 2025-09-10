@@ -1,127 +1,175 @@
-Return-Path: <linux-kernel+bounces-809368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6E6B50C81
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:04:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C37B50CA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A35A11C62C75
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:04:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D7951C60D00
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FA82673AA;
-	Wed, 10 Sep 2025 04:04:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4338A19CC27
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757477040; cv=none; b=fdIHOxh4K2ZWZFX+tr44pQe8NOtswOuNQz3VL+2QsRtjfgWjdlZQJU93gD4GvvAZuJSU3ITjFshB833JzkMPrpQRqk5JIYgsFNpBXv0Ao2I3X7oRrM9OwUfbFDC8s3WAtte3J1DKyQIyFdxp64LOtSzQxWQ5jOJ7ZnblMMB3aew=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757477040; c=relaxed/simple;
-	bh=wxYqy5HBNoeNK3TA7QmrWmGP9lTcJ2jSXPqmA3wLHHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OBUQPxsBneRnSLBH+QEMIZ/nF0u3FshLPPSXBRUGHeurrjJ5e5qNLPugH7AJK7mZu3odUYKUUCqO4XrSdTIuNn8sHgSKSpruuNLovFeAw1DOux3u3Hrjel0jN52dce8x9nor16xFDKTtgAfeGrxchNnUKDHiLc977P+G2v8jEZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0324C1596;
-	Tue,  9 Sep 2025 21:03:49 -0700 (PDT)
-Received: from [10.163.41.55] (unknown [10.163.41.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAB133F66E;
-	Tue,  9 Sep 2025 21:03:48 -0700 (PDT)
-Message-ID: <8381d07d-f669-4e9e-8dd8-5951a4e5727b@arm.com>
-Date: Wed, 10 Sep 2025 09:33:42 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A017126E142;
+	Wed, 10 Sep 2025 04:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TpF9Cjvp"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2066.outbound.protection.outlook.com [40.107.94.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F55325B69F;
+	Wed, 10 Sep 2025 04:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757477180; cv=fail; b=AmjI0sYnNygXt5CHX48o098QofrELokGTk1Vg1GdxAwlqtzSIvND5ptgkw4ue0E1LJovtxm6dVI10kS0PK0dlp0BSQNloUa4movzixayO2aZhkYUgH3+5Ud58lElsBaLU/BXMFjyxKXs+WujlyFC12Xd2wrlhaKQFaw20rAKwQY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757477180; c=relaxed/simple;
+	bh=jUjoRqpXSltkcVKjZSi5vhlaZv118sdHOeCpP99w+VI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uJsbdhMHLJm9rFMhZl9GH4WhstEZCNqeJVv6JNCyW2zlyUs5BwzD8uyNiqyG47jR3i3Z5L6V27bYulVV8SYGLM7y8Z5kFqSMTtFxaO72HsLj+AhVQdZAme6uRZJ00f1PpQfUIL6pMFkvt0rR0kmejCTFtUrPDQPtrVSexPZAwVg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TpF9Cjvp; arc=fail smtp.client-ip=40.107.94.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZbOxQd2UsvtvzFXMUQKZBOs7OAGYWbq48rTgyTNQYf81Z+0XL03cNqFq1sm83djiX9AR9WXS2SXned1EY93yX6T91hlkKNbLJ3wPFbp2U+/FkhZ3FN2xoJvMvneEyPOGe+ubtdPhhSFJS2BGK0VD9fk1IAF+UCIsBTuVSwvwbXYOYj8yukWbNofBzmgB1T7kFnATupc9U3lodB9746izDCxzP7puD6Yne6pe7dZYt6cp4EAqrvUmB7tXO7UBGw8Ku7Q8UosKpyShJI1Yx8pDzPydZje+DIoITvgp+txNakSiCV7/rSxeGJZFdIrVYeP7tg5aCjkoCXbKUodEdN8ljA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O6K3juZTa10YnrRoBofSUkzUOEtECkrUho93DdIAnMc=;
+ b=cL0z/CxzaBjTYwRzeDEf9KlHxYqNZrjl+NR5O6ekv06WCAhJdApXltnYbz56hnXUAQKPWYwMSc+pL4ZT29KTv7J47xt2GZ/bdFRWOtgkHLOMwu40SyNes/vpi4/Tq72W5KFUGMLlyupZLwE0B7hSsf3IJpZ0++Lgln3iUQrv9M41o+eIB1vaoSWEvQX/MdpkuIMz42gmviHJP/S60qpOck9iJAA1mHJdno8O5/Vdsl1Gv052hqLvrGbBIvD0XsaMxx88ZPeB8qAShbQto8oBgf1Kte4FrTMmTYljCDfOEgFrTlCvd4YgFTigeCZ/OLL+rPqhDIilPsZX5Sxj57QOxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O6K3juZTa10YnrRoBofSUkzUOEtECkrUho93DdIAnMc=;
+ b=TpF9CjvpdF1WqtkApMu2NSW6CGU+YO7T4Azg97RMp5Hj0vAG2WemXsOiQl8CbeaQ/LAgcfNABLLzIMk6lNw5mlEZJgoIYR00rtrLn0fcbbGSNpDZH5XRfiqVLuEerspsEi3Y7OaXMMIRyq2nudcai9FGf67HK07jFQbycT93u6UYZTzx4IM35mGxueQLUuKY+Au63qRQkBRaZIbLSQxLO7XPpkMmnnVZgjMsbhXaDsncitJuGcb7e9+MP4i0sSQQZn/Ksx2ZppBYGVuPqUz1fWkurkd2txISNRy9QSnpTZqeBqKr+YDcAQv/dSP/h/z5sSG25ZWm3XhjOV/9EfqGgQ==
+Received: from BN9PR03CA0659.namprd03.prod.outlook.com (2603:10b6:408:13b::34)
+ by DM6PR12MB4314.namprd12.prod.outlook.com (2603:10b6:5:211::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 04:06:14 +0000
+Received: from MN1PEPF0000F0E0.namprd04.prod.outlook.com
+ (2603:10b6:408:13b:cafe::11) by BN9PR03CA0659.outlook.office365.com
+ (2603:10b6:408:13b::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.23 via Frontend Transport; Wed,
+ 10 Sep 2025 04:06:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ MN1PEPF0000F0E0.mail.protection.outlook.com (10.167.242.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Wed, 10 Sep 2025 04:06:13 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 9 Sep
+ 2025 21:06:03 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 9 Sep 2025 21:06:02 -0700
+Received: from dondevbox.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Tue, 9 Sep 2025 21:06:02 -0700
+From: Donald Shannon <donalds@nvidia.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<donalds@nvidia.com>
+CC: <joel@jms.id.au>, <andrew@codeconstruct.com.au>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<openbmc@lists.ozlabs.org>, <etanous@nvidia.com>
+Subject: [PATCH v3 0/2] Add NVIDIA VR144NVL board
+Date: Tue, 9 Sep 2025 21:05:59 -0700
+Message-ID: <20250910040601.240162-1-donalds@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm: Enable khugepaged anonymous collapse on
- non-writable regions
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
- kas@kernel.org, willy@infradead.org, hughd@google.com
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, baohua@kernel.org, richard.weiyang@gmail.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250908075028.38431-1-dev.jain@arm.com>
- <20250908075028.38431-2-dev.jain@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250908075028.38431-2-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E0:EE_|DM6PR12MB4314:EE_
+X-MS-Office365-Filtering-Correlation-Id: 37b248b2-aa36-41c5-3b28-08ddf01f6240
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Tr7CM5Mkedmmapkd5lnSDcFgsIBnKm9S20lXGkEKH4U400k0ZlcCs8midgTk?=
+ =?us-ascii?Q?m21DfAXg73E9NqpyuRRVg23LVClmge4Y6tuMSw6a+4a5ehgTK0sV4UtGCzbk?=
+ =?us-ascii?Q?nGIwl7aSnXLZy83vvc+EeepROGPR2/2aclOIoG5QIZZs74qAf5s0jGtkSser?=
+ =?us-ascii?Q?II6YAVq7A/GDWyQi0lGb01HHTUS5GZ86kEszDG/Jf+RC/THkQTNiVwSRUTKs?=
+ =?us-ascii?Q?vEqW881wxdwQRMRMPKfcqNFB9RGGGOoA122qjBFzND3U4i4t1XibF+AvYHXI?=
+ =?us-ascii?Q?mhsK3/GQcE2GMZhx7wPp+gNQaenMLujgHnIQO1nmgQ9UfFQVwTC+lcmEcnm5?=
+ =?us-ascii?Q?fhK9kjyjRk60URvNZbicwg43h2WbmxQSXCFtqvkClALVOKm3xRCQ/JCbqeyh?=
+ =?us-ascii?Q?VdTZ4Z6qPeuO1NdBU7DIwAbi8WBB7gPRaf98uNj/H+1Xc4EjSzz7fFLdgAQB?=
+ =?us-ascii?Q?MMieWMjvvyH4U5FujmDyu7GrtVs6u6UGfn5EjCOEFfgEdG7Be+39nT0WZQud?=
+ =?us-ascii?Q?LgKEwZUaVew1n1Z8CFu4ic1LYKpuqtQVF31z0Zeiim/gxsz7tjVEF6znk2+E?=
+ =?us-ascii?Q?2fJA/ivlKwlwqEmCaNeWZarzyUe2msttHLnkSEwGIczmV5Jf4dVB901ilkkx?=
+ =?us-ascii?Q?B47YvymEwLNgbFfqlRbOE4PnLTaBG1vbUUpBRoPNBqtZ4117GNe5koZsqorZ?=
+ =?us-ascii?Q?jhL3JetR3a/mdEa+aPAxH49eRUGHv9eDgXxUeceBcTd2D9LdnI72N6SRj9HR?=
+ =?us-ascii?Q?AHqk0tHbmKG8fsX/WpJKICc0NQR5QbtOJ4JTqLhhkCBWEP7DcQG7e8FNvCR3?=
+ =?us-ascii?Q?rBaBNZdbhWrZBTDW9GJIww7EH0EoS4XcEyjfwGzm9j3plpAYdnWEG78tARKH?=
+ =?us-ascii?Q?r+j4tQ5AvNWbPakmfgg2MhkLVC/HUzasHPfsdfXWKKwYqtTWgbrZ3SaTKe9c?=
+ =?us-ascii?Q?5heyW20+TMygQc+nHGfQIl66Fmn3vITWFl2HjkVwt63L0AovW/kW1MA2404J?=
+ =?us-ascii?Q?581WE4ylkL29uXcXIBkwldcv+vn6cFJlgZZ7uygrLrl3VGyUYBFMsWsRWXnM?=
+ =?us-ascii?Q?V+eWaae4wdvFtEZe2nX1IolF2JAGeAwLAi9KmfPmnkP/Wpr7pByD2Vj4qQl1?=
+ =?us-ascii?Q?/hckpXLL0AD6nctPzgk23Fx3PFY6iCOPvYHnwmS8a13d5Vw4n2YWAjwJUTDr?=
+ =?us-ascii?Q?zVC9ZHHHDRqZllkCBF+Y8ITQGasxUUWRvalpcilP0TqNWrelBkWuvLZyA0CD?=
+ =?us-ascii?Q?fsJSQrQAG872F/KcCYJaBqSpwfBdMlLUE+70dobHjQvBzN8wv3ZIp4ps/BvE?=
+ =?us-ascii?Q?c8zTxY3PT2z5TB+JxFY13MgE0ClgrzzlWgmGKrK2R/gTljv92QOp6bnjgkDR?=
+ =?us-ascii?Q?Pj8ZvOtzghJPyH09jXvjPUwlAgFwKDAm4HLfXa6kBrBsELWEX5TjNBXH7Duk?=
+ =?us-ascii?Q?e9sgS08Sp8Jk3Ec4PJZQ7F+AWJM+rW1x/g9w63r0jgWrL6fmirINW0sqxG7g?=
+ =?us-ascii?Q?5S/ek2Ogx7FhYEVoltkrXC8iIAB0ZBVyKLsS?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 04:06:13.7784
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37b248b2-aa36-41c5-3b28-08ddf01f6240
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0E0.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4314
 
-On 08/09/25 1:20 PM, Dev Jain wrote:
-> Currently khugepaged does not collapse an anonymous region which does not
-> have a single writable pte. This is wasteful since a region mapped with
-> non-writable ptes, for example, non-writable VMAs mapped by the
-> application, won't benefit from THP collapse.
-> 
-> An additional consequence of this constraint is that MADV_COLLAPSE does not
-> perform a collapse on a non-writable VMA, and this restriction is nowhere
-> to be found on the manpage - the restriction itself sounds wrong to me
-> since the user knows the protection of the memory it has mapped, so
-> collapsing read-only memory via madvise() should be a choice of the
-> user which shouldn't be overridden by the kernel.
+Patch 1 adds the device tree binding for the NVIDIA VR144NVL board.
+Patch 2 adds the device tree for the NVIDIA VR144NVL board.
 
-Agreed. Dropping this constraint makes sense both for MAD_COLLAPSE
-system call and khugepaged based collapse as well.
-> 
-> Therefore, remove this restriction by not honouring SCAN_PAGE_RO.
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Zi Yan <ziy@nvidia.com> 
-> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-> Reviewed-by: Kiryl Shutsemau <kas@kernel.org>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> ---
+This is an Aspeed AST2600 based BMC board for the NVIDIA VR144NVL
+platform BMC.
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Reference to Ast2600 SOC [1].
+Reference to DC-SCM Spec [2].
 
->  mm/khugepaged.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 4ec324a4c1fe..a0f1df2a7ae6 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -676,9 +676,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
->  			writable = true;
->  	}
->  
-> -	if (unlikely(!writable)) {
-> -		result = SCAN_PAGE_RO;
-> -	} else if (unlikely(cc->is_khugepaged && !referenced)) {
-> +	if (unlikely(cc->is_khugepaged && !referenced)) {
->  		result = SCAN_LACK_REFERENCED_PAGE;
->  	} else {
->  		result = SCAN_SUCCEED;
-> @@ -1421,9 +1419,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
->  		     mmu_notifier_test_young(vma->vm_mm, _address)))
->  			referenced++;
->  	}
-> -	if (!writable) {
-> -		result = SCAN_PAGE_RO;
-> -	} else if (cc->is_khugepaged &&
-> +	if (cc->is_khugepaged &&
->  		   (!referenced ||
->  		    (unmapped && referenced < HPAGE_PMD_NR / 2))) {
->  		result = SCAN_LACK_REFERENCED_PAGE;
-> @@ -2830,7 +2826,6 @@ int madvise_collapse(struct vm_area_struct *vma, unsigned long start,
->  		case SCAN_PMD_NULL:
->  		case SCAN_PTE_NON_PRESENT:
->  		case SCAN_PTE_UFFD_WP:
-> -		case SCAN_PAGE_RO:
->  		case SCAN_LACK_REFERENCED_PAGE:
->  		case SCAN_PAGE_NULL:
->  		case SCAN_PAGE_COUNT:
+Link: https://www.aspeedtech.com/server_ast2600/ [1]
+Link: https://www.opencompute.org/w/index.php?title=Server/MHS/DC-SCM-Specs-and-Designs [2]
+
+Signed-off-by: Donald Shannon <donalds@nvidia.com>
+
+Donald Shannon (2):
+  dt-bindings: arm: aspeed: Add NVIDIA VR144NVL board
+  ARM: dts: aspeed: Add NVIDIA VR144NVL board
+
+ .../bindings/arm/aspeed/aspeed.yaml           |   1 +
+ arch/arm/boot/dts/aspeed/Makefile             |   1 +
+ .../dts/aspeed/aspeed-bmc-nvidia-vr144nvl.dts | 778 ++++++++++++++++++
+ 3 files changed, 780 insertions(+)
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-vr144nvl.dts
+
+-- 
+2.43.0
 
 
