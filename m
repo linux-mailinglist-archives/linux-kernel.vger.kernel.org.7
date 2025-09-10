@@ -1,350 +1,198 @@
-Return-Path: <linux-kernel+bounces-810222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D02A5B51768
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:57:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E34B51769
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D12231C84658
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:57:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A4D44E34E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E90E31D724;
-	Wed, 10 Sep 2025 12:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B093203B0;
+	Wed, 10 Sep 2025 12:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZMAYKbY4"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zrNMJfWy";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+Opm/xw4";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zrNMJfWy";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+Opm/xw4"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B3331CA51;
-	Wed, 10 Sep 2025 12:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38FE31DDAC
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757509015; cv=none; b=PiYUQw3WfFHzCPgGan+sMB/aNL6E5a+NFm/GbJQiFtZvbhbwgOm6AN/MosylJCR0YDn8+u8MRy2dAdsU/6XxCc2Wmzxav0islFMQLsetAUdwg7Q93TL4Zm5XOD2+RCCowx7FjP8vyfMrhRYmmP2QHFuKwjJIUAWdEwee80TFavE=
+	t=1757509026; cv=none; b=nXdDAPS8zii7GxWz7X9wDvhxFPDr3QdJQ2HeiHpVcAoWnGVXbMh/gINAjXKpg3RJZZcPcYBS1d9MoZrQmIvINfpucr7iScPhKxoA/MVikrO99PQ7nvpIKOxF1WG8YK7oO5lxkaGeUYqPg7kd5rczwpcqd5aZzZJuyyeGD6ULRV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757509015; c=relaxed/simple;
-	bh=iMUWz4/QFqQcbdsH1zPcwbOsCaTP/l0YCH6dICosqSM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RZgYKONMEOeeMrQieh1helmDtfpqvElMfkX7HmkIH0ByLPftJsLB2ePVQkPSvTxeGy9WEP57vQ7ybKfyTb8Kr1gJjCucQpSO+FdoCA09aMzSmLeOtEqJBobuPNl8830I4b0O89wtRG+RzRPVL+nrI9iHwv1CLSR4lQ699Ry8CUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZMAYKbY4; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757509010;
-	bh=iMUWz4/QFqQcbdsH1zPcwbOsCaTP/l0YCH6dICosqSM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ZMAYKbY4BvfQcb1JTMvQzCJoSq2KmErbW01lor64rBcZhEbW3VBQiazUtoPUiy0pi
-	 hyBIrOL60xR1Pf+Jp2+k1TH+xpEPEbZPujTWUXrGb/Ov2PXwUhUJW3V7A7ddxj9Nea
-	 EIkRf0vHJq62qs88lGJxR8LXzzM3xOj/wOZK/QJwMsl2Pv+ohxmi/4Zlzz5uTCiv+A
-	 l+avCv3nFxbTeb5Czc/ID9G0/2g8o9gOK9NCQdG/tXyV8g+kpyL9fVVQu6FsIYnwuR
-	 Zg5Ct4oQwJZPFOFgrUKtu+oFRXvJvQb7oR/a+pSJhd9Ub96Fo3kskA4D4O6nWouQFR
-	 pf4K3tGGkIznQ==
-Received: from [IPv6:2606:6d00:15:d961::5ac] (unknown [IPv6:2606:6d00:15:d961::5ac])
+	s=arc-20240116; t=1757509026; c=relaxed/simple;
+	bh=D2huvoDV0kEVwHSxNyxi49TbGRr+Cb2KtSCruwfqdnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=luo7bbYoR7k8SwzsLiTbJSKArvMgZna4XzgIxAf3JsBaD2IRR6UcQ8x4J4N/wvt5ygckTUThWO/01MQn/SwFi/Q8q80AhP7PvV5y/uwuG+N8j3lHCSYVYAIbiv4WQ2v/HW4AlwOEJv2yj3ct/ZIQ3OIXhLhRZdQZxb2O8O3HBYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zrNMJfWy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+Opm/xw4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zrNMJfWy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+Opm/xw4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2299D17E1110;
-	Wed, 10 Sep 2025 14:56:49 +0200 (CEST)
-Message-ID: <c14c5a8b309ffcea723cee66430a59ee57b73e5f.camel@collabora.com>
-Subject: Re: [PATCH v3 0/4] Performance improvement of decoder
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: "jackson.lee" <jackson.lee@chipsnmedia.com>, "mchehab@kernel.org"	
- <mchehab@kernel.org>, "hverkuil-cisco@xs4all.nl"
- <hverkuil-cisco@xs4all.nl>,  "bob.beckett@collabora.com"	
- <bob.beckett@collabora.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
- "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>,
- "lafley.kim" <lafley.kim@chipsnmedia.com>,  "b-brnich@ti.com"	
- <b-brnich@ti.com>, "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>, Nas Chung	
- <nas.chung@chipsnmedia.com>
-Date: Wed, 10 Sep 2025 08:56:46 -0400
-In-Reply-To: <SLXP216MB11483F38D23A5BDFC47068EAED0EA@SLXP216MB1148.KORP216.PROD.OUTLOOK.COM>
-References: <20250623002153.51-1-jackson.lee@chipsnmedia.com>
-		 <f79ab2a0db0eb4aad20ed488de3635f9d8942cdf.camel@collabora.com>
-		 <SLXP216MB114806E1937625CA3760CA3EED0FA@SLXP216MB1148.KORP216.PROD.OUTLOOK.COM>
-	 <48540d8ee22cf747d2dd591a7869baf1cba6719e.camel@collabora.com>
-	 <SLXP216MB11483F38D23A5BDFC47068EAED0EA@SLXP216MB1148.KORP216.PROD.OUTLOOK.COM>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-AjYjeHtaoSF3MHIAUJjI"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B9F0A34AD5;
+	Wed, 10 Sep 2025 12:57:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757509022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mwinq8gsjwiHlcc0O4dms+YN1QO5jIp+XwdfQBarGdk=;
+	b=zrNMJfWyTUAJv9/QajN+dxw1lowq1b5xo7iYC33VNiutR13Y0lEpGCugpEYkjJURRCkxSZ
+	mxk6mrguZS5K0i8Hfga+ftK/8uO4y+WqJINm/Ezo7gYoy/OWI5Yc1gRoSKiOGn6T4tWsQU
+	XnRHR3s1ZN8qpdbw0N7VemCelr+gV30=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757509022;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mwinq8gsjwiHlcc0O4dms+YN1QO5jIp+XwdfQBarGdk=;
+	b=+Opm/xw4Gd6mN2XQHPUz9IXWZ2mnZucVz5+xsMOZFbF911FoFRNImuxdMNfz//GY/4p20v
+	Bb3tifOUHCaEZ1Dg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757509022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mwinq8gsjwiHlcc0O4dms+YN1QO5jIp+XwdfQBarGdk=;
+	b=zrNMJfWyTUAJv9/QajN+dxw1lowq1b5xo7iYC33VNiutR13Y0lEpGCugpEYkjJURRCkxSZ
+	mxk6mrguZS5K0i8Hfga+ftK/8uO4y+WqJINm/Ezo7gYoy/OWI5Yc1gRoSKiOGn6T4tWsQU
+	XnRHR3s1ZN8qpdbw0N7VemCelr+gV30=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757509022;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mwinq8gsjwiHlcc0O4dms+YN1QO5jIp+XwdfQBarGdk=;
+	b=+Opm/xw4Gd6mN2XQHPUz9IXWZ2mnZucVz5+xsMOZFbF911FoFRNImuxdMNfz//GY/4p20v
+	Bb3tifOUHCaEZ1Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 91AA813301;
+	Wed, 10 Sep 2025 12:57:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id sqhiIJ11wWjwBAAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 10 Sep 2025 12:57:01 +0000
+Date: Wed, 10 Sep 2025 13:56:59 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	maple-tree@lists.infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	Charan Teja Kalla <quic_charante@quicinc.com>, shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
+	bhe@redhat.com, baohua@kernel.org, chrisl@kernel.org, 
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v1 3/9] mm/vma: Add limits to unmap_region() for vmas
+Message-ID: <k45ojp4yjaqp56azyuobcsxyqmm5uslo5gq3ddujwfi3ynvkqz@2oncyj3tbnhy>
+References: <20250909190945.1030905-1-Liam.Howlett@oracle.com>
+ <20250909190945.1030905-4-Liam.Howlett@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909190945.1030905-4-Liam.Howlett@oracle.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,lists.infradead.org,kvack.org,vger.kernel.org,redhat.com,oracle.com,suse.cz,google.com,suse.com,quicinc.com,huaweicloud.com,tencent.com,gmail.com,kernel.org,infradead.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,oracle.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
+
+On Tue, Sep 09, 2025 at 03:09:39PM -0400, Liam R. Howlett wrote:
+> Add a limit to the vma search instead of using the start and end of the
+> one passed in.
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> ---
+>  mm/vma.c | 6 ++++--
+>  mm/vma.h | 1 +
+>  2 files changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/vma.c b/mm/vma.c
+> index abe0da33c8446..a648e0555c873 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -474,6 +474,7 @@ void remove_vma(struct vm_area_struct *vma)
+>   * Called with the mm semaphore held.
+>   */
+>  void unmap_region(struct ma_state *mas, struct vm_area_struct *vma,
+> +		unsigned long vma_min, unsigned long vma_max,
+>  		struct vm_area_struct *prev, struct vm_area_struct *next)
+>  {
+>  	struct mm_struct *mm = vma->vm_mm;
+> @@ -481,7 +482,7 @@ void unmap_region(struct ma_state *mas, struct vm_area_struct *vma,
+>  
+>  	tlb_gather_mmu(&tlb, mm);
+>  	update_hiwater_rss(mm);
+> -	unmap_vmas(&tlb, mas, vma, vma->vm_start, vma->vm_end, vma->vm_end,
+> +	unmap_vmas(&tlb, mas, vma, vma_min, vma_max, vma_max,
+>  		   /* mm_wr_locked = */ true);
+>  	mas_set(mas, vma->vm_end);
+>  	free_pgtables(&tlb, mas, vma, prev ? prev->vm_end : FIRST_USER_ADDRESS,
+> @@ -2417,7 +2418,8 @@ static int __mmap_new_file_vma(struct mmap_state *map,
+>  
+>  		vma_iter_set(vmi, vma->vm_end);
+>  		/* Undo any partial mapping done by a device driver. */
+> -		unmap_region(&vmi->mas, vma, map->prev, map->next);
+> +		unmap_region(&vmi->mas, vma, vma->vm_start, vma->vm_end,
+> +			     map->prev, map->next);
+>  
+>  		return error;
+>  	}
+> diff --git a/mm/vma.h b/mm/vma.h
+> index 9183fe5490090..a9d0cef684ddb 100644
+> --- a/mm/vma.h
+> +++ b/mm/vma.h
+> @@ -261,6 +261,7 @@ int do_vmi_munmap(struct vma_iterator *vmi, struct mm_struct *mm,
+>  void remove_vma(struct vm_area_struct *vma);
+>  
+>  void unmap_region(struct ma_state *mas, struct vm_area_struct *vma,
+> +		unsigned long min, unsigned long max,
+>  		struct vm_area_struct *prev, struct vm_area_struct *next);
+>  
+
+nit: min and max don't match the arg names in the actual definition of the function
+
+Reviewed-by: Pedro Falcato <pfalcato@suse.de>
 
 
---=-AjYjeHtaoSF3MHIAUJjI
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jackson,
-
-Le mercredi 10 septembre 2025 =C3=A0 06:59 +0000, jackson.lee a =C3=A9crit=
-=C2=A0:
-[...]
-
-> I have reproduced the stall problem, I can see it with the latest Gstream=
-er version.
-> The root cause is we checked an incorrect return value while flushing, so=
- in spite of not finished flushing, the checking loop if the flushing was f=
-inished was exited.
-> When stop streaming was called and the instance queue count was 1,=C2=A0 =
-the checking function put infinite loop, so the stall problem happened.
->=20
-> The below patch should be needed.
->=20
-> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c b/dr=
-ivers/media/platform/chips-media/wave5/wave5-vpuapi.c
-> index edbe69540ef1..2e0128cd0e4d 100644
-> --- a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
-> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
-> @@ -52,6 +52,7 @@ int wave5_vpu_init_with_bitcode(struct device *dev, u8 =
-*bitcode, size_t size)
-> =C2=A0int wave5_vpu_flush_instance(struct vpu_instance *inst)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret =3D 0;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int mutex_ret =3D 0;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int retry =3D 0;
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D mutex_lock_interruptib=
-le(&inst->dev->hw_lock);
-> @@ -80,9 +81,9 @@ int wave5_vpu_flush_instance(struct vpu_instance *inst)
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_un=
-lock(&inst->dev->hw_lock);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wave5_vp=
-u_dec_get_output_info(inst, &dec_info);
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D mutex_=
-lock_interruptible(&inst->dev->hw_lock);
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_ret =3D =
-mutex_lock_interruptible(&inst->dev->hw_lock);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (mutex_ret)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return mutex_ret;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (dec_=
-info.index_frame_display > 0)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wave5_vpu_dec_set_disp_flag(inst, d=
-ec_info.index_frame_display);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 }
-
-Good catch, unfortunately it does not completely fix the problem for me. Yo=
-u can
-find a the end of this message the patch I actually tested. Note I ,ove the
-mutex_ret in a close scope, and fixed other occurence of this pattern, exce=
-pt
-one that I highlighted to you with a FIXME.
-
-Some new information, I had this trace from GStreamer when the bug occured =
-on forward seeks (very rare):
-
-** (gst-play-1.0:604): WARNING **: 00:03:59.965: v4l2h264dec0: Too old fram=
-es, bug in decoder -- please file a bug
-
-[root@jacinto nicolas]# echo w > /proc/sysrq-trigger=20
-[  335.116289] sysrq: Show Blocked State
-[  335.120054] task:typefind:sink   state:D stack:0     pid:607   tgid:604 =
-  ppid:543    task_flags:0x40044c flags:0x00000019
-[  335.131147] Call trace:
-[  335.133584]  __switch_to+0xf0/0x1c0 (T)
-[  335.137442]  __schedule+0x35c/0x9bc
-[  335.140935]  schedule+0x34/0x110
-[  335.144162]  schedule_timeout+0x80/0x104
-[  335.148081]  wait_for_completion_timeout+0x74/0x158
-[  335.152955]  wave5_vpu_wait_interrupt+0x28/0x60 [wave5]
-[  335.158252]  wave5_vpu_dec_stop_streaming+0x68/0x28c [wave5]
-[  335.163915]  __vb2_queue_cancel+0x2c/0x2d4 [videobuf2_common]
-[  335.169668]  vb2_core_queue_release+0x20/0x74 [videobuf2_common]
-[  335.175678]  vb2_queue_release+0x10/0x1c [videobuf2_v4l2]
-[  335.181081]  v4l2_m2m_ctx_release+0x20/0x40 [v4l2_mem2mem]
-[  335.186567]  wave5_vpu_release_device+0x44/0x150 [wave5]
-[  335.191879]  wave5_vpu_dec_release+0x20/0x2c [wave5]
-[  335.196841]  v4l2_release+0xb4/0xf0 [videodev]
-[  335.201709]  __fput+0xd0/0x2e0
-[  335.205090]  ____fput+0x14/0x20
-[  335.208468]  task_work_run+0x64/0xd4
-[  335.212164]  do_exit+0x240/0x8e0
-[  335.215552]  do_group_exit+0x30/0xa4
-[  335.219177]  get_signal+0x790/0x860
-[  335.222676]  do_signal+0x94/0x394
-[  335.225986]  do_notify_resume+0xd0/0x14c
-[  335.229910]  el0_svc+0xe4/0xe8
-[  335.232967]  el0t_64_sync_handler+0xa0/0xe4
-[  335.237154]  el0t_64_sync+0x198/0x19c
-
-regards,
-Nicolas
-
----
-
-diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c b/driv=
-ers/media/platform/chips-media/wave5/wave5-vpuapi.c
-index edbe69540ef1e..2faca2eee41fe 100644
---- a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
-+++ b/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
-@@ -77,12 +77,13 @@ int wave5_vpu_flush_instance(struct vpu_instance *inst)
-                        return -ETIMEDOUT;
-                } else if (ret =3D=3D -EBUSY) {
-                        struct dec_output_info dec_info;
-+                       int ret_mutex;
-=20
-                        mutex_unlock(&inst->dev->hw_lock);
-                        wave5_vpu_dec_get_output_info(inst, &dec_info);
--                       ret =3D mutex_lock_interruptible(&inst->dev->hw_loc=
-k);
--                       if (ret)
--                               return ret;
-+                       ret_mutex =3D mutex_lock_interruptible(&inst->dev->=
-hw_lock);
-+                       if (ret_mutex)
-+                               return ret_mutex;
-                        if (dec_info.index_frame_display > 0)
-                                wave5_vpu_dec_set_disp_flag(inst, dec_info.=
-index_frame_display);
-                }
-@@ -222,6 +223,8 @@ int wave5_vpu_dec_close(struct vpu_instance *inst, u32 =
-*fail_res)
-        }
-=20
-        do {
-+               int ret_mutex;
-+
-                ret =3D wave5_vpu_dec_finish_seq(inst, fail_res);
-                if (ret < 0 && *fail_res !=3D WAVE5_SYSERR_VPU_STILL_RUNNIN=
-G) {
-                        dev_warn(inst->dev->dev, "dec_finish_seq timed out\=
-n");
-@@ -243,10 +246,10 @@ int wave5_vpu_dec_close(struct vpu_instance *inst, u3=
-2 *fail_res)
-=20
-                mutex_unlock(&vpu_dev->hw_lock);
-                wave5_vpu_dec_get_output_info(inst, &dec_info);
--               ret =3D mutex_lock_interruptible(&vpu_dev->hw_lock);
--               if (ret) {
-+               ret_mutex =3D mutex_lock_interruptible(&vpu_dev->hw_lock);
-+               if (ret_mutex) {
-                        pm_runtime_put_sync(inst->dev->dev);
--                       return ret;
-+                       return ret_mutex;
-                }
-        } while (ret !=3D 0);
-=20
-@@ -482,6 +485,7 @@ dma_addr_t wave5_vpu_dec_get_rd_ptr(struct vpu_instance=
- *inst)
-=20
-        ret =3D mutex_lock_interruptible(&inst->dev->hw_lock);
-        if (ret)
-+               // FIXME this return type is wrong
-                return ret;
-=20
-        rd_ptr =3D wave5_dec_get_rd_ptr(inst);
-nicolas@whitebuilder:~/Sources/TI/jacinto/linux$ git diff
-diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c b/driv=
-ers/media/platform/chips-media/wave5/wave5-vpuapi.c
-index edbe69540ef1e..2faca2eee41fe 100644
---- a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
-+++ b/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
-@@ -77,12 +77,13 @@ int wave5_vpu_flush_instance(struct vpu_instance *inst)
-                        return -ETIMEDOUT;
-                } else if (ret =3D=3D -EBUSY) {
-                        struct dec_output_info dec_info;
-+                       int ret_mutex;
-=20
-                        mutex_unlock(&inst->dev->hw_lock);
-                        wave5_vpu_dec_get_output_info(inst, &dec_info);
--                       ret =3D mutex_lock_interruptible(&inst->dev->hw_loc=
-k);
--                       if (ret)
--                               return ret;
-+                       ret_mutex =3D mutex_lock_interruptible(&inst->dev->=
-hw_lock);
-+                       if (ret_mutex)
-+                               return ret_mutex;
-                        if (dec_info.index_frame_display > 0)
-                                wave5_vpu_dec_set_disp_flag(inst, dec_info.=
-index_frame_display);
-                }
-@@ -222,6 +223,8 @@ int wave5_vpu_dec_close(struct vpu_instance *inst, u32 =
-*fail_res)
-        }
-=20
-        do {
-+               int ret_mutex;
-+
-                ret =3D wave5_vpu_dec_finish_seq(inst, fail_res);
-                if (ret < 0 && *fail_res !=3D WAVE5_SYSERR_VPU_STILL_RUNNIN=
-G) {
-                        dev_warn(inst->dev->dev, "dec_finish_seq timed out\=
-n");
-@@ -243,10 +246,10 @@ int wave5_vpu_dec_close(struct vpu_instance *inst, u3=
-2 *fail_res)
-=20
-                mutex_unlock(&vpu_dev->hw_lock);
-                wave5_vpu_dec_get_output_info(inst, &dec_info);
--               ret =3D mutex_lock_interruptible(&vpu_dev->hw_lock);
--               if (ret) {
-+               ret_mutex =3D mutex_lock_interruptible(&vpu_dev->hw_lock);
-+               if (ret_mutex) {
-                        pm_runtime_put_sync(inst->dev->dev);
--                       return ret;
-+                       return ret_mutex;
-                }
-        } while (ret !=3D 0);
-=20
-@@ -482,6 +485,7 @@ dma_addr_t wave5_vpu_dec_get_rd_ptr(struct vpu_instance=
- *inst)
-=20
-        ret =3D mutex_lock_interruptible(&inst->dev->hw_lock);
-        if (ret)
-+               // FIXME this return type is wrong
-                return ret;
-=20
-        rd_ptr =3D wave5_dec_get_rd_ptr(inst);
-
---=-AjYjeHtaoSF3MHIAUJjI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaMF1jgAKCRDZQZRRKWBy
-9EnIAP9AOn0oiF+WTit9olIDp4XylQGbivLhSbjKsNLkioIK7gEAvmOBUtXEiZe4
-TRnJnACn7fa0XYJYdSgRItWLj/Xxag0=
-=4PHM
------END PGP SIGNATURE-----
-
---=-AjYjeHtaoSF3MHIAUJjI--
+-- 
+Pedro
 
