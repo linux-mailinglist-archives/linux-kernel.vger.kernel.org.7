@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-809244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD07B50A73
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:48:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C243B50A75
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C74565FBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:48:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 030A63A3397
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E926221F39;
-	Wed, 10 Sep 2025 01:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BKaghRGO"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C42221FDA;
+	Wed, 10 Sep 2025 01:50:01 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6EA1EA7DD
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC4414658D;
+	Wed, 10 Sep 2025 01:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757468908; cv=none; b=RyuKaCb9Uvmq5efkhwZ0ZHOiyfaN0F5MRJJwAMx/v0TjEw7m+lrYJK9GabZZecsX8bd8Dfgrmhe2QLWznDjZvFIM71JucwD5hmcUl++yHRTwrmoy/pysfjZdEojnJUy9eNd9GmntZDLQtU3Wo29dkkEJtxUC+9hr32VQhIg1xBk=
+	t=1757469001; cv=none; b=Gd+95ACJvnDaEfciKVpZAegIRkHRtp2UJuY6yE39eO40mL55GpJBYmQkK61B1KfYFma6JMl7n6IyNfnUK37+egzawKckyqC8/OlIR6ltgTsBxF7ehg/tRU85qO1Y52siTRtK++p2LS5tBWxzIxDYptwBcQvklCnZP7nf1CL1DTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757468908; c=relaxed/simple;
-	bh=lNwyQ1qlgC5YOiwLCjfVvPjilzDWvlgRD5Sr/+vFbDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EqX37MnCWeUxpI3HvKIJrVEFzjHZTt2cXOBBDklYWmmqiPdufZxBI89Wza2JFUJuSVmVFwkkDhb+XmjpJ9N+gje6ZCKEGCjRf0Ryj6pfanKvH++LmYh59mUmSK4VISJzKVT+ZTc5DE9JqJoPtB/+4E1fx35aGldI9CIC80isOnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BKaghRGO; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 9 Sep 2025 21:48:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757468892;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=07Yd4H765qOC6tzm5S7wF2VWIIKcE5+hjsYL92cJvP0=;
-	b=BKaghRGOQ0MHnFTX33b2EgYcSDm+bEncTYRvENHbJ3QJO8IE3YcUPgrrCoChuicXfhNNep
-	ncfJhA3J3wwuer9hfjm/wmZlMCMuaBJqvBjMmDL1q6T0tHQK4sMY1Nd6JD84pgLKyGo4lk
-	mBC0eFg2rI3JdqYLf8pEOCswE20wL1c=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org, 
-	amaindex@outlook.com, anna.schumaker@oracle.com, boqun.feng@gmail.com, 
-	geert@linux-m68k.org, ioworker0@gmail.com, joel.granados@kernel.org, 
-	jstultz@google.com, leonylgao@tencent.com, linux-kernel@vger.kernel.org, 
-	linux-m68k@lists.linux-m68k.org, longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com, 
-	mingzhe.yang@ly.com, oak@helsinkinet.fi, peterz@infradead.org, rostedt@goodmis.org, 
-	senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
- pointers
-Message-ID: <gtie7ylcuftmi2jgzviipxnvjzcds46eqce4fxxalbutwphbe4@erwrj3p7udrz>
-References: <20250909145243.17119-1-lance.yang@linux.dev>
- <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
- <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
- <ufkr7rkg7rsfo6ovsnwz2gqf4mtmmevb3mququeukqlryzwzmz@x4chw22ojvnu>
- <bea3d81c-2b33-a89d-ae26-7d565a5d2217@linux-m68k.org>
+	s=arc-20240116; t=1757469001; c=relaxed/simple;
+	bh=7LVigNguHvHbrA1aN0YPywOsZX96eJBBBrNQX4O0vZY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Nw85tpwdyqtSxJDbSkOe3zF6cQ3mYWNUu1Og0NYPdnuhOrvLyWoDoAs3+k+fX0Nc59WOIbataiKUpx/kiq43G7/fx7Jvg7gAg11O/iSEMoB7vLFZ3Zl1zOXXgZ3m6hzDqQi5Mmtzepxhw12gjYYvUcI2tmiWPLGOEsyulCoqeEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 6bd23d088de811f0b29709d653e92f7d-20250910
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:ce7bef24-cef0-472b-bfb8-1e0db3e4682b,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:70633738746ca705e26646221cab4099,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|817|850,TC:nil,Content:-
+	10|-8|-5|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
+	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 6bd23d088de811f0b29709d653e92f7d-20250910
+Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
+	(envelope-from <tanzheng@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1179794620; Wed, 10 Sep 2025 09:49:42 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id B887516004280;
+	Wed, 10 Sep 2025 09:49:42 +0800 (CST)
+X-ns-mid: postfix-68C0D936-29667311
+Received: from localhost.localdomain (unknown [10.42.20.101])
+	by node4.com.cn (NSMail) with ESMTPA id 8825916001A03;
+	Wed, 10 Sep 2025 01:49:41 +0000 (UTC)
+From: Zheng tan <tanzheng@kylinos.cn>
+To: johannes@sipsolutions.net
+Cc: arend.vanspriel@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	tanzheng@kylinos.cn
+Subject: Re: [PATCH v3] wifi: cfg80211: Remove the redundant wiphy_dev
+Date: Wed, 10 Sep 2025 09:49:40 +0800
+Message-Id: <20250910014940.195710-1-tanzheng@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <2363d0a432d280cc2e374cce6603300868780592.camel@sipsolutions.net>
+References: <2363d0a432d280cc2e374cce6603300868780592.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bea3d81c-2b33-a89d-ae26-7d565a5d2217@linux-m68k.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 10, 2025 at 11:35:56AM +1000, Finn Thain wrote:
-> Similarly, on m68k, there is no issue with __alignof(long) == 2 because 
-> these platforms don't trap on misaligned access. But that seems a bit 
-> irrelevant to the real issue, which is not specific architectural quirks, 
-> but the algorithms and their ongoing development.
+> > > > > > There is no need to call wiphy_dev again.Simplifying the
+> > > > > > code makes it more readable.
+> > > > > >=20
+> > > > > > Signed-off-by: Zheng tan <tanzheng@kylinos.cn>
+> > > > > >=20
+> > > > >=20
+> > > > > The bot complains this doesn't match your From: line, is that
+> > > > intentional?
+> > > >=20
+> > > > Yes, I set it up this way on purpose. Sorry, I don't know=20
+> > > > this rule. I'll modify Signed-off-by. Thank you for your comment.
+> > >=20
+> > > Oh. I wasn't really thinking you _need_ to change it - actually I w=
+as
+> > > wondering if you _want_ to change it since I thought maybe "Zheng t=
+an"
+> > > was your preferred spelling, and your email client just used the
+> > > localpart (before the @) instead of your name spelled out by accide=
+nt.
+> > >=20
+> > > So either way I'm fine. Let me know what you prefer.
+> >=20
+> > In that case, perhaps I prefer "Zheng tan".
+>=20
+> Ideally you could resend with your From: line adjusted, or even an extr=
+a
+> From: line thrown into the body of the mail, but I suppose I can try to
+> adjust the From: line as well on the other mail you sent, assuming I
+> remember :)
 
-Err, I believe the topic was just alignment and the breaking of commonly
-held expectations :)
+I will adjust the From line of the patch and resend it. Thank you for you=
+r=20
+patient reply!
 
-> 
-> > ...
-> > > 
-> > > IMHO, good C doesn't make alignment assumptions, because that hinders 
-> > > source code portability and reuse, as well as algorithm extensibility. 
-> > > We've seen it before. The issue here [1] is no different from the 
-> > > pointer abuse which we fixed in Cpython [2].
-> > 
-> > That kind of thinking really dates from before multithreaded and even 
-> > lockless algorithms became absolutely pervasive, especially in the 
-> > kernel.
-> > 
-> 
-> What I meant was, "assumptions hinder portability etc." not "good C 
-> hinders portability etc." (my bad).
-
-Of course, but given the lack of a true atomic type in C there's no good
-alternative way to avoid this landmine.
-
-Also, grep for READ_ONCE/WRITE_ONCE in the kernel tree if you want to
-see how big the issue is - ad then remember that only captures a
-fraction of it :)
-
-> 
-> > These days, READ_ONCE() and WRITE_ONCE() are pervasive, and since C 
-> > lacks any notion of atomics in the type system (the place this primarily 
-> > comes up), it would go a long ways towards improving portability and 
-> > eliminating nasty land mines.
-> > 
-> 
-> Natural alignment would seem to be desirable for new ABIs, until you 
-> realize that it implies wasted RAM on embedded systems and reduced data 
-> locality (that is, cooler caches if you did this on i386).
-
-For the data structures where it matters we tend to organize things by
-natural alignment already.
-
-If anyone wanted to gather precise numbers, there's memory allocation
-profiling + pahole :)
+Best regards,
+Zheng tan
 
