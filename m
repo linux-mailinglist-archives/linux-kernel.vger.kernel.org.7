@@ -1,103 +1,113 @@
-Return-Path: <linux-kernel+bounces-809229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 187FFB50A3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F3FFB50A41
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F00E1C27F02
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:27:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE27189957A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FE51F3D58;
-	Wed, 10 Sep 2025 01:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7780F1F5617;
+	Wed, 10 Sep 2025 01:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/p4zt+9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIJH+jl6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADEB1C84DC;
-	Wed, 10 Sep 2025 01:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08451D5174;
+	Wed, 10 Sep 2025 01:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757467639; cv=none; b=OVcVYZjcYLEJcQpZsXcF5g8w+FKMlv53Tm+TarT4TbQtMqxneOAApfTUcwIx0z/QV+HhrK8G0+o4faZn7H8HxzBs9DKqpZ8KIAPmdbQYLa/KmTWp019Ry6XN0F0AO5+8gxAcdnmuOuSpK4Hm/zIPkCOJhzhpkIeVfpBDhJJjkIU=
+	t=1757467803; cv=none; b=TdHFiA2g8JwLEb4cCE2IQizou2RBGLPhn2omG9hyh9AG4n8AZRqOLPGEsZl8W3My46uCPn75GQWIBC8OsMeWfABd8lRhvyBEjsrXxk+tkFVpGNbHFCSfNLYeudRpM+gKEsvZS9lLt57TpZLMsFhh2NOs6piagHMp6Vhh5i8gwPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757467639; c=relaxed/simple;
-	bh=NRt740wDewvEnDlLdECaG6cLn7kaZWZqxGlfu2JNWsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CJFtSuVBKl8zn1c3DiUOmElRnOiP3rzmeWVUXfg00NVHMqhj4NWn0JHInq6S3oYpbVwRVcHIUkhKluSXagEdlNJr+Kv4/pj6YgATr7A8/L+aQiiMwbMJ2fwP+CbLG9JEzD/zkd3xLZtRncGskebQQqm8crL8nxm7kq+0H7hQ9+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/p4zt+9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BECF7C4CEF4;
-	Wed, 10 Sep 2025 01:27:16 +0000 (UTC)
+	s=arc-20240116; t=1757467803; c=relaxed/simple;
+	bh=fMzUZ89rUIrB3BdUFoSRAOSzYorBCqeFF+aJ+HQat84=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=TqsH9e33j167HelfwTGJ96eczsG9x2oqnyCTaGmG13tjavatonCoPhaa4cSNzZq+1rKH7RbTQkgZw0stSSnoSB/R0e3DQfjwFtvJzcwKSzcVUImbbwhaMrmvCQJQI0ECgiDnjis1r3JuV34LI0C5JYgLKGYvw3zZhmR49m8IxpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIJH+jl6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63043C4CEF4;
+	Wed, 10 Sep 2025 01:30:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757467636;
-	bh=NRt740wDewvEnDlLdECaG6cLn7kaZWZqxGlfu2JNWsw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P/p4zt+9Uw2DL4OMJy1/XVbuSqelY/71VrvHceoS/1wEaVqHHCD+ZmSjt49rc8Ogc
-	 Kewg8NznvyUjJPrJ6xvSwqS50JKJAqofD0DX6cUVFycs1vLwQ8NFV/2dBDFYHkhcrM
-	 x07qultJGHaugcJLAOgBZOhbFLImWe95uUEG9FSBHJ0vxsDm5YrmunclJtWPvWpMM3
-	 1CBUgAQjH+0vXspTD2O6d2hSAS+tXxnYd5I2Mbe/MrAfwzphOwQSmFAPD+IjLW1LSs
-	 +fXZ6J8Rr4bwJUR4Zd8HHRhh68Ga1Zeo99S9wM9FXCIkeLg5wU00hhJ76sPGfgL9In
-	 Jh5O7DU3QdnHA==
-Date: Tue, 9 Sep 2025 20:27:16 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-i3c@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Frank Li <Frank.Li@nxp.com>, Conor Dooley <conor+dt@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v2] dt-bindings: i3c: renesas,i3c: Add RZ/V2H(P) and
- RZ/V2N support
-Message-ID: <175746763548.3566130.10675698517636127630.robh@kernel.org>
-References: <20250908093930.12591-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=k20201202; t=1757467803;
+	bh=fMzUZ89rUIrB3BdUFoSRAOSzYorBCqeFF+aJ+HQat84=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=FIJH+jl63Sz0OwwkPHIQI7XYV1UB11zkmfiKz4S5tm8dzyWnFVXhh8YJQ866GEtQ5
+	 oVXer4P+9Mc48t/bBkfu9NT1MhpuXHK9LKOUsblQkTdn8+KNCDMlyM4fdWqnKf2YfD
+	 jmmlhxg2b1sb+ous78+K+RD1Zhvmdd8dGNdwdazx4J2tX5Qw6auF891aSd+XT9iyfg
+	 e5v9b/ks0hB1I71/zo1wyYwBw3MgsSwT9UfP2KjHNfFM8SgqbOrmchjQl++nFLZqyh
+	 Hl3pDD4nu/yL6Kcz66UgZVZsSipktH0nw1nZJ0U6SCUez7HuZqbaAUTDgJlik+vhGH
+	 6hYY3ZJ03865A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE4BB383BF69;
+	Wed, 10 Sep 2025 01:30:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908093930.12591-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net] net: dev_ioctl: take ops lock in hwtstamp lower
+ paths
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175746780652.866782.7996733446987433045.git-patchwork-notify@kernel.org>
+Date: Wed, 10 Sep 2025 01:30:06 +0000
+References: <20250907080821.2353388-1-cjubran@nvidia.com>
+In-Reply-To: <20250907080821.2353388-1-cjubran@nvidia.com>
+To: Carolina Jubran <cjubran@nvidia.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, sdf@fomichev.me, kuniyu@google.com,
+ kory.maincent@bootlin.com, kees@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cratiu@nvidia.com, dtatulea@nvidia.com
 
+Hello:
 
-On Mon, 08 Sep 2025 10:39:30 +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add device tree binding support for the I3C Bus Interface on Renesas
-> RZ/V2H(P) and RZ/V2N SoCs. The I3C IP on these SoCs is identical to
-> that found on the RZ/G3E SoC.
-> 
-> Add new compatible strings "renesas,r9a09g056-i3c" for RZ/V2N and
-> "renesas,r9a09g057-i3c" for RZ/V2H(P). Both variants use
-> "renesas,r9a09g047-i3c" as a fallback compatible to indicate hardware
-> compatibility with the RZ/G3E implementation.
-> 
-> Update the title to be more generic as it now covers multiple SoC
-> families beyond just RZ/G3S and RZ/G3E.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
-> v1->v2:
-> - Updated title to be more generic.
-> - Updated commit message to reflect changes.
-> - Added Reviewed-by tag.
-> ---
->  .../devicetree/bindings/i3c/renesas,i3c.yaml     | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
-> 
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+On Sun, 7 Sep 2025 11:08:21 +0300 you wrote:
+> ndo hwtstamp callbacks are expected to run under the per-device ops
+> lock. Make the lower get/set paths consistent with the rest of ndo
+> invocations.
+> 
+> Kernel log:
+> WARNING: CPU: 13 PID: 51364 at ./include/net/netdev_lock.h:70 __netdev_update_features+0x4bd/0xe60
+> ...
+> RIP: 0010:__netdev_update_features+0x4bd/0xe60
+> ...
+> Call Trace:
+> <TASK>
+> netdev_update_features+0x1f/0x60
+> mlx5_hwtstamp_set+0x181/0x290 [mlx5_core]
+> mlx5e_hwtstamp_set+0x19/0x30 [mlx5_core]
+> dev_set_hwtstamp_phylib+0x9f/0x220
+> dev_set_hwtstamp_phylib+0x9f/0x220
+> dev_set_hwtstamp+0x13d/0x240
+> dev_ioctl+0x12f/0x4b0
+> sock_ioctl+0x171/0x370
+> __x64_sys_ioctl+0x3f7/0x900
+> ? __sys_setsockopt+0x69/0xb0
+> do_syscall_64+0x6f/0x2e0
+> entry_SYSCALL_64_after_hwframe+0x4b/0x53
+> ...
+> </TASK>
+> ....
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2,net] net: dev_ioctl: take ops lock in hwtstamp lower paths
+    https://git.kernel.org/netdev/net/c/686cab5a18e4
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
