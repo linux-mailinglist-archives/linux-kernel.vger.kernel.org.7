@@ -1,255 +1,123 @@
-Return-Path: <linux-kernel+bounces-810212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97181B5174B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:52:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979B3B5174E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:53:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D03F1545DAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:52:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08A1C545AC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF0E2BE620;
-	Wed, 10 Sep 2025 12:52:34 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF4D31AF3F;
+	Wed, 10 Sep 2025 12:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="QAt47TRh"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886BB31AF33;
-	Wed, 10 Sep 2025 12:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA2631A55F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757508754; cv=none; b=m30AV6399QoHp6z0KjNlJhsddHTg3D8pX/OQCPH8QCKRsldNRTcijz4hnkwtkFQtgmGbmlY6gO6t1NMuM0qqonxvmYL6MerjxTn7HkeoJS40Rv2pwBkU8IyIuvn+fnFNbLpE0KMRWwTnVWtbCXaLkC82u2EEWnohAT4/3sKL9mc=
+	t=1757508812; cv=none; b=UZeZ0svN+L4UrlSeNs4oK6m9CbsklYL1AQM1zhUrQVlzxVRAu/YpJR/8S3K6mXDs9NNOhUWJWwV879oNZYclg4Cl/GP0pUJBy2dAUKZTN8flrXEeB2NALlANz0vZnnbk1/sE610ygQn/Gidm6APqVpa5XTiwWMv27QwOiwyatks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757508754; c=relaxed/simple;
-	bh=ee7B3ZLWWj+PLQJDVUCLSsUTQ+aA/pB6s6Sn5kEfMUg=;
+	s=arc-20240116; t=1757508812; c=relaxed/simple;
+	bh=UCknWCVKZ/v28NkgB+CnV++ugotQy6Cu4r2M0VTiT24=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3Hnibz29Z6VsFArEF86KY7q0gOI0swTmbE3P64yEBUrWwVZ3tANqts0Jg4C6BduiIHPKE2MBnqQfOE98YcEvwa6q8+BQQXLHb2WRjvTUgXJIszy8K+19yaiwpOHxjOBngRloHq8ddVE+NvkyPo8TkLHkulvIFYC9Bgqwf/B1QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from gentoo.org (gentoo.cern.ch [IPv6:2001:1458:202:227::100:45])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: amadio)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 43C4F335DB4;
-	Wed, 10 Sep 2025 12:52:30 +0000 (UTC)
-Date: Wed, 10 Sep 2025 14:52:25 +0200
-From: Guilherme Amadio <amadio@gentoo.org>
-To: Ian Rogers <irogers@google.com>
-Cc: namhyung@kernel.org, acme@kernel.org, adrian.hunter@intel.com,
-	jolsa@kernel.org, kan.liang@linux.intel.com,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	mingo@kernel.org, peterz@infradead.org
-Subject: Re: perf --help triggers an assertion
-Message-ID: <aMF0iWh4yTK5KwcJ@gentoo.org>
-References: <20250701201027.1171561-3-namhyung@kernel.org>
- <20250909094953.106706-1-amadio@gentoo.org>
- <CAP-5=fVCeBz+hgCsctCe7BByaL7GqKVUbDcW4R=2th0C1O0m0w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pblKPDZiX1UyKibCGL/iufy3KkSOjImoYK9iqPXs4/Rhq580F4CT09lgHiFOuITyOjM0FgPy9yV4bLQR2RCRriBoDzhvKw+redjy7HLDZfWgLVQvjTP2TYGjRzxjM1viOXz0VlJneJCXdUEkR05xO8VhKHLQb+y8IZ8jGX9PXXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=QAt47TRh; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=UCkn
+	WCVKZ/v28NkgB+CnV++ugotQy6Cu4r2M0VTiT24=; b=QAt47TRhN3q8wccblduw
+	n86xSls32C5RENplgQEYnzXQqDO9hEithliKipWt7cwGHaeinFKQAgNEQFGGi9i6
+	OLqbWoF+5t2O26xyZ/sdEp4xEiR+/KEYRGyjfwO9WaX4g05Of3RwD7VB6fcmbIzO
+	RatUdpQhzmWc+puyrw0i9I8q5V6/LxuUzlzkn+bJCHdTimSZQj2GxImyqXHWIKIO
+	nuxvRJd/5qxMCmuZRQbH+xaXTf9Biu5tsWVkEny9twgVK2XQ+vMcBpQP3w3Sfrw6
+	2bzu5PKkCI/huHKGkrUJRSXKgr41VcZyyFpa1EGnNmgJHImjrPonRIAMBzktLYV3
+	dQ==
+Received: (qmail 608083 invoked from network); 10 Sep 2025 14:53:25 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Sep 2025 14:53:25 +0200
+X-UD-Smtp-Session: l3s3148p1@P04L6HE+PkFtKPOV
+Date: Wed, 10 Sep 2025 14:53:25 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: =?utf-8?Q?Jean-Fran=C3=A7ois?= Lessard <jefflessard3@gmail.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v4 0/2] device property: Add scoped fwnode child node
+ iterators
+Message-ID: <aMF0xW9rBrSK--Cl@shikoro>
+References: <20250902190443.3252-1-jefflessard3@gmail.com>
+ <aLgY1z-MvQbDBx2_@smile.fi.intel.com>
+ <aLlgpUlHp7t8P4dQ@shikoro>
+ <aLljGIcjAjQhC2uS@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TWXpdjkKt5uEsI6e"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVCeBz+hgCsctCe7BByaL7GqKVUbDcW4R=2th0C1O0m0w@mail.gmail.com>
+In-Reply-To: <aLljGIcjAjQhC2uS@smile.fi.intel.com>
 
-On Tue, Sep 09, 2025 at 11:31:51AM -0700, Ian Rogers wrote:
-> On Tue, Sep 9, 2025 at 2:49 AM Guilherme Amadio <amadio@gentoo.org> wrote:
-> >
-> > Hi Namhyung,
-> >
-> > I was updating perf's package in Gentoo Linux and noticed some problems
-> > which were not there before. I tested with the version below and the problem
-> > still seems to be there. perf --help triggers an assertion (see below).
-> > Looking in the list, it seems related to the patch below:
-> >
-> > https://lore.kernel.org/linux-perf-users/20250701201027.1171561-3-namhyung@kernel.org/
-> >
-> > Cheers,
-> > -Guilherme
-> >
-> > The problem:
-> >
-> > gentoo perf $ ./perf --help
-> > perf: help.c:104: exclude_cmds: Assertion `cmds->names[ci] == NULL' failed.
-> > Aborted                    (core dumped) ./perf --help
-> >
-> > Some extra information:
-> >
-> > gentoo perf $ ./perf version
-> > perf version 6.17.rc5.gf777d1112ee5
-> > gentoo perf $ ./perf test subcmd
-> >  69: libsubcmd help tests                                            :
-> >  69.1: Load subcmd names                                             : Ok
-> >  69.2: Uniquify subcmd names                                         : Ok
-> >  69.3: Exclude duplicate subcmd names                                : Ok
-> > gentoo perf $ ./perf bad-command
-> > perf: 'bad-command' is not a perf-command. See 'perf --help'.
-> > gentoo perf $ ./perf --help
-> > perf: help.c:104: exclude_cmds: Assertion `cmds->names[ci] == NULL' failed.
-> > Aborted                    (core dumped) ./perf --help
-> > gentoo perf $ gdb run --args ./perf --help
-> > GNU gdb (Gentoo 16.3 vanilla) 16.3
-> > Copyright (C) 2024 Free Software Foundation, Inc.
-> > License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-> > This is free software: you are free to change and redistribute it.
-> > There is NO WARRANTY, to the extent permitted by law.
-> > Type "show copying" and "show warranty" for details.
-> > This GDB was configured as "x86_64-pc-linux-gnu".
-> > Type "show configuration" for configuration details.
-> > For bug reporting instructions, please see:
-> > <https://bugs.gentoo.org/>.
-> > Find the GDB manual and other documentation resources online at:
-> >     <http://www.gnu.org/software/gdb/documentation/>.
-> >
-> > For help, type "help".
-> > Type "apropos word" to search for commands related to "word"...
-> > Reading symbols from ./perf...
-> > (gdb) run
-> > Starting program: /home/amadio/src/linux/tools/perf/perf --help
-> > [Thread debugging using libthread_db enabled]
-> > Using host libthread_db library "/usr/lib64/libthread_db.so.1".
-> > perf: help.c:104: exclude_cmds: Assertion `cmds->names[ci] == NULL' failed.
-> >
-> > Program received signal SIGABRT, Aborted.
-> > __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at pthread_kill.c:44
-> > 44            return INTERNAL_SYSCALL_ERROR_P (ret) ? INTERNAL_SYSCALL_ERRNO (ret) : 0;
-> > (gdb) bt
-> > #0  __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at pthread_kill.c:44
-> > #1  0x00007ffff74c1656 in __pthread_kill_internal (threadid=<optimized out>, signo=signo@entry=6) at pthread_kill.c:89
-> > #2  0x00007ffff74c166d in __GI___pthread_kill (threadid=<optimized out>, signo=signo@entry=6) at pthread_kill.c:100
-> > #3  0x00007ffff747509c in __GI_raise (sig=sig@entry=6) at ../sysdeps/posix/raise.c:26
-> > #4  0x00007ffff747637e in __GI_abort () at abort.c:77
-> > #5  0x00007ffff746e023 in __assert_fail_base (fmt=<optimized out>, assertion=assertion@entry=0x555555974d03 "cmds->names[ci] == NULL",
-> >     file=file@entry=0x555555974cfc "help.c", line=line@entry=104, function=function@entry=0x555555974dc8 <__PRETTY_FUNCTION__.0> "exclude_cmds")
-> >     at assert.c:118
-> > #6  0x00007ffff746e075 in __assert_fail (assertion=0x555555974d03 "cmds->names[ci] == NULL", file=0x555555974cfc "help.c", line=104,
-> >     function=0x555555974dc8 <__PRETTY_FUNCTION__.0> "exclude_cmds") at assert.c:127
-> > #7  0x0000555555693813 in exclude_cmds (cmds=0x55555614e5e0 <other_cmds>, excludes=0x55555614e5c0 <main_cmds>) at help.c:104
-> > #8  0x0000555555693eb3 in load_command_list (prefix=0x555555954071 "perf-", main_cmds=0x55555614e5c0 <main_cmds>,
-> >     other_cmds=0x55555614e5e0 <other_cmds>) at help.c:252
-> > #9  0x00005555555e9987 in cmd_help (argc=1, argv=0x7fffffffd1a0) at builtin-help.c:458
-> > #10 0x0000555555685d45 in run_builtin (p=0x555556130de0 <commands+192>, argc=1, argv=0x7fffffffd1a0) at perf.c:349
-> > #11 0x0000555555685fe1 in handle_internal_command (argc=1, argv=0x7fffffffd1a0) at perf.c:401
-> > #12 0x0000555555686142 in run_argv (argcp=0x7fffffffcfac, argv=0x7fffffffcfa0) at perf.c:445
-> > #13 0x0000555555686493 in main (argc=1, argv=0x7fffffffd1a0) at perf.c:553
-> > (gdb) quit
-> 
-> Thanks Guilherme,
-> 
-> I tried to reproduce the same version with various options: DEBUG=1
-> -UNDEBUG in EXTRA_CFLAGS, -fsanitize=address. Being in various
-> directories with "perf-" prefixed files. I'm afraid I wasn't able to
-> reproduce. The assert is trying to avoid a memory leak, so
-> non-critical, and I couldn't in a quick inspection eye-ball an issue.
-> Without getting a reproduction I don't think I can make progress with
-> the issue.
 
-I do not have any special setup on my machine (if you consider Gentoo
-not special, of course). I just did a git bisect and arrived at commit
-9401d1771dad99bfc795dd2ae0c292343fd1f78d, which is the commit I linked
-above. I used
+--TWXpdjkKt5uEsI6e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-$ make -C tools/perf clean && make -B -j16 -C tools/perf DEBUG=1 WERROR=0 NO_SHELLCHECK=1
+On Thu, Sep 04, 2025 at 12:59:52PM +0300, Andy Shevchenko wrote:
+> On Thu, Sep 04, 2025 at 11:49:25AM +0200, Wolfram Sang wrote:
+> >=20
+> > > It might be good to have an immutable branch for me from i2c core.
+> > > Wolfram, can you provide a such if no objections?
+> >=20
+> > Sure thing, I can do that. But there is still discussion on patch 1, so
+> > I will wait for an outcome there.
+>=20
+> But it seems that the discussion can be implemented in a followup?
+> I think we are not in hurry anyway, so let see if it settles down soon.
 
-then called perf --help each time (but perf help record or equivalent
-also triggers the assertion). I'm using GCC 14 on a 3950X. The features
-I have enabled and installed dependencies are below. This patch has been
-backported to at least 6.12 stable, and I can reproduce this with
-v6.12.45.
+I pushed out an immutable branch now:
 
-gentoo linux $ tools/perf/perf version --build-options
-perf version 6.16.g45effee4b85a
-                   aio: [ on  ]  # HAVE_AIO_SUPPORT
-                   bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
-         bpf_skeletons: [ on  ]  # HAVE_BPF_SKEL
-            debuginfod: [ on  ]  # HAVE_DEBUGINFOD_SUPPORT
-                 dwarf: [ on  ]  # HAVE_LIBDW_SUPPORT
-    dwarf_getlocations: [ on  ]  # HAVE_LIBDW_SUPPORT
-          dwarf-unwind: [ on  ]  # HAVE_DWARF_UNWIND_SUPPORT
-              auxtrace: [ on  ]  # HAVE_AUXTRACE_SUPPORT
-                libbfd: [ OFF ]  # HAVE_LIBBFD_SUPPORT ( tip: Deprecated, license incompatibility, use BUILD_NONDISTRO=1 and install binutils-dev[el] )
-           libcapstone: [ on  ]  # HAVE_LIBCAPSTONE_SUPPORT
-             libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
-    libdw-dwarf-unwind: [ on  ]  # HAVE_LIBDW_SUPPORT
-                libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
-               libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
-            libopencsd: [ OFF ]  # HAVE_CSTRACE_SUPPORT
-               libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
-               libpfm4: [ on  ]  # HAVE_LIBPFM
-             libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
-              libslang: [ on  ]  # HAVE_SLANG_SUPPORT
-         libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
-             libunwind: [ OFF ]  # HAVE_LIBUNWIND_SUPPORT ( tip: Deprecated, use LIBUNWIND=1 and install libunwind-dev[el] to build with it )
-                  lzma: [ on  ]  # HAVE_LZMA_SUPPORT
-numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
-                  zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
-                  zstd: [ on  ]  # HAVE_ZSTD_SUPPORT
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/immutable/s=
+coped_fwnode_child
 
-And here are the version of all dependencies I have installed:
+Please have a look if I got the tags correct. Once confirmed, I will
+merge it into i2c/for-mergewindow and Andy can pull it as well.
 
- * dependency graph for dev-util/perf-6.16-r1
- `--  dev-util/perf-6.16-r1
-   `--  dev-util/babeltrace-1.5.11
-   `--  dev-libs/libbpf-1.6.2
-   `--  dev-util/bpftool-7.6.0
-   `--  dev-util/pahole-1.30
-   `--  llvm-core/clang-18.1.8-r6
-   `--  llvm-core/llvm-18.1.8-r6
-   `--  llvm-core/clang-19.1.7
-   `--  llvm-core/llvm-19.1.7
-   `--  llvm-core/clang-20.1.8
-   `--  llvm-core/llvm-20.1.8
-   `--  llvm-core/clang-21.1.0
-   `--  llvm-core/llvm-21.1.0
-   `--  sys-libs/libcap-2.76
-   `--  dev-libs/capstone-5.0.6
-   `--  dev-libs/openssl-3.5.2
-   `--  x11-libs/gtk+-2.24.33-r3
-   `--  virtual/jre-21
-   `--  dev-libs/libpfm-4.13.0
-   `--  dev-libs/libtraceevent-1.8.4
-   `--  dev-libs/libtracefs-1.8.2
-   `--  app-arch/xz-utils-5.8.1-r1
-   `--  sys-process/numactl-2.0.19
-   `--  dev-lang/perl-5.42.0
-   `--  dev-lang/python-0.3.13.7
-   `--  dev-lang/python-0.3.14.0_rc2
-   `--  dev-lang/python-3.11.13_p1
-   `--  dev-lang/python-3.12.11_p1
-   `--  dev-lang/python-3.13.9999
-   `--  dev-lang/python-3.14.0_rc2
-   `--  sys-libs/slang-2.3.3-r1
-   `--  dev-debug/systemtap-5.3
-   `--  dev-util/google-perftools-2.17.2
-   `--  sys-libs/libunwind-1.8.2-r1
-   `--  app-arch/zstd-1.5.7-r1
-   `--  dev-libs/elfutils-0.193
-   `--  sys-libs/binutils-libs-2.45-r1
-   `--  sys-libs/zlib-1.3.1-r1
-   `--  virtual/libcrypt-2-r1
-   `--  sys-kernel/linux-headers-6.16
-   `--  virtual/jdk-21
-   `--  app-arch/tar-1.35
-   `--  dev-python/setuptools-80.9.0-r1
-   `--  app-alternatives/yacc-1-r2
-   `--  app-alternatives/lex-0-r1
-   `--  sys-apps/which-2.23
-   `--  virtual/pkgconfig-3
-   `--  app-text/asciidoc-10.2.1
-   `--  app-text/sgml-common-0.6.3-r7
-   `--  app-text/xmlto-0.0.28-r11
-   `--  sys-process/time-1.9-r1
 
-I hope that this helps with reproducing the problem, but if not, let me
-know which additional information you'd like to have and I will send it.
-My running kernel is 6.16.4, and glibc is version 2.42.
+--TWXpdjkKt5uEsI6e
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards,
--Guilherme
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjBdL0ACgkQFA3kzBSg
+KbZjcxAAg8zr8VLGHvhvSHTBfPPt0Z3gRKZ8db4YqhOu9SgnVC+wY50FBxx/qLCi
+6BXDQO6cMcfAqaWYT9/mE0M8JNMG5JakPRq+nWK4N/qlbhtUYje4GIs0df0BCRUY
+vNW5eoXN4kEi5kTt+LLZyRmzFs1RQMCqyZYTAHhs2FUBJz4V6M6qIBLc+Rl7TG/o
+5GfSRrzwLBa0mbqdldA56zBgI/KeZzQWXV4s5Hivaci6kwJtPwE6ANS1ymWGnrXq
+le7D6X582rqLRmZWHPsJNpGmUJVrKCf4MnDoqqS3AcCACMcJ4OnY+fqAaTfi71i6
+ugo+KtkYEt9fLnHkiaM750mgk6Z6pB3Ujco/b3wC/Q77MdJZaHgEvb1vvk/pwaLY
+UNDkVte50L8XXlCUAGDwc0tBpE/CxdKEg57OUEbGbNg0czCdKaF79KzMk9KOrXbv
+WJJPOpBIjR5oTEyGtctpXbMc3wm6TJiA50/bJjklQA42PSiyJpyh8QCMpyKZjHDW
+G0z+lojwab17OIK8z1nIsqq8jNG3kGSaoGv/xL8MBTXdKbS/qmBKqMnKcvWTK/LH
+qsfUOAHuRpI4IJEuKSk0zb8SvzGC1/uwf/M2D7j/+YqwYnVg3UnV7y/zn4LOkIgJ
+9Ifs/fucj/uI6SSADtYiS/WxbzUTo6GFSGE3bMvIwsyTZWTzCqg=
+=kzqx
+-----END PGP SIGNATURE-----
+
+--TWXpdjkKt5uEsI6e--
 
