@@ -1,138 +1,129 @@
-Return-Path: <linux-kernel+bounces-810037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A06CB51504
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:10:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF7CB51509
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F86F1B263C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:10:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC9195E0D17
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4266431AF3F;
-	Wed, 10 Sep 2025 11:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D7A3191C6;
+	Wed, 10 Sep 2025 11:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZg4a9Pz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="St7YYxqr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9069B31690C;
-	Wed, 10 Sep 2025 11:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050D81D5AC6;
+	Wed, 10 Sep 2025 11:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757502513; cv=none; b=b7javr6P1pol3gm1pgZ9/LmEcpSUjMwedHGcIqawsLtQ28hns0dC9D/LCXPL+RiCWarbHa0BrWvBQlNDNMLHONHYXVkwLzjvCpRUKTz71v0T6QMjwZSLk9An57VxLPj7Ya/8GvcCS/yhR0ZRqxi6xRYsQ81iWQfXukpd9VhM+9o=
+	t=1757502553; cv=none; b=QUgW81purSIWlSN0sWlPv/INMZMtqibIAKo8rlSEr/jOeeDBnU8nvsV4gGuqM1aVNrMaUFPLqEMhL7mQ2ibNh2sRI9wKCE6pqflZd6CIEu8yz9a97Ac6qvy+CsfUPU0jAiSqtRTnnB6VCQPgtAW5IltvdVCXSWnLV1tVJz2TIQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757502513; c=relaxed/simple;
-	bh=eT+fM0/l96U9E80CByHY3UpL1VMyoPh2jRe5J041drA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VdYeI9I81ny6eawsHXL4gHusrdFcfqWdahyddvQuidDG4SYN5qzD7lIJwoi1qmxVI/bPq9M4tNVOTaYIhpjruubHtxaGlXkGF/IliGTVLb8e7lF26cjTF0fBUqFKn+kPPnG+/zfoKDwUhYDSBwOtgOibfeAl/7NO9OOeswO/YGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZg4a9Pz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D442C4CEF8;
-	Wed, 10 Sep 2025 11:08:32 +0000 (UTC)
+	s=arc-20240116; t=1757502553; c=relaxed/simple;
+	bh=b1yDHlo4NkVRtzBInGR9cuXInx1UncWxnwPkowPXb8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qgRWIfAE0qbGonkERiNgIk3yz5Bd2Sg8TwqFEQvmKWabLm/4tHCzALNFs8Bg3C7NryTyRxdos6VPVO1V+r+FsIQIBDxKRu6B1L4f+AmTo29J1u40/2FGpwHnQ6tQe3+0wL2l5t+FrpPhlbhAfSACroqiZ9voCnAr/rCrcYePoGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=St7YYxqr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BDFDC4CEF0;
+	Wed, 10 Sep 2025 11:09:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757502513;
-	bh=eT+fM0/l96U9E80CByHY3UpL1VMyoPh2jRe5J041drA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GZg4a9PzOThwfZJWjmmg1do+BJcK6fKqRVNE1sq+YdWBDlnHaURSjrRlxZ7+9DH4N
-	 Db+CuYerpenQhklpoGj+sHRilAxDRpInKvZJFpf3X1NCOLLQCBlcF189fa3pyP4fw4
-	 ufx5Lufwft1vqYQ0u4pu16D0r5dE6FepR8/Y2m7Bl1iWB50ud8cl9nr4fE/W1LSLys
-	 FYy4EKSZ0zBJNrEh6t7tmcyrIUrM+yDEihmZQ6+XVKFqbhMuCNH5+DEntCodxdQULf
-	 ZowH6/I7RWxU+6aGkzICbmkk9ffdQk6E6ckIxF6EdRydu3MVPbheSr9BgPt07IhG8H
-	 9PwdxdvRijCMA==
-Date: Wed, 10 Sep 2025 13:08:30 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Liu Ying <victor.liu@nxp.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
-	Daniel Stone <daniels@collabora.com>
-Subject: Re: [PATCH v4 09/10] drm/connector: verify that HDMI connectors
- support necessary InfoFrames
-Message-ID: <20250910-courageous-warthog-of-refinement-aced6f@houat>
-References: <20250909-drm-limit-infoframes-v4-0-53fd0a65a4a2@oss.qualcomm.com>
- <20250909-drm-limit-infoframes-v4-9-53fd0a65a4a2@oss.qualcomm.com>
+	s=k20201202; t=1757502552;
+	bh=b1yDHlo4NkVRtzBInGR9cuXInx1UncWxnwPkowPXb8E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=St7YYxqrRTKf6UXLhIQhZEvEo4BvNygiv+4brYaMui16LL52yqubeoSycWR0QG4F1
+	 MdZUULgvbVKP0LioLqzt+uzDieEfLeocgWJCYqPnw/CMVhTrjFi5osZlzsObtSvva/
+	 KIIT0Q+bQNx6fwWW+u96Fm4vqv2tKYqd7VN6OiFuYR59zQOpQI7sGq/vFw1LiBo6o2
+	 QaaqK1FC2NryY0ptOZoYLlVYVTnWBi6sNjOiGrEPP8Bdu4N25rGV2wZLxjhdokqFou
+	 Bp1lxTxP3StT+UuuTBjHxXFb+3OGzPsyb97pK04q/NTWmbpOWAO3JnmJEcC78tfeK/
+	 e9BuRqdgwiuqw==
+Message-ID: <a6ea0b5d-7586-4529-bf91-d8b966aa986e@kernel.org>
+Date: Wed, 10 Sep 2025 13:09:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="xkhodzl7phtwfggk"
-Content-Disposition: inline
-In-Reply-To: <20250909-drm-limit-infoframes-v4-9-53fd0a65a4a2@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] HID: lg-g15 - Add support for Logitech G13.
+To: "Leo L. Schwab" <ewhac@ewhac.org>
+Cc: Kate Hsuan <hpa@redhat.com>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250814212641.197573-2-ewhac@ewhac.org>
+ <7d356834-5795-4979-9f51-0ffcec52ae1d@kernel.org>
+ <aLSntMknSv3lMarZ@ewhac.org>
+ <8ae2cc92-5dfe-466d-95fd-da74309d7244@kernel.org>
+ <2de88077-eb8d-44ad-a96a-5db889913cba@kernel.org>
+ <aLiZbkKgIC8jIqE9@ewhac.org>
+ <c12adb45-fa6d-4bb8-afd2-a02e3026d646@kernel.org>
+ <aMESMcFLrzqrCdbq@ewhac.org>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <aMESMcFLrzqrCdbq@ewhac.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+On 10-Sep-25 7:52 AM, Leo L. Schwab wrote:
+> On Mon, Sep 08, 2025 at 11:08:29PM +0200, Hans de Goede wrote:
+>> There are 2 improvements which I would like to see:
+>>
+>> 1. When the backlight is turned on through the button, you
+>> should pass g15_led->brightness to the notify() call rather
+>> then LED_FULL. GNOME will show an OSD with the new brightness
+>> value shown as a mini progress bar similar to how it shows
+>> speaker volume when doing mute/unmute. This mini progress
+>> bar should show the actual brightness being restored, not
+>> always full brightness.
+>>
+> 	If g15_led->brightness is subsequently changed, should a new
+> notify() call also be made with that new brightness, i.e. should
+> `hw_brightness_changed` be made to track `brightness`?
+
+No, hw_brightness_changed only track changes done independently
+by the hw. sysfs writes should not call notify().
+
+> Indeed, it looks
+> like you do this in `lg_g15_leds_changed_work()`.
+
+That is for the original G15 and G15-v2, where the buttion
+cycles through a couple of backlight levels (IIRC). That work
+only gets queued when we receive a button press notification
+and then it *reads* the new brightness from the keyboard and
+uses that for the notify().
+
+That work does not get queued/used for normal sysfs writes.
+
+>> 2. ATM if the backlight is turned off on the G13 when
+>> the driver loads and then one of the buttons gets pressed
+>> then a notify() will happen because the led_cdev.hw_brightness_changed
+>> value of -1 will be different from the value of 0 in the
+>> input-report. This notify will lead to an unwanted OSD
+>> notification in GNOME, so this needs to be fixed.
+>> IMHO the best fix would be to use:
+>>
+>> 	hid_hw_raw_request(..., HID_INPUT_REPORT, HID_REQ_GET_REPORT);
+>>
+>> at probe to get the input-report so that the driver will
+>> actually now the backlight state at probe() time without
+>> needing to wait for the first time the input-report is send.
+>>
+> 	Will give this a try.
+> 
+>> I'll wait for your G13 support to land first and then
+>> rebase the G510 patch on top.
+>>
+> 	Roger that.
+
+Regards,
+
+Hans
 
 
---xkhodzl7phtwfggk
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 09/10] drm/connector: verify that HDMI connectors
- support necessary InfoFrames
-MIME-Version: 1.0
-
-On Tue, Sep 09, 2025 at 05:52:07PM +0300, Dmitry Baryshkov wrote:
-> Check that connector initialized by drmm_connector_hdmi_init() supports
-> AVI InfoFrames and warn if it doesn't support Vendor-Specific
-> InfofRames (HDMI InfoFrames are more or less required).
->=20
-> Suggested-by: Maxime Ripard <mripard@kernel.org>
-> Acked-by: Daniel Stone <daniels@collabora.com>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  drivers/gpu/drm/drm_connector.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connec=
-tor.c
-> index 92a75684a0f7375d3a94e8c666cb71064ecc8035..222a0ef66d9fdbdb56108ceeb=
-40e7f369d810350 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -602,6 +602,13 @@ int drmm_connector_hdmi_init(struct drm_device *dev,
->  	if (!(max_bpc =3D=3D 8 || max_bpc =3D=3D 10 || max_bpc =3D=3D 12))
->  		return -EINVAL;
-> =20
-> +	/* AVI is required */
-> +	if (!(supported_infoframes & DRM_CONNECTOR_INFOFRAME_AVI))
-> +		return -EINVAL;
-> +
-> +	if (!(supported_infoframes & DRM_CONNECTOR_INFOFRAME_VENDOR))
-> +		drm_info(dev, "HDMI connector with no support for Vendor-Specific Info=
-Frame\n");
-> +
-
-Same remark than on patch 10. It's not something we can check at init
-time, and we should check (and document!) that if we expect an infoframe
-to be written but the write_infoframe hook doesn't support it, it's an
-error.
-
-Maxime
-
---xkhodzl7phtwfggk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMFcLgAKCRAnX84Zoj2+
-do1pAXoDY9Dzn6G/ClMn6Qt9h6baw0nSCc1SPEDOnOlKYoD9BSE05V70x5Sqi0rR
-wJwIv2ABgME+k6f+wI13qd1Ah1huLB0li8xpIpRZTte9l8GEmuSdXIv2pGQJKmjF
-/tLAINKY3g==
-=JQzw
------END PGP SIGNATURE-----
-
---xkhodzl7phtwfggk--
 
