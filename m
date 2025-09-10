@@ -1,132 +1,169 @@
-Return-Path: <linux-kernel+bounces-809756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B4E1B511A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:40:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C4FB511AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 313B73B18D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:40:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45ABB44738E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB6E310624;
-	Wed, 10 Sep 2025 08:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40703112D0;
+	Wed, 10 Sep 2025 08:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQdZ+NyV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zERqqMqa"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6873081C6
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA64310658
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757493632; cv=none; b=q20xDRnsgmWy6Y9Lt765xO0+qJi970/1IzDxyhYNiYMeQHwTZLFXcJqm+VH3FtLK4JXpxCAULE2VBMY2m3biJt5j/yeyFWreO766YruQ6/NNY+dRBpQ64TK27/AJ8hmI3mOZAZtx8w5m2azNuzQvakKYBbmyw5LMKj0kKpd5QEM=
+	t=1757493712; cv=none; b=R2W8Sdh9vLG4OlDTor6Hu105mkzQxrHOsGI0IBfIFWmIehaS9puypW2QrDjG4QCLbzG48lQcJq9+avrNkKCr6WcqcxR3Cogqh04xQGv//ZRtT3RFXbls0ePVs+d4h8qBkVh2bRr77ODJLTw11dDNY+jMkQyPpN5iGWtEhRL89to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757493632; c=relaxed/simple;
-	bh=GPDaP11QrembyBGG0diAjU9KLEUd1GQl7AIT0DvpbQE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t/E09yKP1fkon03aI2mL483ZytEcQwRoWGKuoBf2XmPBz3AYeclmmiq8nwzowgusKZuRTJGfQ42tDS0lDVAf+kB1MSKehYxbL3rplC8lPaHWXW9sGMBdHnremCZFG8FDYYdZl6NpsH4BvYXJmnuQ7a0YXD5ZBtzszRd820Xc8ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQdZ+NyV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 592A3C4CEFA;
-	Wed, 10 Sep 2025 08:40:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757493632;
-	bh=GPDaP11QrembyBGG0diAjU9KLEUd1GQl7AIT0DvpbQE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kQdZ+NyVUhBogJAYXdPGo+VWUjQne8Ir5gG8JfDRnff6xNlkjbxgoKDIEDVa8WAI4
-	 e//oUTN/W437niexorIoyMa2Ykp/WY8GLo/+EIxCSKiEGzOXCdb8GgCtOMVt+YnD+5
-	 UCHzHpohkAmRh4WlYJi79lcWRTNaJa5lTgx2YCwJwKWm6tNfIfIU1JaVSoT8QnQWYl
-	 ADgPo1jlMPV5cVN0QWJ4netH4SCigWg9JyCUzPifTGgqwvg7s32WuAFo9DezFPuZKb
-	 2KJS77qTxECcsvF/QASe0E7/ddNgx4/i25TvKnqS6mYa1L6YNs3NhHvlBSGEvWeOBI
-	 i2jJKax5CjDGQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	syzbot+90266696fe5daacebd35@syzkaller.appspotmail.com
-Subject: [PATCH] f2fs: fix to truncate first page in error path of f2fs_truncate()
-Date: Wed, 10 Sep 2025 16:40:24 +0800
-Message-ID: <20250910084024.1722790-1-chao@kernel.org>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+	s=arc-20240116; t=1757493712; c=relaxed/simple;
+	bh=8BYfSHtHTpHBWXb4w05N17dIDEdh483y9XhV1TMwVBA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=pLXijYi2UO8ugMVGYSCk34Ci4fz7PWRsuUz8CeNElYU1GF6estX/Yir+IT7R3QDhHhSi5BigGDHHSvW10DccDZgc1SPhMyKi2jRbSZzoXi7M1ZAQKqiHr4I30/okiJtSnGjBtZ8uriVoF3f4fLgtKJQBPR+UX+bPC5yA/oOqrOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zERqqMqa; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b0787fc3008so81063966b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:41:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757493706; x=1758098506; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qSif0aXJJp0kSU7OZvdmQspKrVD0dDMIeIyzSM258Dg=;
+        b=zERqqMqaJeFQzTPMs7zZauwrE3Z2PwODLFNiHoSv81BxSMsJNdeK3MROP33BON33ui
+         jnkGIBUK3oUahTMbc8DT+QQSl5/O8LQpj2+5mQw5+XedAMUx8ZkklTE4edAyXfHdVeur
+         GzMN8Qge7IXKPbha9pts9umXLkrrbTEZ7kyjrTv3qsDYNUNUXzIZRc3YXj7TSuy26WUD
+         BBSGWLNe1Pxw4TGEEITvx6Az61Xr428kno6/FgBP8Y2QHKGpH4KtnQJ6nenTtqpGEyZU
+         IS3ZR9PwXIljs5kMJ9nsXWfdPeOoFwMg/+0hp0Fux1HIw/kq71c16nhOG9VJ4PFDlMbc
+         sXhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757493706; x=1758098506;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qSif0aXJJp0kSU7OZvdmQspKrVD0dDMIeIyzSM258Dg=;
+        b=qYGfQBw8kuiscEo3rHYzrPP60hx7pTAX5+FdPLLEPb8K9bm1Z0oK1oIhaVFjkOYCvZ
+         NkA8OQiiQyAK8QJmQ3pQmbViWNAwxAnvZBrY7nlXJ3bfcFG4v5UDY/46PVC9CzX9evpD
+         Oer8xoTNklv86uUEmCA1+RXFpnResnrzqemPcGqVCfqfQEw5AHmVeBDGHJWu2r0Podxf
+         iyh50pPGlYAOIwu78pNRjRBuuwd3A6rXshnwZ+ip0Smpy4+3DxilZOmfu0beST9E/Rv7
+         LHa2v1Fv/qdEcix5JQ1/Z00OFMIRSKCBDXm2M3TJQsIPbE9KFzuo6QA8zRYq0fbOktSG
+         lGTw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1lKuoIgRzPpCVoK4ZSH485vrUXj1VOFfDTsmxVmH/T37rCDYrtErexj3KTsrYRqXvQQZEJX7KSHdt4Yw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwVibr8PN/QLSdYI/L0tflyPoKiOFfHe+POscihLwKB0dlVmaN
+	r6tGaptZb4DkyLsjcPiEXBPH25MOxNVs4pGK1sB38/H7OxPF8ayp0GMIvx3qzJDluJA=
+X-Gm-Gg: ASbGncseVU8vluYGRVHWyBlmzXogIIRtnIuqj2Ch9IPhtBzfygNrBYLg7jFpGkJD3SH
+	O3/7u5KhEflmpbAEY3j9Oe50hWjlOS76dn7cwkqemtGPglHLDqmac3HEwBLzB542zoPLWzkvci3
+	LaK5RJhIS4oXdwGC61sdjhVrFjJrjl67aUepiRUPmovAjOX0YkIJWPg3hX/jhkikxxpHDENMsBV
+	wKnIG8u3tfLht+oeZR478UYklb7tdb7vSNXOkmfIU8WzWtJl3Bt1L/m2q7OUZ0c93FD4pjicsVZ
+	dyMj6VJSDhqVKiENxUBVoClpB8qsxwg/e994NoOBXGguPRMPsFw9p+JkP5v4v3MLFTLvzRptJiD
+	R6zmlwVad5mGMW0w=
+X-Google-Smtp-Source: AGHT+IExNmOsAnAJtqdj679s6TGYzo8sTv/XkpvZFopED68H/ezdLpRsIanj2ZU7Y2gRe1TpbDGmjQ==
+X-Received: by 2002:a17:907:6092:b0:b04:6a58:560b with SMTP id a640c23a62f3a-b04b1545011mr1444007166b.39.1757493705475;
+        Wed, 10 Sep 2025 01:41:45 -0700 (PDT)
+Received: from localhost ([195.52.61.108])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07833a7cb3sm131465466b.81.2025.09.10.01.41.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 01:41:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=2e38c85892acb2a28aa9c9c170304678bd4f0f3265d646caeeeb3f8e67ff;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Wed, 10 Sep 2025 10:41:28 +0200
+Message-Id: <DCOZIMAYLN8P.23PQEAFQ26ADZ@baylibre.com>
+Cc: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <kernel@pengutronix.de>
+Subject: Re: [PATCH v2 2/7] can: m_can: only handle active interrupts
+From: "Markus Schneider-Pargmann" <msp@baylibre.com>
+To: "Marc Kleine-Budde" <mkl@pengutronix.de>, "Chandrasekar Ramakrishnan"
+ <rcsekar@samsung.com>, "Vincent Mailhol" <mailhol.vincent@wanadoo.fr>,
+ "Patrik Flykt" <patrik.flykt@linux.intel.com>, "Dong Aisheng"
+ <b29396@freescale.com>, "Varka Bhadram" <varkabhadram@gmail.com>, "Wu Bo"
+ <wubo.oduw@gmail.com>, "Philipp Zabel" <p.zabel@pengutronix.de>
+X-Mailer: aerc 0.20.1
+References: <20250909-m_can-fix-state-handling-v2-0-af9fa240b68a@pengutronix.de> <20250909-m_can-fix-state-handling-v2-2-af9fa240b68a@pengutronix.de>
+In-Reply-To: <20250909-m_can-fix-state-handling-v2-2-af9fa240b68a@pengutronix.de>
 
-syzbot reports a bug as below:
+--2e38c85892acb2a28aa9c9c170304678bd4f0f3265d646caeeeb3f8e67ff
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-loop0: detected capacity change from 0 to 40427
-F2FS-fs (loop0): Wrong SSA boundary, start(3584) end(4096) blocks(3072)
-F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
-F2FS-fs (loop0): invalid crc value
-F2FS-fs (loop0): f2fs_convert_inline_folio: corrupted inline inode ino=3, i_addr[0]:0x1601, run fsck to fix.
-------------[ cut here ]------------
-kernel BUG at fs/inode.c:753!
-RIP: 0010:clear_inode+0x169/0x190 fs/inode.c:753
-Call Trace:
- <TASK>
- evict+0x504/0x9c0 fs/inode.c:810
- f2fs_fill_super+0x5612/0x6fa0 fs/f2fs/super.c:5047
- get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
- vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
- do_mount fs/namespace.c:4136 [inline]
- __do_sys_mount fs/namespace.c:4347 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4324
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+On Tue Sep 9, 2025 at 7:53 PM CEST, Marc Kleine-Budde wrote:
+> The M_CAN IP core has an Interrupt Register (IR) and an Interrupt
+> Enable (IE) register. An interrupt is triggered if at least 1 bit is
+> set in the bitwise and of IR and IE.
+>
+> Depending on the configuration not all interrupts are enabled in the
+> IE register. However the m_can_rx_handler() IRQ handler looks at all
+> interrupts not just the enabled ones. This may lead to handling of not
+> activated interrupts.
+>
+> Fix the problem and mask the irqstatus (IR register) with the
+> active_interrupts (cached value of IE register).
+>
+> Fixes: e0d1f4816f2a ("can: m_can: add Bosch M_CAN controller support")
+> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> ---
+>  drivers/net/can/m_can/m_can.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.=
+c
+> index fe74dbd2c966..16b38e6c3985 100644
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> @@ -1057,6 +1057,7 @@ static int m_can_poll(struct napi_struct *napi, int=
+ quota)
+>  	u32 irqstatus;
+> =20
+>  	irqstatus =3D cdev->irqstatus | m_can_read(cdev, M_CAN_IR);
+> +	irqstatus &=3D cdev->active_interrupts;
+> =20
+>  	work_done =3D m_can_rx_handler(dev, quota, irqstatus);
+> =20
+> @@ -1243,6 +1244,8 @@ static int m_can_interrupt_handler(struct m_can_cla=
+ssdev *cdev)
+>  	}
+> =20
+>  	m_can_coalescing_update(cdev, ir);
+> +
+> +	ir &=3D cdev->active_interrupts;
 
-During f2fs_evict_inode(), clear_inode() detects that we missed to truncate
-all page cache before destorying inode, that is because in below path, we
-will create page #0 in cache, but missed to drop it in error path, let's fix
-it.
+m_can_coalescing_update() can change active_interrupts, meaning the
+interrupt that caused the interrupt handler to run may be disabled in
+active_interrupts above and then masked in this added line. Would that
+still work or does it confuse the hardware?
 
-- evict
- - f2fs_evict_inode
-  - f2fs_truncate
-   - f2fs_convert_inline_inode
-    - f2fs_grab_cache_folio
-    : create page #0 in cache
-    - f2fs_convert_inline_folio
-    : sanity check failed, return -EFSCORRUPTED
-  - clear_inode detects that inode->i_data.nrpages is not zero
+Best
+Markus
 
-Fixes: 92dffd01790a ("f2fs: convert inline_data when i_size becomes large")
-Reported-by: syzbot+90266696fe5daacebd35@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-f2fs-devel/68c09802.050a0220.3c6139.000e.GAE@google.com
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/file.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+>  	if (!ir)
+>  		return IRQ_NONE;
+> =20
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 42faaed6a02d..1aae4361d0a8 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -904,8 +904,16 @@ int f2fs_truncate(struct inode *inode)
- 	/* we should check inline_data size */
- 	if (!f2fs_may_inline_data(inode)) {
- 		err = f2fs_convert_inline_inode(inode);
--		if (err)
-+		if (err) {
-+			/*
-+			 * Always truncate page #0 to avoid page cache
-+			 * leak in evict() path.
-+			 */
-+			truncate_inode_pages_range(inode->i_mapping,
-+					F2FS_BLK_TO_BYTES(0),
-+					F2FS_BLK_END_BYTES(0));
- 			return err;
-+		}
- 	}
- 
- 	err = f2fs_truncate_blocks(inode, i_size_read(inode), true);
--- 
-2.49.0
 
+--2e38c85892acb2a28aa9c9c170304678bd4f0f3265d646caeeeb3f8e67ff
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaME5uBsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlPh
+JwD+O882FfXxbmgBdEqU131VdRliujOf0g8vLBYeCBmbUP8BAMU2SEytkBNKdis0
+htuDc2xS83czxVfU4r/5EMimHwcD
+=ewUL
+-----END PGP SIGNATURE-----
+
+--2e38c85892acb2a28aa9c9c170304678bd4f0f3265d646caeeeb3f8e67ff--
 
