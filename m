@@ -1,270 +1,147 @@
-Return-Path: <linux-kernel+bounces-810765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755F6B51F06
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:34:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E0DB51F0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D8721899857
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92D5445A41
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29311327A03;
-	Wed, 10 Sep 2025 17:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1C432F741;
+	Wed, 10 Sep 2025 17:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O1M5Dfoi"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X4PAFdCY"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCE88488
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 17:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6086127B355
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 17:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757525634; cv=none; b=STot+rpVaX28XkBk/cDsaM7Glrvmlu2a60psthtJyo7p4brn3rk7vgXrdMzLCaKMKOsffOxP7Z1BnB/qUGt6VohWWwi9DnUuLsxZVEzG9fB36c+n38097ZwNJPTooji0beS6reukS2DIlFheJWRefmOqidweygT5Wna9zfWrDTo=
+	t=1757525749; cv=none; b=qRPnoIjkuIm1f5V9u3Wt/WoYHBaqBp6Y6t0kRUm7KaiaaKLqU4G8hNURoSlkN7hwMuV1RGNpgjWGhCqiCv/u0dzjOe8tl/j7XTFs+R6fq1OARBmIQ/gW+glKTEwgDpGLv/eF2csEnfnfRD8Hm6LWKUbY9HuSCAaqbJGrn78GYWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757525634; c=relaxed/simple;
-	bh=J7gB9Z38NODsqaTbWLcs+XK+Ps9YUEGTomCZhU0fQzY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SglJlMHpbMhVwu3xPXCaH8gZD5QYWO3bzKiTps9u5Zq6NRrsgfLvAJdCHMLLG3tOJtvHMipuHgh0O3EvSwbrMfi9zDGlyh9Bhp5VGA1IDnsv1f06scTwXTIJaWfST1sRgAKDujshkyRlCTps9fW+hdFFNqHJubX1L4imONudxZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O1M5Dfoi; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74382041c9eso5192349a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:33:51 -0700 (PDT)
+	s=arc-20240116; t=1757525749; c=relaxed/simple;
+	bh=loP8HPZivD7ACH7V0w4NocLfwXke5eDWmuUP7xIp2Z8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=oJUOelYyahiCg9G5Gawfs7kqMWmaFOIN0HpEMHXdddepAN6ra3yus+aWH08fVN93qH8BRyg4NezYwM24/tYXzKPigpdSu880NkbImqdHJUECBKe0pJE025nIR7CaubJrUIpk5GHQLSRZULFnjFAK3GNPWXaFHRe0d++lcx7io3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X4PAFdCY; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77422201fd8so5516514b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:35:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757525630; x=1758130430; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N2Xb0Z0taUQW7f25FPwYUA0qCuGXG5HY2O077HuGpHw=;
-        b=O1M5DfoiH4mWWsM1R7bHUE/6yKrICeoAFNGKikfxhdWD2oE3dR9KIZc+1sL/wibFkw
-         h1DVUOnLpMIKTrUE+EP8kdIdteD2bgC86JVe2mLigfKI5hJecLwg+RpqCjSHJ2nlVeRK
-         oTvAZrnGK4h2AZjpvcJe5lYvusLIyzO2QrBDlbOqud+8SmlVOIjQgOfpYr7MjcOPCpmy
-         cK8taW2EbCnvhgkO+Fph1VQlRE4VKj8MYrjZz3/Cvla9L6flHaxdobwMIbcen+qJg6rC
-         mlV1S8cE2bYD+lDqdo8U71uGw+6XuuVPi+GioUp1N1vSrUf8CcntKH2iOTna4mPzZ9Js
-         Jjhw==
+        d=google.com; s=20230601; t=1757525747; x=1758130547; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iO/ZsYGSbIMx/Phc3/cDa0lxkPb1F9j/LU0uE5Fnnto=;
+        b=X4PAFdCYSl1/pZxIDqzNV6WvD4AB03G2FCsW5G1WONJaEBhA2KivgPiNCBn+1TKcma
+         Qaqg1Y+l7jNeNuvrAricI6/io4os7NJyndt2uYzrd2BUwHidg7pWm10VfVgAgh9Rej7w
+         6KVLxUBBoAZrs9y7GAm34p9UNNvTQqK2ra8P2Nh2WO0DHhOqRChtEN7dGQtDIQALP5Eq
+         gZ/JwGB0uKNpdIrvaMj5pEyAmQxu9Uumj0eCmqci8Aqu13uoXTVL9F2r33vYuZOPx+fK
+         h38bMAf2PJgg+d2J3TcVrlTDK2k+T24wr7k8oDAjkVfbU6ciw3J363mufGUS8fUbboJL
+         HMSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757525630; x=1758130430;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N2Xb0Z0taUQW7f25FPwYUA0qCuGXG5HY2O077HuGpHw=;
-        b=OImgGM1hnCoJxvHHC08DZYOzneW06YxjhCGjoHKq/VgC45Fbvrr5Z/ogYC1/R1kqK+
-         dDiVRYBPtAUoeEdZcMncLmeuXMBP7MAC6AWz/zVsqEn4kmnZxIcE9o7uoFzxOQfxXieQ
-         sIGMb6GV/+JUe1B+S2upIjpmykMCAcDSbW0LYuNpwc+XiUZJC7S0NBYxB4uhnMqStJ6A
-         ZvhwnOfGs8JWww4rKbUcfQ3KPqYSX0qEGXSwHnH0as2g8H3P/th765/Va+0lr7vW2NGw
-         ahRSwKMbDjJwisxiULTKTT+6lO+79NvgU4iG2VW75M4Rn2fRD0F2uJDTX76AikMRxH2i
-         iO5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWuGI9341ZtxGLekHIeHSnLzH2REZw7WUVm5DfLFjvo2cwwBRXOBTgY1xE/0TnSG3ByHslX3QSXsGPIxKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7oN3lzsjdl1zMgByKciWiaToyWlUAXFQioqptQnNz2Wd24i6w
-	tRcSeLE4LZMhrkDGFw3c3fCq20tyLpMTg3JbKiTmLE2yIsvOaSZThErn85WR2nG6lGU=
-X-Gm-Gg: ASbGncuVxbxmWHrki6EZLuvh2G6GE5JfDa05OTa1Jjf5Jsd5PsN0caSFQzSCRBeXnmg
-	Wic0THR7MqDnQnJsml1NrQxrBtg8/FZL91vSpxmmO//arT5MKP3xOZksAtzv0QIkcQABlsFh+34
-	mN/xdNM3r+Ok3W8D4cB+oVBO/xG9TQ065lz0j+Di/QQwu9O3gVwaGPgZW2YVhTm8ImRLaEnenHL
-	v6BM6Lbjr1cJcD6vTYqvI6ESpqO5jFcY5vBedhgbMZxbTwuwVA1C7cKJnrWOlzjjGVgmSfhV4hI
-	/IojZwpQAovnc6IkJXifuDA26S3D8Mi+DiFwGtFmAIfdXE4NPPd84GhqqS9oGcnEGds7HxxT4Xt
-	eoY/lNPz5qEEGqfOHLHiFhh7/cqM=
-X-Google-Smtp-Source: AGHT+IHwxhIvt5PLXpTXwHQhyJxRLqO+skdbWcLPjSCafGejX4kGmiQpDD5IwbTqDvgaXQzUCem4EQ==
-X-Received: by 2002:a05:6830:915:b0:746:d7f2:b735 with SMTP id 46e09a7af769-74c771b8c18mr7855259a34.27.1757525630221;
-        Wed, 10 Sep 2025 10:33:50 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:21f9:be5b:476:1ae3])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-746d6647459sm5540595a34.21.2025.09.10.10.33.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 10:33:48 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 10 Sep 2025 12:33:29 -0500
-Subject: [PATCH v4] iio: adc: ad7124: fix sample rate for multi-channel use
+        d=1e100.net; s=20230601; t=1757525747; x=1758130547;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iO/ZsYGSbIMx/Phc3/cDa0lxkPb1F9j/LU0uE5Fnnto=;
+        b=szZ+0W334ACAEGEaHeyBUufSyC9AWg4Ec3GBqhrvoKe9aNhjcoN2n/O+FRedDDyoat
+         /pZ3iKSYYmlzuI+NlG5t8v4L+RhI0Lsn5xAKPiKVfjn/j+81LV0I7uUkp/oTffEiYIpj
+         KA45AG1qG2ii3lcaYu2ttS8TvTp9zZSq6LO1w278TYgNOhtpvTalvwBxrpswmDWDeU7R
+         2VP8tNXWK2h6v8GoE33qT1Va8+W0WdnmQ3Hki44VM2Bfbawovma0JhR8KhgltJC7sQXM
+         kzpolZRE6/8zhw3yDGtTbELbzKU7aEtruAHhY/6MRdgXfj9XDCl5OPnvKAeEs17AbWiR
+         OxhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKJDqK8LrkmIIhLqmZiXstkUWu/pVpwqGuqzZsM5E4pBg33tkHpLbnnwDNzTkrEc/7YieYIT17Q0jCpBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuMB4x+0f3Q6YMu9KNpzTZli1fxfUV4U4QqivNryaBtn8UIZL6
+	Ac35Os9L/fcGMR2kXdPNe8I1NphtskwS/LfoV1wSoE3dO+zdiC1jq30rZu4qVhtoeekjaQlpf11
+	c2PWGIw==
+X-Google-Smtp-Source: AGHT+IEBzSQdUHmA3TyEKJQlmkFhZJqc6bnksPf3qYWhh2BEicugNPiKD9TbhOOHbK5k4iJSThyP/B45Vzw=
+X-Received: from plxb5.prod.google.com ([2002:a17:902:bd45:b0:248:6b51:1364])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:b8b:b0:249:17d1:f1d5
+ with SMTP id d9443c01a7336-25176729912mr186178225ad.60.1757525746596; Wed, 10
+ Sep 2025 10:35:46 -0700 (PDT)
+Date: Wed, 10 Sep 2025 10:35:45 -0700
+In-Reply-To: <20250909093953.202028-2-chao.gao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v4-1-8ca624c6114c@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAGi2wWgC/53OQW7DIBAF0KtYrDs1EBKbrHqPqgvAQzKSbRJwr
- EaR796Js2hVdZMuEBrg8/5NFMyEReyrm8g4U6E08mBeKhGObjwgUMez0FJvZatbIErgusCrUdp
- ApE8objhBzHiGmDIMl34iuIdH7KH1WgfT+jYGKfjTU0aOrOD7x2Pm4IXd6XEovCsIIQ0DTfuKX
- 5c645D4tma65n2i8SDu2SOVKeXr2n1Wa/i/NWcFCmLbmWC1dDtr37y79uQzvnKVVZv1t2CleVr
- QLHgfdZSdtQ26P4TNT2H7tLBhoZE6RqkMhp36JSzL8gX/uvRu7wEAAA==
-X-Change-ID: 20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-8b22c48b8fc0
-To: Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6666; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=J7gB9Z38NODsqaTbWLcs+XK+Ps9YUEGTomCZhU0fQzY=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBowbZtkvd73eSOKh3OBWb5pmn1jnoYJXzTW9RFV
- JRLoFI7A9iJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaMG2bQAKCRDCzCAB/wGP
- wPIVB/462Rbel/ux9/NS+/FxKElSN5YgOSls+JEHcAdH4/Tn7eUsPgEoFnEyeyTYQma9bEYsuKy
- ZAfuJybYvJqi2B/pr3G5FG91xEap0dvvM6+b0noJGTt5XihLGyHGaucUsQMEOA7QoqosaFNPMnW
- 5g2R96+X7WQrwNKlqYu4F39aJNyav3/KPkRdeSquHk1PNt8bEpby25mruuBeMOp2dAtwe5uJ0dX
- 2ul3swB5ZarulPctOHIXnEC/hR+ZtxjQtAWd/tpHD3Ktr6ZiKf8y5oTgnvAGFysDLZbN7QQWH5a
- FoHvZYUY07X0TJcxHLfIaj9kPLYz37omFam03mmJn39P6j9k
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Mime-Version: 1.0
+References: <20250909093953.202028-1-chao.gao@intel.com> <20250909093953.202028-2-chao.gao@intel.com>
+Message-ID: <aMG28ahWdS-2gHk6@google.com>
+Subject: Re: [PATCH v14 01/22] KVM: x86: Introduce KVM_{G,S}ET_ONE_REG uAPIs support
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, john.allen@amd.com, 
+	mingo@kernel.org, mingo@redhat.com, minipli@grsecurity.net, 
+	mlevitsk@redhat.com, namhyung@kernel.org, pbonzini@redhat.com, 
+	prsampat@amd.com, rick.p.edgecombe@intel.com, shuah@kernel.org, 
+	tglx@linutronix.de, weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com, 
+	xiaoyao.li@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-Change how the FS[10:0] field of the FILTER register is calculated to
-get consistent sample rates when only one channel is enabled vs when
-multiple channels are enabled in a buffered read.
+On Tue, Sep 09, 2025, Chao Gao wrote:
+> @@ -6031,6 +6071,44 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+>  		srcu_read_unlock(&vcpu->kvm->srcu, idx);
+>  		break;
+>  	}
+> +	case KVM_GET_ONE_REG:
+> +	case KVM_SET_ONE_REG: {
+> +		struct kvm_x86_reg_id *id;
+> +		struct kvm_one_reg reg;
+> +		u64 __user *value;
+> +
+> +		r = -EFAULT;
+> +		if (copy_from_user(&reg, argp, sizeof(reg)))
+> +			break;
+> +
+> +		r = -EINVAL;
+> +		if ((reg.id & KVM_REG_ARCH_MASK) != KVM_REG_X86)
+> +			break;
+> +
+> +		id = (struct kvm_x86_reg_id *)&reg.id;
+> +		if (id->rsvd1 || id->rsvd2)
+> +			break;
+> +
+> +		if (id->type == KVM_X86_REG_TYPE_KVM) {
+> +			r = kvm_translate_kvm_reg(id);
+> +			if (r)
+> +				break;
+> +		}
+> +
+> +		r = -EINVAL;
+> +		if (id->type != KVM_X86_REG_TYPE_MSR)
+> +			break;
+> +
+> +		if ((reg.id & KVM_REG_SIZE_MASK) != KVM_REG_SIZE_U64)
+> +			break;
+> +
 
-By default, the AD7124 allows larger sampling frequencies when only one
-channel is enabled. It assumes that you will discard the first sample or
-so to allow for settling time and then no additional settling time is
-needed between samples because there is no multiplexing due to only one
-channel being enabled. The conversion formula to convert between the
-sampling frequency and the FS[10:0] field is:
+Almost forgot.  I think it makes sense to grab kvm->srcu here.  I'm not entirely
+positive that's necessary these days, e.g. after commit 3617c0ee7dec ("KVM: x86/xen:
+Only write Xen hypercall page for guest writes to MSR")but there are path, but
+_proving_ that there are no memory or MSR/PMU filter accesses is practically
+impossible given how much code is reachable via MSR emulation.
 
-    fADC = fCLK / (FS[10:0] x 32)
+If someone wants to put in the effort to prove SRCU isn't needed, then we should
+also drop SRCU protection from KVM_{G,S}ET_MSRS.
 
-which is what the driver has been using.
-
-On the other hand, when multiple channels are enabled, there is
-additional settling time needed when switching between channels so the
-calculation to convert between becomes:
-
-    fADC = fCLK / (FS[10:0] x 32 x N)
-
-where N depends on if SINGLE_CYCLE is set, the selected filter type and,
-in some cases, the power mode.
-
-The FILTER register has a SINGLE_CYCLE bit that can be set to force the
-single channel case to use the same timing as the multi-channel case.
-
-Before this change, the first formula was always used, so if all of the
-in_voltageY_sampling_frequency attributes were set to 10 Hz, then doing
-a buffered read with 1 channel enabled would result in the requested
-sampling frequency of 10 Hz. But when more than one channel was
-enabled, the actual sampling frequency would be 2.5 Hz per channel,
-which is 1/4 of the requested frequency.
-
-After this change, the SINGLE_CYCLE flag is now always enabled and the
-multi-channel formula is now always used. This causes the sampling
-frequency to be consistent regardless of the number of channels enabled.
-
-For now, we are hard-coding N = 4 since the driver doesn't yet support
-other filter types other than the default sinc4 filter.
-
-The AD7124_FILTER_FS define is moved while we are touching this to
-keep the bit fields in descending order to be consistent with the rest
-of the file.
-
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
-This is one of those unfortunate cases where we are fixing a bug but we
-risk breaking userspace that may be depending on the buggy behavior.
-
-I intentionally didn't include a Fixes: tag for this reason.
-
-Given some of the other shortcomings of this driver, like using an
-integer IIO_CHAN_INFO_SAMP_FREQ value when it really needs to allow a
-fractional values, it makes me hopeful that no one is caring too much
-about the exact value of the sampling frequency. So I'm more willing
-than I would normally be to take a risk on making this change.
-
-[1] https://lore.kernel.org/linux-iio/20250825-iio-adc-ad7124-proper-clock-support-v2-0-4dcff9db6b35@baylibre.com/
----
-Changes in v4:
-- Removed unused macros.
-- Fixed typo in comment.
-- Link to v3: https://lore.kernel.org/r/20250905-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v3-1-702ff014ec61@baylibre.com
-
-Changes in v3:
-- Removed the ad7124_get_avg() and harded-coded N = 4 for now.
-- Link to v2: https://lore.kernel.org/r/20250904-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v2-1-bbf2f0d997ea@baylibre.com
-
-Changes in v2:
-- Improved comment explaining why the new factor always applies.
-- Fixed merge conflict with iio/testing branch.
-- Replaced avg parameter with ad7124_get_avg() function.
-- Link to v1: https://lore.kernel.org/r/20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v1-1-f8d4c920a699@baylibre.com
----
- drivers/iio/adc/ad7124.c | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index c6435327d431e5f4ba28aa3332ec6eb90da7c83d..15d98b78ec2709e14c354a64f14e7deefc3bcb56 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -93,10 +93,11 @@
- #define AD7124_CONFIG_PGA		GENMASK(2, 0)
- 
- /* AD7124_FILTER_X */
--#define AD7124_FILTER_FS		GENMASK(10, 0)
- #define AD7124_FILTER_FILTER		GENMASK(23, 21)
- #define AD7124_FILTER_FILTER_SINC4		0
- #define AD7124_FILTER_FILTER_SINC3		2
-+#define AD7124_FILTER_SINGLE_CYCLE	BIT(16)
-+#define AD7124_FILTER_FS		GENMASK(10, 0)
- 
- #define AD7124_MAX_CONFIGS	8
- #define AD7124_MAX_CHANNELS	16
-@@ -285,18 +286,20 @@ static u32 ad7124_get_fclk_hz(struct ad7124_state *st)
- 
- static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel, unsigned int odr)
- {
--	unsigned int fclk, odr_sel_bits;
-+	unsigned int fclk, factor, odr_sel_bits;
- 
- 	fclk = ad7124_get_fclk_hz(st);
- 
- 	/*
--	 * FS[10:0] = fCLK / (fADC x 32) where:
-+	 * FS[10:0] = fCLK / (fADC x 32 * N) where:
- 	 * fADC is the output data rate
- 	 * fCLK is the master clock frequency
-+	 * N is number of conversions per sample (depends on filter type)
- 	 * FS[10:0] are the bits in the filter register
- 	 * FS[10:0] can have a value from 1 to 2047
- 	 */
--	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * 32);
-+	factor = 32 * 4; /* N = 4 for default sinc4 filter. */
-+	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * factor);
- 	if (odr_sel_bits < 1)
- 		odr_sel_bits = 1;
- 	else if (odr_sel_bits > 2047)
-@@ -306,7 +309,8 @@ static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel
- 		st->channels[channel].cfg.live = false;
- 
- 	/* fADC = fCLK / (FS[10:0] x 32) */
--	st->channels[channel].cfg.odr = DIV_ROUND_CLOSEST(fclk, odr_sel_bits * 32);
-+	st->channels[channel].cfg.odr = DIV_ROUND_CLOSEST(fclk, odr_sel_bits *
-+								factor);
- 	st->channels[channel].cfg.odr_sel_bits = odr_sel_bits;
- }
- 
-@@ -439,10 +443,20 @@ static int ad7124_write_config(struct ad7124_state *st, struct ad7124_channel_co
- 	if (ret < 0)
- 		return ret;
- 
-+	/*
-+	 * NB: AD7124_FILTER_SINGLE_CYCLE is always set so that we get the same
-+	 * sampling frequency even when only one channel is enabled in a
-+	 * buffered read. If it was not set, the N in ad7124_set_channel_odr()
-+	 * would be 1 and we would get a faster sampling frequency than what
-+	 * was requested.
-+	 */
- 	tmp = FIELD_PREP(AD7124_FILTER_FILTER, cfg->filter_type) |
-+		AD7124_FILTER_SINGLE_CYCLE |
- 		FIELD_PREP(AD7124_FILTER_FS, cfg->odr_sel_bits);
- 	return ad7124_spi_write_mask(st, AD7124_FILTER(cfg->cfg_slot),
--				     AD7124_FILTER_FILTER | AD7124_FILTER_FS,
-+				     AD7124_FILTER_FILTER |
-+				     AD7124_FILTER_SINGLE_CYCLE |
-+				     AD7124_FILTER_FS,
- 				     tmp, 3);
- }
- 
-
----
-base-commit: b8902d55155cec7bd743dc1129e0b32e70b1751f
-change-id: 20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-8b22c48b8fc0
-
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
-
+> +		value = u64_to_user_ptr(reg.addr);
+> +		if (ioctl == KVM_GET_ONE_REG)
+> +			r = kvm_get_one_msr(vcpu, id->index, value);
+> +		else
+> +			r = kvm_set_one_msr(vcpu, id->index, value);
+> +		break;
+> +	}
+>  	case KVM_TPR_ACCESS_REPORTING: {
+>  		struct kvm_tpr_access_ctl tac;
+>  
+> -- 
+> 2.47.3
+> 
 
