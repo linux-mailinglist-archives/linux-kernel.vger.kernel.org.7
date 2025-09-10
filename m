@@ -1,127 +1,169 @@
-Return-Path: <linux-kernel+bounces-811012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D409BB522F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:52:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C142AB522F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F7A1CC1B34
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:52:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E69F586CB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6704A303CB2;
-	Wed, 10 Sep 2025 20:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5986D30506A;
+	Wed, 10 Sep 2025 20:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSUwoiKc"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pw4J8UXk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0953019AD;
-	Wed, 10 Sep 2025 20:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8A92FB08E;
+	Wed, 10 Sep 2025 20:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757537178; cv=none; b=Bk5DOFJuDMMsdsBxvRwViRxUKE0xneaBLidncokGqhhK09fzIO6C8EaAMcW23PpOuPIS7mA/ah+tbX0M3MIHFNMnCZci5+pXZa6tfOckwfS3M6SLn4DPLqC8jvODNsUfoZjPkp9OP9C87umvysd85sgKJoieqaVgHP0qvrH/OGw=
+	t=1757537257; cv=none; b=onvfFHdamOvQms2ZshPGilFxbTbd9W8P9fNUHBpR44xtyfzuh+UBK4OQEidBbMsYBtg35TSnjWu3geqeuAleT5GjTnnvveHb2AF3Uw9pBq5Qv77eUDvVZ4ePJDTD94o72vubCbRA346ajxqH8DWzwRsqkF4Ro0z4FyyemF2ldrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757537178; c=relaxed/simple;
-	bh=3jUJ7yRAPvTNEv7G8uUSApRLe1x8V8/iVjdKA8ADmx4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TbkFKgSuhuZ0f06zLoDafFiVTLZvM4e5k7Ptj9mVL+Xy6xfvJvPgFUXwMHrDsx7JmmAu42umjM7hCd1lD4FVRc4XT/kYgbmE36KwW/KWXXZKHxWw71ZwqMGExBFG+bALEF5DhDSTZG04Z3Y1xzYXeNDp1/7jC1ddH6CV2gUOnPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lSUwoiKc; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-81f9cfa70deso2500385a.1;
-        Wed, 10 Sep 2025 13:46:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757537176; x=1758141976; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zdPfGCbmStLnf7OkwFRjoXPyuHAb7oGF5r4POmSHGhY=;
-        b=lSUwoiKc/uUIRxj+Kx3bwrZ9VGHjIqMmCXPmEtAAq7ex3wfoknlssVj8RzTGxg5B8i
-         peQlD5duBlHDzgZF5LxYPvLXuFy/DgzcXw+YaTrgMjwyAClU28fSGsAPKmBG5z37Gmb9
-         JRzNM81K+gZNl2DGBEj2T7hFs6EbqWB6jW62f6XhSED8eK77YkCWpHcDvhWoG1nE7dvM
-         zzN4fJdbwmELsrmxWpT7po5SOiOmVchGoVpORL+CY/np0rf0DnJJ1dmm1Pnh1sqrQJOH
-         AmKmzlHyW6k3WvJxL89mVRL6zHTw18Dl89ddYB5NhkLwKMUqoDMlPeg/LgWGzEhXRKho
-         rQPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757537176; x=1758141976;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zdPfGCbmStLnf7OkwFRjoXPyuHAb7oGF5r4POmSHGhY=;
-        b=h5yRkUh3go/qaBzUak77e3HxixGMXEjlCbbHWWi3dDmSCVtK3aqes2WwbeL7MgG02p
-         AM8d/Q5YqPuWV0bPum77MOGLscL4FFxEZ8889KstRfyMwWSAcxotr7DmV648ApcHqWBK
-         YmIAG1PWpMJAlUJ+uL4GprYXs3NDIaTFt5tkldzooBxmalI13nUSxgFBF47gcU75WZMp
-         kqFWsUCfc6VDhjh1Gon9hIjDzAA6i/5FrtTYlosORRW15IToyZQWI/F6INbiLMwrUbpc
-         pC+iIvUFAmk/+jWss4A5CRrC0gvSqr6CIwle2H/Bfgp+u8lP8QeUIRVHKWUq369W5fhy
-         tGXw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8iU4pBEmm/GHC/LtWdUILKc/EqdVgWBS/4iLlA6DAm9Vbr3Jw6x4yMY7Zp4KhZ0PqTRiBRzKhxFQ/TW0=@vger.kernel.org, AJvYcCXSR/hb5aLbuy0a9MJvSRtx5OMUviOfVUUOrUNfbeNmTfzQ2eVHbTdzgY2M9NaHJc3xSX5uJiw+cY9sj4kfcZwQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTHYNvUWD+JEFCeMVgHmd7mctjdFpyaCGronCGrUv6s0cVdu6h
-	5QreJaIDfa0wmISFickXJXZ4/x6FQOhK8eTQw1f5BQJxMPsnbUYfPjDQ
-X-Gm-Gg: ASbGncvIhH+h1nAMocdYgBj2tP9dFfUPfLtU1B+pf04gD/iNS5fje4eGQFB5xoAKrzp
-	R3bpr33aUzpl76P8nDg2Dg7iAIhzhRVgYy9QHEROyniwVd+xwgiFYVQ73uw+BiQtWj1nRHkNYRB
-	m+7QXkl+d2fs9mmlbU5k424Ar18xOT2I85IaZMs6pGTIBB64+xRim2apPJ+fm1LG/nAWAobV7lB
-	b387L09L6qC4G3MMUndobrLT4AKXXe9U0jNtGVklI6Jt6P9jp5oSX6JjBibuC2ZppeENQrvqUGl
-	xTZtBMs8txLT0L4xx/OU6ZZc/CmuX/7fYjdYQIfDtkwKvcdWCR/yP8bk1FrSlH/afZIXevWNoV5
-	o48df6LGc9KP4CIecHXs=
-X-Google-Smtp-Source: AGHT+IEyqefIg2aIVeybWhllIAFyMXyMtJhBmm1X475rnhW0Aevfer0/jPOsC0mHTu8niZEnKw8P6Q==
-X-Received: by 2002:a05:620a:4624:b0:80e:f187:7fd7 with SMTP id af79cd13be357-81ff74afbe7mr152223085a.36.1757537175991;
-        Wed, 10 Sep 2025 13:46:15 -0700 (PDT)
-Received: from localhost ([2a03:2880:20ff:5::])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b5e5c0079sm351700385a.43.2025.09.10.13.46.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 13:46:15 -0700 (PDT)
-From: Usama Arif <usamaarif642@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	shuah@kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Usama Arif <usamaarif642@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH] selftests/mm: include linux/mman.h for prctl_thp_disable
-Date: Wed, 10 Sep 2025 21:46:09 +0100
-Message-ID: <20250910204609.1720498-1-usamaarif642@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1757537257; c=relaxed/simple;
+	bh=B9nXx/uAd8bzj5r9K99vQjrO7Sot+mOg+1OtU9x4TJA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YnxNTfnY9KDSSC3jKprg16OFlKPDV0ktl0qPiQE3GHHWYb1gQSYPUjniCQ2i7YSVQUnUX01CGs42G4p7GgZNFJ7da7kAcTUFtg3+6gmdkuLcJIHoGm/aL/cgeHDikn+e6undnK9l8STHKW9YBQwhyQmfb+I7qyOYVZrTJHfpp+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pw4J8UXk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82205C4CEEB;
+	Wed, 10 Sep 2025 20:47:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757537257;
+	bh=B9nXx/uAd8bzj5r9K99vQjrO7Sot+mOg+1OtU9x4TJA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Pw4J8UXkQy5+jBVfd2aWCgPsOF3LXMVECSVAQ09SL5iQQH4LNdhmS4nAJ1faOP54w
+	 ZwSIkie9GiLSvp+f7iCn7fSdm9n84HnC8sf8KmAF0F/BqyPuevrnzZ/z2kDIo1uR2E
+	 LDGFqR+kGG7GXalmI3uppOIJMjiDbCQ+8MKaiTZ77pZtqc3REy0f8pCsLYZRjZiLR9
+	 JDm8j7NNFYFTSDa8ktJuX0nJkLSRKqknAhEJ1lW4wlFs2bVkPyPDrzrxDsVQntH2Fp
+	 7q8v+cJ7zA23X9PUu/eM3d6Q36AFFNkPHmZSSRO8ISV5/PPLQV15QvM2GpjZnX69G1
+	 RnZH0iosdNKlA==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Wed, 10 Sep 2025 13:47:26 -0700
+Subject: [PATCH] md/md-llbitmap: Use DIV_ROUND_UP_SECTOR_T
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250910-llbitmap-fix-64-div-for-32-bit-v1-1-453a5c8e3e00@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAN3jwWgC/x2NSwqEMBAFryK99kESP0SvIi4yk3Zs8EciMiDef
+ ZpZFq94dVPmJJypL25KfEmWfVOwZUHvOWwfhkRlcsY1prMGy/KScw0HJvmirRHlwrQnVA46oPO
+ +CTY676ua9ORIrOI/MIzP8wNeZXLKcAAAAA==
+X-Change-ID: 20250910-llbitmap-fix-64-div-for-32-bit-9885a1d28834
+To: Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>, 
+ Yu Kuai <yukuai3@huawei.com>, Li Nan <linan122@huawei.com>
+Cc: linux-raid@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4615; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=B9nXx/uAd8bzj5r9K99vQjrO7Sot+mOg+1OtU9x4TJA=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDBkHHz+33p76/YjXv9aEo7McPZx06tnZ1p96u/HJjRnKI
+ vXFPam1HaUsDGJcDLJiiizVj1WPGxrOOct449QkmDmsTCBDGLg4BWAi3QqMDDta8xw7jy3cXzrt
+ U0JPWtyFDM7Xvls5Fn99fUY6VLX4UQojw9na7EeCpj3ZNuuPvSg+9Hju1L/Sq2Xf+Cf1aNztWGZ
+ 9iRUA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-MADV_COLLAPSE is part of linux/mman.h and needs to be included
-for this selftest for glibc compatibility. It is also included
-in other tests that use MADV_COLLAPSE.
+When building for 32-bit platforms, there are several link (if builtin)
+or modpost (if a module) errors due to dividends of type 'sector_t' in
+DIV_ROUND_UP:
 
-Fixes: d9c7ff4dae62 ("selftests: prctl: introduce tests for disabling THPs completely")
-Reported-by: Mark Brown <broonie@kernel.org>
-Closes: https://lore.kernel.org/all/c8249725-e91d-4c51-b9bb-40305e61e20d@sirena.org.uk/
-Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+  arm-linux-gnueabi-ld: drivers/md/md-llbitmap.o: in function `llbitmap_resize':
+  drivers/md/md-llbitmap.c:1017:(.text+0xae8): undefined reference to `__aeabi_uldivmod'
+  arm-linux-gnueabi-ld: drivers/md/md-llbitmap.c:1020:(.text+0xb10): undefined reference to `__aeabi_uldivmod'
+  arm-linux-gnueabi-ld: drivers/md/md-llbitmap.o: in function `llbitmap_end_discard':
+  drivers/md/md-llbitmap.c:1114:(.text+0xf14): undefined reference to `__aeabi_uldivmod'
+  arm-linux-gnueabi-ld: drivers/md/md-llbitmap.o: in function `llbitmap_start_discard':
+  drivers/md/md-llbitmap.c:1097:(.text+0x1808): undefined reference to `__aeabi_uldivmod'
+  arm-linux-gnueabi-ld: drivers/md/md-llbitmap.o: in function `llbitmap_read_sb':
+  drivers/md/md-llbitmap.c:867:(.text+0x2080): undefined reference to `__aeabi_uldivmod'
+  arm-linux-gnueabi-ld: drivers/md/md-llbitmap.o:drivers/md/md-llbitmap.c:895: more undefined references to `__aeabi_uldivmod' follow
+
+Use DIV_ROUND_UP_SECTOR_T instead of DIV_ROUND_UP, which exists to
+handle this exact situation.
+
+Fixes: 5ab829f1971d ("md/md-llbitmap: introduce new lockless bitmap")
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 ---
- tools/testing/selftests/mm/prctl_thp_disable.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/md-llbitmap.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/tools/testing/selftests/mm/prctl_thp_disable.c b/tools/testing/selftests/mm/prctl_thp_disable.c
-index feb711dca3a1d..84b4a4b345af5 100644
---- a/tools/testing/selftests/mm/prctl_thp_disable.c
-+++ b/tools/testing/selftests/mm/prctl_thp_disable.c
-@@ -9,6 +9,7 @@
- #include <string.h>
- #include <unistd.h>
- #include <sys/mman.h>
-+#include <linux/mman.h>
- #include <sys/prctl.h>
- #include <sys/wait.h>
+diff --git a/drivers/md/md-llbitmap.c b/drivers/md/md-llbitmap.c
+index 3337d5c7e7e5..1eb434306162 100644
+--- a/drivers/md/md-llbitmap.c
++++ b/drivers/md/md-llbitmap.c
+@@ -781,7 +781,7 @@ static int llbitmap_init(struct llbitmap *llbitmap)
  
--- 
-2.47.3
+ 	while (chunks > space) {
+ 		chunksize = chunksize << 1;
+-		chunks = DIV_ROUND_UP(blocks, chunksize);
++		chunks = DIV_ROUND_UP_SECTOR_T(blocks, chunksize);
+ 	}
+ 
+ 	llbitmap->barrier_idle = DEFAULT_BARRIER_IDLE;
+@@ -864,8 +864,8 @@ static int llbitmap_read_sb(struct llbitmap *llbitmap)
+ 		goto out_put_page;
+ 	}
+ 
+-	if (chunksize < DIV_ROUND_UP(mddev->resync_max_sectors,
+-				     mddev->bitmap_info.space << SECTOR_SHIFT)) {
++	if (chunksize < DIV_ROUND_UP_SECTOR_T(mddev->resync_max_sectors,
++					      mddev->bitmap_info.space << SECTOR_SHIFT)) {
+ 		pr_err("md/llbitmap: %s: chunksize too small %lu < %llu / %lu",
+ 		       mdname(mddev), chunksize, mddev->resync_max_sectors,
+ 		       mddev->bitmap_info.space);
+@@ -892,7 +892,7 @@ static int llbitmap_read_sb(struct llbitmap *llbitmap)
+ 
+ 	llbitmap->barrier_idle = DEFAULT_BARRIER_IDLE;
+ 	llbitmap->chunksize = chunksize;
+-	llbitmap->chunks = DIV_ROUND_UP(mddev->resync_max_sectors, chunksize);
++	llbitmap->chunks = DIV_ROUND_UP_SECTOR_T(mddev->resync_max_sectors, chunksize);
+ 	llbitmap->chunkshift = ffz(~chunksize);
+ 	ret = llbitmap_cache_pages(llbitmap);
+ 
+@@ -1014,10 +1014,10 @@ static int llbitmap_resize(struct mddev *mddev, sector_t blocks, int chunksize)
+ 		chunksize = llbitmap->chunksize;
+ 
+ 	/* If there is enough space, leave the chunksize unchanged. */
+-	chunks = DIV_ROUND_UP(blocks, chunksize);
++	chunks = DIV_ROUND_UP_SECTOR_T(blocks, chunksize);
+ 	while (chunks > mddev->bitmap_info.space << SECTOR_SHIFT) {
+ 		chunksize = chunksize << 1;
+-		chunks = DIV_ROUND_UP(blocks, chunksize);
++		chunks = DIV_ROUND_UP_SECTOR_T(blocks, chunksize);
+ 	}
+ 
+ 	llbitmap->chunkshift = ffz(~chunksize);
+@@ -1094,7 +1094,7 @@ static void llbitmap_start_discard(struct mddev *mddev, sector_t offset,
+ 				   unsigned long sectors)
+ {
+ 	struct llbitmap *llbitmap = mddev->bitmap;
+-	unsigned long start = DIV_ROUND_UP(offset, llbitmap->chunksize);
++	unsigned long start = DIV_ROUND_UP_SECTOR_T(offset, llbitmap->chunksize);
+ 	unsigned long end = (offset + sectors - 1) >> llbitmap->chunkshift;
+ 	int page_start = (start + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
+ 	int page_end = (end + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
+@@ -1111,7 +1111,7 @@ static void llbitmap_end_discard(struct mddev *mddev, sector_t offset,
+ 				 unsigned long sectors)
+ {
+ 	struct llbitmap *llbitmap = mddev->bitmap;
+-	unsigned long start = DIV_ROUND_UP(offset, llbitmap->chunksize);
++	unsigned long start = DIV_ROUND_UP_SECTOR_T(offset, llbitmap->chunksize);
+ 	unsigned long end = (offset + sectors - 1) >> llbitmap->chunkshift;
+ 	int page_start = (start + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
+ 	int page_end = (end + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
+
+---
+base-commit: 5ab829f1971dc99f2aac10846c378e67fc875abc
+change-id: 20250910-llbitmap-fix-64-div-for-32-bit-9885a1d28834
+
+Best regards,
+--  
+Nathan Chancellor <nathan@kernel.org>
 
 
