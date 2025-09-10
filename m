@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-811049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B29F0B52371
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:24:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96097B52373
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9B7C7AA148
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:22:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60B784E1DFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B28A31158A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7A2314B6A;
 	Wed, 10 Sep 2025 21:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Cern/LBe"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FdyknXB3"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796F3309F07;
-	Wed, 10 Sep 2025 21:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD2030FF26;
+	Wed, 10 Sep 2025 21:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757539439; cv=none; b=leUbZuey13GYH6iCaLeOpnx6hNy82lRYJC65XmRtm+GkM9rpX2dLZo4kDK2Wb29jc5T4bU8M5iB/pSfJt9HFwISxGhAzkUFgTJQa5CMH9aRjPCvETuqmXZ9KLJALgRgAHQeO8rDmkOR1gBTXIZu9Q+iepGgVv0Pqnlhst4SlCpE=
+	t=1757539440; cv=none; b=XJDYRN1l7gw5iheBzI3k3Mccx0ThlzyTeDHL6t9VgBVrhenRYtNn5ujoYCSi5UI9gC9b5GtO0LV2sqrV4BjFIjkZZv9gCbqPegi3mAJBP0HgzJ1NErEa0tskO4QJ4NUCM+mKYctNsFpyZCjPH7j8J0M8igyeH4tx27944J7CgKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757539439; c=relaxed/simple;
-	bh=biTn94UYUWgbB4jzZfQ+pzMLwiSvOn6MtuyjJZkNgKQ=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Iz1/dnyaaiv+Nn16g0/fuWrVhRsj0sWrjG1uzWTSWxBUtmbHCL5Fm1WDTe4gnLHmefopUggVuJkmvLzj1aVn1XO01tkX3aPfeIWKDrprWjNYqZsO2JzxU2XMRr1UDjJUMkDmMFGg1/dKXZmkUTNyrHNlYWHoazYBG4mZeyN6kmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Cern/LBe; arc=none smtp.client-ip=198.47.23.234
+	s=arc-20240116; t=1757539440; c=relaxed/simple;
+	bh=PbQeF3y+qwgBCbyFKvOZXgZH5WFcFU8Cgb1ja0zs8uU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=tLoOpMknHlUylvyz8eaHH+d+Q3u14zEALbtAKY0OjjmTOsIfJBhM86939Lzo/aJFfXQTWHGlY5oHMs5/NQ6/X+x5FyBw4xcphOUUkOFr1DLbuy2NpjASAG3h3xidcrqt5LhIgVug1qicqSCJZfFQlSm+ZbVMGJYL3jq8C2zm+k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FdyknXB3; arc=none smtp.client-ip=198.47.19.245
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58ALNoL4226940;
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58ALNoH4146663;
 	Wed, 10 Sep 2025 16:23:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1757539430;
-	bh=bmEY0WfaxpzoYR06q8U/9vAuoR60sOBVOraHfKIbfgs=;
-	h=From:Subject:Date:To:CC;
-	b=Cern/LBe0Av9vMSEe1cKDTioXiRPAXYG/uW/6j29e90j62M1J5WAhv7GuwFjuBaCv
-	 mqcsIO5Ckp2enUju20rYROuQxab7V8NlNogrlEDNteF5aysSh7UCoyFcSalDNVuO76
-	 H4oiik8YvQkuAd2DGkgiamr45n+lQjronFopDnR0=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58ALNnA2572645
+	bh=fkjPzOus4exPAHnEz6RTPXE//hfUlcCGzFIQiKl5DiE=;
+	h=From:Date:Subject:References:In-Reply-To:To:CC;
+	b=FdyknXB3VPlFUy9nK5nSE36PDZYZo8a7pTSuDLfpmnGUXI6vpZr9uSUk+8x5o5kb+
+	 m7GtK7NL73n+2aQ6OYZ7V/WBqn7KOyb0Y4rr8qEPpal221daZx4SIXq30Z0AFlqkUl
+	 0rq2q5GA7HxHcMITXxK9WPg4M75I4F7KHXztYtA4=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58ALNnGV014784
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
 	Wed, 10 Sep 2025 16:23:49 -0500
-Received: from DFLE202.ent.ti.com (10.64.6.60) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE207.ent.ti.com (157.170.170.95) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 10
  Sep 2025 16:23:49 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE202.ent.ti.com
- (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE207.ent.ti.com
+ (157.170.170.95) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
  Transport; Wed, 10 Sep 2025 16:23:49 -0500
 Received: from [127.0.1.1] (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58ALNnZ31097742;
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58ALNnZ41097742;
 	Wed, 10 Sep 2025 16:23:49 -0500
 From: Kendall Willis <k-willis@ti.com>
-Subject: [PATCH v2 0/2] serial: 8250: omap: Add wakeup support
-Date: Wed, 10 Sep 2025 16:23:30 -0500
-Message-ID: <20250910-uart-daisy-chain-8250-omap-v2-0-e90d44c1a9ac@ti.com>
+Date: Wed, 10 Sep 2025 16:23:31 -0500
+Subject: [PATCH v2 1/2] dt-bindings: serial: 8250_omap: Add wakeup pinctrl
+ state
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,11 +67,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFLswWgC/03Myw6CMBCF4Vchs3ZIO7RgXfkexkUDg0wESlq8h
- fDuNq5c/jkn3waJo3CCU7FB5KckCXMOOhTQDn6+MUqXG0iRVU4rfPi4YuclfTAfZMZjHjBMfsG
- qNo7b2jfaWsjAErmX9w+/XHP3MUy4DpH9H6kMaTLWllVDTpFDjXd8yThKOq9StmGCff8CBlorG
- 6cAAAA=
-X-Change-ID: 20250910-uart-daisy-chain-8250-omap-3649ec6a7155
+Message-ID: <20250910-uart-daisy-chain-8250-omap-v2-1-e90d44c1a9ac@ti.com>
+References: <20250910-uart-daisy-chain-8250-omap-v2-0-e90d44c1a9ac@ti.com>
+In-Reply-To: <20250910-uart-daisy-chain-8250-omap-v2-0-e90d44c1a9ac@ti.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby
 	<jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -89,80 +88,48 @@ CC: <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
 X-Mailer: b4 0.14.2
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This series adds wakeup support for the serial 8250_omap driver. On the
-TI K3 AM62 family of devices, the UARTs are able to wakeup the system
-from various low power modes by using I/O daisy-chaining.
+From: Markus Schneider-Pargmann <msp@baylibre.com>
 
-The wakeup functionality is implemented by adding the pinctrl state
-'wakeup' in which specific flags are set on the pins to enable wakeup
-via I/O daisy-chain. If the 'wakeup' pinctrl state exists for the serial
-device, the 'wakeup' pinctrl state is selected on suspend. Upon resume,
-the pinctrl 'default' state is selected.
+Pins associated with the 8250 omap unit can be the source of a wakeup in
+deep sleep states. To be able to wakeup, these pins have to be
+configured in a special way. To support this configuration add the
+default and wakeup pinctrl states.
 
-The commits "dt-bindings: serial: 8250_omap: Add wakeup pinctrl state"
-and "serial: 8250: omap: Support wakeup pinctrl state on suspend" were
-picked from this series [1]. The commit "dt-bindings: serial: 8250_omap:
-Add wakeup pinctrl state" was updated to follow the structure of a
-similar patch [2] by Markus for the m_can driver. The commit "serial:
-8250: omap: Support wakeup pinctrl state on suspend" was updated to only
-include s2ram functionality instead of a poweroff state.
-
-Implementation
---------------
-This series is intended to be implemented along with the following
-series. This patch has no dependencies on any of the other series:
-
-1. "pmdomain: ti_sci: Handle wakeup constraint if device has pinctrl
-   wakeup state" [3]: Patch which skips setting constraints for wakeup
-   sources that use pinctrl state 'wakeup'.
-
-2. "serial: 8250: omap: Add wakeup support" (this series): Implements
-   wakeup from the UARTs for TI K3 SoCs
-
-3. "arm64: dts: ti: k3-am62: Support Main UART wakeup" [4]: Implements
-   the functionality to wakeup the system from the Main UART
-
-Testing
--------
-Tested on a AM62P SK EVM board with all series and dependencies
-implemented. Suspend/resume verified with the Main UART wakeup source
-by entering a keypress on the console.
-
-This github branch [5] has all the necessary patches to test the series
-using linux-next.
-
-Links
------
-[1] https://lore.kernel.org/all/20240523075819.1285554-1-msp@baylibre.com/
-[2] https://lore.kernel.org/all/20250820-topic-mcan-wakeup-source-v6-12-v9-1-0ac13f2ddd67@baylibre.com/
-[3] https://github.com/kwillis01/linux/tree/b4/uart-daisy-chain-pmdomain
-[4] https://github.com/kwillis01/linux/tree/b4/uart-daisy-chain-dts
-[5] https://github.com/kwillis01/linux/tree/uart-daisy-chain
-
-Previous Versions
------------------
-v1: https://lore.kernel.org/all/20250904212455.3729029-1-k-willis@ti.com/
-
-Changes from v1 to v2:
- - Drop patch for updated wakeup-source binding
- - Update dt binding for pinctrl to only use either default or sleep
-   states and change commit message to reflect the change
-
-base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
+Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+Signed-off-by: Kendall Willis <k-willis@ti.com>
 ---
-Markus Schneider-Pargmann (2):
-      dt-bindings: serial: 8250_omap: Add wakeup pinctrl state
-      serial: 8250: omap: Support wakeup pinctrl state on suspend
+ Documentation/devicetree/bindings/serial/8250_omap.yaml | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
- .../devicetree/bindings/serial/8250_omap.yaml      | 16 ++++++++++
- drivers/tty/serial/8250/8250_omap.c                | 36 ++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
----
-base-commit: 5f540c4aade9f1d58fb7b9490b4b7d5214ec9746
-change-id: 20250910-uart-daisy-chain-8250-omap-3649ec6a7155
+diff --git a/Documentation/devicetree/bindings/serial/8250_omap.yaml b/Documentation/devicetree/bindings/serial/8250_omap.yaml
+index 1859f71297ff297141e5cd455574fa9ccd9dd11c..aabacca2b2fa6a7740173e6c415656360b5df4e4 100644
+--- a/Documentation/devicetree/bindings/serial/8250_omap.yaml
++++ b/Documentation/devicetree/bindings/serial/8250_omap.yaml
+@@ -71,6 +71,22 @@ properties:
+   overrun-throttle-ms: true
+   wakeup-source: true
+ 
++  pinctrl-0:
++    description: Default pinctrl state
++
++  pinctrl-1:
++    description: Wakeup pinctrl state
++
++  pinctrl-names:
++    description:
++      When present should contain at least "default" describing the default pin
++      states. The second state called "wakeup" describes the pins in their
++      wakeup configuration required to exit sleep states.
++    minItems: 1
++    items:
++      - const: default
++      - const: wakeup
++
+ required:
+   - compatible
+   - reg
 
-Best regards,
 -- 
-Kendall Willis <k-willis@ti.com>
+2.34.1
 
 
