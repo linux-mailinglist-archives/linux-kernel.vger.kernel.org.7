@@ -1,105 +1,120 @@
-Return-Path: <linux-kernel+bounces-809251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A95B50A98
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:59:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD07B50A73
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 622C04E6B78
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:59:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C74565FBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54E2225760;
-	Wed, 10 Sep 2025 01:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E926221F39;
+	Wed, 10 Sep 2025 01:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="GNfUxdvE"
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BKaghRGO"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67827224AFA
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6EA1EA7DD
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757469578; cv=none; b=jnuawD4YzpUk5fTfg7UGutUnp22rjyTkgw2kwAESzncKfCVC7tr89LZiwZi3iJ9OEJ9nGD39KwoFPOwHKdPOdNQGrAM9KDubwfgThx+77I0jyRaSvasza+1phd/Cb45bkCqfGkwKD4ylns1DzoERrJ0csvOeFt0onyTyTIM5OeQ=
+	t=1757468908; cv=none; b=RyuKaCb9Uvmq5efkhwZ0ZHOiyfaN0F5MRJJwAMx/v0TjEw7m+lrYJK9GabZZecsX8bd8Dfgrmhe2QLWznDjZvFIM71JucwD5hmcUl++yHRTwrmoy/pysfjZdEojnJUy9eNd9GmntZDLQtU3Wo29dkkEJtxUC+9hr32VQhIg1xBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757469578; c=relaxed/simple;
-	bh=eWW5f2UcZzlbQe5XSAzAS5PyzDhhi4LY7mxDHExKlVA=;
-	h=Message-ID:From:To:Subject:Date:MIME-Version; b=DE4Xi1Z26tP9alhfeIm/rKeafU9/rfaHqugD/xyPJL7+WmzF4gwZMQqEYYhpaX52avcefYvAWzUQ2DH2IgFvLcz5rdPrfn7+ktoKF5C7fmhD70tWWKEyIkYhekdrwhkUIxjVKtPMMMiV/+P+eLd6p+aUmG+cDCt53X+ftZHlJXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=GNfUxdvE; arc=none smtp.client-ip=162.62.57.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1757469263; bh=9nQMQerLehG9FQEhBGEdRePggt2lPTLGqDaDNYRlCKU=;
-	h=From:To:Subject:Date;
-	b=GNfUxdvE7/+QWgHiClWq/2PG9qwCNRhWKnAq9gDl4fvfBM5TyNSp9LkPo8S2jXFGT
-	 TSdlxigphVANcGiWwnkeAhJ+zRO0Weifi7n7RF23SDIFmveXlsKOmTGKO8DeLDHwyU
-	 A5LTFSkq57W2mb9ACMW0VngrXuajxrhUbKNd+UoA=
-Received: from localhost.localdomain ([2408:8411:2492:7e81:ab2:ed63:ee9c:f36e])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id C00B16EC; Wed, 10 Sep 2025 09:48:00 +0800
-X-QQ-mid: xmsmtpt1757468880t1hl4uaoy
-Message-ID: <tencent_9F7BD0CB08BE82E158610B7568B3EBD96B09@qq.com>
-X-QQ-XMAILINFO: OVFdYp27KdlJaw15E0ut52TKfRqtnQNKhFTrZHZojOH4XeyntjTAQigDELlbFZ
-	 rQY8BOrgnjtBQRvafcBm3zrJiG/gjOYRcXa+zzQNTQM/NiUEcAqdUj/5f4XrZ6Eev1TCfylDHvM2
-	 2tNcAh8b0LSLq4xCaJJ3NRS3bxQRRaOnKua182eK7ijAo+UnB0ihoC+PVjRi/O66+VNpo7MgkufZ
-	 RZaWG+cTATuaRo933zexcUie9TrS3EneLK+vPaWeBu0rTzfVWSu4howPxr9O3IgT96mt11kSP+wp
-	 N3qknE3kffWwzqqC1jtIcuXuzhBCsqguYOO6R4eOBItSMm8g/6Pz/1MmUQ0lMZgCEhwN2ns02BJr
-	 f2q1gBRVhdRHQpcW77hWt113c9if8slgF8aX6vPvDtL2aB03fYH5InywaoJs+1coJvSbFUrDzUJ6
-	 /jaURFYHjrT9s5P11FewN6p7MQ+sJNRoLrpPcJM7SAoXGcTPDGUTpv01MVMasDjPzVEz68czjNoT
-	 KkQLee0ITGcAaUa3QvKxzcpoKYTImr9GEM3IQhycKfCWkEDm4RB6OoLax82gJqR0A7GmcKgRRDQR
-	 KJgEbbZh9bh/8bqi+fM28Trgtws2bYEQK/MhqNnvkCMcXa4RxN9SHaynNuKlmoNqHF7+2B+cznoM
-	 DGXetMH8zNcTy8z520nNYwo2l4p6QiPjvx7bjJKEEXj9nhhNqfgyvB4zhhui0DowV5rQ18zLyHD6
-	 l/HFdC7EFoHgxcNQJy9T5wdXniiBBE/b+P7VDp3z54sTQ+wcybhrYY0Vn64bnVd+BEUM6PAOaEff
-	 328to+6h5kMaZ1w3Wn3RR1SalVtyxi11qAc9sooIKMkx+HXRqkImq4Wr9NkXjFWHEnl6svuihI9J
-	 jqEuHy3HHv7M7QgmQfmamJRYlICA/qSyF9nv8n8BD7lxwK73McJse6U9uWaCgjTZ9T5D8ZLSiO7G
-	 iZBWfpFJK6Zk5Ka9KckDXBqKi19AjvgvZsK/+dJDSqv6gBI/ulZEWpwb87CRctNzQUNrcZXba2o6
-	 IA1W6RQc+XpRe1rlV7Cz1UeKSCIN8=
-X-QQ-XMRINFO: NhdyCYpGN2QZqWzjAb9u7a0=
-From: Enlin Mu <2277901360@qq.com>
-To: jstultz@google.com,
-	tglx@linutronix.de,
-	sboyd@kernel.org,
-	linux-kernel@vger.kernel.org,
-	enlinmu@gmail.com,
-	enlin.mu@unisoc.com,
-	enlin.mu@outlook.com
-Subject: [PATCH] clocksource: delete unnecessary comments
-Date: Wed, 10 Sep 2025 09:47:59 +0800
-X-OQ-MSGID: <20250910014759.8223-1-2277901360@qq.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1757468908; c=relaxed/simple;
+	bh=lNwyQ1qlgC5YOiwLCjfVvPjilzDWvlgRD5Sr/+vFbDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EqX37MnCWeUxpI3HvKIJrVEFzjHZTt2cXOBBDklYWmmqiPdufZxBI89Wza2JFUJuSVmVFwkkDhb+XmjpJ9N+gje6ZCKEGCjRf0Ryj6pfanKvH++LmYh59mUmSK4VISJzKVT+ZTc5DE9JqJoPtB/+4E1fx35aGldI9CIC80isOnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BKaghRGO; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 9 Sep 2025 21:48:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757468892;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=07Yd4H765qOC6tzm5S7wF2VWIIKcE5+hjsYL92cJvP0=;
+	b=BKaghRGOQ0MHnFTX33b2EgYcSDm+bEncTYRvENHbJ3QJO8IE3YcUPgrrCoChuicXfhNNep
+	ncfJhA3J3wwuer9hfjm/wmZlMCMuaBJqvBjMmDL1q6T0tHQK4sMY1Nd6JD84pgLKyGo4lk
+	mBC0eFg2rI3JdqYLf8pEOCswE20wL1c=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org, 
+	amaindex@outlook.com, anna.schumaker@oracle.com, boqun.feng@gmail.com, 
+	geert@linux-m68k.org, ioworker0@gmail.com, joel.granados@kernel.org, 
+	jstultz@google.com, leonylgao@tencent.com, linux-kernel@vger.kernel.org, 
+	linux-m68k@lists.linux-m68k.org, longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com, 
+	mingzhe.yang@ly.com, oak@helsinkinet.fi, peterz@infradead.org, rostedt@goodmis.org, 
+	senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+Message-ID: <gtie7ylcuftmi2jgzviipxnvjzcds46eqce4fxxalbutwphbe4@erwrj3p7udrz>
+References: <20250909145243.17119-1-lance.yang@linux.dev>
+ <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
+ <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
+ <ufkr7rkg7rsfo6ovsnwz2gqf4mtmmevb3mququeukqlryzwzmz@x4chw22ojvnu>
+ <bea3d81c-2b33-a89d-ae26-7d565a5d2217@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bea3d81c-2b33-a89d-ae26-7d565a5d2217@linux-m68k.org>
+X-Migadu-Flow: FLOW_OUT
 
-From: Enlin Mu <enlin.mu@unisoc.com>
+On Wed, Sep 10, 2025 at 11:35:56AM +1000, Finn Thain wrote:
+> Similarly, on m68k, there is no issue with __alignof(long) == 2 because 
+> these platforms don't trap on misaligned access. But that seems a bit 
+> irrelevant to the real issue, which is not specific architectural quirks, 
+> but the algorithms and their ongoing development.
 
-The new format is as follows:
-  clocksource: jiffies mask:0xfff max_cycles:0xffff,max_idle_ns: 7645000 ns
+Err, I believe the topic was just alignment and the breaking of commonly
+held expectations :)
 
-Signed-off-by: Enlin Mu <enlin.mu@unisoc.com>
----
- kernel/time/clocksource.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> > ...
+> > > 
+> > > IMHO, good C doesn't make alignment assumptions, because that hinders 
+> > > source code portability and reuse, as well as algorithm extensibility. 
+> > > We've seen it before. The issue here [1] is no different from the 
+> > > pointer abuse which we fixed in Cpython [2].
+> > 
+> > That kind of thinking really dates from before multithreaded and even 
+> > lockless algorithms became absolutely pervasive, especially in the 
+> > kernel.
+> > 
+> 
+> What I meant was, "assumptions hinder portability etc." not "good C 
+> hinders portability etc." (my bad).
 
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 0aef0e349e49..c70880376ec6 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -1218,7 +1218,7 @@ void __clocksource_update_freq_scale(struct clocksource *cs, u32 scale, u32 freq
- 
- 	clocksource_update_max_deferment(cs);
- 
--	pr_info("%s: mask: 0x%llx max_cycles: 0x%llx, max_idle_ns: %lld ns\n",
-+	pr_info("%s mask: 0x%llx max_cycles: 0x%llx, max_idle_ns: %lld ns\n",
- 		cs->name, cs->mask, cs->max_cycles, cs->max_idle_ns);
- }
- EXPORT_SYMBOL_GPL(__clocksource_update_freq_scale);
--- 
-2.39.5
+Of course, but given the lack of a true atomic type in C there's no good
+alternative way to avoid this landmine.
 
+Also, grep for READ_ONCE/WRITE_ONCE in the kernel tree if you want to
+see how big the issue is - ad then remember that only captures a
+fraction of it :)
+
+> 
+> > These days, READ_ONCE() and WRITE_ONCE() are pervasive, and since C 
+> > lacks any notion of atomics in the type system (the place this primarily 
+> > comes up), it would go a long ways towards improving portability and 
+> > eliminating nasty land mines.
+> > 
+> 
+> Natural alignment would seem to be desirable for new ABIs, until you 
+> realize that it implies wasted RAM on embedded systems and reduced data 
+> locality (that is, cooler caches if you did this on i386).
+
+For the data structures where it matters we tend to organize things by
+natural alignment already.
+
+If anyone wanted to gather precise numbers, there's memory allocation
+profiling + pahole :)
 
