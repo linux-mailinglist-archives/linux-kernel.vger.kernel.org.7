@@ -1,356 +1,122 @@
-Return-Path: <linux-kernel+bounces-809916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA720B51376
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:08:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F39DB5137F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A570F3B6162
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:08:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 633F01C266C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D65431194C;
-	Wed, 10 Sep 2025 10:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2ELCipT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3839F24169D;
-	Wed, 10 Sep 2025 10:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015C62D1932;
+	Wed, 10 Sep 2025 10:08:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BBE315D25
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757498881; cv=none; b=GFZuLyIObq8LMx0ZqggUxOZP1ckBOeQ5ZijvCZ8Kww0U54lGdQCxaVdSy3uPL87rluotTtveeaZ5STb0qs6QGavSu0fd9RzMFX0FPtK1V62C6Ndk8X07M/CnxhRJ8NGVp+2+uptz6VBKjcsLwWXMyI9E4rSZ5x8r93JZk5bsAok=
+	t=1757498907; cv=none; b=f/zVJ1c6yFYHKg2hrwDNECAiFaxn5/a6qld5TGSgGHuF260YhJVGYbJyWJHmrrovCUwOBPsd359x1y8N3sFNlS+Qq8UEQuS9MIuNgQuRsV39JCR6gwYf04Vy2ufaKWyyeqZGn79DF44fhcKCFbXrZxQVRpKs+GUiwSyhaDe2YIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757498881; c=relaxed/simple;
-	bh=SgY377TySytRn6FIO/rE2+aLA7x8CvZYrR5OUKT5s/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mO9cSJhUVmuw6McE5gRpkawRRZtporTbfaZLJemizGw4F2bdAUudWnCjdZKf6dJQHI1XpfWGooOaM+1oiStuGM5eIGVOp/QjWEhQM8foUYcLTlRQ/9So/004kCpbg4MqiWRzPu/VCo8pk41ZgniEi4zcf49ogMXCFqVqx5Kslis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2ELCipT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09B1EC4CEF0;
-	Wed, 10 Sep 2025 10:07:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757498880;
-	bh=SgY377TySytRn6FIO/rE2+aLA7x8CvZYrR5OUKT5s/M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=j2ELCipT1u5m8iD0vib9RNYRmxAf1Vb2HFxTmZ1bqSh4lnUBVqfcHNrwysi5dYFxZ
-	 WR4UW1cCaw+i++Ed+nhYeN494sfsc6e6+zK9NFVPqo1RvSaIzhxdJXyDjojoPuW8K7
-	 jI2j0oMU/4+07kDxiVi146JF0B9vXhAs/H/RPH/cxzcAi2atOfHg9We/ghZZvHAWfM
-	 yB502zF5WapOR6WHT+UidHPlTz5RcqDqri/CBSnhgbrnKxNXX7RUh17LblQo15iBv4
-	 6ZgQwZNSoqY0TSZkAT/hHntYOSPCdiKH952CeSz4r2KTnWVfH92BYCPqoYueT94B1M
-	 W2t7pCg/zv1VA==
-From: Benno Lossin <lossin@kernel.org>
-To: Benno Lossin <lossin@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Fiona Behrens <me@kloenk.dev>,
-	Alban Kurti <kurti@invicto.ai>
-Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] rust: pin-init: add `#[bind]` attribute to access previously initialized fields
-Date: Wed, 10 Sep 2025 12:07:53 +0200
-Message-ID: <20250910100755.2361281-1-lossin@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1757498907; c=relaxed/simple;
+	bh=MnqbWyDA2EOd2xFAHwBhdGG8jY7mWY+9asdBzyGANb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j1Ywt9a7jJsdssRyTednzNOIRlWc7BQykJJEu5SkxOumb3LMEV4pDD7mU6DYyAIuYNUs2LK9b6M1TXucMtLz/bK3uoX5Ke2ftSCM+MXTwTaWP7iZlbYNuifyq2Kc4DlfJH3ktpICMmphQhYn47FSRml6PGeT002qUBa4mW8Y73E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AFAC71756;
+	Wed, 10 Sep 2025 03:08:16 -0700 (PDT)
+Received: from [10.1.25.55] (e122027.cambridge.arm.com [10.1.25.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F11C3F66E;
+	Wed, 10 Sep 2025 03:08:21 -0700 (PDT)
+Message-ID: <ea4b657e-13fa-485e-9d3c-5b395ad3d8e2@arm.com>
+Date: Wed, 10 Sep 2025 11:08:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
+ properly aligned
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Suzuki K Poulose
+ <suzuki.poulose@arm.com>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-coco@lists.linux.dev, will@kernel.org, maz@kernel.org,
+ tglx@linutronix.de, robin.murphy@arm.com, akpm@linux-foundation.org
+References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
+ <aLrh_rbzWLPw9LnH@arm.com> <yq5aikht1e0z.fsf@kernel.org>
+ <aL7AoPKKKAR8285O@arm.com> <b5ee1ab3-f91f-4982-95c7-516f4968a6c9@arm.com>
+ <20250908145845.GA699673@ziepe.ca>
+ <d8687b08-6bb4-4645-8172-72936a51b0d8@arm.com> <aL8RdvuDbtbUDk2D@arm.com>
+Content-Language: en-GB
+From: Steven Price <steven.price@arm.com>
+In-Reply-To: <aL8RdvuDbtbUDk2D@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Assigning a field a value in an initializer macro can be marked with the
-`#[bind]` attribute. Doing so creates a `let` binding with the same
-name. This `let` binding has the type `Pin<&mut T>` if the field is
-structurally pinned or `&mut T` otherwise (where `T` is the type of the
-field).
+On 08/09/2025 18:25, Catalin Marinas wrote:
+> On Mon, Sep 08, 2025 at 04:39:13PM +0100, Steven Price wrote:
+>> On 08/09/2025 15:58, Jason Gunthorpe wrote:
+>>> If ARM has proper faulting then you don't have an issue mapping 64K
+>>> into a userspace and just segfaulting the VMM if it does something
+>>> wrong.
+>>
+>> ...the VMM can cause problems. If the VMM touches the memory itself then
+>> things are simple - we can detect that the fault was from user space and
+>> trigger a SIGBUS to kill of the VMM.
+> 
+> Similarly for uaccess.
+> 
+>> But the VMM can also attempt to pass the address into the kernel and
+>> cause the kernel to do a get_user_pages() call (and this is something we
+>> want to support for shared memory). The problem is if the kernel then
+>> touches the parts of the page which are protected we get a fault with no
+>> (easy) way to relate back to the VMM.
+> 
+> I assume the host has a mechanism to check that the memory has been
+> marked as shared by the guest and the guest cannot claim it back as
+> private while the host is accessing it (I should dig out the CCA spec).
+> 
+>> guest_memfd provided a nice way around this - a dedicated allocator
+>> which doesn't allow mmap(). This meant we don't need to worry about user
+>> space handing protected memory into the kernel. It's now getting
+>> extended to support mmap() but only when shared, and there was a lot of
+>> discussion about how to ensure that there are no mmap regions when
+>> converting memory back to private.
+> 
+> That's indeed problematic and we don't have a simple way to check that
+> a user VMM address won't fault when accessed via the linear map. The
+> vma checks we get with mmap are (host) page size based.
+> 
+> Can we instead only allow mismatched (or smaller) granule sizes in the
+> guest if the VMM doesn't use the mmap() interface? It's not like
+> trapping TCR_EL1 but simply rejecting such unaligned memory slots since
+> the host will need to check that the memory has indeed been shared. KVM
+> can advertise higher granules only, though the guest can ignore them.
+> 
 
-Signed-off-by: Benno Lossin <lossin@kernel.org>
----
-Changes from v1:
-* require explicit annotation through `#[bind]` to create the let
-  binding
-* this removes the need to patch existing uses of initializer macros
----
- rust/pin-init/src/macros.rs | 181 ++++++++++++++++++++++++++++--------
- 1 file changed, 142 insertions(+), 39 deletions(-)
+Yes, mismatched granules sizes could be supported if we disallowed
+mmap(). This is assuming the RMM supports the required size - which is
+currently true, but the intention is to optimise the S2 in the future by
+matching the host page size.
 
-diff --git a/rust/pin-init/src/macros.rs b/rust/pin-init/src/macros.rs
-index 9ced630737b8..21798a9d195f 100644
---- a/rust/pin-init/src/macros.rs
-+++ b/rust/pin-init/src/macros.rs
-@@ -988,38 +988,56 @@ fn drop(&mut self) {
-         @pinned($($(#[$($p_attr:tt)*])* $pvis:vis $p_field:ident : $p_type:ty),* $(,)?),
-         @not_pinned($($(#[$($attr:tt)*])* $fvis:vis $field:ident : $type:ty),* $(,)?),
-     ) => {
--        // For every field, we create a projection function according to its projection type. If a
--        // field is structurally pinned, then it must be initialized via `PinInit`, if it is not
--        // structurally pinned, then it can be initialized via `Init`.
--        //
--        // The functions are `unsafe` to prevent accidentally calling them.
--        #[allow(dead_code)]
--        #[expect(clippy::missing_safety_doc)]
--        impl<$($impl_generics)*> $pin_data<$($ty_generics)*>
--        where $($whr)*
--        {
--            $(
--                $(#[$($p_attr)*])*
--                $pvis unsafe fn $p_field<E>(
--                    self,
--                    slot: *mut $p_type,
--                    init: impl $crate::PinInit<$p_type, E>,
--                ) -> ::core::result::Result<(), E> {
--                    // SAFETY: TODO.
--                    unsafe { $crate::PinInit::__pinned_init(init, slot) }
--                }
--            )*
--            $(
--                $(#[$($attr)*])*
--                $fvis unsafe fn $field<E>(
--                    self,
--                    slot: *mut $type,
--                    init: impl $crate::Init<$type, E>,
--                ) -> ::core::result::Result<(), E> {
--                    // SAFETY: TODO.
--                    unsafe { $crate::Init::__init(init, slot) }
--                }
--            )*
-+        $crate::macros::paste! {
-+            // For every field, we create a projection function according to its projection type. If a
-+            // field is structurally pinned, then it must be initialized via `PinInit`, if it is not
-+            // structurally pinned, then it can be initialized via `Init`.
-+            //
-+            // The functions are `unsafe` to prevent accidentally calling them.
-+            #[allow(dead_code)]
-+            #[expect(clippy::missing_safety_doc)]
-+            impl<$($impl_generics)*> $pin_data<$($ty_generics)*>
-+            where $($whr)*
-+            {
-+                $(
-+                    $(#[$($p_attr)*])*
-+                    $pvis unsafe fn $p_field<E>(
-+                        self,
-+                        slot: *mut $p_type,
-+                        init: impl $crate::PinInit<$p_type, E>,
-+                    ) -> ::core::result::Result<(), E> {
-+                        // SAFETY: TODO.
-+                        unsafe { $crate::PinInit::__pinned_init(init, slot) }
-+                    }
-+
-+                    $(#[$($p_attr)*])*
-+                    $pvis unsafe fn [<__project_ $p_field>]<'__slot>(
-+                        self,
-+                        slot: &'__slot mut $p_type,
-+                    ) -> ::core::pin::Pin<&'__slot mut $p_type> {
-+                        ::core::pin::Pin::new_unchecked(slot)
-+                    }
-+                )*
-+                $(
-+                    $(#[$($attr)*])*
-+                    $fvis unsafe fn $field<E>(
-+                        self,
-+                        slot: *mut $type,
-+                        init: impl $crate::Init<$type, E>,
-+                    ) -> ::core::result::Result<(), E> {
-+                        // SAFETY: TODO.
-+                        unsafe { $crate::Init::__init(init, slot) }
-+                    }
-+
-+                    $(#[$($attr)*])*
-+                    $fvis unsafe fn [<__project_ $field>]<'__slot>(
-+                        self,
-+                        slot: &'__slot mut $type,
-+                    ) -> &'__slot mut $type {
-+                        slot
-+                    }
-+                )*
-+            }
-         }
-     };
- }
-@@ -1207,7 +1225,7 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-         @slot($slot:ident),
-         @guards($($guards:ident,)*),
-         // In-place initialization syntax.
--        @munch_fields($field:ident <- $val:expr, $($rest:tt)*),
-+        @munch_fields($(#[$bind:ident])? $field:ident <- $val:expr, $($rest:tt)*),
-     ) => {
-         let init = $val;
-         // Call the initializer.
-@@ -1216,6 +1234,11 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-         // return when an error/panic occurs.
-         // We also use the `data` to require the correct trait (`Init` or `PinInit`) for `$field`.
-         unsafe { $data.$field(::core::ptr::addr_of_mut!((*$slot).$field), init)? };
-+        $crate::__init_internal!(bind($(#[$bind])?):
-+            @field($field),
-+            @slot($slot),
-+            @data($data),
-+        );
-         // Create the drop guard:
-         //
-         // We rely on macro hygiene to make it impossible for users to access this local variable.
-@@ -1239,7 +1262,7 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-         @slot($slot:ident),
-         @guards($($guards:ident,)*),
-         // In-place initialization syntax.
--        @munch_fields($field:ident <- $val:expr, $($rest:tt)*),
-+        @munch_fields($(#[$bind:ident])? $field:ident <- $val:expr, $($rest:tt)*),
-     ) => {
-         let init = $val;
-         // Call the initializer.
-@@ -1247,6 +1270,13 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-         // SAFETY: `slot` is valid, because we are inside of an initializer closure, we
-         // return when an error/panic occurs.
-         unsafe { $crate::Init::__init(init, ::core::ptr::addr_of_mut!((*$slot).$field))? };
-+
-+        $crate::__init_internal!(bind($(#[$bind])?):
-+            @field($field),
-+            @slot($slot),
-+            @data(),
-+        );
-+
-         // Create the drop guard:
-         //
-         // We rely on macro hygiene to make it impossible for users to access this local variable.
-@@ -1265,12 +1295,51 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-             );
-         }
-     };
--    (init_slot($($use_data:ident)?):
-+    (init_slot(): // No `use_data`, so all fields are not structurally pinned
-+        @data($data:ident),
-+        @slot($slot:ident),
-+        @guards($($guards:ident,)*),
-+        // Init by-value.
-+        @munch_fields($(#[$bind:ident])? $field:ident $(: $val:expr)?, $($rest:tt)*),
-+    ) => {
-+        {
-+            $(let $field = $val;)?
-+            // Initialize the field.
-+            //
-+            // SAFETY: The memory at `slot` is uninitialized.
-+            unsafe { ::core::ptr::write(::core::ptr::addr_of_mut!((*$slot).$field), $field) };
-+        }
-+
-+        $crate::__init_internal!(bind($(#[$bind])?):
-+            @field($field),
-+            @slot($slot),
-+            @data(),
-+        );
-+
-+        // Create the drop guard:
-+        //
-+        // We rely on macro hygiene to make it impossible for users to access this local variable.
-+        // We use `paste!` to create new hygiene for `$field`.
-+        $crate::macros::paste! {
-+            // SAFETY: We forget the guard later when initialization has succeeded.
-+            let [< __ $field _guard >] = unsafe {
-+                $crate::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
-+            };
-+
-+            $crate::__init_internal!(init_slot():
-+                @data($data),
-+                @slot($slot),
-+                @guards([< __ $field _guard >], $($guards,)*),
-+                @munch_fields($($rest)*),
-+            );
-+        }
-+    };
-+    (init_slot($use_data:ident):
-         @data($data:ident),
-         @slot($slot:ident),
-         @guards($($guards:ident,)*),
-         // Init by-value.
--        @munch_fields($field:ident $(: $val:expr)?, $($rest:tt)*),
-+        @munch_fields($(#[$bind:ident])? $field:ident $(: $val:expr)?, $($rest:tt)*),
-     ) => {
-         {
-             $(let $field = $val;)?
-@@ -1279,6 +1348,12 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-             // SAFETY: The memory at `slot` is uninitialized.
-             unsafe { ::core::ptr::write(::core::ptr::addr_of_mut!((*$slot).$field), $field) };
-         }
-+        $crate::__init_internal!(bind($(#[$bind])?):
-+            @field($field),
-+            @slot($slot),
-+            @data($data),
-+        );
-+
-         // Create the drop guard:
-         //
-         // We rely on macro hygiene to make it impossible for users to access this local variable.
-@@ -1289,7 +1364,7 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-                 $crate::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
-             };
- 
--            $crate::__init_internal!(init_slot($($use_data)?):
-+            $crate::__init_internal!(init_slot($use_data):
-                 @data($data),
-                 @slot($slot),
-                 @guards([< __ $field _guard >], $($guards,)*),
-@@ -1297,6 +1372,34 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-             );
-         }
-     };
-+    (bind(#[bind]):
-+        @field($field:ident),
-+        @slot($slot:ident),
-+        @data($data:ident),
-+    ) => {
-+        // SAFETY:
-+        // - the project function does the correct field projection,
-+        // - the field has been initialized,
-+        // - the reference is only valid until the end of the initializer.
-+        let $field = $crate::macros::paste!(unsafe { $data.[< __project_ $field >](&mut (*$slot).$field) });
-+    };
-+    (bind(#[bind]):
-+        @field($field:ident),
-+        @slot($slot:ident),
-+        @data(),
-+    ) => {
-+        // SAFETY:
-+        // - the field is not structurally pinned, since no `use_data` was required to create this
-+        //   initializer,
-+        // - the field has been initialized,
-+        // - the reference is only valid until the end of the initializer.
-+        let $field = unsafe { &mut (*$slot).$field };
-+    };
-+    (bind():
-+        @field($field:ident),
-+        @slot($slot:ident),
-+        @data($($data:ident)?),
-+    ) => {};
-     (make_initializer:
-         @slot($slot:ident),
-         @type_name($t:path),
-@@ -1354,7 +1457,7 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-     (make_initializer:
-         @slot($slot:ident),
-         @type_name($t:path),
--        @munch_fields($field:ident <- $val:expr, $($rest:tt)*),
-+        @munch_fields($(#[$bind:ident])? $field:ident <- $val:expr, $($rest:tt)*),
-         @acc($($acc:tt)*),
-     ) => {
-         $crate::__init_internal!(make_initializer:
-@@ -1367,7 +1470,7 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-     (make_initializer:
-         @slot($slot:ident),
-         @type_name($t:path),
--        @munch_fields($field:ident $(: $val:expr)?, $($rest:tt)*),
-+        @munch_fields($(#[$bind:ident])? $field:ident $(: $val:expr)?, $($rest:tt)*),
-         @acc($($acc:tt)*),
-     ) => {
-         $crate::__init_internal!(make_initializer:
+But I'm not sure how useful that would be. The VMMs of today don't
+expect to have to perform read()/write() calls to access the guest's
+memory, so any user space emulation would need to also be updated to
+deal with this restriction.
 
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
--- 
-2.50.1
+But that seems like a lot of effort to support something that doesn't
+seem to have a use case. Whereas there's an obvious use case for the
+guest and VMM sharing one (or often more) pages of (mapped) memory. The
+part that CCA makes this tricky is that we need to pick the VMM's page
+size rather than the guest's.
+
+Steve
 
 
