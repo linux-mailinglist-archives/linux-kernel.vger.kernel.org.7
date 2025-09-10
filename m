@@ -1,120 +1,119 @@
-Return-Path: <linux-kernel+bounces-809712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60BF2B51107
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:21:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B6EB5110C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3461B61DFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A117F1B2787D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8791B30FC36;
-	Wed, 10 Sep 2025 08:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC0E30F7F0;
+	Wed, 10 Sep 2025 08:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mNNqA8px";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UOasHq1u"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Dh6Tt8QA"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F5C30F943;
-	Wed, 10 Sep 2025 08:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F129D30EF85
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757492431; cv=none; b=h6jaDzo8mYj90erAtclnX/ZLVAfohHCfer4hTCAbgCwhbG1DopOxJJdFIeyLAd3jSQ1r8iJ48eJd+h5Wrr4SUucN8xeLFDtITvk99vCaDnEG0xS7xsMue83mkh5ZtCzoTVLEpIvWyqx8beUO/HEn3f6vCkdRbLm3oarOLdTk0v8=
+	t=1757492510; cv=none; b=HMwlllnSeomQ/p00oQX9E8g7qpU40JO0uyqlX56yEWm6HOLw2PWaTu861bGgANpFz35wfSzG92t6jBEqd3kfir68UreIEVwlkVvRkW9P3soDi0/M2MGSLrVNBvkYs8CNJkwcyzDBUjIIBh5KzH345WKQfougyN3XiermpqipV7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757492431; c=relaxed/simple;
-	bh=1uPEjYWxkLIek3T+4iAvG+2at77ecF4QIzsgSji0HkY=;
+	s=arc-20240116; t=1757492510; c=relaxed/simple;
+	bh=NbAiRonudTxxn0Dt83kCP93jhH7iA1DD1uK9tgWHiiQ=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=n082HXAmoCfwtEO9k0iyQEvnf+8TZC6A6n634VBi2R4Aqlb1XHLVxby1r1vkNLRKeb6eXC5KhHY/qO+NYMXobKo/vO4cGTo3ZzYWHGlE5Iw7c3xAS8uxs2zdOXc5ihc4asyo1YGFLaRfwu1TRlNcd9VW6RiDypU76Wc1r1DHUWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mNNqA8px; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UOasHq1u; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757492427;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+CP7a9wws54uQZjmYM4sfmOi5aU+3bjgiGZVeJJmASM=;
-	b=mNNqA8pxV739WOsKJHgEtTJOMzX94iX97K4Ca48VKToBLBDsOAuPRpnAviQ4cvMU6C0Bk7
-	A5mfIda9JkS3gxSPqX4A+hpyJFgpGHWTOOfmtQ1HAe/wSFGkeSscPc9fAM+Jfxb59IH/1I
-	0k0n5GyOhU6D34bkPuFoMEaCL7l9A95WcVb0RR++NMWymRaP241u2PPYxunvC6aJm4vHUH
-	43q626KUuKnVAHYivEM6NNaQuk/ZUwrMjLOg4MQTbqZIE8CpvaFQ6G6f6wB1RBE188f9vN
-	aeFANjWsi6tymtcat1kCVAgA1TyopPhL3jM96rdJctbl2DdhndatVkQKFYxAMg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757492427;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+CP7a9wws54uQZjmYM4sfmOi5aU+3bjgiGZVeJJmASM=;
-	b=UOasHq1uYa5lt0uQ97FDdS3UHchNqSx7ZJpnsh0V4afb/TZLgNqSAON8pWEePxp1gYSODg
-	Qy/0se5U0TRUFnCw==
-To: Daniel Wagner <dwagner@suse.de>, Hannes Reinecke <hare@suse.de>
-Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, Keith
- Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg
- <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>, Aaron Tomlin
- <atomlin@atomlin.com>, "Martin K. Petersen" <martin.petersen@oracle.com>,
- Costa Shulyupin <costa.shul@redhat.com>, Juri Lelli
- <juri.lelli@redhat.com>, Valentin Schneider <vschneid@redhat.com>, Waiman
- Long <llong@redhat.com>, Ming Lei <ming.lei@redhat.com>, Frederic
- Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
- megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
- storagedev@microchip.com, virtualization@lists.linux.dev,
- GR-QLogic-Storage-Upstream@marvell.com
-Subject: Re: [PATCH v8 10/12] blk-mq: use hk cpus only when
- isolcpus=io_queue is enabled
-In-Reply-To: <d11a0c60-1b75-49ec-a2f8-7df402c4adf2@flourine.local>
-References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
- <20250905-isolcpus-io-queues-v8-10-885984c5daca@kernel.org>
- <ff66801c-f261-411d-bbbf-b386e013d096@suse.de>
- <d11a0c60-1b75-49ec-a2f8-7df402c4adf2@flourine.local>
-Date: Wed, 10 Sep 2025 10:20:26 +0200
-Message-ID: <87ms72u3at.ffs@tglx>
+	 MIME-Version:Content-Type; b=FWhbol8TrEhop0SMMqjYHAvmwwlD7cY+zftSWhadUN0V3YG74+u2miJghqBajasT2V/my68E/JW8Xbng2aNDXli0dLjj9nNlX6tgiaK8sCvgmVFxL0BRuE5V7oPS/qXxACYrWnw5ds6SB7pbubZGBkB2CyUqtY3aWFBK5azZpv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Dh6Tt8QA; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 020441A0BD3;
+	Wed, 10 Sep 2025 08:21:46 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C9BDC606D4;
+	Wed, 10 Sep 2025 08:21:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EA2B7102F23C1;
+	Wed, 10 Sep 2025 10:21:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757492505; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=NbAiRonudTxxn0Dt83kCP93jhH7iA1DD1uK9tgWHiiQ=;
+	b=Dh6Tt8QA6S70Ghz0oNTxymUWY03z5vFwvRqdDkV12ToYE0rTRT08QfmezeuxMoIEqzcWl/
+	cEOByp9wkD/cwK1RWAGKqg/P3BdtUSIQFagOXeU7fr9kzHduCLwk0zrMbqdmYsThRS5iom
+	vImynl8vkdYhu/jfi2lxvheeX46HtQ/5oKVKcLPZEC/iZbrlWi2YL1fKtcBBg2ryP1j/x8
+	05abcsmYL9k/3QBYaPhJ1Lsy+ZPq8aWpT7E1Oj0SPFKLP1B/DneTM8LkIniHVRlC3dNaB9
+	9JI4nf1d989RLkND0p9cHN/YkDpXNvu3lTyIEMxadnItlTGBThb01P+5SRg7Sg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Santhosh Kumar K <s-k6@ti.com>
+Cc: <richard@nod.at>,  <vigneshr@ti.com>,  <broonie@kernel.org>,
+  <tudor.ambarus@linaro.org>,  <pratyush@kernel.org>,  <mwalle@kernel.org>,
+  <p-mantena@ti.com>,  <linux-spi@vger.kernel.org>,
+  <linux-mtd@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,
+  <a-dutta@ti.com>,  <u-kumar1@ti.com>,  <praneeth@ti.com>
+Subject: Re: [RFC PATCH 01/10] spi: spi-mem: Introduce support for tuning
+ controller
+In-Reply-To: <20250811193219.731851-2-s-k6@ti.com> (Santhosh Kumar K.'s
+	message of "Tue, 12 Aug 2025 01:02:10 +0530")
+References: <20250811193219.731851-1-s-k6@ti.com>
+	<20250811193219.731851-2-s-k6@ti.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Wed, 10 Sep 2025 10:21:41 +0200
+Message-ID: <87seguemzu.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Sep 08 2025 at 09:26, Daniel Wagner wrote:
-> On Mon, Sep 08, 2025 at 08:13:31AM +0200, Hannes Reinecke wrote:
->> >   const struct cpumask *blk_mq_online_queue_affinity(void)
->> >   {
->> > +	if (housekeeping_enabled(HK_TYPE_IO_QUEUE)) {
->> > +		cpumask_and(&blk_hk_online_mask, cpu_online_mask,
->> > +			    housekeeping_cpumask(HK_TYPE_IO_QUEUE));
->> > +		return &blk_hk_online_mask;
->> 
->> Can you explain the use of 'blk_hk_online_mask'?
->> Why is a static variable?
->
-> The blk_mq_*_queue_affinity helpers return a const struct cpumask *, the
-> caller doesn't need to free the return value. Because cpumask_and needs
-> store its result somewhere, I opted for the global static variable.
->
->> To my untrained eye it's being recalculated every time one calls
->> this function. And only the first invocation run on an empty mask,
->> all subsequent ones see a populated mask.
->
-> The cpu_online_mask might change over time, it's not a static bitmap.
-> Thus it's necessary to update the blk_hk_online_mask. Doing some sort of
-> caching is certainly possible. Given that we have plenty of cpumask
-> logic operation in the cpu_group_evenly code path later, I am not so
-> sure this really makes a huge difference.
+On 12/08/2025 at 01:02:10 +0530, Santhosh Kumar K <s-k6@ti.com> wrote:
 
-Sure,  but none of this is serialized against CPU hotplug operations. So
-the resulting mask, which is handed into the spreading code can be
-concurrently modified. IOW it's not as const as the code claims.
+> From: Pratyush Yadav <pratyush@kernel.org>
+>
+> Some controllers like the Cadence OSPI controller need to perform a
+> tuning sequence to operate at high data rates. Tuning is needs to happen
+> once the device is switched to appropriate mode (say 8S-8S-8S or
+> 8D-8D-8D).
 
-How is this even remotely correct?
+This is actually wrong. Tuning is way more generic than that :)
+
+If someone wants to use a chip at a high frequency (50MHz in your case,
+but whatever, there is a threshold above which additional care must be
+taken), it must go through the calibration step. It does not matter in
+which mode you are. Calibration would still be relevant in single SDR
+mode.
+
+
+This 50MHz bothered Mark because it is too Cadence specific. Maybe this
+should be a controller parameter? If the spi-mem core (or even the spi
+core, by extensino) sees that the design allows running at XMHz (due to
+the SPI peripheral properties or simply the absence of any limitation),
+and if the controller states that it requires an extra tuning step above
+YMHz (and X > Y), then it launches the calibration.
+
+From a core perspective, I would like the calibration hook to be as
+simple as possible, because what "calibration" means is highly
+controller and chip specific.
+
+The Cadence SPI controller driver could request the pattern through
+the nvmem interface or maybe we can even include it in the kernel
+through some type of firmware interface (it could be stored anywhere)
+and if it gets it, it writes it to the device cache. Once done, it takes
+the fastest available read operation available for the chip and performs
+its calibration.
+
+The calibration hook no longer needs anything SPI driver specific. I
+don't know if still requires anything chip specific though (like the
+optimal read operation), but can you please try implementing that and
+then we'll discuss this further.
 
 Thanks,
-
-        tglx
+Miqu=C3=A8l
 
