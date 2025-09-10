@@ -1,137 +1,125 @@
-Return-Path: <linux-kernel+bounces-810535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2D0B51C00
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:40:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 755E3B51C02
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C099188767E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:40:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72BEA188E011
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851C0327A00;
-	Wed, 10 Sep 2025 15:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0274F263C8A;
+	Wed, 10 Sep 2025 15:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMt59hWx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="STjT5T9w"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D818426F2B0;
-	Wed, 10 Sep 2025 15:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6423257858;
+	Wed, 10 Sep 2025 15:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757518779; cv=none; b=DzCU/2dR0NiR7mXVwgO4l/u7yV9rBTOsVOm0VYzzqwhlRW+gl+8fYC9beBIrHgBFV687nltaW/7Qio/IfuC8Mr9mVvE4kbxIeAsksBGH1gTc10GBZpwdCLYXu++IAYYlxTjwDgVlevg7DgGEMKSrv2VXdIIy8bcKHDi9Tu/cUeg=
+	t=1757518816; cv=none; b=RK3JLdVD0Y4/T9QnPsIv84xYyg574NOa1J2nBY5TKEfnJOYsOfck8QBGqfiBVkoykgJau/a6WVGas8RyTElXkjtw/XfsHEhMGDcthAluioEfJ/drbVWxqnCVrdqSIz8AhYFps45msIKzcPqg/BL58A2Zlr/MtF90z/BA2A2k7qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757518779; c=relaxed/simple;
-	bh=yUDdS/kuvrozQGLQ5U1rfQ0M4SPbUZSrG694a+5B/Qk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=ghK3oj/I+OE2CjxX6XQR+1Lqyl+nW26Ef2LIkAi+NiEitZED+EpLps4sGIiRlDfheLPMk20KYDLDfCrBYoHYmOqcBPoKOo02MqujM/LO7daGZNgdrCn4lEO0ESeUw/aUWeqB5dCXhqpqrUpN8cBdDKLvgXmAla9od5SSh5VyrmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMt59hWx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3503C4CEF7;
-	Wed, 10 Sep 2025 15:39:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757518779;
-	bh=yUDdS/kuvrozQGLQ5U1rfQ0M4SPbUZSrG694a+5B/Qk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SMt59hWxE4DAiEWQ2LyGmBT1g9X4q51DD+ii+z0vGAQN/r3XzJ2MUKsQCqW4UvhI1
-	 q6fy0a8tnE2hyVuSJpefhBaFfYD4iC0wombfDnp3hYD6zvaoybQ7pxcIYfkIMNxC9v
-	 yLfIX9rffkNKP3JJdeO3akm2u3hMdeeJCtDEmFdA9UPK8EKmRo1Tkr9/7tb/g+652J
-	 9MnBzITvmBQE/YkT7iO8iPCYw6qt0osAvJ45tLmIYKJS/hyjjXEkD5SYhetTKyelu8
-	 uXqUB7jyn996I0omfV1+Kz2XXhy1r9EyWNTYrXSWfeq7l97/ni8oTcr1sR6ShMycHw
-	 NCNQreXn9NNtA==
+	s=arc-20240116; t=1757518816; c=relaxed/simple;
+	bh=QrYqOCxbruM21gMTV1jjXaaxQ+qUE8x/RiQoGBT0K+o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tOn5PRJ2bAbGj/bDR190Edex44C4ktxdihvHdkWlNFiCuKKkHA9/tM7n3tDHqB/nEHvr5zZkNdyhClrHh/WEJoOyrdxWS97krO0Xb6sdwCNemKrLwf5vRU7mJccWHfZyhTWkHtKvf4Dfw3IRKbP+zpVUQXblvcIdt1BFZEHFvzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=STjT5T9w; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757518815; x=1789054815;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=QrYqOCxbruM21gMTV1jjXaaxQ+qUE8x/RiQoGBT0K+o=;
+  b=STjT5T9wLzYfUmM4CKHyruc/d7bPZ9xZQ1q2y5Ns2wrd9OmjJsTGm/9X
+   goNSx2fiGHzfvXrBgyqSeaJcdMslyQT+I4n/18wnQvPDBUhBLpfqe61Dc
+   Q3ZaLaSj3SLhGmRZ3oyrIDxgBRwH4SWgHzR4RErj2+TvLm2Ae3KX6bI5V
+   PRD7KigPm9N85imHMv2Y4g2yu8KhS/JlzsUzgokJoDaWv4flsRu8ZnOKC
+   TuCcl4PLJtdwidYjausDN0kW+KsiCY9x45PnBVSAbdtQYWC+lPIACYQb/
+   rohie+viibtB8lPx6ihMwduPMNiLveZyuvjaxIvjPRqxBHY+tdJT53jnR
+   g==;
+X-CSE-ConnectionGUID: +U/nWZRaRiytzSej8uOiaA==
+X-CSE-MsgGUID: Ov71n1XYSCa3AAAu8GMSnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59896959"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59896959"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 08:40:13 -0700
+X-CSE-ConnectionGUID: rfYVEpm3RD+hL8jvhNh9/g==
+X-CSE-MsgGUID: pCuS3oKHQ16SXeVuD0Ma4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="204413413"
+Received: from spandruv-desk2.jf.intel.com (HELO [10.98.25.49]) ([10.98.25.49])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 08:40:12 -0700
+Message-ID: <dfcf7e0e55a9110c9c90334c46637c61e4cb98c7.camel@linux.intel.com>
+Subject: Re: [PATCH 2/2] cpufreq: intel_pstate: Enable HWP without EPP
+ feature
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 10 Sep 2025 08:40:11 -0700
+In-Reply-To: <CAJZ5v0iu87EJYfJV+6gTBXkc5B5pfXo97JEfBb_ddOMnMrTCTw@mail.gmail.com>
+References: <20250904000608.260817-1-srinivas.pandruvada@linux.intel.com>
+	 <20250904000608.260817-2-srinivas.pandruvada@linux.intel.com>
+	 <CAJZ5v0gwXiRTo_Lri3rduA-RqDhwgK4ymwX3ttxqhTw9W6d=fQ@mail.gmail.com>
+	 <CAJZ5v0jqLnnBL8fLJ3vxS_61rAigru8T1a9Q-k+cg2kptv_zUA@mail.gmail.com>
+	 <CAJZ5v0iu87EJYfJV+6gTBXkc5B5pfXo97JEfBb_ddOMnMrTCTw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 10 Sep 2025 17:39:34 +0200
-Message-Id: <DCP8ER16H0AF.2FF0F9922SS0@kernel.org>
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: "Alice Ryhl" <aliceryhl@google.com>, "Danilo Krummrich"
- <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- "Fiona Behrens" <me@kloenk.dev>, "Alban Kurti" <kurti@invicto.ai>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] rust: pin-init: add `#[bind]` attribute to access
- previously initialized fields
-X-Mailer: aerc 0.20.1
-References: <20250910100755.2361281-1-lossin@kernel.org>
- <aMFQL-Hq1KvBG5lh@google.com> <DCP1Y8N4SRRF.25V7F6PV5ODCQ@kernel.org>
- <CAH5fLgg+-oz_cP9=ke+ukp9qYZAsD=hKqvvGfkJWRcCKdrTQ-g@mail.gmail.com>
- <DCP456FHT625.1L5BVZ4LPD8VQ@kernel.org> <aMGE64_J5R8U_rk5@tardis-2.local>
- <DCP7JTWPA4QS.9PTE12UVZFDC@kernel.org> <aMGT6h5yIcpR3mCg@tardis-2.local>
-In-Reply-To: <aMGT6h5yIcpR3mCg@tardis-2.local>
+MIME-Version: 1.0
 
-On Wed Sep 10, 2025 at 5:06 PM CEST, Boqun Feng wrote:
-> On Wed, Sep 10, 2025 at 04:59:11PM +0200, Benno Lossin wrote:
->> On Wed Sep 10, 2025 at 4:02 PM CEST, Boqun Feng wrote:
->> > On Wed, Sep 10, 2025 at 02:19:00PM +0200, Benno Lossin wrote:
->> >> On Wed Sep 10, 2025 at 12:40 PM CEST, Alice Ryhl wrote:
->> >> > On Wed, Sep 10, 2025 at 12:36=E2=80=AFPM Benno Lossin <lossin@kerne=
-l.org> wrote:
->> >> >>
->> >> >> On Wed Sep 10, 2025 at 12:17 PM CEST, Alice Ryhl wrote:
->> >> >> > On Wed, Sep 10, 2025 at 12:07:53PM +0200, Benno Lossin wrote:
->> >> >> >> Assigning a field a value in an initializer macro can be marked=
- with the
->> >> >> >> `#[bind]` attribute. Doing so creates a `let` binding with the =
-same
->> >> >> >> name. This `let` binding has the type `Pin<&mut T>` if the fiel=
-d is
->> >> >> >> structurally pinned or `&mut T` otherwise (where `T` is the typ=
-e of the
->> >> >> >> field).
->> >> >> >>
->> >> >> >> Signed-off-by: Benno Lossin <lossin@kernel.org>
->> >> >> >
->> >> >> > Is there a reason we can't apply this to all fields and avoid th=
-e
->> >> >> > attribute?
->> >> >>
->> >> >> Adding the attribute was due to Boqun's concern on v1 [1]. I think=
- it
->> >> >> might be surprising too, but I'm also happy with no attribute.
->> >> >>
->> >> >> [1]: https://lore.kernel.org/all/aLshd0_C-1rh3FAg@tardis-2.local
->> >> >
->> >> > IMO the ideal is if it works without an attribute. Perhaps trying t=
-hat
->> >> > in the kernel is a reasonable experiment to find out whether that's
->> >> > reasonable to do for the general language feature?
->> >>=20
->> >> @Boqun what is your opinion on this?
->> >>=20
->> >
->> > If we plan to make the in-place initializer language feature behave
->> > similar, as I asked here [1], then dropping `#[bind]` seems good to me=
-.
->>=20
->> I don't think we can promise how that language feature is going to look
->> like. It will definitely support accessing already initialized fields,
->> but in what form remains to be seen.
->>=20
->
-> Sure, but in kernel we are able to stay the same as whatever the
-> language feature will be like, right?
+On Wed, 2025-09-10 at 12:08 +0200, Rafael J. Wysocki wrote:
+> On Sat, Sep 6, 2025 at 6:13=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
+rg>
+> wrote:
+> >=20
+> > On Fri, Sep 5, 2025 at 11:02=E2=80=AFPM Rafael J. Wysocki
+> > <rafael@kernel.org> wrote:
+> > >=20
+> > > On Thu, Sep 4, 2025 at 2:06=E2=80=AFAM Srinivas Pandruvada
+> > > <srinivas.pandruvada@linux.intel.com> wrote:
+> > > >=20
+> > > > When EPP feature is not available (CPUID CPUID.06H:EAX[10] is
+> > > > not set),
+> > > > intel_pstate will not enable HWP.
+> > > >=20
+> > > > Some processors support DEC feature (Dynamic Efficiency
+> > > > Control). But in
+> > > > this case HWP must be enabled.
+> > > >=20
+> > > > So, enable HWP even if EPP feature is not available but DEC
+> > > > feature is
+> > > > present.
+> > > >=20
+> > > > When EPP feature is not available don't publish sysfs
+> > > > attributes
+> > > > "energy_performance_available_preferences" and
+> > > > "energy_performance_preference", but continue to enable HWP.
+> > > >=20
+> > > >=20
 
-Yes :)
+[...]
 
-> In other words, as long as we propose the same thing to the language
-> feature and keep kernel code and language feature synced (presumbly
-> there could be some more discussion on the syntax when presented to Rust
-> commmunity), then I'm think it's fine.
+> >=20
+> > Attached is a new version, please let me know if it works for you.
+>=20
+> Any chance to have a look at the latest patch?
+That patch looks good.
 
-I'll take v1 (with the in-tree fixes) then. Do you mind giving your RB
-for that one? Thanks!
+Thanks,
+Srinivas
 
----
-Cheers,
-Benno
 
