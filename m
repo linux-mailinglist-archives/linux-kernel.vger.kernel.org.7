@@ -1,107 +1,90 @@
-Return-Path: <linux-kernel+bounces-809346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D713AB50C3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:14:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A36B50C46
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C983460A06
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:14:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11F6C4687AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794492580EE;
-	Wed, 10 Sep 2025 03:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KABHcOun"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAB425A642;
+	Wed, 10 Sep 2025 03:20:20 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C118F4A
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 03:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E75258EFB
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 03:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757474063; cv=none; b=SqLAeZo1NLn3BOmOn10TgfT1b3UFH/L0a5uWwCT2KTR0PfKzusnjCjkrqeE45A5gxgWdNbNoRqEhG7WR7qcVhCE8jqX5Rz9fPzGJ4QWFMvOWpvZY6P0uOX2sWKF91LEgVLsot+Xnj6567lFT04GdDh8nIpf36k++LRDFY/iGbHs=
+	t=1757474419; cv=none; b=IAUUQW+SDMUPsmhvuqRqyS+eBqaBvNWfcY8mWyFHBxkSKcK5jtib16QApdXGz0F2uH7hIRQJxsPcDY0x1PmffAky2nJBTFpDGRxHMUs2fvEOQtHJAr0JWxL2H9E6WfZW17M63iQswuWvtano3+fxbcpo4suQneEg01RerV7oIc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757474063; c=relaxed/simple;
-	bh=TcwTT74aQaPaV63W1C7OeqMDunCWPhOwjwEsGuRKoKA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TyHKtqFd1eIFy5wfJHcehZ980+0m3AO2anyontkKZkPrGDdJPpm0zqRDqA7Bk7cp0sR9lkm86seROXggufHTXuMZVm+FD/+qwea8vC4SwHx6wGkHMHodYO/Sn+IRJPiJySLwXdC0o9E4dMpN4nwSJQvI8uoPEzHkWTq58s2aEgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KABHcOun; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4421BC4CEF0;
-	Wed, 10 Sep 2025 03:14:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757474063;
-	bh=TcwTT74aQaPaV63W1C7OeqMDunCWPhOwjwEsGuRKoKA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KABHcOun1fxqcw3tG8NUUO83OuhFEK5DBYCADvm5MMT6Cru3LTtfsldFv3IADKp/D
-	 IGCWOTNHR1i5NviYpacgIfrN+sMIi5omdZKeabU26YVruspNDCjr79DWCt+kGgpN19
-	 0ePH7yrG4+HRhdaGTNFLd8ZB26zTx2WGJ6WJ44x7JvesO1TodiZQUzW7+Zu2KXHOEN
-	 j7a7jz+9d/4NqJFPC0gSbE8PbtTq8FTbL8s+1ui6RPl5psyfOD3QpUiUbi6MNf7tG3
-	 XlrrJfeFu/0wEE+wbX4tlEsvIcSf8298CD388zkXg72fu1IpUEtYl453JyBPJYyQdF
-	 BY1fOqk3RTtFQ==
-From: SeongJae Park <sj@kernel.org>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <zhouchengming@bytedance.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm: remove unused zpool layer
-Date: Tue,  9 Sep 2025 20:14:21 -0700
-Message-Id: <20250910031421.166611-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250909151345.GE1474@cmpxchg.org>
-References: 
+	s=arc-20240116; t=1757474419; c=relaxed/simple;
+	bh=wo2bpcyVXWavSZ21w2gQftxl1jhlZnTJtgw9TEbuk9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=E8z06SnidqpUZey4XAkYEwTanYFCD+U1jY5wilG64p4LPsbB7fWt3i1SwT4H7w1XYDV/S2142T5pas2ZY+wgMSLLPfI6GVB4gHH1O7hFsBWAdTSsoJJZFK5xlK5RK78zLUpOvzhOtsW9zIgwegNrvzjI6JG6ZBnTTV5d8GgoKBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cM5T141kzz2TT8k;
+	Wed, 10 Sep 2025 11:16:53 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2631D14027A;
+	Wed, 10 Sep 2025 11:20:09 +0800 (CST)
+Received: from [10.67.120.170] (10.67.120.170) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 10 Sep 2025 11:20:08 +0800
+Message-ID: <f2720f17-5e81-4f69-aaf5-791b47973178@huawei.com>
+Date: Wed, 10 Sep 2025 11:20:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] iommu: Add io_ptdump debug interface for iommu
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<yangyicong@huawei.com>, <wangzhou1@hisilicon.com>,
+	<prime.zeng@hisilicon.com>, <xuwei5@huawei.com>, <fanghao11@huawei.com>,
+	<jonathan.cameron@huawei.com>, <linuxarm@huawei.com>
+References: <20250814093005.2040511-1-xiaqinxin@huawei.com>
+ <20250902161028.GC184112@ziepe.ca>
+From: Qinxin Xia <xiaqinxin@huawei.com>
+In-Reply-To: <20250902161028.GC184112@ziepe.ca>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
-On Tue, 9 Sep 2025 16:13:45 +0100 Johannes Weiner <hannes@cmpxchg.org> wrote:
 
-> On Fri, Aug 29, 2025 at 12:07:28PM -0700, SeongJae Park wrote:
-> > On Fri, 29 Aug 2025 17:15:27 +0100 Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > 
-> > > With zswap using zsmalloc directly, there are no more in-tree users of
-> > > this code. Remove it.
-> > > 
-> > > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> > [...]
-> > > --- a/Documentation/admin-guide/mm/zswap.rst
-> > > +++ b/Documentation/admin-guide/mm/zswap.rst
-> > [...]
-> > >  When a swap page is passed from swapout to zswap, zswap maintains a mapping
-> > > -of the swap entry, a combination of the swap type and swap offset, to the zpool
-> > > -handle that references that compressed swap page.  This mapping is achieved
-> > > -with a red-black tree per swap type.  The swap offset is the search key for the
-> > > -tree nodes.
-> > 
-> > Nit.  s/red-black tree/xarray/ ?
+
+On 2025/9/3 00:10:28, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> On Thu, Aug 14, 2025 at 05:30:03PM +0800, Qinxin Xia wrote:
+>> This patch supports the iopgtable_dump function (similar to kernel_page_dump).
+>> The IOMMU page table dump debugging function is added to the framework layer.
+>> Different architectures only need to provide the implemented dump ops.
+>> It also provides the implementation of ARM SMMUv3 and io-pgtable-arm.
+>>
+>> Qinxin Xia (2):
+>>    iommu/debug: Add IOMMU page table dump debug facility
+>>    iommu/io-pgtable: Add ARM SMMUv3 page table dump support
 > 
-> Yeah, I just kept the changes scoped to the removal of zpool.
-
-Makes sense to me :)
-
+> I'd prefer we do this on top of iommu pt please, I don't want to
+> further deeping the hole of changing all the page table code in all
+> drivers for debugfs.
 > 
-> But this file indeed needs a general update beyond the changes in this
-> series. I'll send a separate patch to clean this up.
+> Jason
+Ok, I see, my colleague Wang Zhou also released a version of io_ptdump
+a long time ago, which is implemented in smmu debugfs. Will recommends 
+that io_ptdump be implemented in a way similar to CPU page table dump. 
+Using debugfs to expose the data and using format-specific callbacks to 
+implement specific data dumps, I'll talk to him about this as well.
 
-Looking forward to!
-
-> 
-> > Acked-by: SeongJae Park <sj@kernel.org>
-> 
-> Thanks SJ
-
-:)
-
-
-Thanks,
-SJ
 
