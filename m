@@ -1,86 +1,79 @@
-Return-Path: <linux-kernel+bounces-811017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B1ECB522FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:53:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD016B522FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2A64583AF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:53:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2E5C1CC1B90
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66ADF2FAC17;
-	Wed, 10 Sep 2025 20:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2212FB96C;
+	Wed, 10 Sep 2025 20:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="V8F4g2wH"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iI3Z2+Gl"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074212F0661
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9472F3C30
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757537445; cv=none; b=Lg+8pk0QTAfjg/guRNjoTSh7svyG7H0zNkgjgLs8pjr0V8frj59+dcjpcVUrU5vhoVWkWFqC/EoY72BBkX6RiIUbDupAkfrUay3n6f8lLmBqXQ25d9t0lPBQfqkeX3KqsHNiMnUsgDTjf3pAkzS2YVbM+VCRiBDr0tYw6+l+dTE=
+	t=1757537527; cv=none; b=PlrWeDopLILv61r9Rxp1fc6C7LMPbkE9LEKiLDWyUxO9XWVL9519xcJZo5uepPt0PSeLdgA41fLkHHu8yLHk0QhQhdtTgXlZn9PgQN+rx/yRNNvXXFAyUP9UFSI7b1zBt25Y33h6OehSRXs5EllAokl+5/qhhg7TDF++MYGhBjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757537445; c=relaxed/simple;
-	bh=XWprFPpArhG9hGfbEYNbQ0Z5KMjikP2t9OLlwy31ke8=;
+	s=arc-20240116; t=1757537527; c=relaxed/simple;
+	bh=s1TtveuImqnP0hpIGysAqfx+gnL5Qe3RC5p2R902L/s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HLbwtUAdfohxT7HyYQwT/8TfHH6oCYh5KpYA5aQ1VzQzH1W+PIPdzBZHUN+/fNeoPFyVNeE8evmSQutLYox9wZu/VKP2FXfZTryzkB+gNije8SniEAPRm3GAaxPmcxLYwUqCAcw4/VoFvXgxqvpXe4+qFHYtwCZiGSPA6nNNJP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=V8F4g2wH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ACgGHh003911
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:50:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SPob3xHolBsWwjw80JPpgSx8g/7DdiQrQAaQRydH9WY=; b=V8F4g2wHOl6fj7hm
-	4qkm0WgSAHE/uy+VoHAMy+ROcydNcqBvT4x+C9Yh72Xffie0sm184uN4Ug9ByPKp
-	w49V8bDrrPxsfEU5i56Y5TvWozYh5TPB27EH6liK2hxR7g5mAg+v5aZduW736bYI
-	wIr/qsEkvVLwS8Mz+RSCOGY74+lYogsyqgQe4bjb0v/FEjiJlij3EvHA3kgJcJz+
-	2YFK4fRYHUUl9JbnfqlTIa2qZR47WODt6IUbd1s455yVK5fO2zNMv9Szhb0hs+UD
-	mOSy7gByFmK08M8G2bI8khzQWVmwiP1iL3C6kUD9wr5J+OV6/mKoL9fQY8DgYWRr
-	5WaBfg==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490bwsddcx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:50:43 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-324e41e946eso15648853a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:50:43 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=ihKoYokbq9NFynr+mmCnn44vP2CbSu4oJiT64QIe4Mbyhv0az0btw/zTkwUaciOxti6LKrPYB/Pd2vTsJUh/nJ7xr/o95i1Ci8nyGMFo+8R4jnJD+4n7bpUjsjJORxP7/gI62fN8YSzIdniO7x47ee+aapKNjdZKkQwL8e5lQIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iI3Z2+Gl; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b60481d4baso676481cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757537525; x=1758142325; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FWNfQlk257JJfT1KYHWmeyNUroe/2i7tvfJ15AQHNsU=;
+        b=iI3Z2+GlqWEOHMkiMBbBUh3F74zeP55W93AEzQUN7rxa1Khw/lPPlZzB0f0+dTwuak
+         VLLTHT+tphWpRD0j4W4K/ylgA76GgJm6TpYf9jnIoN0FF/L91CIv8GzMpFiMyHXnHBKP
+         HZfriJQg6MYvHgqPDjQWjIVZjYGh0qkLFIq/WZyU3MWrwXl8HdFx0tZPLc5RCbFYmysS
+         Xf7hdDBh8VnezUVfElg3hOLcSJscg2tfNr6jGKNALH10IqZ5NNiNRYCXRy+fehLSsNwg
+         jOShdOFrMWKPw27ZMINt3StcPONLrcfiOW7eQQLXHDTfgDKrnWORGnsqpnz6a4H78CG7
+         AG0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757537442; x=1758142242;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1757537525; x=1758142325;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SPob3xHolBsWwjw80JPpgSx8g/7DdiQrQAaQRydH9WY=;
-        b=T4eCeKMTMi3pZkKw6veSPDtptaesuFSBv9fQo2ypl4/1FQxiAUKBSRuj7T0Xcoc9qY
-         4k8jOAQi8TKAWvIspDvQcTTAEG5tmehOEw3N7iXWj+EuqhPHsY3q6DN1VUFULdKbukNF
-         zIF+fks+ntw+fHmO4oN2F9mRQR+1Z/1f6jeYebeJcKld5oDdbTI5hXx+76xiwW3CyE5J
-         nyRHQ1R1xXYfpZFvKG+KZFb3c6R3bfAq5/x/oOnhu/Aelc9uxNrNhQsOJNN2ZwQuB2An
-         j12ffgZ01fBHrNXoqtL7l6bUQYj5DC41WISfQpSxutw+7nPoiERy0No5xiHYiphi2Jg3
-         6UAA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1uXgdUexuy/23vdshixcViVn3ruO7Cn8THgUWIqOT1NnOo4DSNbz5FCjboMUHE9QIW8yPEP1lb9/Z7Bo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJxnvScwTGATGOQ8/tyO0S6lZvig9oF8c4MBsfhSUYtZvb+lxF
-	wgItB+pjgcpDuBbPoNqh16BE+2NmEkTLAXpDMAyv0lGyJOdbztY3Xfc+oEsxSBT31t0K3xcLcKx
-	OINhOsvlQHJ0PefyBpe4WNuOHBNwMOlQUkgk2P/mZkKc1KEiaXziz/agLELpegiDz9ZE=
-X-Gm-Gg: ASbGncu78AOnVuiEvIjCEIbh3TvQhLC0CU8v9BCxVsRqwKidoRHD6XrzK54EzUrup7L
-	tXuy5R4pW+4a/a1wgNI6eDfmjJmvLB5cxRBDxGn5vVBL57cbKmh7gdBtT75hFb+n1hIC8Aitb7+
-	eov3eZ8i/5VPXULI+bpCltOcXUCmDBw05VZUt52kREXxShI7G3Joa8Z/+tYoLltqujSb1E6JxfD
-	nLBnzv0PJJ6LVOsdEffxxYNoXrLFao9c7CsybWuNx7lgrfPwZqsXVB4D6bJ1IO2piR0IkUPGnI2
-	mxBn84jPv4POMXWwWZp7xXPMnZfnsedPyWC8Bafg2WVwpHYhe+KhOmdDLXJu3SCA
-X-Received: by 2002:a17:90b:5584:b0:32b:cb05:849a with SMTP id 98e67ed59e1d1-32d43f936fbmr20933663a91.29.1757537440759;
-        Wed, 10 Sep 2025 13:50:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgJXUpYTL8I7hHNV60o5NvlVmaX9wyglwKhRnYCLq0zaPYXXiRus2xum9n0Qgv2GWgeXlXqQ==
-X-Received: by 2002:a17:90b:5584:b0:32b:cb05:849a with SMTP id 98e67ed59e1d1-32d43f936fbmr20933645a91.29.1757537440323;
-        Wed, 10 Sep 2025 13:50:40 -0700 (PDT)
-Received: from [192.168.1.6] ([106.222.234.137])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dd62b59ffsm45380a91.7.2025.09.10.13.50.35
+        bh=FWNfQlk257JJfT1KYHWmeyNUroe/2i7tvfJ15AQHNsU=;
+        b=ZqRsS/UnrvpBOVwc5GylddKRHffNaqsQ76yHBjV41cHZqSX60aV8XDFUZebGfsyztc
+         k6hXHGe8mHOzZISBsdDW5fO/PlZupzOR3jMWZBvA1pyWW6GdRlHKDkPRllUchElR8ofE
+         dTeqxpTj/V445U9WeTo8YYTA1OseYXn4VwVDtDzX6+fwjsFIJufNErPKnIWpqQhHWkFZ
+         l4iZZ3sIm+ghsWsmqgEl1zlE6vbdpiI2WgetYx6Yt+F4bvHLmEDQykg3tpA3M1lTdgCs
+         yrheVbCEH8PyFcOeacQT18wouqzufez2fsLEXzjfwQ61MSaH/0LP7YyW11cimWGLcNdh
+         0Ltg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHs8Ia6J68RdNr7Bwccc1F+C4kqgTxtAi1SdnJeoXwPBz2fTTUhXLtP0A71jyycxDSgy5YKsrURi/JUyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGVWsPDnzMZzO0V9BVpsExwlFfMtqQ3PNGLurQgECgY3UUcS8p
+	Nfj51PaIu9/oBPFIDWPB9JRUwJWmUKKi/YRzVKclfiWVGyew49taPMbtPWMo5Q==
+X-Gm-Gg: ASbGnctpOKCzTFzUqMXjyN7aRmIITHWUSvDfT1xPCc+6FoQOfVdoLXjpA8Ki7rNB8w8
+	kc3MifiTdv9cy/QmZMRyoUZsLSEOYlmsQCzCXy2XNyGz8xch/PSyi/LgepRQPARBNTz0nINUqYF
+	1iI1lkuM0t0Vcl6prxMro5l7RzOaF7rzgZvx7BWuJIrwHNsU3HgdpbHGdAssvbqsFl/nK8hQnPT
+	nR+nXHYJtvje1MTWMXEJEuIihoAgvW+h2mV9j9GMxnxDMBlGnbHKYCgrZc6oOhiv0X8egV50vIh
+	xLlu/+mM12GOuMsAyxyrMCVgJXQ2HZ9CgCDFWMhTg1an+EEfVWhB1v0TD6OKrJrMGiqC2s3XlC2
+	R1J9sn2+g3hlWZ++jrPvIkHW7fE6zGpukvF4fLAWrz88SJXXYxq8=
+X-Google-Smtp-Source: AGHT+IFosu/REDKci4+Jh9k0F5EUAbtHTivVRaQuKcjCuMndGQMzNxwSqOG/Slmd3Ge+SzGqo/JjZg==
+X-Received: by 2002:ac8:7c45:0:b0:4b5:e54b:190b with SMTP id d75a77b69052e-4b5f844d21dmr230870771cf.50.1757537524852;
+        Wed, 10 Sep 2025 13:52:04 -0700 (PDT)
+Received: from [172.20.7.106] ([63.116.149.204])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b61bbdd190sm28886691cf.36.2025.09.10.13.52.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 13:50:39 -0700 (PDT)
-Message-ID: <69af97f2-75bb-494f-a081-cd967c442c15@oss.qualcomm.com>
-Date: Thu, 11 Sep 2025 02:20:33 +0530
+        Wed, 10 Sep 2025 13:52:04 -0700 (PDT)
+Message-ID: <8c4967ca-a125-458f-9998-6de4f8257dd5@gmail.com>
+Date: Wed, 10 Sep 2025 16:51:57 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,92 +81,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] drm/msm: Assorted fixes and changes
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        Jonathan Marek
- <jonathan@marek.ca>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250911-assorted-sept-1-v2-0-a8bf1ee20792@oss.qualcomm.com>
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20250911-assorted-sept-1-v2-0-a8bf1ee20792@oss.qualcomm.com>
+Subject: Re: [PATCH 2/3] alloc_tag: prevent enabling memory profiling if it
+ was shut down
+Content-Language: en-GB
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, vbabka@suse.cz, mhocko@suse.com,
+ jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
+ shakeel.butt@linux.dev, 00107082@163.com, pasha.tatashin@soleen.com,
+ souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250909233409.1013367-1-surenb@google.com>
+ <20250909233409.1013367-3-surenb@google.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <20250909233409.1013367-3-surenb@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: UruWTVnevJ1KZTc1AHGbhQOZQ_uazoS7
-X-Proofpoint-GUID: UruWTVnevJ1KZTc1AHGbhQOZQ_uazoS7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfX/YvFubLrqwq/
- crnoitGrXfHBhaeStdiq0T3fLhf5pH5kvhPn4Ua6CTZUlc44JNnJj3yDz3hm5PBSj/Cv86T+5i4
- jlGLiuJQ6lkgJANcwuV32nbNXwh+CBVx+Vr38qPgRUxAhixS2cgJfnx/C8+72PwBYR9QXDC6D0C
- 1mUv2JjrAnaYgShhUljqYivWQOOUDRGNa6HyuYPyS8iFh/OVdbuFTk4nP0LxmXDAM8HB9DcD29j
- eKbxtGj5mOwUpnklua0J0D4HFP3EFCrhn4HReeyFTij+Jf8KXxAFyr5oOxkinGF4pay4DCDA7lG
- Z9YpAT7jKYM/LS0+wRDWnQ6qqQFwubwATkRAuBKuf2i4tphpBctphGd3mqB18UfsCNFQ9YcuOL5
- YZmnh9ph
-X-Authority-Analysis: v=2.4 cv=G4kcE8k5 c=1 sm=1 tr=0 ts=68c1e4a3 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=Cna2H39EMVpDwGpHkUETmA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=6_OwgA1yP801watpjiAA:9 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_04,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- malwarescore=0 adultscore=0 impostorscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
 
-On 9/11/2025 2:14 AM, Akhil P Oommen wrote:
-> A few changes and fixes that were lying in my stack.
+
+
+On 10/09/2025 00:34, Suren Baghdasaryan wrote:
+> Memory profiling can be shut down due to reasons like a failure during
+> initialization. When this happens, the user should not be able to
+> re-enable it. Current sysctrl interface does not handle this properly
+> and will allow re-enabling memory profiling. Fix this by checking for
+> this condition during sysctrl write operation.
 > 
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 > ---
-> Changes in v2:
-> - EDITME: describe what is new in this series revision.
-> - EDITME: use bulletpoints and terse descriptions.
-
-Oops, sent it too soon before updating the changelog:
-
-Changes in v2:
-- Update the documentation for DRM_GEM_GPUVA flag (Rob)
-- Use parenthesis in Macro definition (Konrad)
-- Reworded the comment in acd_probe() (Rob)
-
--Akhil.
-
-> - Link to v1: https://lore.kernel.org/r/20250902-assorted-sept-1-v1-0-f3ec9baed513@oss.qualcomm.com
+>  lib/alloc_tag.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 > 
-> ---
-> Akhil P Oommen (4):
->       drm/msm: Fix bootup splat with separate_gpu_drm modparam
->       drm/msm/a6xx: Fix GMU firmware parser
->       drm/msm/adreno: Add a modparam to skip GPU
->       drm/msm/a6xx: Add a comment to acd_probe()
-> 
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c      |  9 ++++++++-
->  drivers/gpu/drm/msm/adreno/adreno_device.c | 13 +++++++++++++
->  drivers/gpu/drm/msm/msm_drv.c              |  1 +
->  include/drm/drm_drv.h                      |  3 ++-
->  4 files changed, 24 insertions(+), 2 deletions(-)
-> ---
-> base-commit: 5cc61f86dff464a63b6a6e4758f26557fda4d494
-> change-id: 20250901-assorted-sept-1-5556f15236b8
-> 
-> Best regards,
+
+Acked-by: Usama Arif <usamaarif642@gmail.com>
 
 
+
+> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> index 95688c4cba7a..79891528e7b6 100644
+> --- a/lib/alloc_tag.c
+> +++ b/lib/alloc_tag.c
+> @@ -767,6 +767,16 @@ struct page_ext_operations page_alloc_tagging_ops = {
+>  EXPORT_SYMBOL(page_alloc_tagging_ops);
+>  
+>  #ifdef CONFIG_SYSCTL
+
+nit: might be good to add a comment here that we are not using default as we dont want to enable
+it back if it fails once. But not worth a respin as someone can always check git log if curious.
+
+> +static int proc_mem_profiling_handler(const struct ctl_table *table, int write,
+> +				      void *buffer, size_t *lenp, loff_t *ppos)
+> +{
+> +	if (!mem_profiling_support && write)
+> +		return -EINVAL;
+> +
+> +	return proc_do_static_key(table, write, buffer, lenp, ppos);
+> +}
+> +
+> +
+>  static struct ctl_table memory_allocation_profiling_sysctls[] = {
+>  	{
+>  		.procname	= "mem_profiling",
+> @@ -776,7 +786,7 @@ static struct ctl_table memory_allocation_profiling_sysctls[] = {
+>  #else
+>  		.mode		= 0644,
+>  #endif
+> -		.proc_handler	= proc_do_static_key,
+> +		.proc_handler	= proc_mem_profiling_handler,
+>  	},
+>  };
+>  
 
 
