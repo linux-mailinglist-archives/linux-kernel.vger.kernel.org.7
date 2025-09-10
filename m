@@ -1,102 +1,164 @@
-Return-Path: <linux-kernel+bounces-810686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C83B51DE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:38:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0D2B51DF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481BE1C27486
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01EC73AD19E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E34271446;
-	Wed, 10 Sep 2025 16:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26F82798F8;
+	Wed, 10 Sep 2025 16:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIm/Ujgb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ewWSoeMZ"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A5025BEE1
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DC3270575;
+	Wed, 10 Sep 2025 16:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757522281; cv=none; b=Aq4m4z8Qh/stbEWf7VLBRqF0CsrCQdyENlI7505pFkkQv+fQRvBt/a04RMzaQKKkU4wq+qrzTBOOVi/Dxd0L+b8cndxFCd5KizQkDQVSVTXaYcg80pKc/rwL+ebnrDJzLru1WpRGWp0f7FtE9rXt6LrmHCtaumCnMeecpqKnOMs=
+	t=1757522350; cv=none; b=WvrRnBiHFx8B3oTKuMRubdt055RjcuojGDGMQ0ST9RuZveO1pfKm5T2QRtfwfAkx4D2kCICqOYPArHbhM0/mGezfBKA17ygEr7dw7M56DBYgljbZ2d0GkuynvfttPovw5eG9CoqIRx3sAZwz2uP7xs8hjAV9KnBLp2/9eLjxNnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757522281; c=relaxed/simple;
-	bh=ldXWcdmE13ah6lBxgKqVw4wJH+fE6gBrhvUZKKZw/r4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sjci8CwZYPxpSRxZNMY8HbI7kOJxYRyHLQSO0Tc3H0I5zslpYdv0OwhDzJYVBeBM+7bV9Y0XxYlqNOqlvY4OsQhDFSAEqMYKFLyfLuzh6N+bXw/DqjdLTARGboQZijqt7k8avz1RbhwZED4bP/CUjFaIcrZdm+xNJQ2Bo7btQy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIm/Ujgb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76529C4CEFF
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:38:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757522281;
-	bh=ldXWcdmE13ah6lBxgKqVw4wJH+fE6gBrhvUZKKZw/r4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WIm/Ujgbf718kx21gbL2DeYQbNbSuzmw0RrnMIzAFC7+nIyV6HXBDDkyi56Pp4YWR
-	 TSrinyh/piAyYQCqh2pSE/q/Xz6rYZ0yO5ViM7vVG7pVyVzP0TY4jTUf1N/Pctr1oW
-	 0V2elYdB0RTIfb6kF7AxC982txzB3uGmCPcxl6p1Wmd0cZtyQmJNEwIBxe/mIgCjC8
-	 SBs6K7PxFs4AmqLCkFhSwiLhtPcnSRRJCtQdGJuG7MCcJHbC6hMdHL01BNBOra0v0r
-	 A5H5K6vhIvPUHYnV68FFKNFX20URxA5u3aFuLEZz6bgbihjYb+Vb42jdLCiQjHjYxQ
-	 Ds1+cCxSENLeA==
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45ddca76f22so67065e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:38:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVHI9HU9U8iSWozn4aLZPO/Rt9BhcVl5zsS3QcBADDjwSLMu8XQFszlNTBu09IYl8sAHn+zhHZVwVKsh34=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3APzS9GJQ+rk3kiWDndsEdA2RyIbmMxAzFIZ16xs4eGEuR0Bd
-	ytmkPLkYOQJKgo1ozhYVnzbAm++9JcD/YIycOCN6jaYNmoaSu4MZ58bmDFlHJMricUMhQItkS5q
-	Uj///HuEb0QI6TNACVdJ07Yad+hQiUN22fy/Epn4o
-X-Google-Smtp-Source: AGHT+IHIcZSYVf5Ghq8ZCt7fBSe6Jk0JycWud/uY2Ua6Qwb3BTtv2K2VfdajQ80Prrk17CPuEPzgVIj/KEesxMsohO0=
-X-Received: by 2002:a05:600c:4614:b0:45b:9a6e:ceaf with SMTP id
- 5b1f17b1804b1-45df73f78camr1353545e9.0.1757522280029; Wed, 10 Sep 2025
- 09:38:00 -0700 (PDT)
+	s=arc-20240116; t=1757522350; c=relaxed/simple;
+	bh=fyoQXQIcHwrUIvNO31TLoM1O9Zqsrhk1xnUmKYMZqYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mi67P13Z463vkur+xn1UpmAYx0+RsiFDurQ9FOfx0QaJyjw+pzhqaFksXykjOlloQQlQeoHDxtsBFf0vng8pk+1xrMJ9CkPfLhfnK3Ax9B4P1d40x1o5WE8YusT2OKBnCE635u6jqPDhwImcBlw+XeK+mu/2wUT7S3Gk0NUf50g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ewWSoeMZ; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cMRGb71wkz9tRH;
+	Wed, 10 Sep 2025 18:39:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1757522344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8UVunKIY45vYhwHOKc5wHVILWcquaDNcktx0K8FPhrs=;
+	b=ewWSoeMZyssPl8xHZ8z0V4/zYD98UjxK1j1D8Ai4z0TC10w29jGy6FpB8uECc+AJUzpJyI
+	rXoO/2FS4cOGBk3Bzl/R/BaDHBp2ug3CG3cpaGT/6pZaJ6fDdwJT6Vj3c2x+KHyD5jxQ/d
+	Xjp2YJ9uCgYoAiD+Nvn+HxKoEz2umqVoBfT9qdd40XIXSrpF0eHaNScBU84zNWCs08LY+e
+	StXgQxVVlFntQ501F/WbII+JtnNcxG08vw/27pqOItazwiqOGaK57ut9Om9LujGAzOQ/Tl
+	zVJnEDKKy/MlEUv4zXWSGBx705YlE8sKitou80enL+U1k+g3JchbhnqOmlpzpg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Thu, 11 Sep 2025 02:38:47 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 26/32] nsfs: add current_in_namespace()
+Message-ID: <2025-09-10-personal-preachy-halogen-illness-huN66a@cyphar.com>
+References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
+ <20250910-work-namespace-v1-26-4dd56e7359d8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910160833.3464-1-ryncsn@gmail.com> <20250910160833.3464-2-ryncsn@gmail.com>
- <CAMgjq7Db_DbZosWrUUAGfObDYA2e34zB=RtUpRZc2u4RJBiSxg@mail.gmail.com>
-In-Reply-To: <CAMgjq7Db_DbZosWrUUAGfObDYA2e34zB=RtUpRZc2u4RJBiSxg@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 10 Sep 2025 09:37:48 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuPd10FosK=CQbrw3ZPF+ckJO7-_1eLKY87_MX8sZ5YYUQ@mail.gmail.com>
-X-Gm-Features: AS18NWA9yRquM3BelDzwSg3xc3yiEw69xvVtEIQURHSBoX4G2NvJ0Z9YpOqdPN8
-Message-ID: <CAF8kJuPd10FosK=CQbrw3ZPF+ckJO7-_1eLKY87_MX8sZ5YYUQ@mail.gmail.com>
-Subject: Re: [PATCH v3 01/15] docs/mm: add document for swap table
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xlc5qqfca35nciqm"
+Content-Disposition: inline
+In-Reply-To: <20250910-work-namespace-v1-26-4dd56e7359d8@kernel.org>
+X-Rspamd-Queue-Id: 4cMRGb71wkz9tRH
+
+
+--xlc5qqfca35nciqm
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 26/32] nsfs: add current_in_namespace()
+MIME-Version: 1.0
 
-On Wed, Sep 10, 2025 at 9:14=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> On Thu, Sep 11, 2025 at 12:08=E2=80=AFAM Kairui Song <ryncsn@gmail.com> w=
-rote:
-> >
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > From: Chris Li <chrisl@kernel.org>
->
-> So sorry about this. I did fix my git config and verified that, but
-> sent the email on another machine that still having a broken config :/
->
-> Hi Andrew, can you help fix the Author to be Chris here?
->
-> BTW I saw the current version in mm-new, the author is already Chris,
-> which is correct.
+On 2025-09-10, Christian Brauner <brauner@kernel.org> wrote:
+> Add a helper to easily check whether a given namespace is the caller's
+> current namespace. This is currently open-coded in a lot of places.
+> Simply switch on the type and compare the results.
+>=20
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-If the mm-new got it right, you have nothing to worry about. I assume
-Andrew's tooling already takes care of this common issue.
+Looks good, feel free to add my
 
-Chris
+Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
+
+> ---
+>  include/linux/nsfs.h | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/include/linux/nsfs.h b/include/linux/nsfs.h
+> index fb84aa538091..e5a5fa83d36b 100644
+> --- a/include/linux/nsfs.h
+> +++ b/include/linux/nsfs.h
+> @@ -5,6 +5,8 @@
+>  #define _LINUX_NSFS_H
+> =20
+>  #include <linux/ns_common.h>
+> +#include <linux/cred.h>
+> +#include <linux/pid_namespace.h>
+> =20
+>  struct path;
+>  struct task_struct;
+> @@ -22,5 +24,17 @@ int ns_get_name(char *buf, size_t size, struct task_st=
+ruct *task,
+>  			const struct proc_ns_operations *ns_ops);
+>  void nsfs_init(void);
+> =20
+> -#endif /* _LINUX_NSFS_H */
+> +#define __current_namespace_from_type(__ns)				\
+> +	_Generic((__ns),						\
+> +		struct cgroup_namespace *: current->nsproxy->cgroup_ns,	\
+> +		struct ipc_namespace *:    current->nsproxy->ipc_ns,	\
+> +		struct net *:              current->nsproxy->net_ns,	\
+> +		struct pid_namespace *:    task_active_pid_ns(current),	\
+> +		struct mnt_namespace *:    current->nsproxy->mnt_ns,	\
+> +		struct time_namespace *:   current->nsproxy->time_ns,	\
+> +		struct user_namespace *:   current_user_ns(),		\
+> +		struct uts_namespace *:    current->nsproxy->uts_ns)
+> +
+> +#define current_in_namespace(__ns) (__current_namespace_from_type(__ns) =
+=3D=3D __ns)
+> =20
+> +#endif /* _LINUX_NSFS_H */
+>=20
+> --=20
+> 2.47.3
+>=20
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--xlc5qqfca35nciqm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaMGplxsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG8lPQD+NApDKaW4M8pv6R7a51On
+uCLR3fnsMihbWdVUX0stY1cA/AmoZ/8sX104FAD981fIcw2HdcoGpdjKBkLYZdek
+JDME
+=FNUj
+-----END PGP SIGNATURE-----
+
+--xlc5qqfca35nciqm--
 
