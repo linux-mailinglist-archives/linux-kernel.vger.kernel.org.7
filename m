@@ -1,215 +1,76 @@
-Return-Path: <linux-kernel+bounces-810457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33922B51B0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:11:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1D9B51AE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1457AA02200
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:02:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80862170E29
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3B533769D;
-	Wed, 10 Sep 2025 14:57:24 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AC1327A34;
+	Wed, 10 Sep 2025 14:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="YYYKTX11"
+Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDBF32C33B;
-	Wed, 10 Sep 2025 14:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4ADB327A1F;
+	Wed, 10 Sep 2025 14:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757516244; cv=none; b=nQqVZ3dGtiKKIE96NliPfKrGoZIDTu5i2FgyY5eO0EdJwqL2/O0c3Qy1p2E1XqMveWO3OSrGTn7PzlOfWg/8f757SGMxWGiIlfwZil3rqQRH4JRkVMfJ8tpIZtiFv0cW+kB1foMxUE0WY9iWSrCb78pdF0uYs/rlTuK+XJA2kPQ=
+	t=1757516361; cv=none; b=KbRykyjd27m6HLcBTPF9NuFC8XfVlTwPGYs/qH9F1kjjGGcf0jz4yGyCEHFhdbIkYWd5Le7wpa6P6CpqLeKc2BBmUwXKd8ghX8wbmn+36F+D7PKCPuqH/yXBEQ3Rj6JqB+mqvrbNjhCnLsIifljQPV0MrXt5VKOKvUam5bVQcBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757516244; c=relaxed/simple;
-	bh=i9kGLzuwhgZ00stfvmGeDFvOj/l2RLR+XHCvs78CoAU=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Y1YvasOvhViOdMycswQYBKu6+8HpWAZBj/DQduxGaON2g9PJen5RWYA9cTa1dO/keFegUzwqISgCUhDAJHGgraVwyuHbGtnsatHB6x4E0oiHJXNPBqIUHBVHIsyJCZrsbh87hD8ZTCJzPl+kKOyr11HpyGEA+j0B/EaqZ4s0eAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cMNvm1wDvzRkFf;
-	Wed, 10 Sep 2025 22:52:36 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 45D53180B63;
-	Wed, 10 Sep 2025 22:57:13 +0800 (CST)
-Received: from [10.174.178.247] (10.174.178.247) by
- dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 10 Sep 2025 22:57:12 +0800
-Subject: Re: [PATCH v3] ACPI: APEI: EINJ: Allow more types of addresses except
- MMIO
-To: Jiaqi Yan <jiaqiyan@google.com>, <tony.luck@intel.com>,
-	<rafael@kernel.org>
-CC: <dan.j.williams@intel.com>, <bp@alien8.de>, <mchehab@kernel.org>,
-	<xueshuai@linux.alibaba.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250910044531.264043-1-jiaqiyan@google.com>
-From: Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <88893809-ed13-dbb9-2446-8fd680f57693@huawei.com>
-Date: Wed, 10 Sep 2025 22:57:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+	s=arc-20240116; t=1757516361; c=relaxed/simple;
+	bh=i+W9XBDNiNauWFra8m5tnO4evGE80GW9FRlAsKhJjSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JRGWq49i4f7lfx5rzkcYtErGbToDQI8OZYRXykNicS8Mm1ukUJvzCyIi6IHZqKisXWv2NAv5QrqAFwMgrE19kt8cxdtyjRWmpO6Av8qFt4DVbBLUw5sFlZzGlGZ554HxU8/GObOCfbjB9dvqTfBkgA8j/9mOxEqM69IEeaTtWyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=YYYKTX11; arc=none smtp.client-ip=129.21.49.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
+Received: from localhost (localhost [127.0.0.1])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id DB9D240ED4BA;
+	Wed, 10 Sep 2025 10:59:17 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
+	in-reply-to:content-disposition:content-type:content-type
+	:mime-version:references:message-id:subject:subject:from:from
+	:date:date:received:received; s=mail; t=1757516351; x=
+	1759330752; bh=i+W9XBDNiNauWFra8m5tnO4evGE80GW9FRlAsKhJjSE=; b=Y
+	YYKTX1120skmF4K5iqoDxDVBHg32oNKfvR+B6aztF9Tnt/Oo/+9OWd27bdo9O2Kk
+	wQVfELlds76JUm75Ov/8Wi+PklFnciue9eEKuEbzYelZZLucyKC6N5/z118QD63x
+	rKeSyLC5LNyRGK50EPXer5xQ2Hqud6UljqAo6OZl/I=
+X-Virus-Scanned: amavisd-new at csh.rit.edu
+Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
+ by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
+ with ESMTP id W3HZiSeVnRVE; Wed, 10 Sep 2025 10:59:11 -0400 (EDT)
+Received: from ada.csh.rit.edu (ada.csh.rit.edu [129.21.49.156])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id 73F8C40E2F43;
+	Wed, 10 Sep 2025 10:59:11 -0400 (EDT)
+Date: Wed, 10 Sep 2025 10:59:10 -0400
+From: Mary Strodl <mstrodl@csh.rit.edu>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org,
+	oe-kbuild-all@lists.linux.dev, linus.walleij@linaro.org,
+	brgl@bgdev.pl, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] gpio: mpsse: support bryx radio interface kit
+Message-ID: <aMGSPj6VKMDO8dkn@ada.csh.rit.edu>
+References: <20250908173804.3816149-1-mstrodl@csh.rit.edu>
+ <202509092305.ncd9mzaZ-lkp@intel.com>
+ <aMFzTaO7zGVgWNRK@ada.csh.rit.edu>
+ <CAMuHMdVpdk5JaqXf6LkSWQvZ7FnfyLdMWOJX+7n0=PZ-udH-WA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250910044531.264043-1-jiaqiyan@google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVpdk5JaqXf6LkSWQvZ7FnfyLdMWOJX+7n0=PZ-udH-WA@mail.gmail.com>
 
-On 2025/9/10 12:45, Jiaqi Yan wrote:
-> EINJ driver today only allows injection request to go through for two
-> kinds of IORESOURCE_MEM: IORES_DESC_PERSISTENT_MEMORY and
-> IORES_DESC_SOFT_RESERVED. This check prevents user of EINJ to test
-> memory corrupted in many interesting areas:
-> 
-> - Legacy persistent memory
-> - Memory claimed to be used by ACPI tables or NV storage
-> - Kernel crash memory and others
-> 
-> There is need to test how kernel behaves when something consumes memory
-> errors in these memory regions. For example, if certain ACPI table is
-> corrupted, does kernel crash gracefully to prevent "silent data
-> corruption". For another example, legacy persistent memory, when managed
-> by Device DAX, does support recovering from Machine Check Exception
-> raised by memory failure, hence worth to be tested.
-> 
-> However, attempt to inject memory error via EINJ to legacy persistent
-> memory or ACPI owned memory fails with -EINVAL.
-> 
-> Allow EINJ to inject at address except it is MMIO. Leave it to the BIOS
-> or firmware to decide what is a legitimate injection target.
-> 
-> In addition to the test done in [1], on a machine having the following
-> iomem resources:
-> 
->      ...
->      01000000-08ffffff : Crash kernel
->      768f0098-768f00a7 : APEI EINJ
->      ...
->    768f4000-77323fff : ACPI Non-volatile Storage
->    77324000-777fefff : ACPI Tables
->    777ff000-777fffff : System RAM
->    77800000-7fffffff : Reserved
->    80000000-8fffffff : PCI MMCONFIG 0000 [bus 00-ff]
->    90040000-957fffff : PCI Bus 0000:00
->    ...
->    300000000-3ffffffff : Persistent Memory (legacy)
->    ...
-> 
-> I commented __einj_error_inject during the test and just tested when
-> injecting a memory error at each start address shown above:
-> - 0x80000000 and 0x90040000 both failed with EINVAL
-> - request passed through for all other addresses
-> 
-> Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
-> ---
-> 
-> Changelog
-> 
-> v2 [2] -> v3:
-> - Remove unnecessary IORES_DESC_CXL per comment from Hanjun [3].
-> - Minor update to code comment.
-> 
-> v1 [1] -> v2:
-> - In addition to allow IORES_DESC_PERSISTENT_MEMORY_LEGACY, open the
->    door wider and only exclude MMIO per suggestion from Tony [4].
-> - Rebased to commit 11e7861d680c ("Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm").
-> 
-> [1] https://lore.kernel.org/linux-acpi/20250825223348.3780279-1-jiaqiyan@google.com
-> [2] https://lore.kernel.org/linux-acpi/20250830030226.918555-1-jiaqiyan@google.com
-> [3] https://lore.kernel.org/linux-acpi/bc8ad4b8-c000-0298-efd1-4a332c4c7820@huawei.com
-> [4] https://lore.kernel.org/linux-acpi/SJ1PR11MB60835824926BEE57F094DE6FFC39A@SJ1PR11MB6083.namprd11.prod.outlook.com
-> 
-> drivers/acpi/apei/einj-core.c | 51 ++++++++++++++++++++++++++++-------
->   1 file changed, 42 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-> index 2561b045acc7b..3c87953dbd197 100644
-> --- a/drivers/acpi/apei/einj-core.c
-> +++ b/drivers/acpi/apei/einj-core.c
-> @@ -656,6 +656,43 @@ static int __einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
->   	return rc;
->   }
->   
-> +/* Allow almost all types of address except MMIO. */
-> +static bool is_allowed_range(u64 base_addr, u64 size)
-> +{
-> +	int i;
-> +	/*
-> +	 * MMIO region is usually claimed with IORESOURCE_MEM + IORES_DESC_NONE.
-> +	 * However, IORES_DESC_NONE is treated like a wildcard when we check if
-> +	 * region intersects with known resource. So do an allow list check for
-> +	 * IORES_DESCs that definitely or most likely not MMIO.
-> +	 */
-> +	int non_mmio_desc[] = {
-> +		IORES_DESC_CRASH_KERNEL,
-> +		IORES_DESC_ACPI_TABLES,
-> +		IORES_DESC_ACPI_NV_STORAGE,
-> +		IORES_DESC_PERSISTENT_MEMORY,
-> +		IORES_DESC_PERSISTENT_MEMORY_LEGACY,
-> +		/* Treat IORES_DESC_DEVICE_PRIVATE_MEMORY as MMIO. */
-> +		IORES_DESC_RESERVED,
-> +		IORES_DESC_SOFT_RESERVED,
-> +	};
-> +
-> +	if (region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
-> +			      == REGION_INTERSECTS)
-> +		return true;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(non_mmio_desc); ++i) {
-> +		if (region_intersects(base_addr, size, IORESOURCE_MEM, non_mmio_desc[i])
-> +				      == REGION_INTERSECTS)
-> +			return true;
-> +	}
-> +
-> +	if (arch_is_platform_page(base_addr))
-> +		return true;
-> +
-> +	return false;
-> +}
-> +
->   /* Inject the specified hardware error */
->   int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 param3,
->   		      u64 param4)
-> @@ -702,19 +739,15 @@ int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 param3,
->   	 * Disallow crazy address masks that give BIOS leeway to pick
->   	 * injection address almost anywhere. Insist on page or
->   	 * better granularity and that target address is normal RAM or
-> -	 * NVDIMM.
-> +	 * as long as is not MMIO.
-
-Thanks for updating this as well.
-
->   	 */
->   	base_addr = param1 & param2;
->   	size = ~param2 + 1;
->   
-> -	if (((param2 & PAGE_MASK) != PAGE_MASK) ||
-> -	    ((region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
-> -				!= REGION_INTERSECTS) &&
-> -	     (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DESC_PERSISTENT_MEMORY)
-> -				!= REGION_INTERSECTS) &&
-> -	     (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DESC_SOFT_RESERVED)
-> -				!= REGION_INTERSECTS) &&
-> -	     !arch_is_platform_page(base_addr)))
-> +	if ((param2 & PAGE_MASK) != PAGE_MASK)
-> +		return -EINVAL;
-> +
-> +	if (!is_allowed_range(base_addr, size))
->   		return -EINVAL;
->   
->   	if (is_zero_pfn(base_addr >> PAGE_SHIFT))
-
-Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
-
-Thanks
-Hanjun
+On Wed, Sep 10, 2025 at 04:55:05PM +0200, Geert Uytterhoeven wrote:
+> Please don't.  The m68k version is wrong.  I will send a patch to fix it.
+Even better. Thanks!
 
