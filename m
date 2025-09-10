@@ -1,160 +1,205 @@
-Return-Path: <linux-kernel+bounces-810192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB1CCB51717
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:38:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F7B1B5171E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C139D1C8248F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:38:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC9927B3463
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306FE31CA58;
-	Wed, 10 Sep 2025 12:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A6C31282F;
+	Wed, 10 Sep 2025 12:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pKGyG2Ug"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dk7QbqrX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B5A31A55A
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13A62DF12E
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757507786; cv=none; b=GIYZhJiqyNRTWp3xyS20o8Ed7soOVFl1XwC/sw1tMnjZh+Y3zlzMSN6uRckxnulCrxE7uYExSAhIXngJ+WEW9wNgXl8QmWBHUQ8t+37PMHGCb1PXHCjP60TlgROMZzFXw4SuYQ7QlqFVdQSa/20nrqwh+n4Ws9KF5GJnslJoZcg=
+	t=1757507837; cv=none; b=ljwnQahAMQ/0aJXM8f4Y3GeIM1kp+LeDD7QsvDxL9T82pi7j/tUiWQzgzVm/dEz4JP/2rNn4B93V9tBN9U2Xh3qdRVjUDpTcqxeU7HRSyewid/UYFOyvtbq5lXdX9D2Kmz/AcqCmqFzqzLKfDnVVMeOqV7fP3puxyesm5YnrMps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757507786; c=relaxed/simple;
-	bh=NoLJl6scBRVZRqT+wkrDL4OnVlDy7ZVPjr3jqhZ0scU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tk/+622t7FbLR+k6o9XIeKNunagl8Ck22X27beesPqENvM/bcvMnVV1x8StYx0dx0EL9HhiVGwjBpMxKd8EEfYZ5kq0Gus8QcCGMmxE/Gr7i1lwrNY51qGJBGfPAhaG0K6pxWn0EJo5lMO9dfqRzYI5KtVMJMPwPZhTnGKeayb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pKGyG2Ug; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f13922e4-07f8-4720-bc62-c309efc48967@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757507782;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MMbn74c4BsmSunzhyeWTqZeRg+QZ0xdrTfapzSQZIdc=;
-	b=pKGyG2UgJGq6vlE51DaUbmgoLHh1ll/nGTbJA1qgCW4qQan/OtSU6roMde+nS8Jc377reK
-	1BxJ5mDsM+7OpOkfg4SSXUbpumBRc4ouR7XQksXkVzF7MuPDHvR56je7pqgRk+Vyajyt7L
-	ZWlGKqAdrHNpRSDjjAJTzIoHS5H2eDM=
-Date: Wed, 10 Sep 2025 20:36:08 +0800
+	s=arc-20240116; t=1757507837; c=relaxed/simple;
+	bh=zLkhf9ENVvK7tinNTuxO5/bOZ6G3lPjxkDt4TICYWyA=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=ARpust7NENhtkbiChVqKDP6RyP092Q8W9x1kGzTCrfEA6rX0QoBDOrX8R6nKpeuKcPzY+1d0Kdliw6Qf02ahIDfhqnNjCnz+bfkq5UK/8lIZDZOHC99Ng4zqZJ+8nqKEEoDd3l10jGSQTEos7CcUDO7FbxZNkWTDD+IbDSqXH9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dk7QbqrX; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757507836; x=1789043836;
+  h=date:from:to:cc:subject:message-id;
+  bh=zLkhf9ENVvK7tinNTuxO5/bOZ6G3lPjxkDt4TICYWyA=;
+  b=Dk7QbqrX2Q5H0W7ndf2HwuCoXATpn7ppWwES84+2+6cAiPJ6SzifLLsi
+   ABwt627cd9NTByHzSFBlkTvmbJyEMsZGzDUasvyif/Cqq24B1PybNgIhW
+   akr3zEW8vzyI6XiOY8wlGjpG4W4NkB4VFfz83T8B/g2ODf3aAxE429OK6
+   kLYWbELIitZ91Psh+0NPaAXwTn14AXZDxU7wPSHe6HTwhBOcTv5vV2D9i
+   hSLAyFZpxbNXUqvQAdKBiDNxEIXJOLVqv730ZMBTvVL6pDaAN2fZrjeJD
+   bUgOSM7IXEKNCILUPZZYdjdjaS6ylp+dIU3roOZpUIwEqcuzU1JH0wmVg
+   g==;
+X-CSE-ConnectionGUID: 68U00ldOSRqxsmA+PQNJCg==
+X-CSE-MsgGUID: 8OdcjzR8QuSkHUyQjh0Urw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="59754036"
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="59754036"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 05:37:15 -0700
+X-CSE-ConnectionGUID: mGvEdAIWQeiCn+3AkhHGiQ==
+X-CSE-MsgGUID: wxdiVVW+T3GcKB/MVfLLZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="172664377"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 10 Sep 2025 05:37:14 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uwK4V-0005vb-1R;
+	Wed, 10 Sep 2025 12:37:11 +0000
+Date: Wed, 10 Sep 2025 20:36:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:timers/urgent] BUILD SUCCESS
+ e895f8e29119c8c966ea794af9e9100b10becb88
+Message-ID: <202509102019.jHMCufeo-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH 1/4] sched/fair: Propagate load for throttled cfs_rq
-To: Aaron Lu <ziqianlu@bytedance.com>,
- Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- Peter Zijlstra <peterz@infradead.org>, Josh Don <joshdon@google.com>,
- Ingo Molnar <mingo@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Xi Wang <xii@google.com>
-Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
- Chuyi Zhou <zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>,
- Florian Bezdeka <florian.bezdeka@siemens.com>,
- Songtang Liu <liusongtang@bytedance.com>, Chen Yu <yu.c.chen@intel.com>,
- Matteo Martelli <matteo.martelli@codethink.co.uk>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-References: <20250910095044.278-1-ziqianlu@bytedance.com>
- <20250910095044.278-2-ziqianlu@bytedance.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20250910095044.278-2-ziqianlu@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 2025/9/10 17:50, Aaron Lu wrote:
-> Before task based throttle model, propagating load will stop at a
-> throttled cfs_rq and that propagate will happen on unthrottle time by
-> update_load_avg().
-> 
-> Now that there is no update_load_avg() on unthrottle for throttled
-> cfs_rq and all load tracking is done by task related operations, let the
-> propagate happen immediately.
-> 
-> While at it, add a comment to explain why cfs_rqs that are not affected
-> by throttle have to be added to leaf cfs_rq list in
-> propagate_entity_cfs_rq() per my understanding of commit 0258bdfaff5b
-> ("sched/fair: Fix unfairness caused by missing load decay").
-> 
-> Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/urgent
+branch HEAD: e895f8e29119c8c966ea794af9e9100b10becb88  hrtimers: Unconditionally update target CPU base after offline timer migration
 
-LGTM!
+elapsed time: 1462m
 
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+configs tested: 113
+configs skipped: 3
 
-Thanks.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> ---
->   kernel/sched/fair.c | 26 ++++++++++++++++++--------
->   1 file changed, 18 insertions(+), 8 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index df8dc389af8e1..f993de30e1466 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5729,6 +5729,11 @@ static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
->   	return cfs_bandwidth_used() && cfs_rq->throttled;
->   }
->   
-> +static inline bool cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
-> +{
-> +	return cfs_bandwidth_used() && cfs_rq->pelt_clock_throttled;
-> +}
-> +
->   /* check whether cfs_rq, or any parent, is throttled */
->   static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
->   {
-> @@ -6721,6 +6726,11 @@ static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
->   	return 0;
->   }
->   
-> +static inline bool cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
-> +{
-> +	return false;
-> +}
-> +
->   static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
->   {
->   	return 0;
-> @@ -13151,10 +13161,13 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
->   {
->   	struct cfs_rq *cfs_rq = cfs_rq_of(se);
->   
-> -	if (cfs_rq_throttled(cfs_rq))
-> -		return;
-> -
-> -	if (!throttled_hierarchy(cfs_rq))
-> +	/*
-> +	 * If a task gets attached to this cfs_rq and before being queued,
-> +	 * it gets migrated to another CPU due to reasons like affinity
-> +	 * change, make sure this cfs_rq stays on leaf cfs_rq list to have
-> +	 * that removed load decayed or it can cause faireness problem.
-> +	 */
-> +	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
->   		list_add_leaf_cfs_rq(cfs_rq);
->   
->   	/* Start to propagate at parent */
-> @@ -13165,10 +13178,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
->   
->   		update_load_avg(cfs_rq, se, UPDATE_TG);
->   
-> -		if (cfs_rq_throttled(cfs_rq))
-> -			break;
-> -
-> -		if (!throttled_hierarchy(cfs_rq))
-> +		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
->   			list_add_leaf_cfs_rq(cfs_rq);
->   	}
->   }
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                   randconfig-001-20250909    gcc-8.5.0
+arc                   randconfig-002-20250909    gcc-8.5.0
+arm                               allnoconfig    clang-22
+arm                          pxa910_defconfig    gcc-15.1.0
+arm                   randconfig-001-20250909    clang-18
+arm                   randconfig-002-20250909    clang-17
+arm                   randconfig-003-20250909    clang-22
+arm                   randconfig-004-20250909    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250909    clang-16
+arm64                 randconfig-002-20250909    gcc-11.5.0
+arm64                 randconfig-003-20250909    gcc-11.5.0
+arm64                 randconfig-004-20250909    clang-22
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250909    gcc-15.1.0
+csky                  randconfig-002-20250909    gcc-15.1.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon               randconfig-001-20250909    clang-22
+hexagon               randconfig-002-20250909    clang-22
+i386                             allmodconfig    gcc-14
+i386                              allnoconfig    gcc-14
+i386        buildonly-randconfig-001-20250909    gcc-13
+i386        buildonly-randconfig-002-20250909    clang-20
+i386        buildonly-randconfig-003-20250909    clang-20
+i386        buildonly-randconfig-004-20250909    clang-20
+i386        buildonly-randconfig-005-20250909    clang-20
+i386        buildonly-randconfig-006-20250909    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20250909    gcc-15.1.0
+loongarch             randconfig-002-20250909    gcc-15.1.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                     loongson1b_defconfig    clang-22
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20250909    gcc-11.5.0
+nios2                 randconfig-002-20250909    gcc-8.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250909    gcc-8.5.0
+parisc                randconfig-002-20250909    gcc-12.5.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                 mpc834x_itx_defconfig    clang-16
+powerpc               randconfig-001-20250909    clang-22
+powerpc               randconfig-002-20250909    clang-17
+powerpc               randconfig-003-20250909    gcc-8.5.0
+powerpc                     redwood_defconfig    clang-22
+powerpc64             randconfig-001-20250909    clang-20
+powerpc64             randconfig-002-20250909    gcc-10.5.0
+powerpc64             randconfig-003-20250909    gcc-8.5.0
+riscv                             allnoconfig    gcc-15.1.0
+riscv                 randconfig-001-20250909    clang-22
+riscv                 randconfig-002-20250909    clang-22
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                  randconfig-001-20250909    gcc-11.5.0
+s390                  randconfig-002-20250909    clang-18
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                               j2_defconfig    gcc-15.1.0
+sh                    randconfig-001-20250909    gcc-15.1.0
+sh                    randconfig-002-20250909    gcc-9.5.0
+sh                           se7619_defconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250909    gcc-8.5.0
+sparc                 randconfig-002-20250909    gcc-15.1.0
+sparc64               randconfig-001-20250909    clang-22
+sparc64               randconfig-002-20250909    gcc-8.5.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-14
+um                    randconfig-001-20250909    gcc-14
+um                    randconfig-002-20250909    gcc-14
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250909    clang-20
+x86_64      buildonly-randconfig-002-20250909    clang-20
+x86_64      buildonly-randconfig-003-20250909    gcc-14
+x86_64      buildonly-randconfig-004-20250909    clang-20
+x86_64      buildonly-randconfig-005-20250909    gcc-14
+x86_64      buildonly-randconfig-006-20250909    clang-20
+x86_64                              defconfig    gcc-14
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                  audio_kc705_defconfig    gcc-15.1.0
+xtensa                randconfig-001-20250909    gcc-8.5.0
+xtensa                randconfig-002-20250909    gcc-15.1.0
+xtensa                    xip_kc705_defconfig    gcc-15.1.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
