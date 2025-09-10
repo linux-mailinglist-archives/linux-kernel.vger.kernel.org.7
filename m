@@ -1,175 +1,102 @@
-Return-Path: <linux-kernel+bounces-810685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A86B51DE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:37:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C83B51DE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC663BD07E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:37:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481BE1C27486
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A9526F2B9;
-	Wed, 10 Sep 2025 16:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E34271446;
+	Wed, 10 Sep 2025 16:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="MEGx7w4A"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIm/Ujgb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2B1262FD4
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A5025BEE1
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757522235; cv=none; b=QwjKeKXOBJVfqBXyN/QG2nskLOjAt99LsIK8oH7iB4Trm/K+EFF13qXzW+CIa9TVEtCX2gwSBIzLdNSj+OvBeRbiyXrd4LXwC0dD08MHXleWGcqlGLacncdvXUtuJtQsuCMukh4eR0RDzU1ATLbpqyx6QbafKHVv55rj+uchzP0=
+	t=1757522281; cv=none; b=Aq4m4z8Qh/stbEWf7VLBRqF0CsrCQdyENlI7505pFkkQv+fQRvBt/a04RMzaQKKkU4wq+qrzTBOOVi/Dxd0L+b8cndxFCd5KizQkDQVSVTXaYcg80pKc/rwL+ebnrDJzLru1WpRGWp0f7FtE9rXt6LrmHCtaumCnMeecpqKnOMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757522235; c=relaxed/simple;
-	bh=D7+1Jtko4vGFBtZ3b9PtA52nn3hdE+r4sdDTEiZ9DIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pPlnOco7DUSaasrvNDSqdXJt4shC7pw8Xubf/Ncn/j8N6FNN1FFx+4IFD2m5Xu4OJRid4nH9YeuQJjvyAEqrtzNTdLyTmEubRaEW/zi/R4e+AeDOmXeaV+frviE9Ni5VBZvwXpj+4IdJ3OdYCuHVRsm0O1gcHloiLn+ciLbp0ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=MEGx7w4A; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-4023132bd4aso23882405ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:37:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1757522232; x=1758127032; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5PHdX8GAxuQZU4FPQQfLC6oiU9UUSdStUhO8V11U/BI=;
-        b=MEGx7w4ABZdm126HTNA3s4s0PSDKCS3OOLXr47+IaN8cVf/aoJSJyepbAPxjWF3vNt
-         eKEhp+bDQ/cS84luZDF9WrjX/JQSpJS1lSZKJvj1pWrvXeK0PtRTN95hJWUJ4mSjBefo
-         RMoBa5MFEi9cieAPzBBycDMBw25U743V8q8XNwSmtmCwQbD8KX74j6ETivflnUAuYidK
-         UmprWnN+5ZZxSXQsn0mQEK0B/ND2FKctk88eWYC4b11BpH8MdMgDUAmEY9FtE56HhOLU
-         0Jrp5QQEQQiW7RVQXLMOoncdmdi/f8/GHXl2g6ZHnDRY9O7lZ6ii7nWiCuk1j9fLO+Q4
-         TA4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757522232; x=1758127032;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5PHdX8GAxuQZU4FPQQfLC6oiU9UUSdStUhO8V11U/BI=;
-        b=jXRNvOWr41sbAC7tdLqCEAamkLdGWvpDrrIqmPhJzwzmLGgQCUsi0JoGPZNJWuSHhv
-         zx4gp9IP2mICZLgGgrmGCErvJptdBnIqt1erAj727y3pacuOoPaVsFxOp9y29izssy/i
-         cQggK7HZ66VfniLAGmKBH/vky081Aw1WEYxmSGO02hAvueWB5v6vprcQWk48SvzBSUFW
-         Xc5kwkdEaun6wssUtuRr5c9IWMykaxCKAyJvt3eG/HX7Py3JFYA4fn10st6H8Sf6KzH+
-         jxbQSdpnkJVN+d9f2m2X6XKaId1xya5Xjhz0fbQDnXTM+gSKYCl1/sWvr6CFudjwT2is
-         gHqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBqO8yFQnB5k7N74Hmbf4cb8QuH0KusnzKtfgDb4A4c6bzWb0IU+vq3RhHVy8ICkadMZ2u8BIe9ui8/QA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhEcs128PBbXOEKT2EKqgivqQR6XZ3RpxlcnQCMIQhezz8d3Ns
-	pSuh2dCC+ZFIz9V9NQ65h8Z2ParPMc0RAyySbWkt8Tt6lDgU28/H9ip+iR9d0vPV7uw=
-X-Gm-Gg: ASbGncvgwcFSFzuy2Xsb3YgqNllKmfoHP47SIOxKkdnMXVlPWvWt2yUsWdnPP2ZxTZW
-	zeZP7intGcpF1aQq/dxbPxzps6wYKUSy+VEmDtwCBUZoFlgcArKhMHe2sx5pN7YFVnFQ/EivxvF
-	aRlIYzh0yI5D4pEu07igeJEmuqJsHuHfZ0g8RBD4e1qexIgQYg3sBCOahzkESMFQ/SCVdAt7u9Q
-	ro4IWgweeoDzF9Unhn5ZzOZ6VF1ecxBn0lwaqe6NooOW0ppGc6tpjMA/twKjvNBYatGctLIAdxV
-	Umj9eBOaa8brVpcVxifcDQm6DzHTiXJIKzwXIOp2uBKn2YBtl4iJXYVL4hwgwpBrBivqiwiC8md
-	saJn0cLH5OxKuhTnZW5RdxPcmD0aW9g==
-X-Google-Smtp-Source: AGHT+IGBAC+NF9eQWXe2qgtcaHE/zyQFVP7RCp/eYumttsidkm4pYYuSbUHJdDdCHsm7TKN2JhGJKw==
-X-Received: by 2002:a05:6e02:1c0f:b0:418:f658:acbc with SMTP id e9e14a558f8ab-418f658ae4bmr28223245ab.20.1757522232476;
-        Wed, 10 Sep 2025 09:37:12 -0700 (PDT)
-Received: from kf-m2g5 ([2607:fb90:cfaa:41d:4be0:7e8b:71d9:233b])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4049b300638sm42214305ab.10.2025.09.10.09.37.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 09:37:12 -0700 (PDT)
-Date: Wed, 10 Sep 2025 11:36:50 -0500
-From: Aaron Rainbolt <arainbolt@kfocus.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, mmikowski@kfocus.org
-Subject: [REGRESSION] Intel Turbo Boost stuck disabled on some Clevo
- machines (was: [PATCH] cpufreq: intel_pstate: Unchecked MSR aceess in
- legacy mode)
-Message-ID: <20250910113650.54eafc2b@kf-m2g5>
-In-Reply-To: <CAJZ5v0h99RFF26qAnJf07LS0t-6ATm9c2zrQVzdi96x3FAPXQg@mail.gmail.com>
-References: <20250429210711.255185-1-srinivas.pandruvada@linux.intel.com>
-	<CAJZ5v0h99RFF26qAnJf07LS0t-6ATm9c2zrQVzdi96x3FAPXQg@mail.gmail.com>
-Organization: Kubuntu Focus
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757522281; c=relaxed/simple;
+	bh=ldXWcdmE13ah6lBxgKqVw4wJH+fE6gBrhvUZKKZw/r4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sjci8CwZYPxpSRxZNMY8HbI7kOJxYRyHLQSO0Tc3H0I5zslpYdv0OwhDzJYVBeBM+7bV9Y0XxYlqNOqlvY4OsQhDFSAEqMYKFLyfLuzh6N+bXw/DqjdLTARGboQZijqt7k8avz1RbhwZED4bP/CUjFaIcrZdm+xNJQ2Bo7btQy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIm/Ujgb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76529C4CEFF
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:38:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757522281;
+	bh=ldXWcdmE13ah6lBxgKqVw4wJH+fE6gBrhvUZKKZw/r4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=WIm/Ujgbf718kx21gbL2DeYQbNbSuzmw0RrnMIzAFC7+nIyV6HXBDDkyi56Pp4YWR
+	 TSrinyh/piAyYQCqh2pSE/q/Xz6rYZ0yO5ViM7vVG7pVyVzP0TY4jTUf1N/Pctr1oW
+	 0V2elYdB0RTIfb6kF7AxC982txzB3uGmCPcxl6p1Wmd0cZtyQmJNEwIBxe/mIgCjC8
+	 SBs6K7PxFs4AmqLCkFhSwiLhtPcnSRRJCtQdGJuG7MCcJHbC6hMdHL01BNBOra0v0r
+	 A5H5K6vhIvPUHYnV68FFKNFX20URxA5u3aFuLEZz6bgbihjYb+Vb42jdLCiQjHjYxQ
+	 Ds1+cCxSENLeA==
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45ddca76f22so67065e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:38:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVHI9HU9U8iSWozn4aLZPO/Rt9BhcVl5zsS3QcBADDjwSLMu8XQFszlNTBu09IYl8sAHn+zhHZVwVKsh34=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3APzS9GJQ+rk3kiWDndsEdA2RyIbmMxAzFIZ16xs4eGEuR0Bd
+	ytmkPLkYOQJKgo1ozhYVnzbAm++9JcD/YIycOCN6jaYNmoaSu4MZ58bmDFlHJMricUMhQItkS5q
+	Uj///HuEb0QI6TNACVdJ07Yad+hQiUN22fy/Epn4o
+X-Google-Smtp-Source: AGHT+IHIcZSYVf5Ghq8ZCt7fBSe6Jk0JycWud/uY2Ua6Qwb3BTtv2K2VfdajQ80Prrk17CPuEPzgVIj/KEesxMsohO0=
+X-Received: by 2002:a05:600c:4614:b0:45b:9a6e:ceaf with SMTP id
+ 5b1f17b1804b1-45df73f78camr1353545e9.0.1757522280029; Wed, 10 Sep 2025
+ 09:38:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250910160833.3464-1-ryncsn@gmail.com> <20250910160833.3464-2-ryncsn@gmail.com>
+ <CAMgjq7Db_DbZosWrUUAGfObDYA2e34zB=RtUpRZc2u4RJBiSxg@mail.gmail.com>
+In-Reply-To: <CAMgjq7Db_DbZosWrUUAGfObDYA2e34zB=RtUpRZc2u4RJBiSxg@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 10 Sep 2025 09:37:48 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuPd10FosK=CQbrw3ZPF+ckJO7-_1eLKY87_MX8sZ5YYUQ@mail.gmail.com>
+X-Gm-Features: AS18NWA9yRquM3BelDzwSg3xc3yiEw69xvVtEIQURHSBoX4G2NvJ0Z9YpOqdPN8
+Message-ID: <CAF8kJuPd10FosK=CQbrw3ZPF+ckJO7-_1eLKY87_MX8sZ5YYUQ@mail.gmail.com>
+Subject: Re: [PATCH v3 01/15] docs/mm: add document for swap table
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Apr 2025 16:29:09 +0200
-"Rafael J. Wysocki" <rafael@kernel.org> wrote:
+On Wed, Sep 10, 2025 at 9:14=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
+e:
+>
+> On Thu, Sep 11, 2025 at 12:08=E2=80=AFAM Kairui Song <ryncsn@gmail.com> w=
+rote:
+> >
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > From: Chris Li <chrisl@kernel.org>
+>
+> So sorry about this. I did fix my git config and verified that, but
+> sent the email on another machine that still having a broken config :/
+>
+> Hi Andrew, can you help fix the Author to be Chris here?
+>
+> BTW I saw the current version in mm-new, the author is already Chris,
+> which is correct.
 
-> On Tue, Apr 29, 2025 at 11:07=E2=80=AFPM Srinivas Pandruvada
-> <srinivas.pandruvada@linux.intel.com> wrote:
-> >
-> > When turbo mode is unavailable on a Skylake-X system, executing the
-> > command:
-> > "echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo"
-> > results in an unchecked MSR access error: WRMSR to 0x199
-> > (attempted to write 0x0000000100001300).
-> >
-> > This issue was reproduced on an OEM (Original Equipment
-> > Manufacturer) system and is not a common problem across all
-> > Skylake-X systems.
-> >
-> > This error occurs because the MSR 0x199 Turbo Engage Bit (bit 32)
-> > is set when turbo mode is disabled. The issue arises when
-> > intel_pstate fails to detect that turbo mode is disabled. Here
-> > intel_pstate relies on MSR_IA32_MISC_ENABLE bit 38 to determine the
-> > status of turbo mode. However, on this system, bit 38 is not set
-> > even when turbo mode is disabled.
-> >
-> > According to the Intel Software Developer's Manual (SDM), the BIOS
-> > sets this bit during platform initialization to enable or disable
-> > opportunistic processor performance operations. Logically, this bit
-> > should be set in such cases. However, the SDM also specifies that
-> > "OS and applications must use CPUID leaf 06H to detect processors
-> > with opportunistic processor performance operations enabled."
-> >
-> > Therefore, in addition to checking MSR_IA32_MISC_ENABLE bit 38,
-> > verify that CPUID.06H:EAX[1] is 0 to accurately determine if turbo
-> > mode is disabled.
-> >
-> > Fixes: 4521e1a0ce17 ("cpufreq: intel_pstate: Reflect current
-> > no_turbo state correctly") Signed-off-by: Srinivas Pandruvada
-> > <srinivas.pandruvada@linux.intel.com> Cc: stable@vger.kernel.org
-> > ---
-> >  drivers/cpufreq/intel_pstate.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/cpufreq/intel_pstate.c
-> > b/drivers/cpufreq/intel_pstate.c index f41ed0b9e610..ba9bf06f1c77
-> > 100644 --- a/drivers/cpufreq/intel_pstate.c
-> > +++ b/drivers/cpufreq/intel_pstate.c
-> > @@ -598,6 +598,9 @@ static bool turbo_is_disabled(void)
-> >  {
-> >         u64 misc_en;
-> >
-> > +       if (!cpu_feature_enabled(X86_FEATURE_IDA))
-> > +               return true;
-> > +
-> >         rdmsrl(MSR_IA32_MISC_ENABLE, misc_en);
-> >
-> >         return !!(misc_en & MSR_IA32_MISC_ENABLE_TURBO_DISABLE);
-> > -- =20
->=20
-> Applied as a fix for 6.15-rc, thanks!
->=20
+If the mm-new got it right, you have nothing to worry about. I assume
+Andrew's tooling already takes care of this common issue.
 
-FYI, this seems to have broken turbo boost on some Clevo systems with
-an Intel Core i9-14900HX CPU. These CPUs obviously support turbo boost,
-and kernels without this commit have turbo boost working properly, but
-after this commit turbo boost is stuck disabled and cannot be
-enabled by writing to /sys/devices/system/cpu/intel_pstate/no_turbo. I
-made a bug report about this against Ubuntu's kernel at [1], which is
-the only report I know that is able to point to this commit as having
-broken things. However, it looks like an Arch Linux user [2] and a
-Gentoo user [3] are running into the same thing.
-
-[1] https://bugs.launchpad.net/ubuntu/+source/linux-hwe-6.14/+bug/2122531
-
-[2] https://bbs.archlinux.org/viewtopic.php?id=3D305564
-
-[3] https://forums.gentoo.org/viewtopic-p-8866128.html?sid=3De97619cff0d9c7=
-9c2eea2cfe8f60b0d3
+Chris
 
