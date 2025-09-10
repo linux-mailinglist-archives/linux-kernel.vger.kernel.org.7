@@ -1,202 +1,107 @@
-Return-Path: <linux-kernel+bounces-809498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C41AB50E64
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:47:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE2ECB50E66
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1AAF562885
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:47:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D64056345F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3553064BA;
-	Wed, 10 Sep 2025 06:42:25 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09B23090CB;
+	Wed, 10 Sep 2025 06:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grmD5Ryy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C850303C8A;
-	Wed, 10 Sep 2025 06:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188CE3064AB;
+	Wed, 10 Sep 2025 06:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757486545; cv=none; b=USVCsIhC0IxYc5I2nb++F/rGsJDLN3LgFFJTHLrOInMZzzGRqsRCXtWYfmFcb+nBHHDGrFhh282JiOqzye1EHt6d1GF8lgAI3dR0A1mnbLS49cVHvVJSCNkYINYDhQj9lreCUiLC+b2tOJgU9N0ncA6c+DJIOpvgxmGaA9Gypos=
+	t=1757486584; cv=none; b=K030HNxGSFAIBiP+HcnKy2qCJ6OdvFVn6klvIIVu+9tZ2TVLA9uvNWNl594qziJ+3ab7XgDcBP9WFVwQ7HZptcYvNoE2wrLsHW9tJDRM2oopFw4w9AID6BPt/OzsVSjz77XrIV1gCBMBp7qUM8WPhSGJqoMgtaSOCFjtw95FPWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757486545; c=relaxed/simple;
-	bh=VFt52MJMXv7/WJmI+ezrk3pifNVu6VYqGJuWWHSMAKM=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=aXbkcCl9SB/Y02qFA3ypRnPbz5G1DOJFwtpLAAlMpZ4OS9YbCo370aUDYi3R0AHIJPwio3EObjKLQHqZsG/p9SjHtZG7r/bjbQOg9C6dxMlmO/g6BVd02tsBSD+8fIROzIeAYAz5ZpJ3Tzb5Y6msvHOEiH3jVrnOo5GXZWcx4dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cMB254hWHzYQvQ1;
-	Wed, 10 Sep 2025 14:42:21 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 295CC1A0C21;
-	Wed, 10 Sep 2025 14:42:20 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDnMY7KHcFoTbsJCA--.50604S3;
-	Wed, 10 Sep 2025 14:42:19 +0800 (CST)
-Subject: Re: [PATCH for-6.18/block 06/10] blk-mq: split bitmap grow and resize
- case in blk_mq_update_nr_requests()
-To: Nilay Shroff <nilay@linux.ibm.com>, Yu Kuai <hailan@yukuai.org.cn>,
- Yu Kuai <yukuai1@huaweicloud.com>, ming.lei@redhat.com, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250908061533.3062917-1-yukuai1@huaweicloud.com>
- <20250908061533.3062917-7-yukuai1@huaweicloud.com>
- <85259339-d832-468a-a9b0-0c326c896370@linux.ibm.com>
- <8ab0b2e2-a3da-43b1-9fb8-141e85aee3b2@yukuai.org.cn>
- <a4fd99c3-faa6-4c6d-b7a5-4f32d3eed40b@linux.ibm.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <bd4e6dfb-fa9c-d36a-5ed5-4cf6411f00a6@huaweicloud.com>
-Date: Wed, 10 Sep 2025 14:42:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1757486584; c=relaxed/simple;
+	bh=TrzdffNFbFHjCc7us2UtS8xJB2U43lIWnmmO0qVYK4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YiOGGU0m600kllomi2PY2INYHaFH4bsOY64rpjUpWRciNJPI4VguN3vniqRlTvdsDAqtpYlR+sNgU3vWKpcS2bNhOlVO4tAMt/d2W2h38CCZ9HtBgKveCnJYj4Kzjs+ntra55OG8+N/yX9p5OgWefyaTTghmVbmTUoJbQ3x5xB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grmD5Ryy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80124C4CEF0;
+	Wed, 10 Sep 2025 06:43:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757486582;
+	bh=TrzdffNFbFHjCc7us2UtS8xJB2U43lIWnmmO0qVYK4Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=grmD5Ryysghnc3fkZcBbJke8sLgG2Vx5AKUlLHugs5tOCCMh3qB6sNp+YgzW9nRlx
+	 hAsamxqm3fDhIz6VpHfV7wmPx2uMQN4MH6ApoNHD27MzUsDmRr/ZLhoqrC2liTdf+F
+	 3j2gpHCiz93DBAwnc88VdKPxPE50WBt16WBcCiYWxrNZY/Cx1LqcO5g9ylrjkDp3uV
+	 p1zw4tM+grCywI7YHTrrUfAyxkwOid81vSQFOt4aZxoHLze6fh8yVH5lz9gx+nlkZX
+	 /9M17/Meo4++tsqrsVnHvfWfVrG4mHEAod+rTYBspiXYODK/6cRprqvCeyoE+U7Lds
+	 Sozrh19iSsePQ==
+Message-ID: <1c7024ba-60fc-472d-982a-ab45b4f23748@kernel.org>
+Date: Wed, 10 Sep 2025 15:43:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a4fd99c3-faa6-4c6d-b7a5-4f32d3eed40b@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDnMY7KHcFoTbsJCA--.50604S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF48XrW8Gw47WF4Uuw18AFb_yoWruF1kpr
-	1kJFyUGry5Jr1kJr1Utr1UXry8Kr1UJ3WDJr18JFyUJr47Jr12gr4UXr1qgr1UJr48Jr4U
-	Jr1UJr9rZr1UJr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/20] can: netlink: refactor can_validate_bittiming()
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>,
+ =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250910-canxl-netlink-prep-v2-0-f128d4083721@kernel.org>
+ <20250910-canxl-netlink-prep-v2-4-f128d4083721@kernel.org>
+ <20250910-outrageous-liberal-falcon-9215d3-mkl@pengutronix.de>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol@kernel.org>
+Autocrypt: addr=mailhol@kernel.org; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
+ fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
+ F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
+ 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
+ YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
+ dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
+ zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250910-outrageous-liberal-falcon-9215d3-mkl@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 10/09/2025 at 15:13, Marc Kleine-Budde wrote:
+> On 10.09.2025 15:03:29, Vincent Mailhol wrote:
+>> Whenever can_validate_bittiming() is called, it is always preceded by
+>> some boilerplate code which was copy pasted all over the place. Move
+>> that repeated code directly inside can_validate_bittiming().
+>>
+>> Finally, the mempcy() is not needed. Just use the pointer returned by
+>> nla_data() as-is.
+> 
+> The memcpy()'ed struct is guaranteed to be properly aligned, is this
+> also the case for the casted nla_data() pointer?
 
-在 2025/09/10 14:30, Nilay Shroff 写道:
-> 
-> 
-> On 9/9/25 10:09 PM, Yu Kuai wrote:
->> Hi,
->>
->> 在 2025/9/9 20:18, Nilay Shroff 写道:
->>>
->>> On 9/8/25 11:45 AM, Yu Kuai wrote:
->>>> From: Yu Kuai <yukuai3@huawei.com>
->>>>
->>>> No functional changes are intended, make code cleaner and prepare to fix
->>>> the grow case in following patches.
->>>>
->>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->>>> ---
->>>>    block/blk-mq.c | 28 ++++++++++++++++------------
->>>>    1 file changed, 16 insertions(+), 12 deletions(-)
->>>>
->>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
->>>> index 1ff6370f7314..82fa81036115 100644
->>>> --- a/block/blk-mq.c
->>>> +++ b/block/blk-mq.c
->>>> @@ -4931,21 +4931,25 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
->>>>                blk_mq_tag_update_sched_shared_tags(q);
->>>>            else
->>>>                blk_mq_tag_resize_shared_tags(set, nr);
->>>> -    } else {
->>>> +    } else if (!q->elevator) {
->>>>            queue_for_each_hw_ctx(q, hctx, i) {
->>>>                if (!hctx->tags)
->>>>                    continue;
->>>> -            /*
->>>> -             * If we're using an MQ scheduler, just update the
->>>> -             * scheduler queue depth. This is similar to what the
->>>> -             * old code would do.
->>>> -             */
->>>> -            if (hctx->sched_tags)
->>>> -                ret = blk_mq_tag_update_depth(hctx,
->>>> -                            &hctx->sched_tags, nr);
->>>> -            else
->>>> -                ret = blk_mq_tag_update_depth(hctx,
->>>> -                            &hctx->tags, nr);
->>>> +            sbitmap_queue_resize(&hctx->tags->bitmap_tags,
->>>> +                nr - hctx->tags->nr_reserved_tags);
->>>> +        }
->>>> +    } else if (nr <= q->elevator->et->nr_requests) {
->>>> +        queue_for_each_hw_ctx(q, hctx, i) {
->>>> +            if (!hctx->sched_tags)
->>>> +                continue;
->>>> +            sbitmap_queue_resize(&hctx->sched_tags->bitmap_tags,
->>>> +                nr - hctx->sched_tags->nr_reserved_tags);
->>>> +        }
->>>> +    } else {
->>>> +        queue_for_each_hw_ctx(q, hctx, i) {
->>>> +            if (!hctx->sched_tags)
->>>> +                continue;
->>>> +            blk_mq_tag_update_depth(hctx, &hctx->sched_tags, nr);
->>>>                if (ret)
->>>>                    goto out;
->>>>            }
->>> The above code is good however can this be bit simplified?
->>> It's a bit difficult to follow through all nesting and so
->>> could it be simplified as below:
->>>
->>> if (shared-tags) {
->>>       if (elevator)
->>>          // resize sched-shared-tags bitmap
->>>       else
->>>          // resize shared-tags bitmap
->>> } else {
->>>       // non-shared tags
->>>       if (elevator) {
->>>           if (new-depth-is-less-than-the-current-depth)
->>>               // resize sched-tags bitmap
->>>           else
->>>               // handle sched tags grow
->>>       } else
->>>           // resize tags bitmap
->>> }
->>
->> AFAIK, if - else if chain should be better than nested if - else, right?
->>
->> If you don't mind, I can add comments to each else if chain to make code cleaner:
->>
->> if () {
->>      /* shared tags */
->>      ...
->> } else if () {
->>      /* non-shared tags and elevator is none */
->>      ...
->> } else if () {
->>      /* non-shared tags and elevator is not none, nr_requests doesn't grow */
->>      ...
->> } else () {
->>      /* non-shared tags and elevator is not none, nr_requests grow */
->>      ...
->> }
->>
-> Yeah, I am good with the proper comments as well so that it'd be easy
-> for anyone reviewing the code later to understand what those all nested
-> if-else conditions meant.
-> 
+The NLA attributes are aligned on 4 bytes, c.f. NLA_ALIGNTO:
 
-Ok, I'll do that in the next version.
+https://elixir.bootlin.com/linux/v6.16.5/source/include/uapi/linux/netlink.h#L248
 
-Thanks for the review!
-Kuai
+Which is sufficient for struct can_bittiming which also requires just 4 bytes of
+alignment as proven by the fact the the code would still compile if I add this
+static assert:
 
-> Thanks,
-> --Nilay
-> 
-> .
-> 
+  static_assert(_Alignof(typeof(*bt)) <= NLA_ALIGNTO);
+
+But I have to admit that you caught me off guard. I did not think of that. Maybe
+I should add above static assertions to the code to document that what we are
+doing is correct?
+
+
+Yours sincerely,
+Vincent Mailhol
 
 
