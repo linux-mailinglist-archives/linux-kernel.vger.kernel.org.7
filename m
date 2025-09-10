@@ -1,141 +1,116 @@
-Return-Path: <linux-kernel+bounces-809168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE944B5097E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:03:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C75DAB50985
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A25A1B2772B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:03:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A680444033D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002771C695;
-	Wed, 10 Sep 2025 00:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77FCC120;
+	Wed, 10 Sep 2025 00:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHdVbXT9"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="JuDYPhxg"
+Received: from r3-25.sinamail.sina.com.cn (r3-25.sinamail.sina.com.cn [202.108.3.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A544513D51E;
-	Wed, 10 Sep 2025 00:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D9FC148
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757462595; cv=none; b=CXiyNr9thaiirO05cZOlXeaHgwqbHX79Rcad8tzSNyNA9f3Zn5gi70OyexSsdPRRXk+4Fsv0IW5pRR2YZopJtpThT9h42NMKWu7AWubdKj0ZxM0t+Ka35JCQIp+iHIP7FRwlsn58K/fXzW+SCkHYxhNG6LUsY8BSj94buvTlrqw=
+	t=1757462647; cv=none; b=Z2xefWt5gP4RHXpIfFFYXgDPvlss1nFXvpf59WrlY6zk+AOGOfyLh3fv9jKxzPMYLYm4OYouLmADKelgrRtEnjfbtQaL0WYKVov7daAW7wrVCWjHvrEFWNlKP6QE3+pdX3iit3hrd7pqP2ikl7b72HLN+N9Ll+jPxDX31CrMhr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757462595; c=relaxed/simple;
-	bh=NjT32UAKvl13aq5XV+kTsjdAy65nzMBFlOCuvIsB2Jg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RU6Fi7KK9hniDTuRcskChcQoNgUeHwUg8eHofvUcb1/0ybECNnOD0pF4eWL06qtsAFh3+T8gltamXML0KV1FnuIjQYYflIYuz+gQ1+27WRdRRFpiBY210AIaypwsfxe8dQb93TWrslQ3OWM/qk+DLg73jdhyHUr6Pj8yARO+ApE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHdVbXT9; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f72452a8eso7400737e87.3;
-        Tue, 09 Sep 2025 17:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757462592; x=1758067392; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x+htEZdSD2rDWbR+m2mXqSv7espiCRXxlYqWM68DDKk=;
-        b=AHdVbXT9TRbZltaLMWnsqPqAQAcefCddyB4K297VuTJiuObL40aiLXqIC8SykJ+L10
-         W5Dm/WeQGITFQFv+xKMxluwkfqpY0q+hXrRI86TJsSZWIkRr7/SWOMJ0ffKCwX08BgOh
-         woO45WWGcorBYhwiA1nrYCCnxCpj1GRziixYBkdf9BzXVMraRy1r4vPJa3nTvH7k5vfg
-         4WlUgl9iHwHS0I01YFx4ecvBo8BYnOPRqwGFcxVmWFD8fP/mXGksQWwE6MOnr/+iUGh7
-         0H/PPKF9ggGCH79lg9UpxoIZCLXZQElTA0FCYr9CELhdyVnFlPmO9PoXkFgM/8uiKmWw
-         dmlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757462592; x=1758067392;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x+htEZdSD2rDWbR+m2mXqSv7espiCRXxlYqWM68DDKk=;
-        b=Lk0Mj4pDXyGxqyHtmBJwbFM3q27jLYBPFQWmgbeD/XktxeKnsWHUh7PHPwCQczCpbs
-         uhIqR4v2kOn5xi39+q6JmkVihMweSJK7HUoEFm9kBOX1YGYLQN1dZnPm/Y3pKMAs6iAW
-         l/2NTD5UAYPdbbUEGmfPuKrZvZ1ytWh59PqWU1NSp0gN+bTI1zv8JXC+SQlVoLaNzco7
-         7MvjGEWHblZW7PjzMskZSqlfT3OieBz6jJB4hsu9jQkh4FtimA0+TOytD2TLjVCZHkwY
-         OBQzh6oY39oY6TKBjn7IBTMo9FsqwFucYf7BGHQD4endSInFO+e39fKxpcAm+EF3ISF6
-         fafg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYIA/DX4kl7Rq/kSmCA21elS5tAqAjRZ+1SMj7NK8Z+w0Mmuss9ELjOMf4+pxigIXdMZ5yGxNhp2QUpXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBp+OM1yBB2lmyJfgi6KfuRBd9ExIGudhz+D5drh3bGrw46YSd
-	He71b9L0IkRkvp2ghLsoJU0GvfkbgNNUBe8atsh2Q1RCBN0yBZGNboRD4EzyeQ==
-X-Gm-Gg: ASbGncuopd+1x4a2zsxKPL3/frZDU4rjgGEv/TTrOe0fH6m503spXaZj71Fr0Hd6Ltf
-	iA+q+aPUWMLC/efUWKwUDMkeE8zvid1SV3sMbWekhe9CUKY3WKGGFJiDplB/xDaImAPTlIp9YdA
-	6hH7+wzRMvSOvxwjNjRztBG+V7vtcCE0KbalfvZuevtWGxBL8eES1+ARauOOGCIozRzX8CAGFcd
-	/JD7F0nVMovLUVO9CO1MxPAUH4fnpuuDuSRqpZIMDhIG09EC4ut2U+wUOkJ7UoNP/+cD5gyJd6S
-	FkOikfuRBWrTZ7cHegdwEH5x1TA9Ip9v3lFEAE8y43y7ZwlIIEtNCKwwpRgR2cuDivicFLPwBwA
-	MbMeL1JyQ8ouo86izjj+/I+0shJhxXi6cTiGQ7y2YkxC3TQ==
-X-Google-Smtp-Source: AGHT+IGMCYubKMN79pEKoDqh9ItPBNdikHQxIEu6FgZAnSZy8Yq/rKuVxZ4ilwzZqzYzTcNwKTXvZw==
-X-Received: by 2002:a05:6512:1149:b0:560:8b86:75b3 with SMTP id 2adb3069b0e04-562613147a7mr5303113e87.3.1757462591473;
-        Tue, 09 Sep 2025 17:03:11 -0700 (PDT)
-Received: from foxbook (bfg216.neoplus.adsl.tpnet.pl. [83.28.44.216])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-568188224d7sm848901e87.120.2025.09.09.17.03.10
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 09 Sep 2025 17:03:11 -0700 (PDT)
-Date: Wed, 10 Sep 2025 02:03:06 +0200
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] usb: xhci: Queue URB_ZERO_PACKET as one TD
-Message-ID: <20250910020306.1d77d7e5.michal.pecio@gmail.com>
-In-Reply-To: <e29fa12b-55e4-4ab1-b623-11feb447bdf7@linux.intel.com>
-References: <20250908130128.7ed81912.michal.pecio@gmail.com>
-	<6ca18b05-80d4-4988-bb08-3cad003e10f4@linux.intel.com>
-	<20250909193859.73127f85.michal.pecio@gmail.com>
-	<e29fa12b-55e4-4ab1-b623-11feb447bdf7@linux.intel.com>
+	s=arc-20240116; t=1757462647; c=relaxed/simple;
+	bh=c/YMJ4aiAKivh5/bYvhSukpDrN5xJzfHNCd+pBXPf9Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FLFwiAqCpWNgB+sgRu4RBLc98nh9AsUH1nqrgHq8ZAYbEsl2ZunJSXEtxzpmr+05szIqahOCok2YpnXaYfuExGKPj2/buL/HURkfoZ5QG0azaqoihx9ebllGVeUI5w1vD4ajzr8jH+SqrpL3Aeoz7m+0g1PxSh7xei16VWS98FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=JuDYPhxg; arc=none smtp.client-ip=202.108.3.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757462643;
+	bh=jDrDTq1IVzBDGEsVX/HH66JqsYBsLwmpiddeGS/SFxM=;
+	h=From:Subject:Date:Message-ID;
+	b=JuDYPhxgITWLWR5CfNZkUNbFZTb/i2PJMwgoLI5ulqMmAUtQZqQeFbqI7kLXQ5adO
+	 moZqAdJiDCAwAxchJzIRS/b4lQYf5Kg6Q5zSW8zxZW6lvSbiYZfMQ648ByAFFaLMbS
+	 7QXWdVf5uyPVY25piROIHEPeWza3c89qYt7PZPXo=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 68C0C04500006052; Wed, 10 Sep 2025 08:03:19 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1548466816279
+X-SMAIL-UIID: B15C2E1E69D4479AAFF0586463A98976-20250910-080319-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+cef594105ac7e60c6d93@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [kvmarm?] [kvm?] WARNING: locking bug in vgic_put_irq
+Date: Wed, 10 Sep 2025 08:03:09 +0800
+Message-ID: <20250910000310.6672-1-hdanton@sina.com>
+In-Reply-To: <68acd0d9.a00a0220.33401d.048b.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 10 Sep 2025 01:57:39 +0300, Mathias Nyman wrote:
-> On 9.9.2025 20.38, Michal Pecio wrote:
-> > On Tue, 9 Sep 2025 16:04:33 +0300, Mathias Nyman wrote:  
-> >> Adding the zero-length TRB to the original TD when we need to send a
-> >> zero-length packet would simplify things, and I would otherwise fully
-> >> support this, but the xHCI spec is pretty clear that it requires a
-> >> dedicated TD for zero-length transactions.  
-> > 
-> > You are right of course, an empty TRB in a TD would simply send no
-> > data, or maybe it's a TRB Error, I'm not sure.
-> > 
-> > But this is not what this patch is about - the trick is to use an
-> > *unchained* TRB, which is a separate TD from HW's perspective, and
-> > to count it as part of the same TD from the driver's perspective.  
+> Date: Mon, 25 Aug 2025 14:08:41 -0700	[thread overview]
+> Hello,
 > 
-> Ok, I see.
-> The whole TD without completion flag does worry me a bit.
->
-> We need to make sure stop/stald mid TD cases work, and  urb length is
-> set correctly.
+> syzbot found the following issue on:
+> 
+> HEAD commit:    7b8346bd9fce KVM: arm64: Don't attempt vLPI mappings when ..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17b4e862580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=7c53d3478750eda0
+> dashboard link: https://syzkaller.appspot.com/bug?extid=cef594105ac7e60c6d93
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15860634580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1074e862580000
 
-It looks odd, but I can't find anything wrong.
+#syz test
 
-4.10.4 discusses what happens when IOC is clear on the last TRB of
-a TD so it looks like this is allowed.
-
-If the first TD halts or stops before completion then it doesn't
-matter that we cleared its IOC. Everything works as before, except
-that Set TR Deq will skip both TDs and the URB will be given back.
-
-If the first TD completes, the xHC silently moves to the second TD.
-
-No matter what happens to the second TD, URB length is calculated:
-
-       if (ep_trb == td->end_trb)	/* end_trb is second TD */
-                td->urb->actual_length = requested - remaining;
-
-where 'requested' is full URB and 'remaining' is TRB transfer residue
-which should be zero because buffer length is zero. Looks OK.
-
-And curiously, this behavior too is no different from what exists now.
-I see nothing stopping the second TD from overwriting whatever was set
-when the first TD generated its event (success or otherwise).
-
-Regards,
-Michal
+--- x/arch/arm64/kvm/vgic/vgic.c
++++ y/arch/arm64/kvm/vgic/vgic.c
+@@ -146,20 +146,25 @@ void vgic_flush_pending_lpis(struct kvm_
+ 	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+ 	struct vgic_irq *irq, *tmp;
+ 	unsigned long flags;
++	LIST_HEAD(head);
+ 
+ 	raw_spin_lock_irqsave(&vgic_cpu->ap_list_lock, flags);
+ 
+ 	list_for_each_entry_safe(irq, tmp, &vgic_cpu->ap_list_head, ap_list) {
+ 		if (irq->intid >= VGIC_MIN_LPI) {
+ 			raw_spin_lock(&irq->irq_lock);
+-			list_del(&irq->ap_list);
++			list_move(&irq->ap_list, &head);
+ 			irq->vcpu = NULL;
+ 			raw_spin_unlock(&irq->irq_lock);
+-			vgic_put_irq(vcpu->kvm, irq);
+ 		}
+ 	}
+ 
+ 	raw_spin_unlock_irqrestore(&vgic_cpu->ap_list_lock, flags);
++
++	list_for_each_entry_safe(irq, tmp, &head, ap_list) {
++		list_del(&irq->ap_list);
++		vgic_put_irq(vcpu->kvm, irq);
++	}
+ }
+ 
+ void vgic_irq_set_phys_pending(struct vgic_irq *irq, bool pending)
+--
 
