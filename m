@@ -1,246 +1,127 @@
-Return-Path: <linux-kernel+bounces-809600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29ED1B50FB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:40:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F83AB50FB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245155E0FF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:39:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AACA04E1137
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD4B30C34C;
-	Wed, 10 Sep 2025 07:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CED30C34B;
+	Wed, 10 Sep 2025 07:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WKMLLn4a"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNsZS7sa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCE12D3A77;
-	Wed, 10 Sep 2025 07:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0A53064A9;
+	Wed, 10 Sep 2025 07:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757489990; cv=none; b=lVhYCaL5+hWgmydtBxHto38+wItUKYWwDNWzU51cH/hpIyBk1j8hPsSCDCJypx4GIMeHNG/Aul3EkT1WXs6zIecVdGHXpz9AkfdMoVAdYflReLOxud4s9Im6PbgLbYciW9Ri42evHLWzAaqXxsD6qpWyoKUyh1fYtgr+HozvwK4=
+	t=1757490020; cv=none; b=iImteoa53wfwFiSMtL5at8spmxC+niEfstUWbQJhy/akPHU8qI2k2J5UjO1EqYDIa9me3Sdo1tXuVLUvsPAAf8Rqj4mHIr322+I7wwH4RLl/8c6g6yPSCwqGLsWhZfxf8W46BixWSTPQT1y+pcna+8gfFgq7EHhViuvxEqWffy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757489990; c=relaxed/simple;
-	bh=GlL9SxBrvEmkrdlyzWYn/sI4QM42saQpv8yBemlzIPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UO7o9LoJ4i4AnPEpUFmdagO1Qd9yTVvgnAAn4OzfcnbHATK4QtK3GzKwe12pQQyudmsGFl6asor98mMlv8a9DMpyAmZdybIVM1sBCaSxmhuF3rgUmxfHQALJvsNlW333H7RvmJsMfQPesArO7jWYadw9RSmFCvwuPCRChiKPW9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WKMLLn4a; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1757489986;
-	bh=x3Dz7xGOAKp69Am1OxtztE5KmivLDQU8MkO5G+s0i3c=;
-	h=Date:From:To:Cc:Subject:From;
-	b=WKMLLn4aNdKlKmdP0JebJfZ3vdOI04sJ5elM5rJfLX+Izgas1U1glQvE39OznyBDK
-	 F+efTOBro6fj+UaNK6hKSjCYSNFT6iuLVBM0b6kT9deducmDTs5zUe6RjUxuALtTGA
-	 3BwcP5qx1Jpd3GI/Zzx0vo9DDjx2JaiUlnv1vVDVEbnZS9aYn0X7fDDjSfkaYFlO60
-	 LJujL+BNE8gTW1D0DcsJIndnVkmnEM6fDAiA3/1NWyCm6Ky6V+HDS8I4ITvoJckwAB
-	 RNIXoFYmUIsjD5t4z/t8tRrU6AfHm+AHgWjTrYVHQ8CyaNWZeM0v3n3GDJCSE5kFVK
-	 v4MNHR36+dKKw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cMCJK6kS9z4wB8;
-	Wed, 10 Sep 2025 17:39:45 +1000 (AEST)
-Date: Wed, 10 Sep 2025 17:39:45 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the v4l-dvb tree
-Message-ID: <20250910173945.3aa7245a@canb.auug.org.au>
+	s=arc-20240116; t=1757490020; c=relaxed/simple;
+	bh=l9gbLcOw34CjnvmzL1eZV7Qw70Siz0YwsCoVPZZyPrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DlA4yu+WkGEMQxEyKso4yt2qMPOeN/a7RvdcL+4xqj+DGAtPOKOYq2zVGrEXpLtRC+2DlgNrHXEy5uvOmWtdQN1xnnmQpGT+SSdUgn72v8puVri2w0otMhRUq8/zHK8SUyCjMofPvbNzSI2NX3XL9NmPNp9pzbPzqLtHKqyrENk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNsZS7sa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35B4DC4CEF9;
+	Wed, 10 Sep 2025 07:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757490019;
+	bh=l9gbLcOw34CjnvmzL1eZV7Qw70Siz0YwsCoVPZZyPrU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SNsZS7saVQNVGMNirRFJcAN71OF3mnIquqPetH462uEpnuG9vmT70FQhM+9+vp8jy
+	 9RCYCNQJNci/6wqzs39YmIEBtfnHetfFh5fiFWXSB1PrPTu0HcZIN8Rx88ThdSmAX0
+	 kJ5apzpWxAjNmpWahxRoOJ56Wg2Y2qi5WNZ6YZ63IP5UScO1Q2aoqlkXNiTQ2ldwje
+	 74S+2wvR2iu1KnhortPp/kHwkRh2eld8m6frliS1pBI581SuitL6d8HZOL6Ve3LVtE
+	 6LS1u0OqMVlbBTN7X39Uu3zjvYt8BiB5RET3koSmBMWKc3qjquXaU8nc049ZDgSKur
+	 QJsVvxqkP+aoQ==
+Message-ID: <8484af14-63f3-4dd9-91d8-6bd79b736819@kernel.org>
+Date: Wed, 10 Sep 2025 09:40:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/mdaHWC7.pmVBd8AoRGLEU/K";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: bridge: lt9211c: Add bindings
+To: Nilesh Laad <nilesh.laad@oss.qualcomm.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, venkata.valluru@oss.qualcomm.com,
+ jessica.zhang@oss.qualcomm.com, Yi Zhang <zhanyi@qti.qualcomm.com>
+References: <20250910-add-lt9211c-bridge-v1-1-4f23740fe101@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250910-add-lt9211c-bridge-v1-1-4f23740fe101@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/mdaHWC7.pmVBd8AoRGLEU/K
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 10/09/2025 09:37, Nilesh Laad wrote:
+> From: Yi Zhang <zhanyi@qti.qualcomm.com>
+> 
+> Add bindings for lt9211c.
 
-Hi all,
+Why? There is no user of it. We do not need bindings without users.
 
-Commits
+I am not reviewing the rest.
 
-  dcf6fb89e6f7 ("media: qcom: camss: remove a check for unavailable CAMSS e=
-ndpoint")
-  605af91e90b0 ("media: qcom: camss: unconditionally set async notifier of =
-subdevices")
-  17ad461622f4 ("media: qcom: camss: remove .link_entities callback")
-  aefd4d698e47 ("media: qcom: camss: Enumerate resources for QCS8300")
-  42914692e800 ("media: qcom: camss: enable vfe 690 for qcs8300")
-  950f3d308f8b ("media: qcom: camss: enable csid 690 for qcs8300")
-  9ca5d17f5e2e ("media: qcom: camss: Add CSIPHY support for QCS8300")
-  6adf001b6779 ("media: qcom: camss: Add qcs8300 compatible")
-  634a2958fae3 ("media: dt-bindings: Add qcom,qcs8300-camss compatible")
-  b478527cce8a ("media: qcom: camss: Enumerate resources for lemans(sa8775p=
-)")
-  e7b59e1d06fb ("media: qcom: camss: Add support for VFE 690")
-  ed03e99de0fa ("media: qcom: camss: Add support for CSID 690")
-  7803b63a1640 ("media: qcom: camss: Add support for CSIPHY (v1.3.0)")
-  5f4ba689e7f3 ("media: qcom: camss: Add qcom,sa8775p-camss compatible")
-  8dd22e90331d ("media: dt-bindings: Add qcom,sa8775p-camss compatible")
-  a3dce6e3c85f ("media: qcom: camss: Rename camss-vfe-780.c to camss-vfe-ge=
-n3.c")
-  0d6d5f49e0fc ("media: qcom: camss: Rename camss-csid-780.c to camss-csid-=
-gen3.c")
-  9e89149a19ed ("media: qcom: camss: add support for QCM2290 camss")
-  ce63fbdf849f ("media: qcom: camss: csiphy-3ph: Add CSIPHY 2ph DPHY v2.0.1=
- init sequence")
-  f0fc808a466a ("media: qcom: camss: Add CSID 340 support")
-  acf8d084699e ("media: qcom: camss: Add support for TFE (Spectra 340)")
-  cba308979b01 ("dt-bindings: media: Add qcom,qcm2290-camss")
-  57429b0fddfe ("media: iris: Fix firmware reference leak and unmap memory =
-after load")
-  dbd57932f8d0 ("media: iris: Add support for SM8750 (VPU v3.5)")
-  1f01a49816a5 ("media: iris: Split power on per variants")
-  2fbb823a0744 ("media: iris: Call correct power off callback in cleanup pa=
-th")
-  93fad55aa996 ("media: iris: vpu3x: Add MNoC low power handshake during ha=
-rdware power-off")
-  fde38008fc4f ("media: iris: fix module removal if firmware download faile=
-d")
-  6d3926a237b6 ("dt-bindings: media: qcom,sm8550-iris: Do not reference leg=
-acy venus properties")
-  49b5feb5214d ("dt-bindings: media: qcom,sm8550-iris: Add SM8750 video cod=
-ec")
-  088ee3df91ba ("dt-bindings: media: qcom,sm8550-iris: Add X1E80100 compati=
-ble")
-  1b2263ef3292 ("MAINTAINERS: Update Vikash Garodia's email address")
-  246fdc42df9b ("mailmap: update Dikshita Agarwal's email addresses")
-  907cef174cd8 ("dt-bindings: media: qcom,sm8550-iris: Update Dikshita Agar=
-wal's email address")
-  e1684530b163 ("MAINTAINERS: update Dikshita Agarwal's email addresses")
-  bfdfbdf469b4 ("MAINTAINERS: Add a media/platform/qcom MAINTAINERS entry")
-  c0baf70955e7 ("media: i2c: s5k6a3: Use V4L2 legacy sensor clock helper")
-  5bf86863ddfe ("media: i2c: s5k5baf: Use V4L2 legacy sensor clock helper")
-  75b5888a8935 ("media: i2c: s5c73m3: Use V4L2 legacy sensor clock helper")
-  d2fa1134a48b ("media: i2c: ov8856: Use V4L2 legacy sensor clock helper")
-  f2cc0ccab90f ("media: i2c: ov8856: Replace client->dev usage")
-  0e14d99c4dbe ("media: i2c: ov5695: Use V4L2 legacy sensor clock helper")
-  0f1e46fc82e5 ("media: i2c: ov5645: Use V4L2 legacy sensor clock helper")
-  cd7a9b578356 ("media: i2c: ov2685: Use V4L2 legacy sensor clock helper")
-  dc1dadf63d45 ("media: i2c: ov02a10: Use V4L2 legacy sensor clock helper")
-  f8f4914ed030 ("media: i2c: ov02a10: Replace client->dev usage")
-  44fec2c00d8c ("media: i2c: imx290: Use V4L2 legacy sensor clock helper")
-  c5b1a92c5bfa ("media: i2c: imx258: Use V4L2 legacy sensor clock helper")
-  4b23f780a353 ("media: i2c: imx258: Replace client->dev usage")
-  d2d7488bf53d ("media: i2c: gc08a3: Use V4L2 legacy sensor clock helper")
-  30dbc5316736 ("media: i2c: gc05a2: Use V4L2 legacy sensor clock helper")
-  fdee212433d2 ("media: i2c: et8ek8: Use V4L2 legacy sensor clock helper")
-  cf7ea1d6e563 ("media: i2c: et8ek8: Drop support for per-mode external clo=
-ck frequency")
-  dd235b07b65e ("media: v4l2-common: Add legacy camera sensor clock helper")
-  bfa626306cf7 ("media: i2c: ov9734: Use V4L2 sensor clock helper")
-  9f16195e4567 ("media: i2c: ov9734: Replace client->dev usage")
-  5b428a40a63d ("media: i2c: ov7251: Use V4L2 sensor clock helper")
-  063f5989718c ("media: i2c: ov5693: Use V4L2 sensor clock helper")
-  c8ab1727624a ("media: i2c: ov5675: Use V4L2 sensor clock helper")
-  381045e43b73 ("media: i2c: ov5675: Replace client->dev usage")
-  2fc0898408b1 ("media: i2c: ov5670: Use V4L2 sensor clock helper")
-  be3971e218b9 ("media: i2c: ov5670: Replace client->dev usage")
-  f994b6e7e580 ("media: i2c: ov4689: Use V4L2 sensor clock helper")
-  853bd2ec1196 ("media: i2c: ov2740: Use V4L2 sensor clock helper")
-  fdba8eba02b6 ("media: i2c: ov2740: Replace client->dev usage")
-  964ae05b0d69 ("media: i2c: ov13b10: Use V4L2 sensor clock helper")
-  42bab2cb292d ("media: i2c: ov13b10: Replace client->dev usage")
-  9df442485b13 ("media: i2c: ov13858: Use V4L2 sensor clock helper")
-  8853d26bfd04 ("media: i2c: ov13858: Replace client->dev usage")
-  5dee9af9c859 ("media: i2c: ov08x40: Use V4L2 sensor clock helper")
-  5ff996ee54ad ("media: i2c: ov08x40: Replace client->dev usage")
-  1e921b267eb7 ("media: i2c: ov08d10: Use V4L2 sensor clock helper")
-  4e2b34c36ce1 ("media: i2c: ov08d10: Replace client->dev usage")
-  70dbc965b419 ("media: i2c: ov02e10: Use V4L2 sensor clock helper")
-  d1f4dbef9c95 ("media: i2c: ov02e10: Replace client->dev usage")
-  baa59320ee73 ("media: i2c: ov02c10: Use V4L2 sensor clock helper")
-  963b07259fba ("media: i2c: ov02c10: Replace client->dev usage")
-  60d1c3a2b9ba ("media: i2c: og01a1b: Use V4L2 sensor clock helper")
-  4d58f671944a ("media: i2c: og01a1b: Replace client->dev usage")
-  eaa7d46d9654 ("media: i2c: imx335: Use V4L2 sensor clock helper")
-  49c6ac166cf7 ("media: i2c: imx355: Replace client->dev usage")
-  047119e3cd63 ("media: i2c: imx319: Use V4L2 sensor clock helper")
-  df2942622abf ("media: i2c: imx319: Replace client->dev usage")
-  cff416364c33 ("media: i2c: imx208: Use V4L2 sensor clock helper")
-  5fa4f8665f05 ("media: i2c: imx208: Replace client->dev usage")
-  2753de70d7d5 ("media: i2c: hi847: Use V4L2 sensor clock helper")
-  f499f2bf6257 ("media: i2c: hi847: Replace client->dev usage")
-  c674a3890638 ("media: i2c: hi556: Use V4L2 sensor clock helper")
-  dfd2fb5b73c2 ("media: i2c: hi556: Replace client->dev usage")
-  73d31c7626ef ("media: i2c: ov6650: Drop unused driver")
-  f14eb6a9aa13 ("media: i2c: mt9v111: Do not set clock rate manually")
-  b4dd3bbd2eeb ("media: i2c: mt9v032: Drop support for platform data")
-  0f8d0da42c2d ("media: i2c: mt9v032: Replace client->dev usage")
-  55e3c86887dd ("media: i2c: mt9v022: Drop unused mt9v022.h header")
-  4e181beb68a6 ("dt-bindings: media: imx274: Make clocks property required")
-  ea501438dcd3 ("dt-bindings: media: imx258: Make clocks property required")
-  c7d54dba555a ("dt-bindings: media: et8ek8: Deprecate clock-frequency prop=
-erty")
-  aa1826696a55 ("dt-bindings: media: Deprecate clock-frequency property for=
- camera sensors")
-  fa9e6df636fb ("media: i2c: add ov2735 image sensor driver")
-  773bb3066e6d ("dt-bindings: media: i2c: Add ov2735 sensor")
-  25bf2e1925c9 ("media: i2c: Add OmniVision OG0VE1B camera sensor")
-  9acb06945fab ("dt-bindings: media: i2c: Add OmniVision OG0VE1B camera sen=
-sor")
-  fd7cb868e309 ("media: i2c: Add OmniVision OV6211 image sensor driver")
-  9364790e91fb ("dt-bindings: media: i2c: Add OmniVision OV6211 image senso=
-r")
-  c7df6f339af9 ("media: ov08x40: Fix the horizontal flip control")
-  bfbd5aa5347f ("media: i2c: og01a1b: Specify monochrome media bus format i=
-nstead of Bayer")
-  bfdcfd008b37 ("media: ov02e10: Remove Jingjing's e-mail address")
-  80ae11c1a524 ("media: ti: j721e-csi2rx: Fix NULL vs IS_ERR() bug in ti_cs=
-i2rx_request_max_ppc()")
-  a1dcf9a069f7 ("media: stm32-dcmi: use int type to store negative error co=
-des")
-  27296c1f0027 ("media: raspberrypi: use int type to store negative error c=
-odes")
-  bacd71314544 ("media: i2c: mt9v111: fix incorrect type for ret")
-  da8f23e35916 ("media: ov8865: move mode_configure out of state_configure")
-  075710b670d9 ("media: i2c: mt9p031: fix mbus code initialization")
-  4010eef01deb ("media: staging: ipu7: Don't include linux/version.h")
-  6a79e9c91e9e ("media: mc: Clear minor number reservation at unregistratio=
-n time")
-  fc2aaf2d93a6 ("media: venus: core: Add qcm2290 DT compatible and resource=
- data")
-  a9551290ef3b ("media: venus: core: Sort dt_match alphabetically.")
-  7998681eb7f4 ("media: venus: hfi_plat_v4: Add capabilities for the 4XX li=
-te core")
-  ba4fdff92011 ("media: venus: Add framework support for AR50_LITE video co=
-re")
-  85c853b70436 ("media: venus: Define minimum valid firmware version")
-  93f213b444a4 ("media: venus: firmware: Use correct reset sequence for IRI=
-S2")
-  c329055587ee ("media: dt-bindings: venus: Add qcm2290 dt schema")
-
-are missing a Signed-off-by from their committers.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/mdaHWC7.pmVBd8AoRGLEU/K
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmjBK0EACgkQAVBC80lX
-0Gy7Ywf/UVKDgJkuNaUsaFliqqi4tINf98CQ3UuGyCm4AJaNyUji6t8J3O4fS6zQ
-mSl6/ovYb+dNhNhTb+iXPwMwM7eoWNRrIL/Gu0mTr/UNn3ErEdE/jTAkLcLtFZxX
-TAMtHD1jSq5XqZ5/ph+j+dLJzmfcBz/kVKdPRgLaVQZdOE9nrCdwRHWOV8RyGg7a
-9Oq1dOrOR2WuVb5hqmmMIqAHeiuGCr93JXWDvbWQtBN5AxDr0Ydj8zY7FVnVuVts
-ELPpbMUbhqRTiSq+SzWDGuEqEi2V5XDix3iegswyoo67aSIHMwXQayWk4ymvO6ur
-gtZ/8lRdxLVUFmCb6Xc0/8jl9uOkkQ==
-=FiDa
------END PGP SIGNATURE-----
-
---Sig_/mdaHWC7.pmVBd8AoRGLEU/K--
+Best regards,
+Krzysztof
 
