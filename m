@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-810742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA47B51EB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:17:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B56FFB51EB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162A41C87C34
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:17:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63F685683FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597CC27990B;
-	Wed, 10 Sep 2025 17:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B6827990B;
+	Wed, 10 Sep 2025 17:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="pQRs/3ZK"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hQ/XMwtG"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EC413774D;
-	Wed, 10 Sep 2025 17:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827442472A8
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 17:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757524613; cv=none; b=DgCfyaAaGgnUDn7X1KqJhK2RlZ2YSKXFGhWcO7lSHWHcartskgkHRVI7QgviRkvtNfm+1gbcTM52X5Wgod+zwaNN+5YWznT5zRFFUz/zdY29m0c00o0EqAcYXpf7XWM5n7iPWEQM/knydB/Sxl6hSG9Do3rQ6nckBrkkFxytiQ4=
+	t=1757524628; cv=none; b=q6TPZ9kmabPtAYIf6xb+AlQ9YMoZdONw95YiEVPiFmn9/vductNKRLgX3fAXX7K0WEdbZ/ez/nclHFqgCNmCdJ5h8W5qcJo60VivrZ3P2AhVSPhSqOKFlnFTvUNs8XHKO6jTY6pYsPiaM4gU4cyJbWGImLtmlfYovEi697iIJak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757524613; c=relaxed/simple;
-	bh=LWiTpviXtSxA2uLJhCTluREzykCtzO584HqazV0nCCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=u/8nBb41TIBPqM14eC3Ka5dLHElPL0KFodFy9/WcufcRYK5H6Wnh27Scz6xrLS+7kVmCLo/sdstsE5u+cdOSGknb4Gp9Ev+T5N0dftRRmdMHv3G1FwgwBshBtWnsYHvUMA0cumRgEoszHcI643z8/D0PfTUfgQf94MAzdSnWNjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=pQRs/3ZK; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1757524613; x=1789060613;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=LWiTpviXtSxA2uLJhCTluREzykCtzO584HqazV0nCCw=;
-  b=pQRs/3ZK3VtuzkNtam0AHwRyXm7WlH7YSh7ZPynwZJRzikOp9Y/maxC7
-   hFZkIATza3v05f9UtMdTAGgkhKlXoF+mvx45nGk8ailLXZ4/6ku7O/cW0
-   AxCwS48Yl4vAyLWfvRvP6Se8H4sKDAxGC1njKLPZehTCCZw8A1uWPDMae
-   ir5T9Wn3+vCj9bbnqkPoDR/8kQJtZ66VrJyVgcrSYSPuy97RgeKW1DuDK
-   Gp0DlMX5eGOUumWOyGvOF3kHq91ZlnLXsX2ygrpXg6aDJ0RPw2JV0CfaB
-   ZNNxfpZbpRTOJD7KDxAeIB0pL+h/m7FpdQJhmaQXXGkk15KVEqaqornxt
-   A==;
-X-CSE-ConnectionGUID: GzHJBcSSS/ufTmRbnewvdg==
-X-CSE-MsgGUID: J9J1N0KkTMGJXEg7AK49uA==
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="277704208"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Sep 2025 10:16:46 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 10 Sep 2025 10:16:04 -0700
-Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Wed, 10 Sep 2025 10:16:04 -0700
-Message-ID: <fa5d44ca-d1ea-4c72-a998-b10f098b25f8@microchip.com>
-Date: Wed, 10 Sep 2025 10:16:03 -0700
+	s=arc-20240116; t=1757524628; c=relaxed/simple;
+	bh=/8scpJKa/iGwoxx0XEBO3b5H/jRJ5KUnLl7bAsgfxQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SC0QmJwK7Ap5I9L6LQhPrkXaJxc0yUxN9u1LAE1UUZzlpEWgKZdm0dFK/S/tkDXB8l2bn6T8yclEXeO3FXSktQbwtiodhVWo0mOu8EnW3a6168OBA0y/TYUDyqjljdSIQEVTBuwhGJjkti5v6c5cDq/kcMIGjDyvPdHcgnlNlcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hQ/XMwtG; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b078aabeb9fso177598466b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:17:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757524625; x=1758129425; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qfe7dcIp1ydBJFqKaAb0AacZyDfVzRbrMNGs7rVhHAg=;
+        b=hQ/XMwtGPXt4kDt5Rf29TJIiICzTBBvxenvFAKmb/qdj8fxMFgi9OeVOtG6KezD14K
+         +vd0JoVh/G9wWo7aUVEx90OSvbTtUXMt17ykG2qjvnm2d6XYJ3HlMcVe0IAf/gaYmaQL
+         534dWM+4t/fBSt0jLEHJiMBG2oUILGxkEX/H7c5Wh2AIajXziI39/PJV1wO7dMNudBBB
+         1hjcbbfKUOD9foW3HJQzAkShi9ztNjqEabckKCIZy9yieHHCWw/kyhaUVYb+3kG4S5sn
+         3T3tZsrzBC7e3AY4TiecvILOZ6zxc+lrY2EhDdzN48ecmFqpJwA1tsoVN2nFs8Bn67ng
+         JIpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757524625; x=1758129425;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qfe7dcIp1ydBJFqKaAb0AacZyDfVzRbrMNGs7rVhHAg=;
+        b=CORMVdPhga1sCvLsrl7cGLXTKhPXWiD+9atoC/Q5uMAcoEK9uI2zAy4zaXYWub+6A9
+         90Z4oAdReJAR259kTXyUo0r9ax9qeMFtVyae0WSYA8iqn0uoJy7eZp3tQoAbAriX2HxZ
+         TXO1puERUvFDax88nXCbu3lkDc5R+WEqXMn527b/4Pzib71+kFgejXkr8UJPOBqHUDpi
+         T9/PZvSSnHp87Ny7fS5KR4RexrEWWF50rnTQQWi5FER0RayMpdD1wHnG/PamASNrvHj5
+         yom9dVGfafDxJXGFICxuTQJp5uW1YriCP+SIUPxIbr2DD4xKY7boCCzP4IwBWMWGD6oI
+         fP0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOpa8n8lA4oHOj4zYTrLZuSuNtU31e/6bKyy6y3a1CLSQbHpE31cCwhORAzo5UyLYS9zVa+oZdp40iRa0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8jEmNb+nrXCRy8UbHFbp9qNeipmWxnYU0eKKBEcVYHZjyVOLk
+	pvKr5I3tbJBZYe+AazbU0cSSArL0v4iDQW3c6mRq+q0tfoxE/Oghxkv2
+X-Gm-Gg: ASbGncuAwhLd0RdrMQF+2c2z0Jy710SNClhOgpd6dz5zA+w658+6rAOZS703mzlpAdd
+	H5lSUQ2fjmHIWx6+6MLKz2P2qrYEM16aEFlncYIh/U7pKcu8aQkGrP2PVdotTPxaRl80cVq9ZCF
+	+bWDVnFfe3vY0DjO2T8VtTaBI8GbPXu4gKKzDHPnaiJkN1OTu/25ZegYzrBHaKXYayGHtTcBa8l
+	P3muvLKjjPCRrftDAVAkXiie6GM8wgnLRSlRx2eg+SR4PylAJqhJk57Wd2jmO3UL/YtAK61XBtZ
+	DjDc61IEV5C8PIXk8uRU/LEYTPJdX/3V3b14qYUhTSt7h9CGeI7jy2tqWcynMTWzdFi1E0LC9/x
+	RxOqGTtNMl9jrWs9EwjEWMxgG85hpB791/mPL07gzySE1h7yUXC9BShFyykkF2MKy/1vle0hN0d
+	uqYUq9HA==
+X-Google-Smtp-Source: AGHT+IGPnTERaGG2PTMA2cxq7DG9wKiV7iClodfojOAKtu9zwJ7Lvhr5isHQ3VORbCBRaD6Ey2Yd6Q==
+X-Received: by 2002:a17:907:86a5:b0:b04:5b47:8bd8 with SMTP id a640c23a62f3a-b04b1663e38mr1596523266b.34.1757524624535;
+        Wed, 10 Sep 2025 10:17:04 -0700 (PDT)
+Received: from ?IPV6:2a02:8109:8617:d700:1266:7a83:f27c:69b7? ([2a02:8109:8617:d700:1266:7a83:f27c:69b7])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b078304655dsm199803066b.11.2025.09.10.10.17.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 10:17:03 -0700 (PDT)
+Message-ID: <7f095cde-cefc-4259-9f7d-9de17c12758b@gmail.com>
+Date: Wed, 10 Sep 2025 19:17:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,151 +82,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: microchip: sama7d65: Add GPIO buttons and LEDs
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250909160842.392075-1-Ryan.Wanner@microchip.com>
- <20250910-retake-attic-ac1fe3429a1e@thorsis.com>
- <20250910-alkalize-overtime-930a59a7d169@thorsis.com>
-From: Ryan Wanner <ryan.wanner@microchip.com>
+Subject: Re: [PATCH v2] media: i2c: alvium: Accelerated alvium_set_power
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: michael.roeder@avnet.eu, martin.hecht@avnet.eu,
+ Tommaso Merciai <tomm.merciai@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-kernel@vger.kernel.org,
+ Ricardo Ribalda <ribalda@chromium.org>
+References: <20250909112252.2577949-1-mhecht73@gmail.com>
+ <aMGUoQMGZ12oBnpa@kekkonen.localdomain>
 Content-Language: en-US
-In-Reply-To: <20250910-alkalize-overtime-930a59a7d169@thorsis.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Martin Hecht <mhecht73@gmail.com>
+In-Reply-To: <aMGUoQMGZ12oBnpa@kekkonen.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/9/25 23:25, Alexander Dahl wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> Hello Ryan,
-> 
-> Am Wed, Sep 10, 2025 at 08:20:28AM +0200 schrieb Alexander Dahl:
->> Hello Ryan,
->>
->> Am Tue, Sep 09, 2025 at 09:08:38AM -0700 schrieb Ryan.Wanner@microchip.com:
->>> From: Ryan Wanner <Ryan.Wanner@microchip.com>
->>>
->>> Add the USER button as a GPIO input as well as add the LEDs and enable
->>> the blue LED as a heartbeat.
->>>
->>> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
->>> ---
->>>  .../dts/microchip/at91-sama7d65_curiosity.dts | 49 +++++++++++++++++++
->>>  1 file changed, 49 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
->>> index f091cc40a9f0..2fe34c59d942 100644
->>> --- a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
->>> +++ b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
->>> @@ -11,6 +11,7 @@
->>>  #include "sama7d65-pinfunc.h"
->>>  #include "sama7d65.dtsi"
->>>  #include <dt-bindings/mfd/atmel-flexcom.h>
->>> +#include <dt-bindings/input/input.h>
->>>  #include <dt-bindings/pinctrl/at91.h>
->>>
->>>  / {
->>> @@ -26,6 +27,42 @@ chosen {
->>>             stdout-path = "serial0:115200n8";
->>>     };
->>>
->>> +   gpio-keys {
->>> +           compatible = "gpio-keys";
->>> +
->>> +           pinctrl-names = "default";
->>> +           pinctrl-0 = <&pinctrl_key_gpio_default>;
->>> +
->>> +           button {
->>> +                   label = "PB_USER";
->>> +                   gpios = <&pioa PIN_PC10 GPIO_ACTIVE_LOW>;
->>> +                   linux,code = <KEY_PROG1>;
->>> +                   wakeup-source;
->>> +           };
->>> +   };
->>> +
->>> +   leds {
->>> +           compatible = "gpio-leds";
->>> +           pinctrl-names = "default";
->>> +           pinctrl-0 = <&pinctrl_led_gpio_default>;
->>> +
->>> +           led-red {
->>> +                   label = "red";
->>> +                   gpios = <&pioa PIN_PB17 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
->>> +           };
->>> +
->>> +           led-green {
->>> +                   label = "green";
->>> +                   gpios = <&pioa PIN_PB15 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
->>> +           };
->>> +
->>> +           led-blue {
->>> +                   label = "blue";
->>> +                   gpios = <&pioa PIN_PA21 GPIO_ACTIVE_HIGH>;
->>> +                   linux,default-trigger = "heartbeat";
->>> +           };
->>> +   };
->>
->> The label property is deprecated.  Please use the properties "color"
->> and "function" for new boards.  See devicetree binding documentation
->> for LEDs.
-> 
-> From a quick glance, this seems to be an RGB-LED, so I would suggest
-> to not model it as three distinct LEDs, but make use of the
-> "leds-group-multicolor" feature, example:
-> 
->  59         multi-led {
->  60                 compatible = "leds-group-multicolor";
->  61                 color = <LED_COLOR_ID_RGB>;
->  62                 function = LED_FUNCTION_INDICATOR;
->  63                 leds = <&led_red>, <&led_green>, <&led_blue>;
->  64         };
+Hi Sakari,
 
-I see, I was not aware of this feature. This would combine all of the
-LED pins into one RGB light correct, it seems from sysfs that this is
-the case.
+thank you for your feedback. Please ignore v3 because overlap. I will 
+adopt your proposal and send v4. Nevertheless I'm in conversation with 
+Ricardo because some eventually misleading feedback from CI to learn how 
+to deal with that.
 
-Would having the default-trigger="heartbeat" still be allowed for the
-led-blue node or should that be moved into the multi-led node? From the
-bindings it seems that the default trigger is still in the gpio-led nodes.
+BR Martin
 
-Best,
-Ryan
+On 9/10/25 17:09, Sakari Ailus wrote:
+> Hi Martin,
 > 
-> Greets
-> Alex
+> On Tue, Sep 09, 2025 at 01:22:51PM +0200, Martin Hecht wrote:
+>> Now alvium_set_power tests if Alvium is up and running already
+>> instead of waiting for the period of a full reboot. This safes
+>> about 5-7 seconds delay for each connected camera what is already
+>> booted especially when using multiple Alvium cameras or using
+>> camera arrays.
+>> The new function alvium_check is used by read_poll_timeout to check
+>> whether a camera is connected on I2C and if it responds already.
+>>
+>> Signed-off-by: Martin Hecht <mhecht73@gmail.com>
+>> ---
+>> v2:
+>> - added alvium_check to be used by read_poll_timeout as
+>>    suggested by Sakari
+>> ---
+>>   drivers/media/i2c/alvium-csi2.c | 32 +++++++++++++++++++++++++-------
+>>   1 file changed, 25 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/media/i2c/alvium-csi2.c b/drivers/media/i2c/alvium-csi2.c
+>> index 5c1bab574394..c63af96d3b31 100644
+>> --- a/drivers/media/i2c/alvium-csi2.c
+>> +++ b/drivers/media/i2c/alvium-csi2.c
+>> @@ -443,10 +443,8 @@ static int alvium_is_alive(struct alvium_dev *alvium)
+>>   
+>>   	alvium_read(alvium, REG_BCRM_MINOR_VERSION_R, &bcrm, &ret);
+>>   	alvium_read(alvium, REG_BCRM_HEARTBEAT_RW, &hbeat, &ret);
+>> -	if (ret)
+>> -		return ret;
+>>   
+>> -	return hbeat;
+>> +	return ret;
+>>   }
+>>   
+>>   static void alvium_print_avail_mipi_fmt(struct alvium_dev *alvium)
+>> @@ -2364,8 +2362,25 @@ static int alvium_get_dt_data(struct alvium_dev *alvium)
+>>   	return -EINVAL;
+>>   }
+>>   
+>> +static int alvium_check(struct alvium_dev *alvium, u64 *bcrm_major)
+>> +{
+>> +	struct device *dev = &alvium->i2c_client->dev;
+>> +	int ret = 0;
 > 
->>
->> Thanks and greetings
->> Alex
->>
->>> +
->>>     memory@60000000 {
->>>             device_type = "memory";
->>>             reg = <0x60000000 0x40000000>;
->>> @@ -352,6 +389,18 @@ pinctrl_i2c10_default: i2c10-default {
->>>             bias-pull-up;
->>>     };
->>>
->>> +   pinctrl_key_gpio_default: key-gpio-default {
->>> +           pinmux = <PIN_PC10__GPIO>;
->>> +           bias-pull-up;
->>> +   };
->>> +
->>> +   pinctrl_led_gpio_default: led-gpio-default {
->>> +           pinmux = <PIN_PB15__GPIO>,
->>> +                    <PIN_PB17__GPIO>,
->>> +                    <PIN_PA21__GPIO>;
->>> +           bias-pull-up;
->>> +   };
->>> +
->>>     pinctrl_sdmmc1_default: sdmmc1-default {
->>>             cmd-data {
->>>                     pinmux = <PIN_PB22__SDMMC1_CMD>,
->>> --
->>> 2.43.0
->>>
->>>
->>
+> No need to assign ret here.
+> 
+>> +
+>> +	ret = alvium_read(alvium, REG_BCRM_MAJOR_VERSION_R, bcrm_major, NULL);
+>> +
+> 
+> No need for an empty line here.
+> 
+> But see below...
+> 
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (*bcrm_major != 0)
+>> +		return 0;
+>> +
+>> +	return -ENODEV;
+>> +}
+>> +
+>>   static int alvium_set_power(struct alvium_dev *alvium, bool on)
+>>   {
+>> +	u64 bcrm_major = 0;
+>>   	int ret;
+>>   
+>>   	if (!on)
+>> @@ -2375,9 +2390,12 @@ static int alvium_set_power(struct alvium_dev *alvium, bool on)
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> -	/* alvium boot time 7s */
+>> -	msleep(7000);
+>> -	return 0;
+>> +	/* alvium boot time is up to 7.5s but test if its available already */
+>> +	read_poll_timeout(alvium_check, bcrm_major, (bcrm_major == 0),
+>> +		250000, 7500000, false,
+>> +		alvium, &bcrm_major);
+> 
+> I presume bcrm_major needs to be non-zero to proceed rather than zero?
+> 
+> I think you could also do:
+> 
+> 	read_poll_timeout(alvium_read, ret, !ret && brcm_major, 250000, 7500000,
+> 			  false, alvium, REG_BCRM_MAJOR_VERSION_R, bcrm_major,
+> 			  NULL);
+> 
+> 	return ret ?: brcm_major ? 0 : -ENODEV;
+> 
+>> +
+>> +	return ret;
+>>   }
+>>   
+>>   static int alvium_runtime_resume(struct device *dev)
+>> @@ -2442,7 +2460,7 @@ static int alvium_probe(struct i2c_client *client)
+>>   	if (ret)
+>>   		goto err_powerdown;
+>>   
+>> -	if (!alvium_is_alive(alvium)) {
+>> +	if (alvium_is_alive(alvium)) {
+> 
+> If you prefer to change this, then I'd assign the return value to ret, as
+> returned by alvium_read() and use it as the error code here, too. But this
+> should be a separate patch.
+> 
+>>   		ret = -ENODEV;
+>>   		dev_err_probe(dev, ret, "Device detection failed\n");
+>>   		goto err_powerdown;
+> 
 
 
