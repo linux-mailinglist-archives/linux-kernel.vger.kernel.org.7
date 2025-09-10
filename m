@@ -1,182 +1,253 @@
-Return-Path: <linux-kernel+bounces-811064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 734A1B523A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:44:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B8AB52369
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2720248645D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:44:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C171C23396
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABDF313275;
-	Wed, 10 Sep 2025 21:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED5230FF28;
+	Wed, 10 Sep 2025 21:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="b0PBYpbe"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zk6DwjOR"
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEB922333B;
-	Wed, 10 Sep 2025 21:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083C7204F99
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 21:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757540685; cv=none; b=E4b4NZpi6+UnstAeeGuSMlgDJjTorPJr6Dyk8ElsBl3MId/gmxfqX0w/rTM6WA7HYiwhB5RF6D2oVR677n4nYTns3zadQRD5+nzUhKVbi5PZNCkEXhByInmBk+zQRYyMBsS+P/I83pUhMb14WsxQBKEb0eEXw13xk+S9TJCBS58=
+	t=1757539437; cv=none; b=V6I3Aotfd/j8n3/lLjfky4lqMDfLk05PLm60iDVb1Noffdg4HOj9pgSYe5n+ZZ1cKO4AklglbDOWTKvsCDxUikYRjRAr3+3MXVNVWn40Yuw/5y4nMUJUTkUnzycQKVA2idGAK7/RTQz1hxw84SZrOuu5w4Zc2uPEgnl+xwjb7F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757540685; c=relaxed/simple;
-	bh=xlW8quooVNdXtWkJmB0hXmDsnuvk2Jn7NEuIxTagAbA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=hldWtpfezsBObAhR3hq+c9q9W8QpuJK6VqJHM47ZkTQNE7gySSkVexA+r+841sLWauNf5aqEY1UZpzD0NuJ+3+oolFP5loNfaIzq4UY3D81HE02/JxGjUzoG7vDDHhsK7HlkGU1nN7pWVh/lpb0ZZixIf73//23fX6SAQKABcz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=b0PBYpbe; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58ALGtFR225957;
-	Wed, 10 Sep 2025 16:16:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757539015;
-	bh=9fBHeMDXGKZ0BRvRgsZi/dMbQnS2+VArdU+vF0c8rxs=;
-	h=From:Date:Subject:To:CC;
-	b=b0PBYpbeYOt0tDT6XLM5y9curno1o8hraInd2u198z0svC1s0wRXbRNsDY1R5FjlJ
-	 7TWFpyLC6CxTqqa0zdi5vuZCitT5yUBuuch6ie8BnSSnmbZ3DMtJopDh7cp2sKy6lm
-	 zO0IahuIJovkQEdJTDldrVDUW66fzFsRhmvwsvjU=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58ALGtjB569811
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 10 Sep 2025 16:16:55 -0500
-Received: from DLEE201.ent.ti.com (157.170.170.76) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 10
- Sep 2025 16:16:54 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE201.ent.ti.com
- (157.170.170.76) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 10 Sep 2025 16:16:54 -0500
-Received: from [127.0.1.1] (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58ALGsDL792374;
-	Wed, 10 Sep 2025 16:16:54 -0500
-From: Kendall Willis <k-willis@ti.com>
-Date: Wed, 10 Sep 2025 16:16:35 -0500
-Subject: [PATCH v2] pmdomain: ti_sci: Handle wakeup constraint if device
- has pinctrl wakeup state
+	s=arc-20240116; t=1757539437; c=relaxed/simple;
+	bh=d4u2croQRqHeFHDIJ1SzU/4czH4b6u4L198LRaiPE8Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G3hxyRmgwMzxsPGX1ViGtcmWr9nWfO1q4muk96zU8AKpSr1Q3QZe+zsZAb85TVWhegd0/opJwd2Z1L06TDsWDt7rScb/ION3cfevNofulJMYfFm2BTYCXG7Y8e4nGPcDsnIiTgFicKgEL/M68/RxMJsnf8TJEtu/4CpJlv5VvXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zk6DwjOR; arc=none smtp.client-ip=74.125.224.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-6045eb3848eso28110d50.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:23:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757539435; x=1758144235; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xkAS8Cy65QDLj5I+d6oGhBN8bbmh1b9Rv/Sfz/w1PE8=;
+        b=zk6DwjORw2+r2yK8W39qdTg7UEUe2tvLaDXAvEVmtPmg/qiMBg0I2SfFGmFigp4/rA
+         nadYYKNCKeT9Kc86Sg6/SZkt26aBlbE77rgPMetTd9sTQe+JpPz4vAvrRtH2cugpBjeQ
+         E1IfFnWbaY5LonyxcXlJ7H9uuZcqf+TglwScvWT/TloPVTYJ1Ow/4Tdux/FwdA4zHbMI
+         Yty1dg/50yAB1Tgy+OKEGeKdo7e5UEjHh7GmNxW2LN8ZXvGrLqhRshXuLdD8XIFKazmE
+         neudNsZvKXxyOcFUZx4TB02ARfJoMIhXUJplH9vTHSAwg169yLYifWuBVdm7/l70U7tR
+         tIBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757539435; x=1758144235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xkAS8Cy65QDLj5I+d6oGhBN8bbmh1b9Rv/Sfz/w1PE8=;
+        b=VcLw3dOB/pwoQJRLyaGD7ljqJ6+FgImzGYFRIxvM6Al6clNrgpVWAQy7rkcRxznJ7l
+         2oJtJpEl78LXFjjTM3GPvNLOQauRiKvsV9e0p5gd1DsjpdsolMCZ4RErQU853L91Udwl
+         PQo53N7109r5ST1cLpXISsoryCeYGKgc8gzbksmMtbbsBIl+/lTLsKq91CDGTalEv1B0
+         4OXAjzvxoT5Md2yk91DE8nUeL2MsJNTpwVk8xCTJttOg73faspi6KMHwNbilHJQO5ulB
+         WHQykbrK28XpdGB0gqAZU6BJSnh+inBCnwyvl3w9Jq/hja20hMHTljQhfBIkW1z+N2tp
+         odqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHL16ogaDYCsgyCTOQLTZKTZTf3b2JtVlWJYKmpUENxPd26qs83BAvLvz3hAEXE7BgCWChon1tkfSKVbw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySUM9YzQt/P4mloG/bF+rELsdJ7SV0XtJd8jBEZiAPKfVo8YpF
+	IC4K9NaE/4yxw/fQMO5Ey5X9Lc4fAMK09/wSRCjUWWm9c6jttcs1WyvSyLTZhb1GhvrzJ7d1XSR
+	wL/H13UmgA14Lt9FuHfpp+dKBhF6rXs0yX0V9lfQ4
+X-Gm-Gg: ASbGnctc6hF1vPU86G297giP/sZA97HqrryFpu5vjIWzRDUjiETYSIpWv9MD9bBqKj1
+	5VsQqzwb0+Vs2pKCkh9A4CPI+uz4CrUQ82JL8sCBgnM+buweDfq8dy0RKcYurPqUiBhP+MtUhoD
+	Q0yM3Y74jdvqXXVXzeBZp+NlHEWXu33KsUs0rGe4NNuSSZsbqjFKJMk2uSoDk/2e2UHJjkfHFrH
+	x+nOcZmkc1HxkEn8tkvZntvjcJQmUzeQthm2F7xn6MVj0CT5ByK82A=
+X-Google-Smtp-Source: AGHT+IHZpuAIpP6eU8XgbFP1ihmPC/VQZiOoNU+Aq/FCti1zZ6kcOWyFQNZrZuCxHtYj7ukkLXh1f92vcgX3i27OpLw=
+X-Received: by 2002:a05:690e:150f:b0:600:46e7:e51a with SMTP id
+ 956f58d0204a3-610274a362amr14607055d50.19.1757539434611; Wed, 10 Sep 2025
+ 14:23:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250910-uart-daisy-chain-pmdomain-v2-1-6d0215f4af32@ti.com>
-X-B4-Tracking: v=1; b=H4sIALLqwWgC/02Myw6CMBBFf4XM2iHtIAKu/A/jorRFJtKWtPgK4
- d+trtzdk9xzVkg2sk1wLFaI9sGJg89AuwL0qPzVIpvMQIJq0UmBdxUXNIrTG/OBPc7OBPcdfVv
- 1ZHrSldaQ/TnagV+/9vmSeYjB4TJGq/6KYk9SHkRTVg3VbdegxBs+eZo4nRYudXCwbR8cJZjmp
- gAAAA==
-X-Change-ID: 20250910-uart-daisy-chain-pmdomain-b83b2db2c3cc
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Santosh
- Shilimkar <ssantosh@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <d-gole@ti.com>, <vishalm@ti.com>,
-        <sebin.francis@ti.com>, <msp@baylibre.com>, <khilman@baylibre.com>,
-        <a-kaur@ti.com>, <k-willis@ti.com>
-X-Mailer: b4 0.14.2
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250902111951.58315-1-kalyazin@amazon.com> <20250902111951.58315-2-kalyazin@amazon.com>
+In-Reply-To: <20250902111951.58315-2-kalyazin@amazon.com>
+From: James Houghton <jthoughton@google.com>
+Date: Wed, 10 Sep 2025 14:23:18 -0700
+X-Gm-Features: Ac12FXxBiQR_yOnKkTX3Mj5Vty6qT5i1blDHt6xkWg63pMdSm1PpYlQkfLTvYk4
+Message-ID: <CADrL8HV8+dh4xPv6Da5CR+CwGJwg5uHyNmiVmHhWFJSwy8ChRw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] KVM: guest_memfd: add generic population via write
+To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "shuah@kernel.org" <shuah@kernel.org>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "michael.day@amd.com" <michael.day@amd.com>, 
+	"david@redhat.com" <david@redhat.com>, "Roy, Patrick" <roypat@amazon.co.uk>, 
+	"Thomson, Jack" <jackabt@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>, 
+	"Cali, Marco" <xmarcalx@amazon.co.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For TI K3 SoCs with IO daisy-chaining using pinctrl wakeup state, avoid
-sending wakeup constraints to the PM co-processor. This allows the SoC to
-enter deeper low power states while still maintaining wakeup capability
-for peripherals using IO daisy-chain wakeup via pinctrl wakeup state,
-similar to the existing wake IRQ mechanism added in commit b06bc47279919
-("pmdomain: ti_sci: handle wake IRQs for IO daisy chain wakeups").
+On Tue, Sep 2, 2025 at 4:20=E2=80=AFAM Kalyazin, Nikita <kalyazin@amazon.co=
+.uk> wrote:
+>
+> From: Nikita Kalyazin <kalyazin@amazon.com>
 
-Detect the pinctrl wakeup state in the suspend path, and if it exists,
-skip sending the constraint.
+Hi Nikita,
 
-Signed-off-by: Kendall Willis <k-willis@ti.com>
----
-Implementation
---------------
-This patch is intended to be implemented along with the following
-series. This patch has no dependencies on any of the other series:
+>
+> write syscall populates guest_memfd with user-supplied data in a generic
+> way, ie no vendor-specific preparation is performed.  This is supposed
+> to be used in non-CoCo setups where guest memory is not
+> hardware-encrypted.
 
-1. "pmdomain: ti_sci: Handle wakeup constraint if device has pinctrl
-   wakeup state": (this patch) skips setting constraints for wakeup
-   sources that use pinctrl state 'wakeup'.
+What's meant to happen if we do use this for CoCo VMs? I would expect
+write() to fail, but I don't see why it would (seems like we need/want
+a check that we aren't write()ing to private memory).
 
-2. "serial: 8250: omap: Add wakeup support": Implements wakeup from
-   the UARTs for TI K3 SoCs
-   https://github.com/kwillis01/linux/tree/b4/uart-daisy-chain-8250-omap
+> The following behaviour is implemented:
+>  - only page-aligned count and offset are allowed
+>  - if the memory is already allocated, the call will successfully
+>    populate it
+>  - if the memory is not allocated, the call will both allocate and
+>    populate
+>  - if the memory is already populated, the call will not repopulate it
+>
+> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
+> ---
+>  virt/kvm/guest_memfd.c | 64 +++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 63 insertions(+), 1 deletion(-)
+>
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 08a6bc7d25b6..a2e86ec13e4b 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -379,7 +379,9 @@ static int kvm_gmem_mmap(struct file *file, struct vm=
+_area_struct *vma)
+>  }
+>
+>  static struct file_operations kvm_gmem_fops =3D {
+> -       .mmap           =3D kvm_gmem_mmap,
+> +       .mmap           =3D kvm_gmem_mmap,
+> +       .llseek         =3D default_llseek,
+> +       .write_iter     =3D generic_perform_write,
 
-3. "arm64: dts: ti: k3-am62: Support Main UART wakeup": Implements the
-   functionality to wakeup the system from the Main UART
-   https://github.com/kwillis01/linux/tree/b4/uart-daisy-chain-dts
+You seem to have accidentally replaced some tabs with spaces here. :)
+Please keep the style consistent.
 
-Testing
--------
-Tested on a AM62P SK EVM board with all series and dependencies
-implemented. Suspend/resume verified with the Main UART wakeup source
-by entering a keypress on the console.
+>         .open           =3D generic_file_open,
+>         .release        =3D kvm_gmem_release,
+>         .fallocate      =3D kvm_gmem_fallocate,
+> @@ -390,6 +392,63 @@ void kvm_gmem_init(struct module *module)
+>         kvm_gmem_fops.owner =3D module;
+>  }
+>
+> +static int kvm_kmem_gmem_write_begin(const struct kiocb *kiocb,
+> +                                    struct address_space *mapping,
+> +                                    loff_t pos, unsigned int len,
+> +                                    struct folio **foliop,
+> +                                    void **fsdata)
+> +{
+> +       struct file *file =3D kiocb->ki_filp;
+> +       pgoff_t index =3D pos >> PAGE_SHIFT;
+> +       struct folio *folio;
+> +
+> +       if (!PAGE_ALIGNED(pos) || len !=3D PAGE_SIZE)
+> +               return -EINVAL;
 
-This github branch has all the necessary patches to test the series
-using linux-next:
-https://github.com/kwillis01/linux/tree/uart-daisy-chain
+Requiring pos to be page-aligned seems like a strange restriction, and
+requiring len to be exactly PAGE_SIZE just seems wrong. I don't see
+any reason why the below logic can't be made to work with an
+unrestricted pos and len (in other words, I don't see how guest_memfd
+is special vs other filesystems in this regard).
 
-Version History
----------------
-Changes from v1 to v2:
- - Reworded commit message to be concise and to reference commit
-   b06bc47279919
+> +
+> +       if (pos + len > i_size_read(file_inode(file)))
+> +               return -EINVAL;
+> +
+> +       folio =3D kvm_gmem_get_folio(file_inode(file), index);
+> +       if (IS_ERR(folio))
+> +               return -EFAULT;
+> +
+> +       if (WARN_ON_ONCE(folio_test_large(folio))) {
+> +               folio_unlock(folio);
+> +               folio_put(folio);
+> +               return -EFAULT;
+> +       }
+> +
+> +       if (folio_test_uptodate(folio)) {
+> +               folio_unlock(folio);
+> +               folio_put(folio);
+> +               return -ENOSPC;
 
-v1: https://lore.kernel.org/all/20250904211607.3725897-1-k-willis@ti.com/
----
- drivers/pmdomain/ti/ti_sci_pm_domains.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Does it actually matter for the folio not to be uptodate? It seems
+unnecessarily restrictive not to be able to overwrite data if we're
+saying that this is only usable for unencrypted memory anyway.
 
-diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-index 82df7e44250bb64f9c4a2108b5e97bd782a5976d..884905fd0686c1b94aba68c03da038e577428adf 100644
---- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
-+++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-@@ -10,6 +10,7 @@
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/pm_qos.h>
-@@ -84,9 +85,24 @@ static inline void ti_sci_pd_set_wkup_constraint(struct device *dev)
- 	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
- 	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
- 	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
-+	struct pinctrl *pinctrl = devm_pinctrl_get(dev);
-+	struct pinctrl_state *pinctrl_state_wakeup;
- 	int ret;
- 
- 	if (device_may_wakeup(dev)) {
-+		/*
-+		 * If device can wakeup using pinctrl wakeup state,
-+		 * we do not want to set a constraint
-+		 */
-+		if (!IS_ERR_OR_NULL(pinctrl)) {
-+			pinctrl_state_wakeup = pinctrl_lookup_state(pinctrl, "wakeup");
-+			if (!IS_ERR_OR_NULL(pinctrl_state_wakeup)) {
-+				dev_dbg(dev, "%s: has wake pinctrl wakeup state, not setting " \
-+						"constraints\n", __func__);
-+				return;
-+			}
-+		}
-+
- 		/*
- 		 * If device can wakeup using IO daisy chain wakeups,
- 		 * we do not want to set a constraint.
+Is ENOSPC really the right errno for this? (Maybe -EFAULT?)
 
----
-base-commit: 5f540c4aade9f1d58fb7b9490b4b7d5214ec9746
-change-id: 20250910-uart-daisy-chain-pmdomain-b83b2db2c3cc
+> +       }
+> +
+> +       *foliop =3D folio;
+> +       return 0;
+> +}
+> +
+> +static int kvm_kmem_gmem_write_end(const struct kiocb *kiocb,
+> +                                  struct address_space *mapping,
+> +                                  loff_t pos, unsigned int len,
+> +                                  unsigned int copied,
+> +                                  struct folio *folio, void *fsdata)
+> +{
+> +       if (copied) {
+> +               if (copied < len) {
+> +                       unsigned int from =3D pos & (PAGE_SIZE - 1);
 
-Best regards,
--- 
-Kendall Willis <k-willis@ti.com>
+How about:
 
+unsigned int from  =3D pos & ((1UL << folio_order(*folio)) - 1)
+
+So that we don't need to require !folio_test_large() in
+kvm_kmem_gmem_write_begin().
+
+> +
+> +                       folio_zero_range(folio, from + copied, len - copi=
+ed);
+> +               }
+> +               kvm_gmem_mark_prepared(folio);
+> +       }
+> +
+> +       folio_unlock(folio);
+> +       folio_put(folio);
+> +
+> +       return copied;
+> +}
+> +
+>  static int kvm_gmem_migrate_folio(struct address_space *mapping,
+>                                   struct folio *dst, struct folio *src,
+>                                   enum migrate_mode mode)
+> @@ -442,6 +501,8 @@ static void kvm_gmem_free_folio(struct folio *folio)
+>
+>  static const struct address_space_operations kvm_gmem_aops =3D {
+>         .dirty_folio =3D noop_dirty_folio,
+> +       .write_begin =3D kvm_kmem_gmem_write_begin,
+> +       .write_end =3D kvm_kmem_gmem_write_end,
+>         .migrate_folio  =3D kvm_gmem_migrate_folio,
+>         .error_remove_folio =3D kvm_gmem_error_folio,
+>  #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
+> @@ -489,6 +550,7 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t =
+size, u64 flags)
+>         }
+>
+>         file->f_flags |=3D O_LARGEFILE;
+> +       file->f_mode |=3D FMODE_LSEEK | FMODE_PWRITE;
+>
+>         inode =3D file->f_inode;
+>         WARN_ON(file->f_mapping !=3D inode->i_mapping);
+> --
+> 2.50.1
+>
 
