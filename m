@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-810248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D35B517B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:12:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C31CB517B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952DD189A5A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:12:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F221D3ACAB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995F531A54B;
-	Wed, 10 Sep 2025 13:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66103319875;
+	Wed, 10 Sep 2025 13:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Vqw4y+VK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kbAf2RUe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DC330FC19;
-	Wed, 10 Sep 2025 13:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D3C27F747;
+	Wed, 10 Sep 2025 13:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757509947; cv=none; b=icZnBMO08eNIOwK3JWdx8Hger0hS1itdD/VZixc8w4GQQKAHHKufmQ91w2bEoAud7gNyHDn8ZhLDFMrKA8YVAZbcPIci3e83WND2/hlmiUZKMMIO+mBokpbDyRf76suMRqFjnSGdgQVN5dLgIOtfM6/aweHAN505CiysZI8THZc=
+	t=1757510059; cv=none; b=hfAF3pNGaX0CCbLA5HRPZqj2tMqpG542bAkaryO6wG7hclRq7StaSn16UHbH9INDMengdHyO4ZSmcAI2k7x2nE8jcZJoMT7vbxuk+uSAAfYmJ887y1ApS3YWL1eWZE4KeKxTo7+ZEbJXyJ8te23crVmFQ2YywAckBJbXxh3aKnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757509947; c=relaxed/simple;
-	bh=/B+oMwcX8UPYEh42Wvb9sKbpZNLOozmZx9mpR/Gn/as=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s//BtI25U41gw8Wd5ZVE6h0hn5JruBKe7+k9Y7Fr5J2GCvCgvQbtWe9phvR8UJwAfwRYkAK5JOssdm0Fw+zxrtuHiumwbcxbA9Xg0PIoZH2Ul/B3X4fRDcDeuAiTuJNGERHsO+dIVLFV34HkF8NhtCmRa2jdMY8IY0DMOkXTdhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Vqw4y+VK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5531C4CEF0;
-	Wed, 10 Sep 2025 13:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757509946;
-	bh=/B+oMwcX8UPYEh42Wvb9sKbpZNLOozmZx9mpR/Gn/as=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vqw4y+VKvlr4e5cz94s+vGqFrwyA7Ega8xvnVHmX0iCKmFfa9rl4Wis9UvQEWg5xl
-	 DOv5J1mXSTzAkIJQDHn+js0Zbt6IRqeUh9JI9HkLK4SGaFXW02rnKIjYYWiQV3hX6v
-	 DJ+G7HTnEv+ytQ8TTMK4U25OI0RYdP0FjQcilt4A=
-Date: Wed, 10 Sep 2025 15:12:23 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: rafael@kernel.org, abdiel.janulgue@gmail.com,
-	daniel.almeida@collabora.com, robin.murphy@arm.com,
-	a.hindborg@kernel.org, ojeda@kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Update the DMA Rust entry
-Message-ID: <2025091015-paddle-phonebook-9ad0@gregkh>
-References: <20250910094015.11551-1-dakr@kernel.org>
+	s=arc-20240116; t=1757510059; c=relaxed/simple;
+	bh=9Pe02Wp9Wa61TyWuZketBjA9b9YjXG6KBrzkRTagEIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S+vk5M5jXSDRBC5b1AKODMOWLFg8OLziQGcR6ZQ5qgL/ID7uCju4fBcvcMvmVb51wN0jrNphGRAOnVeygSq75z+WkCCUA/dXy+hyqQeYO3weYiUwaHKo231ZIBQBDm7tlr6IyNV698kvJOavN5Dx3wRfa8WWb1ZmuwECnRTKt8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kbAf2RUe; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757510058; x=1789046058;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9Pe02Wp9Wa61TyWuZketBjA9b9YjXG6KBrzkRTagEIM=;
+  b=kbAf2RUeuYl6Mv+bm9REmsVKmJj1zUTo/u6yfp1gCgy3s5AYAUPUppfu
+   84DqvzigUHA0SBw6DNIWXCoT1IoGwbEVNJvulnXqyEqXr5LWOZ8J85UCc
+   uXf/XgyfNLzA6mekiU0zsyAxkx/lpPOvIoPqskMnuiRIRlSp9My7BCGUW
+   Fo8tn9jLry7pX1c4euyeAXIwj6wR40mE+FNs1SSY1S6uRMGMSyqdYuGb1
+   +TA4oK7G5cz+3MTJ7L/Ms75Xx7Vh0X/MtW3yW+b2OmmJx3NWojoWhBIS/
+   4sKjpnLa1PptABOTShDgYmdaZhcJPhHq2A6VmWtVi85jIq2I+OQD82WX8
+   A==;
+X-CSE-ConnectionGUID: X9Cf4j54QQ2qIQGeKXRMtg==
+X-CSE-MsgGUID: WSDFDTEDTnW19IQlRCFPOA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="85262895"
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="85262895"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 06:14:17 -0700
+X-CSE-ConnectionGUID: nvYFnd3DSq+q8t+5CqgS5w==
+X-CSE-MsgGUID: h1V5Bt/aSRKm0ETaLO0Hfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="197062774"
+Received: from qliang3-mobl3.ccr.corp.intel.com (HELO [10.125.65.247]) ([10.125.65.247])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 06:14:12 -0700
+Message-ID: <c29abf85-aafe-4cf8-b4e8-6d3b5b250ce6@linux.intel.com>
+Date: Wed, 10 Sep 2025 06:13:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910094015.11551-1-dakr@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 1/5] x86/boot: Shift VMXON from KVM init to CPU
+ startup phase
+To: "Huang, Kai" <kai.huang@intel.com>, "Gao, Chao" <chao.gao@intel.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "brgerst@gmail.com" <brgerst@gmail.com>,
+ "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+ "x86@kernel.org" <x86@kernel.org>, "rafael@kernel.org" <rafael@kernel.org>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "seanjc@google.com" <seanjc@google.com>, "xin@zytor.com" <xin@zytor.com>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "hpa@zytor.com" <hpa@zytor.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "kprateek.nayak@amd.com" <kprateek.nayak@amd.com>,
+ "pavel@kernel.org" <pavel@kernel.org>,
+ "david.kaplan@amd.com" <david.kaplan@amd.com>,
+ "Williams, Dan J" <dan.j.williams@intel.com>, "bp@alien8.de" <bp@alien8.de>
+References: <20250909182828.1542362-1-xin@zytor.com>
+ <20250909182828.1542362-2-xin@zytor.com>
+ <1301b802284ed5755fe397f54e1de41638aec49c.camel@intel.com>
+ <aMFcwXEWMc2VIzQQ@intel.com>
+ <16a9cc439f2826ee99ff1cfc42c9006a7a544dd4.camel@intel.com>
+Content-Language: en-US
+From: Arjan van de Ven <arjan@linux.intel.com>
+In-Reply-To: <16a9cc439f2826ee99ff1cfc42c9006a7a544dd4.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10, 2025 at 11:40:03AM +0200, Danilo Krummrich wrote:
-> Update the DMA Rust maintainers entry in the following two aspects:
 > 
->   (1) Change Abdiel's entry to 'Reviewer'.
-> 
->   (2) Take patches through the driver-core tree.
-> 
-> Abdiel won't do any more maintainer work on the DMA (or scatterlist)
-> infrastructure, but he'd like to be kept in the loop, hence change is
-> entry to 'R:'.
-> 
-> Analogous to [1], the DMA (and scatterlist) helpers are closely coupled
-> with the core device infrastructure and the device lifecycle, hence take
-> patches through the driver-core tree by default.
-> 
-> Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> Link: https://lore.kernel.org/r/20250725202840.2251768-1-ojeda@kernel.org [1]
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  MAINTAINERS | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fed6cd812d79..281149d9b821 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7239,15 +7239,15 @@ F:	include/linux/swiotlb.h
->  F:	kernel/dma/
->  
->  DMA MAPPING HELPERS DEVICE DRIVER API [RUST]
-> -M:	Abdiel Janulgue <abdiel.janulgue@gmail.com>
->  M:	Danilo Krummrich <dakr@kernel.org>
-> +R:	Abdiel Janulgue <abdiel.janulgue@gmail.com>
->  R:	Daniel Almeida <daniel.almeida@collabora.com>
->  R:	Robin Murphy <robin.murphy@arm.com>
->  R:	Andreas Hindborg <a.hindborg@kernel.org>
->  L:	rust-for-linux@vger.kernel.org
->  S:	Supported
->  W:	https://rust-for-linux.com
-> -T:	git https://github.com/Rust-for-Linux/linux.git alloc-next
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git
->  F:	rust/helpers/dma.c
->  F:	rust/kernel/dma.rs
->  F:	samples/rust/rust_dma.rs
-> 
-> base-commit: 3c9ba2777d6c86025e1ba4186dc5cd930e40ec5f
-> -- 
-> 2.51.0
-> 
+> Since I think doing VMXON when bringing up CPU unconditionally is a
+> dramatic move at this stage, I was actually thinking we don't do VMXON in
+> CPUHP callback, but only do prepare things like sanity check and VMXON
+> region setup etc.  If anything fails, we refuse to online CPU, or mark CPU
+> as VMX not supported, whatever.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+the whole point is to always vmxon -- and simplify all the complexity
+from doing this dynamic.
+So yes "dramatic" maybe but needed -- especially as things like TDX
+and TDX connect need vmxon to be enabled outside of KVM context.
+
+
+> 
+> The core kernel then provides two APIs to do VMXON/VMXOFF respectively,
+> and KVM can use them.  The APIs needs to handle concurrent requests from
+> multiple users, though.  VMCLEAR could still be in KVM since this is kinda
+> KVM's internal on how to manage vCPUs.
+> 
+> Does this make sense?
+
+not to me -- the whole point is to not having this dynamic thing
+
 
