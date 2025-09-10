@@ -1,109 +1,135 @@
-Return-Path: <linux-kernel+bounces-809895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5B9B5133A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C652B512B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F0B11C28404
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77BA31C82886
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685AE314A74;
-	Wed, 10 Sep 2025 09:52:37 +0000 (UTC)
-Received: from bregans-1.gladserv.net (bregans-1.gladserv.net [185.128.211.58])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119D53148BC;
+	Wed, 10 Sep 2025 09:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hfHiZmbp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9D0265609;
-	Wed, 10 Sep 2025 09:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.211.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998E61EBA14;
+	Wed, 10 Sep 2025 09:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497957; cv=none; b=NKJ18wo7Bk7UOqzocG65Kh81xJhMrQ/z6NLIjuNapMxesxzQeBmTMdDBZ5t8s0qqI8Y9nLo3JpUkV+HG23koLCUsXcXQ2oNmuheJ9YpGHStJLKFVX7NCQUbn/EWpxJ1oBmpl/LCxdSAVh1av/8GhDiYdQpU/7Bka57pDH//McxA=
+	t=1757497121; cv=none; b=fN7LyQxmCb8hPF7HKvyy2lTOAbjVs5iFisck8u4ChJOu1jFUZSRRCvtT7zHNL6SxoA2263YIT4tWh1SWG4q7MOodMCLGoowI1IHWbk7Xd5mJqMQVpqDRTJfaR6d7j7fsGZeDaV7Jf4ps1mfmCCtCwQCrUtyVQJphQdIpRoxRaY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497957; c=relaxed/simple;
-	bh=gSQlvxsR6uNM6GEheU7y6b4i42meAgCJ79Zi6uyxkhs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p5stYZh/+JAg5cwzRgPZd6owuO2vonES0RDnEtsDHG+XcIVgbqn2ohMHR7YdOk5PL0T8W3qgy/J50jjijCzadc20YokIwttD9iFxx3LuG+a1NvVKnGIK1cNLgT7L9k25DvWrzG5S6ZHE2WmlPYXdP/RezN+cqomb8QPeWTsbNBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.211.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
-From: Brett A C Sheffield <bacs@librecast.net>
-To: stable@vger.kernel.org
-Cc: regressions@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Helge Deller <deller@gmx.de>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Lee Jones <lee@kernel.org>,
-	Murad Masimov <m.masimov@mt-integration.ru>,
-	Yongzhen Zhang <zhangyongzhen@kylinos.cn>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Brett A C Sheffield <bacs@librecast.net>
-Subject: [PATCH 1/1] Revert "fbdev: Disable sysfb device registration when removing conflicting FBs"
-Date: Wed, 10 Sep 2025 09:38:03 +0000
-Message-ID: <20250910095124.6213-5-bacs@librecast.net>
-X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20250910095124.6213-3-bacs@librecast.net>
-References: <20250910095124.6213-3-bacs@librecast.net>
+	s=arc-20240116; t=1757497121; c=relaxed/simple;
+	bh=EMpd3gvqX8iY0MLFJz1Rt7MQin6Dzcdt7Lq82h/v5UM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BGBIw/ISo2mztJ0knDlcK7oKR4JwpTvTX8KoO+pia5+JVzvKpMgkVLE644VSPjElePJCk4/iO2Wv9G0/IlOLh3oLf1kAWFcNn8APVpNDYIU1UO2qXwxzRQLuZQbRDMTZh4KqxsMblpXMgP4BNXubU36jevNZbev2LlTr5RsaehU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hfHiZmbp; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757497120; x=1789033120;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=EMpd3gvqX8iY0MLFJz1Rt7MQin6Dzcdt7Lq82h/v5UM=;
+  b=hfHiZmbpSl4OR0WzdZsSAeGG0aLkFK9KbgVhJ3cQiCDbxfvcFTCHgfUg
+   bGs4okNt9gdTbSajSRMF8hEM+rKPkSRWv7VBCP8vhd5l1EYM7fh+DNqVa
+   1X8Zlv1HRen4wp3lagHXFNnPZhEjslQ6mz+frQNeRKE47sybbT12cwK0M
+   oNDIgqouEduMLaToT1gkMCI3vm2GmaIx0rJ0FT33qtcIQpvBsKy9mdhAN
+   BR/58vpC5JDhUiW08ljnDcpNMMh9kGZWF+wqs8SR1gTy6Fy2C+MrwPQez
+   qQSZhVcPkUbdVtMz63DyQzHKXzWXnseGI5uYHvKV1ASee5atemhV+taEy
+   w==;
+X-CSE-ConnectionGUID: kybKLRxhTMy37X4R8zBT7g==
+X-CSE-MsgGUID: 6NMLmpnLQu+pKrJdVc5S0Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="71216876"
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="71216876"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 02:38:39 -0700
+X-CSE-ConnectionGUID: g8EKtBtYRAKQOLNvcdZn1w==
+X-CSE-MsgGUID: kIToiwnqSJ6a123RyMBrAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="173255473"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 02:38:34 -0700
+Message-ID: <4575e64f-8989-4a33-8f37-c013ba8f676f@intel.com>
+Date: Wed, 10 Sep 2025 17:38:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 07/22] KVM: x86: Add fault checks for guest CR4.CET
+ setting
+To: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: acme@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, john.allen@amd.com, mingo@kernel.org, mingo@redhat.com,
+ minipli@grsecurity.net, mlevitsk@redhat.com, namhyung@kernel.org,
+ pbonzini@redhat.com, prsampat@amd.com, rick.p.edgecombe@intel.com,
+ seanjc@google.com, shuah@kernel.org, tglx@linutronix.de,
+ weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com
+References: <20250909093953.202028-1-chao.gao@intel.com>
+ <20250909093953.202028-8-chao.gao@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250909093953.202028-8-chao.gao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This reverts commit 13d28e0c79cbf69fc6f145767af66905586c1249.
+On 9/9/2025 5:39 PM, Chao Gao wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+> 
+> Check potential faults for CR4.CET setting per Intel SDM requirements.
+> CET can be enabled if and only if CR0.WP == 1, i.e. setting CR4.CET ==
+> 1 faults if CR0.WP == 0 and setting CR0.WP == 0 fails if CR4.CET == 1.
+> 
+> Co-developed-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
 
-Commit ee7a69aa38d8 ("fbdev: Disable sysfb device registration when
-removing conflicting FBs") was backported to 5.15.y LTS. This causes a
-regression where all virtual consoles stop responding during boot at:
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
-"Populating /dev with existing devices through uevents ..."
-
-Reverting the commit fixes the regression.
-
-Signed-off-by: Brett A C Sheffield <bacs@librecast.net>
----
- drivers/video/fbdev/core/fbmem.c | 12 ------------
- 1 file changed, 12 deletions(-)
-
-diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-index d938c31e8f90..3b52ddfe0350 100644
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/major.h>
- #include <linux/slab.h>
--#include <linux/sysfb.h>
- #include <linux/mm.h>
- #include <linux/mman.h>
- #include <linux/vt.h>
-@@ -1795,17 +1794,6 @@ int remove_conflicting_framebuffers(struct apertures_struct *a,
- 		do_free = true;
- 	}
- 
--	/*
--	 * If a driver asked to unregister a platform device registered by
--	 * sysfb, then can be assumed that this is a driver for a display
--	 * that is set up by the system firmware and has a generic driver.
--	 *
--	 * Drivers for devices that don't have a generic driver will never
--	 * ask for this, so let's assume that a real driver for the display
--	 * was already probed and prevent sysfb to register devices later.
--	 */
--	sysfb_disable();
--
- 	mutex_lock(&registration_lock);
- 	do_remove_conflicting_framebuffers(a, name, primary);
- 	mutex_unlock(&registration_lock);
--- 
-2.49.1
+> ---
+>   arch/x86/kvm/x86.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 7c0a07be6b64..50c192c99a7e 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -1173,6 +1173,9 @@ int kvm_set_cr0(struct kvm_vcpu *vcpu, unsigned long cr0)
+>   	    (is_64_bit_mode(vcpu) || kvm_is_cr4_bit_set(vcpu, X86_CR4_PCIDE)))
+>   		return 1;
+>   
+> +	if (!(cr0 & X86_CR0_WP) && kvm_is_cr4_bit_set(vcpu, X86_CR4_CET))
+> +		return 1;
+> +
+>   	kvm_x86_call(set_cr0)(vcpu, cr0);
+>   
+>   	kvm_post_set_cr0(vcpu, old_cr0, cr0);
+> @@ -1372,6 +1375,9 @@ int kvm_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+>   			return 1;
+>   	}
+>   
+> +	if ((cr4 & X86_CR4_CET) && !kvm_is_cr0_bit_set(vcpu, X86_CR0_WP))
+> +		return 1;
+> +
+>   	kvm_x86_call(set_cr4)(vcpu, cr4);
+>   
+>   	kvm_post_set_cr4(vcpu, old_cr4, cr4);
 
 
