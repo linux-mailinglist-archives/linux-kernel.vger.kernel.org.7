@@ -1,256 +1,110 @@
-Return-Path: <linux-kernel+bounces-810449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 176C5B51ACA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:05:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C098FB51AB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9CD1887B4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:00:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCEB9B629F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACCB321F3B;
-	Wed, 10 Sep 2025 14:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05B2329F34;
+	Wed, 10 Sep 2025 14:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="KQCrzMj7"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HgBKUW2T";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cv4kftta"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A3819F111;
-	Wed, 10 Sep 2025 14:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757516100; cv=pass; b=M03aX0t+gbDW1bDScqAmlr+cu0HL7OyC7rO2pzt1y8xVD8X670zlGWTxywQ85mVzkbf2YpOGfbnMVd69D2vSgZLpeTyR8Z9gu3X8UekfCm8pk52+S+9sCjIeR5oJU42s4O9MSis/+vifZ+sBOn0Zjgmo8x1JFlICVwzM7KMNO+Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757516100; c=relaxed/simple;
-	bh=b/OUs0/4Iwh0jTReAkuIvxGUsbn/C0Y7jBJ4MpQIXu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jlew4KjRszcTIabA/HB/SJkuQLzd25q/q5rWOtPu5NMglEtQm6HyhT4aE5cxrU0tNqfb/by4MzV09qOK2TrpZfPNLFhwuW4J8uFKoGJiZuksUsKnTUFYVZMNte0cqgJV6S5uGsizXur1CVQoFX4+I6nrcDeNK1CoFZ1SufpRSJ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=KQCrzMj7; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757516039; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cySHIIHGOlRlLmI8Clj9g4NASUZop+O9QrS+8MOF2YLNmTcuhHKZlqj6Jv8rUd2DuPbZb/YnffF5+QJ4f9ciYW/817EXyvVP3nbo8tGdFmPCnz1Yjgh2NH3vVd+C0iWhqk2KQERVyMmeaBEadFVJiMupazVtaK2g0m5BXD5P4aU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757516039; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=zpHcWl3XpbxmTQtYZyhIFwBgYhnEXqkN76+ct9zQsic=; 
-	b=DWzQmQB9i923kc1wLtRSs0mJXECc9DTGPGje4vPcj3T90fTHT6l1WSITKn3EfaNeRiJE2o1zU8RI3+wVBOfGlRKlDouWdwnJnoxUD+1qyVOGSXiQQN62ul4GqExzm3w5WTCukE/ToKRcxU4WAEXfDz4t0HR6y1wxyOUtZ6Jdr0M=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757516039;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=zpHcWl3XpbxmTQtYZyhIFwBgYhnEXqkN76+ct9zQsic=;
-	b=KQCrzMj7lQrIfPdvvl5BB41ka4CcnVgyULhxZ7WNqKbdb0jn99L8NCW8TUJ27Z8l
-	RY98XcwJdO3A1TuA/2LA8lxWZbFr+ptDydjCvY1bLkyc8nGHq30FVZOf2ZM2ws7Gl85
-	5UGX5u6XAwxqoc/MvOcVFWQmB7AkhYJkjlWawpgE=
-Received: by mx.zohomail.com with SMTPS id 1757516037104680.5102248497525;
-	Wed, 10 Sep 2025 07:53:57 -0700 (PDT)
-Message-ID: <be01559a-ab26-4631-8b99-07c8cb82e555@collabora.com>
-Date: Wed, 10 Sep 2025 11:53:43 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FB0329F2F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757516059; cv=none; b=pX08gCAIFzJHtRr0SQzCQqgVERsFkUFkCx1Mle1dEpIMQfjfRhr5YeJrtBH7A2TEuPE7/z8TaP1rGMdW2Xuw3s01TjwbBXXJ5aVGC0fhAbjqACXVR/ccYKAEj4xYwul0zh1pxD9DYoY9lhDB+GHAiEdYTc3xZ36YEBTBq5Fe/Hk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757516059; c=relaxed/simple;
+	bh=XSaX1sxYtqPtQQ8fXDVHqx9RopzIBxiTdAA+e8cMZOU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uT6/6XrpdyqtR0ULEb239JofaI3ZHBz9uQinyfk9liVjHZEH2FEsV/HXQzKpmnMhlc/rKQowK8Gw89LOdSy/hpei64B1bPzvP/A0RNYBTrRh07fJmgFFIi09in/5syAn7b35CQmyGP2AsLrVxoxg/7k/vE9MOHb77dZkTQ/xNaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HgBKUW2T; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cv4kftta; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757516053;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hgwqXmToXPpmi6iMjwkVoSVLN5sKUJ4q4e/5ofe+WSU=;
+	b=HgBKUW2TGWPSai701tuK9bDxD3f1J3vPUxz+eojSMo1ACqEwt7hU+bEZdV7EhAtqTceSiA
+	Hl955WjKPiGSZNM1+FaF9oMGnzsqIULWTb62zYxET0hVMiqNK9JqnbnSRodb3FxqgPgW8q
+	gruOpIbB+j9C46JwqZzFviY9Qe0WfraTmgxpWVJv4j4tIS7WtY/wibgVcQve1IfCX3faZB
+	KOfjsC5G3iMKBX80rt72FObNsJ448yUUIIXPwAbr6hCcT/HcHnxtxj9dohrMAIT7R5Ze+u
+	GbhzCZoHoF20NOe/UHMi1BsGo1jBDR+bQH9hvLxrgWn4qb4J/I7Pqfs8rKOLow==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757516053;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hgwqXmToXPpmi6iMjwkVoSVLN5sKUJ4q4e/5ofe+WSU=;
+	b=cv4kfttatviow1VMz62/65CHr5JnYAgdf0asArhaVo7ut6/5UKOWUH5U0i9D0VeZVXN/wA
+	F86wiEMJmanviNCw==
+To: Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng
+ <boqun.feng@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, Sean
+ Christopherson <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>, Dexuan
+ Cui <decui@microsoft.com>, x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Huacai
+ Chen <chenhuacai@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [patch V4 00/36] rseq: Optimize exit to user space
+In-Reply-To: <4029c2d2-7a0c-4531-aa1e-b35be9098bb1@kernel.dk>
+References: <20250908212737.353775467@linutronix.de>
+ <4029c2d2-7a0c-4531-aa1e-b35be9098bb1@kernel.dk>
+Date: Wed, 10 Sep 2025 16:54:12 +0200
+Message-ID: <87bjnitl2j.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 10/14] regulator: dt-bindings: Convert Dialog
- Semiconductor DA9211 Regulators to YAML
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
- andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
- conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
- edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
- jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
- krzk+dt@kernel.org, kuba@kernel.org,
- kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
- linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
- maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
- mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
- p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
- sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
- tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-11-ariel.dalessandro@collabora.com>
- <20250821-practical-coyote-of-hail-d2fddb@kuoka>
-Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <20250821-practical-coyote-of-hail-d2fddb@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain
 
-Krzysztof,
+On Wed, Sep 10 2025 at 07:55, Jens Axboe wrote:
+> On 9/8/25 3:31 PM, Thomas Gleixner wrote:
+>> For your convenience all of it is also available as a conglomerate from
+>> git:
+>> 
+>>     git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/perf
+>
+> I used this branch for some quick testing. Since I last looked at the
+> rseq performance overhead, glibc must have improved a few things. FWIW,
+> box is running libc 2.41 at the moment. Test box is on debian unstable,
+> so gets frequent updates. In any case, for one of my usual kernel
+> overhead runs of checking running a basic IOPS based test, I see the
+> following on the stock (-rc5 + 6.18 targeted changes) kernel running
+> that test:
+>
+> +    0.89%  io_uring  [kernel.kallsyms]  [k] __get_user_8
+> +    0.58%  io_uring  [kernel.kallsyms]  [k] __put_user_8
+> +    1.13%  io_uring  [kernel.kallsyms]  [k] __rseq_handle_notify_resume
+>
+> which is about 2.6% of purely rseq related overhead. Pulling in the
+> above branch and running the exact same test, all of the above are gone
+> and perusing the profile has nothing jump out at me in terms of shifting
+> those cycles to other bookkeeping.
+>
+> So yes, this work does make a very noticeable difference!
 
-On 8/21/25 3:53 AM, Krzysztof Kozlowski wrote:
-> On Wed, Aug 20, 2025 at 02:12:58PM -0300, Ariel D'Alessandro wrote:
->> Convert the existing text-based DT bindings for Dialog Semiconductor DA9211
->> Voltage Regulators family to a YAML schema. Examples are simplified, as
->> these are all equal.
-> 
-> Also not wrapped... fix your editor to recognize how commits are
-> written.
+I would have been really surprised if not :)
 
-Ack.
+Thanks a lot for testing!
 
-> 
->>
->> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> ---
-> 
-> ...
-> 
->> +---
->> +$id: http://devicetree.org/schemas/regulator/dlg,da9211.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: |
-> 
-> Drop |
-
-Ack.
-
-> 
->> +  Dialog Semiconductor DA9211/DA9212/DA9213/DA9223/DA9214/DA9224/DA9215/DA9225
->> +  Voltage Regulator
->> +
->> +maintainers:
->> +  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - "dlg,da9211"
->> +      - "dlg,da9212"
->> +      - "dlg,da9213"
->> +      - "dlg,da9223"
->> +      - "dlg,da9214"
->> +      - "dlg,da9224"
->> +      - "dlg,da9215"
->> +      - "dlg,da9225"
-> 
-> No quotes. I don't think this was ever tested.
-
-Ack.
-
-> 
-> Also, keep it properly ordered
-
-Good catch, thanks.
-
-> 
-> 
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  regulators:
->> +    type: object
->> +    additionalProperties: false
->> +    description: |
-> 
-> Drop |
-
-Ack.
-
-> 
->> +      List of regulators provided by the device
->> +
->> +    patternProperties:
->> +      "^BUCK([A-B])$":
-> 
-> [AB]
-
-Ack.
-
-> 
->> +        type: object
->> +        $ref: regulator.yaml#
->> +        description: |
->> +          Properties for a single BUCK regulator
->> +
->> +        properties:
->> +          regulator-initial-mode:
->> +            items:
->> +              enum: [ 1, 2, 3 ]
->> +            description: Defined in include/dt-bindings/regulator/dlg,da9211-regulator.h
->> +
->> +          regulator-allowed-modes:
->> +            items:
->> +              enum: [ 1, 2, 3 ]
->> +            description: Defined in include/dt-bindings/regulator/dlg,da9211-regulator.h
->> +
->> +          enable-gpios:
->> +            maxItems: 1
->> +            description: Specify a valid GPIO for platform control of the regulator
-> 
-> Drop description, obvious.
-
-Ack.
-
-> 
->> +
->> +        unevaluatedProperties: false
-> 
-> For nested blocks this goes after $ref: regulator.
-
-Ack.
-
-> 
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - regulators
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/regulator/dlg,da9211-regulator.h>
->> +
->> +    i2c1 {
-> 
-> i2c
-
-Ack.
-
-> 
->> +        #address-cells = <1>;
->> +        #size-cells = <0>;
->> +
->> +        da9212: da9212@68 {
-> 
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-Ack, thanks a lot for your help.
-
-Regards,
-
--- 
-Ariel D'Alessandro
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
-
+       tglx
 
