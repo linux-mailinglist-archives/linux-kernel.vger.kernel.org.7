@@ -1,152 +1,78 @@
-Return-Path: <linux-kernel+bounces-810097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9198AB515C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:33:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6736B515CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEABC1C83F82
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 819423A8BFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B362D2D63F8;
-	Wed, 10 Sep 2025 11:32:50 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06F0316912;
+	Wed, 10 Sep 2025 11:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dw0oDyMk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E476C27F747
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C2130C371;
+	Wed, 10 Sep 2025 11:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757503970; cv=none; b=sizu5KK+uz9Hls5X/5oQnr8OLUfenZUICtweXrel0BGAjGGHOFQMmOGZkQgL2OsZ9JLIm2QhKixLog1AY9KK4J3fMtnOUoTPmXY3BCK/s/lUvlDyAF/QMqrnMK1Cw558eyJfnPUjI+Wdn0etK4w91AyTTGxdyD/UdbDnJSzP1uI=
+	t=1757503971; cv=none; b=VN31zpgUFGB48IDjkyfZrDik9CYig75t+rc3Pl90ovzzPFMCpnF3trrozTGfB5wZWxg5Eeg36dG3868M0qYA687tSQE37sH8FUCJQ+TRfe3VmpWOM+ASlUJoAMi3PKp57Ik5lnKJ1fbiGbFfoxcSgshRUrecbdFn3t/qel6Tsvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757503970; c=relaxed/simple;
-	bh=gQs0Yg1NdK6mV1qUCLBvEoKZOLjU/7pXuRVXKpCkovA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A2XIgon9nLzvufTMOOXocN62roZwMb5fW6PScb8bCeGldEuOQOKGPoqcp4kfJnkehmhD+elA+7rb9BknfBfsTSrwsliCBw3wDfzAlFxBZSWnNJ0ynZtvGyNFdhgDyvv+nrEQXiVdKPtvL6juE/WWp0dJTd2QQB9Xvj6CnA0jnkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4cMJVP1cyjz3tZdn;
-	Wed, 10 Sep 2025 19:33:49 +0800 (CST)
-Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id 08B081A016C;
-	Wed, 10 Sep 2025 19:32:40 +0800 (CST)
-Received: from huawei.com (10.50.85.135) by dggpemf200018.china.huawei.com
- (7.185.36.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 10 Sep
- 2025 19:32:39 +0800
-From: Quanmin Yan <yanquanmin1@huawei.com>
-To: <sj@kernel.org>
-CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<yanquanmin1@huawei.com>, <wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
-Subject: [PATCH 2/2] mm/damon/reclaim: support addr_unit for DAMON_RECLAIM
-Date: Wed, 10 Sep 2025 19:32:21 +0800
-Message-ID: <20250910113221.1065764-3-yanquanmin1@huawei.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250910113221.1065764-1-yanquanmin1@huawei.com>
-References: <20250910113221.1065764-1-yanquanmin1@huawei.com>
+	s=arc-20240116; t=1757503971; c=relaxed/simple;
+	bh=erV4920Yq0T2rbBU/yUFkESQG/Yc/YjZ7mIxIQVhfpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tApe9Nb7PjysbbdnAwR8shbVug2wU736xAOk2YjCiyhhxeh5yYgDTNf9owKCi/fSSqra+LwpIO32kws8HQ1OgHrx+bWA6wSCVQLgZbf2ofPvY0gVAcdDoBgjh81T9TXc9oeQtXZeQ3seujHygk0IWsdbQ4F1sMEQyjZx2UPqxnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dw0oDyMk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F1F8C4CEFB;
+	Wed, 10 Sep 2025 11:32:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757503970;
+	bh=erV4920Yq0T2rbBU/yUFkESQG/Yc/YjZ7mIxIQVhfpw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dw0oDyMk6hhum3hcABSV0D6G3Gs7c72pqAso2J5Ckm5L0woIwzYULd31G148Wtw6E
+	 WtfILYnSfxL/MWqTs3jEqny+PVs6li3OwVrTOXZ07fil3SUseeTAgm6TTM/TW0ODxh
+	 QB1ohFU/6Tf9FiGHmVbdniaEZIhfIylrGPTaPXiObOutGyhX+ZMBvICYgENGkm3Op4
+	 7MGQZ2zBvOYqCnZo5JovbsbiiHJeSPQEY2sWvjVp5YYrUWMm8BAAYZetjLBfnyXPdO
+	 PUHJB1lvCgD9PLPqaDo9gRHVLTTbvuHn46pHRq9o0XwYf/E2J1gAfHJPFofI/k5hVq
+	 1+YawLlhNy+vg==
+Date: Wed, 10 Sep 2025 13:32:48 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Martin Hecht <mhecht73@gmail.com>
+Cc: linux-media@vger.kernel.org, sakari.ailus@linux.intel.com, 
+	michael.roeder@avnet.eu, martin.hecht@avnet.eu, Tommaso Merciai <tomm.merciai@gmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: media: i2c: alliedvision,alvium-csi2
+Message-ID: <20250910-arboreal-alligator-of-tact-c04463@kuoka>
+References: <20250909113218.2595516-1-mhecht73@gmail.com>
+ <20250909113218.2595516-2-mhecht73@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf200018.china.huawei.com (7.185.36.31)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250909113218.2595516-2-mhecht73@gmail.com>
 
-Implement a sysfs file to expose addr_unit for DAMON_RECLAIM
-users. During parameter application, use the configured
-addr_unit parameter to perform the necessary initialization.
-Similar to the core layer, prevent setting addr_unit to zero.
+On Tue, Sep 09, 2025 at 01:32:15PM +0200, Martin Hecht wrote:
+> Change from my company email address to gmail.com.
+> 
+> Signed-off-by: Martin Hecht <mhecht73@gmail.com>
+> ---
+>  .../devicetree/bindings/media/i2c/alliedvision,alvium-csi2.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-It is worth noting that when monitor_region_start and
-monitor_region_end are unset (i.e., 0), their values will
-later be set to biggest_system_ram. At that point, addr_unit
-may not be the default value 1. Although we could divide the
-biggest_system_ram value by addr_unit, changing addr_unit
-without setting monitor_region_start/end should be considered
-a user misoperation. And biggest_system_ram is only within
-the 0~ULONG_MAX range, system can clearly work correctly with
-addr_unit=1. Therefore, if monitor_region_start/end are unset,
-always silently reset addr_unit to 1.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
----
- mm/damon/reclaim.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
-diff --git a/mm/damon/reclaim.c b/mm/damon/reclaim.c
-index fb7c982a0018..590f9d6c55ef 100644
---- a/mm/damon/reclaim.c
-+++ b/mm/damon/reclaim.c
-@@ -128,6 +128,13 @@ module_param(monitor_region_start, ulong, 0600);
- static unsigned long monitor_region_end __read_mostly;
- module_param(monitor_region_end, ulong, 0600);
- 
-+/*
-+ * Scale factor for DAMON_RECLAIM to ops address conversion.
-+ *
-+ * This parameter must not be set to 0.
-+ */
-+static unsigned long addr_unit __read_mostly = 1;
-+
- /*
-  * Skip anonymous pages reclamation.
-  *
-@@ -194,6 +201,15 @@ static int damon_reclaim_apply_parameters(void)
- 	if (err)
- 		return err;
- 
-+	/*
-+	 * If monitor_region_start/end are unset, always silently
-+	 * reset addr_unit to 1.
-+	 */
-+	if (!monitor_region_start && !monitor_region_end)
-+		addr_unit = 1;
-+	param_ctx->addr_unit = addr_unit;
-+	param_ctx->min_sz_region = max(DAMON_MIN_REGION / addr_unit, 1);
-+
- 	if (!damon_reclaim_mon_attrs.aggr_interval) {
- 		err = -EINVAL;
- 		goto out;
-@@ -294,6 +310,30 @@ static int damon_reclaim_turn(bool on)
- 	return damon_call(ctx, &call_control);
- }
- 
-+static int damon_reclaim_addr_unit_store(const char *val,
-+		const struct kernel_param *kp)
-+{
-+	unsigned long input_addr_unit;
-+	int err = kstrtoul(val, 0, &input_addr_unit);
-+
-+	if (err)
-+		return err;
-+	if (!input_addr_unit)
-+		return -EINVAL;
-+
-+	addr_unit = input_addr_unit;
-+	return 0;
-+}
-+
-+static const struct kernel_param_ops addr_unit_param_ops = {
-+	.set = damon_reclaim_addr_unit_store,
-+	.get = param_get_ulong,
-+};
-+
-+module_param_cb(addr_unit, &addr_unit_param_ops, &addr_unit, 0600);
-+MODULE_PARM_DESC(addr_unit,
-+	"Scale factor for DAMON_RECLAIM to ops address conversion (default: 1)");
-+
- static int damon_reclaim_enabled_store(const char *val,
- 		const struct kernel_param *kp)
- {
--- 
-2.43.0
+Best regards,
+Krzysztof
 
 
