@@ -1,246 +1,199 @@
-Return-Path: <linux-kernel+bounces-810199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D93B5172B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:43:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16709B5172D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 693701C830D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:44:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3676171FE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17A131C56B;
-	Wed, 10 Sep 2025 12:43:43 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75AA31C570;
+	Wed, 10 Sep 2025 12:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lvXHCLx6"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88BF31B117;
-	Wed, 10 Sep 2025 12:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627D831B10A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757508223; cv=none; b=t3i6MbTpg0hjR+Czb/6TIYSNMmcPt056pBsUbFlQ5DDbkf27xaKj00CLfmD4xvkHD0AHhGfY4gESaqeB8JbayeM93g7a2Tu/eJNr9WTwReOLJm5D2vY1AAbfHbzJTtDBpYK70W7O9SIXgnoxXybHbs3je/6zJRrB9p6IVnUMdkY=
+	t=1757508239; cv=none; b=JwpNQwqsBg0FtLA70jxsyUxCKDQhGkWjdri58Gm6mOXS/2whU5S6qlX+jKlGcfJ19v4H8H7qmoOLwzh92bBgFI6s4HXcpgpCUaY1pUEj2rwuHfbdy2k3mwK9d47cTUFn0CtmnruJ3zrOQbI+1iUlaA7zSOCd0PyOUwYKvmDnb6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757508223; c=relaxed/simple;
-	bh=+2TZJn/jYbEmFbdJjtRnq4il2VAT+CuLLgJ3y2/AIr4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kSns5WEGhNaJFkFlbNekTTeGibtTZMKsEaPNY0GmtDWU73JolhApGSUM5uWK93U0gugWWhGL1V5Tbxk0vvRZRlFS0oiTufViEBCT+rn+JvfkB2z9lUQSRnZcjgarO1yuBwSycKU3PJdsWAflzKQ9v1JnPqAGgglIYhdyRxAqJ90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMKzt3Bzsz6LDJ9;
-	Wed, 10 Sep 2025 20:40:58 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D0F431400C8;
-	Wed, 10 Sep 2025 20:43:36 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 10 Sep
- 2025 14:43:35 +0200
-Date: Wed, 10 Sep 2025 13:43:34 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
-	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
-	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
-	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v11 06/23] CXL/AER: Introduce rch_aer.c into AER driver
- for handling CXL RCH errors
-Message-ID: <20250910134334.000062b5@huawei.com>
-In-Reply-To: <20250827013539.903682-7-terry.bowman@amd.com>
-References: <20250827013539.903682-1-terry.bowman@amd.com>
-	<20250827013539.903682-7-terry.bowman@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757508239; c=relaxed/simple;
+	bh=6hyxMssO6UptV5ndyXXdOtME72JdJ4MYovUh70TTqVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BT+J2iaA3awJss+F4CXlupJq0ysFMUQ+QNvBhKiy+Xgt3gZMhngrSp45Te2zP0J7spniTwOA9PkI9q5vqwEJeQOTKroB5CIX1xiy5RPpIHW2ZthHLOgYk7NrJbg2GpgRnGyxgOT917DkoVT5YXkkW02FxFYCHH/TZp10DjIDRMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lvXHCLx6; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7459de59821so5842663a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 05:43:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757508236; x=1758113036; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pQhOG91bArp9vZkb5DwKkVqTLjRBlvwnVCISw9YNxrs=;
+        b=lvXHCLx6U2wmIq79iRabgINYDjQJ4QPVu5vF/wVxi1qjxfkLeJj1Or8X7NP2J7T+SJ
+         50prWJfeuxtfACirtp3UBZGda/0P3eccUJIlTxztWKx1QYKd5zsJ4bSnh8NBe6CACML9
+         XuC7erT2+LLUoY72K4f/tulK0wLRZ/GPlYV9Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757508236; x=1758113036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pQhOG91bArp9vZkb5DwKkVqTLjRBlvwnVCISw9YNxrs=;
+        b=ZmMp21ZnS/GN/ytTuxGSiGTFdjAhJjcE6ULDYK8Qty53VrvbhtcOISdEVOM7LOjvRq
+         A4FzFtfh75a005LA+z8ymagT3dP+jyRjcJKQkw9gKHWLGZVO+3XGl71WP+wfOqx9uYOO
+         yOKDOYZtjfGO8fpOs8PoYpEEabGjxrtEP8KykpLVik0fsqar7UXj7wKE/sJZ0FnwMvzP
+         kcSFUV7VRibBlwFz06etoOkztU7ho+OODOucj6TlrQB4F41nebrCL3MXxMK+4wUVbDyk
+         2GDAsY2gHDebXgjT2GlSlDFH2Z3mFKN9BIlFhYCW/Sni/JuGIfgJF7MaMi+v3rnxaQaZ
+         b/jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVw4eE2skJDQ02ya9D+c0UpQ9DBAX3wujQvopV5r6AvFTg+ayjxNMDxxWOIKfuxdaK9t9AdxaE7i+V5zgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpxHxtlEK7qt8YecTl1s9aj3PtnI1ElIjh/LhsSwQBtKJ+zDXO
+	ffDmrHWtXiyTuCG0g9e95CEWBUmdFAUIWiFtw9H9/Z1TWu73BJIHPL/pmAH51pNANvIR4ZBI2sA
+	zZvsuLAfykE8vG4NXPktbjDjixkzo2BoP06fJSFk+
+X-Gm-Gg: ASbGnctlxL/6G3rAmLMRBftttfi6WWjxDvI6BZy5Fpr/h6hmuhrffZ4mtnAtTUYZtP7
+	Fk12wPwhqtYqkgk8bl2twcpH060QYHGbRIZUaNj6yYnPVZW5HEZENEUTGUs/pRwC6y1bYCg2xBF
+	hIQa0yw9ziWRArL3BR/1MZmfvIhPbWy/yPFw7Rovs/WWSOvobu32GHklJRTfJy3Cn6TRRd+nS0w
+	gAN/h1pe7JHU6oxsTmMFlcf0iiHtz/b8c8k1o9lKW3g2Xls
+X-Google-Smtp-Source: AGHT+IGxcqc4D5gEQ+X5NRlavlcxPq6T9FzervsoDixpqR3jg4vwtYGtcuqLh1US1dqr6ottFh5JAcVWbB+ygwZExC4=
+X-Received: by 2002:a05:6830:2a16:b0:73e:8c8b:749 with SMTP id
+ 46e09a7af769-74c667ebe6dmr9355332a34.0.1757508236391; Wed, 10 Sep 2025
+ 05:43:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20250909094335.1097103-1-treapking@chromium.org> <CAJZ5v0jNytfP8W2XSyBNLe8OsD=O9M7WWvhtxdwXA-5KxwKfbg@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jNytfP8W2XSyBNLe8OsD=O9M7WWvhtxdwXA-5KxwKfbg@mail.gmail.com>
+From: Pin-yen Lin <treapking@chromium.org>
+Date: Wed, 10 Sep 2025 20:43:45 +0800
+X-Gm-Features: Ac12FXxR5wted0eOqkHInYwIU_oThynHjmKnNyVK-3wz-J14_ellHNLoRtJtMTE
+Message-ID: <CAEXTbpd6k=_yF4vG-zU4C0ymriLYXcT4AusCFJ03wZWJecOS5w@mail.gmail.com>
+Subject: Re: [PATCH] PM: sleep: Don't wait for SYNC_STATE_ONLY device links
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Hsin-Te Yuan <yuanhsinte@chromium.org>, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Chen-Yu Tsai <wenst@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 26 Aug 2025 20:35:21 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
+Hi Rafael,
 
-> The restricted CXL Host (RCH) AER error handling logic currently resides
-> in the AER driver file, drivers/pci/pcie/aer.c. CXL specific changes are
-> conditionally compiled using #ifdefs.
-> 
-> Improve the AER driver maintainability by separating the RCH specific logic
-> from the AER driver's core functionality and removing the ifdefs. Introduce
-> drivers/pci/pcie/rch_aer.c for moving the RCH AER logic into.
-> 
-> Move the CXL logic into the new file but leave helper functions in aer.c
-> for now as they will be moved in future patch for CXL virtual hierarchy
-> handling.
-> 
-> 2 changes are required to maintain compilation after the move. Change
-> cxl_rch_handle_error() & cxl_rch_enable_rcec() to be non-static inorder for
-> accessing from the AER driver in aer.c.
-> 
-> Introduce CONFIG_CXL_RCH_RAS in cxl/Kconfig. Update pcie/pcie/Makefile to
-> conditionally compile rch_aer.c file using CONFIG_CXL_RCH_RAS.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-Hi Terry,
+Thanks for the review.
 
-Sorry it took me so long to get back this.
+On Wed, Sep 10, 2025 at 7:56=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Tue, Sep 9, 2025 at 11:44=E2=80=AFAM Pin-yen Lin <treapking@chromium.o=
+rg> wrote:
+> >
+> > Device links with DL_FLAG_SYNC_STATE_ONLY should not affect suspend
+> > and resume, and functions like device_reorder_to_tail() and
+> > device_link_add() doesn't try to reorder the consumers with such flag.
+> >
+> > However, dpm_wait_for_consumers() and dpm_wait_for_suppliers() doesn't
+> > check this flag before triggering dpm_wait, leading to potential hang
+> > during suspend/resume.
+>
+> Have you seen this happen or is it just a theory?
 
-Anyhow a few 'scope' of export questions inline.
+We initially see this with a downstream kernel, but I can reproduce
+this with the upstream kernel when I connect the usb host controller
+to a "usb-a-connector" node on MT8186 Corsola Chromebook. The
+devicetree looks like:
 
-Jonathan
+usb-a-connector {
+        compatible =3D "usb-a-connector";
+        port {
+                usb_a_con: endpoint {
+                        remote-endpoint =3D <&usb_hs>;
+                };
+        };
+};
 
+usb_host {
+        compatible =3D "mediatek,mt8186-xhci", "mediatek,mtk-xhci";
+        port {
+                usb_hs: endpoint {
+                        remote-endpoint =3D <&usb_a_con>;
+                };
+        };
+};
 
-> 
-> ---
-> Changes in v10->v11:
-> - Remove changes in code-split and move to earlier, new patch
-> - Add #include <linux/bitfield.h> to cxl_ras.c
-> - Move cxl_rch_handle_error() & cxl_rch_enable_rcec() declarations from pci.h
-> to aer.h, more localized.
-> - Introduce CONFIG_CXL_RCH_RAS, includes Makefile changes, ras.c ifdef changes
-> ---
->  drivers/cxl/Kconfig        |   9 +++-
->  drivers/cxl/core/ras.c     |   3 ++
->  drivers/pci/pci.h          |  20 +++++++
->  drivers/pci/pcie/Makefile  |   1 +
->  drivers/pci/pcie/aer.c     | 108 +++----------------------------------
->  drivers/pci/pcie/rch_aer.c |  99 ++++++++++++++++++++++++++++++++++
->  6 files changed, 138 insertions(+), 102 deletions(-)
->  create mode 100644 drivers/pci/pcie/rch_aer.c
-> 
-> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-> index 1c7c8989fd8b..028201e24523 100644
-> --- a/drivers/cxl/Kconfig
-> +++ b/drivers/cxl/Kconfig
-> @@ -235,5 +235,12 @@ config CXL_MCE
->  
->  config CXL_RAS
->  	def_bool y
-> -	depends on ACPI_APEI_GHES && PCIEAER_CXL
-> +	depends on ACPI_APEI_GHES && PCIEAER && CXL_PCI
-> +
-> +config CXL_RCH_RAS
-> +	bool "CXL: Restricted CXL Host (RCH) protocol error handling"
-> +	def_bool n
+In this case, the two nodes form a cycle and I ended up seeing a
+SYNC_STATE_ONLY devlink from usb_host (supplier) to the
+usb-a-connector (consumer).
 
-Isn't that the default anyway?  So probably drop that explicit default.
+I'm not very sure why we didn't see this issue before. Maybe it's
+related to the fact that the usb-a-connector has a compatible string
+(so a platform device is created) but no driver binds into it.
+>
+> > Add DL_FLAG_SYNC_STATE_ONLY in dpm_wait_for_consumers() and
+> > dpm_wait_for_suppliers() to fix this.
+>
+> The above sentence is incomplete AFAICS.
 
+Sorry, I meant "Add a check for DL_FLAG_SYNC_STATE_ONLY in ...". I'll
+update this in the next version.
+>
+> > Fixes: 05ef983e0d65a ("driver core: Add device link support for SYNC_ST=
+ATE_ONLY flag")
+> > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> > ---
+> >
+> >  drivers/base/power/main.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> > index 2ea6e05e6ec90..3271f4af2cb65 100644
+> > --- a/drivers/base/power/main.c
+> > +++ b/drivers/base/power/main.c
+> > @@ -282,7 +282,8 @@ static void dpm_wait_for_suppliers(struct device *d=
+ev, bool async)
+> >          * walking.
+> >          */
+> >         list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_n=
+ode)
+> > -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+> > +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
+> > +                   !device_link_test(link, DL_FLAG_SYNC_STATE_ONLY))
+>
+> This should use a check like device_link_flag_is_sync_state_only(),
+> which is different from the above one, for consistency with
+> device_reorder_to_tail().
 
-> +	depends on CXL_RAS
-> +	help
-> +	  RAS support for Restricted CXL Host (RCH) defined in CXL1.1.
->  endif
+Thanks. I'll fix this in the next version.
+>
+> >                         dpm_wait(link->supplier, async);
+> >
+> >         device_links_read_unlock(idx);
+> > @@ -339,7 +340,8 @@ static void dpm_wait_for_consumers(struct device *d=
+ev, bool async)
+> >          * unregistration).
+> >          */
+> >         list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_n=
+ode)
+> > -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+> > +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
+> > +                   !device_link_test(link, DL_FLAG_SYNC_STATE_ONLY))
+>
+> And same here.
+>
+> >                         dpm_wait(link->consumer, async);
+> >
+> >         device_links_read_unlock(idx);
+> > --
 
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 12215ee72afb..c8a0c0ec0073 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-
-> +#ifdef CONFIG_CXL_RAS
-> +void pci_aer_unmask_internal_errors(struct pci_dev *dev);
-> +bool cxl_error_is_native(struct pci_dev *dev);
-> +bool is_internal_error(struct aer_err_info *info);
-> +#else
-> +static inline void pci_aer_unmask_internal_errors(struct pci_dev *dev) { }
-> +static inline bool cxl_error_is_native(struct pci_dev *dev) { return false; }
-> +static inline bool is_internal_error(struct aer_err_info *info) { return false; }
-
-For me the ifdef makes sense for the cxl specific one, but not the other two
-which I think are reasonable interfaces to expose more generally.
-
-> +#endif
-> +
->  #endif /* DRIVERS_PCI_H */
-> diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
-> index 173829aa02e6..07c299dbcdd7 100644
-> --- a/drivers/pci/pcie/Makefile
-> +++ b/drivers/pci/pcie/Makefile
-> @@ -8,6 +8,7 @@ obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o bwctrl.o
->  
->  obj-y				+= aspm.o
->  obj-$(CONFIG_PCIEAER)		+= aer.o err.o tlp.o
-> +obj-$(CONFIG_CXL_RCH_RAS)	+= rch_aer.o
->  obj-$(CONFIG_PCIEAER_INJECT)	+= aer_inject.o
->  obj-$(CONFIG_PCIE_PME)		+= pme.o
->  obj-$(CONFIG_PCIE_DPC)		+= dpc.o
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 7fe9f883f5c5..29de7ee861f7 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1098,7 +1098,7 @@ static bool find_source_device(struct pci_dev *parent,
->   * Note: AER must be enabled and supported by the device which must be
->   * checked in advance, e.g. with pcie_aer_is_native().
->   */
-> -static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
-> +void pci_aer_unmask_internal_errors(struct pci_dev *dev)
->  {
->  	int aer = dev->aer_cap;
->  	u32 mask;
-> @@ -1111,119 +1111,25 @@ static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
->  	mask &= ~PCI_ERR_COR_INTERNAL;
->  	pci_write_config_dword(dev, aer + PCI_ERR_COR_MASK, mask);
->  }
-> +EXPORT_SYMBOL_NS_GPL(pci_aer_unmask_internal_errors, "CXL");
-Why put this one in the CXL namespace? 
-
-Maybe check the others as well. For instance is_internal_error()
-doesn't feel CXL specific either.
-
-
->  
->  /**
->   * pci_aer_handle_error - handle logging error into an event log
-
-> diff --git a/drivers/pci/pcie/rch_aer.c b/drivers/pci/pcie/rch_aer.c
-> new file mode 100644
-> index 000000000000..bfe071eebf67
-> --- /dev/null
-> +++ b/drivers/pci/pcie/rch_aer.c
-
-
-> +static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
-> +{
-> +	struct aer_err_info *info = (struct aer_err_info *)data;
-> +	const struct pci_error_handlers *err_handler;
-> +
-> +	if (!is_cxl_mem_dev(dev) || !cxl_error_is_native(dev))
-> +		return 0;
-> +
-> +	/* Protect dev->driver */
-> +	device_lock(&dev->dev);
-
-Probably not one to bury in this patch (maybe you do it later in which
-case ignore this) but given we are touching the code,
-	guard(device)(&dev->dev);
-
-to allow early returns and no need to have the goto.
-
-> +
-> +	err_handler = dev->driver ? dev->driver->err_handler : NULL;
-> +	if (!err_handler)
-> +		goto out;
-> +
-> +	if (info->severity == AER_CORRECTABLE) {
-> +		if (err_handler->cor_error_detected)
-> +			err_handler->cor_error_detected(dev);
-> +	} else if (err_handler->error_detected) {
-> +		if (info->severity == AER_NONFATAL)
-> +			err_handler->error_detected(dev, pci_channel_io_normal);
-> +		else if (info->severity == AER_FATAL)
-> +			err_handler->error_detected(dev, pci_channel_io_frozen);
-> +	}
-> +out:
-> +	device_unlock(&dev->dev);
-> +	return 0;
-> +}
-
+Regards,
+Pin-yen
 
