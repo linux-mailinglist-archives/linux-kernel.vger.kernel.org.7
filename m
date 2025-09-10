@@ -1,98 +1,80 @@
-Return-Path: <linux-kernel+bounces-809222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4C1B50A2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:22:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF700B50A2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0F94412E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:22:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A837563A1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D991F03D9;
-	Wed, 10 Sep 2025 01:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CC61F2BA4;
+	Wed, 10 Sep 2025 01:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZxu1pNY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWPk3uTx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5919128EB;
-	Wed, 10 Sep 2025 01:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4804928EB;
+	Wed, 10 Sep 2025 01:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757467345; cv=none; b=fqhtzf8x0xrpmtZrylqFVMZNsmRkVt+v2wJfwt7D0y6hDzMreqR205MlI+WVD8bd6hdW29LH4mQ5jFwbu4vmxfRf7J7Oo1WdVQr51jpcV0uqvdbPxsSPnxzM/xB5pZEmanwtKkT0m4xTSA+HVCJRelIEfpiTekcB72M7noDWRe0=
+	t=1757467402; cv=none; b=I+H8mKY+4xsINi4RyjKgPP845Lfd0OfbQJ6RHf6u5xESgr3y7k0a6ZITx7NptPGINdMFHnSoLwtvjsI6aV/el625ohJen4FCKAJqobLZH6thjTz9Gbsr2F0nx1PAHDCxhC56d6jX7AF9SL8Y63sQwE0dfVKG68rJ6nMUHdYYA+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757467345; c=relaxed/simple;
-	bh=p544tyskxhMXXHIGtIgpsGHuS7qiqPp4PGaGoTa2Ig8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=bPJbJQQvlAfBHdcIWvK/OOw4Qf5l+3He2GhjbQVtNr6pbLn5Je/6sdLnMTVp4ol2+jv+XC2hNhLqkaph6Xuz5MBLKERwled/NrT3gvcm9Vb94jOhi4u59re/dQ6SyVF1oI11J0YPZXX/nG3h0iN5KtoSVXf6m5ZzttXaXeVYP7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZxu1pNY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3C29C4CEF4;
-	Wed, 10 Sep 2025 01:22:20 +0000 (UTC)
+	s=arc-20240116; t=1757467402; c=relaxed/simple;
+	bh=o0vciZAdTN6hRxPd/8cva0H8noNZQH8GL+sl7Ryf34w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RtA9buKU/Ag0qEUM+mDbuT6mTVRM/eCflgUUuQ0RQLGd11K3wk+D8ef3BqNpVsa+3wwgFpGEM64W1HvI0oWSEuv7HsmhOmrNT+IuIoKKSNijZPszIo70IheJqSa6+rVD68oxYEkQOt7joTQHizyAfKHxBFJL1ABg7k4TdqTQwh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWPk3uTx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45157C4CEF4;
+	Wed, 10 Sep 2025 01:23:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757467344;
-	bh=p544tyskxhMXXHIGtIgpsGHuS7qiqPp4PGaGoTa2Ig8=;
+	s=k20201202; t=1757467400;
+	bh=o0vciZAdTN6hRxPd/8cva0H8noNZQH8GL+sl7Ryf34w=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IZxu1pNY/OK3nNWHUTCV+REZCpAYaxASKOOnuamiyzTX5kvPS+GVxYDhvkj0NYomA
-	 /IE6WP/GesSkuo9RXzqzoFHdAsVIV0V3zvEj5n7TCiT85bEnHNZ1aN8Yb10N8tQeZW
-	 LGRTolUhFIRSXe+8j3KEHtk+/dsbO3CjQxCT+thuFLvKHeJKWJLvdkAK5vyk220zMV
-	 5jnL8NCHFUzAUHw/WyD31qKvnZpZf+mIpYs85W3i68xTdCYhMrjQzjprJcSQUqtpLQ
-	 ro0U4mz/UhZ7whjqYxZkP/YXt3oFUag2wEEfRtdRV+brrwzU4pWVBJGmoKTdzeMFIZ
-	 zn4sw2XnfsdHA==
-Date: Wed, 10 Sep 2025 10:22:18 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
- Jinchao Wang <wangjinchao600@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] tracing: wprobe: Add wprobe event trigger
-Message-Id: <20250910102218.a767c63f91e7b4dcb68144ee@kernel.org>
-In-Reply-To: <175708432404.64001.2572289500054005289.stgit@devnote2>
-References: <175708427997.64001.11661389635019507808.stgit@devnote2>
-	<175708432404.64001.2572289500054005289.stgit@devnote2>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=cWPk3uTxD2nsGcFORxKr3KINSeD5//ES9AWvBN8+vGtNE2CKsFF6EsJj8bhDGgE7P
+	 2lBWVNE/uqhvkk0MA3OJvf0yduIdNnOxL6ejMdIV42GTLW/7Mo5RfSMo6LQfNvwTya
+	 Qqf5TcB8bWo4C3iKiV9fGN5WEk7E/AsUDA8eP4gMGFbMvEiZnH5Nt/la5xAztriQA+
+	 TaRJhr72rB1ekwkAfjRgayKol5jVW0XWumhAIMnlh/KyorxiTq82diivZOfgR+/U5u
+	 KyJT6wT4aPrx8q5PVNCQxhiXBl4RipHu9qDCSjFEjaL1Vl1xwa7I+0p3Vlkg7UFMaF
+	 1mY9cmC8mB5FA==
+Date: Tue, 9 Sep 2025 18:23:19 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky
+ <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+ <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Jianbo Liu
+ <jianbol@nvidia.com>
+Subject: Re: [PATCH net 2/3] net/mlx5e: Prevent entering switchdev mode with
+ inconsistent netns
+Message-ID: <20250909182319.6bfa8511@kernel.org>
+In-Reply-To: <1757326026-536849-3-git-send-email-tariqt@nvidia.com>
+References: <1757326026-536849-1-git-send-email-tariqt@nvidia.com>
+	<1757326026-536849-3-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri,  5 Sep 2025 23:58:44 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+On Mon, 8 Sep 2025 13:07:05 +0300 Tariq Toukan wrote:
+> If the PF's netns has been moved and differs from the devlink's netns,
+> enabling switchdev mode would create an invalid state where
+> representors and PF exist in different namespaces.
+> 
+> To prevent this inconsistent configuration,
 
-> +static void wprobe_unregister_trigger(char *glob,
-> +				      struct event_trigger_data *data,
-> +				      struct trace_event_file *file)
-> +{
-> +	lockdep_assert_held(&event_mutex);
-> +
-> +	if (wprobe_trigger_exist_same(data, file)) {
-> +		list_del_rcu(&data->list);
-> +		trace_event_trigger_enable_disable(file, 0);
-> +		update_cond_flag(file);
-> +	}
-> +
-> +	if (data && data->ops->free)
-> +		data->ops->free(data);
-> +}
-
-This function is wrongly free the passed trigger_data instead of
-trigger_data on the event. The passed @data is a dummy data to
-find the actual data from @file.
-Thanks Jinchao to find it!
-
-Thank you,
-
+Could you explain clearly what is the problem with having different
+netdevs in different namespaces? From networking perspective it really
+doesn't matter.
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+pw-bot: cr
 
