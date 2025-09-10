@@ -1,134 +1,96 @@
-Return-Path: <linux-kernel+bounces-811068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DC8B523DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:51:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D305CB523E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B0631BC6B94
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:51:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50EFC561D0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC3D30F935;
-	Wed, 10 Sep 2025 21:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B3131076C;
+	Wed, 10 Sep 2025 21:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lUCMaj25"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f7q8mayP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D355B2D1926
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 21:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AEA2D1926;
+	Wed, 10 Sep 2025 21:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757541071; cv=none; b=ec4GuGZgldtj4psJE7qT8UaaHIHJr2hw7CKKS8s58YI6v4UsXfT2qqq/VS5vwd4So7A902OKETxEG17x3a6l3rCGCqWEgJBDoI6UMFueLjm66+6c6M0XxXyiKOWaBlTcsOILWuuB/XnIV0Bzbucd+Iti++hH9XXc+FpXFkCVz4E=
+	t=1757541156; cv=none; b=S5D63HwtfqkjLYLVEB7fzS5eY2K8L3xnlii7WxTCJTlC2ybujCEoEHPA59AIZ6aD9Y8IqP1QzwohSU0kib5o5KcZxm88E+8eSyZFYWgN7HEqIdHDD8+drhJF2WehRJ5vT9asp/3fK/GeVtmoprLTaOjMzzgdnqfpCfTdHXS0Wzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757541071; c=relaxed/simple;
-	bh=o95v/+Gki1KYTrPyXr39Fj4FLKk98Q6CUu2/j+SJkls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n+5N0XrweFz9RIJO3zqVpY6VIad1+quvF6IiIXf3QN7Kk7bv4EvL4k3LFGNXc/ogreY89o8JDgW5H9M3zqh4N2jMtrkKpH/NLQ1pRLPoBXfYHqNdi68it4VhNbvqkBVqWPSYxMTjQHp+FVTxE0gmj2rfJHIqcj0SVqKgV6YEeYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lUCMaj25; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f72452a8eso8442e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:51:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757541068; x=1758145868; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o95v/+Gki1KYTrPyXr39Fj4FLKk98Q6CUu2/j+SJkls=;
-        b=lUCMaj25tQhXcGFY9D49JqORZtpH3UmMIfCSRICie6AeBAXTG2ucmQFL5J3kyTOjMr
-         GqN5k6s7s7bdpSWx8c5oCiSYU4Sbc6GEHlF78Pe3p50GUHvC+ALN45xW6bZJEHXwEuSE
-         DhTp8AdigzSmAzdS+VKPE6zo0Ynywrra60+YIEPpRqYg1kOILa9FD9TyqWYFyoGcCUPy
-         qCvARQTTJ5mBd1ShV7sIUoEvzSfQmvPWDKIo6crDJFWaZRY5aexfXHkLJY3PBoZH24IG
-         WAhkw9c+ntdcIANOIQdwSG/ZX2iqKWzt1TVpVB46ZLdEs4/H45yI9hN0YG9B8Uk/njKI
-         5Mbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757541068; x=1758145868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o95v/+Gki1KYTrPyXr39Fj4FLKk98Q6CUu2/j+SJkls=;
-        b=xT4ZJwfXRZpgs2JJ+6YnxETE+nnjvymhwXdzWTNANHu0G/8kJ32ganpx2/2wEnRLFc
-         QrMP0qrUEi3k5EntXatJI9GKyzNkkA6PNKeLMpbYbECw6NSSKt17l8zl7+TrAktuSPk+
-         kJft6zT2kDWuz8mBmZ3t4A76UNWrjrOdd/AQOc2AQCi0rw0yS9JUwrupjR/7e5aArivN
-         IvB8d92mWUj7Aont9/jTB6SAJDWocbRP1sz4vlWxsQDqwhXmmvBZHmIU7ljYu7WY60Vg
-         EAr03Jc2QQUMr/LhKEZbKosQktoswqL24rrxes/Iq742lkT9r9M2lf7sJSn74sbQSvxU
-         JR6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX3sd2mTubEkHz56uNTTzyifmdK5k5TlVghMsvVXyQ1gIvQCVBARqoBbqFx5+8Bcr3K7vAIx3IMjriPNsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR7OSJjEkFyta9OtYn1EY4FEpa2P8SY7PrurawRpSqDnCqFcdp
-	w3Wr/QnUVR9qvL2R2Bk69rH48UHbT8lhwUBkPsteYrOqnYi53MJ87HWC8SAhUEF1fGdZvdTqFtO
-	qIfnmBmqBn6d5M+c/6X4q3AUXUmG6ohIhNeIkF25QOUmdCU6RD2fiXG8qvg==
-X-Gm-Gg: ASbGnctBjHS3ZogleYOkKr1cV9fj2Lp491lPNlmQpkDUoavLiJ52vhdQacyzUIrw2SM
-	uLHq0P0D2ZF4RW8tmtM1n243EnjLdyDjYxcaN3ja9hOOXU5yveyDen88qkOjG4JcyB7Ot4RfiQW
-	vQvJ9HSEolucYEadre3Vvd3aQBdCKlkCS/+SIRqPloc5q0tVJGKBlO5d6SILyBLMjddej5DT/YF
-	Gjrtls=
-X-Google-Smtp-Source: AGHT+IEJlIdE5osVu7CFRz1B+V23ahz3lLGypCenTLhiP4qfmKZkgsEstnnmYSdvYj0hsFA8e+enqb/RwpOwngd12h8=
-X-Received: by 2002:a2e:a54b:0:b0:337:9e3b:895f with SMTP id
- 38308e7fff4ca-33b43430959mr48580621fa.0.1757541068033; Wed, 10 Sep 2025
- 14:51:08 -0700 (PDT)
+	s=arc-20240116; t=1757541156; c=relaxed/simple;
+	bh=I8E14UOPH8nShUkHDdlOhBPuTaihR9JrpK2VPAQCM3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FqJDG2vVaHrF0BFM4uS0xfDeHVEHJSZ90h0U0tnO8skSK/0RVgBOxoVNyJfvnQMzuf+jJVGCBfeVZ8LXXt3+aCTDJaVFVzdLOX4iP/Ige/G6ogy2wFMAmVWgGHtPiRS29SCI9BvmCRMyCXMWIzjRe3850JPydJfRiNQ20D42Re0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f7q8mayP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39284C4CEEB;
+	Wed, 10 Sep 2025 21:52:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757541156;
+	bh=I8E14UOPH8nShUkHDdlOhBPuTaihR9JrpK2VPAQCM3c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f7q8mayPUM7YzWehf/K7A0V2YA+Yjo8FN4/b0P9yt3Yq4QeiwigsAo8CzaYoV+IQ2
+	 auli2gD7StigdNjliRSYJGkVrEDyLKs5oxPlfVU6fOqu+EcqqrW52BA8g842wctNRw
+	 51HYXsZrkAyMNd9q/Pswx8K80CBF5ebJ8Axzd+xhQpF70CuxI8rQibUBkBGy+917Wj
+	 nv14VABQE2uP7PpKra1fRVd8jcjrSeEF5ROJDUjg/1ocDczIgvMbfYhLIHnVwQDbRk
+	 hG/RlaBfiCMVimxIqn8EtbAFvIwFPaZEdmwiApyNrUVb66hlglVv4/jCs6C/Ejk8L1
+	 Y9sa3ZiR+Mkew==
+Date: Wed, 10 Sep 2025 22:52:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Erick Karanja <karanja99erick@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, julia.lawall@inria.fr
+Subject: Re: [PATCH] spi: Convert lock/unlock to scoped_guard
+Message-ID: <62598bc3-d4d3-457d-9060-a2db6c4a6c21@sirena.org.uk>
+References: <20250910205003.421067-1-karanja99erick@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827024222.588082-1-gary.yang@cixtech.com>
- <20250827024222.588082-3-gary.yang@cixtech.com> <CACRpkdaX2VPAb+vihZ5BEAsGy+jNUdQ8q+3c3Q78uWmqZYeu=g@mail.gmail.com>
- <PUZPR06MB58879640C5849ABA55EF0C34EF0FA@PUZPR06MB5887.apcprd06.prod.outlook.com>
-In-Reply-To: <PUZPR06MB58879640C5849ABA55EF0C34EF0FA@PUZPR06MB5887.apcprd06.prod.outlook.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 10 Sep 2025 23:50:57 +0200
-X-Gm-Features: Ac12FXwBa9ZOv5SOk4OUSUTF518ns1CoJ9PMufbvw3-fq3nVHK7Qp4WDBqsYJOQ
-Message-ID: <CACRpkdZzqRo9LRkF8=BSDANweWd0ccWtu5_nznDUn_FS6Fb0BQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: Add cix,sky1-pinctrl
-To: Gary Yang <gary.yang@cixtech.com>
-Cc: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	cix-kernel-upstream <cix-kernel-upstream@cixtech.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KR8AaO+v6rfU+K60"
+Content-Disposition: inline
+In-Reply-To: <20250910205003.421067-1-karanja99erick@gmail.com>
+X-Cookie: I think my career is ruined!
+
+
+--KR8AaO+v6rfU+K60
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Gary!
+On Wed, Sep 10, 2025 at 11:50:03PM +0300, Erick Karanja wrote:
+> Siplify the lock/unlock pattern with scope based cleanup.
+>=20
+> Generated-by: Coccinelle SmPL
 
-On Tue, Sep 9, 2025 at 5:30=E2=80=AFAM Gary Yang <gary.yang@cixtech.com> wr=
-ote:
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
 
-> First share a good news with you. It's that We have verified the new sche=
-me pass on Radax O6 board.
+--KR8AaO+v6rfU+K60
+Content-Type: application/pgp-signature; name="signature.asc"
 
-That's great!
+-----BEGIN PGP SIGNATURE-----
 
-> We just have a question before submit new patchs. As you know, there are =
-some macros defines in dts/dtsi file.
->
-> Where should these defines locate? We found these defines locate in inclu=
-de/dt-bindings/pinctrl/
->
-> mt7623-pinfunc.h on MT7623 platform. We don't find arch/arm64/boot/dts/*/=
-* -pinmux-props.dtsi.
->
-> What's your suggestion? Please kindly remind me if I misunderstand and mi=
-ss anything.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjB8x8ACgkQJNaLcl1U
+h9CUqwf/Qejgpl/52j/41f4MSADCN43JDvykgLN+kC01jKcpR5gxmJ/hSEgVTkCr
+eU8htgeR1cY3fAezdRjPH0bfQKiXH1xsMByxwfKQPpyhW0qgrlAIAbsWggII/wbh
+6EtuqW/pLbAbDCHolfAigq+y7GkAhSGXp29kTjsgFzHHBbuumEhrDrgOqMkWu4Wm
+tB7Kj7jfe5XjPhtrNvLRS3uNW+JuwiH9cmX142v/XEl0Zag9oHxMpqIwToAMaWdx
+DI/aGtfkFFx+X9LnHoiJW7Wg8Q62sXWDmPK70LcTYwC9jqb36D4u3LPW1oEfZTfk
+vLjFeS6hdli6VE+qItGb6O6NvGaDSA==
+=lsZQ
+-----END PGP SIGNATURE-----
 
-Yes these are old habits from Mediatek platforms which are bad.
-
-Since they are not bindings, just convenience defines, I would suggest you =
-move
-the stuff from
-include/dt-bindings/pinctrl/pads-sky1.h
-
-Into
-arch/arm64/boot/dts/cix/pads-sky1[.h|.dtsi]
-
-I am not aware that using .h or .dtsi has any semantic difference,
-maybe the DT experts can tell. Maybe use pads-sky1.h to be on
-the safe side.
-
-Yours,
-Linus Walleij
+--KR8AaO+v6rfU+K60--
 
