@@ -1,101 +1,130 @@
-Return-Path: <linux-kernel+bounces-810332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189FBB518E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:08:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED963B518F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428093B8E90
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:05:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 368DC188A979
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530FA326D73;
-	Wed, 10 Sep 2025 14:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8325C321F28;
+	Wed, 10 Sep 2025 14:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dofEW7af"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="He1uySlx"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA36322A13;
-	Wed, 10 Sep 2025 14:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8303A320A23;
+	Wed, 10 Sep 2025 14:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757513101; cv=none; b=E7KYKkddd3zkZkMhB4yXmMfHDHOEPsunDDQ4FOsFJRjt5Kdh29roXxS+ngFwelHyF3IbsXnf+4+mbY+AiH09K0OheawTuOE8FqzXjqg593rydy+NEfw5mK60KtdMEJEIJFpRF6GrGtrsGMhs4wMkRti/nDE21WU2atB0bgDqTXc=
+	t=1757513232; cv=none; b=W9r+uAaNTGE0l50sjgt+lJEo3amQJtkyEnPv6VlAyoXC2bfJObTNewpIVVxLktanzzXdnFcXRcKIIbK8xFR1ZRcJYGlocGobay0Q9XVKc1zsFDs8Cw9f+OZXauKUSNAeXzY0QvlooVDxuuyklzR5pHx/z34DqnBoUXbCHnHOMAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757513101; c=relaxed/simple;
-	bh=Ue/nhc+rd9GaJbE14Zs0vWlm6GxxSExENpYlLQYUyQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NNsiK2gnYoz/J5srbCEhNn14SUxJmk5L2kv3OWIJiiQLe1LdBAPgUz3SpSGf9TA3b0L59xka/MC123BAtycwvbOpwGJtAAQlDP5YuDvQxiIVDVWuTFaQ4x1X9YW48LkzDFgy/5FhYBmTwHSPJbbRL7teaUDvo3JrHwWyzcqd1Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dofEW7af; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mKSB+4xL7cCmeYE/ZtEdtCjsvm7CIgVIfr0teJIjFAU=; b=dofEW7af/ejhmNipPt2aD1zjQc
-	r/T1X53PF0e+BEfGBFGmptVoarxZBEN1Hr7xriD76R1w+M+nvAcyFt2PcHdzuHg+TQmoMQFUdBQaA
-	jm/o6jj1rPqB5i/QW6QVLU4W6O2YAUS0S3TvZPMLDfVQol1YTS76QR+/j8xxBFEpwnMLWAqId4scS
-	bdUpC9Pcr4BH4JRwC/mCjcKWJe0ye/ZaEnL2OllK0B+92NxsmXiDMXLQP/kJYOtEetOYDdThozbzr
-	U+eiVsgCMI71Rea2iE366+z3/3jQiRamjgJEHnieliGZegYbRdaVVmJTC4g6lcXbzYemC7sUUzZ3A
-	gI/iBz2w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uwLRO-0000000A1bz-3lAQ;
-	Wed, 10 Sep 2025 14:04:54 +0000
-Date: Wed, 10 Sep 2025 15:04:54 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
-	linux-mm@kvack.org, imx@lists.linux.dev,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Richard Weinberger <richard@nod.at>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Ankur Arora <ankur.a.arora@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Ira Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-	Andreas Larsson <andreas@gaisler.com>
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-Message-ID: <aMGFhuHyQwtwyF7B@casper.infradead.org>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
- <CACRpkdb=E-_6fZ+4mX5FJas9C5Njp3Gwrygs-cAfWNdbP594cw@mail.gmail.com>
+	s=arc-20240116; t=1757513232; c=relaxed/simple;
+	bh=e1ghvNIVEDhDOpiSBJL+3J1+vjBTLBp51nImUjAA7s8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gPgsQIOkHXRTnYloJqHf3SDBH7zxUWTKNjKJ32XVmh3ikEmXwOLbfPyzqACvLVCZC/bzKQ/m8lMExEUkBA9aWVgcT3P8zGkpJ9fcSMVeKM0DBP//SwfO4rHv1CXGAXPu5n0a6EnON2RSTut8CI2eEtrPzw7ac6cpPTdEN4bfWQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=He1uySlx; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-32b959b4895so4777569a91.1;
+        Wed, 10 Sep 2025 07:07:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757513231; x=1758118031; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U9a57p4h/5p2e5Uiw/EL0tS6w+eEl4IpqCuOC0vO87Q=;
+        b=He1uySlxgYkGvcSc4nHBzhAljJjanFqR4T8fF873xMSqWlZtKe5u4PDgeVLEXZKcqc
+         uE0ki8tzgDootZWo33eUAI8fAGC5l9iZsaaS56+kHlu4jFGdKyhNb99eH4k7ohbkbv8z
+         koYtEk70dH4OhWsMClAGITG6ZWKOxYOezlg28N5RSCwpGQ8KUu76a+Z9DmWvkrQYNxfY
+         k9poGc91OlUJtZzBb03ezCoiYd0cvp/99ZYRxq6gHSl5DkamfeOxrFCgpltFwfrgGySX
+         NXAFakwGi8D4l+NhfBEK5MLElYFAC60ExWHPaa/2+SxDI8O4XuZekTHnKFUHfs2bzGsl
+         nmcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757513231; x=1758118031;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U9a57p4h/5p2e5Uiw/EL0tS6w+eEl4IpqCuOC0vO87Q=;
+        b=X4G1oTHT15l+BCR7Tk0anwLrSPEIt4IZHNz4WmOvlrsNh+3Ygsk5G4xWEu22dK4LGD
+         sMhffMuiMxkBTWe+nyfvFw1dVtly3H4Q+I5LFxlaIfZ1uiGgcPdsOuPPfrkfLqYF222X
+         clymVe3kIxNAgWlNBHr6+awK7UWM61DbwoyS8UUYgLUUUy9W7MWbdwzJ6LNZOXUTXRTT
+         5KXZpyj8b42TSbCqt1nZPaiuUKA/yykr2VPFR3V1uDlhmkjnalhoh8Ottr0EySWe9Em3
+         6rC8htPwZIDp7qVDecJSAa8bc7P+vsQ4xSkVltGHqTeBsPfIsor7RanlHmmw8eA1Su+R
+         H6DA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzipFnvOjJNaW2tRd60u9QX32vNXIOMiwSaCjUQrL7rrsR2UcUqV1nmhlhVInKx2f3vZTQgyf8IvHHx9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI9uQDd1Gdo+ZEzAw+/J/VMjA+1Z7ewcmbk2ONwro+IxxEpVsL
+	P5UYTh4UEYBn8b7rjOVqhrIW0UJ8/OajdhQ32p0K5jeEhK+AgBe7BwrU
+X-Gm-Gg: ASbGncs/SYQbdXKRhWMF/tP19/2qK+NkNZbC7rjB8Lb5bVNeZzV72D2Wr7OVp8QLg73
+	SyU34Pyb7yZUJXNJBNtEw5jJ9UkCZAvymNWWKO58ek4lObzaU0BF12CDdgVTi2Vq5NSDy0ETxa1
+	eADaGeL1u9YzqQV0jSJNrMhK2KBC56YGbIDegMp4B9elMwWsZOlS7aBjuWDNA9KH/gZJJscr+Z3
+	iQj2SYRSZh5S33mexkXCV7JsialQR1S5wevNH9mOYA33sIDgO7E9g8yQJSSFZ2bXP6jXWsyef1s
+	D9fnlzS4k41BJGKGsXRouU09Frcdhv49/yd2aqCZCe41Q/xxfMA+p26UQ6PSewbKK18i94IMWAx
+	vRr1vnhunYwvBbEpOMkRyYvwYeOrt
+X-Google-Smtp-Source: AGHT+IH7i3rHW/35HWjyAxYyVURJ3m0CgZHufcD5q/iHAAUpeyd5wMB/QGMt1OJxzAeiwSZeKg77ZQ==
+X-Received: by 2002:a17:90b:5105:b0:32b:958a:51da with SMTP id 98e67ed59e1d1-32d43f13e9amr20895830a91.16.1757513230665;
+        Wed, 10 Sep 2025 07:07:10 -0700 (PDT)
+Received: from [127.0.1.1] ([2401:4900:1c7e:73ce:c1b3:ae9:98ce:970])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dbb2f54acsm2760204a91.2.2025.09.10.07.07.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 07:07:10 -0700 (PDT)
+From: Dixit Parmar <dixitparmar19@gmail.com>
+Subject: [PATCH 0/2] iio: magnetometer: cleanup unused
+ IIO_CHAN_INFO_PROCESSED handling
+Date: Wed, 10 Sep 2025 19:36:48 +0530
+Message-Id: <20250910-iio_chan_617_rc5-v1-0-924091d374be@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb=E-_6fZ+4mX5FJas9C5Njp3Gwrygs-cAfWNdbP594cw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPiFwWgC/x2MWwqAIBAArxL7neCGD+wqEVK21f5YKEQg3T3rc
+ xhmCmRKTBn6pkCiizMfsQK2DYR9ihsJXipDJzstHUrBfPjPeIPWp6CFdjM5oxarNELNzkQr3/9
+ yGJ/nBZV5WoBiAAAA
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, 
+ Gerald Loacker <gerald.loacker@wolfvision.net>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dixit Parmar <dixitparmar19@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757513226; l=899;
+ i=dixitparmar19@gmail.com; s=20250726; h=from:subject:message-id;
+ bh=e1ghvNIVEDhDOpiSBJL+3J1+vjBTLBp51nImUjAA7s8=;
+ b=YaTJg3d8TH8gupDDSqrSAQrYBwIag8ZbvYuVuiRIQ0wGeDphem0+cnAaPnbvWl7XLc9p4u2xr
+ C1D+M4UoRWRCQJlbs9C8ltVOQOr4ezx9GPRJh/29AcEkW6B2BAWoTB2
+X-Developer-Key: i=dixitparmar19@gmail.com; a=ed25519;
+ pk=TI6k8pjTuLFcYiHazsate3W8rZGU2lbOrSJ4IWNoQhI=
 
-On Wed, Sep 10, 2025 at 03:10:05PM +0200, Linus Walleij wrote:
-> This is is done so that we can unmap *most* of the kernel
-> memory but *keep* the VMALLOC area, so that e.g. exceptions
-> can still execute and save to stack when they occur, and we can
-> call into the kernel to execute said exceptions.
-> 
-> This in practice means the area 0xf1000000-0xffffffff
-> which also includes the high exception vectors that must for
-> natural reasons also be kept in the mapping.
-> What we have mapped today (all of the time) is
-> 0xc0000000-0xffffffff.
-> 
-> A minimal 256 MB mapping from 0xf0000000-0xffffffff
-> should be able to cover this.
+This series cleans up dead code in the magnetometer drivers by
+removing unused handling for IIO_CHAN_INFO_PROCESSED. None of these
+drivers set this bit in info_mask_* fields, so the cases are never
+reached.
+These changes reduce code paths, improve readability, and make the
+switch statements easier to maintain. No functional changes are
+intended.
 
-Can I ask where the MMIO (PCI?) window lives?
+Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+---
+Dixit Parmar (2):
+      iio: magnetometer: als31300: remove unused IIO_CHAN_INFO_PROCESSED handling
+      iio: magnetometer: tmag5273: remove unused IIO_CHAN_INFO_PROCESSED handling
+
+ drivers/iio/magnetometer/als31300.c | 1 -
+ drivers/iio/magnetometer/tmag5273.c | 1 -
+ 2 files changed, 2 deletions(-)
+---
+base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+change-id: 20250910-iio_chan_617_rc5-59be964d7451
+
+Best regards,
+-- 
+Dixit Parmar <dixitparmar19@gmail.com>
+
 
