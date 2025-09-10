@@ -1,150 +1,100 @@
-Return-Path: <linux-kernel+bounces-809874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE7DB5130D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:46:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 236D7B51317
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2714B4E4E63
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A8BB1C2517D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D29318143;
-	Wed, 10 Sep 2025 09:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEurMkih"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691CA317707;
-	Wed, 10 Sep 2025 09:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7C2253B56;
+	Wed, 10 Sep 2025 09:46:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571854A21;
+	Wed, 10 Sep 2025 09:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497521; cv=none; b=Wk3DOdbCcs+gJxLxWjHDyVwmBYgoGiW3RokFxYw+zcGvp2DM94j6K0w8LNdtVwlZaWuzfRWFIEwlO0uBxe3cvm3JBG7eSGaGRzYLtvel+vt0fcqdc8S49Xqc6ZqN7MuE+7/8QHlfEIPxbpMFjIviSeObo8/dSA01AJbmXjCj8/8=
+	t=1757497598; cv=none; b=Lc2ocACOrY3pTH6TgjsEVoPwyzwhchGaKH6bTVpbSk3CYcnlr6tP/WEPkIwpgfEaWY4Q1MKz4Z8rD5kefH3uL39BhmAmIJ9APg1p01kuTaveLq5PEF+PXXCYE1hW9iIkYwNgM3LHu3GddkV9xWRytdc2y7CdWy7RVNB56mgjYxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497521; c=relaxed/simple;
-	bh=K+4k5KDchq+kd7GGd1r9dnpNzsZ6Y5j7WjYZyZJsAZw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=boPs4lrLQR16pJatrj1MsaQ4HTHP8Qk20gi6HbGalezr07wcQJME9jv3A0RuvD/q5OpASOgPkKFAQeeBUvJRSCfdkdcoeHUQ8LsicS640SwGlhR++O73JLDDqTwIL7UicmMdkYbCfTM9VEAP517UUoItxu886T4y9XwTUvmvk44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEurMkih; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB2B6C4CEFB;
-	Wed, 10 Sep 2025 09:45:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757497520;
-	bh=K+4k5KDchq+kd7GGd1r9dnpNzsZ6Y5j7WjYZyZJsAZw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UEurMkihwHyIo3de5Ku6Ho8a2DHEf2WX8MifMXFKsOccm5S93RGzG+sTzcsn3HgLa
-	 psIqroDAHmq3RAe9q6fpnHTzGdkaxrQf4GSQqQuj0N9taCraBe3XT/nS3GeaFlvjbw
-	 prSqJ/SOs7UJxp8zBdncc2gHXKt09RBMPOl/IMPDFnelFdtDwHhbfY2KHqE79JzVBp
-	 nq6Qv/sgOA3t6Tq90R4ZbVdSfZHaI04LqYrOi5phBKPWMe5HQ23mtwr5AU7Tu7VODs
-	 AQ5Iw0M3fZPGW+k8QirqEWPqsz9U0v1KYgQsBn7uDcHPph9DThi7H3ErBjoDxbU70c
-	 Fl5HYvlYPciCw==
-Message-ID: <3a884a4e-4e2a-47ce-b128-ae987bb6d3dd@kernel.org>
-Date: Wed, 10 Sep 2025 11:45:15 +0200
+	s=arc-20240116; t=1757497598; c=relaxed/simple;
+	bh=TSFLMel7oCuezsYmG5MWz4klu2efMEfmF/XM9BvIWIc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hEUSu4DWYnnQR7wPtS9z6DzphGoaYguVNo7zLuFP9Oqpwoflu6jkT4ZIvOs9/F35P/JHCFP0jLpWV6p+X6vA2+L+wTXpsgiKhd3hISxStL19NbOmIQLHUrJFuERkL+qU8x4uD9QjS8Y/zV9BMgJHMOPNXjfUqab/COVRee+wU6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B1D116F8;
+	Wed, 10 Sep 2025 02:46:27 -0700 (PDT)
+Received: from a076716.blr.arm.com (a076716.blr.arm.com [10.164.21.47])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 384DA3F63F;
+	Wed, 10 Sep 2025 02:46:30 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org
+Subject: [PATCH 0/3] arm64/ptdump: Add cmdline 'early_ptdump'
+Date: Wed, 10 Sep 2025 15:16:20 +0530
+Message-Id: <20250910094623.2356282-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: qcom: monaco-evk: Use correct sound card
- compatible to match SoC
-To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- kernel@oss.qualcomm.com, prasad.kumpatla@oss.qualcomm.com,
- ajay.nandam@oss.qualcomm.com
-References: <20250910044512.1369640-1-mohammad.rafi.shaik@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250910044512.1369640-1-mohammad.rafi.shaik@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/09/2025 06:45, Mohammad Rafi Shaik wrote:
-> The Monaco-EVK board is based on Qualcomm's QCS8300 SoC. The DTS
-> previously reused the sound card compatible as "qcom,qcs8275-sndcard",
-> which is based on existing coverage. To maintain clarity and consistency,
-> the naming conventions for the compatible should reflect actual SoC
-> rather than the board. Therefore, update the sound card compatible as
-> "qcom,qcs8300-sndcard" to avoid potential confusion.
-> 
-> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-> ---
-> This patch series depends on patch series:
-> https://lore.kernel.org/linux-sound/20250905142647.2566951-1-mohammad.rafi.shaik@oss.qualcomm.com/
-> ---
->  arch/arm64/boot/dts/qcom/monaco-evk.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/monaco-evk.dts b/arch/arm64/boot/dts/qcom/monaco-evk.dts
-> index f3c5d363921e..7187c1760ef5 100644
-> --- a/arch/arm64/boot/dts/qcom/monaco-evk.dts
-> +++ b/arch/arm64/boot/dts/qcom/monaco-evk.dts
-> @@ -38,7 +38,7 @@ max98357a: audio-codec-1 {
->  	};
->  
->  	sound {
-> -		compatible = "qcom,qcs8275-sndcard";
-> +		compatible = "qcom,qcs8300-sndcard";
+Enable early kernel page table dump for debug purpose when required through
+a new kernel command line option 'early_ptdump'. But first this reorganizes
+ptdump_init() separating out the debugfs creation, so that it can be called
+early on in setup_arch(). This also adds kernel dmesg console print support
+for existing pt_dump_seq_[printf|puts]() helpers.
 
-The other patch claims that changing binding would be ABI break, so
-obviously here is actual impact on users.
+This series applies on v6.17-rc5
 
-Also, the other patch explains that it is the same hardware, so we are
-back at previous discussions (sc8380xp, sa8775p etc): we do not rename
-compatibles just because your prefer something else now.
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-efi@vger.kernel.org
 
-That's a NAK.
+Changes in V1:
 
-Best regards,
-Krzysztof
+- Dropped ARM64_PTDUMP_CONSOLE and instead enabled cmdline 'early_ptdump'
+
+Changes in RFC:
+
+https://lore.kernel.org/all/20250818091436.938517-1-anshuman.khandual@arm.com/
+
+Anshuman Khandual (3):
+  arm64/ptdump: Re-organize ptdump_init()
+  arm64/ptdump: Enable console output in pt_dump_seq_[printf|puts]()
+  arm64/ptdump: Add 'early_ptdump' kernel command line option
+
+ .../admin-guide/kernel-parameters.txt         |  4 ++
+ arch/arm64/include/asm/ptdump.h               |  4 ++
+ arch/arm64/kernel/setup.c                     |  3 ++
+ arch/arm64/mm/ptdump.c                        | 51 +++++++++++++++----
+ drivers/firmware/efi/arm-runtime.c            |  4 +-
+ 5 files changed, 53 insertions(+), 13 deletions(-)
+
+-- 
+2.25.1
+
 
