@@ -1,127 +1,217 @@
-Return-Path: <linux-kernel+bounces-809924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0A5B51389
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:09:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DCE3B51387
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 499A14E3922
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:09:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04E614E229B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AC93164A3;
-	Wed, 10 Sep 2025 10:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF9C314B88;
+	Wed, 10 Sep 2025 10:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gqvu3Lla"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQFU1GHH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914BE3148D2;
-	Wed, 10 Sep 2025 10:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE3E30DD15;
+	Wed, 10 Sep 2025 10:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757498948; cv=none; b=PYzW31/O1YE5IKmbfDZk6XfLt6OMxu/GHJ4i+vgyms8UWRKYQCKqh+LXwbqml6R+IrUUGazn+W34jTp3cww5XQSFcJMU9d4MQzC+d9E6bBtdNU3tschat1b2CTxAfWFq3rq1BgLaqd7CEmqaeDhDNd4BkJjsr1si86WQMJ4TR5k=
+	t=1757498942; cv=none; b=gc+l+bGgH0REocCljbSXX5/3D3FWLeqpdgDoWxv2DhUzWBRIVfHwaDnrEN+EUVPEWbK04bCg+7qbBxEj1Zgi1zepubWZZh0EntABugNFb49OtQ0bRYjkcg6ULseU6e0X4DTM1H0uUxwQGMkl4BnC6ybvrAb9XFb5wgq9KuaIVSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757498948; c=relaxed/simple;
-	bh=Yw7urFo1XJkTV6Rbao9ijZVc+2mkTbZoWD4FeI7e3R0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Di0YPtM0cXLRr0/g0wv2kDf4g48pVD6+hhQnAQD4XBXSUTtA6cnKTpkHBKLOSpF2G5Uwr79Nup42HAUnrbU8+vpvU3oEj3DyN3Ikvubx2HCMYSZnWTHiCfL6D1cOqur+qZIJlOAM+1GA45TZLQxfKLBxTGSQJSpT3zNlp6USwFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gqvu3Lla; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58A9os0M029387;
-	Wed, 10 Sep 2025 10:08:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=likaU/
-	FOcKZAkm8jAvvUDMPBbTRjF/U2gkyAfC8RkQI=; b=gqvu3LladePLAGqk4b4YfI
-	uq5WTrpieCOvePE+Q8po2aVC6QrcH7rnoTs1omrxd8VKcQ0ub81jFUPzZVGCjWfW
-	6Z8ezDeLhiiNEHb+5uDLsw5Z/5r3kDKK7Zrj9tfbizLJMeKZCzBkNJnSvgxgJVO0
-	ISHVx9DpT/TC6JnJpfgtPzb+T+7H7QaO5cHXkjMWAGJrLr+NY2YFOWOAdlGz5253
-	XIhdNSDjgzz/DFjfuB3tcbs/kKS58ZtcVBQfxQ1aXI36Bh/z8hwgKp+MVKZcIumA
-	wbcZDhm2cfupFup3pSbCqPkxUhsXxFAr1E64hzlZKAfKYtJ2aP85o+EpQGDuDujw
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffdct1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 10:08:51 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58A9b1Sl020492;
-	Wed, 10 Sep 2025 10:08:50 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 490yp100tp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 10:08:50 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58AA8oAv32964884
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Sep 2025 10:08:50 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E52858066;
-	Wed, 10 Sep 2025 10:08:50 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E798058055;
-	Wed, 10 Sep 2025 10:08:45 +0000 (GMT)
-Received: from [9.43.57.88] (unknown [9.43.57.88])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 10 Sep 2025 10:08:45 +0000 (GMT)
-Message-ID: <384ce5cf-a404-483a-bac0-6307b62c52e8@linux.ibm.com>
-Date: Wed, 10 Sep 2025 15:38:44 +0530
+	s=arc-20240116; t=1757498942; c=relaxed/simple;
+	bh=aeTA+lv2/iWgxRZ8jrB4QdsGG60YLD9kDCzhaXcpjuI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pXc1DfpZcgjkcWhLxXFs7r+qKgxpxEMKEWfq+aluETrx6XzE1zY1Tjp0iY6Te110z5iLg9VkgeWz+SGove6tJ3gd/R6ncPwVuRVN9B2jarxwJdRkqwT0DOd5Jtt431IM/Yf0W4CNMDd+PGZ6hg84sL+ZjRk+0XiXSVfN6u2pt1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQFU1GHH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47073C4CEFA;
+	Wed, 10 Sep 2025 10:09:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757498942;
+	bh=aeTA+lv2/iWgxRZ8jrB4QdsGG60YLD9kDCzhaXcpjuI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QQFU1GHHjWal7zYc1RUbSOSaNT0uaWghqNsDYZe5aP9TWWSRuwHaiP+rBjseazOe7
+	 KdHnWOdoWamQrPloFa1nMFvP91qGHAtQllguliMy0H5sjU278KuYewVoxP1Q+1GpUy
+	 RBuXYe9LRLH36Hk3B1zVggFknetUtvofUAY8Q94ukztZVPeMEfKC9XLG1Tm4jnr2SI
+	 5COlVZERZ4h7nW3c8McxUIalWkWkQjJMyWfOtNCgdE6mW45hUSdpB3HWnWCaVncvs/
+	 ooGQtFpUbqlkLnv7JzLhPIkC6hi8c1MY/OsjvKPvncrIhVVu+DPP1Pi+TfgO7XN0re
+	 3nlWnmcI0uytQ==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-61e783a1e00so4347116eaf.1;
+        Wed, 10 Sep 2025 03:09:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUaNmLTCAnlB2vJT5AOpXFNXC0e8iKvFJiv+4THIhHeC4twwIvwbzXdP6VkMON4HNyL6Vp6bycJw/8TEbg=@vger.kernel.org, AJvYcCWNzEvcfCBF2VqXzeoE3Eo0eqpbkwTS4TNLKD8q4II08vvP+HfOl1tzKxkpAKmX21RSyr8QTRm94BY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD1IA5Nj+GLEMx+MIx2D8RXXDEkqladF0lcpGMArdc2bfimVqo
+	3JuhknNC7PfLi4i+L74QVKGYZe/ZqpE7Aw6xmUy+lF2V+I9hVvU52wsZaGSwEVQGT6LeqXmANYn
+	cnJhDYjKzfeVPEsfi9fKQ7l54zWGxvBI=
+X-Google-Smtp-Source: AGHT+IExtstt7zgf6AALxQeMVPvejKGakN2bVaehDXZcFGnx8oq5iaf6A0etveV3YN9Z/Vbh9/EJ7H+n5FKVYkmfBfo=
+X-Received: by 2002:a4a:ba8d:0:b0:61f:f60f:de87 with SMTP id
+ 006d021491bc7-62178a93955mr5432528eaf.7.1757498941534; Wed, 10 Sep 2025
+ 03:09:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 for-6.18/block 06/10] blk-mq: split bitmap grow and
- resize case in blk_mq_update_nr_requests()
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
-        johnny.chenyi@huawei.com
-References: <20250910080445.239096-1-yukuai1@huaweicloud.com>
- <20250910080445.239096-7-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <20250910080445.239096-7-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: gFqNYJDuSvoNvfTazYoA7z1TIP18aucD
-X-Proofpoint-GUID: gFqNYJDuSvoNvfTazYoA7z1TIP18aucD
-X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c14e33 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8
- a=V5-dstEP5heE38FwefgA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX7nTxIKUUcVAw
- X3IBexlUCE7snELaN55UaIakraK7M/hiJgrPx4QDxCu02cmw5ULYzegI09w0fyTXG1oGD6cYoHg
- Hy7A0l168KPfJ4vE/n658yz1leTZ5J1lSPK5gn2suvW4WCiZM2dA7boey7JKMpME2vgAUcASX3S
- TeucYivcr4t67zac8K9s+r8vsGTZ1iAPEbYyUsnY3C6xuieSzJGcCxiH0UQi0UMBVn99dlXq1vP
- uImbgnRtbCbULfZyrT5sOaJnVetuaD7uBCUtTFcDbN1fLbPKbbp7YAP3SBX48RyvDw+hUoZotn/
- VyXrGoMYBZdVwe4ShbXvF5Gk1vZHG/p77LdE8RyNEmGzxBw01PiDwL6VLh/sAynjvxvNtrrgv/f
- ZvsfrTy9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_03,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
+References: <20250904000608.260817-1-srinivas.pandruvada@linux.intel.com>
+ <20250904000608.260817-2-srinivas.pandruvada@linux.intel.com>
+ <CAJZ5v0gwXiRTo_Lri3rduA-RqDhwgK4ymwX3ttxqhTw9W6d=fQ@mail.gmail.com> <CAJZ5v0jqLnnBL8fLJ3vxS_61rAigru8T1a9Q-k+cg2kptv_zUA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jqLnnBL8fLJ3vxS_61rAigru8T1a9Q-k+cg2kptv_zUA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 10 Sep 2025 12:08:49 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iu87EJYfJV+6gTBXkc5B5pfXo97JEfBb_ddOMnMrTCTw@mail.gmail.com>
+X-Gm-Features: Ac12FXzms7NFc8nF1XizTbqRsQ7_ppMIftb6YidwLrbMwfsz9eQKhTkFVqXLZwE
+Message-ID: <CAJZ5v0iu87EJYfJV+6gTBXkc5B5pfXo97JEfBb_ddOMnMrTCTw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] cpufreq: intel_pstate: Enable HWP without EPP feature
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, viresh.kumar@linaro.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Sep 6, 2025 at 6:13=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
+> wrote:
+>
+> On Fri, Sep 5, 2025 at 11:02=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
+> >
+> > On Thu, Sep 4, 2025 at 2:06=E2=80=AFAM Srinivas Pandruvada
+> > <srinivas.pandruvada@linux.intel.com> wrote:
+> > >
+> > > When EPP feature is not available (CPUID CPUID.06H:EAX[10] is not set=
+),
+> > > intel_pstate will not enable HWP.
+> > >
+> > > Some processors support DEC feature (Dynamic Efficiency Control). But=
+ in
+> > > this case HWP must be enabled.
+> > >
+> > > So, enable HWP even if EPP feature is not available but DEC feature i=
+s
+> > > present.
+> > >
+> > > When EPP feature is not available don't publish sysfs attributes
+> > > "energy_performance_available_preferences" and
+> > > "energy_performance_preference", but continue to enable HWP.
+> > >
+> > > Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.c=
+om>
+> > > ---
+> > >  drivers/cpufreq/intel_pstate.c | 35 +++++++++++++++++++++++++++++++-=
+--
+> > >  1 file changed, 32 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_p=
+state.c
+> > > index c28454b16723..d74abe909fbc 100644
+> > > --- a/drivers/cpufreq/intel_pstate.c
+> > > +++ b/drivers/cpufreq/intel_pstate.c
+> > > @@ -904,6 +904,11 @@ static struct freq_attr *hwp_cpufreq_attrs[] =3D=
+ {
+> > >         NULL,
+> > >  };
+> > >
+> > > +static struct freq_attr *hwp_cpufreq_default_attrs[] =3D {
+> > > +       &base_frequency,
+> > > +       NULL,
+> > > +};
+> > > +
+> > >  static bool no_cas __ro_after_init;
+> > >
+> > >  static struct cpudata *hybrid_max_perf_cpu __read_mostly;
+> > > @@ -1370,6 +1375,9 @@ static void intel_pstate_hwp_offline(struct cpu=
+data *cpu)
+> > >  #define POWER_CTL_EE_ENABLE    1
+> > >  #define POWER_CTL_EE_DISABLE   2
+> > >
+> > > +/* Enable bit for Dynamic Efficiency Control (DEC) */
+> > > +#define POWER_CTL_DEC_ENABLE   27
+> > > +
+> > >  static int power_ctl_ee_state;
+> > >
+> > >  static void set_power_ctl_ee_state(bool input)
+> > > @@ -3761,6 +3769,17 @@ static const struct x86_cpu_id intel_hybrid_sc=
+aling_factor[] =3D {
+> > >         {}
+> > >  };
+> > >
+> > > +static bool dec_enabled(void)
+> > > +{
+> > > +       u64 power_ctl;
+> > > +
+> > > +       rdmsrq(MSR_IA32_POWER_CTL, power_ctl);
+> > > +       if (power_ctl & BIT(POWER_CTL_DEC_ENABLE))
+> > > +               return true;
+> > > +
+> > > +       return false;
+> > > +}
+> > > +
+> > >  static int __init intel_pstate_init(void)
+> > >  {
+> > >         static struct cpudata **_all_cpu_data;
+> > > @@ -3793,15 +3812,24 @@ static int __init intel_pstate_init(void)
+> > >                  * Avoid enabling HWP for processors without EPP supp=
+ort,
+> > >                  * because that means incomplete HWP implementation w=
+hich is a
+> > >                  * corner case and supporting it is generally problem=
+atic.
+> > > +                * But when DEC enable bit is set (MSR 0x1FC bit 27),=
+ continue
+> > > +                * to enable HWP.
+> > >                  *
+> > >                  * If HWP is enabled already, though, there is no cho=
+ice but to
+> > >                  * deal with it.
+> > >                  */
+> > > -               if ((!no_hwp && boot_cpu_has(X86_FEATURE_HWP_EPP)) ||=
+ hwp_forced) {
+> > > +               if (!no_hwp || hwp_forced) {
+> > > +                       if (boot_cpu_has(X86_FEATURE_HWP_EPP)) {
+> > > +                               intel_pstate.attr =3D hwp_cpufreq_att=
+rs;
+> > > +                               intel_cpufreq.attr =3D hwp_cpufreq_at=
+trs;
+> > > +                       } else if (dec_enabled()) {
+> > > +                               intel_pstate.attr =3D hwp_cpufreq_def=
+ault_attrs;
+> > > +                               intel_cpufreq.attr =3D hwp_cpufreq_de=
+fault_attrs;
+> > > +                       } else {
+> > > +                               goto skip_hwp_enable;
+> > > +                       }
+> > >                         hwp_active =3D true;
+> > >                         hwp_mode_bdw =3D id->driver_data;
+> > > -                       intel_pstate.attr =3D hwp_cpufreq_attrs;
+> > > -                       intel_cpufreq.attr =3D hwp_cpufreq_attrs;
+> > >                         intel_cpufreq.flags |=3D CPUFREQ_NEED_UPDATE_=
+LIMITS;
+> > >                         intel_cpufreq.adjust_perf =3D intel_cpufreq_a=
+djust_perf;
+> > >                         if (!default_driver)
+> > > @@ -3811,6 +3839,7 @@ static int __init intel_pstate_init(void)
+> > >
+> > >                         goto hwp_cpu_matched;
+> > >                 }
+> > > +skip_hwp_enable:
+> > >                 pr_info("HWP not enabled\n");
+> > >         } else {
+> > >                 if (no_load)
+> > > --
+> >
+> > I think that this would work, but then it looks super ad hoc and I'd
+> > like to completely rearrange it.
+> >
+> > My (totally untested) version is attached.  Please let me know if this
+> > can be made work for you and if so, I'll turn it into a proper patch.
+>
+> Bah, the EPP-related attributes need to be hidden when EPP is not
+> there, even if hwp_forced is set.
+>
+> Attached is a new version, please let me know if it works for you.
 
-
-On 9/10/25 1:34 PM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> No functional changes are intended, make code cleaner and prepare to fix
-> the grow case in following patches.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-
-Looks good to me:
-Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
+Any chance to have a look at the latest patch?
 
