@@ -1,109 +1,118 @@
-Return-Path: <linux-kernel+bounces-810644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA691B51D37
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:14:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CE6B51D49
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8DD9B4E2D33
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:14:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D802B580C5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72633314C5;
-	Wed, 10 Sep 2025 16:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EE1334383;
+	Wed, 10 Sep 2025 16:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QoC1xbOf"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Sddu5nOv"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85671B425C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E460261B81;
+	Wed, 10 Sep 2025 16:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757520837; cv=none; b=a81tEPRAqHBDDDDmCR0D0SiNW6ecdd0upDq5BTXf4rLeZnbES4raZXn2FxRjA2iuLeTMKFMyYq2roPBkGlIA2GpzpaC3VSWujOFVOvA4kIXkwKoCfybM/iGVeU7hjcdndZdHYmqS8ZjPin+1yeePXVMZvUVecRt/Yv9bk7Haog8=
+	t=1757520814; cv=none; b=UoEosDpREwt5oiMtwHF5feYYGgj99VOPI4lbZW3BxlHRJI0HFfGe5EHQE0gdh69A8l/RgPJKttYi+g/bi3sWOiiX2qheaCdyQngPqGQfwyhq7i33X+ls9ralU/nH7kt5xudV36Qbv75CjaHmQ8oL8LRMUWJlagBUnIp+xJPSGxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757520837; c=relaxed/simple;
-	bh=QdiDWwxajDafGytCRj5Idko5t6hGYc52LVL1KdhcrAU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LxK56RaxXEidUJuFecspbAm7HPVL36KXY2osX/MLxu3cFO7oqGvThx5vZCcotgXUk8T5NKEXVg0rZzuUilbs5IPkyKh84V59UNOmufK+JjQJJNttk5PiCttS3MWMFxvCPc0PMh7U/dUh5FJnilzuyILPjwE8mN0AE9mWSMDepPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QoC1xbOf; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32dc4faa0d7so657591a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:13:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757520835; x=1758125635; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QdiDWwxajDafGytCRj5Idko5t6hGYc52LVL1KdhcrAU=;
-        b=QoC1xbOfL7H/N/gNRArMUFz1iaH7BGodKqjamav3x4pjwyYoz7ZfvGkjLPR3r9iotd
-         P15CfQ4rpy/RZTgw0VWGSYxcPr3xSoP2ucVKp5GfPdmhcrU0vxB8WFUqQuPFW8cd24LV
-         vel9aHqcoRSMpf02eYRcoHUEw6Qmnh9uq2/h12I0lIBUdplysMrB461+ZUTL+TB3ctFU
-         n4JgLmdOf1EtaIKzwDicgsCIUallhr9/deK9eIjrPsFhygLxbdqc62vqj9zyCIgrU/Cl
-         nXf6qek6vOQfcm0p3fHPTyNpOnDjU/Iu+sZdSq9Kw0EfYXJEfL1W/scEmGdsfPh06RU1
-         ZfqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757520835; x=1758125635;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QdiDWwxajDafGytCRj5Idko5t6hGYc52LVL1KdhcrAU=;
-        b=GJSNgYY9sSVOO2Fbw0Dtv1USmo/yxX73dMf8Ms0QvYBr1E5+jfrjuKga1mA88fTsat
-         ey9X6DL6y4MvatJbpdyFopFho0FbbHaeJByuuxJZU8f9Yqn6q6bkRWgx5Pvirc42KjZE
-         kZrJBa5mpl8v7/cCqBHaQrtWV569gu6viPExiMCWY87mjPGtQOzXYJjmmO4dLalQnogT
-         4yAPOHHR5gAPuvN24YS3Vx0z8/ANjgKuWf/WPppr7WPeWXETgf/tn6GN8gO5OyGLUD4d
-         Q1v3xAnw4YHhkk/wVK/fWszIZtxRvwPUYpylDYPyZdYBiwDWuUuoygL03IcniakX/TA7
-         +f5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXtXAPYAvd0F2a5ccfHEJGKoDMkyu5WaqB6sW2gT6Thc05Uwq0cO0pq/nsx+oO3OGCDkWZJEdo1cZIncHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP1IEYYufgLaxALJclhvC9la6ltsCgf1rYE/RaHZppU+ufInUD
-	j6zAK2yKyP/0AsvqfPJAf3zxPxn8BJ9QMeU8crEASfd/SryBmsZvgU6DhHW7j9HymzYE93QIOgD
-	AG8BW+nn7nKV7OBPelPW0Phgof+j/0QM=
-X-Gm-Gg: ASbGncs7xUFMdOG2YIVqtCIVOeDXwZVgShYLkRjxpl1MwmKHKV92aGoyNQg99zBwm3Q
-	7nLG7g0D4VvLCcHnhVoC8/MHwr9Nu7KcjNHT6uqe+kF4eZfMZ2FB+t5QDpfbGU7lyMnMCJgxVVv
-	8JlJszdot/w+xwQKEOsZpELhMmv/Mw507lCoKCf1HOQ//YkjUA2x/rq4PCemop0yjpQvJZF1+Dt
-	sjV+Lz0Mko=
-X-Google-Smtp-Source: AGHT+IGTt7x1vLOYMI6PYO93ndUSxRjal+0P7YHM1pddCpCgfatgREvad06nsjSla4ZkyN4Ux4D+siw/yg6LeyGPZ1o=
-X-Received: by 2002:a17:90b:3950:b0:32b:cb15:5fdc with SMTP id
- 98e67ed59e1d1-32d43f82724mr19760720a91.30.1757520835029; Wed, 10 Sep 2025
- 09:13:55 -0700 (PDT)
+	s=arc-20240116; t=1757520814; c=relaxed/simple;
+	bh=MV39y2Xl/uahnxe2dsMAhx/+KnRqygZKLmJRmVcf5Kk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RZrW0JD9DGeVxy213ovKuTI72OLQYJWQ8VcQGTk0I92s+1ft87ww5rZ3JZywhvVRhryYvjM9FDECbaAKSDf0jVhiXZtltA2S4KJGBD6bTaN1loPv/MK3TqcMugP0W3S2Tht1LYhy3h5CwCAl/kF3cdIMai744bq77C7RwcRlQhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Sddu5nOv; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=xLlQAdX9EKuLPni5mv0BQWTJbO5P/J2GkEBcV1lVcTo=; b=Sddu5nOv/xqB0VhycUgjA123tZ
+	I01vOGUkrQizRG48DnnMXA51nL1l4Lo2uEQNvoq8w5S0YEMJ/qYsEUKmOlxPohBF8l2WkoWgMX01E
+	tbz1hmFpmE3PQTnyfJ4m1Asd2aLUNcLfkS6yHNCMBe7bg8+Lnxd0YfpiFFerkBturacI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uwNRh-007y94-Op; Wed, 10 Sep 2025 18:13:21 +0200
+Date: Wed, 10 Sep 2025 18:13:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Prathosh Satish <Prathosh.Satish@microchip.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] dpll: zl3073x: Allow to use custom phase
+ measure averaging factor
+Message-ID: <acfc8c63-4434-4738-84a9-00360e70c773@lunn.ch>
+References: <20250910103221.347108-1-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910160833.3464-1-ryncsn@gmail.com> <20250910160833.3464-2-ryncsn@gmail.com>
-In-Reply-To: <20250910160833.3464-2-ryncsn@gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Thu, 11 Sep 2025 00:13:15 +0800
-X-Gm-Features: Ac12FXw7L2tf9IDZt7MK2f3EMzzx492hVTOs8W7PnEPHCh4J_mvxiTWsay0SzGY
-Message-ID: <CAMgjq7Db_DbZosWrUUAGfObDYA2e34zB=RtUpRZc2u4RJBiSxg@mail.gmail.com>
-Subject: Re: [PATCH v3 01/15] docs/mm: add document for swap table
-To: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910103221.347108-1-ivecera@redhat.com>
 
-On Thu, Sep 11, 2025 at 12:08=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wro=
-te:
->
-> From: Kairui Song <kasong@tencent.com>
->
-> From: Chris Li <chrisl@kernel.org>
+On Wed, Sep 10, 2025 at 12:32:21PM +0200, Ivan Vecera wrote:
+> The DPLL phase measurement block uses an exponential moving average,
+> calculated using the following equation:
+> 
+>                        2^N - 1                1
+> curr_avg = prev_avg * --------- + new_val * -----
+>                          2^N                 2^N
+> 
+> Where curr_avg is phase offset reported by the firmware to the driver,
+> prev_avg is previous averaged value and new_val is currently measured
+> value for particular reference.
+> 
+> New measurements are taken approximately 40 Hz or at the frequency of
+> the reference (whichever is lower).
+> 
+> The driver currently uses the averaging factor N=2 which prioritizes
+> a fast response time to track dynamic changes in the phase. But for
+> applications requiring a very stable and precise reading of the average
+> phase offset, and where rapid changes are not expected, a higher factor
+> would be appropriate.
+> 
+> Add devlink device parameter phase_offset_avg_factor to allow a user
+> set tune the averaging factor via devlink interface.
+> 
+> Tested-by: Prathosh Satish <Prathosh.Satish@microchip.com>
+> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+> ---
+>  Documentation/networking/devlink/zl3073x.rst |  4 ++
+>  drivers/dpll/zl3073x/core.c                  |  6 +-
+>  drivers/dpll/zl3073x/core.h                  |  8 ++-
+>  drivers/dpll/zl3073x/devlink.c               | 67 ++++++++++++++++++++
+>  4 files changed, 82 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/networking/devlink/zl3073x.rst b/Documentation/networking/devlink/zl3073x.rst
+> index 4b6cfaf386433..ddd159e39e616 100644
+> --- a/Documentation/networking/devlink/zl3073x.rst
+> +++ b/Documentation/networking/devlink/zl3073x.rst
+> @@ -20,6 +20,10 @@ Parameters
+>       - driverinit
+>       - Set the clock ID that is used by the driver for registering DPLL devices
+>         and pins.
+> +   * - ``phase_offset_avg_factor``
+> +     - runtime
+> +     - Set the factor for the exponential moving average used by DPLL phase
+> +       measurement block. The value has to be in range <0, 15>.
 
-So sorry about this. I did fix my git config and verified that, but
-sent the email on another machine that still having a broken config :/
+Maybe put the text in the commit message here as well?
 
-Hi Andrew, can you help fix the Author to be Chris here?
-
-BTW I saw the current version in mm-new, the author is already Chris,
-which is correct.
+      Andrew
 
