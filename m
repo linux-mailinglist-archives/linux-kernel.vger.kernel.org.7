@@ -1,113 +1,61 @@
-Return-Path: <linux-kernel+bounces-809425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E69CB50D90
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:53:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7F4B50D97
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8A87543033
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B096B5E11CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584C12BE64A;
-	Wed, 10 Sep 2025 05:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ewhac.org header.i=@ewhac.org header.b="XfhtR+JW"
-Received: from crocodile.elm.relay.mailchannels.net (crocodile.elm.relay.mailchannels.net [23.83.212.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DE02DCC1C;
+	Wed, 10 Sep 2025 05:57:01 +0000 (UTC)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FDC3C0C;
-	Wed, 10 Sep 2025 05:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757483580; cv=pass; b=sfMxR37R8PjRCm4n1vOOIWzyhZ/EnwcvCSVcgVFDC283NwLAkaleKfPoCkLEaDWMqT6d9hMrBg5l+3lyHcaDHfo/9i3bSL+3RFz4LH644lRj5UyMoPAzi0GYLtfBuhlQubVjmTh2Z5NR/LABvK+Ci3eP9B/z0T0fZ71vfPS08+Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757483580; c=relaxed/simple;
-	bh=RGl+S4e3Sf59k/NMAVgiuE27wL1Jbzn+nFNQSJFWRi4=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D7F2D97BE;
+	Wed, 10 Sep 2025 05:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757483821; cv=none; b=PGhu8umwcQ2ncOgiyXm+dtN2+ostAlxX9jz8yUHUyMsvwQnkFfYJcX645M7Ys1qbhCbAtGiUh2baQifPbMEGTpwyZWMoTw7t3H1bOB2XvNfZEGNvmNQLgPSFA+zTyA8zLdbw0ttnYHj3q1JKTsz8sOvrzziSu1tNYjwqozLjvQk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757483821; c=relaxed/simple;
+	bh=fswMvV2JhjoYkNR/3InHtloxIMbtnBVjmtbkTtfCVto=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LvFuoxGrW5e5+iGQJJNSKh4dmALlfFlAiZ+ua+B5+sp8zD0rFV8hHPBwvdHe0MU7vTht3jD9BrZVtEdKEIbJQ8mkYbNYjP2xHHG3yP6decWwj6bOmv1UG8zCBLfWwIShRBq5bfD/2EDPstosyIsfF0jiDfNTYq0LvPi2v2mqgL4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ewhac.org; spf=pass smtp.mailfrom=ewhac.org; dkim=pass (2048-bit key) header.d=ewhac.org header.i=@ewhac.org header.b=XfhtR+JW; arc=pass smtp.client-ip=23.83.212.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ewhac.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ewhac.org
-X-Sender-Id: dreamhost|x-authsender|ewhac@ewhac.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 358888323B;
-	Wed, 10 Sep 2025 05:52:51 +0000 (UTC)
-Received: from pdx1-sub0-mail-a248.dreamhost.com (100-107-18-138.trex-nlb.outbound.svc.cluster.local [100.107.18.138])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id B7187830D4;
-	Wed, 10 Sep 2025 05:52:50 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1757483570; a=rsa-sha256;
-	cv=none;
-	b=ELTnCaWECI08UinxZrhEIqktqbe0zHi6frVPpCWEYbv1ioNTfdBuTJu8whHH8T+SrFs8kR
-	EhJG73aeBEudw7VbUyxIpuKX5cIa71bod4ExQEZQypSyWOmngQAyadmgvzMeXyVgqQWEnO
-	j92YZT3Y2qBryb9tCEo40q8oEJJiD7h1SQ/IS1PgvdhNHRKA+uTL6reN7EUAmwgXeJlKWl
-	WAJj2Yo4jh/g6fiSoj6bhoNb5j6uMs4I6GvEHIe/E3AlLAZyJgPNxlnGFHEbcPF3ltmQij
-	PLH9D75YwmLYu06FPbGpHO+6Y/GPoj7mNIWOQjbjpk1OzvJxTKdLc/kXMhyjkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1757483570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=JjwWwiTcFv0mCbP4562f/VlNggPq6mIy4JQda6A9OR4=;
-	b=KV4q07gev/bLycWz7IcEhHSfueQjrXMFiFxoW10e7O2W/OEpbOf/3PAVl5tRlPzsOG6kmU
-	gNzEAh70I4NtlnlLjKWNGQ7bose+oEKNnWM5lB4HS5H/dVRA4sRNouw/Y2N9PPKKOx5TKW
-	uKfDqsUexNy8H2BXc4IzjkhHftyx2q2HhrN02YYeWj/fVFVVHldPdHY+SeAQ3dOxGz+oS4
-	om8TKms1Lhofv7LLGDB9/QGFFxc2r+lzsZC2NknoZIMwD/hBzl0NdnlWHVQ3LnSa/kT+Yw
-	ombsXp2A2Eg3t+fWPQwSYpxQVXRbjkLFrtqZPBha5qQUyGgz3hoYCUtGR2LhTA==
-ARC-Authentication-Results: i=1;
-	rspamd-54bcd779b6-5vnl9;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=ewhac@ewhac.org
-X-Sender-Id: dreamhost|x-authsender|ewhac@ewhac.org
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|ewhac@ewhac.org
-X-MailChannels-Auth-Id: dreamhost
-X-Exultant-Tart: 6f629f33048cc96a_1757483571021_433849618
-X-MC-Loop-Signature: 1757483571021:2091576281
-X-MC-Ingress-Time: 1757483571021
-Received: from pdx1-sub0-mail-a248.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.107.18.138 (trex/7.1.3);
-	Wed, 10 Sep 2025 05:52:51 +0000
-Received: from ewhac.org (unknown [135.180.175.143])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ewhac@ewhac.org)
-	by pdx1-sub0-mail-a248.dreamhost.com (Postfix) with ESMTPSA id 4cM8wy3wRZzGs;
-	Tue,  9 Sep 2025 22:52:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ewhac.org;
-	s=dreamhost; t=1757483570;
-	bh=JjwWwiTcFv0mCbP4562f/VlNggPq6mIy4JQda6A9OR4=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=XfhtR+JWZn8I3zjg3HA1OGmVy5/FJZ3h4tQAjfe234RQl0KaivJUCh4FjrVgz5Jyb
-	 j+dnFKfQoYIkostF4To6hylvyAhvA3jAf31+sDcNxkI6YeJ02Wj3iO2aUPwwsNnkTU
-	 q8yO2ebQuxhVy0bOtKTNcA5O2sMp3IxTyAMmG8qz3btPclT5xaEoXCyCDrfC/mw5Fn
-	 aBQizNfaqglertrbUfMLqO07hvzJnPRkn/cL8TU1Q+360hS5bXzsFOcHevox+r23MG
-	 WG1jJbMGpMuE65FahonUbmlZjg+/BLcSu45JarQA2KJP+tRsLddTvebjPT9uVSPAF1
-	 KenW1bOSMsgxg==
-Received: from ewhac by walkies with local (Exim 4.98.2)
-	(envelope-from <ewhac@ewhac.org>)
-	id 1uwDlB-00000001T2X-3yO5;
-	Tue, 09 Sep 2025 22:52:49 -0700
-Date: Tue, 9 Sep 2025 22:52:49 -0700
-From: "Leo L. Schwab" <ewhac@ewhac.org>
-To: Hans de Goede <hansg@kernel.org>
-Cc: Kate Hsuan <hpa@redhat.com>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] HID: lg-g15 - Add support for Logitech G13.
-Message-ID: <aMESMcFLrzqrCdbq@ewhac.org>
-References: <20250814212641.197573-2-ewhac@ewhac.org>
- <7d356834-5795-4979-9f51-0ffcec52ae1d@kernel.org>
- <aLSntMknSv3lMarZ@ewhac.org>
- <8ae2cc92-5dfe-466d-95fd-da74309d7244@kernel.org>
- <2de88077-eb8d-44ad-a96a-5db889913cba@kernel.org>
- <aLiZbkKgIC8jIqE9@ewhac.org>
- <c12adb45-fa6d-4bb8-afd2-a02e3026d646@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tZa5HP698eMp+fmCpXoZAbLqb1SBYh6ihVf/t8YeQGmcA6ivNr5eUYOLpOUUx6GLYCdh9lzf5r/JwNxtyQojeJjwmnJZ1Pv0FVolmrBNpHYcZk0imzMt5dZ9KqXaFZCjtjpyggUXi9hFSqWLAOzTzjpJq5wNccOjHtXP/jv3h6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpsz8t1757483799t0123b750
+X-QQ-Originating-IP: lyem3Oekvl4MxcDQrc9OHBjV390njzAolyA3bLir5BA=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 10 Sep 2025 13:56:36 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1762630498417445566
+Date: Wed, 10 Sep 2025 13:56:36 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "Anwar, Md Danish" <a0501179@ti.com>, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
+	maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com,
+	lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org,
+	geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com,
+	lukas.bulwahn@redhat.com, alexanderduyck@fb.com,
+	richardcochran@gmail.com, kees@kernel.org, gustavoars@kernel.org,
+	rdunlap@infradead.org, vadim.fedorenko@linux.dev,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v11 3/5] net: rnpgbe: Add basic mbx ops support
+Message-ID: <36DC826EE102DC1F+20250910055636.GA1832711@nic-Precision-5820-Tower>
+References: <20250909120906.1781444-1-dong100@mucse.com>
+ <20250909120906.1781444-4-dong100@mucse.com>
+ <54602bba-3ec1-4cae-b068-e9c215b43773@ti.com>
+ <20250909135554.5013bcb0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -116,44 +64,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c12adb45-fa6d-4bb8-afd2-a02e3026d646@kernel.org>
+In-Reply-To: <20250909135554.5013bcb0@kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MmIUUz9KGMMd/33id8JVeJq4ygdv4Fb6TngcYuKqsjh14Un+5IekNnpN
+	60vYQPXOKoTvUQe6XjU1StrkgCZajfyctyEl0ae3H8rYB614EDqT2lQfKSIsVzXaohpmDZa
+	O3LXrBzQuCImWtOhrf7g8Stv4rr1mkUoCQucfZFnngg471y7QqVpxgmOwdBABVgr911jPOP
+	QVeEUGek13yKeTSaJrqHT/JSeUtVnDmWwmrXjfOKVEH+SrjDtTFiVj0pXlOvqqlXp4qXfOr
+	8j71uXc+86vN7jnPnKvy7DzdEcZl7Y7s89FBe9I9LgEaSnrVquAlJrbCI/tLAgQEITc29fM
+	Pnc65A/cI5c9q0K0eSTbLfyZuUhLq7QTgZMvYjBsH5D38ngKQVmZqRSt6jG+2ezVOOyuRiK
+	BW8FrY8lRCQPomsBe9YtqSQMiyV8n6URMcIYwAuVJfp4abkCYP9ob9QHXd7Q+wNBHqwfFcM
+	AnYizLTz5Fo4MhcrW0okoYryXOekDNu0os+2naYxnEy3I2PAiXxZRkXtg2Iw+4bxTJkdCVr
+	JeKpwhXLyLWbc8NI939eAO++CcYEbZ+4O+k67ApYkgkFTPEZzmRv8lWahgmSrP2JMKUM9eo
+	iNFovopPqcZ4Oy/FN/y3uhRpT2orBwaep20IsdMFgEOU9gEMpgoKgLpf37di0jPv5cUo8lq
+	Lzyf8ctUWBDhX6eYLEKKw0r1zfDfpz2iCIHkOrTzXKUDgR8+IXl/DsoELpr5wJ1Tn/BMOKQ
+	xbUNKBAZukdQCG80Yu952TX6/+pmIzQAlgjk1ehVUvi7krE3kY+9vxEeVVnKOYhFaCGOcu6
+	ltQ+7WR+wk7r+yqJcRKzw65BL+FxChF9OSKbatx6+sWk9ttGf5Poy5qKWBr07AuebDjAMji
+	dX/4u00kXdHPIQdOJka77KcHKyV+o3p8tpq+Cang5iR4WZs5NY33oRrtAorxs+75EToMHQ/
+	LakPmTb1SyaDYqOf2LQL0jAPIDGP9vVYxdofQWmMQ+GlgfLiVMTSv6Oob1Ot3z+R5SrM4XA
+	4EsoEibglp7/mUl3pgQ6rbnGXimko=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Sep 08, 2025 at 11:08:29PM +0200, Hans de Goede wrote:
-> There are 2 improvements which I would like to see:
+On Tue, Sep 09, 2025 at 01:55:54PM -0700, Jakub Kicinski wrote:
+> On Tue, 9 Sep 2025 19:52:21 +0530 Anwar, Md Danish wrote:
+> > > +	for (i = 0; i < size_in_words; i++)
+> > > +		msg[i] = mbx_data_rd32(mbx, MUCSE_MBX_FWPF_SHM + 4 * i);  
+> > 
+> > The array indexing calculation should use multiplication by sizeof(u32)
+> > instead of hardcoded 4.
 > 
-> 1. When the backlight is turned on through the button, you
-> should pass g15_led->brightness to the notify() call rather
-> then LED_FULL. GNOME will show an OSD with the new brightness
-> value shown as a mini progress bar similar to how it shows
-> speaker volume when doing mute/unmute. This mini progress
-> bar should show the actual brightness being restored, not
-> always full brightness.
->
-	If g15_led->brightness is subsequently changed, should a new
-notify() call also be made with that new brightness, i.e. should
-`hw_brightness_changed` be made to track `brightness`?  Indeed, it looks
-like you do this in `lg_g15_leds_changed_work()`.
+> Not sure this is really necessary, I'd expect C programmers to intuit 
+> that 4 is the number of bytes in u32 here. sizeof(u32) is going to
+> overflow 80 char line limit and cause more harm than good.
+> 
 
-> 2. ATM if the backlight is turned off on the G13 when
-> the driver loads and then one of the buttons gets pressed
-> then a notify() will happen because the led_cdev.hw_brightness_changed
-> value of -1 will be different from the value of 0 in the
-> input-report. This notify will lead to an unwanted OSD
-> notification in GNOME, so this needs to be fixed.
-> IMHO the best fix would be to use:
-> 
-> 	hid_hw_raw_request(..., HID_INPUT_REPORT, HID_REQ_GET_REPORT);
-> 
-> at probe to get the input-report so that the driver will
-> actually now the backlight state at probe() time without
-> needing to wait for the first time the input-report is send.
->
-	Will give this a try.
+I found similar code in other drivers, ixgbe, it like this:
 
-> I'll wait for your G13 support to land first and then
-> rebase the G510 patch on top.
-> 
-	Roger that.
+#define IXGBE_READ_REG_ARRAY(a, reg, offset) \
+                 ixgbe_read_reg((a), (reg) + ((offset) << 2))
 
-					Schwab
+         for (i = 0; i < size; i++)
+                 msg[i] = IXGBE_READ_REG_ARRAY(hw, IXGBE_PFMBMEM(vf_number), i);
+
+Maybe I should follow that style?
+
+Thanks for your feedback.
+
 
