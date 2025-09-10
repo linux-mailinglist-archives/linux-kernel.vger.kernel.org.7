@@ -1,224 +1,302 @@
-Return-Path: <linux-kernel+bounces-809385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E027B50CE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:46:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF6FB50CE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EF114406C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 408AB4682AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D9F2BE7B0;
-	Wed, 10 Sep 2025 04:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B886F2BD597;
+	Wed, 10 Sep 2025 04:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZCBoPQh+"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="K4feRcNt"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2066.outbound.protection.outlook.com [40.107.93.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9F42BE036
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757479539; cv=none; b=CAAz4MZ7NEkyy0HnT9LNuboymiy6DR7gDQfamiD1OICtTRqFp3GzWfe1tmlx9c/8N7kyscLPwFkHcyQFvP7MQCyPFoIq0oxwVgXTHN150+0q0teFdA9vRikJhji9ruj5XijBY0EtyKyd5VQP3JPdc2/9Zg2Zh2lz42azrqYhkeo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757479539; c=relaxed/simple;
-	bh=syiSmSAFO+aipbEzZrniarasYU989JCArBVy1P7PnhU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=j/V+KUGmtj7dhJS7MgDr4Sqn+f6z9gSGZAnb5s5RsqO+bAoK2WiszBMnFlLi1ipIvi79pKahA0R2sKws9g0tZHMDWlWQSPL5DCtltKrNTDXYZ/PBVpHGrypRe41XxBZWT/0ryhj9gfkJnifBGysnENxjh9m0XwlZg+PmVTOeyYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZCBoPQh+; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-329ee88fb47so11759847a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 21:45:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757479537; x=1758084337; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FJadLmysskB2boZjs9046Qcr8br6WCNXbEVyeTwtHYE=;
-        b=ZCBoPQh+GNzJLIRKiqmcNlXL7lxgRv57fZL7g0oftxb/mTYkul78ipNKPdS8skYv4w
-         xfysLsJbVWzeB+BYHhu2kxn4MzDGaaX6GQdIhfhMKq5yWA547kgClap7kE7tvxDYzsO4
-         J3wkbhqHKGWkXQ1XZELwiI3+fbd47S3ANAlB5LDqzfDD+QJIeWOHWqShHLZG7AXYEhZP
-         cGnZxiZAcCxRW+luE2HH+3oUibkgNeeIjzJvJ2jo84Ue9iNM9ObLKD9bggWigspANXni
-         16WUqVrZeZAsfwqOlcXayR7NvmeQvqNCbUcuZ/CjSdeZ+ADE+y9JN2yZZ7rnym4qULna
-         4hBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757479537; x=1758084337;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FJadLmysskB2boZjs9046Qcr8br6WCNXbEVyeTwtHYE=;
-        b=V1dJz1PbUCqpBarKh20owjgAiEpq/mFPA/62UbdD7w0NYRdraiQAuYyXvJ1VDycx9e
-         uDGegRdyb8uvbqF2BUX5vyFGAUfMFg8A+P5ULUnXIjiY/hZiYEHbrbE8ieSu295lxAdR
-         u7neqx16/JOCSJt2X9ApenyiVBW7iXsJPc1qfiCpKGb1FVRwmz6Yyd+sqTIrqErPfqOZ
-         eYp0k9i9QG33vPTvwYQBYjIp8liVGGAcbT4XKZGmpkeAqGwLLZyRhYK05VjZuFHWL7lp
-         u+/o1ojjnyAk3e9Zl/TTC8/TxdslsVVVxfQksxpBXzFN5+LLMurx9IutUPBk2QpGQfhX
-         zx5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVPwJc8JTsaHrEW67bLC2XhG5SeapDdL2v/3FtVvL8Fgqbfw9YZfvCD8x6o3Dnl2Bhio4U3ivNTgASYHzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8a1Bw/XHm0pEu1qNtAZiPxlMzOoijEjdTv7nnVa1fYF+dNIwT
-	uYHBBDeOaxK18YsuDblAiTtNlbfEyHwPShqmmzzuRl2z1cEGNM+BrgWg0OwPTymoNjo9IVkRD1W
-	47IHTapBmFodVNg==
-X-Google-Smtp-Source: AGHT+IGtF7G2qOTh8GkkHp+M2bIvebaZlladQ6uTxMfb0gBBP18Ndrlwth4enuUWrPoL3Hi7QjmZAZ4P9gFopQ==
-X-Received: from pjbqx4.prod.google.com ([2002:a17:90b:3e44:b0:327:cee7:a99f])
- (user=jiaqiyan job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:51cf:b0:32d:a721:8cc7 with SMTP id 98e67ed59e1d1-32da7226f41mr6178432a91.35.1757479537478;
- Tue, 09 Sep 2025 21:45:37 -0700 (PDT)
-Date: Wed, 10 Sep 2025 04:45:31 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101CA5464E;
+	Wed, 10 Sep 2025 04:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757479700; cv=fail; b=Y6jVuM6gcMKhIJouKqhcvSWmiCQa4aDqHOd8wCJafiGIWtyxO8p8QrwA8ebk7dtswBnpkxWqRtlzXHOvRKhXJGGNl5cayd1GE7b67ag+6gzKZaUTJeAxXFGsU+FnWIlwcjziVG1fjPEhcDr9V6C0XSqq2zlVdcJK0hzVqtQ/M4g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757479700; c=relaxed/simple;
+	bh=dpdQxSzGzQOA93Qw+eYfGAh4SiOKZLefqRcoFIdhih8=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=OvqjtGlvdv58KSz9gr0Icdkkjuyxk4phxjLf+/CfGxrGAQ5QLSUJuKFwq8G40pmL0ciSGBz6cZjOoWVFHWhWaYZs9thiOdYFaUCALqt7RCjgddHymzDJ9KokWoDka5bo5+3dBF/ghOge2udx5BFthmkEggWnryZN6xcGT9I2FUI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=K4feRcNt; arc=fail smtp.client-ip=40.107.93.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GYgt5rOfdUMBXxrNbAy67KCAYcmRuK38B/U/2L46m/MGwkYX7OlfDmRrbt1V1sdSlpHFAA8vUYwg0JpoMzV0cJ8wwp1mOjQRAItxJsjdHeW1vXa0sA15sGHK/8gGPA8mmgFclYpX8Olh8WwEaXk6xpRz7fACrHSPKqt0XCY6ZCZkSdb5GuEUZpTPqZFjSKTUFVCXww2+vxei8fuPedkU5j5njcpAV5hcSIOdvgiImegHslCNqnFDZPWfpauXfHAa5RxONo3mF3ZwFNSp0Zl9Sdlc/10jDiBbovH6g25Mo1Q8+gd4utySuCb0K4VLlkgEyDXR/+K2m1xBWf4EJ5F2gA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hb8qMDcX5mac49JzlYe/056oZSj0xgXVD881WAENCGU=;
+ b=IBheaKUdTsMM+cKuuemRh8Aj2yQbMfSraG0odNJ0F7mS4Z5lquChj4Ytk7YH9V+MlIQNVzB+cgyypqo9RMYvJf57zEMSBQATtl0aH5FmNVk0NK+eWYwcHa2jyivedWo39QYBA/87ntCHEcQUIDEtlxy6qL7RyXJ3ZRm9cu3ZrpEXgMgxqQABulfoMRR3Jf6kwRyomokg+PyHhGvzIVvSIq2JXUSP5zsxnipR36L1ku4Fhq3YONVzooifvgBYbMgMTsg2YRvm4ehau2sA7D4KQzAn++ggx/B1LGqgK+87xI/Dlk9GcukkTVcYkEPf1YRK4JT2dL9ORkpCrNVuYoSoUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hb8qMDcX5mac49JzlYe/056oZSj0xgXVD881WAENCGU=;
+ b=K4feRcNtWQS+nJnDtwOOLXNRr9M7SyDlO/jQcrZICSRouTGXwTIQxkn+55FSavajz1cBMllrIphBTrcgbLewrInlYfg2m8fOVfkzP8eJ3q0eNNsDgiqA5XhIC9UcVz4i6HUtvwmHNXVfrKnOK1gq4eeqgaKtMF1Izk9zJqHNuzBEHK5qVJQFGPChDbqfXjalPIWSHFYqQUDLU1pZuXdwVsiuZsdW1nlph/2NEG+47tpH06kqcxNhza4GrDSw7f9v21hqJkKwkLvkqUJRFu9rG5rs03cQjffmmxAGe4jf62ddWvT/uBxe4sjDT51tgT9zPDdvjZ7/ceWsLchKA4eFsA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CH3PR12MB8993.namprd12.prod.outlook.com (2603:10b6:610:17b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 04:48:16 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 04:48:16 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 10 Sep 2025 13:48:12 +0900
+Message-Id: <DCOUK0Z4YV6M.2R0CFE57DY5CR@nvidia.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Joel
+ Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v3 02/11] gpu: nova-core: move GSP boot code out of
+ `Gpu` constructor
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Danilo Krummrich" <dakr@kernel.org>, "Alexandre Courbot"
+ <acourbot@nvidia.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250902-nova_firmware-v3-0-56854d9c5398@nvidia.com>
+ <20250902-nova_firmware-v3-2-56854d9c5398@nvidia.com>
+ <843554b1-f4c5-43f5-a23b-583339708bea@kernel.org>
+ <DCIZ79KKSSF1.25NJT5ZWR3OOS@nvidia.com>
+ <DCJ0UA7KM9AP.OGO7EJB4ORQP@kernel.org>
+ <DCOBWF0EZLHF.3FFVAB16SJ3FW@nvidia.com>
+ <DCOCL398HXDH.3QH9U6UGGIUP1@kernel.org>
+In-Reply-To: <DCOCL398HXDH.3QH9U6UGGIUP1@kernel.org>
+X-ClientProxiedBy: TYCP286CA0120.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:29c::20) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250910044531.264043-1-jiaqiyan@google.com>
-Subject: [PATCH v3] ACPI: APEI: EINJ: Allow more types of addresses except MMIO
-From: Jiaqi Yan <jiaqiyan@google.com>
-To: tony.luck@intel.com, rafael@kernel.org, guohanjun@huawei.com
-Cc: dan.j.williams@intel.com, bp@alien8.de, mchehab@kernel.org, 
-	xueshuai@linux.alibaba.com, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jiaqi Yan <jiaqiyan@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CH3PR12MB8993:EE_
+X-MS-Office365-Filtering-Correlation-Id: 041a90b3-8b90-496f-4b59-08ddf025416d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|10070799003|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZmpqdHZLUGhuS1UzMFBIL1dkZzBicmdmWE1SOTFJWmdyajZzSEFoZHpxMW9W?=
+ =?utf-8?B?Rkk1S0ZCWXp0VVdjbklkOXZBSXdLazRrUmMwdlRDZnUxaW4vUUM0NXBsZWlx?=
+ =?utf-8?B?dTJoclB6RC9mVFkyRWZOblRkYzl1bWh4VUVxakgrWXBLckpMSU1CUm5PdkFZ?=
+ =?utf-8?B?bW5VckhhT0M0aytMMEJFTjEyUHo4TmY4eXBSSTVleng4a1lLbnIrcEpKSEtG?=
+ =?utf-8?B?M1JwMEE3dVVBbjE2ZU5HSFlHQ3gxcEJBYmc1Z3J3djJVOVBzUUduanpvbWZV?=
+ =?utf-8?B?QUd5dnptbm9BenBiSFU5RkN5eUxuaHNZL0VCRHErajhENklzZGhEUk5teGFw?=
+ =?utf-8?B?RllCdGIwRENTNTRDa1B0TStjMmlFN0crWTh2eGU0ZjUzZlVPVjlKWlhWQTBs?=
+ =?utf-8?B?QmoxMGlEQ3U4dEl0ai9EK1NJWjNKSFJpKythQlV6L2hSZlJ2ekZEaGJuRitL?=
+ =?utf-8?B?RTNvTHRSZGlwd0ZvcXhBUG1rb2R3MDdvdGdXemRWRnRXdWRZcFpGWjFNbnNm?=
+ =?utf-8?B?ODUvT3A3KzJxRnF3Q3ZDVVJvY0dOa25vYnlaZEtnOUFuNTBqQ3FuRmxzYytj?=
+ =?utf-8?B?TmJqOG80NUNLeisyNkZFY1R6RjhnWXQ2c0VYV3ExSlFmM2lya3ZYL3FhVGdp?=
+ =?utf-8?B?VXdrMExCRFJWREI5RzJ2N0N6YjVPb082bkNwcDZidmdJdWJQOURDZndweEVI?=
+ =?utf-8?B?UlViY2VpTmw5Zlo1TXN4Ty84TW5wQ0oweFdFODFMRFRDdC9VOUtVMzFsaFhM?=
+ =?utf-8?B?eDNPa2xCdlNHNkN3OEh2WGdFZmlnbnhMZCtRdEJPZTU1UXlXaUwzRGd4Rzhm?=
+ =?utf-8?B?OUc0VVZLci82VUxvc1VqUGJhYmFTd2gvdWY3cGRyMEh2azJ0cWYrQktUVUI5?=
+ =?utf-8?B?eUhyaGpaZHc1QnJSNFVRV21EQVhPcVlUaUF0TjFDYjU3bTNqM2Y1MGxINEw2?=
+ =?utf-8?B?eldyTjB4VllMYUttajlxWTJYN1hIK3pOWUhrVjh0UVB3UXBvL09sZVZHckps?=
+ =?utf-8?B?bWhFSktKUUZnNjFSL1dHMFlIM3VENndEN1Q3SmUwREVjV2o1SklEME5aQUxK?=
+ =?utf-8?B?cWozUWpHNmsxWGd3c3lkcVFqcjROWEtGVjU4djRBdFR2RC9kVWJNK3ZDRTdi?=
+ =?utf-8?B?SUhHS3kwNHFyeTB6a3pBVmE5UExiQWdCY1VCTmhReGNFc3lETkRZakxmdEVk?=
+ =?utf-8?B?YXRlUFdyMXhTVFNLT1JJM1NmMjdsTWZFUlczZng3em4zTmw0dklldmV0K09Y?=
+ =?utf-8?B?eG9aa3BqTHVuTWVSMVRGVWN1QkpLR2EzV1grZ2k0MHRrWm5tMGxWeGZOZjhY?=
+ =?utf-8?B?eGZ0NGpPVDhnN2krSHZNL0ZNT204c1JiUEVBcW1veXpwVG5YdExvOENxMmVZ?=
+ =?utf-8?B?SUNaQ1hEMkttR0dLenRmMjhrcWw0YUw4TXhFSnhQdGdsVWlacE9qS245VUx6?=
+ =?utf-8?B?eS9hZVo4bVNiT2U0YTl0Q0FJWFd5YVA3Z1BidHNNVW1aN3kyT2FKakxBM1ZS?=
+ =?utf-8?B?eWVjam9TUGJ4L2FVVXJoUTVmNVZDdWt0YklISmw4aXk1TXpjbTlwOUhDc29E?=
+ =?utf-8?B?RmIvSEFTNlQ1cTdMRTJBdGl4MStDRHZBQ2ovOTVKb2hOaVRiYkNQelBWRWgx?=
+ =?utf-8?B?eDFnZVJ6MWUrdEpRSVAvWVl5dksrZlhKY1Q2S1UzZ0hKSnd1cE1yQlJFUmti?=
+ =?utf-8?B?c0NXVE9QS3hBdmdYMklpY0xhdnl4MWQwTHRLc3lpNTZQWHpWWWlURFA2bk1a?=
+ =?utf-8?B?TjZHMFVjTVBGQmc4SEZZcE9Rbmo1QXRyU1Zvbk1wTG1yQ1FhZVFGSTZ5UTY1?=
+ =?utf-8?B?RDBTc3dzNEtpeVlCTlBIbjN0VXhCbFlxcHFZUnQyQ1g0LzFHM01SN3hDYWJG?=
+ =?utf-8?B?UTd3Z3hTTGZBRHVaL3VLcFBqRzZJRmN4SDRzNFdoS1ZXbTZ4TWF6amU5UFIy?=
+ =?utf-8?Q?h2Fsprsh+PY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WDlqVDR1Y3BodGcya08vWmh4R3UrRWQyYzNmZ0lCOEpUbUZuZlNaQ244NUpq?=
+ =?utf-8?B?SU1PdDh0QWZwY2N4OGNFbUVhVUpiUUcxY21ETGZsTFRORlFLRDlPTjRncVpP?=
+ =?utf-8?B?QXB6eUljcFdKcnZ2SFgxMUNEL202YXJvVklyb1BQc29vQVZPRm1IbGxpTzBL?=
+ =?utf-8?B?UnNuL1NwakVxQzhUdDR1bmg4UnhhTXVJOERuei83RTEwYWoxK2EyWEhSVi9E?=
+ =?utf-8?B?VVZvWUphQ1pxbnpoRmVQK3ZGcndMb1FYaTEzQ09Hb2tydDZUdjNLalVZVklz?=
+ =?utf-8?B?ZUZGZ3cxZnBtRkY0RTVsT3BrL3JScjVpR05YdEQzYnpQWUZoT0U2aDNvWSsr?=
+ =?utf-8?B?dDRZZjRtYnlVQ0pCM2p4b1JtWHFiRlByZHh2M0lPQ01idTdHOG9kc0hObjdW?=
+ =?utf-8?B?TGVRVHhUZEdndXpNekozRnNhTEU3QWVKVldRbHZuQU8yTTFBVnRWWHd6K3dj?=
+ =?utf-8?B?NVYwL0tVVUdRU0h1SG5YUG11Y0srV09QUlpQRStVZHEzOXl3NnBaaWNGNW05?=
+ =?utf-8?B?b0ZjVCtDRi9FK2tSWGhYZ3hhMEUxMVdSTGVqK1pQcG80SHNMcmgrU1FDalVR?=
+ =?utf-8?B?eUhXQmptbDRZdGoyd3Q4SVpwazJQWVJDSmhrUWs3czdibWR1eFM4bFUwQTBP?=
+ =?utf-8?B?VU53dUErN29rbjZYUi9zalU4bmRlZ29IdU0vUVRpaDNVS0pXZkNuSWtsa3Jr?=
+ =?utf-8?B?N2JrYjBBUGQ0ZWpmd05Cd2x4RFJJN2ozSHozSjBKanBKQkNjLzQ2MzBlbjR3?=
+ =?utf-8?B?dk0wVG9aNjhsTGc3ck02Ulp3VjdsZGpIaVQ5OWYvTklGc21ySjVyZjhJV1FF?=
+ =?utf-8?B?NW5Jb1BSRmplOWE1Um5ZYUJnYWRpcVFMYkk2a2E4UUVWZEdnRGJNZzV0Njcw?=
+ =?utf-8?B?bzU3Q0UyaTdTTzBqWDN3QmZ6dFVkZzluSGVBaWZaQjJPeURVNzU1YnRLem1r?=
+ =?utf-8?B?b0RMMURxVjE3Mzl3Nk1yZ0RsUXl2THZ2UW1NdlZpS0p1WlBoTHdyNS92QnB0?=
+ =?utf-8?B?bEJJbE1Cc0xlOFlZL0ZacjFJamU4ZnU3ZnVuWXFMYndobmpVNjdrMmpId3ky?=
+ =?utf-8?B?QU13cGNqVHR2Z2MrMUZwMnl1c2hldEo3Qi83OFpyZkpnOFpBS1BqVWdIbmNS?=
+ =?utf-8?B?MDVtSEMreXVoNnRJWEFEMGJTSVBCZERBUHNYMGtudWdCR3BWdEp6clZYdnpI?=
+ =?utf-8?B?RGptMVZURDVrRFRYMktDUmtDRVVMSUtGK24wb1dwQmw1VXhmQ2VuWWovOTdu?=
+ =?utf-8?B?cXl2dHA0a0s0dzQ3cDZLZy9QRzhmNTJWNU5XMkNjVjZjYjJjOUpuTHNqQTZa?=
+ =?utf-8?B?eVQ1elRyRWlJUDFOV3FlUHlBZjkyVWk4c1dsdmNwSWlkbWFOeldxZ3k4YW1z?=
+ =?utf-8?B?ZkVrWnhvWkx1L29kK0YvMFR4N3VWWXp1MndqUkJWdzR2cHVJT3NxNmthL2Rj?=
+ =?utf-8?B?Ungvby9TZHJwYUxVQ2FSUVVYUlNlcHhKRWR6VG5RMm16RzJOM0tjVjc1ZFhQ?=
+ =?utf-8?B?NFM1T0xCMkZnL3JFK0VGemVRUDlxSWVNVnJIUElhclpLWUg3L3R1YVJKdUNJ?=
+ =?utf-8?B?Sm9yMVdVNmtQMDIyR3NMRHZYaE5rTEJmM0I3SGZMczlJK1JFYjNIWFRyOXhB?=
+ =?utf-8?B?bFlwM0Z6Qi9jWDlKSnc4OGtoN3QwRnZEcm1XK1JzZFNwWkEvN0xxbTJCU2tt?=
+ =?utf-8?B?bENXcEd1b3N2YWFEMHNmV2s4TFNZZFBIMDhzSlpyUFJhUmM4Q1A0RnllbFJK?=
+ =?utf-8?B?SDdISTFMS2xwNVBKU2dTbnlvT0NqMXc4VnIvaEJwS3VpRDlJYjVGRDFMNFBy?=
+ =?utf-8?B?Yk1BdWtTaHIvWGNFbENRUk9BTENpRmpUZFRJK29JOVZOWU54aU82NzM0RUhV?=
+ =?utf-8?B?K2JodmhEcE40eEVUVTZqcTNJMDQ5WVRvLytQZlkyR1Z4ZEFCV3VDZGozM0dG?=
+ =?utf-8?B?d05aTGdJbWxxZkJBeE5raWMrdjNsNk5jZGI1VUFab1AwdkV6Sm5GVmlCR2wx?=
+ =?utf-8?B?cy81S3F0NW1BV25VeXhQN09qTW5HZnQrMGVWWEdRa0NpaXFQc1R5MTd3VTEx?=
+ =?utf-8?B?T0J1ZnVDa3BvbkxqWGYwa01oaUZRVXJzbm9mUG5GcndYWFpOOGpUNytUSGth?=
+ =?utf-8?B?THdQYUtCVGxSd1BzTzd2VEJXeE4zQU8wYitzcDdHQWlTTkpWckE1VURrUFRW?=
+ =?utf-8?Q?X8swVbY80yq9huTxAsvTCDKdIkKNTh9ZKOF7fhENDfcm?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 041a90b3-8b90-496f-4b59-08ddf025416d
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 04:48:16.0625
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: W1GQrVAYpIc/aSQxcx6TqKe1811EGfHG4VP2B6HWqmjBhEZkDnF9Iz3C/yr1uz455oHBsoGurvD4dRbEHTuK/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8993
 
-EINJ driver today only allows injection request to go through for two
-kinds of IORESOURCE_MEM: IORES_DESC_PERSISTENT_MEMORY and
-IORES_DESC_SOFT_RESERVED. This check prevents user of EINJ to test
-memory corrupted in many interesting areas:
+On Tue Sep 9, 2025 at 11:43 PM JST, Danilo Krummrich wrote:
+> On Tue Sep 9, 2025 at 4:11 PM CEST, Alexandre Courbot wrote:
+>> On Wed Sep 3, 2025 at 5:27 PM JST, Danilo Krummrich wrote:
+>>> On Wed Sep 3, 2025 at 9:10 AM CEST, Alexandre Courbot wrote:
+>>>> On Wed Sep 3, 2025 at 8:12 AM JST, Danilo Krummrich wrote:
+>>>>> On 9/2/25 4:31 PM, Alexandre Courbot wrote:
+>>>>>>       pub(crate) fn new(
+>>>>>>           pdev: &pci::Device<device::Bound>,
+>>>>>>           devres_bar: Arc<Devres<Bar0>>,
+>>>>>
+>>>>> The diff is hiding it, but with this patch we should also make sure t=
+hat this=20
+>>>>> returns impl PinInit<Self, Error> rather than Result<impl PinInit<Sel=
+f>.
+>>>>>
+>>>>> I think this should be possible now.
+>>>>
+>>>> There is still code that can return errors (falcon creation, etc) - do
+>>>> you mean that we should move it into the pin initializer and turn it
+>>>> into a `try_pin_init`?
+>>>
+>>> Yeah, that would be better practice, if it doesn't work out for a good =
+reason
+>>> we can also fall back to Result<impl PinInit<Self, Error>, but we shoul=
+d at
+>>> least try to avoid it.
+>>
+>> I tried but could not do it in a way that is satisfying. The problem is
+>> that `Gpu::new` receives a `Arc<Devres<Bar0>>`, which we need to
+>> `access` in order to do anything useful with it. If we first store it
+>> into the `Gpu` structure, then every subsequent member needs to `access`
+>> it in its own code block in order to perform their own initialization.
+>> This is quite cumbersome.
+>>
+>> If there is a way to obtain the `Bar0` once after the `bar` member of
+>> `Gpu` is initialized, and then use that instance with each remaining
+>> member, then that problem would go away but I am not aware of such a
+>> thing.
+>
+> What about this?
+>
+> 	impl Gpu {
+> 	    pub(crate) fn new<'a>(
+> 	        dev: &'a Device<Bound>,
+> 	        bar: &'a Bar0
+> 	        devres_bar: Arc<Devres<Bar0>>,
+> 	    ) -> impl PinInit<Self, Error> + 'a {
+> 	        try_pin_init(Self {
+> 	            bar: devres_bar,
+> 	            spec: Spec::new(bar)?,
+> 	            gsp_falcon: Falcon::<Gsp>::new(dev, spec.chipset)?,
+> 	            sec2_falcon: Falcon::<Sec2>::new(dev, spec.chipset)?,
+> 	            sysmem_flush: SysmemFlush::register(dev, bar, spec.chipset)?
+> 	            gsp <- Gsp::new(gsp_falcon, sec2_falcon, sysmem_flush)?,
+> 	        })
+> 	    }
+> 	}
 
-- Legacy persistent memory
-- Memory claimed to be used by ACPI tables or NV storage
-- Kernel crash memory and others
+It does work. The bizareness of passing the `bar` twice aside, here is
+what it looks like when I got it to compile:
 
-There is need to test how kernel behaves when something consumes memory
-errors in these memory regions. For example, if certain ACPI table is
-corrupted, does kernel crash gracefully to prevent "silent data
-corruption". For another example, legacy persistent memory, when managed
-by Device DAX, does support recovering from Machine Check Exception
-raised by memory failure, hence worth to be tested.
+    pub(crate) fn new<'a>(
+        pdev: &'a pci::Device<device::Bound>,
+        devres_bar: Arc<Devres<Bar0>>,
+        bar: &'a Bar0,
+    ) -> impl PinInit<Self, Error> + 'a {
+        try_pin_init!(Self {
+            spec: Spec::new(bar).inspect(|spec| {
+                dev_info!(
+                    pdev.as_ref(),
+                    "NVIDIA (Chipset: {}, Architecture: {:?}, Revision: {})=
+\n",
+                    spec.chipset,
+                    spec.chipset.arch(),
+                    spec.revision
+                );
+            })?,
 
-However, attempt to inject memory error via EINJ to legacy persistent
-memory or ACPI owned memory fails with -EINVAL.
+            sysmem_flush: SysmemFlush::register(pdev.as_ref(), bar, spec.ch=
+ipset)?,
 
-Allow EINJ to inject at address except it is MMIO. Leave it to the BIOS
-or firmware to decide what is a legitimate injection target.
+            gsp_falcon: Falcon::<Gsp>::new(
+                pdev.as_ref(),
+                spec.chipset,
+                bar,
+                spec.chipset > Chipset::GA100,
+            )
+            .inspect(|falcon| falcon.clear_swgen0_intr(bar))?,
 
-In addition to the test done in [1], on a machine having the following
-iomem resources:
+            sec2_falcon: Falcon::<Sec2>::new(pdev.as_ref(), spec.chipset, b=
+ar, true)?,
 
-    ...
-    01000000-08ffffff : Crash kernel
-    768f0098-768f00a7 : APEI EINJ
-    ...
-  768f4000-77323fff : ACPI Non-volatile Storage
-  77324000-777fefff : ACPI Tables
-  777ff000-777fffff : System RAM
-  77800000-7fffffff : Reserved
-  80000000-8fffffff : PCI MMCONFIG 0000 [bus 00-ff]
-  90040000-957fffff : PCI Bus 0000:00
-  ...
-  300000000-3ffffffff : Persistent Memory (legacy)
-  ...
+            gsp: Self::start_gsp(pdev, bar, spec.chipset, gsp_falcon, sec2_=
+falcon)?,
 
-I commented __einj_error_inject during the test and just tested when
-injecting a memory error at each start address shown above:
-- 0x80000000 and 0x90040000 both failed with EINVAL
-- request passed through for all other addresses
+            bar: devres_bar,
+        })
+    }
 
-Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
----
+The wait for GFW initialization had to be moved to `probe`, but that's
+fine IMO. I do however find the code less readable in this form, less
+editable as well. And LSP seems lost, so I don't get any syntax
+highlighting in the `try_pin_init` block.
 
-Changelog
-
-v2 [2] -> v3:
-- Remove unnecessary IORES_DESC_CXL per comment from Hanjun [3].
-- Minor update to code comment.
-
-v1 [1] -> v2:
-- In addition to allow IORES_DESC_PERSISTENT_MEMORY_LEGACY, open the
-  door wider and only exclude MMIO per suggestion from Tony [4].
-- Rebased to commit 11e7861d680c ("Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm").
-
-[1] https://lore.kernel.org/linux-acpi/20250825223348.3780279-1-jiaqiyan@google.com
-[2] https://lore.kernel.org/linux-acpi/20250830030226.918555-1-jiaqiyan@google.com
-[3] https://lore.kernel.org/linux-acpi/bc8ad4b8-c000-0298-efd1-4a332c4c7820@huawei.com
-[4] https://lore.kernel.org/linux-acpi/SJ1PR11MB60835824926BEE57F094DE6FFC39A@SJ1PR11MB6083.namprd11.prod.outlook.com
-
-drivers/acpi/apei/einj-core.c | 51 ++++++++++++++++++++++++++++-------
- 1 file changed, 42 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-index 2561b045acc7b..3c87953dbd197 100644
---- a/drivers/acpi/apei/einj-core.c
-+++ b/drivers/acpi/apei/einj-core.c
-@@ -656,6 +656,43 @@ static int __einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
- 	return rc;
- }
- 
-+/* Allow almost all types of address except MMIO. */
-+static bool is_allowed_range(u64 base_addr, u64 size)
-+{
-+	int i;
-+	/*
-+	 * MMIO region is usually claimed with IORESOURCE_MEM + IORES_DESC_NONE.
-+	 * However, IORES_DESC_NONE is treated like a wildcard when we check if
-+	 * region intersects with known resource. So do an allow list check for
-+	 * IORES_DESCs that definitely or most likely not MMIO.
-+	 */
-+	int non_mmio_desc[] = {
-+		IORES_DESC_CRASH_KERNEL,
-+		IORES_DESC_ACPI_TABLES,
-+		IORES_DESC_ACPI_NV_STORAGE,
-+		IORES_DESC_PERSISTENT_MEMORY,
-+		IORES_DESC_PERSISTENT_MEMORY_LEGACY,
-+		/* Treat IORES_DESC_DEVICE_PRIVATE_MEMORY as MMIO. */
-+		IORES_DESC_RESERVED,
-+		IORES_DESC_SOFT_RESERVED,
-+	};
-+
-+	if (region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
-+			      == REGION_INTERSECTS)
-+		return true;
-+
-+	for (i = 0; i < ARRAY_SIZE(non_mmio_desc); ++i) {
-+		if (region_intersects(base_addr, size, IORESOURCE_MEM, non_mmio_desc[i])
-+				      == REGION_INTERSECTS)
-+			return true;
-+	}
-+
-+	if (arch_is_platform_page(base_addr))
-+		return true;
-+
-+	return false;
-+}
-+
- /* Inject the specified hardware error */
- int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 param3,
- 		      u64 param4)
-@@ -702,19 +739,15 @@ int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 param3,
- 	 * Disallow crazy address masks that give BIOS leeway to pick
- 	 * injection address almost anywhere. Insist on page or
- 	 * better granularity and that target address is normal RAM or
--	 * NVDIMM.
-+	 * as long as is not MMIO.
- 	 */
- 	base_addr = param1 & param2;
- 	size = ~param2 + 1;
- 
--	if (((param2 & PAGE_MASK) != PAGE_MASK) ||
--	    ((region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
--				!= REGION_INTERSECTS) &&
--	     (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DESC_PERSISTENT_MEMORY)
--				!= REGION_INTERSECTS) &&
--	     (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DESC_SOFT_RESERVED)
--				!= REGION_INTERSECTS) &&
--	     !arch_is_platform_page(base_addr)))
-+	if ((param2 & PAGE_MASK) != PAGE_MASK)
-+		return -EINVAL;
-+
-+	if (!is_allowed_range(base_addr, size))
- 		return -EINVAL;
- 
- 	if (is_zero_pfn(base_addr >> PAGE_SHIFT))
--- 
-2.51.0.384.g4c02a37b29-goog
-
+Fundamentally, this changes the method from a fallible method returning
+a non-fallible initializer into a non-fallible method returning a
+fallible initializer. I'm ok with that, and maybe this new form will
+encourage us to keep this method short, which is what we want, but other
+than that what benefit are we getting from this change?
 
