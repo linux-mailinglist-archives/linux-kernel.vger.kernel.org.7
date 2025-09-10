@@ -1,97 +1,96 @@
-Return-Path: <linux-kernel+bounces-809660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51353B51078
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:06:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58114B51082
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D85A463D57
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:05:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9A7B7BB29F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF23313554;
-	Wed, 10 Sep 2025 08:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C533115AD;
+	Wed, 10 Sep 2025 08:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ERgfoKTg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hozs6Owg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ERgfoKTg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hozs6Owg"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Eu1749Ij";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J3j1WwYY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Eu1749Ij";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J3j1WwYY"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DE0313264
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8037B310624
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491317; cv=none; b=hL28hp8otr/XOf+KmI4sNzuKPGZCoZKRC6BqD2ufr5tHVeuco2f7aXZwzWuL7mF7MRUNgRkXHIFxhzs6VL7eJE31mxMgaUB2nla8t1lyzbP3vL0Vbyxb6mjKWT8jwRIoBV54+zihzuWtyzhA0O9eMkOIatcxr4kXfxqC3VOCmp8=
+	t=1757491296; cv=none; b=eqkXXJIE3MV0w6f1tt/Q1H3tAtABwo+SS3FlRZIZM0oWKfAlwHDS/5Ei3U82Z6Fdfgpk/j5Z6aFzeu78jPzm6awDqylarYTf8vC5h+uwp73gqUts2T5uW9yGENs2LgJswz44eNmXa2wFz6wscf31svxgGqZN6BRyyVeOxd3SIPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491317; c=relaxed/simple;
-	bh=tc0my3fQoLwAWw0ndzrIL04sHQNvGTBVTn1a3Ysr0DI=;
+	s=arc-20240116; t=1757491296; c=relaxed/simple;
+	bh=g9cbuUAWUkFUAyf/4k3/s7/bNyOkiitIzQ05JCCKOuQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GeVTYDAVcFdihnZdsw9llFkMv0/iux8FmL52UkwCxNEW81TKaKSRY3u8ZFkUnpwjd2xBIgMJk1J8BdWnmjzX11wDNJMDRbrHoYFU5E8SQ3BSI9BuIOS7byGCDnJR5wbEKIDTkMxaMQ0cxdJ1UtDpAg5k+P28H81W1GAFlzMqCQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ERgfoKTg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hozs6Owg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ERgfoKTg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hozs6Owg; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:To:Cc; b=qopJHL6TMovKrEvTVbtzTv00HvQdaMBkbbyXe8F8JFs5xkQA8/m3bdDipdiKe1JAjM9zNCgH0Aa7W7RQrLGmcZ/jnLMPdqyR8F7ApKgMJ7oV00uUsenvH7yg+gad9TxQSwdwZlz6OTPTtsfUBn8Kf11sVO/mCsfOhrtw3Bjm8S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Eu1749Ij; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J3j1WwYY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Eu1749Ij; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J3j1WwYY; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2E91B5CAE9;
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 42A5C34C3D;
 	Wed, 10 Sep 2025 08:01:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1757491267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mzg1TCVobED1/AQhFq++VLVyKBPlbLMYE7LGG7XCRZ0=;
-	b=ERgfoKTgRTLkYNlVw80V9Xg3zPFjP5v5ZJXJWl/GCxHJkIctN0GlQ+AhibmOwcW8GTYPyt
-	KMs6m7EklV8NutCDKoIS3yARG8haYw7l/9erBzjOu6pzQFScB6ntrjGPwcflVZxtwvS2c5
-	UNXkhATnMzJ/IG60X9wTA0KUr9Qu6Og=
+	bh=CTAufz5l+Vwi1MYujf4i5OOI04SHSqMr5qvqknMVzaY=;
+	b=Eu1749IjuQ3nDFCZbxxBwSyUbpOaR3IvEXYMV309JnAIXH/J+2N/R1WOZxOH8xMgSbMEXP
+	3Xl2K2LsF5fHS0MFnmdO4bDx3o0Z0cX59UwNY2Lx/WzFxtMTX8iAJu7275KTO1K5wXj2Fr
+	Tzgp3LzEw8o1GS1vu8d1mpc1fT/Qe9w=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1757491267;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mzg1TCVobED1/AQhFq++VLVyKBPlbLMYE7LGG7XCRZ0=;
-	b=hozs6Owg3FUSclY4koxhH7cFPwh4S9FDMp0Cu1baao81SUBfCyAii0DRWzIZFPcwq89/r9
-	1Yt5dsf5SaN6kXDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ERgfoKTg;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=hozs6Owg
+	bh=CTAufz5l+Vwi1MYujf4i5OOI04SHSqMr5qvqknMVzaY=;
+	b=J3j1WwYYsK2o+YK+R5guQ7k613W2ZX/QcuM27yXm5TwQ0wzR9P0vmyRkAlgfnwtfMdQYmW
+	uhncGsLDOy3AhvCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Eu1749Ij;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=J3j1WwYY
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1757491267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mzg1TCVobED1/AQhFq++VLVyKBPlbLMYE7LGG7XCRZ0=;
-	b=ERgfoKTgRTLkYNlVw80V9Xg3zPFjP5v5ZJXJWl/GCxHJkIctN0GlQ+AhibmOwcW8GTYPyt
-	KMs6m7EklV8NutCDKoIS3yARG8haYw7l/9erBzjOu6pzQFScB6ntrjGPwcflVZxtwvS2c5
-	UNXkhATnMzJ/IG60X9wTA0KUr9Qu6Og=
+	bh=CTAufz5l+Vwi1MYujf4i5OOI04SHSqMr5qvqknMVzaY=;
+	b=Eu1749IjuQ3nDFCZbxxBwSyUbpOaR3IvEXYMV309JnAIXH/J+2N/R1WOZxOH8xMgSbMEXP
+	3Xl2K2LsF5fHS0MFnmdO4bDx3o0Z0cX59UwNY2Lx/WzFxtMTX8iAJu7275KTO1K5wXj2Fr
+	Tzgp3LzEw8o1GS1vu8d1mpc1fT/Qe9w=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1757491267;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mzg1TCVobED1/AQhFq++VLVyKBPlbLMYE7LGG7XCRZ0=;
-	b=hozs6Owg3FUSclY4koxhH7cFPwh4S9FDMp0Cu1baao81SUBfCyAii0DRWzIZFPcwq89/r9
-	1Yt5dsf5SaN6kXDg==
+	bh=CTAufz5l+Vwi1MYujf4i5OOI04SHSqMr5qvqknMVzaY=;
+	b=J3j1WwYYsK2o+YK+R5guQ7k613W2ZX/QcuM27yXm5TwQ0wzR9P0vmyRkAlgfnwtfMdQYmW
+	uhncGsLDOy3AhvCg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7ED8013AFF;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 993F113B01;
 	Wed, 10 Sep 2025 08:01:06 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WByuHkIwwWgGJAAAD6G6ig
+	id ANYiJUIwwWgGJAAAD6G6ig
 	(envelope-from <vbabka@suse.cz>); Wed, 10 Sep 2025 08:01:06 +0000
 From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 10 Sep 2025 10:01:12 +0200
-Subject: [PATCH v8 10/23] tools/testing/vma: clean up stubs in
- vma_internal.h
+Date: Wed, 10 Sep 2025 10:01:13 +0200
+Subject: [PATCH v8 11/23] maple_tree: Drop bulk insert support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,7 +99,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-slub-percpu-caches-v8-10-ca3099d8352c@suse.cz>
+Message-Id: <20250910-slub-percpu-caches-v8-11-ca3099d8352c@suse.cz>
 References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
 In-Reply-To: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
 To: Suren Baghdasaryan <surenb@google.com>, 
@@ -110,16 +109,8 @@ Cc: Roman Gushchin <roman.gushchin@linux.dev>,
  Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
  Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org, 
  linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
- maple-tree@lists.infradead.org, vbabka@suse.cz, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- WangYuli <wangyuli@uniontech.com>, Jann Horn <jannh@google.com>, 
- Andrew Morton <akpm@linux-foundation.org>
+ maple-tree@lists.infradead.org, vbabka@suse.cz
 X-Mailer: b4 0.14.2
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 2E91B5CAE9
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-4.51 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -131,7 +122,7 @@ X-Spamd-Result: default: False [-4.51 / 50.00];
 	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
+	RCPT_COUNT_TWELVE(0.00)[13];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
@@ -142,517 +133,605 @@ X-Spamd-Result: default: False [-4.51 / 50.00];
 	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz,uniontech.com,google.com,linux-foundation.org];
+	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	DKIM_TRACE(0.00)[suse.cz:+];
 	R_RATELIMIT(0.00)[to_ip_from(RLfsjnp7neds983g95ihcnuzgq)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 42A5C34C3D
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
 X-Spam-Score: -4.51
 
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
 
-We do not need to references arguments just to avoid compiler warnings,
-the warning in question does not arise here, so remove all of the
-instances of '(void)xxx' introduced purely to avoid this warning.
+Bulk insert mode was added to facilitate forking faster, but forking now
+uses __mt_dup() to duplicate the tree.
 
-As reported by WagYuli in the referenced mail, GCC 8.3 and before will
-have issues compiling this file if parameter names are not provided, so
-ensure these are always provided.
+The addition of sheaves has made the bulk allocations difficult to
+maintain - since the expected entries would preallocate into the maple
+state.  A big part of the maple state node allocation was the ability to
+push nodes back onto the state for later use, which was essential to the
+bulk insert algorithm.
 
-Finally, perform a trivial fix up of kmem_cache_alloc() which technically
-has parameters in the incorrect order (as reported by Vlastimil Babka
-off-list).
+Remove mas_expected_entries() and mas_destroy_rebalance() functions as
+well as the MA_STATE_BULK and MA_STATE_REBALANCE maple state flags since
+there are no users anymore.  Drop the associated testing as well.
 
-Link: https://lkml.kernel.org/r/20250826102824.22730-1-lorenzo.stoakes@oracle.com
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reported-by: WangYuli <wangyuli@uniontech.com>
-Closes: https://lore.kernel.org/linux-mm/EFCEBE7E301589DE+20250729084700.208767-1-wangyuli@uniontech.com/
-Reported-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: WangYuli <wangyuli@uniontech.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- tools/testing/vma/vma_internal.h | 167 +++++++++++++--------------------------
- 1 file changed, 57 insertions(+), 110 deletions(-)
+ lib/maple_tree.c                 | 270 +--------------------------------------
+ lib/test_maple_tree.c            | 137 --------------------
+ tools/testing/radix-tree/maple.c |  36 ------
+ 3 files changed, 4 insertions(+), 439 deletions(-)
 
-diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-index 3639aa8dd2b06ebe5b9cfcfe6669994fd38c482d..f8cf5b184d5b51dd627ff440943a7af3c549f482 100644
---- a/tools/testing/vma/vma_internal.h
-+++ b/tools/testing/vma/vma_internal.h
-@@ -676,9 +676,7 @@ static inline struct kmem_cache *__kmem_cache_create(const char *name,
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index 38fb68c082915211c80f473d313159599fe97e2c..4f0e30b57b0cef9e5cf791f3f64f5898752db402 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -83,13 +83,9 @@
  
- static inline void *kmem_cache_alloc(struct kmem_cache *s, gfp_t gfpflags)
- {
--	(void)gfpflags;
+ /*
+  * Maple state flags
+- * * MA_STATE_BULK		- Bulk insert mode
+- * * MA_STATE_REBALANCE		- Indicate a rebalance during bulk insert
+  * * MA_STATE_PREALLOC		- Preallocated nodes, WARN_ON allocation
+  */
+-#define MA_STATE_BULK		1
+-#define MA_STATE_REBALANCE	2
+-#define MA_STATE_PREALLOC	4
++#define MA_STATE_PREALLOC	1
+ 
+ #define ma_parent_ptr(x) ((struct maple_pnode *)(x))
+ #define mas_tree_parent(x) ((unsigned long)(x->tree) | MA_ROOT_PARENT)
+@@ -1031,24 +1027,6 @@ static inline void mas_descend(struct ma_state *mas)
+ 	mas->node = mas_slot(mas, slots, mas->offset);
+ }
+ 
+-/*
+- * mte_set_gap() - Set a maple node gap.
+- * @mn: The encoded maple node
+- * @gap: The offset of the gap to set
+- * @val: The gap value
+- */
+-static inline void mte_set_gap(const struct maple_enode *mn,
+-				 unsigned char gap, unsigned long val)
+-{
+-	switch (mte_node_type(mn)) {
+-	default:
+-		break;
+-	case maple_arange_64:
+-		mte_to_node(mn)->ma64.gap[gap] = val;
+-		break;
+-	}
+-}
 -
--	return calloc(s->object_size, 1);
-+	return calloc(1, s->object_size);
- }
- 
- static inline void kmem_cache_free(struct kmem_cache *s, void *x)
-@@ -842,11 +840,11 @@ static inline unsigned long vma_pages(struct vm_area_struct *vma)
- 	return (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
- }
- 
--static inline void fput(struct file *)
-+static inline void fput(struct file *file)
- {
- }
- 
--static inline void mpol_put(struct mempolicy *)
-+static inline void mpol_put(struct mempolicy *pol)
- {
- }
- 
-@@ -854,15 +852,15 @@ static inline void lru_add_drain(void)
- {
- }
- 
--static inline void tlb_gather_mmu(struct mmu_gather *, struct mm_struct *)
-+static inline void tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm)
- {
- }
- 
--static inline void update_hiwater_rss(struct mm_struct *)
-+static inline void update_hiwater_rss(struct mm_struct *mm)
- {
- }
- 
--static inline void update_hiwater_vm(struct mm_struct *)
-+static inline void update_hiwater_vm(struct mm_struct *mm)
- {
- }
- 
-@@ -871,36 +869,23 @@ static inline void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
- 		      unsigned long end_addr, unsigned long tree_end,
- 		      bool mm_wr_locked)
- {
--	(void)tlb;
--	(void)mas;
--	(void)vma;
--	(void)start_addr;
--	(void)end_addr;
--	(void)tree_end;
--	(void)mm_wr_locked;
- }
- 
- static inline void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
- 		   struct vm_area_struct *vma, unsigned long floor,
- 		   unsigned long ceiling, bool mm_wr_locked)
- {
--	(void)tlb;
--	(void)mas;
--	(void)vma;
--	(void)floor;
--	(void)ceiling;
--	(void)mm_wr_locked;
- }
- 
--static inline void mapping_unmap_writable(struct address_space *)
-+static inline void mapping_unmap_writable(struct address_space *mapping)
- {
- }
- 
--static inline void flush_dcache_mmap_lock(struct address_space *)
-+static inline void flush_dcache_mmap_lock(struct address_space *mapping)
- {
- }
- 
--static inline void tlb_finish_mmu(struct mmu_gather *)
-+static inline void tlb_finish_mmu(struct mmu_gather *tlb)
- {
- }
- 
-@@ -909,7 +894,7 @@ static inline struct file *get_file(struct file *f)
- 	return f;
- }
- 
--static inline int vma_dup_policy(struct vm_area_struct *, struct vm_area_struct *)
-+static inline int vma_dup_policy(struct vm_area_struct *src, struct vm_area_struct *dst)
- {
- 	return 0;
- }
-@@ -936,10 +921,6 @@ static inline void vma_adjust_trans_huge(struct vm_area_struct *vma,
- 					 unsigned long end,
- 					 struct vm_area_struct *next)
- {
--	(void)vma;
--	(void)start;
--	(void)end;
--	(void)next;
- }
- 
- static inline void hugetlb_split(struct vm_area_struct *, unsigned long) {}
-@@ -959,51 +940,48 @@ static inline void vm_acct_memory(long pages)
- {
- }
- 
--static inline void vma_interval_tree_insert(struct vm_area_struct *,
--					    struct rb_root_cached *)
-+static inline void vma_interval_tree_insert(struct vm_area_struct *vma,
-+					    struct rb_root_cached *rb)
- {
- }
- 
--static inline void vma_interval_tree_remove(struct vm_area_struct *,
--					    struct rb_root_cached *)
-+static inline void vma_interval_tree_remove(struct vm_area_struct *vma,
-+					    struct rb_root_cached *rb)
- {
- }
- 
--static inline void flush_dcache_mmap_unlock(struct address_space *)
-+static inline void flush_dcache_mmap_unlock(struct address_space *mapping)
- {
- }
- 
--static inline void anon_vma_interval_tree_insert(struct anon_vma_chain*,
--						 struct rb_root_cached *)
-+static inline void anon_vma_interval_tree_insert(struct anon_vma_chain *avc,
-+						 struct rb_root_cached *rb)
- {
- }
- 
--static inline void anon_vma_interval_tree_remove(struct anon_vma_chain*,
--						 struct rb_root_cached *)
-+static inline void anon_vma_interval_tree_remove(struct anon_vma_chain *avc,
-+						 struct rb_root_cached *rb)
- {
- }
- 
--static inline void uprobe_mmap(struct vm_area_struct *)
-+static inline void uprobe_mmap(struct vm_area_struct *vma)
- {
- }
- 
- static inline void uprobe_munmap(struct vm_area_struct *vma,
- 				 unsigned long start, unsigned long end)
- {
--	(void)vma;
--	(void)start;
--	(void)end;
- }
- 
--static inline void i_mmap_lock_write(struct address_space *)
-+static inline void i_mmap_lock_write(struct address_space *mapping)
- {
- }
- 
--static inline void anon_vma_lock_write(struct anon_vma *)
-+static inline void anon_vma_lock_write(struct anon_vma *anon_vma)
- {
- }
- 
--static inline void vma_assert_write_locked(struct vm_area_struct *)
-+static inline void vma_assert_write_locked(struct vm_area_struct *vma)
- {
- }
- 
-@@ -1013,16 +991,16 @@ static inline void unlink_anon_vmas(struct vm_area_struct *vma)
- 	vma->anon_vma->was_unlinked = true;
- }
- 
--static inline void anon_vma_unlock_write(struct anon_vma *)
-+static inline void anon_vma_unlock_write(struct anon_vma *anon_vma)
- {
- }
- 
--static inline void i_mmap_unlock_write(struct address_space *)
-+static inline void i_mmap_unlock_write(struct address_space *mapping)
- {
- }
- 
--static inline void anon_vma_merge(struct vm_area_struct *,
--				  struct vm_area_struct *)
-+static inline void anon_vma_merge(struct vm_area_struct *vma,
-+				  struct vm_area_struct *next)
- {
- }
- 
-@@ -1031,27 +1009,22 @@ static inline int userfaultfd_unmap_prep(struct vm_area_struct *vma,
- 					 unsigned long end,
- 					 struct list_head *unmaps)
- {
--	(void)vma;
--	(void)start;
--	(void)end;
--	(void)unmaps;
+ /*
+  * mas_ascend() - Walk up a level of the tree.
+  * @mas: The maple state
+@@ -1878,21 +1856,7 @@ static inline int mab_calc_split(struct ma_state *mas,
+ 	 * end on a NULL entry, with the exception of the left-most leaf.  The
+ 	 * limitation means that the split of a node must be checked for this condition
+ 	 * and be able to put more data in one direction or the other.
+-	 */
+-	if (unlikely((mas->mas_flags & MA_STATE_BULK))) {
+-		*mid_split = 0;
+-		split = b_end - mt_min_slots[bn->type];
 -
- 	return 0;
- }
- 
--static inline void mmap_write_downgrade(struct mm_struct *)
-+static inline void mmap_write_downgrade(struct mm_struct *mm)
- {
- }
- 
--static inline void mmap_read_unlock(struct mm_struct *)
-+static inline void mmap_read_unlock(struct mm_struct *mm)
- {
- }
- 
--static inline void mmap_write_unlock(struct mm_struct *)
-+static inline void mmap_write_unlock(struct mm_struct *mm)
- {
- }
- 
--static inline int mmap_write_lock_killable(struct mm_struct *)
-+static inline int mmap_write_lock_killable(struct mm_struct *mm)
- {
- 	return 0;
- }
-@@ -1060,10 +1033,6 @@ static inline bool can_modify_mm(struct mm_struct *mm,
- 				 unsigned long start,
- 				 unsigned long end)
- {
--	(void)mm;
--	(void)start;
--	(void)end;
+-		if (!ma_is_leaf(bn->type))
+-			return split;
 -
- 	return true;
- }
- 
-@@ -1071,16 +1040,13 @@ static inline void arch_unmap(struct mm_struct *mm,
- 				 unsigned long start,
- 				 unsigned long end)
- {
--	(void)mm;
--	(void)start;
--	(void)end;
- }
- 
--static inline void mmap_assert_locked(struct mm_struct *)
-+static inline void mmap_assert_locked(struct mm_struct *mm)
- {
- }
- 
--static inline bool mpol_equal(struct mempolicy *, struct mempolicy *)
-+static inline bool mpol_equal(struct mempolicy *a, struct mempolicy *b)
- {
- 	return true;
- }
-@@ -1088,63 +1054,62 @@ static inline bool mpol_equal(struct mempolicy *, struct mempolicy *)
- static inline void khugepaged_enter_vma(struct vm_area_struct *vma,
- 			  vm_flags_t vm_flags)
- {
--	(void)vma;
--	(void)vm_flags;
- }
- 
--static inline bool mapping_can_writeback(struct address_space *)
-+static inline bool mapping_can_writeback(struct address_space *mapping)
- {
- 	return true;
- }
- 
--static inline bool is_vm_hugetlb_page(struct vm_area_struct *)
-+static inline bool is_vm_hugetlb_page(struct vm_area_struct *vma)
- {
- 	return false;
- }
- 
--static inline bool vma_soft_dirty_enabled(struct vm_area_struct *)
-+static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
- {
- 	return false;
- }
- 
--static inline bool userfaultfd_wp(struct vm_area_struct *)
-+static inline bool userfaultfd_wp(struct vm_area_struct *vma)
- {
- 	return false;
- }
- 
--static inline void mmap_assert_write_locked(struct mm_struct *)
-+static inline void mmap_assert_write_locked(struct mm_struct *mm)
- {
- }
- 
--static inline void mutex_lock(struct mutex *)
-+static inline void mutex_lock(struct mutex *lock)
- {
- }
- 
--static inline void mutex_unlock(struct mutex *)
-+static inline void mutex_unlock(struct mutex *lock)
- {
- }
- 
--static inline bool mutex_is_locked(struct mutex *)
-+static inline bool mutex_is_locked(struct mutex *lock)
- {
- 	return true;
- }
- 
--static inline bool signal_pending(void *)
-+static inline bool signal_pending(void *p)
- {
- 	return false;
- }
- 
--static inline bool is_file_hugepages(struct file *)
-+static inline bool is_file_hugepages(struct file *file)
- {
- 	return false;
- }
- 
--static inline int security_vm_enough_memory_mm(struct mm_struct *, long)
-+static inline int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
- {
- 	return 0;
- }
- 
--static inline bool may_expand_vm(struct mm_struct *, vm_flags_t, unsigned long)
-+static inline bool may_expand_vm(struct mm_struct *mm, vm_flags_t flags,
-+				 unsigned long npages)
- {
- 	return true;
- }
-@@ -1169,7 +1134,7 @@ static inline void vm_flags_clear(struct vm_area_struct *vma,
- 	vma->__vm_flags &= ~flags;
- }
- 
--static inline int shmem_zero_setup(struct vm_area_struct *)
-+static inline int shmem_zero_setup(struct vm_area_struct *vma)
- {
- 	return 0;
- }
-@@ -1179,20 +1144,20 @@ static inline void vma_set_anonymous(struct vm_area_struct *vma)
- 	vma->vm_ops = NULL;
- }
- 
--static inline void ksm_add_vma(struct vm_area_struct *)
-+static inline void ksm_add_vma(struct vm_area_struct *vma)
- {
- }
- 
--static inline void perf_event_mmap(struct vm_area_struct *)
-+static inline void perf_event_mmap(struct vm_area_struct *vma)
- {
- }
- 
--static inline bool vma_is_dax(struct vm_area_struct *)
-+static inline bool vma_is_dax(struct vm_area_struct *vma)
- {
- 	return false;
- }
- 
--static inline struct vm_area_struct *get_gate_vma(struct mm_struct *)
-+static inline struct vm_area_struct *get_gate_vma(struct mm_struct *mm)
- {
- 	return NULL;
- }
-@@ -1217,16 +1182,16 @@ static inline void vma_set_page_prot(struct vm_area_struct *vma)
- 	WRITE_ONCE(vma->vm_page_prot, vm_page_prot);
- }
- 
--static inline bool arch_validate_flags(vm_flags_t)
-+static inline bool arch_validate_flags(vm_flags_t flags)
- {
- 	return true;
- }
- 
--static inline void vma_close(struct vm_area_struct *)
-+static inline void vma_close(struct vm_area_struct *vma)
- {
- }
- 
--static inline int mmap_file(struct file *, struct vm_area_struct *)
-+static inline int mmap_file(struct file *file, struct vm_area_struct *vma)
- {
- 	return 0;
- }
-@@ -1388,8 +1353,6 @@ static inline int mapping_map_writable(struct address_space *mapping)
- 
- static inline unsigned long move_page_tables(struct pagetable_move_control *pmc)
- {
--	(void)pmc;
+-		mas->mas_flags |= MA_STATE_REBALANCE;
+-		if (!bn->slot[split])
+-			split--;
+-		return split;
+-	}
 -
- 	return 0;
+-	/*
++	 *
+ 	 * Although extremely rare, it is possible to enter what is known as the 3-way
+ 	 * split scenario.  The 3-way split comes about by means of a store of a range
+ 	 * that overwrites the end and beginning of two full nodes.  The result is a set
+@@ -2039,27 +2003,6 @@ static inline void mab_mas_cp(struct maple_big_node *b_node,
+ 	}
  }
  
-@@ -1397,51 +1360,36 @@ static inline void free_pgd_range(struct mmu_gather *tlb,
- 			unsigned long addr, unsigned long end,
- 			unsigned long floor, unsigned long ceiling)
- {
--	(void)tlb;
--	(void)addr;
--	(void)end;
--	(void)floor;
--	(void)ceiling;
- }
- 
- static inline int ksm_execve(struct mm_struct *mm)
- {
--	(void)mm;
+-/*
+- * mas_bulk_rebalance() - Rebalance the end of a tree after a bulk insert.
+- * @mas: The maple state
+- * @end: The maple node end
+- * @mt: The maple node type
+- */
+-static inline void mas_bulk_rebalance(struct ma_state *mas, unsigned char end,
+-				      enum maple_type mt)
+-{
+-	if (!(mas->mas_flags & MA_STATE_BULK))
+-		return;
 -
+-	if (mte_is_root(mas->node))
+-		return;
+-
+-	if (end > mt_min_slots[mt]) {
+-		mas->mas_flags &= ~MA_STATE_REBALANCE;
+-		return;
+-	}
+-}
+-
+ /*
+  * mas_store_b_node() - Store an @entry into the b_node while also copying the
+  * data from a maple encoded node.
+@@ -2109,9 +2052,6 @@ static noinline_for_kasan void mas_store_b_node(struct ma_wr_state *wr_mas,
+ 	/* Handle new range ending before old range ends */
+ 	piv = mas_safe_pivot(mas, wr_mas->pivots, offset_end, wr_mas->type);
+ 	if (piv > mas->last) {
+-		if (piv == ULONG_MAX)
+-			mas_bulk_rebalance(mas, b_node->b_end, wr_mas->type);
+-
+ 		if (offset_end != slot)
+ 			wr_mas->content = mas_slot_locked(mas, wr_mas->slots,
+ 							  offset_end);
+@@ -3011,126 +2951,6 @@ static inline void mas_rebalance(struct ma_state *mas,
+ 	return mas_spanning_rebalance(mas, &mast, empty_count);
+ }
+ 
+-/*
+- * mas_destroy_rebalance() - Rebalance left-most node while destroying the maple
+- * state.
+- * @mas: The maple state
+- * @end: The end of the left-most node.
+- *
+- * During a mass-insert event (such as forking), it may be necessary to
+- * rebalance the left-most node when it is not sufficient.
+- */
+-static inline void mas_destroy_rebalance(struct ma_state *mas, unsigned char end)
+-{
+-	enum maple_type mt = mte_node_type(mas->node);
+-	struct maple_node reuse, *newnode, *parent, *new_left, *left, *node;
+-	struct maple_enode *eparent, *old_eparent;
+-	unsigned char offset, tmp, split = mt_slots[mt] / 2;
+-	void __rcu **l_slots, **slots;
+-	unsigned long *l_pivs, *pivs, gap;
+-	bool in_rcu = mt_in_rcu(mas->tree);
+-	unsigned char new_height = mas_mt_height(mas);
+-
+-	MA_STATE(l_mas, mas->tree, mas->index, mas->last);
+-
+-	l_mas = *mas;
+-	mas_prev_sibling(&l_mas);
+-
+-	/* set up node. */
+-	if (in_rcu) {
+-		newnode = mas_pop_node(mas);
+-	} else {
+-		newnode = &reuse;
+-	}
+-
+-	node = mas_mn(mas);
+-	newnode->parent = node->parent;
+-	slots = ma_slots(newnode, mt);
+-	pivs = ma_pivots(newnode, mt);
+-	left = mas_mn(&l_mas);
+-	l_slots = ma_slots(left, mt);
+-	l_pivs = ma_pivots(left, mt);
+-	if (!l_slots[split])
+-		split++;
+-	tmp = mas_data_end(&l_mas) - split;
+-
+-	memcpy(slots, l_slots + split + 1, sizeof(void *) * tmp);
+-	memcpy(pivs, l_pivs + split + 1, sizeof(unsigned long) * tmp);
+-	pivs[tmp] = l_mas.max;
+-	memcpy(slots + tmp, ma_slots(node, mt), sizeof(void *) * end);
+-	memcpy(pivs + tmp, ma_pivots(node, mt), sizeof(unsigned long) * end);
+-
+-	l_mas.max = l_pivs[split];
+-	mas->min = l_mas.max + 1;
+-	old_eparent = mt_mk_node(mte_parent(l_mas.node),
+-			     mas_parent_type(&l_mas, l_mas.node));
+-	tmp += end;
+-	if (!in_rcu) {
+-		unsigned char max_p = mt_pivots[mt];
+-		unsigned char max_s = mt_slots[mt];
+-
+-		if (tmp < max_p)
+-			memset(pivs + tmp, 0,
+-			       sizeof(unsigned long) * (max_p - tmp));
+-
+-		if (tmp < mt_slots[mt])
+-			memset(slots + tmp, 0, sizeof(void *) * (max_s - tmp));
+-
+-		memcpy(node, newnode, sizeof(struct maple_node));
+-		ma_set_meta(node, mt, 0, tmp - 1);
+-		mte_set_pivot(old_eparent, mte_parent_slot(l_mas.node),
+-			      l_pivs[split]);
+-
+-		/* Remove data from l_pivs. */
+-		tmp = split + 1;
+-		memset(l_pivs + tmp, 0, sizeof(unsigned long) * (max_p - tmp));
+-		memset(l_slots + tmp, 0, sizeof(void *) * (max_s - tmp));
+-		ma_set_meta(left, mt, 0, split);
+-		eparent = old_eparent;
+-
+-		goto done;
+-	}
+-
+-	/* RCU requires replacing both l_mas, mas, and parent. */
+-	mas->node = mt_mk_node(newnode, mt);
+-	ma_set_meta(newnode, mt, 0, tmp);
+-
+-	new_left = mas_pop_node(mas);
+-	new_left->parent = left->parent;
+-	mt = mte_node_type(l_mas.node);
+-	slots = ma_slots(new_left, mt);
+-	pivs = ma_pivots(new_left, mt);
+-	memcpy(slots, l_slots, sizeof(void *) * split);
+-	memcpy(pivs, l_pivs, sizeof(unsigned long) * split);
+-	ma_set_meta(new_left, mt, 0, split);
+-	l_mas.node = mt_mk_node(new_left, mt);
+-
+-	/* replace parent. */
+-	offset = mte_parent_slot(mas->node);
+-	mt = mas_parent_type(&l_mas, l_mas.node);
+-	parent = mas_pop_node(mas);
+-	slots = ma_slots(parent, mt);
+-	pivs = ma_pivots(parent, mt);
+-	memcpy(parent, mte_to_node(old_eparent), sizeof(struct maple_node));
+-	rcu_assign_pointer(slots[offset], mas->node);
+-	rcu_assign_pointer(slots[offset - 1], l_mas.node);
+-	pivs[offset - 1] = l_mas.max;
+-	eparent = mt_mk_node(parent, mt);
+-done:
+-	gap = mas_leaf_max_gap(mas);
+-	mte_set_gap(eparent, mte_parent_slot(mas->node), gap);
+-	gap = mas_leaf_max_gap(&l_mas);
+-	mte_set_gap(eparent, mte_parent_slot(l_mas.node), gap);
+-	mas_ascend(mas);
+-
+-	if (in_rcu) {
+-		mas_replace_node(mas, old_eparent, new_height);
+-		mas_adopt_children(mas, mas->node);
+-	}
+-
+-	mas_update_gap(mas);
+-}
+-
+ /*
+  * mas_split_final_node() - Split the final node in a subtree operation.
+  * @mast: the maple subtree state
+@@ -3837,8 +3657,6 @@ static inline void mas_wr_node_store(struct ma_wr_state *wr_mas,
+ 
+ 	if (mas->last == wr_mas->end_piv)
+ 		offset_end++; /* don't copy this offset */
+-	else if (unlikely(wr_mas->r_max == ULONG_MAX))
+-		mas_bulk_rebalance(mas, mas->end, wr_mas->type);
+ 
+ 	/* set up node. */
+ 	if (in_rcu) {
+@@ -4255,7 +4073,7 @@ static inline enum store_type mas_wr_store_type(struct ma_wr_state *wr_mas)
+ 	new_end = mas_wr_new_end(wr_mas);
+ 	/* Potential spanning rebalance collapsing a node */
+ 	if (new_end < mt_min_slots[wr_mas->type]) {
+-		if (!mte_is_root(mas->node) && !(mas->mas_flags & MA_STATE_BULK))
++		if (!mte_is_root(mas->node))
+ 			return  wr_rebalance;
+ 		return wr_node_store;
+ 	}
+@@ -5562,25 +5380,7 @@ void mas_destroy(struct ma_state *mas)
+ 	struct maple_alloc *node;
+ 	unsigned long total;
+ 
+-	/*
+-	 * When using mas_for_each() to insert an expected number of elements,
+-	 * it is possible that the number inserted is less than the expected
+-	 * number.  To fix an invalid final node, a check is performed here to
+-	 * rebalance the previous node with the final node.
+-	 */
+-	if (mas->mas_flags & MA_STATE_REBALANCE) {
+-		unsigned char end;
+-		if (mas_is_err(mas))
+-			mas_reset(mas);
+-		mas_start(mas);
+-		mtree_range_walk(mas);
+-		end = mas->end + 1;
+-		if (end < mt_min_slot_count(mas->node) - 1)
+-			mas_destroy_rebalance(mas, end);
+-
+-		mas->mas_flags &= ~MA_STATE_REBALANCE;
+-	}
+-	mas->mas_flags &= ~(MA_STATE_BULK|MA_STATE_PREALLOC);
++	mas->mas_flags &= ~MA_STATE_PREALLOC;
+ 
+ 	total = mas_allocated(mas);
+ 	while (total) {
+@@ -5600,68 +5400,6 @@ void mas_destroy(struct ma_state *mas)
+ }
+ EXPORT_SYMBOL_GPL(mas_destroy);
+ 
+-/*
+- * mas_expected_entries() - Set the expected number of entries that will be inserted.
+- * @mas: The maple state
+- * @nr_entries: The number of expected entries.
+- *
+- * This will attempt to pre-allocate enough nodes to store the expected number
+- * of entries.  The allocations will occur using the bulk allocator interface
+- * for speed.  Please call mas_destroy() on the @mas after inserting the entries
+- * to ensure any unused nodes are freed.
+- *
+- * Return: 0 on success, -ENOMEM if memory could not be allocated.
+- */
+-int mas_expected_entries(struct ma_state *mas, unsigned long nr_entries)
+-{
+-	int nonleaf_cap = MAPLE_ARANGE64_SLOTS - 2;
+-	struct maple_enode *enode = mas->node;
+-	int nr_nodes;
+-	int ret;
+-
+-	/*
+-	 * Sometimes it is necessary to duplicate a tree to a new tree, such as
+-	 * forking a process and duplicating the VMAs from one tree to a new
+-	 * tree.  When such a situation arises, it is known that the new tree is
+-	 * not going to be used until the entire tree is populated.  For
+-	 * performance reasons, it is best to use a bulk load with RCU disabled.
+-	 * This allows for optimistic splitting that favours the left and reuse
+-	 * of nodes during the operation.
+-	 */
+-
+-	/* Optimize splitting for bulk insert in-order */
+-	mas->mas_flags |= MA_STATE_BULK;
+-
+-	/*
+-	 * Avoid overflow, assume a gap between each entry and a trailing null.
+-	 * If this is wrong, it just means allocation can happen during
+-	 * insertion of entries.
+-	 */
+-	nr_nodes = max(nr_entries, nr_entries * 2 + 1);
+-	if (!mt_is_alloc(mas->tree))
+-		nonleaf_cap = MAPLE_RANGE64_SLOTS - 2;
+-
+-	/* Leaves; reduce slots to keep space for expansion */
+-	nr_nodes = DIV_ROUND_UP(nr_nodes, MAPLE_RANGE64_SLOTS - 2);
+-	/* Internal nodes */
+-	nr_nodes += DIV_ROUND_UP(nr_nodes, nonleaf_cap);
+-	/* Add working room for split (2 nodes) + new parents */
+-	mas_node_count_gfp(mas, nr_nodes + 3, GFP_KERNEL);
+-
+-	/* Detect if allocations run out */
+-	mas->mas_flags |= MA_STATE_PREALLOC;
+-
+-	if (!mas_is_err(mas))
+-		return 0;
+-
+-	ret = xa_err(mas->node);
+-	mas->node = enode;
+-	mas_destroy(mas);
+-	return ret;
+-
+-}
+-EXPORT_SYMBOL_GPL(mas_expected_entries);
+-
+ static void mas_may_activate(struct ma_state *mas)
+ {
+ 	if (!mas->node) {
+diff --git a/lib/test_maple_tree.c b/lib/test_maple_tree.c
+index cb3936595b0d56a9682ff100eba54693a1427829..14fbbee32046a13d54d60dcac2b45be2bd190ac4 100644
+--- a/lib/test_maple_tree.c
++++ b/lib/test_maple_tree.c
+@@ -2746,139 +2746,6 @@ static noinline void __init check_fuzzer(struct maple_tree *mt)
+ 	mtree_test_erase(mt, ULONG_MAX - 10);
+ }
+ 
+-/* duplicate the tree with a specific gap */
+-static noinline void __init check_dup_gaps(struct maple_tree *mt,
+-				    unsigned long nr_entries, bool zero_start,
+-				    unsigned long gap)
+-{
+-	unsigned long i = 0;
+-	struct maple_tree newmt;
+-	int ret;
+-	void *tmp;
+-	MA_STATE(mas, mt, 0, 0);
+-	MA_STATE(newmas, &newmt, 0, 0);
+-	struct rw_semaphore newmt_lock;
+-
+-	init_rwsem(&newmt_lock);
+-	mt_set_external_lock(&newmt, &newmt_lock);
+-
+-	if (!zero_start)
+-		i = 1;
+-
+-	mt_zero_nr_tallocated();
+-	for (; i <= nr_entries; i++)
+-		mtree_store_range(mt, i*10, (i+1)*10 - gap,
+-				  xa_mk_value(i), GFP_KERNEL);
+-
+-	mt_init_flags(&newmt, MT_FLAGS_ALLOC_RANGE | MT_FLAGS_LOCK_EXTERN);
+-	mt_set_non_kernel(99999);
+-	down_write(&newmt_lock);
+-	ret = mas_expected_entries(&newmas, nr_entries);
+-	mt_set_non_kernel(0);
+-	MT_BUG_ON(mt, ret != 0);
+-
+-	rcu_read_lock();
+-	mas_for_each(&mas, tmp, ULONG_MAX) {
+-		newmas.index = mas.index;
+-		newmas.last = mas.last;
+-		mas_store(&newmas, tmp);
+-	}
+-	rcu_read_unlock();
+-	mas_destroy(&newmas);
+-
+-	__mt_destroy(&newmt);
+-	up_write(&newmt_lock);
+-}
+-
+-/* Duplicate many sizes of trees.  Mainly to test expected entry values */
+-static noinline void __init check_dup(struct maple_tree *mt)
+-{
+-	int i;
+-	int big_start = 100010;
+-
+-	/* Check with a value at zero */
+-	for (i = 10; i < 1000; i++) {
+-		mt_init_flags(mt, MT_FLAGS_ALLOC_RANGE);
+-		check_dup_gaps(mt, i, true, 5);
+-		mtree_destroy(mt);
+-		rcu_barrier();
+-	}
+-
+-	cond_resched();
+-	mt_cache_shrink();
+-	/* Check with a value at zero, no gap */
+-	for (i = 1000; i < 2000; i++) {
+-		mt_init_flags(mt, MT_FLAGS_ALLOC_RANGE);
+-		check_dup_gaps(mt, i, true, 0);
+-		mtree_destroy(mt);
+-		rcu_barrier();
+-	}
+-
+-	cond_resched();
+-	mt_cache_shrink();
+-	/* Check with a value at zero and unreasonably large */
+-	for (i = big_start; i < big_start + 10; i++) {
+-		mt_init_flags(mt, MT_FLAGS_ALLOC_RANGE);
+-		check_dup_gaps(mt, i, true, 5);
+-		mtree_destroy(mt);
+-		rcu_barrier();
+-	}
+-
+-	cond_resched();
+-	mt_cache_shrink();
+-	/* Small to medium size not starting at zero*/
+-	for (i = 200; i < 1000; i++) {
+-		mt_init_flags(mt, MT_FLAGS_ALLOC_RANGE);
+-		check_dup_gaps(mt, i, false, 5);
+-		mtree_destroy(mt);
+-		rcu_barrier();
+-	}
+-
+-	cond_resched();
+-	mt_cache_shrink();
+-	/* Unreasonably large not starting at zero*/
+-	for (i = big_start; i < big_start + 10; i++) {
+-		mt_init_flags(mt, MT_FLAGS_ALLOC_RANGE);
+-		check_dup_gaps(mt, i, false, 5);
+-		mtree_destroy(mt);
+-		rcu_barrier();
+-		cond_resched();
+-		mt_cache_shrink();
+-	}
+-
+-	/* Check non-allocation tree not starting at zero */
+-	for (i = 1500; i < 3000; i++) {
+-		mt_init_flags(mt, 0);
+-		check_dup_gaps(mt, i, false, 5);
+-		mtree_destroy(mt);
+-		rcu_barrier();
+-		cond_resched();
+-		if (i % 2 == 0)
+-			mt_cache_shrink();
+-	}
+-
+-	mt_cache_shrink();
+-	/* Check non-allocation tree starting at zero */
+-	for (i = 200; i < 1000; i++) {
+-		mt_init_flags(mt, 0);
+-		check_dup_gaps(mt, i, true, 5);
+-		mtree_destroy(mt);
+-		rcu_barrier();
+-		cond_resched();
+-	}
+-
+-	mt_cache_shrink();
+-	/* Unreasonably large */
+-	for (i = big_start + 5; i < big_start + 10; i++) {
+-		mt_init_flags(mt, 0);
+-		check_dup_gaps(mt, i, true, 5);
+-		mtree_destroy(mt);
+-		rcu_barrier();
+-		mt_cache_shrink();
+-		cond_resched();
+-	}
+-}
+-
+ static noinline void __init check_bnode_min_spanning(struct maple_tree *mt)
+ {
+ 	int i = 50;
+@@ -4077,10 +3944,6 @@ static int __init maple_tree_seed(void)
+ 	check_fuzzer(&tree);
+ 	mtree_destroy(&tree);
+ 
+-	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
+-	check_dup(&tree);
+-	mtree_destroy(&tree);
+-
+ 	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
+ 	check_bnode_min_spanning(&tree);
+ 	mtree_destroy(&tree);
+diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+index 172700fb7784d29f9403003b4484a5ebd7aa316b..c0543060dae2510477963331fb0ccdffd78ea965 100644
+--- a/tools/testing/radix-tree/maple.c
++++ b/tools/testing/radix-tree/maple.c
+@@ -35455,17 +35455,6 @@ static void check_dfs_preorder(struct maple_tree *mt)
+ 	MT_BUG_ON(mt, count != e);
+ 	mtree_destroy(mt);
+ 
+-	mt_init_flags(mt, MT_FLAGS_ALLOC_RANGE);
+-	mas_reset(&mas);
+-	mt_zero_nr_tallocated();
+-	mt_set_non_kernel(200);
+-	mas_expected_entries(&mas, max);
+-	for (count = 0; count <= max; count++) {
+-		mas.index = mas.last = count;
+-		mas_store(&mas, xa_mk_value(count));
+-		MT_BUG_ON(mt, mas_is_err(&mas));
+-	}
+-	mas_destroy(&mas);
+ 	rcu_barrier();
+ 	/*
+ 	 * pr_info(" ->seq test of 0-%lu %luK in %d active (%d total)\n",
+@@ -36454,27 +36443,6 @@ static inline int check_vma_modification(struct maple_tree *mt)
  	return 0;
  }
  
- static inline void ksm_exit(struct mm_struct *mm)
+-/*
+- * test to check that bulk stores do not use wr_rebalance as the store
+- * type.
+- */
+-static inline void check_bulk_rebalance(struct maple_tree *mt)
+-{
+-	MA_STATE(mas, mt, ULONG_MAX, ULONG_MAX);
+-	int max = 10;
+-
+-	build_full_tree(mt, 0, 2);
+-
+-	/* erase every entry in the tree */
+-	do {
+-		/* set up bulk store mode */
+-		mas_expected_entries(&mas, max);
+-		mas_erase(&mas);
+-		MT_BUG_ON(mt, mas.store_type == wr_rebalance);
+-	} while (mas_prev(&mas, 0) != NULL);
+-
+-	mas_destroy(&mas);
+-}
+ 
+ void farmer_tests(void)
  {
--	(void)mm;
- }
+@@ -36487,10 +36455,6 @@ void farmer_tests(void)
+ 	check_vma_modification(&tree);
+ 	mtree_destroy(&tree);
  
- static inline void vma_lock_init(struct vm_area_struct *vma, bool reset_refcnt)
- {
--	(void)vma;
--	(void)reset_refcnt;
- }
+-	mt_init(&tree);
+-	check_bulk_rebalance(&tree);
+-	mtree_destroy(&tree);
+-
+ 	tree.ma_root = xa_mk_value(0);
+ 	mt_dump(&tree, mt_dump_dec);
  
- static inline void vma_numab_state_init(struct vm_area_struct *vma)
- {
--	(void)vma;
- }
- 
- static inline void vma_numab_state_free(struct vm_area_struct *vma)
- {
--	(void)vma;
- }
- 
- static inline void dup_anon_vma_name(struct vm_area_struct *orig_vma,
- 				     struct vm_area_struct *new_vma)
- {
--	(void)orig_vma;
--	(void)new_vma;
- }
- 
- static inline void free_anon_vma_name(struct vm_area_struct *vma)
- {
--	(void)vma;
- }
- 
- /* Declared in vma.h. */
-@@ -1495,7 +1443,6 @@ static inline int vfs_mmap_prepare(struct file *file, struct vm_area_desc *desc)
- 
- static inline void fixup_hugetlb_reservations(struct vm_area_struct *vma)
- {
--	(void)vma;
- }
- 
- static inline void vma_set_file(struct vm_area_struct *vma, struct file *file)
-@@ -1506,13 +1453,13 @@ static inline void vma_set_file(struct vm_area_struct *vma, struct file *file)
- 	fput(file);
- }
- 
--static inline bool shmem_file(struct file *)
-+static inline bool shmem_file(struct file *file)
- {
- 	return false;
- }
- 
--static inline vm_flags_t ksm_vma_flags(const struct mm_struct *, const struct file *,
--			 vm_flags_t vm_flags)
-+static inline vm_flags_t ksm_vma_flags(const struct mm_struct *mm,
-+		const struct file *file, vm_flags_t vm_flags)
- {
- 	return vm_flags;
- }
 
 -- 
 2.51.0
