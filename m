@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-809982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12473B5143F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:45:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF69B5143E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCAFC487E54
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:45:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DD86541B92
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54085319840;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11AB31984C;
 	Wed, 10 Sep 2025 10:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jp5UqNS1"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g/M2mrch"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B3D2C2365
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A25330DEB0
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757501064; cv=none; b=F7ZOVBKVLJ/NFEjTJ3cYZDq26Rg8ms+SYei9Jx1NyP0fiQvWuGCUnEyQxBy3Xxa9hBlqFFFteZHCD2mtTVodCShd8m4+xj3WCChnOt0qv+haRUd48S144/jdYFcbdK+HMtjsjwQToUSjUFpgZEzI0ks76SKZhhx6PxAsTzXde6c=
+	t=1757501064; cv=none; b=UdxEtqTT3oYvMtASaIwG3GbaRNJhgJXsZxLyrT6qUSn4gBk5IICAKSovW7zgh3EgiSDY+qKhw3Y16S0sKO7prAAj2p4drOUPynDleCkYbTver/L7pnkqk9X7XMwRL5UoCgRe4IgIvzYN5VdoOxyFeuZmfT/HZiRWRHXNmIrMV98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757501064; c=relaxed/simple;
-	bh=9uLbL4CfehXgK0FgR1jl+4z97FyCLswBjlNfgLA3G44=;
+	bh=M1UcDlfXbj/5vPqirllwe6Mt+pNopstDQ9HKCl8tOeY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aXcjp4+ygzroOaZdeJdMDcIrDo0A0hvHHpbOjfYeAfOkG1pt4TirxbBouhDIoFuVYF5WVaKz/sVrooXadq+ezy0165m4Aq5ibAyLeLG8LSB75OZ7SsZh0RBczVUf4K2tREAQKNbDdj5AEeljLW+E67zllAwtaV8jChr9W/yaKTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jp5UqNS1; arc=none smtp.client-ip=209.85.208.42
+	 In-Reply-To:To:Cc; b=IFSRKdYIvfz6mOhPoohtIepCfe/0NPOM+eJCaMrNK3BqzZaw+DKw3x5+4ORLCMkS3TbV61gk+mVVB0/6L0wzjHCo6ilu8gQBzY5LQKb38cI6qTKBkfTsW1Bmu53xLjOjDy/3WabzA6AnuuYtuPI2T6s11Z1sEx0sErCg7/ko1Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g/M2mrch; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6217798e8acso992503a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 03:44:21 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6285612382aso472842a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 03:44:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757501060; x=1758105860; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757501061; x=1758105861; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cqRItD2bt3js5TTmQrynwO8hQqUf0mH+3ap8vOPgmc0=;
-        b=Jp5UqNS1eN9d8Wbrq5dRSOoFAUz0ZBrPhdanqQrMnlfWE4ePAOF/vuh35Bd5fRorXW
-         7g27a+HIrInmcLsfJZHiN2D4A301ZvDEtdymFly6NW+PL87dNv2fqQi2NJEQl/cK0Xtz
-         nbcO+JtKzfi3jaNo/EpyvbwTtR6WXs1cDe6n8zrBWNnHAaONPeYHhbZaUdg4C4GhCnhA
-         EvhNicI5/ploCgnA4zMPrfqE/BXugHucamzWZLH5fJ+fqplgqkEy/Qpv1roPX9ZAnl4w
-         ZrcgUTycHeeeq40bwKEgTtgeCdbFIMLg9Sk17/DxioVruW7e2ACJTmAohGBb69Ivcg6B
-         rOvw==
+        bh=BnBsMIetOHLgxvRafB9XZsD33miPY9fW8C/xMa98MG0=;
+        b=g/M2mrchhOJWWaLk51lksJeDaFxJBaDowFb//By3kF7GJtlNlFe8k4CBd+GBPq72YM
+         Ugw2IjQw8ZmGphzV4r0yo3ToLqzikF5X23LLU7TvPrp3VIkwxPMsqqDyDAQztYmq2p9C
+         G5LI0GXx1G3YuXeQS4jj6FZhk8pie4JaGkvlNKxJJow3Ivt5wvw0XBI52CgzMDB8fxn2
+         pncn1SkAcUdpdaYVwXVq/OL0kdDVpTOWhXuDWsAU3PH2my+LK+WUWkX0cGX3hxZzuP/1
+         aTcvzBKoYNoWrTAt83eLSmWRbgTvXMjZiZzhBw66uaF88seIJbv4HofRJB5ueHcCxovR
+         klug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757501060; x=1758105860;
+        d=1e100.net; s=20230601; t=1757501061; x=1758105861;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cqRItD2bt3js5TTmQrynwO8hQqUf0mH+3ap8vOPgmc0=;
-        b=nJKoArGlD/vyXqRJ2kr/wTcf4Qd4X1P6ro4uPhkj80Bok2RHGz5qhFzNVH+ku5lNq1
-         V2F8Vcg0ETPpuY2rS/mlpkSejKk0obbHib45KKG5YuB/cXInN3qB7MsilUXlNmv8LcxI
-         nfs4XGg6cwYKRk1LCCnfWAWIqIHNJ75P4pwYwOyoqm4gmt9sK6aJNz1SqvH+dH3ZLjP/
-         G7N0x2rizvh5XCO+LIbSpKyryNEfDFZPhgL5yAdUNKO9AaqHBxiJYhguax8U3A3WA2lu
-         Ful/8S2yC+HnyL3aAQPRMmfOQ0e6TxFOwyTY8Zhagz8gBm/zl1R2HFNYdUEX+3uzZDdz
-         FQQw==
-X-Gm-Message-State: AOJu0YzBSOABrF1N8uXq8+UMIY8TVRbQBMa5hpDnCvV0aCxIxiD3pnhH
-	dmBzb5szk23iPDaLw9SkBJNT0VS7qlRLiUWeWukImwVDemRTPGjYvjHXHHsEhT3/qKQ=
-X-Gm-Gg: ASbGncsOjOE3DseP+05/Sqxkvwkn1EDX6dXYOSvqXibr56iyjxTCbewGOzz4JxOPdKn
-	psLuR9bWjgBfDKO32v6sxVce/Cahz9E/Ha9hGI0QVnN05/GLyHoED4D51ebmksU/mLdk0u9dyca
-	YkOZcnpPOLliHv/mH9A7kslRSgbcgji/YsXt8lQ1hy3XXUZm0yY6ejmcfePXXpDW3luWddk8eP4
-	iRDIfH9paK+L/Yii6WrSTq+pD35ArQcavBrUrjKYVc9vAY0CcYcV6dzzzjCcu0/9pnc/K5/cGlA
-	kFyoXmIZbatR/Yeeidf6CQFdZf8St12xrFt4SIsu48Jqv0kZ08M/8W6iqu/cAlc/UrBkl/99vds
-	r/V/HjPfsgArCUikyKHLm+dFplh1zAQAtRiByjDg=
-X-Google-Smtp-Source: AGHT+IEpTQEtThVJ24rqHPh2z2AuC0Jni6hadwlzpRBmk8LSW8tMLyniWOtwKNncJCF0pQQNoWuS9Q==
-X-Received: by 2002:a05:6402:325b:b0:62d:c7b9:b149 with SMTP id 4fb4d7f45d1cf-62dc7b9b348mr461877a12.2.1757501060110;
-        Wed, 10 Sep 2025 03:44:20 -0700 (PDT)
+        bh=BnBsMIetOHLgxvRafB9XZsD33miPY9fW8C/xMa98MG0=;
+        b=ueGJoI10jbWMiPW9AWiyIic4F12rh86mF6zCYyrdbyKUu/2MhdBKntXIzFTYlgNuOe
+         k1rZZ0tLqUxH0znEIcl/WA9Tmsdu1FGtdlTDi4GMWAGqBJjDKtL7DBVkuee8DiGhBMyU
+         3juwZ0HCC/URNQYKiMNhAY8FKxVqTfqpMRb4efci/7KMnnhtK0dc0MC8MR6ZsQlO+Dx8
+         EGh5k5Z/VE95IN7EF760ILpuLHwiilEQAmsvgv8vNP8L/zuPbtj8wN9UNODRgb4H1H3g
+         4TtAlFSD4f+Skv0phOQyp3b0pFUp/WZjwonAb316bg4H/5ARsXkTItSk1Z8urrHM6RuC
+         Q0RQ==
+X-Gm-Message-State: AOJu0Yyx27dINklScPiGpE87qi8+0b3Dtl8WrSnxKhVtiJBFRTJ13uDD
+	nY5H/5NaCc6qU795RHHc8VNA7OfhtC8MDCXIaKaOlvsoaIOHWqWYmmC17Z/WWYfMmlc=
+X-Gm-Gg: ASbGncvPNHX507ajBxxWXh0yoP3nzCQxZ00kg5sJtTuociYhNpstqZwT+a65kAitYOX
+	OuuRRlAJV8U6z9d0Sq5CvnfroKu/XWYZZorkaLrGP0OQvqu9qzi0q30Wly7/Gbz6fkcThcYWEmq
+	jwLCq+gUPlIRhIlIKfXaHNHHcB/FmOJhwQaJ2akcNs3WRYQeYygwYFiq04+CbyuiqcBwMeTXBlJ
+	FCHR+qihDP+ZH6iIefbZX0ILFGivK3vbCaGYtnfnVRRUQHKXfcGYcedQwkxjNfGB4BYr/pCnd/c
+	EYhPgzltNtK3k64I3eOz+NRJ8yLDgz5i9wsMydut1wmvf8iCP4jAAVnOTA//ZxRrEsYK6DB70J5
+	Ebeppfhq/bgSYbbDbvHYUgSzYwpRHltTkrCII+O4=
+X-Google-Smtp-Source: AGHT+IHndwPgiFalUI0Osr1mhVatUVBRlt9rqFbB1yf+l748O6YjoHNTTNyX3DiefIzkA9XLIxL87g==
+X-Received: by 2002:a05:6402:2345:b0:628:3c12:8732 with SMTP id 4fb4d7f45d1cf-6283c1294c9mr5449146a12.8.1757501061401;
+        Wed, 10 Sep 2025 03:44:21 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c01ae5f75sm3144890a12.46.2025.09.10.03.44.19
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c01ae5f75sm3144890a12.46.2025.09.10.03.44.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 03:44:19 -0700 (PDT)
+        Wed, 10 Sep 2025 03:44:20 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 10 Sep 2025 12:44:02 +0200
-Subject: [PATCH 06/13] memory: tegra30-emc: Simplify and handle deferred
+Date: Wed, 10 Sep 2025 12:44:03 +0200
+Subject: [PATCH 07/13] memory: tegra20-emc: Simplify and handle deferred
  probe with dev_err_probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-memory-tegra-cleanup-v1-6-023c33a2d997@linaro.org>
+Message-Id: <20250910-memory-tegra-cleanup-v1-7-023c33a2d997@linaro.org>
 References: <20250910-memory-tegra-cleanup-v1-0-023c33a2d997@linaro.org>
 In-Reply-To: <20250910-memory-tegra-cleanup-v1-0-023c33a2d997@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -93,21 +93,21 @@ Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
  Aaron Kling <webgeek1234@gmail.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2183;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2340;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=9uLbL4CfehXgK0FgR1jl+4z97FyCLswBjlNfgLA3G44=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowVZz3v9AbJoO2ZDaH8ze2R7RA8EtirBgZASnh
- lSu5ws/TJGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMFWcwAKCRDBN2bmhouD
- 14nSD/4n+XU86XSAKNv1sV0NhsLqho9+ahJdat/d4NoY2PTqmvCcWi8fnFuAUo6QzycsCIAxofq
- eDJI/DYitrW42nBMAZZfM5SkaNohsY9bXviojcRLC6KQ5zTHaWF09EHEGUtcBGIEzCyc5A1HPtb
- PtooA36aEQHm9X2+K0qJrgdJKsk2Qpd3hrnFuUGRLgPx3gfenJFhvGLdH1WJWXo9lketY7ynjFC
- zyxbRvNoh+RRL6I+OgfQEX13zQSnOiWGP1FvLEccsDb0NIjUF+r6dPdTwZF55acqS7H7YiV1gdw
- jSLNeJWNzneRwHnHpviy7G+CJcGWbWlnqsF0Frn9zE8YPPuXIZMCJYjmclspe028FfeH6zLx70J
- BpqlOSpJFi9niVl9N++TVp02WgXaOwi4H/3N5fe1PB2yIdF2ZRC4/t7akwrOIHTCakfRej4jNoe
- H+8595OGsv2r93lquQoel4cHXJAwRvYUep4D6KWI9zWWFQy2Tl+YykeUCVj2Pp50jSrGldLRnP2
- g+9L4um2sAqgEsI6Khk2aqSUNai4B0gHWcnCwEqkVSyRN/saXktQ6wGHe+Ee5UtXrGxjKtoUHdq
- HTm17+Qzxz/P6r82SMkLMqjzsAYY+J9Tfe+IctJSCAIrKNID0aBryJTLj8IyHViNm63tam+zvkp
- bLx2I71sqNEs7Ng==
+ bh=M1UcDlfXbj/5vPqirllwe6Mt+pNopstDQ9HKCl8tOeY=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowVZ0vbHbIrfCHEW8zwOekb7DVpj0wPZ/QUTL8
+ BZn64ePhuqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMFWdAAKCRDBN2bmhouD
+ 113ED/49eVcXsqTjBbSJYlPack6vuHMauo2QQxobnfuEmbtlDWntO+UJ23Hw6/HX5diGaMdpJh0
+ DRjQo+Joy/uwKhWKZQspD5kVHzV/JRuO0MPAvz+pCGYi+CYakhOUAlABQgMrGHrSLMSDncw16p1
+ wnMOytfiqr0Z9hML8JYbSRWbaKqRCv9WyJ+jiz1o67hv7ROWkAYUV8YG8TFCkhK//TbmDUdPy/7
+ gwvE4Q8D27+qKxMOZi3Nq2oTTPA6t78zXStaDHWdxYRNFV4wAj7x7pnj9jRNhsLPo0Mszg2aUeO
+ OBQtCfmpqv6RKdWBGGqRq13Q/OQhUbiN1AKCLKf9SxqTGcptBU8dcRkT++a4XkaFkfHachbx00w
+ IVcQGbAGOe3HCAQ7r+MKgatZgeZX739NcvuPzdVPAXgYIiB/Amotv8hFymIyRENCFVR1PsnNdPK
+ XpkVfKU1CvN508lZpOe0vYb19peu+f1EkBypIPgfB2o8ONdsVuwbl8ue9xf7PpWz2s5ZdOoUYuX
+ tsHbc3msA/7P2CvaUspPs/7BFJxGuoyGJ/Sh6VnpxqoVh9E7yYb+L2If0cIeHrVVH0dDqx5vxbD
+ fwJuei1bCGc2+KpTKO8TsXoWIeYG/AvUedwXfQRWs/ZvM2Zb2eB92LH/t6lgY4gGLyAWktgKTFm
+ 9AZAZKQ32Kx4n+Q==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
@@ -115,16 +115,18 @@ Certain calls, like clk_get, can cause probe deferral and driver should
 handle it.  Use dev_err_probe() to fix that and also change other
 non-deferred errors cases to make the code simpler.
 
+Also fix missing new line in error message of devm_devfreq_add_device().
+
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/memory/tegra/tegra30-emc.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+ drivers/memory/tegra/tegra20-emc.c | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index c96aa63a5aa085a409ae7ec901d2a210748f5bcb..cca386af423e9647266878ce6cd1bcec09c8eba4 100644
---- a/drivers/memory/tegra/tegra30-emc.c
-+++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -1563,9 +1563,8 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
+diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+index a34636a1c4c55419c323eabfe96c5f27375df344..18e266dde5d2a0fb962fadc04161b03fb79f76cb 100644
+--- a/drivers/memory/tegra/tegra20-emc.c
++++ b/drivers/memory/tegra/tegra20-emc.c
+@@ -1051,9 +1051,8 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
  
  remove_nodes:
  	icc_nodes_remove(&emc->provider);
@@ -135,7 +137,7 @@ index c96aa63a5aa085a409ae7ec901d2a210748f5bcb..cca386af423e9647266878ce6cd1bcec
  }
  
  static void devm_tegra_emc_unset_callback(void *data)
-@@ -1592,16 +1591,13 @@ static int tegra_emc_init_clk(struct tegra_emc *emc)
+@@ -1080,16 +1079,13 @@ static int tegra_emc_init_clk(struct tegra_emc *emc)
  		return err;
  
  	emc->clk = devm_clk_get(emc->dev, NULL);
@@ -157,19 +159,20 @@ index c96aa63a5aa085a409ae7ec901d2a210748f5bcb..cca386af423e9647266878ce6cd1bcec
  
  	err = devm_add_action_or_reset(emc->dev,
  				       devm_tegra_emc_unreg_clk_notifier, emc);
-@@ -1654,10 +1650,8 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 
- 	err = devm_request_irq(&pdev->dev, emc->irq, tegra_emc_isr, 0,
- 			       dev_name(&pdev->dev), emc);
--	if (err) {
--		dev_err(&pdev->dev, "failed to request irq: %d\n", err);
--		return err;
+@@ -1172,10 +1168,9 @@ static int tegra_emc_devfreq_init(struct tegra_emc *emc)
+ 	devfreq = devm_devfreq_add_device(emc->dev, &tegra_emc_devfreq_profile,
+ 					  DEVFREQ_GOV_SIMPLE_ONDEMAND,
+ 					  &emc->ondemand_data);
+-	if (IS_ERR(devfreq)) {
+-		dev_err(emc->dev, "failed to initialize devfreq: %pe", devfreq);
+-		return PTR_ERR(devfreq);
 -	}
-+	if (err)
-+		return dev_err_probe(&pdev->dev, err, "failed to request irq\n");
++	if (IS_ERR(devfreq))
++		return dev_err_probe(emc->dev, PTR_ERR(devfreq),
++				     "failed to initialize devfreq\n");
  
- 	err = tegra_emc_init_clk(emc);
- 	if (err)
+ 	return 0;
+ }
 
 -- 
 2.48.1
