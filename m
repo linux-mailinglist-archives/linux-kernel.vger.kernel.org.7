@@ -1,181 +1,223 @@
-Return-Path: <linux-kernel+bounces-809470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7059FB50E08
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:30:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74139B50E0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18CA616E60C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:30:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DBCB7B2B4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028A4304980;
-	Wed, 10 Sep 2025 06:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7C72D0283;
+	Wed, 10 Sep 2025 06:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoXZ/DDP"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PoYELaZU"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC2D2248BD;
-	Wed, 10 Sep 2025 06:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B18B1F2BA4;
+	Wed, 10 Sep 2025 06:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757485794; cv=none; b=c+j2aayflA6Ozqw3zk7E99NIWOkt+0+StswIx8bOJRfG6qnqJSWuBEPu9GvLR8Vg5o6DRcvqmagK6bIpFzg2Ock/ACFIhLDDovoM4DRR8ebcq519u5/vdp5hkVA97KEa56Pasa+CUNKeYRG92o25drM3TPmMwdm0Xcl0bw+E79g=
+	t=1757485857; cv=none; b=S3+piyl83h3HyeNpnJ+5k91gsz4tBeRXkeIh4+VmWeV0KxPcObkFIXuOvS+nv3u7Z9Olbe9jnV/yxnTg54Agw5j9G3iA4XWOOp/BWsf7HUee7vyj2U21DvarlEPuySKTxyjMAsDa+gH078L/wr+qbOwqLrDTt5h17egVrplUSkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757485794; c=relaxed/simple;
-	bh=Dibl/kQKaHorGgBtFOaZ+szvArwC/81oVD0cUkuxExk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vEGQUnT/avDKXDMZy7KIwF8c9nFrAVe2qMc7nM0R5IjSxT0ZTikn+MzpIzYEI1bvY/nqeWD5GlWqld7G78UHLuJKT7LDD9PhCNQJnDrJOERzgsyGMJ5y/qewZiZ91kdjouvhtB8f+cf/sqaQYUfpTvBbuS7JMEhye6pfwyyBfk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NoXZ/DDP; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3df35a67434so4003559f8f.3;
-        Tue, 09 Sep 2025 23:29:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757485791; x=1758090591; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XKP313wOh9DVVumYpdxBRg57U3LWJuOfY6g/8BKP5Aw=;
-        b=NoXZ/DDPhdymrbBIwP/N/C566y4RlYPUk193vv5F1wyqt1b2sr7/DnDgidtNI7HylV
-         hPo/8UAfWZl7lVDWDuF/HKEJx57v3Bjca/O7gieNBS98p5uBNT5wmEiWo6ohZfjqrDEM
-         yLcFk9vuTHMx4T1w/cyPp6QfZBdcUGQh03qFi1B2YPAii0xfy3AjTXcqb5ZhH3drLZQs
-         rBaABULmsFULHL3kvwX6ZtVm2ZAj5l/hms8pUN2Nzju0IvNtdQ3fN6wIg1448/7OAYXH
-         K/J/6RyQD+Sj3bFELFuM2LD5suvXx2leue4eEhS3Y7HAmJN95HgFzfgYDKh/MRgigV4t
-         w9Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757485791; x=1758090591;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XKP313wOh9DVVumYpdxBRg57U3LWJuOfY6g/8BKP5Aw=;
-        b=GUQ/OuJZMqB8WADs8rxT1ETEYKN9XrXS9S/YuNs4T7CiWwwo80vEawLhRfeFxwK6F4
-         Ct0ki6MzsPMmJeKLFd+rDgJOubyNYiKlv4TkJ2BZD+MLg2jFs/WnBVLSk/ezLvJXA78G
-         KNLEJGTc7pyCA3w+VPXc8uYZCBMts3xKLDqmepK3hIIKHtaNx/mmuNClorCm2UWgIhob
-         LgXeRl3y31f17i2NaWKzxYTNiIH0agBn7sLTZLn/TnoCnH1jhz1Fgd59SL6KZdi9XBae
-         SGJILpQfovs0SwakHq0pGp1nr5UbiSmXHLEOzRtW7GSJD2gEQwaBEzqR4jOX6gjSkxZo
-         GmNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVh3k0iN06EJLv7mz96RXdTFOvrnQdYirngHL7WQbqsAnQUOwyn2kQBLT1mQ36tmCFvMnzd/zU2vy9Dedg=@vger.kernel.org, AJvYcCWi7NSl08+FcUl1cpQ4P0+vTQWexVrzYdS/qd+6/O4HjWSmceUI0lNcWCWl6edZ6iAoZwZH2akJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9ucmBbc4x1udWvlle4Oyd/IsYvV4IsSK2L/KKodnhSPyeetUF
-	NDJ40gItTI0GVCkcEGiV1gmD9nq24SxN35Of5MDlDcVxY9Zt1eL+sGNP
-X-Gm-Gg: ASbGncsvqiGH36XN+p3R3nXg2BwVxFbgkvER2yMrB2ndHVjGKepLJPT7Czv9JN16lVs
-	VP7jnf3VefkCTNhAvwi3wIsF477zSrGzKQW+MfpB0+20F5p436h9UdqpIowFS1Q187L7si1x+he
-	LCEboANbkQ5R1M2mB4welS6korF4HwkOnYTSZ2XZ4LYlRaYmPL2XY9NXiGMXhkl1Xb3LTVcVxUm
-	sWj9I53aBxczAdgGVpeXFyHY0uKYokGiFtaMk6m6F9MkK4N/UQ9Y8Gv4Iei20YsHEBftcS9SUb1
-	qZOJxNEul9srQmPt3SOcbG2QgEMW4+OlvGnG6/vxuIDssZTIqAVN+L1ZI8D9BEIMkA5Seg+XECF
-	+E8cEkL9+Lwfk86d3d9MnLQ8aTMYv9OVq9OuTHpp1rGc=
-X-Google-Smtp-Source: AGHT+IH4xjeDI7BMGYFkTG+1E5nlBu48fC0/KJ/xYPASFL1LXZ2TrP6ZQFypKRu94cbojkyCom0C2w==
-X-Received: by 2002:a05:6000:4022:b0:3db:b975:dba with SMTP id ffacd0b85a97d-3e64bfd7047mr11281874f8f.63.1757485790700;
-        Tue, 09 Sep 2025 23:29:50 -0700 (PDT)
-Received: from localhost.localdomain ([159.196.197.79])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521c9cdbsm5832477f8f.16.2025.09.09.23.29.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 23:29:50 -0700 (PDT)
-From: Jamie Bainbridge <jamie.bainbridge@gmail.com>
-To: Nimal Prabudoss <nprabudoss@marvell.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Manish Chopra <manishc@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Manish Rangankar <manish.rangankar@cavium.com>,
-	Michal Kalderon <Michal.Kalderon@cavium.com>,
-	Ariel Elior <Ariel.Elior@cavium.com>
-Cc: Jamie Bainbridge <jamie.bainbridge@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 net] qed: Don't collect too many protection override GRC elements
-Date: Wed, 10 Sep 2025 16:29:16 +1000
-Message-ID: <f8e1182934aa274c18d0682a12dbaf347595469c.1757485536.git.jamie.bainbridge@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1757485857; c=relaxed/simple;
+	bh=2UbzDj4uOafPTJkONo1CB1yVdlo16YEjBnWAyMjgrw8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JRMBuHcuEBf8Pi7ayC0HjKsLWg1r2HubwPbxLyv5qO3U4EFjfj36Ifn1knjVAEqVm51hjKb+032l55yFcyMRzRgwApV4oSDV53HbrRKnvPI49s41YtXgJ8Y6POC5Wc7t+BJ774n5kFQ/koecCF1zm84+TW7z+tdKfyjFEy16UyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PoYELaZU; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58A64sCX000646;
+	Wed, 10 Sep 2025 06:30:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=FY/EXr
+	p2yH+KEZ3JsYKHI/jMOejDpaiwK892fvwEtbw=; b=PoYELaZUFSXQzs53Br/HtB
+	RVjMsS/MCfLk5e/8IEulm3Nl9y1P1q3P9aDcMk+7Do/GhqB5MNTjBv6gqqVoKjX3
+	HL+/NWVj+ninsaj1dsRQ3X6Y797Joojn8aaCkx+M3iKtZ8BqK4IzJj8OtV769SNN
+	yX6kQuhJriVTtm13Wr27jswB2cTCdftryTR9aPvd9hWoQz6Z7waQeN9pyn3Iurn0
+	gE3RJ7rJ7nK8hpOJP5ubNkfZURC9Pn2rral3RUQitElvKULjHVKuVvx3bfn7MJpT
+	UFK6MEYtsGeY8SexB8fPa93Skp895MgnDm1UtYXwL76jG0BMQrQk3BHJ+fWQ9u2w
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffcax0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Sep 2025 06:30:37 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58A37LAR001156;
+	Wed, 10 Sep 2025 06:30:36 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 491203er1g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Sep 2025 06:30:36 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58A6UZBq33292958
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 10 Sep 2025 06:30:36 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D41625805E;
+	Wed, 10 Sep 2025 06:30:35 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 236E658045;
+	Wed, 10 Sep 2025 06:30:31 +0000 (GMT)
+Received: from [9.43.57.88] (unknown [9.43.57.88])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 10 Sep 2025 06:30:30 +0000 (GMT)
+Message-ID: <a4fd99c3-faa6-4c6d-b7a5-4f32d3eed40b@linux.ibm.com>
+Date: Wed, 10 Sep 2025 12:00:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH for-6.18/block 06/10] blk-mq: split bitmap grow and resize
+ case in blk_mq_update_nr_requests()
+To: Yu Kuai <hailan@yukuai.org.cn>, Yu Kuai <yukuai1@huaweicloud.com>,
+        ming.lei@redhat.com, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+        johnny.chenyi@huawei.com
+References: <20250908061533.3062917-1-yukuai1@huaweicloud.com>
+ <20250908061533.3062917-7-yukuai1@huaweicloud.com>
+ <85259339-d832-468a-a9b0-0c326c896370@linux.ibm.com>
+ <8ab0b2e2-a3da-43b1-9fb8-141e85aee3b2@yukuai.org.cn>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <8ab0b2e2-a3da-43b1-9fb8-141e85aee3b2@yukuai.org.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Vgqm4KcRGdvJU3R8Y9om_chCmL6skbHj
+X-Proofpoint-GUID: Vgqm4KcRGdvJU3R8Y9om_chCmL6skbHj
+X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c11b0d cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=i0EeH86SAAAA:8 a=MAtkmkursVBXDMlYZQEA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfXzyxllk1o4YYs
+ WiEnI2Cns0l+EWGlT/VrWZOJxHaGyP5uA/poPVk51CR7sLjEHCjZkyMCUrYxNfCLPc5RYFeeHWz
+ PHPTt/gnzZ+02P2rNZrUSBVq7yCEMRxr79DRmjjALZMFzQifC/lUsrEDftSNaarh7UKI/+jGeI2
+ gI7a/hjH+Q3ZweNMJujR6sQH5aqgxOxpRppy2gnbMiG78S5z08cQ5brxED/y2EnwFBxDPtRDykD
+ oSKn9xB22utpGd9SsiH7vBzNONG9oXLb58ag/+1pO9JXRVdpOA5L0rKvVp+TindqgiSvRp7jgt2
+ akUYVowhmOMHc1ol+gTkAwAGVQ6fW0mJmGxc7BfoaWeP+3qfeVpfR2nPAua1ZT0n/bSeo+U2lo5
+ 2HqOWU2h
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-09_03,2025-09-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
 
-In the protection override dump path, the firmware can return far too
-many GRC elements, resulting in attempting to write past the end of the
-previously-kmalloc'ed dump buffer.
 
-This will result in a kernel panic with reason:
 
- BUG: unable to handle kernel paging request at ADDRESS
+On 9/9/25 10:09 PM, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/9/9 20:18, Nilay Shroff 写道:
+>>
+>> On 9/8/25 11:45 AM, Yu Kuai wrote:
+>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>
+>>> No functional changes are intended, make code cleaner and prepare to fix
+>>> the grow case in following patches.
+>>>
+>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>>> ---
+>>>   block/blk-mq.c | 28 ++++++++++++++++------------
+>>>   1 file changed, 16 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>>> index 1ff6370f7314..82fa81036115 100644
+>>> --- a/block/blk-mq.c
+>>> +++ b/block/blk-mq.c
+>>> @@ -4931,21 +4931,25 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
+>>>               blk_mq_tag_update_sched_shared_tags(q);
+>>>           else
+>>>               blk_mq_tag_resize_shared_tags(set, nr);
+>>> -    } else {
+>>> +    } else if (!q->elevator) {
+>>>           queue_for_each_hw_ctx(q, hctx, i) {
+>>>               if (!hctx->tags)
+>>>                   continue;
+>>> -            /*
+>>> -             * If we're using an MQ scheduler, just update the
+>>> -             * scheduler queue depth. This is similar to what the
+>>> -             * old code would do.
+>>> -             */
+>>> -            if (hctx->sched_tags)
+>>> -                ret = blk_mq_tag_update_depth(hctx,
+>>> -                            &hctx->sched_tags, nr);
+>>> -            else
+>>> -                ret = blk_mq_tag_update_depth(hctx,
+>>> -                            &hctx->tags, nr);
+>>> +            sbitmap_queue_resize(&hctx->tags->bitmap_tags,
+>>> +                nr - hctx->tags->nr_reserved_tags);
+>>> +        }
+>>> +    } else if (nr <= q->elevator->et->nr_requests) {
+>>> +        queue_for_each_hw_ctx(q, hctx, i) {
+>>> +            if (!hctx->sched_tags)
+>>> +                continue;
+>>> +            sbitmap_queue_resize(&hctx->sched_tags->bitmap_tags,
+>>> +                nr - hctx->sched_tags->nr_reserved_tags);
+>>> +        }
+>>> +    } else {
+>>> +        queue_for_each_hw_ctx(q, hctx, i) {
+>>> +            if (!hctx->sched_tags)
+>>> +                continue;
+>>> +            blk_mq_tag_update_depth(hctx, &hctx->sched_tags, nr);
+>>>               if (ret)
+>>>                   goto out;
+>>>           }
+>> The above code is good however can this be bit simplified?
+>> It's a bit difficult to follow through all nesting and so
+>> could it be simplified as below:
+>>
+>> if (shared-tags) {
+>>      if (elevator)
+>>         // resize sched-shared-tags bitmap
+>>      else
+>>         // resize shared-tags bitmap
+>> } else {
+>>      // non-shared tags
+>>      if (elevator) {
+>>          if (new-depth-is-less-than-the-current-depth)
+>>              // resize sched-tags bitmap
+>>          else
+>>              // handle sched tags grow
+>>      } else
+>>          // resize tags bitmap
+>> }
+> 
+> AFAIK, if - else if chain should be better than nested if - else, right?
+> 
+> If you don't mind, I can add comments to each else if chain to make code cleaner:
+> 
+> if () {
+>     /* shared tags */
+>     ...
+> } else if () {
+>     /* non-shared tags and elevator is none */
+>     ...
+> } else if () {
+>     /* non-shared tags and elevator is not none, nr_requests doesn't grow */
+>     ...
+> } else () {
+>     /* non-shared tags and elevator is not none, nr_requests grow */
+>     ...
+> }
+> 
+Yeah, I am good with the proper comments as well so that it'd be easy
+for anyone reviewing the code later to understand what those all nested
+if-else conditions meant. 
 
-where "ADDRESS" is just past the end of the protection override dump
-buffer. The start address of the buffer is:
- p_hwfn->cdev->dbg_features[DBG_FEATURE_PROTECTION_OVERRIDE].dump_buf
-and the size of the buffer is buf_size in the same data structure.
-
-The panic can be arrived at from either the qede Ethernet driver path:
-
-    [exception RIP: qed_grc_dump_addr_range+0x108]
- qed_protection_override_dump at ffffffffc02662ed [qed]
- qed_dbg_protection_override_dump at ffffffffc0267792 [qed]
- qed_dbg_feature at ffffffffc026aa8f [qed]
- qed_dbg_all_data at ffffffffc026b211 [qed]
- qed_fw_fatal_reporter_dump at ffffffffc027298a [qed]
- devlink_health_do_dump at ffffffff82497f61
- devlink_health_report at ffffffff8249cf29
- qed_report_fatal_error at ffffffffc0272baf [qed]
- qede_sp_task at ffffffffc045ed32 [qede]
- process_one_work at ffffffff81d19783
-
-or the qedf storage driver path:
-
-    [exception RIP: qed_grc_dump_addr_range+0x108]
- qed_protection_override_dump at ffffffffc068b2ed [qed]
- qed_dbg_protection_override_dump at ffffffffc068c792 [qed]
- qed_dbg_feature at ffffffffc068fa8f [qed]
- qed_dbg_all_data at ffffffffc0690211 [qed]
- qed_fw_fatal_reporter_dump at ffffffffc069798a [qed]
- devlink_health_do_dump at ffffffff8aa95e51
- devlink_health_report at ffffffff8aa9ae19
- qed_report_fatal_error at ffffffffc0697baf [qed]
- qed_hw_err_notify at ffffffffc06d32d7 [qed]
- qed_spq_post at ffffffffc06b1011 [qed]
- qed_fcoe_destroy_conn at ffffffffc06b2e91 [qed]
- qedf_cleanup_fcport at ffffffffc05e7597 [qedf]
- qedf_rport_event_handler at ffffffffc05e7bf7 [qedf]
- fc_rport_work at ffffffffc02da715 [libfc]
- process_one_work at ffffffff8a319663
-
-Resolve this by clamping the firmware's return value to the maximum
-number of legal elements the firmware should return.
-
-Fixes: d52c89f120de8 ("qed*: Utilize FW 8.37.2.0")
-Signed-off-by: Jamie Bainbridge <jamie.bainbridge@gmail.com>
----
-v2: Move the check to the correct place after discussion with Jakub
-    Kicinski and more debugging.
-    Add more detail about error symptoms to the commit description
-    also suggested by Jakub.
----
- drivers/net/ethernet/qlogic/qed/qed_debug.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_debug.c b/drivers/net/ethernet/qlogic/qed/qed_debug.c
-index 9c3d3dd2f84753100d3c639505677bd53e3ca543..1f0cea3cae92f542e0213af87e885406599980a9 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_debug.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_debug.c
-@@ -4462,10 +4462,11 @@ static enum dbg_status qed_protection_override_dump(struct qed_hwfn *p_hwfn,
- 		goto out;
- 	}
- 
--	/* Add override window info to buffer */
-+	/* Add override window info to buffer, preventing buffer overflow */
- 	override_window_dwords =
--		qed_rd(p_hwfn, p_ptt, GRC_REG_NUMBER_VALID_OVERRIDE_WINDOW) *
--		PROTECTION_OVERRIDE_ELEMENT_DWORDS;
-+		min(qed_rd(p_hwfn, p_ptt, GRC_REG_NUMBER_VALID_OVERRIDE_WINDOW) *
-+		PROTECTION_OVERRIDE_ELEMENT_DWORDS,
-+		PROTECTION_OVERRIDE_DEPTH_DWORDS);
- 	if (override_window_dwords) {
- 		addr = BYTES_TO_DWORDS(GRC_REG_PROTECTION_OVERRIDE_WINDOW);
- 		offset += qed_grc_dump_addr_range(p_hwfn,
--- 
-2.47.3
+Thanks,
+--Nilay
 
 
