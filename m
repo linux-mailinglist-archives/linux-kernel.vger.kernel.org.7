@@ -1,173 +1,87 @@
-Return-Path: <linux-kernel+bounces-809627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBD3B51024
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:59:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 155B4B51018
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4227C7B3061
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:56:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C829917C83C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C836030E0D2;
-	Wed, 10 Sep 2025 07:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVDKA8WC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF062D24AC;
+	Wed, 10 Sep 2025 07:58:07 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA33E30DEA5
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FEF30DD03
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491089; cv=none; b=gm6+hH0CnIWfnxRzFQZ15h6BXuIPtpoX5C+XKlOkNGpccxTyuHfljTBUVlzn80WuA5dn9esTk+bIw8WX0uGiSkcQroZBivrlP5LwczRmBOZh4ZUxSkIpBwlGP3qyuvciRK9ipJvhW6tUt0RmYIdpt4Ur4Z3CAASV6u0GSeJoTBc=
+	t=1757491087; cv=none; b=FnojxO1Ql00QY7GLmK+0sQ+/DAg3WijE/XU/3BtpbuBx7s/TdVZE3BNMX9U4r8uPyeuYRRI5UlVg0hFz1uBTYveQsw7pYPOc4C21r21Od36rkzEAtbWsc3pmaxDaLfv5yjlHMYYB2tE8Mk5Z5IaxeaLB4MPbVGiU5HoSqccfqhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491089; c=relaxed/simple;
-	bh=LztD8EweTcKzQwfThVrDf5vHXn1Xuy8jy9vRPLZPWHM=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Lfzxx2Txk//QK7b2GRwxzVaiIfjQ9E/8reFdSkfJLDaDZ6uZNryXk9wwGqGKWFGcG4xBqGUO1xwDP0t9dkvOEon/QFmbAt8Xh2VEB8wNyugyha44r7Dsu47+HWkszkBAb8IehnJWJ/QQLUuxnZT/jtJswRsehDVxcP+q7a+/cHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVDKA8WC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F6E9C4CEF5;
-	Wed, 10 Sep 2025 07:58:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757491088;
-	bh=LztD8EweTcKzQwfThVrDf5vHXn1Xuy8jy9vRPLZPWHM=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=jVDKA8WCeQzXTghD9Y1h1TXSnVLZ4wu1cJ+PPuTu199VG9c0tr4UAOE1K6LU6OrgM
-	 ryfbrgQd9aXCZy46bOYE6+XS4AiNEdgfqXcX/j9FgmPF7b3NO88SBRjI700becCoYM
-	 8EFn/LbIyOz/Ugq9SK9Qz+XvRWrk08+L6sSyVJM/G5hQSnV3Mrw3E1Ss1itZp1cy4b
-	 wcu2VJX63oU3u3AvcJrgA+Z4Bes1BH39V4/dBROfUI54NYdBJrbyiDSciEzslU+5+T
-	 xYXz93Q9cUG5d5/99JDJdmXuBloeq66YyNsfRzLqM80z55TpRCqx//rQ4CZpcfVt00
-	 LzmIPaIfC1R2g==
-Message-ID: <8ccaa1f0-3263-41a9-b2e5-bf540be979c7@kernel.org>
-Date: Wed, 10 Sep 2025 15:58:04 +0800
+	s=arc-20240116; t=1757491087; c=relaxed/simple;
+	bh=YPTelKc/fHdiEACPB6+iEdvYqo126hYyR0iawk5xgAM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mg4fY7F+ruo9vHgofns3vMH6JCMG7IAUVr6fTv+eaHl4NkTwqo3gYjWkb2aeDcs1jPQkMPGUrxwTBBLZYSUSAQA9j8Cj5NSP87T/Fv8UktCDSYpHa5mfCroCSwpEMKwRIwNOdrIoK2xUuY08UmYdtDLF+Q4b2Q/E16fhRVnesq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8876712ea4bso1574183039f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:58:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757491084; x=1758095884;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b+bbRBcaCzjk+Nw8lse9LDBiDhyeMETBKDuUNk3pn/Y=;
+        b=nBIy5gUnXKyouXNP78FXGVyjnAntggqVy3jLg+spaglNeO/zivwjeDM0BnztOtYqGf
+         uDiHD9kaQx06+ZpjGByCeqa52p6qpjL/REuADbcaga7WuwegJa9FpluXmT9zY101x/0z
+         6hpv3wmAl2ehtv+u8UrNWMgrkWlcx790bZ61sQDvtCwUoz9ieh8wlygYJUf8xN/50oJq
+         xpOVagA5Kn29WLhRTLQ77KQl+nIOiLVTdJLh2UVBWa/eYr08q8DClWHTVEACmGVxSKFN
+         FTIXDAy5KlPjcGUVNoRY/EnZVBFiGLQW4jcdp0dowjjyvd6KBKIPwfw5YIHi8AccNP/S
+         vQ/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVcpULmbpljtbgOFz4XRBNfou699fxiOPUhbayQWRbJ0tqdi1ml8gndpOf3+d+uN+43mnKDXSP88K2KDHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4i6ib0KgwXmYhtisN0JTrtUUDlYqrdbvKQZOvMA2nQ/CRfih3
+	n9nPzNOcwOVNV2csNA4Er8ZbfFNhnSMyyNwvJF8MBrqffnLN3Q/FWWDZzZEFgF0PKMDAa8pSq8s
+	egMcmmFim412WcCgwcs0xwrNfA0lczPQkv1oHxYNn3yjg95wfGF2ieIeXhio=
+X-Google-Smtp-Source: AGHT+IFZRfJxmgq7njwaPkfAnUWFwWG3HDpMwhRiiZgHWuju4IgcOO0om/65FbdB1POnrD5bty0JReR7g59QocbPZslYvT8bkANf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org
-Subject: Re: [syzbot] [f2fs?] kernel BUG in clear_inode (4)
-To: syzbot <syzbot+90266696fe5daacebd35@syzkaller.appspotmail.com>,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <68c09802.050a0220.3c6139.000e.GAE@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <68c09802.050a0220.3c6139.000e.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:180b:b0:418:aefa:bb83 with SMTP id
+ e9e14a558f8ab-418aefabfc2mr7221185ab.5.1757491084402; Wed, 10 Sep 2025
+ 00:58:04 -0700 (PDT)
+Date: Wed, 10 Sep 2025 00:58:04 -0700
+In-Reply-To: <tencent_4CCA0CABE7C1C6EC12C0064989A0AEEF6E06@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c12f8c.050a0220.3c6139.001c.GAE@google.com>
+Subject: Re: [syzbot] [fs?] WARNING in sysfs_emit_at
+From: syzbot <syzbot+b6445765657b5855e869@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git bugfix/syzbot
+Hello,
 
-On 9/10/25 05:11, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    f777d1112ee5 Merge tag 'vfs-6.17-rc6.fixes' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=124dad62580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=429771c55b615e85
-> dashboard link: https://syzkaller.appspot.com/bug?extid=90266696fe5daacebd35
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15a43562580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164dad62580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/860ff2f591a4/disk-f777d111.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/31f4ca3a76d4/vmlinux-f777d111.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/c534fac91a74/bzImage-f777d111.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/6c7a25c90276/mount_0.gz
->   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=11a43562580000)
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+90266696fe5daacebd35@syzkaller.appspotmail.com
-> 
-> loop0: detected capacity change from 0 to 40427
-> F2FS-fs (loop0): Wrong SSA boundary, start(3584) end(4096) blocks(3072)
-> F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
-> F2FS-fs (loop0): invalid crc value
-> F2FS-fs (loop0): f2fs_convert_inline_folio: corrupted inline inode ino=3, i_addr[0]:0x1601, run fsck to fix.
-> ------------[ cut here ]------------
-> kernel BUG at fs/inode.c:753!
-> Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-> CPU: 0 UID: 0 PID: 6097 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> RIP: 0010:clear_inode+0x169/0x190 fs/inode.c:753
-> Code: 4c 89 f7 e8 59 7a ec ff e9 60 ff ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 7c c0 4c 89 f7 e8 2f 7b ec ff eb b6 e8 28 40 8d ff 90 <0f> 0b e8 20 40 8d ff 90 0f 0b e8 18 40 8d ff 90 0f 0b e8 10 40 8d
-> RSP: 0018:ffffc9000408f890 EFLAGS: 00010293
-> RAX: ffffffff82311f78 RBX: ffff888022059300 RCX: ffff888024ced940
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc9000408fa00 R08: 0000000000000000 R09: 0000000000000000
-> R10: dffffc0000000000 R11: fffffbfff1e3ab47 R12: dffffc0000000000
-> R13: ffff888022059300 R14: ffff888022059558 R15: 0000000000000001
-> FS:  000055557dd70500(0000) GS:ffff8881268bf000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055738e9e8660 CR3: 0000000029a1c000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  evict+0x504/0x9c0 fs/inode.c:810
->  f2fs_fill_super+0x5612/0x6fa0 fs/f2fs/super.c:5047
->  get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
->  vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
->  do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
->  do_mount fs/namespace.c:4136 [inline]
->  __do_sys_mount fs/namespace.c:4347 [inline]
->  __se_sys_mount+0x317/0x410 fs/namespace.c:4324
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f865d77038a
-> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffc62ec72e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007ffc62ec7370 RCX: 00007f865d77038a
-> RDX: 0000200000000140 RSI: 00002000000000c0 RDI: 00007ffc62ec7330
-> RBP: 0000200000000140 R08: 00007ffc62ec7370 R09: 0000000000000008
-> R10: 0000000000000008 R11: 0000000000000246 R12: 00002000000000c0
-> R13: 00007ffc62ec7330 R14: 0000000000005531 R15: 00002000000056c0
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:clear_inode+0x169/0x190 fs/inode.c:753
-> Code: 4c 89 f7 e8 59 7a ec ff e9 60 ff ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 7c c0 4c 89 f7 e8 2f 7b ec ff eb b6 e8 28 40 8d ff 90 <0f> 0b e8 20 40 8d ff 90 0f 0b e8 18 40 8d ff 90 0f 0b e8 10 40 8d
-> RSP: 0018:ffffc9000408f890 EFLAGS: 00010293
-> RAX: ffffffff82311f78 RBX: ffff888022059300 RCX: ffff888024ced940
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc9000408fa00 R08: 0000000000000000 R09: 0000000000000000
-> R10: dffffc0000000000 R11: fffffbfff1e3ab47 R12: dffffc0000000000
-> R13: ffff888022059300 R14: ffff888022059558 R15: 0000000000000001
-> FS:  000055557dd70500(0000) GS:ffff8881268bf000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055738e9e8660 CR3: 0000000029a1c000 CR4: 00000000003526f0
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-by: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
+Tested-by: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         9dd1835e Merge tag 'dma-mapping-6.17-2025-09-09' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=160a7562580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e0bea6c0b97a2002
+dashboard link: https://syzkaller.appspot.com/bug?extid=b6445765657b5855e869
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11d5a642580000
+
+Note: testing is done by a robot and is best-effort only.
 
