@@ -1,195 +1,269 @@
-Return-Path: <linux-kernel+bounces-810296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A824FB5186E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:55:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0528CB51872
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30E821899C8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AB5F3B6310
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED6F1F4E34;
-	Wed, 10 Sep 2025 13:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B20331CA46;
+	Wed, 10 Sep 2025 13:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SoRbWa+k"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Oc5skglq"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2061.outbound.protection.outlook.com [40.107.243.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6D8218ACC;
-	Wed, 10 Sep 2025 13:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757512496; cv=none; b=UhuWjR+qmYvtFP1HVdQEfsbybhlByC7EG1Q3CM/7lBbFc7EC2R7+WvKNeCZ5/wXJYjE+qRMr6zwcAFpUHzmlODme3lfAv39UN2CHM8vo6yIMII2T0LEfjG7Dza+ZaYOtvPuEHYwfllH5exZ5iP3JdpH00WVaVRdXKCPDTPwkvr0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757512496; c=relaxed/simple;
-	bh=/8UtYirEDYoOIbphyHMIVX0/QMGG1VCWOJPYddPzLD4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JgnUFdVn4YgexZEJQXzDq0hmiuNeGziZjxtwLd6S6ibvc7Upnuc4OdfDEGtvVrkgdz1N9t1FN+cdPoc8VMPnFt3T/pydNZWMGECw2FoLzGhIpCQUSwxtxmNYwcJTcv4bfpPPSva9Qbno70mH0KsyGgIhCm8sk399fo+3qH8P+Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SoRbWa+k; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757512491;
-	bh=/8UtYirEDYoOIbphyHMIVX0/QMGG1VCWOJPYddPzLD4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=SoRbWa+kDhB9TzKR+tCQk5cxSM9+BvVzlO0Q4RcaVwUvc4NjgiwDdSSUt6abI+3Ug
-	 2ICt72HDwN3INq23r2f4C6tz8QayhHSz0AxTt6NPQ+CzXjJo3qGJyFzw1m2Z/ryWUI
-	 DglsBglH9bdVUC+/jtebE0TukzdZuvxk854VleQUzgUbo+QxwfFNG8GGeep0Bz34/u
-	 seIqjIZK1a1quNulXCt2DXL6zqU1zyuRb96VT6FbznTr2YTKF9phyNxL4tqWMZv4Dl
-	 ZxVA29YmwTFw/x8dZUzkCbsl+l+u1kSSpAuQJ4QdZoRmrZJXsdw4FpGgp+aiYfBgSM
-	 nZ6ekpzsouE0w==
-Received: from jupiter.universe (dyndsl-091-248-188-108.ewe-ip-backbone.de [91.248.188.108])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BAF0217E088B;
-	Wed, 10 Sep 2025 15:54:51 +0200 (CEST)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 79570480044; Wed, 10 Sep 2025 15:54:51 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Wed, 10 Sep 2025 15:54:51 +0200
-Subject: [PATCH] arm64: dts: rockchip: Fix network on rk3576 evb1 board
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEB02BE620;
+	Wed, 10 Sep 2025 13:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757512508; cv=fail; b=bi14/zu22/3VFQBYaoQCGBOBf3zxs6XSMmzsgV3aryAWhJVdjEyOKLbZIwUn1hQ7G3ht6TsSQ69fhbEjAV2WgOPdyezFR8j0NhwDTazFsyyE35+cKxvMkTpHOIldn7P/LR3dke4znoVm7VhSbv6JUyXvbZ7z9UIeNR/1RuihBTs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757512508; c=relaxed/simple;
+	bh=UwSvwm3+snzVFVrdC+zQKaoPypX04MPCTh2v4OjnRvs=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=cuJ37+6iTt3vpP/imxgMS1gm7p4qGW9ROku1HX4i+ZwuH091d9sodlZl8kGctg3InurypReYNpkST4WBsdSsC4uzLRmO/OrMmwE4IwffrztCFM9iTrijEwAmV2qSn6nNOWOhbwKHAm2mGnULBiZMKhbI4JFxtb0IOu+VCxym+wQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Oc5skglq; arc=fail smtp.client-ip=40.107.243.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AAosGQirJHvS3gGDb68ScTY6eib0OmzABRF34Ygz6xZO3FFT7YYsIHxB5Y2MrGjg5wsYXLpgsAsuAbL0A3KVhMSCVSfKntGn8724NyJk+aq3umalTDZ31HHy8xuQhGmuylFgeCXQcEjmDM2SDv86fqEYWvmf3y+V2oiMAeVybB8L1Y47ZsxSo/r2Lp20KzRh9Y61g4SqInqWBBJD3HLO5FYjbbUMNwBTwqUq89hcZesD3vdAmQZBjcSjPqoQAkDae8eHaqc3IljjYwnOe3hAUcRBm76P9OfU8KdztanpP09fO+zKtkozspb25u3hmGqIGR5wCu57V0utjpBFXOj5tQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UwSvwm3+snzVFVrdC+zQKaoPypX04MPCTh2v4OjnRvs=;
+ b=q+ztXMaKWULNrln+cBRM7EXvJzTpwE5BLpb137lyA3UOzbYodDSIZRokE95rHN1Xf+88DuJrq+uDjpxoK7ruMXBoBfQ3HoHhXSApN8fLRy2G/xBC9amDbyEdwl5tBRp/OVnsTu1HtjtC0ei5c0sLhyjr9d6wqLrJNn+J/vwbhF591W3JD5dafqm6vrpi0bHcgR7lzwc2zhVuFX12cWyjA6I0wn8TnW4FgNz/1a70r9SR274gsjj2r8Lqk65thoSFEh5xvnMqHG1ExPuzX+S/qYDigaeYhK3wLgQZIp7vaRJqG4qQo4cZc9yuTfypJ8YC1Qva5FuerLlGnb4sgJWa1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UwSvwm3+snzVFVrdC+zQKaoPypX04MPCTh2v4OjnRvs=;
+ b=Oc5skglq1N5CALIVS++ASJmvLP/BVWOaxWizGehTNui+u/zURnzyZqcEZSu0fZ7OEDOIoXEhJfe3UCheNizqS/s9M+AFIXlyUYUCJw3D1cBavO1GRpyTuh7zqBdVaqTkmM9UWhwsNXIc5FRN+PQ6BMFfuC8RNT5Rtau1R1sPTsKhlNQ3yDHbih2wFRJmGah3+Ko+iC3pFPfXsYeYePSjbL0CzfdGUzXg4ySIpvqmvxmk7yPOuZNlijJBgFVe754R1IQBMoUpMClH659GhEGQa+CjvBvXlv7GS/+V+h+KYbcbR4GwCTntiQvMVSyhXYk0OLDJjyD60SvQR7BQf1Dw5g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CY5PR12MB6647.namprd12.prod.outlook.com (2603:10b6:930:40::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 13:55:03 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 13:55:03 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 10 Sep 2025 22:54:59 +0900
+Message-Id: <DCP66O4WE3CE.3P5ZHC9P62LOZ@nvidia.com>
+Cc: "John Hubbard" <jhubbard@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Alistair
+ Popple" <apopple@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>,
+ "Timur Tabi" <ttabi@nvidia.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>
+Subject: Re: Implicit panics (was: [PATCH v2 2/8] gpu: nova-core: firmware:
+ add support for common firmware header)
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
+ <20250826-nova_firmware-v2-2-93566252fe3a@nvidia.com>
+ <9adb92d4-6063-4032-bf76-f98dcfe2c824@nvidia.com>
+ <DCD2VJ1WJW2O.VM7E4PD3DFYO@nvidia.com>
+ <CANiq72=nGbziZCKt=AneE_vXw76i=+td0dSVfbOJ8kJ9eYHw9w@mail.gmail.com>
+ <DCOVRI3TVJBN.3OGDSK8HW74LL@nvidia.com>
+ <CANiq72n-q0vdzp=Tb=brue+BMoNYdCTKsqcMYUsvKgvu9ZqGoQ@mail.gmail.com>
+In-Reply-To: <CANiq72n-q0vdzp=Tb=brue+BMoNYdCTKsqcMYUsvKgvu9ZqGoQ@mail.gmail.com>
+X-ClientProxiedBy: TYCP286CA0130.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b6::12) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-rk3576-evb-network-v1-1-68ed4df272a2@collabora.com>
-X-B4-Tracking: v=1; b=H4sIACqDwWgC/x3MwQpAQBCA4VfRnE3NrhCvIgfLYFJLs1pK3t3m+
- B3+/4HAKhygzR5QjhJk9wkmz2BcB78wypQMlmxJjSHUrSjrCjk69Hxeu27oqBkd2YrIGEjhoTz
- L/U+7/n0/pbO4qGQAAAA=
-X-Change-ID: 20250910-rk3576-evb-network-b09cb0260011
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3340;
- i=sebastian.reichel@collabora.com; h=from:subject:message-id;
- bh=/8UtYirEDYoOIbphyHMIVX0/QMGG1VCWOJPYddPzLD4=;
- b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGjBgyv0Snl1hIYtTGv1yO1KIdE5RcXUVbExR
- iQ4YXBWaLwBmokCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJowYMrAAoJENju1/PI
- O/qaBOkQAKMN/8cj7wuP2lEaE7js7l+HmzH07C5ToGZ7aVe6EJ0NXEwozv2ItC2mLGlavxhl773
- rWmymc+sSoVP67KtoOeLb/h7+71wkjDOg/iTDA+zZaHRGxGbM+b2ebSOUwq0NGiWYD33PW4vQS4
- aDrmYPKRef9tCFkz8hxPmQsMGYZzpxvCTOG/9hUewg+Q3Q6bC70mIhpC4FoWRUG62lCqlPEg93n
- 5TRnR+6FVY4UViPX84scJdTSCl+e5z51LVKiCtP+jjPb6MQsDZygYygKMtvW3sgt4TPJPGYMQJu
- 2H272hUQJtR6aiJlhcJfM+J841hZb8WmNKEW+cX8pz7HLHJ12Ca/4BU0lUx1W+Tcsjy8qmveRY/
- oWzOy8GX4HdkRok4n8IXs5UKIlb9uhjP/wPh4XHmeCZGUSqdXTh2xnRn57l3xR+WMVpTzJ7Ypny
- EE6aT6l0D72vUxopFQR/noL0TSl8rBdLUE7sc8iFKOx1qZMoGZlY3jMICckxH5OdTy2sj3cYlSQ
- 7bxMV8L/1tSyfy2eclx2Pa69U0JUCwnblGbIKSqDsE0Lgq7GhWShMmvHZpO2bsbxSmNO5F+0mz8
- aVSdyNEi+XFSTMHUprG+SgrdqUqh/AWB+tjwRY7S62Ads6sf72Pk76CaaVqX5CzcNGjNwXDr3z4
- 55B97I8mYJo51ZO4O/2c4Dw==
-X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CY5PR12MB6647:EE_
+X-MS-Office365-Filtering-Correlation-Id: 35f4b5c4-5c9d-4406-876e-08ddf071a3de
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|10070799003|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eThtRGUremVEY1JhVjJicndoNER6RHQxWmppbzVIWjVyQk1YMnp4Uk1tOEor?=
+ =?utf-8?B?TEhEWnd2d09qRlcrZ0haODFvd3oyYUR4clhlYmJuTnRGNUVTT1JuZ2tTVFFF?=
+ =?utf-8?B?c1ViZndEUEpQakJZOEo4UEdXYjBuWkk1ZFdSeGxmejMrc0RaUHdOR0huQkJt?=
+ =?utf-8?B?Zks1L0p0T0xnT2xNRHF3YXlYK0UyTnN1Z3RqM1BDbDNGUnE0NlBkN0RGenlY?=
+ =?utf-8?B?R293c3g3eHhDdmo1SmovTE5oMUQyck1LbEQ1OWxhYjRGNFoybTlKd0RpMHJZ?=
+ =?utf-8?B?a0VCd3B4SWRheXRjTDAvMkw5MXFVSmhCTk4vZUVDSkdZN0ZwZ2FlN01ZR2tM?=
+ =?utf-8?B?QTNVMzA0aVAwbEFMZWhqSDZOU2pXSmxyaXdhMjJjOTlTa01oMTZuQXdaZ1dh?=
+ =?utf-8?B?MkNBK1dkZjk1V0w0TnpxcjBLMmV1Ukc1SGVsTFRxZXZsdkR3L1ZDUTVST1VT?=
+ =?utf-8?B?R0xVcFJFaDM4aFdzaWZOVWZUZkNPbHkvZTIrOEJqTFhnZTB2Tk5xcWNtY21H?=
+ =?utf-8?B?OENOK1M2cjUzakgxNVIvQW82SVdyODlPT1JnTTBtUlA4ZXQvdWxMN0ZNUzY2?=
+ =?utf-8?B?NDgzL3lPN2FDM0d2YlhvT2FRa2JiRjVCUWN6V2J0TDFnYThld1FrR3Fobm9T?=
+ =?utf-8?B?ZDBOdytPSzBtN2N1M3NKbUpoNnBCRnFFcjVuY2d2VjlaS01aVFNWVEQ2b2RM?=
+ =?utf-8?B?ZmFHYnlsRTRUa20wMW16dmRFQ09xU1dOdFg0MXVEUC9HbEdOVUxycVEvOE9k?=
+ =?utf-8?B?UXNzV2o2R1cydzlTL0JENEM4dEoraEROUjd4R0xqVmorUVVDbWNGNW41SUF5?=
+ =?utf-8?B?UXdSTmtlVmMvNjJER0o1NkNCSWRCNGdOdEowTlhFblhGLzJ5ZjFla3Z3QVZF?=
+ =?utf-8?B?SHE0VldkcXVkaUwrSjBLY01wc2JxRkVUaStjY3pZQXpSdjd5MmJoZjFTb2xD?=
+ =?utf-8?B?Z0xmdTUxT2xIL1I3Mkw3QzA4Y1dDWjZmNTJnWG5aUGFXR3NaREtJWm92K253?=
+ =?utf-8?B?akxKK3I5anN6V3hOc3IreTRXNUVsUHhzNkh6VlVsU3VwR01sZHp1SXFoRUIz?=
+ =?utf-8?B?QVkzTDA1dVJRNndibHZobjNyRGpLRmZsbUNFcW5SZEJNVEtnVHdwa3gvU3BM?=
+ =?utf-8?B?RTBVUXNMcFZjS1owQ2F6ZXpXYlBhRkRCWTJwMC9sak9jc081aVIzQ2ZvMito?=
+ =?utf-8?B?TEEvTE5DczRaSEJ1M0wrQVp5OFVPMk83UkprZCtBd21PSHBqWVBBNE5PV1Y4?=
+ =?utf-8?B?THFkdW5QYVpkYlBKNTAxdG1CbzhpY0l6MHUvMDFZcTRZeC9Td3JtdnRSSFlW?=
+ =?utf-8?B?YnE4WDYxdHpxRjIrWnZ5SWgvZ21FTjNZT09mdnNJTm9CVEtkZzlQYkR1WEgv?=
+ =?utf-8?B?NGlDbElGd25PdGdXZjhtbkd4VVhwczBFckZETmVLZ3Zja3pyR3V4Ym0xbjV3?=
+ =?utf-8?B?YVEydjQyVlhydUxNTzJ3V1BZUjZWS3FUamN1bUIxWkhSRzJsRFhlVnc4RXNQ?=
+ =?utf-8?B?cmxQQXM0cm5hS0ZKa2EzT0lFanBaTEFEQTJPUUVmVmhxa21EWm9TckQwM05P?=
+ =?utf-8?B?MEIrOVdOYUUwSnY5UVN3T1hKYStDNmFDNE1pNThlREdwZk9pQXh0SmswV2dB?=
+ =?utf-8?B?UURLQnpuTFlYVzBqTmFhRkpTbEtaM2NDQTYvcTdDdk5mVlk2cXk4TWxoTTZM?=
+ =?utf-8?B?Vmtjb2lOVG01OUV4RFRoMThudDI4TE1NRVQvMUhCMitBRHQ4VlNleUV5bVdl?=
+ =?utf-8?B?bTBMR1grN0ZQLzFjZ2w5OUxqVHpyZXl4S09ZblJVdE5lOWszYytwa29xQXBt?=
+ =?utf-8?B?bUdmS2hMS1lMdHUxdWpmWmVuVVVOOUNHRFVhaURBNlBPSDluR3NpaVliNjBj?=
+ =?utf-8?B?aVllOE0vb0tIZDBqNWhEMXhCeHY5UWpzSW9ZV0o0bUVFY1hiZE9Ja2hzMk51?=
+ =?utf-8?Q?vlwb0uMEbM8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(10070799003)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZUQ2dUhrd29UZThpWi9GejZRYndXUDQzM29obTB1cTJMcFM5UjRCdnRqczNK?=
+ =?utf-8?B?aGtqQnhDR0M0aDdrUTdwL1Q4Vzg5RnEwYzZoNjhkbUhXQ2xOaGVxck4xWVNn?=
+ =?utf-8?B?SlFnaWwvTDFqUy83N3FUbGdDTUxwU0trQ09HR0dPa0gvdEhmazZKTUZTV0li?=
+ =?utf-8?B?QmJ2YW5BYjVnbGhQWFpCTGdMUkowbGNjcHcrZzJUbG5TSGdTcEw5eVUzN3ZV?=
+ =?utf-8?B?MmxHVEJzUHF5a3hRR3ZDejhldWg5eW5xZE9BdU9iaFo2VGlrdXlCLzVPV3Uv?=
+ =?utf-8?B?UUJmaEJtVHlJMDFGZG5xZjBPaHRzWDNVN0gxQzM3VU1kL3dqbzBEZ0VOTkZP?=
+ =?utf-8?B?WXphZmNIYzliU0ZZYm1RTnZ2aDdlV1BRbFlKMDNwWWgzQm1TMnhyeW1SeDZz?=
+ =?utf-8?B?dzViUWZEMDl2eERZREdKSU03VmY3Ymt1ZlZGSlhrNVBXeVdHOFg1Y0tkYUd5?=
+ =?utf-8?B?Z25kcGhGMTYwci9LR1pNWEVFQlYrSDh5clBXcUtnRzZYTGltaGx2TGRHWXc2?=
+ =?utf-8?B?MkNTOEJ1aXp4QUo4MVBFWFJsd3dmWlc0MjNsVnZEQk9COHphRmVoVEdSQU1i?=
+ =?utf-8?B?RlViWXI2TjZOQkk4Z1R6VWwvRGhXL0pXK0xzaVljNlZPanpGMVFQek5WNmxI?=
+ =?utf-8?B?VCsreEovQktURVVHV2hRUG5OTUN4Vm1nb0NzYmlQK2o5N1VPMGtTNzBTaEU2?=
+ =?utf-8?B?eU9GN0YzMHRzdmZBS2NMYThHN045dVpuelNnSk9ZdHgvRERhUUZ3My9KSExx?=
+ =?utf-8?B?R05SRDFNTERjZXoxWUlDZkcyYjBvYzl3Q3A5NXpOb1JpbmxzQlY1T3ZRZ1Zz?=
+ =?utf-8?B?Y09ISEZ5blNxQXllK3VjRER3YmhDYW1CUS9KSFVTWUFRWmE2LzFhZWRlVGx3?=
+ =?utf-8?B?Q1lBeGh0ZGNxMUxpSnVwS01tT1hYZEIrb2Nzdjg3dENLUmVvcWpJL0tJbEtY?=
+ =?utf-8?B?V0t0d3BwQ1NuWFJpdTNzTk1kYW1CTkNFRDlaek5SY2QvS1M2S2NDRVZQZzU5?=
+ =?utf-8?B?Ly84WXhnK0FEVm1KV2pvY2NjdXZZTzBSeWhtcllFaUJQTy9UWjNXWGZHcGJw?=
+ =?utf-8?B?UDllRThBY0FVNVMxd2tHR2NLYnBFMU9xQ0kyTWhMMHNMcytYb2c0NVpjQmJz?=
+ =?utf-8?B?WnBheUZ5UTZQTTEvaURobHcyWXVYUkRWMitDK0YrOStGamxjZ0x3ci8vc2x1?=
+ =?utf-8?B?MTE3WExjVjl0Mmo3M3pocGg3dnowSVR5OHJFSGE3QnlGWXRkVHp3VTQ1SVFx?=
+ =?utf-8?B?b3B5YzZwNktOZk14Yjc2U2dCd2lUTWVIWmFSNXArbVJSbTk4N2RIbzFzOG5E?=
+ =?utf-8?B?Tmh5VEl5dko1ZDVNZHNNUUtHdDBhZGdoUVc0MGFRUm8vNUpjOUdlRDZzTStL?=
+ =?utf-8?B?UlFjTkQyd0ZNZHd6V1dENmlwR09SMTZoN1pSRVFpQnRzZlJQZmdRRFhIYytz?=
+ =?utf-8?B?eDIzanNOVE5wMGg5Z1h4M0Jzb0I0Vm0rSVhXdmk5RmpXcW9Vd2ZQalZPMWc3?=
+ =?utf-8?B?SXp4WmVEMWRZeWw1QVdaUDNvNko2TzVDelhNRndRRGRwN21RWTcwMkVYOHdw?=
+ =?utf-8?B?eEJWUUxvUHgyMEgvMzVtN0ZYOGF1QUJuNnViVDIzYUFiMGpCS2dVK3pFcm9a?=
+ =?utf-8?B?VnB4VnhMZzVQRzNyV1JRSnNZSGluMTNpMjlXbTVxY0w3Tzh0bUQrTDJLeksw?=
+ =?utf-8?B?WnlnMmVWN1BqeEhjMytNQVdVYzlYNWZQWVlwNlppTW40dzdBdGxDQ2pkWEdj?=
+ =?utf-8?B?ZzRvLzJjU24zTmpPNWZ2OEp5cWlQak9iWmRRZnBFMGFCQVFPbVdVcy9OU2Nj?=
+ =?utf-8?B?TFFZalErbUFCbkZtdGhtd1o3QmdtZGZwby9iRHhrUGlHZWZaMWdSRGhYSEkw?=
+ =?utf-8?B?bnlIZlp0T1Z1aUE3VElKQVZlaGhDOTRRSEEwa2V0U3R1Vk5pazAwOHdQanZj?=
+ =?utf-8?B?Zit6YUIydFgvbTVpblFBREY3NGlBMTJ3TXZiMVBwN0dWVXZXdEE1ZVFoblJB?=
+ =?utf-8?B?QzFnUGN0VEdDTHpyQ016Sll1NThITUpzWnIwYTZZaWxzTmJjSzVEeXZQRGd4?=
+ =?utf-8?B?dEF3QjRSUTB0dWhkZGVNRkVBVFJmekVMODBNZWcwTHZweWJMZGdORnkwUFdv?=
+ =?utf-8?B?TjJMQ3BPSUVlQmhXU0dYdElmanpneXVLMFVmY0dVeTVMaHRuN2piUmhNeTNT?=
+ =?utf-8?Q?FNEpq2NoTNorpN9MoKtfSX5VHSVyv6hKGOxxDCN6sNph?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35f4b5c4-5c9d-4406-876e-08ddf071a3de
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 13:55:02.9528
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MZLrv4fX52b802kInIP3M0eZzwisjDge78FrVrF1wQi0QjnGSKxgQcUWUUpZG70b2LePN87oaHJ9zwRb4mdcSQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6647
 
-The RK3576 EVB1 has a RTL8211F PHY for each GMAC interface with
-a dedicated reset line and the 25MHz clock provided by the SoC.
-The current description results in non-working Ethernet as the
-clocks are only enabled by the PHY driver, but probing the right
-PHY driver currently requires that the PHY ID register can be read
-for automatic identification.
+On Wed Sep 10, 2025 at 7:00 PM JST, Miguel Ojeda wrote:
+> On Wed, Sep 10, 2025 at 7:45=E2=80=AFAM Alexandre Courbot <acourbot@nvidi=
+a.com> wrote:
+>>
+>> That would be nice, but also wouldn't cover all the cases where implicit
+>> panics can happen, like out-of-bounds slice accesses - we can't have a
+>> "report-and-continue" mode for these.
+>
+> In principle, it could cover OOBs (even if it is a bad idea).
+>
+>> But perception matters, and such crashes can be damaging to the reputati=
+on of the project.
+>
+> Yes, we are well aware -- we have had it in our wish list for upstream
+> Rust for a long time.
+>
+> We are tackling these things as we go -- e.g. we solved the `alloc`
+> panics and the ball on the report-and-continue mode for overflows
+> started moving.
+>
+> Part of Rust for Linux is about making Rust the best language for
+> kernel development it can be, after all, and so far upstream Rust has
+> been quite helpful on giving us the features we need -- we meet with
+> them every two weeks, please join if you have time!
+>
+> (Side note: the "safety" that Rust "sells" isn't really about avoiding
+> panics, although obviously it would be a nice feature to have.)
 
-This fixes up the network description to get the network functionality
-working reliably and cleans up usage of deprecated DT properties while
-at it.
+That's right, these panics are actually the last line of safety to
+prevent a program for doing something damaging. It is just that the
+consequences in a regular program are not as heavy as in the kernel.
 
-Fixes: f135a1a07352 ("arm64: dts: rockchip: Add rk3576 evb1 board")
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3576-evb1-v10.dts | 38 +++++++++++++++++-------
- 1 file changed, 28 insertions(+), 10 deletions(-)
+The only two options are either allowing user-space to crash the kernel
+through a module with a missing bound check, or letting it tamper with
+data it is not supposed to access. While the first option is terrible,
+the second one is unacceptable - so at the end of the day what we likely
+want is to keep the panic behavior and limit these occurrences as much
+as possible through information to the programmer.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576-evb1-v10.dts b/arch/arm64/boot/dts/rockchip/rk3576-evb1-v10.dts
-index 439831715cbb55a67ce9ca8736d70549377e8048..db8fef7a4f1b9570cb517ccc9a857d1c93c9d2db 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576-evb1-v10.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3576-evb1-v10.dts
-@@ -275,9 +275,6 @@ &eth0m0_rx_bus2
- 		     &eth0m0_rgmii_clk
- 		     &eth0m0_rgmii_bus
- 		     &ethm0_clk0_25m_out>;
--	snps,reset-gpio = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
--	snps,reset-active-low;
--	snps,reset-delays-us = <0 20000 100000>;
- 	tx_delay = <0x21>;
- 	status = "okay";
- };
-@@ -293,9 +290,6 @@ &eth1m0_rx_bus2
- 		     &eth1m0_rgmii_clk
- 		     &eth1m0_rgmii_bus
- 		     &ethm0_clk1_25m_out>;
--	snps,reset-gpio = <&gpio3 RK_PA3 GPIO_ACTIVE_LOW>;
--	snps,reset-active-low;
--	snps,reset-delays-us = <0 20000 100000>;
- 	tx_delay = <0x20>;
- 	status = "okay";
- };
-@@ -715,18 +709,32 @@ hym8563: rtc@51 {
- };
- 
- &mdio0 {
--	rgmii_phy0: phy@1 {
--		compatible = "ethernet-phy-ieee802.3-c22";
-+	rgmii_phy0: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id001c.c916";
- 		reg = <0x1>;
- 		clocks = <&cru REFCLKO25M_GMAC0_OUT>;
-+		assigned-clocks = <&cru REFCLKO25M_GMAC0_OUT>;
-+		assigned-clock-rates = <25000000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&rgmii_phy0_rst>;
-+		reset-assert-us = <20000>;
-+		reset-deassert-us = <100000>;
-+		reset-gpios = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
- 	};
- };
- 
- &mdio1 {
--	rgmii_phy1: phy@1 {
--		compatible = "ethernet-phy-ieee802.3-c22";
-+	rgmii_phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id001c.c916";
- 		reg = <0x1>;
- 		clocks = <&cru REFCLKO25M_GMAC1_OUT>;
-+		assigned-clocks = <&cru REFCLKO25M_GMAC1_OUT>;
-+		assigned-clock-rates = <25000000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&rgmii_phy1_rst>;
-+		reset-assert-us = <20000>;
-+		reset-deassert-us = <100000>;
-+		reset-gpios = <&gpio3 RK_PA3 GPIO_ACTIVE_LOW>;
- 	};
- };
- 
-@@ -786,6 +794,16 @@ rtc_int: rtc-int {
- 		};
- 	};
- 
-+	network {
-+		rgmii_phy0_rst: rgmii-phy0-rst {
-+			rockchip,pins = <2 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		rgmii_phy1_rst: rgmii-phy1-rst {
-+			rockchip,pins = <3 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
- 	pcie0 {
- 		pcie0_rst: pcie0-rst {
- 			rockchip,pins = <2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
+Build errors on such panic sites insertions, with the option to relax
+the rule locally if a justifying SAFETY comment is provided? And as you
+said, what do we do if a panic can be removed through a particular
+optimization - does it become mandatory to build the kernel? Is it
+applicable to all architectures and (in the future) all supported
+compilers?
 
----
-base-commit: 02761df1f09ec1d3e03ec2c68c6c5c85955dd8f4
-change-id: 20250910-rk3576-evb-network-b09cb0260011
+I suspect it will take more than Plumbers to get to the bottom of this.
+:)
 
-Best regards,
--- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
+>
+>> Writing a uC topic proposal for Plumbers right now. :)
+>
+> I see it there, thanks! I can briefly mention the topic in Kangrejos,
+> since we will have Rust representation, including from the language
+> team.
+>
+> I don't think the discussion should focus much on "Do we need this?"
+> but rather more on "What exactly do we want? Would we be OK with a
+> local solution? Do we need/want a global one? Would we be OK with LSP?
+> Would we be OK with no panics after optimizations, e.g. a link time
+> check? Or do we want full support in the language for guaranteed
+> non-panicking functions? Do we need exceptional carve-outs on such
+> checking for particular language constructs?" and so on. And, of
+> course, "Who has time to write an RFC and implement an experiment
+> upstream if an approach is decided".
+>
+> Getting data on "in practice, how much of an issue it is on the Rust
+> side" would help too -- those with actual users running Rust kernel
+> code probably can tell us something.
+>
+> What I would personally expect to happen is that, over time, we
+> understand better what are the worst cases we must tackle.
 
+Thanks, these are great directions to explore. I see that some thinking
+has already been done on this, do we have a bug or tracking issue so I
+can catch up with the discussions that have already taken place?
 
