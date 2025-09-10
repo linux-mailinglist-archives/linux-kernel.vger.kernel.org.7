@@ -1,126 +1,109 @@
-Return-Path: <linux-kernel+bounces-810201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAFB9B5172E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84426B5172F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D4A11891151
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:45:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B14C1C26ABC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4ED131B13F;
-	Wed, 10 Sep 2025 12:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF66A1A0BE0;
+	Wed, 10 Sep 2025 12:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="aOhbme1K"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="NcWVxE0H"
+Received: from mail3-162.sinamail.sina.com.cn (mail3-162.sinamail.sina.com.cn [202.108.3.162])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5662C0266
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE0131B833
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757508295; cv=none; b=Lz8tJs+nxDD6Yq8xZzTTSYmUoGS3UHnEV+WmVIxLnHni6I19ejoEIYGijkpGiA3I4DNGHO249XjLmiZCNX1Liq6MJZUXjzj+gMD7f8d+GfNfuXEDqPEaTzJOcHFYF/gEhPVuqGd+i+tBwEs+Rb0D+MSy7+N0gmlsWB9+bEa5OO8=
+	t=1757508311; cv=none; b=ViSCo3hRKARray3N0X+BvnzRVxdfv4PNgcKsSFbP5Y+eENTK7A0+htIO5WiwEOFYfl8ifTHKhYxxNpSIbPpImlY6VrWcf8CHqhkkDx7N4lVNrjru895fRzKSvQpwPxXEp836rcHradzTNIR1q1blZqpwmnZQqxxQPKjVhaN1Wk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757508295; c=relaxed/simple;
-	bh=1wIPiHYTTcPWjGCqP0U9W2dlBav5LMFfAO50dplnTqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y0VIR6G0+rUA0+ohpCrBH9i2sdZywt+eAr8r+mc9yEAamIPwhpPxt+91BwJbxIJI8LGw82ONHKxmM5h5x6DT9gbyR09KIUM4HtT2l6XPBYmuMmwx364dZAK8aQqvapvWz0OJDsYopFWkB/awjkGjmnXAtmbOsrpcWawyhv0SSrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=aOhbme1K; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 97ABE22E49;
-	Wed, 10 Sep 2025 14:44:49 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 26e2zTYJ4SXs; Wed, 10 Sep 2025 14:44:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1757508289; bh=1wIPiHYTTcPWjGCqP0U9W2dlBav5LMFfAO50dplnTqY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=aOhbme1Kk8YPSM7ceJBX1pyRtZFnV6Xzm4KQUkHwsi2ZtEfCg1D3Jmay9A8yjIuha
-	 T9PfaVp1+Oj0819jIECQbSUxU90t4Q5dA/YaUZ0RirFxfdHfrqOmf3QDbJH3EbcTvW
-	 HN9pjMCWYvlUi9ngYSdf4nZ+8ccCTS8xsTcBvL8tK06I7Z15350HO1M6WNGDJfSpva
-	 tWycDekr4RASfamzAsOutrIeTe3vOG22Ra+QVdqBcZG/jAIDr3KLWL50FWeYdfXw1S
-	 TmZs5+UwrJ3GE76Ugr2loTQexId6Fk1OQABYonEbNT6uzkeOLwh4XS6J/rrBKz5UpS
-	 nftRIbWCVNHSQ==
-Date: Wed, 10 Sep 2025 12:44:23 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Chukun Pan <amadeus@jmu.edu.cn>, Vinod Koul <vkoul@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-phy@lists.infradead.org,
+	s=arc-20240116; t=1757508311; c=relaxed/simple;
+	bh=friDOi+j2o6hQPANR07L1IPeAnSMQyso3EV72HcrS7s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NNX+1E3piNv+U28FF9YfkuIk8Tib5132EWB42N5eQ6nI9/DfvuRf/iIFsoYEE8OQ5xc/Wjj7ZTMdImizqmjbvlYZTZ8tSAbvyYmYQ6b3tyAg4tM8RqB6hNnAXdOjEtlaF6WAhJLC4csXj397MdZPdJHu58WmdyOxeFdsdoYJf2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=NcWVxE0H; arc=none smtp.client-ip=202.108.3.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757508306;
+	bh=wrI27L50Krmhj1fPADGXvtbzVUmtq03K20RQqcV8sng=;
+	h=From:Subject:Date:Message-ID;
+	b=NcWVxE0H6KMVQXXNfOsaZA3Ra6YyOM5y6LITw3sp1BkAHTLN8jdVQPPb3ShBQ670T
+	 PKvGWyw9m8a5B6StteXoFqLbKljAQWVccAB+/n7PphB0Gth8eFD909efvMzTy/2JxY
+	 jHMNINst0oszr9y10uA0Kt64RUV+lyCTKunhDfGA=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 68C172CB00004803; Wed, 10 Sep 2025 20:45:01 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8252306291757
+X-SMAIL-UIID: 7D4C23C301F749E79BF9F5BE7AA477E1-20250910-204501-1
+From: Hillf Danton <hdanton@sina.com>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] phy: rockchip: naneng-combphy: use existing DT
- property check for rk3528
-Message-ID: <aMFyp1pn5xUJOVtj@pie>
-References: <20250910122000.951100-1-amadeus@jmu.edu.cn>
+Subject: Re: Excessive page cache occupies DMA32 memory
+Date: Wed, 10 Sep 2025 20:44:49 +0800
+Message-ID: <20250910124452.6747-1-hdanton@sina.com>
+In-Reply-To: <9dc9e324-4a39-43d0-8716-be325fae2247@collabora.com>
+References: <766ef20e-7569-46f3-aa3c-b576e4bab4c6@collabora.com> <aH51JnZ8ZAqZ6N5w@casper.infradead.org> <2025072238-unplanted-movable-7dfb@gregkh> <91fc0c41-6d25-4f60-9de3-23d440fc8e00@collabora.com> <2025072234-cork-unadvised-24d3@gregkh> <c93b34ca-1abf-4db0-90f9-3802ac02c25a@arm.com> <bdd1efa8-691c-4e84-8977-cdfd48e7363a@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910122000.951100-1-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 10, 2025 at 08:20:00PM +0800, Chukun Pan wrote:
-> The naneng-combphy driver already has DT property checks for
-> "rockchip,enable-ssc" and "rockchip,ext-refclk", use it for
-> the rk3528_combphy_cfg. Also aligned the indentation of the
-> rk3528_combphy_grfcfgs parameters (using tabs).
+On Wed, 10 Sep 2025 16:23:37 +0500 Muhammad Usama Anjum wrote:
+> >>>> For example, in the mhi driver, the failure is triggered when the
+> >>>> MHI's st_worker gets scheduled-in at resume.
+> >>>>
+> >>>> mhi_pm_st_worker()
+> >>>> -> mhi_fw_load_handler()
+> >>>>     -> mhi_load_image_bhi()
+> >>>>        -> mhi_alloc_bhi_buffer()
+> >>>>           -> dma_alloc_coherent(GFP_KERNEL) returns -ENOMEM
+> >>>
+> >>> And what is the exact size you are asking for here?
+> > 
+> > 512 KB
+> > 
+Any order above PAGE_ALLOC_COSTLY_ORDER is not guaranteed in 90+% cases.
+Nor is it DMA32 specific.
+
+> Another update:
+> This issue reproduces on v6.11.11. To summarize, we're unable to reproduce
+> this bug in the v6.15.9. We wanted to do bisection and find out which kernel
+> change has caused/fixed it, but it's too difficult considering the complex
+> reproducer setup (Tekken 8 Demo game + page cache stress). We don't want to
+> spend more time on something that is very hard to reproduce and is already
+> fixed in later versions.
 > 
-> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+> My debugging has shown in v6.15.9 that the allocation succeeds under the same
+> constraints of power management. My hunch is that somehow the dma memory
+
+Can you try again without the JW work [1] applied?
+
+> doesn't get occupied to the extent that dma allocations start to fail at
+> resume in v6.15.9.
+> 
 > ---
->  drivers/phy/rockchip/phy-rockchip-naneng-combphy.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-
-I should have noticed this simplification. Thanks for following up,
-
-Reviewed-by: Yao Zi <ziyao@disroot.org>
-
-> diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> index a3ef19807b9e..ad6c8a11951b 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-> @@ -518,7 +518,7 @@ static int rk3528_combphy_cfg(struct rockchip_combphy_priv *priv)
->  		return -EINVAL;
->  	}
->  
-> -	if (device_property_read_bool(priv->dev, "rockchip,ext-refclk")) {
-> +	if (priv->ext_refclk) {
->  		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_ext, true);
->  
->  		if (priv->type == PHY_TYPE_PCIE && rate == REF_CLOCK_100MHz) {
-> @@ -543,11 +543,9 @@ static int rk3528_combphy_cfg(struct rockchip_combphy_priv *priv)
->  		}
->  	}
->  
-> -	if (priv->type == PHY_TYPE_PCIE) {
-> -		if (device_property_read_bool(priv->dev, "rockchip,enable-ssc"))
-> -			rockchip_combphy_updatel(priv, RK3528_PHYREG40_SSC_EN,
-> -						 RK3528_PHYREG40_SSC_EN, RK3528_PHYREG40);
-> -	}
-> +	if (priv->type == PHY_TYPE_PCIE && priv->enable_ssc)
-> +		rockchip_combphy_updatel(priv, RK3528_PHYREG40_SSC_EN,
-> +					 RK3528_PHYREG40_SSC_EN, RK3528_PHYREG40);
->  
->  	return 0;
->  }
-> @@ -571,7 +569,7 @@ static const struct rockchip_combphy_grfcfg rk3528_combphy_grfcfgs = {
->  	.con2_for_pcie		= { 0x0008, 15, 0, 0x00, 0x101 },
->  	.con3_for_pcie		= { 0x000c, 15, 0, 0x00, 0x0200 },
->  	/* pipe-grf */
-> -	.u3otg0_port_en         = { 0x0044, 15, 0, 0x0181, 0x1100 },
-> +	.u3otg0_port_en		= { 0x0044, 15, 0, 0x0181, 0x1100 },
->  };
->  
->  static const struct rockchip_combphy_cfg rk3528_combphy_cfgs = {
-> -- 
-> 2.25.1
-> 
+> Thanks,
+> Usama
+>
+[1] Subject: [PATCH 0/5] mm: reliable huge page allocator
+https://lore.kernel.org/all/20250313210647.1314586-1-hannes@cmpxchg.org/
 
