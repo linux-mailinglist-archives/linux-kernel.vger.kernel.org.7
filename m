@@ -1,145 +1,125 @@
-Return-Path: <linux-kernel+bounces-810372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66E2B5197B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:35:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC78B5196A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FFFA7BD27A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:29:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D316442600
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CE9324B24;
-	Wed, 10 Sep 2025 14:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4997532A3D3;
+	Wed, 10 Sep 2025 14:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAtVOB1N"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iLtvWNit"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B5E1863E;
-	Wed, 10 Sep 2025 14:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC47830F93E
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757514655; cv=none; b=VyTeLiq8IKGnk+19MoTgSX/kHSJDGLXErVrPvWHzAXt09d7UCnFDcCcWEZyFnzhh248LSaKhxygMP3J7KFjNoEFYp+XnmZhYOATGxvdWkpJ+98VMZJpLNaB4SBaHVWfLfXcgMXfM9bcZj6v7dAKI2biuEwAq/vLkEsp12r0ZVKk=
+	t=1757514684; cv=none; b=B6iHlXy1e+A0BulbViH+HmdixO1B67+AIN2ekoHCXkgrYF/ga9i0MA7or1QFiWYZoNXqW5zPK0XANr5O7pvjF6q74gMabKEc1xIqGJw1u1Yok3kS7PoTVoAHWXO7dLcTooIOLwKBawDQmK0hxpHR8gna+X0Y+V93LVaOI7R7GVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757514655; c=relaxed/simple;
-	bh=Q5JQwy5iVhfba4PDMTkG83RMB/eStM9/LUOcXOEGAew=;
+	s=arc-20240116; t=1757514684; c=relaxed/simple;
+	bh=S0PYbj7oVlC0tHMdjUS9fcyQ3ust6fizX8gkLiKSPKw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YOvaC8YxJXtnRiLHquHw7TP0V/xyBON/uZ3snayy0YqirYgiPr1MXLTFAfm5XyQ2NWv1aYQcHGskc/eouiSz2+8jhK7D3ZjRVQzD7ZLvKnbwC/Vv/iddpzNI3hvqnNv/ibBllJvjqE575EmDUMdfLfbP/hoMEiZoYEHU39DYFE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAtVOB1N; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32c54c31ed9so4210839a91.3;
-        Wed, 10 Sep 2025 07:30:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=LqXhpee6Fx0jxaWfYcdS6F9pJXzp3EQRmvl5H1Xqz2RTUPP1om4HzxzRZ7JKHgcAeXXf062VOiViHHbVON6KYnwj9QrbO3YhzXM6AcOQ52lmvbiGhZstjuDtn5uf86DUGSHOSQE66R0BCwN/PH/GS/fEB7DZtVk/Ty82UnJF3j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iLtvWNit; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61cfbb21fd1so11418a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:31:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757514653; x=1758119453; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757514681; x=1758119481; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/wYpny2eAiLj7phFAVb8K9lZatmDsPErPszMysbW8mQ=;
-        b=MAtVOB1NKnKz6geac9nzuy//9A/G44ULZVNzAfLa0nLITKltddgFRavnw65QrFbJwv
-         0lMcg9Rcuh47AA0l8vSO4GqukrathxA035EAmjf9bI97XNcFRJPxb8iA5BpAdIHSNN6V
-         IA/ZGwxpOJFLARTb7F7MxOOLmgCiKa7vJYpwB/0UCVrdevJmEunKYN+jjilVAe11h6Lg
-         mjpNObCDTu3yK4OuGywR77JcZht4AyOZOZSSGirKZBWW7f0iE/OjR9LZW0H4AxV+LslW
-         vs5DjvekbIQWl3aw7xAcP9so2CZWAwIE5q/SqWmb5GbUpcHgGg2TipqulpIYZKfx/kum
-         WlqQ==
+        bh=TBHjh07xVgerT1Ryn1zxmezBGqdr9sptWQnsNWqHz8E=;
+        b=iLtvWNitbg5dq5zTPcRVkIHdw5H2ObXf5kDRqmR2S1oO9t/MiNSVHyMFIALn/aqK0r
+         mlNJnVPstp7bTS+EoLVvX/v1Encf7sQf+y9UTwg58tsHgaUsj+JchSQnDG1jW3DF5jJo
+         +JtswBWmWAXsrnta22S4BTYBV1IWf3edYe7YxRsTItNSs1Kuju2fXEEy83lt8LiePbqe
+         PrYZVkDjMI14pqxN3NSiixU0S5rf5/vvcUPfNIg66SeeO4kcgdGLFkI9NzQNCOJiAI4Q
+         K3pug+M9vLEv12T/WfkkqRnRqnq4Njfw8IMEwVrLj160t2xiDduOr54wvCF9YQVSsan7
+         rFVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757514653; x=1758119453;
+        d=1e100.net; s=20230601; t=1757514681; x=1758119481;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/wYpny2eAiLj7phFAVb8K9lZatmDsPErPszMysbW8mQ=;
-        b=pXCeGdJyUXp/uD2Kt7ToZwWkmivAhEgKJVxkd9XTUyuKLZqJ5XuDxP5Oc6dQC9Texn
-         XJHAhZ0hSymcyntx8aVv5sRrqLiCWq6iyC1/v8NQ4Sofzm5gcm5phyPGEpxohsCezFKv
-         BLlvOJ10UmtbMI3VXUQqyK+A443kpSJT4VnvCW8PCpqNvhLmHEeB9mwL0VSXd9cWqVQn
-         hqEqW1r20AOdnPByWreGqvCxjom8iVvTtUR7/RgrvXQDxru+W+r7W4pxeqdt+tL7DFS/
-         AlvfD7Xfy/xcXkwDZyRHTxD2Pr5ESyQnqaDz0qWThvOrGuh1HdVxzTHMNIYnrBwg0KIE
-         rWnw==
-X-Forwarded-Encrypted: i=1; AJvYcCU28MgcY6MYYWCKBvIlOJ8Jk/kqNNB0S+VeYaoLw4yppQF4bRbg3icG7SAwRuht7+LgETY=@vger.kernel.org, AJvYcCUMCkF0gyNQ3PLZcuXZGub+UAy12G8+tOtrkHbTpd45pcFn3NUWDnbhgqnayp8i56zYR0LMT+JWsQdZktvf@vger.kernel.org, AJvYcCVPK36cgllN0vSWkHx9l0TCD7mbQtCxDrepORxJOrJZFQPRy1duyy9vnga8b1dKKJWBNwgJNLdOVbWhAppFGKkUU/Fd@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvdgMc2+98wu9wwRXnVNeFM2UAIpYkJoAqeLv/YMaeMTaDT8qZ
-	bMQ20E1YjF6y2Bl/bPJv4F93YN4Z2Y0X7L5GtwPMROumfm8eRmWCGO1Ge9qpN9u+iqyXXfgzAQ7
-	PI00C/V8hFn8b5Pbu8AuDmKhQLKHTuYY=
-X-Gm-Gg: ASbGncvavKaLmxTMbTJc5R7aGl8TjNmbt8xj1MGnOgAj1tF3Q5GlC+7YGnHgmzWK1YZ
-	mQ1mgpR8Gk/0U8pp/y1LGK/It7V5KISDp1ahNGNSlrngfuF7WIKsrdAuKYeQZRDfwDAzCmF3c+S
-	/5sXXbMhSuTJQWwJuSx9Haqqzy3Ad4xJ3rp3zXXTnv5qDnSdM2teuaQqX9GARkyCCyWc0FubFhr
-	R9ZxAKdg7QqULKjeq05bYc=
-X-Google-Smtp-Source: AGHT+IHPs0H+Nl6iUhu9rYC0Wlyk8tBA3VNM2+wR0NhG/M+6OrnQbgCQG795h4/ENIUQDSSHEOVK6c7HZ0cQlc+zNJA=
-X-Received: by 2002:a17:90a:ec85:b0:32b:4c71:f423 with SMTP id
- 98e67ed59e1d1-32d43f81c16mr18840924a91.32.1757514652864; Wed, 10 Sep 2025
- 07:30:52 -0700 (PDT)
+        bh=TBHjh07xVgerT1Ryn1zxmezBGqdr9sptWQnsNWqHz8E=;
+        b=vFXaRzG2VEIRM6eMcAo7X8cNKNJm8yx+OLD3NyovcPc/0sYQm6yh3d/Ob5xHI5mA7m
+         ByPagDUEIIeV7rOvCVjJwa6buO6z8NcXcn2HJXr2JOc8xJ9fRchQflkt4KvFebvTbxjS
+         6PvzcwDkAVpc8ULhOVYD0S25Z1QrFDBJsRyojemODv6iA4y5cnBcmfqnbxAwQEbugWM0
+         hfa14Pzm3pJwcEEkBOA8xb6wRaGb5Bu1rKhaN/xjX5u4eqLH0NYnRqhmEUO9yVJpSILJ
+         nuTdhqWrF51zDfkKIfqvGyZYO/4v9MVFb2h047P6kutj01XSZL8BcQhSxrO/CHNi5uPZ
+         2IHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiCy7gDw5uaQcMRKwkFWQkI8A5MVZTHe1t3Wo0WoDgY9doQAkXdXV+s/W5Wg4HovgTWNxioP+XU032oHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyofZSa4AGkGloKMdGvVc2nMm1W1BkEg+zpMtKEuKHEWpM3tK20
+	eC+3tuKs71ZTR0zo1Ot66xvz8mbM9LHfj8GR5Q1hJCGNtwd/odeuk3HUG75WLQoESNMhuoN1vXR
+	S578s+RUiTwDYjWUhqnBBWmeTfj8uqpcCCqZEroVT
+X-Gm-Gg: ASbGnctXLRBY4UHccYBNrZlne35lrJXc327+sOPaDO7Jj94uWEhmWiGa0VLNPKRg17K
+	L5jtbSHARHse5rc2QEbQX3fxq772gqKB039CcYc/i8vRfUTcBqdF8/RpYI0eGhy6GMC81nx9wpi
+	pcweATOLtypg+sc4DLY8vf+L9tn+c1+2S0NV7QAxQZ4wfqFm04srz1EbnGzZf25Vm2GHOce6PEt
+	aDnOSWRYSeThqvK7+BGig3pryCyr6Bvo0VZznCdcLyxan3S0Onq
+X-Google-Smtp-Source: AGHT+IGRjXQUY1hnYAWcdMxN/6KyD3xPZ0pQZ40M0o4vqF3cIQJ4GOYF46WvRJzio4N+Z7uVd9rvPLKsmTPmZkGoMyo=
+X-Received: by 2002:a05:6402:2185:b0:61c:c9e3:18f9 with SMTP id
+ 4fb4d7f45d1cf-62d4e0f68eamr87423a12.3.1757514680889; Wed, 10 Sep 2025
+ 07:31:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250720112133.244369-10-jolsa@kernel.org> <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
- <aLlKJWRs5etuvFuK@krava> <CAEf4BzYUyOP_ziQjXshVeKmiocLjtWH+8LVHSaFNN1p=sp2rNg@mail.gmail.com>
- <20250904203511.GB4067720@noisy.programming.kicks-ass.net>
- <CAEf4BzZ6xSc7cFy7rF=G2+gPAfK+5cvZ0eDhnd5eP5m1t9EK-A@mail.gmail.com>
- <20250904205210.GQ3245006@noisy.programming.kicks-ass.net>
- <CAEf4BzY216jgetzA_TBY7_jSkcw-TGCj64s96ijoi3iAhcyHuw@mail.gmail.com>
- <20250904215617.GR3245006@noisy.programming.kicks-ass.net>
- <20250904215826.GP4068168@noisy.programming.kicks-ass.net> <20250905082447.GQ4068168@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250905082447.GQ4068168@noisy.programming.kicks-ass.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 10 Sep 2025 10:30:39 -0400
-X-Gm-Features: Ac12FXyq3p703r3UwDyOpTo5nqGiR2kP5WHNyX8x7vM4ABOKKe20-gT57SVI1hg
-Message-ID: <CAEf4BzaHcs2wa_F4ro4Lg31WX-7+uo=CGpUKUD_2MfhGEAvazQ@mail.gmail.com>
-Subject: Re: nop5-optimized USDTs WAS: Re: [PATCHv6 perf/core 09/22]
- uprobes/x86: Add uprobe syscall to speed up uprobe
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
-	Ingo Molnar <mingo@kernel.org>
+References: <20250910103355.629421-1-czapiga@google.com> <87frcucy3p.fsf@bootlin.com>
+In-Reply-To: <87frcucy3p.fsf@bootlin.com>
+From: "Jakub \"Kuba\" Czapiga" <czapiga@google.com>
+Date: Wed, 10 Sep 2025 16:30:43 +0200
+X-Gm-Features: AS18NWBTtKhP8XqCorujp7PIPt_ibCOebdea57KS6V9p1MfFOBrohUfAAkZewTE
+Message-ID: <CABkukdpRxHFg9FbaV1GnS5UG3-ZxdxPbjKYdUpdmvOcLs5phKA@mail.gmail.com>
+Subject: Re: [PATCH] mtd: spi-nor: core: Check read CR support
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Pratyush Yadav <pratyush@kernel.org>, 
+	Michael Walle <mwalle@kernel.org>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Konrad Adamczyk <konrada@google.com>, 
+	Adeel Arshad <adeel.arshad@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 5, 2025 at 4:24=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
-> wrote:
+Hi Miqu=C3=A8l,
+
+On Wed, Sep 10, 2025 at 2:05=E2=80=AFPM Miquel Raynal <miquel.raynal@bootli=
+n.com> wrote:
 >
-> On Thu, Sep 04, 2025 at 11:58:26PM +0200, Peter Zijlstra wrote:
-> > On Thu, Sep 04, 2025 at 11:56:17PM +0200, Peter Zijlstra wrote:
+> Hi Jakub,
+>
+> > diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+> > index ac4b960101cc..79deee3a50d3 100644
+> > --- a/drivers/mtd/spi-nor/core.c
+> > +++ b/drivers/mtd/spi-nor/core.c
+> > @@ -2608,6 +2608,10 @@ static int spi_nor_setup(struct spi_nor *nor,
+> >               }
+> >       }
 > >
-> > > Ooh, that suggests we do something like so:
-> >
-> > N/m, I need to go sleep, that doesn't work right for the 32bit nops tha=
-t
-> > use lea instead of nopl. I'll see if I can come up with something more
-> > sensible.
+> > +     /* Some SPI controllers might not support CR read opcode. */
+> > +     if (spi_nor_read_cr(nor, nor->bouncebuf) =3D=3D -EOPNOTSUPP)
 >
-> Something like this. Can someone please look very critical at this fancy
-> insn_is_nop()?
+> There is a spi_nor_spimem_check_op() helper which might be better suited
+> for this purpose?
 
-Can't truly review that low-level instruction decoding logic (and you
-seem to have found an issue yourself), but superficially the cases
-that are claimed to be handled seem like legit no-op instructions. And
-the overall logic of nop handling in can_optimize and emulation seems
-to be intact as well.
+spi_nor_spimem_check_op() works only for spi-mem devices. spi_nor_read_cr()
+handles both spi-mem and spi-nor controller. Using spi_nor_spimem_check_op(=
+)
+would require adding a variation of spi_nor_read_cr() that would use
+spi_nor_spimem_check_op() for spi-mem and spi_nor_controller_ops_read_reg()
+for spi-nor controller.
+Another way would be to do this check only for the spi-mem as spi-nor
+controllers seem to be deprecated in favour of spi-mem.
 
-Thanks for generalizing all this!
-
-To the extent that this means anything:
-
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-
->
-> ---
->  arch/x86/include/asm/insn-eval.h |  2 +
->  arch/x86/kernel/alternative.c    | 20 +--------
->  arch/x86/kernel/uprobes.c        | 32 ++------------
->  arch/x86/lib/insn-eval.c         | 92 ++++++++++++++++++++++++++++++++++=
-++++++
->  4 files changed, 98 insertions(+), 48 deletions(-)
->
-
-[...]
+Thanks,
+Jakub
 
