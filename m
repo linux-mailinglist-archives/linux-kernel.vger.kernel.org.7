@@ -1,246 +1,200 @@
-Return-Path: <linux-kernel+bounces-810478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC34B51B39
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:16:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 236E3B51B24
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F681894F93
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:13:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EFDE7A2092
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3594F31C59E;
-	Wed, 10 Sep 2025 15:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7543081BB;
+	Wed, 10 Sep 2025 15:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Mdve/p9F"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NpeALrA1"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2061.outbound.protection.outlook.com [40.107.95.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311092D6E5C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757517171; cv=none; b=q9oKukJgoxMHXppG+KLvzEXmR/oRZJUwHHP4T02uemltC+g0aTRCFHYa6Ne9/ArQiJn8NQFl04M4mxEm71WHvY8G02W9RE5cnZM6uiGPjcvVT0zRcrq/9RYi3R1rnUX8t5O8ZAMMfhprSQvJa0VwCkGjvjwjgT57P5glA2zhpiE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757517171; c=relaxed/simple;
-	bh=yEPNFizhlMLYtzzCJT8WnF7ItC7mAbP5GDBNbLX2dIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TOOUkUnmnz3JhJauyOZWb4pmlQ20wJREXG0sl6mGkmWwEq+SpCVDZ6THM/zCTa4ztjtQFcWT2Na8C2e+G4ZH5o0Sb0piJWiyABndNhYJR3V7r0t+oNiCwsarb3pbQpp4x9TA5Yk1mNPdJqOaoIKpUeTuAisXv5exevLfH4KZqPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Mdve/p9F; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6188b793d21so11131117a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:12:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757517167; x=1758121967; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lS4B/kVyOWsTepn7TGoZ2DE5rifwijFnY4ZfdnGn4f8=;
-        b=Mdve/p9F+UqNTYsq2yRthjQml9zzizC3UQJXiusMOTGjkDJc5hwNY5fILvKxW+XzkS
-         26o3NUG7U9gQT7B7nYsANoXa/Wcy6xKtiDjvKdhPPV9qjCkHJL06rYOZFC5rXQJIkgQJ
-         INePFaUb70ttosO7vBgv3Gy9Uj77EC3Pfv1ZVFSeAdb6RGviqRE8Gcr6UvIOyylrTKIz
-         ChCyWxyNaLIyRuNiPMajzGsLhzxAJoP/N4QPM6RfopU4zcuYJsl2qk9Blckqgxv7KTS7
-         JbMp1J9zCW5FIo+7lNGKk426uY26dLguGejnEwM2bAkH54Wpf6KdS8pLa56eWSb0yZkm
-         m06w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757517167; x=1758121967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lS4B/kVyOWsTepn7TGoZ2DE5rifwijFnY4ZfdnGn4f8=;
-        b=GsRU9P5NaNj//xdx5a/u5UjbQJJOvwysWicMDySUuesFwkN+fiXggvq067Erw0E2Fc
-         kHf1BRcqgBOQv+PthAdxuuOhlMOfs+ynnBt8aOS+BZ+/bopU0w//GjpO7xpSgrzkwRfU
-         2PU4EEeXQJMsmw/QKYjCcwKatYGik8anf8hpY2apncjppxyIxadkKlGFrC4pgnMOlMHw
-         b1R8/qwGY7Ogp5Dmu8/cLYm1GNfRJKkVlyP3zCIgwt/hp0gLkToUzm1WvubTJixH3SPu
-         u8RZVhejKhiuXg3TtSJYuo/qDO5v9p6qE994nb57UQn+mWfy3Mbl52FcA2d+SPXRAlSX
-         KMRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUL7psgi/KuoqZavbXZr5VxzRrv7ld4zHLfIiXVPONktROdF6icrVFjRdW4z1bwkjkweqVrvCOCKbI7l04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznB7SFQSQePm2zQoFrpKE4BoacHbLd8CokeQaYltp1wh3IVA+s
-	/aIQ/P82aLcDFQOgOoXI0fY7IeM3XUySg8v35mrX/NBR3ejWkG0wGo758bpu2Y5AQPo=
-X-Gm-Gg: ASbGncvZfAX3Ysz6eyGnp7TjqJMX9l3Jm7BIhcbMFTRA9aTi4pA0cqsGncB69lQIg/G
-	dQGpJq4dWCdKWfJXv8RwNDzYOPDg0p6RrqUK6z1HfcBedvrzgRD7c/HQS599+kNsY3cIflMKkNK
-	I1oDmQofBJ3LJ9fkBpQpk1aVOnC+SWt3IWp8BVNEzYBf0+iIX6O4v0z1P3NxCWdCGY8d4yNPJqI
-	pwKjDJyc118MOkgpxmDnYfVfZeNBmViyoVu1Y/p8sh3SaeanvX/Ra6xrLsRHtilWyfClFrSH8/X
-	mrH8BS3RhinaBU8m39VeIauFPiHhs0e5DlFM3si4GXRks1l19yyc3j64oTqBs7DopI2867FWGua
-	z34JlHJPt1geOFoCHAqeboJRe0lI6EZRaLHQo
-X-Google-Smtp-Source: AGHT+IEDAom2o01RiyMlPHt3bYIxRvyaze23uGNfMpTApnouglenk0sA16ZHwEvKSTawukwNZSsQqw==
-X-Received: by 2002:a05:6402:354a:b0:629:1c5:808d with SMTP id 4fb4d7f45d1cf-62901c5839amr9541659a12.3.1757517166778;
-        Wed, 10 Sep 2025 08:12:46 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c018007casm3385154a12.35.2025.09.10.08.12.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 08:12:46 -0700 (PDT)
-Date: Wed, 10 Sep 2025 17:12:43 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Breno Leitao <leitao@debian.org>, Mike Galbraith <efault@gmx.de>,
-	Simon Horman <horms@kernel.org>, kuba@kernel.org, calvin@wbinvd.org,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>, paulmck@kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-	boqun.feng@gmail.com, Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-Message-ID: <aMGVa5kGLQBvTRB9@pathway.suse.cz>
-References: <4c4ed7b836828d966bc5bf6ef4d800389ba65e77.camel@gmx.de>
- <otlru5nr3g2npwplvwf4vcpozgx3kbpfstl7aav6rqz2zltvcf@famr4hqkwhuv>
- <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
- <7a2b44c9e95673829f6660cc74caf0f1c2c0cffe.camel@gmx.de>
- <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
- <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
- <tgp5ddd2xdcvmkrhsyf2r6iav5a6ksvxk66xdw6ghur5g5ggee@cuz2o53younx>
- <84a539f4kf.fsf@jogness.linutronix.de>
- <trqtt6vhf6gp7euwljvbbmvf76m4nrgcoi3wu3hb5higzsfyaa@udmgv5lwahn4>
- <847by65wfj.fsf@jogness.linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B0A2D948D;
+	Wed, 10 Sep 2025 15:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757517222; cv=fail; b=oLvh/bivYHHeWilOvQ9ap7ozXydek19uS8uQB8+XTdNj2bcYoB5rtE/n7LPGBk1/PUpKvxiSv9mFbHvnb4E3j7zVqdugDsMZoR3Va/9NN07nWV80CQtEPDTQoGg7FdOPxeF61H2aW2oubaM87l+EJj2/76FDNLEp6syHKvDrBPI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757517222; c=relaxed/simple;
+	bh=cHkqJAy60cAQu3uBvU/6/OLH8p4K1f7jr2BQxSzY7/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=seWQjQNepmHOq2IQJs0vET3LAo//rvb1zumBI+IqtRVtjAbXbL9aQyk2STknNAViDwwkCrJROfSyLSS+KLgrvJlR1BgGNhdmArVhOHM4Yj8N6oRvtthEu44qhKAs15YVTcvHeKB3FZRHDKzBQ5C3JsDFk/sidPR4mO723C5QG0Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NpeALrA1; arc=fail smtp.client-ip=40.107.95.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o4/Rl0PtDa27klBK1SU/DnD93PGVBRoI+zZHXQY6HhBK+BgNudYyGB2H+83MbiKqTMwZIjuwWCQ1o5WFJR/9O/3pdRqf3c45lsEczdv5+j6QwkKqdbJjjQ/6m7iWGZb1pHb3rhbAlZGdF22AAj2Jdvqmr0xmYxkjtOg7uJZuo9pxaDV5WtEYq2BS9b97tRD2y9Ot0wgyzJmtJgzkZLGlnTHGtejYBL66YvsmRhOJ9T7Tjqo+Mkwy5QEI8yRhZQiGptqEEBucwQZWRMPR+m12Fvf8VIst18r3nR4qpLsPscwsUteOTTgpAVsSzHfjOdvvZ/wgjr/eN72XmxFmVk+76Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=00UihxpjTrMAlFV+NC0s1siZKixPmqFj6vc1aeHLOI0=;
+ b=ckqh5iuBwnOqq7BvACIWevCmLCKU8JvAuwxzNxGeYjJ2yaRtoBOnr6F/kU14DfETir1Ark5d2u4NhKDtSVJm5Jv/83PEpq4yjuTTtW9IY210mJurnWg/UZlpXrNg25r2HfqKR/1Lq24lG/JO12vg4F8veC5/9DLzPnTTYKgd1KFnD/6UnNI51RoEwYBSqcwlf0jcMy0gv7HEJJHK3NI0z9JxWe2oYm1Fht0TvbQjWjKfzyxkN+VhybJ9fIdc2TnY+/pUV+ApLxVzZc7SZqzcyOFe8BuQf5aSMYpILxS8ZLMGEv2v9yyQwbMxp8Ys6LWawSrzdhIn1qmzHypIt+V2kQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=00UihxpjTrMAlFV+NC0s1siZKixPmqFj6vc1aeHLOI0=;
+ b=NpeALrA1ksRRNlV3itSy3eANYdDjDqj3DyAL1+s7iPoPaQHpKuIS2J8A3N/1ajsTu33JijgLP2TN65+jFBSXZoIDI5rNggRWWrBqWBP6gdWF4Sfz92VXSc1rca7EZ7t2ztoGzjKFn+r6O+KbF/VzexEXTZ161B/LeuHyKrJRvec=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CY5PR12MB6369.namprd12.prod.outlook.com (2603:10b6:930:21::10)
+ by SJ2PR12MB8718.namprd12.prod.outlook.com (2603:10b6:a03:540::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 15:13:38 +0000
+Received: from CY5PR12MB6369.namprd12.prod.outlook.com
+ ([fe80::d4c1:1fcc:3bff:eea6]) by CY5PR12MB6369.namprd12.prod.outlook.com
+ ([fe80::d4c1:1fcc:3bff:eea6%4]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 15:13:38 +0000
+Date: Wed, 10 Sep 2025 11:13:33 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Avadhut Naik <avadhut.naik@amd.com>
+Cc: linux-edac@vger.kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] EDAC/amd64: Add support for AMD family 1Ah-based
+ newer models
+Message-ID: <20250910151333.GF11602@yaz-khff2.amd.com>
+References: <20250909185748.1621098-1-avadhut.naik@amd.com>
+ <20250909185748.1621098-4-avadhut.naik@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909185748.1621098-4-avadhut.naik@amd.com>
+X-ClientProxiedBy: BN8PR04CA0043.namprd04.prod.outlook.com
+ (2603:10b6:408:d4::17) To CY5PR12MB6369.namprd12.prod.outlook.com
+ (2603:10b6:930:21::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <847by65wfj.fsf@jogness.linutronix.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6369:EE_|SJ2PR12MB8718:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36db94a0-8ad4-492b-9132-08ddf07c9e44
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Wz3uoiMWjiIW6m0++fGPCzeiQlxAcftGWMkZitYDfhUIHtLTzCzYVSmwoEh2?=
+ =?us-ascii?Q?5fef8Buyr78WEQslH7Bi0CNi+zASB1mOwFovTAeJTfzT79V99gvPsDJLVSQ9?=
+ =?us-ascii?Q?WVzgHhhHCdHlZt/S9jcq2dpeCIyrSWTE7woV3I7aWy6VPPxjGNy+xgwMXQy5?=
+ =?us-ascii?Q?Qjphkq49rIDu3EpvvqAdQ4UcFeRK0OO85MLXFNzfPWKT4jyWsaMbVUvw9TQj?=
+ =?us-ascii?Q?XwuczV6jeMzLDDwMBAtFQZX+p09z9vHts1QtwiLPripFrApyNEqPSmqTtDQ0?=
+ =?us-ascii?Q?pMZciXRZ2yWEHBHPrx+2YLfc+5cJ5oUDB8twtctGmhiiLvMqHcgKgdQZ12XR?=
+ =?us-ascii?Q?JsQzGQvSJ2rWfqRa4SqQwxeUTKivmtofL4wk9fZpAsF414Rxg/5ya+r+zmI6?=
+ =?us-ascii?Q?qIHuh0Or47PjRBm1tpKIKTeeBcpal1YHEPA03LKovCdUqtOqZmUjIrBtR2SZ?=
+ =?us-ascii?Q?AW/FGkPkOo6sDQfbnBX/Ey4VzwAktjqUrHt/8CC3Vxybbm8tD0iSF2zSeIMI?=
+ =?us-ascii?Q?GomeRoVCYNYz357erWvXT5cIv+EFTi7Pvk0ZjJ/1YgsP56apsRIZtJpEWwSy?=
+ =?us-ascii?Q?JOMagW+OWow4RnOEN70LgqYzlaM/4IDY1YNMTAuaUvLLL6biuFbaHnOdf1gI?=
+ =?us-ascii?Q?H/+HRT2MHfeXz0de/XBaaHbmLiMlpVqz0i8Cr8/P6EMZYCMZbjRk1tTRtDw7?=
+ =?us-ascii?Q?+YqtRe8lsuFKzi0CoPAcHuB/ufn1sVOecebIu2qK0xv2HLTh85bpN1enQoJX?=
+ =?us-ascii?Q?yaTWFw+o+TMJ+RBL9m6OCd50rKcGadnCTXCrmi4lIM8w3ZQACy6m40yS8ghV?=
+ =?us-ascii?Q?oxo+SaQtad4fgNjRhF2PK44snA8oFnSqJu2J2PG4ICtfKHcRJ2fgFAKMGz9N?=
+ =?us-ascii?Q?xE4Q2ywBe9nl0hAWGPu5qUwMQAAvjw55Rw6jJV2iBiO0XZl5uPRJDXwBP/kN?=
+ =?us-ascii?Q?B0EuVpUjOEPSL4dulHNy2eVV+zaFMV7dRZYhulTyVRjAZ53+M5SfJHzQ+fgs?=
+ =?us-ascii?Q?q+04EgCKYcwk6F5foDVvVLnfEow+TdoDoiT3muYxrF6sEHOnrZDsRXxwnhPE?=
+ =?us-ascii?Q?a21VrpevHqGSOSktFrPQ7avMTCCK4hmRcxZmrexTq5iGSgd8WZ7vMVu009vx?=
+ =?us-ascii?Q?fN1SX23cU/OYg3kK32gML4qxbM20xw0yEo2++gaAIbVbfUWEY2I8JapJHGHV?=
+ =?us-ascii?Q?ilsfsUumvxEOAPhNsny9Wd16pqTYzozXsuaZ0YPHtlkKXjK7pz43Fq/cbBdG?=
+ =?us-ascii?Q?nep7gy9YqSj/6BhgczDha+LxnJz3oUdfjk5XksqV1WOCfeSjdTezVJ7TcFaq?=
+ =?us-ascii?Q?cpiOOkfUUzOQCDsHIiUXx1Z1PaTZumGEniRzaezi0eEk83d2++hYsrqHnlQY?=
+ =?us-ascii?Q?BEPNCJFgWgupcfVdtGTeN2XvE6oEUCWuA4y/jb7ugNscManwrg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6369.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?57Qhrk5bvyDaooOFkmfRCW38gN/6eNMX/8ClxFGcA+u9R7lgRT6T00mP02TA?=
+ =?us-ascii?Q?/VAsEyFTKcMQgZDBtoaUMSAu1YAGG2g0BSc5sqccaG8FksF05QF3BVjgJPkY?=
+ =?us-ascii?Q?ZzVBwauywZ5CcNEJ59CEMFLOwBccLuqK48D7rkecs7+Mjt3kb6vwU47Pg/Fs?=
+ =?us-ascii?Q?TlM6AkQkxL8YXNmK56D1JrBHfkBSoUq1+3c8K1cPygXiFfto+cZ+CEEVewRg?=
+ =?us-ascii?Q?L8g8LRlE1Ks9UDTvlOmeyTvt3Shf637UjyWKcseJy3r6HWdpLBOZvUHu8x86?=
+ =?us-ascii?Q?iQFJ1KMp7RFZyQqKbkCoCp8SLWCRPGG9WCZe55TO4HH0ppFGcTfK5PDB51WJ?=
+ =?us-ascii?Q?BjRKyOwMhyFXqoWeysYapvFBkNzQ2afn/5IHnRY8BNmq7nQAJUfGb0sflNmD?=
+ =?us-ascii?Q?cfLQ7flYYV4CktYIN8zNgh2+4MGSSZrqv2NW0NbFQQCYdZpaXgWmqaGSlfar?=
+ =?us-ascii?Q?Dcp7ZuH42WTExLzWiqoJv+yKBMD9DOgQ32TrI17DuWzotfbFCvrLjolkf9pe?=
+ =?us-ascii?Q?1oma725RcjGiz83iMyzCs2tnFpigq4ix3ipDU5g6galqv7Vhf7eHoPQwKJQP?=
+ =?us-ascii?Q?AqyZDXWpO1b82+Jd3Ms9p2rPAHsiovonIfPPIISCvhwLKfFrffE2dzJiicVk?=
+ =?us-ascii?Q?cif76kX0jexjCaETNly4STd7yO78eM91bezTNvhT9JXieUj+hxJ06aM3jOhB?=
+ =?us-ascii?Q?mI1lVqL0DaQOgoUe8mWFbzUefc52qTlSJLWXEWBYBR1HttjOdJuQgCQHxe/O?=
+ =?us-ascii?Q?KqXS28m3Nwf66QkjfpvTSeG3rptRrGNluE9uwd/CHPDWkRwKD1xMh8edb6eo?=
+ =?us-ascii?Q?NgKOGrj1sMm3k0sXj7bxwWZu6sjIUz1VCSr0SYL0G1uxj9GCb4bDNFLzcbPR?=
+ =?us-ascii?Q?2a771g1s4TyEKHhoXTxu8naBLJ1ba8o7l1ASgaMDZiXtiz0wWUFpKDUVN7Kg?=
+ =?us-ascii?Q?821GNunaVyGx8tmRv2IuzLzkSxXVq89YbZxR0B8ChydL+8tcu8KEtF1+HcPN?=
+ =?us-ascii?Q?lJ0EAmhHFecgup9cXfU++hikH7AOBeW8/MbEY0IBc5wBAM5I7YSEuIWgFH8t?=
+ =?us-ascii?Q?P4RFcuyW5NXWNPrdQ79fZm/llsMrRa0FGbgfrNMkY0pYT9dWDZiEqOkxE4jP?=
+ =?us-ascii?Q?dYzK6iWLozNiWXtttQrmnMvtrDiET45XcfZNb1Nt/8LD+4RYeWqePv1y9/wR?=
+ =?us-ascii?Q?R/vFNatgYo4dRy1iTgPwEaRWcrsSrd7CDCqDtXZ6tEwWb3LhKWOH2ASZm3Gw?=
+ =?us-ascii?Q?FuybUAF2VsJcbHkeh7pqBGyg/+K72ti7s3Csrob5eDs691WzA55TZesZi4Jn?=
+ =?us-ascii?Q?93euOxxZK3NuUNXQckbGg8LWlZb92oYK6jh7YuX69EzNXumb3/1/Uf0sCztv?=
+ =?us-ascii?Q?AIyeje5Lrjmr7NWskxsfa3x7Ftj0IBrR9OBQS0W2SA6NcdCEsR45/Gu9fRyu?=
+ =?us-ascii?Q?smA5lCpc8AX5a1tIO2fWqAOles3Ob/FAvl7Qo/SqMrPOhLpMfImevJqB7lnp?=
+ =?us-ascii?Q?0rhAsKeNBqg98WHMlO0bZjfwcrkQql59New05nhaEc3tt/YwsLQeXhVKQtN1?=
+ =?us-ascii?Q?a2vC7EPMNuLAx/cIioAKxQn6PfQrut4dlU72VGr+?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36db94a0-8ad4-492b-9132-08ddf07c9e44
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6369.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 15:13:38.0012
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lsw5SebHvQ7jcrcxCwhfRJDt6BI3Rl2hhKqsa3YJjDSyVMcLK42go2HcBWFSNzGyGzROUR+nOm4vV3niTV53bw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8718
 
-On Wed 2025-09-10 14:28:40, John Ogness wrote:
-> (Added CC printk folks since we are now talking about the nbcon API.)
+On Tue, Sep 09, 2025 at 06:53:12PM +0000, Avadhut Naik wrote:
+> Add support for family 1Ah-based models 50h-57h, 90h-9Fh, A0h-AFh, and
+> C0h-C7h.
 > 
-> Hi Breno,
+> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+> ---
+> Changes in v2:
+> 1. Remove extra tabs
 > 
-> On 2025-09-09, Breno Leitao <leitao@debian.org> wrote:
-> > To summarize the problem:
-> >
-> > 1) netpoll calls .ndo_start_xmit() with IRQ disabled, which causes the
-> > lockdep problem reported in this thread. (current code)
-> >
-> > 2) moving netconsole to use NBCON will help in the thread context, given
-> > that .write_thread() doesn't need to have IRQ disabled. (This requires
-> > rework of netconsole target_list_lock)
+> Changes in v3:
+> 1. Since ctl_name string is now assigned at runtime, group similar models
+> together.
+> ---
+>  drivers/edac/amd64_edac.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> Aside from reworking the target_list_lock, be aware that ->device_lock()
-> must at least disable migration. The kerneldoc for the ->device_lock()
-> callback talks about this.
-> 
-> > 3) In the atomic context, there is no easy solution so far. The options
-> > are not good, but, I will list them here for the sake of getting things
-> > clear:
-> >
-> >   a) Defer the msg as proposed initially.
-> >     Pro: If the machine is not crashing, it should simply work (?!)
-> >     Cons: It cannot be expected that the workqueue is functional during panic, thus
-> >           the messages might be lost
-> 
-> To be clear, "might be lost" means the message was not printed on the
-> netconsole. The message still will have made it into the ringbuffer and
-> attempted output to any other consoles as well as being available to
-> crash tools.
-> 
-> My problem with implementing deferring is that is what ->write_thread()
-> is already doing.
+> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+> index 0fade110c3fb..804d3c4c3f14 100644
+> --- a/drivers/edac/amd64_edac.c
+> +++ b/drivers/edac/amd64_edac.c
+> @@ -3895,6 +3895,16 @@ static int per_family_init(struct amd64_pvt *pvt)
+>  		case 0x40 ... 0x4f:
+>  			pvt->flags.zn_regs_v2   = 1;
+>  			break;
+> +		case 0x50 ... 0x57:
+> +		case 0xc0 ... 0xc7:
+> +			pvt->max_mcs            = 16;
+> +			pvt->flags.zn_regs_v2   = 1;
+> +			break;
+> +		case 0x90 ... 0x9f:
+> +		case 0xa0 ... 0xaf:
+> +			pvt->max_mcs            = 8;
+> +			pvt->flags.zn_regs_v2   = 1;
 
-I agree. Deferring any job in write_atomic() callback does not make
-much sense. It is primary called in panic() where the deferred
-job would never be done.
+All of Family 1Ah uses 'zn_regs_v2', so this can go before the models
+cases.
 
-And yes, if .write_atomic() callback is not implemented then the console
-handling is already automatically deferred to the printk kthread.
+The register changes happened in Family 19h, so there are a mix of
+models there.
 
-> I wonder if we should extend the nbcon interface so that it is possible
-> to specify that ->write_atomic() is not safe. Then it would only be used
-> as a last resort in panic context.
-> 
-> @pmladek: We could introduce a new console flag (NBCON_ATOMIC_UNSAFE) so
-> that the callback is only used by nbcon_atomic_flush_unsafe().
+We could be so bold to say 'zn_regs_v2 = (family >= 0x1A)' up top.
 
-This might be an acceptable compromise. It would try to emit messages
-only at the very end of panic() as the last desperate attempt.
+Family 19h would not set this, but then the individual model cases can
+fix it up.
 
-Just to be sure, what do you mean with unsafe?
-
-    + taking IRQ unsafe locks?
-    + using trylock and ignoring result (keep using oops_in_progress check?)
-    + ???
-
-Note that write_atomic() might get serialized against other operations
-using the nbcon_context locking. But it might require adding wrappers
-which would take both netconsole-specific lock and nbcon_context at
-the same time, similar to uart_port_*lock*() API, see
-include/linux/serial_core.h
-
-It might also require adding support for a nested nbcon_context locking.
-
-And there is a risk that nbcon_context lock might become another big
-kernel lock.
-
-
-> >   b) Send the message anyway (and hope for the best)
-> >     Cons: Netpoll will continue to call IRQ unsafe locks from IRQ safe
-> >           context (lockdep will continue to be unhappy)
-> >     Pro: This is how it works today already, so, it is not making the problem worse.
-> >          In fact, it is narrowing the problem to only .write_atomic().
-> 
-> Two concerns here:
-> 
-> 1. ->write_atomic() is also used during normal operation
-> 
-> 2. It is expected that ->write_atomic() callbacks are implemented
->    safely. The other nbcon citizens are doing this. Having an nbcon
->    driver with an unsafe ->write_atomic() puts all nbcon drivers at risk
->    of not functioning during panic.
-> 
-> This could be combined with (a) so that ->write_atomic() implements its
-> own deferred queue of messages to print and only when
-> @legacy_allow_panic_sync is true, will it try to send immediately and
-> hope for the best. @legacy_allow_panic_sync is set after all nbcon
-> drivers have had a chance to flush their buffers safely and then the
-> kernel starts to allow less safe drivers to flush.
-
-I think that the important trick is adding the NBCON_ATOMIC_UNSAFE
-flag. The practice will show where such callbacks might be
-allowed (risk vs. gain).
-
-> Although I would prefer the NBCON_ATOMIC_UNSAFE approach instead.
-
-Yes, I would start with allowing unsafe write_atomic() only
-in nbcon_atomic_flush_unsafe() and see if it is enough.
-
-
-> >   c) Not implementing .write_atomic
-> >     Cons: we lose the most important messages of the boot.
-> >
-> >   Any other option I am not seeing?
-> 
-> d) Not implementing ->write_atomic() and instead implement a kmsg_dumper
->    for netconsole. This registers a callback that is called during
->    panic.
-> 
->    Con: The kmsg_dumper interface has nothing to do with consoles, so it
->         would require some effort coordinating with the console drivers.
-> 
->    Pro: There is absolute freedom for the dumper to implement its own
->         panic-only solution to get messages out.
-
-I guess that the dumper would use similar tricks as an "unsafe"
-write_atomic() callback.
-
-I would personally try the appraoch with the "unsafe" write_atomic()
-callback first, IMHO, it would allow more flexibility than adding
-a special kmsg_dumper.
-
-> e) Involve support from the underlying network drivers to implement true
->    atomic sending. Thomas Gleixner talked [0] very briefly about how
->    this could be implemented for netconsole during the 2022
->    proof-of-concept presentation of the nbcon API.
-> 
->    Cons: It most likely requires new API callbacks for the network
->          drivers to implement hardware-specific solutions. Many (most?)
->          drivers would not be able to support it.
-> 
->    Pro: True reliable atomic printing via network.
-
-Yeah, that is the dream solution :-)
-
-Best Regards,
-Petr
+Thanks,
+Yazen
 
