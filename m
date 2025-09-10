@@ -1,194 +1,159 @@
-Return-Path: <linux-kernel+bounces-809475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C306DB50E15
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:39:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD68B50E16
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 739C54812FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:39:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8000E4E5BBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E4230597C;
-	Wed, 10 Sep 2025 06:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA0A3064AB;
+	Wed, 10 Sep 2025 06:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SeEIQaGa"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b="UU+x0fu5"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83543246788;
-	Wed, 10 Sep 2025 06:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0677D246788
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 06:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757486336; cv=none; b=dVA3g92UXth3PpoIyDnWIs1rUo8RP6f2H0FPaNK+6i9sPDeJsWKb3FeIeRCr+ziyNERhqUexYPSt+vrhYMQzMuPAJIWHzE0mjpb8gAHFdF2VRkdNvIrCWO9wTT9Yh9zx16DZYMe3Zys9LF+cByh7r2QWVvW2mUaSs6l3Do35h94=
+	t=1757486344; cv=none; b=OONcG+4FOAWu+7GZZG0gwQURVyBrcwzuwE9gEoc8zOvbDHtxKAdgXsNgYVUcqEAV407s45Zo8FQoF6yhmyTfp9iVo0QfMvxh+k6gY16Q5sMZk69iXiIsOFjLbFsy7lUDUKA2SKqkzfglErDLoZyIh0FRfkcAit86o+v+jQk/Ldo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757486336; c=relaxed/simple;
-	bh=HtJFPVBSRLL69/fDPfGLjardcvvG2PoQkZG1CwL/WNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J6WVmOJ04+LvKm2Bme9W9uZJ2Akeyy6K6kX/8rgaVAY5d9rz/HcEkPfEjHXl6eva/jsG3VXwWayQ4MVF+AD6/unc9BZWN97SE+qYyhQm1cI4UZiHl+trBFAbQjwSntBMjRBBfcG4PDOkIVlUnUDcj0lTQEv3WpR2bVAxQBj5Z68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SeEIQaGa; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58A5gQ7d026821;
-	Wed, 10 Sep 2025 06:38:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=u4c9n0
-	RJl5sZ/Cou/Y9CAtU3SlebsfZtlil7ogfqWlo=; b=SeEIQaGaI2rBMkmZdnUyO9
-	qkF7ZOcLu5r1dMmzRnWJoxlrFljpv3yXp2cFeq8BYK74wj8r6i6PuR14h+ZCmcsN
-	pDOSudSPTfSfyPGl/VnQ+9UxdWZ11lyodujIqNZi/PA7/6tnQlWT4zu60G+ftGEa
-	FY9jQKdnkqf2EdR8m0cm0K9dF5ALPs9XztwriDmq2m851SwefmM2nP3JHy/WPvvA
-	ZBXlj1aXCRi8U4Snfpbxyzp/Tsn4iCJB2dpBkjLW+0yK5ZtgAqPRELDdneQcXMMp
-	QavuHUpr7V4TKanHVuy2ssCQMFL1QNP0grhWLTdU+ji6wkufoL4zVNvCqM94f4/A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bcsuy4q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 06:38:46 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58A6ckud028548;
-	Wed, 10 Sep 2025 06:38:46 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bcsuy4m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 06:38:46 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58A5ph8k007929;
-	Wed, 10 Sep 2025 06:38:45 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109pq37b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 06:38:45 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58A6chSE55837048
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Sep 2025 06:38:43 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B8FED20043;
-	Wed, 10 Sep 2025 06:38:43 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A4CF320040;
-	Wed, 10 Sep 2025 06:38:40 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.208.79])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 10 Sep 2025 06:38:40 +0000 (GMT)
-Date: Wed, 10 Sep 2025 12:08:18 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zorro Lang <zlang@redhat.com>
-Cc: John Garry <john.g.garry@oracle.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v5 02/12] common/rc: Add _require_fio_version helper
-Message-ID: <aMEc2gW2WA0kYUks@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1755849134.git.ojaswin@linux.ibm.com>
- <955d47b2534d9236adbd2bbd13598bbd1da8fc04.1755849134.git.ojaswin@linux.ibm.com>
- <1b12c0d9-b564-4e57-b1a5-359e2e538e9c@oracle.com>
- <20250907052943.4r3eod6bdb2up63p@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <aL_US3g7BFpRccQE@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <08438a13-6be7-4be3-a102-35a1f6fec9a5@oracle.com>
- <aL_tLHcWyFPShrUc@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <20250910060715.gc2thcbklvhzaxz2@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+	s=arc-20240116; t=1757486344; c=relaxed/simple;
+	bh=BiSHJfuoO49NYwm2GbdHcT3STRW877pFDRQF39t5I9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NllnvkNYZ1DUQXmYFIufsqxo1R0Ae0bI27WKGBj9ncmT9H5GxphhPIMlzKiZWMq1+heNR0h1VWYJvluKQcGIeMZamwY5sXgzvM8VINnnzKgw5/L0JQa0rEJx7yYQRwa0HdXbedHh5uOO8D/JwBNZHe7NpBSuuS5nRcv+dE3j9GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b=UU+x0fu5; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1757486325; x=1758091125;
+	i=markus.stockhausen@gmx.de;
+	bh=BiSHJfuoO49NYwm2GbdHcT3STRW877pFDRQF39t5I9w=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=UU+x0fu5pHx70Oc7x1vVOeu0F7Oi/A8+YFy4+tV1hC+new4vtwvC4yPsxV1ky2eP
+	 mr93PibsRhJEvdL3Vwt/ip6DBgK1Ihe6zg14HF790s+0WmjClUVcyUtvEGsj8WCnQ
+	 DOIqmUspotC6wzG7PgQBudi9ELzvpEalh/rZryIn6MFXDBcO9AnNZaJdUHC2KIgT9
+	 9gnlrSqciErKhiYmCW5QbiheXFrvV9AQz8/xgqe3zKzVjJ+SW9jrBylCprqahmG5G
+	 Q0jNvyLtDdKfdy4fKMl2+/QqH8do6HjVM/9kohI5De3XwM1WCnlCkyz9RWZc1UGa2
+	 44HpCZtJaIAfyFdArw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from colnote55 ([94.31.70.55]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MWzk3-1utps41c3l-00ONmM; Wed, 10
+ Sep 2025 08:38:45 +0200
+From: <markus.stockhausen@gmx.de>
+To: <daniel.lezcano@linaro.org>,
+	<tglx@linutronix.de>
+Cc: <linux-kernel@vger.kernel.org>
+Subject: Question about clocksource/drivers/timer-rtl-otto patches
+Date: Wed, 10 Sep 2025 08:38:45 +0200
+Message-ID: <014201dc221d$8e785900$ab690b00$@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250910060715.gc2thcbklvhzaxz2@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfX/0NtW9aEEW6h
- pnXyqnOyNm5xPrlppDsonIz3Nt9Abuk8iRHaPT5jdvWNcAA5O4YaqK2XmXS0tdr7KwxBFriIKRe
- XXNEjFr/ONYI1DTzRz47GF2/Av+epfEtlxisjtWsyjiA4mxjtFsz7Afdc6UctsvJxT73ypGbyO3
- WXyRxU44WPoODkBmWzsUPovd6l3bwN+zFocKhIF0FsNAlipUOh/L3SgyCr2o0u1FI4ItuVtUHwe
- Zf5aeVxZ+gR/CBNZpvET54SI7qosJBnPZAjTiJV55DyRL2kzHqiuwy+AuyeSIWCMZiPSVMkZcfS
- hShs0ucdhfe3uHT5JYgzVIBzn9pUrdvN1qz68Hdk30vJ5YKU8AZmDU2KWhoeCy5J+nlc5AKVXbI
- XyXFfCu4
-X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68c11cf7 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=2Bkm4qvF8fFmuRCA4ikA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: EOPOwHLh1yDoNwu07lGqEec2q_NXr1ZK
-X-Proofpoint-ORIG-GUID: UHNWWDSEJfsBFveSEPLXhrVj7i43CyCR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_03,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdwhZ0NKL+kAVgikRh6pep9Qx97ddQ==
+Content-Language: de
+X-Provags-ID: V03:K1:fUHwXjVwRGDvECj6NziiWeCaQgPwksyZajCGdV8yZ7betl0A1w7
+ EV39qE4krbrs7aCAih6rYcSd5/3b8rBcgnrMmRROrEUOS5UxGC1dbtbeJxcUUJ6rMXg+eAq
+ 8lHCVyCB+vrIhzpa/w/ZhniOb7FiWUFYRLBJzKEMgqslD2KVGYf8Fk4Xne1uG8+wp7+fndV
+ Cb5eNXSlF93LHf8LBarjw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:FkgXn5iBPAI=;lrj9eztmO+dHyhQOiY0pvgdjGE0
+ 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
 
-On Wed, Sep 10, 2025 at 02:07:15PM +0800, Zorro Lang wrote:
-> On Tue, Sep 09, 2025 at 02:32:36PM +0530, Ojaswin Mujoo wrote:
-> > On Tue, Sep 09, 2025 at 08:26:52AM +0100, John Garry wrote:
-> > > On 09/09/2025 08:16, Ojaswin Mujoo wrote:
-> > > > > > This requires the user to know the version which corresponds to the feature.
-> > > > > > Is that how things are done for other such utilities and their versions vs
-> > > > > > features?
-> > > > > > 
-> > > > > > I was going to suggest exporting something like
-> > > > > > _require_fio_atomic_writes(), and _require_fio_atomic_writes() calls
-> > > > > > _require_fio_version() to check the version.
-> > > > > (Sorry, I made a half reply in my last email)
-> > > > > 
-> > > > > This looks better than only using _require_fio_version. But the nature is still
-> > > > > checking fio version. If we don't have a better idea to check if fio really
-> > > > > support atomic writes, the _require_fio_version is still needed.
-> > > > > Or we rename it to "__require_fio_version" (one more "_"), to mark it's
-> > > > > not recommended using directly. But that looks a bit like a trick 😂
-> > > > > 
-> > > > > Thanks,
-> > > > > Zorro
-> > > > Hey Zorro, I agree with your points that version might not be the best
-> > > > indicator esp for downstream software, but at this point I'm unsure
-> > > > what's the workaround.
-> 
-> Hi Ojaswin, I don't have better workaround than require_fio_version for now. I mean:
-> 1) name _require_fio_version as __require_fio_version, to mark it's an internal function
->    of another common function.
-> 2) only call __require_fio_version in _require_fio_atomic_writes for now, don't use it
->    in any test cases directly.
+Hello Daniel, hello Thomas,
 
-Got it, I'll make this change, thanks
+I guess you are very busy with other things and had no time
+to have a look at my timer-rtl-otto patches. At least without=20
+the first one the driver is buggy and we rely on downstream=20
+patches.
 
-> 
-> > > > 
-> > > > One thing that comes to mind is to let fio do the atomic write and use
-> > > > the tracepoints to confirm if RWF_ATOMIC was passed, but that adds a lot
-> > > > of dependency on tracing framework being present (im unsure if something
-> > > > like this is used somewhere in xfstests before). Further it's messy to
-> > > > figure out that out of all the IO fio command will do, which one to
-> > > > check for RWF_ATOMIC.
-> > > > 
-> > > > It can be done I suppose but is this sort of complexity something we
-> > > > want to add is the question. Or do we just go ahead with the version
-> > > > check.
-> > > 
-> > > I think that just checking the version is fine for this specific feature.
-> > > But I still also think that versioning should be hidden from the end user,
-> > > i.e. we should provide a helper like _require_fio_atomic_writes
-> > 
-> > Sure, I'm okay. @Zorro, does that sound okay to you?
-> 
-> Sure, that's what I tried to say as above, sorry if I made you misunderstand :)
+In case there is something to fix or the patches must go to=20
+different recipients/reviewers, please let me know.
 
-Right I was just confirming. Thanks for the review :)
+See https://lkml.org/lkml/2025/8/4/239
 
-Regards,
-ojaswin
-> 
-> Thanks,
-> Zorro
-> 
-> > > 
-> > > thanks,
-> > > John
-> > 
-> 
+Thanks in advance.
+
+Markus
+
+
+
+
 
