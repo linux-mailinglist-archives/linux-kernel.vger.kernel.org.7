@@ -1,207 +1,164 @@
-Return-Path: <linux-kernel+bounces-809429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC05B50D9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:59:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CBB4B50DA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAA365E1C42
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:59:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 700517AD6BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206732E0419;
-	Wed, 10 Sep 2025 05:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F2E303A1C;
+	Wed, 10 Sep 2025 06:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GUiKNtmi"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kzJU2rH5"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6CC3B186;
-	Wed, 10 Sep 2025 05:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE385C133;
+	Wed, 10 Sep 2025 06:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757483985; cv=none; b=k5p0LlicxwYbV8FbRU4GDJ0cPGrPw11jWaWvJfhT6G1Njeq8ImLMUPCLxItunxD9gCMZGtlaGfOOMvxQBbYy6duBmXqbzcGNvsKZ6obCKTmIHGNusgSmysTiyrxAyZqOaegqXxUYLgvGefJDC9/xfW50NhHBnwf+5fEvDhzK/mM=
+	t=1757484120; cv=none; b=QI/pmEp2/sEorIZLw4lC/huMwzFe/GqczexAy4JQ5vZOdlIH7NyMAo6hBD0HMgR7VDNycOVwBzg/yo0KzEvwPvAxz9HDtkfaTskLO9hDFbl62vi2hc8RmzpqbbfAGLJzJCRLovTRcZgOyuDfRFdLsB2xixnzpRs98TKZQw0jUL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757483985; c=relaxed/simple;
-	bh=5IxG8Z9PgwiMMwrOHhG7jefOPrAnnnDK9LcuzzTL9Z4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gMoApKom/8dvSNmj9zJ+UkXV8lb54dFFWY2T5f8dCtr6ynr1NsKqTlm5B5w7iVpbjsBJ0MiYBfcVjZ8ltUrhHj9AqOPi3NEkDMA++IVPOR0FrFrZtNl19wIs6GvwOych2X9XMywBhFEEtFdqFBAJ2X5Hd4tRCjAllXUz/I9hDLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GUiKNtmi; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=Mnw4Ea8vEVwGfnN17/VxvzfcceILPNEC7ILi6SjVv80=; b=GUiKNtmigoEsHj6WJ/U4Lo4PHh
-	aEqD0U1Dqn1GFAFoGiSHOt4SD2akXQEPG0QP9q4+fv+qmoDW2uMWnzJXruJWUNr3PDCbAoRokwyR0
-	oHr69BREEsUhf4MMX0bLe6+fFsD4DjUCiWzl4BkIc5tB1c19jB2SvW5oXF5+5uhAEVX+Duk53ijTH
-	x3BenGs8/jzwXUpzKzw19NW2zFx3iIO4az1AQwDovyu1sdsTKUSsk0KXUHaC1/a4zJs1t22MEAEe/
-	GSa9HDAa01NBV90lOposu/RJrtO5ahp6QHUdzdj/VPSL1Z16GUIbz1vsMVW93HLKOGaGTTggD7bNP
-	NPlWLlEA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uwDrq-0000000CETl-14dY;
-	Wed, 10 Sep 2025 05:59:42 +0000
-Message-ID: <14133b75-a984-4244-a18d-f02f0b81d1b7@infradead.org>
-Date: Tue, 9 Sep 2025 22:59:41 -0700
+	s=arc-20240116; t=1757484120; c=relaxed/simple;
+	bh=BQupjcom55woG6Sh53IRhAcdsd3+WTxEdJSNaUOX+v0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uBqvv3dMitmOmskK1YvSQTmIBAMfsn/RMyZJaxqtoM/YkLfyQjJvKnt/du0OXLOpttB+ycsj6VqJn9tTn6+AWCJHTb13E63s+sA76KxUAHuUm/720pBWnqzStXQsEtnYN5uSPkCbtov309WRupWAEn1UWFQAehrTZdmuDCpX+J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kzJU2rH5; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7724df82cabso7299789b3a.2;
+        Tue, 09 Sep 2025 23:01:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757484118; x=1758088918; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BQupjcom55woG6Sh53IRhAcdsd3+WTxEdJSNaUOX+v0=;
+        b=kzJU2rH55JAGRDZA8ynYoUmdWj3rAwLJ2JBgIuWc0yaPizuharEpfJo6EIeh2ouOOm
+         SHJiPaXYyS1Sia/V5R7xHFsclxdFqhAH6XtPkvYiil0YW2ec+Mh0WteDSaLpK3UV28kV
+         f4dSAM5N/imCBl/TTNvHlIQmvr5siGNedryW5tVnEbBY7up/hj11uFThboVNv2kVuTdj
+         rzB9Ssbyl9S9iATvbv/dxxKMBUGg7fTGyT+lCk36J/2n4Gizsds4fcyLxbkwoNj04yWo
+         v+KAPg+WcvAupINpleFDhFgNfGwwS/JyiVQbCx6ut1soWOKfRWXPq8i/sYYL5g1keVcc
+         TXAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757484118; x=1758088918;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BQupjcom55woG6Sh53IRhAcdsd3+WTxEdJSNaUOX+v0=;
+        b=SmHvHgai3sf4aUs/Tx3VhFfDDIFF/H6KHH7/OIAmckUaoDwDz6qtWOBuciCgA4t0+v
+         JjovRWd3hcdSSDrhSdpiMhSmBTlbrXj8X/LUoQOxP5cPUj99ihpKllxEfBlevuk8i+UI
+         fWx7NdpSmQIpALl+aBNAc+6/J2pocN/mRHD7DNbl9SlRd387dx2UB7UQ1xGvSnJ+EjHt
+         pj1PqEUBGmEPYg5hGMxoTzfVke6Y+DBKQoSGaBYcaZaHX7flZ1oH2lkEgEavlfoaBYYu
+         ZBCSEEZ6vJsCIDtJ3ONxkWoWvz+si6TPSxUR7epo2dMYkCLnOg/VVxB7cXCxsqCWeDGT
+         rJOg==
+X-Forwarded-Encrypted: i=1; AJvYcCU915tryPATv+qwG2rzTE6mmdAKA/zai8x57I3kffZ39nFgr8h4hpH7QTmzXJ8MkJb4FZhjfwNmqiv9@vger.kernel.org, AJvYcCV/R2ndfOR99dbwM8mPcjR6ncUN/lbeSqoEsAhND9lLZwOKC6p4cKc+xIgirZUsoH/p2G3jSOxOxkdwFrJ1@vger.kernel.org, AJvYcCWxp6nLjY7Tpwy4wGO+UBbSAl9ZlBBURDcdI6wcTnbYN39D1nEkO5VnZrnFbXY0I+fxvoALp6+B5fY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxbGlOlfczaPhFIVufXWR5z7qgouErIINwbuhd7P4mp54119Tt
+	EZhPBxS8kSIaKzi0ff75h3yhs0k+3h8XRBmTtGuwKl1ZSdUzIQ26XW9u
+X-Gm-Gg: ASbGnct18/ZRDZxqCRSuG9sPxLiZWGWUQpQfGgrjVJqHQOwhrv3KQMP5rdmdYovGaQS
+	F8FVFEKIcKKPsiDPdyCHhULui1Qn4d8+15nTjc6lBsO8JqPyqXlEnhXfh3nxZAG3khyNWDVWsGB
+	EipMtx11dspJFsdPiG8PvUjBu/IFwDqymyWbeBLdSmku/FIPkCYVdxWX3sqHag3tovxZSYAayry
+	9HFcMOBFXgKaY/mPy+s/BgBGMDTvfJRXO8vzRTm6Y0PDx8NWjIMTTELkWRMty3YW9Ld64W0o8Bv
+	a5clEB/zmfVWs+zb3tjRwcOVfLrq5EMghx7WU5GwteqPiRyA6IDcG9ZPI/74gr97j8dAcvcv+S6
+	wU7bvEWhFvwHfzRYdMsEi93VKW1Gs5RL4D6Z8
+X-Google-Smtp-Source: AGHT+IE9Bb+/1OygTfKNn8Kmbyq0XcTuRLE4Du0nhd8YG3MZpglD4NTL1R+HA16kMOY0LjL2LkiDWA==
+X-Received: by 2002:a05:6a00:3e0f:b0:772:505d:abda with SMTP id d2e1a72fcca58-7742df0cf95mr19067552b3a.31.1757484117955;
+        Tue, 09 Sep 2025 23:01:57 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774662f9cfdsm3867023b3a.101.2025.09.09.23.01.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 23:01:56 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 12FC641FA3A1; Wed, 10 Sep 2025 13:01:55 +0700 (WIB)
+Date: Wed, 10 Sep 2025 13:01:54 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux EFI <linux-efi@vger.kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+Subject: Re: [PATCH] x86/Documentation: explain LINUX_EFI_INITRD_MEDIA_GUID
+Message-ID: <aMEUUkVQv2tqpO2L@archie.me>
+References: <20250910015738.14848-2-bagasdotme@gmail.com>
+ <0b61b6f3-f11a-494c-9d4e-94ca19fd1eb6@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kernel-doc: add support for handling global variables
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
-References: <80f85eacc306e62de8c9c68712c653ba290c2ff2.1757262141.git.mchehab+huawei@kernel.org>
- <d85e3f24-dbcd-4f28-b31f-a77661fc66fb@infradead.org>
- <20250909215824.1968220c@foz.lan>
- <5dc41508-43e8-4e80-b4e0-149af7bbdf19@infradead.org>
- <20250910010903.5388bffc@foz.lan>
- <0d190bf0-b9d4-4d5c-a1cc-6d5d79be3886@infradead.org>
- <656591ff-fa7d-4763-8759-0a0af3a4039a@infradead.org>
- <c195c68f-e815-4428-9134-8746198a4611@infradead.org>
- <20250910062323.059bb078@foz.lan>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250910062323.059bb078@foz.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-Hi Mauro,
-
-On 9/9/25 9:23 PM, Mauro Carvalho Chehab wrote:
-> Em Tue, 9 Sep 2025 17:02:00 -0700
-> Randy Dunlap <rdunlap@infradead.org> escreveu:
-> 
->> On 9/9/25 4:50 PM, Randy Dunlap wrote:
->>>
->>>
->>> On 9/9/25 4:49 PM, Randy Dunlap wrote:  
->>>>
->>>>
->>>> On 9/9/25 4:09 PM, Mauro Carvalho Chehab wrote:  
->>>>> Em Tue, 9 Sep 2025 14:06:43 -0700
->>>>> Randy Dunlap <rdunlap@infradead.org> escreveu:
->>>>>  
->>>>>> On 9/9/25 12:58 PM, Mauro Carvalho Chehab wrote:  
->>>>>>> Em Tue, 9 Sep 2025 00:27:20 -0700
->>>>>>> Randy Dunlap <rdunlap@infradead.org> escreveu:  
->>>>>  
->>>>>>>> +.. kernel-doc:: init/kdoc-globals-test.c
->>>>>>>> +   :identifiers:
->>>>>>>>
->>>>>>>> The html output says
->>>>>>>> "Kernel Globals"
->>>>>>>> but nothing else.    
->>>>>>>
->>>>>>> I usually don't add :identifiers: on kernel-doc entries. If you use
->>>>>>> identifiers, you need to explicitly tell what symbols you want.    
->>>>>>
->>>>>> Well, it worked/works without using having any identifiers listed, and
->>>>>> the docs in Documentation/doc-guide/kernel-doc.rst says that they are
->>>>>> optional:
->>>>>>
->>>>>> identifiers: *[ function/type ...]*
->>>>>>   Include documentation for each *function* and *type* in *source*.
->>>>>>   If no *function* is specified, the documentation for all functions
->>>>>>   and types in the *source* will be included.
->>>>>>   *type* can be a struct, union, enum, or typedef identifier.  
->>>>>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wX9bT4DJmcCyioR/"
+Content-Disposition: inline
+In-Reply-To: <0b61b6f3-f11a-494c-9d4e-94ca19fd1eb6@infradead.org>
 
 
->>>>> I suspect that an empty identifier could be raising an exception.  
->>
->> and it's being caught and ignored (not printed)?
-> 
-> there is a try/except block to capture exceptions. It is supposed to
-> print something, though:
-> 
->         try:
->             if kfiles:
->                 return self.run_kdoc(cmd, kfiles)
->             else:
->                 return self.run_cmd(cmd)
-> 
->         except Exception as e:  # pylint: disable=W0703
->             logger.warning("kernel-doc '%s' processing failed with: %s" %
->                            (cmd_str(cmd), pformat(e)))
->             return [nodes.error(None, nodes.paragraph(text = "kernel-doc missing"))]
-> 
+--wX9bT4DJmcCyioR/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 09, 2025 at 08:25:34PM -0700, Randy Dunlap wrote:
+> On 9/9/25 6:57 PM, Bagas Sanjaya wrote:
+> > +.. _pe-coff-entry-point:
+> > +
+> > +PE/COFF entry point
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +When compiled with ``CONFIG_EFI_STUB=3Dy``, the kernel can be executed=
+ as a
+> > +regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
+> > +implementation details.
+> > +
+> > +The stub loader can request the initrd via a UEFI protocol. For this t=
+o work,
+> > +the firmware or bootloader needs to register a handle which implements=
+ the
+> > +``EFI_LOAD_FILE2`` protocol with the ``LINUX_EFI_INITRD_MEDIA_GUID`` d=
+evice
+> > +path. In this case, a kernel booting via the EFI stub will use the ``L=
+oadFile``
+> > +function on the registered handle to obtain a reference to the initrd.
+>=20
+> drivers/firmware/efi/libstub/efi-stub-helper.c (line 509) says LoadFile2
+> protocol. Is that the same as the LoadFile function?
+>=20
+> https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d47=
+39b0fd0
+> (the link below) also says LoadFile2() 4 times (and LoadFile 0 times).
 
->>>> Anyway, does this take away something that currently works?  
->>
->> The output looks the same with this patch AFAICT.
-> 
-> run it in verbose mode to see what command line was passed to
-> the file:
-> 
-> 	$ make SPHINXDIRS=your_test_dir V=1 htmldocs
-> 
-> This should be printing how the kernel-doc.py command line would be(*):
-> 
-> 	scripts/kernel-doc.py -rst -enable-lineno ./include/linux/peci.h
-> 	./include/linux/peci.h:20 Scanning doc for struct peci_controller_ops
-> 	./include/linux/peci.h:32 Scanning doc for struct peci_controller
-> 	./include/linux/peci.h:58 Scanning doc for struct peci_device
-> 	./include/linux/peci.h:88 Scanning doc for struct peci_request
-> 
-> (*) the kerneldoc.py extension doesn't call kernel-doc.py, but instead
->     run directly the Python classes from the library. Yet, to help one
->     to debug it, the command line is displayed.
+=46rom UEFI spec [1], both LoadFile and LoadFile2 protocol versions of Load=
+File()
+function has same prototype but somewhat different in behavior. To answer
+your question, however, I think so.
 
-I see. Thanks.
-
-I get this if I list all of them (on 2 separate identifiers lines):
-
-../scripts/kernel-doc.py -rst -enable-lineno -function ROOT_DEV -function system_state -function saved_command_line -function diskseq ../init/kdoc-globals-test.c
-../init/kdoc-globals-test.c:5 Scanning doc for global ROOT_DEV
-../init/kdoc-globals-test.c:15 Scanning doc for global system_state
-../init/kdoc-globals-test.c:27 Scanning doc for global saved_command_line
-../init/kdoc-globals-test.c:33 Scanning doc for global loops_per_jiffy
-../init/kdoc-globals-test.c:40 Scanning doc for global preset_lpj
-../init/kdoc-globals-test.c:49 Scanning doc for global linux_proc_banner
-../init/kdoc-globals-test.c:63 Scanning doc for global linux_banner
-../init/kdoc-globals-test.c:72 Scanning doc for global diskseq
-../init/kdoc-globals-test.c:80 Scanning doc for global rtnl_mutex
-../scripts/kernel-doc.py -rst -enable-lineno -function loops_per_jiffy -function preset_lpj -function linux_proc_banner -function linux_banner ../init/kdoc-globals-test.c
-
-or this is I don't use the identifiers line at all:
-
-../scripts/kernel-doc.py -rst -enable-lineno ../init/kdoc-globals-test.c
-../init/kdoc-globals-test.c:5 Scanning doc for global ROOT_DEV
-../init/kdoc-globals-test.c:15 Scanning doc for global system_state
-../init/kdoc-globals-test.c:27 Scanning doc for global saved_command_line
-../init/kdoc-globals-test.c:33 Scanning doc for global loops_per_jiffy
-../init/kdoc-globals-test.c:40 Scanning doc for global preset_lpj
-../init/kdoc-globals-test.c:49 Scanning doc for global linux_proc_banner
-../init/kdoc-globals-test.c:63 Scanning doc for global linux_banner
-../init/kdoc-globals-test.c:72 Scanning doc for global diskseq
-../init/kdoc-globals-test.c:80 Scanning doc for global rtnl_mutex
-
-
-And then both of them report these warnings (already discussed):
-
-Documentation/core-api/kernel-api:435: ../init/kdoc-globals-test.c:10: WARNING: Invalid C declaration: Expected end of definition. [error at 32]
-  enum system_states system_state __read_mostly;
-  --------------------------------^
-Documentation/core-api/kernel-api:435: ../init/kdoc-globals-test.c:20: WARNING: Invalid C declaration: Expected end of definition. [error at 25]
-  char *saved_command_line __ro_after_init;
-  -------------------------^
-
-and the 3 globals with initialization values are skipped/omitted.
-
-So to get "all identifiers," I should just omit the :identifiers:
-line completely. kernel-doc.rst could use some clarification on that
-point.
+EFI folks, what are your opinions?
 
 Thanks.
--- 
-~Randy
 
+[1]: https://uefi.org/specs/UEFI/2.10/13_Protocols_Media_Access.html
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--wX9bT4DJmcCyioR/
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMEUTgAKCRD2uYlJVVFO
+o5mQAP9ZTGLecYvygYu5qw9wk0bzOGd+dBF08ZBGDPNzsDaKSwD+Pd6CTNLpWuet
+SidxBU1eQylKAqmw7Rj0FLux+E4SiQo=
+=OII+
+-----END PGP SIGNATURE-----
+
+--wX9bT4DJmcCyioR/--
 
