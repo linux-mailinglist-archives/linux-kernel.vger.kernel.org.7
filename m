@@ -1,47 +1,81 @@
-Return-Path: <linux-kernel+bounces-809862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA35B512EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:43:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12AB7B512F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B1C91B251C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:43:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF6B1178FB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25596314A94;
-	Wed, 10 Sep 2025 09:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E61314B8A;
+	Wed, 10 Sep 2025 09:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4072pDR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TCNZv6Py"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C0A3115B8;
-	Wed, 10 Sep 2025 09:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9933148C2;
+	Wed, 10 Sep 2025 09:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497397; cv=none; b=A6LombGBNHgVfI6wR5Zp0hjjWBSBVAf2eBWPjrx0IgokHN4caWFoWgB48AzndQdtNVA15PPOrWV62IBwvVNyS8jFbkYLJEiTKSotd1y7rai6DS7oEDvVxp82aw4nBcSmyVJNonrYT8RgqTaIw3A/b86goUB0oM/S6D23Nl0ys3o=
+	t=1757497400; cv=none; b=gSNcVwkZkrsuNRc9AT4INP4kn0gtMxO4T/FKsnIVRmLpL/19PQvt9jVRYcyr1HD/gjCojodbKxq9VF8tdLUl0ZdB/znzbJqgIS9JmTvPeLT6/rH1AUwZ846hhUTja6Ptxk7874fPAj0Q8UENN2lWSrV3GIMpGopX3Q2KAoQLCk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497397; c=relaxed/simple;
-	bh=S+aQbFX9hu/DKfI431C7M1rHrzo8lXM2Z2qWlgAtuNU=;
+	s=arc-20240116; t=1757497400; c=relaxed/simple;
+	bh=Qg4SnOajWTPp0F9yvDIVD6p+vbZ6EUUeIv6GZ9qy+bs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hwrM1uCUbxtdOgp0TussNfX4enHeePmj/J3qAOw2Yq8TPPn72uOtolhjesprUGn5TicsIf0z9QKi353LD25vjKdHEbWqCK3bF4ZeCzv25FS0wVQ89CpG38GgoQJu+wji82ORJFEER2swqWd5rzq681Mx299kMBUmC02nKImjjZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4072pDR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 438AEC4CEF0;
-	Wed, 10 Sep 2025 09:43:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757497396;
-	bh=S+aQbFX9hu/DKfI431C7M1rHrzo8lXM2Z2qWlgAtuNU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=H4072pDRHr6l5lHaFv/4xDl6o8R2z7n/Lp+zEBYoPrpxoitzdLaoQxiSTM+ciqDlw
-	 L9R7CS0TwD5cF6B3iOX6YMEkv+SgUQbwGte8f+E6XB7KKBKo1b/Uj0wwWNpAM/E4h0
-	 Ttvqmmk260dyEqp5D4JCSTtmM8gvwahuU1uvrmnXoEjKZ972wWwRHzlZplrb01krMV
-	 Rt9eeSR8FyYc3njUME7vwyRrFbSg1LhMQjwrY70cPr8x9tf6VpPH0y35/L3tliE9bL
-	 wXsYOxr56Xq9500NbTRT9h9p31NSvVGD6e4Tc4c6I6adNokCEJjdIvRzt+u7NXmm2I
-	 ZK731WSjFPlAQ==
-Message-ID: <a8dcffa4-c578-46d7-8fdf-cd4f5a29a2a6@kernel.org>
-Date: Wed, 10 Sep 2025 11:43:11 +0200
+	 In-Reply-To:Content-Type; b=gc1+z4rvJS1cbpOsE8D4ASk2+PrWc6xIOYa5qSBz7qmYVB/5puTwegRNfLAdbjuZ0KCKk2dqhQY977ZRj05dmihuziQePdeu0e+k1fIHMiP2tYzohiHqZfEXQOaLNry77y8K4JxHme0XL00a70A2wwehlNTWZBhqow7GZ3CAh2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TCNZv6Py; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45cb659e858so45699125e9.2;
+        Wed, 10 Sep 2025 02:43:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757497396; x=1758102196; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8+Yb/IxxLIspa6tHUrNInqlVlxK+I+nsywpKyzMZIM8=;
+        b=TCNZv6PyC56oz2eR1xLMpcRJMGdLr8JyYtqV8g4KW5icFcXxzQ9+u5MPPYCaPs0ImW
+         5j6GR28NHkmt2R4ihcv7E+fLHoIOVAYnv1FNck3qC2BBAiKiYgTQuRaDx9w7Ta9ncD9E
+         bLw9fN7kWqcnbULhNoD2sMs29wm+0IYXjilAFXQB8uMhSA/ku6xQjMWMyAbJUiqq/9yE
+         aK5XC0sJgRMWJ1Mdm1gsOFCCONtItF0wBV3CUxYua/DeKG2yB5irYT1Dcp1xJj3oJiMf
+         WHydKjaHhDxbla45146HygE80AcXgX2hBoGQqThIldEY+v+Ab5byMeBEY/J2kdvoG/jX
+         lHAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757497396; x=1758102196;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8+Yb/IxxLIspa6tHUrNInqlVlxK+I+nsywpKyzMZIM8=;
+        b=eMfh5fFy75Wdn/dlmkTMQp7bNa9+eoaV9KogCBTjwGW9JFtl1nuOrT+eDUI6Boroqu
+         9EVW8/2TVSBU8CN3b6xVugKsvy3HYg7Gd2krBPsn9MgfjG5gs6Rsfkb01/GIs5AxMBx8
+         j7DlimwdXe5uZu7KbxpW8/vGvldpJeCqmH2AoOmCQRM3POUvLoFgCEH1r4EMTP4eQpMT
+         VB/1Pd046PwmP6L2MxijqHB/ysnz7CcnJAsP+AeGfvJLKCfL934M47T7aTN/ElkbocNn
+         VTcCuhMUvefHIBth6rWpsge7NZ1NgcdHBP/RrQZgGtMoIHibe7k0Gw7rIV4fiaOBXWn2
+         Lsmg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/hPq0g4wYTmWwgCihwAFkCgnEoQM6duq5752WKDmrN5aGFiDScsmwUGSBbsiQpmdtAHvh2utDZ+C8@vger.kernel.org, AJvYcCVOYYXV2iBrnSii5B0WxKZ90KzR54K4wGx5eNlZVsHMHgK54gvmsUm+lOu+K4NfQgNZD4W+rW/xj5rS@vger.kernel.org, AJvYcCVmrL+BEEdGoRGTlZYvt0Ccjpm3PZpA7lx6xCnQk5aEaXb85iM7bmQGCRse4s0DK/NV01GgRokAqfUxXKWY@vger.kernel.org, AJvYcCW6yDm5DXH6tNrwJJNEnWZ+qKj0EuPzT2NzDN5afDF0mU6OG7DZQwSlOHRpayFxq2GsliuB8APuRw0T2Zt67m6HYA==@vger.kernel.org, AJvYcCXu+1FJOkhJOYIp+1B/62AFR+ItMIzGMRpngK7S5QVLPW61VdKu/fEmbIE7EI2LMxEjslMxwHy4MXGE@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj2lJW3V2Q5OYmWSN6k1C8gHwj5F0wx9aKhwYTRnTqFnOdt6Gv
+	WbwGQZyEoc14kBKIMRS20d2ItE0JQBwpnUeFytTJYZgIDEIyuFfn8VSG
+X-Gm-Gg: ASbGnct1CPmEIgpj2WQ60QiouIpujeNxAriFpJDL4TVRVhZBQvgf1nOHNIYUG1JzWzG
+	8Rx8DInLS8IxVRrFKh7vrNxEqYsbGPMvAfz+OcywdZ7d9k4ImmCsaSzX4kJ6gfB8CUbCsUqkK/Z
+	jVg/CrI1iYzI9GwM8rJcpwkjVPleeiUKRKQHuW/4oXAFvRlEGmaovgypPPNtKq2dOzrtL+03Cwv
+	el1brM/Y1jPjevHjII/i35qXAVrgwYns/x3Wfk5q3IED43tPwNqDrJtK+D8sRT93sJbykOjFGA6
+	7dn4XElb7r5/xsliX8byDIweaCZUTG/1GVxRtcdgqmiBp3+cszpVyg+f0wVbEZao9urfIK4KyC3
+	8yyVfZR0wM+HR3n3AqKd9yh1ynqv7fSje37at0cOTsWJe8gPu6bCDUy6S4yzlXYstzEq1W1t2Ls
+	u0yiytm58jSiLOepInxkBQuYFiQhy4kfSb/+yqlOP42CZj0tXER6ebIo7thVanLeQbGDOYpIvRw
+	7Oj
+X-Google-Smtp-Source: AGHT+IG++5gaOV3PJKYuJ0A9nAeEycj+nF32F/RTHqK48mjNiX/HpSzosqAvPkjm4CBA9YvRx7JU+A==
+X-Received: by 2002:a05:600c:c48e:b0:45b:6743:2242 with SMTP id 5b1f17b1804b1-45dddee9cc4mr128836755e9.22.1757497396149;
+        Wed, 10 Sep 2025 02:43:16 -0700 (PDT)
+Received: from ?IPV6:2a02:8440:7135:4f4c:c6d5:9a0c:a4c1:1e58? (2a02-8440-7135-4f4c-c6d5-9a0c-a4c1-1e58.rev.sfr.net. [2a02:8440:7135:4f4c:c6d5:9a0c:a4c1:1e58])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df1ba282dsm25183485e9.5.2025.09.10.02.43.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 02:43:15 -0700 (PDT)
+Message-ID: <22a485b9-1b86-41d3-a42c-f813eea94697@gmail.com>
+Date: Wed, 10 Sep 2025 11:43:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,124 +83,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] ASoC: dt-bindings: qcom,sm8250: Add QCS8300 sound
- card
-To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v6 01/20] bus: firewall: move stm32_firewall header file
+ in include folder
+To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@oss.qualcomm.com, prasad.kumpatla@oss.qualcomm.com,
- ajay.nandam@oss.qualcomm.com
-References: <20250905142647.2566951-1-mohammad.rafi.shaik@oss.qualcomm.com>
- <20250905142647.2566951-2-mohammad.rafi.shaik@oss.qualcomm.com>
- <43090acb-ea36-4015-b14f-78d44d789d42@kernel.org>
- <a9507045-b900-49ee-8841-0f8fd30816ba@kernel.org>
- <abc66798-dc91-4860-b0b4-de39a58b5745@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <conor+dt@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Julius Werner <jwerner@chromium.org>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+References: <20250909-b4-ddrperfm-upstream-v6-0-ce082cc801b5@gmail.com>
+ <20250909-b4-ddrperfm-upstream-v6-1-ce082cc801b5@gmail.com>
+ <9a46c8a8-1d25-410c-9fa2-267eb4040390@foss.st.com>
+ <19e664da-df4c-4bc0-84ce-41e4364f10bc@gmail.com>
+ <7cfb167a-26df-4abf-a6ec-73813a1a0986@foss.st.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <abc66798-dc91-4860-b0b4-de39a58b5745@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
+In-Reply-To: <7cfb167a-26df-4abf-a6ec-73813a1a0986@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 10/09/2025 10:05, Mohammad Rafi Shaik wrote:
+On 10/09/2025 10:42, Gatien CHEVALLIER wrote:
 > 
 > 
-> On 9/10/2025 1:09 PM, Krzysztof Kozlowski wrote:
->> On 10/09/2025 09:26, Krzysztof Kozlowski wrote:
->>>> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>> index 8ac91625dce5..eebf80c1d79a 100644
->>>> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>> @@ -35,6 +35,7 @@ properties:
->>>>             - qcom,qcm6490-idp-sndcard
->>>>             - qcom,qcs6490-rb3gen2-sndcard
->>>>             - qcom,qcs8275-sndcard
+> On 9/10/25 09:47, Clément Le Goffic wrote:
+>> On 09/09/2025 14:25, Gatien CHEVALLIER wrote:
 >>>
->>> So what is the point of this compatible? There is no user of it and I
->>> think you added QCS8275 for this case exactly...
 >>>
->>> Shall I start reverting commits from Qualcomm because you post patches
->>> "just in case" and turns out they are completely not needed? No single
->>> user of such code?
+>>> On 9/9/25 12:12, Clément Le Goffic wrote:
+>>>> From: Clément Le Goffic <clement.legoffic@foss.st.com>
+>>>>
+>>>> Other driver than rifsc and etzpc can implement firewall ops, such as
+>>>> rcc.
+>>>> In order for them to have access to the ops and type of this framework,
+>>>> we need to get the `stm32_firewall.h` file in the include/ folder.
+>>>>
+>>>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>>>> Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
+>>>> ---
+>>>>   drivers/bus/stm32_etzpc.c                       | 3 +--
+>>>>   drivers/bus/stm32_firewall.c                    | 3 +--
+>>>>   drivers/bus/stm32_rifsc.c                       | 3 +--
+>>>>   {drivers => include/linux}/bus/stm32_firewall.h | 0
+>>>>   4 files changed, 3 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/drivers/bus/stm32_etzpc.c b/drivers/bus/stm32_etzpc.c
+>>>> index 7fc0f16960be..4918a14e507e 100644
+>>>> --- a/drivers/bus/stm32_etzpc.c
+>>>> +++ b/drivers/bus/stm32_etzpc.c
+>>>> @@ -5,6 +5,7 @@
+>>>>   #include <linux/bitfield.h>
+>>>>   #include <linux/bits.h>
+>>>> +#include <linux/bus/stm32_firewall.h>
+>>>>   #include <linux/device.h>
+>>>>   #include <linux/err.h>
+>>>>   #include <linux/init.h>
+>>>> @@ -16,8 +17,6 @@
+>>>>   #include <linux/platform_device.h>
+>>>>   #include <linux/types.h>
+>>>> -#include "stm32_firewall.h"
+>>>> -
+>>>>   /*
+>>>>    * ETZPC registers
+>>>>    */
+>>>> diff --git a/drivers/bus/stm32_firewall.c b/drivers/bus/ 
+>>>> stm32_firewall.c
+>>>> index 2fc9761dadec..ef4988054b44 100644
+>>>> --- a/drivers/bus/stm32_firewall.c
+>>>> +++ b/drivers/bus/stm32_firewall.c
+>>>> @@ -5,6 +5,7 @@
+>>>>   #include <linux/bitfield.h>
+>>>>   #include <linux/bits.h>
+>>>> +#include <linux/bus/stm32_firewall.h>
+>>>>   #include <linux/bus/stm32_firewall_device.h>
+>>>>   #include <linux/device.h>
+>>>>   #include <linux/err.h>
+>>>> @@ -18,8 +19,6 @@
+>>>>   #include <linux/types.h>
+>>>>   #include <linux/slab.h>
+>>>> -#include "stm32_firewall.h"
+>>>> -
+>>>>   /* Corresponds to STM32_FIREWALL_MAX_EXTRA_ARGS + firewall ID */
+>>>>   #define STM32_FIREWALL_MAX_ARGS (STM32_FIREWALL_MAX_EXTRA_ARGS + 1)
+>>>> diff --git a/drivers/bus/stm32_rifsc.c b/drivers/bus/stm32_rifsc.c
+>>>> index 4cf1b60014b7..643ddd0a5f54 100644
+>>>> --- a/drivers/bus/stm32_rifsc.c
+>>>> +++ b/drivers/bus/stm32_rifsc.c
+>>>> @@ -5,6 +5,7 @@
+>>>>   #include <linux/bitfield.h>
+>>>>   #include <linux/bits.h>
+>>>> +#include <linux/bus/stm32_firewall.h>
+>>>>   #include <linux/device.h>
+>>>>   #include <linux/err.h>
+>>>>   #include <linux/init.h>
+>>>> @@ -16,8 +17,6 @@
+>>>>   #include <linux/platform_device.h>
+>>>>   #include <linux/types.h>
+>>>> -#include "stm32_firewall.h"
+>>>> -
+>>>>   /*
+>>>>    * RIFSC offset register
+>>>>    */
+>>>> diff --git a/drivers/bus/stm32_firewall.h b/include/linux/bus/ 
+>>>> stm32_firewall.h
+>>>> similarity index 100%
+>>>> rename from drivers/bus/stm32_firewall.h
+>>>> rename to include/linux/bus/stm32_firewall.h
+>>>>
 >>
+>> Hi Gatien
 >>
->> @Mark,
+>>> As the firewall header is moved to a dedicated firewall directory,
 >>
->> In case it wasn't obvious, please do not merge the patch till we get
->> some clarification. For sure it is wrong one way or another: either
->> incomplete or just duplicated.
+>> I don't move it to a dedicated firewall directory just to the "bus" 
+>> directory where the "stm32_firewall_device.h" header file is already 
+>> located.
 >>
 > 
-> The device tree currently uses qcs8275 as the sound compatible, and
-> the corresponding Device tree changes have already been applied and merged.
+> Yes, my bad, I mixed my words there.
 > 
-> Reverting this now would break the ABI.
-
-If reverting would break ABI then:
-
+>>> maybe it would be coherent to create the same kind of directory
+>>> for the sources as non-buses drivers use it. I can test it on my
+>>> side if you're willing to make the change.
+>>
+>> Do you mean create an include/linux/bus/firewall/ directory ?
+>>
 > 
-> A new device tree patch with qcs8300 is currently under review:
-> 
-> https://lore.kernel.org/linux-arm-msm/20250910044512.1369640-1-mohammad.rafi.shaik@oss.qualcomm.com/
+> Rather include/linux/firewall/(stm32/). and a drivers/firewall/(stm32/)
+> directory for the firewall files would be great. If that's not too much
+> of a burden.
 
-This is ABI break thus NAK.
+I thinks that's a bit too much for this one.
+As you're the firewall maintainer I would need to modify your entry in 
+the MAINTAINER file (and I just see that your entry is lacking the 
+header file path).
+For now I think it is not urgent neither mandatory.
+Maybe in a next patch series ?
+Even in the driver bus directory there is no vendor policy so adding a 
+path like drivers/bus/{stm32/|firewall/}stm32_firewall.c is a bit 
+overlapping as with the filename we already know it is ST and its firewall.
+Let me know what you think !
 
-> 
-> Once the machine driver and device tree patch with qcs8300 are accepted 
-> and merged,
-> 
-> I will promptly submit a cleanup patch to remove of discontinued 
-> compatibles from the machine driver.
+BR,
+Clément
 
-So this is the same hardware? Then no, we do not rename compatibles.
-
-Best regards,
-Krzysztof
 
