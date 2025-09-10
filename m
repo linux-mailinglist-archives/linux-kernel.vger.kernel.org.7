@@ -1,192 +1,216 @@
-Return-Path: <linux-kernel+bounces-810741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DBDB51EB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:15:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA47B51EB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6AEC7B582C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:13:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162A41C87C34
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE6B22422A;
-	Wed, 10 Sep 2025 17:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597CC27990B;
+	Wed, 10 Sep 2025 17:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rt4H8NEG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="pQRs/3ZK"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94405314B89;
-	Wed, 10 Sep 2025 17:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EC413774D;
+	Wed, 10 Sep 2025 17:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757524514; cv=none; b=ThlsdLPK0JGcWkZ9YhBrOTVYMPLToyhH02cJP6eM5eHsOO7c9p9zVZDGrn37Ibl1dR25SFqS+oFz4JgLuZQceVbvN7sggXi8Yu1TDi+t+t40nvpPKjjEMbZBEd10mnPq+gHFoPJS91FkvdG/ctBLKbtRuwB1TXHLKJIrdkzcrcE=
+	t=1757524613; cv=none; b=DgCfyaAaGgnUDn7X1KqJhK2RlZ2YSKXFGhWcO7lSHWHcartskgkHRVI7QgviRkvtNfm+1gbcTM52X5Wgod+zwaNN+5YWznT5zRFFUz/zdY29m0c00o0EqAcYXpf7XWM5n7iPWEQM/knydB/Sxl6hSG9Do3rQ6nckBrkkFxytiQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757524514; c=relaxed/simple;
-	bh=GSzpQXrVsGOkg9n0qjibU8nmSrVRvwep/b24SJElML0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=moDuRP8n8W1Zo4Ueygsh50FxvKNRBaSi06ERRWegVA36E9Sty6vGV3bsC6I4E0Px2P1V0bt9NhGRv9rXnmN4c8d4ECAXudsJ9QtJuouyr6kV45p8Vcdi6nd7Ne+VAjGI2IZ9tPgF2kvkPtwsLDIFwcxLaWPSakYFTAjkS9ug94g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rt4H8NEG; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1757524613; c=relaxed/simple;
+	bh=LWiTpviXtSxA2uLJhCTluREzykCtzO584HqazV0nCCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=u/8nBb41TIBPqM14eC3Ka5dLHElPL0KFodFy9/WcufcRYK5H6Wnh27Scz6xrLS+7kVmCLo/sdstsE5u+cdOSGknb4Gp9Ev+T5N0dftRRmdMHv3G1FwgwBshBtWnsYHvUMA0cumRgEoszHcI643z8/D0PfTUfgQf94MAzdSnWNjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=pQRs/3ZK; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757524511; x=1789060511;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=GSzpQXrVsGOkg9n0qjibU8nmSrVRvwep/b24SJElML0=;
-  b=Rt4H8NEGRTmLF2Lv7vX7giFJ4TAcydUiyGKKq0286mG9k16yJZm1wCqC
-   yThkn1sZq7C4VDRq4G199yAId+cyUyWxWq720cAZvSspMALUeQdDkcFps
-   7yJrnihPobuIe2fVHs+o6A6v/zNeUOP4O2tDus2jIY/UNRMVRHZx5VSUm
-   m9fAUotDQDMVQhOeulXWdeDEnm8mBgiBzgPxTx2n4BaZKlZV9rUeruAkk
-   P6ecuECKy0HMWigZX6p/dZlg1Ih3jnHJ0CkHe1cleBQ21UoGKWn0H8WyR
-   eHQQ2yxvAesJj5aUU7hC6qfpM/w6njT++mIJbhY6vS7znYKE7s/NliCM4
-   w==;
-X-CSE-ConnectionGUID: zr9FqOkmQ4ezvIReYoBdJw==
-X-CSE-MsgGUID: cGe9EZ6KQ0C7QBG4UwPoVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="85288843"
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1757524613; x=1789060613;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=LWiTpviXtSxA2uLJhCTluREzykCtzO584HqazV0nCCw=;
+  b=pQRs/3ZK3VtuzkNtam0AHwRyXm7WlH7YSh7ZPynwZJRzikOp9Y/maxC7
+   hFZkIATza3v05f9UtMdTAGgkhKlXoF+mvx45nGk8ailLXZ4/6ku7O/cW0
+   AxCwS48Yl4vAyLWfvRvP6Se8H4sKDAxGC1njKLPZehTCCZw8A1uWPDMae
+   ir5T9Wn3+vCj9bbnqkPoDR/8kQJtZ66VrJyVgcrSYSPuy97RgeKW1DuDK
+   Gp0DlMX5eGOUumWOyGvOF3kHq91ZlnLXsX2ygrpXg6aDJ0RPw2JV0CfaB
+   ZNNxfpZbpRTOJD7KDxAeIB0pL+h/m7FpdQJhmaQXXGkk15KVEqaqornxt
+   A==;
+X-CSE-ConnectionGUID: GzHJBcSSS/ufTmRbnewvdg==
+X-CSE-MsgGUID: J9J1N0KkTMGJXEg7AK49uA==
 X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="85288843"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 10:15:10 -0700
-X-CSE-ConnectionGUID: nNE5Qo01SxGRSP+zTcxmuQ==
-X-CSE-MsgGUID: q8OXQ+HCTaiG0w0DZwOrAw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="177480945"
-Received: from spandruv-desk.jf.intel.com ([10.54.55.20])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 10:15:10 -0700
-Message-ID: <dda1d8d23407623c99e2f22e60ada1872bca98fe.camel@linux.intel.com>
-Subject: Re: [REGRESSION] Intel Turbo Boost stuck disabled on some Clevo
- machines (was: [PATCH] cpufreq: intel_pstate: Unchecked MSR aceess in
- legacy mode)
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Aaron Rainbolt <arainbolt@kfocus.org>, "Rafael J. Wysocki"
-	 <rafael@kernel.org>
-Cc: viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, mmikowski@kfocus.org
-Date: Wed, 10 Sep 2025 10:15:00 -0700
-In-Reply-To: <20250910113650.54eafc2b@kf-m2g5>
-References: <20250429210711.255185-1-srinivas.pandruvada@linux.intel.com>
-		<CAJZ5v0h99RFF26qAnJf07LS0t-6ATm9c2zrQVzdi96x3FAPXQg@mail.gmail.com>
-	 <20250910113650.54eafc2b@kf-m2g5>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+   d="scan'208";a="277704208"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Sep 2025 10:16:46 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Wed, 10 Sep 2025 10:16:04 -0700
+Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Wed, 10 Sep 2025 10:16:04 -0700
+Message-ID: <fa5d44ca-d1ea-4c72-a998-b10f098b25f8@microchip.com>
+Date: Wed, 10 Sep 2025 10:16:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: microchip: sama7d65: Add GPIO buttons and LEDs
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250909160842.392075-1-Ryan.Wanner@microchip.com>
+ <20250910-retake-attic-ac1fe3429a1e@thorsis.com>
+ <20250910-alkalize-overtime-930a59a7d169@thorsis.com>
+From: Ryan Wanner <ryan.wanner@microchip.com>
+Content-Language: en-US
+In-Reply-To: <20250910-alkalize-overtime-930a59a7d169@thorsis.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-09-10 at 11:36 -0500, Aaron Rainbolt wrote:
-> On Wed, 30 Apr 2025 16:29:09 +0200
-> "Rafael J. Wysocki" <rafael@kernel.org> wrote:
->=20
-> > On Tue, Apr 29, 2025 at 11:07=E2=80=AFPM Srinivas Pandruvada
-> > <srinivas.pandruvada@linux.intel.com> wrote:
-> > >=20
-> > > When turbo mode is unavailable on a Skylake-X system, executing
-> > > the
-> > > command:
-> > > "echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo"
-> > > results in an unchecked MSR access error: WRMSR to 0x199
-> > > (attempted to write 0x0000000100001300).
-> > >=20
-> > > This issue was reproduced on an OEM (Original Equipment
-> > > Manufacturer) system and is not a common problem across all
-> > > Skylake-X systems.
-> > >=20
-> > > This error occurs because the MSR 0x199 Turbo Engage Bit (bit 32)
-> > > is set when turbo mode is disabled. The issue arises when
-> > > intel_pstate fails to detect that turbo mode is disabled. Here
-> > > intel_pstate relies on MSR_IA32_MISC_ENABLE bit 38 to determine
-> > > the
-> > > status of turbo mode. However, on this system, bit 38 is not set
-> > > even when turbo mode is disabled.
-> > >=20
-> > > According to the Intel Software Developer's Manual (SDM), the
-> > > BIOS
-> > > sets this bit during platform initialization to enable or disable
-> > > opportunistic processor performance operations. Logically, this
-> > > bit
-> > > should be set in such cases. However, the SDM also specifies that
-> > > "OS and applications must use CPUID leaf 06H to detect processors
-> > > with opportunistic processor performance operations enabled."
-> > >=20
-> > > Therefore, in addition to checking MSR_IA32_MISC_ENABLE bit 38,
-> > > verify that CPUID.06H:EAX[1] is 0 to accurately determine if
-> > > turbo
-> > > mode is disabled.
-> > >=20
-> > > Fixes: 4521e1a0ce17 ("cpufreq: intel_pstate: Reflect current
-> > > no_turbo state correctly") Signed-off-by: Srinivas Pandruvada
-> > > <srinivas.pandruvada@linux.intel.com> Cc: stable@vger.kernel.org
-> > > ---
-> > > =C2=A0drivers/cpufreq/intel_pstate.c | 3 +++
-> > > =C2=A01 file changed, 3 insertions(+)
-> > >=20
-> > > diff --git a/drivers/cpufreq/intel_pstate.c
-> > > b/drivers/cpufreq/intel_pstate.c index f41ed0b9e610..ba9bf06f1c77
-> > > 100644 --- a/drivers/cpufreq/intel_pstate.c
-> > > +++ b/drivers/cpufreq/intel_pstate.c
-> > > @@ -598,6 +598,9 @@ static bool turbo_is_disabled(void)
-> > > =C2=A0{
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u64 misc_en;
-> > >=20
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!cpu_feature_enabled(X86_FE=
-ATURE_IDA))
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return true;
-> > > +
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rdmsrl(MSR_IA32_MISC_ENABL=
-E, misc_en);
-> > >=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return !!(misc_en & MSR_IA=
-32_MISC_ENABLE_TURBO_DISABLE);
-> > > --=C2=A0=20
-> >=20
-> > Applied as a fix for 6.15-rc, thanks!
-> >=20
->=20
-> FYI, this seems to have broken turbo boost on some Clevo systems with
-> an Intel Core i9-14900HX CPU. These CPUs obviously support turbo
-> boost,
-> and kernels without this commit have turbo boost working properly,
-> but
-> after this commit turbo boost is stuck disabled and cannot be
-> enabled by writing to /sys/devices/system/cpu/intel_pstate/no_turbo.
-> I
-> made a bug report about this against Ubuntu's kernel at [1], which is
-> the only report I know that is able to point to this commit as having
-> broken things. However, it looks like an Arch Linux user [2] and a
-> Gentoo user [3] are running into the same thing.
->=20
+On 9/9/25 23:25, Alexander Dahl wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> 
+> Hello Ryan,
+> 
+> Am Wed, Sep 10, 2025 at 08:20:28AM +0200 schrieb Alexander Dahl:
+>> Hello Ryan,
+>>
+>> Am Tue, Sep 09, 2025 at 09:08:38AM -0700 schrieb Ryan.Wanner@microchip.com:
+>>> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+>>>
+>>> Add the USER button as a GPIO input as well as add the LEDs and enable
+>>> the blue LED as a heartbeat.
+>>>
+>>> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+>>> ---
+>>>  .../dts/microchip/at91-sama7d65_curiosity.dts | 49 +++++++++++++++++++
+>>>  1 file changed, 49 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+>>> index f091cc40a9f0..2fe34c59d942 100644
+>>> --- a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+>>> +++ b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+>>> @@ -11,6 +11,7 @@
+>>>  #include "sama7d65-pinfunc.h"
+>>>  #include "sama7d65.dtsi"
+>>>  #include <dt-bindings/mfd/atmel-flexcom.h>
+>>> +#include <dt-bindings/input/input.h>
+>>>  #include <dt-bindings/pinctrl/at91.h>
+>>>
+>>>  / {
+>>> @@ -26,6 +27,42 @@ chosen {
+>>>             stdout-path = "serial0:115200n8";
+>>>     };
+>>>
+>>> +   gpio-keys {
+>>> +           compatible = "gpio-keys";
+>>> +
+>>> +           pinctrl-names = "default";
+>>> +           pinctrl-0 = <&pinctrl_key_gpio_default>;
+>>> +
+>>> +           button {
+>>> +                   label = "PB_USER";
+>>> +                   gpios = <&pioa PIN_PC10 GPIO_ACTIVE_LOW>;
+>>> +                   linux,code = <KEY_PROG1>;
+>>> +                   wakeup-source;
+>>> +           };
+>>> +   };
+>>> +
+>>> +   leds {
+>>> +           compatible = "gpio-leds";
+>>> +           pinctrl-names = "default";
+>>> +           pinctrl-0 = <&pinctrl_led_gpio_default>;
+>>> +
+>>> +           led-red {
+>>> +                   label = "red";
+>>> +                   gpios = <&pioa PIN_PB17 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
+>>> +           };
+>>> +
+>>> +           led-green {
+>>> +                   label = "green";
+>>> +                   gpios = <&pioa PIN_PB15 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
+>>> +           };
+>>> +
+>>> +           led-blue {
+>>> +                   label = "blue";
+>>> +                   gpios = <&pioa PIN_PA21 GPIO_ACTIVE_HIGH>;
+>>> +                   linux,default-trigger = "heartbeat";
+>>> +           };
+>>> +   };
+>>
+>> The label property is deprecated.  Please use the properties "color"
+>> and "function" for new boards.  See devicetree binding documentation
+>> for LEDs.
+> 
+> From a quick glance, this seems to be an RGB-LED, so I would suggest
+> to not model it as three distinct LEDs, but make use of the
+> "leds-group-multicolor" feature, example:
+> 
+>  59         multi-led {
+>  60                 compatible = "leds-group-multicolor";
+>  61                 color = <LED_COLOR_ID_RGB>;
+>  62                 function = LED_FUNCTION_INDICATOR;
+>  63                 leds = <&led_red>, <&led_green>, <&led_blue>;
+>  64         };
 
-As the bug report suggested, the system boots with no turbo, it must be
-forcefully turned ON by writing to this attribute.
-I wonder if there is a BIOS option to turn ON turbo on this system?
+I see, I was not aware of this feature. This would combine all of the
+LED pins into one RGB light correct, it seems from sysfs that this is
+the case.
 
-This processor itself is capable of up to 5.8 GHz turbo.
+Would having the default-trigger="heartbeat" still be allowed for the
+led-blue node or should that be moved into the multi-led node? From the
+bindings it seems that the default trigger is still in the gpio-led nodes.
 
-
-I will try to find contact at Clevo.
-
-We can try to reduce scope of this change to non HWP only where there
-is unchecked MSR issue.
-
-Thanks,
-Srinivas
-
-> [1]
-> https://bugs.launchpad.net/ubuntu/+source/linux-hwe-6.14/+bug/2122531
->=20
-> [2] https://bbs.archlinux.org/viewtopic.php?id=3D305564
->=20
-> [3]
-> https://forums.gentoo.org/viewtopic-p-8866128.html?sid=3De97619cff0d9c79c=
-2eea2cfe8f60b0d3
+Best,
+Ryan
+> 
+> Greets
+> Alex
+> 
+>>
+>> Thanks and greetings
+>> Alex
+>>
+>>> +
+>>>     memory@60000000 {
+>>>             device_type = "memory";
+>>>             reg = <0x60000000 0x40000000>;
+>>> @@ -352,6 +389,18 @@ pinctrl_i2c10_default: i2c10-default {
+>>>             bias-pull-up;
+>>>     };
+>>>
+>>> +   pinctrl_key_gpio_default: key-gpio-default {
+>>> +           pinmux = <PIN_PC10__GPIO>;
+>>> +           bias-pull-up;
+>>> +   };
+>>> +
+>>> +   pinctrl_led_gpio_default: led-gpio-default {
+>>> +           pinmux = <PIN_PB15__GPIO>,
+>>> +                    <PIN_PB17__GPIO>,
+>>> +                    <PIN_PA21__GPIO>;
+>>> +           bias-pull-up;
+>>> +   };
+>>> +
+>>>     pinctrl_sdmmc1_default: sdmmc1-default {
+>>>             cmd-data {
+>>>                     pinmux = <PIN_PB22__SDMMC1_CMD>,
+>>> --
+>>> 2.43.0
+>>>
+>>>
+>>
 
 
