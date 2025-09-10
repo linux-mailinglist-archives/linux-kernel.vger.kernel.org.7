@@ -1,181 +1,162 @@
-Return-Path: <linux-kernel+bounces-810700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4858CB51E1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:45:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA16AB51E1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB40517B1DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:45:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59C53169E0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4708B25BEE1;
-	Wed, 10 Sep 2025 16:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD43275AF3;
+	Wed, 10 Sep 2025 16:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x8nCrXqR"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2osiUM5H"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2705F329F1C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E74219A86;
+	Wed, 10 Sep 2025 16:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757522749; cv=none; b=HkWMr2MZO32REJ1B2nOkwey+ICBFmBe0Mv6FsLJourwEcyCH7weGLIlmxsXWPmUm6KRez/PWuqRJxR0m8v6pR8LMveXt+U68oElQ4LV92+5pIlDKipD/K7dptEw0SAxPzahkwlPv+uOZ6thufpvfJKEJosJnPDOMCBbdDIHk4KY=
+	t=1757522787; cv=none; b=VzkbX0GMIL7jRUaQQRYWi+uuM2XwOU+1wagMlnUQ1ZJhfLFko6kbxzLiqzVDWqhm6ouhC1SJGglqkrMvC1pU6k5C3ZjVbn72xG3rj8yedqQnXxwPqK6qCNc1ydq1KP/4Z53/G4kjqAKgAcv9gAMHox4aHg44Il8+IAKc2i4grJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757522749; c=relaxed/simple;
-	bh=3DoVvAkHKzlA55dWX7469yZ7NdqVmb2RDHnFOvW9QuY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zo1Ab7W30y2I47aDySSpeC83BMOViMA9Y4YH8VDKOvIwUT+6BjGwFKaRVUvDFemhTyYgBJ+6p2cwfuOjzKLU8slxKK3jQ2i69WNlND/27JfNqJfScn91o1+i0IoVaqLSjYA3vG6qZbqIS63eOBcdyjz4sftzYW4JTdSql1M8o6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x8nCrXqR; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24b2337d1bfso5665ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:45:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757522747; x=1758127547; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=awcUZJhrSr7vk/FN6/yazFNso0WDtq5kIuzjKcXy7dM=;
-        b=x8nCrXqRuFl2oDmuSyJJC7KYbgbAl1Y4vxGzkStTfJtsCG8+0Dcyd6+E/Ve/dKzQAi
-         e78INYFUrTEDkEiUfIk94FLYYFqUJMmIcBEQfhGNI/tfIxmrW5pkLUDHF/VvTMBmWpuc
-         dkRMrimMdTe6k9XuS6rliBnawRqOWo9EFDqVSLA4hv41PwSRBg82/2vvGlJPNoG8F3rg
-         4po8rKj2l4iLFbD6/duExlDnKRfpW1q7TKKZ4KLI4jmAmikJelYHuRMJj5TUcZBY3YFh
-         XZRckaKGqN+ApjZ/vJ0KkYbSSif3r5HDHvZf7EPwSeLv5jwdMfw2NcYUYe8xDJPbsQ00
-         NfCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757522747; x=1758127547;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=awcUZJhrSr7vk/FN6/yazFNso0WDtq5kIuzjKcXy7dM=;
-        b=NIXgA0JVXJbPYGo4SzACF306AsbMZePBeklUSVVLdKT3KOoGu+oo8K/tqUEib5JL6n
-         Mp2N6/IgeQdl+HuF6kvek0RxP12x3mk9V5x3+0XNed7Pu3Ns16Arm+q6BFjM6Yj5aN2j
-         UanQ+YTHK1g0PnZNyIt7tg6q9/K/8USDXew0S2g6na+yJSYUDZYRWVrq5ZyY5PUdQpN5
-         ZPTc1L+Gk2g8CnLnUebWMmUs7DjnM6Snw2oDLIO4mQxRmxR2RwApc0LlY46iW3sKD+FF
-         WQc9MibphAvZt7/TyZHOYWDlKtETWE/Fl0LDIbkfgec8bZ5RS3oknXMIhYxpFYbQnO32
-         efJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBIpglP6H35pOUe+o/lVoXDVut5kgd6q+8p93nq33saO/VnGGTpqT26IYn2OqxqW+5GyNstP9ymf+QFo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUB/IkYalPIGk2xUPsh6a9AWPizUvquhNNTEXCfqCJ6t8oI44r
-	6fkVgZplq+pjPrTi0liUYbsXcrUjWX8ke9BXAueTywC+ksSDbom7Ul/y47RdmSnMvMavSf0kWEb
-	1m7BomnYSHl41R0rSICaSJEVOUh+86amdmQ6ffIEZ
-X-Gm-Gg: ASbGncs1PzZ91i8pVPnEaOxj0joA2Xd3xxtUeUumh+Zva6wNvRBWDZ6eKNnEQgk2DED
-	h/ftr37KnaZKZ5DfakcGOVw8uIdLJvA60cghAAMm5N/nPC72bl6bTB9/0yoVT7lRDtYl/q17234
-	k6nCbVs3+PrEyxCSSwxhffEZbkwI8wqGN3CTXhbfR/Yrh/lyAti7zA9928sqwqy5HEoiRM7pDI1
-	/ImZZwgrySSXBOeaigOCXU1SH1978apeGdD90Lp4a1b
-X-Google-Smtp-Source: AGHT+IHYwRpB3J9CuictAomIol7aeL11ghkSN0Km+0mTWaChVAO1NMeXp/i3VR4zUg4scx2cFOoKZZYNX2kyXd2Cqxw=
-X-Received: by 2002:a17:902:d50e:b0:248:aa0d:f826 with SMTP id
- d9443c01a7336-25a55af0c4emr5769095ad.6.1757522747028; Wed, 10 Sep 2025
- 09:45:47 -0700 (PDT)
+	s=arc-20240116; t=1757522787; c=relaxed/simple;
+	bh=LHVi22hmdKEYriv8S93DuMS2bCKCirlgpOUbUHzNiAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yx3O1qy+qIuHMvu42i8SuiDBvh0POlJ+jDErXBFgRKhVCdXfup2/x4z9wGeFqdnU/KyjHC/zITCT5zsEZhcQ22oyE82QF/mPf6pJx5n6O6oL0YvWIW5k9SQ5eQgKGpWhk+fGOHcqO+qh+mQzCXadVLj87hmxgPJ7FoXQvc4oy6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2osiUM5H; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=HoO6vkDGS7CPDCnJ0Lsh5f0VN7QxwwVtfLxnW3o78pw=; b=2osiUM5H9hRhyjYCh/8vwaG8NV
+	KlgzREfAFiIJMtCrrcw5ipDeTRxm4u2j5LdwxuzheT5iKj9bOIqdMKIqO962Jd0v7vB06lpCaf9gw
+	IB1sh1wn6ZBkxTFqX6LNvmoJFgc2XV70cz0jZ23NnVWIypvX0mx4L393XFQq8sjnEE3A=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uwNxX-007yW5-1Q; Wed, 10 Sep 2025 18:46:15 +0200
+Date: Wed, 10 Sep 2025 18:46:15 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+	Pascal Eberhard <pascal.eberhard@se.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: configure strap pins
+ during reset
+Message-ID: <14114502-f087-4d3b-a91e-cff0dfe59045@lunn.ch>
+References: <20250910-ksz-strap-pins-v1-0-6308bb2e139e@bootlin.com>
+ <20250910-ksz-strap-pins-v1-2-6308bb2e139e@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aMACaOmneDrG8_pQ@gentoo.org> <CAP-5=fVA_Cduf9NvFAJezcNcg0JDNGa5q7m_mRBWNAYGEUo8bw@mail.gmail.com>
- <aMAtqNq55TZEuaKn@gentoo.org>
-In-Reply-To: <aMAtqNq55TZEuaKn@gentoo.org>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 10 Sep 2025 09:45:35 -0700
-X-Gm-Features: Ac12FXy0jWTEx2X8QZ0NZCANfJE8Eof_psH73gdEiZeY_JHSOHjsmrlsDgL6vC0
-Message-ID: <CAP-5=fX-GG_pUH+1Eak8dsoTdNh=vRU+00scBxbRt7EhXZosiw@mail.gmail.com>
-Subject: Re: Problem with perf report --gtk
-To: Guilherme Amadio <amadio@gentoo.org>
-Cc: acme@kernel.org, namhyung@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910-ksz-strap-pins-v1-2-6308bb2e139e@bootlin.com>
 
-On Tue, Sep 9, 2025 at 6:37=E2=80=AFAM Guilherme Amadio <amadio@gentoo.org>=
- wrote:
->
-> On Tue, Sep 09, 2025 at 06:04:42AM -0700, Ian Rogers wrote:
-> > On Tue, Sep 9, 2025 at 3:33=E2=80=AFAM Guilherme Amadio <amadio@gentoo.=
-org> wrote:
-> > >
-> > > Hi Arnaldo, Namhyung,
-> > >
-> > > Since sometime we have a bug in Gentoo's bugzilla about perf report -=
--gtk not
-> > > working=C2=B9: https://bugs.gentoo.org/937869
-> > >
-> > > I know this feature is not used very much, but I thought I'd report i=
-n
-> > > any case. The problem is easily reproducible as shown below:
-> > >
-> > >
-> > > $ perf record -a -g -- sleep 1
-> > > [ perf record: Woken up 1 times to write data ]
-> > > [ perf record: Captured and wrote 1.818 MB perf.data (6648 samples) ]
-> > > $ LD_DEBUG=3Dsymbols perf report --gtk 2>&1 | grep '(fatal)'
-> > >     288067:     /usr/libexec/perf-core/libperf-gtk.so: error: symbol =
-lookup error: undefined symbol: hashmap_find (fatal)
-> > > $ perf report --gtk
-> > > GTK browser requested but could not find libperf-gtk.so
-> > >
-> > > I tried this with perf 6.16, but this bug seems to have been there si=
-nce
-> > > at least 6.12.
-> > >
-> > > Please let me know if it's better to file problems at https://bugzill=
-a.kernel.org/.
-> >
-> > Thanks for letting us know Guilherme! I suspect I broke things when
-> > trying to fix python things. The code linking libperf-gtk.so is:
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
-t.git/tree/tools/perf/Makefile.perf?h=3Dperf-tools-next#n809
-> > The hashmap symbols are part of the perf-util library:
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
-t.git/tree/tools/perf/util/Build?h=3Dperf-tools-next#n197
-> > So maybe there needs to be a libbpf -lbpf for your case? Alternatively
-> > we may need to reorder the libraries here:
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
-t.git/tree/tools/perf/Makefile.perf?h=3Dperf-tools-next#n464
-> > like:
-> > PERFLIBS +=3D $(LIBPERF_BENCH) $(LIBPERF_TEST) $(LIBPERF_UI) $(LIBPERF_=
-UTIL)
-> > becomes:
-> > PERFLIBS +=3D $(LIBPERF_BENCH) $(LIBPERF_TEST) $(LIBPERF_UTIL) $(LIBPER=
-F_UI)
->
-> Thank you for the suggestion, but just changing the order of linking or
-> linking libbpf doesn't seem to fix the issue. I still see:
->
-> $ nm -D libperf-gtk.so | grep hashmap
->                  U hashmap_find
->
-> at the end of the build. The function is in util/hashmap.c, so the
-> problem might be more involved than just the linking order.
+> Support the KSZ8463's strap configuration that enforces SPI as
+> communication bus, since it is the only bus supported by the driver.
 
-Thanks Guilherme! I was able to reproduce the "nm -D" output. Adding
-"-z defs" to the "$(OUTPUT)libperf-gtk.so" also fails for that symbol,
-it fails for many more. Even though the symbol is undefined "perf
-reprt --gtk" works for me. Attaching gdb I see that the symbol is in
-the perf executable itself. I tried the following change:
-```
- $(OUTPUT)libperf-gtk.so: $(GTK_IN) $(PERFLIBS)
--       $(QUIET_LINK)$(CC) -o $@ -shared $(LDFLAGS) $(filter %.o,$^) $(GTK_=
-LIBS)
-+       $(QUIET_LINK)$(CC) -o $@ -shared $(LDFLAGS) $(filter %.o,$^)
-$(filter %libperf-util.a,$^) $(GTK_LIBS)
-```
-or
-```
- $(OUTPUT)libperf-gtk.so: $(GTK_IN) $(PERFLIBS)
--       $(QUIET_LINK)$(CC) -o $@ -shared $(LDFLAGS) $(filter %.o,$^) $(GTK_=
-LIBS)
-+       $(QUIET_LINK)$(CC) -o $@ -shared $(LDFLAGS) $(filter
-%libperf-util.a,$^) $(filter %.o,$^) $(GTK_LIBS)
-```
-but the nm output shows either the same or more undefined symbols, not less=
-.
+So this is the key sentence for this patchset, which should of been in
+patch 0/X. You have a chicken/egg problem. You cannot talk to the
+switch to put it into SPI mode because you cannot talk to the switch
+using SPI.
 
-I'm wondering if perhaps the hashmap_find symbol is being stripped
-from the perf executable. Maybe it is an LTO or stripping related
-thing?
+The current patch descriptions, and the patches themselves don't make
+this clear. They just vaguely mention configuration via strapping.
 
-Thanks,
-Ian
+> +static int ksz_configure_strap(struct ksz_device *dev)
+
+Please make it clear this function straps the switch for SPI. If
+somebody does add support for I2C, they need to understand that...
+
+> +{
+> +	struct pinctrl_state *state = NULL;
+> +	struct pinctrl *pinctrl;
+> +	int ret;
+> +
+> +	if (of_device_is_compatible(dev->dev->of_node, "microchip,ksz8463")) {
+
+I would not hide this here. Please move this if into
+ksz_switch_register(). I also think this function should have the
+ksz8463 prefix, since how you strap other devices might differ. So
+ksz8463_configure_straps_spi() ?
+
+> +		struct gpio_desc *rxd0;
+> +		struct gpio_desc *rxd1;
+> +
+> +		rxd0 = devm_gpiod_get_index_optional(dev->dev, "strap", 0, GPIOD_OUT_LOW);
+> +		if (IS_ERR(rxd0))
+> +			return PTR_ERR(rxd0);
+> +
+> +		rxd1 = devm_gpiod_get_index_optional(dev->dev, "strap", 1, GPIOD_OUT_HIGH);
+> +		if (IS_ERR(rxd1))
+> +			return PTR_ERR(rxd1);
+> +
+> +		/* If at least one strap definition is missing we don't do anything */
+> +		if (!rxd0 || !rxd1)
+> +			return 0;
+
+I would say, if you have one, not two, the DT blob is broken, and you
+should return -EINVAL.
+
+> +
+> +		pinctrl = devm_pinctrl_get(dev->dev);
+> +		if (IS_ERR(pinctrl))
+> +			return PTR_ERR(pinctrl);
+> +
+> +		state = pinctrl_lookup_state(pinctrl, "reset");
+> +		if (IS_ERR(state))
+> +			return PTR_ERR(state);
+> +
+> +		ret = pinctrl_select_state(pinctrl, state);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int ksz_switch_register(struct ksz_device *dev)
+>  {
+>  	const struct ksz_chip_data *info;
+> @@ -5353,10 +5392,18 @@ int ksz_switch_register(struct ksz_device *dev)
+>  		return PTR_ERR(dev->reset_gpio);
+>  
+>  	if (dev->reset_gpio) {
+> +		ret = ksz_configure_strap(dev);
+> +		if (ret)
+> +			return ret;
+> +
+>  		gpiod_set_value_cansleep(dev->reset_gpio, 1);
+>  		usleep_range(10000, 12000);
+>  		gpiod_set_value_cansleep(dev->reset_gpio, 0);
+>  		msleep(100);
+> +
+> +		ret = pinctrl_select_default_state(dev->dev);
+> +		if (ret)
+> +			return ret;
+
+This does not look symmetrical. Maybe put the
+pinctrl_select_default_state() inside a function called
+ksz8463_release_straps_spi()?
+
+	Andrew
 
