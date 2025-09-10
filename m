@@ -1,318 +1,114 @@
-Return-Path: <linux-kernel+bounces-809219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66231B50A20
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:15:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39225B50A27
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B6D23B5889
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:15:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56F131C26431
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF1C1E6DC5;
-	Wed, 10 Sep 2025 01:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB6F1EF091;
+	Wed, 10 Sep 2025 01:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jMk9Jl3L";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="nG3sV0EU"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="g3qKEn7S"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B3F22EE5
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757466926; cv=fail; b=bkCN5Zs1YBORnTY3beklzZfaLDIzdzj+q84aKJWwX134qmXTXyGQ9dfzFoEhyXX/zeSZmNEnivkyyXjUM+2PpuNW29lCBOY10/T0GgrBP32ZL2umFxCnqJLThqr6YsqAkJJIVEmLhTnWlzFCs8rx1a5mZNIvbIxKtPMKpX7hPak=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757466926; c=relaxed/simple;
-	bh=13rwE/LPJKUGsmoG2vW8OaNQqI8uxXR8d7oVjkeYWjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=r7VsdWTbzr+w4jgyQujZbprMf1Nl4OKCAQub0d9sxRAZnge07vEqBtQMcIZ8BM1pMGWB64xEEWMkI62YUwUbbncQQ7qDoUteIDWQWpbQ8eT/GDlMcbBeSYMip5xPUKfvaq52mDnB4z+mjj8YvAvLVM1TuuLeFpvwMzmHd9YrrKw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=jMk9Jl3L; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=nG3sV0EU; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 589L0ZH2016819;
-	Wed, 10 Sep 2025 01:15:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=xqt0J+sxnk+vs4iQVE
-	E9HG5Um1V1ux3iSH+D+F7U4cY=; b=jMk9Jl3LcrXB8ZAfi+IkxqwzP4C59dgDQh
-	t2+x7LPfYThEv8Qzf8U49RRRYuaAgpuQ6NTzwvpUGm4DOjVNCwZd0YbG1sjVKtso
-	5tT1M9TBzyK+DFfUzYT1RlnN9ac8R4ZUCkwYAEwHqpsXnTelBIUVEys5KAsxGkkq
-	PQQ5WU//fTvaqmqIvOMeRciDoUPiEs2AYJZfSTPnm1k3x9Hyj0qc0OFKRuCYfj6W
-	gOqVfDM+UgC5bo0Btz1YDco6WK2ZCG2k05LKNzS00PKKqZE8MRBteE4bXW5gNPge
-	CpDbqiECZ1g6s4KLqUNZOXaqr2JQeFaAmpvF0ThvGGyZTb0/MOjg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4922x932dt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Sep 2025 01:15:06 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 589Md74B038950;
-	Wed, 10 Sep 2025 01:15:05 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2076.outbound.protection.outlook.com [40.107.220.76])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 490bdac5ue-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Sep 2025 01:15:05 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NzPGQrG1onTEq8kyUEly8KNL6H+OPBX3/KVQtuGsqG+OvGc6aLoe3Okdf+JJlLRao9mdYtX1YKhtHN6H7zref5FvE9G8P5I5AkVCUMrFaL5kpRcfBa+ruOXq3hP6lGCbXso8D1sEk3tkD+72TpOb6wIQmzLQJLheYCWuxp0RtH93WljpGHskqT2hiV7gZRHURRMUlQCv8/Sl2EChXYCmjr3GSMxZS+WDjjoCmsusTpub2z8mLohT/QnqgxaNbrF5Uw40xTZOEtHy9Rm1exsmOHhemwM3iAvp+7bAwVHywxnThvGJzvJSG4FLQqSx+bd64ObPsoeWNqnsYRKkVGVg+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xqt0J+sxnk+vs4iQVEE9HG5Um1V1ux3iSH+D+F7U4cY=;
- b=Rj/zjrMuL/QV4RxiMFDCyhiiEAsifYOE+mPs5NoIyXoRCnC8CXCE1sSHRxD/Y1FXkhwF5m5Q4IJqxCud8dCV2cmPKwZmUljBeah9sIc9Oc+P1tinyyNH8Bs4n55R5jIc0zSUlfOcQbcXGsl882bzrhsAQUTgnYpOWWReqtqRCAJ/TpaAmc+g3Zz07tottwNVTUmAiGXTxQPAP9H/qXiAypa8vQT2+F47/xArq3y5itLC0d1IS8hftgbWrAZc9cBx3uJCgdgPmOxyz4BD822TJ7Q6YPSXxbm9NWS7qB5UfY5ktN4W6kY8W0dYrmG+Khp33I0sbQFNrp+zP4d5la8hjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xqt0J+sxnk+vs4iQVEE9HG5Um1V1ux3iSH+D+F7U4cY=;
- b=nG3sV0EUFRAQRgbTNnHXJXzesKdbRoMOUP+DEimsMt1VWKMHr2AEfiwC9VgmW2MjngwUx4/5fNomUQmiNpd08veWnZqDoI9j3t/dQ/kfnQkJlou0keCmrQwHfuF4ADbvpErVUBWv335VG83ufKcUGoZ0eZMmavH9Gtu//MR6/dE=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by SJ5PPFD796AA27B.namprd10.prod.outlook.com (2603:10b6:a0f:fc02::7d3) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 01:15:00 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
- 01:15:00 +0000
-Date: Wed, 10 Sep 2025 10:14:50 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Jane Chu <jane.chu@oracle.com>
-Cc: osalvador@suse.de, liushixin2@huawei.com, muchun.song@linux.dev,
-        david@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, jannh@google.com
-Subject: Re: [PATCH] mm/hugetlb: fix copy_hugetlb_page_range() to use
- ->pt_share_count
-Message-ID: <aMDRAr1UP1Ix6zaY@hyeyoo>
-References: <20250909184357.569259-1-jane.chu@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909184357.569259-1-jane.chu@oracle.com>
-X-ClientProxiedBy: SL2P216CA0164.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:1b::8) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EFC7E9;
+	Wed, 10 Sep 2025 01:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757467246; cv=none; b=XWpo//FCT+wipuTb8kU3XQR+9SFvM4NI8o1bfsUVv6xXQPWi+8J4rymV6jmqcmz6TcUtWeUzVmgfCrc7QJEREnh6Y2PKb49tiw8sIShUkhYw8od5scXqXnclpna6SmEtL0hJaBmk/6ZhOSC1dOR+a/9s/MHu0SjyL5zEbnHCXkU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757467246; c=relaxed/simple;
+	bh=SjSZ4fJvEkON3f7H8fSsbr6eG88xcLoUS0NgI9+azdk=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=o6fKDhLepegqiH2U5u8BNM9B95v3CP5KYUAKO+fd2PbEgBm0+m8H/3xHATu6sfqn3WLIbOEd3lrX4CPHBiJ4p2oDQ3meEJyRgelM+Zso7Mx/4I7ohmvKQX5buFuUjMrcbxCEo4jzNkEzastIyR8KHE8f9SgE/IoT06dAHQfXlIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=g3qKEn7S; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1757466931; bh=G5kNXpFVRo0yjSdKeycX6sHGdQvY6yNnQ0dazno75uU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=g3qKEn7S+F5W9VJwpwkk7zo2bZxxDfLZntWUCQf0syMnLLq4L0P7Kl8xqcdZssw9n
+	 uxN/07pkLA25tP97PVAc3f74HAK/YEd1g2vEQ1IEs7e4MdHzyuC+ei5cKNfC+rNAIR
+	 xpbfDovVBajMKhqA0v/vGMXccbJci+D1Im3/LrF8=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrszc43-0.qq.com (NewEsmtp) with SMTP
+	id 3DD89E33; Wed, 10 Sep 2025 09:15:29 +0800
+X-QQ-mid: xmsmtpt1757466929tuoy189ox
+Message-ID: <tencent_341BA32545BAFBBB2133249EDE1B774B4908@qq.com>
+X-QQ-XMAILINFO: NqN/wpVFVRYXHuZItgFVQwOdjGLIqK2h9RS3YOVGy8/sETj/yPd+ohspYbsk4V
+	 nuWIZC2YGsqW5C7Ppd2NGKITiGwsVHGh8QM0KjI6ejMnUijPPDYgChLC2E9HTMwqwtjrK4qhH0fh
+	 7urzwWuv3VrLKzj/dVIcCF/JHrPz0TYJVZuO/p46CJdTAcAu6hvamkw4QJCYteaHA7SjSM08xJUX
+	 VquRr1ucYL9OYy57VoIt1uALj1dt1cbvD8uTo7lt49eirN3GzyNERliK2CSywvR/eE1mAQfo2Rvh
+	 Ch/lnJEhEQxlYuaiSni6dc97cBHZkJJPyePjd+LRpPXSZ1tluzO7I9RHRFpPufvlnP53eBLQmvf+
+	 7IeVoLMfr4bVqVEOuoR9OOvYziGViGSj+bXb1xIxyI9smvOfuB757j5aY+2XkYIyDHpz7xCx/Z84
+	 +hVTM0XfdUvaTE6BjF89wd8hMdYlboRR8whELKxSoG4T8L17Fe6MUYwe5vjKEHn5w5Vwe4f2E4wl
+	 rxcR9xCoMzURTumQW4/M7R2feEC/NJdTzv6FPaPEhey5np9aTfOyzrrDFFpglvig3uBXQ2z7V6js
+	 2Xg8UI7Jcsygrc3XRtRHRCwTdXsC5EAtpm4MItR9qqRLQYHRrYQGHKi1hq6f65YRoFXcZ5LvyNDG
+	 nKlUmyZFYCrXy055ozMp1+m+6ztixCBNnkIZ/See0wVNWlb3hi7nCkNoguHZiMAteJm07p4c/kjb
+	 pmQyVs5VCIe4hruAmU3l2phjsGOgqjDwOa0W/6QataLWgSLY+lQiL2ndqXJUNVSpBYbJi6p2Gw2H
+	 0R04/zkxh4D5aglK27Xu11Hkza48xLkMf2TSjk/DWIfScTK1dL0NUuOxejBFvxfxsCJehrIaUMje
+	 p3zmn90JOIgxXmUC2cPFkfrQkZLxD1+0zoJ7J3ko8CTi/woA1OKkg+PmpfmOZjquEXIBz4E2cV63
+	 xlVXPIrsikmFxfGy1VXevSUNE1y1I7cfCM5DcAKJpM6RMQRd/DvQ==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+031d0cfd7c362817963f@syzkaller.appspotmail.com
+Cc: laurent.pinchart@ideasonboard.com,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH Next] media: mc: Clear minor number before put device
+Date: Wed, 10 Sep 2025 09:15:27 +0800
+X-OQ-MSGID: <20250910011526.990021-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68c097c5.050a0220.3c6139.000a.GAE@google.com>
+References: <68c097c5.050a0220.3c6139.000a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|SJ5PPFD796AA27B:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a5304c8-ce0a-4d73-9691-08ddf0077637
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6s+V8lphgIyZa5bMS3Dj8tK/dHDKZqksdIKMHnUtKmuCahgpsvNUIB8p8BbX?=
- =?us-ascii?Q?VBRPhUsgYiaoRU0/+dNhqcMSi/0BVN4Pg9Py5RqTYF06RP9W87NNmwtcvapz?=
- =?us-ascii?Q?dM80lrO6w/aJdSKvJ28CmmNSHhtPfrdujuGe00j0WkQNxcsgIr7cklbzLV7l?=
- =?us-ascii?Q?imsmlJaGJwPqcRmamZpxAYXIGWmgQRXRc9kt9gK8HHCKH9lV/sggHLq4H4MD?=
- =?us-ascii?Q?gmR3Z81WOEGRN0CVzNvCQBh7jR47M+a/lxpDLLA4+fcMGt36ykclL7hFBTYW?=
- =?us-ascii?Q?j1cH1Dt1IGHz1lbTJx3TzwcPj5pTW2aOlmcZhduO+byKyIl8woYdEIWm1rVx?=
- =?us-ascii?Q?WaIhSSVQGDsf+V6B4+f4FP3gKL4k4mgBRSmx5kSN6tUhZ/RyxGW/hnf+zc9m?=
- =?us-ascii?Q?XhBcy1tTestSvxQ41/2thV3BQbHwSliLH1YYR/cMKG08NbfwtlCYN+Befc3D?=
- =?us-ascii?Q?LayDAwlCuyVq3Ek2pYeHB55wNYVOgDLG8it3dkAd6d4symuwp30v4a2zNQuE?=
- =?us-ascii?Q?SxaJ0r5iFYRk6+23V/BpZCRUu+cYWR17QlbtW+nQWkV1rNNXnzK706KfKHL5?=
- =?us-ascii?Q?tr2zk9LYQLy5eD/5e1kIGov60pVAmqy4CupoDd9JeeB6hDm9GZBMYzhgL2O8?=
- =?us-ascii?Q?IWVLNnBCpy5M77K5RGxckppwEbbMjQZgxkcZNyxo3waUYLf9ipo9soho3+gZ?=
- =?us-ascii?Q?01PO5QETj2+LT8zfvItrymKSTnkCoVsvzJ6bwczWl9bgZPdZkl9HatyaSxD6?=
- =?us-ascii?Q?49y+SRya2PrWvfToUl0LYML/MwafQp+Lz5HJKI7TRgnZw2SpUmDIEYOX3kwt?=
- =?us-ascii?Q?b/9uSS35MiLDNqbsHgxNX/ilGHQecI2dQqC6hMZARvBDpzgiRvAYCdtjWE93?=
- =?us-ascii?Q?wgNeKAukrKrc32aJmd9KmyaDuqYFJeabP7nr5Y4A1mIe1GTQSbzAbMcNSh+I?=
- =?us-ascii?Q?C3ebL19Hg97G8Qs4bc1MtcTpxXcadFgCKILN/salG9/GsLesQV1VFR5jGA1p?=
- =?us-ascii?Q?NaQLfjxI34YN+acOtEcdfFLe8Nebs2Ln18cvxRZp2vBJFUpND+s70owkFeHo?=
- =?us-ascii?Q?YlrPooOseZ4cPe0k9ZhxSTlRioggkB+Grw06FgF3whQsCfpj7QMyYOk50RR6?=
- =?us-ascii?Q?W5N9AaUdEPpdKb5vMqbY01d9UX/8cqV1TG8G6dStDdcbk6zD+URniCsXRhpa?=
- =?us-ascii?Q?SQEkAqHTomraaalwBpzEIXo4hjn2BUMEHKAde45MZdIxpn7PPrxWCOu9k3bs?=
- =?us-ascii?Q?Vm8dDRdqbir7norae35aWZ1dSQHSBOp2mn4oqd3H4I2KsjHhQt3YLkJ1qhEp?=
- =?us-ascii?Q?UBIzreUFRygcT9G+hTLsgyawk7vHSGJXjAGegwQ6K4ZaQesp/wdH+sRa5TVn?=
- =?us-ascii?Q?xp85NObdVAwcfJhv1aRN7EcIaLYhADwyKauIEm3I6TnoPZ/+x5D6FXLFVte8?=
- =?us-ascii?Q?FasI6hew1rI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?cQsuBdYG6M+5TWyYEPrgt6mdJSZ7/N26gEThfaluafDYcHGTtJcK2x9g3K2C?=
- =?us-ascii?Q?773u549thjbSl5h2b1be5HSlxUpEbnKAGeaY6gFvDEZ7ch5ZN8YydZMM8A4y?=
- =?us-ascii?Q?u+Wey2A/ewvBJPSV+M4ITqicwMIH+6aEaARqwWGvlw1G6sIB1G8octxfr9MY?=
- =?us-ascii?Q?6l00GQEBibIf94B/CeWiz1l1qP3P7xl2dauUvBCyEPZ2WWaF7SXhefAr9Z7Q?=
- =?us-ascii?Q?+F7i4zj2RnDTGP1B7c1EtBZAwPNJOP73AcpWgh/yanUXRztFmou9e0w3O3SV?=
- =?us-ascii?Q?YXGYE9w3BrbU7AAPBtOzFErh8HdPVE32nhzwsXX2REV31JsH8Szlbvtbn9ht?=
- =?us-ascii?Q?V9BrGwAn01l8On7o/EM62ev8okon7N/co2AAnQJ1kasJoWC2Y1/UgKKHo0F3?=
- =?us-ascii?Q?qwoXDVyn4S0CRQnnVMLVhfbLYeWHPvIRq+U0o0EXjiC87J44U4tSqA+1TbeH?=
- =?us-ascii?Q?L7l40HopLZHk1X6Bxsz1v88Ky9Nowg7AHuOyLafQ3j9VUkwaKWZ9mJ1ortp8?=
- =?us-ascii?Q?pVgA38revyC7h9HqASNPXoo3i4LQi4YMKD60h81OW0J7wX8BGvI0pog1U+ta?=
- =?us-ascii?Q?baSBu/Sf8XgxBvS62/NPChdrixbpHiaV7EjvZygTHIYdFKvMat36VqpNoTIv?=
- =?us-ascii?Q?wJOZSz58gnJnDNouumfC2DyG/3RS8bVAEVEMT5FUlSBLkeu8zpkYM/nUOOr8?=
- =?us-ascii?Q?lX9KZ3Mp3/rp0cJfVC7fyTEcOh6FWlqPNOHv8PS1m6UikyoOP8TefGw9O5qR?=
- =?us-ascii?Q?5mPiv9SZbHvKX11+oFtqPuJs3UYbVTJcX1lIjmqLGy6VaRTZDo9Rp4AYY7NV?=
- =?us-ascii?Q?6ngu7t02qrDJOeZcGJ/DL8wvhSWzJ884YRedo4FkvvcCzzvsRyTdUKSQXJ5m?=
- =?us-ascii?Q?m3Bc53hrtuKMiRGJ1s9kOIKJ0dItAtMTs/vIRxjwRHXadzXBxX8ifFDgqvH8?=
- =?us-ascii?Q?mB+u+Ov8lEb3TZqRpU2K4sv02TG43DAHmGcgbDuRfPJKAtcRv1bazbpl4dpq?=
- =?us-ascii?Q?YcrAxkXP462eVShfZfrCOf3iafZsF1lxegP/fJ6P7Jl9tKuO4e32uUp3XvDX?=
- =?us-ascii?Q?5hsNzDsRN0bJQOIcxgMZzu/b7uJg3EILiWMvg4fvK9EsWI8G3zpmZLtVpzse?=
- =?us-ascii?Q?Ztq2vGcqWvZPpH7NVtb1eZYEi+9StEOurpr2X+9ElNFGoCiLUdzgmVQcyl3k?=
- =?us-ascii?Q?Eaf9FJR6MWk029JtKlMtWExeyHHeyk0zdTyE2p6LT9og4TTAWWKsrH/HC+oY?=
- =?us-ascii?Q?PAAO2j7jyDLjDb6hnEn1LULZqY4RTaqWJG1E5RmwQOZqRUozktDFGJAOGI/j?=
- =?us-ascii?Q?vLz9ZuARMDNxrGcYFQd2dsSiE7iSlnlV586gLDsf7nWQvlvjZ7LsM59tYRwr?=
- =?us-ascii?Q?qUT0e6/gy5c1d5V76lN1kmO9WnBcg7gdr0aMfGOydD4wAIbOqtjGAPYIl2Fn?=
- =?us-ascii?Q?VbGklvtstWrlCkZrL/EqzWsV1NQA1cu8VVF/lMs3lTRvRnCbm16rDNlMcx9m?=
- =?us-ascii?Q?95HK4VkLP8VPbaJBID9XeFBtrFN37wKoQnyDvfbqsYANlDfYXXG+BAqD8L0g?=
- =?us-ascii?Q?jyAdYVp355PSAAp5QFKBlwuQuuzC/FpYy2Oq5Pb9?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Aq9taSoyXeaUkwkPA9t5UiW8v8OKpv+fuoCg6lhn1bKQcV9aIMjRmY0sffc+z6Ke81Ihlwq5cYisbQsZpllN4CcdQ/OL4F3t+JFQD1AgAuTihEdGGbJP3zZiKCxOMEiJkJ3rDGY0Q2R1Ekiv8y7ogeR5Gi267UjPRNa2UbooEsjG5pqi4ilKbd8s7wYQoaQeEH8deCv3K0znyDh7QGRbPIAdf+CncxT1UtruWZ3JdVNyP/0oKoQUD4pu2Ga9mgkVcCtzHaTaKnjU1SFy//ObIK7f2XcwXyM0CCGcnuQqfICPa91bMi3z1Ohm8pC5O87HG6/2otNB/t+no4EF+Q+MclMU+ILTsmb+KMS5qwXDJYyl/CTbKJIIfhe3CbCG/apa7BtmooahD9warnd3cgnw5eIZEn4DNpbBOIT80szjHERdzBwf217I+PjNs4jsMEVo1XW3kAn9kmNN/y7tVv1djDsOp/JrvZ7nPNNQep8gSWrXrCKoff8Y+5dIt3Y+KoaNZuV2tncZft5JuH4Cf1PCISU4VmqUEjhuypkW9EIMQSJVdb7hkf/FZHtXc0eB0LoXan03UoL4H7xxddrG/oyurkqdDMjVY+RCJ09cZVb+jJI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a5304c8-ce0a-4d73-9691-08ddf0077637
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 01:15:00.3082
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QjQzrXWsnX/Ln7V/7I8on5jkGwOpq6ZsltKJOcBeIp4dLh4FfaoatoazEdrNdKsFPzKSsTRDdhGO5gsK8YpkKw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFD796AA27B
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_03,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 suspectscore=0
- mlxlogscore=999 adultscore=0 spamscore=0 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509100009
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE2NiBTYWx0ZWRfX+5Z+dUEPuK29
- gcP2XR91EClxo952TnLHNRD/Q6f1KaNoKc3a6WAoeHUgACkwU2Bo40MdVY6uLTTW6sQlvALjvgP
- HnED/Q2QbF/n1Q8nqcwJLLR9JMJ5in3qWe3u8u9C03qQ8m/gWAB+9qZ6eBsnvcBLwfh2P11bgaK
- vp4hULcoG5o6gtCcLUvY9wRYHQ/JRiFECoSA/FKs3UWYoLC5Y2XipRIblauM4pZWnX9BZmJNDqL
- 9hZLC3GqITU4OOrsWr1OaLcfrOrgj9n1P7Xo/2fVnvyxyFi6PIiCq/tXGf4XLlnCYUb0yGxhYgL
- CPXZ8805e280l02MdWzKMC3bokuGCHDX/kTqoxVVKEFyxVQh1T/6NMptmN0f980Ldfdbopu8X0Z
- C5iU44azdx9XClgSs/h5IuH9gbNSgA==
-X-Proofpoint-GUID: gY_z7mJaz-fmza_-36ixS67Jhlc_o0am
-X-Proofpoint-ORIG-GUID: gY_z7mJaz-fmza_-36ixS67Jhlc_o0am
-X-Authority-Analysis: v=2.4 cv=LYY86ifi c=1 sm=1 tr=0 ts=68c0d11a b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=E5WGbSE0ojqRuLBXenIA:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:12083
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 09, 2025 at 12:43:57PM -0600, Jane Chu wrote:
-> commit 59d9094df3d79 introduced ->pt_share_count dedicated to
+The device minor should not be cleared after the device is released.
 
-nit: the format should be:
-  commit <sha1> ("summary")
-?
+Fixes: 9e14868dc952 ("media: mc: Clear minor number reservation at unregistration time")
+Reported-by: syzbot+031d0cfd7c362817963f@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=031d0cfd7c362817963f
+Tested-by: syzbot+031d0cfd7c362817963f@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ drivers/media/mc/mc-devnode.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-> hugetlb PMD share count tracking, but omitted fixing
-> copy_hugetlb_page_range(), leaving the function relying on
-> page_count() for tracking that no longer works.
-> 
-> When lazy page table copy for hugetlb is disabled (commit bcd51a3c679d),
-
-same here.
-
-> fork()'ing with hugetlb PMD sharing quickly lockup -
-> 
-> [  239.446559] watchdog: BUG: soft lockup - CPU#75 stuck for 27s!
-> [  239.446611] RIP: 0010:native_queued_spin_lock_slowpath+0x7e/0x2e0
-> [  239.446631] Call Trace:
-> [  239.446633]  <TASK>
-> [  239.446636]  _raw_spin_lock+0x3f/0x60
-> [  239.446639]  copy_hugetlb_page_range+0x258/0xb50
-> [  239.446645]  copy_page_range+0x22b/0x2c0
-> [  239.446651]  dup_mmap+0x3e2/0x770
-> [  239.446654]  dup_mm.constprop.0+0x5e/0x230
-> [  239.446657]  copy_process+0xd17/0x1760
-> [  239.446660]  kernel_clone+0xc0/0x3e0
-> [  239.446661]  __do_sys_clone+0x65/0xa0
-> [  239.446664]  do_syscall_64+0x82/0x930
-> [  239.446668]  ? count_memcg_events+0xd2/0x190
-> [  239.446671]  ? syscall_trace_enter+0x14e/0x1f0
-> [  239.446676]  ? syscall_exit_work+0x118/0x150
-> [  239.446677]  ? arch_exit_to_user_mode_prepare.constprop.0+0x9/0xb0
-> [  239.446681]  ? clear_bhb_loop+0x30/0x80
-> [  239.446684]  ? clear_bhb_loop+0x30/0x80
-> [  239.446686]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> There are two options to resolve the potential latent issue:
->   1. remove the PMD sharing awareness from copy_hugetlb_page_range(),
->   2. fix it.
-> This patch opts for the second option.
-> 
-> Fixes: 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared
-> count")
-
-nit: we don't add newline even when Fixes: tag is line is over 75 characters?
+diff --git a/drivers/media/mc/mc-devnode.c b/drivers/media/mc/mc-devnode.c
+index 0d01cbae98f2..6daa7aa99442 100644
+--- a/drivers/media/mc/mc-devnode.c
++++ b/drivers/media/mc/mc-devnode.c
+@@ -276,13 +276,10 @@ void media_devnode_unregister(struct media_devnode *devnode)
+ 	/* Delete the cdev on this minor as well */
+ 	cdev_device_del(&devnode->cdev, &devnode->dev);
+ 	devnode->media_dev = NULL;
++	clear_bit(devnode->minor, media_devnode_nums);
+ 	mutex_unlock(&media_devnode_lock);
  
-> Signed-off-by: Jane Chu <jane.chu@oracle.com>
-> ---
-
-The change in general looks good to me,
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-
-+Cc Jann Horn who backported the commit 59d9094df3d79.
-
-Elaborating a little bit why it doesn't need to be backported:
-TL;DR: One needs to backport commit 3aa4ed8040e15 to pre-v6.0 kernels,
-or revert commit bcd51a3c679d to trigger this.
-
-commit 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared count")
-is introduced in 6.13 and backported to 5.10.y, 5.15.y, 6.1.y, 6.6.y, 6.12.y.
-
-As lazy page table copy is enabled in v6.0 by commit bcd51a3c679d
-("hugetlb: lazy page table copies in fork()"), the bug is not triggered
-because shared hugetlb VMAs go through lazy page table copy logic
-(vma_needs_copy() returns false) or they can't share page tables
-(uffd_disable_huge_pmd_share() returns false).
-
-They shouldn't have anon_vma, VM_PFNMAP, VM_MIXEDMAP and UFFD-WP VMA
-cannot share page tables - so either vma_needs_copy() return false, or
-page tables cannot be shared.
-
-And before commit 3aa4ed8040e15 ("mm/hugetlb: make detecting shared pte
-more reliable") introduced in v6.1, copy_hugetlb_page_range() doesn't check
-refcount to determine whether the page table is shared. 
-
->  mm/hugetlb.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
-> 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 753f99b4c718..8ca5b4f7805f 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -5594,18 +5594,13 @@ int copy_hugetlb_page_range(struct mm_struct *dst, struct mm_struct *src,
->  			break;
->  		}
->  
-> -		/*
-> -		 * If the pagetables are shared don't copy or take references.
-> -		 *
-> -		 * dst_pte == src_pte is the common case of src/dest sharing.
-> -		 * However, src could have 'unshared' and dst shares with
-> -		 * another vma. So page_count of ptep page is checked instead
-> -		 * to reliably determine whether pte is shared.
-> -		 */
-> -		if (page_count(virt_to_page(dst_pte)) > 1) {
-> +#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
-> +		/* If the pagetables are shared don't copy or take references. */
-> +		if (ptdesc_pmd_pts_count(virt_to_ptdesc(dst_pte)) > 0) {
->  			addr |= last_addr_mask;
->  			continue;
->  		}
-> +#endif
->  
->  		dst_ptl = huge_pte_lock(h, dst, dst_pte);
->  		src_ptl = huge_pte_lockptr(h, src, src_pte);
-> -- 
-> 2.43.5
-> 
-
+ 	put_device(&devnode->dev);
+-
+-	mutex_lock(&media_devnode_lock);
+-	clear_bit(devnode->minor, media_devnode_nums);
+-	mutex_unlock(&media_devnode_lock);
+ }
+ 
+ /*
 -- 
-Cheers,
-Harry / Hyeonggon
+2.43.0
+
 
