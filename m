@@ -1,194 +1,222 @@
-Return-Path: <linux-kernel+bounces-810116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51220B5161E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:52:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B49E2B51620
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A001C200D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:53:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EADF7AA7C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B44A30E0D9;
-	Wed, 10 Sep 2025 11:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CeDAY/M6"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFCA2D6605;
+	Wed, 10 Sep 2025 11:54:24 +0000 (UTC)
+Received: from listy.pwr.edu.pl (listy.pwr.edu.pl [156.17.197.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE072877DC
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20103258EC8
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.17.197.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757505150; cv=none; b=orRGBokVmKnHen1v5InMEO4Et1/HIp6FQi8u9fbxD2fI9aohHGGiA3FpN7CL1keBcfQml2kYokIMRn4+1rSx4uUb+7ByyxpJ6XFRb182Wblog5UdgJ1KGKu1eCs+dcxwbdA7Rm2xOApFff0RAk4f+zuq2v1KVtbW9okQ9UwN2UY=
+	t=1757505263; cv=none; b=TCAUtg2hM+ZbyDRyncUJ0s0Rp7XwOfxtgS6FZ39LVCA4SB+QdotULQ8zf6YZeFLQDcIZceJVFfr27I5lPrQiYgcLrMDP43XlB3kX1xWZwfjvxNMkwZ3j2S1zGEKraAwnKbN94HL3vLb6+3py65CiQ3ve+pCfosHnpKYu4tYAUjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757505150; c=relaxed/simple;
-	bh=e4bdA9laZbM3EfcZ0X9/imMIUb2Gb39r21T9GFYy+58=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZExV/KO1q6GJXtVBRkPrf105SJ17Px9wIXZx65iyRdVu5a7VERN2yGp1TXTjA7WaQEAb6eGn9UaL6tCj0sTo2Nf+zY1vA4i7Mf7FzRNJMlfduNUSCkyyqs0RJ7SAaAyhO/y0Z4hEw1aScawngL2o0FJFbJtIsDzHNSzcPgrExLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CeDAY/M6; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45de56a042dso23746635e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:52:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757505147; x=1758109947; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U46X76YKHn1BRClXohd2pCqWqgDo3sVqrrD/BOqtq6c=;
-        b=CeDAY/M6L9S82earBtraBVwXVIsIAoqdZV6FeAewZAILRKNLIJmeMdxqH3nVMsSQVr
-         FmIA+FIA6ktCxrRbptJhEKLgMV+gTxnL5DKC1rWcuskHbEciiVw93XmZSgxtdemTR4/o
-         JGuyAi7MNbosp0bCUJ1vEhTWUrtSWKMzW9GAOGiPTTTrzlB2cAmo11+49QEk/HtWT4WS
-         oMBrR5PkouMQOnUSSnMP+M8wW0shwU2UZBJXPOo4+7GPSusdOzQpw8bM/ZPqv6O+cFA3
-         OxNMU6vXp+aZ2GaU+baAwTaUTBJ9VEdS6xuKuPhF5h1y3J8n1jWzWcVZVMgUGM+hfavy
-         tgQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757505147; x=1758109947;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U46X76YKHn1BRClXohd2pCqWqgDo3sVqrrD/BOqtq6c=;
-        b=UR1+HREGEHMzy3tUsZ3E6WB6w632bZwSPP+96erBBxFljrI+Qe81vrG8ahRYc0n4QK
-         okTgpOpCWNrXgsKVqw2CQc2umJdKF+TKzyydOOg9VDOvNzhyNxEmY9WBXdkRSk0NdBwA
-         jXTEcbDyyERQNSkl+7PTf1NqCYHWy9px3xIYQQp8kW61ONF7YNl3Vr2igWbc1NaXm2GW
-         WnknI2iXSFzHgFfeSq+G2htnbEXNxNg3S4zkzuXpXBdEzh/9xgI8BX7J/w4Tq2FAv23a
-         DKg4OTByKX4qPd7TT5FTpy7pCgy5zDEtQDz41u7tKgQiKGuqDHMLq9tlCD+eoNWwee55
-         n91g==
-X-Forwarded-Encrypted: i=1; AJvYcCWlkFfI7T+UdYksv3yl2Algs2tjcVvqIyFzxASJrnjX7AlwcQOXr+WLQenYXchXOQxjmNvkhgt4869uNJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2LDyCH5gBEE9l1vTMBEDbWAjc0MqlC2sICnWPQ9sFNdKbtC77
-	t0K7F+WwlzNPUvVylvv9jiRPkSK8u3ITWYA7pAY9cm//jl95JmTh1rZzqaWGxpHWu95hV2x+nhk
-	GWWneBkZIrCNOG3iUfLQJsh4Mpr10GUFK2yJqPbB7
-X-Gm-Gg: ASbGncus1JrdNbAOD3FN8ZlTPBjkNgT4NPYK/zV5NIzUV0M8pjiRNfwhi+wTl014qUA
-	mXsnM7sC/MIwtf5+oe6xbtZ1yL/exoXjcMq7zDHeiZVjWgYLunUs5SleRRJo4WeozQ3ys7qAV/l
-	t/aDZ8LYoOunia7Tj7ZVfguIS2mS9PqfuexS17OgQtReR2wvpSPJ+2duZ6FbA+1/sqsK5SvEr7b
-	r4l+30xf4JBGYGJQWUANXZxpTCNEXgKsIkUvQd14Hi+SUMjQ494WBuO/w==
-X-Google-Smtp-Source: AGHT+IErhntOQVzgPns8ISGDADdpAB61F5bnMVwtgDnrhzYG8zp4IeEhc7oW9TpLnTCtbJ5aJuLv6ZOvVJkT4RdrFy8=
-X-Received: by 2002:a05:6000:25c2:b0:3df:33e9:14cc with SMTP id
- ffacd0b85a97d-3e6442da8d5mr13285933f8f.54.1757505146808; Wed, 10 Sep 2025
- 04:52:26 -0700 (PDT)
+	s=arc-20240116; t=1757505263; c=relaxed/simple;
+	bh=L3yYJ1xkuiXmGTDwaw8TQ+QhtzIgBdzjjURQEhfbWvY=;
+	h=Content-Type:Message-Id:From:Date:Mime-Version:To:Subject; b=XafDxh2tKAgYUDy/XPYHDk8k4FJn/hVbAGzeCiCUB2EElw3BEcbwRHaPhI5PakNj0A40QK94wIL3BwfCzPqERsdteOXe5qflOmPZXq7AqxH5umd51gKFVaEu4+Xrib8GhrahncaLfdVmJJ8HiU3EbpTXH8za+XyAOh7QwGzefQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e-informatyka.pl; spf=pass smtp.mailfrom=e-informatyka.pl; arc=none smtp.client-ip=156.17.197.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e-informatyka.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e-informatyka.pl
+Received: from localhost (156-17-130-43.ii.pwr.edu.pl [156.17.130.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: e-informatica@listy.pwr.edu.pl)
+	by listy.pwr.edu.pl (Postfix) with UTF8SMTPSA id 7F5B04048DBA
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:54:12 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 listy.pwr.edu.pl 7F5B04048DBA
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+X-Listmonk-Campaign: f884ba71-56f3-4ced-80ef-0b7a3ade467a
+Content-Type: text/plain; charset=UTF-8
+Message-Id: <1757505252520187170.1.2610577288502871950@listmonk.example.com>
+From: "e-Informatica Software Engineering Journal" <e-informatica@e-informatyka.pl>
+Date: Wed, 10 Sep 2025 11:54:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250910100755.2361281-1-lossin@kernel.org> <aMFQL-Hq1KvBG5lh@google.com>
- <DCP1Y8N4SRRF.25V7F6PV5ODCQ@kernel.org> <CAH5fLgg+-oz_cP9=ke+ukp9qYZAsD=hKqvvGfkJWRcCKdrTQ-g@mail.gmail.com>
- <DCP2STI9M1XX.3RHBQDPQOC3JO@kernel.org>
-In-Reply-To: <DCP2STI9M1XX.3RHBQDPQOC3JO@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 10 Sep 2025 13:52:14 +0200
-X-Gm-Features: AS18NWC693vUyJRrFe_67v99ngDuGtmgBjD0KGQIP9wthtOlQgbODTCOn6ws5us
-Message-ID: <CAH5fLgjS+T1acN9jsEv85bhhXwevSA2trqu-9aFFsKpH82b8iA@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: pin-init: add `#[bind]` attribute to access
- previously initialized fields
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, Fiona Behrens <me@kloenk.dev>, 
-	Alban Kurti <kurti@invicto.ai>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+To: <linux-kernel@vger.kernel.org>
+Subject: Publish Your Research in e-Informatica Soft. Eng. Journal (IF=1.2, Open Access, Free of Charge)
+X-Listmonk-Subscriber: 0adc0220-7bc8-4f1d-86b1-177f6654fd40
 
-On Wed, Sep 10, 2025 at 1:15=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> On Wed Sep 10, 2025 at 12:40 PM CEST, Alice Ryhl wrote:
-> > On Wed, Sep 10, 2025 at 12:36=E2=80=AFPM Benno Lossin <lossin@kernel.or=
-g> wrote:
-> >>
-> >> On Wed Sep 10, 2025 at 12:17 PM CEST, Alice Ryhl wrote:
-> >> > On Wed, Sep 10, 2025 at 12:07:53PM +0200, Benno Lossin wrote:
-> >> >> Assigning a field a value in an initializer macro can be marked wit=
-h the
-> >> >> `#[bind]` attribute. Doing so creates a `let` binding with the same
-> >> >> name. This `let` binding has the type `Pin<&mut T>` if the field is
-> >> >> structurally pinned or `&mut T` otherwise (where `T` is the type of=
- the
-> >> >> field).
-> >> >>
-> >> >> Signed-off-by: Benno Lossin <lossin@kernel.org>
-> >> >
-> >> > Is there a reason we can't apply this to all fields and avoid the
-> >> > attribute?
-> >>
-> >> Adding the attribute was due to Boqun's concern on v1 [1]. I think it
-> >> might be surprising too, but I'm also happy with no attribute.
-> >>
-> >> [1]: https://lore.kernel.org/all/aLshd0_C-1rh3FAg@tardis-2.local
-> >
-> > IMO the ideal is if it works without an attribute. Perhaps trying that
-> > in the kernel is a reasonable experiment to find out whether that's
-> > reasonable to do for the general language feature?
-> >
-> >> > Do we have a place that might be able to use this?
-> >>
-> >> I didn't find one, but Danilo plans to base some changes on top this
-> >> cycle that need this.
->
-> We can use it in devres right away:
->
-> diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-> index d04e3fcebafb..97c616a1733d 100644
-> --- a/rust/kernel/devres.rs
-> +++ b/rust/kernel/devres.rs
-> @@ -137,10 +137,11 @@ pub fn new<'a, E>(
->      {
->          let callback =3D Self::devres_callback;
->
-> -        try_pin_init!(&this in Self {
-> +        try_pin_init!(Self {
->              dev: dev.into(),
->              callback,
->              // INVARIANT: `inner` is properly initialized.
-> +            #[bind]
->              inner <- Opaque::pin_init(try_pin_init!(Inner {
->                      devm <- Completion::new(),
->                      revoke <- Completion::new(),
-> @@ -150,8 +151,7 @@ pub fn new<'a, E>(
->              //
->              // [1] https://github.com/Rust-for-Linux/pin-init/pull/69
->              _add_action: {
-> -                // SAFETY: `this` is a valid pointer to uninitialized me=
-mory.
-> -                let inner =3D unsafe { &raw mut (*this.as_ptr()).inner }=
-;
-> +                let inner =3D core::ptr::from_ref(inner.into_ref().get_r=
-ef());
+<!doctype html>
+<html>
+    <head>
+        <title>Publish Your Research in e-Informatica Soft. Eng. Journal (I=
+F=3D1.2, Open Access, Free of Charge)</title>
+        <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Du=
+tf-8">
+        <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-sc=
+ale=3D1, minimum-scale=3D1">
+        <base target=3D"_blank">
+        <style>
+            body {
+                background-color: #F0F1F3;
+                font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, sans-=
+serif;
+                font-size: 15px;
+                line-height: 26px;
+                margin: 0;
+                color: #444;
+            }
 
-Overall looks good. Looks like you want Opaque::get here rather than
-the cast cast cast operation.
+            pre {
+                background: #f4f4f4f4;
+                padding: 2px;
+            }
 
->                  // SAFETY:
->                  // - `dev.as_raw()` is a pointer to a valid bound device=
-.
-> @@ -160,7 +160,7 @@ pub fn new<'a, E>(
->                  //    properly initialized, because we require `dev` (i.=
-e. the *bound* device) to
->                  //    live at least as long as the returned `impl PinIni=
-t<Self, Error>`.
->                  to_result(unsafe {
-> -                    bindings::devm_add_action(dev.as_raw(), Some(callbac=
-k), inner.cast())
-> +                    bindings::devm_add_action(dev.as_raw(), Some(callbac=
-k), inner.cast_mut().cast())
->                  }).inspect_err(|_| {
->                      let inner =3D Opaque::cast_into(inner);
->
->
-> Together with the initializer code blocks this becomes quite nice. :)
->
-> > Danilo, what plans do you have?
->
-> Besides that, the plan is [1].
->
-> [1] https://lore.kernel.org/all/DCL32RUQ6Z56.1ERY7JBK6O1J6@kernel.org/
+            table {
+                width: 100%;
+                border: 1px solid #ddd;
+            }
+            table td {
+                border-color: #ddd;
+                padding: 5px;
+            }
 
-Looks nice :)
+            .wrap {
+                background-color: #fff;
+                padding: 30px;
+                max-width: 525px;
+                margin: 0 auto;
+                border-radius: 5px;
+            }
 
-Alice
+            .button {
+                background: #0055d4;
+                border-radius: 3px;
+                text-decoration: none !important;
+                color: #fff !important;
+                font-weight: bold;
+                padding: 10px 30px;
+                display: inline-block;
+            }
+            .button:hover {
+                background: #111;
+            }
+
+            .footer {
+                text-align: center;
+                font-size: 12px;
+                color: #888;
+            }
+                .footer a {
+                    color: #888;
+                    margin-right: 5px;
+                }
+
+            .gutter {
+                padding: 30px;
+            }
+
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+
+            a {
+                color: #0055d4;
+            }
+                a:hover {
+                    color: #111;
+                }
+            @media screen and (max-width: 600px) {
+                .wrap {
+                    max-width: auto;
+                }
+                .gutter {
+                    padding: 10px;
+                }
+            }
+        </style>
+    </head>
+<body style=3D"background-color: #F0F1F3;font-family: 'Helvetica Neue', 'Se=
+goe UI', Helvetica, sans-serif;font-size: 15px;line-height: 26px;margin: 0;=
+color: #444;">
+    <div class=3D"gutter" style=3D"padding: 30px;">&nbsp;</div>
+    <div class=3D"wrap" style=3D"background-color: #fff;padding: 30px;max-w=
+idth: 525px;margin: 0 auto;border-radius: 5px;">
+        Dear colleague,
+
+We would like to invite you to submit your papers to the e-Informatica Soft=
+ware Engineering Journal (EISEJ).
+
+We particularly invite papers focused on:
+- software engineering or=20
+- the intersection of data science (AI/ML) and software engineering.
+
+Our strengths:
+- excellent, international Editorial Board (https://www.e-informatyka.pl/in=
+dex.php/einformatica/editorial-board/)
+- *open access without any authorship fees*, =20
+- no paper length limit,
+- fast, continuous publishing model with papers edited and published immedi=
+ately after acceptance,
+- rigorous, blind peer-review process.
+
+Our achievements:
+- ISI WoS with Impact Factor (IF=3D1.2, 5 Year IF=3D1.3) calculated by Clar=
+ivate (https://jcr.clarivate.com/jcr-jp/journal-profile?journal=3DE-INFORMA=
+TICA&year=3DAll%20years),=20
+- Scopus (https://www.scopus.com/sourceid/21100259509) with CiteScore=3D3.5=
+,=20
+- DBLP (https://dblp.uni-trier.de/db/journals/eInformatica/index.html),=20
+- Directory of Open Access Journals (https://doaj.org/toc/2084-4840),=20
+- Google Scholar (https://scholar.google.pl/citations?user=3D8-uDLDoAAAAJ&h=
+l) etc.
+
+Apart from classic research papers, we invite you to submit:
+- systematic reviews (incl. systematic mapping/scoping studies),=20
+- surveys,
+- research agendas,
+- vision papers.=20
+
+We not only invite you to submit papers (https://mc.manuscriptcentral.com/e=
+-InformaticaSEJ), but also to organise special sections (please get in touc=
+h with us at e-informatica@pwr.edu.pl).
+
+We would be grateful for your feedback as well. Please let us know what we =
+lack, what we did not think about, or what we should do to become an even m=
+ore attractive venue from your point of view!
+Let us collaborate on any excellent idea within the scope of the journal!
+
+With very best wishes,
+e-Informatica Software Engineering Journal (EISEJ)
+Editors-in-Chief
+Lech Madeyski and Miroslaw Ochodek
+
+EISEJ website: https://www.e-informatyka.pl/
+EISEJ submission site: https://mc.manuscriptcentral.com/e-InformaticaSEJ
+    </div>
+   =20
+    <div class=3D"footer" style=3D"text-align: center;font-size: 12px;color=
+: #888;">
+        <p>
+            <a href=3D"https://listmonk.e-informatyka.pl/subscription/f884b=
+a71-56f3-4ced-80ef-0b7a3ade467a/0adc0220-7bc8-4f1d-86b1-177f6654fd40" style=
+=3D"color: #888;">Unsubscribe</a>
+            &nbsp;&nbsp;
+            <a href=3D"https://listmonk.e-informatyka.pl/campaign/f884ba71-=
+56f3-4ced-80ef-0b7a3ade467a/0adc0220-7bc8-4f1d-86b1-177f6654fd40" style=3D"=
+color: #888;">View in browser</a>
+        </p>
+    </div>
+    <div class=3D"gutter" style=3D"padding: 30px;">&nbsp;<img src=3D"https:=
+//listmonk.e-informatyka.pl/campaign/f884ba71-56f3-4ced-80ef-0b7a3ade467a/0=
+0000000-0000-0000-0000-000000000000/px.png" alt=3D"" /></div>
+</body>
+</html>
 
