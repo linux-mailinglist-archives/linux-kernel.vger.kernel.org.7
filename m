@@ -1,159 +1,323 @@
-Return-Path: <linux-kernel+bounces-810582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB752B51CA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:58:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61AF0B51CB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD3F5657AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:58:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73266188818F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC19B32ED32;
-	Wed, 10 Sep 2025 15:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BA432ED23;
+	Wed, 10 Sep 2025 15:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HEwrG97l"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fJK8QTZk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E5830FC39;
-	Wed, 10 Sep 2025 15:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757519878; cv=none; b=KG/jbBEctla7UPOJifsmAknr1HnywB5uHYH3tNHRce9lIA88WyJd6obAIcx4JdnPTyBwYeC12BiZ+F3bkvruQ8HUsdFRVXuS2714TVRljuoe8x3yXsH1p4mU9IECQBo3b6/Tbe+Lnv0Sq17YR+7bNR2DTYTEBafZSen1mvBqJlY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757519878; c=relaxed/simple;
-	bh=3f3fTdEx0CvLdoBZ9wVCD1IKQF+p+fgc9v1DuV5Nq3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NBNHKQN/9eT+oooOuaMMeUTurmvL93CF6/IFnMJ4n8im6mkS4oVNZo1Rs+TOybg7zHAbbLLtgF5Sg/HBEGolodrbTW9C+BuxMFDmH7MALYPuqPADXG0WqhJaHPFbjLKXKZm80Yw+WweeZf64MAuWP3cK7pNg+5nUWPhBpsDSRV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HEwrG97l; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757519874;
-	bh=3f3fTdEx0CvLdoBZ9wVCD1IKQF+p+fgc9v1DuV5Nq3c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HEwrG97ltNTGGhfByXRt96hJtoDGiAIEPl1ZBG/0gxNkoMWUEK57NiUUR8o/3XdEy
-	 Zizu6wW/RXVlSe/c1T8eEdNUXNfn1vwkVtjoItPq1SbCypubpO2fWCCo7hmMXRQ5eW
-	 Lp2p3/hQXUQejA4chTaczscAXuof5ALn7PfS2vJujtABuJY8OW5f5UaS/YnskCa9aJ
-	 IfZopk8vdjiYMRVxuS/CS8iVaAomIuTwnR43kj6dSAUSJvU8WginbaUe2rhkB95mDF
-	 I3RiqfNYNo2/XqgrtI2VkuKH/kmMNp5TeXv2o/ItlfHtnQSe89fFR/+JCnyCpcSc8+
-	 g/aKgfzRa/XCw==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E225917E0A2B;
-	Wed, 10 Sep 2025 17:57:52 +0200 (CEST)
-Date: Wed, 10 Sep 2025 17:57:40 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Miguel Ojeda
- <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?UTF-8?B?QmrDtnJu?=
- Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich
- <dakr@kernel.org>, Daniel Stone <daniels@collabora.com>, Rob Herring
- <robh@kernel.org>, Beata Michalska <beata.michalska@arm.com>, Carsten
- Haitzler <carsten.haitzler@foss.arm.com>, Ashley Smith
- <ashley.smith@collabora.com>, Steven Price <steven.price@arm.com>, Jeffrey
- Vander Stoep <jeffv@google.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v3] rust: drm: Introduce the Tyr driver for Arm Mali
- GPUs
-Message-ID: <20250910175740.2d15d0d5@fedora>
-In-Reply-To: <20250910-tyr-v3-1-dba3bc2ae623@collabora.com>
-References: <20250910-tyr-v3-1-dba3bc2ae623@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C355524BBE4
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757519921; cv=fail; b=uBo3HPQSgIvLC2r5I0ZjfApnAPa2Roc1ozN8WdGL4sbuQaRmfiUVEm+66yAaMSDZUZkhRJb9L8zNltX57YuzGjv8mtOxnulUO779gv6tLDnIjgT/HA/lK9nNj6ziwJngSgXLBEl/6ata4QWnkN3+FCHEaxgo4oENTNGXggGhAFw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757519921; c=relaxed/simple;
+	bh=OLihxjqfAi8w3+HXw6sWaEiPN2QO5MTBtpfBBGIujtQ=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=VLNA/jbqna8I4F4Sg6ITnOplnzDSWQhc9ks/oa0FxYZT/nZVK0XPEMNeKIWBIy5WKoXKJ4Oap1U1eVQMFugneNNJwZ0y+6EBlSuF/4ENUr4gNmoDe1jjhgXyAgbo1EYNwPH1AQ8HiE0+aDViFeXGLKEEltQzcjvrC/h8HJwBG78=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fJK8QTZk; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757519920; x=1789055920;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=OLihxjqfAi8w3+HXw6sWaEiPN2QO5MTBtpfBBGIujtQ=;
+  b=fJK8QTZk1ezmLfv192s/uTVapfQGz5FLQy8k5PravlZ3CLB6ygBMuWbh
+   NB0Lga7a8WTzTFU8677tfAmygjpRnBzvdh7DRtLsKr6cMZCVRpEpZLrbz
+   /mtiszUpH5LVAonwKtxjlVADDzxWBYf/q3jozQWT/1d6v0Dblpt5ICS7j
+   yZljX5ovRFKmcB0QWl6ULA1X0tzAqfT66ucFWhwZW5aLAYQAFgcb/mfBJ
+   f/FVEIsmpcnnZRa/SbvlLuEik9+Xwy1G9X+ByD4jONjy249bSMlrt33H8
+   PGQxfhU/6qcMOy9baFw6GJui+u4IMNGq9z8vBDJ+Oezkobud6epqK3/TF
+   A==;
+X-CSE-ConnectionGUID: 492yOORuRFS8N94fZ5J/DA==
+X-CSE-MsgGUID: UzrZCXrjQi600mMYXUW3zg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="59693577"
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="59693577"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 08:57:46 -0700
+X-CSE-ConnectionGUID: D63kdAj5QWGcS0WhNT1LqQ==
+X-CSE-MsgGUID: fjfnanJ5QVyRSSI5nOf5pA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="173023488"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 08:57:45 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 10 Sep 2025 08:57:44 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 10 Sep 2025 08:57:44 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.42)
+ by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 10 Sep 2025 08:57:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KuUo2SlutWr3qv9Pbg3ysDM1CynaHIafioGT76TxmeIsnN0TdZT2417o1W0UBv0vPU5kIef168pa8108GVLlRgy49GQYbBz0GcLUSCX2KCdzlTzd/4ZjNGl1QXzMCg4MmMKceFmZu6SLsOESroL1mQA8ADJOEanU9EOLdPuMnwUqkGOX5VTx7ggSuwJ+2tcK79ttsDk2gXTt62gMM/QWVXkGtsra1PH8Px/a9O7+XdgKfS5cca+dXyS9zg6hY32p2Ck7NSZkneXKsT7On14gpO1wAkGI5s8l9rr1mQtKO7+LBKsbjBPKApZR96QxZ1XlQb8n+L2ePj9wtFSqtTHCwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7Hli0SDSnevsdmT+Yh9MWD7O717X7JQj9fgnvUxZTDo=;
+ b=jnVZD5r/ETV2DHYBDeOTwoDJYtqRrCu2xlcg+ZHxMlZtxiFtiY7AXhBYNl6VKAaEbTim74WR4qL0uIZv+xyIGCX7Nigp5XUppXyPH8hEttJi8/x33lNgQWnpGFOWnwPYV6o20zFrrcC2WWYye4boNYkj+ny9QTDe4Kh40ArOFUNoUYg58mjaDYHQLpFVbLOf8IUvjCLLd0RUDbMlXthF/6TQ0V4VwZeZwn0Vxc8L2xhl2YLhLv5l7pyzjsdJIAY+lxUxC8rwXlp1tEunctCG05QVUS5NO9PH3R+aS/38pyPrSFo3yBRjaUi/jJWFzF4l2ScLoN/GFRpK9UvPq5XV/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by SA2PR11MB4938.namprd11.prod.outlook.com (2603:10b6:806:fb::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 15:57:42 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 15:57:42 +0000
+Message-ID: <91f25013-e025-47ef-9d5b-9746678b6856@intel.com>
+Date: Wed, 10 Sep 2025 08:57:40 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 24/31] x86/resctrl: Handle number of RMIDs supported by
+ telemetry resources
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
+ Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>, Chen Yu <yu.c.chen@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20250829193346.31565-1-tony.luck@intel.com>
+ <20250829193346.31565-25-tony.luck@intel.com>
+Content-Language: en-US
+From: Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <20250829193346.31565-25-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW2PR16CA0058.namprd16.prod.outlook.com
+ (2603:10b6:907:1::35) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SA2PR11MB4938:EE_
+X-MS-Office365-Filtering-Correlation-Id: caca3440-2df2-40e9-7d66-08ddf082c638
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?YUNmNk9RU2NpWUUzYlZ6Z2kwMHRNUm84NFd6SWh1MmI1T3JBSnIrQjVRWXdj?=
+ =?utf-8?B?YWNVWG41N2FiSWJ2bThDeU85c2pmNzJuSnpYdEI1UFdtb1k2WlA3NlNVVXoy?=
+ =?utf-8?B?YjZwb3NTcE0xNTBaRjI3Qk1aRXNrRVRJZXNhS1Y1dlg3UWtNNGtsY3JiQ0tO?=
+ =?utf-8?B?SGFzNm9rc3phd2lGZk5ZVThjUzZiQ0ttNFJVWndGbEc4VlNtSEhIdXV2QmRr?=
+ =?utf-8?B?S1RkbWNMOVBoaGkxS0s0eVBTSzVjUk1PVWVabWtnUi8vN3NZSEtpUytuaHJu?=
+ =?utf-8?B?ODZ3MVZzYXhITEk1azdtZUdUcDNENVJXeU1nRzBMYUwvT2VaclpYUGNGaUUv?=
+ =?utf-8?B?dUZudDl4R0JVQ1EwL09uZWk2WlJHZkEvNFhLbUN3aFpSVWRCSThsNjBzV2pY?=
+ =?utf-8?B?dG10amtRM09YMms3WFZKemZ2UTAyUTdnVG16UG5tYXJtdTY5Rld3WXllUVhO?=
+ =?utf-8?B?NWNCRG41NXBldkgvSzF4VVpFdExQVVhodEJROXQ0L1pmTVFZWFp6a28ybEZr?=
+ =?utf-8?B?Sm9XS2Y2WlAyZXhkeHNwc0Z4SlIvbTJERm9Ib1A5R25Qdi9EM2V4eEhIS3dq?=
+ =?utf-8?B?aFpFREV2bzhGOTY2UGhOZFJDNzI3TnFFZXdpV0w5bTlXc09jamFCaEJROUdk?=
+ =?utf-8?B?ejVTN1JtQ3AzcFVvaVBEYWxlUDgraWlrdnpZODJLVmdESm1GV0JLbzBFYTFj?=
+ =?utf-8?B?MEkvOTRNNG5JNGljRFFwdWc3a1RDc3IrRS9BbjkwM3JNUHpQQldVSFZlWWdn?=
+ =?utf-8?B?VFJRc3ltdmVvREZ0ZTFWaGorZnc3dmZocWZFd21tSDMzbi81M1g2TUxhbG1a?=
+ =?utf-8?B?UTl1dEF3dWxMcXBwMWZwRUlxSHlUcE4xWUU0QjJMZDdURGcyTC9yYndnbXNV?=
+ =?utf-8?B?N1hRMEFXbS9XVnY0a1Z1RzRJME5GRW1hL0NkdUh3YjVPU0VqU0J6ZlliSFJI?=
+ =?utf-8?B?VTlaZGk4a2NWSkVVc3ZSUlg5cnI2RUoxZ1oxYkdSMmN5VXk4OGFLZmFvSXVs?=
+ =?utf-8?B?Wm1pTVlnTFpobFgrS0RnbFg2K2xSWWpoajFGN0FheW0zNVMxTlNGRk9TVXBO?=
+ =?utf-8?B?Vnh5bWd5SURXV1JQRnNxZDlJUjBCcktrUXZKWDQ4bmwvNGlJbHlZM1ptbnh5?=
+ =?utf-8?B?UHZsRVJpbUtFTmpJSStTbXJCMy9ObTB5RE4yb3plR2p0OU4yR2l5SXZwZ1NU?=
+ =?utf-8?B?UHZCbjVvaDhSd2o5cXdkTzArMHpmZGNvZzd3OTU3amNMa2lpTk5lRy9RcEFB?=
+ =?utf-8?B?dEFTUmxiVjJ4OHI4aXJWZENkRGpXU1RCOXM1YXBxL0J0OFE4NWVPeHRZMlZo?=
+ =?utf-8?B?WUFVQXdneUFxdHRUNVJSYzlIZGV4UDJNVlVWcUJ1b2RWcXRPYTBEMEFMTkZi?=
+ =?utf-8?B?UDR6aHVNQkYzZWhSZEVUS21Ldlo3S0VQTXdoRDVMUmtUb0QxcHlKR3JqL2tq?=
+ =?utf-8?B?ejYrdk92ZHBGNVZadU1oZlZNWEczRnhYVkpFblZHT204MTFuQ052MFY1YTlW?=
+ =?utf-8?B?eHczL1hzYUtFMUNOUlVFNHdMMjV6TGVhdlRmbGdQSjR0Z29KaHRaOWtaOWxP?=
+ =?utf-8?B?SU1zUGJjcTZ1RkJzOThDaXBBakVmOFB2RG45a2JKaG1iZ0tDU1FUMEc1blBa?=
+ =?utf-8?B?ZEIya0pFb1o3VDVEejNiUG9TTlpud245dkhPdDhYYWt5QmxqOU94N1M4RGd6?=
+ =?utf-8?B?ekxodnRQNjc5MVVqTUlteC9GYTN2dmcrS09XNExpTzRIdzQ5R3pXLzBTWUdo?=
+ =?utf-8?B?OHd3VXlnaVRpVXdhd1gvc1hnU1JUSXRzN0I1elB4ZEpzY2hKWHg5Y2duYVdO?=
+ =?utf-8?B?RFY1Vkc2MWtIeXBEaGExTDVIOFl2eWRkNis5ZTRCZkhqdjl3VHh0UlhFbVVn?=
+ =?utf-8?B?ZXVPV2IyOUVqazgrZEtWRG43U3dWOVN5RDhEMHViMU5zU1g1OURLLzBtTVlT?=
+ =?utf-8?Q?/wsetlOAjO8=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QzRWUllqVUpXd0Q5T3lkVDhaUDAzNG51K2IyZUlYMG1RVTE0M3lVSnBpMzZF?=
+ =?utf-8?B?UFVGSTEvVEdxdzlnNFJlSFl1YmJaMTFsWnB3MGR4K1RlUi9QNkIzaENqalFl?=
+ =?utf-8?B?bmNEcTZwVWxEbUdlcTVjQVQyZE1QbVYwMnh6S294RTc4N1R1TUxoS0ZRMC9D?=
+ =?utf-8?B?UUZ5VCs0bDJXcVY5QytwajZuK3NVT0xHckhpdlJOOHY1d09GR1IycWdvSUtC?=
+ =?utf-8?B?UmI2WVRwWDd0NnRqMkFkMjVGWkI4ZDE5RE9mS2JNSVYxK1Qzby9vNy9WZzZh?=
+ =?utf-8?B?Y0RGQ2IxeGtyU0kyWGZjSXRqemtSdVZyQWhJVTVvRHJpaEkwN1dFQWZzbjh0?=
+ =?utf-8?B?cHhGUjYvWFBpZ25waGllMTEyYkF4UFozRlF3bWlsNVNtNXFEMnhXUmMybzQz?=
+ =?utf-8?B?c1lwYlhrK1BXekJBTkpxYzdnaEN4dkN5eW5Yb0FrY25UaUIyS2lOaWthcmF4?=
+ =?utf-8?B?UEVBektmcmVpK05rNllkV1lEREhtMzR2NnRnSGJJcmxQeStoUXZWL3psUnV2?=
+ =?utf-8?B?Q2p4a1R4d2VVTzlwb2xnVVVJeEl4Z25UYlJDMnE4d1V1NndWU2xWKzBIZW80?=
+ =?utf-8?B?bmhYYWdRV2QrRzk1QmhYbStxVXdIcW5NMXA1YU1qM3B2enRRMU9vWjZhSmRX?=
+ =?utf-8?B?ckFpb3BoZkRiSlJiY3ZibWkrcWtIS2JIeExqNE93N2pLa2FiaTJqMGxvV2F0?=
+ =?utf-8?B?UkNIcTR2YWxmcysyNnZjZ3VqV1RpMEdacC95SnpBVHdWdXpNOC9lNG9BVStm?=
+ =?utf-8?B?ak9Tbkh3RUN0TWgzMXp0OHhlSStuNHp1QXB5SUIxcmtsdkdLVkRsR2x1MEFM?=
+ =?utf-8?B?cHpGY01xdzAxUzl5NDcycW96aEVyOHo5YU5qb1d5dWxjby9iL25tNEQxdUNz?=
+ =?utf-8?B?d0h1M096WCtEWlRibkh0RzhLZ0xybVdhdGwxYzhnWGhuS05FTXpUdXl6UzZq?=
+ =?utf-8?B?d3J4Y1YrVk81U2JJNzE1Z1MrQkN2TkFZY01haUh0QWJBL1FUODdYOUxYSTdu?=
+ =?utf-8?B?SWpyOEs0VW1oV3JtZWVNcnVzQThTQVRFaWk5VEs4ZmtuTHpJaWdMQldZZnMy?=
+ =?utf-8?B?LzZGaHBpZWxwSUxXOGVMV3RJKzRUTFpNV3BPbHFTTXhnUCs0WjF5dGVydWpF?=
+ =?utf-8?B?ZFF5TW5HZS94U0dnMmhnZXJmSFF3ZmJNOTU0V1RadGJoQ3VGSVNoY1J0aUtH?=
+ =?utf-8?B?RFB3eUhvV0RYaVA3WVJ0V05xMFJjeHVsT1ZodnpoTUwvSmhxUGxqSmdQeTJB?=
+ =?utf-8?B?ZE1hbElzK0g0bmt6OFZua1gxTTdYRkZmdlRPOWlMNDJ5Y2FPc25YWUZWSHRs?=
+ =?utf-8?B?SHFJRzhFZDZKYTdJMEd5Y3ZKYWw1Y0pCL2I3Z2pqaWR0M0Qvb3RWdGNaUDcv?=
+ =?utf-8?B?ZmIvbGJjR01ieTB5NVJ5RnkvMjdKaWtnL1RaTkltbUw5VEI4OXdGVllXZnQr?=
+ =?utf-8?B?clhBMEovTnpBdi8zTzV1eWhaUEY0Wnk5WWlLVnNOTGVMNjhUTGhodG5HRTM0?=
+ =?utf-8?B?UEp1dWdVN21nQlZBcEs5bE1KRFBFaXhXcXVqczB3Q0l2dTJEY0w0d1pTWmcv?=
+ =?utf-8?B?Zlo1N2ZVNDlKS0pYaE1GN1JYdzFJenNIWW52MUJrZzVPbVY4elk0Q3NXZ2lE?=
+ =?utf-8?B?ejhPZEorbklEczZYck5RTUU4b1NLRmFZMHYveHdiVXVpN29kOUpvVmVpOVFN?=
+ =?utf-8?B?L01mV01VbFVrWjdGK0RlU0x6UWhBSUpoWU9wd0ZIUThVWVdmczZWQzd1RTYv?=
+ =?utf-8?B?UmpqMWVsT2puRWhTQW5TM0dyZ0ZJaDJLMkVJQ2RCdHFiVUFwYytWQmhLVXVQ?=
+ =?utf-8?B?Zkc1TThKR1JvNFRjTFlQQzNkcXNocmZoOE5sTS9yRm1kOEpYNy8ycGZCV0ZW?=
+ =?utf-8?B?OEFva1k1cHpaYW12YzRPTlhLcmg3OWdyQllmYjRieFdLeTRWWEpLNThrT05y?=
+ =?utf-8?B?OGJUWGk0QmtNTjVlTVB2Vjd4WjdTL2F2Tm9RQXFncFVvanQxYTBNeWlJcmxn?=
+ =?utf-8?B?N0NoRWVNc1ZhdUhHZ3JseU5HMlNHdiszT1NrRXBWN1FZQTMyVWRzVVZPd2lt?=
+ =?utf-8?B?UURmazRXL2l1b0Z6bDJoZ3FQaGtJeFVXdmZPbWhsR0xXL3BaTnQxbmlvd0hq?=
+ =?utf-8?B?RWVNQjhUUDJ5Zi8vd2k4LzBjQldFZVVMamIwaDROaTN3aXV5dmMrNzdNNVJP?=
+ =?utf-8?B?bEE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: caca3440-2df2-40e9-7d66-08ddf082c638
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 15:57:41.9850
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BeDzVUb8VCwbdB6I9DS6+n/RUsyhTo9xCGIDGf6cAit+/+zaS27fnzfW7FEQPcRh9k3zJZWmkbExkaZgwy2TUevw8vFstkqefVnWI36PgEY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4938
+X-OriginatorOrg: intel.com
 
-On Wed, 10 Sep 2025 10:51:18 -0300
-Daniel Almeida <daniel.almeida@collabora.com> wrote:
+Hi Tony,
 
-> Add a Rust driver for ARM Mali CSF-based GPUs. It is a port of Panthor
-> and therefore exposes Panthor's uAPI and name to userspace, and the
-> product of a joint effort between Collabora, Arm and Google engineers.
+On 8/29/25 12:33 PM, Tony Luck wrote:
+> There are now three meanings for "number of RMIDs":
 > 
-> The aim is to incrementally develop Tyr with the abstractions that are
-> currently available until it is consider to be in parity with Panthor
-> feature-wise.
+> 1) The number for legacy features enumerated by CPUID leaf 0xF. This
+> is the maximum number of distinct values that can be loaded into the
+> IA32_PQR_ASSOC MSR. Note that systems with Sub-NUMA Cluster mode enabled
+> will force scaling down the CPUID enumerated value by the number of SNC
+> nodes per L3-cache.
 > 
-> The development of Tyr itself started in January, after a few failed
-> attempts of converting Panthor piecewise through a mix of Rust and C
-> code. There is a downstream branch that's much further ahead in terms of
-> capabilities than this initial patch.
-> 
-> The downstream code is capable of booting the MCU, doing sync VM_BINDS
-> through the work-in-progress GPUVM abstraction and also doing (trivial)
-> submits through Asahi's drm_scheduler and dma_fence abstractions. So
-> basically, most of what one would expect a modern GPU driver to do,
-> except for power management and some other very important adjacent
-> pieces. It is not at the point where submits can correctly deal with
-> dependencies, or at the point where it can rotate access to the GPU
-> hardware fairly through a software scheduler, but that is simply a
-> matter of writing more code.
-> 
-> This first patch, however, only implements a subset of the current
-> features available downstream, as the rest is not implementable without
-> pulling in even more abstractions. In particular, a lot of things depend
-> on properly mapping memory on a given VA range, which itself depends on
-> the GPUVM abstraction that is currently work-in-progress. For this
-> reason, we still cannot boot the MCU and thus, cannot do much for the
-> moment.
-> 
-> This constitutes a change in the overall strategy that we have been
-> using to develop Tyr so far. By submitting small parts of the driver
-> upstream iteratively, we aim to:
-> 
-> a) evolve together with Nova and rvkms, hopefully reducing regressions
-> due to upstream changes (that may break us because we were not there, in
-> the first place)
-> 
-> b) prove any work-in-progress abstractions by having them run on a real
-> driver and hardware and,
-> 
-> c) provide a reason to work on and review said abstractions by providing
-> a user, which would be tyr itself.
-> 
-> Despite its limited feature-set, we offer IGT tests. It is only tested
-> on the rk3588, so any other SoC is probably not going to work at all for
-> now.
-> 
-> The skeleton is basically taken from Nova and also
-> rust_platform_driver.rs.
-> 
-> Lastly, the name "Tyr" is inspired by Norse mythology, reflecting ARM's
-> tradition of naming their GPUs after Nordic mythological figures and
-> places.
-> 
-> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> Co-developed-by: Beata Michalska  <beata.michalska@arm.com>
-> Signed-off-by: Beata Michalska  <beata.michalska@arm.com>
-> Co-developed-by: Carsten Haitzler <carsten.haitzler@foss.arm.com>
-> Signed-off-by: Carsten Haitzler <carsten.haitzler@foss.arm.com>
-> Co-developed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> 
-> Link: https://www.collabora.com/news-and-blog/news-and-events/introducing-tyr-a-new-rust-drm-driver.html
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> 2) The number of registers in MMIO space for each event. This
+> is enumerated in the XML files and is the value initialized into
+> event_group::num_rmids. This will be overwritten with a lower
+> value if hardware does not support all these registers at the
+> same time (see next case).
 
-Not that is really matters, but this is
+Same comment as v8. :(
 
-Acked-by: Boris Brezillon <boris.brezillon@collabora.com>
+> 
+> 3) The number of "hardware counters" (this isn't a strictly accurate
+> description of how things work, but serves as a useful analogy that
+> does describe the limitations) feeding to those MMIO registers. This
+> is enumerated in telemetry_region::num_rmids returned from the call to
+> intel_pmt_get_regions_by_feature()
+> 
+> Event groups with insufficient "hardware counters" to track all RMIDs
+> are difficult for users to use, since the system may reassign "hardware
+> counters" at any time. This means that users cannot reliably collect
+> two consecutive event counts to compute the rate at which events are
+> occurring.
+> 
+> Use rdt_set_feature_disabled() to mark any under-resourced event groups
+
+Use -> Introduce
+
+> (those with telemetry_region::num_rmids < event_group::num_rmids) as
+> unusable.  Note that the rdt_options[] structure must now be writable
+> at run-time.  The request to disable will be overridden if the user
+> explicitly requests to enable using the "rdt=" Linux boot argument.
+
+Can add snippet here about how values are adjusted in this case.
+
+> 
+> Scan all enabled event groups and assign the RDT_RESOURCE_PERF_PKG
+> resource "num_rmids" value to the smallest of these values as this value
+> will be used later to compare against the number of RMIDs supported by
+> other resources.
+
+can append "... to determine how many monitoring resource groups are            
+supported."
+
+> 
+> N.B. Changed type of rdt_resource::num_rmid to u32 to match type of
+
+Same comment as v8. :(
+
+> event_group::num_rmids so that min(r->num_rmid, e->num_rmids) won't
+> complain about mixing signed and unsigned types.  Print r->num_rmid as
+> unsigned value in rdt_num_rmids_show().
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+
+...
+
+> diff --git a/arch/x86/kernel/cpu/resctrl/intel_aet.c b/arch/x86/kernel/cpu/resctrl/intel_aet.c
+> index 71aed96f9499..f06f71c06029 100644
+> --- a/arch/x86/kernel/cpu/resctrl/intel_aet.c
+> +++ b/arch/x86/kernel/cpu/resctrl/intel_aet.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/cpu.h>
+>  #include <linux/intel_vsec.h>
+>  #include <linux/io.h>
+> +#include <linux/minmax.h>
+>  #include <linux/resctrl.h>
+>  
+>  #include "internal.h"
+> @@ -36,20 +37,26 @@ struct pmt_event {
+>  
+>  /**
+>   * struct event_group - All information about a group of telemetry events.
+> + * @name:		Name for this group (used by boot rdt= option)
+>   * @pfg:		Points to the aggregated telemetry space information
+>   *			within the INTEL_PMT_TELEMETRY driver that contains data for all
+>   *			telemetry regions.
+>   * @guid:		Unique number per XML description file.
+> + * @num_rmids:		Number of RMIDs supported by this group. May be djusted downwards
+
+djusted -> adjusted
+Also, please stay within 80 columns.
+
+> + *			if enumeration from intel_pmt_get_regions_by_feature() indicates
+> + *			fewer RMIDs can be tracked simultaneously.
+>   * @mmio_size:		Number of bytes of MMIO registers for this group.
+>   * @num_events:		Number of events in this group.
+>   * @evts:		Array of event descriptors.
+>   */
+>  struct event_group {
+>  	/* Data fields for additional structures to manage this group. */
+> +	char				*name;
+>  	struct pmt_feature_group	*pfg;
+>  
+>  	/* Remaining fields initialized from XML file. */
+>  	u32				guid;
+> +	u32				num_rmids;
+>  	size_t				mmio_size;
+>  	unsigned int			num_events;
+>  	struct pmt_event		evts[] __counted_by(num_events);
+
+Reinette
+
 
