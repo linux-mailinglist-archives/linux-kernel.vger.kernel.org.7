@@ -1,211 +1,238 @@
-Return-Path: <linux-kernel+bounces-809764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D208B511C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:47:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D24B511C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98ED4E1E45
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7EBE442A73
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2DC31158D;
-	Wed, 10 Sep 2025 08:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8023112BE;
+	Wed, 10 Sep 2025 08:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJESPZ6l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VuE9AfxW"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD5E30F93D;
-	Wed, 10 Sep 2025 08:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA5325A350
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757494032; cv=none; b=T7gqx4h+U7E8aX3y/2fMOSGEhcCgLA9vjLSc4s68KRKNFSq8wy5m52LxPf/1NWcQOWHobn+WuBLG8N7zyKfoFD9lK0OmP3zOMBNz69sSfKM1BBpb1hCduAbBmQ1i5Vf86JsorH9tL/B3tiNmPEX+Rsz1HC3OADi5GACHuAWAce4=
+	t=1757494079; cv=none; b=NA0BkgKQuiwzQ6HApgvrzUi+lSCa4rcMX0hbge6MF5ajKdlPaeBjwvqWQa1xuJltgvZIM6buziTiVck2xc6N4PZGjtYm5NI/NkyH0ivU1HXF9kZL++DzUUxEa1PFG85CSgu5kgTC1bCaBWDDaTF2CI55BbVL6XUirVA5QH6xJus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757494032; c=relaxed/simple;
-	bh=WppBPowSewof/D5eVLXkCnHoKjpriLA2OUGq3Qnm2eI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=jiVDyoswJDsRm0X3rhYvyhq3COtMoSlz8ldrMd/UHvlhYfiFQBYCEe5CRh3r2XYsHkmJYTyQPxW6TLHO0GJA/HCcV4LJwqJn+vDVMR/3xYqV4Dd6hM3Mna3gzKXsWzQtVMraH0K934xfq03BPqdAStt9HN/gT8dN/UGgL9cSRYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJESPZ6l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD53C4CEF0;
-	Wed, 10 Sep 2025 08:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757494031;
-	bh=WppBPowSewof/D5eVLXkCnHoKjpriLA2OUGq3Qnm2eI=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=ZJESPZ6lxzuProG9lMdkWZnUdwptCur8qCkwbnuymnB4OzQnTCSsZvNKwlM+l14av
-	 avSWz9q2NGNPJ7zXztH7yMlB4il8x79co82w/jAbVLYOSFQ0aIbZHAU3hIJ4TayqDK
-	 1SawHkF2W6Q1FQO1zffxQ5+X7OzKE431V/h3dm5jqqM7H8V2oEPl+IWq8JRhrGAzB0
-	 gsWRzii0hSeix6ew8EDmTjd/KjZxhaKX1befEeCYkL33hvqcdSnI6v6PYeNtQHodZf
-	 d2Uxau1tFgH3LbK2rEQEmxF3f6r4NsaVDKfeeifUFW9TDSvZpKNOMc5EQyUv7chuA1
-	 rwE9Mop5Dwncw==
+	s=arc-20240116; t=1757494079; c=relaxed/simple;
+	bh=5Wxy+cByCfGdHHb4M2ZsMYsBI19fkHCRvTB58Mup2WI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=swSzeM2fQOf5iWGN8XnpNg4Nosfo/fWwJNKJOLqJqQ8NCJeW+Q+NUhy87Zd+ZJRIQri0IHzKchB96NTid+NmXc1+V47vtVif6PH7RbTfpgX/Xlw5MPBevcvzzkhulh6eL3IOWEDryYYzvEdYXo7XZ5x4/8mYPeZ8CuzfDLwtnQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VuE9AfxW; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-628caee5ba2so837643a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:47:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757494074; x=1758098874; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Np8jfN3sYCP+UmiGDdyhOB20Mr6qqzZDL1HeGBXkwGc=;
+        b=VuE9AfxW7MCHGW9SdJp/vK5WvuLsuvgOaUFfhpanXsdr+ocKybKrppHJUfKkRZy8yy
+         bR+8XctnRcM8W2H+9vP80pKpEaor1gikmPEzehCYPvFHPJpznoi8GTqzoSz/2y7XKIXz
+         DnlDdUX2/rSG7Jo+aTptGjH4wBmYgnX/zDsN2klgZGbBsDXlL1poSktyvbc/Oc/73D7f
+         aRRnrWSlfzS7lB7kGRE5nUwFFPsknjYJHJ1x7ys1I/8VR/W8H6JEcYPGTTwf5f9FWDDq
+         JXDPWEhpM766/up/yLNi/MxRZAbtL5XQHGoOI5x96+LsQrCtvxCaByuuqwvXM/J0ZZbB
+         EsUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757494074; x=1758098874;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Np8jfN3sYCP+UmiGDdyhOB20Mr6qqzZDL1HeGBXkwGc=;
+        b=C9LyuA3cal8WhtFU6ziW4tKG5iH9S61rrBcB6i/bvKidVpgeBHOyJrA1ywJT2RBIvP
+         1g/m9/+sDtWROvgZWOeX8mrrIryHG8aRMy7UNHpU4fyc5xGixgK3lMYFinqLoFZSYw6u
+         vuNc4DRV+LQNRXNnaRPgtsXV4PxcGSsW4IxAWm8tna9l7htU7dRSt8OFQog7xFbdDPly
+         EQXWjoGAD/rZuOAUQExuRgnVBXTP9p73/OcFQcWdsGGve6qnU/cRQ+YlsqgWRIWAsHPo
+         5Jlo++Ff67bkIoPDoA5/yb9M67mIEIlGcWHORT2p3w/5z6P6JnBFiI3tJDAd4sSnh2k+
+         slnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMdOzTfjkGEfAJI0CDvcNd/ZR/ubzeftsean3OhWScbt8OHFkuOYf2WAV820HNIXpfadr6EEvk62owr4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKoHLezTV8y7dAchBhjxKXHsl61ccS24aHqaXMurPANVVzsfw9
+	tzkzUmDiZCjOaaFUh5aDaNqsr4VOj15lM1csw6Z6/fopMXl+ziHT7XTgVsayJUjiD58=
+X-Gm-Gg: ASbGncsKNjeAl6DnnKnTlphM7WEi6JS+7RyGSDiObx7gGR8UTy9TM7YOyFXxj6N/6Dn
+	zGdytDPnScqoKbzcDIHOxuz+mYsIU40lRID+XV2ZuIiSe86OI+y23W0LGv6bJ/bLN15NuBjyPSn
+	SJqtcjVeQe2/vW4f7Mlxoyj191eNj+TvDX7qyey81lG+CyTGOhkHfutizYwEiEbsLnRdq2kBJS0
+	aQtqdHc+G7HyG5sFN4LYKQq+wcpyBmVIyRH6OTqLVhTmsfrP8CqxwOpwgV6NeL+6EtAH4WIkEXs
+	cF+SNraFbAYNhj1nIgFJKJN4cmEaiLKTw1nS2FrJgM3zAqsGVYv5PaFeTH/PuyD6ACCH7lEa9TY
+	E5RsWam5GrTZff80=
+X-Google-Smtp-Source: AGHT+IFFXA9GkG6+WLmmoEATkhmBMPCC6WdDDdJFkTbluD5Nd2yRv1fYzfd/AlqQM/vXH5uJHFTLTg==
+X-Received: by 2002:a17:906:ef04:b0:af9:8739:10ca with SMTP id a640c23a62f3a-b0493282aecmr1879849966b.28.1757494074240;
+        Wed, 10 Sep 2025 01:47:54 -0700 (PDT)
+Received: from localhost ([195.52.61.108])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b078340ddb3sm126731466b.96.2025.09.10.01.47.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 01:47:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=8030d55e11177121433a9ebb9e4a605ad54d0a0699010de488929059151e;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Wed, 10 Sep 2025 10:47:45 +0200
+Message-Id: <DCOZNFLPYZFH.2EWPVI5X452IJ@baylibre.com>
+Cc: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <kernel@pengutronix.de>
+Subject: Re: [PATCH v2 3/7] can: m_can: m_can_handle_state_errors(): fix CAN
+ state transition to Error Active
+From: "Markus Schneider-Pargmann" <msp@baylibre.com>
+To: "Marc Kleine-Budde" <mkl@pengutronix.de>, "Chandrasekar Ramakrishnan"
+ <rcsekar@samsung.com>, "Vincent Mailhol" <mailhol.vincent@wanadoo.fr>,
+ "Patrik Flykt" <patrik.flykt@linux.intel.com>, "Dong Aisheng"
+ <b29396@freescale.com>, "Varka Bhadram" <varkabhadram@gmail.com>, "Wu Bo"
+ <wubo.oduw@gmail.com>, "Philipp Zabel" <p.zabel@pengutronix.de>
+X-Mailer: aerc 0.20.1
+References: <20250909-m_can-fix-state-handling-v2-0-af9fa240b68a@pengutronix.de> <20250909-m_can-fix-state-handling-v2-3-af9fa240b68a@pengutronix.de>
+In-Reply-To: <20250909-m_can-fix-state-handling-v2-3-af9fa240b68a@pengutronix.de>
+
+--8030d55e11177121433a9ebb9e4a605ad54d0a0699010de488929059151e
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 10 Sep 2025 10:47:05 +0200
-Message-Id: <DCOZMX59W82I.1AH7XVW3RUX2D@kernel.org>
-Subject: Re: [PATCH] rust: pci: add PCI interrupt allocation and management
- support
-Cc: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <nouveau@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, <acourbot@nvidia.com>, "Alistair Popple"
- <apopple@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "John Hubbard" <jhubbard@nvidia.com>,
- "Timur Tabi" <ttabi@nvidia.com>, <joel@joelfernandes.org>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250910035415.381753-1-joelagnelf@nvidia.com>
-In-Reply-To: <20250910035415.381753-1-joelagnelf@nvidia.com>
 
-On Wed Sep 10, 2025 at 5:54 AM CEST, Joel Fernandes wrote:
->  impl Device<device::Bound> {
+On Tue Sep 9, 2025 at 7:53 PM CEST, Marc Kleine-Budde wrote:
+> The CAN Error State is determined by the receive and transmit error
+> counters. The CAN error counters decrease when reception/transmission
+> is successful, so that a status transition back to the Error Active
+> status is possible. This transition is not handled by
+> m_can_handle_state_errors().
+>
+> Add the missing detection of the Error Active state to
+> m_can_handle_state_errors() and extend the handling of this state in
+> m_can_handle_state_change().
+>
+> Fixes: e0d1f4816f2a ("can: m_can: add Bosch M_CAN controller support")
+> Fixes: cd0d83eab2e0 ("can: m_can: m_can_handle_state_change(): fix state =
+change")
+> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 
-The Bound context is not enough for some of the methods below, some of them
-require the Core context, more below.
+Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
 
-> +    /// Free all allocated IRQ vectors for this device.
-> +    ///
-> +    /// This should be called to release interrupt resources when they a=
-re no longer needed,
-> +    /// during driver unbind or removal.
-> +    pub fn free_irq_vectors(&self) {
-> +        // SAFETY: `self.as_raw` is guaranteed to be a pointer to a vali=
-d `struct pci_dev`.
-> +        // `pci_free_irq_vectors` is safe to call even if no vectors are=
- currently allocated.
-> +        unsafe { bindings::pci_free_irq_vectors(self.as_raw()) };
-> +    }
-
-This requires the Core context, but we should not provide this method at al=
-l to
-begin with; it puts the burden on drivers to remember calling this.
-
-Instead, alloc_irq_vectors() should register a devres object with
-devres::register(), so this gets called automatically when the device is
-unbound.
-
-Note that a cleanup through devres is not in conflict with the Core context
-requirement.
-
-> +    /// Allocate IRQ vectors for this PCI device.
-> +    ///
-> +    /// Allocates between `min_vecs` and `max_vecs` interrupt vectors fo=
-r the device.
-> +    /// The allocation will use MSI-X, MSI, or legacy interrupts based o=
-n the `irq_types`
-> +    /// parameter and hardware capabilities. When multiple types are spe=
-cified, the kernel
-> +    /// will try them in order of preference: MSI-X first, then MSI, the=
-n legacy interrupts.
-> +    /// This is called during driver probe.
-> +    ///
-> +    /// # Arguments
-> +    ///
-> +    /// * `min_vecs` - Minimum number of vectors required
-> +    /// * `max_vecs` - Maximum number of vectors to allocate
-> +    /// * `irq_types` - Types of interrupts that can be used
-> +    ///
-> +    /// # Returns
-> +    ///
-> +    /// Returns the number of vectors successfully allocated, or an erro=
-r if the allocation
-> +    /// fails or cannot meet the minimum requirement.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// // Allocate using any available interrupt type in the order ment=
-ioned above.
-> +    /// let nvecs =3D dev.alloc_irq_vectors(1, 32, IrqTypes::all())?;
-> +    ///
-> +    /// // Allocate MSI or MSI-X only (no legacy interrupts)
-> +    /// let msi_only =3D IrqTypes::default()
-> +    ///     .with(IrqType::Msi)
-> +    ///     .with(IrqType::MsiX);
-> +    /// let nvecs =3D dev.alloc_irq_vectors(4, 16, msi_only)?;
-> +    /// ```
-> +    pub fn alloc_irq_vectors(
-> +        &self,
-> +        min_vecs: u32,
-> +        max_vecs: u32,
-> +        irq_types: IrqTypes,
-> +    ) -> Result<u32> {
-> +        // SAFETY: `self.as_raw` is guaranteed to be a pointer to a vali=
-d `struct pci_dev`.
-> +        // `pci_alloc_irq_vectors` internally validates all parameters a=
-nd returns error codes.
-> +        let ret =3D unsafe {
-> +            bindings::pci_alloc_irq_vectors(self.as_raw(), min_vecs, max=
-_vecs, irq_types.raw())
-> +        };
-> +
-> +        to_result(ret)?;
-> +        Ok(ret as u32)
-> +    }
-
-This is only valid to be called from the Core context, as it modifies inter=
-nal
-fields of the inner struct device.
-
-Also, it would be nice if it would return a new type that can serve as argu=
-ment
-for irq_vector(), such that we don't have to rely on random integers.
-
-> +
-> +    /// Get the Linux IRQ number for a specific vector.
-> +    ///
-> +    /// This is called during driver probe after successful IRQ allocati=
-on
-> +    /// to obtain the IRQ numbers for registering interrupt handlers.
-> +    ///
-> +    /// # Arguments
-> +    ///
-> +    /// * `vector` - The vector index (0-based)
-> +    ///
-> +    /// # Returns
-> +    ///
-> +    /// Returns the Linux IRQ number for the specified vector, or an err=
-or if the vector
-> +    /// index is invalid or no vectors are allocated.
-> +    pub fn irq_vector(&self, vector: u32) -> Result<u32> {
-
-This method is already staged for inclusion in v6.18 in driver-core-next. P=
-lease
-make sure to base changes on top of the tree mentioned in the maintainers f=
-ile,
-driver-core in this case.
-
-The signature of the existing method is:
-
-	pub fn irq_vector(&self, index: u32) -> Result<IrqRequest<'_>>
-
-We return an IrqRequest, which captures the IRQ number *and* the correspond=
-ing
-device, such that you can't get the combination wrong.
-
-Maybe it's worth looking at improving the index argument with a new type as
-mentioned above.
-
-> +        // SAFETY: `self.as_raw` is guaranteed to be a pointer to a vali=
-d `struct pci_dev`.
-> +        let irq =3D unsafe { bindings::pci_irq_vector(self.as_raw(), vec=
-tor) };
-> +
-> +        to_result(irq)?;
-> +        Ok(irq as u32)
-> +    }
+> ---
+>  drivers/net/can/m_can/m_can.c | 55 ++++++++++++++++++++++++++-----------=
+------
+>  1 file changed, 33 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.=
+c
+> index 16b38e6c3985..3edf01b098a4 100644
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> @@ -812,6 +812,9 @@ static int m_can_handle_state_change(struct net_devic=
+e *dev,
+>  	u32 timestamp =3D 0;
+> =20
+>  	switch (new_state) {
+> +	case CAN_STATE_ERROR_ACTIVE:
+> +		cdev->can.state =3D CAN_STATE_ERROR_ACTIVE;
+> +		break;
+>  	case CAN_STATE_ERROR_WARNING:
+>  		/* error warning state */
+>  		cdev->can.can_stats.error_warning++;
+> @@ -841,6 +844,12 @@ static int m_can_handle_state_change(struct net_devi=
+ce *dev,
+>  	__m_can_get_berr_counter(dev, &bec);
+> =20
+>  	switch (new_state) {
+> +	case CAN_STATE_ERROR_ACTIVE:
+> +		cf->can_id |=3D CAN_ERR_CRTL | CAN_ERR_CNT;
+> +		cf->data[1] =3D CAN_ERR_CRTL_ACTIVE;
+> +		cf->data[6] =3D bec.txerr;
+> +		cf->data[7] =3D bec.rxerr;
+> +		break;
+>  	case CAN_STATE_ERROR_WARNING:
+>  		/* error warning state */
+>  		cf->can_id |=3D CAN_ERR_CRTL | CAN_ERR_CNT;
+> @@ -877,30 +886,33 @@ static int m_can_handle_state_change(struct net_dev=
+ice *dev,
+>  	return 1;
 >  }
+> =20
+> -static int m_can_handle_state_errors(struct net_device *dev, u32 psr)
+> +static enum can_state
+> +m_can_state_get_by_psr(struct m_can_classdev *cdev)
+> +{
+> +	u32 reg_psr;
+> +
+> +	reg_psr =3D m_can_read(cdev, M_CAN_PSR);
+> +
+> +	if (reg_psr & PSR_BO)
+> +		return CAN_STATE_BUS_OFF;
+> +	if (reg_psr & PSR_EP)
+> +		return CAN_STATE_ERROR_PASSIVE;
+> +	if (reg_psr & PSR_EW)
+> +		return CAN_STATE_ERROR_WARNING;
+> +
+> +	return CAN_STATE_ERROR_ACTIVE;
+> +}
+> +
+> +static int m_can_handle_state_errors(struct net_device *dev)
+>  {
+>  	struct m_can_classdev *cdev =3D netdev_priv(dev);
+> -	int work_done =3D 0;
+> +	enum can_state new_state;
+> =20
+> -	if (psr & PSR_EW && cdev->can.state !=3D CAN_STATE_ERROR_WARNING) {
+> -		netdev_dbg(dev, "entered error warning state\n");
+> -		work_done +=3D m_can_handle_state_change(dev,
+> -						       CAN_STATE_ERROR_WARNING);
+> -	}
+> +	new_state =3D m_can_state_get_by_psr(cdev);
+> +	if (new_state =3D=3D cdev->can.state)
+> +		return 0;
+> =20
+> -	if (psr & PSR_EP && cdev->can.state !=3D CAN_STATE_ERROR_PASSIVE) {
+> -		netdev_dbg(dev, "entered error passive state\n");
+> -		work_done +=3D m_can_handle_state_change(dev,
+> -						       CAN_STATE_ERROR_PASSIVE);
+> -	}
+> -
+> -	if (psr & PSR_BO && cdev->can.state !=3D CAN_STATE_BUS_OFF) {
+> -		netdev_dbg(dev, "entered error bus off state\n");
+> -		work_done +=3D m_can_handle_state_change(dev,
+> -						       CAN_STATE_BUS_OFF);
+> -	}
+> -
+> -	return work_done;
+> +	return m_can_handle_state_change(dev, new_state);
+>  }
+> =20
+>  static void m_can_handle_other_err(struct net_device *dev, u32 irqstatus=
+)
+> @@ -1031,8 +1043,7 @@ static int m_can_rx_handler(struct net_device *dev,=
+ int quota, u32 irqstatus)
+>  	}
+> =20
+>  	if (irqstatus & IR_ERR_STATE)
+> -		work_done +=3D m_can_handle_state_errors(dev,
+> -						       m_can_read(cdev, M_CAN_PSR));
+> +		work_done +=3D m_can_handle_state_errors(dev);
+> =20
+>  	if (irqstatus & IR_ERR_BUS_30X)
+>  		work_done +=3D m_can_handle_bus_errors(dev, irqstatus,
+
+
+--8030d55e11177121433a9ebb9e4a605ad54d0a0699010de488929059151e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaME7MRsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlOS
+8AEA/Cz2GJhok5svEAkYHHWsmzLyszwnF5r0b55RL8ER42MBAMfpsfCTPI8cu+0P
+6IlWMBIo+cSY4NQOgdHs7ffWTvIK
+=cVYp
+-----END PGP SIGNATURE-----
+
+--8030d55e11177121433a9ebb9e4a605ad54d0a0699010de488929059151e--
 
