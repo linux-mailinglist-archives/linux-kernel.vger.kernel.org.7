@@ -1,584 +1,140 @@
-Return-Path: <linux-kernel+bounces-810924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26731B5218E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:07:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31FDEB52190
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 327A61BC84EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:07:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF33B467A81
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC9C2EDD5D;
-	Wed, 10 Sep 2025 20:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283FB2BB1D;
+	Wed, 10 Sep 2025 20:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="maft4cKZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KP8uSR4v";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WJb1KelV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E9A24C068;
-	Wed, 10 Sep 2025 20:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0752ED871
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757534821; cv=none; b=h+PFG/cUvDxoMRqRc5LRkXDuLHbGaRFCuI//goqUpX3DGf3NIs0AX7ncFSMM4XkifrjYhc4UhwukEZ6tHly71B01OuMKSOip6g45rItRlObsYw15WFzl4ShC+2ti28FRUGcKjGmnPBQGIHFQZaXHIuHQy3bt8EGdBtR06rgrjUo=
+	t=1757534839; cv=none; b=ZO6HxQ5VBIumDUSvu43qiCc5rmTwv/R82n3DSZP4ptPFFwRrbT7SeswtPW2yxfBVw4P2rlFDw3NNVcmscEbTJSXxvjjT67VpJczMgOwif+dOLpvBVrEBrUcRt7R/HeGQ1mZkQ7w44EJQAWRQRabylcpsiN0c0P+LY9/fRDa1Usc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757534821; c=relaxed/simple;
-	bh=oKqJXxva/SnTQaeGyz+ABXgHVdBNVQdLAeqKDiCq9sI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dZRlHraaOWK1v71r6FukONJUjfWKIhyKCyvYsKuENtdyERuoEGFEPIYt0n0W2TFvj2VrafJzNqIsBsXWl10thQ+S7+WZJeKeYL55c0mkQLUqOZ6c0UySFulkguPRjyeE13dfkRn9OJPKonL9SwqUv/xCdTpjahoNjZIVoARK/gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=maft4cKZ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757534818; x=1789070818;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=oKqJXxva/SnTQaeGyz+ABXgHVdBNVQdLAeqKDiCq9sI=;
-  b=maft4cKZSO44aFfAtrCOC1VwCIk4b1a6bXOzLIdyGmLZAoqEGMAM9B66
-   uv3uqE1r2gaJRHUEeHus7gSj5bV3132FqSOhpcItbz3z1qKnBnhQL5fD+
-   iR2WDFjzHGtIwg0EQ/bIwVbnVli713jxbTrHofWBR7SwDoqyFyhdBRVxA
-   W0M973ymOUPKF+XTzCmPLxBzFnVnSJBXkytqKwwOvHk5mh9D9LV72GL8j
-   wMEyxjM1yc8eLVK0x9k+WCF+VVmp7R/2cST+LvyFvRDrMutcAaBYN5T0N
-   ZMYZjy/PKVCGegnJ/+4enFzwbf/lTxd4mwwFrpJVwg+DeIzt61HSxOitR
-   w==;
-X-CSE-ConnectionGUID: CK8jTsNOToaSl7KRTlrVCg==
-X-CSE-MsgGUID: 4+pUgP2YRe66UE+XgI0L3g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="77462662"
-X-IronPort-AV: E=Sophos;i="6.18,255,1751266800"; 
-   d="scan'208";a="77462662"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 13:06:57 -0700
-X-CSE-ConnectionGUID: grGZXSjgQDO6PxfjYB69mQ==
-X-CSE-MsgGUID: ETPeDm3CRAGYZcx9DLvppQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,255,1751266800"; 
-   d="scan'208";a="173567336"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.110.219]) ([10.125.110.219])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 13:06:57 -0700
-Message-ID: <df638af0-1e22-4260-9232-68d9a4946103@intel.com>
-Date: Wed, 10 Sep 2025 13:06:55 -0700
+	s=arc-20240116; t=1757534839; c=relaxed/simple;
+	bh=DRpSdqEBlULqatQ28DhIqTN1PXhpqV1W058lxudFvys=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WzdMnVjcxfTBA8y6gLWE6PIacs+Fv+kQhphY+V36Dx4rZ8qDSGZcYlsTmcgIgoOWFoWRaSoNUFXLyESMXc5lvnm1zwlMAaYMlwvT1CHXne0vrY5b5+QitiyFRXlX+nFHZs4rIjdy+OiKbyCLfX6r/z4LQVwgZeKhT4llyFj3M2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KP8uSR4v; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WJb1KelV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757534834;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TXiU2Y758Ana+gXTRNJ7cGEemsdXEpDtx+PeKTGcMqo=;
+	b=KP8uSR4vsTWPAj3XhOCpB6QeNPLsFVVnfwtNXrb8yxbL9CUeZ5TuJv6v1/pw/w2vAEq4q7
+	GFlGL7xgTuUCqZ6D5iYCKmZriLQtkD+P4+aR75nKuDgYbFtpqSHWSkWrUe205xx5CoYtAd
+	BMLKDW3vJ3hfcgCdcoaATGFOTlhFhiG3K63N36+nNZLoHXu5gSr4BIJQvuM8qmKhzPLlpL
+	UIincmwjgtwnc+JVOytWCiHp2/xMIXr2XRsYwES3nPv5RVx8Rh/s7+7VaCd4MUmhKMzXCG
+	O/29mOwQe41wFwTUwTdq64AQ9nB5OSXiCrXiRGk6b4Efi/+oIsXr1sSDT7HTfw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757534834;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TXiU2Y758Ana+gXTRNJ7cGEemsdXEpDtx+PeKTGcMqo=;
+	b=WJb1KelVPWpq3gcmn+l2dHPcoeqYU3JdCmGEZUz0GVZlpx3Rvb+6OOlgAkTVC4Ei0v+GqJ
+	Ja6q20EF7aLzHzCg==
+To: syzbot <syzbot+8b3a2e23253b50098164@syzkaller.appspotmail.com>,
+ anna-maria@linutronix.de, frederic@kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Cc: Peter Zijlstra <peterz@infradead.org>, Juri Lelli <jlelli@redhat.com>
+Subject: Re: [syzbot] [kernel?] WARNING in hrtimer_forward (4)
+In-Reply-To: <68b25b42.a70a0220.1c57d1.00f6.GAE@google.com>
+References: <68b25b42.a70a0220.1c57d1.00f6.GAE@google.com>
+Date: Wed, 10 Sep 2025 22:07:13 +0200
+Message-ID: <87qzwers0e.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 07/23] CXL/PCI: Move CXL DVSEC definitions into
- uapi/linux/pci_regs.h
-To: "Bowman, Terry" <terry.bowman@amd.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
- ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
- rrichter@amd.com, dan.carpenter@linaro.org,
- PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
- Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
- linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250827013539.903682-1-terry.bowman@amd.com>
- <20250827013539.903682-8-terry.bowman@amd.com>
- <91a11ced-88be-4ecd-b3c3-04e1e85f1860@intel.com>
- <750a363b-8645-4115-a6a4-757941992330@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <750a363b-8645-4115-a6a4-757941992330@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+On Fri, Aug 29 2025 at 19:00, syzbot wrote:
 
+> HEAD commit:    b6add54ba618 Merge tag 'pinctrl-v6.17-2' of git://git.kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1130eef0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8b3a2e23253b50098164
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/102656909b6f/disk-b6add54b.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/fa30d1d80a47/vmlinux-b6add54b.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/c25ee8abf30a/bzImage-b6add54b.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+8b3a2e23253b50098164@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 1186 at kernel/time/hrtimer.c:1052 hrtimer_forward+0x1d6/0x2b0 kernel/time/hrtimer.c:1052
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 1186 Comm: irq/33-virtio1- Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+> RIP: 0010:hrtimer_forward+0x1d6/0x2b0 kernel/time/hrtimer.c:1052
 
-On 9/10/25 11:11 AM, Bowman, Terry wrote:
-> 
-> 
-> On 8/28/2025 4:07 PM, Dave Jiang wrote:
->>
->> On 8/26/25 6:35 PM, Terry Bowman wrote:
->>> The CXL DVSECs are currently defined in cxl/core/cxlpci.h. These are not
->>> accessible to other subsystems.
->>>
->>> Change DVSEC name formatting to follow the existing PCI format in
->>> pci_regs.h. The current format uses CXL_DVSEC_XYZ. Change to be PCI_DVSEC_CXL_XYZ.
->> I don't think renaming is necessary. Especially changing all the existing CXL code. CXL isn't exactly considered a subset of PCI (not part of PCI consortium). IMO it may be better to leave it as it was. Maybe others have different opinions. 
->>
->> DJ
->>  
-> 
-> Hi Dave,
-> 
-> This was requested by Dan Williams during v10 review:
-> https://lore.kernel.org/linux-cxl/6881626a784f_134cc7100b4@dwillia2-xfh.jf.intel.com.notmuch/
-> 
-> Let me know how to proceed.
+It compains that the timer is enqueued when it is attempted to be forwarded
 
-Ok then just keep it. 
+> Code: 4c 89 33 48 8b 04 24 eb 07 e8 86 34 12 00 31 c0 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d e9 01 d8 4d 09 cc e8 6b 34 12 00 90 <0f> 0b 90 eb df 48 89 e8 4c 09 f8 48 c1 e8 20 74 0a 48 89 e8 31 d2
+> RSP: 0018:ffffc90000a78bd0 EFLAGS: 00010006
+> RAX: ffffffff81ac27e5 RBX: ffff8880b883b508 RCX: ffff888026c19dc0
+> RDX: 0000000000000100 RSI: 0000000000010000 RDI: 0000000000010100
+> RBP: 000000000009d057 R08: 0000000000010000 R09: 0000000000010100
+> R10: dffffc0000000000 R11: ffffffff8167a890 R12: ffff8880b883b520
+> R13: 0000000000184487 R14: 1ffff110171076a4 R15: 0000000000000001
+> FS:  0000000000000000(0000) GS:ffff8881269c2000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f95323cbf98 CR3: 0000000064088000 CR4: 00000000003526f0
+> Call Trace:
+>  <IRQ>
+>  hrtimer_forward_now include/linux/hrtimer.h:366 [inline]
+>  dl_server_timer kernel/sched/deadline.c:1193 [inline]
 
-DJ
+which is strange as this is with the timer callback itself, so it
+shouldn't be enqueued, unless there is a possiblilty to have:
 
-> 
-> Terry
-> 
->>> Update existing occurrences to match the name change.
->>>
->>> Update the inline documentation to refer to latest CXL spec version.
->>>
->>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
->>> ---
->>>  drivers/cxl/core/pci.c        | 62 +++++++++++++++++------------------
->>>  drivers/cxl/core/regs.c       | 12 +++----
->>>  drivers/cxl/cxlpci.h          | 53 ------------------------------
->>>  drivers/cxl/pci.c             |  2 +-
->>>  drivers/pci/pci.c             | 18 +++++-----
->>>  include/uapi/linux/pci_regs.h | 60 ++++++++++++++++++++++++++++++---
->>>  6 files changed, 104 insertions(+), 103 deletions(-)
->>>
->>> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
->>> index a3aef78f903a..d677691f8a05 100644
->>> --- a/drivers/cxl/core/pci.c
->>> +++ b/drivers/cxl/core/pci.c
->>> @@ -110,19 +110,19 @@ static int cxl_dvsec_mem_range_valid(struct cxl_dev_state *cxlds, int id)
->>>  	int rc, i;
->>>  	u32 temp;
->>>  
->>> -	if (id > CXL_DVSEC_RANGE_MAX)
->>> +	if (id > PCI_DVSEC_CXL_RANGE_MAX)
->>>  		return -EINVAL;
->>>  
->>>  	/* Check MEM INFO VALID bit first, give up after 1s */
->>>  	i = 1;
->>>  	do {
->>>  		rc = pci_read_config_dword(pdev,
->>> -					   d + CXL_DVSEC_RANGE_SIZE_LOW(id),
->>> +					   d + PCI_DVSEC_CXL_RANGE_SIZE_LOW(id),
->>>  					   &temp);
->>>  		if (rc)
->>>  			return rc;
->>>  
->>> -		valid = FIELD_GET(CXL_DVSEC_MEM_INFO_VALID, temp);
->>> +		valid = FIELD_GET(PCI_DVSEC_CXL_MEM_INFO_VALID, temp);
->>>  		if (valid)
->>>  			break;
->>>  		msleep(1000);
->>> @@ -146,17 +146,17 @@ static int cxl_dvsec_mem_range_active(struct cxl_dev_state *cxlds, int id)
->>>  	int rc, i;
->>>  	u32 temp;
->>>  
->>> -	if (id > CXL_DVSEC_RANGE_MAX)
->>> +	if (id > PCI_DVSEC_CXL_RANGE_MAX)
->>>  		return -EINVAL;
->>>  
->>>  	/* Check MEM ACTIVE bit, up to 60s timeout by default */
->>>  	for (i = media_ready_timeout; i; i--) {
->>>  		rc = pci_read_config_dword(
->>> -			pdev, d + CXL_DVSEC_RANGE_SIZE_LOW(id), &temp);
->>> +			pdev, d + PCI_DVSEC_CXL_RANGE_SIZE_LOW(id), &temp);
->>>  		if (rc)
->>>  			return rc;
->>>  
->>> -		active = FIELD_GET(CXL_DVSEC_MEM_ACTIVE, temp);
->>> +		active = FIELD_GET(PCI_DVSEC_CXL_MEM_ACTIVE, temp);
->>>  		if (active)
->>>  			break;
->>>  		msleep(1000);
->>> @@ -185,11 +185,11 @@ int cxl_await_media_ready(struct cxl_dev_state *cxlds)
->>>  	u16 cap;
->>>  
->>>  	rc = pci_read_config_word(pdev,
->>> -				  d + CXL_DVSEC_CAP_OFFSET, &cap);
->>> +				  d + PCI_DVSEC_CXL_CAP_OFFSET, &cap);
->>>  	if (rc)
->>>  		return rc;
->>>  
->>> -	hdm_count = FIELD_GET(CXL_DVSEC_HDM_COUNT_MASK, cap);
->>> +	hdm_count = FIELD_GET(PCI_DVSEC_CXL_HDM_COUNT_MASK, cap);
->>>  	for (i = 0; i < hdm_count; i++) {
->>>  		rc = cxl_dvsec_mem_range_valid(cxlds, i);
->>>  		if (rc)
->>> @@ -217,16 +217,16 @@ static int cxl_set_mem_enable(struct cxl_dev_state *cxlds, u16 val)
->>>  	u16 ctrl;
->>>  	int rc;
->>>  
->>> -	rc = pci_read_config_word(pdev, d + CXL_DVSEC_CTRL_OFFSET, &ctrl);
->>> +	rc = pci_read_config_word(pdev, d + PCI_DVSEC_CXL_CTRL_OFFSET, &ctrl);
->>>  	if (rc < 0)
->>>  		return rc;
->>>  
->>> -	if ((ctrl & CXL_DVSEC_MEM_ENABLE) == val)
->>> +	if ((ctrl & PCI_DVSEC_CXL_MEM_ENABLE) == val)
->>>  		return 1;
->>> -	ctrl &= ~CXL_DVSEC_MEM_ENABLE;
->>> +	ctrl &= ~PCI_DVSEC_CXL_MEM_ENABLE;
->>>  	ctrl |= val;
->>>  
->>> -	rc = pci_write_config_word(pdev, d + CXL_DVSEC_CTRL_OFFSET, ctrl);
->>> +	rc = pci_write_config_word(pdev, d + PCI_DVSEC_CXL_CTRL_OFFSET, ctrl);
->>>  	if (rc < 0)
->>>  		return rc;
->>>  
->>> @@ -242,7 +242,7 @@ static int devm_cxl_enable_mem(struct device *host, struct cxl_dev_state *cxlds)
->>>  {
->>>  	int rc;
->>>  
->>> -	rc = cxl_set_mem_enable(cxlds, CXL_DVSEC_MEM_ENABLE);
->>> +	rc = cxl_set_mem_enable(cxlds, PCI_DVSEC_CXL_MEM_ENABLE);
->>>  	if (rc < 0)
->>>  		return rc;
->>>  	if (rc > 0)
->>> @@ -304,11 +304,11 @@ int cxl_dvsec_rr_decode(struct cxl_dev_state *cxlds,
->>>  		return -ENXIO;
->>>  	}
->>>  
->>> -	rc = pci_read_config_word(pdev, d + CXL_DVSEC_CAP_OFFSET, &cap);
->>> +	rc = pci_read_config_word(pdev, d + PCI_DVSEC_CXL_CAP_OFFSET, &cap);
->>>  	if (rc)
->>>  		return rc;
->>>  
->>> -	if (!(cap & CXL_DVSEC_MEM_CAPABLE)) {
->>> +	if (!(cap & PCI_DVSEC_CXL_MEM_CAPABLE)) {
->>>  		dev_dbg(dev, "Not MEM Capable\n");
->>>  		return -ENXIO;
->>>  	}
->>> @@ -319,7 +319,7 @@ int cxl_dvsec_rr_decode(struct cxl_dev_state *cxlds,
->>>  	 * driver is for a spec defined class code which must be CXL.mem
->>>  	 * capable, there is no point in continuing to enable CXL.mem.
->>>  	 */
->>> -	hdm_count = FIELD_GET(CXL_DVSEC_HDM_COUNT_MASK, cap);
->>> +	hdm_count = FIELD_GET(PCI_DVSEC_CXL_HDM_COUNT_MASK, cap);
->>>  	if (!hdm_count || hdm_count > 2)
->>>  		return -EINVAL;
->>>  
->>> @@ -328,11 +328,11 @@ int cxl_dvsec_rr_decode(struct cxl_dev_state *cxlds,
->>>  	 * disabled, and they will remain moot after the HDM Decoder
->>>  	 * capability is enabled.
->>>  	 */
->>> -	rc = pci_read_config_word(pdev, d + CXL_DVSEC_CTRL_OFFSET, &ctrl);
->>> +	rc = pci_read_config_word(pdev, d + PCI_DVSEC_CXL_CTRL_OFFSET, &ctrl);
->>>  	if (rc)
->>>  		return rc;
->>>  
->>> -	info->mem_enabled = FIELD_GET(CXL_DVSEC_MEM_ENABLE, ctrl);
->>> +	info->mem_enabled = FIELD_GET(PCI_DVSEC_CXL_MEM_ENABLE, ctrl);
->>>  	if (!info->mem_enabled)
->>>  		return 0;
->>>  
->>> @@ -345,35 +345,35 @@ int cxl_dvsec_rr_decode(struct cxl_dev_state *cxlds,
->>>  			return rc;
->>>  
->>>  		rc = pci_read_config_dword(
->>> -			pdev, d + CXL_DVSEC_RANGE_SIZE_HIGH(i), &temp);
->>> +			pdev, d + PCI_DVSEC_CXL_RANGE_SIZE_HIGH(i), &temp);
->>>  		if (rc)
->>>  			return rc;
->>>  
->>>  		size = (u64)temp << 32;
->>>  
->>>  		rc = pci_read_config_dword(
->>> -			pdev, d + CXL_DVSEC_RANGE_SIZE_LOW(i), &temp);
->>> +			pdev, d + PCI_DVSEC_CXL_RANGE_SIZE_LOW(i), &temp);
->>>  		if (rc)
->>>  			return rc;
->>>  
->>> -		size |= temp & CXL_DVSEC_MEM_SIZE_LOW_MASK;
->>> +		size |= temp & PCI_DVSEC_CXL_MEM_SIZE_LOW_MASK;
->>>  		if (!size) {
->>>  			continue;
->>>  		}
->>>  
->>>  		rc = pci_read_config_dword(
->>> -			pdev, d + CXL_DVSEC_RANGE_BASE_HIGH(i), &temp);
->>> +			pdev, d + PCI_DVSEC_CXL_RANGE_BASE_HIGH(i), &temp);
->>>  		if (rc)
->>>  			return rc;
->>>  
->>>  		base = (u64)temp << 32;
->>>  
->>>  		rc = pci_read_config_dword(
->>> -			pdev, d + CXL_DVSEC_RANGE_BASE_LOW(i), &temp);
->>> +			pdev, d + PCI_DVSEC_CXL_RANGE_BASE_LOW(i), &temp);
->>>  		if (rc)
->>>  			return rc;
->>>  
->>> -		base |= temp & CXL_DVSEC_MEM_BASE_LOW_MASK;
->>> +		base |= temp & PCI_DVSEC_CXL_MEM_BASE_LOW_MASK;
->>>  
->>>  		info->dvsec_range[ranges++] = (struct range) {
->>>  			.start = base,
->>> @@ -781,7 +781,7 @@ u16 cxl_gpf_get_dvsec(struct device *dev)
->>>  		is_port = false;
->>>  
->>>  	dvsec = pci_find_dvsec_capability(pdev, PCI_VENDOR_ID_CXL,
->>> -			is_port ? CXL_DVSEC_PORT_GPF : CXL_DVSEC_DEVICE_GPF);
->>> +			is_port ? PCI_DVSEC_CXL_PORT_GPF : PCI_DVSEC_CXL_DEVICE_GPF);
->>>  	if (!dvsec)
->>>  		dev_warn(dev, "%s GPF DVSEC not present\n",
->>>  			 is_port ? "Port" : "Device");
->>> @@ -797,14 +797,14 @@ static int update_gpf_port_dvsec(struct pci_dev *pdev, int dvsec, int phase)
->>>  
->>>  	switch (phase) {
->>>  	case 1:
->>> -		offset = CXL_DVSEC_PORT_GPF_PHASE_1_CONTROL_OFFSET;
->>> -		base = CXL_DVSEC_PORT_GPF_PHASE_1_TMO_BASE_MASK;
->>> -		scale = CXL_DVSEC_PORT_GPF_PHASE_1_TMO_SCALE_MASK;
->>> +		offset = PCI_DVSEC_CXL_PORT_GPF_PHASE_1_CONTROL_OFFSET;
->>> +		base = PCI_DVSEC_CXL_PORT_GPF_PHASE_1_TMO_BASE_MASK;
->>> +		scale = PCI_DVSEC_CXL_PORT_GPF_PHASE_1_TMO_SCALE_MASK;
->>>  		break;
->>>  	case 2:
->>> -		offset = CXL_DVSEC_PORT_GPF_PHASE_2_CONTROL_OFFSET;
->>> -		base = CXL_DVSEC_PORT_GPF_PHASE_2_TMO_BASE_MASK;
->>> -		scale = CXL_DVSEC_PORT_GPF_PHASE_2_TMO_SCALE_MASK;
->>> +		offset = PCI_DVSEC_CXL_PORT_GPF_PHASE_2_CONTROL_OFFSET;
->>> +		base = PCI_DVSEC_CXL_PORT_GPF_PHASE_2_TMO_BASE_MASK;
->>> +		scale = PCI_DVSEC_CXL_PORT_GPF_PHASE_2_TMO_SCALE_MASK;
->>>  		break;
->>>  	default:
->>>  		return -EINVAL;
->>> diff --git a/drivers/cxl/core/regs.c b/drivers/cxl/core/regs.c
->>> index 5ca7b0eed568..fb70ffbba72d 100644
->>> --- a/drivers/cxl/core/regs.c
->>> +++ b/drivers/cxl/core/regs.c
->>> @@ -271,10 +271,10 @@ EXPORT_SYMBOL_NS_GPL(cxl_map_device_regs, "CXL");
->>>  static bool cxl_decode_regblock(struct pci_dev *pdev, u32 reg_lo, u32 reg_hi,
->>>  				struct cxl_register_map *map)
->>>  {
->>> -	u8 reg_type = FIELD_GET(CXL_DVSEC_REG_LOCATOR_BLOCK_ID_MASK, reg_lo);
->>> -	int bar = FIELD_GET(CXL_DVSEC_REG_LOCATOR_BIR_MASK, reg_lo);
->>> +	u8 reg_type = FIELD_GET(PCI_DVSEC_CXL_REG_LOCATOR_BLOCK_ID_MASK, reg_lo);
->>> +	int bar = FIELD_GET(PCI_DVSEC_CXL_REG_LOCATOR_BIR_MASK, reg_lo);
->>>  	u64 offset = ((u64)reg_hi << 32) |
->>> -		     (reg_lo & CXL_DVSEC_REG_LOCATOR_BLOCK_OFF_LOW_MASK);
->>> +		     (reg_lo & PCI_DVSEC_CXL_REG_LOCATOR_BLOCK_OFF_LOW_MASK);
->>>  
->>>  	if (offset > pci_resource_len(pdev, bar)) {
->>>  		dev_warn(&pdev->dev,
->>> @@ -311,15 +311,15 @@ static int __cxl_find_regblock_instance(struct pci_dev *pdev, enum cxl_regloc_ty
->>>  	};
->>>  
->>>  	regloc = pci_find_dvsec_capability(pdev, PCI_VENDOR_ID_CXL,
->>> -					   CXL_DVSEC_REG_LOCATOR);
->>> +					   PCI_DVSEC_CXL_REG_LOCATOR);
->>>  	if (!regloc)
->>>  		return -ENXIO;
->>>  
->>>  	pci_read_config_dword(pdev, regloc + PCI_DVSEC_HEADER1, &regloc_size);
->>>  	regloc_size = FIELD_GET(PCI_DVSEC_HEADER1_LENGTH_MASK, regloc_size);
->>>  
->>> -	regloc += CXL_DVSEC_REG_LOCATOR_BLOCK1_OFFSET;
->>> -	regblocks = (regloc_size - CXL_DVSEC_REG_LOCATOR_BLOCK1_OFFSET) / 8;
->>> +	regloc += PCI_DVSEC_CXL_REG_LOCATOR_BLOCK1_OFFSET;
->>> +	regblocks = (regloc_size - PCI_DVSEC_CXL_REG_LOCATOR_BLOCK1_OFFSET) / 8;
->>>  
->>>  	for (i = 0; i < regblocks; i++, regloc += 8) {
->>>  		u32 reg_lo, reg_hi;
->>> diff --git a/drivers/cxl/cxlpci.h b/drivers/cxl/cxlpci.h
->>> index 3959fa7e2ead..ad24d81e9eaa 100644
->>> --- a/drivers/cxl/cxlpci.h
->>> +++ b/drivers/cxl/cxlpci.h
->>> @@ -7,59 +7,6 @@
->>>  
->>>  #define CXL_MEMORY_PROGIF	0x10
->>>  
->>> -/*
->>> - * See section 8.1 Configuration Space Registers in the CXL 2.0
->>> - * Specification. Names are taken straight from the specification with "CXL" and
->>> - * "DVSEC" redundancies removed. When obvious, abbreviations may be used.
->>> - */
->>> -#define PCI_DVSEC_HEADER1_LENGTH_MASK	GENMASK(31, 20)
->>> -
->>> -/* CXL 2.0 8.1.3: PCIe DVSEC for CXL Device */
->>> -#define CXL_DVSEC_PCIE_DEVICE					0
->>> -#define   CXL_DVSEC_CAP_OFFSET		0xA
->>> -#define     CXL_DVSEC_MEM_CAPABLE	BIT(2)
->>> -#define     CXL_DVSEC_HDM_COUNT_MASK	GENMASK(5, 4)
->>> -#define   CXL_DVSEC_CTRL_OFFSET		0xC
->>> -#define     CXL_DVSEC_MEM_ENABLE	BIT(2)
->>> -#define   CXL_DVSEC_RANGE_SIZE_HIGH(i)	(0x18 + (i * 0x10))
->>> -#define   CXL_DVSEC_RANGE_SIZE_LOW(i)	(0x1C + (i * 0x10))
->>> -#define     CXL_DVSEC_MEM_INFO_VALID	BIT(0)
->>> -#define     CXL_DVSEC_MEM_ACTIVE	BIT(1)
->>> -#define     CXL_DVSEC_MEM_SIZE_LOW_MASK	GENMASK(31, 28)
->>> -#define   CXL_DVSEC_RANGE_BASE_HIGH(i)	(0x20 + (i * 0x10))
->>> -#define   CXL_DVSEC_RANGE_BASE_LOW(i)	(0x24 + (i * 0x10))
->>> -#define     CXL_DVSEC_MEM_BASE_LOW_MASK	GENMASK(31, 28)
->>> -
->>> -#define CXL_DVSEC_RANGE_MAX		2
->>> -
->>> -/* CXL 2.0 8.1.4: Non-CXL Function Map DVSEC */
->>> -#define CXL_DVSEC_FUNCTION_MAP					2
->>> -
->>> -/* CXL 2.0 8.1.5: CXL 2.0 Extensions DVSEC for Ports */
->>> -#define CXL_DVSEC_PORT_EXTENSIONS				3
->>> -
->>> -/* CXL 2.0 8.1.6: GPF DVSEC for CXL Port */
->>> -#define CXL_DVSEC_PORT_GPF					4
->>> -#define   CXL_DVSEC_PORT_GPF_PHASE_1_CONTROL_OFFSET		0x0C
->>> -#define     CXL_DVSEC_PORT_GPF_PHASE_1_TMO_BASE_MASK		GENMASK(3, 0)
->>> -#define     CXL_DVSEC_PORT_GPF_PHASE_1_TMO_SCALE_MASK		GENMASK(11, 8)
->>> -#define   CXL_DVSEC_PORT_GPF_PHASE_2_CONTROL_OFFSET		0xE
->>> -#define     CXL_DVSEC_PORT_GPF_PHASE_2_TMO_BASE_MASK		GENMASK(3, 0)
->>> -#define     CXL_DVSEC_PORT_GPF_PHASE_2_TMO_SCALE_MASK		GENMASK(11, 8)
->>> -
->>> -/* CXL 2.0 8.1.7: GPF DVSEC for CXL Device */
->>> -#define CXL_DVSEC_DEVICE_GPF					5
->>> -
->>> -/* CXL 2.0 8.1.8: PCIe DVSEC for Flex Bus Port */
->>> -#define CXL_DVSEC_PCIE_FLEXBUS_PORT				7
->>> -
->>> -/* CXL 2.0 8.1.9: Register Locator DVSEC */
->>> -#define CXL_DVSEC_REG_LOCATOR					8
->>> -#define   CXL_DVSEC_REG_LOCATOR_BLOCK1_OFFSET			0xC
->>> -#define     CXL_DVSEC_REG_LOCATOR_BIR_MASK			GENMASK(2, 0)
->>> -#define	    CXL_DVSEC_REG_LOCATOR_BLOCK_ID_MASK			GENMASK(15, 8)
->>> -#define     CXL_DVSEC_REG_LOCATOR_BLOCK_OFF_LOW_MASK		GENMASK(31, 16)
->>> -
->>>  /*
->>>   * NOTE: Currently all the functions which are enabled for CXL require their
->>>   * vectors to be in the first 16.  Use this as the default max.
->>> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
->>> index bd100ac31672..bd95be1f3d5c 100644
->>> --- a/drivers/cxl/pci.c
->>> +++ b/drivers/cxl/pci.c
->>> @@ -933,7 +933,7 @@ static int cxl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->>>  	cxlds->rcd = is_cxl_restricted(pdev);
->>>  	cxlds->serial = pci_get_dsn(pdev);
->>>  	cxlds->cxl_dvsec = pci_find_dvsec_capability(
->>> -		pdev, PCI_VENDOR_ID_CXL, CXL_DVSEC_PCIE_DEVICE);
->>> +		pdev, PCI_VENDOR_ID_CXL, PCI_DVSEC_CXL_DEVICE);
->>>  	if (!cxlds->cxl_dvsec)
->>>  		dev_warn(&pdev->dev,
->>>  			 "Device DVSEC not present, skip CXL.mem init\n");
->>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->>> index 9e42090fb108..d775ed37a79b 100644
->>> --- a/drivers/pci/pci.c
->>> +++ b/drivers/pci/pci.c
->>> @@ -5031,7 +5031,7 @@ static int pci_dev_reset_slot_function(struct pci_dev *dev, bool probe)
->>>  static u16 cxl_port_dvsec(struct pci_dev *dev)
->>>  {
->>>  	return pci_find_dvsec_capability(dev, PCI_VENDOR_ID_CXL,
->>> -					 PCI_DVSEC_CXL_PORT);
->>> +					 PCI_DVSEC_CXL_PORT_EXT);
->>>  }
->>>  
->>>  static bool cxl_sbr_masked(struct pci_dev *dev)
->>> @@ -5043,7 +5043,9 @@ static bool cxl_sbr_masked(struct pci_dev *dev)
->>>  	if (!dvsec)
->>>  		return false;
->>>  
->>> -	rc = pci_read_config_word(dev, dvsec + PCI_DVSEC_CXL_PORT_CTL, &reg);
->>> +	rc = pci_read_config_word(dev,
->>> +				  dvsec + PCI_DVSEC_CXL_PORT_EXT_CTL_OFFSET,
->>> +				  &reg);
->>>  	if (rc || PCI_POSSIBLE_ERROR(reg))
->>>  		return false;
->>>  
->>> @@ -5052,7 +5054,7 @@ static bool cxl_sbr_masked(struct pci_dev *dev)
->>>  	 * bit in Bridge Control has no effect.  When 1, the Port generates
->>>  	 * hot reset when the SBR bit is set to 1.
->>>  	 */
->>> -	if (reg & PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR)
->>> +	if (reg & PCI_DVSEC_CXL_PORT_EXT_CTL_UNMASK_SBR)
->>>  		return false;
->>>  
->>>  	return true;
->>> @@ -5097,22 +5099,22 @@ static int cxl_reset_bus_function(struct pci_dev *dev, bool probe)
->>>  	if (probe)
->>>  		return 0;
->>>  
->>> -	rc = pci_read_config_word(bridge, dvsec + PCI_DVSEC_CXL_PORT_CTL, &reg);
->>> +	rc = pci_read_config_word(bridge, dvsec + PCI_DVSEC_CXL_PORT_EXT_CTL_OFFSET, &reg);
->>>  	if (rc)
->>>  		return -ENOTTY;
->>>  
->>> -	if (reg & PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR) {
->>> +	if (reg & PCI_DVSEC_CXL_PORT_EXT_CTL_UNMASK_SBR) {
->>>  		val = reg;
->>>  	} else {
->>> -		val = reg | PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR;
->>> -		pci_write_config_word(bridge, dvsec + PCI_DVSEC_CXL_PORT_CTL,
->>> +		val = reg | PCI_DVSEC_CXL_PORT_EXT_CTL_UNMASK_SBR;
->>> +		pci_write_config_word(bridge, dvsec + PCI_DVSEC_CXL_PORT_EXT_CTL_OFFSET,
->>>  				      val);
->>>  	}
->>>  
->>>  	rc = pci_reset_bus_function(dev, probe);
->>>  
->>>  	if (reg != val)
->>> -		pci_write_config_word(bridge, dvsec + PCI_DVSEC_CXL_PORT_CTL,
->>> +		pci_write_config_word(bridge, dvsec + PCI_DVSEC_CXL_PORT_EXT_CTL_OFFSET,
->>>  				      reg);
->>>  
->>>  	return rc;
->>> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
->>> index a3a3e942dedf..b03244d55aea 100644
->>> --- a/include/uapi/linux/pci_regs.h
->>> +++ b/include/uapi/linux/pci_regs.h
->>> @@ -1225,9 +1225,61 @@
->>>  /* Deprecated old name, replaced with PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE */
->>>  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL		PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE
->>>  
->>> -/* Compute Express Link (CXL r3.1, sec 8.1.5) */
->>> -#define PCI_DVSEC_CXL_PORT				3
->>> -#define PCI_DVSEC_CXL_PORT_CTL				0x0c
->>> -#define PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR		0x00000001
->>> +/* Compute Express Link (CXL r3.2, sec 8.1)
->>> + *
->>> + * Note that CXL DVSEC id 3 and 7 to be ignored when the CXL link state
->>> + * is "disconnected" (CXL r3.2, sec 9.12.3). Re-enumerate these
->>> + * registers on downstream link-up events.
->>> + */
->>> +
->>> +#define PCI_DVSEC_HEADER1_LENGTH_MASK  GENMASK(31, 20)
->>> +
->>> +/* CXL 3.2 8.1.3: PCIe DVSEC for CXL Device */
->>> +#define PCI_DVSEC_CXL_DEVICE					0
->>> +#define	  PCI_DVSEC_CXL_CAP_OFFSET	       0xA
->>> +#define	    PCI_DVSEC_CXL_MEM_CAPABLE	       BIT(2)
->>> +#define	    PCI_DVSEC_CXL_HDM_COUNT_MASK       GENMASK(5, 4)
->>> +#define	  PCI_DVSEC_CXL_CTRL_OFFSET	       0xC
->>> +#define	    PCI_DVSEC_CXL_MEM_ENABLE	       BIT(2)
->>> +#define	  PCI_DVSEC_CXL_RANGE_SIZE_HIGH(i)     (0x18 + (i * 0x10))
->>> +#define	  PCI_DVSEC_CXL_RANGE_SIZE_LOW(i)      (0x1C + (i * 0x10))
->>> +#define	    PCI_DVSEC_CXL_MEM_INFO_VALID       BIT(0)
->>> +#define	    PCI_DVSEC_CXL_MEM_ACTIVE	       BIT(1)
->>> +#define	    PCI_DVSEC_CXL_MEM_SIZE_LOW_MASK    GENMASK(31, 28)
->>> +#define	  PCI_DVSEC_CXL_RANGE_BASE_HIGH(i)     (0x20 + (i * 0x10))
->>> +#define	  PCI_DVSEC_CXL_RANGE_BASE_LOW(i)      (0x24 + (i * 0x10))
->>> +#define	    PCI_DVSEC_CXL_MEM_BASE_LOW_MASK    GENMASK(31, 28)
->>> +
->>> +#define PCI_DVSEC_CXL_RANGE_MAX		       2
->>> +
->>> +/* CXL 3.2 8.1.4: Non-CXL Function Map DVSEC */
->>> +#define PCI_DVSEC_CXL_FUNCTION_MAP				2
->>> +
->>> +/* CXL 3.2 8.1.5: Extensions DVSEC for Ports */
->>> +#define PCI_DVSEC_CXL_PORT_EXT					3
->>> +#define	  PCI_DVSEC_CXL_PORT_EXT_CTL_OFFSET			0x0c
->>> +#define	    PCI_DVSEC_CXL_PORT_EXT_CTL_UNMASK_SBR		0x00000001
->>> +
->>> +/* CXL 3.2 8.1.6: GPF DVSEC for CXL Port */
->>> +#define PCI_DVSEC_CXL_PORT_GPF					4
->>> +#define	  PCI_DVSEC_CXL_PORT_GPF_PHASE_1_CONTROL_OFFSET		0x0C
->>> +#define	    PCI_DVSEC_CXL_PORT_GPF_PHASE_1_TMO_BASE_MASK	GENMASK(3, 0)
->>> +#define	    PCI_DVSEC_CXL_PORT_GPF_PHASE_1_TMO_SCALE_MASK	GENMASK(11, 8)
->>> +#define	  PCI_DVSEC_CXL_PORT_GPF_PHASE_2_CONTROL_OFFSET		0xE
->>> +#define	    PCI_DVSEC_CXL_PORT_GPF_PHASE_2_TMO_BASE_MASK	GENMASK(3, 0)
->>> +#define	    PCI_DVSEC_CXL_PORT_GPF_PHASE_2_TMO_SCALE_MASK	GENMASK(11, 8)
->>> +
->>> +/* CXL 3.2 8.1.7: GPF DVSEC for CXL Device */
->>> +#define PCI_DVSEC_CXL_DEVICE_GPF				5
->>> +
->>> +/* CXL 3.2 8.1.8: PCIe DVSEC for Flex Bus Port */
->>> +#define PCI_DVSEC_CXL_FLEXBUS_PORT				7
->>> +
->>> +/* CXL 3.2 8.1.9: Register Locator DVSEC */
->>> +#define PCI_DVSEC_CXL_REG_LOCATOR				8
->>> +#define	  PCI_DVSEC_CXL_REG_LOCATOR_BLOCK1_OFFSET		0xC
->>> +#define	    PCI_DVSEC_CXL_REG_LOCATOR_BIR_MASK			GENMASK(2, 0)
->>> +#define		   PCI_DVSEC_CXL_REG_LOCATOR_BLOCK_ID_MASK	GENMASK(15, 8)
->>> +#define	    PCI_DVSEC_CXL_REG_LOCATOR_BLOCK_OFF_LOW_MASK	GENMASK(31, 16)
->>>  
->>>  #endif /* LINUX_PCI_REGS_H */
-> 
+   CPU0                       CPU1
+                                
+   timer_expires()
+      callback()              ????
+        dl_task_timer()       rq_lock()
+          rq_lock()             hrtimer_start()
+                              rq_unlock()
+           hrtimer_forward()
 
+No idea whether that's possible, but that's the only sensible
+explanation.
+
+>  dl_task_timer+0xa42/0x12d0 kernel/sched/deadline.c:1234
+>  __run_hrtimer kernel/time/hrtimer.c:1761 [inline]
+>  __hrtimer_run_queues+0x503/0xd40 kernel/time/hrtimer.c:1825
+>  hrtimer_interrupt+0x45d/0xa90 kernel/time/hrtimer.c:1887
+>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1039 [inline]
+>  __sysvec_apic_timer_interrupt+0x10b/0x410 arch/x86/kernel/apic/apic.c:1056
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
+>  sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1050
+>  </IRQ>
+>  <TASK>
+>  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
 
