@@ -1,154 +1,120 @@
-Return-Path: <linux-kernel+bounces-809711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BCE4B51102
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:20:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60BF2B51107
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A891B267A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:20:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3461B61DFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171C030EF85;
-	Wed, 10 Sep 2025 08:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8791B30FC36;
+	Wed, 10 Sep 2025 08:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5dMNMS1"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mNNqA8px";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UOasHq1u"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67043090F7
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F5C30F943;
+	Wed, 10 Sep 2025 08:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757492424; cv=none; b=Y9qKc9AQgmK1nA2vIFMx6MUDmpWHIuWZbaffc+O88Q/J420ub1BeMb21SZKEmP95oUjGP2/SxT4rjUqnmREUo4iwEn3lyPOogYv08yC51xxmSu4y950kHh2XvgQm/tUfCAdeLZeE+FFyVQoVA4A9UAJG/UUGcQIUNE8UvY0mjjc=
+	t=1757492431; cv=none; b=h6jaDzo8mYj90erAtclnX/ZLVAfohHCfer4hTCAbgCwhbG1DopOxJJdFIeyLAd3jSQ1r8iJ48eJd+h5Wrr4SUucN8xeLFDtITvk99vCaDnEG0xS7xsMue83mkh5ZtCzoTVLEpIvWyqx8beUO/HEn3f6vCkdRbLm3oarOLdTk0v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757492424; c=relaxed/simple;
-	bh=PAz3im+y19NDT+YMJxSBDJens7K9RovOUhC6XNb8bys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=chvJGN37hxMvtH/4gaNRmVAXVWB/A6rYvvY3ZtFQsOQk7K5gEuLTBHugZhiXsVQS/1LfUT9t7lFNGXJCPPNBnkZvuw7XY+6uUd8Gy8YGpRFQdtvUznL4FnnrBezPHEh7gS4sxc7KEdrZsSuMiU3O3f9JJu13Vn5dRviw6PiuA1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5dMNMS1; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b00f6705945so78291066b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757492421; x=1758097221; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/L/ZiHIMyXmxKkiSLCWK4pWAdvwcf6C/7sfjkt+r2Zs=;
-        b=E5dMNMS1V1mwGjFvwsOC7Q8EV2jIm4VGtmzMbgcvbUemkURSwAeqRTwVt67gc0P/yr
-         PCpDNgjzQVSs8/RC+aK1EW5mqFLIoxlxbYQdbK7CRihE9A950SQBxA2CP3r7q1L5CcBA
-         sVLX1gb7jUV8IPjP4UA/OxuLuCLHKLk04K5wYR29AeW+MThz+obX3mhO2bInHhCUMBRl
-         JkA4fkMTgaIm3Jwt1tdqv91epv+TcYjH37Ig9eDhUo15P6XW2MR3zdAo3j2gsoCqeuDW
-         cZRq5wn1TLtvl4vCSRI2eiXrw9tkhGs6Z79jc0e8DqNTQp2QNBgqI3F4ymSLM+xn+AAX
-         E+gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757492421; x=1758097221;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/L/ZiHIMyXmxKkiSLCWK4pWAdvwcf6C/7sfjkt+r2Zs=;
-        b=AZUYQVKg9KGW1fAaa9kW7zn3SrxmGgs4VURrfpPCdTgF3u9bWbk0PRFoqfS6WRDFse
-         UkbfBl4CeWYWNCae1/XtVD18LLU7fWTuxXqLsx3fQbSfnIsyfsSfwv0qUtuQNbjF/JIc
-         u89h7Y4sqciUxTw89XYsM39KyhuBZBoHTDuUb+H9HcCuQErB3s6fhtEF22wI3t/RzU4Y
-         9CfCoavGSWTWTCsBGotofa83jzWeo00bnYc8Y5eDPWiwogICk5Y0bavPh9BlX0IKt/AE
-         TiG60vefIxl0gqJ3zusm8fk3V870Th5hy8OTKybPVcIUPwvcJ6OcmAJ+gRdDF+jWXxsk
-         /+kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/x6smSgOguFotfnxbSPzwyRlFysNBa5pJQZ8kvAshDBpfS3sYgN1Agh6owkFU8nYM9QCf5d3K8+h8BWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPwxAgw/T9nu3YfuuAGxr8kJRnFwjeHfbBBnnPToJdZlHOuYky
-	k6aEVzrCyML2Y5do0Lmy/dnNGnqf4rtXjO9uE7iH9W/y1CvuIlI4dJVq
-X-Gm-Gg: ASbGncuSq9QrP2LvNtO9OyY6lVzEYYbk+L4u4gsBFRV6pdFYTzBkBuvwNTSWTtRpGr4
-	eUoO9WUKoYKEuP30WmOSG/XwTSdKovP5tA+SEXt4m+vnx99179CFRypK+cA02iHCaBfYb7z9IDC
-	JnCeNq8faqWEkHOwPR4OF0SWa+fJDv6ntxIkrfHCYZdTUSdwRV+h0G1l5M4mQWp6J3GBTndiEaF
-	pkGBwxtVJVJZflx78UHIJOe7OlTsRgcdgIUQCSOPuaZxLTg8R6f/cVB8J7M7Yj/jZGdrZjDQcHB
-	D3ffuFMwZFIEiHZDyH35xR3ZnCbu0dSmAFVxs4A14OFQgU9+dIyEzFAWPFVDal9zvyNUMYQNIo2
-	96jGlKR1wtnmicnFIw7c5/4nc2A==
-X-Google-Smtp-Source: AGHT+IEZ6Y8m9czCHfXyGir/VeA90+bvrcMtK66llF0DDBp7AdUVUAE+7FZ2p8xLZJOlSOvaso7zZw==
-X-Received: by 2002:a17:907:9718:b0:afe:b131:1820 with SMTP id a640c23a62f3a-b04b155985emr758644266b.6.1757492420788;
-        Wed, 10 Sep 2025 01:20:20 -0700 (PDT)
-Received: from skbuf ([2a02:2f04:d005:3b00:6669:35e7:fc93:9b1c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07833ffa91sm122826066b.91.2025.09.10.01.20.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 01:20:20 -0700 (PDT)
-Date: Wed, 10 Sep 2025 11:20:17 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>, Simon Horman <horms@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH v16 10/10] net: dsa: tag_mtk: add comments about
- Airoha usage of this TAG
-Message-ID: <20250910082017.hjlq3664xvg5qjub@skbuf>
-References: <20250909004343.18790-1-ansuelsmth@gmail.com>
- <20250909004343.18790-1-ansuelsmth@gmail.com>
- <20250909004343.18790-11-ansuelsmth@gmail.com>
- <20250909004343.18790-11-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1757492431; c=relaxed/simple;
+	bh=1uPEjYWxkLIek3T+4iAvG+2at77ecF4QIzsgSji0HkY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=n082HXAmoCfwtEO9k0iyQEvnf+8TZC6A6n634VBi2R4Aqlb1XHLVxby1r1vkNLRKeb6eXC5KhHY/qO+NYMXobKo/vO4cGTo3ZzYWHGlE5Iw7c3xAS8uxs2zdOXc5ihc4asyo1YGFLaRfwu1TRlNcd9VW6RiDypU76Wc1r1DHUWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mNNqA8px; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UOasHq1u; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757492427;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+CP7a9wws54uQZjmYM4sfmOi5aU+3bjgiGZVeJJmASM=;
+	b=mNNqA8pxV739WOsKJHgEtTJOMzX94iX97K4Ca48VKToBLBDsOAuPRpnAviQ4cvMU6C0Bk7
+	A5mfIda9JkS3gxSPqX4A+hpyJFgpGHWTOOfmtQ1HAe/wSFGkeSscPc9fAM+Jfxb59IH/1I
+	0k0n5GyOhU6D34bkPuFoMEaCL7l9A95WcVb0RR++NMWymRaP241u2PPYxunvC6aJm4vHUH
+	43q626KUuKnVAHYivEM6NNaQuk/ZUwrMjLOg4MQTbqZIE8CpvaFQ6G6f6wB1RBE188f9vN
+	aeFANjWsi6tymtcat1kCVAgA1TyopPhL3jM96rdJctbl2DdhndatVkQKFYxAMg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757492427;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+CP7a9wws54uQZjmYM4sfmOi5aU+3bjgiGZVeJJmASM=;
+	b=UOasHq1uYa5lt0uQ97FDdS3UHchNqSx7ZJpnsh0V4afb/TZLgNqSAON8pWEePxp1gYSODg
+	Qy/0se5U0TRUFnCw==
+To: Daniel Wagner <dwagner@suse.de>, Hannes Reinecke <hare@suse.de>
+Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, Keith
+ Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg
+ <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>, Aaron Tomlin
+ <atomlin@atomlin.com>, "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Costa Shulyupin <costa.shul@redhat.com>, Juri Lelli
+ <juri.lelli@redhat.com>, Valentin Schneider <vschneid@redhat.com>, Waiman
+ Long <llong@redhat.com>, Ming Lei <ming.lei@redhat.com>, Frederic
+ Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+ megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+ storagedev@microchip.com, virtualization@lists.linux.dev,
+ GR-QLogic-Storage-Upstream@marvell.com
+Subject: Re: [PATCH v8 10/12] blk-mq: use hk cpus only when
+ isolcpus=io_queue is enabled
+In-Reply-To: <d11a0c60-1b75-49ec-a2f8-7df402c4adf2@flourine.local>
+References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
+ <20250905-isolcpus-io-queues-v8-10-885984c5daca@kernel.org>
+ <ff66801c-f261-411d-bbbf-b386e013d096@suse.de>
+ <d11a0c60-1b75-49ec-a2f8-7df402c4adf2@flourine.local>
+Date: Wed, 10 Sep 2025 10:20:26 +0200
+Message-ID: <87ms72u3at.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909004343.18790-11-ansuelsmth@gmail.com>
- <20250909004343.18790-11-ansuelsmth@gmail.com>
+Content-Type: text/plain
 
-On Tue, Sep 09, 2025 at 02:43:41AM +0200, Christian Marangi wrote:
-> Add comments about difference between Airoha AN8855 and Mediatek tag
-> bitmap.
-> 
-> Airoha AN88555 doesn't support controlling SA learning and Leaky VLAN
+On Mon, Sep 08 2025 at 09:26, Daniel Wagner wrote:
+> On Mon, Sep 08, 2025 at 08:13:31AM +0200, Hannes Reinecke wrote:
+>> >   const struct cpumask *blk_mq_online_queue_affinity(void)
+>> >   {
+>> > +	if (housekeeping_enabled(HK_TYPE_IO_QUEUE)) {
+>> > +		cpumask_and(&blk_hk_online_mask, cpu_online_mask,
+>> > +			    housekeeping_cpumask(HK_TYPE_IO_QUEUE));
+>> > +		return &blk_hk_online_mask;
+>> 
+>> Can you explain the use of 'blk_hk_online_mask'?
+>> Why is a static variable?
+>
+> The blk_mq_*_queue_affinity helpers return a const struct cpumask *, the
+> caller doesn't need to free the return value. Because cpumask_and needs
+> store its result somewhere, I opted for the global static variable.
+>
+>> To my untrained eye it's being recalculated every time one calls
+>> this function. And only the first invocation run on an empty mask,
+>> all subsequent ones see a populated mask.
+>
+> The cpu_online_mask might change over time, it's not a static bitmap.
+> Thus it's necessary to update the blk_hk_online_mask. Doing some sort of
+> caching is certainly possible. Given that we have plenty of cpumask
+> logic operation in the cpu_group_evenly code path later, I am not so
+> sure this really makes a huge difference.
 
-Is there an extra 5 in AN88555?
+Sure,  but none of this is serialized against CPU hotplug operations. So
+the resulting mask, which is handed into the spreading code can be
+concurrently modified. IOW it's not as const as the code claims.
 
-> from tag. Although these bits are not used (and even not defined for
-> Leaky VLAN), it's worth to add comments for these difference to prevent
-> any kind of regression in the future if ever these bits will be used.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  net/dsa/tag_mtk.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/net/dsa/tag_mtk.c b/net/dsa/tag_mtk.c
-> index b670e3c53e91..ac3f956abe39 100644
-> --- a/net/dsa/tag_mtk.c
-> +++ b/net/dsa/tag_mtk.c
-> @@ -18,6 +18,9 @@
->  #define MTK_HDR_XMIT_TAGGED_TPID_88A8	2
->  #define MTK_HDR_RECV_SOURCE_PORT_MASK	GENMASK(2, 0)
->  #define MTK_HDR_XMIT_DP_BIT_MASK	GENMASK(5, 0)
-> +/* AN8855 doesn't support SA_DIS and Leaky VLAN
-> + * control in tag as these bits doesn't exist.
-> + */
+How is this even remotely correct?
 
-I think it would be good to present the AN8855 tag using a different
-string, so that libpcap knows it shouldn't decode these bits. The code
-can be reused for now.
+Thanks,
 
->  #define MTK_HDR_XMIT_SA_DIS		BIT(6)
->  
->  static struct sk_buff *mtk_tag_xmit(struct sk_buff *skb,
-> -- 
-> 2.51.0
-> 
-
+        tglx
 
