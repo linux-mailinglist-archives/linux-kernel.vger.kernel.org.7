@@ -1,164 +1,124 @@
-Return-Path: <linux-kernel+bounces-810824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC04B52033
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:23:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B87B5203C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C838487BE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C15BB563741
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C615271A7C;
-	Wed, 10 Sep 2025 18:23:15 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07502765EA;
+	Wed, 10 Sep 2025 18:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jpj7MTdv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60ACD22D9E9
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 18:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5690D329F38;
+	Wed, 10 Sep 2025 18:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757528595; cv=none; b=WRGS9QX3e+hjdTx1ddtclayDjOSjs6/81ZYfcoTHXIpRaf3NzF/QBqbAb7TVYCTkdwn/h8eQBpdCduvHruzJEvS4F4k+sB79bY3r2SmLhphfsThtM51Nj+GFJedYdb10+ncfm8mgomqj4WpWCpd8eI2ieZeNUJsHa5iTQQ1ZU1g=
+	t=1757528790; cv=none; b=n6x4ZvyW0ahC9HRgKPFHPmDhE+he5vTdavOzI/M60D0+y5h8O7WL9iLRXBbaUD8lH2LvBEddwwLgi/Qqqg6yuAFrig0pUwBI9u88FMiFwYCL0tAQOw7Hovmo2z72H2OSip3LQ/0nmI9tKpiW4my7H0Tpt7fciVX9gr9i3GyCpic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757528595; c=relaxed/simple;
-	bh=RbZB2QdvXdQC93hIZTWCMHxfBgllHO53876Due/cfHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSgt6MBGMfh/qq5FzXOkuR/K0S58eYUd9PRS4ymmR84pNBDwJh9HykF533klS5XOOWv+IxBqg6gTnfW8YT9Qy5XaFzqgnJkqUbULtEcGgSILLHpz48nC8FWgKLtUWIdgXSulBpQN2a386WnlddQnPWQsVlfMis8kCodu2EEKIr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b0418f6fc27so1193143666b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:23:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757528592; x=1758133392;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hmFXFgSBxNTUpOGRx+AfdRKGmjlssb6jAEn00Lu8FBY=;
-        b=iHQLpSBKSEDK09a48UBA6te6pXFID8YA/O7fSkOm6ZYZYSQwr6f9/AELgSfCaZClWp
-         vZxA/nRi3aSpfPU9p3Ls2TxLvgOaXarMJp39bnJysgIUxDLic27R5IcqT/NDiEhCpub9
-         OmLLri1d4s6EMkUhlH3GtDVmls9PdNnr+OdpfwQySq5WQP07lYTRJcPtRm2uO0J4uPaK
-         8Rduq9wANLfCcoz+C17pX1qUave+EzrZ8gCSxntr2Q3xZUCtZJXf1fBYkxFDzkiTGKHU
-         NHE3ylMWK5X7OcAqm/bX6LYkHOiVdzIxd8x3MRSuQx1K1KD9nLuoXCSDeA77sgIW/n8n
-         3ceg==
-X-Forwarded-Encrypted: i=1; AJvYcCVP1NRjYplMlRKUl4w1/jAdmgUgKBsH/74mrI7G3UFOqdlGhyTGoS11j6ITkzxaZPi2pFOW91Nus/6pag8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqtcU3f4wRGoPdUlat7CLFzzbf8uWlZtHCuAVxRHGAw02JlCMS
-	QIK+sW2HVdpr7Y/fxL7RCGug4M6OrmlMKRoLLI4nLSoMuRJQaaoqg8Uj
-X-Gm-Gg: ASbGncsHtQOHFUvWG8rICISYx182irqvrY0GRFN6TukVWvWmhcw6Zmr7/tgVexgTfvd
-	k5iMq0mZczaxplJQ7PBecULbG88eDN5NJsyCJSpnsx5D4qycmjA0EqYjbnh9O1Meg+seKWqRGNa
-	YnUNAK3CZ141h1oB9iW2XiY+9xNJspIUmEsT41anArrineRsKDtWtPMqpgCuL0h4txNknpmlVWs
-	5sTxecAYc7GUSOQ7D0I+SjAKo/nhUmi5+auUYVWhJRVjtF+Xdl/q2i31+obR8bMW7z4hlJUttXn
-	k+pPHekqZM6ddJPuBOoiavRW7gWNSmDhl7m0zuo/GM1/OyhbTj6dPbRBu+0GIVXINjTlJ6SFUHm
-	8XYm8zWe+1+zk
-X-Google-Smtp-Source: AGHT+IHbHsFjicTmkBhhDK0SwLgSuiGScEUPM0kKkIXxZFZUbT4mc+5rRFWNh8O7jTHDdbNFXbzBJQ==
-X-Received: by 2002:a17:907:1c26:b0:b07:892d:6769 with SMTP id a640c23a62f3a-b07892d67d9mr319644166b.2.1757528591432;
-        Wed, 10 Sep 2025 11:23:11 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:8::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07830aa7cesm205651866b.30.2025.09.10.11.23.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 11:23:10 -0700 (PDT)
-Date: Wed, 10 Sep 2025 11:23:08 -0700
-From: Breno Leitao <leitao@debian.org>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Mike Galbraith <efault@gmx.de>, Simon Horman <horms@kernel.org>, 
-	kuba@kernel.org, calvin@wbinvd.org, Pavel Begunkov <asml.silence@gmail.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, paulmck@kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	netdev@vger.kernel.org, boqun.feng@gmail.com, Petr Mladek <pmladek@suse.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-Message-ID: <cbvfyefqdyy6py2fswqp3licm3ynrsmc3jclgnbubp72elmai7@kwvks5yhkybc>
-References: <4c4ed7b836828d966bc5bf6ef4d800389ba65e77.camel@gmx.de>
- <otlru5nr3g2npwplvwf4vcpozgx3kbpfstl7aav6rqz2zltvcf@famr4hqkwhuv>
- <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
- <7a2b44c9e95673829f6660cc74caf0f1c2c0cffe.camel@gmx.de>
- <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
- <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
- <tgp5ddd2xdcvmkrhsyf2r6iav5a6ksvxk66xdw6ghur5g5ggee@cuz2o53younx>
- <84a539f4kf.fsf@jogness.linutronix.de>
- <trqtt6vhf6gp7euwljvbbmvf76m4nrgcoi3wu3hb5higzsfyaa@udmgv5lwahn4>
- <847by65wfj.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1757528790; c=relaxed/simple;
+	bh=8zSU8u1AH6DF6zdffsNtTjsbQliu7LsDi1PKEDclH5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PaPlQm4rAAq1WlS85GDYiLjBnSP0udcSWQ72sI53inxOXMtqAhgyWYuD4ld9KNK31Sk+vc85Q6Dk1pS48KJSBS9CF9PR3h0UyktMCI4mM/bUiEPTT1ThoWZuYqvf/Cfh/1SHrWbNjxJqPkAF0/jf5WOATCf+ju0jdiFoGGmEdbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jpj7MTdv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57980C4CEEB;
+	Wed, 10 Sep 2025 18:26:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757528789;
+	bh=8zSU8u1AH6DF6zdffsNtTjsbQliu7LsDi1PKEDclH5Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Jpj7MTdv5Oqaqig2NCNo6RAZMwqMtLhmQ+QuMjuqF7xqsBOgETgqt26lx/tyuek4M
+	 ILPvuZ3MWkEPlWzh9za/Y5cYoXd4IOEcyzrwh/+4vm2rYEER+V1+2MgAfDTjY/MYN3
+	 6c1guk/Y9s9a+Rn8LVBFfuIKCox22YpJDmVwHmn314y7V6OBADRXaV3SXSgfeZbMVM
+	 a1SJ7DPYOm/K1wWodHIsjsUCjrLK3monpII7Hf3umITvfJeAsZi+P8dgYLW6n+nJ+4
+	 SyzZRUteNz4V5Ggao0RokAtKdbEozIdAnInE72bUyUjFE8lV1/K2FM99td/F/ap1yv
+	 TXJfcpa8Bf0Og==
+Message-ID: <24abb0c2-553c-49a5-8daf-60d3726557df@kernel.org>
+Date: Wed, 10 Sep 2025 13:26:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <847by65wfj.fsf@jogness.linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] PM: hibernate: Restrict GFP mask in
+ hibernation_snapshot()
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Todd Brandt <todd.e.brandt@linux.intel.com>,
+ Linus Torvalds <torvalds@linuxfoundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Samuel Zhang <guoqing.zhang@amd.com>
+References: <5924662.DvuYhMxLoT@rafael.j.wysocki>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <5924662.DvuYhMxLoT@rafael.j.wysocki>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10, 2025 at 02:28:40PM +0206, John Ogness wrote:
-> On 2025-09-09, Breno Leitao <leitao@debian.org> wrote:
-> >   b) Send the message anyway (and hope for the best)
-> >     Cons: Netpoll will continue to call IRQ unsafe locks from IRQ safe
-> >           context (lockdep will continue to be unhappy)
-> >     Pro: This is how it works today already, so, it is not making the problem worse.
-> >          In fact, it is narrowing the problem to only .write_atomic().
+On 9/10/25 4:41 AM, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Two concerns here:
+> Commit 12ffc3b1513e ("PM: Restrict swap use to later in the suspend
+> sequence") incorrectly removed a pm_restrict_gfp_mask() call from
+> hibernation_snapshot(), so memory allocations involving swap are not
+> prevented from being carried out in this code path any more which may
+> lead to serious breakage.
 > 
-> 1. ->write_atomic() is also used during normal operation
+> The symptoms of such breakage have become visible after adding a
+> shrink_shmem_memory() call to hibernation_snapshot() in commit
+> 2640e819474f ("PM: hibernate: shrink shmem pages after dev_pm_ops.prepare()")
+> which caused this problem to be much more likely to manifest itself.
 > 
-> 2. It is expected that ->write_atomic() callbacks are implemented
->    safely. The other nbcon citizens are doing this. Having an nbcon
->    driver with an unsafe ->write_atomic() puts all nbcon drivers at risk
->    of not functioning during panic.
+> However, since commit 2640e819474f was initially present in the DRM
+> tree that did not include commit 12ffc3b1513e, the symptoms of this
+> issue were not visible until merge commit 260f6f4fda93 ("Merge tag
+> 'drm-next-2025-07-30' of https://gitlab.freedesktop.org/drm/kernel")
+> that exposed it through an entirely reasonable merge conflict
+> resolution.
 > 
-> This could be combined with (a) so that ->write_atomic() implements its
-> own deferred queue of messages to print and only when
-> @legacy_allow_panic_sync is true, will it try to send immediately and
-> hope for the best. @legacy_allow_panic_sync is set after all nbcon
-> drivers have had a chance to flush their buffers safely and then the
-> kernel starts to allow less safe drivers to flush.
+> Fixes: 12ffc3b1513e ("PM: Restrict swap use to later in the suspend sequence")
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220555
+> Reported-by: Todd Brandt <todd.e.brandt@linux.intel.com>
+> Tested-by: Todd Brandt <todd.e.brandt@linux.intel.com>
+> Cc: 6.16+ <stable@vger.kernel.org> # 6.16+
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
 > 
-> Although I would prefer the NBCON_ATOMIC_UNSAFE approach instead.
+> This is super-urgent, so I'm going to fast-track it.
 
-Agree. That seems a more straight forward solution for drivers, and it
-is clearly a solution that would help netconsole case.
+Thanks.  Looking at the codepaths again it makes sense.
+It's a bit surprising to me this showed up, we had done stress testing 
+before submitting.  Nonetheless, thank you for the fix.
 
-> >   c) Not implementing .write_atomic
-> >     Cons: we lose the most important messages of the boot.
-> >
-> >   Any other option I am not seeing?
+Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+
 > 
-> d) Not implementing ->write_atomic() and instead implement a kmsg_dumper
->    for netconsole. This registers a callback that is called during
->    panic.
+> ---
+>   kernel/power/hibernate.c |    1 +
+>   1 file changed, 1 insertion(+)
 > 
->    Con: The kmsg_dumper interface has nothing to do with consoles, so it
->         would require some effort coordinating with the console drivers.
-
-I am looking at kmsg_dumper interface, and it doesn't have the buffers
-that need to be dumper.
-
-So, if I understand corect, my kmsg_dumper callback needs to handle loop
-into the messages buffer and print the remaining messages, right?
-
-In other words, do I need to track what messages were sent in
-netconsole, and then iterate in the kmsgs buffer 
-to find messages that hasn't been sent, and send from there?
-
->    Pro: There is absolute freedom for the dumper to implement its own
->         panic-only solution to get messages out.
-
-What about calls to .write_atomic() calls that are not called during
-panic? Will those be lost in this approach?
-
-> e) Involve support from the underlying network drivers to implement true
->    atomic sending. Thomas Gleixner talked [0] very briefly about how
->    this could be implemented for netconsole during the 2022
->    proof-of-concept presentation of the nbcon API.
+> --- a/kernel/power/hibernate.c
+> +++ b/kernel/power/hibernate.c
+> @@ -449,6 +449,7 @@ int hibernation_snapshot(int platform_mo
+>   	shrink_shmem_memory();
+>   
+>   	console_suspend_all();
+> +	pm_restrict_gfp_mask();
+>   
+>   	error = dpm_suspend(PMSG_FREEZE);
+>   
 > 
->    Cons: It most likely requires new API callbacks for the network
->          drivers to implement hardware-specific solutions. Many (most?)
->          drivers would not be able to support it.
 > 
->    Pro: True reliable atomic printing via network.
+> 
 
-That would make more sense, but, it seems deciding about it is above my
-pay grade. :-)
-
-Thanks for helping us with this issue,
---breno
 
