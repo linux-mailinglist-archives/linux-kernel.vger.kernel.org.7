@@ -1,291 +1,335 @@
-Return-Path: <linux-kernel+bounces-810465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36A2B51AFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:10:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED35B51B16
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC720173324
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:05:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0328044463B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994C5253B66;
-	Wed, 10 Sep 2025 15:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F21242D90;
+	Wed, 10 Sep 2025 15:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="b/PLYmMZ"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2074.outbound.protection.outlook.com [40.107.244.74])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="opz+Ac1a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C7123DEB6;
-	Wed, 10 Sep 2025 15:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757516742; cv=fail; b=lPt9JSu+vznS4mN7X2ES7sPKo7rZaNchTZSLjIkLMgFOLnoHOw4JKOzSgGbdLs77tpj6OXU+QwLyktu5i7Ifxob0MEJ67NgbdHUXceRUG3wkB9XVIctAma7NnmztivWvoJjYv350aPuQoPPYZ9PgxMcYXzp6UkqWuSjSpr1ldo4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757516742; c=relaxed/simple;
-	bh=2gBgaflenxeYWIdb2wLMpIGUu1SI8GjuWcK0YmRr4KQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=qla2ITGlp4I51WHu2LxHXy4Fy//l2Pi23VqQJqAql5f5POZYzI97CPVS9vdb2QeWSlWPq7/1WsVqrqj2LhvrcLvnJg4YAYXY5sga3hh4MJmHn4gUIivA97wNiy++3IVMC5tVEB2vROQdpflQqmchQTRB1Q6AF4mEGQ8eswhyjxw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=b/PLYmMZ; arc=fail smtp.client-ip=40.107.244.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=leFlI/aJU8A3Ts+fXvxv1/Ur5vs8KgbABS0xMIkbwtXd1pPYnjiqAs3Va8ocH/sxyO8b9KoBnp2fOelDGoOO58PtSC8M4uLmrYQRAMcSEjQcOD1m2H7HfybKab0GVkeZOVWEXyo5GIy4EtgAoDxxS9n0wd6oYw4sD90JN13qiK9ZJGhxPSdHLypRbYtN2IOkNYMg7mR2zKsSa1Vq56IafJwKBLEHA53qmWA71YP3KxNWwHSzhgi2kKa9S88lCCAtYIlPyoVnc0hwe0J9SX/AgZtgLmpfenJcnT3pgk1S7UDgarUWN/JuYp97ctGuXjdeqeHFz9xK50BBmwI/sWo7UQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=72LoLQurnQTbpPBOp6zimiFxDL20pReRwFj+yCXaWVA=;
- b=xDT/VAvqbxY/w47U4xyW3nfrIiXvPzre8re9s52ZCJTJQF2nicVqK1shQzXXSgfj5qUlMuNcqW3B2h2MTp+GLrY0l1zuUPoGJa1YG4fgTnl/rYa+933fxSBoXtoZ2AGmLbpzry1pJQ8+MgVmnTjL3XoKfHjbAJj8qE/1UIgu779gP9ize6fctNuMqpW4rMrINDS50cKAzT2DjsnY6YkJ+siFbvHmVTY58ua4Hdit4NDXzGjVXJojlhZTid96Cg26tnJoePI8Lg3ejV5HyFtFkKFDycPN6wGXevOaZQOmI++q23IqLNRFFigKG3yDug+MlWGyz7NDy+3ul8O1dU2k+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=72LoLQurnQTbpPBOp6zimiFxDL20pReRwFj+yCXaWVA=;
- b=b/PLYmMZRfO0FOB3sw5DsD29J65w5KaF5J+DWfunFTCOcdTnLjoLCwcY8IkWsatYwk5zzltbfgEUj6roIq2D2GeEw9dTH3LTPJfFfU8r2PTtvupYGd5CjG5pjLBxRgo33aC60wBV7gBZoYMcEl5RC5aUNdRsKuwdaqd023uK0VE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CY5PR12MB6369.namprd12.prod.outlook.com (2603:10b6:930:21::10)
- by PH7PR12MB7113.namprd12.prod.outlook.com (2603:10b6:510:1ec::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Wed, 10 Sep
- 2025 15:05:37 +0000
-Received: from CY5PR12MB6369.namprd12.prod.outlook.com
- ([fe80::d4c1:1fcc:3bff:eea6]) by CY5PR12MB6369.namprd12.prod.outlook.com
- ([fe80::d4c1:1fcc:3bff:eea6%4]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
- 15:05:35 +0000
-Date: Wed, 10 Sep 2025 11:05:25 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-edac@vger.kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] EDAC/amd64: Remove NUM_CONTROLLERS macro
-Message-ID: <20250910150525.GE11602@yaz-khff2.amd.com>
-References: <20250909185748.1621098-1-avadhut.naik@amd.com>
- <20250909185748.1621098-3-avadhut.naik@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909185748.1621098-3-avadhut.naik@amd.com>
-X-ClientProxiedBy: MN2PR05CA0065.namprd05.prod.outlook.com
- (2603:10b6:208:236::34) To CY5PR12MB6369.namprd12.prod.outlook.com
- (2603:10b6:930:21::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F56B329F21;
+	Wed, 10 Sep 2025 15:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757516730; cv=none; b=bnr6dxMIYQon0OJqbYMFpVLv3lRzM55C+AwfnGN3pQJBkA5Skf09EXbHycqawhiW9SZtpq/ScqVHNDpGPolH8hvCh0edBU1edYrD8pvRL4IL4kU7PnL0fdCRHTprBZV0GAy/ZUhZ9eovLnSAbxwJDJqoMqbcSKpHiszqwJIPsU0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757516730; c=relaxed/simple;
+	bh=Jy9QNB52XR6hS3A2FDoP6tUYvbRB0ENiuehcstyLthQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y71qOYLYIVBLcEVPxtdxK510fAltYp/DsXjMOUu5KT/vkYVc9FqCPqYe6KCyjwMEIDdr59o7DFpyu3EMgBBoT6PNdZUABQuGuEC3/P8ci0lZ3XPhr/JXsTuKosdxwCwAf1DZQ0lga+FKhY0Y+hk29bkkuboKiqdr3HvlbjZ4KkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=opz+Ac1a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82964C4CEEB;
+	Wed, 10 Sep 2025 15:05:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757516728;
+	bh=Jy9QNB52XR6hS3A2FDoP6tUYvbRB0ENiuehcstyLthQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=opz+Ac1ab593W7VTuHtAQfinpRyxFM6oSX88PeCJVQ3GdPoUkl+HkN7phJ8lCwgOa
+	 WWzYwjriG6fLwKbIEHfHGkVbR3IkSPF4ps75HixAkwy8Z9xrebkWTLpDiqo9Akn9bN
+	 XOoCoEnoD3moygzmJa1/3w9JxAKi4OeMNcpocezFBTvxxdGUbpRnNEsPXiituwV/gg
+	 9960oKuIVvnrb0o2Swz+tIkhYJs7zbqEnaLTXtOzj5RkSARltEtD4nPQzziL5berJE
+	 499vjPrdqKVKEoW2W4YT64pshcHZ0GbPMYz78iKV41QPrcYLG702FdzaONiXfilU79
+	 oogll5GkGI+yw==
+Date: Wed, 10 Sep 2025 10:05:27 -0500
+From: Rob Herring <robh@kernel.org>
+To: Harrison Carter <hcarter@thegoodpenguin.co.uk>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: leds: as3645: Convert to DT schema
+Message-ID: <20250910150527.GA54174-robh@kernel.org>
+References: <20250909-ams-txt-to-dt-schema-v1-1-8a30c25c8295@thegoodpenguin.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6369:EE_|PH7PR12MB7113:EE_
-X-MS-Office365-Filtering-Correlation-Id: c50f7ee0-8c70-4789-3bec-08ddf07b7e58
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MG9mIoBh8+KW1mJaNYSk3IK9dRoIhsvYdGaltIFDlSUPkg5LZlCqukwJgbmo?=
- =?us-ascii?Q?VDSZaBs/WMC/de0xbqM0aDWhypjdLkmLqgmVgl7ntERmfM/O6tpfOU4aNpKQ?=
- =?us-ascii?Q?5XwDxx2SMkOvfFufWzGp3gM+8G+FNXhU8EXjVqxgjcYomT2MTqjwoo2JNWhx?=
- =?us-ascii?Q?kcYFaGZPpPlSBXeczcclzUXKTvXfeut+lyseIj5y2gOsuSS6BTQDz9j7FKLi?=
- =?us-ascii?Q?gdRD0UV4QpZ0ki/cG8slUJgbWOM+4f7rpfkD+EQ0kf1Jak5RerUZcpOEQG4n?=
- =?us-ascii?Q?QFZOzeFIQzGsPbK3TT8Kc/IDCJROK/M6OmJ2TEb7AAOfLY9b3c9sznJQUUmP?=
- =?us-ascii?Q?YqF0U5iQ8p2U/NgqPuPOunq5yb+ofzxymphKurfOnfzNUVo2+4kIbCLXM0no?=
- =?us-ascii?Q?suYSKzxiq/+/by2kfVDterAwHrdPwtZ8gUpl5MGKjAAdhC67DrD9wEbPcOvp?=
- =?us-ascii?Q?ljbv5i9KUAWNksVlH7BqLiNvR1OkMOKMroAoD21N5kR7H/saJvXM/5rHEnj0?=
- =?us-ascii?Q?PJL4Q/07GKKPwWAuNObb40n+ZT6DZHJ3FGAe4FYvN9Y8RAP7noLYO3dYtKI6?=
- =?us-ascii?Q?gABkuo5wdP/WEdi1XyKubwLywHivq+ymvZK05oVcAWuVGlMPH0fg6U9iX07i?=
- =?us-ascii?Q?QnBxvJGD+K0WqV0rsTWWcVVd0d/bEcZxH1m3yCcFc+50sR9/aq1J2//XaVXH?=
- =?us-ascii?Q?zJtwcYbX4ZgZkmeisyDjwVKeJsqqK9mYmgMVqC2QtNQOKTfTKoh+EY00v6a8?=
- =?us-ascii?Q?nyEnPuoAK/ep7nR3q7l5mbDQfcpKGGP9qbNZtHBtfoLv7NRV4umfrkAZFXzc?=
- =?us-ascii?Q?kyvKxp0XhfS502j90nnVzJdeFLA8hjnC8B9h4b8BbuogHXYTBeN+kBAvMx5h?=
- =?us-ascii?Q?NUEeVJ3dshx4ahdGd3r3v6k6DAwM27ibei4/taXUwUOz3LVu6p7zholtaetQ?=
- =?us-ascii?Q?vGRORMITM1I531hJVTH+qJcnQCcj1VyN1cW5dEuEoCAYvO8KTusINHjIScS0?=
- =?us-ascii?Q?keDZ17CbmrmaXkBC3xj84obacUlP3GTGhbPIQ4VjUj2ubR5LNcTRq+cnlBRD?=
- =?us-ascii?Q?8/Vuf/vOMV8wL23/9v6g5OPhcGIxL4V3WwVX/7I2CaLhgmYblrYT8IjH/5oi?=
- =?us-ascii?Q?ZJ64N/1p4GOLg29hyZCQbnt0R+X7qlwX9O9UQT/EZp/oRE8Z+/5AmRun+X86?=
- =?us-ascii?Q?Cdf2Y2PBSiQTDibY9Yyl+MRif5nLS3YDptO2ecOd+fdSMJkDxpl4aUc3Ig9d?=
- =?us-ascii?Q?PpZ6UzFwz9qf5zNZ6YeP4ASYDG78JHcxFVH8TCLoJItlas0VL/zgvhbn1xvX?=
- =?us-ascii?Q?IBSiIeHnwPrvnPcaEtTqeeKlnLEGbByyqJxKKG5yP4aaMHsKzQvmNLc2qX5y?=
- =?us-ascii?Q?4LkgTjrT8QuKMjVRl3M981aXRdTUvzaKqghV9/k98Gz0oRseV+0M9rXqQPil?=
- =?us-ascii?Q?EkKzEH8FJM0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6369.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ORtxnrtXa/I/3I3oy5z8of3AK32fBqEK4kCow43M5ntMRsWKnSKF5c4R+EA+?=
- =?us-ascii?Q?zBQceCfVL+51DX9iC0nWNPdz5HK5UO1v6NhqxLrEIa3lea9ACvSGCyLgYMkN?=
- =?us-ascii?Q?LY+KJC9pX30NaU7xJ7vUoryb9CALmsvGP6UgoN89yze/8nuEiqoPBx2xkFyr?=
- =?us-ascii?Q?+qMcyqqS++nUrCgfdJw1qkrhqNwc0NCEvA0Za6osAKs5GxiEnZ6ICvidVKBJ?=
- =?us-ascii?Q?PcDAp/BYgebxCdoJQPnPswrIT3kiHP46If/FbZ3mqEACNkHlDyxyi4eWquvO?=
- =?us-ascii?Q?ublES2/62TiyYaITyGGb4mJg0mRVROQxxnDI1wCaVg7OUzOjGCq+JDKONGUG?=
- =?us-ascii?Q?eK54Qkq0qsP0c52YjNLOrnKta8UntJKed3aA3sn2fAxPQDpyr0qiFSGJ7+kn?=
- =?us-ascii?Q?6/DI5eq0AXIf8ORCBVy4sZbVDCwUkN28DAFDYQ+wq1M/6OBMJpsgTkw1dL7N?=
- =?us-ascii?Q?yj1VsVKqHMFgrxTW7EPU3L9wQ8OCMiiHyFAgNkog5GcGWkqXh4is2u3zHT27?=
- =?us-ascii?Q?/eWjqBBV63OD48hSBHpeFBDuA6KLARONvw8qOhAXGQPfznt/tkHI/XkrhOou?=
- =?us-ascii?Q?wbYA2FQrJljemy5Zk4avMg4GaBCn+eNgdsFMu9lZfGYogVh97U8sUNs1u0K1?=
- =?us-ascii?Q?wkG5Xbr7od+bSpHamUjNeU+3BGR2RCX3cJ33GjuTHqRdA0+fQLmcsQETLcp8?=
- =?us-ascii?Q?4cmT0kFLOM8PSgmvubC2i4EtjR6Tkv6yxanlSn8jetwcQcLaeo6MMepF9vIp?=
- =?us-ascii?Q?B+phOQe+fqBuS7VkCKFpBaoFgqa531HknC4ZO1BzXysYbUbfho6++vPOiM6Y?=
- =?us-ascii?Q?qp9XcBBjb2cHB8ZItkQtwkIdt5BcZRayDrg/EzrHBnSOmE1H8/3439H6GUst?=
- =?us-ascii?Q?JMv3FM/KNUuQE5YgCFZiTwBFcM1quVehW9/cA/MPC6EnTlhnatREq52Erp03?=
- =?us-ascii?Q?KOl0jZUV/ctImJd2IVZTJiyYmwb0r0thjstKG4gjHzljvVX8w5E5uvi1AOgv?=
- =?us-ascii?Q?FlcnkVYcF5WnWVOwwMjJUOnH574HkgRVyNdNbtAcyz2Pj+MYs6k2zfQuhCCf?=
- =?us-ascii?Q?XEyJbZUGPlxsO/PBtjfQr8Rg+u5rJyZx5vJvqUjGuQlLrWUgDp7PAjdoYdwS?=
- =?us-ascii?Q?MH1kSxDe0PFgOYSeU5lcHXhRbQiMUqFaMAxz8UNbbLn+a9dEAK3cK/K8qGqw?=
- =?us-ascii?Q?wEAAR5SWN/FzLWhXANCoSWy9gbKJDUwCAsG4hFha1rbIdqXMEiGm0TBW/4Ak?=
- =?us-ascii?Q?OLlCpMcnSVlBiFpFQhpxYCd8zKTcIx9LPvaN8X22QNGwPr5Mh/wHooUt9EZW?=
- =?us-ascii?Q?nTtPnJWvr2OwIwrPrW/xUUrbBGo3czM6mnmbcgl10K/97YwMD3BxfRdItJ3U?=
- =?us-ascii?Q?q9tHSi/PYZjgYSUrYbaXyu1DiAnIiuDjLFNFFKdmUNwmAIdt9tTCVZn+YqB+?=
- =?us-ascii?Q?LfxMNBC20rDix6HJpwlHd2OkKmWmSZxCbWqHrcPGkpotc2wiZK7vGxZaDNQz?=
- =?us-ascii?Q?x1asWFBauLmjp+AR3vM5OhMvQaIV+AOwL0uHF1ZBhUsQV76QrcuZ+SmvelW/?=
- =?us-ascii?Q?XpoTFmZE2uq3sJxixz7GAhJfChaciADj9JNVh1qg?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c50f7ee0-8c70-4789-3bec-08ddf07b7e58
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6369.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 15:05:34.9743
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nrmgBUbVxHoS/j/8K52Ztyhkon2uGycGMNVULV78hN0C3xgY9aGmtMuX1/OVTp0ki11AHxDvBXD1WjcXkEzC/A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7113
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909-ams-txt-to-dt-schema-v1-1-8a30c25c8295@thegoodpenguin.co.uk>
 
-On Tue, Sep 09, 2025 at 06:53:11PM +0000, Avadhut Naik wrote:
-> Currently, the NUM_CONTROLLERS macro is only used to statically allocate
-> the csels array of struct chip_select in struct amd64_pvt.
+On Tue, Sep 09, 2025 at 09:50:04AM +0100, Harrison Carter wrote:
+> Convert the ams,as3645a.txt to DT Schema format.
 > 
-> The size of this array, however, will never exceed the number of UMCs on
-> the SOC. Since, max_mcs variable in struct amd64_pvt already stores the
-> number of UMCs on the SOC, the macro can be removed and the static array
-> can be dynamically allocated instead.
-
-You should note that max_mcs and the csels array are also used in legacy
-systems with 'DCTs'.
-
-Those had a max of 2 controllers which we already set in
-per_family_init() as the global default. So the legacy systems are
-covered by this change too.
-
-Without noting this, it seems like that case may be overlooked.
-
+> maintainer: set to what I found in MAINTAINERS
 > 
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+> Signed-off-by: Harrison Carter <hcarter@thegoodpenguin.co.uk>
 > ---
-> Changes in v3:
-> Patch introduced.
-> ---
->  drivers/edac/amd64_edac.c | 19 +++++++++++++------
->  drivers/edac/amd64_edac.h |  5 ++---
->  2 files changed, 15 insertions(+), 9 deletions(-)
+>  .../devicetree/bindings/leds/ams,as3645a.txt       |  85 --------------
+>  .../devicetree/bindings/leds/ams,as3645a.yaml      | 130 +++++++++++++++++++++
+>  2 files changed, 130 insertions(+), 85 deletions(-)
 > 
-> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-> index 3989794e4f29..0fade110c3fb 100644
-> --- a/drivers/edac/amd64_edac.c
-> +++ b/drivers/edac/amd64_edac.c
-> @@ -4000,30 +4000,34 @@ static int probe_one_instance(unsigned int nid)
->  	if (ret < 0)
->  		goto err_enable;
->  
-> +	pvt->csels = kcalloc(pvt->max_mcs, sizeof(*pvt->csels), GFP_KERNEL);
-> +	if (!pvt->csels)
-> +		goto err_enable;
+> diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.txt b/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+> deleted file mode 100644
+> index 4af2987b25e92394ebd46456e30002d3ae3a6101..0000000000000000000000000000000000000000
+> --- a/Documentation/devicetree/bindings/leds/ams,as3645a.txt
+> +++ /dev/null
+> @@ -1,85 +0,0 @@
+> -Analog devices AS3645A device tree bindings
+> -
+> -The AS3645A flash LED controller can drive two LEDs, one high current
+> -flash LED and one indicator LED. The high current flash LED can be
+> -used in torch mode as well.
+> -
+> -Ranges below noted as [a, b] are closed ranges between a and b, i.e. a
+> -and b are included in the range.
+> -
+> -Please also see common.txt in the same directory.
+> -
+> -
+> -Required properties
+> -===================
+> -
+> -compatible	: Must be "ams,as3645a".
+> -reg		: The I2C address of the device. Typically 0x30.
+> -#address-cells	: 1
+> -#size-cells	: 0
+> -
+> -
+> -Required properties of the flash child node (0)
+> -===============================================
+> -
+> -reg: 0
+> -flash-timeout-us: Flash timeout in microseconds. The value must be in
+> -		  the range [100000, 850000] and divisible by 50000.
+> -flash-max-microamp: Maximum flash current in microamperes. Has to be
+> -		    in the range between [200000, 500000] and
+> -		    divisible by 20000.
+> -led-max-microamp: Maximum torch (assist) current in microamperes. The
+> -		  value must be in the range between [20000, 160000] and
+> -		  divisible by 20000.
+> -ams,input-max-microamp: Maximum flash controller input current. The
+> -			value must be in the range [1250000, 2000000]
+> -			and divisible by 50000.
+> -
+> -
+> -Optional properties of the flash child node
+> -===========================================
+> -
+> -function	:  See Documentation/devicetree/bindings/leds/common.txt.
+> -color		:  See Documentation/devicetree/bindings/leds/common.txt.
+> -label		:  See Documentation/devicetree/bindings/leds/common.txt (deprecated).
+> -
+> -
+> -Required properties of the indicator child node (1)
+> -===================================================
+> -
+> -reg: 1
+> -led-max-microamp: Maximum indicator current. The allowed values are
+> -		  2500, 5000, 7500 and 10000.
+> -
+> -Optional properties of the indicator child node
+> -===============================================
+> -
+> -function	:  See Documentation/devicetree/bindings/leds/common.txt.
+> -color		:  See Documentation/devicetree/bindings/leds/common.txt.
+> -label		:  See Documentation/devicetree/bindings/leds/common.txt (deprecated).
+> -
+> -
+> -Example
+> -=======
+> -
+> -#include <dt-bindings/leds/common.h>
+> -
+> -	as3645a@30 {
+> -		#address-cells = <1>;
+> -		#size-cells = <0>;
+> -		reg = <0x30>;
+> -		compatible = "ams,as3645a";
+> -		led@0 {
+> -			reg = <0x0>;
+> -			flash-timeout-us = <150000>;
+> -			flash-max-microamp = <320000>;
+> -			led-max-microamp = <60000>;
+> -			ams,input-max-microamp = <1750000>;
+> -			function = LED_FUNCTION_FLASH;
+> -		};
+> -		led@1 {
+> -			reg = <0x1>;
+> -			led-max-microamp = <10000>;
+> -			function = LED_FUNCTION_INDICATOR;
+> -		};
+> -	};
+> diff --git a/Documentation/devicetree/bindings/leds/ams,as3645a.yaml b/Documentation/devicetree/bindings/leds/ams,as3645a.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f956c20cc8fb379f370ad785a3d75f27d0cfa032
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/ams,as3645a.yaml
+> @@ -0,0 +1,130 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/ams,as3645a.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
+> +title: Analog Devices AS3645A LED Controller
+> +
+> +maintainers:
+> +  - Sakari Ailus <sakari.ailus@iki.fi>
+> +
+> +description: |
 
-You can move this allocation to the end of per_family_init(). That's
-where we determine 'max_mcs'.
+Don't need '|'.
 
-If you do so, then the 'goto' changes below are not needed.
+> +  The AS3645A flash LED controller can drive two LEDs, one high current
+> +  flash LED and one indicator LED. The high current flash LED can be
+> +  used in torch mode as well.
+> +
+> +properties:
+> +  compatible:
+> +    const: ams,as3645a
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  led@0:
+> +    type: object
+> +    $ref: common.yaml#
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        const: 0
+> +
+> +      flash-timeout-us:
+> +        minimum: 100000
+> +        maximum: 850000
 
-Another option is to put it in hw_info_get() like we do for UMCs. But
-that means adding the allocation to three different helper functions
-rather than just the one with per_family_init().
+	   multipleOf: 50000
 
->  	ret = pvt->ops->hw_info_get(pvt);
->  	if (ret < 0)
-> -		goto err_enable;
-> +		goto err_csels;
->  
->  	ret = 0;
->  	if (!instance_has_memory(pvt)) {
->  		amd64_info("Node %d: No DIMMs detected.\n", nid);
-> -		goto err_enable;
-> +		goto err_csels;
->  	}
->  
->  	if (!pvt->ops->ecc_enabled(pvt)) {
->  		ret = -ENODEV;
->  
->  		if (!ecc_enable_override)
-> -			goto err_enable;
-> +			goto err_csels;
->  
->  		if (boot_cpu_data.x86 >= 0x17) {
->  			amd64_warn("Forcing ECC on is not recommended on newer systems. Please enable ECC in BIOS.");
-> -			goto err_enable;
-> +			goto err_csels;
->  		} else
->  			amd64_warn("Forcing ECC on!\n");
->  
->  		if (!enable_ecc_error_reporting(s, nid, F3))
-> -			goto err_enable;
-> +			goto err_csels;
->  	}
->  
->  	ret = init_one_instance(pvt);
-> @@ -4033,7 +4037,7 @@ static int probe_one_instance(unsigned int nid)
->  		if (boot_cpu_data.x86 < 0x17)
->  			restore_ecc_error_reporting(s, nid, F3);
->  
-> -		goto err_enable;
-> +		goto err_csels;
->  	}
->  
->  	amd64_info("%s detected (node %d).\n", pvt->ctl_name, pvt->mc_node_id);
-> @@ -4043,6 +4047,8 @@ static int probe_one_instance(unsigned int nid)
->  
->  	return ret;
->  
-> +err_csels:
-> +	kfree(pvt->csels);
+> +        description: |
+> +          Flash timeout in microseconds. Must be divisible by 50000
 
-This can go in hw_info_put(). We have kfree(pvt->umc) there already.
+Drop description. 
 
->  err_enable:
->  	hw_info_put(pvt);
->  	kfree(pvt);
-> @@ -4077,6 +4083,7 @@ static void remove_one_instance(unsigned int nid)
->  	/* Free the EDAC CORE resources */
->  	mci->pvt_info = NULL;
->  
-> +	kfree(pvt->csels);
->  	hw_info_put(pvt);
->  	kfree(pvt);
->  	edac_mc_free(mci);
-> diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
-> index 56999ed3ae56..39d30255c767 100644
-> --- a/drivers/edac/amd64_edac.h
-> +++ b/drivers/edac/amd64_edac.h
-> @@ -96,7 +96,6 @@
->  /* Hardware limit on ChipSelect rows per MC and processors per system */
->  #define NUM_CHIPSELECTS			8
->  #define DRAM_RANGES			8
-> -#define NUM_CONTROLLERS			12
->  
->  #define ON true
->  #define OFF false
-> @@ -347,8 +346,8 @@ struct amd64_pvt {
->  	u32 dbam0;		/* DRAM Base Address Mapping reg for DCT0 */
->  	u32 dbam1;		/* DRAM Base Address Mapping reg for DCT1 */
->  
-> -	/* one for each DCT/UMC */
-> -	struct chip_select csels[NUM_CONTROLLERS];
-> +	/* Allocate one for each DCT/UMC */
-> +	struct chip_select *csels;
->  
->  	/* DRAM base and limit pairs F1x[78,70,68,60,58,50,48,40] */
->  	struct dram_range ranges[DRAM_RANGES];
+> +
+> +      flash-max-microamp:
+> +        minimum: 200000
+> +        maximum: 500000
+> +        description: |
+> +          Maximum flash current in microamperes. Must be divisible by 20000
+> +
+> +      led-max-microamp:
+> +        minimum: 20000
+> +        maximum: 160000
+> +        description: |
+> +          Maximum torch (assist) current in microamperes Must be divisible by 20000
+
+Same on these 2.
+
+> +
+> +      ams,input-max-microamp:
+> +        minimum: 1250000
+> +        maximum: 2000000
+> +        description: |
+
+Don't need '|'.
+
+> +          Maximum flash controller input current. Must be divisible by 50000
+> +
+> +    required:
+> +      - reg
+> +      - flash-timeout-us
+> +      - flash-max-microamp
+> +      - led-max-microamp
+> +      - ams,input-max-microamp
+> +
+> +  led@1:
+> +    type: object
+> +    $ref: common.yaml#
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        const: 1
+> +
+> +      led-max-microamp:
+> +        enum:
+> +          - 2500
+> +          - 5000
+> +          - 7500
+> +          - 10000
+> +        description: |
+> +          Maximum indicator current. The allowed values are 2500, 5000, 7500 and 10000.
+
+No need to repeat constraints in free-form text. Drop the description 
+here, but I would add description under the nodes to say they are for 
+flash and indicator.
+
+> +
+> +    required:
+> +      - reg
+> +      - led-max-microamp
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#size-cells"
+> +  - "#address-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/leds/common.h>
+> +
+> +    i2c{
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        as3645a@30 {
+
+led-controller@30
+
+> +            compatible = "ams,as3645a";
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +            reg = <0x30>;
+> +
+> +            led@0 {
+> +                reg = <0>;
+> +                flash-timeout-us = <150000>;
+> +                flash-max-microamp = <320000>;
+> +                led-max-microamp = <60000>;
+> +                ams,input-max-microamp = <1750000>;
+> +                function = LED_FUNCTION_FLASH;
+> +            };
+> +
+> +            led@1 {
+> +                reg = <1>;
+> +                led-max-microamp = <10000>;
+> +                function = LED_FUNCTION_INDICATOR;
+> +            };
+> +        };
+> +    };
+> +...
+> 
+> ---
+> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+> change-id: 20250906-ams-txt-to-dt-schema-a821e0e03c46
+> 
+> Best regards,
 > -- 
-
-Thanks,
-Yazen
+> Harrison Carter <hcarter@thegoodpenguin.co.uk>
+> 
 
