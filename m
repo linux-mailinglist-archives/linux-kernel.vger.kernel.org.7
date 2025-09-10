@@ -1,78 +1,86 @@
-Return-Path: <linux-kernel+bounces-809225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA86AB50A31
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:24:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E196CB50A38
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146FA1C2689E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:24:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D972441D25
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA331EF091;
-	Wed, 10 Sep 2025 01:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B3F1F3BAC;
+	Wed, 10 Sep 2025 01:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tExNPPiF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fUqnq8E+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A611EF36E;
-	Wed, 10 Sep 2025 01:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8698E1EB5E3;
+	Wed, 10 Sep 2025 01:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757467432; cv=none; b=YKNMuh6q0U9/DxcD15lZkFyEyFJbI8IS4VqQlJUIgKh1YSZDc+T0xbWrVmEXoqrDIPXS+ldOCBOn/yUrSNaMG6vpExgd0lfm6i/H1VIBQPmvcrx2hCijZtCKQ8JTVfDYhEFwdUoOER6a9zeMgIrasMfPwVNNmo6PZEPOWxuXqsE=
+	t=1757467584; cv=none; b=hpxr2IIthLDUsljE4CUuuohAwTeLR+ufUsp5g6DeL7am4rEKbVAA6h5SDfyQhOtWP60NV5omdpz96NLcVul+wLI0PKvq6QUE3ocQxX7bQStoYMO1iDegIMbY0pDXcTsAoRdaOID+OcpoWu7tyo6NLY0jG1kn3NROmohOfbqPAu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757467432; c=relaxed/simple;
-	bh=8Tph3Mdng0klOn3Y7UpTZVK/JtvnHHum+iG72VMnspM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QCpsBFZi+DxgO4REF0JXyrjlAuK6bv+2DimSWnAiOJqp2RrcZ12Ksgi7+FEqAmU6+UDxC9rkidiGgyUA+h26m8eaeo2AuQQbn+xF4Hnm6UGauWn5CB31OKrh/TvMqySyEv1+6s2qsGaJAhRYgbkM/GJvRX4QwiZNod9BjUZcUio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tExNPPiF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D14CC4CEF4;
-	Wed, 10 Sep 2025 01:23:51 +0000 (UTC)
+	s=arc-20240116; t=1757467584; c=relaxed/simple;
+	bh=6H+vJE7E8FrtvtrJctIMl1VGEDdD9t6pgrkERpF0vq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2ozlyTeNMrquBupv1mYpYVawD8btlqL+8lqi4Ux+D8B0LwddEIlenF0D0+XQajYdVUW0KTPHS7XyV9i8ncvKIVRURTwhgvoIwaqFRFbBTSVUVE5Xlv9tJVBSYvAbkBTef5mtoAVFIlXoU5YLEjaZfaOjwV+RKT/0C1oNeje++U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fUqnq8E+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3AF4C4CEF4;
+	Wed, 10 Sep 2025 01:26:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757467431;
-	bh=8Tph3Mdng0klOn3Y7UpTZVK/JtvnHHum+iG72VMnspM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tExNPPiFHMwuxddzWPTWgm651z4v/NJZkD/AAtjg4KxZOKoIdT015ARZcACsVcngk
-	 7hFeRdrFeu8uq6v+oRRnJzElaCO8fupkYokVkj8phVf9sNwpxLEcvoeMzdckYLKodU
-	 aDbcLvbAiOWkl7r7QULUbhzuO0DKxdBADGglN7CM0Nzj+icV6Rxn5z2Jd9+MI1hMlh
-	 b46r+8bWhUdZ+ONBBIAAxoAtSHQG7fczIpvuqj7Eukw3I91zFzc5uHqTP5woqYEzer
-	 DlKGL714K9dp3CukOWspPbF9aAdIr18w/CXvBtolTbrTAhyzgXDU/tOTkn5HRremzk
-	 LdGUD+YgihIvQ==
-Date: Tue, 9 Sep 2025 18:23:50 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky
- <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
- <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Jianbo Liu
- <jianbol@nvidia.com>
-Subject: Re: [PATCH net 1/3] net/mlx5e: Harden uplink netdev access against
- device unbind
-Message-ID: <20250909182350.3ab98b64@kernel.org>
-In-Reply-To: <1757326026-536849-2-git-send-email-tariqt@nvidia.com>
-References: <1757326026-536849-1-git-send-email-tariqt@nvidia.com>
-	<1757326026-536849-2-git-send-email-tariqt@nvidia.com>
+	s=k20201202; t=1757467584;
+	bh=6H+vJE7E8FrtvtrJctIMl1VGEDdD9t6pgrkERpF0vq0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fUqnq8E+dk9tqpuR5mAgbwlKZ/mvSHNMFElLfT0SXYVGch4c4zmcRfDsRkmBirOUk
+	 goBT8mIpBx3qGZ/Nn38NH2HFnTtwGMCS92bgXO0hNsBTMJuI0DHbjtzd7/WSdYeWfp
+	 XsS/HGVN/TG63x5XGBKoY3TVc5uNnhNasFqnlIUGC7ruNP1buMwA6I5WkpuU7uF1RM
+	 QNp8aaaA3MqpwfrcXCzlmP5YnpIH4+aAQC4jQSC6wB1aIninSeWDLpnjRv8K1lfPxx
+	 BtXvaP1qNu0CIySiuijCRGk2iudWcAr4LKWjkfLdQrhA8kIPfFeMYz2mzW4Ve7GYY2
+	 X9zRlIuRzIxcg==
+Date: Tue, 9 Sep 2025 20:26:23 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Dharma Balasubiramani <dharma.b@microchip.com>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-kernel@vger.kernel.org,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: Re: [PATCH v2 1/5] dt-bindings: spi: Document sam9x7 QSPI
+Message-ID: <175746758262.3564926.3476770597508307840.robh@kernel.org>
+References: <20250908-microchip-qspi-v2-0-8f3d69fdd5c9@microchip.com>
+ <20250908-microchip-qspi-v2-1-8f3d69fdd5c9@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908-microchip-qspi-v2-1-8f3d69fdd5c9@microchip.com>
 
-On Mon, 8 Sep 2025 13:07:04 +0300 Tariq Toukan wrote:
-> +	struct net_device *netdev = mlx5_uplink_netdev_get(dev);
-> +	struct mlx5e_priv *priv;
-> +	int err;
-> +
-> +	if (!netdev)
-> +		return 0;
 
-Please don't call in variable init functions which require cleanup 
-or error checking.
+On Mon, 08 Sep 2025 09:44:16 +0530, Dharma Balasubiramani wrote:
+> Document the sam9x7 quad spi that supports interface to serial memories
+> operating in
+> 
+> - Single-bit SPI, Dual SPI, Quad SPI and Octal SPI
+> - Single Data Rate or Double Data Rate modes
+> 
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/spi/atmel,quadspi.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
 
