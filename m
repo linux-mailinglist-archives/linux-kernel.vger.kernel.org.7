@@ -1,232 +1,104 @@
-Return-Path: <linux-kernel+bounces-809834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6485B51294
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:34:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE6A4B512AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596604E2685
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:34:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A6013B3099
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4F7313E18;
-	Wed, 10 Sep 2025 09:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ty2WBiMU"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD40E313E06;
+	Wed, 10 Sep 2025 09:37:58 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924733112BE;
-	Wed, 10 Sep 2025 09:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDB430BB96
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757496859; cv=none; b=ovJ4BORRhrBH7zR6D5VMnBuxY5JlM4M2v+cRvArNp5MmMCTrigkmbI7+Xih8Qg5c2F7EffNoi/cVf82iFC7c+h08Us69VqB3TPAQ23HgGmHMbaudVVyLnHvsTA778+uLLWYZ7jc/lGpk4SX02qwvvN84BphhkMkHjjfprubwpyA=
+	t=1757497078; cv=none; b=LkNmKWPnQIfLtjuSKiHMx5AJKCKMSv+UBaF+UOhnxJaQnskOVPc/nKMUj26T1dlK8zsQ3zcIxVdBDI5NS1zgGBdOww1pfML1w9RmF2QMcvGbGgcy/WvkvFAYPUrbbquStST/GFAZgQ9P1ZtR0UzN25pXCbZeSfkcFrXfPj8J9Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757496859; c=relaxed/simple;
-	bh=hV+FclEdVykCpBoJLA3hiIs8bAVEMpfOi1QesqODR1A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YAqFc2MCdrffzFE++5ZXKOO1JZ/AY7+KMv1m9j+WpoHijHj+39TVWi5zkjG91J9ldyklsiScEbwxAe5WXXfifct+/8O+3hYMxlbsVxq6NIFk00z93YWdUxDYObaLGiQLN0cqtQQM3urF0TmoqL6PzL4f9gk6uAzWQ5NnWVy6gdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ty2WBiMU; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757496853; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=CxOpiotR3/TBBHbw/zXSnCu06zXOVHPuSixUgLaNya4=;
-	b=ty2WBiMULegD1S7qvJw/bXQZDV7HJ/q64rOCmdSA6jY6ahB3d51uYvMv2mIMvhHrd+FPnqHAqVdxBnMXjvj8NZawQS9QcC6B0P3Z+FVUtmkpj7pk4u9D1uz4Fm0fWWZRVb7DseDGEz11/l6i3XWTsK44q1Gbne7Z05o8AIbffpg=
-Received: from localhost(mailfrom:tianruidong@linux.alibaba.com fp:SMTPD_---0Wnhbz2M_1757496849 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 10 Sep 2025 17:34:12 +0800
-From: Ruidong Tian <tianruidong@linux.alibaba.com>
-To: xueshuai@linux.alibaba.com,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Cc: james.morse@arm.com,
-	tony.luck@intel.com,
-	cleger@rivosinc.com,
-	hchauhan@ventanamicro.com,
-	tianruidong@linux.alibaba.com
-Subject: [RFC PATCH 5/5] riscv: Add Hardware Error Exception trap handler
-Date: Wed, 10 Sep 2025 17:33:47 +0800
-Message-Id: <20250910093347.75822-6-tianruidong@linux.alibaba.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20250910093347.75822-1-tianruidong@linux.alibaba.com>
-References: <20250910093347.75822-1-tianruidong@linux.alibaba.com>
+	s=arc-20240116; t=1757497078; c=relaxed/simple;
+	bh=cWm8EcycI60jj7JL695XhYTEoHqJuv/2xBU7iViB9YU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IdTYuRhuEqGyPjAn2A8LiPdfCw6ZYiKb+kgAvQdGBATHOfsDpo9MRHMnRabQxox01tu4x7e6fNe585rISqYk9iESSnefnMLPYLT3O/OkOdvNti87BlvOqlpb2imA+k9hIY01aOLTpzH0echICa8fwM5afNowGtpCNXTk2XlUOwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.kerkmann@pengutronix.de>)
+	id 1uwHGt-0007uM-Ja; Wed, 10 Sep 2025 11:37:47 +0200
+Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.kerkmann@pengutronix.de>)
+	id 1uwHGs-000ZLc-37;
+	Wed, 10 Sep 2025 11:37:46 +0200
+Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
+	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.98.2)
+	(envelope-from <s.kerkmann@pengutronix.de>)
+	id 1uwHGs-000000090kl-3jh2;
+	Wed, 10 Sep 2025 11:37:46 +0200
+From: Stefan Kerkmann <s.kerkmann@pengutronix.de>
+Subject: [PATCH v2 0/2] ASoC: codecs: pcm1754: add pcm1754 dac driver
+Date: Wed, 10 Sep 2025 11:34:04 +0200
+Message-Id: <20250910-v6-12-topic-pcm1754-v2-0-0917dbe73c65@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAxGwWgC/32NQQ7CIBBFr9KwdgwQUXDlPUwXBKbtLAQCldQ03
+ F3sAVy+l/z3d1YwExZ2H3aWsVKhGDrI08DcYsOMQL4zk1wqroWGegUhYY2JHCT3Ejd1Aa0mK53
+ xynnO+jJlnGg7qs+x80JljflznFTxs/97VQAHFN4LbdAaYx8Jw/xecwy0nT2ysbX2BZj/OGG7A
+ AAA
+X-Change-ID: 20250818-v6-12-topic-pcm1754-85fa2c9d5cd0
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ =?utf-8?q?Alvin_=C5=A0ipraga?= <alvin@pqrs.dk>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel@pengutronix.de, 
+ Stefan Kerkmann <s.kerkmann@pengutronix.de>, 
+ =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.kerkmann@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Implement the Hardware Error Exception trap handler for RISC-V architecture
-synchronous hardware error handling. This enables the OS to receive
-hardware error notifications from firmware through the standardized ACPI
-HEST (Hardware Error Source Table) interface.
-
-The implementation includes:
-- A new exception vector entry for Hardware Error Exceptio
-- A trap handler (do_trap_hardware_error) that processes hardware errors
-  in both kernel(panic now) and user modes(SIGBUS)
-- Integration with APEI GHES (Generic Hardware Error Source) to report
-  hardware errors from firmware
-
-This change enables RISC-V systems with ACPI to handle synchronous
-hardware errors in a firmware-first manner.
-
-Signed-off-by: Ruidong Tian <tianruidong@linux.alibaba.com>
+Signed-off-by: Stefan Kerkmann <s.kerkmann@pengutronix.de>
 ---
- arch/riscv/include/asm/acpi.h |  2 ++
- arch/riscv/kernel/acpi.c      | 55 +++++++++++++++++++++++++++++++++++
- arch/riscv/kernel/entry.S     |  4 +++
- arch/riscv/kernel/traps.c     | 19 ++++++++++++
- 4 files changed, 80 insertions(+)
+Changes in v2:
+- addressed DT binding review comments from Krzysztof
+- Link to v1: https://lore.kernel.org/r/20250818-v6-12-topic-pcm1754-v1-0-e1dd189ea99a@pengutronix.de
 
-diff --git a/arch/riscv/include/asm/acpi.h b/arch/riscv/include/asm/acpi.h
-index 0c599452ef48..ae861885b97d 100644
---- a/arch/riscv/include/asm/acpi.h
-+++ b/arch/riscv/include/asm/acpi.h
-@@ -91,6 +91,7 @@ int acpi_get_riscv_isa(struct acpi_table_header *table,
- 
- void acpi_get_cbo_block_size(struct acpi_table_header *table, u32 *cbom_size,
- 			     u32 *cboz_size, u32 *cbop_size);
-+int apei_claim_hee(struct pt_regs *regs);
- #else
- static inline void acpi_init_rintc_map(void) { }
- static inline struct acpi_madt_rintc *acpi_cpu_get_madt_rintc(int cpu)
-@@ -108,6 +109,7 @@ static inline void acpi_get_cbo_block_size(struct acpi_table_header *table,
- 					   u32 *cbom_size, u32 *cboz_size,
- 					   u32 *cbop_size) { }
- 
-+static inline int apei_claim_hee(struct pt_regs *regs) { return -ENOENT; }
- #endif /* CONFIG_ACPI */
- 
- #ifdef CONFIG_ACPI_NUMA
-diff --git a/arch/riscv/kernel/acpi.c b/arch/riscv/kernel/acpi.c
-index 3f6d5a6789e8..928f9474bfee 100644
---- a/arch/riscv/kernel/acpi.c
-+++ b/arch/riscv/kernel/acpi.c
-@@ -20,6 +20,11 @@
- #include <linux/of_fdt.h>
- #include <linux/pci.h>
- #include <linux/serial_core.h>
-+#include <linux/efi.h>
-+#include <linux/irq_work.h>
-+#include <linux/nmi.h>
-+#include <acpi/ghes.h>
-+#include <asm/csr.h>
- 
- int acpi_noirq = 1;		/* skip ACPI IRQ initialization */
- int acpi_disabled = 1;
-@@ -334,3 +339,53 @@ int raw_pci_write(unsigned int domain, unsigned int bus,
- }
- 
- #endif	/* CONFIG_PCI */
-+
-+/*
-+ * Claim Hardware Error Exception as a firmware first notification.
-+ *
-+ * Used by RISC-V exception handler for hardware error processing.
-+ * @regs may be NULL when called from process context.
-+ */
-+int apei_claim_hee(struct pt_regs *regs)
-+{
-+	int err = -ENOENT;
-+	bool return_to_irqs_enabled;
-+	unsigned long flags;
-+
-+	if (!IS_ENABLED(CONFIG_ACPI_APEI_GHES))
-+		return err;
-+
-+	/* Save current interrupt state */
-+	local_irq_save(flags);
-+	return_to_irqs_enabled = !irqs_disabled();
-+
-+	if (regs)
-+		return_to_irqs_enabled = (regs->status & SR_SIE) != 0;
-+
-+	/*
-+	 * HEE can interrupt other operations, handle as NMI-like context
-+	 * to ensure proper APEI processing
-+	 */
-+	nmi_enter();
-+	err = ghes_notify_hee();
-+	nmi_exit();
-+
-+	/*
-+	 * APEI NMI-like notifications are deferred to irq_work. Unless
-+	 * we interrupted irqs-masked code, we can do that now.
-+	 */
-+	if (!err) {
-+		if (return_to_irqs_enabled) {
-+			local_irq_restore(flags);
-+			irq_work_run();
-+		} else {
-+			pr_warn_ratelimited("APEI work queued but not completed");
-+			err = -EINPROGRESS;
-+		}
-+	} else {
-+		local_irq_restore(flags);
-+	}
-+
-+	return err;
-+}
-+EXPORT_SYMBOL(apei_claim_hee);
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 3a0ec6fd5956..1cbefe934d84 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -459,6 +459,10 @@ SYM_DATA_START_LOCAL(excp_vect_table)
- 	RISCV_PTR do_page_fault   /* load page fault */
- 	RISCV_PTR do_trap_unknown
- 	RISCV_PTR do_page_fault   /* store page fault */
-+	RISCV_PTR do_trap_unknown
-+	RISCV_PTR do_trap_unknown
-+	RISCV_PTR do_trap_unknown
-+	RISCV_PTR do_trap_hardware_error /* Hardware Error */
- SYM_DATA_END_LABEL(excp_vect_table, SYM_L_LOCAL, excp_vect_table_end)
- 
- #ifndef CONFIG_MMU
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index 80230de167de..48f1ea1e03e6 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -22,6 +22,7 @@
- #include <linux/irq.h>
- #include <linux/kexec.h>
- #include <linux/entry-common.h>
-+#include <linux/acpi.h>
- 
- #include <asm/asm-prototypes.h>
- #include <asm/bug.h>
-@@ -442,3 +443,21 @@ asmlinkage void handle_bad_stack(struct pt_regs *regs)
- 		wait_for_interrupt();
- }
- #endif
-+
-+asmlinkage __visible __trap_section void do_trap_hardware_error(struct pt_regs *regs)
-+{
-+	if (user_mode(regs)) {
-+		irqentry_enter_from_user_mode(regs);
-+
-+		if (apei_claim_hee(regs))
-+			do_trap_error(regs, SIGBUS, BUS_OBJERR, regs->badaddr, "Hardware Error");
-+
-+		irqentry_exit_to_user_mode(regs);
-+	} else {
-+		irqentry_state_t state = irqentry_nmi_enter(regs);
-+
-+		die(regs, "Hardware Error");
-+
-+		irqentry_nmi_exit(regs, state);
-+	}
-+}
+---
+Alvin Šipraga (1):
+      ASoC: codecs: pcm1754: add pcm1754 dac driver
+
+Stefan Kerkmann (1):
+      ASoC: dt-bindings: ti,pcm1754: add binding documentation
+
+ .../devicetree/bindings/sound/ti,pcm1754.yaml      |  55 ++++++
+ sound/soc/codecs/Kconfig                           |   5 +
+ sound/soc/codecs/Makefile                          |   2 +
+ sound/soc/codecs/pcm1754.c                         | 185 +++++++++++++++++++++
+ 4 files changed, 247 insertions(+)
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20250818-v6-12-topic-pcm1754-85fa2c9d5cd0
+
+Best regards,
 -- 
-2.43.7
+Stefan Kerkmann <s.kerkmann@pengutronix.de>
 
 
