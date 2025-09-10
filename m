@@ -1,160 +1,283 @@
-Return-Path: <linux-kernel+bounces-809737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03134B51163
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:33:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31261B51164
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:34:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 557FD16F476
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:33:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 022734E1CA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B175130FC37;
-	Wed, 10 Sep 2025 08:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C0930F801;
+	Wed, 10 Sep 2025 08:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7hQbCKv"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbIX6kPf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656F32DD5F6;
-	Wed, 10 Sep 2025 08:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBE9309EEF
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757493225; cv=none; b=Bq+nBFTmMzPZnCLgPeP2sERQNGmCmYF+SYYdUTRKdTDH8V5oyMUwjuRbilQEjzsdedNO7blmTxfdIYo6p3+BzV+PtR5OGJ+iPXU2UFZxf3rawx7Fmd78O2JKwNjEEgK2+DRPfkinnu2dsIr5Ew8fAGhHYGU4c24TlTmdYA/z3lM=
+	t=1757493241; cv=none; b=UxKXF50RXreRowoW2b+QqMxDy0YbfbbAXkP3t70qb4Ya+3gu7zLURykpkV+2qsrr9H1JKtvMSVcGMZAeh+eml8LVG6x6b75ppWzp8NQTVfOL9DT2RhaLs58F35+F/iSU1Sp0zrzmoiuY+fAri3RuAMX41AVa5plmaOQPeGpom9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757493225; c=relaxed/simple;
-	bh=QEVdoZxES7x73H4Mp5RFBH4QFpvezZhffON9ysK2E+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DhjTwKEjW7t4zya2Zez3zAsYaUr4OzDwNdMrtIk4c+aW4bJbyo9BZ012xRtR6xxFNh3F3f/3q+N2yrcIbesQ+iRtiS3O8SkEodioj6fpXboeLWmAK8/3PGsw+cyyO+NYe+08jwHO+rH3p3P8RS8c8RukFgb97MeYI/K66tfxIUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7hQbCKv; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45df656889cso6216395e9.1;
-        Wed, 10 Sep 2025 01:33:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757493222; x=1758098022; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EHfbo0BKomkvlXOhBVfB/0eAcoO1X0ualN2+zvtl7Uc=;
-        b=X7hQbCKvdXYi5YeMnIELei1GWbEcwBnn0xFHWKtrvyHuTfqTL94ZMHRiDGi6HIpmLo
-         +1G7vYsv3vpf4BwIdGtwve1yj79Qh/eyBWPjTRx+JFXEAzscC9ofoP35a5istDOrKZ3t
-         zUdA+SivZNFtZvo+aFR5Kv7IEfv6N0NU0QXTMl1WJFR7A68GIyzSlzR5RGLc0htEqlC4
-         TNfrvbxF9uo5nPDxTp8jo3SmTfgzX3FE3545JRSEcv7rGYoFewkRoYdeaYOXri+pKsUY
-         0a5qet6OrZwRVIrRjjcHUy+srDmm+8vwk+1Ge5ods3uS0t5bu3ui640cHm75b9OOua7Y
-         aWPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757493222; x=1758098022;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EHfbo0BKomkvlXOhBVfB/0eAcoO1X0ualN2+zvtl7Uc=;
-        b=buCSdkPsNX8rqgbsCCKhqodCSbXo1bxs2PamkpdNxlLvjUIwSbNQxMbFWjPMPIT7HC
-         WTwOJdK/QFaNc7g3MMXojS7DxNgh+zWWFjFgyVx9lvEu+egpk3M1HrEqaBh8Oi0SI8QV
-         FCGc4WroIGFzl+Xv+FpzMkQ+1pyjdLjOUHZTpx1mKpgt2lrVnTP+HGwEKZPfJDQOHsBc
-         FrQp7Gr0gshfzyBOmznq0JNxbr3NfKEzY0zvMX3a5EUSyTvuERh7/+LQc67vjvSv+L/w
-         grla2wWpeNeJ822P+4qyscmG0PIaEfJ/yTRIYOyM7SP08fR/1yuOQNzS7NvdoBoSYqhz
-         XB3g==
-X-Forwarded-Encrypted: i=1; AJvYcCU9LZjGyDFGgnHO68t6R5MXlZ1stdmT7hxBuKR3YjSrcg+ulWqjSj2uLjRzwhCaztmiQmGkSqLGnZft2n6z@vger.kernel.org, AJvYcCV3rSYIvifVbdMurEiwv+Q4kCAF1xa5AqXoGtroIxBrpj974UyMixeFKTpNuagdl2YOtU7d/+GyS1XF@vger.kernel.org, AJvYcCV868gorA8A7hy0VloKiCiGqQsRa9BlJaIEATDMpqnPANgAzmpJ424qi7rR0gaSnKN2O3JWaD9wes9X@vger.kernel.org, AJvYcCWEmKWaN4LiaOMo6IjS4M5uk1dpUnlgebI4Z3tGrE8M0JDUCrjwNWLH4qKLEMdpkFNWNWnkZsYbpr0SivK1lQTkZg==@vger.kernel.org, AJvYcCWylH/eqervKodNXspPM50mlSpYs8AvfYX1cOU0k63zWtPNT0sh3TQF1ei+dFNbky1qD/qCMmj4NT3m@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhglmP2jokD2WgzNfFnotVfgQMlDw9D8zw5ZHgRk7+k6ywIALt
-	e1DJ1RXh4dMLAqBbbq5o8X6fAuFV14A5aHvxIpXHM1cxUcnxjkGZAl1t
-X-Gm-Gg: ASbGnct3FIrJEs9LrJ8Gm6n1b/hmMC6TZJYxEQqyXCwo3/IlAXqQUnnKX92NZJMjrRF
-	jN3PcZmGLc+3asu7B6LFE+J8ia71Gh1s2MFxRN1seSPn7ROc7G0s2WTd/uATVxpyxeqH/cBOnfF
-	8bnG2vAYzcm7t7JzwAeyOSZ3ZAvl+Zn+L9dMCCZZsXRjpgb0+R6asKOdcn3NjjBTA/YQ8SGSJOw
-	NlJE+a9d9owezRGTv5YVuKNHz57toU27odNOvNdXVtOsAk/+AG89ebOpJFDNqMlkiSwl++0CvnA
-	u8L56fQFAVXF8SWoby68RejIEdHxSj4ffWr6FirKf3R6RF7kNY7/afazjcmz6WD5WtuOGcicX5z
-	dE6WBOykSP63o+UHZ+lsEtAxe2SxB0jAEOqq5cZDLuIGfhgdsTnFB/zucaTxIbcFW9NEH10jCS8
-	tZOsNwUrBqldLYfQtOsrhwB7uo0FJ8HIkS0wvwZNfYlg7GuX0dLLsZ0piHXosXGCI=
-X-Google-Smtp-Source: AGHT+IERWBLoDJYJTftiCvvL8rJvicVn7K1El1ceydxmfro3VBEiw0JoaM94eFug5LOT1WRGb+/cOg==
-X-Received: by 2002:a05:600c:a05:b0:45d:d5c6:97b4 with SMTP id 5b1f17b1804b1-45ded2fb475mr46947715e9.9.1757493221488;
-        Wed, 10 Sep 2025 01:33:41 -0700 (PDT)
-Received: from ?IPV6:2a02:8440:7135:4f4c:9000:7072:695b:3ef? (2a02-8440-7135-4f4c-9000-7072-695b-03ef.rev.sfr.net. [2a02:8440:7135:4f4c:9000:7072:695b:3ef])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521c9a2esm6376513f8f.14.2025.09.10.01.33.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 01:33:41 -0700 (PDT)
-Message-ID: <7c9eadf3-6b71-48ba-99ad-bca5b8bc40e6@gmail.com>
-Date: Wed, 10 Sep 2025 10:33:39 +0200
+	s=arc-20240116; t=1757493241; c=relaxed/simple;
+	bh=TIzmDeWrxXGOrqQJgO1ho+rcXE2ljlXUJJkwn0dTGHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EpKraGVys4j+o+qUqSnOt/fu+c9FGhtOICDudxakpkVMNEajeHqD3VaELy2W85uL0h6nvWegxsjylQlFAWVGsNlo0wA2RuIuqssGH/ekFu30KgQLyIszL3eVFM9vvjbj1eAruCWND1KGAKnaySC3DLmsYNw9B4YhXJD4gEWzAR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LbIX6kPf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6918C4CEF0;
+	Wed, 10 Sep 2025 08:34:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757493241;
+	bh=TIzmDeWrxXGOrqQJgO1ho+rcXE2ljlXUJJkwn0dTGHk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LbIX6kPfTWCHRwzEHakmKpRsdirCgbhj3mfsmYjdto68chBZ0Fh+gQtHYghhqYKCo
+	 AgGn1wp585shNvcF3d78F4ZtsXXVIaFM+3isuN27vcRFcYbDQJ97PJgjnY6zDtSjl0
+	 LsRME7H3a8o651quDGsb8TlQjZk8vT4hFX9vAtoZLeoiQiQvrsqwq0fQ+MgDPQCvIk
+	 fk8jjcIEQHra+jlXYLK8jAFkM89HFNhJFTAhSaTWKjHgO/hi3JI86bcvkN91cSDGXp
+	 QDzJfUZeXVD/FIgW5Ub8GAgNs7dl+FVt7iUUPsyegOVVnf6F/w0bxoI7Vl5hvOrR48
+	 CmCr0KZdmkg9A==
+Date: Wed, 10 Sep 2025 10:33:58 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Jocelyn Falempe <jfalempe@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Javier Martinez Canillas <javierm@redhat.com>, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 2/3] drm/panic: Add kunit tests for drm_panic
+Message-ID: <20250910-fascinating-hungry-lemur-1d9f49@houat>
+References: <20250908090341.762049-1-jfalempe@redhat.com>
+ <20250908090341.762049-3-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 12/20] dt-bindings: perf: stm32: introduce DDRPERFM
- dt-bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
- Julius Werner <jwerner@chromium.org>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Jonathan Corbet <corbet@lwn.net>, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
- =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-References: <20250909-b4-ddrperfm-upstream-v6-0-ce082cc801b5@gmail.com>
- <20250909-b4-ddrperfm-upstream-v6-12-ce082cc801b5@gmail.com>
- <20250910-adamant-hospitable-firefly-ae30c5@kuoka>
-Content-Language: en-US
-From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-In-Reply-To: <20250910-adamant-hospitable-firefly-ae30c5@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="2gnzefsek5tf3ojl"
+Content-Disposition: inline
+In-Reply-To: <20250908090341.762049-3-jfalempe@redhat.com>
 
-On 10/09/2025 09:57, Krzysztof Kozlowski wrote:
-> On Tue, Sep 09, 2025 at 12:12:19PM +0200, Clément Le Goffic wrote:
->> From: Clément Le Goffic <clement.legoffic@foss.st.com>
->>
->> DDRPERFM is the DDR Performance Monitor embedded in STM32MPU SoC.
->> It allows to monitor DDR events that come from the DDR Controller
->> such as read or write events.
->>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
->> ---
->>   .../devicetree/bindings/perf/st,stm32-ddr-pmu.yaml | 94 ++++++++++++++++++++++
->>   1 file changed, 94 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/perf/st,stm32-ddr-pmu.yaml b/Documentation/devicetree/bindings/perf/st,stm32-ddr-pmu.yaml
->> new file mode 100644
->> index 000000000000..1d97861e3d44
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/perf/st,stm32-ddr-pmu.yaml
->> @@ -0,0 +1,94 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/perf/st,stm32-ddr-pmu.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +maintainers:
->> +  - Clément Le Goffic <legoffic.clement@gmail.com>
->> +
->> +title: STMicroelectronics STM32 DDR Performance Monitor (DDRPERFM)
->> +
->> +properties:
->> +  compatible:
->> +    oneOf:
->> +      - items:
->> +          - const: st,stm32mp131-ddr-pmu
->> +      - items:
->> +          - enum:
->> +              - st,stm32mp151-ddr-pmu
->> +          - const: st,stm32mp131-ddr-pmu
->> +      - items:
->> +          - const: st,stm32mp251-ddr-pmu
-> 
-> You did not implement Rob's comment.
 
-Indeed I miss it. Will fix it for the next version.
+--2gnzefsek5tf3ojl
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/3] drm/panic: Add kunit tests for drm_panic
+MIME-Version: 1.0
 
-Best regards,
-Clément
+Hi,
+
+On Mon, Sep 08, 2025 at 11:00:30AM +0200, Jocelyn Falempe wrote:
+> Add kunit tests for drm_panic.
+> They check that drawing the panic screen doesn't crash, but they
+> don't check the correctness of the resulting image.
+>=20
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> ---
+>=20
+> v2:
+>  * Add a few checks, and more comments in the kunit tests. (Maxime Ripard=
+).
+>=20
+>  MAINTAINERS                            |   1 +
+>  drivers/gpu/drm/drm_panic.c            |   4 +
+>  drivers/gpu/drm/tests/drm_panic_test.c | 198 +++++++++++++++++++++++++
+>  3 files changed, 203 insertions(+)
+>  create mode 100644 drivers/gpu/drm/tests/drm_panic_test.c
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 402fe14091f1..e9be893d6741 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8480,6 +8480,7 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kern=
+el.git
+>  F:	drivers/gpu/drm/drm_draw.c
+>  F:	drivers/gpu/drm/drm_draw_internal.h
+>  F:	drivers/gpu/drm/drm_panic*.c
+> +F:	drivers/gpu/drm/tests/drm_panic_test.c
+>  F:	include/drm/drm_panic*
+> =20
+>  DRM PANIC QR CODE
+> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+> index 1e06e3a18d09..d89812ff1935 100644
+> --- a/drivers/gpu/drm/drm_panic.c
+> +++ b/drivers/gpu/drm/drm_panic.c
+> @@ -986,3 +986,7 @@ void drm_panic_exit(void)
+>  {
+>  	drm_panic_qr_exit();
+>  }
+> +
+> +#ifdef CONFIG_DRM_KUNIT_TEST
+> +#include "tests/drm_panic_test.c"
+> +#endif
+> diff --git a/drivers/gpu/drm/tests/drm_panic_test.c b/drivers/gpu/drm/tes=
+ts/drm_panic_test.c
+> new file mode 100644
+> index 000000000000..d5d20dd2aa7c
+> --- /dev/null
+> +++ b/drivers/gpu/drm/tests/drm_panic_test.c
+> @@ -0,0 +1,198 @@
+> +// SPDX-License-Identifier: GPL-2.0 or MIT
+> +/*
+> + * Copyright (c) 2025 Red Hat.
+> + * Author: Jocelyn Falempe <jfalempe@redhat.com>
+> + *
+> + * KUNIT tests for drm panic
+> + */
+> +
+> +#include <drm/drm_fourcc.h>
+> +#include <drm/drm_panic.h>
+> +
+> +#include <kunit/test.h>
+> +
+> +#include <linux/units.h>
+> +#include <linux/vmalloc.h>
+> +
+> +/* Check the framebuffer color only if the panic colors are the default =
+*/
+> +#if (CONFIG_DRM_PANIC_BACKGROUND_COLOR =3D=3D 0 && \
+> +	CONFIG_DRM_PANIC_FOREGROUND_COLOR =3D=3D 0xffffff)
+> +#define DRM_PANIC_CHECK_COLOR
+> +#endif
+> +
+> +struct drm_test_mode {
+> +	const int width;
+> +	const int height;
+> +	const u32 format;
+> +	void (*draw_screen)(struct drm_scanout_buffer *sb);
+> +	const char *fname;
+> +};
+> +
+> +/*
+> + * Run all tests for the 3 panic screens: user, kmsg and qr_code
+> + */
+> +#define DRM_TEST_MODE_LIST(func) \
+> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_XRGB8888, func) \
+> +	DRM_PANIC_TEST_MODE(300, 200, DRM_FORMAT_XRGB8888, func) \
+> +	DRM_PANIC_TEST_MODE(1920, 1080, DRM_FORMAT_XRGB8888, func) \
+> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB565, func) \
+> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB888, func) \
+> +
+> +#define DRM_PANIC_TEST_MODE(w, h, f, name) { \
+> +	.width =3D w, \
+> +	.height =3D h, \
+> +	.format =3D f, \
+> +	.draw_screen =3D draw_panic_screen_##name, \
+> +	.fname =3D #name, \
+> +	}, \
+> +
+> +static const struct drm_test_mode drm_test_modes_cases[] =3D {
+> +	DRM_TEST_MODE_LIST(user)
+> +	DRM_TEST_MODE_LIST(kmsg)
+> +	DRM_TEST_MODE_LIST(qr_code)
+> +};
+> +#undef DRM_PANIC_TEST_MODE
+> +
+> +static int drm_test_panic_init(struct kunit *test)
+> +{
+> +	struct drm_scanout_buffer *priv;
+> +
+> +	priv =3D kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_NULL(test, priv);
+> +
+> +	test->priv =3D priv;
+> +
+> +	drm_panic_set_description("Kunit testing");
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Test drawing the panic screen, using a memory mapped framebuffer
+> + * Set the whole buffer to 0xa5, and then check that all pixels have been
+> + * written.
+> + */
+> +static void drm_test_panic_screen_user_map(struct kunit *test)
+> +{
+> +	struct drm_scanout_buffer *sb =3D test->priv;
+> +	const struct drm_test_mode *params =3D test->param_value;
+> +	char *fb;
+> +	int fb_size;
+> +
+> +	sb->format =3D drm_format_info(params->format);
+> +	fb_size =3D params->width * params->height * sb->format->cpp[0];
+> +
+> +	fb =3D vmalloc(fb_size);
+> +	KUNIT_ASSERT_NOT_NULL(test, fb);
+> +
+> +	memset(fb, 0xa5, fb_size);
+> +
+> +	iosys_map_set_vaddr(&sb->map[0], fb);
+> +	sb->width =3D params->width;
+> +	sb->height =3D params->height;
+> +	sb->pitch[0] =3D params->width * sb->format->cpp[0];
+> +
+> +	params->draw_screen(sb);
+> +
+> +#ifdef DRM_PANIC_CHECK_COLOR
+> +	{
+> +		int i;
+> +
+> +		for (i =3D 0; i < fb_size; i++)
+> +			KUNIT_ASSERT_TRUE(test, fb[i] =3D=3D 0 || fb[i] =3D=3D 0xff);
+> +	}
+> +#endif
+
+I'm not really fond of the ifdef here. Could you turn this into a
+function, and return that it's valid if the colors don't match what you
+expect?
+
+> +	vfree(fb);
+> +}
+> +
+> +/*
+> + * Test drawing the panic screen, using a list of pages framebuffer
+> + * No checks are performed
+
+What are you testing then if you aren't checking anything?
+
+> + */
+> +static void drm_test_panic_screen_user_page(struct kunit *test)
+> +{
+> +	struct drm_scanout_buffer *sb =3D test->priv;
+> +	const struct drm_test_mode *params =3D test->param_value;
+> +	int fb_size;
+> +	struct page **pages;
+> +	int i;
+> +	int npages;
+> +
+> +	sb->format =3D drm_format_info(params->format);
+> +	fb_size =3D params->width * params->height * sb->format->cpp[0];
+> +	npages =3D DIV_ROUND_UP(fb_size, PAGE_SIZE);
+> +
+> +	pages =3D kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_NULL(test, pages);
+> +
+> +	for (i =3D 0; i < npages; i++) {
+> +		pages[i] =3D alloc_page(GFP_KERNEL);
+> +		KUNIT_ASSERT_NOT_NULL(test, pages[i]);
+
+KUNIT_ASSERT_* return immediately, so you're leaking the pages array
+here.
+
+Maxime
+
+--2gnzefsek5tf3ojl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaME36wAKCRAnX84Zoj2+
+dsRiAYC5khdLWr61N0wCIL8Z0JdvL2/H6uiHCllT4PmoI/zN8feUSsQrKc3Mwbnm
+ukk1xOYBfRMVwXLBUjztbTGCJ/K1ZXzEalXG0mgCIXfc7CJem8tyRIkib58DPHIe
+NGLgHovX6g==
+=du/g
+-----END PGP SIGNATURE-----
+
+--2gnzefsek5tf3ojl--
 
