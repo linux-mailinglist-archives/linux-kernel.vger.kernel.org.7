@@ -1,124 +1,110 @@
-Return-Path: <linux-kernel+bounces-810825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B87B5203C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:26:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8D5B5203E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C15BB563741
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:26:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D281BC8214
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07502765EA;
-	Wed, 10 Sep 2025 18:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jpj7MTdv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D3327815B;
+	Wed, 10 Sep 2025 18:26:53 +0000 (UTC)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5690D329F38;
-	Wed, 10 Sep 2025 18:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C28A26FA77;
+	Wed, 10 Sep 2025 18:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757528790; cv=none; b=n6x4ZvyW0ahC9HRgKPFHPmDhE+he5vTdavOzI/M60D0+y5h8O7WL9iLRXBbaUD8lH2LvBEddwwLgi/Qqqg6yuAFrig0pUwBI9u88FMiFwYCL0tAQOw7Hovmo2z72H2OSip3LQ/0nmI9tKpiW4my7H0Tpt7fciVX9gr9i3GyCpic=
+	t=1757528813; cv=none; b=sRZN+xXnm/DD4jRzm6GVSaajm31Xc9AZ28nfg7kqWMUmSr8HnDMVbqmXQ26NEMqjyoMoyzLt2od26q5cDJYUOYuHitDtSJWlb0gFL/aiOoW0Rmxy9DjeRj4oV0CHNaDQ0S1Xe3MnVIS2L+h+dN296j6I9Hy1XCnb9FX1oXpu+Rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757528790; c=relaxed/simple;
-	bh=8zSU8u1AH6DF6zdffsNtTjsbQliu7LsDi1PKEDclH5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PaPlQm4rAAq1WlS85GDYiLjBnSP0udcSWQ72sI53inxOXMtqAhgyWYuD4ld9KNK31Sk+vc85Q6Dk1pS48KJSBS9CF9PR3h0UyktMCI4mM/bUiEPTT1ThoWZuYqvf/Cfh/1SHrWbNjxJqPkAF0/jf5WOATCf+ju0jdiFoGGmEdbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jpj7MTdv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57980C4CEEB;
-	Wed, 10 Sep 2025 18:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757528789;
-	bh=8zSU8u1AH6DF6zdffsNtTjsbQliu7LsDi1PKEDclH5Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Jpj7MTdv5Oqaqig2NCNo6RAZMwqMtLhmQ+QuMjuqF7xqsBOgETgqt26lx/tyuek4M
-	 ILPvuZ3MWkEPlWzh9za/Y5cYoXd4IOEcyzrwh/+4vm2rYEER+V1+2MgAfDTjY/MYN3
-	 6c1guk/Y9s9a+Rn8LVBFfuIKCox22YpJDmVwHmn314y7V6OBADRXaV3SXSgfeZbMVM
-	 a1SJ7DPYOm/K1wWodHIsjsUCjrLK3monpII7Hf3umITvfJeAsZi+P8dgYLW6n+nJ+4
-	 SyzZRUteNz4V5Ggao0RokAtKdbEozIdAnInE72bUyUjFE8lV1/K2FM99td/F/ap1yv
-	 TXJfcpa8Bf0Og==
-Message-ID: <24abb0c2-553c-49a5-8daf-60d3726557df@kernel.org>
-Date: Wed, 10 Sep 2025 13:26:28 -0500
+	s=arc-20240116; t=1757528813; c=relaxed/simple;
+	bh=0Ge/+WkbgCMPVI7iSrjIo+poccgp1KWRGwl578L0+Ek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HXpJVzs6TExxkiAQOdEVsGSywI1dsmoVoTXEC/D1R7E63tDIiMahDn+8JetIncpUJF9V3cZw1GABfxojWVCE0KhTeXOK9+72Q1ThuK/cpIXSwBccOLm3Y0oDAQwz51Tnibrs4/G2Rzo3LR8Pp7rW4jnYgbsmOk9amxWS++VR4rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b0787fa12e2so187624766b.2;
+        Wed, 10 Sep 2025 11:26:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757528809; x=1758133609;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oSBAzl6wD76Cva3WaSt7fUWLozpvyd1a3tCiUh/Kyy0=;
+        b=HTq4aDToj+53uYb2bLFcaEX2AG6Eod+UXVdVV+iCaSlokLoj9TnNu9ocDaUBnhMiMG
+         x7JHkqUOuB/MqsKhR6CyacxZ4dqYiy43bG1VpZnTjqV1RIDe4mpb9QwTFnh0hzfEs5Zd
+         BxDxfKgcUI1xRjJZl7tzw7tAfF22mimb3ApOi6Gxe24Jk60qdqRmmDVgNPM96wxnYMn+
+         8ZJ7qwoPKBGpyZQEzuBAZnyVDivVEIn5EFz3A7AacjgsPOgb3wceW0A+XVhOKwoAmhwW
+         fA1j0qVy4U09SC8x3fmepkHVeJwtxr/bNy3PWk5enfG9OL7M/oIcKQ7NiCk6TQq4TI1j
+         Owhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjruEQCVOvLQHK1LJf9SizBXqWtzNOg0xez6r/CkSm0lnCitFhUUYjSH6hp5eooHg2nGBZwsKAKT4d3ZE=@vger.kernel.org, AJvYcCXKMDxhyMzK1YWSBFhRp+VowkqdTqFKLJowG7HSKx1hJbyzTzTSPw/5Nch4cCDac/SMFpfvSQ68@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG7kGPdYcG5icMrIMpndm4E3LGOnjmIRqmrVP9H9RVQZs1kmij
+	Rdp9/Q9W/EPlpYWDRG3dAep9hb4+TcbL+kEX5Z2HicUteMwFkA5d8MaZ
+X-Gm-Gg: ASbGnct3hyTu5Yr9gocAqo2DqO5Z8e55yIOmu/Yes4MVM/HVs4vMI9flkltqK0xaJwA
+	JmULCMJY3CHjDqfJt4FrGuCQWdYEr8GQdPM5N5Zbmbnsz+r1Cmm7h+KXipREvWJEHyqyS279Z9e
+	FFCbNdHFyF+JZ8VCrO2lfEx7GbYz/h+BGDo0/pCBUOnHhywqK7kJZ6FnMQCIMcnBYYdkal+jVMI
+	T5Rd8ru5yYCtNsQQ/9epolYmUWKF4o0rhcHa/Tq4SaNaSsuTxCb1y3vKEd2y4ujs6j2HBADvioe
+	+Uf8kHizBoAHwvbXWz5kp57gCoW5xqP72h76db9Ez8JU+oVMHh/s2Kof1mPOn2WekLIpi/vYSj0
+	GZ5aMtIE10wpn
+X-Google-Smtp-Source: AGHT+IHaelywRYzfmS3mcSI3Y9aqq1KnoB/1WFY1xOOEPVUlPhva7fHs7yFHqmDm9leJZZJaLXIHow==
+X-Received: by 2002:a17:906:fd8a:b0:afe:85d5:a318 with SMTP id a640c23a62f3a-b04b1666d66mr1568401066b.36.1757528808541;
+        Wed, 10 Sep 2025 11:26:48 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:4::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62e9f161470sm40970a12.35.2025.09.10.11.26.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 11:26:48 -0700 (PDT)
+Date: Wed, 10 Sep 2025 11:26:45 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: John Ogness <john.ogness@linutronix.de>, 
+	Mike Galbraith <efault@gmx.de>, Simon Horman <horms@kernel.org>, kuba@kernel.org, 
+	calvin@wbinvd.org, Pavel Begunkov <asml.silence@gmail.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, paulmck@kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	netdev@vger.kernel.org, boqun.feng@gmail.com, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
+Message-ID: <oc46gdpmmlly5o44obvmoatfqo5bhpgv7pabpvb6sjuqioymcg@gjsma3ghoz35>
+References: <otlru5nr3g2npwplvwf4vcpozgx3kbpfstl7aav6rqz2zltvcf@famr4hqkwhuv>
+ <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
+ <7a2b44c9e95673829f6660cc74caf0f1c2c0cffe.camel@gmx.de>
+ <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
+ <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
+ <tgp5ddd2xdcvmkrhsyf2r6iav5a6ksvxk66xdw6ghur5g5ggee@cuz2o53younx>
+ <84a539f4kf.fsf@jogness.linutronix.de>
+ <trqtt6vhf6gp7euwljvbbmvf76m4nrgcoi3wu3hb5higzsfyaa@udmgv5lwahn4>
+ <847by65wfj.fsf@jogness.linutronix.de>
+ <aMGVa5kGLQBvTRB9@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] PM: hibernate: Restrict GFP mask in
- hibernation_snapshot()
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Todd Brandt <todd.e.brandt@linux.intel.com>,
- Linus Torvalds <torvalds@linuxfoundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Samuel Zhang <guoqing.zhang@amd.com>
-References: <5924662.DvuYhMxLoT@rafael.j.wysocki>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <5924662.DvuYhMxLoT@rafael.j.wysocki>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMGVa5kGLQBvTRB9@pathway.suse.cz>
 
-On 9/10/25 4:41 AM, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Commit 12ffc3b1513e ("PM: Restrict swap use to later in the suspend
-> sequence") incorrectly removed a pm_restrict_gfp_mask() call from
-> hibernation_snapshot(), so memory allocations involving swap are not
-> prevented from being carried out in this code path any more which may
-> lead to serious breakage.
-> 
-> The symptoms of such breakage have become visible after adding a
-> shrink_shmem_memory() call to hibernation_snapshot() in commit
-> 2640e819474f ("PM: hibernate: shrink shmem pages after dev_pm_ops.prepare()")
-> which caused this problem to be much more likely to manifest itself.
-> 
-> However, since commit 2640e819474f was initially present in the DRM
-> tree that did not include commit 12ffc3b1513e, the symptoms of this
-> issue were not visible until merge commit 260f6f4fda93 ("Merge tag
-> 'drm-next-2025-07-30' of https://gitlab.freedesktop.org/drm/kernel")
-> that exposed it through an entirely reasonable merge conflict
-> resolution.
-> 
-> Fixes: 12ffc3b1513e ("PM: Restrict swap use to later in the suspend sequence")
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220555
-> Reported-by: Todd Brandt <todd.e.brandt@linux.intel.com>
-> Tested-by: Todd Brandt <todd.e.brandt@linux.intel.com>
-> Cc: 6.16+ <stable@vger.kernel.org> # 6.16+
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> This is super-urgent, so I'm going to fast-track it.
+On Wed, Sep 10, 2025 at 05:12:43PM +0200, Petr Mladek wrote:
+> On Wed 2025-09-10 14:28:40, John Ogness wrote:
 
-Thanks.  Looking at the codepaths again it makes sense.
-It's a bit surprising to me this showed up, we had done stress testing 
-before submitting.  Nonetheless, thank you for the fix.
+> > @pmladek: We could introduce a new console flag (NBCON_ATOMIC_UNSAFE) so
+> > that the callback is only used by nbcon_atomic_flush_unsafe().
+> 
+> This might be an acceptable compromise. It would try to emit messages
+> only at the very end of panic() as the last desperate attempt.
+> 
+> Just to be sure, what do you mean with unsafe?
+> 
+>     + taking IRQ unsafe locks?
 
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
-
-> 
-> ---
->   kernel/power/hibernate.c |    1 +
->   1 file changed, 1 insertion(+)
-> 
-> --- a/kernel/power/hibernate.c
-> +++ b/kernel/power/hibernate.c
-> @@ -449,6 +449,7 @@ int hibernation_snapshot(int platform_mo
->   	shrink_shmem_memory();
->   
->   	console_suspend_all();
-> +	pm_restrict_gfp_mask();
->   
->   	error = dpm_suspend(PMSG_FREEZE);
->   
-> 
-> 
-> 
-
+Taking IRQ unsafe locks is the major issue we have in netconsole today.
+Basically the drivers can implement IRQ unsafe locks in their
+.ndo_start_xmit() callback, and in some cases those are IRQ unsafe,
+which doesn't match with .write_atomic(), which expect all the inner
+locks to be IRQ safe.
 
