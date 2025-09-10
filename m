@@ -1,115 +1,96 @@
-Return-Path: <linux-kernel+bounces-809733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C073B51155
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:32:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 243FBB51175
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F66B1C82365
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:32:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D289C1891892
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9B43112BE;
-	Wed, 10 Sep 2025 08:31:55 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FD33101BD;
+	Wed, 10 Sep 2025 08:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="TTC97Rhn"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A7F2D5947;
-	Wed, 10 Sep 2025 08:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9828D309EEF;
+	Wed, 10 Sep 2025 08:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757493115; cv=none; b=vCGhlW1oIehzzqcihZ5IWJ4rfKYiHYgCVytTO+L3mBmKzEmvCxGSWTV4wzqLCdHxe2DN1/GjzyB4rJQ+E8zGczIiESa6zKFn4IG/07L2BpyCbI0ofnhJJ4pv518UsupJfdHrRaXV2LMUsMCSUBwQkHqevRNIBuf7UuxWnWY4Ky4=
+	t=1757493291; cv=none; b=cr8g+tM4DSOYTEp2bsM9U7cdB8N8nMyF6pnYN7975UnbobnL5O6h+M/R89uuJW4zsEXizmmWF98qeNvm2qAy5grEAb2MpMviFttp1KmIfW4Wpk/3TPitFXBme0juFUggHpTvBBjf0gvPdylntqV6woJEsJKEHMwM0TSJmhAijGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757493115; c=relaxed/simple;
-	bh=btYuSerNDcokDO6Y/one3a829eB8ISvBdG67DcBTu9c=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=fhq/dL/3BGLaMAtv4lnvq3QpLFjVUO/cT0wr9wUKsL9tKG9zymYE6NWtlsX3sPd3IzWXJ6NoDts+eykiTerneg0DjlhVRx9nbJ/zSO0b9l2bpi8JOaeghHXlcRnHfeak7A1tvKkFzP8IViYwt6pDvz5Ah92EJZUi43jJsv0GPiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cMDSR0LhGzYQvcg;
-	Wed, 10 Sep 2025 16:31:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 881DB1A23A5;
-	Wed, 10 Sep 2025 16:31:49 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCn8IxzN8Fol3MSCA--.51693S3;
-	Wed, 10 Sep 2025 16:31:49 +0800 (CST)
-Subject: Re: [PATCH 1/2] md: init queue_limits->max_hw_wzeroes_unmap_sectors
- parameter
-To: John Garry <john.g.garry@oracle.com>, Zhang Yi
- <yi.zhang@huaweicloud.com>, linux-block@vger.kernel.org,
- linux-raid@vger.kernel.org, drbd-dev@lists.linbit.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
- martin.petersen@oracle.com, axboe@kernel.dk, yi.zhang@huawei.com,
- yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250825083320.797165-1-yi.zhang@huaweicloud.com>
- <20250825083320.797165-2-yi.zhang@huaweicloud.com>
- <5b0fd2a0-dffc-4f51-bdff-746e9bd611bd@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <05249654-3088-d3e1-570d-79f58019377c@huaweicloud.com>
-Date: Wed, 10 Sep 2025 16:31:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1757493291; c=relaxed/simple;
+	bh=b30MO4zp9p/RKhKI6RZvaV69XNrXjRj73xkh/4Xi8jM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WU+fpiOLxSREt1g8quH4mzaRZCgVnVKYGbXjfJD4YetzfDK378Z+POYcuE7Rh5qVK7QB1PmtwLdz1w/eSc3Yc4Fc2NzAQFeMlWtLKFIK7Nrd3FCdJ/7ajaeFh3uWV+JC9zxOVfgOVvgX+gMzEGyOzrO+Sxf7CqcegXsrLOQfFqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=TTC97Rhn; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=ZfdHANOehTUP1HPo2Io2Zx+Al3fFDMd7EV9Pa2pY7UU=;
+	b=TTC97RhnEgJfdlDzGW47lqFtg2e6cVlsSCFfrsS/oXpiK2FMEG2qNi5T/ibO0f
+	vlpeixtVmt1bFDP4BvEV0nNZDFTnVMZhDOA/n2fPXrb7JnyIKu8wBGBocSMbxJwL
+	sE+NWsgAtsE0QI2yAAAtP0WKCTHAT8Tu4r4IigBUOgd8k=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgBnJW+NN8FoDMs8BA--.39270S3;
+	Wed, 10 Sep 2025 16:32:16 +0800 (CST)
+Date: Wed, 10 Sep 2025 16:32:13 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank.Li@nxp.com
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Anup Patel <apatel@ventanamicro.com>, Marc Zyngier <maz@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Shuah Khan <shuah@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org,
+	jdmason@kudzu.us, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v21 9/9] arm64: dts: imx95: Add msi-map for pci-ep device
+Message-ID: <aME3jbmlRVcT2biX@dragon>
+References: <20250710-ep-msi-v21-0-57683fc7fb25@nxp.com>
+ <20250710-ep-msi-v21-9-57683fc7fb25@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <5b0fd2a0-dffc-4f51-bdff-746e9bd611bd@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn8IxzN8Fol3MSCA--.51693S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruw45WFyUuF4kGr43Jw4Utwb_yoWkCrgEkr
-	sxXa98XFW5AF42qw4UKr13ZrW3ta95Wr1kZF1rWrs8XFyrZrykursxZ3sa9F15JFWIqr90
-	kan7Xw1I9FZFvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbaxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdYx
-	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710-ep-msi-v21-9-57683fc7fb25@nxp.com>
+X-CM-TRANSID:M88vCgBnJW+NN8FoDMs8BA--.39270S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU8zVbUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIhB84WjBN5DjOQAA37
 
-Hi,
-
-在 2025/09/02 20:25, John Garry 写道:
->> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->> index 408c26398321..35c6498b4917 100644
->> --- a/drivers/md/raid1.c
->> +++ b/drivers/md/raid1.c
->> @@ -3211,6 +3211,7 @@ static int raid1_set_limits(struct mddev *mddev)
->>       md_init_stacking_limits(&lim);
->>       lim.max_write_zeroes_sectors = 0;
->> +    lim.max_hw_wzeroes_unmap_sectors = 0;
+On Thu, Jul 10, 2025 at 03:13:55PM -0400, Frank Li via B4 Relay wrote:
+> From: Frank Li <Frank.Li@nxp.com>
 > 
-> It would be better if we documented why we cannot support this on 
-> raid1/10, yet we can on raid0.
+> Add msi-map for pci-ep device.
 > 
-> I am looking through the history of why max_write_zeroes_sectors is set 
-> to zero. I have gone as far back as 5026d7a9b, and this tells us that 
-> the retry mechanism for WRITE SAME causes an issue where mirrors are 
-> offlined (and so we disabled the support); and this was simply copied 
-> for write zeroes in 3deff1a70.
+> Acked-by: Manivannan Sadhasivam <mani@kernel.org>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Yes, we don't support it for now, and I think it is not too hard to
-support write zeros, and finaly to support unmap zeros. BTW, raid5
-discard is in the same suituation.
-
-However, I feel this is not related to this set, perhaps a seperate
-patch to add comments, I can accept that.
-
-Thanks,
-Kuai
+Applied, thanks!
 
 
