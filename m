@@ -1,126 +1,114 @@
-Return-Path: <linux-kernel+bounces-809867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C32B512FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:44:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0457B512E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0B854E42D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:44:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C2E1B258A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE10314B88;
-	Wed, 10 Sep 2025 09:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674233148B5;
+	Wed, 10 Sep 2025 09:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cuRXfXXn"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Or5Hcgov"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185CD314A64
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102BC2D97BE
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497436; cv=none; b=eU8gT3w0YsRs5AHfVLfpbVDLyf/0XsJf4wO8COrHcyKohHzgiW9HhSKo1Pz/fl7h2xs/MNbPGKC+WW0dL/4zA3edeJ6LNL6UKDEZwMh0l5iwRdiGExei4lGgYTIiLkDOfIKxabWzmGhLunhAYcowLqJQdbuULxd+LJCPhu1GROQ=
+	t=1757497389; cv=none; b=hbinf4LLanOu4P4mCBUKrZJalco4xEHjsrAly/c1mNM7lREo7ZQ+NClXxIEJTAhqHvyNIVPFV7Rr8vARnmX4BZu5dhncgFhXUPx1+tk8B5BNZrEQQWGlXMJUpHqut+oL0JEfVVor5up3i5nKYdaSxR1pzFIYlO9XA4zcla6lIc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497436; c=relaxed/simple;
-	bh=u6EG6vSoRy4kPnyCmp45B8043Yx/hFJztAr/bGgmt6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UJtGjVsWQy3lVJyBEH85W8WmcL0iGTNBZI5NovWI8xrftC3rVg96wnBWwsAZzTBECqNnZTxIo60jfInstXiq/4NxRY33Ep2SOTOPcq0RK4xSGcFiRG4XYowB1xctHWB+e8rK+oqzQFDrFCv/z6vgPKKV3amUhSEk0nnCWJSRb48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cuRXfXXn; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58A9grHe034436;
-	Wed, 10 Sep 2025 04:42:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757497373;
-	bh=dyv3kFridXyExxHMMNoTnDYngAzvq7DH8iZrAUtCx80=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=cuRXfXXn9f6MkdZzQEJCUKOrYBK4ijUoxBfeGdRQT9wanwswoJbwQ5OrAK67QtiyH
-	 22tf7sa6HGa7OzXV3i8XiR9ICXbhVTlO6F1hd9hq24uuzE7c1q/YZQbTg96n7r9c1I
-	 917KWvtQs+SEmlalQA4P6+gMQmN2jmjCaZAR689Q=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58A9grpj280139
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 10 Sep 2025 04:42:53 -0500
-Received: from DLEE210.ent.ti.com (157.170.170.112) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 10
- Sep 2025 04:42:52 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE210.ent.ti.com
- (157.170.170.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 10 Sep 2025 04:42:52 -0500
-Received: from [172.24.235.208] (hkshenoy.dhcp.ti.com [172.24.235.208])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58A9giAJ287029;
-	Wed, 10 Sep 2025 04:42:45 -0500
-Message-ID: <a8a0af57-7576-41fe-b5a3-474a06d9de88@ti.com>
-Date: Wed, 10 Sep 2025 15:12:44 +0530
+	s=arc-20240116; t=1757497389; c=relaxed/simple;
+	bh=8u6FaARRtSREzbYeC4zN0fjp2DwVky7Eafbhh1jrDCA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Wx1dwfFSujb7zZGUXjRI8MVGBy11ereSk3Cj5+ejwlw4dKEdLc4uUfCTDJsli2qhKNWGHja69xLGQXYYLUK5GTBxh5xtQ3U8ELCn20k0J1rWV+cO5hg8mj+zx/nqRyeQAjU4jx0+fi48H3ARPX6/Axm27Dz/JTcO/LCNFu0cJbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Or5Hcgov; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b04abcc1356so650842266b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:43:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757497386; x=1758102186; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8u6FaARRtSREzbYeC4zN0fjp2DwVky7Eafbhh1jrDCA=;
+        b=Or5HcgovTKy/+IdRILIG/rLTDfpglBw4XR2hYP0fBewGlv++OuOajO7F5raparnW0q
+         q9LaTzIcL8fPvtgCq0s8dAzWs6ZGkZ1a1vtXN2pYq2nbpy8A5pEG3qvrBbk0Z9MiXR/A
+         2ZLd9t0UQKRvjJ7WTQLBAkNO+IWNfLu6aNaa1MJ68PU2X3iRM7++lEZOIMmzFWcN5aio
+         1iYR0MsYR5ur5DjJC28BjUPMDCfpBlgmlX2pWxC9Ye6iO3ss4Z/YLbFr635UrJ1PN6MT
+         MzpEJrKJtoknIrcWAaWFxFO/IoK8WkLMJOBwuISkZ3Uf8/ubfl3xeikHgyXO8chXlyzI
+         /sUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757497386; x=1758102186;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=8u6FaARRtSREzbYeC4zN0fjp2DwVky7Eafbhh1jrDCA=;
+        b=u3v6zaZUd06gv+Ckj9vv6NH50GO+EF8OLnMZ9QQHJf81ZaNoIMFtWdo1Z02/9mMAJE
+         tm5kCba/8EoeNLzzYxi+gXJMClx48USmRYXcbDSGOYUM4p9EGwMBcX80jWDdMgaHWijf
+         VX8qL/rEDV1isy1p7Da1IDuV5L+k//6xLfKvLG+PAahqLQFbSW8qkiY5fsEt0a/9C4Uq
+         N23AHfl/5jwkMqGYQtr2GNcQzYPf44CZyaFvbDaaa8CdNbDGKVroxyayxBuKjFgiBhAS
+         0CzHpv5d/H8B8LQ01EoRIMht/3/TC7kNGn7V3xEC+xAFD/v6EdeTu8CjdjlP8yFD0Hkn
+         90KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKb44/J/BKBxpbVbTvRwpAVhJLa0OgW54j8Zfw6ux9FemBiUNQ1AZnqLEx9poTyVoSvgOBrLtVvusBS3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzChnatQzc/YuJ1SGER5KNritiTfw4OQX16on5spFbSfuP8XHXm
+	Fv9tysOUbEr2Fpm5z+Ox+H65983NwN3yx33zglEYsmE0hgmSS6/H3Fqs6bun1LgGqtc=
+X-Gm-Gg: ASbGncvMYfJEdRdPejxhEi8sfv00sbs6rYTo9yjy7UGkwAPqROBn+GKUgD4SunPZ8uS
+	H6/sCne6uE3RInSDlc3UAniAy4SL1/9z62BESnorzHAzIcS/YM8S6uamvQ7G52XYo1AyndXwoIQ
+	DVNVO90nwD3ezYTKfAt6G73uVf2nSznjS4iu/qaPKHyT49+818kUss+TeBdI8zD+oTjmPa0gGwi
+	mFEwUsYqxbl5D799ZBiyVvpi6I1lE4KJatm2CAftUrn5wZsHW/725vjJP0aWztZzpxS94QbO8nw
+	Zkz1RZHryUGwzgsPflBDE4879WX0EE+efj5T7ejNerayWURqm//wsOfV4FYyBoLrqglam8GTgdQ
+	iZxIEnKOmzslpRb/c+hgTrIw=
+X-Google-Smtp-Source: AGHT+IFWuLSyNubOEP+haT1kxcJlsnbQvIZV9vTCdS/TLhc04cY3/upnJwzgMXGylHLDI8GWpEssXw==
+X-Received: by 2002:a17:907:7f93:b0:afe:764d:6b22 with SMTP id a640c23a62f3a-b04b145f591mr1268961666b.9.1757497386292;
+        Wed, 10 Sep 2025 02:43:06 -0700 (PDT)
+Received: from draig.lan ([185.126.160.19])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07830bb83bsm136246666b.42.2025.09.10.02.43.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 02:43:05 -0700 (PDT)
+Received: from draig (localhost [IPv6:::1])
+	by draig.lan (Postfix) with ESMTP id BC8215F82D;
+	Wed, 10 Sep 2025 10:43:04 +0100 (BST)
+From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
+To: Haixu Cui <quic_haixcui@quicinc.com>
+Cc: <andriy.shevchenko@intel.com>,  <harald.mommer@oss.qualcomm.com>,
+  <quic_msavaliy@quicinc.com>,  <broonie@kernel.org>,
+  <virtio-dev@lists.linux.dev>,  <viresh.kumar@linaro.org>,
+  <linux-spi@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <hdanton@sina.com>,  <qiang4.zhang@linux.intel.com>,
+  <quic_ztu@quicinc.com>,  <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH v9 2/3] virtio-spi: Add virtio-spi.h
+In-Reply-To: <20250828093451.2401448-3-quic_haixcui@quicinc.com> (Haixu Cui's
+	message of "Thu, 28 Aug 2025 17:34:50 +0800")
+References: <20250828093451.2401448-1-quic_haixcui@quicinc.com>
+	<20250828093451.2401448-3-quic_haixcui@quicinc.com>
+User-Agent: mu4e 1.12.12; emacs 30.1
+Date: Wed, 10 Sep 2025 10:43:04 +0100
+Message-ID: <87qzwe63tj.fsf@draig.linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/6] drm/bridge: cadence: cdns-mhdp8546-core: Set the
- mhdp connector earlier in atomic_enable()
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-        <simona@ffwll.ch>, <lumag@kernel.org>, <dianders@chromium.org>,
-        <andy.yan@rock-chips.com>, <linux@treblig.org>,
-        <viro@zeniv.linux.org.uk>, <aradhya.bhatia@linux.dev>,
-        <javierm@redhat.com>, <tomi.valkeinen@ideasonboard.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devarsht@ti.com>, <u-kumar1@ti.com>, <s-jain1@ti.com>,
-        <lyude@redhat.com>, <luca.ceresoli@bootlin.com>
-References: <20250909090824.1655537-1-h-shenoy@ti.com>
- <20250909090824.1655537-4-h-shenoy@ti.com>
- <bnydasal33cfzwddq6djfjgfb6viavpfpkuks5j7mpmvihckui@o7jvkwmskcuf>
-Content-Language: en-US
-From: Harikrishna Shenoy <h-shenoy@ti.com>
-In-Reply-To: <bnydasal33cfzwddq6djfjgfb6viavpfpkuks5j7mpmvihckui@o7jvkwmskcuf>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Haixu Cui <quic_haixcui@quicinc.com> writes:
 
-On 9/9/25 19:44, Dmitry Baryshkov wrote:
-> On Tue, Sep 09, 2025 at 02:38:21PM +0530, Harikrishna Shenoy wrote:
->> From: Jayesh Choudhary <j-choudhary@ti.com>
->>
->> In case if we get errors in cdns_mhdp_link_up() or cdns_mhdp_reg_read()
->> in atomic_enable, we will go to cdns_mhdp_modeset_retry_fn() and will hit
->> NULL pointer while trying to access the mutex. We need the connector to
->> be set before that. Unlike in legacy !(DBANC) cases, we do not have
->> connector initialised in bridge_attach(). So set the mhdp->connector
->> in atomic_enable() earlier to avoid possible NULL pointer.
->>
->> Fixes: c932ced6b585 ("drm/tidss: Update encoder/bridge chain connect model")
->> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
->> ---
->>   .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 20 +++++++++----------
->>   1 file changed, 10 insertions(+), 10 deletions(-)
-> It looks like you should reorder your commits: first apply the DBANC
-> fixes, then drop support for !DBANC.
-
-Before dropping !DBANC support, we can't change the connector to pointer 
-cleanly
-
-by cleanly I mean,the driver should be build correctly after applying 
-each commit.
-
-So, if the patches which fixes the bug of NULL pointer de reference due 
-to DBNAC
-
-are applied before dropping the code related to !DBANC code will result 
-in build failure.
-
-Hence the sequencing of commits.
-
+> Add virtio-spi.h header for virtio SPI.
 >
+> Signed-off-by: Haixu Cui <quic_haixcui@quicinc.com>
+
+Reviewed-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
+
+--=20
+Alex Benn=C3=A9e
+Virtualisation Tech Lead @ Linaro
 
