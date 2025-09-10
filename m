@@ -1,139 +1,113 @@
-Return-Path: <linux-kernel+bounces-810120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ACFBB51635
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:57:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D8CAB5163F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06D61487A9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:57:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF9CA7B214C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB07311C1B;
-	Wed, 10 Sep 2025 11:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E28F319858;
+	Wed, 10 Sep 2025 11:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqiA+Gmq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NxH5+lKL"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F8C28641D;
-	Wed, 10 Sep 2025 11:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931A6259CA9
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757505417; cv=none; b=ugRwe+NaUSUObH8j4h5THLz2af/+uAOAquRnfFbubzSBZcxcdsVOFYCWcl5qmFSAlLtCa4RsaaP0W3rg7QkrDl1tqsOWumJJowLbJx78FYO5HuvKaMq9peXCsxq7M0JJ279ifd2PdaCChbhK+RtFrf05dRJUCaT+GtoOH16eEGI=
+	t=1757505436; cv=none; b=R0TEkOwcCadb7wUYDMzvg47BEn9VzwKFHZURl22sFP1YkiWYpWNRSkdoazQgwIrFqch+CTEpjiDs6GEm07QzxB/kSH9uAA8v7x6dgOkm8c5tPkkrYzyAib7qra1+C4XCRB4a9ythsSRoFS2wnb8OUkJlhq4AGvaW79SN8J06maM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757505417; c=relaxed/simple;
-	bh=9ymga6d+xv8j2APww0Z/VEc6qtPLFWr7mQjdN8gX8RM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r4lZH8VA2OxsL9+ovSS26T2aT2GHMIO7jt8otRTix2g3gUUa7ximj9Q/SkY7iX+uVf4GgsXEJ8mIwUnJp+vMnurMsiykZWLOYwLXwfc6YCJW0B9AjCKtDH5guFkwJl34HZYncZ148EjWV04ji8e1JjJFL/+hdbOYrYdvXWF8b7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqiA+Gmq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67E04C4CEFA;
-	Wed, 10 Sep 2025 11:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757505416;
-	bh=9ymga6d+xv8j2APww0Z/VEc6qtPLFWr7mQjdN8gX8RM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YqiA+GmqqhYgg0itian0rbYsCFVPGM9Egu0JUmUqX093g1cVrdsg7s8kTUiBm7Qlu
-	 grOO6lNJ3YlDyfajdDdYCfx6pkrTecHGyHU/c6J7qW0PaZ/5sE+j4UoL4YOAR4oFlr
-	 92o8tpLBgz1IjiAKyjQ0WEEBqUbBOzXnAwppQaL2BOzHQd4BfINfZLckG2KeE1jZKe
-	 8WJvRrmnwc5drlTICVo3H2q88Ujd24eUMyHYVn1Weyedms++nxfjlf3KMAcCjDwVsF
-	 Jq8W22o1iUnU6MRIlgkQ+rBz/GUFJr+jTzJ0AdR5vni7Mi1YGVBq01WwNJaUFuwVuG
-	 2XJsx9c8w9zKQ==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-61ff7638f4eso2171407eaf.2;
-        Wed, 10 Sep 2025 04:56:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVXpiJEbD9zHIQp1KHw/XCF4miNg/TnlppabYOjAwn381/uJVpircMPuIJa7vxYOf7UHZcRmO7TGcc=@vger.kernel.org, AJvYcCWPh1wLMRfPXDB7hk7Y69WRUTb02rXiKZJMMj7kWCfEqMHJR5rCbkpnMVcAR/o34eBmFE7rwLEpV57f/Zc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWBPYsDhlTWpBGeUcUvrwSES6011HgA6616wL1SQXMn9mFO/HC
-	KLtIx2tSx+vhvUmJe26jdzgQ3Gr5ELw9yv+46VbfUgLFFHVw9lcumptdkj0o+PBIEDiJcdwCe0o
-	doxgqN6PNPyxs0TZRbAw+IP76TPZ4FDE=
-X-Google-Smtp-Source: AGHT+IEPM1a3/h0NZNKINJv3q89lj3PFZw+5DYNu3Jjh/KH0qG/1navRKm57c2tZ4rOPudorQm2yrVrFBAuExP2dVZ4=
-X-Received: by 2002:a05:6820:509:b0:621:7820:a28 with SMTP id
- 006d021491bc7-62178aa41fdmr6304612eaf.8.1757505415725; Wed, 10 Sep 2025
- 04:56:55 -0700 (PDT)
+	s=arc-20240116; t=1757505436; c=relaxed/simple;
+	bh=qpiVJjWEyw0flVEUf2pEXKX4Ry0xXatYYHCE5Flni1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lTVSnqMLzpDL32oGJR5mj37JgXli+7/LwLUttsp9qSFdOckPxbDdbU5ohnSTNj1CvsP67V99ffXzjeMzULqobBYJb93VIcEN9UACoP1bSJNpa5Z44/YPypcAd8xLhse2M3u3uhhIaAPVFaMRqvC8mV/88pRwkp2SKQ9luNQhnXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NxH5+lKL; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 10 Sep 2025 07:57:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757505429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uA3jzP0gvgqj8vfQCUNaxIEfEE9Vd+4Ci6oFMhsFfFI=;
+	b=NxH5+lKL7ChnYpL8vxoi0rJPUz6nTSQFO3OTIBCYeiUuuJR1NWN/zTS8pF4hqP5ZnlalOr
+	f78Z+8Mh7l6f7JhQwZVjrpAQp3RlRBZXmFMtlnMQbvcCL9AWxe5qfuwlL7FkAWWFa08m8O
+	jUpIofExq0THR8tHQ7Lxnr8s0F87e34=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Finn Thain <fthain@linux-m68k.org>, Lance Yang <lance.yang@linux.dev>, 
+	akpm@linux-foundation.org, amaindex@outlook.com, anna.schumaker@oracle.com, 
+	boqun.feng@gmail.com, ioworker0@gmail.com, joel.granados@kernel.org, 
+	jstultz@google.com, leonylgao@tencent.com, linux-kernel@vger.kernel.org, 
+	linux-m68k@lists.linux-m68k.org, longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com, 
+	mingzhe.yang@ly.com, oak@helsinkinet.fi, peterz@infradead.org, rostedt@goodmis.org, 
+	senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+Message-ID: <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp>
+References: <20250909145243.17119-1-lance.yang@linux.dev>
+ <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
+ <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
+ <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909094335.1097103-1-treapking@chromium.org>
-In-Reply-To: <20250909094335.1097103-1-treapking@chromium.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 10 Sep 2025 13:56:44 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jNytfP8W2XSyBNLe8OsD=O9M7WWvhtxdwXA-5KxwKfbg@mail.gmail.com>
-X-Gm-Features: Ac12FXwIdkUAXuV0Z_RMIKC4_3hVl_Mzmpc41M487V2P5XFC8LuYAr1_yA-4Te4
-Message-ID: <CAJZ5v0jNytfP8W2XSyBNLe8OsD=O9M7WWvhtxdwXA-5KxwKfbg@mail.gmail.com>
-Subject: Re: [PATCH] PM: sleep: Don't wait for SYNC_STATE_ONLY device links
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Hsin-Te Yuan <yuanhsinte@chromium.org>, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Chen-Yu Tsai <wenst@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Sep 9, 2025 at 11:44=E2=80=AFAM Pin-yen Lin <treapking@chromium.org=
-> wrote:
->
-> Device links with DL_FLAG_SYNC_STATE_ONLY should not affect suspend
-> and resume, and functions like device_reorder_to_tail() and
-> device_link_add() doesn't try to reorder the consumers with such flag.
->
-> However, dpm_wait_for_consumers() and dpm_wait_for_suppliers() doesn't
-> check this flag before triggering dpm_wait, leading to potential hang
-> during suspend/resume.
+On Wed, Sep 10, 2025 at 09:36:34AM +0200, Geert Uytterhoeven wrote:
+> On Wed, 10 Sept 2025 at 02:07, Finn Thain <fthain@linux-m68k.org> wrote:
+> > On Tue, 9 Sep 2025, Kent Overstreet wrote:
+> > > On Tue, Sep 09, 2025 at 10:52:43PM +0800, Lance Yang wrote:
+> > > > From: Lance Yang <lance.yang@linux.dev>
+> > > >
+> > > > The blocker tracking mechanism assumes that lock pointers are at least
+> > > > 4-byte aligned to use their lower bits for type encoding.
+> > > >
+> > > > However, as reported by Eero Tamminen, some architectures like m68k
+> > > > only guarantee 2-byte alignment of 32-bit values. This breaks the
+> > > > assumption and causes two related WARN_ON_ONCE checks to trigger.
+> > >
+> > > Isn't m68k the only architecture that's weird like this?
+> >
+> > No. Historically, Linux/CRIS did not naturally align integer types either.
+> > AFAIK, there's no standard that demands natural alignment of integer
+> > types. Linux ABIs differ significantly.
+> >
+> > For example, Linux/i386 does not naturally align long longs. Therefore,
+> > x86 may be expected to become the next m68k (or CRIS) unless such
+> > assumptions are avoided and alignment requirements are made explicit.
+> >
+> > The real problem here is the algorithm. Some under-resourced distros
+> > choose to blame the ABI instead of the algorithm, because in doing so,
+> > they are freed from having to work to improve upstream code bases.
+> >
+> > IMHO, good C doesn't make alignment assumptions, because that hinders
+> > source code portability and reuse, as well as algorithm extensibility.
+> > We've seen it before. The issue here [1] is no different from the pointer
+> > abuse which we fixed in Cpython [2].
+> >
+> > Linux is probably the only non-trivial program that could be feasibly
+> > rebuilt with -malign-int without ill effect (i.e. without breaking
+> > userland) but that sort of workaround would not address the root cause
+> > (i.e. algorithms with bad assumptions).
+> 
+> The first step to preserve compatibility with userland would be to
+> properly annotate the few uapi definitions that would change with
+> -malign-int otherwise.  I am still waiting for these patches...
 
-Have you seen this happen or is it just a theory?
-
-> Add DL_FLAG_SYNC_STATE_ONLY in dpm_wait_for_consumers() and
-> dpm_wait_for_suppliers() to fix this.
-
-The above sentence is incomplete AFAICS.
-
-> Fixes: 05ef983e0d65a ("driver core: Add device link support for SYNC_STAT=
-E_ONLY flag")
-> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> ---
->
->  drivers/base/power/main.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index 2ea6e05e6ec90..3271f4af2cb65 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -282,7 +282,8 @@ static void dpm_wait_for_suppliers(struct device *dev=
-, bool async)
->          * walking.
->          */
->         list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_nod=
-e)
-> -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
-> +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
-> +                   !device_link_test(link, DL_FLAG_SYNC_STATE_ONLY))
-
-This should use a check like device_link_flag_is_sync_state_only(),
-which is different from the above one, for consistency with
-device_reorder_to_tail().
-
->                         dpm_wait(link->supplier, async);
->
->         device_links_read_unlock(idx);
-> @@ -339,7 +340,8 @@ static void dpm_wait_for_consumers(struct device *dev=
-, bool async)
->          * unregistration).
->          */
->         list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_nod=
-e)
-> -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
-> +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
-> +                   !device_link_test(link, DL_FLAG_SYNC_STATE_ONLY))
-
-And same here.
-
->                         dpm_wait(link->consumer, async);
->
->         device_links_read_unlock(idx);
-> --
+I think it'd need a new gcc attribute to do it sanely...
 
