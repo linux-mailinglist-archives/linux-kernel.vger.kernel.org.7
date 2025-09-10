@@ -1,156 +1,83 @@
-Return-Path: <linux-kernel+bounces-810791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2253B51F7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:53:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3DD9B51F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD2BB481852
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:53:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B10D5446D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F7931D386;
-	Wed, 10 Sep 2025 17:53:32 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5126C8488
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 17:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D6F33CE97;
+	Wed, 10 Sep 2025 17:55:16 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37F7338F55;
+	Wed, 10 Sep 2025 17:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757526811; cv=none; b=lCldqOWsOopFPYdZWW4ZSE3FZ8J3f8RZQe4ipr6NgnTa8zdtgZSEDLUzu3/7feXzHxKTlCPpVSEFWK19kjEKb383pTZ68GR63z6sqL33i0Lr9BMjeaZao7iBPinCtwMdG7eC5+lCMkf/1mGJQJ24tccv22IVSl73HSz0sbTDV2A=
+	t=1757526915; cv=none; b=Kq1i220gSy37DlkTSdpQrYgOSDP6vpbO6tDQ/J29riDAaH4WBUwY111YXctzZgHaW2trJq6s6FGLgf7t+kv7jbfCW5ON00twLx/5gV6E9MwQSMhVrL+bNhneqkfyC4Q5nmvI7ocIAEZBstpD/KN7EEZlQZsi5RZJAYUZlGbVFkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757526811; c=relaxed/simple;
-	bh=g65vmnBrf83PJDIpAFQzfZ0xLySouvkFdaGla1Iow0Y=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cduQRJO7KxmguFdlCp0d0rbVZXn2NxHjh2BghAnVdpRib8PPaTsCRFEsmYFPwSUwVB7DwnDCbAjDj146WJJipODdZmh+mmTCG/KHtD8Ao1Y4kPsyEEQBgKRkNHKIFwMxl9PIgIuYmdBNC1ua/vaTINJWfQA//RSeEC6js9royB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-401eba8efecso15379535ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:53:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757526809; x=1758131609;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fAe78HzvKrmzUWfDTlQOX6TLHogAHGupJtXSD3zOil4=;
-        b=P88iSmcYtlgWwneGbgwd07gU0GacHnEp+E4l9pv1HaW9afe6bkbTNmrWd0w0XGgecl
-         EJalkh1PBtvZMwDHhe6y3sjm2UBnBjzeeTpBArdRusB6I9O7LiBAMiutaeRr2asv6UGK
-         v0F8xl5FzYDDIa7kIaa/OnG3ozon9nkZ7nQWT6goNLqC0IzljpHTsqsjbgVn2yFDTEgs
-         CmEzLMAExmSG39prgoCCo1iFWqChpadfe+34AZNq7srwKRnQfHCM/FrJKkShZRwcKWKr
-         Nyzd4PqmflZcGfyiBkp2u86IZQyAMkBp1mNWETkaZJ1i2ziOJguh30ei0twBwgC7vEHB
-         klrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbfDVzsh9uI3JVi41VTytVY5EZcu3zZIVkVMoWc+r5OZ4zp1wiuzSf8u21DfuFCKm7frj8gr0bN1a8OIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfa8+OrqbHu2mCJfaDPQyri7oPJzxyT1T6gh/JjTSVTJVEABp9
-	qRv+psEaXLIojOoHqmxSNXv85OJzjjcJRxhPeqlHg6U9T6Uh+SFhmVSRwAU68uiWALF3UATi/A9
-	Xel5KhAW3wbExYrxk9m3lcAiJ76CaDF59Cfvsqt2AQVFuniOyHo5gK7qWdZ4=
-X-Google-Smtp-Source: AGHT+IG0q7VHKO3FPxRQyRcND8f+cOEPjTXAcOqrvlE/B3jzOTdvqug6xnHm+OmQX8YjWxmBtZ19g1dKmFQ6s3v9xlcjt4QVyJK7
+	s=arc-20240116; t=1757526915; c=relaxed/simple;
+	bh=dVwe7SromTzyP65UkhWR26EDfDV0kLIswXvkxFF2EbU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LyONKtDnDzc1Vxtu8QcpXFWQgRpUBkIFMPY031rHQeqPBD2pbRlfQmZKtjuWobU+SGvKOFIP9OPKwpONWdjhMy/FX7GnZJ3GbODUutnr3FMwIbHx87bMfuO/oWskGSocLL6zq8C4VtmDjFSrCZaeogbDzKg88F5D3NDFofQ/V8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: mUYlKe/lSN2oZjXhq1e96g==
+X-CSE-MsgGUID: TGJeayQDTBCAbO+oh4PObQ==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 11 Sep 2025 02:55:05 +0900
+Received: from demon-pc.localdomain (unknown [10.226.92.32])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B282E4031317;
+	Thu, 11 Sep 2025 02:55:02 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: 
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH] nvmem: rcar-efuse: add missing MODULE_DEVICE_TABLE
+Date: Wed, 10 Sep 2025 20:54:13 +0300
+Message-ID: <20250910175415.8698-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca0a:0:b0:402:b8e3:c9f7 with SMTP id
- e9e14a558f8ab-41beb04877fmr7394125ab.8.1757526809505; Wed, 10 Sep 2025
- 10:53:29 -0700 (PDT)
-Date: Wed, 10 Sep 2025 10:53:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c1bb19.050a0220.3c6139.0027.GAE@google.com>
-Subject: [syzbot] [overlayfs?] WARNING in ovl_workdir_create (5)
-From: syzbot <syzbot+078954d5ad423349aa78@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The nvmem-rcar-efuse driver can be compiled as a module. Add missing
+MODULE_DEVICE_TABLE so it can be matched by modalias and automatically
+loaded by udev.
 
-syzbot found the following issue on:
-
-HEAD commit:    d1d10cea0895 Merge tag 'perf-tools-fixes-for-v6.17-2025-09..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14fba87c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=429771c55b615e85
-dashboard link: https://syzkaller.appspot.com/bug?extid=078954d5ad423349aa78
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fca0faadbf1b/disk-d1d10cea.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/aa812ff26c41/vmlinux-d1d10cea.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0cf89313ffd8/bzImage-d1d10cea.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+078954d5ad423349aa78@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(rt_mutex_owner(lock) != current)
-WARNING: CPU: 1 PID: 6377 at kernel/locking/rtmutex_common.h:191 debug_rt_mutex_unlock kernel/locking/rtmutex_common.h:191 [inline]
-WARNING: CPU: 1 PID: 6377 at kernel/locking/rtmutex_common.h:191 rt_mutex_slowunlock+0x6ce/0x8a0 kernel/locking/rtmutex.c:1419
-Modules linked in:
-CPU: 1 UID: 0 PID: 6377 Comm: syz.2.75 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:debug_rt_mutex_unlock kernel/locking/rtmutex_common.h:191 [inline]
-RIP: 0010:rt_mutex_slowunlock+0x6ce/0x8a0 kernel/locking/rtmutex.c:1419
-Code: 0f b6 04 20 84 c0 0f 85 c6 01 00 00 83 3d 0d fc 24 04 00 75 19 90 48 c7 c7 c0 ed 0a 8b 48 c7 c6 00 ee 0a 8b e8 c3 bf 8a f6 90 <0f> 0b 90 90 90 e9 2f fa ff ff 90 0f 0b 90 e9 53 fe ff ff be 02 00
-RSP: 0018:ffffc90004dd74a0 EFLAGS: 00010046
-RAX: 0f6370d1171cee00 RBX: ffff88805d37f7e0 RCX: 0000000000080000
-RDX: ffffc9000eb1b000 RSI: 000000000000170a RDI: 000000000000170b
-RBP: ffffc90004dd7590 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffed1017124863 R12: dffffc0000000000
-R13: ffff88805d37f790 R14: 0000000000000a02 R15: 1ffff920009bae9c
-FS:  00007f7c0943d6c0(0000) GS:ffff8881269bf000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe813a53530 CR3: 00000000378d0000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- inode_unlock include/linux/fs.h:879 [inline]
- ovl_workdir_create+0x4da/0x8b0 fs/overlayfs/super.c:331
- ovl_make_workdir fs/overlayfs/super.c:669 [inline]
- ovl_get_workdir+0x32f/0x17c0 fs/overlayfs/super.c:827
- ovl_fill_super+0x1365/0x35b0 fs/overlayfs/super.c:1406
- vfs_get_super fs/super.c:1325 [inline]
- get_tree_nodev+0xbb/0x150 fs/super.c:1344
- vfs_get_tree+0x92/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
- do_mount fs/namespace.c:4136 [inline]
- __do_sys_mount fs/namespace.c:4347 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4324
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7c0b1febe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7c0943d038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f7c0b436090 RCX: 00007f7c0b1febe9
-RDX: 0000200000000440 RSI: 0000200000000100 RDI: 0000000000000000
-RBP: 00007f7c0b281e19 R08: 0000200000000200 R09: 0000000000000000
-R10: 0000000000000008 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f7c0b436128 R14: 00007f7c0b436090 R15: 00007fff5ec39608
- </TASK>
-
-
+Fixes: 1530b923a514 ("nvmem: Add R-Car E-FUSE driver")
+Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/nvmem/rcar-efuse.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/nvmem/rcar-efuse.c b/drivers/nvmem/rcar-efuse.c
+index f24bdb9cb5a7..d9a96a1d59c8 100644
+--- a/drivers/nvmem/rcar-efuse.c
++++ b/drivers/nvmem/rcar-efuse.c
+@@ -127,6 +127,7 @@ static const struct of_device_id rcar_fuse_match[] = {
+ 	{ .compatible = "renesas,r8a779h0-otp", .data = &rcar_fuse_v4m },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(of, rcar_fuse_match);
+ 
+ static struct platform_driver rcar_fuse_driver = {
+ 	.probe = rcar_fuse_probe,
+-- 
+2.51.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
