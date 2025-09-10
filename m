@@ -1,130 +1,287 @@
-Return-Path: <linux-kernel+bounces-810922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C43BFB5218B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:02:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F4A9B520C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62D467ABE72
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:00:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AEA01BC5624
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DC82ED871;
-	Wed, 10 Sep 2025 20:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="S/DgMXTG"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5420329F0E;
-	Wed, 10 Sep 2025 20:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D261D2D5950;
+	Wed, 10 Sep 2025 19:19:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6037429E115;
+	Wed, 10 Sep 2025 19:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757534545; cv=none; b=IZgiaHVWb/9mV5ghAIMxuGMdq3+qONW2x1fec9FRd6/iJg7sdPlaja34JgMF8bF5oBUuS5Qf4jiIgcCva5+QAImFGW8tF6zdUdEScerpyMtVbWLqkqDeUzpsS73PjTnkKJ9P9JzDuSf4iX9S9uRRyCkV9OBzShyDiMPqGzw91HI=
+	t=1757531959; cv=none; b=EQ6iZLcnn2BAcHf7EqP87CsCP+AyHg4lrfDAKsirKPXqozO4GCZQiOLuxa/CDATNa+nVhnGRpG9oCOVLQ/O2MpW3Ra8EXrmdmIb/zALcplz7+m0zwfD/6ZbkmrrviPzKFIT0GwGwkdTzWGAQvttnP4fGfrzUKsGYb9RgAKHxK+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757534545; c=relaxed/simple;
-	bh=a+dv0UV8rJBpw5xyo6IBTrbeTMXkPWVPM8ER8nxUixY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mzJGmStJ1X9YzmwYPHWXHvtw6IULmj+hGa5NcnKq68vAbSXqgT93mg+TCUhWWkSfvyIOQ4xF3CH3kiZZ88Z2xR3Jz/V3cR5+d0+dWCyhquT1I0zfPH+KsgtMmaUYChS52Q50TY4K6CsvEIHPy1GKqTPzj3kRiTxYfCVu+Z/7Ugw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=S/DgMXTG; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=6gz3FXQu3DOFyH5Z/Yxt5ftIBimKEIJZnXppi88qYoQ=; b=S/DgMXTG9T1+Ocjo962KJ96UaF
-	anWelgQmGO/UfRZPPlKdjlmpkrnpewf2mmdKcL4ZnXofMfK6ODsm6s7oh7b4M5k4RMXWCfp/XPBXH
-	3MwMaQj1B/0RTfum51nzotVj5vc+982luD2HDTLjF8cIQzn1Vj0w4MDeXodebLl1aTafz+DLIzGER
-	+DKZKKCIylemE0bvBATwKOZY0uaIobx1bhiUVmBdE3x0j9iXHdnloksfYoIR0No9Yrb2L8fUiMY1y
-	ozK9zlaRZpU9/STU323PodgcPRhe0nOxqdYY9iyRN+/snTgZFbX4fH306Fg//Ji/s/RUcgW/GpgS1
-	gZ3CSndA==;
-Date: Wed, 10 Sep 2025 21:18:04 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Andreas Kemnade <akemnade@kernel.org>, Lee Jones <lee@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Alistair Francis <alistair@alistair23.me>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Shawn
- Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
- <festevam@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: mfd: sy7636a: Add missing gpio pins
- and supply
-Message-ID: <20250910211804.5d88f12b@akair>
-In-Reply-To: <aMGdH7Ab+9t/v3CB@lizhi-Precision-Tower-5810>
-References: <20250909-sy7636-rsrc-v2-0-cfd9f44fd259@kernel.org>
-	<20250909-sy7636-rsrc-v2-1-cfd9f44fd259@kernel.org>
-	<aMGdH7Ab+9t/v3CB@lizhi-Precision-Tower-5810>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757531959; c=relaxed/simple;
+	bh=jwJZhRU/w/h0cEDUI5UN11bGGLmn04QK/RkqMeyWD2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UfkqakLkPwYZPyNla6qZ5EH8e+X0m6JJ0r2BfHFwop0i8HOsj43AHrG4OI21upHNNd3pGo3AvLPPP5+o1eXMyXzeeNhCh21mv0lr23D0eZofc7T7LgHWckt+slSTcsiBq3Oa+g1wMiKhs0gVQfK8Wgi4mLpTyFQzUYCl32ws7xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 428E516F2;
+	Wed, 10 Sep 2025 12:19:06 -0700 (PDT)
+Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8755E3F694;
+	Wed, 10 Sep 2025 12:19:08 -0700 (PDT)
+Message-ID: <e12dce47-77a3-4993-98e7-c1eba683b4d0@arm.com>
+Date: Wed, 10 Sep 2025 20:19:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 16/33] arm_mpam: Add helpers for managing the locking
+ around the mon_sel registers
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-17-james.morse@arm.com>
+ <aMBKQCmlj0Ne56/M@e133380.arm.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <aMBKQCmlj0Ne56/M@e133380.arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Am Wed, 10 Sep 2025 11:45:35 -0400
-schrieb Frank Li <Frank.li@nxp.com>:
+Hi Dave,
 
-> On Tue, Sep 09, 2025 at 10:33:02PM +0200, Andreas Kemnade wrote:
-> > To be able to fully describe how the SY7636A is connected to the system,
-> > add properties for the EN and VCOM_EN pins. To squeeze out every bit
-> > of unused current, in many devices it is possible to power off the
-> > complete chip. Add an input regulator to allow that.
-> >
-> > Signed-off-by: Andreas Kemnade <akemnade@kernel.org>
-> > ---
-> >  .../devicetree/bindings/mfd/silergy,sy7636a.yaml         | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml b/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
-> > index ee0be32ac0204..054b97dd0c5c7 100644
-> > --- a/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
-> > +++ b/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
-> > @@ -32,6 +32,22 @@ properties:
-> >        Specifying the power good GPIOs.
-> >      maxItems: 1
-> >
-> > +  enable-gpios:
-> > +    description:
-> > +      If EN pin is not hardwired, specify it here to have it set up.  
+On 09/09/2025 16:39, Dave Martin wrote:
+> On Fri, Aug 22, 2025 at 03:29:57PM +0000, James Morse wrote:
+>> The MSC MON_SEL register needs to be accessed from hardirq context by the
+>> PMU drivers, making an irqsave spinlock the obvious lock to protect these
 > 
-> Need descript function of enabel-gpios, you can ref data sheet sy7636a.
-> 
-> "enable-gpios" is good self documented by property name, needn't
-> description at all.
-> 
-What you are saying is contradictory. I would prefer to have a mapping
-crystal clear visible between properties and pins. That is why I want
-that description. I remember I have got the datasheet from the company
-site with registration without acknowledging any terms. But I do not
-find that site.
+> What PMU drivers?  MPAM itself doesn't define its monitors as PMUs, and
+> (as of this series) there is no intergration with perf.
 
-> > +    maxItems: 1
-> > +
-> > +  vcom-en-gpios:
-> > +    description:
-> > +      If VCOM_EN pin is not hardwired, specify it here to have it set up.
-> > +    maxItems: 1
-> > +
-> > +  vin-supply:
-> > +    description:
-> > +      Supply for the chip. Some vendor kernels and devicetrees declare this
-> > +      as a GPIO named "pwrall" which does not exist in the datasheet,
-> > +      disabling it makes the chip disappear on the bus.
-> > +  
+I can redraw this as the IPI that is needed on platforms with cache:MSC and PSCI:CPU_SUSPEND.
+
+The PMU driver got dragged further out in time as ABMC may be a viable alternative
+for platforms with insufficient monitors. (but there are also platforms which don't
+look enough like a Xeon for this to work)
+
+
+>> registers. On systems with SCMI mailboxes it must be able to sleep, meaning
+>> a mutex must be used.
+>>
+>> Clearly these two can't exist at the same time.
 > 
-> The same here, descript function. such as power supply for whole chip.
+> The locks obvisouly do exist at the same time.  Do you mean that an
+> individual MSC must be either MMIO or SCMI/PCC?
 
-I think it is useful what I am writing here. DT maintainers are
-apparently fine with it, since it has earned a Reviewed-By.
+Yes, I've reworded that as 'for one MSC at the same time'.
 
-Regards,
-Andreas
+> (I don't think anything prevents both kinds of MSC from existing in the
+> same system?)
+> 
+> Above, you seem to imply that each kind of MSC interface requires a
+> different kind of lock, but below, you imply that the locks must be
+> used together, with holding the outer lock being a precondition for
+> taking the inner lock. 
+> 
+> Because these functions are introduced with no user, the code doesn't
+> offer much in the way of clues.  In particular, there is no indication
+> of what the outer lock is supposed to protect.
+
+It's a structure to you do the right things in the right context.
+You have to try to take both locks - all the inner lock does on a system that
+needs to sleep is check the context, so the outer lock does all the 'protecting'.
+On 'normal' systems, the inner lock takes an irqsave spinlock which makes does
+all the work, and makes it safe for the overflow interrupt.
+
+
+
+>> Add helpers for the MON_SEL locking. The outer lock must be taken in a
+>> pre-emptible context before the inner lock can be taken. On systems with
+>> SCMI mailboxes where the MON_SEL accesses must sleep - the inner lock
+>> will fail to be 'taken' if the caller is unable to sleep. This will allow
+>> the PMU driver to fail without having to check the interface type of
+> 
+> Why is it acceptable to fail (i.e., don't the counts need to be read on
+> non-MMIO MSCs?)
+
+They can't from contexts that need to sleep. If you've got this firmware thing
+you also need to have a platform that doesn't need IPI to reach the mailbox (why
+would it), overflow interrupts, or a PMU driver.
+Instead of having two drivers, or type checks all over the place - this structure
+lets such a platform get through as much of the driver as possible, before failing
+at the point that would deadlock. (need to wait for an interrupt in interrupt context).
+
+I think this is the most maintainable approach as it has the most in common. I don't like
+the two drivers alternative.
+
+
+>> each MSC.
+
+
+
+>> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+>> index a623f405ddd8..c6f087f9fa7d 100644
+>> --- a/drivers/resctrl/mpam_internal.h
+>> +++ b/drivers/resctrl/mpam_internal.h
+>> @@ -68,10 +68,19 @@ struct mpam_msc {
+>>  
+>>  	/*
+>>  	 * mon_sel_lock protects access to the MSC hardware registers that are
+>> -	 * affeted by MPAMCFG_MON_SEL.
+>> +	 * affected by MPAMCFG_MON_SEL, and the mbwu_state.
+>> +	 * Both the 'inner' and 'outer' must be taken.
+>> +	 * For real MMIO MSC, the outer lock is unnecessary - but keeps the
+>> +	 * code common with:
+>> +	 * Firmware backed MSC need to sleep when accessing the MSC, which
+>> +	 * means some code-paths will always fail. For these MSC the outer
+>> +	 * lock is providing the protection, and the inner lock fails to
+>> +	 * be taken if the task is unable to sleep.
+>> +	 *
+>>  	 * If needed, take msc->probe_lock first.
+>>  	 */
+>>  	struct mutex		outer_mon_sel_lock;
+>> +	bool			outer_lock_held;
+> 
+> Why not use mutex_is_locked()?
+
+That works. I've had a bad experience with the lockdep version of that checking who
+owns the mutex, and getting confused when there is an IPI involved.
+
+
+>>  	raw_spinlock_t		inner_mon_sel_lock;
+> 
+> Why raw?  The commit message makes no mention of it.
+> 
+> (We really to need to sit on a specific CPU while holding this lock, so
+> "raw" makes sense.  But we're always doing this in a cross-call,
+> presumably with the hotplug lock held -- so I think we can't be
+> migrated anyway?)
+
+Nothing to do with hotplug. (my recollection as to why this got changed - ) is because an
+IPI results in the kind of context where you can't sleep - and regular spinlocks can end
+up sleeping. This is the trick RT pulls. Without raw here - the atomic sleep check starts
+complaining about taking a spinlock  behind and IPI.
+
+
+>>  	unsigned long		inner_mon_sel_flags;
+>>  
+>> @@ -81,6 +90,52 @@ struct mpam_msc {
+>>  	struct mpam_garbage	garbage;
+>>  };
+>>  
+>> +static inline bool __must_check mpam_mon_sel_inner_lock(struct mpam_msc *msc)
+>> +{
+>> +	/*
+>> +	 * The outer lock may be taken by a CPU that then issues an IPI to run
+>> +	 * a helper that takes the inner lock. lockdep can't help us here.
+>> +	 */
+>> +	WARN_ON_ONCE(!msc->outer_lock_held);
+>> +
+>> +	if (msc->iface == MPAM_IFACE_MMIO) {
+>> +		raw_spin_lock_irqsave(&msc->inner_mon_sel_lock, msc->inner_mon_sel_flags);
+>> +		return true;
+>> +	}
+>> +
+>> +	/* Accesses must fail if we are not pre-emptible */
+>> +	return !!preemptible();
+> 
+> What accesses?
+
+To the mon_sel register.
+
+
+
+> In the MPAM_IFACE_MMIO case, this returns true even though non-
+> preemptible (because of getting the lock).
+> 
+> So, what is the semantics of the return value?
+> 
+> A comment would probably help.
+
+/* Returning false here means accesses to mon_sel must fail and report an error. */
+
+
+>> +}
+>> +
+>> +static inline void mpam_mon_sel_inner_unlock(struct mpam_msc *msc)
+>> +{
+>> +	WARN_ON_ONCE(!msc->outer_lock_held);
+>> +
+>> +	if (msc->iface == MPAM_IFACE_MMIO)
+>> +		raw_spin_unlock_irqrestore(&msc->inner_mon_sel_lock, msc->inner_mon_sel_flags);
+>> +}
+>> +
+>> +static inline void mpam_mon_sel_outer_lock(struct mpam_msc *msc)
+>> +{
+>> +	mutex_lock(&msc->outer_mon_sel_lock);
+>> +	msc->outer_lock_held = true;
+>> +}
+>> +
+> 
+>> +static inline void mpam_mon_sel_outer_unlock(struct mpam_msc *msc)
+>> +{
+>> +	msc->outer_lock_held = false;
+>> +	mutex_unlock(&msc->outer_mon_sel_lock);
+>> +}
+>> +
+>> +static inline void mpam_mon_sel_lock_held(struct mpam_msc *msc)
+>> +{
+>> +	WARN_ON_ONCE(!msc->outer_lock_held);
+>> +	if (msc->iface == MPAM_IFACE_MMIO)
+>> +		lockdep_assert_held_once(&msc->inner_mon_sel_lock);
+>> +	else
+>> +		lockdep_assert_preemption_enabled();
+>> +}
+>> +
+> 
+> Except that monitors may need to be accessed in interrupt context,
+> I don't see an obvious difference between controls and monitors that
+> motivates this locking model.
+
+Controls don't have an overflow interrupt, and would never be accessed by perf in nasty
+contexts.
+
+
+> Is the outer lock ever needfully held for extended periods of time,
+> making a (raw) spinlock unsuitable?
+
+It's held before sending the IPI - but only because the firmware platforms should never
+need to send that IPI.
+
+I can drop the outer lock for now as the firmware platforms haven't properly materialised,
+(promised ~three years ago - also promised in December this year). But some kind of
+abstraction is needed here to keep the code common, and these mon_sel accesses need to be
+something that can fail.
+
+
+Thanks,
+
+James
 
