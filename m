@@ -1,127 +1,233 @@
-Return-Path: <linux-kernel+bounces-809535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA00B50ECB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:11:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F187B50ECD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 690451C22471
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:12:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE2215438A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D018A307AE1;
-	Wed, 10 Sep 2025 07:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7773074AF;
+	Wed, 10 Sep 2025 07:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Hcv50php"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="c6qYCdZw"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011002.outbound.protection.outlook.com [52.101.70.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8411302CBA;
-	Wed, 10 Sep 2025 07:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757488298; cv=none; b=MEivGjQy+yfvHxq1JZ2WqGcKN+CjpgUhjXlDBuLaDbd9GDU8LQxAKBC6sAv+UXRfFV1TXOC/YzMnBM53S6Zao3iLhfABT8nwy3s/K7Ekzlw7khNG0s290cUlyoNZ3lONXfJyrp1M6MdiW8QQ9VYOO4JbvX3SeTnuf8cUeZeplWM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757488298; c=relaxed/simple;
-	bh=MKPZxIH3taedtreJ88sBf96nUf/AxnC4Xzi7CyUCBfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IIP1l5Z+e7MCpaNYz2UTIRthkuYIL0H8EExQflHLfpcdEALasEsGjnZ4LZSn3N5A/rOA9BtsjIuqhncM1VWHKikMialhE5+GFR3pXZyVpzTx0Yfo3LiiBXz2KdzwmaCBR/RpWDOCkxTGMc8YKOCc/HcX7s2dgfHUTFN24Z8ZnrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Hcv50php; arc=none smtp.client-ip=220.197.32.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=t7wTohui/fSOqceO9w1DSGUSUx0VNZ73a2duW9lrSKo=;
-	b=Hcv50phpoOajJxbARmNcO0WvCsTJtq4C7IfOmJ8OZLgyW0IFhyB0A4Y6ItRei6
-	Xf4lkIMHdU+qed1jSS0LjNJQoZ54W+anj2ZwoSxIoUbkCRPYBxvErNceISvMERK2
-	DmicX94zFN4bLE0jsNRicBQoOl9wybl7xt8Gz34Z7qIgo=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgBHBW+MJMFo0Ow7BA--.40818S3;
-	Wed, 10 Sep 2025 15:11:10 +0800 (CST)
-Date: Wed, 10 Sep 2025 15:11:08 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Qais Yousef <qyousef@layalina.io>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: cap the default transition delay at 10 ms
-Message-ID: <aMEkjGN9HlwURISR@dragon>
-References: <20250910065312.176934-1-shawnguo2@yeah.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5E42BE620;
+	Wed, 10 Sep 2025 07:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757488329; cv=fail; b=pgZfTfRjXYupeK9SPvOvKZEirEfkFyCLQqTAhpP1XK6TqvSzeuWJ0aSI+vOXgT8gBdbbdHDuYUii1bFAcSHx7RrcyJJY4GajyB21wobQ/GOrzlPIxDQqEwGXXLb+hFqa75JbQ0z2+l3bF4vw9ZqWuRkJjTARMEsw9HLinDDElE4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757488329; c=relaxed/simple;
+	bh=l4wOK6dSSu2vwO/Kx27CfHPsqC3uv/01tsCSf4k/CMg=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=eN9RslzDu+IY7GIYkfYK204nVrWU5+MdShNdmP22cTO1DNP9uy4vcIkDjXi2aYAgNZDKSTl2/VpHLa+bAxFSjSwuS0R+XlNv9Rj3DKhC02znTItnzQQJSJv3919nyRiEnF3Xt9Q37CNBktGFIAnTcydSRKyW6FU99mGmyJAPO4E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=c6qYCdZw; arc=fail smtp.client-ip=52.101.70.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=alt68JGXkTiOO0ut6ZUtEynySbe8X3fPhdsN03GH9WV6xNZfTpohCWeZCzPtaGJ1vNNQsPnximsTuHaY6G17yedyQcF7nQpKg8gFQ3/9OIySid3xW25+YPrDWuGB+0QLfNfkjWicGt63U5J3rMPCwTj6ITnCl6lqifSFYwPthL2OEkaHZF0pb3C0PAfaeTcx+E2bU1GwlFxTIBnveakOZsVcJdhhoFxIpDlG9nffK1MclzOAbVQeZPNO9ix2C9wxvH5E7RJJKZBOYWHZCltJGt05LMnI4XlnU5AT9gwj+BK1RGmCHDljq7B46WhHJrof7L8OxJAF6473tQoXXjnbuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FxeK8MIgw1+MjNYsgBUKJbgn9oL+02JX3KPVdELzjo4=;
+ b=m9cKrubjtSRiOSAO9zHZCWatW/nN0zj2U7lHpXY8EHFKkCSIIU9KIr/t87ts3Llr86uO0SZNOH2pTZbjUeWwZlIGbVHmzY9wzVET7jmJdXLDuWNzPRCrNK6DRi77PRGEJAGF17BkYCZUObz6S/W93q1zojRag6NuuF+bYSZt38kD+icheKJljuIg9qAyUmvgbW7dAuP3RFf32GppmLt2QWMuQcYKtfKZ8+hkF4f90wVrzTy+fH9pSyC3NaOohv4QIycFpCZzUtbdXN4X2Q9LC3QuUi4OByuL+bdGw9fUPr8C91XtugwBKeQLb3clsrN6F3EvbjrPEa4YGgVBxrAEYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FxeK8MIgw1+MjNYsgBUKJbgn9oL+02JX3KPVdELzjo4=;
+ b=c6qYCdZw21rVjUsRuE611bVRqjSAnaJyYvQqXx97dzkbrS5xRT1Ve/d+RrQLtLU4A1562fKb6eGuJGRqOyp0S2J1PU+yqRxH4H68np4NGDhDvTPZJqey/WPZLOes0FodIfR2kVWVnIy4yQ7+16eyYEesENZa+YG3coAhZx+DdK4Hz69Vxx/GlLgm/BT3/FilmUjimx+cBWwvdrHF5f/Bdnc2V8cu5Pmm3fIUOZ1TvGbnJYvG4VQm9b4pdHLzRq0fAir6qAhC13vDMzKMh+4qT1BS6xxo3IKolLaVdx9NKsNdzTyXWhBp7M4Bpu54R1+Nr5RdC7HoeJmJFaOSfPOXeg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AS1PR04MB9358.eurprd04.prod.outlook.com (2603:10a6:20b:4dc::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.15; Wed, 10 Sep
+ 2025 07:12:04 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9115.010; Wed, 10 Sep 2025
+ 07:12:04 +0000
+From: Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH v2 0/6] remoteproc: imx_proc: Simplify driver by removing
+ the switch-case
+Date: Wed, 10 Sep 2025 15:11:44 +0800
+Message-Id: <20250910-imx-rproc-cleanup-v2-0-10386685b8a9@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALAkwWgC/32NQQ6CMBBFr0Jm7ZhSCgFX3MOwgDKVSaRtWiU1h
+ LtbOYDL95L//g6RAlOEW7FDoI0jO5tBXgrQy2gfhDxnBilkLTrRIq8Jgw9Oo37SaN8eG1NNtWq
+ mzswG8s4HMpzO5n3IvHB8ufA5L7byZ//VthIFUlu1eiqVqhrd2+Sv2q0wHMfxBQ0VFQ+wAAAA
+X-Change-ID: 20250908-imx-rproc-cleanup-6f3b546b9fdf
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+ Frank Li <frank.li@nxp.com>
+Cc: Hiago De Franco <hiago.franco@toradex.com>, 
+ linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757488317; l=1654;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=l4wOK6dSSu2vwO/Kx27CfHPsqC3uv/01tsCSf4k/CMg=;
+ b=eG+konEZfivYmnTt1NhfmEhMsRkBWjIVqkExkARcFB9DKm8R3tep2jUBOQ4fNrpNX6wb4MLHa
+ i5aDgibdD5yAgdEBkxj0RFKgekFJCHpeDWOTfXR8HYB1O72/wGPybAe
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SI1PR02CA0015.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::18) To DB9PR04MB8461.eurprd04.prod.outlook.com
+ (2603:10a6:10:2cf::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910065312.176934-1-shawnguo2@yeah.net>
-X-CM-TRANSID:M88vCgBHBW+MJMFo0Ow7BA--.40818S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uryfKF13JF17Jw4rWw48WFg_yoW8Kr4kpF
-	W5uay2yr48Xayqywn2kw48ua4Fva1DA3y2kFyqywnYv3y3J3WF93WUKayUK3yrAr4DGa15
-	XF1Ut3ZrJF48ArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ut9N3UUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIQ62HGjBJI49ZAAA3f
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AS1PR04MB9358:EE_
+X-MS-Office365-Filtering-Correlation-Id: 050b6215-42de-4d07-0c30-08ddf03957e9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|1800799024|7416014|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?byt5cWpIVEc4dVJHZXFybTZ5MXdOQzh2QkRtNDZXOForWm1SK1JrM2NReVF3?=
+ =?utf-8?B?cnF6RjhuV0FaYXUyMjRyT1NLQ2MyWGtIY3hyVHdIaXFYYVlpQzY1ZDVPWlNM?=
+ =?utf-8?B?eUNXanVpNGZhT2lpcUYxb3p2bm9BUitVdGFYeEZtRDY0Z3FackR3cnhHa0pY?=
+ =?utf-8?B?RmJSWFVNcGVFMHlBSDRIK0l0OXBaTjBRVlRnQmhsbW9qbm1kN29Nczk0OFNJ?=
+ =?utf-8?B?aU43ZkovbERzOEJ3VUVrZlhyTVh4QXpvU3Z4K0QyTnlBQjhvM2kvV2hXSkxZ?=
+ =?utf-8?B?UDBKdmZSQjJSYjlvZUcxcG5kQVEwK3dMaXpyVnZPZ1NHVkFveStDcTlVWklt?=
+ =?utf-8?B?dldaWDRkUDhER3NFeVhGZGdXQk41TWdkZkdhSXZyQitPdExicC9Ya3FkcW5N?=
+ =?utf-8?B?MDFmVEZHT3BFNkZlUUNEUUdCa1JNalFORjBETW9sN2EyWk1FalBKUTRkTDdu?=
+ =?utf-8?B?QmJ5TStROWN3QkJZMHZGY0toRmhZR1ZHMCs1K25va0FjQ1UvV2NkRUZoNzhE?=
+ =?utf-8?B?SXpkbG5YYXZuT25rclBGTTArV0ZhUExwWkVNNUtkTGIrd21ZUjRPaERxb0JH?=
+ =?utf-8?B?NFR5SW5yZlFEVTdyWEl4a1UvcWtNNGYvbnNPMTlGTDRreXY0VkJUUWFVYkZ5?=
+ =?utf-8?B?ejZlZEQyUlNsbFczZUNScmZGSWd4SXhCL1lKTm44aXFub3lBZFBGLzc0TnNk?=
+ =?utf-8?B?dWZKQlRrdGhpODczNmZpbDBKV3BrbVNMcklCRVJpb1prV3RWcEE5WVY4VXU4?=
+ =?utf-8?B?SUwraVJ6ZnlKaEloR3BEdlhjMHROT2l1RVVpdFVsVlBwNmhpejBTdGljOEcx?=
+ =?utf-8?B?M2tWODkzODBISUdkVVQ3T3IwZVdmMWV0QzRVcXlhL2szRWhMUXZ6dS9qZUly?=
+ =?utf-8?B?UjdQUllKL2xiWGNuSmRNcXRKdkNUWll1MzFOMWp1bnBEU3NOMzJxTHFTQVJ2?=
+ =?utf-8?B?bEhrRllBb0dMc3kweDVsdC91OXpoMFpmWWkvM3ZHdXdsQk9kZEJRdm1kVWt6?=
+ =?utf-8?B?WWFEbDNzaXNxRlhpTEkxNHhUZ2RFekpSNVkzSDJJd0I4RmJMdEZBVFdxQzdD?=
+ =?utf-8?B?TGlYWXdLUDc5U0tNclRydG1qN3JaOXRibTJzb2p4bVdiMStiVW9BUnduMUtn?=
+ =?utf-8?B?RjNSUVg1VTFTWlNGby9aRGdMTEtaRjQyb05rbi9GcGs1cTVtRXpkc05qQXB2?=
+ =?utf-8?B?N0dGUitNQkpUUlJpTUpRbGh3N3ErYmxqZlgyTUlOMXhpT1hhT1g1VHBZYklY?=
+ =?utf-8?B?VUMwRXZHdnEra0p3RlVBLzJ1N0VDWnZzcE9NajR2Uk14TG9KODMzRjlFSU1G?=
+ =?utf-8?B?UVQ5WkU3RFRoRE9CeTVSekM0RHF5dWJpV1luMlZSUTVQR0JWTFM4a0JJTE8w?=
+ =?utf-8?B?Q3VsWVc3OERyVFI5TmVGK2YyeHNBbm1QUkpsYzBTbzkwR1hBNzV6SmpCeTJC?=
+ =?utf-8?B?SzdhVnl6aERhMWxnQjZnUnpTenUxZVV2VnkzRWhXVU9jNW5UaksxYmcrbHFB?=
+ =?utf-8?B?MHBzTGNBS25wQmdqSnFUODhzbzZReG5mNjA1VldVeGltakJnKytvcU9xS0o1?=
+ =?utf-8?B?SzJjUjU2N01nVCtSbThzbldDVCs2S29BTGI5V2FPSUVNaStsNmZyYTVMZHo5?=
+ =?utf-8?B?Vi9FWDNKbFlWR0VuL1JLSlFTM2dMNEVFcTRCRkx5cGREYnIrMjl1SjRFYytH?=
+ =?utf-8?B?L0EvRExQWVd4Z2xFeE1sNktyVFg0U2tRbXprSWtmSXB1bVJjVnh4ZS9hK0Ns?=
+ =?utf-8?B?elVxazFxWS9uWVBrWklRSjZIcGFXajhxNmJFN0ZNWi80SW5ycEZMLzRsRys0?=
+ =?utf-8?B?Tm9ISmFsTFRTRjMyV2FKbGNuZDlQYTE5R1VkMkxBM0prTU5rTVA1MjhJVVgr?=
+ =?utf-8?B?TFQxZXRncUZsa0pNMEJFUVQyVWJXZmpoUTZyb1FCMGhBREhpMlZ5RG1tc0wv?=
+ =?utf-8?B?bjVjQ24rUElyL29aY2tuSk56RVBjanFXNmpZcVk3OU1aTkxtQVBEeGE0OWVS?=
+ =?utf-8?Q?bcJ0oveG0y5K7D67tSVp8PuVAdX4xE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(7416014)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?d01UV1l2dHNJZXdKaWZxSE5oMUFuRkFiUWt3N3lOL281cTBBZldoN0h4bUND?=
+ =?utf-8?B?c1laUHNkTkRqaVVBZGNuclQ3bWw5clR2L21BSTY4dUl6ZExFT3pVU1FVRDFB?=
+ =?utf-8?B?aUN5ZnBDMDJoYmVObkNHSHJpemZjZ3BRc2dxbmdyOCtsU2cvaytWNGg0aElL?=
+ =?utf-8?B?dVQ1dmw2NkhTd2szSzlnVGRUdkZyUmpnVThpL2tQY1hsMFl3R3Q5bmQ1Ty82?=
+ =?utf-8?B?aGRNL1RZTFVWaFlEUUxZM2h1aVpOOUkrRTZEakNjTXlRang2RXFPbk8rWXE1?=
+ =?utf-8?B?a3gzSi9tQ2ZieW9ScFJFT1RvNFpEQ0pyUllSQmNTVjE4WEt1TEI2WlZHeXFW?=
+ =?utf-8?B?VENKekRVSHpFczZTYVpBd1FMZzFWTEEzNEJ2L0lMTE8yRWF2TnBodlNSWHJa?=
+ =?utf-8?B?VGR0aDZCeVZ5a0JjSVJJSnJuYi9FakNxcmNkSFQybTd1QVd0V21hMTA3aXN1?=
+ =?utf-8?B?WVV5a2tHWlJIZ2M5cU5QdGRJcEdUemxaRHZYaXNoUEp5d1dmOTc0R0cxaU5j?=
+ =?utf-8?B?UzdmaTlHdW9PSVNEQmhkbDJRck1uT2RmT092dXlNZEtVb05QcGZoZktJeXNa?=
+ =?utf-8?B?ZmREVUppM1A1ZUpWVHZFU3RDcSs0WGxHam1FeStSd2JjamZ4NzEwbjVUR1dL?=
+ =?utf-8?B?cWt5TXFjenQybFNWQ0tmbklXWUhHMDFzc0hPQUFRRTBsN0ZQSzZTQkdVZ0s3?=
+ =?utf-8?B?VjlrNjgwdjZqSk5ON0cxeUlCeFZ3eVM1eTFpaWJTZGlsZ3BxMUZaYzhGY0sy?=
+ =?utf-8?B?bHllMXFWVWtnRlM0T0lhNGhrbXl6aXE4c0hIcmFWSHp1Q1BoWkFvSHpCS1JQ?=
+ =?utf-8?B?bEp6eGVvNWVDeDFDTUNIclpDNmJxd3I3eVcyb0dzemRLZ1R0SXNWU3lJczIw?=
+ =?utf-8?B?NTUyTFhlZUZDYmtRaDJZamt2cnlwcTZtUE5SSUVhSVFGRmN4c1RnWlRxL0Rr?=
+ =?utf-8?B?Z0JENTJLRzk2bkQrTFNNTjVZSnJBZzYyK1R6L3BIa3k3eDBvWFZqRHY2K3JL?=
+ =?utf-8?B?M0tHODFXbTR0azM2RjAydjBYWXRxWXJBNTFTV3RIcVJZNjFJTzU4ZXgydUxw?=
+ =?utf-8?B?TDJaRUJtZUtRa3luKzBiY0Q2T2R0TnFrMnNqdHZhSmhaSklMTGJVMU5yV3NI?=
+ =?utf-8?B?K2gxRzg1a2hVc0R2YUhSTzBFaE5aNU03Q3NwWnU0MndCdUxiRWhRWmloSXhC?=
+ =?utf-8?B?SGcxOE1yVkg3SUdCQXJ5U0Q2R05pdTNad1BtUjRoRlBNUHh3a1dSQjA1LzFR?=
+ =?utf-8?B?NVB4Y0c3UGVqSjlyeGw1Zm9UZmlkd0t2QXVNU2UrVkhYRktvR3g2MnU0MmxG?=
+ =?utf-8?B?ejNrbnoyTXg3TDZ6cDRXQnBvZ0RLWDJHVVBwcHZsbWVYWW1rblRLZDBZd0Zq?=
+ =?utf-8?B?RitqeC9mWTZlSlgzQUpGQzhtLzBBOVgrTk16SldOdG5qcGlCejAyRkhNMEVz?=
+ =?utf-8?B?RTBURFJ4OWEvL2c0QTBvSEg1WGpmZUFsZERtRnhzRkNBUUhKYVJFS2JQczJn?=
+ =?utf-8?B?U2ZzTkZhdCs5YmtwQTEwZGg2Y3F4Q2V6amtSekluV1g3RGdvUGtVS2s4Ykpw?=
+ =?utf-8?B?TUkzY1QxaWZPdU9CNXBBMDJOL3BJNktUdE9hRi96bHZwSVplMS9TbE1DS1RC?=
+ =?utf-8?B?L0JpRk1nNVA0dWdEbEFmdjM0YjlHN2EzRXVtNmFHSXQ2VWc1MUZoZGZCdXYw?=
+ =?utf-8?B?MElQWEFOWTJHcUJtQ2lmditKR3BkejhWRmxzcWQyRGM0ZU9XekV5R2Ftazlo?=
+ =?utf-8?B?NWxXYXYyekhVR0JtblVTaU12bG0xTjhQWm91dTA0UGZxbzJPai9JbVpGVjlL?=
+ =?utf-8?B?NHV2YkUzWWkyWTR2Z2dVVDZFODU3d05EdjlTa2tGVk1VN2pOeXBPWG1pMTNq?=
+ =?utf-8?B?bkYxdlhReThEL3VoTHNRUUYzSFVwZHpMaVlsL2FWbHBDSFZVTFlLRzlwcGpF?=
+ =?utf-8?B?NWIxa0NPMzcwNGhGem9Pa1JaMVlqOE44ajhlOGxMcmdPcWVIYjdSTHF5dW5i?=
+ =?utf-8?B?ckRiSmFUNkVXcVlXbzhjM05VTy9tTUdXeHk2ZEtEeVZXR2w5bzVpSWY4VDB4?=
+ =?utf-8?B?TTdzbnFZcTB4bWhVVUlxOGZUK25nWk9ocGVUU1RSQWp2MFBOSnhlM1FqdVps?=
+ =?utf-8?Q?sxsyPn8sFtEtSuwji7dmS1nZl?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 050b6215-42de-4d07-0c30-08ddf03957e9
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 07:12:04.4102
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GMo84V9aBVpbgpye4lX3Z37p8XjtpAYZUHHqx387UWX/euXrp1Ed+8y9fm0xZITOsTECiuaOg2NVOjPzXEBWLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9358
 
-On Wed, Sep 10, 2025 at 02:53:12PM +0800, Shawn Guo wrote:
-> From: Shawn Guo <shawnguo@kernel.org>
-> 
-> A regression is seen with 6.6 -> 6.12 kernel upgrade on platforms where
-> cpufreq-dt driver sets cpuinfo.transition_latency as CPUFREQ_ETERNAL (-1),
-> due to that platform's DT doesn't provide the optional property
-> 'clock-latency-ns'.  The dbs sampling_rate was 10000 us on 6.6 and
-> suddently becomes 6442450 us (4294967295 / 1000 * 1.5) on 6.12 for these
-> platforms, because that the 10 ms cap for transition_delay_us was
-> accidentally dropped by the commits below.
-> 
->   commit 37c6dccd6837 ("cpufreq: Remove LATENCY_MULTIPLIER")
->   commit a755d0e2d41b ("cpufreq: Honour transition_latency over transition_delay_us")
->   commit e13aa799c2a6 ("cpufreq: Change default transition delay to 2ms")
-> 
-> It slows down dbs governor's reacting to CPU loading change
-> dramatically.  Also, as transition_delay_us is used by schedutil governor
-> as rate_limit_us, it shows a negative impact on device idle power
-> consumption, because the device gets slightly less time in the lowest OPP.
-> 
-> Fix the regressions by adding the 10 ms cap on transition delay back.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 37c6dccd6837 ("cpufreq: Remove LATENCY_MULTIPLIER")
-> Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-> ---
->  drivers/cpufreq/cpufreq.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index fc7eace8b65b..36e0c85cb4e0 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -551,8 +551,13 @@ unsigned int cpufreq_policy_transition_delay_us(struct cpufreq_policy *policy)
->  
->  	latency = policy->cpuinfo.transition_latency / NSEC_PER_USEC;
->  	if (latency)
-> -		/* Give a 50% breathing room between updates */
-> -		return latency + (latency >> 1);
-> +		/*
-> +		 * Give a 50% breathing room between updates.
-> +		 * And cap the transition delay to 10 ms for platforms
-> +		 * where the latency is too high to be reasonable for
-> +		 * reevaluating frequency.
-> +		 */
-> +		return min(latency + (latency >> 1), 10 * MSEC_PER_SEC);
+This patchset serves as a preparing patchset for i.MX95 support.
 
-I guess it's more correct to use USEC_PER_MSEC instead, even if both
-have the value 1000.  Will fix in v2.
+The current code logic is complicated, with mix the usage of switch-case
+and if-else.
 
-Shawn
+To simplify the code logic:
+ Introduce struct imx_rproc_plat_ops to wrap platform start,stop,detect_mode.
+ Each imx_rproc_dcfg data structure is assigned a ops pointer.
+ The common imx_rproc_{start,stop}() directly invokes the plat ops, no
+ need the switch-case.
+ mmio/smc/scu_api ops are included.
+ No functional changes.
 
->  
->  	return USEC_PER_MSEC;
->  }
-> -- 
-> 2.43.0
-> 
+Thanks to Daniel and Frank for the help.
+
+Test on i.MX8MM for MMIO ops, i.MX8MP for SMC ops, i.MX8QM for SCU-API ops.
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Changes in v2:
+- Simplify the if/else in patch 6 per Frank and Mathieu
+- Add R-b from Daniel and Frank.
+- Link to v1: https://lore.kernel.org/r/20250908-imx-rproc-cleanup-v1-0-e838cb14436c@nxp.com
+
+---
+Peng Fan (6):
+      remoteproc: imx_rproc: Introduce start/stop/detect_mode ops for imx_rproc_dcfg
+      remoteproc: imx_rproc: Move imx_rproc_dcfg closer to imx_rproc_of_match
+      remoteproc: imx_rproc: Simplify IMX_RPROC_MMIO switch case
+      remoteproc: imx_rproc: Simplify IMX_RPROC_SCU_API switch case
+      remoteproc: imx_rproc: Simplify IMX_RPROC_SMC switch case
+      remoteproc: imx_rproc: Clean up after ops introduction
+
+ drivers/remoteproc/imx_rproc.c | 449 +++++++++++++++++++++++------------------
+ drivers/remoteproc/imx_rproc.h |   7 +
+ 2 files changed, 265 insertions(+), 191 deletions(-)
+---
+base-commit: 3e8e5822146bc396d2a7e5fbb7be13271665522a
+change-id: 20250908-imx-rproc-cleanup-6f3b546b9fdf
+
+Best regards,
+-- 
+Peng Fan <peng.fan@nxp.com>
 
 
