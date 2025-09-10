@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-809889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9833B51332
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:51:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B137EB51333
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EB3517367E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:51:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D67648048B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1D53115B8;
-	Wed, 10 Sep 2025 09:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BEE3148C7;
+	Wed, 10 Sep 2025 09:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="VOGutj54"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="HlipuqdQ"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BE525A320
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0CD25DB06
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497890; cv=none; b=ea5TwnVS3Cw3+xpdBwZb1jhyEiIz0siuap9VcAIXJs+iHxEo6Dt2g6JFvR9eCrQK0WYTm9JJS187OsrUui4XQmulXGorQlTXxUkMcKCD0WLVpjyh/rWR3XzF2jlZUATHO1EJVgBtaVNqk667CYEdbk4O+3ukmsQAPgWyxJl0kDs=
+	t=1757497898; cv=none; b=lxtPPzDSHA0lgQxgK31QvD3yYLwKVjvi+Xz131Rq6NXp2jrW1T9jxg5Y3kPEFHfqjJmXBrQIVR8bEuWZ9cKg2ZSUMeRmYKkg0mD7bI0/4Utt8oiOzi7MzO9iKRv32zs46iRGk3VXXBbzQS8tX8dFsKeaC4dlg2NNlVFWL5u6vZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497890; c=relaxed/simple;
-	bh=PPdJKbt+QhiatobW0HNneeEsuS7d4F+Tqh3a3V4pt/4=;
+	s=arc-20240116; t=1757497898; c=relaxed/simple;
+	bh=e4TTFxWbfCAruZCvvckJLtHWN3hktCeBCZI+2cmgIrc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SA2r98ADt9T2WITjOBAYwrwJ2pB1/kZdvUXj/Yk1fNAcoDdLAYOMPTXx6wJicuyKpZvZiZbkbDFaBh2x9fHGunknHT5CPDnRvciBGht1Xb3A7m6O4o6YHNSU7RHrXx+FfJOoe48iHngd4Zu8teXzyK2ygUIQCgTgeJsenZBkjlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=VOGutj54; arc=none smtp.client-ip=209.85.215.181
+	 MIME-Version; b=lMbL8VzC84jr11WCX6Nj27gjxQj8PRO8TsUW6nCNPFWalKwCIvIPshxiSmZJdwS8UGqkGYwI1mnwSw8E6F7L2BF2WROdzHwN8qK39e4qT0jlYZ7fSNwJtj4wuetHKb205vYcxkivu7RjLHI0YplD7+HMcH5CoEq0qSILl2mHkFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=HlipuqdQ; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b475dfb4f42so3976657a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:51:28 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-77460a64848so1505659b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:51:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1757497888; x=1758102688; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1757497896; x=1758102696; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XN62zYWns9T3iEXjB0mMzeReZa6lZpakq/cZfsDQ4jU=;
-        b=VOGutj54gh6sQCICTO8xC9AoHPJdhtxJp0h6C0XJU5VZa5FGNUGfGNOwBQJqdjB2Gz
-         Wa2099nc+nN+z8pQKpFpmmJzDr1JM7pNleoxZge3/AOFnchS15VTwtAKDxo2r8tcStRb
-         hTYzv05tHl0J3pRr+BLiXfhSXbLTPwgMloCjF/LFs8Zg5vYCZ/Tdkcb7g7Nk6y+7OQAi
-         60blSxp0KUC2r+YWO5KQ0czGgxBVgKJgpIiVqxZzLjywTEhX/UnYFQ4iQ3irluEJRdD+
-         UbEr+NMA+sJZbST2vLjCE8q778D/ihcDOl8SnSgVQuLc9uSPRqBSNidye5YnesDD2BNW
-         Hjng==
+        bh=LhkrDCBZE1HQCcoT5uSllVkcfT4YZeL1VIJqEPNvTDM=;
+        b=HlipuqdQof6ieid0CQK8VUf6bCBGJ1oKJEyyBGixZues9NKwtJ37s9aJxH34UwFeDz
+         dmeVTFB+qwm6K+y8gAdd+lUltJMwZ/eToksBVSkHTfEMcQCkGSPCCV5Nmx93YouIlNxJ
+         ktNWRRU6+EZ9o9rZHdQeFx4JVIi6tJo1HtFi0kL2Kx34TCVDltK9qL5Rh79RLMw2eNIR
+         gW6kOlO7KWdiQDcX86JGzkkz6yBwXmlP6txlswzZZ9Cnu8C8r8miRUYXdLHxCqYFzG5p
+         1d8IeiGm4nDQIDnAXh29s99R99Tocst1txpE+2we5rTddWKD3PolWEsqhT/BIMoH7y9Z
+         jRpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757497888; x=1758102688;
+        d=1e100.net; s=20230601; t=1757497896; x=1758102696;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XN62zYWns9T3iEXjB0mMzeReZa6lZpakq/cZfsDQ4jU=;
-        b=YHDXHFQUGv96YTxq7Xr0ScvppDudfC3dOy04NKpIib3AykJq3ExET9TOAG+dUcvR1T
-         x1STZEB6UEJkDqxDcZ7HJMAG1lOLbXUyVKFDCMMc1iprN4am77wClG/vQr6m9h4WFXKx
-         UilGPyZQW6KWDu6n0+qW5gUJAJlthWnn+5SBcuJYV+9VmwuqDp5dU3ANzi1l8v1/I0Tk
-         8jHiDkyTuoWc6ILinnvmOVqZbVRx0drUP1hsrFzEIMInGCe4AuXnQttBeflIxRywWzi7
-         yS7MDaToHG5X0C+E6nAey01EtSRDa09U1n1muEAqDxYmIEmnWpSMJClL5rQY487FDRig
-         D9zg==
-X-Gm-Message-State: AOJu0Yx6IVcatllMiP2tNdw16l87xp8ou+T2zW7Ugch5hxmL45+3VYtB
-	0x83bNf83Vrd6sGRdPDdJ7nATKdINN9vJW6qCTCGQFEmYo3RMILVc2WH4ahGOqI6Nw==
-X-Gm-Gg: ASbGncuueYQ2CZDV4Ve4n4EX2S2fS6QW13EbKJNhBQdKxDGC+0WMScS1IcigeOe4A4T
-	Nl9wbjZXQJ6HdVa9KV8l4B7ByTvH76pHyi42nX2vWjDuva7mt9XWhSD0/yfre8KFnf3m1m6h36L
-	NKc/hLCATdCorxTPnJBAocXtWh67on4kSOUACkRzRaVgyecORXY6PJ6uKuuFd8ZbMuNJL8V56Nx
-	bxSqL1cVWQMxPNHaag6oIliUdMTsGxLEO1cm/+nHxGnQbF1DRst5lgKI3JLSHHyM5Pq32HcYNXI
-	mc7LnDVrJ+8WtNlbK+Ts9QfrhoxtWQSuHvJVRRxKGn7TaIKw2Ko5k0SAf5CKgSkLEaLtBZg8/1z
-	qNyybiVbIR4saMZVq/01x/DaoEdErvoXhJv8TCnuVYwdFejmu337QRdrO66R/VgTO31EAMVwPVy
-	E/R9bqDWmmBfJal0khzE63
-X-Google-Smtp-Source: AGHT+IGz+PRsKft1Xi0RyAaFtraod4QzmZBMZyBBJczolHAPHmi+z2xaTTuNMkiWdUulhNc1qSHVGA==
-X-Received: by 2002:a05:6a20:1596:b0:24b:bae4:9c7f with SMTP id adf61e73a8af0-25341e68162mr21656234637.39.1757497887544;
-        Wed, 10 Sep 2025 02:51:27 -0700 (PDT)
+        bh=LhkrDCBZE1HQCcoT5uSllVkcfT4YZeL1VIJqEPNvTDM=;
+        b=TYWIrjwMdbaB2SczYKyJhe3yQ2bxg6Xq8dqlCrntfQPF9rbxm3C3DKfFyGgNx2nv8X
+         kg+ewnx4aC7SrBI1tIt7DdprlfbEao9fjhZ305Q8FrlL1UCNZtbgiWPU3MznIpJW3fgd
+         +vfhjkT5Ts4qCtA9B9zxL2sajBOhcbVAYFuL/w1smkSqIP9jlvyVXkDMSyp1LIJjteFA
+         xrW/91leZAfiBE8KMiT8cYw5uQwjGJ8CxTEePZweR4xQ3A+mu7dAi5qkp34CdGogWQaP
+         IcTOeoL0tl4y2TLlHRTRRZPI2lzj3V5XfnuJp2YgAAZcX9296ABvjO5sjL2r+YvMHERz
+         MC+g==
+X-Gm-Message-State: AOJu0Ywslk6X9iJ+K1pF6vkQaQJWcE/+rQsWrzNlchkRKt5duT2zyZKR
+	tvCZJy69HQOSml2pCjJxNr1p1LkLffdoCIyHCvcb1vSuBADFbL/0QpMLMvnotDC6rw==
+X-Gm-Gg: ASbGncv2qHaaaorddj57DY/vaEB2rMmSiCi8dekrNpCgEqL5sbKl7xZEdbyJP17OEQj
+	rmEIoZCJgzWxF23tbZ3vK41dvNXYnZ6HCAcdGJ6MosiOxfDdxdhvaT9ANLtVe37a2EpmCpTQ54O
+	3+fMfX7pSPgt0IiFoCGxmuOz6jyxZ0igs4ZKXR539Nnum5f0nF/cuoTh9XCzF421q7WluGqV4lj
+	s4TjwFyPTbeAx6r7Y9b/AMeqXisWDYPsyL5sRh3tX8YHdQ2SPSxdumqWeB0Yx4U2GG3/Z8Lh6TE
+	Q5wP7oaAEnXG0lhDjw29vbld2s0SJAHoC+Y4+iTbwRxhRQubLZFUbac91/9BVOXlPEk+U6tzu5G
+	vgdYDafoH340SAJsjvFvolkJqVq3mq+oZl+etZnrHtggEYU4EeYlDZdnOtIFekKQf3TfajnUrLJ
+	fI5nw0Hgbpzw==
+X-Google-Smtp-Source: AGHT+IFF3i3IWo+xqIZXLLhITk3nlcct04gm0352Icsw+69CRyxsMwcBjxoZ9MfilSofK0SnEl3ipQ==
+X-Received: by 2002:a05:6a20:4322:b0:240:489:be9a with SMTP id adf61e73a8af0-2533fab5821mr21778099637.23.1757497895854;
+        Wed, 10 Sep 2025 02:51:35 -0700 (PDT)
 Received: from 5CG4011XCS-JQI.bytedance.net ([61.213.176.57])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b548b81f5acsm1850623a12.1.2025.09.10.02.51.19
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b548b81f5acsm1850623a12.1.2025.09.10.02.51.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 02:51:27 -0700 (PDT)
+        Wed, 10 Sep 2025 02:51:35 -0700 (PDT)
 From: Aaron Lu <ziqianlu@bytedance.com>
 To: Valentin Schneider <vschneid@redhat.com>,
 	Ben Segall <bsegall@google.com>,
@@ -95,9 +95,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Matteo Martelli <matteo.martelli@codethink.co.uk>,
 	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 3/4] sched/fair: Do not special case tasks in throttled hierarchy
-Date: Wed, 10 Sep 2025 17:50:43 +0800
-Message-Id: <20250910095044.278-4-ziqianlu@bytedance.com>
+Subject: [PATCH 4/4] sched/fair: Do not balance task to a throttled cfs_rq
+Date: Wed, 10 Sep 2025 17:50:44 +0800
+Message-Id: <20250910095044.278-5-ziqianlu@bytedance.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250910095044.278-1-ziqianlu@bytedance.com>
 References: <20250910095044.278-1-ziqianlu@bytedance.com>
@@ -109,66 +109,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-With the introduction of task based throttle model, task in a throttled
-hierarchy is allowed to continue to run till it gets throttled on its
-ret2user path.
+When doing load balance and the target cfs_rq is in throttled hierarchy,
+whether to allow balancing there is a question.
 
-For this reason, remove those throttled_hierarchy() checks in the
-following functions so that those tasks can get their turn as normal
-tasks: dequeue_entities(), check_preempt_wakeup_fair() and
-yield_to_task_fair().
+The good side to allow balancing is: if the target CPU is idle or less
+loaded and the being balanced task is holding some kernel resources,
+then it seems a good idea to balance the task there and let the task get
+the CPU earlier and release kernel resources sooner. The bad part is, if
+the task is not holding any kernel resources, then the balance seems not
+that useful.
 
-The benefit of doing it this way is: if those tasks gets the chance to
-run earlier and if they hold any kernel resources, they can release
-those resources earlier. The downside is, if they don't hold any kernel
-resouces, all they can do is to throttle themselves on their way back to
-user space so the favor to let them run seems not that useful and for
-check_preempt_wakeup_fair(), that favor may be bad for curr.
+While theoretically it's debatable, a performance test[0] which involves
+200 cgroups and each cgroup runs hackbench(20 sender, 20 receiver) in
+pipe mode showed a performance degradation on AMD Genoa when allowing
+load balance to throttled cfs_rq. Analysis[1] showed hackbench doesn't
+like task migration across LLC boundary. For this reason, add a check in
+can_migrate_task() to forbid balancing to a cfs_rq that is in throttled
+hierarchy. This reduced task migration a lot and performance restored.
 
-K Prateek Nayak pointed out prio_changed_fair() can send a throttled
-task to check_preempt_wakeup_fair(), further tests showed the affinity
-change path from move_queued_task() can also send a throttled task to
-check_preempt_wakeup_fair(), that's why the check of task_is_throttled()
-in that function.
-
+[0]: https://lore.kernel.org/lkml/20250822110701.GB289@bytedance/
+[1]: https://lore.kernel.org/lkml/20250903101102.GB42@bytedance/
 Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
 ---
- kernel/sched/fair.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/sched/fair.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 58f5349d37256..3dbdfaa697477 100644
+index 3dbdfaa697477..00ee59993b6a3 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7081,7 +7081,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
- 			 * Bias pick_next to pick a task from this cfs_rq, as
- 			 * p is sleeping when it is within its sched_slice.
- 			 */
--			if (task_sleep && se && !throttled_hierarchy(cfs_rq))
-+			if (task_sleep && se)
- 				set_next_buddy(se);
- 			break;
- 		}
-@@ -8735,7 +8735,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
- 	 * lead to a throttle).  This both saves work and prevents false
- 	 * next-buddy nomination below.
+@@ -9369,14 +9369,19 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
+ 	/*
+ 	 * We do not migrate tasks that are:
+ 	 * 1) delayed dequeued unless we migrate load, or
+-	 * 2) cannot be migrated to this CPU due to cpus_ptr, or
+-	 * 3) running (obviously), or
+-	 * 4) are cache-hot on their current CPU, or
+-	 * 5) are blocked on mutexes (if SCHED_PROXY_EXEC is enabled)
++	 * 2) target cfs_rq is in throttled hierarchy, or
++	 * 3) cannot be migrated to this CPU due to cpus_ptr, or
++	 * 4) running (obviously), or
++	 * 5) are cache-hot on their current CPU, or
++	 * 6) are blocked on mutexes (if SCHED_PROXY_EXEC is enabled)
  	 */
--	if (unlikely(throttled_hierarchy(cfs_rq_of(pse))))
-+	if (task_is_throttled(p))
- 		return;
+ 	if ((p->se.sched_delayed) && (env->migration_type != migrate_load))
+ 		return 0;
  
- 	if (sched_feat(NEXT_BUDDY) && !(wake_flags & WF_FORK) && !pse->sched_delayed) {
-@@ -9009,8 +9009,8 @@ static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
- {
- 	struct sched_entity *se = &p->se;
- 
--	/* throttled hierarchies are not runnable */
--	if (!se->on_rq || throttled_hierarchy(cfs_rq_of(se)))
-+	/* !se->on_rq also covers throttled task */
-+	if (!se->on_rq)
- 		return false;
- 
- 	/* Tell the scheduler that we'd really like se to run next. */
++	if (task_group(p) &&
++	    throttled_hierarchy(task_group(p)->cfs_rq[env->dst_cpu]))
++		return 0;
++
+ 	/*
+ 	 * We want to prioritize the migration of eligible tasks.
+ 	 * For ineligible tasks we soft-limit them and only allow
 -- 
 2.39.5
 
