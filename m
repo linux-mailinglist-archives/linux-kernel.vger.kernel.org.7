@@ -1,194 +1,117 @@
-Return-Path: <linux-kernel+bounces-809962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB29B51405
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:30:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F06B51413
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:32:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60F72169926
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:30:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 627057BD992
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B87E3128AB;
-	Wed, 10 Sep 2025 10:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD98A316901;
+	Wed, 10 Sep 2025 10:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxlXJBtZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDV3wOaN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693A23164C0;
-	Wed, 10 Sep 2025 10:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BE53168E8;
+	Wed, 10 Sep 2025 10:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757500018; cv=none; b=kQHt3Tbf/1yAJCH4UlS2oSrhe0u+vdNyzwlCPA2IgE3BW/xUFzaryaG23yUVoKCUR0EXLu6bKOIhU4kyAZZl9V2s9d9ni7ytImUZ+v63oO4dmypOHv/PbVmqNwWUMMugkTXC8ngarEGhuah689vnc/mWNUUTJrdZWpSpTSR5d58=
+	t=1757500054; cv=none; b=TG2QqLLyDUysJxHbie1o2tSi28aIJ8ZE5MEmE4fxdJ3P1J/pbZOITirRrbKrdUvbVUPRGfByj8jQziz6QjGZ/ikW2Wq9dJv9B5DZYCd85o1cBiFLr0zBiamnv+XzdW78VQK+EPzl2tgZSpisrNdwRI1d/7A/mgPoJwSHjMdXUb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757500018; c=relaxed/simple;
-	bh=bDfRAQYYJeFwDu+iCdyQBIBE3rcoxBIvTJMBJoSMxKA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aYGpTXgaWsA4Rv7fMi8CElh2auFbtoaEX2sUH09BG7T6JWJ+lFb95jox6h0uAIQqSIKSO9zAoXb1N14pn5U1xublzV6jh5hnyPbipryDS7uB5d/Xvl1gjKHI7xjILdX3HgZRdAogCW+v33YFPBHtp1juQtcxSYrt0JmBIseHe2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxlXJBtZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01037C4CEF0;
-	Wed, 10 Sep 2025 10:26:58 +0000 (UTC)
+	s=arc-20240116; t=1757500054; c=relaxed/simple;
+	bh=KhEMuvVrOJ6kfh3E7NEPQFw2W+J72hOgAE/qSgliAVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h6Eg0Kt9XCZ9wauhRewL81EWIo9PfriaybIDCxLu7WcAblcmyFVPPwWQe+nBRRPYGAUCIGxFOpljZhheMb2sjYJoGK13sUG71uQ8/BIqWYyTwm30b2pK4Yl+YIYkknLY9CRZ4htFdYw+eoSk5W7knhG1sWt8iltt2i8kEdT5vDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gDV3wOaN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EA29C4CEF0;
+	Wed, 10 Sep 2025 10:27:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757500018;
-	bh=bDfRAQYYJeFwDu+iCdyQBIBE3rcoxBIvTJMBJoSMxKA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uxlXJBtZXrPyR0/fdSiywoBa+aXpaOXLPreyDaSCg6mirW8FPDPWRMHMkpY0THeI3
-	 6FwUI2Jhsg3WaNZYYSXf7vcICsFhtQ8SwZGCdkZ5r3NXOv9Kl4F/n/Hupv0dC/98D9
-	 tBChFGwLy3vjBO6hQ7y+1mpKac7Uq9dtyYx6AefQAMTieHqPJ4LDG6bVWhhAf8QUc/
-	 wLXUPp/8nkbPfsMQBcDJdrsR5rCAULH2iy45POzhQaXl6lc8hUjVMvygo/IKr2kaXo
-	 L8GBTReFj7keYV8Lk5wcy5EHrl98F15kTQVDgGus3qw9CifonPDc9EhHqxJgGlpgYo
-	 ka0zKxrFTdIww==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-62182f350ddso2289041eaf.3;
-        Wed, 10 Sep 2025 03:26:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUES53T9ZOUMD9L5J30rh+NT31GgNZr1gwr8xo47SacdpWG9S6Qyph6q/LpMc/8gnF3bQKhIgiEc54=@vger.kernel.org, AJvYcCULs7h3kIYWf7Cb4K/m7CLkLwbW51Us4YDlmr8ItYwd+xTtdiB+6Lfp6mlRLxwmM3gH7X6yErBRHL/QaFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy37dCUu4P/Qo+gwvDLo6uaQ9WMjM1k6nreoOK9c8dShw0obV6V
-	EsaG2XCaRjlP29H17FAZWDjCxnhbNHJApWexG4th/qz9msV/krsQY4IekkjgGdbNyN9plH/AhxM
-	kUxiEXmVbsnNYo/u9ri+xfdlaS3IQXPY=
-X-Google-Smtp-Source: AGHT+IEW1ZMJYmF6fePsBwm2GCT1JKTtlATrU+IU3wp5hSKaQdIZweJd49rKiN9bwXqO9xNq7YIri6kNCsNL4ZS3CAg=
-X-Received: by 2002:a05:6820:2293:b0:621:71a0:5b67 with SMTP id
- 006d021491bc7-62178a9c5b3mr6831201eaf.7.1757500012941; Wed, 10 Sep 2025
- 03:26:52 -0700 (PDT)
+	s=k20201202; t=1757500053;
+	bh=KhEMuvVrOJ6kfh3E7NEPQFw2W+J72hOgAE/qSgliAVs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gDV3wOaNIHd8MA/PqYOrPRUxvir9KKCe08yzJLmqABNXKWjjMSv7WxnYzwVeRSPIm
+	 d2rLANlD6lL1Cj0mbBfOPOb0jNcIpxcQxGvICBR8VsYWdLU3CUvytjhXcyK8Nt0oE3
+	 L7JhjIzKD4LNpZbjobOEJ6y716IclJn+aRCDG4Z7OJ6UzWo8i3qph0dJuDwjG1Eq9+
+	 9T+IXY6B6iVjnUx8ElwmpyemD2X8x9hNWNOTYHhbKq+OBySel9pCM+g0NtxfRH5Jea
+	 tmAOhr5LYoBZfH3+UPPv9ngBvYXso0g/agfREMhrQdrJSQ97hG+Q9qCceoij5Z9y3f
+	 Y5pcSAGpSBqIw==
+Date: Wed, 10 Sep 2025 13:27:29 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Philipp Reisner <philipp.reisner@linbit.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Zhu Yanjun <yanjun.zhu@linux.dev>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] rdma_rxe: call comp_handler without holding
+ cq->cq_lock
+Message-ID: <20250910102729.GP341237@unreal>
+References: <20250822081941.989520-1-philipp.reisner@linbit.com>
+ <20250908142457.GA341237@unreal>
+ <CADGDV=XNrmNo5gNZ1cX4eGUi+0xgAcQzra+pNHNGuQbc0DrpKA@mail.gmail.com>
+ <20250909153133.GA882933@ziepe.ca>
+ <CADGDV=VZK4oXM=h4PzYOm_PJihMKdQUkrADOiw6EaC4kCssAcQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908230655.2562440-1-sohil.mehta@intel.com>
-In-Reply-To: <20250908230655.2562440-1-sohil.mehta@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 10 Sep 2025 12:26:40 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i3B9LQmU-o5Reh6T+sVEPeGqMvEf7f_3Wdh6jc+sRBeA@mail.gmail.com>
-X-Gm-Features: Ac12FXyY-gpWX307z-g_sZf8fnXHzp98YH9CeYGgxf7ItUtBMs4z60VBBzSvkHI
-Message-ID: <CAJZ5v0i3B9LQmU-o5Reh6T+sVEPeGqMvEf7f_3Wdh6jc+sRBeA@mail.gmail.com>
-Subject: Re: [PATCH v4] cpufreq: ondemand: Update the efficient idle check for
- Intel extended Families
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
-	x86@kernel.org, Tony Luck <tony.luck@intel.com>, Zhao Liu <zhao1.liu@linux.intel.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADGDV=VZK4oXM=h4PzYOm_PJihMKdQUkrADOiw6EaC4kCssAcQ@mail.gmail.com>
 
-On Tue, Sep 9, 2025 at 1:08=E2=80=AFAM Sohil Mehta <sohil.mehta@intel.com> =
-wrote:
->
-> IO time is considered busy by default for modern Intel processors. The
-> current check covers recent Family 6 models but excludes the brand new
-> Families 18 and 19.
->
-> According to Arjan van de Ven, the model check was mainly due to a lack
-> of testing on systems before INTEL_CORE2_MEROM. He suggests considering
-> all Intel processors as having an efficient idle.
->
-> Extend the IO busy classification to all Intel processors starting with
-> Family 6, including Family 15 (Pentium 4s) and upcoming Families 18/19.
->
-> Use an x86 VFM check and move the function to the header file to avoid
-> using arch-specific #ifdefs in the C file.
->
-> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+On Tue, Sep 09, 2025 at 06:00:36PM +0200, Philipp Reisner wrote:
+> On Tue, Sep 9, 2025 at 5:31 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > On Tue, Sep 09, 2025 at 04:48:19PM +0200, Philipp Reisner wrote:
+> > > On Mon, Sep 8, 2025 at 4:25 PM Leon Romanovsky <leon@kernel.org> wrote:
+> > > >
+> > > > On Fri, Aug 22, 2025 at 10:19:41AM +0200, Philipp Reisner wrote:
+> > > > > Allow the comp_handler callback implementation to call ib_poll_cq().
+> > > > > A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe driver.
+> > > > > And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock deadlock.
+> > > >
+> > > > Can you please be more specific about the deadlock?
+> > > > Please write call stack to describe it.
+> > > >
+> > > Instead of a call stack, I write it from top to bottom:
+> > >
+> > > The line numbers in the .c files are valid for Linux-6.16:
+> > >
+> > > 1  rxe_cq_post()                      [rxe_cq.c:85]
+> > > 2   spin_lock_irqsave()               [rxe_cq.c:93]
+> > > 3   cq->ibcq.comp_handler()           [rxe_cq.c:116]
+> > > 4    some_comp_handler()
+> > > 5     ib_poll_cq()
+> > > 6      cq->device->ops.poll_cq()      [ib_verbs.h:4037]
+> > > 7       rxe_poll_cq()                 [rxe_verbs.c:1165]
+> > > 8        spin_lock_irqsave()          [rxe_verbs.c:1172]
+> > >
+> > > In line 8 of this call graph, it deadlocks because the spinlock
+> > > was already acquired in line 2 of the call graph.
+> >
+> > Is this even legal in verbs? I'm not sure you can do pull cq from a
+> > interrupt driven comp handler.. Is something already doing this intree?
+> >
+> 
+> The file drivers/infiniband/sw/rdmavt/cq.c has this comment:
+> /*
+> * The completion handler will most likely rearm the notification
+> * and poll for all pending entries.  If a new completion entry
+> * is added while we are in this routine, queue_work()
+> * won't call us again until we return so we check triggered to
+> * see if we need to call the handler again.
+> */
+> 
+> Also, Intel and Mellanox cards and drivers allow calling ib_poll_cq()
+> from the completion handler.
 
-Applied (with a minor whitespace adjustment) as 6.18 material, thanks!
+And do these drivers drop CQ lock like you are proposing here?
 
-> ---
-> v4:
->  - Move the function check to the header file as an inline function.
->  - Combine x86 specific #ifdefs.
->
-> v3: https://lore.kernel.org/lkml/20250826183644.220093-1-sohil.mehta@inte=
-l.com/
->  - Posting this patch separately since the core family cleanup series
->    was merged without it.
->  - Improve commit message and code comments.
-> ---
->  drivers/cpufreq/cpufreq_ondemand.c | 25 +------------------------
->  drivers/cpufreq/cpufreq_ondemand.h | 22 ++++++++++++++++++++++
->  2 files changed, 23 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/cpufreq/cpufreq_ondemand.c b/drivers/cpufreq/cpufreq=
-_ondemand.c
-> index 0e65d37c9231..a6ecc203f7b7 100644
-> --- a/drivers/cpufreq/cpufreq_ondemand.c
-> +++ b/drivers/cpufreq/cpufreq_ondemand.c
-> @@ -29,29 +29,6 @@ static struct od_ops od_ops;
->
->  static unsigned int default_powersave_bias;
->
-> -/*
-> - * Not all CPUs want IO time to be accounted as busy; this depends on ho=
-w
-> - * efficient idling at a higher frequency/voltage is.
-> - * Pavel Machek says this is not so for various generations of AMD and o=
-ld
-> - * Intel systems.
-> - * Mike Chan (android.com) claims this is also not true for ARM.
-> - * Because of this, whitelist specific known (series) of CPUs by default=
-, and
-> - * leave all others up to the user.
-> - */
-> -static int should_io_be_busy(void)
-> -{
-> -#if defined(CONFIG_X86)
-> -       /*
-> -        * For Intel, Core 2 (model 15) and later have an efficient idle.
-> -        */
-> -       if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL &&
-> -                       boot_cpu_data.x86 =3D=3D 6 &&
-> -                       boot_cpu_data.x86_model >=3D 15)
-> -               return 1;
-> -#endif
-> -       return 0;
-> -}
-> -
->  /*
->   * Find right freq to be set now with powersave_bias on.
->   * Returns the freq_hi to be used right now and will set freq_hi_delay_u=
-s,
-> @@ -377,7 +354,7 @@ static int od_init(struct dbs_data *dbs_data)
->         dbs_data->sampling_down_factor =3D DEF_SAMPLING_DOWN_FACTOR;
->         dbs_data->ignore_nice_load =3D 0;
->         tuners->powersave_bias =3D default_powersave_bias;
-> -       dbs_data->io_is_busy =3D should_io_be_busy();
-> +       dbs_data->io_is_busy =3D od_should_io_be_busy();
->
->         dbs_data->tuners =3D tuners;
->         return 0;
-> diff --git a/drivers/cpufreq/cpufreq_ondemand.h b/drivers/cpufreq/cpufreq=
-_ondemand.h
-> index 1af8e5c4b86f..eb35ec19fa86 100644
-> --- a/drivers/cpufreq/cpufreq_ondemand.h
-> +++ b/drivers/cpufreq/cpufreq_ondemand.h
-> @@ -24,3 +24,25 @@ static inline struct od_policy_dbs_info *to_dbs_info(s=
-truct policy_dbs_info *pol
->  struct od_dbs_tuners {
->         unsigned int powersave_bias;
->  };
-> +
-> +#ifdef CONFIG_X86
-> +#include <asm/cpu_device_id.h>
-> +/*
-> + * Not all CPUs want IO time to be accounted as busy; this depends on
-> + * how efficient idling at a higher frequency/voltage is.
-> + *
-> + * Pavel Machek says this is not so for various generations of AMD and
-> + * old Intel systems. Mike Chan (android.com) claims this is also not
-> + * true for ARM.
-> + *
-> + * Because of this, select a known series of Intel CPUs (Family 6 and
-> + * later) by default, and leave all others up to the user.
-> + */
-> +static inline bool od_should_io_be_busy(void)
-> +{
-> +       return (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL &&
-> +               boot_cpu_data.x86_vfm >=3D INTEL_PENTIUM_PRO);
-> +}
-> +#else
-> +static inline bool od_should_io_be_busy(void) { return false; }
-> +#endif
-> --
-> 2.43.0
->
+> 
+> The problem exists only with the RXE driver.
 
