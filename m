@@ -1,185 +1,251 @@
-Return-Path: <linux-kernel+bounces-811031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A072B52329
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:58:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2392CB5232A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1812058523E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:58:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E90486B83
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073F93002C0;
-	Wed, 10 Sep 2025 20:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85FF2EE26B;
+	Wed, 10 Sep 2025 21:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0pjjsP5"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUmheAyG"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1502FF153
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A1E1A01BF
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 21:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757537887; cv=none; b=fOgMSS0yOVJlcu5ZoGh9TGiB+gUTqec5kvQV+FkhsB6mPGqUXeF5arFPuiY1cWQTJ/xl100k8VeWgULbyw2lITeMcv6lWfLFeJyjLMVL1WiRgPcTDh3O+pA/VNhoBHrW9O9Z1TDh56iG+pb6xutHVyoQ4ekbmRdq4LfF02ma2+c=
+	t=1757538167; cv=none; b=NYGyP/JslWDCNbkUrs8XUNE2DiPnmsZO6hy8QyppZDsz0Y6qmXCpZLphiMghYDfCpcEdT8xxz8qrHoBKGgHWkHuJRhi+4HOg4zttneGJkJdHMhrHVgcvsMR1FOSDTZGad3OU+6qq2xzt7rA0gLojlXVVO8i7p2rxq0vGenOXYAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757537887; c=relaxed/simple;
-	bh=BxoYv6ear/flR5rAr5c7A/wGu93sOLIbo2XqrISjEys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uhv7eGpWR2hrdHrNQtHyaMgdHJanQTAO/n5v/c/WgKZhse382eA3cbiPpgz19ULEotTpW4mkV5TDl7HnDfWVvRVKdrAY/84Cz8gC6QYMgfZKlQdYUOfwRS5EIMmUsJs2NCMqOFFCMfPwAiPCVVZNMpUenFi6ee41w8rLqi+VfPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X0pjjsP5; arc=none smtp.client-ip=209.85.215.175
+	s=arc-20240116; t=1757538167; c=relaxed/simple;
+	bh=fMQBK6eRk1HlnNI+n9/QwIf2+NZf77j1GzwLL0pjOeY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p4S+oWBMIPENjETEbYkTbaitAQSvByRIxPCYEjo/FDmzx6/PTeCbVaDsQSXAt5J+SVWo+qt+4XDW/sOWuI4XsmgtLW3c5wwHRqG1yyaEkDlztm1/OWvTjaJpTruz28genvLnFAKjfA608oZIotPXYPwE4xNNvNvNnAOLnInM1ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUmheAyG; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b520539e95bso1508a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:58:05 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-80e33b9e2d3so686896385a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:02:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757537885; x=1758142685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BxoYv6ear/flR5rAr5c7A/wGu93sOLIbo2XqrISjEys=;
-        b=X0pjjsP5yhuBJIIh8KxkB+eKryxWPjMDelIUwOS3qSd7o9ZwonqxHHyivj7pgq03Td
-         OXPMmeNCiduFoe4JQyh/Hwh4RTJVGDEJC49/BWv7tUVNpaym4jmnl+AfUn8KztP+cqrc
-         DC5Kaq5j5J3+7DuD8giEoouvxRI/42duIFBkbAT9J1s38qj+r35Z7tx/jkksZjOY8zfq
-         HcY6R5AraZLnMCBArS7xpZ9hyfIFSBCrJ7nTf4XU4liNxfZoXLGcxSCeSqjCchkblir6
-         sA0xAYARY3nOUrS2v4K/Rcr7GewrTOuyUTnza5OQ2U4WneIOWxDa8UxAiqnam1Ub5S6I
-         yC3g==
+        d=gmail.com; s=20230601; t=1757538165; x=1758142965; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K1Cbhy+VanJPMX0Q1u/x/lX5tWRv6IISLLkoD+jnkuQ=;
+        b=EUmheAyGonexZeHTjruV40cwAHkPKzuW4v9OZxQY4TZaiCf4e5fGnqProRJGs0L34D
+         /zXefCSfZhOWVxfR2QmQHAGrhE2sB+yGSPmuRL+ZcptRIgQAI6+kQCRWGJMjnMZzxGEg
+         cDpZySRxp5dWWk+ncrx0sWIrJST6S/Tn42mQnrEIxOmHtBgcbZ1fkqDVx5g1ilJMgl9R
+         gXmp9+dKeBMRk+5Uo8jTOYs2mi1EHBUAvwyRn1Td5bCqzH85wlZwdJgc3QKiqi89Njq8
+         sbXW8LCEx2cqI5RY9EozExLELsjtYZjef8Ij2mttQwQ7L1E2DmzGSnEm0Uc/Wxnm+TR3
+         ve2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757537885; x=1758142685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BxoYv6ear/flR5rAr5c7A/wGu93sOLIbo2XqrISjEys=;
-        b=vTJykbG1VsK1jVHZXlFxkcP8tyoS7ML0IuMjNsNdKTJqTOes4PhF3yceryk9vsIgdo
-         n7FtBEgVEZOohTRv/AqWcIc2iwzBoFmBTnbNXhT8wPQs7MJs5Id96Pjr5m8v/0jsQneR
-         +9oFcwJvu+PTHctM2zB0SjBbfv3iVoKOOVPZpztbwYS/MW3NOB4lZXG+Ub3Qwg2kULax
-         qsCQoiAqz+zfFu2zYUgGoPvrvERKlQbtKpJXV8622ZMxATcb3mitRr03Db8moSLfJRVv
-         eavOJ6Roi4m1Glwi9p0eXe9MJLPdKwvz0+M+0Va4Kn7J3naXlWyjvLu2xT9Y2qnKXDns
-         bitA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTcLD768TTCAJWkeYwy4sWiVZWP1DZVr/7+QyOrhJK1r+lzkiPBTHNj55cg1n7+2xZZMKHVpRhi0Z1c1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqLfCyrJ1uef0ZvNxvvU7iEaR7COaBG2iaImSV3xJ3rW312AhG
-	V+JGZnJeEGpKp5v0tvQtQuU+fVhilxVFRI4PkdVZL4LMZYlpPqrRaQNLi0whvDFh+yYD9IqmfW/
-	SWAyWSO4fckl7UmT1OsqNp4AZ0E4/ScQ=
-X-Gm-Gg: ASbGncsMNUxJT9JrXritLhwZEHS8TPLNGdRNjPq44rhdmRnVn+O1ujFyqg02nXf7BZS
-	3+FaifOEjp8Qq8EbAHiJN8PpMC1K3pNOpUMdk3XqtKrHW/HIqzm8h8R+GSe+kEtDQUgAmXsNR/e
-	PpZMvQ5A6X9kUipVBm4fgO5mbmniNQxkxiRjjkht6tyGZ8n5MeVOFOUwXRkLUOOWuAAxPGPtHYP
-	UmXmpnuzQHmfdFOP61icNlyCI78+J1/byBJqKmz/iJysJdJLrv/8/LXQLuA57hIjJ6Dq/k7wUWE
-	9cYq68c3Dnj3/ovYR5CFbUeBBEyJavssvAx+
-X-Google-Smtp-Source: AGHT+IHOtyqVloSPxzWiVhs1DHE+nqj8s6NxjWWTZ+mliqirt76YYBTxY96SyGIZl1OENRfeSA3lt8/1dOvRBF8z1YY=
-X-Received: by 2002:a17:90b:4a92:b0:32b:87ef:5faa with SMTP id
- 98e67ed59e1d1-32d43f91aadmr12103792a91.4.1757537884710; Wed, 10 Sep 2025
- 13:58:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757538165; x=1758142965;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K1Cbhy+VanJPMX0Q1u/x/lX5tWRv6IISLLkoD+jnkuQ=;
+        b=gXNM7OOUJzF6XtnwfcaZMaR6o8nFYpLzl4POJC9kIxQYsBetR75yzVNlMLPhUQsaZr
+         DNiSGmhLKvaQI2+BEzt6QoYw0P3haFTcDfPuOaX3d1sXId2vGEc0rrbXoOYW6RZIB6nV
+         yyVUsz0FM/zwBvF8uQLJbpcHRjIrbU0MX1q+PrcLxBhqdoqHi2hxqRgEb+dlLAYzzFNt
+         aL12+wsS5Gl/nm7B8I17nb4IEfBJzxHFZQwZogqBgcfFO2aMU4mLITyLXznGXlbw6eDo
+         rjz4woGttEh2EmJ3VBfsSYD7LcfSdig1dpjhs0cxbP5Jw6DU9qgPAX5odcHtBThEUF3P
+         ngvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9falK69VOHQoeFPstM3/FUMsCib0cZZvC97Nuzhp5d9oqNlUj/5FTj+PHejCk3hCjVYNsrNflG/eQ2qs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTunHWAEIAkcHrOOQCqNk3u5BZu/YA+VLSAVWWB+A4vhUQwp7t
+	HKTezWhDuxOXK7Co+yGq7+fSDwKBuDj+RTp1hCpcu0JmRWpRCZ9gVH27
+X-Gm-Gg: ASbGncujXADi+Fh8sJg6x4iKIQC1V2ghNnol3jzR1q7wCNxzJOXGUeKY5nLOUo9LXwV
+	9+qYsvGYZmxUKlFsIv1E4ntgPzy4kKGjfkwoqbxQtkef0w69eYchVfr1ne5AQojD4mRhH5GXZBO
+	/OIRvrwA8lV1UEj61N9ASkb97SyjbSvRgd5hrj2xBvJphfBvIAiGbiz8/vb9tzV61n4DDo54W1L
+	Fr8DSQkkwHBk99qCgtUNsyD7dinKaMjBkBTNzZU/3A8bQL17bITb2W49fnWmC/4LM8wDS4DewD6
+	HYeFEDU118hQiMdN2h998u/VZE4M396HWpapf+48H2uU44K7qAP7AHKTT7vFxcbwXULwTaqkryJ
+	hdSobkQuhZ+LwC4EISaf858fmYKxUn/b540KwCwgSiNvMqaxNKSI=
+X-Google-Smtp-Source: AGHT+IHlZ0IDGw1WASa6aDpHNf8Pgci8L2nEiRJ3kUYw3tN88C1KbvhkOPTx9cwxD3yo7KJ59NQSdw==
+X-Received: by 2002:a05:620a:a101:b0:817:4e4a:6969 with SMTP id af79cd13be357-8174e68f614mr1358466985a.78.1757538164867;
+        Wed, 10 Sep 2025 14:02:44 -0700 (PDT)
+Received: from [172.20.7.106] ([63.116.149.204])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b5faec7bbsm353446785a.63.2025.09.10.14.02.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 14:02:44 -0700 (PDT)
+Message-ID: <e073e41d-3317-49a9-a2ee-c0e8def66dcd@gmail.com>
+Date: Wed, 10 Sep 2025 17:02:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
- <20250826-nova_firmware-v2-2-93566252fe3a@nvidia.com> <9adb92d4-6063-4032-bf76-f98dcfe2c824@nvidia.com>
- <DCD2VJ1WJW2O.VM7E4PD3DFYO@nvidia.com> <CANiq72=nGbziZCKt=AneE_vXw76i=+td0dSVfbOJ8kJ9eYHw9w@mail.gmail.com>
- <DCOVRI3TVJBN.3OGDSK8HW74LL@nvidia.com> <CANiq72n-q0vdzp=Tb=brue+BMoNYdCTKsqcMYUsvKgvu9ZqGoQ@mail.gmail.com>
- <DCP66O4WE3CE.3P5ZHC9P62LOZ@nvidia.com>
-In-Reply-To: <DCP66O4WE3CE.3P5ZHC9P62LOZ@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 10 Sep 2025 22:57:51 +0200
-X-Gm-Features: AS18NWDK5sDVUBXgL53C4CuHgNvckurg2KJki-Oyxxcp6gSr_EFeu2funPREjNc
-Message-ID: <CANiq72=2VhHBZbTL7mdF9C+eBabft8rpP0_8FjxKi2d_2ZMbCQ@mail.gmail.com>
-Subject: Re: Implicit panics (was: [PATCH v2 2/8] gpu: nova-core: firmware:
- add support for common firmware header)
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Alistair Popple <apopple@nvidia.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] alloc_tag: mark inaccurate allocation counters in
+ /proc/allocinfo output
+Content-Language: en-GB
+To: Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, hannes@cmpxchg.org,
+ rientjes@google.com, roman.gushchin@linux.dev, harry.yoo@oracle.com,
+ shakeel.butt@linux.dev, 00107082@163.com, pasha.tatashin@soleen.com,
+ souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250909234942.1104356-1-surenb@google.com>
+ <ff28f071-f448-4f25-bea0-17db946e0acf@suse.cz>
+ <CAJuCfpFf+D1C9esHXpR5WaJ_4=JmvZkYQMWY7KVYf42JLDTFZQ@mail.gmail.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAJuCfpFf+D1C9esHXpR5WaJ_4=JmvZkYQMWY7KVYf42JLDTFZQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 10, 2025 at 3:55=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.=
-com> wrote:
->
-> The only two options are either allowing user-space to crash the kernel
-> through a module with a missing bound check, or letting it tamper with
 
-So we are definitely not aiming to allow that on purpose, i.e. I know
-you said "missing", but just to clarify: they would of course be
-considered a bug, just like hitting similar facilities in C code.
 
-(In general, if we get into the situation where we can actually crash
-the kernel from userspace, that is a CVE with the current rules
-(modulo exceptional cases, e.g. the recent discussion about debugging
-tools, for instance), regardless of whether it was due to a Rust panic
-or not.)
+On 10/09/2025 15:50, Suren Baghdasaryan wrote:
+> On Tue, Sep 9, 2025 at 11:25 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>
+>> On 9/10/25 01:49, Suren Baghdasaryan wrote:
+>>> While rare, memory allocation profiling can contain inaccurate counters
+>>> if slab object extension vector allocation fails. That allocation might
+>>> succeed later but prior to that, slab allocations that would have used
+>>> that object extension vector will not be accounted for. To indicate
+>>> incorrect counters, mark them with an asterisk in the /proc/allocinfo
+>>> output.
+>>> Bump up /proc/allocinfo version to reflect change in the file format.
+>>
+>> Since it's rare, is it worth the trouble?
+> 
+> Apparently they are seen in Meta's fleet which instigated this thread:
+> https://lore.kernel.org/all/17fab2d6-5a74-4573-bcc3-b75951508f0a@gmail.com/
+> 
 
-The Rust panic is, as you say, the last line of defense, attempting to
-limit the damage. I think that is worth it for at least some users
-that want it (like cloud providers) and some parts of the kernel.
-Sometimes it can be worse, though, i.e. perhaps the OOB or the
-overflow was not actually a "big issue" "in practice" for a particular
-case.
+Yes it happens on memory bound services!
 
-I think it will likely depend on the kind of code we are talking about
--- not all panics are the same, and not all code is the same. For
-random modules, for instance, yes, we should definitely prevent
-developers from writing panics as much as possible (or not at all);
-the same way we try to prevent them from writing unsafe code -- after
-all, panicking operations and unsafe code are both an statement that
-we are sure "something cannot happen".
+>>
+>>> Example output with invalid counters:
+>>> allocinfo - version: 2.0
+>>>            0        0 arch/x86/kernel/kdebugfs.c:105 func:create_setup_data_nodes
+>>>            0        0 arch/x86/kernel/alternative.c:2090 func:alternatives_smp_module_add
+>>>           0*       0* arch/x86/kernel/alternative.c:127 func:__its_alloc
+>>>            0        0 arch/x86/kernel/fpu/regset.c:160 func:xstateregs_set
+>>>            0        0 arch/x86/kernel/fpu/xstate.c:1590 func:fpstate_realloc
+>>>            0        0 arch/x86/kernel/cpu/aperfmperf.c:379 func:arch_enable_hybrid_capacity_scale
+>>>            0        0 arch/x86/kernel/cpu/amd_cache_disable.c:258 func:init_amd_l3_attrs
+>>>       49152*      48* arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create
+>>>        32768        1 arch/x86/kernel/cpu/mce/genpool.c:132 func:mce_gen_pool_create
+>>>            0        0 arch/x86/kernel/cpu/mce/amd.c:1341 func:mce_threshold_create_device
+>>>
+>>> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+>>
+>> Here a link might have been helpful :)
+> 
+> Right, here it is and suggestion is in the last paragraph:
+> https://lore.kernel.org/all/20250519160846.GA773385@cmpxchg.org/
+> 
+>>
+>>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>>> ---
 
-So the more we prevent APIs that do not need to rely on panicking (nor
-unsafe code) on drivers etc., the better.
+Acked-by: Usama Arif <usamaarif642@gmail.com>
 
-I also think forcing to have no panics at all (i.e. globally) would
-force us to handle way more truly impossible cases than C does
-(unsafely so), which isn't great and has downsides too (increased
-complexity, for one, which can also lead to more bugs). And we don't
-want to go memory unsafe for all those either (I mean, it could be an
-option, but I wouldn't recommend it, and it would still be a bug if
-hit). So for certain cases panicking may be a reasonable option in
-practice -- that is where I wanted us to get more experience to know
-how we fare vs. C here and thus the data request.
+>>> Patch is based on mm-new.
+>>>
+>>>  include/linux/alloc_tag.h | 12 ++++++++++++
+>>>  include/linux/codetag.h   |  5 ++++-
+>>>  lib/alloc_tag.c           |  7 +++++--
+>>>  mm/slub.c                 |  2 ++
+>>>  4 files changed, 23 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+>>> index 9ef2633e2c08..d40ac39bfbe8 100644
+>>> --- a/include/linux/alloc_tag.h
+>>> +++ b/include/linux/alloc_tag.h
+>>> @@ -221,6 +221,16 @@ static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes)
+>>>       ref->ct = NULL;
+>>>  }
+>>>
+>>> +static inline void alloc_tag_set_inaccurate(struct alloc_tag *tag)
+>>> +{
+>>> +     tag->ct.flags |= CODETAG_FLAG_INACCURATE;
+>>> +}
+>>> +
+>>> +static inline bool alloc_tag_is_inaccurate(struct alloc_tag *tag)
+>>> +{
+>>> +     return !!(tag->ct.flags & CODETAG_FLAG_INACCURATE);
+>>> +}
+>>> +
+>>>  #define alloc_tag_record(p)  ((p) = current->alloc_tag)
+>>>
+>>>  #else /* CONFIG_MEM_ALLOC_PROFILING */
+>>> @@ -230,6 +240,8 @@ static inline bool mem_alloc_profiling_enabled(void) { return false; }
+>>>  static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_tag *tag,
+>>>                                size_t bytes) {}
+>>>  static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes) {}
+>>> +static inline void alloc_tag_set_inaccurate(struct alloc_tag *tag) {}
+>>> +static inline bool alloc_tag_is_inaccurate(struct alloc_tag *tag) { return false; }
+>>>  #define alloc_tag_record(p)  do {} while (0)
+>>>
+>>>  #endif /* CONFIG_MEM_ALLOC_PROFILING */
+>>> diff --git a/include/linux/codetag.h b/include/linux/codetag.h
+>>> index 457ed8fd3214..8ea2a5f7c98a 100644
+>>> --- a/include/linux/codetag.h
+>>> +++ b/include/linux/codetag.h
+>>> @@ -16,13 +16,16 @@ struct module;
+>>>  #define CODETAG_SECTION_START_PREFIX "__start_"
+>>>  #define CODETAG_SECTION_STOP_PREFIX  "__stop_"
+>>>
+>>> +/* codetag flags */
+>>> +#define CODETAG_FLAG_INACCURATE      (1 << 0)
+>>> +
+>>>  /*
+>>>   * An instance of this structure is created in a special ELF section at every
+>>>   * code location being tagged.  At runtime, the special section is treated as
+>>>   * an array of these.
+>>>   */
+>>>  struct codetag {
+>>> -     unsigned int flags; /* used in later patches */
+>>> +     unsigned int flags;
+>>>       unsigned int lineno;
+>>>       const char *modname;
+>>>       const char *function;
+>>> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+>>> index e9b33848700a..a7f15117c759 100644
+>>> --- a/lib/alloc_tag.c
+>>> +++ b/lib/alloc_tag.c
+>>> @@ -80,7 +80,7 @@ static void allocinfo_stop(struct seq_file *m, void *arg)
+>>>  static void print_allocinfo_header(struct seq_buf *buf)
+>>>  {
+>>>       /* Output format version, so we can change it. */
+>>> -     seq_buf_printf(buf, "allocinfo - version: 1.0\n");
+>>> +     seq_buf_printf(buf, "allocinfo - version: 2.0\n");
+>>>       seq_buf_printf(buf, "#     <size>  <calls> <tag info>\n");
+>>>  }
+>>>
+>>> @@ -90,7 +90,10 @@ static void alloc_tag_to_text(struct seq_buf *out, struct codetag *ct)
+>>>       struct alloc_tag_counters counter = alloc_tag_read(tag);
+>>>       s64 bytes = counter.bytes;
+>>>
+>>> -     seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls);
+>>> +     if (unlikely(alloc_tag_is_inaccurate(tag)))
+>>> +             seq_buf_printf(out, "%11lli* %7llu* ", bytes, counter.calls);
+>>> +     else
+>>> +             seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls);
+>>>       codetag_to_text(out, ct);
+>>>       seq_buf_putc(out, ' ');
+>>>       seq_buf_putc(out, '\n');
+>>> diff --git a/mm/slub.c b/mm/slub.c
+>>> index af343ca570b5..9c04f29ee8de 100644
+>>> --- a/mm/slub.c
+>>> +++ b/mm/slub.c
+>>> @@ -2143,6 +2143,8 @@ __alloc_tagging_slab_alloc_hook(struct kmem_cache *s, void *object, gfp_t flags)
+>>>        */
+>>>       if (likely(obj_exts))
+>>>               alloc_tag_add(&obj_exts->ref, current->alloc_tag, s->size);
+>>> +     else
+>>> +             alloc_tag_set_inaccurate(current->alloc_tag);
+>>>  }
+>>>
+>>>  static inline void
+>>>
+>>> base-commit: f4e8f46973fe0c0f579944a37e96ba9efbe00cca
+>>
 
-It will also depend on what upstream Rust can give us (more on that
-below). For instance, having an enforced way with carve-outs that need
-to be annotated would at least make it stand out to reviewers and make
-developers think thrice.
-
-> Thanks, these are great directions to explore. I see that some thinking
-> has already been done on this, do we have a bug or tracking issue so I
-> can catch up with the discussions that have already taken place?
-
-In general, I do my best to track this kind of thing in the issues
-linked from issue #2 ("Rust features" in this case:
-https://github.com/Rust-for-Linux/linux/issues/354), and you can see
-some pointers for the overflow part. For no panics there is also an
-entry for a long time, but I don't think there has been any "deep"
-discussion on it -- I mean between Rust and the kernel (there are of
-course discussions in upstream Rust, and there also have been in our
-side in the mailing list). I just added a couple recent pointers, I
-can look for more.
-
-In that meeting I mentioned with them, I raised this a month or two
-ago, and I did so today too, and mentioned that you wanted to discuss
-it in LPC. If you (or e.g. someone from NVIDIA) have time to work on
-this, including in upstream Rust (e.g. writing an RFC, implementing an
-experiment...), then please let me know. They are open to the
-possibility of having a Rust project goal for the next round on no
-panics (2026H1), so it is a good chance to move things forward. We had
-today a discussion on potential forms it could take (an attribute on a
-function, guaranteed or not, escape hatches or not, lints, an enforced
-comment, Klint, the report-and-continue feature...) and related
-ongoing efforts (having a `nopanic` effect, `target_feature(enable
-=3D`...).
-
-I hope that helps, and thanks!
-
-Cheers,
-Miguel
 
