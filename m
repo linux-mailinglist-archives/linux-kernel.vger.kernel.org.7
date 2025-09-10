@@ -1,134 +1,116 @@
-Return-Path: <linux-kernel+bounces-810330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CBA1B518DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:07:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB00B518E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78017188ECB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:05:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F74D3B30F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170DB322DAD;
-	Wed, 10 Sep 2025 14:04:40 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8025324B11;
+	Wed, 10 Sep 2025 14:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuiKFF0x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B121322A13;
-	Wed, 10 Sep 2025 14:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5A1322A13;
+	Wed, 10 Sep 2025 14:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757513079; cv=none; b=O9H+l6jPiTAmJGF55PhinCezCRCqTuQknDoUHW+L3yV38PwVzgMr8pKQaYGiSBe7JytqEtbqofe22urcCXVi1pgA5bu+2Rfc5hxZIYYfqBCWzQnwc4MOnZZv9eYxjIzBmecWwQ4hxIWh4Kxr3VeWbwkCemGjD+nlBwuo/DcTj2w=
+	t=1757513083; cv=none; b=k+OlbdEnTJ+x2li1jIAgKrx6YLp34Cz9DJZUDCgZ1U6zMTZepqwGH0HpqgITrhSLjL3EDcVnjW3ZtnKZ+PC57YzU10GOtxDujC5WC9sxsD3/lAHeRG8r33f8e/etT3jQ60gK4ZnkT/rTxBnWWWqKWyF5wmH7FFs9FIoGy0k+Cek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757513079; c=relaxed/simple;
-	bh=XGf6An9pkuacotas4PAUho44h/2LaY9ZaYpivcI6rZY=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=ImeF2pWs+rxRZD+RH7GPQCw6PA1bR1Y/WmYNzejVqQxGNx9uwyIvTJ3L5V7hD3GBdvOo49PYLSDkOB5inOrZ+n99e0IaAHF3ja3IAAUzhklQo6QqPapgh5XYre/89MyDGYQcX/3zf110wdG/4QlX7J8shgfnMo3lxMbaqWadDiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id D2E8683E14;
-	Wed, 10 Sep 2025 16:04:34 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id LaIcEPcDfBsv; Wed, 10 Sep 2025 16:04:34 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 1A4472FFDA5;
-	Wed, 10 Sep 2025 16:04:34 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id X4a51J5LvQXj; Wed, 10 Sep 2025 16:04:33 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id C16AD83E14;
-	Wed, 10 Sep 2025 16:04:33 +0200 (CEST)
-Date: Wed, 10 Sep 2025 16:04:33 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: ksummit <ksummit@lists.linux.dev>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	linuxppc-dev@lists.ozlabs.org, 
-	linux-mips <linux-mips@vger.kernel.org>, 
-	linux-mm <linux-mm@kvack.org>, imx@lists.linux.dev, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Lucas Stach <l.stach@pengutronix.de>, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Ankur Arora <ankur.a.arora@oracle.com>, 
-	David Hildenbrand <david@redhat.com>, 
-	Mike Rapoport <rppt@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Matthew Wilcox <willy@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, vbabka <vbabka@suse.cz>, 
-	Suren Baghdasaryan <surenb@google.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>, 
-	heiko <heiko@sntech.de>, 
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
-	"Chester A. Unal" <chester.a.unal@arinc9.com>, 
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>, 
-	Andreas Larsson <andreas@gaisler.com>
-Message-ID: <497308537.21756.1757513073548.JavaMail.zimbra@nod.at>
-In-Reply-To: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
+	s=arc-20240116; t=1757513083; c=relaxed/simple;
+	bh=ATU9dgy3b9wKc6pd3WupmwqCzZ6dSzE/gRNOxa3liac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YwgYCbaD8gBatHGK2cP0wCSNgsr0X68bNigoptVPJb0e/RHYicdkJYp1Ayi+eWmx04/qCO408ccxCxreqH6j3u6FyW4EcJFpFbuTgrhniMGYusBgSjUIxwoDT6R3fF5Sj0HcwZ87HpWnMD/xi2SshumqmLe2qpsM3tOBUnWV3Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuiKFF0x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3187EC4CEEB;
+	Wed, 10 Sep 2025 14:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757513082;
+	bh=ATU9dgy3b9wKc6pd3WupmwqCzZ6dSzE/gRNOxa3liac=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TuiKFF0xpk3X+MqrLNA03Tjd1x7v08zWrg8CB705EqXfVLqhv1ZU2Ln5ps8FJ2urP
+	 AGqAFuOSOGb8STcC55uqzD0UIEP8JWC/4CLb0P9N4aclCYyrn/OOZ1+hp60YOkTgSc
+	 TUlKmrIHN8yMXDvlcoqzaiPUONcGjDxGuWRYU68yjidvQ6tGir9Xik11UVsvZ+BJMK
+	 szC/U6TDZjv2hd7VhHMac5tpyicmF9Tokzf+TpT2+cf+4xfrcJS/MU3A/lYOvyavBR
+	 7Y4Tpy6PRR8/1fmo6FU0C7WmwADq3pTv72jCG4gaLLFTvKOeEd8jkkEZ2yP3TWs3Vs
+	 +ZEYZO68uYkbg==
+Message-ID: <b44ca395-102e-4780-949d-9d656ba18ec0@kernel.org>
+Date: Wed, 10 Sep 2025 16:04:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF141 (Linux)/8.8.12_GA_3809)
-Thread-Topic: Reaching consensus on CONFIG_HIGHMEM phaseout
-Thread-Index: xOQifXk0CYTOSYO4gO/z6lk9BLmNXg==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] rust: drm: Introduce the Tyr driver for Arm Mali GPUs
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Daniel Stone <daniels@collabora.com>, Rob Herring <robh@kernel.org>,
+ Beata Michalska <beata.michalska@arm.com>,
+ Carsten Haitzler <carsten.haitzler@foss.arm.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Ashley Smith <ashley.smith@collabora.com>,
+ Steven Price <steven.price@arm.com>, Jeffrey Vander Stoep
+ <jeffv@google.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org, kernel@collabora.com
+References: <20250910-tyr-v3-1-dba3bc2ae623@collabora.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250910-tyr-v3-1-dba3bc2ae623@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Arnd,
+On 9/10/25 3:51 PM, Daniel Almeida wrote:
+> diff --git a/drivers/gpu/drm/tyr/Kconfig b/drivers/gpu/drm/tyr/Kconfig
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..de910b2cba3a48e0b238eb0f66279758c02dfb6f
+> --- /dev/null
+> +++ b/drivers/gpu/drm/tyr/Kconfig
+> @@ -0,0 +1,17 @@
+> +# SPDX-License-Identifier: GPL-2.0 or MIT
+> +
+> +config DRM_TYR
+> +	tristate "Tyr (Rust DRM support for ARM Mali CSF-based GPUs)"
+> +	depends on DRM=y
+> +	depends on RUST
+> +	depends on ARM || ARM64 || COMPILE_TEST
+> +	depends on !GENERIC_ATOMIC64  # for IOMMU_IO_PGTABLE_LPAE
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Arnd Bergmann" <arnd@arndb.de>
-> High memory is one of the least popular features of the Linux kernel.
-> Added in 1999 for linux-2.3.16 to support large x86 machines, there
-> are very few systems that still need it. I talked about about this
-> recently at the Embedded Linux Conference on 32-bit systems [1][2][3]
-> and there were a few older discussions before[4][5][6].
->=20
-> While removing a feature that is actively used is clearly a regression
-> and not normally done, I expect removing highmem is going to happen
-> at some point anyway when there are few enough users, but the question
-> is when that time will be.
->=20
-> I'm still collecting information about which of the remaining highmem
-> users plan to keep updating their kernels and for what reason. Some
-> users obviously are alarmed about potentially losing this ability,
-> so I hope to get a broad consensus on a specific timeline for how long
-> we plan to support highmem in the page cache and to give every user
-> sufficient time to migrate to a well-tested alternative setup if that
-> is possible, or stay on a highmem-enabled LTS kernel for as long
-> as necessary.
+For the Nova drivers I did add
 
-I am part of a team responsible for products based on various 32-bit SoCs,
-so I'm alarmed.
-These products, which include ARMv7 and PPC32 architectures with up to 2 Gi=
-B of RAM,
-are communication systems with five-figure deployments worldwide.
+	default n
 
-Removing high memory will have an impact on these systems.
-The oldest kernel version they run is 4.19 LTS, with upgrades to a more rec=
-ent
-LTS release currently in progress.
-We typically upgrade the kernel every few years and will continue to suppor=
-t
-these systems for at least the next 10 years.
+as long as the driver is work in progress.
 
-Even with a new memory split, which could utilize most of the available mem=
-ory,
-I expect there to be issues with various applications and FPGA device drive=
-rs.
+> +	help
+> +	  Rust DRM driver for ARM Mali CSF-based GPUs.
+> +
+> +	  This driver is for Mali (or Immortalis) Valhall Gxxx GPUs.
+> +
+> +	  Note that the Mali-G68 and Mali-G78, while Valhall architecture, will
+> +	  be supported with the panfrost driver as they are not CSF GPUs.
+> +
+> +	  if M is selected, the module will be called tyr.
 
-Thanks,
-//richard
+I also did add
+
+	This driver is work in progress and may not be functional.
+
+to make it clear what people will get.
 
