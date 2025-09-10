@@ -1,193 +1,306 @@
-Return-Path: <linux-kernel+bounces-809675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A916DB5108E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:08:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32313B51090
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B106C188A881
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:09:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4555C1891CC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47040310782;
-	Wed, 10 Sep 2025 08:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968F930DEDA;
+	Wed, 10 Sep 2025 08:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GB+oIiUa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="EZocfgW+"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2066.outbound.protection.outlook.com [40.107.243.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01E53101B9
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491540; cv=none; b=G6AjxGS/pZWCgJy3iw/tiv+2Sh+/hv8LhT90Jj1S8q68Y+Q1e64kWbZ70xONwf3jH4A6CQmKSYXCqY0tvESPlH9Rf+HEdU4/v3cSWfJOAnfxQVaZSQP1xTPFv77BgPrpUhN8V4SxddIf2dMD9ZlnUgXW/TdL7wlXMDKq2DUaYds=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491540; c=relaxed/simple;
-	bh=qyPmCnCGxSOramXXx5tP3J4r1BBGqAEwvng/Q8csOWs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VpbLxV6XqkYuTQyx/efD7TR0dgBQkvWGhSaCHMIMmXgrAjBouzwo2B+zcLFqVqzubhQBLoKDzcxtXTk2x/WyC4yZMXRg1/z5Ss6w2DCNKig29SCzvLfLPqkN7bwDlVAGVsxt6HVSZwgo2LXzYM5ayo3BknUExTY5q3S1PFCkrv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GB+oIiUa; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757491536;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=q7okfE8N/Cj/cxVYYhlDzMPejqxlMfhSTKL9gD+wIBI=;
-	b=GB+oIiUa6udprMz6vh1l3cw6AViQplIcfdBRh4eszV70uFFM2NhbaJzWSFAGBoHeHH7kpP
-	FPrDKISbt/f9ScgVzbuehUKoCFJr/izaATCL5fzbBYUq5TlWdNf+47A/2r4iPhlv3RnB0k
-	koz6eM0+pWDqO/MWsUwKGf2BE57mGwI=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-IAVAB3tjNPCQHE3Ie3u5_A-1; Wed, 10 Sep 2025 04:05:35 -0400
-X-MC-Unique: IAVAB3tjNPCQHE3Ie3u5_A-1
-X-Mimecast-MFC-AGG-ID: IAVAB3tjNPCQHE3Ie3u5_A_1757491534
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45decfa5b26so9588605e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:05:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757491534; x=1758096334;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q7okfE8N/Cj/cxVYYhlDzMPejqxlMfhSTKL9gD+wIBI=;
-        b=be2aMqYsof8jxREnSeN7qoJovANiT8v/aavYYtQlkAClslxC80nWOn+GVxbg7HhfvN
-         p1l6TzccHzCWb19jDT9M5zgeeLls83cnm7dcWrQK8IX4xyNWzqJo9EGMb7j46behqGPP
-         AHAEyZslNTAIn+e9F+IuPQJkoyO8b1EUHg65WaVVvqQx2IpbQOM8kE2yZE1Uv4UfoS94
-         aP31C/Ym8oFx3E1SkjhdPytg91MUDNE4KeWnTsuDbs/+9RbQjaR+w83ElXc9h5ZVvzGh
-         iDZlm+VA6bdS9/zfkX2yJ9W6kvJhVoMrMkxuoo3+FhfXfw+ob0fQvKPxy19yhZfYONgj
-         NPTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+r/J30OikjqBqqgc32L2FNdeX+kdzWlm+HJ7CUGjlR9txcyArzFDZ8+tfSXyxiHmbVsq3zj1XQlzysGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy2utHm+G7ktIO02Wl/l8uyx3wJxtaT66iu88W+ckU9zPc4jfQ
-	DhwrZ4nIwmxQ7jehFwRyqw8uMLy7Kgl7GOLdl6IEh9FBA0/p2QNVXu4IeWi6HLt827/6M5rpW4j
-	qvDxsjMAgApXJzKfdw91w5lASbw5TKWR6fY4jdp+T8teS0JMo+Vb8AmMTVaFvsADzPg==
-X-Gm-Gg: ASbGncsH7lcQz0qks0H5sFmDCeLP5kdlnKpEKEMPo2Y8YiS4cRp4KzzWkgJHFqEFrj9
-	MOcX0+IqPox4N/AGVZB62KMfoxAeTX5LA0mTgewPBtUWnH/VN4Wr8TNGoryuMqIG6+jdVwdlzxP
-	VWk7yM/6R3XKaRydbkZd0UNpFyUJKCH7aV789BEfxNr8XrLOuAkulVN6/AENEI5KzBOkwGVqZr6
-	KDteyTZMxgaXQtRS6QCMvdmHAyK+/ZlPpx54WzUtTRIlex4TMX9uNdCr2x0GKZYthu6SrtDnOtp
-	cu8Rcr5x+/BiEQ893LV1HGa6wzGJ5Qma3k3Rke3LJYrUaI249slmKyKqhO9p5T1nMRX7asGjYxv
-	x+z4dAifIjbx8rbhxb9QHm8Aup0zceMNBc03QSeQ4YqgbmUctwJ7qiZqh7vrzKAlj+aY=
-X-Received: by 2002:a05:6000:1884:b0:3e7:4719:a054 with SMTP id ffacd0b85a97d-3e74719a711mr7904473f8f.7.1757491534118;
-        Wed, 10 Sep 2025 01:05:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFCgDtJldwla+vW4jYusl7xeGy3gWWJkq3a9E5eOUYvmRDk2iXJOXjHFj6oEKlPxtGi0M2hjA==
-X-Received: by 2002:a05:6000:1884:b0:3e7:4719:a054 with SMTP id ffacd0b85a97d-3e74719a711mr7904446f8f.7.1757491533586;
-        Wed, 10 Sep 2025 01:05:33 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f17:9c00:d650:ab5f:74c2:2175? (p200300d82f179c00d650ab5f74c22175.dip0.t-ipconnect.de. [2003:d8:2f17:9c00:d650:ab5f:74c2:2175])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521c9caasm6221141f8f.19.2025.09.10.01.05.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 01:05:33 -0700 (PDT)
-Message-ID: <0b1fb5c2-3d36-4fa4-95b0-02c693933228@redhat.com>
-Date: Wed, 10 Sep 2025 10:05:31 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EA030DD2B;
+	Wed, 10 Sep 2025 08:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757491603; cv=fail; b=l52q4xE3DQ68TRlt2hlDIQ6PhpHSoNeCKsIqNnox/YiIQEK9TAmkygi5CDa3Ukzfl4Ags9RIAWJPK2NI6HsL8+zOauAO7XekK6BLmbAvOBCiBBVJkranRfs6sPTMA98nGDVLZ4TNGbiI5ms2D9RwSiKz0bRKIj8AjWYgp9uiKwA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757491603; c=relaxed/simple;
+	bh=8cdtUXaSwNAt5nYzAXeLmDPvaPI1h2gjGIgIfVl8xEc=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Mkhs/pb2PUoNCBMK1AA2xsJXTjjOjL/47SGFx7oGj2E54eOCTGWGcbTweUI77dJO6nkwzNTDshkojQfxZeZRzUulqjcMqnCsCFwNLdhiD1EZgzj1o/kN/bfl1U1wsIQ7Tvb8JdDpUq5ru79DBsaCnj5gBt3dVGtXXR7MmfWkXEY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=EZocfgW+; arc=fail smtp.client-ip=40.107.243.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=liJrSzseu20Ko0/dno5Y201//oQA/cgEIWaxnpV2AnoRCCmEA4EdbENY7EpxCdIc7155qFm9eFtwbXjktJs+kHiZ1FQgSZ+6NAIHgBSgOZeZxV8IGcikuhp/lP6kSp0MIt6NMiTNlZjG+tKTFWrNOHwL93QX2z0A8w41I+uusFA+/EcK7V0+Yr2VpV2WoUhswj7akxM1Blny2FcFiKufubNIPhXcb4hWES2jtwE2aqIqkc9pAW4hKLxSSwl+uEZrk6zCjVTaYEx0N73ilLhatyWRR87GZVENgTpEJ5KZXAwWHkT+cQLeg+lg/W+gNMCZ7C/NhNgeAYuZx+sfkfVuFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t4uobWq8nd+oQySvH7JRTdlq+iFFh//jl3Oo29NZb3U=;
+ b=W38WqaMSqdnz4kuUHW5H8eUMUQXQ9W/yH8xLC1VhcJG0ffnIsmcy5uCFPOKkt3hySdtG9U7MwbV6rdvhomk9EFPsnRR6aQvHFl4FP0OwsPtC/TDGGByJA0I41Uk1yCb7u7VsEZ0fH2m/SDiXovmtycYR9YGHmJiLLst8sAdYIQuo5ycZQk1hV/MZ6xFZADmWa7Ahu7+M822sNxvA2FQhFPhBxzFkLdAg4p4pEopd2EsSfTB3utTvlDQeyWb/qgN8M4AgJs2J/hvlQm8l7iLXvxVf+4C8+LlfUmADQXRGbdh0vmOc6E8SrAGyLlpOFK5hGcuYk/OwfK6GM/X789CXdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t4uobWq8nd+oQySvH7JRTdlq+iFFh//jl3Oo29NZb3U=;
+ b=EZocfgW+j7q4AuZPLSf8YPQdC7fIvRBs9H1Gejfea8BKKCMXXJe7glNpkAD08L/og0cPGuY4RylPcUhhuqYlrJpRBWN10MlOJBOvC+5g8SKakVcshUU3cyXTQ/zmMpMBfcfu4uLOkFKi7albFq9AcGzdUHadWZWuQOB1uC5UUlvTYMKe8mLPurnYxBzdyNsusCt3YZl5vE661pX/EKc40/g1UEhxzILcajNrGDb1W8BKZCxvjlkTDjo9bLPrck3GeLD0L2aeHWyJuOfeE8Ch/b0HV2soutH+9OCr7GSk1WUrQ3JxuqeyGwu3hw/cQb0Zp31DToyrxDe9UKp8GRFmXw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
+ by CH2PR03MB8087.namprd03.prod.outlook.com (2603:10b6:610:27e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.15; Wed, 10 Sep
+ 2025 08:06:38 +0000
+Received: from MN2PR03MB4927.namprd03.prod.outlook.com
+ ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
+ ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9115.010; Wed, 10 Sep 2025
+ 08:06:38 +0000
+From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+To: Mark Brown <broonie@kernel.org>,
+	linux-spi@vger.kernel.org (open list:SPI SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list),
+	Matthew Gerlach <matthew.gerlach@altera.com>,
+	Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
+	Niravkumar L Rabara <nirav.rabara@altera.com>,
+	Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+Subject: [PATCH 1/1] spi: cadence-qspi: defer runtime support on socfpga if reset bit is enabled
+Date: Wed, 10 Sep 2025 16:06:32 +0800
+Message-Id: <910aad68ba5d948919a7b90fa85a2fadb687229b.1757491372.git.khairul.anuar.romli@altera.com>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <cover.1757491372.git.khairul.anuar.romli@altera.com>
+References: <cover.1757491372.git.khairul.anuar.romli@altera.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY5PR17CA0010.namprd17.prod.outlook.com
+ (2603:10b6:a03:1b8::23) To MN2PR03MB4927.namprd03.prod.outlook.com
+ (2603:10b6:208:1a8::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rv/ltl_monitor: adapt handle_task_newtask to u64
- clone_flags
-To: schuster.simon@siemens-energy.com, Steven Rostedt <rostedt@goodmis.org>,
- Christian Brauner <brauner@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Arnd Bergmann <arnd@arndb.de>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-References: <20250904-trace-task-newtask-fix-callbacks-v1-1-8edb3d557365@siemens-energy.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250904-trace-task-newtask-fix-callbacks-v1-1-8edb3d557365@siemens-energy.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|CH2PR03MB8087:EE_
+X-MS-Office365-Filtering-Correlation-Id: 94655851-8c14-4f64-9c48-08ddf040f7bf
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MIwkWJSm38uNe40bqA6DUH5aCUg6Ac2TD45SBGN8wdwUwVlADvECdJupJh2p?=
+ =?us-ascii?Q?xEZgrjnRdNOz/50EnCq0aAnjY9TJwZMM+c/GKcg+gv0LqlZKxA+orYES7jop?=
+ =?us-ascii?Q?APeum/VsMoVf4n4LR6ja5WbtKpMChKCKVjALVb6Z2plxBCsgk0s+shBzSNYq?=
+ =?us-ascii?Q?uP0t4VTlcYhnpRpJMbmQJ9meAlIHQQK44ROBwm6XfxjYkUXn6UbEj12Z8Z62?=
+ =?us-ascii?Q?L0iEr+mrYUO087Ilge/xdSTAhfFV4iMGw5heBXCRMhPDUNbm2KCBsl/EgeAC?=
+ =?us-ascii?Q?p8PztyZ3DSJKzX7mS1zZyNsJEabgK4Fw/+DyA6kjVMySk5aezNZNN6mq8aOQ?=
+ =?us-ascii?Q?1aGJNMXavPJ8Vkq2sNIUoIak/2a5R/s+grnIS2JTxKDrIAUfy+7B5DdEL7E5?=
+ =?us-ascii?Q?9FCWrwTOWQDhXPIKMZ6eGoJLoqjAzPkAdoISw7zOKNEJApOxBbZCar68gXEH?=
+ =?us-ascii?Q?cAQfw1LMIoS1ohccG0iXpFoUgNjKe6LR8VgHqqn4pjWGzWjDgj+mVxF9/54L?=
+ =?us-ascii?Q?UJmtTFkiu06SC72RDrZ/7foIWFqDThC5uOSCa858bo4q16VGlJ4sdyrCBeIp?=
+ =?us-ascii?Q?FMC5MKOw3jdEfDEc/QFU5uq+M7W9ZhLvKG8CT8tHctKQqwcW51SAqeWnBZPA?=
+ =?us-ascii?Q?Vn6iBY+/R9WHH2gbu6a3C3H21NUSMj4NV82DadcTBhwWmAUhRwbtpzJv+h73?=
+ =?us-ascii?Q?jdRcXekinDCuR5Be3xDtPbXc1lzu4xX5VTa7XP3WGUe2FoduIXX6PflKc4VW?=
+ =?us-ascii?Q?kNyDCkduRqoQfq90Vlzjg+qb2HxumLw1Hon2e7QZZN2Be7WEOhoGaJJ7HKgk?=
+ =?us-ascii?Q?gOw88mYqfCFIqTKN33s9MnYHXBDQBKhsY2JM2M7KJ7vzjU8dWIQJdrGP5XsC?=
+ =?us-ascii?Q?fjKs1gdkA9+0Y1xWYOuAzYd2IKhRLYB0+uryG0IEdrot7+GuMAL3CzZfDoKx?=
+ =?us-ascii?Q?TbY+y213LB90DzpxLXcm3eLlxBg20RSpJ4putlitCmNtvJKAzPMGvD3MQcdF?=
+ =?us-ascii?Q?PlF9o/3VRNOwz8YeHnna19Z7NwaKtslYX9mCFhjrBblQS8UUUCi5i+62dxvC?=
+ =?us-ascii?Q?+OAHazuGoajGeg3LO7+0v/3pmieVMP4MzYuIVLvENtotzUM6qWgasX66dOIc?=
+ =?us-ascii?Q?qt9LQoL5QNWCTGvJqAav+7T1d4PJfA1ZWlzBHX9B1v1ZRVtThiq36YwBhAJs?=
+ =?us-ascii?Q?BXIro4qB5V7cS3YiyWi49YrakA6O094NdiPDNGhnSPBIld3edYe3pNpXwTeH?=
+ =?us-ascii?Q?EmxaYKXHcfRIWtbo34IrFEtJyswu5kCxbqfeVFi5EZVtGOZjvP+1Krxfi3kG?=
+ =?us-ascii?Q?Ef/d4vR9IdnJQ6SOwsqoOMVzXTsKUgAXNxUyW4uahUjQM+nryQMKzTf3hX5Y?=
+ =?us-ascii?Q?Mm+JlRNQEDrsmn8pcW6ZhWFt9Ttk/sEoJ4eXRx+j1giYWzatvG+eDbNSBKCJ?=
+ =?us-ascii?Q?mko1TEQSCCw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vgUAyo0kYrZuaEGNx2KnQbFqk/4QU+xdMSaD9e35GvYeoQ6Nqce4FrbEOUlQ?=
+ =?us-ascii?Q?ApmkDYH/3asWeYJN7i34giI/bIRmDo7zuf9TxMj1NFyrDCayBWZL+X89Rlo2?=
+ =?us-ascii?Q?nXR7nzxHfhsd6oZxO5vOEWisJOxNUf7dr5zE9yLx2FWalNqv7LVYUWfVHnc6?=
+ =?us-ascii?Q?2yb/iAVqIztfV834IKK3lbpLUNEaVca8JCeOqn5AnYoeefPZrFjJbbinAEOd?=
+ =?us-ascii?Q?oLhNmzj70iqWWAeDFivFyjs6n8yD5Eo4tCipbCnSqcncPFARhkiPL8nz4pWu?=
+ =?us-ascii?Q?ShSeMTReAmA18wZBkQzFjysXWvHsPkeOlHtl+XvQq7PDeXDQiSX/FFsH1vSV?=
+ =?us-ascii?Q?da8aYI4tr31Spkz5aznodEJ88UUG5sNaQ/bYCaGi+h4e4uQIngvUDfldXgsP?=
+ =?us-ascii?Q?3axxDdJEcge5Mu6Th5N/ery0lHM/jc/qOOz+DYx1DLYkcSWPkafals2hGhwq?=
+ =?us-ascii?Q?LBOhaEm9wQ7eiOvYZWSAvSCmZSREiMeFSIvGfxVX17nIMB14EzwOy8t4wNn+?=
+ =?us-ascii?Q?+hW3TlBJhPOdPud0rlMJn9PBFX5Sc9uRn8dwgGvRvUyY5bx9xL/wi33D9GCG?=
+ =?us-ascii?Q?wGvVYITkr+G81l5RsATvRViL91rlPk9DDnqKKqiV5vszV695CPUcEVEkB2uY?=
+ =?us-ascii?Q?Y5pd52DZmnpOg6fcyGcI3CdguW65X74QWJfBp/mxs3s/cLtXXGtHraSc8NHs?=
+ =?us-ascii?Q?1XzQrCgTWAHmQj6pW0zfSmPO9wrviN7SYd/te4bGGLEUcavF98HyBIHVjAs3?=
+ =?us-ascii?Q?8+Wx/h21BQUn2sNWztfjUNZDE8WZrz4w8j6toKG04KZSRqwcY3DroElilj7+?=
+ =?us-ascii?Q?3wiisZlD94UCd2ri1u1+3lm+IKE6FhFvXGr/04laZiB9dZ3h1jZrTv0wi20Y?=
+ =?us-ascii?Q?vYxXeSOYOFbV8D7cra/7CUptl6hdnC/5SdzucN0LAjVTFQlbh7m+D30um3jz?=
+ =?us-ascii?Q?/l7s12dyTjj8fSU6YuI1hpxZhXAqeO1EY0rTCveRr3oE1jEv/ls9Bh9ZgATT?=
+ =?us-ascii?Q?wJAaXXGBRnk31qOlweR3x5jVqvFM73OYFZk+Pp4FTRbrjp5MkSeKTHRpBuvq?=
+ =?us-ascii?Q?+7D5Po6gtC+RG0K7UZVgdBwvw4YHv8Bbwu0aMdBbjTr9fJ8T2r6V504kNC/G?=
+ =?us-ascii?Q?R2iIiGJLY1JAmjtcHwCb3qS9qHeqWMvgCqyk65M79rub6znS7eMmNMw35mNu?=
+ =?us-ascii?Q?86plIbdcVw2elV9ns0enZeaxAfV2+Iewo3OeeHJdfxajK4l8XYnQMPS361V+?=
+ =?us-ascii?Q?/eWmrg3zeQ9AZ6DbiOj80kVMe/f7Pt6KnX0TW9bdUtBaZAfrOwrsKxbjMJYF?=
+ =?us-ascii?Q?0xWp7vaCzNQaImvG/g3GpH29fwDKdIOeAfBc8iYG0qCUzXfzhjNoZ/1SJTDI?=
+ =?us-ascii?Q?D4zU5iwCtRZxvRtzfUA1WCWZwoJydw7a91jK4D0LfCaVcuDLp0TlTd5wUFmw?=
+ =?us-ascii?Q?CxLM//sMTY9NwByI9iqJL/ZftYDc9PdqlgEDNwhooVZ+jLSAQ2KDo1xNrnjl?=
+ =?us-ascii?Q?r0BhGD7QahcnpCmV0eaDsVFyDLT9ARls4i9TL2MdpNyV/1j3Yogf1j2EHDbA?=
+ =?us-ascii?Q?zF5aY30ZbnDihOo+kLsjuYzfCPACFkUkh/qfjuBViZIiRe6uKakipXXfmzqg?=
+ =?us-ascii?Q?ig=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94655851-8c14-4f64-9c48-08ddf040f7bf
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 08:06:38.5578
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZRKlSjwRAQPdVuyeRBF7BNKZaSp86QLSG/m4UoY0wz+A+AR0IFgPvJmuE1VuDFaYgZgb+vZvfEaTKtPLe7xaVReKJjdo7WJ/TpSwvh3Ewik=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR03MB8087
 
-On 04.09.25 13:36, Simon Schuster via B4 Relay wrote:
-> From: Simon Schuster <schuster.simon@siemens-energy.com>
-> 
-> Since commit edd3cb05c00a ("copy_process: pass clone_flags as u64 across
-> calltree") the task_newtask trace event exposes clone_flags as u64 to
-> its callbacks.
-> 
-> However, ltl_monitor was not adapted, resulting in a faulty callback.
-> This also resulted in an lkp build warning due to
-> -Wincompatible-pointer-types.
-> 
-> Fixes: edd3cb05c00a ("copy_process: pass clone_flags as u64 across calltree")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/lkml/20250904113334.18822d43@canb.auug.org.au/
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202509040134.bQVbm7ja-lkp@intel.com/
-> Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
-> ---
-> I did further search for other in-tree users of the task_newtask
-> callback, but the trace macros make it a bit harder. Yet, as far as I
-> could see, there are none, so this patch hopefully resolves the problem
-> for good. The other matches all relate to "tp_btf/task_newtask", which
-> seems to be unaffected.
-> 
-> With this patch, ARCH=S390 allmodconfig -- that originally tripped the
-> LKP builds -- now builds without further -Wincompatible-pointer-types
-> warnings.
-> 
-> Sorry for causing this trouble, and thanks to Stephen Rothwell for
-> testing/reporting.
-> ---
+Enabling runtime PM allows the kernel to gate clocks and power to idle
+devices. On SoCFPGA, a warm reset does not fully reinitialize these
+domains.This leaves devices suspended and powered down, preventing U-Boot
+or the kernel from reusing them after a warm reset, which breaks the boot
+process.
 
-Not a stable commit id I think, so it should be squashed into the 
-original one.
+Fixes: 4892b374c9b7 ("mtd: spi-nor: cadence-quadspi: Add runtime PM support")
+CC: stable@vger.kernel.org # 6.12+
+Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+Reviewed-by: Niravkumar L Rabara <nirav.rabara@altera.com>
+Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+---
+ drivers/spi/spi-cadence-quadspi.c | 53 +++++++++++++++++++++----------
+ 1 file changed, 36 insertions(+), 17 deletions(-)
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
+diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
+index 9bf823348cd3..d288e9d9c187 100644
+--- a/drivers/spi/spi-cadence-quadspi.c
++++ b/drivers/spi/spi-cadence-quadspi.c
+@@ -46,6 +46,7 @@ static_assert(CQSPI_MAX_CHIPSELECT <= SPI_CS_CNT_MAX);
+ #define CQSPI_DMA_SET_MASK		BIT(7)
+ #define CQSPI_SUPPORT_DEVICE_RESET	BIT(8)
+ #define CQSPI_DISABLE_STIG_MODE		BIT(9)
++#define CQSPI_DISABLE_RUNTIME_PM	BIT(10)
+ 
+ /* Capabilities */
+ #define CQSPI_SUPPORTS_OCTAL		BIT(0)
+@@ -1468,14 +1469,17 @@ static int cqspi_exec_mem_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ 	int ret;
+ 	struct cqspi_st *cqspi = spi_controller_get_devdata(mem->spi->controller);
+ 	struct device *dev = &cqspi->pdev->dev;
++	const struct cqspi_driver_platdata *ddata = of_device_get_match_data(dev);
+ 
+ 	if (refcount_read(&cqspi->inflight_ops) == 0)
+ 		return -ENODEV;
+ 
+-	ret = pm_runtime_resume_and_get(dev);
+-	if (ret) {
+-		dev_err(&mem->spi->dev, "resume failed with %d\n", ret);
+-		return ret;
++	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM))) {
++		ret = pm_runtime_resume_and_get(dev);
++		if (ret) {
++			dev_err(&mem->spi->dev, "resume failed with %d\n", ret);
++			return ret;
++		}
+ 	}
+ 
+ 	if (!refcount_read(&cqspi->refcount))
+@@ -1491,7 +1495,8 @@ static int cqspi_exec_mem_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ 
+ 	ret = cqspi_mem_process(mem, op);
+ 
+-	pm_runtime_put_autosuspend(dev);
++	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM)))
++		pm_runtime_put_autosuspend(dev);
+ 
+ 	if (ret)
+ 		dev_err(&mem->spi->dev, "operation failed with %d\n", ret);
+@@ -1985,11 +1990,12 @@ static int cqspi_probe(struct platform_device *pdev)
+ 			goto probe_setup_failed;
+ 	}
+ 
+-	pm_runtime_enable(dev);
+-
+-	pm_runtime_set_autosuspend_delay(dev, CQSPI_AUTOSUSPEND_TIMEOUT);
+-	pm_runtime_use_autosuspend(dev);
+-	pm_runtime_get_noresume(dev);
++	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM))) {
++		pm_runtime_enable(dev);
++		pm_runtime_set_autosuspend_delay(dev, CQSPI_AUTOSUSPEND_TIMEOUT);
++		pm_runtime_use_autosuspend(dev);
++		pm_runtime_get_noresume(dev);
++	}
+ 
+ 	ret = spi_register_controller(host);
+ 	if (ret) {
+@@ -1997,12 +2003,17 @@ static int cqspi_probe(struct platform_device *pdev)
+ 		goto probe_setup_failed;
+ 	}
+ 
+-	pm_runtime_put_autosuspend(dev);
++	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM))) {
++		pm_runtime_put_autosuspend(dev);
++		pm_runtime_mark_last_busy(dev);
++		pm_runtime_put_autosuspend(dev);
++	}
+ 
+ 	return 0;
+ probe_setup_failed:
+ 	cqspi_controller_enable(cqspi, 0);
+-	pm_runtime_disable(dev);
++	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM)))
++		pm_runtime_disable(dev);
+ probe_reset_failed:
+ 	if (cqspi->is_jh7110)
+ 		cqspi_jh7110_disable_clk(pdev, cqspi);
+@@ -2013,7 +2024,11 @@ static int cqspi_probe(struct platform_device *pdev)
+ 
+ static void cqspi_remove(struct platform_device *pdev)
+ {
++	const struct cqspi_driver_platdata *ddata;
+ 	struct cqspi_st *cqspi = platform_get_drvdata(pdev);
++	struct device *dev = &pdev->dev;
++
++	ddata = of_device_get_match_data(dev);
+ 
+ 	refcount_set(&cqspi->refcount, 0);
+ 
+@@ -2026,14 +2041,17 @@ static void cqspi_remove(struct platform_device *pdev)
+ 	if (cqspi->rx_chan)
+ 		dma_release_channel(cqspi->rx_chan);
+ 
+-	if (pm_runtime_get_sync(&pdev->dev) >= 0)
+-		clk_disable(cqspi->clk);
++	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM)))
++		if (pm_runtime_get_sync(&pdev->dev) >= 0)
++			clk_disable(cqspi->clk);
+ 
+ 	if (cqspi->is_jh7110)
+ 		cqspi_jh7110_disable_clk(pdev, cqspi);
+ 
+-	pm_runtime_put_sync(&pdev->dev);
+-	pm_runtime_disable(&pdev->dev);
++	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM))) {
++		pm_runtime_put_sync(&pdev->dev);
++		pm_runtime_disable(&pdev->dev);
++	}
+ }
+ 
+ static int cqspi_runtime_suspend(struct device *dev)
+@@ -2112,7 +2130,8 @@ static const struct cqspi_driver_platdata socfpga_qspi = {
+ 	.quirks = CQSPI_DISABLE_DAC_MODE
+ 			| CQSPI_NO_SUPPORT_WR_COMPLETION
+ 			| CQSPI_SLOW_SRAM
+-			| CQSPI_DISABLE_STIG_MODE,
++			| CQSPI_DISABLE_STIG_MODE
++			| CQSPI_DISABLE_RUNTIME_PM,
+ };
+ 
+ static const struct cqspi_driver_platdata versal_ospi = {
 -- 
-Cheers
-
-David / dhildenb
+2.35.3
 
 
