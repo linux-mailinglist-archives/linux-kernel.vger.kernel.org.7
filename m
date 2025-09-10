@@ -1,104 +1,270 @@
-Return-Path: <linux-kernel+bounces-810157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D29AB516B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:20:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13C5B516B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A94291C831E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:21:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91784E6E4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDCF3176EF;
-	Wed, 10 Sep 2025 12:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFB1319855;
+	Wed, 10 Sep 2025 12:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8ISRPkm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="U2v3S3Jf"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D1D264638;
-	Wed, 10 Sep 2025 12:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD41314B91;
+	Wed, 10 Sep 2025 12:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757506848; cv=none; b=tYLNvA62vXoZgrauc355MMLkCc1y0MUFQOrRfLf5UICPTbJBpMsim1U56/jwFhSwqQQu5bWy+ulnrSeyOZE+oeJ0NItOcVvypUsxWwsTkQtRSFb8HU1yP9J++c+YoMG+a2m+HDJu9vdYHkysNz/7Kf0E6humgesu/3avE/iUXoI=
+	t=1757506887; cv=none; b=gI+BO+uKZQRaJcmd6l/Y79ZAL/cERwBb9D6Lr4nRQY8PCrHyTDYhrqV6F6l8ozG9NBXFZTye2ZUv6vTPXxxyJlXiO4zbiOOcE7Ydaw72buVsgaBHpb164dps/LKs92wlDNP6+Po+hppy04zmFPWjsimCJd6Ei5YprSo7VtgkVJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757506848; c=relaxed/simple;
-	bh=9ziSh7+jqZyf3UzqZajs8CYNo1sTpmApE/Ayopvs16o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lsBZXBn+1gzRh+kH/UGg3uLLCmN+wS1mVnY8q1HnWVb/kDvRyWY2GUJqNgZkZnVSZZDSIOwSzm3wx5N3wWzY3NXlBNXq87zukoFfpCF2r3GUF8ka117BQamXT8V/MbXia68iCZtl+IJrpBxCRDrj3pcMshsLgRhRKuQpqGpzCvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8ISRPkm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F05FC4CEF0;
-	Wed, 10 Sep 2025 12:20:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757506847;
-	bh=9ziSh7+jqZyf3UzqZajs8CYNo1sTpmApE/Ayopvs16o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q8ISRPkm6DSTl3snhoL8y++8BXcZSOq1nbIGJu+WpGPiPuBTWZOcEou6TRZTK0cb0
-	 5w9y8+QsLq5fbHFecF+64tInUBFAM+46A5rfaxSWdFHVF6K6PFIpI89BLcSy1qfCcC
-	 /Dr37obCYmvSpRkr/GC6/Hu42Tw1rLujmFhOwaPSamrC5SufsJ1S521aJA3tBkS6yP
-	 AEErbxprqZFrJ7jKY7Ag23PIwEAIsfRqD29XSRiqhL4di/mZ8nWcbidLW7jF/GEUVH
-	 az9sgMXwaJoAGJvb/1ftFjE8GSVFJ2EUdlqBLYM3e5dX+9RN09BNLANGYG8inJjr/8
-	 zgIXFAV7948QA==
-Date: Wed, 10 Sep 2025 13:20:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Andreas Kemnade <akemnade@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alistair Francis <alistair@alistair23.me>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: mfd: sy7636a: Add missing gpio pins
- and supply
-Message-ID: <9853ad77-555d-4a38-972c-834ff45b9cb7@sirena.org.uk>
-References: <20250909-sy7636-rsrc-v2-0-cfd9f44fd259@kernel.org>
- <20250909-sy7636-rsrc-v2-1-cfd9f44fd259@kernel.org>
+	s=arc-20240116; t=1757506887; c=relaxed/simple;
+	bh=7wuC/HcaHF4I9pw2yi2x2cypDzYc5KuP2H8+jUJFos0=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=TbwkN8Xfrc6dtjAGcYmPfbHoXzI3rWHGEvXTqmwf9qaXnWB2O4ZMt9BUzqJqUFT3uriPpHQaZGlzRvXvTjeGTHvri4ZqAEVl5LcWiBi+k0hDFeawGORg4LRysEVXvYeDpHx8kh43QnE85LExjrPFGXxVsrqdeBp3nPdQdPQDY9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=U2v3S3Jf; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58A5XvAO010958;
+	Wed, 10 Sep 2025 12:21:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Wm6ObA
+	UM6Ra3mXu/iqfiRZqi8eQvB5Kjt46I3ybPgFg=; b=U2v3S3Jf1prJE37+yXTAIN
+	8YMyOu3bCdPVYGDhFJpaLn6HaffIEqchbUDounTYld7nriEG6ddSNWJfgEtcIHUZ
+	RhlA9k3toeEouzplngrMqkpRK3h7iLMbiBO+OPahBtFX5OyD1YXd5fV5d5vftDuB
+	R2iKmeHNdNGAeShkaT2Arjq1WFYoybIv+MtFfnZ29z74XKw93NKQ3VXLkCqh1Ojg
+	PvhRToPFXrdUCf8n+QROc0Es2bG4ZfBJ3yGwDLSCsiqeVRfOE8Xvio5ecAkPT/Rp
+	O7cISBrikJmNNQg6yKLcD48jI7S4D6lYsCpo8FuM0YBM8wQH6IPYbGOlWOAoVsIQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffe1dt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Sep 2025 12:21:07 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58AC98kx027958;
+	Wed, 10 Sep 2025 12:21:07 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffe1dq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Sep 2025 12:21:06 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58A9jXoc007895;
+	Wed, 10 Sep 2025 12:21:05 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109prcdp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Sep 2025 12:21:05 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58ACL4K063701434
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 10 Sep 2025 12:21:05 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D72BD58055;
+	Wed, 10 Sep 2025 12:21:04 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3F04A58043;
+	Wed, 10 Sep 2025 12:21:04 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.153.78])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 10 Sep 2025 12:21:04 +0000 (GMT)
+Message-ID: <7790048d4dc468792b428e80ceae7261a97a896d.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] ima: don't clear IMA_DIGSIG flag when setting
+ non-IMA xattr
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin	
+ <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul
+ Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E.
+ Hallyn"	 <serge@hallyn.com>,
+        "open list:SECURITY SUBSYSTEM"	
+ <linux-security-module@vger.kernel.org>,
+        open list	
+ <linux-kernel@vger.kernel.org>
+In-Reply-To: <20250908105825.1573222-1-coxu@redhat.com>
+References: <20250902042515.759750-1-coxu@redhat.com>
+	 <20250908105825.1573222-1-coxu@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 10 Sep 2025 08:21:03 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="08SCNPHVt+IzhmFS"
-Content-Disposition: inline
-In-Reply-To: <20250909-sy7636-rsrc-v2-1-cfd9f44fd259@kernel.org>
-X-Cookie: I think my career is ruined!
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 0Cf5JexUbD-23jt0wWvf_SJE434MYWJl
+X-Proofpoint-GUID: -J3YCBMJ7QEUXFeZnVOB-pW-7jAWt6z-
+X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c16d33 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8 a=910HjdCciHtYCj_r2X8A:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX9N7Iozi70nie
+ SlcTkSD6poG6xGkBGkVvlkH/zUQN+GIHT9LN8lzMiFlqgKCE86t8+NarM5TTNDnxOyNwUJtaM1W
+ 03RmcKoOTO7nqwKAGdMlxEQa5zdxNG3K/irXEmpIkHlg6005h7FuNmnqYYTK7qd+ATIOHLYELZ6
+ cC5va5jDa7W/g1TOM+TKYxZ5Fbbejcy5BWL7IfYQqQYSfu06lWL023EAK79x0HMfeyGn/RKUeYy
+ k4YMcpPVIoNPv++ZVJYQgmIennDg/5oG47JR/UBRsKUrUIdQOvsMBDP+UFOitqhHPDKqWYxz0FC
+ 4CM4lCRvpxIx3Dcbex6D+13jvmwmz6LBtvPjsENQ2ym5ukpvqVv6PQQbnN7Go5lD0LWs9+3aQXS
+ Td5f6kFD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-10_01,2025-09-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
 
+On Mon, 2025-09-08 at 18:58 +0800, Coiby Xu wrote:
+> Currently when both IMA and EVM are in fix mode, the IMA signature will
+> be reset to IMA hash if a program first stores IMA signature in
+> security.ima and then sets security.selinux for a file.
 
---08SCNPHVt+IzhmFS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The problem description should be generic.
 
-On Tue, Sep 09, 2025 at 10:33:02PM +0200, Andreas Kemnade wrote:
-> To be able to fully describe how the SY7636A is connected to the system,
-> add properties for the EN and VCOM_EN pins. To squeeze out every bit
-> of unused current, in many devices it is possible to power off the
-> complete chip. Add an input regulator to allow that.
+-> and then writes some other security xattr for the file.
 
-Lee, the code for this is in the regulator tree so it probably makes
-sense to merge the binding update there too?
+Start a new paragraph here for the example.
+> For example, on
+> Fedora, after booting the kernel with "ima_appraise=3Dfix evm=3Dfix
+> ima_policy=3Dappraise_tcb" and installing rpm-plugin-ima, reinstalling a
+> package will not make good reference IMA signature generated. Instead
+> IMA hash is generated,
+>     # getfattr -m - -d -e hex /usr/bin/bash
+>     # file: usr/bin/bash
+>     security.ima=3D0x0404...
+>=20
+> This happens because when setting selinux.selinux, the IMA_DIGSIG flag
+> that had been set early was cleared. As a result, IMA hash is generated
+> when the file is closed.
 
---08SCNPHVt+IzhmFS
-Content-Type: application/pgp-signature; name="signature.asc"
+Start a new paragraph here, adding a sentence describing the solution to th=
+e
+problem. For example,
 
------BEGIN PGP SIGNATURE-----
+Prevent replacing the IMA file signature with a file hash, by preventing th=
+e
+IMA_DIGSIG flag from being reset.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjBbRgACgkQJNaLcl1U
-h9DOSwf/T2EB8PZz+auYD+noS9Bw0dg85UYJrG+bYea2qYRMFLDrCUIgvLct2UPp
-2ktkLkieGmEy7MFzC3f1YLXHweE2w19JO/kYkacFpW2pz0hjagVHam+Z504lWpyM
-wkjicYM58xTdX8RnarCd0f4ICwhQg0690Uz33IFe6iH9/VK+YZA3OCcLbrvzaOVN
-4Yah1l+s+R23fLs0EMjVWmxt+zw8XzLQ9OOoSCyYU78tSinLJw7LlYqIG25Vo0eS
-9lZB2lktjR+3fpW1gndQM72do0TfOnQLja2F4j4iCDfull8fl+jBGJ+dFzzda/cR
-syefzGHG8QR2JW1A3WD9f4i60ZIErg==
-=bcPe
------END PGP SIGNATURE-----
+>=20
+> Here's a minimal C reproducer,
+>=20
+>     #include <stdio.h>
+>     #include <sys/xattr.h>
+>     #include <fcntl.h>
+>     #include <unistd.h>
+>     #include <string.h>
+>     #include <stdlib.h>
+>=20
+>     int main() {
+>         const char* file_path =3D "/usr/sbin/test_binary";
+>         const char* hex_string =3D "030204d33204490066306402304";
+>         int length =3D strlen(hex_string);
+>         char* ima_attr_value;
+>         int fd;
+>=20
+>         fd =3D open(file_path, O_WRONLY|O_CREAT|O_EXCL, 0644);
+>         if (fd =3D=3D -1) {
+>             perror("Error opening file");
+>             return 1;
+>         }
+>=20
+>         ima_attr_value =3D (char*)malloc(length / 2 );
+>         for (int i =3D 0, j =3D 0; i < length; i +=3D 2, j++) {
+>             sscanf(hex_string + i, "%2hhx", &ima_attr_value[j]);
+>         }
+>=20
+>         if (fsetxattr(fd, "security.ima", ima_attr_value, length/2, 0) =
+=3D=3D -1) {
+>             perror("Error setting extended attribute");
+>             close(fd);
+>             return 1;
+>         }
+>=20
+>         const char* selinux_value=3D "system_u:object_r:bin_t:s0";
+>         if (fsetxattr(fd, "security.selinux", selinux_value, strlen(selin=
+ux_value), 0) =3D=3D -1) {
+>             perror("Error setting extended attribute");
+>             close(fd);
+>             return 1;
+>         }
+>=20
+>         close(fd);
+>=20
+>         return 0;
+>     }
+>=20
+> Signed-off-by: Coiby Xu <coxu@redhat.com>
 
---08SCNPHVt+IzhmFS--
+Thanks, Coiby.  The updated patch looks good.  Have you looked at the other
+calls to ima_reset_appraise_flags() to make sure they don't need to be adju=
+sted?
+
+thanks,
+
+Mimi
+
+> ---
+>  security/integrity/ima/ima_appraise.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/i=
+ma/ima_appraise.c
+> index f435eff4667f..4e4750ea41ad 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -694,6 +694,15 @@ static int ima_protect_xattr(struct dentry *dentry, =
+const char *xattr_name,
+>  	return 0;
+>  }
+> =20
+> +/*
+> + * ima_reset_appraise_flags - reset ima_iint_cache flags
+> + *
+> + * @digsig: whether to clear/set IMA_DIGSIG flag, tristate values
+> + *          0: clear IMA_DIGSIG
+> + *          1: set IMA_DIGSIG
+> + *         -1: don't change IMA_DIGSIG
+> + *
+> + */
+>  static void ima_reset_appraise_flags(struct inode *inode, int digsig)
+>  {
+>  	struct ima_iint_cache *iint;
+> @@ -706,9 +715,9 @@ static void ima_reset_appraise_flags(struct inode *in=
+ode, int digsig)
+>  		return;
+>  	iint->measured_pcrs =3D 0;
+>  	set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
+> -	if (digsig)
+> +	if (digsig =3D=3D 1)
+>  		set_bit(IMA_DIGSIG, &iint->atomic_flags);
+> -	else
+> +	else if (digsig =3D=3D 0)
+>  		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
+>  }
+> =20
+> @@ -794,6 +803,8 @@ static int ima_inode_setxattr(struct mnt_idmap *idmap=
+, struct dentry *dentry,
+>  		digsig =3D (xvalue->type =3D=3D EVM_IMA_XATTR_DIGSIG);
+>  	} else if (!strcmp(xattr_name, XATTR_NAME_EVM) && xattr_value_len > 0) =
+{
+>  		digsig =3D (xvalue->type =3D=3D EVM_XATTR_PORTABLE_DIGSIG);
+> +	} else {
+> +		digsig =3D -1;
+>  	}
+>  	if (result =3D=3D 1 || evm_revalidate_status(xattr_name)) {
+>  		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
+
 
