@@ -1,103 +1,211 @@
-Return-Path: <linux-kernel+bounces-809763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DFB7B511BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:44:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D208B511C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE98216BD9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:44:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98ED4E1E45
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79AF310621;
-	Wed, 10 Sep 2025 08:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2DC31158D;
+	Wed, 10 Sep 2025 08:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="gEF7w8yg"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJESPZ6l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4734C2AE99;
-	Wed, 10 Sep 2025 08:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD5E30F93D;
+	Wed, 10 Sep 2025 08:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757493878; cv=none; b=FeiqWMDZbZEjDmz48w+ZjQ9bJYW498EL6hd7PmB8XRqK8GdpC9OYLSzMghQnjTMwYjCEbh81lu5yAMEuxlY5hQY2zFpiRezfdddzOZQx1J0oE0gE/0W4TJcjGNtEc5R8ZIjLCDMasb8cPu7N+H5fUWgdDKKbgIRER8fcCyMDQrc=
+	t=1757494032; cv=none; b=T7gqx4h+U7E8aX3y/2fMOSGEhcCgLA9vjLSc4s68KRKNFSq8wy5m52LxPf/1NWcQOWHobn+WuBLG8N7zyKfoFD9lK0OmP3zOMBNz69sSfKM1BBpb1hCduAbBmQ1i5Vf86JsorH9tL/B3tiNmPEX+Rsz1HC3OADi5GACHuAWAce4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757493878; c=relaxed/simple;
-	bh=hpz41grSZgUpOdZSDvGHF3rBgqGglK7gcLfkEeaB+OU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u7a0AHhQ3a2zyOMz+LlPBhkk2C2RJK8lsWb49wo/02ZaIb9Jq779NCMR/29CKR8cXKrBNcn6FESmWS8hqtaoXFwdbJT/J7eaHC/1fuY6ZA7Cp4wxeqbvQ1YKsYGJM4bQCspMlFDmP4c7saj6QMYU9ccweD9Ep9QJiP/YAZdXoAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=gEF7w8yg; arc=none smtp.client-ip=220.197.32.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=jupNrTs3JMwOvq+fnMPXFS8hLrrLD5lrJLhDJBoxSEs=;
-	b=gEF7w8yg+1iuLMmCraMdsagAWxzGsodzN3SjBWGYTGKuazSL3IiqlmafGSKxv2
-	U04fsQYvnREEFhAy67GKLLdbYWIAIKqTwYpMuNzO9sK8C/wpK7/DiNu7eRkl0OVh
-	Onuc4N9A7sHAluvCbYd4gNNnsgrIdrKZBvVoxugTjtQgI=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgD3P987OsFoZf5EBA--.43160S3;
-	Wed, 10 Sep 2025 16:43:41 +0800 (CST)
-Date: Wed, 10 Sep 2025 16:43:39 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Shawn Guo <shawnguo@kernel.org>,
-	mathieu.poirier@linaro.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:SYSTEM CONTROL MANAGEMENT INTERFACE (SCMI) i.MX..." <arm-scmi@vger.kernel.org>,
-	"open list:SYSTEM CONTROL MANAGEMENT INTERFACE (SCMI) i.MX..." <imx@lists.linux.dev>,
-	"moderated list:SYSTEM CONTROL MANAGEMENT INTERFACE (SCMI) i.MX..." <linux-arm-kernel@lists.infradead.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Subject: Re: [PATCH V2 RESEND] dt-bindings: firmware: imx95-scmi: Allow
- linux,code for protocol@81
-Message-ID: <aME6O29QxvU_PcRx@dragon>
-References: <20250718094723.3680482-1-peng.fan@nxp.com>
- <20250825082154.GA26152@nxa18884-linux.ap.freescale.net>
+	s=arc-20240116; t=1757494032; c=relaxed/simple;
+	bh=WppBPowSewof/D5eVLXkCnHoKjpriLA2OUGq3Qnm2eI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=jiVDyoswJDsRm0X3rhYvyhq3COtMoSlz8ldrMd/UHvlhYfiFQBYCEe5CRh3r2XYsHkmJYTyQPxW6TLHO0GJA/HCcV4LJwqJn+vDVMR/3xYqV4Dd6hM3Mna3gzKXsWzQtVMraH0K934xfq03BPqdAStt9HN/gT8dN/UGgL9cSRYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJESPZ6l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD53C4CEF0;
+	Wed, 10 Sep 2025 08:47:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757494031;
+	bh=WppBPowSewof/D5eVLXkCnHoKjpriLA2OUGq3Qnm2eI=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=ZJESPZ6lxzuProG9lMdkWZnUdwptCur8qCkwbnuymnB4OzQnTCSsZvNKwlM+l14av
+	 avSWz9q2NGNPJ7zXztH7yMlB4il8x79co82w/jAbVLYOSFQ0aIbZHAU3hIJ4TayqDK
+	 1SawHkF2W6Q1FQO1zffxQ5+X7OzKE431V/h3dm5jqqM7H8V2oEPl+IWq8JRhrGAzB0
+	 gsWRzii0hSeix6ew8EDmTjd/KjZxhaKX1befEeCYkL33hvqcdSnI6v6PYeNtQHodZf
+	 d2Uxau1tFgH3LbK2rEQEmxF3f6r4NsaVDKfeeifUFW9TDSvZpKNOMc5EQyUv7chuA1
+	 rwE9Mop5Dwncw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825082154.GA26152@nxa18884-linux.ap.freescale.net>
-X-CM-TRANSID:Mc8vCgD3P987OsFoZf5EBA--.43160S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKw45GF1UZrWrGr47CrykXwb_yoWfJrc_CF
-	WxJr9ruw4agw4Ik3WrtrW3urnrK3y8XF1DXr1Ygr1fXFnxArZ8Z3ZxA34rAw17ZaykXFZ7
-	W3Z0qF409FyDujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUUfMaUUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCwLEZWjBF1101wAAso
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 10 Sep 2025 10:47:05 +0200
+Message-Id: <DCOZMX59W82I.1AH7XVW3RUX2D@kernel.org>
+Subject: Re: [PATCH] rust: pci: add PCI interrupt allocation and management
+ support
+Cc: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <nouveau@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, <acourbot@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "John Hubbard" <jhubbard@nvidia.com>,
+ "Timur Tabi" <ttabi@nvidia.com>, <joel@joelfernandes.org>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250910035415.381753-1-joelagnelf@nvidia.com>
+In-Reply-To: <20250910035415.381753-1-joelagnelf@nvidia.com>
 
-On Mon, Aug 25, 2025 at 04:21:54PM +0800, Peng Fan wrote:
-> Hi Sudeep, Shawn
-> 
-> On Fri, Jul 18, 2025 at 05:47:22PM +0800, Peng Fan wrote:
-> >From: Alexander Stein <alexander.stein@ew.tq-group.com>
-> >
-> >BBM protocol supports a single power button, supported by driver
-> >imx-sm-bbm-key.c. By default this is KEY_POWER, but can also be overwritten
-> >using linux,code. Add a reference to this schema and add linux,code as a
-> >supported property.
-> >
-> >Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> >Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> >Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> >---
-> 
-> Not sure which tree this patch should be landed in. But would you please
-> pick it up?
+On Wed Sep 10, 2025 at 5:54 AM CEST, Joel Fernandes wrote:
+>  impl Device<device::Bound> {
 
-I do not see the patch in next-20250910, nor reply from Sudeep
-indicating it's been applied, so I just picked it up.
+The Bound context is not enough for some of the methods below, some of them
+require the Core context, more below.
 
-Shawn
+> +    /// Free all allocated IRQ vectors for this device.
+> +    ///
+> +    /// This should be called to release interrupt resources when they a=
+re no longer needed,
+> +    /// during driver unbind or removal.
+> +    pub fn free_irq_vectors(&self) {
+> +        // SAFETY: `self.as_raw` is guaranteed to be a pointer to a vali=
+d `struct pci_dev`.
+> +        // `pci_free_irq_vectors` is safe to call even if no vectors are=
+ currently allocated.
+> +        unsafe { bindings::pci_free_irq_vectors(self.as_raw()) };
+> +    }
 
+This requires the Core context, but we should not provide this method at al=
+l to
+begin with; it puts the burden on drivers to remember calling this.
+
+Instead, alloc_irq_vectors() should register a devres object with
+devres::register(), so this gets called automatically when the device is
+unbound.
+
+Note that a cleanup through devres is not in conflict with the Core context
+requirement.
+
+> +    /// Allocate IRQ vectors for this PCI device.
+> +    ///
+> +    /// Allocates between `min_vecs` and `max_vecs` interrupt vectors fo=
+r the device.
+> +    /// The allocation will use MSI-X, MSI, or legacy interrupts based o=
+n the `irq_types`
+> +    /// parameter and hardware capabilities. When multiple types are spe=
+cified, the kernel
+> +    /// will try them in order of preference: MSI-X first, then MSI, the=
+n legacy interrupts.
+> +    /// This is called during driver probe.
+> +    ///
+> +    /// # Arguments
+> +    ///
+> +    /// * `min_vecs` - Minimum number of vectors required
+> +    /// * `max_vecs` - Maximum number of vectors to allocate
+> +    /// * `irq_types` - Types of interrupts that can be used
+> +    ///
+> +    /// # Returns
+> +    ///
+> +    /// Returns the number of vectors successfully allocated, or an erro=
+r if the allocation
+> +    /// fails or cannot meet the minimum requirement.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// // Allocate using any available interrupt type in the order ment=
+ioned above.
+> +    /// let nvecs =3D dev.alloc_irq_vectors(1, 32, IrqTypes::all())?;
+> +    ///
+> +    /// // Allocate MSI or MSI-X only (no legacy interrupts)
+> +    /// let msi_only =3D IrqTypes::default()
+> +    ///     .with(IrqType::Msi)
+> +    ///     .with(IrqType::MsiX);
+> +    /// let nvecs =3D dev.alloc_irq_vectors(4, 16, msi_only)?;
+> +    /// ```
+> +    pub fn alloc_irq_vectors(
+> +        &self,
+> +        min_vecs: u32,
+> +        max_vecs: u32,
+> +        irq_types: IrqTypes,
+> +    ) -> Result<u32> {
+> +        // SAFETY: `self.as_raw` is guaranteed to be a pointer to a vali=
+d `struct pci_dev`.
+> +        // `pci_alloc_irq_vectors` internally validates all parameters a=
+nd returns error codes.
+> +        let ret =3D unsafe {
+> +            bindings::pci_alloc_irq_vectors(self.as_raw(), min_vecs, max=
+_vecs, irq_types.raw())
+> +        };
+> +
+> +        to_result(ret)?;
+> +        Ok(ret as u32)
+> +    }
+
+This is only valid to be called from the Core context, as it modifies inter=
+nal
+fields of the inner struct device.
+
+Also, it would be nice if it would return a new type that can serve as argu=
+ment
+for irq_vector(), such that we don't have to rely on random integers.
+
+> +
+> +    /// Get the Linux IRQ number for a specific vector.
+> +    ///
+> +    /// This is called during driver probe after successful IRQ allocati=
+on
+> +    /// to obtain the IRQ numbers for registering interrupt handlers.
+> +    ///
+> +    /// # Arguments
+> +    ///
+> +    /// * `vector` - The vector index (0-based)
+> +    ///
+> +    /// # Returns
+> +    ///
+> +    /// Returns the Linux IRQ number for the specified vector, or an err=
+or if the vector
+> +    /// index is invalid or no vectors are allocated.
+> +    pub fn irq_vector(&self, vector: u32) -> Result<u32> {
+
+This method is already staged for inclusion in v6.18 in driver-core-next. P=
+lease
+make sure to base changes on top of the tree mentioned in the maintainers f=
+ile,
+driver-core in this case.
+
+The signature of the existing method is:
+
+	pub fn irq_vector(&self, index: u32) -> Result<IrqRequest<'_>>
+
+We return an IrqRequest, which captures the IRQ number *and* the correspond=
+ing
+device, such that you can't get the combination wrong.
+
+Maybe it's worth looking at improving the index argument with a new type as
+mentioned above.
+
+> +        // SAFETY: `self.as_raw` is guaranteed to be a pointer to a vali=
+d `struct pci_dev`.
+> +        let irq =3D unsafe { bindings::pci_irq_vector(self.as_raw(), vec=
+tor) };
+> +
+> +        to_result(irq)?;
+> +        Ok(irq as u32)
+> +    }
+>  }
 
