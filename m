@@ -1,124 +1,115 @@
-Return-Path: <linux-kernel+bounces-810822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC22B5202A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:18:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDAFB52032
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F6763BE825
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:18:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E63A562530
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AF026F2A6;
-	Wed, 10 Sep 2025 18:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C4C271462;
+	Wed, 10 Sep 2025 18:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jod+0eqH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WSatKagG"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880DC19E97A;
-	Wed, 10 Sep 2025 18:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC78E22422A;
+	Wed, 10 Sep 2025 18:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757528323; cv=none; b=uq+6b77JcwWSy6PSDkDAn7/wkuIqNFi8wocRrlSzkTLZux/VLb0tNP6UcWK95kwgCMl8oWJHN80kmQ0mTIS4ICLtEa0I/OjvsFVEYDc5zdGYTEx0AXsdENR/subfOZgn5ljucl4eW7WQSVdxjHT8rKcAWOTkLr6PlZy1X/N0OvI=
+	t=1757528405; cv=none; b=DBbCmu1R4IV6dKdMt7jmSJBmyae+ROnLqiGVbmKYgUy/LUUN17E3R7wSZhq3Ep7NzpY0xt5MLTx4iATTnmDng/Rrdb3Fnpsxc4IptbnaWlUvbWOSj2kZUOKTQzY9MQvvV+m4b1OEHY0W0/vPrYXxFyjyOq3MGOJnIlZ8E1sDdNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757528323; c=relaxed/simple;
-	bh=O/tH+Gn/02Eni4fXZFe3weLi71ZVLKbDdQuvcMp3yeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sFlfbgGtvJOg8v6v0TQXICI4j5KvF1zRfTb7ZHjWXOADO3fIpNx8n0blhvpWPDlxY5sWguOawhh5U693IQ8bjhFTCGxATT7rm5+Wjsp1dejc2gv19LCsKAK7j1yRri2v7QekRzmxeejxC2tVwO+T2aOOD69Jn4LnBUlnIJNMQfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jod+0eqH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 818D5C4CEEB;
-	Wed, 10 Sep 2025 18:18:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757528323;
-	bh=O/tH+Gn/02Eni4fXZFe3weLi71ZVLKbDdQuvcMp3yeU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jod+0eqHrjgTZN4vEvGL6mPtJHBXCRJexVWIyNqy0l0bTMFrT1pnfZP9o7mlR+6uB
-	 qRwhgX8ynm2NXemq8DwasOI/kajxf4QRgn4eBRwtlVqdcmxelK8rGTLzHXwQB9qVWI
-	 6NDcy+GNjp56PVLHQ0ZAbG0ZF4WYHWeQj6J3u6mbENoaQPf0+fstHvW8JIW2FQt47D
-	 Syw1+NQMVghcCfoXjniHgyHZ1RvK3MRaZySDEzWSPrPm/VWiNktfQpMILqVzKnNbEt
-	 VzCjpqF9FaTsekdUyb5pVT0dpEiRNpNQP2dtkEBh1li2oRdZw3hP3Fxc1EQICNVH58
-	 PYOV9V+1+Hyhw==
-Date: Wed, 10 Sep 2025 19:18:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Petre Rodan <petre.rodan@subdimension.ro>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/14] iio: accel: bma220 improvements
-Message-ID: <20250910191833.7c0e20b2@jic23-huawei>
-In-Reply-To: <20250910-bma220_improvements-v2-0-e23f4f2b9745@subdimension.ro>
-References: <20250910-bma220_improvements-v2-0-e23f4f2b9745@subdimension.ro>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757528405; c=relaxed/simple;
+	bh=ewGV+K42Qi2TBeJG/kRJCd6MynsZ6+8Ifv4ODPkQs5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qh9eMpQTsX/jTkdyyxNllSmUFui+NnOHrNcbauB0vCk5AjC8GapoKmzwAWx2kF6QZnNdO9lcu+nuzS6nP0xqWYcJDJ8l/a1PYLUwY/SD7hm0/LuIW6/b6/xHyRQVtpGq8fbJQxyCxqvtiHLo4ajyKZ7NSMVVUoIsFNrPv6cgipg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WSatKagG; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=TjWNQMxBOIgUJz+VV92/f6Sqt99APWpac1vz/U7RENk=; b=WSatKagGqiYXaRwXFonVtpHvUp
+	xei20UdTVUB7PPX3UvE3SqQhA6qdCRikIroG5DFD6bfwfYlvbReKxPQxrhPul6NAUZfBWin/vLyIW
+	JnHQma1ZIAZW3egF37tgCT3kI9+Ox4D7fQlMtxMlXomI3PZFpChKE8UPhroirCf8jyXvoakH60qqW
+	kEIPOAeub74cB06TGTnoqByVozue2OGOUkmpeAIJVyiA1JgfskWfE7kBpHcVBfoEIB5kRYcHnea6t
+	VwjrTRiKcUd9bF9tqSWENo14wzG2qGoNOQrp+TUrV8NCwQx5JDbzEmj9VKeQDElu+PPg0SfecdsSM
+	k1GLBf2A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uwPQ9-0000000DNqA-3tUQ;
+	Wed, 10 Sep 2025 18:19:54 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8A0F2300342; Wed, 10 Sep 2025 20:19:52 +0200 (CEST)
+Date: Wed, 10 Sep 2025 20:19:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, longman@redhat.com,
+	hannes@cmpxchg.org, mkoutny@suse.com, void@manifault.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [PATCH 00/14] sched: Support shared runqueue locking
+Message-ID: <20250910181952.GU3289052@noisy.programming.kicks-ass.net>
+References: <20250910154409.446470175@infradead.org>
+ <aMG2HAWhgAYBdh6Q@gpd4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMG2HAWhgAYBdh6Q@gpd4>
 
-On Wed, 10 Sep 2025 10:57:05 +0300
-Petre Rodan <petre.rodan@subdimension.ro> wrote:
+On Wed, Sep 10, 2025 at 07:32:12PM +0200, Andrea Righi wrote:
 
-> Series of patches that switch the driver to the regmap API and add
-> i2c connectivity.
+> I've done a quick test with this patch set applied and I was able to
+> trigger this:
 > 
-> Tested in I2C and SPI modes with two different sensors.
+> [   49.746281] ============================================
+> [   49.746457] WARNING: possible recursive locking detected
+> [   49.746559] 6.17.0-rc4-virtme #85 Not tainted
+> [   49.746666] --------------------------------------------
+> [   49.746763] stress-ng-race-/5818 is trying to acquire lock:
+> [   49.746856] ffff890e0adacc18 (&dsq->lock){-.-.}-{2:2}, at: dispatch_dequeue+0x125/0x1f0
+> [   49.747052]
+> [   49.747052] but task is already holding lock:
+> [   49.747234] ffff890e0adacc18 (&dsq->lock){-.-.}-{2:2}, at: task_rq_lock+0x6c/0x170
+> [   49.747416]
+> [   49.747416] other info that might help us debug this:
+> [   49.747557]  Possible unsafe locking scenario:
+> [   49.747557]
+> [   49.747689]        CPU0
+> [   49.747740]        ----
+> [   49.747793]   lock(&dsq->lock);
+> [   49.747867]   lock(&dsq->lock);
+> [   49.747950]
+> [   49.747950]  *** DEADLOCK ***
+> [   49.747950]
+> [   49.748086]  May be due to missing lock nesting notation
+> [   49.748086]
+> [   49.748197] 3 locks held by stress-ng-race-/5818:
+> [   49.748335]  #0: ffff890e0f0fce70 (&p->pi_lock){-.-.}-{2:2}, at: task_rq_lock+0x38/0x170
+> [   49.748474]  #1: ffff890e3b6bcc98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x20/0xa0
+> [   49.748652]  #2: ffff890e0adacc18 (&dsq->lock){-.-.}-{2:2}, at: task_rq_lock+0x6c/0x170
 > 
-> Event-related code was skipped since the patch series was getting too
-> large.
+> Reproducer:
 > 
-> Contains fixes based on feedback from Krzysztof, David and Jonathan.
-> 
-> First time pushing with b4, crossing fingers.
-Worked nicely as far as I can see.  I should try it myself at some point.
-I've been using magic finger memory to format patches for far too long :)
+>  $ cd tools/sched_ext
+>  $ make scx_simple
+>  $ sudo ./build/bin/scx_simple
+>  ... and in another shell
+>  $ stress-ng --race-sched 0
 
-Anyhow, this is coming together nicely.  Don't rush a new version out
-for a few days though to give others time to take a look.
-
-thanks,
-
-Jonathan
-
-> 
-> Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
-> ---
-> Petre Rodan (14):
->       dt-bindings: iio: accel: bosch,bma220 cleanup typo
->       dt-bindings: iio: accel: bosch,bma220 setup SPI clock mode
->       dt-bindings: iio: accel: bosch,bma220 change irq type
->       iio: accel: bma220: split original driver
->       iio: accel: bma220: add open firmware table
->       iio: accel: bma220: add get regulator check
->       iio: accel: bma220: reset registers during init stage
->       iio: accel: bma220: migrate to regmap API
->       iio: accel: bma220: add i2c module
->       iio: accel: bma220: add i2c watchdog feature
->       iio: accel: bma220: add interrupt trigger
->       iio: accel: bma220: add LPF cut-off frequency mapping
->       iio: accel: bma220: add debugfs reg access
->       iio: accel: bma220: add maintainer
-> 
->  .../bindings/iio/accel/bosch,bma220.yaml           |   9 +-
->  MAINTAINERS                                        |   7 +
->  drivers/iio/accel/Kconfig                          |  18 +-
->  drivers/iio/accel/Makefile                         |   4 +-
->  drivers/iio/accel/bma220.h                         |  20 +
->  drivers/iio/accel/bma220_core.c                    | 617 +++++++++++++++++++++
->  drivers/iio/accel/bma220_i2c.c                     |  61 ++
->  drivers/iio/accel/bma220_spi.c                     | 318 +----------
->  8 files changed, 757 insertions(+), 297 deletions(-)
-> ---
-> base-commit: 19dc57d72d2b9365ef185286886c432f980cff55
-> change-id: 20250907-bma220_improvements-e31641777e61
-> 
-> Best regards,
-
+Heh, the selftests thing was bound to not cover everything. I'll have a
+poke at it. Thanks!
 
