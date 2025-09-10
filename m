@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-809691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8EDB510CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:13:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9879DB510CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7011C82A74
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:14:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B004E2BAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1961730F80E;
-	Wed, 10 Sep 2025 08:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E8230F801;
+	Wed, 10 Sep 2025 08:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XoWGGI3l"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hzJxBM8i"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B0C30EF7E
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9F830E854
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491912; cv=none; b=uvMiL9K6dXFboP7BzJvnNRrzxl5DGKq+G6KaJzXVbS/nsHdDquv2nBtS/qTS+42+DUwc9NdYyo2ziUqt6Vkd8a82LivVayS1PEc+2UfX2PKVJ7ojr6WhO4FUYCjvMsn4fQrnxZ4YdVSp2qfX5ETSMEb8TWFjjnQ6jazFICOabmw=
+	t=1757491911; cv=none; b=TYZGe0KnPomnMQ+pAGdTs4G25AD/1tNzG3iqjq0ITT3/uSJIpRxdsVI4QgPIKEuCCooKoTne76mu/iq9m43s/2yxsbdkIhVm82dnOwmpHYlYpFJDBPa+cgoqKXO/4es3GK/k+PwDduXds6kHz66DmjivodSZjdNI7sj1rnV3r8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491912; c=relaxed/simple;
-	bh=zV6UIzKpC2XSiOBKmnRX5bxOtaKg0EgMOEBzfFrZUB8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iPTYmzXnkkrsaXi/B/+U37u+TGCwoR/lT33e4jpF1SLH8laKELLEQ/BQR5LtmUfhrFk2uxLwFdOqi2n3Pbw5T1VN/M0HZNwkCOkAf22SuRG8FXg0kRm8uemEnUf+rY/kOb9rQ2XuCWneCF7X7bDIGwSuyfkfzRZUtLIdlboRIKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XoWGGI3l; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1757491911; c=relaxed/simple;
+	bh=ELRJva3fiuc8exfYKh8ZbZoAbwpstiAgEsP1yy3AI00=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=DRSMPM5Qa1xXXVYm5DBzCGsiUignudhxyf/HaPAka7u3qO5RVyfPCYSLnjlYKhC4aYzy1hcBo8/fkpT57nmYBDvOM3VkIk9r/eGxRwRDxEzcjje0HKt+bW46LQ8VN9l7ou4TO8xbsGjrow/jn984XNRn81La+kxiP3v2L5Aryxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hzJxBM8i; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3dae49b1293so3302784f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:11:48 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dec601cd3so19581475e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:11:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757491907; x=1758096707; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=68YOxZzKrnQTKmgz7fSU1hdvIBDa3DAXw0GY+gLPr3Q=;
-        b=XoWGGI3lOuZ424fI37chCp4TPDueSOGIWyN3/Jvjp/zhgJ7B1ZM/KCiTsmTOkV+lw4
-         Jr/vMTxDAm65xOw7aL8g7Fl2kYT+cR6+5KqT+EeHSHbTMLscSkdqeUkt8UMs8re1FBwt
-         Zrx68FKghGOXyjsVxZroYZq+d1auQmS0WXGOawBM0V1XqwgOU29smHKjLzAT4WO26X5c
-         KsYHCEdowMMsclseZM7ACJVm6KnLR8Zp4ByMSk4YpoLyOcYCPd51M92OeUVaZTdKRsCU
-         wW8iAVLEhtTK7n8V+PKpMjcsDAq6e8zSPffnlMW1BfvYKWN6RaQ51JsrHUqIDJZgxPFw
-         Uu6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757491907; x=1758096707;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1757491908; x=1758096708; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=68YOxZzKrnQTKmgz7fSU1hdvIBDa3DAXw0GY+gLPr3Q=;
-        b=bP1nk0AuitVkn2O4nswHfT6Nfevo7Q8j6LcuAwDDZ7Y8jLHt9KBXuJ/cClO562TDG2
-         TDvZyK/bljFJvSwoObw0T+cEUtvFpgk8w4Ww5TxWqt1eBpM/ckWqg/l8dop/NGzOuYpj
-         CyaxBvVN9kxjCb0wK0L3OJKa5sADRY7dPNhupH00ScvmKThNckErwvU8AA1JfqHU+/5e
-         smH6/s2vl+0i83OnttOHHYfZNeU3K4r66SSNNiK7n7aDBHOCn/kvPVmeq6ccLj7nxH1t
-         vcCRv6bAEgeIlBVgE4hm6ec+EyItpuoC6dK+cvIRm8OfDcyAJ0RKWqsdMAsDfV4+XLDb
-         3WOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVz1AcmEzcCxWFhHMyVe/wRVgyn8Di27kjpL+SHlZbHrw12qoitakn9WLRG17wbqOA8yYcY8cNQWI4XmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4n/e6L8yu83K9TklpDTdoMDD3qmkBgseNCLbj/wyEnaaP/owc
-	RChv5CJR1waU35TaGOrfAoNp85mQ2etzfR3bpnv2S7kBfTOrPcAbVomwD/VbAcItXXE=
-X-Gm-Gg: ASbGncvakdF2UQkHzBgXkduhujhmSTN3ENpNQrIXetvtxbr+esHJi/L9XQaqiro5INU
-	M6JhcF/NGoyPshkSy916TQtTMJd2zWR7pExF1gD5k2hB6nmGpX5Js/P58tHQMSxm3JpHvpKj0au
-	USZMLv2zWo73UY9a3/AIv2CeLLWmLR1/HH46Y51FCHHfwnRrOU7Y0euH5QiTinbnlOTMBrF9qhx
-	rNHdDNtyaCJQcWJLTe05JFYnRzaV+WvKDT9hpzemj1ZDxV/qgRobqvDvGv7Rnbjnpx00R9YtXSl
-	MCqe2FlSQRsAqO/3h5u+9Nd2cvdjAqS3vkGCBAW68487wGd/DA8fRYLlxLHM3e/5KQcBGvNFRPI
-	PLD/QyxzkivzDK5A/HqE8VoHGAMTW
-X-Google-Smtp-Source: AGHT+IF+aey3zIQg5GKYJoXPwVZLDSMaAarObf04DoKusKxuuPB1FlhE5Skl6HLSQ58yxneD1ofyrA==
-X-Received: by 2002:a05:6000:26c1:b0:3df:f7d1:f8ae with SMTP id ffacd0b85a97d-3e636d8ffadmr11307892f8f.4.1757491906862;
-        Wed, 10 Sep 2025 01:11:46 -0700 (PDT)
+        bh=37bRp9+f4wigxD4YWC8DmxwjJmoS8JAeLHOsjSA4OdA=;
+        b=hzJxBM8iLfWob+KadSFiPJbXwexHDDQxoqC3eJ8ubTXegJI3I2mP8bx4Jm0H8JRmR3
+         WUPaeQgitbMRCoDZ2l+iAARRzn6TdoEAajV24sCuKQvYdKEgINnScFSzRwV9DSPNp5qv
+         teulk1VKEoPn2TY+otbMudB/uNmU83/jZ+CyZNI2yNgEWhjM3431vsZiZc69duCDN/a2
+         Iz+jCOEmGuWluLQkU0pEed7ivbHFblC37faTWXzlN1qFqRT+tnYPp4XonAyrD/0JfBiB
+         i7KIL/bjNh4KdcqdVVpirugmQWEczeTflMkxtVXfNkt+CbbpDPl2JqAKo3wkDNMb30+a
+         MocQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757491908; x=1758096708;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=37bRp9+f4wigxD4YWC8DmxwjJmoS8JAeLHOsjSA4OdA=;
+        b=qUv98Mc5p/2rAX28bbNmkxUbV578G6bio1Me/CLl54WDwptIyd9PoHK7cB7vmbzRCd
+         Erk8Ut4791IOnxGOTaMYxEmcHFS0rHf2ATA0yIhpycdPi/pYWr4DpZukXmkVRpXiQDG4
+         w5fBv2jfbv5FZDqQRmRclt7JLYrLsldgYJqpKNx31KWfDPn4UyDAs1gKojrjYIWzTxGE
+         9ZNMb6A0NiHLnvvheXpzACp6n4XxcOvAr2+J2Cp3cb9YA6EKwuPuTZZNiHzYRkbN0fkP
+         uccYAU65NWdGoyQTzVbtn+8h7BLPM2o9V4GtCQa6ykjHvqBPIshXWSTEkF9h3/kDDBsC
+         qWdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWw0Gl5WC56Z2QCuosEnN3ESYePzvuJTju8K7qD4O4gLtRy0i4wskBipGDnvLBIJelJuTWBCpQ8OmqE0AY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwRJrlnA+Yi9yOsWun3Yt/BMjnit1e7vXuYo5LicImuD+dWW3H
+	DNKOF9CZyXTBMThMrtxderlGi82gIyDI1OQp1IL/di68n2EMZdzTbaZZgFYTPb9MYfI=
+X-Gm-Gg: ASbGncv3wkfdF1QoNIfgHDYn1T1qad+Y9iVeKgog7uyGYNG88HE1SFNVf3gDywyh/K7
+	5DG39WTjRwzX6RNwJHupIkJX6suOjxg+mvTPw8AwK8YxuB4cLQWFhgpLU7UcLQXX6qKe5RU/GUq
+	CfBhfOPt1UgDCUczpBml+cPtQv6oKlNiawCMHEj5X+KueqBMc4UsYRDvVimRpTPf7KptcPu987e
+	BIBhNIAU5krZsNQVB7Ymw70rdjfr5ZR8was2nw9c1t7lggR5HIZ/QMgV9JNJbsEh5xa4MemTHfz
+	HuORjcnkN0hjSbvp/ZIilIeCdPPd0e/nY3Y2xWn3doIBRVJQjNp0QcaTD3/Un4l6fjyf7t14vuE
+	P9Zxx1dbZ08F100qtvSAUtkFnq401
+X-Google-Smtp-Source: AGHT+IG52FWePrP8CUVkWd+othtSQU/zQLSAcXh37OyedEhfJZcLBPbOvIzTrqHZbmzlQ8IUctMzdA==
+X-Received: by 2002:a05:600c:1993:b0:45b:7a93:f108 with SMTP id 5b1f17b1804b1-45dddeb74a0mr134958545e9.3.1757491907914;
+        Wed, 10 Sep 2025 01:11:47 -0700 (PDT)
 Received: from orion.home ([2a02:c7c:7259:a00:a727:6a46:52e3:cac2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df8218944sm18119995e9.12.2025.09.10.01.11.45
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df8218944sm18119995e9.12.2025.09.10.01.11.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 01:11:46 -0700 (PDT)
+        Wed, 10 Sep 2025 01:11:47 -0700 (PDT)
 From: Alexey Klimov <alexey.klimov@linaro.org>
-Subject: [PATCH v2 0/2] Add raw OPUS codec support for compress offload
-Date: Wed, 10 Sep 2025 09:11:40 +0100
-Message-Id: <20250910-opus_codec_rfc_v1-v2-0-35fb6536df6b@linaro.org>
+Date: Wed, 10 Sep 2025 09:11:41 +0100
+Subject: [PATCH v2 1/2] ALSA: compress: add raw opus codec define and opus
+ decoder structs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,11 +84,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALwywWgC/32NzQqDMBAGX0Vybsommph66nsUkfypC8VI0kqL+
- O6NnnppYS/zwcyuJPmIPpGmWEn0CyYMUwZ+Kogd9TR4ii4z4cAFSCZpmJ+ps8F528XedgujRoJ
- xJSh1KQ3J3hx9j6+jeWszj5geIb6PFwvb13+1fEBZX4MBXTFdw/WOk47hHOKw1w9VcfilisoJW
- wsJSshvtd227QMv20AZ7gAAAA==
-X-Change-ID: 20250616-opus_codec_rfc_v1-b60bd308893b
+Message-Id: <20250910-opus_codec_rfc_v1-v2-1-35fb6536df6b@linaro.org>
+References: <20250910-opus_codec_rfc_v1-v2-0-35fb6536df6b@linaro.org>
+In-Reply-To: <20250910-opus_codec_rfc_v1-v2-0-35fb6536df6b@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
  Takashi Iwai <tiwai@suse.com>, Srinivas Kandagatla <srini@kernel.org>, 
  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
@@ -100,82 +100,96 @@ Cc: Patrick Lai <plai@qti.qualcomm.com>,
  Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
 X-Mailer: b4 0.14.2
 
-This series adds support in kernel to recognise raw (or plain) OPUS
-codec playback for compress offloading. At this point this series
-doesn't deal with OPUS packets packed in any kind of containers (OGG or
-others) and focuses on adding missing bits for pure OPUS packets.
+Adds a raw opus codec define and raw opus decoder structs.
+This is for raw OPUS packets not packed in any type of container
+(for instance OGG container). The decoder struct fields are
+taken from corresponding RFC document: RFC 7845 Section 5.
 
-The second patch adds its usage in Qualcomm Audio DSP code. To correctly
-recognise raw OPUS packets by qdsp6, each packets needs to be prepended
-with 4-bytes field that contains length of a raw OPUS packet.
-It is expected to be useful for usecases when OPUS packets are streamed
-over network and they are not encapsulated in a container. Userspace
-application that will use the compress API has to manually add such
-4-bytes long field to each OPUS packet.
-
-This is tested on sm8750-mtp. It is expected that next hardware revisions
-will also support raw OPUS codec offloading.
-
-Dependencies are:
--- hardware with DSP that supports decoding OPUS packets (>=sm8750);
--- adsp fastrpc;
--- explicitly setting format in sm8750 soundcard driver;
--- running adsprpcd tool with support for Audio PD and DSP libraries
-loading support (or its alternative);
--- tinycompress fcplay tool that will prepare raw opus packets and
-do the required addition of length field;
--- mfc module in topology compress-playback path, that module is
-expected to parse channel mapping and do the required things to
-map streams/channels to physically-present output channels on backend.
-
-The userspace tinycompress tool with support for raw OPUS compress
-playback is located here:
-https://github.com/laklimov/tinycompress_opus
-branch: opus_v3_workinprogress
-
-The userspace tool is not expected that it is ready and still needs
-some work, for instance recognition that it runs on Qualcomm hardware.
-More like working PoC.
-
+Cc: Srinivas Kandagatla <srini@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>
+Co-developed-by: Annemarie Porter <annemari@quicinc.com>
+Signed-off-by: Annemarie Porter <annemari@quicinc.com>
 Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
-Changes since RFC (mostly as suggetsed by Srini):
-- added struct snd_dec_opus_ch_map to struct snd_dec_opus;
-- changed tags;
-- reworked comments for struct snd_dec_opus;
-In qcom audioreach patch:
-- corrected how {stream_count,coupled_count} is ejected from mcfg->codec;
-- stopped dealing with channel mapping parsing (this is internal struct for
-  decoder on audio DSP side);
-- used sizeof(*opus_cfg) for payload size;
-Tinycompress/fcplay:
-- small updates to match kernel structs.
-- Link to RFC: https://lore.kernel.org/r/20250616-opus_codec_rfc_v1-v1-0-1f70b0a41a70@linaro.org
-
----
-Changes in v2 (as suggested by Vinod):
-- opus decoder struct: switch version memeber to be union to allow reading it
- as a byte or two 4-bits fields;
-- audioreach_set_compr_media_format: read version byte.
-- Link to v1: https://lore.kernel.org/r/20250820-opus_codec_rfc_v1-v1-0-54d5c7560856@linaro.org
-
----
-Alexey Klimov (2):
-      ALSA: compress: add raw opus codec define and opus decoder structs
-      ASoC: qcom: qdsp6/audioreach: add support for offloading raw opus playback
-
  include/uapi/sound/compress_params.h | 49 +++++++++++++++++++++++++++++++++++-
- sound/soc/qcom/qdsp6/audioreach.c    | 27 ++++++++++++++++++++
- sound/soc/qcom/qdsp6/audioreach.h    | 17 +++++++++++++
- sound/soc/qcom/qdsp6/q6apm-dai.c     |  3 ++-
- sound/soc/qcom/qdsp6/q6apm.c         |  3 +++
- 5 files changed, 97 insertions(+), 2 deletions(-)
----
-base-commit: 65dd046ef55861190ecde44c6d9fcde54b9fb77d
-change-id: 20250616-opus_codec_rfc_v1-b60bd308893b
+ 1 file changed, 48 insertions(+), 1 deletion(-)
 
-Best regards,
+diff --git a/include/uapi/sound/compress_params.h b/include/uapi/sound/compress_params.h
+index bc7648a30746f4632ecf6695868e79550a431dfa..b3ddd7919f42048b307564d8a6a83e4c8ad2c7fd 100644
+--- a/include/uapi/sound/compress_params.h
++++ b/include/uapi/sound/compress_params.h
+@@ -43,7 +43,8 @@
+ #define SND_AUDIOCODEC_BESPOKE               ((__u32) 0x0000000E)
+ #define SND_AUDIOCODEC_ALAC                  ((__u32) 0x0000000F)
+ #define SND_AUDIOCODEC_APE                   ((__u32) 0x00000010)
+-#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_APE
++#define SND_AUDIOCODEC_OPUS_RAW              ((__u32) 0x00000011)
++#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_OPUS_RAW
+ 
+ /*
+  * Profile and modes are listed with bit masks. This allows for a
+@@ -324,6 +325,51 @@ struct snd_dec_ape {
+ 	__u32 seek_table_present;
+ } __attribute__((packed, aligned(4)));
+ 
++/**
++ * struct snd_dec_opus - Opus decoder parameters (raw opus packets)
++ * @version: Usually should be '1' but can be split into major (4 upper bits)
++ * and minor (4 lower bits) sub-fields.
++ * @num_channels: Number of output channels.
++ * @pre_skip: Number of samples to discard at 48 kHz.
++ * @sample_rate: Sample rate of original input.
++ * @output_gain: Gain to apply when decoding (in Q7.8 format).
++ * @mapping_family: Order and meaning of output channels. Only values 0 and 1
++ * are expected; values 2..255 are not recommended for playback.
++ *
++ * Optional channel mapping table. Describes mapping of opus streams to decoded
++ * channels.
++ * @struct snd_dec_opus_ch_map
++ *	@stream_count: Number of streams encoded in each Ogg packet.
++ *	@coupled_count: Number of streams whose decoders are used for two
++ *		channels.
++ *	@channel_map: describes which decoded channel to be used for each one.
++ *		See RFC doc for details.
++ *		This supports only mapping families 0 and 1, therefore max
++ *		number of channels is 8.
++ *
++ * These options were extracted from RFC7845 Section 5.
++ */
++
++struct snd_dec_opus {
++	union {
++		struct {
++			__u8 minor:4;
++			__u8 major:4;
++		} __attribute__((packed)) fields;
++		__u8 version_byte;
++	} version;
++	__u8 num_channels;
++	__u16 pre_skip;
++	__u32 sample_rate;
++	__u16 output_gain;
++	__u8 mapping_family;
++	struct snd_dec_opus_ch_map {
++		__u8 stream_count;
++		__u8 coupled_count;
++		__u8 channel_map[8];
++	} chan_map;
++} __attribute__((packed, aligned(4)));
++
+ union snd_codec_options {
+ 	struct snd_enc_wma wma;
+ 	struct snd_enc_vorbis vorbis;
+@@ -334,6 +380,7 @@ union snd_codec_options {
+ 	struct snd_dec_wma wma_d;
+ 	struct snd_dec_alac alac_d;
+ 	struct snd_dec_ape ape_d;
++	struct snd_dec_opus opus_d;
+ 	struct {
+ 		__u32 out_sample_rate;
+ 	} src_d;
+
 -- 
-Alexey Klimov <alexey.klimov@linaro.org>
+2.47.2
 
 
