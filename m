@@ -1,97 +1,142 @@
-Return-Path: <linux-kernel+bounces-810573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F3CB51C88
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:54:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5DEB51C8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 577EC7AEC74
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B870518891B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B3932A817;
-	Wed, 10 Sep 2025 15:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HzTwxlOJ"
-Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com [209.85.219.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3EC32BF43;
+	Wed, 10 Sep 2025 15:54:11 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E669631AF2C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCD531AF2C
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757519636; cv=none; b=hpD6TyU5KImC7g4JGw7Ei6q5dZSTpB3bpXruFqfRx2MckGAEH7VaSjJ4cz2UBblB7f6hgWujOy/EvPlo2H0rZu1yUlWeJi+p1ws0ldkhbHi/Qpw+dezlYO6zbwbP8QDkzG6UvA6JDymmc/jbzkFmYugelmsS0ktGGLluqpfnbgo=
+	t=1757519650; cv=none; b=WP1yHhaqdAESdCH2G+R8X9RqpLrpfxsWOElPrg1yR1ALUvUJ8hJUV8K2QuYVHfGFUiRzwLd/uyUjDDzGoZnUql+zFnWysZNUokxSLR63Va349A4WDhT0ANsIBNbipgZNi+EVSHaHv6pXzT2hg8qkyQxOnY7u5FVWKB3imK2c7Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757519636; c=relaxed/simple;
-	bh=WsJU03bKw4hxUYNUHTQv3ZI0g3UG9Lwvk2vioqHSAOc=;
-	h=MIME-Version:Message-ID:Date:Subject:From:To:Content-Type; b=lavx+3F1sHEcbIYDsSMpBLOgxQz3a/3Cz11EPOrOOro7IfqrpRFaaR5q0O6GIAH2OO6/ZM5N8p5TyaKaCoBl8ZM0cyHB5ss6YiAAGQg7jCom+kCxGW7Y1/aHEaUnIVj9+l1UWnR8skmxKdA9/R3Rdt+XClVYQ3XHZ9NO2t4/aew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HzTwxlOJ; arc=none smtp.client-ip=209.85.219.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f198.google.com with SMTP id 3f1490d57ef6-e9d67ca7a23so8173525276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757519634; x=1758124434; darn=vger.kernel.org;
-        h=to:from:subject:date:message-id:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/cGj2ubSNDWnnk8qoBMWrdRqeDwm9XqKs7XZZJafyjg=;
-        b=HzTwxlOJ+F0cZNw/Em48gHxN4eP7YiUcA/1S9HGr7WDE/3SYSlUfB2dGZ54pccR37+
-         hcmPOb/UekjW4Hk5sFU4Itc/Lut0fWFCpnac6OM39/7cP2ZeTJp7jVmf6H0s8ochO86e
-         Mr/qYJGXXbWjOU/YlAJM8vrfUAq6kcnke9nv/s3nRk3zLZY8B8e4mUwd/F0ooa+Uqkpn
-         olmXsX4NZ3Cibl6EjX+20Zrhn25ym0Jj94tW4pTp3DivdbFBSDgckNEnWvyRykFoyLMn
-         sxI0ohb/uwDKhsMv4CBLTs5hBkK6pZJ8aYGXzRlG12aIOmRg5U4+yYk5+x66unRfU1Fu
-         eIRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757519634; x=1758124434;
-        h=to:from:subject:date:message-id:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/cGj2ubSNDWnnk8qoBMWrdRqeDwm9XqKs7XZZJafyjg=;
-        b=saqqkAWLE67iZgQbmcwF/vVIQ6PyGQbOUI5OKtLWcq1Pxv59/HDkDuaGeTmbNppZ5m
-         3Cdd7rXZIUs/ARhl8tyQ/fRsUf282KNEzlaOTwg4hWJigLErLuutjNZypBLmydNhrOdi
-         UE4/9BPtGK3ewmHbRkphO7j4kXdEYOUrUjnQxKaANUCOwvoVGr24c+PN+oHF8gY7dtxY
-         djxLGq8NkzpZOK51ulD0Pfaotnk02L++Uhu1+Swk9uHKOy0IgO/T5whtzV4Yzcs24XPT
-         TclWezJOxVKGelZjtLBvJtruSsh6c610+lCRpE+QIFzxTyBV4W0mMAfO48Tmmq9Qz/1v
-         V3gA==
-X-Gm-Message-State: AOJu0Ywb7Aau89W+rFv9BYKnMMXOZzNhf5faEuOsqE6wJ+vxL80nUHJ9
-	xpS5a0EIreE0QIc96BsNy9MOdiTwFd4ZwG9f74G6Rf/ZKK3Q6O2USeL9NpafFpFv75ajiawrBIu
-	/3fg=
-X-Google-Smtp-Source: AGHT+IEBclHEeLWNCa8kUBD2BQLMBCl1OyFy2n5hZQwzN+P6ORngRmt/7OAxNuuw03XSmUAdLcWHDCh/kA==
+	s=arc-20240116; t=1757519650; c=relaxed/simple;
+	bh=C1AjRx7KnjXXSlctsl/aH4GowViazJTD/uAewQRTZB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M69xa0sSF8svYAJtqEB3C6IBdvXIyHQgLXDOyTaumD8PoXbKaZBlQTTS1OcPuOvpcUubM5MxLNFJLF9e5ni7ZrZrQn0GMrVhgGjahM5NDiXUpToMW/QsN2/GmP5RnBL3NuZrSf2bNv/9d3QIIIuG0QBf9FC36Uv2CT4I40kuwKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwN8y-0008U5-Ku; Wed, 10 Sep 2025 17:54:00 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwN8x-000cAf-1T;
+	Wed, 10 Sep 2025 17:53:59 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwN8x-00GJ0O-0v;
+	Wed, 10 Sep 2025 17:53:59 +0200
+Date: Wed, 10 Sep 2025 17:53:59 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, Jonas Rebmann <jre@pengutronix.de>,
+	Andrew Lunn <andrew@lunn.ch>, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 1/4] dt-bindings: net: dsa: nxp,sja1105: Add reset-gpios
+ property
+Message-ID: <20250910155359.tqole7726sapvgzr@pengutronix.de>
+References: <20250910-imx8mp-prt8ml-v1-0-fd04aed15670@pengutronix.de>
+ <20250910-imx8mp-prt8ml-v1-1-fd04aed15670@pengutronix.de>
+ <20250910125611.wmyw2b4jjtxlhsqw@skbuf>
+ <20250910143044.jfq5fsv2rlsrr5ku@pengutronix.de>
+ <20250910144328.do6t5ilfeclm2xa4@skbuf>
+ <693c3d1e-a65b-47ea-9b21-ce1d4a772066@sirena.org.uk>
+ <20250910153454.ibh6w7ntxraqvftb@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6902:250b:b0:e95:38eb:eecc with SMTP id
- 3f1490d57ef6-e9f65d176d8mr17427217276.12.1757519633758; Wed, 10 Sep 2025
- 08:53:53 -0700 (PDT)
-Message-ID: <autogen-java-f9cea762-1f4c-4d92-8447-82bbe978fa56@google.com>
-Date: Wed, 10 Sep 2025 15:53:53 +0000
-Subject: Need 5 star reviews from your city?
-From: ahoke9501@gmail.com
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910153454.ibh6w7ntxraqvftb@skbuf>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi,
+On 25-09-10, Vladimir Oltean wrote:
+> On Wed, Sep 10, 2025 at 04:09:05PM +0100, Mark Brown wrote:
+> > > And if you plan to do that from the GPIO function of your SoC, the SoC
+> > > might be busy doing other stuff, like booting, and no one might be
+> > > driving the RST_N voltage to a defined state.
+> > 
+> > I suspect you're reading too much into the datasheet there.  I suspect
+> > that what it's trying to say is that the reset signal only works with
+> > stable power and clocks, that it must be held low for the 5us while
+> > those conditions hold and that you have to do at least one cold reset
+> > after power on.  The above wording is pretty common in datasheets and I
+> > know in a bunch of cases it was carried forward kind of blindly rather
+> > than looking at the actual device requirements.
+> 
+> No, it doesn't say that, and I had discussions with the application
+> engineering team for this chip about this :-/
+> 
+> I can't comment on anything extrapolated outside of the SJA1105/SJA1110.
+> 
+> > > It really depends on a lot of factors including the reset timing and
+> > > supply voltage distribution of the PCB, but RST_N has essentially 2
+> > > purposes. One is ensuring proper POR sequencing, the other is cold
+> > > resetting at runtime. You can do the latter over SPI with identical
+> > > outcome, which leaves proper POR sequencing, which is not best served by
+> > > a GPIO in my experience.
+> > 
+> > I'm not sure not including the signal in the DT bindings is going to
+> > influence board designers much either way TBH.
+> 
+> Either way, something has to nudge at least the software developer
+> towards finding and reading the vendor's relevant documentation.
+> 
+> In that sense, 'reset-gpios' is misleading to say the least, because
+> everyone sees a reset GPIO and has the human tendency to think there
+> isn't anything more to be known about it (like I also did).
+> 
+> To be clear, I'm saying that supporting 'reset-gpios' in this driver was
+> a mistake, at least in the form where its supplies and clocks aren't
+> also under control. I'm not sure it's a mistake that we need to document,
+> and if we do, there need to be a lot more disclaimers. Also, I'm pretty
+> sure nothing will break if driver support for it is simply removed.
 
-We specialize in helping businesses like yours thrive by providing  
-authentic 5-star reviews from verified individuals with public profiles.  
-Our reviews are 100% genuine, helping you build trust and establish  
-credibility with your audience.
+IMHO silently removing the support will break designs for sure and
+should never be done. As said, imagine that the firmware will handle the
+supplies and the driver only needs to release the reset. If you silently
+remove the support, the device will be kept in reset-state. In field
+firmware updates are seldom, so you break your device by updating to a
+new kernel.
 
-We offer reviews across a wide range of platforms, including Trustpilot,  
-Reviews.io, Facebook, WhoDoYou.com, ProvenExpert.com, TrustIndex.io,  
-ResellerRatings, Quora, TripAdvisor, and more. Whether it's app stores or  
-social media, we can help increase your engagement, grow your followers,  
-and drive business success.
+One could argue that the driver supported it but there was no dt-binding
+yet, so it was a hidden/unstable feature but I don't know the policy.
 
-Our team is available around the clock to support you.
-
-Simply reply to this email.
-
-Best regards,
-Review Providers
-
-To opt out of future emails, just reply with "No more email." Thank you!
+Regards,
+  Marco
 
