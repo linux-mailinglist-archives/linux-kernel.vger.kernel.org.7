@@ -1,165 +1,105 @@
-Return-Path: <linux-kernel+bounces-810180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBAD4B516FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:34:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25452B516FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFDC71BC6C58
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:34:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF71F167DBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC956319878;
-	Wed, 10 Sep 2025 12:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBA031AF27;
+	Wed, 10 Sep 2025 12:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="symQNNFY";
-	dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="3KONcXgz"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xZY4BowY"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46F131D37C;
-	Wed, 10 Sep 2025 12:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757507632; cv=pass; b=O4DePFU6X8HELrBNqc7VXL7ov+P5GmrPAUM7GiKRCnrXrbFpzwkYyzLYiF0+ivQ1l/Y2FPn7oRzXUu7Pa76Gp33d+7vm3ZUY5y6DVjDfXeCn+4VfXItNpV6l+XcJNbW6YJxjse2pb46odjD54+lnS/gYYC2FI4gBJizAzele0Yc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757507632; c=relaxed/simple;
-	bh=8M2GzYvIA+TpmU2ZecmwBCCAnAMu7eN9RTI1Fh6AveY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DDeryf73aw/8J27O8JuFSAMAZ6CWKb2vggLFcwEwbHp7DbWz7KSG1+IouYpoPBT8ZKXH72aFc3pNnZidUQ2lysIljfiwdrDb04H5lIOiz+DfKEBjGb8FSIgZwW2sPl1JWHEv02ZeBeq8mawEIigvK3mErDT39lQgvU8Il0h71wU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=symQNNFY; dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=3KONcXgz; arc=pass smtp.client-ip=85.215.255.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
-ARC-Seal: i=1; a=rsa-sha256; t=1757507609; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=ZOiyYc7in0uXYUOQbbZOI6rixuJbWgh2YjtprGhj/GP7IK26/a47GFsoRlE8ow8R/P
-    rsYCajl+tRXzN0FEc9Vg/u+mEVC6QSG5w0xqynjIQqCq1fXg9Gt9TT5vDVUoqkWdB4Vy
-    IO6S4m4IcceRG49b50kKfADuBf3gfoCJAO/C0EG0oVid2E2oVsYLc6e7BuerW9dxhcNz
-    xC1pC90eYfglLX0ls2J9s0RLhYU8riw5ryoSnq9Mc3uohJ9C5LwHNUnRj/bvsyGkgUf8
-    BIYONdU+cYQwveWRrOA2rsnfGLz9h+Xtde3Y6HaqsaMF/DW3Dw3K/VzllCc2Kb9sXRd6
-    NZBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1757507609;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=uawGsKCcrMWleT592kSxbrH8Xptw/2ObmICJfX6Z9rA=;
-    b=nYVou6Z5+88UU8nS71MEvtoCxKcyH7Raw9Q1Pk1xoDa8dgyPY0WaB74LgtZriK3xKK
-    /N0FD1GCjW1ze1OV7XVQw50szLhVT4gyElg+gfxL9Y0Q0w8kQF6zBOqqL+97sQzPGQjw
-    O3Btp/ia4n9ic2LNs5gI8mpaxilXn4nSMvoQJEuX5ho35bE0wH4+OYww1c24WY73WwQI
-    cmYVv8EamQkpX3FYxVGwOpqEapH0ITip2R7knc0GCjf13fxszDBCRA1UO6FnCLz5O0L5
-    LTwflK6q83zl/vsky2bcc/RQEJwUNwAf+gGtkfRNuYWcrwQtlhNWGktio5QgY0J1GnJ7
-    erIQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757507609;
-    s=strato-dkim-0002; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=uawGsKCcrMWleT592kSxbrH8Xptw/2ObmICJfX6Z9rA=;
-    b=symQNNFY1hSPj0DJ8U3LqzoZEbcx57mUd5DuaWQiSHFaZ0SCrJ8zU4vI8jM8by1cpL
-    CL+BFUhcKVfPdIgDsBRfTtwqcvwCo8W9+oCpjyTuhL+7wh81yeYj8uQ+S/CwyYQjME3q
-    tFZAtmVQqfkHH6WDg/7TKoRl1I8Q38WeV9C9LQneIVZ8zpMBUhGPF41jYStA8I/1tGYu
-    Ni4N6hSDhWF6aYc9MZuUvUGj3/MVk+mhhqGgy4o4Psw/DrqVtjNU0pSOcvLhzBxQIF3u
-    boXxSU+0uqFAR+SVn80u6xa+o6BhV3sxAnZOQe8B6LjUMs/qquwNzX1iNou89kcsd2WQ
-    AQbw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1757507609;
-    s=strato-dkim-0003; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=uawGsKCcrMWleT592kSxbrH8Xptw/2ObmICJfX6Z9rA=;
-    b=3KONcXgzFkubVM55rBcajd4tyBdJIqcx9HGwNoZkQwtv6Z6SOLlUetCse6Mp7EJWuI
-    NMTWzZepG+rdPTgDXFDw==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMrZpkO3Mw3lZ/t54cFxeEQ7s8bGWj0Q=="
-Received: from [IPV6:2a00:6020:4a38:6810::9f3]
-    by smtp.strato.de (RZmta 52.1.2 AUTH)
-    with ESMTPSA id K5d36118ACXSuvH
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Wed, 10 Sep 2025 14:33:28 +0200 (CEST)
-Message-ID: <a71b84b1-3dcd-442f-ba22-ca2f3ef90fa7@hartkopp.net>
-Date: Wed, 10 Sep 2025 14:33:28 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBC831A55A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757507635; cv=none; b=GMs4nE1+zSda4R7UdyYqVHwNua/fnTBOp8JwIP5vR0szwGkWb4cdSStC7cRAlc6xT5h3a6HoiaAIaz4ZKvqn1OOMVS2cjuM2A8Y6fksdIDgT4kA3GyDEMstns8z72Gl6ucGsqFmRSreoXiiSTc9GfHNa/Vi6X2fDV7R8ARSeVYM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757507635; c=relaxed/simple;
+	bh=skI9T+/xeLD/m7s7Qla7tjWVpYf4bhBPCpCvExBgah8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s8YMIhmUwUsNBomonkpiGJr3SdqOoxmOfJ9LfL9HPxUZM9Z82OKEhnNNfx7dNU5G4gc4g6yK3Q4Z58bLo/GIIF7WfJmIdipCV62ZbkT49puk/VR0/dg+Tt3XriZslkdvueNC08SfbCDuOGC2VC51/bZue1j0qOZAsYCsI2GImU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xZY4BowY; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-33ca74c62acso31589801fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 05:33:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757507632; x=1758112432; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=skI9T+/xeLD/m7s7Qla7tjWVpYf4bhBPCpCvExBgah8=;
+        b=xZY4BowYbBv3pEOqzg/YrSiHhN36VIBp+14Bpsr7ogk1Tnp1faa5fVpzy3NvQp5ugu
+         pFiybdU0L8OnK3ItpR9vffwXOK3qx70nItLO1kMGgdPaVzg9xGB+hd5xjSNatoSF58ZT
+         71YaTiL6dsNz3+0X1UaddkVXzhkOodCTFKSlwNyATMDMZgMe1xJqWbWa2SKvBn7Zq9gY
+         LV22bhh0w4GU2mJfSusx2fJgao9yRMKoy/h35EXXm3tzh2p1em3c6UuRE0AmDLoYfiQ3
+         nFk+gECbj7BqxN2ECd3is4fB5IVscDmgsdtQvjxDJwUk2E+yl9ng09p1PevJ6zf+plpy
+         D+fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757507632; x=1758112432;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=skI9T+/xeLD/m7s7Qla7tjWVpYf4bhBPCpCvExBgah8=;
+        b=V9So74PCgFYRbOaXRYIkiEPYgSF9ELTbLNx2r+XdeXLQCURNy3mw7iu1fgLYbqMZOC
+         f+Z2DqsN4iV1tKOdf2mbht8+h7owqKK2BQEQr0TCNn46Z2Va/4soCYZAzgWCW7PPbTuA
+         H2ZahKDsza9M2/12QsubxS0IA7BaDM862tZI2zS+ktbbgYHIPLD0karzcoiBoUnmDB0s
+         UIWDsYxrs4hC4RC5+1wBUEFi+0Daod5gZVdHfNmXUf+MkqywDXnTlFnugMm4/LPVgzZw
+         SOm1hH++IM/ai4w0PcbGhCajHGkFY6fyGUdKloHT2UK+AVAU2eABSHnbH+1P9yhLGsu+
+         y8Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRlzQlsE4QuGz8GD64nLmBzT31d7pPREfPLPsnKtyTCbXSH58UQX4LhK5PbDgz+FHmx+LmWDB3uGj95cM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC34rTLCzr7wiOc85j9L6QgIudKE4civKdQQpTZV3tJY6BHbzZ
+	SERHXa2fXdjsU8/VXiLvaotD56GAVPamU1fMNzsas9fAeUkEtZdvzBRw5CTiY7rsyQyvPhfSF2r
+	qtOxrO7FoTRxEng7k20tCe5C58Vd/WMRYWAsSx5trDAeZYf3rVb1YVpA=
+X-Gm-Gg: ASbGncu7Fdxv1HLd18FlF3B63koIqcOQak2zFp1LLvyDE0+raAR3MbqEYmdbN4uN5vl
+	cPHcl3Uzb3t4osbSIZxYUnSBKevmaHkl7gECelOFKVdupJmEs0mUH6T2mL9I/Y+86tDMnUfiEjB
+	7NSeejBvkMKN+KEX8o9QJBS8Ey5YIOy6/3T5m6lWnkKSsYyHr5JlJKlV/9F0ug/IKl6jGnuu1L7
+	fC6fX21RqAxB2j7Kw==
+X-Google-Smtp-Source: AGHT+IEYoTvKtT/H8Cg1gC/hS69lPe2ANltBJh4zGTiR26j0Tk12U4lmcbqE8e5TQVcLgLIs14eG8gIT+xqllMez8WM=
+X-Received: by 2002:a05:651c:235a:20b0:337:e190:67e8 with SMTP id
+ 38308e7fff4ca-33b526a8672mr46134901fa.23.1757507631985; Wed, 10 Sep 2025
+ 05:33:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10] mptcp: pm: kernel: flush: do not reset ADD_ADDR
- limit
-To: "Heyne, Maximilian" <mheyne@amazon.de>
-Cc: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- Thomas Dreibholz <dreibh@simula.no>, Mat Martineau <martineau@kernel.org>,
- Jakub Kicinski <kuba@kernel.org>,
- Mat Martineau <mathew.j.martineau@linux.intel.com>,
- Matthieu Baerts <matthieu.baerts@tessares.net>,
- "David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250910-nicety-alert-0e004251@mheyne-amazon>
-Content-Language: en-US
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-In-Reply-To: <20250910-nicety-alert-0e004251@mheyne-amazon>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250910-arm-remove-high-pte-v1-1-d0899882815f@linaro.org>
+ <7dfbb373-fb44-48d1-9880-747faa47e079@app.fastmail.com> <CACRpkdZ=4n=_yeWY1MSDRuQ=H-P=QiTcQkJF_YDHMfRM2RgDZw@mail.gmail.com>
+In-Reply-To: <CACRpkdZ=4n=_yeWY1MSDRuQ=H-P=QiTcQkJF_YDHMfRM2RgDZw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 10 Sep 2025 14:33:40 +0200
+X-Gm-Features: Ac12FXyBaauWVqgGPolMGErAfsIOEC-HKcvur8Pwkz1xYkC_NW_HSeKYtjS3I8A
+Message-ID: <CACRpkdYVUGuS5fJuC0gXxz_AUi=rgKQ8FDoVpCrE0V224xF7Vw@mail.gmail.com>
+Subject: Re: [PATCH] RFC: ARM: drop support for HIGHPTE
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Max,
+On Wed, Sep 10, 2025 at 2:25=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
 
-I'm not responsible for net/mptcp/pm_netlink.c nor can I be found in git 
-blame of that file.
+> Ah, I was blissfully unaware of that patch, sorry.
 
-Why did you send this patch to me and having all the relevant persons in CC?
+Actually that is a weird thing of me to say about a patch that
+I even replied to.
 
-Best regards,
-Oliver
+I had *blatantly forgot* about that patch would be a more
+accurate statement...
 
-On 10.09.25 11:28, Heyne, Maximilian wrote:
-> From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-> 
-> commit 68fc0f4b0d25692940cdc85c68e366cae63e1757 upstream.
-> 
-> A flush of the MPTCP endpoints should not affect the MPTCP limits. In
-> other words, 'ip mptcp endpoint flush' should not change 'ip mptcp
-> limits'.
-> 
-> But it was the case: the MPTCP_PM_ATTR_RCV_ADD_ADDRS (add_addr_accepted)
-> limit was reset by accident. Removing the reset of this counter during a
-> flush fixes this issue.
-> 
-> Fixes: 01cacb00b35c ("mptcp: add netlink-based PM")
-> Cc: stable@vger.kernel.org
-> Reported-by: Thomas Dreibholz <dreibh@simula.no>
-> Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/579
-> Reviewed-by: Mat Martineau <martineau@kernel.org>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> Link: https://patch.msgid.link/20250815-net-mptcp-misc-fixes-6-17-rc2-v1-2-521fe9957892@kernel.org
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> [adjusted patch by removing WRITE_ONCE to take into account the missing
->   commit 72603d207d59 ("mptcp: use WRITE_ONCE for the pernet *_max")]
-> Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
-> ---
-> For some reason only the corresponding selftest patch was backported and
-> it's now failing on 5.10 kernels. I tested that with this patch the
-> selftest is succeeding again.
-> ---
->   net/mptcp/pm_netlink.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-> index 32379fc706cac..c31a1dc69f835 100644
-> --- a/net/mptcp/pm_netlink.c
-> +++ b/net/mptcp/pm_netlink.c
-> @@ -869,7 +869,6 @@ static void __flush_addrs(struct pm_nl_pernet *pernet)
->   static void __reset_counters(struct pm_nl_pernet *pernet)
->   {
->   	pernet->add_addr_signal_max = 0;
-> -	pernet->add_addr_accept_max = 0;
->   	pernet->local_addr_max = 0;
->   	pernet->addrs = 0;
->   }
-
+Yours,
+Linus Walleij
 
