@@ -1,118 +1,177 @@
-Return-Path: <linux-kernel+bounces-809307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C10B50BCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:51:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D86B50BEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE1901888EA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:51:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67B673A50D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3419246BD8;
-	Wed, 10 Sep 2025 02:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB68246BD8;
+	Wed, 10 Sep 2025 02:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ELIyMPzk"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MF274h6e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089ED2033A
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDDF246789
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757472671; cv=none; b=iHWJY1Yop1eFO1MmwFpe8VZr9tQh/do7zpAUk6+/MqpFXSuXrLJmvxrw66jqw3iDcXw5d01B3XGrbfNSZmVKEeUBG4qsg+C3lMbKlZBcd0ugxKfGhJT2SpsB4/yTWgtz3lELnuoOjBMcdLB7GcxAIKABky8FMyWzijkDuarV6ak=
+	t=1757472798; cv=none; b=hwirnBeD49SsZq0CTOSys4ctYRdnkVERVpmWrB23Gi/GLPULh2gz+OJOqRMhZv0GMEnTClpG9z4T2ulY8BTlcJMicLxAj1VbXNhgvQu04l5w+TKH3ooj0HSS6pAXrLiAtR7RFLfZBEKEpt4J6GaUFxpg5L2te57N2jntDhIKOtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757472671; c=relaxed/simple;
-	bh=EtsERrGuUPQUjphbYZJJaJS3niN77FqxYnzLWZQAx64=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FqRidMfkMQXqq15/tQDm0VrOOKXZZ3kPb3vRPv0OAQqHJaETo3fnqL0p3bIWoBb2tDcnZla3phaI6OeotcUIQJspWuCPEBhrlDAFxLF6iHR4Ak3xixxRw199k6O+/JJgqYeLGG8BFKuuQeShQ0GV3Ik7qmChIrtcW8D+GBnwA0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ELIyMPzk; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-24b132bd90dso12810415ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 19:51:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757472669; x=1758077469; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o3cDWVvExlqY0E+Cv0lKzyo4mEyiBol+XD/LhCh80Vo=;
-        b=ELIyMPzkR89YUy1X0gXm/c+cO2CzjLO8+D0rRt8Yp4nzrx/Zrqux1fqod08eXhDFW0
-         HZVO8bMcBg5QduJMLHPITAM2RB6/7Unu4wLUat2nGl7XoRFXClofvV9Q+n1fgMURy9SN
-         gBCz46VIC5Xkn/WbpDpgKm9CeiNIOpa3gBc5W0TZyU6XeOOvA0TRl59s3izGGLItrhhN
-         d+PhpdisnhRCDU9CewjxxS7la7ly5sw5GRdj2jHCbrRpDOHt5MwZlu9lYlTbr+ZX190z
-         2fHdthQuyHfklJarPge6fTwHHknW6hHQaYQnGzQ5VF9vJ3O4GC1CP+Wmeh92W463fvii
-         1q8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757472669; x=1758077469;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o3cDWVvExlqY0E+Cv0lKzyo4mEyiBol+XD/LhCh80Vo=;
-        b=uIg38/xIcugXhv5WgcUmPNX6pZZtftvSvqrYCDnWHKFX9eDVOHOamGNRdREsCnDs5x
-         pYmvHaFlkgu4ggz6ouCdvJVcdObJHC3e5EGCjV3YZXHHZzXD8qjazIAy//dwMxOBuHBd
-         5taEjVrKoPm8GyQbtIZ5frbqpEmXVoP3DSbIoxMN7UWWSgZLF4MWeUTbP/Pm6LNwY2ta
-         4Vn7QM7mfz0BMIHneovlgMKJNVq5WQ3Bv1BDbLZLyG4pxtOt9tq6J7YnjJeMhMwZD9bR
-         eUfGv3sPZmxo/WySFZlhgv+F781QquDx9zNiy4d5jIu+/kd0G0ktFUKHnnxPMrVnSgb5
-         OI/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ4SWVA2BTdcCRv0QFQ0NshqGyzIV/bgWhw1fYLFeFeta6iZJv9mfTpnjHRORFTjM7T7l3SmikrpIHm44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbWKN2x7JvVTxU9CS/k4fFZQfmRIq6rMIUMfyBJPOPK3fG6M3Q
-	jgybfYv5zdskjqe/8/F6mXhA8LUEPzWQ46SGZpaiB8XFL9NZj4xuUX5EP/sxGfZWjVhU7z4YyE9
-	aXjjnCCFae39mmXyIg9K0uAjFzcYK1cM=
-X-Gm-Gg: ASbGnctm78exFcWSRuxVVfZLQHIAqpDdvZZyEkaKIhE0KEFWec6Arz8L8/O+CtnqY48
-	JxMuqgDKmlYRFvI4Ii+gYIwrOSZfdUGSBZWLL7+6LGBihU2Ayyz55EPb8zoDHIsRoMGf63BiChP
-	j3K/Z1PJ4CBWqaGIkpQVNOpAvLRwG+/JADPSbwRrw9Tn22FNjitXGOniqGxnREBaC/h5Z4i6HFH
-	/zy7ceRS6MZlXL3hLyhgKIOoLGu9lcUnMR+qJMbaiAqDBqMqilloS0AD5bt3pZ/B6sHGcMqWy4W
-	mwYlaRxX4MxxYVmB/rh1QHtFbcnGisX0L7Va
-X-Google-Smtp-Source: AGHT+IGOVxPPeHlaId8gR8lioyyzsheNaiwTT3Z4mTxmXaDAiOl1rybxKWa35nYEmELwWpePOnf3WMn/mBBDODtw6NE=
-X-Received: by 2002:a17:902:ce83:b0:24c:b881:201 with SMTP id
- d9443c01a7336-251757ba959mr101664375ad.9.1757472669129; Tue, 09 Sep 2025
- 19:51:09 -0700 (PDT)
+	s=arc-20240116; t=1757472798; c=relaxed/simple;
+	bh=GJ1MLCdme2x9qtynutCYrIHT4ATvii1OjG3O+Z1i030=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CGzocCaawoFN708HaOnGX/n7jCeK0jO1ISN97cu3blzDZG472KdK9ZOazhdypCTfxQXGMfIyw0shKVLTwceWoHwz5SudWVwANXugcOH/nOpMxEgiPbUgn3zTlF7ravDgNnBQjY9JXfWFbMH9z6epuB7MG78UJMr46VJYaE/QTYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MF274h6e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B4CFC4CEF4;
+	Wed, 10 Sep 2025 02:53:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757472797;
+	bh=GJ1MLCdme2x9qtynutCYrIHT4ATvii1OjG3O+Z1i030=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MF274h6eft90SnUARRBgSkYCpkeBr8kOTdZElVORVZFQQ8d03ixPeSXzq3Gwsm0TT
+	 hzNwssYMRaTlqDrTPPLNlIQtqDnSUi+5XIc6w7CNpjG4oDlRbgjzewwgxrcEEZhCPs
+	 OCo2bJYOWQlWwg+P7uGIvGeSwvCTOOVBoncaM9owtcdFyycl1AvCqeNm5XERvLgbmI
+	 WC+az8697a/hHeHRG3PQKwoUGE1tDTb4VQSW9g52fbLBI7jgAx7IqMLmqjucc71k0d
+	 PfZTF+A+XMP9WN8O1PtIHFlLBAGB+Bi4ehhDhxFFStOLyV0qFvtj9DSOQ6q7lq+lcv
+	 67GCFdEOQIDrA==
+From: SeongJae Park <sj@kernel.org>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>,
+	Chris Li <chrisl@kernel.org>,
+	Barry Song <baohua@kernel.org>,
+	Baoquan He <bhe@redhat.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	David Hildenbrand <david@redhat.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: Re: [PATCH v2 11/15] mm, swap: use the swap table for the swap cache and switch API
+Date: Tue,  9 Sep 2025 19:53:15 -0700
+Message-Id: <20250910025315.109884-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250905191357.78298-12-ryncsn@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250906140256.3059395-1-vitaly.wool@konsulko.se>
- <aL6YHkF96ICqqbBZ@google.com> <94252007-f389-41d0-b5a0-ed948225543a@kernel.org>
- <CANiq72k6OXcvjzKimfzKAAw8QPzDoVxUx_smFA8KU6gEwJ3yeQ@mail.gmail.com> <3f8de021-8eb3-4a7c-9adb-8244c5aa250a@nvidia.com>
-In-Reply-To: <3f8de021-8eb3-4a7c-9adb-8244c5aa250a@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 10 Sep 2025 04:50:56 +0200
-X-Gm-Features: AS18NWDFbBI9-w6QOjK9I1s_Ny3SqcFb8YmUlOePJpvF51e4H4-1WzSgXfRqZlc
-Message-ID: <CANiq72=ex8zJx+KZTV5eRoqkYE=PUkbG5TTvOJo5cXTtd7b1Fg@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: rbtree: add immutable cursor
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Vitaly Wool <vitaly.wool@konsulko.se>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	=?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 10, 2025 at 3:09=E2=80=AFAM John Hubbard <jhubbard@nvidia.com> =
-wrote:
->
-> Interesting. I know the topic of rustc minimum version (1.78 right now)
-> has been discussed a lot, but I'm somehow still confused about how this
-> works, on nova for example.
->
-> The &raw feature requires rustc 1.82.0. So I thought we couldn't use
-> it. But clearly we can...right?
->
-> So confused. Please help. :)
+Hi Kairui,
 
-Please see what I have at this subpage:
+On Sat,  6 Sep 2025 03:13:53 +0800 Kairui Song <ryncsn@gmail.com> wrote:
 
-    https://rust-for-linux.com/unstable-features
+> From: Kairui Song <kasong@tencent.com>
+> 
+> Introduce basic swap table infrastructures, which are now just a
+> fixed-sized flat array inside each swap cluster, with access wrappers.
+> 
+> Each cluster contains a swap table of 512 entries. Each table entry is
+> an opaque atomic long. It could be in 3 types: a shadow type (XA_VALUE),
+> a folio type (pointer), or NULL.
+> 
+> In this first step, it only supports storing a folio or shadow, and it
+> is a drop-in replacement for the current swap cache. Convert all swap
+> cache users to use the new sets of APIs. Chris Li has been suggesting
+> using a new infrastructure for swap cache for better performance, and
+> that idea combined well with the swap table as the new backing
+> structure. Now the lock contention range is reduced to 2M clusters,
+> which is much smaller than the 64M address_space. And we can also drop
+> the multiple address_space design.
+> 
+> All the internal works are done with swap_cache_get_* helpers. Swap
+> cache lookup is still lock-less like before, and the helper's contexts
+> are same with original swap cache helpers. They still require a pin
+> on the swap device to prevent the backing data from being freed.
+> 
+> Swap cache updates are now protected by the swap cluster lock
+> instead of the Xarray lock. This is mostly handled internally, but new
+> __swap_cache_* helpers require the caller to lock the cluster. So, a
+> few new cluster access and locking helpers are also introduced.
+> 
+> A fully cluster-based unified swap table can be implemented on top
+> of this to take care of all count tracking and synchronization work,
+> with dynamic allocation. It should reduce the memory usage while
+> making the performance even better.
 
-I hope that helps!
+Thank you for continuing this nice work.  I was unfortunately unable to get
+time to review this thoroughly, but found below.
 
-Cheers,
-Miguel
+> 
+> Co-developed-by: Chris Li <chrisl@kernel.org>
+> Signed-off-by: Chris Li <chrisl@kernel.org>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+[...]
+> --- a/mm/swap.h
+> +++ b/mm/swap.h
+[...]
+> @@ -367,7 +452,7 @@ static inline int non_swapcache_batch(swp_entry_t entry, int max_nr)
+>  static inline pgoff_t folio_index(struct folio *folio)
+>  {
+>  	if (unlikely(folio_test_swapcache(folio)))
+> -		return swap_cache_index(folio->swap);
+> +		return swp_offset(folio->swap);
+>  	return folio->index;
+>  }
+
+This makes i386 build on my setup fails, like below:
+
+    In file included from /mm/shmem.c:44:
+    /mm/swap.h: In function ‘folio_index’:
+    /mm/swap.h:462:24: error: implicit declaration of function ‘swp_offset’; did you mean ‘pmd_offset’? [-Werror=implicit-function-declaration]
+      462 |                 return swp_offset(folio->swap);
+          |                        ^~~~~~~~~~
+          |                        pmd_offset
+    In file included from /mm/shmem.c:69:
+    /include/linux/swapops.h: At top level:
+    /include/linux/swapops.h:107:23: error: conflicting types for ‘swp_offset’; have ‘long unsigned int(swp_entry_t)’
+      107 | static inline pgoff_t swp_offset(swp_entry_t entry)
+          |                       ^~~~~~~~~~
+    /mm/swap.h:462:24: note: previous implicit declaration of ‘swp_offset’ with type ‘int()’
+      462 |                 return swp_offset(folio->swap);
+          |                        ^~~~~~~~~~
+    cc1: some warnings being treated as errors
+
+You may be able to reproduce this using my script [1].
+
+I also found including swapops.h as below fix this on my setup.  I didn't read
+this code thoroughly, so not really sure if it is the right approach, though.
+
+    --- a/mm/swap.h
+    +++ b/mm/swap.h
+    @@ -3,6 +3,7 @@
+     #define _MM_SWAP_H
+    
+     #include <linux/atomic.h> /* for atomic_long_t */
+    +#include <linux/swapops.h>
+     struct mempolicy;
+     struct swap_iocb;
+
+[1] https://github.com/damonitor/damon-tests/blob/master/corr/tests/build_i386.sh
+
+
+Thanks,
+SJ
+
+[...]
 
