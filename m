@@ -1,124 +1,175 @@
-Return-Path: <linux-kernel+bounces-809808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D985B51248
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:18:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB1AB51244
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:17:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83ACF4837AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:18:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F3694E25CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B803128BC;
-	Wed, 10 Sep 2025 09:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F58311C27;
+	Wed, 10 Sep 2025 09:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Wh8Yimpd"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wpQ4RqM4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9XA33nXs";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wpQ4RqM4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9XA33nXs"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D032877E9;
-	Wed, 10 Sep 2025 09:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEB13081B6
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757495877; cv=none; b=kSsdz1RFPVLmXs+AwEVNvIW8UQ9nGyeyX0/lCDH0xF7zbX7iaA91DFCbSN9CDPh902kBQDsmyZTvN4whxp4SRTHx1nCakBt2f2RAVVgq5gMR/q1t440hPn75LgFr5XLBVML1HNH7wQOfueU7c1CpUgI/Uz/aMKZJ3/oeFbPU/hY=
+	t=1757495854; cv=none; b=EJ71oYVkrPGuipDA9olaD2XYnnU533hiAo8Wam58Q2DAzTJW48u81IN/xf9Cyu0E1yrLIaRAJiYPNtDXxKXO1IsOqZTVzmyw0LoFRnDJGzMteQOjlKL/JSseC6aQI8D1Rva7wfjbn/KqIN/VbUEKYs0XvjLTzrO1QEc2B0MFfeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757495877; c=relaxed/simple;
-	bh=GGcoW1rHPYKDVIpMVNnDGCuNsRgAHDhGZ6iQD3KEJQM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=b12J0e9OyGLQBizPK1J9J3iGxpyPPqM2A8jbZZbK7vM4kVGBgGzqnKAuH4choW3luGqnZjsI+kXUj+5DQqELsqpImlLVc/7AjLZ0ucN4G2AChvOg9UC5qJ1IY8sNf2NnSvMwvq/2Ad/KKLJloCEDJNcOhCQjvwST4r0KbW4DTig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Wh8Yimpd; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=kW
-	sJsKi4N76Tmx+Lu2+X5uhhEh4alrr77qi//eZRpHk=; b=Wh8YimpdbYux2bZ0Tm
-	WiH6rPacfglByyrkNxLAiLObV0VMg8PC+2FP2WgEiy6sBzh/6BqSnR5YHy/Z6yKS
-	urXYQwcFkNLjmdElYBMNrT4vgDwyXQK/60fdiC+/zBenz3vTa3A7afk/EFb7jtMH
-	izbshVITI8VxHHqjJN8TkZhtc=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDHL4wPQsFoNSDgAA--.35458S2;
-	Wed, 10 Sep 2025 17:17:04 +0800 (CST)
-From: yicongsrfy@163.com
-To: linux@armlinux.org.uk
-Cc: andrew@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	hkallweit1@gmail.com,
-	kuba@kernel.org,
+	s=arc-20240116; t=1757495854; c=relaxed/simple;
+	bh=SjKs9oCrenImG0RG3XvxaFxGywWDapdI/0foyNwUtiY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mewRYbdYeWderusNrXmFKC5NGU0Lh7s42kIE16cljR8w6WuqzSYSYfvwZGSiOSbZxIxmKUDDkCpTnR7v1grSHHVrho8YJN6Cw1F0bl+uLVd5vRMGouNGWzyK7cDEezJtmVterJwvYirZ5cZQ5wHNRy90yaMoFpasNHYISjczZCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wpQ4RqM4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9XA33nXs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wpQ4RqM4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9XA33nXs; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2E932371F6;
+	Wed, 10 Sep 2025 09:17:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757495850; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/JapfLJgp168zjhr+Azwnb5KVJmSjxr/r/6m5rjAdZ4=;
+	b=wpQ4RqM4hoyqGskZ/trspeAImZoKmWXUtwxQoZP8HXj9sMw/cVJOcn+upqK+T2nFuqfIiw
+	tReqlEZbEZIm+YwEkJQ3Xw2sToiijex8+bcR0c1MxlQUmK4vDPEycXYtycY1V030M7EdvX
+	2captUHoWBH0Lec8nxSs0xpgE00px9M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757495850;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/JapfLJgp168zjhr+Azwnb5KVJmSjxr/r/6m5rjAdZ4=;
+	b=9XA33nXssEmV4bGhbKRKt4k4+6qcNP+rnvlv7wxtcEO8i1LJQ045V3QgPK0w9Qfjn8OlGR
+	boRCwt6pwhTDE8DQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=wpQ4RqM4;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=9XA33nXs
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757495850; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/JapfLJgp168zjhr+Azwnb5KVJmSjxr/r/6m5rjAdZ4=;
+	b=wpQ4RqM4hoyqGskZ/trspeAImZoKmWXUtwxQoZP8HXj9sMw/cVJOcn+upqK+T2nFuqfIiw
+	tReqlEZbEZIm+YwEkJQ3Xw2sToiijex8+bcR0c1MxlQUmK4vDPEycXYtycY1V030M7EdvX
+	2captUHoWBH0Lec8nxSs0xpgE00px9M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757495850;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/JapfLJgp168zjhr+Azwnb5KVJmSjxr/r/6m5rjAdZ4=;
+	b=9XA33nXssEmV4bGhbKRKt4k4+6qcNP+rnvlv7wxtcEO8i1LJQ045V3QgPK0w9Qfjn8OlGR
+	boRCwt6pwhTDE8DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A8F2513301;
+	Wed, 10 Sep 2025 09:17:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +/D5JylCwWiXPAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 10 Sep 2025 09:17:29 +0000
+Date: Wed, 10 Sep 2025 11:17:29 +0200
+Message-ID: <87zfb2vf86.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Patrick Lai <plai@qti.qualcomm.com>,
+	Annemarie Porter <annemari@quicinc.com>,
+	srinivas.kandagatla@oss.qualcomm.com,
+	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	yicong@kylinos.cn
-Subject: Re: [PATCH] net: phy: avoid config_init failure on unattached PHY during resume
-Date: Wed, 10 Sep 2025 17:17:03 +0800
-Message-Id: <20250910091703.3575924-1-yicongsrfy@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <aMEzv50VmUb2eUMQ@shell.armlinux.org.uk>
-References: <aMEzv50VmUb2eUMQ@shell.armlinux.org.uk>
+	linux-arm-msm@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	kernel@oss.qualcomm.com,
+	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+Subject: Re: [PATCH v2 1/2] ALSA: compress: add raw opus codec define and opus decoder structs
+In-Reply-To: <20250910-opus_codec_rfc_v1-v2-1-35fb6536df6b@linaro.org>
+References: <20250910-opus_codec_rfc_v1-v2-0-35fb6536df6b@linaro.org>
+	<20250910-opus_codec_rfc_v1-v2-1-35fb6536df6b@linaro.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDHL4wPQsFoNSDgAA--.35458S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uryUJr4xGw43KFy8Gr1Utrb_yoW8Kry5pr
-	WxXas5ur1vqF1kGrs7A3y8Ja4jvwsIvrW3J3sxKr98CFy5uF9Y939Fqr43ZFW5Crs8Ca47
-	ZF4jqayUArZruaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U7wIgUUUUU=
-X-CM-SenderInfo: p1lf00xjvuw5i6rwjhhfrp/1tbiUATE22jBPCm76wAAsn
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,perex.cz,suse.com,gmail.com,qti.qualcomm.com,quicinc.com,oss.qualcomm.com,vger.kernel.org,linaro.org,linux.dev];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 2E932371F6
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-On Wed, 10 Sep 2025 09:15:59 +0100, "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
->
-> On Wed, Sep 10, 2025 at 10:58:26AM +0800, yicongsrfy@163.com wrote:
-> > From: Yi Cong <yicong@kylinos.cn>
-> >
-> > When resuming a PHY device that is not attached to a MAC (i.e.
-> > phydev->attached_dev is NULL), mdio_bus_phy_resume() may call into
-> > phy_init_hw() -> phydev->drv->config_init(), which can return -EOPNOTSUPP
-> > (-95) if the driver does not support initialization in this state.
-> >
-> > This results in log messages like:
-> > [ 1905.106209] YT8531S Gigabit Ethernet xxxxmac_mii_bus-XXXX:00:01:
-> > PM: dpm_run_callback(): mdio_bus_phy_resume+0x0/0x180 [libphy] returns -95
-> > [ 1905.106232] YT8531S Gigabit Ethernet xxxxmac_mii_bus-XXXX:00:01:
-> > PM: failed to resume: error -95
-> >
-> > In practice, only one PHY on the bus (e.g. XXXX:00:00) is typically
-> > attached to a MAC interface; others (like XXXX:00:01) are probed but
-> > not used, making such resume attempts unnecessary and misleading.
-> >
-> > Add an early return in mdio_bus_phy_resume() when !phydev->attached_dev,
-> > to prevent unneeded hardware initialization and avoids false error reports.
->
-> PHYs are allowed to be attached without a net device. Your PHY
-> driver needs to cope with this condition.
->
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+On Wed, 10 Sep 2025 10:11:41 +0200,
+Alexey Klimov wrote:
+> +struct snd_dec_opus {
+> +	union {
+> +		struct {
+> +			__u8 minor:4;
+> +			__u8 major:4;
+> +		} __attribute__((packed)) fields;
 
-Thank you for the reply!
+Bit fields aren't really good for ABI definition, as it's not well
+defined.  I'd rather leave it as a u8.  If any, you can provide a
+bitmask definition or a macro to retrieve the version numbers.
 
-My thought is, if a PHY device hasn't been attached to a net_device,
-is it still necessary to go through the resume procedure?
+Also, don't forget to bump the API protocol number.
+It's been already increased to 0.4.0 for 64bit tstamp support, and
+yours need to increase one more.
 
-My issue context is as follows:
-After entering `mdio_bus_phy_resume`, the call flow proceeds to:
-`phy_init_hw()`
-    => `phydev->drv->config_init`
-        => `yt8521_config_init`
+(That is, please make sure to create patches based on linux-next, or
+ for-next branch of sound git tree.)
 
-Then, because `phydev->interface != PHY_INTERFACE_MODE_SGMII`, it attempts
-to enter `ytphy_rgmii_clk_delay_config` to configure the RGMII tx/rx delay.
-However, since this PHY device is not associated with any GMAC and is not
-connected via an RGMII interface, the function returns `-EOPNOTSUPP`.
 
-Of course, I could submit a fix patch to `motorcomm.c` to terminate
-`config_init` early. But as I mentioned at the beginning, when a PHY
-device hasn't been attached, do we really need to let it go through
-the entire resume process?
+thanks,
 
+Takashi
 
