@@ -1,114 +1,77 @@
-Return-Path: <linux-kernel+bounces-809221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39225B50A27
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:20:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66411B50A23
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56F131C26431
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:21:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20E1A56078B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB6F1EF091;
-	Wed, 10 Sep 2025 01:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BDE1EF36E;
+	Wed, 10 Sep 2025 01:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="g3qKEn7S"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u4/lJImw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EFC7E9;
-	Wed, 10 Sep 2025 01:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37841487E9;
+	Wed, 10 Sep 2025 01:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757467246; cv=none; b=XWpo//FCT+wipuTb8kU3XQR+9SFvM4NI8o1bfsUVv6xXQPWi+8J4rymV6jmqcmz6TcUtWeUzVmgfCrc7QJEREnh6Y2PKb49tiw8sIShUkhYw8od5scXqXnclpna6SmEtL0hJaBmk/6ZhOSC1dOR+a/9s/MHu0SjyL5zEbnHCXkU=
+	t=1757466950; cv=none; b=IgapzV5/JIceHc36nPpcuXGhzyPOTHcm5IKSIOnV8n5yAf+EoXqqsUGng+Iw4aR7NQuUv4bgRFOYG2RNHYqzPY2bXifIoCacvVeWrmg2yFaJBkFmugMe5MCn2e3wUyWHA2GgwdS9KbmrW0VmiM6GxVQilacR0yO6Y3fe/g/+wXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757467246; c=relaxed/simple;
-	bh=SjSZ4fJvEkON3f7H8fSsbr6eG88xcLoUS0NgI9+azdk=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=o6fKDhLepegqiH2U5u8BNM9B95v3CP5KYUAKO+fd2PbEgBm0+m8H/3xHATu6sfqn3WLIbOEd3lrX4CPHBiJ4p2oDQ3meEJyRgelM+Zso7Mx/4I7ohmvKQX5buFuUjMrcbxCEo4jzNkEzastIyR8KHE8f9SgE/IoT06dAHQfXlIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=g3qKEn7S; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1757466931; bh=G5kNXpFVRo0yjSdKeycX6sHGdQvY6yNnQ0dazno75uU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=g3qKEn7S+F5W9VJwpwkk7zo2bZxxDfLZntWUCQf0syMnLLq4L0P7Kl8xqcdZssw9n
-	 uxN/07pkLA25tP97PVAc3f74HAK/YEd1g2vEQ1IEs7e4MdHzyuC+ei5cKNfC+rNAIR
-	 xpbfDovVBajMKhqA0v/vGMXccbJci+D1Im3/LrF8=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrszc43-0.qq.com (NewEsmtp) with SMTP
-	id 3DD89E33; Wed, 10 Sep 2025 09:15:29 +0800
-X-QQ-mid: xmsmtpt1757466929tuoy189ox
-Message-ID: <tencent_341BA32545BAFBBB2133249EDE1B774B4908@qq.com>
-X-QQ-XMAILINFO: NqN/wpVFVRYXHuZItgFVQwOdjGLIqK2h9RS3YOVGy8/sETj/yPd+ohspYbsk4V
-	 nuWIZC2YGsqW5C7Ppd2NGKITiGwsVHGh8QM0KjI6ejMnUijPPDYgChLC2E9HTMwqwtjrK4qhH0fh
-	 7urzwWuv3VrLKzj/dVIcCF/JHrPz0TYJVZuO/p46CJdTAcAu6hvamkw4QJCYteaHA7SjSM08xJUX
-	 VquRr1ucYL9OYy57VoIt1uALj1dt1cbvD8uTo7lt49eirN3GzyNERliK2CSywvR/eE1mAQfo2Rvh
-	 Ch/lnJEhEQxlYuaiSni6dc97cBHZkJJPyePjd+LRpPXSZ1tluzO7I9RHRFpPufvlnP53eBLQmvf+
-	 7IeVoLMfr4bVqVEOuoR9OOvYziGViGSj+bXb1xIxyI9smvOfuB757j5aY+2XkYIyDHpz7xCx/Z84
-	 +hVTM0XfdUvaTE6BjF89wd8hMdYlboRR8whELKxSoG4T8L17Fe6MUYwe5vjKEHn5w5Vwe4f2E4wl
-	 rxcR9xCoMzURTumQW4/M7R2feEC/NJdTzv6FPaPEhey5np9aTfOyzrrDFFpglvig3uBXQ2z7V6js
-	 2Xg8UI7Jcsygrc3XRtRHRCwTdXsC5EAtpm4MItR9qqRLQYHRrYQGHKi1hq6f65YRoFXcZ5LvyNDG
-	 nKlUmyZFYCrXy055ozMp1+m+6ztixCBNnkIZ/See0wVNWlb3hi7nCkNoguHZiMAteJm07p4c/kjb
-	 pmQyVs5VCIe4hruAmU3l2phjsGOgqjDwOa0W/6QataLWgSLY+lQiL2ndqXJUNVSpBYbJi6p2Gw2H
-	 0R04/zkxh4D5aglK27Xu11Hkza48xLkMf2TSjk/DWIfScTK1dL0NUuOxejBFvxfxsCJehrIaUMje
-	 p3zmn90JOIgxXmUC2cPFkfrQkZLxD1+0zoJ7J3ko8CTi/woA1OKkg+PmpfmOZjquEXIBz4E2cV63
-	 xlVXPIrsikmFxfGy1VXevSUNE1y1I7cfCM5DcAKJpM6RMQRd/DvQ==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+031d0cfd7c362817963f@syzkaller.appspotmail.com
-Cc: laurent.pinchart@ideasonboard.com,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	mchehab@kernel.org,
-	sakari.ailus@linux.intel.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH Next] media: mc: Clear minor number before put device
-Date: Wed, 10 Sep 2025 09:15:27 +0800
-X-OQ-MSGID: <20250910011526.990021-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <68c097c5.050a0220.3c6139.000a.GAE@google.com>
-References: <68c097c5.050a0220.3c6139.000a.GAE@google.com>
+	s=arc-20240116; t=1757466950; c=relaxed/simple;
+	bh=cxlh3AJ76sbpWmAnYRTyLTELgkVNAiDa1hROV3mBUWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Jk71l30EkX9VVabmuo6AGVq/6eT2EUVa3iw60EMm1wT4KVImzOLjwYOU85BCapp0Beo4n9LnUtCc2nKNxOtfFQmNDM56jtdNQuU/IUf0K+208UZPOsXD6SMKHhMo86HBOyOZ+sp6U0wpkKCI91epsuTK9+H1aMz800xDhh3XDHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u4/lJImw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C6C6C4CEF4;
+	Wed, 10 Sep 2025 01:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757466949;
+	bh=cxlh3AJ76sbpWmAnYRTyLTELgkVNAiDa1hROV3mBUWc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u4/lJImwhptY4sOT6NZoJ7bqQ4r1Ni8t3xFkLQ8PRTKy4+1dlGVEaou9KHTDVbIDj
+	 F8SjFUNFDgYpOhAg9e1moGt/eKSoAbaDo/GeiBXPx3EWyDTcb7GZ3jMfEkn60WMQMB
+	 AGW8hDkoqyVVi2S0vBemcUkZSEidafBQibN1ffg4XI+UlZkq9Smm1J9Ce9MQHlGwOj
+	 lMPEaF/3TEOTuKpIsqLjzNtyujkP3zW5AK/w9p9KhYE+7f3fJQDxtaUEaJVUTtYoc3
+	 cTqbvSdYrv2h5bunigBwd4MZbcu7uGk5qUy/qVF1F6+F5uRn84h1zYPcQ0RB0dWFCz
+	 kr1Y41UEIIk+w==
+Date: Tue, 9 Sep 2025 18:15:47 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: =?UTF-8?B?5p2O5YWL5pav?= <conleylee@foxmail.com>
+Cc: vkoul@kernel.org, davem@davemloft.net, wens@csie.org,
+ mripard@kernel.org, netdev@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: sun4i-emac: free dma descriptor
+Message-ID: <20250909181547.0782840f@kernel.org>
+In-Reply-To: <tencent_0DDFF70B944AC1B7CE9AC20A22D8DA3C4609@qq.com>
+References: <20250904072446.5563130d@kernel.org>
+	<tencent_D434891410B0717BB0BDCB1434969E6EB50A@qq.com>
+	<20250908132615.6a2507ed@kernel.org>
+	<tencent_0DDFF70B944AC1B7CE9AC20A22D8DA3C4609@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The device minor should not be cleared after the device is released.
+On Tue, 9 Sep 2025 14:36:42 +0800 =E6=9D=8E=E5=85=8B=E6=96=AF wrote:
+> Thank you for the suggestion. I've reviewed the documentation, and
+> setting the reuse flag while reusing descriptors might be a good
+> optimization. I'll make the changes and run some tests. If everything
+> works well, I'll submit a new patch.
 
-Fixes: 9e14868dc952 ("media: mc: Clear minor number reservation at unregistration time")
-Reported-by: syzbot+031d0cfd7c362817963f@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=031d0cfd7c362817963f
-Tested-by: syzbot+031d0cfd7c362817963f@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- drivers/media/mc/mc-devnode.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+To be clear if you're saying the driver is buggy and can crash right
+now we need to fix it first and then optimize it later, as separate
+commits. So that LTS kernels can backport the fix.
 
-diff --git a/drivers/media/mc/mc-devnode.c b/drivers/media/mc/mc-devnode.c
-index 0d01cbae98f2..6daa7aa99442 100644
---- a/drivers/media/mc/mc-devnode.c
-+++ b/drivers/media/mc/mc-devnode.c
-@@ -276,13 +276,10 @@ void media_devnode_unregister(struct media_devnode *devnode)
- 	/* Delete the cdev on this minor as well */
- 	cdev_device_del(&devnode->cdev, &devnode->dev);
- 	devnode->media_dev = NULL;
-+	clear_bit(devnode->minor, media_devnode_nums);
- 	mutex_unlock(&media_devnode_lock);
- 
- 	put_device(&devnode->dev);
--
--	mutex_lock(&media_devnode_lock);
--	clear_bit(devnode->minor, media_devnode_nums);
--	mutex_unlock(&media_devnode_lock);
- }
- 
- /*
--- 
-2.43.0
-
+The questions I'm asking are because I don't understand whether the
+upstream kernel is buggy and how exactly..
 
