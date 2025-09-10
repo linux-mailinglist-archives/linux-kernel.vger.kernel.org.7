@@ -1,152 +1,235 @@
-Return-Path: <linux-kernel+bounces-810423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11FAB51A85
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:57:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2B9B51AB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415A41BC12FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:53:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 394D0A008FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E8D334711;
-	Wed, 10 Sep 2025 14:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0170B341641;
+	Wed, 10 Sep 2025 14:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LfSK4Dvy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="feTMT6ab"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8903314B0;
-	Wed, 10 Sep 2025 14:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757515405; cv=none; b=rt06jxRa3iAd6zIcX2EW84RHYjXNz1XY5rd4WM6lK9OdTNxtkD8+OtIJ+J0qb1iP6njEPLGJMnSUwfaHTpCmYBrAHPvnyuZhPHdMLbEnWwPB4fvBt8X9hTRum4kmiLTO9PUY1vWVF8JTJZkSJzj+wqpLf0RhWW92tpo5mmFt4LQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757515405; c=relaxed/simple;
-	bh=ZbY2B6yVl12t9+vakyT6Odcj14A3coWtEtGibMgyy5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SGv8AVhx0VKN6CZZQrvv1v+gbI/A9sqNP6JiILaObQYFgYsz5jTga1LPcYcdvRn0b4GMzm2kPVH3GgUy7kmBb9dHGGoIf0M9nGGxv5d3UdlsB/MTzr+6hFXicM+ZqdYV5OabnahpTXnM6VFbDoGTF0xPHiEsE7fQwN9B7naD5QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LfSK4Dvy; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757515404; x=1789051404;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZbY2B6yVl12t9+vakyT6Odcj14A3coWtEtGibMgyy5g=;
-  b=LfSK4DvyERA/iNHfF5ncuvpu7wtYxlMM7hlGj4IXxXXE7WAc7qUgD1io
-   Wwx0VuoCwCdxdX4myd1yzWonbhFamRhcIp731HHF8SMXF+nyMu4aR9rSx
-   lcp7353g+aD4xiiboUb4y6wUbESlxhyHdgMIIEbqC6jv2/JaOBnL6zO4d
-   NmhVNy7ZntrvoMegvfulghyPqwqyMc/ab3fdTUm1RTizXyNkwYYE5uzbY
-   Rtmn7wovRq+S7HT2CZakOTFmWbRQtkGKxnGMYRF4o0mGxEpTHxUOJMPbu
-   1vfqCO2csdPeGIftVWIAJw4x7TOwCHKYHC2/0nQqDcR6vEShIdXgXpDvN
-   Q==;
-X-CSE-ConnectionGUID: 2+1n5nY/S3CYQYwQzdCXcg==
-X-CSE-MsgGUID: UFGrXi9yS0KA00qj+3roQQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="71248286"
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="71248286"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 07:43:21 -0700
-X-CSE-ConnectionGUID: 8xOG4fZsS/Wlx1q+FywMXA==
-X-CSE-MsgGUID: uILFlauiRmePsJvk6TcztA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="177742939"
-Received: from ettammin-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.108])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 07:43:16 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id F09371201B4;
-	Wed, 10 Sep 2025 17:43:12 +0300 (EEST)
-Date: Wed, 10 Sep 2025 17:43:12 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Julien Massot <julien.massot@collabora.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v7 00/24] media: i2c: add Maxim GMSL2/3 serializer and
- deserializer drivers
-Message-ID: <aMGOgHzwig8NvxT-@kekkonen.localdomain>
-References: <20250718152500.2656391-1-demonsingur@gmail.com>
- <aLBqxQQsnY3ZK4eT@kekkonen.localdomain>
- <d558ede0-5838-4a69-b25d-cafaa3b6cc97@gmail.com>
- <aMEgNtjcy1-NuBds@kekkonen.localdomain>
- <1b79e467-1d39-457f-a488-0f3eb9e14efc@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319AC334703;
+	Wed, 10 Sep 2025 14:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757515438; cv=pass; b=VBIfu7PtesqK2eBzR4komwf9OlamMUeGwhb1WbQN4YOcTuAfAJ6g6gmdW8jWYFzn/nqT13zmN9QolV6Ew8RcMfW84MaxEveh1PjSX23Y0qr39cnNFAslH8SQu+wZE0dH3fkWz5+95kbSG1nSMj9EjpI01WAXmQBZyjy3vV4xwPc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757515438; c=relaxed/simple;
+	bh=jWf+1iSB/smQ+JM7XZSTmLuJQb9ZbXX2Cx7HEGs4BjM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=aeBPX2se+cKT7DqG4AtNSrkArlJW4J/YuUCouNigcVVZzrEqBZ4gedW/7DUMAQ0Gt2o9NMPq0Zer2Mvd+eecNY6xmD0C1tgVE+9leyoD04IZJ/xM64z1ws5SkGlaB1z7ao85te+losXRWextJhpfYvNP1uByhMtv4HIZcbg/UcM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=feTMT6ab; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757515418; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MMq+EoqgJoYlcFOzgg1a8Rz0lEeN5cuylX5lnnSpflLZ5mXnOKDWI7YiZXMl6g60S96YuzP2PwSFTM0tfoep9dg9ToUKs2/N4P16VJWlefmW5LdxYiN29uRSheROOCYUdkwTgvmQMk010tZxHjSyk0LoEGlAUX3QR7RexDO7R6c=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757515418; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=n+BmJhI3Z0aT6bNC5a9jb74/Ds7aMQmdDL2VAdy6ZWM=; 
+	b=dQSCL3rUmgkm16VUxU+JFLWQRwbgF2PBIm7Tv6Xo5L0o53BjkYf+iNwKpzSxmxTaRiSmdQ4of1xB+EKboI/3ZecGdRPTNTLXzExBBu1xUkKa5IAFF0hVRaqKfzCntx6GHJroLVVs0fzkt8D38WBB6GWwsHdh+NCVLxsL/tJDTdU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757515418;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=n+BmJhI3Z0aT6bNC5a9jb74/Ds7aMQmdDL2VAdy6ZWM=;
+	b=feTMT6ab8zHYd4DYR1SX81008fE8ZqkjzRgxAxnwcdzCss/Op11bxN9GyKTWG0LE
+	p1vsSlCdxvOABlpOaem5T3xibu999Qq1wIXit9rgK77e/XJu3oTGa0IgHAkPReVJ30F
+	4IghQ3BKgmJAb/J2YhPDX6c0xAMacslC5GmRpEtw=
+Received: by mx.zohomail.com with SMTPS id 175751541634272.4536622769192;
+	Wed, 10 Sep 2025 07:43:36 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b79e467-1d39-457f-a488-0f3eb9e14efc@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] rust: irq: request: touch up the documentation
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aMEc0-8mM4uaFwlB@google.com>
+Date: Wed, 10 Sep 2025 11:43:20 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <6149F5A9-D38A-4D28-8F97-3D672079AAB7@collabora.com>
+References: <20250909-irq-andreas-fixes-v1-1-dbc9aafed2cb@collabora.com>
+ <aMEc0-8mM4uaFwlB@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-Hi Cosmin,
+Hi Alice,
 
-On Wed, Sep 10, 2025 at 01:48:29PM +0300, Cosmin Tanislav wrote:
-> 
-> 
-> On 9/10/25 9:52 AM, Sakari Ailus wrote:
-> > Hi Cosmin,
-> > 
-> > On Thu, Sep 04, 2025 at 10:52:09AM +0300, Cosmin Tanislav wrote:
-> > > Hi Sakari.
-> > > 
-> > > I recently left Analog Devices but I will continue to try upstreaming
-> > > this driver. After the upstreaming is done we can switch the
-> > > maintainer status to someone else.
-> > 
-> > Ack, thank you.
-> > 
-> > > 
-> > > Here's the output for the commands you asked, provided by my
-> > > ex-coworker. It's for MAX96716 + 2xMAX96717 + 2x IMX219.
-> > > 
-> > > Do we need to fix anything based on the compliance tests?
-> > 
-> > Looking at the errors, it looks like some fixing is needed, possibly also
-> > on v4l2-compliance side.
-> > 
-> 
-> I'll take a closer look at the failures whenever I get the time.
-> 
-> > Regarding GMSL, are the image width, height or mbus code used for anything
-> > by the serialiser or deserialiser drivers?
-> > 
-> 
-> No, not really. All the information needed by the GMSL drivers is
-> provided through get_frame_desc() ops, and there's no fallback for the
-> data type, so the stream format is not involved at all, but as far as I
-> remember it's necessary to be set properly for the media pipeline to
-> pass validation.
+> On 10 Sep 2025, at 03:38, Alice Ryhl <aliceryhl@google.com> wrote:
+>=20
+> On Tue, Sep 09, 2025 at 05:46:55PM -0300, Daniel Almeida wrote:
+>> Parts of the documentation are either unclear or misplaced and can
+>> otherwise be improved. This commit fixes them.
+>>=20
+>> This is specially important in the context of the safety requirements =
+of
+>> functions or type invariants, as users have to uphold the former and =
+may
+>> rely on the latter, so we should avoid anything that may create
+>> confusion.
+>>=20
+>> Suggested-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+>=20
+>> /// A request for an IRQ line for a given device.
+>> @@ -112,7 +117,7 @@ impl<'a> IrqRequest<'a> {
+>>     ///
+>>     /// - `irq` should be a valid IRQ number for `dev`.
+>>     pub(crate) unsafe fn new(dev: &'a Device<Bound>, irq: u32) -> =
+Self {
+>> -        // INVARIANT: `irq` is a valid IRQ number for `dev`.
+>> +        // By function safety requirement, irq` is a valid IRQ =
+number for `dev`.
+>>         IrqRequest { dev, irq }
+>=20
+> When creating a value with an Invariants section, we usually have an
+> INVARIANT comment. Why was this one removed?
 
-In earlier iterations of multi-stream support we've had link validation dig
-this information up from the closest sub-device that supported get_fmt pad
-op but that also made the assumption there would be no stream branching
-taking place, which is not the case anymore.
+This was requested by Andreas [0].
 
-I guess the most simple way to address this indeed would be to add the
-formats to the streams, even if the driver doesn't need them. Also for
-backwards compatiblity related reasons they are probably necessary -- the
-older max9671* drivers did support them, too.
+>=20
+>>     }
+>>=20
+>> @@ -183,6 +188,8 @@ pub fn irq(&self) -> u32 {
+>> /// * We own an irq handler whose cookie is a pointer to `Self`.
+>> #[pin_data]
+>> pub struct Registration<T: Handler + 'static> {
+>> +    /// We need to drop inner before handler, as we must ensure that =
+the handler
+>> +    /// is valid until `free_irq` is called.
+>>     #[pin]
+>>     inner: Devres<RegistrationInner>,
+>>=20
+>> @@ -196,7 +203,8 @@ pub struct Registration<T: Handler + 'static> {
+>> }
+>>=20
+>> impl<T: Handler + 'static> Registration<T> {
+>> -    /// Registers the IRQ handler with the system for the given IRQ =
+number.
+>> +    /// Registers the IRQ handler with the system for the IRQ number =
+represented
+>> +    /// by `request`.
+>>     pub fn new<'a>(
+>>         request: IrqRequest<'a>,
+>>         flags: Flags,
+>> @@ -208,7 +216,11 @@ pub fn new<'a>(
+>>             inner <- Devres::new(
+>>                 request.dev,
+>>                 try_pin_init!(RegistrationInner {
+>> -                    // INVARIANT: `this` is a valid pointer to the =
+`Registration` instance
+>> +                    // INVARIANT: `this` is a valid pointer to the =
+`Registration` instance.
+>> +                    // INVARIANT: `cookie` is being passed to =
+`request_irq` as
+>> +                    // the cookie. It is guaranteed to be unique by =
+the type
+>> +                    // system, since each call to `new` will return =
+a different
+>> +                    // instance of `Registration`.
+>>                     cookie: this.as_ptr().cast::<c_void>(),
+>=20
+> I believe these comments address the invariants of RegistrationInner. =
+In
+> that case, we usually place them on the struct:
+>=20
+> // INVARIANT: `this` is a valid pointer to the `Registration` =
+instance.
+> // INVARIANT: `cookie` is being passed to `request_irq` as
+> // the cookie. It is guaranteed to be unique by the type
+> // system, since each call to `new` will return a different
+> // instance of `Registration`.
+> try_pin_init!(RegistrationInner {
+>=20
 
-This would also address (most of?) the v4l2-compliance issues.
+Also requested by Andreas, i.e.:
 
--- 
-Kind regards,
+> >>> +/// # Invariants
+> >>> +///
+> >>> +/// - `self.irq` is the same as the one passed to =
+`request_{threaded}_irq`.
+> >>> +/// - `cookie` was passed to `request_{threaded}_irq` as the =
+cookie. It is guaranteed to be unique
+> >>> +/// by the type system, since each call to `new` will return a =
+different instance of
+> >>> +/// `Registration`.
+> >>
+> >> This seems like a mix of invariant declaration and conformance. I =
+don't
+> >> think the following belongs here:
+> >>
+> >> It is guaranteed to be unique
+> >> by the type system, since each call to `new` will return a =
+different instance of
+> >> `Registration`.
+> >>
+> >> You could replace it with a uniqueness requirement.
+> >
+> > WDYM? This invariant is indeed provided by the type system and we do =
+rely on it
+> > to make the abstraction work.
+>=20
+> The invariant section of the type documentation should be a list of
+> invariants, not reasoning about why the invariants hold. The reasoning
+> goes in the code where we construct the type, where we momentarily
+> break invariants, or where we change the value of the type.
+>=20
+> In this case, I think the invariant is that `cookie` is unique. How we
+> conform to this invariant does not belong in the list. When you
+> construct the type, you should have an `// INVARIANT:` comment
+> explaining why the newly constructed type upholds the invariant.
+>=20
+> At least that is how I understand intended use of the framework.
 
-Sakari Ailus
+
+
+> Also, I don't really understand these comments. The first invariant =
+is:
+>=20
+> `self.irq` is the same as the one passed to `request_{threaded}_irq`.
+>=20
+> and the justification for that is that `this` is a valid pointer to =
+the
+> `Registration` instance. That doesn't make sense to me because this
+> comment talks about `this`/`cookie` when it should talk about `irq`.
+>=20
+>>                     irq: {
+>>                         // SAFETY:
+>=20
+> Alice
+
+Is the order supposed to match? I wasn=E2=80=99t relating these two at =
+this particular =E2=80=9C// INVARIANT: "
+
+[0]: =
+https://lore.kernel.org/rust-for-linux/87zfblurtj.fsf@t14s.mail-host-addre=
+ss-is-not-set/=
 
