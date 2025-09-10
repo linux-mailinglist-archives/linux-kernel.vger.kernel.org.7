@@ -1,218 +1,225 @@
-Return-Path: <linux-kernel+bounces-809667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126CCB5108C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:08:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD25B5106A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 686B116DD0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:06:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB36E1C80AAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74637314A90;
-	Wed, 10 Sep 2025 08:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448E73101C7;
+	Wed, 10 Sep 2025 08:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XH1P/pCm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="96GHuDHG";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XH1P/pCm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="96GHuDHG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9hu+wut"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA83A314A77
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749133101A7;
+	Wed, 10 Sep 2025 08:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491345; cv=none; b=QbdTrrd6H17kD5+5jBKXXR81lC0l9cy3NUjf/Li3UbNhE57m2i8PI7Yqf+3I1oHX2w4qlfWbd+5074TOVMe4aHwpGzGkF9KTYiRUPyLf4OkJjJ1Qlh++vKChM2xIziYD0Dtof4DJsgoKhsyM8owtQ43ACCfpPACrvfV5JQ+brtg=
+	t=1757491288; cv=none; b=ddbgKOhlXVHtJr3rtSOevaz3hYZPqqYbTcpG7UlNkobi0uwYZJn0E/Ybc0/Ia/BP2cnGUIsO/iTcOSiY50V1o+DgxWp1CdTmwV6x+FICGVZarKCLX7Q4ScMScdS557JGEmc6DyIa0+8SglAQj6hmU90/cklG+NAjUxfHW6Denvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491345; c=relaxed/simple;
-	bh=th11ShjVAeX5+cSm0X+revws6o8w5NssszS+FOPUo4g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tfsHCl5KmNHuCdCWCdhu30bdoA3ivPFX3jk1WB60mVOmfm3M1tDuf0nIy2asUDkJQKxisONwbhfuDdxXe6Q+EWpsSz4zl/7zdQ/ZrLKzZqe57RxK8YEWKL/uNnqENU8o8vqLGSp6cTXBE3CXcTsecDFBC87t/+Y8VqyFXHajVUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XH1P/pCm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=96GHuDHG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XH1P/pCm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=96GHuDHG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 65D705CB7F;
-	Wed, 10 Sep 2025 08:01:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757491267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suObi2/GY4gIdOy8/pJdudh4YHfdoLo9Lt+1E266qUA=;
-	b=XH1P/pCm7aIhdWR2K+hIhZNEHdMZ3IZbS3VhIImYaSvMZvBS+/fs5djvmdoTXkHjT78KPG
-	KCtg3OkOWqkWN6Qut5anMLrs+F+LOsMsjQjHugmwQJikMbosqj/tBQTLL2ft0qZRI1ucjk
-	eEAdqrh908w1crlBF+wFd9tGnM8Wwnw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757491267;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suObi2/GY4gIdOy8/pJdudh4YHfdoLo9Lt+1E266qUA=;
-	b=96GHuDHGXNaNLLeyYvM8kaj/9vvyLDirzWizLmA/t8xdUUVXJF6oXmSnEj3YQkPpJT5iuk
-	ZBzeuMMKVchYMCDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="XH1P/pCm";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=96GHuDHG
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757491267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suObi2/GY4gIdOy8/pJdudh4YHfdoLo9Lt+1E266qUA=;
-	b=XH1P/pCm7aIhdWR2K+hIhZNEHdMZ3IZbS3VhIImYaSvMZvBS+/fs5djvmdoTXkHjT78KPG
-	KCtg3OkOWqkWN6Qut5anMLrs+F+LOsMsjQjHugmwQJikMbosqj/tBQTLL2ft0qZRI1ucjk
-	eEAdqrh908w1crlBF+wFd9tGnM8Wwnw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757491267;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suObi2/GY4gIdOy8/pJdudh4YHfdoLo9Lt+1E266qUA=;
-	b=96GHuDHGXNaNLLeyYvM8kaj/9vvyLDirzWizLmA/t8xdUUVXJF6oXmSnEj3YQkPpJT5iuk
-	ZBzeuMMKVchYMCDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4EFFA13AD1;
-	Wed, 10 Sep 2025 08:01:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UI7/EkMwwWgGJAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 10 Sep 2025 08:01:07 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 10 Sep 2025 10:01:21 +0200
-Subject: [PATCH v8 19/23] maple_tree: Replace mt_free_one() with kfree()
+	s=arc-20240116; t=1757491288; c=relaxed/simple;
+	bh=W9AyICeigCjB4ZfW6Mn13qQroeZohBNvhnwa50EVj9s=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=sJ3RJ5u4dwlZ6BuQ1PA7ig9easlwJHSh/dyCJyJUjJCCFCEoPUdOeYA5iEJLUPV5osECI3auh0AQDlckOTD70Q6CHjvfaCHuUnjDg+qgdgUaUu09L1Cj3X/rTb6tIW45OLdKZ1lS9C55XCIRmsKKsfAxadRVmuvy7muiQYG33o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9hu+wut; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6E1DC4CEF5;
+	Wed, 10 Sep 2025 08:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757491288;
+	bh=W9AyICeigCjB4ZfW6Mn13qQroeZohBNvhnwa50EVj9s=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=O9hu+wutcuu/Q7972UJxuki8Y3HF4ragOWc7XGwFauq0XvJt5T/41JaU7f3ND83lO
+	 EVRVi9iOwSjLuwb6kX7NPM10qUQFLq0OnnSD35bMP+nXottJf4RDXgzxBESv7bUZgT
+	 AlwjvU4+dydveIghjt8smeGX8GqNRzYAUopY6BXbQhfZayr5d3hdU3NAFcOYyTvWXN
+	 xgIA1u/iIR0GClqtjHMuVTVU/y7N3th6G6/NoazYd+uoYfiOvKtQYu0xxxtCqQKtUP
+	 UoLc3sdaX9535hMlddg5lLAjLv8Z2XnGYx2dM73rzI8s74z9PjMVhTevClGKq8Lgcq
+	 VZ5K6xEMCyIrg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-slub-percpu-caches-v8-19-ca3099d8352c@suse.cz>
-References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
-In-Reply-To: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
-To: Suren Baghdasaryan <surenb@google.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
- Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
- Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
- maple-tree@lists.infradead.org, vbabka@suse.cz, 
- Pedro Falcato <pfalcato@suse.de>
-X-Mailer: b4 0.14.2
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz,suse.de];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLfsjnp7neds983g95ihcnuzgq)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 65D705CB7F
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 10 Sep 2025 10:01:22 +0200
+Message-Id: <DCOYNWXYKBOK.XCRA4Z34RUXP@kernel.org>
+Subject: Re: [PATCH v3 02/11] gpu: nova-core: move GSP boot code out of
+ `Gpu` constructor
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Joel
+ Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
+To: "Alexandre Courbot" <acourbot@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250902-nova_firmware-v3-0-56854d9c5398@nvidia.com>
+ <20250902-nova_firmware-v3-2-56854d9c5398@nvidia.com>
+ <843554b1-f4c5-43f5-a23b-583339708bea@kernel.org>
+ <DCIZ79KKSSF1.25NJT5ZWR3OOS@nvidia.com>
+ <DCJ0UA7KM9AP.OGO7EJB4ORQP@kernel.org>
+ <DCOBWF0EZLHF.3FFVAB16SJ3FW@nvidia.com>
+ <DCOCL398HXDH.3QH9U6UGGIUP1@kernel.org>
+ <DCOUK0Z4YV6M.2R0CFE57DY5CR@nvidia.com>
+In-Reply-To: <DCOUK0Z4YV6M.2R0CFE57DY5CR@nvidia.com>
 
-From: Pedro Falcato <pfalcato@suse.de>
+On Wed Sep 10, 2025 at 6:48 AM CEST, Alexandre Courbot wrote:
+> On Tue Sep 9, 2025 at 11:43 PM JST, Danilo Krummrich wrote:
+>> 	impl Gpu {
+>> 	    pub(crate) fn new<'a>(
+>> 	        dev: &'a Device<Bound>,
+>> 	        bar: &'a Bar0
+>> 	        devres_bar: Arc<Devres<Bar0>>,
+>> 	    ) -> impl PinInit<Self, Error> + 'a {
+>> 	        try_pin_init(Self {
+>> 	            bar: devres_bar,
+>> 	            spec: Spec::new(bar)?,
+>> 	            gsp_falcon: Falcon::<Gsp>::new(dev, spec.chipset)?,
+>> 	            sec2_falcon: Falcon::<Sec2>::new(dev, spec.chipset)?,
+>> 	            sysmem_flush: SysmemFlush::register(dev, bar, spec.chipset)=
+?
+>> 	            gsp <- Gsp::new(gsp_falcon, sec2_falcon, sysmem_flush)?,
+>> 	        })
+>> 	    }
+>> 	}
+>
+> It does work. The bizareness of passing the `bar` twice aside,
 
-kfree() is a little shorter and works with kmem_cache_alloc'd pointers
-too. Also lets us remove one more helper.
+Yeah, but it really seems like a minor inconvinience. (Especially, since th=
+is
+will be the only occurance of this we'll ever have.)
 
-Signed-off-by: Pedro Falcato <pfalcato@suse.de>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- lib/maple_tree.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+> here is what it looks like when I got it to compile:
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index c706e2e48f884fd156e25be2b17eb5e154774db7..0439aaacf6cb1f39d0d23af2e2a5af1d27ab32be 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -177,11 +177,6 @@ static inline int mt_alloc_bulk(gfp_t gfp, size_t size, void **nodes)
- 	return kmem_cache_alloc_bulk(maple_node_cache, gfp, size, nodes);
- }
- 
--static inline void mt_free_one(struct maple_node *node)
--{
--	kmem_cache_free(maple_node_cache, node);
--}
--
- static inline void mt_free_bulk(size_t size, void __rcu **nodes)
- {
- 	kmem_cache_free_bulk(maple_node_cache, size, (void **)nodes);
-@@ -5092,7 +5087,7 @@ static void mt_free_walk(struct rcu_head *head)
- 	mt_free_bulk(node->slot_len, slots);
- 
- free_leaf:
--	mt_free_one(node);
-+	kfree(node);
- }
- 
- static inline void __rcu **mte_destroy_descend(struct maple_enode **enode,
-@@ -5176,7 +5171,7 @@ static void mt_destroy_walk(struct maple_enode *enode, struct maple_tree *mt,
- 
- free_leaf:
- 	if (free)
--		mt_free_one(node);
-+		kfree(node);
- 	else
- 		mt_clear_meta(mt, node, node->type);
- }
-@@ -5385,7 +5380,7 @@ void mas_destroy(struct ma_state *mas)
- 			mt_free_bulk(count, (void __rcu **)&node->slot[1]);
- 			total -= count;
- 		}
--		mt_free_one(ma_mnode_ptr(node));
-+		kfree(ma_mnode_ptr(node));
- 		total--;
- 	}
- 
-@@ -6373,7 +6368,7 @@ static void mas_dup_free(struct ma_state *mas)
- 	}
- 
- 	node = mte_to_node(mas->node);
--	mt_free_one(node);
-+	kfree(node);
- }
- 
- /*
+This looks great!
 
--- 
-2.51.0
+>     pub(crate) fn new<'a>(
+>         pdev: &'a pci::Device<device::Bound>,
+>         devres_bar: Arc<Devres<Bar0>>,
+>         bar: &'a Bar0,
+>     ) -> impl PinInit<Self, Error> + 'a {
+>         try_pin_init!(Self {
+>             spec: Spec::new(bar).inspect(|spec| {
+>                 dev_info!(
+>                     pdev.as_ref(),
+>                     "NVIDIA (Chipset: {}, Architecture: {:?}, Revision: {=
+})\n",
+>                     spec.chipset,
+>                     spec.chipset.arch(),
+>                     spec.revision
+>                 );
+>             })?,
 
++             _: {
++                 gfw::wait_gfw_boot_completion(bar)
++                     .inspect_err(|_| dev_err!(pdev.as_ref(), "GFW boot di=
+d not complete"))?;
++             },
+>
+>             sysmem_flush: SysmemFlush::register(pdev.as_ref(), bar, spec.=
+chipset)?,
+>
+>             gsp_falcon: Falcon::<Gsp>::new(
+>                 pdev.as_ref(),
+>                 spec.chipset,
+>                 bar,
+>                 spec.chipset > Chipset::GA100,
+>             )
+>             .inspect(|falcon| falcon.clear_swgen0_intr(bar))?,
+>
+>             sec2_falcon: Falcon::<Sec2>::new(pdev.as_ref(), spec.chipset,=
+ bar, true)?,
+>
+-             gsp: Self::start_gsp(pdev, bar, spec.chipset, gsp_falcon, sec=
+2_falcon)?,
++             gsp <- Self::start_gsp(pdev, bar, spec.chipset, gsp_falcon, s=
+ec2_falcon),
+>
+>             bar: devres_bar,
+>         })
+>     }
+>
+> The wait for GFW initialization had to be moved to `probe`, but that's
+> fine IMO.
+
+That's not necessary, you can keep it in Gpu::new() -- I don't see what's
+preventing us from that. I inserted it in the code above.
+
+> I do however find the code less readable in this form, less
+> editable as well. And LSP seems lost, so I don't get any syntax
+> highlighting in the `try_pin_init` block.
+
+Benno is working on a syntax update, so automatic formatting etc. will prop=
+erly
+work.
+
+Otherwise, I can't see how this is a downgrade. It represents the initializ=
+ation
+process in a much clearer way that the current implementation of Gsp::new()=
+,
+which is rather messy.
+
+> Fundamentally, this changes the method from a fallible method returning
+> a non-fallible initializer into a non-fallible method returning a
+> fallible initializer.
+
+Yeah, that's the best case when working with pin-init.
+
+> I'm ok with that, and maybe this new form will
+> encourage us to keep this method short, which is what we want, but other
+> than that what benefit are we getting from this change?
+
+The immediate benefit is that we don't need an extra allocation for the Gsp
+structure.
+
+The general benefit is that once we need to add more fields to
+structures that require pinning (such as locks -- and we will need a lot of
+them) we're prepared for it.
+
+If we're not prepared for it, I'm pretty sure that everytime someone needs =
+to
+add e.g. a new lock for something, it will just result in a new Pin<KBox<T>=
+>,
+because the initial pin-init hierarchy just isn't there, and creating a new
+allocation is more convinient than fixing the existing code.
+
+This is exactly what pin-init was introduced for in the kernel, such that w=
+e're
+not doing worse than equivalent C code.
+
+	struct Foo {
+	   struct Bar bar;
+	   void *data;
+	   struct mutex data_lock;
+	}
+
+	struct Bar {
+	   void *data;
+	   struct mutex data_lock;
+	}
+
+In C you can just kmalloc(sizeof(Foo), GFP_KERNEL) and subsequently initial=
+ize
+all fields.
+
+In Rust I don't want to fall back having to allocate for Bar *and* for Foo
+separately.
+
+If there are things to improve with pin-init, let's improve them, but let's=
+ not
+do worse than C code in this aspect.
 
