@@ -1,91 +1,123 @@
-Return-Path: <linux-kernel+bounces-809165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E429B50977
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:01:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C98B5097A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C2DF4E811D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:01:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9683F5605DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451C13BB48;
-	Wed, 10 Sep 2025 00:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2020F1DA23;
+	Wed, 10 Sep 2025 00:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjytF97B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OdPE2yhQ"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D9410F2;
-	Wed, 10 Sep 2025 00:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123FBEAC7
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757462455; cv=none; b=UXi51F/GevHJyFIH0CaeSzOxARlDIiGfyfbZ58yU625l+VBRGvfhQ/uSEYHrSvaTLFsRZlN6f5apwuTewB62ui9ZiY3QrlTodIh+arzI5V+JMcKWxVq/cXQgY77KdeldTr1e0qQ+Z7AQ3b+uOF/Tws+eqA3ljJ+yM2QQTG4uWqQ=
+	t=1757462506; cv=none; b=Z8b9FPdwwqxkr05+W9yVDgPOTOgahidYP2/WkTWhGpgQRlW8+R/y6ms8rxnkVGSDOqPBj6OYI8gXeirnYtDUA6fXzqi+qMcJXiO8lPQ3lYP5W5pYre7+2aj5AjM7dwX1KJfwexNr+HgPwynYaU6kOhDWJb3VLS8jHpogXtGV1lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757462455; c=relaxed/simple;
-	bh=T2dGmfcpRuIkRrBuxpENztq7/EZdH7TQujjC93PJ6QE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N/Vs4wjjj1vXfPYMMsonbDZZZ4O6DO29KgN7Ug63LGSbYd7wuaH1MFFleaftpeLEe59lc13g2wK3vXHgngItaS6NI0gOvaS+E4746tTsf+2Re4oXN6vFc3IB5lG6t6HirADDzyndPn2AOLbkZSuIfYSl+nyYyPzBKY/CQcKxKfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjytF97B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AE71C4CEF4;
-	Wed, 10 Sep 2025 00:00:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757462455;
-	bh=T2dGmfcpRuIkRrBuxpENztq7/EZdH7TQujjC93PJ6QE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IjytF97Bm/junWGLsaJGRm7N7a1ss+vOqbNOdUeBW33UOC9nQ3UCbonEnmHXfub5R
-	 SHaIpl76ToxXITmlOiDtcGPL9J22APDEg9Jqds/XUXpsmqw6O4GZv8hSZD478rqNrL
-	 MBws5ul6dC414m9nt9tJcyKVELQssOkWTZty8gWLQTZQINQKsvD/Ya7u1uKjEPg6fh
-	 fHysyXy45HqxeK3ONvXXtvfgetI/vYsJ78XyzuBUgvV/Zi1Zpn2FrNf+I7/pJDMSgD
-	 JbJhHx84Mbnu221gqBW09oiDdn84Hw5IAWFW1ssJa2uLfyMAOKkg0PbKd/fako07pK
-	 7qmMYUjq1QKpA==
-Date: Tue, 9 Sep 2025 17:00:53 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Wei Fang <wei.fang@nxp.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Clark Wang
- <xiaoning.wang@nxp.com>, Stanislav Fomichev <sdf@fomichev.me>,
- imx@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-imx@nxp.com, Andrew Lunn <andrew@lunn.ch>, Frank Li
- <frank.li@nxp.com>
-Subject: Re: [PATCH v6 net-next 1/6] net: fec: use a member variable for
- maximum buffer size
-Message-ID: <20250909170053.6d0eb1b7@kernel.org>
-In-Reply-To: <20250908161755.608704-2-shenwei.wang@nxp.com>
-References: <20250908161755.608704-1-shenwei.wang@nxp.com>
-	<20250908161755.608704-2-shenwei.wang@nxp.com>
+	s=arc-20240116; t=1757462506; c=relaxed/simple;
+	bh=TL0O/aTwAdiFLd7yMVW0LqdDNXOH2G4wx0LoXiEpTik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iZpL+9VTwL3l7VtQ8mCDPGOUlkI+v07fcDigyvKXldhnokBqaqhlxnwA0Bhte0CbMqc34OSyvc0hXl2ljCCvX/+DkX+1DWnIXi2IH0wuwpkQucWCPYAN1DuPquu+kDXpAlB0aiMFjMJkfJtZyv+je1Df07WHEth7Zfhg2n4hoFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OdPE2yhQ; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-25221fa3c9bso990655ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 17:01:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757462504; x=1758067304; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IqcDWqfJLwLOyJ5y56FcG8QSqOyBU74DK/OOgsSQXCI=;
+        b=OdPE2yhQXDXlrbUspVRXZTLlV4kPw+bfce0c11dImHeWg3gE1QAWHCvZ3KgDx9zsjr
+         JynDmIdHpb2VDIuiIBlXdn8lqW/xMcAdvPTe2Apl0eDSRfWq9sSpG7O2No7cjUrLtusg
+         P1EzUxyjcAaXJeVIZs1yrXJvvPnN3kE84ZaEM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757462504; x=1758067304;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IqcDWqfJLwLOyJ5y56FcG8QSqOyBU74DK/OOgsSQXCI=;
+        b=KhnUlzqamePr7DbswaAdOhhjTN7xbr0wUwmQB9R1aEfTe/0MVRbnRhsuAGaE8BZ95Q
+         kJN8HEYv9TcE8NcjE8KrRKOnFf6yawrH1286BNIIdDuZ/amexekY+n10EA82D2eIJ/nP
+         fFRF/Y15u/6xHPIE+wlF11k0b9srqywP4jXLK9dde+m+4KuIz/o8a8+U6U2VWGRHh/ly
+         a9jIwVUssTzcL+ICguFQ9PswgTGZuGA7BbRbuQEhjRPyzQQ9LSrD0RGnVagvOn+TFVL0
+         d3RR9ktoDnIR9b7xANUsZJ+pGNXCJTb+bY6ZFD9VXIACQ+HQBOHgib00QX8lrb29MnAQ
+         IC1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWTrOe5XEz1OM9UXvQsbZC61k8r1U8koMm3lW+CSTBSbRyYUkG909JkjpfEwAi+3aX67ZJ7HXLqVVBt8+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg7TdxLHv7NsLFVfZ8/FCh4Z4fgvBFSS2Oxh2eH1zdR9GSel8d
+	RP6OJA14rl6OlEO3wPXuMLy2k2KGXoZPUggrOxzkIXTNsbucYvKMs2krEP+/jrzcBg==
+X-Gm-Gg: ASbGnctXCROZ7eDn/JuNC54kg1Y7A5i+vOcDlK85QOH157BGz58Q9rTNKrH20SzUWQw
+	qtYG+mUQJu+At+/B/sDPqBMDezjsWJr/ZDVEsE/kXUJXVt5mUvqbTA6Y/U7zjhBr3M65/3wsE+g
+	/S4PsdI/xcmv6ve8OYybQPxJE7w5ses1+v4XOe/+7fwoUqUrDMpr+7nXF7ksHB796YO6UGVREaQ
+	dQZyvvz7mwwlu/foYP7orvpNoMKq/wnHffSs9iTiUSgepKFrZ5Z/PRbbqilRYjCVK46tMsLisn0
+	8aNeO+rmL+82f/XgeFcKRIFnihE67a9uGc6BaBT0dS9IpVc3E4stL/QkKd+O7gAjGzHsTEYzkA5
+	RDZuaTuCw62sfQaCdwqBQivgPpGVqFzBxCflg8HNqXy+cCzNKFe20pqeLpdLFOULdYHAl74A=
+X-Google-Smtp-Source: AGHT+IEWQd9UQ3bAAMXqR5jg79X2RViVbY9wPPCVw9/Jc8wLdWf1qklDEFie7CGAphB6W0gOvDthEw==
+X-Received: by 2002:a17:902:e551:b0:24c:7bf0:6e68 with SMTP id d9443c01a7336-24cedc7aa79mr255602615ad.7.1757462504013;
+        Tue, 09 Sep 2025 17:01:44 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:e1f7:9c44:893a:3857])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-25a27422d29sm9186895ad.27.2025.09.09.17.01.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 17:01:43 -0700 (PDT)
+Date: Tue, 9 Sep 2025 17:01:41 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: Re: [PATCH] mm: vm_event_item: Explicit #include for THREAD_SIZE
+Message-ID: <aMC_5baavoll9pBM@google.com>
+References: <20250909201419.827638-1-briannorris@chromium.org>
+ <20250909165336.c9505e477461fd5e41e6cfe4@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909165336.c9505e477461fd5e41e6cfe4@linux-foundation.org>
 
-On Mon,  8 Sep 2025 11:17:50 -0500 Shenwei Wang wrote:
-> -#define	OPT_FRAME_SIZE	(PKT_MAXBUF_SIZE << 16)
-> -#else
-> -#define	OPT_FRAME_SIZE	0
-> +#define	OPT_ARCH_HAS_MAX_FL
->  #endif
+On Tue, Sep 09, 2025 at 04:53:36PM -0700, Andrew Morton wrote:
+> On Tue,  9 Sep 2025 13:13:57 -0700 Brian Norris <briannorris@chromium.org> wrote:
+> 
+> > This header uses THREAD_SIZE, which is provided by the thread_info.h
+> > header but is not included in this header. Depending on the #include
+> > ordering in other files, this can produce preprocessor errors.
+> > 
+> > ...
+> >
+> > --- a/include/linux/vm_event_item.h
+> > +++ b/include/linux/vm_event_item.h
+> > @@ -2,6 +2,8 @@
+> >  #ifndef VM_EVENT_ITEM_H_INCLUDED
+> >  #define VM_EVENT_ITEM_H_INCLUDED
+> >  
+> > +#include <linux/thread_info.h>
+> > +
+> >  #ifdef CONFIG_ZONE_DMA
+> >  #define DMA_ZONE(xx) xx##_DMA,
+> >  #else
+> 
+> Is there a known configuraion which triggers this, or was this from
+> inspection?
 
-> +#ifdef OPT_ARCH_HAS_MAX_FL
-> +	rcntl |= fep->max_buf_size << 16;
-> +#endif
+The original trigger was a non-upstream driver that includes this
+header. Since the root cause lay here, I figured I might as well patch
+it at the origin.
 
-We try to avoid ifdefs inside C functions, they make compilation
-coverage harder. Could you define OPT_ARCH_HAS_MAX_FL to 0 or 1
-depending on the platform, and then use:
-
-	if (OPT_ARCH_HAS_MAX_FL)
-		rcntl |= fep->max_buf_size << 16;
-
-The compiler will eliminate the condition if it's a constant,
-but its slightly easier to read and lets the compiler see the code
-regardless of the arch.
+Brian
 
