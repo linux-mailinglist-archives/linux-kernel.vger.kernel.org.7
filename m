@@ -1,106 +1,111 @@
-Return-Path: <linux-kernel+bounces-810155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E3BB516AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:19:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5AFB516AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70573581BE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:19:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F1A3441272
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F00B314B91;
-	Wed, 10 Sep 2025 12:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="un0m+nlr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1EA313E2E;
+	Wed, 10 Sep 2025 12:20:17 +0000 (UTC)
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E624F276051;
-	Wed, 10 Sep 2025 12:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C64B276051
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757506746; cv=none; b=pUWkv3X+qbBkypp5XAA9K+Dgh0iR74SYtLV8CtzjlS17dVibC9NquOjOig4u3d7hb6oG8ewL6tQN4/tLcM3oQW3x8ML4sQteO5irPDDp88tx1OaCP8aN259S4pmFloxO1KR4LEPbz3sL2qsyvDe3S71Q64uNS63eiCKS4M18hUI=
+	t=1757506817; cv=none; b=D+m8Vo81h0V7CmV6crqgO6bHldZAIGDDDmmPEOjMLEG5PLUiP+iHRuZWV5W0TIvSgvLGQlXEZWrSphaIrtPvPQT+jAu8MQPWuz3zlIpxzhUDuSJKriDYLex4mR+9OZsgf3W2PhCuemI9pFWzTxITYy+2LyW43KC8hdinhPCbuS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757506746; c=relaxed/simple;
-	bh=wmdfnuozal+OpHj0U2Ghsg6W++59A0UjBovthF4ZldU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=vCGsmBESkL2UavEhO/ZeSeR31o1uwMc28ZYTsLQgTBbEMbB9EE46qfoo5sR859y6wMBCmuEQYDfkYC7wy0on50hQPBLl+JmlI3RjCv0BYAsU8b653LgoAYCo5TiJXQpVSn9SU8eITnu3Uhp4p9prf4lCDQcrrT957V+Ia3W6HSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=un0m+nlr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 135EBC4CEF0;
-	Wed, 10 Sep 2025 12:19:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757506745;
-	bh=wmdfnuozal+OpHj0U2Ghsg6W++59A0UjBovthF4ZldU=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=un0m+nlr+IgJu6bPntMKBKDunPlyEd9Iowg1G6i7WcrsdSEiWih1UKG9+aLIdiTEU
-	 WueBr1b09782wHdSGr1H+MGyLH2KPIhlpbLYp1Xf0gvk5ravp9u12ZakehKlX6baiH
-	 VXGxk2JVv2OBg7gCA67VQ4VrePiOXhqt3L2vmZShh83VqNrkaFPuubgxlq4ZYvgNEP
-	 giUeukITlUHT5RoGi3pK5vqp1/s0ueCKwwKxMlQZRpYjH4+MHYsxYXFg4au5ZM7sSb
-	 yYaDqJNocGFwgf33uongCt+M/vVpTWY2kBVzEpfFkLEMICPYghPu9dMgD/lggLjXey
-	 BfSSnxl65Q0hQ==
+	s=arc-20240116; t=1757506817; c=relaxed/simple;
+	bh=Rnaz4lvvqv81VAJPYG7sxvyAagH672MXsv7FDe2/yao=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fgF6gamiArKBcSb+3N1t4fK/92gpQebrihGV+M4MAllFRokIrNX1Os/gkbM8O3VmHt8nHYb5ArHvjOSz9NknzJYUj0sKYS1UbrgN7di3OYqAjlLhD2SHxbytyN9Xb+piv7821s2CJNIrVgSCcsVkLpfhNOGsDHp2sKaZhaqReoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.213.26])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2258dbfa4;
+	Wed, 10 Sep 2025 20:20:05 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Yao Zi <ziyao@disroot.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Subject: [PATCH 1/1] phy: rockchip: naneng-combphy: use existing DT property check for rk3528
+Date: Wed, 10 Sep 2025 20:20:00 +0800
+Message-Id: <20250910122000.951100-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 10 Sep 2025 14:19:00 +0200
-Message-Id: <DCP456FHT625.1L5BVZ4LPD8VQ@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, "Fiona Behrens" <me@kloenk.dev>, "Alban
- Kurti" <kurti@invicto.ai>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] rust: pin-init: add `#[bind]` attribute to access
- previously initialized fields
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>, "Danilo Krummrich"
- <dakr@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250910100755.2361281-1-lossin@kernel.org>
- <aMFQL-Hq1KvBG5lh@google.com> <DCP1Y8N4SRRF.25V7F6PV5ODCQ@kernel.org>
- <CAH5fLgg+-oz_cP9=ke+ukp9qYZAsD=hKqvvGfkJWRcCKdrTQ-g@mail.gmail.com>
-In-Reply-To: <CAH5fLgg+-oz_cP9=ke+ukp9qYZAsD=hKqvvGfkJWRcCKdrTQ-g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9933919ce703a2kunm0b30bd90142f2c
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZQkxOVh9DTE5JT0xJSBhNQlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSFVJTVlXWRYaDxIVHRRZQVlPS0hVSktIS0pITVVKS0tVS1
+	kG
 
-On Wed Sep 10, 2025 at 12:40 PM CEST, Alice Ryhl wrote:
-> On Wed, Sep 10, 2025 at 12:36=E2=80=AFPM Benno Lossin <lossin@kernel.org>=
- wrote:
->>
->> On Wed Sep 10, 2025 at 12:17 PM CEST, Alice Ryhl wrote:
->> > On Wed, Sep 10, 2025 at 12:07:53PM +0200, Benno Lossin wrote:
->> >> Assigning a field a value in an initializer macro can be marked with =
-the
->> >> `#[bind]` attribute. Doing so creates a `let` binding with the same
->> >> name. This `let` binding has the type `Pin<&mut T>` if the field is
->> >> structurally pinned or `&mut T` otherwise (where `T` is the type of t=
-he
->> >> field).
->> >>
->> >> Signed-off-by: Benno Lossin <lossin@kernel.org>
->> >
->> > Is there a reason we can't apply this to all fields and avoid the
->> > attribute?
->>
->> Adding the attribute was due to Boqun's concern on v1 [1]. I think it
->> might be surprising too, but I'm also happy with no attribute.
->>
->> [1]: https://lore.kernel.org/all/aLshd0_C-1rh3FAg@tardis-2.local
->
-> IMO the ideal is if it works without an attribute. Perhaps trying that
-> in the kernel is a reasonable experiment to find out whether that's
-> reasonable to do for the general language feature?
+The naneng-combphy driver already has DT property checks for
+"rockchip,enable-ssc" and "rockchip,ext-refclk", use it for
+the rk3528_combphy_cfg. Also aligned the indentation of the
+rk3528_combphy_grfcfgs parameters (using tabs).
 
-@Boqun what is your opinion on this?
-
-I'm open to take v2 or v1, whatever you guys prefer.
-
+Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
 ---
-Cheers,
-Benno
+ drivers/phy/rockchip/phy-rockchip-naneng-combphy.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
+index a3ef19807b9e..ad6c8a11951b 100644
+--- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
++++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
+@@ -518,7 +518,7 @@ static int rk3528_combphy_cfg(struct rockchip_combphy_priv *priv)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (device_property_read_bool(priv->dev, "rockchip,ext-refclk")) {
++	if (priv->ext_refclk) {
+ 		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_ext, true);
+ 
+ 		if (priv->type == PHY_TYPE_PCIE && rate == REF_CLOCK_100MHz) {
+@@ -543,11 +543,9 @@ static int rk3528_combphy_cfg(struct rockchip_combphy_priv *priv)
+ 		}
+ 	}
+ 
+-	if (priv->type == PHY_TYPE_PCIE) {
+-		if (device_property_read_bool(priv->dev, "rockchip,enable-ssc"))
+-			rockchip_combphy_updatel(priv, RK3528_PHYREG40_SSC_EN,
+-						 RK3528_PHYREG40_SSC_EN, RK3528_PHYREG40);
+-	}
++	if (priv->type == PHY_TYPE_PCIE && priv->enable_ssc)
++		rockchip_combphy_updatel(priv, RK3528_PHYREG40_SSC_EN,
++					 RK3528_PHYREG40_SSC_EN, RK3528_PHYREG40);
+ 
+ 	return 0;
+ }
+@@ -571,7 +569,7 @@ static const struct rockchip_combphy_grfcfg rk3528_combphy_grfcfgs = {
+ 	.con2_for_pcie		= { 0x0008, 15, 0, 0x00, 0x101 },
+ 	.con3_for_pcie		= { 0x000c, 15, 0, 0x00, 0x0200 },
+ 	/* pipe-grf */
+-	.u3otg0_port_en         = { 0x0044, 15, 0, 0x0181, 0x1100 },
++	.u3otg0_port_en		= { 0x0044, 15, 0, 0x0181, 0x1100 },
+ };
+ 
+ static const struct rockchip_combphy_cfg rk3528_combphy_cfgs = {
+-- 
+2.25.1
+
 
