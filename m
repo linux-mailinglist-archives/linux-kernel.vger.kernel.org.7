@@ -1,133 +1,152 @@
-Return-Path: <linux-kernel+bounces-809768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 815EBB511CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:52:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD16B511D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082CE5614D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:52:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 917CB169BFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B383115A0;
-	Wed, 10 Sep 2025 08:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC093115A0;
+	Wed, 10 Sep 2025 08:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YD7L3Tev"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6vHoYKe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7CD3054CC;
-	Wed, 10 Sep 2025 08:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC95304BC6;
+	Wed, 10 Sep 2025 08:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757494328; cv=none; b=guGUIe+hsz0bQ1PYGB3nMTU4AUN2h6wd5hHT5PAKh+5ebeNoSVrELwiOBGIFDYl5vEKzId+UiC+PF0CEL3FnXOmawomlxviiL27qwzoyTby+z+Sc+WFoSPXNHLZeso6nqkZe3aynhf54R+qKGiG3tw6O2I5eenJ6qo6n1RyagDo=
+	t=1757494363; cv=none; b=qIxTWfPPrcoSW49mcYOmS5G8IkHnWGRY7ZV3774JCOparTbWLGfRoRC/eNzEY9EdOqH3JL6w9j74TtiEhz5Wu/25IXpJAazxWe81KmpzvlzFVttreJ2k0meJex373KqvbTN3xp+3EprsBwZAuw5XgkamVte8Tc0exlxLhLENJUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757494328; c=relaxed/simple;
-	bh=I5cYx/T1SXbulk3JlVlEMBZravNv1H+LLIU9yqOdm/Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NWN74Xo0poCgNNfaneNCtu+LIyYbBZRxLcCjTPMT2UxWEEThG0Ah/1mSPR6NnplELlKDLEXTIWg5TyyJ5fh4RAdT8HIJUAkaDhOX3q6olh1toLIliYu8Jt4tWt5q4IExN/AxnW13HF6ST4jcLoI42y7xZ5B9t0TeiYrnacNIvRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YD7L3Tev; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45cb6180b60so41485085e9.0;
-        Wed, 10 Sep 2025 01:52:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757494324; x=1758099124; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nL6WOeH0OK0KWvIoWuECqmad1+y9j6UCjyBUSROQsnI=;
-        b=YD7L3TevLXSTtEDu6D9747Hny7fRQTxM8/Oc8HqIvzo4CbsqhWDcnpIFsgfgbYd8u3
-         RFSokb/LIEpkBzfXxdqiF09JiQEqUelCcWe9FT3xK97uKEfld2J8+oMDx9UhxtPsZEVo
-         vEPeN69OR94QcSQQIyNq4o+HQAUG+bwi+u4x2KVPcCguqW9V4N2OwbvVmM2eTRxMr39m
-         HSMSKdo+POfRgy+zPXdvUTD+756+E+5y2j2la0jwGHwTtJQm8iCChlkNLS//Mf0OU2Mo
-         LNzPQ7zJbAMBPM3JvsJa48rPkFDw2a2GVypsFWLr3evK9ERumqzFHwg9FFCDy3fG1Prv
-         PGHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757494324; x=1758099124;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nL6WOeH0OK0KWvIoWuECqmad1+y9j6UCjyBUSROQsnI=;
-        b=kk9pylxLtIHyfBhE9g7FkdNlFBaYouSNjxgysi/KA4mz//TlA5MZsB6yvkgfvDhMZL
-         vNxrsdBB3cLH7Nrif5QE7nVCh0iegsZkwHEgHFvBLi0LOJ2MXwv9T2IlSW89WuN4+se3
-         /ISOwZPX3/MDQbduLSTILrKkcv+lGT+klNEoNfvb4kg9Gc/Z/dvHyI7uDt4d6RcvwkCe
-         R4q9HpYd7bAJUUMKdTvLIe7Ooxo5horB4g0EsD9k5iwSbW1VJyTIx8Ie5scSJbVn4k93
-         8tzkZLftDobYl0XCWdFYwqXGo/vg5QuTDQf1YESXarthkhaFl9//obGk19o7mRZcK60A
-         0YOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkYiVz4WNsadnisTPrgfIzH2OorgOnZmaq00VonPWB4dXBh5HVYCgC2ttJBxwdtnSqpGt/AqI7QWXw1+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg4YjAQNe48wDV/oAsaOSR7Dq4RYQnByoDTl6fF/gViCmN1zC3
-	Fr4EPhJDGvOlaCyWrknNJIqveIIlo2n8cBca00s3I/PyREK+4HRNxjZcuGdVPHcgZuq6HQ==
-X-Gm-Gg: ASbGncvpySmECjcCbpksxE222vxzQ9tfdVWeLvRKqa+RJnr/RWXhCmqRFyQ22Y0c4XX
-	jAlffd+qlmT08XlXhXYcAwtLd2BaEXNWiga5YPgpq6XJiHYlZFQHYembeY6c7/eXo9g1vYAWeTg
-	EgQetwemCZvG5yCt44AjDbM364Uz9EeeyAGDVNyU1LkQbnNZF4FX+3lRejZYDeJyAJ6ROEsGN/I
-	Ei8BFYPdRHCyCTRAbWInt0w5kKIS4VmzfKRbt7GOvk8pL6F/nfa9LCzlrvdIhH47olW156WXDNO
-	ZPOToeQvjJwkYMd2sNqwT4czTFJxWJJIwYXMrhOeiwrqLoU8Kh6Nat4FQK9yNLNFDKsTtiKV484
-	g4dOIdN/0vCYwCz/P3KiB5REQrhte9p0uS0KrwtIXa1rTPceZVYgWMc4epbwjen7s/u7JuRR8KP
-	Ywfv8X2Ip784TErNwmvfa5ShqEFPVXrHV6yluKcQMs
-X-Google-Smtp-Source: AGHT+IHzAfJGoQSZAfeNLR/GmGqrp+i2SdaV+vyygYNlE3JTqV7cE+8Ddr7jUxV5tok8lOPWnd258A==
-X-Received: by 2002:a05:600c:a47:b0:45b:6275:42cc with SMTP id 5b1f17b1804b1-45dddeefa72mr128892155e9.28.1757494323859;
-        Wed, 10 Sep 2025 01:52:03 -0700 (PDT)
-Received: from ip-10-0-150-200.eu-west-1.compute.internal (ec2-52-49-196-232.eu-west-1.compute.amazonaws.com. [52.49.196.232])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e752238832sm5812014f8f.31.2025.09.10.01.52.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 01:52:03 -0700 (PDT)
-From: Fred Griffoul <griffoul@gmail.com>
-To: kvm@vger.kernel.org
-Cc: Fred Griffoul <fgriffo@amazon.co.uk>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] KVM: nVMX: Mark APIC access page dirty when syncing vmcs12 pages
-Date: Wed, 10 Sep 2025 08:51:55 +0000
-Message-ID: <20250910085156.1419090-1-griffoul@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757494363; c=relaxed/simple;
+	bh=BGCsHd+sg36gGyPa8SrCibmlCLKwotYFCrxqqP26p6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QKX5oqJ1TwWrKD/kobtL8MuKDm1cufJSA9IuDUwsaTTbvo7RJ0P4+JIvVgtV9CwRRoGi4Sz4rnY/FxNu0SQIsK3sW0YEaje4Bq/x0CjPcoL0KNvRg/2Zu/KxM7OWg+O1pbPjt7Qk4B9PLQ8F3PPpT8f1r8l3yro77hg7NP63rZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6vHoYKe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10FCFC4CEF0;
+	Wed, 10 Sep 2025 08:52:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757494363;
+	bh=BGCsHd+sg36gGyPa8SrCibmlCLKwotYFCrxqqP26p6Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S6vHoYKeSk8MIXhXJzqr1LQqqFGmpmjzi/79DZqOcOtTzjbZMnm6O7dTD9celLsjL
+	 DMQJbrwzWYZiLJyrkzYd5477RMxn6wBgEEYSSuVZYq8D27hdo0m2DtvAGrnAL0VX/s
+	 wHKkS3tlj1QET/xQ00lWdTjZ67DXncQOPL1sGvqQVHwhH0ab9qpXb+vmp7ibsRXI2Y
+	 y4+7LEi/MPF8RMIvW4LgLCFkqhqV4OI07ai9LfAkDWK6SByCpFQS/BzExXkewcYlwh
+	 y0YRXJIkyv+l3bZ2PEE58unVkWp9KdM8Lt+8gp/8v0wv8dd4MhKVmy7Hhtfi72cqoW
+	 Rdirkp40HEYXA==
+Message-ID: <d084b27b-eea0-48a1-a8a6-171280bec69f@kernel.org>
+Date: Wed, 10 Sep 2025 10:52:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/20] dt-bindings: memory: factorise LPDDR props into
+ SDRAM props
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
+Cc: Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+ Julius Werner <jwerner@chromium.org>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Jonathan Corbet <corbet@lwn.net>, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+References: <20250909-b4-ddrperfm-upstream-v6-0-ce082cc801b5@gmail.com>
+ <20250909-b4-ddrperfm-upstream-v6-5-ce082cc801b5@gmail.com>
+ <20250910-flat-raptor-of-temperance-5e8c7c@kuoka>
+ <899eb863-6b6d-42f0-9e7c-e2020ee45f4d@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <899eb863-6b6d-42f0-9e7c-e2020ee45f4d@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Fred Griffoul <fgriffo@amazon.co.uk>
+On 10/09/2025 10:41, Clément Le Goffic wrote:
+> On 10/09/2025 09:54, Krzysztof Kozlowski wrote:
+>> On Tue, Sep 09, 2025 at 12:12:12PM +0200, Clément Le Goffic wrote:
+>>> From: Clément Le Goffic <clement.legoffic@foss.st.com>
+>>>
+>>> LPDDR and DDR bindings are SDRAM types and are likely to share the same
+>>> properties (at least for density, io-width and reg).
+>>> To avoid bindings duplication, factorise the properties.
+>>>
+>>> The compatible description has been updated because the MR (Mode
+>>> registers) used to get manufacturer ID and revision ID are not present
+>>> in case of DDR.
+>>> Those information should be in a SPD (Serial Presence Detect) EEPROM in
+>>> case of DIMM module or are known in case of soldered memory chips as
+>>> they are in the datasheet of the memory chips.
+>>>
+>>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>>
+>> Is this email defunct now, that you add second SoB?
+> 
+> Yes, but I still want to upstream it and was thinking to keep the 
+> "original" author even if it is me.
+> Am I wrong here ? What should I do ?
 
-For consistency with commit 7afe79f5734a ("KVM: nVMX: Mark vmcs12's APIC
-access page dirty when unmapping"), which marks the page dirty during
-unmap operations, also mark it dirty during vmcs12 page synchronization.
 
-Signed-off-by: Fred Griffoul <fgriffo@amazon.co.uk>
----
-v2: Fix commit ID to use 12 chars instead of 11 (checkpatch warning)
+It's fine, I just wanted to clarify this.
 
- arch/x86/kvm/vmx/nested.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index b8ea1969113d..02aee6dd1698 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -3916,10 +3916,10 @@ void nested_mark_vmcs12_pages_dirty(struct kvm_vcpu *vcpu)
- 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
- 	gfn_t gfn;
-
--	/*
--	 * Don't need to mark the APIC access page dirty; it is never
--	 * written to by the CPU during APIC virtualization.
--	 */
-+	if (nested_cpu_has2(vmcs12, SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES)) {
-+		gfn = vmcs12->apic_access_addr >> PAGE_SHIFT;
-+		kvm_vcpu_mark_page_dirty(vcpu, gfn);
-+	}
-
- 	if (nested_cpu_has(vmcs12, CPU_BASED_TPR_SHADOW)) {
- 		gfn = vmcs12->virtual_apic_page_addr >> PAGE_SHIFT;
---
-2.43.0
-
+Best regards,
+Krzysztof
 
