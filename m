@@ -1,145 +1,93 @@
-Return-Path: <linux-kernel+bounces-809350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C733B50C4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:26:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C196B50C54
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D838A16B41A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:26:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25509465372
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032C0261B8F;
-	Wed, 10 Sep 2025 03:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KVVabbYX"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7C131D39C;
-	Wed, 10 Sep 2025 03:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB15263892;
+	Wed, 10 Sep 2025 03:33:14 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3A125B69F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 03:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757474751; cv=none; b=k7i1jY9kxWVTGoabla/OIPJDFhaIOg3bgsuEPU4lC0e89Ttvyg44+GFTaJDUGjktxjJ33rOKhc5cwz6BL1e/ROMXFfwKDELHMLxN+BCEScNVkXX56u8CWiFbX8Gjd3whStjF4+M0m6QvxsB3gteKMWZ7n0xbadAZBqUgGC12gdw=
+	t=1757475194; cv=none; b=U7U1zBilGpzKl4ZvwMLaV2y/coz3zpPr+g+vfHK2zA9CJ5TNoQbeZfc8lT6fKqdcSZv8pY0cgiPKjEqQ7/D1AEfaBxzoiHHhMN0SUQZVuLexGK56uYCshijVyu1u2P33yegUxeswW2HWXnkTvyBbONlfawDUHsRC1GhDyTb2Y7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757474751; c=relaxed/simple;
-	bh=xY5rA+hMSVyjSus3zfT68myqKGV0onGxAgOMxyqjBOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QteAKvLXKW1gRlKBTNb/j7HFm8X24nFduweya7MeV+9+8CsFTQUUH0P63WM6mtQJ3IM91LlUdNGN3IQeFgaHJDKYnjDnGXsqBcaxnyUkcNfwuJ5DBuI+WU1nyG4T/CfmWLLlIOZrT12xWL+cGWNnXIjf/7uDNG+4EVtEGZK0fXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KVVabbYX; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=AY3GxwGfKCJrcEiXZl9PXnIPzFNTmR/piIW0AtCYuQc=; b=KVVabbYX/g9eYv64OWWc6ChYiT
-	r7xbN6sr+zwhEQxS0J2An1J3slt14Qug3u/BosEZHGxUxeyrUtjp+4gy8K8PJwr6OlEyKqMjQ0x0/
-	KsaWb/Ccp9Yoo+/wLclwB5jF4icyHVaS+zPftWOiikPORHy91YvMOYaSU899N3mJThuXj6Sd9GHJ8
-	oOgvWRPKcTeOuFgDBNwHV4Gj7FtymNUMJ6VnfP5zf/3kVHpnSGpuyaZy54w1sguxywJCHb6Pl2OvM
-	XtIhHMPSfobHMzPzQnmM0fNd3w+i7yLPznxBWAeOeAhkL/A6Cd71/fnHTwWZWxPP1vUldvBz0mdkf
-	7U7QIxnQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uwBSh-0000000BpMn-2NtJ;
-	Wed, 10 Sep 2025 03:25:35 +0000
-Message-ID: <0b61b6f3-f11a-494c-9d4e-94ca19fd1eb6@infradead.org>
-Date: Tue, 9 Sep 2025 20:25:34 -0700
+	s=arc-20240116; t=1757475194; c=relaxed/simple;
+	bh=gNqSJfbSx0ggWHnz0FnjAuFrwifiUc6ruI3bSB++ovo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Owpqj45yUK6nU6bCWFHE3yiL2F+oJJiRHqcblZ5JSANn977ztH/8c8sAiKYZ5psnFTiv0/UgmlOtoV+xCGGkxBAup7mEBSp30biQodrWSPaf75rZd5A6GetlIlVVKWcBgYCB6TKFUbpsHg2S03vF19vf5QDO1fEr24MFL9CviYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee268c0f0b3310-f43f0;
+	Wed, 10 Sep 2025 11:30:00 +0800 (CST)
+X-RM-TRANSID:2ee268c0f0b3310-f43f0
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from Z04181454368174 (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee968c0f0b41c9-7ed92;
+	Wed, 10 Sep 2025 11:30:00 +0800 (CST)
+X-RM-TRANSID:2ee968c0f0b41c9-7ed92
+From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+To: akpm@linux-foundation.org
+Cc: karolinadrobnik@gmail.com,
+	linux-kernel@vger.kernel.org,
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Subject: [PATCH] tools: Add a return value check of malloc() and calloc()
+Date: Wed, 10 Sep 2025 11:29:50 +0800
+Message-ID: <20250910032951.2897-1-zhangjiao2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/Documentation: explain LINUX_EFI_INITRD_MEDIA_GUID
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux EFI <linux-efi@vger.kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Hugo Osvaldo Barrera <hugo@whynothugo.nl>
-References: <20250910015738.14848-2-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250910015738.14848-2-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Bagas,
+From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-This mostly looks good to me. I have a couple of small comments
-below.
+Add a return value check of malloc() and calloc() in lib/slab.c
 
+Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+---
+ tools/lib/slab.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On 9/9/25 6:57 PM, Bagas Sanjaya wrote:
-> From: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
-> 
-> Since the Handover Protocol was deprecated, the recommended approach is
-> to provide an initrd using a UEFI boot service with the
-> LINUX_EFI_INITRD_MEDIA_GUID device path. Documentation for the new
-> approach has been no more than an admonition with a link to an existing
-> implementation.
-> 
-> Provide a short explanation of this functionality, to ease future
-> implementations without having to reverse engineer existing ones.
-> 
-> Signed-off-by: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
-> Link: https://lore.kernel.org/r/20250428131206.8656-2-hugo@whynothugo.nl
-> [Bagas: Don't use :ref: link to EFI stub documentation]
-> Co-developed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
->  Documentation/admin-guide/efi-stub.rst |  3 +++
->  Documentation/arch/x86/boot.rst        | 35 ++++++++++++++++++++------
->  2 files changed, 30 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/efi-stub.rst b/Documentation/admin-guide/efi-stub.rst
-> index 090f3a185e1897..2f0f040f6913a4 100644
-> --- a/Documentation/admin-guide/efi-stub.rst
-> +++ b/Documentation/admin-guide/efi-stub.rst
-> @@ -79,6 +79,9 @@ because the image we're executing is interpreted by the EFI shell,
->  which understands relative paths, whereas the rest of the command line
->  is passed to bzImage.efi.
->  
-> +.. hint::
-> +   It is also possible to provide an initrd using UEFI boot services. See
-> +   :ref:`pe-coff-entry-point` for details.
->  
->  The "dtb=" option
->  -----------------
-> diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
-> index 77e6163288db08..fadbe66517bdf2 100644
-> --- a/Documentation/arch/x86/boot.rst
-> +++ b/Documentation/arch/x86/boot.rst
-
-> +.. _pe-coff-entry-point:
-> +
-> +PE/COFF entry point
-> +===================
-> +
-> +When compiled with ``CONFIG_EFI_STUB=y``, the kernel can be executed as a
-> +regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
-> +implementation details.
-> +
-> +The stub loader can request the initrd via a UEFI protocol. For this to work,
-> +the firmware or bootloader needs to register a handle which implements the
-> +``EFI_LOAD_FILE2`` protocol with the ``LINUX_EFI_INITRD_MEDIA_GUID`` device
-> +path. In this case, a kernel booting via the EFI stub will use the ``LoadFile``
-> +function on the registered handle to obtain a reference to the initrd.
-
-drivers/firmware/efi/libstub/efi-stub-helper.c (line 509) says LoadFile2
-protocol. Is that the same as the LoadFile function?
-
-https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
-(the link below) also says LoadFile2() 4 times (and LoadFile 0 times).
-
-thanks.
+diff --git a/tools/lib/slab.c b/tools/lib/slab.c
+index 981a21404f32..07c98926c0e4 100644
+--- a/tools/lib/slab.c
++++ b/tools/lib/slab.c
+@@ -19,6 +19,8 @@ void *kmalloc(size_t size, gfp_t gfp)
+ 		return NULL;
+ 
+ 	ret = malloc(size);
++	if (!ret)
++		return NULL;
+ 	uatomic_inc(&kmalloc_nr_allocated);
+ 	if (kmalloc_verbose)
+ 		printf("Allocating %p from malloc\n", ret);
+@@ -45,6 +47,8 @@ void *kmalloc_array(size_t n, size_t size, gfp_t gfp)
+ 		return NULL;
+ 
+ 	ret = calloc(n, size);
++	if (!ret)
++		return NULL;
+ 	uatomic_inc(&kmalloc_nr_allocated);
+ 	if (kmalloc_verbose)
+ 		printf("Allocating %p from calloc\n", ret);
 -- 
-~Randy
+2.33.0
+
+
 
 
