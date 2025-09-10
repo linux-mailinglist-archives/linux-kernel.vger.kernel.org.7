@@ -1,120 +1,82 @@
-Return-Path: <linux-kernel+bounces-809781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB830B511F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:01:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03125B511FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B630A3B58A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:00:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EBA6563748
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB583126DA;
-	Wed, 10 Sep 2025 09:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A6A312838;
+	Wed, 10 Sep 2025 09:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="itj2Rtyc"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="p7iHPOHb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECAF3126A9;
-	Wed, 10 Sep 2025 09:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BD6302CB4;
+	Wed, 10 Sep 2025 09:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757494846; cv=none; b=kEY+J6ZEifxq/62Br+FoWGPRik7xhr+p9IbjK4GoFRdNgdePSliq2pXETvk53WuPwRJtnYrUcdnwLQNfhJpMIFTStKFTja1ArxAt7V9mNfRitZuSsXLx1c9SgCgxR+qPGYSN/dBXfmZNtZlJ/fP4gRB6btr5b/Ont0mzSGp06b0=
+	t=1757494847; cv=none; b=IMTj1ZyxUjeCGzvLJVE6PCd6mJ+AhCvhtGcLIiPlgZlJ1imBWpo1UHkMm7hGmr5WQPV9kTDHhUuJwxLbZXKRzrONRdmevZSHI3ASE/Om1MLDcR9rOt5JcnIJD/vdnN8qoWlepeixAN+BAMg4Lmv14h7r3fcRwua5jr1NnsswNQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757494846; c=relaxed/simple;
-	bh=1NeGNR8ppiTRmS1Pkwf5TXsnABtuDP09G4iG8YpA3tY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OyVs2ZGdrMoeuZ2IdXifa7HD3nOtQ+Tj/6f1+qk8ovCsiZ50S775ohCamAMS7mezWB+IpCPAeVJ28Oom0zWwpb2bJybphxytsOivJGctUBncUrKC4Oyt1L6XVBWJYRK9Fftd0XMKqNoPEN7h6fIXcwjNAuCEHU5Sn3GLn1WkmS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=itj2Rtyc; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 38780C6B3AC;
-	Wed, 10 Sep 2025 09:00:26 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id CBB2D606D4;
-	Wed, 10 Sep 2025 09:00:41 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4F648102F27B4;
-	Wed, 10 Sep 2025 11:00:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757494841; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=m8aDYS4mb5TWDdaf7wgtI6EN6s0r67hielYnU+r+pKM=;
-	b=itj2RtycbgPXsbK3nwmGIwNwvUvT9lbFpDATR7OBuQWgiiXbA+3u4jMP10p+eeJd14/iwb
-	R5kPAZCHPX3lnWcVUZYoUvosqs1vmbHDn8qNJIoZIEs69ZQcrVCbhvJieSaJ4xPKdID5x9
-	T2l7AOKWw7SagqA8aTk7YSF5k7Bg1w5WT5lXF04uC/hohNXNdbSXD+gJULVXTcoYl6aBPd
-	HnTALLS0Gg9anIm96Q0A+tZx+mb0ohMJEKFMDFzMItlUWzm8ws0i5UKM4ujk2eUGENvXD8
-	XUChcJ9eX5tYkSDgvbIjlm/8Lw0ZfCmUgmolmqTHgEXsEFlYIUFIbueblCZ+ew==
-Date: Wed, 10 Sep 2025 11:00:21 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>, Sebastian Reichel
- <sre@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski
- <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>, Sebastian Reichel
- <sebastian.reichel@collabora.com>, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 9/9] power: supply: max77976_charger: fix constant
- current reporting
-Message-ID: <20250910110021.7ad15002@booty>
-In-Reply-To: <20250909-max77705_77976_charger_improvement-v2-9-a8d2fba47159@gmail.com>
-References: <20250909-max77705_77976_charger_improvement-v2-0-a8d2fba47159@gmail.com>
-	<20250909-max77705_77976_charger_improvement-v2-9-a8d2fba47159@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757494847; c=relaxed/simple;
+	bh=4Xd4T9plZGNuzmetOyet7pXzc6rXYThTyeIFjtxyluw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aIx1a/VrUeY9N8y1NbXT1GXPI4OcS1wPq7LbLUwTOT2pdDHPlSdbw3Shy0p7eAArQY/zmt/3lssryoMN2le1FGBfNk6QauWXSsmr3wi/Xwrb0nCTfvYsyujbAaZN7sKWKst+7Tu0b41/e/gKfy/fEMUh09EmvVMCQBof0IW96Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=p7iHPOHb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DC3BC4AF0C;
+	Wed, 10 Sep 2025 09:00:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757494846;
+	bh=4Xd4T9plZGNuzmetOyet7pXzc6rXYThTyeIFjtxyluw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p7iHPOHbiKvNeVcrHURbrVeEG4lKrvJQ0BSkPjR/thoFGaMIknDuO4RlX5uIhaSQr
+	 y7ZS9lbQ1+O68pa0QTIY5uY2H2XszCwjmKErRWUgiQta5JRWDNSFCTsWOdlIWZm+/h
+	 fbQPu114XW8oqZ/bJKZE2WTGVpIJMADsyBRi3DWQ=
+Date: Wed, 10 Sep 2025 11:00:43 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com, dakr@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rafael@kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] USB: core: remove the move buf action
+Message-ID: <2025091007-stricken-relock-ef72@gregkh>
+References: <68c118e8.a70a0220.3543fc.000e.GAE@google.com>
+ <tencent_B32D6D8C9450EBFEEE5ACC2C7B0E6C402D0A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_B32D6D8C9450EBFEEE5ACC2C7B0E6C402D0A@qq.com>
 
-Hello Dzmitry, Sebastian,
-
-On Tue, 09 Sep 2025 21:29:19 +0300
-Dzmitry Sankouski <dsankouski@gmail.com> wrote:
-
-> CHARGE_CONTROL_LIMIT is a wrong property to report charge current limit,
-> because `CHARGE_*` attributes represents capacity, not current. The
-> correct attribute to report and set charge current limit is
-> CONSTANT_CHARGE_CURRENT.
+On Wed, Sep 10, 2025 at 03:58:47PM +0800, Edward Adam Davis wrote:
+> The buffer size of sysfs is fixed at PAGE_SIZE, and the page offset
+> of the buf parameter of sysfs_emit_at() must be 0, there is no need
+> to manually manage the buf pointer offset.
 > 
-> Rename CHARGE_CONTROL_LIMIT to CONSTANT_CHARGE_CURRENT.
-> 
-> Fixes: 715ecbc10d6a ("power: supply: max77976: add Maxim MAX77976 charger driver")
-> 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> Fixes: 711d41ab4a0e ("usb: core: Use sysfs_emit_at() when showing dynamic IDs")
+> Reported-by: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=b6445765657b5855e869
+> Tested-by: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 > ---
->  drivers/power/supply/max77976_charger.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/power/supply/max77976_charger.c b/drivers/power/supply/max77976_charger.c
-> index e6fe68cebc32..3d6ff4005533 100644
-> --- a/drivers/power/supply/max77976_charger.c
-> +++ b/drivers/power/supply/max77976_charger.c
-> @@ -292,10 +292,10 @@ static int max77976_get_property(struct power_supply *psy,
->  	case POWER_SUPPLY_PROP_ONLINE:
->  		err = max77976_get_online(chg, &val->intval);
->  		break;
-> -	case POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT_MAX:
-> +	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX:
+>  drivers/usb/core/driver.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Indeed CHARGE_CONTROL_LIMIT looks like a mistake.
+While this fix looks correct, your cc: list is very odd as this is a
+linux-usb bug, not a driver core issue, right?
 
-Sebastian, my concern now is whether this change would be considered a
-userspace ABI breakage.
+At the least, cc: the person who wrote the offending change?
 
-Other than that, LGTM.
+thanks,
 
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+greg k-h
 
