@@ -1,159 +1,137 @@
-Return-Path: <linux-kernel+bounces-809726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E16B51137
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:28:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2FEB5113B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABA3E1C803AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56519161065
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BD930F7FB;
-	Wed, 10 Sep 2025 08:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C73F30F812;
+	Wed, 10 Sep 2025 08:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGs4blp2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XxXVQbjd"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6716A30CDA1;
-	Wed, 10 Sep 2025 08:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D035C275AFB;
+	Wed, 10 Sep 2025 08:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757492887; cv=none; b=EAr6xHlo3F7L/ThlneXv4hC8763BafK//MjjG/DkDZWtTYCKE/sEIKB0VoIbuE5yyNc+qYfzzqCONXESBa2xDRd827SPKeF5CM8+QypWF83S8LG2gr8jjrM53TydnhLBazWyrYjkEyZ2ydyg65eZS5odTvYnWMoh547Yta4Nl9g=
+	t=1757492933; cv=none; b=Q3sKCuJXtlr9SbYWMIM0526sCveFwQDJ3q2QbM3MTkyaiUNFZ3WYOWbCxyM9wfBOcvFxZBGAQ6mVt6PKOvvrOKXNH123PnA0/f2xb/71OyWQy16uwUTsWG+zj3BEdDZhAYdu+cIBPqp5rSzFVa88722GE/ngJcGc4moDol7iT/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757492887; c=relaxed/simple;
-	bh=E35FXdvXarB6Ep6s0kvPworSUWLLMvPxnL261c+f2cA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BN7Lc4Yub6KzFAEfBmU//mCj+RWqFJ0rmjdtkjSFEktESMzx95cgPTHY+02t1gsrYa21efRLwj3niWrFu9B/D/BFpI6LTaVeiaB5Wrsw7Dlw62GONkxc/UHcOaHPas85PB2ODh43ItKQtp91RGcukBuAHKE8cmWDMZxXMs+0NTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGs4blp2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D065AC4CEF0;
-	Wed, 10 Sep 2025 08:28:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757492886;
-	bh=E35FXdvXarB6Ep6s0kvPworSUWLLMvPxnL261c+f2cA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VGs4blp2aBu69qQ0rtyjPL/vT8Af9zts4zjLQV7i3YqVnQ4HK6l18E5B6VJafI9gn
-	 ysomlTdVJg4P6FE2ylhzShmNXQWrKSkeiJlNrNICfY3EEz+s0bOulYMFchvTf9TfEa
-	 VvLAj0O/CRbL/F0xV8TJhUWJlZUpGDRPo7tDHFlIb/PKsIQ/RfGbNJPGRv1mEa2XVR
-	 OO9CEUWtrBahWwR1xJPfHy3SsZhgYWaMvL2HgJQYa2BNgUnZkHzIgNV9Y2rvxR70Wv
-	 eOKA1E7GQ6rWx7fJ39oszlkGDeSZl0PdQyqWVkDbx1eNgWWr2MFGoIh6lFlkv9HtDp
-	 Bahw/p0ZO4M/Q==
-Received: from [185.219.108.64] (helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1uwGBQ-00000004xbP-0d9l;
-	Wed, 10 Sep 2025 08:28:04 +0000
-Date: Wed, 10 Sep 2025 09:28:03 +0100
-Message-ID: <86ecsed84s.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org
-Cc: 	Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sven Peter <sven@kernel.org>,
-	Janne Grunau <j@jannau.net>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	James Clark <james.clark@linaro.org>
-Subject: Re: [PATCH 15/25] genirq: Allow per-cpu interrupt sharing for non-overlapping affinities
-In-Reply-To: <20250908163127.2462948-16-maz@kernel.org>
-References: <20250908163127.2462948-1-maz@kernel.org>
-	<20250908163127.2462948-16-maz@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1757492933; c=relaxed/simple;
+	bh=q/1ZE3PXAs88kpq1OOMpxNmoZPuIeIOeXhOw8k6yfmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YOaz1wQm0K9FmZ7PbdF3NB4ZbWhePtNxN/sj0nTctCSy8XMT5Vc7vzfx5LUYgkeyLASL/JBc+zH5GshhVqDFVg0MTjNsLc33NUj4nO8Y8SgU6JNG7NiWxK2S8gxkLmMVTTulStArRqZZmtFZBQX+ZEpKksCHjm6dTENgNPGPin0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XxXVQbjd; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-33c9ca16a64so32036591fa.3;
+        Wed, 10 Sep 2025 01:28:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757492929; x=1758097729; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Il1eL+RQOm+itMiKRM51rKcZfVj/Pae94v1C9COD6Mc=;
+        b=XxXVQbjd7XK3SelKROjbbJFTXtRobGVFPtkN2mpJqnDDE7qXGXbY4vBnw5f8SiX+Sc
+         cidUKFraXCBJWkYlWuyzByW5bXnpPPR3O9GZieyLvxhIbzXNKGtBYWIwzNT+5JfsbEll
+         DiT6y/G442ijX2FoeBfss0oq0LOpCerX9r6GBdkYnOUvdIP8lasC1b+Itn/XC8XtKO/G
+         ZFO5eggR1BTS8gZT362uyMiOJVmCvLrhNB0B+UDbZ65rOWrfTxdFbSd4yGfHHoDu2pkC
+         QP4srT8Y8/cWojtaKW/BHqFhyt1dGAWyooHmZJhqgcc6NxC0swmSFQSG/gLZzCiT9IMi
+         nrKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757492929; x=1758097729;
+        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Il1eL+RQOm+itMiKRM51rKcZfVj/Pae94v1C9COD6Mc=;
+        b=cZDTSvBuNApdTMOLTnEwym2ic4c2lWTo8ukljkkc9rklWQM++Pju0jOQ4RoMXpmh5U
+         n9u4ZOeXxGflHSbXKuZblt7aBkhKWHW26IUUVYtTA/6R4Ydp6Td5fCeAl7RFNbv3IQoi
+         aUiHlIArTZt/odKoRvuElxhtlEiIh+q8v7BPgx1vXo0HnRXe+NHZy+pMYlLhpRhbSEm+
+         rN2/a8w9IwdbK9BTrvEJFoPachZvhcdINQsJvbj5eWH7xB9NnNQs1O/q6fsdX1CfB/QS
+         hF+5oLSfMDm44LpQ60pZL9yANYI5R8ltlEGjiWYY/uyUIjqFYAEP08MhhIHhncCa8i5W
+         0fJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8drDUMJ9oG9pxbzTWn5Rx2Z+7S7uJBcSTR4aR8gRoxi3TklzWzi1VLLJ5iCgov+liCW5J3a9EJOz4@vger.kernel.org, AJvYcCXlbAu8nNLyJzqUTcaQy9Rp0HwJwlh/bAhzBqwm660f8tFhlwp0v+iAaL7SW9YpsghfZHhohDSxTPpx34o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2/Z7tO2sP9JOs8fb7xEQBVdGTBYRsJur6iHec6oZwmXB94Xmc
+	VPELxugI/PRWWeKZEDFu4SQmumwC6SRsQ69D7ac5GL3TE3elc8ILU9eN
+X-Gm-Gg: ASbGnctyeMxCNW5e3oXSos8lSFIWOx8K7iVwDCF5EMG3/Y1+6BMQyaX9ZILljxJxwmh
+	WzsRIby4uwnsQqdAE/F8daDF6SST5DOwDSGDSAS2WR7MGdKp1o5T8eEZFflRgM5Y2aIc9JEMbmg
+	Q+OyVcFz3jfbJJYAJv6RqZtlSMDUG3wMHxtrPW3TcEdlndTMzhi5gIh2t8foNKAF9yY9r1UbOZ9
+	I6lUPRCV5J08jCXYSidqBIoqQ1EZ+tEaI1UqiyHLY/k/A7diKcx0mPP40rNpV6yRepX7GXyySy9
+	GlViV1vW7yQ8R792aRZKiDrfRmvux8rufOdDyZshKEPfKvcVQ3iJMnOPFTAtTOlONa4DfzMuHJp
+	ABoJHSsI8Q71vKyTqvhihpFVq4vh6hMgdKJ0=
+X-Google-Smtp-Source: AGHT+IFfhNdaWAKQKHo6mTTPYGZiDqlB419AfQvtStJlwa8BybO4/MFstjUvPibjDFoxTMM/k/3GWQ==
+X-Received: by 2002:a05:651c:1504:b0:336:c9be:c164 with SMTP id 38308e7fff4ca-33b603f5101mr38187041fa.45.1757492928514;
+        Wed, 10 Sep 2025 01:28:48 -0700 (PDT)
+Received: from foxbook (bfg216.neoplus.adsl.tpnet.pl. [83.28.44.216])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f5075c85sm40890321fa.50.2025.09.10.01.28.47
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Wed, 10 Sep 2025 01:28:48 -0700 (PDT)
+Date: Wed, 10 Sep 2025 10:28:43 +0200
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@linux.intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Cc: Niklas Neronin <niklas.neronin@linux.intel.com>,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: xhci: Check for events pointing above DMA space
+Message-ID: <20250910102843.61e4a277.michal.pecio@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, mark.rutland@arm.com, will@kernel.org, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7bit
 
-On Mon, 08 Sep 2025 17:31:17 +0100,
-Marc Zyngier <maz@kernel.org> wrote:
-> 
-> Interrupt sharing for percpu-devid interrupts is forbidden, and
-> for good reasons. These are interrupts generated *from* a CPU and
-> handled by itself (timer, for example). Nobody in their right mind
-> would put two devices on the same pin (and if they have, they get to
-> keep the pieces...).
-> 
-> But this also prevents more benign cases, where devices are connected
-> to groups of CPUs, and for which the affinities are not overlapping.
-> Effectively, the only thing they share is the interrupt number, and
-> nothing else.
-> 
-> Let's tweak the definition of IRQF_SHARED applied to percpu_devid
-> interrupts to allow this particular case. This results in extra
-> validation at the point of the interrupt being setup and freed,
-> as well as a tiny bit of extra complexity for interrupts at handling
-> time (to pick the correct irqaction).
-> 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> ---
->  kernel/irq/chip.c   |  8 ++++--
->  kernel/irq/manage.c | 67 +++++++++++++++++++++++++++++++++++++--------
->  2 files changed, 61 insertions(+), 14 deletions(-)
-> 
-> diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-> index 0d0276378c707..af90dd440d5ee 100644
-> --- a/kernel/irq/chip.c
-> +++ b/kernel/irq/chip.c
-> @@ -897,8 +897,9 @@ void handle_percpu_irq(struct irq_desc *desc)
->  void handle_percpu_devid_irq(struct irq_desc *desc)
->  {
->  	struct irq_chip *chip = irq_desc_get_chip(desc);
-> -	struct irqaction *action = desc->action;
->  	unsigned int irq = irq_desc_get_irq(desc);
-> +	unsigned int cpu = smp_processor_id();
-> +	struct irqaction *action;
->  	irqreturn_t res;
->  
->  	/*
-> @@ -910,12 +911,15 @@ void handle_percpu_devid_irq(struct irq_desc *desc)
->  	if (chip->irq_ack)
->  		chip->irq_ack(&desc->irq_data);
->  
-> +	for (action = desc->action; action; action = action->next)
-> +		if (cpumask_test_cpu(cpu, action->affinity))
-> +			break;
-> +
->  	if (likely(action)) {
->  		trace_irq_handler_entry(irq, action);
->  		res = action->handler(irq, raw_cpu_ptr(action->percpu_dev_id));
->  		trace_irq_handler_exit(irq, action, res);
->  	} else {
-> -		unsigned int cpu = smp_processor_id();
->  		bool enabled = cpumask_test_cpu(cpu, desc->percpu_enabled);
->  
->  		if (enabled)
+On systems with 32 bit DMA, we could get events pointing above 4G due
+bad link TRBs, contexts or commands, or simply HW malfunction.
 
-As Will points out off the list, the above lacks the a similar
-handling for percpu_devid NMIs, leading to NMIs that are only handled
-on the first affinity group.
+Catch this when truncating to dma_addr_t, log the anomaly, bail out.
+An alternative is to handle untrusted HW-originated DMAs as u64, but
+it adds overhead on 32 bit machines for no clear benefit.
 
-It's easy enough to move the above to common code and share it with
-handle_percpu_devid_fasteoi_nmi(), but at this point there is hardly
-any difference with handle_percpu_devid_irq().
+In 64 bit DMA builds this check should optimize to nothing and all
+errors are handled as usual "event TRB doesn't match pending TRB".
 
-Any objection to simply killing the NMI version?
+Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+---
+ drivers/usb/host/xhci-ring.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Thanks,
-
-	M.
-
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index a879c569c2f2..a2100e0a5d0a 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -1809,6 +1809,12 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
+ 	cmd_dma = le64_to_cpu(event->cmd_trb);
+ 	cmd_trb = xhci->cmd_ring->dequeue;
+ 
++	if (sizeof(cmd_dma) < sizeof(u64) && cmd_dma < le64_to_cpu(event->cmd_trb)) {
++		xhci_err(xhci, "slot %d command completion points above DMA space (%#llx)\n",
++				slot_id, le64_to_cpu(event->cmd_trb));
++		return;
++	}
++
+ 	trace_xhci_handle_command(xhci->cmd_ring, &cmd_trb->generic, cmd_dma);
+ 
+ 	cmd_comp_code = GET_COMP_CODE(le32_to_cpu(event->status));
+@@ -2673,6 +2679,12 @@ static int handle_tx_event(struct xhci_hcd *xhci,
+ 	trb_comp_code = GET_COMP_CODE(le32_to_cpu(event->transfer_len));
+ 	ep_trb_dma = le64_to_cpu(event->buffer);
+ 
++	if (sizeof(ep_trb_dma) < sizeof(u64) && ep_trb_dma < le64_to_cpu(event->buffer)) {
++		xhci_err(xhci, "slot %d ep %d transfer event points above DMA space\n",
++				slot_id, ep_index);
++		goto err_out;
++	}
++
+ 	ep = xhci_get_virt_ep(xhci, slot_id, ep_index);
+ 	if (!ep) {
+ 		xhci_err(xhci, "ERROR Invalid Transfer event\n");
 -- 
-Without deviation from the norm, progress is not possible.
+2.48.1
 
