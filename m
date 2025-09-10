@@ -1,136 +1,150 @@
-Return-Path: <linux-kernel+bounces-809876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CEEAB51315
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:47:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE7DB5130D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33D621C82AA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:47:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2714B4E4E63
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C09F317707;
-	Wed, 10 Sep 2025 09:45:25 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D29318143;
+	Wed, 10 Sep 2025 09:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEurMkih"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1D63191BF
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691CA317707;
+	Wed, 10 Sep 2025 09:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497525; cv=none; b=ouDbMKP0tV4/wWzb/I4BYrzPUTgEDMyPJsRGWaN25EltlF4pjmePc/Dg0IA0lBykK+cEX4qiInuzxIy0o7vfAYpXyAwxL5xY0vJHVuNMWZa2LNi9LxNTpHQHB2uUgIxy7H9SWsJKAtGUzTdxXnIzp81DKIMX1pU9Lbw7sfaRSDE=
+	t=1757497521; cv=none; b=Wk3DOdbCcs+gJxLxWjHDyVwmBYgoGiW3RokFxYw+zcGvp2DM94j6K0w8LNdtVwlZaWuzfRWFIEwlO0uBxe3cvm3JBG7eSGaGRzYLtvel+vt0fcqdc8S49Xqc6ZqN7MuE+7/8QHlfEIPxbpMFjIviSeObo8/dSA01AJbmXjCj8/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497525; c=relaxed/simple;
-	bh=3zQu35m1C6YPImywyjnt2q1c7Rr8khcAX2jfPUML1h0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFRYfLDiGz/j4s73KSD2sEejesMbcPSwYk0EdTlSvZPGj6r+MafH3GSAuEUtt8Jt7TE7GKcmAm97DZh48FfR8fAwo2SSoJrBFYHURmEzf19mcPpDyxwhqPNZXIjyl84jClKyEz31PIquX+OzGE29OZKQf6WDg+fWuZLqDCcrx0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uwHO6-0000Ts-30; Wed, 10 Sep 2025 11:45:14 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uwHO5-000ZMU-2h;
-	Wed, 10 Sep 2025 11:45:13 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uwHO5-00GDN2-2E;
-	Wed, 10 Sep 2025 11:45:13 +0200
-Date: Wed, 10 Sep 2025 11:45:13 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/11] dmaengine: imx-sdma: fix missing
- of_dma_controller_free()
-Message-ID: <20250910094513.eawc5n6zbddtg5c5@pengutronix.de>
-References: <20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de>
- <20250903-v6-16-topic-sdma-v1-8-ac7bab629e8b@pengutronix.de>
- <aLhZ2zfh5bnNoH8X@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1757497521; c=relaxed/simple;
+	bh=K+4k5KDchq+kd7GGd1r9dnpNzsZ6Y5j7WjYZyZJsAZw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=boPs4lrLQR16pJatrj1MsaQ4HTHP8Qk20gi6HbGalezr07wcQJME9jv3A0RuvD/q5OpASOgPkKFAQeeBUvJRSCfdkdcoeHUQ8LsicS640SwGlhR++O73JLDDqTwIL7UicmMdkYbCfTM9VEAP517UUoItxu886T4y9XwTUvmvk44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEurMkih; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB2B6C4CEFB;
+	Wed, 10 Sep 2025 09:45:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757497520;
+	bh=K+4k5KDchq+kd7GGd1r9dnpNzsZ6Y5j7WjYZyZJsAZw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UEurMkihwHyIo3de5Ku6Ho8a2DHEf2WX8MifMXFKsOccm5S93RGzG+sTzcsn3HgLa
+	 psIqroDAHmq3RAe9q6fpnHTzGdkaxrQf4GSQqQuj0N9taCraBe3XT/nS3GeaFlvjbw
+	 prSqJ/SOs7UJxp8zBdncc2gHXKt09RBMPOl/IMPDFnelFdtDwHhbfY2KHqE79JzVBp
+	 nq6Qv/sgOA3t6Tq90R4ZbVdSfZHaI04LqYrOi5phBKPWMe5HQ23mtwr5AU7Tu7VODs
+	 AQ5Iw0M3fZPGW+k8QirqEWPqsz9U0v1KYgQsBn7uDcHPph9DThi7H3ErBjoDxbU70c
+	 Fl5HYvlYPciCw==
+Message-ID: <3a884a4e-4e2a-47ce-b128-ae987bb6d3dd@kernel.org>
+Date: Wed, 10 Sep 2025 11:45:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLhZ2zfh5bnNoH8X@lizhi-Precision-Tower-5810>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: dts: qcom: monaco-evk: Use correct sound card
+ compatible to match SoC
+To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ kernel@oss.qualcomm.com, prasad.kumpatla@oss.qualcomm.com,
+ ajay.nandam@oss.qualcomm.com
+References: <20250910044512.1369640-1-mohammad.rafi.shaik@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250910044512.1369640-1-mohammad.rafi.shaik@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 25-09-03, Frank Li wrote:
-> On Wed, Sep 03, 2025 at 03:06:16PM +0200, Marco Felsch wrote:
-> > Add the missing of_dma_controller_free() to free the resources allocated
-> > via of_dma_controller_register(). The missing free was introduced long
-> > time ago  by commit 23e118113782 ("dma: imx-sdma: use
-> > module_platform_driver for SDMA driver") while adding a proper .remove()
-> > implementation.
-> >
-> > Fixes: 23e118113782 ("dma: imx-sdma: use module_platform_driver for SDMA driver")
+On 10/09/2025 06:45, Mohammad Rafi Shaik wrote:
+> The Monaco-EVK board is based on Qualcomm's QCS8300 SoC. The DTS
+> previously reused the sound card compatible as "qcom,qcs8275-sndcard",
+> which is based on existing coverage. To maintain clarity and consistency,
+> the naming conventions for the compatible should reflect actual SoC
+> rather than the board. Therefore, update the sound card compatible as
+> "qcom,qcs8300-sndcard" to avoid potential confusion.
 > 
-> Look it is hard to back port to old kernel.  Can move it to before cleanup?
-
-I know that fixing commits should come first but this commit dates back
-to v3.18-rc1, therefore I thought that backporting this commit would
-cause more troubles than it's worth it.
-
-Anyway, after checking the current LTS and stable kernels I think that
-the commit could be backported without troubles because the APIs used
-do exist on all these kernels.
-
-Regards,
-  Marco
-
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > ---
-> >  drivers/dma/imx-sdma.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> > index e30dd46cf6522ee2aa4d3aca9868a01afbd29615..6c6d38b202dd2deffc36b1bd27bc7c60de3d7403 100644
-> > --- a/drivers/dma/imx-sdma.c
-> > +++ b/drivers/dma/imx-sdma.c
-> > @@ -2232,6 +2232,13 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
-> >  				     ofdma->of_node);
-> >  }
-> >
-> > +static void sdma_dma_of_dma_controller_unregister_action(void *data)
-> > +{
-> > +	struct sdma_engine *sdma = data;
-> > +
-> > +	of_dma_controller_free(sdma->dev->of_node);
-> > +}
-> > +
-> >  static void sdma_dma_device_unregister_action(void *data)
-> >  {
-> >  	struct sdma_engine *sdma = data;
-> > @@ -2370,6 +2377,8 @@ static int sdma_probe(struct platform_device *pdev)
-> >  	if (ret)
-> >  		return dev_err_probe(dev, ret, "failed to register controller\n");
-> >
-> > +	devm_add_action_or_reset(dev, sdma_dma_of_dma_controller_unregister_action, sdma);
-> > +
-> >  	spba_bus = of_find_compatible_node(NULL, NULL, "fsl,spba-bus");
-> >  	ret = of_address_to_resource(spba_bus, 0, &spba_res);
-> >  	if (!ret) {
-> >
-> > --
-> > 2.47.2
-> >
+> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+> ---
+> This patch series depends on patch series:
+> https://lore.kernel.org/linux-sound/20250905142647.2566951-1-mohammad.rafi.shaik@oss.qualcomm.com/
+> ---
+>  arch/arm64/boot/dts/qcom/monaco-evk.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/arch/arm64/boot/dts/qcom/monaco-evk.dts b/arch/arm64/boot/dts/qcom/monaco-evk.dts
+> index f3c5d363921e..7187c1760ef5 100644
+> --- a/arch/arm64/boot/dts/qcom/monaco-evk.dts
+> +++ b/arch/arm64/boot/dts/qcom/monaco-evk.dts
+> @@ -38,7 +38,7 @@ max98357a: audio-codec-1 {
+>  	};
+>  
+>  	sound {
+> -		compatible = "qcom,qcs8275-sndcard";
+> +		compatible = "qcom,qcs8300-sndcard";
+
+The other patch claims that changing binding would be ABI break, so
+obviously here is actual impact on users.
+
+Also, the other patch explains that it is the same hardware, so we are
+back at previous discussions (sc8380xp, sa8775p etc): we do not rename
+compatibles just because your prefer something else now.
+
+That's a NAK.
+
+Best regards,
+Krzysztof
 
