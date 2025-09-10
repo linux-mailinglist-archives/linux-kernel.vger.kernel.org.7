@@ -1,166 +1,161 @@
-Return-Path: <linux-kernel+bounces-811124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3B2B524B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:29:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7142B524B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E4851B2615B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:30:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A819B7B65BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F622D662F;
-	Wed, 10 Sep 2025 23:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBA0309DC1;
+	Wed, 10 Sep 2025 23:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UuWj9VRP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCvxi0ew"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75B226F280
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3D7282F5;
+	Wed, 10 Sep 2025 23:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757546979; cv=none; b=cI1cInM775nlH29gkH5XIB7pFPR8s1MuPSRpSo9VO67PbqWZyLO9Qvgvqeg/xvA0SCDnhG++FB2/Dcsjyg5M6LTzxW9YzSUVQPwwaNZwP79h4lRHOsc1i2HlfHttQ1AXsrM1dqu1RXFK7nQmvfjFdfqLOV3Ortu+PoacvMrh4KE=
+	t=1757547297; cv=none; b=jSaBsRCHUjErcQiRU+5ysc/UzsYloLfRE2V7N5L1DtkJXOA6y9/XB4b1yjTbs6Hwj/mVC3YCqmfOyjKYQgOEs7HaQhM/ETjTO/Qn27zI5bT7+qYXTsz9CRcQKZ972WtTzAlk5yRc7nRv5W6S7DvsRkrF9zpA1IlraXBWNP8Bfvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757546979; c=relaxed/simple;
-	bh=giqX8D1e03WEb190csFinToB6mmpK+SueWukzwTLrtw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I9YRf5CX9ByevW99fgbi4T2tQJQUTkEzaUV0cYJVo47t8dxwczxkutp8seIK+5DvpBOtZU/WfllKP0BA1WKLiiHtghCCygbhoLyoloDY6lcaAtkRNKqpLX146EtsYa2L7NzbI7ZMhF5IF4ggg2atrykHfgKt0mTZbIsvMmlRMjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UuWj9VRP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86805C4CEF0
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:29:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757546979;
-	bh=giqX8D1e03WEb190csFinToB6mmpK+SueWukzwTLrtw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UuWj9VRPzw1PvbSaCVy7gV5XIu21brGl+BUVHFYgg27kHS3pblH2z9FZm0Zjxv25q
-	 vM6pT5R7jh5OKkI2NzxgMyQx5Fv8tw3d/fDKigI8SHueZNQxBPhV/8lB1uJ3ajTG9s
-	 xUvNcX9o7L4/f1V7B0FTzSx33FWb6to8itCzKX1wbdB4WAu7Kpl/1brpLB1O/G3tDn
-	 TxiZM+HCqDW8zkFyLasBq+7lhQXG5SZiejGqiHT2kol1gyw9+pY3SzmoJ0bhzIwZT0
-	 0XZFkApfr8uVDYBu9rbQ39gXBGSk8G3BnLFiRb/55HfKgaFrdWxUE1VeN1tzfFAXpY
-	 4lPsVBhr+WVCA==
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb7a16441so15185566b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:29:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDnxaeZsmPxsGBsDSIyRnre7ITeVb9a24NlOsprouWlWytEeIroRF37tSXfBm3zC42VV2w7sgHPPHIzpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6fkxkaXq1IoJW6/14UAqYtVdfWMlz1733covxF0xhNcvkG82J
-	Iwr/ciKJL+Q9LPpEGEtyPCAmR791fH9DXgpamqZAA6jRblGUjC/r0rfpvzN/HV1fb4QTruf1Sdk
-	ksDB+HrjZ/3a28ZcxDCqw5yHSmpsMz9A=
-X-Google-Smtp-Source: AGHT+IGlGgx50+D2ydI5vBqV6/W+PuaO1JZSUd97+Jrqkz/eIi6Qj2v1ae31SM3Fqif/p17XncOr6qKwTf/VY8KBwGc=
-X-Received: by 2002:a17:907:808:b0:afe:bdcb:9e62 with SMTP id
- a640c23a62f3a-b04b16c4a55mr1764621066b.33.1757546977956; Wed, 10 Sep 2025
- 16:29:37 -0700 (PDT)
+	s=arc-20240116; t=1757547297; c=relaxed/simple;
+	bh=eFxtgKR83MrEuA47DhOIbgBHX+KlIG8hTh2LQqjlSlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6Cl6/gJn7GX2K6FItdRTFi11782mJRp0XYozsKzOc+SQ62aWseErmsetoDlbTkeMEe6Ag6qYVj8cPqnnNZvsHWHpdHlhjEqvS7Hj8liGQxOpFEsKttoQ3SJwoe1uL9J1eB0XsMkve7jrd0AVOq5cZm7t/61bm9NLv1UqxeWKJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCvxi0ew; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7726c7ff7e5so106858b3a.3;
+        Wed, 10 Sep 2025 16:34:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757547295; x=1758152095; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L83OmJnlnRObHJm5rh4huVP1DHkzrTe/WeiSjIPyfoA=;
+        b=WCvxi0ewQ5jGvLscjsSIrpcFXNf+qQ4Yrb+I392bsFYb6XuTXElFNSO1tJEPurxHqj
+         mezu0Ck1L4Jkqj7f8ake1ESYhiUE8PAPTPzb+Zie5+PCSCJ4EBia8HkqjjWmrEKd+7Hp
+         mEb7T7cJGrmhK7ivsnZ1hWsb7p/lg+Rj7VI6zQ5JXHsNxOS+Jj2L9K+9KPPak6hbIFt0
+         NcSwBrlsP8VsK8YJ2/9q/7590NK6l6vk6z284C0ZTvA99i0uLuGUR3ezZtD1PyNlMCkM
+         8h2Zfv0XbVS+ZezEaDPzcECQFfJX55p6P6TYeZgNNM8lZGgYVLtVpfLrt+gSWmV6eYWN
+         UYcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757547295; x=1758152095;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L83OmJnlnRObHJm5rh4huVP1DHkzrTe/WeiSjIPyfoA=;
+        b=aCshBl0DUNFVjgO6ffzmjgXcHkCLpYocT26YKXgKxNJTqPPH4nHRdBFvw+NneE1h31
+         a0K9RVlCUCtIOXS4PrezjbEyn3/f+A+1aFezqsNly+16j/bes+IZcqizkgkg+JS2xz9e
+         bJ5yoP04cIEdOfGPKKmEFKd+zpuR21XtoBLuEaPTUOfCW26/nJrvD5+6rP0SmGSeb8Qi
+         aw2ZvTSXwdLIhrUsULOWmVqiTto1mJSsJfOzziCXM9pcK5jZ0VYD0i4/FNT7Lsw5SWLb
+         4keWovGrDqtSTkSbpOxJbf5hH2XxaROQqJniEDOyOosfwYe+1l6JvPx+5+H2FH2G5ebO
+         c+FA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbc84hLGz4mVuc6CqPHvre6k6KEzGZ8KJiZHq9P+NjHB+MyUUNlespTwWhO8tRFWoyykhFcX+fK3Kj@vger.kernel.org, AJvYcCUmxbVfeqQ4BdevFhFYBwvO+pFFgKuJ36LGHu4rdUm8x/uNsobEZGNEwnPvvaDugvl/D61HQQxX@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzjlZJX692rc+jcBY2cvow9AlA4v14VZjVX+74S0yfWgTRSR39
+	KEIJDpkfucNadBXAGqv1Lim0mO+JkBQLECqoKbIUKExHL+NS7jdeQyiq
+X-Gm-Gg: ASbGncsXSSF3kaCshVswrtREp8opDfvgoGSA4j0lBXacOSBs+eP1m6tloMUbn/N2YY0
+	d7YosFhN+fCw53GUmCbOBiBgnqtw2bux+X/DXHPs0cHcH5q5la1/pvkgBlnYo/TFiU0xz+yR/rX
+	0KEHwACdbQd4HQEsiJ9IHNN4vIhziP5pMptZNz4Dtnj57GwWwvQZ0xrZZws08ZxpCGDJ5gMwLaC
+	1IRUbwDccCNLQrT1/htqR0lVncFpKhT/U0XAOtti98nf6WHVyTnFKTwOnTmjGCOxHRXvosoHh2L
+	ficCZXE91VKA1pT7Dod8IPZUxNLINT5ZisVow8oSUZRqee79U/hHtX7srfcsdQaSG2V4z9HLP/5
+	+SvILrws3A2vo319pJ7LpgA+V9Q==
+X-Google-Smtp-Source: AGHT+IH1VBXQZF9Pbgh0Y0oOXEX86Q5eTMHk/H1cMk3qgJg7DkCYSDiwZfGuYRp99w8BfskwDEDxAQ==
+X-Received: by 2002:a17:902:e551:b0:24d:cd5a:5e88 with SMTP id d9443c01a7336-2516da07750mr226912245ad.2.1757547295042;
+        Wed, 10 Sep 2025 16:34:55 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a2acff5a7sm39108455ad.121.2025.09.10.16.34.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 16:34:54 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 0283241FA3A1; Thu, 11 Sep 2025 06:34:50 +0700 (WIB)
+Date: Thu, 11 Sep 2025 06:34:50 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux cgroups <cgroups@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrea Righi <arighi@nvidia.com>,
+	Johannes Bechberger <me@mostlynerdless.de>,
+	Changwoo Min <changwoo@igalia.com>,
+	Shashank Balaji <shashank.mahadasyam@sony.com>,
+	Ingo Molnar <mingo@kernel.org>, Jake Rice <jake@jakerice.dev>,
+	Cengiz Can <cengiz@kernel.wtf>
+Subject: Re: [PATCH 2/2] Documentation: cgroup-v2: Replace manual table of
+ contents with contents:: directive
+Message-ID: <aMILGtrAHb3dKVq7@archie.me>
+References: <20250910072334.30688-1-bagasdotme@gmail.com>
+ <20250910072334.30688-3-bagasdotme@gmail.com>
+ <6geggl3iu2hffdop43rtd6yp2ivd26ytfn4xdclurwce6mapal@4ve46y652dbj>
+ <875xdqtp7m.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905084059.26959-1-ot_zhangchao.zhang@mediatek.com>
- <20250905084059.26959-2-ot_zhangchao.zhang@mediatek.com> <a7589659-0352-4d47-a3cf-f2433cc512ec@kernel.org>
-In-Reply-To: <a7589659-0352-4d47-a3cf-f2433cc512ec@kernel.org>
-From: Sean Wang <sean.wang@kernel.org>
-Date: Wed, 10 Sep 2025 18:29:24 -0500
-X-Gmail-Original-Message-ID: <CAGp9Lzrp-cfn_GiLrHCU629wEAxWy=egOMrRh6thYbymu+QXjA@mail.gmail.com>
-X-Gm-Features: Ac12FXyyVN5Jiq60xJ95u5ez5XUlTPRrkZuzl25f4dRSg1MxKAtg591tBXMalW4
-Message-ID: <CAGp9Lzrp-cfn_GiLrHCU629wEAxWy=egOMrRh6thYbymu+QXjA@mail.gmail.com>
-Subject: Re: [PATCH v7 1/1] Bluetooth: mediatek: add gpio pin to reset bt
-To: Krzysztof Kozlowski <krzk@kernel.org>, Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Luiz Von Dentz <luiz.dentz@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Jiande Lu <jiande.lu@mediatek.com>, 
-	Deren Wu <deren.Wu@mediatek.com>, Chris Lu <chris.lu@mediatek.com>, 
-	Hao Qin <Hao.qin@mediatek.com>, linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	linux-mediatek <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UsU7vGubNiLv2087"
+Content-Disposition: inline
+In-Reply-To: <875xdqtp7m.fsf@trenco.lwn.net>
+
+
+--UsU7vGubNiLv2087
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
-
-Sorry again for the confusion. I believe Zhangchao is still new to the
-upstream process, and we=E2=80=99ll work together to improve this. Since th=
-is
-series has become a bit hard to follow, would you agree that it might
-be better for us to restart with a clean patch that addresses the
-review comments? A clean version would make it easier for reviewers to
-focus on the current issues without being distracted by earlier
-mistakes.
-
-Hi Zhangchao,
-
-Please note that both btusb.c (with DT and ACPI) and btmtksdio.c (with
-DT) already support reset_gpio. Our goal should be to benefit from
-these existing mechanisms while ensuring that this patch does not
-introduce any regressions. If the current mechanisms do not fully meet
-your requirements, it=E2=80=99s important to clearly explain why, so we can
-adapt the existing framework rather than creating a separate one.
-
-And please remember to carefully respect and respond to reviewer
-feedback, reviewers volunteer their time and experience to help us
-keep the subsystem clean and consistent. It=E2=80=99s a valuable opportunit=
-y
-for us to learn and to ensure smoother integration.
-
-                          Sean
-
-On Fri, Sep 5, 2025 at 3:44=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 05/09/2025 10:40, Zhangchao Zhang wrote:
-> > Makes the platform Bluetooth to be reset by hardware pin,
-> > it provides two methods to do it for mediatek controller,
-> > and it has been tested locally many times and can reset normally.
+On Wed, Sep 10, 2025 at 07:24:45AM -0600, Jonathan Corbet wrote:
+> Michal Koutn=C3=BD <mkoutny@suse.com> writes:
+>=20
+> > On Wed, Sep 10, 2025 at 02:23:34PM +0700, Bagas Sanjaya <bagasdotme@gma=
+il.com> wrote:
+> >> manually-arranged table of contents (as reST comments) gets out-of-sync
+> >> with actual toctree as not all of these are added to it.
 > >
-> > When an exception occurs, resetting Bluetooth by hardware pin
-> > is more stable than resetting Bluetooth by software.
-> > If the corresponding pin is not found in dts,
-> > bluetooth can also be reset successfully.
+> > Is this true? I generated HTML with this patch and the resulting ToC
+> > matches what's in the comment.
 > >
-> > Co-developed: Hao Qin <hao.qin@mediatek.com>
-> > Co-developed: Chris Lu <chris.lu@mediatek.com>
-> > Co-developed: Jiande Lu <jiande.lu@mediatek.com>
-> > Signed-off-by: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
-> > ---
-> >  drivers/bluetooth/btmtk.c | 32 ++++++++++++++++++++++++++++++++
-> >  1 file changed, 32 insertions(+)
+> >> Replace it with automatically-generated table of contents via contents=
+::
+> >> directive.
 > >
-> > diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
-> > index 4390fd571dbd..29d6a93f255d 100644
-> > --- a/drivers/bluetooth/btmtk.c
-> > +++ b/drivers/bluetooth/btmtk.c
-> > @@ -6,6 +6,8 @@
-> >  #include <linux/firmware.h>
-> >  #include <linux/usb.h>
-> >  #include <linux/iopoll.h>
-> > +#include <linux/gpio/consumer.h>
-> > +#include <linux/of.h>
-> >  #include <linux/unaligned.h>
-> >
-> >  #include <net/bluetooth/bluetooth.h>
-> > @@ -359,11 +361,41 @@ int btmtk_set_bdaddr(struct hci_dev *hdev, const =
-bdaddr_t *bdaddr)
-> >  }
-> >  EXPORT_SYMBOL_GPL(btmtk_set_bdaddr);
-> >
-> > +static int btmtk_hw_gpio_reset(struct hci_dev *hdev, struct btmtk_data=
- *reset_work)
-> > +{
-> > +     struct gpio_desc *reset_gpio;
-> > +
-> > +     /* Find device node*/
-> > +     hdev->dev.of_node =3D of_find_compatible_node(NULL, NULL, "mediat=
-ek,mt7925-bluetooth");
->
-> Nothing improved.
->
-> You just keep ignoring comments.
->
-> NAK
->
-> Best regards,
-> Krzysztof
->
+> > Mauro, what's the best practice wrt consistent ToC and having it in
+> > plaintext form?
+>=20
+> I fairly routinely get patches fixing manual TOCs that are not updated
+> to match changes elsewhere.  We have a nice system that can manage the
+> TOC automatically for us, it seems best to me to use it.
+>=20
+> That said, if having the TOC in the plain-text version of the document
+> is deemed to be important, then it needs to be kept and manually
+> maintained.
+
+So for the v2, should I fix up the manual toctree to match autogenerated
+one?
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--UsU7vGubNiLv2087
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMILGgAKCRD2uYlJVVFO
+oy3PAP4yTquF7DXoT96XrGn5T6IGDvwCzQg3+0dEjrX0lyLC7QEAzwEi6CO3ZnGr
+3wkojXo+RTN8o3V0Y1letnvGzguC1A0=
+=4FUJ
+-----END PGP SIGNATURE-----
+
+--UsU7vGubNiLv2087--
 
