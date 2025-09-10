@@ -1,168 +1,130 @@
-Return-Path: <linux-kernel+bounces-809890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B137EB51333
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:52:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 560C3B51334
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D67648048B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:51:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 469D67B1323
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BEE3148C7;
-	Wed, 10 Sep 2025 09:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAC525DB06;
+	Wed, 10 Sep 2025 09:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="HlipuqdQ"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmijofgf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0CD25DB06
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21ED3115B8
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497898; cv=none; b=lxtPPzDSHA0lgQxgK31QvD3yYLwKVjvi+Xz131Rq6NXp2jrW1T9jxg5Y3kPEFHfqjJmXBrQIVR8bEuWZ9cKg2ZSUMeRmYKkg0mD7bI0/4Utt8oiOzi7MzO9iKRv32zs46iRGk3VXXBbzQS8tX8dFsKeaC4dlg2NNlVFWL5u6vZI=
+	t=1757497904; cv=none; b=Fls9ibywFKAxh68dr8buJdHYrF3EEAaI1ZL5IqOLJ5WTIAQ6arG5/wLyJp6oOG/8+oXZ94/GY3nl3kSmAS8mzYw11lhHpSJ+fhW0wNnQGPlxb/eVDfbQdR5zO8Iu3+UTXYH5Hxvea2NXcmwpecErJkI1+pVqnnsDLiPtWsW4ffI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497898; c=relaxed/simple;
-	bh=e4TTFxWbfCAruZCvvckJLtHWN3hktCeBCZI+2cmgIrc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lMbL8VzC84jr11WCX6Nj27gjxQj8PRO8TsUW6nCNPFWalKwCIvIPshxiSmZJdwS8UGqkGYwI1mnwSw8E6F7L2BF2WROdzHwN8qK39e4qT0jlYZ7fSNwJtj4wuetHKb205vYcxkivu7RjLHI0YplD7+HMcH5CoEq0qSILl2mHkFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=HlipuqdQ; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-77460a64848so1505659b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:51:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1757497896; x=1758102696; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LhkrDCBZE1HQCcoT5uSllVkcfT4YZeL1VIJqEPNvTDM=;
-        b=HlipuqdQof6ieid0CQK8VUf6bCBGJ1oKJEyyBGixZues9NKwtJ37s9aJxH34UwFeDz
-         dmeVTFB+qwm6K+y8gAdd+lUltJMwZ/eToksBVSkHTfEMcQCkGSPCCV5Nmx93YouIlNxJ
-         ktNWRRU6+EZ9o9rZHdQeFx4JVIi6tJo1HtFi0kL2Kx34TCVDltK9qL5Rh79RLMw2eNIR
-         gW6kOlO7KWdiQDcX86JGzkkz6yBwXmlP6txlswzZZ9Cnu8C8r8miRUYXdLHxCqYFzG5p
-         1d8IeiGm4nDQIDnAXh29s99R99Tocst1txpE+2we5rTddWKD3PolWEsqhT/BIMoH7y9Z
-         jRpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757497896; x=1758102696;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LhkrDCBZE1HQCcoT5uSllVkcfT4YZeL1VIJqEPNvTDM=;
-        b=TYWIrjwMdbaB2SczYKyJhe3yQ2bxg6Xq8dqlCrntfQPF9rbxm3C3DKfFyGgNx2nv8X
-         kg+ewnx4aC7SrBI1tIt7DdprlfbEao9fjhZ305Q8FrlL1UCNZtbgiWPU3MznIpJW3fgd
-         +vfhjkT5Ts4qCtA9B9zxL2sajBOhcbVAYFuL/w1smkSqIP9jlvyVXkDMSyp1LIJjteFA
-         xrW/91leZAfiBE8KMiT8cYw5uQwjGJ8CxTEePZweR4xQ3A+mu7dAi5qkp34CdGogWQaP
-         IcTOeoL0tl4y2TLlHRTRRZPI2lzj3V5XfnuJp2YgAAZcX9296ABvjO5sjL2r+YvMHERz
-         MC+g==
-X-Gm-Message-State: AOJu0Ywslk6X9iJ+K1pF6vkQaQJWcE/+rQsWrzNlchkRKt5duT2zyZKR
-	tvCZJy69HQOSml2pCjJxNr1p1LkLffdoCIyHCvcb1vSuBADFbL/0QpMLMvnotDC6rw==
-X-Gm-Gg: ASbGncv2qHaaaorddj57DY/vaEB2rMmSiCi8dekrNpCgEqL5sbKl7xZEdbyJP17OEQj
-	rmEIoZCJgzWxF23tbZ3vK41dvNXYnZ6HCAcdGJ6MosiOxfDdxdhvaT9ANLtVe37a2EpmCpTQ54O
-	3+fMfX7pSPgt0IiFoCGxmuOz6jyxZ0igs4ZKXR539Nnum5f0nF/cuoTh9XCzF421q7WluGqV4lj
-	s4TjwFyPTbeAx6r7Y9b/AMeqXisWDYPsyL5sRh3tX8YHdQ2SPSxdumqWeB0Yx4U2GG3/Z8Lh6TE
-	Q5wP7oaAEnXG0lhDjw29vbld2s0SJAHoC+Y4+iTbwRxhRQubLZFUbac91/9BVOXlPEk+U6tzu5G
-	vgdYDafoH340SAJsjvFvolkJqVq3mq+oZl+etZnrHtggEYU4EeYlDZdnOtIFekKQf3TfajnUrLJ
-	fI5nw0Hgbpzw==
-X-Google-Smtp-Source: AGHT+IFF3i3IWo+xqIZXLLhITk3nlcct04gm0352Icsw+69CRyxsMwcBjxoZ9MfilSofK0SnEl3ipQ==
-X-Received: by 2002:a05:6a20:4322:b0:240:489:be9a with SMTP id adf61e73a8af0-2533fab5821mr21778099637.23.1757497895854;
-        Wed, 10 Sep 2025 02:51:35 -0700 (PDT)
-Received: from 5CG4011XCS-JQI.bytedance.net ([61.213.176.57])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b548b81f5acsm1850623a12.1.2025.09.10.02.51.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 02:51:35 -0700 (PDT)
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 4/4] sched/fair: Do not balance task to a throttled cfs_rq
-Date: Wed, 10 Sep 2025 17:50:44 +0800
-Message-Id: <20250910095044.278-5-ziqianlu@bytedance.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250910095044.278-1-ziqianlu@bytedance.com>
-References: <20250910095044.278-1-ziqianlu@bytedance.com>
+	s=arc-20240116; t=1757497904; c=relaxed/simple;
+	bh=V3TH6teKuqGP+qaeHsXMAY/wkqGVW8w7CJZ/OeEeDtY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cGIM9JR5zr8OsMK5VKa92mguoJgC6GvNv6xEWwrpNGvbk10eyuFtfRrL57YlRjxJP+AJnEMWGn/DF/PE901/nAxQMF5UVDx+vHgGOtuKDYMxpCDoza2QX4ReLdRzxchgKQcFwm52HzshZo1t7djQ2C4VGaBPsQf3dTGe4g576BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmijofgf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EBD6C4CEF0;
+	Wed, 10 Sep 2025 09:51:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757497903;
+	bh=V3TH6teKuqGP+qaeHsXMAY/wkqGVW8w7CJZ/OeEeDtY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cmijofgfP5d2trBwIYZJEIDR0QkzVce3qQBKWiaWJnvLFrcDfZ+q3t7PjfvpOnqrG
+	 jFbqHROFZ+ID75LZKWFFb+F/AA0R8vgwgl/4mnU/xCWSQ9pc5JlnjeOmCbgsfdRvZ0
+	 hhRSWNklxLj1gwgBP/sPnIWRJ0Ni8By6OJC7xZzCVXceEU1fNhjvtWuRd+N7peOq6r
+	 kXSdBPQ8/ecIbYkilgejPlULwdWZcocKMmT/BRr2SsI9QmnYkz3xFiIRUA1Z1yF4NX
+	 XJejuOvuJmDL3m63aOh3nQB1BpC+3RPGz+u8rp0CPXpUEw4ZUKTcns97Dp0bY8agnv
+	 BZ6o+5qhPlQyw==
+Message-ID: <b12ed3b1-fc61-4db8-a504-9adeb168dd7c@kernel.org>
+Date: Wed, 10 Sep 2025 11:51:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] soc: mediatek: mtk-svs: fix device leaks on probe
+ failure
+To: Johan Hovold <johan@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Roger Lu <roger.lu@mediatek.com>, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250909095651.5530-1-johan@kernel.org>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <matthias.bgg@kernel.org>
+Autocrypt: addr=matthias.bgg@gmail.com; keydata=
+ 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
+In-Reply-To: <20250909095651.5530-1-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When doing load balance and the target cfs_rq is in throttled hierarchy,
-whether to allow balancing there is a question.
 
-The good side to allow balancing is: if the target CPU is idle or less
-loaded and the being balanced task is holding some kernel resources,
-then it seems a good idea to balance the task there and let the task get
-the CPU earlier and release kernel resources sooner. The bad part is, if
-the task is not holding any kernel resources, then the balance seems not
-that useful.
 
-While theoretically it's debatable, a performance test[0] which involves
-200 cgroups and each cgroup runs hackbench(20 sender, 20 receiver) in
-pipe mode showed a performance degradation on AMD Genoa when allowing
-load balance to throttled cfs_rq. Analysis[1] showed hackbench doesn't
-like task migration across LLC boundary. For this reason, add a check in
-can_migrate_task() to forbid balancing to a cfs_rq that is in throttled
-hierarchy. This reduced task migration a lot and performance restored.
+On 09/09/2025 11:56, Johan Hovold wrote:
+> This series fixes mostly benign device leaks in case the svs driver
+> probe defers (or is ever unbound), but which should be fixed if only to
+> reduce the risk of such bugs being reproduced in places where it matter
+> more.
+> 
 
-[0]: https://lore.kernel.org/lkml/20250822110701.GB289@bytedance/
-[1]: https://lore.kernel.org/lkml/20250903101102.GB42@bytedance/
-Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
----
- kernel/sched/fair.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+Series queued, thanks!
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 3dbdfaa697477..00ee59993b6a3 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9369,14 +9369,19 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
- 	/*
- 	 * We do not migrate tasks that are:
- 	 * 1) delayed dequeued unless we migrate load, or
--	 * 2) cannot be migrated to this CPU due to cpus_ptr, or
--	 * 3) running (obviously), or
--	 * 4) are cache-hot on their current CPU, or
--	 * 5) are blocked on mutexes (if SCHED_PROXY_EXEC is enabled)
-+	 * 2) target cfs_rq is in throttled hierarchy, or
-+	 * 3) cannot be migrated to this CPU due to cpus_ptr, or
-+	 * 4) running (obviously), or
-+	 * 5) are cache-hot on their current CPU, or
-+	 * 6) are blocked on mutexes (if SCHED_PROXY_EXEC is enabled)
- 	 */
- 	if ((p->se.sched_delayed) && (env->migration_type != migrate_load))
- 		return 0;
- 
-+	if (task_group(p) &&
-+	    throttled_hierarchy(task_group(p)->cfs_rq[env->dst_cpu]))
-+		return 0;
-+
- 	/*
- 	 * We want to prioritize the migration of eligible tasks.
- 	 * For ineligible tasks we soft-limit them and only allow
--- 
-2.39.5
+> Johan
+> 
+> 
+> Johan Hovold (2):
+>    soc: mediatek: mtk-svs: fix device leaks on mt8183 probe failure
+>    soc: mediatek: mtk-svs: fix device leaks on mt8192 probe failure
+> 
+>   drivers/soc/mediatek/mtk-svs.c | 23 +++++++++++++++++++++++
+>   1 file changed, 23 insertions(+)
+> 
 
 
