@@ -1,193 +1,190 @@
-Return-Path: <linux-kernel+bounces-810854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3F9B520B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:12:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A9BB520B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E304D1BC6F17
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:12:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79BD31BC75B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964C52D5920;
-	Wed, 10 Sep 2025 19:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99E92D4B68;
+	Wed, 10 Sep 2025 19:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iE0jFgvA"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJP1H/bT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6F7253951;
-	Wed, 10 Sep 2025 19:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C77C2571DC;
+	Wed, 10 Sep 2025 19:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757531513; cv=none; b=BvLOriiFz5JVM5t7TEogwNaLIYl0uaqRCitS+aYq4Q1gqvFWS+HnI6DZxXv7d9DM6+BM3NPVKc4FH81BVcz0S7OhGRo1pPcu2VxP+PpANKOAmkvh+mS+kDEJbUJV4C8ldT/jjry043ZIfSjwv6Iu4zWZtuCi1Z9IxVEA6koeIro=
+	t=1757531542; cv=none; b=Oh2Wcqhik/o7ZqUj0j9Ob5d4EMrzo8VfTLq5G4Rlep3QUSQI5zaq8gjrHydp18rS7RSD2kzpa7k3ZyFkbhNEIG2mNa2GVyluYC+cNxeOBKXY5PvBDPTpwgas9csOeBCqihvIOTejoUdcRDAyO3kRQyfkB5/RyA6qRwbOPj5YsfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757531513; c=relaxed/simple;
-	bh=KOANke260Y7N8OFgQD8TZ+R34HpsV2NnLbUCOfILchY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CtsEkyoQyqvYRDeChG2mmGd/UFgR28XyRdg/8A7zasOLd4K2s7JXMGPdzpQnI0HwuicNh1rSMmZy/vDdIv/YZbE1N+JkaxCtV0YO7enVmrpN/YpAwIDHAQZQ9d7zB6i/ZqQ/oO2w9ABN0Q1DU1cWPtgcGo4VKup+aZiXbKVSsAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iE0jFgvA; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b04271cfc3eso943966366b.3;
-        Wed, 10 Sep 2025 12:11:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757531509; x=1758136309; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uNWe951fEznrVHG6mxzWqLu6O942IWo0SOgA3l0YSpM=;
-        b=iE0jFgvAPYgr1Dtp2r5lf+wA1ge2xT849TWhhkbWgggGJj94USQqJ8GaSKYs/Aspuf
-         L+l7FohEewZrWqDe7JfoJWH20K2Gg9QP6th3ZIBdtE1LzIBfLPJbMHYsK1iNZXJ7wboc
-         /wpHfxC2QzSfpxQl5RfGceE5mlEliGlceQfSZVGLh7VPXDG1XBnVoW5U9pOZj+Zleqt2
-         0qC6eRDkqBPCEm4jgeyJPyn29YmO2EeDLjmm5YZKnJySrNw9koCqq/aurjba25gDo7fg
-         +dXkdzDhmyv1Z0n4mcRTAeU65/OnRVVohuVqd+zBpntkET1sHAxdGvIW2Bi0lAwBQ0Av
-         SIgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757531509; x=1758136309;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uNWe951fEznrVHG6mxzWqLu6O942IWo0SOgA3l0YSpM=;
-        b=mTCXiHdG+Vn2ajEYc+pGe4uCP+AsXYrl5FyWtNT/Ozpwf04pG4M5fOhgaZJCEklDb/
-         Fo/hlCKSL0CoLujNsQ78+fboKGqh9a5V7ma2MJxnmVvEYCXX4RMmumEFpYWIWXaw0xl4
-         RgV6FYAXZqzpVhy56/2RTSRUkko1HL2OcuiRNQetk5MGDuHeZIuOaWD9Eb+/Sy1SKnMM
-         4TFiw+XQJ6n/b49g/VPt/BDwzBXBgjzYvFXe6NxTuONY9ieKYKENwYaHxg5yvCEz7sWA
-         //Eu7zc9BtT256DwOw5VO4untcYxNjJbkNHwHuhe9K4ckrMKZ6hs4+tINb6mRWD4Ebhw
-         IrTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEVUQMPFwOWfQAQ6JsrPa7lx6PB98IgESYoNr8KcpvSmBBc2xHuguLDGPVqmBrGbocDqvsBv1T+gDh@vger.kernel.org, AJvYcCVQ7buJNr++GLFYX8/opHTlU6sXWfzHylfW22vLv5zbXukwU3FdYVUodO2P2A9jK72lyuZcWqAQ5o4ZyWk=@vger.kernel.org, AJvYcCVj+xM+4IbmmZ7BOpKhtzBdW0kIe7lcYCIsTHvgkuh4/cB9kCpknycWH7IrJgHeX5kKQSWr796x3REi@vger.kernel.org, AJvYcCVyWBuMa2FbkIqPOnMI5ow4dW1Q+m4F5quiP+gSh+5HfbwnWb6xl4CbAmvSLW2/b5Q13lis9lOQcvWANS8+@vger.kernel.org, AJvYcCWC5tabUBdFAK1R7/zn+pDXglCFb4ZJFn8SOB2wEWh+wEtAWFLYkE05KmycK9t0DKrQ+XziSQYH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxe1+iGlDW4+fWmfjLiZhH4B197cEVEuxPRZioERx2xSAcKPH/
-	tdJiBoGnD++IGgKyknHN2NCslDIXy3BX+imFoU+I2lCiE1an9XymW/W8KWHTky9g6rR08IQbNbm
-	MVIRoJ5yq5PDAfzsf+ET38hxepJIJxg==
-X-Gm-Gg: ASbGncujSS0Ogxgar/BhZzuAi9iLweSXGhW4cwkTHn/mxxM7shnCbmFbFjDRoHG+bv5
-	RzQ7bWM+e0Ty6K84WyF8lYaiaTKDxD21uR3i6m+zqwxrtsc4F4Prd6nb7XeTmnL/tLwwrVIgSGy
-	Hrg47LdaOqdGlb/+16OD6Twir8YgV9asW68CtlnQaiYtJ9FbA1j3aw2rEEwexUHCxV8VhzQbfJP
-	66+/wGxqSxfgAc85CU=
-X-Google-Smtp-Source: AGHT+IH5k2YiwT7SeoDVr7cCV501nWg0Xjh6ykKknruZUH8hPd8Ej4pPkLIOwcC4xwCRJE2syaveBnn49jruM399P9Q=
-X-Received: by 2002:a17:907:a48:b0:afe:87bd:da59 with SMTP id
- a640c23a62f3a-b04b1687ddamr1564443466b.42.1757531509134; Wed, 10 Sep 2025
- 12:11:49 -0700 (PDT)
+	s=arc-20240116; t=1757531542; c=relaxed/simple;
+	bh=MZoH5Dw3FlDYGUDpz/hLH4usGwkTmmO2EeJ1AyiZ/SY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XBPakCA5ZVuu+rHZ1U73ha5UArLBm3In57LrYLh/2RF1Qp0Jts79cdf6YElanH9OsV3RsEsyktLeq5BODZHxXE/7P0nyfllkAgNp7PZPoenVeG1k6eXgJ/9T1CY++jhJtxpK4pabqQ6sfCFLlCjCGKjMr1p8tfU+uNeuMZkK7tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJP1H/bT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E66D1C4CEEB;
+	Wed, 10 Sep 2025 19:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757531541;
+	bh=MZoH5Dw3FlDYGUDpz/hLH4usGwkTmmO2EeJ1AyiZ/SY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZJP1H/bTlgo2Ox+uZlHmbBwPKRVt8xYkKXM8wt0KB6Zr4JBBkXcj5MkW2V5900VLi
+	 JSRGF0PT+erVz71/10BwwGw9hXe34R3x4TB687P2RcbDw4WgMV6i7oqdmZ/4d7nEW+
+	 5lAv4Jb7ZXG4ETJE9dreoUJONiTXblgfyHaEZJtmFdHskECCJPzPQaAh3RiCN+wjZ1
+	 n2HNfZ4rIfTV0uVtNcUATAGb9Q+VLn+PvCsEqs9vv6IjUKzXI26VWBJ1el5MNuDH9H
+	 OsSLkpd1LX0THZL6aAieXtUtnNzh5gwOWviITOmbswHvkqWQzTBFG6oefY4sx0FB55
+	 Uf0QDs1DnA+5g==
+Date: Wed, 10 Sep 2025 20:12:12 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Akshay Jindal <akshayaj.lkd@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, anshulusr@gmail.com,
+ dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ shuah@kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7] iio: light: ltr390: Implement runtime PM support
+Message-ID: <20250910201212.5d9f57bc@jic23-huawei>
+In-Reply-To: <CAE3SzaTZ8PXM_B8FBetOTSfz2myGZ=WzPp8h2d79Q95zKLq5hw@mail.gmail.com>
+References: <20250909194649.10512-1-akshayaj.lkd@gmail.com>
+	<CAHp75VfpQ9c4cptnNGzFYakQxY7JjtUEMDsysS9KJ60xrzaE4g@mail.gmail.com>
+	<CAE3SzaTZ8PXM_B8FBetOTSfz2myGZ=WzPp8h2d79Q95zKLq5hw@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904-hwmon-tps23861-add-class-restrictions-v3-0-b4e33e6d066c@gmail.com>
- <4e7a2570-41ec-4179-96b2-f8550181afd9@roeck-us.net> <aL5g2JtIpupAeoDz@pengutronix.de>
- <CAAcybuvqqKBniV+OtgfCLHJdmZ836FJ3p7ujp3is2B8bxQh4Kw@mail.gmail.com> <9e4db8d7-c99f-46f3-9ddb-00b0a9261d86@roeck-us.net>
-In-Reply-To: <9e4db8d7-c99f-46f3-9ddb-00b0a9261d86@roeck-us.net>
-From: Gregory Fuchedgi <gfuchedgi@gmail.com>
-Date: Wed, 10 Sep 2025 12:11:10 -0700
-X-Gm-Features: Ac12FXyY2k6-zu3gOyPfWLj0St0alE4zNkLzD-PbTPjdHRpByiOWYilwdbtcq-Q
-Message-ID: <CAAcybusjm00hv+W-pKaNpPedXuWeTu5mo=i6TKnTJgVurO_ryg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] hwmon: (tps23861) add class restrictions and
- semi-auto mode support
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Robert Marko <robert.marko@sartura.hr>, 
-	Luka Perkov <luka.perkov@sartura.hr>, Jean Delvare <jdelvare@suse.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>, 
-	Network Development <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 8, 2025 at 11:02=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> =
-wrote:
->
-> On 9/8/25 09:39, Gregory Fuchedgi wrote:
-> > On Sun, Sep 7, 2025 at 9:51=E2=80=AFPM Oleksij Rempel <o.rempel@pengutr=
-onix.de> wrote:
-> >>
-> >> On Sun, Sep 07, 2025 at 09:06:25AM -0700, Guenter Roeck wrote:
-> >>> +Cc: pse-pd maintainers and netdev mailing list
-> >>>
-> >>> On 9/4/25 10:33, Gregory Fuchedgi via B4 Relay wrote:
-> >>>> This patch series introduces per-port device tree configuration with=
- poe
-> >>>> class restrictions. Also adds optional reset/shutdown gpios.
-> >>>>
-> >>>> Tested with hw poe tester:
-> >>>>    - Auto mode tested with no per-port DT settings as well as explic=
-it port
-> >>>>      DT ti,class=3D4. Tested that no IRQ is required in this case.
-> >>>>    - Semi-Auto mode with class restricted to 0, 1, 2 or 3. IRQ requi=
-red.
-> >>>>    - Tested current cut-offs in Semi-Auto mode.
-> >>>>    - On/off by default setting tested for both Auto and Semi-Auto mo=
-des.
-> >>>>    - Tested fully disabling the ports in DT.
-> >>>>    - Tested with both reset and ti,ports-shutdown gpios defined, as =
-well as
-> >>>>      with reset only, as well as with neither reset nor shutdown.
-> >>>>
-> >>>> Signed-off-by: Gregory Fuchedgi <gfuchedgi@gmail.com>
-> >>>
-> >>> This entire series makes me more and more unhappy. It is not the resp=
-onsibility
-> >>> of the hardware monitoring subsystem to control power. The hardware m=
-onitoring
-> >>> subsystem is for monitoring, not for control.
-> >>>
-> >>> Please consider adding a driver for this chip to the pse-pd subsystem
-> >>> (drivers/net/pse-pd). As it turns out, that subsystem already support=
-s
-> >>> tps23881. This is a similar chip which even has a similar register se=
-t.
-> >>>
-> >>> This driver could then be modified to be an auxiliary driver of that =
-driver.
-> >>> Alternatively, we could drop this driver entirely since the pse-pd su=
-bsystem
-> >>> registers the chips it supports as regulator which has its own means =
-to handle
-> >>> telemetry.
-> >> Yes, Guenter is right. This driver belongs to the pse-pd framework.
-> > No disagreement here in principle. However, the current hwmon driver
-> > already implements power control and exposes it via in*_enable sysfs
-> > files. I found this a bit odd, but I don't write drivers often.
-> > My understanding of Guenter's suggestion is that it would require break=
-ing
-> > this userspace API?
-> >
->
-> If the enable attributes enable power to the ports, that code and functio=
-nality
-> is simply wrong. It should only enable (or have enabled) power _monitorin=
-g_.
-> As such, changing that would from my perspective be a bug fix.
+On Wed, 10 Sep 2025 18:06:32 +0530
+Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
 
-Alright, then. I'll try to find some time in the next few months to port th=
-is
-over to a separate driver in pse-pd. And then remove the in*_enable from hw=
-mon
-one. Even if it's there by mistake, probably shouldn't fix it until there's=
- an
-alternative in place.
-
->
-> And, yes, that slipped my attention when reviewing the original code.
-> Sorry to have to say that, but I am not perfect.
->
-> >  From a quick look at the tps23881 datasheet I can see that it is
-> > similar, however, it is quite different in the context of this patch.
-> > tps23881 (unlike tps23861) has Port Power Allocation register that can
-> > limit poe power class. This register can be set prior to
-> > detection/classification. So the extra complexity of an interrupt
-> > handler that decides whether to enable the power may not be required.
+> Hi Andy,
+> Thank you very much for your valuable feedback.
+> I do have a small request regarding the review process. Over the past 3=
+=E2=80=934
+> versions,most of the comments have been about fixing indentations and
+> improving code readability. I would kindly request if it would be possible
+> to consolidate such cosmetic comments into a single review round.
+>=20
+> I completely understand that incremental feedback makes sense when the co=
+de
+> is actively changing, but if the changes are minimal, spreading out minor
+> suggestions over multiple review cycles tends to unnecessarily increase t=
+he
+> turnaround time.
+>=20
+> Your support in this would help me address the comments more efficiently.
+>=20
+> On Wed, Sep 10, 2025 at 12:47=E2=80=AFPM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
 > >
-> > Perhaps it still makes sense to merge these drivers, but I don't have
-> > time or hardware to do it at the moment.
->
-> I didn't suggest to merge the tps23881 and tps23861 drivers; I just point=
-ed out
-> that they have a similar register set.
->
-> The point here is that a hardware monitoring driver should limit itself
-> to hardware monitoring. Actual control should, for example, be implemente=
-d
-> through the regulator or thermal subsystems.
+> > On Tue, Sep 9, 2025 at 10:47=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gma=
+il.com> wrote: =20
+> > > +static int ltr390_read_raw(struct iio_dev *iio_device,
+> > > +                          struct iio_chan_spec const *chan, int *val,
+> > > +                          int *val2, long mask) =20
+> >
+> >
+> > Also logical split might be better, i.e. putting val and val2 on the
+> > same line. Then mask will be on the next one =20
+> Ok, will fix.
+>=20
+> > >  static void ltr390_powerdown(void *priv)
+> > >  {
+> > >         struct ltr390_data *data =3D priv;
+> > > +       struct device *dev =3D &data->client->dev;
+> > > +       int ret;
+> > >
+> > >         guard(mutex)(&data->lock);
+> > >
+> > >         /* Ensure that power off and interrupts are disabled */
+> > > -       if (regmap_clear_bits(data->regmap, LTR390_INT_CFG,
+> > > -                               LTR390_LS_INT_EN) < 0)
+> > > -               dev_err(&data->client->dev, "failed to disable interr=
+upts\n");
+> > > +       if (data->irq_enabled) {
+> > > +               ret =3D regmap_clear_bits(data->regmap, LTR390_INT_CF=
+G, LTR390_LS_INT_EN);
+> > > +               if (ret < 0)
+> > > +                       dev_err(dev, "failed to disable interrupts\n"=
+); =20
+> >
+> > In event_config we assure that IRQ is enabled. =20
+> What do you mean here?
+> > =20
+> > > +               data->irq_enabled =3D false; =20
+> >
+> > Here we may lie about the facts. What will the driver do, if the IRQ
+> > is triggered just before this line? =20
+> I don't see why the device will trigger an IRQ, when we are disabling
+> the INT via
+> regmap_clear_bits before this.
+
+There may be a theoretical race with an incoming interrupt only being obser=
+ved
+after the regmap_clear_bits() has returned.  The question becomes whether t=
+hat
+matters.  data->irq_enabled is not relevant to the actual interrupt handling
+and the power down isn't stopping registers being read, just new data being
+captured.  So should be fine.
+
+>=20
+> > =20
+> > > +               pm_runtime_put_autosuspend(&data->client->dev); =20
+> >
+> > You have dev, use it. =20
+> Ok, will fix.
+>=20
+> >
+> > But where is the symmetrical pm_runtime_get*()? =20
+
+>=20
+> This is the fundamental approach of managing IRQ handling + runtime PM.
+> suggested by Jonathan in preliminary rounds and employed by many drivers.
+> "When enabling IRQ, increase the refcount, and decrease when disabling"
+> This is done because ltr390 does not have a wakeup functionality.
+
+It's not really about enabling the irq. It's more about turning on autonomo=
+us
+data capture that in turn is related to enabling events (which indeed cause
+irqs).  So similar to what we tend to do with runtime pm in the buffer enab=
+le
+callbacks as we are intentionally holding the power on.
+
+So this function is effectively disabling the events - be it in a fast
+fashion given it happens on driver unbind.
+
+
+>=20
+> put_autosuspend is tied to disable which can happen in 2 places:
+> 1. event_config.
+> 2. powerdown (if irq enabled).
+>=20
+> pm_runtime_get* is tied to enable which can happen only at 1 place:
+> 1. event_config.
+>=20
+> If IRQ was enabled before power down, that means in event_config
+> we had already called pm_runtime_get* and increased the refcount to 1.
+> This will come down to 0 as a result of either of disabling event_config
+> or powerdown.
+
+Exactly this bit.  Maybe this would all have been cleaner if we had
+just called this events_enabled rather than irq_enabled?
+
+Andy, if you are fine with the explanation I'll tidy up the minor stuff
+whilst applying.
+
+Jonathan
+
+>=20
+> Thanks,
+> Akshay.
+
 
