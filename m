@@ -1,62 +1,76 @@
-Return-Path: <linux-kernel+bounces-810681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16CBB51DD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:34:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA86BB51DD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A26933A7A7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:34:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71D9A162E24
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827DE221FCD;
-	Wed, 10 Sep 2025 16:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C97926D4EB;
+	Wed, 10 Sep 2025 16:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vu/Fm0pO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="zr7tmHzH"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF40B329F0B;
-	Wed, 10 Sep 2025 16:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59045267387
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757522082; cv=none; b=gUPX9BVnmahXd5LZ63OqVpW3z4BoJoKXyVe2P0h6F/udreVW5mlWencsTr1bK0suasgYyefwgnwZgy0HqNuasW3AhCa7HnYrT/t+orUB/abqytyH22sYl7XVKfTabie4D74kqcurYRyUMG/X8dvG/mPkzQO/wBq8RmG5AhFR0MU=
+	t=1757522104; cv=none; b=XZW0pyX/QZa/NHYCmLcq8gn+DhrCv6qZE3/EFbZWxgk12IIIR4zpLBd7iw37otr008fsSrtr2xgRJTv7Go9lCkwdljZaZ8LNYU+/D0G48mTiyOwkDbRvGcxXODfM5c4fmDCJ008DsKLAKsToNymc/CzZz59cCySjN1hkI3E2pww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757522082; c=relaxed/simple;
-	bh=VqnVe7ND+z/dHs2bcI+Mkh13Zz2u2mKxafPYDENBCWY=;
+	s=arc-20240116; t=1757522104; c=relaxed/simple;
+	bh=jKAsUD4oHPGtqjOd3Tc7AifQDyVp2WbT7gojou8pCrg=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bT3KqLcL6N6ZBnfJ14lQRhw55HMkoWC51b67s5l5u2ajzU6pdfSO/9Zx5e7sTWw89KkrY7+GssKJMYsMVPicqV8jXOdd1HVsL9i7SL3GGohv56Vy3bcoYpS3OcNsjV7P9KCBh47UjUqZX+GgNU8vXq/EmCgE7ERwUvspTr6TJGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vu/Fm0pO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C98CEC4CEEB;
-	Wed, 10 Sep 2025 16:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757522082;
-	bh=VqnVe7ND+z/dHs2bcI+Mkh13Zz2u2mKxafPYDENBCWY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Vu/Fm0pONBD9IALPZ47AK1IXAVgbjE2+QAC35PY89+UqTdMmWUtEaBciVEY1KT3mD
-	 5o50i59e2fP2SHutZj2sJuQU2ZRNiTWMuwHpasen2CFUXoRGnhL2f26Mga6zT2kOyx
-	 hG1ZRC4qWDBgCaAx0FVuDXHmgVv1xUsRoR4BaBKrCT72PuzDw0X5io3SCQi+QTNZjZ
-	 0gWQdiZiaB8kIXoo8rJTjWPz0DZZciQoc2IUOPhZPUfmJOv80iPHbWWx8ldzFHVxQK
-	 Enlw8uXMoAbzTYZeKXBsSGDo17ZPQ3Om9U9LI8PEtM6566f1tApAFIACImBg1yxJCq
-	 bqE7qlBiSqVww==
-Date: Wed, 10 Sep 2025 17:34:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Ioana Risteiu <Ioana.Risteiu@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ramona Nechita
- <ramona.nechita@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/4] Add IIO backend support for AD7779
-Message-ID: <20250910173437.7e442621@jic23-huawei>
-In-Reply-To: <20250831133738.5ba540c7@jic23-huawei>
-References: <20250825221355.6214-1-Ioana.Risteiu@analog.com>
-	<82a21a66-409f-4ec8-9351-365031b8646b@baylibre.com>
-	<20250831133738.5ba540c7@jic23-huawei>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=tC98e8hsGJco/OcEjJ4DjDDQp1f5txMvNbNWSaL0J0lIIKiJ1+8J9soPSe7MOt9yA5Lm/czc3wum1f2bEpUd22h6CqKO4tOp5XvmnLjeu+WqeKeDM7FJjQ1UG2rpt81OL3VBlqmzPFaLB8Dmkz2X9AYBFk+tiwxbeOAl8gvx8/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=zr7tmHzH; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id CB2101A0D5A;
+	Wed, 10 Sep 2025 16:35:00 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B9F1A606D4;
+	Wed, 10 Sep 2025 16:35:00 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 57FD4102F292B;
+	Wed, 10 Sep 2025 18:34:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757522099; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=X2b6+Nl1KIR1LF6HdKe9hNfppcCRQR7JbvwrsgEtuuY=;
+	b=zr7tmHzHIJb8fsqhH5CSxTqc7cBc4qfgcCHpVhfiOjZvoFh3BFCEn7apF3H6VxngpnQZK7
+	KZ4SxLqZQSA+eGH1PZ3K+b/Gq1oaNYQnPofWeQlCXUwBkDX72zCReycxQPGaVviCj6R33k
+	5bzbvYesJRL+NjKoWUx5dwruJCZ5blf1caEf07+wOoZjATlNbTh75Whhppl+CLK5IPEN3K
+	p2QvOUZqxElzV8sfPcZa/4wc7DeQCcu0s0l0OIi27goVrzcWsOnzW946HsDjj8DoclKWV+
+	sz815RByWtUiakpOedJHD4IHhMcoH1tmyUoz7GmbOsTikPhMbgjot2tey7d7PA==
+Date: Wed, 10 Sep 2025 18:34:40 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
+ on unplug
+Message-ID: <20250910183440.3fe50fac@booty>
+In-Reply-To: <20250910-amazing-camouflaged-barracuda-bb79cb@houat>
+References: <20250808-drm-bridge-atomic-vs-remove-v1-0-a52e933b08a8@bootlin.com>
+	<20250808-drm-bridge-atomic-vs-remove-v1-2-a52e933b08a8@bootlin.com>
+	<l2orbpdoh3cqqgqudbnbdlogo3bd57uu4nv3ax74uoahknzjgr@gbxxuky3huw6>
+	<20250820131302.6a2da5ef@booty>
+	<20250908154901.64f1a639@booty>
+	<20250910-amazing-camouflaged-barracuda-bb79cb@houat>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,82 +79,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sun, 31 Aug 2025 13:37:38 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+Hi Maxime,
 
-> On Tue, 26 Aug 2025 11:24:26 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
-> 
-> > On 8/25/25 5:13 PM, Ioana Risteiu wrote:  
-> > >   - Add axi_adc_num_lanes_set in the adi_axi_adc_ops structure to support
-> > >   setting number of lanes used by AXI ADC.
-> > >   - Add the generic io-backends property to the AD7779 binding to enable
-> > >   support for the IIO backend framework.
-> > >   - Add the adi,num-lanes property to set the number of lanes used by
-> > >   AD7779.
-> > >   - Move the initialization specific to communication without iio-backend
-> > >   into a separate setup function.
-> > >   - Add a new functionality to ad7779 driver that streams data through data
-> > >   output interface using IIO backend interface.    
+On Wed, 10 Sep 2025 09:52:21 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
+
+> On Mon, Sep 08, 2025 at 03:49:01PM +0200, Luca Ceresoli wrote:
+> > Hello Maxime,
 > > 
-> > It is more helpful for the cover letter to contain a high-level
-> > overview of why you want this series included in the kernel. We
-> > can look at the individual patches to see what they are about, so
-> > repeating that here isn't especially helpful.
-> > 
-> > For example, I would write the cover letter for this series like this:
-> > 
-> > The AD7779 ADC chip has a secondary data bus for high-speed data
-> > transfers. To make use of this bus, it is connected to an FPGA IP
-> > core [1] which is handled using the IIO backend framework. This IP
-> > core connects to the data bus lines as well as the data ready signal
-> > on the ADC. This interface can use 1, 2 or 4 lanes at a time.
-> > 
-> > This series extends the devicetree bindings to describe these wiring
-> > configuration, extends the IIO backend framework to allow setting the
-> > number of lanes that are being used, and extends the ad7779 driver to
-> > allow using such a backend for reading data in buffered reads.
-> > 
-> > [1]: https://analogdevicesinc.github.io/hdl/projects/ad777x_fmcz/index.html
+> > On Wed, 20 Aug 2025 13:13:02 +0200
+> > Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
 > >   
+> > > > > +	/*
+> > > > > +	 * sn65dsi83_atomic_disable() should release some resources, but it
+> > > > > +	 * cannot if we call drm_bridge_unplug() before it can
+> > > > > +	 * drm_bridge_enter(). If that happens, let's release those
+> > > > > +	 * resources now.
+> > > > > +	 */
+> > > > > +	if (ctx->disable_resources_needed) {
+> > > > > +		if (!ctx->irq)
+> > > > > +			sn65dsi83_monitor_stop(ctx);
+> > > > > +
+> > > > > +		gpiod_set_value_cansleep(ctx->enable_gpio, 0);
+> > > > > +		usleep_range(10000, 11000);
+> > > > > +
+> > > > > +		regulator_disable(ctx->vcc);
+> > > > > +	}      
+> > > > 
+> > > > I'm not sure you need this. Wouldn't registering a devm action do the
+> > > > same thing?    
 > > > 
-> > > Ioana Risteiu (4):
-> > >   iio: adc: adi-axi-adc: add axi_adc_num_lanes_set
-> > >   dt-bindings: iio: adc: add IIO backend support
-> > >   iio: adc: extract setup function without backend
-> > >   iio: adc: update ad7779 to use IIO backend
-> > > 
-> > >  .../bindings/iio/adc/adi,ad7779.yaml          |  44 +++-
-> > >  drivers/iio/adc/ad7779.c                      | 192 ++++++++++++++----
-> > >  drivers/iio/adc/adi-axi-adc.c                 |   1 +
-> > >  3 files changed, 196 insertions(+), 41 deletions(-)
-> > >     
+> > > Good idea, thanks. I'll give it a try.  
 > > 
-> > Please include a changelog of what was changed in each revision of
-> > the series along with links to the previous revisions. Tools like
-> > b4 can help automate this.
+> > I'm catching up with this series after being busy a few weeks...
 > > 
-> > https://docs.kernel.org/6.16/process/submitting-patches.html  
-> Whilst I fully agree with this, please keep the per patch change logs
-> as well as personally I find those more useful.  For those just
-> changes from previous version is fine.
+> > I looked at this, but contrary my initial impression I think it would
+> > not be an improvement.
+> > 
+> > The reason is at least one of these cleanup actions (namely the
+> > regulator_disable()) must be done only if there is a matching enable,
+> > which is in atomic_pre_enable. This is why I introduced a flag in the
+> > first place.
+> > 
+> > I'm not sure which usage of devres you had in mind, but I see two
+> > options.
+> > 
+> > Option 1: in probe, add a devres action to call a function like:
+> > 
+> > sn65dsi83_cleanups()
+> > {
+> > 	if (ctx->disable_resources_needed) {
+> > 		/* the same cleanups */
+> > 	}    
+> > }
+> > 
+> > But that is just a more indirect way of doing the same thing, and
+> > relies on the same flag.
+> > 
+> > Option 2: have a function to unconditionally do the cleanups:
+> > 
+> > sn65dsi83_cleanups()
+> > {
+> > 	/* the same cleanups (no if) */
+> > }
+> > 
+> > And then:
+> >  * in atomic_pre_enable, instead of setting the flag
+> >    add a devres action to call sn65dsi83_cleanups()
+> >  * in atomic_disable, instead of clearing the flag
+> >    remove the devres action
+> > 
+> > Even this option looks like more complicated and less readable code
+> > to do the same thing.
+> > 
+> > Do you have in mind a better option that I haven't figured out?  
 > 
-> Anyhow, other than this process stuff the series looks good to me
-> so applied to the togreg branch of iio.git and pushed out as testing.
+> Would using devm_add_action in atomic_pre_enable, and
+> devm_release_action in atomic_post_disable work?
 > 
-Was missing a SELECT IIO_BACKEND.
-0-day found this and I've fixed it up.
+> That way, if you have a typical enable / disable cycle, the action will
+> get registered and executed properly, and if you only have an enable but
+> no matching disable, it will be collected after remove.
 
-Thanks,
+So you're OK with option 2. I just implemented it, works well and the
+resulting code is a bit cleaner. Queued for v2.
 
-Jonathan
+Luca
 
-> Thanks,
-> 
-> Jonathan
-> 
-> 
-> 
-
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
