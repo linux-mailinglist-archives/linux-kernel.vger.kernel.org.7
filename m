@@ -1,132 +1,114 @@
-Return-Path: <linux-kernel+bounces-809798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12692B5122B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:10:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B109B5122D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53463A4B77
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA2F53AFFFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205D83126B6;
-	Wed, 10 Sep 2025 09:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XYBHxHHc"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CC12BE65B
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B753126C9;
+	Wed, 10 Sep 2025 09:10:53 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB5F30C35B;
+	Wed, 10 Sep 2025 09:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757495404; cv=none; b=Ly43hxQ9boW4QTakF+WIljxUinJYzbjB1PLceAhK6NdxZISZjZKQpOUTY69XPHDACXqNYIBaDurubh5iG00rztVOxVJ6g4NQzZ8nDQVOf5A8S+u3Da3YvKsgj+yMjwNJookBTCmOmAe6KGLNysOJBFb/HQ6QQdYg5NNvBUrmipo=
+	t=1757495453; cv=none; b=ABfqaYEx+XlBgALQLAySkNz5N5PTrm4Sofk6vuFiRSnXWcF74uba1vJK9c3CIHL6syqJZfGhEMRQEENhMACJQrS7g+4bn383P85+Q3kDJE46AWIPfuDMBYcA8nhYL0F5RtWz3d/VsTOYTuBGSqrUAI9D57bYUbSetmGCV4MvLiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757495404; c=relaxed/simple;
-	bh=H9zCZyDIgvwzWEQM7YDLcK5/VX5ORk30XN2IWK4wDvo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=I4Lo1pzy+RWlotKvKAffnw8RTuFKeqv4XnFSm6eHW99O6TE6T/BttWDv8v7WHA8k7++IvXKX/AmEyGbw7fO9tAcv0x2qCfBEgzksyjEooU8HTEgbGMa4gOd+lbDp/PoJxKQfVTipcO4tz5F9srzwDif7rISxt3Ybkr9asoVOwZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XYBHxHHc; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id EF759C6B3AC;
-	Wed, 10 Sep 2025 09:09:44 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A07CA606DB;
-	Wed, 10 Sep 2025 09:10:00 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D015B102F294C;
-	Wed, 10 Sep 2025 11:09:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757495399; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ZGdZCcz9UwBIS4jBTMbck9fbv41yXW91D1xMl9GGQ8Y=;
-	b=XYBHxHHcXTegSVJoHeE5qbiapSrwAvEXVOKI5IezhWdA9WwS54GGZgevjXwXdG7HA0+rr+
-	9A8oqmp2ETMkEJwoK8CdCIBlXmNo20Vx/czOCkavpiwTog03Ofe5PfaJdcYl1UY3jY8PfY
-	yxofQq7jFG8I+3rzc3Ky/67zilxcp+6W+jWIPSKRVlu0UYDUKCwHE4tIHRWKOv0Lhj3qKc
-	qlRpDN218k2eOSNLzmFghGox8FY6tkdeugudJsx5ze8qWWT0q5JxMQGlu9eol+2B3ikDHr
-	iC7hekKLgZpadIu3XAbnJ6IkOrs0GmLZ0Zso4hkaq0Yma7X2IT7Fu29bE//L7A==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Cheng Ming Lin <linchengming884@gmail.com>
-Cc: richard@nod.at,  vigneshr@ti.com,  robh@kernel.org,  krzk+dt@kernel.org,
-  conor+dt@kernel.org,  tudor.ambarus@linaro.org,
-  mmkurbanov@salutedevices.com,  Takahiro.Kuwano@infineon.com,
-  pratyush@kernel.org,  linux-mtd@lists.infradead.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  alvinzhou@mxic.com.tw,  Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: Re: [PATCH v2 1/3] dt-bindings: mtd: spi-nand: Add
- enable-randomizer-otp property
-In-Reply-To: <20250910030301.1368372-2-linchengming884@gmail.com> (Cheng Ming
-	Lin's message of "Wed, 10 Sep 2025 11:02:59 +0800")
-References: <20250910030301.1368372-1-linchengming884@gmail.com>
-	<20250910030301.1368372-2-linchengming884@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Wed, 10 Sep 2025 11:09:35 +0200
-Message-ID: <87wm66d67k.fsf@bootlin.com>
+	s=arc-20240116; t=1757495453; c=relaxed/simple;
+	bh=nN0dkOHatWi3Kgddu96dR8RKHH0WVA7ud+zi9dAXztE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EIJTb2KCkvLWXJjmOMGf3QYe+OS3I/TGSl6sdE9uQCWTxm0A4Igs/bDCLmTS5hxapERwBfWvl4V8xQCbY1TtzJhU9nFAd+W6ts5vN/Y2eywzEo0WZLetG+zec/9Z7hcdGu1ZTx+p3Bd1zHzyDiVFLpWOjKIWYFq4eXuLSBX3e8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.89])
+	by gateway (Coremail) with SMTP id _____8AxSNGYQMFoVr8IAA--.18861S3;
+	Wed, 10 Sep 2025 17:10:48 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.89])
+	by front1 (Coremail) with SMTP id qMiowJAxz8OTQMFo18eLAA--.52768S2;
+	Wed, 10 Sep 2025 17:10:47 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	Xuefeng Li <lixuefeng@loongson.cn>,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	stable@vger.kernel.org,
+	Binbin Zhou <zhoubinbin@loongson.cn>,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: [PATCH V2] LoongArch: Align ACPI structures if ARCH_STRICT_ALIGN enabled
+Date: Wed, 10 Sep 2025 17:10:33 +0800
+Message-ID: <20250910091033.725716-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAxz8OTQMFo18eLAA--.52768S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Cr18CF1rJryxJF43XF17XFc_yoW8GryUpF
+	yDCrWkGrZrGr1fCa4jy397uryUtFs5CrWIgFWUt3W8ZF1qva4UXr4kKr1DWFyYgayFqFWx
+	ZFnag34DZa4Yv3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zwZ7UUUUU==
 
-Hello Cheng Ming,
+ARCH_STRICT_ALIGN is used for hardware without UAL, now it only control
+the -mstrict-align flag. However, ACPI structures are packed by default
+so will cause unaligned accesses.
 
-On 10/09/2025 at 11:02:59 +08, Cheng Ming Lin <linchengming884@gmail.com> w=
-rote:
+To avoid this, define ACPI_MISALIGNMENT_NOT_SUPPORTED in asm/acenv.h to
+align ACPI structures if ARCH_STRICT_ALIGN enabled.
 
-> From: Cheng Ming Lin <chengminglin@mxic.com.tw>
->
-> Add a new boolean property "enable-randomizer-otp" to enable the
-> randomizer feature on supported SPI-NAND devices.
->
-> Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> ---
->  Documentation/devicetree/bindings/mtd/spi-nand.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/mtd/spi-nand.yaml b/Docume=
-ntation/devicetree/bindings/mtd/spi-nand.yaml
-> index 77a8727c7..432bc79e9 100644
-> --- a/Documentation/devicetree/bindings/mtd/spi-nand.yaml
-> +++ b/Documentation/devicetree/bindings/mtd/spi-nand.yaml
-> @@ -21,6 +21,10 @@ properties:
->      description: Encode the chip-select line on the SPI bus
->      maxItems: 1
->=20=20
-> +  enable-randomizer-otp:
+Cc: stable@vger.kernel.org
+Reported-by: Binbin Zhou <zhoubinbin@loongson.cn>
+Suggested-by: Xi Ruoyao <xry111@xry111.site>
+Suggested-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+V2: Modify asm/acenv.h instead of Makefile.
 
-This is a NAND wide feature, so we should probably add a prefix, such as
-"nand,".
+ arch/loongarch/include/asm/acenv.h | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Now, what about this "otp" suffix? Many (if not all) chips have a
-volatile setting for that. About the naming, "otp" often reflects to the
-OTP area, which is not what you imply here, as you want to insist
-(rightfully) on the fact that this feature cannot be disabled.
+diff --git a/arch/loongarch/include/asm/acenv.h b/arch/loongarch/include/asm/acenv.h
+index 52f298f7293b..483c955f2ae5 100644
+--- a/arch/loongarch/include/asm/acenv.h
++++ b/arch/loongarch/include/asm/acenv.h
+@@ -10,9 +10,8 @@
+ #ifndef _ASM_LOONGARCH_ACENV_H
+ #define _ASM_LOONGARCH_ACENV_H
+ 
+-/*
+- * This header is required by ACPI core, but we have nothing to fill in
+- * right now. Will be updated later when needed.
+- */
++#ifdef CONFIG_ARCH_STRICT_ALIGN
++#define ACPI_MISALIGNMENT_NOT_SUPPORTED
++#endif /* CONFIG_ARCH_STRICT_ALIGN */
+ 
+ #endif /* _ASM_LOONGARCH_ACENV_H */
+-- 
+2.47.3
 
-Also, this is a per-chip configuration, while I would have welcomed a
-per-partition configuration. I can easily imagine two cases:
-
-- The boot ROM, for longevity purposes, expects the first blocks
-  containing the bootloader to be scrambled. However the rest of the
-  system does not really care and disables randomization.
-
-- The boot ROM is not capable of de-scrambling, however the rest of the
-  system relies on the (probably) more robust scrambling feature.
-
-In both cases a chip wide variable is not relevant.
-
-The fact that it is a one-time feature makes it even harder to fit into
-something generic.
-
-How do you think these constraints could fit with your needs? Can you
-please explain again (sorry for the repetition) what Macronix chips have
-the volatile capability and which ones do not?
-
-Thanks,
-Miqu=C3=A8l
 
