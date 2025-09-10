@@ -1,174 +1,116 @@
-Return-Path: <linux-kernel+bounces-809852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 024C6B512CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:40:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A47B512D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE974189B544
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:40:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3AEA7B9284
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF506314A64;
-	Wed, 10 Sep 2025 09:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C5D306492;
+	Wed, 10 Sep 2025 09:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QNhEv9vG"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eBS0yNdg"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839643148D6
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158F3313E06
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497219; cv=none; b=ZW7tACmwATQvOqoDhBg0nbaRhbITEeopIN/dhBiSFWOVKsr6vT9mPVHC6/0r8K1tV9p59W9A+7LN59uYandT/wQd+XX9rc8ACpbLyKNOEabYuXdEMTqcJbYekcxeoth8wPXH15BePYHhQ9ErqcGCIowlXTnKA9ePlzlZ3ZX9pIA=
+	t=1757497185; cv=none; b=B6cTT0K1ABNeC+lGZJGAHwK7QvnnlkKJYlk0Bl2fGcBUeMiUDGwUENhEzftAjfk+3/xt7XFzjO9FE4tLRsOUk5dK+Chiqn3en/EyZS+UFyR5xXSJnD1Cyyf0+Mmp1PEqCsmz4A2+/srvWeU+5pvFv/f8niapwnoGB+OwUN5843s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497219; c=relaxed/simple;
-	bh=yy/j27wt5j3Fq7s1cLfzdClECpaEYo3uX0UvHw3cPvQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mCpWX7NgMYoDF/k+VkXiJEXyWZ528A5ucF/OXRDdJi3P+WUzih2D0c79s7LriYmhoxNM5zkQwGwBDLbwt10Juk5U6Geqjebyta/kSpHScIzCf8TdK2xGVWMtuI92uxnKILaBRzoYtpp8Hy+8PlBC9GL2Df7gyWutKMYYf6ZI+VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QNhEv9vG; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77238cb3cbbso6939536b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:40:17 -0700 (PDT)
+	s=arc-20240116; t=1757497185; c=relaxed/simple;
+	bh=m3w9198KPcW52Kq5czGxwlCuVIFnmkUpH3jecGwOHRI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=S0MuDg7RlpalcMydEqPMJLFtpNTp2eqVLjt7xkamEy0mZjE3lMaG6AecKA0w3/jsnmMDRKCM7tB+bHKgfpFpVs/++vfkqBxekxeLIub6gj7I7FMsDWb0v94CtmhYWwQjfHf4ZMujcxci+z9+nC3mvGzJvB7v9A9AQJ9mj561sug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eBS0yNdg; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b03fa5c5a89so943047466b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:39:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757497217; x=1758102017; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1757497180; x=1758101980; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w+pqYMSs4N866RiVb5rwqnQGAKdcJ5TNLGW1E9wVfcs=;
-        b=QNhEv9vGbsWlry+HULqmzrefnvaeBqF5pjPs4XWpztzL0OmeaaxiPCQ0EjfFLpCeKZ
-         7ZdJY5fRTjNUnbo2KsS+25I1qg5RzKW1pIgbJhpr2eKsfrnwR/IFjwnihGCrz/9Rwejm
-         Zrb/3ZJwdzZFwD/1MQpFqRxN2JOkduzgijQuzTnq7H36zHzkDxCVHQbHIlrb5waNVPaZ
-         kPflySnCIpMPEn0Ww8aynJrw3yFp053UI3AVf0o0LZlo7NA8MgdzKJGueeZ3MIZPPJMy
-         HYgyqaB0x/R3Q84hv4uB8u6gPlVobggm9c+ygscQTGyjbnpYxLYvebjUSCqNRnIis0tT
-         fqVg==
+        bh=m3w9198KPcW52Kq5czGxwlCuVIFnmkUpH3jecGwOHRI=;
+        b=eBS0yNdg85VxplV5PCne2faobtNgQxz+twlD68Pv/00siAxIwglmWONslGqd4gBAU/
+         4niFf9F3VP+vKf0OC89wthO4adjThbN5N+9cMOqLxFIG6/sSJmmczZ4NUy98aYsb3204
+         5e331kyX08f3b+L/zRJD5C7pSjb3GCf7dGtwHY0bcqbp0hAQzaNwMm5XOLJyayOR/w4t
+         BbG9PjOUS9i1+lRR1kDrqA7c5NZiPMjoDQp+kpFJr0d5HdJLLCzDobM8BuFmnreKsEI2
+         ErkE7l1WOH0L0j76gj4tPssOd1C2+ZtMphaqF8v0Viwx7WayCZsr6SqJkkDC3a8KrJ5u
+         eCzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757497217; x=1758102017;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w+pqYMSs4N866RiVb5rwqnQGAKdcJ5TNLGW1E9wVfcs=;
-        b=heDHzl2Vq0jbge7jD5xIanI+L1bXBe1A1R7Fp36HsXmshGcacgWkLa1+rroB23wquv
-         /qND6VyVxq/+B3wAoj89pNgarQZclFUz+LUYum/XfkcNJQ0NzayhYwypkoatYLvYD3QZ
-         tGrmgcRsgdyjgiRKm9/CAhGL4F4hFwQm0AtxA0zRH/c0P9EYNudritYiUluiqJpUrUQv
-         JeghAxX3d0yNFsqzV+ek2de3LsWFwcSFtVL1Wa1gHnUns3mXcGXE6P0Wsl/SZ0ZzceJO
-         z/E26N2raaxuG7yyu98gfVfKBsTmMIJZ6s2ifNDOkc7zYVaQduBJjUgm42br9G68Lo9z
-         kysg==
-X-Gm-Message-State: AOJu0YzHqneNcuvj/RuAJG7bAJcx2weJ+bKXXTZSkKuGraZXFdrZ4ESj
-	dN+qcn5lws65s9Y1lPlhqwpiCrQlmnz2gvB5IAUiTvQzvFT2BroouaJW
-X-Gm-Gg: ASbGncs+927wZhqiT3NCxfeHWl3AdobLZV7vVpCl4aUDkGASqXoLFJu6B/F5LRNxckw
-	EjmKb8Ca++pS4032oXoqn5idrMpTsoVpSc7HNRv/wZq7do5HeVtkLwT5vKTUBx/kEmjiz1AyhBY
-	grLYR8q76QyiZdXKSaCkW/m2jdBQkrpV6qqWywqr02LnTuICU3XRnX03ieZ/0YR56Bop6A/Mp+1
-	nT/x8YCDblRhRACEC6PHiaVhtb9KKJbfScVxc6/mdI2KWP0fQLZHqQQjOkQzkEP3s6yIPr6bjCS
-	1M/GfgtNsO90FgKWu7Y7iFGLUOWW64ATRSsswTLGJ1O2Xf03h7WS7rjK3GD7Wv1pZSI3jZByoOX
-	GH+GkjlfSi2hpYj8+c6MiP6q5Vy4L5N6eMiT6U8+jMw==
-X-Google-Smtp-Source: AGHT+IFxfQUSufnf2d7W8iscIoRArB05v+1dzzXcxPwXldgH/JEANowOrxpEypKXQr1aQ5aJb26uVQ==
-X-Received: by 2002:a05:6a21:3397:b0:248:4d59:93e6 with SMTP id adf61e73a8af0-2533fab2204mr20066016637.19.1757497216729;
-        Wed, 10 Sep 2025 02:40:16 -0700 (PDT)
-Received: from localhost ([103.121.208.62])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77466121eaesm4507087b3a.25.2025.09.10.02.40.16
+        d=1e100.net; s=20230601; t=1757497180; x=1758101980;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=m3w9198KPcW52Kq5czGxwlCuVIFnmkUpH3jecGwOHRI=;
+        b=uvjxYLVYtvS9VPkQhuDUvIKb+Ou6y1UptLGM8ku40DVS4W28ahljb6oTsFB2NlgpGt
+         C4BLcDu2ftxmZO+QiPuy45WvwGrF3Y0s2Q9lVVLTDBui00p06TM/ElCr8xhfba1n6gIA
+         bBXTjP+5uHDP03+dzBc+3pPgDZ5HbfXOkZEOXGLEsyAHWHzS3OlewrGVR/g19vvARpIb
+         9oWIPiwQvrxv/7MCDNjbko923NapY5xvi4MlETcHPEk3lZbAyaz8r/jd94XMNdX5xj46
+         hO+hrvlLbQjqf33jE03OKmYP70ZG/369VHvkIr3zETUCEimkkARM1QVetBGUT7CI8tcD
+         8lgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXhSfQuej8zVEXnaNKasfKjgF7u0boalNoBUIhfu6lAytJxvgdUgGDF7tzEgO7WYnpfgnEkMMh0t7Gx84=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAWQVtkiioZKniFHuAmCObQ8gww78tmYf0GJX3Z77mmfESwIRx
+	3vm/PFenASRURBZNEnEQeeBxsU9RFiH2OuaxsJNwnfrN/HEoPIjFrxy1oqPbDheDyXXKlqUNDlP
+	sHm0v1P0=
+X-Gm-Gg: ASbGncu7IX8PYXrDZ9GTbrncSqN9maOVfoxX0VgygoDAYZJChSaaNHUN9VbB0poTCp3
+	l8V2pakSX45mUGtlnMPO5gs1LueZIdxPhnaWZ+IrQAcrRS+SaKDnFLN/Tb/lwSAW17ToVWlT9HU
+	fQlvXt3u5UqiV8/UfVG4vO2a247RX9eYZz9NoF8uVTPnh9ND3pG0rg5Wv1ZgPefKRF47z+JCQ4n
+	w2z4YQ6bt2BGmZrfCTlt0mKDg6lP8oMgX/aASaVkAXOTsXhCsCJqQ8ZSRl3BT5yJJ1Q9hd20fBr
+	nEtiRJSyQyvISupM5by5wXjzzfUffVjfhOr6SLRnau9tzQ2iQpXXbpY9pHpRlhSt1kGjCk7vJE4
+	E3D04tkV0VLNXGrxI1/mE9I6/lN/1ObTLtw==
+X-Google-Smtp-Source: AGHT+IEgLz62atvGYTtgWhK0IqE5DaeMbopSvx9UyamfacYq3cpWns33qwgJoigjRNFokWLtUFrPnA==
+X-Received: by 2002:a17:907:97c9:b0:b04:1a1c:cb5b with SMTP id a640c23a62f3a-b04b13fd491mr1455086066b.7.1757497180392;
+        Wed, 10 Sep 2025 02:39:40 -0700 (PDT)
+Received: from draig.lan ([185.126.160.19])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07833ac0c1sm138008066b.84.2025.09.10.02.39.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 02:40:16 -0700 (PDT)
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Jinchao Wang <wangjinchao600@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] x86/hw_breakpoint: Add arch_reinstall_hw_breakpoint
-Date: Wed, 10 Sep 2025 17:39:35 +0800
-Message-ID: <20250910093951.1330637-2-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250910093951.1330637-1-wangjinchao600@gmail.com>
-References: <20250910093951.1330637-1-wangjinchao600@gmail.com>
+        Wed, 10 Sep 2025 02:39:39 -0700 (PDT)
+Received: from draig (localhost [IPv6:::1])
+	by draig.lan (Postfix) with ESMTP id BCED35F82D;
+	Wed, 10 Sep 2025 10:39:38 +0100 (BST)
+From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
+To: Haixu Cui <quic_haixcui@quicinc.com>
+Cc: <andriy.shevchenko@intel.com>,  <harald.mommer@oss.qualcomm.com>,
+  <quic_msavaliy@quicinc.com>,  <broonie@kernel.org>,
+  <virtio-dev@lists.linux.dev>,  <viresh.kumar@linaro.org>,
+  <linux-spi@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <hdanton@sina.com>,  <qiang4.zhang@linux.intel.com>,
+  <quic_ztu@quicinc.com>,  <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH v9 1/3] virtio: Add ID for virtio SPI
+In-Reply-To: <20250828093451.2401448-2-quic_haixcui@quicinc.com> (Haixu Cui's
+	message of "Thu, 28 Aug 2025 17:34:49 +0800")
+References: <20250828093451.2401448-1-quic_haixcui@quicinc.com>
+	<20250828093451.2401448-2-quic_haixcui@quicinc.com>
+User-Agent: mu4e 1.12.12; emacs 30.1
+Date: Wed, 10 Sep 2025 10:39:38 +0100
+Message-ID: <87wm6663z9.fsf@draig.linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The new `arch_reinstall_hw_breakpoint` function can be used in an
-atomic context, unlike the more expensive free and re-allocation path.
+Haixu Cui <quic_haixcui@quicinc.com> writes:
 
-This patch adds `BP_SLOT_ACTION_REINSTALL` to the `enum` and updates the
-`manage_bp_slot` helper to correctly handle the action. This allows
-callers to efficiently re-establish an existing breakpoint.
+> Add VIRTIO_ID_SPI definition for virtio SPI.
+>
+> Signed-off-by: Haixu Cui <quic_haixcui@quicinc.com>
+> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
----
- arch/x86/include/asm/hw_breakpoint.h |  2 ++
- arch/x86/kernel/hw_breakpoint.c      | 21 +++++++++++++++++++++
- 2 files changed, 23 insertions(+)
+Reviewed-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
 
-diff --git a/arch/x86/include/asm/hw_breakpoint.h b/arch/x86/include/asm/hw_breakpoint.h
-index bd437a30dbf2..d1cc6db8a59f 100644
---- a/arch/x86/include/asm/hw_breakpoint.h
-+++ b/arch/x86/include/asm/hw_breakpoint.h
-@@ -20,6 +20,7 @@ struct arch_hw_breakpoint {
- 
- enum bp_slot_action {
- 	BP_SLOT_ACTION_INSTALL,
-+	BP_SLOT_ACTION_REINSTALL,
- 	BP_SLOT_ACTION_UNINSTALL,
- };
- 
-@@ -64,6 +65,7 @@ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
- 
- 
- int arch_install_hw_breakpoint(struct perf_event *bp);
-+int arch_reinstall_hw_breakpoint(struct perf_event *bp);
- void arch_uninstall_hw_breakpoint(struct perf_event *bp);
- void hw_breakpoint_pmu_read(struct perf_event *bp);
- void hw_breakpoint_pmu_unthrottle(struct perf_event *bp);
-diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
-index 1736063a82b7..99223695cee8 100644
---- a/arch/x86/kernel/hw_breakpoint.c
-+++ b/arch/x86/kernel/hw_breakpoint.c
-@@ -94,6 +94,10 @@ static int manage_bp_slot(struct perf_event *bp, enum bp_slot_action action)
- 		old_bp = NULL;
- 		new_bp = bp;
- 		break;
-+	case BP_SLOT_ACTION_REINSTALL:
-+		old_bp = bp;
-+		new_bp = bp;
-+		break;
- 	case BP_SLOT_ACTION_UNINSTALL:
- 		old_bp = bp;
- 		new_bp = NULL;
-@@ -192,6 +196,23 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
- 	return arch_manage_bp(bp, BP_SLOT_ACTION_INSTALL);
- }
- 
-+/*
-+ * Reinstall a hardware breakpoint on the current CPU.
-+ *
-+ * This function is used to re-establish a perf counter hardware breakpoint.
-+ * It finds the debug address register slot previously allocated for the
-+ * breakpoint and re-enables it by writing the address to the debug register
-+ * and setting the corresponding bits in the debug control register (DR7).
-+ *
-+ * It is expected that the breakpoint's event context lock is already held
-+ * and interrupts are disabled, ensuring atomicity and safety from other
-+ * event handlers.
-+ */
-+int arch_reinstall_hw_breakpoint(struct perf_event *bp)
-+{
-+	return arch_manage_bp(bp, BP_SLOT_ACTION_REINSTALL);
-+}
-+
- /*
-  * Uninstall the breakpoint contained in the given counter.
-  *
--- 
-2.43.0
-
+--=20
+Alex Benn=C3=A9e
+Virtualisation Tech Lead @ Linaro
 
