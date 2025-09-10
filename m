@@ -1,439 +1,282 @@
-Return-Path: <linux-kernel+bounces-810272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF80B51807
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:37:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3723B51800
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47EFC5E25F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:37:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 798A1482BD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA41B3176FD;
-	Wed, 10 Sep 2025 13:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAC42749E2;
+	Wed, 10 Sep 2025 13:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/49O4VN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Dm5RiJu5"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2087.outbound.protection.outlook.com [40.107.100.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067514A1A;
-	Wed, 10 Sep 2025 13:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757511413; cv=none; b=fwzfVXnZGr7ixmUK+qVgr5m2Wcf6yg2YWz3RvB2dTKuvBAbJ6pT15VGDAEsnhrVhhWXoOLK3WuhgyjcOtnEFHjtZVxJ7i+Rw1fo0hR0blNBFlTOOMp8T+BVV9SDBQ2TQRSt6YD7KLko9D869bTQAlGxL9sdgAMWD1vKtOtFX3BQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757511413; c=relaxed/simple;
-	bh=7Wwh4dWJ4kd1y6JrFld/PSEmpOQhwY3hnN2xoW5xdqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ETURE8XXVxdTm8UXET2o1RNdFbOKOAlrjRC2wIO5a2K9n/E5sQQUUeKnpOxmhe9ekZDTpmgvWlNVKA4ariMPKAJg73GCeW5Oool3W8ZYdMdfOBZDgGrXHalNrmR9sHXAlKBtAmff2kgZ49RjaDUGT6qs1OPZCTHOfbCHwcOu8Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/49O4VN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17EF1C4CEF0;
-	Wed, 10 Sep 2025 13:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757511412;
-	bh=7Wwh4dWJ4kd1y6JrFld/PSEmpOQhwY3hnN2xoW5xdqo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e/49O4VNHyDNK1ZcH4D00hS+DWWGb1eZLoKF/C6a90jObZ462rU0vZ2IDiUZ5e9Mk
-	 z6xXWrWJwX3cLIsM9elzIdisAol9EhW3YbJxOcazfZpB+rQA6QSZwuantwHbQ1ExGq
-	 plPqb607Se+ryZxVGEK+ypwR4MG3O0SmRZUe9bBfsmf1V+9lOKixp3fTM+iB1UFM7z
-	 nU4gqwqJD7nUNZ1MM8zzI4AgYqwVFrvtyYw7Bl/X7k++adCOVexgqXlUU+Z9A64trs
-	 xPp1RKUuuzbVU5Zntgjjkq0BGC+6TAJVm4XKjU3opnNtEi82HIAmkAyEFv3yRkh7mi
-	 gmWas7poS0gkA==
-Date: Wed, 10 Sep 2025 19:03:38 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, 
-	Sean Christopherson <seanjc@google.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>, Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] KVM: selftests: Test TPR / CR8 sync and interrupt
- masking
-Message-ID: <ck4k7g7pd77ojfptkp4yg6qz66queg2n6eo4o54ezhdbv4rvgn@mpuss5twpxhi>
-References: <cover.1756139678.git.maciej.szmigiero@oracle.com>
- <a5efbf76990d023c7cf21c5a4c170f4ad0234d85.1756139678.git.maciej.szmigiero@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A1F1DED63
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757511292; cv=fail; b=oBnmLJTerEXbf14hrQx2wjSYieVSpcH92+E1t7H/VN2mJ/uqlJM1iEAae1SAc7BKeIu3kh/EshdWdb+hLmEOtxCaPMjbJ25lvXkcbeK9DC6Rcdjuvb1hAFgc3mw7gDSSymoWqQ1eQBcqJXyvH5S0y2Ylm+2JUSgH2/pdbS0fDls=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757511292; c=relaxed/simple;
+	bh=+Td4lZ0VOpSg8fWvJzTzWSP/DY2o46gc3TROW3dL5nM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pYMMqjvbuFHXDZS2nxipsslxjpBNq1LU9lMRQakmLEdCZTMP3xxlhxuehx2Prs4HphI8gK1r3/leD1Vf5HS9sT+/2kw3gS0TJ823BD9QpwqWNQb4rWbvNZ/JL/3dNm6/hsgwIZZiH9yWbqofh63CBkI4jDEmn+DCrHTGikeiQ7w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Dm5RiJu5; arc=fail smtp.client-ip=40.107.100.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f+k8+zmvqXg1jN4/36FrAlp2ub6lLBUVNzUnrUVvI3uMKxYE3ET+Frz7vLV7zGOQkrbgEZWl74qcc7SPCmt9jAbSyf2HYukvppUIRO+wXpOiXbrYWr9kb2G745ha1S4h7qTvIEMoGXFFRnVtM8UKHFsiqGtYGK4UM6KJQoWiN4MMqcLliQ/BMLYw8Oqf4O8DB5bQE6v04+hdbzJmTjh6nL7jm7zRaV4+zpCaEEKhp+l8tCBFf74ngFtYT2dHy6fMCqLmOE19CMi9j7V7IMDeNupskdemYOfQu5UGZNmbH9+bRhrc98otyiMVNX01x4b9IFRlMP3unMhhe3Wew1BEsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qhgVw/gq+8JHNm6RuZ600k3erndaLKHO64EIabLHGr0=;
+ b=CEj7Pcpo+vQAkPr/QXBj5BcS/YYHdPZ+4q0cvWhOtCDKo4gKi/v01maMGYa2gzfPOEzGZShPTaMVyS4KXbrr67oaqPXhFYwrlGmCClc6tHE1r9RPk9xYfN22m+tZQnxw9YqVRxqWv3BLkw/p4NU96XvgGtjICIKlTPCCXjlw5F1Qe8CS0Lu2SPUTl8llPKD0L9OEYiNWgnTwBj408zNm7PvbDwdZJ7jkhVaDRogu/ZPD1rujuQR1salKEkNval985ivu8cZSvDR3z/na1DuWBl3tyxiZlknpkfg0494w0RfQOBxt96wUw7NbrA2KlWWJxEhOpdqZdMZKedvEUOWiaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qhgVw/gq+8JHNm6RuZ600k3erndaLKHO64EIabLHGr0=;
+ b=Dm5RiJu5WU85xYx4EMvWF2ifvjVaQr3tgUvH6ozpXcfobfxSQMtAReeJLi1jwWS/LESz9j8lpHpKvsq+o4dhaAukuSnf8HbX84kiDjAjx7I9auLg/gSGrTH5tGLNeBIgHY4wol2G2Owu/xD5Mk+FiU0dWSlzcakLKKEm1cB+LTo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by MN2PR12MB4110.namprd12.prod.outlook.com (2603:10b6:208:1dd::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 13:34:47 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 13:34:47 +0000
+Message-ID: <bcad0da8-a7c9-44b6-97f8-8dfc01acfc73@amd.com>
+Date: Wed, 10 Sep 2025 15:34:38 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: ttm: do not direct reclaim when allocating high
+ order pages
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-dev@igalia.com, Sergey Senozhatsky <senozhatsky@chromium.org>
+References: <20250910-ttm_pool_no_direct_reclaim-v1-1-53b0fa7f80fa@igalia.com>
+ <e79a134b-89de-4da1-b64b-b890227fce8a@amd.com>
+ <aMF0fe7CIVD-8zVo@quatroqueijos.cascardo.eti.br>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <aMF0fe7CIVD-8zVo@quatroqueijos.cascardo.eti.br>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0076.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cd::20) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a5efbf76990d023c7cf21c5a4c170f4ad0234d85.1756139678.git.maciej.szmigiero@oracle.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MN2PR12MB4110:EE_
+X-MS-Office365-Filtering-Correlation-Id: 25ba64d9-576b-4e5a-26f4-08ddf06ecf55
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cFNJVWVvZElPQnJRSkZFQ25BS1Fkc2czUHJFQUdJL3BCTmtwN3lMdmh2TlBQ?=
+ =?utf-8?B?YTYvazZ1dmJESDdWZUZTTG5Ic21Ja1ZQMkhZNE1BUTYrN09VNXV3aWdxN1Fo?=
+ =?utf-8?B?TVpKM0Q3Q2N2a0x6OFJ1bU5meUhaYzlhU1owMW9VbDRVOVN5Q0hSZXhlUHRp?=
+ =?utf-8?B?N2FOSUFScEpkdDI3YXEyOExPdnc2OVVKdnl3a3JyMHB3eXJ4TTJEZkNPQ2Yv?=
+ =?utf-8?B?RUVsQ1pwamZ0YWxpWnZvWkpob0haQkp0eHEwMEQ5M1pqNUVmV21vSHY5UEVm?=
+ =?utf-8?B?VkFpOU10M2UxenJ1VzJ3N2w0eGh0c1dVdjJOenJ0cWNKdjNrYjJVSEthVHpq?=
+ =?utf-8?B?c1FBQTRuVXpOTENjb3gwTnVDM0RKYVJsL3U4NDh4TzA4QnRwaHZQSld5czRN?=
+ =?utf-8?B?bTZWZ0RRUmtkUUJreTZTd1Zwdlo0dTQ0TEczdXU4azliY2YwRDhLdDBleWxJ?=
+ =?utf-8?B?VHhIUmxTaER1cGNmK1UyaXJvT25YS0twVW15Q09hamN0R0FRajNaRXQzaTBj?=
+ =?utf-8?B?bS9yVjY2M1dPSFdIK0xFVVBjMlo3ZlFjMzVDVFNpc1hLU3JUSFM1ODd0NDZs?=
+ =?utf-8?B?NUtwaHYvQ2ZObW5ITUR6TWpsNC9zQW9LRVdvdlNNQmdNTi9BLzZXMDRUTCtz?=
+ =?utf-8?B?cVpQeG9ndVRzcHRCczVnbzQxK213VVNtd0lLaExzNTRZeldHQUZhZ2tYeklX?=
+ =?utf-8?B?Q3ZGWkZuQ2dNMGxSb3BjU1c0RUtUaTNkSGxzSFlvY0dYL3RGbEoxWmR1Uks0?=
+ =?utf-8?B?RU4zY2ZNTDRoY0pnY1pjT0NhWVplWTlpbkFKSms4U2xhRnUzRVFiTWhqWmJn?=
+ =?utf-8?B?bEQ2eE5PaVEzcUg2UWpxMytiYU0wWlRHNVoxVERqY2lnbittS2Z3eEdoOS9N?=
+ =?utf-8?B?cDRZNUlWcEdTTENLcGQwcThVY2U3OU1MZFE4M2lUM0UwQ2kzb0ZCd1BkNC9k?=
+ =?utf-8?B?NE1PQVJCYUtjN2R6NFRmTWpNZS9IVTVwSHAzLzFURTYyVzZTZUJIZ1k4MTR0?=
+ =?utf-8?B?cUtKM1djejFKYXByWTRCQjlDdXNnNG5oSCtXNDFsTGMxS1UzTEFncEw5NHNk?=
+ =?utf-8?B?Qy9VZFFLeDJXUysrWEM1WXlxWEcrTnpHaXIvUUFoVTNuRTZPem9NVnRPeHIr?=
+ =?utf-8?B?WklXSnAyUld1a2VwWlBUenNYY00rYmxKOUJweDZwbWozMlpoMmZTaUlPSjJw?=
+ =?utf-8?B?NTViMUZFc1p4TmJsNHU5ZTdsblFKZ2NRZC9GMG9iZFNnWHNpMHpYZHdxdHJp?=
+ =?utf-8?B?WERteUJMT1dCc3BKS2gzMkhBSWE3Z3BXYm5uaDdzbDlBUTluZkl4NnprMDhS?=
+ =?utf-8?B?VC9mcG1vQ0N2YVBOclpRR0wvSnNuckFJQ0ViOHhzVC8vRmJqVXB3WldicWxE?=
+ =?utf-8?B?SlFaQnFYbW9zVWNON1k2a3JxekhBRTh3TGduM2RSWW5hUnBONklXc01jUFFn?=
+ =?utf-8?B?UzRVckZ5TFBZY2hWSkR4Sk9OdWNtMTBkRGtndkhXK0xuZDRxdHBZckpkUFBC?=
+ =?utf-8?B?MFlmWXhPem16U29Kb1lmMStBQ0VpY2Jxa1ZxSXBtUVJvZzMwSDBBUzAxZU9G?=
+ =?utf-8?B?dGlNc2grV1RuN2VCNXp5SzJKMmUwdHZZSnBtZVI2a1ZGTThzMmRKT01ybGNF?=
+ =?utf-8?B?dGtQdDVhcFRSbjhaL1dyamNXWGtOZFozMVVhdklRTnM1bkEyVm5QVEhCd25N?=
+ =?utf-8?B?cDhIclFSejFCeGppZVBxZVV2a0lQVmNhTEpzb2tPdUdTR3FMT3lTdDhtdnBB?=
+ =?utf-8?B?dlNndFYxcVFQSktWSTJseGlJeWwyM0Exd0xocXdsbjZDZjJ3ck9ENC9KejFS?=
+ =?utf-8?B?M3ZsVGNNVUcvWDhuL1dtRFF6V0xnRkRORTZwRDhkbDE0cDFKaXZhbDU1WkJM?=
+ =?utf-8?B?cXJaakl3L3FDRVJUZWRSeUhCMlNWc1ljalRoZmwrU3hJR0xwNFpKbDFCRXNv?=
+ =?utf-8?Q?7q7CzWDh17o=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?T2xMUkl6SnVvNHpadlpGeVgyQXc1TENTcWJWa3IrcTd3WGJ3ZWRTQTlDWGpU?=
+ =?utf-8?B?VlcvaTNzU2NTd09haVNGalpPaFVWVTVraVFsLzBPVDJ0Q2lpaUIwTEVUeWFO?=
+ =?utf-8?B?K3hZSmkwNXZ2REx6R2JpS2NQTlptWlVUMmc3aDlsNWVyamJhVzFVdVN0b0FR?=
+ =?utf-8?B?b2xvcHhUclp0R0lHUnlQRmI1dzM3M3l0QlUzZENCY3pqTnBaVmdQc0JYRExJ?=
+ =?utf-8?B?aFF4VlhaeUxCZFhPZWpBdkFLMkpwbXo2dC8zYWN4elduaEl3aDdXNXFTQUZs?=
+ =?utf-8?B?WFAycWNER2hycnFYS1ZZRElqTWFGVTdLVWl2MWd2NzE3dG5xbHNrVG9ob1ZP?=
+ =?utf-8?B?YzRuNTU0ZnFYUk5aZFhGcjdCK2tyejN0NVlxZm9wWEFwbUMzRThzSVZNRjZ4?=
+ =?utf-8?B?ZjV6SjVCZkxUZzN6dmJrTU5ZUzhqdkNjU2Z5TDhvVWl3a2YweHpGdGhXVGY3?=
+ =?utf-8?B?SFpBTEVOeElvT043b0R3ZEZBL005WHpwUTYvZkx5dTRlS0pqVmtLUWxPcVRF?=
+ =?utf-8?B?eEFxZmU0SUtNYkNKaGJ5YXAwc1plQnprL0Z6dldlM1Evd0F4Tk94TlBFN3po?=
+ =?utf-8?B?Z2VEY1pZeGdmck1oQ3NPZDhkZGk2REFVOHgzZ0xiY0l4MlpGZ2JpcGtrMkp1?=
+ =?utf-8?B?MzVualh4N1M4QzNqUm5KUVVZcHR2Uk5sMmpUSDU2L1BTcm14Yk9uQ05yaHRE?=
+ =?utf-8?B?aHdDOG44akIwZTRqaVExZjNqTGU5QmgyeDBJK0lRazlxWERDTzJTbk90NC92?=
+ =?utf-8?B?SHBHUlBMcGp6alBCR0JRSll5QXZjbDJ0ajM3dDJqVzFKWDBtUWtLdFg4aGxh?=
+ =?utf-8?B?RVJWSTNTS2l6RDE5RVhmbWRucFZ6NUpLakUzMzRudXlIMlZrTXQ2anBJWkVY?=
+ =?utf-8?B?djQzUWhxcFdTZi8yM0F4b3FWRjlzK2ZsdCsxck14UXp1Tm53VXcwaW5nUnhR?=
+ =?utf-8?B?UVo4amwxWlA1Y2hrY0QzL0t4ZExOR3B0R29wRlUvaDJ1V3Y2V0gwRnU3S2pi?=
+ =?utf-8?B?dW5tb2I5VDFPZ05XSjhVN29DWEhBNGRianJLWTRMdFU0VmZ2bG45UGdDMlkr?=
+ =?utf-8?B?bmhKaFVBN2Y0eXQ5K3l0WVFKNllWVTAvY0xPcWpubU9PMUJjSUZpeG5MMC9q?=
+ =?utf-8?B?aXd6cVVKVnJRbHUybGYyci93WG9vbXVhZDJyVnpTTlpPQzNHamhxVzJuNXlH?=
+ =?utf-8?B?dGtwRHZhS204MmZLSExodlJTb3JrclFhK01tZlp0OUJrc3hpaXJqbGJPRnRY?=
+ =?utf-8?B?VWYzOWRaQVNtSk9PYW5sbWVPOGFCUFI5bmVOVExwNUhyc0N5YzdqdEdXbkVX?=
+ =?utf-8?B?Z25OUDFZNDQ1UXB6MHhCTHpVQVBneXhtM0ZFdGlIRk1xZUMxSHJ0bUhQRWk1?=
+ =?utf-8?B?azB5TTVhSjIrSlJZeEoyQVhvb056bmY0OFVpeGt5S1pCN1pMenVMcTNNbG1h?=
+ =?utf-8?B?VWlVODNOZGhCZE50UHowdWEyYWh5VXltV3MrcnNveUhZeWUvOGtYQTUvZHA2?=
+ =?utf-8?B?aVFKY1kyYjdOb2pUVkpxYjlkZ0FCeVcwZ2h2MDBzTExvN2lOV3BwNDJkcTdK?=
+ =?utf-8?B?VHYyNVBEOWpoemFxVjVhSWhrSzRyWFViTktuNkc0akpYc2hRcjJ3U08xV20r?=
+ =?utf-8?B?Q3BlVTZ5bTc0ODFnZVFzNVhBT2llL29xMDJ5VkRaRnlxMm42WUdaTmFIZ014?=
+ =?utf-8?B?S3BiaE0veE1FOUNzVTBheWp3VWF3OHIrbEIxVkoxS05kdGFKYWx5aEFDcWd6?=
+ =?utf-8?B?c2ppQldMQ1c4NjFtbTdUVExBMEl1UnZmM3Z1YnU4UXd6QTMrMXhKS0dRMmtK?=
+ =?utf-8?B?QVdJbWx4NU1GWlNkZXNNS3dlTUZPMWNGYlZNMEtpd25jdmRrMzNaNHJMcXFY?=
+ =?utf-8?B?N3duY1BzNEZEMXkrc3dvT2VmZExtVWFVKzNtMmpXaEFKTTRNaVBGOEFRVHRu?=
+ =?utf-8?B?bG0wQ1JCVVdUV2V4bmdVZ25xK2grY0pwMnJOdG54bkpMdExVVmlEMjZja1Rq?=
+ =?utf-8?B?OTd4R1VxUGVzUXVzcTNhNjVRdG82MVl1R3dUODdteHlkd1V0RDEwMXJjTzcr?=
+ =?utf-8?B?TmVvUTBLZ1daMVB0S3Myck5zd3EwNmdlcmV5Tmc0ZGtCQUF6UG50K3dMWkRY?=
+ =?utf-8?Q?TWF2J5S/a6vrxeBc3mazVqFTI?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 25ba64d9-576b-4e5a-26f4-08ddf06ecf55
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 13:34:47.3996
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZTgsXeTHVShHNjI2uq0+DRuZwFil+YZl8vZWTCChCP3W99WYN6gb9ydKEt9cErmn
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4110
 
-On Mon, Aug 25, 2025 at 06:44:29PM +0200, Maciej S. Szmigiero wrote:
-> From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
+On 10.09.25 14:52, Thadeu Lima de Souza Cascardo wrote:
+> On Wed, Sep 10, 2025 at 02:11:58PM +0200, Christian König wrote:
+>> On 10.09.25 13:59, Thadeu Lima de Souza Cascardo wrote:
+>>> When the TTM pool tries to allocate new pages, it stats with max order. If
+>>> there are no pages ready in the system, the page allocator will start
+>>> reclaim. If direct reclaim fails, the allocator will reduce the order until
+>>> it gets all the pages it wants with whatever order the allocator succeeds
+>>> to reclaim.
+>>>
+>>> However, while the allocator is reclaiming, lower order pages might be
+>>> available, which would work just fine for the pool allocator. Doing direct
+>>> reclaim just introduces latency in allocating memory.
+>>>
+>>> The system should still start reclaiming in the background with kswapd, but
+>>> the pool allocator should try to allocate a lower order page instead of
+>>> directly reclaiming.
+>>>
+>>> If not even a order-1 page is available, the TTM pool allocator will
+>>> eventually get to start allocating order-0 pages, at which point it should
+>>> and will directly reclaim.
+>>
+>> Yeah that was discussed before quite a bit but at least for AMD GPUs that is absolutely not something we should do.
+>>
+>> The performance difference between using high and low order pages can be up to 30%. So the added extra latency is just vital for good performance.
+>>
+>> We could of course make that depend on the HW you use if it isn't necessary for some other GPU, but at least both NVidia and Intel seem to have pretty much the same HW restrictions.
+>>
+>> NVidia has been working on extending this to even use 1GiB pages to reduce the TLB overhead even further.
+>>
+>> Regards,
+>> Christian.
+>>
 > 
-> Add a few extra TPR / CR8 tests to x86's xapic_state_test to see if:
-> * TPR is 0 on reset,
-> * TPR, PPR and CR8 are equal inside the guest,
-> * TPR and CR8 read equal by the host after a VMExit
-> * TPR borderline values set by the host correctly mask interrupts in the
-> guest.
+> But if the system cannot reclaim or is working hard on reclaiming, it will
+> not allocate that page and the pool allocator will resort to lower order
+> pages anyway.
 > 
-> These hopefully will catch the most obvious cases of improper TPR sync or
-> interrupt masking.
+> In case the system has pages available, it will use them. I think there is
+> a balance here and I find this one is reasonable. If the system is not
+> under pressure, it will allocate those higher order pages, as expected.
+
+Well that is not even remotely correct.
+
+We have seen all kind of problems with this, especially on Fedora were automatic de-fragmentation is disabled by default.
+
+The result is that an use case which causes strong memory fragmentation massively affects the performance of later running GPU based applications even when reclaim is enabled.
+
+Disabling this would massively worsen the problem. Falling back to lower order pages is basically just a workaround to avoid the OOM killer under heavy memory fragmentation.
+
+> I can look into the behavior when the system might be fragmented, but I
+> still believe that the pool is offering such a protection by keeping those
+> higher order pages around. It is when the system is under memory presure
+> that we need to resort to lower order pages.
+>
+> What we are seeing here is on a low memory (4GiB) single node system with
+> an APU, that it will have lots of latencies trying to allocate memory by
+> doing direct reclaim trying to allocate order-10 pages, which will fail and
+> down it goes until it gets to order-4 or order-3. With this change, we
+> don't see those latencies anymore and memory pressure goes down as well.
+
+Yeah and that you see memory pressure going down is a clear indicator that something is going wrong here.
+
+If this is for an AMD based GPU then that is an absolutely clear no-go from my side.
+
+Regards,
+Christian.
+
 > 
-> Do these tests both in x2APIC and xAPIC modes.
-> The x2APIC mode uses SELF_IPI register to trigger interrupts to give it a
-> bit of exercise too.
+> Cascardo.
 > 
-> Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
-> ---
->  .../testing/selftests/kvm/include/x86/apic.h  |   5 +
->  .../selftests/kvm/x86/xapic_state_test.c      | 265 +++++++++++++++++-
->  2 files changed, 267 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/include/x86/apic.h b/tools/testing/selftests/kvm/include/x86/apic.h
-> index 80fe9f69b38d..67285e533e14 100644
-> --- a/tools/testing/selftests/kvm/include/x86/apic.h
-> +++ b/tools/testing/selftests/kvm/include/x86/apic.h
-> @@ -27,7 +27,11 @@
->  #define	APIC_LVR	0x30
->  #define		GET_APIC_ID_FIELD(x)	(((x) >> 24) & 0xFF)
->  #define	APIC_TASKPRI	0x80
-> +#define		APIC_TASKPRI_TP_SHIFT	4
-> +#define		APIC_TASKPRI_TP_MASK	GENMASK(7, 4)
->  #define	APIC_PROCPRI	0xA0
-> +#define		APIC_PROCPRI_PP_SHIFT	4
-> +#define		APIC_PROCPRI_PP_MASK	GENMASK(7, 4)
-
-These can probably be simplified with get()/set() macros. Something like 
-this:
-#define	GET_APIC_PRI(x)		(((x) >> 4) & 0xF)
-#define	SET_APIC_PRI(x, y)	(((x) & ~0xF0) | (((y) & 0xF) << 4))
-
->  #define	APIC_EOI	0xB0
->  #define	APIC_SPIV	0xF0
->  #define		APIC_SPIV_FOCUS_DISABLED	(1 << 9)
-> @@ -67,6 +71,7 @@
->  #define	APIC_TMICT	0x380
->  #define	APIC_TMCCT	0x390
->  #define	APIC_TDCR	0x3E0
-> +#define	APIC_SELF_IPI	0x3F0
->  
->  void apic_disable(void);
->  void xapic_enable(void);
-> diff --git a/tools/testing/selftests/kvm/x86/xapic_state_test.c b/tools/testing/selftests/kvm/x86/xapic_state_test.c
-> index fdebff1165c7..968e5e539a1a 100644
-> --- a/tools/testing/selftests/kvm/x86/xapic_state_test.c
-> +++ b/tools/testing/selftests/kvm/x86/xapic_state_test.c
-> @@ -1,9 +1,11 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  #include <fcntl.h>
-> +#include <stdatomic.h>
->  #include <stdio.h>
->  #include <stdlib.h>
->  #include <string.h>
->  #include <sys/ioctl.h>
-> +#include <unistd.h>
->  
->  #include "apic.h"
->  #include "kvm_util.h"
-> @@ -16,6 +18,245 @@ struct xapic_vcpu {
->  	bool has_xavic_errata;
->  };
->  
-> +#define IRQ_VECTOR 0x20
-> +
-> +/* See also the comment at similar assertion in memslot_perf_test.c */
-> +static_assert(ATOMIC_INT_LOCK_FREE == 2, "atomic int is not lockless");
-> +
-> +static atomic_uint tpr_guest_irq_sync_val;
-> +
-> +static void tpr_guest_irq_sync_flag_reset(void)
-> +{
-> +	atomic_store_explicit(&tpr_guest_irq_sync_val, 0,
-> +			      memory_order_release);
-> +}
-> +
-> +static unsigned int tpr_guest_irq_sync_val_get(void)
-> +{
-> +	return atomic_load_explicit(&tpr_guest_irq_sync_val,
-> +				    memory_order_acquire);
-> +}
-> +
-> +static void tpr_guest_irq_sync_val_inc(void)
-> +{
-> +	atomic_fetch_add_explicit(&tpr_guest_irq_sync_val, 1,
-> +				  memory_order_acq_rel);
-> +}
-> +
-> +static void tpr_guest_irq_handler_xapic(struct ex_regs *regs)
-> +{
-> +	tpr_guest_irq_sync_val_inc();
-> +
-> +	xapic_write_reg(APIC_EOI, 0);
-> +}
-> +
-> +static void tpr_guest_irq_handler_x2apic(struct ex_regs *regs)
-> +{
-> +	tpr_guest_irq_sync_val_inc();
-> +
-> +	x2apic_write_reg(APIC_EOI, 0);
-> +}
-> +
-> +static void tpr_guest_irq_queue(bool x2apic)
-> +{
-> +	if (x2apic) {
-> +		x2apic_write_reg(APIC_SELF_IPI, IRQ_VECTOR);
-> +	} else {
-> +		uint32_t icr, icr2;
-> +
-> +		icr = APIC_DEST_SELF | APIC_DEST_PHYSICAL | APIC_DM_FIXED |
-> +			IRQ_VECTOR;
-> +		icr2 = 0;
-> +
-> +		xapic_write_reg(APIC_ICR2, icr2);
-> +		xapic_write_reg(APIC_ICR, icr);
-> +	}
-> +}
-> +
-> +static uint8_t tpr_guest_tpr_get(bool x2apic)
-> +{
-> +	uint32_t taskpri;
-> +
-> +	if (x2apic)
-> +		taskpri = x2apic_read_reg(APIC_TASKPRI);
-> +	else
-> +		taskpri = xapic_read_reg(APIC_TASKPRI);
-
-Rather than pass x2apic flag to all these helpers, it might be better to 
-have a global is_x2apic, and helpers for reading APIC registers.  See 
-tools/testing/selftests/kvm/x86/apic_bus_clock_test.c for an example 
-that we should be able to adopt here.
-
-> +
-> +	return (taskpri & APIC_TASKPRI_TP_MASK) >> APIC_TASKPRI_TP_SHIFT;
-> +}
-> +
-> +static uint8_t tpr_guest_ppr_get(bool x2apic)
-> +{
-> +	uint32_t procpri;
-> +
-> +	if (x2apic)
-> +		procpri = x2apic_read_reg(APIC_PROCPRI);
-> +	else
-> +		procpri = xapic_read_reg(APIC_PROCPRI);
-> +
-> +	return (procpri & APIC_PROCPRI_PP_MASK) >> APIC_PROCPRI_PP_SHIFT;
-> +}
-> +
-> +static uint8_t tpr_guest_cr8_get(void)
-> +{
-> +	uint64_t cr8;
-> +
-> +	asm volatile ("mov %%cr8, %[cr8]\n\t" : [cr8] "=r"(cr8));
-> +
-> +	return cr8 & GENMASK(3, 0);
-
-Why mask off the remaining bits? Shouldn't they all be zero?
-
-> +}
-> +
-> +static void tpr_guest_check_tpr_ppr_cr8_equal(bool x2apic)
-> +{
-> +	uint8_t tpr;
-> +
-> +	tpr = tpr_guest_tpr_get(x2apic);
-> +
-> +	GUEST_ASSERT_EQ(tpr_guest_ppr_get(x2apic), tpr);
-> +	GUEST_ASSERT_EQ(tpr_guest_cr8_get(), tpr);
-> +}
-> +
-> +static void tpr_guest_code(uint64_t x2apic)
-> +{
-> +	cli();
-> +
-> +	if (x2apic)
-> +		x2apic_enable();
-> +	else
-> +		xapic_enable();
-> +
-> +	tpr_guest_check_tpr_ppr_cr8_equal(x2apic);
-
-Would be good to confirm that the guest reads a zero TPR here on 
-startup.
-
-> +
-> +	tpr_guest_irq_queue(x2apic);
-> +
-> +	/* TPR = 0 but IRQ masked by IF=0, should not fire */
-> +	udelay(1000);
-> +	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 0);
-> +
-> +	sti();
-> +
-> +	/* IF=1 now, IRQ should fire */
-> +	while (tpr_guest_irq_sync_val_get() == 0)
-> +		cpu_relax();
-> +	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 1);
-> +
-> +	GUEST_SYNC(0);
-> +	tpr_guest_check_tpr_ppr_cr8_equal(x2apic);
-> +
-> +	tpr_guest_irq_queue(x2apic);
-> +
-> +	/* IRQ masked by barely high enough TPR now, should not fire */
-> +	udelay(1000);
-> +	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 1);
-> +
-> +	GUEST_SYNC(1);
-> +	tpr_guest_check_tpr_ppr_cr8_equal(x2apic);
-> +
-> +	/* TPR barely low enough now to unmask IRQ, should fire */
-> +	while (tpr_guest_irq_sync_val_get() == 1)
-> +		cpu_relax();
-> +	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 2);
-> +
-> +	GUEST_DONE();
-> +}
-
-You don't necessarily have to do it, but it would be good to have a test 
-where the guest updates the TPR too -- as a way to confirm that V_TPR is 
-kept in sync with CR8 and TPR.
-
-> +
-> +static uint8_t lapic_tpr_get(struct kvm_lapic_state *xapic)
-> +{
-> +	return (*((u32 *)&xapic->regs[APIC_TASKPRI]) & APIC_TASKPRI_TP_MASK) >>
-> +		APIC_TASKPRI_TP_SHIFT;
-> +}
-> +
-> +static void lapic_tpr_set(struct kvm_lapic_state *xapic, uint8_t val)
-> +{
-> +	*((u32 *)&xapic->regs[APIC_TASKPRI]) &= ~APIC_TASKPRI_TP_MASK;
-> +	*((u32 *)&xapic->regs[APIC_TASKPRI]) |= val << APIC_TASKPRI_TP_SHIFT;
-> +}
-> +
-> +static uint8_t sregs_tpr(struct kvm_sregs *sregs)
-> +{
-> +	return sregs->cr8 & GENMASK(3, 0);
-
-Here too.. do we need to mask the reserved bits?
-
-> +}
-> +
-> +static void test_tpr_check_tpr_zero(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm_lapic_state xapic;
-> +
-> +	vcpu_ioctl(vcpu, KVM_GET_LAPIC, &xapic);
-> +
-> +	TEST_ASSERT_EQ(lapic_tpr_get(&xapic), 0);
-> +}
-> +
-> +static void test_tpr_check_tpr_cr8_equal(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm_sregs sregs;
-> +	struct kvm_lapic_state xapic;
-> +
-> +	vcpu_sregs_get(vcpu, &sregs);
-> +	vcpu_ioctl(vcpu, KVM_GET_LAPIC, &xapic);
-> +
-> +	TEST_ASSERT_EQ(sregs_tpr(&sregs), lapic_tpr_get(&xapic));
-> +}
-> +
-> +static void test_tpr_mask_irq(struct kvm_vcpu *vcpu, bool mask)
-> +{
-> +	struct kvm_lapic_state xapic;
-> +	uint8_t tpr;
-> +
-> +	static_assert(IRQ_VECTOR >= 16, "invalid IRQ vector number");
-> +	tpr = IRQ_VECTOR / 16;
-> +	if (!mask)
-> +		tpr--;
-> +
-> +	vcpu_ioctl(vcpu, KVM_GET_LAPIC, &xapic);
-> +	lapic_tpr_set(&xapic, tpr);
-> +	vcpu_ioctl(vcpu, KVM_SET_LAPIC, &xapic);
-> +}
-> +
-> +static void test_tpr(struct kvm_vcpu *vcpu, bool x2apic)
-> +{
-> +	bool run_guest = true;
-> +
-> +	vcpu_args_set(vcpu, 1, (uint64_t)x2apic);
-> +
-> +	/* According to the SDM/APM the TPR value at reset is 0 */
-> +	test_tpr_check_tpr_zero(vcpu);
-> +	test_tpr_check_tpr_cr8_equal(vcpu);
-> +
-> +	tpr_guest_irq_sync_flag_reset();
-> +
-> +	while (run_guest) {
-> +		struct ucall uc;
-> +
-> +		alarm(2);
-> +		vcpu_run(vcpu);
-> +		alarm(0);
-> +
-> +		switch (get_ucall(vcpu, &uc)) {
-> +		case UCALL_ABORT:
-> +			REPORT_GUEST_ASSERT(uc);
-> +			break;
-> +		case UCALL_DONE:
-> +			test_tpr_check_tpr_cr8_equal(vcpu);
-> +
-> +			run_guest = false;
-> +			break;
-> +		case UCALL_SYNC:
-> +			test_tpr_check_tpr_cr8_equal(vcpu);
-> +
-> +			if (uc.args[1] == 0)
-> +				test_tpr_mask_irq(vcpu, true);
-> +			else if (uc.args[1] == 1)
-> +				test_tpr_mask_irq(vcpu, false);
-
-Having wrappers around that will make this clearer, I think:
-	test_tpr_set_tpr()
-	test_tpr_clear_tpr()
-or such?
-
-> +			else
-> +				TEST_FAIL("Unknown SYNC %lu", uc.args[1]);
-> +			break;
-> +		default:
-> +			TEST_FAIL("Unknown ucall result 0x%lx", uc.cmd);
-> +			break;
-> +		}
-> +	}
-> +}
-> +
->  static void xapic_guest_code(void)
->  {
->  	cli();
-> @@ -195,6 +436,12 @@ static void test_apic_id(void)
->  	kvm_vm_free(vm);
->  }
->  
-> +static void clear_x2apic_cap_map_apic(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
-> +{
-> +	vcpu_clear_cpuid_feature(vcpu, X86_FEATURE_X2APIC);
-> +	virt_pg_map(vm, APIC_DEFAULT_GPA, APIC_DEFAULT_GPA);
-> +}
-> +
->  static void test_x2apic_id(void)
->  {
->  	struct kvm_lapic_state lapic = {};
-> @@ -230,10 +477,17 @@ int main(int argc, char *argv[])
->  	};
->  	struct kvm_vm *vm;
->  
-> +	/* x2APIC tests */
-> +
->  	vm = vm_create_with_one_vcpu(&x.vcpu, x2apic_guest_code);
->  	test_icr(&x);
->  	kvm_vm_free(vm);
->  
-> +	vm = vm_create_with_one_vcpu(&x.vcpu, tpr_guest_code);
-> +	vm_install_exception_handler(vm, IRQ_VECTOR, tpr_guest_irq_handler_x2apic);
-> +	test_tpr(x.vcpu, true);
-
-Any reason not to pass in a pointer to x similar to test_icr()?
-
-
-- Naveen
+>>
+>>>
+>>> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+>>> ---
+>>>  drivers/gpu/drm/ttm/ttm_pool.c | 4 +++-
+>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool.c
+>>> index baf27c70a4193a121fbc8b4e67cd6feb4c612b85..6124a53cd15634c833bce379093b557d2a2660fd 100644
+>>> --- a/drivers/gpu/drm/ttm/ttm_pool.c
+>>> +++ b/drivers/gpu/drm/ttm/ttm_pool.c
+>>> @@ -144,9 +144,11 @@ static struct page *ttm_pool_alloc_page(struct ttm_pool *pool, gfp_t gfp_flags,
+>>>  	 * Mapping pages directly into an userspace process and calling
+>>>  	 * put_page() on a TTM allocated page is illegal.
+>>>  	 */
+>>> -	if (order)
+>>> +	if (order) {
+>>>  		gfp_flags |= __GFP_NOMEMALLOC | __GFP_NORETRY | __GFP_NOWARN |
+>>>  			__GFP_THISNODE;
+>>> +		gfp_flags &= ~__GFP_DIRECT_RECLAIM;
+>>> +	}
+>>>  
+>>>  	if (!pool->use_dma_alloc) {
+>>>  		p = alloc_pages_node(pool->nid, gfp_flags, order);
+>>>
+>>> ---
+>>> base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+>>> change-id: 20250909-ttm_pool_no_direct_reclaim-ee0807a2d3fe
+>>>
+>>> Best regards,
+>>
 
 
