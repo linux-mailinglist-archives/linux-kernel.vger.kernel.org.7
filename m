@@ -1,114 +1,122 @@
-Return-Path: <linux-kernel+bounces-809198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845EBB509EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:33:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A0F6B509F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 344254E787B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEA284E30F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413F1136347;
-	Wed, 10 Sep 2025 00:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F4D19EED3;
+	Wed, 10 Sep 2025 00:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bZ+cfOkj"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="ezlGNwd0"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E667CEEC3;
-	Wed, 10 Sep 2025 00:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE1619D093;
+	Wed, 10 Sep 2025 00:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757464400; cv=none; b=XxqYeah2GacukuLI4981m4OLG/DZTkNApWAtkw6ba58kvATTVDHPGDZSxn9NDGSziIfM9eSY9PVWj8d1tO3yKktR75QZlXUbY65w4mbu4cJRHMjrlrNWZjDDI/2LgSwYs6KGOoKFbjE0NkCFqgTNtTR497qaNt1tFXE9FiydbSc=
+	t=1757464684; cv=none; b=QZWEGjeOocalZeeWHqcHLshey46Se4ezwpwHc/c44viG8Gy9cvJROrhKN4MQMTY/WjtsJH4qWsO4dwsn4CVatOfMPe5pET2vkA0Ra0/4HKTF6BGBb+Hl7orngeoWKH51kG2+ODKepdO77UX5dPKUapjem5SqS+z5XpLiyw2aJbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757464400; c=relaxed/simple;
-	bh=pS3b56oiokeq0CgPfc52tIPnSWTbKs4vOS3a+kmw7jo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d/f8mOwbZp0O2JadP+f7n0CNhNFfOHnTkZiaNM5HXC3dA8rMGLRMyS1SH0Yg7csk/p/ENF7eZx9IvMI37GHw2zD+cOQjeUed+Cat7sCUcSZX4ISDrU4Cusr4ltPfBO2TqU+HXuq2+hugFm0/F2CQPkJykrNjj+DBlMW1JzdppXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bZ+cfOkj; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=+7i6AL/giGG8sDoDggEW2tn65nUMUUOKofKssaLcy1w=; b=bZ+cfOkjVovEqOsNsAmbzO+jK3
-	ZC+G754RaEYlFk7SYJTZu4IivuxnzmWpDq92c8U8z9pZT/sQOKtfHTlKqbSqt0HCu+b0VSx4WKc2x
-	+bVpliaDB4NlawCwjgjl0bDWflR0IoIHGYPD0Qnf7EogwXtQx3zSpeow6CebBT5SkF8jfxtqLX8Bz
-	ghXIvhvFmKBUDO5NX5OzFEQr0TMfd2KFwTD7iZ3oCPmDudEZyCf+zxHDMeWqNMkf+he5zk51h+eN3
-	e+ODD2EaYuKh2EGsIG1BeqOAExdofpHYTBkhvDSasvKMu0BqJovXiJwl5GEdF47eUeq2WNnBSDlYs
-	+DRsEQNg==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uw8lw-0000000BBNh-38jX;
-	Wed, 10 Sep 2025 00:33:16 +0000
-Message-ID: <1c79b3c7-5847-4960-9454-0c70d02a6441@infradead.org>
-Date: Tue, 9 Sep 2025 17:33:15 -0700
+	s=arc-20240116; t=1757464684; c=relaxed/simple;
+	bh=Cd/LhAC3OdULazTtLXZ2kDCrWNzkkHlYUMoWV0jvamc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=k0hsMWdmiDfOtbCQhnnHdzOvQ/KnDbpcTeJTk+k235lm0n+8NBTDJiuX2ddf5I+vtmOa2mcnTUjUX1gTor4qumobrmnIoRZIsTEb4CxU295K2FUy6HZtycRz1DEx3ueYnaWLnse6IBzMRYLv5KKNJBPxMyDpm21yKDbnXWTnC0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=ezlGNwd0; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58A0bsjD7416368, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1757464674; bh=9n6IzR3PgOzhIEHGjGMIwn7DV9RVL3N2moaSKDuol3s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=ezlGNwd0KBmSWJys6tyPeyPoew1MVwzxV1gb1f2MyGMwnDj/JWHy36lkDhwP5q/BQ
+	 XidrRXmqD/2/dZxLeIDeK5DErWjQF/WTKk70qpZD0WgezUTkOGZqnqkDMZUx8R5/Bf
+	 XCM+vQZI8brB2efJBDjaPoFdeTMWkf5UsggroU0cSVDhbjqkySyRbNzKzrnjWaYjr0
+	 rLertKleJofpcW+B1y3WPFXdGnTEwWrkooKYtl+gdFLIG/43O/T8dogt/9sLizwxzK
+	 GuFn/OwAfYtS0Yl2oQzU03tH91NoA/1bUg37WWa8KkxAAfrU/ZJeDAl68eEhJWvv/d
+	 xAIS/pHcGww7g==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58A0bsjD7416368
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 10 Sep 2025 08:37:54 +0800
+Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 10 Sep 2025 08:37:54 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 10 Sep 2025 08:37:54 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
+ 15.02.1544.027; Wed, 10 Sep 2025 08:37:54 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: =?iso-8859-2?Q?Ond=F8ej_Jirman?= <megi@xff.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "open list:REALTEK WIRELESS DRIVER (rtw89)"
+	<linux-wireless@vger.kernel.org>
+Subject: RE: [PATCH] net: wireless: rtw89: Sleep while waiting for firmware init
+Thread-Topic: [PATCH] net: wireless: rtw89: Sleep while waiting for firmware
+ init
+Thread-Index: AQHcIc+fk+Cu8K8WX0+hNcR/3x+wJ7SLkeew
+Date: Wed, 10 Sep 2025 00:37:54 +0000
+Message-ID: <4a3f6b40a0064de1acd80f4eeb1cdd0f@realtek.com>
+References: <20250909211255.1486851-1-megi@xff.cz>
+In-Reply-To: <20250909211255.1486851-1-megi@xff.cz>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/7] kstate, test: add test module for testing kstate
- subsystem.
-To: Andrey Ryabinin <arbn@yandex-team.com>, linux-kernel@vger.kernel.org
-Cc: Alexander Graf <graf@amazon.com>, Mike Rapoport <rppt@kernel.org>,
- James Gowans <jgowans@amazon.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-mm@kvack.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Baoquan He
- <bhe@redhat.com>, kexec@lists.infradead.org,
- Pratyush Yadav <ptyadav@amazon.de>, Jason Gunthorpe <jgg@nvidia.com>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- David Rientjes <rientjes@google.com>, Pratyush Yadav <pratyush@kernel.org>,
- Changyuan Lyu <changyuanl@google.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Chris Li <chrisl@kernel.org>, Ashish.Kalra@amd.com,
- William Tu <witu@nvidia.com>, David Matlack <dmatlack@google.com>
-References: <20250909201446.13138-1-arbn@yandex-team.com>
- <20250909201446.13138-6-arbn@yandex-team.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250909201446.13138-6-arbn@yandex-team.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+Ond=F8ej Jirman <megi@xff.cz> wrote:
+> From: Ondrej Jirman <megi@xff.cz>
+>=20
+> This avoids RCU stalls caused by waiting up to 400ms for firmware init.
+>=20
+> Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> ---
+>  drivers/net/wireless/realtek/rtw89/fw.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw89/fw.c b/drivers/net/wirele=
+ss/realtek/rtw89/fw.c
+> index 16e59a4a486e..2c034b764a0a 100644
+> --- a/drivers/net/wireless/realtek/rtw89/fw.c
+> +++ b/drivers/net/wireless/realtek/rtw89/fw.c
+> @@ -109,9 +109,9 @@ int rtw89_fw_check_rdy(struct rtw89_dev *rtwdev, enum=
+ rtw89_fwdl_check_type type
+>         u8 val;
+>         int ret;
+>=20
+> -       ret =3D read_poll_timeout_atomic(mac->fwdl_get_status, val,
+> -                                      val =3D=3D RTW89_FWDL_WCPU_FW_INIT=
+_RDY,
+> -                                      1, FWDL_WAIT_CNT, false, rtwdev, t=
+ype);
+> +       ret =3D read_poll_timeout(mac->fwdl_get_status, val,
+> +                               val =3D=3D RTW89_FWDL_WCPU_FW_INIT_RDY,
+> +                               1, FWDL_WAIT_CNT, false, rtwdev, type);
 
+As I know, sleeping while RCU lock is not allowed. Please share kernel log
+about the RCU stall and your perspective.=20
 
-On 9/9/25 1:14 PM, Andrey Ryabinin wrote:
-> diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
-> index b6ea861006bf..af9a25bdcd6e 100644
-> --- a/kernel/liveupdate/Kconfig
-> +++ b/kernel/liveupdate/Kconfig
-> @@ -69,6 +69,14 @@ config KSTATE
->  	  state, save it into the memory and restore the state after kexec
->  	  in new kernel.
->  
-> +config KSTATE_TEST
-> +	bool "KSTATE test code"
-> +	help
-> +	  Build a simple test/playground code that is useful for kstate
-
-	  Build simple
-
-> +	  subsystem development. It contains some structure with different
-
-	                                          structures
-?
-
-> +	  kind of data which migrated across kexec to the new kernel
-
-	  kinds        which are migrated
-
-> +	  using KSTATE.
-> +
-
--- 
-~Randy
+>         if (ret) {
+>                 switch (val) {
+>                 case RTW89_FWDL_CHECKSUM_FAIL:
+> --
+> 2.51.0
+>=20
 
 
