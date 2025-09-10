@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-810114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D061B51616
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:48:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D25B5161C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA37467BFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:48:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B09DB7AA40D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1EB284B4C;
-	Wed, 10 Sep 2025 11:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4268030F53B;
+	Wed, 10 Sep 2025 11:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SlFE3eEN"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTUmsG5H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F03284B42
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871D12797B8;
+	Wed, 10 Sep 2025 11:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757504889; cv=none; b=FOtiVJ/duqaMo/cI7gNPAKLKyEkRcgAWR6E3TqUIKFHtZOCqmniqswx548GDkvEemx1iwK63dl75tRGXVWKrzjCljid+jSgH1uQmMChn5ZBloz6hbD/YUeuce1OqKSz/YKVSi9WghMnkORC50YC6OJXKtv/eYdKFUgcB2DHuIts=
+	t=1757505030; cv=none; b=sjc/CwCaSr9FDbEo5vTCjz31+j4b/aBtkZc13UlbaW9Q93AFfRVvwEIE1w4mpR0NwGBFQFDkyfko1G6PrwrRKnfMTZx2SPrjTcXeh2KHdPt5ijFjOCmuIYrKYBKENH/KidWDGnLShiyuXGLV1NpbGhWjZ+0cYoQdSumTty950fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757504889; c=relaxed/simple;
-	bh=glUpWDjU/whbEm+cXSDLbJPOFLb0/DY79uUM8qwNMmY=;
+	s=arc-20240116; t=1757505030; c=relaxed/simple;
+	bh=Mqve2GlzuCnytDpGTk9tHKkadC70O5DHUUGd7vf/G5w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uEYNXuByPMlmWxWg9uqhTT3sTevxeUj5sR3SkPbTn/7IiyOiqUg51Lmt6oxBRlx2o6K7fzy4XB0hBiao2obKsIIcTrqrY4mjBQWgPAqXLYkjKKj6PBCPky8hrzrGnNi2aZ8EoX+aY/3ifgdHgROxlk4Ncirg1o9B4Ctzy3eauho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SlFE3eEN; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3e537dc30c7so5109213f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:48:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757504885; x=1758109685; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=psddHzFokLiBPLVEpbVIxZmPYIzTbvsTQwlkDfkebjY=;
-        b=SlFE3eENiwnEM1Al7EMhcCMqh9WhfBa4g+FJfrvc39yX5nwe4NVDfwywiqO6CVLk0g
-         bW1MDTIzhCtViHtMWaNf47634TfjHUBYGkrXR4kHR7uIaSN+Lz/Z4xglnnPFmLSgIg+0
-         /k586jnhIR/4GAlPlyQpbjp7Eoar5wYg7N7sKkkvF+kevpy/rPFBqpap+FDxT+H3+8rU
-         LYHvuQlVM4/ts8vjnm9wK4QBndjvniWxo0nh2LL3ttEYxdC6skVXBeeVzX3HTK1M/UjO
-         mv7/JzWYNm7PNhY0CAhZ0YMpz8EESxghbkWTrBOGqJUeH+kD8fVXFYUbCFWzn40ETX7x
-         LS6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757504885; x=1758109685;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=psddHzFokLiBPLVEpbVIxZmPYIzTbvsTQwlkDfkebjY=;
-        b=MSAruD0ggFwkUS2Pt3sgoY2SeLo5AIhZyPQl0z8ET3EeXFS98XFq0MCa2utwezgoZZ
-         jg9nWl/63RIDAsLkHWpMU6tPgfq4ImpJ6hlUfbSPv1LK+YoAXDsUqgAaDQNfiR/UIMYF
-         P4hd2K67eYN09shoetojaLEqzZmD2Ih8+4xmsJBUgkjdDcHVWmSdVMMrUqaGlqZJ+Llj
-         RMgnglYzKiTHO7Ig6G4+PAXZCZu0bI3GPgvmbdWWOdqRCwybpLKsdVSSEfjOAKj0dERT
-         3A18lEjuWHv9dxtxDdOlzxkaBZdoGfoUW2r7zHmh/0dFFbguY8GOR3uJLZd6SSyTPLMf
-         ss9Q==
-X-Gm-Message-State: AOJu0YwZyKgZ6nSSBmbF6rh1AKyBE6m8t0/BTmE3iZXoA1MJh/kZUb4Z
-	uFyajvXE1Louup6/oY4wyR42WfJNhEK5aBLsxjIPyihyLS1FgS6PZIjWq1ch1Pf/cqY=
-X-Gm-Gg: ASbGncv6u2v3Gi2Qnkr1RB3BOCZywk8FTcg8ZYxMix4tltV2wusmJsF4edEvRqYJ4XN
-	+UJ0Z/4ROhZ/0rizhXrIrlyxOvFryBRfKQqv6L2Zh/8rNSaestkcY1mp1S9PcxmLyQao1+Nlqnn
-	4CbLuHN5Mvn23m4cKw3ap888v20Gwr9RoUSI/5Kk7JU0x0ya5YqJIFTnR0vS2aNBq3iDsQ+Vsd3
-	2eBMU3uOQot6sAvOEnXG5DPNq2IvIuttXtxorefPn31sNTbGaJISVAtCuP1YyQjqO+ahAPmJjBL
-	DiNWjBML7WFbqkoEXhB+LOKCl0++nk7wRBCEeum8drTaBnZ/FhvIrYBgAalpvG0WhRYi/Q+g7td
-	e0WBX2DVqHl98upUE6dMYds8ZbIaFHQ/DjWpK
-X-Google-Smtp-Source: AGHT+IEC0BwkiBcLfkC6AyjnK+7m/uZFo+fHuHF5ML5ydk07hOwcF87TM1WXMbXyppNJR3OAgoJ1Xw==
-X-Received: by 2002:a05:6000:1a8d:b0:3e4:e4e:3449 with SMTP id ffacd0b85a97d-3e64c692515mr12297520f8f.58.1757504885431;
-        Wed, 10 Sep 2025 04:48:05 -0700 (PDT)
-Received: from [192.168.0.20] ([212.21.159.60])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df16070bdsm28840585e9.3.2025.09.10.04.48.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 04:48:04 -0700 (PDT)
-Message-ID: <49960695-5de9-494b-98c3-2ad7f1d5fa9f@suse.com>
-Date: Wed, 10 Sep 2025 14:48:03 +0300
+	 In-Reply-To:Content-Type; b=S5Soh6kXA3ZNM8PUGzcedh0FF1UVR94qR7L1rSTqa6VAC9yUnkUrpB7DnEB3NuEjW6L144lyAyuCpX5v7cOw43URuPlNJWAUHfmr/Fng+rmKymwrR3mYyYE92ursXSGI2yIoTUEpJ6i/5MXZpdHXno1sHOZBypcu++85H1EE7TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTUmsG5H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D60CC4CEF0;
+	Wed, 10 Sep 2025 11:50:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757505030;
+	bh=Mqve2GlzuCnytDpGTk9tHKkadC70O5DHUUGd7vf/G5w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fTUmsG5HDreIpInwmgyZdNcXNx2hqdqP6qfXcPywMRX9Hj1Ru3YkS7n6GPpXECYdz
+	 mFiuMbqFopUta/wM3P2gMcyok8tOMih3woSxLB6BF5dYcTlFIdzJlt9VAM39M8INeW
+	 q3WQNOdElVDgMoJIXXm6ods1NWvC8/TiEILn0nCvEgWsszNEZztNf4jjcr1RGZjb9V
+	 Z+k17mqFFVTAB1oaWfdLYkNc80vZbv9dNAG4giobT4C0vwmBRkMbzG9jv4mvAhmjVB
+	 T5bHSH4zByLazl7SvyqpVs6FmFz7CIkmWrgZR499DYw2K441qsihyB/+ffKFQcP/Yu
+	 3lWFU8FQ008xw==
+Message-ID: <c6c80870-386b-473d-b643-bcd64c86c692@kernel.org>
+Date: Wed, 10 Sep 2025 13:50:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,74 +49,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 03/15] x86/mce: Define BSP-only SMCA init
-To: Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org,
- Tony Luck <tony.luck@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- Smita.KoralahalliChannabasappa@amd.com, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
- linux-acpi@vger.kernel.org
-References: <20250908-wip-mca-updates-v6-0-eef5d6c74b9c@amd.com>
- <20250908-wip-mca-updates-v6-3-eef5d6c74b9c@amd.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-Autocrypt: addr=nik.borisov@suse.com; keydata=
- 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
-In-Reply-To: <20250908-wip-mca-updates-v6-3-eef5d6c74b9c@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v4 1/4] dt-bindings: leds: add generic LED consumer
+ documentation
+To: Aleksandrs Vinarskis <alex@vinarskis.com>, Lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+ Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Daniel Thompson <danielt@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ threeway@gmail.com, Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20250910-leds-v4-0-1fc320488233@vinarskis.com>
+ <20250910-leds-v4-1-1fc320488233@vinarskis.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20250910-leds-v4-1-1fc320488233@vinarskis.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+Hi Aleksandrs,
 
+Thank you for your continued work on this.
 
-On 9/8/25 18:40, Yazen Ghannam wrote:
-> Currently on AMD systems, MCA interrupt handler functions are set during
-> CPU init. However, the functions only need to be set once for the whole
-> system.
+One small remark below.
+
+On 10-Sep-25 1:07 PM, Aleksandrs Vinarskis wrote:
+> Introduce common generic led consumer binding, where consumer defines
+> led(s) by phandle, as opposed to trigger-source binding where the
+> trigger source is defined in led itself.
 > 
-> Assign the handlers only during BSP init. Do so only for SMCA systems to
-> maintain the old behavior for legacy systems.
+> Add already used in some schemas 'leds' parameter which expects
+> phandle-array. Additionally, introduce 'led-names' which could be used
+> by consumers to map LED devices to their respective functions.
 > 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
+> ---
+>  .../devicetree/bindings/leds/leds-consumer.yaml    | 67 ++++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-consumer.yaml b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..045b7a4fcd3bdcfb19a02fe4435b40445c168115
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
+> @@ -0,0 +1,67 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/leds-consumer.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Common leds consumer
+> +
+> +maintainers:
+> +  - Aleksandrs Vinarskis <alex@vinarskis.com>
+> +
+> +description:
+> +  Some LED defined in DT are required by other DT consumers, for example
+> +  v4l2 subnode may require privacy or flash LED. Unlike trigger-source
+> +  approach which is typically used as 'soft' binding, referencing LED
+> +  devices by phandle makes things simpler when 'hard' binding is desired.
+> +
+> +  Document LED properties that its consumers may define.
+> +
+> +select: true
+> +
+> +properties:
+> +  leds:
+> +    oneOf:
+> +      - type: object
+> +      - $ref: /schemas/types.yaml#/definitions/phandle-array
+> +        description:
+> +          A list of LED device(s) required by a particular consumer.
+> +        items:
+> +          maxItems: 1
+> +
+> +  led-names:
+> +    description:
+> +      A list of device name(s). Used to map LED devices to their respective
+> +      functions, when consumer requires more than one LED.
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/leds/common.h>
+> +
+> +    leds {
+> +        compatible = "gpio-leds";
+> +
+> +        privacy_led: privacy-led {
+> +            color = <LED_COLOR_ID_RED>;
+> +            default-state = "off";
+> +            function = LED_FUNCTION_INDICATOR;
+> +            gpios = <&tlmm 110 GPIO_ACTIVE_HIGH>;
+> +        };
+> +    };
+> +
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      v4l2_node: camera@36 {
+> +        reg = <0x36>;
+> +
+> +        leds = <&privacy_led>;
+> +        led-names = "privacy-led";
 
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+This should probable be:
+
+        led-names = "privacy";
+
+Now without the "-led".
+
+Regards,
+
+Hans
+
+
 
