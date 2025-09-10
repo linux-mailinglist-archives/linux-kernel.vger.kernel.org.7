@@ -1,234 +1,314 @@
-Return-Path: <linux-kernel+bounces-810486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21975B51B51
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97AA4B51B53
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19FA51894ECB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:17:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD4718999EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464F1242D90;
-	Wed, 10 Sep 2025 15:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68B824DCFD;
+	Wed, 10 Sep 2025 15:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="p5Fq26fY"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OGx9rSCT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3CF24DCFD
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CDA24A04A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757517394; cv=none; b=eOyY7TeIdUsfxXUQjZq7XokiWg0bK5PBQeu8b90wK9UT87Ei5gLhzVHPCUiKKMH/6JBxg35ddAtatS8UwNiBt/XHkTno9v0U7Rvo3BAA3YWXGnD8QsCrZqw25h7iYZTIkXQPf/GjDvvQbG+T2NGnJaww1B2MavvlM7bF2CuzpxA=
+	t=1757517417; cv=none; b=JBZe/tnywaLD+JLYR7Vh4FkuHEULDA16B9lRF6BB1i/Eu4InOCL/8LFTp8if/xKEgS3gn0Z6Z7XT1ghyi7gFxCvuGGhar2bi86+iHlAdKVaDu258e9AOts7xDynbaD2IvRVqGldysAR/a15PiVkloO27l+CF2faeuCRcdZaT9e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757517394; c=relaxed/simple;
-	bh=CMr+Yyb64ouHjg8enQXwO9zPKrjmmn+0fLcun1xcNsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m6hLt0Bp3dQyivaKrK7pMDQJbN1SG+tJ5a3mxQosFBz77zsYh84AxTzZJj1Xp9175kmYuxezrR+yY/fiQ+5LjekU/5tIrykuXZ6pmXnbFo2kkjs/Sg+7b9R88BXKFfnXH8s5J7PEFAIlrJCSoRNuXI71SE6hII+F0e9PF050s4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=p5Fq26fY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ACgT6c004003
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:16:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=kKm0FaL1IsnsJ1lRYNU+N3Fz
-	JdUYvVMh5dXRjU0QCk8=; b=p5Fq26fYWFQBv4jsqwoICAN3BPzWKiJ1nDETM99M
-	qYaJAlGyDaaHmKO1z93fcVW5AWkmOt1ObtdBYRcfscs2Dt3fBbzvs/SnkRo7Ifc7
-	7qQs49X1iUmV7tciI/bLswt8v/1P0apmUMCxq2pWlPemmfz0K+EN1BqxZmDlcNZl
-	bLdSmNTQrd3J1EQJDwspX2Q9ESFL4yeilX8M+0j6cs5FnriK3LpIIxOF/IS2qvFW
-	h2XMguo7EqCiriV+JKtDR6nQZ029MA6bgpufcFu2wyf6OrdEfBOOq63E4qNt7jkc
-	OXyLqkyUxTB3D9koO2CbE2l2L4cEK+a9ar/TSU1vg9bq9Q==
-Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com [209.85.221.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490bwscdct-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:16:30 +0000 (GMT)
-Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-5449f6cacd1so10144619e0c.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:16:30 -0700 (PDT)
+	s=arc-20240116; t=1757517417; c=relaxed/simple;
+	bh=bCaWrOOv19v551VomOnMCJOunrRGUciE5BBsfEaEedE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PPY1QeFvGpn9mX9fRuJS4ga6Jl+Rhlr8PPMAWZ99dXr0DninjpuCB1U1nzgErNXlEQuRlk/kwNq4GZh+FGDxXdpKdCuNbbe8hQ4EH1U6N11g63vT2Js3yP4Ch9mrCl1hMYNspYur+sHrpgG8oZeqD/mrYtomsnsXmnOSOEJUq8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OGx9rSCT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757517414;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OTaDACB4l26rOSYcf8BPat/9VEf+Ju7nr9jru3/iH8o=;
+	b=OGx9rSCTbRIxWZrQ+pbk+ssZIlHShJC7QlT9LxeR6BdRKQkQmpp6ZTVZiq5IYc4hDdQzB/
+	i0RyxzUWN4NGVJZCOfz7GXYkdpoXBrO+VNkEXLJVDhOqUyO/Yq7Qt6/0WbUu5R1u25I7Uy
+	aAtYl+DRdD1AvhI/3QLvjerWe5oZXso=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-164-d8BUdNmMPy-KXGbfXssXpQ-1; Wed, 10 Sep 2025 11:16:53 -0400
+X-MC-Unique: d8BUdNmMPy-KXGbfXssXpQ-1
+X-Mimecast-MFC-AGG-ID: d8BUdNmMPy-KXGbfXssXpQ_1757517412
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45cb612d362so39302655e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:16:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757517389; x=1758122189;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kKm0FaL1IsnsJ1lRYNU+N3FzJdUYvVMh5dXRjU0QCk8=;
-        b=hRiFBz62yf/mizURmJVTHufPlmmzFQYGmg+4AQSIMLRw8Yf8rMk9bW3Aa68eazk6wX
-         aRkL22ACl4M+RvYDPlxy8SETPl5qOww3Qu4BkTQMLZtvutcE7PRHtuZwzjdgTCKqJnrw
-         o2wTVWO4FdKX3rm1ccnDLkZhbw5Nefj2FOA6JKJF+OLHZ4OOUFBmo/gkKBoBfgCMzYlu
-         bvB1xMe1VkzZOOmTO352F4JvULLP/zM/tICyM2Lc5JKFcVg/4TaqKo4a4OZYQx4ALZNX
-         jpBZGutUkVdAnWOBeuyrG+AxKphbELMeQfHCsH34b7FP8H9meHY4BiROHp5mPOdmpOoL
-         wT2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXegj8kHWdRzLVRiKBEozJPl9q6ZYTDlyRl0yMBqWSutUCjnFsAwmlNOn8Me5vr9SoF4PbXLWBURZ/e/Kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL3b6CeFn61dp2+VEodiOV16x3nqaRKvFxspFKDP8tCR28GkH+
-	s39KtWF2G5EgPQpfyXLAKWV6VWzHWdUPSSeUmWo5D5nDL7W2TNwDgbHrOrXStgMl9YnYERuIEzS
-	jdRms6yGu1SVhIujhso7RDtr6oOgnRzt/vJXAGYL4Z0GigWE3WRIbPNQY7y5x06c+tuI=
-X-Gm-Gg: ASbGncsrh4Z2WlBMX7ArQxxaH4wNPV17RRL1TthCjGIeVsZ/fUCs3+RF+kHbh0aiYtX
-	kRRhvfNXP3kW3NDyC0ISxit4rK7eay5MdhwcJMZJH/4ymyPJe0z9EmqZNseY1cAhSAcWAlBTb3L
-	s1ztHhQ/6R77xJsgADTM0trciipgN+J9hQUnBnAlJA3m+XvA45xuUREgQZwceQ7nnXRgxuvrxHX
-	vZJzd7vX61CD3YDrBnBKTq+3/zsLGmFHfFwuo1HAY/ZuQw9lyUvD2M/KVPc/H1JNZBHb/GzBvHh
-	O3rxSh5aJsKu0FiGVqvlphhroXUgB1zYlLW08EWiAU0WBKul1XLgF/+3+LpvIjL/3bbKCE+RMvn
-	DXYmJy0zGN/fFfQmOVjVMlKu8OVZy1moCII/keOpRSTFGRNRVo5jW
-X-Received: by 2002:a05:6122:2a42:b0:543:6ff8:d6d7 with SMTP id 71dfb90a1353d-5472a0088bfmr5155440e0c.1.1757517388963;
-        Wed, 10 Sep 2025 08:16:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEV+Ok0B9ImEfUJn+5MDsBCd0a1EnbrepGzoV/kCIfMR/JnpVKik3JbAUvvY8M2wWHlz+5tjQ==
-X-Received: by 2002:a05:6122:2a42:b0:543:6ff8:d6d7 with SMTP id 71dfb90a1353d-5472a0088bfmr5155361e0c.1.1757517388194;
-        Wed, 10 Sep 2025 08:16:28 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5680c4246c2sm1301330e87.17.2025.09.10.08.16.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 08:16:27 -0700 (PDT)
-Date: Wed, 10 Sep 2025 18:16:25 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-        Liu Ying <victor.liu@nxp.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        Daniel Stone <daniels@collabora.com>
-Subject: Re: [PATCH v4 01/10] drm/connector: let drivers declare infoframes
- as unsupported
-Message-ID: <z333ysst5ifakomo35jtbpydj44epqwwn4da76rcnsq4are62m@32gsmgx2pcdi>
-References: <20250909-drm-limit-infoframes-v4-0-53fd0a65a4a2@oss.qualcomm.com>
- <20250909-drm-limit-infoframes-v4-1-53fd0a65a4a2@oss.qualcomm.com>
- <20250910-furry-singing-axolotl-9aceac@houat>
+        d=1e100.net; s=20230601; t=1757517412; x=1758122212;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OTaDACB4l26rOSYcf8BPat/9VEf+Ju7nr9jru3/iH8o=;
+        b=QMZ7k6tMRzZk/YFN0UQvMRpko9otTWl8o8XgRZpBe9QbnLyF2Cyh9GjsrSW9LwWK+O
+         q3hT3YzL/tAicbRX9u8xtEw6giw7V/YwfLfD2XaZuSOuVrCDyUd4iejH28+4llN6P9/W
+         l9LqyS0EhBzFpfUUgLY2vaE/7+Uag6BhvcNgWGK+fmw6T//mMDVvqluqy7RJ4Kbs+Y75
+         H63TpPlCdhdIR8oN7qOrY4tNpSa4aa+x8XePWHwQbpx3mmZfKN6pViw+Hosw1Ia6FCFr
+         BMNC4LcuUSgjbufds1QZK1tV+svnOo6fvYjKOuzX4W+tqFjR3pvPqgXPm7SR23aKXLNO
+         fbdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnkR6J4v4nSlrk3R0ZA+7GKYE5wYrHyd/rlNqLBvtUCLnjKWHFAWjAMAStYT/3HtitNWyMZNGHWFfVu3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqBAndmc48q1Y1dF8pT47Hh8Du9nE6+6lX914f8NLOmxM2lJvB
+	NfDLRsIKpCqlGKMYbpkHvWbfzGPa/tevsbK6clRXhMqaj6i+YcPWqWPur235gjY3qdqPSKWIsrq
+	WjkjDFdsFqt77W4Z24wEbcW1cxxm75jpf5avCzAphrG9KNCKpCyFGi4YO/ocge2Pq5Q==
+X-Gm-Gg: ASbGncusyOVJAraALnpISlyajXyMysleQWn7Epyp2P10he7s7kXR6iAFxmnx0iI1lPK
+	bLv60CPaCna5E1LXwzUOSSZxpKb/DK6nCHW9TGHbYBIMyDY2p8ATdfAP0T61IhVJLWLHqR8RTsx
+	nH47lY0fEnfHqlS1ER2we5hdnUSmVvAZ8DXSDKhuCHsAPRSXomzyYSK2iUUnqRGQ3rVvbxE5VCJ
+	Jx2DAEr7OHsR+C9AzVq9lnoMHb5TuDtYj7r/CKOTIvKaT5NY3f5QGbftw0rEyMU5DtTiTAoZs7f
+	MMSMrZXO9SP747O/z57zSy2luevR0KMjO/eKLk4+yt9LaXL+dXwvo/gLZBE9fYNMakhbAJVlDZp
+	7vsY=
+X-Received: by 2002:a05:600c:1e8c:b0:455:f187:6203 with SMTP id 5b1f17b1804b1-45dddef01e4mr122798625e9.27.1757517412076;
+        Wed, 10 Sep 2025 08:16:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFzhtY65zo214jeKk3uc6/bfpYCHiRF7m/w5yM+4Thwc9xD9ARqamRIoJw8cuMXHSIAD8repQ==
+X-Received: by 2002:a05:600c:1e8c:b0:455:f187:6203 with SMTP id 5b1f17b1804b1-45dddef01e4mr122797995e9.27.1757517411234;
+        Wed, 10 Sep 2025 08:16:51 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df81c72e0sm35573405e9.3.2025.09.10.08.16.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 08:16:50 -0700 (PDT)
+Message-ID: <5e9dc5b5-9671-4a72-b926-8b526ebf9059@redhat.com>
+Date: Wed, 10 Sep 2025 17:16:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910-furry-singing-axolotl-9aceac@houat>
-X-Proofpoint-ORIG-GUID: euceeRQhS0nHwvdvxBe7G7-i3BH9cdgk
-X-Proofpoint-GUID: euceeRQhS0nHwvdvxBe7G7-i3BH9cdgk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfX1V6iaDfwJ9nA
- bTBC4dw7i0Pokr12lgf55tPDqqRGUVNUHe/vFYM3eNF4nXzRBZarLXA4fDry0G/+EJY3CaECG1C
- MOZS9mLbF4bYEZreLIWmxcKkO2Fkm+xKNUGRUcW1xN3wW7nfFDa0V2WOawO2+Cv+1qoX3AKBS0t
- cD3eNUzuvyEfgcAAwcXMLHy5m9QaOcegAuhwL73YqD79cuFRGXIEue6nUGg7xbwHeV1ErSRgws6
- asIptt7KCNSPArUtfIDiXnTaXh0AmSzu81Zmeil2fqLTK+oWLwWIKFHLB0SqIhFZWteBQ0OIY3Z
- eLEKaxj5HT5crLXs0H7VLtmCHU6OSa3OxgCiA4SjDo0iffMwe43HOds3ydXMIcTOGhrkDiFxLt5
- evTTvLko
-X-Authority-Analysis: v=2.4 cv=G4kcE8k5 c=1 sm=1 tr=0 ts=68c1964e cx=c_pps
- a=wuOIiItHwq1biOnFUQQHKA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=8AirrxEcAAAA:8 a=QX4gbG5DAAAA:8 a=EUspDBNiAAAA:8
- a=Hspkq7dj2dKET-HI0ioA:9 a=CjuIK1q_8ugA:10 a=XD7yVLdPMpWraOa8Un9W:22
- a=ST-jHhOKWsTCqRlWije3:22 a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_02,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- malwarescore=0 adultscore=0 impostorscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] drm/panic: Add kunit tests for drm_panic
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Javier Martinez Canillas <javierm@redhat.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20250908090341.762049-1-jfalempe@redhat.com>
+ <20250908090341.762049-3-jfalempe@redhat.com>
+ <20250910-fascinating-hungry-lemur-1d9f49@houat>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20250910-fascinating-hungry-lemur-1d9f49@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10, 2025 at 01:03:47PM +0200, Maxime Ripard wrote:
-> On Tue, Sep 09, 2025 at 05:51:59PM +0300, Dmitry Baryshkov wrote:
-> > Currently DRM framework expects that the HDMI connector driver supports
-> > all infoframe types: it generates the data as required and calls into
-> > the driver to program all of them, letting the driver to soft-fail if
-> > the infoframe is unsupported. This has a major drawback on userspace
-> > API: the framework also registers debugfs files for all Infoframe types,
-> > possibly surprising the users when infoframe is visible in the debugfs
-> > file, but it is not visible on the wire. Drivers are also expected to
-> > return success even for unsuppoted InfoFrame types.
-> > 
-> > Let drivers declare that they support only a subset of infoframes,
-> > creating a more consistent interface. Make the affected drivers return
-> > -EOPNOTSUPP if they are asked to program (or clear) InfoFrames which are
-> > not supported.
-> > 
-> > Acked-by: Liu Ying <victor.liu@nxp.com>
-> > Acked-by: Daniel Stone <daniels@collabora.com>
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+On 10/09/2025 10:33, Maxime Ripard wrote:
+> Hi,
 > 
-> Again, I still believe that it's a bad idea, goes against what the spec
-> states, and the framework was meant to be.
+> On Mon, Sep 08, 2025 at 11:00:30AM +0200, Jocelyn Falempe wrote:
+>> Add kunit tests for drm_panic.
+>> They check that drawing the panic screen doesn't crash, but they
+>> don't check the correctness of the resulting image.
+>>
+>> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+>> ---
+>>
+>> v2:
+>>   * Add a few checks, and more comments in the kunit tests. (Maxime Ripard).
+>>
+>>   MAINTAINERS                            |   1 +
+>>   drivers/gpu/drm/drm_panic.c            |   4 +
+>>   drivers/gpu/drm/tests/drm_panic_test.c | 198 +++++++++++++++++++++++++
+>>   3 files changed, 203 insertions(+)
+>>   create mode 100644 drivers/gpu/drm/tests/drm_panic_test.c
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 402fe14091f1..e9be893d6741 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -8480,6 +8480,7 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+>>   F:	drivers/gpu/drm/drm_draw.c
+>>   F:	drivers/gpu/drm/drm_draw_internal.h
+>>   F:	drivers/gpu/drm/drm_panic*.c
+>> +F:	drivers/gpu/drm/tests/drm_panic_test.c
+>>   F:	include/drm/drm_panic*
+>>   
+>>   DRM PANIC QR CODE
+>> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+>> index 1e06e3a18d09..d89812ff1935 100644
+>> --- a/drivers/gpu/drm/drm_panic.c
+>> +++ b/drivers/gpu/drm/drm_panic.c
+>> @@ -986,3 +986,7 @@ void drm_panic_exit(void)
+>>   {
+>>   	drm_panic_qr_exit();
+>>   }
+>> +
+>> +#ifdef CONFIG_DRM_KUNIT_TEST
+>> +#include "tests/drm_panic_test.c"
+>> +#endif
+>> diff --git a/drivers/gpu/drm/tests/drm_panic_test.c b/drivers/gpu/drm/tests/drm_panic_test.c
+>> new file mode 100644
+>> index 000000000000..d5d20dd2aa7c
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/tests/drm_panic_test.c
+>> @@ -0,0 +1,198 @@
+>> +// SPDX-License-Identifier: GPL-2.0 or MIT
+>> +/*
+>> + * Copyright (c) 2025 Red Hat.
+>> + * Author: Jocelyn Falempe <jfalempe@redhat.com>
+>> + *
+>> + * KUNIT tests for drm panic
+>> + */
+>> +
+>> +#include <drm/drm_fourcc.h>
+>> +#include <drm/drm_panic.h>
+>> +
+>> +#include <kunit/test.h>
+>> +
+>> +#include <linux/units.h>
+>> +#include <linux/vmalloc.h>
+>> +
+>> +/* Check the framebuffer color only if the panic colors are the default */
+>> +#if (CONFIG_DRM_PANIC_BACKGROUND_COLOR == 0 && \
+>> +	CONFIG_DRM_PANIC_FOREGROUND_COLOR == 0xffffff)
+>> +#define DRM_PANIC_CHECK_COLOR
+>> +#endif
+>> +
+>> +struct drm_test_mode {
+>> +	const int width;
+>> +	const int height;
+>> +	const u32 format;
+>> +	void (*draw_screen)(struct drm_scanout_buffer *sb);
+>> +	const char *fname;
+>> +};
+>> +
+>> +/*
+>> + * Run all tests for the 3 panic screens: user, kmsg and qr_code
+>> + */
+>> +#define DRM_TEST_MODE_LIST(func) \
+>> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_XRGB8888, func) \
+>> +	DRM_PANIC_TEST_MODE(300, 200, DRM_FORMAT_XRGB8888, func) \
+>> +	DRM_PANIC_TEST_MODE(1920, 1080, DRM_FORMAT_XRGB8888, func) \
+>> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB565, func) \
+>> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB888, func) \
+>> +
+>> +#define DRM_PANIC_TEST_MODE(w, h, f, name) { \
+>> +	.width = w, \
+>> +	.height = h, \
+>> +	.format = f, \
+>> +	.draw_screen = draw_panic_screen_##name, \
+>> +	.fname = #name, \
+>> +	}, \
+>> +
+>> +static const struct drm_test_mode drm_test_modes_cases[] = {
+>> +	DRM_TEST_MODE_LIST(user)
+>> +	DRM_TEST_MODE_LIST(kmsg)
+>> +	DRM_TEST_MODE_LIST(qr_code)
+>> +};
+>> +#undef DRM_PANIC_TEST_MODE
+>> +
+>> +static int drm_test_panic_init(struct kunit *test)
+>> +{
+>> +	struct drm_scanout_buffer *priv;
+>> +
+>> +	priv = kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
+>> +	KUNIT_ASSERT_NOT_NULL(test, priv);
+>> +
+>> +	test->priv = priv;
+>> +
+>> +	drm_panic_set_description("Kunit testing");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/*
+>> + * Test drawing the panic screen, using a memory mapped framebuffer
+>> + * Set the whole buffer to 0xa5, and then check that all pixels have been
+>> + * written.
+>> + */
+>> +static void drm_test_panic_screen_user_map(struct kunit *test)
+>> +{
+>> +	struct drm_scanout_buffer *sb = test->priv;
+>> +	const struct drm_test_mode *params = test->param_value;
+>> +	char *fb;
+>> +	int fb_size;
+>> +
+>> +	sb->format = drm_format_info(params->format);
+>> +	fb_size = params->width * params->height * sb->format->cpp[0];
+>> +
+>> +	fb = vmalloc(fb_size);
+>> +	KUNIT_ASSERT_NOT_NULL(test, fb);
+>> +
+>> +	memset(fb, 0xa5, fb_size);
+>> +
+>> +	iosys_map_set_vaddr(&sb->map[0], fb);
+>> +	sb->width = params->width;
+>> +	sb->height = params->height;
+>> +	sb->pitch[0] = params->width * sb->format->cpp[0];
+>> +
+>> +	params->draw_screen(sb);
+>> +
+>> +#ifdef DRM_PANIC_CHECK_COLOR
+>> +	{
+>> +		int i;
+>> +
+>> +		for (i = 0; i < fb_size; i++)
+>> +			KUNIT_ASSERT_TRUE(test, fb[i] == 0 || fb[i] == 0xff);
+>> +	}
+>> +#endif
+> 
+> I'm not really fond of the ifdef here. Could you turn this into a
+> function, and return that it's valid if the colors don't match what you
+> expect?
 
-Please correct me if I'm wrong. The specs (HDMI & CEA) define several
-infoframes and whether we should be sending them. If I'm reading it
-correctrly, CEA spec explicitly says 'If the Source supports the
-transmission of [foo] InfoFrame..." (6.4 - AVI, 6.6 - Audio, 6.7 MPEG,
-6.9 - DRM). For other InfoFrames (6.5 SPD, 6.8 NTSC VBI) it just defines
-that sending those frames is optional.
+Yes, I can rework this.
+> 
+>> +	vfree(fb);
+>> +}
+>> +
+>> +/*
+>> + * Test drawing the panic screen, using a list of pages framebuffer
+>> + * No checks are performed
+> 
+> What are you testing then if you aren't checking anything?
 
-We can't even infer support for InfoFrames from the Source features.
-E.g. CEA 6.6.1 defines a case when digital audio is allowed to be sent,
-without sending Audio InfoFrame.
-
-As we will be getting more and more features, some of the InfoFrames
-or data packets will be 'good to have, but not required'.
+It tests that there are no access to an unmapped page.
+But I can add the same check that with the "map" case.
+It just requires more work to map the pages.
 
 > 
-> So, no, sorry. That's still a no for me. Please stop sending that patch
-
-Oops :-)
-
-> unless we have a discussion about it and you convince me that it's
-> actually something that we'd need.
-
-My main concern is that the drivers should not opt-out of the features.
-E.g. if we start supporting ISRC packets or MPEG or NTSC VBI InfoFrames
-(yes, stupid examples), it should not be required to go through all the
-drivers, making sure that they disable those. Instead the DRM framework
-should be able to make decisions like:
-
-- The driver supports SPD and the VSDB defines SPD, enable this
-  InfoFrame (BTW, this needs to be done anyway, we should not be sending
-  SPD if it's not defined in VSDB, if I read it correctly).
-
-- The driver hints that the pixel data has only 10 meaninful bits of
-  data per component (e.g. out of 12 for DeepColor 36), the Sink has
-  HF-VSDB, send HF-VSIF.
-
-- The driver has enabled 3D stereo mode, but it doesn't declare support
-  for HF-VSIF. Send only H14b-VSIF.
-
-Similarly (no, I don't have these on my TODO list, these are just
-examples):
-- The driver defines support for NTSC VBI, register a VBI device.
-
-- The driver defines support for ISRC packets, register ISRC-related
-  properties.
-
-- The driver defines support for MPEG Source InfoFrame, provide a way
-  for media players to report frame type and bit rate.
-
-- The driver provides limited support for Extended HDR DM InfoFrames,
-  select the correct frame type according to driver capabilities.
-
-Without the 'supported' information we should change atomic_check()
-functions to set infoframe->set to false for all unsupported InfoFrames
-_and_ go through all the drivers again each time we add support for a
-feature (e.g. after adding HF-VSIF support).
+>> + */
+>> +static void drm_test_panic_screen_user_page(struct kunit *test)
+>> +{
+>> +	struct drm_scanout_buffer *sb = test->priv;
+>> +	const struct drm_test_mode *params = test->param_value;
+>> +	int fb_size;
+>> +	struct page **pages;
+>> +	int i;
+>> +	int npages;
+>> +
+>> +	sb->format = drm_format_info(params->format);
+>> +	fb_size = params->width * params->height * sb->format->cpp[0];
+>> +	npages = DIV_ROUND_UP(fb_size, PAGE_SIZE);
+>> +
+>> +	pages = kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
+>> +	KUNIT_ASSERT_NOT_NULL(test, pages);
+>> +
+>> +	for (i = 0; i < npages; i++) {
+>> +		pages[i] = alloc_page(GFP_KERNEL);
+>> +		KUNIT_ASSERT_NOT_NULL(test, pages[i]);
+> 
+> KUNIT_ASSERT_* return immediately, so you're leaking the pages array
+> here.
+> 
+yes, I can fix that, but is it important to not leak when the test fails?
 
 -- 
-With best wishes
-Dmitry
+
+Jocelyn
+
+> Maxime
+
 
