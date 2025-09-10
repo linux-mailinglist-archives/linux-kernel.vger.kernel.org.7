@@ -1,402 +1,360 @@
-Return-Path: <linux-kernel+bounces-809989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0E3B51449
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:46:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAEEDB51468
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7906F3AFE1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:46:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B34FD7BE0D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012B03126A2;
-	Wed, 10 Sep 2025 10:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fQTWcIce"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9082F31AF0C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18D5238D42;
+	Wed, 10 Sep 2025 10:45:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3EA3164C8
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757501072; cv=none; b=EETkUOGtZ+H4Bo5+p5poeZLaY2pTEZm+lhkVdH4Ei8U/Phcuk0a6mjHyZh+65NuEpwyThZI3cPyohHOztelniQsnv0UJLJWVf2J042/qBGa+f54DThbJMq0/4V1VJbe5dJLTIIzQG+9dYRVdkL5ihYida7FPVoqzo7R9GBakTII=
+	t=1757501109; cv=none; b=RDxrzCBOf+dTlMAPeFDOAa2fML6hYmDaCvUv9Thn3p2UVRfxcFcx+p5zivyagnbQ62y3O21SaOh1/2O6Aq7S6lBTegHIhg8mE3HVo0Mr4kbTf7EJSwHnIssiRIO2wmTUbN+qdK1A1UP0BYNfgOND7yit5hSeco7r3QyBVG6rV9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757501072; c=relaxed/simple;
-	bh=tlQi3r+H1JGGrk/YLRDqB/Z+oPYppKLe5bLhnA4eaRQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nQ3asuLQ0hw5WuGHwlwQ2TWbVy0ZALH+i8olW4OwgeTejd9AKLRmW89Ani30j3g9AAp+MVaereL8DLomcLb1HC6Skt1V0B4mjuWMZjFWgra9FdGNOQdV4NhMLdc7Dtdy8K44okPmiw/jYNpn0+F1O1SBGg4OVwxwTgAMwXvJM4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fQTWcIce; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6217d0a194eso962392a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 03:44:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757501069; x=1758105869; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=awjAmmSZbAFmfogi+S/l4kjOeQDsQkYCuybhjXS0HiI=;
-        b=fQTWcIceO40bLqzMmCz0LAqlbBYWcU327dNInAf+QoJU/bOxfBMmqBdvKtD2/GjV6j
-         1NUO191TjaFYK3z3sbb9Bc1a5VqNFK0Gir6Z8zrJivj8DRgUKcuOMHbYJUujkgYvrfNG
-         WycQXOd7FnLa9IqbDl2V8FXn+SU/uVfyILlIufpOYc4hlZYGeb6OlrYvgazEDrLxr38i
-         7z/N1ZznsaA4ScVa0j0iPkOQJFAfi3ekj3uSkGhs6SRclRog+32TAvYgBLo6egmLGWtD
-         0UkZ7A/Syn6zwcQaatFk2pd2judJT52u9XA/rwVW5O7qdVb0zAUhoKE6uqhtjQv2A5o4
-         BzoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757501069; x=1758105869;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=awjAmmSZbAFmfogi+S/l4kjOeQDsQkYCuybhjXS0HiI=;
-        b=ej4cylhlphYZJEKN8vIz7/yfZo/5SW7PaljG34wc1GHKnoieS7xQOb/uBm8jzbfD4x
-         yokD0NZqsj+3fDAY+Jwf4U+cb2lAl4/tBAD0JCAA/TBFY9qSDNfxd2SWCKeBUfHevdo8
-         T3y2ScY+annXkyGfY/mOlAaHrHW4hh8rI6XTlfxKlfCpKU+qWn4ZSOi/URaTQFugV7si
-         z8LBopxE+gepXxNOWwV8GU2dlek4s1QbEg/RmerBaHBUuSXZgT87Sdx85y5WKACv0Mv0
-         llyb03/WLH7Nm/aHudJpdqsacYRGB+p9ozQwr5z2ZXh0iVKxZErOg7/E3LEHJcgoZ237
-         CCHw==
-X-Gm-Message-State: AOJu0YzbayXyebstaE+qlbTq3uTiiTRO0tLBD7japLH5wriIf/e28PEt
-	HTPKBy8e3tEgSSNVTsi3pl321S6gO6pTJtG+9PmT+KYxtzKrfZT1spTRU/IM8zNv7Ko=
-X-Gm-Gg: ASbGnct3aIsqQFKUWyw/kWpKFGO+QzU38CJdWs4wNTDeEEgpaJTf2bdT5JzUZMESK29
-	P0+T/yixfWSaijq+ZPnWmcszpiAEDNgeNAI53xL1DvkfMEqzPFn0BdkX4mxs/xGyA9hA3ycHBxj
-	EuO2sWtWvzLIdEu/Y6HgMiOod+GXx0opgZffwuN4yi50BX5xntAjOonpCDwa2k7NrHL4usGGfow
-	+QH+BHtryIsfaPIRk6B+Hs5skGcfqmWET3Iftwgnh/sQauI/+N8xKEbQ2nE9VZj3PlBWlnXwnB5
-	ImSelw/dnoP185FORAykmZbVhrkt3yhf7JoC9QPZ12Cpu/PGIHCJ5P62hgSQJqU1qAG6X4I8XMt
-	TDcIsDlLfMUhaVE+kKUCkK4XRPEoioXv2aHLfo2BhgFENOHxfYw==
-X-Google-Smtp-Source: AGHT+IHYWOvbvSNVW7lGcnVhQ31yPAiSLv/hdr/5YNQZR/qNGILwRXiZbORt5T5qnaUAFzFEzwKbDA==
-X-Received: by 2002:a05:6402:26cf:b0:62c:af05:580d with SMTP id 4fb4d7f45d1cf-62caf055e13mr1859284a12.0.1757501068808;
-        Wed, 10 Sep 2025 03:44:28 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c01ae5f75sm3144890a12.46.2025.09.10.03.44.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 03:44:28 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 10 Sep 2025 12:44:09 +0200
-Subject: [PATCH 13/13] memory: tegra30-emc: Add the SoC model prefix to
- functions
+	s=arc-20240116; t=1757501109; c=relaxed/simple;
+	bh=ofXBXq9c6SMXO25BMXx4sHiuk3nK3z6Gv52WCxyl9lU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z82Spa2OCrgiklhIcncwEk+/5Z4EkBxmKusGLraVKHBzYkoHVj3GzdkyYUL7EjqmfafrIRAPNrQE0NCnVmKh2BO5xyX2Yiq5JeIWAAqNUERPMC7HLXLa4cLyJyNiNTs6Wv4QHwl+xvJeH9Cr9YxVhDPQqe9mWSgwmh2bkCSRCkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D6DB16F8;
+	Wed, 10 Sep 2025 03:44:58 -0700 (PDT)
+Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 988173F66E;
+	Wed, 10 Sep 2025 03:45:04 -0700 (PDT)
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Kees Cook <kees@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH] arm64: mm: Move KPTI helpers to mmu.c
+Date: Wed, 10 Sep 2025 11:44:54 +0100
+Message-ID: <20250910104454.317067-1-kevin.brodsky@arm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-memory-tegra-cleanup-v1-13-023c33a2d997@linaro.org>
-References: <20250910-memory-tegra-cleanup-v1-0-023c33a2d997@linaro.org>
-In-Reply-To: <20250910-memory-tegra-cleanup-v1-0-023c33a2d997@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9709;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=tlQi3r+H1JGGrk/YLRDqB/Z+oPYppKLe5bLhnA4eaRQ=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowVZ6p+Wg/cvmcpBedI/b23/dTkekCQenKngl8
- zJ4021ZUYmJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMFWegAKCRDBN2bmhouD
- 1xH/D/9v/cFr1rPdatL40Y7SD7ZLaHS1ZHY2/PasggZV3bZuTOpnuVu3Wfng6cFgfPOvkyqDpWf
- 6xh3J3hj+FH9mkF236GAZq0zk8MibaMmL3jxhqJ0o+1c0XUjX6luZefSoBuxGRp5szuFioL34XZ
- tXTpU0/eI4zIfHLJGUU/mE0zgVrq/SO7zMRcdUZvyPGslJlWesMSnSzyUR2JZOHPBLbzsRmb8YD
- Eh9lYwNnqQ2KHbmPI5u2SaTLPRKKiM/j1ioAS47NY4oVkxfIv4twuPjPKq7X1iqkpr3lKW0nVl7
- OUx5eijBmbLZRzOHc6nUJKuedUgMv9AmMjBTo1Q2r7qEijVbY3Mew+3emBATEHixykRkTrZNjcc
- x1A5wO2m+y+ZCNZ4oBZQw51CHd5mLvL7lss6ifVDASn6e/iLODbhWTqmbEsyxE8r9hvCz335ZkM
- zv8t9Jfz022bDuw0kX8lbzf50gCqE9wYIQ/B+5lJc8Zj6p8V/BA5hiiW0xCTsVZOApusRHUX8p2
- 8mJcwZI49yFgYUNlE8MSu7HX8WWMqHzyRA+opzUvHvThMnxHLaKqaqGd9YjynMzpUb2CUMdqbBV
- 4y6yVmM4uuuTi9GbPXihbepRX115kjr578PCzfiGpOJVHF5B/ujwTuWXRGJHyNGoJ2AtMT8uMQu
- WnVigHq7DUj1K/w==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-Replace "tegra_emc" with "tegra124_emc" in all functions to:
-1. Avoid name clashing with other Tegra EMC drivers which makes it
-   easier to jump to function definitions,
-2. Decode the calltraces a bit easier,
-3. Unify with other Tegra MC and EMC drivers, which use the SoC model
-   prefixes.
+create_kpti_ng_temp_pgd() is currently defined (as an alias) in
+mmu.c without matching declaration in a header; instead cpufeature.c
+makes its own declaration. This is clearly not pretty, and as commit
+ceca927c86e6 ("arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc
+function signature") showed, it also makes it very easy for the
+prototypes to go out of sync.
 
-No functional impact.
+All this would be much simpler if kpti_install_ng_mappings() and
+associated functions lived in mmu.c, where they logically belong.
+This is what this patch does:
+- Move kpti_install_ng_mappings() and associated functions from
+  cpufeature.c to mmu.c, add a declaration to <asm/mmu.h>
+- Make create_kpti_ng_temp_pgd() a static function that simply calls
+  __create_pgd_mapping_locked() instead of aliasing it
+- Mark all these functions __init
+- Move __initdata after kpti_ng_temp_alloc (as suggested by
+  checkpatch)
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 ---
- drivers/memory/tegra/tegra30-emc.c | 90 +++++++++++++++++++-------------------
- 1 file changed, 45 insertions(+), 45 deletions(-)
+Note: as things stand, create_kpti_ng_temp_pgd() could be removed,
+but a separate patch [1] will make use of it to add an
+assertion.
 
-diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index cca386af423e9647266878ce6cd1bcec09c8eba4..914116d8ec16d0d52180c7fadd1843adc139ceaf 100644
---- a/drivers/memory/tegra/tegra30-emc.c
-+++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -413,7 +413,7 @@ static int emc_seq_update_timing(struct tegra_emc *emc)
- 	return 0;
- }
- 
--static irqreturn_t tegra_emc_isr(int irq, void *data)
-+static irqreturn_t tegra30_emc_isr(int irq, void *data)
- {
- 	struct tegra_emc *emc = data;
- 	u32 intmask = EMC_REFRESH_OVERFLOW_INT;
-@@ -1228,7 +1228,7 @@ static long emc_round_rate(unsigned long rate,
- 	return timing->rate;
- }
- 
--static void tegra_emc_rate_requests_init(struct tegra_emc *emc)
-+static void tegra30_emc_rate_requests_init(struct tegra_emc *emc)
- {
- 	unsigned int i;
- 
-@@ -1330,7 +1330,7 @@ static int emc_set_max_rate(struct tegra_emc *emc, unsigned long rate,
-  *       valid range.
-  */
- 
--static bool tegra_emc_validate_rate(struct tegra_emc *emc, unsigned long rate)
-+static bool tegra30_emc_validate_rate(struct tegra_emc *emc, unsigned long rate)
- {
- 	unsigned int i;
- 
-@@ -1341,7 +1341,7 @@ static bool tegra_emc_validate_rate(struct tegra_emc *emc, unsigned long rate)
- 	return false;
- }
- 
--static int tegra_emc_debug_available_rates_show(struct seq_file *s, void *data)
-+static int tegra30_emc_debug_available_rates_show(struct seq_file *s, void *data)
- {
- 	struct tegra_emc *emc = s->private;
- 	const char *prefix = "";
-@@ -1356,9 +1356,9 @@ static int tegra_emc_debug_available_rates_show(struct seq_file *s, void *data)
- 
- 	return 0;
- }
--DEFINE_SHOW_ATTRIBUTE(tegra_emc_debug_available_rates);
-+DEFINE_SHOW_ATTRIBUTE(tegra30_emc_debug_available_rates);
- 
--static int tegra_emc_debug_min_rate_get(void *data, u64 *rate)
-+static int tegra30_emc_debug_min_rate_get(void *data, u64 *rate)
- {
- 	struct tegra_emc *emc = data;
- 
-@@ -1367,12 +1367,12 @@ static int tegra_emc_debug_min_rate_get(void *data, u64 *rate)
- 	return 0;
- }
- 
--static int tegra_emc_debug_min_rate_set(void *data, u64 rate)
-+static int tegra30_emc_debug_min_rate_set(void *data, u64 rate)
- {
- 	struct tegra_emc *emc = data;
- 	int err;
- 
--	if (!tegra_emc_validate_rate(emc, rate))
-+	if (!tegra30_emc_validate_rate(emc, rate))
- 		return -EINVAL;
- 
- 	err = emc_set_min_rate(emc, rate, EMC_RATE_DEBUG);
-@@ -1384,11 +1384,11 @@ static int tegra_emc_debug_min_rate_set(void *data, u64 rate)
- 	return 0;
- }
- 
--DEFINE_DEBUGFS_ATTRIBUTE(tegra_emc_debug_min_rate_fops,
--			tegra_emc_debug_min_rate_get,
--			tegra_emc_debug_min_rate_set, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(tegra30_emc_debug_min_rate_fops,
-+			 tegra30_emc_debug_min_rate_get,
-+			 tegra30_emc_debug_min_rate_set, "%llu\n");
- 
--static int tegra_emc_debug_max_rate_get(void *data, u64 *rate)
-+static int tegra30_emc_debug_max_rate_get(void *data, u64 *rate)
- {
- 	struct tegra_emc *emc = data;
- 
-@@ -1397,12 +1397,12 @@ static int tegra_emc_debug_max_rate_get(void *data, u64 *rate)
- 	return 0;
- }
- 
--static int tegra_emc_debug_max_rate_set(void *data, u64 rate)
-+static int tegra30_emc_debug_max_rate_set(void *data, u64 rate)
- {
- 	struct tegra_emc *emc = data;
- 	int err;
- 
--	if (!tegra_emc_validate_rate(emc, rate))
-+	if (!tegra30_emc_validate_rate(emc, rate))
- 		return -EINVAL;
- 
- 	err = emc_set_max_rate(emc, rate, EMC_RATE_DEBUG);
-@@ -1414,11 +1414,11 @@ static int tegra_emc_debug_max_rate_set(void *data, u64 rate)
- 	return 0;
- }
- 
--DEFINE_DEBUGFS_ATTRIBUTE(tegra_emc_debug_max_rate_fops,
--			tegra_emc_debug_max_rate_get,
--			tegra_emc_debug_max_rate_set, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(tegra30_emc_debug_max_rate_fops,
-+			 tegra30_emc_debug_max_rate_get,
-+			 tegra30_emc_debug_max_rate_set, "%llu\n");
- 
--static void tegra_emc_debugfs_init(struct tegra_emc *emc)
-+static void tegra30_emc_debugfs_init(struct tegra_emc *emc)
- {
- 	struct device *dev = emc->dev;
- 	unsigned int i;
-@@ -1451,11 +1451,11 @@ static void tegra_emc_debugfs_init(struct tegra_emc *emc)
- 	emc->debugfs.root = debugfs_create_dir("emc", NULL);
- 
- 	debugfs_create_file("available_rates", 0444, emc->debugfs.root,
--			    emc, &tegra_emc_debug_available_rates_fops);
-+			    emc, &tegra30_emc_debug_available_rates_fops);
- 	debugfs_create_file("min_rate", 0644, emc->debugfs.root,
--			    emc, &tegra_emc_debug_min_rate_fops);
-+			    emc, &tegra30_emc_debug_min_rate_fops);
- 	debugfs_create_file("max_rate", 0644, emc->debugfs.root,
--			    emc, &tegra_emc_debug_max_rate_fops);
-+			    emc, &tegra30_emc_debug_max_rate_fops);
- }
- 
- static inline struct tegra_emc *
-@@ -1518,7 +1518,7 @@ static int emc_icc_set(struct icc_node *src, struct icc_node *dst)
- 	return 0;
- }
- 
--static int tegra_emc_interconnect_init(struct tegra_emc *emc)
-+static int tegra30_emc_interconnect_init(struct tegra_emc *emc)
- {
- 	const struct tegra_mc_soc *soc = emc->mc->soc;
- 	struct icc_node *node;
-@@ -1567,25 +1567,25 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
- 	return dev_err_probe(emc->dev, err, "failed to initialize ICC\n");
- }
- 
--static void devm_tegra_emc_unset_callback(void *data)
-+static void devm_tegra30_emc_unset_callback(void *data)
- {
- 	tegra20_clk_set_emc_round_callback(NULL, NULL);
- }
- 
--static void devm_tegra_emc_unreg_clk_notifier(void *data)
-+static void devm_tegra30_emc_unreg_clk_notifier(void *data)
- {
- 	struct tegra_emc *emc = data;
- 
- 	clk_notifier_unregister(emc->clk, &emc->clk_nb);
- }
- 
--static int tegra_emc_init_clk(struct tegra_emc *emc)
-+static int tegra30_emc_init_clk(struct tegra_emc *emc)
- {
- 	int err;
- 
- 	tegra20_clk_set_emc_round_callback(emc_round_rate, emc);
- 
--	err = devm_add_action_or_reset(emc->dev, devm_tegra_emc_unset_callback,
-+	err = devm_add_action_or_reset(emc->dev, devm_tegra30_emc_unset_callback,
- 				       NULL);
- 	if (err)
- 		return err;
-@@ -1600,14 +1600,14 @@ static int tegra_emc_init_clk(struct tegra_emc *emc)
- 		return dev_err_probe(emc->dev, err, "failed to register clk notifier\n");
- 
- 	err = devm_add_action_or_reset(emc->dev,
--				       devm_tegra_emc_unreg_clk_notifier, emc);
-+				       devm_tegra30_emc_unreg_clk_notifier, emc);
- 	if (err)
- 		return err;
- 
- 	return 0;
- }
- 
--static int tegra_emc_probe(struct platform_device *pdev)
-+static int tegra30_emc_probe(struct platform_device *pdev)
- {
- 	struct tegra_core_opp_params opp_params = {};
- 	struct device_node *np;
-@@ -1648,12 +1648,12 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 
- 	emc->irq = err;
- 
--	err = devm_request_irq(&pdev->dev, emc->irq, tegra_emc_isr, 0,
-+	err = devm_request_irq(&pdev->dev, emc->irq, tegra30_emc_isr, 0,
- 			       dev_name(&pdev->dev), emc);
- 	if (err)
- 		return dev_err_probe(&pdev->dev, err, "failed to request irq\n");
- 
--	err = tegra_emc_init_clk(emc);
-+	err = tegra30_emc_init_clk(emc);
- 	if (err)
- 		return err;
- 
-@@ -1664,9 +1664,9 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 		return err;
- 
- 	platform_set_drvdata(pdev, emc);
--	tegra_emc_rate_requests_init(emc);
--	tegra_emc_debugfs_init(emc);
--	tegra_emc_interconnect_init(emc);
-+	tegra30_emc_rate_requests_init(emc);
-+	tegra30_emc_debugfs_init(emc);
-+	tegra30_emc_interconnect_init(emc);
- 
- 	/*
- 	 * Don't allow the kernel module to be unloaded. Unloading adds some
-@@ -1678,7 +1678,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int tegra_emc_suspend(struct device *dev)
-+static int tegra30_emc_suspend(struct device *dev)
- {
- 	struct tegra_emc *emc = dev_get_drvdata(dev);
- 	int err;
-@@ -1699,7 +1699,7 @@ static int tegra_emc_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int tegra_emc_resume(struct device *dev)
-+static int tegra30_emc_resume(struct device *dev)
- {
- 	struct tegra_emc *emc = dev_get_drvdata(dev);
- 
-@@ -1711,28 +1711,28 @@ static int tegra_emc_resume(struct device *dev)
- 	return 0;
- }
- 
--static const struct dev_pm_ops tegra_emc_pm_ops = {
--	.suspend = tegra_emc_suspend,
--	.resume = tegra_emc_resume,
-+static const struct dev_pm_ops tegra30_emc_pm_ops = {
-+	.suspend = tegra30_emc_suspend,
-+	.resume = tegra30_emc_resume,
- };
- 
--static const struct of_device_id tegra_emc_of_match[] = {
-+static const struct of_device_id tegra30_emc_of_match[] = {
- 	{ .compatible = "nvidia,tegra30-emc", },
- 	{},
- };
--MODULE_DEVICE_TABLE(of, tegra_emc_of_match);
-+MODULE_DEVICE_TABLE(of, tegra30_emc_of_match);
- 
--static struct platform_driver tegra_emc_driver = {
--	.probe = tegra_emc_probe,
-+static struct platform_driver tegra30_emc_driver = {
-+	.probe = tegra30_emc_probe,
- 	.driver = {
- 		.name = "tegra30-emc",
--		.of_match_table = tegra_emc_of_match,
--		.pm = &tegra_emc_pm_ops,
-+		.of_match_table = tegra30_emc_of_match,
-+		.pm = &tegra30_emc_pm_ops,
- 		.suppress_bind_attrs = true,
- 		.sync_state = icc_sync_state,
- 	},
- };
--module_platform_driver(tegra_emc_driver);
-+module_platform_driver(tegra30_emc_driver);
- 
- MODULE_AUTHOR("Dmitry Osipenko <digetx@gmail.com>");
- MODULE_DESCRIPTION("NVIDIA Tegra30 EMC driver");
+[1] https://lore.kernel.org/all/20250813145607.1612234-3-chaitanyas.prakash@arm.com/
+---
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Kees Cook <kees@kernel.org>,
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>
+---
+ arch/arm64/include/asm/mmu.h   |   6 ++
+ arch/arm64/kernel/cpufeature.c |  97 ------------------------------
+ arch/arm64/mm/mmu.c            | 106 ++++++++++++++++++++++++++++++---
+ 3 files changed, 103 insertions(+), 106 deletions(-)
 
+diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+index 49f1a810df16..624edd6c4964 100644
+--- a/arch/arm64/include/asm/mmu.h
++++ b/arch/arm64/include/asm/mmu.h
+@@ -104,5 +104,11 @@ static inline bool kaslr_requires_kpti(void)
+ 	return true;
+ }
+ 
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++void kpti_install_ng_mappings(void);
++#else
++static inline void kpti_install_ng_mappings(void) {}
++#endif
++
+ #endif	/* !__ASSEMBLY__ */
+ #endif
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index ef269a5a37e1..b99eaad48c14 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1940,103 +1940,6 @@ static bool has_pmuv3(const struct arm64_cpu_capabilities *entry, int scope)
+ }
+ #endif
+ 
+-#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+-#define KPTI_NG_TEMP_VA		(-(1UL << PMD_SHIFT))
+-
+-extern
+-void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
+-			     phys_addr_t size, pgprot_t prot,
+-			     phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags);
+-
+-static phys_addr_t __initdata kpti_ng_temp_alloc;
+-
+-static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
+-{
+-	kpti_ng_temp_alloc -= PAGE_SIZE;
+-	return kpti_ng_temp_alloc;
+-}
+-
+-static int __init __kpti_install_ng_mappings(void *__unused)
+-{
+-	typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
+-	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
+-	kpti_remap_fn *remap_fn;
+-
+-	int cpu = smp_processor_id();
+-	int levels = CONFIG_PGTABLE_LEVELS;
+-	int order = order_base_2(levels);
+-	u64 kpti_ng_temp_pgd_pa = 0;
+-	pgd_t *kpti_ng_temp_pgd;
+-	u64 alloc = 0;
+-
+-	if (levels == 5 && !pgtable_l5_enabled())
+-		levels = 4;
+-	else if (levels == 4 && !pgtable_l4_enabled())
+-		levels = 3;
+-
+-	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
+-
+-	if (!cpu) {
+-		alloc = __get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
+-		kpti_ng_temp_pgd = (pgd_t *)(alloc + (levels - 1) * PAGE_SIZE);
+-		kpti_ng_temp_alloc = kpti_ng_temp_pgd_pa = __pa(kpti_ng_temp_pgd);
+-
+-		//
+-		// Create a minimal page table hierarchy that permits us to map
+-		// the swapper page tables temporarily as we traverse them.
+-		//
+-		// The physical pages are laid out as follows:
+-		//
+-		// +--------+-/-------+-/------ +-/------ +-\\\--------+
+-		// :  PTE[] : | PMD[] : | PUD[] : | P4D[] : ||| PGD[]  :
+-		// +--------+-\-------+-\------ +-\------ +-///--------+
+-		//      ^
+-		// The first page is mapped into this hierarchy at a PMD_SHIFT
+-		// aligned virtual address, so that we can manipulate the PTE
+-		// level entries while the mapping is active. The first entry
+-		// covers the PTE[] page itself, the remaining entries are free
+-		// to be used as a ad-hoc fixmap.
+-		//
+-		create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc),
+-					KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
+-					kpti_ng_pgd_alloc, 0);
+-	}
+-
+-	cpu_install_idmap();
+-	remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
+-	cpu_uninstall_idmap();
+-
+-	if (!cpu) {
+-		free_pages(alloc, order);
+-		arm64_use_ng_mappings = true;
+-	}
+-
+-	return 0;
+-}
+-
+-static void __init kpti_install_ng_mappings(void)
+-{
+-	/* Check whether KPTI is going to be used */
+-	if (!arm64_kernel_unmapped_at_el0())
+-		return;
+-
+-	/*
+-	 * We don't need to rewrite the page-tables if either we've done
+-	 * it already or we have KASLR enabled and therefore have not
+-	 * created any global mappings at all.
+-	 */
+-	if (arm64_use_ng_mappings)
+-		return;
+-
+-	stop_machine(__kpti_install_ng_mappings, NULL, cpu_online_mask);
+-}
+-
+-#else
+-static inline void kpti_install_ng_mappings(void)
+-{
+-}
+-#endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
+-
+ static void cpu_enable_kpti(struct arm64_cpu_capabilities const *cap)
+ {
+ 	if (__this_cpu_read(this_cpu_vector) == vectors) {
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 183801520740..eff3295393ee 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -27,6 +27,7 @@
+ #include <linux/kfence.h>
+ #include <linux/pkeys.h>
+ #include <linux/mm_inline.h>
++#include <linux/stop_machine.h>
+ 
+ #include <asm/barrier.h>
+ #include <asm/cputype.h>
+@@ -466,14 +467,6 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+ 	mutex_unlock(&fixmap_lock);
+ }
+ 
+-#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+-extern __alias(__create_pgd_mapping_locked)
+-void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
+-			     phys_addr_t size, pgprot_t prot,
+-			     phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+-			     int flags);
+-#endif
+-
+ static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm,
+ 				       enum pgtable_type pgtable_type)
+ {
+@@ -735,7 +728,102 @@ static void __init declare_vma(struct vm_struct *vma,
+ }
+ 
+ #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+-static pgprot_t kernel_exec_prot(void)
++#define KPTI_NG_TEMP_VA		(-(1UL << PMD_SHIFT))
++
++static phys_addr_t kpti_ng_temp_alloc __initdata;
++
++static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
++{
++	kpti_ng_temp_alloc -= PAGE_SIZE;
++	return kpti_ng_temp_alloc;
++}
++
++static void __init create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys,
++					   unsigned long virt, phys_addr_t size,
++					   pgprot_t prot,
++					   phys_addr_t (*pgtable_alloc)(enum pgtable_type),
++					   int flags)
++{
++	__create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
++				    pgtable_alloc, flags);
++}
++
++static int __init __kpti_install_ng_mappings(void *__unused)
++{
++	typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
++	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
++	kpti_remap_fn *remap_fn;
++
++	int cpu = smp_processor_id();
++	int levels = CONFIG_PGTABLE_LEVELS;
++	int order = order_base_2(levels);
++	u64 kpti_ng_temp_pgd_pa = 0;
++	pgd_t *kpti_ng_temp_pgd;
++	u64 alloc = 0;
++
++	if (levels == 5 && !pgtable_l5_enabled())
++		levels = 4;
++	else if (levels == 4 && !pgtable_l4_enabled())
++		levels = 3;
++
++	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
++
++	if (!cpu) {
++		alloc = __get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
++		kpti_ng_temp_pgd = (pgd_t *)(alloc + (levels - 1) * PAGE_SIZE);
++		kpti_ng_temp_alloc = kpti_ng_temp_pgd_pa = __pa(kpti_ng_temp_pgd);
++
++		//
++		// Create a minimal page table hierarchy that permits us to map
++		// the swapper page tables temporarily as we traverse them.
++		//
++		// The physical pages are laid out as follows:
++		//
++		// +--------+-/-------+-/------ +-/------ +-\\\--------+
++		// :  PTE[] : | PMD[] : | PUD[] : | P4D[] : ||| PGD[]  :
++		// +--------+-\-------+-\------ +-\------ +-///--------+
++		//      ^
++		// The first page is mapped into this hierarchy at a PMD_SHIFT
++		// aligned virtual address, so that we can manipulate the PTE
++		// level entries while the mapping is active. The first entry
++		// covers the PTE[] page itself, the remaining entries are free
++		// to be used as a ad-hoc fixmap.
++		//
++		create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc),
++					KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
++					kpti_ng_pgd_alloc, 0);
++	}
++
++	cpu_install_idmap();
++	remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
++	cpu_uninstall_idmap();
++
++	if (!cpu) {
++		free_pages(alloc, order);
++		arm64_use_ng_mappings = true;
++	}
++
++	return 0;
++}
++
++void __init kpti_install_ng_mappings(void)
++{
++	/* Check whether KPTI is going to be used */
++	if (!arm64_kernel_unmapped_at_el0())
++		return;
++
++	/*
++	 * We don't need to rewrite the page-tables if either we've done
++	 * it already or we have KASLR enabled and therefore have not
++	 * created any global mappings at all.
++	 */
++	if (arm64_use_ng_mappings)
++		return;
++
++	stop_machine(__kpti_install_ng_mappings, NULL, cpu_online_mask);
++}
++
++static pgprot_t __init kernel_exec_prot(void)
+ {
+ 	return rodata_enabled ? PAGE_KERNEL_ROX : PAGE_KERNEL_EXEC;
+ }
+
+base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
 -- 
-2.48.1
+2.47.0
 
 
