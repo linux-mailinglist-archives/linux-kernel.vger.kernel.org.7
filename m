@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-810179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1CD3B516F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:33:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBAD4B516FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E98161BC5051
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:33:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFDC71BC6C58
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B29319871;
-	Wed, 10 Sep 2025 12:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC956319878;
+	Wed, 10 Sep 2025 12:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gkU91/lF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="symQNNFY";
+	dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="3KONcXgz"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E0F4A04
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757507576; cv=none; b=DjG0z/jIJAmEtNwt3KdH4HLlnIkZyCs0NePnYlueX55QfvHSAZJl67C9o3Zij1WBwvQDx4QqDewKq8HkOIBAcqzyr62exlh1Dwecs4wR9Z3gAtv1IGvtQUd22k2rEJXF+o5qdW61fWpNeu0kJvw69mTX4JjjfuHIcf0zA0TCHqI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757507576; c=relaxed/simple;
-	bh=n1DtndBK5g3HRGB5wLktmQuCwMaE4fiNt3Dq7k07L0I=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46F131D37C;
+	Wed, 10 Sep 2025 12:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757507632; cv=pass; b=O4DePFU6X8HELrBNqc7VXL7ov+P5GmrPAUM7GiKRCnrXrbFpzwkYyzLYiF0+ivQ1l/Y2FPn7oRzXUu7Pa76Gp33d+7vm3ZUY5y6DVjDfXeCn+4VfXItNpV6l+XcJNbW6YJxjse2pb46odjD54+lnS/gYYC2FI4gBJizAzele0Yc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757507632; c=relaxed/simple;
+	bh=8M2GzYvIA+TpmU2ZecmwBCCAnAMu7eN9RTI1Fh6AveY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kxZlYXQfb6Eab3RpiLi0TqFkrO6SHUH+WxoGF0IgnBvkQbW89Woxenlg9ctO50p4YKqIIeNp2Gj2qTqqOEekTB0e4bKxeKZFAo4MThAq+rgCj7vowEDy7Fs7wm/Mg9Y0Yczx8H+byU+/ERzXEIlW17aYMePZpvwklh/9QlLnbWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gkU91/lF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757507573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LViYUFGFqV7wdk7rT7+n+ckEpLRp2oc7FTXBWlnTc1s=;
-	b=gkU91/lFqFoIbG7MXi/zMQWf1G/KzQ1Kwf5VvIOH/u+LKOyFsPhZUem5QGYa5AiTBE/jGp
-	ROTwX6Z7adZfycOVJnr7h9ND7HDEf/TJ48b7PNVlKOv+ujbH96JXu/GlOa71baRAdkk79m
-	+1n0Qv20n5FqDtodgY613gw67GzcgvU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-617-eSerAqcwPF6ilvX_1dsQMQ-1; Wed, 10 Sep 2025 08:32:52 -0400
-X-MC-Unique: eSerAqcwPF6ilvX_1dsQMQ-1
-X-Mimecast-MFC-AGG-ID: eSerAqcwPF6ilvX_1dsQMQ_1757507571
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45a15f10f31so3919095e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 05:32:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757507571; x=1758112371;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LViYUFGFqV7wdk7rT7+n+ckEpLRp2oc7FTXBWlnTc1s=;
-        b=kmEH1fYQ7RlBusn/+ggqXCQvFwc6Trxm2u/UdV3KP8MzMMiB5V49qIqv0jjrkwk9xy
-         kT/nhHsgoWCnQ6s0SDwxyVCoQrZOwp8/YpJfqVvTvZT9r79cDJj96v44zDBt56JwPPgf
-         nCsry/4R6pFtEept5L45SDXjtc5p5UYFLRTMYJIXJThnG42Vw/ihjxSu6xCKap7cOBCX
-         57jA60FSUXfHiMDpC7+TQ1g2bZoxM2eEnuBlsmcCL+2NoeOgmgaa38bLvexDJHXQaUMx
-         QwwiJG9F0zY/QTT4AAUunzqA1RPRffeWJTbgCxoRVLptUK6Z6mzIwe+Of/7/7UujQvPD
-         pBPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEVr59NvbLKrRiYIz3Mh55CuY2OD8x2fqtzEJIrCjqqAd3oVbuRYaA0US2ym5i4VlI+bOqaaW31mBTmfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycMDahdfDnKLSjJXRcmLlDXK75pF1cfMYEulVU9jTLk8WSi6Wk
-	kBxaXmWivU00EvSJOpry78MWLUsv0bHghWnzhwUgR92nj6zbqk9Y3qQhizXQlffEYFXJL7vzGaA
-	NP2ZOfVoRnzRzYlDqq0AQOMaCp/3I0q2zIiG0w1ZVva6uIgmZ9bLbblBtRevJtIUC7A==
-X-Gm-Gg: ASbGncshmqqPMzymK1DiBIhNKfQtp2xLTsrONBUG85VmRaSjgdJJRVRlgscBm8vplop
-	UojcXqUwvhpnNSsPTtNlDp8xy2++t8srMNLchte29dFL1lKjOFSmSLxw6eGvaHtfPToLLXsMiog
-	jJJU7eSPCJSpj405dHtbD5F2coYyjT14cWrUf6MxQJck2CRHcrFbaTAGvpfqSJGJvVowk1z48rB
-	F5QFs90yGO2yPi7qYm0kMvlg/P3vueO0HNKrzvx9ENWTMji/vCulZhu+i9qJAt/ah4Cr9ZVLBDE
-	ZK6EYtlYBeLaxGDZ990B3x1Ng41FK1avjUrvoWQToCO8/kolacSAqvvPZtW5908LSNDMAbtMVkj
-	vNRh4wZRXqsegU2NWA25BPgWcj72JqMtIYiY7+XFvh9+U4KMmGCeK+lMfaD+wjcJNS0Y=
-X-Received: by 2002:a05:600c:3b1d:b0:45b:8ac2:9761 with SMTP id 5b1f17b1804b1-45dde20e5c0mr148260795e9.13.1757507570803;
-        Wed, 10 Sep 2025 05:32:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/W9Mmo72Y7k0e/5lev9LwiyPK0j0L4lMPmSP/XxC16yAcbXhF14eU/SqL+2U67nqcP2mA5Q==
-X-Received: by 2002:a05:600c:3b1d:b0:45b:8ac2:9761 with SMTP id 5b1f17b1804b1-45dde20e5c0mr148260265e9.13.1757507570271;
-        Wed, 10 Sep 2025 05:32:50 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f17:9c00:d650:ab5f:74c2:2175? (p200300d82f179c00d650ab5f74c22175.dip0.t-ipconnect.de. [2003:d8:2f17:9c00:d650:ab5f:74c2:2175])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521bfd08sm6588369f8f.4.2025.09.10.05.32.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 05:32:49 -0700 (PDT)
-Message-ID: <b908b8a9-8860-4464-b86c-467797f1fafd@redhat.com>
-Date: Wed, 10 Sep 2025 14:32:47 +0200
+	 In-Reply-To:Content-Type; b=DDeryf73aw/8J27O8JuFSAMAZ6CWKb2vggLFcwEwbHp7DbWz7KSG1+IouYpoPBT8ZKXH72aFc3pNnZidUQ2lysIljfiwdrDb04H5lIOiz+DfKEBjGb8FSIgZwW2sPl1JWHEv02ZeBeq8mawEIigvK3mErDT39lQgvU8Il0h71wU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=symQNNFY; dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=3KONcXgz; arc=pass smtp.client-ip=85.215.255.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
+ARC-Seal: i=1; a=rsa-sha256; t=1757507609; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=ZOiyYc7in0uXYUOQbbZOI6rixuJbWgh2YjtprGhj/GP7IK26/a47GFsoRlE8ow8R/P
+    rsYCajl+tRXzN0FEc9Vg/u+mEVC6QSG5w0xqynjIQqCq1fXg9Gt9TT5vDVUoqkWdB4Vy
+    IO6S4m4IcceRG49b50kKfADuBf3gfoCJAO/C0EG0oVid2E2oVsYLc6e7BuerW9dxhcNz
+    xC1pC90eYfglLX0ls2J9s0RLhYU8riw5ryoSnq9Mc3uohJ9C5LwHNUnRj/bvsyGkgUf8
+    BIYONdU+cYQwveWRrOA2rsnfGLz9h+Xtde3Y6HaqsaMF/DW3Dw3K/VzllCc2Kb9sXRd6
+    NZBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1757507609;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=uawGsKCcrMWleT592kSxbrH8Xptw/2ObmICJfX6Z9rA=;
+    b=nYVou6Z5+88UU8nS71MEvtoCxKcyH7Raw9Q1Pk1xoDa8dgyPY0WaB74LgtZriK3xKK
+    /N0FD1GCjW1ze1OV7XVQw50szLhVT4gyElg+gfxL9Y0Q0w8kQF6zBOqqL+97sQzPGQjw
+    O3Btp/ia4n9ic2LNs5gI8mpaxilXn4nSMvoQJEuX5ho35bE0wH4+OYww1c24WY73WwQI
+    cmYVv8EamQkpX3FYxVGwOpqEapH0ITip2R7knc0GCjf13fxszDBCRA1UO6FnCLz5O0L5
+    LTwflK6q83zl/vsky2bcc/RQEJwUNwAf+gGtkfRNuYWcrwQtlhNWGktio5QgY0J1GnJ7
+    erIQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757507609;
+    s=strato-dkim-0002; d=hartkopp.net;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=uawGsKCcrMWleT592kSxbrH8Xptw/2ObmICJfX6Z9rA=;
+    b=symQNNFY1hSPj0DJ8U3LqzoZEbcx57mUd5DuaWQiSHFaZ0SCrJ8zU4vI8jM8by1cpL
+    CL+BFUhcKVfPdIgDsBRfTtwqcvwCo8W9+oCpjyTuhL+7wh81yeYj8uQ+S/CwyYQjME3q
+    tFZAtmVQqfkHH6WDg/7TKoRl1I8Q38WeV9C9LQneIVZ8zpMBUhGPF41jYStA8I/1tGYu
+    Ni4N6hSDhWF6aYc9MZuUvUGj3/MVk+mhhqGgy4o4Psw/DrqVtjNU0pSOcvLhzBxQIF3u
+    boXxSU+0uqFAR+SVn80u6xa+o6BhV3sxAnZOQe8B6LjUMs/qquwNzX1iNou89kcsd2WQ
+    AQbw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1757507609;
+    s=strato-dkim-0003; d=hartkopp.net;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=uawGsKCcrMWleT592kSxbrH8Xptw/2ObmICJfX6Z9rA=;
+    b=3KONcXgzFkubVM55rBcajd4tyBdJIqcx9HGwNoZkQwtv6Z6SOLlUetCse6Mp7EJWuI
+    NMTWzZepG+rdPTgDXFDw==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMrZpkO3Mw3lZ/t54cFxeEQ7s8bGWj0Q=="
+Received: from [IPV6:2a00:6020:4a38:6810::9f3]
+    by smtp.strato.de (RZmta 52.1.2 AUTH)
+    with ESMTPSA id K5d36118ACXSuvH
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Wed, 10 Sep 2025 14:33:28 +0200 (CEST)
+Message-ID: <a71b84b1-3dcd-442f-ba22-ca2f3ef90fa7@hartkopp.net>
+Date: Wed, 10 Sep 2025 14:33:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,168 +88,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-To: Arnd Bergmann <arnd@arndb.de>, Matthew Wilcox <willy@infradead.org>
-Cc: ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Richard Weinberger <richard@nod.at>, Lucas Stach <l.stach@pengutronix.de>,
- Linus Walleij <linus.walleij@linaro.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Ankur Arora <ankur.a.arora@oracle.com>, Mike Rapoport <rppt@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
- Ira Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Alexander Sverdlin <alexander.sverdlin@gmail.com>,
- "Chester A. Unal" <chester.a.unal@arinc9.com>,
- Sergio Paracuellos <sergio.paracuellos@gmail.com>,
- Andreas Larsson <andreas@gaisler.com>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
- <aMDYdp3H-yOHU1Pm@casper.infradead.org>
- <b60310f3-25d3-4f2b-88cb-ad65d5f55ec2@app.fastmail.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 5.10] mptcp: pm: kernel: flush: do not reset ADD_ADDR
+ limit
+To: "Heyne, Maximilian" <mheyne@amazon.de>
+Cc: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ Thomas Dreibholz <dreibh@simula.no>, Mat Martineau <martineau@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>,
+ Mat Martineau <mathew.j.martineau@linux.intel.com>,
+ Matthieu Baerts <matthieu.baerts@tessares.net>,
+ "David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250910-nicety-alert-0e004251@mheyne-amazon>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <b60310f3-25d3-4f2b-88cb-ad65d5f55ec2@app.fastmail.com>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
+In-Reply-To: <20250910-nicety-alert-0e004251@mheyne-amazon>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10.09.25 14:17, Arnd Bergmann wrote:
-> On Wed, Sep 10, 2025, at 03:46, Matthew Wilcox wrote:
->> On Tue, Sep 09, 2025 at 11:23:37PM +0200, Arnd Bergmann wrote:
->>> While removing a feature that is actively used is clearly a regression
->>> and not normally done, I expect removing highmem is going to happen
->>> at some point anyway when there are few enough users, but the question
->>> is when that time will be.
->>
->> I don't mind that the feature remains ... unless it causes us trouble.
->> Which it currently does.  Perhaps we could start by removing HIGHPTE?
->> There was a certain amount of complexity introduced into the page fault
->> path when support for that was introduced.  x86 removed support for it,
->> so it's just ARM left before we can remove the complexity again.
->>
->> Most of the other pain points are around storing metadata (directories,
->> superblocks, etc) in page cache highmem.  I think we can get rid of that
->> now too.
+Hi Max,
+
+I'm not responsible for net/mptcp/pm_netlink.c nor can I be found in git 
+blame of that file.
+
+Why did you send this patch to me and having all the relevant persons in CC?
+
+Best regards,
+Oliver
+
+On 10.09.25 11:28, Heyne, Maximilian wrote:
+> From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
 > 
-> Agreed, this is roughly what I meant with the suggestion of removing
-> __GFP_HIGHMEM allocations from as many places as possible, while leaving
-> the pagecache and zram. I already brought up HIGHPTE earlier this year
-> since it already has an separate Kconfig symbol, but Russell was worried
-> about increasing the lowmem usage at all.
+> commit 68fc0f4b0d25692940cdc85c68e366cae63e1757 upstream.
 > 
-> Maybe we could go back to the earlier idea of first categorizing
-> the important highmem users better, and make it possible to
-> use Kconfig symbols to enable highpte/highmem-anonymous/highmem-file/
-> highmem-metadata/highmem-zram/... individually as well as count the
-> actual usage for each of them. Having statistics in /proc/meminfo or
-> similar would allow more informed decision about no longer supporting
-> some of the categories later.
-
-That makes sense.
-
-Essentially, let's move out as much of the 
-now-possibly-unnecessary-complexity while still leaving basic highmem 
-support in. To mean that implies removing highpte first.
-
+> A flush of the MPTCP endpoints should not affect the MPTCP limits. In
+> other words, 'ip mptcp endpoint flush' should not change 'ip mptcp
+> limits'.
 > 
-> Not sure how many __GFP_ flags we could reasonably spend on categorizing,
-> as we are already up to 26 out of 32 (not counting CONFIG_ASAN_HW_TAGS,
-> which is 64-bit only and uses two more bits), or what alternative
-> would work.
+> But it was the case: the MPTCP_PM_ATTR_RCV_ADD_ADDRS (add_addr_accepted)
+> limit was reset by accident. Removing the reset of this counter during a
+> flush fixes this issue.
 > 
->> I don't see any particular need to gt rid of file data stored in highmem,
->> nor anonymous memory stored in highmem.  And if we're only talking
->> about hundreds of megabytes of memory, I think anon+ file pagecache is
->> probably most of the memory in the system already unless you have some
->> very weird workloads.
+> Fixes: 01cacb00b35c ("mptcp: add netlink-based PM")
+> Cc: stable@vger.kernel.org
+> Reported-by: Thomas Dreibholz <dreibh@simula.no>
+> Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/579
+> Reviewed-by: Mat Martineau <martineau@kernel.org>
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> Link: https://patch.msgid.link/20250815-net-mptcp-misc-fixes-6-17-rc2-v1-2-521fe9957892@kernel.org
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> [adjusted patch by removing WRITE_ONCE to take into account the missing
+>   commit 72603d207d59 ("mptcp: use WRITE_ONCE for the pernet *_max")]
+> Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+> ---
+> For some reason only the corresponding selftest patch was backported and
+> it's now failing on 5.10 kernels. I tested that with this patch the
+> selftest is succeeding again.
+> ---
+>   net/mptcp/pm_netlink.c | 1 -
+>   1 file changed, 1 deletion(-)
 > 
-> The main problem I see with the pagecache itself is that the fewer
-> highmem machines people test on, the harder it gets to spot regressions
-> where new code fails to kmap() the pages correctly.
-
-Yes. Whenever I touch highmem I'm concerned I will silently break 
-something and nobody notices.
-
-Then I find myself booting a x86-pat in a VM and wonder why we are still 
-supporting that and why it is so hard for me to get it tested. If we 
-manage to not have that testing part so annoying, it would already eb a 
-big win.
-
-(did ever anybody look into simulating highmem on 64bit to make it 
-easier to test?)
-
-> 
-> Another concern is the number of memory zones, but it does not appear
-> that we would completely remove ZONE_HIGHMEM as long as ZRAM or pagecache
-> uses it.
-> 
->> Where we may want to be a bit careful is some people have Plans to
->> reuse the kmap infrastructure to support things like unmapping the
->> pagecacheto protect against spectre-eqsue attacks.  I know Intel was
->> working on this when 3dxp was going to be a Thing, but it's recently
->> been brought back:
->>
->> https://lore.kernel.org/linux-mm/20250812173109.295750-1-jackmanb@google.com/
-> 
-> If that gets merged, it would at least address the concern about
-> testing, since presumably many bugs around missing kmap/kumap then
-> also show up on x86-64 kernels with ASI enabled.
-
-Right. Likely we should at some point cleanup the api to not talk about 
-map/unmap but rather something along the lines of "start access / end 
-access".
-
--- 
-Cheers
-
-David / dhildenb
+> diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
+> index 32379fc706cac..c31a1dc69f835 100644
+> --- a/net/mptcp/pm_netlink.c
+> +++ b/net/mptcp/pm_netlink.c
+> @@ -869,7 +869,6 @@ static void __flush_addrs(struct pm_nl_pernet *pernet)
+>   static void __reset_counters(struct pm_nl_pernet *pernet)
+>   {
+>   	pernet->add_addr_signal_max = 0;
+> -	pernet->add_addr_accept_max = 0;
+>   	pernet->local_addr_max = 0;
+>   	pernet->addrs = 0;
+>   }
 
 
