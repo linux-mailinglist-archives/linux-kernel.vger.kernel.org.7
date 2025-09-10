@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-809511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84FEFB50E84
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:52:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C540B50EB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB89B1894B3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:53:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEC8C166B17
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB4B30597D;
-	Wed, 10 Sep 2025 06:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B48F305058;
+	Wed, 10 Sep 2025 07:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ezNvTq1t"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="FGTa1YfD"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C10219D89E;
-	Wed, 10 Sep 2025 06:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DEC1798F;
+	Wed, 10 Sep 2025 07:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757487168; cv=none; b=sLn0VwOF2IovQgiyDCzLTki1hH+5Py4vjOTT7q7mtiU1WP2YxMISr2w999mn7w8I0R78Z0CQWNdHQz8ht/HPtldEaWE0fseRhq02KPIsvkIoa4X9oRJmVgj6+dc8cPYZCjP4Q2pal76G4tUOz03kVaowO8qGhJhLDM8E3g2Jryo=
+	t=1757487859; cv=none; b=hgxVeHzeFRtgVSjr5friIKSgZ7MBNvDRgl47p/DVvUVQuOqaT9rS71kuqSNcbe8s2H8kZNORsoYJIxUwWR+6yY9YOU7ielwnvMm5m4a1zpUgaW6trZMvaCWSouw9Vs5Cg8ZHGj4f7Qo8w9YuTcmp9Zy2v76zKc+zYv9HHdydyUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757487168; c=relaxed/simple;
-	bh=Xbxzbd9N/J4R8JD9GiiHN7QemzWWqNtVAcebecs6kMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OW4GA04T9cqGtsmMaowyS4OdAtCwnyRj7/0hOMmGbK0EkybW+/VQ0A98ibnq35/6kFsbIEbg6s8PPnLOP05k8oCN4thlcNAjcJH4wx79/RBTMEqFf3/dvvPn9cka/9FimnHO6HAq4AJmfty12OEAkgkaV008/gLCkdKlO2gtox8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ezNvTq1t; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757487167; x=1789023167;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Xbxzbd9N/J4R8JD9GiiHN7QemzWWqNtVAcebecs6kMo=;
-  b=ezNvTq1tO5XqYhDZlDjPmYguvYxgjfCw3cpMG/gxQot8zN/WCRC5eba9
-   YIdLH69dpEPtOnZ9DG0++mzBs/TvkhtpZ4sD0CMByffacD1bVmebLkBwz
-   OgapBoyIdWnWq85fLN/Xx7Rca3BeZAvOty2SvqdPyq080omW4MolxGf8X
-   QhFM0dxLrRMTfQnP2VBP7ZJGl+9rSEta0kYyoCxp5ZK+3lJN/h2zJwwaW
-   zsOszKL2Ee6aNQHnB/H0t6PG/DOZMbpnmdStuvDyXkLVNLrI79htlSDrh
-   Pgmgh3n0wsSitnNKqGkKYvhnx4TX6lUhbUysE6B3Y0p1lJ19HFlZzX7UI
-   w==;
-X-CSE-ConnectionGUID: FuRUlq+LTf+HZHuex1/yeg==
-X-CSE-MsgGUID: XvsxKj7PQbquIsvk25WMvg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="59009251"
-X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
-   d="scan'208";a="59009251"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 23:52:46 -0700
-X-CSE-ConnectionGUID: hrfBlALWRS+/KWf7YVGKMw==
-X-CSE-MsgGUID: S5OAHpV4SDW3E4KxEva7sQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
-   d="scan'208";a="177579067"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.14])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 23:52:42 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 932A71201B4;
-	Wed, 10 Sep 2025 09:52:38 +0300 (EEST)
-Date: Wed, 10 Sep 2025 09:52:38 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Julien Massot <julien.massot@collabora.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v7 00/24] media: i2c: add Maxim GMSL2/3 serializer and
- deserializer drivers
-Message-ID: <aMEgNtjcy1-NuBds@kekkonen.localdomain>
-References: <20250718152500.2656391-1-demonsingur@gmail.com>
- <aLBqxQQsnY3ZK4eT@kekkonen.localdomain>
- <d558ede0-5838-4a69-b25d-cafaa3b6cc97@gmail.com>
+	s=arc-20240116; t=1757487859; c=relaxed/simple;
+	bh=zM3tYwg3Esfkyecquj5JgIVI41Ms90wXl7Y4pNYPqPI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UPD5byMNHJ5wkvYisn31o6lMTF4DmWWP9jxx3zdDQ0kqmRSl2guwwDfYvjAoZrl0LAZjbstM3qhuMBKxmOZIwkgG4YzJ7R1y4jY2rRAcRV5T4qbagr/TZjoJlmYKK/G5GPPvfiVVPmWXpnOY+vZVRTnD1DDdoVLKhJzZwi9KJFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=FGTa1YfD; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=5Z
+	ZPzeDrpMYxgza36PsQIam3kvrpjmthexLESEAuMpY=; b=FGTa1YfDvwqofxGC2V
+	Vu+jHroYvAKZp2+GibLSM6Xem2Ss/GVhEqNjQ0tF9rromIc03viww0F112QNTR5f
+	6SBadZFv/OVvYtYr2wiSIDZIolm3ss3tF5+CZJcwZTjNsKq4KeMXq0SStY9DJcOi
+	5D7F9Cm1DOiuV4eIaFuPxJ/to=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgBHu3tdIMFoTs1DBA--.44176S2;
+	Wed, 10 Sep 2025 14:53:18 +0800 (CST)
+From: Shawn Guo <shawnguo2@yeah.net>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Qais Yousef <qyousef@layalina.io>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shawn Guo <shawnguo@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] cpufreq: cap the default transition delay at 10 ms
+Date: Wed, 10 Sep 2025 14:53:12 +0800
+Message-ID: <20250910065312.176934-1-shawnguo2@yeah.net>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d558ede0-5838-4a69-b25d-cafaa3b6cc97@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Mc8vCgBHu3tdIMFoTs1DBA--.44176S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Aw4UKw48Aw4UZF4UWr13CFg_yoW8urykpF
+	W5W3y2yr18Xa1ktws2vw48u34Fva1DA34akFyjkwnYv3y3J3ZYvF1UKFWUKrZ5Zr4DGan0
+	qF1jy3ZrJF48Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UtwIgUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgDEZWjA+a16GgAAsv
 
-Hi Cosmin,
+From: Shawn Guo <shawnguo@kernel.org>
 
-On Thu, Sep 04, 2025 at 10:52:09AM +0300, Cosmin Tanislav wrote:
-> Hi Sakari.
-> 
-> I recently left Analog Devices but I will continue to try upstreaming
-> this driver. After the upstreaming is done we can switch the
-> maintainer status to someone else.
+A regression is seen with 6.6 -> 6.12 kernel upgrade on platforms where
+cpufreq-dt driver sets cpuinfo.transition_latency as CPUFREQ_ETERNAL (-1),
+due to that platform's DT doesn't provide the optional property
+'clock-latency-ns'.  The dbs sampling_rate was 10000 us on 6.6 and
+suddently becomes 6442450 us (4294967295 / 1000 * 1.5) on 6.12 for these
+platforms, because that the 10 ms cap for transition_delay_us was
+accidentally dropped by the commits below.
 
-Ack, thank you.
+  commit 37c6dccd6837 ("cpufreq: Remove LATENCY_MULTIPLIER")
+  commit a755d0e2d41b ("cpufreq: Honour transition_latency over transition_delay_us")
+  commit e13aa799c2a6 ("cpufreq: Change default transition delay to 2ms")
 
-> 
-> Here's the output for the commands you asked, provided by my
-> ex-coworker. It's for MAX96716 + 2xMAX96717 + 2x IMX219.
-> 
-> Do we need to fix anything based on the compliance tests?
+It slows down dbs governor's reacting to CPU loading change
+dramatically.  Also, as transition_delay_us is used by schedutil governor
+as rate_limit_us, it shows a negative impact on device idle power
+consumption, because the device gets slightly less time in the lowest OPP.
 
-Looking at the errors, it looks like some fixing is needed, possibly also
-on v4l2-compliance side.
+Fix the regressions by adding the 10 ms cap on transition delay back.
 
-Regarding GMSL, are the image width, height or mbus code used for anything
-by the serialiser or deserialiser drivers?
+Cc: stable@vger.kernel.org
+Fixes: 37c6dccd6837 ("cpufreq: Remove LATENCY_MULTIPLIER")
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+---
+ drivers/cpufreq/cpufreq.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index fc7eace8b65b..36e0c85cb4e0 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -551,8 +551,13 @@ unsigned int cpufreq_policy_transition_delay_us(struct cpufreq_policy *policy)
+ 
+ 	latency = policy->cpuinfo.transition_latency / NSEC_PER_USEC;
+ 	if (latency)
+-		/* Give a 50% breathing room between updates */
+-		return latency + (latency >> 1);
++		/*
++		 * Give a 50% breathing room between updates.
++		 * And cap the transition delay to 10 ms for platforms
++		 * where the latency is too high to be reasonable for
++		 * reevaluating frequency.
++		 */
++		return min(latency + (latency >> 1), 10 * MSEC_PER_SEC);
+ 
+ 	return USEC_PER_MSEC;
+ }
 -- 
-Kind regards,
+2.43.0
 
-Sakari Ailus
 
