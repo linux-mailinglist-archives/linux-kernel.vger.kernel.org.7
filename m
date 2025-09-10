@@ -1,180 +1,252 @@
-Return-Path: <linux-kernel+bounces-809238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2545CB50A5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B97B50A57
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 266291C6120C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:41:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE9F1BC7B54
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FD92144C9;
-	Wed, 10 Sep 2025 01:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AA520B7ED;
+	Wed, 10 Sep 2025 01:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TfP00S3x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="uB+irvQe";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="BTZt0Etd"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0C3218ACC
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757468419; cv=none; b=uhsgBkK4MYwAQpFEI9dwyWcenYPAGK4qA0eIr4xnJ7zrdd7nO6qz/SwvRRul1kpAcH15q/7REkBzLilEE1gTH9bYIJsxQRcDko+35tdy2rg32rsj+0HNlmxn5M43bm+mOW9nYUAG5B7nbibWp7HhSEfxZqMQc6CQgudMMvMaEbE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757468419; c=relaxed/simple;
-	bh=FHt07G2ckc/YJ1ZcIYot/VUnYBJdpLJpENBo+p+6XNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mKrvvIZIDSOBiV/n//vC192zVXMPyg7TlYGxOL+UrSCGezgvDonuvveav2FM5O0ch+t+aBRorIb5+YtBh+4JddkLwIIakXQnia4BVP6FPF1XEYYZA/Ec1u1qBe2Se8lKupJgykdGmoBjGIENu6GgRul4zUdqvprr8roYbnmi0ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TfP00S3x; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757468417;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9bf0TnMJBEYNTRXq3aALRg5uk33yVz0wdtITnMYWXzk=;
-	b=TfP00S3xsJUlYhEa79PdUAnpEgLRqy3Wf20FQHuZXE0+IE92xsL5Jo4FF4FXannht8Kcbs
-	AyD1cZq438OuM3z//VdUbyiGmeMgPcb8s09GWFmNIJAuvkk1LWExTTD5xnZyozVn1zPJ9Y
-	MAeCG16fWSbC4QyicA8ANRokncP8XVc=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-681-IzAhDUMgPq-7uDe851JRfg-1; Tue, 09 Sep 2025 21:40:15 -0400
-X-MC-Unique: IzAhDUMgPq-7uDe851JRfg-1
-X-Mimecast-MFC-AGG-ID: IzAhDUMgPq-7uDe851JRfg_1757468415
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-329745d6960so6659804a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 18:40:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757468414; x=1758073214;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9bf0TnMJBEYNTRXq3aALRg5uk33yVz0wdtITnMYWXzk=;
-        b=SMhLO+cpOp8V7g7YMD7ElS7/1GUXqwR5cj99Vs1y1P4rINpGXv/AoMP0rBxK+GeEZY
-         RnbgUoTjg26sFIiMth7KmY/Ultm8nmBy8O2djb4H0Luwm0C8r6XD534gk9aiZVaW9v7o
-         h0LPUYevlq8jqRbL5fH4mrc+/NWku6AFmclvvC3dzScvA2Ph4pECJLJnsKkrZoM2aAhk
-         08nTY3XjAGAXFKsw6TXLYaQbmtBTefzaYSo9ST49rabLkUd/zGzxhpMGmFJCvNEm0cA3
-         lp8Cqgy/2zpHh9afr7Z5GzOQzhb6cy6MF8q5Ea+7OkjGQn4UNOme8WP0+1Sovm7K1Jni
-         ePYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7Yr0LmWgwv3VfqrLpDaGNKhB2k0eHJNrg/64D1nXF6C8JWoitEeJ1DmbShZtvoY9Zv6+/4c0mYbF6i9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeQnrq/plVEYhXzOJ68yb6UW9viKeA/TuQExlaUE3q0Io9VsmG
-	xGgIZ+KD8+210Cf12kJ0femUqwG4IWP1dwti6ZwLZzGsSOteXos1qsqod0v1CWS7iPUmRQntDYD
-	2oeYayI9nk5FN9+MTzXzkcg0Ci4PAEJOesyke7fzn9HSTW8QwfTGa2B3HcKHYq31wkg==
-X-Gm-Gg: ASbGncsMayVEpZ3KOYqsuKcJ111lC5Vogiqh4vxx4w0P3aotAF81qJx5vn12BagUMiT
-	UzAFxPOgalArgpWJueiWUQaLD/GTHwZq/hYRcLzuC0+IKeUVOlpXH2uuNTQTTqyCaM9mfQkqqAw
-	d3K+bDQXPfEm/EjCZ+foiSoqud0zOhBAFuzAXbicOkbirOO8FUkOYy+nDjaf4ZT+QMA2vnk+mFi
-	+8HkQvp4/D5cdkaj1+p//thb0M+GWrkpNdn1BLwq0Rm8q+/hQMY1CrEAd4a95eSTynS9AyQ1K6z
-	TJfwbjUwhu83wQte558dMlZqMn3PhFo=
-X-Received: by 2002:a17:90b:3d04:b0:32a:34d8:33cf with SMTP id 98e67ed59e1d1-32d43f77634mr16823430a91.31.1757468414491;
-        Tue, 09 Sep 2025 18:40:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWQlNFYMJg6XtDWuyZkLB1653jaInOG0K9bglwWI7QAmLbCiyDXHVpiFBScl37R1NTsEoaMQ==
-X-Received: by 2002:a17:90b:3d04:b0:32a:34d8:33cf with SMTP id 98e67ed59e1d1-32d43f77634mr16823406a91.31.1757468414115;
-        Tue, 09 Sep 2025 18:40:14 -0700 (PDT)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dbb00f880sm537261a91.0.2025.09.09.18.40.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 18:40:13 -0700 (PDT)
-Date: Wed, 10 Sep 2025 09:36:50 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ima: don't clear IMA_DIGSIG flag when setting non-IMA
- xattr
-Message-ID: <wwcnoevou44eoe3ner4oegtdsdg46tlvwidu3ynobs7huac7ae@ljivg5ksohxv>
-References: <20250902042515.759750-1-coxu@redhat.com>
- <d252b04934908e7e65a3299bfeffc282c7b0b12f.camel@linux.ibm.com>
- <53wb5tzech2k4k25xy2heq7ohmp2elw2a7l4x3nfk6fajfydur@5thsinydau5x>
- <13d7fcfecb06423294ae0553c9a561f4cc8faf67.camel@linux.ibm.com>
- <9fb8781bfb9c9ae9dd0a1413e23cae20dcd7356a.camel@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9EA1EDA1E
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757468310; cv=fail; b=K0FB4zmjmuguf3paO2RK028RCpyQ0usghWHXkjk8bCGBNRbPwxNVIjagrjUDSDTBB399n5etRX3VI//UJnvLUJXb29BuF5aDB7zWzQOzT14KY4lMNmKXJILf15Coxuk6UfYS2xI65ZLqE1nVZxpj4ZKyfe9g6PUbpZlkipJCvyA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757468310; c=relaxed/simple;
+	bh=3omNDE2W6v81yb7UIKniAZdrPFqbiKALhMAO9pb5O9Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WqNJ2VTEHhPeqiKk1vObBLueIKckHq4bfnq4z4J7hHNEeFDQ4rMP6mGOFbk2t98tAnkE7yHHk3UWNMAOGZtL16iEeiHvEWJyd7pmN8TNGz34JAAMHGutrFX/prD1GdySvZ2JrtGpEVmopWViDJqaHlKpDGjK27PDnbdxYG+bLic=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=uB+irvQe; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=BTZt0Etd; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: d3dbdfa08de611f0bd5779446731db89-20250910
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=3omNDE2W6v81yb7UIKniAZdrPFqbiKALhMAO9pb5O9Y=;
+	b=uB+irvQemtQh5LR5DrVjW1XPdik6yqrQmT6hjqWI9JWKTuXK25HR+aLive38hT3qZ++DVOm0krUuYcj3ootCGISCDSKlNtkeBABA83UTlAj5F9g4eYyO2mXz3QcZwKIg/55UaLSO8r6fiHytZvZUg9H/I/m3V171q6EuUG+Lu94=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.4,REQID:65b1320a-2ba8-4ec2-b08d-dae03094086b,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:1ca6b93,CLOUDID:83b99d84-5317-4626-9d82-238d715c253f,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|110|111,TC:-5,Conten
+	t:0|15|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:
+	0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: d3dbdfa08de611f0bd5779446731db89-20250910
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1922908199; Wed, 10 Sep 2025 09:38:18 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Wed, 10 Sep 2025 09:38:17 +0800
+Received: from TYPPR03CU001.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Wed, 10 Sep 2025 09:38:17 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=E4XQPkICJU4LSVv0HlAnjD6DGXRWMjATUQlhc3D0cgY5hVriXgfmi/kLabxGx9nlzOHs6x3o+sLA8eJUnkmlK0S+Fz91ZtwzYa2FPFvi7iN4r/g+OCFmTD7Bw+DCUsedwE8hep/gAHBk0XI6eVqLMppAoz/yKXUHM6d4r9rWdnPUdN9CTLWFoB2kXxDdc8GdLgTzUlR8sc1NQ8gmooGtV1AYGQ13reN5jXOwW+Y08mpxfI6Ty4XDL2ryKQ1d5nRJaxpkn2I5LW9cV4MONpqkdASrRYbbfZ3nVYynP7+GcGxvci/gAIMcY9OrraiQvZlmKdIbzwim0UooXQVfbsPPNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3omNDE2W6v81yb7UIKniAZdrPFqbiKALhMAO9pb5O9Y=;
+ b=lLmg4o7Zupbh7Pf4j9w81MKN8JbS8G9mg9mY44LGaTTL08GcFN0OMfgQpyoCSr84Y9xilvGASY13cQkH0S5HKgZynNAAhQ8xXPIKGID5o9I5lmE8CLdhgUtKyFCPKTTWyymBWQgnhrNeOTiKdsjwvqYSv0mAhkpDwHVF/Y9c1vD1WVaTyyecuSV22b6BfESutma6g2RiT6tPQTlcImqfW1Bog34VVq6pW6ilD7LLhI9mFnWis/IotJDw++xFKCzz6PHOEsmK7xB4GxuVUQLGsfk9khRuoG5b54s3i1R09Tc2L6dbH9qQ4j+4vao7cdSUt7SGF4VGb4UyvK3ihNSoHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3omNDE2W6v81yb7UIKniAZdrPFqbiKALhMAO9pb5O9Y=;
+ b=BTZt0EtdevuqQfMGtaqLuFzxgQ1Z/uE2miPAr2fiCyX+E3u8L7oa98GreEY9iK67pyMz0URyHAOOwkEF8ZbtuoT2FkVKdAcsQf/bjaFXPymadoN080451tubT/9/4lyyvHr1s3+iAtdWWhB8ZRGngB+Z18cx2+t8S+HJhhxE0jQ=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by JH0PR03MB7612.apcprd03.prod.outlook.com (2603:1096:990:17::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 01:38:13 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%4]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 01:38:13 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "johan@kernel.org"
+	<johan@kernel.org>
+CC: "simona@ffwll.ch" <simona@ffwll.ch>, "make24@iscas.ac.cn"
+	<make24@iscas.ac.cn>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, "airlied@gmail.com"
+	<airlied@gmail.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>, "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH 2/2] drm/mediatek: clean up driver data initialisation
+Thread-Topic: [PATCH 2/2] drm/mediatek: clean up driver data initialisation
+Thread-Index: AQHcGMQlDAnTrXAYxkCoVJ3S/41H0rSLtZsA
+Date: Wed, 10 Sep 2025 01:38:12 +0000
+Message-ID: <c4137f43453ee9ae17592dd230426f26e338f0d8.camel@mediatek.com>
+References: <20250829090345.21075-1-johan@kernel.org>
+	 <20250829090345.21075-3-johan@kernel.org>
+In-Reply-To: <20250829090345.21075-3-johan@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.3-0ubuntu1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|JH0PR03MB7612:EE_
+x-ms-office365-filtering-correlation-id: 13a6f2a5-eb7e-48d9-aa8b-08ddf00ab4d4
+x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|42112799006|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?b0ozZ1BRTHJXZDlEZTNRVGdjcU9raEkwVWxCY29HQVV2cGNXUVg3LzQvOTg0?=
+ =?utf-8?B?LzNwSy9qNHRjcXRldG9PbFFmb1Y4OTF0N3FZaWEwS2lWWXM1eXNpbkNZZklj?=
+ =?utf-8?B?TzBpcUVWZWJpeTEyaVJSOHBUUC9ITWlzeXVUblFwLzJSTGVFOTVkMlpSWjVy?=
+ =?utf-8?B?ZnpNWTd2R2Y2cnFZVDU2VlJaOVdIMS9PSkFySXZNZUtNRWlRWmh2amhLZlBq?=
+ =?utf-8?B?U1lOUWdkVVFoVy94RWF2RTIzLzYzbGFaTXFmLytqYjRwUFJCNndaWk9uYTNK?=
+ =?utf-8?B?ZURlZUNhZlZlbHBuNWlCYTRTdVBsQVVFMVdMVlN4THFXY0ZrWFVydE44aVhJ?=
+ =?utf-8?B?QmdZUXBVcHlQeDhaNWlOVGpodWppZlZUM2xVaHh2aXEraXVOc0tvNzRrSW5K?=
+ =?utf-8?B?ei9YWnhEMENBSHF3SktKVUhUejFHMzZLczB0UkdNZkhqeDNnZ292d0dZV2Qy?=
+ =?utf-8?B?d0VYR1RBMjh2OTN5MmZtZ2tDMHFGTzNQa2hjbnI2YzM2MXhDbkNReU11VGdW?=
+ =?utf-8?B?ZDBuKzRRc25zM09DYzFBbzk1cXAvaTc2aDhCV1owVDRnSW1CSmQxS2tuYmdX?=
+ =?utf-8?B?RytqaVZxZlRXZXVNSXZKMm0yN3h5YXRRWnJZcnZLVEdHRzlPaWp6N3FXQXM5?=
+ =?utf-8?B?UXFiNEZYVU9iWnlFSUc1dm83UFdlTWIxYXo4dm9kL1VOTmFDa2JsdGptN3py?=
+ =?utf-8?B?MDZESG5kZ2NaTWRIbklrcE51SGNPSjBYbHhseHRkeUZJQnNuSWJYQkdwOSs5?=
+ =?utf-8?B?Y2lGVlNFYTBhQURUdXRwanVwRkxQTGlSTm8rdU5oWUJZRXR0MWZMZE1MM0ZF?=
+ =?utf-8?B?RmlTMmlNM1ZlZUI5dmxKTldIb2gwZmk0RXNvNUZuKzVwVENZbmF5Z3Fkc3Jq?=
+ =?utf-8?B?b2tpOHpNWjIwOG9JVE1YSm5MZW95andvMzExSEVHVGFOUFNPY2xaK3VzVTVQ?=
+ =?utf-8?B?d2JTVEwrLzhvd2trYy9KUUZnWDZaVW9aeTdKdUIxWlh1Ynl1MDZieWV6Umxz?=
+ =?utf-8?B?c1RXK2Y2RUNvUVgxRjVyL3FkMEQybTV5YUlXMzF5NnBRQUdzRm1BTUl5NnVT?=
+ =?utf-8?B?d0dJb3lyZkZYWjM4R2QvMnBabVpKbWUzTThsMTJVc2RGc044eHJlMlJIb1JG?=
+ =?utf-8?B?a0RSRFYwcHRwQUFWMFZqLzZic1BPQXp4UEZXeDhINnJQRmpWMjJOMzRGcXUx?=
+ =?utf-8?B?T1ZXVWRGc0JITzlmYUtIME5hcXBmVlRHV00xWnRyV0NuUzNyNC9YdEd4a1RQ?=
+ =?utf-8?B?SnN4aTVuTkl5OG1GcnVFdEpkYUkyaG5jM0tiUTFzSVR1VGRRa3NsSGYrams4?=
+ =?utf-8?B?dXFPOUk5SThOVm1kVG1YSytiNWk2NlZHZEhUUkF6NG1STGpjdFBBanhyb0R2?=
+ =?utf-8?B?V25idnNYb2RVVDNpU3MwMUR0MVRaVk96eFZxaUdmUktybzYzY3kxYkdVelpi?=
+ =?utf-8?B?ZWZpSXpEdUJ6b0ZiMTlwelB2Q1F0aVRYUWF2Ni94dkhNYTZNVHd2ZUg5M1Rx?=
+ =?utf-8?B?WnVnWVBvL25icVdiYU5TcjNRUUhFanh4VG9NemZQZUNtb0w5Y3VHSytoZDBD?=
+ =?utf-8?B?UEJuY29wT1B1RDVYQXRjT1lQM1RXMXU2SkNLcWZtdHppalBFTmtkZFcrMUxI?=
+ =?utf-8?B?L0N3dG1nTFBJVFpqNVlCbnVlNm5UL0lNUUpkOXhvZnY0RXRYNjI2em4zbXpJ?=
+ =?utf-8?B?bTNFYTVSNVJBNlR6SVNwZmRwblBzUnY2YzZETWsrQWQ1cFYxdUZDVXVCMzJt?=
+ =?utf-8?B?QlRvZVpVcExBYTdtbklJc3YyZkRYTDg3RzhxclB4TFFxbHZ6ZmNEN1lLbU5G?=
+ =?utf-8?B?RkY1czBKRVQydzZlL2JKWTI2amJ4YzRrRnZQbC8yL1JZTlFIbSswdU5NUnI0?=
+ =?utf-8?B?NnVGNzI2blIrT0RiUzlIZk1YL2IwdGVLcjlTYmUrTzVhWXJWRTF6bzdMb29D?=
+ =?utf-8?B?WHZVRXc3YmJPYTZJUm5TMnVWTTRadDNNc1AreDhaRG1nRVNLNi91YkNydXFG?=
+ =?utf-8?Q?m5ngpkRX3lXmat8syRbMAfkHpb+P10=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(42112799006)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZForNUk3QkRQMGErRDhXZC9MOVFIc2haaUZWRWYrT09XZlpkMjNrRjVMRnRI?=
+ =?utf-8?B?ZmhYUHBwYTYwdzJOZWdDTExDM2VsQTlKQ015NHlxQ080dW94OFdhRzRESmlW?=
+ =?utf-8?B?K0tzbjVHd3F2UWdzbUxxcjJwcHFCeE1ZaTRrYTlMc1BCQk9reTZvWVR3TW42?=
+ =?utf-8?B?S3ZWRzJ3OWNicXJkMm9SKzlzcDE3SWVJTmpHTDRsU3hwdVBYVE5SNmxDVlc5?=
+ =?utf-8?B?VHNwb2VrQkw2QUVPWVhyQWxicitaZ0FlTS9SWlhOc0pYcTdvRUpndWNPT05D?=
+ =?utf-8?B?MlhMRDRMaDkveDdyMWxZK243N2l4cHBWbTBWT0RGSDV5OFNWbUxQMGZySUtl?=
+ =?utf-8?B?WEhFcFpaZjJ5dlVvK1I4bzVkM1h5UEJ5VFJDRWkwakpzOUY1dVZVblJ5LzJT?=
+ =?utf-8?B?M3NDVGZSRnQyU0dvT1lPTktLVU9yU0tJdmFjdFdwQTJRaDkxMHVSR1c2MVo0?=
+ =?utf-8?B?THQ2TktBdDlJUUFEUWFOSXBTZk5PM21KZVZJNjVWU09jSGpoN1dqbTRHS09Z?=
+ =?utf-8?B?d2FxQlRiM0I4T1Z1WXNqdWZCbVdpTjN2bW1YNzN1Rk40c2VFWDkzY0V0ZkNY?=
+ =?utf-8?B?ekM5WG9GbjNOZGtIUmMyTjlYeS9iVHhkSjdEUUtrRkRjM0Y0NGlSTk1SVUZH?=
+ =?utf-8?B?Rmg0bVBwUnlVekc5L1pPRmRaTHJSZWJRUTBwdm1UY0d6L3F0LzJ0ZjlaVmxm?=
+ =?utf-8?B?TzRhSFhQQTJSMW82US9TK3FPSXlTcnVnNm1rN3ZDQzA5c3B4NHpqb1lQbkty?=
+ =?utf-8?B?Nm04QmlRWU5VQzZoRnpHUXJDKzU0cUV3c3Jab1lZOVREL21yZWE0MDNZdU16?=
+ =?utf-8?B?Wm5ZemJrSjA0WDhWbmp1L1JNMmFiMTZwclVjbUVwbCtZd3h2OFhacjRWdEor?=
+ =?utf-8?B?clM5TTNuYVczUVpoVWlRektvYnYzcndkSHM4dzNOb05oOHgxamlRM08zMUp5?=
+ =?utf-8?B?cE9TdlZncVh3cytyYUk0MXdNdk9lTmRpcjIzZFpsSnlRRTVjOUViOW85TStX?=
+ =?utf-8?B?MGtHN00wa2tneW9aVmRVaXlQZThGc0NoMFBVdEtpaXB1b2dzVnlKRDBycnFj?=
+ =?utf-8?B?ZnBsTWFVWTJ1NVBKOTBmbjdUc3VQYkFMRGtIdnJYVWNqWm9BeCtBT3JzMlJO?=
+ =?utf-8?B?YUxCanFaRGNCRTBvd1E4elk3aVdOaGgyWTlxczAxMkRFcUhSNWVnVHl6bVRl?=
+ =?utf-8?B?ZmFnUHN1UHhaY3ZKY0ZvQXJNaWVJdHgzSithNmY4cXRobXp6N0c4c2VocnBY?=
+ =?utf-8?B?TnJ2eGhsVGwxV0Vwc2FhTkNhK2E2bFd3TjcrV2RHRTM5RThWSy9XeGFGTkxj?=
+ =?utf-8?B?VDhtaXV5YTRhNEdDSy9LTmV2cm1Fb1FZWDhwSDBWN2NGQ2JHVnYzV1BIcnht?=
+ =?utf-8?B?NVA3SnFWSHdGeHpKdkhDd05nSy9qeUZBL0diVWZXKzVpNjhFbUJ3RXAxRG82?=
+ =?utf-8?B?c3VaWkk1WXBRcEpRcG52bTlCaVJHc05oeWhkRXg0WFlqTFR4ekhOcU1oR2xr?=
+ =?utf-8?B?UlEyOFlsRVhHN3pLcDEyY0NySXByUHR2YmUzdzhzOXQvM1FkdmUxdlc2YnNk?=
+ =?utf-8?B?YkUwaXRNcm5CK3hyZUxKcDNXOVRVNzZLTWE3NmdZcktMNUJ6YUEyN0lVZ0NN?=
+ =?utf-8?B?OFZjRkV2bGdxakFsL2F3TXF5Mld5VXdpSTk1ak9zVmY3RWZ5U0ZDdUllWUdy?=
+ =?utf-8?B?dXpjS0VYQXBCSW1ER0tIaUNUbVRuZG5aSFhhS1ZCVXlJWDdDc0lzd1A5T0hy?=
+ =?utf-8?B?T1V2Z3hMb3dFcWRQNGV5c2hndjVVOG9FNmE1SDZvQ1BLcHRHOC9lcEw0bW41?=
+ =?utf-8?B?amlkK0VienZuNkdFMmoxcXBvK2hZenR1a1VhTmQwbXloNElZRHVSZzZjUkVT?=
+ =?utf-8?B?TTZDMXNDa01RK2lmWEI0VW5wMXdJakZWZzdCanVoQ0JUOUxrK2hEeWpibi9G?=
+ =?utf-8?B?N0gwL1ZDOFdUT0YrRWNBUDJOcjZ4Rk5QN2NJK1hzMGg5c0dkRkdrcnpTMDZw?=
+ =?utf-8?B?aGFVbGE3aW83SzEvd0dxUkIyUm5oVEl6QnFDbFhYSjcvVDloaDFaWWVOdjFE?=
+ =?utf-8?B?aWp2NFdqY1R3MlBxZ2g0VkF5ejRmTXlYd0hSQlJ0c05kajhGTnY5eFgwSGU2?=
+ =?utf-8?Q?9qYptJnesy8vWbRhyJL9uaT0I?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8A68A5969A2BE942B623904F046B4835@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <9fb8781bfb9c9ae9dd0a1413e23cae20dcd7356a.camel@linux.ibm.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13a6f2a5-eb7e-48d9-aa8b-08ddf00ab4d4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2025 01:38:13.0347
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YMHAMNgFSJaNXrO7xtbqurjhVugVEunZoJ4sL9irzbOU5rVp7u/KX0Pty+KSYYaItqpejwDDhQBtfQaTeUz4Hg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB7612
 
-On Mon, Sep 08, 2025 at 04:58:05PM -0400, Mimi Zohar wrote:
->On Mon, 2025-09-08 at 10:53 -0400, Mimi Zohar wrote:
->> Hi Coiby,
->>
->> On Mon, 2025-09-08 at 19:12 +0800, Coiby Xu wrote:
->> > >
->> > > Even without an IMA appraise policy, the security xattrs are written out to the
->> > > filesystem, but the IMA_DIGSIG flag is not cached.
->> >
->> > It seems I miss some context for the above sentence. If no IMA policy is
->> > configured, no ima_iint_cache will be created. If you mean non-appraisal
->> > policy, will not caching IMA_DIGSIG flag cause any problem?
->>
->> Sorry.  What I was trying to say is that your test program illustrates the
->> problem both with or without any of the boot command line options as you
->> suggested - "ima_appraise=fix evm=fix ima_policy=appraise_tcb".  Writing some
->> other security xattr is a generic problem, whether the file is in policy or not,
->> whether IMA or EVM are in fix mode or not.  The rpm-plugin-ima should install
->> the IMA signature regardless.
->
->My mistake.  An appraise policy indeed needs to be defined for the file
->signature to be replaced with a file hash.
-
-Thanks for the clarification! rpm-plugin-ima does try to install IMA
-signature as shown from the following strace output,
-
-     # strace rpm --reinstall ip*.rpm
-     openat(11, "lnstat;68aee3f4", O_WRONLY|O_CREAT|O_EXCL, 0200) = 12
-     dup(12)                                 = 13
-     write(13, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0'\0\0\0\0\0\0"..., 19256) = 19256
-     close(13)                               = 0
-     getuid()                                = 0
-     fchown(12, 0, 0)                        = 0
-     fchmod(12, 0755)                        = 0
-     getuid()                                = 0
-     utimensat(12, NULL, [{tv_sec=1734480000, tv_nsec=0} /* 2024-12-17T19:00:00-0500 */, {tv_sec=1734480000, tv_nsec=0} /* 2024-12-17T19:00:00-0500 */], 0) = 0
-     fsetxattr(12, "security.ima", "\3\2\4\3232\4I\0f0d\0020O\231\341q\323Q\322\235\341\7\323\224\205\2104\24\241\331#"..., 111, 0) = 0
-     fsetxattr(12, "security.selinux", "system_u:object_r:bin_t:s0", 27, 0) = 0
-     close(12)                               = 0
-
-But after rpm-plugin-selinux sets security.selinux, the IMA
-signature get cleared and is replaced with IMA hash.
-
->
->>
->> SELinux doesn't usually re-write the security.selinux xattr, so the problem is
->> hard to reproduce after installing the rpm-plugin-ima with "dnf reinstall
->> <package>".
-
-Since rpm-plugin-selinux will write security.selinux for a newly
-installed file, so this issue can be easily reproduced. If you want to
-reproduce this issue by yourself, here are the steps to reproduce this
-issue on Fedora,
-1. Turn off secure boot and boot the kernel with 
-    "ima_appraise=fix evm=fix ima_policy=appraise_tcb"
-2. dnf install rpm-plugin-ima -y
-3. dnf reinstall iproute -y
-4. Run "getfattr -m - -d -e hex /usr/sbin/ip" to check if /usr/sbin/ip has IMA signature set
-
-And my attached C reproducer is to extract the essence of what
-rpm-plugin-ima does so it can be a minimal reproducer and also to
-illustrate what the problem is.
-
->>
->> thanks,
->>
->> Mimi
->>
->
-
--- 
-Best regards,
-Coiby
-
+T24gRnJpLCAyMDI1LTA4LTI5IGF0IDExOjAzICswMjAwLCBKb2hhbiBIb3ZvbGQgd3JvdGU6DQo+
+IEV4dGVybmFsIGVtYWlsIDogUGxlYXNlIGRvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFj
+aG1lbnRzIHVudGlsIHlvdSBoYXZlIHZlcmlmaWVkIHRoZSBzZW5kZXIgb3IgdGhlIGNvbnRlbnQu
+DQo+IA0KPiANCj4gVGhlIHBsYXRmb3JtIGFuZCBkcm0gZGV2aWNlcyBhcmUgb25seSB1c2VkIHRv
+IGxvb2sgdXAgdGhlIGRybSBkZXZpY2UgYW5kDQo+IGl0cyBkcml2ZXIgZGF0YSByZXNwZWN0aXZl
+bHkgd2hlbiBpbml0aWFsaXNpbmcgdGhlIGRyaXZlciBkYXRhIGR1cmluZw0KPiBiaW5kKCkuDQo+
+IA0KPiBEcm9wIHRoZSByZWZlcmVuY2UgY291bnRzIGFzIHNvb24gYXMgdGhleSBoYXZlIGJlZW4g
+dXNlZCB0byBtYWtlIHRoZQ0KPiBjb2RlIG1vcmUgcmVhZGFibGUuDQo+IA0KPiBOb3RlIHRoYXQg
+dGhlIGNydGMgY291bnQgaXMgbmV2ZXIgaW5jcmVtZW50ZWQgb24gbG9va3VwIGZhaWx1cmVzLg0K
+DQpSZXZpZXdlZC1ieTogQ0sgSHUgPGNrLmh1QG1lZGlhdGVrLmNvbT4NCg0KPiANCj4gU2lnbmVk
+LW9mZi1ieTogSm9oYW4gSG92b2xkIDxqb2hhbkBrZXJuZWwub3JnPg0KPiAtLS0NCj4gIGRyaXZl
+cnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2Rydi5jIHwgMTIgKysrKy0tLS0tLS0tDQo+ICAx
+IGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2Rydi5jIGIvZHJpdmVy
+cy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmMNCj4gaW5kZXggM2IwMmVkMGExNmRhLi4z
+M2I4MzU3NmFmN2UgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtf
+ZHJtX2Rydi5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2Rydi5j
+DQo+IEBAIC0zOTUsMTIgKzM5NSwxNCBAQCBzdGF0aWMgYm9vbCBtdGtfZHJtX2dldF9hbGxfZHJt
+X3ByaXYoc3RydWN0IGRldmljZSAqZGV2KQ0KPiAgICAgICAgICAgICAgICAgICAgICAgICBjb250
+aW51ZTsNCj4gDQo+ICAgICAgICAgICAgICAgICBkcm1fZGV2ID0gZGV2aWNlX2ZpbmRfY2hpbGQo
+JnBkZXYtPmRldiwgTlVMTCwgbXRrX2RybV9tYXRjaCk7DQo+ICsgICAgICAgICAgICAgICBwdXRf
+ZGV2aWNlKCZwZGV2LT5kZXYpOw0KPiAgICAgICAgICAgICAgICAgaWYgKCFkcm1fZGV2KQ0KPiAt
+ICAgICAgICAgICAgICAgICAgICAgICBnb3RvIG5leHRfcHV0X2RldmljZV9wZGV2X2RldjsNCj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgY29udGludWU7DQo+IA0KPiAgICAgICAgICAgICAgICAg
+dGVtcF9kcm1fcHJpdiA9IGRldl9nZXRfZHJ2ZGF0YShkcm1fZGV2KTsNCj4gKyAgICAgICAgICAg
+ICAgIHB1dF9kZXZpY2UoZHJtX2Rldik7DQo+ICAgICAgICAgICAgICAgICBpZiAoIXRlbXBfZHJt
+X3ByaXYpDQo+IC0gICAgICAgICAgICAgICAgICAgICAgIGdvdG8gbmV4dF9wdXRfZGV2aWNlX2Ry
+bV9kZXY7DQo+ICsgICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOw0KPiANCj4gICAgICAg
+ICAgICAgICAgIGlmICh0ZW1wX2RybV9wcml2LT5kYXRhLT5tYWluX2xlbikNCj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgYWxsX2RybV9wcml2W0NSVENfTUFJTl0gPSB0ZW1wX2RybV9wcml2Ow0K
+PiBAQCAtNDEyLDEyICs0MTQsNiBAQCBzdGF0aWMgYm9vbCBtdGtfZHJtX2dldF9hbGxfZHJtX3By
+aXYoc3RydWN0IGRldmljZSAqZGV2KQ0KPiAgICAgICAgICAgICAgICAgaWYgKHRlbXBfZHJtX3By
+aXYtPm10a19kcm1fYm91bmQpDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIGNudCsrOw0KPiAN
+Cj4gLW5leHRfcHV0X2RldmljZV9kcm1fZGV2Og0KPiAtICAgICAgICAgICAgICAgcHV0X2Rldmlj
+ZShkcm1fZGV2KTsNCj4gLQ0KPiAtbmV4dF9wdXRfZGV2aWNlX3BkZXZfZGV2Og0KPiAtICAgICAg
+ICAgICAgICAgcHV0X2RldmljZSgmcGRldi0+ZGV2KTsNCj4gLQ0KPiAgICAgICAgICAgICAgICAg
+aWYgKGNudCA9PSBNQVhfQ1JUQykgew0KPiAgICAgICAgICAgICAgICAgICAgICAgICBvZl9ub2Rl
+X3B1dChub2RlKTsNCj4gICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7DQo+IC0tDQo+IDIu
+NDkuMQ0KPiANCg0K
 
