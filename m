@@ -1,143 +1,73 @@
-Return-Path: <linux-kernel+bounces-809232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1AFB50A48
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:34:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA41B50A4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8B51C60B33
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:34:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEE8B1BC1B40
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1647A1F03D9;
-	Wed, 10 Sep 2025 01:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889AA1E47A3;
+	Wed, 10 Sep 2025 01:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jRGOMphx"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4lZrRA+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F32819755B
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6F21E5213;
+	Wed, 10 Sep 2025 01:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757468031; cv=none; b=QYUeZTo0FCTOV89ZuwVyse2lc9dGEkTlLAB8J+97JBcZj8MBm16pUkw6p+G0ogma5xl6GWCcBJMCq+8xZSs/4wooi5Kq/5evhpfKz1yhg3KYFG39MVg6O60H7Bi7AlqQxB9dBCiOh2IIUVLD8oCj5t7dkYrOuZ7KUkGh3aawQGk=
+	t=1757468152; cv=none; b=NtW7c2hnkC3QA0LQAl5FcmIu/HSb2kddTX/ZKmfbpwFKu6kOmFsIBiFxLYtR7NFN6LxMQdyw1XXcgRHfYbznGl+c463ji1UDXMTG3exgquTLOzvMkDSFo4A64VdPWVdvLq0aNBiHUmeNTIogaT/6zD39wiqVcafJLbDNFcw+Blo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757468031; c=relaxed/simple;
-	bh=UE1dW2vjyCtvAjqcbpkaQjgaA6fRIygDccPoGm5LG1Q=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=CFFQNnwkgNqepDxNxihb1FKVvebXj08dOS5hqg+1q3fw5O0F3CYKhDcrwaTk/I1OSSvvFdRoJCuMNbf7R1WYRPxMnodcGJELYUSieQG1ce+1n9w9INpHBqiPGscp10ljQ/FaL4xeoCv5421Zv0MHtpVyorFb27QyJFowKdmsxjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jRGOMphx; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250910013346epoutp0397b8c00abc2f7a5f83e81df68a682f2f~jx9vNBTO51087810878epoutp03x
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:33:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250910013346epoutp0397b8c00abc2f7a5f83e81df68a682f2f~jx9vNBTO51087810878epoutp03x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1757468026;
-	bh=B/cQztE6JVsN29H2UCnnOkTaLkGI3st9SaYIAZ0Aj6I=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=jRGOMphxr9OlYaJEH6x1gYZyDvpOgTnngtS/3I3ljide5pEQgBPHPyvfPhpoecHxL
-	 MIApyz7+jUfWexphehLhwg6aRsUOj3CAnGERFpgOk5n9bZnwnsZlDyxsipwQ5cWOc5
-	 9MerGn9AbIJGYFCRZ9NMOm1pfNQ3IgfUSKGKrM48=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250910013345epcas2p1627ed06365bff0aaf2d6a0810b074777~jx9ui-Lrd2488624886epcas2p1h;
-	Wed, 10 Sep 2025 01:33:45 +0000 (GMT)
-Received: from epcas2p1.samsung.com (unknown [182.195.36.70]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cM3B075H5z6B9mD; Wed, 10 Sep
-	2025 01:33:44 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250910013344epcas2p265fefabdfed14e90b66cc856c559e561~jx9tOknPz1132511325epcas2p2b;
-	Wed, 10 Sep 2025 01:33:44 +0000 (GMT)
-Received: from KORCO115296 (unknown [12.36.150.221]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250910013344epsmtip1bcef11072703a7ec40ff187ab78578bf~jx9tKKmwA3018230182epsmtip1Y;
-	Wed, 10 Sep 2025 01:33:44 +0000 (GMT)
-From: =?UTF-8?B?7IaQ7Iug?= <shin.son@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Bartlomiej Zolnierkiewicz'"
-	<bzolnier@gmail.com>, "'Rafael J . Wysocki'" <rafael@kernel.org>, "'Daniel
- Lezcano'" <daniel.lezcano@linaro.org>, "'Zhang Rui'" <rui.zhang@intel.com>,
-	"'Lukasz	Luba'" <lukasz.luba@arm.com>, "'Rob Herring'" <robh@kernel.org>,
-	"'Conor Dooley'" <conor+dt@kernel.org>, "'Alim Akhtar'"
-	<alim.akhtar@samsung.com>
-Cc: <linux-pm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <e71e6f3d-af02-4910-91ae-acf41692ac5b@kernel.org>
-Subject: RE: [PATCH v2 1/3] dt-bindings: thermal: samsung: Add tmu-name and
- sensor-index-ranges properties
-Date: Wed, 10 Sep 2025 10:33:43 +0900
-Message-ID: <03a301dc21f2$f2236380$d66a2a80$@samsung.com>
+	s=arc-20240116; t=1757468152; c=relaxed/simple;
+	bh=Fec8sfobQBSww+UvyZTnZcpEuUkC3pn3M7kf7LSU+vU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BgT+U8XEXrTkNMxRpOz8+sJDJGsXyjgLjhSLsmJldwYX9+M/PX/rQifmNhAPDT9DexwBPHAwReVNx2qF6N35OL+SinOcc5PgM98cK7AXW74w0lIiwgdN71wPbtCn63LH8N4ekB2Wxf/9JEiYQ775PvxlNRkrEXqOF3qqZAHAc2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4lZrRA+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E605BC4CEF7;
+	Wed, 10 Sep 2025 01:35:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757468151;
+	bh=Fec8sfobQBSww+UvyZTnZcpEuUkC3pn3M7kf7LSU+vU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=L4lZrRA+W9zQOVMghSDh9lXqH8CpXeAkxjP6jDZBMbhQxvMBvBnk+O+v+WazzXeYb
+	 pYYpQn6P87RPke+Ckpa4SzsspFwiI/QtHL3xwgqiBYr0gTR6XQcsMjyn14uZETrfFA
+	 Kn/9x0ZaTtZibsDM9s9RN83XTNqbTN1v8kYRT6KwzgTYVPKALVHYw+XMIJHShj2KjB
+	 kxLUP32bcMA4jQxW2hYSt6INH/HF9Oc31lvRxikrw1a6QsRPkMBlliiu8N3Jk7n5rb
+	 NtXXMf7nGBRW8ZIMZ1lquk3jzzc/XQAy0F9U1R0Ys+RKiaFYKogmPnXN8F1a2UZY4e
+	 uO1EZ836XgsNQ==
+Date: Tue, 9 Sep 2025 18:35:50 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, ncardwell@google.com, kuniyu@google.com,
+ dsahern@kernel.org, horms@kernel.org, linux-kernel@vger.kernel.org, Mina
+ Almasry <almasrymina@google.com>
+Subject: Re: [PATCH net-next] net: devmem: expose tcp_recvmsg_locked errors
+Message-ID: <20250909183550.5bcc71d2@kernel.org>
+In-Reply-To: <20250908175045.3422388-1-sdf@fomichev.me>
+References: <20250908175045.3422388-1-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQJcDpuT0zWDya8nliyk6vzs/32vBQIURjbqAvLO/ccA7RxvPrNcJnHw
-Content-Language: ko
-X-CMS-MailID: 20250910013344epcas2p265fefabdfed14e90b66cc856c559e561
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250903073653epcas2p4cb25058c97aab9a30c7e68ef5f10fb91
-References: <20250903073634.1898865-1-shin.son@samsung.com>
-	<CGME20250903073653epcas2p4cb25058c97aab9a30c7e68ef5f10fb91@epcas2p4.samsung.com>
-	<20250903073634.1898865-2-shin.son@samsung.com>
-	<e71e6f3d-af02-4910-91ae-acf41692ac5b@kernel.org>
 
-Hello, Krzysztof Kozlowski.
+On Mon,  8 Sep 2025 10:50:45 -0700 Stanislav Fomichev wrote:
+>  				if (err <= 0) {
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski [mailto:krzk@kernel.org]
-> Sent: Saturday, September 6, 2025 9:06 PM
-> To: Shin Son <shin.son@samsung.com>; Bartlomiej Zolnierkiewicz
-> <bzolnier@gmail.com>; Rafael J . Wysocki <rafael@kernel.org>; Daniel
-> Lezcano <daniel.lezcano@linaro.org>; Zhang Rui <rui.zhang@intel.com>;
-> Lukasz Luba <lukasz.luba@arm.com>; Rob Herring <robh@kernel.org>; Conor
-> Dooley <conor+dt@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: linux-pm@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH v2 1/3] dt-bindings: thermal: samsung: Add tmu-name
-> and sensor-index-ranges properties
-> 
-> On 03/09/2025 09:36, Shin Son wrote:
-> >  > +  samsung,hw-sensor-indices:
-> > +    description: |
-> > +      List of hardware sensor indices that are physically present and
-> usable
-> > +      in this TMU instance. Indices not listed are either unmapped or
-> unused.
-> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +    minItems: 1
-> > +    maxItems: 16
-> > +    uniqueItems: true
-> 
-> 
-> For v3 you also need:
-> 
->   items:
->     maximum: 16
-> (or whatever values are actually correct)
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
+Should we change this condition to be err < 0, then?
+I don't see a path that'd return 0 but it's a bit odd to explicitly
+handle 0 here and then let it override copied.
 
-Ok, I understood. I will add it in the next version
-Thank you for your feedback.
-
-Best regards,
-Shin Son
-
+>  					if (!copied)
+> -						copied = -EFAULT;
+> +						copied = err;
 
