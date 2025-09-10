@@ -1,99 +1,108 @@
-Return-Path: <linux-kernel+bounces-809943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EACAB513BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:19:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60BDEB513BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727801C26F48
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:20:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CBFA486494
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EBE314B92;
-	Wed, 10 Sep 2025 10:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593E53164B4;
+	Wed, 10 Sep 2025 10:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Uq7JbDI0"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gE2XCIuo"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2536314A8F;
-	Wed, 10 Sep 2025 10:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B02C2FF65B
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757499540; cv=none; b=r9UUTvOU7gCnT5sV+73dstqfX5cn6+sPdkI4c2fMg4x/JyLJXNolrLdFnQaxs+UPWu84Qy1h3azGuzEGG2xajUfdORSuzoutxzKH26TSQkd4frNAqBOi9dF3pS8S3HQD4ZOGI2M4PrDAuh0NJ5NFGVNvlZwDJWcQG+WlI0IMHJs=
+	t=1757499556; cv=none; b=Hs/N0AoQQWexIPwlQadNd3y9SdxDCNlsOQCQ6xZkgYn67qKJLpYFbJ6p9Pfp3aQrP/OYcKmvvjAlBIjvpjyEugI9Xd7P9XHuQK0LPVo7dy4ZhC7PXt4xsIQOOnYDlxDivVjdaSI/l77nsRiaHw+dKW5C6DNtlvAhX0JQyTI3u8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757499540; c=relaxed/simple;
-	bh=mtfzlV23itZxMpFL9qqRSRbfw+eJl1lkap3louVt2Mw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UEWgiL4kLRhTu7lzfipHOwPLA77YmAGeZDPOMMCdEDJSZ+nhdRMR0eQJI7OEHVrYB+N1oeDSd5UjPjbrX+XafRO08SEwQVjoNE0GsO9zNe6GqolM1bL+x9OJm0jji3yMHPP4l00AM0MuBZG+9ZyMqK8ZMMoPP6BxlYKFxCuiDYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Uq7JbDI0; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cMGqr0z6Rz9tvy;
-	Wed, 10 Sep 2025 12:18:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1757499528;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d3DfTTe4dUU7JEgX+YGY1qShcMAdyIkpmMhLNWRyQYo=;
-	b=Uq7JbDI0bKNyQICkGQU8D46MR9OqRcHti2JdFmhz37MJVgYJOL8hT551xIL5u15m9nbd3F
-	K4zjT60aKKJ4TK2avAjHCKf0vnQer1jrjOS4vnTR33dg1Xnyc757ySko6Pn6QuP2sXsVqt
-	ZY+6qFNJnYMAvNtrLgF9mWGwDaSHm7sC6FJzUH8vkGan3S+BxDGDT+1I52rvTslzuPZh4Q
-	64Rry5+Yw4QETLGWd2ybTMr1Tke8u8jZJ8wwb6ii+wjumoqDyFwIQM5TaFxC1kWWzNhHgw
-	JZwsUYrp44ahHdARo/R4CWHMXLTvd02RUT+3iwUgdzGRBw7Xsz3bs96+SD6Oaw==
-Message-ID: <df3067e4-5597-4557-b61f-26afb7d731d2@mailbox.org>
-Date: Wed, 10 Sep 2025 12:18:41 +0200
+	s=arc-20240116; t=1757499556; c=relaxed/simple;
+	bh=wHz9SsGajPNBHN651vynes9IY74+1qSVzpbURRJCVXs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=opxlJ8LmDdnncBDGfrNmXbOUCJLCUgTLyBWRmoSvcAUCZWfp7D3UUefSLEiy8oqbOC06TlaE+t3II3GWxs2nXixN/UvsWfGJDgZy1CrYVTxW4SkpSkiMh+HCg3g+a/nLSXpmt3yT141RHu6lPl/WqC+tY5f7G6vPy06I/8t7zXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gE2XCIuo; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45b9912a07dso39341405e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 03:19:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757499553; x=1758104353; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1id+5OvuvqKyGBWl/taL6/LjlzotK8J0LksRsZS7ZSw=;
+        b=gE2XCIuogG+6OS8WNgeyXp21IgdLrlkeNK/cKxa0IVqInCKlVMdWkgBANrdtcLhlli
+         kkNfB3VA2zw3Xc8+67iEGORGUKcxQznfkBGGMwkSLoXR03MtI3pidpya+VoudiN/cIAu
+         Mbna1KeL/aACsfKerrAzNUfZpyovLW74whgjd1jGj5F88nD7lbwKmsnPsRHXFJuYgJYK
+         eGgqcmnXychLcRLi9Hk3babLF49k7vZtrSqBOIQodo/VESXsvn65Q2UQuazIBBzx5eef
+         nZnyx1ILlq3jblTnN7Kf47L1z20H6cOOVUqbBkOKzUSmb6iWqclQ2669ubNauGeBeD98
+         Y5wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757499553; x=1758104353;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1id+5OvuvqKyGBWl/taL6/LjlzotK8J0LksRsZS7ZSw=;
+        b=UhPJfSPgHW6OsvczCNv0G+KoyRDtU8e5CPvfWITkqEEVnGFCF4dcdq3m30eR8TgGR+
+         X7n9+FDY3JYvPEK12mIsF90FPNeJDpjr1bD+mIlApqL84aDgE06JDU6LLo5/dwHrCJFw
+         zITb2bYmtHytBvYHMcMcRPcpJ+7qopOo1aoPVW1N+NaC/g/XUTnjctyjn3JT779V2O+r
+         TW47OWZBwnSWr7YG6Jjw7l7dWJn7CYZ0w67ZA/ErdGY4SRJUOhTfBj4rxrK2H0ndbEF9
+         6J3qtbIJCVCtEBkZvFUOmdwGyT1qPxjbRh0ORb8XcFnPgotdplAIQ4Q2qk/yGc3J+j/2
+         cfBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAnFk/iWgUnbPCB28W0tFqPDZPSqmFTCmMboDpaEPtq4GVAql4kCLxAkibESoVy3IjZZSnG0d+XVTpf8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw02R2NO8Q7Rl2mnxYEVE0vaIlOX3Lay51JOo7mLF7RitqhNwPg
+	hDMbcoo8hqSDnfVyJD24vm7oC29/MjA4a2mFi96KBQSwqV8GYlJDA4uBBEngpstn+5eJBOSRsSi
+	VAWrvB1P+y+vdLPWNoQ==
+X-Google-Smtp-Source: AGHT+IG6yPMkO9jM7petOD8J9NTleSm/goiR/WLTyxvYA+RDKwpsQ+z3Wdkkp8ZmZDL9W2QNPMGOPXGF1tzIdys=
+X-Received: from wmsr3.prod.google.com ([2002:a05:600c:8b03:b0:45b:79d1:abcb])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:45c9:b0:45d:d50e:20c3 with SMTP id 5b1f17b1804b1-45dddec9282mr120206755e9.29.1757499553488;
+ Wed, 10 Sep 2025 03:19:13 -0700 (PDT)
+Date: Wed, 10 Sep 2025 10:19:12 +0000
+In-Reply-To: <20250905140534.3328297-1-lossin@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH] dt-bindings: bridge: lt9211c: Add bindings
-To: Nilesh Laad <nilesh.laad@oss.qualcomm.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, venkata.valluru@oss.qualcomm.com,
- jessica.zhang@oss.qualcomm.com, Yi Zhang <zhanyi@qti.qualcomm.com>
-References: <20250910-add-lt9211c-bridge-v1-1-4f23740fe101@oss.qualcomm.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <20250910-add-lt9211c-bridge-v1-1-4f23740fe101@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: b9zx9d1nxxuk6tzn1ubrzj7i4wm6bzsh
-X-MBO-RS-ID: 9ea7b904f0daaed315c
+Mime-Version: 1.0
+References: <20250905140534.3328297-1-lossin@kernel.org>
+Message-ID: <aMFQoM8-SRrOmN1t@google.com>
+Subject: Re: [PATCH] rust: pin-init: add code blocks to `[try_][pin_]init!` macros
+From: Alice Ryhl <aliceryhl@google.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
+	Christian Schrefl <chrisi.schrefl@gmail.com>, Alban Kurti <kurti@invicto.ai>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On 9/10/25 9:37 AM, Nilesh Laad wrote:
-> From: Yi Zhang <zhanyi@qti.qualcomm.com>
+On Fri, Sep 05, 2025 at 04:05:31PM +0200, Benno Lossin wrote:
+> Allow writing `_: { /* any number of statements */ }` in initializers to
+> run arbitrary code during initialization.
 > 
-> Add bindings for lt9211c.
+>     try_init!(MyStruct {
+>         _: {
+>             if check_something() {
+>                 return Err(MyError);
+>             }
+>         },
+>         foo: Foo::new(val),
+>         _: {
+>             println!("successfully initialized `MyStruct`");
+>         },
+>     })
 > 
-> Signed-off-by: Yi Zhang <zhanyi@qti.qualcomm.com>
-> Signed-off-by: Nilesh Laad <nilesh.laad@oss.qualcomm.com>
-> ---
->   .../bindings/display/bridge/lontium,lt9211c.yaml   | 113 +++++++++++++++++++++
->   1 file changed, 113 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/lontium,lt9211c.yaml b/Documentation/devicetree/bindings/display/bridge/lontium,lt9211c.yaml
-Can you extend 
-Documentation/devicetree/bindings/display/bridge/lontium,lt9211.yaml 
-instead ?
+> Link: https://github.com/Rust-for-Linux/pin-init/pull/84/commits/2880a9b898336e2d54f80715f00ce00f21f74d2f
+> Signed-off-by: Benno Lossin <lossin@kernel.org>
 
-How does this chip differ from lt9211 ?
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+
 
