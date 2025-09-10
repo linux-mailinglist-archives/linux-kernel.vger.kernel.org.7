@@ -1,203 +1,209 @@
-Return-Path: <linux-kernel+bounces-810056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B987EB5154A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:18:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877C3B51550
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CEFC1C82FAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:18:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDD933B6A7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6797F2797B8;
-	Wed, 10 Sep 2025 11:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EB027E049;
+	Wed, 10 Sep 2025 11:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T3ElNoRy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QedmcP+k"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3D828DB3
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF1D277C9E
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757503084; cv=none; b=MtrtV52qPoosEbAJ3t31gYlSU8U7mENK/LD67uHja8XHNWwwH0ruPfmQBwn6jt9bHaU4ytRvSg8McLXaMgDlPxEmE4+YzcVeJ9vJcPpFE2QuvqKuVtg6TEscOrm//6Act6BOVlMMC+cWvZltceql9/pjaseHPXDGn6NSCkeMGr8=
+	t=1757503086; cv=none; b=kdJa512QpGyHZf47tvD07IOkKm24SM+dDGyY6oIFvjUXjxM13iQnLCgVwnu+aaMiZ1Jtek4M/0dpsb5c2ONbIFCjMdl9aiCHFyGAcFKAIWiqBdwk0Qq7KWE55BP8hHii6cwU4dRcoppnIiNqeEZauspbtlguUfbxix/6cxqu5Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757503084; c=relaxed/simple;
-	bh=h/Ik0PrqPScBGKfMiCGA3HiX8sIJjeasUwHmqyW7Lu4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R2LE7cs9yJnaKlN3bnhmi8p8ZUDLDFSmFpKV2Ie7pUJduhjVZB5v+FXtK90JFy0VeLQnZoJ+bZilPhCcqhjI6QMLRTH53o9D2Te5ubnRRyqh3qkZrz51aVkHmHugC6OWEMAFQVhD4p4A6EhmmhJGbqFQZtqLC3iscY14IZBSsBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T3ElNoRy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58AAFFIV012527
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:18:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NhKm/oaBZ3mEsPk0XzY2622FMSlrhf1J2meKRh2UOq4=; b=T3ElNoRyp/c3OWa3
-	V+9woT5I44SESHpt8MV6jpu7nXEX7nDsB16by7giD/zGNLCQFDTC6qi5EfZUhlLg
-	E3kL3DyNe2syMFveByGEyH5nOBbmiRE/54I+QoheeWh0YHJ+VE5xEaUGWx2YcAYt
-	kvBnPJC5zBN/THcc1JtIIi4HIR2Zt302wCv+XSmto3CCfpGS+h1/W+NUbwG6TuOs
-	7Jels76qhhUm9PTELZ9cPvMdTSu69n87Dg87Wp4Jg+5Nlx03FT+xBYj05ldacjPE
-	uJQcErmvKuuk9RfmqbLj3CBpuFOlKZsjj2nddD388vvEGN3iVPyoxigAExc25LPr
-	xQKWhA==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490bwsbryt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:18:02 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-77253535b2cso6598883b3a.3
+	s=arc-20240116; t=1757503086; c=relaxed/simple;
+	bh=dnHXgTUAZ7HIbkANA7iXvAXtInJBNledNswHBsB+TgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNDgsjbcyR4gUGAJPd8/WY9c/Nn8F8zX+We7jxfd9vC8vdVWqo9yGgJN7ZuoDtKcyC24bkE26EDcHWRu45wB9fgHmltxJvF+viFidwYtFQdSvWLxKd6E+hzZSDsvK2PLR/w/Qg/W+Rjxe0unMF0CbPTqaUTGVfF2dgHHRCqIULA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QedmcP+k; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757503084;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mQNBoOyxmrq7spEGbUcgPjGs/vcAB6E3uxzpwOuMRrA=;
+	b=QedmcP+kG/+VHeWBioLXp77RqVefGxCxJe0AbVg92GJSwt/RozbtHXdOsfFcXoinCHaJBA
+	7c2LNR4P2/hFwKXu2hN+6eI4d/p2v3D9cdnyGwUpUj4T0j4OfK6IP8kofNhFHbIj2E+Ynw
+	TFS+aFrmOyMrQ0/OBPEb5DuC07YVk4s=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-635-MuGTcafsOJmfFND8TkdN1A-1; Wed, 10 Sep 2025 07:18:02 -0400
+X-MC-Unique: MuGTcafsOJmfFND8TkdN1A-1
+X-Mimecast-MFC-AGG-ID: MuGTcafsOJmfFND8TkdN1A_1757503082
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b471737c5efso4905310a12.1
         for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:18:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757503081; x=1758107881;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1757503082; x=1758107882;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NhKm/oaBZ3mEsPk0XzY2622FMSlrhf1J2meKRh2UOq4=;
-        b=acIoH4LHhhB4pYlQbBK8UVbf0wKY++mRkKy1w3ScGal9o2PQWlLlhC3lLUPVOQoRcR
-         SsIbyQDv5zIcbfocv0KqOZcco3nIl7DR5jJRQ8B1x/NP8KvTP0zaAl/wThbJpgDlqyOD
-         JuOrUtXmtzQQ2VJFKw/8VRoNbOkm5fRnzT1MOiu0dw4bZrxt/YUgWNz403/0dmOF83kI
-         PH7MC+h77bQOJzHr0gXviSwJ4lAO4s4D1CvTULfQGPZBKbxgUXNE0Ahpqonf6jfDGwVR
-         kt1Q7ZMzjqsxHOHZX0+yeRod4BIIR57CqSEcHIiw2h/ZbFJHwVMFdlh8RgD9VEyVBE16
-         gtHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXV0lzXnh4aVV7IFom83hVt4UBl1RZQQnCxS/DJ/dAM8nG47iPrCIb7AVvL2SDIQo/PsvUDTcgOYg/bPQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyektJhus1B8MZa/jLHGRSxig253ah5sj93TWTyTW+F3B5T2ONv
-	exSo2bXQDH5prWOP+2ocbGsRakCCLRKPk0Qqkxgzo6zic4lPCDxLYQ+Nv75PeOrtSltDBRfAkRL
-	agxuKAuItbqQrqN6OBBumqAjFvMu/H58BE19gAwYxI4yXGpjpEdXCS5NV9CjuummFBwo=
-X-Gm-Gg: ASbGncsQm2I4pz3mS3lIZ6qNdUxSkKbpMWbclflNpsKdDXU0+g//IVPL/avVCpXY0cV
-	jUzF3q5kcin/FrMLmCUYHiGaA0DjsZWwk/YlCuSympDkFoSza8UpxmjZMbDTLP7YjicEbgJ1Ul6
-	ZkbFEU/JKPHb3oHKRe6P+MpVEVLQC7tlWplTKoZ6jZonLRB27ViOXOf13RcuYA5WDgwLmRGqdih
-	8WSf4T2CNgt//hjtVJnKRkWbkdWilqq3UzAhUZr9XRcVJOHey9wTfW2KCF2+ds6Ht7U31dIatSU
-	Ppr91Xr/WCbR29cj8hYC0bELGBF8uJYCvg3pPzeoMHtBtJmQj7k7uJfJqHU03VaILwLdizBv7w1
-	Erw==
-X-Received: by 2002:a05:6a20:728f:b0:249:824c:c60d with SMTP id adf61e73a8af0-2533e8532a2mr22929852637.20.1757503081337;
+        bh=mQNBoOyxmrq7spEGbUcgPjGs/vcAB6E3uxzpwOuMRrA=;
+        b=uPmQsGuq/TBLLj+g1+cDqch0UGrvnEJaJ4/+KKTSWpk1seFgGl/F8P8I9j+9c3IcVv
+         Pagm//wXizcY6ZA4ZPzsdn60AAfkptM045hKVWk7vIWNov+l2ssDc3FpyQ1hT0fysR4H
+         faanfZQyqU8WpmK6PPzkq719gIZs1QRF4OpIheGfXuDXMiCewmICj8Th+o3ahK6azyex
+         8kovkAEkabZH4IUC/VJdToRCPby5Qg6ekjrqm3CUeuOaHK3T+7KjUA742+6QqfxpYQbl
+         7mVMe0tZd2AOArJuUOMe6xD0CyhXiM8bicb4zZ90624LTVFUl8Q8uxXU4c90o7WhPlQJ
+         1rEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOZ/11/QTtqTJ2ogMxMJOunmx/pw0i990Y5sbMGhLrEEFsh/r66NEgMtRVc88q1ZiQygd0C0yuzFDFV8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHhST22a6uNL+Q9ZcIVMad1YL8N/XOpxSQ88BjVCib8YJPv3j2
+	VOCGXIFSwkl9PKEtB32ShyJZqwRIPONPr1DDB0CvAhv5p5PGItONIj3UVYIZ93XQqfOGRMnBx3F
+	v1ao6kb5GNKL1zMOefa514H8J5xSeEfJliIj8VcIiXOEVVMEZxAaf3/wqqKK8YJ2WCA==
+X-Gm-Gg: ASbGnct9cCmBMaJoKRJAba6R0GNTNMxQVC9LlGs65veUiH5QoUeLEhbEC8BaxVN33ZI
+	tIeJHlgyA6ntypqOFvBgvuwbI92+eAxv14XN+dYx3gYQ2ZNzdAW+wxFD4v2dUunIumS/qCdl5E0
+	WGP1Eymi9KMecwyVFqTYqNsv7IPiIw68RD2rmmcX1CQM7v3+lwZ4MNLBeb/kxgTMoCp4ONvZNqn
+	qlHHZY4ee1ztAXV4xiTeAb+DxdgxSdU3qPevMtbQOF00x0x4fJfmNRb07ZnQnX2wukBNXFjgps8
+	Fb0Pi4oiBUD6lIvtIn1u6BOHnIMv33/xsyE=
+X-Received: by 2002:a05:6a20:6627:b0:246:3a6:3e3f with SMTP id adf61e73a8af0-2534775e1c2mr14891250637.60.1757503081743;
         Wed, 10 Sep 2025 04:18:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnc6VtP/lNIoPuxQr0V1E0W1udZTbdHFQEsB8FXlg0iy1ie0KmwDB44W1EzlUeQ+BUVyKU6g==
-X-Received: by 2002:a05:6a20:728f:b0:249:824c:c60d with SMTP id adf61e73a8af0-2533e8532a2mr22929798637.20.1757503080852;
+X-Google-Smtp-Source: AGHT+IEiMrvxjVgffC7DE9f/8FL4eREAcsUy0lGs5oMB5Ba2E8pPpwmAdota/m2q4TuNtlgFN8rhwQ==
+X-Received: by 2002:a05:6a20:6627:b0:246:3a6:3e3f with SMTP id adf61e73a8af0-2534775e1c2mr14891224637.60.1757503081330;
+        Wed, 10 Sep 2025 04:18:01 -0700 (PDT)
+Received: from zeus ([2405:6580:83a0:7600:6e93:a15a:9134:ae1f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774662905bcsm4934270b3a.51.2025.09.10.04.17.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 10 Sep 2025 04:18:00 -0700 (PDT)
-Received: from [10.92.178.42] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774662f2fd4sm4875868b3a.93.2025.09.10.04.17.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 04:18:00 -0700 (PDT)
-Message-ID: <4c6e7e6b-2ef4-4ea8-8bf2-26c7aa8c94b8@oss.qualcomm.com>
-Date: Wed, 10 Sep 2025 16:47:54 +0530
+Date: Wed, 10 Sep 2025 20:17:56 +0900
+From: Ryosuke Yasuoka <ryasuoka@redhat.com>
+To: Ian Forbes <ian.forbes@broadcom.com>
+Cc: zack.rusin@broadcom.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	simona@ffwll.ch, jfalempe@redhat.com,
+	bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH drm-misc-next v2 1/1] drm/vmwgfx: add drm_panic support
+ for stdu
+Message-ID: <aMFeZG9_CvWX9vz-@zeus>
+References: <20250908141152.221291-1-ryasuoka@redhat.com>
+ <20250908141152.221291-2-ryasuoka@redhat.com>
+ <CAO6MGtiOuQhGcHUjDjcYwnDrcZOWy9yM_kFwhxcTfbB-_OHQvA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] ASoC: dt-bindings: qcom,sm8250: Add QCS8300 sound
- card
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@oss.qualcomm.com, prasad.kumpatla@oss.qualcomm.com,
-        ajay.nandam@oss.qualcomm.com
-References: <20250905142647.2566951-1-mohammad.rafi.shaik@oss.qualcomm.com>
- <20250905142647.2566951-2-mohammad.rafi.shaik@oss.qualcomm.com>
- <43090acb-ea36-4015-b14f-78d44d789d42@kernel.org>
- <a9507045-b900-49ee-8841-0f8fd30816ba@kernel.org>
- <abc66798-dc91-4860-b0b4-de39a58b5745@oss.qualcomm.com>
- <a8dcffa4-c578-46d7-8fdf-cd4f5a29a2a6@kernel.org>
-Content-Language: en-US
-From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-In-Reply-To: <a8dcffa4-c578-46d7-8fdf-cd4f5a29a2a6@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: JLxwhXHsBb2oalwv7iZZVyVusE6Jv7g7
-X-Proofpoint-GUID: JLxwhXHsBb2oalwv7iZZVyVusE6Jv7g7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxOCBTYWx0ZWRfXypLS2G8S6oRy
- dZxQTky0NjnNF9aLyxPVZICUmetBufWrSS8sNu4vUVCgAWUjZiWQu2QyqgSdApiI0MUcHA7WPjG
- 3mG3dNpx9GykwLLLaWp/sE5RlFVUpdcJ/vIt1HBJfjet7zKWHg7jsvfHiQzpY/Qy92Tomlu+TH8
- UZcBD7P2dMywXCBI1Pj+jaYVmF433LGvwJg3lgdtXpC1FJxCDOAXx+3A2G9HKgVsqJJtXxIMjkZ
- NfzeWuHP4Gsd+5fsREQCjqEO5CbMcSQOnyt8LJypW8/CzhUoeGE7pHlGAtiVdtIA21eCgwJk5tu
- 5UmZbwSy0tcTrX7e0kaQ2+QJkh527W3l1jwjt9cStk6d4/fGIypyhk+GDC9/v21qiv+h7Z6y4G1
- cqzu3Dah
-X-Authority-Analysis: v=2.4 cv=G4kcE8k5 c=1 sm=1 tr=0 ts=68c15e6a cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=gMGxrbJpmBSKcSsSh8cA:9 a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_01,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- malwarescore=0 adultscore=0 impostorscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060018
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAO6MGtiOuQhGcHUjDjcYwnDrcZOWy9yM_kFwhxcTfbB-_OHQvA@mail.gmail.com>
 
+On Tue, Sep 09, 2025 at 03:48:01PM -0500, Ian Forbes wrote:
+> On Mon, Sep 8, 2025 at 9:12 AM Ryosuke Yasuoka <ryasuoka@redhat.com> wrote:
+> 
+> > +static int
+> > +vmw_stdu_primary_plane_get_scanout_buffer(struct drm_plane *plane,
+> > +                                         struct drm_scanout_buffer *sb)
+> > +{
+> > +       struct drm_plane_state *state = plane->state;
+> > +       struct drm_crtc *crtc = state->crtc;
+> > +       struct vmw_private *dev_priv = vmw_priv(crtc->dev);
+> > +
+> > +       if (!plane->state || !plane->state->fb || !plane->state->visible)
+> > +               return -ENODEV;
+> > +
+> > +       sb->format = plane->state->fb->format;
+> > +       sb->width = plane->state->fb->width;
+> > +       sb->height = plane->state->fb->height;
+> > +       sb->pitch[0] = plane->state->fb->pitches[0];
+> > +
+> > +       u64 size = sb->height * sb->pitch[0];
+> > +
+> > +       sb->map[0].vaddr = memremap(dev_priv->vram_start, size, MEMREMAP_WT);
+> > +
+> > +       if (!sb->map[0].vaddr)
+> > +               return -ENOMEM;
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static void vmw_stdu_primary_plane_panic_flush(struct drm_plane *plane)
+> > +{
+> > +       vmw_ldu_primary_plane_panic_flush(plane);
+> > +}
+> > +
+> >  static void
+> >  vmw_stdu_crtc_atomic_flush(struct drm_crtc *crtc,
+> >                            struct drm_atomic_state *state)
+> > @@ -1506,6 +1538,8 @@ drm_plane_helper_funcs vmw_stdu_primary_plane_helper_funcs = {
+> >         .atomic_update = vmw_stdu_primary_plane_atomic_update,
+> >         .prepare_fb = vmw_stdu_primary_plane_prepare_fb,
+> >         .cleanup_fb = vmw_stdu_primary_plane_cleanup_fb,
+> > +       .get_scanout_buffer = vmw_stdu_primary_plane_get_scanout_buffer,
+> > +       .panic_flush = vmw_stdu_primary_plane_panic_flush,
+> >  };
+> >
+> >  static const struct drm_crtc_helper_funcs vmw_stdu_crtc_helper_funcs = {
+> > --
+> > 2.51.0
+> >
+> 
+> You only need the code I've highlighted in this reply with some minor changes.
+> 
+> 1. You can call `vmw_kms_write_svga` directly in `panic_flush`. There
+> is no need to mark the buffer as dirty or send any commands.
 
+In my test environment, it will be unstable without dirty command's
+submission. In test environment, which is Virtual box, I've
+observed serveral instances of the panic screen appearing.
+It sometimes appears immediately as expected, and at other times,
+there's a delay of about 15 to 20 seconds to appear the screen.
+Another pattern, it's necessary to switch back and forth between
+the Virtual Box console window and other windows.
 
-On 9/10/2025 3:13 PM, Krzysztof Kozlowski wrote:
-> On 10/09/2025 10:05, Mohammad Rafi Shaik wrote:
->>
->>
->> On 9/10/2025 1:09 PM, Krzysztof Kozlowski wrote:
->>> On 10/09/2025 09:26, Krzysztof Kozlowski wrote:
->>>>> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>>> index 8ac91625dce5..eebf80c1d79a 100644
->>>>> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>>> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>>> @@ -35,6 +35,7 @@ properties:
->>>>>              - qcom,qcm6490-idp-sndcard
->>>>>              - qcom,qcs6490-rb3gen2-sndcard
->>>>>              - qcom,qcs8275-sndcard
->>>>
->>>> So what is the point of this compatible? There is no user of it and I
->>>> think you added QCS8275 for this case exactly...
->>>>
->>>> Shall I start reverting commits from Qualcomm because you post patches
->>>> "just in case" and turns out they are completely not needed? No single
->>>> user of such code?
->>>
->>>
->>> @Mark,
->>>
->>> In case it wasn't obvious, please do not merge the patch till we get
->>> some clarification. For sure it is wrong one way or another: either
->>> incomplete or just duplicated.
->>>
->>
->> The device tree currently uses qcs8275 as the sound compatible, and
->> the corresponding Device tree changes have already been applied and merged.
->>
->> Reverting this now would break the ABI.
-> 
-> If reverting would break ABI then:
-> 
->>
->> A new device tree patch with qcs8300 is currently under review:
->>
->> https://lore.kernel.org/linux-arm-msm/20250910044512.1369640-1-mohammad.rafi.shaik@oss.qualcomm.com/
-> 
-> This is ABI break thus NAK.
-> 
->>
->> Once the machine driver and device tree patch with qcs8300 are accepted
->> and merged,
->>
->> I will promptly submit a cleanup patch to remove of discontinued
->> compatibles from the machine driver.
-> 
-> So this is the same hardware? Then no, we do not rename compatibles.
-> 
+With command submission, we can stably get a panic screen. Even if it
+failed due to some reasons, we may get the panic screen ultimately. So I
+think we should leave vmw_kms_ldu_panic_do_bo_dirty() to submit
+commands.
 
-Agree, the existing compatible is discontinued naming convention,
-will remove existing qcs8275 and go with qcs8300.
+What do you think?
 
-Thanks.
+> 2. The format should be hardcoded to RGB565 to minimize the risk of
+> overrunning VRAM. Adjust the pitch accordingly to 2x width.
 
-> Best regards,
-> Krzysztof
+I see. drm panic supports multiple pitches. Checking pitch type 
+in get_scanout_buffer is not difficult.
+
+> 3. The sizes should be vmw_priv->initial_width, and
+> vmw_priv->initial_height. These are the safe sizes for VRAM in early
+> boot and will work in panic as well.
+
+OK. I'll try to change this.
+
+> 4. You want to ensure `get_scanout_buffer` only succeeds once when
+> using display unit 0 since all calls to this function will return the
+> same VRAM.
+
+OK. I'll add a check in get_scanout_buffer. To confirm this, Is it
+sufficient to check if lds->num_active is 1, or do I need to check
+other places or values?
+
+> 5. memremap flags should be `MEMREMAP_WB | MEMREMAP_DEC`
+
+OK. I'll chenge the flag like this.
+
+> 6. Move the panic related functions to the vmwgfx_kms.c files since
+> they work in all DU modes.
+
+OK. I'll try to move them in vmwgfx_kms.c
+
+Thank you for your review and detailed comment.
+
+Ryosuke
 
 
