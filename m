@@ -1,92 +1,86 @@
-Return-Path: <linux-kernel+bounces-810086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324ADB515AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:30:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F48B515AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3E8017C2E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:30:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 515753A97ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E440F312812;
-	Wed, 10 Sep 2025 11:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B1B314B88;
+	Wed, 10 Sep 2025 11:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="eA622EpI"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ppKmTRep"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D44274FD1
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEE827E7EB
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757503803; cv=none; b=C9UyAry/fmWcGqmAwDh2Z03BXbe4udc6S41Qmt6yFIHnEgKgltpAX9h4Y4F8XGNp/8wjNAqC+ShNN4gg+0whY33ZZw+KI2SklWtXu0er6eJ5isdd+G0vzZRdRnrIxOvAtrJvcVr8A8L5oV/yKc1YZuPtQzLmdr/RSs5Kqt2Y55M=
+	t=1757503803; cv=none; b=C66S4M63714/tO8h01tLZIXN8S6TmLzBe2RAVeUqgoBzzN+hYZ7/N1Fkda8Z7s9tddr8mofok77KnLdGHaAv5chMi7AZqKQeVddvR01EF6SKKrrORWhvnKs2ZXlSzu2Z+QnPscMiCl5u5ZfapUtmhDJfuZSnHEVGMp5QDhAjmEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757503803; c=relaxed/simple;
-	bh=Qc9ouAXEskfOMC2oi+ncx55YvT5qr8hhC366cFST6ww=;
+	bh=r7oyqM25Rv6UNG3H4S4h/UY1G2EHf11AKE/M9IriSVQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mzTrhaVGIU3seqIxGBVcRVoh2iU9+ekWUT8Bq1J7jAGbMopMQybuFFcjdrAGTGqDGJx32UAKJB7o1znp5VI4cREWH2H+gNY9sDuePSegHsB11mdQTarGWyDAY+njvWPAtOZowV4h/Vj8wcvy3isWVxjAYMCMwkZFpxc0isV/M50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=eA622EpI; arc=none smtp.client-ip=209.85.210.177
+	 MIME-Version:Content-Type; b=nMU84IR+49dd1WeP0JMUOXU7t8SyBq3EWJtgcxkjmwkjeBucPMjjxOXBAKv0oyyn+TqdsDL07TVWZ7IjW/8gztdHbnPVaoqATsBfJAAXNY8b7tBg5WALgzxswL3mx8UkTm3URIJZahxxzpO0oehFeb+62F8P4+URnTZ2TRZpAKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ppKmTRep; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7723f0924a3so8796379b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:30:00 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-77256200f1bso5834566b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:30:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757503800; x=1758108600; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757503801; x=1758108601; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ga9+oP8GJMEvZEK47pxYW+xPRCoN8XvpDsIn4NoQ3I8=;
-        b=eA622EpII/lw7KXH+sQLUXm/RKri5K7EbPSJDp9IolDskuAJzUcodBmrMCMndc2eIn
-         fboRjx5UvE8BWvySlGtIubp7v2Fk8Fvo11Aivjr3Vm/gB9l+2Mbkn2o6IrdNzZS1ipOI
-         dT+l2Eks6AdhG7ddkZVVgbC4sOPv7J7fCW2NHJgUMIl5a0qDALdyz/6hgMrBuXr6Y+gH
-         qhP+zRWv7flCXnnhTBVHhsc+owqnnp9lxkO1WoZqMKsDxjOdIoHRKskKfVn1wZo6fdJA
-         OBJ0qGq1YpS9Vz2616ex/grepkCVkXkZvz/swdAPjtCY+MJAQOdxEUbPXcSGgacBEdOP
-         EHlw==
+        bh=wdgr8V+lWooEJEpjFk6RgEs1J8LDzR0QLCG3DojQRoI=;
+        b=ppKmTRepcjyb/FsTrK1LSO/XsShRhrc7zXUptHFERoz0mmjrDfR9RJDzjN5X7AHOCv
+         mS/janrXyKZ2+GXrDEpyuT4ObzEgq4STmyLjHTWT+JQDyAKK87EufCwHf+BCKfWS+Qkt
+         uJLHYoltjWseaF2t87a6OL3/CjIigw6grkoek89DxJmI5LiGOUMkxHNwYWUcP8fnCEF9
+         YVMyz74S/haE3DxLHZBVC5Tc6SGYw3EHuX3wVObKEwMcFovqtsyTcQTpb3GkHpW5iLeA
+         ExP5AEMKhk48EBETU6mtasqad9p8JAU5+ANppQNJ0r3KbCb9+PTRKIJixKro+L1B/xDT
+         f0Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757503800; x=1758108600;
+        d=1e100.net; s=20230601; t=1757503801; x=1758108601;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ga9+oP8GJMEvZEK47pxYW+xPRCoN8XvpDsIn4NoQ3I8=;
-        b=sXK5zuZGEuNf+i7HnpfpHHk1FUdZxG84bo0js+M6h4ysxeD/52CiHvMeBmi6z/3bmS
-         aihfCg6mH69rj35tToaSYHkk/I2dV+us65cUzTHKdZ96fbSgs3D9Du+yc3lmK2hfpg0m
-         /SMO7iQhliVoRppNFWW34J4WqltU6dnvwT/yXfQeZiw9zNxSP+/d2i5XdGnuCKxnEQtg
-         brR3aJ+qJN+MIMiSSSv976MZRmUNzD4L0ndhQbKk8dy+oh0L8qB+zWB+xq/hy10yRAkU
-         jrSYTzaaFa3we4OCQc+CZtQBengiWI3ZhwnRKICAKLd0FF2bsM2GjR5DnPKn8sFSFmQt
-         o/mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxt7lMqBX10w1VrxiHYINTi/nqpNoSJ5jHvG4jfyTFGIV91sEgvzKpCzlnOfqWMU6COP/YTCcQOU6zjlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBEYyrAJzN/ozbv24ULcxO+taXSEb9BWsB3Ljp3LOl+TPve0Lr
-	npZ5H0j8SFU+EawkUeDVHIGKmH/dgGkSItcKAWmIjDmU7tWN2pCm+1AKDL4wPQDRuKY=
-X-Gm-Gg: ASbGncuwNC+iufSXt3NLKjfQp5JI3ImOx9walGhFnNR5CXR8W7kLtmRkoHycWLI1Piz
-	5vXPNF+iBM1jvBCLjDhTeU8cdUSZ4x0aAxwAsUb5Y3cEwKBEYCih3HzuBm79b/6hGmyRKvn3LC5
-	YUwh5+91c3IhNFyxjVzGOccjNzpSzX3t02ulkbFy3YupG6WRUc4lcxWXTUjE27C3Likw0CYhpD0
-	p/9LvM6JgGAdbjytG4OGWi8KNjctIwRQwfeExH3ieBRdVlt68LTdJjpyeLDexCVlr28RIbBIvfC
-	rerOUea3huZz/v+jjOYJdrnNo8FhwOOAp/SraFsLRl2Ug8JufcGPdncHWbwOMccfCxiNb0wrKTp
-	7k18Rou9nceH6b7E=
-X-Google-Smtp-Source: AGHT+IHmcYOon3e+vAK2exKd9NspHl41ZALs3u/nxenWGV2WwxtMrS9LQckcTVCeEJ6LUSVFA5o+mQ==
-X-Received: by 2002:a05:6a20:2447:b0:245:ffe1:560a with SMTP id adf61e73a8af0-2533fab6247mr22677088637.22.1757503800180;
-        Wed, 10 Sep 2025 04:30:00 -0700 (PDT)
+        bh=wdgr8V+lWooEJEpjFk6RgEs1J8LDzR0QLCG3DojQRoI=;
+        b=wSKInWfMzjzTOqJHo1MsDZ9+JtO9pW/nlB5Ty48n5Jqk/s5NBjvzvj1vlHL1fElXsB
+         xvjlJrHKtMt0sjoZk3+UYJZN9bMEyDEkJObr7wWGH5J9zFssC0d5YgptPXIQ8dPSLS2T
+         vrBw8EHFqGE/MKmdGNx9OY/E+lGuHVNm28JL0k9kuCYpmYeFdu10t5czh/DoKoxABItb
+         dqLccE+AKwfOTPkf9r60eNBFVe6RI2yMJ/7jjvMPv9bQS1dIlzTm2v2dIwqaNyi+JQ4j
+         sDCO4n1Pgl7rqUuNhXMiNpCYkm5DbCes2zjGJZAldJdGf4B5EYO8AWQhTFeX5T7f3fnR
+         Uv5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU8Aw+clfYs4RHHv7tXwDAQwBPuJLpm7oHMf1h4CrqVOl4wqIY8lVpDVc9oXZepWIxuLosQuLDfAw47Rlc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMROj/1OW5SWNdbeleFRZkoiZhrE2DF4DAplyYdu+WmqWkWCsD
+	wBf9EMgLqXLL7ANc4Se1jyC4vmitXiQBpckulUSpOwEbbryeF1Ky/k15p5PpSXXKVXo=
+X-Gm-Gg: ASbGncsjlVYG/Cmu592T6nEgFHWbO2eSJ/8kJTUKagpvC/u/Ygw5TrxOkC0bfvWDgFz
+	VyuwKWuWFS/0T4mGDDUB8R/VssIUQ8ZN+uJb1eiwQEU7ttjDtqnmaSs25uwEuOTdyaLmqTLC55o
+	ysOk2QsfNpOXN2/r+SARz8Opgea3XiWmiliQqQN0DV2cM7p+bl7Sn5DM+PDgWkWGmeGpqulhopR
+	+WrdpFomi3yBQgJ9bGDZS2rEW5juXEOvMCdoHmI3FaawKlah3niqYcNzxHpjrTIni948Ol1B3CT
+	QvsH1s3qUYFwQedXJEO5l1za9FraViNv2wMWmizSzrj8TT591XvpwnAGYBomRRTnhEhEgzojDGY
+	HAFIOA2W2RfzO5IQod5eMTyuGBA==
+X-Google-Smtp-Source: AGHT+IHqJjR620pJipMMNQmLWBVZ/pTemczUKvgbeUD9ETTgnx52MIwaJYp9qC76TJj/X/N799m5Rw==
+X-Received: by 2002:a05:6a00:4fc3:b0:772:5487:c37d with SMTP id d2e1a72fcca58-7742decfc03mr18272135b3a.23.1757503801207;
+        Wed, 10 Sep 2025 04:30:01 -0700 (PDT)
 Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774662920b1sm4964965b3a.52.2025.09.10.04.29.58
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774662920b1sm4964965b3a.52.2025.09.10.04.30.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 04:29:59 -0700 (PDT)
+        Wed, 10 Sep 2025 04:30:00 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
-To: hch@infradead.org, colyli@kernel.org, hare@suse.de, dlemoal@kernel.org, 
- tieren@fnnas.com, bvanassche@acm.org, tj@kernel.org, josef@toxicpanda.com, 
- song@kernel.org, satyat@google.com, ebiggers@google.com, kmo@daterainc.com, 
- neil@brown.name, akpm@linux-foundation.org, 
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com, 
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-In-Reply-To: <20250910063056.4159857-1-yukuai1@huaweicloud.com>
-References: <20250910063056.4159857-1-yukuai1@huaweicloud.com>
-Subject: Re: [PATCH v2 for-6.18/block 00/16] block: fix ordering of
- recursive split IO
-Message-Id: <175750379870.204398.16969834521074103761.b4-ty@kernel.dk>
-Date: Wed, 10 Sep 2025 05:29:58 -0600
+To: Ming Lei <ming.lei@redhat.com>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250908184542.472230-1-csander@purestorage.com>
+References: <20250908184542.472230-1-csander@purestorage.com>
+Subject: Re: [PATCH] ublk: consolidate nr_io_ready and nr_queues_ready
+Message-Id: <175750380033.204398.14564992598850434752.b4-ty@kernel.dk>
+Date: Wed, 10 Sep 2025 05:30:00 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,65 +92,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3-dev-2ce6c
 
 
-On Wed, 10 Sep 2025 14:30:40 +0800, Yu Kuai wrote:
-> Changes from v1:
->  - fix compile failure if CONFIG_BLOCK_CGROUP is disabled in patch 2;
->  - change the words:
->    fix disordered split IO -> fix ordering of split IO
->  - add review tag from Bart and Christoph
-> Changes from RFC v3:
->  - initialize bio->issue_time_ns in blk_mq_submit_bio, patch 2;
->  - set/clear new queue_flag when iolatency is enabled/disabled, patch 3;
->  - fix compile problem for md-linear, patch 12;
->  - make should_fail_bio() non-static, and open code new helper, patch 14;
->  - remove the checking for zoned disk, patch 15;
-> Changes from RFC v2:
->  - add patch 1,2 to cleanup bio_issue;
->  - add patch 3,4 to fix missing processing for split bio first;
->  - bypass zoned device in patch 14;
-> Changes from RFC:
->  - export a new helper bio_submit_split_bioset() instead of
-> export bio_submit_split() directly;
->  - don't set no merge flag in the new helper;
->  - add patch 7 and patch 10;
->  - add patch 8 to skip bio checks for resubmitting split bio;
+On Mon, 08 Sep 2025 12:45:41 -0600, Caleb Sander Mateos wrote:
+> ublk_mark_io_ready() tracks whether all the ublk_device's I/Os have been
+> fetched by incrementing ublk_queue's nr_io_ready count and incrementing
+> ublk_device's nr_queues_ready count if the whole queue is ready.
+> Simplify the logic by just tracking the total number of fetched I/Os on
+> each ublk_device. When this count reaches nr_hw_queues * queue_depth,
+> the ublk_device is ready to receive I/O.
 > 
 > [...]
 
 Applied, thanks!
 
-[01/16] block: cleanup bio_issue
-        commit: 1733e88874838ddebf7774440c285700865e6b08
-[02/16] block: initialize bio issue time in blk_mq_submit_bio()
-        commit: 1f963bdd6420b6080bcfd0ee84a75c96f35545a6
-[03/16] blk-mq: add QUEUE_FLAG_BIO_ISSUE_TIME
-        commit: ea3d1f104db60f9d5074b33819ccea3c216e0bee
-[04/16] md: fix mssing blktrace bio split events
-        commit: 22f166218f7313e8fe2d19213b5f4b3265f8c39e
-[05/16] blk-crypto: fix missing blktrace bio split events
-        commit: 06d712d297649f48ebf1381d19bd24e942813b37
-[06/16] block: factor out a helper bio_submit_split_bioset()
-        commit: e37b5596a19be9a150cb194ec32e78f295a3574b
-[07/16] md/raid0: convert raid0_handle_discard() to use bio_submit_split_bioset()
-        commit: 5b38ee5a4a12cfdefd848f7ec09da3e9007ad55f
-[08/16] md/raid1: convert to use bio_submit_split_bioset()
-        commit: a6fcc160d6fd9b4ddd229e351518daee21eecad7
-[09/16] md/raid10: add a new r10bio flag R10BIO_Returned
-        commit: deeeab3028afebf2f13428f69dcba9f572f0463b
-[10/16] md/raid10: convert read/write to use bio_submit_split_bioset()
-        commit: 6fc07785d9b89255bba45fc84475bb32f9737a90
-[11/16] md/raid5: convert to use bio_submit_split_bioset()
-        commit: 9e8a5b37c9ea3ae9db9028ea756ececf221d9a5a
-[12/16] md/md-linear: convert to use bio_submit_split_bioset()
-        commit: 6529d41d87827f9a27f6c0c6d34c2b77b250b6c6
-[13/16] blk-crypto: convert to use bio_submit_split_bioset()
-        commit: e3290419d9be6cbd7a42c0691504dd66825cabf5
-[14/16] block: skip unnecessary checks for split bio
-        commit: 0b64682e78f7a53ea863e368b1aa66f05767858d
-[15/16] block: fix ordering of recursive split IO
-        commit: b2f5974079d82a4761f002e80601064d4e39a81f
-[16/16] md/raid0: convert raid0_make_request() to use bio_submit_split_bioset()
-        commit: e0ed2bca7bef9267da0928a8ed6d1de41f19ecf6
+[1/1] ublk: consolidate nr_io_ready and nr_queues_ready
+      commit: 97e8ba31b8f1b743c918bf31586cdc272376226b
 
 Best regards,
 -- 
