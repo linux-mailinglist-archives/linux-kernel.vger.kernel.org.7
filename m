@@ -1,220 +1,188 @@
-Return-Path: <linux-kernel+bounces-809581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E167B50F6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:31:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9DFB50F6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 164C91C81BEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:31:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAE2C561763
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3B630B511;
-	Wed, 10 Sep 2025 07:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC54730ACEA;
+	Wed, 10 Sep 2025 07:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ciOU5HxN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gs9NVCu6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182EC202C5C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C58E305957
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757489447; cv=none; b=g+n5vDA0Ww6G7cUZxBzhr3rG19lbMtLhZ3zoTOTJG4l488cC9A1yPR8JiGJYBXZTtBrZF5hhLOtEFUXvWptyPWHuo4zAG0brrDormLog0hWNC+mqcJoEXfBnWOn/4GiiiK0bk5ZnVycvkkuYwRHhZMRExc4kZlhcat2UWThkHkk=
+	t=1757489434; cv=none; b=oPjcnT32RzT27S3uNG7DHSWAIqDqwWu3BKO+jjNGd5EwYP5h6xsKhTu0cRCjWo2z1UJ4S0mz3a2hzC73vDXqsIeVyzCKLrCxv0OO+5bX3wh+AZA46AfQ4pwSUrLLzbxYQAA8YEkX9pVBLYk8I+yxHevg6003HLEwbdO+kKaBgUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757489447; c=relaxed/simple;
-	bh=StFrbaH6Ht93tmg3DXsU6cBFNJ9P4zQ60mXyCe0wE0c=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=FgKL4+0A6k4Lm/w13vce9nKfZ4ziLHqU1KYKD49qcm22pq2BtLHvE+uXVrpgKYM14r8lZO+3FgTkoZltdtXUUcMoCRpYEH1zeyZJSrElvr736u1MnRb27bVBwRt798/014O3neG51jzl+DlGQCCncHKjRkVeics3YF8lihR+j2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ciOU5HxN; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757489446; x=1789025446;
-  h=date:from:to:cc:subject:message-id;
-  bh=StFrbaH6Ht93tmg3DXsU6cBFNJ9P4zQ60mXyCe0wE0c=;
-  b=ciOU5HxNYlkdB9xZl6b1Fbcy8WulJovH/4YKWmTQwXo1PVJDuDeSkeAl
-   2NWm8jV9vAgx4RmMyuH9fWh9ndqP4MrE9eUOqyya4ZhjSgjZXYvhMr9BE
-   xY2AIJ9Y3AVccJKd4g+AYi+M4Waz3hp0p6wXgFqscY3JJp0JGUZlVDwE7
-   PsjwQsf3Dz4nnKlmRHn3KjNt2LCJzWYLaMHhj7SIRxxz7yMovROiaXZlC
-   5iRlEWNKJAyNq60THZclPGUz123+VdfQ0xmatM/oESQ/rPeMbw/0Jh5TR
-   DWLZdpMJfBEYbhBaT3sKP+NHngpV2xq7PhiQYGRV8c52dKs7MH2jrjrz6
-   g==;
-X-CSE-ConnectionGUID: nXNt/ev7Qg+hZfRCbQ0p6A==
-X-CSE-MsgGUID: PTBq6DKuTq6wKonEe47vKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59738385"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="59738385"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 00:30:46 -0700
-X-CSE-ConnectionGUID: cpFiEtzbROWn2AR1xP+Tyg==
-X-CSE-MsgGUID: M9UZGFRITVKjkSNKjMJZIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
-   d="scan'208";a="172883447"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 10 Sep 2025 00:30:44 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uwFHt-0005e5-1u;
-	Wed, 10 Sep 2025 07:30:41 +0000
-Date: Wed, 10 Sep 2025 15:29:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 78eebbd6b628009d24d14b277606c4ba9d6b676b
-Message-ID: <202509101549.LyBhRn5d-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1757489434; c=relaxed/simple;
+	bh=V4GRnptJj2qaYSvuxiQX1AqgJtScMUMPtA6IMx7BN50=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HMBJ1z7jPQCChcwN0gCQr/BE/wykBi4O8G3sKLhyPC6+TmZi+92cmQ3eujQgsM3jpMEQag5pG4dzjqIZqwIRUk08g+udIKTVlNwYbz9qP7nrgKTQHvTPbBzGAGrwSjHtml5VGgz2rouDZTKnOI5RT/42r2gNit9f92+FyJv0TRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gs9NVCu6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757489430;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TSv3IIId7unI8UfEY8bPGg1xGNeJdhNHxN9/10PYUSY=;
+	b=Gs9NVCu69m5r0LTZPuDSY5kXuZlmJdmzg9I8iTRe99eIYFiI68O7jmHUfgOmv5F4vmkezL
+	R0wFkuIvMdpGgzuwdyTW4Zd4DWuifbbG6jxxooB196ApNqNhr3X+z2rpKNfPnyvBrTKpSa
+	bW9XLsaP1igDR/Xoma9FmHh/0qniDg0=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-219-q71_wvGqO-ig0RPtBq4Ctw-1; Wed, 10 Sep 2025 03:30:28 -0400
+X-MC-Unique: q71_wvGqO-ig0RPtBq4Ctw-1
+X-Mimecast-MFC-AGG-ID: q71_wvGqO-ig0RPtBq4Ctw_1757489427
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3df07c967e9so3927952f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:30:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757489427; x=1758094227;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TSv3IIId7unI8UfEY8bPGg1xGNeJdhNHxN9/10PYUSY=;
+        b=rVJM7o1+ZhL6KvNQIQITO1AfogLNX/DvCjxGjCoxvA+Z/rqeSgplnpmBSu0zM5fHF/
+         n0lGgrmTAEPalSvG537HjDDGxN2CrjqyxhecwEEdujSPYj32HPP9I9bUum6NQc7lTplZ
+         oUjlimwjQO6wIdFM670bRf2o5QD60FvauWdmj4M2nNFHa0UZLa5M+rDxyIOmCQfFtOZh
+         rsKrz+E7oM1ArR+hYuLJuQAZThBzNVq1xAEft6vfIfYfWfimRibTqaAYpV91cws4L7e9
+         2hlhUtpJpkp9Az9f8t9ulAz6xNJ00L9YkuQDR7Smie1UiKt7M7ju2eED58IOSpiGt8JS
+         EAhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVibZXeIZ9eHeqVIsTtOPYf3jh4J2iDDDzl+bEl4t7r9d4IwItnOStE5ar0m41Are1NvOq8oTPPeY/zODE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3oSP0AKCJZmXqXyT38DqHW0EsUppCzW+2TDgpdN+IH4wfZfG9
+	WaVxOvMsXZXN5CB6EdU000o9ZbaoRYAh8axiIJ9sAbxsAmggkUGY/SagX48mYfIxZD0BAdaiQ3s
+	H5IVaNoojSr4R3bgin3PZ2eowUnezM8bOc+/FUtiiUKZO3D4gdKvqTCN0tjvzzUL2Tew+fT1BVE
+	wEgF8lu+r4fiNJRv9l5sHHL/H+hXMtck5kZnIa9MXE
+X-Gm-Gg: ASbGncsG2LSYnUxoHcDLBqiEK7IrmBlAKAE3E13g+ECgCO4DBK+SqEJu+sTkleEb75c
+	T76DVYNKM3gEjP672G0GlgSfLRxpAV7VK2qUuvAoAbXW2oR/32dfK6G6hI+3+KmgmBztK6cnNzo
+	kO7vnWnSI8vLVP+OTrP20CLtna6tSaiy9LvSLXjydbzGvS+5rY5oLgNMtBgWwI5PRVeshaR8oX0
+	EyUk/rIJ3lsvfBE5yMRmxc=
+X-Received: by 2002:a05:6000:2087:b0:3de:c5b3:dda3 with SMTP id ffacd0b85a97d-3e645c9d0fbmr12128050f8f.44.1757489427439;
+        Wed, 10 Sep 2025 00:30:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFzuJXYwoOG98BtNJlZ2tE3xANYEOw3wxoX+SSNAaviVD84eLYQ2LV34osvXJQI60WO2kZRIXngmquFvmIfJHk=
+X-Received: by 2002:a05:6000:2087:b0:3de:c5b3:dda3 with SMTP id
+ ffacd0b85a97d-3e645c9d0fbmr12128022f8f.44.1757489427039; Wed, 10 Sep 2025
+ 00:30:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <e8c743dfb16c6c00fd793d7afa6eed33c49f895f.1756202009.git.jstancek@redhat.com>
+ <0ab92ae3-674f-445e-883c-0e511add85d2@redhat.com>
+In-Reply-To: <0ab92ae3-674f-445e-883c-0e511add85d2@redhat.com>
+From: Jan Stancek <jstancek@redhat.com>
+Date: Wed, 10 Sep 2025 09:30:10 +0200
+X-Gm-Features: AS18NWAr8td3LOQLP511LSO5DpHnyQa1skw1nOcY5CC6N4rA6NZKjHj2YmR1a-c
+Message-ID: <CAASaF6yOskaXhQzvqz_-fZekYimgbNspi0JfT4TAWL-rB6mMhg@mail.gmail.com>
+Subject: Re: [PATCH] powerpc/tools: drop `-o pipefail` in gcc check scripts
+To: Joe Lawrence <joe.lawrence@redhat.com>, mpe@ellerman.id.au, 
+	christophe.leroy@csgroup.eu, maddy@linux.ibm.com, npiggin@gmail.com
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 78eebbd6b628009d24d14b277606c4ba9d6b676b  Merge branch into tip/master: 'x86/tdx'
+On Thu, Aug 28, 2025 at 3:32=E2=80=AFPM Joe Lawrence <joe.lawrence@redhat.c=
+om> wrote:
+>
+> On 8/26/25 5:54 AM, Jan Stancek wrote:
+> > We've been observing rare non-deterministic kconfig failures during
+> > olddefconfig, where ARCH_USING_PATCHABLE_FUNCTION_ENTRY was getting
+> > disabled and with it number of other config options that depend on it.
+> >
+> > The reason is that gcc-check-fpatchable-function-entry.sh can fail
+> > if `grep -q` (or scripts/dummy-tools/gcc) is fast enough to exit while
+> > there is still someone writing on other side of pipe. `pipefail`
+> > propagates that error up to kconfig.
+> >
+> > This can be seen for example with:
+> >   # (set -e; set -o pipefail; yes | grep -q y); echo $?
+> >   141
+> >
+> > or by running the actual check script in loop extensively:
+> >   ----------------------------- 8< -------------------------------
+> >   function kconfig()
+> >   {
+> >     for i in `seq 1 100`; do
+> >       arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh \
+> >         ./scripts/dummy-tools/gcc -mlittle-endian \
+> >         || { echo "Oops"; exit 1; }
+> >     done
+> >   }
+> >
+> >   for ((i=3D0; i<$(nproc); i++)); do kconfig & done
+> >   wait; echo "Done"
+> >   ----------------------------- >8 -------------------------------
+> >
+> > Fixes: 0f71dcfb4aef ("powerpc/ftrace: Add support for -fpatchable-funct=
+ion-entry")
+> > Fixes: b71c9ffb1405 ("powerpc: Add arch/powerpc/tools directory")
+> > Signed-off-by: Jan Stancek <jstancek@redhat.com>
+> > ---
+> >  arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh | 1 -
+> >  arch/powerpc/tools/gcc-check-mprofile-kernel.sh           | 1 -
+> >  2 files changed, 2 deletions(-)
+> >
+> > diff --git a/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh =
+b/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh
+> > index 06706903503b..baed467a016b 100755
+> > --- a/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh
+> > +++ b/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh
+> > @@ -2,7 +2,6 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >
+> >  set -e
+> > -set -o pipefail
+> >
+> >  # To debug, uncomment the following line
+> >  # set -x
+> > diff --git a/arch/powerpc/tools/gcc-check-mprofile-kernel.sh b/arch/pow=
+erpc/tools/gcc-check-mprofile-kernel.sh
+> > index 73e331e7660e..6193b0ed0c77 100755
+> > --- a/arch/powerpc/tools/gcc-check-mprofile-kernel.sh
+> > +++ b/arch/powerpc/tools/gcc-check-mprofile-kernel.sh
+> > @@ -2,7 +2,6 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >
+> >  set -e
+> > -set -o pipefail
+> >
+> >  # To debug, uncomment the following line
+> >  # set -x
+>
+> Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+>
+> This bug manifests when automated scripts expect to run a kernel build
+> after `make olddefconfig`.  I reported this to Jan when I found that
 
-elapsed time: 1482m
+Right, maybe we can still add that too.
 
-configs tested: 128
-configs skipped: 3
+Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Would anyone else also care to review, please?
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                          axs101_defconfig    gcc-15.1.0
-arc                 nsimosci_hs_smp_defconfig    gcc-15.1.0
-arc                   randconfig-001-20250909    gcc-8.5.0
-arc                   randconfig-002-20250909    gcc-8.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                            mps2_defconfig    clang-22
-arm                   randconfig-001-20250909    clang-18
-arm                   randconfig-002-20250909    clang-17
-arm                   randconfig-003-20250909    clang-22
-arm                   randconfig-004-20250909    clang-19
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250909    clang-16
-arm64                 randconfig-002-20250909    gcc-11.5.0
-arm64                 randconfig-003-20250909    gcc-11.5.0
-arm64                 randconfig-004-20250909    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250909    gcc-15.1.0
-csky                  randconfig-002-20250909    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250909    clang-22
-hexagon               randconfig-002-20250909    clang-22
-i386                             allmodconfig    gcc-14
-i386                              allnoconfig    gcc-14
-i386                             allyesconfig    gcc-14
-i386        buildonly-randconfig-001-20250909    gcc-13
-i386        buildonly-randconfig-002-20250909    clang-20
-i386        buildonly-randconfig-003-20250909    clang-20
-i386        buildonly-randconfig-004-20250909    clang-20
-i386        buildonly-randconfig-005-20250909    clang-20
-i386        buildonly-randconfig-006-20250909    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250909    gcc-15.1.0
-loongarch             randconfig-002-20250909    gcc-15.1.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-microblaze                      mmu_defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                        maltaup_defconfig    clang-22
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250909    gcc-11.5.0
-nios2                 randconfig-002-20250909    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250909    gcc-8.5.0
-parisc                randconfig-002-20250909    gcc-12.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc                      cm5200_defconfig    clang-22
-powerpc                  mpc885_ads_defconfig    clang-22
-powerpc               randconfig-001-20250909    clang-22
-powerpc               randconfig-002-20250909    clang-17
-powerpc               randconfig-003-20250909    gcc-8.5.0
-powerpc                    socrates_defconfig    gcc-15.1.0
-powerpc64             randconfig-001-20250909    clang-20
-powerpc64             randconfig-002-20250909    gcc-10.5.0
-powerpc64             randconfig-003-20250909    gcc-8.5.0
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20250909    clang-22
-riscv                 randconfig-002-20250909    clang-22
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20250909    gcc-11.5.0
-s390                  randconfig-002-20250909    clang-18
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20250909    gcc-15.1.0
-sh                    randconfig-002-20250909    gcc-9.5.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250909    gcc-8.5.0
-sparc                 randconfig-002-20250909    gcc-15.1.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20250909    clang-22
-sparc64               randconfig-002-20250909    gcc-8.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-14
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20250909    gcc-14
-um                    randconfig-002-20250909    gcc-14
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250909    clang-20
-x86_64      buildonly-randconfig-002-20250909    clang-20
-x86_64      buildonly-randconfig-003-20250909    gcc-14
-x86_64      buildonly-randconfig-004-20250909    clang-20
-x86_64      buildonly-randconfig-005-20250909    gcc-14
-x86_64      buildonly-randconfig-006-20250909    clang-20
-x86_64                              defconfig    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250909    gcc-8.5.0
-xtensa                randconfig-002-20250909    gcc-15.1.0
+Thanks,
+Jan
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> kpatch-build [1] instances were hanging (expecting to hear from a user
+> that would never answer :(
+>
+> [1] https://github.com/dynup/kpatch/blob/master/kpatch-build/kpatch-build
+> --
+> Joe
+>
+
 
