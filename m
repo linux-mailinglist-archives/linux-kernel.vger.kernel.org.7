@@ -1,679 +1,237 @@
-Return-Path: <linux-kernel+bounces-810012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14B8B51499
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:56:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C80B51496
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E995C7A9C53
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D8334E4FD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD6E3128AC;
-	Wed, 10 Sep 2025 10:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64614311950;
+	Wed, 10 Sep 2025 10:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsqxLWFQ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CdxmrtEK"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2078.outbound.protection.outlook.com [40.107.223.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939B3303A1A;
-	Wed, 10 Sep 2025 10:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757501759; cv=none; b=JjEdI9s4/BdESlEC9GZkaOtggfRdTV+riiWYT2z+0TLeJScsxck4QfLnr450ap0Kzk0AGNrvLLcrpv+AjmIVvoyEJM6uggX8ULhNideYeNuYQLc+y0/7gFtep6tywH1+z7npPlHzaOAjonc9MFnsUdtCeT0R5Ad2XwAG9SXDl8E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757501759; c=relaxed/simple;
-	bh=+vQqT/ab6RDCQ93W8/+XtS3Em9BeynuKCLCurltT8Bs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mooErSUskabSS6AOSPhNLWSA+w6IFAIpPY42soJSUuKEt2CwTUy7e2xEC+UjwFMDChHsfruiwGRRcgPySJ9yPmVdAl9QuRsg+fdf62M6z5iRqn4AIEy+kJOXsRn8fBYMuU92sAYGVbmCXYrLQ4wR2UGX5/Q0CaQb+71RwJ6M5x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsqxLWFQ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24c863e852aso59917985ad.1;
-        Wed, 10 Sep 2025 03:55:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757501756; x=1758106556; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7GXWw8MaeHW/oWTutEt1o2w6pMSijMTWoDbapjmuta4=;
-        b=dsqxLWFQkzzEyPYVnaWe72D7Nl67GkysORjbYlSmy/NtP65FosnSjSYzSFFOn12hpZ
-         WU7YYdP9uxE1nDsj4wIsE2+TId3ztO2HjI65PfEj1XR9RY7Xn/jxDdR8BgEVejt+eAch
-         0rISzu5bwGbJLCWKcUgiYBVAw1NDcpPXz8cte8t8kKTUkzDDFbn8e6KzpMbR/5TznzqI
-         X8jf9+8xJcH148aSf00h1Ly1lDcEEjPsLHYWSYUOn1v55mf2hHndN4I2aYHJFLNZf3fQ
-         VyZdcTxJp/QmZYbh7gjkwBZT/rPgZI891wFj/M3i+cGz1B593CJ7lbP8njbtQyYFSyev
-         avzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757501756; x=1758106556;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7GXWw8MaeHW/oWTutEt1o2w6pMSijMTWoDbapjmuta4=;
-        b=KTtckfOvcAcs69Vo6bCVjedqbR9MLlu6BzQqM4Od8clsiWuU1EQNLyFvquPxtAjZw6
-         XEyZIqKrhiT4dSLn7UhD1htiMQx/Z4c8TM0j68ODAm+LJLmuRmROThGjIbKOvGhFJAob
-         QdN5ypQaJY7tzR1EbCpq434AmM/AQiqtoUB2d94afE/NUVvBBE98MPp3T8lt2bwr3czl
-         3iRXEyj1sumokI9lJYf+Z6YyCPbCUsN9Vcw6H4j3AWgZ4hAQAka+bWphKbmg10UPcstH
-         cH4kTXXXSpr3qnrs/O6tkFKqcxrTdeSi65uDd1IJmg951nvf6/w3MrZSaIZXSczZWRn4
-         taRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUq/qZRPHz2hbC0m3ceJhYT7eZYOYQwaYgdV0t7WR0EHixmYsazKvjjJR4TwGue11DxXHwuytCUdUj4iK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBv4wvdt09xEVuM3vYNKugAo9ac48Prv+7fRQGPJPpANHMTeT5
-	w9zaVb+Muo3Hqz2VQsL5xnMN0bSbvbxaSHJrmO3xdagfa8Sd2/2BQQmRWd5unRr2/AumAw==
-X-Gm-Gg: ASbGncuSMzH0JhAn7P8ledkoBG+oQqRaHIYEq+xiesMFpUONJEEYc+s5AyFCCI+/OfC
-	U69ZJJYJmbe9s5HGUr2eh5F+1mY3UQn+JPKNpVI2z5gGWSo9Vcv3KlgxG3ef7U4Yf8ougXzJS6s
-	awFVlz9NnHSbHmtQ4FUv59G0bqMqt1XIVSgQcsCEVUXecmIhLdb761yfUSOKgEe70YnlEh8vN8/
-	5xlGMGvsduy470OUhYFxljh85HzgSAj7AEDlgr0tgaMCGiAYZtFyWJwsRgLvhUDjkpR6XhU5NeZ
-	Jj33DWIQQX/ZHdsuGbJTs2QuHRBCil2sBDrnCSV0ilBb/Zn1LFXcrhShs1p84EtwJjqncsWUnv5
-	CCM0wvXW6sb/4MpL0yiLU0LIvzeKbPJFW
-X-Google-Smtp-Source: AGHT+IEc1SZvL9menS2CCGzMWuE65vRhggNsjQ+wsTtnGKyo5BGQkanHUlzqFtbunROhAfHt5DJDzA==
-X-Received: by 2002:a17:902:e843:b0:24c:7f2f:d9e6 with SMTP id d9443c01a7336-2516d81a032mr191413965ad.10.1757501755737;
-        Wed, 10 Sep 2025 03:55:55 -0700 (PDT)
-Received: from localhost.localdomain ([119.8.44.69])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a2a922630sm23903705ad.104.2025.09.10.03.55.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 03:55:55 -0700 (PDT)
-From: Han Gao <rabenda.cn@gmail.com>
-To: devicetree@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Nutty Liu <liujingqi@lanxincomputing.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Zixian Zeng <sycamoremoon376@gmail.com>,
-	Han Gao <rabenda.cn@gmail.com>
-Cc: linux-riscv@lists.infradead.org,
-	sophgo@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dts: sophgo: sg2042: added numa id description
-Date: Wed, 10 Sep 2025 18:55:31 +0800
-Message-ID: <20250910105531.519897-1-rabenda.cn@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3C3265609;
+	Wed, 10 Sep 2025 10:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757501743; cv=fail; b=h3ibd8JrV2K+LJ+rFWrwdfS5q1CEEEvf3nku2x3CI+8IT6iuAOD4cQD+sbgr+/ZL/VoH4vVa9ZWa0W1Hywk8HT25MaqXG2iVczg9q2IhO+XU1Xz1a1jvuGjBRl2CMFeGuRAolzsifG+T2y9yL/9YOWjjPOFEgVk5iMJQgwR2E08=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757501743; c=relaxed/simple;
+	bh=3KYTMeQtZNRtdfdH00hYo206Qxpyk/bOkZvwYgyZU98=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HUsf4aDBHiZvzI6S4slozbUKe9M32jehrcRAG9qpV1u53htpmPjFXpBmovGST7Hq8o3ubi99GK8lwLX8l1kfzY5YsWV+CK3RTkYtMfaogJrux0moY2tUMcn3mG/z/timpuhiIOeA7mBXh4ufkgq6duwF7XKrO5TdFp0xcuogmW0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CdxmrtEK; arc=fail smtp.client-ip=40.107.223.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PDfmUoWoCk4jllvWQQo2HmpOTVtQvBYdI5B3I/a66eR+KiskP9rd5yrCCXqDr1wgRXkDewm5c0HIVbDgwNRLZjVBYEY9S3KKNQqmu7QxDQsIVjYAdQOh3Hx/s65EMup9iJkXYo1UkEdo+6WME68w+WIdv6mZfWphgQUTDDh1x2eMZpWQ+ENeuZR1Znj8b9S1J166/mJjUT9fLWyJkjEzu/APumis7cMq8AR7/l3Y4gjG3DY1I344u1p75Lq+kpyOa72U1128To9D6O1/L6xnCP2nWXl8gVi1j+I/qEMRNn7Yt72+L+PB1Z2GXMTgAYjI+I6oCsTf9NFtwiKqMbqEKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ciw+RW4jo49WIj99OwJQ4ig+8ZTiMe+C352ACtL+lnE=;
+ b=GYoOq4RnWHMGTA1xbsQKPheiYgEAnZSjsPhvHrYp5HP/R3xdtArYLUoqMngIMUUxRVZh8zPyE//0fobd/CpwdHSEIcM1mjmxrPyC0rD6cQcY3teSKp89oA1bL5O8ypGdVk4JhYkN/3uTiamNCYp/8lRSuYLGp3IPwj38aLkoHwi11E8+Y5A5/BYYOwixECgbrcYY8A6j5/4J6hZyzbwsWHnyfYMha34exiSaSARRON0RRVJAEKZ02dGV/4uqDbFU+1cqfp/tVV7/g13gWMbmF1Mj4ycuIPPjLtqEiVnXFbIEMZVaqVrYbZ2HYr8k/9Vy3W/mAw5s0vFmIpgI0waWVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ciw+RW4jo49WIj99OwJQ4ig+8ZTiMe+C352ACtL+lnE=;
+ b=CdxmrtEKJNI8jK2/0ZolYXlbF0IPVU2ZleWvGzpEtZ8vIKK7t1tpmZlGROi6IN/6BTeVii9AxnsxuNQWotttjl6WKyWqh+NpstDKFQGRIh7FhUWvhPgglrnxhn9h0wvaUJDcbgHK/BVZxEWeiAtGco0zc379/WhvSEPxSMeuoWwKxN/2DSspFDhr8GY2hl/fgDfc+TXRGpVFH5taax+/hGOepz0BIpWYNbV1zKmL1mmAmDAmqSqfWoEpvotfl1bmqI90cZQBQ2XvpPVd2Mu2mCOFM4RvcgY+XDahyLNCO0+2fCl1G8YcrnjSGKyeX8cYFzZ1cmTvYxrRaMwJoo7iPA==
+Received: from CY8PR12MB7195.namprd12.prod.outlook.com (2603:10b6:930:59::11)
+ by SA3PR12MB8021.namprd12.prod.outlook.com (2603:10b6:806:305::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Wed, 10 Sep
+ 2025 10:55:36 +0000
+Received: from CY8PR12MB7195.namprd12.prod.outlook.com
+ ([fe80::e571:5f76:2b46:e0f8]) by CY8PR12MB7195.namprd12.prod.outlook.com
+ ([fe80::e571:5f76:2b46:e0f8%6]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 10:55:36 +0000
+From: Parav Pandit <parav@nvidia.com>
+To: Leon Romanovsky <leon@kernel.org>, Edward Srouji <edwards@nvidia.com>
+CC: "jgg@ziepe.ca" <jgg@ziepe.ca>, "linux-rdma@vger.kernel.org"
+	<linux-rdma@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Cosmin Ratiu <cratiu@nvidia.com>, Vlad
+ Dumitrescu <vdumitrescu@nvidia.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Gal
+ Pressman <gal@nvidia.com>
+Subject: RE: [PATCH 2/4] RDMA/core: Resolve MAC of next-hop device without ARP
+ support
+Thread-Topic: [PATCH 2/4] RDMA/core: Resolve MAC of next-hop device without
+ ARP support
+Thread-Index: AQHcIBIGYUSf6USQe0GQnNY3QDSVn7SMGr+AgAAmyPA=
+Date: Wed, 10 Sep 2025 10:55:36 +0000
+Message-ID:
+ <CY8PR12MB71954BE7258390B4B7965E8FDC0EA@CY8PR12MB7195.namprd12.prod.outlook.com>
+References: <20250907160833.56589-1-edwards@nvidia.com>
+ <20250907160833.56589-3-edwards@nvidia.com> <20250910083229.GK341237@unreal>
+In-Reply-To: <20250910083229.GK341237@unreal>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY8PR12MB7195:EE_|SA3PR12MB8021:EE_
+x-ms-office365-filtering-correlation-id: 32a01215-7a6f-4eef-7d7e-08ddf0589278
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|10070799003|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?YWrD+KuiMfykSXKvgpOdPXbVb9pjDsXbkRYRTgSq5DNMV4F0wsLcoRkaSbYE?=
+ =?us-ascii?Q?z5s7mbDemCI9oOp0pS83WUeTBzOYbszj+ZDXr6wxNyf+emGkDikcragg5WqY?=
+ =?us-ascii?Q?FkPrzRJInT7JXRwpc1f41uc9Kp4zKFOZShURhw+Z5dBZa/MlJ094vY8ig0jt?=
+ =?us-ascii?Q?zaopa+YodeFGc8Co7mJEzz8tph386Pl4yKRq2PFGQplpSKBeAkdusVfz3rcr?=
+ =?us-ascii?Q?YtYsfN1lQYvBC3mBZD3tqq61WsH1+jl0bCMEhPIbj2DCuoaQR4Rd0HemIFmm?=
+ =?us-ascii?Q?/ehEf7BbXXRm+0ABeY/uJ2ZMVn3bneUpQ+KgKzup5rStWcxah5OJFMODu/gK?=
+ =?us-ascii?Q?8Qj2PWQK2SOvKMALOXA4oslWY7bP1fPHiw5ID6lYiEU2eIWlkyKXV/3D07Hf?=
+ =?us-ascii?Q?3QlwxG1k0OdiUL693nr8SLFBdwUJ50qMS+U/r0Zjx05y/YH0m+Zr0SLwj6ky?=
+ =?us-ascii?Q?uw6ZFCpOk/Hz6N+NvQQjySe7CnpgV4/D6JF8xumFU6mx/hv8wdwF9ewgaqAx?=
+ =?us-ascii?Q?k8i3Kk7nSgAjO7D9ID4rfkw4DU/RGWLayOggmYPPmWJsKUO5qeTQcz1UumUX?=
+ =?us-ascii?Q?bZ4HWtOKgcysvw70jzz6QCvOeHoEMt4vZIrMaBSw6bRvND161l7/jJfsdXrN?=
+ =?us-ascii?Q?7mfzS8nNbvo4EOzwujKP6U/5avyJd3ChEyqBkjrVEbL4uZLw72ORcjBiZLlm?=
+ =?us-ascii?Q?CCnX+4JH21PonNWia97mDmJNesVBGDXFkw4DUjt9CufH/KQ+z24VaRhk3VVE?=
+ =?us-ascii?Q?Rw/QLgmjQjuzV9CCMf0GMgvRntXsMzyBwQ9MFQXbcCOIuY8yMngoWLV7l3hu?=
+ =?us-ascii?Q?6YBpL61jTTYFxhLqOUBp3PJkjeTqYwDFmV6CvnVa0+ZnfpGXwa7vDiIQSLdn?=
+ =?us-ascii?Q?2/gsPVhfhuKUb3BNv660/V/YcCtD55wvq00FvW0FlclV7KVlAf2mOCfGYKZj?=
+ =?us-ascii?Q?DXo72Nb2T06QRvDslot/T1rgO9rQJz9mFoQ/2b+fwSpAy3c2JRySibT4HeIn?=
+ =?us-ascii?Q?xhXZ3EaX3c5D4chWM3MZwWwyuRJJVA/Lhz+M9E4OYmzaMyBwEJHNiWh66EZe?=
+ =?us-ascii?Q?WLoXWObjr6rS3KDJah+6obvy8OwtsLcWWzxUAaZd3XgEpyrvBTT6eu0LGlpu?=
+ =?us-ascii?Q?nLhfZXYCx6/1suzwGGaNB4rDWf4WCvazBnI55o5vQ1saR7wrXdqajeBDK/nV?=
+ =?us-ascii?Q?JX8CUII+10n3nRVsaZbtwkyCm3eNxEUwXTA1Ceynj/1aDz6JGvgoUb7G2lnO?=
+ =?us-ascii?Q?84yWgm7GUgkNDgczxVtLi8Df7q/Vza7vXu4qWgiUjBgy00G/aHV9GB8yGcxT?=
+ =?us-ascii?Q?vd1+DyMATNJrztP0WMn7E1aIh9PGZ5hrFFv3C1pRNB6DzB37OX/8443Tavsd?=
+ =?us-ascii?Q?uFjrpI6VYUF3wY8EdM8V/ahlf5SirasiCSoc3Pf2hWYeO+n9GeiilLsUdIi6?=
+ =?us-ascii?Q?AQATIbE+mDfqKu+yrSqqsIEWD9Cq5kyIPM3Zea79hbjhHgU+DcJg2w=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7195.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(10070799003)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?WaGunXpr/cVUNIe8iFEfU9GBUwWvgBUR1mZxjynxd9Epukua3hr9Ji9RAc8E?=
+ =?us-ascii?Q?kWIKuB8sK0soz+rEf6suRvOBchlEjL20gA/hNPyZvVYVB6BRyVBfv2fI26vL?=
+ =?us-ascii?Q?gOSG/zpA5wVxdKxZFWuuj5Nv0P9dUfzKSOu/+GFThFcXGlb+IH+Q8uZQtLtW?=
+ =?us-ascii?Q?1Kf38TZUPGrZNiuuxoyga9n5QpsEtZEWg9tz2/NfJu9Vbx6ofdTbF0fV2dKD?=
+ =?us-ascii?Q?ktyFH5SARybVTMKRm8fXFHP49CIqktHuWhEIlSjkm+SEEaKgATqDXp/LlHWk?=
+ =?us-ascii?Q?fddy2DcwaQTw/56IQ9lE4qyee1LU42UfBHUA82H0tR+k21pZNAp8wKBGBXcK?=
+ =?us-ascii?Q?X0nuJW4p/ObuVGAsZzowD/7z30lNNh54dhCoFUSr6ZuhO7GFTIduuEvnUPRw?=
+ =?us-ascii?Q?RN+VSnitVVn+oatH9cttl/3fyRPvSijV6b1Y04YegMngndSzzYqZix5YqQ5e?=
+ =?us-ascii?Q?yeQoF03xwxHXNviK5f0OfJ1KxEQ6wWPHhs3RhuemakaRaiu7WVk6HA6PrJ3v?=
+ =?us-ascii?Q?IT/gbkiJrqam/de4DjwQeZqS/05T44v70JvxRg4zbzEy7XnGFxiHCLVYE0tj?=
+ =?us-ascii?Q?ppnXR55ARf7vG/vmwHuoUjhIstNvhtPL9Q5KgD97K6fyV8FShas2VerrRACc?=
+ =?us-ascii?Q?k7JmPWDajXt7e8VQ6R6tztFmWdd5E7aPD214lpXSBsyMl+TqqpEFoTRfEtni?=
+ =?us-ascii?Q?lZfE7a33M+CygZFfGb9FcAXAQ0pXso678KNF5iF82dSGsLeydBIJrkMiMMem?=
+ =?us-ascii?Q?OK9ziWGjVcTonXfq8OWwYz20TBzlY0BlUsxPv4FSuw8HbHhkWkvCcs809BsG?=
+ =?us-ascii?Q?EHRPokWC/IGi3TMlbkek+enpQDMfRin+vh/Bk4G0hcEjqmEeqU/ViIOqBy88?=
+ =?us-ascii?Q?a2d2hRTAtcviBWfbhxSh502UdZ8ROjYvi0X3N0sHHzrFoWysFu4aysw40zAd?=
+ =?us-ascii?Q?cL37p8evD35g9IN6oV+kSin2iALpkVXTmRee2P3OwMfwukPZ4yxFiBmsFLLl?=
+ =?us-ascii?Q?8A6i/B0PSk2t6AzUEvy5Q5uPrpAx2PuTqguujf4POSrdZXiyPfS0MUvvNdRL?=
+ =?us-ascii?Q?eMEBNhow/2LiqLJ+aawUpZO5JWmGoLhs3VADSbfuBpWfzh+0n117lAiiKWEk?=
+ =?us-ascii?Q?uvqdsU4Xfw3hC9vDpx8r0cRTU+PlSqbZ3BrFjr8zMTFPYAV2JxsaI3kTxSnS?=
+ =?us-ascii?Q?xXLJAumGCY9UO92qKbys5HoFCOxl3vmjcVr6L9Cyv59rwJggrAqpxSexDBDg?=
+ =?us-ascii?Q?fTRouz8z9Urj2cNaQjD0AI06J1N1Z8KRuofNGt3fw0PP5eOEQazb26nyV2cC?=
+ =?us-ascii?Q?5FCNtKoLKJ97M2P4Twl34DuRhyIaCwxngYmiLMnHKv/wkdXpSJZg6gY5l6iM?=
+ =?us-ascii?Q?iupRqYGa/uj8WmKtW53bjoEd2CNNgEyil5mXEOkSZNqcLRauSKXYDQhO26RB?=
+ =?us-ascii?Q?4ANZoEWYWGaZmU9/OjZ5UiMa0sVGAnFAJ/BoG+NgrSRWgnzAN9HtHD85W/Rl?=
+ =?us-ascii?Q?/h8QQDxtxGwB0opwJ+k6iuko9aOObp7XmjNHMCh6+hz/2jS70U9/B4nsXBM3?=
+ =?us-ascii?Q?ETh+pbAJrFSYfyXDUOwHLYMklkQpDls8WEwwMJM2yrEiP+OjkT4Cyh5eUFoG?=
+ =?us-ascii?Q?2npq2CvSC9nQGeBBN1wwWHE=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7195.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32a01215-7a6f-4eef-7d7e-08ddf0589278
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2025 10:55:36.1221
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: v7wyHEEiDe9s3iwzASVjYENJFnJovkRWwMZ9m6XbMzyKKvyb8jsB+MZeiUYxMch4uPkqyf5t5crRF3Fu14+gCA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8021
 
-According to the description of [1], sg2042 is divided into 4 numa.
-STREAM test performance will improve.
 
-Before:
-Function    Best Rate MB/s  Avg time     Min time     Max time
-Copy:           10739.7     0.015687     0.014898     0.016385
-Scale:          10865.9     0.015628     0.014725     0.016757
-Add:            10622.3     0.023276     0.022594     0.023899
-Triad:          10583.4     0.023653     0.022677     0.024761
+> From: Leon Romanovsky <leon@kernel.org>
+> Sent: 10 September 2025 02:02 PM
+>=20
+> On Sun, Sep 07, 2025 at 07:08:31PM +0300, Edward Srouji wrote:
+> > From: Parav Pandit <parav@nvidia.com>
+> >
+> > Currently, if the next-hop netdevice does not support ARP resolution,
+> > the destination MAC address is silently set to zero without reporting
+> > an error.
+>=20
+> Not an expert here, but from my understanding this is right behavior.
+> IFF_NOARP means "leave" MAC address as is (zero).
+>
+Not really.
+In the example of the VRF, the device does not resolve the ARP itself, but =
+it's the enslaved device which resolves the neighbour.
+Some ip vlan l2 devices do not do arp internally but depends on the bridge/=
+stack to resolve.
 
-After:
-Function    Best Rate MB/s  Avg time     Min time     Max time
-Copy:           34254.9     0.005142     0.004671     0.005995
-Scale:          37735.5     0.004752     0.004240     0.005407
-Add:            44206.8     0.005983     0.005429     0.006461
-Triad:          43040.6     0.006320     0.005576     0.006996
 
-[1] https://github.com/sophgo/sophgo-doc/blob/main/SG2042/TRM/source/pic/mesh.png
+> > This leads to incorrect behavior and may result in packet transmission
+> failures.
+> >
+> > Fix this by deferring MAC resolution to the IP stack via neighbour
+> > lookup, allowing proper resolution or error reporting as appropriate.
+>=20
+> What is the difference here? For IPv4, neighbour lookup is ARP, no?
+It is but it is not the only way. A device may not do ARP by itself but it =
+relies on the rest of the stack like vrf or ip vlan mode to resolve.
+A user may also set manual entry without explicit ARP.
 
-Signed-off-by: Han Gao <rabenda.cn@gmail.com>
----
- arch/riscv/boot/dts/sophgo/sg2042-cpus.dtsi | 64 +++++++++++++++++++++
- arch/riscv/boot/dts/sophgo/sg2042.dtsi      | 20 +++++++
- 2 files changed, 84 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042-cpus.dtsi b/arch/riscv/boot/dts/sophgo/sg2042-cpus.dtsi
-index 77ded5304272..94a4b71acad3 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042-cpus.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042-cpus.dtsi
-@@ -272,6 +272,7 @@ cpu0: cpu@0 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache0>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu0_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -299,6 +300,7 @@ cpu1: cpu@1 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache0>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu1_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -326,6 +328,7 @@ cpu2: cpu@2 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache0>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu2_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -353,6 +356,7 @@ cpu3: cpu@3 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache0>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu3_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -380,6 +384,7 @@ cpu4: cpu@4 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache1>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu4_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -407,6 +412,7 @@ cpu5: cpu@5 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache1>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu5_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -434,6 +440,7 @@ cpu6: cpu@6 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache1>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu6_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -461,6 +468,7 @@ cpu7: cpu@7 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache1>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu7_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -488,6 +496,7 @@ cpu8: cpu@8 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache4>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu8_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -515,6 +524,7 @@ cpu9: cpu@9 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache4>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu9_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -542,6 +552,7 @@ cpu10: cpu@10 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache4>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu10_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -569,6 +580,7 @@ cpu11: cpu@11 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache4>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu11_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -596,6 +608,7 @@ cpu12: cpu@12 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache5>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu12_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -623,6 +636,7 @@ cpu13: cpu@13 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache5>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu13_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -650,6 +664,7 @@ cpu14: cpu@14 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache5>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu14_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -677,6 +692,7 @@ cpu15: cpu@15 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache5>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu15_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -704,6 +720,7 @@ cpu16: cpu@16 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache2>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu16_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -731,6 +748,7 @@ cpu17: cpu@17 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache2>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu17_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -758,6 +776,7 @@ cpu18: cpu@18 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache2>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu18_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -785,6 +804,7 @@ cpu19: cpu@19 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache2>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu19_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -812,6 +832,7 @@ cpu20: cpu@20 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache3>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu20_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -839,6 +860,7 @@ cpu21: cpu@21 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache3>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu21_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -866,6 +888,7 @@ cpu22: cpu@22 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache3>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu22_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -893,6 +916,7 @@ cpu23: cpu@23 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache3>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <0>;
- 
- 			cpu23_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -920,6 +944,7 @@ cpu24: cpu@24 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache6>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu24_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -947,6 +972,7 @@ cpu25: cpu@25 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache6>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu25_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -974,6 +1000,7 @@ cpu26: cpu@26 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache6>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu26_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1001,6 +1028,7 @@ cpu27: cpu@27 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache6>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu27_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1028,6 +1056,7 @@ cpu28: cpu@28 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache7>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu28_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1055,6 +1084,7 @@ cpu29: cpu@29 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache7>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu29_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1082,6 +1112,7 @@ cpu30: cpu@30 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache7>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu30_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1109,6 +1140,7 @@ cpu31: cpu@31 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache7>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <1>;
- 
- 			cpu31_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1136,6 +1168,7 @@ cpu32: cpu@32 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache8>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu32_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1163,6 +1196,7 @@ cpu33: cpu@33 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache8>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu33_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1190,6 +1224,7 @@ cpu34: cpu@34 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache8>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu34_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1217,6 +1252,7 @@ cpu35: cpu@35 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache8>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu35_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1244,6 +1280,7 @@ cpu36: cpu@36 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache9>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu36_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1271,6 +1308,7 @@ cpu37: cpu@37 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache9>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu37_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1298,6 +1336,7 @@ cpu38: cpu@38 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache9>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu38_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1325,6 +1364,7 @@ cpu39: cpu@39 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache9>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu39_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1352,6 +1392,7 @@ cpu40: cpu@40 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache12>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu40_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1379,6 +1420,7 @@ cpu41: cpu@41 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache12>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu41_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1406,6 +1448,7 @@ cpu42: cpu@42 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache12>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu42_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1433,6 +1476,7 @@ cpu43: cpu@43 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache12>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu43_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1460,6 +1504,7 @@ cpu44: cpu@44 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache13>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu44_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1487,6 +1532,7 @@ cpu45: cpu@45 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache13>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu45_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1514,6 +1560,7 @@ cpu46: cpu@46 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache13>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu46_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1541,6 +1588,7 @@ cpu47: cpu@47 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache13>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu47_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1568,6 +1616,7 @@ cpu48: cpu@48 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache10>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu48_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1595,6 +1644,7 @@ cpu49: cpu@49 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache10>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu49_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1622,6 +1672,7 @@ cpu50: cpu@50 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache10>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu50_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1649,6 +1700,7 @@ cpu51: cpu@51 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache10>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu51_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1676,6 +1728,7 @@ cpu52: cpu@52 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache11>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu52_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1703,6 +1756,7 @@ cpu53: cpu@53 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache11>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu53_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1730,6 +1784,7 @@ cpu54: cpu@54 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache11>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu54_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1757,6 +1812,7 @@ cpu55: cpu@55 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache11>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <2>;
- 
- 			cpu55_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1784,6 +1840,7 @@ cpu56: cpu@56 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache14>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu56_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1811,6 +1868,7 @@ cpu57: cpu@57 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache14>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu57_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1838,6 +1896,7 @@ cpu58: cpu@58 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache14>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu58_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1865,6 +1924,7 @@ cpu59: cpu@59 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache14>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu59_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1892,6 +1952,7 @@ cpu60: cpu@60 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache15>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu60_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1919,6 +1980,7 @@ cpu61: cpu@61 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache15>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu61_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1946,6 +2008,7 @@ cpu62: cpu@62 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache15>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu62_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-@@ -1973,6 +2036,7 @@ cpu63: cpu@63 {
- 			d-cache-sets = <512>;
- 			next-level-cache = <&l2_cache15>;
- 			mmu-type = "riscv,sv39";
-+			numa-node-id = <3>;
- 
- 			cpu63_intc: interrupt-controller {
- 				compatible = "riscv,cpu-intc";
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-index b3e4d3c18fdc..029561b6ad81 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-@@ -19,6 +19,26 @@ / {
- 	#size-cells = <2>;
- 	dma-noncoherent;
- 
-+	distance-map {
-+		compatible = "numa-distance-map-v1";
-+		distance-matrix = <0 0 10>,
-+				  <0 1 15>,
-+				  <0 2 25>,
-+				  <0 3 30>,
-+				  <1 0 15>,
-+				  <1 1 10>,
-+				  <1 2 30>,
-+				  <1 3 25>,
-+				  <2 0 25>,
-+				  <2 1 30>,
-+				  <2 2 10>,
-+				  <2 3 15>,
-+				  <3 0 30>,
-+				  <3 1 25>,
-+				  <3 2 15>,
-+				  <3 3 10>;
-+	};
-+
- 	aliases {
- 		serial0 = &uart0;
- 	};
--- 
-2.47.3
-
+>=20
+> >
+> > Fixes: 7025fcd36bd6 ("IB: address translation to map IP toIB addresses
+> > (GIDs)")
+> > Signed-off-by: Parav Pandit <parav@nvidia.com>
+> > Reviewed-by: Vlad Dumitrescu <vdumitrescu@nvidia.com>
+> > Signed-off-by: Edward Srouji <edwards@nvidia.com>
+> > ---
+> >  drivers/infiniband/core/addr.c | 10 +++-------
+> >  1 file changed, 3 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/infiniband/core/addr.c
+> > b/drivers/infiniband/core/addr.c index 594e7ee335f7..ca86c482662f
+> > 100644
+> > --- a/drivers/infiniband/core/addr.c
+> > +++ b/drivers/infiniband/core/addr.c
+> > @@ -454,14 +454,10 @@ static int addr_resolve_neigh(const struct
+> > dst_entry *dst,  {
+> >  	int ret =3D 0;
+> >
+> > -	if (ndev_flags & IFF_LOOPBACK) {
+> > +	if (ndev_flags & IFF_LOOPBACK)
+> >  		memcpy(addr->dst_dev_addr, addr->src_dev_addr,
+> MAX_ADDR_LEN);
+> > -	} else {
+> > -		if (!(ndev_flags & IFF_NOARP)) {
+> > -			/* If the device doesn't do ARP internally */
+> > -			ret =3D fetch_ha(dst, addr, dst_in, seq);
+> > -		}
+> > -	}
+> > +	else
+> > +		ret =3D fetch_ha(dst, addr, dst_in, seq);
+> >  	return ret;
+> >  }
+> >
+> > --
+> > 2.21.3
+> >
 
