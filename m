@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-809674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62B2B51091
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:09:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A916DB5108E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D295A3A79C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:08:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B106C188A881
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A637F310635;
-	Wed, 10 Sep 2025 08:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47040310782;
+	Wed, 10 Sep 2025 08:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WKy+c70t"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GB+oIiUa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7C630DD3B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01E53101B9
 	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491538; cv=none; b=Weqb47nDxrdvQBd37eXIvwdetuAZ4LO5ok7jZvfP4ajc9WN2/LcML3TgHkUauodQpY/waPyirqsRU9eeFz4TqpomGTRyPzfnYJaI8KexBkHFbHCoHLkwfEFtpiptl5TVmkhTL0taS9p3X/m8JZ+h3A8L+wJmJ2od2q83bph49IA=
+	t=1757491540; cv=none; b=G6AjxGS/pZWCgJy3iw/tiv+2Sh+/hv8LhT90Jj1S8q68Y+Q1e64kWbZ70xONwf3jH4A6CQmKSYXCqY0tvESPlH9Rf+HEdU4/v3cSWfJOAnfxQVaZSQP1xTPFv77BgPrpUhN8V4SxddIf2dMD9ZlnUgXW/TdL7wlXMDKq2DUaYds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491538; c=relaxed/simple;
-	bh=ySbA2sA/2khOOpH2bz6CV6pqwbh86FHJpVx+tx+Cv/k=;
+	s=arc-20240116; t=1757491540; c=relaxed/simple;
+	bh=qyPmCnCGxSOramXXx5tP3J4r1BBGqAEwvng/Q8csOWs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XZ2RgdNEMNsqfO7NtLmwSwbVvdJenEaXWTCZXouDfOMgMvh/QRWcbZYlre+3ofsmggHi/rodoRp14dTkf1KoywleCBj2pNa0+wdAN48LYYXjcWm9PoSYPHHw1aJk1Y5N5BvibHUr1Hv4dvf9p26XrMYe7grdunrlCutK/LGbQMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WKy+c70t; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58A7cl0w023096
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:05:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XYaeBpAktxucT5u8cP6K6PPyq3Cmk7hqCqU4GrGeJiQ=; b=WKy+c70tm3Inh/q2
-	E9pT6dbBplwbEmHFziyVUXXyfjA51xiaLojEPOY6oL6CYb3M/kv1bZPDGyr6hqta
-	qU6VNFfrub2z0V2ooxIzAXzJqjfcQ2p1p/IQBq1BuypVa9IA4TSDOlfhX6fyx7Hl
-	kJ/Em4OhN3leMM4g+c43OLItOJW2qqjoNCWm77jAWWQkJ+BAxgya3DbOrwFBrR3t
-	k+xTzWb72X0oXc7d/bHRJ+luiij5EeB7kysruUuzd/nDN6CUMa1BpYyFJLy1O82M
-	9S6MOxlPSrij7bzSoM6yCByp0bbA2mJk29RYYWlIYI4pFu7WN5h6lWKZRx2OSsYF
-	30K6jA==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490dqg2w66-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:05:36 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-32db3d5f20aso1076478a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:05:36 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=VpbLxV6XqkYuTQyx/efD7TR0dgBQkvWGhSaCHMIMmXgrAjBouzwo2B+zcLFqVqzubhQBLoKDzcxtXTk2x/WyC4yZMXRg1/z5Ss6w2DCNKig29SCzvLfLPqkN7bwDlVAGVsxt6HVSZwgo2LXzYM5ayo3BknUExTY5q3S1PFCkrv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GB+oIiUa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757491536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=q7okfE8N/Cj/cxVYYhlDzMPejqxlMfhSTKL9gD+wIBI=;
+	b=GB+oIiUa6udprMz6vh1l3cw6AViQplIcfdBRh4eszV70uFFM2NhbaJzWSFAGBoHeHH7kpP
+	FPrDKISbt/f9ScgVzbuehUKoCFJr/izaATCL5fzbBYUq5TlWdNf+47A/2r4iPhlv3RnB0k
+	koz6eM0+pWDqO/MWsUwKGf2BE57mGwI=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-605-IAVAB3tjNPCQHE3Ie3u5_A-1; Wed, 10 Sep 2025 04:05:35 -0400
+X-MC-Unique: IAVAB3tjNPCQHE3Ie3u5_A-1
+X-Mimecast-MFC-AGG-ID: IAVAB3tjNPCQHE3Ie3u5_A_1757491534
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45decfa5b26so9588605e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:05:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757491536; x=1758096336;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XYaeBpAktxucT5u8cP6K6PPyq3Cmk7hqCqU4GrGeJiQ=;
-        b=WO7J4E0Y2fEThDiSt5NG76jQot2go06qzn6s572YSI4cmcy/uDuO1wJmPuE7e5yp/q
-         8p/M18hvE48m6SVhKuvul6+KmKvsCSzb5p8HJx4d08363RF4HiPfODrL2HEMzR7B8+Vc
-         T8b2PZVKflh0HN/e/PB03a0Q1J0dGQRjdOc9DDVxc26xzRkmBKPUwITy9a7phg7CTMtX
-         GeaMQ1wtaLU3XH/mO9af1+x5W5LDF1vzMSTJFb6G21VzYGPegdy/ep2Ci7AdxPhB086Y
-         /SGu+AgE3Z91GTCgInm+1v19JqifUafq5oZUkRA7VzP4WUlvb00VwBF8Lli4iILsBwgE
-         PPww==
-X-Forwarded-Encrypted: i=1; AJvYcCWRtafLJ/+Wajne3XCIy/Wc9dSQ5T0PXphKtGE9JoNKVPUQnxu4ys8Eu4Rhh+FJXkEIGyfSMDAH4Y/pHPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjQzWFv3OAdMMXxw+IvM02QaeA6iYBPFsMZ3f3PGpwqk0iQ9vj
-	qA+URTog3iGKtRBs1pJwC+aHArF1rKRnpbJJYxBuxQAERyC16n+EG0lCKY9O1K6EjYFg3Xnv5bX
-	ZfQX+omMaSpIzAh4brzqJye4s3Cxx4S1M9nAP7v6ZV8E2sZPVccUPWEdoZ/9zejKgMf0=
-X-Gm-Gg: ASbGncuFExLY92X3yxo9piCoF/GZLwfXc6+CB96J5pu5Ijrt0LbAZ6EIGIwh06DBzqm
-	MbiwlC2aMgCBGeII1DLXpfoySsvT5rf1YMNJr8E9RFdCqCHCVLrqLU8DZiWr1eXTG/iEAJJ7OpV
-	Bswe3QPCiE+hWUTFq/YuqH2j3FOeBqJDESwH0UzmL4XTfXESB6k9Nd3HCFQt/6NMaWjsHHk+GzH
-	l8zl6ZXvna/oB3qHLD8AR6DkJbKp3nIdBOjoZNP9l7l6sqJ3VRBCtz0yKwg7maRSZ4s6tyZJ5ci
-	KGBwsT/Meo5Y+LyXPZlBID2uaqSug53f9/X+aX+X5ghyFz2RhOYMVHkPVW83AxzoX7lhrFwtY2S
-	6dA==
-X-Received: by 2002:a17:90b:2790:b0:32b:95b9:3eb0 with SMTP id 98e67ed59e1d1-32d43dfeba4mr20454141a91.0.1757491535177;
-        Wed, 10 Sep 2025 01:05:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwpBIFx5Xpby4qmNhy57ZfSegfbBowNYPbtWU+5wKfhmtUyGL3qm0r094IiFctzCJY6Z+uaA==
-X-Received: by 2002:a17:90b:2790:b0:32b:95b9:3eb0 with SMTP id 98e67ed59e1d1-32d43dfeba4mr20454097a91.0.1757491534672;
+        d=1e100.net; s=20230601; t=1757491534; x=1758096334;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q7okfE8N/Cj/cxVYYhlDzMPejqxlMfhSTKL9gD+wIBI=;
+        b=be2aMqYsof8jxREnSeN7qoJovANiT8v/aavYYtQlkAClslxC80nWOn+GVxbg7HhfvN
+         p1l6TzccHzCWb19jDT9M5zgeeLls83cnm7dcWrQK8IX4xyNWzqJo9EGMb7j46behqGPP
+         AHAEyZslNTAIn+e9F+IuPQJkoyO8b1EUHg65WaVVvqQx2IpbQOM8kE2yZE1Uv4UfoS94
+         aP31C/Ym8oFx3E1SkjhdPytg91MUDNE4KeWnTsuDbs/+9RbQjaR+w83ElXc9h5ZVvzGh
+         iDZlm+VA6bdS9/zfkX2yJ9W6kvJhVoMrMkxuoo3+FhfXfw+ob0fQvKPxy19yhZfYONgj
+         NPTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+r/J30OikjqBqqgc32L2FNdeX+kdzWlm+HJ7CUGjlR9txcyArzFDZ8+tfSXyxiHmbVsq3zj1XQlzysGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy2utHm+G7ktIO02Wl/l8uyx3wJxtaT66iu88W+ckU9zPc4jfQ
+	DhwrZ4nIwmxQ7jehFwRyqw8uMLy7Kgl7GOLdl6IEh9FBA0/p2QNVXu4IeWi6HLt827/6M5rpW4j
+	qvDxsjMAgApXJzKfdw91w5lASbw5TKWR6fY4jdp+T8teS0JMo+Vb8AmMTVaFvsADzPg==
+X-Gm-Gg: ASbGncsH7lcQz0qks0H5sFmDCeLP5kdlnKpEKEMPo2Y8YiS4cRp4KzzWkgJHFqEFrj9
+	MOcX0+IqPox4N/AGVZB62KMfoxAeTX5LA0mTgewPBtUWnH/VN4Wr8TNGoryuMqIG6+jdVwdlzxP
+	VWk7yM/6R3XKaRydbkZd0UNpFyUJKCH7aV789BEfxNr8XrLOuAkulVN6/AENEI5KzBOkwGVqZr6
+	KDteyTZMxgaXQtRS6QCMvdmHAyK+/ZlPpx54WzUtTRIlex4TMX9uNdCr2x0GKZYthu6SrtDnOtp
+	cu8Rcr5x+/BiEQ893LV1HGa6wzGJ5Qma3k3Rke3LJYrUaI249slmKyKqhO9p5T1nMRX7asGjYxv
+	x+z4dAifIjbx8rbhxb9QHm8Aup0zceMNBc03QSeQ4YqgbmUctwJ7qiZqh7vrzKAlj+aY=
+X-Received: by 2002:a05:6000:1884:b0:3e7:4719:a054 with SMTP id ffacd0b85a97d-3e74719a711mr7904473f8f.7.1757491534118;
         Wed, 10 Sep 2025 01:05:34 -0700 (PDT)
-Received: from [10.92.178.42] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dbb5f3deesm1590684a91.14.2025.09.10.01.05.29
+X-Google-Smtp-Source: AGHT+IFCgDtJldwla+vW4jYusl7xeGy3gWWJkq3a9E5eOUYvmRDk2iXJOXjHFj6oEKlPxtGi0M2hjA==
+X-Received: by 2002:a05:6000:1884:b0:3e7:4719:a054 with SMTP id ffacd0b85a97d-3e74719a711mr7904446f8f.7.1757491533586;
+        Wed, 10 Sep 2025 01:05:33 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f17:9c00:d650:ab5f:74c2:2175? (p200300d82f179c00d650ab5f74c22175.dip0.t-ipconnect.de. [2003:d8:2f17:9c00:d650:ab5f:74c2:2175])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521c9caasm6221141f8f.19.2025.09.10.01.05.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 01:05:34 -0700 (PDT)
-Message-ID: <abc66798-dc91-4860-b0b4-de39a58b5745@oss.qualcomm.com>
-Date: Wed, 10 Sep 2025 13:35:28 +0530
+        Wed, 10 Sep 2025 01:05:33 -0700 (PDT)
+Message-ID: <0b1fb5c2-3d36-4fa4-95b0-02c693933228@redhat.com>
+Date: Wed, 10 Sep 2025 10:05:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,95 +89,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] ASoC: dt-bindings: qcom,sm8250: Add QCS8300 sound
- card
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@oss.qualcomm.com, prasad.kumpatla@oss.qualcomm.com,
-        ajay.nandam@oss.qualcomm.com
-References: <20250905142647.2566951-1-mohammad.rafi.shaik@oss.qualcomm.com>
- <20250905142647.2566951-2-mohammad.rafi.shaik@oss.qualcomm.com>
- <43090acb-ea36-4015-b14f-78d44d789d42@kernel.org>
- <a9507045-b900-49ee-8841-0f8fd30816ba@kernel.org>
+Subject: Re: [PATCH] rv/ltl_monitor: adapt handle_task_newtask to u64
+ clone_flags
+To: schuster.simon@siemens-energy.com, Steven Rostedt <rostedt@goodmis.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Arnd Bergmann <arnd@arndb.de>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+References: <20250904-trace-task-newtask-fix-callbacks-v1-1-8edb3d557365@siemens-energy.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-In-Reply-To: <a9507045-b900-49ee-8841-0f8fd30816ba@kernel.org>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250904-trace-task-newtask-fix-callbacks-v1-1-8edb3d557365@siemens-energy.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 3YLRNvgDkgl_S4KfDO7mWOLIabPcugY8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzNSBTYWx0ZWRfX8qT84N/mw9Tp
- YtDOohHnEh/g37wlO5V9brhg73wnpkFb54ALydVMxZLPkIdfSk+Wami/vNoYffuJXu6rGcLYnRK
- QXbvPPeyIQvSvPQKdVOT1V42ZwTcGX56Ko/iQsHYG4kYmAlsmmtvl3RSVAh77LWFsiFYLAR7ZyH
- j6+jtPFZM1SerovrMX6efv3Ym7YMzk41GOF35lWHwvuKBBRXLSINd1Z23WHAUG1LNkE3Ub6B3Xn
- SUWPu0rEWBdFFrQFiPk7yaw0xfL39nr7a/0QjHaVBdNRgkwSyWiMgAgO8TeoShu2j6llTiCNl8K
- Nl0iX65OP7Y+CTRcH6LxP2Aiaw76inFWQRS85azbtEZ7raxVxmCwZ6c6WVpeiiTfN85M3qIbEuz
- fvjL0ats
-X-Proofpoint-GUID: 3YLRNvgDkgl_S4KfDO7mWOLIabPcugY8
-X-Authority-Analysis: v=2.4 cv=N8UpF39B c=1 sm=1 tr=0 ts=68c13150 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=8rL0g7Y-MTaYnKc9o8EA:9 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_03,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 spamscore=0 malwarescore=0 clxscore=1015 bulkscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060035
 
-
-
-On 9/10/2025 1:09 PM, Krzysztof Kozlowski wrote:
-> On 10/09/2025 09:26, Krzysztof Kozlowski wrote:
->>> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>> index 8ac91625dce5..eebf80c1d79a 100644
->>> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>> @@ -35,6 +35,7 @@ properties:
->>>             - qcom,qcm6490-idp-sndcard
->>>             - qcom,qcs6490-rb3gen2-sndcard
->>>             - qcom,qcs8275-sndcard
->>
->> So what is the point of this compatible? There is no user of it and I
->> think you added QCS8275 for this case exactly...
->>
->> Shall I start reverting commits from Qualcomm because you post patches
->> "just in case" and turns out they are completely not needed? No single
->> user of such code?
+On 04.09.25 13:36, Simon Schuster via B4 Relay wrote:
+> From: Simon Schuster <schuster.simon@siemens-energy.com>
 > 
+> Since commit edd3cb05c00a ("copy_process: pass clone_flags as u64 across
+> calltree") the task_newtask trace event exposes clone_flags as u64 to
+> its callbacks.
 > 
-> @Mark,
+> However, ltl_monitor was not adapted, resulting in a faulty callback.
+> This also resulted in an lkp build warning due to
+> -Wincompatible-pointer-types.
 > 
-> In case it wasn't obvious, please do not merge the patch till we get
-> some clarification. For sure it is wrong one way or another: either
-> incomplete or just duplicated.
+> Fixes: edd3cb05c00a ("copy_process: pass clone_flags as u64 across calltree")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/lkml/20250904113334.18822d43@canb.auug.org.au/
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202509040134.bQVbm7ja-lkp@intel.com/
+> Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
+> ---
+> I did further search for other in-tree users of the task_newtask
+> callback, but the trace macros make it a bit harder. Yet, as far as I
+> could see, there are none, so this patch hopefully resolves the problem
+> for good. The other matches all relate to "tp_btf/task_newtask", which
+> seems to be unaffected.
 > 
+> With this patch, ARCH=S390 allmodconfig -- that originally tripped the
+> LKP builds -- now builds without further -Wincompatible-pointer-types
+> warnings.
+> 
+> Sorry for causing this trouble, and thanks to Stephen Rothwell for
+> testing/reporting.
+> ---
 
-The device tree currently uses qcs8275 as the sound compatible, and
-the corresponding Device tree changes have already been applied and merged.
+Not a stable commit id I think, so it should be squashed into the 
+original one.
 
-Reverting this now would break the ABI.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-A new device tree patch with qcs8300 is currently under review:
+-- 
+Cheers
 
-https://lore.kernel.org/linux-arm-msm/20250910044512.1369640-1-mohammad.rafi.shaik@oss.qualcomm.com/
-
-Once the machine driver and device tree patch with qcs8300 are accepted 
-and merged,
-
-I will promptly submit a cleanup patch to remove of discontinued 
-compatibles from the machine driver.
-
-> Best regards,
-> Krzysztof
+David / dhildenb
 
 
