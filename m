@@ -1,117 +1,93 @@
-Return-Path: <linux-kernel+bounces-810483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021FFB51B4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:19:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5CBB51B40
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60C62444F2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:16:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93784465CEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C422472A5;
-	Wed, 10 Sep 2025 15:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D92831985C;
+	Wed, 10 Sep 2025 15:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RfowFosm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCFm1dAQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647F22417F0;
-	Wed, 10 Sep 2025 15:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5924130CD87;
+	Wed, 10 Sep 2025 15:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757517358; cv=none; b=udoU/ZwEoH5pzhtu56QAAfPe+scbSI7EWGSTMkDyhV+sXfpGzbJBm8bakE1WREH387VBXygFlZmwU/dZ74nKKCnDwUNcRLEsHbOjzG0AH474O/r8PZOA1OLfDlQFSj7FlxR+JvsjVDzfHmaE4C/Wprib5SFt2LTbD0rapUCQiLA=
+	t=1757517296; cv=none; b=BJ7EtfpetUqkIUJHR9+ZXVORFrDrvH6v6A5+eMtlYRg8ypC36wP5N3QC19/fMhjGG3U+a1kaZOcdBeWFHG4dq51jUAznrH4sQ+jNkkelmU7HvNbDVp++w/YlSbGewWy9lY25au9YxP6pItmJ089xAawdGer97ajARrBB+UR1USQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757517358; c=relaxed/simple;
-	bh=3V2RhjkO8Zues0nf8PudCy3D2eUe0xtHPXbYJiuCv58=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ohz5L+oGor35qblBAOevwMFLfxSFFMvXdgeCDVFR9CdQM1t+pbmRxGHYvCimlW8XuAGNw689cWdhGpnMq9AIYU7pBHHbcvnxbF/+jMVBotYfoClkjxu3QxkXYtjfikW5ek1dUlwr7QssFc3pKygs7gVd2CHIx8yxoRAjQsLqyBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RfowFosm; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757517358; x=1789053358;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=3V2RhjkO8Zues0nf8PudCy3D2eUe0xtHPXbYJiuCv58=;
-  b=RfowFosmf8uMJvu2voDGNYAG2WrFweLedE3XgMoqhFP4DOx2hAxuKTYy
-   mEVIDjkaJL8dU+eu5V9R9tWtVgKkeAqOjDDQAqY4TfwHbdVZNl9Y1lrMa
-   xPN6ixSgO3B7UltmwKnDyYCNvz9nqY2G4SKuhGMGLc1JbCd7rLHrW9gEP
-   2jPviJBtRuDRzYMLwbo0f3j4MTXkBAuhHR/JfG58T78+btOez3lk2+Ua4
-   YpvxGKIi+UMIsj1IafKHnYw22GfSsXpCfZCiKGSfuGg8K41Z+gQ+JtFTJ
-   azV3AuJ4gtgfCV8d7OkRHjaznYf62EN2UjrosrR3THK1k18/lHrhY7LGu
-   A==;
-X-CSE-ConnectionGUID: Wyi+6Jp2SI66x1dUk+o67g==
-X-CSE-MsgGUID: fwidlMz3RtO9L8qyj79/xA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="70449459"
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="70449459"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 08:15:57 -0700
-X-CSE-ConnectionGUID: 34v2EslQReK3eKvufQjeSA==
-X-CSE-MsgGUID: cBSYEwz5SAeBrBLDLGfbPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="178624714"
-Received: from baandr0id001.iind.intel.com ([10.66.253.151])
-  by fmviesa004.fm.intel.com with ESMTP; 10 Sep 2025 08:15:54 -0700
-From: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-To: dave@stgolabs.net,
-	paulmck@kernel.org,
-	josh@joshtriplett.org,
-	frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	rostedt@goodmis.org
-Cc: linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org,
-	Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-Subject: [PATCH v2] refperf: Remove redundant kfree() after torture_stop_kthread()
-Date: Wed, 10 Sep 2025 20:44:19 +0530
-Message-Id: <20250910151419.3762048-1-kaushlendra.kumar@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757517296; c=relaxed/simple;
+	bh=2EMvJEZpAwWB3+UuDbsGNKSQvdZmA24xJU7MjldVB2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bIGiSob9S7HJDlhftxakk9eRmLLvKSWOWUezcyASiKdzsQD0w4lGDeWYBwbL26YPzdqgeJujzEki4tIdyf20QJM5zirn19rZZJtTyNWeWhs/iEc5U1TXhskvXLezTA4dLWMRo417T30B20JdHypKJx3u1fi9mh5AD05Jj4H3+vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCFm1dAQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B942DC4CEEB;
+	Wed, 10 Sep 2025 15:14:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757517295;
+	bh=2EMvJEZpAwWB3+UuDbsGNKSQvdZmA24xJU7MjldVB2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WCFm1dAQkMfoZupO9Abjy2cF1PCCIhpEpa1dTU8s4XFG8jM8AODO3ROtAJV3gpwpT
+	 n5QsFlb7329NMT7MrooZpJoTlgMwPEiSy+bfYpzvbXnoCnWu/2hNJYj2hO4pOpLJLg
+	 sfcklF2s4H3oxPa8JGSQ0UHnXYHTnv0LANXzqwa8OLuzttM/bJTlAhfwYpN7NxL9xk
+	 r/ysJaJEN3JeNTfGE7Py1567iIOTUOzFt2Ue+GlRLBcZn2s/sZXlhlCNweTkjDOC0H
+	 lnTTrC298ANwH8nVXNsFryMWlW0rYWrxqCa0pdPDUQExXxxdCd6jKfqHyVt19JiXkU
+	 KHpOyPtrPx5/A==
+Date: Wed, 10 Sep 2025 10:14:52 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Biju <biju.das.au@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/8] dt-bindings: pwm: Document RZ/G3E GPT support
+Message-ID: <175751729205.73392.13919616703987453446.robh@kernel.org>
+References: <20250909091225.128658-1-biju.das.jz@bp.renesas.com>
+ <20250909091225.128658-2-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909091225.128658-2-biju.das.jz@bp.renesas.com>
 
-Remove unnecessary kfree(main_task) call in ref_scale_cleanup() as
-torture_stop_kthread() already handles the memory cleanup for the
-task structure internally.
 
-The additional kfree(main_task) call after torture_stop_kthread()
-is redundant and confusing since torture_stop_kthread() sets the
-pointer to NULL, making this a no-op.
+On Tue, 09 Sep 2025 10:12:11 +0100, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> Document support for the GPT found on the Renesas RZ/G3E (R9A09G047)
+> SoC.
+> 
+> The GPT is a 32-bit timer with 16 hardware channels (GPT0: 8 channel
+> and GPT1: 8channels). The hardware supports simultaneous control of
+> all channels. PWM waveforms can be generated by controlling the
+> up-counter, downcounter, or up- and down-counter.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v1->v2:
+>  * Created separate document for RZ/G3E GPT.
+>  * Updated commit header and description.
+> ---
+>  .../bindings/pwm/renesas,rzg3e-gpt.yaml       | 323 ++++++++++++++++++
+>  1 file changed, 323 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pwm/renesas,rzg3e-gpt.yaml
+> 
 
-This pattern is consistent with other torture test modules where
-torture_stop_kthread() is called without explicit kfree() of the
-task pointer, as the torture framework manages the task lifecycle
-internally.
-
-Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
----
-Changes in v2:
-- Corrected commit message based on review feedback
-
- kernel/rcu/refscale.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-index 2c2648a3ad30..2bfa987f4ba9 100644
---- a/kernel/rcu/refscale.c
-+++ b/kernel/rcu/refscale.c
-@@ -1050,7 +1050,6 @@ ref_scale_cleanup(void)
- 	kfree(reader_tasks);
- 
- 	torture_stop_kthread("main_task", main_task);
--	kfree(main_task);
- 
- 	// Do scale-type-specific cleanup operations.
- 	if (cur_ops->cleanup != NULL)
--- 
-2.34.1
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
