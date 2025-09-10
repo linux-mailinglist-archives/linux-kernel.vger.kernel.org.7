@@ -1,204 +1,174 @@
-Return-Path: <linux-kernel+bounces-810583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00B9B51CA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:58:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B00B51CAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A82BA00ADD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:58:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97BBBA00B28
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E0E32F768;
-	Wed, 10 Sep 2025 15:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85C032F749;
+	Wed, 10 Sep 2025 15:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kwqaTM5U";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hxg22QqU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kwqaTM5U";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hxg22QqU"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wae7y6si"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E344032A80C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D2632CF7F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757519878; cv=none; b=VbPMCgL/DcyPJPJfv5TKa5j858B6mKCcK2HJ5ZBUdSWyUkR0g2qfMHyzdTmk+WbL812VrZqt+4c8KFTUgpFYz4oAFCssqz/ao7TfDuFH2jZiPcohvkL5EpHYbXX6D2jh+EjeFfyYxLZYESsIsZw1Tu7A4fDeNCs71L7oRn2Z/c4=
+	t=1757519892; cv=none; b=uq6zfrN0GI+YmMmAOvlGWcV108Z2rfwEdkzH63sVpbML/tNLFu5Q0WUA6989cFxgb93DsF/cO8YXsQUDYQUoUPsbeGdxSrQE3edC5eGDpwSqDgyIp3+R3nOHk1xUnx7YMkynZ+bBidVtm6ICqhLC7DBOE26QwkqZEeTL6UaTwFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757519878; c=relaxed/simple;
-	bh=IZrlqx9uORVSUnEosnx1YE8IuMJeJrHVMPuj5iwzZP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l3fNsRqw4nO+wO316z1LSxucJ4J4SR+z2GNroa6JN+Ka7AirebrIokinKREW4V0fodfvbeJaeQ96KiMl6iNBxqFA1kHI7hmBAqdju5OU0GqCrd7UYYK0UHeyfZaNgBP5XtDgvD5tXdZ3APIRNZqw8hMlmjWBIVz24xaxPzvHFRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kwqaTM5U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hxg22QqU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kwqaTM5U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hxg22QqU; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1BB023872D;
-	Wed, 10 Sep 2025 15:57:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757519873; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yk0aHG6hS8MMs//QobyIp7FNFZW5FT9Bx3ocfWppQgU=;
-	b=kwqaTM5UV3amr8dsrDooVR0G3qTbXf7wgp5Lt5wOzJto8cHUjMjRFkXXkjPPTGD2WUA1Yu
-	tT5yVR9xdmChHdNfaB67fNWSb9ArmkwKcHL2Hoc4C6Yw4QbUTQA1ZOWStui6+CN7+D2dEx
-	ifCN6AbAt3zPZ1pYXim+4W35Nl/6Pwo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757519873;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yk0aHG6hS8MMs//QobyIp7FNFZW5FT9Bx3ocfWppQgU=;
-	b=hxg22QqUPBIk17+zwN3Ur+4h14Hd65V2KNnA8gVlry0Uos2QXIJRMSPsLywl3HYBOwnMSl
-	5Xd2z+RfzqvA74Ag==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757519873; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yk0aHG6hS8MMs//QobyIp7FNFZW5FT9Bx3ocfWppQgU=;
-	b=kwqaTM5UV3amr8dsrDooVR0G3qTbXf7wgp5Lt5wOzJto8cHUjMjRFkXXkjPPTGD2WUA1Yu
-	tT5yVR9xdmChHdNfaB67fNWSb9ArmkwKcHL2Hoc4C6Yw4QbUTQA1ZOWStui6+CN7+D2dEx
-	ifCN6AbAt3zPZ1pYXim+4W35Nl/6Pwo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757519873;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yk0aHG6hS8MMs//QobyIp7FNFZW5FT9Bx3ocfWppQgU=;
-	b=hxg22QqUPBIk17+zwN3Ur+4h14Hd65V2KNnA8gVlry0Uos2QXIJRMSPsLywl3HYBOwnMSl
-	5Xd2z+RfzqvA74Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0980B13310;
-	Wed, 10 Sep 2025 15:57:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 92dRAgGgwWhiQAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 10 Sep 2025 15:57:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 9F15CA0A2D; Wed, 10 Sep 2025 17:57:52 +0200 (CEST)
-Date: Wed, 10 Sep 2025 17:57:52 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 14/32] net: use ns_common_init()
-Message-ID: <vgfnpdvwiji7bbg7yb5fbymp6f6q5f66rywkjyrxtdejdgoi37@ghpon5czjtkm>
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-14-4dd56e7359d8@kernel.org>
+	s=arc-20240116; t=1757519892; c=relaxed/simple;
+	bh=0OXy0pIlk1rrTtpMa3bUiDD9A6fnxy7GK4ztvEBXy6E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VyKs+qrPR4FRvi6yssn4ZVJULomEXdVKXpuJWMmRMHagjz7Lp/VseLdReJ7nbNsq8S2gJ2GhkMZMtJOoRIpElH2urM3DBQFJbJYFyMThI7ikOnzcse5IRxGps57TLB44f17UaZtKiWCjdTNXJsplZ/cnu0sEsNFjhS3+BdShhuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wae7y6si; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3dae49b1293so3593674f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:58:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757519889; x=1758124689; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aJ6CTb9QgukTBV6bS9gxx7JwKyJl+T8wYIdJWg2p/8g=;
+        b=wae7y6si1VBXkptU5+3lrvpOAFWKnRnsgnzI9bC7CTWms/wbYzebfs0OGaId6vbFM2
+         Genj9Nv5rFGhBfJqA9KPOWAgWDlHdl5YD7AY6YGpnVe817DqJlJ88u5YdtAnkQCJepQ7
+         dLDJqinLSS+tUBU8oL/kBomRV7caxRJ0H6QQSnZPpKK7lDZFHB9M3e3GY1TVs2je6PJn
+         a1SikCox5MKCnd6giCjcwFkyxCzqgVwksqH80/B8t2Jh+Lrnxcp9SgAKxx+48ycw062V
+         pUHEYRkiNwbE4mNIPoGnJS/jRxTGV+ysXKD9ym+GO9nrwtquYuOMxEsIDeW5QAGshyzy
+         PbEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757519889; x=1758124689;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aJ6CTb9QgukTBV6bS9gxx7JwKyJl+T8wYIdJWg2p/8g=;
+        b=MuUqSe4Ew1pXCnRXhvEzUqtMBCkFpamf1Sk6DnPHAkiUHnpDZGXuCsFuudYM0ENPhz
+         dKAjbRniqg3qlh0/UlUi6MQru7nLUnS6PMUsHS31ijoLw01N2kwgUp7/pm0QRAjE48Ew
+         dB2CMnYC9kh/cc7YMHo2fcapWWQ30+sgEGWrJGCbNaqsm75t48psHh3vQtBTomCpEQnq
+         eM0tdwchCb9Gaj3N0iZPfyjr1KSNej+jqqnXFxvfLxcMoyDf6T/zc6bS6hnekVgJgrtI
+         DVKGl9atfiEVjloPtaVk4dCJbOJ3HuYvHz1Ky1nKYZjW4blJzFB1kDZ792if60ISilGM
+         UASA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzvDtEeM6w691B8D1Pwcj7C1mL99fnZk77w5tmrFScLCWvzFAw2u9a+/X+0YqED9duV1q1PaHnFcD4MdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu2g6yPAKeprG1pb9Fy5scMbVjAEk6qmILVXwNIs2jA5B3VOT7
+	dgC/LijsRjUMRMk+nM6E/M2vUeIEFbJzQ2bUSX0Wj1s3/bUjD4/u49xEaUbdE+XcCPE=
+X-Gm-Gg: ASbGncvFqNZeEenOlp0oSWCwbh8rSBX7AM90wPcI6bqiq6Cw6rum+es6YQyU4gFIgWs
+	BP/AWjTy8DJXT64mrhVdXjl6i3iVEAFPdNYwb7oqaUTWQ2MNQ1WvGEAVa+/QNRjjiy7WB+dSGu2
+	SzdgwSq5F2GwBmns+ij3CV5FfgzAfIVtWzLW4YfU1tuWzg8+YlC6kSD4gSiTimKVizBpXBgzV6B
+	2uyUeddwvHzELAVmr2nXS+nBLejli3h98j2pR48qzUeTnj9ZwvHDk88LEsC9obB3YKetc5liXUw
+	ZdVU0E3Xh0cEOEr8O/FfPW471ZaBPdGsIIHUY3hRWZZmLVjGB/4x8vdbU3A/yCGvgyvYnIXlGwm
+	NEJnJYY6NScC/eiMQGO+eB6tRd4B1kKrSaEDNqXMpBIQ=
+X-Google-Smtp-Source: AGHT+IGxtk8aUU60lUW/tWlArM0SdaxDZo6GGAqsTWAWeM6Yie0aGFijwOZEXm4dntS9JpH0TcFNHA==
+X-Received: by 2002:a05:6000:24c1:b0:3e2:ac0:8c55 with SMTP id ffacd0b85a97d-3e643c1a48cmr13871860f8f.55.1757519889267;
+        Wed, 10 Sep 2025 08:58:09 -0700 (PDT)
+Received: from mai.box.freepro.com ([2a05:6e02:1041:c10:9717:723a:79cf:4f4a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75223ea3csm7490325f8f.49.2025.09.10.08.58.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 08:58:08 -0700 (PDT)
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	krzk+dt@kernel.org
+Cc: linux-iio@vger.kernel.org,
+	s32@nxp.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	chester62515@gmail.com,
+	mbrugger@suse.com,
+	ghennadi.procopciuc@oss.nxp.com
+Subject: [PATCH v2 0/2] NXP SAR ADC IIO driver for s32g2/3 platforms
+Date: Wed, 10 Sep 2025 17:57:54 +0200
+Message-ID: <20250910155759.75380-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910-work-namespace-v1-14-4dd56e7359d8@kernel.org>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLbyy5b47ky7xssyr143sji8pp)];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.30
+Content-Transfer-Encoding: 8bit
 
-On Wed 10-09-25 16:36:59, Christian Brauner wrote:
-> Don't cargo-cult the same thing over and over.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+The S32G2 and S32G3 platforms have a couple of successive
+approximation register (SAR) ADCs with eight channels and 12-bit
+resolution. These changes provide the driver support for these ADCs
+and the bindings describing them.
 
-One comment below.
+The driver is derived from the BSP driver version. It has been partly
+rewritten to conform to upstream criteria.
 
-> @@ -812,17 +828,14 @@ static void net_ns_net_debugfs(struct net *net)
->  
->  static __net_init int net_ns_net_init(struct net *net)
->  {
-> -#ifdef CONFIG_NET_NS
-> -	net->ns.ops = &netns_operations;
-> -#endif
-> -	net->ns.inum = PROC_NET_INIT_INO;
-> -	if (net != &init_net) {
-> -		int ret = ns_alloc_inum(&net->ns);
-> -		if (ret)
-> -			return ret;
-> -	}
-> +	int ret = 0;
-> +
-> +	if (net == &init_net)
-> +		net->ns.inum = PROC_NET_INIT_INO;
-> +	else
-> +		ret = proc_alloc_inum(&to_ns_common(net)->inum);
->  	net_ns_net_debugfs(net);
+https://github.com/nxp-auto-linux/linux/blob/release/bsp44.0-6.6.85-rt/drivers/iio/adc/s32cc_adc.c
 
-Here you're calling net_ns_net_debugfs() even if proc_alloc_inum() failed
-which looks like a bug to me...
+After the V1 posting there were some discussions around the DMA code
+to be converted to use the IIO DMA API [1]. Unfortunately this one is
+not yet fully implemented and merged in the framework to support the
+cyclic DMA. The current DMA code in the driver has been used in
+production since several years and even if I agree it can be improved
+with a dedicated IIO DMA API in the future, IMO, it sounds reasonable
+to keep it as is until the IIO DMA API supporting the cyclic DMA is
+merged. I'll be glad to convert the driver code if such an API exists
+and allows to remove code inside the driver.
 
-								Honza
+[1] https://lore.kernel.org/all/c30bb4b6328d15a9c213c0fa64b909035dc7bf40.camel@gmail.com/
 
-> -	return 0;
-> +	return ret;
->  }
->  
->  static __net_exit void net_ns_net_exit(struct net *net)
-> @@ -1282,7 +1295,12 @@ void __init net_ns_init(void)
->  #ifdef CONFIG_KEYS
->  	init_net.key_domain = &init_net_key_domain;
->  #endif
-> -	preinit_net(&init_net, &init_user_ns);
-> +	/*
-> +	 * This currently cannot fail as the initial network namespace
-> +	 * has a static inode number.
-> +	 */
-> +	if (preinit_net(&init_net, &init_user_ns))
-> +		panic("Could not preinitialize the initial network namespace");
->  
->  	down_write(&pernet_ops_rwsem);
->  	if (setup_net(&init_net))
-> 
-> -- 
-> 2.47.3
-> 
+Changelog:
+	* V2:
+	  - Massaged the cover letter changelog to explain the DMA
+	  ** Andriy Shevchenko **
+	  - Added missing headers and use proper header for of.h
+	  - Changed macro offset zero to be consistent
+	  - Remove macros REG_ADC_MCR_NRSMPL_* as they are unused
+	  - Changed delays macro under the form 100000 => 100 * USEC_PER_MSEC
+	  - Replaced PAGE_SIZE by a NXP_PAGE_SIZE = SZ_4K macro
+	  - Replaced read_poll_timeout() by readl_poll_timeout()
+	  - Changed error pattern "error first"
+	  - Replaced variable type 'int' to 'unsigned int'
+	  - Fixed bug right instead of left shift, use BIT(channel)
+	  - Returned directly from switch-case
+	  - Used guard(spinlock_irqsave)()
+	  - One liner function call
+	  - Remove redundant {}
+	  - Write default values litterals instead of temporary variables
+	  - Changed variable name vref -> vref_mV
+	  - Removed unneeded error message
+	  - Used dev_err_probe() consistently
+	  - Removed successful driver probe message
+	  - Removed redundant blank line
+
+	  ** Nuno Sa **
+	  - Replaced of_device_get_match_data() by device_get_match_data()
+	  - Removed iio_device_unregister() because devm_iio_device_register() is used
+	  - Removed "/* sentinel */" comment
+	  - Removed CONFIG_PM_SLEEP defiries
+
+	  ** Krzysztof Kozlowski / David Lechner **
+	  - Removed clock-names in DT bindings
+	  - Fixed minItems by maxItems
+
+	* V1:
+	  - Initial post
+
+Daniel Lezcano (2):
+  dt-bindings: iio: adc: Add the NXP SAR ADC for s32g2/3 platforms
+  iio: adc: Add the NXP SAR ADC support for the s32g2/3 platforms
+
+ .../bindings/iio/adc/nxp,s32g2-sar-adc.yaml   |   63 +
+ drivers/iio/adc/Kconfig                       |   13 +
+ drivers/iio/adc/Makefile                      |    1 +
+ drivers/iio/adc/nxp-sar-adc.c                 | 1026 +++++++++++++++++
+ 4 files changed, 1103 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/nxp,s32g2-sar-adc.yaml
+ create mode 100644 drivers/iio/adc/nxp-sar-adc.c
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
 
