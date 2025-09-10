@@ -1,233 +1,192 @@
-Return-Path: <linux-kernel+bounces-810740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0446FB51EAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23DBDB51EB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 170347B47FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:13:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6AEC7B582C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D242305077;
-	Wed, 10 Sep 2025 17:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE6B22422A;
+	Wed, 10 Sep 2025 17:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oQSndI/b"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2055.outbound.protection.outlook.com [40.107.236.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rt4H8NEG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83288329F0B;
-	Wed, 10 Sep 2025 17:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757524478; cv=fail; b=T8DeM2WITGbNe+K5AzsjDiMjCAdS85ul1KePCUV/X1xnptOhIpM1e/+3jS+Rvr8oSOMishXsa78XGyzbMfhSvOAfmLCsh4J8ys+tLY6TVIq1jXRESHmOMh5ANX8WVmYQBFqUOKLBGjb1/FcvUdmx0uJi2lbStv+QV3ec2mLsmRA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757524478; c=relaxed/simple;
-	bh=eo1gOvc3N98bAaeAHa9YLPZ/YUa1XTBHgJzNR8TWLJE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uKOltdkJSWLNwvgd7oPUYXPXsYZugOrNsaTQfJEiATxesKjrvtBE6Q/m2MmAV5j/vasZ4kNstFGoXC60ICsIQJJNpLtALrjH+6+zQss9Okg7UfFZBfAbTyHvBJ4EG0Eq53e0cEzy3YIYNBHMemUbDT4HJseaWY+85qoJwMFqnoA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oQSndI/b; arc=fail smtp.client-ip=40.107.236.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wQma+jVf+W0LCVEoLRZG+kU98P6EivAHxYUnYFjoDFM6QeZ964uAghdzsPTZNhSju4do2oiP+MSFhG+w0nvCgjlWChGjWf2fXB/0h/yHrtv1VGbtj1Qxt8Gjh9b2Hid871P2WhimvvpWVHmBQEckNhHQr7fDlQrDInJvhlZFHcB9IsjQsxLoYW/VMMD2MdoeE9OYNmi6XJ3YN/OqPi7man9zHKPkbGlA4F2p6qjoiRJ2mXtH/ti/50bdUsaglZWzkTtHWwWofb8wktyZ9Np0LAlnHYWBKraLbsXr8cxgquMgD7H8QStgKfTZGxbpxabMfUalRwj5kcaYXuo1REebiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m/WHqlEieSdAEidT1vQbjDvj4mrx3eeRaciDspbJTkQ=;
- b=M56cM/7BbY9kqKXwYTSC/E6Tr7YtTLetVDUZQv79PZ4qwzl5fi8OHYPmio6E+DjHf1RK+h8ZOquNzT9M+D86H77hsc/kJsUV33QO1zbWYxVyYwWGdw3VCzueaWifvXxmmGB/JTJh92V7JFgVmKl+9JI3r6JEhwTVvr7jA+l71e8qbGOSKT6BTC3658HRJc4xgmMRnaevI/LJrGi5M1C/RKKhkdNTARmuo24src6EHN92ePAuIftiUCFCq333aYi5okj/wkPT9nSrR6R8cN1QdnNau7+NXbPd8hbCD7Q+uFo4oBn6BCzL1HIjBswg0phvnQT1xEehlMzEX43gu33fKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m/WHqlEieSdAEidT1vQbjDvj4mrx3eeRaciDspbJTkQ=;
- b=oQSndI/btxMzLsMrFFTMX+dAdpE5k7ilpCBXcNO81JlQWtHpuGjNl62JuKygWVpGM6L4Zhbk8sVp4ySXa8fekjEAe9vebRZk8/fLIfyH2ryAwriONP6kwSLvfVjEsq/B04nf7M1tevMzLMBNBokffMWyRneao15mHkW7ITeMBJo=
-Received: from DM6PR01CA0008.prod.exchangelabs.com (2603:10b6:5:296::13) by
- PH8PR12MB6891.namprd12.prod.outlook.com (2603:10b6:510:1cb::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 17:14:32 +0000
-Received: from CY4PEPF0000EE3C.namprd03.prod.outlook.com
- (2603:10b6:5:296:cafe::2b) by DM6PR01CA0008.outlook.office365.com
- (2603:10b6:5:296::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Wed,
- 10 Sep 2025 17:14:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CY4PEPF0000EE3C.mail.protection.outlook.com (10.167.242.13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Wed, 10 Sep 2025 17:14:31 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 10 Sep
- 2025 10:14:30 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 10 Sep
- 2025 10:14:30 -0700
-Received: from r9-mach.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Wed, 10 Sep 2025 10:14:25 -0700
-From: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
-To: <broonie@kernel.org>, <alsa-devel@alsa-project.org>
-CC: <Vijendar.Mukunda@amd.com>, <Basavaraj.Hiregoudar@amd.com>,
-	<Sunil-kumar.Dommati@amd.com>, <syed.sabakareem@amd.com>, "Venkata Prasad
- Potturu" <venkataprasad.potturu@amd.com>, Liam Girdwood
-	<lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>, Greg KH <gregkh@linuxfoundation.org>, Ranjani Sridharan
-	<ranjani.sridharan@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>,
-	Peter Zijlstra <peterz@infradead.org>, "open list:SOUND - SOC LAYER / DYNAMIC
- AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] ASoC: amd: acp: Fix incorrect retrival of acp_chip_info
-Date: Wed, 10 Sep 2025 22:43:59 +0530
-Message-ID: <20250910171419.3682468-1-venkataprasad.potturu@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94405314B89;
+	Wed, 10 Sep 2025 17:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757524514; cv=none; b=ThlsdLPK0JGcWkZ9YhBrOTVYMPLToyhH02cJP6eM5eHsOO7c9p9zVZDGrn37Ibl1dR25SFqS+oFz4JgLuZQceVbvN7sggXi8Yu1TDi+t+t40nvpPKjjEMbZBEd10mnPq+gHFoPJS91FkvdG/ctBLKbtRuwB1TXHLKJIrdkzcrcE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757524514; c=relaxed/simple;
+	bh=GSzpQXrVsGOkg9n0qjibU8nmSrVRvwep/b24SJElML0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=moDuRP8n8W1Zo4Ueygsh50FxvKNRBaSi06ERRWegVA36E9Sty6vGV3bsC6I4E0Px2P1V0bt9NhGRv9rXnmN4c8d4ECAXudsJ9QtJuouyr6kV45p8Vcdi6nd7Ne+VAjGI2IZ9tPgF2kvkPtwsLDIFwcxLaWPSakYFTAjkS9ug94g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rt4H8NEG; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757524511; x=1789060511;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=GSzpQXrVsGOkg9n0qjibU8nmSrVRvwep/b24SJElML0=;
+  b=Rt4H8NEGRTmLF2Lv7vX7giFJ4TAcydUiyGKKq0286mG9k16yJZm1wCqC
+   yThkn1sZq7C4VDRq4G199yAId+cyUyWxWq720cAZvSspMALUeQdDkcFps
+   7yJrnihPobuIe2fVHs+o6A6v/zNeUOP4O2tDus2jIY/UNRMVRHZx5VSUm
+   m9fAUotDQDMVQhOeulXWdeDEnm8mBgiBzgPxTx2n4BaZKlZV9rUeruAkk
+   P6ecuECKy0HMWigZX6p/dZlg1Ih3jnHJ0CkHe1cleBQ21UoGKWn0H8WyR
+   eHQQ2yxvAesJj5aUU7hC6qfpM/w6njT++mIJbhY6vS7znYKE7s/NliCM4
+   w==;
+X-CSE-ConnectionGUID: zr9FqOkmQ4ezvIReYoBdJw==
+X-CSE-MsgGUID: cGe9EZ6KQ0C7QBG4UwPoVA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="85288843"
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="85288843"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 10:15:10 -0700
+X-CSE-ConnectionGUID: nNE5Qo01SxGRSP+zTcxmuQ==
+X-CSE-MsgGUID: q8OXQ+HCTaiG0w0DZwOrAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="177480945"
+Received: from spandruv-desk.jf.intel.com ([10.54.55.20])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 10:15:10 -0700
+Message-ID: <dda1d8d23407623c99e2f22e60ada1872bca98fe.camel@linux.intel.com>
+Subject: Re: [REGRESSION] Intel Turbo Boost stuck disabled on some Clevo
+ machines (was: [PATCH] cpufreq: intel_pstate: Unchecked MSR aceess in
+ legacy mode)
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Aaron Rainbolt <arainbolt@kfocus.org>, "Rafael J. Wysocki"
+	 <rafael@kernel.org>
+Cc: viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, mmikowski@kfocus.org
+Date: Wed, 10 Sep 2025 10:15:00 -0700
+In-Reply-To: <20250910113650.54eafc2b@kf-m2g5>
+References: <20250429210711.255185-1-srinivas.pandruvada@linux.intel.com>
+		<CAJZ5v0h99RFF26qAnJf07LS0t-6ATm9c2zrQVzdi96x3FAPXQg@mail.gmail.com>
+	 <20250910113650.54eafc2b@kf-m2g5>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3C:EE_|PH8PR12MB6891:EE_
-X-MS-Office365-Filtering-Correlation-Id: 643eae52-6160-41be-73ec-08ddf08d81b4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7V9qS1xvN/pOs1sqyWUcVeON6DLViixYDxOKM0p6Em7CNy8YV0hy/RAUjoPN?=
- =?us-ascii?Q?XgJk3gR/G9xS6t68qXKVPUd+ssPpQ38dBDDnqVUvd8OAKlKxifkdTWpLoRpA?=
- =?us-ascii?Q?+6UTF2XpCkyBxRMkKFK4IxamFJhPToL0LxLYDxR/qzYTL3fKlTffOX5S7oUt?=
- =?us-ascii?Q?F1rveQSQFMkcyznUeHiJzDb4QjfeQI0Yj1Te+PBljQvDUWFPNnkrUOoijUwy?=
- =?us-ascii?Q?YHuQxm+Wt39U3pcUK0odpOTkNlR21ssgC9K82Ep4n7tEf80C8UrzHvKgSmS+?=
- =?us-ascii?Q?xFremJH5Q0oPbBCBFhNtNWiyAqvlhCMxVtsTOFYEMi1XahdmiLitGDNv9ZrN?=
- =?us-ascii?Q?+sA0wIb7wq17g3UpAuMCAJPp71apPu51uzj3VuYRNuswwelLJ1pASInzcCXK?=
- =?us-ascii?Q?sNCpilXBIO/IKhaxqxTna69fA0oIQN7Dk8THe2BMhv46/2zg3/htqWFNVlw6?=
- =?us-ascii?Q?ufAuIZYgI2CdT3pp5ZMVxrZEHV0IXDJX8UujLLyp8V14VXDMNzItmYAI+kaq?=
- =?us-ascii?Q?sjCcgMU0EdRswIor7XDx7PAAbCAhbcysC3sS7LgJADDH75JMdNcUwlFAP43l?=
- =?us-ascii?Q?JOFbbQKvYqHN3eUMAaMGaLe3QRPz4E/04wZh2ABQwqQuFHZrVqbxNcrmW4nM?=
- =?us-ascii?Q?S+D0koeLBC9ZZsT3HZmG03JVn081W2vM6m6qJQS/Ac1+1fvpd96efXL0BBrZ?=
- =?us-ascii?Q?Gs44ga9kHK0UJLiCqw+xdPdnSh5dWMi3FlTO7Fq9SePZVRXQZO0FkWteNjQW?=
- =?us-ascii?Q?NEnz/5hzKLkzwCUndgdW8QkPi3ogJB0zcGx+Tm8auxPVbzqQQukmEtnv81Nn?=
- =?us-ascii?Q?0TgXSJmcsQkY27WxMZnzTwWsZhiDeYM8RQAv7jZaXw2QtQimbeUPJHaYf6p1?=
- =?us-ascii?Q?+Do6bdQCkGLn17AUW0C7Np3KoETyPVMsOj4cEgMySNI+p02BZPSrj1e3Qs3x?=
- =?us-ascii?Q?4zN8v5J+QiiPREpQhpubEs4vswVueubWEj2l2zPBch3MiyIYPUTTI6PXGXnm?=
- =?us-ascii?Q?akx7nCMnfWbWScGaDGnr8CtJsvp06puAouWAQckJYkhPe6V9XRfCZaSb6mew?=
- =?us-ascii?Q?UgcYqDA4Kp1I7Fi1is4rhxiV38d9OZ/iTbVBYoHcJNx5qvC49TK7h5Frrm+0?=
- =?us-ascii?Q?zLMVxWZrCXe2HNz4DGP/DMWwfdWwGprBYCp1VV2UTF6hMvZjtSKreIp93LhB?=
- =?us-ascii?Q?P9+IvLRy3u/ulX/qy0pydgvRZ9gvRUCMjaDyGXYILxsDedpFxhWbixN25R8D?=
- =?us-ascii?Q?wXdB21gtEnfnyqQj2qcSnvY9SuKqQQX1FI5xoztq4WakD0tl3sDkRWEbxn9G?=
- =?us-ascii?Q?6YEN900GB+7oU/t5M6hnIKVRAdxQLpOkp0/8funG113MqohTt/FjFH5iLkhK?=
- =?us-ascii?Q?MsopzM4gZdGb2E+MFWu3rAn/8YfjPE4DtLn3QBnzxNSlgjrikM+T2ImG58Tx?=
- =?us-ascii?Q?gQpNvS5/JyLuRgvwDAbDwY/vdFRO/ihyHX32szAHNE4d2ub2arzF71IIkKBP?=
- =?us-ascii?Q?nb/1hNPJEWb19wk4dlhlGihApLqST8PlbNN1?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 17:14:31.2735
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 643eae52-6160-41be-73ec-08ddf08d81b4
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE3C.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6891
 
-Use dev_get_drvdata(dev->parent) instead of dev_get_platdata(dev)
-to correctly obtain acp_chip_info members in the acp I2S driver.
-Previously, some members were not updated properly due to incorrect
-data access, which could potentially lead to null pointer
-dereferences.
+On Wed, 2025-09-10 at 11:36 -0500, Aaron Rainbolt wrote:
+> On Wed, 30 Apr 2025 16:29:09 +0200
+> "Rafael J. Wysocki" <rafael@kernel.org> wrote:
+>=20
+> > On Tue, Apr 29, 2025 at 11:07=E2=80=AFPM Srinivas Pandruvada
+> > <srinivas.pandruvada@linux.intel.com> wrote:
+> > >=20
+> > > When turbo mode is unavailable on a Skylake-X system, executing
+> > > the
+> > > command:
+> > > "echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo"
+> > > results in an unchecked MSR access error: WRMSR to 0x199
+> > > (attempted to write 0x0000000100001300).
+> > >=20
+> > > This issue was reproduced on an OEM (Original Equipment
+> > > Manufacturer) system and is not a common problem across all
+> > > Skylake-X systems.
+> > >=20
+> > > This error occurs because the MSR 0x199 Turbo Engage Bit (bit 32)
+> > > is set when turbo mode is disabled. The issue arises when
+> > > intel_pstate fails to detect that turbo mode is disabled. Here
+> > > intel_pstate relies on MSR_IA32_MISC_ENABLE bit 38 to determine
+> > > the
+> > > status of turbo mode. However, on this system, bit 38 is not set
+> > > even when turbo mode is disabled.
+> > >=20
+> > > According to the Intel Software Developer's Manual (SDM), the
+> > > BIOS
+> > > sets this bit during platform initialization to enable or disable
+> > > opportunistic processor performance operations. Logically, this
+> > > bit
+> > > should be set in such cases. However, the SDM also specifies that
+> > > "OS and applications must use CPUID leaf 06H to detect processors
+> > > with opportunistic processor performance operations enabled."
+> > >=20
+> > > Therefore, in addition to checking MSR_IA32_MISC_ENABLE bit 38,
+> > > verify that CPUID.06H:EAX[1] is 0 to accurately determine if
+> > > turbo
+> > > mode is disabled.
+> > >=20
+> > > Fixes: 4521e1a0ce17 ("cpufreq: intel_pstate: Reflect current
+> > > no_turbo state correctly") Signed-off-by: Srinivas Pandruvada
+> > > <srinivas.pandruvada@linux.intel.com> Cc: stable@vger.kernel.org
+> > > ---
+> > > =C2=A0drivers/cpufreq/intel_pstate.c | 3 +++
+> > > =C2=A01 file changed, 3 insertions(+)
+> > >=20
+> > > diff --git a/drivers/cpufreq/intel_pstate.c
+> > > b/drivers/cpufreq/intel_pstate.c index f41ed0b9e610..ba9bf06f1c77
+> > > 100644 --- a/drivers/cpufreq/intel_pstate.c
+> > > +++ b/drivers/cpufreq/intel_pstate.c
+> > > @@ -598,6 +598,9 @@ static bool turbo_is_disabled(void)
+> > > =C2=A0{
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u64 misc_en;
+> > >=20
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!cpu_feature_enabled(X86_FE=
+ATURE_IDA))
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return true;
+> > > +
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rdmsrl(MSR_IA32_MISC_ENABL=
+E, misc_en);
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return !!(misc_en & MSR_IA=
+32_MISC_ENABLE_TURBO_DISABLE);
+> > > --=C2=A0=20
+> >=20
+> > Applied as a fix for 6.15-rc, thanks!
+> >=20
+>=20
+> FYI, this seems to have broken turbo boost on some Clevo systems with
+> an Intel Core i9-14900HX CPU. These CPUs obviously support turbo
+> boost,
+> and kernels without this commit have turbo boost working properly,
+> but
+> after this commit turbo boost is stuck disabled and cannot be
+> enabled by writing to /sys/devices/system/cpu/intel_pstate/no_turbo.
+> I
+> made a bug report about this against Ubuntu's kernel at [1], which is
+> the only report I know that is able to point to this commit as having
+> broken things. However, it looks like an Arch Linux user [2] and a
+> Gentoo user [3] are running into the same thing.
+>=20
 
-This issue was missed in the earlier commit
-("ASoC: amd: acp: Fix NULL pointer deref in acp_i2s_set_tdm_slot"),
-which only addressed set_tdm_slot(). This change ensures that all
-relevant functions correctly retrieve acp_chip_info, preventing
-further null pointer dereference issues.
+As the bug report suggested, the system boots with no turbo, it must be
+forcefully turned ON by writing to this attribute.
+I wonder if there is a BIOS option to turn ON turbo on this system?
 
-Fixes: e3933683b25e ("ASoC: amd: acp: Remove redundant acp_dev_data structure")
+This processor itself is capable of up to 5.8 GHz turbo.
 
-Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
 
----
+I will try to find contact at Clevo.
 
-Changes since v1:
-- Update the commit description.
+We can try to reduce scope of this change to non HWP only where there
+is unchecked MSR issue.
 
- sound/soc/amd/acp/acp-i2s.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Thanks,
+Srinivas
 
-diff --git a/sound/soc/amd/acp/acp-i2s.c b/sound/soc/amd/acp/acp-i2s.c
-index 617690362ad7..4ba0a66981ea 100644
---- a/sound/soc/amd/acp/acp-i2s.c
-+++ b/sound/soc/amd/acp/acp-i2s.c
-@@ -73,7 +73,7 @@ static int acp_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
- 			   unsigned int fmt)
- {
- 	struct device *dev = cpu_dai->component->dev;
--	struct acp_chip_info *chip = dev_get_platdata(dev);
-+	struct acp_chip_info *chip = dev_get_drvdata(dev->parent);
- 	int mode;
- 
- 	mode = fmt & SND_SOC_DAIFMT_FORMAT_MASK;
-@@ -199,7 +199,7 @@ static int acp_i2s_hwparams(struct snd_pcm_substream *substream, struct snd_pcm_
- 	u32 reg_val, fmt_reg, tdm_fmt;
- 	u32 lrclk_div_val, bclk_div_val;
- 
--	chip = dev_get_platdata(dev);
-+	chip = dev_get_drvdata(dev->parent);
- 	rsrc = chip->rsrc;
- 
- 	/* These values are as per Hardware Spec */
-@@ -386,7 +386,7 @@ static int acp_i2s_trigger(struct snd_pcm_substream *substream, int cmd, struct
- {
- 	struct acp_stream *stream = substream->runtime->private_data;
- 	struct device *dev = dai->component->dev;
--	struct acp_chip_info *chip = dev_get_platdata(dev);
-+	struct acp_chip_info *chip = dev_get_drvdata(dev->parent);
- 	struct acp_resource *rsrc = chip->rsrc;
- 	u32 val, period_bytes, reg_val, ier_val, water_val, buf_size, buf_reg;
- 
-@@ -516,14 +516,13 @@ static int acp_i2s_trigger(struct snd_pcm_substream *substream, int cmd, struct
- static int acp_i2s_prepare(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
- {
- 	struct device *dev = dai->component->dev;
--	struct acp_chip_info *chip = dev_get_platdata(dev);
-+	struct acp_chip_info *chip = dev_get_drvdata(dev->parent);
- 	struct acp_resource *rsrc = chip->rsrc;
- 	struct acp_stream *stream = substream->runtime->private_data;
- 	u32 reg_dma_size = 0, reg_fifo_size = 0, reg_fifo_addr = 0;
- 	u32 phy_addr = 0, acp_fifo_addr = 0, ext_int_ctrl;
- 	unsigned int dir = substream->stream;
- 
--	chip = dev_get_platdata(dev);
- 	switch (dai->driver->id) {
- 	case I2S_SP_INSTANCE:
- 		if (dir == SNDRV_PCM_STREAM_PLAYBACK) {
-@@ -632,7 +631,7 @@ static int acp_i2s_startup(struct snd_pcm_substream *substream, struct snd_soc_d
- {
- 	struct acp_stream *stream = substream->runtime->private_data;
- 	struct device *dev = dai->component->dev;
--	struct acp_chip_info *chip = dev_get_platdata(dev);
-+	struct acp_chip_info *chip = dev_get_drvdata(dev->parent);
- 	struct acp_resource *rsrc = chip->rsrc;
- 	unsigned int dir = substream->stream;
- 	unsigned int irq_bit = 0;
--- 
-2.43.0
+> [1]
+> https://bugs.launchpad.net/ubuntu/+source/linux-hwe-6.14/+bug/2122531
+>=20
+> [2] https://bbs.archlinux.org/viewtopic.php?id=3D305564
+>=20
+> [3]
+> https://forums.gentoo.org/viewtopic-p-8866128.html?sid=3De97619cff0d9c79c=
+2eea2cfe8f60b0d3
 
 
