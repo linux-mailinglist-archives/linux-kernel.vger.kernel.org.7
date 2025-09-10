@@ -1,195 +1,145 @@
-Return-Path: <linux-kernel+bounces-811132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DCFB524CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:51:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683AFB524D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4208C1C219BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:51:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26B905607D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231BD2773DA;
-	Wed, 10 Sep 2025 23:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1D6277CA5;
+	Wed, 10 Sep 2025 23:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bnUwSVJL"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SrAYg4Qv"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CFD268C73
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE25324C676
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757548265; cv=none; b=A7uByoZlGr9CbfFFQxIrI4zAg8RqKoY+EKscy98hQUJRnBcBulKVYh3Noi+g5XqW2pK7ctcDesbwUp5z/yj7HIO+VCNFWzkBharGW8vyHTlURj/e7qXnvzkHOS1IjnCITeNZnffdxxRaeOqDwyCcnjQgKSvPQpg10IaOyHzVnik=
+	t=1757548660; cv=none; b=rFl/cDvHx3frBksjkL+9fhDq06IjBwHG0A9Fp7rfoMjBPzB6MJYf1OLba51QQRwK2Zb3RYdRzsY8OfRCAYXOEKA8Z9C1ub4KScAkk8KXv/owJi4ZUfSBLBMvDXbjQpFF1LabFv3FWjJIyFll+T1dhOzIDqmda195BZ4FWT2fqgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757548265; c=relaxed/simple;
-	bh=lT9wxRvvCIPJxXs5LthvBDL+Ph0L298VM/1LfR7jVG0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NmSv5GjrcnqlWOj9jvIIQMHK8Txi4ZcGm8jnPa6FUEbaccNaKoV/jIMHuRwl/oYpX4h59iwrZWOztHfu1Ez8b4vyqX6/6fGZgaHx6cuCxcWOTSBS1YiAyGYllSfq+VxzPfO/SBnkFMQKJkgpKofpSmo7Hv2nDz9s0ADnCxMNtdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bnUwSVJL; arc=none smtp.client-ip=209.85.210.201
+	s=arc-20240116; t=1757548660; c=relaxed/simple;
+	bh=qz9+9gHyijTiX3GbxpmHDb0ux6mjGKJ86qbTMBx8j/Q=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qM+3lZma5Gf/EFI7MqwDysH9FVNAVhYn+ZrbeStaf3QV8k50zbugZKylRwiGrCh+wE7PENexXhD4DbieYQkdDD4/Sb01wLFE9AqS5FzxbDuqhIboGZB9fwEHtdYa1vdIOdqm5Xxf1Aq3gFV1ilbGO5alybLl4o5NWijV3RpSawA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SrAYg4Qv; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7741ef59d18so102098b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:51:03 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24b2336e513so1251205ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:57:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757548263; x=1758153063; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QdKgArnQrwIFW/ARGiTdXi98XW2fxSfLYpo+hZTfmQ8=;
-        b=bnUwSVJLUtj2MFS3euLw2onzuMQ/6FNfJ2ARXFaJK5kJHgVMKe/5ol4QRmL8wu6tE4
-         req5OdeIiAoesKCd80kflOkEVoRLbJAbB9X13RL06Sc6/ZBxSpY8IsUzn38OHKHllUoZ
-         /75muWmqasU02L0zIMR9EXji4nRVRtDMR6ScjRXVoxt4Ose5EDh04Mnl8hjsbvVxvNAp
-         NcsCJoInJMFa5kkObalGB+u7c2ffMApV2zW4diO9AWE7JvKoU3KqdYXNVONYt7vensRk
-         2s3baYwCHVjdxZ+/WjrruwMabaXGxxEMiH09VCObeP7kraK3e01242eyZuNwSy/bczio
-         f+3Q==
+        d=google.com; s=20230601; t=1757548658; x=1758153458; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=U3W9KmAhRtbP+yDFjRzq6OkAwTzphYT+gRDr5EFEvmo=;
+        b=SrAYg4QvFYM+he9ouFkPzm5P9k4lIagVSbjAgHzPRfVnLx/i/RurR4KmF9Mv6TGHMy
+         ZkFI3gisTue6CDsqHnU9KLFZzusTML3QI+WH6vx3CGNRYQPw3DU7aomy9hEC7V9NfIJK
+         zCgoo2zwRJBzDyB6ipuRnpMWN47hUabmflHkpezYOQnAUgHCmdJF4Zr4o/ib6KMRCOav
+         UsjaVBjYaia5K10KJoeOrGp7Bi3x458sZ1aK3+2eYJ7IPqmEdLPDt0PDsHVdV/gr/zZZ
+         VlgCfc3qhTcKQTcRKss8G07OCQFvPBuRIFeXE3hGaN0E9jRx9Mf6r4RnqZC8cb/Kxakc
+         6/sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757548263; x=1758153063;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QdKgArnQrwIFW/ARGiTdXi98XW2fxSfLYpo+hZTfmQ8=;
-        b=Wqar49eXuv8M0HGwFpbs+tJeSW1B1RhFcxqkwu2e85810UYF0RFYrdGXKEnl/RgHhp
-         GfFACVqJYRJDDGBkW4lFC9BZ7mxwbhD9N+HXSzS1B7BzvlgUHGP4wzR0prNBFZMrQtMn
-         5nnLTGXdIa3fzBrgREf9Ma5JEHh/etHr9kRCgwdWfFQdtla+Ox+YdNeJBODXLgkvDDY7
-         /CCcq0GaHkOcpBbzXysm1DoFQlMgu7dFdoSfqffA/zqzTTXeFYbbR81q7YxxqBBidZTX
-         Qm8Q0yPtIJ3UI20xZGnRfP70wT6L7l+SJz64FRq72V4sMSVUluOg0aj0wYZ638fiDoqD
-         7W7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVVMOVW9AIunUasp2UDaxpeQhlv9oaKcX2oR3fD2ntUGMvIJNTUtZZGLVAtswAaC0OqUXlVirUVZLo/KNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4pZAOA/wp7daAbqmFLsrEWrG8559set8xdc0B6vfV5v1Zx3U/
-	CHBIXVAnw+Ttwbw4J5t2UNkWmoROd3NTQf985UxDd+HHAXTvyFZUd95m3sRPPHrGGKHuRFZXTvu
-	9aQ+Adg==
-X-Google-Smtp-Source: AGHT+IHAOPoqLqzW42pDcQ2iL3CgvV4MYVB044aGs9+gV2plwshaHJewVBH05WXowEYEqUEjkGVyJvd+7wQ=
-X-Received: from pgma18.prod.google.com ([2002:a63:1a52:0:b0:b49:dc77:f407])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:4321:b0:24d:d206:699c
- with SMTP id adf61e73a8af0-2534519d154mr25197522637.53.1757548263178; Wed, 10
- Sep 2025 16:51:03 -0700 (PDT)
-Date: Wed, 10 Sep 2025 16:51:01 -0700
-In-Reply-To: <20250718001905.196989-4-dapeng1.mi@linux.intel.com>
+        d=1e100.net; s=20230601; t=1757548658; x=1758153458;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U3W9KmAhRtbP+yDFjRzq6OkAwTzphYT+gRDr5EFEvmo=;
+        b=GmW/bKMp0dXcP0lQ4rgFcD75fpZjEhzpueR8qvDjlWEDPpSztv8CdL3iFjZlJv6a7G
+         V06vaNbxshpgVdFgPb4/Ewou6zdc+KBkzA/dK/ut4x1+o2bTTi3wg9iYmbWwkhwXfLVD
+         WUxNzRMl2c/EkLG8f8blqCyxCKUfLp2eIHHEE+CyhjWDT1+EDOUaA3SUYzlhoQ28S3Dq
+         Qc/3oV8VaGPw0piVm8fUU/mnjeCwIAevxHvbPtDI23leW7TVrItb8Bn9DWUzGRDu+PVQ
+         rz2TiTxv90512uhZXaGOz9eA2GP0YYMAHB8MocQkhQm9epqlChbVYLggybgQm1T7lT3T
+         Ve0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWk0MOqBDvCdy8fMNPrFWt7wzH0Ozy5ZuUI4YFx84jZI85gcJYmIBGfQwKaXIFPTtKpuy5nQNlOTnq/GXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfHDfSAok20ImrPBiNYirMPbEEuI+e3XLdkdZYfreaLODAJEfI
+	2InTdvdcAJwBwSZT3EA7ie3ziXjr+tovrtkATC7hkL7hwj6gm8g/mmzc1L4ePppAGdet1aWrY9B
+	ladjAHvt3CsV/UQ==
+X-Google-Smtp-Source: AGHT+IFUIKZ6YAAu0ecY4R9EKyV2/HbtOzWNpGLUTDE+qaL3FL5lUcCQHJs46ff3j8+VKUmaZpk3coRYbtSDEw==
+X-Received: from plyw24.prod.google.com ([2002:a17:902:d718:b0:253:4280:9f31])
+ (user=kinseyho job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:d48c:b0:250:5ff5:3f4b with SMTP id d9443c01a7336-2516fdc77a2mr262461415ad.15.1757548657920;
+ Wed, 10 Sep 2025 16:57:37 -0700 (PDT)
+Date: Wed, 10 Sep 2025 16:51:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250718001905.196989-1-dapeng1.mi@linux.intel.com> <20250718001905.196989-4-dapeng1.mi@linux.intel.com>
-Message-ID: <aMIO5ZLNur5JkdYl@google.com>
-Subject: Re: [PATCH v2 3/5] KVM: Selftests: Validate more arch-events in pmu_counters_test
-From: Sean Christopherson <seanjc@google.com>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>, 
-	Zide Chen <zide.chen@intel.com>, Das Sandipan <Sandipan.Das@amd.com>, 
-	Shukla Manali <Manali.Shukla@amd.com>, Yi Lai <yi1.lai@intel.com>, 
-	Dapeng Mi <dapeng1.mi@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250910235121.2544928-1-kinseyho@google.com>
+Subject: [RFC PATCH v2 0/2] mm: multi-gen LRU scanning for page promotion
+From: Kinsey Ho <kinseyho@google.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Jonathan.Cameron@huawei.com, dave.hansen@intel.com, gourry@gourry.net, 
+	hannes@cmpxchg.org, mgorman@techsingularity.net, mingo@redhat.com, 
+	peterz@infradead.org, raghavendra.kt@amd.com, riel@surriel.com, 
+	rientjes@google.com, sj@kernel.org, weixugc@google.com, willy@infradead.org, 
+	ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net, 
+	nifan.cxl@gmail.com, xuezhengchu@huawei.com, yiannis@zptcorp.com, 
+	akpm@linux-foundation.org, david@redhat.com, byungchul@sk.com, 
+	kinseyho@google.com, joshua.hahnjy@gmail.com, yuanchu@google.com, 
+	balbirs@nvidia.com, alok.rathore@samsung.com, lorenzo.stoakes@oracle.com, 
+	axelrasmussen@google.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
+	zhengqi.arch@bytedance.com, shakeel.butt@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 18, 2025, Dapeng Mi wrote:
-> Clearwater Forest introduces 5 new architectural events (4 topdown
-> level 1 metrics events and LBR inserts event). This patch supports
-> to validate these 5 newly added events. The detailed info about these
-> 5 events can be found in SDM section 21.2.7 "Pre-defined Architectural
->  Performance Events".
-> 
-> It becomes unrealistic to traverse all possible combinations of
-> unavailable events mask (may need dozens of minutes to finish all
-> possible combination validation). So only limit unavailable events mask
-> traverse to the first 8 arch-events.
+This patch series introduces a software-based approach to identifying
+hot pages for promotion in tiered memory systems, particularly those
+leveraging CXL-attached memory, by utilizing the Multi-Generational
+LRU (MGLRU) framework. This method is designed to complement
+hardware-based hotness detection mechanisms like Intel PMU sampling, AMD
+IBS, or dedicated CXL memory monitoring units, providing a more
+comprehensive view of page access patterns, similar to kmmscand [1].
 
-Split these into separate patches.  Buring a meaningful change like this in a big
-patch that seemingly just adds architectural collateral is pure evil.
-> @@ -612,15 +620,19 @@ static void test_intel_counters(void)
->  			pr_info("Testing arch events, PMU version %u, perf_caps = %lx\n",
->  				v, perf_caps[i]);
->  			/*
-> -			 * To keep the total runtime reasonable, test every
-> -			 * possible non-zero, non-reserved bitmap combination
-> -			 * only with the native PMU version and the full bit
-> -			 * vector length.
-> +			 * To keep the total runtime reasonable, especially after
-> +			 * the total number of arch-events increasing to 13, It's
-> +			 * impossible to test every possible non-zero, non-reserved
-> +			 * bitmap combination. Only test the first 8-bits combination
-> +			 * with the native PMU version and the full bit vector length.
->  			 */
->  			if (v == pmu_version) {
-> -				for (k = 1; k < (BIT(NR_INTEL_ARCH_EVENTS) - 1); k++)
-> +				int max_events = min(NR_INTEL_ARCH_EVENTS, 8);
+We propose to utilize MGLRU's existing infrastructure to provide hot
+page information. A key benefit here is the reuse of the MGLRU page
+table walk code, thus avoiding the overhead and duplication of effort
+involved in implementing a separate page table scanning mechanism. The
+working set reporting proposal [2] also reuses MGLRU's infrastructure,
+but focuses on cold page detection. It provides its own aging daemon,
+which could additionally provide hot page information by integrating
+this proof-of-concept.
 
-Too arbitrary, and worse, bad coverage.  And honestly, even iterating over 255
-(or 512?) different values is a waste of time.  Ha!  And test_arch_events() is
-buggy, it takes unavailable_mask as u8 instead of a u32.  I'll slot in a patch
-to fix that.
-
-As for the runtime, I think it's time to throw in the towel in terms of brute
-forcing the validation space, and just test a handful of hopefully-interesting
-values, e.g.
+This series is based on and relies on [3] as the aggregation and
+promotion engine to implement the promotion policies. This is still in
+the RFC stage as a proof-of-concept and requires more rigorous testing.
 
 ---
- .../selftests/kvm/x86/pmu_counters_test.c     | 38 +++++++++++--------
- 1 file changed, 23 insertions(+), 15 deletions(-)
+v2: Fixed a correctness issue during page table walk, where, on resume,
+one page found with the access-bit set was incorrectly not added to the
+pghot data structure provided by [3].
 
-diff --git a/tools/testing/selftests/kvm/x86/pmu_counters_test.c b/tools/testing/selftests/kvm/x86/pmu_counters_test.c
-index cfeed0103341..09ad68675576 100644
---- a/tools/testing/selftests/kvm/x86/pmu_counters_test.c
-+++ b/tools/testing/selftests/kvm/x86/pmu_counters_test.c
-@@ -577,6 +577,26 @@ static void test_intel_counters(void)
- 		PMU_CAP_FW_WRITES,
- 	};
- 
-+	/*
-+	 * To keep the total runtime reasonable, test only a handful of select,
-+	 * semi-arbitrary values for the mask of unavailable PMU events.  Test
-+	 * 0 (all events available) and all ones (no events available) as well
-+	 * as alternating bit sequencues, e.g. to detect if KVM is checking the
-+	 * wrong bit(s).
-+	 */
-+	const uint32_t unavailable_masks[] = {
-+		0x0,
-+		0xffffffffu,
-+		0xf0f0f0f0u,
-+		0x0f0f0f0fu,
-+		0xaaaaaaaau,
-+		0xa0a0a0a0u,
-+		0x0a0a0a0au,
-+		0x55555555u,
-+		0x50505050u,
-+		0x05050505u,
-+	};
-+
- 	/*
- 	 * Test up to PMU v5, which is the current maximum version defined by
- 	 * Intel, i.e. is the last version that is guaranteed to be backwards
-@@ -614,16 +634,7 @@ static void test_intel_counters(void)
- 
- 			pr_info("Testing arch events, PMU version %u, perf_caps = %lx\n",
- 				v, perf_caps[i]);
--			/*
--			 * To keep the total runtime reasonable, test every
--			 * possible non-zero, non-reserved bitmap combination
--			 * only with the native PMU version and the full bit
--			 * vector length.
--			 */
--			if (v == pmu_version) {
--				for (k = 1; k < (BIT(NR_INTEL_ARCH_EVENTS) - 1); k++)
--					test_arch_events(v, perf_caps[i], NR_INTEL_ARCH_EVENTS, k);
--			}
-+
- 			/*
- 			 * Test single bits for all PMU version and lengths up
- 			 * the number of events +1 (to verify KVM doesn't do
-@@ -632,11 +643,8 @@ static void test_intel_counters(void)
- 			 * ones i.e. all events being available and unavailable.
- 			 */
- 			for (j = 0; j <= NR_INTEL_ARCH_EVENTS + 1; j++) {
--				test_arch_events(v, perf_caps[i], j, 0);
--				test_arch_events(v, perf_caps[i], j, -1u);
--
--				for (k = 0; k < NR_INTEL_ARCH_EVENTS; k++)
--					test_arch_events(v, perf_caps[i], j, BIT(k));
-+				for (k = 1; k < ARRAY_SIZE(unavailable_masks); k++)
-+					test_arch_events(v, perf_caps[i], j, unavailable_masks[k]);
- 			}
- 
- 			pr_info("Testing GP counters, PMU version %u, perf_caps = %lx\n",
+v1: https://lore.kernel.org/linux-mm/20250324220301.1273038-1-kinseyho@google.com/
+---
+
+[1] [RFC PATCH V3 00/17] mm: slowtier page promotion based on PTE A bit
+https://lore.kernel.org/linux-mm/20250814153307.1553061-1-raghavendra.kt@amd.com/
+
+[2] [PATCH v4 0/9] mm: workingset reporting
+https://lore.kernel.org/linux-mm/20241127025728.3689245-1-yuanchu@google.com/
+
+[3] [RFC PATCH v2 0/8] mm: Hot page tracking and promotion infrastructure
+https://lore.kernel.org/linux-mm/20250910144653.212066-1-bharata@amd.com/
+
+Kinsey Ho (2):
+  mm: mglru: generalize page table walk
+  mm: klruscand: use mglru scanning for page promotion
+
+ include/linux/mmzone.h |   5 ++
+ mm/Kconfig             |   8 ++
+ mm/Makefile            |   1 +
+ mm/internal.h          |   4 +
+ mm/klruscand.c         | 118 +++++++++++++++++++++++++++
+ mm/vmscan.c            | 181 +++++++++++++++++++++++++++++++----------
+ 6 files changed, 272 insertions(+), 45 deletions(-)
+ create mode 100644 mm/klruscand.c
+
 -- 
+2.51.0.384.g4c02a37b29-goog
+
 
