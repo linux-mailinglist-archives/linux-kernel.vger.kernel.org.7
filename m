@@ -1,97 +1,60 @@
-Return-Path: <linux-kernel+bounces-809462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164A1B50DF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FEACB50DF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B4D73A84EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:20:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8CDE545AFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1A030595C;
-	Wed, 10 Sep 2025 06:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C652730596B;
+	Wed, 10 Sep 2025 06:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e3A9FrUX"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="Wxrpa7B4"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569BF22259D;
-	Wed, 10 Sep 2025 06:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA00213E9F;
+	Wed, 10 Sep 2025 06:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757485205; cv=none; b=VAu7tcPnoiXPe07GmYZh+fHAqVDphRKcY/WHUo/vnBqDe5Ng2GO9Ep8WGyoNxQcltDi9MpWr48zl+85R9X2sKWLcyL+ZFbdaOhjYAeiUaAoc38As1B4Xeo5UVAAEwGzVby5GFbmNlpYjLZn7XMozI6XW+9bIZP310XQJHq6MDGs=
+	t=1757485246; cv=none; b=Tg6p9eC6bNqQSOJecmvRMCm9VgOmSjH0rCzTkLdLQ3dZl6Tf7rrUzWrLBuT0okapqfD86v4aUt1dJTJDmFLHHYUdymWVeTMB1pPPGjShTBkQYvmslkhXJcBfmyT+XoofJCYGDXhvh/eaZFmhh9AdLe9YNbViCyoxbVeWUe5mCPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757485205; c=relaxed/simple;
-	bh=GNr5fSQdvX6LdqB/W1EZ8Bb6oXPTAA6ZnpCtLjpI0F4=;
+	s=arc-20240116; t=1757485246; c=relaxed/simple;
+	bh=uPHddWIsxVWs59gR/d09rB8RiyVGwuLFe0sZqG5gM50=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KGEbV4IYVNsf5UHnC8B3al9O747UbP5QoNn/HgRxjwnsTitLRahkIFWi8skJjFpM5BCY6WeRvVeeNWMhAOmyNMcxYxKQ2Z+pb5FOcecei/2dhNHYsiICy5A6reuu9gIPIUxbml3o0w8Kln8RLeFqqML8cOtm5a2OLS2sZTOmWYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e3A9FrUX; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id D14877A0226;
-	Wed, 10 Sep 2025 02:20:01 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Wed, 10 Sep 2025 02:20:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757485201; x=1757571601; bh=olvJU0Qy+Cu3De8cG+SQ0iQ+feuXB8WHAz5
-	1Z2X5bxs=; b=e3A9FrUXfqCYN+Z1VXm1vmK8p1g31UUM+gOpvbK8X4vL1WJbOnZ
-	ZuyiKrP5shMmqqm8fviRgSod8O5FCkoMi7UqkfQ21fm1tSYLpXPepJK782qEdMjP
-	XCRVQfn/ZHHsg51CgPEsamm1/oEDRkdPvLn9CFx9uoW9sPXeCCB/QftmDvoEAfnV
-	crk+8/3FK8dgHVAeqUAQ5+QX61kDIGxpFviboBW3/phFHXhOHVRqLTZYIfstCSWb
-	uUmOMS2BPTHbYlplCrV1dlzqIu9nw456cYeJf0qSc88VlMSnbU339Z5N5T6ICxA1
-	pDNITfGyCjrwJ4efy99LbkL4nCFmBWh8y2A==
-X-ME-Sender: <xms:kBjBaBfnR2EAOSwulVIjvh1JNRdwP0Sbr9mmSNtYyg9Bxu0o8YmtYQ>
-    <xme:kBjBaOITm5T2x3sXdfGjQP87pQcShU44V0Ohk9FkpYB_ukHSfEorsCgSjXbhwfJJq
-    ImGAWYFbeYS0gA>
-X-ME-Received: <xmr:kBjBaGn25h3RLlXChcYVX-C0WGGnL9X0rpdMZYGrV6qZzEXG-tmjXMOY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvdehhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefkughoucfutghh
-    ihhmmhgvlhcuoehiughoshgthhesihguohhstghhrdhorhhgqeenucggtffrrghtthgvrh
-    hnpedvudefveekheeugeeftddvveefgfduieefudeifefgleekheegleegjeejgeeghfen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehiughosh
-    gthhesihguohhstghhrdhorhhgpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhht
-    phhouhhtpdhrtghpthhtohepihdrmhgrgihimhgvthhssehovhhnrdhorhhgpdhrtghpth
-    htohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggr
-    vhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesgh
-    hoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhorhhmsh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhhsvghlfhhtvghsth
-    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:kBjBaOewaNQh3bOjkY4Lxlco38ywE736U85fc0wme3K30rbGddbbxw>
-    <xmx:kBjBaPyrCD3R8H9890vLqp3aI_sufil0HV264vKQhSsm1bnsV3hMcw>
-    <xmx:kBjBaPKsMPYC-f3cKh0_TTLdZ_dGXLihPjLY8n111UxbCbHL2fsalQ>
-    <xmx:kBjBaItu5oxZQLmd5rkC3nAvF_0T_PZiIG7VnG5jlMscnvEmY7ovGg>
-    <xmx:kRjBaLF9L6GpgRy7DDEtIbSTDS3LbPtjx795p_gjUTZ27zA09BU3i09g>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 10 Sep 2025 02:20:00 -0400 (EDT)
-Date: Wed, 10 Sep 2025 09:19:58 +0300
-From: Ido Schimmel <idosch@idosch.org>
-To: Ilya Maximets <i.maximets@ovn.org>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, dev@openvswitch.org,
-	Eelco Chaudron <echaudro@redhat.com>,
-	Aaron Conole <aconole@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Davide Caratti <dcaratti@redhat.com>
-Subject: Re: [PATCH net v2 1/2] net: dst_metadata: fix IP_DF bit not
- extracted from tunnel headers
-Message-ID: <aMEYjvSNvxfD7iJz@shredder>
-References: <20250909165440.229890-1-i.maximets@ovn.org>
- <20250909165440.229890-2-i.maximets@ovn.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tRjBvCzB22QYyrKwph3Ijgk9rTUTkzn+2VqgS1ApaoTsZ4q0r8qEsbSB4vYqgOhjzTdwQQc5svTEEPpyfZU5cHm5sHo9aI4pCVp2+hawOkp7opIx7vb8tGgKXDJK1yRx9QrI/fJeJvBT/o13VEqNJdxAKCsRmjL13T76Dru+9H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=Wxrpa7B4; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CC0AA148625E;
+	Wed, 10 Sep 2025 08:20:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1757485234; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=YzWEaq7fc9RZr840kPRXsnWFetoKfBv/D8xt+yJ4/m0=;
+	b=Wxrpa7B4yLX38x0eHaGOBvhBP8zgjpKgAmymznTrEEINHHmzs/6cH+rr/UCWjlLw99ye0n
+	PY0YQUb0CeQ1ZLEPbSU5FOgl1darrlVde4qvytBwDAp/WCuIzj/sc1NEgQL1/BDQGY+V0p
+	5r2CFv3Pnxz5PrAUWJf9MPs0BkM7PoGBWoKphz891fRQVpq7BRsOMygUYtL0Nc9M9KJfSe
+	xxjpewAOHzMZUPmlXJomz8UtepPTMd/iQR2T8ygsBaOzO0ZdgH0kJX/xLksxNy8u1D8rDR
+	n6Oq10xvUlopELrrqh5Gdk7rEEf2lx8RteATdOWswheCNNi0nVfEgUhl5SiWWA==
+Date: Wed, 10 Sep 2025 08:20:28 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: Ryan.Wanner@microchip.com
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: microchip: sama7d65: Add GPIO buttons and LEDs
+Message-ID: <20250910-retake-attic-ac1fe3429a1e@thorsis.com>
+Mail-Followup-To: Ryan.Wanner@microchip.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250909160842.392075-1-Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,47 +63,107 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250909165440.229890-2-i.maximets@ovn.org>
+In-Reply-To: <20250909160842.392075-1-Ryan.Wanner@microchip.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Sep 09, 2025 at 06:54:15PM +0200, Ilya Maximets wrote:
-> Both OVS and TC flower allow extracting and matching on the DF bit of
-> the outer IP header via OVS_TUNNEL_KEY_ATTR_DONT_FRAGMENT in the
-> OVS_KEY_ATTR_TUNNEL and TCA_FLOWER_KEY_FLAGS_TUNNEL_DONT_FRAGMENT in
-> the TCA_FLOWER_KEY_ENC_FLAGS respectively.  Flow dissector extracts
-> this information as FLOW_DIS_F_TUNNEL_DONT_FRAGMENT from the tunnel
-> info key.
-> 
-> However, the IP_TUNNEL_DONT_FRAGMENT_BIT in the tunnel key is never
-> actually set, because the tunneling code doesn't actually extract it
-> from the IP header.  OAM and CRIT_OPT are extracted by the tunnel
-> implementation code, same code also sets the KEY flag, if present.
-> UDP tunnel core takes care of setting the CSUM flag if the checksum
-> is present in the UDP header, but the DONT_FRAGMENT is not handled at
-> any layer.
-> 
-> Fix that by checking the bit and setting the corresponding flag while
-> populating the tunnel info in the IP layer where it belongs.
-> 
-> Not using __assign_bit as we don't really need to clear the bit in a
-> just initialized field.  It also doesn't seem like using __assign_bit
-> will make the code look better.
-> 
-> Clearly, users didn't rely on this functionality for anything very
-> important until now.  The reason why this doesn't break OVS logic is
-> that it only matches on what kernel previously parsed out and if kernel
-> consistently reports this bit as zero, OVS will only match on it to be
-> zero, which sort of works.  But it is still a bug that the uAPI reports
-> and allows matching on the field that is not actually checked in the
-> packet.  And this is causing misleading -df reporting in OVS datapath
-> flows, while the tunnel traffic actually has the bit set in most cases.
-> 
-> This may also cause issues if a hardware properly implements support
-> for tunnel flag matching as it will disagree with the implementation
-> in a software path of TC flower.
-> 
-> Fixes: 7d5437c709de ("openvswitch: Add tunneling interface.")
-> Fixes: 1d17568e74de ("net/sched: cls_flower: add support for matching tunnel control flags")
-> Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
+Hello Ryan,
 
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+Am Tue, Sep 09, 2025 at 09:08:38AM -0700 schrieb Ryan.Wanner@microchip.com:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+> 
+> Add the USER button as a GPIO input as well as add the LEDs and enable
+> the blue LED as a heartbeat.
+> 
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>  .../dts/microchip/at91-sama7d65_curiosity.dts | 49 +++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+> index f091cc40a9f0..2fe34c59d942 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+> +++ b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+> @@ -11,6 +11,7 @@
+>  #include "sama7d65-pinfunc.h"
+>  #include "sama7d65.dtsi"
+>  #include <dt-bindings/mfd/atmel-flexcom.h>
+> +#include <dt-bindings/input/input.h>
+>  #include <dt-bindings/pinctrl/at91.h>
+>  
+>  / {
+> @@ -26,6 +27,42 @@ chosen {
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_key_gpio_default>;
+> +
+> +		button {
+> +			label = "PB_USER";
+> +			gpios = <&pioa PIN_PC10 GPIO_ACTIVE_LOW>;
+> +			linux,code = <KEY_PROG1>;
+> +			wakeup-source;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_led_gpio_default>;
+> +
+> +		led-red {
+> +			label = "red";
+> +			gpios = <&pioa PIN_PB17 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
+> +		};
+> +
+> +		led-green {
+> +			label = "green";
+> +			gpios = <&pioa PIN_PB15 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
+> +		};
+> +
+> +		led-blue {
+> +			label = "blue";
+> +			gpios = <&pioa PIN_PA21 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+
+The label property is deprecated.  Please use the properties "color"
+and "function" for new boards.  See devicetree binding documentation
+for LEDs.
+
+Thanks and greetings
+Alex
+
+> +
+>  	memory@60000000 {
+>  		device_type = "memory";
+>  		reg = <0x60000000 0x40000000>;
+> @@ -352,6 +389,18 @@ pinctrl_i2c10_default: i2c10-default {
+>  		bias-pull-up;
+>  	};
+>  
+> +	pinctrl_key_gpio_default: key-gpio-default {
+> +		pinmux = <PIN_PC10__GPIO>;
+> +		bias-pull-up;
+> +	};
+> +
+> +	pinctrl_led_gpio_default: led-gpio-default {
+> +		pinmux = <PIN_PB15__GPIO>,
+> +			 <PIN_PB17__GPIO>,
+> +			 <PIN_PA21__GPIO>;
+> +		bias-pull-up;
+> +	};
+> +
+>  	pinctrl_sdmmc1_default: sdmmc1-default {
+>  		cmd-data {
+>  			pinmux = <PIN_PB22__SDMMC1_CMD>,
+> -- 
+> 2.43.0
+> 
+> 
 
