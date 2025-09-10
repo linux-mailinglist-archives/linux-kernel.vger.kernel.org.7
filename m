@@ -1,147 +1,220 @@
-Return-Path: <linux-kernel+bounces-810893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC9FB5212F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:36:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BE0B5212E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FEFB3B1F03
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:36:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27E90585716
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3932D949E;
-	Wed, 10 Sep 2025 19:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739F2271A7C;
+	Wed, 10 Sep 2025 19:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BojGLvm8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aorlRc6Y"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE382D8379
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 19:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7452D594F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 19:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757532959; cv=none; b=Gxgpnwc7ZT4D0TCWzQMvJFYcWTGrqgQnByKMZGM0v3PTsbQWP5lML7ULw0r5fc/1q/lneQW3S2MnbcYPepn85Si+0sXMIPXaH6Atfj96ur+mWnUDmtTOCx6TJnqxlVsOJ/oYmpOjng1m/d6aUPGTIK4O+cU5a03/MXAl9HHsmRQ=
+	t=1757532956; cv=none; b=G9tW2xouM4TeUYAKEFpen/ug7F6EK/4tCXqLAn2z5x2MxyOK4YnVQ3GaQrRkAHr5zIZwwQJ+3OApVFWcUWKfP+jXzB0qjTf8IUaSYXS6OkIq8R26S45tRZLu0N87Q312bNStRCIFSwiGBaNTogw61A/pb7b7pBSzsYSHYNIEbqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757532959; c=relaxed/simple;
-	bh=glGPFG+CIZ1HcAUwv3tEcuY/Pc94TIJeXpFprv7xWPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UP/qg8j5C/yUxO0o7tmEJWRKE1LDL9ejoPMT+HWxsSg4YS/1XSJEDV9oYG9VAXX5zR/a2oXehdVbWtWey8M/zrnoPhpJPopAVUidly52Girdm735acQ0wfzj+5WBUdRZyUoBgf8EnSiY4PPaMTyubB0XVbCjo9KE9RZxrQ81grE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BojGLvm8; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757532958; x=1789068958;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=glGPFG+CIZ1HcAUwv3tEcuY/Pc94TIJeXpFprv7xWPY=;
-  b=BojGLvm8etME5usnLszaH3bsVMjg0pvAzB5NMHZYpJTaNvXA3rOKjyCq
-   9GNG73G3rt0wSjyF+CJwohgy5k8JX06aWQoMkAukJQO4YJvP0BwmgFfmF
-   SU+t4nJ9siHISSZS/zN/DFT/paDbaoOnYXY4xaiKgO3sXQnquw9+FAX60
-   KRTfLS0XrBLA13MXL1zS7bNG9zh3l/puiQAISpYyr5ekirNekYXUXsa63
-   b5WKGQ0x5cGMYbLD/wg+WS4beHWV38Np1YMlFgG071QBTB1/Zi18KgEZA
-   hUfLhWOEJE9/LOlStcpVGLmLaw5O0CFuTXJcyAjyUst+cvC+guI5jT7Xv
-   w==;
-X-CSE-ConnectionGUID: DsinPOcyS4yI+2vWa5RVOw==
-X-CSE-MsgGUID: VONqqXkYTpi74mCSoXaNUQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="47428390"
-X-IronPort-AV: E=Sophos;i="6.18,255,1751266800"; 
-   d="scan'208";a="47428390"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 12:35:58 -0700
-X-CSE-ConnectionGUID: Gotx55P7RVmJn72DnzWJFg==
-X-CSE-MsgGUID: QAIlmXqkSd+dhIdGihFtug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,255,1751266800"; 
-   d="scan'208";a="177783300"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 10 Sep 2025 12:35:54 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uwQbf-0006Eh-10;
-	Wed, 10 Sep 2025 19:35:51 +0000
-Date: Thu, 11 Sep 2025 03:35:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mike Looijmans <mike.looijmans@topic.nl>,
-	dri-devel@lists.freedesktop.org
-Cc: oe-kbuild-all@lists.linux.dev, Mike Looijmans <mike.looijmans@topic.nl>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
-Message-ID: <202509110339.t9spKBAI-lkp@intel.com>
-References: <20250908061605.76787-3-mike.looijmans@topic.nl>
+	s=arc-20240116; t=1757532956; c=relaxed/simple;
+	bh=PtN1wZSHACRT6avekYs3yn3rwtGd9wSgDovmjolOpF8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P8q+MvBhq8S1ub92qYpV2GVcyglplz3M3TiVh4uAEalnaQQIo3Ug1SB7D59DInfDwGTrdQmYAsGft9JTrSSO5m8RI6LQOO4PpOWL4gX6roB64b8AqnhduepnbF9sWODPFd/V7+6VsxDajGIZcF63kWe0dnCwkcyCDM1P/kIX4so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aorlRc6Y; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7728815e639so4069769b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:35:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757532953; x=1758137753; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rDKunTxf/S5CBlU8+drFx4GQVl38jBRjcy2CRI8kVQU=;
+        b=aorlRc6YCNM9XKG8R6pkHQv2OIzwRenWscG69qs3lyLvK/K/YwRYB/aRm+67hqHnhq
+         8TVaNwo4gWsy5xJb+k3D6IC7vkpC//UBcFo63Ok8k/I0hpVC+4BMtvejUHkiN73Gg61r
+         zv/XVpJagmQfuXqL8cIg2flNNHF/o/H3CAqUI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757532953; x=1758137753;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rDKunTxf/S5CBlU8+drFx4GQVl38jBRjcy2CRI8kVQU=;
+        b=Rso66Wqe+GX3QfIPuOmTIRyV2Ibf7vz+IUmyUniSn6cZHKgNTHNskXSBv4bJ7Q5W1Q
+         B0QvlaXBSItW4EQdHFdsZ9436BigxH33ujleeE7uv1bLPHD9w6Kb7y2Q+INFq8jh4l9A
+         eDwJdbE4NiW6M1qLShSWjRx4bzxMQrZo/FGpCQHbrSO2kLzvyu3qVKNfGmv+Ea0eDMbT
+         NxDkfC9JapHoBOI94W3j7yP3ykFFJhJg65IE7uNZX3CAnhY4M+xfyunxKv/9DbkxnJBc
+         l/3Ax28W7ao86CEbhHkrVZUAidG41QixIGUAx0csQuEkvYxqCIuUHVn1JjsEg+YjE4wF
+         5ejA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Enegs9VTvFo8ciaEjV7jLMwu6n7XYlcPdmkMJsK+3IJnxUz9sgYfuOl7ALLeu4DR6iPjvzyU675Y1LA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOBA4qS/0FKLGQrAMSz9+iMO6JnIpQmYFSARoAhbtfdjEZ6kKt
+	cS7/GH6QZOwUhJGEu8fXsWHThPiVWSG/iO6A/QzTvy9osm3z0MTyZREEYcIVXRu3ZMAeTivH/8T
+	7xz37gJZc8maMKJUx3W9geF3O5e4Kbj3BxbMaK3pt
+X-Gm-Gg: ASbGncsdhDH0o0sfGNIZoicTiQ5+dYb817HTrx5qTlMl1zoHwt/bwkTwlCy08TVIwA0
+	FFuhg90jXnkRQKbkgaNZec+zB7uGQHjsIti/Phfa7oXLhVhBHuVI3XXAzb+QR33nu1S4eD2kDKn
+	Jiokb82/Dw9o/PBMD14enCyXGBetkxn7FzxTEeRWFcVOxXoxPGVxTEwoMziX7PB0C6ZIyBNINbo
+	OFAxlJXjDi1CbhGBPWyGYjI97C0Z4WJQFY=
+X-Google-Smtp-Source: AGHT+IEecFj4d2N8l54ipxV9A0HELOpzA3uq6yMz+0dnkVdznSIvHQpERqoi0pQkGgHfRcYwyH9WUSZ+n1fNKe/lvIs=
+X-Received: by 2002:a05:6a21:33a1:b0:24a:6bef:bdd5 with SMTP id
+ adf61e73a8af0-25344130fbfmr23540158637.41.1757532953527; Wed, 10 Sep 2025
+ 12:35:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908061605.76787-3-mike.looijmans@topic.nl>
+References: <20250905142206.4105351-1-akuchynski@chromium.org>
+ <20250905142206.4105351-5-akuchynski@chromium.org> <2025091029-snarl-decimal-aea2@gregkh>
+In-Reply-To: <2025091029-snarl-decimal-aea2@gregkh>
+From: Andrei Kuchynski <akuchynski@chromium.org>
+Date: Wed, 10 Sep 2025 19:35:42 +0000
+X-Gm-Features: Ac12FXxPN_dgj5aIjIjw1flHyJdM6r_Y2JbGmXYfsM4L8NDijYd8kjCgCMLV2jo
+Message-ID: <CAMMMRMdOiGQdmgQ7COa1Nf9Rh9BQLD79TJ77VW4ejadx_bNyeg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] usb: typec: Implement alternate mode priority handling
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Benson Leung <bleung@chromium.org>, 
+	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, "Christian A. Ehrhardt" <lk@c--e.de>, 
+	Venkat Jayaraman <venkat.jayaraman@intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mike,
+On Wed, Sep 10, 2025 at 1:31=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Fri, Sep 05, 2025 at 02:22:05PM +0000, Andrei Kuchynski wrote:
+> > This patch introduces APIs to manage the priority of USB Type-C alterna=
+te
+> > modes. These APIs allow for setting and retrieving a priority number fo=
+r
+> > each mode. If a new priority value conflicts with an existing mode's
+> > priority, the priorities of the conflicting mode and all subsequent mod=
+es
+> > are automatically incremented to ensure uniqueness.
+> >
+> > Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
+> > ---
+> >  drivers/usb/typec/Makefile         |  2 +-
+> >  drivers/usb/typec/mode_selection.c | 38 ++++++++++++++++++++++++++++++
+> >  drivers/usb/typec/mode_selection.h |  6 +++++
+> >  include/linux/usb/typec_altmode.h  |  1 +
+> >  4 files changed, 46 insertions(+), 1 deletion(-)
+> >  create mode 100644 drivers/usb/typec/mode_selection.c
+> >  create mode 100644 drivers/usb/typec/mode_selection.h
+> >
+> > diff --git a/drivers/usb/typec/Makefile b/drivers/usb/typec/Makefile
+> > index 7a368fea61bc..8a6a1c663eb6 100644
+> > --- a/drivers/usb/typec/Makefile
+> > +++ b/drivers/usb/typec/Makefile
+> > @@ -1,6 +1,6 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >  obj-$(CONFIG_TYPEC)          +=3D typec.o
+> > -typec-y                              :=3D class.o mux.o bus.o pd.o ret=
+imer.o
+> > +typec-y                              :=3D class.o mux.o bus.o pd.o ret=
+imer.o mode_selection.o
+> >  typec-$(CONFIG_ACPI)         +=3D port-mapper.o
+> >  obj-$(CONFIG_TYPEC)          +=3D altmodes/
+> >  obj-$(CONFIG_TYPEC_TCPM)     +=3D tcpm/
+> > diff --git a/drivers/usb/typec/mode_selection.c b/drivers/usb/typec/mod=
+e_selection.c
+> > new file mode 100644
+> > index 000000000000..2179bf25f5d4
+> > --- /dev/null
+> > +++ b/drivers/usb/typec/mode_selection.c
+> > @@ -0,0 +1,38 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright 2025 Google LLC.
+> > + */
+> > +
+> > +#include "mode_selection.h"
+> > +#include "class.h"
+> > +#include "bus.h"
+> > +
+> > +static int increment_duplicated_priority(struct device *dev, void *dat=
+a)
+> > +{
+> > +     struct typec_altmode **alt_target =3D (struct typec_altmode **)da=
+ta;
+> > +
+> > +     if (is_typec_altmode(dev)) {
+> > +             struct typec_altmode *alt =3D to_typec_altmode(dev);
+> > +
+> > +             if (alt !=3D *alt_target && alt->priority =3D=3D (*alt_ta=
+rget)->priority) {
+> > +                     alt->priority++;
+> > +                     *alt_target =3D alt;
+> > +                     return 1;
+> > +             }
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +void typec_mode_set_priority(struct typec_altmode *alt,
+> > +             const unsigned int priority)
+> > +{
+> > +     struct typec_port *port =3D to_typec_port(alt->dev.parent);
+> > +     int res =3D 1;
+> > +
+> > +     alt->priority =3D priority;
+> > +
+> > +     while (res)
+> > +             res =3D device_for_each_child(&port->dev, &alt,
+> > +                             increment_duplicated_priority);
+> > +}
+> > diff --git a/drivers/usb/typec/mode_selection.h b/drivers/usb/typec/mod=
+e_selection.h
+> > new file mode 100644
+> > index 000000000000..cbf5a37e6404
+> > --- /dev/null
+> > +++ b/drivers/usb/typec/mode_selection.h
+> > @@ -0,0 +1,6 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +
+> > +#include <linux/usb/typec_altmode.h>
+> > +
+> > +void typec_mode_set_priority(struct typec_altmode *alt,
+> > +             const unsigned int priority);
+> > diff --git a/include/linux/usb/typec_altmode.h b/include/linux/usb/type=
+c_altmode.h
+> > index b3c0866ea70f..571c6e00b54f 100644
+> > --- a/include/linux/usb/typec_altmode.h
+> > +++ b/include/linux/usb/typec_altmode.h
+> > @@ -28,6 +28,7 @@ struct typec_altmode {
+> >       int                             mode;
+> >       u32                             vdo;
+> >       unsigned int                    active:1;
+> > +     unsigned int                    priority;
+>
+> What is the range of this?  And this value is only incremented, never
+> decremented?
+>
 
-kernel test robot noticed the following build errors:
+The range extends from 0 to UINT_MAX. The value is only incremented.
+The only exception is that If the user sets UINT_MAX for two alternate
+modes in turn, the priority of the first mode becomes 0. This does not
+break the algorithm, and the user can check all priorities via
+=E2=80=98priority=E2=80=99 attributes.
+I am unsure if a check for this specific case is necessary, as it
+would require examining priorities across all modes, not just a simple
+'if' statement.
+There are a few ideas in this algorithm:
+- all priorities must always be valid and unique
+- no unnecessary restrictions for the user
+- as simple as possible
 
-[auto build test ERROR on 53e760d8949895390e256e723e7ee46618310361]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mike-Looijmans/dt-bindings-drm-bridge-ti-tmds181-Add-TI-TMDS181-and-SN65DP159-bindings/20250908-141752
-base:   53e760d8949895390e256e723e7ee46618310361
-patch link:    https://lore.kernel.org/r/20250908061605.76787-3-mike.looijmans%40topic.nl
-patch subject: [PATCH v5 2/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
-config: i386-randconfig-013-20250910 (https://download.01.org/0day-ci/archive/20250911/202509110339.t9spKBAI-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250911/202509110339.t9spKBAI-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509110339.t9spKBAI-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   ld: drivers/gpu/drm/bridge/ti-tmds181.o: in function `tmds181_mode_valid':
->> drivers/gpu/drm/bridge/ti-tmds181.c:118:(.text+0x2e): undefined reference to `drm_hdmi_compute_mode_clock'
-
-
-vim +118 drivers/gpu/drm/bridge/ti-tmds181.c
-
-   111	
-   112	static enum drm_mode_status
-   113	tmds181_mode_valid(struct drm_bridge *bridge, const struct drm_display_info *info,
-   114			   const struct drm_display_mode *mode)
-   115	{
-   116		unsigned long long rate;
-   117	
- > 118		rate = drm_hdmi_compute_mode_clock(mode, 8, HDMI_COLORSPACE_RGB);
-   119	
-   120		/* Minimum clock rate is 25MHz */
-   121		if (rate < 25000000)
-   122			return MODE_CLOCK_LOW;
-   123	
-   124		/*
-   125		 * When in HDMI 2 mode, the clock is 1/40th of the bitrate. The limit is
-   126		 * then the data rate of 6Gbps, which would use a 600MHz pixel clock.
-   127		 */
-   128		if (rate > 600000000)
-   129			return MODE_CLOCK_HIGH;
-   130	
-   131		return MODE_OK;
-   132	}
-   133	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Andrei
 
