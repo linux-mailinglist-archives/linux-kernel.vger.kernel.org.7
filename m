@@ -1,68 +1,57 @@
-Return-Path: <linux-kernel+bounces-809388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38CD2B50D03
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:10:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A84B50D11
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39BCE1C26CDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:11:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE2047B34FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E8B2BDC0E;
-	Wed, 10 Sep 2025 05:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA774260578;
+	Wed, 10 Sep 2025 05:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0VRfI/e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ADSDnES+"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D291DDDD;
-	Wed, 10 Sep 2025 05:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F12631D39F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 05:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757481037; cv=none; b=bdpbhYtaQSGzNWQPWJGAQbTVfPctlfPeSPxtyu9aLZnCNDgZkg50x/8co4mmTbDmNU85ksWR7H+B2TCjS4Wf/TMFQktN9lv6pDwrzikieykxKoFqe7ZKODe/0qM+7QxhfL/15X+eUowhENXzASLEs1H4WC5DamFV04/nJqjhPIY=
+	t=1757481499; cv=none; b=O1+hozo9PxGuhRyD/973VPmHWSCKPTlm3UbK+G2huZIM2zFHgD7lDKehGSb6yn3wPOw5wvPwFF1n+GuNcIHMAjrX0FRPntud/Gm5GB7ClVVNpi36C2bJDkwMXUtNjyGwQ6Ttap5VDOSNguCOEdSGJIrnASJA8VH3AesX/7sDU18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757481037; c=relaxed/simple;
-	bh=ulCUV9C314YyKs41QAMn/UMnFxanovaasff/UpI/TOQ=;
+	s=arc-20240116; t=1757481499; c=relaxed/simple;
+	bh=REH7eUKP+Nr8xbBHvhgwlBaD4/1/YC39m0GjHndY1CI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bjm5jGPUmkn0/f0n/LUb99JBUjGEMx5pN4kcpHEJVagUq+78VN1Z+kaGluOSW6pdIgdhNKI8nxGWte6ZFvwNYWX51Tx5d9Hew5+Z45TwQdUs0WYZ8vz1iokUPVTef1cWM9FCBUfkVIod7SEQYKWOKiv2gXN+tBIMBTv0lo9oaIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k0VRfI/e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F09CC4CEF0;
-	Wed, 10 Sep 2025 05:10:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757481036;
-	bh=ulCUV9C314YyKs41QAMn/UMnFxanovaasff/UpI/TOQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k0VRfI/eBLgnnLJDoUyKp7UdMKK4uCmQn3bNaxcBp3XozJTav9RY4MqaOhgcANnB4
-	 MKzVhwgelj9u7aClS2zuvQKMQpyI6YcGctQ6L2SKdPjhyHBuoiuVXPs+KR2GDyyiw7
-	 fpRXtj38s9AWaTZg4RZ4ylryPFcJYp/+YehVTE8ST8WwHYDfpvaMvwX4KhQOl7/eUK
-	 EMTAPQVRQ1RhmYRrBkDtsI1IaLt9pA+UXgIhecqYW2IglKPtkWbHYlVBMzQwEiQGzQ
-	 ZVEceLcbGP6qm/sMLk1yofNTyAT9BEiSpA1ZK+jGkBH+CLqzI4NBvSiWTyCKCVcSQx
-	 urs8rtkyIJiHA==
-Date: Wed, 10 Sep 2025 10:40:15 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Apurupa Pattapu <quic_apurupa@quicinc.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kuldeep Singh <quic_kuldsing@quicinc.com>,
-	Sumit Garg <sumit.garg@oss.qualcomm.com>
-Subject: Re: [PATCH v10 00/11] Trusted Execution Environment (TEE) driver for
- Qualcomm TEE (QTEE)
-Message-ID: <aMEINycp24DG6KXO@sumit-X1>
-References: <20250909-qcom-tee-using-tee-ss-without-mem-obj-v10-0-20b17855ef31@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MgJuhBzgKqvCge474R7GGN0dTRwWvFDWIOjTJTDILBGiirUOS2aR1i4eWw646KKacEIBiyfReNmgVG8M+/zYByp/8tHCTTeIo3RzPXNFOiagnnFEFV8k44G0+gHfxHhZ5lU1vs3RoUobON5qLyWF9CQY0agdEyRfTvzRJ4fzm24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ADSDnES+; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 9 Sep 2025 22:18:10 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757481495;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cVZb3Wv5DjHV/fPWzvQeRpiAZuaKt+I3hkiJK9us3y4=;
+	b=ADSDnES+dA9YiAsLR1cETJqGS3IXOSFpFZeD+BtrcZyZnqzeTZdv6YG3+hIiUmB2GEOZts
+	9XAfth4nQDb468IXHg64fzok3xtKvEINhKb8+PypbZBLxAKH2AzYWDt5E36un+tU1uDHKR
+	71IfSwkaYr/DAutTh7Nm5nRUBRfQg9Y=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, vbabka@suse.cz, 
+	hannes@cmpxchg.org, usamaarif642@gmail.com, rientjes@google.com, 
+	roman.gushchin@linux.dev, harry.yoo@oracle.com, 00107082@163.com, 
+	pasha.tatashin@soleen.com, souravpanda@google.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] alloc_tag: mark inaccurate allocation counters in
+ /proc/allocinfo output
+Message-ID: <hp7kdpo4wqlyge2mjivfieibcfxu2jxestrqfwll27v4gsoqja@stvbcth6zc5v>
+References: <20250909234942.1104356-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,242 +60,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250909-qcom-tee-using-tee-ss-without-mem-obj-v10-0-20b17855ef31@oss.qualcomm.com>
+In-Reply-To: <20250909234942.1104356-1-surenb@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Amir,
+On Tue, Sep 09, 2025 at 04:49:42PM -0700, Suren Baghdasaryan wrote:
+> While rare, memory allocation profiling can contain inaccurate counters
+> if slab object extension vector allocation fails. That allocation might
+> succeed later but prior to that, slab allocations that would have used
+> that object extension vector will not be accounted for. To indicate
+> incorrect counters, mark them with an asterisk in the /proc/allocinfo
+> output.
+> Bump up /proc/allocinfo version to reflect change in the file format.
+> 
+> Example output with invalid counters:
+> allocinfo - version: 2.0
+>            0        0 arch/x86/kernel/kdebugfs.c:105 func:create_setup_data_nodes
+>            0        0 arch/x86/kernel/alternative.c:2090 func:alternatives_smp_module_add
+>           0*       0* arch/x86/kernel/alternative.c:127 func:__its_alloc
+>            0        0 arch/x86/kernel/fpu/regset.c:160 func:xstateregs_set
+>            0        0 arch/x86/kernel/fpu/xstate.c:1590 func:fpstate_realloc
+>            0        0 arch/x86/kernel/cpu/aperfmperf.c:379 func:arch_enable_hybrid_capacity_scale
+>            0        0 arch/x86/kernel/cpu/amd_cache_disable.c:258 func:init_amd_l3_attrs
+>       49152*      48* arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create
+>        32768        1 arch/x86/kernel/cpu/mce/genpool.c:132 func:mce_gen_pool_create
+>            0        0 arch/x86/kernel/cpu/mce/amd.c:1341 func:mce_threshold_create_device
+> 
+> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
-On Tue, Sep 09, 2025 at 05:11:02PM -0700, Amirreza Zarrabi wrote:
-> This patch series introduces a Trusted Execution Environment (TEE)
-> driver for Qualcomm TEE (QTEE). QTEE enables Trusted Applications (TAs)
-> and services to run securely. It uses an object-based interface, where
-> each service is an object with sets of operations. Clients can invoke
-> these operations on objects, which can generate results, including other
-> objects. For example, an object can load a TA and return another object
-> that represents the loaded TA, allowing access to its services.
-> 
-> Kernel and userspace services are also available to QTEE through a
-> similar approach. QTEE makes callback requests that are converted into
-> object invocations. These objects can represent services within the
-> kernel or userspace process.
-> 
-> Note: This patch series focuses on QTEE objects and userspace services.
-> 
-> Linux already provides a TEE subsystem, which is described in [1]. The
-> tee subsystem provides a generic ioctl interface, TEE_IOC_INVOKE, which
-> can be used by userspace to talk to a TEE backend driver. We extend the
-> Linux TEE subsystem to understand object parameters and an ioctl call so
-> client can invoke objects in QTEE:
-> 
->   - TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF_*
->   - TEE_IOC_OBJECT_INVOKE
-> 
-> The existing ioctl calls TEE_IOC_SUPPL_RECV and TEE_IOC_SUPPL_SEND are
-> used for invoking services in the userspace process by QTEE.
-> 
-> The TEE backend driver uses the QTEE Transport Message to communicate
-> with QTEE. Interactions through the object INVOKE interface are
-> translated into QTEE messages. Likewise, object invocations from QTEE
-> for userspace objects are converted into SEND/RECV ioctl calls to
-> supplicants.
-> 
-> The details of QTEE Transport Message to communicate with QTEE is
-> available in [PATCH 12/12] Documentation: tee: Add Qualcomm TEE driver.
-> 
-> You can run basic tests with following steps:
-> git clone https://github.com/quic/quic-teec.git
-> cd quic-teec
-> mkdir build
-> cmake .. -DCMAKE_TOOLCHAIN_FILE=CMakeToolchain.txt -DBUILD_UNITTEST=ON
-> 
-> https://github.com/quic/quic-teec/blob/main/README.md lists dependencies
-> needed to build the above.
-> 
-> More comprehensive tests are availabe at
-> https://github.com/qualcomm/minkipc.
-> 
-> root@qcom-armv8a:~# qtee_supplicant &
-> root@qcom-armv8a:~# qtee_supplicant: process entry PPID = 378
-> Total listener services to start = 4
-> Opening CRequestTABuffer_open
-> Path /data/
-> register_service ::Opening CRegisterTABufCBO_UID
-> Calling TAbufCBO Register
-> QTEE_SUPPLICANT RUNNING
->  
-> root@qcom-armv8a:~# smcinvoke_client -c /data 1
-> Run callback obj test...
-> Load /data/tzecotestapp.mbn, size 52192, buf 0x1e44ba0.
-> System Time: 2024-02-27 17:26:31
-> PASSED - Callback tests with Buffer inputs.
-> PASSED - Callback tests with Remote and Callback object inputs.
-> PASSED - Callback tests with Memory Object inputs.
-> TEST PASSED!
-> root@qcom-armv8a:~#
-> root@qcom-armv8a:~# smcinvoke_client -m /data 1
-> Run memory obj test...
-> Load /data/tzecotestapp.mbn, size 52192, buf 0x26cafba0.
-> System Time: 2024-02-27 17:26:39
-> PASSED - Single Memory Object access Test.
-> PASSED - Two Memory Object access Test.
-> TEST PASSED!
-> 
-> This series has been tested for QTEE object invocations, including
-> loading a TA, requesting services from the TA, memory sharing, and
-> handling callback requests to a supplicant.
-> 
-> Tested platforms: sm8650-mtp, sm8550-qrd, sm8650-qrd, sm8650-hdk
-> 
-> [1] https://www.kernel.org/doc/Documentation/tee.txt
-> 
-> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-> 
-> Changes in v10:
-> - Remove all loggings in qcom_scm_qtee_init().
-> - Reorder patches.
-> - Link to v9:
->   https://lore.kernel.org/r/20250901-qcom-tee-using-tee-ss-without-mem-obj-v9-0-a2af23f132d5@oss.qualcomm.com
-
-It's still not rebased on top of linux-next and have merge conflicts,
-see my comments here [1].
-
-[1] https://lore.kernel.org/all/aL_MCagNVIDXW0wp@sumit-X1/
-
--Sumit
-
-> 
-> Changes in v9:
-> - Remove unnecessary logging in qcom_scm_probe().
-> - Replace the platform_device_alloc()/add() sequence with
->   platform_device_register_data().
-> - Fixed sparse warning.
-> - Fixed documentation typo.
-> - Link to v8:
->   https://lore.kernel.org/r/20250820-qcom-tee-using-tee-ss-without-mem-obj-v8-0-7066680f138a@oss.qualcomm.com
-> 
-> Changes in v8:
-> - Check if arguments to qcom_scm_qtee_invoke_smc() and
->   qcom_scm_qtee_callback_response() are NULL.
-> - Add CPU_BIG_ENDIAN as a dependency to Kconfig.
-> - Fixed kernel bot errors.
-> - Link to v7:
->   https://lore.kernel.org/r/20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-0-ce7a1a774803@oss.qualcomm.com
-> 
-> Changes in v7:
-> - Updated copyrights.
-> - Updated Acked-by: tags.
-> - Fixed kernel bot errors.
-> - Link to v6:
->   https://lore.kernel.org/r/20250713-qcom-tee-using-tee-ss-without-mem-obj-v6-0-697fb7d41c36@oss.qualcomm.com
-> 
-> Changes in v6:
-> - Relocate QTEE version into the driver's main service structure.
-> - Simplfies qcomtee_objref_to_arg() and qcomtee_objref_from_arg().
-> - Enhanced the return logic of qcomtee_object_do_invoke_internal().
-> - Improve comments and remove redundant checks.
-> - Improve helpers in qcomtee_msh.h to use GENMASK() and FIELD_GET().
-> - updated Tested-by:, Acked-by:, and Reviewed-by: tags
-> - Link to v5:
->   https://lore.kernel.org/r/20250526-qcom-tee-using-tee-ss-without-mem-obj-v5-0-024e3221b0b9@oss.qualcomm.com
-> 
-> Changes in v5:
-> - Remove references to kernel services and public APIs.
-> - Support auto detection for failing devices (e.g., RB1, RB4).
-> - Add helpers for obtaining client environment and service objects.
-> - Query the QTEE version and print it.
-> - Move remaining static variables, including the object table, to struct
->   qcomtee.
-> - Update TEE_MAX_ARG_SIZE to 4096.
-> - Add a dependancy to QCOM_TZMEM_MODE_SHMBRIDGE in Kconfig
-> - Reorganize code by removing release.c and qcom_scm.c.
-> - Add more error messages and improve comments.
-> - updated Tested-by:, Acked-by:, and Reviewed-by: tags
-> - Link to v4: https://lore.kernel.org/r/20250428-qcom-tee-using-tee-ss-without-mem-obj-v4-0-6a143640a6cb@oss.qualcomm.com
-> 
-> Changes in v4:
-> - Move teedev_ctx_get/put and tee_device_get/put to tee_core.h.
-> - Rename object to id in struct tee_ioctl_object_invoke_arg.
-> - Replace spinlock with mutex for qtee_objects_idr.
-> - Move qcomtee_object_get to qcomtee_user/memobj_param_to_object.
-> - More code cleanup following the comments.
-> - Cleanup documentations.
-> - Update MAINTAINERS file.
-> - Link to v3: https://lore.kernel.org/r/20250327-qcom-tee-using-tee-ss-without-mem-obj-v3-0-7f457073282d@oss.qualcomm.com
-> 
-> Changes in v3:
-> - Export shm_bridge create/delete APIs.
-> - Enable support for QTEE memory objects.
-> - Update the memory management code to use the TEE subsystem for all
->   allocations using the pool.
-> - Move all driver states into the driver's main service struct.
-> - Add more documentations.
-> - Link to v2: https://lore.kernel.org/r/20250202-qcom-tee-using-tee-ss-without-mem-obj-v2-0-297eacd0d34f@quicinc.com
-> 
-> Changes in v2:
-> - Clean up commit messages and comments.
-> - Use better names such as ubuf instead of membuf or QCOMTEE prefix
->   instead of QCOM_TEE, or names that are more consistent with other
->   TEE-backend drivers such as qcomtee_context_data instead of
->   qcom_tee_context.
-> - Drop the DTS patch and instantiate the device from the scm driver.
-> - Use a single structure for all driver's internal states.
-> - Drop srcu primitives and use the existing mutex for synchronization
->   between the supplicant and QTEE.
-> - Directly use tee_context to track the lifetime of qcomtee_context_data.
-> - Add close_context() to be called when the user closes the tee_context.
-> - Link to v1: https://lore.kernel.org/r/20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com
-> 
-> Changes in v1:
-> - It is a complete rewrite to utilize the TEE subsystem.
-> - Link to RFC: https://lore.kernel.org/all/20240702-qcom-tee-object-and-ioctls-v1-0-633c3ddf57ee@quicinc.com
-> 
-> ---
-> Amirreza Zarrabi (11):
->       firmware: qcom: tzmem: export shm_bridge create/delete
->       firmware: qcom: scm: add support for object invocation
->       tee: allow a driver to allocate a tee_device without a pool
->       tee: add close_context to TEE driver operation
->       tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
->       tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
->       tee: increase TEE_MAX_ARG_SIZE to 4096
->       tee: add Qualcomm TEE driver
->       tee: qcom: add primordial object
->       tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
->       Documentation: tee: Add Qualcomm TEE driver
-> 
->  Documentation/tee/index.rst              |   1 +
->  Documentation/tee/qtee.rst               |  96 ++++
->  MAINTAINERS                              |   7 +
->  drivers/firmware/qcom/qcom_scm.c         | 119 ++++
->  drivers/firmware/qcom/qcom_scm.h         |   7 +
->  drivers/firmware/qcom/qcom_tzmem.c       |  63 ++-
->  drivers/tee/Kconfig                      |   1 +
->  drivers/tee/Makefile                     |   1 +
->  drivers/tee/qcomtee/Kconfig              |  12 +
->  drivers/tee/qcomtee/Makefile             |   9 +
->  drivers/tee/qcomtee/async.c              | 182 ++++++
->  drivers/tee/qcomtee/call.c               | 820 +++++++++++++++++++++++++++
->  drivers/tee/qcomtee/core.c               | 915 +++++++++++++++++++++++++++++++
->  drivers/tee/qcomtee/mem_obj.c            | 169 ++++++
->  drivers/tee/qcomtee/primordial_obj.c     | 113 ++++
->  drivers/tee/qcomtee/qcomtee.h            | 185 +++++++
->  drivers/tee/qcomtee/qcomtee_msg.h        | 304 ++++++++++
->  drivers/tee/qcomtee/qcomtee_object.h     | 316 +++++++++++
->  drivers/tee/qcomtee/shm.c                | 150 +++++
->  drivers/tee/qcomtee/user_obj.c           | 692 +++++++++++++++++++++++
->  drivers/tee/tee_core.c                   | 127 ++++-
->  drivers/tee/tee_private.h                |   6 -
->  include/linux/firmware/qcom/qcom_scm.h   |   6 +
->  include/linux/firmware/qcom/qcom_tzmem.h |  15 +
->  include/linux/tee_core.h                 |  54 +-
->  include/linux/tee_drv.h                  |  12 +
->  include/uapi/linux/tee.h                 |  56 +-
->  27 files changed, 4410 insertions(+), 28 deletions(-)
-> ---
-> base-commit: 33bcf93b9a6b028758105680f8b538a31bc563cf
-> change-id: 20241202-qcom-tee-using-tee-ss-without-mem-obj-362c66340527
-> 
-> Best regards,
-> -- 
-> Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-> 
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
