@@ -1,42 +1,47 @@
-Return-Path: <linux-kernel+bounces-810045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED036B51528
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:13:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B91B51537
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA2FF168248
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:12:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C9B3BBAE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3218319852;
-	Wed, 10 Sep 2025 11:12:26 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA64C31D723;
+	Wed, 10 Sep 2025 11:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DcDqAues"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1EB31D37D;
-	Wed, 10 Sep 2025 11:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEB431CA56;
+	Wed, 10 Sep 2025 11:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757502746; cv=none; b=YrX/HXrPpIZ62iAhgyuPoklXzNPWwhUS5fql6N2cenlx5QiS3w3sjic7iO4tqrRW6/R3XpExLIoq22E9jDN/K9e1hDZetknVgz196gh37SFfpxE/UFNAWOw06dzL4ZCLNrRBXOuNDBS94Wj7DeOpy7/hCMNx9GQjvcok5Oyz7Ew=
+	t=1757502751; cv=none; b=Qhh57p6bcNbi84WTeW/v1xixOTOmvlek524GmmN+cA2RNmJqgMDGLOL33NjUTtpFzz5qvOcSn3GXJXY9vwSqfZxKg0forZieKzgyA+IAp6fKC3QvaZP26i61a4GCIMNt4GwZtN8fudXF1RPfFLVBCOSlWg/SciwsD7Ci4S7FLQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757502746; c=relaxed/simple;
-	bh=PKr2I9o/Z0nYzv3hFWpk9gwnN/cFKToG0e7J+kAIrtw=;
+	s=arc-20240116; t=1757502751; c=relaxed/simple;
+	bh=n59Dbh4oSSuthhXX8IsAwVjZfG6Ul64POly2My1uQhk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B8reEHPhl3b9K1F3ewsngskuaBdEYTjbEVa6zX1k5yEHYSifX1mXDw/+2Rrhb0JiG3gEe6t1/fM3dTeW/WD06keUqc9RGh5LX1/16+mX9dFbuExNxUNXocL86EVs0h2FkyxHImIMf6DpBrvLR7awZfpRDKPKoIsLQaNVqIPVBrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.2.205] (p5dc55aad.dip0.t-ipconnect.de [93.197.90.173])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 988B260213CBB;
-	Wed, 10 Sep 2025 13:11:53 +0200 (CEST)
-Message-ID: <bbf020fc-4567-4c12-8400-5077ae2a7718@molgen.mpg.de>
-Date: Wed, 10 Sep 2025 13:11:52 +0200
+	 In-Reply-To:Content-Type; b=ceWZFBjlShrKjz1Iv05HgPHNV0NDNsajR9itPfpKPOz3DcOfRoksAa7CAnsa3jLuWOfL2fLy/R1jU8yRBnWdxkbsDHW8Cn9CVYQfqk/RtiyFYj0ZGau08k8lARApR13sJZTcoV5iZk9gtVzjXK08JXULh2aBF7M+ub0XrczIbX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DcDqAues; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BE66C4CEF8;
+	Wed, 10 Sep 2025 11:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757502750;
+	bh=n59Dbh4oSSuthhXX8IsAwVjZfG6Ul64POly2My1uQhk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DcDqAuesmMWu+u16cziwPbVd1dqBmO0MWp/Ya0RaIJmpVzH//z1Q5uCafk7lVqdJP
+	 hebe7CfiVOPyamL368EkBcBNx1AEoGYGT7xmDTilPl24foxtYOhn59q8VriWVqgK1e
+	 W1zZCyjzvSXFkirA9FoHT569kpzthfKmZI+ycL1twBu3FT6eIyWXd8QxyUnevkD1CC
+	 im+2gZmOfysMNGF79GwgrzjL7hlekiC8y8XZf96n3q3Ce9yV0/B2RLfCB6nMj3Gaxq
+	 jsJis4rXax0q9nErFkGSJlEHFe8izyvuygeIIzDjb+VDBmvOVCebwny11YdMZcqGhL
+	 MjdFlFrnIXv+A==
+Message-ID: <f6fbc5cc-392d-4914-a08c-e70091ca3371@kernel.org>
+Date: Wed, 10 Sep 2025 20:12:27 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,102 +49,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2][next] Bluetooth: Avoid a couple dozen
- -Wflex-array-member-not-at-end warnings
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, linux-bluetooth@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <aMAZ7wIeT1sDZ4_V@kspp>
+Subject: Re: [PATCH v2 04/20] can: netlink: refactor can_validate_bittiming()
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>,
+ =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250910-canxl-netlink-prep-v2-0-f128d4083721@kernel.org>
+ <20250910-canxl-netlink-prep-v2-4-f128d4083721@kernel.org>
+ <20250910-outrageous-liberal-falcon-9215d3-mkl@pengutronix.de>
+ <1c7024ba-60fc-472d-982a-ab45b4f23748@kernel.org>
+ <20250910-quaint-weightless-narwhal-658e26-mkl@pengutronix.de>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <aMAZ7wIeT1sDZ4_V@kspp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Vincent Mailhol <mailhol@kernel.org>
+Autocrypt: addr=mailhol@kernel.org; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
+ fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
+ F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
+ 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
+ YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
+ dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
+ zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250910-quaint-weightless-narwhal-658e26-mkl@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Dear Gustavo,
-
-
-Thank you for your patch.
-
-Am 09.09.25 um 14:13 schrieb Gustavo A. R. Silva:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
+On 10/09/2025 at 19:55, Marc Kleine-Budde wrote:
+> On 10.09.2025 15:43:00, Vincent Mailhol wrote:
+>> On 10/09/2025 at 15:13, Marc Kleine-Budde wrote:
+>>> On 10.09.2025 15:03:29, Vincent Mailhol wrote:
+>>>> Whenever can_validate_bittiming() is called, it is always preceded by
+>>>> some boilerplate code which was copy pasted all over the place. Move
+>>>> that repeated code directly inside can_validate_bittiming().
+>>>>
+>>>> Finally, the mempcy() is not needed. Just use the pointer returned by
+>>>> nla_data() as-is.
+>>>
+>>> The memcpy()'ed struct is guaranteed to be properly aligned, is this
+>>> also the case for the casted nla_data() pointer?
+>>
+>> The NLA attributes are aligned on 4 bytes, c.f. NLA_ALIGNTO:
+>>
+>> https://elixir.bootlin.com/linux/v6.16.5/source/include/uapi/linux/netlink.h#L248
+>>
+>> Which is sufficient for struct can_bittiming which also requires just 4 bytes of
+>> alignment as proven by the fact the the code would still compile if I add this
+>> static assert:
+>>
+>>   static_assert(_Alignof(typeof(*bt)) <= NLA_ALIGNTO);
+>>
+>> But I have to admit that you caught me off guard. I did not think of that. Maybe
+>> I should add above static assertions to the code to document that what we are
+>> doing is correct?
 > 
-> Use the __struct_group() helper to fix 31 instances of the following
-> type of warnings:
-> 
-> 30 net/bluetooth/mgmt_config.c:16:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 1 net/bluetooth/mgmt_config.c:22:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> Yes, make it so!
 
-You could add an explanation, why the macro `__struct_group()` defined 
-in `include/uapi/linux/stddef.h` fixes this, and why it is preferred 
-over `TRAILING_OVERLAP()`. Also, the two underscores would suggest to 
-me, it’s some kind of internal implementation.
+I applied the changes locally.
 
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
-> Changes in v2:
->   - Use __struct_group() instead of TRAILING_OVERLAP().
-> 
-> v1:
->   - Link: https://lore.kernel.org/linux-hardening/aLSCu8U62Hve7Dau@kspp/
-> 
->   include/net/bluetooth/mgmt.h | 9 +++++++--
->   net/bluetooth/mgmt_config.c  | 4 ++--
->   2 files changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/net/bluetooth/mgmt.h b/include/net/bluetooth/mgmt.h
-> index 3575cd16049a..74edea06985b 100644
-> --- a/include/net/bluetooth/mgmt.h
-> +++ b/include/net/bluetooth/mgmt.h
-> @@ -53,10 +53,15 @@ struct mgmt_hdr {
->   } __packed;
->   
->   struct mgmt_tlv {
-> -	__le16 type;
-> -	__u8   length;
-> +	/* New members MUST be added within the __struct_group() macro below. */
-> +	__struct_group(mgmt_tlv_hdr, __hdr, __packed,
-> +		__le16 type;
-> +		__u8   length;
-> +	);
->   	__u8   value[];
->   } __packed;
-> +static_assert(offsetof(struct mgmt_tlv, value) == sizeof(struct mgmt_tlv_hdr),
-> +	      "struct member likely outside of __struct_group()");
->   
->   struct mgmt_addr_info {
->   	bdaddr_t	bdaddr;
-> diff --git a/net/bluetooth/mgmt_config.c b/net/bluetooth/mgmt_config.c
-> index 6ef701c27da4..c4063d200c0a 100644
-> --- a/net/bluetooth/mgmt_config.c
-> +++ b/net/bluetooth/mgmt_config.c
-> @@ -13,13 +13,13 @@
->   
->   #define HDEV_PARAM_U16(_param_name_) \
->   	struct {\
-> -		struct mgmt_tlv entry; \
-> +		struct mgmt_tlv_hdr entry; \
->   		__le16 value; \
->   	} __packed _param_name_
->   
->   #define HDEV_PARAM_U8(_param_name_) \
->   	struct {\
-> -		struct mgmt_tlv entry; \
-> +		struct mgmt_tlv_hdr entry; \
->   		__u8 value; \
->   	} __packed _param_name_
->   
+Let me know when you are done with the review of the other patches. I will wait
+for your other comments (if any) before sending v3.
 
 
-Kind regards,
+Yours sincerely,
+Vincent Mailhol
 
-Paul
 
