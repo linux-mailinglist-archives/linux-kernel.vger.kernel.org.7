@@ -1,202 +1,180 @@
-Return-Path: <linux-kernel+bounces-810645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060FEB51D3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:15:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF42B51D4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EE2F189BF62
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:15:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770D41C2559D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4FC261B81;
-	Wed, 10 Sep 2025 16:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788C325A35F;
+	Wed, 10 Sep 2025 16:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NMLBvto5"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2071.outbound.protection.outlook.com [40.107.223.71])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gyr2TIz7"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFD332F777;
-	Wed, 10 Sep 2025 16:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757520903; cv=fail; b=PuIBcVyuLs0NBr52A8mGFP087fTiMZZ5U/w9Tnxaq4+2DqyVNMduNwTxqcoX6QTxOFk991uha/CBKYhIrE+QgYupc7yX9P13mpPhWGLFtvdVzJD2V+7HFfE7b7WuxdCDxguIKN7LClBm+sls0GHcoOl9CrI7awt4YsAYrtfLaGY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757520903; c=relaxed/simple;
-	bh=YIu4Lc7HLfs92iM8NEMGt9EMLHAWRHd3ROKrd8QjhgY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=s8o5qcbirRF8xh1Egh4AWL/DhiNL3xMur4oqMkvqP6gc9LvkJm1SG52cS6FnVqYAGsaeDHZU32uHLyHcyesPe6N/cvjNf/TAiLwsJVZObgflGvek/aufylosGArVBBsXxbxOnxCWfd4bhegwwcstCKroToO1N/lOMPFCaAY2XKM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NMLBvto5; arc=fail smtp.client-ip=40.107.223.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LlE18jC2rJj/kxPo6I4XDAnjMQUsGIXT+WAYrrcH0J5gF4IcUnTauF4S/HCT8fe+Xk6oQIxhuJizPWUcM3F60aMmpfuJsgANG/DULrtEdjQQYkUwzvCMbDAz4t11c9+boGtnFEgdsZX/uRcX0+TTAvpjfWgP8+zuz+5XV5PgM1USmlCSsAKCLrwXJBaYW4EQs/e+D00Rs3esUaQMm+jSnVGOaHrPQCii9DbpqEz5NgIHSaYHJFA1qml05DOrRM6b11jiwnSVaX6BQDmlg7ata04fnSSAhrWNAvtKQ0H63F+dUkf08ciB0tAxcuo2p4D5hz4XK2wFh9mMVKjWQhhB6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zTn1xMMipgvI1aWfg/m+KcUoq5Q12ZdkCDT3GlbhSZY=;
- b=TISFAaUVsDhQkyw11QDrX6cvpe4m+GnH3eZkILzysEVFM5z6KBp4EIBMkRSwusgxDGJWSZaOw0EylHKXIiJLi5F1gkswKDa4VHm0N9DfAIfp1ORaNd1d8hF327S9tJ05vVQKbU9lxnOcMmh4lDgzkw+UwMtHOMP3tqG/Qvz7AvNlVfHyqQbLYVw19hkwdWMw/Neupt/secOQ3ULx1uIQfCNtVmykrpSSO8SH1osvSsSWL4XGcufe/Njm+glW9gLqlaAtNdGva2yFWVqpDuobOGWl/rETaVcU9dN9svHKI1y5LtWFbS+m/Hb7nK/g0AnJr8beo9051iPTptxUybdcsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zTn1xMMipgvI1aWfg/m+KcUoq5Q12ZdkCDT3GlbhSZY=;
- b=NMLBvto5AJz3pfx7v/IslFesO1vq773eEy587G2+olqeyuJMgxYf+k4HX7Kj5vtv0eG5ZOpB414oDVNtsXmVPgr2J/bPNk7rXaf+Hj93cThD7Ln8s9TVN9dN7tAlzTCLo39ieWUhwT28+heevSLEtIDUbA3GQ982gAjrDLzWxo4mcGqEUeNoda8a6Ok2IAJX2yJNNC2XGuujMma8eSteEQLOnNJiAmsQKFZNRIEVwyCINAPpZhb7pkMhVvtQHwIQPnb5EPsJYEYvTR5Ewbhv30toQHSJmy62hnBLKQ2BvnjFbIpSq1nKZ8tw/D5gDwvKS79/cknnNx59ycAXAS592Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB7282.namprd12.prod.outlook.com (2603:10b6:510:209::7)
- by SJ1PR12MB6051.namprd12.prod.outlook.com (2603:10b6:a03:48a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 16:14:57 +0000
-Received: from PH7PR12MB7282.namprd12.prod.outlook.com
- ([fe80::6f03:f851:7f6c:c68d]) by PH7PR12MB7282.namprd12.prod.outlook.com
- ([fe80::6f03:f851:7f6c:c68d%3]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
- 16:14:57 +0000
-Message-ID: <29ab5e2d-2b76-477c-a4fa-39de622544bc@nvidia.com>
-Date: Wed, 10 Sep 2025 09:14:55 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] ARM: dts: aspeed: Add NVIDIA VR144NVL board
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, etanous@nvidia.com
-References: <20250910040601.240162-1-donalds@nvidia.com>
- <20250910040601.240162-3-donalds@nvidia.com>
- <3114a51c-47a2-4b67-8965-33841ee87fd5@lunn.ch>
-Content-Language: en-US
-From: Donald Shannon <donalds@nvidia.com>
-In-Reply-To: <3114a51c-47a2-4b67-8965-33841ee87fd5@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY5PR03CA0009.namprd03.prod.outlook.com
- (2603:10b6:a03:1e0::19) To PH7PR12MB7282.namprd12.prod.outlook.com
- (2603:10b6:510:209::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70A91E1DF0;
+	Wed, 10 Sep 2025 16:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757520989; cv=none; b=OclSVDAIkxXHdOtaj+bRP/wgeN65Aqb4SywmoV0GLguy39i846MwyR2GOWvAa9Jhs2fG91VvAwUwGmy2JJbahy5E/lCyYBRgm0VMrecU5qMKLyEXTffMX1xU93A8KJl4uJyzqoh2iDUsxPMRsR3L4OKaFAUDY2ET8EFdIVlR7T0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757520989; c=relaxed/simple;
+	bh=MErv7ofNJvs2O2HyYXqdJGh01YPQd2InhldhO81ZjVI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=knuB3vLBJu1jSbv1wkH2jKupxXSvW06EGaV3E8A80THgVL3b61SZSdV0DYvmvT1yQe4W4YA2kH/V0Cq6PoWKX0rCH39H+NV5+a+HmMvfbGd18VP319nnC3N8jlAK9G/mqCcESNR5Me3pkjcTEoOKbpqTndDXOCKIu07Wgr0OZgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gyr2TIz7; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 4EA5AC6B38C;
+	Wed, 10 Sep 2025 16:16:08 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 11643606D4;
+	Wed, 10 Sep 2025 16:16:24 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7BC49102F28EB;
+	Wed, 10 Sep 2025 18:15:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757520982; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=E0APalsRu/zy6XFrd8Z66ktVEZmFwpkka305wRfKLmY=;
+	b=gyr2TIz7PJf5tUr1jy8ZxhE8/qurylPahZ3BUp+dI5+7B3FC//K/B7fflvrcCuYcN66q2+
+	upMK0YCNAWowIB//uiyWZ7de/gg0EgtTwtGDQnesJaYbMZAn6Qd6K5nMvVMsS5b4EaVn94
+	wbFqUspV9n+gDvTuT1Z1kjpBz7adunhrCjxCydGrMbQ5jJxybFiax5cbvuTnVeQTjxTkU9
+	fJX502c091Dax5uIAJT4FNwjOZ3n9ra3XFIy1XJPc0zu2uefTmZYe5zh2v/18USEPtR5oZ
+	OT0pFJd9UnLiKSgBh6kJ/mLON/XMv7ZbFLw9JJ1kHWa9YOT4P8rTeoVNXz8Paw==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH net v5 0/5] net: macb: various fixes
+Date: Wed, 10 Sep 2025 18:15:29 +0200
+Message-Id: <20250910-macb-fixes-v5-0-f413a3601ce4@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB7282:EE_|SJ1PR12MB6051:EE_
-X-MS-Office365-Filtering-Correlation-Id: ee41f40e-1987-4be8-82ef-08ddf0852f54
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MjI3R3BZUERHNUk4WkxrWnNIWGZ6ZGUzM0RxV3pqb25UUldwSEpUaGJ1OUNI?=
- =?utf-8?B?NW9CdmpBM1hiY1hYN1ZFVW5OUzFrR0tSblFzU1RBdkRQZ2pkdXVyREl2d3lJ?=
- =?utf-8?B?TWs3UUpFRE5JR3dXUFJGL3hoaFlUQWY5Zm1MRUVMZkw1VWhYRFo1QVprMm0w?=
- =?utf-8?B?bUFua2J2Y3BpKzNiR2MwQ21DM2ttbXBqK1h6K21qYWlQc2Z6aDhod2tQajFy?=
- =?utf-8?B?OVdzWTRONElTTnZaVUZMaGhqQWw4WGRwYkdqdG1HZ2R0Mi80MGpwOVl6SjNa?=
- =?utf-8?B?YTVQTTVRZFFLTUxmekYzZEpzNjRsU3VOMDM5MTY0MnN0TTRhczdQM2xKK2Nu?=
- =?utf-8?B?d08vSkw5YkE5ZmdGSk5iOXFrc2x3QVR4N1czL2RwM2g1U05XeTA3cVpzZitK?=
- =?utf-8?B?TlQydUdaOGlialU2QlhpSjJHa3ZNdlBGZnJmVUU2dE9aZXVaOExDcFBBTHFp?=
- =?utf-8?B?SlpaV2FkczAvKzRBVkVXdDJMSkx0T2UvUVQ4cjFKeityWjZ0emZ0WXR0YlpO?=
- =?utf-8?B?djhHbjdsQWJKSXFTVUx2UWJtYkc3dXViSUgzbDJUZUFWRDhUR00rRmI3MWIv?=
- =?utf-8?B?NU1uMXhoMjJjaU5adkNabmt3d2pWVGhGMjVNa29KOFZDU0Z1TTR4SnJueXNo?=
- =?utf-8?B?V25wcnFqbm95RmdzTDg1UGxBb01Pc3RKbklTSjZKbm1HOWZXSStseThBNDVk?=
- =?utf-8?B?N01QV0x1aW55MzhEcTNVT3JFeW5MZjFpMk5jR2dhZEFhWXo1Vml6QTFIV3gx?=
- =?utf-8?B?V3RGbFp2Y3ZrNzFkR1pINFliU3VOZ2paL3ppbzdIczhmcEJIOWswMWdDeTRE?=
- =?utf-8?B?blIxMVFQOWJ6T3o2cVRpd293aXFiT1ZtVTNZdjN0TWNNRU5OeWlFanhmOTNr?=
- =?utf-8?B?NzNVUUttcnRIc1B4Unp3ZkIxS0I3MkdISC9mcnE3N3JZcUl1b1dWTHZ6WU1S?=
- =?utf-8?B?T3N5Mk1hYzdwek1wSUI2b2RwKzlWRUtRRjgrcER5TE5BNWVneHVyUm9OVkl3?=
- =?utf-8?B?MFd4K3VNWkFYUjBqVE5DZTFaZFI1VzhqOFRjOUFFRVVTY1hGTVQwMnNLb0VV?=
- =?utf-8?B?UEVDZnd2TXY4d1loa09OREZab0UwRi9uTm5PdnpNd2wybmlIN3JvZWpOQ3Q1?=
- =?utf-8?B?UDRHMU1Rei9kRVcwU0R5eVcxTXJ3cnBOUjc5ZjdBcjZZeUY4OHV2VTlid2JW?=
- =?utf-8?B?VEpoQ1VmKzlVcFp2TW8wQy9lZmNkaSt0V2NnQml5QXd0TjdiVTU4WHlDb0U4?=
- =?utf-8?B?LytPUlNVNVhRRW56MEdWbjNOMjhTRWMvUzliSmpqcGJBRlhsUWF5SkpKbUlX?=
- =?utf-8?B?NlgyM0VlTXl5TGlmalF1eFhSSzFueUUwVXBta3U5MVZzTld0QktianZmNWhi?=
- =?utf-8?B?REo0S3JTVVBnWUwybEt0WHVQY1FBWVdTNDZKekg0NFRiYmxGOGdnNnFLUlBr?=
- =?utf-8?B?bnB6QUNMeFFsaWs0Ly8vbUxZN3dJWVUxbHB5ek9ZR3U3dXZOd3R6UmZKUHhV?=
- =?utf-8?B?RmdLSWlSYURSTDhsYlRPdklQejBLTCtGSEduc1J4ZmpQK1VuZzZuYjVNSFJt?=
- =?utf-8?B?T2oxY2FrRXlDUGE4aWxubGVtUTVNSVdCWVN3U2JRNktvdmFaYUczclh2a00r?=
- =?utf-8?B?TTBrSVk4K1hoeWtUelcyWGxIbG9mS291bWIrOC9OQ2ZLQjhzdlRHYTloZUxS?=
- =?utf-8?B?dHZGUUN0RC9va2pyaDN0L0lINFQ5RGNHQzI3bkUxUXovdnB5YTJIQmhNMnU5?=
- =?utf-8?B?U2ZtV2V1YXNnd2doUVZDdnNXbkhtNTQ3WmNGWkJBNkdMWk1iNmJEMW1Ec1Fz?=
- =?utf-8?B?STUxanpLYXZudkxaaHd5MERzZmVjNVE3VzZOMUxTRXYvcUtnaDRZQlg4ZWxT?=
- =?utf-8?B?M1BRT29iQzlhcUhaS3IxMURPVmZtblZsNCtGWHRWRi93bjgva1B3ODBSRHlM?=
- =?utf-8?Q?9Y2G0iFLt0A=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7282.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b25BbWZIRmNwaTgxU3UwcTNKdW1Bc2hrcFgzMURSUDI4V2dhTFJGQ20vWEhn?=
- =?utf-8?B?WE9uWmlBTXgvaHR0QUU2akU5N2V2Nkp2eDdnVjBvNEFyWmEyMG12MnNFZlZV?=
- =?utf-8?B?K0lTVGFFdFQ1UmRvcTRRSmdsbnc0Q2g4Y2Z1Mzg2MXFaZXJnV1d4MXRLMURp?=
- =?utf-8?B?Wk8wRDFJTlJKTktNTTFzcTFPU0RmQXpOWTZVYWNiell4R08zTnVGTkZMb1hW?=
- =?utf-8?B?eURiNklINThka0M2ZzVVaGFJY29EK1BCOW9zUEVtajN2cmxiVVAxMFI0Y2NS?=
- =?utf-8?B?WVh4MlpqOHdHMDZGMU5oVnNCUk55RG5Yc0orSlBqNG5iM3c2U2UrTThkU3J3?=
- =?utf-8?B?eDhqRDlRcFF6UzI4UXNROHJQVDlYNTBacmNNZWRiZjc2cTZLNmRLS242MFhS?=
- =?utf-8?B?aGd0ZzRUSGw4cXBLVUxKNzNjTURsZ0pyUHZpSm44TFFHYmtHTVgyS2tBaWhF?=
- =?utf-8?B?UzNjVGc0QzJhQUpyNjkzR2FCV0d2eDhpdXZGU1JjZGZ3OUtFSGxkOWtZbUti?=
- =?utf-8?B?NlpJR0twbXNlMW45L3Q1VzAranZzVnR6YnEvandSQ0lYci93cmNJeVJHb0Iz?=
- =?utf-8?B?MkxpWVM3QVhwS2JGQUxaUHo3SW44WW1vSEFtcEtrU2RmQ3R5U1FkVkhkeU5u?=
- =?utf-8?B?QnRKT1pYcGZpQ2s4MW1EaTNmZTluQjJMUU94VStVaGh6bXNDWmhHeEJyR1FX?=
- =?utf-8?B?aDBQZnhEdkZGdDJkZEZ1dkNKUSs2bVRoK3JFN1VqOUdVRWJXYUFVK3ZQYzBX?=
- =?utf-8?B?QjVYR2VNSUtPNDB2anpKdjcyWXZhN1lhSEpJS3NXemNOdXNIcDBCMUg1aU1M?=
- =?utf-8?B?d3BFN0hKdVMyVkxlMHA1WUxLb3FZL1Q5UlJiSmNjOEJwWEtFeDM5MmNTTG9V?=
- =?utf-8?B?bFhmcFR5MWVDMVRma2c4Nm40NlRFUHkxTTZYcEIwTm8rczlHTEFMSXFZU2pa?=
- =?utf-8?B?b01vTjdFUkhtaUx4UlplNzRydkN2QUZ5MzdaeDVYeDJVS1FBVHJmNm5jcDhS?=
- =?utf-8?B?aklTN0l3T3pjOHgvQmVPVHJHVXBwQkExc2x2RituQ2tHNFVMcUZSUmJhQ1Av?=
- =?utf-8?B?ZjlDQnliSjhNOHo5UDRFZUFYdmxpdkFmMkR1eVkvZDYrYTlhT25IalVtU2Yr?=
- =?utf-8?B?MmhkaCsyMUhHbXJtNElESXRVTzBZTDdkRCt1Sk9McytEQVNoWGdTUnBmQmFk?=
- =?utf-8?B?SVJqSGpWWVQ0VXpiakIyYkZUaTN3RDVHdXZvanJoVkZXaXYxMmRBSHM3bUI3?=
- =?utf-8?B?c010V3M1SGpvbWNiRko2eEVraXFDYytvL21jMFZLWWhwYVd6QisycHBCa1J2?=
- =?utf-8?B?Tkp0UzlGWTQyaDhrK05qS1pxWUJOZmJXWWhmcVNCWEFrVVJEbXVMbGRTZ0tD?=
- =?utf-8?B?aGtyOFo5eGFvU0didUFzcVlURTJDNzBTN3cvc0ZtNG56ZUZmQnExUUorMG9R?=
- =?utf-8?B?amNIZk51c1Ewbkh0R0xqM3dBbGFEdkJPbWZNbGt2R1BkVlE3bk1OU3E4UFpY?=
- =?utf-8?B?RTlJOURqWUNKK0s5eG1TeHdCZzcwTktSQnRrWG9pTTdPV3pabjA3NU1wMmlF?=
- =?utf-8?B?S2loOVkyUlJPWXRUWTJsMzN3K0JsY0lLWmtYcHR4NElaNlBtUnk4QnhtVjRn?=
- =?utf-8?B?Q3QxT2UxMG1CMDBWZjRVT0E2ejYrQmZIb1FzTHo4TkhFaW4veEZKTHpWdUxD?=
- =?utf-8?B?amlGV2pYSDJ0S1Vtc21BZ29iQVBWT0ZZYm9YWm1rTk1iRVN0K2hmbkdOcFFk?=
- =?utf-8?B?UDFzQ1JIMFZxbHBHNG11blZMWGFEVnNCK3lzekRGZ3F2U2RNUTJML1lWUFNs?=
- =?utf-8?B?eDFOUWw5NE9lM25zUmk2empMVDNmS3dMV1dzRGxBcTJjZFpBM2o1UGxTdkVH?=
- =?utf-8?B?djZOM2JzNFBYOUNndE1xZy9kM3pMZ2FDZHZBcUdUN0I1YU1jS0xBeEIvelEx?=
- =?utf-8?B?WXB2OUpjMzRKbVdhVDRsNllwSlUra0kyZVJiQVNSTnFRcE9rb01QRjM5STlx?=
- =?utf-8?B?V1l1QlFHSlloQkRyRlBJdGxQNlVtQkozTm9FWVpBRmdKSnU1VXRpUjFBMTBI?=
- =?utf-8?B?U0JNWlhpcVBvNmdnckNXYnl3d3cvK1ZYZHN2UWdOWjh3QzBVbW9jQkZRYWRD?=
- =?utf-8?Q?UBi65wazocutenu9nvgtBEE/m?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee41f40e-1987-4be8-82ef-08ddf0852f54
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB7282.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 16:14:57.3523
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5eDIxvNetwtI/AaJ6WC6YtgQmgIXwEzdwFVu8ajn5XPBK8izYnRX3JhBDHAB/LR1V1ebLRO+SPFf89w3xZ0+CA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6051
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACGkwWgC/22NSw7CIBRFt9K8sRi+tjhyH8ZBiw9LYsFAQzQNe
+ 5cwsonD+zn3bpAwOkxw7jaImF1ywVehDh2YefQPJO5eNXDKFR3oQJbRTMS6NyaC3KqeImNcMqj
+ AK2ILav8KHle4VXN2aQ3x0w6yaNG/rSwIJXSwzJpJsV7byxTC+nT+aMLShrL8gTndwbLCXBiht
+ eSaneQeLqV8AaP8UfLoAAAA
+X-Change-ID: 20250808-macb-fixes-e2f570e11241
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, 
+ Harini Katakam <harini.katakam@xilinx.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Sean Anderson <sean.anderson@linux.dev>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 9/10/25 05:56, Andrew Lunn wrote:
+Fix a few disparate topics in MACB:
 
->> Changes v2 -> v3:
->>    - Removed unused phy-mode property from mac0
->> +&mac0 {
->> +     pinctrl-names = "default";
->> +     phy-handle = <&ethphy0>;
->> +     pinctrl-0 = <&pinctrl_rgmii1_default>;
->> +     status = "okay";
->> +};
-> Oh, fun.
->
-> Please don't do that. At some point Aspeed it going to clean up the
-> mess they made with RGMII delays. And at that point, it is very likely
-> your board will mysteriously break, if nobody remembers it is doing
-> something probably no other board does.
->
->          Andrew
+[PATCH net v5 0/5] net: macb: various fixes
+[PATCH net v5 1/5] dt-bindings: net: cdns,macb: allow tsu_clk without tx_clk
+[PATCH net v5 2/5] net: macb: remove illusion about TBQPH/RBQPH being per-queue
+[PATCH net v5 3/5] net: macb: move ring size computation to functions
+[PATCH net v5 4/5] net: macb: single dma_alloc_coherent() for DMA descriptors
+[PATCH net v5 5/5] net: macb: avoid dealing with endianness in macb_set_hwaddr()
 
-Hi Andrew,
+Patch 3/5 is a rework that simplifies patch 4/5. It is the only non-fix.
 
-I will add it back in. Our board phy has tx and rx delays.
+Pending series on MACB are: (1) many cleanup patches and (2) patches for
+EyeQ5 support. Those will be sent targeting net-next/main once this
+series lands there, aiming to minimise merge conflicts. Old version of
+those patches are visible in the V2 revision [0].
 
-Don
+Thanks,
+Have a nice day,
+Théo
+
+[0]: https://lore.kernel.org/lkml/20250627-macb-v2-0-ff8207d0bb77@bootlin.com/
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v5:
+- Fix hwaddr endianness patch following comment by Russell [2].
+  [2]: https://lore.kernel.org/lkml/DCKQTNSCJD5Q.BKVVU59U0MU@bootlin.com/
+- Take 4 Acked-by: Nicolas Ferre.
+- Take Tested-by: Nicolas Ferre.
+- Link to v4: https://lore.kernel.org/r/20250820-macb-fixes-v4-0-23c399429164@bootlin.com
+
+Changes in v4:
+- Drop 11 patches that are only cleanups. That includes the
+  RBOF/skb_reserve() patch that, after discussion with Sean [1], has
+  had its Fixes trailer dropped. "move ring size computation to
+  functions" is the only non-fix patch that is kept, as it is depended
+  upon by further patches. Dropped patches:
+    dt-bindings: net: cdns,macb: sort compatibles
+    net: macb: match skb_reserve(skb, NET_IP_ALIGN) with HW alignment
+    net: macb: use BIT() macro for capability definitions
+    net: macb: remove gap in MACB_CAPS_* flags
+    net: macb: Remove local variables clk_init and init in macb_probe()
+    net: macb: drop macb_config NULL checking
+    net: macb: simplify macb_dma_desc_get_size()
+    net: macb: simplify macb_adj_dma_desc_idx()
+    net: macb: move bp->hw_dma_cap flags to bp->caps
+    net: macb: introduce DMA descriptor helpers (is 64bit? is PTP?)
+    net: macb: sort #includes
+  [1]: https://lore.kernel.org/lkml/d4bead1c-697a-46d8-ba9c-64292fccb19f@linux.dev/
+- Wrap code to 80 chars.
+- Link to v3: https://lore.kernel.org/r/20250808-macb-fixes-v3-0-08f1fcb5179f@bootlin.com
+
+Changes in v3:
+- Cover letter: drop addresses that reject emails:
+  cyrille.pitchen@atmel.com
+  hskinnemoen@atmel.com
+  jeff@garzik.org
+  rafalo@cadence.com
+- dt-bindings: Take 2x Reviewed-by Krzysztof.
+- dt-bindings: add Fixes trailer to "allow tsu_clk without tx_clk"
+  patch, to highlight we are not introducing new behavior.
+- Reorder commits; move fixes first followed by cleanup patches.
+- Drop all EyeQ5 related commits.
+- New commit: "remove gap in MACB_CAPS_* flags".
+- New commit: "move ring size computation to functions".
+- New commit: "move bp->hw_dma_cap flags to bp->caps".
+- Rename introduced helpers macb_dma_is_64b() to macb_dma64() and,
+  macb_dma_is_ptp() to macb_dma_ptp().
+- Rename MACB_CAPS_RSC_CAPABLE -> MACB_CAPS_RSC.
+- Fix commit message typos: "maxime" -> "maximise", etc.
+- Take 7x Reviewed-by: Sean Anderson.
+- Add details to some commit messages.
+- Link to v2: https://lore.kernel.org/r/20250627-macb-v2-0-ff8207d0bb77@bootlin.com
+
+---
+Théo Lebrun (5):
+      dt-bindings: net: cdns,macb: allow tsu_clk without tx_clk
+      net: macb: remove illusion about TBQPH/RBQPH being per-queue
+      net: macb: move ring size computation to functions
+      net: macb: single dma_alloc_coherent() for DMA descriptors
+      net: macb: avoid dealing with endianness in macb_set_hwaddr()
+
+ .../devicetree/bindings/net/cdns,macb.yaml         |   2 +-
+ drivers/net/ethernet/cadence/macb.h                |   4 -
+ drivers/net/ethernet/cadence/macb_main.c           | 140 ++++++++++-----------
+ 3 files changed, 69 insertions(+), 77 deletions(-)
+---
+base-commit: 03605e0fae3948824b613bfb31bcf420b89c89c7
+change-id: 20250808-macb-fixes-e2f570e11241
+
+Best regards,
+-- 
+Théo Lebrun <theo.lebrun@bootlin.com>
 
 
