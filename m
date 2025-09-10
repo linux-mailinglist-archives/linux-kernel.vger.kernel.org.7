@@ -1,262 +1,256 @@
-Return-Path: <linux-kernel+bounces-810502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D103B51B7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:24:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB36B51B84
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE6E47AC627
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:22:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8583ADE0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B2E5464E;
-	Wed, 10 Sep 2025 15:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33400311C38;
+	Wed, 10 Sep 2025 15:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jqHbgIX9"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bGG96C65"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FD527B355
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757517852; cv=none; b=WXF9+dLRU7J1YgVYvD7o0pwrw0tmwrHXSAsD6hY45nGTASDluFT7thyyhaqWFgHQ9Z0swlyk6ETmNUQiYLkQbgamOiyL3Rmqgd3cD1drem+2Et9YxLBr7N+hwNycupzQ+6Z4rmCZzhgxFkEU6zFoMen3P0UaJkTGkV52frZUyzI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757517852; c=relaxed/simple;
-	bh=iiw06wgl+p4NfUCoi92iJwzwIpiHapGdLTCxziJrQ2c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PyuThM1r0yz8+cliiAJ8uUa6X2BF6tcv0pVidDAmmTsjRUEd37L+kr3ubEzCDDwxODkQfoRoxuC9Ug0Eqwfi8UtEkziVq7cBIEPNhZ35TL2a9KH6i90RRooZuMPV/RXvYjOqY9fIQpUVXgxa0om8QVu7TxvA+LlYMJ9CvEpRprs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jqHbgIX9; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-621c6ae39b5so16773a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757517849; x=1758122649; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YLzimIwCrnqvV3j5sA3GYOxbGdhxDlHB4mZ0xdr+3d4=;
-        b=jqHbgIX9rmmTigVnLvQ1FA74phLOJRD9iGMuvs69TKzA2gbjGL6/ORUTrtbMbI5jvl
-         ekSTwnPt4DG7CO+lzJ47PAtKCU6vtfdhsMnFufXvxAicnMpOQb03ymgZp8Lg7x0FbaLG
-         NZ+nucc8gEVskQzkjHGU5FUUbIo1Wt9YYiM6sakvf7rqVQ6xXtrKz16uSiz/Rv4vKA2T
-         VqBHAQeLlGaAaN1NINwfNvpO+c38M+71a4MWfFojmBEGYbKRnF8zfVmFtK5jERyWAUjq
-         u/kK30f3to3WTurkcP31dCidc0AiTu987aj7NpGKyL2/w7u+kbpgMos0/G5q4ntNaZsw
-         lU0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757517849; x=1758122649;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YLzimIwCrnqvV3j5sA3GYOxbGdhxDlHB4mZ0xdr+3d4=;
-        b=CFacvJvlcihjl6F50Xi6kG3V25xs6ImcwOPz0dv6voGP6jav89XWwhHeGfHFEIyIVS
-         r4LJjnvnwrQfG9u+Rhe9mctfRcBkxidY//HL8VuPwgP0UmtfCvnuokGs2TCP1GFgHx/N
-         ZI6QGSwqjFV2JcgCyN3eO3bAlBbZ0QeH2tzVFgnZb+nbLLgHz0BOSQAA4ZHNWzwyhefU
-         ilIN5/S/sahuZPZuNxXZQpgrLfLgYywCeXQkqKrp5mc3Y97583sjsVcrj4vqgFthqPl/
-         TNwy3qmoXFexEXaQzvgAIOH8lm/zcXFeBpUDVF6PHxcbY5pxXkbNtd328JiVrkMAYUAX
-         +r/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXh30ZU9BVcJ2VjDD+CG4xRXmSCqyqJ1f86CN5PgL4e/2zLp8yP8pr/65w6TNU4VwMK4CqNKBE7W/v37pU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYU0AcAOg9MbqfE3x3Fz0vIotXmU6Ow4Q9RI8Q4wogvwU60Aaw
-	D3dBisNGiJ72DxFi/LI8mDNkYDOP3o2MToDHH2XlWMNlzk0Ovl8amCyXbQ2gNPYrhiLp8DB3AEk
-	5Ky17SaMmRfa88+aKOQ4OPWvXmnUlIDYwJX4oQ7LZQT44M+9xeHVUZlhK
-X-Gm-Gg: ASbGnctKgR/8WyF69io8is7dgYAVCSH38zEJlM0QLhjtI+DKTvNlnejTKFyVoMgni7+
-	8yhSGfCk2b8MqWjqqlCRE37V0UWYHCszZKn5R43wbiBqn9W6fkmhcPJjc4+fZCAmCWq0frpn83Y
-	Zldfi4BVhgbptzO75jXIUPrqzUN8D25rxC6j0VHodx4CW244iH+ePheKD8zqJiSq4xkMUEK1T7H
-	ILcH4efpRMWRxdsqsFo8wjz/IIZzaF94rlHa6LzAZk=
-X-Google-Smtp-Source: AGHT+IF5Ohw+Igdpiqfr2NaLOCuYq2aGHC6zAz0SPaARab0f2dpehIyUKQUWFW1zcPOADAw5vISpP/RgxkTdWGpY8YI=
-X-Received: by 2002:aa7:d5cc:0:b0:61c:32fb:999b with SMTP id
- 4fb4d7f45d1cf-62d4e5c8ed1mr83463a12.1.1757517848839; Wed, 10 Sep 2025
- 08:24:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D900212FA0;
+	Wed, 10 Sep 2025 15:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757517864; cv=fail; b=o6urYK6q2zIo596h/Va4sUEtm8yOIPI3+Dnzv3Yh68+z/MgqAhyEOLmzg+JzKmK0GmKaRs7yZW2xYQ0CwtS7lBBJSWOIUaFi8DZey49Sj4PXO5liwixK0XIpwStm+iUu8BSaQ+78ZfH9s7yjH6sJLTqmJeHE+HQE9/jpa/+i83A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757517864; c=relaxed/simple;
+	bh=spF0+7ssA95fkMEsuAXsVF9bIY1QOd2JERrPNSnYieU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rIhJcszBtQSc0B/+cA8SvB2Ex+G5ibm2PKo4zs/tM/RLBPQ+AxjbgEJFK6+bKhtB5cSBMZFi7vDVEY/+j08nvf54Q74ExiCOrc8FsxYAsf1aKPdBQkSLpHa0mm+RzMV8Mws0oY+bRqS13hrftt4MGEnie55Bdmb4EFFk0DvjhVk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bGG96C65; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757517863; x=1789053863;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=spF0+7ssA95fkMEsuAXsVF9bIY1QOd2JERrPNSnYieU=;
+  b=bGG96C65qaG7LU2YpANJijv4bo9ePyHr3UyiSzqMZLIquNcuZIc4MyJn
+   RifOq6MHKf/SM165Y5bE0DP80pttDpjrbsXpr7KBJd172l0tdVWdi8icU
+   mwX75ZnD0IErMveBjm0bIxc9Lmdfip+V8ukqExFVJsxdPiU+nDQ/BC4H5
+   Df3X1p3hV118FDeYIYUG7MxuRZhbNa26OChBoeq6aAtXYA5dOgl+b/yki
+   /5DgUxJIchPDJmbEkiWurGQTUC/S80L4kEPSOuijUCvJ2+IJ0Kbkxeuzh
+   ur2V7KBcKYLbFNqiKvuOkCzRccx5+Z3bMX5yYcDB3Ko5U6oHe6F3EDT4y
+   Q==;
+X-CSE-ConnectionGUID: YsHLiYj/RoSeKCnCT1vt2g==
+X-CSE-MsgGUID: BS5p2tasSZCkX+b2IsnD7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="59943112"
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="59943112"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 08:24:22 -0700
+X-CSE-ConnectionGUID: ORbPwwBgQhyJ+qNfi8AKQQ==
+X-CSE-MsgGUID: lExG/EFLQYOUM4FavmRDxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="173503415"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 08:24:22 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 10 Sep 2025 08:24:21 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 10 Sep 2025 08:24:21 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.65) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 10 Sep 2025 08:24:19 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XOY3WcMr/GBEB/NxfB5D8whnNULaAMRocZVCD+ziQy/z9FTXAbQqcSqef7iPmFTrSWlgr/suH5w0LW7HJIryUQmouU2XXFo6ZewhMyA0hkwtzxEpwtM1N2vUZPAWWiDAQGwEsZQkIzNS6hqwl6T92gp0026Ko97tX6Claj3w3RRMdaDzcQEtAPjnvsaarEGr6jA1FfAigSRMDYAiDCuP6I19BPVmI9bne2O7b1qTsyQlEHk6rPqX5NbAb1VsZ1ZhFLiYO4biVYzlDNpfRZQsgXrL3sAkrH8vuOqz9Sfth7tDZahxlcvjX0BEEiqi5Ic7Dw9DzhU5yXM3YJHvXZEsbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aLB+BF5YR18OAuXA+My9SFV0K3vLFngYzKoYNJRFxDU=;
+ b=moSZ1Qy+cS4GT+rZBAtlls91NhfXK2Pa+NcaSeLyqaVdc8vjKf5ejy+765+AI02bnlBdof49Xl0cLUtiojFl5n8BB+T1ATwiFbvQ5RpUlBIQi9sWnnwyFFfDYprvKcEI8omnhq5jzb/rxykKbft3HN927xuyuUcgHpEE2ZMGWe1s8saploKnRN9KELicz18U91M4bNRNE7TsWpIS3WdEly1+JTPY9XiufpH92RY236BcJthIWQq4J1bieI3yDUNv8CqqHyVt/xXhIfQraoD29dBi9RYno9bdrbSPinx3AT+z2cU3sy2wIceZuzkdtRmZlWY8+be6+wtSqbTeSUB7DQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by IA1PR11MB7271.namprd11.prod.outlook.com (2603:10b6:208:429::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 15:24:16 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%4]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 15:24:16 +0000
+Date: Wed, 10 Sep 2025 23:24:02 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <acme@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<john.allen@amd.com>, <mingo@kernel.org>, <mingo@redhat.com>,
+	<minipli@grsecurity.net>, <mlevitsk@redhat.com>, <namhyung@kernel.org>,
+	<pbonzini@redhat.com>, <prsampat@amd.com>, <rick.p.edgecombe@intel.com>,
+	<seanjc@google.com>, <shuah@kernel.org>, <tglx@linutronix.de>,
+	<weijiang.yang@intel.com>, <x86@kernel.org>, <xin@zytor.com>
+Subject: Re: [PATCH v14 06/22] KVM: x86: Load guest FPU state when access
+ XSAVE-managed MSRs
+Message-ID: <aMGYEvUZ6sg6dPvs@intel.com>
+References: <20250909093953.202028-1-chao.gao@intel.com>
+ <20250909093953.202028-7-chao.gao@intel.com>
+ <be3459db-d972-4d46-a48a-2fab1cde7faa@intel.com>
+ <aMFedyAqac+S38P2@intel.com>
+ <5077c390-1211-42fc-b753-2a23187cf8ca@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <5077c390-1211-42fc-b753-2a23187cf8ca@intel.com>
+X-ClientProxiedBy: SGAP274CA0013.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::25)
+ To CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910143726.19905-1-zhongjinji@honor.com> <20250910143726.19905-2-zhongjinji@honor.com>
- <aMGWAg5jIitYCXdZ@tiehlicka>
-In-Reply-To: <aMGWAg5jIitYCXdZ@tiehlicka>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 10 Sep 2025 08:23:56 -0700
-X-Gm-Features: AS18NWAJ45hQ9B-n7p6XQn7GBwUVm3h_aYmSoIZyWzjk4e_caUPvzXaPHJVMs7E
-Message-ID: <CAJuCfpEu_pq5kDgQ2jDnWVNuzVPrMKz2Gw0EeoPU6WD38aBXVA@mail.gmail.com>
-Subject: Re: [PATCH v9 1/2] mm/oom_kill: Thaw the entire OOM victim process
-To: Michal Hocko <mhocko@suse.com>
-Cc: zhongjinji <zhongjinji@honor.com>, rientjes@google.com, shakeel.butt@linux.dev, 
-	akpm@linux-foundation.org, tglx@linutronix.de, liam.howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, lenb@kernel.org, rafael@kernel.org, 
-	pavel@kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, liulu.liu@honor.com, feng.han@honor.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|IA1PR11MB7271:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21e8a494-2e89-4713-531c-08ddf07e1a76
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9uZuticEutVYX8D5Ts6CcwRFMz0jbJNHBPDc5kyWIFo+oe6e3lBFdPOh0ShL?=
+ =?us-ascii?Q?V9WzuVt4zX/Dx6rsiajRPR7oKemeZeAPWM+uRDaZ8+0ngOZsiuTQb9XqixZm?=
+ =?us-ascii?Q?J7ayfjEza3Tw1TnZJOi5Yz8pS1xAxAZK77Mj1ti2MPBVyTYZYJ0JG9W1x2WX?=
+ =?us-ascii?Q?IEw5heA2qn0DM+ek4+IeeTICVQp7FnMOyEu0WZQZd1RL8uvpnuwiKcYXZZyd?=
+ =?us-ascii?Q?YJnuOWT+Y1Maogh4iM5NJXT9l7mu/XPFRPkA5/s01pcNZEAHl+rnlSRYwBmj?=
+ =?us-ascii?Q?OEDCMIgfm6ffX0WJcRNji0++55gqMloJbGLkgcxQcSWeeTi0IowpuCV6q/yO?=
+ =?us-ascii?Q?xjP6vZGPqKmzPrqEAXqrjvgXgWsHFXjIyYDva4T/v365RyRhG3lHoUHnngkI?=
+ =?us-ascii?Q?Vyp056qRMnmcXUykMGlUQhKDVIrB8KR78Kfd5yOIc+1aShG6tmulCcrvGezL?=
+ =?us-ascii?Q?68hsh49kob1ex2GiQxlOY5BlKgxROyj4/qIwr1PYGaYhCTJZ5S0pGXIG8Do7?=
+ =?us-ascii?Q?WQ/oFnNpJymIsd3TM4W9K7EB+y5dMmGxE6T/+tqEs3KbfdaeMgoRD0me5jvF?=
+ =?us-ascii?Q?fPQsOhrVXCDC7etgt4LWuqsvzmyVKnpKjJ6Zwl8I4qmbuEC7Ic0DLBBKlGMi?=
+ =?us-ascii?Q?AUAixtiKzexlTPRNLcKmPGv+LKMcud/in/qcUc+cPQyyatGhI6LMKnUua6sT?=
+ =?us-ascii?Q?9YviOuzwZeSFg6cZ1vWfkUciVsy0rtQfSI4qRP2YyRKKeEGitVGgSRyvX2G9?=
+ =?us-ascii?Q?kg6tLjTaM0pMjP8MSutkkjC5+U9beIoGc/H9w4CB753RAOoatZhehxTq68vY?=
+ =?us-ascii?Q?3ej4E5Bt/8KmCxTM+qic//OLs2Mnq9Yu069VeTmMb0MKKjeVb3jVEy+YWnRE?=
+ =?us-ascii?Q?mheeJPgFhXMIiiwcPoQd/AFPu5+CKCi28n9RTgta0814wE5Qq6GrUNtYoK3t?=
+ =?us-ascii?Q?pZifkk/toLqhXN+zpf0h8fSPjLjhPGnHwd6YWpK3cC4vUGnwQRH+Ljh6M6Py?=
+ =?us-ascii?Q?zcRS3NizI+JvpB1x/kVNkz5MK9i0KpN7kz6Ec1U3mIcU7VivaIeSK9toFwRP?=
+ =?us-ascii?Q?AVVxW/DIEq4xpkVysn5EsTcx+jBZRmO7kGdPdumHUDkdqCwy+gRNt6mji8J1?=
+ =?us-ascii?Q?efUYzRe8kjEzrbpfizwtHtMYHTN+3caz8/29oSpDQ9ChSrIO7UrbLdC+7n8w?=
+ =?us-ascii?Q?XdTxLM8xKDYK9q6rEmmR1qs1tastEhhRBixZGpiD9DX7+/ZgxqzLe3HPZErY?=
+ =?us-ascii?Q?6OK4vf/8AaCAyibsQi6TaMSgyY131Vp0EUhW22KzFB4xjbytGI4vrtmykIRk?=
+ =?us-ascii?Q?ZzhVu2Tt5EvzwhxjGjHrXf4rk0l4AwdKqSeyTwEIg02/uMDZya2/gIW9JZlx?=
+ =?us-ascii?Q?v7JsRSfzZyM3FR/vbwqq6jKzTRp48c433KyiV8CQi7GHWLvuQkPC05HnoFHn?=
+ =?us-ascii?Q?VN2iRJH9Ubo=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pYcmZVAYNvwbttaIWsIxi58s+67GUslS31M+O0RdaAqAfgaDEJJJhzV47MpB?=
+ =?us-ascii?Q?QnT4z6c1KXn71sOk8Og/l+Yj6X9Y70HU+d/C0w6iYeStGXoP/1pscLF6xo0b?=
+ =?us-ascii?Q?Nmpsvci4Q5i9EboNl8lIij36A/gAEiLXsr8dmKfPq8cB7+NCSb4HdPFtV5KW?=
+ =?us-ascii?Q?+wh04aK1HSh93kB8B5TA55C38TFsNUyfP0Hym7J/PDXXVAYMcT58Go6VCZmJ?=
+ =?us-ascii?Q?ctqWkxAUS+Xyu/5KAImrzqRsfOEOaszbWPtj6PNsIdp5+Aq7HfLOymwTrtQi?=
+ =?us-ascii?Q?Apc4IAyuGOpr0cMQ0SdN4Dqqzz9a5vhJG3ShilLYiTY7uUL/ypgcMVDrsOah?=
+ =?us-ascii?Q?HKQihhBM7OcWTupvYreWGyaeMpvPkfDbtRH1S3KSprTIrCvWMJ8RBuh4n9PC?=
+ =?us-ascii?Q?kz4qUQ7GXeq70Km+QZxe4MuOKcBUZkYRVEReEDb5O6yWvC420cyhh0uLoVpf?=
+ =?us-ascii?Q?emNAaET1zOshbmkXoViqONcT1815+UT8kTzcQgTzTCT5EhyOkFnQiTtVZUKk?=
+ =?us-ascii?Q?nFithKRpO0bQtuZ0rCNlR3cRQ87aLDElKdsnckN6+LFQPDHDaaVT93eja+i/?=
+ =?us-ascii?Q?vg+KlWH1EmrllAyNUFUe9USTdPwb6169cmyPFUxik/9/OEdvlwGkLaSs6Bk/?=
+ =?us-ascii?Q?o69lnj+4vthgAdC+E1iw2E96an9R2Kp0LcY1EbEz6meoGXXwfwbspWmZlmYU?=
+ =?us-ascii?Q?dlpOo3SQUq+EGHIKxyAzqKzyCQQjsnz8QXyY4FD4sZHEYnIcn42jH6iB01fN?=
+ =?us-ascii?Q?f2Xzug58DUJdSeKCcZyim55V8WTXd+c0n9fInWEkAUR3C31wA8GHUslMxQ3D?=
+ =?us-ascii?Q?VOsPA5Kft8xh+YG53qZD3bSPPfsJgpYlNNMj7CcE7xXN2MdxbUcBc2l1wdw4?=
+ =?us-ascii?Q?76PAmg7T/g4y9Z3onY8xy246pg8kG6U1o1Al9PxQPB9O2kZRCBpNwsgOP2Lq?=
+ =?us-ascii?Q?9MlTdvdaAhS/y8Mh2d+Cu0pjyIhP7FGiQMm9d4FXe6JlHPYRerg2MaYuy1TJ?=
+ =?us-ascii?Q?FpykpH84t85GVZo7rFBPGtvoHytykE7BDZROCvi2MTiUHm/9UjtAcH54EDc+?=
+ =?us-ascii?Q?dypoTmrmDIHljNSRQruQwdNcbF0jKciO2qEannIhCfrGr2S7EZQ/nhiFPymX?=
+ =?us-ascii?Q?jjqBe8Y4IdCSDu5FxpHzvTFZRhBzyERAf5hWyuX3QNy5ak8MMDSdw/v8vrtL?=
+ =?us-ascii?Q?IzJmkTMON6ffXaGCZYhLZB58e2Z/MN2NfCURQpiEJSZPwOUm2sMxUlG2KA0r?=
+ =?us-ascii?Q?B1OuOw1lY0kvDNHZBm8gGq784JIIMMX1D3U5//w0HtXJiY+CC1psotuJY6CR?=
+ =?us-ascii?Q?uvOAmFPwesZFcW8r2hVK5qgydgPjRZXmKzct5Z2RkBvYkjSBgbHkUdP4rapw?=
+ =?us-ascii?Q?knsM6L4FJSMVJmIDWaTOVM/s1kNqesSV9FOhG88wm/EIjIxeX7JzccK9va/8?=
+ =?us-ascii?Q?tP9ONNGNRrCcteFD6UDJgtUGGVZDwrB2UblYn0EKhOXE7fuJL38b4iT6nsRV?=
+ =?us-ascii?Q?KfpNb7Q3xzcnZa8c0rbB8ZPW24VPUv/NApOAgFLmFTovjBWE57vkbHB81NSu?=
+ =?us-ascii?Q?VfVLbfwWAllJ1YE0B92yFKSBGCH8IrXUhFu+TqQT?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21e8a494-2e89-4713-531c-08ddf07e1a76
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 15:24:16.0095
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SAUtFhsSEHZp3/dbrEOtlStWJO6QF67vvwFwtJc2vMr/dYgBIjTAaBmwiUfQ7+IywEaArTJXILuFr+EH2CvCHQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7271
+X-OriginatorOrg: intel.com
 
-On Wed, Sep 10, 2025 at 8:15=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrot=
-e:
+On Wed, Sep 10, 2025 at 09:46:01PM +0800, Xiaoyao Li wrote:
+>On 9/10/2025 7:18 PM, Chao Gao wrote:
+>> On Wed, Sep 10, 2025 at 05:37:50PM +0800, Xiaoyao Li wrote:
+>> > On 9/9/2025 5:39 PM, Chao Gao wrote:
+>> > > From: Sean Christopherson <seanjc@google.com>
+>> > > 
+>> > > Load the guest's FPU state if userspace is accessing MSRs whose values
+>> > > are managed by XSAVES. Introduce two helpers, kvm_{get,set}_xstate_msr(),
+>> > > to facilitate access to such kind of MSRs.
+>> > > 
+>> > > If MSRs supported in kvm_caps.supported_xss are passed through to guest,
+>> > > the guest MSRs are swapped with host's before vCPU exits to userspace and
+>> > > after it reenters kernel before next VM-entry.
+>> > > 
+>> > > Because the modified code is also used for the KVM_GET_MSRS device ioctl(),
+>> > > explicitly check @vcpu is non-null before attempting to load guest state.
+>> > > The XSAVE-managed MSRs cannot be retrieved via the device ioctl() without
+>> > > loading guest FPU state (which doesn't exist).
+>> > > 
+>> > > Note that guest_cpuid_has() is not queried as host userspace is allowed to
+>> > > access MSRs that have not been exposed to the guest, e.g. it might do
+>> > > KVM_SET_MSRS prior to KVM_SET_CPUID2.
+>> 
+>> ...
+>> 
+>> > > +	bool fpu_loaded = false;
+>> > >    	int i;
+>> > > -	for (i = 0; i < msrs->nmsrs; ++i)
+>> > > +	for (i = 0; i < msrs->nmsrs; ++i) {
+>> > > +		/*
+>> > > +		 * If userspace is accessing one or more XSTATE-managed MSRs,
+>> > > +		 * temporarily load the guest's FPU state so that the guest's
+>> > > +		 * MSR value(s) is resident in hardware, i.e. so that KVM can
+>> > > +		 * get/set the MSR via RDMSR/WRMSR.
+>> > > +		 */
+>> > > +		if (vcpu && !fpu_loaded && kvm_caps.supported_xss &&
+>> > 
+>> > why not check vcpu->arch.guest_supported_xss?
+>> 
+>> Looks like Sean anticipated someone would ask this question.
 >
-> On Wed 10-09-25 22:37:25, zhongjinji wrote:
-> > OOM killer is a mechanism that selects and kills processes when the sys=
-tem
-> > runs out of memory to reclaim resources and keep the system stable. But=
- the
-> > oom victim cannot terminate on its own when it is frozen, even if the O=
-OM
-> > victim task is thawed through __thaw_task(). This is because __thaw_tas=
-k() can
-> > only thaw a single OOM victim thread, and cannot thaw the entire OOM vi=
-ctim
-> > process.
-> >
-> > Also, freezing_slow_path() decides whether a task is an OOM victim by c=
-hecking
-> > the task's TIF_MEMDIE flag. When a task is thawed, the freezer bypasses=
- PM
-> > freezing and cgroup freezing states to thaw it. But TIF_MEMDIE is not a=
- thread
-> > group shared flag, and only one thread is marked with TIF_MEMDIE. If ot=
-her
-> > threads are thawed, they may still remain frozen due to PM freezing and=
- cgroup
-> > freezing states.
-> >
-> > To solve this, thaw_process() is introduced to thaw all threads of the =
-victim,
-> > ensuring every thread in the victim process can be thawed. The freezer =
-uses
-> > tsk_is_oom_victim() to determine whether a task is an OOM victim, becau=
-se
-> > tsk->signal->oom_mm is data shared by all threads. This allows all vict=
-im threads
-> > to rely on it to be thawed.
+>here it determines whether to call kvm_load_guest_fpu().
 >
-> A history detour for future reference.
-> TIF_MEMDIE was a "this is the oom victim & it has access to memory
-> reserves" flag in the past. It has that thread vs. process problems and
-> tsk_is_oom_victim was introduced later to get rid of them and other
-> issues as well as the guarantee that we can identify the oom victim's mm =
-reliably
-> for other oom_reaper. I recommend reading git log of mm/oom_kill.c to
-> get hairy history of that area and how tricky it is due all the subtle
-> interaction with process exit paths etc.
+>- based on kvm_caps.supported_xss, it will always load guest fpu.
+>- based on vcpu->arch.guest_supported_xss, it depends on whether userspace
+>calls KVM_SET_CPUID2 and whether it enables any XSS feature.
 >
-> >
-> > This change will thaw the entire victim process when OOM occurs,
-> > ensuring that the oom victim can terminate on its own.
-> >
-> > Signed-off-by: zhongjinji <zhongjinji@honor.com>
+>So the difference is when no XSS feature is enabled for the VM.
 >
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Thanks!
+>In this case, if checking vcpu->arch.guest_supported_xss, it will skip
+>kvm_load_guest_fpu(). And it will result in GET_MSR gets usrerspace's value
+>and SET_MSR changes userspace's value, when MSR access is eventually allowed
+>in later do_msr() callback. Is my understanding correctly?
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+Actually, there will be no functional issue.
 
-> >
-> > Acked-by: Michal Hocko <mhocko@suse.com>
-> > ---
-> >  include/linux/freezer.h |  2 ++
-> >  kernel/freezer.c        | 20 +++++++++++++++++++-
-> >  mm/oom_kill.c           | 10 +++++-----
-> >  3 files changed, 26 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/include/linux/freezer.h b/include/linux/freezer.h
-> > index b303472255be..32884c9721e5 100644
-> > --- a/include/linux/freezer.h
-> > +++ b/include/linux/freezer.h
-> > @@ -47,6 +47,7 @@ extern int freeze_processes(void);
-> >  extern int freeze_kernel_threads(void);
-> >  extern void thaw_processes(void);
-> >  extern void thaw_kernel_threads(void);
-> > +extern void thaw_process(struct task_struct *p);
-> >
-> >  static inline bool try_to_freeze(void)
-> >  {
-> > @@ -80,6 +81,7 @@ static inline int freeze_processes(void) { return -EN=
-OSYS; }
-> >  static inline int freeze_kernel_threads(void) { return -ENOSYS; }
-> >  static inline void thaw_processes(void) {}
-> >  static inline void thaw_kernel_threads(void) {}
-> > +static inline void thaw_process(struct task_struct *p) {}
-> >
-> >  static inline bool try_to_freeze(void) { return false; }
-> >
-> > diff --git a/kernel/freezer.c b/kernel/freezer.c
-> > index 6a96149aede9..ddc11a8bd2ea 100644
-> > --- a/kernel/freezer.c
-> > +++ b/kernel/freezer.c
-> > @@ -10,6 +10,7 @@
-> >  #include <linux/export.h>
-> >  #include <linux/syscalls.h>
-> >  #include <linux/freezer.h>
-> > +#include <linux/oom.h>
-> >  #include <linux/kthread.h>
-> >
-> >  /* total number of freezing conditions in effect */
-> > @@ -40,7 +41,7 @@ bool freezing_slow_path(struct task_struct *p)
-> >       if (p->flags & (PF_NOFREEZE | PF_SUSPEND_TASK))
-> >               return false;
-> >
-> > -     if (test_tsk_thread_flag(p, TIF_MEMDIE))
-> > +     if (tsk_is_oom_victim(p))
-> >               return false;
-> >
-> >       if (pm_nosig_freezing || cgroup_freezing(p))
-> > @@ -206,6 +207,23 @@ void __thaw_task(struct task_struct *p)
-> >               wake_up_state(p, TASK_FROZEN);
-> >  }
-> >
-> > +/*
-> > + * thaw_process - Thaw a frozen process
-> > + * @p: the process to be thawed
-> > + *
-> > + * Iterate over all threads of @p and call __thaw_task() on each.
-> > + */
-> > +void thaw_process(struct task_struct *p)
-> > +{
-> > +     struct task_struct *t;
-> > +
-> > +     rcu_read_lock();
-> > +     for_each_thread(p, t) {
-> > +             __thaw_task(t);
-> > +     }
-> > +     rcu_read_unlock();
-> > +}
-> > +
-> >  /**
-> >   * set_freezable - make %current freezable
-> >   *
-> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> > index 25923cfec9c6..88356b66cc35 100644
-> > --- a/mm/oom_kill.c
-> > +++ b/mm/oom_kill.c
-> > @@ -772,12 +772,12 @@ static void mark_oom_victim(struct task_struct *t=
-sk)
-> >               mmgrab(tsk->signal->oom_mm);
-> >
-> >       /*
-> > -      * Make sure that the task is woken up from uninterruptible sleep
-> > -      * if it is frozen because OOM killer wouldn't be able to free
-> > -      * any memory and livelock. freezing_slow_path will tell the free=
-zer
-> > -      * that TIF_MEMDIE tasks should be ignored.
-> > +      * Make sure that the process is woken up from uninterruptible sl=
-eep
-> > +      * if it is frozen because OOM killer wouldn't be able to free an=
-y
-> > +      * memory and livelock. The freezer will thaw the tasks that are =
-OOM
-> > +      * victims regardless of the PM freezing and cgroup freezing stat=
-es.
-> >        */
-> > -     __thaw_task(tsk);
-> > +     thaw_process(tsk);
-> >       atomic_inc(&oom_victims);
-> >       cred =3D get_task_cred(tsk);
-> >       trace_mark_victim(tsk, cred->uid.val);
-> > --
-> > 2.17.1
->
-> --
-> Michal Hocko
-> SUSE Labs
->
+Those MSR accesses are always "rejected" with KVM_MSR_RET_UNSUPPORTED by
+__kvm_set/get_msr() and get fixup if they are "host_initiated" in
+kvm_do_msr_access(). KVM doesn't access any hardware MSRs in the process.
+
+Using vcpu->arch.guest_supported_xss here also works, but the correctness
+isn't that obvious for this special case.
 
