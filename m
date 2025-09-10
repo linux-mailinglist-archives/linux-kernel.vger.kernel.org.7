@@ -1,145 +1,115 @@
-Return-Path: <linux-kernel+bounces-809618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EB3B50FF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:47:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 947E5B50FF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9215F1734A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:47:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEDE21C26DBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D13030DEBA;
-	Wed, 10 Sep 2025 07:47:27 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9077B30C633;
+	Wed, 10 Sep 2025 07:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BCHLGpuL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SyjhIxdl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD66530DD3D;
-	Wed, 10 Sep 2025 07:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86437241139;
+	Wed, 10 Sep 2025 07:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757490446; cv=none; b=uisTGJNjyq3iA7FjhZbgdisNt539jJ/sVZ4wLLir5ruCDngA9mnOigwpJVmOoa6TINrDcVG+gTZF/fnB+lgmO5L1xEpUv5E55D+wWGrpUg3sXkbT2RpesFKz7bS1RjwHWggzY7L1a6T22tkQ3gigDjqAKdcgvJzXoMy9iEqmlJc=
+	t=1757490551; cv=none; b=FjtQqIGTh7BxdCPxBx4OjEAlmM4zHB43UKZA2n1KCWMoEHPE9CEGzFXL2JQbWYEIbeB/qzVtX5NlAflVYnMII9nXri0TE4R+iomNxTbXuL/87/JlWSADBFpHVTiSpCQO3PvkM3PQM8OQxyeBzUL9p1IepPJl8MOddlekorNPv7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757490446; c=relaxed/simple;
-	bh=HrkZ7QmyC0ko9xZZhLgcxejf/rH/pOxKsUUUy4ZqFIQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SnzygRbgIQb31/oHwMfmKNryLiyumHLAZAkzG6XjeTuFGXU5Ujw10wL/noKXeZ5+SjGnZj1IC+73XgyFkMLCU1TjuL7rShlugF/2cK4K3C5gdNL78+hBhUff7ZR9lI9Kfxs1ddmbf6vrX8232HIPo8qhXto+FJnFBh7M5Gp+6Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 5ec13dee8e1a11f0b29709d653e92f7d-20250910
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:b0f74bbd-84c0-49b8-8258-c438c2ef876d,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:6493067,CLOUDID:e94c29525daa99a61a755ff701b91a0a,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 5ec13dee8e1a11f0b29709d653e92f7d-20250910
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 162616005; Wed, 10 Sep 2025 15:47:15 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id A3DBDE009008;
-	Wed, 10 Sep 2025 15:47:15 +0800 (CST)
-X-ns-mid: postfix-68C12D03-4921011059
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 40575E009007;
-	Wed, 10 Sep 2025 15:47:14 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: "Rafael J . wysocki" <rafael@kernel.org>,
-	Hans de Goede <hansg@kernel.org>
-Cc: Len Brown <lenb@kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v1] ACPI: video: Fix missing backlight node creation on Zhaoxin platforms
-Date: Wed, 10 Sep 2025 15:47:11 +0800
-Message-Id: <20250910074711.1511753-1-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1757490551; c=relaxed/simple;
+	bh=YcbNLRwOobCcOOt8Z1TWXPjn7EOh3UzfBzPPrJ3iP+E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iTOpgchGMhKAFSTJ292kkP5vytTcBMk4l9N3IvfS1Yv99LOkPmdkoFIyx1Fyh/97HA7Hcw6Jup91gd/jVrogi7nr3+vhYDXDBBE4nVFpEbnjJS3tjmOQO+JI+tmsZ5w23Ps4Y8Fkk3XnXxWF41uSfTW276r7OoJ+GZ2wOElPc0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BCHLGpuL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SyjhIxdl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757490547;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w9emZbZmgTB06eYlDuPxhoQsTb5CjKcX+ELCNcB9xyo=;
+	b=BCHLGpuLDXl/eeWBj8+P8+rJSSFEfRozipRB/CMffMhdE37HKx8iK5UjEPwn8VGh2MujBJ
+	ZbIdB7cUyi6BlsYGuzcNKOSp2p3VYLa9vopwYtcbYWD54qLkQ6+qxOy6jIu0LkGyCoWR80
+	dYxJoSL6abV4YXslFwpx48dIXRlIZrpwu2ydVZFo6cIafdzKnJkPW6rZVkKBOrEIXY07Cp
+	apwR0ASB9w4ObiWRJKuw5G8tDoexAce4ToV3o0/NqjygyO0ttxkJHx/O7WBdBSW0BXHaha
+	8yKILecSBOIxpWJINP4y6i4giofpptJBQjYBTwnGqOVPUioTu3Qlh7nWDOng5w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757490547;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w9emZbZmgTB06eYlDuPxhoQsTb5CjKcX+ELCNcB9xyo=;
+	b=SyjhIxdl9Pia9C0mByYI4KEkzTcHAZtaSTkYOUv15e466W5nsGdOr1TdrrP+8MJG+mD6tA
+	4lgQbpNOhyyAmTBg==
+To: K Prateek Nayak <kprateek.nayak@amd.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Prakash
+ Sangappa <prakash.sangappa@oracle.com>, Madadi Vineeth Reddy
+ <vineethr@linux.ibm.com>, Steven Rostedt <rostedt@goodmis.org>, Sebastian
+ Andrzej Siewior <bigeasy@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org
+Subject: Re: [patch 07/12] rseq: Implement syscall entry work for time slice
+ extensions
+In-Reply-To: <45b4a0db-dab6-4b9d-9ee8-f564eaa202bf@amd.com>
+References: <20250908225709.144709889@linutronix.de>
+ <20250908225753.012514970@linutronix.de>
+ <45b4a0db-dab6-4b9d-9ee8-f564eaa202bf@amd.com>
+Date: Wed, 10 Sep 2025 09:49:06 +0200
+Message-ID: <87plbyu4r1.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Some recent Lenovo and Inspur machines with Zhaoxin CPUs fail to create
-/sys/class/backlight/acpi_video0 on v6.6 kernels, while the same hardware
-works correctly on v5.4.
+On Wed, Sep 10 2025 at 10:52, K. Prateek Nayak wrote:
+> On 9/9/2025 4:30 AM, Thomas Gleixner wrote:
+>> +static inline void rseq_slice_set_need_resched(struct task_struct *curr)
+>> +{
+>> +	/*
+>> +	 * The interrupt guard is required to prevent inconsistent state in
+>> +	 * this case:
+>> +	 *
+>> +	 * set_tsk_need_resched()
+>> +	 * --> Interrupt
+>> +	 *       wakeup()
+>> +	 *        set_tsk_need_resched()
+>> +	 *	  set_preempt_need_resched()
+>> +	 *     schedule_on_return()
+>> +	 *        clear_tsk_need_resched()
+>> +	 *	  clear_preempt_need_resched()
+>> +	 * set_preempt_need_resched()		<- Inconsistent state
+>> +	 *
+>> +	 * This is safe vs. a remote set of TIF_NEED_RESCHED because that
+>> +	 * only sets the already set bit and does not create inconsistent
+>> +	 * state.
+>> +	 */
+>> +	scoped_guard(irq)
+>> +		set_need_resched_current();
+>
+> nit. any specific reason for using a scoped_guard() instead of just a
+> guard() here (and in rseq_cancel_slice_extension_timer()) other than to
+> prominently highlight what is being guarded?
 
-Our analysis shows that the current implementation assumes the presence o=
-f a
-GPU. The backlight registration is only triggered if a GPU is detected, b=
-ut on
-these platforms the backlight is handled purely by the EC without any GPU=
-.
-As a result, the detection path does not create the expected backlight no=
-de.
+Yes, the intention was to highlight it and scoped_guard() really
+does. From a code generation perspective it's the same outcome.
 
-To fix this, move the following logic:
+Thanks,
 
-/* Use ACPI video if available, except when native should be preferred. *=
-/
-if ((video_caps & ACPI_VIDEO_BACKLIGHT) &&
-    !(native_available && prefer_native_over_acpi_video()))
-        return acpi_backlight_video;
-
-above the if (auto_detect) *auto_detect =3D true; statement.
-
-This ensures that the ACPI video backlight node is created even when no G=
-PU is
-present, restoring the correct behavior observed on older kernels.
-
-Fixes: 78dfc9d1d1ab ("ACPI: video: Add auto_detect arg to __acpi_video_ge=
-t_backlight_type()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
----
- drivers/acpi/video_detect.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
-index d507d5e08435..c1bb22b57f56 100644
---- a/drivers/acpi/video_detect.c
-+++ b/drivers/acpi/video_detect.c
-@@ -1011,6 +1011,11 @@ enum acpi_backlight_type __acpi_video_get_backligh=
-t_type(bool native, bool *auto
- 	if (acpi_backlight_dmi !=3D acpi_backlight_undef)
- 		return acpi_backlight_dmi;
-=20
-+	/* Use ACPI video if available, except when native should be preferred.=
- */
-+	if ((video_caps & ACPI_VIDEO_BACKLIGHT) &&
-+	     !(native_available && prefer_native_over_acpi_video()))
-+		return acpi_backlight_video;
-+
- 	if (auto_detect)
- 		*auto_detect =3D true;
-=20
-@@ -1024,11 +1029,6 @@ enum acpi_backlight_type __acpi_video_get_backligh=
-t_type(bool native, bool *auto
- 	if (dell_uart_present)
- 		return acpi_backlight_dell_uart;
-=20
--	/* Use ACPI video if available, except when native should be preferred.=
- */
--	if ((video_caps & ACPI_VIDEO_BACKLIGHT) &&
--	     !(native_available && prefer_native_over_acpi_video()))
--		return acpi_backlight_video;
--
- 	/* Use native if available */
- 	if (native_available)
- 		return acpi_backlight_native;
---=20
-2.25.1
-
+        tglx
 
