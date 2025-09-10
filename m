@@ -1,74 +1,61 @@
-Return-Path: <linux-kernel+bounces-809922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FEB8B51383
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:09:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D985B51248
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B950C48478B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:09:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83ACF4837AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FE5315D25;
-	Wed, 10 Sep 2025 10:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B803128BC;
+	Wed, 10 Sep 2025 09:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ljv+NdLq"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Wh8Yimpd"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FF03168E3;
-	Wed, 10 Sep 2025 10:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D032877E9;
+	Wed, 10 Sep 2025 09:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757498911; cv=none; b=Sesj2frahSNkXNENM0f92MeE7DVzgjsPxrmJ9rF17ntg36Qed7uhSyAxlra17MA7u3Q8RItA4Lb2GmMe0eQuvNZyjU6AU9odjAtyZ6z1nYEOXyJ0zP8pQDDttcw35bawrU+D9Bh16NI/KbW5Q3fr8Hp2jgwYrjVnr/MPh/fIg38=
+	t=1757495877; cv=none; b=kSsdz1RFPVLmXs+AwEVNvIW8UQ9nGyeyX0/lCDH0xF7zbX7iaA91DFCbSN9CDPh902kBQDsmyZTvN4whxp4SRTHx1nCakBt2f2RAVVgq5gMR/q1t440hPn75LgFr5XLBVML1HNH7wQOfueU7c1CpUgI/Uz/aMKZJ3/oeFbPU/hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757498911; c=relaxed/simple;
-	bh=VB5cgXo2xxVwk9IAD5Uf+ULaKOy+5RNY9wME4q2c45c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BBPXEtJbAsBqwXHrpNmrSgURExuvb9brB47vfnUKhLH/jFJqynP3+o8gEqDeYopxdOu52KF/yWEdcdXatUiKpG+cQBkfLesR3241v4QNu+njd8LDtq4IvC/v1F8BzrkFHVfgnzFvpk9pJSQhsbwoqwSBVY5iQ4/iSV0z3T3MeP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ljv+NdLq; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58AA8P1N545522;
-	Wed, 10 Sep 2025 05:08:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757498905;
-	bh=7NzzeGx5+r6n9YJMU71Yapk0WyZVB72LHdmmk/QXsTQ=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=ljv+NdLqaCTtyPF6TL/eEqnR2+nCtIHxln1ETOIUCF2T3xClmEOAf/5q6LhEc/tpu
-	 KvF6CnR9mBIgxIir+fxEpiFR2RGJRxzvyIWNvqS9nXJmyb+ZeMRU/Abk2CXDJqaUgQ
-	 5int8nn++K9mbsgq/2Ne4OH8V7shZR13Y5WBeC+o=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58AA8PHb1074300
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 10 Sep 2025 05:08:25 -0500
-Received: from DFLE213.ent.ti.com (10.64.6.71) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 10
- Sep 2025 05:08:24 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE213.ent.ti.com
- (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 10 Sep 2025 05:08:25 -0500
-Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58AA8NlW318114;
-	Wed, 10 Sep 2025 05:08:24 -0500
-From: T Pratham <t-pratham@ti.com>
-To: T Pratham <t-pratham@ti.com>, Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-CC: Kamlesh Gurudasani <kamlesh@ti.com>, Manorit Chawdhry <m-chawdhry@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Praneeth Bajjuri <praneeth@ti.com>, Vishal Mahaveer <vishalm@ti.com>,
-        Kavitha Malarvizhi <k-malarvizhi@ti.com>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 4/4] crypto: ti: Add support for AES-CCM in DTHEv2 driver
-Date: Wed, 10 Sep 2025 14:46:56 +0530
-Message-ID: <20250910100742.3747614-5-t-pratham@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250910100742.3747614-1-t-pratham@ti.com>
-References: <20250910100742.3747614-1-t-pratham@ti.com>
+	s=arc-20240116; t=1757495877; c=relaxed/simple;
+	bh=GGcoW1rHPYKDVIpMVNnDGCuNsRgAHDhGZ6iQD3KEJQM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=b12J0e9OyGLQBizPK1J9J3iGxpyPPqM2A8jbZZbK7vM4kVGBgGzqnKAuH4choW3luGqnZjsI+kXUj+5DQqELsqpImlLVc/7AjLZ0ucN4G2AChvOg9UC5qJ1IY8sNf2NnSvMwvq/2Ad/KKLJloCEDJNcOhCQjvwST4r0KbW4DTig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Wh8Yimpd; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=kW
+	sJsKi4N76Tmx+Lu2+X5uhhEh4alrr77qi//eZRpHk=; b=Wh8YimpdbYux2bZ0Tm
+	WiH6rPacfglByyrkNxLAiLObV0VMg8PC+2FP2WgEiy6sBzh/6BqSnR5YHy/Z6yKS
+	urXYQwcFkNLjmdElYBMNrT4vgDwyXQK/60fdiC+/zBenz3vTa3A7afk/EFb7jtMH
+	izbshVITI8VxHHqjJN8TkZhtc=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDHL4wPQsFoNSDgAA--.35458S2;
+	Wed, 10 Sep 2025 17:17:04 +0800 (CST)
+From: yicongsrfy@163.com
+To: linux@armlinux.org.uk
+Cc: andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	hkallweit1@gmail.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	yicong@kylinos.cn
+Subject: Re: [PATCH] net: phy: avoid config_init failure on unattached PHY during resume
+Date: Wed, 10 Sep 2025 17:17:03 +0800
+Message-Id: <20250910091703.3575924-1-yicongsrfy@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <aMEzv50VmUb2eUMQ@shell.armlinux.org.uk>
+References: <aMEzv50VmUb2eUMQ@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,226 +63,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-CM-TRANSID:_____wDHL4wPQsFoNSDgAA--.35458S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uryUJr4xGw43KFy8Gr1Utrb_yoW8Kry5pr
+	WxXas5ur1vqF1kGrs7A3y8Ja4jvwsIvrW3J3sxKr98CFy5uF9Y939Fqr43ZFW5Crs8Ca47
+	ZF4jqayUArZruaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U7wIgUUUUU=
+X-CM-SenderInfo: p1lf00xjvuw5i6rwjhhfrp/1tbiUATE22jBPCm76wAAsn
 
-AES-CCM is an AEAD algorithm supporting both encryption and
-authentication of data. This patch introduces support for AES-CCM AEAD
-algorithm in the DTHEv2 driver.
+On Wed, 10 Sep 2025 09:15:59 +0100, "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+>
+> On Wed, Sep 10, 2025 at 10:58:26AM +0800, yicongsrfy@163.com wrote:
+> > From: Yi Cong <yicong@kylinos.cn>
+> >
+> > When resuming a PHY device that is not attached to a MAC (i.e.
+> > phydev->attached_dev is NULL), mdio_bus_phy_resume() may call into
+> > phy_init_hw() -> phydev->drv->config_init(), which can return -EOPNOTSUPP
+> > (-95) if the driver does not support initialization in this state.
+> >
+> > This results in log messages like:
+> > [ 1905.106209] YT8531S Gigabit Ethernet xxxxmac_mii_bus-XXXX:00:01:
+> > PM: dpm_run_callback(): mdio_bus_phy_resume+0x0/0x180 [libphy] returns -95
+> > [ 1905.106232] YT8531S Gigabit Ethernet xxxxmac_mii_bus-XXXX:00:01:
+> > PM: failed to resume: error -95
+> >
+> > In practice, only one PHY on the bus (e.g. XXXX:00:00) is typically
+> > attached to a MAC interface; others (like XXXX:00:01) are probed but
+> > not used, making such resume attempts unnecessary and misleading.
+> >
+> > Add an early return in mdio_bus_phy_resume() when !phydev->attached_dev,
+> > to prevent unneeded hardware initialization and avoids false error reports.
+>
+> PHYs are allowed to be attached without a net device. Your PHY
+> driver needs to cope with this condition.
+>
+> --
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
-Signed-off-by: T Pratham <t-pratham@ti.com>
----
- drivers/crypto/ti/Kconfig         |  1 +
- drivers/crypto/ti/dthev2-aes.c    | 97 ++++++++++++++++++++++++++-----
- drivers/crypto/ti/dthev2-common.h |  1 +
- 3 files changed, 83 insertions(+), 16 deletions(-)
+Thank you for the reply!
 
-diff --git a/drivers/crypto/ti/Kconfig b/drivers/crypto/ti/Kconfig
-index e1ef84b39267..02eff4f0e04b 100644
---- a/drivers/crypto/ti/Kconfig
-+++ b/drivers/crypto/ti/Kconfig
-@@ -9,6 +9,7 @@ config CRYPTO_DEV_TI_DTHEV2
- 	select CRYPTO_CTR
- 	select CRYPTO_XTS
- 	select CRYPTO_GCM
-+	select CRYPTO_CCM
- 	select SG_SPLIT
- 	help
- 	  This enables support for the TI DTHE V2 hw cryptography engine
-diff --git a/drivers/crypto/ti/dthev2-aes.c b/drivers/crypto/ti/dthev2-aes.c
-index ddcdefbc375a..271f99b57c81 100644
---- a/drivers/crypto/ti/dthev2-aes.c
-+++ b/drivers/crypto/ti/dthev2-aes.c
-@@ -16,6 +16,7 @@
- 
- #include "dthev2-common.h"
- 
-+#include <linux/bitfield.h>
- #include <linux/delay.h>
- #include <linux/dmaengine.h>
- #include <linux/dma-mapping.h>
-@@ -68,6 +69,7 @@ enum aes_ctrl_mode_masks {
- 	AES_CTRL_CTR_MASK = BIT(6),
- 	AES_CTRL_XTS_MASK = BIT(12) | BIT(11),
- 	AES_CTRL_GCM_MASK = BIT(17) | BIT(16) | BIT(6),
-+	AES_CTRL_CCM_MASK = BIT(18) | BIT(6),
- };
- 
- #define DTHE_AES_CTRL_MODE_CLEAR_MASK		~GENMASK(28, 5)
-@@ -80,6 +82,10 @@ enum aes_ctrl_mode_masks {
- 
- #define DTHE_AES_CTRL_CTR_WIDTH_128B		(BIT(7) | BIT(8))
- 
-+#define DTHE_AES_CCM_L_FROM_IV_MASK		GENMASK(2, 0)
-+#define DTHE_AES_CTRL_CCM_L_MASK		GENMASK(21, 19)
-+#define DTHE_AES_CTRL_CCM_M_MAXVAL		GENMASK(24, 22)
-+
- #define DTHE_AES_CTRL_SAVE_CTX_SET		BIT(29)
- 
- #define DTHE_AES_CTRL_OUTPUT_READY		BIT_MASK(0)
-@@ -95,6 +101,8 @@ enum aes_ctrl_mode_masks {
- #define AES_BLOCK_WORDS				(AES_BLOCK_SIZE / sizeof(u32))
- #define AES_IV_WORDS				AES_BLOCK_WORDS
- #define DTHE_AES_GCM_AAD_MAXLEN			(BIT_ULL(32) - 1)
-+#define DTHE_AES_CCM_AAD_MAXLEN			(BIT(16) - BIT(8))
-+#define DTHE_AES_CCM_CRYPT_MAXLEN		(BIT_ULL(61) - 1)
- #define POLL_TIMEOUT_INTERVAL			HZ
- 
- static int dthe_poll_reg(struct dthe_data *dev_data, u32 reg, u32 bit)
-@@ -246,6 +254,12 @@ static void dthe_aes_set_ctrl_key(struct dthe_tfm_ctx *ctx,
- 	case DTHE_AES_GCM:
- 		ctrl_val |= AES_CTRL_GCM_MASK;
- 		break;
-+	case DTHE_AES_CCM:
-+		ctrl_val |= AES_CTRL_CCM_MASK;
-+		ctrl_val |= FIELD_PREP(DTHE_AES_CTRL_CCM_L_MASK,
-+				       (iv_in[0] & DTHE_AES_CCM_L_FROM_IV_MASK));
-+		ctrl_val |= DTHE_AES_CTRL_CCM_M_MAXVAL;
-+		break;
- 	}
- 
- 	if (iv_in) {
-@@ -732,10 +746,6 @@ static int dthe_aead_setkey(struct crypto_aead *tfm, const u8 *key, unsigned int
- 	if (keylen != AES_KEYSIZE_128 && keylen != AES_KEYSIZE_192 && keylen != AES_KEYSIZE_256)
- 		return -EINVAL;
- 
--	ctx->aes_mode = DTHE_AES_GCM;
--	ctx->keylen = keylen;
--	memcpy(ctx->key, key, keylen);
--
- 	crypto_aead_clear_flags(ctx->aead_fb, CRYPTO_TFM_REQ_MASK);
- 	crypto_aead_set_flags(ctx->aead_fb,
- 			      crypto_aead_get_flags(tfm) &
-@@ -744,6 +754,28 @@ static int dthe_aead_setkey(struct crypto_aead *tfm, const u8 *key, unsigned int
- 	return crypto_aead_setkey(ctx->aead_fb, key, keylen);
- }
- 
-+static int dthe_gcm_aes_setkey(struct crypto_aead *tfm, const u8 *key, unsigned int keylen)
-+{
-+	struct dthe_tfm_ctx *ctx = crypto_aead_ctx(tfm);
-+
-+	ctx->aes_mode = DTHE_AES_GCM;
-+	ctx->keylen = keylen;
-+	memcpy(ctx->key, key, keylen);
-+
-+	return dthe_aead_setkey(tfm, key, keylen);
-+}
-+
-+static int dthe_ccm_aes_setkey(struct crypto_aead *tfm, const u8 *key, unsigned int keylen)
-+{
-+	struct dthe_tfm_ctx *ctx = crypto_aead_ctx(tfm);
-+
-+	ctx->aes_mode = DTHE_AES_CCM;
-+	ctx->keylen = keylen;
-+	memcpy(ctx->key, key, keylen);
-+
-+	return dthe_aead_setkey(tfm, key, keylen);
-+}
-+
- static int dthe_aead_setauthsize(struct crypto_aead *tfm, unsigned int authsize)
- {
- 	struct dthe_tfm_ctx *ctx = crypto_aead_ctx(tfm);
-@@ -881,14 +913,18 @@ static int dthe_aead_run(struct crypto_engine *engine, void *areq)
- 
- 	u32 iv_in[AES_IV_WORDS];
- 
--	if (req->iv) {
--		memcpy(iv_in, req->iv, GCM_AES_IV_SIZE);
-+	if (ctx->aes_mode == DTHE_AES_GCM) {
-+		if (req->iv) {
-+			memcpy(iv_in, req->iv, GCM_AES_IV_SIZE);
-+		} else {
-+			iv_in[0] = 0;
-+			iv_in[1] = 0;
-+			iv_in[2] = 0;
-+		}
-+		iv_in[3] = 0x01000000;
- 	} else {
--		iv_in[0] = 0;
--		iv_in[1] = 0;
--		iv_in[2] = 0;
-+		memcpy(iv_in, req->iv, AES_IV_SIZE);
- 	}
--	iv_in[3] = 0x01000000;
- 
- 	/* Clear key2 to reset previous GHASH intermediate data */
- 	for (int i = 0; i < AES_KEYSIZE_256 / sizeof(u32); ++i)
-@@ -975,12 +1011,16 @@ static int dthe_aead_crypt(struct aead_request *req)
- 	/*
- 	 * Need to fallback to software in the following cases due to HW restrictions:
- 	 * - Both AAD and plaintext/ciphertext are zero length
--	 * - AAD length is more than 2^32 - 1 bytes
--	 * PS: req->cryptlen is currently unsigned int type, which causes the above condition
--	 * tautologically false. If req->cryptlen were to be changed to a 64-bit type,
--	 * the check for this would need to be added below.
-+	 * - For AES-GCM, AAD length is more than 2^32 - 1 bytes
-+	 * - For AES-CCM, AAD length is more than 2^16 - 2^8 bytes
-+	 * - For AES-CCM, plaintext/ciphertext length is more than 2^61 - 1 bytes
-+	 *
-+	 * PS: req->cryptlen is currently unsigned int type, which causes the second and fourth
-+	 * cases above tautologically false. If req->cryptlen is to be changed to a 64-bit
-+	 * type, the check for these would also need to be added below.
- 	 */
--	if (req->assoclen == 0 && cryptlen == 0) {
-+	if ((req->assoclen == 0 && cryptlen == 0) ||
-+	    (ctx->aes_mode == DTHE_AES_CCM && req->assoclen > DTHE_AES_CCM_AAD_MAXLEN)) {
- 		struct aead_request *subreq = &rctx->fb_req;
- 		int ret;
- 
-@@ -1111,7 +1151,7 @@ static struct aead_engine_alg aead_algs[] = {
- 	{
- 		.base.init			= dthe_aead_init_tfm,
- 		.base.exit			= dthe_aead_exit_tfm,
--		.base.setkey			= dthe_aead_setkey,
-+		.base.setkey			= dthe_gcm_aes_setkey,
- 		.base.setauthsize		= dthe_aead_setauthsize,
- 		.base.maxauthsize		= AES_BLOCK_SIZE,
- 		.base.encrypt			= dthe_aead_encrypt,
-@@ -1133,6 +1173,31 @@ static struct aead_engine_alg aead_algs[] = {
- 		},
- 		.op.do_one_request = dthe_aead_run,
- 	}, /* GCM AES */
-+	{
-+		.base.init			= dthe_aead_init_tfm,
-+		.base.exit			= dthe_aead_exit_tfm,
-+		.base.setkey			= dthe_ccm_aes_setkey,
-+		.base.setauthsize		= dthe_aead_setauthsize,
-+		.base.maxauthsize		= AES_BLOCK_SIZE,
-+		.base.encrypt			= dthe_aead_encrypt,
-+		.base.decrypt			= dthe_aead_decrypt,
-+		.base.chunksize			= AES_BLOCK_SIZE,
-+		.base.ivsize			= AES_IV_SIZE,
-+		.base.base = {
-+			.cra_name		= "ccm(aes)",
-+			.cra_driver_name	= "ccm-aes-dthev2",
-+			.cra_priority		= 299,
-+			.cra_flags		= CRYPTO_ALG_TYPE_AEAD |
-+						  CRYPTO_ALG_KERN_DRIVER_ONLY |
-+						  CRYPTO_ALG_ASYNC |
-+						  CRYPTO_ALG_NEED_FALLBACK,
-+			.cra_blocksize		= 1,
-+			.cra_ctxsize		= sizeof(struct dthe_tfm_ctx),
-+			.cra_reqsize		= sizeof(struct dthe_aes_req_ctx),
-+			.cra_module		= THIS_MODULE,
-+		},
-+		.op.do_one_request = dthe_aead_run,
-+	}, /* CCM AES */
- };
- 
- int dthe_register_aes_algs(void)
-diff --git a/drivers/crypto/ti/dthev2-common.h b/drivers/crypto/ti/dthev2-common.h
-index 3c9fe0633cca..3b3b133fc984 100644
---- a/drivers/crypto/ti/dthev2-common.h
-+++ b/drivers/crypto/ti/dthev2-common.h
-@@ -39,6 +39,7 @@ enum dthe_aes_mode {
- 	DTHE_AES_CTR,
- 	DTHE_AES_XTS,
- 	DTHE_AES_GCM,
-+	DTHE_AES_CCM,
- };
- 
- /* Driver specific struct definitions */
--- 
-2.43.0
+My thought is, if a PHY device hasn't been attached to a net_device,
+is it still necessary to go through the resume procedure?
+
+My issue context is as follows:
+After entering `mdio_bus_phy_resume`, the call flow proceeds to:
+`phy_init_hw()`
+    => `phydev->drv->config_init`
+        => `yt8521_config_init`
+
+Then, because `phydev->interface != PHY_INTERFACE_MODE_SGMII`, it attempts
+to enter `ytphy_rgmii_clk_delay_config` to configure the RGMII tx/rx delay.
+However, since this PHY device is not associated with any GMAC and is not
+connected via an RGMII interface, the function returns `-EOPNOTSUPP`.
+
+Of course, I could submit a fix patch to `motorcomm.c` to terminate
+`config_init` early. But as I mentioned at the beginning, when a PHY
+device hasn't been attached, do we really need to let it go through
+the entire resume process?
 
 
