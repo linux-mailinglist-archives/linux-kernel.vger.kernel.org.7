@@ -1,188 +1,135 @@
-Return-Path: <linux-kernel+bounces-810579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3499B51C9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:57:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884BEB51CA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FA29565E0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:57:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEB63564D06
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CE532C331;
-	Wed, 10 Sep 2025 15:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HXbXtNBy"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14ECA32C312
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EBE32F76C;
+	Wed, 10 Sep 2025 15:56:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DC932ED4C
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757519808; cv=none; b=dToUmqIxQnS4dPaZnVbyk4/CC7hRYQ1tGO+YMokHousg478lM4bNzodKBOtpAnGbtfoz/HTpu8DqNPpOLWAe/6UcRw1yuv7NVbCoWqZ603yDWVjBR5+uoN8XYY7ZJn9MDZa6x4S+V3UdEhv7rvAdw1OIBpSBFuwvp4tZGcQ630w=
+	t=1757519810; cv=none; b=RpbOpnYTA9jfvFZnS0FjOmqkFN6H3WQsYaDsKGKkYWUnnEkYRPdiONvUyGMjyn53vWaGKzHKEpCOo6QcrLI61AEzljl2TxWzI6Cn+IwOiA+OZpEC6R1Bs3LwsyaSRkzaTKUUH894TY5IgT6bB64VpqZJo8MYkxmfQwheeDU+Ozs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757519808; c=relaxed/simple;
-	bh=N+YTr8YJ8tq7DvxpZf5zcvz6cd8fQ2EbBmkTADdjMIo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=ADqAENSS52g/FeFmLvRCn1eh763c2yWp1LwQ0JTDhhpji+ixXjwx4daC3wYtWwC+4EdNhKnu7UpPId1ZJurChU6GhDmopHpON8MffU1e61fDkGlZJrAIs9nJ2ovbt+qKDYc6NYo4BdBoXkZyAKDBKNUSV4GA6vI7yoQsDQ8eBCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HXbXtNBy; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24ca417fb41so82673845ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:56:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757519806; x=1758124606; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DYBsvUTSiy3eilreEVnNRX3JIkQuLOtjlS/T3FePQHA=;
-        b=HXbXtNByd0+junstHlhl1APj5lMrOkojJ/+PD1gluS2D4Utduz6osc+6pBb/GMACI1
-         yIJyIYVz2wqZ8CN36/zDuJSnqk0xc/ZZwPsMQM/9GRrAt6LrzvznF8nXx+Q5gL/iP+7I
-         89Yvn5mg0u7sZr2mOWuVsjBdu9J0hjyhbnkRrRXYX5rSk/n9fLldQxBgLBBwKrxlIem4
-         akhPm3yCLt4gw+/3OYu9YYaiGC1rV05fdmf0kfENNmjprE1ZFh8Zp2MpxatrHstfiphV
-         8JChuy4wvHIE3S4uaW0sZZK58r8KubZQ1thA39/VPPibPutMcHg5JVrhvq7vhXi6Ibsw
-         Clfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757519806; x=1758124606;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DYBsvUTSiy3eilreEVnNRX3JIkQuLOtjlS/T3FePQHA=;
-        b=f9G+lGCDWoSbkPe7EC8HWqJ6L+9xLgXoS2qMay687AWzPbQeIdkDjVM2a8O6hCEZW8
-         PA3rMLsbxQUQYi2tt2EQDrh/CYlAsJej0+R5wy25GG9ejCnAVVLjNJikr4soi9N7NAuE
-         oaFxDeyJPuKoKHKVMyULaP0QA1YFIvRjprrV2MZarjkVBjEuyriC9yUPQKDbRh/ekCWH
-         dy9aO3QvleCLQjsVVrmzTYCNynPbL/QA1p8miwPiHGk9ne++JAA2XiPMGMOo3727Csn8
-         ZKhcEcPV0LR5v3q/UGPg5JpjFm9gLWgnCZvCzKpFgx3tY6deMJrrEAJGUPj7BXas5rcr
-         0xkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXb6XTImL6CAu+uZI3UgB68sHgmobtPd78VVWaUIU/21QnFI5QPwro0vIojWCKzQZHXWNSMMSVjh1qBpGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbHXs3D+/IoHZ0lrtRENwEvjgMJ2maawsuC2Ej3JDK/Op+1kbj
-	5/FlbErXvJY1ATrXLhsvwfARsh4RVRhkegRktVvAZIqd64ZqZdPreLlS91CobHDkdivMfR1rQaT
-	GnGqh/9T3ng==
-X-Google-Smtp-Source: AGHT+IEHn9UIszRp1p4kyU8H/MCgwjIZ3oWz+AKXfF9qUTgYBq7A/AhNz8ZA6KV5OlExMcNLHcZAkGFIcIoa
-X-Received: from plbbh5.prod.google.com ([2002:a17:902:a985:b0:24c:b370:db43])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:dac6:b0:250:de70:cf9c
- with SMTP id d9443c01a7336-25174ff62d3mr228709665ad.47.1757519806353; Wed, 10
- Sep 2025 08:56:46 -0700 (PDT)
-Date: Wed, 10 Sep 2025 08:56:35 -0700
+	s=arc-20240116; t=1757519810; c=relaxed/simple;
+	bh=qm9Si9celcAuY66dwGfGzGsQfV8JFQy1l2SFv/E41VU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LR7meXKHzXTJ1mQC5T9SJdl2cd3vpNPtUJudgbkyaTMttwM2IvNuF32jw4BcDfkZZrnt7o4v7CIVnKh1xPN06vF6WwwQxS1U1QvlD+EwCKCdrYOwoNfNCSq7fXT7ualvay6WxwWEAEeDoKZDFci8jo56za7IjMCSGYtUewlov2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E1AA16F2;
+	Wed, 10 Sep 2025 08:56:39 -0700 (PDT)
+Received: from [10.1.25.55] (e122027.cambridge.arm.com [10.1.25.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 744343F63F;
+	Wed, 10 Sep 2025 08:56:45 -0700 (PDT)
+Message-ID: <bba00626-f9aa-4525-8568-2616adac7563@arm.com>
+Date: Wed, 10 Sep 2025 16:56:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250910155635.46187-1-irogers@google.com>
-Subject: [PATCH v2] perf test: AMD IBS swfilt skip kernel tests if paranoia is >1
-From: Ian Rogers <irogers@google.com>
-To: Ravi Bangoria <ravi.bangoria@amd.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Collin Funk <collin.funk1@gmail.com>, 
-	James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] drm/panfrost: Introduce JM contexts for manging
+ job resources
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ kernel@collabora.com, Rob Herring <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+References: <20250904001054.147465-1-adrian.larumbe@collabora.com>
+ <20250904001054.147465-3-adrian.larumbe@collabora.com>
+ <99a903b8-4b51-408d-b620-4166a11e3ad1@arm.com>
+ <20250910175213.542fdb4b@fedora>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250910175213.542fdb4b@fedora>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-If not root and the perf_event_paranoid is set >1 swfilt will fail to
-open the event failing the test. Add check to skip the test in that
-case.
+On 10/09/2025 16:52, Boris Brezillon wrote:
+> On Wed, 10 Sep 2025 16:42:32 +0100
+> Steven Price <steven.price@arm.com> wrote:
+> 
+>>> +int panfrost_jm_ctx_create(struct drm_file *file,
+>>> +			   struct drm_panfrost_jm_ctx_create *args)
+>>> +{
+>>> +	struct panfrost_file_priv *priv = file->driver_priv;
+>>> +	struct panfrost_device *pfdev = priv->pfdev;
+>>> +	enum drm_sched_priority sched_prio;
+>>> +	struct panfrost_jm_ctx *jm_ctx;
+>>> +
+>>> +	int ret;
+>>> +
+>>> +	jm_ctx = kzalloc(sizeof(*jm_ctx), GFP_KERNEL);
+>>> +	if (!jm_ctx)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	kref_init(&jm_ctx->refcnt);
+>>> +
+>>> +	/* Same priority for all JS within a single context */
+>>> +	jm_ctx->config = JS_CONFIG_THREAD_PRI(args->priority);
+>>> +
+>>> +	ret = jm_ctx_prio_to_drm_sched_prio(file, args->priority, &sched_prio);
+>>> +	if (ret)
+>>> +		goto err_put_jm_ctx;
+>>> +
+>>> +	for (u32 i = 0; i < NUM_JOB_SLOTS - 1; i++) {
+>>> +		struct drm_gpu_scheduler *sched = &pfdev->js->queue[i].sched;
+>>> +		struct panfrost_js_ctx *js_ctx = &jm_ctx->slots[i];
+>>> +
+>>> +		ret = drm_sched_entity_init(&js_ctx->sched_entity, sched_prio,
+>>> +					    &sched, 1, NULL);
+>>> +		if (ret)
+>>> +			goto err_put_jm_ctx;
+>>> +
+>>> +		js_ctx->enabled = true;
+>>> +	}
+>>> +
+>>> +	ret = xa_alloc(&priv->jm_ctxs, &args->handle, jm_ctx,
+>>> +		       XA_LIMIT(0, MAX_JM_CTX_PER_FILE), GFP_KERNEL);
+>>> +	if (ret)
+>>> +		goto err_put_jm_ctx;  
+>>
+>> On error here we just jump down and call panfrost_jm_ctx_put() which
+>> will free jm_ctx but won't destroy any of the drm_sched_entities. There
+>> seems to be something a bit off with the lifetime management here.
+>>
+>> Should panfrost_jm_ctx_release() be responsible for tearing down the
+>> context, and panfrost_jm_ctx_destroy() be nothing more than dropping the
+>> reference?
+> 
+> The idea was to kill/cancel any pending jobs as soon as userspace
+> releases the context, like we were doing previously when the FD was
+> closed. If we defer this ctx teardown to the release() function, we're
+> basically waiting for all jobs to complete, which:
+> 
+> 1. doesn't encourage userspace to have proper control over the contexts
+>    lifetime
+> 2. might use GPU/mem resources to execute jobs no one cares about
+>    anymore
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
-Remove incorrect sample count corrections
----
- tools/perf/tests/shell/amd-ibs-swfilt.sh | 51 ++++++++++++++++++------
- 1 file changed, 38 insertions(+), 13 deletions(-)
+Ah, good point - yes killing the jobs in panfrost_jm_ctx_destroy() makes
+sense. But we still need to ensure the clean-up happens in the other
+paths ;)
 
-diff --git a/tools/perf/tests/shell/amd-ibs-swfilt.sh b/tools/perf/tests/shell/amd-ibs-swfilt.sh
-index 7045ec72ba4c..ebe1fedb897b 100755
---- a/tools/perf/tests/shell/amd-ibs-swfilt.sh
-+++ b/tools/perf/tests/shell/amd-ibs-swfilt.sh
-@@ -1,6 +1,10 @@
- #!/bin/bash
- # AMD IBS software filtering
- 
-+ParanoidAndNotRoot() {
-+  [ "$(id -u)" != 0 ] && [ "$(cat /proc/sys/kernel/perf_event_paranoid)" -gt $1 ]
-+}
-+
- echo "check availability of IBS swfilt"
- 
- # check if IBS PMU is available
-@@ -16,6 +20,7 @@ if [ ! -f /sys/bus/event_source/devices/ibs_op/format/swfilt ]; then
- fi
- 
- echo "run perf record with modifier and swfilt"
-+err=0
- 
- # setting any modifiers should fail
- perf record -B -e ibs_op//u -o /dev/null true 2> /dev/null
-@@ -31,11 +36,17 @@ if [ $? -ne 0 ]; then
-     exit 1
- fi
- 
--# setting it with swfilt=1 should be fine
--perf record -B -e ibs_op/swfilt=1/k -o /dev/null true
--if [ $? -ne 0 ]; then
--    echo "[FAIL] IBS op PMU cannot handle swfilt for exclude_user"
--    exit 1
-+if ! ParanoidAndNotRoot 1
-+then
-+    # setting it with swfilt=1 should be fine
-+    perf record -B -e ibs_op/swfilt=1/k -o /dev/null true
-+    if [ $? -ne 0 ]; then
-+        echo "[FAIL] IBS op PMU cannot handle swfilt for exclude_user"
-+        exit 1
-+    fi
-+else
-+    echo "[SKIP] not root and perf_event_paranoid too high for exclude_user"
-+    err=2
- fi
- 
- # check ibs_fetch PMU as well
-@@ -46,10 +57,16 @@ if [ $? -ne 0 ]; then
- fi
- 
- # check system wide recording
--perf record -aB --synth=no -e ibs_op/swfilt/k -o /dev/null true
--if [ $? -ne 0 ]; then
--    echo "[FAIL] IBS op PMU cannot handle swfilt in system-wide mode"
--    exit 1
-+if ! ParanoidAndNotRoot 1
-+then
-+    perf record -aB --synth=no -e ibs_op/swfilt/k -o /dev/null true
-+    if [ $? -ne 0 ]; then
-+        echo "[FAIL] IBS op PMU cannot handle swfilt in system-wide mode"
-+        exit 1
-+    fi
-+else
-+    echo "[SKIP] not root and perf_event_paranoid too high for exclude_user"
-+    err=2
- fi
- 
- echo "check number of samples with swfilt"
-@@ -60,8 +77,16 @@ if [ ${kernel_sample} -ne 0 ]; then
-     exit 1
- fi
- 
--user_sample=$(perf record -e ibs_fetch/swfilt/k -o- true | perf script -i- -F misc | grep -c ^U)
--if [ ${user_sample} -ne 0 ]; then
--    echo "[FAIL] unexpected user samples: " ${user_sample}
--    exit 1
-+if ! ParanoidAndNotRoot 1
-+then
-+    user_sample=$(perf record -e ibs_fetch/swfilt/k -o- true | perf script -i- -F misc | grep -c ^U)
-+    if [ ${user_sample} -ne 0 ]; then
-+        echo "[FAIL] unexpected user samples: " ${user_sample}
-+        exit 1
-+    fi
-+else
-+    echo "[SKIP] not root and perf_event_paranoid too high for exclude_user"
-+    err=2
- fi
-+
-+exit $err
--- 
-2.51.0.384.g4c02a37b29-goog
+So panfrost_jm_ctx_destroy() should keep the killing jobs part, butthe
+drm scheduler entity cleanup should be moved.
+
+Thanks,
+Steve
 
 
