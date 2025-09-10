@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-810054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88CB2B51543
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:16:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F339EB51548
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EC99444554
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:16:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAB071658E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B9826A0A7;
-	Wed, 10 Sep 2025 11:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B952797A1;
+	Wed, 10 Sep 2025 11:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQ5PQ1l/"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="QKpukNVB"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD6925A355;
-	Wed, 10 Sep 2025 11:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98712773DA
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757502980; cv=none; b=c/QXowCy22ykHk1mg9vV8dv+4yvZZaavdKsImyQyz+egF5wWES68FAF/Bi9ziE+3C7bIdVfeNHsRbUrMx7MsDo+xIv4HLV5xNIzSflnHGPHUdPCDQUhcO0L80LnQXeJEJJEkxokAE3c4gjk5OEB1KSvL8eK69STP4aqtKwCSvbo=
+	t=1757503075; cv=none; b=JcsxLd9U2t+E0VA+g2ddVtt15j0y9tr90lvvcMoGLpX7i/0y4x61JGXqkn89SQmTzGZESBKoEtLtBCLe2X8VcF+PfQ28JzRqDFEtdB5TENy/TCb16H4ot5pYfTNiRsuSjVPTo9Almi3bGMfaCLfHx+z7iPFjCLUuq9Opn4bGiZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757502980; c=relaxed/simple;
-	bh=2rASD+s8QFj1eS4oF5z2j1I3AkxBGsqd2eCLiUasoB8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cxl1YdsGDDzOeimlAFMnFyh2YP261bYUQl6m1+IF7sL3/jZ46asd9+VtTqcjxypaugS8sG4zdMVT1cUZc4+ss4SnhLp/WItxYd1QK+IMI+korNogbsdAkSyc8YAeIkE75eTRZ2ex4MVNKLaIHHoi5gPWoNaT7SnAxbZ3jxvC264=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQ5PQ1l/; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4ee87cc81eso6054255a12.1;
-        Wed, 10 Sep 2025 04:16:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757502978; x=1758107778; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MZbusY2YZDJHUgvIqP5aq8nFaPzc4Ije89rvbFvkmb4=;
-        b=UQ5PQ1l/iUadLMXI3f99zhGMgEzVVCq4bl1lzsRKSrsADYZ8hrc9PlTqNDdBPOpMP3
-         NZouYJGke5QN/uNvkV94v8KGV0rhe0GpZqdc7ajOh67GFo+BARP8KMc/Vf2BPxJ7lSLp
-         by6guwdiYfQHH4ACLhYV8BPXzoWZ+V3ygz6a725i7TQGCxAELdufYcK76hFZGp2zoEKW
-         44KEf7+3+QouM9aXPfjrjaDVvxQBWXCJivwhzh6vqoKeDDMDfnF7X4znq1gjwFSSZb4x
-         hjR3w8nYrbsDiTURqhmAKU2MAESOpvgtk2QZsIQSSRdGL3G+crTr/yAo8gU3OLtHbsLm
-         lfrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757502978; x=1758107778;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MZbusY2YZDJHUgvIqP5aq8nFaPzc4Ije89rvbFvkmb4=;
-        b=abQcBXMnGvgRy84rE7srwkvOVi4ypmDYPk8+MjaWzOUT1fQYPiHz7zELcG+AYN9tiV
-         muxDuijyjVAuptsdXk0wWW+POsLh/4I6rw2YUqGfuH9TFtG0tjgX4zm6Z+etz9dHXPIh
-         d+HKYaUzFwTuL7qZZH97Q8Bh4qsu+LqD7orWpyGtTVo9m868C2Hqg7wwUqVNWxghseOX
-         PkO0tux2knOMGM9fysp0NTHqBEMES1hCgXuKmp7NPrdZwKpY6N123ODkLQv0jSVCNdih
-         EBZBPDqBIEtyCE7F1j5dJ6vH140AHYjmFMSMkC2ejwjA0B6pRtEC1g0GVZCzmaqEd74m
-         kA0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUcEsjqnheP+7ZqxILVK/uZP2OI9A2/1LBPCzEypPaTpA3ExIolRy5aTWcBxMyKwM7wzG2sihQtwCZdzFo=@vger.kernel.org, AJvYcCUuKF/4ad2iBDxdZGuE+2IndJ09W/wFRDfz7HD6I8BvQDPk36ftYjvzsNTojdt4f1FM5+ZKnzUkKIkTj5TEX8Re@vger.kernel.org, AJvYcCXiI6Qf2/HXZXaZPXEs0sQllJg4lQ2W95Y3TYdw/ATIr07VdT/cQzqBnbcM6dgpfYwA3dl25B5D@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfbEAFQC/09ZOGLba0YFVEDeFdh7fo7zjbYG3lPrItR7EFWxz3
-	BiLPU6ijkk4PG/z5XxLPoiVCdV/GIJiRTYvv++aMtfdzBFE3cjFZ+Cie
-X-Gm-Gg: ASbGnctv9g6mUq6tpxzj1JzdneQiZmT0W0+z1rRMDVQS/yPYT9QS79hnWkVrzXA0jks
-	WpNkiucV5jOYjicz7fo6T1CW9TL+2jqnDlgu5IGw2hfeNjE5sXk6uGXFDO3lIJNhqjHyzrG/f8p
-	TsiaTskpGToxpTXilqR2KltVOmgkGA5FseWFpSoEN3+c7bEuORs4yoHznnkwOcOI7wVj3U0QYT5
-	dXST3x3vkTaUOfSB+61fByzKkk4A11EciqhwNzr3id1zSeals8j6bn+PW1k0FK1uI19MwxYD92n
-	8tvnCtb5wpBraf8IOGpq+1hgfunMByG9wjNfZ5sloKtGdnVF4y7fizCYa9lXoUh8jRHjM++rJhM
-	tVseULboUXIF0Zm6pvV//EZ4SmNXr6f4Tcf7kcHWbjEiQ1kMBnsUkMbkM+2sJOARn3K230OL7NX
-	056V5B6JdDf7ueQ+Z2RggvfilupGmNn5OupOee94FCF7XL9XKpw2Kq+YVkucHcnNid
-X-Google-Smtp-Source: AGHT+IHYJUR0byJaWrm8+KNFqANo8zElvFbaG5ym9raoJ7ygPAvqG0hpZXLy2KjyUuPvUxUS73wvMQ==
-X-Received: by 2002:a17:902:fc45:b0:246:464d:1194 with SMTP id d9443c01a7336-2516d81836dmr194708695ad.2.1757502978484;
-        Wed, 10 Sep 2025 04:16:18 -0700 (PDT)
-Received: from ?IPV6:2001:b400:e28d:ed7:4d5a:39b4:7c51:4c71? (2001-b400-e28d-0ed7-4d5a-39b4-7c51-4c71.emome-ip6.hinet.net. [2001:b400:e28d:ed7:4d5a:39b4:7c51:4c71])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a2ac085f9sm23656115ad.117.2025.09.10.04.16.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 04:16:18 -0700 (PDT)
-Message-ID: <270488a6-ec6b-4b38-aa30-b5c9e08cdd18@gmail.com>
-Date: Wed, 10 Sep 2025 19:16:13 +0800
+	s=arc-20240116; t=1757503075; c=relaxed/simple;
+	bh=Xtb/sLzI5bW8Bo35Swpy28juwuCbw+RUPfTq/h5670o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BahGH5+0Epc+yggC5dVJajohxgDbyzCcv6d2JqFCkHrgrSUHhQY1+qjp6e4u2O9dpB/hUJreOLazfZzfzUbDtGQzJyhDYZlO6R9pyGymfbJ3e7pE869ohGJsMS05rlNfVGG+Mrirgf2lVHzpe462tBzWvvNFoOlkeecNVKLLZRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=QKpukNVB; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Xtb/
+	sLzI5bW8Bo35Swpy28juwuCbw+RUPfTq/h5670o=; b=QKpukNVB4TrB18ESciEG
+	Y1BK6GL0+tBbE8uORRbGDneKzuh9uGhhKCB2cmtcYXdo9P8URsWJMc5kroXb5xku
+	/95y7vKfD28hQkEtqoBh/Zd8sfLN8TbO2uVxbmYomKwcV5SqVdjtrGW+bzktOtCd
+	X2QgSDBGKTdKZmcgdCEVmYHwW9khCrPWKve/iYDCm3d11lxgiaSDM7lcQe5Hsdg1
+	oiGLbyAZy7qpRc1RpDEaYDh0/xK5QulJ5wYVr5YmkO5CzI5Zb5Wjs7E3xQgR7Iie
+	yCeMLOrK7Hb+7wUOPLXU0oljL5YpenVUYrdkagHlXWpXIsb13TIDN0e4qSgeR2Tp
+	LQ==
+Received: (qmail 578202 invoked from network); 10 Sep 2025 13:17:49 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Sep 2025 13:17:49 +0200
+X-UD-Smtp-Session: l3s3148p1@ieomknA+gpwujnuV
+Date: Wed, 10 Sep 2025 13:17:49 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Hoan Tran <hoan@os.amperecomputing.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Phil Edworthy <phil.edworthy@renesas.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 1/8] ARM: dts: r9a06g032: Add GPIO controllers
+Message-ID: <aMFeXXXuks0OVkj5@ninjato>
+References: <20250909120041.154459-1-herve.codina@bootlin.com>
+ <20250909120041.154459-2-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/net: fix unused return value warnings in ksft.h
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-References: <20250906-selftests-net-ksft-v1-1-f1577cea3f68@gmail.com>
- <20250908182018.28d9ff10@kernel.org>
- <a3d1c5ca-cdce-428d-8c1c-6a1f59e2dd76@gmail.com>
- <20250909162551.5224a3dc@kernel.org>
-Content-Language: en-US
-From: "Nai-Chen(Simone) Cheng" <bleach1827@gmail.com>
-In-Reply-To: <20250909162551.5224a3dc@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iumSSLlPufN+jsYR"
+Content-Disposition: inline
+In-Reply-To: <20250909120041.154459-2-herve.codina@bootlin.com>
 
 
-Hi Jakub,
+--iumSSLlPufN+jsYR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-09-10 07:25, Jakub Kicinski wrote:
-> Sounds good!
+On Tue, Sep 09, 2025 at 02:00:32PM +0200, Herve Codina (Schneider Electric)=
+ wrote:
+> Add GPIO controllers (Synosys DesignWare IPs) available in the
+> r9a06g032 (RZ/N1D) SoC.
+>=20
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
+m>
 
-I tried the direct void casting approach, but it still generates 
-warnings with GCC 14.2.0:
-     (void)write(fd, msg, sizeof(msg));
-     still shows: warning: ignoring return value of 'write'...
+Of course, I couldn't test and review all GPIOs but the GPIOs I tested
+on my N1D-DB and EB work nicely so far. Previous tests didn't work
+because I simply missed to setup a configuration switch properly for
+this case. Phew!
 
-After further researching, I found this appears to be a known GCC/glibc 
-issue dating back to 2015 where direct void casting doesn't work for 
-functions with __warn_unused_result__. [1] Since this is a long-standing 
-toolchain issue and direct void casting won't suppress warning, I think 
-you can skip this patch. Thank you!
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66425
+I won't have the bandwidth to review the irq patches. Maybe I can donate
+tests, but no promises...
 
-Best Regards,
-Nai-Chen Cheng
+
+--iumSSLlPufN+jsYR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjBXlkACgkQFA3kzBSg
+KbbEaA//fbbtj5vTazGI3o6nzrkselioCZlzKsf5vGNmi8jqg+aXHRK7vm7yTfSW
+i0A3/MxjuXHIaEDf/MW8SgPp6/z+TtyMohi3cnwPPonAbOKaICpEEbQmrEXTO4kn
+AQE3VM1lXAxGjL/rHi7tv+d2o3s3SM9fHGNvmsTaYHsLxJni/ylOERHKSCDNZvdT
+spoyw+5i7xw5rmN5Drjh+LWT04H3YwPMs9Hikbk6fdd2eTZ9yEWi2wLiNwbSLX9z
+iSNkE6TTth9OvGGQusfuzgwJVq9oAMFNcW1YWISCznGHJ1hOaHhvi2+mTStfNgtR
+h9mgNiOF3NuPm6OMqtNSQYYkJ3Y/LEYy3O3RAhRCVk3B1Gdt/nkKMuigVSvV7m1Q
+3xFNMiDqCuzdX15JPAgu927pSNnQXP0GKshTtZTpCtzFjj/GgEl8KJCjqQ7og0bx
+FatOjTUnFv1BZXc/LaVPthp1FSozfje7RULinOrXSq+nVUZJJrNcHYflR9qKx51q
+5Q5iC7TX8qmyewAgqwnMJMNNMgwt3ykWfxeVte8P2CgBJdPfaRIqYxEC+8KQHBF6
+WeAin+KN5RWDAAceH6NZuJKlQzO1QucH/ciAxwO6naSa3DBgasISrvOU9s0dZCvt
+jkeXbOIhevD6w2y6CsApyTG7UX9ckayXAec1htNOJOL15VpGToc=
+=Mu3J
+-----END PGP SIGNATURE-----
+
+--iumSSLlPufN+jsYR--
 
