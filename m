@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-810268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91CB1B517FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:33:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 048B4B517FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C1183B55B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:33:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F46C7A5BED
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDF2284B4C;
-	Wed, 10 Sep 2025 13:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ruzTUkDs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD1128C5D9;
+	Wed, 10 Sep 2025 13:33:21 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C7A1EF36B;
-	Wed, 10 Sep 2025 13:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491AD268C40;
+	Wed, 10 Sep 2025 13:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757511193; cv=none; b=UPRw1dbigyKrZd35V4Ad5+5MluqChdZshZevVAPEE4wmGNNLpZrRzNQwSpKyiGMAxvkwhdwORqB0W1Yvq4csNhVaZaOl5NkRYAAwZpPUSPeUEbEqseNPuRXmX5f7lMNCceKC30qwyFUsdGyNYXusHGh8WTyZOINT+FtSJnIa0GQ=
+	t=1757511201; cv=none; b=vGMoHUhJKYj8Rbiln9IZIqI0p3xHdsWljxKOKOi+pPtkADCbpYxHhn72uAx+yeub0HtdT1tuWZbRqJGSTVCI+nuxd+9wAQQK/4oetO1A5yu87N5m8oeHYEGlJ5PGahxj32+X+tx0b/wHHEREGSg7Fhiznp4eMozvCAoddzSCZIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757511193; c=relaxed/simple;
-	bh=Tw0QTfnyqKrEkt7OfgUFYqL1O3TTE6wURjAAbyBOnds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AZaqdRDRiSexKbY3gRReYfy4sO35jBQQh/z+nGPwC4EhfwkaZcztXycEZrRxlYQHWMCEKI3yMVvxTxqAb/h9dAxOLFpAuMAR6J0V2nNRDkf4dDm5U8DjPSoiY37KyWLs0iWCw49xz3Tymy7Xq80LreGHOekpGDMmRihqR6Cl69U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ruzTUkDs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 235FCC4CEF0;
-	Wed, 10 Sep 2025 13:33:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757511193;
-	bh=Tw0QTfnyqKrEkt7OfgUFYqL1O3TTE6wURjAAbyBOnds=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=ruzTUkDssG9v+7bDCr1Dn78LqwMHtvwSp2Vn+/doFtdmR9gGZAlvMKnBJVMq6rZCq
-	 Si7ATH4YCrXdiwPqE65WDJ5byScWAFaW0aEIR/c1aZF/nzjQGVHDKdmHskdPA4+YVx
-	 ihsOKmXlQ1N9VAZ8JhbqDNs3/u/ehaDBeItipU6FFEF3v8pm9G4iiEtf9e1bWzEU13
-	 /MqflFUMFruvthk1yicRdBuv9tV14Q011uq0Oj9EGX1R2VuNAqRVN3doLw82jsbuz4
-	 syAOBgURGFQo+0wgOxMnfM40x6TNgkY6Z4Vwm+bMJmjdwoitxAq2q7yQM4KFHV7ARW
-	 Qz/vDdwECHPVA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3384FCE0B24; Wed, 10 Sep 2025 06:33:12 -0700 (PDT)
-Date: Wed, 10 Sep 2025 06:33:12 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-Cc: dave@stgolabs.net, josh@joshtriplett.org, frederic@kernel.org,
-	neeraj.upadhyay@kernel.org, rostedt@goodmis.org,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
-Subject: Re: [PATCH v2] rcu/rcutorture: Improve error handling in
- rcu_torture_fwd_prog_init()
-Message-ID: <41a572f2-b9d3-4985-a61e-bff0b3b0e4d3@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250910092820.3736526-1-kaushlendra.kumar@intel.com>
+	s=arc-20240116; t=1757511201; c=relaxed/simple;
+	bh=mm8ZHp2llaxc5rR9/AJ1BbnRRUYcAIrw9QAjKCsusy8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rEBJX68qqOZ+vkPfiG7fEDEKTBzU5l6hqD+fzlL9oQobmxTPc+Z4aBPvrr7AYzH9Gy66VdJBHJ5XwjE8DYK4tzfUT6cKkw/wHEqzThFnpT8CUEtergU2p3aXUkaN1GWt5I4egp6wZcWRO6G6J4Cq63ElvZEnEbrjJEjaTeuNGEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMM3P6PXfz6K5wF;
+	Wed, 10 Sep 2025 21:29:05 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6E0A81402F2;
+	Wed, 10 Sep 2025 21:33:16 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 10 Sep
+ 2025 15:33:15 +0200
+Date: Wed, 10 Sep 2025 14:33:14 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
+	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v11 21/23] CXL/PCI: Introduce CXL uncorrectable protocol
+ error recovery
+Message-ID: <20250910143314.0000147b@huawei.com>
+In-Reply-To: <20250827013539.903682-22-terry.bowman@amd.com>
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+	<20250827013539.903682-22-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910092820.3736526-1-kaushlendra.kumar@intel.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, Sep 10, 2025 at 02:58:20PM +0530, Kaushlendra Kumar wrote:
-> Restructure error handling in rcu_torture_fwd_prog_init() to provide
-> cleaner allocation failure paths. The current code checks both
-> allocations in a single condition, making error handling less
-> efficient and clear.
+On Tue, 26 Aug 2025 20:35:36 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
+
+> Populate the cxl_do_recovery() function with uncorrectable protocol error (UCE)
+> handling. Follow similar design as found in PCIe error driver,
+> pcie_do_recovery(). One difference is cxl_do_recovery() will treat all UCEs
+> as fatal with a kernel panic. This is to prevent corruption on CXL memory.
 > 
-> The improved approach:
-> - Check rfp allocation immediately and return early on failure
-> - Separately handle fwd_prog_tasks allocation failure with proper
->   cleanup
-> - Remove redundant kfree(fwd_prog_tasks) since it would be NULL on
->   failure
-
-First, thank you for your interest in Linux-kernel RCU!
-
-However, you lost me on this one.  Please see below.
-
-> Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-> ---
-> Changes in v2:
-> - Fixed word wrapping in commit message to follow kernel guidelines
-> ---
->  kernel/rcu/rcutorture.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Introduce cxl_walk_port(). Make this analogous to pci_walk_bridge() but walking
+> CXL ports instead. This will iterate through the CXL topology from the
+> erroring device through the downstream CXL Ports and Endpoints.
 > 
-> diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> index 807fbf6123a7..6af0d207adba 100644
-> --- a/kernel/rcu/rcutorture.c
-> +++ b/kernel/rcu/rcutorture.c
-> @@ -2995,11 +2995,11 @@ static int __init rcu_torture_fwd_prog_init(void)
->  	if (fwd_progress_div <= 0)
->  		fwd_progress_div = 4;
->  	rfp = kcalloc(fwd_progress, sizeof(*rfp), GFP_KERNEL);
-> +	if (!rfp)
-> +		return -ENOMEM;
+> Export pci_aer_clear_fatal_status() for CXL to use if a UCE is not found.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> 
+> ---
+> Changes in v10->v11:
+> - pci_ers_merge_results() - Move to earlier patch
 
-Don't we still need to set fwd_progress to zero?
+One trivial formatting thing below.
 
->  	fwd_prog_tasks = kcalloc(fwd_progress, sizeof(*fwd_prog_tasks), GFP_KERNEL);
+> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+> index 536ca9c815ce..3da675f72616 100644
+> --- a/drivers/cxl/core/ras.c
+> +++ b/drivers/cxl/core/ras.c
 
-Although this change does avoid the doomed kcalloc() attempt, why are
-we optimizing an infrequent failure case?
+> +static void cxl_walk_port(struct device *port_dev,
+> +			  int (*cb)(struct device *, void *),
+> +			  void *userdata)
+> +{
+> +	struct cxl_dport *dport = NULL;
+> +	struct cxl_port *port;
+> +	unsigned long index;
+> +
+> +	if (!port_dev)
+> +		return;
+> +
+> +	port = to_cxl_port(port_dev);
+> +	if (port->uport_dev && dev_is_pci(port->uport_dev))
+> +		cb(port->uport_dev, userdata);
+> +
+> +	xa_for_each(&port->dports, index, dport)
+> +	{
 
-> -	if (!rfp || !fwd_prog_tasks) {
-> +	if (!fwd_prog_tasks) {
->  		kfree(rfp);
-> -		kfree(fwd_prog_tasks);
+	xa_for_each(&port->dports, index, dport) {
 
-Invoking kfree() on a NULL pointer is a well-defined no-op.
+as it's just a fancy for loop.
 
-> -		fwd_prog_tasks = NULL;
->  		fwd_progress = 0;
->  		return -ENOMEM;
->  	}
-
-I don't see where this is helping the common-case success path, nor am
-I seeing need need to optimize this initialization-time-only code path.
-Adding the zeroing of fwd_progress will result in a net increase in the
-number of lines of code.
-
-So what am I missing here?
-
-							Thanx, Paul
+> +		struct device *child_port_dev __free(put_device) =
+> +			bus_find_device(&cxl_bus_type, &port->dev, dport,
+> +					match_port_by_parent_dport);
+> +
+> +		cb(dport->dport_dev, userdata);
+> +
+> +		cxl_walk_port(child_port_dev, cxl_report_error_detected, userdata);
+> +	}
+> +
+> +	if (is_cxl_endpoint(port))
+> +		cb(port->uport_dev->parent, userdata);
+> +}
 
