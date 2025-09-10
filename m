@@ -1,163 +1,111 @@
-Return-Path: <linux-kernel+bounces-809582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96A6B50F6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:31:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48610B50F78
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86AA7561839
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:31:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E5F1C81E7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E4D30AD13;
-	Wed, 10 Sep 2025 07:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2BA30B532;
+	Wed, 10 Sep 2025 07:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7W7ltzx"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eXoYV+ZS"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B7B27056D;
-	Wed, 10 Sep 2025 07:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B63920E6F3;
+	Wed, 10 Sep 2025 07:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757489472; cv=none; b=RoK0qcFhCRUZH/SvgeDFb88s6kbS7Z7hTe7D2TtBSgmPNkcotAPdlXet/BWSOCfJtRrwT4eqqV2jpN3Vqis/rgYV7MMAnrg4Sax69SR8Xxz8hPEA06zD8mMmUQZ/TqxC4ftsMQTHnB0aVpAiE8+pYO3oB1KbsvvwRfMPxeHdbzs=
+	t=1757489565; cv=none; b=T2JOlYA8NA18yyNdneDzgG6kuOAMT8FswGspIWjBhdGTZTJQSavyaAB9TnIzOB3uNO+z5eRY2BZkgU3YxXspI3k0gClva8MbuUbpR0XvzqCcxg6kCZb5U9fgPgAc7rHeW5WcTJsMDDrawNEde5FiroX3Fqyb/is3jw+ygUt5X8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757489472; c=relaxed/simple;
-	bh=aLBtXmKx167i1YA63y7W4HmmeXF/5BMYUnmv/zS4pmY=;
-	h=From:Date:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bUQA2SCfxiy3RDNtyUYk7a7aDLCePRoZcKFOp1fDFEXZn5n9C6e++stBauYQctviunGKk3lxCjnrcOAgqfKLlzNm8gSlu3zGkA5c1rGPjqG/pV220pWTjx9M0Wt8tyfAsyacBs9Aaj6JJV42KMty1/S0V0/rNOLavS4VgE17QSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E7W7ltzx; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f6bb0a364so6860905e87.1;
-        Wed, 10 Sep 2025 00:31:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757489469; x=1758094269; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xFHJxuICj98Guwl4fVnasAXJJOBn+5zR++ozDmXM+Ds=;
-        b=E7W7ltzxiL2cKj+i/H7a7JmfOCmggR88bpBlRwJ73XrNb3qY8NpgAPjlT9PC0J1+jI
-         nNM5x63OhyTQDDcAI2AHOnI/VHO/wZ1Xc1JLXN4ISPW/OO0Xp6F17U40/DI+mUm9Ifg5
-         qt5O/iYvK+D0e6Y9R0LGBwfj+WeP8KRhSFuFLXXfvovUB/DICST9xSR32AXwTE6P6+Xp
-         ws1FFzXCqqr9u0GMbGCaNGZRbBE5Vpn3zvCDPVcl3DmSOSLaB9zvxZf1dg171Sd71l/R
-         LnoyD0RYFlCzaKkXFG9uzDmRqITjPhGxwx54mq+fxl59LTkopk/sVHQ24mc6s181tBKZ
-         nGcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757489469; x=1758094269;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xFHJxuICj98Guwl4fVnasAXJJOBn+5zR++ozDmXM+Ds=;
-        b=K7Id0nIt/AT8hoqHN0SCRVvDZU7Z398Ql2JaOpfnEzYgfd5X4AMs15tMV+fsYKuPNh
-         81k78my/KG1oAbLp6hSnt6JyiKZjUUm7P0Ou9y7S2UOq1MzOZoHj3JyB4v+SzUhc5rXU
-         hB36h/txmIodA+WLW3hrFHNHYZ8u154ESgYcbexC7Zup4C2GaXjoJJDaPN2/0zhYgTJe
-         PRNxnddqCb8HwaxJmAz9val2oHheUkWpqy+l0nLHFKoCMHabTSc5iljqMpjHbPL+BLIe
-         uX+8Z0Fc+IvdnzOQYztmqm4JlfssvMCoGxJTKbY3JIPR7048xuHfn8Qqt0syVgXbK7Dy
-         4P1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUFLVlzHx3ZtIxVbkT9Tvj59Ca3xI07ROvN8q4cRtC8GbeiKI99NFBoq64/cV5DLIc1IV1x@vger.kernel.org, AJvYcCWmYqfbexwTCiXvgJQS+BzyFVsBeYeEdfOeKYftqOQm2VR6VCjd4H5xHvrbvr/Eluzju3BgDc/UfgErWvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+sSAjFTIe8cE0M+4PR8xOmW427sv5ru3NxBG2C69LAMZM4b0M
-	kL7WepG6i1bEIqpWLs60fl+iwWr387bGsqVg02C3OIpaa23Z+YPPbDp3z+5XQKpb
-X-Gm-Gg: ASbGncvxHF+IDmJ4YyU+Pzp6oFx8/6kzvGFRK80pX+AL3xwT7hRY1Es46+fgUdmHHEv
-	q0tHuPM9p8utuq6DHtCiH9J3mKTXLTuNJvxiQgpZSI70WLLYgyDm85vnZF4EMleotxdE3SJMUU/
-	CRnYfCEmBMwrGt9/qA9Hc6MXeDJ+jQeaiXWSWAkm/dkoCA4QsBH1edxcGMS/CUjRnIsJQyzq/l6
-	l7zPp01G/V0hVAd831i/x3qZDv1kece/UGA7yTcUzHHWqFY1nAvK6zOBIKVQbpDDJ73NhdOeOW3
-	5562anZ+i+UXFbMwfpPt9vrQn4OM24aL/IylG8Ga0WiF2zAR4ssrlNgkMMTnGHzOYeWUAxXs3XJ
-	jiQWByM43STd9MdoFgZBAKFG/CslEosd2i86xb9wnHj7r2nbNMvt16auICOC7ms483BheF8A=
-X-Google-Smtp-Source: AGHT+IEcsyTBCBDDV1Tw1uNbYG7FH9MeVABG6eLTqtCcX6osCxdSBBJoixssy7qrpruP7IVgjHC0lw==
-X-Received: by 2002:a05:6512:6404:b0:55f:65a3:cfe7 with SMTP id 2adb3069b0e04-56262e1c134mr4873760e87.49.1757489468302;
-        Wed, 10 Sep 2025 00:31:08 -0700 (PDT)
-Received: from pc636 (host-95-203-28-174.mobileonline.telia.com. [95.203.28.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5695ac78c7asm874530e87.99.2025.09.10.00.31.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 00:31:07 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 10 Sep 2025 09:31:05 +0200
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	maple-tree@lists.infradead.org
-Subject: Re: [PATCH v7 04/21] slab: add sheaf support for batching
- kfree_rcu() operations
-Message-ID: <aMEpOTLh8EX6DXYq@pc636>
-References: <20250903-slub-percpu-caches-v7-0-71c114cdefef@suse.cz>
- <20250903-slub-percpu-caches-v7-4-71c114cdefef@suse.cz>
- <aL7FFpIMmXtzzSL1@pc638.lan>
- <6f8274da-a010-4bb3-b3d6-690481b5ace0@suse.cz>
- <aL_uhPtztx7Ef0T2@pc636>
- <772oyaa3j27tlklhpo6oqxsdtlvsg5goh2opzuig6xvgztgum4@scsoxrgtqm2f>
+	s=arc-20240116; t=1757489565; c=relaxed/simple;
+	bh=cNnqhoxdg6frKUHAp0uAvy8mj8b5kvtLDtzWSIHpTo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IuZ33ek4sCM7yRj29yzF/j+1uz20awFXuji2BpH2P5D7hyYaLIqIyhTcX7DRTHzLU3cTJssRFKbMlzu3pHfCIZyPWCTgbK91qf/PVb8mrE3vNJINzEe9hJrz6hcRH9mVRdPyh2Azq2hTsmBoWU6ilRjo12qmYN/MFS84+XETx/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eXoYV+ZS; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1757489560;
+	bh=DDjQG2kzRUcg34BRx4dGy87ztctw9ocUAFXaIrrFn54=;
+	h=Date:From:To:Cc:Subject:From;
+	b=eXoYV+ZSk1KFh9UI4LGQ/xVhN1Gboh6VYXsLNmDmE8LLXJjbisGo/up0H5Am/VyV/
+	 LpjUUznUbQTO8YFJ/AdI1nCwesMp4/9iO1NU0/Nr0kn3xB0ktmEpBc8+WXLEWt28Dg
+	 8/OZ/+1lqHb8bRhIeKGVpL+XJ3DCIVTkjDz3Ow52riUxAhNmk7tdMbPilFqBO3fxha
+	 NppRwk5YbwpGdLvuOtmbfSUHLYQ3Z+VY0Z+kHNjluWuUMvRbRA01iSPemW1Vc0GgOi
+	 x13q4J0IlgGLZ1bsTRrAP5N4govvbFIH+HzwKyBS7n6SqAmc/h2eaw6/rb+UXM23lZ
+	 MZWZCtEZq9n7Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cMC881JmBz4w2S;
+	Wed, 10 Sep 2025 17:32:39 +1000 (AEST)
+Date: Wed, 10 Sep 2025 17:32:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jane Chu <jane.chu@oracle.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the mm-hotfixes tree
+Message-ID: <20250910173239.5e7f4d4a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <772oyaa3j27tlklhpo6oqxsdtlvsg5goh2opzuig6xvgztgum4@scsoxrgtqm2f>
+Content-Type: multipart/signed; boundary="Sig_/yr.rBbgnyA2/s19T9EJGGEF";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Sep 09, 2025 at 10:35:15AM -0400, Liam R. Howlett wrote:
-> * Uladzislau Rezki <urezki@gmail.com> [250909 05:08]:
-> 
-> ...
-> 
-> > 
-> > > > - call_rcu() can be slow, therefore we do not use it in the kvfree_rcu().
-> > > 
-> > > If call_rcu() is called once per 32 kfree_rcu() filling up the rcu sheaf, is
-> > > it still too slow?
-> > >
-> > You do not know where in a queue this callback lands, in the beginning,
-> > in the end, etc. It is part of generic list which is processed one by
-> > one. It can contain thousands of callbacks.
-> 
-> How does this differ from kvfree_rcu()?
-> 
-> Surely if you have enough calls to kvfree_rcu(), you will end up with a
-> large list of frees before the end of a grace period?  Our placement in
-> the freeing order would still be dependent on what else is using the
-> infrastructure in the same grace period, right?
-> 
-In kfree_rcu() we use page blocks to carry pointers. Lists can be used
-if there is a low memory condition so a page can not be allocated or
-cache is empty. But this is not part of carr_rcu() track in any way.
+--Sig_/yr.rBbgnyA2/s19T9EJGGEF
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Right regular call_rcu() puts callback into its own internal lists and
-they are processed one by one during list iteration. In such lists you
-can have hundred of thousand callback.
+Hi all,
 
->
-> How is kvfree_rcu() affected by rcu callback offloading to a specific
-> cpu and rcu expedite?  Often these two features come into play for
-> certain workloads which are of concern to us.
-> 
-We maintain a separate path. Offload is done after a grace period is
-over. It is classic way. Historically all deferred freeing was one
-call_rcu() per ptr.
+In commit
 
-> > 
-> > If performance is not needed then it is not an issue. But in
-> > kvfree_rcu() we do not use it, because of we want to offload
-> > fast.
-> 
-> Today, I free things using call_rcu() and a custom callback so I would
-> think stacking 32 together would make the list shorter, but latency
-> would increase by waiting until there are 32.
-> 
-> If we wanted to flush the kvfree_rcu() list, is it done in the same way
-> as the call_rcu() list, or is there a better way?
-> 
-For this case we have kvfree_rcu_barrier(). It is not same as call_rcu()
-flushing.
+  61979fc7ec31 ("mm/hugetlb: fix copy_hugetlb_page_range() to use ->pt_shar=
+e_count")
 
---
-Uladzislau Rezki
+Fixes tag
+
+  Fixes: 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not split Fixes tags over more than one line.
+
+Also (looking at the original posted patch), please keep all the commit
+message tags together at the end of the commit message.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/yr.rBbgnyA2/s19T9EJGGEF
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmjBKZcACgkQAVBC80lX
+0Gx+rAf4/r+J8FSEIYsrpL0fZIfTXmg9FkCxtCkAHpykHpvBA8vf2QsuWdHKOXPe
+5DAdM4j1zZ9VbsA1dJBo6h1lY4BYPLJEN0ViYMVFXdSWhOtfzszY68UquCiU+oWA
+Jwk767IGlNs+GEHyJyh8jJ6MjbXv+DpYJmbNel476zy4K4FHIBNuGy9GOJuBcaf3
+DQKs8AMozf6IPXhdOI9R2pTYhOTaDQQ1otlG4M9NmPkGtF5XgN8wwsR3apFaTt6w
+VNQbrCT9nEJo/7ZwmC3x2+GXfhUsYTi9nM+bhr0N/xXBkPEPfJPSJHcfbCOHtw/K
+W2q5wd8m3lL8AxU07vaGxZFZmKAV
+=7Z9Q
+-----END PGP SIGNATURE-----
+
+--Sig_/yr.rBbgnyA2/s19T9EJGGEF--
 
