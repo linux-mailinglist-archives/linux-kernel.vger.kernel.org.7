@@ -1,116 +1,146 @@
-Return-Path: <linux-kernel+bounces-809169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75DAB50985
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:04:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16713B50988
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A680444033D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:04:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAEEF440B9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77FCC120;
-	Wed, 10 Sep 2025 00:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8968F7D;
+	Wed, 10 Sep 2025 00:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="JuDYPhxg"
-Received: from r3-25.sinamail.sina.com.cn (r3-25.sinamail.sina.com.cn [202.108.3.25])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OrDTEdu/"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D9FC148
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73573C17;
+	Wed, 10 Sep 2025 00:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757462647; cv=none; b=Z2xefWt5gP4RHXpIfFFYXgDPvlss1nFXvpf59WrlY6zk+AOGOfyLh3fv9jKxzPMYLYm4OYouLmADKelgrRtEnjfbtQaL0WYKVov7daAW7wrVCWjHvrEFWNlKP6QE3+pdX3iit3hrd7pqP2ikl7b72HLN+N9Ll+jPxDX31CrMhr4=
+	t=1757462821; cv=none; b=bWm+IkXx4aCcdoys3Wmo4ykRofeuC3/L0xc0Jw9wTFPW3VbgT0Tca99Ci0ipj6IAvdhwxSp0uri60AU3wVMkVIJNp10tu4KR0+ru97efNGtXoFKlybezcM5Zv0XCUQjouSNA8tDDyTa8PgVN97HLedLpvE62aTIuqeU+U5gGGgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757462647; c=relaxed/simple;
-	bh=c/YMJ4aiAKivh5/bYvhSukpDrN5xJzfHNCd+pBXPf9Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FLFwiAqCpWNgB+sgRu4RBLc98nh9AsUH1nqrgHq8ZAYbEsl2ZunJSXEtxzpmr+05szIqahOCok2YpnXaYfuExGKPj2/buL/HURkfoZ5QG0azaqoihx9ebllGVeUI5w1vD4ajzr8jH+SqrpL3Aeoz7m+0g1PxSh7xei16VWS98FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=JuDYPhxg; arc=none smtp.client-ip=202.108.3.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757462643;
-	bh=jDrDTq1IVzBDGEsVX/HH66JqsYBsLwmpiddeGS/SFxM=;
-	h=From:Subject:Date:Message-ID;
-	b=JuDYPhxgITWLWR5CfNZkUNbFZTb/i2PJMwgoLI5ulqMmAUtQZqQeFbqI7kLXQ5adO
-	 moZqAdJiDCAwAxchJzIRS/b4lQYf5Kg6Q5zSW8zxZW6lvSbiYZfMQ648ByAFFaLMbS
-	 7QXWdVf5uyPVY25piROIHEPeWza3c89qYt7PZPXo=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 68C0C04500006052; Wed, 10 Sep 2025 08:03:19 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 1548466816279
-X-SMAIL-UIID: B15C2E1E69D4479AAFF0586463A98976-20250910-080319-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+cef594105ac7e60c6d93@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kvmarm?] [kvm?] WARNING: locking bug in vgic_put_irq
-Date: Wed, 10 Sep 2025 08:03:09 +0800
-Message-ID: <20250910000310.6672-1-hdanton@sina.com>
-In-Reply-To: <68acd0d9.a00a0220.33401d.048b.GAE@google.com>
-References: 
+	s=arc-20240116; t=1757462821; c=relaxed/simple;
+	bh=RsmIRUdpmeC+5siB3DndQQwalZ7bkzuKj60a51UgypQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=KRM8xSzd98ncGy7swS11e3p+7eT3APao+sbGQ9oY4F5kFvxkNJPbup1F26v/ohI9C1IpehPmYHqzs7yRVc10regPKllHt9m0WRMjxZyinuMSaYrg4bg1ttlgIB7dWIf6GzUplUHcdHDbtsGFn9Z56OJeRWyE1wUrp8w8yDmiDq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OrDTEdu/; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 01478EC024F;
+	Tue,  9 Sep 2025 20:06:58 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Tue, 09 Sep 2025 20:06:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1757462817; x=1757549217; bh=iFrYSh+DPwmcqz8uizFLdHufnJyI67r++QL
+	TBgAM1pY=; b=OrDTEdu/3+G1F7PYDx2AdwJuFOalhEkGDF+LGUkkf5MK/NR6JXv
+	GfeRhyyHMiCyfIlAZtL5Xstscwj2DggWRxqDfEJbwiHsTKbRH0lUOGkXwEJPLp49
+	1ZQoRl3+K2vYyT94i2QzoTzQ4UMNDYra3BondziT0gmE18m5E269h+yjUZjLhiu2
+	pAk09XzDVmpE1uUtqRfsCScYPITIr1drJRSx9skqxHMhZs+YBhFOolBQWpsFC0Pq
+	oPW+mTsNox4z0Mxm6Y5XGiwCY3rfbqEuNZSApBd/usULcLm07vvCC7lR3XlZC+wo
+	hkmGAoxsrp/Pv2fsPYpjHC7PQrqMqeVAcDg==
+X-ME-Sender: <xms:H8HAaMJpSe4R3eTQSVuFyYoJga6T2iV6aKkJt4eqOuU568W1Wq6Exw>
+    <xme:H8HAaNesZsEuhkxHdxaOoxTLu0wtkGxjHvRJXZhEmfjIbXOnv2yPNndKRHCb_kP2w
+    6zwDlj67tkuidcVN3Y>
+X-ME-Received: <xmr:H8HAaPIIXy4Vlf8eq6_QK9SJ_lO32bf3kK_Go3AU5EtsM-2OPLBwcrcnmukEbRMXVg3Nnw-M39_avuRqkgIigVKwZOSeazMLbzw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvudekudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfhrhhomhephfhinhhnucfvhhgr
+    ihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepiedugeehveevudffudduhedtveehhfejffefuedujeeuheffkeeigeduudfhfeev
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthhgrihhnsehl
+    ihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtohepvdegpdhmohguvgepshhmth
+    hpohhuthdprhgtphhtthhopehkvghnthdrohhvvghrshhtrhgvvghtsehlihhnuhigrdgu
+    vghvpdhrtghpthhtoheplhgrnhgtvgdrhigrnhhgsehlihhnuhigrdguvghvpdhrtghpth
+    htoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthho
+    pegrmhgrihhnuggvgiesohhuthhlohhokhdrtghomhdprhgtphhtthhopegrnhhnrgdrsh
+    gthhhumhgrkhgvrhesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepsghoqhhunhdrfhgv
+    nhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheike
+    hkrdhorhhgpdhrtghpthhtohepihhofihorhhkvghrtdesghhmrghilhdrtghomhdprhgt
+    phhtthhopehjohgvlhdrghhrrghnrgguohhssehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:H8HAaPB6VYSAVwr_gpKUINuvTLw-rVHn00n5zZ-ZXBZoi95rTj6niQ>
+    <xmx:H8HAaAgJ9Qsk-lWCVlnrI0PxRrNqkxu1atRFv8nAPPwQu9v0-gyg6A>
+    <xmx:H8HAaBNbmk_oAnG3GjNDRDfQCTBcqRAyVxICL6KGPBoeZ6qoAd_VTw>
+    <xmx:H8HAaPbqWAEgUx3W3uY_A3SkumywPPEQA9bW4JJf8POEShbQvLMGdg>
+    <xmx:IcHAaJxUccZL0deGSWGBnMNamTTPoBjRZpNsFH21TLO2I92IOjnCRC_u>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 9 Sep 2025 20:06:52 -0400 (EDT)
+Date: Wed, 10 Sep 2025 10:07:04 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+cc: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org, 
+    amaindex@outlook.com, anna.schumaker@oracle.com, boqun.feng@gmail.com, 
+    geert@linux-m68k.org, ioworker0@gmail.com, joel.granados@kernel.org, 
+    jstultz@google.com, leonylgao@tencent.com, linux-kernel@vger.kernel.org, 
+    linux-m68k@lists.linux-m68k.org, longman@redhat.com, mhiramat@kernel.org, 
+    mingo@redhat.com, mingzhe.yang@ly.com, oak@helsinkinet.fi, 
+    peterz@infradead.org, rostedt@goodmis.org, senozhatsky@chromium.org, 
+    tfiga@chromium.org, will@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+In-Reply-To: <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
+Message-ID: <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
+References: <20250909145243.17119-1-lance.yang@linux.dev> <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 
-> Date: Mon, 25 Aug 2025 14:08:41 -0700	[thread overview]
-> Hello,
+
+On Tue, 9 Sep 2025, Kent Overstreet wrote:
+
+> On Tue, Sep 09, 2025 at 10:52:43PM +0800, Lance Yang wrote:
+> > From: Lance Yang <lance.yang@linux.dev>
+> > 
+> > The blocker tracking mechanism assumes that lock pointers are at least
+> > 4-byte aligned to use their lower bits for type encoding.
+> > 
+> > However, as reported by Eero Tamminen, some architectures like m68k
+> > only guarantee 2-byte alignment of 32-bit values. This breaks the
+> > assumption and causes two related WARN_ON_ONCE checks to trigger.
 > 
-> syzbot found the following issue on:
+> Isn't m68k the only architecture that's weird like this?
 > 
-> HEAD commit:    7b8346bd9fce KVM: arm64: Don't attempt vLPI mappings when ..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17b4e862580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7c53d3478750eda0
-> dashboard link: https://syzkaller.appspot.com/bug?extid=cef594105ac7e60c6d93
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15860634580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1074e862580000
 
-#syz test
+No. Historically, Linux/CRIS did not naturally align integer types either. 
+AFAIK, there's no standard that demands natural alignment of integer 
+types. Linux ABIs differ significantly.
 
---- x/arch/arm64/kvm/vgic/vgic.c
-+++ y/arch/arm64/kvm/vgic/vgic.c
-@@ -146,20 +146,25 @@ void vgic_flush_pending_lpis(struct kvm_
- 	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
- 	struct vgic_irq *irq, *tmp;
- 	unsigned long flags;
-+	LIST_HEAD(head);
- 
- 	raw_spin_lock_irqsave(&vgic_cpu->ap_list_lock, flags);
- 
- 	list_for_each_entry_safe(irq, tmp, &vgic_cpu->ap_list_head, ap_list) {
- 		if (irq->intid >= VGIC_MIN_LPI) {
- 			raw_spin_lock(&irq->irq_lock);
--			list_del(&irq->ap_list);
-+			list_move(&irq->ap_list, &head);
- 			irq->vcpu = NULL;
- 			raw_spin_unlock(&irq->irq_lock);
--			vgic_put_irq(vcpu->kvm, irq);
- 		}
- 	}
- 
- 	raw_spin_unlock_irqrestore(&vgic_cpu->ap_list_lock, flags);
-+
-+	list_for_each_entry_safe(irq, tmp, &head, ap_list) {
-+		list_del(&irq->ap_list);
-+		vgic_put_irq(vcpu->kvm, irq);
-+	}
- }
- 
- void vgic_irq_set_phys_pending(struct vgic_irq *irq, bool pending)
---
+For example, Linux/i386 does not naturally align long longs. Therefore, 
+x86 may be expected to become the next m68k (or CRIS) unless such 
+assumptions are avoided and alignment requirements are made explicit.
+
+The real problem here is the algorithm. Some under-resourced distros 
+choose to blame the ABI instead of the algorithm, because in doing so, 
+they are freed from having to work to improve upstream code bases.
+
+IMHO, good C doesn't make alignment assumptions, because that hinders 
+source code portability and reuse, as well as algorithm extensibility. 
+We've seen it before. The issue here [1] is no different from the pointer 
+abuse which we fixed in Cpython [2].
+
+Linux is probably the only non-trivial program that could be feasibly 
+rebuilt with -malign-int without ill effect (i.e. without breaking 
+userland) but that sort of workaround would not address the root cause 
+(i.e. algorithms with bad assumptions).
+
+[1]
+https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com/
+
+[2]
+https://github.com/python/cpython/pull/135016
 
