@@ -1,125 +1,110 @@
-Return-Path: <linux-kernel+bounces-810957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B8DB52253
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:30:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CA5B52257
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0394B1B24F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:30:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 140354851E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40CA2FAC15;
-	Wed, 10 Sep 2025 20:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zg3NrRM0"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1C218FDBE;
+	Wed, 10 Sep 2025 20:33:17 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FA12EF649;
-	Wed, 10 Sep 2025 20:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AE419C546;
+	Wed, 10 Sep 2025 20:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757536142; cv=none; b=Apu7Z0avaSDfwZPkrYdobo28nNKRbPxvLzNFQsLc+az21Vb3u2Fw2+DqTTWaxKcdpHv7hsBWKuk1kiMnrZ4JMKU63dZiVLg4X5wew8w9KfsgO12geEmLXD9ifQ0LYKaKf2wixy0XwRmmnyAqCZgXs7mjdLK5lnoF4ILvFT8rQCU=
+	t=1757536397; cv=none; b=EIknayxSztkbtGhJ4j3ipGR8TF6irHcpmC2JPWj2qUtSWfogo4nmXgsm3W56gqyvcTCLa6gly+ao0Ci9/ShJl56FVlMNyvYjLiobuPxoIIBbXUl/vo9LrkO14Mxptjd23gSAGQUVMwAMMRdTmZySUQY9lFhLVYIfye5xjEKIdR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757536142; c=relaxed/simple;
-	bh=2g8mr7Hqv+MS1W1CXy9T7WAwkwk1+OsFYsHS+bnRKVc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tPmbhdr9RrHUBhzKGynNoNiI+XG7Ih81UdlHtArp9SdF8+9AFe25ELlq/xBUKq+2ZSiBGiQzAZnRmbpfwWhlH0yIAId1UO3pQufcAHRRZUE/KP8BaWF9QEffEpMXleXlQg3vssSloyvsujSQpSubGzpKjk7ZaJapWRWbTHR6Za4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zg3NrRM0; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b043a33b060so1136468166b.1;
-        Wed, 10 Sep 2025 13:29:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757536139; x=1758140939; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x4B4aiPEb0LiSOlZmFJpv6hP2/ZNa1GUokKu/b0X24U=;
-        b=Zg3NrRM04Hw/fRq3Az/EeiNEIz5gNEqDEXKQVx46iLELVqYKX8j70aGj0kfMzuE/5F
-         wrSa/M5XzDrxQQVmaNxh0skXyzoBQ3J9akINaa2bA9TECqGyoA4AqLl/DCzuULoNEpzD
-         jLCYCWI4qygcFufyUmyJHLTlxtaXXudFvBeBYxW+Vs1QtDi04iBA/eyci4DVySyhI2gq
-         51Zfhl9jOf5tlkGHvfeXjJTKjhASMo6E0uct96RTFDBAT62YGgFONXTn9Damb7mbIN2G
-         I8jjlNu9D1rENsoD1Ssm2Vu9lzAgIJboI1wr9QPTO/1rclrMbnV4wU49NsFZlqz0bJsT
-         DFUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757536139; x=1758140939;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x4B4aiPEb0LiSOlZmFJpv6hP2/ZNa1GUokKu/b0X24U=;
-        b=StBGByn5FTWg8ENN6jCs4IEpf5MGcCShOnEYKFtdHcBc5OMdIuchApoCXH3q/d95KW
-         XG6HwuIxGcYP17AakpL1FIfGvws3DShxlfN+FmgmM+44EOO6UTV0JtB+bAUr2KQFADFp
-         5e0NuVpFaf30RC1IV4wtmY5LpFhU16YbRLyqf29R4n8YZ2t8MlLFplL0NKfvu22+riit
-         wCPhX0sBD4coRxB2+ZNP6DTim4bMATnsDFa9jkYtVeAIwVlAPI3Xdnc/rY/Fi3Q5QgQ3
-         9VLogkeQjNIwjWzlPGzju266ItxJ1/HFZZOnJbKvRxQUlBohQ2kuQT0lJGXh7y00FTbU
-         8RIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU09mQAf3pzSXP3X9CsZOaAYeKfkn9ToTc3dFPnxkab48wq+9B5izK1ykJ7LuAZinkdQmuiVv81AECA@vger.kernel.org, AJvYcCVJIW8hRH3m73kYYL8yX94fcnBC9J5qD5FtmghkFjfpzvIu1ZYvOANP9P7vPW5HX0/w/2ydQ1MLzPOo@vger.kernel.org, AJvYcCWFWGMLjppRmjyNoF+a0upfGquzTDiVqbWbcjD4alpI80JW2ZRluAkwO5AlbKb3S0XViFdsbo988BrqFiNU@vger.kernel.org
-X-Gm-Message-State: AOJu0YzueyzkQhU2h2zemJiayAWFOWz3FYvEu8xPkRjblXCCH+6+9in7
-	HSzdLl9/vi62ITn7J6oqMT0xIIBUHKqydga9NeL87Bv+7V4BVJfH73n/fvzkBFKOvPiWxgWGOJL
-	0We2ihLmv3Xn5lZ6piuPR1xSdC53b42M=
-X-Gm-Gg: ASbGncuPGBD7egr6l2CdQXVtkzy+kAhabosQauQP7gyVmIpLaLYw7FVCC9ARTX+fFda
-	Hi1V/ch6jr5Z68G+oA2SRiczT5Qrwv8tp+iSmtIDLkPWrJDxuxliOJZjOS0XMKOf9rAjS0u4xr0
-	4LeEp1Nzh2sxmtRelejpUe88AUcSpYwYkO/RZgpVdNptIYAirh5CQTxwL5A9XuZQqn52EojlRLt
-	oLtPlY3d+dtuE96iA==
-X-Google-Smtp-Source: AGHT+IHtRtXVd/EJ9yTuNZ4XATlQBuskIDOxI2L5HZESPp1tnTq/HcAyuBLz1Bt2QdUB83Cmu7G1ejVuyS4Eai9jUdg=
-X-Received: by 2002:a17:907:96aa:b0:afd:d94b:830d with SMTP id
- a640c23a62f3a-b04b1767317mr1709402666b.62.1757536138715; Wed, 10 Sep 2025
- 13:28:58 -0700 (PDT)
+	s=arc-20240116; t=1757536397; c=relaxed/simple;
+	bh=Xn32CgfsCdcgiZc5xVsldvxbovwbLiKF6pDU6aeqlX8=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=SIx47eboTwhbXTcdGlaph7BITRcgGac3ROWI8oRR+9Cp+f/bhSF7nExkrXSjLWjate0eoWjek6w6NvYUVnK0WYZHzDmWs2SF2hAndqwRMYpxI3swLtEGDuBhuQGCb8s72tFGEPV9zRBJ24DakThdlIM15yc0lNhEJqQ14NuZWh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 511D5CE34D;
+	Wed, 10 Sep 2025 22:33:07 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id aSKreuvdlGXI; Wed, 10 Sep 2025 22:33:06 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 4BFD3CE34E;
+	Wed, 10 Sep 2025 22:33:06 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id YO9RM-IU3T_L; Wed, 10 Sep 2025 22:33:06 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 082B5CE34D;
+	Wed, 10 Sep 2025 22:33:06 +0200 (CEST)
+Date: Wed, 10 Sep 2025 22:33:05 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: Dave Hansen <dave@sr71.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, ksummit <ksummit@lists.linux.dev>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, 
+	linux-mips <linux-mips@vger.kernel.org>, 
+	linux-mm <linux-mm@kvack.org>, imx <imx@lists.linux.dev>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Lucas Stach <l.stach@pengutronix.de>, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Ankur Arora <ankur.a.arora@oracle.com>, 
+	David Hildenbrand <david@redhat.com>, 
+	Mike Rapoport <rppt@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, vbabka <vbabka@suse.cz>, 
+	Suren Baghdasaryan <surenb@google.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>, 
+	heiko <heiko@sntech.de>, 
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+	"Chester A. Unal" <chester.a.unal@arinc9.com>, 
+	Sergio Paracuellos <sergio.paracuellos@gmail.com>, 
+	Andreas Larsson <andreas@gaisler.com>
+Message-ID: <640041197.22387.1757536385810.JavaMail.zimbra@nod.at>
+In-Reply-To: <dec53524-97ee-4e56-8795-c7549c295fac@sr71.net>
+References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com> <497308537.21756.1757513073548.JavaMail.zimbra@nod.at> <dec53524-97ee-4e56-8795-c7549c295fac@sr71.net>
+Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-bma220_improvements-v2-0-e23f4f2b9745@subdimension.ro>
- <20250910-bma220_improvements-v2-6-e23f4f2b9745@subdimension.ro>
- <20250910185841.075594bb@jic23-huawei> <aMHIzUuNx9LXQdag@lipo>
-In-Reply-To: <aMHIzUuNx9LXQdag@lipo>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 10 Sep 2025 23:28:21 +0300
-X-Gm-Features: AS18NWBUuQogOoEVC-LBTA2LIYWWTUqXU1KiggrjdFP-_BymArr8L1ifO4vziQo
-Message-ID: <CAHp75VfuZ_5akK8qc1zOtNXpwOWCUTB0tZhJqs=tZ-+71Wdosg@mail.gmail.com>
-Subject: Re: [PATCH v2 06/14] iio: accel: bma220: add get regulator check
-To: Petre Rodan <petre.rodan@subdimension.ro>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF141 (Linux)/8.8.12_GA_3809)
+Thread-Topic: Reaching consensus on CONFIG_HIGHMEM phaseout
+Thread-Index: qX92QwLBi0un/69XQpQP6tb4aScRlQ==
 
-On Wed, Sep 10, 2025 at 9:52=E2=80=AFPM Petre Rodan <petre.rodan@subdimensi=
-on.ro> wrote:
-> On Wed, Sep 10, 2025 at 06:58:41PM +0100, Jonathan Cameron wrote:
-> > On Wed, 10 Sep 2025 10:57:11 +0300
-> > Petre Rodan <petre.rodan@subdimension.ro> wrote:
-> >
-> > I don't follow the 'add get regulator check' of the patch description.
-> > This is ensuring they are powered up if necessary.  So I'd
-> > just go with the vague: "turn power supplies on"
->
-> to be honest I added this just because I've seen the devm_regulator_bulk_=
-get_enable() function used all over the place in iio code.
-> but looking at the linux/regulator/consumers.h header I was more puzzled.
-> just some forward declarations and then static functions doing exactly no=
-thing.
-> I'm afraid to ask what that is all about. placeholder for a future API?
+Dave,
 
-You probably see two things in one place:
-1/ declaration of the function that is implemented in the C-code
-2/ stub for the case when implementation is switched off (usually via
-kernel configuration).
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Dave Hansen" <dave@sr71.net>
+>> Even with a new memory split, which could utilize most of the
+>> available memory, I expect there to be issues with various
+>> applications and FPGA device drivers.
+> I'd be really curious what the _actual_ issues would be with a
+> non-standard split. There are a lot of "maybe" problems and solutions
+> here, but it's hard to move forward without known practical problems to
+> tackle.
+>=20
+> Has anybody run into actual end user visible problems when using one of
+> weirdo PAGE_OFFSET configs?
 
-I recommend using elixir.bootlin.com to browse the code, or locally
-via cscope or similar.
+In the past I saw that programs such as the Java Runtime (JRE) ran into
+address space limitations due to a 2G/2G split on embedded systems.
+Reverting to a 3G/1G split fixed the problems.
 
-
---=20
-With Best Regards,
-Andy Shevchenko
+Thanks,
+//richard
 
