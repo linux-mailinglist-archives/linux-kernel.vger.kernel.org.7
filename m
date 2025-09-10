@@ -1,155 +1,200 @@
-Return-Path: <linux-kernel+bounces-810497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040E7B51B80
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:24:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C28B51B79
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64C8C465E6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:22:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DACB3A6ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B8B31D386;
-	Wed, 10 Sep 2025 15:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517173164D1;
+	Wed, 10 Sep 2025 15:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UlCTclhX"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UFpqNeX/"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726A62C0F7B
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8463277A9
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757517746; cv=none; b=dJtKEP/lbxQvPcu42bdiGd/URgAUrmJPLBgyD10C+mCkR6aeUxoFK9c/3jv13gwiDyiTkhWpXIEHtnbItDt1JIYpEOSyg44INpM0pvyTgHNm8+bKAS4x+3dy6wb9rwaFcuywhqlXyxVz6yxB1CBrjGpKkO13r97IDpZkBpRG+bI=
+	t=1757517752; cv=none; b=IKnKJDu4Lx+6XQduY9sBjHS3iVAgesfXngziDDLmY1q+0OYfQeUFuAQX5vpXXJkhBH0lh+w/8NPhZjfUyYw7YYiRIJpMNwqx70t6QtXN6MRmBcYkXtTRaR8sGMg5Rkz+sQa42vpux8tbZucpXBbmAnD48LktrJxsoR3Pewd1BI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757517746; c=relaxed/simple;
-	bh=lLWfzen6uM2hFlERHK9rDtfJhTMmwaVbEcunW4cxdpc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l1aAgjrbn+UTyDxqlYKfKVvJAYAhRVoIccLXxccCBe4s2ILSlaWkC0Ivo5b5Vln1jDTEV7shGGKa8MIDpiTegy9dKYnlAnjiquhm3Kara2BBci7f9Fyf0ZJCSzYSwDN8nENoxflvYjfurOuc3lDUP47nhbO7V05EkIY1FuzMlB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UlCTclhX; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1757517752; c=relaxed/simple;
+	bh=ADUvuqFKPB34dYMqxEN/4AMxhhHMgpwTOGiQSuTaaXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dx7o/0gmk0uKqKiBqVRXNqYelrZ/Co8PC/LcxH3D8l7iBsxoJNV60COtGnaUgg4V0cZ/46gjQXcicVlXk/EIryrKkk6jYs5u/pCo67S5GbE6m7WMKVlJsOLa+EKjL6F+Y38D8eGch9DI15faI7rESALaFH3r+TWd/8hUuOEjGOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UFpqNeX/; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3e537dc30c7so5398291f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:22:24 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b07883a5feeso158418466b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:22:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757517743; x=1758122543; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=kVn5qvi+EQ4miZEc1V5J3/t7DCygziEcYhq/1So6cXk=;
-        b=UlCTclhXEy333jv+7DY8gUvdr7yo0wIE9boGsgkEYAFpjpTqGM6NVFGQuMAH0T1azD
-         bAboTOKihon2juLV+Z2bPnToDNknAEq9vxp1b10ik8w3Uwl5OCJ6WwUK6BV7UN7JE5PH
-         9uo9dXF78+8YStv5m9MAkqlJoDT7Jdp5omREXzGG1eL0cSt4ydz5aJBBmYnwymDV5z2W
-         UYbn+B0Qe6afE/d30qOYj/AIVd6PGxLpC3zWDHVFqTdUJIKWl39WMm6aCahsEj0Sbtbf
-         z+GEFdfLJZy7o5RwUezY/wrZTIqyIZZgB+oJUs8XoubFwTFyeJvLgDGYKqX9YZSGcWId
-         aZ/w==
+        d=suse.com; s=google; t=1757517749; x=1758122549; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Q/qIKqTt/TeHwEAuPNWMb+Opu1b3bhXOvxk1BCU0qY=;
+        b=UFpqNeX/ijFxd51PbhtfoRbfKoweMEoliucOgiwfID3iiEzy3l+fN/vD23eWRwt2d5
+         IuHQRPz6yEO+dHNP1gxckR6FV9eXBwZCl3CZtuar36U69Ak5noa1Pw5Z48VlzpslvOJS
+         CYpU1ZBeMTPMtmP9jbv+vxFoi0LrBY1tG8q/EFiL4oTYRWixz7h1wsIbocr2mryEf40z
+         PBQ/wKWqikMs9SY0M4DpDsotH3hVFbxQjrsmeoqbHr5fOVEO57+GYXKEwXkjs7ETwUIh
+         DjAYuP+ScFCk0e0S4mNNMPg9h/K9LoQB0Rw/Dxw5yBPgRZTPLZHoztj8XAsaeo+ZZuu2
+         oQnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757517743; x=1758122543;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kVn5qvi+EQ4miZEc1V5J3/t7DCygziEcYhq/1So6cXk=;
-        b=PDdrq+cbfMh7Bmhb9+R2RLYUUFC5qRxzhQ7cVboyeVY+gJhV56IQtgSm+PyW6wOmXL
-         UDviuCX13ntZu3oNQLsHfXyM/T7SkcaNOvF7dUI4BAojqofaacfvjjpyoVyy4msV80KE
-         AzQ7foXgYBl3mUtcCsGgEfJzK04d/4KESOabqgLKTN+Gom4rv3M7adIu93Jh+uk5eraD
-         +URaSX6yNNegcY4iK+wUBIi39qP0KmFEBxT6GSTJ8dLiNpeyTmXsb5KC3Z7DKiG2DWMO
-         p7IBtgZrJshgznr5VgFtg9y6xYTmQ31/poG+DFyldC6dPtETPbb5KYQkEj5lBKtvRFsA
-         Au2Q==
-X-Gm-Message-State: AOJu0YwixY6MX4oMdF3h6eBeryRhW3pRbBYxaf7TxzhsL705k49IMNwq
-	xswRSxrHz/eVVBqKqmv1umTAp2uzvbclKYOr1fvtb8OWDCH0+K0YomMaWEjqlWnwdvE=
-X-Gm-Gg: ASbGncvkPfyqzD1UBJUw9lw6NjhmXWfWhWY8J2Q/kxox/QAYVepWfDVYr0nxQkZ5Qs4
-	1nAP/4wSzkV5iqLzniUzMPGsOf2Mg/B6sflfFPMG7QbIdRORNwgOvrwdhaC2RVm2kmGrIjJ+rtr
-	K8DEhtkWRNkhoEBkLhArjjQAF2vhVlYPneAHUc4w1hsOxjbt725T9uglGnyyV5Logf/07g9Su85
-	X/KqvVDDI9jTHevU3rS9SLcyfOMuzzQhoYqGXjL+dnB7fLA1QoNKpqsRFyG4pUK/iZzLZgSS/q9
-	se/GGpZBrChAvbQYbHECuvhvwH1etdbJ8akrkKPR9uU3MxLpfJLl0qfe1J+T1c5g3ORIbc0/zcK
-	E0KzRmZ2gQ+BgYseNg8wM9LeFXX+psHrEX8i1mthBNp07HG/wuxRZ9pfI+J2LVg9g6no=
-X-Google-Smtp-Source: AGHT+IE/8wph2kz3bIbRx4/AeV456AfOXpfFA7Jm9nOBSvU/86K2GyIBZVHWyi1ESzO5NTuh6EwNuQ==
-X-Received: by 2002:a05:6000:310d:b0:3e5:a68:bdc5 with SMTP id ffacd0b85a97d-3e63736c735mr14047737f8f.13.1757517742726;
-        Wed, 10 Sep 2025 08:22:22 -0700 (PDT)
-Received: from [10.20.0.214] (ivokam.ddns.nbis.net. [109.121.139.111])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75223f5d7sm7136215f8f.53.2025.09.10.08.22.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 08:22:22 -0700 (PDT)
-Message-ID: <e46b51af-2c18-4e8c-9843-661b12c5df5e@suse.com>
-Date: Wed, 10 Sep 2025 18:22:09 +0300
+        d=1e100.net; s=20230601; t=1757517749; x=1758122549;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Q/qIKqTt/TeHwEAuPNWMb+Opu1b3bhXOvxk1BCU0qY=;
+        b=w/H3rsnnhQ+c4abDQx9svlvyiH5Af/op+66fSdQTsGq6zCbuhvZS8C+FBPdznrsocR
+         ZfC15qHCAw/BxJQ2tsBjLeABarAZHeEcVWcpjtsIkmrr2h+IMjOKu4oynHrDFsazNbmu
+         3KtGrzpw/gSDm585ux1v6Ofrv3lxWIICrAxb7KediOHIxAzR/fKlnyauliWB49PDwO7k
+         Qe67vd9B5u0G0r1TTr/7dAps8OR9GE6m5rmZ7xhNpPPzCYfaRuDerDsm8DgHqO1Mx248
+         VV1G+SnDiCYM37kFVOcjsPJZ38YvFw/KRRqeaOkqXNDz7qnbigRe/0x8NE1uPuS8/Ii3
+         F0hA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4PbiXrXZDr3U8XaKl7zOR3mVC17vXFX+6/rndP8RTrL4S465P9SACGZg8nVc3UI0RTITXfoNHqRIYS/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7ZZRMqQCqWpkzzy6CSEvHnuqk/nsgQ79ZNw5oo4RAl3dlMTI9
+	OYELyQaPCWwCBybvSRIJQy6n95UaouAQYqSBmWaeuuAVVEehbgoOC0TS0SUOGzW7YCE=
+X-Gm-Gg: ASbGncuwleIMxP92Z907i7Qwr6jbvY3Znn3Zak8IdByEnwT91bWnT4OkvxMhQ5rvnGy
+	NW9dSnMefRV6rHk8n5YngrM3TeGmQQPKvPmndjXXcvgAZ5z7dxF3UowpSNk0UhIMB3d9c9K/bMK
+	c6eBKW8L88mX8ckjnyRAWO4P5mtAsOrpnFKaJMh7r8kDb6+NKa+XpOMtu7k3X4SL5RSfqnkF2VE
+	j0WtniEqHJA1KN0RymDucPZ0nVCQxUS2BOp1UAEgbRMnDoQGneOKH+FAP5SMM543dZet3XACSzS
+	YnUDaNp8P0L9Je3TL41CuTf0oDQt9gD63Rj6G+6XwmQup+J5B/0AvUDwdZ98vFfy7+z+cOveB6R
+	kWSKFIK5ca3oyX0kibyklNLSXHweCnGGJUBC5vuiJ9GA/NMpVn+Rlwsw=
+X-Google-Smtp-Source: AGHT+IGu1RPgfzvjjZxcEkpx1Cu0aX34wfa0rbwgT6cXKfY+5y9LXUr0ynjlTUCJ2SRrzExxIqoXFA==
+X-Received: by 2002:a17:907:6088:b0:b04:48c5:352 with SMTP id a640c23a62f3a-b04b13ca12dmr1500001166b.5.1757517748203;
+        Wed, 10 Sep 2025 08:22:28 -0700 (PDT)
+Received: from localhost (109-81-31-43.rct.o2.cz. [109.81.31.43])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b078e361902sm110599966b.67.2025.09.10.08.22.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 08:22:27 -0700 (PDT)
+Date: Wed, 10 Sep 2025 17:22:25 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: zhongjinji <zhongjinji@honor.com>
+Cc: rientjes@google.com, shakeel.butt@linux.dev, akpm@linux-foundation.org,
+	tglx@linutronix.de, liam.howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, surenb@google.com, lenb@kernel.org,
+	rafael@kernel.org, pavel@kernel.org, linux-mm@kvack.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	liulu.liu@honor.com, feng.han@honor.com
+Subject: Re: [PATCH v9 2/2] mm/oom_kill: The OOM reaper traverses the VMA
+ maple tree in reverse order
+Message-ID: <aMGXsenuvA682-Dc@tiehlicka>
+References: <20250910143726.19905-1-zhongjinji@honor.com>
+ <20250910143726.19905-3-zhongjinji@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 07/15] x86/mce: Add clear_bank() helper
-To: Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org,
- Tony Luck <tony.luck@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- Smita.KoralahalliChannabasappa@amd.com, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
- linux-acpi@vger.kernel.org
-References: <20250908-wip-mca-updates-v6-0-eef5d6c74b9c@amd.com>
- <20250908-wip-mca-updates-v6-7-eef5d6c74b9c@amd.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-Autocrypt: addr=nik.borisov@suse.com; keydata=
- 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
-In-Reply-To: <20250908-wip-mca-updates-v6-7-eef5d6c74b9c@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910143726.19905-3-zhongjinji@honor.com>
 
-
-
-On 8.09.25 г. 18:40 ч., Yazen Ghannam wrote:
-> Add a helper at the end of the MCA polling function to collect vendor
-> and/or feature actions.
+On Wed 10-09-25 22:37:26, zhongjinji wrote:
+> Although the oom_reaper is delayed and it gives the oom victim chance to
+> clean up its address space this might take a while especially for
+> processes with a large address space footprint. In those cases
+> oom_reaper might start racing with the dying task and compete for shared
+> resources - e.g. page table lock contention has been observed.
 > 
-> Start with a basic skeleton for now. Actions for AMD thresholding and
-> deferred errors will be added later.
+> Reduce those races by reaping the oom victim from the other end of the
+> address space.
 > 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> It is also a significant improvement for process_mrelease(). When a process
+> is killed, process_mrelease is used to reap the killed process and often
+> runs concurrently with the dying task. The test data shows that after
+> applying the patch, lock contention is greatly reduced during the procedure
+> of reaping the killed process.
+> 
+> The test is based on arm64.
+> 
+> Without the patch:
+> |--99.57%-- oom_reaper
+> |    |--0.28%-- [hit in function]
+> |    |--73.58%-- unmap_page_range
+> |    |    |--8.67%-- [hit in function]
+> |    |    |--41.59%-- __pte_offset_map_lock
+> |    |    |--29.47%-- folio_remove_rmap_ptes
+> |    |    |--16.11%-- tlb_flush_mmu
+> |    |    |--1.66%-- folio_mark_accessed
+> |    |    |--0.74%-- free_swap_and_cache_nr
+> |    |    |--0.69%-- __tlb_remove_folio_pages
+> |    |--19.94%-- tlb_finish_mmu
+> |    |--3.21%-- folio_remove_rmap_ptes
+> |    |--1.16%-- __tlb_remove_folio_pages
+> |    |--1.16%-- folio_mark_accessed
+> |    |--0.36%-- __pte_offset_map_lock
+> 
+> With the patch:
+> |--99.53%-- oom_reaper
+> |    |--55.77%-- unmap_page_range
+> |    |    |--20.49%-- [hit in function]
+> |    |    |--58.30%-- folio_remove_rmap_ptes
+> |    |    |--11.48%-- tlb_flush_mmu
+> |    |    |--3.33%-- folio_mark_accessed
+> |    |    |--2.65%-- __tlb_remove_folio_pages
+> |    |    |--1.37%-- _raw_spin_lock
+> |    |    |--0.68%-- __mod_lruvec_page_state
+> |    |    |--0.51%-- __pte_offset_map_lock
+> |    |--32.21%-- tlb_finish_mmu
+> |    |--6.93%-- folio_remove_rmap_ptes
+> |    |--1.90%-- __tlb_remove_folio_pages
+> |    |--1.55%-- folio_mark_accessed
+> |    |--0.69%-- __pte_offset_map_lock
 
+I do not object to the patch but this profile is not telling much really
+as already pointed out in prior versions as we do not know the base
+those percentages are from. It would be really much more helpful to
+measure the elapse time for the oom_repaer and exit_mmap to see those
+gains.
+ 
+> Signed-off-by: zhongjinji <zhongjinji@honor.com>
+> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  mm/oom_kill.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index 88356b66cc35..28fb36be332b 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -516,7 +516,7 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
+>  {
+>  	struct vm_area_struct *vma;
+>  	bool ret = true;
+> -	VMA_ITERATOR(vmi, mm, 0);
+> +	MA_STATE(mas, &mm->mm_mt, ULONG_MAX, ULONG_MAX);
+>  
+>  	/*
+>  	 * Tell all users of get_user/copy_from_user etc... that the content
+> @@ -526,7 +526,13 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
+>  	 */
+>  	set_bit(MMF_UNSTABLE, &mm->flags);
+>  
+> -	for_each_vma(vmi, vma) {
+> +	/*
+> +	 * It might start racing with the dying task and compete for shared
+> +	 * resources - e.g. page table lock contention has been observed.
+> +	 * Reduce those races by reaping the oom victim from the other end
+> +	 * of the address space.
+> +	 */
+> +	mas_for_each_rev(&mas, vma, 0) {
+>  		if (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP))
+>  			continue;
+>  
+> -- 
+> 2.17.1
 
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-
+-- 
+Michal Hocko
+SUSE Labs
 
