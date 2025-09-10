@@ -1,92 +1,62 @@
-Return-Path: <linux-kernel+bounces-810357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 836B4B5193E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:23:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C767B5193A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93EDC48753C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:23:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 731861C24A95
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C9332779D;
-	Wed, 10 Sep 2025 14:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06A5324B22;
+	Wed, 10 Sep 2025 14:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qoy49RH8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXqV7Y5w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64941D8E01;
-	Wed, 10 Sep 2025 14:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7671684A4;
+	Wed, 10 Sep 2025 14:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757514212; cv=none; b=kHvIwAk/I7ZIAPrlJwIEa5pMlP2xkpu+ftkCpYkDrfyd2l8zSANzwm1AKjO+YA+Fw9G5LWAWYTFnG34Zc1XtUB7VcdLRQmnfexdB6jqmz/tnz6tsBw1DR0UNs5XvTLSHDs0uYNvLn0qc63v0QPuYEO1MCKLWk41P4QAflaCdD60=
+	t=1757514203; cv=none; b=ovnr9FzyPd1fCDgbwItWZasdoglbkR2N+0yv8MSHYyobZC8RcSbN2CgVCT6V7JQZCF/Tx2GBB3oc3dsZZ0ogzu3O3qY2SnLWCcDU+EsMYjSxUFPl3PkwBYDYSTP7ci8bLmbTbWwt6Wkxz9UBaPVTaAHm9yfVoV/QIcZdtO3TRRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757514212; c=relaxed/simple;
-	bh=1bFVZOPAI0hpsGdDGYL11liyhNF/ieQ0EbbfFC6fLJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GyLcCb/o0qltiLK3dBI/u83j1SQz52Zr3Mujrgz2o/fZhj+Ha9wbHBilbRRR+crodb+vFcZ07G73QLtsehlroea3Rl52huGBGhHTcd0sduY7Lnp8HFdfSvSg+OneRMygRFO71WjweUksarYyaqq3VMzK4Ej1o/DFOdVQdLbeYQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qoy49RH8; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757514211; x=1789050211;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1bFVZOPAI0hpsGdDGYL11liyhNF/ieQ0EbbfFC6fLJM=;
-  b=Qoy49RH8X7Ltcqkb7EZIi+sYsPK0qYTparYg2TgfL5aXVnvL/dCaFq1j
-   iShhfnnNWY494dvGXOijRjtFXubDaHxTz0yTcVx0C32tQwPpV2bZd0Zub
-   2ms5eZiaGb3lrNfIZlcEXuTO3zjTC3sTSkNJHDMpOgQQUX/EmA9G1UGM0
-   h1hGYseZhdT5+r6YLti3OOsw0wNPlZvuFjCUy7vXKErgTkoYbXoiByYsg
-   4StIwhsv/NskdSHu/gDEjg1WG9QJokVOtx6mtcr2v06m//9nL88Rw269d
-   M4uR6rsRRBTogsrGE6sVKwZjkjCzgXHRSVqK6XAMMHM30/Dqv0A1vYDPD
-   A==;
-X-CSE-ConnectionGUID: O5OpgW+KTPKPBNKioNcm0A==
-X-CSE-MsgGUID: ua3ILOlIS9SGOkmgPzhh8A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="59968069"
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="59968069"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 07:23:30 -0700
-X-CSE-ConnectionGUID: yuIR36rGStyOjEIQAy0eQg==
-X-CSE-MsgGUID: mTqMvtgbSNaNQOkbLpYDHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="173003238"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 10 Sep 2025 07:23:24 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uwLjF-00060l-20;
-	Wed, 10 Sep 2025 14:23:21 +0000
-Date: Wed, 10 Sep 2025 22:22:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: MD Danish Anwar <danishanwar@ti.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Luo Jie <quic_luoj@quicinc.com>, Fan Gong <gongfan1@huawei.com>,
-	Lei Wei <quic_leiwei@quicinc.com>,
-	Michael Ellerman <mpe@ellerman.id.au>, Lee Trager <lee@trager.us>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH net-next v3 2/7] net: rpmsg-eth: Add basic rpmsg skeleton
-Message-ID: <202509102238.mlNKX2KI-lkp@intel.com>
-References: <20250908090746.862407-3-danishanwar@ti.com>
+	s=arc-20240116; t=1757514203; c=relaxed/simple;
+	bh=sPrb8D0bSLp1Js3/8C0uU0W0ATkZZf+fqUxj/05AtlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=PjtJO5vEWLlMFN0oOtARUpXI6O9DTtddHyYL5kprF+GTJWCUNGL/bzqgegDAP1UJgmIB8hTnLQOkr1XU527xd1A4hj4yZvzoETLk3EYUltOldsLuY36kOzPIdAX3+ZqfheOCCOjNZs/yH9FnZ20mowiAxhOJs1ODZQQwvNXim1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXqV7Y5w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79A7FC4CEEB;
+	Wed, 10 Sep 2025 14:23:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757514202;
+	bh=sPrb8D0bSLp1Js3/8C0uU0W0ATkZZf+fqUxj/05AtlY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ZXqV7Y5wyyMy8XPbh7JLpkdcpaKmaztp6Y0DwSjdEv41hAbGELyFer083foOLZxDB
+	 uVTwM9d0VzXe5ApdhOhBcOigUrmCndv5r7VieWdnOyaoM19Y2rzdYnc1aoBHnuFulc
+	 AqIe8dr5b831dN+Kb2n63v4Akag6nRBwY80VbL4FSiuspLylF3TddTA/6EyrER5x/B
+	 DDJiWxz4rrkQ5gD0S9WprL3hWsUolUwdU5r0Q36JY+D4tTcHsNqhb229bRBfxu4z9Y
+	 ZHr8s3wIy6jmv8qTiakGq+vJ6g4lTDSc0pwVl5u9S7lykALNBAxV4MmKgjiH15D5tn
+	 w5RdZe7h8z7oA==
+Date: Wed, 10 Sep 2025 09:23:21 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: kwilczynski@kernel.org, u.kleine-koenig@baylibre.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, arnd@arndb.de,
+	bwawrzyn@cisco.com, bhelgaas@google.com, unicorn_wang@outlook.com,
+	conor+dt@kernel.org, 18255117159@163.com, inochiama@gmail.com,
+	kishon@kernel.org, krzk+dt@kernel.org, lpieralisi@kernel.org,
+	mani@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
+	robh@kernel.org, s-vadapalli@ti.com, tglx@linutronix.de,
+	thomas.richard@bootlin.com, sycamoremoon376@gmail.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
+	sophgo@lists.linux.dev, rabenda.cn@gmail.com, chao.wei@sophgo.com,
+	xiaoguang.xing@sophgo.com, fengchun.li@sophgo.com
+Subject: Re: [PATCH v2 2/7] PCI: cadence: Check pcie-ops before using it.
+Message-ID: <20250910142321.GA1533672@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,32 +65,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250908090746.862407-3-danishanwar@ti.com>
+In-Reply-To: <18aba25b853d00caf10cc784093c0b91fdc1747d.1757467895.git.unicorn_wang@outlook.com>
 
-Hi MD,
+Drop period at end of subject.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 16c610162d1f1c332209de1c91ffb09b659bb65d]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/MD-Danish-Anwar/net-rpmsg-eth-Add-Documentation-for-RPMSG-ETH-Driver/20250908-171329
-base:   16c610162d1f1c332209de1c91ffb09b659bb65d
-patch link:    https://lore.kernel.org/r/20250908090746.862407-3-danishanwar%40ti.com
-patch subject: [PATCH net-next v3 2/7] net: rpmsg-eth: Add basic rpmsg skeleton
-config: x86_64-randconfig-r132-20250910 (https://download.01.org/0day-ci/archive/20250910/202509102238.mlNKX2KI-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250910/202509102238.mlNKX2KI-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509102238.mlNKX2KI-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "rproc_get_by_child" [drivers/net/ethernet/rpmsg_eth.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Wed, Sep 10, 2025 at 10:08:16AM +0800, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
+> 
+> ops of struct cdns_pcie may be NULL, direct use
+> will result in a null pointer error.
+> 
+> Add checking of pcie->ops before using it for new
+> driver that may not supply pcie->ops.
+> 
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> ---
+>  drivers/pci/controller/cadence/pcie-cadence-host.c | 2 +-
+>  drivers/pci/controller/cadence/pcie-cadence.c      | 4 ++--
+>  drivers/pci/controller/cadence/pcie-cadence.h      | 6 +++---
+>  3 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
+> index 59a4631de79f..fffd63d6665e 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
+> @@ -531,7 +531,7 @@ static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
+>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_PCI_ADDR1(0), addr1);
+>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(0), desc1);
+>  
+> -	if (pcie->ops->cpu_addr_fixup)
+> +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
+>  		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+>  
+>  	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(12) |
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
+> index 70a19573440e..61806bbd8aa3 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.c
+> @@ -92,7 +92,7 @@ void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 busnr, u8 fn,
+>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(r), desc1);
+>  
+>  	/* Set the CPU address */
+> -	if (pcie->ops->cpu_addr_fixup)
+> +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
+>  		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+>  
+>  	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(nbits) |
+> @@ -123,7 +123,7 @@ void cdns_pcie_set_outbound_region_for_normal_msg(struct cdns_pcie *pcie,
+>  	}
+>  
+>  	/* Set the CPU address */
+> -	if (pcie->ops->cpu_addr_fixup)
+> +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
+>  		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+>  
+>  	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(17) |
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+> index 1d81c4bf6c6d..2f07ba661bda 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.h
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
+> @@ -468,7 +468,7 @@ static inline u32 cdns_pcie_ep_fn_readl(struct cdns_pcie *pcie, u8 fn, u32 reg)
+>  
+>  static inline int cdns_pcie_start_link(struct cdns_pcie *pcie)
+>  {
+> -	if (pcie->ops->start_link)
+> +	if (pcie->ops && pcie->ops->start_link)
+>  		return pcie->ops->start_link(pcie);
+>  
+>  	return 0;
+> @@ -476,13 +476,13 @@ static inline int cdns_pcie_start_link(struct cdns_pcie *pcie)
+>  
+>  static inline void cdns_pcie_stop_link(struct cdns_pcie *pcie)
+>  {
+> -	if (pcie->ops->stop_link)
+> +	if (pcie->ops && pcie->ops->stop_link)
+>  		pcie->ops->stop_link(pcie);
+>  }
+>  
+>  static inline bool cdns_pcie_link_up(struct cdns_pcie *pcie)
+>  {
+> -	if (pcie->ops->link_up)
+> +	if (pcie->ops && pcie->ops->link_up)
+>  		return pcie->ops->link_up(pcie);
+>  
+>  	return true;
+> -- 
+> 2.34.1
+> 
 
