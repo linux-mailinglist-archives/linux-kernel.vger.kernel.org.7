@@ -1,84 +1,77 @@
-Return-Path: <linux-kernel+bounces-810572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF29B51C87
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:54:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EB6FB51C8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D18C817EB73
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:54:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71C55188D1C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCAF327A38;
-	Wed, 10 Sep 2025 15:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E364632A3EB;
+	Wed, 10 Sep 2025 15:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZYtoknMh"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012011.outbound.protection.outlook.com [52.101.66.11])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U6vtLLDr"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485CD327A2C;
-	Wed, 10 Sep 2025 15:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF60A31AF2C;
+	Wed, 10 Sep 2025 15:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757519629; cv=fail; b=q1QQG2wYQb22I1ZSqBnaLy5qMMf2BZg+AiZo7f61YSa8KS5CtStSPyq9fSfCoOoWa6TJKD3oKe5t/EXXXDyM2q7srtS4VLTL+pNCT13O6plj61Xu/9djBjP3PHAoK5zHJxuSDYvuCuUyXpPhHNmZPxSMB6VPw8hWkYlV+jw5qNw=
+	t=1757519625; cv=fail; b=k0Bbq0EPws8ZzHUHcPpUr1EfyBLl1Kl5AI8kI4iv7joLDMWNLdOSSjfBZilhOn0EetxTG1sL+BsHlnvGmZIvSXrrMNLE4qeaabw5euvU60KlU/oiRkReYYApnsRAfTAlu8B7Y3Eml8uS/A7sBPQlcvGc8k0Z7vHFeWotisqCLmk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757519629; c=relaxed/simple;
-	bh=GiHVsl9TQD1UF6S2Z9QlEv0vo7GWrDyF8q16tjVBppg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KBMWlzEVlpvhAnxkOO+gc/DSVVGod6MMffjhDkMAbBXYGxiWZQWZ1NTvvZJQGJIR50Rciqe6CammISqrw0A9UbKinkGZ+wRZ9m0unKDnki8J8WFdHdToJkXOtNNb5Co2PxN8QILWXlCGDhWr2yBWfBHL2gVdWaBxWkG38PbMhAc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZYtoknMh; arc=fail smtp.client-ip=52.101.66.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1757519625; c=relaxed/simple;
+	bh=xGnRwNYGHBf5uS+jiS4JMEPeL533MvdkJpLsIoOIdMY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GEPt5Ah98XC4EQgEoymPatLm4VEEvx08yz5ILYUywKtwwJh0AhKFO8e3U1IBncpzL/dJq5RKtp9hrV+5fxqLpAwvGPYwXuZwDo8jua9UnntHg6UybpbXl9y5wAajpFXC/f+b3zeuUjypiPYvdPGLwELUb+hI0+x17J199QXZyyQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U6vtLLDr; arc=fail smtp.client-ip=40.107.92.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OMh9Ie9Rhx9wGrauCrbYZdE2tSjtO4FmW0FQ543H4dngv6XBSIFhVlrTRwSV2Tq2h3ZgFq/Ma6Fb7f5Lz0NYpRHKpELSQQCgqFCaCJIWyxTrn5quM+RRVe4LNYKJsP9bDtc2ObE8jFwxKyUotE9JjtHj3NgT6BNVG32J0UKKVO2+MmbpnS88cF6DUQN4eEt9nH6GIN//Z3Q7b0nyZZYozBt4ZmXg4w43bC/QNOiTtLIVlSfRz7EvTlDOrpewaNGvanc+XlXVHa2GUUkjXLA5VNjy+kkU2C9N9bt4wUINlbFCl960Y7ab4K7agRLB6TIWojn63HLrvTzzZeX61NNOWw==
+ b=GVMdSh96UCzHXuIYOP5cl+juXoYdbdIoCaDFogebaXgcXZSOLO93vZtssxA/8Y5QJmlGlwAiYCuX7g27P7b4FvqweWSQ63hiid0yx8T4TFApnureFykG9jgNzXzsqWu+yoLAozLITc6o0cr1B57tz5WqRykpOFDs7eJViAxE68P/CFOO96nGEXMMqa5GHUT7mM7EqFwdrQGAdxSfPljIgekA5Uv/tikRFqAPQIn2VpK4XNTVi8PuTjv6d7mPPbCDWd+4pcOwvFgaiqO/WHIp7WDiNJsZmS8Ca6VSJubM49bbbxOeIjQGpQYECuHgM6lSGCszjPMVwea9kJ20e4xXjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VsbSfxJLNH4ZcnNZpXIHWNsUkdGIFdm8R+njon8kEj4=;
- b=ugXJjwtRROqltwXAHD1pLXDEjhQ0ULs8nhBgBBgtl7Lojzxl7UXVyELDsuwvx6tFEPkLimBgKG/4Qtlo7H1jWYOBtsHxlVizHhvfd1UUtCoU4gd9pzUcBebMI+BBVCIMxIpIPfdlSGpy/hPd9VqFW1B9+NHfM2+w0kfFz/SzJDxrxnoOr0b9YiQ71Yh2M98NgPegWSSlU7//P/cwXsqm8b1uAZ/zoFnkdFBOyafxZd5Zf2OFoEuA9BFKPbuU0c6Q4JJ40OwZ8pFQR8Yoo2hIiGjS7EZQwv3KxnW+MI8EeKbN4k3O7ytjQu8t4Ici37HhT5SQ5D4yPMWfiL3uhOqjIQ==
+ bh=SIwNBkyJ5WgfdmQ0Ocy+kI1Xz/ZMA+4RAskTVSq0gdU=;
+ b=RqyhuD//ZHCTbpvKnEmEJEfo+TTUxfpu/r92QOLAab04QSvVyeFOwjkzPmEc+mvDkTvTBBUBfYLDO8aKNKVGAErPWDVBgGhvinBqpJrSN9rbMcMEIoRURAUe43v7x4kNy5TzFQC9JZAswQfCec8VVVmnOlsCqzWeo4RQNHboE9rsSFLL4Y7LmmtcUm5kbkOnHh+ePLU8JTJfc4JaF3WuZygFsJJqwHKy6EXiZ/cmxWY/Hxgzqfc9DAwGwQB9P6Qxjcve6YofCs56isd/NsFbem66/cLJP4zpTQ3PdnrHO+WH/jVO46vEkGhzt+B75lOY89ccOVOD2axlvQ681Y5eug==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VsbSfxJLNH4ZcnNZpXIHWNsUkdGIFdm8R+njon8kEj4=;
- b=ZYtoknMh6Ns0CjB1+5qDW1RwRew0O5glk4B4wnoo/zzXVkvyC+mhKtBdS43NyHEnz3cYhemwd/3i7MlTsskgpJu8OMpmGIlDreMArL6zhd3QTXJAxVJRW3U5USOmclWuRk54altmxNtuhfOFi5T5MdcTHWV5GLQP/fI6bzeJCLfHU+1xE8JP41wGxMtgLmTtBAnwJe+KykadCt1uHyOfeYDbK0hzsAWhOuTPz8y9h0E1S5vsiYcrMRJMuAEvMD6Fhuqiz35FMHIgwxFUBQhtXI3hIXpNE81rQeT9FQYKYx07d+xJyMbJhW6cIYJlVdXRl7ySSRGUqJItXtWQIDbcPw==
+ bh=SIwNBkyJ5WgfdmQ0Ocy+kI1Xz/ZMA+4RAskTVSq0gdU=;
+ b=U6vtLLDrW1kmtG7s2IeWuiAc7s9yhy87mUjP3+mu6+NOxqwme4tKKWTAh2jnzPcZzJqe3Kc6b2Cv7jlsPimOLjkn2G3KxZNXz/M1B1eMju04PZOh4DWupVyvBx/JfE7VDt8bVw/CL0gb1/vSbzyhUwmuQ7ZYOB5/09D6rd8HhlA=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by AM9PR04MB8860.eurprd04.prod.outlook.com (2603:10a6:20b:40b::15) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH0PR12MB5388.namprd12.prod.outlook.com (2603:10b6:610:d7::15)
+ by CY8PR12MB7489.namprd12.prod.outlook.com (2603:10b6:930:90::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.15; Wed, 10 Sep
- 2025 15:53:42 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd%5]) with mapi id 15.20.9115.010; Wed, 10 Sep 2025
- 15:53:42 +0000
-Date: Wed, 10 Sep 2025 11:53:34 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] remoteproc: imx_rproc: Clean up after ops
- introduction
-Message-ID: <aMGe/gwmFqjoFszg@lizhi-Precision-Tower-5810>
-References: <20250910-imx-rproc-cleanup-v2-0-10386685b8a9@nxp.com>
- <20250910-imx-rproc-cleanup-v2-6-10386685b8a9@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910-imx-rproc-cleanup-v2-6-10386685b8a9@nxp.com>
-X-ClientProxiedBy: SJ0PR13CA0089.namprd13.prod.outlook.com
- (2603:10b6:a03:2c4::34) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 15:53:41 +0000
+Received: from CH0PR12MB5388.namprd12.prod.outlook.com
+ ([fe80::a363:f18a:cdd1:9607]) by CH0PR12MB5388.namprd12.prod.outlook.com
+ ([fe80::a363:f18a:cdd1:9607%5]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 15:53:40 +0000
+Message-ID: <8186d0e4-14a1-4198-9a9f-8082f0b289b8@amd.com>
+Date: Wed, 10 Sep 2025 10:53:38 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] EDAC/amd64: Generate ctl_name string at runtime
+To: Yazen Ghannam <yazen.ghannam@amd.com>, Avadhut Naik <avadhut.naik@amd.com>
+Cc: linux-edac@vger.kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org
+References: <20250909185748.1621098-1-avadhut.naik@amd.com>
+ <20250909185748.1621098-2-avadhut.naik@amd.com>
+ <20250910145108.GD11602@yaz-khff2.amd.com>
+Content-Language: en-US
+From: "Naik, Avadhut" <avadnaik@amd.com>
+In-Reply-To: <20250910145108.GD11602@yaz-khff2.amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1P222CA0149.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:3c2::26) To CH0PR12MB5388.namprd12.prod.outlook.com
+ (2603:10b6:610:d7::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,130 +79,322 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AM9PR04MB8860:EE_
-X-MS-Office365-Filtering-Correlation-Id: ecfb7436-aa03-4c52-f0ae-08ddf082373b
+X-MS-TrafficTypeDiagnostic: CH0PR12MB5388:EE_|CY8PR12MB7489:EE_
+X-MS-Office365-Filtering-Correlation-Id: cb6eefc3-db4b-4cd0-d6df-08ddf082367a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|1800799024|7416014|376014|52116014|38350700014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?aHP4GlVVtFOxOIY6fcKnz+KQnmLgx/QT6L2gZXhZUaBUdO83JZYFVIjg1JV4?=
- =?us-ascii?Q?LEYTCiYN+mppj7S4q+Uc2tK9W4IpUFRWwyHz/ixNDS6SDieaoJ+A39LN5RNR?=
- =?us-ascii?Q?AxTlmcg/T1Zfib0Oy3RCkIp1BJ4QRDLXGH7BOQiBjZeCQm6RJcbDMJC/9tg4?=
- =?us-ascii?Q?T0oKmLTNC2PAxOQJrRgzq1mYg4kZbs2Y5A8kbNMfL/AjETZVwx9lX6mJMBX6?=
- =?us-ascii?Q?T9GPB3z0NOVmdZDz4lRYblU0s0Nhhlc8hwrPn60v0tk+fxxB+jVb5WSeRTou?=
- =?us-ascii?Q?fQ1e/pdS/GK5qt9pwEbddq9GdNkmlY9mDMIzCdGtzc6sXT6HdgLSRnbQcB8y?=
- =?us-ascii?Q?jRc+UzswmNriwqoC6KpUqMpuWPOXZ5MSAWrDfiLDfB40DUIAKnUsMJ+sMLDU?=
- =?us-ascii?Q?pv7LhEjHELftkmvziop1ApyV2haFiSifSejQsYnR7kAG1BpocturcpayWC3k?=
- =?us-ascii?Q?qVOrbxVq/4lYBMb1MnMVD4KJGU4AjqF2VfbS+feYaozWiolTNQYieQQO4voU?=
- =?us-ascii?Q?esiPjyp18nTx0rPtFL/cH0DVqL4naq3q4ryCcI8WaVmpkjYf/rATEHSVNd7I?=
- =?us-ascii?Q?DXmlDr8hvYkS6pPJdxw7bU6r9KB3HRl8ho1yASFxDb2Z5Fhm6ImFQ7LM1uo/?=
- =?us-ascii?Q?y6qEWCVEpWvk9AP6l8dhWzIi6E7USV0xS0vUHUhp59WbAH8MiDJpKqkH1vx/?=
- =?us-ascii?Q?cAfFziegBOLxUfLAckH2fIkUj6hbN/pbggjYv07NbD65awhgwB7kN9zCRQ54?=
- =?us-ascii?Q?oVy2V1cCCyuRnX5QAYv5qX9WrvD5sOCpUqdhFHHnFZaYnHKUHShhmfva8Yyx?=
- =?us-ascii?Q?ZNLeQvLBno+1W8/vxAI2aJ+Pw1BJXO6zN0CYB+4w4TsJm5hvUY3V0XiImiQU?=
- =?us-ascii?Q?gVQ15KdS/2E6HEi/qeRXIa8/StSU68J1CIuMqS5Ah85dws/IEmv4NDeE4Ho9?=
- =?us-ascii?Q?zENzQDJwwqGKb2VxR0a0recg3cZaF3zRDM1ex1NljHlKNuaW78EhqX5e1oRl?=
- =?us-ascii?Q?qoSGOEU5rrcr4vQhgMzjrYnOe4QxD53Akh0+WqYy59XSmyfOvugMEqCUDCU/?=
- =?us-ascii?Q?dJ6NzLEdEN2P7ffd7uT8t8EtmUWNVI7ePqDHJriY96SqJ6qvS77ix8qTBAmv?=
- =?us-ascii?Q?nWeSgo1DrpI+vx21zAOznemQVLfO0x02JkDbxfgcMS/TIBSn0wWzA4vCDfvR?=
- =?us-ascii?Q?V5nBOeYg5U7h5ATkF2372g/Amdoi+5ktkV5wtYKuEiDvsvyg1LWzZY+l1xZN?=
- =?us-ascii?Q?ojUfbgRLmuPLRb1kshNd8hT58TxuH4vME0/f7TLrBwhHQpvbo1+w0V2BjwxS?=
- =?us-ascii?Q?RdojDpWG2jAwhLLb6gI05arlsX+BzHEAewm0xxJbUFJqJMs/erFcNA2cmDSW?=
- =?us-ascii?Q?Wh/5ISXMDfXLzrkn129CR3sc1GCxSY+9AFiivvJxWCBKZ6bEYJrI/SVfEtZw?=
- =?us-ascii?Q?OnhrL1sNh2LtN2jcAsSAUw1u0+IOyoSqN/jI5glsAajC4d9TH60BPQ=3D=3D?=
+	=?utf-8?B?V1V4TGtzVW44aGVLaVVwQVVpaE1QMzBBZFpjNXYzc3V6WDErMm1Wb2QzWDZl?=
+ =?utf-8?B?d3pkQzdiRjFCVDIrYVl1VFRqWVJuS2FkN1hxcUluM2JoQUxGOFZYR01FN2VQ?=
+ =?utf-8?B?c0pGcnN1VDQ5M2dkSFlDb3dWWW9pNTB5MVdPMGtoSDVhMXpmOUtNZGlPMTNt?=
+ =?utf-8?B?WkQ5enY4bUNMekZXWXVsdVdVS1FoVFhrRVZ3UExvUXNGRGhEOVhIYWRyZ3kz?=
+ =?utf-8?B?U21YMSs0Z2RKUEI2eEJLWHhISDJURnB4RXhXTHNmMjhuNW9YVHluMDRLMXl4?=
+ =?utf-8?B?QXNyYXNwNWpPK211a0dIOGd4THduNk1EVVhkS0g3VzBDYlNsNEVYelpYL0dq?=
+ =?utf-8?B?TjJpU1dKamh5WXdZNVFzNmptODNRdnAvSllwa0lOalJLczNRdE9DdHRRTGlX?=
+ =?utf-8?B?a1VnN3Q3OWhydWdLTFh2ZjJEZ2EraHlja3lPZlBoUmVDbHdCTmQ3U29BUklU?=
+ =?utf-8?B?OStJeWZZWmtVYk1hcUVHTWt2VktmTExBSlI2U3Q3WXY4cFk3RURnbkx5WlpD?=
+ =?utf-8?B?SjRxL3lJeGtNdjY4VCtHc1lCSExLQ0ZJTkNCd3JMZW8rRjZWMnRuVk4reUJV?=
+ =?utf-8?B?UzF2ZTE4YlcyK0w2aGNGRDg0UXhXK09xTGdUK2swWGRialpqczhqVy9QTUl3?=
+ =?utf-8?B?dW1aVkRYK3g2dHM5MDRjaE5maW9pQk9pSDhmN05vMUREK1hha2UxVHBDeVNj?=
+ =?utf-8?B?SHBTS0lLcERTa05BQVkzTVphUVlCY3RjRU1wRkFrY1lQM3QwTHNwOFR6TUZR?=
+ =?utf-8?B?N0psc09kWTE0MFFEWnJOcjhrb3kwSEhGWDJzc25PN2ZkOFhrb3FPOXBCOVhh?=
+ =?utf-8?B?Q2ZmK0NuLzF1MVFocFo2QmwvaUlyam1KSmhoKy9MeW84eTMvdm1xWkVhZEVh?=
+ =?utf-8?B?OU5aSTFaZmV3VlNQUzhSeDNFUGJSQ1FCYyt6T2Z5Z3JneldHTWxpSk1tS3dp?=
+ =?utf-8?B?MStXb2xSaHVFNmRYZ2gzU2o0WC9ObDIrNTg0Nm9mUkxFTFpSNDBxWERQb0E5?=
+ =?utf-8?B?Y3hRNWc3T3pid0lXRG9jdm1wRHhTRWFaai9rdFo3bnlhcktPUnc5U3NqdFR5?=
+ =?utf-8?B?T2RRS2pMc1gxNHMrOWJHRTJRUVB3clRUM2FqVUZmcnhQd2s1NDFMajdhdzd4?=
+ =?utf-8?B?NEpVZmRxT1BvNzdPbElSd01pWXFBd0QzWDFMaEtacEdJSDZaQklud0tEZDly?=
+ =?utf-8?B?WTJQd3hrcThJcGRTdlY5WWVGYzlBem9rYXJ1QnZjVHNXM3FzYndoRHBNaGhi?=
+ =?utf-8?B?bnhqNHE1WVdQeHNqWGdyYjgyZ3JIZGtYWVlQeG51ZmpzMlJOckNnUkMzWUR0?=
+ =?utf-8?B?bHppRzZkRndFMklRcHAvUjFhWVVoRC94bWdORDF1RGJ6elBicytjZFJEby9u?=
+ =?utf-8?B?QWJDMS9WZ05vSWlMdk5hdGJXa2lpT3M1T3czT0J5cHRPbE43TG1uSytPY1Rr?=
+ =?utf-8?B?dzRudEhNbXdLYnRBdjBSTnorNmhRV0ZBbGxxTklIT2hTd29uckZyNjg5WCtL?=
+ =?utf-8?B?VDZVWmFBbklhRndxS2RXUWZXRWY3STZocFc3b0gvN1V3a2tpbVptNlpEbTY4?=
+ =?utf-8?B?Vldnd2pDdzBiUlBoQ29MZUlyLzBzOG5ESXZ3T1BJczRzWUMzY1UwV2ovV2Z3?=
+ =?utf-8?B?bkRlSVQ2d2VIRDc5ZHNwZldsOEdDTDZBWEFUSHh5VndkY2YxWG1wdDJEUFhJ?=
+ =?utf-8?B?NUNhTVhDN2tabVY5VW4zMWU4c2pZcGJ4U1N4U1Z3cHdSOG5YdWVWWVBhVzRM?=
+ =?utf-8?B?bGJHN2ZZZC9GNkkvcDVBeEEzZm9lZWxILzRTbFFQNUMrQUg4a0phaFZCNnZi?=
+ =?utf-8?B?WjBleDlnN1B1d2FiVUdNdU1aLzFKVjdzSU05Vmo4dUJjQ3FHbDY2aTIwMlRK?=
+ =?utf-8?B?cGlVcXpiNnNhZlZCQTFOb2JNWUUrSVUyMXBnczh5enY1L3NjVU5FeTRiMjNU?=
+ =?utf-8?Q?E1psYpfrhBg=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR12MB5388.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?cy09l1ji9krdWzQw3CHia0fKCNI2qQGtga/tnn2g3+D79Ti/lvti2kdGyl2O?=
- =?us-ascii?Q?oJx4pV3OwwJ2Af+WOoa9fmMsX5b/oIp6jcwI2Suf0V1MwpO3F1U6IbsE59m8?=
- =?us-ascii?Q?xtcEPyYO51049AM/0YfpJa/oii/W/bI0RcOSrRqVvyFPbizdthEjN8U2rmpE?=
- =?us-ascii?Q?wQ82OwPJAgnrkskMHxUKDdi/A5EkU1G9jhHx5J7L05CAedbY/VlQq/muz/cC?=
- =?us-ascii?Q?WMFbvsl/fci0EYdh80D+6si3qGzQjDwBcWgm9u7UwAK6blT2NINgdecEsD7P?=
- =?us-ascii?Q?OweoeqfsVPbS9zMpb915kUY+CvsdIJOCzW+rzWcepdDcxs+Npnd4KjkoISka?=
- =?us-ascii?Q?BTAJ6iW3QHM2KPRTpu118mpKUiN1lwllzOfYrEjIzUQJl88E12Alhh8h1PjL?=
- =?us-ascii?Q?kGz1DsBmC0z+gjG1+VNJ/ik8P74vhXK9CX9GI84SB7PwqX3z45NoRKFrKtYH?=
- =?us-ascii?Q?s35C81DpBCCIwTsCqOYl5O9AexlaN6thNvXfC2F3ox0aKA/ZDOpwW4GtKFXO?=
- =?us-ascii?Q?0A/PFEhzJnoY27gnZWoFlFOReNwcJ3eLtJ+qNzlP5/ikFkj/pToza+Vk18X5?=
- =?us-ascii?Q?deoShP7KE+OCe6sAK1NeFVNj5HOZcAfMxQaUKz22Nryxl+C7nc0PKA0epCNW?=
- =?us-ascii?Q?cjmvyNOcCInTz3qq+lU2KiYWVYJw81zPN8Jgz3Wujt+Og6CB8c5AMnrdsquM?=
- =?us-ascii?Q?1kesSZMOU4l4ZCbbl0vgWyvkY6t+ksIhI5sDr+WnDpWjiQ+knHAqbfR+U5Om?=
- =?us-ascii?Q?x5Arh6Nxxxz6N3tgYdFApOkBVizhls8Vk7R5B6lyVXtEYD4Afakzv80i0Z1A?=
- =?us-ascii?Q?L+XxwZW08yDxEJDPMO2M2uZ3jFnXQIMjVNyw41+euFgn8v9LJAuWUAShbnbC?=
- =?us-ascii?Q?/Yu0rVCZFGb9Lz3CsAex7RnU6dDfSHfS4ycCRXTOEUOPPSetv+VG2gdYuUmq?=
- =?us-ascii?Q?UeHnUvnQdMWCbOTbgMFkA+Rk/7AZZqu0PggLd7i+UJeiXkOVBuMeyUsA4cPC?=
- =?us-ascii?Q?oLuaW68Q9YEfSR/G1+0wOaJkbz9NrseppA667tpiZyICiknXRbb8rLQFj1eu?=
- =?us-ascii?Q?kxV55rtOMXPR5mMVblG4lLe7L3Ei8HGoGtHwLm9g/lHahjETnI6a1srEJhR0?=
- =?us-ascii?Q?IqqPl4TW+UV6/6veXDFJS14jCXYuMfWRr+SAm9bPCblqw1ztbbeVSFyogfIk?=
- =?us-ascii?Q?f2mDFcqlCPg+gcN5notl5VM7trxxb5R8Sd3sU/zQKtAhMXRClshtZhkAykVz?=
- =?us-ascii?Q?D1UkvvITPCL4sNhUTI2N8O8D/+89rx9GHg3+TG6hE+ojbX5SsI0yt5hx3mkh?=
- =?us-ascii?Q?ah5PXwCABvMm28WcdCgdreAttl1b191d/1UIBEKIr/LGX8Vvo5OzUZHTGyJi?=
- =?us-ascii?Q?C1CO5eVh27prA3Okep0oIZBsUcOhDxcBLVvb8h4JcGySAz/JaQdX2QYcmIP8?=
- =?us-ascii?Q?824vo05vdWTnGjURg5ccg724WbrJPXdaspuyuLIv2mzuHl8ebiN0hC03d7dj?=
- =?us-ascii?Q?6FhZBBEN6xDp5lyUr9ReID+DuxFpc8slk0dMU5ChIh6R9FXPWzUhqNFBMeTy?=
- =?us-ascii?Q?cY3W8JM7+K1+DL5CzVVhtnwYIiRr84F0gKe/XNmT?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ecfb7436-aa03-4c52-f0ae-08ddf082373b
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+	=?utf-8?B?blQra3gxOUJQc2NlVFNaSzRHQVR1Zk9NQWN5RzdIUDcraUprSmMxWUdaY3Vj?=
+ =?utf-8?B?UVhFNFBtaStIN1p3Z2VmZk5tV0czZFB5SHY0UnluNERVKzg1YlhlZ0FONDVT?=
+ =?utf-8?B?Y2QySTNRMm9xZ3ExQVBNczlNODhyZDBwZjdRMHJMdklxSTJ3d3V4TVN0Tjc1?=
+ =?utf-8?B?eTBQSklpNkNacnJKdjJuVTUzNUp0OVhvWlUwemhyQzdHSjRZdUxnakFveERN?=
+ =?utf-8?B?TlpGUitXTFRiNmFraUdVYk5Wb1hHN1RvdlFzVEdjZVR4UWVmZUlndzB1aUpH?=
+ =?utf-8?B?Y200YkthS0JVTTBteDZTZlUrV3ZjTU9YR2hQQnpxY1BWaWlhYytQMG90WCtp?=
+ =?utf-8?B?dUx3MXh1WFR0L2FEM1c2eTBSNm0yZ0RweE55dDd0ZlhmQ2pFQ0lSWVhZOURt?=
+ =?utf-8?B?L3lvUUZ6dll6K29wNnpJa2pWUmZPVk9Xa21NVDRmUmV3ekhKVXIwL2g4aTh4?=
+ =?utf-8?B?ajNxS3ltUFNHYjNxU09mc200RGczZEJ2U0o2TDJVNVJFaUt0Mk9GUGkxSnRz?=
+ =?utf-8?B?WjNxZWRoWmNmY1MwRWU2Tjc0ZkFwRkxXK0daUENKbFM0OGhCUVM0c2xOT0xl?=
+ =?utf-8?B?bCszZzBNT3hWMEdkWTNieW9WQkdUaE1nZWlOL20vTlA4YkUvVG9mQUc4aFpY?=
+ =?utf-8?B?Nk1nUzgzdEdSRW5KMnVoaW1NaUhWMjFFam9QejBPQmVkZ2tlOWFxUWl0MmFV?=
+ =?utf-8?B?dGM5aEdPWGdlQ2FjbjI5WlVBOUdZWmh3Z1FYVzVuK3U5TE5GaWZldG1ZSXJn?=
+ =?utf-8?B?LzdXblpTNnhxY0QrUWdzVVAzSDdoMGlBMjhUQ25wVUVYRjZuV1d3K3FkakxM?=
+ =?utf-8?B?QW01b3dHM012TDdxY3VSY0owMitDR3Q1ME5ycFkxck9BYkpRK0dVYkVjazJq?=
+ =?utf-8?B?cjRRU0J3SW9XYUtvOUwxb1ZOK0VnLzJ3R0E4UlQ4cEhBMmpTbmRtampWZkZp?=
+ =?utf-8?B?QVBPVXZQMk1uYkZDcjlwN3NzRmxydWxRdWxURlNPQzJ4d0gzdGdoMTF3aTV2?=
+ =?utf-8?B?VFAzSEhIU0grbE5vcnh3TFQ3ai83K3pvYUZmb0psUXhVSnZIK3h4aFRWeTZl?=
+ =?utf-8?B?UDRnU2d1bmtoa1pyODBPZDVmNFVqSEpuMW9teVV2YWMrOEpCWVpDMlNxU3Fu?=
+ =?utf-8?B?cDNCdzBNYmU5OG5CMXp0bVF6SXpQdlZsajNyYmpLci8zR2YyZ0E2SklJSXgr?=
+ =?utf-8?B?QkJROWIxUVgyWjdzM1VSdFIvdnRNcC90N1ZzS3I1Qjl0eGRNWFo2bTliSXB6?=
+ =?utf-8?B?RGZQRlo0c2VQMmdUWU5FdzVQZWt3Zng1cHQ0T0VNUS9xdU5hTzFsRkZ1ZlBG?=
+ =?utf-8?B?Sy9SVTdER0xFVWxienN3UlN5SkxzWnRYZ29zekdmaUpsaXVhQUYzVFh3ck40?=
+ =?utf-8?B?Y1lkd1F4NzAzUmNkSGUxbU83TjlFN000bU9EVzhKelI3blUzdXZOZlFQaGI4?=
+ =?utf-8?B?L29iaEQzbWZrYVNNY1drakJXV2ZZQmpHNUEyS2IvQWpqYWVteHFRcVljcFkw?=
+ =?utf-8?B?bGRuWmdvV0VRM0FGZEUxZEFmTWY1YVU2a1ZDL1JLaTljYWlRSlg1TXlIelM5?=
+ =?utf-8?B?UVpqSHpKNGJOamVXbXV1ZFRiMzBzMmtTSjVyQ2tUdU5CYzZMM3VsKzZKM2NR?=
+ =?utf-8?B?T04yZTRQWWxtRzBSVi95WjZqMUs1QmlBLzNWNlFPT3N4ZUVYUkp0bS9MR1ZU?=
+ =?utf-8?B?UkxDN3hzSy84d0ZTNWpjV0c5RnpsbFZuVFhQVHRjejBpNmxKYU51L0Q5U1E5?=
+ =?utf-8?B?c0dTak5FTU1LWXFPR092RVZOS0NONWFDcFNwTmtoaHVHYkhYS0U3SGhPR3Ni?=
+ =?utf-8?B?U3BDNkRsYmxpRDVlWjUvUkw2UXFpMkN4cmZiRUJlQzU3NjJtZzg2WGkrRm52?=
+ =?utf-8?B?TDQ2Y3FEb3JUM2NhSTBFMXZOZ3lmOGZoNmFtdDRyQS9Vb0FLbDkyMTVvVHRS?=
+ =?utf-8?B?bWQvVWtnbklOQ3BLSk5DeE9zN25mZnZSU0xtcS9sZ2UwZHd0bXBYZ3ZxY3pN?=
+ =?utf-8?B?VjQ0VjFXcmlpb1N3dEprK1RKaVpVRENhbW9ZeS9qMS9DN1JOVTVFUmpmV2hM?=
+ =?utf-8?B?S1QrdDZkNERWM09LZnZ0QU94NXAxZ0N2VWhXUUFFbjE1UkpoMTFyQXVXRUMr?=
+ =?utf-8?Q?NVE527uI1Z8mv1wEv570T5OaG?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb6eefc3-db4b-4cd0-d6df-08ddf082367a
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR12MB5388.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 15:53:42.1783
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 15:53:40.8362
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kHMgrUhQTVJ9vIwkbQ/rVGzphtqhzDBxoAzeTQZBoaqj8olZosv86h9/Nv+FjiZAb+G2z1RNswu3BQz1GTwDFw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8860
+X-MS-Exchange-CrossTenant-UserPrincipalName: HJ25iR5jROX0nNxi3s1wPUS9GLcv6tgCm0tZcDo7Czi924RKG0idyYs5tj2aVfZpF3IQ0vDHV6vSGO2dIi/oIA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7489
 
-On Wed, Sep 10, 2025 at 03:11:50PM +0800, Peng Fan wrote:
-> With the switch-case in imx_rproc_{start,stop}{} removed, simplify
-> the code logic by removing 'goto'. The last switch-case in
-> imx_rproc_detect_mode() are no longer needed and can be removed.
->
-> This cleanup improves code readability and aligns with the new ops-based
-> design.
->
-> No functional changes.
->
-> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/remoteproc/imx_rproc.c | 34 ++++++++++++----------------------
->  1 file changed, 12 insertions(+), 22 deletions(-)
->
-...
 
-> @@ -997,18 +989,16 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
->  {
->  	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
->
-> -	if (dcfg->ops && dcfg->ops->detect_mode)
-> -		return dcfg->ops->detect_mode(priv->rproc);
-> -
-> -	switch (dcfg->method) {
 
-Can you remove 'method' in data struct also?
+On 9/10/2025 09:51, Yazen Ghannam wrote:
+> On Tue, Sep 09, 2025 at 06:53:10PM +0000, Avadhut Naik wrote:
+>> Currently, the ctl_name string is statically assigned based on the family
+>> and model of the SOC when the amd64_edac module is loaded.
+>>
+>> The same, however, is not exactly needed as the string can be generated
+>> and assigned at runtime through scnprintf().
+>>
+>> Remove all static assignments and generate the string at runtime. Also,
+>> cleanup the switch cases which now become defunct.
+>>
+>> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+>> ---
+>> Changes in v3:
+>> Patch introduced.
+>> ---
+>>  drivers/edac/amd64_edac.c | 44 +++++++--------------------------------
+>>  drivers/edac/amd64_edac.h |  4 +++-
+>>  2 files changed, 11 insertions(+), 37 deletions(-)
+>>
+>> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+>> index 07f1e9dc1ca7..3989794e4f29 100644
+>> --- a/drivers/edac/amd64_edac.c
+>> +++ b/drivers/edac/amd64_edac.c
+>> @@ -3767,6 +3767,8 @@ static int per_family_init(struct amd64_pvt *pvt)
+>>  	pvt->model	= boot_cpu_data.x86_model;
+>>  	pvt->fam	= boot_cpu_data.x86;
+>>  	pvt->max_mcs	= 2;
+> 
+> Newline here, please.
+> 
+Okay.
 
-Frank
-> -	case IMX_RPROC_NONE:
-> +	/*
-> +	 * To i.MX{7,8} ULP, Linux is under control of RTOS, no need
-> +	 * dcfg->ops or dcfg->ops->detect_mode, it is state RPROC_DETACHED.
-> +	 */
-> +	if (!dcfg->ops || !dcfg->ops->detect_mode) {
->  		priv->rproc->state = RPROC_DETACHED;
->  		return 0;
-> -	default:
-> -		break;
->  	}
->
-> -	return 0;
-> +	return dcfg->ops->detect_mode(priv->rproc);
->  }
->
->  static int imx_rproc_clk_enable(struct imx_rproc *priv)
->
-> --
-> 2.37.1
->
+>> +	scnprintf(pvt->ctl_name, sizeof(pvt->ctl_name), "F%02Xh_M%02Xh",
+>> +		  pvt->fam, pvt->model);
+> 
+> There are a couple of special cases below.
+> 
+> So I think it may be better to move this part to the end...
+> 
+>>  
+>>  	/*
+>>  	 * Decide on which ops group to use here and do any family/model
+>> @@ -3779,8 +3781,10 @@ static int per_family_init(struct amd64_pvt *pvt)
+>>  
+>>  	switch (pvt->fam) {
+>>  	case 0xf:
+>> -		pvt->ctl_name				= (pvt->ext_model >= K8_REV_F) ?
+>> -							  "K8 revF or later" : "K8 revE or earlier";
+>> +		if (pvt->ext_model >= K8_REV_F)
+>> +			strscpy(pvt->ctl_name, "K8 revF or later", sizeof(pvt->ctl_name));
+>> +		else
+>> +			strscpy(pvt->ctl_name, "K8 revE or earlier", sizeof(pvt->ctl_name));
+> 
+> Maybe save this special case to a temporary "char *name".
+> 
+>>  		pvt->f1_id				= PCI_DEVICE_ID_AMD_K8_NB_ADDRMAP;
+>>  		pvt->f2_id				= PCI_DEVICE_ID_AMD_K8_NB_MEMCTL;
+>>  		pvt->ops->map_sysaddr_to_csrow		= k8_map_sysaddr_to_csrow;
+>> @@ -3788,7 +3792,6 @@ static int per_family_init(struct amd64_pvt *pvt)
+>>  		break;
+>>  
+>>  	case 0x10:
+>> -		pvt->ctl_name				= "F10h";
+>>  		pvt->f1_id				= PCI_DEVICE_ID_AMD_10H_NB_MAP;
+>>  		pvt->f2_id				= PCI_DEVICE_ID_AMD_10H_NB_DRAM;
+>>  		pvt->ops->dbam_to_cs			= f10_dbam_to_chip_select;
+>> @@ -3797,12 +3800,10 @@ static int per_family_init(struct amd64_pvt *pvt)
+>>  	case 0x15:
+>>  		switch (pvt->model) {
+>>  		case 0x30:
+>> -			pvt->ctl_name			= "F15h_M30h";
+>>  			pvt->f1_id			= PCI_DEVICE_ID_AMD_15H_M30H_NB_F1;
+>>  			pvt->f2_id			= PCI_DEVICE_ID_AMD_15H_M30H_NB_F2;
+>>  			break;
+>>  		case 0x60:
+>> -			pvt->ctl_name			= "F15h_M60h";
+>>  			pvt->f1_id			= PCI_DEVICE_ID_AMD_15H_M60H_NB_F1;
+>>  			pvt->f2_id			= PCI_DEVICE_ID_AMD_15H_M60H_NB_F2;
+>>  			pvt->ops->dbam_to_cs		= f15_m60h_dbam_to_chip_select;
+>> @@ -3811,7 +3812,6 @@ static int per_family_init(struct amd64_pvt *pvt)
+>>  			/* Richland is only client */
+>>  			return -ENODEV;
+>>  		default:
+>> -			pvt->ctl_name			= "F15h";
+>>  			pvt->f1_id			= PCI_DEVICE_ID_AMD_15H_NB_F1;
+>>  			pvt->f2_id			= PCI_DEVICE_ID_AMD_15H_NB_F2;
+>>  			pvt->ops->dbam_to_cs		= f15_dbam_to_chip_select;
+>> @@ -3822,12 +3822,10 @@ static int per_family_init(struct amd64_pvt *pvt)
+>>  	case 0x16:
+>>  		switch (pvt->model) {
+>>  		case 0x30:
+>> -			pvt->ctl_name			= "F16h_M30h";
+>>  			pvt->f1_id			= PCI_DEVICE_ID_AMD_16H_M30H_NB_F1;
+>>  			pvt->f2_id			= PCI_DEVICE_ID_AMD_16H_M30H_NB_F2;
+>>  			break;
+>>  		default:
+>> -			pvt->ctl_name			= "F16h";
+>>  			pvt->f1_id			= PCI_DEVICE_ID_AMD_16H_NB_F1;
+>>  			pvt->f2_id			= PCI_DEVICE_ID_AMD_16H_NB_F2;
+>>  			break;
+>> @@ -3836,76 +3834,52 @@ static int per_family_init(struct amd64_pvt *pvt)
+>>  
+>>  	case 0x17:
+>>  		switch (pvt->model) {
+>> -		case 0x10 ... 0x2f:
+>> -			pvt->ctl_name			= "F17h_M10h";
+>> -			break;
+>>  		case 0x30 ... 0x3f:
+>> -			pvt->ctl_name			= "F17h_M30h";
+>>  			pvt->max_mcs			= 8;
+>>  			break;
+>> -		case 0x60 ... 0x6f:
+>> -			pvt->ctl_name			= "F17h_M60h";
+>> -			break;
+>> -		case 0x70 ... 0x7f:
+>> -			pvt->ctl_name			= "F17h_M70h";
+>> -			break;
+>>  		default:
+>> -			pvt->ctl_name			= "F17h";
+>>  			break;
+>>  		}
+>>  		break;
+>>  
+>>  	case 0x18:
+>> -		pvt->ctl_name				= "F18h";
+>>  		break;
+>>  
+>>  	case 0x19:
+>>  		switch (pvt->model) {
+>>  		case 0x00 ... 0x0f:
+>> -			pvt->ctl_name			= "F19h";
+>>  			pvt->max_mcs			= 8;
+>>  			break;
+>>  		case 0x10 ... 0x1f:
+>> -			pvt->ctl_name			= "F19h_M10h";
+>>  			pvt->max_mcs			= 12;
+>>  			pvt->flags.zn_regs_v2		= 1;
+>>  			break;
+>> -		case 0x20 ... 0x2f:
+>> -			pvt->ctl_name			= "F19h_M20h";
+>> -			break;
+>>  		case 0x30 ... 0x3f:
+>>  			if (pvt->F3->device == PCI_DEVICE_ID_AMD_MI200_DF_F3) {
+>> -				pvt->ctl_name		= "MI200";
+>> +				memset(pvt->ctl_name, 0, sizeof(pvt->ctl_name));
+>> +				strscpy(pvt->ctl_name, "MI200", sizeof(pvt->ctl_name));
+> 
+> And this to a temp name too.
+> 
+>>  				pvt->max_mcs		= 4;
+>>  				pvt->dram_type		= MEM_HBM2;
+>>  				pvt->gpu_umc_base	= 0x50000;
+>>  				pvt->ops		= &gpu_ops;
+>>  			} else {
+>> -				pvt->ctl_name		= "F19h_M30h";
+>>  				pvt->max_mcs		= 8;
+>>  			}
+>>  			break;
+>> -		case 0x50 ... 0x5f:
+>> -			pvt->ctl_name			= "F19h_M50h";
+>> -			break;
+>>  		case 0x60 ... 0x6f:
+>> -			pvt->ctl_name			= "F19h_M60h";
+>>  			pvt->flags.zn_regs_v2		= 1;
+>>  			break;
+>>  		case 0x70 ... 0x7f:
+>> -			pvt->ctl_name			= "F19h_M70h";
+>>  			pvt->max_mcs			= 4;
+>>  			pvt->flags.zn_regs_v2		= 1;
+>>  			break;
+>>  		case 0x90 ... 0x9f:
+>> -			pvt->ctl_name			= "F19h_M90h";
+>>  			pvt->max_mcs			= 4;
+>>  			pvt->dram_type			= MEM_HBM3;
+>>  			pvt->gpu_umc_base		= 0x90000;
+>>  			pvt->ops			= &gpu_ops;
+>>  			break;
+>>  		case 0xa0 ... 0xaf:
+>> -			pvt->ctl_name			= "F19h_MA0h";
+>>  			pvt->max_mcs			= 12;
+>>  			pvt->flags.zn_regs_v2		= 1;
+>>  			break;
+>> @@ -3915,12 +3889,10 @@ static int per_family_init(struct amd64_pvt *pvt)
+>>  	case 0x1A:
+>>  		switch (pvt->model) {
+>>  		case 0x00 ... 0x1f:
+>> -			pvt->ctl_name           = "F1Ah";
+>>  			pvt->max_mcs            = 12;
+>>  			pvt->flags.zn_regs_v2   = 1;
+>>  			break;
+>>  		case 0x40 ... 0x4f:
+>> -			pvt->ctl_name           = "F1Ah_M40h";
+>>  			pvt->flags.zn_regs_v2   = 1;
+>>  			break;
+>>  		}
+> 
+> ...here.
+> 
+> Then check if the name was set already (by the special cases). If not,
+> then set the generic family/model name.
+> 
+> For example:
+> 	char *tmp_name = NULL;
+> 
+> 	if K8:
+> 		if F:
+> 			tmp_name = "K8 F";
+> 		else:
+> 			tmp_name = "K8 E";
+> 	if MI200:
+> 		tmp_name = "MI200";
+> 
+> 	if (tmp_name)
+> 		scnprintf(pvt->ctl_name, sizeof(pvt->ctl_name), tmp_name);
+> 	else
+> 		scnprintf(pvt->ctl_name, sizeof(pvt->ctl_name), "F%02Xh_M%02Xh",
+> 			  pvt->fam, pvt->model);
+> 
+Okay! Will try this out!
+
+-- 
+Thanks,
+Avadhut Naik
+
 
