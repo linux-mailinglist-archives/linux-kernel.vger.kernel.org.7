@@ -1,39 +1,94 @@
-Return-Path: <linux-kernel+bounces-810376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547E1B51971
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:33:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE6C3B51972
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63C885E523E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:33:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8070516E011
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6952322DDE;
-	Wed, 10 Sep 2025 14:33:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8B731AF06
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A6A31AF06;
+	Wed, 10 Sep 2025 14:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RIPdlXBr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aPbQTK0k";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DHnj4RBh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="C7dAZMDa"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA10B32779D
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757514812; cv=none; b=Q63/6Na8MKm/yhkT7bh5YG/77+yEW7PmdigPcUhz4Uu/ynHZNpCzeALCF152HT+2p9tmm+Oa0g1YcEbzYmHkb2WEiTvBGaK+0YRfJXjv+6qLhMJlXVpIsTNff5acEggw+Emleh9qM9vbawCTes6goasqGq1peWV9z9NaeBBgnaQ=
+	t=1757514815; cv=none; b=mLrHsI0p0pDD52Vs//ZEQCdvIdanDnPakKnIPN5KVmlgMdZVNfpPRAsE+5ExrBVLDg/Df9G+TmkOqFwTYxUCXIqmA1yuMCau+5w+MXJPalXSIOdLHIqhRg1gXV5WoDweF7GXTwbnTyTGLzfoJ8/b4yGkvYShI8j6YOsHlrcOzfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757514812; c=relaxed/simple;
-	bh=2TRqDUzkDgBYc8A+1WRx3fA20lqyhcEo7DEXvjhXmsI=;
+	s=arc-20240116; t=1757514815; c=relaxed/simple;
+	bh=ZV32YFX/qWVrf3r82W+gLBIuV4AqRThwbUbsXnzL4mw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JezjlnrmWIRJw9tbIFkjNNBjCmd4nSbRcjXIprQLFA6CmeQTiF2pVlv1LMKryRa+A5X2iEHXY3G7DpWga32aAhDL57vIdS8aAGE5Z4PvkKVgUOUHqYzxl74ktCl8EuHQfChA5t6pUtfO6HerwhZOTnjAzXwAIwve+fa2ddB1qz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 15D3F16F2;
-	Wed, 10 Sep 2025 07:33:21 -0700 (PDT)
-Received: from [10.57.90.208] (unknown [10.57.90.208])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B6F53F694;
-	Wed, 10 Sep 2025 07:33:27 -0700 (PDT)
-Message-ID: <6fd9df06-7120-4eef-9f02-70ba49266c75@arm.com>
-Date: Wed, 10 Sep 2025 15:33:25 +0100
+	 In-Reply-To:Content-Type; b=CrmreOkNsOAsrCaF2AJZB2YzdtOX8Mr9eipjbe4ye20LaEJ1j4iZwAO14QLtgjjdakBny2fGjl+WA2sLO094qhkjov37MMV1hGJ/qA8tnWTCqTT/9WM95dJaS5ctwNcXfq3fa2Z04sWJ2nQzITLcsiEPm0qxvYj2E30Vp4+0Vn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RIPdlXBr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aPbQTK0k; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DHnj4RBh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=C7dAZMDa; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 233D238494;
+	Wed, 10 Sep 2025 14:33:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757514811; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ikw4jiiY7S2fYJkezEQT0dSKUI9SI40oygtMNCfxpuY=;
+	b=RIPdlXBrTxjXDImJOqMu941nKRyca4jrgtdxxGgeKq7uqpJSdBApyzRXVLXdgy/7ZEqr1P
+	AN4tCnGJFx8uVARhxGEKqac6S1eZgOaxQaJYJu4cYpWhBRHw0TxFsRViVGgXoTT73rddM2
+	9YhHHBble+pFBjBKujvL9ujy1w5LjT8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757514811;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ikw4jiiY7S2fYJkezEQT0dSKUI9SI40oygtMNCfxpuY=;
+	b=aPbQTK0kQEB7A6/j4s9KMmKLPEoUkJ58VIYPXEqM5sUqMs/bit9Q4Qj6RtSnOlIs0tlwZM
+	avgDvl5Bbs5TfKBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757514810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ikw4jiiY7S2fYJkezEQT0dSKUI9SI40oygtMNCfxpuY=;
+	b=DHnj4RBhlBqEd3erIu7MtYqpX4kphWIwb2LfRzXVIROmeoF2P3IoVEONcVd1wBbBpqIG5z
+	7jodtT3gMqzcK5QjUgrsFefGvWdB1XKUu0VMInO+SHIRi9yjY80Kx/gwDge3j0Ffct9awE
+	CR/v4Oi/+JZ/q9uIL8hIGpzlksijLg4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757514810;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ikw4jiiY7S2fYJkezEQT0dSKUI9SI40oygtMNCfxpuY=;
+	b=C7dAZMDaqeS1MOqgEIkTxs7C4sDK1WKHr8ZO8D4aJny4d8u68PpOx2r7OR/38oJ6PRdzMm
+	OewhkkesF1EjecCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B40D313310;
+	Wed, 10 Sep 2025 14:33:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cRuTKjmMwWguJQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 10 Sep 2025 14:33:29 +0000
+Message-ID: <1dd1dfe2-8005-4d02-8032-46c31c41423e@suse.de>
+Date: Wed, 10 Sep 2025 16:33:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,336 +96,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: mm: Move KPTI helpers to mmu.c
-Content-Language: en-GB
-To: Kevin Brodsky <kevin.brodsky@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Kees Cook <kees@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>,
- Yeoreum Yun <yeoreum.yun@arm.com>
-References: <20250910104454.317067-1-kevin.brodsky@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250910104454.317067-1-kevin.brodsky@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v10 2/4] PCI/VGA: Replace vga_is_firmware_default() with a
+ screen info check
+To: "Mario Limonciello (AMD)" <superm1@kernel.org>,
+ David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ Daniel Dadap <ddadap@nvidia.com>
+References: <20250811162606.587759-1-superm1@kernel.org>
+ <20250811162606.587759-3-superm1@kernel.org>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250811162606.587759-3-superm1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[kernel.org,gmail.com,google.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_DN_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On 10/09/2025 11:44, Kevin Brodsky wrote:
-> create_kpti_ng_temp_pgd() is currently defined (as an alias) in
-> mmu.c without matching declaration in a header; instead cpufeature.c
-> makes its own declaration. This is clearly not pretty, and as commit
-> ceca927c86e6 ("arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc
-> function signature") showed, it also makes it very easy for the
-> prototypes to go out of sync.
-> 
-> All this would be much simpler if kpti_install_ng_mappings() and
-> associated functions lived in mmu.c, where they logically belong.
-> This is what this patch does:
-> - Move kpti_install_ng_mappings() and associated functions from
->   cpufeature.c to mmu.c, add a declaration to <asm/mmu.h>
-> - Make create_kpti_ng_temp_pgd() a static function that simply calls
->   __create_pgd_mapping_locked() instead of aliasing it
-> - Mark all these functions __init
-> - Move __initdata after kpti_ng_temp_alloc (as suggested by
->   checkpatch)
 
-This is a great clean up IMHO; that alias has caught me out a few times in the
-past when hacking in this area. And this code clearly belongs in mmu.c.
 
-> 
-> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+Am 11.08.25 um 18:26 schrieb Mario Limonciello (AMD):
+> vga_is_firmware_default() checks firmware resources to find the owner
+> framebuffer resources to find the firmware PCI device.  This is an
+> open coded implementation of screen_info_pci_dev().  Switch to using
+> screen_info_pci_dev() instead.
+>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
 > ---
-> Note: as things stand, create_kpti_ng_temp_pgd() could be removed,
-> but a separate patch [1] will make use of it to add an
-> assertion.
-
-I'd vote for removing it and just calling __create_pgd_mapping_locked() direct.
-The next version of the other patch can just rebase on top of yours and add the
-assert in __kpti_install_ng_mappings().
-
-Either way:
-
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-
-> 
-> [1] https://lore.kernel.org/all/20250813145607.1612234-3-chaitanyas.prakash@arm.com/
+> v10:
+>   * Rebase on 6.17-rc1
 > ---
-> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Kees Cook <kees@kernel.org>,
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Yeoreum Yun <yeoreum.yun@arm.com>
-> ---
->  arch/arm64/include/asm/mmu.h   |   6 ++
->  arch/arm64/kernel/cpufeature.c |  97 ------------------------------
->  arch/arm64/mm/mmu.c            | 106 ++++++++++++++++++++++++++++++---
->  3 files changed, 103 insertions(+), 106 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
-> index 49f1a810df16..624edd6c4964 100644
-> --- a/arch/arm64/include/asm/mmu.h
-> +++ b/arch/arm64/include/asm/mmu.h
-> @@ -104,5 +104,11 @@ static inline bool kaslr_requires_kpti(void)
->  	return true;
->  }
->  
-> +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-> +void kpti_install_ng_mappings(void);
-> +#else
-> +static inline void kpti_install_ng_mappings(void) {}
-> +#endif
-> +
->  #endif	/* !__ASSEMBLY__ */
->  #endif
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index ef269a5a37e1..b99eaad48c14 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -1940,103 +1940,6 @@ static bool has_pmuv3(const struct arm64_cpu_capabilities *entry, int scope)
->  }
->  #endif
->  
-> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-> -#define KPTI_NG_TEMP_VA		(-(1UL << PMD_SHIFT))
+>   drivers/pci/vgaarb.c | 31 +++++--------------------------
+>   1 file changed, 5 insertions(+), 26 deletions(-)
+>
+> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
+> index 78748e8d2dbae..b58f94ee48916 100644
+> --- a/drivers/pci/vgaarb.c
+> +++ b/drivers/pci/vgaarb.c
+> @@ -556,34 +556,13 @@ EXPORT_SYMBOL(vga_put);
+>   
+>   static bool vga_is_firmware_default(struct pci_dev *pdev)
+>   {
+> -#if defined(CONFIG_X86)
+> -	u64 base = screen_info.lfb_base;
+> -	u64 size = screen_info.lfb_size;
+> -	struct resource *r;
+> -	u64 limit;
+> +#ifdef CONFIG_SCREEN_INFO
+> +	struct screen_info *si = &screen_info;
+>   
+> -	/* Select the device owning the boot framebuffer if there is one */
 > -
-> -extern
-> -void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
-> -			     phys_addr_t size, pgprot_t prot,
-> -			     phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags);
+> -	if (screen_info.capabilities & VIDEO_CAPABILITY_64BIT_BASE)
+> -		base |= (u64)screen_info.ext_lfb_base << 32;
 > -
-> -static phys_addr_t __initdata kpti_ng_temp_alloc;
+> -	limit = base + size;
 > -
-> -static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
-> -{
-> -	kpti_ng_temp_alloc -= PAGE_SIZE;
-> -	return kpti_ng_temp_alloc;
-> -}
+> -	/* Does firmware framebuffer belong to us? */
+> -	pci_dev_for_each_resource(pdev, r) {
+> -		if (resource_type(r) != IORESOURCE_MEM)
+> -			continue;
 > -
-> -static int __init __kpti_install_ng_mappings(void *__unused)
-> -{
-> -	typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
-> -	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
-> -	kpti_remap_fn *remap_fn;
+> -		if (!r->start || !r->end)
+> -			continue;
 > -
-> -	int cpu = smp_processor_id();
-> -	int levels = CONFIG_PGTABLE_LEVELS;
-> -	int order = order_base_2(levels);
-> -	u64 kpti_ng_temp_pgd_pa = 0;
-> -	pgd_t *kpti_ng_temp_pgd;
-> -	u64 alloc = 0;
+> -		if (base < r->start || limit >= r->end)
+> -			continue;
 > -
-> -	if (levels == 5 && !pgtable_l5_enabled())
-> -		levels = 4;
-> -	else if (levels == 4 && !pgtable_l4_enabled())
-> -		levels = 3;
-> -
-> -	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
-> -
-> -	if (!cpu) {
-> -		alloc = __get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
-> -		kpti_ng_temp_pgd = (pgd_t *)(alloc + (levels - 1) * PAGE_SIZE);
-> -		kpti_ng_temp_alloc = kpti_ng_temp_pgd_pa = __pa(kpti_ng_temp_pgd);
-> -
-> -		//
-> -		// Create a minimal page table hierarchy that permits us to map
-> -		// the swapper page tables temporarily as we traverse them.
-> -		//
-> -		// The physical pages are laid out as follows:
-> -		//
-> -		// +--------+-/-------+-/------ +-/------ +-\\\--------+
-> -		// :  PTE[] : | PMD[] : | PUD[] : | P4D[] : ||| PGD[]  :
-> -		// +--------+-\-------+-\------ +-\------ +-///--------+
-> -		//      ^
-> -		// The first page is mapped into this hierarchy at a PMD_SHIFT
-> -		// aligned virtual address, so that we can manipulate the PTE
-> -		// level entries while the mapping is active. The first entry
-> -		// covers the PTE[] page itself, the remaining entries are free
-> -		// to be used as a ad-hoc fixmap.
-> -		//
-> -		create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc),
-> -					KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
-> -					kpti_ng_pgd_alloc, 0);
+> -		return true;
 > -	}
-> -
-> -	cpu_install_idmap();
-> -	remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
-> -	cpu_uninstall_idmap();
-> -
-> -	if (!cpu) {
-> -		free_pages(alloc, order);
-> -		arm64_use_ng_mappings = true;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static void __init kpti_install_ng_mappings(void)
-> -{
-> -	/* Check whether KPTI is going to be used */
-> -	if (!arm64_kernel_unmapped_at_el0())
-> -		return;
-> -
-> -	/*
-> -	 * We don't need to rewrite the page-tables if either we've done
-> -	 * it already or we have KASLR enabled and therefore have not
-> -	 * created any global mappings at all.
-> -	 */
-> -	if (arm64_use_ng_mappings)
-> -		return;
-> -
-> -	stop_machine(__kpti_install_ng_mappings, NULL, cpu_online_mask);
-> -}
-> -
-> -#else
-> -static inline void kpti_install_ng_mappings(void)
-> -{
-> -}
-> -#endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
-> -
->  static void cpu_enable_kpti(struct arm64_cpu_capabilities const *cap)
->  {
->  	if (__this_cpu_read(this_cpu_vector) == vectors) {
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 183801520740..eff3295393ee 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -27,6 +27,7 @@
->  #include <linux/kfence.h>
->  #include <linux/pkeys.h>
->  #include <linux/mm_inline.h>
-> +#include <linux/stop_machine.h>
->  
->  #include <asm/barrier.h>
->  #include <asm/cputype.h>
-> @@ -466,14 +467,6 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
->  	mutex_unlock(&fixmap_lock);
->  }
->  
-> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-> -extern __alias(__create_pgd_mapping_locked)
-> -void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
-> -			     phys_addr_t size, pgprot_t prot,
-> -			     phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> -			     int flags);
 > -#endif
-> -
->  static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm,
->  				       enum pgtable_type pgtable_type)
->  {
-> @@ -735,7 +728,102 @@ static void __init declare_vma(struct vm_struct *vma,
->  }
->  
->  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-> -static pgprot_t kernel_exec_prot(void)
-> +#define KPTI_NG_TEMP_VA		(-(1UL << PMD_SHIFT))
-> +
-> +static phys_addr_t kpti_ng_temp_alloc __initdata;
-> +
-> +static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
-> +{
-> +	kpti_ng_temp_alloc -= PAGE_SIZE;
-> +	return kpti_ng_temp_alloc;
-> +}
-> +
-> +static void __init create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys,
-> +					   unsigned long virt, phys_addr_t size,
-> +					   pgprot_t prot,
-> +					   phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-> +					   int flags)
-> +{
-> +	__create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
-> +				    pgtable_alloc, flags);
-> +}
-> +
-> +static int __init __kpti_install_ng_mappings(void *__unused)
-> +{
-> +	typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
-> +	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
-> +	kpti_remap_fn *remap_fn;
-> +
-> +	int cpu = smp_processor_id();
-> +	int levels = CONFIG_PGTABLE_LEVELS;
-> +	int order = order_base_2(levels);
-> +	u64 kpti_ng_temp_pgd_pa = 0;
-> +	pgd_t *kpti_ng_temp_pgd;
-> +	u64 alloc = 0;
-> +
-> +	if (levels == 5 && !pgtable_l5_enabled())
-> +		levels = 4;
-> +	else if (levels == 4 && !pgtable_l4_enabled())
-> +		levels = 3;
-> +
-> +	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
-> +
-> +	if (!cpu) {
-> +		alloc = __get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
-> +		kpti_ng_temp_pgd = (pgd_t *)(alloc + (levels - 1) * PAGE_SIZE);
-> +		kpti_ng_temp_alloc = kpti_ng_temp_pgd_pa = __pa(kpti_ng_temp_pgd);
-> +
-> +		//
-> +		// Create a minimal page table hierarchy that permits us to map
-> +		// the swapper page tables temporarily as we traverse them.
-> +		//
-> +		// The physical pages are laid out as follows:
-> +		//
-> +		// +--------+-/-------+-/------ +-/------ +-\\\--------+
-> +		// :  PTE[] : | PMD[] : | PUD[] : | P4D[] : ||| PGD[]  :
-> +		// +--------+-\-------+-\------ +-\------ +-///--------+
-> +		//      ^
-> +		// The first page is mapped into this hierarchy at a PMD_SHIFT
-> +		// aligned virtual address, so that we can manipulate the PTE
-> +		// level entries while the mapping is active. The first entry
-> +		// covers the PTE[] page itself, the remaining entries are free
-> +		// to be used as a ad-hoc fixmap.
-> +		//
-> +		create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc),
-> +					KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
-> +					kpti_ng_pgd_alloc, 0);
-> +	}
-> +
-> +	cpu_install_idmap();
-> +	remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
-> +	cpu_uninstall_idmap();
-> +
-> +	if (!cpu) {
-> +		free_pages(alloc, order);
-> +		arm64_use_ng_mappings = true;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +void __init kpti_install_ng_mappings(void)
-> +{
-> +	/* Check whether KPTI is going to be used */
-> +	if (!arm64_kernel_unmapped_at_el0())
-> +		return;
-> +
-> +	/*
-> +	 * We don't need to rewrite the page-tables if either we've done
-> +	 * it already or we have KASLR enabled and therefore have not
-> +	 * created any global mappings at all.
-> +	 */
-> +	if (arm64_use_ng_mappings)
-> +		return;
-> +
-> +	stop_machine(__kpti_install_ng_mappings, NULL, cpu_online_mask);
-> +}
-> +
-> +static pgprot_t __init kernel_exec_prot(void)
+> +	return pdev == screen_info_pci_dev(si);
+> +#else
+>   	return false;
+> +#endif
+>   }
+>   
+>   static bool vga_arb_integrated_gpu(struct device *dev)
 
-nit: this change (to add __init) is unrelated; does it deserve it's own patch?
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
->  {
->  	return rodata_enabled ? PAGE_KERNEL_ROX : PAGE_KERNEL_EXEC;
->  }
-> 
-> base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
 
 
