@@ -1,122 +1,128 @@
-Return-Path: <linux-kernel+bounces-810266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A02B517F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:31:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 669B2B517ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9168417ABFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C2623B84E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D5C31DDB2;
-	Wed, 10 Sep 2025 13:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77BB31B13F;
+	Wed, 10 Sep 2025 13:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="ZIAzvfhu"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yM8lskni"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E128A31079B;
-	Wed, 10 Sep 2025 13:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336CF28DF07;
+	Wed, 10 Sep 2025 13:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757511051; cv=none; b=fSjd4FYHRdQJfR5q0elfFjeLFJO7loJOrt1kB7LDzWsjGGAIvJulw7N7lhquwveoXpf+009lj2Ll1hPrQHtIX2f961fvSjpJ9DgcM4LflgGxolCnIrxzs10/bYIwpOoI7ab/BSlFvOMjRkcB4JkZY2G8QUUVesfS3uc3SvGoW/I=
+	t=1757511014; cv=none; b=O66SoYIeBIJDDxeNZhJ1320nVunxegjBpS5XtCRq7O3VgZ5HyxIp8oTXtg4Kl8rXSXC1EI44utCDsPndjcG94kgb2zRGVsZbdvfQdpJ3BM6Qf5y2deAUj3WhZjknY5WK6DGGYvi+N2wDcdPWJIP7ujRgRc6L6Rm71FWBGJ3SBIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757511051; c=relaxed/simple;
-	bh=x7ddNJB4PbEZlaZxFw8Q4jEczKtBC3VpbHxRUgvDWr0=;
+	s=arc-20240116; t=1757511014; c=relaxed/simple;
+	bh=Qz2mO85q1kVwec8We02B67RFangkqvGYgZLpXbZJFkE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SqZDr0mR4zooGuquhkkk14iTYTIWJ9QEvCtIrw0ac1o0zCDcQOHnzC9KezjVHJivQ7pG24eZu3fLoDCg3pViZFZrrf65SQ9JHEvv8dpHY/SoZC7iG+o+MNzU9tYmK323FLDn9g7WmaYPTxrX43uoYJnwGTT4i08eJCXWuqRRXe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=ZIAzvfhu; arc=none smtp.client-ip=1.95.21.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=gYMy2/LLnu2KAOtRSTu6UdjE6ow6Rx7TsQICVL6w6ak=;
-	b=ZIAzvfhuS9W0YBFZsT9WvS6RE8IPbvsze8s+ZRyqDugfH9xf7UFC8g+knCJUnG
-	aF/2I6Gzh/IJMhoVX9d5cY6KRJd4KSiVnvWgUIeuKTiPnuH/u3sLM6cZZtLUbZ8N
-	wmxbLczxBZoPFGR3ICF7zumWrkip+kq6psJO069//eR9w=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgBHddlIfcFo5a5YBA--.43536S3;
-	Wed, 10 Sep 2025 21:29:46 +0800 (CST)
-Date: Wed, 10 Sep 2025 21:29:44 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Andrej Rosano <andrej.rosano@reversec.com>
-Cc: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>,
-	Andrea Barisani <andrea@inversepath.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v2 2/8] ARM: dts: imx53-usbarmory: Replace license text
- comment with SPDX identifier
-Message-ID: <aMF9SKDEu4dlq_Xe@dragon>
-References: <20250814-imx-misc-dts-lic-v2-0-faff7db49a5f@prolan.hu>
- <20250814-imx-misc-dts-lic-v2-2-faff7db49a5f@prolan.hu>
- <b48844bc-07f3-4fc1-8486-8968bf6d2362@prolan.hu>
- <aMFofaIczqElAsLY@stjenka.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCgvvFtrH4JEIRoS9Jlw+U7AgVC1gFnyaSId1EiOQCbWAObJu8IxBfbQLMtTM8DyywvRcP86AFAtAwLfUlkC+4nZd+sfsFXYX4XCTmlQ5HxjvWrI/+5OiBw3SNleFiCSM8NvvGsqK82afXprI6+W4JZUiWkSIY7Z+hZ8g2aOX/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yM8lskni; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39808C4CEF8;
+	Wed, 10 Sep 2025 13:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757511013;
+	bh=Qz2mO85q1kVwec8We02B67RFangkqvGYgZLpXbZJFkE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yM8lskniPdIv8ddSiJKSGuJ5GzUgLRvVHnqDNfQD3zyN9KWpf3lql0+NekAXNXd81
+	 mMIbHsGw6tHBVJKvK5QirRDR4bLOISbV/yicisQ8q3ir6iKn2NHHQaYGnr+7/wuKZh
+	 KSfAH6cEEwT0efryE7oN6equpHM4NcJgKLLdxdwM=
+Date: Wed, 10 Sep 2025 15:30:05 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andrei Kuchynski <akuchynski@chromium.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Jameson Thies <jthies@google.com>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	Guenter Roeck <groeck@chromium.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	"Christian A. Ehrhardt" <lk@c--e.de>,
+	Venkat Jayaraman <venkat.jayaraman@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] usb: typec: Add mode_control field to port
+ property
+Message-ID: <2025091018-slather-dispose-015d@gregkh>
+References: <20250905142206.4105351-1-akuchynski@chromium.org>
+ <20250905142206.4105351-2-akuchynski@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMFofaIczqElAsLY@stjenka.localdomain>
-X-CM-TRANSID:Ms8vCgBHddlIfcFo5a5YBA--.43536S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tr13Kry5Zry8tF1rtrWfAFb_yoW8Gr4xpF
-	W8KF4YyF4UJ3yrGa1j9a1DZ3saqw4fKFy5AryDW347Zrn8Xr1FqF4xKry5KFy29r1DCF4j
-	ya1aqFWSqay5AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYpBfUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIgz8YmjBfUyqYQAA3j
+In-Reply-To: <20250905142206.4105351-2-akuchynski@chromium.org>
 
-On Wed, Sep 10, 2025 at 12:01:02PM +0000, Andrej Rosano wrote:
-> Hi Bence,
+On Fri, Sep 05, 2025 at 02:22:02PM +0000, Andrei Kuchynski wrote:
+> This new field in the port properties dictates whether the Platform Policy
+> Manager (PPM) allows the OS Policy Manager (OPM) to change the currently
+> active, negotiated alternate mode.
 > 
-> yes, we agree.
-
-Andrej, could you give an explicit Acked-by tag for this patch?
-
-Shawn
-
-> On 2025-09-09 Tue, Csókás Bence wrote:
-> > [You don't often get email from csokas.bence@prolan.hu. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> > 
-> > Hi,
-> > 
-> > On 2025. 08. 14. 9:47, Bence Csókás wrote:
-> > > Replace verbatim license text with a `SPDX-License-Identifier`.
-> > > 
-> > > The comment header mis-attributes this license to be "X11", but the
-> > > license text does not include the last line "Except as contained in this
-> > > notice, the name of the X Consortium shall not be used in advertising or
-> > > otherwise to promote the sale, use or other dealings in this Software
-> > > without prior written authorization from the X Consortium.". Therefore,
-> > > this license is actually equivalent to the SPDX "MIT" license (confirmed
-> > > by text diffing).
-> > > 
-> > > Cc: Andrej Rosano <andrej@inversepath.com>
-> > > Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
-> > 
-> > +To: Andrea Barisani <andrea@inversepath.com>
-> > 
-> > Andrej, Andrea, do you agree with this?
-> > 
-> > Thanks,
-> > Bence
-> > 
+> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
+> ---
+>  drivers/usb/typec/class.c | 9 ++++++---
+>  drivers/usb/typec/class.h | 2 ++
+>  include/linux/usb/typec.h | 2 ++
+>  3 files changed, 10 insertions(+), 3 deletions(-)
 > 
-> -- 
-> Andrej Rosano | Hardware Security | Reversec Foundry
-> www.reversec.com/foundry
-> BDE1 62F4 7020 1588 8046 AE02 EA17 8C32 AB56 54CE
+> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> index 67a533e35150..9f86605ce125 100644
+> --- a/drivers/usb/typec/class.c
+> +++ b/drivers/usb/typec/class.c
+> @@ -457,11 +457,13 @@ static umode_t typec_altmode_attr_is_visible(struct kobject *kobj,
+>  					     struct attribute *attr, int n)
+>  {
+>  	struct typec_altmode *adev = to_typec_altmode(kobj_to_dev(kobj));
+> +	struct typec_port *port = typec_altmode2port(adev);
+>  
+>  	if (attr == &dev_attr_active.attr)
+> -		if (!is_typec_port(adev->dev.parent) &&
+> -		    (!adev->ops || !adev->ops->activate))
+> -			return 0444;
+> +		if (!is_typec_port(adev->dev.parent)) {
+> +			if (!port->mode_control || !adev->ops || !adev->ops->activate)
+> +				return 0444;
+> +		}
+>  
+>  	return attr->mode;
+>  }
+> @@ -2681,6 +2683,7 @@ struct typec_port *typec_register_port(struct device *parent,
+>  	}
+>  
+>  	port->pd = cap->pd;
+> +	port->mode_control = !cap->no_mode_control;
+>  
+>  	ret = device_add(&port->dev);
+>  	if (ret) {
+> diff --git a/drivers/usb/typec/class.h b/drivers/usb/typec/class.h
+> index db2fe96c48ff..c53a04b9dc75 100644
+> --- a/drivers/usb/typec/class.h
+> +++ b/drivers/usb/typec/class.h
+> @@ -80,6 +80,8 @@ struct typec_port {
+>  	 */
+>  	struct device			*usb2_dev;
+>  	struct device			*usb3_dev;
+> +
+> +	bool				mode_control;
 
+Shouldn't this go up higher in this structure, to avoid the hole you
+created, and to take advantage of the existing hole?  Perhaps after
+orientation?
+
+thanks,
+
+greg k-h
 
