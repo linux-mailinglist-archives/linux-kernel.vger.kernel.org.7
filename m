@@ -1,115 +1,142 @@
-Return-Path: <linux-kernel+bounces-809619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 947E5B50FF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:49:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EF4B50FFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEDE21C26DBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:49:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 410A24823E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9077B30C633;
-	Wed, 10 Sep 2025 07:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD1430CDB7;
+	Wed, 10 Sep 2025 07:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BCHLGpuL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SyjhIxdl"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="UpAiqXB3"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86437241139;
-	Wed, 10 Sep 2025 07:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E52325CC69;
+	Wed, 10 Sep 2025 07:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757490551; cv=none; b=FjtQqIGTh7BxdCPxBx4OjEAlmM4zHB43UKZA2n1KCWMoEHPE9CEGzFXL2JQbWYEIbeB/qzVtX5NlAflVYnMII9nXri0TE4R+iomNxTbXuL/87/JlWSADBFpHVTiSpCQO3PvkM3PQM8OQxyeBzUL9p1IepPJl8MOddlekorNPv7o=
+	t=1757490742; cv=none; b=ZQnZQovwAVvYVqpKGTZoKcJ/tITf4K/W+kHSVX2x2BQ9mSe6q55IEc76WxH5SSicHkfjjbEkJk39fyhudAefU0OIsi7cepveohKYBNN0x8eOQHHs3MtP5IJ6D2tJN8mJxdMEaBumD1W1JCY3XmgHwBo+ziuefbsLKltiacNsmUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757490551; c=relaxed/simple;
-	bh=YcbNLRwOobCcOOt8Z1TWXPjn7EOh3UzfBzPPrJ3iP+E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iTOpgchGMhKAFSTJ292kkP5vytTcBMk4l9N3IvfS1Yv99LOkPmdkoFIyx1Fyh/97HA7Hcw6Jup91gd/jVrogi7nr3+vhYDXDBBE4nVFpEbnjJS3tjmOQO+JI+tmsZ5w23Ps4Y8Fkk3XnXxWF41uSfTW276r7OoJ+GZ2wOElPc0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BCHLGpuL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SyjhIxdl; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757490547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w9emZbZmgTB06eYlDuPxhoQsTb5CjKcX+ELCNcB9xyo=;
-	b=BCHLGpuLDXl/eeWBj8+P8+rJSSFEfRozipRB/CMffMhdE37HKx8iK5UjEPwn8VGh2MujBJ
-	ZbIdB7cUyi6BlsYGuzcNKOSp2p3VYLa9vopwYtcbYWD54qLkQ6+qxOy6jIu0LkGyCoWR80
-	dYxJoSL6abV4YXslFwpx48dIXRlIZrpwu2ydVZFo6cIafdzKnJkPW6rZVkKBOrEIXY07Cp
-	apwR0ASB9w4ObiWRJKuw5G8tDoexAce4ToV3o0/NqjygyO0ttxkJHx/O7WBdBSW0BXHaha
-	8yKILecSBOIxpWJINP4y6i4giofpptJBQjYBTwnGqOVPUioTu3Qlh7nWDOng5w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757490547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w9emZbZmgTB06eYlDuPxhoQsTb5CjKcX+ELCNcB9xyo=;
-	b=SyjhIxdl9Pia9C0mByYI4KEkzTcHAZtaSTkYOUv15e466W5nsGdOr1TdrrP+8MJG+mD6tA
-	4lgQbpNOhyyAmTBg==
-To: K Prateek Nayak <kprateek.nayak@amd.com>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Prakash
- Sangappa <prakash.sangappa@oracle.com>, Madadi Vineeth Reddy
- <vineethr@linux.ibm.com>, Steven Rostedt <rostedt@goodmis.org>, Sebastian
- Andrzej Siewior <bigeasy@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
- linux-arch@vger.kernel.org
-Subject: Re: [patch 07/12] rseq: Implement syscall entry work for time slice
- extensions
-In-Reply-To: <45b4a0db-dab6-4b9d-9ee8-f564eaa202bf@amd.com>
-References: <20250908225709.144709889@linutronix.de>
- <20250908225753.012514970@linutronix.de>
- <45b4a0db-dab6-4b9d-9ee8-f564eaa202bf@amd.com>
-Date: Wed, 10 Sep 2025 09:49:06 +0200
-Message-ID: <87plbyu4r1.ffs@tglx>
+	s=arc-20240116; t=1757490742; c=relaxed/simple;
+	bh=0t9yGEEXA3Nn31jI+sccFFY5GV7rY3i2PAjiZdNyzW8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qKfUvncmjcXldl8QznS7CKV9gOTKnkkU/c3pIXaKj/RADTDjDJet7rDwSQmo2iiXOyNY5OI348vLN0w/pLe+9RDUniARUt3d9IGdFtcSNT2PjSdfqIRXmvD6HXoKXc8Urwf5X2dnBLwIaAkfJxxe5NqKIVIDv9/dNq3Ia8ZJZzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=UpAiqXB3; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1757490737;
+	bh=0t9yGEEXA3Nn31jI+sccFFY5GV7rY3i2PAjiZdNyzW8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=UpAiqXB3yiQEgpvPHKLvbnNRdMV2SHfn0p0a6v3MF12xT+5TlctwrtOaez6Zk8spA
+	 HKpx8SPWcBAY4YqjIMk26VoKiqfN5w5wLppLQellIXouGegIg0Jcf6Kp9IyriWmXN9
+	 LLRHX8UelKi428SLse1/00tT3wpIxnQlJDYHdMvIsMU567h1onU0npm/Htx10tLv2c
+	 pcAN37aMAdTZ11uKoQ2sZf/3NM6BDgVBIp/JnZ3DMe5shE9ZVpfO7dQM8ZmyyfxHRY
+	 SX8pU7R2QMK5P8ueaTyw3akgbDB00Zs3klVO2sFazRiUMlspkxMDyhX33Q6x52mLsD
+	 w2X6o2szzBrzQ==
+Received: from [192.168.68.113] (unknown [180.150.112.213])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id A1CD067672;
+	Wed, 10 Sep 2025 15:52:15 +0800 (AWST)
+Message-ID: <bee023bb9b2ccb3e2437e466190dff2304268db9.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 1/2] arm64: dts: nuvoton: npcm845: Add peripheral
+ nodes
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Tomer Maimon <tmaimon77@gmail.com>, robh+dt@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ avifishman70@gmail.com,  tali.perry1@gmail.com, joel@jms.id.au,
+ venture@google.com, yuenn@google.com,  benjaminfair@google.com
+Cc: openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 10 Sep 2025 17:22:14 +0930
+In-Reply-To: <20250908125938.3584927-2-tmaimon77@gmail.com>
+References: <20250908125938.3584927-1-tmaimon77@gmail.com>
+	 <20250908125938.3584927-2-tmaimon77@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
 
-On Wed, Sep 10 2025 at 10:52, K. Prateek Nayak wrote:
-> On 9/9/2025 4:30 AM, Thomas Gleixner wrote:
->> +static inline void rseq_slice_set_need_resched(struct task_struct *curr)
->> +{
->> +	/*
->> +	 * The interrupt guard is required to prevent inconsistent state in
->> +	 * this case:
->> +	 *
->> +	 * set_tsk_need_resched()
->> +	 * --> Interrupt
->> +	 *       wakeup()
->> +	 *        set_tsk_need_resched()
->> +	 *	  set_preempt_need_resched()
->> +	 *     schedule_on_return()
->> +	 *        clear_tsk_need_resched()
->> +	 *	  clear_preempt_need_resched()
->> +	 * set_preempt_need_resched()		<- Inconsistent state
->> +	 *
->> +	 * This is safe vs. a remote set of TIF_NEED_RESCHED because that
->> +	 * only sets the already set bit and does not create inconsistent
->> +	 * state.
->> +	 */
->> +	scoped_guard(irq)
->> +		set_need_resched_current();
->
-> nit. any specific reason for using a scoped_guard() instead of just a
-> guard() here (and in rseq_cancel_slice_extension_timer()) other than to
-> prominently highlight what is being guarded?
+SGkgVG9tZXIsCgpPbiBNb24sIDIwMjUtMDktMDggYXQgMTU6NTkgKzAzMDAsIFRvbWVyIE1haW1v
+biB3cm90ZToKPiBFbmFibGUgcGVyaXBoZXJhbCBzdXBwb3J0IGZvciB0aGUgTnV2b3RvbiBOUENN
+ODQ1IFNvQyBieSBhZGRpbmcgZGV2aWNlCj4gbm9kZXMgZm9yIEV0aGVybmV0IGNvbnRyb2xsZXJz
+LCBNTUMgY29udHJvbGxlciwgU1BJIGNvbnRyb2xsZXJzLCBVU0IKPiBkZXZpY2UgY29udHJvbGxl
+cnMsIHJhbmRvbSBudW1iZXIgZ2VuZXJhdG9yLCBBREMsIFBXTS1GQU4gY29udHJvbGxlciwKPiBh
+bmQgSTJDIGNvbnRyb2xsZXJzLiBJbmNsdWRlIHBpbm11eCBjb25maWd1cmF0aW9ucyBmb3IgcmVs
+ZXZhbnQKPiBwZXJpcGhlcmFscyB0byBzdXBwb3J0IGhhcmR3YXJlIG9wZXJhdGlvbi4gQWRkIGFu
+IE9QLVRFRSBmaXJtd2FyZSBub2RlCj4gZm9yIHNlY3VyZSBzZXJ2aWNlcy4KPiAKPiBTaWduZWQt
+b2ZmLWJ5OiBUb21lciBNYWltb24gPHRtYWltb243N0BnbWFpbC5jb20+Cj4gLS0tCj4gwqAuLi4v
+ZHRzL251dm90b24vbnV2b3Rvbi1jb21tb24tbnBjbTh4eC5kdHNpwqDCoCB8IDcwMiArKysrKysr
+KysrKysrKysrKy0KPiDCoC4uLi9ib290L2R0cy9udXZvdG9uL251dm90b24tbnBjbTg0NS5kdHNp
+wqDCoMKgwqAgfMKgwqAgNyArCj4gwqAyIGZpbGVzIGNoYW5nZWQsIDcwOCBpbnNlcnRpb25zKCsp
+LCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnV2
+b3Rvbi9udXZvdG9uLWNvbW1vbi1ucGNtOHh4LmR0c2kgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL251
+dm90b24vbnV2b3Rvbi1jb21tb24tbnBjbTh4eC5kdHNpCj4gaW5kZXggMjQxMzM1MjhiOGU5Li43
+ZjEyMGRhMzMxMGEgMTAwNjQ0Cj4gCgoqc25pcCoKCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoGZpdTE6IHNwaUBmYjAwMjAwMCB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqBjb21wYXRpYmxlID0gIm51dm90b24sbnBjbTg0NS1maXUiOwo+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgI2FkZHJlc3Mt
+Y2VsbHMgPSA8MT47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAjc2l6ZS1jZWxscyA9IDwwPjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoHJlZyA9IDwweDAgMHhmYjAwMjAwMCAweDAgMHgxMDAwPjsKPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZy1uYW1lcyA9ICJj
+b250cm9sIjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oGNsb2NrcyA9wqAgPCZjbGsgTlBDTThYWF9DTEtfU1BJMT47Cj4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjbG9jay1uYW1lcyA9ICJjbGtfc3BpMSI7Cj4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwaW5jdHJsLW5h
+bWVzID0gImRlZmF1bHQiOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgcGluY3RybC0wID0gPCZzcGkxX3BpbnM+Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc3RhdHVzID0gImRpc2FibGVkIjsKPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoGZpdTM6IHNwaUBjMDAwMDAwMCB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqBjb21wYXRpYmxlID0gIm51dm90b24sbnBjbTg0NS1maXUiOwo+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgI2FkZHJlc3Mt
+Y2VsbHMgPSA8MT47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAjc2l6ZS1jZWxscyA9IDwwPjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoHJlZyA9IDwweDAgMHhjMDAwMDAwMCAweDAgMHgxMDAwPjsKPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZy1uYW1lcyA9ICJj
+b250cm9sIjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oGNsb2NrcyA9wqAgPCZjbGsgTlBDTThYWF9DTEtfU1BJMz47Cj4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjbG9jay1uYW1lcyA9ICJjbGtfc3BpMyI7Cj4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwaW5jdHJsLW5h
+bWVzID0gImRlZmF1bHQiOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgcGluY3RybC0wID0gPCZzcGkzX3BpbnM+Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc3RhdHVzID0gImRpc2FibGVkIjsKPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoGZpdXg6IHNwaUBmYjAwMTAwMCB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqBjb21wYXRpYmxlID0gIm51dm90b24sbnBjbTg0NS1maXUiOwo+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgI2FkZHJlc3Mt
+Y2VsbHMgPSA8MT47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAjc2l6ZS1jZWxscyA9IDwwPjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoHJlZyA9IDwweDAgMHhmYjAwMTAwMCAweDAgMHgxMDAwPiwKPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDwweDAgMHhmODAwMDAw
+MCAweDAgMHgyMDAwMDAwPjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoHJlZy1uYW1lcyA9ICJjb250cm9sIiwgIm1lbW9yeSI7Cj4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjbG9ja3MgPcKgIDwmY2xrIE5QQ004
+WFhfQ0xLX1NQSVg+Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgY2xvY2stbmFtZXMgPSAiY2xrX2FoYiI7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzdGF0dXMgPSAiZGlzYWJsZWQiOwo+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqB9OwoKQ2FuIHlvdSBwbGVhc2UgYXVkaXQgdGhlIHBhdGNoIChh
+bmQgdGhlIHJlc3Qgb2YgdGhlIGR0c2kpIHRvIG1ha2Ugc3VyZQphbGwgbm9kZXMgYXJlIG9yZGVy
+ZWQgYnkgYXNjZW5kaW5nIHVuaXQgYWRkcmVzcywgYXMgcGVyIHRoZSBEVFMgc3R5bGUKZ3VpZGU/
+CgpodHRwczovL2RvY3Mua2VybmVsLm9yZy9kZXZpY2V0cmVlL2JpbmRpbmdzL2R0cy1jb2Rpbmct
+c3R5bGUuaHRtbCNvcmRlci1vZi1ub2RlcwoKQW5kcmV3Cgo+ICsKPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgbWM6IG1lbW9yeS1jb250cm9sbGVyQGYwODI0MDAwIHsKPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGNvbXBhdGlibGUgPSAibnV2
+b3RvbixucGNtODQ1LW1lbW9yeS1jb250cm9sbGVyIjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZyA9IDwweDAgMHhmMDgyNDAwMCAweDAgMHgxMDAw
+PjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGludGVy
+cnVwdHMgPSA8R0lDX1NQSSAyNSBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKPiArwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgfTsKPiArCgoqc25pcCoK
 
-Yes, the intention was to highlight it and scoped_guard() really
-does. From a code generation perspective it's the same outcome.
-
-Thanks,
-
-        tglx
 
