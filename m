@@ -1,153 +1,174 @@
-Return-Path: <linux-kernel+bounces-810722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D49B51E62
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:57:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0AA3B51E66
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 037541C871AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:57:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617AE1C874D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C01287249;
-	Wed, 10 Sep 2025 16:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B7528B7EA;
+	Wed, 10 Sep 2025 16:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RjrcCUug"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1gbJxRWG"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C57329F38;
-	Wed, 10 Sep 2025 16:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9050122EE5;
+	Wed, 10 Sep 2025 16:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757523436; cv=none; b=CkSBLwbmQK7BO6vesONZ8TWksuo8S1ft4USylYu/6KOIqA12vamAhlQWiw+AKbXX2W/IEyS5yH+WTwbVBZiae7ut8tqgAz5nzVPU1/NUOQjimHjUUFNhvmjy8ErXF+A/DrPoCQ5R4/NdsWU4F2aMK35eMD+qG+3WXOXgy/N/HR8=
+	t=1757523474; cv=none; b=D1OR2RW4akAWM+g7csyHOkKgTKATq+gfJ8CXtN3LanC7YtUAeR7OMdoM4V4eH08B/UBTM13ZDDZa4ydfWXVAGBkUA7yvvwmB29FVLFS87uESrKtKEI+za1tjjJuETk/2wX9MXelh3UYc2MBv04Xyc948FeZ73IiVMNvAbcfH8pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757523436; c=relaxed/simple;
-	bh=29yavP7OV8ZvespV4CLRsLc0fldknIlUzCfZijOolDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qv748nDTE/L47r0CCrODMLk40bLo4EY1DzGZl3fs8Em0qJ6LxjWPvwLxFoTzjzSMmv4zcIeddSwkBNZYVZgtX7KqK68YOgqfwiPjqPkBJxbp1TvdIarnLB3CiMLpWKJDMaCxwlCPymqzu/jcS6ZiyTFap03gqdvNamc4vLNM6eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RjrcCUug; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757523434; x=1789059434;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=29yavP7OV8ZvespV4CLRsLc0fldknIlUzCfZijOolDI=;
-  b=RjrcCUug19Ck2roHbhFe9AIebGyWFP0eF7qtEL4l6O4sVRfwm+MG4usl
-   DLKs78lgln3TiIDNVvGf5EgpatxOQ/cZUOJxWR/Be7TFy/0Tn3x52zqGE
-   UQKsTlWWWufWkEvsEFmxuii7i4YOiBjo4xRj/Y5EASoCwrieYf1onITIF
-   8z/T7AV7LZi+xlOuI3NZOwiNFw3bjMGIjTujyKjpf4WOQSILXrH9q/te/
-   p6gM+Wvkos0loPaPRDmiCNF0agNCVVxSHPmj8Tv42MxeqyScusQV7qW6k
-   Hut63i23qYEFkMmBuDiD3XQslRFiTdAWAh9IsB1e8prL4qY2IBXnbZyRl
-   Q==;
-X-CSE-ConnectionGUID: XJjXjXCiTnmpMPR+Z8FjPA==
-X-CSE-MsgGUID: fchBigQlQh+RgZY5Y2ubnA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="70940735"
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="70940735"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 09:57:14 -0700
-X-CSE-ConnectionGUID: zI1fsTZxQzyIEKTu0cPGbQ==
-X-CSE-MsgGUID: hNdcYcQ4SrCunwflNKG+mw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="177731260"
-Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.110.214]) ([10.125.110.214])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 09:57:14 -0700
-Message-ID: <6a5b66e4-d534-41ff-8feb-ce0ad3ebdff5@intel.com>
-Date: Wed, 10 Sep 2025 09:57:13 -0700
+	s=arc-20240116; t=1757523474; c=relaxed/simple;
+	bh=DtE9miUBQAJCy5AeiKeGehsF4pgnBKqNW9ryVVfwaFE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=uC8py6FxbqSB60BcP35rw2mwr/KN/d9SaAWVvzsfCTHOf2MQnQp94Lb86BNs6Cql0DOQaUN2kvIDyAFtQoHZhYOhD5lCbUJrdDmimZpk1zUqhecgtGr5FeaiaPRP4EFgF5brRwXht1J7dm4vtvC2sitfa4CthB51awc+mnN+OSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1gbJxRWG; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 10E411A0D5A;
+	Wed, 10 Sep 2025 16:57:51 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E6122606D4;
+	Wed, 10 Sep 2025 16:57:50 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E431C102F2833;
+	Wed, 10 Sep 2025 18:57:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757523468; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=4szWPvO4QJK7QXpJTUGbKS9tON103WxwvOm5NDrmuMM=;
+	b=1gbJxRWG9xSsrPgDIudnpxMmPnmBcGhPlleMVERqlMGN5PBPGFylksL/5CZ5YKfw82vclr
+	pN87gSozbGFw7JoU0OsC2FGCzPXsr7nayyyqXutREb4U2rhCcW/hfNWsLCIbfxyEptcaJO
+	NpaaRyXPWzG3yhXSYCWajaowwzfZvQ/J7FrhkSeqfW1qJqtq9UD5LeU02UzPANnRlz/0mK
+	1O7Bfu4cKF4BdQdrWALzTiA6PlOw7Pp8hDf5Nbx9Oi7hLToIeQIjrZh4lbhSQXl1VSbcR5
+	7DjUCQbZcG2txaupiwFZ053mN+AWnhmbgdzfIKXGrpnwhz6tM3zRdIRxo8WOOA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/virt/tdx: Use precalculated TDVPR page physical
- address
-To: Kiryl Shutsemau <kas@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Rick Edgecombe
- <rick.p.edgecombe@intel.com>, Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Kai Huang <kai.huang@intel.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Vishal Annapurve <vannapurve@google.com>, Thomas Huth <thuth@redhat.com>,
- Adrian Hunter <adrian.hunter@intel.com>, linux-coco@lists.linux.dev,
- kvm@vger.kernel.org, Farrah Chen <farrah.chen@intel.com>
-References: <20250910144453.1389652-1-dave.hansen@linux.intel.com>
- <oyagitkaefceadeqoqgycqhubw4hnlsjxf6lytazxpjnzueb4k@bmcvegkzrycq>
- <684e83b3-756b-4995-9804-6b1d0cfa4103@intel.com>
- <766raob5ltycizxfzcqh5blvdyk5girzfu2575n7gu4g7cmco5@zttwu3qwmjlm>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <766raob5ltycizxfzcqh5blvdyk5girzfu2575n7gu4g7cmco5@zttwu3qwmjlm>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Wed, 10 Sep 2025 18:57:23 +0200
+Message-Id: <DCPA2BR78XM8.HWKZZ8WQF3S8@bootlin.com>
+Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-rpi-kernel@lists.infradead.org>, "Broadcom internal kernel review
+ list" <bcm-kernel-feedback-list@broadcom.com>, "Andrew Lunn"
+ <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, "Paolo Abeni" <pabeni@redhat.com>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Florian Fainelli"
+ <florian.fainelli@broadcom.com>, "Andrea della Porta"
+ <andrea.porta@suse.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>, "Phil
+ Elwell" <phil@raspberrypi.com>, "Jonathan Bell" <jonathan@raspberrypi.com>,
+ "Dave Stevenson" <dave.stevenson@raspberrypi.com>,
+ <stable@vger.kernel.org>, "Andrew Lunn" <andrew@lunn.ch>
+To: "Nicolas Ferre" <nicolas.ferre@microchip.com>, "Jakub Kicinski"
+ <kuba@kernel.org>, "Stanimir Varbanov" <svarbanov@suse.de>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v2 1/5] net: cadence: macb: Set upper 32bits of DMA ring
+ buffer
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250822093440.53941-1-svarbanov@suse.de>
+ <20250822093440.53941-2-svarbanov@suse.de>
+ <20250825165310.64027275@kernel.org>
+ <3bccf773-abd6-4ade-a1c5-99f2a773b723@microchip.com>
+In-Reply-To: <3bccf773-abd6-4ade-a1c5-99f2a773b723@microchip.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 9/10/25 09:12, Kiryl Shutsemau wrote:
-> On Wed, Sep 10, 2025 at 09:10:06AM -0700, Dave Hansen wrote:
->> On 9/10/25 09:06, Kiryl Shutsemau wrote:
->>>>  struct tdx_vp {
->>>>  	/* TDVP root page */
->>>>  	struct page *tdvpr_page;
->>>> +	/* precalculated page_to_phys(tdvpr_page) for use in noinstr code */
->>>> +	phys_addr_t tdvpr_pa;
->>> Missing newline above the new field?
->> I was actually trying to group the two fields together that are aliases
->> for the same logical thing.
->>
->> Is that problematic?
-> No. Just looks odd to me. But I see 'struct tdx_td' also uses similar
-> style.
+Hello Nicolas, Jakub, Stanimir,
 
-Your review or ack tag there seems to have been mangled by your email
-client. Could you try to resend it, please? ;)
+On Tue Aug 26, 2025 at 11:14 AM CEST, Nicolas Ferre wrote:
+> On 26/08/2025 at 01:53, Jakub Kicinski wrote:
+>> On Fri, 22 Aug 2025 12:34:36 +0300 Stanimir Varbanov wrote:
+>>> In case of rx queue reset and 64bit capable hardware, set the upper
+>>> 32bits of DMA ring buffer address.
+>>>
+>>> Cc: stable@vger.kernel.org # v4.6+
+>>> Fixes: 9ba723b081a2 ("net: macb: remove BUG_ON() and reset the queue to=
+ handle RX errors")
+>>> Credits-to: Phil Elwell <phil@raspberrypi.com>
+>>> Credits-to: Jonathan Bell <jonathan@raspberrypi.com>
+>>> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+>>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>>=20
+>>> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/eth=
+ernet/cadence/macb_main.c
+>>> index ce95fad8cedd..36717e7e5811 100644
+>>> --- a/drivers/net/ethernet/cadence/macb_main.c
+>>> +++ b/drivers/net/ethernet/cadence/macb_main.c
+>>> @@ -1634,7 +1634,11 @@ static int macb_rx(struct macb_queue *queue, str=
+uct napi_struct *napi,
+>>>                macb_writel(bp, NCR, ctrl & ~MACB_BIT(RE));
+>>>
+>>>                macb_init_rx_ring(queue);
+>>> -             queue_writel(queue, RBQP, queue->rx_ring_dma);
+>>> +             queue_writel(queue, RBQP, lower_32_bits(queue->rx_ring_dm=
+a));
+>>> +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+>>> +             if (bp->hw_dma_cap & HW_DMA_CAP_64B)
+>>> +                     macb_writel(bp, RBQPH, upper_32_bits(queue->rx_ri=
+ng_dma));
+>>> +#endif
+>>>
+>>>                macb_writel(bp, NCR, ctrl | MACB_BIT(RE));
+>>>
+>>=20
+>> Looks like a subset of Th=C3=A9o Lebrun's work:
+>> https://lore.kernel.org/all/20250820-macb-fixes-v4-0-23c399429164@bootli=
+n.com/
+>> let's wait for his patches to get merged instead?
+>
+> Yes, we can certainly wait. As RBOPH changes by Th=C3=A9o are key, they w=
+ill=20
+> probably remove the need for this fix altogether: but I count on you=20
+> Stanimir to monitor that (as I don't have a 64 bit capable platform at=20
+> hand).
+
+I when looking for where this patch came from.
+Commit in the raspberrypi downstream kernel:
+https://github.com/raspberrypi/linux/commit/e45c98decbb16e58a79c7ec6fbe4374=
+320e814f1
+
+It is somewhat unreadable; the only part that seems related is the:
+
+> net: macb: Several patches for RP1
+> 64-bit RX fix
+
+ - Is there any MACB hardware (not GEM) that uses 64-bit DMA
+   descriptors? What platforms? RPi maybe?
+
+ - Assuming such a platform exists, the next question is why does
+   macb_rx() need to reinit RBQPH/0x04D4. It reinits RBQP/0x0018
+   because it is the buffer pointer and increments as buffers get used.
+
+   To reinit RBQPH would be for the case of the increment overflowing
+   into the upper 32-bits. Sounds like a reasonable fix (for a really
+   rare bug) if that hardware actually exists.
+
+   This wouldn't be needed on GEM because RBQPH is shared across queues.
+   So of course RBQPH would not increment with the buffer pointer.
+
+If this patch is needed (does HW exist?), then my series doesn't address
+it. I can take the patch in a potential V6 if you want. V5 got posted
+today [0].
+
+[0]: https://lore.kernel.org/lkml/20250910-macb-fixes-v5-0-f413a3601ce4@boo=
+tlin.com/
+
+Thanks,
+Have a nice day,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
