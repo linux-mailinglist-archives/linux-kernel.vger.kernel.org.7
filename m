@@ -1,128 +1,182 @@
-Return-Path: <linux-kernel+bounces-809531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599BCB50EBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:08:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5855FB50EC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAF78543236
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:08:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF8885434EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977DB305E19;
-	Wed, 10 Sep 2025 07:08:47 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DB6305972;
+	Wed, 10 Sep 2025 07:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frdAZNl+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8BF175A5
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6825175A5;
+	Wed, 10 Sep 2025 07:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757488127; cv=none; b=tPWJ1Bx4OanZn9EK1vvBppj9sd2qNRev8W/gLrTIFlQzrboXJPHQhbL+xTt9sFwwzCyNShYIYHMQz4TSjg9N5h/PHFmZxRdzPPHspwHlql063Th64HV3zVYS0fIwjD5l/OMEmHmgjCULE6A0KRFWrZ5COsSnIJ5O23zBTSqFCE8=
+	t=1757488133; cv=none; b=FyZx95kxXK5sD5+vBNQm7Rcr1ygV+obUvvNxBz1/wgUH3p/cwySsKjYNQBauMypC7cmACu+tdA0NKE9gjnyMbKybWgni5ShrFrBbKh1qSQiaXnQjRdPHjL41hLtDGm3JzJG+t6AXlf02xVv/8DcwNiFTacysarQFhC10EGlOGgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757488127; c=relaxed/simple;
-	bh=VDXJRMatLsnf9a6GY+1Kzd46i4ImKZ+ZX2nboEeBDuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hcg7CWokvU2pZ3I1+aVlaPM4+XT43uumMOSLK0icCvgLJclJ655NrZsGaDA1hel2qg0u5/XdK3RIWlYMIyUJNLRDA7yF1fJ4EhkBl2T8XAfItE5gXX/uUgv+x/mPhHBBQKNU94c3aYVoED0xzORS4FYjMVtmNkHEMlOV9Ci7l0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uwEwW-0006YP-9Z; Wed, 10 Sep 2025 09:08:36 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uwEwU-000YJv-2i;
-	Wed, 10 Sep 2025 09:08:34 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uwEwU-00G9DX-2C;
-	Wed, 10 Sep 2025 09:08:34 +0200
-Date: Wed, 10 Sep 2025 09:08:34 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v1 1/1] net: phy: clear EEE runtime state in
- PHY_HALTED/PHY_ERROR
-Message-ID: <aMEj8vjJY4h6kYbN@pengutronix.de>
-References: <20250909131248.4148301-1-o.rempel@pengutronix.de>
- <5078fdbe-b8ac-430a-ab5d-9fa2d493c7da@lunn.ch>
+	s=arc-20240116; t=1757488133; c=relaxed/simple;
+	bh=fjSohwTz1+Et268wecE2Kh86wUopAC58X5j5ABbf6FQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jX1JQ/7I6p++hf7BEwc4bHhCv5slzHk1Po0C6hC6ebvhW65KEWZSkahrDgunMTqyHfk2z7f8/+dMKMvhH8NWVl4OI5CJYkUx+TLvR9ZoW3N1qMHFnuODbixmVr45+jVBvmK3lpN5YyEzBVrRlCIpzmRRLrKpLK2hRpjUkNaycgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frdAZNl+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 953C5C4CEF0;
+	Wed, 10 Sep 2025 07:08:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757488133;
+	bh=fjSohwTz1+Et268wecE2Kh86wUopAC58X5j5ABbf6FQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=frdAZNl+WOND6AT1uN5xEe0ikDxRoAi8DKBHGiBMLKnTUdeQtunIY2l2ZLVEVfyXH
+	 O+apxKoMcOl4GDUvijkn0qn3qzBWkO4alMYQap8q0hQOOr/iCyvn44KSI6As22DRq4
+	 KpxPDy7I61DcYRuNshcaa5OYfzbQL8adTh07+uczPnVkJHby47q2KFYbfKGb9n+LIL
+	 9qgtyPPmRS95JQSR5GgxOTmvQaZjv3MAneiQcW/5/Li9w4JVwZKogKf7uAzIjrVjxj
+	 ecZuZFO18tESXripy8RhcN+Jnz52TzrrZCFJAmk4EInsvUTdHvKLUcGqpkTqZJASgc
+	 9Ac87Lohfvm4g==
+Message-ID: <6faff5b1-65b1-41ee-aba8-8c06a2bc6f58@kernel.org>
+Date: Wed, 10 Sep 2025 09:08:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5078fdbe-b8ac-430a-ab5d-9fa2d493c7da@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: counter: Add new ti,omap-dmtimer-cap
+ compatible
+To: Gokul Praveen <g-praveen@ti.com>, j-keerthy@ti.com, vigneshr@ti.com,
+ wbg@kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
+Cc: u-kumar1@ti.com, n-francis@ti.com
+References: <20250909080042.36127-1-g-praveen@ti.com>
+ <20250909080042.36127-2-g-praveen@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250909080042.36127-2-g-praveen@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 09, 2025 at 03:58:32PM +0200, Andrew Lunn wrote:
-> On Tue, Sep 09, 2025 at 03:12:48PM +0200, Oleksij Rempel wrote:
-> > Clear EEE runtime flags when the PHY transitions to HALTED or ERROR
-> > and the state machine drops the link. This avoids stale EEE state being
-> > reported via ethtool after the PHY is stopped or hits an error.
+On 09/09/2025 10:00, Gokul Praveen wrote:
+> This commit adds a YAML binding for OMAP DM timer used in
+
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
+
+Don't use "YAML binding" - there is no such thing.
+
+Instead just describe the hardware.
+
+> capture operating mode.
 > 
-> One obvious question, why is EEE special? We have other state in
-> phydev which is not valid when the link is down. Are we setting speed
-> and duplex to UNKNOWN? lp_advertising, mdix, master_slave_state?
+> Signed-off-by: Gokul Praveen <g-praveen@ti.com>
+> ---
+>  .../bindings/counter/ti,omap-dmtimer-cap.yaml | 34 +++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/counter/ti,omap-dmtimer-cap.yaml
 > 
-> So while i agree it is nice not to show stale EEE state, maybe we
-> should not be showing any stale state and this patch needs extending?
+> diff --git a/Documentation/devicetree/bindings/counter/ti,omap-dmtimer-cap.yaml b/Documentation/devicetree/bindings/counter/ti,omap-dmtimer-cap.yaml
+> new file mode 100644
+> index 000000000000..8de9cf58aee5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/counter/ti,omap-dmtimer-cap.yaml
+> @@ -0,0 +1,34 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/counter/ti,omap-dmtimer-cap.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI dual mode timer Capture Module
+> +
+> +maintainers:
+> +  - Gokul Praveen <g-praveen@ti.com>
+> +
+> +description:
+> +  TI dual mode timer instances have an IO pin for Capture capability.
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,omap-dmtimer-cap
 
-I decided to send the first step patch for the agreed subset (EEE
-flags), so it can be merged faster.
+Missing SoC specific part. OMAP is family, no?
 
-As a follow-up I would propose a separate patch which clears additional
-link-resolved state when the PHY enters HALTED, for example:
+> +
+> +  ti,timers:
+> +    description: Timer instance phandle for the Capture
 
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -1552,6 +1552,16 @@ static enum phy_state_work _phy_state_machine(struct phy_device *phydev)
-                }
-                break;
-        case PHY_HALTED:
-+               if (phydev->link) {
-+                       if (phydev->autoneg == AUTONEG_ENABLE) {
-+                               phydev->speed = SPEED_UNKNOWN;
-+                               phydev->duplex = DUPLEX_UNKNOWN;
-+                       }
-+                       if (phydev->master_slave_state != MASTER_SLAVE_STATE_UNSUPPORTED)
-+                               phydev->master_slave_state = MASTER_SLAVE_STATE_UNKNOWN;
-+                       phydev->mdix = ETH_TP_MDI_INVALID;
-+                       linkmode_zero(phydev->lp_advertising);
-+               }
-        case PHY_ERROR:
-                if (phydev->link) {
-                        phydev->link = 0;
+So the only resource is phandle? That's completely fake device then. NAK.
 
-Would this approach be acceptable, or do you see hidden issues with clearing
-these extra fields?
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +required:
+> +  - compatible
+> +  - ti,timers
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    main_cap10: dmtimer-main-cap-10 {
 
-Best Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+If you cannot find a name matching your device, please check in kernel
+sources for similar cases or you can grow the spec (via pull request to
+DT spec repo).
+
+
+Best regards,
+Krzysztof
 
