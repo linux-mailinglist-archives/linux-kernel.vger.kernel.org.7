@@ -1,104 +1,97 @@
-Return-Path: <linux-kernel+bounces-810102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9928FB515DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A39CBB515E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596AB481A91
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:36:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43079483976
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974432848BD;
-	Wed, 10 Sep 2025 11:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A1A280332;
+	Wed, 10 Sep 2025 11:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ApXjy1T5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBs1aXtG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F3227FD76;
-	Wed, 10 Sep 2025 11:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22FF2848BD
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757504176; cv=none; b=uxCcoypO3VHG1HifVrt2CUXW2hPPbhl/OOdXyG5Vb+3d39MiR9fRiTl/N8rt31W9Xb93Pk8BbRuG1HZKtV6unvCBVUPJ3K2QcmFuUVcgfqiwBlUV1GaZ4hmP/doDrnqgI4ovvUldyd9+bLQ+TENTR3RmorHvftgWG+DhMvwoJDk=
+	t=1757504187; cv=none; b=p5IOL04bhFxLUsP7idbC6p/F8UDwhDyfdk0kLUljzwU/2ixSoaCmzP0pJyGuAIXsTFGzp4tq6m1XZMVUYzvxTRXTJZTeCdMReXvfB0RJ8kP8f9nCIE3EwVuKMN99PECUpDoEV6JlzH2lCvInBUfhls2m/3QSLT3C3HLM+YtLnAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757504176; c=relaxed/simple;
-	bh=6l01S/6rt47Erai4jgs1/fHMs7MWuVscpV4xRqhC7Bw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ejSYno2yyIn+8zp8CAgE0cFW3d4G7MhnvD9qXUtNKtqTPRcpAWZ3e2tvul2JOBRZsbG/NCHcyEXcTXVEOC/R1Uy+oW8I6w0aLVu+0vAJF/VgFjUwAc2/4GQUOLRWCZIt0OIFH1KJFX6uhvr9mGJu9gW4rRtIjll+hzvdOk2fKkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ApXjy1T5; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757504175; x=1789040175;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=6l01S/6rt47Erai4jgs1/fHMs7MWuVscpV4xRqhC7Bw=;
-  b=ApXjy1T5NFgybDDKODC3wp8loy9mjbo5uBjeCi2+XV9iKiCZfdHa32Dx
-   KRj4AfYP8R9DXwL1CdBQs9FtEkav4CaZlV5xQlYrse9wLTcSJffFDUeNu
-   /w6vu/87JR60RaDBc/x1B72y8dsYvLhg/jdllmcQiowCQyN/K0yOEnHIL
-   NajDWKcVRUX5HJbp64vOk6WttIvPUALfm+Ohcbj8Zok1wptam/p5+wCnm
-   Kl8sLT24aMMqbQJOiemYKGKbyFtCV7kyNYQl6/QekiT3VdJGOhwjZIVm+
-   3rGO9LKZZKxwj4PrBrqxAWrXEvRrax6j0Kh65fGBbSoOCSRbIoQj1vKb0
-   A==;
-X-CSE-ConnectionGUID: UEudGTgATv2TXbkZ8eAbjQ==
-X-CSE-MsgGUID: Dn/ZlPX0S3it0xMtwKfwOw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="85254248"
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="85254248"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 04:36:14 -0700
-X-CSE-ConnectionGUID: GgsNQTLSRAChkvxJTM6ILw==
-X-CSE-MsgGUID: iK3CtWNvQyacEx2hxp+Fxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="172535363"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.59])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 04:36:11 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: platform-driver-x86@vger.kernel.org, 
- Antheas Kapenekakis <lkml@antheas.dev>
-Cc: linux-kernel@vger.kernel.org, 
- Derek John Clark <derekjohn.clark@gmail.com>, 
- =?utf-8?q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>, 
- Eileen <eileen@one-netbook.com>, Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250904132252.3041613-1-lkml@antheas.dev>
-References: <20250904132252.3041613-1-lkml@antheas.dev>
-Subject: Re: [PATCH v1 1/2] platform/x86: oxpec: Add support for OneXPlayer
- X1Pro EVA-02
-Message-Id: <175750416456.15501.9029760807017226588.b4-ty@linux.intel.com>
-Date: Wed, 10 Sep 2025 14:36:04 +0300
+	s=arc-20240116; t=1757504187; c=relaxed/simple;
+	bh=sx745xYWNlQTz7IJ+l5XW0LtbZ4FRTEwu33ThUwCe7A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eQDnA6sVRg8aryatRLH8hObaPXeHPagYhEM0ANvoIx2rs3fofBRW5DoIuXaS1IoxA9hvzyOXjYZvTRQpg7pfjxZrkzGrRzIs7hLNaEvuFdSSow4nFc1OG6VN/4lbo1flXuJAvSmPHkHJ1I2Un48Qyv56wsFCKuee50cjBJB5aJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBs1aXtG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2711DC4CEFB
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757504187;
+	bh=sx745xYWNlQTz7IJ+l5XW0LtbZ4FRTEwu33ThUwCe7A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZBs1aXtGGaTI80cS1mtr5ixOzUetamUriresW3xxwkeg8VrJTP9LT6Jn7fV/uI7eD
+	 xjt0xmHdar4Ms63ZReN1V0QuXXcTFAOfOQUz4R2efyP2+RGMheRhEFmASqwE4jTDqG
+	 8GfWNhxLe59jDRMQZFCsx6GyOKR2EJF48Xhqu4RwRARWWeEy7eWh+kjHxm3GZWuBH0
+	 GemGuOZYs4ecvVGb/golSDZ4tHozfGi0Sb2XHytYskB9rdUi5gwbGhMjUx6fWtbT8i
+	 Px9XrXpJ7FqNfYJ+ATWuysKAAPB878Yyx6/I46AcuWPpLCEn1dIyF6jU9rkD+MIbT7
+	 th0uX/KeTun0Q==
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6205e2b7a8fso2397753eaf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:36:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUkzFjZoGIxVteNV6ihFHoRmVlQDbf3mCt+dKE+xSCEOCZT6z5WOTOSNjipIT6DuhPlaWRY0Ri58rOWoLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrMphiBM1WPIhAEEOmwU5cLYYfnQG9QwNrMWJ4jIQMe7MCVM0J
+	5huVkLohaRaA/J8PGRSMNAcjvjt9a+9H7aYy67ZejzCnGmUconvMghE7wUrX+PmsoVDN5Nnqloq
+	fIO7YYQ4SSG++45sf/vOrUHHF+Mkv/tA=
+X-Google-Smtp-Source: AGHT+IEJO7lV7IxQ2LoalC1HeIn3RsvWclTAZHN7seU9U5SjUk6ilxWC/Yd7dP9gyeE3b0ua+DJCzPKBOUc8oYM21NI=
+X-Received: by 2002:a05:6820:828:b0:620:7998:64aa with SMTP id
+ 006d021491bc7-621789fd31cmr7072039eaf.1.1757504186425; Wed, 10 Sep 2025
+ 04:36:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+References: <20250908152213.30621-1-johan@kernel.org> <20250908152213.30621-2-johan@kernel.org>
+ <6a00646c-2b25-4193-8db2-157669817d61@oss.qualcomm.com>
+In-Reply-To: <6a00646c-2b25-4193-8db2-157669817d61@oss.qualcomm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 10 Sep 2025 13:36:15 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gXY-QRFonw1fU7ok5k0ieNXo99gmQhXTbXQ8icDwEhCg@mail.gmail.com>
+X-Gm-Features: Ac12FXyVqN9IGLh7O7_astg1sdoDIW3e_DesBVTeINM0sGt0jkF6qY4MvvkCO_0
+Message-ID: <CAJZ5v0gXY-QRFonw1fU7ok5k0ieNXo99gmQhXTbXQ8icDwEhCg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] cpuidle: qcom-spm: fix device and OF node leaks at probe
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Johan Hovold <johan@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, linux-arm-msm@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 04 Sep 2025 15:22:51 +0200, Antheas Kapenekakis wrote:
+On Mon, Sep 8, 2025 at 5:40=E2=80=AFPM Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> On 9/8/25 5:22 PM, Johan Hovold wrote:
+> > Make sure to drop the reference to the saw device taken by
+> > of_find_device_by_node() after retrieving its driver data during
+> > probe().
+> >
+> > Also drop the reference to the CPU node sooner to avoid leaking it in
+> > case there is no saw node or device.
+> >
+> > Fixes: 60f3692b5f0b ("cpuidle: qcom_spm: Detach state machine from main=
+ SPM handling")
+> > Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.or=
+g>
+> > Signed-off-by: Johan Hovold <johan@kernel.org>
+> > ---
+>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-> It is a special edition of X1Pro with Intel and a different color.
-> 
-> 
-
-
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/2] platform/x86: oxpec: Add support for OneXPlayer X1Pro EVA-02
-      commit: fba9d5448bd45b0ff7199c47023e9308ea4f1730
-[2/2] platform/x86: oxpec: Add support for AOKZOE A1X
-      commit: d857d09fb653f081f5730e5549fce397513b0ef9
-
---
- i.
-
+Applied as 6.18 material along with the [2/2], thanks!
 
