@@ -1,59 +1,78 @@
-Return-Path: <linux-kernel+bounces-809909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32687B51364
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:01:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24374B5136C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D109B7B3996
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCB48162FA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B239253355;
-	Wed, 10 Sep 2025 10:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0ArAIPW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5960931D361;
-	Wed, 10 Sep 2025 10:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1212571D8;
+	Wed, 10 Sep 2025 10:03:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8B023D7EF;
+	Wed, 10 Sep 2025 10:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757498466; cv=none; b=Bk+vO1qsbIEE3j8EMTdRCFVkDYBdttnO9IgFo6GjkEj0nD2YFbc9SIo/IMlObFkGXCczpi1lE+vtov6XO89sqdYyE1j54oyRFIqUKl9vsg47EF8dE8sixUo5ACKz49e4kk1fitjVHQ4uqI8yI2phQ0OujvimQb8YGXEHfJcskNE=
+	t=1757498597; cv=none; b=nNXGFrjE3swjGLF+yXV2vYxTyJMdaImvoUJN45Wn/IqmMZ9puzovJGoqatmqzZIGd+GkoXjuwxD61Z7qbVP6++kwGNoH14vTRIPFVZUtR7nCnWxia7ub64JoAAdHzjxWtCCJdjQb0xq8XPTnt/NxaPY9M95qE0WNmy4FDBKIrjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757498466; c=relaxed/simple;
-	bh=G54EZvV6TYh/6aRiLS/VHoanwwYRL6VCM+nMKElEI20=;
+	s=arc-20240116; t=1757498597; c=relaxed/simple;
+	bh=I6d11lOxfm06weQbqzIXWWIrhs68/TQI6BVBp5qCvv4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BHFWDcql/xNyXSH8EZgQ1hF0A9azztCfH/0aCnqyDj+N4Qgt3Fz6eUnkcwkkkFaY8q+V40SFrqBOynayr3fnxLeuJKeUJRfDK4wmdLII+VDM4MxqhWfKDfV8aPEtdSQsbGm9BFz1wy43fVXQqeBHiY4jnOzKtQd8kQK1+CK6NPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j0ArAIPW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D25CC4CEF0;
-	Wed, 10 Sep 2025 10:01:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757498465;
-	bh=G54EZvV6TYh/6aRiLS/VHoanwwYRL6VCM+nMKElEI20=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j0ArAIPWssOq42cLhTYSaTOOEJ3f4TBdM/d8YerpuWgBriQtXuyvU+81knfjxYXt5
-	 NV1+P14kcqIt+EbTzbRGCUbdEM/UHfatAA2R5KTwKqiapdE1S25UYnLqPh7ObG7Lgv
-	 YeDAqGlHqMjJ7uhjLZU4hA1VFYuuIYBwwYRkkjN8rUoURyeU8StIcihBmdnXggdn1A
-	 sAug9yL8h/isBavawkJzfdFyz5tY01zNuSYyK+Nw3NzLC61UPM89My7GuKULLmoVte
-	 cVgTrHOnuIjWrK16Yok8x6ljiChFtIx+9pPfoP2Lnvy+XrJSa0QGT6mV886AjC6Ehz
-	 o3ai+1/N+usZw==
-Date: Wed, 10 Sep 2025 13:01:00 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Kriish Sharma <kriish.sharma2006@gmail.com>
-Cc: alibuda@linux.alibaba.com, dust.li@linux.alibaba.com,
-	sidraya@linux.ibm.com, wenjia@linux.ibm.com, mjambigi@linux.ibm.com,
-	tonylu@linux.alibaba.com, guwen@linux.alibaba.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, linux-rdma@vger.kernel.org,
-	linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] net/smc: replace strncpy with strscpy for ib_name
-Message-ID: <20250910100100.GM341237@unreal>
-References: <20250908180913.356632-1-kriish.sharma2006@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WHOyOXYryhCN+oRV/WNGeLh3eD2TTh2/2GDqvGYukI/L3KTzAN/b3dAisUvlmkcfCRiEUqdpfgD59GrPN3/x5Za+M1twCZ9v9XLvh3dYhy3haCbIOWsLc+hOMGB9oCi35cyPheyx1b2aTPw4wCBYnpiXPFhB45I1rXXC7sVD3/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A58516F8;
+	Wed, 10 Sep 2025 03:03:07 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 192AD3F66E;
+	Wed, 10 Sep 2025 03:03:08 -0700 (PDT)
+Date: Wed, 10 Sep 2025 11:03:06 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Lee Jones <lee@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <legoffic.clement@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	James Cowgill <james.cowgill@blaize.com>,
+	Matt Redfearn <matt.redfearn@blaize.com>,
+	Neil Jones <neil.jones@blaize.com>,
+	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Yang Shen <shenyang39@huawei.com>, Imre Kaloz <kaloz@openwrt.org>,
+	Yinbo Zhu <zhuyinbo@loongson.cn>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com, imx@lists.linux.dev,
+	linux-unisoc@lists.infradead.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 1/3] mfd: vexpress-sysreg: use more common syntax for
+ compound literals
+Message-ID: <20250910-precious-silky-worm-8bae77@sudeepholla>
+References: <20250910-make-compound-literals-normal-again-v1-0-076ee7738a0b@linaro.org>
+ <20250910-make-compound-literals-normal-again-v1-1-076ee7738a0b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,40 +81,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250908180913.356632-1-kriish.sharma2006@gmail.com>
+In-Reply-To: <20250910-make-compound-literals-normal-again-v1-1-076ee7738a0b@linaro.org>
 
-On Mon, Sep 08, 2025 at 06:09:13PM +0000, Kriish Sharma wrote:
-> Replace the deprecated strncpy() with strscpy() for ib_name in
-> smc_pnet_add_ib(). The destination buffer should be NUL-terminated and
-> does not require any trailing NUL-padding. Since ib_name is a fixed-size
-> array, the two-argument form of strscpy() is sufficient and preferred.
+On Wed, Sep 10, 2025 at 09:25:45AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
-> ---
->  net/smc/smc_pnet.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The (typeof(foo)) construct is unusual in the kernel, use a more typical
+> syntax by explicitly spelling out the type.
 > 
-> diff --git a/net/smc/smc_pnet.c b/net/smc/smc_pnet.c
-> index 76ad29e31d60..b90337f86e83 100644
-> --- a/net/smc/smc_pnet.c
-> +++ b/net/smc/smc_pnet.c
-> @@ -450,7 +450,7 @@ static int smc_pnet_add_ib(struct smc_pnettable *pnettable, char *ib_name,
->  		return -ENOMEM;
->  	new_pe->type = SMC_PNET_IB;
->  	memcpy(new_pe->pnet_name, pnet_name, SMC_MAX_PNETID_LEN);
-> -	strncpy(new_pe->ib_name, ib_name, IB_DEVICE_NAME_MAX);
-> +	strscpy(new_pe->ib_name, ib_name);
 
-It is worth to mention that caching ib_name is wrong as IB/core provides
-IB device rename functionality.
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
-Thanks
-
->  	new_pe->ib_port = ib_port;
->  
->  	new_ibdev = true;
-> -- 
-> 2.34.1
-> 
-> 
+-- 
+Regards,
+Sudeep
 
