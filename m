@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-809841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B2D9B512A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:37:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E06B512B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34C343A9D3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:37:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A669F4E2A7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBE0313E1F;
-	Wed, 10 Sep 2025 09:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7852A314B6E;
+	Wed, 10 Sep 2025 09:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrFC/fE/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CUCm+0Cc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1003A285CAF;
-	Wed, 10 Sep 2025 09:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB93314A7F;
+	Wed, 10 Sep 2025 09:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497034; cv=none; b=PNFY0hCVDnORwLBd33VA+ct3KDB/Kjf/uW5k/tBs1MTd+uWDwC0Opf3qXco2i80xpe8x9Y0+y5DK7TmA51Hgrs3LN7l+q3kKY6wexomVp9PxgeGwgazj38gPOpWhafjYH6O5iswmywFFR59/3UYVIwEMZKiNjI7kp7+Og9OfoFY=
+	t=1757497083; cv=none; b=XoGXaCQX79PC2H/5cWVWlo248RsgCNgnc2tKfNp7ZCl0b5zDcfIeioDzgBJ7Zmyt2UngYWzibpsUCWQssn4gatj0+Ra9H1R/2zx44ZkOIl1MN4eQeKQ64hb8SZYIvzDEZ2Fe1eGGCz5Z2FGO6EvOAf54fxZp3g6nJ/DAmnKsS3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497034; c=relaxed/simple;
-	bh=28Z83TYU1HcXY9gGFlYZe5FSkvWNJL9vWbrzyGS+5pM=;
+	s=arc-20240116; t=1757497083; c=relaxed/simple;
+	bh=K3S4/YYR0q8eWSDj5bQrQ8p7/okLw1YwfbW83NtyxJk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=doJN3gpdvbbUb//4eIH52v2gf2qkcsjNQXMn4kcz4uAZmehq45rgNzMGVYCBCqynlNbE+z4g5WgBqnbAN/eA8uQtfJ/l2py+xWiBxKdMLTrvE6AU83Ycy1wfdTGvqnp3FM3NljqTKEXkBV1FNu3lAi3BwAErFaaiwubLqcMmiH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrFC/fE/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D8B1C4CEF8;
-	Wed, 10 Sep 2025 09:37:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757497033;
-	bh=28Z83TYU1HcXY9gGFlYZe5FSkvWNJL9vWbrzyGS+5pM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LrFC/fE/oDv/+Dn6Np09etM9Npqz03ErTqdlyl7GKVA9kDhwpcpp4HvrUmXaxz6Lo
-	 PKnUha90vZwmj5z5nri8qBNVmZnEnuIEgLcKVUsy2EU7IHPyot8jgZRE3o2p2R6ujq
-	 wE1hGalT7vT8CI2atXShbN0g5NOIOz2S39qEtH5pvXqLSg6bY7SOvY33Q8bR8s0mSa
-	 umY/oqnMyLkWte8iHy9yhhP30C3FDhBGtjZjiPWDfPALd9LJ9diSrYxZPnyZbwMe5i
-	 SnowW6qqWGUwd34SGJReguDbIKG5SBEkYaR80Xp9JLIdXMPGRNa+AfwpUhyFq2kpeF
-	 /tOMZGmjuVLDw==
-Message-ID: <12816b79-c9b0-43d1-9b99-a1e7c7d73571@kernel.org>
-Date: Wed, 10 Sep 2025 11:37:10 +0200
+	 In-Reply-To:Content-Type; b=ZUtMTqbieoUss0ipuakEKZzx0uaFn3bhCN1uu/PIcuBianXgCP1zuKXuO0mlH45Z2GozUEG/mlNsHeqRorHO8KCRvDjpVyDX9k5Z4z7uGizpgTVCjB5TmelnFGun8V89Px7mJzIURoWsiZdMT7xDEKMNUTJbzTzCJ5Y4yHZvA4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CUCm+0Cc; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757497082; x=1789033082;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=K3S4/YYR0q8eWSDj5bQrQ8p7/okLw1YwfbW83NtyxJk=;
+  b=CUCm+0CcRMnQxPRsd3/WPaJHmpXf9Fb47d7btCGotty7HdUU50fT356l
+   2LGVLmoFqA5mqbG9gjU7R1Ie58RSsZMQlF4pfzfQQ2QKa8cnrG1DwLs6H
+   iwINZB4skhrehCe+7Ybt/HOJan99YiAH5vEABzxusRAysV92r6OTHfBhO
+   AgJbMBFf+19FM6fwI/pPUFyHGGgPlaL72OBFlCDHiVwAZ8j8/iE7v7fAH
+   jMO2kR4MFKN4iPB8aq2iKXBxtdZCI3gudMEauhrPOfNIL5zBZTt+hGro2
+   kv4nHwqeUwf4morHzmg+UU5b4m7KIqr1rFJLKCXHVtCO6BpgaIczLzm5U
+   w==;
+X-CSE-ConnectionGUID: NWsILvWZR5C4/b/unB1nfQ==
+X-CSE-MsgGUID: 9AXy5W7ZTza7PEDFTNI1pQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="71216806"
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="71216806"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 02:38:01 -0700
+X-CSE-ConnectionGUID: nYyyuxHNT0WdC4Vb/XqFhg==
+X-CSE-MsgGUID: pTxQS5PpTXmqP5Puv2L3NQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="173255428"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 02:37:56 -0700
+Message-ID: <be3459db-d972-4d46-a48a-2fab1cde7faa@intel.com>
+Date: Wed, 10 Sep 2025 17:37:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,120 +66,165 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ACPI: video: Fix missing backlight node creation on
- Zhaoxin platforms
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>,
- "Rafael J . wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>, Mario Limonciello
- <mario.limonciello@amd.com>, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250910074711.1511753-1-zhangzihuan@kylinos.cn>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <20250910074711.1511753-1-zhangzihuan@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v14 06/22] KVM: x86: Load guest FPU state when access
+ XSAVE-managed MSRs
+To: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: acme@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, john.allen@amd.com, mingo@kernel.org, mingo@redhat.com,
+ minipli@grsecurity.net, mlevitsk@redhat.com, namhyung@kernel.org,
+ pbonzini@redhat.com, prsampat@amd.com, rick.p.edgecombe@intel.com,
+ seanjc@google.com, shuah@kernel.org, tglx@linutronix.de,
+ weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com
+References: <20250909093953.202028-1-chao.gao@intel.com>
+ <20250909093953.202028-7-chao.gao@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250909093953.202028-7-chao.gao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Zihuan,
-
-On 10-Sep-25 9:47 AM, Zihuan Zhang wrote:
-> Some recent Lenovo and Inspur machines with Zhaoxin CPUs fail to create
-> /sys/class/backlight/acpi_video0 on v6.6 kernels, while the same hardware
-> works correctly on v5.4.
+On 9/9/2025 5:39 PM, Chao Gao wrote:
+> From: Sean Christopherson <seanjc@google.com>
 > 
-> Our analysis shows that the current implementation assumes the presence of a
-> GPU. The backlight registration is only triggered if a GPU is detected, but on
-> these platforms the backlight is handled purely by the EC without any GPU.
-> As a result, the detection path does not create the expected backlight node.
+> Load the guest's FPU state if userspace is accessing MSRs whose values
+> are managed by XSAVES. Introduce two helpers, kvm_{get,set}_xstate_msr(),
+> to facilitate access to such kind of MSRs.
 > 
-> To fix this, move the following logic:
+> If MSRs supported in kvm_caps.supported_xss are passed through to guest,
+> the guest MSRs are swapped with host's before vCPU exits to userspace and
+> after it reenters kernel before next VM-entry.
 > 
-> /* Use ACPI video if available, except when native should be preferred. */
-> if ((video_caps & ACPI_VIDEO_BACKLIGHT) &&
->     !(native_available && prefer_native_over_acpi_video()))
->         return acpi_backlight_video;
+> Because the modified code is also used for the KVM_GET_MSRS device ioctl(),
+> explicitly check @vcpu is non-null before attempting to load guest state.
+> The XSAVE-managed MSRs cannot be retrieved via the device ioctl() without
+> loading guest FPU state (which doesn't exist).
 > 
-> above the if (auto_detect) *auto_detect = true; statement.
+> Note that guest_cpuid_has() is not queried as host userspace is allowed to
+> access MSRs that have not been exposed to the guest, e.g. it might do
+> KVM_SET_MSRS prior to KVM_SET_CPUID2.
 > 
-> This ensures that the ACPI video backlight node is created even when no GPU is
-> present, restoring the correct behavior observed on older kernels.
+> The two helpers are put here in order to manifest accessing xsave-managed
+> MSRs requires special check and handling to guarantee the correctness of
+> read/write to the MSRs.
 > 
-> Fixes: 78dfc9d1d1ab ("ACPI: video: Add auto_detect arg to __acpi_video_get_backlight_type()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-
-Thank you for your patch.
-
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Co-developed-by: Yang Weijiang <weijiang.yang@intel.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
 > ---
->  drivers/acpi/video_detect.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+> v14:
+> - s/rdmsrl/rdmsrq, s/wrmsrl/wrmsrq (Xin)
+> - return true in is_xstate_managed_msr() for MSR_IA32_S_CET
+> ---
+>   arch/x86/kvm/x86.c | 36 +++++++++++++++++++++++++++++++++++-
+>   arch/x86/kvm/x86.h | 24 ++++++++++++++++++++++++
+>   2 files changed, 59 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
-> index d507d5e08435..c1bb22b57f56 100644
-> --- a/drivers/acpi/video_detect.c
-> +++ b/drivers/acpi/video_detect.c
-> @@ -1011,6 +1011,11 @@ enum acpi_backlight_type __acpi_video_get_backlight_type(bool native, bool *auto
->  	if (acpi_backlight_dmi != acpi_backlight_undef)
->  		return acpi_backlight_dmi;
->  
-> +	/* Use ACPI video if available, except when native should be preferred. */
-> +	if ((video_caps & ACPI_VIDEO_BACKLIGHT) &&
-> +	     !(native_available && prefer_native_over_acpi_video()))
-> +		return acpi_backlight_video;
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index c15e8c00dc7d..7c0a07be6b64 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -136,6 +136,9 @@ static int __set_sregs2(struct kvm_vcpu *vcpu, struct kvm_sregs2 *sregs2);
+>   static void __get_sregs2(struct kvm_vcpu *vcpu, struct kvm_sregs2 *sregs2);
+>   
+>   static DEFINE_MUTEX(vendor_module_lock);
+> +static void kvm_load_guest_fpu(struct kvm_vcpu *vcpu);
+> +static void kvm_put_guest_fpu(struct kvm_vcpu *vcpu);
 > +
->  	if (auto_detect)
->  		*auto_detect = true;
->  
-> @@ -1024,11 +1029,6 @@ enum acpi_backlight_type __acpi_video_get_backlight_type(bool native, bool *auto
->  	if (dell_uart_present)
->  		return acpi_backlight_dell_uart;
->  
-> -	/* Use ACPI video if available, except when native should be preferred. */
-> -	if ((video_caps & ACPI_VIDEO_BACKLIGHT) &&
-> -	     !(native_available && prefer_native_over_acpi_video()))
-> -		return acpi_backlight_video;
-> -
->  	/* Use native if available */
->  	if (native_available)
->  		return acpi_backlight_native;
+>   struct kvm_x86_ops kvm_x86_ops __read_mostly;
+>   
+>   #define KVM_X86_OP(func)					     \
+> @@ -4566,6 +4569,22 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   }
+>   EXPORT_SYMBOL_GPL(kvm_get_msr_common);
+>   
+> +/*
+> + *  Returns true if the MSR in question is managed via XSTATE, i.e. is context
+> + *  switched with the rest of guest FPU state.
+> + */
+> +static bool is_xstate_managed_msr(u32 index)
+> +{
+> +	switch (index) {
+> +	case MSR_IA32_S_CET:
+> +	case MSR_IA32_U_CET:
+> +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+>   /*
+>    * Read or write a bunch of msrs. All parameters are kernel addresses.
+>    *
+> @@ -4576,11 +4595,26 @@ static int __msr_io(struct kvm_vcpu *vcpu, struct kvm_msrs *msrs,
+>   		    int (*do_msr)(struct kvm_vcpu *vcpu,
+>   				  unsigned index, u64 *data))
+>   {
+> +	bool fpu_loaded = false;
+>   	int i;
+>   
+> -	for (i = 0; i < msrs->nmsrs; ++i)
+> +	for (i = 0; i < msrs->nmsrs; ++i) {
+> +		/*
+> +		 * If userspace is accessing one or more XSTATE-managed MSRs,
+> +		 * temporarily load the guest's FPU state so that the guest's
+> +		 * MSR value(s) is resident in hardware, i.e. so that KVM can
+> +		 * get/set the MSR via RDMSR/WRMSR.
+> +		 */
+> +		if (vcpu && !fpu_loaded && kvm_caps.supported_xss &&
 
-There is a very specific ordering, as the comment in the function says:
+why not check vcpu->arch.guest_supported_xss?
 
-        /*
-         * The below heuristics / detection steps are in order of descending
-         * presedence. The commandline takes presedence over anything else.
-         */
-
-You cannot just move one fo the detect steps like this, this will break
-many many other systems.
-
-NACK for this patch, sorry.
-
-We will need to figure out some other way to fix your issue.
-
-For starters I do not understand how this patch helps.
-
-You are moving the:
-
-	/* Use ACPI video if available, except when native should be preferred. */
-	if ((video_caps & ACPI_VIDEO_BACKLIGHT) &&
-	     !(native_available && prefer_native_over_acpi_video()))
-		return acpi_backlight_video;
-
-Above the nvidia_wmi_ec_present, apple_gmux_present and dell_uart_present
-checks, but I would expect all of these to be false on Lenovo and Inspur
-machines with Zhaoxin CPUs ?  So this patch should not make a difference.
-
-Please double check that this patch fixes things for you.
-
-And if it does really fix things then please add printk()
-calls printing the value of nvidia_wmi_ec_present, apple_gmux_present 
-and dell_uart_present these should all be false, but maybe we get
-a false-positive and one of them is set to true ?
-
-Regards,
-
-Hans
-
+> +		    is_xstate_managed_msr(entries[i].index)) {
+> +			kvm_load_guest_fpu(vcpu);
+> +			fpu_loaded = true;
+> +		}
+>   		if (do_msr(vcpu, entries[i].index, &entries[i].data))
+>   			break;
+> +	}
+> +	if (fpu_loaded)
+> +		kvm_put_guest_fpu(vcpu);
+>   
+>   	return i;
+>   }
+> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+> index eb3088684e8a..34afe43579bb 100644
+> --- a/arch/x86/kvm/x86.h
+> +++ b/arch/x86/kvm/x86.h
+> @@ -701,4 +701,28 @@ int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, int cpl,
+>   
+>   int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
+>   
+> +/*
+> + * Lock and/or reload guest FPU and access xstate MSRs. For accesses initiated
+> + * by host, guest FPU is loaded in __msr_io(). For accesses initiated by guest,
+> + * guest FPU should have been loaded already.
+> + */
+> +
+> +static inline void kvm_get_xstate_msr(struct kvm_vcpu *vcpu,
+> +				      struct msr_data *msr_info)
+> +{
+> +	KVM_BUG_ON(!vcpu->arch.guest_fpu.fpstate->in_use, vcpu->kvm);
+> +	kvm_fpu_get();
+> +	rdmsrq(msr_info->index, msr_info->data);
+> +	kvm_fpu_put();
+> +}
+> +
+> +static inline void kvm_set_xstate_msr(struct kvm_vcpu *vcpu,
+> +				      struct msr_data *msr_info)
+> +{
+> +	KVM_BUG_ON(!vcpu->arch.guest_fpu.fpstate->in_use, vcpu->kvm);
+> +	kvm_fpu_get();
+> +	wrmsrq(msr_info->index, msr_info->data);
+> +	kvm_fpu_put();
+> +}
+> +
+>   #endif
 
 
