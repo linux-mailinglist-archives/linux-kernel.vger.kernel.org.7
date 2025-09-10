@@ -1,110 +1,115 @@
-Return-Path: <linux-kernel+bounces-810448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C098FB51AB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:02:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56045B51AD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCEB9B629F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACFDC176B5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05B2329F34;
-	Wed, 10 Sep 2025 14:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HgBKUW2T";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cv4kftta"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0768A32ED55;
+	Wed, 10 Sep 2025 14:55:22 +0000 (UTC)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FB0329F2F
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E9332CF99;
+	Wed, 10 Sep 2025 14:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757516059; cv=none; b=pX08gCAIFzJHtRr0SQzCQqgVERsFkUFkCx1Mle1dEpIMQfjfRhr5YeJrtBH7A2TEuPE7/z8TaP1rGMdW2Xuw3s01TjwbBXXJ5aVGC0fhAbjqACXVR/ccYKAEj4xYwul0zh1pxD9DYoY9lhDB+GHAiEdYTc3xZ36YEBTBq5Fe/Hk=
+	t=1757516121; cv=none; b=Hik3rQDxzTCrpilb2oVOI4Jkare59HonCTLnbLLfMGkkrNiD/QclU/cF4LTX3SwcHPclqf+hHreGrEBxNdG/VPsLwNW+UfOFX4lQJ7kBVvP7nyDzcwl9jslFA0EfYBnw0vdVQ5guv0HeXEZuIfcrrtNG7/eYAEx5zKdRc+lyHmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757516059; c=relaxed/simple;
-	bh=XSaX1sxYtqPtQQ8fXDVHqx9RopzIBxiTdAA+e8cMZOU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uT6/6XrpdyqtR0ULEb239JofaI3ZHBz9uQinyfk9liVjHZEH2FEsV/HXQzKpmnMhlc/rKQowK8Gw89LOdSy/hpei64B1bPzvP/A0RNYBTrRh07fJmgFFIi09in/5syAn7b35CQmyGP2AsLrVxoxg/7k/vE9MOHb77dZkTQ/xNaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HgBKUW2T; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cv4kftta; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757516053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hgwqXmToXPpmi6iMjwkVoSVLN5sKUJ4q4e/5ofe+WSU=;
-	b=HgBKUW2TGWPSai701tuK9bDxD3f1J3vPUxz+eojSMo1ACqEwt7hU+bEZdV7EhAtqTceSiA
-	Hl955WjKPiGSZNM1+FaF9oMGnzsqIULWTb62zYxET0hVMiqNK9JqnbnSRodb3FxqgPgW8q
-	gruOpIbB+j9C46JwqZzFviY9Qe0WfraTmgxpWVJv4j4tIS7WtY/wibgVcQve1IfCX3faZB
-	KOfjsC5G3iMKBX80rt72FObNsJ448yUUIIXPwAbr6hCcT/HcHnxtxj9dohrMAIT7R5Ze+u
-	GbhzCZoHoF20NOe/UHMi1BsGo1jBDR+bQH9hvLxrgWn4qb4J/I7Pqfs8rKOLow==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757516053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hgwqXmToXPpmi6iMjwkVoSVLN5sKUJ4q4e/5ofe+WSU=;
-	b=cv4kfttatviow1VMz62/65CHr5JnYAgdf0asArhaVo7ut6/5UKOWUH5U0i9D0VeZVXN/wA
-	F86wiEMJmanviNCw==
-To: Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>
-Cc: Michael Jeanson <mjeanson@efficios.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng
- <boqun.feng@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, Sean
- Christopherson <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>, Dexuan
- Cui <decui@microsoft.com>, x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Huacai
- Chen <chenhuacai@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [patch V4 00/36] rseq: Optimize exit to user space
-In-Reply-To: <4029c2d2-7a0c-4531-aa1e-b35be9098bb1@kernel.dk>
-References: <20250908212737.353775467@linutronix.de>
- <4029c2d2-7a0c-4531-aa1e-b35be9098bb1@kernel.dk>
-Date: Wed, 10 Sep 2025 16:54:12 +0200
-Message-ID: <87bjnitl2j.ffs@tglx>
+	s=arc-20240116; t=1757516121; c=relaxed/simple;
+	bh=5af/AwT6KfNTGqSpQuQ6FbWKuFRwcE7GyNykJbk1tqQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QphENvEQjQit3JiN/D84jrbjQ0hHDGOTmzfM2KVh8jgD2oqTp79T/bhC4W+VlY7RHrGN+KAXXHQXabaSeWel7PMzuYTa/F95FgcyyPOk9GjGok96XueFa9Gokoe8yLXBVb7Z2liNyLGxgCMfqIJ1Zh1UEMDXU43WCqjFUhd67J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-89018ea8f7cso3480724241.0;
+        Wed, 10 Sep 2025 07:55:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757516117; x=1758120917;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=//DRGGSnwpkitx6kcZgkAF5a1sMaJ0M51j+GALAjlxM=;
+        b=F0UHULU+ftwVTarpB6pBH27tLMibh2N8owEAmst9qVEk2kdK9LWGdvBmvc10aBxMvg
+         phQK8KvunX3YjvK36chl2dRFOp1xkj1qEW1Z1bPfNDFFXH+obswIXz7Jf5K+T3nR4IrN
+         O4BILVCn+bIlKeGsG/euS9QnrJqMA6+WlptQyOz4UTa0o5zmzbzyd7dEjG5Wh4+rKEmO
+         OaB5OoG9ll2e1PaBx1vbUoRlr+sSRLXHG44xYZrI94RDPHrXKEMtaZmwwt7LdcrNNmYR
+         gcRqmbcTFKfZwHQOufU8yVL53MUrJmrDCqOwpZ5iDww4RYmm5twsV4JICwNwyFIaU9cF
+         +mYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxlGUnF0c3hnFvd1twMJuqh+j4A5WmIXq+lY1+2vuJ3AFLzek12KtMfgYxlD6JKOMlAgloNO8oByb/@vger.kernel.org, AJvYcCX3jYPqtr/rO5Q3TNCIbTVR+fRf0e8XyfbkW8/NM2xrhNtlSP7sAAaXuFvv3LBO2atlwzNihbKUwSlBsxRz@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDMkBbua1UiL2tfAMmVu8YmZuv74oRx5bd06kGQdMbcKuiXZYu
+	TA/l4zG2UtQCbAi5osPSsy/Az9izxgSI8Y1ea9GCs5+wUeTH+vYHuJDXD+DcDKxP
+X-Gm-Gg: ASbGncueg6p+ADMsQK9qo1t76ptuF/0hI9vbjnqJN/GiNx35MSqbqo6fdCSYUoRwqw3
+	OZwJlrLxbdi8y6YFQL741D1nB71l1ApMXhhEf6uHHhE/sPgGKab46A7QQ5iHIH80RyUf382GTPe
+	U3X2dulYMUPxOTViYYSua309mwZtCVaJaM1DVgrRcB5WM1KeGKVKCqHYOuhr1eP6msDrQRw2wkp
+	VVBQUxyEl3sfp76tud3p/zzmZ8pBHbOjxABFhpNOBGTiv+BdZPD9DZisB0aJ/bzVNAYQdApT8Sl
+	tobjuR0XaYgL6sJLmpRvuP52rIYOXUTqaAKYwzBSlnDkK6F0sbOz/x+jgxB2GTSI7U5JYsvgDBD
+	+gFmQZD8u/4JHn6pC1gKhxCLD0BUejZKCtY2lhP1gf3tT8mHjxW5JDyG5i78n
+X-Google-Smtp-Source: AGHT+IE5RoLjIKIdN3nGMb86ZwjWs5trEFsksKaaKo+vMe0IY7zKi7TsPzWVuaJYiCAnnLukgQpCKg==
+X-Received: by 2002:a05:6102:9d2:b0:526:2d5:6c81 with SMTP id ada2fe7eead31-53d1c2dffffmr6327494137.8.1757516117472;
+        Wed, 10 Sep 2025 07:55:17 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-89610ad6f9esm8721372241.5.2025.09.10.07.55.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 07:55:17 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5330fdb9723so3354279137.0;
+        Wed, 10 Sep 2025 07:55:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVkZah4NAG1R180v7wIp1Vr/b+r2rS2bieXhLPqF1ij8K1EHgcZ2pH575czqUZSEot9JpHwyjNnWTcOTvUl@vger.kernel.org, AJvYcCX4S9X0cPPMk7PSTr63rDRDZ0bVetmhcdgFHsHr96elVuPP2UEbmWcFU50se5zrcEfu854RLVCctkXu@vger.kernel.org
+X-Received: by 2002:a05:6102:2923:b0:523:d0d7:b963 with SMTP id
+ ada2fe7eead31-53d218dd0fcmr5047036137.22.1757516116296; Wed, 10 Sep 2025
+ 07:55:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250908173804.3816149-1-mstrodl@csh.rit.edu> <202509092305.ncd9mzaZ-lkp@intel.com>
+ <aMFzTaO7zGVgWNRK@ada.csh.rit.edu>
+In-Reply-To: <aMFzTaO7zGVgWNRK@ada.csh.rit.edu>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 10 Sep 2025 16:55:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVpdk5JaqXf6LkSWQvZ7FnfyLdMWOJX+7n0=PZ-udH-WA@mail.gmail.com>
+X-Gm-Features: AS18NWCYkdXAqeWrylTZ9OIziMkwB6Yb1TrV7psXDt0AcVru0xgJTTJ049UgE2Y
+Message-ID: <CAMuHMdVpdk5JaqXf6LkSWQvZ7FnfyLdMWOJX+7n0=PZ-udH-WA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: mpsse: support bryx radio interface kit
+To: Mary Strodl <mstrodl@csh.rit.edu>
+Cc: kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org, 
+	oe-kbuild-all@lists.linux.dev, linus.walleij@linaro.org, brgl@bgdev.pl, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 10 2025 at 07:55, Jens Axboe wrote:
-> On 9/8/25 3:31 PM, Thomas Gleixner wrote:
->> For your convenience all of it is also available as a conglomerate from
->> git:
->> 
->>     git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/perf
->
-> I used this branch for some quick testing. Since I last looked at the
-> rseq performance overhead, glibc must have improved a few things. FWIW,
-> box is running libc 2.41 at the moment. Test box is on debian unstable,
-> so gets frequent updates. In any case, for one of my usual kernel
-> overhead runs of checking running a basic IOPS based test, I see the
-> following on the stock (-rc5 + 6.18 targeted changes) kernel running
-> that test:
->
-> +    0.89%  io_uring  [kernel.kallsyms]  [k] __get_user_8
-> +    0.58%  io_uring  [kernel.kallsyms]  [k] __put_user_8
-> +    1.13%  io_uring  [kernel.kallsyms]  [k] __rseq_handle_notify_resume
->
-> which is about 2.6% of purely rseq related overhead. Pulling in the
-> above branch and running the exact same test, all of the above are gone
-> and perusing the profile has nothing jump out at me in terms of shifting
-> those cycles to other bookkeeping.
->
-> So yes, this work does make a very noticeable difference!
+Hi Mary,
 
-I would have been really surprised if not :)
+On Wed, 10 Sept 2025 at 15:24, Mary Strodl <mstrodl@csh.rit.edu> wrote:
+> On Tue, Sep 09, 2025 at 09:32:09PM +0800, kernel test robot wrote:
+> >    drivers/gpio/gpio-mpsse.c: In function 'mpsse_ensure_supported':
+> > >> drivers/gpio/gpio-mpsse.c:211:25: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'int' [-Wformat=]
+> >      211 |                         "mpsse: GPIO %ld doesn't support %s\n",
+> >          |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Oops. Turns out this is m68k-specific weirdness. v2 will convert the
+> result to an int and use %d.
+>
+> I'll hold off on posting it because I'm anticipating there will be some feedback
+> on the actual code changes that will need a revision anyways ;)
 
-Thanks a lot for testing!
+Please don't.  The m68k version is wrong.  I will send a patch to fix it.
 
-       tglx
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
