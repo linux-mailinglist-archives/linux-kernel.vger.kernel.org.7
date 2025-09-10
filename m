@@ -1,142 +1,175 @@
-Return-Path: <linux-kernel+bounces-809620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90EF4B50FFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:52:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B80BB50FFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 410A24823E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:52:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEE96482869
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD1430CDB7;
-	Wed, 10 Sep 2025 07:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C90F30DEA6;
+	Wed, 10 Sep 2025 07:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="UpAiqXB3"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LamIGD1q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E52325CC69;
-	Wed, 10 Sep 2025 07:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752E330DD3B
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757490742; cv=none; b=ZQnZQovwAVvYVqpKGTZoKcJ/tITf4K/W+kHSVX2x2BQ9mSe6q55IEc76WxH5SSicHkfjjbEkJk39fyhudAefU0OIsi7cepveohKYBNN0x8eOQHHs3MtP5IJ6D2tJN8mJxdMEaBumD1W1JCY3XmgHwBo+ziuefbsLKltiacNsmUQ=
+	t=1757490745; cv=none; b=W+6xHx6w7q8Qyy6YvrCigBFb7/jubw7Mb+QwRJ/pntHOOAN0ZA4jpCP47T6tbGmdvXzSZppNrcPlX/CxyITep9BB7J4sCukV3C2MyKFVqgp6DspFoQBkWu8CaM8OzNdm5mjdPm24fVL/kNkhyeHLkqYvYMgnNe22gtgLUdPwVOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757490742; c=relaxed/simple;
-	bh=0t9yGEEXA3Nn31jI+sccFFY5GV7rY3i2PAjiZdNyzW8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qKfUvncmjcXldl8QznS7CKV9gOTKnkkU/c3pIXaKj/RADTDjDJet7rDwSQmo2iiXOyNY5OI348vLN0w/pLe+9RDUniARUt3d9IGdFtcSNT2PjSdfqIRXmvD6HXoKXc8Urwf5X2dnBLwIaAkfJxxe5NqKIVIDv9/dNq3Ia8ZJZzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=UpAiqXB3; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1757490737;
-	bh=0t9yGEEXA3Nn31jI+sccFFY5GV7rY3i2PAjiZdNyzW8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=UpAiqXB3yiQEgpvPHKLvbnNRdMV2SHfn0p0a6v3MF12xT+5TlctwrtOaez6Zk8spA
-	 HKpx8SPWcBAY4YqjIMk26VoKiqfN5w5wLppLQellIXouGegIg0Jcf6Kp9IyriWmXN9
-	 LLRHX8UelKi428SLse1/00tT3wpIxnQlJDYHdMvIsMU567h1onU0npm/Htx10tLv2c
-	 pcAN37aMAdTZ11uKoQ2sZf/3NM6BDgVBIp/JnZ3DMe5shE9ZVpfO7dQM8ZmyyfxHRY
-	 SX8pU7R2QMK5P8ueaTyw3akgbDB00Zs3klVO2sFazRiUMlspkxMDyhX33Q6x52mLsD
-	 w2X6o2szzBrzQ==
-Received: from [192.168.68.113] (unknown [180.150.112.213])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id A1CD067672;
-	Wed, 10 Sep 2025 15:52:15 +0800 (AWST)
-Message-ID: <bee023bb9b2ccb3e2437e466190dff2304268db9.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v2 1/2] arm64: dts: nuvoton: npcm845: Add peripheral
- nodes
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Tomer Maimon <tmaimon77@gmail.com>, robh+dt@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- avifishman70@gmail.com,  tali.perry1@gmail.com, joel@jms.id.au,
- venture@google.com, yuenn@google.com,  benjaminfair@google.com
-Cc: openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 10 Sep 2025 17:22:14 +0930
-In-Reply-To: <20250908125938.3584927-2-tmaimon77@gmail.com>
-References: <20250908125938.3584927-1-tmaimon77@gmail.com>
-	 <20250908125938.3584927-2-tmaimon77@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1757490745; c=relaxed/simple;
+	bh=KT11CFgDF51QdJwu+rJCwNinPOsU6PNjp4Iyulbjie0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/wvwFuX5znJQJWS8EfHbXVJF37SI03ye65GbYrV+pQW+dG9Hr5dEzQ43W4mKFxd0uWleXFodB8ImX3+dizZ8SA6gSOt4UBe5PccMDo4e0ZPUy/sqSfirds/6sqqZAC8xv4Y+TUQMatiQNmVHTkTyzzltkZfYIrj19BbCZRpG60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LamIGD1q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A5A6C4CEF0;
+	Wed, 10 Sep 2025 07:52:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757490745;
+	bh=KT11CFgDF51QdJwu+rJCwNinPOsU6PNjp4Iyulbjie0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LamIGD1qr4S96Y5A6Ic5A4xhpLGmLFZwjKKjMZaPgkUbMNx+N3T3xHpH8laPCApBY
+	 cSokzYof+HScaMolR+F7QEW7fb/BKnlN3WWR11smj8plV1yKp3qSlLbOU5YiujZXQ5
+	 jWCSejGI7odwMnjKTJE35ZHFQ4ExRgejgw6ce7DiW37ClMA+y5QUsDiCDjPVsSOWDp
+	 Gt9IcgN9Hh6r4CAua5QDT18oZUnBjnE78dX2xLsgCE3VT/fy5Na9i0Lp1dssZ9QpRm
+	 NGLwF/9QNa8/sWNSCZHPfR0H4j1WMMfqDRmEXJTKHq0ZSAzyiERMvvO2BqmYzhodvM
+	 4z4sv6mFtL7jg==
+Date: Wed, 10 Sep 2025 09:52:21 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
+ on unplug
+Message-ID: <20250910-amazing-camouflaged-barracuda-bb79cb@houat>
+References: <20250808-drm-bridge-atomic-vs-remove-v1-0-a52e933b08a8@bootlin.com>
+ <20250808-drm-bridge-atomic-vs-remove-v1-2-a52e933b08a8@bootlin.com>
+ <l2orbpdoh3cqqgqudbnbdlogo3bd57uu4nv3ax74uoahknzjgr@gbxxuky3huw6>
+ <20250820131302.6a2da5ef@booty>
+ <20250908154901.64f1a639@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="r7rztooyq4gxwyol"
+Content-Disposition: inline
+In-Reply-To: <20250908154901.64f1a639@booty>
 
-SGkgVG9tZXIsCgpPbiBNb24sIDIwMjUtMDktMDggYXQgMTU6NTkgKzAzMDAsIFRvbWVyIE1haW1v
-biB3cm90ZToKPiBFbmFibGUgcGVyaXBoZXJhbCBzdXBwb3J0IGZvciB0aGUgTnV2b3RvbiBOUENN
-ODQ1IFNvQyBieSBhZGRpbmcgZGV2aWNlCj4gbm9kZXMgZm9yIEV0aGVybmV0IGNvbnRyb2xsZXJz
-LCBNTUMgY29udHJvbGxlciwgU1BJIGNvbnRyb2xsZXJzLCBVU0IKPiBkZXZpY2UgY29udHJvbGxl
-cnMsIHJhbmRvbSBudW1iZXIgZ2VuZXJhdG9yLCBBREMsIFBXTS1GQU4gY29udHJvbGxlciwKPiBh
-bmQgSTJDIGNvbnRyb2xsZXJzLiBJbmNsdWRlIHBpbm11eCBjb25maWd1cmF0aW9ucyBmb3IgcmVs
-ZXZhbnQKPiBwZXJpcGhlcmFscyB0byBzdXBwb3J0IGhhcmR3YXJlIG9wZXJhdGlvbi4gQWRkIGFu
-IE9QLVRFRSBmaXJtd2FyZSBub2RlCj4gZm9yIHNlY3VyZSBzZXJ2aWNlcy4KPiAKPiBTaWduZWQt
-b2ZmLWJ5OiBUb21lciBNYWltb24gPHRtYWltb243N0BnbWFpbC5jb20+Cj4gLS0tCj4gwqAuLi4v
-ZHRzL251dm90b24vbnV2b3Rvbi1jb21tb24tbnBjbTh4eC5kdHNpwqDCoCB8IDcwMiArKysrKysr
-KysrKysrKysrKy0KPiDCoC4uLi9ib290L2R0cy9udXZvdG9uL251dm90b24tbnBjbTg0NS5kdHNp
-wqDCoMKgwqAgfMKgwqAgNyArCj4gwqAyIGZpbGVzIGNoYW5nZWQsIDcwOCBpbnNlcnRpb25zKCsp
-LCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnV2
-b3Rvbi9udXZvdG9uLWNvbW1vbi1ucGNtOHh4LmR0c2kgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL251
-dm90b24vbnV2b3Rvbi1jb21tb24tbnBjbTh4eC5kdHNpCj4gaW5kZXggMjQxMzM1MjhiOGU5Li43
-ZjEyMGRhMzMxMGEgMTAwNjQ0Cj4gCgoqc25pcCoKCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoGZpdTE6IHNwaUBmYjAwMjAwMCB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBjb21wYXRpYmxlID0gIm51dm90b24sbnBjbTg0NS1maXUiOwo+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgI2FkZHJlc3Mt
-Y2VsbHMgPSA8MT47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAjc2l6ZS1jZWxscyA9IDwwPjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoHJlZyA9IDwweDAgMHhmYjAwMjAwMCAweDAgMHgxMDAwPjsKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZy1uYW1lcyA9ICJj
-b250cm9sIjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oGNsb2NrcyA9wqAgPCZjbGsgTlBDTThYWF9DTEtfU1BJMT47Cj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjbG9jay1uYW1lcyA9ICJjbGtfc3BpMSI7Cj4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwaW5jdHJsLW5h
-bWVzID0gImRlZmF1bHQiOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgcGluY3RybC0wID0gPCZzcGkxX3BpbnM+Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc3RhdHVzID0gImRpc2FibGVkIjsKPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoGZpdTM6IHNwaUBjMDAwMDAwMCB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBjb21wYXRpYmxlID0gIm51dm90b24sbnBjbTg0NS1maXUiOwo+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgI2FkZHJlc3Mt
-Y2VsbHMgPSA8MT47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAjc2l6ZS1jZWxscyA9IDwwPjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoHJlZyA9IDwweDAgMHhjMDAwMDAwMCAweDAgMHgxMDAwPjsKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZy1uYW1lcyA9ICJj
-b250cm9sIjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oGNsb2NrcyA9wqAgPCZjbGsgTlBDTThYWF9DTEtfU1BJMz47Cj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjbG9jay1uYW1lcyA9ICJjbGtfc3BpMyI7Cj4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwaW5jdHJsLW5h
-bWVzID0gImRlZmF1bHQiOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgcGluY3RybC0wID0gPCZzcGkzX3BpbnM+Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc3RhdHVzID0gImRpc2FibGVkIjsKPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoGZpdXg6IHNwaUBmYjAwMTAwMCB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBjb21wYXRpYmxlID0gIm51dm90b24sbnBjbTg0NS1maXUiOwo+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgI2FkZHJlc3Mt
-Y2VsbHMgPSA8MT47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAjc2l6ZS1jZWxscyA9IDwwPjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoHJlZyA9IDwweDAgMHhmYjAwMTAwMCAweDAgMHgxMDAwPiwKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDwweDAgMHhmODAwMDAw
-MCAweDAgMHgyMDAwMDAwPjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoHJlZy1uYW1lcyA9ICJjb250cm9sIiwgIm1lbW9yeSI7Cj4gK8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjbG9ja3MgPcKgIDwmY2xrIE5QQ004
-WFhfQ0xLX1NQSVg+Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgY2xvY2stbmFtZXMgPSAiY2xrX2FoYiI7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzdGF0dXMgPSAiZGlzYWJsZWQiOwo+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqB9OwoKQ2FuIHlvdSBwbGVhc2UgYXVkaXQgdGhlIHBhdGNoIChh
-bmQgdGhlIHJlc3Qgb2YgdGhlIGR0c2kpIHRvIG1ha2Ugc3VyZQphbGwgbm9kZXMgYXJlIG9yZGVy
-ZWQgYnkgYXNjZW5kaW5nIHVuaXQgYWRkcmVzcywgYXMgcGVyIHRoZSBEVFMgc3R5bGUKZ3VpZGU/
-CgpodHRwczovL2RvY3Mua2VybmVsLm9yZy9kZXZpY2V0cmVlL2JpbmRpbmdzL2R0cy1jb2Rpbmct
-c3R5bGUuaHRtbCNvcmRlci1vZi1ub2RlcwoKQW5kcmV3Cgo+ICsKPiArwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgbWM6IG1lbW9yeS1jb250cm9sbGVyQGYwODI0MDAwIHsKPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGNvbXBhdGlibGUgPSAibnV2
-b3RvbixucGNtODQ1LW1lbW9yeS1jb250cm9sbGVyIjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlZyA9IDwweDAgMHhmMDgyNDAwMCAweDAgMHgxMDAw
-PjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGludGVy
-cnVwdHMgPSA8R0lDX1NQSSAyNSBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKPiArwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgfTsKPiArCgoqc25pcCoK
 
+--r7rztooyq4gxwyol
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
+ on unplug
+MIME-Version: 1.0
+
+On Mon, Sep 08, 2025 at 03:49:01PM +0200, Luca Ceresoli wrote:
+> Hello Maxime,
+>=20
+> On Wed, 20 Aug 2025 13:13:02 +0200
+> Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+>=20
+> > > > +	/*
+> > > > +	 * sn65dsi83_atomic_disable() should release some resources, but =
+it
+> > > > +	 * cannot if we call drm_bridge_unplug() before it can
+> > > > +	 * drm_bridge_enter(). If that happens, let's release those
+> > > > +	 * resources now.
+> > > > +	 */
+> > > > +	if (ctx->disable_resources_needed) {
+> > > > +		if (!ctx->irq)
+> > > > +			sn65dsi83_monitor_stop(ctx);
+> > > > +
+> > > > +		gpiod_set_value_cansleep(ctx->enable_gpio, 0);
+> > > > +		usleep_range(10000, 11000);
+> > > > +
+> > > > +		regulator_disable(ctx->vcc);
+> > > > +	}   =20
+> > >=20
+> > > I'm not sure you need this. Wouldn't registering a devm action do the
+> > > same thing? =20
+> >=20
+> > Good idea, thanks. I'll give it a try.
+>=20
+> I'm catching up with this series after being busy a few weeks...
+>=20
+> I looked at this, but contrary my initial impression I think it would
+> not be an improvement.
+>=20
+> The reason is at least one of these cleanup actions (namely the
+> regulator_disable()) must be done only if there is a matching enable,
+> which is in atomic_pre_enable. This is why I introduced a flag in the
+> first place.
+>=20
+> I'm not sure which usage of devres you had in mind, but I see two
+> options.
+>=20
+> Option 1: in probe, add a devres action to call a function like:
+>=20
+> sn65dsi83_cleanups()
+> {
+> 	if (ctx->disable_resources_needed) {
+> 		/* the same cleanups */
+> 	}   =20
+> }
+>=20
+> But that is just a more indirect way of doing the same thing, and
+> relies on the same flag.
+>=20
+> Option 2: have a function to unconditionally do the cleanups:
+>=20
+> sn65dsi83_cleanups()
+> {
+> 	/* the same cleanups (no if) */
+> }
+>=20
+> And then:
+>  * in atomic_pre_enable, instead of setting the flag
+>    add a devres action to call sn65dsi83_cleanups()
+>  * in atomic_disable, instead of clearing the flag
+>    remove the devres action
+>=20
+> Even this option looks like more complicated and less readable code
+> to do the same thing.
+>=20
+> Do you have in mind a better option that I haven't figured out?
+
+Would using devm_add_action in atomic_pre_enable, and
+devm_release_action in atomic_post_disable work?
+
+That way, if you have a typical enable / disable cycle, the action will
+get registered and executed properly, and if you only have an enable but
+no matching disable, it will be collected after remove.
+
+Maxime
+
+--r7rztooyq4gxwyol
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMEuNQAKCRAnX84Zoj2+
+dtLOAX9rfDRVVP+/z7dJDPxsVAJx0Q3CbcUFefT8oLdQq+ir/1ZSRE1K/ac7ytHJ
+cEOJhy4Bf0PYd6HQyy2bD/x4/X5jf+w8apfzLbg+ydQa+kAMAwStBVAOjMZEGylM
+F9sYa3xEFA==
+=Bjkz
+-----END PGP SIGNATURE-----
+
+--r7rztooyq4gxwyol--
 
