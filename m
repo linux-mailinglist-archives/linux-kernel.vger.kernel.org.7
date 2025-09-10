@@ -1,109 +1,80 @@
-Return-Path: <linux-kernel+bounces-811024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59FE6B5230B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:54:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89FD2B52310
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC801CC1DD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:55:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D32F188DC40
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65542F7ADC;
-	Wed, 10 Sep 2025 20:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBC42FABFE;
+	Wed, 10 Sep 2025 20:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sfZr8weE"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouG8SDZh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E11F2FAC0C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4995924BBF0;
+	Wed, 10 Sep 2025 20:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757537660; cv=none; b=tAZkUqUZYGzQIpojIGDCQMihIK3K1oSxOtN1LwA8mcw3wp1x0K9rMKNgKjyjtYPfCY8KWSsQHRq+J21Il4Tmc89HR9U1Yq0chcxglIEgaEwaYB6OzLH01HqXT0hns3nXy9eM3XlK/u1Pgx6l0bMB5MHw6VcQLxbKUFSjuM1k1ec=
+	t=1757537680; cv=none; b=KIe9nMg86bTRembmfsJVaOaxcsNnSUi5mVPcYTezSyazg+mYqgeZdmWLcNgAEYWBzHzO+2/iJnIEQE6U5ha+TtOwyJtLDEvYKn43rePMJHlbCrEFwHxbcInSXlfAbR+v9IGbpdSRkBCt7QN19ZGlbnNbgM/ESYHI/i6ew4JRG7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757537660; c=relaxed/simple;
-	bh=ZEcpykoDvXOpYaB+2kfI3cJP0yHLdZM+Vguo0ayJir4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=myziawv19gjELeXkaKk0bKmJqiLlEJKQuHNvkwsdKVgsQFzKberx1KAzLYfw3nvvGtxwrA/FsG/Lf1IG2s5eJNU9rmPWz8EZOVd7MuCioSfSsGB24X91JdZvYojfJ0rl3Q7EB2GNIjbv3oOhUxZcPNcvJCG5CjUaTZE2K4Bj1Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sfZr8weE; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3dae49b117bso51993f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757537655; x=1758142455; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=aGyBuuqykGpjKmWVjyvuUErzIfxP8EZ388iFMPKDEVE=;
-        b=sfZr8weEe/Svffz9nj1rS19MzkNOswhsSloYV2MCwfAF9ZmhuE4RaOaprsWimulA4i
-         i1ZT2OTNy0WDolQSXV0IKj/fjWlJ69uenM0WyaLuHvu/Ris2l8gLYfmvXlwAKwHDR5uQ
-         gLTvIkrFvjq1MyStZGwfdJzETsLjj8m3b4zaVwa5PZBsqDuy14gEU24nA3NfO6Frkpux
-         dzUTRjb3Dg8bjr/Exr3ZB+7UfukwzLX3pKOFIqMFgpDansMXuga+7kaWuaVhCWmR5eFq
-         6XUyuegtHxNanW5Bh7LoCU8B4FmramdUfD0MzhFa/FX33X8v0hds6cOaojI/t/urR/XT
-         iHCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757537655; x=1758142455;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aGyBuuqykGpjKmWVjyvuUErzIfxP8EZ388iFMPKDEVE=;
-        b=oKXs+pbnHPEZnLWkwWo1opBCd6VuCAUWy9H7AdQsU4Wjl7GhubBw2RJ+JcGzh8piDP
-         obFKUSdn6D/ihnAodkOUOkoZKuGssQm8uNMutRSLFtdcnPGJ0wGsmnPouisfQFPuDeqs
-         WVTZPe5b6QtnyrHHmPC+gVYLp47KqJNyU2RSPjelnVygjWl3kN7Bzaw1MevaIrdtci14
-         l4KIQG2YUQhIZAIqoYP+L52d5q3V11e5vkYo9TBdGbHe+8QM9ZtBTQ+siIjJXaxM0WcC
-         4JkrAICzBsL+K420SNyfnWCTrt0yvLNARFx7hLBOFnwM+idVSsddcyGsWK0S1YV2xIVP
-         qeMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbu5Llg+o2sZKjUf4oP7W4WZJ2zVaavKbpVEP9EHjW220fSfl+sV9C9Bjsdn+YNgdIkIMOTAtTTClpxT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxoWI3xO89zQiuu8iWj9rTP/1aWc1qGPqpyv2oySv33bnL3VFP
-	uZXTwDthoTt4CMavLF4R1mcL1gp7a46kHSaz1rSa7pL19u90ijdwku+sf5+zh3jx0/M=
-X-Gm-Gg: ASbGncspPFm+QAZEzba65TjeHHgB6UtMTyuSEyWe4pN/IrapJvrAXeh0iUDBRYjYOXO
-	BQrgiswNPbrtCQGhNtJIb3YHBgVcNrtW291xpRP2z030PaLSeOLEqHTC7qdiWj+sR98ukFYpZjF
-	X/SKkovr+8gnXoNn55Ac4BLWybmIh2HXzJlcpPovMfAGXdF2OYMOx9POGGsMmuMsbp7njNBCu7+
-	TvdRHsAMZC0ejroLsZ1Z8VC0M5M4eXf6GiUTaEyCZwbMtiKUAvV5mY5nDxVG1aObj3UipNlmsGf
-	IxORvmXYpRMMixao3qaCc9+2vq8Cqd1IEoO6B+cy9S1aZBYJs4XfTM5ifSpywtwYLFo2ABxHMol
-	qisFL6+3lcSOl+Eb0DnNkzXP8nQzC5HiZOYpcU0/FfpW2/pDg6GzPU1XVqrG0Elf5/ErVXz25qo
-	VFJg==
-X-Google-Smtp-Source: AGHT+IHITa3qEhstFjSZFoYKlPG+V2cGYS1jAFxy6suweQRIhurUKS/GcMZKFd31Rr56oTDCDehMSA==
-X-Received: by 2002:a05:6000:4283:b0:3e1:734b:5393 with SMTP id ffacd0b85a97d-3e6435551d9mr13456719f8f.28.1757537655532;
-        Wed, 10 Sep 2025 13:54:15 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:9717:723a:79cf:4f4a? ([2a05:6e02:1041:c10:9717:723a:79cf:4f4a])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45e017b4222sm856045e9.20.2025.09.10.13.54.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 13:54:15 -0700 (PDT)
-Message-ID: <cf020451-115a-471a-bba0-4152015e7173@linaro.org>
-Date: Wed, 10 Sep 2025 22:54:13 +0200
+	s=arc-20240116; t=1757537680; c=relaxed/simple;
+	bh=KssoOpfOfigrIlpJQqWpr8ktWR+/dLD6TCQFjHkyp38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bx4L/tor0+8oTH4NC9E4/57xF5BrR0MmexV1UFZxLE99/ZSkHK0FEE7CNYbi1wJHhCW8DLJM/DvvsPkd99CE6ZuUjW4HSolJQSllOu1xzbD5Fe7aYAD4TeJT6xAVpMcXl59VGKHr84LonTncvu3RP4jzsYJJDaG1HrdmFGopTw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouG8SDZh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94C03C4CEEB;
+	Wed, 10 Sep 2025 20:54:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757537679;
+	bh=KssoOpfOfigrIlpJQqWpr8ktWR+/dLD6TCQFjHkyp38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ouG8SDZhCiqPOP5knO6OI9kwGIZss90mhwqYwsN83L09qvfznqQpOh6xYMFoT9Bi2
+	 Hca3L3RTm3JKuKGy+u/1WqoBDVKfcbA1qeXRLdw4/KpEKGjrEEJP6cEhEpvp36S/ZZ
+	 LjCymE6jZLONLFBYPwFh6h/WKt+LxTkACsXu7f5DTd7C/iOT3ytCnYx+HMWqBfvcAR
+	 rS9EPpB9z+ZrV6+gUa/sPxd1VoYNpJQMB8uqc5+lHH+aTiSpPjLiOZrPTGnCm9Bnj0
+	 mJbevjVGGN9a04+Qt3QmrhO0q7/ThBq8idm7S6QnxUU0ePn3sgrPdAAQ/VFB8eMkug
+	 UiFZBH1f6KKoQ==
+Date: Wed, 10 Sep 2025 15:54:38 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mailbox: Convert
+ marvell,armada-3700-rwtm-mailbox to DT schema
+Message-ID: <175753766829.393033.5874794455011904372.robh@kernel.org>
+References: <20250812181357.63395-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] clocksource/drivers/timer-rtl-otto: enhancements
-To: Markus Stockhausen <markus.stockhausen@gmx.de>, tglx@linutronix.de,
- linux-kernel@vger.kernel.org, howels@allthatwemight.be, bjorn@mork.no
-References: <20250804080328.2609287-1-markus.stockhausen@gmx.de>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250804080328.2609287-1-markus.stockhausen@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-On 04/08/2025 10:03, Markus Stockhausen wrote:
-> This series fixes some shortcomings of the Realtek Otto timer driver.
-> These became evident after switching to longterm kernel 6.12. Devices
-> were randomly rebooted by the watchdog.
-
-Applied, thanks
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812181357.63395-1-robh@kernel.org>
 
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+On Tue, 12 Aug 2025 13:13:53 -0500, Rob Herring (Arm) wrote:
+> Convert the Marvell Armada 3700 rWTM mailbox binding to DT schema
+> format. It's a straightforward conversion.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../marvell,armada-3700-rwtm-mailbox.txt      | 16 -------
+>  .../marvell,armada-3700-rwtm-mailbox.yaml     | 42 +++++++++++++++++++
+>  2 files changed, 42 insertions(+), 16 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/mailbox/marvell,armada-3700-rwtm-mailbox.txt
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/marvell,armada-3700-rwtm-mailbox.yaml
+> 
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Applied, thanks!
+
 
