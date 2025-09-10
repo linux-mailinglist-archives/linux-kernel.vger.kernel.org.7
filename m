@@ -1,164 +1,115 @@
-Return-Path: <linux-kernel+bounces-809732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00FF0B51150
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:32:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C073B51155
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E50C1C804A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:32:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F66B1C82365
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4250309EEF;
-	Wed, 10 Sep 2025 08:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMLu5Y9Z"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9B43112BE;
+	Wed, 10 Sep 2025 08:31:55 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7167E30F544;
-	Wed, 10 Sep 2025 08:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A7F2D5947;
+	Wed, 10 Sep 2025 08:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757493105; cv=none; b=dQ/NOycQydU1GMOD2Njk+oXcntXMr8FOefBnOsN6RvDt97lq8lEquaO5o6+HzfZjRN7MAeYeZ0uQgTVPLlBNkOCmexxx9rJeIBHS+Gd7ezk3ErS9O2j1Rw0sRZhe3zk08RXBaPp45KmbbZMECzbzqBGqlB3xOggVXisp5mIUSdI=
+	t=1757493115; cv=none; b=vCGhlW1oIehzzqcihZ5IWJ4rfKYiHYgCVytTO+L3mBmKzEmvCxGSWTV4wzqLCdHxe2DN1/GjzyB4rJQ+E8zGczIiESa6zKFn4IG/07L2BpyCbI0ofnhJJ4pv518UsupJfdHrRaXV2LMUsMCSUBwQkHqevRNIBuf7UuxWnWY4Ky4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757493105; c=relaxed/simple;
-	bh=YMeOTS2s5UrKb4GkderWVzhb5EkilUWg4YaxZ3sZMjo=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EGiMIT0GhEiQzqmJCGR8NWVwEjUYd7nG7WKejqJQOQBb0u26ytRtBfs7EBQyVK1odrmqnONoLPnEFce+Kq5g9YerG4yxOQPI+gETsoPUfKm7Uw6YX8eKaTyFz2aO7wgkjKm0TevmxYVCEpsawpg6vJs3YpT6QnJSg2ahTNQ+C3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mMLu5Y9Z; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3e4aeaa57b9so3572717f8f.1;
-        Wed, 10 Sep 2025 01:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757493102; x=1758097902; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=7+Vq3ysZS2lc4WhA67yDwpubRjl51dbZS1N3bA03ln0=;
-        b=mMLu5Y9Z+xIV9D6wXsHKyKeOSJhjqfKqg65wIsoDACdgp+Zz3gbYHFwCp7t/HpiqPx
-         rh2q7dCOaResaXyXtcE/4DMvOi+lo6CCfjbT7xuXCksdLVdshuOauv23Jzo8i0+6cAiq
-         BWGNEmCmdZX3NGyQkHgVoY9kNfKcoAexLdfxqFL9CG4GmQyeqYVkjgiPDS7vVH4E+pIz
-         +Z+BBdyEVmrz4QXTSLAs5aIieDUqJU06/n2Fs7MvDURs8INSmQsIV39NFqF21yfBCiQJ
-         Qlco7PRcVw42IiDZ9+TPBBQotkruzBSO3pjoK34PO6rbqY8S48sORgPxU5OmQiFm8s0V
-         dVrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757493102; x=1758097902;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7+Vq3ysZS2lc4WhA67yDwpubRjl51dbZS1N3bA03ln0=;
-        b=vl5BB7dVg14NRGycmqsB4itDxph6YNItq8+4buGCNjOchj3O0bACfPgMUXKFVOlZKK
-         NTn/Sg0b133MX0x6iUbEFVeWQrTvgzhp/Jl20rPRflfGWvPgaMfB51hIA9ZzDv8j5Thn
-         p0PWaXOB+DGsETqP5zm4eLbGQ5k5I/NI7aJz46ohGJpPafbxfU6sM2bmvZVAUJA2RGIF
-         8hXMjqBwvLubOORO8EPzKRmKlAswrndfSqjee511fmJi33HRkvXgtREMRLrMpMERirvi
-         kLONLwrbbC7HkqkUOd99P+2Bo/8j4Tq5O7ItDJpwvE3aXyYsEv+fUdkd03qvvfc1d8Pf
-         ZXGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWNdMs3enasyWcFVRkfFkbgGGKls/bjr2Kaz6qnJrNX21y8FlGz4FUDsp83qwBHc2oROPvXciBqI2+@vger.kernel.org, AJvYcCWqrKsevEG1g2LBdqiv5EdMgA7wr+B8lepcNdC+c9922WkgCQJJHYttP05752Hik4n9wjy6ROJm@vger.kernel.org, AJvYcCXnkYK9GEqoLDw9vE1FiI/htUUw+3VB8Um0kPatlegG8P6i6Tp6OEljw1bur74a6ZgWh7isCOQ1TWT3BQJX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRjrH8SOTNUq18dpqvl2ZsV41qiPz0aWWM7Eu3j+eYmIzb5A7r
-	fqduaQUqRMlF6msan1619B7wPt2ffBQtV0yI3ENykxynyOmL6M84t3MX
-X-Gm-Gg: ASbGnctF3ZucoMhQCC+cKQzRkHvAREKoENUUBlb1nRqvg2XJ4vYH62aifUOd1nsiM5I
-	MElK8FHhuzOoSRgFghncDBxWJTElWHoRXYSTllrRWw6tdOyKxhtr8p8CDUnfTokb0yu9Zg5Gcn0
-	sAjPajrRDnpqGq2sVNDEvQwayNrLN0XCmFnyCamZAdMlND5kMiXD46e9WDC4NvnHQUuYZt6ovIa
-	qpErz0Jt5y0+pUthTPyGmMjPIlfVQicKvzQfu6zaNJBhcjtH1ObRrf4KBHauN7mQ7yztAvuntQ0
-	p5ZPnIGSq6BEDCl/cdRRT2sS9XMVL2FHwaKRkTVrB811FFQObue3VIht73bhnpQma5ngv2ir4aI
-	DT2mDXlI7rnzvsQy1yn0D8pg8GR+qz+1eiQcm2b9ZsidYZl2RoafRf5wWhVqH5/muwbGGUA==
-X-Google-Smtp-Source: AGHT+IGx/xbJUIH4+beV7q9PMqx0glsggALR4qg5rZZAhjCkYIwZFcTKRYd4C8GT0jF1ei0YocGGkA==
-X-Received: by 2002:a05:6000:2f87:b0:3d7:df92:5e31 with SMTP id ffacd0b85a97d-3e641e3b09amr13400380f8f.16.1757493101468;
-        Wed, 10 Sep 2025 01:31:41 -0700 (PDT)
-Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521ca2aesm6060026f8f.26.2025.09.10.01.31.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 01:31:41 -0700 (PDT)
-Message-ID: <68c1376d.050a0220.2085dc.675b@mx.google.com>
-X-Google-Original-Message-ID: <aME3Z0CacqPJNZT8@Ansuel-XPS.>
-Date: Wed, 10 Sep 2025 10:31:35 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>, Simon Horman <horms@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH v16 10/10] net: dsa: tag_mtk: add comments about
- Airoha usage of this TAG
-References: <20250909004343.18790-1-ansuelsmth@gmail.com>
- <20250909004343.18790-1-ansuelsmth@gmail.com>
- <20250909004343.18790-11-ansuelsmth@gmail.com>
- <20250909004343.18790-11-ansuelsmth@gmail.com>
- <20250910082017.hjlq3664xvg5qjub@skbuf>
+	s=arc-20240116; t=1757493115; c=relaxed/simple;
+	bh=btYuSerNDcokDO6Y/one3a829eB8ISvBdG67DcBTu9c=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=fhq/dL/3BGLaMAtv4lnvq3QpLFjVUO/cT0wr9wUKsL9tKG9zymYE6NWtlsX3sPd3IzWXJ6NoDts+eykiTerneg0DjlhVRx9nbJ/zSO0b9l2bpi8JOaeghHXlcRnHfeak7A1tvKkFzP8IViYwt6pDvz5Ah92EJZUi43jJsv0GPiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cMDSR0LhGzYQvcg;
+	Wed, 10 Sep 2025 16:31:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 881DB1A23A5;
+	Wed, 10 Sep 2025 16:31:49 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCn8IxzN8Fol3MSCA--.51693S3;
+	Wed, 10 Sep 2025 16:31:49 +0800 (CST)
+Subject: Re: [PATCH 1/2] md: init queue_limits->max_hw_wzeroes_unmap_sectors
+ parameter
+To: John Garry <john.g.garry@oracle.com>, Zhang Yi
+ <yi.zhang@huaweicloud.com>, linux-block@vger.kernel.org,
+ linux-raid@vger.kernel.org, drbd-dev@lists.linbit.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
+ martin.petersen@oracle.com, axboe@kernel.dk, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250825083320.797165-1-yi.zhang@huaweicloud.com>
+ <20250825083320.797165-2-yi.zhang@huaweicloud.com>
+ <5b0fd2a0-dffc-4f51-bdff-746e9bd611bd@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <05249654-3088-d3e1-570d-79f58019377c@huaweicloud.com>
+Date: Wed, 10 Sep 2025 16:31:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910082017.hjlq3664xvg5qjub@skbuf>
+In-Reply-To: <5b0fd2a0-dffc-4f51-bdff-746e9bd611bd@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCn8IxzN8Fol3MSCA--.51693S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruw45WFyUuF4kGr43Jw4Utwb_yoWkCrgEkr
+	sxXa98XFW5AF42qw4UKr13ZrW3ta95Wr1kZF1rWrs8XFyrZrykursxZ3sa9F15JFWIqr90
+	kan7Xw1I9FZFvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbaxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdYx
+	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wed, Sep 10, 2025 at 11:20:17AM +0300, Vladimir Oltean wrote:
-> On Tue, Sep 09, 2025 at 02:43:41AM +0200, Christian Marangi wrote:
-> > Add comments about difference between Airoha AN8855 and Mediatek tag
-> > bitmap.
-> > 
-> > Airoha AN88555 doesn't support controlling SA learning and Leaky VLAN
-> 
-> Is there an extra 5 in AN88555?
-> 
-> > from tag. Although these bits are not used (and even not defined for
-> > Leaky VLAN), it's worth to add comments for these difference to prevent
-> > any kind of regression in the future if ever these bits will be used.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  net/dsa/tag_mtk.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/net/dsa/tag_mtk.c b/net/dsa/tag_mtk.c
-> > index b670e3c53e91..ac3f956abe39 100644
-> > --- a/net/dsa/tag_mtk.c
-> > +++ b/net/dsa/tag_mtk.c
-> > @@ -18,6 +18,9 @@
-> >  #define MTK_HDR_XMIT_TAGGED_TPID_88A8	2
-> >  #define MTK_HDR_RECV_SOURCE_PORT_MASK	GENMASK(2, 0)
-> >  #define MTK_HDR_XMIT_DP_BIT_MASK	GENMASK(5, 0)
-> > +/* AN8855 doesn't support SA_DIS and Leaky VLAN
-> > + * control in tag as these bits doesn't exist.
-> > + */
-> 
-> I think it would be good to present the AN8855 tag using a different
-> string, so that libpcap knows it shouldn't decode these bits. The code
-> can be reused for now.
->
+Hi,
 
-Do you think I can implement 2 tagger in the same driver or do I need to
-make a library of this driver? Just asking what is the correct way to
-generalize it.
-
-> >  #define MTK_HDR_XMIT_SA_DIS		BIT(6)
-> >  
-> >  static struct sk_buff *mtk_tag_xmit(struct sk_buff *skb,
-> > -- 
-> > 2.51.0
-> > 
+在 2025/09/02 20:25, John Garry 写道:
+>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>> index 408c26398321..35c6498b4917 100644
+>> --- a/drivers/md/raid1.c
+>> +++ b/drivers/md/raid1.c
+>> @@ -3211,6 +3211,7 @@ static int raid1_set_limits(struct mddev *mddev)
+>>       md_init_stacking_limits(&lim);
+>>       lim.max_write_zeroes_sectors = 0;
+>> +    lim.max_hw_wzeroes_unmap_sectors = 0;
 > 
+> It would be better if we documented why we cannot support this on 
+> raid1/10, yet we can on raid0.
+> 
+> I am looking through the history of why max_write_zeroes_sectors is set 
+> to zero. I have gone as far back as 5026d7a9b, and this tells us that 
+> the retry mechanism for WRITE SAME causes an issue where mirrors are 
+> offlined (and so we disabled the support); and this was simply copied 
+> for write zeroes in 3deff1a70.
 
--- 
-	Ansuel
+Yes, we don't support it for now, and I think it is not too hard to
+support write zeros, and finaly to support unmap zeros. BTW, raid5
+discard is in the same suituation.
+
+However, I feel this is not related to this set, perhaps a seperate
+patch to add comments, I can accept that.
+
+Thanks,
+Kuai
+
 
