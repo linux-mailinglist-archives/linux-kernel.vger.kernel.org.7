@@ -1,133 +1,172 @@
-Return-Path: <linux-kernel+bounces-811074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12FA2B5240B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F2C2B52410
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7AED5839E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:04:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D8D9583ADC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7049D2D77EF;
-	Wed, 10 Sep 2025 22:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70C73115A0;
+	Wed, 10 Sep 2025 22:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wzJ8J6O+"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="UxVeuMem"
+Received: from mail-pl1-f228.google.com (mail-pl1-f228.google.com [209.85.214.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7781531F9
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 22:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC0E2D3EEA
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 22:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757541835; cv=none; b=B70LxJzD7ILrQYnCGMRzlRqB31iwlS2X2NfoFGd42fb86O0sitsam3HtzNxKg4Qna3gD4LAfW549+cOcXRb7m4aZRyU3Y0ve9T8ixQXIvxQgyuUuT8Aqdb8hSflixCo93XFqoYi9Jal44E2iBZbUz5MjXIMq9uThA1zxJUU1kZU=
+	t=1757541919; cv=none; b=ZYR6merAkXMJdIL9JC6PHgvHWuUL7PFAcVOncKhok3MNA2frSINN2NrNOe4Zik/YoNIwL9rRh4TeBCfS/tzlq9jOFGbzrBg462ZqZbVM4VyCxg6tv1bl9metvdKWPECJP2ZPJB5BLvMT2WO3lsHeTvQyyZqB6rA5NS5wbsIni4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757541835; c=relaxed/simple;
-	bh=aE5uCNhs1u3g6pohgmpcLJXBRFNPdmYKr1kSz8VgOU4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZnIIshDHrOPUBloqb3Y81k5mw7XceT2N0YoRYdJ97E7wDWrMdt1LWf9QvYe2Dw+PfulwR+yl9LcZo1PicTzTocAFezIRioQ4Q5BeOx/wxgUVF8nUNmeY1meuBLinrnO0Qop/9u0CE/SfHFW6OdOY0B8VYRHnp9zFyMVQVS1Iim8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wzJ8J6O+; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b47173afd90so146267a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:03:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757541833; x=1758146633; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pk6OURjfr3XUwz7xuUVoE1kFuuE2okareB/QgbX6n30=;
-        b=wzJ8J6O+iJeCoVwPfGt6MM+rxF9oxVertipMQA+WEzBFku6n7fEOqr1Px/2r1KA4Qw
-         jSy21/DY3DA+SwIEzkWSpsdzpXJ8bPHjCvJIUtwGJjwNQ5AwgLT3uXwPKVAbheJ4xTIp
-         G3fSycYFMFC3GeimkdqmjYhaigSzQnrXpBBeZZDtSDFBMtRXQwQ8iw02Eo9ipo+wQpXV
-         JSH5YOcm5v2KKkZVBjp9TxsJIrjXPZIsu0eI9qKyDbMShHFLdzVdRp+YYXmWSM9pLmv7
-         yB2B6Xpm7OT1h+sGQ1s7rCxO/1Y8RNzr+0Sp6yxj8od3Noz2vQk3HMCh9GVR/mR4TjLM
-         40QQ==
+	s=arc-20240116; t=1757541919; c=relaxed/simple;
+	bh=WPmBkbbWU0R7UVuoQr9K4F2w4LPIWw8i2zUW2ipwqcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NvhUrwLqXyUtHLzLP+kGSY6xDhoKm0fMTA3Ml0ta9txXyFKk3dwoC6hROgVFh7U1au/fA53Xn8PHAkQOpW0kKYwYXMkJt36DM7LzbMvT5JCyfmQhW2dd7z5pXgqRC3E/FzhG5a/pkIEdd3ErhsQxYxBHeev7OMuQC3h6nvB1Mv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=UxVeuMem; arc=none smtp.client-ip=209.85.214.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f228.google.com with SMTP id d9443c01a7336-2570bf605b1so320935ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:05:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757541833; x=1758146633;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pk6OURjfr3XUwz7xuUVoE1kFuuE2okareB/QgbX6n30=;
-        b=uLAqBwVFR7+Uin912+oihYzvVBbLADVQDxO/wTjxcZuR53N+Wy8xwcz9XnAHAsaDlr
-         pxLN/CRi1eLdMjXsA5IWfro22innokj7J0+PCWJpYcNSnlEy/wSGrpR0CUJCpSbj52R0
-         AGPxRVRXsZbipvpMnYlVHwUfng/mQJTgqVzEVVIhamA9Dic4aYKPb5Rj01sGBLbHUjbb
-         /BH4m1bFK1ilZdlVkBh+/Lc86KkMZIOfyWcTT/ROLiNS2bI3hwqQzFUbP5aAXn73r7s5
-         DWxdvMKhI0syklKEh3p2oS53o2qiLaADONkh0sqRk3auhKLJKHVxA3CrYbFnHTHqcidC
-         pMzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRdrZ8naAAch5rFnVFbD4mKIjvFmWcAZfWHI8JjTaUVy2p4Qw3nb7fW2A6J9YYV89E3YEAMr9B7bN2+wA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc/1+q0qvBwAURk6Q1EFeb5DFx75dCRNYXUNg5zqXu6HtqZEb/
-	RuUuNUtK9enBRGncB7bED/uFcyJerb5zbEXIwOcvSmpbTpnELhXiPmT3QbTynbTMNnGNOBevJVi
-	dsnTLMg==
-X-Google-Smtp-Source: AGHT+IENXCH4SuSphP+WfGGDSdjGmLGhnHOBJ/boJsiqZ+MqMV4PbdSmBjtFRZdUumVba4F8E0AnJQ71O+s=
-X-Received: from pjbsb16.prod.google.com ([2002:a17:90b:50d0:b0:32b:92ac:cfb9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4f:b0:32d:3713:5a4f
- with SMTP id 98e67ed59e1d1-32d43ef6e16mr23388863a91.3.1757541833526; Wed, 10
- Sep 2025 15:03:53 -0700 (PDT)
-Date: Wed, 10 Sep 2025 15:03:51 -0700
-In-Reply-To: <20250718001905.196989-3-dapeng1.mi@linux.intel.com>
+        d=1e100.net; s=20230601; t=1757541917; x=1758146717;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k+pRF4YDkBDpu0q0XohqilWJxU+Cw/6tcedpHDHdQxs=;
+        b=J01feuslUjaJXk74oqPnJmz4R+RgJA7YX3qFFyHKENmVCrdYI+y9Dxc5ZxjZHlHukZ
+         n06mNGfg06oeJ1B5jpv7lTuQoKfPlyHz0fCjCzzivkeG7O+84qIDVZzO8lx/GHD3JMEs
+         7YVHAfXY1/iAC0yDCo+DhsY0XeUTY9ITh9mSC+tIIFuaxROQvrqPItBzlqXT4LRJc+B3
+         9H1ueRU13LqQIu0/EIYRp70pf+xV5hZzlJ1N9KnDlBZ9nto/Ajmm7I2B8+SUdeEThZ+c
+         t34r/e2fNEysJbWAop4amzOhnd5T4fxjcG0R5fFOFBkrxMNoipz5uwGB11+NtkbEAJd+
+         NFWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUg+ulCoGt2+s2vgM1wbwJIx9I+gjP10dvVh8VSn9SENN3IdPGxbjgNfmD52P4zOVfk8cEmxuLLLnWro10=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw32VjvYbspGCthTRW9OIdt9JWyc626lCT0p/6+HbMrU4+lUnAr
+	ogRMK+LW1cSWiz+X4vQtzkUvUGQlDRBujKDXIcIuVAtDTqv02mSKsb/nlJFMFZRotibe1I7RpK1
+	YYPDN8CWYXgt7Gf5+s5qP2VhnYXa04tjxPeRsy7Up0H3OSGK9CurBygeWq7zMuCYbTtwuiQGPhP
+	djH8gjbcG5uJ9INRzrpsObTjRnQ7pkaQE1yhl5gKMO+vDPWWMWP1RBeoyN9JFT577Ib1uzNdz8g
+	SnH06NRYeXm/eceMqGPBc3F
+X-Gm-Gg: ASbGncsrAd234LIGdyCR2W7osrzw9gEU2XnKkGIp2bSnJTZXZiTPHElU3Lq0v74nmVJ
+	XDxEyKvwMWZ5beHYsiMn28eUW343G6SQ3xiu4IZyKuGgeixfeAH0q2YYbmVixRIvlxdRY7mpPrM
+	7KUiCStMvK+2M1AbZA+tqbcPutnT6EvZCx85gtXHIjj4udq9FqfxWgzOXX175BJE8pXtj5vza9S
+	jjY9HoRWXcIjfr3iWYfq19UEqU0Qsyv1fe7LqzNszXdFW81RQnRHJNd7jWD4VcQEyTWTPOel0o3
+	AxPA2NaHp99nPDEsphg3IN74sYpzO8+/22DbA1n5zrM3+sMFO49kcKQQcaicoKLXOqEXBMarW/a
+	AoVw+zQEP6MnP5dDVuMEARHiVRzsz2917STzvZdnJuZesVz/FrkAurWN554xjVBf4UhrEUEGw63
+	9nsc5Q
+X-Google-Smtp-Source: AGHT+IH5JLeY6jZ5ioycU0OYCotPzqK6cqzhy62AjX1qLjAnDd4DCuJHEZH0tLy17EPvW6rf3L11cSL/1/6l
+X-Received: by 2002:a17:903:46c5:b0:24c:f589:661 with SMTP id d9443c01a7336-2516ce5ff53mr251269245ad.11.1757541916812;
+        Wed, 10 Sep 2025 15:05:16 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-10.dlp.protect.broadcom.com. [144.49.247.10])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-25a2a734848sm3267185ad.70.2025.09.10.15.05.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Sep 2025 15:05:16 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-25177b75e38so498565ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:05:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1757541915; x=1758146715; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=k+pRF4YDkBDpu0q0XohqilWJxU+Cw/6tcedpHDHdQxs=;
+        b=UxVeuMempUw6TSDtHk9FKiyODulkS4zStQfCexgUbdwEAF12b6zY0PfaNtSIsjDEkz
+         Y5KwqNqjsv3TX3x1TIJJhJYHaGRgNuq1i8ihu3TE8cUPNHWeY3Lq6XoYnnSU8yKCcurj
+         bggSE/SGiyW1qdsVtyyrKtQ1Is7VgDs93AxBs=
+X-Forwarded-Encrypted: i=1; AJvYcCXLgU9ix0syic6j4Ap91xjwigsXKZi1USJoOm/7dbealYjNCQk4FyBW47z0xApK3+yOMkI/xZC2cdyktUs=@vger.kernel.org
+X-Received: by 2002:a17:902:d58f:b0:24b:11c8:2d05 with SMTP id d9443c01a7336-251718ddafdmr259726845ad.45.1757541915315;
+        Wed, 10 Sep 2025 15:05:15 -0700 (PDT)
+X-Received: by 2002:a17:902:d58f:b0:24b:11c8:2d05 with SMTP id d9443c01a7336-251718ddafdmr259726435ad.45.1757541914912;
+        Wed, 10 Sep 2025 15:05:14 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25bf675b77fsm1714715ad.43.2025.09.10.15.05.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 15:05:14 -0700 (PDT)
+Message-ID: <f72733cf-cf96-4960-b07f-ed0d9efbbb03@broadcom.com>
+Date: Wed, 10 Sep 2025 15:05:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250718001905.196989-1-dapeng1.mi@linux.intel.com> <20250718001905.196989-3-dapeng1.mi@linux.intel.com>
-Message-ID: <aMH1xwsK1eTjJh71@google.com>
-Subject: Re: [PATCH v2 2/5] KVM: selftests: Add timing_info bit support in vmx_pmu_caps_test
-From: Sean Christopherson <seanjc@google.com>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>, 
-	Zide Chen <zide.chen@intel.com>, Das Sandipan <Sandipan.Das@amd.com>, 
-	Shukla Manali <Manali.Shukla@amd.com>, Yi Lai <yi1.lai@intel.com>, 
-	Dapeng Mi <dapeng1.mi@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v2 07/15] gpio: brcmstb: use new generic GPIO chip API
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>,
+ Doug Berger <opendmb@gmail.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>,
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250910-gpio-mmio-gpio-conv-part4-v2-0-f3d1a4c57124@linaro.org>
+ <20250910-gpio-mmio-gpio-conv-part4-v2-7-f3d1a4c57124@linaro.org>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250910-gpio-mmio-gpio-conv-part4-v2-7-f3d1a4c57124@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On Fri, Jul 18, 2025, Dapeng Mi wrote:
-> A new bit PERF_CAPABILITIES[17] called "PEBS_TIMING_INFO" bit is added
-> to indicated if PEBS supports to record timing information in a new
-> "Retried Latency" field.
+On 9/10/25 00:12, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Since KVM requires user can only set host consistent PEBS capabilities,
-> otherwise the PERF_CAPABILITIES setting would fail, so add
-> pebs_timing_info bit into "immutable_caps" to block host inconsistent
-> PEBS configuration and cause errors.
-
-Please explain the removal of anythread_deprecated.  AFAICT, something like this
-is accurate:
-
-Opportunistically drop the anythread_deprecated bit.  It isn't and likely
-never was a PERF_CAPABILITIES flag, the test's definition snuck in when
-the union was copy+pasted from the kernel's definition.
-
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Tested-by: Yi Lai <yi1.lai@intel.com>
-> ---
->  tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Convert the driver to using the new generic GPIO chip interfaces from
+> linux/gpio/generic.h.
 > 
-> diff --git a/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c b/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c
-> index a1f5ff45d518..f8deea220156 100644
-> --- a/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c
-> +++ b/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c
-> @@ -29,7 +29,7 @@ static union perf_capabilities {
->  		u64 pebs_baseline:1;
->  		u64	perf_metrics:1;
->  		u64	pebs_output_pt_available:1;
-> -		u64	anythread_deprecated:1;
-> +		u64	pebs_timing_info:1;
->  	};
->  	u64	capabilities;
->  } host_cap;
-> @@ -44,6 +44,7 @@ static const union perf_capabilities immutable_caps = {
->  	.pebs_arch_reg = 1,
->  	.pebs_format = -1,
->  	.pebs_baseline = 1,
-> +	.pebs_timing_info = 1,
->  };
->  
->  static const union perf_capabilities format_caps = {
-> -- 
-> 2.34.1
-> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
+
 
