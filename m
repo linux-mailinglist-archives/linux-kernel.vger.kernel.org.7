@@ -1,112 +1,83 @@
-Return-Path: <linux-kernel+bounces-810668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAE4B51D94
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:26:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D04FB51D97
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4BCA4801F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:26:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 685C21881E45
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0759327A04;
-	Wed, 10 Sep 2025 16:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DF3334383;
+	Wed, 10 Sep 2025 16:26:24 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94419335BC4
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9847327A04;
+	Wed, 10 Sep 2025 16:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757521556; cv=none; b=VcJ05ST5k0pj93UdwMKQFWMvlOpvX+xsr5a7bpwLgt+COana5h2CVjNZQigBV4FwaGpIXlhRZ6JWAJ6IsaSz2lF88jwrKsOdjBb2gbzWa/mdj/BC65EqelI1IRF3YC35Q7MBEwAeknK89pVKWRAHB05OGK0OwKJuw+xcMJzp/C4=
+	t=1757521583; cv=none; b=pQX+RatuFIV47Z3xvnjNHWURfT4BpGz+shG3j2XI9bN7klX4R14hKj4OmKwWSWL6zJuWgtX1XLk7lCHmyArisqyJCz9pQqEU2SCe/axmK94QssglNOPgN3dOztbkNni+SNscj6r4mg9MCp7DMikN23Nqb61ljDo2sqWCU6HH9l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757521556; c=relaxed/simple;
-	bh=NItkhV+J7EkGZ9L4Me7fKyuKJDLlzvDoljoZzn5hHAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VWK/NtTgg636ocGIZQw0dvMRQF0/EFZqqhOetxsBXLaG238z+5tGyaS6NZrk9jssQqtdwhkfRWY/ibKgtTdAHtA2MeDELirGq7MJCm7K1tpoDSGh3pOrmi9qbqiC9YQA/D+hoMVx6GiHsfxeepEDil4Ry0IuTWwsl3WZvJMRMPQ=
+	s=arc-20240116; t=1757521583; c=relaxed/simple;
+	bh=g5UrjwaGEa3oun9vYFWEdV929yoZW6OpDgUw21L2FZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OkhvKlVJtOXgtvk90woPiZOJQxxTRp0eyM7Vhx1HWOsE3v52iFw/p57Zs0RvKWJj91CeRF5EWRYEJM8H97OgJCsPVZgqTprNfJaS31IM1/RZzbEZZqEl9Omx+APmz+3VnLI/cq+hOGkVwAVKOCJNt6FmPrkwk2ZaJ5tlSUVb1Tc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A713C16F2;
-	Wed, 10 Sep 2025 09:25:44 -0700 (PDT)
-Received: from [10.57.67.148] (unknown [10.57.67.148])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A8EE83F63F;
-	Wed, 10 Sep 2025 09:25:50 -0700 (PDT)
-Message-ID: <bff6c831-68b0-4dbb-b54e-cbf349a942cb@arm.com>
-Date: Wed, 10 Sep 2025 18:25:48 +0200
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D059116F2;
+	Wed, 10 Sep 2025 09:26:12 -0700 (PDT)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9DA733F63F;
+	Wed, 10 Sep 2025 09:26:19 -0700 (PDT)
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
+	Mao Jinlong <quic_jinlmao@quicinc.com>,
+	Tao Zhang <quic_taozha@quicinc.com>,
+	Jie Gan <jie.gan@oss.qualcomm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2] coresight: tpda: fix the logic to setup the element size
+Date: Wed, 10 Sep 2025 17:26:00 +0100
+Message-ID: <175752153907.1858468.5330366699431350067.b4-ty@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250906-fix_element_size_issue-v2-1-dbb0ac2541a9@oss.qualcomm.com>
+References: <20250906-fix_element_size_issue-v2-1-dbb0ac2541a9@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: mm: Move KPTI helpers to mmu.c
-To: Ryan Roberts <ryan.roberts@arm.com>, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Kees Cook <kees@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>,
- Yeoreum Yun <yeoreum.yun@arm.com>
-References: <20250910104454.317067-1-kevin.brodsky@arm.com>
- <6fd9df06-7120-4eef-9f02-70ba49266c75@arm.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <6fd9df06-7120-4eef-9f02-70ba49266c75@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 10/09/2025 16:33, Ryan Roberts wrote:
-> On 10/09/2025 11:44, Kevin Brodsky wrote:
->> create_kpti_ng_temp_pgd() is currently defined (as an alias) in
->> mmu.c without matching declaration in a header; instead cpufeature.c
->> makes its own declaration. This is clearly not pretty, and as commit
->> ceca927c86e6 ("arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc
->> function signature") showed, it also makes it very easy for the
->> prototypes to go out of sync.
->>
->> All this would be much simpler if kpti_install_ng_mappings() and
->> associated functions lived in mmu.c, where they logically belong.
->> This is what this patch does:
->> - Move kpti_install_ng_mappings() and associated functions from
->>   cpufeature.c to mmu.c, add a declaration to <asm/mmu.h>
->> - Make create_kpti_ng_temp_pgd() a static function that simply calls
->>   __create_pgd_mapping_locked() instead of aliasing it
->> - Mark all these functions __init
->> - Move __initdata after kpti_ng_temp_alloc (as suggested by
->>   checkpatch)
-> This is a great clean up IMHO; that alias has caught me out a few times in the
-> past when hacking in this area. And this code clearly belongs in mmu.c.
 
-Good to hear!
+On Sat, 06 Sep 2025 07:53:04 +0800, Jie Gan wrote:
+> Some TPDM devices support both CMB and DSB datasets, requiring
+> the system to enable the port with both corresponding element sizes.
+> 
+> Currently, the logic treats tpdm_read_element_size as successful if
+> the CMB element size is retrieved correctly, regardless of whether
+> the DSB element size is obtained. This behavior causes issues
+> when parsing data from TPDM devices that depend on both element sizes.
+> 
+> [...]
 
->> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
->> ---
->> Note: as things stand, create_kpti_ng_temp_pgd() could be removed,
->> but a separate patch [1] will make use of it to add an
->> assertion.
-> I'd vote for removing it and just calling __create_pgd_mapping_locked() direct.
-> The next version of the other patch can just rebase on top of yours and add the
-> assert in __kpti_install_ng_mappings().
+Applied, thanks!
 
-Oh yes good point, not sure why I didn't consider that! It clearly makes
-more sense, I'll send a v2.
+[1/1] coresight: tpda: fix the logic to setup the element size
+      https://git.kernel.org/coresight/c/fd6974c19eb3
 
-> Either way:
->
-> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
->
->> [1] https://lore.kernel.org/all/20250813145607.1612234-3-chaitanyas.prakash@arm.com/
->>
->> [...]
->>
->> +static pgprot_t __init kernel_exec_prot(void)
-> nit: this change (to add __init) is unrelated; does it deserve it's own patch?
-
-I thought I might as well sneak it in since it's still related to KPTI
-and in the same block... But happy to split it off if that feels more
-appropriate.
-
-- Kevin
+Best regards,
+-- 
+Suzuki K Poulose <suzuki.poulose@arm.com>
 
