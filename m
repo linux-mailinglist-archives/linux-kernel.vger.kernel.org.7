@@ -1,95 +1,117 @@
-Return-Path: <linux-kernel+bounces-810752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0279B51ED2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:24:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA26B51EE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8800A5817A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:24:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8371B27411
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62441320A29;
-	Wed, 10 Sep 2025 17:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68320EACD;
+	Wed, 10 Sep 2025 17:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6O9S5Q2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YoIYZjZz"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4E03126AD;
-	Wed, 10 Sep 2025 17:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC2C255F5E;
+	Wed, 10 Sep 2025 17:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757525027; cv=none; b=P9yNOU9QVyiWOS/QhWqclXmdW2GWoCCHSSB3imNuS2wIH8roTgzniqodIGLfoeQPg7hL/v90HKj8lnzkQNOLB06kkP0AwpuEeu0pU0tEsfybVFFC/Gul52z+x83Ybfd298dKo3WnklIe5mpOCRw/7w+ihnUKo6Qr22A1CJSzzu0=
+	t=1757525255; cv=none; b=BAL+/AQHReKph6AMKfOqocxxeJWfN1MZTs201B+MMI0dMCjt8ciZrqKE3Dy9+bauRFQW4Y800eOt0GWvZxW6hrdWI/qapbor1jmUNTub5wxnMUEpC0qR1RLrRHsUjcmHq+shV1Oa9Sn+gEgs/5u6RCCTszpkioCB+5cAb95VyBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757525027; c=relaxed/simple;
-	bh=2oZJ4NanHFBpJK7mVTRXGTHVse28QdOdraSCom3vIek=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aK56oWF9oG8YyW0oG77YFBZwLqRIxPknvEFvtguEQKz9pxBgvxIkJCV0rfn7oRxX5343MgA9fJY7TqrzJEiFhOoteJEfDV5tP3f5xqZijVb4ecUOG4SJ77DUVg9vWKWU9X2vne7+zQQS+uS2tKC/t0LPTZgiYy0bscPQKkbMKKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6O9S5Q2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6391FC4CEEB;
-	Wed, 10 Sep 2025 17:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757525027;
-	bh=2oZJ4NanHFBpJK7mVTRXGTHVse28QdOdraSCom3vIek=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r6O9S5Q2uEm03nX9khvKTs3zwLxAynuxcSNN2DcHEDwglyX7vSXB7VJ4WxQsSzyUt
-	 GMGIx+WAPsTj3Y8w2VXDbln5WqnVwsFu5TUV5j+g0EcLSm+Oy6ZQXKcBWf1ce6B/zN
-	 6qt2mSdMsDr6J2+2kl8o+UApCD1as6lOCjJqZDcYiIaTUw1DmtDDT8Z7uXusQo/+RX
-	 XSEtnT8vQSC9gwAui/qvxbkFk2F/E0CXFPzsibGLNQzHCDjlW713o2VD5vVpO270Cw
-	 Z07Mr/aFxcmEaP7CA9RewabJJkEvkYk8GiAAJNk+1RTfEV9fncPnQBrfV3g1OhzQcy
-	 CpdmRM/d5VtOQ==
-Date: Wed, 10 Sep 2025 10:23:45 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Jiri Pirko <jiri@resnulli.us>, Jonathan Corbet
- <corbet@lwn.net>, "Leon Romanovsky" <leon@kernel.org>, Jason Gunthorpe
- <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch
- <mbloch@nvidia.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, "John
- Fastabend" <john.fastabend@gmail.com>, <netdev@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-rdma@vger.kernel.org>, <bpf@vger.kernel.org>, Gal Pressman
- <gal@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>, Dragos Tatulea
- <dtatulea@nvidia.com>, Jiri Pirko <jiri@nvidia.com>
-Subject: Re: [PATCH net-next 10/10] net/mlx5e: Use the 'num_doorbells'
- devlink param
-Message-ID: <20250910102345.4fd2b49f@kernel.org>
-In-Reply-To: <1757499891-596641-11-git-send-email-tariqt@nvidia.com>
-References: <1757499891-596641-1-git-send-email-tariqt@nvidia.com>
-	<1757499891-596641-11-git-send-email-tariqt@nvidia.com>
+	s=arc-20240116; t=1757525255; c=relaxed/simple;
+	bh=IbDI6NByxIuvJpDQV0z450B/UbqXV9f1soeWIoUs718=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KmJy1ixWWLsrmpcsdiXPwUiX80Zgbtpf8qdq7jp7gWaqMzSRVznRCUXntYqk2z9HIZuIoF6Iw3BLAIn5tt0gx3WkS+vGDrWbfKwcs+VrIIai2RyMu+hIMcOjutGAQphvSLb8mD4qJTlfxi6ikeenwRAf3+ZFqrd5+f/xSXyqFpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YoIYZjZz; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 698A140E01D2;
+	Wed, 10 Sep 2025 17:27:23 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ejTizIk3HIBh; Wed, 10 Sep 2025 17:27:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1757525238; bh=AaHxBJ1T5/lzqwfAIWFqoerftxnxSVKw4mzH9fNFLvQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YoIYZjZz7DB/GNwEwUULywd3ovui4UA0jSTMFhu59QEAtf45IB08kRZFA+JHt4Z8e
+	 h8wTl7aBch86V1TbFJ6csu0YyK3MZMArHg5LKD3xKxWn7HnnTcdGejMlWP/nRuTKcH
+	 asNn23Ya35Z39N9uCWjB3qBnJFGET9cAeveBzp0xyvIGQRTWL9tiCkk2cRF0bD8Mfg
+	 Rc2fhhMbUc+6zj+UIge9ORMbI3zOdrvIuxJ54Kd2i54Kr27OJZJZGTAxsz5JkNXk3e
+	 kGbs1v8GKaF4jF8ODc564UfR7oqMwjUZSOvMSHqYnRAHQLn6Ji2sMcKT82KMK6PV/K
+	 hrW670pt2m2Ru7I+NkmUKr+oTbIr1M2u2nW1rDhG0lMpwaJ5aHl/dfe5ItJoprAGb+
+	 kSOpAH6Yw1GnSNPy/e7CfcpK8pBBfkjzcMsXgyP7jMH2HdlXnmAfRoGckzw4Q6hPQM
+	 ifjkfVFsDyUOj7U4UWcCXWJs1bls+JKyvFoKRkp+BdqEwSZsGc2VJCWCAe7nWgC7Mx
+	 OB6qBF7WLbuv8K+jHMa63UsRB2yX5v4rMttSTxkXM6d8nZv+QXBi/GTPMQW6NK/dpd
+	 Ap5kFEG/3LfRka8OpNjLATnxhZz7IXPDLPZjT4NnXXxyXjm8PxXa0PvHOBgEzBCqP0
+	 GIqu/SuwgH7nbr3m+nmFGv/g=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 37CA240E00DD;
+	Wed, 10 Sep 2025 17:26:36 +0000 (UTC)
+Date: Wed, 10 Sep 2025 19:26:27 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Babu Moger <babu.moger@amd.com>
+Cc: corbet@lwn.net, tony.luck@intel.com, reinette.chatre@intel.com,
+	Dave.Martin@arm.com, james.morse@arm.com, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, kas@kernel.org, rick.p.edgecombe@intel.com,
+	akpm@linux-foundation.org, paulmck@kernel.org, frederic@kernel.org,
+	pmladek@suse.com, rostedt@goodmis.org, kees@kernel.org,
+	arnd@arndb.de, fvdl@google.com, seanjc@google.com,
+	thomas.lendacky@amd.com, pawan.kumar.gupta@linux.intel.com,
+	perry.yuan@amd.com, manali.shukla@amd.com, sohil.mehta@intel.com,
+	xin@zytor.com, Neeraj.Upadhyay@amd.com, peterz@infradead.org,
+	tiala@microsoft.com, mario.limonciello@amd.com,
+	dapeng1.mi@linux.intel.com, michael.roth@amd.com,
+	chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+	kvm@vger.kernel.org, peternewman@google.com, eranian@google.com,
+	gautham.shenoy@amd.com
+Subject: Re: [PATCH v18 14/33] x86/resctrl: Add data structures and
+ definitions for ABMC assignment
+Message-ID: <20250910172627.GCaMG0w6UP4ksqZZ50@fat_crate.local>
+References: <cover.1757108044.git.babu.moger@amd.com>
+ <1eb6f7ba74f37757ebf3a45cfe84081b8e6cd89a.1757108044.git.babu.moger@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1eb6f7ba74f37757ebf3a45cfe84081b8e6cd89a.1757108044.git.babu.moger@amd.com>
 
-On Wed, 10 Sep 2025 13:24:51 +0300 Tariq Toukan wrote:
-> @@ -45,6 +45,14 @@ Parameters
->       - The range is between 1 and a device-specific max.
->       - Applies to each physical function (PF) independently, if the device
->         supports it. Otherwise, it applies symmetrically to all PFs.
-> +   * - ``num_doorbells``
-> +     - driverinit
-> +     - This controls the number of channel doorbells used by the netdev. In all
-> +       cases, an additional doorbell is allocated and used for non-channel
-> +       communication (e.g. for PTP, HWS, etc.). Supported values are:
-> +       - 0: No channel-specific doorbells, use the global one for everything.
-> +       - [1, max_num_channels]: Spread netdev channels equally across these
-> +         doorbells.
+On Fri, Sep 05, 2025 at 04:34:13PM -0500, Babu Moger wrote:
+> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+> index 18222527b0ee..48230814098d 100644
+> --- a/arch/x86/include/asm/msr-index.h
+> +++ b/arch/x86/include/asm/msr-index.h
+> @@ -1232,6 +1232,7 @@
+>  /* - AMD: */
+>  #define MSR_IA32_MBA_BW_BASE		0xc0000200
+>  #define MSR_IA32_SMBA_BW_BASE		0xc0000280
+> +#define MSR_IA32_L3_QOS_ABMC_CFG	0xc00003fd
+>  #define MSR_IA32_L3_QOS_EXT_CFG		0xc00003ff
+>  #define MSR_IA32_EVT_CFG_BASE		0xc0000400
 
-This is not vibing with the changes we merged yesterday (or I fumbled
-the merge):
+Some of those MSRs are AMD-specific: why do they have "IA32" in the name and
+not "AMD64"?
 
-Documentation/networking/devlink/mlx5.rst:13: ERROR: Error parsing content block for the "list-table" directive: uniform two-level bullet list expected, but row 8 does not contain the same number of items as row 1 (3 vs 4).
+-- 
+Regards/Gruss,
+    Boris.
 
-Also in this series:
-
-drivers/net/ethernet/mellanox/mlx5/core/devlink.c:549:11-83: WARNING avoid newline at end of message in NL_SET_ERR_MSG_FMT_MOD
+https://people.kernel.org/tglx/notes-about-netiquette
 
