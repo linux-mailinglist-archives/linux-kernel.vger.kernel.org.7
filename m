@@ -1,185 +1,176 @@
-Return-Path: <linux-kernel+bounces-810364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88252B51953
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C603BB51945
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 119D75E0907
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:28:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81F073BB710
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5334832C33B;
-	Wed, 10 Sep 2025 14:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592FD324B29;
+	Wed, 10 Sep 2025 14:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="huwaecfn"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="AdOiSQQL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N6PtHH1m"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B51921ABD7;
-	Wed, 10 Sep 2025 14:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B8E1E5B70;
+	Wed, 10 Sep 2025 14:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757514457; cv=none; b=MWZ6HhaIzx9QluyqpiQ6H1Db7+oC2HvAip3PaUVSvTkhN14USwrAc//L9bgkdoWQEN86pC7IM5SnAB4MKJ/JFblPMSURO2XorhlwmwBPWPfA2UBrBDIZY/lZGh+H5NibNeLBFQWbb8FObHngIX01ixoY4N/3Z89vvbDoxvO7qQI=
+	t=1757514438; cv=none; b=sOVxPeMxK8mHE2t7e2t/oS2FQBF6iMRbZMnoReIn5IYkk/YjfxgOksN7B1I5Secgyai0CET2jAZAxI191wrKnWai8tU7bJvEx0iFk38oBfdNAhzLymAxMCIZnSFL5ZEnDU66/WOV0gI0ImPJHliHVGsWvNeekLAfi0eN+TTMjxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757514457; c=relaxed/simple;
-	bh=F+54nyJoOaeW+YO7b5fh/pn2Rb9lPRUq7jAkB4/h54U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EsM5hUNh/8maRdcHR/20KBuqxXSOiaHhYkisYdrRtHB1lYz5yMqF5PtmnRySsZDu4TFHoghw2tibX15BrQHdS9vVVlcKBqoErJZ7+bHyUYDXm8GMCIt26JzBxBTQa1gVJ8+sTBUt/CImfaFDO+EiaDrsFj0GGPKj4hGHNYxxZTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=huwaecfn; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=gk
-	aLOONp2OfwA99Mnop3EmvMXcoEsDECzL1MSv7/DgI=; b=huwaecfnZ1MLoojV4c
-	UC/hfX4oC3UyxonBZewJjVc8EeGCEdpN6QdVKVIGn7qKebkbf9upDjvk8Y2dQlUl
-	wIZ7NE8Np+IrDYzG+/gSwojUD20Er7M2mdswyKh3B8CWK1EjEiWjUS5f2snkvzYn
-	/QVbG8HUIJbqs/LbdIZSHFya4=
-Received: from MS-CMFLBWVCLQRG.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3XxuyisFoZggUAQ--.49759S2;
-	Wed, 10 Sep 2025 22:27:00 +0800 (CST)
-From: GuangFei Luo <luogf2025@163.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org,
+	s=arc-20240116; t=1757514438; c=relaxed/simple;
+	bh=bj2yFbRCokvPHJ735Zq2Wa9dqLZJc0I744ezRzG3Fmo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UOR20BkJnWtGAQNi9f7tfjy63hfv3YfQU9vM635OZNJh1ZzfjaAORIynfAUB8FXJ/52brkrBKmj/DN9847sZRSjlyydg5bVHL8q4VhqSLZIAaX32SGprgUheVkK+1IBdCUrFPfLu97X+Wl7gfQqruXCcLduMcJQ/yYjA59JbTh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=AdOiSQQL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=N6PtHH1m; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 6A670140038A;
+	Wed, 10 Sep 2025 10:27:15 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Wed, 10 Sep 2025 10:27:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm3; t=1757514435; x=1757600835; bh=Nb
+	/OvLkybPe18o1QZdMGfvhfAQ6tntAGQQX5GgK2rko=; b=AdOiSQQLwDzxEyEnK8
+	N9jvw8WEo5jPOR10/sdw2v4ouqOPHR+/u8x2IKJZlv041GlpDaytGNJWZbXZk1HE
+	A14HGaniq2vD8tX+cVioYnCxQG/WdjaJp5wywg368whdqft8oar5bdPXWzkGtiL5
+	bsjBdF1jkK4irDJteF8fxU6Apo1bq0DqG8N3Oy50c61nDrgdBvYZngFvxMaA0oDY
+	lMmDmCOAyPqofXmfPJmcHtrMFaUrFRX6KTdb34K9smrkdUo9BcOn2eSLNeyw9m8e
+	XQRgK0pUV+T6Vjl1r/cj4M7sjcWsxyjYuQcZC5451CtHtSg6JuWXxa/bhdBfmNuJ
+	17/A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1757514435; x=1757600835; bh=Nb/OvLkybPe18o1QZdMGfvhfAQ6t
+	ntAGQQX5GgK2rko=; b=N6PtHH1m08UJW+OWSO37i1XzptdYTa76qSXUXYSyBiqp
+	zgQfedajRv5SUhZT1LSQbblpSVrbc0SQJX9LizpmctasnYDqTfgT472d774Uox43
+	krDiRqZxDpcPbBnWCulArtA2evJ/LbQxOhpVHcQFn4qfAcklW3/5FOs6o5odlL7u
+	epGZwUFeQEP/0VND/ky01XQaYzGnwNHY9rTQ1LIiTs5ioWVsNpnlpk9o8yaBE848
+	OybL59T3k76PSNlhgcG5m+IU28L9Uh9Nq/f35aMJJxRWnGLTsSz93esE23QE7Uit
+	j5lQDnUokolUzYTVUQa7094XN1YaDLOl9eZPREDMBw==
+X-ME-Sender: <xms:w4rBaINAbWbRYbN1Mcb5-zxL3uv05wEvT9KMkB2Be_xLW9BHMCk45A>
+    <xme:w4rBaPv4sz3q4mYAjcFgTD_9SbpTqOJN3MWnask99tpcVo81zifFAE8H5_KZgINJo
+    BAAql7k1852k9LAVME>
+X-ME-Received: <xmr:w4rBaLaj5rf-gLSOXMAE6ervHdP_Ex6pAvqCtFaLVyZ-PcwghB9MsWNHCpjz_F1Wj4nbDEvjNeP6NcbD1PZpI7VWJQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvfeehfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffogggtgfesthekredtredtjeenucfhrhhomheppfhikhhlrghsucfu
+    npguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrghsse
+    hrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepheduleetteekgffffedu
+    feeuvdejiedvkefhveeifeegffehledtvdevhfefteegnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhgu
+    sehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhr
+    ghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhope
+    hgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhk
+    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    nhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrd
+    hsvg
+X-ME-Proxy: <xmx:w4rBaByvGVK1dO6ldW7gafT9-IKFjVNVlkyt_uktxVuygioW7cwclw>
+    <xmx:w4rBaDi74LwIdLP6lrZET0PbSSCAzu8EaTiwpKP1oz6sXmG1-Fxtsw>
+    <xmx:w4rBaNnix2aCrDZePXi-sp68ZqMz64EcqIoTPF__dBnlRA8kc0e9qQ>
+    <xmx:w4rBaJj6pTWTHm7TWtbNXP-LwF7OUbsDVhr9IYscXv43aGEy2fmhvA>
+    <xmx:w4rBaDyw7r_o1x7yNFmWIy7QmM8tsM3tJKDDCYmYI-id9QadqFhk9N_J>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 10 Sep 2025 10:27:14 -0400 (EDT)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	luogf2025@163.com,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v2] ACPI: battery: prevent sysfs_add_battery re-entry on rapid events
-Date: Wed, 10 Sep 2025 22:26:53 +0800
-Message-ID: <20250910142653.313360-1-luogf2025@163.com>
-X-Mailer: git-send-email 2.43.0
+	linux-renesas-soc@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 0/2] clocksource/drivers/sh_cmt: Improve clock event design
+Date: Wed, 10 Sep 2025 16:26:55 +0200
+Message-ID: <20250910142657.1148696-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3XxuyisFoZggUAQ--.49759S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3AF43ur1kWw4fWF43uF18Grg_yoW7Cr1xpa
-	yrKa1UKrW8GF4kJwsF9F1jgFyxWan0qF9rWr95Jrn2kasruw1DAryxZFyUXFsrGrykZ3y8
-	ZF1kt3Wrtw1xWw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U2Q6AUUUUU=
-X-CM-SenderInfo: poxrwwisqskqqrwthudrp/1tbizRrEmWjBgQHokwAAsY
 
-v2:
- - Fix missing mutex_unlock in acpi_battery_update()
-   (Reported-by: kernel test robot)
+Hello,
 
-When removing and reinserting the laptop battery, ACPI can trigger
-two notifications in quick succession:
+This series tries to address an issue with the Renesas CMT driver
+design. The driver do PM and clock handling in struct clock_event_device
+callbacks. This leads to LOCKDEP warnings and I think hints at a larger
+issue.
 
-  - ACPI_BATTERY_NOTIFY_STATUS (0x80)
-  - ACPI_BATTERY_NOTIFY_INFO   (0x81)
+    =============================
+    [ BUG: Invalid wait context ]
+    6.17.0-rc3-arm64-renesas-03071-gb3c4f4122b28-dirty #21 Not tainted
+    -----------------------------
+    swapper/1/0 is trying to lock:
+    ffff00000898d180 (&dev->power.lock){-...}-{3:3}, at: __pm_runtime_resume+0x38/0x88
+    ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version 0xAF400001/0xDCC63000, Driver version 5.0
+    other info that might help us debug this:
+    ccree e6601000.crypto: ARM ccree device initialized
+    context-{5:5}
+    2 locks held by swapper/1/0:
+     #0: ffff80008173c298 (tick_broadcast_lock){-...}-{2:2}, at: __tick_broadcast_oneshot_control+0xa4/0x3a8
+     #1: ffff0000089a5858 (&ch->lock){....}-{2:2}
+    usbcore: registered new interface driver usbhid
+    , at: sh_cmt_start+0x30/0x364
+    stack backtrace:
+    CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.17.0-rc3-arm64-renesas-03071-gb3c4f4122b28-dirty #21 PREEMPT
+    Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
+    Call trace:
+     show_stack+0x14/0x1c (C)
+     dump_stack_lvl+0x6c/0x90
+     dump_stack+0x14/0x1c
+     __lock_acquire+0x904/0x1584
+     lock_acquire+0x220/0x34c
+     _raw_spin_lock_irqsave+0x58/0x80
+     __pm_runtime_resume+0x38/0x88
+     sh_cmt_start+0x54/0x364
+     sh_cmt_clock_event_set_oneshot+0x64/0xb8
+     clockevents_switch_state+0xfc/0x13c
+     tick_broadcast_set_event+0x30/0xa4
+     __tick_broadcast_oneshot_control+0x1e0/0x3a8
+     tick_broadcast_oneshot_control+0x30/0x40
+     cpuidle_enter_state+0x40c/0x680
+     cpuidle_enter+0x30/0x40
+     do_idle+0x1f4/0x26c
+     cpu_startup_entry+0x34/0x40
+     secondary_start_kernel+0x11c/0x13c
+     __secondary_switched+0x74/0x78
 
-Both notifications call acpi_battery_update(). Because the events
-happen very close in time, sysfs_add_battery() can be re-entered
-before battery->bat is set, causing a duplicate sysfs entry error.
+This series tries to address this by instead doing PM and clock
+management at probe time, and leaving them on for the CMT channels that
+are used as clock events. The CMT design is a bit messy as channels can
+be used both as clock sources and events. And the design to do the
+housekeeping for clock sources seems to be valid and is kept.
 
-This patch ensures that sysfs_add_battery() is not re-entered
-when battery->bat is already non-NULL, preventing the duplicate
-sysfs creation and stabilizing battery hotplug handling.
+The work is tested on R-Car M3-N and R-Mobile A1.
 
-[  476.117945] sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0A:00/power_supply/BAT1'
-[  476.118896] CPU: 1 UID: 0 PID: 185 Comm: kworker/1:4 Kdump: loaded Not tainted 6.12.38+deb13-amd64 #1  Debian 6.12.38-1
-[  476.118903] Hardware name: Gateway          NV44             /SJV40-MV        , BIOS V1.3121 04/08/2009
-[  476.118906] Workqueue: kacpi_notify acpi_os_execute_deferred
-[  476.118917] Call Trace:
-[  476.118922]  <TASK>
-[  476.118929]  dump_stack_lvl+0x5d/0x80
-[  476.118938]  sysfs_warn_dup.cold+0x17/0x23
-[  476.118943]  sysfs_create_dir_ns+0xce/0xe0
-[  476.118952]  kobject_add_internal+0xba/0x250
-[  476.118959]  kobject_add+0x96/0xc0
-[  476.118964]  ? get_device_parent+0xde/0x1e0
-[  476.118970]  device_add+0xe2/0x870
-[  476.118975]  __power_supply_register.part.0+0x20f/0x3f0
-[  476.118981]  ? wake_up_q+0x4e/0x90
-[  476.118990]  sysfs_add_battery+0xa4/0x1d0 [battery]
-[  476.118998]  acpi_battery_update+0x19e/0x290 [battery]
-[  476.119002]  acpi_battery_notify+0x50/0x120 [battery]
-[  476.119006]  acpi_ev_notify_dispatch+0x49/0x70
-[  476.119012]  acpi_os_execute_deferred+0x1a/0x30
-[  476.119015]  process_one_work+0x177/0x330
-[  476.119022]  worker_thread+0x251/0x390
-[  476.119026]  ? __pfx_worker_thread+0x10/0x10
-[  476.119030]  kthread+0xd2/0x100
-[  476.119033]  ? __pfx_kthread+0x10/0x10
-[  476.119035]  ret_from_fork+0x34/0x50
-[  476.119040]  ? __pfx_kthread+0x10/0x10
-[  476.119042]  ret_from_fork_asm+0x1a/0x30
-[  476.119049]  </TASK>
-[  476.142552] kobject: kobject_add_internal failed for BAT1 with -EEXIST, don't try to register things with the same name in the same directory.
-[  476.415022] ata1.00: unexpected _GTF length (8)
-[  476.428076] sd 0:0:0:0: [sda] Starting disk
-[  476.835035] ata1.00: unexpected _GTF length (8)
-[  476.839720] ata1.00: configured for UDMA/133
-[  491.328831] sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0A:00/power_supply/BAT1'
-[  491.329720] CPU: 1 UID: 0 PID: 185 Comm: kworker/1:4 Kdump: loaded Not tainted 6.12.38+deb13-amd64 #1  Debian 6.12.38-1
-[  491.329727] Hardware name: Gateway          NV44             /SJV40-MV        , BIOS V1.3121 04/08/2009
-[  491.329731] Workqueue: kacpi_notify acpi_os_execute_deferred
-[  491.329741] Call Trace:
-[  491.329745]  <TASK>
-[  491.329751]  dump_stack_lvl+0x5d/0x80
-[  491.329758]  sysfs_warn_dup.cold+0x17/0x23
-[  491.329762]  sysfs_create_dir_ns+0xce/0xe0
-[  491.329770]  kobject_add_internal+0xba/0x250
-[  491.329775]  kobject_add+0x96/0xc0
-[  491.329779]  ? get_device_parent+0xde/0x1e0
-[  491.329784]  device_add+0xe2/0x870
-[  491.329790]  __power_supply_register.part.0+0x20f/0x3f0
-[  491.329797]  sysfs_add_battery+0xa4/0x1d0 [battery]
-[  491.329805]  acpi_battery_update+0x19e/0x290 [battery]
-[  491.329809]  acpi_battery_notify+0x50/0x120 [battery]
-[  491.329812]  acpi_ev_notify_dispatch+0x49/0x70
-[  491.329817]  acpi_os_execute_deferred+0x1a/0x30
-[  491.329820]  process_one_work+0x177/0x330
-[  491.329826]  worker_thread+0x251/0x390
-[  491.329830]  ? __pfx_worker_thread+0x10/0x10
-[  491.329833]  kthread+0xd2/0x100
-[  491.329836]  ? __pfx_kthread+0x10/0x10
-[  491.329838]  ret_from_fork+0x34/0x50
-[  491.329842]  ? __pfx_kthread+0x10/0x10
-[  491.329844]  ret_from_fork_asm+0x1a/0x30
-[  491.329850]  </TASK>
-[  491.329855] kobject: kobject_add_internal failed for BAT1 with -EEXIST, don't try to register things with the same name in the same directory.
+See individual patches for change long.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202509101620.yI0HZ5gT-lkp@intel.com/
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202509101620.yI0HZ5gT-lkp@intel.com/
-Fixes: 508df92d1f8d ("ACPI: battery: register power_supply subdevice only when battery is present")
-Signed-off-by: GuangFei Luo <luogf2025@163.com>
-Cc: stable@vger.kernel.org
----
- drivers/acpi/battery.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Niklas Söderlund (2):
+  clocksource/drivers/sh_cmt: Split start/stop of clock source and
+    events
+  clocksource/drivers/sh_cmt: Do not power down channels used for events
 
-diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-index 6905b56bf3e4..649185f7a3b1 100644
---- a/drivers/acpi/battery.c
-+++ b/drivers/acpi/battery.c
-@@ -1026,11 +1026,15 @@ static int acpi_battery_update(struct acpi_battery *battery, bool resume)
- 		return result;
- 	acpi_battery_quirks(battery);
- 
-+	mutex_lock(&battery->sysfs_lock);
- 	if (!battery->bat) {
- 		result = sysfs_add_battery(battery);
--		if (result)
-+		if (result) {
-+			mutex_unlock(&battery->sysfs_lock);
- 			return result;
-+		}
- 	}
-+	mutex_unlock(&battery->sysfs_lock);
- 
- 	/*
- 	 * Wakeup the system if battery is critical low
+ drivers/clocksource/sh_cmt.c | 89 +++++++++++++++++++++++-------------
+ 1 file changed, 58 insertions(+), 31 deletions(-)
+
 -- 
-2.43.0
+2.51.0
 
 
