@@ -1,75 +1,81 @@
-Return-Path: <linux-kernel+bounces-810504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F629B51B86
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:25:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 830E9B51B8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D16574850FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:24:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3EAC17E7BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A3E31D750;
-	Wed, 10 Sep 2025 15:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EB9322A1A;
+	Wed, 10 Sep 2025 15:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="z0AT4xmQ"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2055.outbound.protection.outlook.com [40.107.93.55])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="j/eNaZ+d"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011061.outbound.protection.outlook.com [40.107.130.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0EE224220;
-	Wed, 10 Sep 2025 15:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C39731D386;
+	Wed, 10 Sep 2025 15:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.61
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757517876; cv=fail; b=a1uh49Tu0Hi8KCBKj6UbDlGUWIRLxaRFGCH5j1phbpB6jPTs4WQtxAJWEckVqAH5qyz67ccObdiFMWC2rR74LlJ78UfgifAKmCdYYDO9ysveYVhaaLnvO3TVzM0FuWe+EWvVMx+oY7iYQERhzCrWHGkCzrS7MDRj2FiFjWOBl8Y=
+	t=1757517920; cv=fail; b=XaFUM5/l92EkjZ6L1M3DudVW8vkJ1N1sDUWH3IYj93hktLh+OUaCXiwJ8eqJM3ExHnEvLVTKHI+6Zavy8CKfyNNJm+rvc9umw0bJhsAGIlMSyj/Hwc0KhlQztTuW5RdPkJVqf/nZfUxV6+7OuLZrdCNjdaoEug1w6TVs6RvjAXM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757517876; c=relaxed/simple;
-	bh=wjE5Q/TVHqFchE7+Q6KKs1rBEMSYvkUVmiD/lOw9V/g=;
+	s=arc-20240116; t=1757517920; c=relaxed/simple;
+	bh=0d7wdEChV7idboDeb0tyFKqOn+9/miDYT/1N9bPF94A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=QaEzhqW7Yksm7KDq0nJGRVDg9pxfhs5Xhbw2gQ8jtdBTPkGe9EpWxaHnMq8qro6rWguOOx61ov0f1VbG144wliNfSRTVgUNQ+SAxYo6vYoRewBjIF8Y4hhKI1eTcb4Sj3KvtilXqf5qbE6w3tiFvr71IeIhy06yVgTyCVsEnjCs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=z0AT4xmQ; arc=fail smtp.client-ip=40.107.93.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	 Content-Disposition:In-Reply-To:MIME-Version; b=c9kyBq+fTfoXUMq9gZoi+LboOsA1+C2JOFFJ8nLOQBcP3fewjdB5BiBuupy7s7oGx6+vshbFTOdO39vHm1T2tb0zXWfLtgnXVxVckC/UfNE5koye23+fvpikaabchIOvmK5HBWa56ohVRAyvWWKAkJSVV6b0J8vJm3QfPdG58zQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=j/eNaZ+d; arc=fail smtp.client-ip=40.107.130.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UnZ7L+NupiElFWE+y/kEG0RcByv06qiuxqUUn9N8Vh7p8n15dg8o3HKjtywugaAhgNqoQlTLw9L+EmCUAfZ/fI8PNDCrUWNhRgNusMbroYg3N6GyUtZDVwJDkcNtJrdgiEV4+/6w2QBy/woVG63RW/UP0UpjBJj4cJTPLvIkVTxGCbeGfvcSU0xeCeBzaRm3Ototh0HzV8uvB73231p+dRde9libCs8c1ZTQaNBYdfchW1F9sRhi27vwbpZbSE80qtsY6+GzsA5eC5ghsaLMQmfbK84SdO/38Q3eOa7nnZ7GFms4/SuDc/bVbBTAGvL2sCbflRUQQkyCfVHXs95RKg==
+ b=ISVyYwpvxIWLZhl8x50LSvUkSjc4WR+MpDYqbl/3M977gO1ywNAY2FO7idlCorD2jdHVNe/lVqIiXKhFziEKINCl51vQ0+ZdR/WXXzqPUTzHsj9KrEJl67N39vMYERk5IjdrHAY4gH9WUPzfG8qNvFkGr/Xf0Q8Ea8UxntLBWAuzJo7jy0GezPuCpuFh/erJkEpIYPmbiSiHKQh8vYMzzCFxSse2uGkTwYPB+Q22YmQy2td389UKBazIYIzVERPA1EWGNGMo4aXYShYyJkKrigoVdp/MK2zj7aVn7hBMoAGkYtGdHAlCflbecNrUi6A0qJH1qY5rEbnyWG5sF4Exjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tW2XVEmC4dz2q7Q6gFUVucEO4+lI1+fYSLpecEp9Izo=;
- b=Pb7B25BtSCalDBC2oOmg/JC7LxEutdU4okioI8fTlS3mYr061Il/AzS0LgtZmDWr7iaGB1y1YKyymwiiCED+s/zo3E1WMk33ijHNmDh8bGufAqpe8H83NsOITV1lOGcnw7hDicr7svOC3BI9+MN1DecE36CtPQHyjzKh8b2j6ehwGIN36Z5ugFsRw5Z6OMIr+25CAndaEd5P8kbWeRgcqHVNqSsNOiJ9fE0dWbmbxzBrsLqtJVziIU7ghWgwQ9Ajcn6AGGBlHvcvW98xzct8LQ81Oy3P/bUoBUgFr2Kr84jHD0pXEnUuvT8z3HxRieg/TLZCwD9xAXmFAoI/lId7mQ==
+ bh=D6Y5RI7Kln+YEc8OpxqtIZn1/EQxfICTzb7RkoLwzU8=;
+ b=RJc0nYjWwo5P0l/AYCGatACk8Y8loiD/YVVuRtRzm2S+Op7li9eH88sSPq7/vsJzWgAFffhcA7LHkziEWeqE/eedpWTGWndsFVRUr+BKqGUqsmqhWCBitr7MLfoBIV/PPY7pOMA32tR095P2ON+nMF4Df3EfFYcXBt7CY6iO6k/mEpwq6HK6Gwgjy5K6qE8GT0bygznQquU8Sq3wk3S271iQ/Cm3Xz7OHhrRhMiwK+o9oGvZICMheOQaW2WNn7n+KKw8RBWgpbLMFFppOgWU0FL+csC/lM7WBaZeMXRmI315lJbDiVdHAvH/1kNCsSgD2VvcklB6/XvplIV+33Mu/w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tW2XVEmC4dz2q7Q6gFUVucEO4+lI1+fYSLpecEp9Izo=;
- b=z0AT4xmQwnM4Pdz1h1rbPcmWZNtqA8RRGFDFYnScrV7fx6K0kCt9L51snStjGOsG1zdQw0Untg3hGHd5CEKYAbiRdgC1jKEXw8+ZFNcO/fK8N+LweHeuFUT/1FS2n39sGErXtLdjjy7yI0FSOf7ZMiRJFvhYhEizXnmYWEjgBdA=
+ bh=D6Y5RI7Kln+YEc8OpxqtIZn1/EQxfICTzb7RkoLwzU8=;
+ b=j/eNaZ+dpqKgy8QWDNxhLK6Ni35cdDhIi/5JUuLvHETkXq6hqO1dj00FkwFnM4mfH5TsYV6hyfqoYMeKBu6DWjZwmM50YVmVYp0T5jP/Fm6GoRZO4YySd2dkuddB6iFJXBrUKvUB0R9IwxMHG6YPM6d5XoU/ctV6w/d9oFvEY7R4jEFnje0+GoySc0Qgae8F7fgEwejceOBa+tnXegensHEVCvlTO2IoUMM4Db8uhQ/T7jBW047IOEPfNI2JkxkZc5QOjivef82bPDZztgLA60Uoi37OVFBiE/heS9DVDCmDdfnAyOqhIVpr16JzpcVHGJQFmXXYe9xtV27pxGFWtA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CY5PR12MB6369.namprd12.prod.outlook.com (2603:10b6:930:21::10)
- by PH7PR12MB6465.namprd12.prod.outlook.com (2603:10b6:510:1f7::16) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by PA4PR04MB7678.eurprd04.prod.outlook.com (2603:10a6:102:ec::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 15:24:31 +0000
-Received: from CY5PR12MB6369.namprd12.prod.outlook.com
- ([fe80::d4c1:1fcc:3bff:eea6]) by CY5PR12MB6369.namprd12.prod.outlook.com
- ([fe80::d4c1:1fcc:3bff:eea6%4]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
- 15:24:31 +0000
-Date: Wed, 10 Sep 2025 11:24:27 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-edac@vger.kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] EDAC/mc_sysfs: Begin deprecating legacy sysfs
- EDAC interface
-Message-ID: <20250910152427.GH11602@yaz-khff2.amd.com>
-References: <20250909185748.1621098-1-avadhut.naik@amd.com>
- <20250909185748.1621098-6-avadhut.naik@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.15; Wed, 10 Sep
+ 2025 15:25:13 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd%5]) with mapi id 15.20.9115.010; Wed, 10 Sep 2025
+ 15:25:12 +0000
+Date: Wed, 10 Sep 2025 11:25:04 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, arm-scmi@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] firmware: imx: sm-misc: Dump syslog info
+Message-ID: <aMGYUALGv283tnV7@lizhi-Precision-Tower-5810>
+References: <20250910-sm-syslog-v1-0-5b36f8f21da6@nxp.com>
+ <20250910-sm-syslog-v1-2-5b36f8f21da6@nxp.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250909185748.1621098-6-avadhut.naik@amd.com>
-X-ClientProxiedBy: MN0P222CA0027.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:208:531::35) To CY5PR12MB6369.namprd12.prod.outlook.com
- (2603:10b6:930:21::10)
+In-Reply-To: <20250910-sm-syslog-v1-2-5b36f8f21da6@nxp.com>
+X-ClientProxiedBy: SJ0PR05CA0009.namprd05.prod.outlook.com
+ (2603:10b6:a03:33b::14) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,197 +83,181 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6369:EE_|PH7PR12MB6465:EE_
-X-MS-Office365-Filtering-Correlation-Id: 06dbb972-5f9c-40dd-33f1-08ddf07e23f7
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|PA4PR04MB7678:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b9eaa6a-9e27-4df7-c069-08ddf07e3c6f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|52116014|7416014|376014|366016|1800799024|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cbWyzthC5h1u/YYQVmLPJHMy8W57n5GoFznSeHgQUj5KQ4rOTzjLA0eRmCSq?=
- =?us-ascii?Q?KQFAZixOepxKYwzFwQn9FhrkpSKcA+UJsukXXRa8MmFBJi1SWZ9KFzylDro+?=
- =?us-ascii?Q?o8i+5wj4zoPN8iY+/ecyeKUnlVQWl8GPeV/CkKKTu+4j/ptV7z67aD0XGc7R?=
- =?us-ascii?Q?c9zJ7SGcgSUwKUcPodh4HP5o1nAvanuGzNQIk5AGf+gzH3W5EJWJz2K3tMCC?=
- =?us-ascii?Q?590kLJEQPRKm2Sjq+8p88b1w90UVC7UjOyZUzvsPtcbYYSB/uPxNWUCinYrU?=
- =?us-ascii?Q?8ZR+EPLwJWwXctmC0mqOxB5mVLl3pDMLDMVoTspS2bEDjXKbDcSsMW4s4ox6?=
- =?us-ascii?Q?UwvZ6XJSK9gK9ZFGG0qrEV9L1g6D6/CmIIabWCeZNcNR5aBFzOx+atKUy1gx?=
- =?us-ascii?Q?64upIqGYcnik+fr/Xp/kZfq9WaXFzKq/PkGgXI2ddVa8DxrWLdfpkgrwiw5+?=
- =?us-ascii?Q?LHEQDPxY7ZyZpzoUeudiFboieU+BlohkVkt7AheTDgfycQhkmyyzAte2vLNH?=
- =?us-ascii?Q?Xgu5GeEHWQKREAg0T0UhviTsdTJnn4fI6OOUDpIgBUvlNSKDz02IRrN0qrb3?=
- =?us-ascii?Q?/ymgUOViaDmaZybhXqxdDkkcNxcsz329uq31I2SRxvzc8v36cIL8/kPnkRSv?=
- =?us-ascii?Q?CZDBvZ8IGm2DlCR4VlSq8nJGTR2tZam2M1wYiX3t748BFm7BeU8B3d9eIkAL?=
- =?us-ascii?Q?+LpcTFhrfhdaueAZD8UIinLmrZGxnmMhfUsMMXP/WxIUh4C+DIe5hGPwYlVx?=
- =?us-ascii?Q?GQP2bUjIRq/b73M1Kc5gUkJq1hyu+jR2cx4pi1SzWYggBnbB1t9KShjxiwLC?=
- =?us-ascii?Q?cmrKIGbWz0HQFrSteeGTgnfWB7mrksRQVQBFBcrJbkDJIQ4CTRosyOtrFUDI?=
- =?us-ascii?Q?lPMwhCPiEcYJq/D3dML4F2QfYs0wXTnigAVY8z1S2XsgIdmZAIwkvQOEXRwR?=
- =?us-ascii?Q?SOHm5zP+ZMsTU7fUzJHDWRZfZuQQltwvNahpYCALxkKcyn5TbnYa8fQbdnlA?=
- =?us-ascii?Q?OWUZf3eU5SUyef29tVHg+3F6qWtEn1XTSLjitEuuQu2YvsjKHrnT2UhzjFmd?=
- =?us-ascii?Q?jJEJmwgJCc+jLt1lsYj0JJ1fqgu3dSGKXRCLypNOj+l4Vcre80nrgSXUM+Ex?=
- =?us-ascii?Q?TqEM3vlIFUatp7uyanf6+aAAdiKn8a8PuJRrvGQcqwTXQC5tXrTiVeOFqtDq?=
- =?us-ascii?Q?to8zP5ZAuoUSRYcUQeGC7hwiH/J2B/2UaR4EM/dluV7drXY7z6whSfOuh3bs?=
- =?us-ascii?Q?vPBCzH4+PDU7CYxKPFiuI+FM3ApID2y3LFCitk6wSsbnqyB51jOUAVeAUKCd?=
- =?us-ascii?Q?DmQAon7JvvB+4m5pUSiMrkkVdRpd226pZchdhyv+xxq8HnMY5dllVVDEW6P8?=
- =?us-ascii?Q?KIOvdCvNwdhjg+OB2XhS8oyQaFapYZ82ZoosENB3BFT2G8dsdjqNkX6lxtDh?=
- =?us-ascii?Q?RwzQLdP+oXs=3D?=
+	=?us-ascii?Q?WSowDCa4ETQohbK26C9A5pjwfjA5EnXLIoDDzKHovqHs5Cm8smzKHmyTPig6?=
+ =?us-ascii?Q?ucABkTKifRPRw+XGeGTfvnRaCNG0p785mQv7RbTrLkaVcSD6mfc6LqdY2qhk?=
+ =?us-ascii?Q?p2R7q2UsRXOIw908QR7SQd3lejAgfPMgPZjz5iKbc/vydrTv6QVvoJuBtuOE?=
+ =?us-ascii?Q?GA0z6KEidbLZNlSO7SMdOlKTvXlFowHSkP0nB5dRR5OeBOOm/yveYZniWzcp?=
+ =?us-ascii?Q?wapnWiFrUfTnE9IWjvUJ8cRJoB9ROlTLHwXT6qvG1ITF57nuQB3BjlA/9lOj?=
+ =?us-ascii?Q?nYWode8hKlqQyUoMM4U7RZ2ek1Lp+Z3CkQHXXVnio6XHu9mY5tpL9r9DLlcW?=
+ =?us-ascii?Q?3EcojZaJnYCx00ZvZmyEaksVHL0Ll+FACy28oAOY5BChcfEH0KC0uo/W9bSb?=
+ =?us-ascii?Q?y+0K9LhsPvvFBFnwnJ8Q7shgkmjtmXwR/CgsnayZeH7KSmtTFpW0x9XJ0Mu5?=
+ =?us-ascii?Q?TKeuJSPpx+AtEsbA1FQ6x5ow2d1MZM8qAFlaYtYz/BaefSHKb5BTu1+7XC33?=
+ =?us-ascii?Q?KWG8PCVlO41OkGObr1EI0sgaAqZ8PV/iCbWWaJ4Iefr9CdJ3OGmLnBpaPnNr?=
+ =?us-ascii?Q?cWATNY5dSw9kJEznkFJMYI/M6vKBmeWhh7hICvdDOnSXYmBV9TQjYtKgvCBI?=
+ =?us-ascii?Q?tQKT4vTfPQNjOUfdbCCxRQUaOsfMKwu0HT3LYpcV2xqj/yIpLbs6dqbJhw/6?=
+ =?us-ascii?Q?rMK5O4LtYnLyhWqX46SPZMNVI2vyUsVaVk5tiqnoBsFMcV2xUXdv6Yk+tVmD?=
+ =?us-ascii?Q?hMi6H3v1GNNkWFehQdZZxM6eKVKJ5NRkoBBscpyCtg2BPTfZotzbFGD5ECTw?=
+ =?us-ascii?Q?knvdLS/MHqHmJ5DM4NXPoAjNsc5dmPZc+vjQGEApz1OjmfIpfuWV+ptnkJ0E?=
+ =?us-ascii?Q?URV3hCK3M0NlgxM5NVNk7VMV1++hzWiMN1UWbE3RGX0J1f6N2rkYB8DCp2m8?=
+ =?us-ascii?Q?0inkIGwxSfE1WohhAcSu3Q2hsJY1Q95CzwOXrU7SHkudTm3BgeJX6Bbx0T+i?=
+ =?us-ascii?Q?uoYfLJJdAAOZxlg5p6ENIcn/7qj+1QKCAJF4keSUkorAg0OIKpmjSPcGyyvj?=
+ =?us-ascii?Q?OyNkqjlqDr4CjgTfH1VUHHP5Dk9JMF+WVtpgRHuyGaDAQ7N13Onsja0/sgmF?=
+ =?us-ascii?Q?2EBwnM+gQ49sYKejMhjUVxm6u5Ac99a82gzkix2w9LwofNeaRE5f3B0L6aha?=
+ =?us-ascii?Q?ZR05WwhKUX3stH5UuhejwJQgKS0lGNe8WliKkkHp4vPceoDqFoLJUwuJ32lW?=
+ =?us-ascii?Q?7kiVNYCFVHUTJpEg+ZVcK4dcq5bUtn+GEVrZ7/pefYAVBrZo+fENmMnLI6kw?=
+ =?us-ascii?Q?Yq7+KaMHIctVqu7um+tFCd2L1Lo9yhqswS2JnsAsBAaY2yt8h1/nr3tVDJ+8?=
+ =?us-ascii?Q?UpxicTQREwQrwed+kwyxckdigLcujWv4dqcm7igQzwkn+vL7uX2uq3LtZerj?=
+ =?us-ascii?Q?2HtyUiH9AWqQspEsn33moyHdvLu5jj9Eoq0c6g+z04/bOYKbPPJjD2Ubzvyh?=
+ =?us-ascii?Q?E6YqmIUhI1RvENA=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6369.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Oqu5f4cY1x4N9D8DfXJPaPFckZV5tUgZUQ1qGz1m602/me2Ao9x5sq103c9V?=
- =?us-ascii?Q?wX3FEwamqxrtduC9WwMkpJTmBPNvbmRr6Swq+Z7EPrqTm/RRJfF1Ul6/JO8E?=
- =?us-ascii?Q?S6FIDXL/cptPCVcPKjctZEFv1sMIS3b53WP9vvWyuhvR/d1kRCPEI//whVhK?=
- =?us-ascii?Q?QDn7upQ+IFNatnQiJzhVElc3b1P5UIMrGSBbo2GOZxfrdjZh4Gx5NbgwZblk?=
- =?us-ascii?Q?DCtjpjGYwPQU8y3L9eb/TpXh750KoY2dEgbS5fARx2TNfGGxHgKSluQgl+0e?=
- =?us-ascii?Q?KHbu0q4qfqhwj1zB4TorDwQ+CDsr6yKYssPTUNoIYSRNsKtaZ6vRPbuDxGyh?=
- =?us-ascii?Q?fH1YCWiVAaAOcrDmXMXyniMi+8fHIWbiJ+605Vzknrs57BZif5n6yPmqYDrI?=
- =?us-ascii?Q?gcOZUDw3R2/50Loqp4+CClRfe6jk3pEBn3kECzKILXYA+4kVNmB90zP94qOx?=
- =?us-ascii?Q?Z6hNJ9PXtTgp4XRFzEaO+eM77wIbSXmSuqs5ap/PcwgxeHLKSc2IjtvD1lcS?=
- =?us-ascii?Q?Pu6A9MbKXeBNJGfO/08+vQpTRe0OGHPUT6QzmwMlRcEuroe2tzWtS9glTi2C?=
- =?us-ascii?Q?bgtUbUYI6JsF9lXPUdiYZFe/HGVWrvKTfr8jEJULcD59/j4IBh+HvwLADoDV?=
- =?us-ascii?Q?iQ0raZdFq+PcU+OI5ils7a6ve0HAQjaZ2TNn/C816N0EFNYtVaAVB8MMaED/?=
- =?us-ascii?Q?T6cwR5GIr8HPrRj+FqvZC3pmru8XDTuHr2IeDKtnD4bA7hcpTAn6Hg/l4pdz?=
- =?us-ascii?Q?h1NUMjmQ+lDVVvR0WYagQIFlI9Aqky4Mq5emoPq+8FbZmf8whl7kJWDtudf0?=
- =?us-ascii?Q?PpZDlJ+OmWns2OTxT14Yfzzl52NDhja0GQBYi0KUZWVxBjzx8+P9yesvOhMa?=
- =?us-ascii?Q?Xx9nRwnH4fUQ+lzyN3tUFXUod9a+btauaoKabFfpxDWEj1pDmoO6NPOajuQ/?=
- =?us-ascii?Q?13XXpPS7cBtrvpG1GZJ6FkLId1lfX0t0PRJoqvu9eCsvRPux6JJ6BbJMPgLv?=
- =?us-ascii?Q?c/QCjwpqO9DgpdiE3OercyWMymcdthHEroipynhSIsb0qr1kPygV/k0iotKa?=
- =?us-ascii?Q?9TSkf8Wvx492EMK/Y83RHqKjTcLI31kXciliuIuX+GKThKvTQY9S6o4yjfUH?=
- =?us-ascii?Q?lH41OhR8Oe0+2QIahMqE1xTVWfMWH63wrHruvzKvg0od8DqxFOfQMutJWBih?=
- =?us-ascii?Q?EhLJM6Q45JbqHsuXfXeua7jtl+NjBNy+4ODrSQ4Bg//JhG77WKjClbOReXkJ?=
- =?us-ascii?Q?eVXtRtG1sLbDd3RUSPjEohcQuTtbuDRLgEGai/PxkWGeXdTteS8Yo50FUNce?=
- =?us-ascii?Q?zHvH5D/P8jZdEGAOIofkEsrHcW+hnTqsfCfQZ6ozVESYRGvmGRkx+BiUi5Ij?=
- =?us-ascii?Q?K9SusW+FLJODWdYHFyQQLsNLZUjkMOxNEdx4tackwkNg7mn/GNMYqp1DToe1?=
- =?us-ascii?Q?tyWbZBjlYlSkQfZknXExt7WA/FKUmcMRPZyd32V1MRGKxAD5QGXImqkD+u7R?=
- =?us-ascii?Q?3LaFkNggP8aarV3GAv9b0dvnEPH4ui9v6FvsYttaLYRNLKsd3Ti6ZT8h824y?=
- =?us-ascii?Q?bF/Q4a3CG1SHTDhNBoOpKVBzdu27D/3R0mssF2it?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06dbb972-5f9c-40dd-33f1-08ddf07e23f7
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6369.namprd12.prod.outlook.com
+	=?us-ascii?Q?WTubacjT3+Vna37dWxHUm91byQdVzzD22KycUg2ddt5LZCURxx8+ORZkjW6u?=
+ =?us-ascii?Q?nk58wZYl4BDE4GiRTU7SGcPfLheyL+Q3UwZjIGQ4cbFgHTWNm0VVQvxr1tb6?=
+ =?us-ascii?Q?Kiu5b/27IK1FqbLTujmD2AGW7PvHHhWPRmZtpKu0vvox5Z+Jo2NdfGCNYfVG?=
+ =?us-ascii?Q?eB6c1oICxwsREQgeAel34JwAcV93oi74Vwzn2F47xTZgflwTTrI+C6WCuwtE?=
+ =?us-ascii?Q?RlA74d0Hbwl1a8eHHSuCD5DF6W1iEObty9PwSrv0AfsrKWqMZH0HT0UNf2g0?=
+ =?us-ascii?Q?ZzJWw0+ecvdS6EmSYXdfmAZsD7n8EsUH0trBw5udO9UMy4iiFAoBmkl46+n/?=
+ =?us-ascii?Q?RQgBLBvqf4dq5XsR2HvgStvgE+Hu8IaiJc+mh/vFII8CqcdVJ2VpyyOPjT8z?=
+ =?us-ascii?Q?BIlUDXRPbvcPDxJ8D4bcA9DpE18yUpO4v5kxQlE+sP9NNNKsTcOHd7DDIk9a?=
+ =?us-ascii?Q?xYng7RA0kkaeqBIJsPeIZuoRADKWVFbc4yNXbPpB0b6stauHtpX/jUF1TRb5?=
+ =?us-ascii?Q?jflfGFP7E9kOUFURCNX98ST4qnRvQ3Czud8Vl7QMF2efHY9l7mG1NabCFwLa?=
+ =?us-ascii?Q?LKQngmARSXsjXMxqFtTUk86UA93RPUoxvQeRAZtqRQbg/DD5tc88lbtUU7ef?=
+ =?us-ascii?Q?Fn9AXa2HgjBZA0mmwuN1gByHbzvH9mOKs3u9My6unD8X6KfYS3GzEV10MEPn?=
+ =?us-ascii?Q?DF9mntAgMQd+Sr7bsZfwhkQx3PjO45Ro/IKYW8lQS2XHZjJTFqbMn9ak1wMa?=
+ =?us-ascii?Q?wo2GfpvPO2kAR+nfm3ZdlSNREBoYecMAjeHy55wzy6NAk1A1GjzlNxzGElcw?=
+ =?us-ascii?Q?+trxuwigSGTfuXXaNuMUnYTDBjpaLCXCq4vojo1U3skNO1XoW+YHw6v2pVUc?=
+ =?us-ascii?Q?kGmn5QZRa4b3H8Hplgon3snyODMAkG4QBzA+XdjkM1Nw9x/nRV1zMku9o2P4?=
+ =?us-ascii?Q?TQpwhW5aw4KygQGDkIvhS5zYHcnpB41SdIjPsroOrC99dMGkZVkEoNgUgwr5?=
+ =?us-ascii?Q?CBNyPeiLcNnFmMoDG53sVRD4kaFLZ1X2FRAY59HZ1Dl5IxetGWwyHv/t6kVk?=
+ =?us-ascii?Q?GOWcO0ac6ug27lHQFSPmEyWQwtNJiiYbSPB9A3fbFoUQqCX2dWcspF++V/CL?=
+ =?us-ascii?Q?ijAqghHFQErEt3zE7RgGSnLgOH0dj6J0YeEBASix32zTGHNp7d96YcTZaCMt?=
+ =?us-ascii?Q?AgyRCRe1jev+cKdFVFHKtO3pFXNFBZZIyXxf7Kh/LYcHxDxIiuWxETjBjrSF?=
+ =?us-ascii?Q?XANgPbKnQIjgEV7MrVP/HtdZltKtxrubtEbydGD5CACbkZEkYb1z7RYm0ein?=
+ =?us-ascii?Q?Puz9PpG/NXD9NdwWfIlZk6SUjqzSXvFBzQWTaOyImVnyuTwWQW7cI1ql2KTv?=
+ =?us-ascii?Q?OSBE8l5JFYuIRY/uKYtOZw42DoKWnKsS7sAmk4h5eA/NN6DCktNRJ6HwE+Pw?=
+ =?us-ascii?Q?7MbBE31N1qy+HTgvvDq3nV5KDuzb+k8heC1keJYACwx0YrE/9MED1ZIDxjig?=
+ =?us-ascii?Q?CuF8xctvGR0aJT65H6gDr/Kp/MZopwYKP+y/NsK9+6fF+iHz1rpXyqxVFkWw?=
+ =?us-ascii?Q?kwnzY/nQyCEUpH6FRF8=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b9eaa6a-9e27-4df7-c069-08ddf07e3c6f
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 15:24:31.8060
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 15:25:12.8802
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DII4g019QmJlXHX6gyH0yOZ1W/4sA8z82adVzdb0TEB2IPIfTrLSvc20OZ4tMc15cQBFd9VniHKvo1qn1voqng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6465
+X-MS-Exchange-CrossTenant-UserPrincipalName: iVBUYweM3WvCmK8ZHYiQMxP36saA5xKrXeE6BptkGLZklITe8gUnfr04G4gmw2Pn5RTseAwENP0/lOOj0+4u6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7678
 
-On Tue, Sep 09, 2025 at 06:53:14PM +0000, Avadhut Naik wrote:
-> The legacy sysfs EDAC interface has been made obsolete more than a decade
-> ago through the introduction of a new per-DIMM interface.
-> 
-> The legacy interface however, hasn't been removed till date.
-> 
-> Begin deprecating it so that it can eventually be removed two releases
-> later.
-> 
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+On Wed, Sep 10, 2025 at 10:28:18PM +0800, Peng Fan wrote:
+> Add debugfs interface to read System Manager syslog info
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
-> Changes in v3:
-> Patch introduced.
-> ---
->  drivers/edac/Kconfig         |  2 +-
->  drivers/edac/edac_mc_sysfs.c | 14 ++++++++++++++
->  2 files changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-> index b824472208c4..19470f4efee7 100644
-> --- a/drivers/edac/Kconfig
-> +++ b/drivers/edac/Kconfig
-> @@ -25,7 +25,7 @@ if EDAC
->  
->  config EDAC_LEGACY_SYSFS
->  	bool "EDAC legacy sysfs"
-> -	default y
-> +	default n
->  	help
->  	  Enable the compatibility sysfs nodes.
->  	  Use 'Y' if your edac utilities aren't ported to work with the newer
-> diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
-> index 8689631f1905..3840eef942f8 100644
-> --- a/drivers/edac/edac_mc_sysfs.c
-> +++ b/drivers/edac/edac_mc_sysfs.c
-> @@ -144,6 +144,8 @@ struct dev_ch_attribute {
->  static ssize_t csrow_ue_count_show(struct device *dev,
->  				   struct device_attribute *mattr, char *data)
->  {
-> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
+>  drivers/firmware/imx/sm-misc.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>
+> diff --git a/drivers/firmware/imx/sm-misc.c b/drivers/firmware/imx/sm-misc.c
+> index fc3ee12c2be878e0285183e3381c9514a63d5142..4678d76b7dd6907533b5131c15ff0edcb66f43b2 100644
+> --- a/drivers/firmware/imx/sm-misc.c
+> +++ b/drivers/firmware/imx/sm-misc.c
+> @@ -3,12 +3,15 @@
+>   * Copyright 2024 NXP
+>   */
+>
+> +#include <linux/debugfs.h>
+> +#include <linux/device/devres.h>
+>  #include <linux/firmware/imx/sm.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/scmi_protocol.h>
+>  #include <linux/scmi_imx_protocol.h>
+> +#include <linux/seq_file.h>
+>
+>  static const struct scmi_imx_misc_proto_ops *imx_misc_ctrl_ops;
+>  static struct scmi_protocol_handle *ph;
+> @@ -44,10 +47,43 @@ static int scmi_imx_misc_ctrl_notifier(struct notifier_block *nb,
+>  	return 0;
+>  }
+>
+> +static int syslog_show(struct seq_file *file, void *priv)
+> +{
+> +	struct device *dev = file->private;
+> +	/* 4KB is large enough for syslog */
+> +	void *syslog __free(kfree) = kmalloc(SZ_4K, GFP_KERNEL);
+> +	/* syslog API use num words, not num bytes */
+> +	u16 size = SZ_4K / 4;
+> +	int ret;
 > +
->  	struct csrow_info *csrow = to_csrow(dev);
->  
->  	return sysfs_emit(data, "%u\n", csrow->ue_count);
-> @@ -152,6 +154,8 @@ static ssize_t csrow_ue_count_show(struct device *dev,
->  static ssize_t csrow_ce_count_show(struct device *dev,
->  				   struct device_attribute *mattr, char *data)
->  {
-> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
+> +	if (!ph)
+> +		return -ENODEV;
 > +
->  	struct csrow_info *csrow = to_csrow(dev);
->  
->  	return sysfs_emit(data, "%u\n", csrow->ce_count);
-> @@ -160,6 +164,8 @@ static ssize_t csrow_ce_count_show(struct device *dev,
->  static ssize_t csrow_size_show(struct device *dev,
->  			       struct device_attribute *mattr, char *data)
->  {
-> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
-> +
->  	struct csrow_info *csrow = to_csrow(dev);
->  	int i;
->  	u32 nr_pages = 0;
-> @@ -172,6 +178,8 @@ static ssize_t csrow_size_show(struct device *dev,
->  static ssize_t csrow_mem_type_show(struct device *dev,
->  				   struct device_attribute *mattr, char *data)
->  {
-> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
-> +
->  	struct csrow_info *csrow = to_csrow(dev);
->  
->  	return sysfs_emit(data, "%s\n", edac_mem_types[csrow->channels[0]->dimm->mtype]);
-> @@ -180,6 +188,8 @@ static ssize_t csrow_mem_type_show(struct device *dev,
->  static ssize_t csrow_dev_type_show(struct device *dev,
->  				   struct device_attribute *mattr, char *data)
->  {
-> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
-> +
->  	struct csrow_info *csrow = to_csrow(dev);
->  
->  	return sysfs_emit(data, "%s\n", dev_types[csrow->channels[0]->dimm->dtype]);
-> @@ -189,6 +199,8 @@ static ssize_t csrow_edac_mode_show(struct device *dev,
->  				    struct device_attribute *mattr,
->  				    char *data)
->  {
-> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
-> +
->  	struct csrow_info *csrow = to_csrow(dev);
->  
->  	return sysfs_emit(data, "%s\n", edac_caps[csrow->channels[0]->dimm->edac_mode]);
-> @@ -199,6 +211,7 @@ static ssize_t channel_dimm_label_show(struct device *dev,
->  				       struct device_attribute *mattr,
->  				       char *data)
->  {
-> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
->  	struct csrow_info *csrow = to_csrow(dev);
->  	unsigned int chan = to_channel(mattr);
->  	struct rank_info *rank = csrow->channels[chan];
-> @@ -238,6 +251,7 @@ static ssize_t channel_dimm_label_store(struct device *dev,
->  static ssize_t channel_ce_count_show(struct device *dev,
->  				     struct device_attribute *mattr, char *data)
->  {
-> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
->  	struct csrow_info *csrow = to_csrow(dev);
->  	unsigned int chan = to_channel(mattr);
->  	struct rank_info *rank = csrow->channels[chan];
-> -- 
+> +	ret = imx_misc_ctrl_ops->misc_syslog(ph, &size, syslog);
+> +	if (ret) {
+> +		if (size > SZ_4K / 4) {
+> +			dev_err(dev, "syslog size is larger than 4KB, please enlarge\n");
+> +			return ret;
 
-Depcreated -> Deprecated
+suppose it is never happen, you pass down size to misc_syslog, it should
+never write data more than size.
 
-And maybe the warning can go in an short inline function? Sorry, I
-forgot if this came up already.
+I am not sure what means of misc_syslog() return value. Generally it should
+be how many data in pointer 'syslog' if return value > 0.
 
-Also, "two future releases" is vague. And it may be confusing if this is
-backported.
+So seq_hex_dump() should use ret value. Then only dump validate data,
+instead of the whole buffer.
 
-Does anyone have a better suggestion, or is this good as-is?
+Frank
 
-Thanks,
-Yazen
+> +		}
+> +	}
+> +
+> +	seq_hex_dump(file, " ", DUMP_PREFIX_NONE, 16, sizeof(u32), syslog, size * 4, false);
+> +	seq_putc(file, '\n');
+> +
+> +	return 0;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(syslog);
+> +
+> +static void scmi_imx_misc_put(void *p)
+> +{
+> +	debugfs_remove((struct dentry *)p);
+> +}
+> +
+>  static int scmi_imx_misc_ctrl_probe(struct scmi_device *sdev)
+>  {
+>  	const struct scmi_handle *handle = sdev->handle;
+>  	struct device_node *np = sdev->dev.of_node;
+> +	struct dentry *scmi_imx_dentry;
+>  	u32 src_id, flags;
+>  	int ret, i, num;
+>
+> @@ -98,6 +134,12 @@ static int scmi_imx_misc_ctrl_probe(struct scmi_device *sdev)
+>  		}
+>  	}
+>
+> +	scmi_imx_dentry = debugfs_create_dir("scmi_imx", NULL);
+> +	if (!IS_ERR(scmi_imx_dentry))
+> +		debugfs_create_file("syslog", 0444, scmi_imx_dentry, &sdev->dev, &syslog_fops);
+> +
+> +	devm_add_action_or_reset(&sdev->dev, scmi_imx_misc_put, scmi_imx_dentry);
+> +
+>  	return 0;
+>  }
+>
+>
+> --
+> 2.37.1
+>
 
