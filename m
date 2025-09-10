@@ -1,222 +1,186 @@
-Return-Path: <linux-kernel+bounces-810117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B49E2B51620
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:54:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55018B51629
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EADF7AA7C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:52:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CE73565198
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFCA2D6605;
-	Wed, 10 Sep 2025 11:54:24 +0000 (UTC)
-Received: from listy.pwr.edu.pl (listy.pwr.edu.pl [156.17.197.119])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A59C313526;
+	Wed, 10 Sep 2025 11:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="QMrR7Z56"
+Received: from mail-4317.protonmail.ch (mail-4317.protonmail.ch [185.70.43.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20103258EC8
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.17.197.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731F528725B;
+	Wed, 10 Sep 2025 11:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757505263; cv=none; b=TCAUtg2hM+ZbyDRyncUJ0s0Rp7XwOfxtgS6FZ39LVCA4SB+QdotULQ8zf6YZeFLQDcIZceJVFfr27I5lPrQiYgcLrMDP43XlB3kX1xWZwfjvxNMkwZ3j2S1zGEKraAwnKbN94HL3vLb6+3py65CiQ3ve+pCfosHnpKYu4tYAUjU=
+	t=1757505356; cv=none; b=kxpIXU3mlrAAbb0CV3CY8Rr5X5aFU7YkE8F6JuRTl5gk3q0AJu5XoUyCiGLfLyqpBIzDly10xT9LQyaUcD+4EIAxdYex0WC1sZA0gd+AJzVa/fRPhsAoBwzh/zw0APYWGWvv2GPu71BJ0Q4g+W2VGj0eZJsuUdjbFU5gJXBbau4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757505263; c=relaxed/simple;
-	bh=L3yYJ1xkuiXmGTDwaw8TQ+QhtzIgBdzjjURQEhfbWvY=;
-	h=Content-Type:Message-Id:From:Date:Mime-Version:To:Subject; b=XafDxh2tKAgYUDy/XPYHDk8k4FJn/hVbAGzeCiCUB2EElw3BEcbwRHaPhI5PakNj0A40QK94wIL3BwfCzPqERsdteOXe5qflOmPZXq7AqxH5umd51gKFVaEu4+Xrib8GhrahncaLfdVmJJ8HiU3EbpTXH8za+XyAOh7QwGzefQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e-informatyka.pl; spf=pass smtp.mailfrom=e-informatyka.pl; arc=none smtp.client-ip=156.17.197.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e-informatyka.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e-informatyka.pl
-Received: from localhost (156-17-130-43.ii.pwr.edu.pl [156.17.130.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: e-informatica@listy.pwr.edu.pl)
-	by listy.pwr.edu.pl (Postfix) with UTF8SMTPSA id 7F5B04048DBA
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:54:12 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 listy.pwr.edu.pl 7F5B04048DBA
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-X-Listmonk-Campaign: f884ba71-56f3-4ced-80ef-0b7a3ade467a
-Content-Type: text/plain; charset=UTF-8
-Message-Id: <1757505252520187170.1.2610577288502871950@listmonk.example.com>
-From: "e-Informatica Software Engineering Journal" <e-informatica@e-informatyka.pl>
-Date: Wed, 10 Sep 2025 11:54:12 +0000
+	s=arc-20240116; t=1757505356; c=relaxed/simple;
+	bh=ubMvjrek87GeaqHNL5HP9x3C5ADG973j0x4E0albOnY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N6YABajCqQolm6yDajDNhhJ+ZqUFW5H8WTkb/0X4NBgWk7SJb5Eifts1w8UUuidxZuTdqCZGk/5biY4eMgKeo3D2NFGfQzH6eWdAtl0SsRjyAZLkHrdy0XRmYcAc0P3rI2IUn7L+4SUmdW1eBiI5hwYgVvHb87AS+h3rmUHg8JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=QMrR7Z56; arc=none smtp.client-ip=185.70.43.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
+	s=protonmail; t=1757505346; x=1757764546;
+	bh=ubMvjrek87GeaqHNL5HP9x3C5ADG973j0x4E0albOnY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=QMrR7Z5676anBLe7AwxaKKijBhSvwv6m7yQv47t5NC0444eC2kKw96q59+2x85mFe
+	 A4mAQw0X3jevbu76dbFKC3xOgN/Zrwk8jJIDb4s4iOdW1Xpt8fQtuUtlSrjI5gccLb
+	 eRbazy2nfu5l/mYqS1JGe6+2nTtbI6L/ndnwGis5bQyXf3qUgsX//x9egZqwYILnBJ
+	 bwi8GPNx97ApOCR90PTnIaSU5/FmZaqjRV3ahwTbHlzlqR8QFcXOvxIVbFGRv/g67W
+	 mLrqzq/YvJXsd1hsb/nj1K+dw6Btw4sulGlb+srUcJCcpvaLcytbzeTZl1N+bY00f/
+	 yxOUX9S8oDY5w==
+Date: Wed, 10 Sep 2025 11:55:42 +0000
+To: Hans de Goede <hansg@kernel.org>
+From: Aleksandrs Vinarskis <alex@vinarskis.com>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Daniel Thompson <danielt@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, threeway@gmail.com, Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v4 1/4] dt-bindings: leds: add generic LED consumer documentation
+Message-ID: <5bgdfKv1_vrZKbzrkfF_zm8JDGoS_IdEmDcQzC2KmzhywBdjgOV1ULxep6DscsKudeIo4LdKRCGcAhPn3u1n-XMhT8m2U2EMifIZ0r39og0=@vinarskis.com>
+In-Reply-To: <c6c80870-386b-473d-b643-bcd64c86c692@kernel.org>
+References: <20250910-leds-v4-0-1fc320488233@vinarskis.com> <20250910-leds-v4-1-1fc320488233@vinarskis.com> <c6c80870-386b-473d-b643-bcd64c86c692@kernel.org>
+Feedback-ID: 158356072:user:proton
+X-Pm-Message-ID: 79dbae72426f9ad4c136f124bd92c930930dc852
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-To: <linux-kernel@vger.kernel.org>
-Subject: Publish Your Research in e-Informatica Soft. Eng. Journal (IF=1.2, Open Access, Free of Charge)
-X-Listmonk-Subscriber: 0adc0220-7bc8-4f1d-86b1-177f6654fd40
 
-<!doctype html>
-<html>
-    <head>
-        <title>Publish Your Research in e-Informatica Soft. Eng. Journal (I=
-F=3D1.2, Open Access, Free of Charge)</title>
-        <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Du=
-tf-8">
-        <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-sc=
-ale=3D1, minimum-scale=3D1">
-        <base target=3D"_blank">
-        <style>
-            body {
-                background-color: #F0F1F3;
-                font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, sans-=
-serif;
-                font-size: 15px;
-                line-height: 26px;
-                margin: 0;
-                color: #444;
-            }
 
-            pre {
-                background: #f4f4f4f4;
-                padding: 2px;
-            }
 
-            table {
-                width: 100%;
-                border: 1px solid #ddd;
-            }
-            table td {
-                border-color: #ddd;
-                padding: 5px;
-            }
 
-            .wrap {
-                background-color: #fff;
-                padding: 30px;
-                max-width: 525px;
-                margin: 0 auto;
-                border-radius: 5px;
-            }
 
-            .button {
-                background: #0055d4;
-                border-radius: 3px;
-                text-decoration: none !important;
-                color: #fff !important;
-                font-weight: bold;
-                padding: 10px 30px;
-                display: inline-block;
-            }
-            .button:hover {
-                background: #111;
-            }
 
-            .footer {
-                text-align: center;
-                font-size: 12px;
-                color: #888;
-            }
-                .footer a {
-                    color: #888;
-                    margin-right: 5px;
-                }
+On Wednesday, September 10th, 2025 at 13:50, Hans de Goede <hansg@kernel.or=
+g> wrote:
 
-            .gutter {
-                padding: 30px;
-            }
+>=20
+>=20
+> Hi Aleksandrs,
+>=20
+> Thank you for your continued work on this.
+>=20
+> One small remark below.
+>=20
+> On 10-Sep-25 1:07 PM, Aleksandrs Vinarskis wrote:
+>=20
+> > Introduce common generic led consumer binding, where consumer defines
+> > led(s) by phandle, as opposed to trigger-source binding where the
+> > trigger source is defined in led itself.
+> >=20
+> > Add already used in some schemas 'leds' parameter which expects
+> > phandle-array. Additionally, introduce 'led-names' which could be used
+> > by consumers to map LED devices to their respective functions.
+> >=20
+> > Signed-off-by: Aleksandrs Vinarskis alex@vinarskis.com
+> > ---
+> > .../devicetree/bindings/leds/leds-consumer.yaml | 67 ++++++++++++++++++=
+++++
+> > 1 file changed, 67 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/leds/leds-consumer.yaml =
+b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..045b7a4fcd3bdcfb19a02fe=
+4435b40445c168115
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
+> > @@ -0,0 +1,67 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/leds/leds-consumer.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Common leds consumer
+> > +
+> > +maintainers:
+> > + - Aleksandrs Vinarskis alex@vinarskis.com
+> > +
+> > +description:
+> > + Some LED defined in DT are required by other DT consumers, for exampl=
+e
+> > + v4l2 subnode may require privacy or flash LED. Unlike trigger-source
+> > + approach which is typically used as 'soft' binding, referencing LED
+> > + devices by phandle makes things simpler when 'hard' binding is desire=
+d.
+> > +
+> > + Document LED properties that its consumers may define.
+> > +
+> > +select: true
+> > +
+> > +properties:
+> > + leds:
+> > + oneOf:
+> > + - type: object
+> > + - $ref: /schemas/types.yaml#/definitions/phandle-array
+> > + description:
+> > + A list of LED device(s) required by a particular consumer.
+> > + items:
+> > + maxItems: 1
+> > +
+> > + led-names:
+> > + description:
+> > + A list of device name(s). Used to map LED devices to their respective
+> > + functions, when consumer requires more than one LED.
+> > +
+> > +additionalProperties: true
+> > +
+> > +examples:
+> > + - |
+> > + #include <dt-bindings/gpio/gpio.h>
+> > + #include <dt-bindings/leds/common.h>
+> > +
+> > + leds {
+> > + compatible =3D "gpio-leds";
+> > +
+> > + privacy_led: privacy-led {
+> > + color =3D <LED_COLOR_ID_RED>;
+> > + default-state =3D "off";
+> > + function =3D LED_FUNCTION_INDICATOR;
+> > + gpios =3D <&tlmm 110 GPIO_ACTIVE_HIGH>;
+> > + };
+> > + };
+> > +
+> > + i2c {
+> > + #address-cells =3D <1>;
+> > + #size-cells =3D <0>;
+> > +
+> > + v4l2_node: camera@36 {
+> > + reg =3D <0x36>;
+> > +
+> > + leds =3D <&privacy_led>;
+> > + led-names =3D "privacy-led";
+>=20
+>=20
+> This should probable be:
+>=20
+> led-names =3D "privacy";
+>=20
+> Now without the "-led".
 
-            img {
-                max-width: 100%;
-                height: auto;
-            }
+Ah of course, seems I messed my rebasing, thanks for spotting it.
+Re-spinning.
 
-            a {
-                color: #0055d4;
-            }
-                a:hover {
-                    color: #111;
-                }
-            @media screen and (max-width: 600px) {
-                .wrap {
-                    max-width: auto;
-                }
-                .gutter {
-                    padding: 10px;
-                }
-            }
-        </style>
-    </head>
-<body style=3D"background-color: #F0F1F3;font-family: 'Helvetica Neue', 'Se=
-goe UI', Helvetica, sans-serif;font-size: 15px;line-height: 26px;margin: 0;=
-color: #444;">
-    <div class=3D"gutter" style=3D"padding: 30px;">&nbsp;</div>
-    <div class=3D"wrap" style=3D"background-color: #fff;padding: 30px;max-w=
-idth: 525px;margin: 0 auto;border-radius: 5px;">
-        Dear colleague,
+Alex
 
-We would like to invite you to submit your papers to the e-Informatica Soft=
-ware Engineering Journal (EISEJ).
-
-We particularly invite papers focused on:
-- software engineering or=20
-- the intersection of data science (AI/ML) and software engineering.
-
-Our strengths:
-- excellent, international Editorial Board (https://www.e-informatyka.pl/in=
-dex.php/einformatica/editorial-board/)
-- *open access without any authorship fees*, =20
-- no paper length limit,
-- fast, continuous publishing model with papers edited and published immedi=
-ately after acceptance,
-- rigorous, blind peer-review process.
-
-Our achievements:
-- ISI WoS with Impact Factor (IF=3D1.2, 5 Year IF=3D1.3) calculated by Clar=
-ivate (https://jcr.clarivate.com/jcr-jp/journal-profile?journal=3DE-INFORMA=
-TICA&year=3DAll%20years),=20
-- Scopus (https://www.scopus.com/sourceid/21100259509) with CiteScore=3D3.5=
-,=20
-- DBLP (https://dblp.uni-trier.de/db/journals/eInformatica/index.html),=20
-- Directory of Open Access Journals (https://doaj.org/toc/2084-4840),=20
-- Google Scholar (https://scholar.google.pl/citations?user=3D8-uDLDoAAAAJ&h=
-l) etc.
-
-Apart from classic research papers, we invite you to submit:
-- systematic reviews (incl. systematic mapping/scoping studies),=20
-- surveys,
-- research agendas,
-- vision papers.=20
-
-We not only invite you to submit papers (https://mc.manuscriptcentral.com/e=
--InformaticaSEJ), but also to organise special sections (please get in touc=
-h with us at e-informatica@pwr.edu.pl).
-
-We would be grateful for your feedback as well. Please let us know what we =
-lack, what we did not think about, or what we should do to become an even m=
-ore attractive venue from your point of view!
-Let us collaborate on any excellent idea within the scope of the journal!
-
-With very best wishes,
-e-Informatica Software Engineering Journal (EISEJ)
-Editors-in-Chief
-Lech Madeyski and Miroslaw Ochodek
-
-EISEJ website: https://www.e-informatyka.pl/
-EISEJ submission site: https://mc.manuscriptcentral.com/e-InformaticaSEJ
-    </div>
-   =20
-    <div class=3D"footer" style=3D"text-align: center;font-size: 12px;color=
-: #888;">
-        <p>
-            <a href=3D"https://listmonk.e-informatyka.pl/subscription/f884b=
-a71-56f3-4ced-80ef-0b7a3ade467a/0adc0220-7bc8-4f1d-86b1-177f6654fd40" style=
-=3D"color: #888;">Unsubscribe</a>
-            &nbsp;&nbsp;
-            <a href=3D"https://listmonk.e-informatyka.pl/campaign/f884ba71-=
-56f3-4ced-80ef-0b7a3ade467a/0adc0220-7bc8-4f1d-86b1-177f6654fd40" style=3D"=
-color: #888;">View in browser</a>
-        </p>
-    </div>
-    <div class=3D"gutter" style=3D"padding: 30px;">&nbsp;<img src=3D"https:=
-//listmonk.e-informatyka.pl/campaign/f884ba71-56f3-4ced-80ef-0b7a3ade467a/0=
-0000000-0000-0000-0000-000000000000/px.png" alt=3D"" /></div>
-</body>
-</html>
+>=20
+> Regards,
+>=20
+> Hans
 
