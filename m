@@ -1,220 +1,202 @@
-Return-Path: <linux-kernel+bounces-810892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79BE0B5212E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06BE1B52131
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27E90585716
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:36:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6478E177DC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739F2271A7C;
-	Wed, 10 Sep 2025 19:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aorlRc6Y"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF79A2D77F5;
+	Wed, 10 Sep 2025 19:36:02 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7452D594F
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 19:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FE82D8DA9
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 19:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757532956; cv=none; b=G9tW2xouM4TeUYAKEFpen/ug7F6EK/4tCXqLAn2z5x2MxyOK4YnVQ3GaQrRkAHr5zIZwwQJ+3OApVFWcUWKfP+jXzB0qjTf8IUaSYXS6OkIq8R26S45tRZLu0N87Q312bNStRCIFSwiGBaNTogw61A/pb7b7pBSzsYSHYNIEbqA=
+	t=1757532962; cv=none; b=soskovdCCc93zKGkH7vdQloYmIE0Fexrezr0JfzOJJqZohtVCFxsAlkE55x2Obzjn3jVG/ThqQwHV8ItwbR4uy6Lchfs8krLcwiXtqj7M26y0tj6tQnJTydtfSjP2ftSLslKB+Eh1j4nBCddMW7eyA6CX3EQg6YTaPzYk5hhDRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757532956; c=relaxed/simple;
-	bh=PtN1wZSHACRT6avekYs3yn3rwtGd9wSgDovmjolOpF8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P8q+MvBhq8S1ub92qYpV2GVcyglplz3M3TiVh4uAEalnaQQIo3Ug1SB7D59DInfDwGTrdQmYAsGft9JTrSSO5m8RI6LQOO4PpOWL4gX6roB64b8AqnhduepnbF9sWODPFd/V7+6VsxDajGIZcF63kWe0dnCwkcyCDM1P/kIX4so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aorlRc6Y; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7728815e639so4069769b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:35:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757532953; x=1758137753; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rDKunTxf/S5CBlU8+drFx4GQVl38jBRjcy2CRI8kVQU=;
-        b=aorlRc6YCNM9XKG8R6pkHQv2OIzwRenWscG69qs3lyLvK/K/YwRYB/aRm+67hqHnhq
-         8TVaNwo4gWsy5xJb+k3D6IC7vkpC//UBcFo63Ok8k/I0hpVC+4BMtvejUHkiN73Gg61r
-         zv/XVpJagmQfuXqL8cIg2flNNHF/o/H3CAqUI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757532953; x=1758137753;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rDKunTxf/S5CBlU8+drFx4GQVl38jBRjcy2CRI8kVQU=;
-        b=Rso66Wqe+GX3QfIPuOmTIRyV2Ibf7vz+IUmyUniSn6cZHKgNTHNskXSBv4bJ7Q5W1Q
-         B0QvlaXBSItW4EQdHFdsZ9436BigxH33ujleeE7uv1bLPHD9w6Kb7y2Q+INFq8jh4l9A
-         eDwJdbE4NiW6M1qLShSWjRx4bzxMQrZo/FGpCQHbrSO2kLzvyu3qVKNfGmv+Ea0eDMbT
-         NxDkfC9JapHoBOI94W3j7yP3ykFFJhJg65IE7uNZX3CAnhY4M+xfyunxKv/9DbkxnJBc
-         l/3Ax28W7ao86CEbhHkrVZUAidG41QixIGUAx0csQuEkvYxqCIuUHVn1JjsEg+YjE4wF
-         5ejA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5Enegs9VTvFo8ciaEjV7jLMwu6n7XYlcPdmkMJsK+3IJnxUz9sgYfuOl7ALLeu4DR6iPjvzyU675Y1LA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOBA4qS/0FKLGQrAMSz9+iMO6JnIpQmYFSARoAhbtfdjEZ6kKt
-	cS7/GH6QZOwUhJGEu8fXsWHThPiVWSG/iO6A/QzTvy9osm3z0MTyZREEYcIVXRu3ZMAeTivH/8T
-	7xz37gJZc8maMKJUx3W9geF3O5e4Kbj3BxbMaK3pt
-X-Gm-Gg: ASbGncsdhDH0o0sfGNIZoicTiQ5+dYb817HTrx5qTlMl1zoHwt/bwkTwlCy08TVIwA0
-	FFuhg90jXnkRQKbkgaNZec+zB7uGQHjsIti/Phfa7oXLhVhBHuVI3XXAzb+QR33nu1S4eD2kDKn
-	Jiokb82/Dw9o/PBMD14enCyXGBetkxn7FzxTEeRWFcVOxXoxPGVxTEwoMziX7PB0C6ZIyBNINbo
-	OFAxlJXjDi1CbhGBPWyGYjI97C0Z4WJQFY=
-X-Google-Smtp-Source: AGHT+IEecFj4d2N8l54ipxV9A0HELOpzA3uq6yMz+0dnkVdznSIvHQpERqoi0pQkGgHfRcYwyH9WUSZ+n1fNKe/lvIs=
-X-Received: by 2002:a05:6a21:33a1:b0:24a:6bef:bdd5 with SMTP id
- adf61e73a8af0-25344130fbfmr23540158637.41.1757532953527; Wed, 10 Sep 2025
- 12:35:53 -0700 (PDT)
+	s=arc-20240116; t=1757532962; c=relaxed/simple;
+	bh=97TTwFnkZILp+AwKU5rkAQ1/KcOF8CugkOR3mmbqLGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMa8hIribPUGJqhlEA+ihaElF1ycYLmgCTmu2bokTvh0Aqs1I1trPX34n5+U2oY1Kxw0NfoCOtL6q/X9YXtBv6w9aFMou09RSGKLNs19esAq1XtSe+qf/UKcCY14X7GBOKf3nvSV3bNXjs96G/jtUW0UKLRitRZRRJrzU7sYDMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwQba-00044l-E0; Wed, 10 Sep 2025 21:35:46 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwQba-000dsZ-09;
+	Wed, 10 Sep 2025 21:35:46 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwQbZ-00GLdL-2s;
+	Wed, 10 Sep 2025 21:35:45 +0200
+Date: Wed, 10 Sep 2025 21:35:45 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] dmaengine: add support for device_link
+Message-ID: <20250910193545.gx3qoyjamoxlncqd@pengutronix.de>
+References: <20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de>
+ <20250903-v6-16-topic-sdma-v1-9-ac7bab629e8b@pengutronix.de>
+ <aLhUv+mtr1uZTCth@lizhi-Precision-Tower-5810>
+ <20250909120309.5zgez5exbvxn5z3y@pengutronix.de>
+ <aMA88W/rDxFesEx+@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905142206.4105351-1-akuchynski@chromium.org>
- <20250905142206.4105351-5-akuchynski@chromium.org> <2025091029-snarl-decimal-aea2@gregkh>
-In-Reply-To: <2025091029-snarl-decimal-aea2@gregkh>
-From: Andrei Kuchynski <akuchynski@chromium.org>
-Date: Wed, 10 Sep 2025 19:35:42 +0000
-X-Gm-Features: Ac12FXxPN_dgj5aIjIjw1flHyJdM6r_Y2JbGmXYfsM4L8NDijYd8kjCgCMLV2jo
-Message-ID: <CAMMMRMdOiGQdmgQ7COa1Nf9Rh9BQLD79TJ77VW4ejadx_bNyeg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] usb: typec: Implement alternate mode priority handling
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Benson Leung <bleung@chromium.org>, 
-	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, "Christian A. Ehrhardt" <lk@c--e.de>, 
-	Venkat Jayaraman <venkat.jayaraman@intel.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMA88W/rDxFesEx+@lizhi-Precision-Tower-5810>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Sep 10, 2025 at 1:31=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Fri, Sep 05, 2025 at 02:22:05PM +0000, Andrei Kuchynski wrote:
-> > This patch introduces APIs to manage the priority of USB Type-C alterna=
-te
-> > modes. These APIs allow for setting and retrieving a priority number fo=
-r
-> > each mode. If a new priority value conflicts with an existing mode's
-> > priority, the priorities of the conflicting mode and all subsequent mod=
-es
-> > are automatically incremented to ensure uniqueness.
+On 25-09-09, Frank Li wrote:
+
+...
+
+> > > > diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+> > > > index 758fcd0546d8bde8e8dddc6039848feeb1e24475..a50652bc70b8ce9d4edabfaa781b3432ee47d31e 100644
+> > > > --- a/drivers/dma/dmaengine.c
+> > > > +++ b/drivers/dma/dmaengine.c
+> > > > @@ -817,6 +817,7 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+> > > >  	struct fwnode_handle *fwnode = dev_fwnode(dev);
+> > > >  	struct dma_device *d, *_d;
+> > > >  	struct dma_chan *chan = NULL;
+> > > > +	struct device_link *dl;
+> > > >
+> > > >  	if (is_of_node(fwnode))
+> > > >  		chan = of_dma_request_slave_channel(to_of_node(fwnode), name);
+> > > > @@ -858,6 +859,13 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+> > > >  	/* No functional issue if it fails, users are supposed to test before use */
+> > > >  #endif
+> > > >
+> > > > +	dl = device_link_add(dev, chan->device->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
+> > >
+> > > chan->device->dev is dmaengine devices. But some dmaengine's each channel
+> > > have device, consumer should link to chan's device, not dmaengine device
+> > > because some dmaengine support per channel clock\power management.
 > >
-> > Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
-> > ---
-> >  drivers/usb/typec/Makefile         |  2 +-
-> >  drivers/usb/typec/mode_selection.c | 38 ++++++++++++++++++++++++++++++
-> >  drivers/usb/typec/mode_selection.h |  6 +++++
-> >  include/linux/usb/typec_altmode.h  |  1 +
-> >  4 files changed, 46 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/usb/typec/mode_selection.c
-> >  create mode 100644 drivers/usb/typec/mode_selection.h
+> > I get your point. Can you give me some pointers please? To me it seems
+> > like the dma_chan_dev is only used for sysfs purpose according the
+> > dmaengine.h.
+> 
+> Not really, there are other dma engineer already reuse it for other purpose.
+> So It needs update kernel doc for dma_chan_dev.
+
+Can you please provide me some pointers? I checked the kernel code base
+for the struct::dma_chan_dev. I didn't found any references within the
+dmaengine drivers. The only usage I found was for the sysfs purpose.
+
+> > > chan's device's parent devices is dmaengine devices. it should also work
+> > > for sdma case
 > >
-> > diff --git a/drivers/usb/typec/Makefile b/drivers/usb/typec/Makefile
-> > index 7a368fea61bc..8a6a1c663eb6 100644
-> > --- a/drivers/usb/typec/Makefile
-> > +++ b/drivers/usb/typec/Makefile
-> > @@ -1,6 +1,6 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> >  obj-$(CONFIG_TYPEC)          +=3D typec.o
-> > -typec-y                              :=3D class.o mux.o bus.o pd.o ret=
-imer.o
-> > +typec-y                              :=3D class.o mux.o bus.o pd.o ret=
-imer.o mode_selection.o
-> >  typec-$(CONFIG_ACPI)         +=3D port-mapper.o
-> >  obj-$(CONFIG_TYPEC)          +=3D altmodes/
-> >  obj-$(CONFIG_TYPEC_TCPM)     +=3D tcpm/
-> > diff --git a/drivers/usb/typec/mode_selection.c b/drivers/usb/typec/mod=
-e_selection.c
-> > new file mode 100644
-> > index 000000000000..2179bf25f5d4
-> > --- /dev/null
-> > +++ b/drivers/usb/typec/mode_selection.c
-> > @@ -0,0 +1,38 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright 2025 Google LLC.
-> > + */
-> > +
-> > +#include "mode_selection.h"
-> > +#include "class.h"
-> > +#include "bus.h"
-> > +
-> > +static int increment_duplicated_priority(struct device *dev, void *dat=
-a)
-> > +{
-> > +     struct typec_altmode **alt_target =3D (struct typec_altmode **)da=
-ta;
-> > +
-> > +     if (is_typec_altmode(dev)) {
-> > +             struct typec_altmode *alt =3D to_typec_altmode(dev);
-> > +
-> > +             if (alt !=3D *alt_target && alt->priority =3D=3D (*alt_ta=
-rget)->priority) {
-> > +                     alt->priority++;
-> > +                     *alt_target =3D alt;
-> > +                     return 1;
-> > +             }
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +void typec_mode_set_priority(struct typec_altmode *alt,
-> > +             const unsigned int priority)
-> > +{
-> > +     struct typec_port *port =3D to_typec_port(alt->dev.parent);
-> > +     int res =3D 1;
-> > +
-> > +     alt->priority =3D priority;
-> > +
-> > +     while (res)
-> > +             res =3D device_for_each_child(&port->dev, &alt,
-> > +                             increment_duplicated_priority);
-> > +}
-> > diff --git a/drivers/usb/typec/mode_selection.h b/drivers/usb/typec/mod=
-e_selection.h
-> > new file mode 100644
-> > index 000000000000..cbf5a37e6404
-> > --- /dev/null
-> > +++ b/drivers/usb/typec/mode_selection.h
-> > @@ -0,0 +1,6 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +
-> > +#include <linux/usb/typec_altmode.h>
-> > +
-> > +void typec_mode_set_priority(struct typec_altmode *alt,
-> > +             const unsigned int priority);
-> > diff --git a/include/linux/usb/typec_altmode.h b/include/linux/usb/type=
-c_altmode.h
-> > index b3c0866ea70f..571c6e00b54f 100644
-> > --- a/include/linux/usb/typec_altmode.h
-> > +++ b/include/linux/usb/typec_altmode.h
-> > @@ -28,6 +28,7 @@ struct typec_altmode {
-> >       int                             mode;
-> >       u32                             vdo;
-> >       unsigned int                    active:1;
-> > +     unsigned int                    priority;
->
-> What is the range of this?  And this value is only incremented, never
-> decremented?
->
+> > I see, this must be tested of course.
+> > > >         if (chan->device->create_devlink) {
+> > >                 u32 flags = DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_CONSUMER;
+> >
+> > According device_link.rst: using DL_FLAG_STATELESS and
+> > DL_FLAG_AUTOREMOVE_CONSUMER is invalid.
+> >
+> > >                 if (pm_runtime_active(dev))
+> > >                         flags |= DL_FLAG_RPM_ACTIVE;
+> >
+> > This is of course interessting, thanks for the hint.
+> >
+> > > When create device link (apply channel), consume may active.
+> >
+> > I have read it as: "resue the supplier and ensure that the supplier
+> > follows the consumer runtime state".
+> >
+> > >                 dl = device_link_add(chan->slave, &chan->dev->device, flags);
+> >
+> > Huh.. you used the dmaengine device too?
+> 
+> /**
+>  * struct dma_chan_dev - relate sysfs device node to backing channel device
+>  * @chan: driver channel device
+>  * @device: sysfs device
+>  * @dev_id: parent dma_device dev_id
+>  * @chan_dma_dev: The channel is using custom/different dma-mapping
+>  * compared to the parent dma_device
+>  */
+> struct dma_chan_dev {
+> 	struct dma_chan *chan;
+> 	struct device device;
+> 	int dev_id;
+> 	bool chan_dma_dev;
+> };
+> 
+> struct dma_chan {
+> 	struct dma_device *device; /// this one should be dmaengine
+> 	struct dma_chan_dev *dev; /// this one is pre-chan device.
+> }
 
-The range extends from 0 to UINT_MAX. The value is only incremented.
-The only exception is that If the user sets UINT_MAX for two alternate
-modes in turn, the priority of the first mode becomes 0. This does not
-break the algorithm, and the user can check all priorities via
-=E2=80=98priority=E2=80=99 attributes.
-I am unsure if a check for this specific case is necessary, as it
-would require examining priorities across all modes, not just a simple
-'if' statement.
-There are a few ideas in this algorithm:
-- all priorities must always be valid and unique
-- no unnecessary restrictions for the user
-- as simple as possible
+I've tested your approach but it turns out that teh dma_chan_dev has no
+driver. Of course we could use the DL_FLAG_STATELESS flag but this is
+described as:
 
-Thanks,
-Andrei
+| When driver presence on the supplier is irrelevant and only correct
+| suspend/resume and shutdown ordering is needed, the device link may
+| simply be set up with the ``DL_FLAG_STATELESS`` flag.  In other words,
+| enforcing driver presence on the supplier is optional.
+
+I want to enforce the driver presence, therefore I used the manged flags
+which excludes the DL_FLAG_STATELESS, if I get it right.
+
+Please see the below the debug output:
+
+** use the dmaengine device as supplier **
+
+device_link_init_status: supplier.dev:30bd0000.dma-controller supplier.drv:imx-sdma supplier.status:0x2 consumer:dev:30840000.spi consumer.drv:spi_imx consumer.status:0x1
+device_link_init_status: supplier.dev:30e10000.dma-controller supplier.drv:imx-sdma supplier.status:0x2 consumer:dev:30c20000.sai consumer.drv:fsl-sai consumer.status:0x1
+
+
+** use the dma channel device as supplier **
+
+device_link_init_status: supplier.dev:dma0chan0 supplier.drv:no-driver supplier.status:0x0 consumer:dev:30840000.spi consumer.drv:spi_imx consumer.status:0x1
+device_link_init_status: supplier.dev:dma0chan1 supplier.drv:no-driver supplier.status:0x0 consumer:dev:30840000.spi consumer.drv:spi_imx consumer.status:0x1
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 51 at /drivers/base/core.c:1387 device_links_driver_bound+0x170/0x3a0
+...
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+
+As said, I get your point regarding the usage of the dma-channel device
+but I didn't found any reference to a driver which used the dma-channel
+device. Also since I want to have the supply driver to enforced by the
+devlink I don't want to use the DL_FLAG_STATELESS flag.
+
+Regarding your point, that some DMA controllers may have seperate clocks
+for each channel: I think this can be handled by the dmaengine driver,
+e.g. via the device_alloc_chan_resources() hook.
+
+@all
+I'm pleased about any input :)
+
+Regards,
+  Marco
 
