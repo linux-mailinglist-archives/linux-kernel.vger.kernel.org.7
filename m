@@ -1,141 +1,144 @@
-Return-Path: <linux-kernel+bounces-810009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB70B51493
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:55:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B730BB51494
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41C603B2A1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:55:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7402F4E4939
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25897316907;
-	Wed, 10 Sep 2025 10:55:17 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54464314A80;
+	Wed, 10 Sep 2025 10:55:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32878265609;
-	Wed, 10 Sep 2025 10:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404203148CE
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757501716; cv=none; b=dmJlMxKFc6SQTbHDlJYvPQXZuXJeYQ6rCFbF9f3hmA+LRaXHaMFU9F8mnKPaS0lh/Q93ywmBY5k70GjcEBfGkS7ehkeI0R+6I/RGCb3sqri/BulR9l72UQiI1Z8zifsuJNqcRYi2K46m56Gs6PijSCcs2O4ZFgEzHlKY930J1yk=
+	t=1757501736; cv=none; b=CZphA74yEy7cVaFoKSFmAzQW9h8Y0/7j7RpBL/djC067mYNfQTSWiTz7ybp5+RgzwUDZ9Jacm8qE+kh69t2g4X6RZlk82D58KrrjMV0HHc8jT+XRpdHNxW6ayZ2DlP5eZ6Bxx7HuU8KZFHdRMyQoktDAmILTwFb4cVtq/tzxwBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757501716; c=relaxed/simple;
-	bh=I7MU1fHrHACBDvmNSiiCbviy8lO8iLrTXXsUak9sToI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sP7dTsoshDX0ZsgNbj2jkLVsXYM9y2g3k1Bk6xk47wXTAAGyluLhnKfi76lhSe5gupY23Y5AeppTZ0R0YW1jZ55RzZQDWEY26AyGzIQIoqIuclGnYIaH/J/dUPmE8FyEFUnTsetwTeV+CKtTQ6D18XZ2d8LlYIoicPrUFhCbstI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMHZm2BSvz6LDG6;
-	Wed, 10 Sep 2025 18:52:32 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8EE85140373;
-	Wed, 10 Sep 2025 18:55:10 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 10 Sep
- 2025 12:55:10 +0200
-Date: Wed, 10 Sep 2025 11:55:08 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Fei Shao <fshao@chromium.org>
-CC: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>, Bjorn Andersson
-	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-remoteproc@vger.kernel.org>
-Subject: Re: [PATCH] remoteproc: mediatek: Use
- for_each_available_child_of_node_scoped()
-Message-ID: <20250910115508.0000785e@huawei.com>
-In-Reply-To: <20250908044348.2402981-1-fshao@chromium.org>
-References: <20250908044348.2402981-1-fshao@chromium.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757501736; c=relaxed/simple;
+	bh=8nvkIAZCReg0X56hAjdZQZYgX4EEt2Ac+PloTh3KTII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gYyLeDl/Jij9XXW/pFlWhXUNf1TZVBKIVNCJXRZeNj4+IMmiCpsAxaZ10UJbC8ogfUsaU9xej/2EhfBHxZe3EzeL+XFXTY4ohrR745ibUHOFjX4L5Jb6SR7yHO1neeSUHUOJYImGrPW5QiVCRPRteILLjAAFgRI7zEde6oDWn4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uwIU0-0008BJ-B7; Wed, 10 Sep 2025 12:55:24 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uwITz-000Zpd-1H;
+	Wed, 10 Sep 2025 12:55:23 +0200
+Received: from pengutronix.de (glittertind.blackshift.org [116.203.23.228])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 0E29846AD9E;
+	Wed, 10 Sep 2025 10:55:23 +0000 (UTC)
+Date: Wed, 10 Sep 2025 12:55:22 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vincent Mailhol <mailhol@kernel.org>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
+	=?utf-8?B?U3TDqXBoYW5l?= Grosjean <stephane.grosjean@hms-networks.com>, Robert Nawrath <mbro1689@gmail.com>, 
+	Minh Le <minh.le.aj@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
+	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/20] can: netlink: refactor can_validate_bittiming()
+Message-ID: <20250910-quaint-weightless-narwhal-658e26-mkl@pengutronix.de>
+References: <20250910-canxl-netlink-prep-v2-0-f128d4083721@kernel.org>
+ <20250910-canxl-netlink-prep-v2-4-f128d4083721@kernel.org>
+ <20250910-outrageous-liberal-falcon-9215d3-mkl@pengutronix.de>
+ <1c7024ba-60fc-472d-982a-ab45b4f23748@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- frapeml500008.china.huawei.com (7.182.85.71)
-
-On Mon,  8 Sep 2025 12:43:25 +0800
-Fei Shao <fshao@chromium.org> wrote:
-
-> Use scoped for_each_available_child_of_node_scoped() to remove manual
-> of_node_put() calls from early returns.
-
-There aren't any early returns here.
-
-This runs into some of the stuff that cleanup.h docs suggest we shouldn't
-do which is combining gotos and __free() magic. 
-I think this case is actually fine despite that but in general worth
-thinking about the code structure and whether that can be avoided.
-
-One option would be to factor out the loop into another function then use
-and error return from that to call the stuff under the init_free label.
-
-Jonathan
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="m5knyjl545q6dpmc"
+Content-Disposition: inline
+In-Reply-To: <1c7024ba-60fc-472d-982a-ab45b4f23748@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-> 
-> Signed-off-by: Fei Shao <fshao@chromium.org>
-> ---
-> 
->  drivers/remoteproc/mtk_scp.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 8206a1766481..b123698feb52 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1234,7 +1234,6 @@ static int scp_add_multi_core(struct platform_device *pdev,
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev_of_node(dev);
->  	struct platform_device *cpdev;
-> -	struct device_node *child;
->  	struct list_head *scp_list = &scp_cluster->mtk_scp_list;
->  	const struct mtk_scp_of_data **cluster_of_data;
->  	struct mtk_scp *scp, *temp;
-> @@ -1243,11 +1242,10 @@ static int scp_add_multi_core(struct platform_device *pdev,
->  
->  	cluster_of_data = (const struct mtk_scp_of_data **)of_device_get_match_data(dev);
->  
-> -	for_each_available_child_of_node(np, child) {
-> +	for_each_available_child_of_node_scoped(np, child) {
->  		if (!cluster_of_data[core_id]) {
->  			ret = -EINVAL;
->  			dev_err(dev, "Not support core %d\n", core_id);
-> -			of_node_put(child);
->  			goto init_fail;
->  		}
->  
-> @@ -1255,7 +1253,6 @@ static int scp_add_multi_core(struct platform_device *pdev,
->  		if (!cpdev) {
->  			ret = -ENODEV;
->  			dev_err(dev, "Not found platform device for core %d\n", core_id);
-> -			of_node_put(child);
->  			goto init_fail;
->  		}
->  
-> @@ -1264,14 +1261,12 @@ static int scp_add_multi_core(struct platform_device *pdev,
->  		if (IS_ERR(scp)) {
->  			ret = PTR_ERR(scp);
->  			dev_err(dev, "Failed to initialize core %d rproc\n", core_id);
-> -			of_node_put(child);
->  			goto init_fail;
->  		}
->  
->  		ret = rproc_add(scp->rproc);
->  		if (ret) {
->  			dev_err(dev, "Failed to add rproc of core %d\n", core_id);
-> -			of_node_put(child);
->  			scp_free(scp);
->  			goto init_fail;
->  		}
+--m5knyjl545q6dpmc
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 04/20] can: netlink: refactor can_validate_bittiming()
+MIME-Version: 1.0
 
+On 10.09.2025 15:43:00, Vincent Mailhol wrote:
+> On 10/09/2025 at 15:13, Marc Kleine-Budde wrote:
+> > On 10.09.2025 15:03:29, Vincent Mailhol wrote:
+> >> Whenever can_validate_bittiming() is called, it is always preceded by
+> >> some boilerplate code which was copy pasted all over the place. Move
+> >> that repeated code directly inside can_validate_bittiming().
+> >>
+> >> Finally, the mempcy() is not needed. Just use the pointer returned by
+> >> nla_data() as-is.
+> >=20
+> > The memcpy()'ed struct is guaranteed to be properly aligned, is this
+> > also the case for the casted nla_data() pointer?
+>=20
+> The NLA attributes are aligned on 4 bytes, c.f. NLA_ALIGNTO:
+>=20
+> https://elixir.bootlin.com/linux/v6.16.5/source/include/uapi/linux/netlin=
+k.h#L248
+>=20
+> Which is sufficient for struct can_bittiming which also requires just 4 b=
+ytes of
+> alignment as proven by the fact the the code would still compile if I add=
+ this
+> static assert:
+>=20
+>   static_assert(_Alignof(typeof(*bt)) <=3D NLA_ALIGNTO);
+>=20
+> But I have to admit that you caught me off guard. I did not think of that=
+=2E Maybe
+> I should add above static assertions to the code to document that what we=
+ are
+> doing is correct?
+
+Yes, make it so!
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--m5knyjl545q6dpmc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjBWRgACgkQDHRl3/mQ
+kZzB+AgAt34/hIMo1GS6hgYwJLghxiyPkp3HrhyAEM0sfWNvtLPvml/q7s/FFgrK
+2Yy8GwqDDJZ4B8djBQq/Sj5dBFGmRLhL/tWB9bUQnXk32KZ/TvblkCaFTWf/76Va
+1z3RWKW6aVl9vDQ5q9IRTnx9WbIlHJx9Eq+fmz7R9unF0Wo6QgYKfq2mhQqzkcJL
+ZWtA+U2RfLKbQ+9Fh8rCljZfkao/cbbSEPmRDEwUlQPjg3bfoQZXAIv712YHP3yg
+Pi1INm2XgE8BLcRvEtD9d3wt42yv7KVm9ZdKScUm0KGbbs2FuYY+yfr/UOR7jYgy
+fFaa19bR9S3TAiOduI11xUGTXIuNhw==
+=uaFW
+-----END PGP SIGNATURE-----
+
+--m5knyjl545q6dpmc--
 
