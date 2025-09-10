@@ -1,286 +1,142 @@
-Return-Path: <linux-kernel+bounces-809777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6667CB511ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:58:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7C6B511F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614865637B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:58:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA9A4E728A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0958A311955;
-	Wed, 10 Sep 2025 08:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF20311955;
+	Wed, 10 Sep 2025 08:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="sJ7Hf6dz"
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="afQaowMl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA14311942;
-	Wed, 10 Sep 2025 08:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDBC30FF1E
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757494683; cv=none; b=t/jV8jhzuXg9nVseHTyXr9O7430lBQ3qgRowEc7UeFWFFDeb3+EwbkG0ui7QIsjCmEvd2rgf1XLiFOUPFzCIvpOQNFpPBrVYbvlRIlvOVuEVxVRf3H+xdSofRb40IDSVWmRuxkFXr6MOryrc1Se9Gtds8WaaoAqsqyQ28l4WSwY=
+	t=1757494749; cv=none; b=cSfDA21zsdIYfsDoKDIb4AJ3E3+wJ2ZraI5FlX1FjV3TNOqYg51gBdN8kkz6+9EgsOU/W0pyIYXSASCAkdvPHb1sLlQVUCyYKmIVV1+aYAJrzYyomOhexLef2NF7Tb9scBvZvXsPq7zraa15abhNf04V1vvOVqmtYaKgYFepX1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757494683; c=relaxed/simple;
-	bh=iMTvDYPnxsIi5BxbLY0nLVNd+wqZTFqdrBbOlRU5mQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GxqIFj8VPLHy3dmSZtPHj4bmLctj7IlgDaGy1evMKlEG2mrGaZ1EMsu/45lQPZdBiKf7UkY3nSuVMRsHYdA6Cd3MezE7trm+FMq3io5LJchpeILTveYQ/evfLXko4W8DF032tNz+eNrcmRbuEtj8nnm1b4te8dR9fmrqFps/YW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=sJ7Hf6dz; arc=none smtp.client-ip=195.181.215.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-	t=1757494676; bh=iMTvDYPnxsIi5BxbLY0nLVNd+wqZTFqdrBbOlRU5mQ0=;
-	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
-	b=sJ7Hf6dz6iJfMGLdg4EyNcDEgF8vQZm9IjK97eNQFqOrF1vlmCwtME24W5WktJiWA
-	 3f5bhFC5RB/yd7TTfqstimHq9061gOX+l20UzyCM1D9JZvaF32bX7i3Wjg9T73VMG4
-	 kqQCCoCLn5I4+4HSnZbZdYzjLtBh4RtuAeXy50YQ=
-Date: Wed, 10 Sep 2025 10:57:55 +0200
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"open list:REALTEK WIRELESS DRIVER (rtw89)" <linux-wireless@vger.kernel.org>
-Subject: Re: [PATCH] net: wireless: rtw89: Sleep while waiting for firmware
- init
-Message-ID: <mcf6zmdhmqlg3xbar2yxa7bnvvnlxbttveug7k6u23tc6yigq6@exm5imy6aob4>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
-	Ping-Ke Shih <pkshih@realtek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"open list:REALTEK WIRELESS DRIVER (rtw89)" <linux-wireless@vger.kernel.org>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
-References: <20250909211255.1486851-1-megi@xff.cz>
- <4a3f6b40a0064de1acd80f4eeb1cdd0f@realtek.com>
+	s=arc-20240116; t=1757494749; c=relaxed/simple;
+	bh=qVUqCiNWKhbm4OJQ/h1GXQ4Ue76QXxYJE1ZLypTGFuk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dOYVynL8dHKImAnjqHRmPH4iGQMwiPWiihYLPan3ies/sO27veN12HTM00at7pc5CtYjhG4UGw6XLroegRQ5pzqUxNoCAgP9npGe784zSJSmKpE18M9t29NlwAlEjyHGVvlQqdyN2MuhUz4vEX9Ls8qd+Rtd44cmpLGzapjCg/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=afQaowMl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757494746;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YbNpi+kDNBgUr3iCBEGx1sOECaER/m1rAGG176HSF7M=;
+	b=afQaowMlmDKa+8hwsvCxbW/l1CayX5e6O5132b7I/WR+jHjgW3+2+IzN2xnbtF1PQ1PbRW
+	Xgn19CmJzbLxA/f25PjnLerBNtOYprKDrlabQxIbqzWG7a93BBz6lFeQ1hdIuBE/Im6ubq
+	LC3ewXyYqU4mpJSih8mK3LEs+GS+iOs=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-255-EeJIAGGPOXem8qRsnBYdWQ-1; Wed, 10 Sep 2025 04:59:05 -0400
+X-MC-Unique: EeJIAGGPOXem8qRsnBYdWQ-1
+X-Mimecast-MFC-AGG-ID: EeJIAGGPOXem8qRsnBYdWQ_1757494742
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-62caf055c95so1374866a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:59:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757494742; x=1758099542;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YbNpi+kDNBgUr3iCBEGx1sOECaER/m1rAGG176HSF7M=;
+        b=OiPs3RmM3wzvwlebBVjn29f19ifJqCpuRcV5t9IjLdrmRep0Boj8waZTRrXxMUiGiZ
+         vTwJ8YEpAqM0TKnL1c0egnXNqDqZiorbL0TaMEHQvLzGa40ZhmJ5vAM0ZJZxrI5O+lCB
+         wVs6m6gemq+krO8X+JfQ9tQNSoUyiLY0MjWs3bEY9QYh1ftaYOywk8iYhTiJ5TZZq7S2
+         KIRO9RETRtD6JSRpmkGf0Jfe8G3B2sFhibvojmelkqduTPaxH2ykR/9gZfaDbLOBverK
+         TpYejJWvxh673JaBynSENaUv2rdTl/aPbcNprQFLcmkBxgsjrrcy1LXgFNEuYd9iFkCK
+         Ej/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU/V9J2d+qQ/Q5wzT7OVpMW9sLH8qQ3yqcy+bvP3k3dQg/ZkhCtl+I5/R/b+nyyaPUQCepuUi/qk0gxAcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9g8RCibuAWi0EQvlD5Ro3oEHJcQCNBpo1ewYOMpJBtcAELDr5
+	IA8YenPYlvZilpx0p9Ivz6RIR9a7ipXP6xk6wKYeZQlnCQVB+C8O8Mzr+MzkbfKkvjhh1E+sx1X
+	v+LqDyHLHAd8/R/LgJBWBZ/pAqmYgao1ltVIcd6GSGydSoWcMzuGkoE+z1IhcrVanyw==
+X-Gm-Gg: ASbGnctcrryElDUjcKZbfwCovjEVhL8vxIz6SY61ZC5gYPUJvwL9mZDik5e4JZ3bSZd
+	KyGo+p6jhchUd3FC6LaZJiZNk0uwQtiFU5rQ37rIXq1Y9g4xt5GNmL91fLo+T9PUErZy7zHzkqp
+	GnVkdxrDQft6TNvRL8ysxhoKNs5tFuWxbdav1UksL/n2299pzHXbmcHpS7JyVR1hIk6Z3UDVjky
+	7r3JSedWGOa7PWDUmRHtDehn1lXKHNjpeot3PyXqE/kI+VSeDmn4av9FRq7qfxhlZ/dSw0vR0Ld
+	tCgZMVPHraG2vDwrYOF2GQ+8QcMaGxfFNAwl43j8Ksy8JBrFD7Q7pzAuWe9aoNOMRRCQ5mj10Xr
+	ERk4er2Ko7of2lQ==
+X-Received: by 2002:a05:6402:1d4c:b0:62c:710d:5600 with SMTP id 4fb4d7f45d1cf-62c710d58b3mr3918125a12.5.1757494742444;
+        Wed, 10 Sep 2025 01:59:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHIhjF/hQzrKDBiBG++LNsoFWIGNfnxMPAxlcabo5++O/vC/iz8XosvW+jycdz3EyQro8e4TQ==
+X-Received: by 2002:a05:6402:1d4c:b0:62c:710d:5600 with SMTP id 4fb4d7f45d1cf-62c710d58b3mr3918105a12.5.1757494741975;
+        Wed, 10 Sep 2025 01:59:01 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c0123f35esm2792862a12.32.2025.09.10.01.59.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 01:59:01 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-rt-devel@lists.linux.dev,
+	linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] Documentation: update config name in real-time architecture support
+Date: Wed, 10 Sep 2025 10:58:59 +0200
+Message-ID: <20250910085859.47818-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4a3f6b40a0064de1acd80f4eeb1cdd0f@realtek.com>
 
-On Wed, Sep 10, 2025 at 12:37:54AM +0000, Ping-Ke Shih wrote:
-> Ondřej Jirman <megi@xff.cz> wrote:
-> > From: Ondrej Jirman <megi@xff.cz>
-> > 
-> > This avoids RCU stalls caused by waiting up to 400ms for firmware init.
-> > 
-> > Signed-off-by: Ondrej Jirman <megi@xff.cz>
-> > ---
-> >  drivers/net/wireless/realtek/rtw89/fw.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/net/wireless/realtek/rtw89/fw.c b/drivers/net/wireless/realtek/rtw89/fw.c
-> > index 16e59a4a486e..2c034b764a0a 100644
-> > --- a/drivers/net/wireless/realtek/rtw89/fw.c
-> > +++ b/drivers/net/wireless/realtek/rtw89/fw.c
-> > @@ -109,9 +109,9 @@ int rtw89_fw_check_rdy(struct rtw89_dev *rtwdev, enum rtw89_fwdl_check_type type
-> >         u8 val;
-> >         int ret;
-> > 
-> > -       ret = read_poll_timeout_atomic(mac->fwdl_get_status, val,
-> > -                                      val == RTW89_FWDL_WCPU_FW_INIT_RDY,
-> > -                                      1, FWDL_WAIT_CNT, false, rtwdev, type);
-> > +       ret = read_poll_timeout(mac->fwdl_get_status, val,
-> > +                               val == RTW89_FWDL_WCPU_FW_INIT_RDY,
-> > +                               1, FWDL_WAIT_CNT, false, rtwdev, type);
-> 
-> As I know, sleeping while RCU lock is not allowed. Please share kernel log
-> about the RCU stall and your perspective. 
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-My perspective is that busy looping via read_poll_timeout_atomic() on a CPU for
-up to 400ms (FWDL_WAIT_CNT is 400_000) is not optimal and that rtw driver is for
-some reason a major user of *_atomic version of read_poll function, which is
-I guess fine if you just need to wait for a few microseconds, and want
-a predictably timed exit from polling. But firmware load ready check doesn't
-seem to be this case.
+Commit 14ec35ff5786 ("entry: Rename "kvm" entry code assets to "virt" to
+genericize APIs") renames the config KVM_XFER_TO_GUEST_WORK to
+VIRT_XFER_TO_GUEST_WORK. In a concurrent development work with commit
+f51fe3b7e48c ("Documentation: Add real-time to core-api"), the
+documentation on making an architecture support PREEMPT_RT has been
+included referring to this config with its previous name.
 
-Does the driver really need exit from polling the moment firmware signals ready
-status here (and similarly in many other places)?
+Adjust the documentation to the current situation, and specifically
+refer to the new name of the config.
 
-More than 50% of uses of this function across all of kernel comes from rtw
-driver:
+Fixes: f51fe3b7e48c ("Documentation: Add real-time to core-api")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ Documentation/core-api/real-time/architecture-porting.rst | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-  https://elixir.bootlin.com/linux/v6.16.5/C/ident/read_poll_timeout_atomic
+diff --git a/Documentation/core-api/real-time/architecture-porting.rst b/Documentation/core-api/real-time/architecture-porting.rst
+index d822fac29922..3062cff0e5a3 100644
+--- a/Documentation/core-api/real-time/architecture-porting.rst
++++ b/Documentation/core-api/real-time/architecture-porting.rst
+@@ -35,9 +35,10 @@ POSIX CPU timers and KVM
+   POSIX CPU timers must expire from thread context rather than directly within
+   the timer interrupt. This behavior is enabled by setting the configuration
+   option CONFIG_HAVE_POSIX_CPU_TIMERS_TASK_WORK.
+-  When KVM is enabled, CONFIG_KVM_XFER_TO_GUEST_WORK must also be set to ensure
+-  that any pending work, such as POSIX timer expiration, is handled before
+-  transitioning into guest mode.
++  When virtualization support, such as KVM, is enabled,
++  CONFIG_VIRT_XFER_TO_GUEST_WORK must also be set to ensure that any pending
++  work, such as POSIX timer expiration, is handled before transitioning into
++  guest mode.
+ 
+ Hard-IRQ and Soft-IRQ stacks
+   Soft interrupts are handled in the thread context in which they are raised. If
+-- 
+2.51.0
 
-My understanding is that in non-preemtible kernel this will prevent anything
-from executing on said CPU for up to that amount of time, which is what the
-kernel complains about (6.16.6):
-
-[    8.028997] rcu: INFO: rcu_sched detected expedited stalls on CPUs/tasks: { 1-.... } 6 jiffies s: 709 root: 0x2/.
-[    8.029819] rcu: blocking rcu_node structures (internal RCU debug):
-[    8.030261] Sending NMI from CPU 3 to CPUs 1:
-[    8.030280] NMI backtrace for cpu 1
-[    8.030295] CPU: 1 UID: 0 PID: 366 Comm: hostapd Not tainted 6.16.6-00531-gefcc09919cb9 #17 VOLUNTARY
-[    8.030304] Hardware name: Pine64 Quartz64 Model A (DT)
-[    8.030307] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    8.030313] pc : arch_counter_get_cntpct+0x8/0x20
-[    8.030326] lr : __delay+0x90/0xe8
-[    8.030332] sp : ffff8000859c34a0
-[    8.030334] x29: ffff8000859c34a0 x28: ffff0001074de180 x27: ffff000100117080
-[    8.030342] x26: ffff0001042003c0 x25: ffff0001042024e8 x24: 0000000000000000
-[    8.030347] x23: 0000000000000000 x22: ffffffffec859f81 x21: 00000000137a69df
-[    8.030352] x20: 0000000000000018 x19: ffff800082af7158 x18: 00000000000007f4
-[    8.030357] x17: 0000000800000000 x16: 41003d382021b000 x15: ffff000100f68088
-[    8.030362] x14: 0000000000000000 x13: 0000000000000000 x12: 00000000000003d0
-[    8.030367] x11: 0000000000000001 x10: ffff000100f680c8 x9 : 000000013c624a80
-[    8.030372] x8 : ffff00013c624a90 x7 : 0000000000000000 x6 : 000000013c624a80
-[    8.030377] x5 : ffff800080ddeae0 x4 : ffff00010420dff4 x3 : 00000000ffff41e0
-[    8.030381] x2 : 0000000000000001 x1 : ffff8000859c34a0 x0 : 00000000137a69ed
-[    8.030388] Call trace:
-[    8.030390]  arch_counter_get_cntpct+0x8/0x20 (P)
-[    8.030397]  __const_udelay+0x28/0x38
-[    8.030402]  rtw89_fw_check_rdy+0x3c/0x134
-[    8.030412]  rtw89_fw_download+0x1b4/0x1d0
-[    8.030417]  rtw89_mac_partial_init+0xcc/0x158
-[    8.030424]  rtw89_mac_init+0x40/0x16c
-[    8.030429]  rtw89_core_start+0x14/0x268
-[    8.030433]  rtw89_leave_ips+0x24/0xe8
-[    8.030440]  rtw89_ops_add_interface+0x1c4/0x244
-[    8.030445]  rtw89_ops_change_interface+0x84/0x120
-[    8.030449]  drv_change_interface+0x58/0xd0
-[    8.030457]  ieee80211_if_change_type+0x198/0x3c8
-[    8.030465]  ieee80211_change_iface+0x38/0x20c
-[    8.030471]  cfg80211_change_iface+0x170/0x2bc
-[    8.030477]  nl80211_set_interface+0x248/0x274
-[    8.030484]  genl_family_rcv_msg_doit+0xb8/0x110
-[    8.030494]  genl_rcv_msg+0x1ac/0x244
-[    8.030499]  netlink_rcv_skb+0x44/0xf8
-[    8.030504]  genl_rcv+0x30/0x44
-[    8.030509]  netlink_unicast+0x2d8/0x34c
-[    8.030514]  netlink_sendmsg+0x170/0x3d8
-[    8.030518]  __sock_sendmsg+0x48/0x54
-[    8.030526]  ____sys_sendmsg+0x24c/0x264
-[    8.030531]  ___sys_sendmsg+0x6c/0xb0
-[    8.030536]  __sys_sendmsg+0x6c/0xb8
-[    8.030540]  __arm64_sys_sendmsg+0x1c/0x24
-[    8.030545]  invoke_syscall.constprop.0+0x3c/0xe4
-[    8.030553]  el0_svc_common.constprop.0+0x34/0xcc
-[    8.030559]  do_el0_svc+0x18/0x20
-[    8.030564]  el0_svc+0x20/0x5c
-[    8.030570]  el0t_64_sync_handler+0x104/0x130
-[    8.030574]  el0t_64_sync+0x154/0x158
-
-The kernel build has CONFIG_HZ_250=y so 6 jiffies is 24 ms. Not a lot, not
-a small amount either.
-
-I also get this on 6.17-rc5:
-
-Seems to come from https://elixir.bootlin.com/linux/v6.16.5/source/drivers/net/wireless/realtek/rtw89/efuse.c#L174
-
-Which is another place that seemingly doesn't need udelay() based polling,
-because the function is only called from driver probe.
-
-This time it stalled for combined time of 26+6 jiffies, which is 128ms. That's
-a lot (probably a combined time of looping over all efuse addresses, while busy
-polling for each access, without allowing the CPU to schedule other tasks).
-
-[    1.038100] rcu: INFO: rcu_sched detected expedited stalls on CPUs/tasks: { 0-.... } 6 jiffies s: 105 root: 0x1/.
-[    1.038898] rcu: blocking rcu_node structures (internal RCU debug):
-[    1.039334] Sending NMI from CPU 2 to CPUs 0:
-[    1.039343] NMI backtrace for cpu 0
-[    1.039350] CPU: 0 UID: 0 PID: 126 Comm: irq/70-pcie-sys Not tainted 6.17.0-rc5-00531-g5cf2d75707fc #3 VOLUNTARY
-[    1.039356] Hardware name: Pine64 Quartz64 Model A (DT)
-[    1.039359] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    1.039364] pc : rtw89_pci_ops_read32+0x38/0x58
-[    1.039373] lr : rtw89_dump_physical_efuse_map+0x27c/0x4ec
-[    1.039380] sp : ffff80008402b890
-[    1.039381] x29: ffff80008402b890 x28: fffffff7ff000000 x27: ffff000102f56800
-[    1.039387] x26: 00000000000004c0 x25: 0000000000000060 x24: ffff000102f59000
-[    1.039393] x23: 00000000000004c0 x22: ffff000102f59130 x21: 0000000000000130
-[    1.039397] x20: 00000000000f3e3d x19: ffff000103c82020 x18: ffff800174645000
-[    1.039402] x17: 0000000800000000 x16: 41003d382021b000 x15: ffff800082e4f410
-[    1.039407] x14: ffff800082d5e3c0 x13: 00000000000000c0 x12: ffff0001f73a33c0
-[    1.039412] x11: 00000000000000c0 x10: 00000000000009f0 x9 : ffff80008402b740
-[    1.039416] x8 : ffff000102cb9a90 x7 : 0000000000000000 x6 : 0000000000000010
-[    1.039421] x5 : 0000000000000000 x4 : ffff800080df72c0 x3 : 00000000ffff4030
-[    1.039426] x2 : 0000000000003fff x1 : 0000000000000030 x0 : 0000000001300000
-[    1.039432] Call trace:
-[    1.039434]  rtw89_pci_ops_read32+0x38/0x58 (P)
-[    1.039439]  rtw89_parse_efuse_map_ax+0xc4/0x258
-[    1.039444]  rtw89_chip_info_setup+0xb0/0x308
-[    1.039451]  rtw89_pci_probe+0x704/0xb80
-[    1.039455]  local_pci_probe+0x38/0x90
-[    1.039461]  pci_device_probe+0xa4/0x1a0
-[    1.039466]  really_probe+0xbc/0x384
-[    1.039472]  __driver_probe_device+0x78/0x148
-[    1.039476]  driver_probe_device+0x3c/0x120
-[    1.039481]  __device_attach_driver+0xb0/0x160
-[    1.039485]  bus_for_each_drv+0x6c/0xb0
-[    1.039490]  __device_attach+0x94/0x19c
-[    1.039494]  device_initial_probe+0x10/0x18
-[    1.039498]  pci_bus_add_device+0x84/0x138
-[    1.039503]  pci_bus_add_devices+0x34/0x80
-[    1.039506]  pci_bus_add_devices+0x60/0x80
-[    1.039510]  pci_bus_add_devices+0x60/0x80
-[    1.039513]  pci_bus_add_devices+0x60/0x80
-[    1.039518]  pci_rescan_bus+0x2c/0x3c
-[    1.039522]  rockchip_pcie_rc_sys_irq_thread+0xe4/0x118
-[    1.039529]  irq_thread_fn+0x24/0xa0
-[    1.039536]  irq_thread+0x178/0x2ec
-[    1.039540]  kthread+0xe4/0x1a0
-[    1.039545]  ret_from_fork+0x10/0x20
-[    1.118092] rcu: INFO: rcu_sched detected expedited stalls on CPUs/tasks: { 0-.... } 26 jiffies s: 105 root: 0x1/.
-[    1.118889] rcu: blocking rcu_node structures (internal RCU debug):
-[    1.119323] Sending NMI from CPU 2 to CPUs 0:
-[    1.119328] NMI backtrace for cpu 0
-[    1.119333] CPU: 0 UID: 0 PID: 126 Comm: irq/70-pcie-sys Not tainted 6.17.0-rc5-00531-g5cf2d75707fc #3 VOLUNTARY
-[    1.119339] Hardware name: Pine64 Quartz64 Model A (DT)
-[    1.119341] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    1.119345] pc : arch_counter_get_cntpct+0x8/0x20
-[    1.119352] lr : __delay+0x90/0xe8
-[    1.119357] sp : ffff80008402b850
-[    1.119359] x29: ffff80008402b850 x28: fffffff7ff000000 x27: ffff000102f56800
-[    1.119365] x26: 00000000000004c0 x25: 0000000000000060 x24: ffff000102f59000
-[    1.119370] x23: 00000000000004c0 x22: fffffffff662150b x21: 00000000099df455
-[    1.119375] x20: 0000000000000018 x19: ffff800082b25228 x18: ffff800174645000
-[    1.119379] x17: 0000000800000000 x16: 41003d382021b000 x15: ffff800082e4f410
-[    1.119384] x14: ffff800082d5e3c0 x13: 00000000000000c0 x12: ffff0001f73a33c0
-[    1.119389] x11: 00000000000000c0 x10: 00000000000009f0 x9 : ffff80008402b740
-[    1.119394] x8 : ffff000102cb9a90 x7 : 0000000000000000 x6 : 0000000000000010
-[    1.119398] x5 : 0000000000000000 x4 : ffff800080df72c0 x3 : 00000000ffff4030
-[    1.119403] x2 : 0000000000000000 x1 : ffff80008402b850 x0 : 00000000099df455
-[    1.119409] Call trace:
-[    1.119410]  arch_counter_get_cntpct+0x8/0x20 (P)
-[    1.119415]  __const_udelay+0x28/0x38
-[    1.119419]  rtw89_dump_physical_efuse_map+0x264/0x4ec
-[    1.119425]  rtw89_parse_efuse_map_ax+0xc4/0x258
-[    1.119429]  rtw89_chip_info_setup+0xb0/0x308
-[    1.119435]  rtw89_pci_probe+0x704/0xb80
-[    1.119440]  local_pci_probe+0x38/0x90
-[    1.119445]  pci_device_probe+0xa4/0x1a0
-[    1.119449]  really_probe+0xbc/0x384
-[    1.119455]  __driver_probe_device+0x78/0x148
-[    1.119459]  driver_probe_device+0x3c/0x120
-[    1.119463]  __device_attach_driver+0xb0/0x160
-[    1.119467]  bus_for_each_drv+0x6c/0xb0
-[    1.119472]  __device_attach+0x94/0x19c
-[    1.119475]  device_initial_probe+0x10/0x18
-[    1.119479]  pci_bus_add_device+0x84/0x138
-[    1.119484]  pci_bus_add_devices+0x34/0x80
-[    1.119487]  pci_bus_add_devices+0x60/0x80
-[    1.119491]  pci_bus_add_devices+0x60/0x80
-[    1.119495]  pci_bus_add_devices+0x60/0x80
-[    1.119498]  pci_rescan_bus+0x2c/0x3c
-[    1.119502]  rockchip_pcie_rc_sys_irq_thread+0xe4/0x118
-[    1.119508]  irq_thread_fn+0x24/0xa0
-[    1.119514]  irq_thread+0x178/0x2ec
-[    1.119517]  kthread+0xe4/0x1a0
-[    1.119522]  ret_from_fork+0x10/0x20
-[    1.159225] mmc_host mmc0: Bus speed (slot 0) = 150000000Hz (slot req 150000000Hz, actual 150000000HZ div = 0)
-
-Thank you and regards,
-	o.
-
-
-> >         if (ret) {
-> >                 switch (val) {
-> >                 case RTW89_FWDL_CHECKSUM_FAIL:
-> > --
-> > 2.51.0
-> > 
-> 
 
