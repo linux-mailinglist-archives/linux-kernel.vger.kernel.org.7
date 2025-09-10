@@ -1,132 +1,123 @@
-Return-Path: <linux-kernel+bounces-811015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36707B522FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:53:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE037B52305
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DC1A586B3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:52:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 230C6486719
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DFE3081CD;
-	Wed, 10 Sep 2025 20:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AB22820D1;
+	Wed, 10 Sep 2025 20:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQMBLw5D"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dFa6BmnG"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B3B2F546E
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2572153E7;
+	Wed, 10 Sep 2025 20:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757537352; cv=none; b=XAFsB5wDB2jBeTNOw8H7PfAbjyYkKuLjOl7sdY2wqRexQt6JUciWvKEwi963Wk3aaHncV8wRbexqtve/Tf9YIWkdXqDmo4T23Dz/7IpiCd8n5JPIp+VOLfNV0/fbck+63TLHq0b/4hafKAS4mjtaxVDRGUVa7USLE2h9c9PXck8=
+	t=1757537432; cv=none; b=lQdkI51gIjvIBd9v/6sMgYAvv9y1aJBntlSNqUYC16Po4UhAT/THgvdyH9ujVm4kpOxOck7PSDIId85GFjqMvndoWSHVWAGQFEE6xa2y7sbpyAq36Y5S9ue1xLocAzaTH15F/EwErsgk59ivtKFlZeQouyfHX6UtSnScqem3OZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757537352; c=relaxed/simple;
-	bh=kocdpr+5Hpzb3+6EdPtF6aVjU5h3/r53kE4yaBVZ5TA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=li272aZmOrvUVLiTTBU8/NrykLb4lH/Nq95JdkECkm5JiDwSmNLKS1OwVpAVVHNrM9g0lg7LXFsmbZYIUH8cfW4qWmNfbFuLyCPQxiGAianTEc/V9Y/g2T6i+sfOCEza940FdddGjaNMiTj0TYhXtA4sncLOqYbTmnYzvWV+vMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQMBLw5D; arc=none smtp.client-ip=209.85.222.174
+	s=arc-20240116; t=1757537432; c=relaxed/simple;
+	bh=zCrrWU4+I84+eL99CFwFMBilFmwiaY54cp88tLis1wk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WZE/I/zJIPkKArpga8L91AbebvMruZ5kEPtWl1QG3sqAnv0OfdZOSkzI2iI0Qmfre+sv3PmZC38wdo58sFoc1XKns7pkMRUZQaYKA5k9XsCd2OsJ2aUv4G1qkU3g4XcFXFi1nUSW74JQor7hAhTfum7dNfsDCNJXWZLf6I/VGLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dFa6BmnG; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-81076e81a23so849081085a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:49:10 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45dda7d87faso206335e9.2;
+        Wed, 10 Sep 2025 13:50:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757537349; x=1758142149; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KdKNnUqR+FthWHSkVdu+kDWg2jegsxHUPzCEEZJSG9Y=;
-        b=AQMBLw5DImsaD9nS9LVdPo7xXpzIFgWcEPTcfkzYQ36AWsAtFA/iXLAaHgwy6KfX84
-         0FJB2gWGbaRmitPytWZjsaaLLlu0LIpS76zUkNTWtcWR/+o6RFcfYrrfeSahCHSxSifT
-         H/7OJBGpnxLz6GQkdjKVV7jFc53c9LaO3QW6JwbeCl8lTccfQdsFMR9FtlMjGZr1DoMN
-         1abpwf7VHKYoCSh1S092n6inrFqXDTDQp0ZlFR17lwowOdwuYfF5pXe718sfKQUvgtIB
-         KwEy7XXhDdN4tvQIjIT7EMPNGYab8A23ANDP+WdIUIECnsLKIVX86DhrTAJib482mBJZ
-         g4uw==
+        d=gmail.com; s=20230601; t=1757537429; x=1758142229; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rr+o6adacQ3Y9t+4EiVEXOmwmZruCHEfmNH1+hFLWY4=;
+        b=dFa6BmnG2Q1OgAuV81oy/VewU2clsdgywvQ6tPnglMHp2RFArFD209qp91s8KyR1H5
+         AJgg5mQ5AlAZ2WuSjBuBB/bUh6IyOokLrPaId4qXoBR+mHAqLiFOiOUPtLH/KcTMiXcd
+         3lfcRxzvdi7wKQ+gAMbc2pBAKf5lLdbUlcvIW9BzpAxrAbWPmyx7A5PH7qKX8CR3+xSd
+         D5sK3rQ+OUKUgR+vuMb32SHy/4cN2uPlDgRrsjvB1gUlEZZb6stf1Ea1OinO7iBMScWH
+         G46a4RMIm7TEFcXxVjrTtGK+px2ngv8MiCj5lzvig/XHGo/0Vb1btlc6vo9V2zN19UXt
+         WjuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757537349; x=1758142149;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KdKNnUqR+FthWHSkVdu+kDWg2jegsxHUPzCEEZJSG9Y=;
-        b=k0VPxPNnkifIH8ReQ3EpwteEwG0kqlgWfM86QTowNzoMc60bWKTbhNBpmIOw0iFx22
-         xPW8tF2nHjFAGsBgAgkTtpNVJwCfTP1jxOst/eMpwAWVA239lcIPf0hN2fylDB//027V
-         MYYLr03kAAxiqFeQgvu9VKJEH9fWuRPd3W0J2nkD1W4nUAEb2wYd19jjrFNnn0Jfm+WK
-         65nByeMeyJi3RqHJpFfyJIxVTVJ/bwsR4jExJE4NN0vVu1XcU/h3yzKVZI/bm8VngQzI
-         /iww0Y9R99BdZa5YNPYKdzpJp6bPXCa1tKZcpuLqt6csxzZvhZEHFUrXaWpAthqBZnrk
-         e2QA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTAlH3i9+E2ZwLgfsFTTVMtvkj3cgpaGzzESlhBNuaAyuUCZ9yrduW74CZiXGt+LuzUde1uYjdv1lxAcI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6BCJrXrMoeMKsx6Y/3hork0Pk1GdOFmuhzzwqcigXY43j1Hwe
-	3glxE09K6WwK0w+dprdlRQt4w2fyjhWjcmUTxoqKOBGbkh1Vp7LLBo8C
-X-Gm-Gg: ASbGncvQeeYtLBkXkPgV3YM2DFLz+P3Dwsu8NHUKMkkjXCJQuC+G+n3FCMWoFiIdo8Z
-	4CIuxm3q75knpCF2zEeiQIyT9ru0fBo0ZejXRaeJXKuxYa9Ao/YHevgtjHh3e0pmJD7MnrPAa38
-	G1wAv+l9Lf2kFFEOfmhDiIrctUDJ0IhRaibOMfTwoNbkJFMx1CkMTpr1OxUg9jBBh4o3l/ftl88
-	OcazzE1wr9PcSFJ9hBlhadR4hB9d9A5qr7ABgbhFOuTDWjNXL33R7nMiPXjgwRft9i5SVaxfAPW
-	/zgdBoNMyXPuf8x5twDObZHnHJgCWlISnZpWNKVWfYfk0Dx1ZBd6eqoMFstm1DMHGA0LRcqplvb
-	OZfn8GZtE8wS785fnWB5r/w/96Wf3KHXActzaNJtn
-X-Google-Smtp-Source: AGHT+IF5t9CgVNGthj48BfL5VlbkBf29lx5nVEid2Z4AgsD1UqZumkmImiNnxSRYun/vml+FuDG4AA==
-X-Received: by 2002:a05:620a:4385:b0:815:3483:21f6 with SMTP id af79cd13be357-8153483258fmr1982394485a.72.1757537349179;
-        Wed, 10 Sep 2025 13:49:09 -0700 (PDT)
-Received: from [172.20.7.106] ([63.116.149.204])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b5e5bfbd5sm353061285a.41.2025.09.10.13.49.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 13:49:08 -0700 (PDT)
-Message-ID: <c2efc885-8b23-4ef9-8eca-05f17e158fb3@gmail.com>
-Date: Wed, 10 Sep 2025 16:49:01 -0400
+        d=1e100.net; s=20230601; t=1757537429; x=1758142229;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rr+o6adacQ3Y9t+4EiVEXOmwmZruCHEfmNH1+hFLWY4=;
+        b=NRn0/B2uuAinf2Nj8OvhAIbYHUEU8EaHoGBMETvkpV2C8ZI3Hjn//ozP7pd9TK1pwL
+         jBBmHc623UMCpwmHWGbFICYwpS9lArRk4h01TTMKKDU112BqSYPPktJbFaLDG/2IB0l8
+         p2L73qXRMUmaa9pkSbbqILtVM0eWkTma35UQSdDgV3fGiYanB+nTOs/S5PjZcCvPu+7B
+         MjGFN+UdUU1ypuzLVG7DBnBXrY48Y7+l/lTLF1WwIqTyRr09d15ii7g/L8ET2ZVjnzOH
+         8wPj9+Syr3zZQk57fKFRev7uODBH7nWse1zvQ1CMIN/VlRkGPgygYu3WczwW2CodC2sy
+         Fjhw==
+X-Forwarded-Encrypted: i=1; AJvYcCU20O/xSYncjN6iHv1Ah0mxdQkk8nsQNrRx0wQ9UXFPJ+m4dzA+3YikY3zNUQSgKlg9PCXSTYs/y4U1@vger.kernel.org, AJvYcCUDaTsEVfFazCt8MIYZLT6NlZBuwBNgmOiXDgVR+j7Mj/8CHLqf+Qd75dnaSQc4ZRpJzCSIqxqTRqiUieM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHBM5g6sj6wfFgunj7qSTOknbhiiEGmEGwdE36xMcQKOkywx7a
+	7mZqfYQlqIdyr+YAXusgegMpUL00hQqpoXuC5r733lKwEemWgSY2UiJYDRVgYjGi
+X-Gm-Gg: ASbGncsyYHF+jRyWe+dNMOtbFReYwVQ3cXU6O2aNPLNccbe86bPMBVmBKGjVnqVHtmM
+	MSD+KPLA+DVLVnUSWzwEVPXRDJlraoPbhPgLbS9IB8hD6OlcqEo6nhkJxUeVOz3PuD3L2WeQfrA
+	WQq580MxYXmj22TDKlls9mpN8DBFsUrfSkK6WynUs1D6bmrbS3jNnP2cJfLAmmWgOsPP6XRpZKa
+	qFHyd84ae/2vz8TovZwb8JsamnF6sCL0oWMaxDwdjxwJNy6bSTjpbDdPR9L/pxOaKvFHTTcOzO/
+	JJci87v+9IVdGDS5A9likOzPa/qVOYyVH1xgeIa2nYvRkvW/Awu0/6Dx3HwOQqqgFnNXnAXKGvL
+	U5EuC4T5mP6UGL1R+cIlictwei783
+X-Google-Smtp-Source: AGHT+IGvu07f+l/TsAJDYLsIB1XmRUSZhy6g4+mA6iuRUPfi4Uw8Fv4uiBWrGYrmk83lJNixQsRIJg==
+X-Received: by 2002:a05:600c:4e13:b0:45b:79fd:cb3d with SMTP id 5b1f17b1804b1-45de19f4ea7mr157925965e9.36.1757537429425;
+        Wed, 10 Sep 2025 13:50:29 -0700 (PDT)
+Received: from pc.. ([105.163.1.135])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e016b6aa2sm795185e9.0.2025.09.10.13.50.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 13:50:28 -0700 (PDT)
+From: Erick Karanja <karanja99erick@gmail.com>
+To: broonie@kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	julia.lawall@inria.fr,
+	Erick Karanja <karanja99erick@gmail.com>
+Subject: [PATCH] spi: Convert lock/unlock to scoped_guard
+Date: Wed, 10 Sep 2025 23:50:03 +0300
+Message-ID: <20250910205003.421067-1-karanja99erick@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] alloc_tag: use release_pages() in the cleanup path
-Content-Language: en-GB
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, vbabka@suse.cz, mhocko@suse.com,
- jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
- shakeel.butt@linux.dev, 00107082@163.com, pasha.tatashin@soleen.com,
- souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250909233409.1013367-1-surenb@google.com>
- <20250909233409.1013367-2-surenb@google.com>
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <20250909233409.1013367-2-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Siplify the lock/unlock pattern with scope based cleanup.
 
+Generated-by: Coccinelle SmPL
 
-On 10/09/2025 00:34, Suren Baghdasaryan wrote:
-> When bulk-freeing an array of pages use release_pages() instead of freeing
-> them page-by-page:
-> 
-> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  lib/alloc_tag.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
+Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+---
+ drivers/spi/spi-qup.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Acked-by: Usama Arif <usamaarif642@gmail.com>
+diff --git a/drivers/spi/spi-qup.c b/drivers/spi/spi-qup.c
+index 7d647edf6bc3..ad4f526a3705 100644
+--- a/drivers/spi/spi-qup.c
++++ b/drivers/spi/spi-qup.c
+@@ -654,10 +654,10 @@ static irqreturn_t spi_qup_qup_irq(int irq, void *dev_id)
+ 		error = -EIO;
+ 	}
+ 
+-	spin_lock(&controller->lock);
+-	if (!controller->error)
+-		controller->error = error;
+-	spin_unlock(&controller->lock);
++	scoped_guard (spinlock, &controller->lock) {
++		if (!controller->error)
++			controller->error = error;
++	}
+ 
+ 	if (spi_qup_is_dma_xfer(controller->mode)) {
+ 		writel_relaxed(opflags, controller->base + QUP_OPERATIONAL);
+-- 
+2.43.0
 
-> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> index e9b33848700a..95688c4cba7a 100644
-> --- a/lib/alloc_tag.c
-> +++ b/lib/alloc_tag.c
-> @@ -438,9 +438,10 @@ static int vm_module_tags_populate(void)
->  		if (nr < more_pages ||
->  		    vmap_pages_range(phys_end, phys_end + (nr << PAGE_SHIFT), PAGE_KERNEL,
->  				     next_page, PAGE_SHIFT) < 0) {
-> +			release_pages_arg arg = { .pages = next_page };
-> +
->  			/* Clean up and error out */
-> -			for (int i = 0; i < nr; i++)
-> -				__free_page(next_page[i]);
-> +			release_pages(arg, nr);
->  			return -ENOMEM;
->  		}
->  
-
-Maybe this can be done in free_mod_tags_mem as well?
 
