@@ -1,128 +1,123 @@
-Return-Path: <linux-kernel+bounces-809821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6B6B51278
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:28:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B95F8B51280
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 441FE1BC5F2F
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C35817B38BF
 	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED674313E03;
-	Wed, 10 Sep 2025 09:28:03 +0000 (UTC)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF59F313E07;
+	Wed, 10 Sep 2025 09:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YQwukn2D"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F852BE7B1;
-	Wed, 10 Sep 2025 09:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9615E308F38;
+	Wed, 10 Sep 2025 09:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757496483; cv=none; b=OV9ccKkh+d4ZEkOxdylWUgQ3LPqVpBPFJCWMh6XkrEHTT9OA5EdBMr2xSMji8nukMXoorAA5+Abdpf9FEzAvNO8O22BN1qfn/kUUtt8Fy2g94aOY7Di9F6B3JW2kL85hzOYWGZixB5Z9qncnTbXdtXGqmr2nyH2yBPhnHlBk4fw=
+	t=1757496601; cv=none; b=Sr8EzDTbDRB1LLeL4qZpzHaezTktgumQZcRKVg/wkOXmoCwN0PGU5QLCjKuuBFsmN7ZEZx/JXNucYavcCDtqib1DWxp4DluCK8ZWPUMycwIrDbhc44ZcQ5AdQlxU7GZPIf/Vf8zBSV7cIPuFILPaGvgRHagKdr5i7q+5f3Sg+wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757496483; c=relaxed/simple;
-	bh=aSFFwup56Na+mc+GbIhVEfY7AY/MM1tKLA8ABojdkhs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aXkl4qWdcNe4cFz8HKx67cwf5GC/Smyc8tdlujD8vXk/KEzRZhMIkIyPiq0q4irVdYvpEuGhU6E+EQPHnJweLOHYKbtGyUDPCDUvEUm1sbsqGaezDhkvvMa17DTCgVQrW14QaT7FI4o1w4TN8LLB92jUhuKLQIoJMibs2Q5X7W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-52b66993757so2098597137.1;
-        Wed, 10 Sep 2025 02:28:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757496480; x=1758101280;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cM4pW56c+6+KnwUEMEDed5wG5Vyjqd+monXczey7cig=;
-        b=GVHv9LnVLLJF+qyJkuVsGDPZbjKOmG2QTqL06KdjE2MSSLr9wloP3XjrV/gq+dqwYk
-         2yLb9UImZx8u/naGPh/cQ+OcVp3qCPi0xOI2daly9N/6Xaakjizjc4kE0BLGaNmmdXfN
-         NqHM5fyS6+96F0T/Yduc8hqjFM/B2CL6yneVPI9D0mzpNIVj0+TkHJkUPuR46woVfBWk
-         yRq96wRMif/3qfY7wV2Dyx33YWj99LYRtImWermXWj2EhwWJYp3XbXHaarVsavesjXjT
-         hXDJqeyvuVuUyvpQSPuMO6g49J6Q39Vya8gPxi8/XiGgKtA4Dk/l3mpsJsUMLT6xnO8u
-         f3iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOG4Jit4bq4pvceF3iQd4D3tZLVCeOs2IUz/GaW61PIJc4DtQ2HswBVX7N2Xb5ODTLbUCXR8J6QPPUYgMd@vger.kernel.org, AJvYcCVjxAN4fNZa6OLtv6OaxCzpztOyPCGNBlxVRgr2MX9LpQ6IyGHCyqSyA8S7Vqy1TuWgRArGvmT2j8sUtTpHXI7Uo9s=@vger.kernel.org, AJvYcCXsG4IHVZ3arCgE6l7yDlVHRwYYXbOiOzyn+1mUAogEwt2R/92sijAyECascjysmB95q1Bp4xowt6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0l0b3t5+qfflsiBhE4FFb+Ysanz+JXaMRafU3lw8gI5Xj4HYS
-	31jQ+48z889g2O+lDOiMKDZLZwL0o7ncI+NlOKvZKUO4oE7UExssitu6puKp0bG5
-X-Gm-Gg: ASbGnct7ZJCTmkblmANnFikCeXk73Zd3pJuKSYwKQKCl0AQekN7S1SIXTs3uqrth016
-	tf4mzB56uEmE5SCJys95wAhFlEIop7foaTQzVn2hyzSSSKFBRONQ3ClnsFFEiWRDu20Z876T0Uc
-	2chzF2ZNoMm0tAwTfsG9bTOq2ImbJGTGtvp18FSk773/RIBJ6ZgLI1xG/xRw2uAP626gS3+n30Z
-	2j5SHMiVaST3A/Jy6kI4to0IQ2uJCbcWCgFFfQG1oDbM4PQc+Qxa6+CkBBCf+yI1B2UBUfP4s2a
-	LINwiwk/KBLiBe/lqeGoyC5Sl6wEaN3+/S2R23mOf3h3OcJlSj9Ot3zsG6uagCvBhwg36IAksSF
-	3pZeWj1Bp0v6ncsPY3dYGsrrId/nq8mJH/CjUVl49Co5C71XnOSfQCDVLuTZY
-X-Google-Smtp-Source: AGHT+IHzB84IcAyytbgaKJ+86NqOTeA9Qtu/aypEW9Q+LOkVuQF2/3aUghtfHEfRZ4/OB2ts0cJFGg==
-X-Received: by 2002:a05:6102:291f:b0:505:ff14:8e0 with SMTP id ada2fe7eead31-53d0dbe86a9mr4633421137.11.1757496479960;
-        Wed, 10 Sep 2025 02:27:59 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544912fdff1sm13598359e0c.10.2025.09.10.02.27.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 02:27:59 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-52a4e220b9bso834213137.3;
-        Wed, 10 Sep 2025 02:27:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUoxgHXFkFNMBfPUMi16h6X6qvuDfR1FmhEBW56HP0c9FuvgDww1rHnlBMT2dEcqAP2E8FQ1rOx4Ndv07DV@vger.kernel.org, AJvYcCWpowdlNDzbfQGx7QvY/7JBKVJOeb7tFOrA18PTxUNmaW5cItKU9XgLVCKicTfJEpO8n10DwWoVfxc=@vger.kernel.org, AJvYcCXB9dH8DLzoq0+SiELJaF9RmWClVL4/kGCYSbeI7LEWBc6aoge4Mj4C1I9vKcKttZMv+P9D2En4uY0mjLNDDTX7Igo=@vger.kernel.org
-X-Received: by 2002:a05:6102:5803:b0:521:b9f2:a5ca with SMTP id
- ada2fe7eead31-53d0dbe8686mr4377472137.13.1757496479003; Wed, 10 Sep 2025
- 02:27:59 -0700 (PDT)
+	s=arc-20240116; t=1757496601; c=relaxed/simple;
+	bh=kv801gF345C4oB+f+aQrqm6mpUznJyW9VneKUbtHrJM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ePokqRAG46exutauhG/KaJfPVEvGBcnprDez5Wy0MqVU2wcDcRUBdR8wRkSV6OVSL5UKoSPuz72R4DXkzE6tQYgd7bd98Yw2eh+7AeLnaiY+f+L6KKrVo4Ch3GXDK5bpgUWS8+W9muetqJL3dTGjpRcLcN3EV17AdLcYaI5a3Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YQwukn2D; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757496600; x=1789032600;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=kv801gF345C4oB+f+aQrqm6mpUznJyW9VneKUbtHrJM=;
+  b=YQwukn2DTLSc7FfB1P2gGWFo0jYIWdmS4OyKdGjjCpdcAs1tpzsq8Dxh
+   rQOhHn5LUDshxbMr6z8HbtitWviKIkWbE4H23e4WgtatSh1XJwejnlwcV
+   sad83t0jPEnI9UchiNTSnwG8FzD1qRd2PpdWlLJuuA3tHlXbIMUMSH5iB
+   IipeCRTsrKGe2cdOaAN2KV0U60yqVMjzMqGBVdFE948NMK7aHLWaJJRlc
+   3/ZEsJX5b8G2oGJCSt8Rh0Si/YRsBszLtaNgCrFI/3e/SOKnrdJ0R2DlU
+   +hbT5ixhWzRNPdyrXA/xjArmlCGFjHhTy7M+uC970VMfE9xzmbsCEMQQx
+   Q==;
+X-CSE-ConnectionGUID: NGzgq0G2R9WR+HpeswV74A==
+X-CSE-MsgGUID: ilTYxnqwSxOYbhpgB9Q0hQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="77257126"
+X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
+   d="scan'208";a="77257126"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 02:29:59 -0700
+X-CSE-ConnectionGUID: UjLmF5dtR3eP67o4uAu2Iw==
+X-CSE-MsgGUID: AOlBc/kCS7CIl0vTvM13Mw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
+   d="scan'208";a="173724380"
+Received: from baandr0id001.iind.intel.com ([10.66.253.151])
+  by fmviesa008.fm.intel.com with ESMTP; 10 Sep 2025 02:29:56 -0700
+From: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+To: dave@stgolabs.net,
+	paulmck@kernel.org,
+	josh@joshtriplett.org,
+	frederic@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	rostedt@goodmis.org
+Cc: linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org,
+	Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+Subject: [PATCH v2] rcu/rcutorture: Improve error handling in rcu_torture_fwd_prog_init()
+Date: Wed, 10 Sep 2025 14:58:20 +0530
+Message-Id: <20250910092820.3736526-1-kaushlendra.kumar@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87segx256a.wl-kuninori.morimoto.gx@renesas.com>
- <20250908012810.4767-1-chenyuan_fl@163.com> <87ms751z28.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87ms751z28.wl-kuninori.morimoto.gx@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 10 Sep 2025 11:27:47 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUYFbWCK=SKDK8cKSsiYkorwfaeoO+cf=f2ERftLY=Yag@mail.gmail.com>
-X-Gm-Features: AS18NWADa4v7ZheOwfPM7H9Z3s9duog9cwBJwfAogeGSU-l7LrKIHl7D5DA-A_c
-Message-ID: <CAMuHMdUYFbWCK=SKDK8cKSsiYkorwfaeoO+cf=f2ERftLY=Yag@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: fix memory leak in cpg_mssr_reserved_init()
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: chenyuan_fl@163.com, geert+renesas@glider.be, mturquette@baylibre.com, 
-	sboyd@kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yuan CHen <chenyuan@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 8 Sept 2025 at 04:02, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> > In the current implementation, when krealloc_array() fails, the error handling path
-> > incorrectly sets the original memory pointer to NULL before it is freed,
-> > resulting in a memory leak during reallocation failure.
-> >
-> > Fixes: 6aa17547649 ("clk: renesas: cpg-mssr: Ignore all clocks assigned to non-Linux system")
-> > Signed-off-by: Yuan CHen <chenyuan@kylinos.cn>
->
-> You want to use ${LINUX}/scripts/checkpatch.pl to get maximum 75 chars warning
->
-> Patch itself is agree, but I still don't understand the git-log.
->
->         incorrectly sets the original memory pointer to NULL before it is freed,
->
-> I still don't understand this part. which part are you talking about ?
-> What does this "original memory pointer" mean ? And what does this "freed"
-> mean ? freed what ??
->
-> I guess you want to indicate is like this ?
->
->         In case of krealloc_array() failure, current error handling just
->         returns from function without freeing alloced array.
->         It cause a memory leak. Fixup it.
+Restructure error handling in rcu_torture_fwd_prog_init() to provide
+cleaner allocation failure paths. The current code checks both
+allocations in a single condition, making error handling less
+efficient and clear.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.18, with the patch description
-reworded.
+The improved approach:
+- Check rfp allocation immediately and return early on failure
+- Separately handle fwd_prog_tasks allocation failure with proper
+  cleanup
+- Remove redundant kfree(fwd_prog_tasks) since it would be NULL on
+  failure
 
-Gr{oetje,eeting}s,
+Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+---
+Changes in v2:
+- Fixed word wrapping in commit message to follow kernel guidelines
+---
+ kernel/rcu/rcutorture.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-                        Geert
-
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 807fbf6123a7..6af0d207adba 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -2995,11 +2995,11 @@ static int __init rcu_torture_fwd_prog_init(void)
+ 	if (fwd_progress_div <= 0)
+ 		fwd_progress_div = 4;
+ 	rfp = kcalloc(fwd_progress, sizeof(*rfp), GFP_KERNEL);
++	if (!rfp)
++		return -ENOMEM;
+ 	fwd_prog_tasks = kcalloc(fwd_progress, sizeof(*fwd_prog_tasks), GFP_KERNEL);
+-	if (!rfp || !fwd_prog_tasks) {
++	if (!fwd_prog_tasks) {
+ 		kfree(rfp);
+-		kfree(fwd_prog_tasks);
+-		fwd_prog_tasks = NULL;
+ 		fwd_progress = 0;
+ 		return -ENOMEM;
+ 	}
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
