@@ -1,88 +1,87 @@
-Return-Path: <linux-kernel+bounces-809240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2199B50A66
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:42:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070ADB50A65
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D42923AC9FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:42:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 388FA1C61258
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D4F21ABD7;
-	Wed, 10 Sep 2025 01:42:27 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290262153D4;
+	Wed, 10 Sep 2025 01:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shzysXrn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C21F21771C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EFE212550;
+	Wed, 10 Sep 2025 01:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757468546; cv=none; b=FiSqpMCrr7D8kBHBm6Ki7boPtUuBTmF6eeBbTLPfzkeoEMB7kv26ovVdAlXgH4B+y6iQ0NYdnZAwHRDZn+bN14PrKBgEOtWq6nP2jNVEEuCN3hoaEG0uMgLrEEMoYZfZLWfolNZxiIodZnLOkh42kW63oGKgmrhwG5iDOdeIO2w=
+	t=1757468543; cv=none; b=NzVzobWQoZnTFlIg90kbGdSqoYnosp20HqGEAHFpI78w+aNcVu/dfM5mHLr7LbIVSCMXliOrn6WoESvLD+V++o5XFgJS58De4sfcjWw1WwlGM9mpXlTbvJz2Y04BcW7Rv3QuDEejy0RlCIHylIONxzMoOwKUvtUg4ehfSf7dvSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757468546; c=relaxed/simple;
-	bh=6OqjZR9oFvkWiE5VSEPIINqSTbDNH6sz23EK/qxRKvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=g/P3bMVtqyMWQhc+JmSD+YapuYzc8N7ulg8wlhHMdIFgv1aP7al5UpUUSjCvpH7bxfzI1l4xy/IqHu1smZpFAI2mq3y9Lc6FGm7s/mPoYUaAWQMzuEDEM777MXHHq0JB79I2d3Ou4mscX3KPm/98q2GVSl6zJ+zScW2Gg128LB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cM3Lt6lpvztTX2;
-	Wed, 10 Sep 2025 09:41:26 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 27FB9180B68;
-	Wed, 10 Sep 2025 09:42:22 +0800 (CST)
-Received: from [10.67.121.183] (10.67.121.183) by
- dggpemf500013.china.huawei.com (7.185.36.188) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 10 Sep 2025 09:42:21 +0800
-Message-ID: <3d57bacf-6ea7-4d95-b411-bde376006b9f@huawei.com>
-Date: Wed, 10 Sep 2025 09:42:20 +0800
+	s=arc-20240116; t=1757468543; c=relaxed/simple;
+	bh=VS/jCBz/twNOKbVyRFcGfLXUgMkqYIWxlqN5dl4ocB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kMTzoJdNPyt6Ys5aB6t7yjXFmQpcF2/yJWFnbArBqsy0pl9gt54Q/n7qIkSm5+RP3mtbNYN0i/tySUTjMD5RRBbKAQhlPLi2VatR0BszxQzDD4sl0FLLp4cvfp64SYnwyi9Aj2pm6EzhTFHTmmwxSEiFYkhSdMXeujV6geFSjdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shzysXrn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3414FC4CEF4;
+	Wed, 10 Sep 2025 01:42:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757468543;
+	bh=VS/jCBz/twNOKbVyRFcGfLXUgMkqYIWxlqN5dl4ocB4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=shzysXrnijyXfHLYpyT0/8kUeGhZc26sw18hS5wfolGD7r2BMPFf2kA526KbMNQjn
+	 L3aea3U9+sdhRPlT9zNP07bZDIjNKOkIY4eiRPOXsrz9J65RQ1JQhfw72FtEIz75mt
+	 aAYEUb+JOYhAQLYZjoE6uesT+bvtWlx63EX3x+D7vEjEBiGxjalpUMBVdV7Cb4NN3m
+	 wZLrTGT2y9u1m4+D9Xx48/2RhRdgIWWtng/oGoKhENmAQe6G/DTKrxIWsBMasqb5cL
+	 NIoROMFfc7PQ15JafpquIZF6gc+NoDFyWRhpQUPGyhp+nnQpfp9zwpEbiRuhB/fmnC
+	 GddC+ao8h1CcA==
+Date: Tue, 9 Sep 2025 18:42:21 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Donald Hunter <donald.hunter@gmail.com>, Mat Martineau
+ <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Davide Caratti
+ <dcaratti@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan
+ <shuah@kernel.org>, netdev@vger.kernel.org, mptcp@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH net 1/3] netlink: specs: mptcp: fix if-idx attribute
+ type
+Message-ID: <20250909184221.02b070b0@kernel.org>
+In-Reply-To: <8f0bc70f-1657-4938-88e8-532ffb7c1a12@kernel.org>
+References: <20250908-net-mptcp-misc-fixes-6-17-rc5-v1-0-5f2168a66079@kernel.org>
+	<20250908-net-mptcp-misc-fixes-6-17-rc5-v1-1-5f2168a66079@kernel.org>
+	<m2plc0ui9z.fsf@gmail.com>
+	<8f0bc70f-1657-4938-88e8-532ffb7c1a12@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] KVM: arm64: Make ID_AA64MMFR1_EL1.VH writable from
- userspace
-To: Oliver Upton <oliver.upton@linux.dev>
-CC: <yuzenghui@huawei.com>, <maz@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <liuyonglong@huawei.com>,
-	<wangzhou1@hisilicon.com>
-References: <20250909034415.3822478-1-yangjinqian1@huawei.com>
- <20250909034415.3822478-4-yangjinqian1@huawei.com>
- <aL-788d0xWThAVSl@linux.dev>
-From: Jinqian Yang <yangjinqian1@huawei.com>
-In-Reply-To: <aL-788d0xWThAVSl@linux.dev>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500013.china.huawei.com (7.185.36.188)
 
-
-
-On 2025/9/9 13:32, Oliver Upton wrote:
-> Hi Jinqian,
+On Tue, 9 Sep 2025 11:08:46 +0200 Matthieu Baerts wrote:
+> > Note that mptcp_pm_parse_entry has this, which should maybe be fixed at
+> > the same time:
+> > 
+> > 	u32 val = nla_get_s32(tb[MPTCP_PM_ADDR_ATTR_IF_IDX]);  
 > 
-> On Tue, Sep 09, 2025 at 11:44:15AM +0800, Jinqian Yang wrote:
->> Allow userspace to downgrade VH in ID_AA64MMFR1_EL1. Userspace can
->> only change this value from high to low.
-> 
-> I'm afraid we can't allow this. When we expose FEAT_VHE to the VM,
-> HCR_EL2.E2H is RES1. Meaning, vEL2 is unconditionally in a VHE
-> context.
-> 
-> I would be OK with a clarifying comment documenting why the field is
-> non-writable.
-> 
+> Good catch!
 
-Okay, v3 will keep ID_AA64MMFR1_EL1.VH non-writable.
+indeed!
 
-Thanks,
-Jinqian
+> This should be fixed in a dedicated patch, because this fixes commit:
+> ef0da3b8a2f1 ("mptcp: move address attribute into mptcp_addr_info"), a
+> different commit than the one being fixed here.
+
+int = u32 is unlikely to cause issues AFAIU. We recently applied 
+a bunch of such fixes to net-next. I think this can also go to -next.
 
