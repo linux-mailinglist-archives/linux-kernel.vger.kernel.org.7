@@ -1,171 +1,146 @@
-Return-Path: <linux-kernel+bounces-810680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C930EB51DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:34:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E16CBB51DD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B260582CAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:33:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A26933A7A7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1697726E6EB;
-	Wed, 10 Sep 2025 16:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827DE221FCD;
+	Wed, 10 Sep 2025 16:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="walGIySX"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vu/Fm0pO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252B8257AEC;
-	Wed, 10 Sep 2025 16:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF40B329F0B;
+	Wed, 10 Sep 2025 16:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757522026; cv=none; b=jbpUmMPJXw78gE5+ksTL9+gEPJDiVehtK9zVwTbW0KtwW//SXFNJYvRpccWVeN2hKTYhFMZhl3hdkB/+bO/QdNfko+xvwGtgA0mFxF76TalX+Xj96BjMOlXFVgzhB/GUrV+ulbvudDT5HiFFtaEy/UgQizXgIzxVh5ol49nLvfA=
+	t=1757522082; cv=none; b=gUPX9BVnmahXd5LZ63OqVpW3z4BoJoKXyVe2P0h6F/udreVW5mlWencsTr1bK0suasgYyefwgnwZgy0HqNuasW3AhCa7HnYrT/t+orUB/abqytyH22sYl7XVKfTabie4D74kqcurYRyUMG/X8dvG/mPkzQO/wBq8RmG5AhFR0MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757522026; c=relaxed/simple;
-	bh=TANS7+tdf/LvPh8rThStViQ9NGrZA+eKprOo3uGZrLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ewL3nzMNEfabHLXedisRlZkUkmevn/NkWYNJ7PThUwuAQWd2oNDE31U5YJCSaJ1hQGE2hu2ygVpKeEiLWM/SkXJVgBr9uZhApiByW5NNuqBKKYBzMD4aPQjAmxw29FNr8XC/s5cd4/qyYO2Fa3CAjVpaHgFmpWXItGFQYR/0Kq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=walGIySX; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cMR8M6xjYz9tvZ;
-	Wed, 10 Sep 2025 18:33:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1757522020;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XFhu/9tuXD479eCt6PebfTg8lX9JB/VHXU3+8U9v9hs=;
-	b=walGIySXpnoW4A8BU2yV93WfdaN0bpkt6mBPJdfij7Un1eI21pNdvo++nzR4MIi+MK+FkW
-	vrcraKejDnjZjhNZ8yJHiL87JxyP0ubO5NPk11l07SVqSYLmnKEFpCS7r6ZpulXqY+E7/C
-	lZfqVRcB90hS3WkhniBSa1I7VLH3tFWenj+jUYiA3C+2VVt9QMtAQt9LC5iqJeW05EHrHs
-	m84ociybCF0+PVPpZnqsMavipKHeWiqtkB0TkjqU0WpSu97x0ERYhcaRdWwAE0GJCLlgjO
-	F/C8hvkU46ZQp0Qms7X32D4I+NxG2eVrlFFdyoDnPdzZwPukr0Q8hVUU+t8Ghg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Thu, 11 Sep 2025 02:33:18 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 01/32] pidfs: validate extensible ioctls
-Message-ID: <2025-09-10-random-finer-pause-treasury-MBAX3P@cyphar.com>
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-1-4dd56e7359d8@kernel.org>
+	s=arc-20240116; t=1757522082; c=relaxed/simple;
+	bh=VqnVe7ND+z/dHs2bcI+Mkh13Zz2u2mKxafPYDENBCWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bT3KqLcL6N6ZBnfJ14lQRhw55HMkoWC51b67s5l5u2ajzU6pdfSO/9Zx5e7sTWw89KkrY7+GssKJMYsMVPicqV8jXOdd1HVsL9i7SL3GGohv56Vy3bcoYpS3OcNsjV7P9KCBh47UjUqZX+GgNU8vXq/EmCgE7ERwUvspTr6TJGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vu/Fm0pO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C98CEC4CEEB;
+	Wed, 10 Sep 2025 16:34:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757522082;
+	bh=VqnVe7ND+z/dHs2bcI+Mkh13Zz2u2mKxafPYDENBCWY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Vu/Fm0pONBD9IALPZ47AK1IXAVgbjE2+QAC35PY89+UqTdMmWUtEaBciVEY1KT3mD
+	 5o50i59e2fP2SHutZj2sJuQU2ZRNiTWMuwHpasen2CFUXoRGnhL2f26Mga6zT2kOyx
+	 hG1ZRC4qWDBgCaAx0FVuDXHmgVv1xUsRoR4BaBKrCT72PuzDw0X5io3SCQi+QTNZjZ
+	 0gWQdiZiaB8kIXoo8rJTjWPz0DZZciQoc2IUOPhZPUfmJOv80iPHbWWx8ldzFHVxQK
+	 Enlw8uXMoAbzTYZeKXBsSGDo17ZPQ3Om9U9LI8PEtM6566f1tApAFIACImBg1yxJCq
+	 bqE7qlBiSqVww==
+Date: Wed, 10 Sep 2025 17:34:37 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Ioana Risteiu <Ioana.Risteiu@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ramona Nechita
+ <ramona.nechita@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] Add IIO backend support for AD7779
+Message-ID: <20250910173437.7e442621@jic23-huawei>
+In-Reply-To: <20250831133738.5ba540c7@jic23-huawei>
+References: <20250825221355.6214-1-Ioana.Risteiu@analog.com>
+	<82a21a66-409f-4ec8-9351-365031b8646b@baylibre.com>
+	<20250831133738.5ba540c7@jic23-huawei>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yjrth425odgu27a4"
-Content-Disposition: inline
-In-Reply-To: <20250910-work-namespace-v1-1-4dd56e7359d8@kernel.org>
-X-Rspamd-Queue-Id: 4cMR8M6xjYz9tvZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sun, 31 Aug 2025 13:37:38 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
---yjrth425odgu27a4
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 01/32] pidfs: validate extensible ioctls
-MIME-Version: 1.0
+> On Tue, 26 Aug 2025 11:24:26 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
+> > On 8/25/25 5:13 PM, Ioana Risteiu wrote:  
+> > >   - Add axi_adc_num_lanes_set in the adi_axi_adc_ops structure to support
+> > >   setting number of lanes used by AXI ADC.
+> > >   - Add the generic io-backends property to the AD7779 binding to enable
+> > >   support for the IIO backend framework.
+> > >   - Add the adi,num-lanes property to set the number of lanes used by
+> > >   AD7779.
+> > >   - Move the initialization specific to communication without iio-backend
+> > >   into a separate setup function.
+> > >   - Add a new functionality to ad7779 driver that streams data through data
+> > >   output interface using IIO backend interface.    
+> > 
+> > It is more helpful for the cover letter to contain a high-level
+> > overview of why you want this series included in the kernel. We
+> > can look at the individual patches to see what they are about, so
+> > repeating that here isn't especially helpful.
+> > 
+> > For example, I would write the cover letter for this series like this:
+> > 
+> > The AD7779 ADC chip has a secondary data bus for high-speed data
+> > transfers. To make use of this bus, it is connected to an FPGA IP
+> > core [1] which is handled using the IIO backend framework. This IP
+> > core connects to the data bus lines as well as the data ready signal
+> > on the ADC. This interface can use 1, 2 or 4 lanes at a time.
+> > 
+> > This series extends the devicetree bindings to describe these wiring
+> > configuration, extends the IIO backend framework to allow setting the
+> > number of lanes that are being used, and extends the ad7779 driver to
+> > allow using such a backend for reading data in buffered reads.
+> > 
+> > [1]: https://analogdevicesinc.github.io/hdl/projects/ad777x_fmcz/index.html
+> >   
+> > > 
+> > > Ioana Risteiu (4):
+> > >   iio: adc: adi-axi-adc: add axi_adc_num_lanes_set
+> > >   dt-bindings: iio: adc: add IIO backend support
+> > >   iio: adc: extract setup function without backend
+> > >   iio: adc: update ad7779 to use IIO backend
+> > > 
+> > >  .../bindings/iio/adc/adi,ad7779.yaml          |  44 +++-
+> > >  drivers/iio/adc/ad7779.c                      | 192 ++++++++++++++----
+> > >  drivers/iio/adc/adi-axi-adc.c                 |   1 +
+> > >  3 files changed, 196 insertions(+), 41 deletions(-)
+> > >     
+> > 
+> > Please include a changelog of what was changed in each revision of
+> > the series along with links to the previous revisions. Tools like
+> > b4 can help automate this.
+> > 
+> > https://docs.kernel.org/6.16/process/submitting-patches.html  
+> Whilst I fully agree with this, please keep the per patch change logs
+> as well as personally I find those more useful.  For those just
+> changes from previous version is fine.
+> 
+> Anyhow, other than this process stuff the series looks good to me
+> so applied to the togreg branch of iio.git and pushed out as testing.
+> 
+Was missing a SELECT IIO_BACKEND.
+0-day found this and I've fixed it up.
 
-On 2025-09-10, Christian Brauner <brauner@kernel.org> wrote:
-> Validate extensible ioctls stricter than we do now.
->=20
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/pidfs.c         |  2 +-
->  include/linux/fs.h | 14 ++++++++++++++
->  2 files changed, 15 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index edc35522d75c..0a5083b9cce5 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
->  		 * erronously mistook the file descriptor for a pidfd.
->  		 * This is not perfect but will catch most cases.
->  		 */
-> -		return (_IOC_TYPE(cmd) =3D=3D _IOC_TYPE(PIDFD_GET_INFO));
-> +		return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER=
-0);
->  	}
-> =20
->  	return false;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index d7ab4f96d705..2f2edc53bf3c 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -4023,4 +4023,18 @@ static inline bool vfs_empty_path(int dfd, const c=
-har __user *path)
-> =20
->  int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter=
-);
-> =20
-> +static inline bool extensible_ioctl_valid(unsigned int cmd_a,
-> +					  unsigned int cmd_b, size_t min_size)
-> +{
-> +	if (_IOC_DIR(cmd_a) !=3D _IOC_DIR(cmd_b))
-> +		return false;
-> +	if (_IOC_TYPE(cmd_a) !=3D _IOC_TYPE(cmd_b))
-> +		return false;
-> +	if (_IOC_NR(cmd_a) !=3D _IOC_NR(cmd_b))
-> +		return false;
-> +	if (_IOC_SIZE(cmd_a) < min_size)
-> +		return false;
-> +	return true;
-> +}
-> +
+Thanks,
 
-nit: I know only we use them for now, but does this maybe belong in
-ioctl.h (or even uaccess.h with the other extensible struct stuff)?
+Jonathan
 
-Otherwise,
+> Thanks,
+> 
+> Jonathan
+> 
+> 
+> 
 
-Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
-
->  #endif /* _LINUX_FS_H */
->=20
-> --=20
-> 2.47.3
->=20
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---yjrth425odgu27a4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaMGoThsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG9tOAEAkwboDbdfy2l6+xUcPkEY
-QOcwGOeIOOgORPljUvqTtPgBAMV5PpdlLiP9vSf9td25629vpEsxSAXsP5V30D+v
-MPgH
-=qT/D
------END PGP SIGNATURE-----
-
---yjrth425odgu27a4--
 
