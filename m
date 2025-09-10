@@ -1,129 +1,104 @@
-Return-Path: <linux-kernel+bounces-810100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06106B515D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:35:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9928FB515DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02F51C25166
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:36:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596AB481A91
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5492820A4;
-	Wed, 10 Sep 2025 11:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974432848BD;
+	Wed, 10 Sep 2025 11:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oyt3iiv6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ApXjy1T5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FB823A9AE;
-	Wed, 10 Sep 2025 11:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F3227FD76;
+	Wed, 10 Sep 2025 11:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757504143; cv=none; b=Rdjq/Dk5V62whqRZuEftDHSeMA8WM4qEglkhWMFWQCFmE8/XkpSeW0JxqXqbembqAQKELAa/ebpLkermXjecB1y3uS4rQUhmUxcea8hPl4vqOeQ449PlU5v4xaKHb0w7CIKArrDRa+Uw2wQqI00kVOZpm0MNYDwQqH8ivruvQJU=
+	t=1757504176; cv=none; b=uxCcoypO3VHG1HifVrt2CUXW2hPPbhl/OOdXyG5Vb+3d39MiR9fRiTl/N8rt31W9Xb93Pk8BbRuG1HZKtV6unvCBVUPJ3K2QcmFuUVcgfqiwBlUV1GaZ4hmP/doDrnqgI4ovvUldyd9+bLQ+TENTR3RmorHvftgWG+DhMvwoJDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757504143; c=relaxed/simple;
-	bh=i6Z2NDahm7CLx4TBaP4siTR23mUGVC+/9EIqEzuOL68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UIb9OI8CNrYw3h51Nx45gWc1pa5s99G0xpNRvx92FfEEv+goprtJ+HxwBPVppAJQwXm7G8Wr0hwfLFweZ/dUxVVLxs1itDuuorCPd5+5Qp9Efe5d2haEFrA3nmCiCyDd5VsuvhClveAFkoWlGsXRV0bsSEGHr0MybYGVnhhGUx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oyt3iiv6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E5BAC4CEF0;
-	Wed, 10 Sep 2025 11:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757504142;
-	bh=i6Z2NDahm7CLx4TBaP4siTR23mUGVC+/9EIqEzuOL68=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Oyt3iiv6aPyQ25GkTyqU4y24qMajRCx/pzq+ugEir/izBj5M7pyRsA8OZStiNfH8y
-	 UnR9dAoBcF5GV5vSuAXDUJr2EGPrBj5A8AcXCvsuQnRCMQtzH1NbxMGgX3hr1dr1QT
-	 /RczUH9k53Mvt102cepRNnuIww15Os+glyKHgI+W2BsLtN1OxDVm47V5anfYpMdvSp
-	 hX8UCpSvTMcDRrLtuB3xXerfO6IO8xFvIcjxKS/v8Ihv7d7Sy4Y0wsMAAW9Qd1RS9w
-	 HEEXr4YbiFH0M7PEFAwIkTiFwEH4/D0rw/MyQsqHpfFZIaS5QJKVnqvyfV7j5xTptL
-	 xL6VO/GfuLEAw==
-Date: Wed, 10 Sep 2025 13:35:39 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Iker Pedrosa <ikerpedrosam@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Javier Martinez Canillas <javierm@redhat.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: display: sitronix,st7920: Add DT
- schema
-Message-ID: <20250910-ant-of-angelic-vastness-b5caa5@kuoka>
-References: <20250909-st7920-v2-0-409f4890fb5f@gmail.com>
- <20250909-st7920-v2-2-409f4890fb5f@gmail.com>
+	s=arc-20240116; t=1757504176; c=relaxed/simple;
+	bh=6l01S/6rt47Erai4jgs1/fHMs7MWuVscpV4xRqhC7Bw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ejSYno2yyIn+8zp8CAgE0cFW3d4G7MhnvD9qXUtNKtqTPRcpAWZ3e2tvul2JOBRZsbG/NCHcyEXcTXVEOC/R1Uy+oW8I6w0aLVu+0vAJF/VgFjUwAc2/4GQUOLRWCZIt0OIFH1KJFX6uhvr9mGJu9gW4rRtIjll+hzvdOk2fKkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ApXjy1T5; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757504175; x=1789040175;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=6l01S/6rt47Erai4jgs1/fHMs7MWuVscpV4xRqhC7Bw=;
+  b=ApXjy1T5NFgybDDKODC3wp8loy9mjbo5uBjeCi2+XV9iKiCZfdHa32Dx
+   KRj4AfYP8R9DXwL1CdBQs9FtEkav4CaZlV5xQlYrse9wLTcSJffFDUeNu
+   /w6vu/87JR60RaDBc/x1B72y8dsYvLhg/jdllmcQiowCQyN/K0yOEnHIL
+   NajDWKcVRUX5HJbp64vOk6WttIvPUALfm+Ohcbj8Zok1wptam/p5+wCnm
+   Kl8sLT24aMMqbQJOiemYKGKbyFtCV7kyNYQl6/QekiT3VdJGOhwjZIVm+
+   3rGO9LKZZKxwj4PrBrqxAWrXEvRrax6j0Kh65fGBbSoOCSRbIoQj1vKb0
+   A==;
+X-CSE-ConnectionGUID: UEudGTgATv2TXbkZ8eAbjQ==
+X-CSE-MsgGUID: Dn/ZlPX0S3it0xMtwKfwOw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="85254248"
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="85254248"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 04:36:14 -0700
+X-CSE-ConnectionGUID: GgsNQTLSRAChkvxJTM6ILw==
+X-CSE-MsgGUID: iK3CtWNvQyacEx2hxp+Fxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="172535363"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.59])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 04:36:11 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: platform-driver-x86@vger.kernel.org, 
+ Antheas Kapenekakis <lkml@antheas.dev>
+Cc: linux-kernel@vger.kernel.org, 
+ Derek John Clark <derekjohn.clark@gmail.com>, 
+ =?utf-8?q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>, 
+ Eileen <eileen@one-netbook.com>, Hans de Goede <hansg@kernel.org>
+In-Reply-To: <20250904132252.3041613-1-lkml@antheas.dev>
+References: <20250904132252.3041613-1-lkml@antheas.dev>
+Subject: Re: [PATCH v1 1/2] platform/x86: oxpec: Add support for OneXPlayer
+ X1Pro EVA-02
+Message-Id: <175750416456.15501.9029760807017226588.b4-ty@linux.intel.com>
+Date: Wed, 10 Sep 2025 14:36:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250909-st7920-v2-2-409f4890fb5f@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Tue, Sep 09, 2025 at 06:52:44PM +0200, Iker Pedrosa wrote:
-> Add binding for Sitronix ST7920 display.
+On Thu, 04 Sep 2025 15:22:51 +0200, Antheas Kapenekakis wrote:
+
+> It is a special edition of X1Pro with Intel and a different color.
 > 
-> Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
-> ---
->  .../bindings/display/sitronix,st7920.yaml          | 52 ++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
 > 
 
-Please organize the patch documenting compatible (DT bindings) before their user.
-See also: https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst#L46
 
-...
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
 
-> +  reg:
-> +    description: The chip-select number for the device on the SPI bus.
+The list of commits applied:
+[1/2] platform/x86: oxpec: Add support for OneXPlayer X1Pro EVA-02
+      commit: fba9d5448bd45b0ff7199c47023e9308ea4f1730
+[2/2] platform/x86: oxpec: Add support for AOKZOE A1X
+      commit: d857d09fb653f081f5730e5549fce397513b0ef9
 
-Drop description, obvious/redundant.
+--
+ i.
 
-> +    maxItems: 1
-> +
-> +  spi-max-frequency:
-> +    maximum: 600000
-> +
-
-I don't see how my comment about supply was addressed. You never
-responded, nothing explained in the changelog, nothing explained in the
-commit msg.
-
-> +required:
-> +  - compatible
-> +  - reg
-> +  - spi-max-frequency
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    // Example: ST7920 connected to an SPI bus
-
-Drop comment.
-
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        display@0 {
-> +            compatible = "sitronix,st7920";
-> +            reg = <0>;
-> +            spi-max-frequency = <600000>;
-> +            spi-cs-high;
-> +        };
-> +    };
-> 
-> -- 
-> 2.51.0
-> 
 
