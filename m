@@ -1,178 +1,222 @@
-Return-Path: <linux-kernel+bounces-810085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59EBEB515A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:29:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A99B515B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FC431C83CED
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:29:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A22EC563E2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C7E3112CF;
-	Wed, 10 Sep 2025 11:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06B227FD76;
+	Wed, 10 Sep 2025 11:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YnNLdWNh"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2086.outbound.protection.outlook.com [40.107.243.86])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="anuciSXi"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2042.outbound.protection.outlook.com [40.107.102.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9AA30596B;
-	Wed, 10 Sep 2025 11:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4938C262FD4;
+	Wed, 10 Sep 2025 11:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757503708; cv=fail; b=hkcnC8V3lRdmYaEC8y6ax0yisujDtmMm9Uh4AicfIp+33jT/SBK+vDa0qgVh2JXePg6dQ+6pqcM2qBynhDP4HSWcSO8ZJ2gRac3E7MNMgcb60lV4C+7w436szLF4UB+asTNau2haC2WJ+AVA6pDIZWaUG1yOQB2OdsWo4DAwngI=
+	t=1757503839; cv=fail; b=QNj/KIqOkG6se26DLRV6uv+tEUYwBXqrqGsA4lplUEI0VcSFxDpj8jy3NhVUFD5YKmNi+Q+Xc2k+hHmS2jtolg1Ult4scjpWEFpuJW2QMF3LbimzeOwEycz5JXy9Gf4LzHRyEA/nnibGxlyQNURn7MKqi1Qeay4a4ro8/8ukQpI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757503708; c=relaxed/simple;
-	bh=uoQxTlAHcNlEvXjPH11CrF+tiIdqud0fEuLcuRLJ+xg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=I0hsbR5YOlKcOaLXO3CP8/xCqhCe7/BcFz9ABW4aIwd5eI7vxqNZNtXEbnLD/cW28JC1nIwo6Q2B5kW9G7CVLjfGQdTXnpStY0MhDGLGVc1IBDAoBpEyJvzAMR6xTcbg307F2GSgJnvVFjio3QlGDQjPADZmpWgxVslDtNCTSxI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YnNLdWNh; arc=fail smtp.client-ip=40.107.243.86
+	s=arc-20240116; t=1757503839; c=relaxed/simple;
+	bh=K5HCOUugzg3dTKjkbPbWzZ1ON47grXUWkwKNvjCiTwM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kfxzhsKHIrUIBjAu0J1VACexLj5T6n+itR30f1VgMHffbZ/Apx7/xNJG7OfhHAfawI5dop5W92RK63XreMBzEg0oZi62jbGTmzkKxgoGbdaTpsZSpBQMEI92EfGh9ZX17XXiLlry3EPHh5fljI3pWn8OqxNsfmeCwTTyHKII+OE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=anuciSXi; arc=fail smtp.client-ip=40.107.102.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gVf+a/nVYOlEDAAiixQ9RD7RQ/jROPGspzDgGrWSDc5uz1yHmwDsamnAo8S7CAH42yrLQmVxvEnuVaWJTmnVVOwFqwK8EPBQ/Ldm+5TLcnSazSK++PyI1ijmvLpJuLCv4enCCxcVNPa4Iq+0KN5jGB5zT4mXeS0yWrFRLFmrE70XcPI+fODdRhFVwQbgz4gq7rBfBMXGXtP3WAuRFOhjHz4Rw0KmoqyjRzwfQuZgah38K7cbKu4WDBxASz8aoBixHpYVWjrOdM3CvEUzsgv9Km43MUm6R6ezOzxqTo5HtdCHE4I/xxr2uWmuUquvfpkuEKUguWGYnqhFhNYT6uvgUw==
+ b=rF04tNvI3yJ+73QeSBDtKjrA1VvMQMPQr84l3Z2DzYNVgicr4jrgl2SF+zmjQ0n7xeSkg4INy/+DFxj3c0KfZurgfTXBwfhwQMhPGpA9pptBLsn0wmeieWQDkEDBuGjMLzAxyXhK/yOJOiK42x6+jaxA1OnFVB89DRinpMnVp6IzWPG9wqxwaNZmI0E4KcA6RO0/8NSYPTTIqD8R9MiZaIJYyQZKGjWCEuNa+zDmxO0kq4adc1Ycellins1k436N8P2Mflmx91ruWA/sy4u3ZJQ3oMiJBfeH5fGyG+q1Mz7YYM/npEMeR/soCVJrZYyW7JrHyFW5ZOyQwFOT6w+oCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KH154ENAJB6GlASFEGH4pN/T80tK/8jqwe0bHWUY3Us=;
- b=wDUSzSaus5S/2pidz7BOe8gYOHaJYlhEhHY59fyV5O/O+Zi/lB60eUYq1RR2Nuydu78HfGJ3iEMoFXStjIa9E+KbQF881+zhlGu7c2WQSdRa7HJt6FBbshZX5edyENg6A7D69MuMo57GxZQ2VRZn//izISYYl3s7tCn0n8SACqO++oW7BkKy41hKA8fITKBsR7dIJaGfB3J1nHmHJknrv6yN/x/iRXR296YyqLQmLllht3UzXfAN7iWdv3c/uJ3uHPw3DTR9K/wsXF1NxiCqa+d2ucJwTeNLxTwTbrB0r/bZy/UnMBrP/3cvLEDvns7i/l+uCkUdWqSdKqBbYGJw6g==
+ bh=wgM9V/u6mNNMFtaFlIIL4nsrYTmYBHocR4T4iKJTDnU=;
+ b=CNwTJd4KaGHS3aqcVKfG0Ug0sUMSitlRDgJTkszo6g3mrLkFR2Nc2wO+2LNghLhJdZE9KuNjGLMrEm4QgH+B0slGPNSL4Ak/OtqTcnelrCVJB3VKxxiduwre6UJW+aFI2gVBziWDiVyOv5KVm+k3Itv8ljUCqRJri6K7Bdo6ib0ahg7KYj6q5mM26lrN7aakXCjxUcASDV+Ugl5JRNfIt7uhKWVsxEayLlSBywAqa3N/U+iKT4S27qtYzgs2kF1m9ThoUEZ9rsDJRA4KBh+axCaWf1BMu7vAPsSyaItLyB8fr/Sq53PC6yzO8HHrnx0+GcBSDSRga5UHi4E04MscEw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KH154ENAJB6GlASFEGH4pN/T80tK/8jqwe0bHWUY3Us=;
- b=YnNLdWNhCbpdxJ24YhTkeYjM4j5ZprCZUk34lhCxCKeSjaJv35S+P0cJz+MmWu4HgOkvVgT9XRT4zOtgdc0kkBY73CKapS/xK2IJ9+GIsGPeoM1TbQSWA5EwQVatgOD1X0+iIhS7mTmTvmNS3NgpAfGCTjyqXI/0O4zXwg/ViCw=
-Received: from BN9PR03CA0306.namprd03.prod.outlook.com (2603:10b6:408:112::11)
- by SJ2PR12MB7963.namprd12.prod.outlook.com (2603:10b6:a03:4c1::6) with
+ bh=wgM9V/u6mNNMFtaFlIIL4nsrYTmYBHocR4T4iKJTDnU=;
+ b=anuciSXiCxKCgvfxH9L4o0WoMooDzJcbCQu/Ai8h6adb5GOvvtTN7116zbwGx+zFYEqVDZDvnKY6nrxuilxyjfXZNswYgK5pKaDTFlV4h8JSMiorm3OwKIQdgQs4I2f44zQcxAHIF2abTSbrDlp+XWOnqz+WG4PZ/J+E7f6yBNw=
+Received: from BYAPR04CA0011.namprd04.prod.outlook.com (2603:10b6:a03:40::24)
+ by CH1PR12MB9645.namprd12.prod.outlook.com (2603:10b6:610:2af::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 11:28:22 +0000
-Received: from BL02EPF0001A0FA.namprd03.prod.outlook.com
- (2603:10b6:408:112:cafe::93) by BN9PR03CA0306.outlook.office365.com
- (2603:10b6:408:112::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.22 via Frontend Transport; Wed,
- 10 Sep 2025 11:28:22 +0000
+ 2025 11:30:30 +0000
+Received: from SN1PEPF00036F42.namprd05.prod.outlook.com
+ (2603:10b6:a03:40:cafe::c5) by BYAPR04CA0011.outlook.office365.com
+ (2603:10b6:a03:40::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Wed,
+ 10 Sep 2025 11:30:30 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- BL02EPF0001A0FA.mail.protection.outlook.com (10.167.242.101) with Microsoft
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SN1PEPF00036F42.mail.protection.outlook.com (10.167.248.26) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Wed, 10 Sep 2025 11:28:22 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 10 Sep
- 2025 04:28:21 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 10 Sep
- 2025 04:28:21 -0700
-Received: from [10.85.34.232] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Wed, 10 Sep 2025 04:28:17 -0700
-Message-ID: <e2b2d2dc-adfd-46db-85ec-a09590fcb399@amd.com>
-Date: Wed, 10 Sep 2025 16:58:16 +0530
+ 15.20.9115.13 via Frontend Transport; Wed, 10 Sep 2025 11:30:29 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Wed, 10 Sep
+ 2025 04:30:13 -0700
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 10 Sep
+ 2025 06:30:11 -0500
+Received: from xhdradheys41.xilinx.com (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Wed, 10 Sep 2025 04:30:05 -0700
+From: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
+To: <git@amd.com>, <michal.simek@amd.com>, <alexandre.belloni@bootlin.com>,
+	<Frank.Li@nxp.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <kees@kernel.org>, <gustavoars@kernel.org>,
+	<jarkko.nikula@linux.intel.com>, <linux-i3c@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-hardening@vger.kernel.org>
+CC: <radhey.shyam.pandey@amd.com>, <srinivas.goud@amd.com>,
+	<shubhrajyoti.datta@amd.com>, <manion05gk@gmail.com>, Manikanta Guntupalli
+	<manikanta.guntupalli@amd.com>
+Subject: [PATCH V6 0/2] Add AMD I3C master controller driver and bindings
+Date: Wed, 10 Sep 2025 16:59:52 +0530
+Message-ID: <20250910112954.553353-1-manikanta.guntupalli@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch 00/12] rseq: Implement time slice extension mechanism
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-CC: Peter Zilstra <peterz@infradead.org>, Mathieu Desnoyers
-	<mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, "Prakash
- Sangappa" <prakash.sangappa@oracle.com>, Madadi Vineeth Reddy
-	<vineethr@linux.ibm.com>, Steven Rostedt <rostedt@goodmis.org>, "Sebastian
- Andrzej Siewior" <bigeasy@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-	<linux-arch@vger.kernel.org>
-References: <20250908225709.144709889@linutronix.de>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250908225709.144709889@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FA:EE_|SJ2PR12MB7963:EE_
-X-MS-Office365-Filtering-Correlation-Id: f78d5dd8-8943-4cbb-3e2f-08ddf05d2656
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F42:EE_|CH1PR12MB9645:EE_
+X-MS-Office365-Filtering-Correlation-Id: b1825412-ebdf-46ea-aa6e-08ddf05d7236
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bU9kYlVhcUc3N0hNcnpTdzM0YVQvR1JLb3ltYTd1ejN0eTVnT2xKWXFWTEFW?=
- =?utf-8?B?dW5sNTNLcnNXSG9qVk9tZlI3eVpaVmczMnpBcVNtVU1tOUF0WUU1c1pIMkww?=
- =?utf-8?B?UmdhNlFISXM0cmUvWDhnKzNleFRXVUo3ZVRDSG1mTm1palV3RGhMcjBqMEVp?=
- =?utf-8?B?RW1mQ2pSK2NjMmFoUGREUU5DVEFwemlESmtQWjZTWXluY3FxbXJVSjZuVGl4?=
- =?utf-8?B?TEVpOXJ5MVpMT0pQeW93cjlWNkxSKytTdUhqZEZ1aXFIRUdjMjQ3SFd2Wmcy?=
- =?utf-8?B?VzdheTdpbE8xMzZrZHd6eVhNUDcvRG1hTVRlQUZtUXFhSHdqdlVUY05QSzk3?=
- =?utf-8?B?YnRjVGtwTjFhT2dsNnpCRXA3MGRqaUY1L2NtQ0hxdjA2dzJxTEZTRjNuZHJE?=
- =?utf-8?B?SDhOaWJXL3k2cm0wOVZreEZMUCtSNnA0NWxiSUxsc1pnOVJjTys0V254SDNU?=
- =?utf-8?B?UjgvNWhXM3VIVHBrRHNyWWFISjgwYmpUa2k3clJxbTFCbE5MbkVTVE1sUzJq?=
- =?utf-8?B?SnVPK2xEazJ0RXhhYnFLS1ZqYVlLdERWUWJ0YzN4TTQ3eWhwVWFHU0k2TjZH?=
- =?utf-8?B?ekQ3SWU2eHM2NXVadCsrUE9vQ29Qb0Fja2UwbkpJVGZQemVad3lQTEpMcmZo?=
- =?utf-8?B?SVpNS0M1SGJ0d2ZCTlNCVFpjZmVvbjBZUG8vUXlOeTdrblEyRFErZGxLaGZv?=
- =?utf-8?B?UkJxUGpnVEROeld0c2lrSFFNN1M1THA4WXU3WGlaYnFrTmdGTm1YTXF3b1U0?=
- =?utf-8?B?RGd0ditqZVlleTlIQ3lHOTFOVjVHTDJsd3JZYUZIVDluSTR4NS9Ld3VhbmR3?=
- =?utf-8?B?a2dCU2pIK0NlV3NjNElvZkdhQnhYTkVqeDBZbVNWc3ErQmZsSjE3N1ZiTXd2?=
- =?utf-8?B?ZkRjUGZJSGo3WjVZeWJjOC9rM29NVmZxRFVYSHVJb2lBU09UUTF3ZnhMMDFi?=
- =?utf-8?B?SzFpdHBOOVBKbWZhWXY1L2xEUytlbHNPMFczYmw3R3lxaHlwK2V6ZDF4ODc0?=
- =?utf-8?B?eG12VzI2aWdCTjBwdUU2MEt4eVNyUGFCNFNhaXRVbzVwQkhIeWtTQU96L09B?=
- =?utf-8?B?dDh6VHdObkVXWCtwZlVYSDVoM3ZMQUJMMElRVkEwV0cvNW1VR0RUM3hCaXQ0?=
- =?utf-8?B?Z0dLV05MWER6MHhaUGJJQjdJVlFvM3FVQkV2bm5ORVZNK3FUQ014Tm9ZQUJX?=
- =?utf-8?B?b3AvSTZObm90MW5GUTZTdTk0RE9wSHAzR3I4SWJidUhFanB1V3VVR1RLT21W?=
- =?utf-8?B?Y09JbUNOVGdZMlJzc1M2OW5iZHZqaEdZSDNnbHFLL1pYS1VJQjVvK04xNEN1?=
- =?utf-8?B?cW9IR2RIejNiVm9QRnJsN25KbXNWWEx5ZU0zOFBVTTZSYmx2MEVRYzcrYVNK?=
- =?utf-8?B?YkNVKzgvVzIxVUZScWsrUUIxRDVqNmNjcjFxdTMwRGIvbnhQWXlwbExaRm42?=
- =?utf-8?B?NnhlY3VIa2hpSENLZWkyRjJrVHpyS0JUVDg3RnhGTjJqUjdxOGpjU2EvUmlQ?=
- =?utf-8?B?K3BQT1kxRnhjL2tuQnRhd2p5Z01VNlJwVFZrc3ZmS3hYeTFnRXcxL3JFZWpv?=
- =?utf-8?B?aDZOUFpncmVUcXpoc09ITGZlbk5TZ2kyZXNpaGt4OWhFbUc5WFBUOWNvU1Bu?=
- =?utf-8?B?ZDB5d1JjcEczWjliQXNrM1k1NW54MkZOTnhta1FvbkpUdlJFa1JTRGt4dXBR?=
- =?utf-8?B?V3lEb2E1L202OUtiU0tHc3NidG9FZXU3S1R5akVsRG1iSGdPQzNUZTJZanBx?=
- =?utf-8?B?aHdyMm1JZEFDbmVWU2JTdUc1eDd2S1licWtnTmdqaklBVzdDalo2KzZVSC90?=
- =?utf-8?B?ckFiREwrV2o3UzduUnFjdmRnZnpvTjRXdk9IK3hIMzlsaEljbzFDY2xOM21m?=
- =?utf-8?B?dHo3T2hjd1k5REhFMUw5NGhoSCtFZkJlZjhJT0pGZ0FaZlpyTVAreVZ2b2ZH?=
- =?utf-8?B?Tm1DOGNXRUtoMGNpMmZRV0FCVHI2MzhMWXB6SzRRQm9iVjlqSzBRWEMzcVI3?=
- =?utf-8?B?WXdWVFZyN0FxNXBITDZISm0xS3dva1FBVmFXOU53b1V2SnVjOWJHOVR4ckhI?=
- =?utf-8?Q?NIacEi?=
+	=?us-ascii?Q?avtdFGfUvFtPWg9Y7AeT4YLvlpsnOfDmNVsfnASQ06mi8UGDBkeyrnB7kZ8V?=
+ =?us-ascii?Q?ERB7R0gDr5M5DpHUR0BOjg3I6Sm0fVBvMk6LoR05gNcNMXUaLYbTlrEmn8F7?=
+ =?us-ascii?Q?Yg1/UXYUzT20fEvbgM5Zc6zZ1Q1EpaYI7/LQYFoJBz+6KnKf1R6AkXnQKHRA?=
+ =?us-ascii?Q?RYEiZSVJ/n0ZckIDiJjA4Db1IxbR+f3+kN/+eZvOqGqGJ0epHScPYPeMMGNK?=
+ =?us-ascii?Q?t5uWJobMyT4iSoe50iCax8pGjAZ8Dve2KQiW8YRLjAeWWRCgbm+ALaFLRoZO?=
+ =?us-ascii?Q?vZcootvKsmx+tggGRof67o3k8gjNNiNOuN/o88XxeNKIm9WKz60xQAjuMmQF?=
+ =?us-ascii?Q?iXVgtRXiW9pUybdjy3hI4R+rW0SvXvi/2mhy6CxN5DZWcy5STkdki8TTPDYQ?=
+ =?us-ascii?Q?y5Kd6On00Cjjw8d216Xa7sBijFkyyZb/RBj2BjqTVhHuAzp41O9ZgkWr+9t4?=
+ =?us-ascii?Q?tfa4yFhHZGRYn/mQx8So+6eHh34vbrpgf29kc5HfEcegZjZKpRWhq0v4oXR5?=
+ =?us-ascii?Q?u82Nt5UwskjZsLCTnNT5tAbwzF1eDi/a+1WuINH0L8D5GHYGypO4eiLhL8o8?=
+ =?us-ascii?Q?RHQ1hYXYiOuebG6LwU/p7oycolH+Ol7mJJfggBHB3uPDUn9ENgV719tLZPKv?=
+ =?us-ascii?Q?g++G8MqHFEA5C9nr5EZ+kZ46tzv0G+v9C8Kooh18r0UKTsw2Xvdma84ePpCA?=
+ =?us-ascii?Q?tOto0OOQMTsVRudmkLpzvD+Dn8UbZuLQ/NbpdH512ihziEAUZENWAvmzQDOc?=
+ =?us-ascii?Q?hmNPGuMGk2opglvY/kyjaRztyosjbNpR/u+ky9Skm5ypsWG8W8sdl5ko02/l?=
+ =?us-ascii?Q?ZtmTOd9pUNJYedYDxi3AO1J2e5ZWKLLEDWcOQP2iTR8L2wyYpABaK2u7RoJP?=
+ =?us-ascii?Q?HpKL9poAtPrLk/yMjawIqdct1omiObuJgm9F37PgXL5pyWBqyn/6UM+gLwSi?=
+ =?us-ascii?Q?rS+nK1rWy/hR6Pfvv5fPX8nlTulYOHfbxRxkr/Xx4aN2iw2ZrnrcjD0MxmuG?=
+ =?us-ascii?Q?VM96zlZJvrQJU9NppxrDhh4aVMlQtY63Y2pJoIdyEUGXGip4s7Kv9CYgmdlh?=
+ =?us-ascii?Q?RJdCJyUEhWLRTXwqwzrmQNH5wJfoiaurYxe02DG7SoBIfx+tiX+hrjRoXsgB?=
+ =?us-ascii?Q?1xFtealP5acTiMTgligeHeG4MjBKtPzRjk0qYJ3eQZed5Iu/B+sDmMEwxhgL?=
+ =?us-ascii?Q?NlTvn3l8A0UCTxVu9QexS+tmSwezRYWmsR9ji8D/QnG2N6MDG4aRJseFMMzn?=
+ =?us-ascii?Q?fi1WM79GBbyWx3JpTQ7jI4G357DSbjJ56iAn1Mq5JnKO/IcFera7/UQx1Zzf?=
+ =?us-ascii?Q?ySu3gtx4gnJM3L3o5h3HmyzEl4OO5KNpsGO1qziPvrfK30CLp8d0x0GAYKDb?=
+ =?us-ascii?Q?5flUwenEQZJqlnib+wYm3OhFIPIotoqnpm/aWi4dSj4+WkQg7IIhKNMM7NiX?=
+ =?us-ascii?Q?4pLz4rHJBP7N4JNNnXRXreiQrnOuXLKnKpehPRQJSAEW7ShqVrQvay8w4shG?=
+ =?us-ascii?Q?uVJaA6G0Xcw31ZbnjAfpm4wsrgZi+VTiGWKcMcuEkJMHXS9X0x1IYI9KZg?=
+ =?us-ascii?Q?=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 11:28:22.1851
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 11:30:29.4582
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f78d5dd8-8943-4cbb-3e2f-08ddf05d2656
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1825412-ebdf-46ea-aa6e-08ddf05d7236
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A0FA.namprd03.prod.outlook.com
+	SN1PEPF00036F42.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7963
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9645
 
-Hello Thomas,
+This patch series introduces support for the AMD I3C master controller,
+including the device tree binding and driver implementation.
 
-On 9/9/2025 4:29 AM, Thomas Gleixner wrote:
-> For your convenience all of it is also available as a conglomerate from
-> git:
-> 
->     git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/slice
+Changes for V2:
+Updated commit subject and description.
+Moved allOf to after required.
+Removed xlnx,num-targets property.
+Added mixed mode support with clock configuration.
+Converted smaller functions into inline functions.
+Used FIELD_GET() in xi3c_get_response().
+Updated xi3c_master_rd_from_rx_fifo() to use cmd->rx_buf.
+Used parity8() for address parity calculation.
+Added guards for locks.
+Dropped num_targets and updated xi3c_master_do_daa().
+Used __free(kfree) in xi3c_master_send_bdcast_ccc_cmd().
+Dropped PM runtime support.
+Updated xi3c_master_read() and xi3c_master_write() with
+xi3c_is_resp_available() check.
+Created separate functions: xi3c_master_init() and xi3c_master_reinit().
+Used xi3c_master_init() in bus initialization and xi3c_master_reinit()
+in error paths.
+Added DAA structure to xi3c_master structure.
 
-Apart from a couple of nit picks, I couldn't spot anything out of place
-and the overall approach looks solid. Please feel free to include:
+Changes for V3:
+Updated commit description.
+Corrected the order of properties and removed resets property.
+Added compatible to required list.
+Added interrupts to example.
+Resolved merge conflicts.
 
-Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Changes for V4:
+Added h/w documentation details.
+Updated timeout macros.
+Removed type casting for xi3c_is_resp_available() macro.
+Used ioread32() and iowrite32() instead of readl() and writel()
+to keep consistency.
+Read XI3C_RESET_OFFSET reg before udelay().
+Removed xi3c_master_free_xfer() and directly used kfree().
+Skipped checking return value of i3c_master_add_i3c_dev_locked().
+Used devm_mutex_init() instead of mutex_init().
+
+Changes for V5:
+Renamed the xlnx,axi-i3c.yaml file into xlnx,axi-i3c-1.0.yaml.
+Used GENMASK_ULL for PID mask as it's 64bit mask.
+
+Changes for V6:
+Corrected the $id in the YAML file to match the filename and fix
+the dtschema warning.
+Removed typecast for xi3c_getrevisionnumber(), xi3c_wrfifolevel(),
+and xi3c_rdfifolevel().
+Replaced dynamic allocation with a static variable for pid_bcr_dcr.
+Fixed sparse warning in do_daa by typecasting the address parity value
+to u8.
+Fixed sparse warning in xi3c_master_bus_init by typecasting the pid value
+to u64 in info.pid calculation.
+
+Manikanta Guntupalli (2):
+  dt-bindings: i3c: Add AMD I3C master controller support
+  i3c: master: Add AMD I3C bus controller driver
+
+ .../bindings/i3c/xlnx,axi-i3c-1.0.yaml        |   55 +
+ MAINTAINERS                                   |    7 +
+ drivers/i3c/master/Kconfig                    |   16 +
+ drivers/i3c/master/Makefile                   |    1 +
+ drivers/i3c/master/amd-i3c-master.c           | 1009 +++++++++++++++++
+ 5 files changed, 1088 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i3c/xlnx,axi-i3c-1.0.yaml
+ create mode 100644 drivers/i3c/master/amd-i3c-master.c
 
 -- 
-Thanks and Regards,
-Prateek
+2.34.1
 
 
