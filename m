@@ -1,512 +1,187 @@
-Return-Path: <linux-kernel+bounces-809336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ABC2B50C26
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:06:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87069B50C34
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A03D4E68F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:06:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729421C625AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FCD2594BD;
-	Wed, 10 Sep 2025 03:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A105B257444;
+	Wed, 10 Sep 2025 03:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EjzhY4yc"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="I8ch8uGy"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012015.outbound.protection.outlook.com [52.101.66.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580E2245028
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 03:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757473504; cv=none; b=BdLcVbfhTT4NppTGEtiZiX5nLRT6XAOIExQVywSO9Xps7N/w21A9RzV+PY3V3MbaIk86b7Dgo5hE1wIcJAPbW/3K48TtB++sEaZPte48auVt2TPcFnVss7h78NyR2J9l/bwopuwG0tQ0UFumMVs4005MJO3lK/d6dCoJ4FIecTo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757473504; c=relaxed/simple;
-	bh=jwZ9aIjXfVx7jFjtaER2chbLRErN8WtYWm8Olg2OB1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iM74u3QV7rxoqcenvQWfGaIwnGtdK3JxwCL6qdxgM/KqPyI3ozmchXcGQBaczu2RAXU3/3NbfLBgMhDfaZIi7NLPyMGK3OrXyslXWYkGV6XL/yYeJEAYzDzYopxUcJ1gaOtcpGyFyfLWycd4YY2yxkzNxgmDhfdKheQDdijntDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EjzhY4yc; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-77269d19280so5807480b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 20:05:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757473502; x=1758078302; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mYFdb1USTj2+x7+zfuFkVYygMNjKD7vPuSqf1KlNu2A=;
-        b=EjzhY4ycWQ9IHk+wJiPXFja2UGkPxU/1DvyCkcosDT7NHBDrOw/P+XWekVOkaBDFMK
-         jgzhuFjJu8JqRNwjhDYdpjpdUEtzOnmDeZjlJbe02l4cNiUMjhzDVG979NRO9a/boTqG
-         DHiweXUMBM0j2vlmLkijhYwR1ukWH2RIZnew3vnh+MNDgnQb8+BgSfhlggPnNDVIqGOL
-         eSglHtYR4zfupqBUehVaM9mqi5M9T4diSQt7YebWOdTta70TnYOrcZZOBwKsdJjKq9HN
-         uvCpD02NGhOJqEQr8z9vvz5PbcH6BGB32MjNXTe18tfmlO3vbeytL1q42GWiR4n5u0oh
-         LQmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757473502; x=1758078302;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mYFdb1USTj2+x7+zfuFkVYygMNjKD7vPuSqf1KlNu2A=;
-        b=imKScWE8uSIBhLtTJu4WKdK8img8vB/z80myQKitslbunk+X1BSOdA3H/BU7LF6I7t
-         fGHUuNP6op/ojVNkiIuJ1qU7opDWGzr8c9WtS7HjDxp9sABK0BWuKY82MsygzBplOT+e
-         B4IvCtDkGxuWDSqi2fTuMEVA9P1c2/hL2z3fx+vivurdx+juZBSfLCwWrIJ3LQkOPbpU
-         a/9K8hD0j5QyflrjFgHABL2RktsEen8T9OAMiowPuWWYn1TU0AiCsVSZeS8RvcHPSPqd
-         6Bd3siF9pe+AU/tm3nSkApVg9c3DuWDS0E1sceK/ZsDoeCovFpqbajjZBbf79gk1CG8w
-         TlVw==
-X-Gm-Message-State: AOJu0YxmMv7RIuWWLA97Zoq7d3Iqb855NPrCX09bTDPZQF3kWJvmza3J
-	+yM5+PmwXYiqIVrHuDEWlPx/1pr4h8eS7vqQJ24VvTtCf+/nT1Ua5U2X
-X-Gm-Gg: ASbGncsTqxe4V4Me1lIkyOD0TMGGfMjtHzl3YLvtsSqpkvbDv5YVxm1ZMWOI9uJbs7m
-	vpx/6yISPr0ihlCUv13gKkG3sKTrnL4hSP8dusxiOT80NFygF5SHj+ptyMdGAKm3waFrm6aJqcm
-	SLsUvbG5r35dHEaLDJ3QfA3OxFWRh9+waDpMoztogVOhIre740AwFhYmFbbm5cUGZ25aeRgtw4W
-	wu2zc3an4zPmf0Kcco3YLrzt3bYP5hptK7DfggW0zd/6bfSknzd8fEdVtpl93aL6y15kc2IhlAw
-	7BjaqROVrK0WP/Naw1P6ZOJItThatwtfAiVw4BjtK9XvLtLX4rNh4wmx0VyhEfdJtXw6SX0zsrp
-	P3anJ8OtEaVVxIieLU3mn8g==
-X-Google-Smtp-Source: AGHT+IHW2m2fqzk8i2yGK4Ymv4hpZSFeeA6yKeeeK7VlEmLTHn98w7HBgHzoDgHwROapuWo4Ze1nRg==
-X-Received: by 2002:a05:6a00:1acb:b0:772:43a9:d587 with SMTP id d2e1a72fcca58-7742ddf13cfmr14536234b3a.20.1757473501384;
-        Tue, 09 Sep 2025 20:05:01 -0700 (PDT)
-Received: from localhost ([216.228.125.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7746628fca0sm3506455b3a.56.2025.09.09.20.05.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 20:05:00 -0700 (PDT)
-Date: Tue, 9 Sep 2025 23:04:58 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	dakr@kernel.org, acourbot@nvidia.com,
-	Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v3 5/5] rust: Add KUNIT tests for bitfield
-Message-ID: <aMDq2ln1ivFol_Db@yury>
-References: <20250909212039.227221-1-joelagnelf@nvidia.com>
- <20250909212039.227221-6-joelagnelf@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01211F3BAE;
+	Wed, 10 Sep 2025 03:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757473705; cv=fail; b=PcZlITurwRdzPlfitHkNjTQG7d7UMVdCfxuk/aY0BNGFTrCjP2q3bFCMYl5VTYbjdQOFb4CAZRQ/B6JaouWwa8d+07cHj6s6S/fcT+v5FWFVbBoc5ZGmOv+6Fc44q6l9q9YGYNHmgBkwIAcDQGJ4OyBCGI61rLtFzasUvQHsBRg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757473705; c=relaxed/simple;
+	bh=WWVEVPMbkf/En4adI31Q/+t4LSM103cUte6DcF9QLn8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BGX2H2FQRPM2YdqG3lTBwsNooldipGQOs2noHTxvUbkP+IX/azBFyIOSLDpZ7kS9ZgPGruvaegpmMeNLLS38Q8I+JDVwwzDF6aqG5vZX5dkP1RlDooV8te6FPMJ35TX9JJZz954ICmeiK/8LLqo6rPEZ75X00SPMwI4G62PUbro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=I8ch8uGy; arc=fail smtp.client-ip=52.101.66.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=C6Fzl80K5CoevCTTMZimQ6K87XSjop9EfEhWJwtq1WJdjlP8Comd05DVl7MXLKoZgZD5q8xM7NAqsJbqXEiCDIYrS2KuNY7mNr5pJfBQQ4lgeCCBF/guJXxUFZDs36JR6NpDGI+0SUad00m8mqPObgEz6hI0kQzCopOIm+Ip/LVj+bkGTY1F6ei+uMUpKXxDhRUKZOB1yUep3KYdlKHA0o4eU7TxtmwkfOG3B0vvyULo8JPfQuZILJSWAHXceNJsSSaSaH2A+Fhow9sgUPBbmKOf3ufNdfjnfq18yKFhtXN3NIxtnC/E/wyjbbajNcebsDpeJ2d5ZDmCdId6xCVeFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WWVEVPMbkf/En4adI31Q/+t4LSM103cUte6DcF9QLn8=;
+ b=fysY4pKdjZjfX3ij0kiGtVOMsD2Wo3dkoaosAMd+1HhU12HNMy40KoBVM/WvWj8tpKyV8LDdZWC8r+DBGYzF76oK6tsjCbkF82M0P6Nt8PBw/MemHRf4KkXmFfCuuGgDHJb/XvBev6AdoCl2grbtG36uP16tYAin+js++BInhHZNYHGPx4TVkK+8P1NnLvP4UY215KAubB6atapiCwpDHfez3gfgeSqdV9hVbnSUYkkqAZHieR/qBWL7bx3Q2lNNrSmyE3j8ePeV0iAfkdrzFWGIW54sXNg1m0LiXoRH2Jj/2UReez+5S2OTcKRgPx2/1xx2bwWxk0+y6iOojdu4pA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WWVEVPMbkf/En4adI31Q/+t4LSM103cUte6DcF9QLn8=;
+ b=I8ch8uGyHsDSxW4MRh8V1Uu5Cqkwre3Wu0mthc+tU3RbQp6O587KGE0frN64fEoqfPUv0PgMYWTZLNWJF0dpqMTcvUk17zCYiSrZ+TffnMzqerbEms8a+k24J4gHYpGgGCYVHKWcWBGzHhJ6duklRqBltHJhDAuT7DdlrGNRBCeMirlEOA4lKQ7Ej40MBxy/PWisBUFXRvEyXoB+3Fkyx4fUp+hpgvOKVeMwZGou+65y++/2JPJDPaLG3o04MWs0PM6KmltePYWhmTH9nN4Tm2w31JJEsKymu0ki6O5TYvKHBg9BraCJWOHtpRTQexsTavODP0L/MWsCq7hG87CocQ==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by PAXPR04MB8528.eurprd04.prod.outlook.com (2603:10a6:102:213::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.15; Wed, 10 Sep
+ 2025 03:08:19 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.9115.010; Wed, 10 Sep 2025
+ 03:08:19 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Shenwei Wang <shenwei.wang@nxp.com>
+CC: Clark Wang <xiaoning.wang@nxp.com>, Stanislav Fomichev <sdf@fomichev.me>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, Andrew Lunn
+	<andrew@lunn.ch>, Frank Li <frank.li@nxp.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
+ Fastabend <john.fastabend@gmail.com>
+Subject: RE: [PATCH v6 net-next 1/6] net: fec: use a member variable for
+ maximum buffer size
+Thread-Topic: [PATCH v6 net-next 1/6] net: fec: use a member variable for
+ maximum buffer size
+Thread-Index: AQHcINw8WFVpNWz3XkGFt7EQK+FfVrSKGSmwgADTkoCAANF28A==
+Date: Wed, 10 Sep 2025 03:08:18 +0000
+Message-ID:
+ <PAXPR04MB85102F65E17869C13D45F708880EA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250908161755.608704-1-shenwei.wang@nxp.com>
+ <20250908161755.608704-2-shenwei.wang@nxp.com>
+ <PAXPR04MB851097411AD8CF1B4250517B880FA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <PAXPR04MB9185336929DC3D5E5B858ED0890FA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+In-Reply-To:
+ <PAXPR04MB9185336929DC3D5E5B858ED0890FA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PAXPR04MB8528:EE_
+x-ms-office365-filtering-correlation-id: 6d9ea807-031e-4a06-e7b8-08ddf0174b06
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|19092799006|1800799024|7416014|376014|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?of6mKNxz6x64YAD1FGF+HCJJimlVAhlqWsmxyx1r18asl9pv+2cRtRAJBeCF?=
+ =?us-ascii?Q?Mo4ZxFlPNH3TcctdpXybAcPj11Ng4BV+s6wYSvwYNSBGU/nKwr8XTEtUHaM+?=
+ =?us-ascii?Q?t5Dy7AJd55HarIFFwLArP0RCse94ABrj2erxzU/ak74nGGxNMMhFYbDeMjib?=
+ =?us-ascii?Q?9qxnAFDTYKiDCpLCLPP6QJvfANWcf+XnwKt/vVWBowI+PXoT95xLOl37ymCo?=
+ =?us-ascii?Q?mkYObC2iHrqrJ4TdG8CUMt3qIWGuAqf9JOFbubODSXld7EZxPHHPn471LF+v?=
+ =?us-ascii?Q?59UlI3+PkvGukSf24q93JdUwFeEukqFNK9A+Ji7mkbvR6IXF2EE8SyKXTxhz?=
+ =?us-ascii?Q?a2weUgWGrLA2zIieRwWYCxjT2afohv0txfi8CvAr20BbAQd0lO47hbpGnZsU?=
+ =?us-ascii?Q?2oXZpw7IsrRaU+EUH6KZm4ZdOZ8g97ey4qd7W0IyLIaI+UJW/ySNabjOcC/P?=
+ =?us-ascii?Q?nNgxqtZh9A1JMDRWTohSn94ZkyZ09GoXkjOZwuj12h5ORBBMAJ3GVDBWo7PR?=
+ =?us-ascii?Q?4xXHvvatoY6zUmHtUJwrnNKnbb0w0sm+zwOszOmKW0xaUFB6vDDY+fuISEGd?=
+ =?us-ascii?Q?1/NjSloK77cvHGC9EDv7ESLExfYiU9iaIvxTruCMdKbD56eslSiFYnVu4UZQ?=
+ =?us-ascii?Q?/93uezujBMEA+1Bx2GTyHYJan/E6J6Gbj6PrtLXjStsSrveQ9+Bt+6AeYg+A?=
+ =?us-ascii?Q?jFH6Wu7xVpCNV51bh/sbwRgGKsONj5i5O6955dHrPZb2srEBePtmwxGahzyS?=
+ =?us-ascii?Q?HQMUX8vjIdgOEFcvc14BVzq3fYcs9nxNeVWnonr18vVN8uuHWQpW9sQ2XOnN?=
+ =?us-ascii?Q?8VWZwGcoW6rvLiM9kE428MBv0PqEpmRcbZDjSYZrx9yVFasxhdZ4f7iSpRCR?=
+ =?us-ascii?Q?KwAZv9iAOzn3gddfbo9lWa465aQMXcIq0UhAvzhmXlXPK4BVcvobOpf2IVAf?=
+ =?us-ascii?Q?62SJt3Hm3IbYNomkJRFZPjXBn5cT47f3BT/P193eqhnWWXmhumjqDdr7et7i?=
+ =?us-ascii?Q?ydn3hVWUq6zOQsgBx5Wyq+LYukIVPp24Uoxi0tXcvXVWJfCQvpjt5FvZVRTU?=
+ =?us-ascii?Q?Iz51owOGzttDNekVL2IiUCdHvVEjQAz5QvhRyqJrJsh3Uy96gxtuDxnrCAbY?=
+ =?us-ascii?Q?ca020RvD8+MZQDyTMnlrXjj5lKFopjHObmHVz6c37toqo+Y2FmuWbFiKGIs4?=
+ =?us-ascii?Q?Tgp8VC4AlSbHPba+Scquh6XLgXumFG2c920w7tMJuzADWfApAKY/GBgTuqtH?=
+ =?us-ascii?Q?pZq5zdgKs7HXcN/2cji1rVFER94ECMzk3ex+aWmdmcnY3geY7DbejIYNL30V?=
+ =?us-ascii?Q?QJkFEgBPsxh1mY3CoGqHRr69jfTNZdPHkLyPhAF0H3cmhS+zJdQ/MYVh9I9k?=
+ =?us-ascii?Q?XMvQ6RZ+aVJbywxKxIYkLc+NcY27OqH747o3oWqP1GdSWanRBQvlxz+xiGPT?=
+ =?us-ascii?Q?Oj/LZj0wwS3vQq7sUjHNcWytb3xZsCO3c5B7zqu84L4tekeLKuEr7Q=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(7416014)(376014)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?B/YlDgd09D1MmIwUw4E7VW7yuD36t6xyYW9itD+Cv9m8P7appYcC1eB1DmrT?=
+ =?us-ascii?Q?XFskaqGFO7vHdvrSOlnDIkIEeBwb822XQXzIPVqxwWVdh/3tU8V4YeUruCD3?=
+ =?us-ascii?Q?BSuRr3yV9915/0q3YtwqfJ/IOSzo6GxGk07ujhzAjOmbKkFqqqxP4XwrSxM+?=
+ =?us-ascii?Q?pWqDnTeEdO64Syg+cYU7EvhNzUksF+JIPrA8UtUr6+e7SgW6ua0PYI+rikpc?=
+ =?us-ascii?Q?6hgMN98EEdMnLTuGrDnyW2wlaief0Xi0d0LISYdrQBJtNlbilH+N2d/grPms?=
+ =?us-ascii?Q?if6SM3mT6ezoK0NUIODa72bA4t8nDZ1PbZkYzetXbnaIxhdUhIhSRW0+orEY?=
+ =?us-ascii?Q?1gkxAhCy8x+0mAZG3Z6ePfSKVDhCNyrGPFEKQrMjS6pbgzx8kar4JbN0dGtF?=
+ =?us-ascii?Q?o81+bCg/WNc+b6YCADSHmKf7l6uR5f5nkQz19ElK5+gC0bWbAztOcrflDXe/?=
+ =?us-ascii?Q?8P1F4HKJWw8Di1QzKJKuyxFS4UVrCTKXRQS8X5fNXBiuWZhx/TeS7ta+0x/m?=
+ =?us-ascii?Q?ZncRFaKS8T7MNeA5y5HiySDgkeGJmMzrZ5dzg+XIVLpwN1RnYzwO4vIjD2Vj?=
+ =?us-ascii?Q?WH6f7Xoeuc2/dvZrssjsfLfZYQJjzj2t1neZObM7xELaWr+97ieZW32Sb59K?=
+ =?us-ascii?Q?OyMGDBhHc5Rn5OE4Mdx5vEtCrMnKqIaDhqE5NF4FYHwRa+lDM7VjlOpaybBL?=
+ =?us-ascii?Q?pGBG76iB3Q9DvVcbbSfXpF3GSyBuOx0qBqhwFl0gfoAU0qu83qJYJ3ZZP+R3?=
+ =?us-ascii?Q?HzlYdFGrQ15g7VbJIEiBYYYY1oooXTARLCOQXPe2zBgWtTISePm1QninU7OF?=
+ =?us-ascii?Q?mF3/O+zk3DPdIPLCSuaVZG9ZiMH+SsdVU0A7Vfew3EVX4E9Nb5qEbKcg3tph?=
+ =?us-ascii?Q?yaewQuNZahxNMlngptLiVaexJcoKh5J/axJhmWGtLQlpb6gxWnabFo876HD1?=
+ =?us-ascii?Q?owFEFrgJGEYtJMEY5eaxOQMjK/b6gfMQcKkYLgBHvX8vyrSRKl33LWjwVxde?=
+ =?us-ascii?Q?kuA03olhlHpcdZ/gVznlQw/zyHdTTABEC4tdxuQ6KNRGxzBHUYdFiyNM9yqY?=
+ =?us-ascii?Q?6a6cFD62ZDASVJ+IZ9NOIkbqvyJGfL1vCh7rcCHOE0jv1B7ejp4GeAJVokBX?=
+ =?us-ascii?Q?Be5k0EsM2pa83QkduXoD0WnyR/48o6UYyy686tnGlSp5imDLv63Ta/AQtDHJ?=
+ =?us-ascii?Q?Epgo0lyOLbg86SczV9YOrWTZDMGYvmVBIEZERwCappXMz/v35SmUCHNSLj5R?=
+ =?us-ascii?Q?PgprtUsAVqx+np9Pv8yXCidu58s1mog0RhQ4WgxCnNKY8EHlAh2QqaXzGzwh?=
+ =?us-ascii?Q?QB2LdCzYF4c7tAx1sYiKLO0Z1E+o7TQQMrt0gebi7Qj8SAZnF5TCJKy/YS/u?=
+ =?us-ascii?Q?Q1c5ex1Ep9NmvOQCwWUCPYsmabun93hGv9mZ2I6Z39zxTZB+O8OpbXPae5B9?=
+ =?us-ascii?Q?PcaJHXSUsF70qES1YoD/f3xXALXg/V/VWbuWf2cvJZBOtlFq7yIRnzs6KZ2K?=
+ =?us-ascii?Q?HZhRSRmktxiBMD3h9mSZqKDd3FV29yq7lHF39H1vmXiHuz6KmFGPKepRC3Ly?=
+ =?us-ascii?Q?QwJVnuW2SIrYPsmF/Zg=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909212039.227221-6-joelagnelf@nvidia.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d9ea807-031e-4a06-e7b8-08ddf0174b06
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2025 03:08:18.9751
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 0Yb8QmaAYB5DC6pj5VmmPoTfbn5WgBT7lgN/ZMqKPX0AZiTBU1AYNVkfEKHCVsFH4SUGOLpTlG3gJctdDYUHrg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8528
 
-On Tue, Sep 09, 2025 at 05:20:39PM -0400, Joel Fernandes wrote:
-> Add KUNIT tests to make sure the macro is working correctly.
-> 
-> [Added range overlap tests suggested by Yury].
+> > In the fec driver, I noticed that the expression "#if defined
+> > (CONFIG_M523x) ||
+> > defined(CONFIG_M527x) || ..." is used in four different places. I
+> > think we could add a separate patch to define a new macro to replace
+> > these occurrences. This new macro should be more generic than
+> OPT_ARCH_HAS_MAX_FL.
+> >
+>=20
+> That is outside the scope of this patch and should be addressed in a foll=
+ow-up
+> cleanup patch later.
+>=20
 
-Please no brackets and personal references in commit messages.
-If you believe it's worth mentioning my suggestion, then:
+Okay, make sense.
 
-Suggested-by: Yury Norov (NVIDIA) <yury.norov@gmail.com> # For overlapped tests
- 
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-
-Some comments inline.
-
-Thanks,
-Yury
-
-> ---
->  rust/kernel/bits/bitfield.rs | 320 +++++++++++++++++++++++++++++++++++
->  1 file changed, 320 insertions(+)
-> 
-> diff --git a/rust/kernel/bits/bitfield.rs b/rust/kernel/bits/bitfield.rs
-> index 0837fefc270f..f3134f2ffd08 100644
-> --- a/rust/kernel/bits/bitfield.rs
-> +++ b/rust/kernel/bits/bitfield.rs
-> @@ -339,3 +339,323 @@ fn default() -> Self {
->          }
->      };
->  }
-> +
-> +#[::kernel::macros::kunit_tests(kernel_bitfield)]
-> +mod tests {
-> +    use core::convert::TryFrom;
-> +
-> +    // Enum types for testing => and ?=> conversions
-> +    #[derive(Debug, Clone, Copy, PartialEq)]
-> +    enum MemoryType {
-> +        Unmapped = 0,
-> +        Normal = 1,
-> +        Device = 2,
-> +        Reserved = 3,
-> +    }
-> +
-> +    impl Default for MemoryType {
-> +        fn default() -> Self {
-> +            MemoryType::Unmapped
-> +        }
-> +    }
-> +
-> +    impl TryFrom<u8> for MemoryType {
-> +        type Error = u8;
-> +        fn try_from(value: u8) -> Result<Self, Self::Error> {
-> +            match value {
-> +                0 => Ok(MemoryType::Unmapped),
-> +                1 => Ok(MemoryType::Normal),
-> +                2 => Ok(MemoryType::Device),
-> +                3 => Ok(MemoryType::Reserved),
-> +                _ => Err(value),
-> +            }
-> +        }
-> +    }
-> +
-> +    impl From<MemoryType> for u64 {
-> +        fn from(mt: MemoryType) -> u64 {
-> +            mt as u64
-> +        }
-> +    }
-> +
-> +    #[derive(Debug, Clone, Copy, PartialEq)]
-> +    enum Priority {
-> +        Low = 0,
-> +        Medium = 1,
-> +        High = 2,
-> +        Critical = 3,
-> +    }
-> +
-> +    impl Default for Priority {
-> +        fn default() -> Self {
-> +            Priority::Low
-> +        }
-> +    }
-> +
-> +    impl From<u8> for Priority {
-> +        fn from(value: u8) -> Self {
-> +            match value & 0x3 {
-> +                0 => Priority::Low,
-> +                1 => Priority::Medium,
-> +                2 => Priority::High,
-> +                _ => Priority::Critical,
-> +            }
-> +        }
-> +    }
-> +
-> +    impl From<Priority> for u16 {
-> +        fn from(p: Priority) -> u16 {
-> +            p as u16
-> +        }
-> +    }
-> +
-> +    bitfield! {
-> +        struct TestPageTableEntry: u64 {
-> +            0:0       present     as bool;
-> +            1:1       writable    as bool;
-> +            11:9      available   as u8;
-> +            13:12     mem_type    as u8 ?=> MemoryType;
-> +            17:14     extended_type as u8 ?=> MemoryType;  // 4-bit field for testing failures
-> +            51:12     pfn         as u64;
-> +            51:12     pfn_overlap as u64;  // Overlapping field
-> +            61:52     available2  as u16;
-> +        }
-> +    }
-> +
-> +    bitfield! {
-> +        struct TestControlRegister: u16 {
-> +            0:0       enable      as bool;
-> +            3:1       mode        as u8;
-> +            5:4       priority    as u8 => Priority;
-> +            7:4       priority_nibble as u8;  // Overlapping field
-> +            15:8      channel     as u8;
-> +        }
-> +    }
-> +
-> +    bitfield! {
-> +        struct TestStatusRegister: u8 {
-> +            0:0       ready       as bool;
-> +            1:1       error       as bool;
-> +            3:2       state       as u8;
-> +            7:4       reserved    as u8;
-> +            7:0       full_byte   as u8;  // Overlapping field for entire register
-> +        }
-> +    }
-> +
-> +    #[test]
-> +    fn test_single_bits() {
-> +        let mut pte = TestPageTableEntry::default();
-> +
-> +        // Test bool field
-> +        assert!(!pte.present());
-> +        assert!(!pte.writable());
-> +
-> +        pte = pte.set_present(true);
-> +        assert!(pte.present());
-> +
-> +        pte = pte.set_writable(true);
-> +        assert!(pte.writable());
-> +
-> +        pte = pte.set_writable(false);
-> +        assert!(!pte.writable());
-> +
-> +        assert_eq!(pte.available(), 0);
-> +        pte = pte.set_available(0x5);
-> +        assert_eq!(pte.available(), 0x5);
-> +    }
-> +
-> +    #[test]
-> +    fn test_range_fields() {
-> +        let mut pte = TestPageTableEntry::default();
-> +
-> +        pte = pte.set_pfn(0x123456);
-> +        assert_eq!(pte.pfn(), 0x123456);
-> +        // Test overlapping field reads same value
-> +        assert_eq!(pte.pfn_overlap(), 0x123456);
-> +
-> +        pte = pte.set_available(0x7);
-> +        assert_eq!(pte.available(), 0x7);
-> +
-> +        pte = pte.set_available2(0x3FF);
-> +        assert_eq!(pte.available2(), 0x3FF);
-> +
-> +        // Test TryFrom with ?=> for MemoryType
-> +        pte = pte.set_mem_type(MemoryType::Device);
-> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Device));
-> +
-> +        pte = pte.set_mem_type(MemoryType::Normal);
-> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Normal));
-> +
-> +        // Test all valid values for mem_type
-> +        pte = pte.set_mem_type(MemoryType::Reserved); // Valid value: 3
-> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Reserved));
-> +
-> +        // Test failure case using extended_type field which has 4 bits (0-15)
-> +        // MemoryType only handles 0-3, so values 4-15 should return Err
-> +        let mut raw = pte.raw();
-> +        raw = (raw & !(0xF << 14)) | (0x7 << 14); // Set bits 17:14 to 7 (invalid for MemoryType)
-> +        let invalid_pte = TestPageTableEntry::from(raw);
-> +        assert_eq!(invalid_pte.extended_type(), Err(0x7)); // Should return Err with the invalid value
-
-Please make sure your lines don't exceed 100 chars, preferably less
-than 80.
-
-> +
-> +        // Test a valid value after testing invalid to ensure both cases work
-> +        raw = (raw & !(0xF << 14)) | (0x2 << 14); // Set bits 17:14 to 2 (valid: Device)
-
-Can you use genmask!() here and everywhere else?
-
-> +        let valid_pte = TestPageTableEntry::from(raw);
-> +        assert_eq!(valid_pte.extended_type(), Ok(MemoryType::Device)); // Should return Ok with Device
-> +
-> +        let max_pfn = (1u64 << 40) - 1;
-> +        pte = pte.set_pfn(max_pfn);
-> +        assert_eq!(pte.pfn(), max_pfn);
-> +        assert_eq!(pte.pfn_overlap(), max_pfn);
-> +    }
-> +
-> +    #[test]
-> +    fn test_builder_pattern() {
-> +        let pte = TestPageTableEntry::default()
-> +            .set_present(true)
-> +            .set_writable(true)
-> +            .set_available(0x7)
-> +            .set_pfn(0xABCDEF)
-> +            .set_mem_type(MemoryType::Reserved)
-> +            .set_available2(0x3FF);
-> +
-> +        assert!(pte.present());
-> +        assert!(pte.writable());
-> +        assert_eq!(pte.available(), 0x7);
-> +        assert_eq!(pte.pfn(), 0xABCDEF);
-> +        assert_eq!(pte.pfn_overlap(), 0xABCDEF);
-> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Reserved));
-> +        assert_eq!(pte.available2(), 0x3FF);
-> +    }
-> +
-> +    #[test]
-> +    fn test_raw_operations() {
-> +        let raw_value = 0x3FF0000003123E03u64;
-> +
-> +        // Test using ::from() syntax
-> +        let pte = TestPageTableEntry::from(raw_value);
-> +        assert_eq!(pte.raw(), raw_value);
-> +
-> +        assert!(pte.present());
-> +        assert!(pte.writable());
-> +        assert_eq!(pte.available(), 0x7);
-> +        assert_eq!(pte.pfn(), 0x3123);
-> +        assert_eq!(pte.pfn_overlap(), 0x3123);
-> +        assert_eq!(pte.mem_type(), Ok(MemoryType::Reserved));
-> +        assert_eq!(pte.available2(), 0x3FF);
-> +
-> +        // Test using direct constructor syntax TestStruct(value)
-> +        let pte2 = TestPageTableEntry(raw_value);
-> +        assert_eq!(pte2.raw(), raw_value);
-> +    }
-> +
-> +    #[test]
-> +    fn test_u16_bitfield() {
-> +        let mut ctrl = TestControlRegister::default();
-> +
-> +        assert!(!ctrl.enable());
-> +        assert_eq!(ctrl.mode(), 0);
-> +        assert_eq!(ctrl.priority(), Priority::Low);
-> +        assert_eq!(ctrl.priority_nibble(), 0);
-> +        assert_eq!(ctrl.channel(), 0);
-> +
-> +        ctrl = ctrl.set_enable(true);
-> +        assert!(ctrl.enable());
-> +
-> +        ctrl = ctrl.set_mode(0x5);
-> +        assert_eq!(ctrl.mode(), 0x5);
-> +
-> +        // Test From conversion with =>
-> +        ctrl = ctrl.set_priority(Priority::High);
-> +        assert_eq!(ctrl.priority(), Priority::High);
-> +        assert_eq!(ctrl.priority_nibble(), 0x2); // High = 2 in bits 5:4
-> +
-> +        ctrl = ctrl.set_channel(0xAB);
-> +        assert_eq!(ctrl.channel(), 0xAB);
-> +
-> +        // Test overlapping fields
-> +        ctrl = ctrl.set_priority_nibble(0xF);
-> +        assert_eq!(ctrl.priority_nibble(), 0xF);
-> +        assert_eq!(ctrl.priority(), Priority::Critical); // bits 5:4 = 0x3
-> +
-> +        let ctrl2 = TestControlRegister::default()
-> +            .set_enable(true)
-> +            .set_mode(0x3)
-> +            .set_priority(Priority::Medium)
-> +            .set_channel(0x42);
-> +
-> +        assert!(ctrl2.enable());
-> +        assert_eq!(ctrl2.mode(), 0x3);
-> +        assert_eq!(ctrl2.priority(), Priority::Medium);
-> +        assert_eq!(ctrl2.channel(), 0x42);
-> +
-> +        let raw_value: u16 = 0x4217;
-> +        let ctrl3 = TestControlRegister::from(raw_value);
-> +        assert_eq!(ctrl3.raw(), raw_value);
-> +        assert!(ctrl3.enable());
-> +        assert_eq!(ctrl3.priority(), Priority::Medium);
-> +        assert_eq!(ctrl3.priority_nibble(), 0x1);
-> +        assert_eq!(ctrl3.channel(), 0x42);
-> +    }
-> +
-> +    #[test]
-> +    fn test_u8_bitfield() {
-> +        let mut status = TestStatusRegister::default();
-> +
-> +        assert!(!status.ready());
-> +        assert!(!status.error());
-> +        assert_eq!(status.state(), 0);
-> +        assert_eq!(status.reserved(), 0);
-> +        assert_eq!(status.full_byte(), 0);
-> +
-> +        status = status.set_ready(true);
-> +        assert!(status.ready());
-> +        assert_eq!(status.full_byte(), 0x01);
-> +
-> +        status = status.set_error(true);
-> +        assert!(status.error());
-> +        assert_eq!(status.full_byte(), 0x03);
-> +
-> +        status = status.set_state(0x3);
-> +        assert_eq!(status.state(), 0x3);
-> +        assert_eq!(status.full_byte(), 0x0F);
-> +
-> +        status = status.set_reserved(0xA);
-> +        assert_eq!(status.reserved(), 0xA);
-> +        assert_eq!(status.full_byte(), 0xAF);
-> +
-> +        // Test overlapping field
-> +        status = status.set_full_byte(0x55);
-> +        assert_eq!(status.full_byte(), 0x55);
-> +        assert!(status.ready());
-> +        assert!(!status.error());
-> +        assert_eq!(status.state(), 0x1);
-> +        assert_eq!(status.reserved(), 0x5);
-> +
-> +        let status2 = TestStatusRegister::default()
-> +            .set_ready(true)
-> +            .set_state(0x2)
-> +            .set_reserved(0x5);
-> +
-> +        assert!(status2.ready());
-> +        assert!(!status2.error());
-> +        assert_eq!(status2.state(), 0x2);
-> +        assert_eq!(status2.reserved(), 0x5);
-> +        assert_eq!(status2.full_byte(), 0x59);
-> +
-> +        let raw_value: u8 = 0x59;
-> +        let status3 = TestStatusRegister::from(raw_value);
-> +        assert_eq!(status3.raw(), raw_value);
-> +        assert!(status3.ready());
-> +        assert!(!status3.error());
-> +        assert_eq!(status3.state(), 0x2);
-> +        assert_eq!(status3.reserved(), 0x5);
-> +        assert_eq!(status3.full_byte(), 0x59);
-
-You've got only one negative test that covers the .from() method.
-Can you add more?
-
-What if I create a bitfield from a runtime value that exceeds
-the capacity?
-
-    bitfield! {
-        struct bf: u8 {
-            0:0       ready       as bool;
-            1:1       error       as bool;
-            3:2       state       as u32;
-       }
-    }
-
-    let raw_value: u8 = 0xff;
-    let bf = bf::from(raw_value);
-
-I guess you'd return None or similar. Can you add such a test?
-The same question for the setters. What would happen for this:
-
-    let bf = bf::default()
-             .set_state(0xf)
-             .set_ready(true);
-
-I think that after the first out-of-boundary in set_state(), you
-should abort the call chain, make sure you're not touching memory
-in set_ready() and returning some type of error.
-
-And for this:
-
-    let ret: u32 = -EINVAL;
-    bf = bf::default();
-    bf = bf.set_state(ret);
-
-For compile-time initializes, it should be a compile-time error, right?
-Can you drop a comment on that?
-
-(In C we've got FIELD_{GET,MODIFY,PREP}. They cover all the static
-cases.)
-
-> +        let status4 = TestStatusRegister::from(0xFF);
-> +        assert!(status4.ready());
-> +        assert!(status4.error());
-> +        assert_eq!(status4.state(), 0x3);
-> +        assert_eq!(status4.reserved(), 0xF);
-> +        assert_eq!(status4.full_byte(), 0xFF);
-> +    }
-> +}
-> -- 
-> 2.34.1
-
-I tried to apply your series on top of master, but it failed. So
-my apologies for not finding the answers to some questions above
-by myself.
-
-For the next version, can you make sure your series is applicable
-on top of master or -next?
 
