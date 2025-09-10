@@ -1,139 +1,98 @@
-Return-Path: <linux-kernel+bounces-809587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F16AB50F7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:33:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E4EB50F7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 194667AFD72
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:31:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2CCB1C81F0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857F430BF6C;
-	Wed, 10 Sep 2025 07:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD0630B533;
+	Wed, 10 Sep 2025 07:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="V+Yl7ejL"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="byG4CkLa"
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D127D1E5219;
-	Wed, 10 Sep 2025 07:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BE8307AE0
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757489579; cv=none; b=SEAe6WnRQU/dXnr93d02Se2+/JBkl8ayPiOhqRO0siV/Lq/UX9ai2UNZ9s9Z4svb3NFJR6l4tVCRM7HoNtF921gzr9PZZR/xtfd3oZyBhEGmyxIRlnzYxZ0Ud0nH5UgtPhPhfILHU10xT/fWmeX/kzVLrqdjdPn5KwOhDJUEGng=
+	t=1757489591; cv=none; b=hQw4Xl/kVmIZKNirlgmi0c5XbRjbCRrRSC1FSSpRtCHG20uVnpd72vaj2tLcYfL7PhgZBLIsEwKdOCo5MPBKDk4sP9isH3/nGVUbqo2/UFzh5RNAxMfJnxGaOd+5yJsVJnW8xeVpzl+AUWRxNHJM8RBWX9P8NznaRKy/YvdficQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757489579; c=relaxed/simple;
-	bh=kaGdOkum4VxJNgDecI3kCpUnC8nt+LPl8FizBkxbrDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XYuFHidIAj1alZdnZLgjEKh169YIZa7PsmjUsCqiAINlK8qAqAo+Pde6rzenNZ+OKK5wUyJOxPDnozZ8yxxBYaBO8y7rIveOhzp8Ll9r+XNSp2zIcebZ/eOLy6XUwuP/EDALwQKhNXmASdpIDPkqCvnsCBEd8vMGvB4dJy0f0vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=V+Yl7ejL; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D617815CD;
-	Wed, 10 Sep 2025 09:31:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757489501;
-	bh=kaGdOkum4VxJNgDecI3kCpUnC8nt+LPl8FizBkxbrDQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V+Yl7ejLfiPIYE9VBgRU7RqydnSAMThRHVMc+IaktSQo/exlniYy/lLM4SU6XEcFX
-	 Ij0PbHPMGZVht9SsDxh2AZ0+Dymj98lozmm81LNoprnxz14lWNhQIHcopmzlA06nFc
-	 EaAKPrt7uMJo7qsT9pXF3pzynzvaXYUAsR8aNnOI=
-Message-ID: <5ddabd43-35a0-406e-bc4d-3878febd3341@ideasonboard.com>
-Date: Wed, 10 Sep 2025 10:32:49 +0300
+	s=arc-20240116; t=1757489591; c=relaxed/simple;
+	bh=AVqDPqve3RasHTz2rv5yUVcBYWln23THZbycgvAjHRM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ZqPY4EX2SWX6bck3IzW8JUQQR0mMqHbgj1LW6ucypum4i9l8smmeI/gJEQmKt+HSKy6wEPiZnSACClXqpOl1WqQwlhyJtd9wFgvN4DaaaBsSccy9JaGhAzVhToriJsL0rBrBsHV6LGfjKC2FqriR9tQpdx47xFBTXkm54f3rvOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=byG4CkLa; arc=none smtp.client-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1757489584; bh=w63wQU3paIocMOKW6dFd9TDyKaaRVt53EjaM+0ehhYA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=byG4CkLay93M/uuWbyaM1p65NIytiJrXixPYlacmIUageyfbuEgZ58BxOi9wd2nZ6
+	 B+G6GsxQ0y5ILbD+ki5GsoCVC3sqwzR0R+IxG0khAUdqJOJYyu5YoOuQoHceVudUm2
+	 gLlCxKM0ofWe9Tvd3BYbTgCW2+x2XHl5fC755pBE=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 84231222; Wed, 10 Sep 2025 15:33:02 +0800
+X-QQ-mid: xmsmtpt1757489582tujif69h6
+Message-ID: <tencent_4CCA0CABE7C1C6EC12C0064989A0AEEF6E06@qq.com>
+X-QQ-XMAILINFO: NQR8mRxMnur9ur9PjhHYY+2mxTTNxa8jKVsRnXq9JTwMMTFga7zaa2iy4KlFiY
+	 qyqcCj4fPvCGScUVUnmybIK2X3lF51VQgTKYyk/zekFFMZwxLRxPck3waIjB62bOyRuxFmamxfmp
+	 d/nY7XPOGMUwRUmziXvTr3nYsS8crLkqFvyGC5DLZhdeDTMziwxW0H4mfnb+Oua1qWl+OhYVncZ3
+	 BKSJD/FAaLpm8TqsCxGXoZ3Xck6QWJDfFeksklUel/qURC/WdpXNdhOv2lV/jzbM7RJyTsTwJe5c
+	 yeuxukFkjhUge6RMssLxfG7rohdTazcRxUXWZvFVGqApJosnBCmXm1FzZl/aAuP0DCsKQZx/25NW
+	 kkszbw5/4uQzN0IpuhiyuB93tGlMO4d/XLDY75fez9mmQ05dHH/QLaLXBJRDpnuZ1X3W1ANX9pcU
+	 W1FIDGyx+aSCHj6y6IdZ2I18D3+7OH6e5YgOUWcl14hnWcLdt75ws6J5FHjSbNPOqIq+NJjkzbgj
+	 3Ld+WxZXRjR72PRdMvcQDycKqTvhl3CRT5omicjVBAeAgSiQKnFgl+3pbv7y2ZbUjBcoLT0m2OpO
+	 k9R1uXtY8yWagxK/Ku+XYGij1GimNu6aCUWV5ksIDvxAcOgr0Yu/lCzJgAgVhcXg7eiKFSJU9BHj
+	 2drEMZpJYfRAhfM8I+7mOhHbCnW6hkABkE83ztUBRXbgqrWwukq8/0wLNKwuwJy2kloSvvmrXYK8
+	 FYRlDkJW8fV9tdu/geDcRa61DwArjv3jPsQzFiJTvD+3P5/etAe0tRtrfSDoi6vM5I24bPP7AcZJ
+	 3KAoYqq7C5L9AyQ+/bJRNkR9GxRbUZBEWRo6m/vmnGZvXjX1NqxNYv86tydk2RAGbXy3K9jCQ4hI
+	 uUj5qPtV4FRVYlu3UMh/J5GVcNqE/PZ9AhatifmZhU8v+8tjDesenz90CvEHvyhWEtot4YO1Bae4
+	 spPwDLguOnoilaR7CMtDcspmRZmAmc
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fs?] WARNING in sysfs_emit_at
+Date: Wed, 10 Sep 2025 15:33:00 +0800
+X-OQ-MSGID: <20250910073259.1457516-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68c118e8.a70a0220.3543fc.000e.GAE@google.com>
+References: <68c118e8.a70a0220.3543fc.000e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 5/6] drm: renesas: rz-du: mipi_dsi: Add LPCLK clock
- support
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>,
- Magnus Damm <magnus.damm@gmail.com>
-References: <20250903161718.180488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250903161718.180488-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-In-Reply-To: <20250903161718.180488-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/09/2025 19:17, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add LPCLK clock handling to the RZ/G2L MIPI DSI driver to support proper
-> DSI timing parameter configuration on RZ/V2H SoCs. While lpclk is present
-> on both RZ/G2L and RZ/V2H SoCs, the RZ/V2H SoC specifically uses the lpclk
-> rate to configure the DSI timing parameter ULPSEXIT.
-> 
-> Introduce a new lpclk field in the rzg2l_mipi_dsi structure and acquire
-> the "lpclk" clock during probe to enable lpclk rate-based timing
-> calculations on RZ/V2H while maintaining compatibility with RZ/G2L.
-> 
-> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v7->v8:
-> - Updated commit message
-> - Switched to use devm_clk_get() instead of devm_clk_get_optional()
->   as lpclk clock is available on all SoCs.
-> 
-> v6->v7:
-> - New patch
-> Note, this patch was previously part of series [0].
-> [0] https://lore.kernel.org/all/20250609225630.502888-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-> ---
->  drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> index 3b52dfc0ea1e..bb03b49b1e85 100644
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> @@ -68,6 +68,7 @@ struct rzg2l_mipi_dsi {
->  	struct drm_bridge *next_bridge;
->  
->  	struct clk *vclk;
-> +	struct clk *lpclk;
->  
->  	enum mipi_dsi_pixel_format format;
->  	unsigned int num_data_lanes;
-> @@ -979,6 +980,10 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
->  	if (IS_ERR(dsi->vclk))
->  		return PTR_ERR(dsi->vclk);
->  
-> +	dsi->lpclk = devm_clk_get(dsi->dev, "lpclk");
-> +	if (IS_ERR(dsi->lpclk))
-> +		return PTR_ERR(dsi->lpclk);
-> +
->  	dsi->rstc = devm_reset_control_get_optional_exclusive(dsi->dev, "rst");
->  	if (IS_ERR(dsi->rstc))
->  		return dev_err_probe(dsi->dev, PTR_ERR(dsi->rstc),
+#syz test
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-
- Tomi
+diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+index c3177034b779..f441958b0ef4 100644
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -119,11 +119,11 @@ ssize_t usb_show_dynids(struct usb_dynids *dynids, char *buf)
+ 	guard(mutex)(&usb_dynids_lock);
+ 	list_for_each_entry(dynid, &dynids->list, node)
+ 		if (dynid->id.bInterfaceClass != 0)
+-			count += sysfs_emit_at(&buf[count], count, "%04x %04x %02x\n",
++			count += sysfs_emit_at(buf, count, "%04x %04x %02x\n",
+ 					   dynid->id.idVendor, dynid->id.idProduct,
+ 					   dynid->id.bInterfaceClass);
+ 		else
+-			count += sysfs_emit_at(&buf[count], count, "%04x %04x\n",
++			count += sysfs_emit_at(buf, count, "%04x %04x\n",
+ 					   dynid->id.idVendor, dynid->id.idProduct);
+ 	return count;
+ }
 
 
