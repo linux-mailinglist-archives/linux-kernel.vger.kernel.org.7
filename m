@@ -1,141 +1,144 @@
-Return-Path: <linux-kernel+bounces-809998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736B0B51463
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:49:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE6CB51467
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32BC54E322D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:49:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A33C6541EDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1E63191B7;
-	Wed, 10 Sep 2025 10:48:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216A82D2496
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62E530648D;
+	Wed, 10 Sep 2025 10:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GFmjIxH0"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F6C239E7D;
+	Wed, 10 Sep 2025 10:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757501306; cv=none; b=Egx/E4A32sPJtVDGgYbURbPFBELJ5bPaQw2ZKQTm5mexoEePxOgwVUzZhibEVdiwijDQHYkdfm9z46JANFh16RaWpf+VMWH+vto8INYzRiBJ6YHhgCwjxbb0si73ibtj7jvJdyASP9f+FDnVHe5WDUie7kj+ltH7Ts0Z2yUGBME=
+	t=1757501334; cv=none; b=uEuhV6/IEJi1KmICLKXTadem/BW6rwzRlPVRog7cjuvNy62bF64nl4LN9RYcfj15GLtxDyniNCWAvAL4tWME1h3L5S7GJVsLceuT6lkOXdy6nu6b1LvBughV6D9GmmY/pGpRkEk2dzXqlBoOtP6asOn0QwE0lXvOPDY646LpaF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757501306; c=relaxed/simple;
-	bh=v3t3dz9WKFUZfR1BayWJSIHs1QiJt5x5lxPwsAnPAmM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sO7/+QbENrrufGWuZmez+T7F8l/VDzBg8hQQYdYcatojWMQKV7e75ynj41xwJZLuKz20TmHkYyCxbBV6rNKIPjfKts5bw4Oq/S64rtp9BXfga1AO9lDcSSKY3qnriPLLJSfPYRXNihjFzVrzpEevIGjdAGrZmD8s0MKUhxX/9NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41F8B16F8;
-	Wed, 10 Sep 2025 03:48:15 -0700 (PDT)
-Received: from donnerap (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67B503F66E;
-	Wed, 10 Sep 2025 03:48:22 -0700 (PDT)
-Date: Wed, 10 Sep 2025 11:48:19 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Russell King <linux+etnaviv@armlinux.org.uk>,
- <etnaviv@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi
- <linux-sunxi@lists.linux.dev>
-Subject: Re: drm/etnaviv: detecting disabled Vivante GPU?
-Message-ID: <20250910114819.00dfe07a@donnerap>
-In-Reply-To: <8192c4d04f1640f140a8f2cb43e694a7476bb0ca.camel@pengutronix.de>
-References: <20250904002924.2bc63b73@minigeek.lan>
-	<8192c4d04f1640f140a8f2cb43e694a7476bb0ca.camel@pengutronix.de>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1757501334; c=relaxed/simple;
+	bh=oZuskF8rQFH7X1X26xw4eX994bR051hWbKT9n03w/6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gTZtKydDKKD3Mz2yJ/rt4bD8USHOy6HEsym3eUMOc3+chVINabwBHUVgOpqYP0pDodVtVAPjoNs94t/elrYaz3JmSQnqHmMr5sBijmI7b+yyB0ynasm8tdddt6G19+V/c9T0/LMMPcsMRRPb64AWUJHmH893zwnFTk6i9BPRslo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GFmjIxH0; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3d19699240dso299008f8f.1;
+        Wed, 10 Sep 2025 03:48:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757501330; x=1758106130; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+N7hk82kSw/hD5RnH/Wdj/jHeKN7m/X8ltb3+xi6FX4=;
+        b=GFmjIxH0/6BG9POU6zwX30h1CQxiF814sHXYThxhVMP5/19kxIpflWgpkB4vnjhssi
+         EkHp8F92zljsDvYAphYasdfpYnrW4B4VvCkxgNzdjp+vpiszuVv8VR0YLpMBeJf5kCxZ
+         y+fk00IWSvDxbn1rS3As26oAkxPkzkGNbKxxnD/1YrK0GV98a2yvtDOUJE4pPR9UxeVl
+         JHI8TJg/rkZHy4hJ+t8E2wDq+gO4Md9l5lrp4DgbpoeTfjBlEtaHOu+YQZO5yQsqFrKU
+         AEa7nLfDbiGUz9ppXPSRssDjRR7v4JF1b90ximl5hHOUHBVAlCJkCjohwLwtz+nG6mQS
+         6p4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757501330; x=1758106130;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+N7hk82kSw/hD5RnH/Wdj/jHeKN7m/X8ltb3+xi6FX4=;
+        b=rUYWakpveUIVhIgSnZLq5SHXNqU8Ouo6jAZZ+QcxempGpN3D6IOmIdbWl/eMAvXTNS
+         LF6uMQCoTZn/Dd/NFF+GoOZaOMssxhUMACzhzPgLRLRsDaokWLXivRSGwgh8s6ZlWEPi
+         de68URyoWoeQB8w8UawcYypHF9P33DiAk32qiAvQS/dhHEewmGuH01kSsnUJ8SzdG/6y
+         h8fOKaSJ5jCHgX4twm0J3iYyuq7d/VLO9a0dsT6yqNOpnZlC+ByLBFaS7UK7raukb57T
+         k6hYM0a6sVX2mpL35f2aqbyCrQk5d5wv1zNJnlUXvFHwM1wRW620WOLzLXNEFqttnik9
+         Gxkw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9BNfqh1GBAJValu3MS1wKjzYouNrxFktnk9sD4gpvAwPgcOAOSe1tvxM4T/z87pO+b+efS8YT6vL6@vger.kernel.org, AJvYcCWagSnM7Z9uWTKewpqcRnsii7qFq3m18/VMSDoVQVsoDu4/qbnDtYbnTaBr2fSBqCiA8lYbxadkcWKnnQ==@vger.kernel.org, AJvYcCX8UoKoyPxsFv8KjaA3HTzkmj8NiFnK8g3vhN88JFvej/RidJ7CmKQb9PN+gUkR7XTM6iP6v6yxpOJMiXE=@vger.kernel.org, AJvYcCXzt6NfotCEo4Zs4QBVdn26OC3P2btpc/MTM5TWS/qSxgJVrwhbDahxD+tEvYAwMyZMOBbFyCNbXWmcWR3p@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+hkgS69zsv4WqhLEeSWX664UItnqGqqTD/b2s5+mMJspekfcz
+	xL1QF50d8+MuHAnQEpklZWd44ypNPw7pQp5MB+AxV2kM9sGNtE1iqTdF
+X-Gm-Gg: ASbGnct72QMffhGfYmv5huMHDjZYxVb3aK6lMxDC2bxl2pM5u0je/lHGwv/9D1EvQGB
+	bCz66qutr/W3sczr2moFsfCiIPHnYQ5wzUPNlDmszV+j6YauDjXxLIT+6rdXzxo2UfjbmMNNdCT
+	aDKQ3oL8MXr4csVk95f6sLY/c/Omwl/Fxr+tDhLCOHC1dTpLfMrmSCByvvcLiDY4AY1cXZVnCTN
+	LvtyEejTA8vDsDSrgSCHF3ihX5qziNAbo3KK+KlvUPsRZz5k5he0aXHmUykhwMRpL0mkhWijR75
+	3VUXocNkG1WGwXQh9ObMUldR8NIgSv55wGZUrFTolPnk2kYAY9FcGc4GaQBQAU6q2x/IPQGAzRY
+	YVm3FshS/FCJ0ZVVLUxgwCJP9KvUndX5WdPC9BPYxMo9+EtsWQwjoNrOWKBs12Jk=
+X-Google-Smtp-Source: AGHT+IG5tS3kYUiCCRtnanVvpm0dBMkyeaNotcMroSTBo+RZ/HHESf9S7ra3pDeqhyi3AeZM8IcVgA==
+X-Received: by 2002:a5d:5e92:0:b0:3e7:428f:d33 with SMTP id ffacd0b85a97d-3e7428f0fe6mr15632685f8f.16.1757501330343;
+        Wed, 10 Sep 2025 03:48:50 -0700 (PDT)
+Received: from [192.168.0.100] ([188.24.124.246])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521ca0e9sm6821205f8f.25.2025.09.10.03.48.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 03:48:49 -0700 (PDT)
+Message-ID: <1b79e467-1d39-457f-a488-0f3eb9e14efc@gmail.com>
+Date: Wed, 10 Sep 2025 13:48:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/24] media: i2c: add Maxim GMSL2/3 serializer and
+ deserializer drivers
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Cosmin Tanislav <cosmin.tanislav@analog.com>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Julien Massot <julien.massot@collabora.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-gpio@vger.kernel.org
+References: <20250718152500.2656391-1-demonsingur@gmail.com>
+ <aLBqxQQsnY3ZK4eT@kekkonen.localdomain>
+ <d558ede0-5838-4a69-b25d-cafaa3b6cc97@gmail.com>
+ <aMEgNtjcy1-NuBds@kekkonen.localdomain>
+From: Cosmin Tanislav <demonsingur@gmail.com>
+Content-Language: en-US
+In-Reply-To: <aMEgNtjcy1-NuBds@kekkonen.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Wed, 10 Sep 2025 09:28:19 +0200
-Lucas Stach <l.stach@pengutronix.de> wrote:
 
-> Hi Andre,
+
+On 9/10/25 9:52 AM, Sakari Ailus wrote:
+> Hi Cosmin,
 > 
-> Am Donnerstag, dem 04.09.2025 um 00:29 +0100 schrieb Andre Przywara:
-> > Hi,
-> > 
-> > the Allwinner A523/A527/T527 family of SoCs feature a Vivante
-> > "VIP9000"(?) NPU, though it seems to be disabled on many SKUs.
-> > See https://linux-sunxi.org/A523#Family_of_sun55iw3 for a table, the
-> > row labelled "NPU" indicates which model has the IP. We suspect it's
-> > all the same die, with the NPU selectively fused off on some packages.
-> > 
-> > Board vendors seem to use multiple SKUs of the SoC on the same board,
-> > so it's hard to say which particular board has the NPU or not. We
-> > figured that on unsupported SoCs all the NPU registers read as 0,
-> > though, so were wondering if that could be considered as a bail-out
-> > check for the driver?
-> > At the moment I get this, on a SoC with a disabled NPU:
-> > [    1.677612] etnaviv etnaviv: bound 7122000.npu (ops gpu_ops)
-> > [    1.683849] etnaviv-gpu 7122000.npu: model: GC0, revision: 0
-> > [    1.690020] etnaviv-gpu 7122000.npu: Unknown GPU model
-> > [    1.696145] [drm] Initialized etnaviv 1.4.0 for etnaviv on minor 0
-> > [    1.953053] etnaviv-gpu 7122000.npu: GPU not yet idle, mask: 0x00000000
-> > 
-> > Chen-Yu got this on his board featuring the NPU:
-> >     etnaviv-gpu 7122000.npu: model: GC9000, revision: 9003
-> > 
-> > If I get the code correctly, then etnaviv_gpu_init() correctly detects
-> > the "unsupported" GPU model, and returns -ENXIO, but load_gpu() in
-> > etnaviv_drv.c then somewhat ignores this, since it keeps looking for more
-> > GPUs, and fails to notice that *none* showed up:
-> > /sys/kernel/debug/dri/etnaviv/gpu is empty in my case.
-> > 
-> > Quick questions:
-> > - Is reading 0 from VIVS_HI_CHIP_IDENTITY (or any other of the ID
-> >   registers) an invalid ID, so we can use that to detect those disabled
-> >   NPUs? If not, can any other register used to check this? The whole
-> >   block seems to be RAZ/WI when the NPU is disabled.
-> >   
-> Yes, 0 is not a valid core ID.
-
-Ah, thanks, that helps to identify the situation (see below).
-
-> > - Would it be acceptable to change the logic to error out of the
-> >   driver's init or probe routine when no GPU/NPU has been found, at
-> >   best with a proper error message? As it stands at the moment, the
-> >   driver is loaded, but of course nothing is usable, so it keeps
-> >   confusing users.  
+> On Thu, Sep 04, 2025 at 10:52:09AM +0300, Cosmin Tanislav wrote:
+>> Hi Sakari.
+>>
+>> I recently left Analog Devices but I will continue to try upstreaming
+>> this driver. After the upstreaming is done we can switch the
+>> maintainer status to someone else.
 > 
-> Yes, I think it would be fine to not expose the DRM device at all if no
-> usable GPU core has been found.
+> Ack, thank you.
 > 
-> However, I think it would still be good if your bootloader would fix up
-> the DT to avoid probing the driver at all if possible. It may work on
-> your system but access to a disabled GPU MMIO is not RAZ/WI everywhere.
+>>
+>> Here's the output for the commands you asked, provided by my
+>> ex-coworker. It's for MAX96716 + 2xMAX96717 + 2x IMX219.
+>>
+>> Do we need to fix anything based on the compliance tests?
+> 
+> Looking at the errors, it looks like some fixing is needed, possibly also
+> on v4l2-compliance side.
+> 
 
-Yes, I agree, Allwinner is "nice" by using RAZ/WI if possible, but indeed
-most other platforms SERROR out when touching an address without a device.
+I'll take a closer look at the failures whenever I get the time.
 
-> On i.MX8M* we have a similar situation with disabled peripherals. There
-> the bootloader can detect which peripherals are active by looking at
-> the SoC fuses and fixes up the DT status property accordingly. Not sure
-> if you may have something similar on the Allwinner.
+> Regarding GMSL, are the image width, height or mbus code used for anything
+> by the serialiser or deserialiser drivers?
+> 
 
-We have code for DT patching in U-Boot, and use that already for some
-Allwinner boards. I don't know if we can identify the actual fuse used. We
-could use the SoC package identifier (first word of the SID eFUSE device,
-cf. the second row in here [1]), but that would require maintenance, as new
-IDs will show up, and we don't know every single one even now.
-Another method would be to just ungate the clock and de-assert the reset,
-then read the NPU ID register (0x18?) to see if it's zero or not. Probably
-the most robust, but involves a bit more code, as we probably would need
-some pseudo-device to fetch those reset/clock details from the DT.
-
-I guess the current situation works as well, for now, but I will look at a
-U-Boot patch, just wanted to check if we can avoid that.
-
-Cheers,
-Andre
-
+No, not really. All the information needed by the GMSL drivers is
+provided through get_frame_desc() ops, and there's no fallback for the
+data type, so the stream format is not involved at all, but as far as I
+remember it's necessary to be set properly for the media pipeline to
+pass validation.
 
 
