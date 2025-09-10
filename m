@@ -1,270 +1,189 @@
-Return-Path: <linux-kernel+bounces-810160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13C5B516B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:21:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65B4B516B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91784E6E4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:21:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08121C83742
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFB1319855;
-	Wed, 10 Sep 2025 12:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4135331770E;
+	Wed, 10 Sep 2025 12:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="U2v3S3Jf"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="EetgiS/d"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011028.outbound.protection.outlook.com [52.101.70.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD41314B91;
-	Wed, 10 Sep 2025 12:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757506887; cv=none; b=gI+BO+uKZQRaJcmd6l/Y79ZAL/cERwBb9D6Lr4nRQY8PCrHyTDYhrqV6F6l8ozG9NBXFZTye2ZUv6vTPXxxyJlXiO4zbiOOcE7Ydaw72buVsgaBHpb164dps/LKs92wlDNP6+Po+hppy04zmFPWjsimCJd6Ei5YprSo7VtgkVJw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757506887; c=relaxed/simple;
-	bh=7wuC/HcaHF4I9pw2yi2x2cypDzYc5KuP2H8+jUJFos0=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=TbwkN8Xfrc6dtjAGcYmPfbHoXzI3rWHGEvXTqmwf9qaXnWB2O4ZMt9BUzqJqUFT3uriPpHQaZGlzRvXvTjeGTHvri4ZqAEVl5LcWiBi+k0hDFeawGORg4LRysEVXvYeDpHx8kh43QnE85LExjrPFGXxVsrqdeBp3nPdQdPQDY9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=U2v3S3Jf; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58A5XvAO010958;
-	Wed, 10 Sep 2025 12:21:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Wm6ObA
-	UM6Ra3mXu/iqfiRZqi8eQvB5Kjt46I3ybPgFg=; b=U2v3S3Jf1prJE37+yXTAIN
-	8YMyOu3bCdPVYGDhFJpaLn6HaffIEqchbUDounTYld7nriEG6ddSNWJfgEtcIHUZ
-	RhlA9k3toeEouzplngrMqkpRK3h7iLMbiBO+OPahBtFX5OyD1YXd5fV5d5vftDuB
-	R2iKmeHNdNGAeShkaT2Arjq1WFYoybIv+MtFfnZ29z74XKw93NKQ3VXLkCqh1Ojg
-	PvhRToPFXrdUCf8n+QROc0Es2bG4ZfBJ3yGwDLSCsiqeVRfOE8Xvio5ecAkPT/Rp
-	O7cISBrikJmNNQg6yKLcD48jI7S4D6lYsCpo8FuM0YBM8wQH6IPYbGOlWOAoVsIQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffe1dt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 12:21:07 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58AC98kx027958;
-	Wed, 10 Sep 2025 12:21:07 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffe1dq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 12:21:06 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58A9jXoc007895;
-	Wed, 10 Sep 2025 12:21:05 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109prcdp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 12:21:05 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58ACL4K063701434
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Sep 2025 12:21:05 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D72BD58055;
-	Wed, 10 Sep 2025 12:21:04 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3F04A58043;
-	Wed, 10 Sep 2025 12:21:04 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.153.78])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 10 Sep 2025 12:21:04 +0000 (GMT)
-Message-ID: <7790048d4dc468792b428e80ceae7261a97a896d.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] ima: don't clear IMA_DIGSIG flag when setting
- non-IMA xattr
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul
- Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E.
- Hallyn"	 <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM"	
- <linux-security-module@vger.kernel.org>,
-        open list	
- <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250908105825.1573222-1-coxu@redhat.com>
-References: <20250902042515.759750-1-coxu@redhat.com>
-	 <20250908105825.1573222-1-coxu@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D15A264638;
+	Wed, 10 Sep 2025 12:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757506886; cv=fail; b=IrU9LlVC7zI5XKYzWoY+wa1eIXVe5/g00095UBC/5p9OvergEcr6Bu//5mEZxrE9eG2ldKZJfeoukvrpon4AgpT3YHr4dBfIIFD9CvEMsoOe6Dz0dWQtYIC4QF944IpXAneJmb0nCNf3/5O52VJil1YaixsRIw+uYsgOzvzIzZg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757506886; c=relaxed/simple;
+	bh=wgNhDb7pganZFSFej9TswCT9+YNC8OADivwFLEvo2lo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qnNwTOPe05IiBkLinNV5kJDo2fX/KWEzpyABkWF8rfEfPnT75DL3OZSPunFGSJygK5VsBTjw66juVcb3Ka4kybLYm8InqaDRurA++VZZ+FRSodKbpOozM8vKM8splKvOZfcCSAsKyZIqhVjCeoO4OpSUWTkrItH18nu20xWR7Y0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=EetgiS/d; arc=fail smtp.client-ip=52.101.70.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=epYam/dzdNpNVNL8DOtyIhjqx6xI2/xddUMdX6mSKyWJ4sY29L3bG2GVSNAUfD2U5QhjM+/BxULeNJXb8FJ+myRvfnl3ktN4FXNA6tc4gOjQOl+Z7huUKlrpqmgy3ZxXP6ZM9ND/sZzyuY8AybvInekAOoqDOmsCXi0y5jGTSbKwbCG+A/YTJkNVctKXcyNmbG8fHR90MNEvAG68k6rfYs21NntZi7lXYnQ+J57LcUq9UlVqN1GHSk9ct3ZQKu/q+gwYURL5vW0uO61B3FpoKsUDxUKctp0+XcptT2KyWrgmSmSfS78Hp98Eyp0ylsbRuEGMDIIDeHXhDzz6ySOncg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wgNhDb7pganZFSFej9TswCT9+YNC8OADivwFLEvo2lo=;
+ b=Swcw9JfxY+uhE9jDqMnY2MdSBjlYxrD+Ja7IuAe2qNFOc7sHgxcFZxNDDc0LLOmOf3s76a3I0VkyN/A6GxBo3FvyZzTFZz5nRk5CPN5/OBgeRwyFbqL6rS0AKMVToc+4yYOHzDHnB6fXDUVTAQssaKb5EyzGGuEZRP1R8gRF1pjuDQ+/ThpDnII2ZM+eFcQRB/gdFy0VaGX31TUb2kyOEKnHeJVhbGMqKDbte9WmO/iwrm/sxxljOf9bAimyedcKEccTZSYh/kEc8S6YakRtEw/rRk4DXa4K0YmQdAl4kelWcE9BfBXjjgp5lpSe39Wx6m4vuQL7dhNkXSz2Ls/tKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wgNhDb7pganZFSFej9TswCT9+YNC8OADivwFLEvo2lo=;
+ b=EetgiS/dsNWtXAq2sEnwDRQpt6yVNXIunuol1Sf1aDEUh0of6pm7WSwhatXDc+s5oc8jHsLz4VlfSONdWWka0hYRAY/4T/cnSdpCS5SRv+MWihWKE2Fmt5UGadV0JJPLOWAFx4JpeSDKm8wAzxWreRcEH38j+xeopxV3Kw9BdaH0dm5Zohg8nUYP47v2+gjEC51y0Cbbtz76JjLsy6R5Hxh81U/AOaA+mstUcz6LAJQwllcBp0f4vv6R/ACbEQykTLV6L93amVbugJbraM4lVJ4y8GsAO+J7Pkq7fVj6o2Iw5PNycgc1f4kQxPpTroiW2owrM7dPQ+KSo8v8BlSevw==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by DB9PR04MB11662.eurprd04.prod.outlook.com (2603:10a6:10:60e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.15; Wed, 10 Sep
+ 2025 12:21:20 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9115.010; Wed, 10 Sep 2025
+ 12:21:20 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Shawn Guo <shawnguo2@yeah.net>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+CC: Sudeep Holla <sudeep.holla@arm.com>, Shawn Guo <shawnguo@kernel.org>,
+	"mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	"open list:SYSTEM CONTROL MANAGEMENT INTERFACE (SCMI) i.MX..."
+	<arm-scmi@vger.kernel.org>, "open list:SYSTEM CONTROL MANAGEMENT INTERFACE
+ (SCMI) i.MX..." <imx@lists.linux.dev>, "moderated list:SYSTEM CONTROL
+ MANAGEMENT INTERFACE (SCMI) i.MX..." <linux-arm-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+	<devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>
+Subject: RE: [PATCH V2 RESEND] dt-bindings: firmware: imx95-scmi: Allow
+ linux,code for protocol@81
+Thread-Topic: [PATCH V2 RESEND] dt-bindings: firmware: imx95-scmi: Allow
+ linux,code for protocol@81
+Thread-Index: AQHb98kBWQQZFuR6ckSibDYWVbPYKrRzQw8AgBkrYYCAADxogA==
+Date: Wed, 10 Sep 2025 12:21:20 +0000
+Message-ID:
+ <PAXPR04MB84597E55332F318889A8BE92880EA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20250718094723.3680482-1-peng.fan@nxp.com>
+ <20250825082154.GA26152@nxa18884-linux.ap.freescale.net>
+ <aME6O29QxvU_PcRx@dragon>
+In-Reply-To: <aME6O29QxvU_PcRx@dragon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|DB9PR04MB11662:EE_
+x-ms-office365-filtering-correlation-id: 433be5f5-fcd2-4745-c119-08ddf0648ca0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|7416014|376014|19092799006|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?AZ5IYtXZPIi51ApobVwxyzg2C0O+55RtoCj6m2ZHEhnuQNnHlJ6tQEwHjoiX?=
+ =?us-ascii?Q?KiUMjOgOxzOvnSCNFpqL83m3zuWHpg686WqUMugSl7213KhgEkKCZ+FOm06Q?=
+ =?us-ascii?Q?L59Fn9dDr6IOnTn/hXdCEJgXmzKZCGzCUXx4rxfQLCMfCvP3YSFbAPpb+8Xt?=
+ =?us-ascii?Q?OrBc8u+G9TT3Z0jZr+CW9KId3MRXvAOe/LdSj+FOkvAYQd+Z5Mwt8vFk3kG6?=
+ =?us-ascii?Q?cS78lA26xxNcbli3XAwf3lNY4gaS3IE3vbu/W95Thm+gvDPm6QwRK3mDhM61?=
+ =?us-ascii?Q?S1QiKb5UJpytiYbndYZjZ5aaeyZLCPUVdd0G1kT4XVbIWIZKPamUMNkxW9mZ?=
+ =?us-ascii?Q?ErH4JIblcueaQRgeUh6r9tnsA8zPTYyotLZ4ihj8VUcaZfIdAVM5gL23aEr2?=
+ =?us-ascii?Q?+A9oqLiSRv3fuV3ek8WDUq+0E1xX4hKanwWgAatxUI7m8ytt2sfxMZ85MJlM?=
+ =?us-ascii?Q?phBYNmzIJeF80etDPfcoWdFaO64CRnCGuJ16/lSkUUpHgxhXxfX/+sogV+ww?=
+ =?us-ascii?Q?i7Y621HVmzfAgMt5BFeQHeKKXuzQA4lMjgMoNcgIvngOzkPtTZ9k9a6oK5FE?=
+ =?us-ascii?Q?kvEETYQq6AW8ZHSn1MgLmYR1Lb4tsnyzOi1BEr/K8eYUfEY53urBCqJLICdL?=
+ =?us-ascii?Q?R/G5QInJkTklN82YS305fxcl6jPBRZ9YG+97MJWIbMahmAg4XWbTQcGRpXlT?=
+ =?us-ascii?Q?ZTtpgweO0FeD6RHCHEteymgZyRRTIUQe//hqtebfxL4b8EpK960DpUtLtzpf?=
+ =?us-ascii?Q?0UpOrMjZkwG6WvU+3KKBkR9CP/M/fCPtoib+VnfUOlC/HInfde8akxP241Zc?=
+ =?us-ascii?Q?ZwNpG9a47USadZuJ7y/N1S9fF2xuM/cBdYgy4hhlr9qBCb5G3EkUBPmRgt+f?=
+ =?us-ascii?Q?je2bF0BbNnRsMsI4Pw6UMf1TLHe58tZ4Q5q+18vqTHXo5UsKtP7zMwl2/2l6?=
+ =?us-ascii?Q?6zJc4mQLmdQHI7i9rZZ1Zb79IhJpLdxi0Cxf5MkHSit22xupE0IwkgAvf7Sj?=
+ =?us-ascii?Q?Z/Kut5Mk+XSNSkdeBB4i5ygbvup11xk6YKI3o7FEaLLE6qkQhgYyLAyMpAUD?=
+ =?us-ascii?Q?CDWUafTxgzr7P7UVstb1a2YSkX7u6+dGKts/p8XBOYvyflLbfFFaGO6KeoLH?=
+ =?us-ascii?Q?dGN6M6Atieuk5hU5VmwpinK4vHdZucc54sXlMgBDaeu44YVH40HfDUoAd6Dc?=
+ =?us-ascii?Q?HckFXWwvs2tJZeep3ICi2ue7/U7RH7h1S+4NZOBl5F6uMm8z0Op5IhTw5a9n?=
+ =?us-ascii?Q?jsPkMmDePtTYsBHt3xgNOtC7sZ4Dd0vlfb/OZgFxpSlOaDnXjb2oWi/vnm1u?=
+ =?us-ascii?Q?ixWV98T2ryIbGKK4rSG+zYR6RTtPxd+Kj3eEyrD3JMCDs2fWhYSEqXaO05Ty?=
+ =?us-ascii?Q?grcS/xxY1ys4MArbgm6K+52xtE0jiMFAx5r9EeX9iF9dPE7RQQ5OENtuIjdq?=
+ =?us-ascii?Q?MjP1MaykfCc8PKunbpxgrZsz/XlG7lVh/LmEuYPNB8yvJCvbr35fQ4czn5Bn?=
+ =?us-ascii?Q?PFZKM0ztZFCZLtI=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(19092799006)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?SQsv03dgLsSlENEBfP08T7ay7IFMcS4l250ZN97DetT9Qp9NrorRvB5nLTVO?=
+ =?us-ascii?Q?am4IMsMML1PiJGlIpl/7T4pa/QWeScAx+44+1MV6q6hfddonLLa1iUFe6h9x?=
+ =?us-ascii?Q?a0L6hqsN7GrbuKlvvskIoJH+sXVJyubDRTdRunCPluzPZ1Kj9bmXJMpG+0rY?=
+ =?us-ascii?Q?1+A3UfFkEVd8xtWPJof9IqGvhu6JyXdbQTnYkY83DIpwmxy8ktWE4ffpjdMm?=
+ =?us-ascii?Q?9r6tXfKSA2Jqwi7SSiXafgy+P6wR2XcYjZceryx4ZzFfU+4adWM3EXjGmH6m?=
+ =?us-ascii?Q?kJ8gzOvHawTJ9H/XA8UF1LMdoxX8gzuK8My1fvjli4My7/hEh27auNJstfeS?=
+ =?us-ascii?Q?8IFTxJ6pV3bF0NOxSgbHXv6iPOv9+Ba9/GnluMRKZh1eypKNdbmRBocp1lvZ?=
+ =?us-ascii?Q?VThWiMyGvmKGx6a1v4COqbYjLcN1W/VmgQNzAEcyEccg+MTeeLL/kRNhDMxK?=
+ =?us-ascii?Q?AGfvJaLwo9ctlkTpBV35Ud235GfDSNfBa+0jQFA8kpAZNbWJA3iZZD9wrXUh?=
+ =?us-ascii?Q?6pnTpRoYpm2WhkzoQCoFFr7fn6WX646Q8q/WgqQBWEHm1C/FX6kARc4nd5ny?=
+ =?us-ascii?Q?J8pVbxrLDuw+SqHbwshqTp1hhBj6KqhWcljUzQec+YfCiHesdRBk7Yznege4?=
+ =?us-ascii?Q?FEA2EtjOJFJzs+XBRzpAMlsevCG3dVOYMDVs7cSuRzMEzXT196KWSOyArLvV?=
+ =?us-ascii?Q?q6tPOW/afG4eerFYyeyKvEM1GDVCpuw02cPnEu42sgcDMnXsU5PwRMEcBH2b?=
+ =?us-ascii?Q?+b2hQ+SinDrNe7zeMfsBHZS/c4gM2x6zQ0H3mfJ+M1+IjCyJvohFEzUzrADL?=
+ =?us-ascii?Q?DH/9BAx8ZMS31b7T8NOIDaENPTwaJ/Tv39itJ+D8NggnHtuLwfLpGTJAXhcO?=
+ =?us-ascii?Q?81HmCHWuuh6jMTRnsqwct/1a+U/eaDIZbrmx3qW6wZjr6gHB2yIKp6ksl9HE?=
+ =?us-ascii?Q?uGepHxa8KuB5CIdb7lTYvbwUNbWy0C4grj9ILYTuZBtbuenpskvsFiiWImQN?=
+ =?us-ascii?Q?0mRzQ6ucmVr+yS8i1vvrZ5d64PLcjHBsOQ3yNSm15MOXkI7+hx2cbJBWH3ca?=
+ =?us-ascii?Q?Tw4e/wFwp3gs0BEa9eX3o07vWvIzMo250VWxh+v046IQp02vwplWcFcC8fpX?=
+ =?us-ascii?Q?flbBCEZd3iodnm50JtjCPyLPD50/iTMU8sMgXw+aXcfMaYMoyNK4e9fK/XVC?=
+ =?us-ascii?Q?tl0u+VZP7ID+me6XtzZeX2EoDARs5ce9i9pr4GqEIb2uNeB9aQGg++M4STt3?=
+ =?us-ascii?Q?Aq+2uUbjZ3QOqjM76pFtupcpl9m8Cgh0ZO98XMerUCDK6GSyYHyPzz1Otj1Q?=
+ =?us-ascii?Q?QKcltJMuRnPDCRtsfexJH/7a8zJGmSc36mb572BS8zvrPRiizKiY9hhPd5l+?=
+ =?us-ascii?Q?7ECAidmA5i3qNVKU+8BnpBm2CA9w4DO7Atie17JNcx9Xy55eqzZ+a1nCm+WI?=
+ =?us-ascii?Q?XenrQEE840VQlWVDi/08PZoVzOVBk8dezV1SyUIPi4PlotkOLiS/1zHGS0hq?=
+ =?us-ascii?Q?oW/lOqQltjs8zh7tojMxRAffgu6MBcNXUbBCilBVoWvgvb49dVCE7P2BSDFY?=
+ =?us-ascii?Q?TZb0h1Bgq7P/XbwJpZ0=3D?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 10 Sep 2025 08:21:03 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 0Cf5JexUbD-23jt0wWvf_SJE434MYWJl
-X-Proofpoint-GUID: -J3YCBMJ7QEUXFeZnVOB-pW-7jAWt6z-
-X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c16d33 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8 a=910HjdCciHtYCj_r2X8A:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX9N7Iozi70nie
- SlcTkSD6poG6xGkBGkVvlkH/zUQN+GIHT9LN8lzMiFlqgKCE86t8+NarM5TTNDnxOyNwUJtaM1W
- 03RmcKoOTO7nqwKAGdMlxEQa5zdxNG3K/irXEmpIkHlg6005h7FuNmnqYYTK7qd+ATIOHLYELZ6
- cC5va5jDa7W/g1TOM+TKYxZ5Fbbejcy5BWL7IfYQqQYSfu06lWL023EAK79x0HMfeyGn/RKUeYy
- k4YMcpPVIoNPv++ZVJYQgmIennDg/5oG47JR/UBRsKUrUIdQOvsMBDP+UFOitqhHPDKqWYxz0FC
- 4CM4lCRvpxIx3Dcbex6D+13jvmwmz6LBtvPjsENQ2ym5ukpvqVv6PQQbnN7Go5lD0LWs9+3aQXS
- Td5f6kFD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_01,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 433be5f5-fcd2-4745-c119-08ddf0648ca0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2025 12:21:20.2587
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XS5S8Gt3S7c7D3SDqEMIBAnCoF/yl5uVB5wAEtWp8t2aI9oGbzwdAHiaSPfgMjLFViRLb6330rXHX0cX5C7TEQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB11662
 
-On Mon, 2025-09-08 at 18:58 +0800, Coiby Xu wrote:
-> Currently when both IMA and EVM are in fix mode, the IMA signature will
-> be reset to IMA hash if a program first stores IMA signature in
-> security.ima and then sets security.selinux for a file.
+Hi Shawn,
 
-The problem description should be generic.
+> Subject: Re: [PATCH V2 RESEND] dt-bindings: firmware: imx95-scmi:
+> Allow linux,code for protocol@81
+[...]
+> I do not see the patch in next-20250910, nor reply from Sudeep
+> indicating it's been applied, so I just picked it up.
 
--> and then writes some other security xattr for the file.
+Thanks for picking it up.
 
-Start a new paragraph here for the example.
-> For example, on
-> Fedora, after booting the kernel with "ima_appraise=3Dfix evm=3Dfix
-> ima_policy=3Dappraise_tcb" and installing rpm-plugin-ima, reinstalling a
-> package will not make good reference IMA signature generated. Instead
-> IMA hash is generated,
->     # getfattr -m - -d -e hex /usr/bin/bash
->     # file: usr/bin/bash
->     security.ima=3D0x0404...
->=20
-> This happens because when setting selinux.selinux, the IMA_DIGSIG flag
-> that had been set early was cleared. As a result, IMA hash is generated
-> when the file is closed.
+Thanks,
+Peng.
 
-Start a new paragraph here, adding a sentence describing the solution to th=
-e
-problem. For example,
-
-Prevent replacing the IMA file signature with a file hash, by preventing th=
-e
-IMA_DIGSIG flag from being reset.
-
+> Shawn
 >=20
-> Here's a minimal C reproducer,
->=20
->     #include <stdio.h>
->     #include <sys/xattr.h>
->     #include <fcntl.h>
->     #include <unistd.h>
->     #include <string.h>
->     #include <stdlib.h>
->=20
->     int main() {
->         const char* file_path =3D "/usr/sbin/test_binary";
->         const char* hex_string =3D "030204d33204490066306402304";
->         int length =3D strlen(hex_string);
->         char* ima_attr_value;
->         int fd;
->=20
->         fd =3D open(file_path, O_WRONLY|O_CREAT|O_EXCL, 0644);
->         if (fd =3D=3D -1) {
->             perror("Error opening file");
->             return 1;
->         }
->=20
->         ima_attr_value =3D (char*)malloc(length / 2 );
->         for (int i =3D 0, j =3D 0; i < length; i +=3D 2, j++) {
->             sscanf(hex_string + i, "%2hhx", &ima_attr_value[j]);
->         }
->=20
->         if (fsetxattr(fd, "security.ima", ima_attr_value, length/2, 0) =
-=3D=3D -1) {
->             perror("Error setting extended attribute");
->             close(fd);
->             return 1;
->         }
->=20
->         const char* selinux_value=3D "system_u:object_r:bin_t:s0";
->         if (fsetxattr(fd, "security.selinux", selinux_value, strlen(selin=
-ux_value), 0) =3D=3D -1) {
->             perror("Error setting extended attribute");
->             close(fd);
->             return 1;
->         }
->=20
->         close(fd);
->=20
->         return 0;
->     }
->=20
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
-
-Thanks, Coiby.  The updated patch looks good.  Have you looked at the other
-calls to ima_reset_appraise_flags() to make sure they don't need to be adju=
-sted?
-
-thanks,
-
-Mimi
-
-> ---
->  security/integrity/ima/ima_appraise.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
->=20
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/i=
-ma/ima_appraise.c
-> index f435eff4667f..4e4750ea41ad 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -694,6 +694,15 @@ static int ima_protect_xattr(struct dentry *dentry, =
-const char *xattr_name,
->  	return 0;
->  }
-> =20
-> +/*
-> + * ima_reset_appraise_flags - reset ima_iint_cache flags
-> + *
-> + * @digsig: whether to clear/set IMA_DIGSIG flag, tristate values
-> + *          0: clear IMA_DIGSIG
-> + *          1: set IMA_DIGSIG
-> + *         -1: don't change IMA_DIGSIG
-> + *
-> + */
->  static void ima_reset_appraise_flags(struct inode *inode, int digsig)
->  {
->  	struct ima_iint_cache *iint;
-> @@ -706,9 +715,9 @@ static void ima_reset_appraise_flags(struct inode *in=
-ode, int digsig)
->  		return;
->  	iint->measured_pcrs =3D 0;
->  	set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
-> -	if (digsig)
-> +	if (digsig =3D=3D 1)
->  		set_bit(IMA_DIGSIG, &iint->atomic_flags);
-> -	else
-> +	else if (digsig =3D=3D 0)
->  		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
->  }
-> =20
-> @@ -794,6 +803,8 @@ static int ima_inode_setxattr(struct mnt_idmap *idmap=
-, struct dentry *dentry,
->  		digsig =3D (xvalue->type =3D=3D EVM_IMA_XATTR_DIGSIG);
->  	} else if (!strcmp(xattr_name, XATTR_NAME_EVM) && xattr_value_len > 0) =
-{
->  		digsig =3D (xvalue->type =3D=3D EVM_XATTR_PORTABLE_DIGSIG);
-> +	} else {
-> +		digsig =3D -1;
->  	}
->  	if (result =3D=3D 1 || evm_revalidate_status(xattr_name)) {
->  		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
 
 
