@@ -1,131 +1,380 @@
-Return-Path: <linux-kernel+bounces-810932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC3CB521A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:12:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44401B521A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A03811C24E0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:12:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E00D516DC0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE4C2ECD1C;
-	Wed, 10 Sep 2025 20:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B602ECD1C;
+	Wed, 10 Sep 2025 20:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RiMLFgPL"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="M8+F8L09";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FKNKc4wN"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943522BB1D
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E5E2BB1D
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757535138; cv=none; b=Fy7t65j4t/1K2aVGqsDksGWwBFcLpjb53ggHCn614xE1E1ANqjZ7Qr9m5JQ3DedkAmgW0A21VDzThuDPt42QJ8hDZoGICpwwbAySt6yRMtjGyZ0WkUj/Aefxqz3yr7/+DdM6mrpxeOjSHQ4Rl/MEjJTETAqkqNMUhICJWxfFPQM=
+	t=1757535262; cv=none; b=PTa2/urWhzMNYzUAkA0StCPH2f44d+6LCi+lH36KysBXAjjrEC1CE7kA1pryAN/Y527sqlOm8o7Zn3smtYKheBIMLy+Xx8ABb8++BzE2SxpwQLEXR4WRhsurq2hiOArkp5LvmpteFClmfUk2NW0dVYpTgbJaQ62gJplzA7QVpAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757535138; c=relaxed/simple;
-	bh=Cvj8xivdSMy3PaQcLvH8a/pOHucCui5YpgUwp3+nqCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QsaqdSfy4EWca0A2QLAOnr+57L8qZ06AGU8wr1L5kNry2ewq2L+1jnxyfUXYfwRJa4wVA8dkyvsBXaHPnUTy8Vi49qNkUFG+RzudUb3+efRjb0MtEfgJOEsJhCWrUj9+gZzHDXsD4bt1QwRNe6Z+fT0drOzJ/qIa/6QecR+ikDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RiMLFgPL; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 10 Sep 2025 13:12:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757535134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gR5yuuzaP05+dnCBzQFX9tuMWKZshj48LMZ7zdf2Gm0=;
-	b=RiMLFgPL2eLugE3IfLCZDeAqKTtRLfUqMUjt0lINJzqe3IK5Hy+nwR33Xz4+ABuS3RzqR8
-	GdhQ2MZQm0CbXP7aQOJLvOd/mIm7InoprUnNwSnFMbkOjO6IC9TvzAyKmDM0A21EjLA8so
-	kmmOUhrW17f9pHzyHX7FLHPot7il8Oo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Lei Liu <liulei.rjpt@vivo.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	David Rientjes <rientjes@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Chen Yu <yu.c.chen@intel.com>, Hao Jia <jiahao1@lixiang.com>, 
-	"Kirill A. Shutemov" <kas@kernel.org>, Usama Arif <usamaarif642@gmail.com>, 
-	Oleg Nesterov <oleg@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Fushuai Wang <wangfushuai@baidu.com>, "open list:MEMORY MANAGEMENT - OOM KILLER" <linux-mm@kvack.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" <cgroups@vger.kernel.org>
-Subject: Re: [PATCH v0 0/2] mm: swap: Gather swap entries and batch async
- release
-Message-ID: <uwqrobr5xqtvav73srbe6v2nccgtoy2456vpgzemwex26lwsq7@2g74vl5oomfx>
-References: <20250909065349.574894-1-liulei.rjpt@vivo.com>
- <fszpgct7ywqy6qq3qnjflol3theovmgnau2wgdqqdxin4q7ezm@zumgw533hxon>
- <CAJuCfpFaTj8PsXkoYRQKQ0sOu+mKikUAE8Wbcx+YpZXZ4M7cMA@mail.gmail.com>
- <b74b1e28-8479-4b14-9210-5b4334d3ce22@vivo.com>
+	s=arc-20240116; t=1757535262; c=relaxed/simple;
+	bh=QL6r8yANc/Fg+toy54tu5iYFLdNAvh8k14st88ey2ws=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=sHeZGTZp+7IeUeMQC0CaOWvcjcJpzkI0pg99d4dbn4Q27eHIqpYaLSlwh4nvz9HpYtFQrHdvsAZFNR8yRpD3v6RQVYMJp1rsXIy4XlT7bTqFmQhjvqb10Wpq/DkdwhG6eJtDXWth+Pw71JpwuYiL0iNI27cqdPVzwtgW4GIjhr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=M8+F8L09; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FKNKc4wN; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 748BF140030F;
+	Wed, 10 Sep 2025 16:14:18 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 10 Sep 2025 16:14:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1757535258;
+	 x=1757621658; bh=GXF7x2qoy3czLvIOjFMmD+rmJp5AFcm/Kbw9JoK2fLs=; b=
+	M8+F8L099AJyPyCGSXuCUwtpgl/qnyTEmyUaWaPChaUvAJf8xJkNy/RGMM4oZgVb
+	NtxZl6TfmF/1JD6tlTIzFyMM4gvROt1a/83i7w4bfu11tUplE2bCkUC3ikBHIM4P
+	0A9KIYcWKrPl34sF+xCSnLHgetbSGiLpLkvgHhAhXoov0w7rZYCLx31jhdAz3uFX
+	9IL146/g22+Xcn/7mGr615q4mvJ8HyMIq5G+Y1La6kS6j44t9zPd1nMRHr29/i+Y
+	yH6d3n1iOcPB8I35PWOWY0vA0MZbk+ykTGrLFn4CFvjdJUetrk+Iq61sOjbi5qTx
+	PBl7vvwTSrhdzra7Tt9udw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757535258; x=
+	1757621658; bh=GXF7x2qoy3czLvIOjFMmD+rmJp5AFcm/Kbw9JoK2fLs=; b=F
+	KNKc4wNgA5loqf6LV0WHtli38pAdZffC9Jij5iRBlK4dBEJ6JrMgr8UBIUOR+pi8
+	mB10GPuKFdWEjfp42pA23tDWPvdUQE+blqd9i5Y/Gs605lxwszuOGlyAmz826C8u
+	PiwrxL/IDuQkIHXnK7eyvYngiWl11xrLLYwAmZ1dqnCTFcceVEKoITIPC9TLfLOU
+	mWWOfV0rfJnDfBTjHtlulTWg6qdbODbEaf8N1tNP9YXmmExVErSqRcayxxvJXS3K
+	e4DWL0yqLqF/W/tgNZl3AASDHhg5LWSaqZhm/JQAUCbUSqE+zTIk4J7bcQkTeeXj
+	/chn7JX8HwGYdVvKXmBdA==
+X-ME-Sender: <xms:GdzBaFS8KVzK6c7JHeBns-eQqNRS-849NL9YPXWRKPurirEN5evTcg>
+    <xme:GdzBaOzDXnq2-LzZR7T9s-oO01GLP0-FWPqiWfsgnp6keJQxFXT7z87kXjYkj_HI_
+    jcGsMGxiZsHGVn7RKw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvgedvvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpeehkeejgffhtdejgfdugfdvjeelteehkefggfetvdeiteettddugeefledtkedtheen
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgrsggrtghordgtohhmpdigvghsqdhinh
+    gtrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
+    mheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmh
+    htphhouhhtpdhrtghpthhtoheptghhrhhishhtohhphhgvrdhlvghrohihsegtshhgrhho
+    uhhprdgvuhdprhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtph
+    htthhopehnphhighhgihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrugguhies
+    lhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehlihhnuhigphhptgdquggvvheslh
+    hishhtshdrohiilhgrsghsrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:GdzBaJC2ytHz0DzJNpj4byDjsb3V887azBYjKLGukKojsSNARWrghQ>
+    <xmx:GdzBaLXvyedRsWJVKyzP9FCsvnrIey4hjXlpppWnUJxFe2RowPL42w>
+    <xmx:GdzBaNoNgWEbQK5mNb9znZfv9aTHtBkv60WugzS6wID3MmjhGaNm-A>
+    <xmx:GdzBaHQdN7vxQtAM0AA24VACjmKQ-DWEZ4s2S6lgx7DC2bonY9AqrQ>
+    <xmx:GtzBaD3fRQQZI7AU_FByE0fFvtY0-g_8JxmVEo-ZoqwR4T0e10thx0im>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 31F11700069; Wed, 10 Sep 2025 16:14:17 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b74b1e28-8479-4b14-9210-5b4334d3ce22@vivo.com>
-X-Migadu-Flow: FLOW_OUT
+X-ThreadId: ASLq8PfgjFLg
+Date: Wed, 10 Sep 2025 22:13:06 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Nicholas Piggin" <npiggin@gmail.com>,
+ "Madhavan Srinivasan" <maddy@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Message-Id: <591bf41e-fe87-49b3-9a45-ce0dff1b8fba@app.fastmail.com>
+In-Reply-To: 
+ <28d908b95fe358129db18f69b30891788e15ada0.1757512010.git.christophe.leroy@csgroup.eu>
+References: 
+ <28d908b95fe358129db18f69b30891788e15ada0.1757512010.git.christophe.leroy@csgroup.eu>
+Subject: Re: [RFC PATCH] powerpc: Remove CONFIG_HIGHMEM
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10, 2025 at 10:14:04PM +0800, Lei Liu wrote:
-> 
-> On 2025/9/10 3:48, Suren Baghdasaryan wrote:
-> > On Tue, Sep 9, 2025 at 12:21 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > > On Tue, Sep 09, 2025 at 02:53:39PM +0800, Lei Liu wrote:
-> > > > 1. Problem Scenario
-> > > > On systems with ZRAM and swap enabled, simultaneous process exits create
-> > > > contention. The primary bottleneck occurs during swap entry release
-> > > > operations, causing exiting processes to monopolize CPU resources. This
-> > > > leads to scheduling delays for high-priority processes.
-> > > > 
-> > > > 2. Android Use Case
-> > > > During camera launch, LMKD terminates background processes to free memory.
-> > > How does LMKD trigger the kills? SIGKILL or cgroup.kill?
-> > SIGKILL
-> > 
-> > > > Exiting processes compete for CPU cycles, delaying the camera preview
-> > > > thread and causing visible stuttering - directly impacting user
-> > > > experience.
-> > > Since the exit/kill is due to low memory situation, punting the memory
-> > > freeing to a low priority async mechanism will help in improving user
-> > > experience. Most probably the application (camera preview here) will get
-> > > into global reclaim and will compete for CPU with the async memory
-> > > freeing.
-> > > 
-> > > What we really need is faster memory freeing and we should explore all
-> > > possible ways. As others suggested fix/improve the bottleneck in the
-> > > memory freeing path. In addition I think we should explore parallelizing
-> > > this as well.
-> > > 
-> > > On Android, I suppose most of the memory is associated with single or
-> > > small set of processes and parallelizing memory freeing would be
-> > > challenging. BTW is LMKD using process_mrelease() to release the killed
-> > > process memory?
-> > Yes, LMKD has a reaper thread which wakes up and calls
-> > process_mrelease() after the main LMKD thread issued SIGKILL.
-> 
-> Hi Suren
-> 
-> our current issue is that after lmkd kills a process,|exit_mm|takes
-> considerable time. The interface you provided might help quickly free
-> memory, potentially allowing us to release some memory from processes before
-> lmkd kills them. This could be a good idea.
-> 
-> We will take your suggestion into consideration.
+On Wed, Sep 10, 2025, at 15:47, Christophe Leroy wrote:
+> There are some discussion around to opportunity to get rid of
+> CONFIG_HIGHMEM, see [1]. This RFC is a tentative to remove it
+> from powerpc so that people can experiment what it would
+> look like and what would be the outcomes.
+>
+> CONFIG_HIGHMEM is being depracated, remove it.
+>
+> To accomodate boards with up to 1Gbytes RAM, PAGE_OFFSET and
+> TASK_SIZE is adjusted to 0xb0000000 (a0000000 on book3s/32 with modules).
+>
+> If you have more than 1Gbytes of RAM you can adjust CONFIG_LOWMEM_SIZE.
+>
+> [1] 
+> https://lore.kernel.org/all/4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com/
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-But LMKD already does the process_mrelease(). Is that not happening on
-your setup?
+Thanks for going through this, even if we keep partial highmem
+support alive a little longer, it's good to know what the pieces
+are that would go away. I think the majority of these already
+removes stuff that no longer has any function, but there are
+obviously a couple of machines that use highmem today, even
+after changing the LOWMEM_SIZE setting.
+
+I took a closer look at the ones that had CONFIG_HIGHMEM set
+in the defconfig (I tried to look earlier for powerpc boards
+but didn't have the idea to check the config) and found a
+handful of machines that were able to use 2GB on MPC8572E,
+MPC8640D or QorIQ P20xx, as well as two that have 4GB.
+
+As with the Arm boards, the 2GB configurations may work
+by further changing the LOWMEM_SIZE etc, but this has
+a higher risk of breaking either drivers or applications.
+
+The 4GB configs are obviously more problematic, no LOWMEM_SIZE
+setting can give back the memory lost from disabling highmem.
+Two options we are discussing for those are either leaving
+highmem only as zram backing store long-term, or leaving it
+for page cache only.
+
+There is also a related setting:
+
+config PHYS_64BIT
+        bool 'Large physical address support' if PPC_E500 || PPC_86xx
+        depends on (44x || PPC_E500 || PPC_86xx) && !PPC_83xx && !PPC_82xx
+        select PHYS_ADDR_T_64BIT
+
+This is currently enabled in 85xx-32bit.config, and probably
+required specifically for the boards that have 4GB of RAM,
+as the PCI MMIO space starts at physical address 0x80000000 (2GB)
+on the qoriq and mpc8641 boards.
+
+The PHYS_64BIT option itself should probably use
+'depends on HIGHMEM'.
+
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 93402a1d9c9f..fec1db5fcb97 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -482,11 +482,6 @@ source "arch/powerpc/platforms/Kconfig"
+> 
+>  menu "Kernel options"
+> 
+> -config HIGHMEM
+> -	bool "High memory support"
+> -	depends on PPC32
+> -	select KMAP_LOCAL
+> -
+
+This could stay guarded by 'depends on EXPERT' in that case.
+
+> @@ -1193,7 +1188,7 @@ config LOWMEM_SIZE_BOOL
+> 
+>  config LOWMEM_SIZE
+>  	hex "Maximum low memory size (in bytes)" if LOWMEM_SIZE_BOOL
+> -	default "0x30000000"
+> +	default "0x40000000"
+> 
+>  config LOWMEM_CAM_NUM_BOOL
+>  	bool "Set number of CAMs to use to map low memory"
+> @@ -1245,7 +1240,7 @@ config PAGE_OFFSET_BOOL
+> 
+>  config PAGE_OFFSET
+>  	hex "Virtual address of memory base" if PAGE_OFFSET_BOOL
+> -	default "0xc0000000"
+> +	default "0xb0000000"
+> 
+>  config KERNEL_START_BOOL
+>  	bool "Set custom kernel base address"
+>
+> @@ -1298,8 +1293,8 @@ config TASK_SIZE_BOOL
+>  config TASK_SIZE
+>  	hex "Size of user task space" if TASK_SIZE_BOOL
+>  	default "0x80000000" if PPC_8xx
+> -	default "0xb0000000" if PPC_BOOK3S_32 && EXECMEM
+> -	default "0xc0000000"
+> +	default "0xa0000000" if PPC_BOOK3S_32 && EXECMEM
+> +	default "0xb0000000"
+> 
+>  config MODULES_SIZE_BOOL
+>  	bool "Set custom size for modules/execmem area"
+
+These all look good to me, as I suggested we should do the
+same thing on arm and x86 using CONFIG_VMSPLIT_3G_OPT
+as the default.
+
+> diff --git a/arch/powerpc/configs/85xx-32bit.config 
+> b/arch/powerpc/configs/85xx-32bit.config
+> index a85310bcb1fd..f96db0bc888f 100644
+> --- a/arch/powerpc/configs/85xx-32bit.config
+> +++ b/arch/powerpc/configs/85xx-32bit.config
+> @@ -1,5 +1,4 @@
+>  CONFIG_PPC64=n
+> -CONFIG_HIGHMEM=y
+>  CONFIG_KEXEC=y
+>  CONFIG_PPC_85xx=y
+>  CONFIG_PROC_KCORE=y
+
+I know the nic.cz Turris has a P2020 CPU and 2GB.
+
+> diff --git a/arch/powerpc/configs/85xx/ge_imp3a_defconfig 
+> b/arch/powerpc/configs/85xx/ge_imp3a_defconfig
+> index 7beb36a41d45..da9f649107dc 100644
+> --- a/arch/powerpc/configs/85xx/ge_imp3a_defconfig
+> +++ b/arch/powerpc/configs/85xx/ge_imp3a_defconfig
+> @@ -23,7 +23,6 @@ CONFIG_MODULE_UNLOAD=y
+>  CONFIG_GE_IMP3A=y
+>  CONFIG_QE_GPIO=y
+>  CONFIG_CPM2=y
+> -CONFIG_HIGHMEM=y
+>  CONFIG_HZ_1000=y
+>  CONFIG_PREEMPT=y
+>  # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+
+I see that IMP3A has 4GB of DDR3 memory, so  this one
+clearly depends on HIGHMEM for actual users if any remain.
+
+https://abaco.com/products/powerpact3-imp3a/p3516 shows
+it has "entered a Restricted Production Phase (RPP) on August
+28, 2020", which was roughly when NXP discontinued the
+QORIQ P2 CPU, and 10 years after it was first introduced.
+
+This was targeted at the military and aerospace markets,
+so there is a good chance that some are still in use, but
+I have no idea whether any of the users are planning to
+update the kernels.
+
+> diff --git a/arch/powerpc/configs/85xx/xes_mpc85xx_defconfig 
+> b/arch/powerpc/configs/85xx/xes_mpc85xx_defconfig
+> index 488d03ae6d6c..10764fad2eb9 100644
+> --- a/arch/powerpc/configs/85xx/xes_mpc85xx_defconfig
+> +++ b/arch/powerpc/configs/85xx/xes_mpc85xx_defconfig
+> @@ -18,7 +18,6 @@ CONFIG_MODVERSIONS=y
+>  # CONFIG_BLK_DEV_BSG is not set
+>  CONFIG_PARTITION_ADVANCED=y
+>  CONFIG_XES_MPC85xx=y
+> -CONFIG_HIGHMEM=y
+>  CONFIG_MATH_EMULATION=y
+>  CONFIG_PCI=y
+>  CONFIG_PCIEPORTBUS=y
+
+Same here: 2-4GB DDR3, sold 2009-2018
+https://www.xes-inc.com/products/end-of-life-sbcs/xcalibur1501/
+
+> diff --git a/arch/powerpc/configs/chrp32_defconfig 
+> b/arch/powerpc/configs/chrp32_defconfig
+> index b799c95480ae..304de18b51f8 100644
+> --- a/arch/powerpc/configs/chrp32_defconfig
+> +++ b/arch/powerpc/configs/chrp32_defconfig
+> @@ -17,7 +17,6 @@ CONFIG_PARTITION_ADVANCED=y
+>  CONFIG_MAC_PARTITION=y
+>  # CONFIG_PPC_PMAC is not set
+>  CONFIG_GEN_RTC=y
+> -CONFIG_HIGHMEM=y
+>  CONFIG_BINFMT_MISC=y
+>  CONFIG_IRQ_ALL_CPUS=y
+>  CONFIG_ISA=y
+
+Apparently the Pegasos-II could support 2GB if you had the right
+board revision and memory.
+
+> diff --git a/arch/powerpc/configs/mpc86xx_base.config 
+> b/arch/powerpc/configs/mpc86xx_base.config
+> index 632c014b122d..a1ca1f7da240 100644
+> --- a/arch/powerpc/configs/mpc86xx_base.config
+> +++ b/arch/powerpc/configs/mpc86xx_base.config
+> @@ -3,6 +3,5 @@ CONFIG_GEF_PPC9A=y
+>  CONFIG_GEF_SBC310=y
+>  CONFIG_GEF_SBC610=y
+>  CONFIG_MVME7100=y
+> -CONFIG_HIGHMEM=y
+>  CONFIG_KEXEC=y
+>  CONFIG_PROC_KCORE=y
+
+There are four 8640 based boards enabled here, three of them
+support 2GB RAM. Apparently the MVME7100 still has "limited
+availablilty, the others were discontinued in 2018 or before.
+
+> diff --git a/arch/powerpc/configs/pmac32_defconfig 
+> b/arch/powerpc/configs/pmac32_defconfig
+> index ae45f70b29f0..24e73489947a 100644
+> --- a/arch/powerpc/configs/pmac32_defconfig
+> +++ b/arch/powerpc/configs/pmac32_defconfig
+> @@ -20,7 +20,6 @@ CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+>  CONFIG_CPU_FREQ_GOV_USERSPACE=y
+>  CONFIG_CPU_FREQ_PMAC=y
+>  CONFIG_GEN_RTC=y
+> -CONFIG_HIGHMEM=y
+>  CONFIG_BINFMT_MISC=m
+>  CONFIG_HIBERNATION=y
+>  CONFIG_PM_DEBUG=y
+
+A couple of G4 Macs could be upgraded to 2GB.
+
+> diff --git a/arch/powerpc/configs/ppc6xx_defconfig 
+> b/arch/powerpc/configs/ppc6xx_defconfig
+> index bb359643ddc1..75b44ce12332 100644
+> --- a/arch/powerpc/configs/ppc6xx_defconfig
+> +++ b/arch/powerpc/configs/ppc6xx_defconfig
+> @@ -60,7 +60,6 @@ CONFIG_TAU=y
+>  CONFIG_TAU_AVERAGE=y
+>  CONFIG_QE_GPIO=y
+>  CONFIG_MCU_MPC8349EMITX=y
+> -CONFIG_HIGHMEM=y
+>  CONFIG_HZ_1000=y
+>  CONFIG_PREEMPT_VOLUNTARY=y
+>  CONFIG_BINFMT_MISC=y
+
+This includes the mpc86xx boards from mpc86xx_base config.
+
+> diff --git a/arch/powerpc/kvm/book3s.c b/arch/powerpc/kvm/book3s.c
+> index d79c5d1098c0..7489557f582a 100644
+> --- a/arch/powerpc/kvm/book3s.c
+> +++ b/arch/powerpc/kvm/book3s.c
+> @@ -20,7 +20,6 @@
+>  #include <linux/gfp.h>
+>  #include <linux/sched.h>
+>  #include <linux/vmalloc.h>
+> -#include <linux/highmem.h>
+> 
+>  #include <asm/reg.h>
+>  #include <asm/cputable.h>
+
+Right, all the linux/highmem.h inclusions are probably unnecessary
+regardless.
+
+> diff --git a/arch/powerpc/platforms/ps3/system-bus.c 
+> b/arch/powerpc/platforms/ps3/system-bus.c
+> index afbaabf182d0..1f20311ed0c9 100644
+> --- a/arch/powerpc/platforms/ps3/system-bus.c
+> +++ b/arch/powerpc/platforms/ps3/system-bus.c
+> @@ -510,7 +510,7 @@ static void * ps3_alloc_coherent(struct device 
+> *_dev, size_t size,
+>  	struct ps3_system_bus_device *dev = ps3_dev_to_system_bus_dev(_dev);
+>  	unsigned long virt_addr;
+> 
+> -	flag &= ~(__GFP_DMA | __GFP_HIGHMEM);
+> +	flag &= ~__GFP_DMA;
+>  	flag |= __GFP_ZERO;
+> 
+>  	virt_addr = __get_free_pages(flag, get_order(size));
+
+This should never have used __GFP_HIGHMEM since it does not support
+32-bit kernels.
+
+    Arnd
 
