@@ -1,87 +1,115 @@
-Return-Path: <linux-kernel+bounces-809626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155B4B51018
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:58:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCAB5B5106C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C829917C83C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:58:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEF5F7B8339
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF062D24AC;
-	Wed, 10 Sep 2025 07:58:07 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BEF30E0C0;
+	Wed, 10 Sep 2025 07:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ug8330kP"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FEF30DD03
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B86C30DD0B;
+	Wed, 10 Sep 2025 07:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491087; cv=none; b=FnojxO1Ql00QY7GLmK+0sQ+/DAg3WijE/XU/3BtpbuBx7s/TdVZE3BNMX9U4r8uPyeuYRRI5UlVg0hFz1uBTYveQsw7pYPOc4C21r21Od36rkzEAtbWsc3pmaxDaLfv5yjlHMYYB2tE8Mk5Z5IaxeaLB4MPbVGiU5HoSqccfqhc=
+	t=1757491141; cv=none; b=Hqi99WZHTQzfJ6/e1YVy4jtBLqovFKjVyK/jyH83GA4PaDs65v52NRaG3fKGzbrQeFbnM9/qFhrQ52TQ0lbWjRncP8Z7DIPtl6Poyqwk3bLX0srWAaEwPD7/PKGeGesUA/e6onSmNQx3GNi9vnBbFd6+0zT0V+oLe5V45B3JchE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491087; c=relaxed/simple;
-	bh=YPTelKc/fHdiEACPB6+iEdvYqo126hYyR0iawk5xgAM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mg4fY7F+ruo9vHgofns3vMH6JCMG7IAUVr6fTv+eaHl4NkTwqo3gYjWkb2aeDcs1jPQkMPGUrxwTBBLZYSUSAQA9j8Cj5NSP87T/Fv8UktCDSYpHa5mfCroCSwpEMKwRIwNOdrIoK2xUuY08UmYdtDLF+Q4b2Q/E16fhRVnesq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8876712ea4bso1574183039f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:58:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757491084; x=1758095884;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b+bbRBcaCzjk+Nw8lse9LDBiDhyeMETBKDuUNk3pn/Y=;
-        b=nBIy5gUnXKyouXNP78FXGVyjnAntggqVy3jLg+spaglNeO/zivwjeDM0BnztOtYqGf
-         uDiHD9kaQx06+ZpjGByCeqa52p6qpjL/REuADbcaga7WuwegJa9FpluXmT9zY101x/0z
-         6hpv3wmAl2ehtv+u8UrNWMgrkWlcx790bZ61sQDvtCwUoz9ieh8wlygYJUf8xN/50oJq
-         xpOVagA5Kn29WLhRTLQ77KQl+nIOiLVTdJLh2UVBWa/eYr08q8DClWHTVEACmGVxSKFN
-         FTIXDAy5KlPjcGUVNoRY/EnZVBFiGLQW4jcdp0dowjjyvd6KBKIPwfw5YIHi8AccNP/S
-         vQ/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVcpULmbpljtbgOFz4XRBNfou699fxiOPUhbayQWRbJ0tqdi1ml8gndpOf3+d+uN+43mnKDXSP88K2KDHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4i6ib0KgwXmYhtisN0JTrtUUDlYqrdbvKQZOvMA2nQ/CRfih3
-	n9nPzNOcwOVNV2csNA4Er8ZbfFNhnSMyyNwvJF8MBrqffnLN3Q/FWWDZzZEFgF0PKMDAa8pSq8s
-	egMcmmFim412WcCgwcs0xwrNfA0lczPQkv1oHxYNn3yjg95wfGF2ieIeXhio=
-X-Google-Smtp-Source: AGHT+IFZRfJxmgq7njwaPkfAnUWFwWG3HDpMwhRiiZgHWuju4IgcOO0om/65FbdB1POnrD5bty0JReR7g59QocbPZslYvT8bkANf
+	s=arc-20240116; t=1757491141; c=relaxed/simple;
+	bh=mFPObuzpF37b4JTpVbmbqGrsleEfc+vMrJEhgyaAVps=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=pVLfhek52FgnjQj/nrL2qE2EhqRT/6Q8F0NDE2vxCLRZA9wk+LJwL5rjDN7rIfBnc1r4qgMg4hTGNmg+7LkWM98oY9bAxDUEtvRltEZla9S8ZoxXPeLSFi7MTy36HMhX9+6Uje6pmSqIZisKNGbQll9MGdVh+ts4jhKdPvPg30s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ug8330kP; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1757491132; bh=CRkkhFM8grEXCn/UNb5SFiYKtdwx4jQPUUTOBUsnr1w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ug8330kPmNPydiEM9gDJFCIG+fIYeUqjPpBiYS7GQG8RzdEca7ogl3GcM6vn9hXWC
+	 Dp52U0oftRBuqrCHFx7G+EFWBmbMrcFblrCXcsGUufLzLWgeynkt7rt82XwmUPPQXX
+	 xL+e7e/mjPtyXy9zvqD1vO/1DY1gkveCspajISQw=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id EB198E7E; Wed, 10 Sep 2025 15:58:49 +0800
+X-QQ-mid: xmsmtpt1757491129thc94ys5b
+Message-ID: <tencent_B32D6D8C9450EBFEEE5ACC2C7B0E6C402D0A@qq.com>
+X-QQ-XMAILINFO: NG7xP+P+sy64akR4b6dN/NBZT+wuWHSk3x5ICkkVdFquAADQRcZ95scO+BDNin
+	 rmqRjFCvaJRYi2wUAmv2g3t1peLlXlYd/93z8ntRdYLpeVbMV6aghH/my5uSqH8mJO+W8OPacB1w
+	 4XjbfMgX/uBNhSTP49PTBuWm9WAWc10Z6WNSrZ2OyYWRYAoSU4OgRkk6BHQmovyjv03OvcUloZ66
+	 3BYNFmAwhVeM6dnKXAEYneUiwECuuKiojGL2uWwYRwJzjLgT4dLolcZHMoSZLIxjA1CM67Mk7p5M
+	 wVDcL7I1ro+N9tKeImwdXM9csDw8s8UDr7b6Vkxej8nTlA24yjhLDvDap/8WU3RHOAXMknkfzXXy
+	 2xHjJqRocPSBirGTd4GYD6To+c4ZtffDl8VOI2EtpxLkpLiFONV/UaDPi+HS2nJaxj8R/N7dP0iS
+	 a6sANwZliAcqU2llWrYxuplTL/eV3Cmk6S8/i4Y7mh52kmqXuDcl+Rj/0SnCUxvBknooQ7N04O/Q
+	 FueEpYAc205DGXZTzqyXlTB18Czo+U3pcP+nUtpyvCeGNAQu7C670DjmHU64JiETChh+pcLeN7Ta
+	 gfQo2/NEsvsL64FBmkRhwl2GbJG9VMT55GA6wyHAaNF0/bJ9+vaxMSB9dQkz5uNZpTdQjUzN3CcE
+	 c3T1nbe9L00mfLs46v+F/yM+lvfhTBwYyKTgj+zbhzOh6MSTnNXcAXI1ADvJyT8+IbGywpUnCG2Q
+	 0/RdoL0tnlALrqBVqe9yMSoSkrGKLIYiP/gK7yAxGyzgkcCqZbEILjFGACmsL3wnUAwKVNb7Jrnd
+	 baosfSKS+6rh7ge2uN8Ew0XtfOmpTv920IeCTuEE2YcmIxIBC9UwxxzAyjaeSP+rc00W0+XLH7nM
+	 LrV3ECiyDXsTMiIuP0uMM16INfqi9cfBooI6UUcqa6qvpHiozexg/sRxJ3H2tKTYkkw8xIs4IUsr
+	 ruZHBv8u23cfmubf2crLBtrK8N64aTRxSis6pikkWgKLsyaQURXpyxhEWKNhBJ
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
+Cc: dakr@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rafael@kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] USB: core: remove the move buf action
+Date: Wed, 10 Sep 2025 15:58:47 +0800
+X-OQ-MSGID: <20250910075846.1492634-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68c118e8.a70a0220.3543fc.000e.GAE@google.com>
+References: <68c118e8.a70a0220.3543fc.000e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180b:b0:418:aefa:bb83 with SMTP id
- e9e14a558f8ab-418aefabfc2mr7221185ab.5.1757491084402; Wed, 10 Sep 2025
- 00:58:04 -0700 (PDT)
-Date: Wed, 10 Sep 2025 00:58:04 -0700
-In-Reply-To: <tencent_4CCA0CABE7C1C6EC12C0064989A0AEEF6E06@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c12f8c.050a0220.3c6139.001c.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in sysfs_emit_at
-From: syzbot <syzbot+b6445765657b5855e869@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The buffer size of sysfs is fixed at PAGE_SIZE, and the page offset
+of the buf parameter of sysfs_emit_at() must be 0, there is no need
+to manually manage the buf pointer offset.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
+Fixes: 711d41ab4a0e ("usb: core: Use sysfs_emit_at() when showing dynamic IDs")
 Reported-by: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=b6445765657b5855e869
 Tested-by: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ drivers/usb/core/driver.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Tested on:
+diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+index c3177034b779..f441958b0ef4 100644
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -119,11 +119,11 @@ ssize_t usb_show_dynids(struct usb_dynids *dynids, char *buf)
+ 	guard(mutex)(&usb_dynids_lock);
+ 	list_for_each_entry(dynid, &dynids->list, node)
+ 		if (dynid->id.bInterfaceClass != 0)
+-			count += sysfs_emit_at(&buf[count], count, "%04x %04x %02x\n",
++			count += sysfs_emit_at(buf, count, "%04x %04x %02x\n",
+ 					   dynid->id.idVendor, dynid->id.idProduct,
+ 					   dynid->id.bInterfaceClass);
+ 		else
+-			count += sysfs_emit_at(&buf[count], count, "%04x %04x\n",
++			count += sysfs_emit_at(buf, count, "%04x %04x\n",
+ 					   dynid->id.idVendor, dynid->id.idProduct);
+ 	return count;
+ }
+-- 
+2.43.0
 
-commit:         9dd1835e Merge tag 'dma-mapping-6.17-2025-09-09' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=160a7562580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e0bea6c0b97a2002
-dashboard link: https://syzkaller.appspot.com/bug?extid=b6445765657b5855e869
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11d5a642580000
-
-Note: testing is done by a robot and is best-effort only.
 
