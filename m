@@ -1,118 +1,190 @@
-Return-Path: <linux-kernel+bounces-809194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4239B509D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:16:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B09B509DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E8FF5641F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D62C564199
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70D037160;
-	Wed, 10 Sep 2025 00:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D268248C;
+	Wed, 10 Sep 2025 00:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UNU3nwSE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b="HRjMja/4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="efNTW2+U"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B0B2AE89
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9D83BB48;
+	Wed, 10 Sep 2025 00:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757463401; cv=none; b=AKMswcmpkKnK48fmymBLhkByv0rT/qMpy7xE1nxU6XQXO82zXezeKP4eMbRXKtV9h7JUPCIwtbZWWUrPvX0tbu1r16RCBrbsRjvaWS2Qk2oqkRqRLbzAdKRUzfitbqvzxhiH3xJTZnuorIqIu7O8/EyePWLIz10geP8oQ+/TblI=
+	t=1757463514; cv=none; b=XHHmMIw7bteE05M+/eycLHTDA3hIaewbD9jcjofWtg5N/AN5eKO2qp1sS2k1twuuMHPbUoTPQQvxfUaChxgrbA8qsopvenf08PrvSdFa2Ga18yiuoPXv6reVjQ1bQ2v6LFjIvh1KzcZMYqeweUQGNDGj+qV9+jFt6G08SGqZwEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757463401; c=relaxed/simple;
-	bh=jE0+8Pm3ucz6ihmMOGP2buLTGmVRol7Mf7pHdZ4YxqY=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OYjQ7uktGQgzfvS/luKKypucii8L0SmrGiUaJRAZXA03zhkPTyCa8IbmOCIxe4LGYdsb5KDgSr+GEQNI9l1fw3MQtxOpwgLORsnttmzzWCcch6xNXrNuGNmKQaulXSBkckjC5G15xjKMbgkNCJluaexUmHspKJDXfme8Eer7qAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UNU3nwSE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757463397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=reiZcYS1rs95iqH9ENKEpho/m1+5VWQZYJCHL88x2mY=;
-	b=UNU3nwSEZOUWqKl8vUVvyR+MznN+nM2uqoGe3oo71mOKYG1mcRTufkNPDUQ1L2W2dY0EMT
-	lwWd1yJnG3PPupWZA62670i935NHl9MbNEnMscd46SyxE6FgirZqMd4nQHhIXkyfXufTt7
-	X1LL38bgzNNRBx8s7Y2O3+39+KCXxwo=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-612-93VqpowYNW2A2ZpOfyKRvQ-1; Tue,
- 09 Sep 2025 20:16:34 -0400
-X-MC-Unique: 93VqpowYNW2A2ZpOfyKRvQ-1
-X-Mimecast-MFC-AGG-ID: 93VqpowYNW2A2ZpOfyKRvQ_1757463393
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 573D8180029E;
-	Wed, 10 Sep 2025 00:16:32 +0000 (UTC)
-Received: from localhost (unknown [10.22.81.43])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 63C003000198;
-	Wed, 10 Sep 2025 00:16:30 +0000 (UTC)
-Date: Tue, 9 Sep 2025 21:16:28 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	stable-rt <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Carsten Emde <C.Emde@osadl.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Wagner <daniel.wagner@suse.com>,
-	Clark Williams <williams@redhat.com>,
-	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
-	Jeff Brady <jeffreyjbrady@gmail.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Luis Goncalves <lgoncalv@redhat.com>
-Subject: [ANNOUNCE] 5.10.242-rt136
-Message-ID: <aMDDXPp0Wn8Wslym@uudg.org>
+	s=arc-20240116; t=1757463514; c=relaxed/simple;
+	bh=aOH0Jq201iLiKSg/quvkkXH53ymUMzpbza9iH6WfWkg=;
+	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
+	 Content-Type:Date:Message-ID; b=TR7Nz5jNDLr1w4t2xD3SRLxVyHm9gXZwbGMbzgcbGzWPPSL5+oAFlsTzXf3xBecFP+TPI7vH+Y4z+kuI3Q6jtw0DPACdiWd+yiiYCP23fa3Umel+MrP5l0huZOlANf34bLxsm6ckkshq0H7rH3zxDKLGd6oAu2dGiWH800rEXbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net; spf=pass smtp.mailfrom=jvosburgh.net; dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b=HRjMja/4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=efNTW2+U; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jvosburgh.net
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id F1B891D001A1;
+	Tue,  9 Sep 2025 20:18:28 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Tue, 09 Sep 2025 20:18:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jvosburgh.net;
+	 h=cc:cc:content-id:content-type:content-type:date:date:from
+	:from:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1757463508; x=
+	1757549908; bh=tVXgzjU/XUoqT7AJ6v4aTSUob1Q0o5B4bDZFNZjqRO0=; b=H
+	RjMja/4XZSLLS1DeCx0ydinru7rgC6h6V3zU6svcdW7OMyEbKbk+69BLv92UduIH
+	OglTvba2DFIOOJcgW7QUPpIDUf5Dp9NuCtIBp6B8uegI7RqGIYedH1D16pro8SDq
+	uXKXTbgbL1D21KsVE5r05l5/Fk9gJchqnzXuqGXSt/mH319FQa6TjNV4NdAaync2
+	Ob5QgL04lf6lV/L1nwlp+GXNnJzE1Qu3nxbmsrY3vwvKyGAqtjCn4z40SFVGF3uo
+	u400zhRngsclY5y2ew5qWyEtT4lvYJRXdNhLNGVzfzzKgLCGsrtXkU8tSZFLwMfA
+	Y5M2IHZJAwV2usRDfXLwQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-id:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm1; t=1757463508; x=1757549908; bh=t
+	VXgzjU/XUoqT7AJ6v4aTSUob1Q0o5B4bDZFNZjqRO0=; b=efNTW2+UtpRG4yrBj
+	+Gl7CBqfaWpUZr2n1fBGM3vFZTUaKCJmb81sSu5RYYdZPJAqulH3Veutm03e21al
+	QWUDgFVyJ7tihEyixK5FqQ8FDQ+utKg7ON7UgxMIMAyOLnEwLSlWd6lvpx+MAqJJ
+	d+LQQeLJoHL9XxR0EoCGyAJeLCy9DZ9LqzQSuwjjFk51Jr89cAuoO2A8MPXOXbKG
+	MS38XLBueP69seAGf4cUb2de4BVvfIkWKbT4QDdRWV7acPCFb1kr6vRUsqH1Hrii
+	nKU7/pe8JMFEFT/4DwU/31gZ/Z/5LfdNr4nSwlTjwqqiI0P6PpdAMnhZKqL9D4cr
+	/sZ4Q==
+X-ME-Sender: <xms:1MPAaH-kse870N3cS2DoSnGbi_yuQUUq8R6jZCU1hcjyK1jtBUQlag>
+    <xme:1MPAaH3Gdilw8ATRMZoJ5jVXUxNO3R8HIUTq32kTgTvLnAymBWe3JvWY9qGHiaYYe
+    42_10Ox1d27TsKbvyc>
+X-ME-Received: <xmr:1MPAaCCQZwhJmEoad_VAzhBK20DpRBslsCM8i8TF4E1RdlYIAJrhDSy7B5plP__Ob5O_gQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvudekvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufgjfhfogggtfffksehttdertdertddvnecuhfhrohhmpeflrgihucggohhs
+    sghurhhghhcuoehjvhesjhhvohhssghurhhghhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epjedvgffhteevvddufedvjeegleetveekveegtdfhudekveeijeeuheekgeffjedunecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhvsehjvh
+    hoshgsuhhrghhhrdhnvghtpdhnsggprhgtphhtthhopedujedpmhhouggvpehsmhhtphho
+    uhhtpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtth
+    hopehlvghithgrohesuggvsghirghnrdhorhhgpdhrtghpthhtoheprghsrghnthhoshht
+    tgesghhmrghilhdrtghomhdprhgtphhtthhopegvfhgruhhlthesghhmgidruggvpdhrtg
+    hpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopeguvggt
+    ohhtsehgohhoghhlvghrshdrtghomhdprhgtphhtthhopehhohhrmhhssehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    shhhuhgrhheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:1MPAaOC59v9Scb9GQPc7MMgrSJWR3oGt2jked5PGLq99FbyeTLBXPQ>
+    <xmx:1MPAaDM9MmTlJWaUGke5P3h-GP69vlSH0Bp2HVIHp8GQ2LLqRkyD0Q>
+    <xmx:1MPAaIOTI37BCrupPgHsjNa-62m_fE9FjDBx3DzFeIFHMaGcYCajYQ>
+    <xmx:1MPAaHscmt_Xkc9Wr_TKpXMBsXOlc9BEvzjcYTn0af0BEbZoKCTqTQ>
+    <xmx:1MPAaERXujxLuFOuRrJPwTXaM31tgNxvlN8lRB5kmpthpLl7i75-bUrZ>
+Feedback-ID: i53714940:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 9 Sep 2025 20:18:27 -0400 (EDT)
+Received: by famine.localdomain (Postfix, from userid 1000)
+	id C55109FCB4; Tue,  9 Sep 2025 17:18:26 -0700 (PDT)
+Received: from famine (localhost [127.0.0.1])
+	by famine.localdomain (Postfix) with ESMTP id C34F09FC62;
+	Tue,  9 Sep 2025 17:18:26 -0700 (PDT)
+From: Jay Vosburgh <jv@jvosburgh.net>
+To: Jakub Kicinski <kuba@kernel.org>
+cc: Calvin Owens <calvin@wbinvd.org>, Breno Leitao <leitao@debian.org>,
+    Andrew Lunn <andrew+netdev@lunn.ch>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>,
+    david decotigny <decot@googlers.com>, linux-kernel@vger.kernel.org,
+    netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+    asantostc@gmail.com, efault@gmx.de, kernel-team@meta.com,
+    stable@vger.kernel.org
+Subject: Re: [PATCH net v3 1/3] netpoll: fix incorrect refcount handling
+ causing incorrect cleanup
+In-reply-to: <20250908182958.23dc4ba0@kernel.org>
+References: <20250905-netconsole_torture-v3-0-875c7febd316@debian.org>
+ <20250905-netconsole_torture-v3-1-875c7febd316@debian.org>
+ <aL9A3JDyx3TxAzLf@mozart.vkv.me> <20250908182958.23dc4ba0@kernel.org>
+Comments: In-reply-to Jakub Kicinski <kuba@kernel.org>
+   message dated "Mon, 08 Sep 2025 18:29:58 -0700."
+X-Mailer: MH-E 8.6+git; nmh 1.8+dev; Emacs 29.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2930647.1757463506.1@famine>
+Date: Tue, 09 Sep 2025 17:18:26 -0700
+Message-ID: <2930648.1757463506@famine>
 
-Hello RT-list!
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-I'm pleased to announce the 5.10.242-rt136 stable release.
+>On Mon, 8 Sep 2025 13:47:24 -0700 Calvin Owens wrote:
+>> I wonder if there might be a demon lurking in bonding+netpoll that this
+>> was papering over? Not a reason not to fix the leaks IMO, I'm just
+>> curious, I don't want to spend time on it if you already did :)
+>
+>+1, I also feel like it'd be good to have some bonding tests in place
+>when we're removing a hack added specifically for bonding.
 
-This release is just an update to the new stable 5.10.242 version and
-no RT-specific changes have been performed.
+	I'll disclaimer this by saying up front that I'm not super
+familiar with the innards of netpoll.
 
-You can get this release via the git tree at:
+	That said, I looked at commit efa95b01da18 ("netpoll: fix use
+after free") and the relevant upstream discussion, and I'm not sure the
+assertion that "After a bonding master reclaims the netpoll info struct,
+slaves could still hold a pointer to the reclaimed data" is correct.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+	I'm not sure the efa9 patch's reference count math is
+correct (more on that below).
 
-  branch: v5.10-rt
-  Head SHA1: e9649d7c452c4703d354f6bf1acc06107009aa67
+	Second, I'm a bit unsure what's going on with the struct netpoll
+*np parameter of __netpoll_setup for the second and subsequent netpoll
+instances (i.e., second and later call), as the function will
+unconditionally do
 
-Or to build 5.10.242-rt136 directly, the following patches should be applied:
+	npinfo->netpoll = np;
 
-  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
+	which it seems like would overwrite the "np" supplied by any
+prior calls to __netpoll_setup.  In bonding, slave_enable_netpoll()
+stashes the "np" it allocates as slave->np, and slave_disable_netpoll
+relies on __netpoll_free to free it, so I don't think it's lost, but it
+seems like netpoll internally only tracks one of these at a time,
+regardless of the reference count.
 
-  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.242.xz
+	On the reference counting, the upstream example from the prior
+discussion includes:
 
-  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.242-rt136.patch.xz
+    mkdir /sys/kernel/config/netconsole/blah
+    echo 0 > /sys/kernel/config/netconsole/blah/enabled
+    echo bond0 > /sys/kernel/config/netconsole/blah/dev_name
+    echo 192.168.56.42 > /sys/kernel/config/netconsole/blah/remote_ip
+    echo 1 > /sys/kernel/config/netconsole/blah/enabled
+    # npinfo refcnt ->1
+    ifenslave bond0 eth1
+    # npinfo refcnt ->2
+    ifenslave bond0 eth0
+    # (this should be optional, preventing ndo_cleanup_nepoll below)
+    # npinfo refcnt ->3
 
-Signing key fingerprint:
+	I'm suspicious of the refcnt values here; both then and now, the
+npinfo for each of the relevant interfaces is a separate per-interface
+allocation in __netpoll_setup, so I'm not sure what exactly is supposed
+to be getting a refcnt of 3.
 
-  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
+	If there are two netpoll instances using the slave in question
+(either directly or via the bond itself), then clearing the
+np->dev->npinfo pointer looks like the wrong thing to do until the last
+reference is released.
 
-All keys used for the above files and repositories can be found on the
-following git repository:
+	-J
 
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-
-Enjoy!
-Luis
-
+---
+	-Jay Vosburgh, jv@jvosburgh.net
 
