@@ -1,115 +1,79 @@
-Return-Path: <linux-kernel+bounces-809643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCAB5B5106C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:03:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A48B51063
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEF5F7B8339
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:00:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A76A2482AF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BEF30E0C0;
-	Wed, 10 Sep 2025 07:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6050630E839;
+	Wed, 10 Sep 2025 07:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ug8330kP"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMUjGtan"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B86C30DD0B;
-	Wed, 10 Sep 2025 07:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B288830DEA5;
+	Wed, 10 Sep 2025 07:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491141; cv=none; b=Hqi99WZHTQzfJ6/e1YVy4jtBLqovFKjVyK/jyH83GA4PaDs65v52NRaG3fKGzbrQeFbnM9/qFhrQ52TQ0lbWjRncP8Z7DIPtl6Poyqwk3bLX0srWAaEwPD7/PKGeGesUA/e6onSmNQx3GNi9vnBbFd6+0zT0V+oLe5V45B3JchE=
+	t=1757491186; cv=none; b=VL26YClQCfTbrR3l5FPvIT4ncPrgkmjzHkU8zpXkNq+DGfO95DM/m8GffRd93igN/xIe/NbM9canguGuXbrOldF9eGoFkJYSHu96VV4WDhdDfMay2bKqjFbHhVh3YnxaR3c1fHxhx/J/DaSlGPi0jdfaAmQgPZ9H/ypJ595kTEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491141; c=relaxed/simple;
-	bh=mFPObuzpF37b4JTpVbmbqGrsleEfc+vMrJEhgyaAVps=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=pVLfhek52FgnjQj/nrL2qE2EhqRT/6Q8F0NDE2vxCLRZA9wk+LJwL5rjDN7rIfBnc1r4qgMg4hTGNmg+7LkWM98oY9bAxDUEtvRltEZla9S8ZoxXPeLSFi7MTy36HMhX9+6Uje6pmSqIZisKNGbQll9MGdVh+ts4jhKdPvPg30s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ug8330kP; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1757491132; bh=CRkkhFM8grEXCn/UNb5SFiYKtdwx4jQPUUTOBUsnr1w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ug8330kPmNPydiEM9gDJFCIG+fIYeUqjPpBiYS7GQG8RzdEca7ogl3GcM6vn9hXWC
-	 Dp52U0oftRBuqrCHFx7G+EFWBmbMrcFblrCXcsGUufLzLWgeynkt7rt82XwmUPPQXX
-	 xL+e7e/mjPtyXy9zvqD1vO/1DY1gkveCspajISQw=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id EB198E7E; Wed, 10 Sep 2025 15:58:49 +0800
-X-QQ-mid: xmsmtpt1757491129thc94ys5b
-Message-ID: <tencent_B32D6D8C9450EBFEEE5ACC2C7B0E6C402D0A@qq.com>
-X-QQ-XMAILINFO: NG7xP+P+sy64akR4b6dN/NBZT+wuWHSk3x5ICkkVdFquAADQRcZ95scO+BDNin
-	 rmqRjFCvaJRYi2wUAmv2g3t1peLlXlYd/93z8ntRdYLpeVbMV6aghH/my5uSqH8mJO+W8OPacB1w
-	 4XjbfMgX/uBNhSTP49PTBuWm9WAWc10Z6WNSrZ2OyYWRYAoSU4OgRkk6BHQmovyjv03OvcUloZ66
-	 3BYNFmAwhVeM6dnKXAEYneUiwECuuKiojGL2uWwYRwJzjLgT4dLolcZHMoSZLIxjA1CM67Mk7p5M
-	 wVDcL7I1ro+N9tKeImwdXM9csDw8s8UDr7b6Vkxej8nTlA24yjhLDvDap/8WU3RHOAXMknkfzXXy
-	 2xHjJqRocPSBirGTd4GYD6To+c4ZtffDl8VOI2EtpxLkpLiFONV/UaDPi+HS2nJaxj8R/N7dP0iS
-	 a6sANwZliAcqU2llWrYxuplTL/eV3Cmk6S8/i4Y7mh52kmqXuDcl+Rj/0SnCUxvBknooQ7N04O/Q
-	 FueEpYAc205DGXZTzqyXlTB18Czo+U3pcP+nUtpyvCeGNAQu7C670DjmHU64JiETChh+pcLeN7Ta
-	 gfQo2/NEsvsL64FBmkRhwl2GbJG9VMT55GA6wyHAaNF0/bJ9+vaxMSB9dQkz5uNZpTdQjUzN3CcE
-	 c3T1nbe9L00mfLs46v+F/yM+lvfhTBwYyKTgj+zbhzOh6MSTnNXcAXI1ADvJyT8+IbGywpUnCG2Q
-	 0/RdoL0tnlALrqBVqe9yMSoSkrGKLIYiP/gK7yAxGyzgkcCqZbEILjFGACmsL3wnUAwKVNb7Jrnd
-	 baosfSKS+6rh7ge2uN8Ew0XtfOmpTv920IeCTuEE2YcmIxIBC9UwxxzAyjaeSP+rc00W0+XLH7nM
-	 LrV3ECiyDXsTMiIuP0uMM16INfqi9cfBooI6UUcqa6qvpHiozexg/sRxJ3H2tKTYkkw8xIs4IUsr
-	 ruZHBv8u23cfmubf2crLBtrK8N64aTRxSis6pikkWgKLsyaQURXpyxhEWKNhBJ
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
-Cc: dakr@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rafael@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] USB: core: remove the move buf action
-Date: Wed, 10 Sep 2025 15:58:47 +0800
-X-OQ-MSGID: <20250910075846.1492634-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <68c118e8.a70a0220.3543fc.000e.GAE@google.com>
-References: <68c118e8.a70a0220.3543fc.000e.GAE@google.com>
+	s=arc-20240116; t=1757491186; c=relaxed/simple;
+	bh=gHRPiMfD/P1RXxFuG3WCUYCOP8iCBS2qErNi8xfZIf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DP1M0AWrz3HqWdau6omrZwgUdZTnp50dl8MCghHQzLO/NaJikpH4ycn01PJQaUeem3o2Fk6mJyEQRequzkwdZTStBWzR/g/ORsPWgMQN1S31IdR/4pXKBK2vBYiWyHKGdoh5/+id7/EEz4fZTvKB/pI9zbhuhO4b4PvRamweVPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMUjGtan; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 883C1C4CEF0;
+	Wed, 10 Sep 2025 07:59:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757491186;
+	bh=gHRPiMfD/P1RXxFuG3WCUYCOP8iCBS2qErNi8xfZIf4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NMUjGtanNgDMLjWGcM2/wQ7wr07ehIVgPSceSZXUquehEf2KqvAIPSO5EMggjg9uk
+	 hbpXJZWWWCpfXhw0LenaPqfUCAS87Z3EvN/xPv8k+3yYcQU4j3Z7h3Zo8tyl7gFITt
+	 YOEt7bCNeIMzh2tZlDk8yyi4Goavwxwwq5IN2Wm6RKClqOE2qx5FtDmI0i9AjCpYN7
+	 TH/M217lOlA7/J15RXpfhX/y68bWsTBAkZDbNW79f6J6ohVLsvl98Q+Z0Hxiq0crTk
+	 dwXDoMWNyvbZmtn1Q2xKQsU7qwjZZ01olNg1c9QRs3GCQIqOt+Q7MeN381lzNxDRhr
+	 PxiQO6WlSSp5A==
+Date: Wed, 10 Sep 2025 09:59:43 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Harikrishna Shenoy <h-shenoy@ti.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, airlied@gmail.com, 
+	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	sjakhade@cadence.com, yamonkar@cadence.com, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, devarsht@ti.com, u-kumar1@ti.com, 
+	s-jain1@ti.com
+Subject: Re: [PATCH v4] dt-bindings: drm/bridge: MHDP8546 bridge binding
+ changes for DSC
+Message-ID: <20250910-silent-classic-vicugna-fdc1ab@kuoka>
+References: <20250909054622.1439487-1-h-shenoy@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250909054622.1439487-1-h-shenoy@ti.com>
 
-The buffer size of sysfs is fixed at PAGE_SIZE, and the page offset
-of the buf parameter of sysfs_emit_at() must be 0, there is no need
-to manually manage the buf pointer offset.
+On Tue, Sep 09, 2025 at 11:16:22AM +0530, Harikrishna Shenoy wrote:
+> From: Swapnil Jakhade <sjakhade@cadence.com>
+> 
+> Add binding changes for DSC(Display Stream Compression) in the MHDP8546
+> DPI/DP bridge.
 
-Fixes: 711d41ab4a0e ("usb: core: Use sysfs_emit_at() when showing dynamic IDs")
-Reported-by: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=b6445765657b5855e869
-Tested-by: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- drivers/usb/core/driver.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Also, where is any user of this change (DSC)? Why are you adding changes
+to the bindings which no one uses?
 
-diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-index c3177034b779..f441958b0ef4 100644
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -119,11 +119,11 @@ ssize_t usb_show_dynids(struct usb_dynids *dynids, char *buf)
- 	guard(mutex)(&usb_dynids_lock);
- 	list_for_each_entry(dynid, &dynids->list, node)
- 		if (dynid->id.bInterfaceClass != 0)
--			count += sysfs_emit_at(&buf[count], count, "%04x %04x %02x\n",
-+			count += sysfs_emit_at(buf, count, "%04x %04x %02x\n",
- 					   dynid->id.idVendor, dynid->id.idProduct,
- 					   dynid->id.bInterfaceClass);
- 		else
--			count += sysfs_emit_at(&buf[count], count, "%04x %04x\n",
-+			count += sysfs_emit_at(buf, count, "%04x %04x\n",
- 					   dynid->id.idVendor, dynid->id.idProduct);
- 	return count;
- }
--- 
-2.43.0
+Best regards,
+Krzysztof
 
 
