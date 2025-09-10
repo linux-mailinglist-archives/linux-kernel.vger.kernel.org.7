@@ -1,225 +1,308 @@
-Return-Path: <linux-kernel+bounces-809650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD25B5106A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:03:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D478B51083
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB36E1C80AAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:03:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E673BDC44
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448E73101C7;
-	Wed, 10 Sep 2025 08:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7679D3164A8;
+	Wed, 10 Sep 2025 08:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9hu+wut"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MnPJRboF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="esJ5Hvj2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MnPJRboF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="esJ5Hvj2"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749133101A7;
-	Wed, 10 Sep 2025 08:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F2D314B8A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491288; cv=none; b=ddbgKOhlXVHtJr3rtSOevaz3hYZPqqYbTcpG7UlNkobi0uwYZJn0E/Ybc0/Ia/BP2cnGUIsO/iTcOSiY50V1o+DgxWp1CdTmwV6x+FICGVZarKCLX7Q4ScMScdS557JGEmc6DyIa0+8SglAQj6hmU90/cklG+NAjUxfHW6Denvg=
+	t=1757491363; cv=none; b=eOJcOgG91lW1XjLU+5B2pH++zgpcVQII295rGfD43OajT3q8fXkh6m2dqqvEty9FoTllTbr1Bzz2wYqT5sqoDpi4kJIo/6jU4jsU+cAhlMIeGA+VO0y+S2oXM199k6UgjO1x8NRr/d4NtQjT81zY9P5toZ4zVU6JpALQskZc5B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491288; c=relaxed/simple;
-	bh=W9AyICeigCjB4ZfW6Mn13qQroeZohBNvhnwa50EVj9s=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=sJ3RJ5u4dwlZ6BuQ1PA7ig9easlwJHSh/dyCJyJUjJCCFCEoPUdOeYA5iEJLUPV5osECI3auh0AQDlckOTD70Q6CHjvfaCHuUnjDg+qgdgUaUu09L1Cj3X/rTb6tIW45OLdKZ1lS9C55XCIRmsKKsfAxadRVmuvy7muiQYG33o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9hu+wut; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6E1DC4CEF5;
-	Wed, 10 Sep 2025 08:01:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757491288;
-	bh=W9AyICeigCjB4ZfW6Mn13qQroeZohBNvhnwa50EVj9s=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=O9hu+wutcuu/Q7972UJxuki8Y3HF4ragOWc7XGwFauq0XvJt5T/41JaU7f3ND83lO
-	 EVRVi9iOwSjLuwb6kX7NPM10qUQFLq0OnnSD35bMP+nXottJf4RDXgzxBESv7bUZgT
-	 AlwjvU4+dydveIghjt8smeGX8GqNRzYAUopY6BXbQhfZayr5d3hdU3NAFcOYyTvWXN
-	 xgIA1u/iIR0GClqtjHMuVTVU/y7N3th6G6/NoazYd+uoYfiOvKtQYu0xxxtCqQKtUP
-	 UoLc3sdaX9535hMlddg5lLAjLv8Z2XnGYx2dM73rzI8s74z9PjMVhTevClGKq8Lgcq
-	 VZ5K6xEMCyIrg==
+	s=arc-20240116; t=1757491363; c=relaxed/simple;
+	bh=hL/uYA3U34m1+gJpgX8WkZHdiwJVs5hstD7odj5T4U0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LkffZCOMul+sy+bpqf97R6TovkfbT6NOo8ZYgYGB+4/7lRmsGLQ6JExr4lEhHTSpzDmUh4cQjISwrV9iFMbkod3rqlYCCYEfr4e6hBOP0d521mCqMIxNUPJqsw66UoXddqHcTj9RuzsQV1WmXC61orelj643DTRnKyXVRE0p4Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MnPJRboF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=esJ5Hvj2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MnPJRboF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=esJ5Hvj2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 78E7E5CB97;
+	Wed, 10 Sep 2025 08:01:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757491267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rqh/ojynYkYiIA62N7CbXckVi4xdirpy4Yia9XnPMB4=;
+	b=MnPJRboFgZMIbt5IKIPfJ6iLTv8kHaJ/WplabiJTV8bqN/ghZC3smI8JFrAxu6K5HJlvVT
+	ORVtIah1FGK/csqvSMRCBd9CP1uNxoCbtgLJb7t34guamaJrPAjZ6gw+C0BY6tZYyJ8/QN
+	j/R++l4QTRXYqwbfxLgCfT4Z7paEWck=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757491267;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rqh/ojynYkYiIA62N7CbXckVi4xdirpy4Yia9XnPMB4=;
+	b=esJ5Hvj2liQq/UumgoT0wUhi+UkAhJVchiVMkWRwQpaoHKltMer0pkevyzBz5htNbm3uXR
+	MszEvC4j57xYb6DA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757491267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rqh/ojynYkYiIA62N7CbXckVi4xdirpy4Yia9XnPMB4=;
+	b=MnPJRboFgZMIbt5IKIPfJ6iLTv8kHaJ/WplabiJTV8bqN/ghZC3smI8JFrAxu6K5HJlvVT
+	ORVtIah1FGK/csqvSMRCBd9CP1uNxoCbtgLJb7t34guamaJrPAjZ6gw+C0BY6tZYyJ8/QN
+	j/R++l4QTRXYqwbfxLgCfT4Z7paEWck=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757491267;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rqh/ojynYkYiIA62N7CbXckVi4xdirpy4Yia9XnPMB4=;
+	b=esJ5Hvj2liQq/UumgoT0wUhi+UkAhJVchiVMkWRwQpaoHKltMer0pkevyzBz5htNbm3uXR
+	MszEvC4j57xYb6DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 638E713ABF;
+	Wed, 10 Sep 2025 08:01:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IDsFGEMwwWgGJAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 10 Sep 2025 08:01:07 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+Date: Wed, 10 Sep 2025 10:01:22 +0200
+Subject: [PATCH v8 20/23] tools/testing: Add support for prefilled slab
+ sheafs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 10 Sep 2025 10:01:22 +0200
-Message-Id: <DCOYNWXYKBOK.XCRA4Z34RUXP@kernel.org>
-Subject: Re: [PATCH v3 02/11] gpu: nova-core: move GSP boot code out of
- `Gpu` constructor
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Joel
- Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-To: "Alexandre Courbot" <acourbot@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250902-nova_firmware-v3-0-56854d9c5398@nvidia.com>
- <20250902-nova_firmware-v3-2-56854d9c5398@nvidia.com>
- <843554b1-f4c5-43f5-a23b-583339708bea@kernel.org>
- <DCIZ79KKSSF1.25NJT5ZWR3OOS@nvidia.com>
- <DCJ0UA7KM9AP.OGO7EJB4ORQP@kernel.org>
- <DCOBWF0EZLHF.3FFVAB16SJ3FW@nvidia.com>
- <DCOCL398HXDH.3QH9U6UGGIUP1@kernel.org>
- <DCOUK0Z4YV6M.2R0CFE57DY5CR@nvidia.com>
-In-Reply-To: <DCOUK0Z4YV6M.2R0CFE57DY5CR@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250910-slub-percpu-caches-v8-20-ca3099d8352c@suse.cz>
+References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
+In-Reply-To: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
+To: Suren Baghdasaryan <surenb@google.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
+ Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+ Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+ maple-tree@lists.infradead.org, vbabka@suse.cz
+X-Mailer: b4 0.14.2
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz];
+	R_RATELIMIT(0.00)[to_ip_from(RLwn5r54y1cp81no5tmbbew5oc),to(RL941jgdop1fyjkq8h4)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On Wed Sep 10, 2025 at 6:48 AM CEST, Alexandre Courbot wrote:
-> On Tue Sep 9, 2025 at 11:43 PM JST, Danilo Krummrich wrote:
->> 	impl Gpu {
->> 	    pub(crate) fn new<'a>(
->> 	        dev: &'a Device<Bound>,
->> 	        bar: &'a Bar0
->> 	        devres_bar: Arc<Devres<Bar0>>,
->> 	    ) -> impl PinInit<Self, Error> + 'a {
->> 	        try_pin_init(Self {
->> 	            bar: devres_bar,
->> 	            spec: Spec::new(bar)?,
->> 	            gsp_falcon: Falcon::<Gsp>::new(dev, spec.chipset)?,
->> 	            sec2_falcon: Falcon::<Sec2>::new(dev, spec.chipset)?,
->> 	            sysmem_flush: SysmemFlush::register(dev, bar, spec.chipset)=
-?
->> 	            gsp <- Gsp::new(gsp_falcon, sec2_falcon, sysmem_flush)?,
->> 	        })
->> 	    }
->> 	}
->
-> It does work. The bizareness of passing the `bar` twice aside,
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
 
-Yeah, but it really seems like a minor inconvinience. (Especially, since th=
-is
-will be the only occurance of this we'll ever have.)
+Add the prefilled sheaf structs to the slab header and the associated
+functions to the testing/shared/linux.c file.
 
-> here is what it looks like when I got it to compile:
+Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ tools/include/linux/slab.h   | 28 ++++++++++++++
+ tools/testing/shared/linux.c | 89 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 117 insertions(+)
 
-This looks great!
+diff --git a/tools/include/linux/slab.h b/tools/include/linux/slab.h
+index c5c5cc6db5668be2cc94c29065ccfa7ca7b4bb08..94937a699402bd1f31887dfb52b6fd0a3c986f43 100644
+--- a/tools/include/linux/slab.h
++++ b/tools/include/linux/slab.h
+@@ -123,6 +123,18 @@ struct kmem_cache_args {
+ 	void (*ctor)(void *);
+ };
+ 
++struct slab_sheaf {
++	union {
++		struct list_head barn_list;
++		/* only used for prefilled sheafs */
++		unsigned int capacity;
++	};
++	struct kmem_cache *cache;
++	unsigned int size;
++	int node; /* only used for rcu_sheaf */
++	void *objects[];
++};
++
+ static inline void *kzalloc(size_t size, gfp_t gfp)
+ {
+ 	return kmalloc(size, gfp | __GFP_ZERO);
+@@ -173,5 +185,21 @@ __kmem_cache_create(const char *name, unsigned int size, unsigned int align,
+ void kmem_cache_free_bulk(struct kmem_cache *cachep, size_t size, void **list);
+ int kmem_cache_alloc_bulk(struct kmem_cache *cachep, gfp_t gfp, size_t size,
+ 			  void **list);
++struct slab_sheaf *
++kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size);
++
++void *
++kmem_cache_alloc_from_sheaf(struct kmem_cache *s, gfp_t gfp,
++		struct slab_sheaf *sheaf);
++
++void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
++		struct slab_sheaf *sheaf);
++int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
++		struct slab_sheaf **sheafp, unsigned int size);
++
++static inline unsigned int kmem_cache_sheaf_size(struct slab_sheaf *sheaf)
++{
++	return sheaf->size;
++}
+ 
+ #endif		/* _TOOLS_SLAB_H */
+diff --git a/tools/testing/shared/linux.c b/tools/testing/shared/linux.c
+index 97b8412ccbb6d222604c7b397c53c65618d8d51b..4ceff7969b78cf8e33cd1e021c68bc9f8a02a7a1 100644
+--- a/tools/testing/shared/linux.c
++++ b/tools/testing/shared/linux.c
+@@ -137,6 +137,12 @@ void kmem_cache_free_bulk(struct kmem_cache *cachep, size_t size, void **list)
+ 	if (kmalloc_verbose)
+ 		pr_debug("Bulk free %p[0-%zu]\n", list, size - 1);
+ 
++	if (cachep->exec_callback) {
++		if (cachep->callback)
++			cachep->callback(cachep->private);
++		cachep->exec_callback = false;
++	}
++
+ 	pthread_mutex_lock(&cachep->lock);
+ 	for (int i = 0; i < size; i++)
+ 		kmem_cache_free_locked(cachep, list[i]);
+@@ -242,6 +248,89 @@ __kmem_cache_create_args(const char *name, unsigned int size,
+ 	return ret;
+ }
+ 
++struct slab_sheaf *
++kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size)
++{
++	struct slab_sheaf *sheaf;
++	unsigned int capacity;
++
++	if (s->exec_callback) {
++		if (s->callback)
++			s->callback(s->private);
++		s->exec_callback = false;
++	}
++
++	capacity = max(size, s->sheaf_capacity);
++
++	sheaf = calloc(1, sizeof(*sheaf) + sizeof(void *) * capacity);
++	if (!sheaf)
++		return NULL;
++
++	sheaf->cache = s;
++	sheaf->capacity = capacity;
++	sheaf->size = kmem_cache_alloc_bulk(s, gfp, size, sheaf->objects);
++	if (!sheaf->size) {
++		free(sheaf);
++		return NULL;
++	}
++
++	return sheaf;
++}
++
++int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
++		 struct slab_sheaf **sheafp, unsigned int size)
++{
++	struct slab_sheaf *sheaf = *sheafp;
++	int refill;
++
++	if (sheaf->size >= size)
++		return 0;
++
++	if (size > sheaf->capacity) {
++		sheaf = kmem_cache_prefill_sheaf(s, gfp, size);
++		if (!sheaf)
++			return -ENOMEM;
++
++		kmem_cache_return_sheaf(s, gfp, *sheafp);
++		*sheafp = sheaf;
++		return 0;
++	}
++
++	refill = kmem_cache_alloc_bulk(s, gfp, size - sheaf->size,
++				       &sheaf->objects[sheaf->size]);
++	if (!refill)
++		return -ENOMEM;
++
++	sheaf->size += refill;
++	return 0;
++}
++
++void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
++		 struct slab_sheaf *sheaf)
++{
++	if (sheaf->size)
++		kmem_cache_free_bulk(s, sheaf->size, &sheaf->objects[0]);
++
++	free(sheaf);
++}
++
++void *
++kmem_cache_alloc_from_sheaf(struct kmem_cache *s, gfp_t gfp,
++		struct slab_sheaf *sheaf)
++{
++	void *obj;
++
++	if (sheaf->size == 0) {
++		printf("Nothing left in sheaf!\n");
++		return NULL;
++	}
++
++	obj = sheaf->objects[--sheaf->size];
++	sheaf->objects[sheaf->size] = NULL;
++
++	return obj;
++}
++
+ /*
+  * Test the test infrastructure for kem_cache_alloc/free and bulk counterparts.
+  */
 
->     pub(crate) fn new<'a>(
->         pdev: &'a pci::Device<device::Bound>,
->         devres_bar: Arc<Devres<Bar0>>,
->         bar: &'a Bar0,
->     ) -> impl PinInit<Self, Error> + 'a {
->         try_pin_init!(Self {
->             spec: Spec::new(bar).inspect(|spec| {
->                 dev_info!(
->                     pdev.as_ref(),
->                     "NVIDIA (Chipset: {}, Architecture: {:?}, Revision: {=
-})\n",
->                     spec.chipset,
->                     spec.chipset.arch(),
->                     spec.revision
->                 );
->             })?,
+-- 
+2.51.0
 
-+             _: {
-+                 gfw::wait_gfw_boot_completion(bar)
-+                     .inspect_err(|_| dev_err!(pdev.as_ref(), "GFW boot di=
-d not complete"))?;
-+             },
->
->             sysmem_flush: SysmemFlush::register(pdev.as_ref(), bar, spec.=
-chipset)?,
->
->             gsp_falcon: Falcon::<Gsp>::new(
->                 pdev.as_ref(),
->                 spec.chipset,
->                 bar,
->                 spec.chipset > Chipset::GA100,
->             )
->             .inspect(|falcon| falcon.clear_swgen0_intr(bar))?,
->
->             sec2_falcon: Falcon::<Sec2>::new(pdev.as_ref(), spec.chipset,=
- bar, true)?,
->
--             gsp: Self::start_gsp(pdev, bar, spec.chipset, gsp_falcon, sec=
-2_falcon)?,
-+             gsp <- Self::start_gsp(pdev, bar, spec.chipset, gsp_falcon, s=
-ec2_falcon),
->
->             bar: devres_bar,
->         })
->     }
->
-> The wait for GFW initialization had to be moved to `probe`, but that's
-> fine IMO.
-
-That's not necessary, you can keep it in Gpu::new() -- I don't see what's
-preventing us from that. I inserted it in the code above.
-
-> I do however find the code less readable in this form, less
-> editable as well. And LSP seems lost, so I don't get any syntax
-> highlighting in the `try_pin_init` block.
-
-Benno is working on a syntax update, so automatic formatting etc. will prop=
-erly
-work.
-
-Otherwise, I can't see how this is a downgrade. It represents the initializ=
-ation
-process in a much clearer way that the current implementation of Gsp::new()=
-,
-which is rather messy.
-
-> Fundamentally, this changes the method from a fallible method returning
-> a non-fallible initializer into a non-fallible method returning a
-> fallible initializer.
-
-Yeah, that's the best case when working with pin-init.
-
-> I'm ok with that, and maybe this new form will
-> encourage us to keep this method short, which is what we want, but other
-> than that what benefit are we getting from this change?
-
-The immediate benefit is that we don't need an extra allocation for the Gsp
-structure.
-
-The general benefit is that once we need to add more fields to
-structures that require pinning (such as locks -- and we will need a lot of
-them) we're prepared for it.
-
-If we're not prepared for it, I'm pretty sure that everytime someone needs =
-to
-add e.g. a new lock for something, it will just result in a new Pin<KBox<T>=
->,
-because the initial pin-init hierarchy just isn't there, and creating a new
-allocation is more convinient than fixing the existing code.
-
-This is exactly what pin-init was introduced for in the kernel, such that w=
-e're
-not doing worse than equivalent C code.
-
-	struct Foo {
-	   struct Bar bar;
-	   void *data;
-	   struct mutex data_lock;
-	}
-
-	struct Bar {
-	   void *data;
-	   struct mutex data_lock;
-	}
-
-In C you can just kmalloc(sizeof(Foo), GFP_KERNEL) and subsequently initial=
-ize
-all fields.
-
-In Rust I don't want to fall back having to allocate for Bar *and* for Foo
-separately.
-
-If there are things to improve with pin-init, let's improve them, but let's=
- not
-do worse than C code in this aspect.
 
