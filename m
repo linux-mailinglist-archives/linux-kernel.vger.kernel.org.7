@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-810782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD86B51F53
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:46:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 040E5B51F52
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D944D3AD9DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:46:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A12774602EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED36340D9B;
-	Wed, 10 Sep 2025 17:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA56C205E3B;
+	Wed, 10 Sep 2025 17:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OsiQfbuu"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Hlnol447"
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B6C3375CF
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 17:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A312834164A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 17:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757526298; cv=none; b=qXxIhn3x1SVCDxvfzEuibkhmfDfMBlEr6iMcBAkzAuHopXEavApI7sG8pCK3z0K5Pb2fOF+1HiwyKkoeHn/NybJRfoxOdpoEwrSsluJ4mutct2kw5fVq+oMDXPPgx8QQ+BPQAqp59GV6+Eieu2tsV1wv2zAmAC6P56/wVS4vyiU=
+	t=1757526305; cv=none; b=qmaGuYcnxXtzHDRvGL/W/9r3phJ+u3WyoFHwOO7m9IXbjVWIVQQolfhW9Ysv89lQqqw4/Wd3TMRg15jNqdzG7U7Z6Vl8Zx9vFsjN4zu8cmzM77UvmF5yNyqi5K3UTyxB6AX6IRSXogURpqhyBAyR2MYgzj1qHJE7mHtFJOK81UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757526298; c=relaxed/simple;
-	bh=bmmoRRCMVFC7on3U5ld4pm8GXER0e0a9IjwT5XnwY18=;
+	s=arc-20240116; t=1757526305; c=relaxed/simple;
+	bh=iVAsp8qEuGbdNZHLXAbc2lkWeVf27QoVgSrG092m6WI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IQbK+nWX/ww94M5MCC0dGbZpv1vVHttHwV+pdMXiqA5c6YFzFzYfgDcF6nGM/FOLSb2Evihpj2QRiNFXhSPnAFmoIMNjZAAwJXI6VsUawTGIz7Txdx8nIxq/jDWzFs5jnVS9k/qLMESrXYzU7mjdh6fU0FV0un+/YuXIj1EwpeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OsiQfbuu; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=LQXLVBkJVV5983t2R93aqXnzh6LitOj8vj81WTkrjBEBtdplussbJGF5JkFA0nT8h3+KPdSFJx0FS9K7Lwo0I9WxKJ+Sp/H2nuScFUiav9BFy3sZZYo2KTRlduC39xeEWI6s0VNBMuG3p64bh5tvUfauE1Ve78e6ZGMrDYmnbYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Hlnol447; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ADEwqs026934;
-	Wed, 10 Sep 2025 17:44:41 GMT
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58AGxWBb022908;
+	Wed, 10 Sep 2025 17:44:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=3M2N//NXu7GH7/7+R
-	Hy6jE+7odu5vxHJAue17NuOL6E=; b=OsiQfbuuj2EsHZzvV37+U3YWY/JEpUBTu
-	Uh8wwLFpyv8VAPvVRj8IH0aMij+2eZdHmbNNaxXsmCS04HEG7KnuER7tXi4jnsg2
-	KnTBFfExPdCzDeL42tIOp7sRosgWOmP4K3QEcON0Y1WF1nAB9Agukz7cEerJZYEV
-	l+XJeduDzEw0ngXmWahumQUGldboissU9rmdvVlNet+T7VkkLLLJ0QTsv6POrQZ0
-	b5kUww8ygd56lsdbJZus04OeG0USNtwBHwxg70JYxx9Vu5JN2g+uDx0DaYA17J3H
-	YB2J8XaOVk24Vaxvik4ASNQkm9mGusESDu4t1Dd2zv3iLAH1wWtNg==
+	:mime-version:references:subject:to; s=pp1; bh=pWnY6x0dhUtbDJ5O2
+	ZYRjeNVPeRHQ8+KZd7THg2oo6I=; b=Hlnol4472RO8JFDXP1nWeDopkFjfgHIWp
+	McCYLt2B99EBfmrgmjH1WqZhGn6E8wn3iyrFyd4RUKe7UvmgSBiUMHNqCmWZtcIh
+	4TX8i2e0TVbPRAJqMDarmKJI7RY/DumXnGBPOV+9Fu9xOAGLNGI9g+ucdjQFs432
+	PkyTc4qwZRp3e0kvOzQhSy7AAgGgOws6BXRTq9Z+S3YlCaUZ/LHKOlYlMs/9Am2k
+	q9m+82U3oWT4JiEqWOLxCyKm/pvZT5WBC40ZrUHOR2+awPFU1r5ac/8FmEd/+CvR
+	XdXGuwZDROd8SBmMXsh2Xh/H31Y8oznJcAU4sM6nQfG87B+4mGzIA==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmwyw1k-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cfffx6j-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 17:44:41 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58AHY9F5018148;
-	Wed, 10 Sep 2025 17:44:40 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmwyw1f-1
+	Wed, 10 Sep 2025 17:44:48 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58AHiC36013900;
+	Wed, 10 Sep 2025 17:44:48 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cfffx6e-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 17:44:40 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58AGn4rW011435;
-	Wed, 10 Sep 2025 17:44:39 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 490y9uj05c-1
+	Wed, 10 Sep 2025 17:44:47 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58AGfaG1020700;
+	Wed, 10 Sep 2025 17:44:46 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 490yp11vn0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 17:44:39 +0000
+	Wed, 10 Sep 2025 17:44:46 +0000
 Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58AHiaBN51052956
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58AHig1W57016654
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Sep 2025 17:44:36 GMT
+	Wed, 10 Sep 2025 17:44:42 GMT
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 04F1520043;
+	by IMSVA (Postfix) with ESMTP id 90D5420043;
+	Wed, 10 Sep 2025 17:44:42 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 814EB20040;
 	Wed, 10 Sep 2025 17:44:36 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0EB6A20040;
-	Wed, 10 Sep 2025 17:44:30 +0000 (GMT)
 Received: from li-7bb28a4c-2dab-11b2-a85c-887b5c60d769.ibm.com.com (unknown [9.124.208.171])
 	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 10 Sep 2025 17:44:29 +0000 (GMT)
+	Wed, 10 Sep 2025 17:44:36 +0000 (GMT)
 From: Shrikanth Hegde <sshegde@linux.ibm.com>
 To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
         vincent.guittot@linaro.org, tglx@linutronix.de, yury.norov@gmail.com,
@@ -82,9 +82,9 @@ Cc: sshegde@linux.ibm.com, vschneid@redhat.com, iii@linux.ibm.com,
         huschle@linux.ibm.com, rostedt@goodmis.org, dietmar.eggemann@arm.com,
         vineeth@bitbyteword.org, jgross@suse.com, pbonzini@redhat.com,
         seanjc@google.com
-Subject: [RFC PATCH v3 09/10] powerpc: Add debug file for set/unset paravirt CPUs
-Date: Wed, 10 Sep 2025 23:12:09 +0530
-Message-ID: <20250910174210.1969750-10-sshegde@linux.ibm.com>
+Subject: [HELPER PATCH] sysfs: Provide write method for paravirt
+Date: Wed, 10 Sep 2025 23:12:10 +0530
+Message-ID: <20250910174210.1969750-11-sshegde@linux.ibm.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250910174210.1969750-1-sshegde@linux.ibm.com>
 References: <20250910174210.1969750-1-sshegde@linux.ibm.com>
@@ -96,169 +96,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: amcS-wnazfFzGDd6FUD5JkuCKo5WkKe7
-X-Proofpoint-ORIG-GUID: DBl5RwKUzaSI_21H3nfDix1PY3aRtyBD
-X-Authority-Analysis: v=2.4 cv=J52q7BnS c=1 sm=1 tr=0 ts=68c1b909 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=X4BZNoojgDGXhmZENQsA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNSBTYWx0ZWRfX/UsDCfDmnuwC
- V2+AgMjbXVKawQJvm45qdVIOhyLGWNw1ZWwEk5ALOXiHyonlV4d/xi97tqrSDqW8l+tH0YgoY2M
- 4WvlSeud74RBd88OHEsa5p3bMTmZK7TzV137nKwIT9fOGhjkzlBBpVxPnNMkPfGRcKlo10shat7
- V2WxDKcfmZsYIEc1uSvgsO+9IwMoJTvlMZnau3InZk3JzByce+eirEuBlPIo423mdS8Ic0VxIgp
- MpLzhQ7jMs9IS1lulnU7OVSVA3z+kY3Ff24s18Lv1SC1cNeu2T2RgB2T5Nb5HF0EJTWfKGX1JK5
- WDVUfrPTuJSFvusQonElJ9/k00eMy7IdFb7gCSDKhldnup9z3TV0F+8xFNJQaLCGWGxq6YWuorw
- hIQ1nKoY
+X-Proofpoint-ORIG-GUID: XT3ksZmm9QlEKIkodWb63ERvrS0E7n_h
+X-Proofpoint-GUID: ZB_Bn-8CmcrKQNtpeQwPHXsYm5HCug7w
+X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c1b910 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=QYAN427j3e14qLe-yhwA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX+cgA+CNx7dSY
+ DghYLUJKuqy2XQvTjeRiqsiikngHVgziVOVSHk9iEP1hL6sQVANCDlqR5SJRJujBAV3WMBfJ2dR
+ HPZzGbT3BwtSb0d5VTajjwcQXexXsJC+wW9uu9GWgLdH1H6+nYArOJmZNap3ZNYOKOcreqYbjof
+ SQyEyT2hgRZD1GELMQnrFiJXhpspQjh9Oi//PgCNCBypeQViCqDbBMjEHjBxriRNJ5Qq6aJQeeH
+ 6IAQPAQ7iAKCwf79l9tuLIZeIEJILGRkm1NGwoZJEIaZuSa/+Y/kHG96CwDtIo7dtMIkNh7I/zx
+ 7eGX5k+j/dmt9HQ6/QgdXq1eyvqnm835prdrppMUOgwHtEfmkQAYdIyMahI28dsJ+9S524W9cXG
+ h8RNjg8M
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-10_03,2025-09-10_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 suspectscore=0 spamscore=0 phishscore=0
- bulkscore=0 adultscore=0 malwarescore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060025
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
 
-PowerPC systems can be deployed shared processor Logical Partitions (SPLPAR)
-aka Shared VM. These configurations allows overcommit of CPU resource.
-i.e more virtual CPUs than physical CPUs.
+This is helper patch which could be used to set the range of CPUs as
+paravirt. One could make use of this for quick testing of this infra
+instead of writing arch specific code.
 
-When there is contention of physical CPUs in such cases arch needs to
-have a mechanism to set the CPUs as paravirt. It also needs to clear
-them when the contention goes away.
+This is currently not meant be merged, since paravirt sysfs file is meant
+to be Read-Only.
 
-Ideal would be get the hint from hypervisor. It would be more accurate
-since it has knowledge of all SPLPARs deployed in the system.
-
-Till the hint from underlying hypervisor arrives, another idea is to
-approximate the hint from steal time. There are some works ongoing, but
-not there yet due to challenges revolving around limits and
-convergence.
-
-Till that happens, there is a need for debugfs file which could be used to
-set/unset the hint. The interface currently is number starting from which
-CPUs will marked as paravirt. It could be changed to one the takes a
-cpumask(list of CPUs) in future.
-
-============== Usage Example ============
-
-Lets say 720 CPU system. It is observing 20% steal time. It is evident
-that one should probably only 576 CPUs. Do,
-
-echo 576 > /sys/kernel/debug/powerpc/vp_manual_hint
+echo 100-200,600-700 >  /sys/devices/system/cpu/paravirt
 cat /sys/devices/system/cpu/paravirt
-576-719
+100-200,600-700
 
-This marks CPUs 576-719 as paravirt and move the tasks out of these
-CPUs. To unset, echo total number of CPUs(720) or higher value.
-
-echo 720 > /sys/kernel/debug/powerpc/vp_manual_hint
+echo > /sys/devices/system/cpu/paravirt
 cat /sys/devices/system/cpu/paravirt
 
 Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
 ---
- arch/powerpc/include/asm/paravirt.h |  1 +
- arch/powerpc/kernel/smp.c           | 58 +++++++++++++++++++++++++++++
- 2 files changed, 59 insertions(+)
+Idea was borrowed from Ilya's patch shared to me internally.
 
-diff --git a/arch/powerpc/include/asm/paravirt.h b/arch/powerpc/include/asm/paravirt.h
-index b78b82d66057..8854da8e532c 100644
---- a/arch/powerpc/include/asm/paravirt.h
-+++ b/arch/powerpc/include/asm/paravirt.h
-@@ -16,6 +16,7 @@
- #include <asm/cputhreads.h>
+It is up for debate to have something like this or like powerpc patch.
+
+ drivers/base/base.h |  4 ++++
+ drivers/base/cpu.c  | 43 ++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 46 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/base/base.h b/drivers/base/base.h
+index 123031a757d9..bd93b2895b24 100644
+--- a/drivers/base/base.h
++++ b/drivers/base/base.h
+@@ -264,3 +264,7 @@ static inline int devtmpfs_delete_node(struct device *dev) { return 0; }
  
- DECLARE_STATIC_KEY_FALSE(shared_processor);
-+DECLARE_STATIC_KEY_FALSE(cpu_paravirt_push_tasks);
- 
- static inline bool is_shared_processor(void)
- {
-diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-index 68edb66c2964..1c0d59d353bd 100644
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -64,6 +64,7 @@
- #include <asm/systemcfg.h>
- 
- #include <trace/events/ipi.h>
-+#include <linux/debugfs.h>
- 
- #ifdef DEBUG
- #include <asm/udbg.h>
-@@ -82,6 +83,7 @@ bool has_big_cores __ro_after_init;
- bool coregroup_enabled __ro_after_init;
- bool thread_group_shares_l2 __ro_after_init;
- bool thread_group_shares_l3 __ro_after_init;
-+static int vp_manual_hint = NR_CPUS;
- 
- DEFINE_PER_CPU(cpumask_var_t, cpu_sibling_map);
- DEFINE_PER_CPU(cpumask_var_t, cpu_smallcore_map);
-@@ -1717,6 +1719,7 @@ static void __init build_sched_topology(void)
- 	BUG_ON(i >= ARRAY_SIZE(powerpc_topology) - 1);
- 
- 	set_sched_topology(powerpc_topology);
-+	vp_manual_hint = num_present_cpus();
- }
- 
- void __init smp_cpus_done(unsigned int max_cpus)
-@@ -1797,4 +1800,59 @@ void __noreturn arch_cpu_idle_dead(void)
- 	start_secondary_resume();
- }
- 
+ void software_node_notify(struct device *dev);
+ void software_node_notify_remove(struct device *dev);
++
 +#ifdef CONFIG_PARAVIRT
-+/*
-+ * sysfs hint to mark CPUs as paravirt. This will help in restricting
-+ * the workload to specified number of CPUs.
-+ * For example, On 720 CPU system 576 > vp_manual_hint means, workload will
-+ * run on 0-575 CPUs. Tasks will move out of 576-719 CPUs.
-+ */
-+
-+static int pv_vp_manual_hint_set(void *data, u64 val)
-+{
-+	int cpu;
-+	int online_cpus = num_online_cpus();
-+
-+	if (val == vp_manual_hint)
-+		return 0;
-+
-+	if (val == 0 || val > online_cpus)
-+		val = online_cpus;
-+
-+	vp_manual_hint = val;
-+
-+	if (vp_manual_hint < online_cpus)
-+		static_branch_enable(&cpu_paravirt_push_tasks);
-+	else
-+		static_branch_disable(&cpu_paravirt_push_tasks);
-+
-+	for_each_online_cpu(cpu) {
-+		if (cpu >= vp_manual_hint)
-+			set_cpu_paravirt(cpu, true);
-+		else
-+			set_cpu_paravirt(cpu, false);
-+	}
-+	return 0;
-+}
-+
-+static int pv_vp_manual_hint_get(void *data, u64 *val)
-+{
-+	*val = vp_manual_hint;
-+	return 0;
-+}
-+
-+DEFINE_SIMPLE_ATTRIBUTE(fops_pv_vp_manual_hint, pv_vp_manual_hint_get,
-+			pv_vp_manual_hint_set, "%llu\n");
-+
-+static __init int paravirt_debugfs_init(void)
-+{
-+	if (is_shared_processor())
-+		debugfs_create_file("vp_manual_hint", 0600, arch_debugfs_dir,
-+				    NULL, &fops_pv_vp_manual_hint);
-+	return 0;
-+}
-+
-+device_initcall(paravirt_debugfs_init)
++DECLARE_STATIC_KEY_FALSE(cpu_paravirt_push_tasks);
 +#endif
-+
+diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+index 902747ff4988..d66cbd0c3060 100644
+--- a/drivers/base/cpu.c
++++ b/drivers/base/cpu.c
+@@ -375,12 +375,53 @@ static int cpu_uevent(const struct device *dev, struct kobj_uevent_env *env)
  #endif
+ 
+ #ifdef CONFIG_PARAVIRT
++static ssize_t store_paravirt_cpus(struct device *dev,
++				   struct device_attribute *attr,
++				   const char *buf, size_t count)
++{
++	cpumask_var_t temp_mask;
++	int retval = 0;
++
++	if (!alloc_cpumask_var(&temp_mask, GFP_KERNEL))
++		return -ENOMEM;
++
++	retval = cpulist_parse(buf, temp_mask);
++	if (retval)
++		goto free_mask;
++
++	/* ALL cpus can't be marked as paravirt */
++	if (cpumask_equal(temp_mask, cpu_online_mask)) {
++		retval = -EINVAL;
++		goto free_mask;
++	}
++	if (cpumask_weight(temp_mask) > num_online_cpus()) {
++		retval = -EINVAL;
++		goto free_mask;
++	}
++
++	/* No more paravirt cpus */
++	if (cpumask_empty(temp_mask)) {
++		static_branch_disable(&cpu_paravirt_push_tasks);
++		cpumask_copy((struct cpumask *)&__cpu_paravirt_mask, temp_mask);
++
++	} else {
++		static_branch_enable(&cpu_paravirt_push_tasks);
++		cpumask_copy((struct cpumask *)&__cpu_paravirt_mask, temp_mask);
++	}
++
++	retval = count;
++
++free_mask:
++	free_cpumask_var(temp_mask);
++	return retval;
++}
++
+ static ssize_t print_paravirt_cpus(struct device *dev,
+ 				   struct device_attribute *attr, char *buf)
+ {
+ 	return sysfs_emit(buf, "%*pbl\n", cpumask_pr_args(cpu_paravirt_mask));
+ }
+-static DEVICE_ATTR(paravirt, 0444, print_paravirt_cpus, NULL);
++static DEVICE_ATTR(paravirt, 0644, print_paravirt_cpus, store_paravirt_cpus);
+ #endif
+ 
+ const struct bus_type cpu_subsys = {
 -- 
 2.47.3
 
