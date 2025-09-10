@@ -1,83 +1,102 @@
-Return-Path: <linux-kernel+bounces-811029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C90AB52321
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:55:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DAA5B52327
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1B7C1C247FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:55:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34705843C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEAD2FD1D8;
-	Wed, 10 Sep 2025 20:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4FB3009C3;
+	Wed, 10 Sep 2025 20:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FjQYb7Is"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95982F39A5;
-	Wed, 10 Sep 2025 20:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="c+hm8Jcw"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BA9272E7B;
+	Wed, 10 Sep 2025 20:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757537719; cv=none; b=RLbomLs0FwdvrJu6tuXSTMpqHKNiHG07MtbGiTxPANH08ONUj0uS/0mvntLOFdyj3usOfCMcMop5dAaQhVGO0jQWKRCzbI4GWRMxIUDQ1Jaa3S8DwRbeLp1V2NmgTJfJPwcCssDOj9gbtu2xSQ28TTGbuyVGIyISdMUKPm9mbrI=
+	t=1757537861; cv=none; b=QmvjFKoh3OVh/aHwhnQgJ5YYprnCdDW3ucP0i84TAG/i8Jh/MeCnE3RnQsLuQnE+oFYu5k+xXOEbuMgRObNkULLC7SGElEylhk+Oo3GbOCLqqX29GoaypX5sTUgrM2/MSFVS0S3tqwXag+K6uAO/B5HphSlzvNjI2EXnxGVQEko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757537719; c=relaxed/simple;
-	bh=gvT9FuWxfZPeqzMQVg7GrtSY0I8p+kp7K2Qrz5hOw1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8m5F6JuZzR7DmRhO0aYdEqniTjsduygGpZrNCAqiYBiyOGXV6+v+l1w4MLGqUmYguMdOtUhfWIGt9zlEmYRbS58soGlWarvk+Feh/SI0QSjaXuT+/912TM2FAIVvCU7Qff8zbKwo2NS51Erw4GpLQwxjP8SQB4+Kf6OgjLtOb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FjQYb7Is; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C4BEC4CEF7;
-	Wed, 10 Sep 2025 20:55:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757537719;
-	bh=gvT9FuWxfZPeqzMQVg7GrtSY0I8p+kp7K2Qrz5hOw1Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FjQYb7IsfJnAIuyyBxN9tylvu4CPrjT2KQzODDUVZ/mB+RChZrFX4TXJcNajCA2cc
-	 P0bU7zrxL5PsQm8t3jqzpBGFbhQ8obdRWTK8AlOBGgAUxGJumDEyRpujIvGxy7zWIi
-	 zBbVYSOFcGWKFiqebAGtlGUYtTmUCiPwHCkxITKjkvniidTH0MIURbk+GYeCJoBbSV
-	 8uPvhngmkiOQEnwzeUSY3sdKvz05h/BC+CA0cNnVKCcHtxsKCEBbt3RRfxEO95a43W
-	 F2UIxVjpNV4YZ1xhqgMF1pkZBjjSbzF50qDsDY1fWDP1cu3kXGJLpm/inRtmD4BssX
-	 RbDq5B36odSNg==
-Date: Wed, 10 Sep 2025 15:55:18 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-watchdog@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: Re: [PATCH] dt-bindings: watchdog: Convert marvell,armada-3700-wdt
- to DT schema
-Message-ID: <175753771781.400321.13844352093310893008.robh@kernel.org>
-References: <20250812203301.726374-1-robh@kernel.org>
+	s=arc-20240116; t=1757537861; c=relaxed/simple;
+	bh=mgH+RApEREFbxuYp5FmMugM97WajwuPrp/KpthV4H70=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=RYtmEroO9idJeuhGhgPy/TPXs6BZ2swF1CT0KWFuel3asGM+u167AqGGaMjeisURr0JDwx8iHkiQIIZ8Laq1HfAYdhhhRn5YgmLnBlKbbdSWfVkuG3inr/opMCXRtXeYq+pzlNV/qlo4H6b1c2o0qLf6ntzujJb4YaZVOSTodVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=c+hm8Jcw; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1006)
+	id B7D0D20171B8; Wed, 10 Sep 2025 13:57:32 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B7D0D20171B8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757537852;
+	bh=N/iRK+5SlnN9/G2FPEN7vTk8IiFryrGhXVADYNhLhW4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=c+hm8Jcw2pW+QahnVxFM3ACweqy/H9hMx2v/oqU2GYqqLI6j3Phzi+e9AHODwBr1k
+	 ye7E/ErWx+MOyur4IFUUXRuEN9Rp1U1hMOUUZDOKS5wIHMcqrSsHKnw4zyk3ynNTUk
+	 8+NuVoyjh4SIsq6DxVIq5wwQyPzXPOEFLvNJ+3rg=
+From: Haiyang Zhang <haiyangz@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: haiyangz@microsoft.com,
+	decui@microsoft.com,
+	kys@microsoft.com,
+	wei.liu@kernel.org,
+	edumazet@google.com,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	longli@microsoft.com,
+	ssengar@linux.microsoft.com,
+	ernis@linux.microsoft.com,
+	dipayanroy@linux.microsoft.com,
+	kotaranov@microsoft.com,
+	shirazsaleem@microsoft.com,
+	andrew+netdev@lunn.ch,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: mana: Reduce waiting time if HWC not responding
+Date: Wed, 10 Sep 2025 13:57:21 -0700
+Message-Id: <1757537841-5063-1-git-send-email-haiyangz@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812203301.726374-1-robh@kernel.org>
 
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
-On Tue, 12 Aug 2025 15:32:57 -0500, Rob Herring (Arm) wrote:
-> Convert the Marvell Armada 3700 watchdog binding to DT schema format.
-> It's a straight-forward conversion.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/watchdog/armada-37xx-wdt.txt     | 23 -----------
->  .../watchdog/marvell,armada-3700-wdt.yaml     | 41 +++++++++++++++++++
->  MAINTAINERS                                   |  2 +-
->  3 files changed, 42 insertions(+), 24 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/watchdog/armada-37xx-wdt.txt
->  create mode 100644 Documentation/devicetree/bindings/watchdog/marvell,armada-3700-wdt.yaml
-> 
+If HW Channel (HWC) is not responding, reduce the waiting time, so further
+steps will fail quickly.
+This will prevent getting stuck for a long time (30 minutes or more), for
+example, during unloading while HWC is not responding.
 
-Applied, thanks!
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+---
+ drivers/net/ethernet/microsoft/mana/hw_channel.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/microsoft/mana/hw_channel.c b/drivers/net/ethernet/microsoft/mana/hw_channel.c
+index ef072e24c46d..ada6c78a2bef 100644
+--- a/drivers/net/ethernet/microsoft/mana/hw_channel.c
++++ b/drivers/net/ethernet/microsoft/mana/hw_channel.c
+@@ -881,7 +881,12 @@ int mana_hwc_send_request(struct hw_channel_context *hwc, u32 req_len,
+ 	if (!wait_for_completion_timeout(&ctx->comp_event,
+ 					 (msecs_to_jiffies(hwc->hwc_timeout)))) {
+ 		if (hwc->hwc_timeout != 0)
+-			dev_err(hwc->dev, "HWC: Request timed out!\n");
++			dev_err(hwc->dev, "HWC: Request timed out: %u ms\n",
++				hwc->hwc_timeout);
++
++		/* Reduce further waiting if HWC no response */
++		if (hwc->hwc_timeout > 1)
++			hwc->hwc_timeout = 1;
+ 
+ 		err = -ETIMEDOUT;
+ 		goto out;
+-- 
+2.34.1
 
 
