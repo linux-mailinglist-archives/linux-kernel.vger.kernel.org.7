@@ -1,252 +1,232 @@
-Return-Path: <linux-kernel+bounces-810147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518E5B51699
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:14:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9458B51697
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 463A71C2803A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:14:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E4804E1510
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CC831282E;
-	Wed, 10 Sep 2025 12:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508BB30F812;
+	Wed, 10 Sep 2025 12:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvEAkL7C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="coLWEfQD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RyV7cZg/";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RfTf8OSN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fKNFrAng"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371EB30EF72;
-	Wed, 10 Sep 2025 12:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A0D27AC21
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757506434; cv=none; b=JJbggoRdmB9IYURZM+opkj+kjVWqRfHeJWhtSVyQHWWZldN87hznimsgKRrEYuBLNJdxP3XclPs2q9VpgNf90O8vjSKvsDHvdXjBsAsMArr3HX8joaAaK6mLhLxjz6i/kEjubdUX85YID6Wyl+dPqSZeQ/npofEU8cQGq0fpZP4=
+	t=1757506433; cv=none; b=JEkQWoBdjqOQ/IRVo6T9eA56bZgdTajrc4pdcN2Zp/GjPWehXtc4/3z33DyEvdva250FASuEFm8B1tomplEJowtcTmbx1OFEPGTSPI5dwvjkm6d3GE7EESGNaWB6rIXd+BfONv+7ymh30Ukm7YGayg1p3f3tnXPPw/GJD5lQhj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757506434; c=relaxed/simple;
-	bh=tL2FAdyt0zFqi+FSeV2e67Ti/XzJaCUPI8eZb2eioWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jF46rVpS3Sj1Y+s/73Aps8pvZzcVJFBVxMN3jszXbh3gM8XJslecNDes578g7rgfwc3LmUgB01WnCHaOa7r4lcXSYmYMWIQIhDykbR+TE3L+PwfiHodO5k0rOpjvy10jajGFGOgP+8ZKUTd6odO4KVNG/ximHoeLLw6/sO3O/cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IvEAkL7C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 892F6C4CEF5;
-	Wed, 10 Sep 2025 12:13:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757506432;
-	bh=tL2FAdyt0zFqi+FSeV2e67Ti/XzJaCUPI8eZb2eioWg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IvEAkL7CpiOH4XoOuK4X57fnSBjEpGvEuvqq77/aje0fRseYep7L98lrBnr0B+7B5
-	 xvdt6v1OYrvgVbWp/cj3fBMnmXX1rfZhrvkxsKjXpz0Lo/koWst52Iez+Q/pM/Ld/o
-	 LXZZt9jNyCTqJEN2Mhz3a6UaFI4wrt9Am6oi2K5nd+xXva7UJRte/MbB/K8KvVETcP
-	 iUrjwHn56emRu9qri4erM5j2kwEBEi9xDrzCnLXID2Rbg/v7SjcJi1M7rXiZuadw8c
-	 QydDrLRqzciwMzwg3oR9HPeoHfoE6vap1l4iBiMitiDYqx0V5YSCrZ7aq7Jd01kFTD
-	 WPUtFyYRn9+uA==
-Date: Wed, 10 Sep 2025 14:13:48 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel-doc: add support for handling global variables
-Message-ID: <20250910141348.5499bb3d@foz.lan>
-In-Reply-To: <b9f8831490b9e8e3e4f6d90d6092b0b78c79137f@intel.com>
-References: <80f85eacc306e62de8c9c68712c653ba290c2ff2.1757262141.git.mchehab+huawei@kernel.org>
-	<b9f8831490b9e8e3e4f6d90d6092b0b78c79137f@intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757506433; c=relaxed/simple;
+	bh=gxJtCOehdfwbx4mhg0qP2v9d6BYlYVbM838PyJ8ipN0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TL80lu7GWmakpIcbvt8NALN38sRs17xlOlOs9ipsL+35xk+PNlCDThYHVv0X8rC6redEP0Rn/f8Dtqll+58keC50ibH+ijpRXkfiBiWz9u1WoVfps3aE4gYX717RVnIRpLlgeHRMk/LXsx6s+IwwI3XASJJejrh64c15QU50Bv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=coLWEfQD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RyV7cZg/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RfTf8OSN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fKNFrAng; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D020B37D09;
+	Wed, 10 Sep 2025 12:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757506430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XYwAkKX+fl6ayhAOtR6UK3xhLhDrTnjYN0qEyFto1zw=;
+	b=coLWEfQDXgKiVJYE3bM0RmncY7XE5LeXcmsW1dw6GqgedUr8hR21pLVKiN9POWnU9S/lY5
+	OCluDHATw2PP50er4GK1bDQChDFmyPge67PipupRGxQn9gOpINuAmQQYJt1ivqLShx0gvn
+	Dwtj1KZvCjhrL8Ax8Mmol4lacgffyNY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757506430;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XYwAkKX+fl6ayhAOtR6UK3xhLhDrTnjYN0qEyFto1zw=;
+	b=RyV7cZg/qsUemWum1WVXdsvjnRG41JVAHFH251kAA6ks42pWEvactFSSPjfO62crdy8Bid
+	ASSUbVhET4JUboAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RfTf8OSN;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=fKNFrAng
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757506429; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XYwAkKX+fl6ayhAOtR6UK3xhLhDrTnjYN0qEyFto1zw=;
+	b=RfTf8OSNLV24MWTWuBhm+azm4s5qgbL/Q36mexG2Frx8tZw/FLed4l14f4dEKIEwPqHO/c
+	Abtn9w8yOVAShwylnF/iseA6+JwwU1Y2ZBtuDL/2rUJP4oFNNW3BfZ20hw5bI5iwpSXJXf
+	IMiO/aydUwdqwk98RazYs/7+Ld1k5bQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757506429;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XYwAkKX+fl6ayhAOtR6UK3xhLhDrTnjYN0qEyFto1zw=;
+	b=fKNFrAngJp6pootj3qyXHClk9CdNX3N+FrLqJpgsRSb6L5pKixjllLfsWKYDUSiUv/4EXh
+	DsTg2zNMWcCynxCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A270113310;
+	Wed, 10 Sep 2025 12:13:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IAZnJn1rwWgrdQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 10 Sep 2025 12:13:49 +0000
+Message-ID: <d3f47a4e-0692-4f0f-9092-cb109fc805fd@suse.de>
+Date: Wed, 10 Sep 2025 14:13:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-Em Wed, 10 Sep 2025 12:24:47 +0300
-Jani Nikula <jani.nikula@linux.intel.com> escreveu:
-
-> On Sun, 07 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wr=
-ote:
-> > Specially on kAPI, sometimes it is desirable to be able to
-> > describe global variables that are part of kAPI.
-> >
-> > Documenting vars with Sphinx is simple, as we don't need
-> > to parse a data struct. All we need is the variable
-> > declaration and use natice C domain ::c:var: to format it
-> > for us.
-> >
-> > Add support for it. =20
->=20
-> Bikeshedding on "global", it sort of implies visibility or linkage, but
-> here it means "variable".
->=20
-> You could document variables that are static, global to the module, or
-> exported to the entire kernel. And you could document functions that are
-> global (for some meaning of global).
->=20
-> I didn't look into kernel-doc, but can't you figure the type out from
-> the source, instead of having to tell it? And if you can't, why not just
-> make it "var" (matching Sphinx) or "variable"?
-
-I don't have a strong opinion here. I ended picking "global" just as a
-sort of declaration of intent, in the sense that this is aimed to be
-used for kAPI vars.
-
-Now, "var" has certainly an appeal, as it matches Sphinx.
-
->=20
->=20
-> BR,
-> Jani.
->=20
-> >
-> > Link: https://lore.kernel.org/linux-doc/491c3022-cef8-4860-a945-c9c4a3b=
-63c09@infradead.org/T/#m947c25d95cb1d96a394410ab1131dc8e9e5013f1
-> > Suggested-by: Randy Dunlap <rdunlap@infradead.org>
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > ---
-> >  scripts/lib/kdoc/kdoc_output.py | 31 +++++++++++++++++++++++++++++++
-> >  scripts/lib/kdoc/kdoc_parser.py | 25 ++++++++++++++++++++++++-
-> >  2 files changed, 55 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_ou=
-tput.py
-> > index 1eca9a918558..405a5c407522 100644
-> > --- a/scripts/lib/kdoc/kdoc_output.py
-> > +++ b/scripts/lib/kdoc/kdoc_output.py
-> > @@ -199,6 +199,10 @@ class OutputFormat:
-> >              self.out_enum(fname, name, args)
-> >              return self.data
-> > =20
-> > +        if dtype =3D=3D "global":
-> > +            self.out_global(fname, name, args)
-> > +            return self.data
-> > +
-> >          if dtype =3D=3D "typedef":
-> >              self.out_typedef(fname, name, args)
-> >              return self.data
-> > @@ -227,6 +231,9 @@ class OutputFormat:
-> >      def out_enum(self, fname, name, args):
-> >          """Outputs an enum"""
-> > =20
-> > +    def out_global(self, fname, name, args):
-> > +        """Outputs a global variable"""
-> > +
-> >      def out_typedef(self, fname, name, args):
-> >          """Outputs a typedef"""
-> > =20
-> > @@ -472,6 +479,18 @@ class RestFormat(OutputFormat):
-> >          self.lineprefix =3D oldprefix
-> >          self.out_section(args)
-> > =20
-> > +    def out_global(self, fname, name, args):
-> > +        oldprefix =3D self.lineprefix
-> > +        ln =3D args.declaration_start_line
-> > +        prototype =3D args.other_stuff["var_type"]
-> > +
-> > +        self.data +=3D f"
-> >
-> > .. c:var:: {prototype}
-> >
-> > "
-> > +
-> > +        self.print_lineno(ln)
-> > +        self.lineprefix =3D "  "
-> > +        self.output_highlight(args.get('purpose', ''))
-> > +        self.data +=3D "
-> > "
-> > +
-> >      def out_typedef(self, fname, name, args):
-> > =20
-> >          oldprefix =3D self.lineprefix
-> > @@ -772,6 +791,18 @@ class ManFormat(OutputFormat):
-> >              self.data +=3D f'.SH "{section}"' + "
-> > "
-> >              self.output_highlight(text)
-> > =20
-> > +    def out_global(self, fname, name, args):
-> > +        out_name =3D self.arg_name(args, name)
-> > +        prototype =3D args.other_stuff["var_type"]
-> > +
-> > +        self.data +=3D f'.TH "{self.modulename}" 9 "{out_name}" "{self=
-.man_date}" "API Manual" LINUX' + "
-> > "
-> > +
-> > +        self.data +=3D ".SH NAME
-> > "
-> > +        self.data +=3D f"{prototype} \- {args['purpose']}
-> > "
-> > +
-> > +        self.data +=3D ".SH SYNOPSIS
-> > "
-> > +        self.data +=3D f"enum {name}" + " {
-> > "
-> > +
-> >      def out_typedef(self, fname, name, args):
-> >          module =3D self.modulename
-> >          purpose =3D args.get('purpose')
-> > diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_pa=
-rser.py
-> > index 574972e1f741..e2a3f4574894 100644
-> > --- a/scripts/lib/kdoc/kdoc_parser.py
-> > +++ b/scripts/lib/kdoc/kdoc_parser.py
-> > @@ -64,7 +64,7 @@ type_param =3D KernRe(r"@(\w*((\.\w+)|(->\w+))*(\.\.\=
-.)?)", cache=3DFalse)
-> >  # Tests for the beginning of a kerneldoc block in its various forms.
-> >  #
-> >  doc_block =3D doc_com + KernRe(r'DOC:\s*(.*)?', cache=3DFalse)
-> > -doc_begin_data =3D KernRe(r"^\s*\*?\s*(struct|union|enum|typedef)=08\s=
-*(\w*)", cache =3D False)
-> > +doc_begin_data =3D KernRe(r"^\s*\*?\s*(struct|union|enum|typedef|globa=
-l)=08\s*(\w*)", cache =3D False)
-> >  doc_begin_func =3D KernRe(str(doc_com) +			# initial " * '
-> >                          r"(?:\w+\s*\*\s*)?" + 		# type (not captured)
-> >                          r'(?:define\s+)?' + 		# possible "define" (not=
- captured)
-> > @@ -886,6 +886,27 @@ class KernelDoc:
-> >          self.output_declaration('enum', declaration_name,
-> >                                  purpose=3Dself.entry.declaration_purpo=
-se)
-> > =20
-> > +    def dump_global(self, ln, proto):
-> > +        """
-> > +        Stores global variables that are part of kAPI.
-> > +        """
-> > +        VAR_ATTRIBS =3D [
-> > +            "extern",
-> > +        ]
-> > +        OPTIONAL_VAR_ATTR =3D "^(?:" + "|".join(VAR_ATTRIBS) + ")?"
-> > +
-> > +        r=3D KernRe(OPTIONAL_VAR_ATTR + r"(\w.*)\s+([\w_]+)[\d\]\[]*\s=
-*;(?:#.*)?$")
-> > +        if not r.match(proto):
-> > +           self.emit_msg(ln,f"{proto}: can't parse variable")
-> > +           return
-> > +
-> > +        declaration_name =3D r.group(2)
-> > +        var_type =3D r.group(0)
-> > +
-> > +        self.output_declaration("global", declaration_name,
-> > +                                var_type=3Dvar_type,
-> > +                                purpose=3Dself.entry.declaration_purpo=
-se)
-> > +
-> >      def dump_declaration(self, ln, prototype):
-> >          """
-> >          Stores a data declaration inside self.entries array.
-> > @@ -897,6 +918,8 @@ class KernelDoc:
-> >              self.dump_typedef(ln, prototype)
-> >          elif self.entry.decl_type in ["union", "struct"]:
-> >              self.dump_struct(ln, prototype)
-> > +        elif self.entry.decl_type =3D=3D "global":
-> > +            self.dump_global(ln, prototype)
-> >          else:
-> >              # This would be a bug
-> >              self.emit_message(ln, f'Unknown declaration type: {self.en=
-try.decl_type}') =20
->=20
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/pixpaper: Fix return type of pixpaper_mode_valid()
+To: Nathan Chancellor <nathan@kernel.org>,
+ LiangCheng Wang <zaq14760@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250908-drm-pixpaper-fix-mode_valid-return-type-v1-1-705ceaf03757@kernel.org>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250908-drm-pixpaper-fix-mode_valid-return-type-v1-1-705ceaf03757@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: D020B37D09
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[kernel.org,gmail.com,linux.intel.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
 
 
 
-Thanks,
-Mauro
+Am 08.09.25 um 22:24 schrieb Nathan Chancellor:
+> When building with -Wincompatible-function-pointer-types-strict, a
+> warning designed to catch kernel control flow integrity (kCFI) issues at
+> build time, there is an instance in the new tiny DRM pixpaper driver:
+>
+>    drivers/gpu/drm/tiny/pixpaper.c:982:16: error: incompatible function pointer types initializing 'enum drm_mode_status (*)(struct drm_crtc *, const struct drm_display_mode *)' with an expression of type 'int (struct drm_crtc *, const struct drm_display_mode *)' [-Werror,-Wincompatible-function-pointer-types-strict]
+>      982 |         .mode_valid = pixpaper_mode_valid,
+>          |                       ^~~~~~~~~~~~~~~~~~~
+>
+> While 'int' and 'enum drm_mode_status' are ABI compatible, hence no
+> regular warning from -Wincompatible-function-pointer-types, the mismatch
+> will trigger a kCFI violation when pixpaper_mode_valid() is called
+> indirectly.
+>
+> Update the return type of pixpaper_mode_valid() to be
+> 'enum drm_mode_status' to clear up the warning and kCFI violation.
+>
+> Fixes: c9e70639f591 ("drm: tiny: Add support for Mayqueen Pixpaper e-ink panel")
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+Thanks for the fix.
+
+> ---
+>   drivers/gpu/drm/tiny/pixpaper.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/tiny/pixpaper.c b/drivers/gpu/drm/tiny/pixpaper.c
+> index b1379cb5f030..32598fb2fee7 100644
+> --- a/drivers/gpu/drm/tiny/pixpaper.c
+> +++ b/drivers/gpu/drm/tiny/pixpaper.c
+> @@ -968,8 +968,8 @@ static const struct drm_crtc_funcs pixpaper_crtc_funcs = {
+>   	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
+>   };
+>   
+> -static int pixpaper_mode_valid(struct drm_crtc *crtc,
+> -			       const struct drm_display_mode *mode)
+> +static enum drm_mode_status
+> +pixpaper_mode_valid(struct drm_crtc *crtc, const struct drm_display_mode *mode)
+>   {
+>   	if (mode->hdisplay == PIXPAPER_WIDTH &&
+>   	    mode->vdisplay == PIXPAPER_HEIGHT) {
+>
+> ---
+> base-commit: 490b30fbaca2abbd6afa8bdc7e2df329b5d82412
+> change-id: 20250908-drm-pixpaper-fix-mode_valid-return-type-4228e531193b
+>
+> Best regards,
+> --
+> Nathan Chancellor <nathan@kernel.org>
+>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
 
