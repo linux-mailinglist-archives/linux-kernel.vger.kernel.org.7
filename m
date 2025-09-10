@@ -1,113 +1,147 @@
-Return-Path: <linux-kernel+bounces-810470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C2A2B51B17
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:12:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF9BAB51B1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB9BF1894D29
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:08:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B303518976F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05E3298994;
-	Wed, 10 Sep 2025 15:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7102130DD0F;
+	Wed, 10 Sep 2025 15:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8No1AQZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qjg1XiVy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5DC259CBC;
-	Wed, 10 Sep 2025 15:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25DF1E8320;
+	Wed, 10 Sep 2025 15:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757516890; cv=none; b=hYHGjgoGvqCVBc3KwJtfrfgtmB5ClRxhyPT4yfvdVbplnmEfck6BVw9px7QaxhEJOKnaZUGiDjfib1jhSYmj9K81TdMd3YeP6T1MSb/gAmgBrlXxuEi9EDG3dYfAq2+ICDC/9VhD7e30e7FJtId/XrVAOFbkZbTTBi6mvs04vWQ=
+	t=1757516956; cv=none; b=N/Vx0PlWppFLjwW7AHqVSxO6fKyg4EOuynA72UU47bWf+BfUtfMXbtry0KEBEt04n/7EAtHnS/EmnOnpHn7c4pybekYRz+mi0AaGE7GePjc9bxRegx7b6JW67xWY7FjaNRm5mbnKchFFaKPvfQVFBHl+Y6RiS33HpWe5+vtR6O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757516890; c=relaxed/simple;
-	bh=bvZHnhmU6YFdTTKMEoziZPmXCSvh59ghlawVkMA6E7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k7mv7cyZuQsd3fpx5BL/iwPOQ2Rot0bWOclDIg0uDG3xSzW1mdcfEc6UaA29hnWLmifrUBatedLGC+WiPF0X9AEFHk3X0ptRfEthz3iNH2eA8xtRr3Y4CFYPEOS4FGVKoT33KZ62hYhrThDLamPHrq72nLYMwPFCInLvriN3K6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8No1AQZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE6CC4CEEB;
-	Wed, 10 Sep 2025 15:08:06 +0000 (UTC)
+	s=arc-20240116; t=1757516956; c=relaxed/simple;
+	bh=ydn2xtFjAjaReC6GWq0B2HXB/HbN5g3KL/JJeEAI6Tw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ceXk+qiI241Ii3O3ZXcf01m7LgVyjno62DpIlXTHpHa/f9XAuR842iuTvtR3u4mYU0Po3/cf8uaQ117mI++HWlFc3ITDg5kC2qXms08rJ8AQL1jILym4Kqyt8u1PIJ6FAcQtDUkQsDbHNahTHrSe2SbRTFE6/Xhp1vRJ/OQfZQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qjg1XiVy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A96D0C4CEEB;
+	Wed, 10 Sep 2025 15:09:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757516889;
-	bh=bvZHnhmU6YFdTTKMEoziZPmXCSvh59ghlawVkMA6E7Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K8No1AQZcL4CTYlNtl4e0zQCljA7seKG6NzXcny2nBooRDPb+w00kcodm4m0Xloko
-	 dsiTSyeLY3kVPv7F7/AHxaHEibx4CFstN7fYj9/8r3KWNKkxOGwB8fWgCPs9hRfGqw
-	 VfqRxgHHo7bsCx5w8hXbd9MQyChumDIwSDMauNsdsFMmvn1DbpV4Plzsd6k2isn+yB
-	 9JahEqE/Bo3qoyh5XaQjVQPLVkk9riEmbz24p6Ea7jPTCbvYoRIp4E1g9jHLP3r7E5
-	 JVgmKQ0XDKbKz/pnzM+9BcFzqThXD3o/Uwc5S5tSASeL/i2igsWe56uzX+nQLjZIfY
-	 tFSAjcZH7SIWA==
-Message-ID: <953481fa-785b-4329-9306-51db6620f611@kernel.org>
-Date: Wed, 10 Sep 2025 17:08:05 +0200
+	s=k20201202; t=1757516954;
+	bh=ydn2xtFjAjaReC6GWq0B2HXB/HbN5g3KL/JJeEAI6Tw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qjg1XiVygkBuHfd07CGmzSo/BBZXDsGklMV0teiRj9Z8OCLNdQBIS6DOn6KlS5iAF
+	 YrMK97cedrPJ+ls5/8RGkg+kMzekHGsJoZNal3m+g9MMIkxKeJCvlEuwD0AajJyVyT
+	 nVVgaq8HdtMZ+kaQYTmwo3o7W9/lsWczG/Jd/89uasTo+qK3R3qYNi0zjmm9+qfnp7
+	 HcznSK765Tg/LeGyQZKu/6bqp01nzTsg/hgsCaQGwpqGFES+HIlh/jP+1pUnvj7WM5
+	 m04NWxyYbHAfuG2S1vrxIHSpSmqrlq0m6PDAL10LSWZJdGlwSDWmjA5B2zlSh5ye+y
+	 90Ey/7zxBol8w==
+Date: Wed, 10 Sep 2025 16:09:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Marco Felsch <m.felsch@pengutronix.de>,
+	Jonas Rebmann <jre@pengutronix.de>, Andrew Lunn <andrew@lunn.ch>,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 1/4] dt-bindings: net: dsa: nxp,sja1105: Add reset-gpios
+ property
+Message-ID: <693c3d1e-a65b-47ea-9b21-ce1d4a772066@sirena.org.uk>
+References: <20250910-imx8mp-prt8ml-v1-0-fd04aed15670@pengutronix.de>
+ <20250910-imx8mp-prt8ml-v1-1-fd04aed15670@pengutronix.de>
+ <20250910125611.wmyw2b4jjtxlhsqw@skbuf>
+ <20250910143044.jfq5fsv2rlsrr5ku@pengutronix.de>
+ <20250910144328.do6t5ilfeclm2xa4@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] rust: pin-init: add `#[bind]` attribute to access
- previously initialized fields
-To: Benno Lossin <lossin@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>, Fiona Behrens <me@kloenk.dev>,
- Alban Kurti <kurti@invicto.ai>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250910100755.2361281-1-lossin@kernel.org>
- <aMFQL-Hq1KvBG5lh@google.com> <DCP1Y8N4SRRF.25V7F6PV5ODCQ@kernel.org>
- <CAH5fLgg+-oz_cP9=ke+ukp9qYZAsD=hKqvvGfkJWRcCKdrTQ-g@mail.gmail.com>
- <DCP456FHT625.1L5BVZ4LPD8VQ@kernel.org> <aMGE64_J5R8U_rk5@tardis-2.local>
- <DCP7JTWPA4QS.9PTE12UVZFDC@kernel.org>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <DCP7JTWPA4QS.9PTE12UVZFDC@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7Lh4wxWc22jPqJvF"
+Content-Disposition: inline
+In-Reply-To: <20250910144328.do6t5ilfeclm2xa4@skbuf>
+X-Cookie: I think my career is ruined!
 
-On 9/10/25 4:59 PM, Benno Lossin wrote:
-> On Wed Sep 10, 2025 at 4:02 PM CEST, Boqun Feng wrote:
->> On Wed, Sep 10, 2025 at 02:19:00PM +0200, Benno Lossin wrote:
->>> On Wed Sep 10, 2025 at 12:40 PM CEST, Alice Ryhl wrote:
->>>> On Wed, Sep 10, 2025 at 12:36 PM Benno Lossin <lossin@kernel.org> wrote:
->>>>>
->>>>> On Wed Sep 10, 2025 at 12:17 PM CEST, Alice Ryhl wrote:
->>>>>> On Wed, Sep 10, 2025 at 12:07:53PM +0200, Benno Lossin wrote:
->>>>>>> Assigning a field a value in an initializer macro can be marked with the
->>>>>>> `#[bind]` attribute. Doing so creates a `let` binding with the same
->>>>>>> name. This `let` binding has the type `Pin<&mut T>` if the field is
->>>>>>> structurally pinned or `&mut T` otherwise (where `T` is the type of the
->>>>>>> field).
->>>>>>>
->>>>>>> Signed-off-by: Benno Lossin <lossin@kernel.org>
->>>>>>
->>>>>> Is there a reason we can't apply this to all fields and avoid the
->>>>>> attribute?
->>>>>
->>>>> Adding the attribute was due to Boqun's concern on v1 [1]. I think it
->>>>> might be surprising too, but I'm also happy with no attribute.
->>>>>
->>>>> [1]: https://lore.kernel.org/all/aLshd0_C-1rh3FAg@tardis-2.local
->>>>
->>>> IMO the ideal is if it works without an attribute. Perhaps trying that
->>>> in the kernel is a reasonable experiment to find out whether that's
->>>> reasonable to do for the general language feature?
->>>
->>> @Boqun what is your opinion on this?
->>>
->>
->> If we plan to make the in-place initializer language feature behave
->> similar, as I asked here [1], then dropping `#[bind]` seems good to me.
-> 
-> I don't think we can promise how that language feature is going to look
-> like. It will definitely support accessing already initialized fields,
-> but in what form remains to be seen.
 
-And as Alice said, getting some experience from real applications is not the
-worst thing. We can always change it if we see it causing too much pain.
+--7Lh4wxWc22jPqJvF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Sep 10, 2025 at 05:43:28PM +0300, Vladimir Oltean wrote:
+> On Wed, Sep 10, 2025 at 04:30:44PM +0200, Marco Felsch wrote:
+
+> > Can you please elaborate a bit more? I was curious and checked the
+> > AH1704, it says:
+
+> > "The RST_N signal must be kept low for at least 5 us after all power
+> > supplies and reference clock signals become stable."
+
+> > This is very common, so the driver only needs to ensure that the pin was
+> > pulled low for at least 5us but not exact 5us.
+
+> The statement says that during power-up, when the supply voltages and
+> clocks rise in order to become within spec, the reset signal must be
+> held low. This requirement lasts for up to 5 us more after the other
+> signals are in spec.
+
+...
+
+> I said that _while the supplies and clocks aren't in spec and 5 us after
+> they become in spec_, RST_N has to be kept low.
+
+> And if you plan to do that from the GPIO function of your SoC, the SoC
+> might be busy doing other stuff, like booting, and no one might be
+> driving the RST_N voltage to a defined state.
+
+I suspect you're reading too much into the datasheet there.  I suspect
+that what it's trying to say is that the reset signal only works with
+stable power and clocks, that it must be held low for the 5us while
+those conditions hold and that you have to do at least one cold reset
+after power on.  The above wording is pretty common in datasheets and I
+know in a bunch of cases it was carried forward kind of blindly rather
+than looking at the actual device requirements.
+
+> It really depends on a lot of factors including the reset timing and
+> supply voltage distribution of the PCB, but RST_N has essentially 2
+> purposes. One is ensuring proper POR sequencing, the other is cold
+> resetting at runtime. You can do the latter over SPI with identical
+> outcome, which leaves proper POR sequencing, which is not best served by
+> a GPIO in my experience.
+
+I'm not sure not including the signal in the DT bindings is going to
+influence board designers much either way TBH.
+
+--7Lh4wxWc22jPqJvF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjBlJEACgkQJNaLcl1U
+h9DAVQf/bV9pJbE/mcsitFrWvPTWQA9z8+bhcyfQvq0Gkx7sHsDEmqtDTZwoRHt0
+l9vaWvTC9naNGIpZ12Qi03nJGcQlGzXAnoWmccXlXwBn6MvMPFBlMsgKNyz+gTNz
+catYyQNIJN6FIQm9deSbtUx8L7B7pe+4SAPw86OtEJZnnehm2O41+jzb4tEyUCKP
+WkmYb5kn9Lvn6zHZb/7b1B7s8wSq+6Ztn1Bveyiu+qdA82H6K+Arwau1Dx3eVffA
+JFfvrMeyRcB5Uw075C0YvBBtvaJycYewBMYMp4rIPrN6L8LzDXyvIxDo2bKOsy7m
+YY6fHqSe2ib/4su6ne2AZDPFBN2Qew==
+=Xxyx
+-----END PGP SIGNATURE-----
+
+--7Lh4wxWc22jPqJvF--
 
