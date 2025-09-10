@@ -1,268 +1,116 @@
-Return-Path: <linux-kernel+bounces-810714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5282AB51E42
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1751EB51E41
 	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C3EF58336D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:50:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F1E63A2FBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE662868B7;
-	Wed, 10 Sep 2025 16:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3342797A9;
+	Wed, 10 Sep 2025 16:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="pTGOnFg8"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPAOgAbm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973E727B4FA;
-	Wed, 10 Sep 2025 16:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBC825CC40;
+	Wed, 10 Sep 2025 16:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757523016; cv=none; b=MsWuEcwq1fZ8ky0vDPnrpz3dqnDrmybU0caUFjCHSWNHcp3GhN6Cyo0ZEJ1uNOnDtR96ZcWQCIU5hyqbPQieBIZLEl1jWxPjP43YcveDJDFLg53Vz2hYkDowWFFtv3qR4BFuoysNA5apVAR24HIk9l07fTkPbR2TdvhEyY/reu0=
+	t=1757523012; cv=none; b=QcpLMQt1VwYHHbM7gDgFiQ6oSkGp6OllVx0qj+2KsazkLsXfGXY0SDLIQhVXFeze5k9m9qEIj99iBcmRP7raCtMzFqjvais9gMaCr25UXbkLoDl2NG75rQtugJTKCN7xRkrGApcX5VHgEmeathQLNMBtJmTH/Y8sZuPbKrAKXSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757523016; c=relaxed/simple;
-	bh=aOCLNV8CRxwBMX59KVuv7r4x05MeRMeRhA/bFYr1SEk=;
+	s=arc-20240116; t=1757523012; c=relaxed/simple;
+	bh=ug5CvfYVPJihh5Zy5QREZIKCevb4x/BKaIGi7u0wAkU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cwVI0x2/1q5vJaoHiGvToIoJVrl/UzcYOtisPfT0UTcAEzhACYKc9774Wb9aFMOb03FIe/p7ONFrbzvjgDmp5pX7vUjndOz+eWuHarAuHjTY2pTaG7MESTCo8pHpbKv3iINy9OER2pY1IUpRXEEMQwswblHkR3T3UqCsVOFUTh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=pTGOnFg8; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cMRWJ3TTDz9v0N;
-	Wed, 10 Sep 2025 18:50:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1757523004;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4VLeMyI+2jX9U6hYocIOdP0O+MNOg3rIcowNJbryvoI=;
-	b=pTGOnFg8T9f9S/0q7IrMEUFz796kCeQDeumMNORscHTL3J8prRYdZZmg7HJfz/L0wzKIXZ
-	0E/kmIYalBHqzMLMvHRwmcNeQ2VVqWDd3USFd2274YQ2P6rFa26r8IPnHt430YmWq9/XCb
-	ybcpP84M9EbXdmbd8oN6tebmDfzJm2ex5oT6teyMEiq8RH+Z0fE6M8dCscRgzizeL0VfKH
-	jScAkAqXNIEDvS+uRA02X4EOGkVN6U5iW/x+V356M49pHJlFdXSBRAeVFk3ANZrVll1ClO
-	bi64++USBx40q8VjS18Gb+gOU97nd4SQaWrPHrnaa+e9xm8Y+jHtS3hZUUNfSA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Thu, 11 Sep 2025 02:49:49 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 29/32] nsfs: add missing id retrieval support
-Message-ID: <2025-09-10-yawning-gross-samba-lox-6iVSwq@cyphar.com>
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-29-4dd56e7359d8@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sJUNJz++1I4yU3mSQwbT3OPsX7Iy6zfLiRU3hfkWp8RRZl7BtDfFk7a6FvrePy8/R/Gg6dhUwuFWrBJbWS21tfxRB3Zz34lAkJgiaXqIEEJ7vfnI5R4dWY9yqK8qwTZdoIoBqiX+o7H8/ObQf6AowhVaWXSjD2W0MoGaS6mC0AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPAOgAbm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB16C4CEEB;
+	Wed, 10 Sep 2025 16:50:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757523011;
+	bh=ug5CvfYVPJihh5Zy5QREZIKCevb4x/BKaIGi7u0wAkU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CPAOgAbmybkyYUUePXHpTFbjK4/sSheXD5Cb30bErD6cxup1wf9xVxlmDMRNMwIRT
+	 USv2axQrbQ9wY+QTzUewNNHgDwGIdgP0EjSPGNTVuC9d0QkPOrgMA92s+XiOFek6X1
+	 PGMz9vUOXTxn0jSQ3m8DaC5UtBYLbIJXCJZ0NwZftg6ovmRECwNzzyDuBU0ehgCApW
+	 EEOuiAPzHvdeIAFmWJxQp2PNt2U3wGDVHlH3skZ/ypc4gZkH9N44g0S0cm0zhGw28r
+	 TpE4NPHIm94DswLhRiL/EjL0BtfMRvLWNDtU8OlRbNqE+QNkJW4kvmOlj4D7+u+QnS
+	 LICDXPxSa2YPw==
+Date: Wed, 10 Sep 2025 11:50:10 -0500
+From: Rob Herring <robh@kernel.org>
+To: Andrey Ryabinin <arbn@yandex-team.com>
+Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
+	Mike Rapoport <rppt@kernel.org>, James Gowans <jgowans@amazon.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Baoquan He <bhe@redhat.com>,
+	kexec@lists.infradead.org, Pratyush Yadav <ptyadav@amazon.de>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	David Rientjes <rientjes@google.com>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Changyuan Lyu <changyuanl@google.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Chris Li <chrisl@kernel.org>, Ashish.Kalra@amd.com,
+	William Tu <witu@nvidia.com>, David Matlack <dmatlack@google.com>,
+	Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 4/7] kho: replace KHO FDT with kstate metadata
+Message-ID: <20250910165010.GA223810-robh@kernel.org>
+References: <20250909201446.13138-1-arbn@yandex-team.com>
+ <20250909201446.13138-5-arbn@yandex-team.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zazlguyoxwpscuax"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250910-work-namespace-v1-29-4dd56e7359d8@kernel.org>
-X-Rspamd-Queue-Id: 4cMRWJ3TTDz9v0N
+In-Reply-To: <20250909201446.13138-5-arbn@yandex-team.com>
 
-
---zazlguyoxwpscuax
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 29/32] nsfs: add missing id retrieval support
-MIME-Version: 1.0
-
-On 2025-09-10, Christian Brauner <brauner@kernel.org> wrote:
-> The mount namespace has supported id retrieval for a while already.
-> Add support for the other types as well.
->=20
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Tue, Sep 09, 2025 at 10:14:39PM +0200, Andrey Ryabinin wrote:
+> Store KSTATE physical address & size instead of FDT in kho_data.
+> and initialize KSTATE from kho_populate().
+> To be able to use FDT in parallel with KSTATE place FDT
+> address&size into 'struct kho_fdt' and save/restore it using KSTATE.
+> 
+> This finishes wiring KSTATE with KHO, making it fully functional.
+> 
+> Signed-off-by: Andrey Ryabinin <arbn@yandex-team.com>
 > ---
->  fs/nsfs.c                 | 74 +++++++++++++++++++++++++++++++++++++++--=
-------
->  include/uapi/linux/nsfs.h | 12 ++++++--
->  2 files changed, 72 insertions(+), 14 deletions(-)
->=20
-> diff --git a/fs/nsfs.c b/fs/nsfs.c
-> index 3c6fcf652633..527480e67fd1 100644
-> --- a/fs/nsfs.c
-> +++ b/fs/nsfs.c
-> @@ -173,6 +173,13 @@ static bool nsfs_ioctl_valid(unsigned int cmd)
->  	case NS_GET_NSTYPE:
->  	case NS_GET_OWNER_UID:
->  	case NS_GET_MNTNS_ID:
-> +	case NS_GET_NETNS_ID:
-> +	case NS_GET_CGROUPNS_ID:
-> +	case NS_GET_IPCNS_ID:
-> +	case NS_GET_UTSNS_ID:
-> +	case NS_GET_PIDNS_ID:
-> +	case NS_GET_TIMENS_ID:
-> +	case NS_GET_USERNS_ID:
->  	case NS_GET_PID_FROM_PIDNS:
->  	case NS_GET_TGID_FROM_PIDNS:
->  	case NS_GET_PID_IN_PIDNS:
-> @@ -226,18 +233,6 @@ static long ns_ioctl(struct file *filp, unsigned int=
- ioctl,
->  		argp =3D (uid_t __user *) arg;
->  		uid =3D from_kuid_munged(current_user_ns(), user_ns->owner);
->  		return put_user(uid, argp);
-> -	case NS_GET_MNTNS_ID: {
-> -		__u64 __user *idp;
-> -		__u64 id;
-> -
-> -		if (ns->ops->type !=3D CLONE_NEWNS)
-> -			return -EINVAL;
-> -
-> -		mnt_ns =3D container_of(ns, struct mnt_namespace, ns);
-> -		idp =3D (__u64 __user *)arg;
-> -		id =3D mnt_ns->ns.ns_id;
-> -		return put_user(id, idp);
-> -	}
->  	case NS_GET_PID_FROM_PIDNS:
->  		fallthrough;
->  	case NS_GET_TGID_FROM_PIDNS:
-> @@ -283,6 +278,61 @@ static long ns_ioctl(struct file *filp, unsigned int=
- ioctl,
->  			ret =3D -ESRCH;
->  		return ret;
->  	}
-> +	case NS_GET_MNTNS_ID:
-> +		fallthrough;
-> +	case NS_GET_NETNS_ID:
-> +		fallthrough;
-> +	case NS_GET_CGROUPNS_ID:
-> +		fallthrough;
-> +	case NS_GET_IPCNS_ID:
-> +		fallthrough;
-> +	case NS_GET_UTSNS_ID:
-> +		fallthrough;
-> +	case NS_GET_PIDNS_ID:
-> +		fallthrough;
-> +	case NS_GET_TIMENS_ID:
-> +		fallthrough;
-> +	case NS_GET_USERNS_ID: {
-> +		__u64 __user *idp;
-> +		__u64 id;
-> +		int expected_type;
-> +
-> +		switch (ioctl) {
-> +		case NS_GET_MNTNS_ID:
-> +			expected_type =3D CLONE_NEWNS;
-> +			break;
-> +		case NS_GET_NETNS_ID:
-> +			expected_type =3D CLONE_NEWNET;
-> +			break;
-> +		case NS_GET_CGROUPNS_ID:
-> +			expected_type =3D CLONE_NEWCGROUP;
-> +			break;
-> +		case NS_GET_IPCNS_ID:
-> +			expected_type =3D CLONE_NEWIPC;
-> +			break;
-> +		case NS_GET_UTSNS_ID:
-> +			expected_type =3D CLONE_NEWUTS;
-> +			break;
-> +		case NS_GET_PIDNS_ID:
-> +			expected_type =3D CLONE_NEWPID;
-> +			break;
-> +		case NS_GET_TIMENS_ID:
-> +			expected_type =3D CLONE_NEWTIME;
-> +			break;
-> +		case NS_GET_USERNS_ID:
-> +			expected_type =3D CLONE_NEWUSER;
-> +			break;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +
-> +		if (ns->ops->type !=3D expected_type)
-> +			return -EINVAL;
+>  arch/x86/include/uapi/asm/setup_data.h |  4 +-
+>  arch/x86/kernel/kexec-bzimage64.c      |  6 +--
+>  arch/x86/kernel/setup.c                |  3 +-
+>  drivers/of/fdt.c                       |  6 +--
+>  include/linux/kexec.h                  |  2 +-
+>  include/linux/kstate.h                 |  1 +
+>  kernel/liveupdate/kexec_handover.c     | 60 +++++++++++++++++++++-----
+>  7 files changed, 61 insertions(+), 21 deletions(-)
+> 
+> diff --git a/arch/x86/include/uapi/asm/setup_data.h b/arch/x86/include/uapi/asm/setup_data.h
+> index 2671c4e1b3a0..844f5b93473f 100644
+> --- a/arch/x86/include/uapi/asm/setup_data.h
+> +++ b/arch/x86/include/uapi/asm/setup_data.h
+> @@ -83,8 +83,8 @@ struct ima_setup_data {
+>   * Locations of kexec handover metadata
+>   */
+>  struct kho_data {
+> -	__u64 fdt_addr;
+> -	__u64 fdt_size;
+> +	__u64 kstate_addr;
+> +	__u64 kstate_size;
+>  	__u64 scratch_addr;
+>  	__u64 scratch_size;
+>  } __attribute__((packed));
 
-While I get that having this be per-ns-type lets programs avoid being
-tricked into thinking that one namespace ID is actually another
-namespace, it feels a bit ugly to have to add a new ioctl for every new
-namespace.
+Isn't this part of the ABI which you can't just change.
 
-If we added a way to get the CLONE_* flag for a namespace (NS_GET_TYPE)
-we could have just NS_GET_ID. Of course, we would have to trust
-userspace to do the right thing...
-
-> +
-> +		idp =3D (__u64 __user *)arg;
-> +		id =3D ns->ns_id;
-> +		return put_user(id, idp);
-> +	}
->  	}
-> =20
->  	/* extensible ioctls */
-> diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
-> index 97d8d80d139f..f7c21840cc09 100644
-> --- a/include/uapi/linux/nsfs.h
-> +++ b/include/uapi/linux/nsfs.h
-> @@ -16,8 +16,6 @@
->  #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
->  /* Get owner UID (in the caller's user namespace) for a user namespace */
->  #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
-> -/* Get the id for a mount namespace */
-> -#define NS_GET_MNTNS_ID		_IOR(NSIO, 0x5, __u64)
->  /* Translate pid from target pid namespace into the caller's pid namespa=
-ce. */
->  #define NS_GET_PID_FROM_PIDNS	_IOR(NSIO, 0x6, int)
->  /* Return thread-group leader id of pid in the callers pid namespace. */
-> @@ -42,6 +40,16 @@ struct mnt_ns_info {
->  /* Get previous namespace. */
->  #define NS_MNT_GET_PREV		_IOR(NSIO, 12, struct mnt_ns_info)
-> =20
-> +/* Retrieve namespace identifiers. */
-> +#define NS_GET_MNTNS_ID		_IOR(NSIO, 5,  __u64)
-> +#define NS_GET_NETNS_ID		_IOR(NSIO, 13, __u64)
-> +#define NS_GET_CGROUPNS_ID	_IOR(NSIO, 14, __u64)
-> +#define NS_GET_IPCNS_ID		_IOR(NSIO, 15, __u64)
-> +#define NS_GET_UTSNS_ID		_IOR(NSIO, 16, __u64)
-> +#define NS_GET_PIDNS_ID		_IOR(NSIO, 17, __u64)
-> +#define NS_GET_TIMENS_ID	_IOR(NSIO, 18, __u64)
-> +#define NS_GET_USERNS_ID	_IOR(NSIO, 19, __u64)
-> +
->  enum init_ns_ino {
->  	IPC_NS_INIT_INO		=3D 0xEFFFFFFFU,
->  	UTS_NS_INIT_INO		=3D 0xEFFFFFFEU,
->=20
-> --=20
-> 2.47.3
->=20
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---zazlguyoxwpscuax
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaMGsLRsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG+B3QD+OfaCVrSG8CvKcSOAHb/i
-J0YiGWqKPhl3LmmE+Z8hO0QBAIdtLWcmkM+zFcaDYZNshc0o4K2/Fuv/8atQ2Zar
-EkAK
-=Sr2H
------END PGP SIGNATURE-----
-
---zazlguyoxwpscuax--
+Rob
 
