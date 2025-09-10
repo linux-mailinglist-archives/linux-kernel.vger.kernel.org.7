@@ -1,175 +1,250 @@
-Return-Path: <linux-kernel+bounces-810657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D39B51D6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:21:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD47B51D6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC0B1B274B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:22:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CFEF54E27FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE95E334393;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE8E3314AD;
 	Wed, 10 Sep 2025 16:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jBzG82h5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="I7Yr/Ycg";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jBzG82h5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="I7Yr/Ycg"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPN3958I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9121718871F
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7179E19C566;
+	Wed, 10 Sep 2025 16:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757521303; cv=none; b=tPoE8izW2QwLa0a18LubPUp/9bavz+pb3rOduRP2Rqjooi6XTkWIQJsAXcuHpZyH+srMocu+Iyiw/RQMKIBk6NkrX9Ot82bPiQbsjpdgd2aIRCnIJYEM+ustHlvkAI27oKgtcrjBhd16ZkdO+LT2Fn7QOQIr2vcQVyd069DB0ak=
+	t=1757521302; cv=none; b=VAQI3MrH5yu6XpMT+xiYv4pxmPoxvejxLEbV33IDROAFscAVs0tdvkhrQHLlJSalgWjOcNr1rZx+MQdznvEJ24Mkq6uFrCJ8AqKmPQwdo5gi/9715I8LNQmF7sSPTothdwYFK+t5SqYSoGDs/IKGrUI9rxyxrs9c6wb0h4AmoPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757521303; c=relaxed/simple;
-	bh=3s2iv5bCAG5HXlN433WWnj2sn+vaY4Ioad2qHQeGPUw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bDdNU6dIJIFD3boy7aZiR3vbZMTzZgrM6Og5qu+cKJfhyvHrlJj7VhxuXnidoYm6DjsVd55rrROVR7FyP0PAPr3W9CuzYNUbc/6aQhl1CPI7WVN4IxYsmK2U6PmYF0V5dqsPHxPIm+R/OkOiGOBTPlIcXJOncsLr7LDxSi13zqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jBzG82h5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=I7Yr/Ycg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jBzG82h5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=I7Yr/Ycg; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 69B8F66E1A;
+	s=arc-20240116; t=1757521302; c=relaxed/simple;
+	bh=eiAEzvpITo3PUWaDegwuNzuA84tOaKEbvkrkixgxBVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RV8T+Y1LAtR7u/G7vWH4BdRCs1QlBN7DIWzDB6gMdwhIC9KdKrXzSaMhHhTS4fN/b8o2vHlQFXjIkEGR0cegkFZ5kdXuEwAJ3n7oCFVvsUp+fpSztZ2f4zfnbi0KZvRb+MrSf057tGu6HcjuZijJy4Ejy7SoggsNvKfnwWaRRKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPN3958I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EB13C4CEEB;
 	Wed, 10 Sep 2025 16:21:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757521298; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=0swCQDk/Ohn3JC99L22z/GzKY9wy8JSTP88vXa2Cj+U=;
-	b=jBzG82h5v081yjJ7ICbL2jgNZb6QoGpB4dHbUHsUmWa6kxz7YjsfV9pylvCNrWnr9jmr7/
-	x/G7aIF/WcwyiThRCcKDgkMtvrAhNsw7ZQiqR22C9yzrk5xU7rSKbkJZuueLJtq+ODPgtx
-	cKP7xp9H8dZF8joCiXUnsFcUyJwcGwI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757521298;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=0swCQDk/Ohn3JC99L22z/GzKY9wy8JSTP88vXa2Cj+U=;
-	b=I7Yr/YcgXraBe+ayWihNqzkPGL8xpYicg7kx4wblY/XrTFh0EhNTJOgM70EiSv9csOu0WD
-	BHlQVt+iZThz66Ag==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=jBzG82h5;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="I7Yr/Ycg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757521298; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=0swCQDk/Ohn3JC99L22z/GzKY9wy8JSTP88vXa2Cj+U=;
-	b=jBzG82h5v081yjJ7ICbL2jgNZb6QoGpB4dHbUHsUmWa6kxz7YjsfV9pylvCNrWnr9jmr7/
-	x/G7aIF/WcwyiThRCcKDgkMtvrAhNsw7ZQiqR22C9yzrk5xU7rSKbkJZuueLJtq+ODPgtx
-	cKP7xp9H8dZF8joCiXUnsFcUyJwcGwI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757521298;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=0swCQDk/Ohn3JC99L22z/GzKY9wy8JSTP88vXa2Cj+U=;
-	b=I7Yr/YcgXraBe+ayWihNqzkPGL8xpYicg7kx4wblY/XrTFh0EhNTJOgM70EiSv9csOu0WD
-	BHlQVt+iZThz66Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B692A13310;
-	Wed, 10 Sep 2025 16:21:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TsBbKZGlwWjCRwAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 10 Sep 2025 16:21:37 +0000
-From: Pedro Falcato <pfalcato@suse.de>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Maksim Davydov <davydov-max@yandex-team.ru>,
-	linux-kernel@vger.kernel.org,
-	Pedro Falcato <pfalcato@suse.de>
-Subject: [PATCH RESEND] x86/split_lock: Warn for bus locks once for each task
-Date: Wed, 10 Sep 2025 17:21:26 +0100
-Message-ID: <20250910162126.157894-1-pfalcato@suse.de>
-X-Mailer: git-send-email 2.51.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757521301;
+	bh=eiAEzvpITo3PUWaDegwuNzuA84tOaKEbvkrkixgxBVU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XPN3958I9TvikLOPtgYVoP473dPJ7IEB0ehAsUh9fuggzr+d/HXd7QGe7Z3a98Ia0
+	 5+Q3nqzMDa0mq1mLhVYdX7xFyHJXgwzaY4gDStCUCHxA500VO6LACW5xvqExmEvTVU
+	 Sr9yjuWRKpszxYgSbfv9ND0O7LP2W9G1Ttbj6Q6Pewsdyq8GcS1lVsRgaFZ14BsOUn
+	 h6IC3xBy63cxGzFRHRko4ovLcarNra6aqRxpY5WZRxpdIFWfhe3KyEhodekhjaBp75
+	 MDak62uRskqZi2yIuO40R2AuO1w42c38n5K6bPNlJI/j/sf8LmdzBx+RZDOkfpc2LZ
+	 Uf41mos4IVt7w==
+Date: Wed, 10 Sep 2025 17:21:36 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, David Lechner	
+ <dlechner@baylibre.com>, nuno.sa@analog.com, andy@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
+ linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
+ ghennadi.procopciuc@oss.nxp.com
+Subject: Re: [PATCH v1 2/2] iio: adc: Add the NXP SAR ADC support for the
+ s32g2/3 platforms
+Message-ID: <20250910172136.29a4c4ab@jic23-huawei>
+In-Reply-To: <5c82294b3a672225542926dee9f5fd18716383c4.camel@gmail.com>
+References: <20250903102756.1748596-1-daniel.lezcano@linaro.org>
+	<20250903102756.1748596-3-daniel.lezcano@linaro.org>
+	<eedbfbfd1ba625b6750eb3ae20a69301b8bc3ef9.camel@gmail.com>
+	<0bfce1eb-69f1-4dae-b461-234eb98ffce1@linaro.org>
+	<a3373804-08a4-4526-a432-c21a74ea3d6b@baylibre.com>
+	<edc8e024-e425-49de-bfa2-44218fe72e26@linaro.org>
+	<6b8cd005-b04c-4dd7-abf7-5a51319a5f0a@baylibre.com>
+	<23b80d52-6149-483b-a159-276dd00d12cd@linaro.org>
+	<e5e76789-c8d9-463c-aa01-f2c6ae718f74@baylibre.com>
+	<fd4c81a5-3b99-448c-92d4-9465f0e76db3@linaro.org>
+	<c23ed0cf-8188-49ac-b310-57bbfb54f337@baylibre.com>
+	<c30bb4b6328d15a9c213c0fa64b909035dc7bf40.camel@gmail.com>
+	<222acc86-c405-4e05-ac8c-520ba81ef0a0@linaro.org>
+	<5c82294b3a672225542926dee9f5fd18716383c4.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim,suse.de:email];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 69B8F66E1A
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Sometimes, it's possible to see long-running services that keep pounding
-the bus_lock logic in a long-standing way that does not trigger
-ratelimiting, but still floods the dmesg nonetheless, over time.
+On Wed, 10 Sep 2025 12:57:19 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-Fix it by using current->reported_split_lock, which was previously
-used for the split_lock handling. In this way, bus_lock #DB's are only
-warned once in the dmesg, for each task that hits a bus lock.
+> On Tue, 2025-09-09 at 18:22 +0200, Daniel Lezcano wrote:
+> > On 09/09/2025 11:29, Nuno S=C3=A1 wrote: =20
+> > > Hi *Daniel* (sorry for that :)),
+> > >=20
+> > > On Mon, 2025-09-08 at 08:58 -0500, David Lechner wrote: =20
+> > > > On 9/8/25 7:16 AM, Daniel Lezcano wrote: =20
+> > > > > On 05/09/2025 23:54, David Lechner wrote: =20
+> > > > > > On 9/5/25 3:58 PM, Daniel Lezcano wrote: =20
+> > > > > > > On 05/09/2025 17:25, David Lechner wrote: =20
+> > > > > > > > On 9/5/25 4:44 AM, Daniel Lezcano wrote: =20
+> > > > > > > > > On 04/09/2025 19:49, David Lechner wrote: =20
+> > > > > > > > > > On 9/4/25 12:40 PM, Daniel Lezcano wrote: =20
+> > > > > > >=20
+> > > > > > > [ ... ] =20
+> >=20
+> > [ ... ]
+> >  =20
+> > > > Unfortunately, not really. Until the last few years, there wasn't r=
+eally
+> > > > any users of these APIs. I added
+> > > > devm_iio_dmaengine_buffer_setup_with_handle()
+> > > > for the SPI offloading work I did recently. The only reason it had =
+to be
+> > > > added is because we needed to get the DMA handle from a different
+> > > > devicetree
+> > > > node from the ADC's node. Since this device has dmas and dma-names =
+in
+> > > > the devicetree, then if devm_iio_dmaengine_buffer_setup[_ext]() doe=
+sn't
+> > > > work
+> > > > with that, then it might have other problems (assumptions made for a
+> > > > specific
+> > > > use case) than just not calling dma_slave_config().
+> > > >=20
+> > > > I think maybe Nuno and certainly I are guilty of trying to offer you
+> > > > advice
+> > > > without looking deeply enough into what you already submitted. :-/
+> > > >  =20
+> > >=20
+> > > Yes, I pretty much just asked for (at least) some discussion about th=
+is and
+> > > see
+> > > if we could use what we already have in IIO.
+> > >  =20
+> > > > I see now that what you are doing with the DMA looks more like othe=
+r SoC
+> > > > ADCs
+> > > > (AT91/STM32/AM335x) which is quite different from how the
+> > > > iio_dmaengine_buffer
+> > > > stuff works, e.g. cyclic vs. not. So unless you are interested in e=
+volving =20
+> > >=20
+> > > Supporting cyclic should be fairly easy (Paul left it almost prepared=
+ for
+> > > it)
+> > > and do I have some patches already. I'm just waiting on having someth=
+ing
+> > > accepted on the ADI DMA IP driver (dmaengine) before sending the IIO =
+patches
+> > > I
+> > > already have.
+> > >  =20
+> > > > the iio_dmaengine_buffer code to be more general to handle this cas=
+e as
+> > > > well,
+> > > > it might not be the right tool for the job currently. =20
+> > >=20
+> > > I think for the STM (IIRC) case they "open" coded it because the IIO =
+DMA
+> > > support
+> > > we had at the time (if any) was more "rudimentary" - (no real zero co=
+py
+> > > interface with userspace for example). But yeah, it seems there are s=
+ome
+> > > gaps
+> > > for your usecase so as David said, you would need to be interested in
+> > > evolving
+> > > the IIO DMA API to accommodate your needs. Again, if nicely integrate=
+d you
+> > > would
+> > > gain some nice "improvements" in performance (not having to use the f=
+ileio
+> > > interface for reading the buffers) for "free".
+> > >=20
+> > > As for dma_slave_config(), you're right and we have no usecase needin=
+g that
+> > > setup and TBH, I did not looked or have any idea (atm) on how to do i=
+t. That
+> > > said, I'll be here to help and contribute if you decide to try and fo=
+llow
+> > > the
+> > > IIO DMA buffer API. =20
+> >=20
+> > I would be glad to help improving the IIO DMA but I don't have enough=20
+> > bandwidth ATM. I was hoping to get this driver merged for v6.18 which i=
+s=20
+> > the next LTS AFAICT. Is it something possible by taking into account al=
+l=20
+> > the comments without improving the DMA code ?
+> >  =20
+>=20
+> No personal problem with that. But ultimately that is up to Jonathan :)
 
-Signed-off-by: Pedro Falcato <pfalcato@suse.de>
----
-This is already reflected in the documentation for bus lock, as "Warn
-once per task and and continues to run.".
+I'm fine with a device doing DMA that isn't using the DMA buffer interface.
+That is, basically what you have here. The only risk is walking ourselves
+into a corner of having to maintain compatibility if later on the zero
+copy performance is needed.
 
-Resend since the first mail had accidentally no mailing list in CC.
+We can solve that, but today I don't recall us having any devices
+offering both interfaces.
 
- arch/x86/kernel/cpu/bus_lock.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/bus_lock.c b/arch/x86/kernel/cpu/bus_lock.c
-index 981f8b1f0792..71342e6244e3 100644
---- a/arch/x86/kernel/cpu/bus_lock.c
-+++ b/arch/x86/kernel/cpu/bus_lock.c
-@@ -335,8 +335,11 @@ void handle_bus_lock(struct pt_regs *regs)
- 		/* Warn on the bus lock. */
- 		fallthrough;
- 	case sld_warn:
--		pr_warn_ratelimited("#DB: %s/%d took a bus_lock trap at address: 0x%lx\n",
-+		if (!current->reported_split_lock) {
-+			pr_warn_ratelimited("#DB: %s/%d took a bus_lock trap at address: 0x%lx\n",
- 				    current->comm, current->pid, regs->ip);
-+			current->reported_split_lock = 1;
-+		}
- 		break;
- 	case sld_fatal:
- 		force_sig_fault(SIGBUS, BUS_ADRALN, NULL);
--- 
-2.51.0
+>=20
+> > Do you have a pointer to Paul's series and the patches you mentioned=20
+> > above ? I can give a try when having some spare time
+> >=20
+> >  =20
+>=20
+> Here is the DMABUF work from Paul [1]. But I do not think this is of much=
+ use
+> for you (as an in kernel consumer) but it is still interesting :).
+>=20
+> My own patches are in here [2] but you have out of tree "noise" in there =
+[2]. At
+> ADI tree we had some legacy "high speed" implementation that we're still
+> supporting (eventually it will go away and we will sync completely with t=
+he
+> upstream solution). I was hopping for this [3] to land first before sendi=
+ng the
+> IIO bits but I'm having some issues with lack of bandwidth (I guess) from=
+ the
+> DMA maintainer. They are not really dependent on each other so I might se=
+nd the
+> IIO stuff soon enough.
+>=20
+> One last comment about dma_slave_config(). That should be easy to go arou=
+nd with
+> devm_iio_dmaengine_buffer_setup_with_handle(). I mean, we canl do all the=
+ DMA
+> chan request in the consumer driver (which would allow to easily call
+> dma_slave_config() when needed) and pass the DMA handle to IIO with the A=
+PI
+> David introduced. In the future, given enough users, we could introduce an
+> helper in the IIO code and it would be easy to "convert" the driver. Now,=
+ if you
+> do need to do something special in the DMA termination callback, we would
+> definitely need to add the mechanism for that. In the ADI tree we do have=
+ a way
+> for a custom DMA submit operation [4] but we never had a proper upstreama=
+ble
+> user for it :(
+>=20
+> Anyways, just some thoughts if you or someone else ever have the time for=
+ this
+> :)
+>=20
+>=20
+> [1]: https://lore.kernel.org/linux-iio/20240620122726.41232-1-paul@crapou=
+illou.net/
+> [2]: https://github.com/analogdevicesinc/linux/commit/a1f64e5e7927d1d96da=
+08245cce35ba9e08a5f52
+> [3]: https://lore.kernel.org/dmaengine/20250811-dev-axi-dmac-fixes-v1-0-8=
+d9895f6003f@analog.com/
+> [4]: https://github.com/analogdevicesinc/linux/blob/main/drivers/iio/buff=
+er/industrialio-buffer-dma.c#L1214
+>=20
+> - Nuno S=C3=A1
 
 
