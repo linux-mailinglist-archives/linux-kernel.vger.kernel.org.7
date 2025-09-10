@@ -1,89 +1,80 @@
-Return-Path: <linux-kernel+bounces-810088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4179BB515B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:30:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B8B8B515BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EA311C83DD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:30:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCF9A160F8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10155319859;
-	Wed, 10 Sep 2025 11:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D040D319842;
+	Wed, 10 Sep 2025 11:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rB3nbBiG"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iHDpGcR6"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09352DCC1C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B212D3128BF;
+	Wed, 10 Sep 2025 11:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757503804; cv=none; b=V/Z/76Oi4Nlnsya/Q5jIPoohldSFMad3JEu4N9p0mdfvb1M5uZr5Cwd870grMNgFNrstKtG4XmdJB/fUxe+SdMQIjDlDoIy92Y+342ViM6WQC2e+nCRauplbDmj/lYkPtCtFi/CBEK7Rkauz8lYOtVRLob2V7cTmpn2WEvZ6AoA=
+	t=1757503847; cv=none; b=EO1BJRtm1j+6qIj6DUv2BP2MhDdLMwxp/+XHEKj0Og8c1762OOxcBxPodayH9SXU+dXlUA9IedKiwlvZIYXr3HuIVVxjQy1q62I2gY4faSS5DruInOd6hs8Is4aY6AwdEdLz6G2aEtKw+Kj8bYA+OiUxZwDDMGcGZ5ynYnZMygE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757503804; c=relaxed/simple;
-	bh=iU3g6YqT3iBhtM4Qx6LE4jyqmLa5j7vhy7FFkAC+vbY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=irVWZhja/7SpVA5pOz8vPBETtZ8rAhdrRAwho8PEN00WS9/FE657zCkHTMSd6lfkMwe2BHShPFPKeRxmAzRT75a0MHP7qk9w/2Q/JVaivDCneTaXZ8yVCJD3asFG7uJz9DwbseGWqoRf9KT+cdpTpELFad7jQA0LFvY5bD9bjK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rB3nbBiG; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7722c8d2694so5641460b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:30:02 -0700 (PDT)
+	s=arc-20240116; t=1757503847; c=relaxed/simple;
+	bh=9ZSLjDe+4Fc/v2AOr41UNDmXMbdnGl8t41vBsqh5l3o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M6DB7TGCJ/fPZNkdaGfTu9htLYTpiIAdJsyfU2hvbXezw5thlqdoZjgyWYFkneCsQ2uyhKgRV2sL9KK50xClNgQTG0Iaj/nnQkzU9ETfurb0lSYxW78/3rW1WzXDF7KvA0J5YbbLx+yWjyt37RP6ISkXTkSfJfPlof5qxN1WDag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iHDpGcR6; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4d118e13a1so4445450a12.3;
+        Wed, 10 Sep 2025 04:30:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757503802; x=1758108602; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UHog35fdZul65rJ2KSFV2eXJRn1rF30zkol6ZT3v8ug=;
-        b=rB3nbBiGCCmUq5GzWvTdIf3pbOGPTQHXycuWNkfM6XjrU0bKY5pbZ8viPOo2jCHobj
-         1lzHzpEgfB5r/gdwtboudIQXpL7M8N1yswrMTWnHhCwcXg6qjJv0Y+5tlfhjX/K9lFvG
-         cSoepf/cgsc4hQogO+/wQAzge5GZicpLIQYFoCMHR6jJWgScpSZPSWVoYfG+oDY8Kd59
-         RaDxUIyCNMVTo81on34pnnNrzFN6u/+ZB9rfKuvyC5m6hjb3lHJ0iSjNv/QV8mHuiuav
-         7cOVevZE/SmRKsqhkz5+PssfDDXnr9Z6PnxkSEIYgX9xLHQyIod32Ekb/9dbGpxd2ELF
-         uUFw==
+        d=gmail.com; s=20230601; t=1757503845; x=1758108645; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=flW00o4TNs0w7ND8/adOgZPHVUNu6jf50PwpLW7fM5I=;
+        b=iHDpGcR6FIek1qNAo4AIJX4WQHCI/MqjD2TvgMy/NfJin15ZANQr84IuIygPgB6mo7
+         lq30mjhX4aVoNdCwBrCPsbTvrwfQfMpWMChbjXhgOeIgtaPmHBm8qiLo3PwyMG7HFogj
+         JBuzI2GKuBINXZHSkGXdDUMirq5cmWLlWdjaAVXw3b1Ct8DqtfQ3Y9GFtXWwKfrzkO0H
+         LstpaaQVl+2G+L+PgtUw6igzzqN0QZx4O1Dd5S+8xoGYk95S3iw2BPt69Wdyxf07iF8O
+         JOxpBD0NWKgDNzwbv7eydDjYMAQAV9+eCOclrnHIqRcixgWLplOH4wRXTfd/Nqz/C0Xr
+         SMEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757503802; x=1758108602;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UHog35fdZul65rJ2KSFV2eXJRn1rF30zkol6ZT3v8ug=;
-        b=Ds2v+oh4laZkOt2muvLXE5/BdxyQl1+icXWwYRez9bIWBDk+wLK0xMtp9tmK8Xs9Qn
-         Z3eB7++1RKctJMEYgE2MPhmZY1Doibq2hHklliS5JsBpnL5GHLJccKtLg9C+/iOQRBo0
-         psC71R/P8r3yWUe7W5Hdhb54YW/yQemzyHEoM78n8pOshoSWeX7rvQH8G0Snyp8dutHo
-         pSTVcp6K6bvrBdW7Py5gkewKjiiggWGbTGTTMc81gjb4NAsrq3CzGc+vk42ReExr0oP1
-         rQwrm87/dSNuMqaGJAdQwwSYtaNMGedTR+1CifdLN1pMDXcEUE4imDbv+Cw9Y9wqaoeh
-         uJXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBQfkEUlmx08r6cQXb1H/2T6w2lW3vT7A3agzITtNhRfOKo4tmN1lT7jqD004hVsiSj6QoYexh3vfdvRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKMv+W+TCKaaIqI8o0ux81LS1bT3ExlFQNBl3a8LZfaFZSNqA2
-	NO2OUIctpmMrkUPT7/v78fTBUxrOKXQUyIY0++ZOeHOKsrCbxT+bHt81aFQMrGmczII=
-X-Gm-Gg: ASbGncuyxPOXZDghYbtoUCO7kgXwZKkfUiwMYyQOJ7ibqu5YzHVQEFA+oBZR52MMO78
-	IBfZ8LPwzX1f0ue6cT8WBCN5tA0r4O1b2kuzxrND0rhms5eD4VP5byc0HkyD21eooN2MDWMPwAA
-	+HHRRmrMiSfOuey93cEACQbeOH1V0zEXUjyJD3g2pvnTl3/A/aBPrzkbjrLgorlFaDFEjjAftZa
-	oC+g5Bf9h+y4kO1EP5dRzhUIYT2Mejd+57xTmIBE0Gyj5tlML1PB1zMnJAq9g97+FiYpIWisyEH
-	6++98Ow8AJzAHluuBkTBXa/yUvq2o/xE9NN8UvyhojbpJlECeEPbh7u+v6mka2gU4O3EjyfkDt3
-	gq3G79zbAfMNyy0Q=
-X-Google-Smtp-Source: AGHT+IHkihz9yFR54R0EvSFdM+hx3ztjH6FzLB6hWLgclGcjkfYrDxszfqHbE5NQHR7E0043fCmspg==
-X-Received: by 2002:a05:6a00:13a0:b0:771:f951:16c6 with SMTP id d2e1a72fcca58-7742de60a43mr17847732b3a.15.1757503802237;
-        Wed, 10 Sep 2025 04:30:02 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774662920b1sm4964965b3a.52.2025.09.10.04.30.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 04:30:01 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: nilay@linux.ibm.com, ming.lei@redhat.com, 
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com, 
- johnny.chenyi@huawei.com
-In-Reply-To: <20250910080445.239096-1-yukuai1@huaweicloud.com>
-References: <20250910080445.239096-1-yukuai1@huaweicloud.com>
-Subject: Re: [PATCH v2 for-6.18/block 00/10] blk-mq: cleanup and fixes for
- updating nr_requests
-Message-Id: <175750380136.204398.548203762682278830.b4-ty@kernel.dk>
-Date: Wed, 10 Sep 2025 05:30:01 -0600
+        d=1e100.net; s=20230601; t=1757503845; x=1758108645;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=flW00o4TNs0w7ND8/adOgZPHVUNu6jf50PwpLW7fM5I=;
+        b=ljPoaZKaJHFDundY+XJ6TZMfW9nfqY/yblhBmsdIR3KT5SagSqMqCjDjud4GL2jd/4
+         /dUfmqic5BYqf92dYqmtlwXTibcgrCljKULF9DZbc+8glf1sAye36g2UYCnoEDOp4wR4
+         jJk4ijKoSCTARgrX7ivuu2kYHkNKVDn0UjZ3mZYUnb5KizK2+wQmhue1/TEOs9dGRK/V
+         3SrG0jRTsHGa25Q/WZh/VVoBRgzgpv6c1TRgxlNfxfIghptHAm/U7VJ5fsIw8IQx8OLX
+         VMLQ3smzMkFzobuzkrguLFZtpdG++pT+YeVvkbarL9y56xEw3tW/OT7XFT8qGaJXgnt2
+         8KWA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3fzeqwNcpnqaJYVZcqkGObqzDgAbLBLFtGhFZRYgyr7atZKYR/ieBxJX6Wjio+P8WcF+a0tnThU9R7sQ=@vger.kernel.org, AJvYcCW4kUUCu7mkC1lsDumjMxSVlIOvOwNwu9zcmlJyZ06jiAiOgjjcv81OZUnJ5AsYxzuka+cdED9N0RzQ4gvfk80N@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt4SOe2vWSMtFYQsnqi1NRtX8ZFBog8hjkdG+5St/YMnsLVfmu
+	1pxyOOfN2iwjZifZduZcEoF3G+xgva1gKOfX1DfCpkx0REY1KU2NJrC5zDIiqg+O
+X-Gm-Gg: ASbGncsx52DvmXbzaIdL/Tt0+UB+eYcyky130w+PnBWvwVZ04kO8mzYnL0gSnqcGPy6
+	ls3z7zCWHReT+yMubr1F3hWsYHujcIXS1G/jrqTm8MUxkLImHpgwc//3ex7wrGLH7pekZK+K20p
+	MNxkm3obnlybs88Yj7xzQ91R5W8czCjN7I0Sr8EMFNl9hTk9FQhtTTC8aNjqmyIMoFPm49upuuz
+	ofTArWcJk/RPupuwTUiR7KR+q6oCOtSZ57/HM4l+gEbWU60CcYdZ//s4m3127HF7oB+onHQ4Oa7
+	7AhLXoqYpJr/vOIzHJlvBo+ZgU5svs9mbMmQln8iJOS6BK9T+rE/xlBHHtS87P1VyWfgPWWfPQ1
+	6yItLVrw1aY+o69CKHbeXemPuZ3H1Fx66hmUXoe6tWu0c+D3UzJbr5NjQp+k6AuPCRZZ4xprZ0T
+	BnjF7XG3JsGaLImh/p
+X-Google-Smtp-Source: AGHT+IGc7SMnCypPSiItYXmc89F0gz9NLoFugqdvp1jo9HA+2pBLrXEE7CO3WouVUiK/9GqKXLS5sw==
+X-Received: by 2002:a17:902:dace:b0:24b:11c8:2cfd with SMTP id d9443c01a7336-2516ce601bbmr241491715ad.7.1757503844712;
+        Wed, 10 Sep 2025 04:30:44 -0700 (PDT)
+Received: from localhost (2001-b400-e28d-0ed7-4d5a-39b4-7c51-4c71.emome-ip6.hinet.net. [2001:b400:e28d:ed7:4d5a:39b4:7c51:4c71])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-25a27df03a6sm24841345ad.56.2025.09.10.04.30.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 04:30:44 -0700 (PDT)
+From: Nai-Chen Cheng <bleach1827@gmail.com>
+Date: Wed, 10 Sep 2025 19:30:32 +0800
+Subject: [PATCH] selftests/Makefile: include $(INSTALL_DEP_TARGETS) in
+ clean target to clean net/lib dependency
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,60 +83,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+Message-Id: <20250910-selftests-makefile-clean-v1-1-29e7f496cd87@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAFdhwWgC/x2MwQqDMBAFf0X27EJMkWJ/RTzE+FIX0yhZkYL47
+ waPwzBzkiILlD7VSRmHqKypQFNX5GeXvmCZCpM1tjVdY1gRww7dlX9uQZAI9hEusfc2jG+DDi9
+ LJd9ysf9n3Q/XdQOYbgM9agAAAA==
+X-Change-ID: 20250910-selftests-makefile-clean-cc2fb70e9e32
+To: Shuah Khan <shuah@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
+ Nai-Chen Cheng <bleach1827@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757503838; l=1181;
+ i=bleach1827@gmail.com; s=20250730; h=from:subject:message-id;
+ bh=9ZSLjDe+4Fc/v2AOr41UNDmXMbdnGl8t41vBsqh5l3o=;
+ b=kXMkH0zAKLkWvP+pZoQE1+O8Jn6o+7/9bPAhRss9NYSh6eI3XM3RkVxIOhufhacf0MniUQ/EC
+ 1hRfpU4jD4BDaAWHTm5r3e2zPbYyYvBM2wW5bj4bUWA52A4GsHa6243
+X-Developer-Key: i=bleach1827@gmail.com; a=ed25519;
+ pk=jahFPRplw20Aaim8fIt8SxlFMqkHbJ+s8zYBGbtHH5g=
 
+The selftests 'make clean' does not clean the net/lib because it only
+processes $(TARGETS) and ignores $(INSTALL_DEP_TARGETS). This leaves
+compiled objects in net/lib after cleaning, requiring manual cleanup.
 
-On Wed, 10 Sep 2025 16:04:35 +0800, Yu Kuai wrote:
-> Changes from v1:
->  - add comments explaining accessing q->elevator without holding
->    elevator_lock in patch 4;
->  - add non-shared checking in patch 8;
->  - add review tag by Nilay, patch 1-5,7,9,10;
-> 
-> Yu Kuai (10):
->   blk-mq: remove useless checking in queue_requests_store()
->   blk-mq: remove useless checkings in blk_mq_update_nr_requests()
->   blk-mq: check invalid nr_requests in queue_requests_store()
->   blk-mq: convert to serialize updating nr_requests with
->     update_nr_hwq_lock
->   blk-mq: cleanup shared tags case in blk_mq_update_nr_requests()
->   blk-mq: split bitmap grow and resize case in
->     blk_mq_update_nr_requests()
->   blk-mq-sched: add new parameter nr_requests in
->     blk_mq_alloc_sched_tags()
->   blk-mq: fix potential deadlock while nr_requests grown
->   blk-mq: remove blk_mq_tag_update_depth()
->   blk-mq: fix stale nr_requests documentation
-> 
-> [...]
+Include $(INSTALL_DEP_TARGETS) in clean target to ensure net/lib
+dependency is properly cleaned.
 
-Applied, thanks!
+Signed-off-by: Nai-Chen Cheng <bleach1827@gmail.com>
+---
+ tools/testing/selftests/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[01/10] blk-mq: remove useless checking in queue_requests_store()
-        commit: dc1dd13d44fa4e4d466476c0f3517c1230c237e4
-[02/10] blk-mq: remove useless checkings in blk_mq_update_nr_requests()
-        commit: 8bd7195fea6d9662aa3b32498a3828bfd9b63185
-[03/10] blk-mq: check invalid nr_requests in queue_requests_store()
-        commit: b46d4c447db76e36906ed59ebb9b3ef8f3383322
-[04/10] blk-mq: convert to serialize updating nr_requests with update_nr_hwq_lock
-        commit: 626ff4f8ebcb7207f01e7810acb85812ccf06bd8
-[05/10] blk-mq: cleanup shared tags case in blk_mq_update_nr_requests()
-        commit: 7f2799c546dba9e12f9ff4d07936601e416c640d
-[06/10] blk-mq: split bitmap grow and resize case in blk_mq_update_nr_requests()
-        commit: e63200404477456ec60c62dd8b3b1092aba2e211
-[07/10] blk-mq-sched: add new parameter nr_requests in blk_mq_alloc_sched_tags()
-        commit: 6293e336f6d7d3f3415346ce34993b3398846166
-[08/10] blk-mq: fix potential deadlock while nr_requests grown
-        commit: b86433721f46d934940528f28d49c1dedb690df1
-[09/10] blk-mq: remove blk_mq_tag_update_depth()
-        commit: 9784041145796994f2b21f4c7e628d7c9db762f4
-[10/10] blk-mq: fix stale nr_requests documentation
-        commit: a75fe12fa2e2f96b619f25b8cda1fdef6d616ab1
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 030da61dbff3a7e4a22d61ba3972e248a43d374d..a2d8e1093b005c9af3570246dd8b10b59e44b46b 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -314,7 +314,7 @@ gen_tar: install
+ 	@echo "Created ${TAR_PATH}"
+ 
+ clean:
+-	@for TARGET in $(TARGETS); do \
++	@for TARGET in $(TARGETS) $(INSTALL_DEP_TARGETS); do \
+ 		BUILD_TARGET=$$BUILD/$$TARGET;	\
+ 		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET clean;\
+ 	done;
+
+---
+base-commit: 9dd1835ecda5b96ac88c166f4a87386f3e727bd9
+change-id: 20250910-selftests-makefile-clean-cc2fb70e9e32
 
 Best regards,
 -- 
-Jens Axboe
-
-
+Nai-Chen Cheng <bleach1827@gmail.com>
 
 
