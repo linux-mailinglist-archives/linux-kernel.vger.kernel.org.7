@@ -1,502 +1,211 @@
-Return-Path: <linux-kernel+bounces-809935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5BBCB513A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:14:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3B97B513A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E2035632EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:14:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ABB3177C36
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDF4313275;
-	Wed, 10 Sep 2025 10:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8382731194C;
+	Wed, 10 Sep 2025 10:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eXsxazUX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b="mBqP1bs/"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3D831D361;
-	Wed, 10 Sep 2025 10:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3748B25F798
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757499283; cv=none; b=p6ihHXP5N1bRwyZohNwoGh7TP8dd5ePHj32YMIZfLay1oH1KeNNbIB0ipmTR00+ocigTdLbbpu5yyQFhaeHhihDcYllAEPjRKl8E+fu07Bog3A/d3292ragTAkeFj9/noClssDI2B1JM8SnXs/qWNU9ZROtjhTwO2bAJ+eWuJRM=
+	t=1757499402; cv=none; b=tpktuDoiSyPVAAbUnq/qABhzLwd9H5gHeAfA8Otdm/Wdt3xK2M33O7t83ttbVOnZzeE9gxVjRP4MIBbmjWfPB2AHKiFlGtBhZwRIY3MqSMRdSNmWlf5KVIIgJc5+IBGgNV+WVQMdphdBgXO6yQye1y4lPiMyOIn5JJOz2Kt5OAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757499283; c=relaxed/simple;
-	bh=xt0821crLzz5S1c2aFP1SFzMZbRsxlQI0Loa6D/OejQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VqqSL27fUQOeLeGpDGRzgTZX6nkMZOPa6f+VHW8dDS/43obicvpsR4crCAT1XeQ0DjnPFiLaYueTlEhdu/QEOl5jco/qJsRfUSil5DtLfDMQsunbaGORxZbCkcOj04ViQWECvSOPSqriS+wIzny2/aE9BSBKdSG9T0UfKABPW1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eXsxazUX; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757499281; x=1789035281;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=xt0821crLzz5S1c2aFP1SFzMZbRsxlQI0Loa6D/OejQ=;
-  b=eXsxazUX1CKiDS3fdKRNkZc5oYcTXU5yusfTsIl+FqPnCRjzw4A0TfLD
-   mkgsWjFAy4W7LGkwalfJPZDzBYpOmgSmqUAPox5TBnooWt3KWdRdcIJkt
-   92YSwMNBSdjNWE3kqfCtUeJfe+HNwqHEz29mNwhcTeWGcBV6x9zXeXrVX
-   +HEufQcQT6dNxiaUTV66mPnW/yU/X7BIkuGZ07w6Pec7J9/SVPwNW73Fx
-   mE3L5q1zJE2wrCXVeQfjNNrO6KC35pStglYrwyd6ow/hiC85Q89Fyxdui
-   jOUu5RuElTB3eIuKFHmd+6tCaA9H/DThs/hVWh18SnLQlBCs7dCzb1eDE
-   w==;
-X-CSE-ConnectionGUID: dMXRmqULSQ2H5OZkDecZjw==
-X-CSE-MsgGUID: d6bpw+xhS76TBSfZdS9UMQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="62434630"
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="62434630"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 03:14:40 -0700
-X-CSE-ConnectionGUID: 7GkQsBloR5y4tuK93NThAA==
-X-CSE-MsgGUID: YiQ3v1A8RHempAq5+7h6Ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="178564698"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.72])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 03:14:37 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 05/19] tools/docs: python_version: move version check
- from sphinx-pre-install
-In-Reply-To: <784ca5070326558220cc275deaa046a274badebe.1756969623.git.mchehab+huawei@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1756969623.git.mchehab+huawei@kernel.org>
- <784ca5070326558220cc275deaa046a274badebe.1756969623.git.mchehab+huawei@kernel.org>
-Date: Wed, 10 Sep 2025 13:14:33 +0300
-Message-ID: <12f948d2bb995d9321ce07d8765e00bcbd822402@intel.com>
+	s=arc-20240116; t=1757499402; c=relaxed/simple;
+	bh=JQGFgf4Q/DkQ2yeI/CGdFJTyTRKPZQ4yJe9U/HIrnSQ=;
+	h=From:To:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=n2l8hP71NpD7QuPwFtcM2bsS7CVCBiQnXOyYEn59wa3opQmIo2D8N6ukfd4oEWit+4z7h/1VlueCoa0MO1sgNlgmbfg+hlb2GIsCfLzYCFRLI0b56AvH05BYVTh7ZqwiN2T1KHYs/49Dpjd3NY+aiwonOw1iuBTU+dP2DLxvUkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b=mBqP1bs/; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1757499398; x=1758104198;
+	i=markus.stockhausen@gmx.de;
+	bh=XYzAE/10QWCzldGWM8VHUVk687IDvvZkqpd+QoLFOFw=;
+	h=X-UI-Sender-Class:From:To:References:In-Reply-To:Subject:Date:
+	 Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=mBqP1bs/kHm0CIQ6ErrydEYnbTElzylB1bRB/iZdLwEVCSO0jlpLZjVXl0Lel6CZ
+	 Zl506uqBYV+HAldEY7KBvhPJBFAGGXvvr2DbZeco1ijygsGvxPk06Vxb4CX3rG7AI
+	 cUxQ7fTNG5jk/FXkMIFlHZKou+ubvoYD843QjVu+84yo3hVHf3do0DWZUj6kYiCus
+	 v+uCNB/ouQZgRFaBbRojq2Rfda964wPPymsCem637m82hOGL7c+0rl1INcTm6zxNG
+	 RxKUakznOsXnLmhrVxYdpYGLh7m0sbR+Ew3wdimsnmISAsx0sj/IoNvpJXdhzsn0Y
+	 2KNYB6mVzo6zkEmARw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from colnote55 ([61.8.139.231]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MIwz4-1uhNeu0Cfi-00LMrh; Wed, 10
+ Sep 2025 12:16:38 +0200
+From: <markus.stockhausen@gmx.de>
+To: "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
+	<tglx@linutronix.de>,
+	<linux-kernel@vger.kernel.org>,
+	<howels@allthatwemight.be>,
+	<bjorn@mork.no>
+References: <20250804080328.2609287-1-markus.stockhausen@gmx.de> <20250804080328.2609287-2-markus.stockhausen@gmx.de> <af4a09e2-5b3e-4223-a926-4ab33b327416@linaro.org>
+In-Reply-To: <af4a09e2-5b3e-4223-a926-4ab33b327416@linaro.org>
+Subject: AW: [PATCH 1/4] clocksource/drivers/timer-rtl-otto: work around dying timers
+Date: Wed, 10 Sep 2025 12:16:36 +0200
+Message-ID: <007901dc223b$feb371a0$fc1a54e0$@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain;
+	charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: de
+Thread-Index: AQHp8yyrgZ2WnUFiBUflLXXXxyaZiwJVKvFZAo3A5nq0SXNUIA==
+X-Provags-ID: V03:K1:va8Svmd18ICIkEeKWhUuc2lw7GFHuBavfKXZ15lI5bZy5Dj6aFc
+ HI3NrMYt/hwDfqgGzAvAcVjbjnqiN4fBRiJrqsdkh+j7H1+YHiVHEnHJWyGtwg9JxNHMeRB
+ 2I/rAIUuMFrcylURw2ILhkk7CkG1R+rV2nJrz9DKTU1OSX6r7LBEDucBoEaNbpUlDDaQeoU
+ Gw77xH85mJWKsuQ6Ru6xw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:OVxd3E1pbac=;Bu1lfeh/O/hY/QzkOFRykJ7hQ7e
+ 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
 
-On Thu, 04 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrot=
-e:
-> The sphinx-pre-install code has some logic to deal with Python
-> version, which ensures that a minimal version will be enforced
-> for documentation build logic.
+> Von: Daniel Lezcano <daniel.lezcano@linaro.org>=20
+> Gesendet: Mittwoch, 10. September 2025 11:03
+>=20
+> On 04/08/2025 10:03, Markus Stockhausen wrote:
+> > The OpenWrt distribution has switched from kernel longterm 6.6 to
+> > 6.12. Reports show that devices with the Realtek Otto switch =
+platform
+> > die during operation and are rebooted by the watchdog. Sorting out
+> > other possible reasons the Otto timer is to blame. The platform
+> > currently consists of 4 targets with different hardware revisions.
+> > It is not 100% clear which devices and revisions are affected.
+> >=20
+> > Analysis shows:
+> >=20
+> > A more aggressive sched/deadline handling leads to more timer starts
+> > with small intervals. This increases the bug chances. See
+> > https://marc.info/?l=3Dlinux-kernel&m=3D175276556023276&w=3D2
+> >=20
+> > Focusing on the real issue a hardware limitation on some devices was
+> > found. There is a minimal chance that a timer ends without firing an
+> > interrupt if it is reprogrammed within the 5us before its expiration
+> > time.
 >
-> Move it to a separate library to allow re-using its code.
+> Is it possible the timer IRQ flag is reset when setting the new =
+counter=20
+> value ?
 >
-> No functional changes.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  tools/docs/lib/python_version.py | 133 +++++++++++++++++++++++++++++++
->  tools/docs/sphinx-pre-install    | 120 +++-------------------------
->  2 files changed, 146 insertions(+), 107 deletions(-)
->  create mode 100644 tools/docs/lib/python_version.py
->
-> diff --git a/tools/docs/lib/python_version.py b/tools/docs/lib/python_ver=
-sion.py
-> new file mode 100644
-> index 000000000000..0519d524e547
-> --- /dev/null
-> +++ b/tools/docs/lib/python_version.py
-> @@ -0,0 +1,133 @@
-> +#!/usr/bin/env python3
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +# Copyright (c) 2017-2025 Mauro Carvalho Chehab <mchehab+huawei@kernel.o=
-rg>
-> +
-> +"""
-> +Handle Python version check logic.
-> +
-> +Not all Python versions are supported by scripts. Yet, on some cases,
-> +like during documentation build, a newer version of python could be
-> +available.
-> +
-> +This class allows checking if the minimal requirements are followed.
-> +
-> +Better than that, PythonVersion.check_python() not only checks the minim=
-al
-> +requirements, but it automatically switches to a the newest available
-> +Python version if present.
-> +
-> +"""
-> +
-> +import os
-> +import re
-> +import subprocess
-> +import sys
-> +
-> +from glob import glob
-> +
-> +class PythonVersion:
-> +    """
-> +    Ancillary methods that checks for missing dependencies for different
-> +    types of types, like binaries, python modules, rpm deps, etc.
-> +    """
-> +
-> +    def __init__(self, version):
-> +        """=EF=BF=BD=EF=BF=BDnitialize self.version tuple from a version=
- string"""
-> +        self.version =3D self.parse_version(version)
-> +
-> +    @staticmethod
-> +    def parse_version(version):
-> +        """Convert a major.minor.patch version into a tuple"""
-> +        return tuple(int(x) for x in version.split("."))
+> While in the code path with the interrupt disabled, the timer expires =
+in=20
+> these 5us, the IRQ flag is raised, then the driver sets a new value =
+and=20
+> this flag is reset automatically, thus losing the current timer =
+expiration ?
 
-I've written a few quick and dirty semver parsers myself, and it saddens
-me to think of adding a simplistic one in the kernel.
+Something like this ...
 
-I'm just wondering, are we doomed to reinventing the wheels in our
-reluctance to depend on anything else?
+During my analysis I tried a lot of things to identify the situation =
+that
+leads to this error. Especially just before the reprogramming command
 
-> +
-> +    @staticmethod
-> +    def ver_str(version):
-> +        """Returns a version tuple as major.minor.patch"""
-> +        return ".".join([str(x) for x in version])
-> +
-> +    def __str__(self):
-> +        """Returns a version tuple as major.minor.patch from self.versio=
-n"""
-> +        return self.ver_str(self.version)
-> +
-> +    @staticmethod
-> +    def get_python_version(cmd):
-> +        """
-> +        Get python version from a Python binary. As we need to detect if
-> +        are out there newer python binaries, we can't rely on sys.releas=
-e here.
-> +        """
-> +
-> +        kwargs =3D {}
-> +        if sys.version_info < (3, 7):
+static inline void rttm_enable_timer(void __iomem *base, u32 mode, u32 =
+divisor)
+{
+  iowrite32(RTTM_CTRL_ENABLE | mode | divisor, base + RTTM_CTRL);
+}
 
-Checking for things that EOL'd four years ago. Why are we doing this to
-ourselves? Why should we take on maintenance of code that jumps through
-hoops for things that nobody supports anymore?
+What I tried:=20
 
-In Documentation/process/changes.rst we've declared Python 3.9 as
-minimum, which is also the oldest version supported by upstream (until
-next month). Even Debian oldoldstable (that's two olds) has 3.9.
+1. Read out the current (remaining) timer value: In the error cases
+this can give any value between 1 (=3D320ns) and 15 (=3D4800ns).
 
-We're talking about the documentation build. I can undertand being more
-conservative about the kernel build in general, but IMHO this is just
-extra work for absolutely no users out there. And I'm not advocating for
-bleeding edge here.
+2. Check if IRQ flag is already set and IRQ might trigger next. This was =
 
-We could just throw out a lot of crap by setting newer but still
-moderately concervative required Python (and Sphinx) versions, and bail
-out on older version. Let the user figure out how to get them.
+never the case.=20
 
-We don't do this for any other tools either.
+3. Reorder reprogramming sequence (as far as possible). Only the
+double reprogramming helped here.
 
-I'm saying that instead of refactoring this overgrown logic to a
-separate file and class, it should be nuked out of the kernel
-completely.
+So nothing we can do to actively identify and work around the buggy
+situation. There is some hardware limitation between expiring timers
+and reprgramming. Due to missing erratum the current bugfix is the
+only (and best) solution I have.
 
-> +            kwargs['universal_newlines'] =3D True
-> +        else:
-> +            kwargs['text'] =3D True
-> +
-> +        result =3D subprocess.run([cmd, "--version"],
-> +                                stdout =3D subprocess.PIPE,
-> +                                stderr =3D subprocess.PIPE,
-> +                                **kwargs, check=3DFalse)
-> +
-> +        version =3D result.stdout.strip()
-> +
-> +        match =3D re.search(r"(\d+\.\d+\.\d+)", version)
-> +        if match:
-> +            return PythonVersion.parse_version(match.group(1))
-> +
-> +        print(f"Can't parse version {version}")
-> +        return (0, 0, 0)
-> +
-> +    @staticmethod
-> +    def find_python(min_version):
-> +        """
-> +        Detect if are out there any python 3.xy version newer than the
-> +        current one.
-> +
-> +        Note: this routine is limited to up to 2 digits for python3. We
-> +        may need to update it one day, hopefully on a distant future.
-> +        """
-> +        patterns =3D [
-> +            "python3.[0-9]",
-> +            "python3.[0-9][0-9]",
-> +        ]
-> +
-> +        # Seek for a python binary newer than min_version
-> +        for path in os.getenv("PATH", "").split(":"):
-> +            for pattern in patterns:
-> +                for cmd in glob(os.path.join(path, pattern)):
-> +                    if os.path.isfile(cmd) and os.access(cmd, os.X_OK):
-> +                        version =3D PythonVersion.get_python_version(cmd)
-> +                        if version >=3D min_version:
-> +                            return cmd
-> +
-> +        return None
-> +
-> +    @staticmethod
-> +    def check_python(min_version):
-> +        """
-> +        Check if the current python binary satisfies our minimal require=
-ment
-> +        for Sphinx build. If not, re-run with a newer version if found.
-> +        """
-> +        cur_ver =3D sys.version_info[:3]
-> +        if cur_ver >=3D min_version:
-> +            ver =3D PythonVersion.ver_str(cur_ver)
-> +            print(f"Python version: {ver}")
-> +
-> +            return
-> +
-> +        python_ver =3D PythonVersion.ver_str(cur_ver)
-> +
-> +        new_python_cmd =3D PythonVersion.find_python(min_version)
-> +        if not new_python_cmd:
-> +            print(f"ERROR: Python version {python_ver} is not spported a=
-nymore\n")
-> +            print("       Can't find a new version. This script may fail=
-")
-> +            return
-> +
-> +        # Restart script using the newer version
+Markus=20
 
-I thought the whole idea of restarting was completely rejected by
-approximately everyone?!
-
-
-BR,
-Jani.
-
-
-> +        script_path =3D os.path.abspath(sys.argv[0])
-> +        args =3D [new_python_cmd, script_path] + sys.argv[1:]
-> +
-> +        print(f"Python {python_ver} not supported. Changing to {new_pyth=
-on_cmd}")
-> +
-> +        try:
-> +            os.execv(new_python_cmd, args)
-> +        except OSError as e:
-> +            sys.exit(f"Failed to restart with {new_python_cmd}: {e}")
-> diff --git a/tools/docs/sphinx-pre-install b/tools/docs/sphinx-pre-install
-> index 954ed3dc0645..d6d673b7945c 100755
-> --- a/tools/docs/sphinx-pre-install
-> +++ b/tools/docs/sphinx-pre-install
-> @@ -32,20 +32,10 @@ import subprocess
->  import sys
->  from glob import glob
->=20=20
-> +from lib.python_version import PythonVersion
->=20=20
-> -def parse_version(version):
-> -    """Convert a major.minor.patch version into a tuple"""
-> -    return tuple(int(x) for x in version.split("."))
-> -
-> -
-> -def ver_str(version):
-> -    """Returns a version tuple as major.minor.patch"""
-> -
-> -    return ".".join([str(x) for x in version])
-> -
-> -
-> -RECOMMENDED_VERSION =3D parse_version("3.4.3")
-> -MIN_PYTHON_VERSION =3D parse_version("3.7")
-> +RECOMMENDED_VERSION =3D PythonVersion("3.4.3").version
-> +MIN_PYTHON_VERSION =3D PythonVersion("3.7").version
->=20=20
->=20=20
->  class DepManager:
-> @@ -235,95 +225,11 @@ class AncillaryMethods:
->=20=20
->          return None
->=20=20
-> -    @staticmethod
-> -    def get_python_version(cmd):
-> -        """
-> -        Get python version from a Python binary. As we need to detect if
-> -        are out there newer python binaries, we can't rely on sys.releas=
-e here.
-> -        """
-> -
-> -        result =3D SphinxDependencyChecker.run([cmd, "--version"],
-> -                                            capture_output=3DTrue, text=
-=3DTrue)
-> -        version =3D result.stdout.strip()
-> -
-> -        match =3D re.search(r"(\d+\.\d+\.\d+)", version)
-> -        if match:
-> -            return parse_version(match.group(1))
-> -
-> -        print(f"Can't parse version {version}")
-> -        return (0, 0, 0)
-> -
-> -    @staticmethod
-> -    def find_python():
-> -        """
-> -        Detect if are out there any python 3.xy version newer than the
-> -        current one.
-> -
-> -        Note: this routine is limited to up to 2 digits for python3. We
-> -        may need to update it one day, hopefully on a distant future.
-> -        """
-> -        patterns =3D [
-> -            "python3.[0-9]",
-> -            "python3.[0-9][0-9]",
-> -        ]
-> -
-> -        # Seek for a python binary newer than MIN_PYTHON_VERSION
-> -        for path in os.getenv("PATH", "").split(":"):
-> -            for pattern in patterns:
-> -                for cmd in glob(os.path.join(path, pattern)):
-> -                    if os.path.isfile(cmd) and os.access(cmd, os.X_OK):
-> -                        version =3D SphinxDependencyChecker.get_python_v=
-ersion(cmd)
-> -                        if version >=3D MIN_PYTHON_VERSION:
-> -                            return cmd
-> -
-> -    @staticmethod
-> -    def check_python():
-> -        """
-> -        Check if the current python binary satisfies our minimal require=
-ment
-> -        for Sphinx build. If not, re-run with a newer version if found.
-> -        """
-> -        cur_ver =3D sys.version_info[:3]
-> -        if cur_ver >=3D MIN_PYTHON_VERSION:
-> -            ver =3D ver_str(cur_ver)
-> -            print(f"Python version: {ver}")
-> -
-> -            # This could be useful for debugging purposes
-> -            if SphinxDependencyChecker.which("docutils"):
-> -                result =3D SphinxDependencyChecker.run(["docutils", "--v=
-ersion"],
-> -                                                    capture_output=3DTru=
-e, text=3DTrue)
-> -                ver =3D result.stdout.strip()
-> -                match =3D re.search(r"(\d+\.\d+\.\d+)", ver)
-> -                if match:
-> -                    ver =3D match.group(1)
-> -
-> -                print(f"Docutils version: {ver}")
-> -
-> -            return
-> -
-> -        python_ver =3D ver_str(cur_ver)
-> -
-> -        new_python_cmd =3D SphinxDependencyChecker.find_python()
-> -        if not new_python_cmd:
-> -            print(f"ERROR: Python version {python_ver} is not spported a=
-nymore\n")
-> -            print("       Can't find a new version. This script may fail=
-")
-> -            return
-> -
-> -        # Restart script using the newer version
-> -        script_path =3D os.path.abspath(sys.argv[0])
-> -        args =3D [new_python_cmd, script_path] + sys.argv[1:]
-> -
-> -        print(f"Python {python_ver} not supported. Changing to {new_pyth=
-on_cmd}")
-> -
-> -        try:
-> -            os.execv(new_python_cmd, args)
-> -        except OSError as e:
-> -            sys.exit(f"Failed to restart with {new_python_cmd}: {e}")
-> -
->      @staticmethod
->      def run(*args, **kwargs):
->          """
->          Excecute a command, hiding its output by default.
-> -        Preserve comatibility with older Python versions.
-> +        Preserve compatibility with older Python versions.
->          """
->=20=20
->          capture_output =3D kwargs.pop('capture_output', False)
-> @@ -527,11 +433,11 @@ class MissingCheckers(AncillaryMethods):
->          for line in result.stdout.split("\n"):
->              match =3D re.match(r"^sphinx-build\s+([\d\.]+)(?:\+(?:/[\da-=
-f]+)|b\d+)?\s*$", line)
->              if match:
-> -                return parse_version(match.group(1))
-> +                return PythonVersion.parse_version(match.group(1))
->=20=20
->              match =3D re.match(r"^Sphinx.*\s+([\d\.]+)\s*$", line)
->              if match:
-> -                return parse_version(match.group(1))
-> +                return PythonVersion.parse_version(match.group(1))
->=20=20
->      def check_sphinx(self, conf):
->          """
-> @@ -542,7 +448,7 @@ class MissingCheckers(AncillaryMethods):
->                  for line in f:
->                      match =3D re.match(r"^\s*needs_sphinx\s*=3D\s*[\'\"]=
-([\d\.]+)[\'\"]", line)
->                      if match:
-> -                        self.min_version =3D parse_version(match.group(1=
-))
-> +                        self.min_version =3D PythonVersion.parse_version=
-(match.group(1))
->                          break
->          except IOError:
->              sys.exit(f"Can't open {conf}")
-> @@ -562,8 +468,8 @@ class MissingCheckers(AncillaryMethods):
->              sys.exit(f"{sphinx} didn't return its version")
->=20=20
->          if self.cur_version < self.min_version:
-> -            curver =3D ver_str(self.cur_version)
-> -            minver =3D ver_str(self.min_version)
-> +            curver =3D PythonVersion.ver_str(self.cur_version)
-> +            minver =3D PythonVersion.ver_str(self.min_version)
->=20=20
->              print(f"ERROR: Sphinx version is {curver}. It should be >=3D=
- {minver}")
->              self.need_sphinx =3D 1
-> @@ -1304,7 +1210,7 @@ class SphinxDependencyChecker(MissingCheckers):
->              else:
->                  if self.need_sphinx and ver >=3D self.min_version:
->                      return (f, ver)
-> -                elif parse_version(ver) > self.cur_version:
-> +                elif PythonVersion.parse_version(ver) > self.cur_version:
->                      return (f, ver)
->=20=20
->          return ("", ver)
-> @@ -1411,7 +1317,7 @@ class SphinxDependencyChecker(MissingCheckers):
->              return
->=20=20
->          if self.latest_avail_ver:
-> -            latest_avail_ver =3D ver_str(self.latest_avail_ver)
-> +            latest_avail_ver =3D PythonVersion.ver_str(self.latest_avail=
-_ver)
->=20=20
->          if not self.need_sphinx:
->              # sphinx-build is present and its version is >=3D $min_versi=
-on
-> @@ -1507,7 +1413,7 @@ class SphinxDependencyChecker(MissingCheckers):
->          else:
->              print("Unknown OS")
->          if self.cur_version !=3D (0, 0, 0):
-> -            ver =3D ver_str(self.cur_version)
-> +            ver =3D PythonVersion.ver_str(self.cur_version)
->              print(f"Sphinx version: {ver}\n")
->=20=20
->          # Check the type of virtual env, depending on Python version
-> @@ -1613,7 +1519,7 @@ def main():
->=20=20
->      checker =3D SphinxDependencyChecker(args)
->=20=20
-> -    checker.check_python()
-> +    PythonVersion.check_python(MIN_PYTHON_VERSION)
->      checker.check_needs()
->=20=20
->  # Call main if not used as module
-
---=20
-Jani Nikula, Intel
 
