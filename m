@@ -1,164 +1,225 @@
-Return-Path: <linux-kernel+bounces-809430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CBB4B50DA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:02:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA21DB50DA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 700517AD6BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:00:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66E005449B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F2E303A1C;
-	Wed, 10 Sep 2025 06:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9B3304980;
+	Wed, 10 Sep 2025 06:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kzJU2rH5"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zt+bdhVh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE385C133;
-	Wed, 10 Sep 2025 06:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17EE3043AE;
+	Wed, 10 Sep 2025 06:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757484120; cv=none; b=QI/pmEp2/sEorIZLw4lC/huMwzFe/GqczexAy4JQ5vZOdlIH7NyMAo6hBD0HMgR7VDNycOVwBzg/yo0KzEvwPvAxz9HDtkfaTskLO9hDFbl62vi2hc8RmzpqbbfAGLJzJCRLovTRcZgOyuDfRFdLsB2xixnzpRs98TKZQw0jUL0=
+	t=1757484286; cv=none; b=iz4Je5y5k3koxUtYuqO8TMahWiH0HS3adrBGxA5HSZ/85k/jZrlbJ3hNzz9cg8IkQsxXC2K1zgjRTa16sKjWNdEZ3UXn+KGExXs8IsQVkgzp+mimp7csBXGjweDHc63vFAxnor0oGzMRNpA+D/X5o0j3qj5vF0qBxhAzEF6Bm4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757484120; c=relaxed/simple;
-	bh=BQupjcom55woG6Sh53IRhAcdsd3+WTxEdJSNaUOX+v0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uBqvv3dMitmOmskK1YvSQTmIBAMfsn/RMyZJaxqtoM/YkLfyQjJvKnt/du0OXLOpttB+ycsj6VqJn9tTn6+AWCJHTb13E63s+sA76KxUAHuUm/720pBWnqzStXQsEtnYN5uSPkCbtov309WRupWAEn1UWFQAehrTZdmuDCpX+J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kzJU2rH5; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7724df82cabso7299789b3a.2;
-        Tue, 09 Sep 2025 23:01:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757484118; x=1758088918; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BQupjcom55woG6Sh53IRhAcdsd3+WTxEdJSNaUOX+v0=;
-        b=kzJU2rH55JAGRDZA8ynYoUmdWj3rAwLJ2JBgIuWc0yaPizuharEpfJo6EIeh2ouOOm
-         SHJiPaXYyS1Sia/V5R7xHFsclxdFqhAH6XtPkvYiil0YW2ec+Mh0WteDSaLpK3UV28kV
-         f4dSAM5N/imCBl/TTNvHlIQmvr5siGNedryW5tVnEbBY7up/hj11uFThboVNv2kVuTdj
-         rzB9Ssbyl9S9iATvbv/dxxKMBUGg7fTGyT+lCk36J/2n4Gizsds4fcyLxbkwoNj04yWo
-         v+KAPg+WcvAupINpleFDhFgNfGwwS/JyiVQbCx6ut1soWOKfRWXPq8i/sYYL5g1keVcc
-         TXAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757484118; x=1758088918;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BQupjcom55woG6Sh53IRhAcdsd3+WTxEdJSNaUOX+v0=;
-        b=SmHvHgai3sf4aUs/Tx3VhFfDDIFF/H6KHH7/OIAmckUaoDwDz6qtWOBuciCgA4t0+v
-         JjovRWd3hcdSSDrhSdpiMhSmBTlbrXj8X/LUoQOxP5cPUj99ihpKllxEfBlevuk8i+UI
-         fWx7NdpSmQIpALl+aBNAc+6/J2pocN/mRHD7DNbl9SlRd387dx2UB7UQ1xGvSnJ+EjHt
-         pj1PqEUBGmEPYg5hGMxoTzfVke6Y+DBKQoSGaBYcaZaHX7flZ1oH2lkEgEavlfoaBYYu
-         ZBCSEEZ6vJsCIDtJ3ONxkWoWvz+si6TPSxUR7epo2dMYkCLnOg/VVxB7cXCxsqCWeDGT
-         rJOg==
-X-Forwarded-Encrypted: i=1; AJvYcCU915tryPATv+qwG2rzTE6mmdAKA/zai8x57I3kffZ39nFgr8h4hpH7QTmzXJ8MkJb4FZhjfwNmqiv9@vger.kernel.org, AJvYcCV/R2ndfOR99dbwM8mPcjR6ncUN/lbeSqoEsAhND9lLZwOKC6p4cKc+xIgirZUsoH/p2G3jSOxOxkdwFrJ1@vger.kernel.org, AJvYcCWxp6nLjY7Tpwy4wGO+UBbSAl9ZlBBURDcdI6wcTnbYN39D1nEkO5VnZrnFbXY0I+fxvoALp6+B5fY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxbGlOlfczaPhFIVufXWR5z7qgouErIINwbuhd7P4mp54119Tt
-	EZhPBxS8kSIaKzi0ff75h3yhs0k+3h8XRBmTtGuwKl1ZSdUzIQ26XW9u
-X-Gm-Gg: ASbGnct18/ZRDZxqCRSuG9sPxLiZWGWUQpQfGgrjVJqHQOwhrv3KQMP5rdmdYovGaQS
-	F8FVFEKIcKKPsiDPdyCHhULui1Qn4d8+15nTjc6lBsO8JqPyqXlEnhXfh3nxZAG3khyNWDVWsGB
-	EipMtx11dspJFsdPiG8PvUjBu/IFwDqymyWbeBLdSmku/FIPkCYVdxWX3sqHag3tovxZSYAayry
-	9HFcMOBFXgKaY/mPy+s/BgBGMDTvfJRXO8vzRTm6Y0PDx8NWjIMTTELkWRMty3YW9Ld64W0o8Bv
-	a5clEB/zmfVWs+zb3tjRwcOVfLrq5EMghx7WU5GwteqPiRyA6IDcG9ZPI/74gr97j8dAcvcv+S6
-	wU7bvEWhFvwHfzRYdMsEi93VKW1Gs5RL4D6Z8
-X-Google-Smtp-Source: AGHT+IE9Bb+/1OygTfKNn8Kmbyq0XcTuRLE4Du0nhd8YG3MZpglD4NTL1R+HA16kMOY0LjL2LkiDWA==
-X-Received: by 2002:a05:6a00:3e0f:b0:772:505d:abda with SMTP id d2e1a72fcca58-7742df0cf95mr19067552b3a.31.1757484117955;
-        Tue, 09 Sep 2025 23:01:57 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774662f9cfdsm3867023b3a.101.2025.09.09.23.01.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 23:01:56 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 12FC641FA3A1; Wed, 10 Sep 2025 13:01:55 +0700 (WIB)
-Date: Wed, 10 Sep 2025 13:01:54 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux EFI <linux-efi@vger.kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Hugo Osvaldo Barrera <hugo@whynothugo.nl>
-Subject: Re: [PATCH] x86/Documentation: explain LINUX_EFI_INITRD_MEDIA_GUID
-Message-ID: <aMEUUkVQv2tqpO2L@archie.me>
-References: <20250910015738.14848-2-bagasdotme@gmail.com>
- <0b61b6f3-f11a-494c-9d4e-94ca19fd1eb6@infradead.org>
+	s=arc-20240116; t=1757484286; c=relaxed/simple;
+	bh=N2U7GhDpMZvg4XexOPOt7yPQ+W4562suX0oH7fx9zPM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qaaDYWOQTCGORJgJtGdQA4tR1Zoo14RykkmYkcCtOXUTQDtzlCqkJU0iKHSy8oNxlNdnYDWfJ8IxYVHsszHsVrHY7VyK3Pjxj8VRHdxK+LNtmk9B/+3vvClubrwl/8M5UGMFo8ZMbUXKAFEre+4EbtIechX+TkMktOTaCgtfofc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zt+bdhVh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17269C4CEF0;
+	Wed, 10 Sep 2025 06:04:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757484286;
+	bh=N2U7GhDpMZvg4XexOPOt7yPQ+W4562suX0oH7fx9zPM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Zt+bdhVhNEmbRaUJVCp/D712YxpFf1mndccrTP8fvVuxYjORoxxuy0+YLVIM1WXx0
+	 ctGbuTcML7gr2wIuCX0bVkbiqF+7Xb/yb3XePOD1iIuCcYfWDLMqVq6Ivg8G//dwLY
+	 v1VeNXnkLZd+/sYTsT63yXuGXhat1IQb9u+48xMGVhDrYkY16o+zxPkADPUIU8ON0h
+	 gz+qrXupte8SJooeJ7l4duD43dZVejSKloNmRCPhlP/3K4tOCSRbE/f0tppoO7J4AH
+	 s0OoHo1yKte+aYx2AbEEWu1hNivyGq1O9h8Zr2KGiPugps7UiQRmmci/XPgNGAwg80
+	 8K8nSIgYnBRkQ==
+From: Vincent Mailhol <mailhol@kernel.org>
+Subject: [PATCH v2 00/20] can: netlink: preparation before introduction of
+ CAN XL step 2/2
+Date: Wed, 10 Sep 2025 15:03:25 +0900
+Message-Id: <20250910-canxl-netlink-prep-v2-0-f128d4083721@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wX9bT4DJmcCyioR/"
-Content-Disposition: inline
-In-Reply-To: <0b61b6f3-f11a-494c-9d4e-94ca19fd1eb6@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAK0UwWgC/22Oyw6CMBREf4XctdXyUCkr/8OwKPQCN0DBthIM4
+ d+tZetyJjlnZgOLhtBCEW1gcCFLk/YhOUVQd1K3yEj5DAlPrjxPY1ZLvQ5MoxtI92w2ODOhqib
+ PRN4oocCDvmxoDdJneWSDr7d3u6OESlpk9TSO5IrIu7xvdZdRkoYf0JF1k/mEU0sciLAvePpvf
+ 4kZZ4Jnlbrx9F4r8ejRaBzOk2mh3Pf9C8S0gjTmAAAA
+X-Change-ID: 20250831-canxl-netlink-prep-9dbf8498fd9d
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Vincent Mailhol <mailhol@kernel.org>, 
+ =?utf-8?q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>, 
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>, 
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6311; i=mailhol@kernel.org;
+ h=from:subject:message-id; bh=N2U7GhDpMZvg4XexOPOt7yPQ+W4562suX0oH7fx9zPM=;
+ b=owGbwMvMwCV2McXO4Xp97WbG02pJDBkHRY48ubmgYFfJaod3HNt/3PjVIr7nRdCZx6sFpqoES
+ Cl/ZX1ysaOUhUGMi0FWTJFlWTknt0JHoXfYob+WMHNYmUCGMHBxCsBEjocy/JXeY5nHNltXZnlX
+ jPGmpScP/Gv90aWcv/B7zTfGnPj71yoYGRYuXalloy+x2XrPKd7D39Zc6k/k+/IxeK7lcb7m1aV
+ ulQwA
+X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
+ fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
 
+In November last year, I sent an RFC to introduce CAN XL [1]. That
+RFC, despite positive feedback, was put on hold due to some unanswered
+question concerning the PWM encoding [2].
 
---wX9bT4DJmcCyioR/
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+While stuck, some small preparation work was done in parallel in [3]
+by refactoring the struct can_priv and doing some trivial clean-up and
+renaming. Initially, [3] received zero feedback but was eventually
+merged after splitting it in smaller parts and resending it.
 
-On Tue, Sep 09, 2025 at 08:25:34PM -0700, Randy Dunlap wrote:
-> On 9/9/25 6:57 PM, Bagas Sanjaya wrote:
-> > +.. _pe-coff-entry-point:
-> > +
-> > +PE/COFF entry point
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +When compiled with ``CONFIG_EFI_STUB=3Dy``, the kernel can be executed=
- as a
-> > +regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
-> > +implementation details.
-> > +
-> > +The stub loader can request the initrd via a UEFI protocol. For this t=
-o work,
-> > +the firmware or bootloader needs to register a handle which implements=
- the
-> > +``EFI_LOAD_FILE2`` protocol with the ``LINUX_EFI_INITRD_MEDIA_GUID`` d=
-evice
-> > +path. In this case, a kernel booting via the EFI stub will use the ``L=
-oadFile``
-> > +function on the registered handle to obtain a reference to the initrd.
->=20
-> drivers/firmware/efi/libstub/efi-stub-helper.c (line 509) says LoadFile2
-> protocol. Is that the same as the LoadFile function?
->=20
-> https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d47=
-39b0fd0
-> (the link below) also says LoadFile2() 4 times (and LoadFile 0 times).
+Finally, in July this year, we clarified the remaining mysteries about
+PWM calculation, thus unlocking the series. Summer being a bit busy
+because of some personal matters brings us to now.
 
-=46rom UEFI spec [1], both LoadFile and LoadFile2 protocol versions of Load=
-File()
-function has same prototype but somewhat different in behavior. To answer
-your question, however, I think so.
+After doing all the refactoring and adding all the CAN XL features,
+the final result is roughly 30 patches, probably too much for a single
+series. So I am splitting it in two:
 
-EFI folks, what are your opinions?
+  - preparation (this series)
+  - CAN XL (will come later, after this series get ACK-ed)
 
-Thanks.
+And so, this series continues and finishes the preparation work done
+in [3]. It contains all the refactoring needed to smoothly introduce
+CAN XL. The goal is to:
 
-[1]: https://uefi.org/specs/UEFI/2.10/13_Protocols_Media_Access.html
+  - split the functions in smaller pieces: CAN XL will introduce a
+    fair amount of code. And some functions which are already fairly
+    long (86 lines for can_validate(), 216 lines for can_changelink())
+    would grow to disproportionate sizes if the CAN XL logic were to
+    be inlined in those functions.
 
---=20
-An old man doll... just what I always wanted! - Clara
+  - repurpose the existing code to handle both CAN FD and CAN XL: a
+    huge part of CAN XL simply reuses the CAN FD logic. All the
+    existing CAN FD logic is made more generic to handle both CAN FD
+    and XL.
 
---wX9bT4DJmcCyioR/
-Content-Type: application/pgp-signature; name=signature.asc
+In more details:
 
------BEGIN PGP SIGNATURE-----
+  - Patch #1 moves struct data_bittiming_params from dev.h to
+    bittiming.h and patch #2 makes can_get_relative_tdco() FD agnostic
+    before also moving it to bittiming.h.
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMEUTgAKCRD2uYlJVVFO
-o5mQAP9ZTGLecYvygYu5qw9wk0bzOGd+dBF08ZBGDPNzsDaKSwD+Pd6CTNLpWuet
-SidxBU1eQylKAqmw7Rj0FLux+E4SiQo=
-=OII+
------END PGP SIGNATURE-----
+  - Patch #3 adds some comments to netlink.h tagging which IFLA
+    symbols are FD specific.
 
---wX9bT4DJmcCyioR/--
+  - Patches #4 to #6 are refactoring can_validate() and
+    can_validate_bittiming().
+
+  - Patches #7 to #11 are refactoring can_changelink() and
+    can_tdc_changelink().
+
+  - Patches #12 and #13 are refactoring can_get_size() and
+    can_tdc_get_size().
+
+  - Patches #14 to #17 are refactoring can_fill_info() and
+    can_tdc_fill_info().
+
+  - Patch #18 makes can_calc_tdco() FD agnostic.
+
+  - Patch #19 adds can_get_ctrlmode_str() which converts control mode
+    flags into strings. This is done in preparation of patch #20.
+
+  - Patch #20 is the final patch and improves the user experience by
+    providing detailed error messages whenever invalid parameters are
+    provided. All those error messages came into handy when debugging
+    the upcoming CAN XL patches.
+
+Aside from the last patch, the other changes do not impact any of the
+existing functionalities.
+
+The follow up series which introduces CAN XL is nearly completed but
+will be sent only once this one is approved: one thing at a time, I do
+not want to overwhelm people (including myself).
+
+[1] https://lore.kernel.org/linux-can/20241110155902.72807-16-mailhol.vincent@wanadoo.fr/
+[2] https://lore.kernel.org/linux-can/c4771c16-c578-4a6d-baee-918fe276dbe9@wanadoo.fr/
+[3] https://lore.kernel.org/linux-can/20241110155902.72807-16-mailhol.vincent@wanadoo.fr/
+
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Vincent Mailhol <mailhol@kernel.org>
+Cc: Stéphane Grosjean <stephane.grosjean@hms-networks.com>
+Cc: Robert Nawrath <mbro1689@gmail.com>
+Cc: Minh Le <minh.le.aj@renesas.com>
+Cc: Duy Nguyen <duy.nguyen.rh@renesas.com>
+Cc: linux-can@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
+---
+Changes in v2:
+
+  - Move can_validate()'s comment block to can_validate_databittiming().
+    Consequently,
+
+      [PATCH 07/21] can: netlink: remove comment in can_validate()
+
+    from v1 is removed.
+
+  - Change any occurrences of WARN_ON(1) into return -EOPNOTSUPP to
+    suppress the three gcc warnings which were reported by the kernel
+    test robot:
+    Link: https://lore.kernel.org/linux-can/202509050259.NjPdQyAD-lkp@intel.com/
+    Link: https://lore.kernel.org/linux-can/202509050404.ZLQknagH-lkp@intel.com/
+    Link: https://lore.kernel.org/linux-can/202509050541.1FKRbqOi-lkp@intel.com/
+
+  - Small rewrite of patch #12 "can: netlink: make can_tdc_get_size()
+    FD agnostic" description to add more details.
+
+- Link to v1: https://lore.kernel.org/r/20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org
+
+---
+Vincent Mailhol (20):
+      can: dev: move struct data_bittiming_params to linux/can/bittiming.h
+      can: dev: make can_get_relative_tdco() FD agnostic and move it to bittiming.h
+      can: netlink: document which symbols are FD specific
+      can: netlink: refactor can_validate_bittiming()
+      can: netlink: add can_validate_tdc()
+      can: netlink: add can_validate_databittiming()
+      can: netlink: refactor CAN_CTRLMODE_TDC_{AUTO,MANUAL} flag reset logic
+      can: netlink: remove useless check in can_tdc_changelink()
+      can: netlink: make can_tdc_changelink() FD agnostic
+      can: netlink: add can_dtb_changelink()
+      can: netlink: add can_ctrlmode_changelink()
+      can: netlink: make can_tdc_get_size() FD agnostic
+      can: netlink: add can_data_bittiming_get_size()
+      can: netlink: add can_bittiming_fill_info()
+      can: netlink: add can_bittiming_const_fill_info()
+      can: netlink: add can_bitrate_const_fill_info()
+      can: netlink: make can_tdc_fill_info() FD agnostic
+      can: calc_bittiming: make can_calc_tdco() FD agnostic
+      can: dev: add can_get_ctrlmode_str()
+      can: netlink: add userland error messages
+
+ drivers/net/can/dev/calc_bittiming.c |  10 +-
+ drivers/net/can/dev/dev.c            |  33 ++
+ drivers/net/can/dev/netlink.c        | 614 ++++++++++++++++++++++-------------
+ include/linux/can/bittiming.h        |  48 ++-
+ include/linux/can/dev.h              |  42 +--
+ include/uapi/linux/can/netlink.h     |  14 +-
+ 6 files changed, 478 insertions(+), 283 deletions(-)
+---
+base-commit: c6142e1913de563ab772f7b0e4ae78d6de9cc5b1
+change-id: 20250831-canxl-netlink-prep-9dbf8498fd9d
+
+Best regards,
+-- 
+Vincent Mailhol <mailhol@kernel.org>
+
 
