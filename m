@@ -1,77 +1,72 @@
-Return-Path: <linux-kernel+bounces-809994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD18B5145B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C090B5142A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F406E4E1844
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:48:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45AA81C21868
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E723148CE;
-	Wed, 10 Sep 2025 10:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA1B2C159A;
+	Wed, 10 Sep 2025 10:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="UKcOtrWe"
-Received: from out203-205-221-191.mail.qq.com (out203-205-221-191.mail.qq.com [203.205.221.191])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qHTKkuq7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oAMpNM77"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C2925782A;
-	Wed, 10 Sep 2025 10:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1B7269CF1
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757501252; cv=none; b=PVLnzzEmOWvjvX5DvxfyaDNk172iglCXGExODEKZ4yW6FNprUXzP5QXSgHClXEkZZVvs/maJ8sysHR+PiM3Qh9XlM3dkaalyOo7lUcWQWFFQ0Rp5H9EL/JGDQ8rr1J/gCtcnUK5Rk9zbZgtbsVUZHVQV1wqeDQZ3WBFc9xBoo08=
+	t=1757500969; cv=none; b=OQIJperqbRA/VLSg38UcnzsUSA6yaZY60Ix+RB1tUhdT6eBgNBbVoWC9M2CBWBvGXlsY+2RRXD2ixxJZCyVHwWfE4mlcH0Sb/IR52TX0DQNd/ePL62Vy7PAEP4y8JwlK12D8jFELc00jk4tAytiiCYXpTEMuiP2QeIUTBAwASI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757501252; c=relaxed/simple;
-	bh=vuDuae618+G9GIUKKhfT2gpIoatwCsXfX9KM+fgvIWg=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ov4ZXYDN/PhDtUArlh2We80Foi4xxEOArdeQj6yRywKJxI7tguffcw3GRYTadfnvOeTpS0hC9AmNATzBnRxVNa7V7rlfJegIUJY39igiIvSEunkUojgZKtRccD1Hoh3kF9xGyM0p59DgHeJIQcbQ9hfniZjwqxwtfndApQiq97g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=UKcOtrWe; arc=none smtp.client-ip=203.205.221.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1757500940;
-	bh=2g9SqMhLUUY5OWEkbJI62B9o1oK6Cw9puvU0A/SCA4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UKcOtrWeRpFVvSeF5GCNO133+5B6ZvqaXNXzV45vA3lJvkzVtzFWbiWnBOx/AezUZ
-	 kMIyisSIVdUV0F9VZd6S67kmAx80S1MS+KqDzlYF4m9ffw9tfsvqdJiJN4J6aJUgqU
-	 L2qBiOjvH1drJje0rA5tTn5QaYJ6SETm0WwqSVw0=
-Received: from localhost ([112.94.75.165])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id A929FED7; Wed, 10 Sep 2025 18:42:18 +0800
-X-QQ-mid: xmsmtpt1757500938tef4mg7kx
-Message-ID: <tencent_7731B6630F8BF7EC0292D2F3ADAEA6F70207@qq.com>
-X-QQ-XMAILINFO: OGZxhFXqN7PJ0OGUSKzaot3PkSIPfgVcLkJCNRpHiuJ/wDe1agEPYkkDgLl2Hi
-	 VOLH3oLeXitQpuBvQSjVDLTenk7gOXKMWl5lIUdIurYWrfPcJfqoxIlMbwDa0NCVvD/fpfwctQ4W
-	 dlK9X4VxXrG7MZypC2CsplwMvnT0QSoTIRbDK/PMKORm4o/XfhIUQzRmmgh1p6zV9KMUBUDDlxxe
-	 7QiAGhORxfs6JdFSuF1CK/yMvtm3LKEeWHFAOkrOtx+/pQlaQ1KvAkMrnnQ0kofZ+7DM+METOhsF
-	 J0A1iiFDrnSTAK6HqAfofrs00ucqqsMDGFwHyxDy58hE0EC4s2DjhkNvLFOWC+i7EVgr5krq/Xsw
-	 jkbCVMlOSlPDeoU/ld01iXgQz+A8thbNZNMkJUeN4HQpFsLa2AMOet7cnlAmmr+EIFlGZseu13OX
-	 p3EX36p5+2qlaV2ZSSqSjj5lxzQRmefkqiQTjai6y80FGFidMEQsOnwil/dqtAoA5lg9Btk/mgSr
-	 IzLe9cdt2rPWbMaB36jw75vSDnopXHJTlmmyAHKei+sQgpdV/E/ZCvWG+stiNU5e0h+6EmsXn23S
-	 xl6rZr63f7g/xOceAsyUYfcnG/qW7YR3qcT0dqdHS+BK5ZWJGOmKG+wa+RTDypNQrsjutbM3DC0v
-	 CIZi00R9lMW3QWiloZRV1r5MM3JkInK9GunpWu+qwMnHMsb/tBCqS+3U9IfWSMMROzRHWEJPdYLX
-	 gsj0D3vQ4jaYVaAUGpvKNwl9rW8zP3F30rm6CoHC06oNSDol+pZKrCf7gAu+8LCzZ03K+GrXoHk5
-	 uFcVtNUdpTenn9iFEjhgpP9nvOTWOHyNxxeqjTDhgqaR0V+sMwduna4mUAeKmLzyfwCX1SLkZ98Y
-	 jwyV3LptUlbJY901E7btNys4ibMQqCqYb0x42NGAwncT97apaNR8dB5BltdiakC2+Ks5Em5Siobs
-	 Fr7wWd2LPZgHgdvQMwvFosqJk5CsFqEnf+SEGw9lEVTd8xbCkqnC5GHvpJ+CgYdSTNCuzSJsRerA
-	 cL9uGeROqA7nvG09ZHTetWJgw1ONKke/Z2AYJAxw==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-Date: Wed, 10 Sep 2025 18:42:18 +0800
-From: Conley Lee <conleylee@foxmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: vkoul@kernel.org, davem@davemloft.net, wens@csie.org,
-	mripard@kernel.org, netdev@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: sun4i-emac: free dma descriptor
-X-OQ-MSGID: <20250910104218.GA1760035@ubuntu-server>
-References: <20250904072446.5563130d@kernel.org>
- <tencent_D434891410B0717BB0BDCB1434969E6EB50A@qq.com>
- <20250908132615.6a2507ed@kernel.org>
- <tencent_0DDFF70B944AC1B7CE9AC20A22D8DA3C4609@qq.com>
- <20250909181547.0782840f@kernel.org>
+	s=arc-20240116; t=1757500969; c=relaxed/simple;
+	bh=co57jl75K096qomkbwgvypPBxFutwSMmugrJac+wmLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tEL+XoW7CSm3XkO6WcaP5IBVnZmdUi6nrJHD+CnZV7JTfFiHd/E80p28r/Xx6mOMH14z9qsx7LnyLzXHWe/FwuzZH2sAJLWNcKTkkNkM69G9gLsKSaz96dJa9bxFBXCvTn22SVkud2CrCa4kK6LPQ0tNcDS32iFYci3O34B8edY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qHTKkuq7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oAMpNM77; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 10 Sep 2025 12:42:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757500965;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RrDNERTJnCX//78uTKO+avBPskWsCrgCUjEY960NOWI=;
+	b=qHTKkuq7RL8FJ2FBB50Y97yfEqgmQBUVyiL2JML95qfWauUz+cdCpvBA/1EQW40mqeONVq
+	jJsBeorZlA2YtjmpSn9/3CSDRI3GUbEkMoGx0qw+OkHjj3gOuUUR2pdfcTZ763GDtOorDa
+	XlLtcMUe8N62ARskuyl+6pY1Ul5Ys7x9pjYJANZKQ2iF6QNZyvzDHOF3ya1KD/W7l3Ntun
+	ANG7NPchUxQYqen6E58lZhTvBa6w3DnDWyAVQa6uzEzckF6tnLlxgSpn0zLe5eeCOFt4Jd
+	4qrn2ajeUjF78Y91i5E2yp9dapUDTstv2yccyOyfTHGC1bUP/Kjo18gEoqAE4A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757500965;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RrDNERTJnCX//78uTKO+avBPskWsCrgCUjEY960NOWI=;
+	b=oAMpNM77d1Qm2TO/VKzusHWEy3cCyeSoVfovEnt967+I74lT7JexaD2xtcFgQDNMKLWjo/
+	rIom1Jnu9A4a2vBw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
+	syzbot <syzbot+034246a838a10d181e78@syzkaller.appspotmail.com>,
+	andrealmeid@igalia.com, dave@stgolabs.net, dvhart@infradead.org,
+	linux-kernel@vger.kernel.org, mingo@redhat.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] futex: Prevent use-after-free during requeue-PI
+Message-ID: <20250910104243.TUMt9HM0@linutronix.de>
+References: <68b75989.050a0220.3db4df.01dd.GAE@google.com>
+ <20250902214628.GL4067720@noisy.programming.kicks-ass.net>
+ <20250903130712.br0G6lOq@linutronix.de>
+ <a1808501-559e-4762-b0ea-f1fffd2e7f19@kernel.dk>
+ <20250904162820.NS1U-oZp@linutronix.de>
+ <4918e983-9964-46a2-aee0-59c91a9c6b35@kernel.dk>
+ <875xdruzl4.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,36 +75,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250909181547.0782840f@kernel.org>
+In-Reply-To: <875xdruzl4.ffs@tglx>
 
-On 09/09/25 at 06:15下午, Jakub Kicinski wrote:
-> Date: Tue, 9 Sep 2025 18:15:47 -0700
-> From: Jakub Kicinski <kuba@kernel.org>
-> To: 李克斯 <conleylee@foxmail.com>
-> Cc: vkoul@kernel.org, davem@davemloft.net, wens@csie.org,
->  mripard@kernel.org, netdev@vger.kernel.org, dmaengine@vger.kernel.org,
->  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] net: ethernet: sun4i-emac: free dma descriptor
-> 
-> On Tue, 9 Sep 2025 14:36:42 +0800 李克斯 wrote:
-> > Thank you for the suggestion. I've reviewed the documentation, and
-> > setting the reuse flag while reusing descriptors might be a good
-> > optimization. I'll make the changes and run some tests. If everything
-> > works well, I'll submit a new patch.
-> 
-> To be clear if you're saying the driver is buggy and can crash right
-> now we need to fix it first and then optimize it later, as separate
-> commits. So that LTS kernels can backport the fix.
-> 
-> The questions I'm asking are because I don't understand whether the
-> upstream kernel is buggy and how exactly..
+syzbot managed to trigger the following race:
 
-After carefully reviewing the documentation and how other drivers use
-dmaengine, I think that if the reuse flag is not set for the descriptor,
-manual release is unnecessary. Therefore, the current driver implementation
-does not contain a bug. This fix patch was a mistake.
+   T1                               T2
 
-Thank you for your thorough review.
+ futex_wait_requeue_pi()
+   futex_do_wait()
+     schedule()
+                               futex_requeue()
+                                 futex_proxy_trylock_atomic()
+                                   futex_requeue_pi_prepare()
+                                   requeue_pi_wake_futex()
+                                     futex_requeue_pi_complete()
+                                      /* preempt */
+
+         * timeout/ signal wakes T1 *
+
+   futex_requeue_pi_wakeup_sync() // Q_REQUEUE_PI_LOCKED
+   futex_hash_put()
+  // back to userland, on stack futex_q is garbage
+
+                                      /* back */
+                                     wake_up_state(q->task, TASK_NORMAL);
+
+In this scenario futex_wait_requeue_pi() is able to leave without using
+futex_q::lock_ptr for synchronization.
+This can be prevented by reading futex_q::task before updating the
+futex_q::requeue_state. A reference on the task_struct is not needed
+because requeue_pi_wake_futex() is invoked with a spinlock_t held which
+implies a RCU read section. Even if T1 terminates immediately after, the
+task_struct will remain valid during T2's wake_up_state().
+A READ_ONCE on futex_q::task before futex_requeue_pi_complete() is
+enough because it ensures that the variable is read before the state is
+updated.
+
+Read futex_q::task before the updating the requeue state, use it for the
+following wakeup.
+
+Fixes: 07d91ef510fb1 ("futex: Prevent requeue_pi() lock nesting issue on RT")
+Reported-by: syzbot+034246a838a10d181e78@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/68b75989.050a0220.3db4df.01dd.GAE@google.com/
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ kernel/futex/requeue.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/futex/requeue.c b/kernel/futex/requeue.c
+index c716a66f86929..d818b4d47f1ba 100644
+--- a/kernel/futex/requeue.c
++++ b/kernel/futex/requeue.c
+@@ -230,8 +230,9 @@ static inline
+ void requeue_pi_wake_futex(struct futex_q *q, union futex_key *key,
+ 			   struct futex_hash_bucket *hb)
+ {
+-	q->key = *key;
++	struct task_struct *task;
+ 
++	q->key = *key;
+ 	__futex_unqueue(q);
+ 
+ 	WARN_ON(!q->rt_waiter);
+@@ -243,10 +244,11 @@ void requeue_pi_wake_futex(struct futex_q *q, union futex_key *key,
+ 	futex_hash_get(hb);
+ 	q->drop_hb_ref = true;
+ 	q->lock_ptr = &hb->lock;
++	task = READ_ONCE(q->task);
+ 
+ 	/* Signal locked state to the waiter */
+ 	futex_requeue_pi_complete(q, 1);
+-	wake_up_state(q->task, TASK_NORMAL);
++	wake_up_state(task, TASK_NORMAL);
+ }
+ 
+ /**
+-- 
+2.51.0
 
 
