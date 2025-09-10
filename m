@@ -1,80 +1,104 @@
-Return-Path: <linux-kernel+bounces-809288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2424B50B25
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:36:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A53EB50B2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5133441B8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:36:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3023E46620D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D622417F0;
-	Wed, 10 Sep 2025 02:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEE6242D7F;
+	Wed, 10 Sep 2025 02:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2DaKw3K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNNYJenb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BF8241673;
-	Wed, 10 Sep 2025 02:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB21223B63F;
+	Wed, 10 Sep 2025 02:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757471799; cv=none; b=TBj4yUZjh1P5aa/hyE4uTt5RK9QIQ/99Ov5mbADO+6jUvfkrUAQ56KYLIMXq1mNOvDLP08i0FMHqW+2L3R5EGd5X3avAXKVOaf8CotXtuunNAzpxOW1ZwfZDERxcPwkzfyxQUv3H4sVrZJp/okYNiJzVcdRwv0aDPAyJmr3SQYk=
+	t=1757472012; cv=none; b=IxdUDgIIWXwxScH3ZFtZKymxKBDb6EgKziqQbDYJzWyR3u+g0OQ8v0GBHVqK45fajFg6LM3TAKeeYiFNZGuoz8dJhAVPLsI2BF0mwESh8v0YaKpUxNq5GTWc8I2GbDKWpqbi6GDJrGsncpxtTaFK/MVufrl4imdvZ4Uiw5iLm6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757471799; c=relaxed/simple;
-	bh=7LXy0U+1fCW8qn4duZDli2vtbqHftWoW8ljc8W9VqPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQ+L8stDg9ERKxd/zF0T5LUl2Skymyqst/JGc/Z566mGIw0ndzvPQ8Dn3tjfinAiYiKAsA9TisgOYEx3nAY1araHwsiV+MO34ou+bPpXaYiE1oN+l3z9hnRwTxPo7GadVoNgQgIZYtq9gg/ShCpB1PCbKffi68t8fpRUIp25iuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2DaKw3K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F905C4CEF4;
-	Wed, 10 Sep 2025 02:36:39 +0000 (UTC)
+	s=arc-20240116; t=1757472012; c=relaxed/simple;
+	bh=nZR1dALMHbgyKK0AcfI3cwQlZU/usFmgnkGpJdsY+VY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=W8N7kFuGtRkzypmgEQcXWAZMMh3d+88mBbmbH7DKXdXIYKlQEua5FlJx7F/939xbZNvmhXxH/7RjWnOfMOGd0/j/CkEdw7rTjUqPowq05M5BJs1UkePqitIQr11ktO6l3ZAdwAoGLmqnj/wnT5zMB8b07xEWZQCSdJe6wgp8TFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNNYJenb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F0CBC4CEF4;
+	Wed, 10 Sep 2025 02:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757471799;
-	bh=7LXy0U+1fCW8qn4duZDli2vtbqHftWoW8ljc8W9VqPg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h2DaKw3Kbm7DwDwBet6VuOzRh1p9IvD9VDR9F944q9dlYZSqxMYGNlyTvk9MTte+7
-	 u5BARDsa+73XYVnGXFs8qyG2/ljE0A1KIYfYjjFH5ciad344dxxDrnM0fuchfOnpis
-	 Px0Sf4jm1QAYfEPTVXpNBfmtho32tCuiMpYo32H+xhQZjQncLpj77HOesldWh6JJGg
-	 gprH2sK0qyWAgIsNIMQsmJLrDueoe81IV3wLkamFx65c0NhRUWwicoD+1SkjXZK9je
-	 f6OeMEem1q3w5Hkk338Ljpd++tffbV5hYYdXfR+OwiH1FuSy4Ddy0MNfw2xtYlKBsN
-	 xsAfJXeMIrwSQ==
-Date: Tue, 9 Sep 2025 21:36:38 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-input@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Henrik Rydberg <rydberg@bitmath.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Nick Dyer <nick@shmanahar.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: input: maxtouch: add common
- touchscreen properties
-Message-ID: <175747179838.3665416.6625910946432624617.robh@kernel.org>
-References: <20250909054903.11519-1-clamor95@gmail.com>
- <20250909054903.11519-2-clamor95@gmail.com>
+	s=k20201202; t=1757472012;
+	bh=nZR1dALMHbgyKK0AcfI3cwQlZU/usFmgnkGpJdsY+VY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jNNYJenb6kLy4W+zjOyyxLdIhcU9HLhymCSwGuibjRkXSPspqS2H/lq//IBjA2oV3
+	 e3fjw2bf1FtolwO/SC9+X5JG0s8sR78WdTmeeduKCn271/oLfDGyz/ALWOruAIs4DB
+	 Lp1s4I7TA0pkGg/Kwco8Ft55oz4Y9Tx4+OCEqZCo80t2ZxWQrQK9vAq/Y11PcGbHqQ
+	 Z3eI6di0eZCReRSKOOm58LB4umiQWPO82O/elfVYMEUrCMmE0I28h3ivd1nQpg4XQ4
+	 QoPHIl6ooVNFSB4SW340+x19ofkmzBxTqNvrPPhyI6SICKMvmRYIdbyV28wOyUo1xd
+	 JCr05fb+oO9Bw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCB6383BF69;
+	Wed, 10 Sep 2025 02:40:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909054903.11519-2-clamor95@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net-next 0/3] ptp: add pulse signal loopback support
+ for
+ debugging
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175747201550.884239.5015453227972787708.git-patchwork-notify@kernel.org>
+Date: Wed, 10 Sep 2025 02:40:15 +0000
+References: <20250905030711.1509648-1-wei.fang@nxp.com>
+In-Reply-To: <20250905030711.1509648-1-wei.fang@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ vladimir.oltean@nxp.com, xiaoning.wang@nxp.com, Frank.Li@nxp.com,
+ yangbo.lu@nxp.com, christophe.leroy@csgroup.eu, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
 
+Hello:
 
-On Tue, 09 Sep 2025 08:49:02 +0300, Svyatoslav Ryhel wrote:
-> Since atmel,maxtouch describes touchscreens too, it should include common
-> touchscreen properties.
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri,  5 Sep 2025 11:07:08 +0800 you wrote:
+> Some PTP devices support looping back the periodic pulse signal for
+> debugging. For example, the PTP device of QorIQ platform and the NETC v4
+> Timer has the ability to loop back the pulse signal and record the extts
+> events for the loopback signal. So we can make sure that the pulse
+> intervals and their phase alignment are correct from the perspective of
+> the emitting PHC's time base. In addition, we can use this loopback
+> feature as a built-in extts event generator when we have no external
+> equipment which does that. Therefore, add the generic debugfs interfaces
+> to the ptp_clock driver. The first two patch are separated from the
+> previous patch set [1]. The third patch is new added.
 > 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  Documentation/devicetree/bindings/input/atmel,maxtouch.yaml | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
+> [...]
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Here is the summary with links:
+  - [v2,net-next,1/3] ptp: add debugfs interfaces to loop back the periodic output signal
+    https://git.kernel.org/netdev/net-next/c/e096a7cc0be1
+  - [v2,net-next,2/3] ptp: netc: add the periodic output signal loopback support
+    https://git.kernel.org/netdev/net-next/c/67ac836373f4
+  - [v2,net-next,3/3] ptp: qoriq: convert to use generic interfaces to set loopback mode
+    https://git.kernel.org/netdev/net-next/c/f3164840a136
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
