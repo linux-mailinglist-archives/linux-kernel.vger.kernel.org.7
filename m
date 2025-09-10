@@ -1,182 +1,252 @@
-Return-Path: <linux-kernel+bounces-810905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FEE5B52159
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:44:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E58F9B5215B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34A537A8FC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:43:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F17A71C862E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0312D8DDD;
-	Wed, 10 Sep 2025 19:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2C52D3ED7;
+	Wed, 10 Sep 2025 19:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="avc37zmE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="l3INOp3E"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2094.outbound.protection.outlook.com [40.107.93.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8261272E7B
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 19:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757533482; cv=none; b=UIx0Z2i+J2gGJjDICxIv43MMCvUPWvE/hZhA6uQz200l7Mw3cL5d5cA3jiKelyhX95P9lUlh8DJkWE1KDSFjhwNIBWhWAzokkRaulBGEb4n/tMLLE9qm/OQc/Y6ck2YkmMWy0ltdNFPQwOPUfsU9kx1qA/kj4X0nmxARfT6K9HY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757533482; c=relaxed/simple;
-	bh=TvvbGJhGoXgTGsOsVrfYtmt12BEe2nakx6B6C3BC+qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMub5LZwftWtUTBm30pIj37GJUwnAji9pga/sJWTIvG8TAagZa8hRrV8l6PMAJAmUajD4YRq4nA6fW5L4Mc1Zo8Spd9Cb/ljcS0S5xEeTN1kgDO4QZGtsfLIZ/xDI8Y67/BrmPR4KU9HZLNkEO8RGUh6HV0RX8k6Emltg3/M21Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=avc37zmE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58AGEoCX017247
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 19:44:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=MRFwGcw4G0+ktZMni3vfLtmQ
-	O/YRU2ZQtqpoFx/hjaA=; b=avc37zmEzVW7YjVsxItPhtWI22GJZQQOvskkWisI
-	fAPD0eUnTWrwGwoiLO6/vxsGmyPbq3IOT3bDNSVNVJ9Cb2MPH1f/YAmv7QAcY8Lh
-	yTzmcpRFSSiZfYNDmLTj7y+7A+m6xea7WQH0GmwOe5wmaLw5jv5tY2TEC0YocBab
-	CzOvW1/dr2D6JZc7kOT9YGSwQkckprDcudn/1rdT9By0GObcCpBRtPZxTT2b7c1e
-	QPuKJ5WTYEV9Uc7qEOByIVZQUFjqVgbtBlcdN/okWE5aChurpHzl8cLP8lDRQrBc
-	PU9xSiqsSMWBtA8NUcn7IkT2woCXAPQ+JlIxcIPC+4K4PA==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 493cpb0kyv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 19:44:38 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-728a71d8fd9so12623216d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:44:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757533478; x=1758138278;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MRFwGcw4G0+ktZMni3vfLtmQO/YRU2ZQtqpoFx/hjaA=;
-        b=rVqqqCRGvXXbBgvBXA1NiBABfaCos7BTeBgxCMnAFMnmMNl1+GbZOqRzvZXCDePB2b
-         cIjtW33/WY1sHli14ReA7OILUdJ0kZuWciTB3BriOJi/kLKuYmLf0a/34eyRaAGWwe1r
-         0+EN0NOb6IRHzRX22uaTx5bR3JiXWeg6OSYMrHGIX+ieztIiS6rBPJSSm9j3a73bTs3A
-         fTBNrjMzCO6jTKih4XscvjKG4vAOqxNuG2tb7hy8QPwaoJkrIkGhjnMe+SUXGIlDuXkW
-         19M5u9e2AMORd14JmO9K5t2PDaGdVhsUwjVF/m+eRDFpyrbIhmXpFNq+Jnl/xRl08chZ
-         5b+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZlhmz5iHNMjosNbLiJqCDgQO/FIErNPUrY9P7oBj2+0P5KUvwZUmrHYio7T/OUYgtBw3vy0K6Ppoq9Tk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygqu8ii3Ho13I6TiR2uvsCWPE7CkheQaUPQhw8Kz6o9xvHWS7H
-	AWMoZuryd1LYowLQ3EdDlHpc1kCmF+OzWjuFDRG5BCCcDJ+90Pqs7kO6iOe15pcz46SRhrhx/cT
-	1AWPWvyZWgQ/7QTYKsFP+D8jb6aPt2WBB2MAjhO5GtAUNSOmw41pLfkT0DKniXb9yEHs=
-X-Gm-Gg: ASbGncsHeZO3ejTUywwxokFQZFiABKVjky9WI7R2rWKX1k+j3yZmU+tJs3MGxnI80iE
-	FEHa2gjh5NNSUcBKzU1zEY17is7TOIlhZU/h0tIEaaHdua5c8NPUIMyUZHuWAvBvrh7SVDB29d/
-	ZQYsiKNjNzXOL8tpn71rBvmlC2uhx3UibJd2oxSqZknZmB8Fl1+20d7Ls7FbcdhlADs+Sey12lG
-	knEWuenQYbwq9dDo/bkl+HqfOFC/MzZbcT7gt5dTy9sGoiE/VMlgqQZ2Ao6heVBF2zF14+CyZS5
-	iewYExhIQixCyUQlpwSt5nBEEsN3/JBQeYCTcAKw9m2V0s8VxFQH0e9tXPHDdmfdoDOPBo4UnMd
-	ueWWXhMfUg8alh7rzUD5uZe08Jnid8dMtjjVJejSJsgzCMf6wv1OY
-X-Received: by 2002:a05:6214:d83:b0:722:4cf0:43ca with SMTP id 6a1803df08f44-7393ec165cfmr207442996d6.36.1757533477906;
-        Wed, 10 Sep 2025 12:44:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHLTybLfL00fFfCA42iPicU5GPH+S6SfBfiUJaoauFhGCNadtLOwQ0vunk0e3CAte+J5/R2vA==
-X-Received: by 2002:a05:6214:d83:b0:722:4cf0:43ca with SMTP id 6a1803df08f44-7393ec165cfmr207442566d6.36.1757533477313;
-        Wed, 10 Sep 2025 12:44:37 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4c4ffd5sm43997081fa.14.2025.09.10.12.44.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 12:44:35 -0700 (PDT)
-Date: Wed, 10 Sep 2025 22:44:32 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Suraj Kandpal <suraj.kandpal@intel.com>
-Cc: kernel-list@raspberrypi.com, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, ankit.k.nautiyal@intel.com,
-        arun.r.murthy@intel.com, uma.shankar@intel.com, jani.nikula@intel.com,
-        harry.wentland@amd.com, siqueira@igalia.com, alexander.deucher@amd.com,
-        christian.koenig@amd.com, airlied@gmail.com, simona@ffwll.ch,
-        liviu.dudau@arm.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, robin.clark@oss.qualcomm.com,
-        abhinav.kumar@linux.dev, tzimmermann@suse.de,
-        jessica.zhang@oss.qualcomm.com, sean@poorly.run,
-        marijn.suijten@somainline.org,
-        laurent.pinchart+renesas@ideasonboard.com, mcanal@igalia.com,
-        dave.stevenson@raspberrypi.com,
-        tomi.valkeinen+renesas@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, louis.chauvet@bootlin.com
-Subject: Re: [PATCH 2/7] drm: writeback: Modify writeback init helpers
-Message-ID: <nw4ehd7a655rzyf6g5yxb3z25en45esja2i5uowzy4wpmb2el6@orycag5iccho>
-References: <20250909100649.1509696-1-suraj.kandpal@intel.com>
- <20250909100649.1509696-3-suraj.kandpal@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631322192F5;
+	Wed, 10 Sep 2025 19:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757533593; cv=fail; b=q1OQ0Ji4Ls5mamnOMAPGbh1EntIOcvhyx1fz1eTDFDzMaQuis2FCE+Ha7M8WvON38Rb1RCCx745xU34abuKA/389L9+9j1m80Xkte/Ldv1Wm4Zf28lftbQvRFunjy14EOqBOBS//uzXzgreaFgdlQJFHmGwem2wPEMconbXH1As=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757533593; c=relaxed/simple;
+	bh=dJ/ROb8l7YE7BS54VOLhskxtg2t2T/Uq6xcPCR2AqeU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 Content-Type:MIME-Version; b=awqQtOebC0blybQNL7X8X/X5hCc1V65nlDUI4/CtmJvCUaNmTBj3gadl+Ruf9FIKaGk5e353wDq1W8kBFfKAeAlCNyT9KQUG1HaqjHMWpzUAjhK79b0V+piSsrfCzduYt59UyXhuZVxjDzwL+4AvjXAarJIUTGwpx2CUovME4Xc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=l3INOp3E; arc=fail smtp.client-ip=40.107.93.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SPSoLKY2on6x+IDKHMVcTf5LenVW/pFO7g9fQ+FCwZ4xZOaoHGfCboJmciIn3VyQmPSf3OlbGFMvSuzE2tirPypSKR053m1FGfA0qbc9ud186QKxEbbnKdr7+oDovMerQMG7fOCoMspb68JmhoeC2bP6Mgz2nOyOl0kYKJKyuaFP+8rFvk7f0pd+QJ61PBxjUwTahvWbJaW5zogH97Kg9QxIibWHmWqrMrQnd8CaT8DsNkgugPmNzFbIMasUBTdJUv5OtqOXNFSkmErz1MWl/NwyePl5mS9e7ogN84op8nZCUK9ZbBS8n1UKaSDryrwxg2dxQbkqBYEdxYUcHXJFtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GwL5lw+/N5QFdXvh9+e7gnl+eA5QPFIR7IVFyRnBslc=;
+ b=pykZ/2YZdQgsrnHSmVO4/w2RP+2Nxtz8mf5jgLJhL0oDiZmIZU+NpuLr35jtDgB3ZqM/g/46FOV1ZCsniamKtDDpM/JknSXlJEN8I9o/DvNF0A2PSqkPmOcFxy4yEo6jn344pNaXVVrNDlve1CGdX7+3Qykbgk4FDbLWmC4kzDCt65T1hj0E37z4HyRpWpXsvaJRVwKcvCiVsmoQ54sbE2O/eis1TjJ4xUeAcuBi7cpuNWo7ojOjRd0fKhsXfLCqrJl0+KxkbnKDf6tXK6H5iNyaS8fjaIknaTtVpUTobl+G3kctTLZfozUzDZUeNbYsEotAeC8ZGpSHwjn8QC+Vkg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GwL5lw+/N5QFdXvh9+e7gnl+eA5QPFIR7IVFyRnBslc=;
+ b=l3INOp3ENrihKUMv2y93oclwhMoqjSHvcbWVrizM1xNpCO1IT+jRb3fODNfvPEUfn8//jaSR29f1NRAPLhBZHKOcpoNoB/u4HS6FVTUQH7WTtyACVDCMutavTY09FzvXjUERCiDzWnsYXuEGCMmrlAK1H9D4YUYUruLekcPJT/8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
+ SA3PR01MB8547.prod.exchangelabs.com (2603:10b6:806:39b::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.22; Wed, 10 Sep 2025 19:46:27 +0000
+Received: from MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::86f5:4db2:7ad5:7fc4]) by MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::86f5:4db2:7ad5:7fc4%6]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 19:46:27 +0000
+Date: Wed, 10 Sep 2025 12:46:24 -0700 (PDT)
+From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+To: James Clark <james.clark@linaro.org>
+cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>, 
+    linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, John Garry <john.g.garry@oracle.com>, 
+    Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>, 
+    Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
+    Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+    Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+    Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+    Adrian Hunter <adrian.hunter@intel.com>, 
+    "Liang, Kan" <kan.liang@linux.intel.com>
+Subject: Re: [PATCH] perf vendor events arm64 AmpereOneX: Fix typo - should
+ be l1d_cache_access_prefetches
+In-Reply-To: <6a24df18-832c-41b8-8226-5dc5b3c9995d@linaro.org>
+Message-ID: <c48690ca-f7d-e711-5b9a-d18c138568d@os.amperecomputing.com>
+References: <20250909210120.9823-1-ilkka@os.amperecomputing.com> <6a24df18-832c-41b8-8226-5dc5b3c9995d@linaro.org>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-ClientProxiedBy: MW4PR04CA0387.namprd04.prod.outlook.com
+ (2603:10b6:303:81::32) To MW4PR01MB6228.prod.exchangelabs.com
+ (2603:10b6:303:76::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909100649.1509696-3-suraj.kandpal@intel.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEwMDE1MCBTYWx0ZWRfX3az9d/ydLWzi
- JFjUHjQwH3fDKuK+CZMum9eZrXE2XdwlSR9+V/BmvokTBRBQ8XBVuvc/3wT+MuRwhFDPSi5RNb6
- 27/SD/d6IlUKBuxDPHNkvV5xzLkce/iezo9ahuLuDfs4Kb48UPivaVqnVd8dPjzfiHIYznv6MGN
- fUBSgfo8Jgk3R4nbHCxIPDn3ZChUwWu/gz8LTX+x6uTpxoxqs49KZDIbbPcBWVG81ndYHEVz6gi
- h29p/vOnMBWPk4N9ATx7yJfRbNIhVSNQOigopLOmjZOkaklilNlPtYl8syupN/tgJwlUbgUrQaK
- WVSevVvkrQyYS3Liw73vo8AqqtRqFAGZe/iRBb8ccgVwRayJScvD6PBp739gjBAtWfQZJljRvWK
- xXTRR4MS
-X-Proofpoint-ORIG-GUID: Pb8k2S2QG6Q0-TqbuGe4DmAIjT3i5pGR
-X-Proofpoint-GUID: Pb8k2S2QG6Q0-TqbuGe4DmAIjT3i5pGR
-X-Authority-Analysis: v=2.4 cv=P4k6hjAu c=1 sm=1 tr=0 ts=68c1d527 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=QyXUC8HyAAAA:8 a=T65gB5C1oy4ZwBZl7KYA:9 a=CjuIK1q_8ugA:10
- a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_04,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 impostorscore=0 suspectscore=0
- spamscore=0 bulkscore=0 malwarescore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509100150
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|SA3PR01MB8547:EE_
+X-MS-Office365-Filtering-Correlation-Id: 83fd0d73-f4a3-476e-88d2-08ddf0a2bb0a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qfksJa9fpSoknThrBn8ZAK3WvUvsV4iUZNcuz7GkSDbvgZlb+tNCulXMd015?=
+ =?us-ascii?Q?bwK93kAg0LGVdiflZaMmaSzH3//wJkGtTJw+myypmnjiT3b/Ob3Kk+fxiyzm?=
+ =?us-ascii?Q?3uiGKFlNx1ZGa25KucoOJC3UV8KQ+RoSRVuUtRI1iwJin5iMplMBV3VFVnQV?=
+ =?us-ascii?Q?1Nv1q9bNicSTahZ/aoFqTnk/W+tSNHl7+oxiFvRXKPKDPlKnyDSIN+ZbF0Yf?=
+ =?us-ascii?Q?WwK4GOlmBHIB/NuvJbXrCOHJE7rZex47mhbF2MxfLy7uGIm3AcM96bjPuygT?=
+ =?us-ascii?Q?JC4EbBO7ZhOj93jE5v/Re1+sYRVijIXW5jVNi4kGYxZ7WTsrrve+WlXHyoD2?=
+ =?us-ascii?Q?W1HfF8cOVkayPMgOpbqQgpCPZFLfzUAXdgR2LzwDkwHtplan8N0+lu6apKRy?=
+ =?us-ascii?Q?YgwaBwjm/xFh0kQY8LtvQ77kP7JJe4J8nrXLtkeTACU/2g65sM4NBKzNGbl/?=
+ =?us-ascii?Q?aWN4XLfE1+eKboyA+pYaXehJoaXTlT+PBb3tApErBFnn1zMLx+DezoJk9F9q?=
+ =?us-ascii?Q?I6BhYlLfztSsOaW3X4OR3aLpJU+cN4r4pG+GVCF5YPiEsfnIpW0zzF/APkNw?=
+ =?us-ascii?Q?CEP4kev4uLyd13PC8VcSTVWcYSSVHmIlSdEfcm4iklNZsUO925GMTsxus+w0?=
+ =?us-ascii?Q?Cv37lJU/7FWcHsLm83GHm8L0zUXwOomRkGdy9k691CbsAsitQqIwhL+nI8GU?=
+ =?us-ascii?Q?YZnRJRYVN6kGshlXWSlGdqmvaYpg4AEFKEz8rdNSXpoqxwcV/nu0/V1Mhxk+?=
+ =?us-ascii?Q?6bE5majdFKYtCLmnqWgnpcg/L3HCcrWM+fW+vl1sN230AY0NbiMXjMd45Hi/?=
+ =?us-ascii?Q?8KaEjAvgp8OjAgVIasbHKh0AGU6+l9wKGs9L4kYauGN0jiiTKf704VMM3FR2?=
+ =?us-ascii?Q?RDbGmhW3d91P6ldk7y/crbrCIZ4AFWhegI9TrxTGx1QWhYrbap+KoMazRIMR?=
+ =?us-ascii?Q?oWVFvf/S6v2SyOhvl7K7x9TcKkvVwbjPiYNwVsX4VSbmgNJY+5g+GF4iLaPI?=
+ =?us-ascii?Q?DgA+GNdnR4a2bpxenxY94iy4Gp+qQILnCPCzgMeaF09HbuyoZvRE1PGHaXfg?=
+ =?us-ascii?Q?L/zL005ThrTQNp8NyTtJSwi7tRLT9yDtbu+JPME8RGPrbRdbjJlown3DVdye?=
+ =?us-ascii?Q?DrF/3lkoGsB6NhBjxygVNVoarDRFMxd1Xp8VH7ETaJxsfBNQ6B6pNV1m6g3B?=
+ =?us-ascii?Q?0wsbWFEPZS8nyHq0SvEQzKRqukieNP3W0YgSh/eJTom1Mzi9mXuqGP9Yb/JN?=
+ =?us-ascii?Q?o1TdAUe6hpVMJ8/GBkmj3S1919YYQSQLkmWbvUylJvJlcC6a3eLwxP4tAnM1?=
+ =?us-ascii?Q?kMjJR8HhpmLqY7VvHfqjsieJ0Q7818zM+K2yFe37nhBnw1EOPE5X05tMcG5p?=
+ =?us-ascii?Q?tRPlBelZJu0s0l93772IcWTCUJ1YLhW9O6CvWqhNZc9AxKeJHQX8XoG0bXYh?=
+ =?us-ascii?Q?mwdKqunSBg2pxJZEWM+ujR9d9wAZhfLwpy82TjScxcggM80NFLCUYGNyrgSD?=
+ =?us-ascii?Q?O6O6oG+V2IGLBQ8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(38350700014)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9k3J6ruKY4+tewuxzc1HIV35VrMUZlWpWmB/TdSSzBnyEFBUPbSTM5O1nST3?=
+ =?us-ascii?Q?lLFZajxkm7M2jDsbjwXV3Tj+dw2HtpIizZS2eSRVy0vI1EuYZO09qirq0+LY?=
+ =?us-ascii?Q?/mteFW/us3B2efeGmPQTgPZDSY+2E9LeU2o5ei1uJm5K7ajWw24SfqEovqmA?=
+ =?us-ascii?Q?9jq/ypeED7xoff9WT28t/FO/ZuJF79KvdQwxaoaQzIAP1sKB2qkavGvSKyto?=
+ =?us-ascii?Q?dwnyqI6Qn64wqISMOCobojDv/0NaVZiKYKWIrDnk3/SMfLQHKesL2uWLLmmV?=
+ =?us-ascii?Q?rPIcyPhG1YsjNH1VuFBxpcm0bwPU0Fb90hkGLrfZ8SPi03F9HSrCUMtgNko/?=
+ =?us-ascii?Q?yAG32jiQkU1joIltRwPoNQkn5Uq/SOIHaTDkdhV38H1bIBdYQutR/eCWrnmb?=
+ =?us-ascii?Q?xR3EnGNVics/GonGxH5xS22Wz7mmAald0I461ssIOlB3xs6++IQZ3eabLXPC?=
+ =?us-ascii?Q?zK3oc8mRgOuqAMkgpfMcJ0csIZaWHRlxm0qTDmnbdntq7ZGh8j/ZLQ/tbRdp?=
+ =?us-ascii?Q?rPMy/v6uyU8WK6zEFaZoFW+HU1gt7StRkGLJEjbO1gG3s9jM+xLp35XXbmbE?=
+ =?us-ascii?Q?Z7gvnEZQr+l/EyQSjILMIl7yT01xAenujlaz7u2nhQj62TewjK/lKjb7wQSZ?=
+ =?us-ascii?Q?Eir4+jp+xs6s+B9ND+MZTW3j0cFXeFLCQ1glzyZ7dNeCoobuV9QRbvr/a0KP?=
+ =?us-ascii?Q?AAEzEnOnLjiE18BiQILHl0cB+t8v0NQBg9zDB7i2YaZAVWEHndh0w597sBXn?=
+ =?us-ascii?Q?1sATXTgMrUpq6HM5Tvm+B+BWsuWb5p11MQ3tAl9Oj9GKZuGWiEfiHOtwEnjQ?=
+ =?us-ascii?Q?JkVEQo+PabYrHuI0Q/7Z6PtFiViB6UFiAUwqI8Ze3SRjTkySB5iaoQjjY3WA?=
+ =?us-ascii?Q?J1xWOY3liIsmvcxrnA26H4i1/1QqQ0DiUWuTv3GuYDpA/m8HTqaCBGqn3Vms?=
+ =?us-ascii?Q?ing9Lb2qs3mbzk6KF4ZWUlkhuqr966vTQL4LCL8uHvboO6qUtQPTZ1iqinOe?=
+ =?us-ascii?Q?v28zbIV3l0gjwaX9malA/xaDtyEF64ktJPhCQjdKpqjyUAQSKRwAvm4Pw8D9?=
+ =?us-ascii?Q?7M8tuGU5js8U93AX3BcGmNuAKDO4uL1oszRlWGFKguMEM7X0kaZd2dZobJpi?=
+ =?us-ascii?Q?unJ5Xcg3tcvS8TMqPTo13FVuJrMQADuKAMVgrFUwTDMRi2Z3PR80jAVaxeBB?=
+ =?us-ascii?Q?L649+B26C6LrfARb4ly9gMRhWRW8w/y3Svhfb/EgTrqFiNvIavCZluBZ68hP?=
+ =?us-ascii?Q?Ho91GJ9fG/5BCxVFZlVY9RWncMJIVUd8D8hC9QCvn6OM0e1qGsNrTnV6s21W?=
+ =?us-ascii?Q?blyrzzfkxNdhI7ehneKd4LhZXjasQrZ/9mUqHPA6e4iWfIN7zJ+52KfetE2J?=
+ =?us-ascii?Q?yEsggClwDcOdaZeYLHj3VtNF07PXGs0UXOJrDe7b+t/5dSQETcEpBszf76aL?=
+ =?us-ascii?Q?dTkUNY7+PsFPrrEHXLj8Z53EVCHD+lvkehvtefahSKb4Vewv5bWTOFKl1PZa?=
+ =?us-ascii?Q?8U+rLFsHya5dlytV/9kkwkh+ca2nuwrE3C8JEb6sJf6MWjhppGvLOSRLCm7g?=
+ =?us-ascii?Q?9A7QWsSm+Xu6iUgZ2KI98cGa23DvXQLx6SpSwLw5GD8f0k15zPwa/FPZxSv1?=
+ =?us-ascii?Q?FumgSIC8KQoMTcnQvf3xmeE=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83fd0d73-f4a3-476e-88d2-08ddf0a2bb0a
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 19:46:27.1695
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: apZ7ZiGWjRo5d4VAAhHeNkj5Q/dPRx/BgNd3JC7HT6vRaKXbYQvOFcGgtOxKd8kAWPvXfYQhfm83exyrXetENxZz18kNVv9oIbkVVs2tHLJSsm7sRri2yGznpB6LxZXk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR01MB8547
 
-On Tue, Sep 09, 2025 at 03:36:44PM +0530, Suraj Kandpal wrote:
-> Now with drm_writeback_connector moved to drm_connector it makes
-> more sense use drm_connector as an argument rather than drm_connector.
 
-than drm_writeback_connector
 
-> The writeback connector can easily be derived from drm_connector.
-> 
-> Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
-> ---
->  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c |  2 +-
->  .../drm/arm/display/komeda/komeda_wb_connector.c |  5 +----
->  drivers/gpu/drm/arm/malidp_mw.c                  |  2 +-
->  drivers/gpu/drm/drm_writeback.c                  | 16 ++++++++--------
->  drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c    |  2 +-
->  .../gpu/drm/renesas/rcar-du/rcar_du_writeback.c  |  3 +--
->  drivers/gpu/drm/vc4/vc4_txp.c                    |  2 +-
->  drivers/gpu/drm/vkms/vkms_writeback.c            |  4 ++--
->  include/drm/drm_writeback.h                      |  4 ++--
->  9 files changed, 18 insertions(+), 22 deletions(-)
-> 
-> @@ -338,13 +338,13 @@ static void drm_writeback_connector_cleanup(struct drm_device *dev,
->   * Returns: 0 on success, or a negative error code
->   */
->  int drmm_writeback_connector_init(struct drm_device *dev,
-> -				  struct drm_writeback_connector *wb_connector,
-> +				  struct drm_connector *connector,
->  				  const struct drm_connector_funcs *con_funcs,
->  				  struct drm_encoder *enc,
->  				  const u32 *formats, int n_formats)
->  {
-> -	struct drm_connector *connector =
-> -		drm_writeback_to_connector(wb_connector);
-> +	struct drm_writeback_connector *wb_connector =
-> +		drm_connector_to_writeback(connector);
+On Wed, 10 Sep 2025, James Clark wrote:
+> On 09/09/2025 10:01 pm, Ilkka Koskinen wrote:
+>> Add missing 'h' to l1d_cache_access_prefetces
+>> 
+>> Also fix a couple of typos and use consistent term in brief descriptions
+>> 
+>> Fixes: 16438b652b46 ("perf vendor events arm64 AmpereOneX: Add core PMU 
+>> events and metrics")
+>> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+>> ---
+>>   .../arch/arm64/ampere/ampereonex/metrics.json          | 10 +++++-----
+>
+> The same typos are in arch/arm64/ampere/ampereone/metrics.json as well.
 
-You can use &connector->writeback without extra wrappers.
+Ah, that's right. The descriptions do have the same typos. I'll prepare 
+another patch for AmpereOne and submit them together as v2.
 
->  	int ret;
->  
->  	ret = drmm_connector_init(dev, connector, con_funcs,
+Cheers, Ilkka
 
--- 
-With best wishes
-Dmitry
+>
+> Reviewed-by: James Clark <james.clark@linaro.org>
+>
+>>   1 file changed, 5 insertions(+), 5 deletions(-)
+>> 
+>> diff --git 
+>> a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json 
+>> b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
+>> index 5228f94a793f..6817cac149e0 100644
+>> --- a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
+>> +++ b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
+>> @@ -113,7 +113,7 @@
+>>       {
+>>           "MetricName": "load_store_spec_rate",
+>>           "MetricExpr": "LDST_SPEC / INST_SPEC",
+>> -        "BriefDescription": "The rate of load or store instructions 
+>> speculatively executed to overall instructions speclatively executed",
+>> +        "BriefDescription": "The rate of load or store instructions 
+>> speculatively executed to overall instructions speculatively executed",
+>>           "MetricGroup": "Operation_Mix",
+>>           "ScaleUnit": "100percent of operations"
+>>       },
+>> @@ -132,7 +132,7 @@
+>>       {
+>>           "MetricName": "pc_write_spec_rate",
+>>           "MetricExpr": "PC_WRITE_SPEC / INST_SPEC",
+>> -        "BriefDescription": "The rate of software change of the PC 
+>> speculatively executed to overall instructions speclatively executed",
+>> +        "BriefDescription": "The rate of software change of the PC 
+>> speculatively executed to overall instructions speculatively executed",
+>>           "MetricGroup": "Operation_Mix",
+>>           "ScaleUnit": "100percent of operations"
+>>       },
+>> @@ -195,14 +195,14 @@
+>>       {
+>>           "MetricName": "stall_frontend_cache_rate",
+>>           "MetricExpr": "STALL_FRONTEND_CACHE / CPU_CYCLES",
+>> -        "BriefDescription": "Proportion of cycles stalled and no ops 
+>> delivered from frontend and cache miss",
+>> +        "BriefDescription": "Proportion of cycles stalled and no 
+>> operations delivered from frontend and cache miss",
+>>           "MetricGroup": "Stall",
+>>           "ScaleUnit": "100percent of cycles"
+>>       },
+>>       {
+>>           "MetricName": "stall_frontend_tlb_rate",
+>>           "MetricExpr": "STALL_FRONTEND_TLB / CPU_CYCLES",
+>> -        "BriefDescription": "Proportion of cycles stalled and no ops 
+>> delivered from frontend and TLB miss",
+>> +        "BriefDescription": "Proportion of cycles stalled and no 
+>> operations delivered from frontend and TLB miss",
+>>           "MetricGroup": "Stall",
+>>           "ScaleUnit": "100percent of cycles"
+>>       },
+>> @@ -391,7 +391,7 @@
+>>           "ScaleUnit": "100percent of cache acceses"
+>>       },
+>>       {
+>> -        "MetricName": "l1d_cache_access_prefetces",
+>> +        "MetricName": "l1d_cache_access_prefetches",
+>>           "MetricExpr": "L1D_CACHE_PRFM / L1D_CACHE",
+>>           "BriefDescription": "L1D cache access - prefetch",
+>>           "MetricGroup": "Cache",
+>
+>
 
