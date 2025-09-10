@@ -1,190 +1,166 @@
-Return-Path: <linux-kernel+bounces-810566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA6A8B51C74
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:52:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A9DB51C79
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97FA4161CF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:52:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A66D2161F2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB9832A3EB;
-	Wed, 10 Sep 2025 15:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EC0327A19;
+	Wed, 10 Sep 2025 15:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Y1GBgcaB"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=yadavpratyush.com header.i=@yadavpratyush.com header.b="MQ1jVJwO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="biG+FHOs"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5261A2C0B
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5235B1A2C0B
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757519523; cv=none; b=DZcVudiT4so88yEM0QJWqcAVvFU3M4U4NMU2PjWUKLAe+6lzxeKP84b9IkcOrQdH8uqHPKzBmHIuMJPgUnM+067dSuXaVDeLpiyAw1v+QBB0N3oYziOQHJIolSe9ZPf5ZNPunwFpDXn/dYbLqsirs8EhfnPW7FgZu9mkAmWbK2E=
+	t=1757519530; cv=none; b=av5X5Xd1/iUzpFK86Ovsbn0rr2hVv7qYa5ZusK2ZVa+EMNpU7d8B1joZIHYTZ10x6DumJKCGJe4ql/xawWhMpYwvVrMhv0IrpxBLZ6xFUiFb7XIDmD1XfF5TLxuBPWWnbZG/C6S/sU3F8iMo7D6N8eD+cAIIT9bTCqP6Cm33B5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757519523; c=relaxed/simple;
-	bh=mvncor3HI+W9A/gmILLwXoL0QG8/oktXJxYei8rUIPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tUlanEVpfY19P5vpWwZ82IXbIl3VSx4H1NJq/c4papUL6EUpRT16iSdDfVRnBG8WJ8VLRhNLE44rNgSHZ4i7KlF0Yz5hQvO9GEJvC47EqSL90O7rellkddHkLLUYDq+i8ywY0DTBir35ec+oqFz7Z4x1cH3ktzYzg6xQN2K2ARE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Y1GBgcaB; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b046f6fb230so165203966b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:52:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757519519; x=1758124319; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xXqCK+svVlBuAMsr5p4huDSfMQXIvsA6yKXWJhLo+iU=;
-        b=Y1GBgcaBhHBdzdjHWdJctGakxSRj+kMJI1Ps1TNkTxlqvMP0fXGLokw5tygfBg2zTx
-         tmhelTbKHBV7xR/aECg9Bzy8FsW/PZIxKg363P0UANJBeNjHwpAF70ncVUWP94HmExuX
-         XvAPy1lprQBoVhkroDfV982PSsEGbwXmGx3A9/2KP7nDVsDuf2jtJuHgQTMBcwWGuwtJ
-         bRk6bSrBGrGET4dD/uiU9x8AiQRajepM2eGBPSelrE8okrBu6Y6n8GU9I0/jNQ6J21Rb
-         q13LX7H92PCwTGLYlNB9Psn3ihJkMO0X4AW9yzZGc9e1/2zDeSoQQHU2WLpEZiYpt43i
-         Qsuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757519519; x=1758124319;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xXqCK+svVlBuAMsr5p4huDSfMQXIvsA6yKXWJhLo+iU=;
-        b=OgqvqcvjKB/k1vvFKuhNwPL7O2vpWmTWeCwPNPvSsD+LdarX+Cw426K8gkSDmNQjCe
-         /JZnS2vlQQkb+ONSN26Z0GaNZzgsqZgBMYFXtsT+601bha1xyeQRKOECUVKwrJBOIcVn
-         QLdG7I02TsfasZBydojB5vV7tUjsUHb+CUw9+HbILLXwmHNQ59mPG6SkJsFf+3bMppWB
-         6aGoRX+nv8FRFrRKnTZmLyUGLxpIuR7iAjreuuS/j4GPKlsz1ITR1oOIJRia9D7SoPuh
-         0R3Xm341FdA4fZVTjLsjVKE0O1r2CfunMcRGWqIey4yjnX+x88AknHQwwygsjJs+OQMC
-         zOSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHbuaYrcKRRYFyurv8N4hmoMVU25d6wYf7AohKI5kci51cgRdb1cYJQoTDXJmDs9gi++U7jcvWiFyPbd0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb61dOIH3dxhziH8dWOZBeZvsovl0wsXxWVmjde/FISzqQDkn+
-	wZ3OYsyr83HKCN7a3YTSw0dKQMLztlm24yTaJttFi8wwFZRNe09cU0BGGRNYU75usEU=
-X-Gm-Gg: ASbGncvwOkpsx8/QAk7yzbljgr9IBrSqtH/+qmLaPzAwJct8dAbQ5UaKBoBoC+Ctvu3
-	9f20ODBtNHL1HXN1L6WX7bhBaFWdxG5N1Ok+LOEuIMnUyhQxLlosqCmvKVBxZtUHj/BSU7e6CKX
-	Ib8G4cN5n6IrQ2tnYWRMCed+bp8B6R1GKaqn4EgG9u8j/b01m6GLF4vnKmrTjvrCEL7yQF7Kfe+
-	KlosNYHJNMjm+m1SHr3IB6b3JQZ49rTGJZR2+hc9By0601LX5cAU6dwSth+0zLhCO6JxiWc9/bt
-	Kvj2kAj/iGE3puUN5HkCbxIQ4lt7C3ho9IW690lheigfsnAIYbD5lHvw8fkOcz2p+3FkseoBRhM
-	5CLljs3DOA41/xAUFpjjhzgGHFVIgVUQJ1u3C
-X-Google-Smtp-Source: AGHT+IFE9TusuMunCFfr6wNayngNXse/YHX3kwzAYccUed2qnbY4WVC4DPlKEEAXxnWfgkh/JZJ6bw==
-X-Received: by 2002:a17:907:7faa:b0:b04:5d56:d838 with SMTP id a640c23a62f3a-b07a648315amr9092266b.20.1757519518832;
-        Wed, 10 Sep 2025 08:51:58 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c018f6a7esm3543294a12.42.2025.09.10.08.51.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 08:51:58 -0700 (PDT)
-Date: Wed, 10 Sep 2025 17:51:56 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Calvin Owens <calvin@wbinvd.org>
-Cc: John Ogness <john.ogness@linutronix.de>,
-	Breno Leitao <leitao@debian.org>, Mike Galbraith <efault@gmx.de>,
-	Simon Horman <horms@kernel.org>, kuba@kernel.org,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>, paulmck@kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-	boqun.feng@gmail.com
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-Message-ID: <aMGenGUNcBbRUUf9@pathway.suse.cz>
-References: <b2qps3uywhmjaym4mht2wpxul4yqtuuayeoq4iv4k3zf5wdgh3@tocu6c7mj4lt>
- <4c4ed7b836828d966bc5bf6ef4d800389ba65e77.camel@gmx.de>
- <otlru5nr3g2npwplvwf4vcpozgx3kbpfstl7aav6rqz2zltvcf@famr4hqkwhuv>
- <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
- <7a2b44c9e95673829f6660cc74caf0f1c2c0cffe.camel@gmx.de>
- <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
- <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
- <tgp5ddd2xdcvmkrhsyf2r6iav5a6ksvxk66xdw6ghur5g5ggee@cuz2o53younx>
- <84a539f4kf.fsf@jogness.linutronix.de>
- <aL88Gb6R5M3zhMTb@mozart.vkv.me>
+	s=arc-20240116; t=1757519530; c=relaxed/simple;
+	bh=DU5u50LviqOpNOHb+nJj7OHxRaLw1n7ssupT8NJfOD8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IUCZtoSg7W9MtCN0WLD6sbKM6mrz9YWEhsUrDaXPZe1n/fm3vCJrN9sGSvmhEIgQkJWT/QMPliCV15oosw9eU6vGP5UP0MHMJvf35sX5lAODfvS5W9s2g9Kw3ar1YppIFa6YJ3Lm/jgBRqnNJM9DgUkB+UTLAmKjpHrMTPRbe+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadavpratyush.com; spf=pass smtp.mailfrom=yadavpratyush.com; dkim=pass (2048-bit key) header.d=yadavpratyush.com header.i=@yadavpratyush.com header.b=MQ1jVJwO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=biG+FHOs; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadavpratyush.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadavpratyush.com
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 71AE6EC0456;
+	Wed, 10 Sep 2025 11:52:07 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Wed, 10 Sep 2025 11:52:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	yadavpratyush.com; h=cc:cc:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1757519527;
+	 x=1757605927; bh=TisYwmvR90ER1jazweHvbvoeDDNC29k3gBI9kEQjEok=; b=
+	MQ1jVJwOLKEK4TRtKuCZUWuuAQageX7JSvcKV/AAQjDLP1FOkBUGIxQeArtXOyvw
+	RiCJOOQLE8dwH2yBZAmJUOZUH2cS8m0H8hQ0tq8RmBLEJ98dlLW+VO5WzwfTEiEp
+	ZcHcL0j4TRgHRbzBPMVoXIN/TgUBSUkl0EwJIqNRU7bOY8hHPzRUQp5tomfYSYM4
+	aaRy1m76V6CftjP7Er2hbHpueVeKDrzxiDB6gIEceqSRYYK3MlhkOMyHKszxkfLi
+	RUbQ8ocKfpbnjZs4bPUh+x0Cqc6aVNmdHryM8Awp3jeJeLtIUlbZWLsONvCvHPyW
+	mZCD/zorvOHIoYCH40mnnQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1757519527; x=1757605927; bh=TisYwmvR90ER1jazweHvbvoeDDNC29k3gBI
+	9kEQjEok=; b=biG+FHOsup8r5uP8IEey1OrJpI5629ob7gPzDpQqOAtxnhL3Zr0
+	lAYHLmLmOnkk/ZFWAy4flV1Zywb3xJ/C9lu8b58qrFjRd1jGE0FnuxDKv1eLqzEC
+	LdNQpk67UX6aieSLbuXzA1Vg/QFxHGWYD0Ncs9fWOg5ffSWPr+e2foIt7hOvmQzy
+	iLlzxsge5Wr1zuVQhZZPD8cgQf80LhnC8Hn+wf2wU+wIA3OsFlc8DTwywa9Wv8MO
+	sEfliZTWg+RaFEbiBvoEfwFRHJ48CPhT4kQMt6cZzi73U66cwxwe/KmU+RdG2VXD
+	ivj6MGO/UgwX/gij06eXHRG+djGwjM9eu7A==
+X-ME-Sender: <xms:pp7BaKOFqY52w3lZOybWzINO3ENFBHOBl4cBomOTthhrWe4PrdUqzQ>
+    <xme:pp7BaHfg7LePI0HEfWmF70EegQxkrN3FIH16nDhz1Qs3U6sgN8W0Qp7GkMEZZEBcj
+    yWK80xxSLGCsqAdFlU>
+X-ME-Received: <xmr:pp7BaMy7WN_9-GXpOn0pRXi8Q9lVHX5GEN0I4gRAYoByjs7OssS_3SPKgmZPxv2wyT4IYbQ_d0nVYjLqZuQ-oN4ZEFZM_2LMeoJyu6JvhNyhs7e0IjPCTdEhtDBDylClO-gMWbLx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvfeejtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufgjfhffkfgfgggtsehttdertddtredtnecuhfhrohhmpefrrhgrthihuhhs
+    hhcujggruggrvhcuoehmvgeshigruggrvhhprhgrthihuhhshhdrtghomheqnecuggftrf
+    grthhtvghrnhepleejgfdufeffuefhiefghfdugeegieejudelgedthfeuudffheeugfel
+    hfevvdelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgvseihrggurghvphhrrghthihushhhrdgtohhmpdhnsggprhgtphhtthhopedugedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrd
+    horhhgpdhrtghpthhtohepkhgvgigvtgeslhhishhtshdrihhnfhhrrgguvggrugdrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehjrghsohhnmhhiuhesghhoohhglhgvrdgtohhmpdhrtghpthht
+    oheptghhrhhishhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjghhgsehnvhhiug
+    hirgdrtghomhdprhgtphhtthhopehprghshhgrrdhtrghtrghshhhinhesshholhgvvghn
+    rdgtohhmpdhrtghpthhtohepsghhvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprg
+    hkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrgh
+X-ME-Proxy: <xmx:pp7BaE3RDLytsa2QtWwRt9RRI1nVOsBEmidFKrSV6h3zaLVCSt-7Iw>
+    <xmx:pp7BaLfLXI8An1b0AqP9N5_8fMLlNdqhMGYiu_I6fX6GdOZu6vb0Cw>
+    <xmx:pp7BaBW4-CrB3M9I16AqpIjPSXOniBsClKfdNAAulDJcszXWj21hbA>
+    <xmx:pp7BaL9T2jEtjmUP7XxYzydsA-Me-77SLflDvRcsv8WP84tmxnRDrw>
+    <xmx:p57BaIxU2zpoDgcYwn06gdAIZWSihVls11YMgzeC1z3eF4bswK9AsSHl>
+Feedback-ID: i93f149c1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 10 Sep 2025 11:52:05 -0400 (EDT)
+From: Pratyush Yadav <me@yadavpratyush.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Alexander Graf <graf@amazon.com>,
+  Mike Rapoport <rppt@kernel.org>,  Changyuan Lyu <changyuanl@google.com>,
+  Andrew Morton <akpm@linux-foundation.org>,  Baoquan He <bhe@redhat.com>,
+  Pasha Tatashin <pasha.tatashin@soleen.com>,  Jason Gunthorpe
+ <jgg@nvidia.com>,  Chris Li <chrisl@kernel.org>,  Jason Miu
+ <jasonmiu@google.com>,  linux-kernel@vger.kernel.org,
+  kexec@lists.infradead.org,  linux-mm@kvack.org
+Subject: Re: [PATCH] kho: make sure folio being restored is actually from KHO
+In-Reply-To: <aMGc-ExhkqwAyY_C@casper.infradead.org>
+References: <20250910153443.95049-1-pratyush@kernel.org>
+	<aMGc-ExhkqwAyY_C@casper.infradead.org>
+Date: Wed, 10 Sep 2025 17:52:04 +0200
+Message-ID: <mafs08qimjoez.fsf@yadavpratyush.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aL88Gb6R5M3zhMTb@mozart.vkv.me>
+Content-Type: text/plain
 
-On Mon 2025-09-08 13:27:05, Calvin Owens wrote:
-> On Friday 09/05 at 14:54 +0206, John Ogness wrote:
-> > <snip>
-> >
-> > NBCON is meant to deprecate @oops_in_progress. However, it is true that
-> > consoles not implementing ->write_atomic() will never print panic
-> > output.
-> 
-> Below is a silly little testcase that makes it more convenient to test
-> if crashes are getting out in a few canned cases, in case anyone else
-> finds it useful.
-> 
-> Testing this on 6.17-rc5 on a Pi 4b, I don't get any netconsole output
-> at all for any crash case over wifi, so that already doesn't work. All
-> the cases currently work over ethernet.
+On Wed, Sep 10 2025, Matthew Wilcox wrote:
 
-I like this test module. IMHO, it would make sense to get it upstream.
-What do you think?
+> On Wed, Sep 10, 2025 at 05:34:40PM +0200, Pratyush Yadav wrote:
+>> +#define KHO_PAGE_MAGIC 0x4b484f50U /* ASCII for 'KHOP' */
+>> +
+>> +/*
+>> + * KHO uses page->private, which is an unsigned long, to store page metadata.
+>> + * Use it to store both the magic and the order.
+>> + */
+>> +union kho_page_info {
+>> +	unsigned long page_private;
+>> +	struct {
+>> +		unsigned int order;
+>> +		unsigned int magic;
+>> +	};
+>
+> KHO is only supported on 64-bit?
 
-Some comments below.
+Yes. Currently only x86_64 and ARM64. It is mainly for hypervisor live
+update so there isn't much reason to support it on 32-bit platforms.
 
-> ----8<----
-> From: Calvin Owens <calvin@wbinvd.org>
-> Subject: [PATCH] Quick and dirty testcase for netconsole (and other consoles)
-> 
-> Signed-off-by: Calvin Owens <calvin@wbinvd.org>
-> ---
->  drivers/tty/Kconfig     |   9 ++
->  drivers/tty/Makefile    |   1 +
->  drivers/tty/crashtest.c | 178 ++++++++++++++++++++++++++++++++++++++++
+>
+>> @@ -210,16 +226,16 @@ static void kho_restore_page(struct page *page, unsigned int order)
+>>  struct folio *kho_restore_folio(phys_addr_t phys)
+>>  {
+>>  	struct page *page = pfn_to_online_page(PHYS_PFN(phys));
+>> -	unsigned long order;
+>> +	union kho_page_info info;
+>>  
+>>  	if (!page)
+>>  		return NULL;
+>>  
+>> -	order = page->private;
+>> -	if (order > MAX_PAGE_ORDER)
+>> +	info.page_private = page->private;
+>> +	if (info.magic != KHO_PAGE_MAGIC || info.order > MAX_PAGE_ORDER)
+>>  		return NULL;
+>>  
+>> -	kho_restore_page(page, order);
+>> +	kho_restore_page(page, info.order);
+>>  	return page_folio(page);
+>
+> This all looks very confused.  Before your patch as well as after it.
+> I don't see anything in the current KHO code that requires the
+> phys_addr_t to be order-aligned.
 
-I would put it into lib/test_crash.c. It is similar to
-the existing lib/test_lockup.c
+Right, good point. I can send that as a follow up patch. But I think
+this patch stands on its own without that fix too.
 
-> --- /dev/null
-> +++ b/drivers/tty/crashtest.c
-> @@ -0,0 +1,178 @@
-[...]
-> +
-> +static ssize_t __crash(void)
-> +{
-> +	pr_emerg("BANG!\n");
-> +	*(volatile unsigned char *)NULL = '!';
-> +	return -ENOSYS;
-
-I would use similar trick as SysRq-c and call panic() directly,
-see sysrq_handle_crash(). Something like:
-
-static void __crash(const char *context)
-{
-	panic(Triggered crash in context: %s\n");
-}
-
-> +}
-> +
-> +static void __crash_irq_work(struct irq_work *work)
-> +{
-> +	__crash();
-
-and call it like:
-
-	__crash("irq");
-
-> +}
-> +
-> +static int __init setup_crashtest(void)
-> +{
-> +	INIT_WORK(&bh_crash_work, __crash_bh_work);
-> +	init_irq_work(&irq_crash_work, __crash_irq_work);
-> +	crashtest_dentry = debugfs_create_file("crashtest", 0600, NULL, NULL,
-> +					       &crashtest_fops);
-
-Match it with the module name: test_crash.
-
-Maybe, do "sed -e s/crashtest/test_crash/g".
-
-> +	if (IS_ERR(crashtest_dentry))
-> +		return PTR_ERR(crashtest_dentry);
-> +
-> +	return 0;
-> +}
-
-Best Regards,
-Petr
+-- 
+Regards,
+Pratyush Yadav
 
