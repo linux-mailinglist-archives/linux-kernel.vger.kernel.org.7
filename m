@@ -1,289 +1,128 @@
-Return-Path: <linux-kernel+bounces-809820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97024B51274
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:26:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6B6B51278
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4B34E1688
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:26:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 441FE1BC5F2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171BC313532;
-	Wed, 10 Sep 2025 09:26:37 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED674313E03;
+	Wed, 10 Sep 2025 09:28:03 +0000 (UTC)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816DE2D0636;
-	Wed, 10 Sep 2025 09:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F852BE7B1;
+	Wed, 10 Sep 2025 09:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757496396; cv=none; b=rzgXjdgFKJW4aMJKkWeIPp8LFYU52jhP3D/ZTJGQIsOgBfrggo1OGPUK6Rk5o6/gpA2nGUDA/ciP7zkb7K3Xfr6Wu+/eL+l8nDN11I7T/hdSodZlPDV2O2Q2GLAMBAohH0p4X+jIOUUYgOw9ZD56PrlCGJTTDHyZsb9ZCVzhIDs=
+	t=1757496483; cv=none; b=OV9ccKkh+d4ZEkOxdylWUgQ3LPqVpBPFJCWMh6XkrEHTT9OA5EdBMr2xSMji8nukMXoorAA5+Abdpf9FEzAvNO8O22BN1qfn/kUUtt8Fy2g94aOY7Di9F6B3JW2kL85hzOYWGZixB5Z9qncnTbXdtXGqmr2nyH2yBPhnHlBk4fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757496396; c=relaxed/simple;
-	bh=TBLaQu9oUkQF+zTBH/m7B/ZNup/xKW2pgwz5OFtQZR0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nx6Pu0x/V6ZebrWxCu/N0HvfpFpOOZihTe4fYBbSLTryiE4DUoEvBI/v1ivO/VWqJZ/I2MTO9NxtSEbxdbPO2BWmbjetVPp6vwiB5jc5yQ7L5chaYI0zENx0jBcmmnmLpanyljyecO1/DSZxmgX/IoSRjZeOcTuG23U7vaZ+Veo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMFf600s8z6L5R0;
-	Wed, 10 Sep 2025 17:25:18 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1377E1404C4;
-	Wed, 10 Sep 2025 17:26:30 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 10 Sep
- 2025 11:26:29 +0200
-Date: Wed, 10 Sep 2025 10:26:27 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: =?ISO-8859-1?Q?Cl=E9ment?= Le Goffic <legoffic.clement@gmail.com>
-CC: Gatien Chevallier <gatien.chevallier@foss.st.com>, Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Julius Werner <jwerner@chromium.org>, Will Deacon <will@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	"Jonathan Corbet" <corbet@lwn.net>,
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	=?ISO-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
-Subject: Re: [PATCH v6 13/20] perf: stm32: introduce DDRPERFM driver
-Message-ID: <20250910102627.00007a40@huawei.com>
-In-Reply-To: <20250909-b4-ddrperfm-upstream-v6-13-ce082cc801b5@gmail.com>
-References: <20250909-b4-ddrperfm-upstream-v6-0-ce082cc801b5@gmail.com>
-	<20250909-b4-ddrperfm-upstream-v6-13-ce082cc801b5@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757496483; c=relaxed/simple;
+	bh=aSFFwup56Na+mc+GbIhVEfY7AY/MM1tKLA8ABojdkhs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aXkl4qWdcNe4cFz8HKx67cwf5GC/Smyc8tdlujD8vXk/KEzRZhMIkIyPiq0q4irVdYvpEuGhU6E+EQPHnJweLOHYKbtGyUDPCDUvEUm1sbsqGaezDhkvvMa17DTCgVQrW14QaT7FI4o1w4TN8LLB92jUhuKLQIoJMibs2Q5X7W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-52b66993757so2098597137.1;
+        Wed, 10 Sep 2025 02:28:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757496480; x=1758101280;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cM4pW56c+6+KnwUEMEDed5wG5Vyjqd+monXczey7cig=;
+        b=GVHv9LnVLLJF+qyJkuVsGDPZbjKOmG2QTqL06KdjE2MSSLr9wloP3XjrV/gq+dqwYk
+         2yLb9UImZx8u/naGPh/cQ+OcVp3qCPi0xOI2daly9N/6Xaakjizjc4kE0BLGaNmmdXfN
+         NqHM5fyS6+96F0T/Yduc8hqjFM/B2CL6yneVPI9D0mzpNIVj0+TkHJkUPuR46woVfBWk
+         yRq96wRMif/3qfY7wV2Dyx33YWj99LYRtImWermXWj2EhwWJYp3XbXHaarVsavesjXjT
+         hXDJqeyvuVuUyvpQSPuMO6g49J6Q39Vya8gPxi8/XiGgKtA4Dk/l3mpsJsUMLT6xnO8u
+         f3iw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOG4Jit4bq4pvceF3iQd4D3tZLVCeOs2IUz/GaW61PIJc4DtQ2HswBVX7N2Xb5ODTLbUCXR8J6QPPUYgMd@vger.kernel.org, AJvYcCVjxAN4fNZa6OLtv6OaxCzpztOyPCGNBlxVRgr2MX9LpQ6IyGHCyqSyA8S7Vqy1TuWgRArGvmT2j8sUtTpHXI7Uo9s=@vger.kernel.org, AJvYcCXsG4IHVZ3arCgE6l7yDlVHRwYYXbOiOzyn+1mUAogEwt2R/92sijAyECascjysmB95q1Bp4xowt6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0l0b3t5+qfflsiBhE4FFb+Ysanz+JXaMRafU3lw8gI5Xj4HYS
+	31jQ+48z889g2O+lDOiMKDZLZwL0o7ncI+NlOKvZKUO4oE7UExssitu6puKp0bG5
+X-Gm-Gg: ASbGnct7ZJCTmkblmANnFikCeXk73Zd3pJuKSYwKQKCl0AQekN7S1SIXTs3uqrth016
+	tf4mzB56uEmE5SCJys95wAhFlEIop7foaTQzVn2hyzSSSKFBRONQ3ClnsFFEiWRDu20Z876T0Uc
+	2chzF2ZNoMm0tAwTfsG9bTOq2ImbJGTGtvp18FSk773/RIBJ6ZgLI1xG/xRw2uAP626gS3+n30Z
+	2j5SHMiVaST3A/Jy6kI4to0IQ2uJCbcWCgFFfQG1oDbM4PQc+Qxa6+CkBBCf+yI1B2UBUfP4s2a
+	LINwiwk/KBLiBe/lqeGoyC5Sl6wEaN3+/S2R23mOf3h3OcJlSj9Ot3zsG6uagCvBhwg36IAksSF
+	3pZeWj1Bp0v6ncsPY3dYGsrrId/nq8mJH/CjUVl49Co5C71XnOSfQCDVLuTZY
+X-Google-Smtp-Source: AGHT+IHzB84IcAyytbgaKJ+86NqOTeA9Qtu/aypEW9Q+LOkVuQF2/3aUghtfHEfRZ4/OB2ts0cJFGg==
+X-Received: by 2002:a05:6102:291f:b0:505:ff14:8e0 with SMTP id ada2fe7eead31-53d0dbe86a9mr4633421137.11.1757496479960;
+        Wed, 10 Sep 2025 02:27:59 -0700 (PDT)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544912fdff1sm13598359e0c.10.2025.09.10.02.27.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 02:27:59 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-52a4e220b9bso834213137.3;
+        Wed, 10 Sep 2025 02:27:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUoxgHXFkFNMBfPUMi16h6X6qvuDfR1FmhEBW56HP0c9FuvgDww1rHnlBMT2dEcqAP2E8FQ1rOx4Ndv07DV@vger.kernel.org, AJvYcCWpowdlNDzbfQGx7QvY/7JBKVJOeb7tFOrA18PTxUNmaW5cItKU9XgLVCKicTfJEpO8n10DwWoVfxc=@vger.kernel.org, AJvYcCXB9dH8DLzoq0+SiELJaF9RmWClVL4/kGCYSbeI7LEWBc6aoge4Mj4C1I9vKcKttZMv+P9D2En4uY0mjLNDDTX7Igo=@vger.kernel.org
+X-Received: by 2002:a05:6102:5803:b0:521:b9f2:a5ca with SMTP id
+ ada2fe7eead31-53d0dbe8686mr4377472137.13.1757496479003; Wed, 10 Sep 2025
+ 02:27:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <87segx256a.wl-kuninori.morimoto.gx@renesas.com>
+ <20250908012810.4767-1-chenyuan_fl@163.com> <87ms751z28.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87ms751z28.wl-kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 10 Sep 2025 11:27:47 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUYFbWCK=SKDK8cKSsiYkorwfaeoO+cf=f2ERftLY=Yag@mail.gmail.com>
+X-Gm-Features: AS18NWADa4v7ZheOwfPM7H9Z3s9duog9cwBJwfAogeGSU-l7LrKIHl7D5DA-A_c
+Message-ID: <CAMuHMdUYFbWCK=SKDK8cKSsiYkorwfaeoO+cf=f2ERftLY=Yag@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: fix memory leak in cpg_mssr_reserved_init()
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: chenyuan_fl@163.com, geert+renesas@glider.be, mturquette@baylibre.com, 
+	sboyd@kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yuan CHen <chenyuan@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 09 Sep 2025 12:12:20 +0200
-Cl=E9ment Le Goffic <legoffic.clement@gmail.com> wrote:
+On Mon, 8 Sept 2025 at 04:02, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> > In the current implementation, when krealloc_array() fails, the error handling path
+> > incorrectly sets the original memory pointer to NULL before it is freed,
+> > resulting in a memory leak during reallocation failure.
+> >
+> > Fixes: 6aa17547649 ("clk: renesas: cpg-mssr: Ignore all clocks assigned to non-Linux system")
+> > Signed-off-by: Yuan CHen <chenyuan@kylinos.cn>
+>
+> You want to use ${LINUX}/scripts/checkpatch.pl to get maximum 75 chars warning
+>
+> Patch itself is agree, but I still don't understand the git-log.
+>
+>         incorrectly sets the original memory pointer to NULL before it is freed,
+>
+> I still don't understand this part. which part are you talking about ?
+> What does this "original memory pointer" mean ? And what does this "freed"
+> mean ? freed what ??
+>
+> I guess you want to indicate is like this ?
+>
+>         In case of krealloc_array() failure, current error handling just
+>         returns from function without freeing alloced array.
+>         It cause a memory leak. Fixup it.
 
-> From: Cl=E9ment Le Goffic <clement.legoffic@foss.st.com>
->=20
-> Introduce the driver for the DDR Performance Monitor available on
-> STM32MPU SoC.
->=20
-> On STM32MP2 platforms, the DDRPERFM allows to monitor up to 8 DDR events
-> that come from the DDR Controller such as read or write events.
->=20
-> On STM32MP1 platforms, the DDRPERFM cannot monitor any event on any
-> counter, there is a notion of set of events.
-> Events from different sets cannot be monitored at the same time.
-> The first chosen event selects the set.
-> The set is coded in the first two bytes of the config value which is on 4
-> bytes.
->=20
-> On STM32MP25x series, the DDRPERFM clock is shared with the DDR controller
-> and may be secured by bootloaders.
-> Access controllers allow to check access to a resource. Use the access
-> controller defined in the devicetree to know about the access to the
-> DDRPERFM clock.
->=20
-> Signed-off-by: Cl=E9ment Le Goffic <clement.legoffic@foss.st.com>
-> Signed-off-by: Cl=E9ment Le Goffic <legoffic.clement@gmail.com>
-Hi Cl=E9ment
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.18, with the patch description
+reworded.
 
-A quick drive by review,
+Gr{oetje,eeting}s,
 
-J
+                        Geert
 
-> diff --git a/drivers/perf/stm32_ddr_pmu.c b/drivers/perf/stm32_ddr_pmu.c
-> new file mode 100644
-> index 000000000000..38328663d2c5
-> --- /dev/null
-> +++ b/drivers/perf/stm32_ddr_pmu.c
-> @@ -0,0 +1,897 @@
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> +
-> +#define MP1_CLR_CNT		GENMASK(3, 0)
-> +#define MP1_CLR_TIME		BIT(31)
-> +#define MP2_CLR_CNT		GENMASK(7, 0)
-> +#define MP2_CLR_TIME		BIT(8)
-> +
-> +/* 4 event counters plus 1 dedicated to time */
-> +#define MP1_CNT_NB		(4 + 1)
-
-This is never used so I would drop it and rename the MP2_CNT_NB
-to indicate it is the max value for any devices supported.
-
-
-> +/* Index of the time dedicated counter */
-> +#define MP1_TIME_CNT_IDX	4
-> +
-> +/* 8 event counters plus 1 dedicated to time */
-> +#define MP2_CNT_NB		(8 + 1)
-...
-
-> +struct stm32_ddr_pmu {
-> +	struct pmu pmu;
-> +	void __iomem *membase;
-> +	struct device *dev;
-> +	struct clk *clk;
-> +	const struct stm32_ddr_pmu_cfg *cfg;
-> +	struct hrtimer hrtimer;
-> +	ktime_t poll_period;
-> +	int selected_set;
-> +	u32 dram_type;
-> +	struct list_head counters[];
-The absence of a __counted_by() marking made me wonder how
-we ensured that this wasn't overrun.  I see below that's because
-size is always the same.  So
-	struct list_head counters[MP2_CNT_NB];
-If you do want to make it dynamic then that is fine but added
-a local variable for the size and the __counted_by() marking so
-the various analysis tools can check for buffer overruns.
-
-> +};
-
-
-
-> +static void stm32_ddr_pmu_event_del(struct perf_event *event, int flags)
-> +{
-> +	struct stm32_ddr_pmu *pmu =3D to_stm32_ddr_pmu(event->pmu);
-> +	struct stm32_ddr_cnt *counter =3D event->pmu_private;
-> +	bool events =3D true;
-
-Always set before use, so don't set it here.  I'd move this into the
-scope of the for loop to make this more obvious.
-
-> +
-> +	stm32_ddr_pmu_event_stop(event, PERF_EF_UPDATE);
-> +
-> +	stm32_ddr_pmu_free_counter(pmu, counter);
-> +
-> +	for (int i =3D 0; i < pmu->cfg->counters_nb; i++) {
-> +		events =3D !list_empty(&pmu->counters[i]);
-> +		if (events) /* If there is activity nothing to do */
-> +			return;
-> +	}
-> +
-> +	hrtimer_cancel(&pmu->hrtimer);
-> +	stm32_ddr_stop_counters(pmu);
-> +
-> +	pmu->selected_set =3D -1;
-> +
-> +	clk_disable(pmu->clk);
-> +}
-
-> +
-> +#define STM32_DDR_PMU_EVENT_ATTR(_name, _id)			\
-> +	PMU_EVENT_ATTR_ID(_name, stm32_ddr_pmu_sysfs_show, _id)
-> +
-> +static struct attribute *stm32_ddr_pmu_events_attrs_mp[] =3D {
-> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_rd, PERF_OP_IS_RD),
-
-Prefixing perf events with perf_ seems unnecessary.
-
-I guess perf_op_is_rd is counting all reads?  Is so why not call it simply =
-'reads'
-or something else short like that?  If it's cycles when a read is going on =
-then
-maybe a more complex is needed, but perf_op_is_rd doesn't convey that to me.
-
-> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_wr, PERF_OP_IS_WR),
-> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_activate, PERF_OP_IS_ACTIVATE),
-> +	STM32_DDR_PMU_EVENT_ATTR(ctl_idle, CTL_IDLE),
-> +	STM32_DDR_PMU_EVENT_ATTR(perf_hpr_req_with_no_credit, PERF_HPR_REQ_WITH=
-_NO_CREDIT),
-> +	STM32_DDR_PMU_EVENT_ATTR(perf_lpr_req_with_no_credit, PERF_LPR_REQ_WITH=
-_NO_CREDIT),
-> +	STM32_DDR_PMU_EVENT_ATTR(cactive_ddrc, CACTIVE_DDRC),
-> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_enter_powerdown, PERF_OP_IS_ENTER_P=
-OWERDOWN),
-> +	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_refresh, PERF_OP_IS_REFRESH),
-> +	STM32_DDR_PMU_EVENT_ATTR(perf_selfresh_mode, PERF_SELFRESH_MODE),
-> +	STM32_DDR_PMU_EVENT_ATTR(dfi_lp_req, DFI_LP_REQ),
-> +	STM32_DDR_PMU_EVENT_ATTR(perf_hpr_xact_when_critical, PERF_HPR_XACT_WHE=
-N_CRITICAL),
-> +	STM32_DDR_PMU_EVENT_ATTR(perf_lpr_xact_when_critical, PERF_LPR_XACT_WHE=
-N_CRITICAL),
-> +	STM32_DDR_PMU_EVENT_ATTR(perf_wr_xact_when_critical, PERF_WR_XACT_WHEN_=
-CRITICAL),
-> +	STM32_DDR_PMU_EVENT_ATTR(dfi_lp_req_cpy, DFI_LP_REQ),  /* Suffixed '_cp=
-y' to allow the
-> +								* choice between sets 2 and 3
-> +								*/
-> +	STM32_DDR_PMU_EVENT_ATTR(time_cnt, TIME_CNT),
-> +	NULL
-> +};
-
-
-> +static int stm32_ddr_pmu_device_probe(struct platform_device *pdev)
-> +{
-> +	struct stm32_firewall firewall;
-> +	struct stm32_ddr_pmu *pmu;
-> +	struct reset_control *rst;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	pmu =3D devm_kzalloc(&pdev->dev, struct_size(pmu, counters, MP2_CNT_NB)=
-, GFP_KERNEL);
-
-If using a fixed number of counters why not put it in the struct
-definition and simplify the code?  I agree it is probably not
-worth making this dynamic given small sizes but I don't mind
-if you do want to do this.  The only thing that isn't a good idea
-is this dynamic, but not really, current situation.
-
-
-> +	if (!pmu)
-> +		return -ENOMEM;
-
-
-
-> +static DEFINE_SIMPLE_DEV_PM_OPS(stm32_ddr_pmu_pm_ops, NULL, stm32_ddr_pm=
-u_device_resume);
-> +
-> +static const struct of_device_id stm32_ddr_pmu_of_match[] =3D {
-> +	{
-> +		.compatible =3D "st,stm32mp131-ddr-pmu",
-> +		.data =3D &stm32_ddr_pmu_cfg_mp1
-
-Trivial but if you are spinning again, normal convention is trailing commas
-in cases like this because maybe other fields will get set later.
-
-> +	},
-> +	{
-> +		.compatible =3D "st,stm32mp251-ddr-pmu",
-> +		.data =3D &stm32_ddr_pmu_cfg_mp2
-> +	},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, stm32_ddr_pmu_of_match);
-> +
-> +static struct platform_driver stm32_ddr_pmu_driver =3D {
-> +	.driver =3D {
-> +		.name =3D DRIVER_NAME,
-> +		.pm =3D pm_sleep_ptr(&stm32_ddr_pmu_pm_ops),
-> +		.of_match_table =3D stm32_ddr_pmu_of_match,
-> +	},
-> +	.probe =3D stm32_ddr_pmu_device_probe,
-> +	.remove =3D stm32_ddr_pmu_device_remove,
-> +};
-> +
-> +module_platform_driver(stm32_ddr_pmu_driver);
-> +
-> +MODULE_AUTHOR("Cl=E9ment Le Goffic");
-> +MODULE_DESCRIPTION("STMicroelectronics STM32 DDR performance monitor dri=
-ver");
-> +MODULE_LICENSE("GPL");
->=20
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
