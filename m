@@ -1,165 +1,118 @@
-Return-Path: <linux-kernel+bounces-809337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C37B50C27
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:06:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C10B50BCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B6544E6CFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:06:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE1901888EA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DFE25D1E6;
-	Wed, 10 Sep 2025 03:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3419246BD8;
+	Wed, 10 Sep 2025 02:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="V63k7WyG"
-Received: from out198-20.us.a.mail.aliyun.com (out198-20.us.a.mail.aliyun.com [47.90.198.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ELIyMPzk"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C604925B2F4;
-	Wed, 10 Sep 2025 03:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089ED2033A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757473531; cv=none; b=A5sg+dCG4axTr8y/+u9GZfVDg3xS9yRzbmmSlU+K+7Bw5ZTj4VBK7+eN8NFT0Qcijo6UYX4kAEfyoaj/q8tJLNzUk/kMD4Pr/rLpg/t93ZjTy+COW3Ksl7ldXPYfjYpJiqZ98kwiS2aU9fU7tFExOD/2ok3fXoWohHgXMuOx6jg=
+	t=1757472671; cv=none; b=iHWJY1Yop1eFO1MmwFpe8VZr9tQh/do7zpAUk6+/MqpFXSuXrLJmvxrw66jqw3iDcXw5d01B3XGrbfNSZmVKEeUBG4qsg+C3lMbKlZBcd0ugxKfGhJT2SpsB4/yTWgtz3lELnuoOjBMcdLB7GcxAIKABky8FMyWzijkDuarV6ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757473531; c=relaxed/simple;
-	bh=OPf2QR2k6DAiKqVX0oVySRjxE6j2hrfdjMNsYF+M5Xs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fC/Vk1OZkY0ihNrpe4SIYBIvXIapWcQnvkucGqfFbxZ03+vDYRREzL4r36KwTW2r+5/b8gz2hYPw7llcbog1ttaeWcYFrytZcvJFAlCTumctZIDpeXoB/rHr+1wIJZ8mWJbsob5OX5zlTJYYgLBcVUIj79WQV9KtrbbLrJgC1TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=V63k7WyG; arc=none smtp.client-ip=47.90.198.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1757473514; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=E93cY9FHGBGF8PLSftp1VfXTr3kQA09+IbltBz6T4yc=;
-	b=V63k7WyG1wUTbdCfT7qVAta4EaGh01O9+eyOwslzy6DaWNpodzj4qOcmDF7XdCkdK2RpdfYxlw36TG05AW0tZUt2jN9F6IJrWMUMaHXUL/ZYKjY1UBRZ0dcVfZyxX2uDGR0Q+AZveTJFbmGHH+3e/pe/DrnMHmj4oXWNDEfeWn4=
-Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.ebeulmh_1757472571 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Wed, 10 Sep 2025 10:49:31 +0800
-From: Hou Wenlong <houwenlong.hwl@antgroup.com>
-To: kvm@vger.kernel.org
-Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] KVM: selftests: Verify 'BS' bit checking in pending debug exception during VM entry
-Date: Wed, 10 Sep 2025 10:49:19 +0800
-Message-Id: <3c0686934fc33ebb484aa5cc71443a22504df7ca.1757416809.git.houwenlong.hwl@antgroup.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1757416809.git.houwenlong.hwl@antgroup.com>
-References: <cover.1757416809.git.houwenlong.hwl@antgroup.com>
+	s=arc-20240116; t=1757472671; c=relaxed/simple;
+	bh=EtsERrGuUPQUjphbYZJJaJS3niN77FqxYnzLWZQAx64=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FqRidMfkMQXqq15/tQDm0VrOOKXZZ3kPb3vRPv0OAQqHJaETo3fnqL0p3bIWoBb2tDcnZla3phaI6OeotcUIQJspWuCPEBhrlDAFxLF6iHR4Ak3xixxRw199k6O+/JJgqYeLGG8BFKuuQeShQ0GV3Ik7qmChIrtcW8D+GBnwA0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ELIyMPzk; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-24b132bd90dso12810415ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 19:51:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757472669; x=1758077469; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o3cDWVvExlqY0E+Cv0lKzyo4mEyiBol+XD/LhCh80Vo=;
+        b=ELIyMPzkR89YUy1X0gXm/c+cO2CzjLO8+D0rRt8Yp4nzrx/Zrqux1fqod08eXhDFW0
+         HZVO8bMcBg5QduJMLHPITAM2RB6/7Unu4wLUat2nGl7XoRFXClofvV9Q+n1fgMURy9SN
+         gBCz46VIC5Xkn/WbpDpgKm9CeiNIOpa3gBc5W0TZyU6XeOOvA0TRl59s3izGGLItrhhN
+         d+PhpdisnhRCDU9CewjxxS7la7ly5sw5GRdj2jHCbrRpDOHt5MwZlu9lYlTbr+ZX190z
+         2fHdthQuyHfklJarPge6fTwHHknW6hHQaYQnGzQ5VF9vJ3O4GC1CP+Wmeh92W463fvii
+         1q8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757472669; x=1758077469;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o3cDWVvExlqY0E+Cv0lKzyo4mEyiBol+XD/LhCh80Vo=;
+        b=uIg38/xIcugXhv5WgcUmPNX6pZZtftvSvqrYCDnWHKFX9eDVOHOamGNRdREsCnDs5x
+         pYmvHaFlkgu4ggz6ouCdvJVcdObJHC3e5EGCjV3YZXHHZzXD8qjazIAy//dwMxOBuHBd
+         5taEjVrKoPm8GyQbtIZ5frbqpEmXVoP3DSbIoxMN7UWWSgZLF4MWeUTbP/Pm6LNwY2ta
+         4Vn7QM7mfz0BMIHneovlgMKJNVq5WQ3Bv1BDbLZLyG4pxtOt9tq6J7YnjJeMhMwZD9bR
+         eUfGv3sPZmxo/WySFZlhgv+F781QquDx9zNiy4d5jIu+/kd0G0ktFUKHnnxPMrVnSgb5
+         OI/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ4SWVA2BTdcCRv0QFQ0NshqGyzIV/bgWhw1fYLFeFeta6iZJv9mfTpnjHRORFTjM7T7l3SmikrpIHm44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbWKN2x7JvVTxU9CS/k4fFZQfmRIq6rMIUMfyBJPOPK3fG6M3Q
+	jgybfYv5zdskjqe/8/F6mXhA8LUEPzWQ46SGZpaiB8XFL9NZj4xuUX5EP/sxGfZWjVhU7z4YyE9
+	aXjjnCCFae39mmXyIg9K0uAjFzcYK1cM=
+X-Gm-Gg: ASbGnctm78exFcWSRuxVVfZLQHIAqpDdvZZyEkaKIhE0KEFWec6Arz8L8/O+CtnqY48
+	JxMuqgDKmlYRFvI4Ii+gYIwrOSZfdUGSBZWLL7+6LGBihU2Ayyz55EPb8zoDHIsRoMGf63BiChP
+	j3K/Z1PJ4CBWqaGIkpQVNOpAvLRwG+/JADPSbwRrw9Tn22FNjitXGOniqGxnREBaC/h5Z4i6HFH
+	/zy7ceRS6MZlXL3hLyhgKIOoLGu9lcUnMR+qJMbaiAqDBqMqilloS0AD5bt3pZ/B6sHGcMqWy4W
+	mwYlaRxX4MxxYVmB/rh1QHtFbcnGisX0L7Va
+X-Google-Smtp-Source: AGHT+IGOVxPPeHlaId8gR8lioyyzsheNaiwTT3Z4mTxmXaDAiOl1rybxKWa35nYEmELwWpePOnf3WMn/mBBDODtw6NE=
+X-Received: by 2002:a17:902:ce83:b0:24c:b881:201 with SMTP id
+ d9443c01a7336-251757ba959mr101664375ad.9.1757472669129; Tue, 09 Sep 2025
+ 19:51:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250906140256.3059395-1-vitaly.wool@konsulko.se>
+ <aL6YHkF96ICqqbBZ@google.com> <94252007-f389-41d0-b5a0-ed948225543a@kernel.org>
+ <CANiq72k6OXcvjzKimfzKAAw8QPzDoVxUx_smFA8KU6gEwJ3yeQ@mail.gmail.com> <3f8de021-8eb3-4a7c-9adb-8244c5aa250a@nvidia.com>
+In-Reply-To: <3f8de021-8eb3-4a7c-9adb-8244c5aa250a@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 10 Sep 2025 04:50:56 +0200
+X-Gm-Features: AS18NWDFbBI9-w6QOjK9I1s_Ny3SqcFb8YmUlOePJpvF51e4H4-1WzSgXfRqZlc
+Message-ID: <CANiq72=ex8zJx+KZTV5eRoqkYE=PUkbG5TTvOJo5cXTtd7b1Fg@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: rbtree: add immutable cursor
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Vitaly Wool <vitaly.wool@konsulko.se>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	=?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In the x86's debug_regs test, add a test case to cover the scenario where
-single-step with STI in VMX sets the 'BS' bit in pending debug
-exceptions for #DB interception and instruction emulation in both cases.
+On Wed, Sep 10, 2025 at 3:09=E2=80=AFAM John Hubbard <jhubbard@nvidia.com> =
+wrote:
+>
+> Interesting. I know the topic of rustc minimum version (1.78 right now)
+> has been discussed a lot, but I'm somehow still confused about how this
+> works, on nova for example.
+>
+> The &raw feature requires rustc 1.82.0. So I thought we couldn't use
+> it. But clearly we can...right?
+>
+> So confused. Please help. :)
 
-Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
----
- .../selftests/kvm/include/x86/processor.h     |  3 +-
- tools/testing/selftests/kvm/x86/debug_regs.c  | 41 +++++++++++++++++--
- 2 files changed, 40 insertions(+), 4 deletions(-)
+Please see what I have at this subpage:
 
-diff --git a/tools/testing/selftests/kvm/include/x86/processor.h b/tools/testing/selftests/kvm/include/x86/processor.h
-index 488d516c4f6f..f5827cca813e 100644
---- a/tools/testing/selftests/kvm/include/x86/processor.h
-+++ b/tools/testing/selftests/kvm/include/x86/processor.h
-@@ -34,7 +34,8 @@ extern uint64_t guest_tsc_khz;
- 
- #define NMI_VECTOR		0x02
- 
--#define X86_EFLAGS_FIXED	 (1u << 1)
-+#define X86_EFLAGS_FIXED	(1u << 1)
-+#define X86_EFLAGS_TF		(1u << 8)
- 
- #define X86_CR4_VME		(1ul << 0)
- #define X86_CR4_PVI		(1ul << 1)
-diff --git a/tools/testing/selftests/kvm/x86/debug_regs.c b/tools/testing/selftests/kvm/x86/debug_regs.c
-index ba80b77c2869..60dea0116b21 100644
---- a/tools/testing/selftests/kvm/x86/debug_regs.c
-+++ b/tools/testing/selftests/kvm/x86/debug_regs.c
-@@ -15,11 +15,31 @@
- 
- #define IRQ_VECTOR 0xAA
- 
-+#define  CAST_TO_RIP(v)  ((unsigned long long)&(v))
-+
- /* For testing data access debug BP */
- uint32_t guest_value;
- 
- extern unsigned char sw_bp, hw_bp, write_data, ss_start, bd_start;
--extern unsigned char fep_bd_start;
-+extern unsigned char fep_bd_start, fep_sti_start, fep_sti_end;
-+
-+static void guest_db_handler(struct ex_regs *regs)
-+{
-+	static int count;
-+	unsigned long target_rips[2] = {
-+		CAST_TO_RIP(fep_sti_start),
-+		CAST_TO_RIP(fep_sti_end),
-+	};
-+
-+	__GUEST_ASSERT(regs->rip == target_rips[count], "STI: unexpected rip 0x%lx (should be 0x%lx)",
-+		       regs->rip, target_rips[count]);
-+	regs->rflags &= ~X86_EFLAGS_TF;
-+	count++;
-+}
-+
-+static void guest_irq_handler(struct ex_regs *regs)
-+{
-+}
- 
- static void guest_code(void)
- {
-@@ -69,13 +89,25 @@ static void guest_code(void)
- 	if (is_forced_emulation_enabled) {
- 		/* DR6.BD test for emulation */
- 		asm volatile(KVM_FEP "fep_bd_start: mov %%dr0, %%rax" : : : "rax");
-+
-+		/* pending debug exceptions for emulation */
-+		asm volatile("pushf\n\t"
-+			     "orq $" __stringify(X86_EFLAGS_TF) ", (%rsp)\n\t"
-+			     "popf\n\t"
-+			     "sti\n\t"
-+			     "fep_sti_start:"
-+			     "cli\n\t"
-+			     "pushf\n\t"
-+			     "orq $" __stringify(X86_EFLAGS_TF) ", (%rsp)\n\t"
-+			     "popf\n\t"
-+			     KVM_FEP "sti\n\t"
-+			     "fep_sti_end:"
-+			     "cli\n\t");
- 	}
- 
- 	GUEST_DONE();
- }
- 
--#define  CAST_TO_RIP(v)  ((unsigned long long)&(v))
--
- static void vcpu_skip_insn(struct kvm_vcpu *vcpu, int insn_len)
- {
- 	struct kvm_regs regs;
-@@ -110,6 +142,9 @@ int main(void)
- 	vm = vm_create_with_one_vcpu(&vcpu, guest_code);
- 	run = vcpu->run;
- 
-+	vm_install_exception_handler(vm, DB_VECTOR, guest_db_handler);
-+	vm_install_exception_handler(vm, IRQ_VECTOR, guest_irq_handler);
-+
- 	/* Test software BPs - int3 */
- 	memset(&debug, 0, sizeof(debug));
- 	debug.control = KVM_GUESTDBG_ENABLE | KVM_GUESTDBG_USE_SW_BP;
--- 
-2.31.1
+    https://rust-for-linux.com/unstable-features
 
+I hope that helps!
+
+Cheers,
+Miguel
 
