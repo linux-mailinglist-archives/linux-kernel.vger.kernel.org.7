@@ -1,306 +1,163 @@
-Return-Path: <linux-kernel+bounces-809676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32313B51090
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:09:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E90B51094
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4555C1891CC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:09:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7666D18950A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968F930DEDA;
-	Wed, 10 Sep 2025 08:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCA030DED5;
+	Wed, 10 Sep 2025 08:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="EZocfgW+"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2066.outbound.protection.outlook.com [40.107.243.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MYjZItM1"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EA030DD2B;
-	Wed, 10 Sep 2025 08:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491603; cv=fail; b=l52q4xE3DQ68TRlt2hlDIQ6PhpHSoNeCKsIqNnox/YiIQEK9TAmkygi5CDa3Ukzfl4Ags9RIAWJPK2NI6HsL8+zOauAO7XekK6BLmbAvOBCiBBVJkranRfs6sPTMA98nGDVLZ4TNGbiI5ms2D9RwSiKz0bRKIj8AjWYgp9uiKwA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491603; c=relaxed/simple;
-	bh=8cdtUXaSwNAt5nYzAXeLmDPvaPI1h2gjGIgIfVl8xEc=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Mkhs/pb2PUoNCBMK1AA2xsJXTjjOjL/47SGFx7oGj2E54eOCTGWGcbTweUI77dJO6nkwzNTDshkojQfxZeZRzUulqjcMqnCsCFwNLdhiD1EZgzj1o/kN/bfl1U1wsIQ7Tvb8JdDpUq5ru79DBsaCnj5gBt3dVGtXXR7MmfWkXEY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=EZocfgW+; arc=fail smtp.client-ip=40.107.243.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=liJrSzseu20Ko0/dno5Y201//oQA/cgEIWaxnpV2AnoRCCmEA4EdbENY7EpxCdIc7155qFm9eFtwbXjktJs+kHiZ1FQgSZ+6NAIHgBSgOZeZxV8IGcikuhp/lP6kSp0MIt6NMiTNlZjG+tKTFWrNOHwL93QX2z0A8w41I+uusFA+/EcK7V0+Yr2VpV2WoUhswj7akxM1Blny2FcFiKufubNIPhXcb4hWES2jtwE2aqIqkc9pAW4hKLxSSwl+uEZrk6zCjVTaYEx0N73ilLhatyWRR87GZVENgTpEJ5KZXAwWHkT+cQLeg+lg/W+gNMCZ7C/NhNgeAYuZx+sfkfVuFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t4uobWq8nd+oQySvH7JRTdlq+iFFh//jl3Oo29NZb3U=;
- b=W38WqaMSqdnz4kuUHW5H8eUMUQXQ9W/yH8xLC1VhcJG0ffnIsmcy5uCFPOKkt3hySdtG9U7MwbV6rdvhomk9EFPsnRR6aQvHFl4FP0OwsPtC/TDGGByJA0I41Uk1yCb7u7VsEZ0fH2m/SDiXovmtycYR9YGHmJiLLst8sAdYIQuo5ycZQk1hV/MZ6xFZADmWa7Ahu7+M822sNxvA2FQhFPhBxzFkLdAg4p4pEopd2EsSfTB3utTvlDQeyWb/qgN8M4AgJs2J/hvlQm8l7iLXvxVf+4C8+LlfUmADQXRGbdh0vmOc6E8SrAGyLlpOFK5hGcuYk/OwfK6GM/X789CXdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t4uobWq8nd+oQySvH7JRTdlq+iFFh//jl3Oo29NZb3U=;
- b=EZocfgW+j7q4AuZPLSf8YPQdC7fIvRBs9H1Gejfea8BKKCMXXJe7glNpkAD08L/og0cPGuY4RylPcUhhuqYlrJpRBWN10MlOJBOvC+5g8SKakVcshUU3cyXTQ/zmMpMBfcfu4uLOkFKi7albFq9AcGzdUHadWZWuQOB1uC5UUlvTYMKe8mLPurnYxBzdyNsusCt3YZl5vE661pX/EKc40/g1UEhxzILcajNrGDb1W8BKZCxvjlkTDjo9bLPrck3GeLD0L2aeHWyJuOfeE8Ch/b0HV2soutH+9OCr7GSk1WUrQ3JxuqeyGwu3hw/cQb0Zp31DToyrxDe9UKp8GRFmXw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
- by CH2PR03MB8087.namprd03.prod.outlook.com (2603:10b6:610:27e::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.15; Wed, 10 Sep
- 2025 08:06:38 +0000
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9115.010; Wed, 10 Sep 2025
- 08:06:38 +0000
-From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-To: Mark Brown <broonie@kernel.org>,
-	linux-spi@vger.kernel.org (open list:SPI SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list),
-	Matthew Gerlach <matthew.gerlach@altera.com>,
-	Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
-	Niravkumar L Rabara <nirav.rabara@altera.com>,
-	Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
-Subject: [PATCH 1/1] spi: cadence-qspi: defer runtime support on socfpga if reset bit is enabled
-Date: Wed, 10 Sep 2025 16:06:32 +0800
-Message-Id: <910aad68ba5d948919a7b90fa85a2fadb687229b.1757491372.git.khairul.anuar.romli@altera.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <cover.1757491372.git.khairul.anuar.romli@altera.com>
-References: <cover.1757491372.git.khairul.anuar.romli@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR17CA0010.namprd17.prod.outlook.com
- (2603:10b6:a03:1b8::23) To MN2PR03MB4927.namprd03.prod.outlook.com
- (2603:10b6:208:1a8::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDD730AAD3
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757491668; cv=none; b=ZnxXg6X0tq+zFGY3Kc5uaf4OGTQlVRF2HfQu9Ig7u5edJr0LaKNV9yRCq+bo9foA7Rd0fQpF82S8ujO8MWcIgGuf+dct94iaVIG26xbB6mGGJil4bgj9eavPFkuJtiifhDBwjjbgBlAdx67MkJN+1ehl12uQv8LHd7d2WG3qTdo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757491668; c=relaxed/simple;
+	bh=dSk6AGhrmnQiBMVkm4iUfkoi5uR3VSQpSwlqk/H1gAg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ADbUE6MwDTL+uo6DY+PbF4F9ZUbPBlolAiYdPBvGlRy/pzwUdZaEH8ZF6qRA4pbfITMXcKoKeliTQ/WDdBT0rhE+/n+7lcRPTUWD5NZE3wwBVpyND01TaCFpXwbpVK9rbV/ol9v1BPQiC4nK7BNmNPX7mrZmTwAcJCmniTdPKy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MYjZItM1; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45dec026c78so20819915e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:07:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757491665; x=1758096465; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZVm/deDTR4I7zgxqPdQwaIpbJb7N4tc5cNwrlaMAz50=;
+        b=MYjZItM1610egb3sO7XF3i80Uwwhjm8rwfUOAl8r0+VH/TvAcS6fPd3dp7ibEKU7sk
+         J3fRfRCO8Vw1akMF1ouq7CQAQhOQY1QWGifHGSb6Hc+//5938Id8AM+k+CNNOM3Za2Qw
+         25tJRbipfv9nI/YJyQmn2Buooc+2cKQazuCj/7MKpHaixda4+fce7mF9ef6oeWX2VS6l
+         BKQuCbl1o40ZZLD08v9AOO+a336SHed2rbZX+HcH7shkplTixv/bUpkTbaSeUA91fl14
+         lTTQ5Iq2vt8DrZQyVd6s+ECXTLml+fI5YmeC2DNHRGCzrMTAMGiqcmIqsCVeIzMPLKiO
+         c/jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757491665; x=1758096465;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZVm/deDTR4I7zgxqPdQwaIpbJb7N4tc5cNwrlaMAz50=;
+        b=VOq9ztHJZk0TmqLrwZPbkX8vFHuBuDay3z0pVphB+lC/jUEcRZJJSyW2mB9AhaihoQ
+         JjGkWD9WzK3L+6TfPo36nl3642g4CKBoQdUD4PGy7f/HzYTxXAPReoQqpUwRwBXqviiN
+         6kuIsjj4zKQwWIwejw1m9xyudqzCIyCQHrXLRAQRwgdsCLlm9UfwZgcDZwQgQYaggrJo
+         JEVjDD4Isx+Q+nJgUR3dh5o0KnCA6+0veVxa+x6cd0XrMo79TSu7OpNbwyNXMJSSDNnR
+         BgSQNQky+8BlnlpgYQGTkHMJw78qr27izqRqmReXFxhtLoZTbVCWCUK2hym1PTfhDHHd
+         te5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUhHbJ8U46HNhtQwzb8v1Sq0yagErFaNU1acVUJdRE9TKjSRGLIoHJuQGB1CsXjxYHREFto+goB5gd1KeY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyGyMxGp9Yhgy6K7DHadoVXWBgisAwm0O3iS1hQ+JNKRnQS8ML
+	efnIOUhkg1wxPRdVBbTOMpWyXtpYAsIWum+VCDf27ss9kYDnmQbrcFUf6d6NjODLHJo=
+X-Gm-Gg: ASbGncsXTdUYqz0o3msBfellyB1qbrJDgUl3EsO6qiRRGyS/wwmGFYAn8VMd4cDW6Jk
+	VFztsByNKxEk1EaKtbAeGsWpN5KfpnlvjJtSyoTNEH07Du+6T+1DJWnQrUKsWkvSbdhcVnx6XvB
+	34uxcmq7W//cUbQvnOkTkKcEerRYeHVppO5aoL0iu0xLweKH8YxFq8lVBp81wsJ9W3YLP4AoZcm
+	qIhGffVLx7RgBt67acWMwkKTyUYjqB+jKkoX+AijyUr4WS9CW3Wzsir68ZOPsClkHoWnVq8qNxd
+	xlSVsOwX/LHNk5+Vtx0s6s+7QFW9L8Qv/tAJE2dTenv0zwJn5OrjD4VsNKbqEjc4npVnquzAmlJ
+	lWqUxZLZ/YcNaMWQI6gePbrvvVBxR
+X-Google-Smtp-Source: AGHT+IFBs8UXGxgkaSg80fNb2XLa7R8prdLQ6TRj1KMntX+P6s5LJFVMk2sAxSEGFFCGhjD2XvI0jw==
+X-Received: by 2002:a05:600c:5493:b0:45d:98be:ee9e with SMTP id 5b1f17b1804b1-45ddde6a3f0mr115055345e9.1.1757491663893;
+        Wed, 10 Sep 2025 01:07:43 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:3936:709a:82c4:3e38])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df8247cc6sm17813605e9.12.2025.09.10.01.07.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 01:07:43 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/9] net: stmmac: qcom-ethqos: add support for SCMI power
+ domains
+Date: Wed, 10 Sep 2025 10:07:37 +0200
+Message-Id: <20250910-qcom-sa8255p-emac-v1-0-32a79cf1e668@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|CH2PR03MB8087:EE_
-X-MS-Office365-Filtering-Correlation-Id: 94655851-8c14-4f64-9c48-08ddf040f7bf
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MIwkWJSm38uNe40bqA6DUH5aCUg6Ac2TD45SBGN8wdwUwVlADvECdJupJh2p?=
- =?us-ascii?Q?xEZgrjnRdNOz/50EnCq0aAnjY9TJwZMM+c/GKcg+gv0LqlZKxA+orYES7jop?=
- =?us-ascii?Q?APeum/VsMoVf4n4LR6ja5WbtKpMChKCKVjALVb6Z2plxBCsgk0s+shBzSNYq?=
- =?us-ascii?Q?uP0t4VTlcYhnpRpJMbmQJ9meAlIHQQK44ROBwm6XfxjYkUXn6UbEj12Z8Z62?=
- =?us-ascii?Q?L0iEr+mrYUO087Ilge/xdSTAhfFV4iMGw5heBXCRMhPDUNbm2KCBsl/EgeAC?=
- =?us-ascii?Q?p8PztyZ3DSJKzX7mS1zZyNsJEabgK4Fw/+DyA6kjVMySk5aezNZNN6mq8aOQ?=
- =?us-ascii?Q?1aGJNMXavPJ8Vkq2sNIUoIak/2a5R/s+grnIS2JTxKDrIAUfy+7B5DdEL7E5?=
- =?us-ascii?Q?9FCWrwTOWQDhXPIKMZ6eGoJLoqjAzPkAdoISw7zOKNEJApOxBbZCar68gXEH?=
- =?us-ascii?Q?cAQfw1LMIoS1ohccG0iXpFoUgNjKe6LR8VgHqqn4pjWGzWjDgj+mVxF9/54L?=
- =?us-ascii?Q?UJmtTFkiu06SC72RDrZ/7foIWFqDThC5uOSCa858bo4q16VGlJ4sdyrCBeIp?=
- =?us-ascii?Q?FMC5MKOw3jdEfDEc/QFU5uq+M7W9ZhLvKG8CT8tHctKQqwcW51SAqeWnBZPA?=
- =?us-ascii?Q?Vn6iBY+/R9WHH2gbu6a3C3H21NUSMj4NV82DadcTBhwWmAUhRwbtpzJv+h73?=
- =?us-ascii?Q?jdRcXekinDCuR5Be3xDtPbXc1lzu4xX5VTa7XP3WGUe2FoduIXX6PflKc4VW?=
- =?us-ascii?Q?kNyDCkduRqoQfq90Vlzjg+qb2HxumLw1Hon2e7QZZN2Be7WEOhoGaJJ7HKgk?=
- =?us-ascii?Q?gOw88mYqfCFIqTKN33s9MnYHXBDQBKhsY2JM2M7KJ7vzjU8dWIQJdrGP5XsC?=
- =?us-ascii?Q?fjKs1gdkA9+0Y1xWYOuAzYd2IKhRLYB0+uryG0IEdrot7+GuMAL3CzZfDoKx?=
- =?us-ascii?Q?TbY+y213LB90DzpxLXcm3eLlxBg20RSpJ4putlitCmNtvJKAzPMGvD3MQcdF?=
- =?us-ascii?Q?PlF9o/3VRNOwz8YeHnna19Z7NwaKtslYX9mCFhjrBblQS8UUUCi5i+62dxvC?=
- =?us-ascii?Q?+OAHazuGoajGeg3LO7+0v/3pmieVMP4MzYuIVLvENtotzUM6qWgasX66dOIc?=
- =?us-ascii?Q?qt9LQoL5QNWCTGvJqAav+7T1d4PJfA1ZWlzBHX9B1v1ZRVtThiq36YwBhAJs?=
- =?us-ascii?Q?BXIro4qB5V7cS3YiyWi49YrakA6O094NdiPDNGhnSPBIld3edYe3pNpXwTeH?=
- =?us-ascii?Q?EmxaYKXHcfRIWtbo34IrFEtJyswu5kCxbqfeVFi5EZVtGOZjvP+1Krxfi3kG?=
- =?us-ascii?Q?Ef/d4vR9IdnJQ6SOwsqoOMVzXTsKUgAXNxUyW4uahUjQM+nryQMKzTf3hX5Y?=
- =?us-ascii?Q?Mm+JlRNQEDrsmn8pcW6ZhWFt9Ttk/sEoJ4eXRx+j1giYWzatvG+eDbNSBKCJ?=
- =?us-ascii?Q?mko1TEQSCCw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vgUAyo0kYrZuaEGNx2KnQbFqk/4QU+xdMSaD9e35GvYeoQ6Nqce4FrbEOUlQ?=
- =?us-ascii?Q?ApmkDYH/3asWeYJN7i34giI/bIRmDo7zuf9TxMj1NFyrDCayBWZL+X89Rlo2?=
- =?us-ascii?Q?nXR7nzxHfhsd6oZxO5vOEWisJOxNUf7dr5zE9yLx2FWalNqv7LVYUWfVHnc6?=
- =?us-ascii?Q?2yb/iAVqIztfV834IKK3lbpLUNEaVca8JCeOqn5AnYoeefPZrFjJbbinAEOd?=
- =?us-ascii?Q?oLhNmzj70iqWWAeDFivFyjs6n8yD5Eo4tCipbCnSqcncPFARhkiPL8nz4pWu?=
- =?us-ascii?Q?ShSeMTReAmA18wZBkQzFjysXWvHsPkeOlHtl+XvQq7PDeXDQiSX/FFsH1vSV?=
- =?us-ascii?Q?da8aYI4tr31Spkz5aznodEJ88UUG5sNaQ/bYCaGi+h4e4uQIngvUDfldXgsP?=
- =?us-ascii?Q?3axxDdJEcge5Mu6Th5N/ery0lHM/jc/qOOz+DYx1DLYkcSWPkafals2hGhwq?=
- =?us-ascii?Q?LBOhaEm9wQ7eiOvYZWSAvSCmZSREiMeFSIvGfxVX17nIMB14EzwOy8t4wNn+?=
- =?us-ascii?Q?+hW3TlBJhPOdPud0rlMJn9PBFX5Sc9uRn8dwgGvRvUyY5bx9xL/wi33D9GCG?=
- =?us-ascii?Q?wGvVYITkr+G81l5RsATvRViL91rlPk9DDnqKKqiV5vszV695CPUcEVEkB2uY?=
- =?us-ascii?Q?Y5pd52DZmnpOg6fcyGcI3CdguW65X74QWJfBp/mxs3s/cLtXXGtHraSc8NHs?=
- =?us-ascii?Q?1XzQrCgTWAHmQj6pW0zfSmPO9wrviN7SYd/te4bGGLEUcavF98HyBIHVjAs3?=
- =?us-ascii?Q?8+Wx/h21BQUn2sNWztfjUNZDE8WZrz4w8j6toKG04KZSRqwcY3DroElilj7+?=
- =?us-ascii?Q?3wiisZlD94UCd2ri1u1+3lm+IKE6FhFvXGr/04laZiB9dZ3h1jZrTv0wi20Y?=
- =?us-ascii?Q?vYxXeSOYOFbV8D7cra/7CUptl6hdnC/5SdzucN0LAjVTFQlbh7m+D30um3jz?=
- =?us-ascii?Q?/l7s12dyTjj8fSU6YuI1hpxZhXAqeO1EY0rTCveRr3oE1jEv/ls9Bh9ZgATT?=
- =?us-ascii?Q?wJAaXXGBRnk31qOlweR3x5jVqvFM73OYFZk+Pp4FTRbrjp5MkSeKTHRpBuvq?=
- =?us-ascii?Q?+7D5Po6gtC+RG0K7UZVgdBwvw4YHv8Bbwu0aMdBbjTr9fJ8T2r6V504kNC/G?=
- =?us-ascii?Q?R2iIiGJLY1JAmjtcHwCb3qS9qHeqWMvgCqyk65M79rub6znS7eMmNMw35mNu?=
- =?us-ascii?Q?86plIbdcVw2elV9ns0enZeaxAfV2+Iewo3OeeHJdfxajK4l8XYnQMPS361V+?=
- =?us-ascii?Q?/eWmrg3zeQ9AZ6DbiOj80kVMe/f7Pt6KnX0TW9bdUtBaZAfrOwrsKxbjMJYF?=
- =?us-ascii?Q?0xWp7vaCzNQaImvG/g3GpH29fwDKdIOeAfBc8iYG0qCUzXfzhjNoZ/1SJTDI?=
- =?us-ascii?Q?D4zU5iwCtRZxvRtzfUA1WCWZwoJydw7a91jK4D0LfCaVcuDLp0TlTd5wUFmw?=
- =?us-ascii?Q?CxLM//sMTY9NwByI9iqJL/ZftYDc9PdqlgEDNwhooVZ+jLSAQ2KDo1xNrnjl?=
- =?us-ascii?Q?r0BhGD7QahcnpCmV0eaDsVFyDLT9ARls4i9TL2MdpNyV/1j3Yogf1j2EHDbA?=
- =?us-ascii?Q?zF5aY30ZbnDihOo+kLsjuYzfCPACFkUkh/qfjuBViZIiRe6uKakipXXfmzqg?=
- =?us-ascii?Q?ig=3D=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94655851-8c14-4f64-9c48-08ddf040f7bf
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 08:06:38.5578
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZRKlSjwRAQPdVuyeRBF7BNKZaSp86QLSG/m4UoY0wz+A+AR0IFgPvJmuE1VuDFaYgZgb+vZvfEaTKtPLe7xaVReKJjdo7WJ/TpSwvh3Ewik=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR03MB8087
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMkxwWgC/x3MMQqAMAxA0auUzAZqNCpeRRxKjZpBrS2IIN7d4
+ viG/x9IElUS9OaBKJcmPfaMsjDgV7cvgjplA1li29oaT39smFxHzAFlcx67urFUsfNcEuQuRJn
+ 1/p/D+L4fffhoTmMAAAA=
+X-Change-ID: 20250704-qcom-sa8255p-emac-8460235ac512
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+ Jose Abreu <joabreu@synopsys.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1820;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=dSk6AGhrmnQiBMVkm4iUfkoi5uR3VSQpSwlqk/H1gAg=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBowTHMa0WXc9aZw47LWizXetwGI4lOfCYN4Ubg/
+ S0JYjTkmO2JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaMExzAAKCRARpy6gFHHX
+ cuN7EACjo0XR4wFpMDKfJ5JkLwH6gCaoqJ2aZHjkmrd16YbueY63wBPoyxG9WXQv0Pf1CaStyXl
+ EgOiXcb0+VDPxR3B91vaK9IMbRiGNPYTMQdKA4yfwEsQE5v4Zkad+jyKkw/LKTklVjgk7SLWsCF
+ GdZDPsOv3Ql1EjwsdolRyF+lV1G97YwOrgnh5I8Xcpdj5FZ7cdPyaG0jX2D0mAjUHLn5qQjeuaY
+ LF1eOrWKp+jEO7c72nmCpUYiSoOYfms0RZf0ehpTDsivB6ZjRpE3ovGKQc818SKermDhNho1jhk
+ J0up1Qexbsfn2ijnAtEPz6n01wuFc6kr24DVj4bwvM+X1GwezbR3Ta86Pb5T7CQdkiSCOUwhZX/
+ c73JWNRheNuYte3uRpGaDwLHAKPfZfMAMIUFXN5yGUUCQbCcIYEu1DQbgv/SPE8sef+5v9zE1xN
+ lngurd+guGXjCYXBBp2iLx6LL2WDHR5oe6FmXMbwo/3J4/+790ec4uy/xAPpVJiGZ26dnu8MNd3
+ PrJgMyP8CUQLYrX6pDmy2ZcoXy0B2DR1cVZBsN+nFarBqZpwS/8F6dO2UkWhs5tun5ukzTs77mY
+ j+/QSI9gT93gh018RqOXMK8DG+UWcl6UZ7cK69n4R/hqhgpU1szBSSzLSDOco8Hxfi8He9Lvjzb
+ TCgZ4/r96lqxrVQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Enabling runtime PM allows the kernel to gate clocks and power to idle
-devices. On SoCFPGA, a warm reset does not fully reinitialize these
-domains.This leaves devices suspended and powered down, preventing U-Boot
-or the kernel from reusing them after a warm reset, which breaks the boot
-process.
+Add support for the firmware-managed variant of the DesignWare MAC on
+the sa8255p platform. This series contains new DT bindings, new DTS
+nodes and driver changes required to support the MAC in the STMMAC
+driver.
 
-Fixes: 4892b374c9b7 ("mtd: spi-nor: cadence-quadspi: Add runtime PM support")
-CC: stable@vger.kernel.org # 6.12+
-Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
-Reviewed-by: Niravkumar L Rabara <nirav.rabara@altera.com>
-Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+It also reorganizes the ethqos code quite a bit to make the introduction
+of power domains into the driver a bit easier on the eye.
+
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/spi/spi-cadence-quadspi.c | 53 +++++++++++++++++++++----------
- 1 file changed, 36 insertions(+), 17 deletions(-)
+Bartosz Golaszewski (9):
+      arm64: dts: qcom: sa8255: add ethernet nodes
+      dt-bindings: net: qcom: document the ethqos device for SCMI-based systems
+      net: stmmac: qcom-ethqos: use generic device properties
+      net: stmmac: qcom-ethqos: improve typing in devres callback
+      net: stmmac: qcom-ethqos: wrap emac driver data in additional structure
+      net: stmmac: qcom-ethqos: split power management fields into a separate structure
+      net: stmmac: qcom-ethqos: split power management context into a separate struct
+      net: stmmac: qcom-ethqos: define a callback for setting the serdes speed
+      net: stmmac: qcom-ethqos: add support for sa8255p
 
-diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
-index 9bf823348cd3..d288e9d9c187 100644
---- a/drivers/spi/spi-cadence-quadspi.c
-+++ b/drivers/spi/spi-cadence-quadspi.c
-@@ -46,6 +46,7 @@ static_assert(CQSPI_MAX_CHIPSELECT <= SPI_CS_CNT_MAX);
- #define CQSPI_DMA_SET_MASK		BIT(7)
- #define CQSPI_SUPPORT_DEVICE_RESET	BIT(8)
- #define CQSPI_DISABLE_STIG_MODE		BIT(9)
-+#define CQSPI_DISABLE_RUNTIME_PM	BIT(10)
- 
- /* Capabilities */
- #define CQSPI_SUPPORTS_OCTAL		BIT(0)
-@@ -1468,14 +1469,17 @@ static int cqspi_exec_mem_op(struct spi_mem *mem, const struct spi_mem_op *op)
- 	int ret;
- 	struct cqspi_st *cqspi = spi_controller_get_devdata(mem->spi->controller);
- 	struct device *dev = &cqspi->pdev->dev;
-+	const struct cqspi_driver_platdata *ddata = of_device_get_match_data(dev);
- 
- 	if (refcount_read(&cqspi->inflight_ops) == 0)
- 		return -ENODEV;
- 
--	ret = pm_runtime_resume_and_get(dev);
--	if (ret) {
--		dev_err(&mem->spi->dev, "resume failed with %d\n", ret);
--		return ret;
-+	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM))) {
-+		ret = pm_runtime_resume_and_get(dev);
-+		if (ret) {
-+			dev_err(&mem->spi->dev, "resume failed with %d\n", ret);
-+			return ret;
-+		}
- 	}
- 
- 	if (!refcount_read(&cqspi->refcount))
-@@ -1491,7 +1495,8 @@ static int cqspi_exec_mem_op(struct spi_mem *mem, const struct spi_mem_op *op)
- 
- 	ret = cqspi_mem_process(mem, op);
- 
--	pm_runtime_put_autosuspend(dev);
-+	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM)))
-+		pm_runtime_put_autosuspend(dev);
- 
- 	if (ret)
- 		dev_err(&mem->spi->dev, "operation failed with %d\n", ret);
-@@ -1985,11 +1990,12 @@ static int cqspi_probe(struct platform_device *pdev)
- 			goto probe_setup_failed;
- 	}
- 
--	pm_runtime_enable(dev);
--
--	pm_runtime_set_autosuspend_delay(dev, CQSPI_AUTOSUSPEND_TIMEOUT);
--	pm_runtime_use_autosuspend(dev);
--	pm_runtime_get_noresume(dev);
-+	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM))) {
-+		pm_runtime_enable(dev);
-+		pm_runtime_set_autosuspend_delay(dev, CQSPI_AUTOSUSPEND_TIMEOUT);
-+		pm_runtime_use_autosuspend(dev);
-+		pm_runtime_get_noresume(dev);
-+	}
- 
- 	ret = spi_register_controller(host);
- 	if (ret) {
-@@ -1997,12 +2003,17 @@ static int cqspi_probe(struct platform_device *pdev)
- 		goto probe_setup_failed;
- 	}
- 
--	pm_runtime_put_autosuspend(dev);
-+	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM))) {
-+		pm_runtime_put_autosuspend(dev);
-+		pm_runtime_mark_last_busy(dev);
-+		pm_runtime_put_autosuspend(dev);
-+	}
- 
- 	return 0;
- probe_setup_failed:
- 	cqspi_controller_enable(cqspi, 0);
--	pm_runtime_disable(dev);
-+	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM)))
-+		pm_runtime_disable(dev);
- probe_reset_failed:
- 	if (cqspi->is_jh7110)
- 		cqspi_jh7110_disable_clk(pdev, cqspi);
-@@ -2013,7 +2024,11 @@ static int cqspi_probe(struct platform_device *pdev)
- 
- static void cqspi_remove(struct platform_device *pdev)
- {
-+	const struct cqspi_driver_platdata *ddata;
- 	struct cqspi_st *cqspi = platform_get_drvdata(pdev);
-+	struct device *dev = &pdev->dev;
-+
-+	ddata = of_device_get_match_data(dev);
- 
- 	refcount_set(&cqspi->refcount, 0);
- 
-@@ -2026,14 +2041,17 @@ static void cqspi_remove(struct platform_device *pdev)
- 	if (cqspi->rx_chan)
- 		dma_release_channel(cqspi->rx_chan);
- 
--	if (pm_runtime_get_sync(&pdev->dev) >= 0)
--		clk_disable(cqspi->clk);
-+	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM)))
-+		if (pm_runtime_get_sync(&pdev->dev) >= 0)
-+			clk_disable(cqspi->clk);
- 
- 	if (cqspi->is_jh7110)
- 		cqspi_jh7110_disable_clk(pdev, cqspi);
- 
--	pm_runtime_put_sync(&pdev->dev);
--	pm_runtime_disable(&pdev->dev);
-+	if (!(ddata && (ddata->quirks & CQSPI_DISABLE_RUNTIME_PM))) {
-+		pm_runtime_put_sync(&pdev->dev);
-+		pm_runtime_disable(&pdev->dev);
-+	}
- }
- 
- static int cqspi_runtime_suspend(struct device *dev)
-@@ -2112,7 +2130,8 @@ static const struct cqspi_driver_platdata socfpga_qspi = {
- 	.quirks = CQSPI_DISABLE_DAC_MODE
- 			| CQSPI_NO_SUPPORT_WR_COMPLETION
- 			| CQSPI_SLOW_SRAM
--			| CQSPI_DISABLE_STIG_MODE,
-+			| CQSPI_DISABLE_STIG_MODE
-+			| CQSPI_DISABLE_RUNTIME_PM,
- };
- 
- static const struct cqspi_driver_platdata versal_ospi = {
+ .../devicetree/bindings/net/qcom,ethqos-scmi.yaml  | 101 ++++++
+ .../devicetree/bindings/net/snps,dwmac.yaml        |   4 +-
+ MAINTAINERS                                        |   1 +
+ arch/arm64/boot/dts/qcom/sa8255p-ride.dts          | 201 ++++++++++++
+ arch/arm64/boot/dts/qcom/sa8255p.dtsi              |  44 +++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |   2 +-
+ .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c    | 345 +++++++++++++++++----
+ 7 files changed, 633 insertions(+), 65 deletions(-)
+---
+base-commit: b6a291a76ecaef3b49d8a9760865abb3d8480dff
+change-id: 20250704-qcom-sa8255p-emac-8460235ac512
+
+Best regards,
 -- 
-2.35.3
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
