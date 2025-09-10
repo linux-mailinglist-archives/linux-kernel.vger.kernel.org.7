@@ -1,202 +1,251 @@
-Return-Path: <linux-kernel+bounces-810051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E438B5153B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:15:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4FDB5153E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10BF2167BCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:15:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5EE3B5B79
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D7E26FD97;
-	Wed, 10 Sep 2025 11:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B471273D66;
+	Wed, 10 Sep 2025 11:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cdPJSWuG"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2074.outbound.protection.outlook.com [40.107.243.74])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZreNsi36"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9E425FA1D;
-	Wed, 10 Sep 2025 11:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757502922; cv=fail; b=D+zD2xeoW41O15+l2+Jy0kG+8eFQEfuYIcQxyIx4FOdRO/vShqSl7UdxoXcezl7ZUhdO8yjDxaLRGSn6hvr/kCD3VErv0Q1UxChcKIMGhUOSS4wnruclbx2oNfCKxAJXOKsZAYunt43XnRGfeFqAA9dHVVgKI0xapdtOaM+v0FM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757502922; c=relaxed/simple;
-	bh=Q/575BUW+F+kjkOTRG3CHifRoUKPy6AK82sizh2lgaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TGoOU1uDxAOMhkrTKTgB3Dx9ZEn5n+GWhoPzz000uHMs9y6MR4AW5EfOdn5Eza3oluFetXAPbVQSJTHUL+y0GOwwtJr2TitZILsKDH1aqthI+zrzlFFddMy0OCkkGCxd10mXx+cVa9DD+hlMkE45F2nCNPyiUtJp8oUoHyCuHXg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cdPJSWuG; arc=fail smtp.client-ip=40.107.243.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O+7n6U2E7OYCYp+xpaqr1fF6ZwLxyk8RvMaBj3N8JiedfSYZbHHVmz2YZa+vShVMLM6Rf4+P+SfARMCXJJvNY5iWAgQDFOlZ4tJCr2WOvgOk3X0Quv0ltnce3YyVMJeHZOo0POYOOprL6L7qAVVtArIi6V5RYd9H/U3pBi/yl0SfiU+A0EGuCNU9uWj5di6mVY3xLiQaIHhwm7NDukAOHgZJy8XQIL81bZUsbtIwr+pByEC/v6iZEWEpDIvFz7rSwWxvLtJhVy/6kfMuLbLM1R48fq1ff/C5PSPbGy6/UsNY7ZomltKqsY48AWy9jzU49+PCSpRPGuclC+VdV/yYNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Pdkr507djNLM5gYA+3uzP1wSRUhn5taWd3QEr/QuFfU=;
- b=fqz1id6oRhlXZJ1Mq/PIkxBHbmXVUFUjf9oE0dZi79EyjqO1Bb6GqPlKc84di0PLstMFO8Ejro5ZZERk3CSy+1Wh6dQ09VkgVXRQ9h4L3TpAdJyGoEVorhS6/wbyBN6dvQsHyB7GxqxSkwkR6nImHzxjpXqs3DlMEiBkLVWqxyfxf6sF9vTgwlDtfMw0b4WWTBZjDU1P+v9Dn7onlmtYW71n7oN5vcE5cxz9gnzZWrq8llNOBQfsjsQrym6bhn/OBRpNqczlziS5GS3k7I0s3NzcRq4F/QRcqNAOyaQx/hRB+KW9XVVpL0Yh3m53umnf+m8kWNXHeK+pZhnUPYYYBw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pdkr507djNLM5gYA+3uzP1wSRUhn5taWd3QEr/QuFfU=;
- b=cdPJSWuGQJs7CQHdLbRnU6igStHGUs2Um0sr7/kZqYGpYjLkYucqh1+aUo/yCAjgQPshdLbVIoc4IDoZQDZrCpVXwr9YWX4Y8s+M5R9lT2+Og41Wf0y08BItaxDIP7+ZujSUhBjK7PXPjfrpzsVzC8lTS2Pai/2RLKROIu/x2RE=
-Received: from MW4P220CA0003.NAMP220.PROD.OUTLOOK.COM (2603:10b6:303:115::8)
- by DS0PR12MB8526.namprd12.prod.outlook.com (2603:10b6:8:163::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 11:15:16 +0000
-Received: from MWH0EPF000989E8.namprd02.prod.outlook.com
- (2603:10b6:303:115:cafe::e6) by MW4P220CA0003.outlook.office365.com
- (2603:10b6:303:115::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.22 via Frontend Transport; Wed,
- 10 Sep 2025 11:15:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- MWH0EPF000989E8.mail.protection.outlook.com (10.167.241.135) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Wed, 10 Sep 2025 11:15:15 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 10 Sep
- 2025 04:15:07 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 10 Sep
- 2025 04:15:06 -0700
-Received: from [10.85.34.232] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Wed, 10 Sep 2025 04:15:02 -0700
-Message-ID: <e61943a6-0005-4146-a5bd-485d3b32e709@amd.com>
-Date: Wed, 10 Sep 2025 16:45:01 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E179DB67E;
+	Wed, 10 Sep 2025 11:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757502941; cv=none; b=lOysWPh8t7g4A9goDGSpprfKfwn0/XKpo+Hq+yFBsNwFSRVPuWuUwF23aaGdhK3PM3q8lCVUGGm0xDInNFsy5FxCZd2yMmZ+di2MbKtXDxgiWLe2D8bVZ2zQIXPBhWSlmnATgfsRT8MvTJjxSXwrEHzfoboasg97wHQPGrtTqA0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757502941; c=relaxed/simple;
+	bh=JKF3sokOfz/KJOLEHPFIVxsadWmDVqjPfFG/mnyQ2Ak=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=LiYR/0gUG8bgva20KDm6zHl8alpCt1+rRTjcwsyFFETGXAl7aFRR6IkxoyUj+McEs2THiY6f3DJGgRTXKo/V/6XS6vciOaSIAvWn6i+DRMm/oyvVRvxvzYVdReMdqpkOXgathyFx/sidpVxo1lrJzmbMrQzFac6S5l4Qvq0T8Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZreNsi36; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58A9cQib007706;
+	Wed, 10 Sep 2025 11:15:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=H35gS4
+	QrbBq711GNVZfhIT+nzbCQvrvrln/RaNPm8Jw=; b=ZreNsi36d4zSIk0BHReat1
+	oqE1rc9kaCusnqWOBwocMOlYXKHbEwZw9glHhgzk8BHPexABFAHURAQzkx9GeV34
+	lq3/yIqaAZIM/v5ySWCr8rY4t45tJfIqdu5VT87TKYuOhz60oWs7FwKkcbNrNAMC
+	FOk7NT44NvYxqYWDSVXVwujPysUckesQoGwQVtGrhQG+zPMjX8kTpGEMS63dm6Is
+	PzF6ivfh+SOpBUebHh/78Wpze2tagecmAQlEoCfJ5T8OVhK6FnHfvgiq1mEj4qKv
+	x7QbBN2zj8LX+hmbfugyE7SyK+vPGhqDSyGc/LlusdjauoMglrGSGIxFnEZ+nNLg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xyd2h63-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Sep 2025 11:15:23 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58ABFM9Z022396;
+	Wed, 10 Sep 2025 11:15:22 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xyd2h61-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Sep 2025 11:15:22 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58AB7Goi017218;
+	Wed, 10 Sep 2025 11:15:21 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gmfx44-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Sep 2025 11:15:21 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58ABFLex10420832
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 10 Sep 2025 11:15:21 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0BFE55805D;
+	Wed, 10 Sep 2025 11:15:21 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0592758054;
+	Wed, 10 Sep 2025 11:15:20 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.153.78])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 10 Sep 2025 11:15:19 +0000 (GMT)
+Message-ID: <cbcbdb3e4aed17f387ae1d357906796551e2f470.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: setting security.ima to fix security.evm for a
+ file with IMA signature
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Coiby Xu <coxu@redhat.com>
+Cc: linux-integrity@vger.kernel.org, Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore	
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"	
+ <serge@hallyn.com>,
+        "open list:SECURITY SUBSYSTEM"	
+ <linux-security-module@vger.kernel.org>,
+        open list	
+ <linux-kernel@vger.kernel.org>
+In-Reply-To: <r3himk4z2aiyqsjstlpnda4wafeo7i4oum3n2dbvnasmtep5ex@zqodcpjmyx5b>
+References: <20250909041954.1626914-1-coxu@redhat.com>
+	 <5aeecf1aa6eff8ae0ea0a9e95d5df79aee338b32.camel@linux.ibm.com>
+	 <r3himk4z2aiyqsjstlpnda4wafeo7i4oum3n2dbvnasmtep5ex@zqodcpjmyx5b>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 10 Sep 2025 07:15:19 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch 06/12] rseq: Implement sys_rseq_slice_yield()
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, <linux-arch@vger.kernel.org>, Peter Zilstra
-	<peterz@infradead.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, Prakash Sangappa
-	<prakash.sangappa@oracle.com>, Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Sebastian Andrzej Siewior
-	<bigeasy@linutronix.de>
-References: <20250908225709.144709889@linutronix.de>
- <20250908225752.936257349@linutronix.de>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250908225752.936257349@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E8:EE_|DS0PR12MB8526:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71f228b9-d56e-4dca-61ea-08ddf05b51c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dkxqd0ttRVFDTTBnNlJhZEYzZnExanZod2JmT3Zhb0ZITzcvUUc4dmRaK3pB?=
- =?utf-8?B?eWJEdStxV2dTMGgySUxLTFh1a2JuV2k0YURUNFVQanJsYzBnQUpHVjlQMERK?=
- =?utf-8?B?ZjZLZ20rM1NNQzJlMFB4eDJSWExCcHBVOFhqS0tzc2x4ekZad0RFQmxmY3RU?=
- =?utf-8?B?ajVPUHhnMmQyM1ZaRHRQZ0g0bjRUazEzVXdBbThDQWRQbUJxQXZpZUNTNytX?=
- =?utf-8?B?Q0lxWGZ5SER0d3VUaVZwa0ZFcVFnM3lhRzJKcHFWTlB0TW9wb25FS3FqTzhl?=
- =?utf-8?B?Z1phVytCRkROWE5ONFhkdFEvZk9Td3hRUWRFS05ObFl1SUpjY3l4QjNGNHlU?=
- =?utf-8?B?dzdleEpsclFzcG5zT0R2OVJha1JMVjBjVGRKQWlSZGZoTVBlTFNkdksxalJ2?=
- =?utf-8?B?YXFSbC96TTFqUUpFbHQwL1JrZld3elMydDF6OGtmb0xYajJXZVJUVWRKT2JG?=
- =?utf-8?B?ZGVXUGdWbnVmRjZGdXV4OHY3dFA5WjAwQ3p1cnFVTUg3T1YwRzYrRmgyaU1X?=
- =?utf-8?B?TW5UUVhIdWxJSHhSeTBTMmNoTWM0RVZlaDVJYVJwRVVNc3pBYmZUeElKQzB4?=
- =?utf-8?B?VHVVakxIdGpiU0MvZTBzR0RSY0V0TEJCUXRWbiswV2xzbzhlRmZUa3hwTnFV?=
- =?utf-8?B?dDZ6ZjRER3J4aERrdDNub2dyN1VFbW9lcWc3QWsrNFVrYXlYRFRGSUZjQWd6?=
- =?utf-8?B?eTE4clo4REFnUWVTdWRiS0NhOUIzSTU3MzYzNWdNRFgzdmhEeEYzZTVNemNT?=
- =?utf-8?B?bEI5cXViNGxZeFRZTFN6V3YrU2dZNWtNOENPVlJzdkhDQWVnK1hNUDBlK3h5?=
- =?utf-8?B?ckEwdWxUa1Q0NEdJNVV5QUJIREIyUXRyc0JkSElMZFVWYVM5b25VaVI5Vmk1?=
- =?utf-8?B?aXhwS0piTndnM1dWUXBleVVxWlNRWUZRMktBaDJtVHBNbWZ4NnROU0Nlempx?=
- =?utf-8?B?N1FvcHh3Qm1VeDhzWnk5MEpjWmg5VTJUTGE1ejBsM0xlaHhMVVYxdmNiajlN?=
- =?utf-8?B?dVFHcEFheXV5Q2hneE0xR1pzOFdmQkx1bVd2VW5UNWRTZkdVZ2pNaWl5eWtw?=
- =?utf-8?B?UzlMY3l3VWs2TVlqdzZ4L0dLUUtVaWF5VGtGNjk4dWw5M2pFQzB6MEVrZGpv?=
- =?utf-8?B?MnJheFphai9zTjhrc2xSVzB4b2pTd3h2TEJlMUtQT3JhRVFKc0I1eVJWWUxV?=
- =?utf-8?B?Ym9uaWlFd0FrVllNTk54eXlRT1VGa2c3b0RKVHFIOHNQVFRkd1FXSU54ek4x?=
- =?utf-8?B?V25xWnAzNVMwN1BjMjRRTWpPRWMxSDhnZWtLRElBQlNNK1R5RTlzWE9Rb0pW?=
- =?utf-8?B?WnRLb25EdCtqZ0JhRGt6Q2NDSmJGdlJodE9FUC8rNWlFenFwZkpUMDlrVzJl?=
- =?utf-8?B?S0xWRVZ5YkFOanVjUWlVdmEwb0k3OVAya2NGeDUyWE9HZHZteGlFN3IxL0dK?=
- =?utf-8?B?STJySGtRSmQxR0RzRDMvSDY0R3duUlpUOGNsZDB4WC9BajJGa2VoWUJVbU1J?=
- =?utf-8?B?T2FkSy9MVU9pdTJIdFVZQi9tVnBBNElNV1UvQUVvZHY3OUJDQkF4UDIwZWV2?=
- =?utf-8?B?NUdRTWRZRzhFMnFvM3o3Vmt3Zmoxa3NzQlR6SEJxc2dyU0JIbTZBYWp6VUdm?=
- =?utf-8?B?aG9ZaXhIVUpPcHJUS2pON3lYYW1MOHhnbVZjbzFSWHNuT3AzTHdXR3NUZjh4?=
- =?utf-8?B?dmhXMTc4YjNFbUdTL24xQVh1RlAzWUJjZE0zUUJaYTJXZnFKU21Wa3ZlYjg4?=
- =?utf-8?B?ejVXYzZ3Y0ZwK2xwaHpISlBHZVBjbXdSN0xpcUgzcTl2WUsrbUhSdEQyU2Rq?=
- =?utf-8?B?eitWcWtyYmhVYk1NaTB3bFoxbWMwUk56U1BZOGVuR3ZoNkROaU9HdzNPNE9Q?=
- =?utf-8?B?VGRBV29wUmtoSzFZTjFocGZQTTYyWGMvZ0VyN2dvbEFSSGtiZmRSWWJxaGVP?=
- =?utf-8?B?RFRKUm9Hdk5mN244S0NkckJxWmxLZVJTcnZzN3FiNVRPWU5VZE00MHAvRTNq?=
- =?utf-8?B?QXQ1Z0NPMTl5dzQwMEpZeVNGcVo2T05Hc1pqVjN6bWp5bWpldTJDM0VYbUow?=
- =?utf-8?Q?t7PW5O?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 11:15:15.9522
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71f228b9-d56e-4dca-61ea-08ddf05b51c2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E8.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8526
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: T6fqf-X3Lo5EH4zQyPJVUxUOnJdGeh1d
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfX9xsq9HSd22dU
+ 8dCgzMxrT75YsgiVcwJ5i1+ZPwkIKyT951kmafSYwVXA+nW0LVTsRYgfqkWmy3FGRm04A5q2PEC
+ BxJ9Qf/Dcf7ydZ48tTpY9aReZmz1OdtYUJkCRf2+/udRTXhmmaYLm5r0oozwlRfPlwCb3ysQwp8
+ XmIXppBD4+dkLu1OShYwkMeHRFt6Izpu0pyZGKpYucZDiOpgw0DsS1XuASX7gG6uURhySdqCwaP
+ M5Mr+sZsqFUKoFGefNg3pM2Ypyw/YWtHSKhdGiC7Wlx4HGuM16Y1Cv+323Pr4sF3Sk1v/USvpt5
+ UZZhFF/QbW+RL0XOuQsQnhBJ0XzPHkbBMNzphT6BckbAVZc1m+DM8X4TstBn7eU69tjXbhd46Zn
+ Vs6d5LMz
+X-Proofpoint-GUID: N0YggciuCLL5XZbibiRPnPQZmFy3DOqR
+X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68c15dcb cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=vUXcQdf43LBxS_wO:21 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8
+ a=n6TOAAXvfV5sXn8gDmAA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-09_03,2025-09-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060235
 
-Hello Thomas,
+On Wed, 2025-09-10 at 09:20 +0800, Coiby Xu wrote:
+> On Tue, Sep 09, 2025 at 11:31:20AM -0400, Mimi Zohar wrote:
+> > On Tue, 2025-09-09 at 12:19 +0800, Coiby Xu wrote:
+> > > When both IMA and EVM fix modes are enabled, accessing a file with IM=
+A
+> > > signature won't cause security.evm to be fixed. But this doesn't happ=
+en
+> > > to a file with correct IMA hash already set because accessing it will
+> > > cause setting security.ima again which triggers fixing security.evm
+> > > thanks to security_inode_post_setxattr->evm_update_evmxattr.
+> > >=20
+> > > Let's use the same mechanism to fix security.evm for a file with IMA
+> > > signature.
+> > >=20
+> > > Signed-off-by: Coiby Xu <coxu@redhat.com>
+> >=20
+> > Agreed, re-writing the file signature stored as security.ima would forc=
+e
+> > security.evm to be updated.
+> >=20
+> > Unfortunately, I'm missing something. ima_appraise_measurement() first =
+verifies
+> > the existing security.evm xattr, before verifying the security.ima xatt=
+r.  If
+> > the EVM HMAC fails to verify, it immediately exits ima_appraise_measure=
+ment().
+> > security.ima in this case is never verified.
+> >=20
+> > This patch seems to address the case where the existing security.evm is=
+ valid,
+> > but the file signature stored in security.ima is invalid.  (To get to t=
+he new
+> > code, the "status" flag is not INTEGRITY_PASS.)  Re-writing the same in=
+valid
+> > file signature would solve an invalid security.evm, but not an invalid =
+IMA file
+> > signature.  What am I missing?
+>=20
+> Hi, Mimi,
+>=20
+> Thanks for raising the question! This patch is to address the case where
+> IMA signature is already added but security.evm doesn't yet exist. So
+> EVM HMAC fails to verify but there is no exiting
+> ima_appraise_measurement immediately.
+>=20
+> And you are right that re-writing an invalid IMA file won't fix an
+> invalid IMA file signature. And even when IMA signature is valid, the
+> verification may fail because the key is missing from .ima keyring. This
+> happens because we need to turn off secure boot to enable fix mode. As a
+> result, CA keys won't be loaded into .machine keyring.
 
-On 9/9/2025 4:30 AM, Thomas Gleixner wrote:
-> --- a/kernel/rseq.c
-> +++ b/kernel/rseq.c
-> @@ -542,6 +542,15 @@ int rseq_slice_extension_prctl(unsigned
->  	return -EFAULT;
->  }
->  
+> Btw, if I'm not
+> mistaken, current IMA code assumes we are not supposed to fix IMA file
+> signature.
 
-nit.
+Right, unlike file hashes, new or the same file signature can be written, b=
+ut
+cannot be "fixed" in the literal sense, as that would require calculating t=
+he
+file hash and signing it with a private key.
 
-Perhaps a small note here to highlight how need_resched() is true
-for tasks who had the slice extension granted. Something like:
+This patch triggers "fixing" the EVM HMAC by re-writing the existing IMA fi=
+le
+signature.  I assume the same result could be achieved by simply re-install=
+ing
+the file signature.  In both cases, the EVM HMAC key needs to exist and be
+loaded.
 
-/**
- * sys_rseq_slice_yield - yield the current processor if a task granted with
- * slice extension is done with the critical work before being forced out.
- *
- * This syscall entry work ensures NEED_RESCHED is set if the task was granted
- * a slice extension before arriving here.
- *
- * Return: 1 if the task successfully yielded the CPU within the granted slice.
- *	   0 if the slice extension was either never granted or was revoked by
- *	   going over the granted extension.
- */
-
-> +SYSCALL_DEFINE0(rseq_slice_yield)
-> +{
-> +	if (need_resched()) {
-> +		schedule();
-> +		return 1;
-> +	}
-> +	return 0;
-> +}
-
--- 
-Thanks and Regards,
-Prateek
+>=20
+> >=20
+> > > ---
+> > >  security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++----=
+--
+> > >  1 file changed, 21 insertions(+), 6 deletions(-)
+> > >=20
+> > > diff --git a/security/integrity/ima/ima_appraise.c b/security/integri=
+ty/ima/ima_appraise.c
+> > > index f435eff4667f..18c3907c5e44 100644
+> > > --- a/security/integrity/ima/ima_appraise.c
+> > > +++ b/security/integrity/ima/ima_appraise.c
+> > > @@ -595,12 +595,27 @@ int ima_appraise_measurement(enum ima_hooks fun=
+c, struct ima_iint_cache *iint,
+> > >  		integrity_audit_msg(audit_msgno, inode, filename,
+> > >  				    op, cause, rc, 0);
+> > >  	} else if (status !=3D INTEGRITY_PASS) {
+> > > -		/* Fix mode, but don't replace file signatures. */
+> > > -		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
+> > > -		    (!xattr_value ||
+> > > -		     xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG)) {
+> > > -			if (!ima_fix_xattr(dentry, iint))
+> > > -				status =3D INTEGRITY_PASS;
+> > > +		/*
+> > > +		 * Fix mode, but don't replace file signatures.
+> > > +		 *
+> > > +		 * When EVM fix mode is also enabled, security.evm will be
+> > > +		 * fixed automatically when security.ima is set because of
+> > > +		 * security_inode_post_setxattr->evm_update_evmxattr.
+> > > +		 */
+> > > +		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig) {
+> > > +			if (!xattr_value ||
+> > > +			    xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG) {
+> > > +				if (ima_fix_xattr(dentry, iint))
+> > > +					status =3D INTEGRITY_PASS;
+> > > +			} else if (xattr_value->type =3D=3D EVM_IMA_XATTR_DIGSIG &&
+> > > +				   evm_revalidate_status(XATTR_NAME_IMA)) {
+> > > +				if (!__vfs_setxattr_noperm(&nop_mnt_idmap,
+> > > +							   dentry,
+> > > +							   XATTR_NAME_IMA,
+> > > +							   xattr_value,
+> > > +							   xattr_len, 0))
+> > > +					status =3D INTEGRITY_PASS;
+> > > +			}
+> > >  		}
+> > >=20
+> > >  		/*
+> > >=20
+> > > base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+> >=20
+>=20
 
 
