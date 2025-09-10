@@ -1,133 +1,135 @@
-Return-Path: <linux-kernel+bounces-810119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15EB6B51632
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:56:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509D4B51644
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48509462B15
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:56:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EDD37B2CE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8263101D9;
-	Wed, 10 Sep 2025 11:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqBlb69r"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE3D31158E;
+	Wed, 10 Sep 2025 11:58:41 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72E628641D;
-	Wed, 10 Sep 2025 11:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E22B3101C7
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757505402; cv=none; b=be8ElOO5Ok47YoGB67lO4BQkq2WS+N8XwUXKEKjF5jRM7o157MiNbB3eMyBne/cAU7cIaSCHBh8g0XByURa3+5VwYUafG7lWoV8hRXxLvHP1JbHK+U9EDMVwD0ys3r2Jdq+CQvRyamMobceoyHoiosjsRbtlLXKcaupWjeb1blk=
+	t=1757505521; cv=none; b=qye6ddyh2jhrv9+GhNFA4qZL75Ns6b5r3l/39aYDTW66PI4UK8Mof0PlZdOlRnnXrODKf8eF/PrCY6fDnrpvBtFNmeQQXufnWx61xr68DPz74McLWcolVf5FJjgZ3J57CMv/EaDBM6teCd1BqMvdAViihTK03UvjdUlkStCDGrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757505402; c=relaxed/simple;
-	bh=De2R9CBS606ovczcygR5nFL+7GgzXsLkukN/cVx7ye8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EBpc+f5/kSCQ4L/Tfq+25ZcVvdTjfQ3YPzHEW1UDfr2EgrOvNrs1CkcczeSJyJ5I4sJxPIxV0hJwiKF5DYmVIrgZ0CJXTS/qFCja4m5xt/oaUDUdDiiQPU5VSw4hfCy9AwUFoNM+FUD0NSdVzcU4Jwhd7QRl3R4PweHPuJb0iMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HqBlb69r; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso933602a12.0;
-        Wed, 10 Sep 2025 04:56:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757505399; x=1758110199; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=58PgKZ7crXEVN+doC/JvTxVFXEIdeFlRJ4nsNT4B/8U=;
-        b=HqBlb69r1MRXRBsg4l0twKjzOWJMLVUoeG3kd4qrJGqq2fS64ZFOXxjNcAkSKluYgO
-         6FHRvVUUxLkzQgnTVRYuJGyCa9wh80wt0b/D82eUTxCcwRVnejyO3CxeihTyuoBCKoW3
-         XkUQ2Cd7k25xGpokWdy0lnC4ZwLfjnuq9mmnYeDo3Fms99F2yFbEP7pxkpJVbg0ss2TG
-         w3KCD8sIA8zEoPsPS5IrPTVR/exQQgrgbm7rN6/7pX1z+HA+SV2bQmCFiG/LAJly5bBF
-         kAh0qiTu3KdqnHxkBMTv0hmAQ+ty9r+Dl8JllHg9poSKykpLrDlNLurkTqHq949vqsRH
-         YeOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757505399; x=1758110199;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=58PgKZ7crXEVN+doC/JvTxVFXEIdeFlRJ4nsNT4B/8U=;
-        b=dXI+uK9qZSnAzYsww+zFr26UQDEN8lzvz/fzOWAQ67mt/aZXi8LPZVIeJyU3LKaa6e
-         0R8UaglaH0wvIWqCB1fhTQsYWTF/VuaaLP6+8Q1Q37ag5ywyJycuVG1IM6JGLn9w6vyA
-         q5bkGBeYs2xBuDHkjV5Fm2Ri8KsqJq+gpjRD65ZK9vqoYe0YfS0ID+G5v93cWZzYMqjv
-         5Pf+m1mVmkR8aZZWFW5G7MMECkCimLUR0F5y8RULims0xsVnWKPXXi2/6xsXkJ9WlVhI
-         4I3rjR6BKG8Mrng1t5Ize/G9z4+q6DjpNz5nqYpxJykkO+y1/vKiMkSkPUqfeDZ9i8+R
-         1VOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhjceg6KVASbdWDFlRlpWN7Y5UlHAY4NVgp5YgSYhkfQp0Yv1HEQvkqriHJcJvDdT4TcjN1CHgk114sXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdwdeqRArv1Y0FBdb0WyZK8g0850IZGLqySL9I63S5uy0mSLhQ
-	gRcar46+XS0Xk15Ytqkq7crZdBC63vskZ5MWlSDw8PSXQJ/5ZhANcwLn
-X-Gm-Gg: ASbGncvv9wJxY+6KalI3jfeHor9nRkaMQZcCuSj8p5V+vj2TH0wQq/6k3fWLziy31gR
-	lFeEdSGZytR2wyAo4k564xtoqsL273EWyS+n8HNbtv25FdFsCP6NmgoPODKzzMiUFQVUAoOnDNp
-	0nReOFZgDxw6UKZKLxoOmM7QxRvJmD3RHgVi0jtHVnjuHiEXy7uK6jphddQ74/h2NuQ1EXrHUn8
-	LeK+B36IkqQD4XFfUzDq6XPIFx5ggXrT6ojqIgulk1KWaXOshudjBm3rlQrAjtsNmjTZ8xNDKBH
-	4EuBXyr1TNEc9gp4LOJys+/TtG/qLlmRtD9fJwRwIQ9rq6v1J6IojfQtDWG2vpjtPZr9c/uQVI1
-	KkxFkfaiAknkw6XvBsYXWezfqAPjJdKQ6
-X-Google-Smtp-Source: AGHT+IFaCF3ulPJQNujmXvXkeP3bZfKPrcuvNuuV6c+u0Fa34L4TmNGVVHINFukz4dIvjqe4PcnIwg==
-X-Received: by 2002:a17:907:1c15:b0:b04:2214:9499 with SMTP id a640c23a62f3a-b04b1dfa8fcmr1607594066b.8.1757505399085;
-        Wed, 10 Sep 2025 04:56:39 -0700 (PDT)
-Received: from [192.168.8.100] ([148.252.147.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0783046d34sm159274866b.6.2025.09.10.04.56.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 04:56:38 -0700 (PDT)
-Message-ID: <fe312d71-c546-4250-a730-79c23a92e028@gmail.com>
-Date: Wed, 10 Sep 2025 12:57:42 +0100
+	s=arc-20240116; t=1757505521; c=relaxed/simple;
+	bh=JbYRe5ZhdH5kEd/vRlltLO5l70zEQ7su3Vasf0fb7JI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vEjmrUB3WkGtNNMpsRY7W0Q2fCHkwbpZsz+JloZasxjeeKGSHn85y2FtmmWlUp8w+uNDjC0BiP+ZhXppoA+NbAiR6TZP6uL49La1i9WB9tcgX79Hx3PQV3dHmhe8OZ8pceOCHpBhRndWRTlNSI4cCtxh65eqmOazwQu2KpwhUVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uwJT5-00069V-3e; Wed, 10 Sep 2025 13:58:31 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uwJT4-000aGX-10;
+	Wed, 10 Sep 2025 13:58:30 +0200
+Received: from pengutronix.de (glittertind.blackshift.org [116.203.23.228])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id E0BE046AE56;
+	Wed, 10 Sep 2025 11:58:29 +0000 (UTC)
+Date: Wed, 10 Sep 2025 13:58:29 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, 
+	"biju.das.au" <biju.das.au@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"magnus.damm" <magnus.damm@gmail.com>, "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v3 1/4] can: rcar_canfd: Update bit rate constants for
+ RZ/G3E and R-Car Gen4
+Message-ID: <20250910-glaring-beaver-of-memory-4d8f47-mkl@pengutronix.de>
+References: <20250908120940.147196-1-biju.das.jz@bp.renesas.com>
+ <20250908120940.147196-2-biju.das.jz@bp.renesas.com>
+ <CAMuHMdWmMzZ0gCNVAsBOGKDTO4kAF5TTcSo4V+m-_MGfsTo63Q@mail.gmail.com>
+ <TY3PR01MB11346BE5957318E1805CF9E7F860EA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <CAMuHMdU7oqTfpGr38FU6GcbaRjF_Ku5yPyFmA2PpVW-zSyVP4A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] io_uring: avoid uring_lock for
- IORING_SETUP_SINGLE_ISSUER
-To: Jens Axboe <axboe@kernel.dk>,
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250904170902.2624135-1-csander@purestorage.com>
- <175742490970.76494.10067269818248850302.b4-ty@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <175742490970.76494.10067269818248850302.b4-ty@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wvgi2fdpg2eudymd"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU7oqTfpGr38FU6GcbaRjF_Ku5yPyFmA2PpVW-zSyVP4A@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 9/9/25 14:35, Jens Axboe wrote:
-> 
-> On Thu, 04 Sep 2025 11:08:57 -0600, Caleb Sander Mateos wrote:
->> As far as I can tell, setting IORING_SETUP_SINGLE_ISSUER when creating
->> an io_uring doesn't actually enable any additional optimizations (aside
->> from being a requirement for IORING_SETUP_DEFER_TASKRUN). This series
->> leverages IORING_SETUP_SINGLE_ISSUER's guarantee that only one task
->> submits SQEs to skip taking the uring_lock mutex in the submission and
->> task work paths.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/5] io_uring: don't include filetable.h in io_uring.h
->        commit: 5d4c52bfa8cdc1dc1ff701246e662be3f43a3fe1
-> [2/5] io_uring/rsrc: respect submitter_task in io_register_clone_buffers()
->        commit: 2f076a453f75de691a081c89bce31b530153d53b
-> [3/5] io_uring: clear IORING_SETUP_SINGLE_ISSUER for IORING_SETUP_SQPOLL
->        commit: 6f5a203998fcf43df1d43f60657d264d1918cdcd
-> [4/5] io_uring: factor out uring_lock helpers
->        commit: 7940a4f3394a6af801af3f2bcd1d491a71a7631d
-> [5/5] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
->        commit: 4cc292a0faf1f0755935aebc9b288ce578d0ced2
 
-FWIW, from a glance that should be quite broken, there is a bunch of
-bits protected from parallel use by the lock. I described this
-optimisation few years back around when first introduced SINGLE_ISSUER
-and the DEFER_TASKRUN locking model, but to this day think it's not
-worth it as it'll be a major pain for any future changes. It would've
-been more feasible if links wasn't a thing. Though, none of it is
-my problem anymore, and I'm not insisting.
+--wvgi2fdpg2eudymd
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/4] can: rcar_canfd: Update bit rate constants for
+ RZ/G3E and R-Car Gen4
+MIME-Version: 1.0
 
--- 
-Pavel Begunkov
+On 10.09.2025 13:44:35, Geert Uytterhoeven wrote:
+> Hi Biju,
+>=20
+> On Wed, 10 Sept 2025 at 12:50, Biju Das <biju.das.jz@bp.renesas.com> wrot=
+e:
+> > > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> Mon, 8 Sept 2025 at 14:09, Biju <biju.das.au@gmail.com> wrote:
+> > > > From: Biju Das <biju.das.jz@bp.renesas.com>
+> > > >
+> > > > The calculation formula for nominal bit rate of classical CAN is sa=
+me
+> > > > as
+> > >
+> > > the same
+> >
+> > OK, will send new version fixing this.
+>=20
+> I don't think you have to resend the series just for this. Marc?
 
+No need to resend, I'll fix it up.
+
+Thanks,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--wvgi2fdpg2eudymd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjBZ+IACgkQDHRl3/mQ
+kZxTPAf/ZpApqO4++7F/fm4Wvlf4s7zhuJu+P/qJt6xs/cSsaBdffpcNv4e41uoY
+T6eaCwbwZrWk8aBOp9pmjKywPVDGIRFxiDTGrsqg27W/7+6iWvtH5RgJGg7zNB0k
+3PtkMEXP1AktDoWOWcC4S1A9DHIuQ4WWesYxH3kmK8HGR9KSyURUHSnpjyYXW3TT
+lMgCol2iqhues0wu1U/FRahySvCVkIr3A9kN+GftFh/yt7BM2cmM8KUsRN7eB2bp
+VtzwbOQqntJYHD7Gzo8i6tvSgoCuH8GyqYu8JJb6bCIf7Gs/lSL0u1AyBvpueinO
+ldop82uQZSRfIZiM4UOhojbn5di/ig==
+=CrHJ
+-----END PGP SIGNATURE-----
+
+--wvgi2fdpg2eudymd--
 
