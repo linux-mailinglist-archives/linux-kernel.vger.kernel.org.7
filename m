@@ -1,183 +1,217 @@
-Return-Path: <linux-kernel+bounces-810555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688C9B51C55
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:48:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7014BB51C46
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E072189E494
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:46:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3094A3A28A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A9E327A18;
-	Wed, 10 Sep 2025 15:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EFC327A38;
+	Wed, 10 Sep 2025 15:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JD1ftN5W"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UFc3ws0G";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o6w8Yyur";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UFc3ws0G";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o6w8Yyur"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888181DFD8F
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22220327A2C
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757519184; cv=none; b=idaTgcp3Nz2+7t6LNux5q8ROHTQq5wk2s+BIxAM/yAYVM2pTpy/60rRZoNUCCxO5E0ZOIE98VqQGzaL+TXzsCl0tnCfhtXNA2uNwxzJ1fA2uxqaokNOLZEj2A9iyT0xrz7gbunFqRwd5XqAi7kD104BGCxR4mzAbq8tF/bIEDCs=
+	t=1757519213; cv=none; b=LBPVNyFi9PGKGaG9KiZd2fKS+2/vWdCU2wSHS6vudUdSR39yKmIRRNvn87V9aLgIpGeyv2glMcHuVMr3SnoJjtf06afhUAbPAA+RlomIwzm0nyk8+sQjRlSIRIlhoWIfcEMLmpW/GzZHHxayJb6fMFJXw8axVLLPYuGNCBQ3PGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757519184; c=relaxed/simple;
-	bh=vz/r/Y/nVR90qs+gGF445+Y6Yl8j/EBX5ZCD/VXMsCE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IbB7/4ayhTHTJMxVaGENv15Ziz6qZq9QFZyk2ZAeJhUdYGyXXxld5IvwXTxYUmaY56XQ/vpFJBXK7/U4/pbF9nbblFXovSjrXVvIyYGf4Zd49uoVNm2yqxStJvNP248VX2S+n592iak4dwRNdMvhifSL7u0VXiuQO3k8pj5C8Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JD1ftN5W; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61d7b2ec241so8702782a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:46:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757519181; x=1758123981; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zZDre0B01w0VLOyAKtjrQWQqebWixg2+j2xbvEpNCxI=;
-        b=JD1ftN5W+gg8J0Kb3sZboaTYS+ShH83rWbCS1iDgrEqfNrEVPc4Dr/xmmS0rpl9owG
-         9Nwe/EeR3kPoN33oVadAirToPM4t58rS2XpnzhCMB7FCFHqaKXrp47pq19lSdw9MwpKL
-         zBpc42xxX//wowSERzm81mc8y6qSSRlpQL4b5GrSopfROFqe5a997D/s/uV6OVC89Tjo
-         Rb3QtIHqgRjXTcJ4oI2YJ1G/+yU/rUKXuwvtWF8q2IK9WBgLMwYHLhvkzG5GE8W/FwT3
-         82dGnj9IwaTh9ZQtnR3ya5I8EmQCt62oVZAdDKBbTqksAbSRw2uuazV3HKoGLa89OU50
-         aqew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757519181; x=1758123981;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zZDre0B01w0VLOyAKtjrQWQqebWixg2+j2xbvEpNCxI=;
-        b=rjloijPJ5UZHxezBEtfLbiasQCkWSEA6j4at+GRwrTfHYTslQlLl5T5IkGlvXFBaMU
-         +rEalTkpFAtQfBZeH0+NueBnD/671jXmbg2/tK2oi+7vW0hdWdcWVw7chQHY00NYkJIq
-         3AtFXpF/ahBtYNPx/3Vy3E+/Y+z97qGYl2MreW5wwd9QEeMEbUMgQmFXc8zWTgL9DAD/
-         QMfClyepIifjTXuwS5bfifaLl1c0ux+wsYdfaWBvqcbOCBaz3o3XUfgBD+d6u9trV90I
-         ZoMwDEZw4+W8ARtN45MAt2qZNBavGLF4zglFm8oYQ75fUsus+k3BhaPtLsgiQREL0hPa
-         y9IA==
-X-Forwarded-Encrypted: i=1; AJvYcCXI/SeeYuuveq/YqitY/UrRTpmCcgjiJJhBUJI/7q8R9PiJ3281/hoDUQRFI8EY4KcaFcphoqM2tAHB8T8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw18nrz2zlEXI60GbDOB+uOYjrSQewCajJVsjIrBj9JqSfB3O7q
-	10Zhr51U26tg4/DeXtbap3bMOIwWsQrwkZlpvk480W6Y9zGeRKESBeCD
-X-Gm-Gg: ASbGnctwuKD4DNHCSr4Ub8efrHHPbmPdUPI9pQtpmMiM+Ot2qWR2O7kPzc8FeYsLS8X
-	9LQfm3hKHg/fpy7u9qS36rJTQ5BeeFfWDCJsWDHouxCtH8CCKFSblwqNt89JWkbeSvGCMe/TaTV
-	jhwBOWMy8VfhmxtlTNa3bgunYQ33uoNv8l2TeoLiiQCBv25Y0gXJtMlwtUo/LeQtrMne+D1NsYK
-	VgiUty0AfjCZIKALU6eYP2Sdmaw9B3fY2TUxt1wcocHN5Ouclqr2S9KlRoa0JJKFOu+0VPOkLRC
-	mOJ4wRjRKXlMXDeObAYLdpuv45LAdud9j6SAySAZDmkOtgDBoS+54rlu/hy7rAk2PNQn7ohN9qe
-	nHHiIx5LSf/IioNXMlX05H8qq00nzHqPcArAunl3eJTc=
-X-Google-Smtp-Source: AGHT+IHAcLD9SdPB4dxNFKubpMFnPJFtp3i6gEZsUQC+Jm1RBuVRs1raG5CvtDgWk0oUZJ1Ip5IxRQ==
-X-Received: by 2002:a05:6402:5242:b0:623:4a7:c670 with SMTP id 4fb4d7f45d1cf-623728d6fabmr13927972a12.8.1757519180634;
-        Wed, 10 Sep 2025 08:46:20 -0700 (PDT)
-Received: from avt74j0.fritz.box ([2a02:8109:8617:d700:1266:7a83:f27c:69b7])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62c01bdb66esm3324297a12.47.2025.09.10.08.46.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 08:46:19 -0700 (PDT)
-From: Martin Hecht <mhecht73@gmail.com>
-To: linux-media@vger.kernel.org
-Cc: sakari.ailus@linux.intel.com,
-	michael.roeder@avnet.eu,
-	martin.hecht@avnet.eu,
-	Martin Hecht <mhecht73@gmail.com>,
-	Tommaso Merciai <tomm.merciai@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] media: i2c: alvium: Accelerated alvium_set_power
-Date: Wed, 10 Sep 2025 17:46:04 +0200
-Message-ID: <20250910154605.479611-1-mhecht73@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757519213; c=relaxed/simple;
+	bh=p3zB8vManmasHn4+Hq/M/BFg0OxKQuK9ur3N8meFVZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RGmh9IfFJpoJ5URXWBFl/Us+XS+k47wYtJI1iG/5HAkK/i4DqeWRW0ZjjFw5lBaYGxWD9X8YyIOm5MDQn3LDwu+Eirt5cLXi3BBraZ1i5jdoCMvfOAU8mPgg4bB6YY4clQYkGfmmcSTFEqjcr0tQmmtcsvl9XsRYqGu5sPRMJ5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UFc3ws0G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o6w8Yyur; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UFc3ws0G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o6w8Yyur; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4BBDB5D920;
+	Wed, 10 Sep 2025 15:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757519208; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JIEIRFBW2JTO76c/Z8WF8UYdn04ImhqRHpoPD+gl+1k=;
+	b=UFc3ws0GrWbj/nyEGSPTc7INNlyNkG9ZzYHfAEG1xKPSJaPqYl0kRMzsv22Ogn9CM+8WcJ
+	eAOoO5bySNa82BmWxq4/tsYGD0pK1wTYPpGjtMl6VcYCkcSJHB8OX/LsDW2cLgnjSJ5wWX
+	iwMy6FqmlhyZ632L5aFVpKG+9QX/lQw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757519208;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JIEIRFBW2JTO76c/Z8WF8UYdn04ImhqRHpoPD+gl+1k=;
+	b=o6w8YyurIubGtR4xQGzv40qGq1mxwME7WN0xh2AYmKoNX0BWC2x6NwXdTzQd85o4XZJ1Ox
+	1I25Ru1KGXwlPGCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UFc3ws0G;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=o6w8Yyur
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757519208; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JIEIRFBW2JTO76c/Z8WF8UYdn04ImhqRHpoPD+gl+1k=;
+	b=UFc3ws0GrWbj/nyEGSPTc7INNlyNkG9ZzYHfAEG1xKPSJaPqYl0kRMzsv22Ogn9CM+8WcJ
+	eAOoO5bySNa82BmWxq4/tsYGD0pK1wTYPpGjtMl6VcYCkcSJHB8OX/LsDW2cLgnjSJ5wWX
+	iwMy6FqmlhyZ632L5aFVpKG+9QX/lQw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757519208;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JIEIRFBW2JTO76c/Z8WF8UYdn04ImhqRHpoPD+gl+1k=;
+	b=o6w8YyurIubGtR4xQGzv40qGq1mxwME7WN0xh2AYmKoNX0BWC2x6NwXdTzQd85o4XZJ1Ox
+	1I25Ru1KGXwlPGCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 554DE13310;
+	Wed, 10 Sep 2025 15:46:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id S43RFGGdwWgbPQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 10 Sep 2025 15:46:41 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 29163A0A2D; Wed, 10 Sep 2025 17:46:27 +0200 (CEST)
+Date: Wed, 10 Sep 2025 17:46:27 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 12/32] uts: use ns_common_init()
+Message-ID: <infsybiodcbptlbolgls6jpur674rszsvdjee6iylcqhq3m5jq@jdmi6vhn2ctf>
+References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
+ <20250910-work-namespace-v1-12-4dd56e7359d8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910-work-namespace-v1-12-4dd56e7359d8@kernel.org>
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TAGGED_RCPT(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 4BBDB5D920
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
 
-Now alvium_set_power tests if Alvium is up and running already
-instead of waiting for the period of a full reboot. This safes
-about 5-7 seconds delay for each connected camera what is already
-booted especially when using multiple Alvium cameras or using
-camera arrays.
-The new function alvium_check is used by read_poll_timeout to check
-whether a camera is connected on I2C and if it responds already.
+On Wed 10-09-25 16:36:57, Christian Brauner wrote:
+> Don't cargo-cult the same thing over and over.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Signed-off-by: Martin Hecht <mhecht73@gmail.com>
----
-changes since v2:
-- remove unused variable dev in alvium_check
+Looks good. Feel free to add:
 
-changes since v1:
-- added alvium_check to be used by read_poll_timeout as
-  suggested by Sakari
----
- drivers/media/i2c/alvium-csi2.c | 31 ++++++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 7 deletions(-)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/drivers/media/i2c/alvium-csi2.c b/drivers/media/i2c/alvium-csi2.c
-index 26cac5821b9f..6d2c3d62137c 100644
---- a/drivers/media/i2c/alvium-csi2.c
-+++ b/drivers/media/i2c/alvium-csi2.c
-@@ -433,10 +433,8 @@ static int alvium_is_alive(struct alvium_dev *alvium)
- 
- 	alvium_read(alvium, REG_BCRM_MINOR_VERSION_R, &bcrm, &ret);
- 	alvium_read(alvium, REG_BCRM_HEARTBEAT_RW, &hbeat, &ret);
--	if (ret)
--		return ret;
- 
--	return hbeat;
-+	return ret;
- }
- 
- static void alvium_print_avail_mipi_fmt(struct alvium_dev *alvium)
-@@ -2354,8 +2352,24 @@ static int alvium_get_dt_data(struct alvium_dev *alvium)
- 	return -EINVAL;
- }
- 
-+static int alvium_check(struct alvium_dev *alvium, u64 *bcrm_major)
-+{
-+	int ret = 0;
-+
-+	ret = alvium_read(alvium, REG_BCRM_MAJOR_VERSION_R, bcrm_major, NULL);
-+
-+	if (ret)
-+		return ret;
-+
-+	if (*bcrm_major != 0)
-+		return 0;
-+
-+	return -ENODEV;
-+}
-+
- static int alvium_set_power(struct alvium_dev *alvium, bool on)
- {
-+	u64 bcrm_major = 0;
- 	int ret;
- 
- 	if (!on)
-@@ -2365,9 +2379,12 @@ static int alvium_set_power(struct alvium_dev *alvium, bool on)
- 	if (ret)
- 		return ret;
- 
--	/* alvium boot time 7s */
--	msleep(7000);
--	return 0;
-+	/* alvium boot time is up to 7.5s but test if its available already */
-+	read_poll_timeout(alvium_check, bcrm_major, (bcrm_major == 0),
-+		250000, 7500000, false,
-+		alvium, &bcrm_major);
-+
-+	return ret;
- }
- 
- static int alvium_runtime_resume(struct device *dev)
-@@ -2432,7 +2449,7 @@ static int alvium_probe(struct i2c_client *client)
- 	if (ret)
- 		goto err_powerdown;
- 
--	if (!alvium_is_alive(alvium)) {
-+	if (alvium_is_alive(alvium)) {
- 		ret = -ENODEV;
- 		dev_err_probe(dev, ret, "Device detection failed\n");
- 		goto err_powerdown;
+								Honza
+
+> ---
+>  kernel/utsname.c | 16 ++--------------
+>  1 file changed, 2 insertions(+), 14 deletions(-)
+> 
+> diff --git a/kernel/utsname.c b/kernel/utsname.c
+> index b1ac3ca870f2..02037010b378 100644
+> --- a/kernel/utsname.c
+> +++ b/kernel/utsname.c
+> @@ -27,16 +27,6 @@ static void dec_uts_namespaces(struct ucounts *ucounts)
+>  	dec_ucount(ucounts, UCOUNT_UTS_NAMESPACES);
+>  }
+>  
+> -static struct uts_namespace *create_uts_ns(void)
+> -{
+> -	struct uts_namespace *uts_ns;
+> -
+> -	uts_ns = kmem_cache_alloc(uts_ns_cache, GFP_KERNEL);
+> -	if (uts_ns)
+> -		refcount_set(&uts_ns->ns.count, 1);
+> -	return uts_ns;
+> -}
+> -
+>  /*
+>   * Clone a new ns copying an original utsname, setting refcount to 1
+>   * @old_ns: namespace to clone
+> @@ -55,17 +45,15 @@ static struct uts_namespace *clone_uts_ns(struct user_namespace *user_ns,
+>  		goto fail;
+>  
+>  	err = -ENOMEM;
+> -	ns = create_uts_ns();
+> +	ns = kmem_cache_zalloc(uts_ns_cache, GFP_KERNEL);
+>  	if (!ns)
+>  		goto fail_dec;
+>  
+> -	err = ns_alloc_inum(&ns->ns);
+> +	err = ns_common_init(&ns->ns, &utsns_operations, true);
+>  	if (err)
+>  		goto fail_free;
+>  
+>  	ns->ucounts = ucounts;
+> -	ns->ns.ops = &utsns_operations;
+> -
+>  	down_read(&uts_sem);
+>  	memcpy(&ns->name, &old_ns->name, sizeof(ns->name));
+>  	ns->user_ns = get_user_ns(user_ns);
+> 
+> -- 
+> 2.47.3
+> 
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
