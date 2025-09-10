@@ -1,112 +1,124 @@
-Return-Path: <linux-kernel+bounces-809248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE69B50A91
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:56:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E707B50A92
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E90F1B2563D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54183460C55
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D23226CF6;
-	Wed, 10 Sep 2025 01:56:24 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D1122541B;
+	Wed, 10 Sep 2025 01:57:10 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8762248B8;
-	Wed, 10 Sep 2025 01:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A762A2264A3
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757469383; cv=none; b=kvGk7iDbzCCMXEswgihrlWdu8NipZFfeHEvwJB9D+mN65YZ2UyHtaqjffjWdihmG8QjG7nKqGogiUvHJ6Y7TV1T8qF13LPADFB+CIjMTomF8YTWMl+4OJPtQxfhD97QyAdqGvyCEgW8SRND6yAVummObRG0hct3gcC310Z0X0ns=
+	t=1757469430; cv=none; b=C2tEpxckQyiB1t/9dXnkOA2/7+V37EFW5aw8O92eTZBa3oouQnxeFkWQNRgoEHcMQQkJZZWMESLw3nGzYGVTzfPcKfuPbO7NVBqzITitKMaPmuZ5WMl0IezWkVt0lwUlR6GepmJCgKt/Ufr20V9eUCWmfqxS2a0ol9ZIfIK1+xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757469383; c=relaxed/simple;
-	bh=zxesjLZpmWK0+n8WPq3ApNudAoBG+yunYX61OkpW7Lg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PMSt2gBw62hDib+x0tuBVKBDJ4jeOgoFobt7OUdFfwx0w68+sW/GzI3mrjMmQ4O8l0A0stkCy4p2IxtSscFz+bZL4iYQNENFIF1GW3FQMK4zpSduq5PuKgrfrKugCY7dHYuz3h60ogb3yMgWPq5YAzC4DOIdT56HSl/K+THMy+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 5471350a8de911f0b29709d653e92f7d-20250910
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:57630198-5744-4314-ae95-7e6c36ec0f92,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:f3531b3caf06b19c5753c8f07bf8d171,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 5471350a8de911f0b29709d653e92f7d-20250910
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <tanzheng@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1203768447; Wed, 10 Sep 2025 09:56:13 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 07333160042A0;
-	Wed, 10 Sep 2025 09:56:13 +0800 (CST)
-X-ns-mid: postfix-68C0DABC-783697334
-Received: from localhost.localdomain (unknown [10.42.20.101])
-	by node4.com.cn (NSMail) with ESMTPA id 4FF6C16004295;
-	Wed, 10 Sep 2025 01:56:12 +0000 (UTC)
-From: Zheng tan <tanzheng@kylinos.cn>
-To: johannes@sipsolutions.net
-Cc: arend.vanspriel@broadcom.com,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	tanzheng@kylinos.cn
-Subject: [PATCH v5] wifi: cfg80211: Remove the redundant wiphy_dev
-Date: Wed, 10 Sep 2025 09:55:56 +0800
-Message-Id: <20250910015556.219298-1-tanzheng@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1757469430; c=relaxed/simple;
+	bh=RX/t6MerktExpMKbfQkJZQmYXZCV0tobve1MAfY2Pf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TVXUlLEjsxhaWxvy/5zlhHk1JbLVQ+exzOSqRGzSzFk8V/Meeagb08aeu+fRu148Koj2WOiPdoRuoXu6Wv1/OjigLkxprF8Flg+PV33uluAa2SphphXU7iRKYFiKVWh3FBW2RqXGewa9V5Bn+OiwM6+wFN8FnMCGcyRRYpu1lx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cM3d81N7Tz24j2j;
+	Wed, 10 Sep 2025 09:53:48 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3DF701A0188;
+	Wed, 10 Sep 2025 09:57:03 +0800 (CST)
+Received: from [10.67.121.183] (10.67.121.183) by
+ dggpemf500013.china.huawei.com (7.185.36.188) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 10 Sep 2025 09:57:02 +0800
+Message-ID: <6a5c32ae-c897-40a4-a5b9-20c77496760d@huawei.com>
+Date: Wed, 10 Sep 2025 09:57:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] KVM: arm64: Make ID_AA64MMFR1_EL1.HCX writable
+ from userspace
+To: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
+CC: <yuzenghui@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
+	<kvmarm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<liuyonglong@huawei.com>, <wangzhou1@hisilicon.com>
+References: <20250909034415.3822478-1-yangjinqian1@huawei.com>
+ <20250909034415.3822478-2-yangjinqian1@huawei.com>
+ <aL_SIwQiz3QO1fKe@linux.dev> <86ldmoc4x7.wl-maz@kernel.org>
+ <aMCeY0vvWTORB6E_@linux.dev>
+From: Jinqian Yang <yangjinqian1@huawei.com>
+In-Reply-To: <aMCeY0vvWTORB6E_@linux.dev>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-There is no need to call wiphy_dev again.Simplifying the
-code makes it more readable.
 
-Signed-off-by: Zheng tan <tanzheng@kylinos.cn>
-Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
----
-Changes in v5:
--Modify the From and Signed-off-by.
 
-Changes in v4:
--Keep the from and Signed-off-by tags consistent.
+On 2025/9/10 5:38, Oliver Upton wrote:
+> On Tue, Sep 09, 2025 at 11:10:28AM +0100, Marc Zyngier wrote:
+>> On Tue, 09 Sep 2025 08:07:15 +0100,
+>> Oliver Upton <oliver.upton@linux.dev> wrote:
+>>>
+>>> On Tue, Sep 09, 2025 at 11:44:13AM +0800, Jinqian Yang wrote:
+>>>> Allow userspace to downgrade HCX in ID_AA64MMFR1_EL1. Userspace can
+>>>> only change this value from high to low.
+>>>>
+>>>> Signed-off-by: Jinqian Yang <yangjinqian1@huawei.com>
+>>>
+>>> I'm not sure our quality of emulation is that great in this case. We
+>>> have no way of trapping the register and it is always stateful. Better
+>>> yet, our RESx infrastructure doesn't account for the presence of
+>>> FEAT_HCX and we happily merge the contents with the host's HCRX.
+>>
+>> Yeah, that's not good, and definitely deserves a fix.
+>>
+>>> We should make a reasonable attempt at upholding the architecture before
+>>> allowing userspace to de-feature FEAT_HCX.
+>>
+>> My concern here is the transitive implications of FEAT_HCX being
+>> disabled: a quick look shows about 20 features that depend on
+>> FEAT_HCX, and we don't really track this. I can probably generate the
+>> dependency graph, but that's not going to be small. Or very useful.
+>>
+>> However, we should be able to let FEAT_HCX being disabled without
+>> problem if the downgrading is limited to non-EL2 VMs. Same thing for
+>> FEAT_VHE.
+>>
+>> What do you think?
+> 
+> So I'm a bit worried about making fields sometimes-writable, it creates
+> a very confusing UAPI behavior. On top of that, our writable masks are
+> currently static.
+> 
+> What if we treat the entire register as RES0 in this case? It seems to
+> be consistent with all the underlying bits / features being NI. A
+> mis-described VM isn't long for this world anyway (e.g. FEAT_SCTLR2 && !FEAT_HCX)
+> and in that case I'd prefer an approach that keeps the KVM code as
+> simple as possible.
+> 
+> We do, after all, expect some level of sanity from userspace of feature
+> dependencies as we do not enforce the dependency graph at the moment.
+> Hell, this could be useful for someone cross-migrating a nested VM from
+> a machine w/o FEAT_HCX to one that has it.
+> 
 
-Changes in v3:
-- Modify the patch description.
+Making HCX writable is very useful, as it allows VMs to migrate between 
+machines that support and do not support FEAT_HCX. For non-EL2 VMs, we 
+have tested that migration works without issues :)
 
-Changes in v2:
-- Delete the use of dev_name instead of pdev->driver->name.
-  This is incorrect.
-
- net/wireless/ethtool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/wireless/ethtool.c b/net/wireless/ethtool.c
-index 2613d6ac0fda..46e4317cbd7e 100644
---- a/net/wireless/ethtool.c
-+++ b/net/wireless/ethtool.c
-@@ -23,7 +23,7 @@ void cfg80211_get_drvinfo(struct net_device *dev, struc=
-t ethtool_drvinfo *info)
- 	else
- 		strscpy(info->fw_version, "N/A", sizeof(info->fw_version));
-=20
--	strscpy(info->bus_info, dev_name(wiphy_dev(wdev->wiphy)),
-+	strscpy(info->bus_info, dev_name(pdev),
- 		sizeof(info->bus_info));
- }
- EXPORT_SYMBOL(cfg80211_get_drvinfo);
---=20
-2.25.1
+Thanks,
+Jinqian
 
 
