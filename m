@@ -1,97 +1,64 @@
-Return-Path: <linux-kernel+bounces-809872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F58B51309
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:46:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CEEAB51315
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72BDA5610DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:45:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33D621C82AA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36EA31197B;
-	Wed, 10 Sep 2025 09:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="19cAUI34"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C09F317707;
+	Wed, 10 Sep 2025 09:45:25 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC7C3164A4
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1D63191BF
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497513; cv=none; b=rEf1qjLhAGeJl3MnSZgFUD0iFvEMHgEpFqL8VE6+jmlZk9mIJMlTJW+ytO6+9pL3gcNDe5iOhZZSQ0LaOP82UjUncoLXAT4AXiN82my6Ni8iinSRgyIjgusNtpBcCDpGLN0fXFiOZ3WowsG7EE1FVfKAB3lMBTHUEGdiZ+7KFVs=
+	t=1757497525; cv=none; b=ouDbMKP0tV4/wWzb/I4BYrzPUTgEDMyPJsRGWaN25EltlF4pjmePc/Dg0IA0lBykK+cEX4qiInuzxIy0o7vfAYpXyAwxL5xY0vJHVuNMWZa2LNi9LxNTpHQHB2uUgIxy7H9SWsJKAtGUzTdxXnIzp81DKIMX1pU9Lbw7sfaRSDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497513; c=relaxed/simple;
-	bh=GCwe8Dko3jDOXji8AdD72nwYCErq8l4yfDoJj7Gnt6A=;
+	s=arc-20240116; t=1757497525; c=relaxed/simple;
+	bh=3zQu35m1C6YPImywyjnt2q1c7Rr8khcAX2jfPUML1h0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZFUV8k0tLALtn5FQ3vzutNfQF3tRvkyvKv8kZlwkjNGhFO9UsHtNcwwTt8blJiMVJDXdX/bkjURuNatv1z9mFyxyVpfPDuuFemP4QcbFZY/vQK4RBoVjmVddNgHNhMBa4MjGGlCdCCrpfLHS+kLWc3LNIutEpc/sFFQhMYBxSlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=19cAUI34; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45deccb2c1eso15535925e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757497509; x=1758102309; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c1kBDy0sA3BYfIdWlr+hjUo0vDal9CsK0/fCdjzti6o=;
-        b=19cAUI34sfYJbTjYGCPpJRZggcSidg2jKJyAfwr7F+ZoZW/Lw3KwWQ0bY09/mVtQ9w
-         J62kIZ/tuB0k8gbnxeAUWphBf+O2khUq2WHWetIzKOaF/9yicq0NhPMngCcaLfjo5d2e
-         P7BqpS6+509izV/NWbg8SSs2RpRrKkxKH20uCUGrvjI/NzxtjAeURVbL1r82lNJuuGzC
-         6vuzcLe6q2NMkrOGjl52VML6yp+hbrAJrjfAHp9v07KPPSgL77T8dqg1e7U3Dpn5HRav
-         gvMfgOueFK6H1mTGPTyQiSJqK6uyaWsjh7lzV9lHmOrI4Md825RoxNegkr2smqhdTTbI
-         qPvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757497510; x=1758102310;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c1kBDy0sA3BYfIdWlr+hjUo0vDal9CsK0/fCdjzti6o=;
-        b=DUo8HRp5j/tNfWRM9BIegYeGix41+Y5r+UFjQdzDQg8ZKk740v6GSwSHQTz5op25et
-         YTUvhFWvPWM6NXlRfGl6ByO19VPjpxKRpI5wONqe/1FuFKsiss18womh5bM7IJUG95M6
-         zUpfdzfY98I32ttm+mM9j8DP+G2LAgzNzMRAbSV+ZQOvEbCimLzHuUzPboOuTjiUPL4X
-         URIEB7DRKm84aD3ko8h9svY5bi0EgflzJuOIyJUcObN74B9IAuP6/gDGQLM5z3tOmk6c
-         Y6WvjFCl81cxsPECm2qmlAPfKGRJ2iQDd8Nu1v8nt0kgNPfnksX665+MuB2Va4W981dp
-         xhKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7rO/4XlIxVcbvFNNoiommhOFS3uuHuK3/tNtWdIOhUnHAwmc3eviP5dNKJC+w4k2Ywsur6aCrOgz2IUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnw/99KG+IYRi9Qc669woF7LL55mPICBPx48OH8Dzjoux/OygV
-	A6rUkviHOwbJVfIAUewYzX4jUCsy2ixYalMjpK8WaPv9OtbKhDiYRLBd6qCq6X9RMg==
-X-Gm-Gg: ASbGncuGQQhv9UbXzZrq1pkysxZ8jCqHniAtgDy45X/TvUKvx0ayx1kagU6CINuxuAw
-	B+AFXiAXbeJ0v36Dxh1uJqayge8lIRNnkWw2uKhrXdciOMLFGhqk4DDeXIPclmsRH3t6B7JHISF
-	Ba59t/clmnlpN5WCgLxBXLiQyWSeko/yIAoolXr5KBByOLdOps9N1bwC4vTAJA4zbbml0ZixVXZ
-	hz0wgT1IzB7dA6NUmhJdVuuw+Ly3IX6lLilZGBEl20zOlMRUjThSCmPviL2vVaJHWYw9QkIa+Xm
-	/hAJ8VckVbcIS2Sdl6S+YQnRORBxkV8zXpcTvZBbPbzoAYyI27g2uC9founcwHoQmcggop2hYF7
-	h5BPSRrcvUr+YjLR+ksnzkqKz2OQgmG+Sv9qtDNo35jfVhR9F2pjHyOv3SFEJkhdhlQ2MwRKFVP
-	z1lTcx
-X-Google-Smtp-Source: AGHT+IENXjSZ9eYxIcTPb1KA8MslU7Gkmmzo6eN91GvxyARG/yRPq8gJbKV+SVFiPMHX+dA+S+OktA==
-X-Received: by 2002:a05:600c:3b1d:b0:45d:84ca:8a7 with SMTP id 5b1f17b1804b1-45dddeba3e5mr124414255e9.14.1757497509275;
-        Wed, 10 Sep 2025 02:45:09 -0700 (PDT)
-Received: from google.com (211.29.195.35.bc.googleusercontent.com. [35.195.29.211])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7532f90e6sm5750475f8f.6.2025.09.10.02.45.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 02:45:08 -0700 (PDT)
-Date: Wed, 10 Sep 2025 10:45:05 +0100
-From: Vincent Donnefort <vdonnefort@google.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
-	linux-trace-kernel@vger.kernel.org, maz@kernel.org,
-	oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, jstultz@google.com,
-	qperret@google.com, will@kernel.org, aneesh.kumar@kernel.org,
-	kernel-team@android.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 04/24] tracing: Add reset to trace remotes
-Message-ID: <aMFIoY5yfQa2Mzgk@google.com>
-References: <20250821081412.1008261-1-vdonnefort@google.com>
- <20250821081412.1008261-5-vdonnefort@google.com>
- <20250908193757.079aae76@gandalf.local.home>
- <aMAZMaZJ1_Eny5Ku@google.com>
- <20250909094028.3265b751@gandalf.local.home>
- <aMBSa29ev0BNgr5R@google.com>
- <20250909143948.420bfb1c@gandalf.local.home>
- <20250909145236.69192cd0@gandalf.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XFRYfLDiGz/j4s73KSD2sEejesMbcPSwYk0EdTlSvZPGj6r+MafH3GSAuEUtt8Jt7TE7GKcmAm97DZh48FfR8fAwo2SSoJrBFYHURmEzf19mcPpDyxwhqPNZXIjyl84jClKyEz31PIquX+OzGE29OZKQf6WDg+fWuZLqDCcrx0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwHO6-0000Ts-30; Wed, 10 Sep 2025 11:45:14 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwHO5-000ZMU-2h;
+	Wed, 10 Sep 2025 11:45:13 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwHO5-00GDN2-2E;
+	Wed, 10 Sep 2025 11:45:13 +0200
+Date: Wed, 10 Sep 2025 11:45:13 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/11] dmaengine: imx-sdma: fix missing
+ of_dma_controller_free()
+Message-ID: <20250910094513.eawc5n6zbddtg5c5@pengutronix.de>
+References: <20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de>
+ <20250903-v6-16-topic-sdma-v1-8-ac7bab629e8b@pengutronix.de>
+ <aLhZ2zfh5bnNoH8X@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,56 +67,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250909145236.69192cd0@gandalf.local.home>
+In-Reply-To: <aLhZ2zfh5bnNoH8X@lizhi-Precision-Tower-5810>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Sep 09, 2025 at 02:52:36PM -0400, Steven Rostedt wrote:
-> On Tue, 9 Sep 2025 14:39:48 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+On 25-09-03, Frank Li wrote:
+> On Wed, Sep 03, 2025 at 03:06:16PM +0200, Marco Felsch wrote:
+> > Add the missing of_dma_controller_free() to free the resources allocated
+> > via of_dma_controller_register(). The missing free was introduced long
+> > time ago  by commit 23e118113782 ("dma: imx-sdma: use
+> > module_platform_driver for SDMA driver") while adding a proper .remove()
+> > implementation.
+> >
+> > Fixes: 23e118113782 ("dma: imx-sdma: use module_platform_driver for SDMA driver")
 > 
-> > But anyway, I think it should work for the remote buffers too. Let me go
-> > and fix the current iterator.
-> 
-> I thought it was broken but it isn't ;-) I did it properly, I just didn't
-> look deep enough.
-> 
-> So yeah, look at the rb_iter_head_event() code. The ring buffer iterator
-> has a copy of the event. It has:
-> 
-> 	if ((iter->head + length) > commit || length > iter->event_size)
-> 		/* Writer corrupted the read? */
-> 		goto reset;
-> 
-> 	memcpy(iter->event, event, length);
-> 	/*
-> 	 * If the page stamp is still the same after this rmb() then the
-> 	 * event was safely copied without the writer entering the page.
-> 	 */
-> 	smp_rmb();
-> 
-> 	/* Make sure the page didn't change since we read this */
-> 	if (iter->page_stamp != iter_head_page->page->time_stamp ||
-> 	    commit > rb_page_commit(iter_head_page))
-> 		goto reset;
-> 
-> It first checks before copying that the data it's about to copy hasn't been
-> touched by the writer.
-> 
-> It then copies the event into the iter->event temp buffer.
-> 
-> Then it checks again that the data hasn't been touched. If it has, then
-> consider the data corrupt and end the iteration. This is how the "trace"
-> file works. I believe you could do the same for the remote code.
-> 
-> If we are gonna keep the "trace" file, let's make sure it's fully
-> implemented.
+> Look it is hard to back port to old kernel.  Can move it to before cleanup?
 
-I was more worry about the ring-buffer page order that can be reshuffled on each
-swap_reader_page(), making the page links useless in the kernel. Ideally, the
-meta-page would keep the page ID order somewhere.
+I know that fixing commits should come first but this commit dates back
+to v3.18-rc1, therefore I thought that backporting this commit would
+cause more troubles than it's worth it.
 
-Alternatively, we could walk all the buffer pages to read the timestamp and
-re-create the order but that sounds quite cumbersome.
+Anyway, after checking the current LTS and stable kernels I think that
+the commit could be backported without troubles because the APIs used
+do exist on all these kernels.
 
+Regards,
+  Marco
+
+> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > ---
+> >  drivers/dma/imx-sdma.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+> > index e30dd46cf6522ee2aa4d3aca9868a01afbd29615..6c6d38b202dd2deffc36b1bd27bc7c60de3d7403 100644
+> > --- a/drivers/dma/imx-sdma.c
+> > +++ b/drivers/dma/imx-sdma.c
+> > @@ -2232,6 +2232,13 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
+> >  				     ofdma->of_node);
+> >  }
+> >
+> > +static void sdma_dma_of_dma_controller_unregister_action(void *data)
+> > +{
+> > +	struct sdma_engine *sdma = data;
+> > +
+> > +	of_dma_controller_free(sdma->dev->of_node);
+> > +}
+> > +
+> >  static void sdma_dma_device_unregister_action(void *data)
+> >  {
+> >  	struct sdma_engine *sdma = data;
+> > @@ -2370,6 +2377,8 @@ static int sdma_probe(struct platform_device *pdev)
+> >  	if (ret)
+> >  		return dev_err_probe(dev, ret, "failed to register controller\n");
+> >
+> > +	devm_add_action_or_reset(dev, sdma_dma_of_dma_controller_unregister_action, sdma);
+> > +
+> >  	spba_bus = of_find_compatible_node(NULL, NULL, "fsl,spba-bus");
+> >  	ret = of_address_to_resource(spba_bus, 0, &spba_res);
+> >  	if (!ret) {
+> >
+> > --
+> > 2.47.2
+> >
 > 
-> -- Steve
 
