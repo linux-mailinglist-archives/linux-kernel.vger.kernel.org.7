@@ -1,208 +1,139 @@
-Return-Path: <linux-kernel+bounces-810795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4EEB51F82
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:55:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3998AB51F7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9ACB5445C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECD643A69AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CB933A020;
-	Wed, 10 Sep 2025 17:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B5B334388;
+	Wed, 10 Sep 2025 17:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="c9dETBzu"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUYb3e2g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4D928B501;
-	Wed, 10 Sep 2025 17:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757526913; cv=pass; b=KIfmuyHTvFTT4AwmiGfceoomeoSIVdX5u8FvtqhwwjcHBzhAi+refuSfZU780FOVDZHKUekDEkNRuwtLCRLDvx3HNUbgWsrqmPdcgJORo9WsNXFxMo8HNPC87auhUw4dC67+qihrxH4ZR5uX/p/5AXCvddA0Uw/D0vxgOhrFevk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757526913; c=relaxed/simple;
-	bh=y+Vk5IPf5yAXY3Xy6BiDHoJWHile6Cy9+H+G9a3U388=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QagQkzzSozV20wM9yFNnYU54ujJh1fuiZsS44qd1vLhvCd5NbGlgIHU3QmhaoGgLd70Zr2o+QQAUPa8pt9QNiFZ9VY0dnnrlTnpmxy20Q9mNgHaA5FVeE/ElkXFUyMyqsI8IEQGQUmjaAdq8k46RHXAwmc3J9K51kBnEtWfx4v0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=c9dETBzu; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757526896; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=kjzBnca2hLI5URWNWxH7CM4COzQ3XKoIYKajHHxDkvQ9wjEzil44Ua+wq3EHPJLYfawTjAr67TfIY1C53HyXmG1tUgl+kyxcewluvJ9KfijKYOcEtOrUaHxtVOT4rVYcxLiCEmnJdrlPRA0GtyQybAcYYNISsoxLCqU+1qAewGI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757526896; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=oHmbwbkQQvKLhyz4wCp3NOMYVa7zCDTSqMwuifJeQ4I=; 
-	b=ITWNLCwAjBspmUcTZASJZhdyKW3UGVbJnJhq8wf4XsaaPZYZDi/vt/P9BHwEEM3Q9h47nC82ztqFfcH6FxNKO5YZfC1LEL/f1WCJthiYSQRElH+5JNjrGbswRKQhhwFba5g4BPI3Q9+CXsBCHnQAiQz1IByruNPJ+0REf8xMPds=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757526896;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=oHmbwbkQQvKLhyz4wCp3NOMYVa7zCDTSqMwuifJeQ4I=;
-	b=c9dETBzuNM0e8PJCV7e0gFeM+YXqzmwXObpKwHkaPxPtrJ7VM7cBYz8Bst6B6o04
-	qc9W1fLrFHXF4vBvLO9nz9/PLBMisTIkk13ONwhvYdMJN+jWysh/hrlpw0M1gfEb1U2
-	5uNhddBYpbcHonLhyknfg7PzyXRnRXEaUCKa7LCk=
-Received: by mx.zohomail.com with SMTPS id 1757526894359276.53351403212207;
-	Wed, 10 Sep 2025 10:54:54 -0700 (PDT)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Wed, 10 Sep 2025 14:54:32 -0300
-Subject: [PATCH v3 2/2] rust: regulator: add devm_enable and
- devm_enable_optional
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3B4261B83;
+	Wed, 10 Sep 2025 17:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757526904; cv=none; b=W8Machvy4Tx0wP7YEkwYiJREhN6IVTV9BHm6zQNm0xxiMHeXy+GQIhobyiKQ0mw/qwrSzNSmCv6JL6d8325M735HA7WCG1VGS9U2gDJ0B6xuHx66fnCxxmqetUtwsb9XNacnoD2Mq/u9Qqha/EyvG93E52xDdAaYmiBNha5EGzY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757526904; c=relaxed/simple;
+	bh=azrvDpWLRoLEgILDy3un95kIXS4nsuMR6SFCe0uv0Jk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ShRpnNJcpBsrcv7Zac0ToskWG32SYqoDr3S6fPSIyixSMF7PjBctZgageXuzH0d5OrPDEro+2jBu38dkr5jUnk5ccoyLxwxTQ6K32PeckKZZkaEdI9uEE7R8elJhdxxAZfxM91+sim0nNTxomQvl1PlitucShVH8+NmFSEbOPLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sUYb3e2g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9893FC4CEF0;
+	Wed, 10 Sep 2025 17:55:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757526903;
+	bh=azrvDpWLRoLEgILDy3un95kIXS4nsuMR6SFCe0uv0Jk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sUYb3e2gbdZy8wiixXLm4XD34LbyRbGP6Jm92K7vvghi7OoicbELkGpFo2LW5QInX
+	 vVf/FsVCspyMXZ19zDEbBePnm/65TR96SWRiZC/I8B0ADnOiBeZ1rks64fxzE/U5qi
+	 xJOFn6ziO+yLaOWo7N81T10eEWFD5+Qh1ulbQxet57SO8cL4WBqeahMzHL3z/4A5nw
+	 TlHZSijMFZO4ObnshfDnTpppKRXKEJm2jijOL+ipL52+IZ5HQIVsRVTjRFgf5LbHA1
+	 NN0pnfTAp1Sk/HxATR/IPTbVcP2012OZBJQ6XLqqOLtzL6qtEZewYYj9hKlXBEdLj/
+	 z3yoR5r0L9GeA==
+Date: Wed, 10 Sep 2025 18:54:58 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Durai.ManickamKR@microchip.com
+Cc: linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com,
+	Frank.Li@nxp.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Balamanikandan.Gunasundar@microchip.com,
+	Nicolas.Ferre@microchip.com
+Subject: Re: [PATCH 0/4] Add Microchip I3C controller
+Message-ID: <20250910-magician-retold-a6835179f71d@spud>
+References: <20250909111333.170016-1-durai.manickamkr@microchip.com>
+ <20250909-pointy-tanning-8e7b4320979d@spud>
+ <d3daaab9-71f5-49e6-b3de-b05339fa7adf@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-regulator-remove-dynamic-v3-2-07af4dfa97cc@collabora.com>
-References: <20250910-regulator-remove-dynamic-v3-0-07af4dfa97cc@collabora.com>
-In-Reply-To: <20250910-regulator-remove-dynamic-v3-0-07af4dfa97cc@collabora.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
- Danilo Krummrich <dakr@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: b4 0.14.2
-X-ZohoMailClient: External
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bU1/wKBcuNijAj8P"
+Content-Disposition: inline
+In-Reply-To: <d3daaab9-71f5-49e6-b3de-b05339fa7adf@microchip.com>
 
-A lot of drivers only care about enabling the regulator for as long as
-the underlying Device is bound. This can be easily observed due to the
-extensive use of `devm_regulator_get_enable` and
-`devm_regulator_get_enable_optional` throughout the kernel.
 
-Therefore, make this helper available in Rust. Also add an example
-noting how it should be the default API unless the driver needs more
-fine-grained control over the regulator.
+--bU1/wKBcuNijAj8P
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Suggested-by: Danilo Krummrich <dakr@kernel.org>
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
----
- rust/helpers/regulator.c | 10 ++++++++
- rust/kernel/regulator.rs | 60 +++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 69 insertions(+), 1 deletion(-)
+On Wed, Sep 10, 2025 at 06:14:21AM +0000, Durai.ManickamKR@microchip.com wr=
+ote:
+> On 10/09/25 01:16, Conor Dooley wrote:
+> > On Tue, Sep 09, 2025 at 04:43:29PM +0530, Durai Manickam KR wrote:
+> >> Add support for microchip SAMA7D65 I3C HCI master only IP. This
+> >> hardware is an instance of the MIPI I3C HCI Controller implementing
+> >> version 1.0 specification. This driver adds platform-specific
+> >> support for SAMA7D65 SoC.
+> >>
+> >> I3C in master mode supports up to 12.5MHz, SDR mode data transfer in
+> >> mixed bus mode (I2C and I3C target devices on same i3c bus). It also
+> >> supports IBI mechanism.
+> >>     =20
+> >> Features tested and supported :
+> >> 	Standard CCC commands.
+> >>         	I3C SDR mode private transfers in PIO mode.
+> >>         	I2C transfers in PIO mode.
+> >>         	Pure bus mode and mixed bus mode.
+> >>
+> >> Testing done:
+> >> With this patch we are able to fully configure the lsm6dso I3C slave
+> >> device. Unlike I2C, I hope there is no linux utility to check the
+> >> various transactions supported in the host controller. These features
+> >> will be added later on this driver after testing (probably with I3C
+> >> analyser KIT).
+> >>
+> >> Durai Manickam KR (4):
+> >>    clk: at91: sama7d65: add peripheral clock for I3C
+> >>    i3c: master: add Microchip SAMA7D65 I3C HCI master driver
+> >>    ARM: configs: at91: sama7: Add SAMA7D65 I3C HCI master
+> >>    ARM: dts: microchip: add I3C controller
+> >>
+> >>   arch/arm/boot/dts/microchip/sama7d65.dtsi    |   12 +
+> >>   arch/arm/configs/sama7_defconfig             |    2 +
+> >>   drivers/clk/at91/sama7d65.c                  |    5 +-
+> >>   drivers/i3c/master/Kconfig                   |   14 +
+> >>   drivers/i3c/master/Makefile                  |    1 +
+> >>   drivers/i3c/master/sama7d65-i3c-hci-master.c | 2705 ++++++++++++++++=
+++
+> >>   6 files changed, 2737 insertions(+), 2 deletions(-)
+> >>   create mode 100644 drivers/i3c/master/sama7d65-i3c-hci-master.c
+>=20
+> Hi Conor,
+>=20
+> Was planning to sent along with the review comments received for the i3c=
+=20
+> driver. Will add this and send in patch v2 series.
+>=20
+> > Where is your dt-binding?
 
-diff --git a/rust/helpers/regulator.c b/rust/helpers/regulator.c
-index cd8b7ba648ee33dd14326c9242fb6c96ab8e32a7..11bc332443bd064f4b5afd350ffc045badff9076 100644
---- a/rust/helpers/regulator.c
-+++ b/rust/helpers/regulator.c
-@@ -40,4 +40,14 @@ int rust_helper_regulator_is_enabled(struct regulator *regulator)
- 	return regulator_is_enabled(regulator);
- }
- 
-+int rust_helper_devm_regulator_get_enable(struct device *dev, const char *id)
-+{
-+	return devm_regulator_get_enable(dev, id);
-+}
-+
-+int rust_helper_devm_regulator_get_enable_optional(struct device *dev, const char *id)
-+{
-+	return devm_regulator_get_enable_optional(dev, id);
-+}
-+
- #endif
-diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
-index 5ea2307f02df4a10c1c8c07b3b8c134d13519b69..b55a201e5029fdfbf51d2d54180dc82372d7a571 100644
---- a/rust/kernel/regulator.rs
-+++ b/rust/kernel/regulator.rs
-@@ -18,7 +18,7 @@
- 
- use crate::{
-     bindings,
--    device::Device,
-+    device::{Bound, Device},
-     error::{from_err_ptr, to_result, Result},
-     prelude::*,
- };
-@@ -69,6 +69,41 @@ pub struct Error<State: RegulatorState> {
-     /// The regulator that caused the error, so that the operation may be retried.
-     pub regulator: Regulator<State>,
- }
-+/// Obtains and enables a [`devres`]-managed regulator for a device.
-+///
-+/// This calls [`regulator_disable()`] and [`regulator_put()`] automatically on
-+/// driver detach.
-+///
-+/// This API is identical to `devm_regulator_get_enable()`, and should be
-+/// preferred over the [`Regulator<T: RegulatorState>`] API if the caller only
-+/// cares about the regulator being enabled.
-+///
-+/// [`devres`]: https://docs.kernel.org/driver-api/driver-model/devres.html
-+/// [`regulator_disable()`]: https://docs.kernel.org/driver-api/regulator.html#c.regulator_disable
-+/// [`regulator_put()`]: https://docs.kernel.org/driver-api/regulator.html#c.regulator_put
-+pub fn devm_enable(dev: &Device<Bound>, name: &CStr) -> Result {
-+    // SAFETY: `dev` is a valid and bound device, while `name` is a valid C
-+    // string.
-+    to_result(unsafe { bindings::devm_regulator_get_enable(dev.as_raw(), name.as_ptr()) })
-+}
-+
-+/// Same as [`devm_enable`], but calls `devm_regulator_get_enable_optional`
-+/// instead.
-+///
-+/// This obtains and enables a [`devres`]-managed regulator for a device, but
-+/// does not print a message nor provides a dummy if the regulator is not found.
-+///
-+/// This calls [`regulator_disable()`] and [`regulator_put()`] automatically on
-+/// driver detach.
-+///
-+/// [`devres`]: https://docs.kernel.org/driver-api/driver-model/devres.html
-+/// [`regulator_disable()`]: https://docs.kernel.org/driver-api/regulator.html#c.regulator_disable
-+/// [`regulator_put()`]: https://docs.kernel.org/driver-api/regulator.html#c.regulator_put
-+pub fn devm_enable_optional(dev: &Device<Bound>, name: &CStr) -> Result {
-+    // SAFETY: `dev` is a valid and bound device, while `name` is a valid C
-+    // string.
-+    to_result(unsafe { bindings::devm_regulator_get_enable_optional(dev.as_raw(), name.as_ptr()) })
-+}
- 
- /// A `struct regulator` abstraction.
- ///
-@@ -146,6 +181,29 @@ pub struct Error<State: RegulatorState> {
- /// }
- /// ```
- ///
-+/// If a driver only cares about the regulator being on for as long it is bound
-+/// to a device, then it should use [`devm_enable`] or [`devm_enable_optional`].
-+/// This should be the default use-case unless more fine-grained control over
-+/// the regulator's state is required.
-+///
-+/// [`devm_enable`]: crate::regulator::devm_enable
-+/// [`devm_optional`]: crate::regulator::devm_enable_optional
-+///
-+/// ```
-+/// # use kernel::prelude::*;
-+/// # use kernel::c_str;
-+/// # use kernel::device::{Bound, Device};
-+/// # use kernel::regulator;
-+/// fn enable(dev: &Device<Bound>) -> Result {
-+///     // Obtain a reference to a (fictitious) regulator and enable it. This
-+///     // call only returns whether the operation succeeded.
-+///     regulator::devm_enable(dev, c_str!("vcc"))?;
-+///
-+///     // The regulator will be disabled and put when `dev` is unbound.
-+///     Ok(())
-+/// }
-+/// ```
-+///
- /// ## Disabling a regulator
- ///
- /// ```
+Weird quoting going on here. Why didn't you just send it with the v1,
+like is normally done? There's no explanation provided about why you've
+omitted it.
 
--- 
-2.51.0
+--bU1/wKBcuNijAj8P
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMG7cgAKCRB4tDGHoIJi
+0s05AQCP7G23S1NipJsfJOd8wie6aelbD8Sa6UynTd7Ochn8+gD+K5Xc1U9x1a/Y
+M4nWFL3C49jxzVXqTIRFRPhMFJxZIww=
+=Iava
+-----END PGP SIGNATURE-----
+
+--bU1/wKBcuNijAj8P--
 
