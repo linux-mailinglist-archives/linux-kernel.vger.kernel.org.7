@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-809524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264B1B50EA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:01:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FA3B50EAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70B60560727
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:01:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C2F84E2660
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DFD2BE63F;
-	Wed, 10 Sep 2025 07:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C686F30648B;
+	Wed, 10 Sep 2025 07:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OddLyNPQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRB9lRqf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144EB36124;
-	Wed, 10 Sep 2025 07:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9401798F;
+	Wed, 10 Sep 2025 07:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757487674; cv=none; b=L/k6etgNt+FFoxtFtG8htRa7PIWBj9jcv+CrTk+PAbe4reHti/gIRQtQn4fbbSMr/qm5KhBRGusPdZRURM5v1v7n1zKie9j1C80Mpl9o3BlDx72SV2rRUiaYqa2640VeY+8FlxNh3TyssgWUyWRfdgWqhS6+LBVDtr1HkirO4hg=
+	t=1757487762; cv=none; b=uS4fYiAjvzlfFeowqfTQYRjpTSgEHv5c/PucoDQMdOBrcNgYRvhnu/rfMlb8eFE/hVXQ6850qy8Fl+I61IxHkgbBWtMlQCZSQ9gpYrEjcAT3dLIxS/Obpjfo8rrDlBrBxldhnL/DZaN++b5eZdZyLIDLnmCIoV3BbzBFbwU1Tv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757487674; c=relaxed/simple;
-	bh=olghyLG/6wVxSy7uPY15BdOebeBKuKSMX+pvxBN8fpg=;
+	s=arc-20240116; t=1757487762; c=relaxed/simple;
+	bh=sKGVZz1dCHqxzGrCJXQCdGqP37JooMozQQfivqvDPvE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BeoWA11+hk5eYOOYsPkD1nMrskgCknlwm5d2pSXaVlNiZ9sRS7jVuPSxT46eeMIibuWA8t/PsFUfl98y/IkKxYTMxsbqUfBRzO7GYtJajZAW23T83fnCRKPNLpgLjn5GcBJHeVywnRHfvebaa0IT9lq9HBFZbxLBwBhs5zgpZeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OddLyNPQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFCD1C4CEF5;
-	Wed, 10 Sep 2025 07:01:07 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=oBIdPCmEWm/PSzO9aPRKNTybKMzsLrpSX7M/gkgCTRK1fSDVmtEvc8mv/7Q8xxxF9cKshR/XB5gSkdEgcRlHzmGDJW7il/UJyu2V6MQr47sVj1hEDYSEKbB8YgNWCOsWQWst+XOvLh9AaN/qG3M+ymcRM/0diqCDAvPAVaGKzZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRB9lRqf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2253DC4CEF5;
+	Wed, 10 Sep 2025 07:02:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757487672;
-	bh=olghyLG/6wVxSy7uPY15BdOebeBKuKSMX+pvxBN8fpg=;
+	s=k20201202; t=1757487761;
+	bh=sKGVZz1dCHqxzGrCJXQCdGqP37JooMozQQfivqvDPvE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OddLyNPQG8RVvbKoK6DwyVeV3xy9ngTTDT7NAXEqn1pzkf8sd3CwzJ8XlIrHC2ALa
-	 F3UnrRlkBHBX12c3AglC8t07f3BtIbV4uWu/8prjiGOj8jSJ+62HxektLi66JdIV3V
-	 Ql/X4lrPLn07lTL1Kx4fsV8a38NW4UUKBGTjIW8tK+FWtllRoBWSyHKbS+aMjcW3NT
-	 FqnhPcAEol6zITXCo8qv9YYpHIJmVor/EY4bTTCeo+mPO+LpWUKNzsxRnYStOWNZ+J
-	 GJm+gowOIdBw6Ab3AQO3BynJFPLkTN+e9HxOgRO0uVu4h9jEyQAPMEgjNzhlVEBMsH
-	 MqRog/mq9hdcw==
-Message-ID: <23b803e0-a74b-477d-b732-83f97ca4105d@kernel.org>
-Date: Wed, 10 Sep 2025 09:01:06 +0200
+	b=lRB9lRqfnVAoFX3Z2Wz01FlkSUgnN+sUYGrOzVB3dg/DuclAOzN6PUVtGm88zpG5K
+	 Zu/t3HG4PLovb0ZPRGmSWWyz76nUcLA5ogAno+KNC2UKXyloGu004jh5dLuiSBiRXW
+	 K0nJ/d6P+9QVdstxa+/lWtjXVESchjjR9BRU35Ur56t5U6EcuZyjiI13hOI31wnuyN
+	 KUF6FVg8kiM9PLSaYdIET90x4OMNjX724oz8eqVcQC6cOsD/1evzCCcepYQR85iUQG
+	 1NbiwOTObMDL6YKyAk9oLcp7g/J4DwtHqtPI3kMtG++/6G+uYTZElBcEZe0GGxgW7R
+	 ZxhKIR73pl0OA==
+Message-ID: <e4d3c2a3-e395-4f60-8cff-fbb9a1611ec2@kernel.org>
+Date: Wed, 10 Sep 2025 09:02:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: monaco-evk-camera: Add DT overlay
+Subject: Re: [PATCH 4/4] dt-bindings: media: camss: Add qcs8300 supplies
+ binding
 To: Vikram Sharma <quic_vikramsa@quicinc.com>, bryan.odonoghue@linaro.org,
  mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
  conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
@@ -57,11 +58,9 @@ To: Vikram Sharma <quic_vikramsa@quicinc.com>, bryan.odonoghue@linaro.org,
  catalin.marinas@arm.com, will@kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
  linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ravi Shankar <quic_rshankar@quicinc.com>,
- Vishal Verma <quic_vishverm@quicinc.com>
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250909114241.840842-1-quic_vikramsa@quicinc.com>
- <20250909114241.840842-4-quic_vikramsa@quicinc.com>
+ <20250909114241.840842-5-quic_vikramsa@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,73 +106,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250909114241.840842-4-quic_vikramsa@quicinc.com>
+In-Reply-To: <20250909114241.840842-5-quic_vikramsa@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 09/09/2025 13:42, Vikram Sharma wrote:
 > From: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
 > 
-> Enable IMX577 sensor using the CCI1 interface on Monaco EVK.
-> Camera reset is controlled through an I2C expander,
-> and power supply is managed via tlmm GPIO74.
+> Add vdda-phy-supply and vdda-pll-supply to the qcom,qcs8300-camss binding.
 > 
-> Co-developed-by: Ravi Shankar <quic_rshankar@quicinc.com>
-> Signed-off-by: Ravi Shankar <quic_rshankar@quicinc.com>
-> Co-developed-by: Vishal Verma <quic_vishverm@quicinc.com>
-> Signed-off-by: Vishal Verma <quic_vishverm@quicinc.com>
 > Signed-off-by: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
 > Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
 > ---
->  arch/arm64/boot/dts/qcom/Makefile             |  4 +
->  .../boot/dts/qcom/monaco-evk-camera.dtso      | 98 +++++++++++++++++++
->  2 files changed, 102 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/monaco-evk-camera.dtso
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 0e4e0e0b833b..714eb4badf5a 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -31,6 +31,10 @@ dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp453.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp454.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= lemans-evk.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= monaco-evk.dtb
-> +
-> +monaco-evk-camera-dtbs	:= monaco-evk.dtb monaco-evk-camera.dtbo
-> +
-> +dtb-$(CONFIG_ARCH_QCOM) += monaco-evk-camera.dtb
+>  .../bindings/media/qcom,qcs8300-camss.yaml          | 13 +++++++++++++
 
-
-Missing proper indentation before +=. Did you even look at this code
-while changing? Or you just copied it from downstream and sent?
-
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8216-samsung-fortuna3g.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-acer-a1-724.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-alcatel-idol347.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/monaco-evk-camera.dtso b/arch/arm64/boot/dts/qcom/monaco-evk-camera.dtso
-> new file mode 100644
-> index 000000000000..5831b4de6eca
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/monaco-evk-camera.dtso
-> @@ -0,0 +1,98 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +/* Camera Sensor overlay on top of Monaco EVK Core Kit */
-> +
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +#include <dt-bindings/clock/qcom,sa8775p-camcc.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +
-> +&{/} {
-> +	vreg_cam1_2p8: vreg_cam1_2p8 {
-
-Don't send us downstream code. You need to rewrite everything, not just
-pieces.
+There is no such file. Why are you not fixing the patches on the list?
 
 
 Best regards,
