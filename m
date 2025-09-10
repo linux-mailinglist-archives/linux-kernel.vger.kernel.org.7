@@ -1,56 +1,105 @@
-Return-Path: <linux-kernel+bounces-809710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C77AB510FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:19:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BCE4B51102
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 796BD4E0D5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:17:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A891B267A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C7E30DD0F;
-	Wed, 10 Sep 2025 08:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171C030EF85;
+	Wed, 10 Sep 2025 08:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+tLMUqh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5dMNMS1"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81695260563;
-	Wed, 10 Sep 2025 08:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67043090F7
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757492261; cv=none; b=eeWURIDTu+hFtldUUw4pdCjOSQgEFSpby/o3xSU6MdN9SALxQYP1bi66ut/xZ8UZcqjuN2B0mfgyiyYhKV75ZrZxMuHSZXF+5o/8hf8233DQIrgJPkeN/oL/nHGD3p3DDi3u3CIsVV1jjOGsjsmBcdiMLI/txFucB4xScIL1tFg=
+	t=1757492424; cv=none; b=Y9qKc9AQgmK1nA2vIFMx6MUDmpWHIuWZbaffc+O88Q/J420ub1BeMb21SZKEmP95oUjGP2/SxT4rjUqnmREUo4iwEn3lyPOogYv08yC51xxmSu4y950kHh2XvgQm/tUfCAdeLZeE+FFyVQoVA4A9UAJG/UUGcQIUNE8UvY0mjjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757492261; c=relaxed/simple;
-	bh=llVJ5Mm3phDyzlh+448iiXnpalPYNOZBm2FyJR0Gdx8=;
+	s=arc-20240116; t=1757492424; c=relaxed/simple;
+	bh=PAz3im+y19NDT+YMJxSBDJens7K9RovOUhC6XNb8bys=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WrFOlr11rQuvc7s3uqmInXhll/Y6TlA0t4hOPvnGlV51yLhH6UoAJrQwOELIygvKrrAFx78bOx1iEE0MjubeYcdt6QrtaEE6C8a20wntNIlY938jVFK4LgVxdZfTb5dZW9fBYPgfJZ1vVDc0Xm6kKyRs9V9Yo8+4eAez7N02Qls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+tLMUqh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C685C4CEF0;
-	Wed, 10 Sep 2025 08:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757492261;
-	bh=llVJ5Mm3phDyzlh+448iiXnpalPYNOZBm2FyJR0Gdx8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c+tLMUqho7QjwIufPMZ4GjWwyExI7gClk5D9d9+OXHSvzCl5SqFSVJ5jUYOoUtkfI
-	 UDlTi7EuAmdnm3MZ/he7yZ5hxyulRI48URvpPDcucHovwKqU+ZUwoyI0CdN4b5P/BN
-	 M7myHdxsaHLYTRKqRpyj6LmFQ9RvLgl4IPUkD5CzLsZbXbHgCIGm7OEGD3S+WeSKPK
-	 ZXLVruDR0Pq1mfKU9t3W3fzNfU9JT0J+ntYG/rtfp319g57FZOJ4G6Lfb4gOUvVKvU
-	 gqqYMA65kw2LCFII1jDqQhpr9hX4MI/15Mzu5D0mqfhtYnDv1Eo5SOKj95rjZUvsAy
-	 fU1LkhrbY85KA==
-Date: Wed, 10 Sep 2025 11:17:35 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Edward Srouji <edwards@nvidia.com>
-Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	parav@nvidia.com, cratiu@nvidia.com, vdumitrescu@nvidia.com,
-	kuba@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
-	gal@nvidia.com
-Subject: Re: [PATCH 1/4] RDMA/core: Squash a single user static function
-Message-ID: <20250910081735.GJ341237@unreal>
-References: <20250907160833.56589-1-edwards@nvidia.com>
- <20250907160833.56589-2-edwards@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=chvJGN37hxMvtH/4gaNRmVAXVWB/A6rYvvY3ZtFQsOQk7K5gEuLTBHugZhiXsVQS/1LfUT9t7lFNGXJCPPNBnkZvuw7XY+6uUd8Gy8YGpRFQdtvUznL4FnnrBezPHEh7gS4sxc7KEdrZsSuMiU3O3f9JJu13Vn5dRviw6PiuA1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5dMNMS1; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b00f6705945so78291066b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:20:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757492421; x=1758097221; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/L/ZiHIMyXmxKkiSLCWK4pWAdvwcf6C/7sfjkt+r2Zs=;
+        b=E5dMNMS1V1mwGjFvwsOC7Q8EV2jIm4VGtmzMbgcvbUemkURSwAeqRTwVt67gc0P/yr
+         PCpDNgjzQVSs8/RC+aK1EW5mqFLIoxlxbYQdbK7CRihE9A950SQBxA2CP3r7q1L5CcBA
+         sVLX1gb7jUV8IPjP4UA/OxuLuCLHKLk04K5wYR29AeW+MThz+obX3mhO2bInHhCUMBRl
+         JkA4fkMTgaIm3Jwt1tdqv91epv+TcYjH37Ig9eDhUo15P6XW2MR3zdAo3j2gsoCqeuDW
+         cZRq5wn1TLtvl4vCSRI2eiXrw9tkhGs6Z79jc0e8DqNTQp2QNBgqI3F4ymSLM+xn+AAX
+         E+gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757492421; x=1758097221;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/L/ZiHIMyXmxKkiSLCWK4pWAdvwcf6C/7sfjkt+r2Zs=;
+        b=AZUYQVKg9KGW1fAaa9kW7zn3SrxmGgs4VURrfpPCdTgF3u9bWbk0PRFoqfS6WRDFse
+         UkbfBl4CeWYWNCae1/XtVD18LLU7fWTuxXqLsx3fQbSfnIsyfsSfwv0qUtuQNbjF/JIc
+         u89h7Y4sqciUxTw89XYsM39KyhuBZBoHTDuUb+H9HcCuQErB3s6fhtEF22wI3t/RzU4Y
+         9CfCoavGSWTWTCsBGotofa83jzWeo00bnYc8Y5eDPWiwogICk5Y0bavPh9BlX0IKt/AE
+         TiG60vefIxl0gqJ3zusm8fk3V870Th5hy8OTKybPVcIUPwvcJ6OcmAJ+gRdDF+jWXxsk
+         /+kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/x6smSgOguFotfnxbSPzwyRlFysNBa5pJQZ8kvAshDBpfS3sYgN1Agh6owkFU8nYM9QCf5d3K8+h8BWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPwxAgw/T9nu3YfuuAGxr8kJRnFwjeHfbBBnnPToJdZlHOuYky
+	k6aEVzrCyML2Y5do0Lmy/dnNGnqf4rtXjO9uE7iH9W/y1CvuIlI4dJVq
+X-Gm-Gg: ASbGncuSq9QrP2LvNtO9OyY6lVzEYYbk+L4u4gsBFRV6pdFYTzBkBuvwNTSWTtRpGr4
+	eUoO9WUKoYKEuP30WmOSG/XwTSdKovP5tA+SEXt4m+vnx99179CFRypK+cA02iHCaBfYb7z9IDC
+	JnCeNq8faqWEkHOwPR4OF0SWa+fJDv6ntxIkrfHCYZdTUSdwRV+h0G1l5M4mQWp6J3GBTndiEaF
+	pkGBwxtVJVJZflx78UHIJOe7OlTsRgcdgIUQCSOPuaZxLTg8R6f/cVB8J7M7Yj/jZGdrZjDQcHB
+	D3ffuFMwZFIEiHZDyH35xR3ZnCbu0dSmAFVxs4A14OFQgU9+dIyEzFAWPFVDal9zvyNUMYQNIo2
+	96jGlKR1wtnmicnFIw7c5/4nc2A==
+X-Google-Smtp-Source: AGHT+IEZ6Y8m9czCHfXyGir/VeA90+bvrcMtK66llF0DDBp7AdUVUAE+7FZ2p8xLZJOlSOvaso7zZw==
+X-Received: by 2002:a17:907:9718:b0:afe:b131:1820 with SMTP id a640c23a62f3a-b04b155985emr758644266b.6.1757492420788;
+        Wed, 10 Sep 2025 01:20:20 -0700 (PDT)
+Received: from skbuf ([2a02:2f04:d005:3b00:6669:35e7:fc93:9b1c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07833ffa91sm122826066b.91.2025.09.10.01.20.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 01:20:20 -0700 (PDT)
+Date: Wed, 10 Sep 2025 11:20:17 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Chester A. Unal" <chester.a.unal@arinc9.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>, Simon Horman <horms@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH v16 10/10] net: dsa: tag_mtk: add comments about
+ Airoha usage of this TAG
+Message-ID: <20250910082017.hjlq3664xvg5qjub@skbuf>
+References: <20250909004343.18790-1-ansuelsmth@gmail.com>
+ <20250909004343.18790-1-ansuelsmth@gmail.com>
+ <20250909004343.18790-11-ansuelsmth@gmail.com>
+ <20250909004343.18790-11-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,111 +108,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250907160833.56589-2-edwards@nvidia.com>
+In-Reply-To: <20250909004343.18790-11-ansuelsmth@gmail.com>
+ <20250909004343.18790-11-ansuelsmth@gmail.com>
 
-On Sun, Sep 07, 2025 at 07:08:30PM +0300, Edward Srouji wrote:
-> From: Parav Pandit <parav@nvidia.com>
+On Tue, Sep 09, 2025 at 02:43:41AM +0200, Christian Marangi wrote:
+> Add comments about difference between Airoha AN8855 and Mediatek tag
+> bitmap.
 > 
-> In order to reduce dependencies in IFF_LOOPBACK in
-> route and neighbour resolution steps, squash the
-> static function to its single caller and simplify the
-> code. No functional change.
+> Airoha AN88555 doesn't support controlling SA learning and Leaky VLAN
 
-It needs more explanation why it is true. Before this change,
-we set dev_addr->network to some value and returned error.
-That error propagated upto process_one_req(), which handles only
-some errors and ignores rest.
+Is there an extra 5 in AN88555?
 
-So now, we continue to handle REQ without proper req->addr->network.
-
-Thanks
-
+> from tag. Although these bits are not used (and even not defined for
+> Leaky VLAN), it's worth to add comments for these difference to prevent
+> any kind of regression in the future if ever these bits will be used.
 > 
-> Signed-off-by: Parav Pandit <parav@nvidia.com>
-> Reviewed-by: Vlad Dumitrescu <vdumitrescu@nvidia.com>
-> Signed-off-by: Edward Srouji <edwards@nvidia.com>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  drivers/infiniband/core/addr.c | 49 ++++++++++++++--------------------
->  1 file changed, 20 insertions(+), 29 deletions(-)
+>  net/dsa/tag_mtk.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
-> index be0743dac3ff..594e7ee335f7 100644
-> --- a/drivers/infiniband/core/addr.c
-> +++ b/drivers/infiniband/core/addr.c
-> @@ -465,34 +465,6 @@ static int addr_resolve_neigh(const struct dst_entry *dst,
->  	return ret;
->  }
+> diff --git a/net/dsa/tag_mtk.c b/net/dsa/tag_mtk.c
+> index b670e3c53e91..ac3f956abe39 100644
+> --- a/net/dsa/tag_mtk.c
+> +++ b/net/dsa/tag_mtk.c
+> @@ -18,6 +18,9 @@
+>  #define MTK_HDR_XMIT_TAGGED_TPID_88A8	2
+>  #define MTK_HDR_RECV_SOURCE_PORT_MASK	GENMASK(2, 0)
+>  #define MTK_HDR_XMIT_DP_BIT_MASK	GENMASK(5, 0)
+> +/* AN8855 doesn't support SA_DIS and Leaky VLAN
+> + * control in tag as these bits doesn't exist.
+> + */
+
+I think it would be good to present the AN8855 tag using a different
+string, so that libpcap knows it shouldn't decode these bits. The code
+can be reused for now.
+
+>  #define MTK_HDR_XMIT_SA_DIS		BIT(6)
 >  
-> -static int copy_src_l2_addr(struct rdma_dev_addr *dev_addr,
-> -			    const struct sockaddr *dst_in,
-> -			    const struct dst_entry *dst,
-> -			    const struct net_device *ndev)
-> -{
-> -	int ret = 0;
-> -
-> -	if (dst->dev->flags & IFF_LOOPBACK)
-> -		ret = rdma_translate_ip(dst_in, dev_addr);
-> -	else
-> -		rdma_copy_src_l2_addr(dev_addr, dst->dev);
-> -
-> -	/*
-> -	 * If there's a gateway and type of device not ARPHRD_INFINIBAND,
-> -	 * we're definitely in RoCE v2 (as RoCE v1 isn't routable) set the
-> -	 * network type accordingly.
-> -	 */
-> -	if (has_gateway(dst, dst_in->sa_family) &&
-> -	    ndev->type != ARPHRD_INFINIBAND)
-> -		dev_addr->network = dst_in->sa_family == AF_INET ?
-> -						RDMA_NETWORK_IPV4 :
-> -						RDMA_NETWORK_IPV6;
-> -	else
-> -		dev_addr->network = RDMA_NETWORK_IB;
-> -
-> -	return ret;
-> -}
-> -
->  static int rdma_set_src_addr_rcu(struct rdma_dev_addr *dev_addr,
->  				 unsigned int *ndev_flags,
->  				 const struct sockaddr *dst_in,
-> @@ -503,6 +475,7 @@ static int rdma_set_src_addr_rcu(struct rdma_dev_addr *dev_addr,
->  	*ndev_flags = ndev->flags;
->  	/* A physical device must be the RDMA device to use */
->  	if (ndev->flags & IFF_LOOPBACK) {
-> +		int ret;
->  		/*
->  		 * RDMA (IB/RoCE, iWarp) doesn't run on lo interface or
->  		 * loopback IP address. So if route is resolved to loopback
-> @@ -512,9 +485,27 @@ static int rdma_set_src_addr_rcu(struct rdma_dev_addr *dev_addr,
->  		ndev = rdma_find_ndev_for_src_ip_rcu(dev_net(ndev), dst_in);
->  		if (IS_ERR(ndev))
->  			return -ENODEV;
-> +		ret = rdma_translate_ip(dst_in, dev_addr);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		rdma_copy_src_l2_addr(dev_addr, dst->dev);
->  	}
->  
-> -	return copy_src_l2_addr(dev_addr, dst_in, dst, ndev);
-> +	/*
-> +	 * If there's a gateway and type of device not ARPHRD_INFINIBAND,
-> +	 * we're definitely in RoCE v2 (as RoCE v1 isn't routable) set the
-> +	 * network type accordingly.
-> +	 */
-> +	if (has_gateway(dst, dst_in->sa_family) &&
-> +	    ndev->type != ARPHRD_INFINIBAND)
-> +		dev_addr->network = dst_in->sa_family == AF_INET ?
-> +						RDMA_NETWORK_IPV4 :
-> +						RDMA_NETWORK_IPV6;
-> +	else
-> +		dev_addr->network = RDMA_NETWORK_IB;
-> +
-> +	return 0;
->  }
->  
->  static int set_addr_netns_by_gid_rcu(struct rdma_dev_addr *addr)
+>  static struct sk_buff *mtk_tag_xmit(struct sk_buff *skb,
 > -- 
-> 2.21.3
+> 2.51.0
 > 
-> 
+
 
