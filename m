@@ -1,142 +1,332 @@
-Return-Path: <linux-kernel+bounces-810462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430DBB51B02
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:11:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24443B51AF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8AE9A083C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:04:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A5216DA8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B8731CA6A;
-	Wed, 10 Sep 2025 15:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997E824338F;
+	Wed, 10 Sep 2025 15:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="jQPxB1FV"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cni7WMUB"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE3F1E8320;
-	Wed, 10 Sep 2025 15:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757516625; cv=pass; b=NPfXtVQzPpNAND/qnb2sYWnfgJxaVq+Xu+kd4OQzb2AYYWpM29AjqwXC01jA7tcdpmIzJqPYzeLm2A1JEshjP1WYSeeifPusncKZFcDZN1KGpW/wMmz/qcFBRyHJBeodSTe3OCTZSFHl4ZzJUVQjSldJsO/8nMBxbgn2h/IuLcs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757516625; c=relaxed/simple;
-	bh=Xw+/4WyQm5ISX5P9Xq6fcVT5Ub7wAv4zcJxXCMGhux8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZljhatN7/RgSYxQajzCZRsJUsJqrucA5+VPQ6nIDKSg2+jA0AbtQ6x7DNfseez4lEH6uL4X0wteJGKWLmmLAKCVKByJbxn1Xsm5UL22uVAc/4FMn0ZCctW0gQqcnNGSy1L8htmfgnwVYH8QZF4bKGWWwEAFaZmX6abJGxdG28cU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=jQPxB1FV; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757516557; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=OjGcbwHQ7qFc4F9AAkVwIzKWD5HRtNcVph5abNLqKUYPGk4w1ePjBCj0tz7hti9MHbxdOhEYELdQk/ziPXJHC2RDGoKpa9/5V5AU76oYgTS7M4uFLMI+DKOBXicgR2t+7eQlayb2lIUGu7Thpeqbqbt6dIgRH5W5B/PtH+5r7iQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757516557; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QfGtFkV2BjKT/6QYgO3xE9sPr0RNHiuBKm13evHqiAQ=; 
-	b=LOEC3tcunob47lit5X+QQ9cxlFjZCpyRGy0IBEJP/2ah/bJ6nUgxS8poFqqzD1B/vLwVrqQVOYrF+0STYNRWbvQfXdnIeWb9becwEvVf8U6HrNC2fD1GBVkDCe8oB8ETdatHQJqPnph74AncKieCSksqeFj/wxL2bVtsipVvcOM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757516557;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=QfGtFkV2BjKT/6QYgO3xE9sPr0RNHiuBKm13evHqiAQ=;
-	b=jQPxB1FVZqyhfX615s1wyOYg+A9wixZAqzUKYwPAYzueo/S9dJFzf0F2jcR21D0D
-	Scy1nrNCr6VGsY3IM6pc3R62vRrVdqtj1AgrtdZQRCsDrWeQgb1iGdpx2unAltp3b8y
-	RazFXuHMg1VK5VGe5MWq7DkXjZp4cPizww9OdPxk=
-Received: by mx.zohomail.com with SMTPS id 1757516554744986.7207805498508;
-	Wed, 10 Sep 2025 08:02:34 -0700 (PDT)
-Message-ID: <6ebef7d1-69b3-4f40-85ba-3c15653eba8e@collabora.com>
-Date: Wed, 10 Sep 2025 12:02:22 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3269329F00
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757516697; cv=none; b=O6+1toDxzIawpw2qkFZFP7/FmYY9qhJObqbS+ItSHYX0febIfEMomXvB7Ls//SXDow6VQpz3WnlvS/fKhWvzlPcOIX4XW35f+LCpZ2j2W4N8oVIJ1wJTVx11DBfJP9bexXG2L56Tfqg/eur9FEo3nXi1noC1lzaCkQQuqDsVq1A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757516697; c=relaxed/simple;
+	bh=zVhN9KwrjTrL0YWCbze+RiFICQMrIXK0k0lLc9Yva8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WXRLmRZnDUgkuFriFG2zKVouWZxphfEeGY2f/Y+3J+wpyz91Kh1z2d5ziNMsBljN2OkOpFl1u1e/SRWiBRePTmMYC1YJSEp+JWAKmLaAEHdkr0xJQ2FvsNGtaBpv4dU03KuEdJRKEoZ4oNp/nvrgjUpQnzyXKBW6l02Up5pFfXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cni7WMUB; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24b2d018f92so201725ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:04:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757516695; x=1758121495; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uMRSBFnuovkLCWlp7ry1NMmUF7tLcce0vVKbF+vi614=;
+        b=Cni7WMUBnpWdvgsFbF5geVmRjTAWNCFMzmg0hYte5HIspgeOk/jmEJWl2kD4/Cso3Z
+         w04NujJO9xfBZ8ziMVlVPeBZhH3pr4ocQxaCJFL+zceAUfA3t9QlL6djCvaTgIpXjWCT
+         MV2IvHYuMEjzDcGUyhhaNXhK5N6szxphcA0LmgKtV0FaYJdMpUOlaKvBAWKppKLs6XCA
+         8A9GBtD9AaQ3wiJCGluXra++d71aGY7xdGir5aBEc/5IA47cmIpMxRQNisH/qk+h8J0k
+         MBN+Qbee0c/9Basa5RjOU0Cm8v9Mjau8BpvcnpQPqYAxNJx0uttrJw0Z6hgZsin2373X
+         D/og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757516695; x=1758121495;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uMRSBFnuovkLCWlp7ry1NMmUF7tLcce0vVKbF+vi614=;
+        b=SLJ80y/JSESOn13vi3f2I048nIlCLKPqpKuBLTMkvWDhYJlN1UmAJlKVZs6DBZ/yBH
+         J2M8vpPw49Nwgud2WIU8TbsLN8+s6M424BwI332sZ7/N4qw4xqviHeH1NeY+Zaf1imHa
+         f3ewHKPlYRkSIEuchVdy7xkp36iRbNspWEBbmv0NoMOGwHMrkR72bHHx/ecq/ZvvEO8U
+         b5dQwXD+0awcfh5dlFW4MTKDSDKeXaejxkRet/VDDI5DV1hrfPF0TzdeeQw3IwSmGX7L
+         /TGsluTNw3tbYWYxqbKxeoElf/4iLM7jAES7cwiaheY3gyiUlptfHSfOOS30i3V3piZF
+         18cg==
+X-Forwarded-Encrypted: i=1; AJvYcCU81m8TnQ/hjQfTNGRZP7RENOWMlahTEiuYSFWuJyo/saOKrCQniv25liteCa2dtimkjbQPOoMq9t/6DmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwygqBAeSSEX4kWVvTb0uYRewkhj/oZ0nsnbaEnI2xUukuk5aXi
+	4pKWDNvvH9xVXrvDtKRd6wSZ8Rb0/I6ZyNQjbiUsThEB90rXvwqqsjuOjKgaebbraXHzXVVhOpv
+	8BSG0B0TefcTvLU0/klNqPVs9GjFz250jI/jjC6Zg
+X-Gm-Gg: ASbGncvzPjO8qeK9qKBGv1CnRyjMfBJrl5KRi++CvM/rmJXe6PKLXTUE3Ypup4xK/aD
+	XW+iZjDzc+0MwluFgzVoQufxEGaexUhkqpMkIAwMBDM/FwkQvblxl1st+4xyNH2FgKa/zva2Lu0
+	JLE/EYOu07UBSJbDrAQARcdowujyfdOzc4OK3sflFizMXVlyjuF3YxjBq0wU2HtbN81C6U4Luu+
+	GmNo6mIPSTajI7M1Vqrsyql8cdNDEFpctA2Mncmx3lma9pueMGrAD0=
+X-Google-Smtp-Source: AGHT+IHjHK57+H0MwRrCJKavMZM9zEHegCRYZnpvioF5uadVg0iUfh9fxzk+VDqbznw0zNVO6BTHbLgR3CI0s2L1Hh4=
+X-Received: by 2002:a17:902:e743:b0:234:bfa1:da3e with SMTP id
+ d9443c01a7336-25a7eafc1cfmr4337455ad.5.1757516694454; Wed, 10 Sep 2025
+ 08:04:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 14/14] dt-bindings: media: mediatek,jpeg: Fix jpeg
- encoder/decoder ranges
-To: Rob Herring <robh@kernel.org>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
- andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
- conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
- edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
- jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
- krzk+dt@kernel.org, kuba@kernel.org,
- kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
- linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
- maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
- mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
- p.zabel@pengutronix.de, pabeni@redhat.com, sean.wang@kernel.org,
- simona@ffwll.ch, support.opensource@diasemi.com, tiffany.lin@mediatek.com,
- tzimmermann@suse.de, yunfei.dong@mediatek.com, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-15-ariel.dalessandro@collabora.com>
- <20250820185508.GA273751-robh@kernel.org>
-Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <20250820185508.GA273751-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+References: <20250701201027.1171561-3-namhyung@kernel.org> <20250909094953.106706-1-amadio@gentoo.org>
+ <CAP-5=fVCeBz+hgCsctCe7BByaL7GqKVUbDcW4R=2th0C1O0m0w@mail.gmail.com> <aMF0iWh4yTK5KwcJ@gentoo.org>
+In-Reply-To: <aMF0iWh4yTK5KwcJ@gentoo.org>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 10 Sep 2025 08:04:42 -0700
+X-Gm-Features: Ac12FXxQD4R_hEvT9DrWrjZXbBqObDt33sDkyVVXtekNBm1m971ECztnjUlcUXg
+Message-ID: <CAP-5=fV8p7u9zfYAWJ8zt=Dq53u-b3pNzD9ve2HabJ9_qjymhw@mail.gmail.com>
+Subject: Re: perf --help triggers an assertion
+To: Guilherme Amadio <amadio@gentoo.org>
+Cc: namhyung@kernel.org, acme@kernel.org, adrian.hunter@intel.com, 
+	jolsa@kernel.org, kan.liang@linux.intel.com, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, mingo@kernel.org, peterz@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rob,
+On Wed, Sep 10, 2025 at 5:52=E2=80=AFAM Guilherme Amadio <amadio@gentoo.org=
+> wrote:
+>
+> On Tue, Sep 09, 2025 at 11:31:51AM -0700, Ian Rogers wrote:
+> > On Tue, Sep 9, 2025 at 2:49=E2=80=AFAM Guilherme Amadio <amadio@gentoo.=
+org> wrote:
+> > >
+> > > Hi Namhyung,
+> > >
+> > > I was updating perf's package in Gentoo Linux and noticed some proble=
+ms
+> > > which were not there before. I tested with the version below and the =
+problem
+> > > still seems to be there. perf --help triggers an assertion (see below=
+).
+> > > Looking in the list, it seems related to the patch below:
+> > >
+> > > https://lore.kernel.org/linux-perf-users/20250701201027.1171561-3-nam=
+hyung@kernel.org/
+> > >
+> > > Cheers,
+> > > -Guilherme
+> > >
+> > > The problem:
+> > >
+> > > gentoo perf $ ./perf --help
+> > > perf: help.c:104: exclude_cmds: Assertion `cmds->names[ci] =3D=3D NUL=
+L' failed.
+> > > Aborted                    (core dumped) ./perf --help
+> > >
+> > > Some extra information:
+> > >
+> > > gentoo perf $ ./perf version
+> > > perf version 6.17.rc5.gf777d1112ee5
+> > > gentoo perf $ ./perf test subcmd
+> > >  69: libsubcmd help tests                                            =
+:
+> > >  69.1: Load subcmd names                                             =
+: Ok
+> > >  69.2: Uniquify subcmd names                                         =
+: Ok
+> > >  69.3: Exclude duplicate subcmd names                                =
+: Ok
+> > > gentoo perf $ ./perf bad-command
+> > > perf: 'bad-command' is not a perf-command. See 'perf --help'.
+> > > gentoo perf $ ./perf --help
+> > > perf: help.c:104: exclude_cmds: Assertion `cmds->names[ci] =3D=3D NUL=
+L' failed.
+> > > Aborted                    (core dumped) ./perf --help
+> > > gentoo perf $ gdb run --args ./perf --help
+> > > GNU gdb (Gentoo 16.3 vanilla) 16.3
+> > > Copyright (C) 2024 Free Software Foundation, Inc.
+> > > License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/g=
+pl.html>
+> > > This is free software: you are free to change and redistribute it.
+> > > There is NO WARRANTY, to the extent permitted by law.
+> > > Type "show copying" and "show warranty" for details.
+> > > This GDB was configured as "x86_64-pc-linux-gnu".
+> > > Type "show configuration" for configuration details.
+> > > For bug reporting instructions, please see:
+> > > <https://bugs.gentoo.org/>.
+> > > Find the GDB manual and other documentation resources online at:
+> > >     <http://www.gnu.org/software/gdb/documentation/>.
+> > >
+> > > For help, type "help".
+> > > Type "apropos word" to search for commands related to "word"...
+> > > Reading symbols from ./perf...
+> > > (gdb) run
+> > > Starting program: /home/amadio/src/linux/tools/perf/perf --help
+> > > [Thread debugging using libthread_db enabled]
+> > > Using host libthread_db library "/usr/lib64/libthread_db.so.1".
+> > > perf: help.c:104: exclude_cmds: Assertion `cmds->names[ci] =3D=3D NUL=
+L' failed.
+> > >
+> > > Program received signal SIGABRT, Aborted.
+> > > __pthread_kill_implementation (threadid=3D<optimized out>, signo=3Dsi=
+gno@entry=3D6, no_tid=3Dno_tid@entry=3D0) at pthread_kill.c:44
+> > > 44            return INTERNAL_SYSCALL_ERROR_P (ret) ? INTERNAL_SYSCAL=
+L_ERRNO (ret) : 0;
+> > > (gdb) bt
+> > > #0  __pthread_kill_implementation (threadid=3D<optimized out>, signo=
+=3Dsigno@entry=3D6, no_tid=3Dno_tid@entry=3D0) at pthread_kill.c:44
+> > > #1  0x00007ffff74c1656 in __pthread_kill_internal (threadid=3D<optimi=
+zed out>, signo=3Dsigno@entry=3D6) at pthread_kill.c:89
+> > > #2  0x00007ffff74c166d in __GI___pthread_kill (threadid=3D<optimized =
+out>, signo=3Dsigno@entry=3D6) at pthread_kill.c:100
+> > > #3  0x00007ffff747509c in __GI_raise (sig=3Dsig@entry=3D6) at ../sysd=
+eps/posix/raise.c:26
+> > > #4  0x00007ffff747637e in __GI_abort () at abort.c:77
+> > > #5  0x00007ffff746e023 in __assert_fail_base (fmt=3D<optimized out>, =
+assertion=3Dassertion@entry=3D0x555555974d03 "cmds->names[ci] =3D=3D NULL",
+> > >     file=3Dfile@entry=3D0x555555974cfc "help.c", line=3Dline@entry=3D=
+104, function=3Dfunction@entry=3D0x555555974dc8 <__PRETTY_FUNCTION__.0> "ex=
+clude_cmds")
+> > >     at assert.c:118
+> > > #6  0x00007ffff746e075 in __assert_fail (assertion=3D0x555555974d03 "=
+cmds->names[ci] =3D=3D NULL", file=3D0x555555974cfc "help.c", line=3D104,
+> > >     function=3D0x555555974dc8 <__PRETTY_FUNCTION__.0> "exclude_cmds")=
+ at assert.c:127
+> > > #7  0x0000555555693813 in exclude_cmds (cmds=3D0x55555614e5e0 <other_=
+cmds>, excludes=3D0x55555614e5c0 <main_cmds>) at help.c:104
+> > > #8  0x0000555555693eb3 in load_command_list (prefix=3D0x555555954071 =
+"perf-", main_cmds=3D0x55555614e5c0 <main_cmds>,
+> > >     other_cmds=3D0x55555614e5e0 <other_cmds>) at help.c:252
+> > > #9  0x00005555555e9987 in cmd_help (argc=3D1, argv=3D0x7fffffffd1a0) =
+at builtin-help.c:458
+> > > #10 0x0000555555685d45 in run_builtin (p=3D0x555556130de0 <commands+1=
+92>, argc=3D1, argv=3D0x7fffffffd1a0) at perf.c:349
+> > > #11 0x0000555555685fe1 in handle_internal_command (argc=3D1, argv=3D0=
+x7fffffffd1a0) at perf.c:401
+> > > #12 0x0000555555686142 in run_argv (argcp=3D0x7fffffffcfac, argv=3D0x=
+7fffffffcfa0) at perf.c:445
+> > > #13 0x0000555555686493 in main (argc=3D1, argv=3D0x7fffffffd1a0) at p=
+erf.c:553
+> > > (gdb) quit
+> >
+> > Thanks Guilherme,
+> >
+> > I tried to reproduce the same version with various options: DEBUG=3D1
+> > -UNDEBUG in EXTRA_CFLAGS, -fsanitize=3Daddress. Being in various
+> > directories with "perf-" prefixed files. I'm afraid I wasn't able to
+> > reproduce. The assert is trying to avoid a memory leak, so
+> > non-critical, and I couldn't in a quick inspection eye-ball an issue.
+> > Without getting a reproduction I don't think I can make progress with
+> > the issue.
+>
+> I do not have any special setup on my machine (if you consider Gentoo
+> not special, of course). I just did a git bisect and arrived at commit
+> 9401d1771dad99bfc795dd2ae0c292343fd1f78d, which is the commit I linked
+> above. I used
+>
+> $ make -C tools/perf clean && make -B -j16 -C tools/perf DEBUG=3D1 WERROR=
+=3D0 NO_SHELLCHECK=3D1
+>
+> then called perf --help each time (but perf help record or equivalent
+> also triggers the assertion). I'm using GCC 14 on a 3950X. The features
+> I have enabled and installed dependencies are below. This patch has been
+> backported to at least 6.12 stable, and I can reproduce this with
+> v6.12.45.
+>
+> gentoo linux $ tools/perf/perf version --build-options
+> perf version 6.16.g45effee4b85a
+>                    aio: [ on  ]  # HAVE_AIO_SUPPORT
+>                    bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+>          bpf_skeletons: [ on  ]  # HAVE_BPF_SKEL
+>             debuginfod: [ on  ]  # HAVE_DEBUGINFOD_SUPPORT
+>                  dwarf: [ on  ]  # HAVE_LIBDW_SUPPORT
+>     dwarf_getlocations: [ on  ]  # HAVE_LIBDW_SUPPORT
+>           dwarf-unwind: [ on  ]  # HAVE_DWARF_UNWIND_SUPPORT
+>               auxtrace: [ on  ]  # HAVE_AUXTRACE_SUPPORT
+>                 libbfd: [ OFF ]  # HAVE_LIBBFD_SUPPORT ( tip: Deprecated,=
+ license incompatibility, use BUILD_NONDISTRO=3D1 and install binutils-dev[=
+el] )
+>            libcapstone: [ on  ]  # HAVE_LIBCAPSTONE_SUPPORT
+>              libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
+>     libdw-dwarf-unwind: [ on  ]  # HAVE_LIBDW_SUPPORT
+>                 libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
+>                libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+>             libopencsd: [ OFF ]  # HAVE_CSTRACE_SUPPORT
+>                libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
+>                libpfm4: [ on  ]  # HAVE_LIBPFM
+>              libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
+>               libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+>          libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
+>              libunwind: [ OFF ]  # HAVE_LIBUNWIND_SUPPORT ( tip: Deprecat=
+ed, use LIBUNWIND=3D1 and install libunwind-dev[el] to build with it )
+>                   lzma: [ on  ]  # HAVE_LZMA_SUPPORT
+> numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+>                   zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
+>                   zstd: [ on  ]  # HAVE_ZSTD_SUPPORT
+>
+> And here are the version of all dependencies I have installed:
+>
+>  * dependency graph for dev-util/perf-6.16-r1
+>  `--  dev-util/perf-6.16-r1
+>    `--  dev-util/babeltrace-1.5.11
+>    `--  dev-libs/libbpf-1.6.2
+>    `--  dev-util/bpftool-7.6.0
+>    `--  dev-util/pahole-1.30
+>    `--  llvm-core/clang-18.1.8-r6
+>    `--  llvm-core/llvm-18.1.8-r6
+>    `--  llvm-core/clang-19.1.7
+>    `--  llvm-core/llvm-19.1.7
+>    `--  llvm-core/clang-20.1.8
+>    `--  llvm-core/llvm-20.1.8
+>    `--  llvm-core/clang-21.1.0
+>    `--  llvm-core/llvm-21.1.0
+>    `--  sys-libs/libcap-2.76
+>    `--  dev-libs/capstone-5.0.6
+>    `--  dev-libs/openssl-3.5.2
+>    `--  x11-libs/gtk+-2.24.33-r3
+>    `--  virtual/jre-21
+>    `--  dev-libs/libpfm-4.13.0
+>    `--  dev-libs/libtraceevent-1.8.4
+>    `--  dev-libs/libtracefs-1.8.2
+>    `--  app-arch/xz-utils-5.8.1-r1
+>    `--  sys-process/numactl-2.0.19
+>    `--  dev-lang/perl-5.42.0
+>    `--  dev-lang/python-0.3.13.7
+>    `--  dev-lang/python-0.3.14.0_rc2
+>    `--  dev-lang/python-3.11.13_p1
+>    `--  dev-lang/python-3.12.11_p1
+>    `--  dev-lang/python-3.13.9999
+>    `--  dev-lang/python-3.14.0_rc2
+>    `--  sys-libs/slang-2.3.3-r1
+>    `--  dev-debug/systemtap-5.3
+>    `--  dev-util/google-perftools-2.17.2
+>    `--  sys-libs/libunwind-1.8.2-r1
+>    `--  app-arch/zstd-1.5.7-r1
+>    `--  dev-libs/elfutils-0.193
+>    `--  sys-libs/binutils-libs-2.45-r1
+>    `--  sys-libs/zlib-1.3.1-r1
+>    `--  virtual/libcrypt-2-r1
+>    `--  sys-kernel/linux-headers-6.16
+>    `--  virtual/jdk-21
+>    `--  app-arch/tar-1.35
+>    `--  dev-python/setuptools-80.9.0-r1
+>    `--  app-alternatives/yacc-1-r2
+>    `--  app-alternatives/lex-0-r1
+>    `--  sys-apps/which-2.23
+>    `--  virtual/pkgconfig-3
+>    `--  app-text/asciidoc-10.2.1
+>    `--  app-text/sgml-common-0.6.3-r7
+>    `--  app-text/xmlto-0.0.28-r11
+>    `--  sys-process/time-1.9-r1
+>
+> I hope that this helps with reproducing the problem, but if not, let me
+> know which additional information you'd like to have and I will send it.
+> My running kernel is 6.16.4, and glibc is version 2.42.
 
-On 8/20/25 3:55 PM, Rob Herring wrote:
-> On Wed, Aug 20, 2025 at 02:13:02PM -0300, Ariel D'Alessandro wrote:
->> Commit 14176e94bb35d ("arm64: dts: mediatek: mt8195: Fix ranges for jpeg
-> 
-> That commit is not in any upstream tree.
+Thanks Guilherme,
 
-Ugh, indeed. Dropping this patch.
+There is also:
+https://lore.kernel.org/lkml/CADHxFxSBKuKUWDvki9QDqc5jf1Y+k2EpvOnDsg8O09pZ1=
+0n2NA@mail.gmail.com/
+which may give me a reproduction. The fix there doesn't look right.
+I'll try to find time to look into it again.
 
-> 
->> enc/decoder nodes") redefined jpeg encoder/decoder children node ranges.
->> Update the related device tree binding yaml definition to match
->> mediatek/mt8195.dtsi, as this is currently the only one using it.
->>
->> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> ---
->>   .../media/mediatek,mt8195-jpegdec.yaml        | 31 ++++++++++---------
->>   .../media/mediatek,mt8195-jpegenc.yaml        | 15 ++++-----
->>   2 files changed, 24 insertions(+), 22 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegdec.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegdec.yaml
->> index e5448c60e3eb5..b1f3df258dc87 100644
->> --- a/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegdec.yaml
->> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8195-jpegdec.yaml
->> @@ -36,7 +36,7 @@ properties:
->>   
->>   # Required child node:
->>   patternProperties:
->> -  "^jpgdec@[0-9a-f]+$":
->> +  "^jpgdec@[0-9],[0-9a-f]+$":
-> 
-> This is wrong unless 0-9 is a separate, distinct address (like a chip
-> select #).
-
-Ack.
-
-Thanks for the feedback.
-Regards,
-
--- 
-Ariel D'Alessandro
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
-
+Thanks,
+Ian
 
