@@ -1,47 +1,63 @@
-Return-Path: <linux-kernel+bounces-809534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031BEB50EC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:10:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E11D8B50F1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E2C11C22488
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:11:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C97D173F8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD823064AD;
-	Wed, 10 Sep 2025 07:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589E5308F0B;
+	Wed, 10 Sep 2025 07:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="txfS6Etg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=grenoble-inp.org header.i=@grenoble-inp.org header.b="udLKDSEQ"
+Received: from smtpout02-ext4.partage.renater.fr (smtpout02-ext4.partage.renater.fr [194.254.241.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D587175A5;
-	Wed, 10 Sep 2025 07:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408CE306494
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.254.241.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757488244; cv=none; b=X10YZIS5QZFsqH8xuEZnjjP1Rcg4TTUDukskg4OenMlUcJp3OzF8fcroICiyFcKQwP7j2ZxoHACr1JOCOd55aUgjscDmqIBSb3tr/yESAxR08zTK09Su/hQylHTVyJpyvU0GSkNFJdzPWnGbpkr4E/2SuJB+tdXC3xdEvsZ69lQ=
+	t=1757488702; cv=none; b=LnzNXgaEGRZSW4eI+k3uRo9qO7hMzjHx/ITXdHu1jMbGsSqjhONWdsklZWIhbfcYEL8MO/R45PlSJScoLeoGq9qqdvioi3nKbDnIY1oXwbOSPJWrStMPbGs1fhbvV41CTW4Y3w2DDYH6zAocRjmFkylqXm1RBII2X+TskE5qk+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757488244; c=relaxed/simple;
-	bh=kJGN4eUpnQFayOKu89xNmgdsMXpg0yHumEE/CC4ylSU=;
+	s=arc-20240116; t=1757488702; c=relaxed/simple;
+	bh=vTyTqafs4PgWKg4ogYxiVmVIWLf9Jvd0sAOXaxaYu/0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FR3yJ06kNyv8osGLS/GEd+6yS0uGA5rJkbf6ORotWdTGpt1e67bzevTx8hZiHmeYkySW7fSgZt7eGjHyiZLC/DBuO6b4nMbn9ol7p7UL9ZsKjnxywdrBpRhinhEluJr0ipXH74jGDZ9c6rdGM6uN6WAXXvlrSTjmoovNKGwt83k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=txfS6Etg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE475C4CEF0;
-	Wed, 10 Sep 2025 07:10:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757488243;
-	bh=kJGN4eUpnQFayOKu89xNmgdsMXpg0yHumEE/CC4ylSU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=txfS6EtgtkyudyVQ2MJQv8Eo/5De9Gt721TJKH8nmbFcGU2ysk+DIWaMKxrxQb0iW
-	 U65CmyTWDE7zbKIxDAvtObsq74irrVlaL4mxU9v77tW+2e8LZzjIUa3qG0Tb2qhs2r
-	 YMuDu48hJGtYWiDrrdn59frTUJpMgHIN58JOU3qXy8fsIhPORxFjwSUn1Hb3nunfWd
-	 bHueGERLRYcgpOeFwsz0lCoXaYKEzb/NqUcUk7bCrZn3SXPL79yoMKimlymTha6iS1
-	 k7qnDMUdmPT52ZnNdPCpD9r2Kh87CZ1DrVQwn0CwDXAi6SwFk220TBOT5U7Hp18xqq
-	 0TsBbFuJtA8yw==
-Message-ID: <74b42187-ee90-4499-a93d-800c3a55c5e8@kernel.org>
-Date: Wed, 10 Sep 2025 09:10:38 +0200
+	 In-Reply-To:Content-Type; b=KLRyiwaSu4sHSdwGzFZHhS2NeX1IDBbEG30x9Lpi9N08wZ4KT952ocNJcNv00QHPbvQShDaE8rAyofHgKtxAPvxBRo9/evHLtgSNxbCDHu5TioeNVe1Y2OylAlFYDKIi7Y58VNXmzfm9DOvFq5jm2U/MKVczcoRMnHPweNdMyGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grenoble-inp.org; spf=none smtp.mailfrom=grenoble-inp.org; dkim=pass (2048-bit key) header.d=grenoble-inp.org header.i=@grenoble-inp.org header.b=udLKDSEQ; arc=none smtp.client-ip=194.254.241.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grenoble-inp.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=grenoble-inp.org
+Received: from zmtaauth02.partage.renater.fr (zmtaauth02.partage.renater.fr [194.254.241.25])
+	by smtpout20.partage.renater.fr (Postfix) with ESMTP id B836EBFE54;
+	Wed, 10 Sep 2025 09:10:45 +0200 (CEST)
+Received: from zmtaauth02.partage.renater.fr (localhost [127.0.0.1])
+	by zmtaauth02.partage.renater.fr (Postfix) with ESMTPS id ACC92A0CAB;
+	Wed, 10 Sep 2025 09:10:45 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by zmtaauth02.partage.renater.fr (Postfix) with ESMTP id 993F8A0CBC;
+	Wed, 10 Sep 2025 09:10:45 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 zmtaauth02.partage.renater.fr 993F8A0CBC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grenoble-inp.org;
+	s=F42A61D9-9621-4693-8E8E-830FB5F1ED6E; t=1757488245;
+	bh=vTyTqafs4PgWKg4ogYxiVmVIWLf9Jvd0sAOXaxaYu/0=;
+	h=Message-ID:Date:MIME-Version:To:From;
+	b=udLKDSEQphZYBqBCK3E0UrIXaQPGORDawCTr+KKPlBriSYOXpV9b/ECPqYsZK1Rwf
+	 X0kDECQA6cTLJy2PQhFNRrTDW3unglpDiVEoFIJrSy4FGtmWLzC1vIvO8wZxHd2gRS
+	 HBb0Xac1iI3n2R2Mb2cYLuCel0RPPQsZDzpQWpWz9+UkPTMLON9mmQa07x1tz3ZYmH
+	 0mAmE4QPrOG1S+W++Jdqjs+SKPc7E7TOma7BFslfvQP8NmOptDtLSLIk4GLSJVeBy6
+	 gFCwvxYCQwV/V7EjWrLXPosTpnWaCWNXqwFvbrFlg/BbCeNVlTSFIVMMsYPcOeju33
+	 gIqcIeUu5Ng6Q==
+Received: from zmtaauth02.partage.renater.fr ([127.0.0.1])
+ by localhost (zmtaauth02.partage.renater.fr [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id kNv6SQ9vCpOy; Wed, 10 Sep 2025 09:10:45 +0200 (CEST)
+Received: from 130.190.85.42 (unknown [194.254.241.250])
+	by zmtaauth02.partage.renater.fr (Postfix) with ESMTPA id 58664A0CAB;
+	Wed, 10 Sep 2025 09:10:45 +0200 (CEST)
+Message-ID: <aff17665-36a5-42be-87d8-ca69ac167c8a@grenoble-inp.org>
+Date: Wed, 10 Sep 2025 09:10:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,91 +65,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: rockchip: Add Firefly
- ROC-RK3588-RT
-To: Kaison Deng <dkx@t-chip.com.cn>
-Cc: Rob Herring <robh@kernel.org>, Jimmy Hon <honyuenkwun@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Wayne Chou <zxf@t-chip.com.cn>, Quentin Schulz <quentin.schulz@cherry.de>,
- Dragan Simic <dsimic@manjaro.org>, Jonas Karlman <jonas@kwiboo.se>,
- FUKAUMI Naoki <naoki@radxa.com>, Peter Robinson <pbrobinson@gmail.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1757322046.git.dkx@t-chip.com.cn>
- <27b2ce7950fdbf28c6c8404c3f8be3c1c35d6b3c.1757322046.git.dkx@t-chip.com.cn>
- <20250909-romantic-efficient-sambar-4fc38f@kuoka>
- <55CC0521CC5B0671+91c4b933e5c5f604ade4f7e314be6fe49efc9e99.camel@t-chip.com.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3] vt: add support for smput/rmput escape codes
+To: Jiri Slaby <jirislaby@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Calixte Pernot <c@lixte.email>
+References: <5002d4f9-4999-4a84-9329-edb20098fd7a@gmail.com>
+ <20250909202629.9386-2-calixte.pernot@grenoble-inp.org>
+ <dbb5a124-4947-491e-8903-faa18e0e5bde@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <55CC0521CC5B0671+91c4b933e5c5f604ade4f7e314be6fe49efc9e99.camel@t-chip.com.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Calixte Pernot <calixte.pernot@grenoble-inp.org>
+Autocrypt: addr=calixte.pernot@grenoble-inp.org; keydata=
+ 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
+In-Reply-To: <dbb5a124-4947-491e-8903-faa18e0e5bde@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Virus-Scanned: clamav-milter 0.103.12 at clamav01
+X-Virus-Status: Clean
+X-Renater-Ptge-SpamState: clean
+X-Renater-Ptge-SpamScore: -100
+X-Renater-Ptge-SpamCause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvvdeihecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucftgffptefvgfftnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvegrlhhigihtvgcurfgvrhhnohhtuceotggrlhhigihtvgdrphgvrhhnohhtsehgrhgvnhhosghlvgdqihhnphdrohhrgheqnecuggftrfgrthhtvghrnhepgeekkeegffeuteduhfelteelteegveeuuedutdejteeuudeivdehheetveeguedvnecukfhppeduleegrddvheegrddvgedurddvhedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelgedrvdehgedrvdeguddrvdehtddphhgvlhhopedufedtrdduledtrdekhedrgedvpdhmrghilhhfrhhomheptggrlhhigihtvgdrphgvrhhnohhtsehgrhgvnhhosghlvgdqihhnphdrohhrghdpnhgspghrtghpthhtohepgedprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegtsehlihigthgvrdgvmhgrihhl
+Content-Transfer-Encoding: quoted-printable
 
-On 10/09/2025 07:47, Kaison Deng wrote:
->>> +      - description: Firefly ROC-RK3588-RT
->>> +        items:
->>> +          - const: firefly,roc-rk3588-rt
->>
->> That's just enum with ROC-RK3576-PC. BTW, all these descriptionis are
->> completely redundant. Actually getting harmful, because copy+paste of
->> the same is only obfuscating code.
->>
->> Best regards,
->> Krzysztof
->>
->>
-> 
-> The ROC-RK3576-PC is based on the RK3576 SoC (4*Cortex-A72 + 4*Cortex-
-> A53). The ROC-RK3588-RT is based on the RK3588 SoC (4*Cortex-A76 +
+Yep, I don't know what went wrong here.
 
-Uh, you are right, somehow I mixed up numbers.
+I didn't see the commit you sent to fix this issue, so I tried to send a=20
+new patch that fixes the issue, but I somehow sent the wrong patch. Sorry=
+.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thank you for your fix.
 
-Best regards,
-Krzysztof
+On 9/10/25 08:43, Jiri Slaby wrote:
+> On 09. 09. 25, 22:26, Calixte Pernot wrote:
+>> From: Calixte Pernot <c@lixte.email>
+>>
+>> Support "\e[?1049h" and "\e[?1049l" escape codes.
+>> This patch allows programs to enter and leave alternate screens.
+>> This feature is widely available in graphical terminal emulators and=20
+>> mostly
+>> used by fullscreen terminal-based user interfaces such as text editors=
+.
+>> Most editors such as vim and nano assume this escape code in not=20
+>> supported
+>> and will not try to print the escape sequence if TERM=3Dlinux.
+>> To try out this patch, run `TERM=3Dxterm-256color vim` inside a VT.
+>>
+>> Signed-off-by: Calixte Pernot <calixte.pernot@grenoble-inp.org>
+>> ---
+>> =C2=A0 drivers/tty/vt/vt.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 58 ++++++++++++++++++++++++++++++++++
+>> =C2=A0 include/linux/console_struct.h |=C2=A0 3 ++
+>> =C2=A0 2 files changed, 61 insertions(+)
+>>
+>> diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+>> index 62049ceb3..d9e4eb3f0 100644
+>> --- a/drivers/tty/vt/vt.c
+>> +++ b/drivers/tty/vt/vt.c
+>> @@ -141,6 +141,7 @@ static const struct consw=20
+>> *con_driver_map[MAX_NR_CONSOLES];
+>> =C2=A0 static int con_open(struct tty_struct *, struct file *);
+>> =C2=A0 static void vc_init(struct vc_data *vc, int do_clear);
+>> =C2=A0 static void gotoxy(struct vc_data *vc, int new_x, int new_y);
+>> +static void restore_cur(struct vc_data *vc);
+>> =C2=A0 static void save_cur(struct vc_data *vc);
+>> =C2=A0 static void reset_terminal(struct vc_data *vc, int do_clear);
+>> =C2=A0 static void con_flush_chars(struct tty_struct *tty);
+>> @@ -1344,6 +1345,10 @@ struct vc_data *vc_deallocate(unsigned int=20
+>> currcons)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kfree(vc->vc_sc=
+reenbuf);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vc_cons[currcon=
+s].d =3D NULL;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>> +=C2=A0=C2=A0=C2=A0 if (vc->vc_saved_screen !=3D NULL) {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kfree(vc->vc_saved_screen)=
+;
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vc->vc_saved_screen =3D NU=
+LL;
+>> +=C2=A0=C2=A0=C2=A0 }
+>
+> Yes, that's the bug. (I am not sure why are you sending this?)
+>
+> thanks,
 
