@@ -1,230 +1,317 @@
-Return-Path: <linux-kernel+bounces-810530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC59B51BE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:38:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB01B51BF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C81A8465188
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42495E7758
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D3626658A;
-	Wed, 10 Sep 2025 15:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD104321425;
+	Wed, 10 Sep 2025 15:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lsbbvFXB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KosGf2fV";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lsbbvFXB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KosGf2fV"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cBbrr4oO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A44D2DF12B
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF45255F5E
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757518680; cv=none; b=Hn8cMj5/ADEt1pFybRtV+drvpDCU7eCNg7BtNvKnoJvHn6N6BsAYZFZSa9A9Nw0AxtnfYSyvkuQ8StIxC8aBXMxcVnTAyWk9o1MFb5htVA6cvHQxhgXR9WmDpxwbSLMnoPB9rT2p3PQE183YLjPccXlWFqIXVQ6zEVyQ0JtNijQ=
+	t=1757518679; cv=none; b=sEU3JYvbM71asu9oc5Z4cBKDKlXPoEV5HzVgxo0yGTBUvn7g4FP07DRyYa63G7gNm1NCn7yBEPz4BXBlvUmfR1xzRhh9YA6JxAup1moEA1Rg6nwJyx6jdEOg1fZ1EVEiQp/hD39L+8frmNW4WbwOmUIqTJw/729Jkhtnn7M/vRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757518680; c=relaxed/simple;
-	bh=J9b9WiXFSRPdfF5JGeZWMBrJ6lEaAe0Rrw2zRiIM1kk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gIyaHdH2hrgsHWggA5ec3yYqp7PWYlOAL5MdFxcao10X2nPwJ01rpjoWnEPfFMYJoTvYCP1rIsUVvc6aRsUT2glPnlk1UCFFbOLV9dXJmcphJSiIdMewzHyKpgAQ+y3gNq6HgCb6Nn1umoWXyCI1SMzheL3SvMJ1l7yVrmV8hWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lsbbvFXB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KosGf2fV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lsbbvFXB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KosGf2fV; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 651FC33CD6;
-	Wed, 10 Sep 2025 15:37:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757518674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=15sE0Z3wXXaolJoSlUAytH9AqR+61628Et+pbioJ8TU=;
-	b=lsbbvFXBasQP0zkHtD8xWmbIWNY91G0uA7t90BqiqfgY4B2VndRrIAB83SFL3qAkVrf4VP
-	Y67nCdHC+/gau4WawfksWn7U3T7EFL+mTYNEaC1eLYXAThAISKsmd7Gto66QRuwe+vuwZX
-	mt6cgLOCvMekjywjiNqAJuTlxwCRTTU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757518674;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=15sE0Z3wXXaolJoSlUAytH9AqR+61628Et+pbioJ8TU=;
-	b=KosGf2fVrUc/d3X8mvYtIDplzNqNMGu8KFNhtUmwqymCLJ4SFOCp2xj1gUMF+fnfsxxy1J
-	/ztvSeY2qDx8veCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757518674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=15sE0Z3wXXaolJoSlUAytH9AqR+61628Et+pbioJ8TU=;
-	b=lsbbvFXBasQP0zkHtD8xWmbIWNY91G0uA7t90BqiqfgY4B2VndRrIAB83SFL3qAkVrf4VP
-	Y67nCdHC+/gau4WawfksWn7U3T7EFL+mTYNEaC1eLYXAThAISKsmd7Gto66QRuwe+vuwZX
-	mt6cgLOCvMekjywjiNqAJuTlxwCRTTU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757518674;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=15sE0Z3wXXaolJoSlUAytH9AqR+61628Et+pbioJ8TU=;
-	b=KosGf2fVrUc/d3X8mvYtIDplzNqNMGu8KFNhtUmwqymCLJ4SFOCp2xj1gUMF+fnfsxxy1J
-	/ztvSeY2qDx8veCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 53B5913301;
-	Wed, 10 Sep 2025 15:37:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QUFuFFKbwWhCOgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 10 Sep 2025 15:37:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 06BE1A0A2D; Wed, 10 Sep 2025 17:37:46 +0200 (CEST)
-Date: Wed, 10 Sep 2025 17:37:45 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 05/32] nsfs: add nsfs.h header
-Message-ID: <biw5wpc4kmp4gdb3imoi65txbd6dsovahrlrd7njvzpuvni4ak@5ytepsd3tp3z>
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-5-4dd56e7359d8@kernel.org>
+	s=arc-20240116; t=1757518679; c=relaxed/simple;
+	bh=DcqpRz8LUZmmCaYuGXzF+m+hJKxK2j9shhVMrKrmQOk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i1TVMB8v21j+HGAHW2opg1xePLmXiR1SLZGur6c8kOzZCJYGhKBA5SXT9wA7N1W1I+swFCTWrFTRA8GZL5M1WVYEJ1jQyIycbnBN71yBn/umMlI/bo3aVxn/vpehbV6WguACzmzwjOYsfX4Ar90V2OtDMYDh4bC2tDriU9rdXLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cBbrr4oO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757518676;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xC5R7eYl9Rwp0IenYxoNNT2Mrkq2ifbsmCTO4MCCq6w=;
+	b=cBbrr4oOAAC2TDHzjFbIDAPy57+V5lhbL+bRUKVSiV+5qKONPaUk62FJVauTUOebSC1uM9
+	SrFcx94MO4gbFZjEQr3EWBl/e7IE+QnpykS2dsyYqiERSEl49D4wi2dt7FhWnCK+X7wuz1
+	s19Ost5HzCrBJpPddBEwxyGIGy8OadQ=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-519-bELqAtVWNEyFaFfWaHluyg-1; Wed, 10 Sep 2025 11:37:55 -0400
+X-MC-Unique: bELqAtVWNEyFaFfWaHluyg-1
+X-Mimecast-MFC-AGG-ID: bELqAtVWNEyFaFfWaHluyg_1757518674
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3ccd58af2bbso323959f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:37:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757518674; x=1758123474;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xC5R7eYl9Rwp0IenYxoNNT2Mrkq2ifbsmCTO4MCCq6w=;
+        b=K+l6+VuBHQnfb/TalsuUeS3R8JAnHMupqwlhwt0TO0/NBB5S3Gkmm3SGOdpDd+uO2p
+         ewRrw/LSic2KQ3sq/dciK8UZNXvmj1fxvrNb82LwaCKJ871CATx4m05//sX3ZawHV3i2
+         mVExpSjyapmCVDdMSkeu6Be9AlQWEuD1sH5zMPlu+2WQuLM6XXbBMUAnA+VBtR1WNZWC
+         zFVhcGzp0QkJ41B+xXcnShNlq3FlQLfQcm2k0Goc/K41TAwevxDghWooaM5xGt/zXXfm
+         rRLKzOH7+1/et+1vSYCJVmUXN74pFUNQmnQ5Q8KsqTfWRy8seh5aAUWGURxZXWz/gQCs
+         JwTA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5dov1W3atAL5gZCUecxKMeG3+DynkGi/uq9gp8PJfJ7llr5YrdFCM4wRg1Cwue1NzIL99zXVEgPEB2Yw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsTl8oSevQKaarku+ObXTwGRH5vnw5X0A4NUjl8u75kOvN0UsC
+	erO5nvH1QV4BpSIFu8HrJ/I4xHSP7YpE/0X4w4wnQc5boL91LiABwq3sHg+hxhiUwoUcYnLHt9J
+	qZ7gJMxxrs/1VUlWTj7fuNj+rghHo1lGTTmRhWxM8d0JAlztm5ItIeMzxpGHwZzPSOw==
+X-Gm-Gg: ASbGncts8SzNrPspSKHVBhEOVmwile+BC9oem3ATmcPoDDOK2n74/vwVduF3uKFd+Ac
+	oilX5AgfAI4UuT32DA5FetIvxFDYW9+E8ktNPuEO8x1mCtrXHdst9oc0H8+GwS8E3+jT3Bm2Jbb
+	jEoKG74X4jp6xhB/S23GcBoC4nm9ijQUn6ws8DS2VbzV9NXtpIroyMINE+jcF2EUuUvh/FwC9p3
+	YHmWzAPC6g2ziB+etkU+lvkhVhDloM18RLnWX3kPSSmSklQYgG4rfOX3M0dPRFyeCjykUEt2eDE
+	QBDi2D6iuw7AsJHJUIIFbWASFhPKyfz7QkZBcJY921vE3Fbpz3VRBwHmWK1eIUz52krBvtSdukW
+	MNVEqaIVfLHeMXXwDK7VZ2b1NLFUzslX1HfWhJOjGQPoaFJTKO1fM9MUv6RyLKk8JCpM=
+X-Received: by 2002:a05:6000:400f:b0:3df:22a3:d240 with SMTP id ffacd0b85a97d-3e75e0f032cmr41419f8f.4.1757518674321;
+        Wed, 10 Sep 2025 08:37:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSanGWB8lh0ls+MFHggdlE9XrwwjBOuob47gN7Go2sD22cOkG0a4ZQLy4lN4pGQUVx9DuyJw==
+X-Received: by 2002:a05:6000:400f:b0:3df:22a3:d240 with SMTP id ffacd0b85a97d-3e75e0f032cmr41388f8f.4.1757518673785;
+        Wed, 10 Sep 2025 08:37:53 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f17:9c00:d650:ab5f:74c2:2175? (p200300d82f179c00d650ab5f74c22175.dip0.t-ipconnect.de. [2003:d8:2f17:9c00:d650:ab5f:74c2:2175])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521c9cdbsm7733009f8f.16.2025.09.10.08.37.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 08:37:53 -0700 (PDT)
+Message-ID: <ef343405-c394-4763-a79f-21381f217b6c@redhat.com>
+Date: Wed, 10 Sep 2025 17:37:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910-work-namespace-v1-5-4dd56e7359d8@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLbyy5b47ky7xssyr143sji8pp)];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
+To: Kevin Brodsky <kevin.brodsky@arm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+ Mark Rutland <Mark.Rutland@arm.com>
+References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
+ <20250908073931.4159362-3-kevin.brodsky@arm.com>
+ <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
+ <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
+ <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
+ <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
+ <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
+ <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
+ <29383ee2-d6d6-4435-9052-d75a263a5c45@redhat.com>
+ <9de08024-adfc-421b-8799-62653468cf63@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <9de08024-adfc-421b-8799-62653468cf63@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed 10-09-25 16:36:50, Christian Brauner wrote:
-> And move the stuff out from proc_ns.h where it really doesn't belong.
 > 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-Looks sensible. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  include/linux/nsfs.h    | 26 ++++++++++++++++++++++++++
->  include/linux/proc_ns.h | 13 +------------
->  2 files changed, 27 insertions(+), 12 deletions(-)
+> Somewhat, but in the regular case where enter() is called followed by
+> leave() there is really no complexity for the caller, just an extra
+> local variable.
 > 
-> diff --git a/include/linux/nsfs.h b/include/linux/nsfs.h
-> new file mode 100644
-> index 000000000000..fb84aa538091
-> --- /dev/null
-> +++ b/include/linux/nsfs.h
-> @@ -0,0 +1,26 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* Copyright (c) 2025 Christian Brauner <brauner@kernel.org> */
-> +
-> +#ifndef _LINUX_NSFS_H
-> +#define _LINUX_NSFS_H
-> +
-> +#include <linux/ns_common.h>
-> +
-> +struct path;
-> +struct task_struct;
-> +struct proc_ns_operations;
-> +
-> +int ns_get_path(struct path *path, struct task_struct *task,
-> +		const struct proc_ns_operations *ns_ops);
-> +typedef struct ns_common *ns_get_path_helper_t(void *);
-> +int ns_get_path_cb(struct path *path, ns_get_path_helper_t ns_get_cb,
-> +		   void *private_data);
-> +
-> +bool ns_match(const struct ns_common *ns, dev_t dev, ino_t ino);
-> +
-> +int ns_get_name(char *buf, size_t size, struct task_struct *task,
-> +			const struct proc_ns_operations *ns_ops);
-> +void nsfs_init(void);
-> +
-> +#endif /* _LINUX_NSFS_H */
-> +
-> diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
-> index 4b20375f3783..5e1a4b378b79 100644
-> --- a/include/linux/proc_ns.h
-> +++ b/include/linux/proc_ns.h
-> @@ -5,7 +5,7 @@
->  #ifndef _LINUX_PROC_NS_H
->  #define _LINUX_PROC_NS_H
->  
-> -#include <linux/ns_common.h>
-> +#include <linux/nsfs.h>
->  #include <uapi/linux/nsfs.h>
->  
->  struct pid_namespace;
-> @@ -75,16 +75,5 @@ static inline int ns_alloc_inum(struct ns_common *ns)
->  #define ns_free_inum(ns) proc_free_inum((ns)->inum)
->  
->  #define get_proc_ns(inode) ((struct ns_common *)(inode)->i_private)
-> -extern int ns_get_path(struct path *path, struct task_struct *task,
-> -			const struct proc_ns_operations *ns_ops);
-> -typedef struct ns_common *ns_get_path_helper_t(void *);
-> -extern int ns_get_path_cb(struct path *path, ns_get_path_helper_t ns_get_cb,
-> -			    void *private_data);
-> -
-> -extern bool ns_match(const struct ns_common *ns, dev_t dev, ino_t ino);
-> -
-> -extern int ns_get_name(char *buf, size_t size, struct task_struct *task,
-> -			const struct proc_ns_operations *ns_ops);
-> -extern void nsfs_init(void);
->  
->  #endif /* _LINUX_PROC_NS_H */
+> There are complications where we want to exit lazy_mmu temporarily, as
+> in mm/kasan/shadow.c [1k], but this is in fact unavoidable. Chatting
+> with Mark Rutland, I realised that to truly support nested sections,
+> this must be handled in a special way in any case. To be clear, I am
+> referring to this situation:
 > 
-> -- 
-> 2.47.3
+> __kasan_populate_vmalloc:
+>      apply_to_page_range:
+>          arch_enter_lazy_mmu_mode() {1}
 > 
+>          kasan_populate_vmalloc_pte:
+>              arch_leave_lazy_mmu_mode() {2}
+>              arch_enter_lazy_mmu_mode() {3}
+> 
+>          arch_leave_lazy_mmu_mode() {4}
+> 
+> With the approach this series takes, call {2} is made safe by passing a
+> special parameter (say LAZY_MMU_FLUSH) that forces lazy_mmu to be fully
+> exited - and call {3} will then re-enter lazy_mmu. This works regardless
+> of whether __kasan_populate_vmalloc() has been called with lazy_mmu
+> already enabled (i.e. calls {1} and {4} can be nested).
+> 
+> On the other hand, with a pagefault_disabled-like approach, there is no
+> way to instruct call {3} to fully exit lazy_mmu regardless of the
+> nesting level.
+
+Sure there is, with a better API. See below. :)
+
+> 
+> It would be possible to make both approaches work by introducing a new
+> API, along the lines of:
+> - int arch_disable_save_lazy_mmu_mode() (the return value indicates the
+> nesting level)
+> - void arch_restore_lazy_mmu_mode(int state) (re-enter lazy_mmu at the
+> given nesting level)
+
+Yes, I think we really need a proper API.
+
+> 
+> This is arguably more self-documenting than passing LAZY_MMU_FLUSH in
+> call {2}. This API is however no simpler when using a
+> pagefault_disabled-like approach (and less consistent than when always
+> saving state on the stack).
+
+Yes, a proper API is warranted. In particular, thinking about the following:
+
+arch_enter_lazy_mmu_mode() {1}
+	arch_enter_lazy_mmu_mode() {2}
+
+	kasan_populate_vmalloc_pte:
+		arch_leave_lazy_mmu_mode() {3}
+		arch_enter_lazy_mmu_mode() {4}
+
+	arch_leave_lazy_mmu_mode() {5}
+arch_leave_lazy_mmu_mode() {6}
+
+
+Imagine if we have the following API instead:
+
+lazy_mmu_enable() {1}
+	lazy_mmu_enable() {2}
+
+	kasan_populate_vmalloc_pte:
+		lazy_mmu_pause() {3}
+		lazy_mmu_continue() {4}
+
+	lazy_mmu_disable() {5}
+lazy_mmu_disable() {6}
+
+
+I think it is crucial that after lazy_mmu_save/lazy_mmu_restore, no more 
+nesting must happen.
+
+Assume we store in the task_struct
+
+uint8_t lazy_mmu_enabled_count;
+bool lazy_mmu_paused;
+
+We can do things like
+
+a) Sanity check that while we are paused that we get no more 
+enable/disable requests
+b) Sanity check that while we are paused that we get no more pause requests.
+
+[...]
+
+>>
+>> If LAZY_MMU_DEFAULT etc. are not for common code, then please
+>> maintain them for the individual archs as well, just like you do with the
+>> opaque type.
+> 
+> I see your point - having them defined in <linux/mm_types.h> could be
+> misleading. I just wanted to avoid all 4 architectures defining the same
+> macros. Maybe call them __LAZY_MMU_* to suggest they're not supposed to
+> be used in generic code?
+
+Maybe look into avoiding them completely :) Let's agree on the API first 
+and then figure out how to pass the information we need to pass.
+
+[...]
+
+>> Worse, it does not
+>>> truly enable states to be nested: it allows the outermost section to
+>>> store some state, but nested sections cannot allocate extra space. This
+>>> is really what the stack is for.
+>>
+>> If it's really just 8 bytes I don't really see the problem. So likely
+>> there is
+>> more to it?
+> 
+> I suppose 8 extra bytes per task is acceptable, but some architectures
+> may want to add more state there.
+
+Just for reference: we currently perform an order-2 allocation, 
+effectively leaving ~4KiB "unused".
+
+If there are any real such case on the horizon where we need to store 
+significantly more (in which case storing it on the stack might probably 
+also bad), please let me know.
+
+> 
+> The one case that is truly problematic (though not required at this
+> point) is where each (nested) section needs to store its own state. With
+> this series it works just fine as there is a lazy_mmu_state_t for each
+> section, however if we use task_struct/thread_struct there can be only
+> one member shared by all nested sections.
+
+Do we have a use case for that on the horizon? If so, I fully agree, we 
+have to store information per level. How/what information we have to 
+store would be another question.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers
+
+David / dhildenb
+
 
