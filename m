@@ -1,159 +1,182 @@
-Return-Path: <linux-kernel+bounces-810770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE3FB51F24
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:39:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C37B51F26
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BE791BC7D3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:40:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81BE71B26045
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0721C3375C0;
-	Wed, 10 Sep 2025 17:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975263314BC;
+	Wed, 10 Sep 2025 17:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dePJwE0+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LU0wCdD1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4535432ED52;
-	Wed, 10 Sep 2025 17:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB69258CD8;
+	Wed, 10 Sep 2025 17:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757525965; cv=none; b=L+4L4IngUHQ5fAcJB4fCclJGMkRQDRYYSY75YeZMfoS9zlffYaqJDfkif7Yu6X4W1Cxqx8X2PDsxqLlJi3qsyDCkEf93bK3JuvrDTA2TpsQ5l8FQz6KqqtOZ5ReGaYix0cGI+wnzd3U2nUntWW+ZF7sjucJbDs3ONGlWvJ+bBfc=
+	t=1757525985; cv=none; b=c/Sq/1YE6X6aupGQ84P5hCPToJJEZG3AGZvkCeUQzEIdwnOOy8LTjiQhfodTdOXTLH/5KECJeLZGqkCCAsNYGi0e4IEXtVlgtZKpLd/TgFEqM/VtY2K+DX+t/beHeYAzC89dA18vNXVRvniNXqCSN5wRdOY+6Q0nf5Unj9XuQp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757525965; c=relaxed/simple;
-	bh=m0DNa4vBUCkxRtQp97NYT7gbXNH16n1jHXxeABD4H7U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U2Gl8mNDYMXvrTdpctSmvY5q/5XLQoQuIXTeMF3Z/DQFyM3vqp7ji1RNRKxaa4lxdksIYuvCFojpg4q8Es1ke1c8BKVau6VLa1i9uktK54MSJELYct/PJwUsjRk4NJa9ySVTGuDoXBWx/7o2tIT+T48fgGWBIYVAJDuBSVU0W4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dePJwE0+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E55C9C4CEF7;
-	Wed, 10 Sep 2025 17:39:24 +0000 (UTC)
+	s=arc-20240116; t=1757525985; c=relaxed/simple;
+	bh=9NYPXM8rN6ZU04YuT+J0cq4PyeCc2Pt6HtA8XSCm9us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s70VY/aDDtbPh7cXaOOLhraPa5FC/S2bJHFZ7Z0qU9wbcyJUk/e4MqZ+ovEkOtME+JIuYiNsFw3FxUjj6r07cZM6RxzVkNfTGuCEwjNpYzloUDj5aQp29oNKkABOuNXgD1Ze25aesafqnOmJCKagGiI9fQ3LVGonhB+rfSuwde8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LU0wCdD1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E41EC4CEEB;
+	Wed, 10 Sep 2025 17:39:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757525964;
-	bh=m0DNa4vBUCkxRtQp97NYT7gbXNH16n1jHXxeABD4H7U=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=dePJwE0+Nu+mvg08+eAXMYN8YFekuHEfh6Vi3atzF/Ty545uITzYxhpoPFiKw07OL
-	 6nKfVTT272uce/KB3s9Z0fEMt5BkAmxijHd996Bz2IRX9GhRg2bBy8AE422fTlh/uQ
-	 G8ZWOHy+H/ZTkOq+VXGkvSoQgOhQH5iEVw/P7XPzJJ79o3EOouG7VVICoVW4MNctrJ
-	 jPCD5NAh64Ducq//A2SqKwWxG4HnzFSelKIizm+eMW7S7xNpK/sZRgb2QNXQG932wD
-	 SNRj9HkjXUGhj621Rbbnle6pybEzYa1GrC1D+dYvmzHkFxhR/I4Ux/RK3ZgzQiCFiz
-	 7ovEbGU/Gsolg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D72CDCAC58D;
-	Wed, 10 Sep 2025 17:39:24 +0000 (UTC)
-From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org>
-Date: Wed, 10 Sep 2025 23:09:21 +0530
-Subject: [PATCH 2/2] iommu/of: Call pci_request_acs() before enumerating
- the Root Port device
+	s=k20201202; t=1757525984;
+	bh=9NYPXM8rN6ZU04YuT+J0cq4PyeCc2Pt6HtA8XSCm9us=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LU0wCdD1/NtlPZTNZ75T4EWOv1EHk8/TsU+F1e5uL470ftUl6ESQt08Wez+cbJJ4B
+	 6rsADo8CZRieeFO85WPE5QWH+WB7Tb0BItNhWxFWGUBiJsTakOdx6F7rLXh+ekMfHq
+	 jO8Q1KNsROLsQFuHJrpsw9k4MAcC9RFfJTpgkEgdIowPED9nvR6jK0qo1vCzFTUSg7
+	 eeEOH5u7iNG6CnP/YcRhmCTiwqa86YXaPyR7z9jE6bTZvfVFUFKUj634XM/Df9W6E3
+	 AAtkfNEXpwSdy26dtJXnBsu38ssLD5lu/v0bfIYQDww8AUzJiIDTMoIzH+V8mkO3Nj
+	 richMcesv2stA==
+Date: Wed, 10 Sep 2025 10:39:42 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Ravi Bangoria <ravi.bangoria@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Collin Funk <collin.funk1@gmail.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf test: AMD IBS swfilt skip kernel tests if
+ paranoia is >1
+Message-ID: <aMG33krB2PGJNZKu@google.com>
+References: <20250910155635.46187-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-pci-acs-v1-2-fe9adb65ad7d@oss.qualcomm.com>
-References: <20250910-pci-acs-v1-0-fe9adb65ad7d@oss.qualcomm.com>
-In-Reply-To: <20250910-pci-acs-v1-0-fe9adb65ad7d@oss.qualcomm.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Joerg Roedel <jroedel@suse.de>, iommu@lists.linux.dev, 
- Anders Roxell <anders.roxell@linaro.org>, 
- Naresh Kamboju <naresh.kamboju@linaro.org>, 
- Pavankumar Kondeti <quic_pkondeti@quicinc.com>, 
- Xingang Wang <wangxingang5@huawei.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2676;
- i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
- bh=s3IWPWrtmYAF1td5P6U9N7afV7EwajwvWtWy1fRfcR0=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBowbfLBKMpPRmXeHjCf82JrGyQlLaBTrURN4KsN
- QgzqkNRMXCJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaMG3ywAKCRBVnxHm/pHO
- 9cuaB/9aEE0RS60+8mmPH7waGER7/F4s9uVWLBpZtCDkWRZyWUdJ7SMdDR50TXthG97BiOw0ZEl
- 4e6l/R90xwaAnmLqpLJMEtBSGR9tGHIrcG+/CiSN5xNqV2SZBSFPxxdsp4DSywhRmXfHw1KShMd
- RC4g15WALpt1tcpI7nYLmC2Ice8R9lTycjTI23MvuU8H+F5CVsODjWbHUN+5xH1MGM0LoQnpdVd
- jH1+LY4a3TqtbeSVCGJPg8zBe/WRZzLLGB85PgXMKoINILTQu6Zxt/OlppSIEbwIL9KFB9nYhmW
- XWvmR+84jPDpHrO27Hyx7es3T68W6UA577cF56W8GUUtYQrl
-X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
-X-Endpoint-Received: by B4 Relay for
- manivannan.sadhasivam@oss.qualcomm.com/default with auth_id=461
-X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Reply-To: manivannan.sadhasivam@oss.qualcomm.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250910155635.46187-1-irogers@google.com>
 
-From: Xingang Wang <wangxingang5@huawei.com>
+On Wed, Sep 10, 2025 at 08:56:35AM -0700, Ian Rogers wrote:
+> If not root and the perf_event_paranoid is set >1 swfilt will fail to
+> open the event failing the test. Add check to skip the test in that
+> case.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+> Remove incorrect sample count corrections
+> ---
+>  tools/perf/tests/shell/amd-ibs-swfilt.sh | 51 ++++++++++++++++++------
+>  1 file changed, 38 insertions(+), 13 deletions(-)
+> 
+> diff --git a/tools/perf/tests/shell/amd-ibs-swfilt.sh b/tools/perf/tests/shell/amd-ibs-swfilt.sh
+> index 7045ec72ba4c..ebe1fedb897b 100755
+> --- a/tools/perf/tests/shell/amd-ibs-swfilt.sh
+> +++ b/tools/perf/tests/shell/amd-ibs-swfilt.sh
+> @@ -1,6 +1,10 @@
+>  #!/bin/bash
+>  # AMD IBS software filtering
+>  
+> +ParanoidAndNotRoot() {
+> +  [ "$(id -u)" != 0 ] && [ "$(cat /proc/sys/kernel/perf_event_paranoid)" -gt $1 ]
+> +}
+> +
+>  echo "check availability of IBS swfilt"
+>  
+>  # check if IBS PMU is available
+> @@ -16,6 +20,7 @@ if [ ! -f /sys/bus/event_source/devices/ibs_op/format/swfilt ]; then
+>  fi
+>  
+>  echo "run perf record with modifier and swfilt"
+> +err=0
+>  
+>  # setting any modifiers should fail
+>  perf record -B -e ibs_op//u -o /dev/null true 2> /dev/null
+> @@ -31,11 +36,17 @@ if [ $? -ne 0 ]; then
+>      exit 1
+>  fi
+>  
+> -# setting it with swfilt=1 should be fine
+> -perf record -B -e ibs_op/swfilt=1/k -o /dev/null true
+> -if [ $? -ne 0 ]; then
+> -    echo "[FAIL] IBS op PMU cannot handle swfilt for exclude_user"
+> -    exit 1
+> +if ! ParanoidAndNotRoot 1
+> +then
+> +    # setting it with swfilt=1 should be fine
+> +    perf record -B -e ibs_op/swfilt=1/k -o /dev/null true
+> +    if [ $? -ne 0 ]; then
+> +        echo "[FAIL] IBS op PMU cannot handle swfilt for exclude_user"
+> +        exit 1
+> +    fi
+> +else
+> +    echo "[SKIP] not root and perf_event_paranoid too high for exclude_user"
+> +    err=2
+>  fi
+>  
+>  # check ibs_fetch PMU as well
+> @@ -46,10 +57,16 @@ if [ $? -ne 0 ]; then
+>  fi
+>  
+>  # check system wide recording
+> -perf record -aB --synth=no -e ibs_op/swfilt/k -o /dev/null true
+> -if [ $? -ne 0 ]; then
+> -    echo "[FAIL] IBS op PMU cannot handle swfilt in system-wide mode"
+> -    exit 1
+> +if ! ParanoidAndNotRoot 1
 
-When booting with devicetree, ACS is enabled for all ACS capable PCI
-devices except the first Root Port enumerated in the system. This is due to
-calling pci_request_acs() after the enumeration and initialization of the
-Root Port device. But afterwards, ACS is getting enabled for the rest of
-the PCI devices, since pci_request_acs() sets the 'pci_acs_enable' flag and
-the PCI core uses this flag to enable ACS for the rest of the ACS capable
-devices.
+Using CPU events (-a) requires paranoid level 0.
 
-Ideally, pci_request_acs() should only be called if the 'iommu-map' DT
-property is set for the host bridge device. Hence, call pci_request_acs()
-from devm_of_pci_bridge_init() if the 'iommu-map' property is present in
-the host bridge DT node. This aligns with the implementation of the ARM64
-ACPI driver (drivers/acpi/arm64/iort.c) as well.
-
-With this change, ACS will be enabled for all the PCI devices including the
-first Root Port device of the DT platforms.
-
-Cc: stable@vger.kernel.org # 5.6
-Fixes: 6bf6c24720d33 ("iommu/of: Request ACS from the PCI core when configuring IOMMU linkage")
-Signed-off-by: Xingang Wang <wangxingang5@huawei.com>
-Signed-off-by: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
-[mani: reworded subject, description and comment]
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
----
- drivers/iommu/of_iommu.c | 1 -
- drivers/pci/of.c         | 8 +++++++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-index 6b989a62def20ecafd833f00a3a92ce8dca192e0..c31369924944d36a3afd3d4ff08c86fc6daf55de 100644
---- a/drivers/iommu/of_iommu.c
-+++ b/drivers/iommu/of_iommu.c
-@@ -141,7 +141,6 @@ int of_iommu_configure(struct device *dev, struct device_node *master_np,
- 			.np = master_np,
- 		};
- 
--		pci_request_acs();
- 		err = pci_for_each_dma_alias(to_pci_dev(dev),
- 					     of_pci_iommu_init, &info);
- 		of_pci_check_device_ats(dev, master_np);
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index 3579265f119845637e163d9051437c89662762f8..98c2523f898667b1618c37451d1759959d523da1 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -638,9 +638,15 @@ static int pci_parse_request_of_pci_ranges(struct device *dev,
- 
- int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge)
- {
--	if (!dev->of_node)
-+	struct device_node *node = dev->of_node;
-+
-+	if (!node)
- 		return 0;
- 
-+	/* Enable ACS if IOMMU mapping is detected for the host bridge */
-+	if (of_property_read_bool(node, "iommu-map"))
-+		pci_request_acs();
-+
- 	bridge->swizzle_irq = pci_common_swizzle;
- 	bridge->map_irq = of_irq_parse_and_map_pci;
- 
-
--- 
-2.45.2
+Thanks,
+Namhyung
 
 
+> +then
+> +    perf record -aB --synth=no -e ibs_op/swfilt/k -o /dev/null true
+> +    if [ $? -ne 0 ]; then
+> +        echo "[FAIL] IBS op PMU cannot handle swfilt in system-wide mode"
+> +        exit 1
+> +    fi
+> +else
+> +    echo "[SKIP] not root and perf_event_paranoid too high for exclude_user"
+> +    err=2
+>  fi
+>  
+>  echo "check number of samples with swfilt"
+> @@ -60,8 +77,16 @@ if [ ${kernel_sample} -ne 0 ]; then
+>      exit 1
+>  fi
+>  
+> -user_sample=$(perf record -e ibs_fetch/swfilt/k -o- true | perf script -i- -F misc | grep -c ^U)
+> -if [ ${user_sample} -ne 0 ]; then
+> -    echo "[FAIL] unexpected user samples: " ${user_sample}
+> -    exit 1
+> +if ! ParanoidAndNotRoot 1
+> +then
+> +    user_sample=$(perf record -e ibs_fetch/swfilt/k -o- true | perf script -i- -F misc | grep -c ^U)
+> +    if [ ${user_sample} -ne 0 ]; then
+> +        echo "[FAIL] unexpected user samples: " ${user_sample}
+> +        exit 1
+> +    fi
+> +else
+> +    echo "[SKIP] not root and perf_event_paranoid too high for exclude_user"
+> +    err=2
+>  fi
+> +
+> +exit $err
+> -- 
+> 2.51.0.384.g4c02a37b29-goog
+> 
 
