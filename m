@@ -1,195 +1,148 @@
-Return-Path: <linux-kernel+bounces-809590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3817DB50F86
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E95B50F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E890B3B7CD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:34:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 749513AE26A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9AA307482;
-	Wed, 10 Sep 2025 07:34:00 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E2430BF4E;
+	Wed, 10 Sep 2025 07:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaweH+z8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF12730B533
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34001E5219;
+	Wed, 10 Sep 2025 07:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757489640; cv=none; b=S+349aextPFqMMwvuyH+V4mjkU2HC9/S3xk6YGW30oCakX4lYtzyyUaIyUOe287J4xgzaFRe1SXZYpnIuwEDvKog9oOI6XlOG4N6ev6p6EGnS7cVXsxcWaa17N3UVGCHic8GBZApAIt5e6L3NtBw03fzovaH2ySiJcrkwLSrW7A=
+	t=1757489629; cv=none; b=FABDb6HuMJeDZvBOvhzjWHoIBvNmRdJBaRlu7qBSIKYTxtTVtNgO8qfYmBFWEp5AzheyGFtCzOwfnIdu0h8mFEAUjSh2XOKGlTO1tls7SVvmQq7t9cVTH6nf9TeoDhvPOv0eVOCtf4t+FipGuE5opkgmkKXDm6CN6TRhvwVqxlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757489640; c=relaxed/simple;
-	bh=mh9v/gr8Q8swnB0yhey2ANHnfKU52XeVBg3bZ6V/DuE=;
+	s=arc-20240116; t=1757489629; c=relaxed/simple;
+	bh=/XnpTWNk/kv+NQgAdTS1A1Ab76RuactuTcyAflw/L7w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MM3HOUjzsarv4NH9w7gqbHNIam4BviAwLeBr12dPGYkqxijbGqVHCXnqAMNav32nfZDF3ICymbiZKJAjA1bIPOTL2TWy6X/ovagnCUxTEYDoRKz2J8BViK9983sOYKh9jwg6J/eqpEwEcFMlOy9zi9rG7FPaJVkHGgQGOwKAftQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1uwFKn-0001RR-NW; Wed, 10 Sep 2025 09:33:41 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1uwFKn-000YM5-12;
-	Wed, 10 Sep 2025 09:33:41 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1uwFKn-00GA2l-0e;
-	Wed, 10 Sep 2025 09:33:41 +0200
-Date: Wed, 10 Sep 2025 09:33:41 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Uwe =?iso-8859-15?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
-	Pengutronix <kernel@pengutronix.de>, linux-pwm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] backlight: pwm_bl: apply the initial backlight state
- with sane defaults
-Message-ID: <aMEp1S4Yw1mxkjlH@pengutronix.de>
-References: <20250731-blpwm-v1-1-0171fd31bff9@pengutronix.de>
- <n6rltuxqwybh2mwzz3hxi3tzix2c7q3mbovscobzzmkj6puo6w@gc3qnchjlagq>
- <7zae3uaz5wdk2ktmg44aqdnfjglklqujtktslvlye3ssd3xvbv@qwwjiip6kgfo>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ao2FaGswLqsDr1A8ZnOZlTQxQtMQgde0Ba+gkapSTeEksQHoxHvAVG0GwRCb8bZJxBg5NzqwtyXHeCbu3UMG/5ET60hqQFdI8/67i/UQ5VZyNmFaeCUTT2+gDu2nTlW+jh8OhKJkIPR9jiUdaPIg/QVyod+3Pgr48zSMTWo/Akg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaweH+z8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB517C4CEF0;
+	Wed, 10 Sep 2025 07:33:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757489628;
+	bh=/XnpTWNk/kv+NQgAdTS1A1Ab76RuactuTcyAflw/L7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qaweH+z8BxmkKE1ouYJdFNhlYQj7OSwPR6vei84660qDGY3b2ayba8Xa4NjRhRKqQ
+	 epTHEwqDw7OOhz42xo6a3A9e4uehd2Gr9neNldgZ9djYFdeMgDg6V+foFy5QOBv1Uz
+	 i5lSzewoRPlG06mEm7cYk9DdBcniCZXb3KefyLLOO0rU0dNm8ZAzQghWHi8bEbRCZZ
+	 itXMl6OPuDhFdNfzXYphQv+ZxGx9804vA4czk6CZ+ZJKTCTXrw2LrYXR+A50evfJXv
+	 0Dz0F9RPM0QrdZrLUO7hYRN5OtTtEbg/6vJXWYoBn7vmo0i1GvF7n0DyV82UuAVK0n
+	 lJ87BRzJ4JaEg==
+Date: Wed, 10 Sep 2025 09:33:45 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Andrew Davis <afd@ti.com>, Jared Kangas <jkangas@redhat.com>, 
+	Mattijs Korpershoek <mkorpershoek@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	iommu@lists.linux.dev, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v7 0/5] dma-buf: heaps: Create a CMA heap for each CMA
+ reserved region
+Message-ID: <20250910-vigorous-attractive-gorilla-af6fec@houat>
+References: <20250721-dma-buf-ecc-heap-v7-0-031836e1a942@kernel.org>
+ <20250826-vagabond-catfish-of-courtesy-cbfa76@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bqT2zYJdWIxJu/lU"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="nkmy2zjqcls5g6m2"
 Content-Disposition: inline
-In-Reply-To: <7zae3uaz5wdk2ktmg44aqdnfjglklqujtktslvlye3ssd3xvbv@qwwjiip6kgfo>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250826-vagabond-catfish-of-courtesy-cbfa76@houat>
 
 
---bqT2zYJdWIxJu/lU
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
+--nkmy2zjqcls5g6m2
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 0/5] dma-buf: heaps: Create a CMA heap for each CMA
+ reserved region
+MIME-Version: 1.0
 
-Hi Uwe
+On Tue, Aug 26, 2025 at 09:36:03AM +0200, Maxime Ripard wrote:
+> Hi,
+>=20
+> On Mon, Jul 21, 2025 at 01:17:29PM +0200, Maxime Ripard wrote:
+> > Here's another attempt at supporting user-space allocations from a
+> > specific carved-out reserved memory region.
+> >=20
+> > The initial problem we were discussing was that I'm currently working on
+> > a platform which has a memory layout with ECC enabled. However, enabling
+> > the ECC has a number of drawbacks on that platform: lower performance,
+> > increased memory usage, etc. So for things like framebuffers, the
+> > trade-off isn't great and thus there's a memory region with ECC disabled
+> > to allocate from for such use cases.
+> >=20
+> > After a suggestion from John, I chose to first start using heap
+> > allocations flags to allow for userspace to ask for a particular ECC
+> > setup. This is then backed by a new heap type that runs from reserved
+> > memory chunks flagged as such, and the existing DT properties to specify
+> > the ECC properties.
+> >=20
+> > After further discussion, it was considered that flags were not the
+> > right solution, and relying on the names of the heaps would be enough to
+> > let userspace know the kind of buffer it deals with.
+> >=20
+> > Thus, even though the uAPI part of it had been dropped in this second
+> > version, we still needed a driver to create heaps out of carved-out mem=
+ory
+> > regions. In addition to the original usecase, a similar driver can be
+> > found in BSPs from most vendors, so I believe it would be a useful
+> > addition to the kernel.
+> >=20
+> > Some extra discussion with Rob Herring [1] came to the conclusion that
+> > some specific compatible for this is not great either, and as such an
+> > new driver probably isn't called for either.
+> >=20
+> > Some other discussions we had with John [2] also dropped some hints that
+> > multiple CMA heaps might be a good idea, and some vendors seem to do
+> > that too.
+> >=20
+> > So here's another attempt that doesn't affect the device tree at all and
+> > will just create a heap for every CMA reserved memory region.
+> >=20
+> > It also falls nicely into the current plan we have to support cgroups in
+> > DRM/KMS and v4l2, which is an additional benefit.
+> >=20
+> > Let me know what you think,
+> > Maxime
+>=20
+> Any chance we can get this merged?
 
-On Tue, Sep 09, 2025 at 03:49:22PM +0200, Uwe Kleine-K=F6nig wrote:
->On Fri, Aug 01, 2025 at 08:32:20AM +0200, Uwe Kleine-K=F6nig wrote:
->> On Thu, Jul 31, 2025 at 10:47:18AM +0200, Michael Grzeschik wrote:
->> > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backligh=
-t/pwm_bl.c
->> > index 237d3d3f3bb1a..5924e0b9f01e7 100644
->> > --- a/drivers/video/backlight/pwm_bl.c
->> > +++ b/drivers/video/backlight/pwm_bl.c
->> > @@ -518,13 +518,6 @@ static int pwm_backlight_probe(struct platform_de=
-vice *pdev)
->> >  	if (!state.period && (data->pwm_period_ns > 0))
->> >  		state.period =3D data->pwm_period_ns;
->> >
->> > -	ret =3D pwm_apply_might_sleep(pb->pwm, &state);
->> > -	if (ret) {
->> > -		dev_err_probe(&pdev->dev, ret,
->> > -			      "failed to apply initial PWM state");
->> > -		goto err_alloc;
->> > -	}
->> > -
->> >  	memset(&props, 0, sizeof(struct backlight_properties));
->> >
->> >  	if (data->levels) {
->> > @@ -582,6 +575,15 @@ static int pwm_backlight_probe(struct platform_de=
-vice *pdev)
->> >  	pb->lth_brightness =3D data->lth_brightness * (div_u64(state.period,
->> >  				pb->scale));
->> >
->> > +	state.duty_cycle =3D compute_duty_cycle(pb, data->dft_brightness, &s=
-tate);
->> > +
->> > +	ret =3D pwm_apply_might_sleep(pb->pwm, &state);
->> > +	if (ret) {
->> > +		dev_err_probe(&pdev->dev, ret,
->> > +			      "failed to apply initial PWM state");
->> > +		goto err_alloc;
->> > +	}
->> > +
->>
->> I wonder why the PWM is updated at all in .probe(). Wouldn't it be the
->> natural thing to keep the PWM configured as it was (in its reset default
->> state or how the bootloader set it up)?
->>
->> Orthogonal to your change, while looking at the driver I wondered about:
->>
->>         bl =3D backlight_device_register(dev_name(&pdev->dev), &pdev->de=
-v, pb,
->>                                        &pwm_backlight_ops, &props);
->>         if (IS_ERR(bl)) {
->>                 ret =3D dev_err_probe(&pdev->dev, PTR_ERR(bl),
->>                                     "failed to register backlight\n");
->>                 goto err_alloc;
->>         }
->>
->>         if (data->dft_brightness > data->max_brightness) {
->>                 dev_warn(&pdev->dev,
->>                          "invalid default brightness level: %u, using %u=
-\n",
->>                          data->dft_brightness, data->max_brightness);
->>                 data->dft_brightness =3D data->max_brightness;
->>         }
->>
->>         bl->props.brightness =3D data->dft_brightness;
->>         bl->props.power =3D pwm_backlight_initial_power_state(pb);
->>         backlight_update_status(bl);
->>
->> Shoudn't setting data->dft_brightness, bl->props.brightness and
->> bl->props.power better happen before backlight_device_register()? Also
->> calling backlight_update_status() after backlight_device_register()
->> seems wrong to me, I'd claim the backend driver shouldn't call that.
->
->Do you intend to work on this orthogonal feedback? If not, I'll put it
->on my todo list.
+Guys, can we move forward on this?
 
-Oh, yes, the orthogonal feedback. Thanks for the reminder of this
-actually intended patch not being ready. I will work on this first. If you
-like, please take the opurtunity to fix the issue you found.
+Maxime
 
-Regards,
-Michael
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---bqT2zYJdWIxJu/lU
+--nkmy2zjqcls5g6m2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmjBKc4ACgkQC+njFXoe
-LGToNA//aIR5pPEwKcP/MWGus4W52lHrTsHAlXrmVHzWz0xX/sh3asgjiJ/iw29P
-vsA/LhTwEKmmHu9CvpKcwTHUHNULIN0wbgh66RNZDiYXxZrxELdQCBEA0OFOPfQS
-F8NnU7mBa7WsHG7IRi2XgBch9Ke/xfq5qXA5I62Z+Bw5X9UPn3dxSH66Rm8MLOyL
-P0vCwcVogzW6rmMaXe/PqB2go8k7h/YEJmpMmB89IWFBFfvY+85FQJue8ZsuEFA2
-Pyi2mCIdQbLN79M7LofhGd4C4jlZt+1EMXz+WI9f3+UU38ukYTAAlBU7DstzIU5M
-0BvRTZlnThyJdlXsfQ5NgqvnpMsJKJZRxG1BqEHp8Ar8RdudadGB6y1C36GDfF+b
-wJnGK/S2h8K9DMjmXgkyLBozPIqHs+hP2Jgx88rOJ0TezsqqkAMpU0dEsmd/1rJm
-yc2lOTfuhwVicLHItpKqblm00n/ELZ89c1arIRRbsOdv106+2gIZ+olOZ1zY1SXO
-NNTIXx0yogb99UaKEGBWCeSXKcDIQ0dj1F7C8uYLLTB6h0y0UZfFn6pDTGjZKokx
-twsAN3sMpcs/2uwPy1hkDnpNI0m0wVaqGJ/jVJMElg2pG1DW2d6loDvQ43mzv+Pd
-huJhp+APt6QGcIDadcCX1JWzT+leUlprdWLFkNwd5KYGq3w03hc=
-=iZKH
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMEp2QAKCRAnX84Zoj2+
+dsg7AXsGZJPtUsHUnHvNADap4iyMsh/caF3U64tQkHWWAcnVwP1ptV6A6FmBCXx9
+Lw0xiv8BgKYytEtc6THWvRv6a29zx8LVSv9EuNTYDZshPTgSqETUzAx4CVEAAA/O
+//tQ1dcNeA==
+=tTl0
 -----END PGP SIGNATURE-----
 
---bqT2zYJdWIxJu/lU--
+--nkmy2zjqcls5g6m2--
 
