@@ -1,169 +1,128 @@
-Return-Path: <linux-kernel+bounces-809775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A422B511E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:57:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D787CB51117
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D983563616
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:57:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55225173F83
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51352311C3B;
-	Wed, 10 Sep 2025 08:57:30 +0000 (UTC)
-Received: from s1.jo-so.de (s1.jo-so.de [37.221.195.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31BF30F558;
+	Wed, 10 Sep 2025 08:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4OgNlmQT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k1RrGMx8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371C1311952;
-	Wed, 10 Sep 2025 08:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.221.195.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA189245028;
+	Wed, 10 Sep 2025 08:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757494649; cv=none; b=i8r8Fh8G8EjGgINfte6THCrMQM8JM12nB5OZI0wAfFXivfJVoQ0thxgLxLrcQDWoKnn8SF/Y9Bh61XG6EQh1QP+AgydPU8AQum0woeynEio1cXx/0eX/90p2sDUXAk5nTbsh7X9ED5NP5N44IOWRhYMhVpoRJsqCGFqs18JC3eo=
+	t=1757492549; cv=none; b=PMpbs0VRH9dUgFYFOZ0Wg4S6tfeslBkRUwZJ+/xQ1KEMTrOYHwxhVeAd/LpRy+QiGlFGS11LoUmG10kDQjjvUTKZuZmnyeDwbaaZUh0tfG8gHtEK8un2H+kNKWqK+DYHTWJvLqiuNWk/TEq4OzxP56kPNV5XBmCfx2mebzG7s+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757494649; c=relaxed/simple;
-	bh=UyTKr/gRlDYEGxckMgklqxwcPAl9u7MPrPxBjUXQOW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cn0AOIEwZb4xvhsHu/BeNy5zLh4ne8/LO2mAwn2gbcuAWad5kIJGdBnw5nA0G6OOJRGNPMoK9qOe8JjDP8HCFal+76/bp4tSHxxFhxFKObzVoBW7R0x2P4lYJPjgceIba/MAEPgbQMVrUDKLTtWsnZkyo28KDAmEiCJ53fA2/Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jo-so.de; spf=pass smtp.mailfrom=jo-so.de; arc=none smtp.client-ip=37.221.195.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jo-so.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jo-so.de
-Received: from mail-relay (helo=jo-so.de)
-	by s1.jo-so.de with local-bsmtp (Exim 4.98.2)
-	(envelope-from <joerg@jo-so.de>)
-	id 1uwG5X-00000006hFm-0ZHo;
-	Wed, 10 Sep 2025 10:21:59 +0200
-Received: from joerg by zenbook.jo-so.de with local (Exim 4.98.2)
-	(envelope-from <joerg@jo-so.de>)
-	id 1uwG5W-00000000Okw-2Jme;
-	Wed, 10 Sep 2025 10:21:58 +0200
-Date: Wed, 10 Sep 2025 10:21:58 +0200
-From: =?utf-8?B?SsO2cmc=?= Sommer <joerg@jo-so.de>
-To: Yibo Dong <dong100@mucse.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, "Anwar, Md Danish" <a0501179@ti.com>, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com, 
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com, 
-	lorenzo@kernel.org, geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com, 
-	lukas.bulwahn@redhat.com, alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org, 
-	gustavoars@kernel.org, rdunlap@infradead.org, vadim.fedorenko@linux.dev, 
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v11 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <vfarjsi3uf55kb5uj25stnjriemyvra7gomxmtik3jowsp24n5@k44vc2gdmyaf>
-References: <20250909120906.1781444-1-dong100@mucse.com>
- <20250909120906.1781444-5-dong100@mucse.com>
- <68fc2f5c-2cbd-41f6-a814-5134ba06b4b5@ti.com>
- <20250909135822.2ac833fc@kernel.org>
- <00A30C785FE598BA+20250910060821.GB1832711@nic-Precision-5820-Tower>
+	s=arc-20240116; t=1757492549; c=relaxed/simple;
+	bh=85UKcsOMfyn0E3yinLzfkoR/jW47TpISZIXdMgdVMIE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fMxR3reGUJhmiyiP2FRD3tzAMZmp2IcqDy+GYc+T39V7Cw5K+vQmFY0254ueBDmhTXV1sB/lADnKdmzVEvd9RdzIuOzoPNJ+tXe+1kCppJ8Zz6mBQdl6s4alPOEel2GjZyGVTFBf9RhvqGHa+xO3MGMXN5ku0Eq7i8jpayc3TrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4OgNlmQT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k1RrGMx8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757492546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WQUAVcjXn7tf95scgh3pOPJD9865+15BngQtRr5ID5E=;
+	b=4OgNlmQTqS4AyVDZHcTox0tlSaBwDkJEL/Ts7pkw/dx/M20Ltu0mrLteEBzdn9sJCVLD2y
+	dfcDP2k/EfsDTMJe8iTDcOHbq2BngCcR1pbaFFCTimZtO0pqy4HziY964ELyL3VGhPzbuS
+	I46WwDbecRUNZqYt1o8HVYCiswSpMka/TqCAedJJlSUhci4k9ImyLi3psTc+Rao3niCHBo
+	mDNGZo71G7ZhUHWl7fzzx0tPbWfneJvCy34cNAAEOFdknyQqPsI0i8u+u8+b/E2q+kPo4k
+	dVOmJyABT05U8tEgXNXEiJ9BjjvnFlL25g3XQ9eMAo54Isys05Y7C9zjDJj6tA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757492546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WQUAVcjXn7tf95scgh3pOPJD9865+15BngQtRr5ID5E=;
+	b=k1RrGMx8UOcygrkA8B9pm+mc/YjWJfzFVvkuTYWUt4MA239Asn+1jaJhj5EpeHW+3neqBz
+	3wzspqNtmL4AzyBg==
+To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, Keith
+ Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg
+ <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Aaron Tomlin <atomlin@atomlin.com>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>, Costa Shulyupin <costa.shul@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>, Valentin Schneider
+ <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, Ming Lei
+ <ming.lei@redhat.com>, Frederic Weisbecker <frederic@kernel.org>, Mel
+ Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Aaron Tomlin
+ <atomlin@atomlin.com>, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+ megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+ storagedev@microchip.com, virtualization@lists.linux.dev,
+ GR-QLogic-Storage-Upstream@marvell.com, Daniel Wagner <wagi@kernel.org>
+Subject: Re: [PATCH v8 04/12] genirq/affinity: Add cpumask to struct
+ irq_affinity
+In-Reply-To: <20250905-isolcpus-io-queues-v8-4-885984c5daca@kernel.org>
+References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
+ <20250905-isolcpus-io-queues-v8-4-885984c5daca@kernel.org>
+Date: Wed, 10 Sep 2025 10:22:25 +0200
+Message-ID: <87jz26u37i.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ave2a22qe2b7h3wz"
-Content-Disposition: inline
-In-Reply-To: <00A30C785FE598BA+20250910060821.GB1832711@nic-Precision-5820-Tower>
+Content-Type: text/plain
 
+On Fri, Sep 05 2025 at 16:59, Daniel Wagner wrote:
+> Pass a cpumask to irq_create_affinity_masks as an additional constraint
+> to consider when creating the affinity masks. This allows the caller to
+> exclude specific CPUs, e.g., isolated CPUs (see the 'isolcpus' kernel
+> command-line parameter).
+>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>  include/linux/interrupt.h | 16 ++++++++++------
+>  kernel/irq/affinity.c     | 12 ++++++++++--
+>  2 files changed, 20 insertions(+), 8 deletions(-)
+>
+> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+> index 51b6484c049345c75816c4a63b4efa813f42f27b..b1a230953514da57e30e601727cd0e94796153d3 100644
+> --- a/include/linux/interrupt.h
+> +++ b/include/linux/interrupt.h
+> @@ -284,18 +284,22 @@ struct irq_affinity_notify {
+>   * @nr_sets:		The number of interrupt sets for which affinity
+>   *			spreading is required
+>   * @set_size:		Array holding the size of each interrupt set
+> + * @mask:		cpumask that constrains which CPUs to consider when
+> + *			calculating the number and size of the interrupt sets
 
---ave2a22qe2b7h3wz
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH net-next v11 4/5] net: rnpgbe: Add basic mbx_fw support
-MIME-Version: 1.0
+You surely couldn't come up with a less descriptive name for this
+member, right?
 
-Yibo Dong schrieb am Mi 10. Sep, 14:08 (+0800):
-> On Tue, Sep 09, 2025 at 01:58:22PM -0700, Jakub Kicinski wrote:
-> > On Tue, 9 Sep 2025 19:59:11 +0530 Anwar, Md Danish wrote:
-> > > > +int mucse_mbx_sync_fw(struct mucse_hw *hw)
-> > > > +{
-> > > > +	int try_cnt =3D 3;
-> > > > +	int err;
-> > > > +
-> > > > +	do {
-> > > > +		err =3D mucse_mbx_get_info(hw);
-> > > > +		if (err =3D=3D -ETIMEDOUT)
-> > > > +			continue;
-> > > > +		break;
-> > > > +	} while (try_cnt--);
-> > > > +
-> > > > +	return err;
-> > > > +} =20
-> > >=20
-> > > There's a logical issue in the code. The loop structure attempts to
-> > > retry on ETIMEDOUT errors, but the unconditional break statement after
-> > > the if-check will always exit the loop after the first attempt,
-> > > regardless of the error. The do-while loop will never actually retry
-> > > because the break statement is placed outside of the if condition that
-> > > checks for timeout errors.
-> >=20
->=20
-> What is expected is 'retry on ETIMEDOUT' and 'no retry others'.=20
-> https://lore.kernel.org/netdev/a066746c-2f12-4e70-b63a-7996392a9132@lunn.=
-ch/
->=20
-> > The other way around. continue; in a do {} while () look does *not*
-> > evaluate the condition. So this can loop forever.
-> >=20
->=20
-> Maybe I can update like this ?
->=20
-> int mucse_mbx_sync_fw(struct mucse_hw *hw)
-> {
-> 	int try_cnt =3D 3;
-> 	int err;
->=20
-> 	do {
-> 		err =3D mucse_mbx_get_info(hw);
-> 		if (err !=3D -ETIMEDOUT)
-> 			break;
-> 		/* only retry with ETIMEDOUT, others just return */
-> 	} while (try_cnt--);
->=20
-> 	return err;
-> } =20
+> diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+> index 4013e6ad2b2f1cb91de12bb428b3281105f7d23b..c68156f7847a7920103e39124676d06191304ef6 100644
+> --- a/kernel/irq/affinity.c
+> +++ b/kernel/irq/affinity.c
+> @@ -70,7 +70,13 @@ irq_create_affinity_masks(unsigned int nvecs, struct irq_affinity *affd)
+>  	 */
+>  	for (i = 0, usedvecs = 0; i < affd->nr_sets; i++) {
+>  		unsigned int nr_masks, this_vecs = affd->set_size[i];
+> -		struct cpumask *result = group_cpus_evenly(this_vecs, &nr_masks);
+> +		struct cpumask *result;
+> +
+> +		if (affd->mask)
+> +			result = group_mask_cpus_evenly(this_vecs, affd->mask,
+> +							&nr_masks);
 
-How about something like this?
+Please get rid of this line break. You have 100 characters.
 
-int mucse_mbx_sync_fw(struct mucse_hw *hw)
-{
-	for (int try =3D 3; try; --try) {
-		int err =3D mucse_mbx_get_info(hw);
-		if (err !=3D -ETIMEDOUT)
-			return err;
-	}
-
-	return ETIMEDOUT;
-}
-
-
-My 2cent.
-
-Regards J=C3=B6rg
-
---=20
-=E2=80=9EEs wurden und werden zu viele sprachlose B=C3=BCcher gedruckt, nac=
-h deren
-schon fl=C3=BCchtiger Lekt=C3=BCre man all die B=C3=A4ume um Vergebung bitt=
-en m=C3=B6chte,
-die f=C3=BCr den Schund ihr Leben lassen mussten.=E2=80=9C (Michael J=C3=BC=
-rgs,
-                      Seichtgebiete =E2=80=93 Warum wir hemmungslos verbl=
-=C3=B6den)
-
---ave2a22qe2b7h3wz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABEIAB0WIQS1pYxd0T/67YejVyF9LJoj0a6jdQUCaME1JAAKCRB9LJoj0a6j
-dWHfAP9MpwXSbDkmn0L3EBxXklRTyGo9dD4BVrhkdXrXtYNrXgD/f0quVJJNn+Zo
-2d4EZ+ulmakNhpMKJUdjDi8P1IHNG6c=
-=3Gfd
------END PGP SIGNATURE-----
-
---ave2a22qe2b7h3wz--
 
