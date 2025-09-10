@@ -1,97 +1,117 @@
-Return-Path: <linux-kernel+bounces-810058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60BDB51551
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:18:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D79B51553
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFEAB16D031
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:18:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98D707B52D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07D927FB27;
-	Wed, 10 Sep 2025 11:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4291527B355;
+	Wed, 10 Sep 2025 11:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="proBvEk/"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2080.outbound.protection.outlook.com [40.107.100.80])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U4envZ2n"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E32A2797A1;
-	Wed, 10 Sep 2025 11:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD3327A919;
+	Wed, 10 Sep 2025 11:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757503093; cv=fail; b=anmejKL+R4vi5caKnqQfkpgt9m8hDS80oXoLgfpPpzODAsZeJJYny1P7z4stNnSh3/PMAILf0vImNHsssLNabm69DXXDBcTt83oQUXP3im1884vJiqnAOVM7zJI6QBteFDuvZZFRBs7hEtO9PdQYQ4CBfIrYwH1eLGB89eWlziw=
+	t=1757503113; cv=fail; b=nkC7INRt/YWp7DPWfZCrvacSkybF1v3SOdEotuAMz+LVCTxpDk0mVmA2dvlOMVZjx6ZGNjD2NqlgtsquFQkykbhmtJPw3E0ggehsiLMYlvx/2tsQJ+cpBPu4BIyGKvVU+3b15zmZm2wIYWaLwThSMI+A7r3RwhSAkBI0u7NuO0g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757503093; c=relaxed/simple;
-	bh=teyUZ599nVw9yVRUNwLTaznC4+8rrvA5FtRk+vqg9rU=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=VK3jZBdVmyXbBTulvpRVLSkeqYgtU5fkDfPHRzTaNgLdaGlQzICcyDUMlMpmA7nvePo9FPdpku15wwVh7/snQNSokGl/jXrv2C77xvUKCHxY34l9ZkYIlvExESA0CeLHDBlgyRmVkxKl3suQCcmbl3FEe1MOOPUJmynmYR+1OzY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=proBvEk/; arc=fail smtp.client-ip=40.107.100.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1757503113; c=relaxed/simple;
+	bh=njYKX3GUJ7PQKjbm599cuvXylchqB1LVqUvDtxscZYI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NUM823wSatv8pAuYiaPVazpkihheAQcCpObfLWMDPe51N43AcbasotKKOtmGCJPlXGkGZ6d3D7HB8Wb+XCDztbqhAsv9WTDb7yiHPjVuTceCY5e95SWj9c+Z47BhUGNP2N22VFv6PQ9Nxjoqyc999FzUV1oBBzvtxWz9VZnbmz4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U4envZ2n; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757503112; x=1789039112;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=njYKX3GUJ7PQKjbm599cuvXylchqB1LVqUvDtxscZYI=;
+  b=U4envZ2nCF61OIN4XRVCBqVxb3CYm2nohilaB5LQapODtsdlA4cNimjG
+   uqpDIgGykaTJO3539J8rVRZFvggBf4SuUq3f80Vo003hrB2E1JVWGWVZL
+   tbKiIkvm23N2ETZlnxLoRs8Mw9yc1MUqiVRKTx3a+rARoVkI6X6TymOED
+   RPJLf7wy1lDVIimBp8rsqSAQE3iiZKFcoKHq9zmXLS8fDw516eDBAPXFb
+   vfZkNUtz8TR8twE8xBARiAqiCBjhtCXH7/7KsrtTBRBNmdRxUzFGP2zCF
+   XoBxGVy+6V4c75YonaEwg0i4SsccVWD9rBXdROASvZMWIW+o/oGT2y7J+
+   w==;
+X-CSE-ConnectionGUID: Dtgbx9ORQZKUz3VmNlc+Gg==
+X-CSE-MsgGUID: CZ/pc+bWTuCWA3zFbrlGEA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="59951419"
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="59951419"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 04:18:31 -0700
+X-CSE-ConnectionGUID: e03QvXpxSiSybgaVkDxaFA==
+X-CSE-MsgGUID: Y5VKafgGQHOsrZqkzKRCag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
+   d="scan'208";a="204352333"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 04:18:30 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 10 Sep 2025 04:18:29 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 10 Sep 2025 04:18:29 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (40.107.101.53)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 10 Sep 2025 04:18:29 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JwI5EAf5pzbg8dQtg3k9idcspdmw8YLiaHy0BNzFt/Pvgl2dLRgYeMj/tFwAkhEp17QwKdHejJ5A8gYV6EmIApQwF/dkiojFEXRH2HRiJehpeR8WvFVnEsc2lomAttEzF/rp3i7w0agVCjT8dbOMxhiK6oIZJMpA9XcUYMpUWhlvU9JH7jXm34w7v8e79BADz//+UIOantF1aqXXXOBWcUwRK4AJbwTJ4un+Zyg6fX/CCeo2GIzlyMbnwVYyze8mXCtZdnAVNTc7mOkKG7hqp0vJ9+l7Yh/4LsmgTnFSAlF5WNVCmZtYu9h6SIjQJCD6BLsxL3rPbifnU3fQXV8UAg==
+ b=QM6cYM41TkOF+NQQsNq6DLH2B0yQmjPPZGnTeL0aGbqK6il2L2yM9p97O4FpZV8jMs4juu064PIk+zhe/64vOhPi93YGrJXvL9yiIp/bXvasN2tT0DIW9CDh3CGhi72St9yqW+JYnkzXyXUZNmQ1ONi7XX+6BLtzBdfREDEpOMtC+jThPSLqZZ+kwsoteoxaC1YWXC/zWRyMJ+u7wRXv7KciFi9UH3dDyTAAntW7VnqGAuEb7c/UvDosSUQlKo9AXVmGcNs+Q7wm4TP1MIsRdReFMyagXl9LtVgrGQRgEy/dugR0wn0gwgnBJFs6UaXJOVVWphH1vyub2U2fxkI4Dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YS8lWMP16RyyrdgtEDEABYCTwvt1h2alYjROlxZgEeA=;
- b=kdBRvvgqaV3mgD6wre3MkDWZIh7z2AsQNYSfS9pjW8Vo/S94v8jwjb96BDOjSSEYPCGWbPBOUOCPFmGTtw4q5FR0jdVImEUfIUL+4ZNvPRNkwUS3WhfvXC6fVze+WrfLlXokBnVK1Xdw5bZ6JXBH/eJbhXQkuPnAnThD2DZVCvtCs/7uDcq0DlgxovE2MnQ2o9QxKml/yf/m3dsn8DKN//4IbqZ8MI8pwn5BwCybKPN4joiPTh+uqGQrPZJg0wJ1B7ikB+UrXFfNYWhqY3H0w0twSP+h2E2va9LjnMKEabV7HRPBz4rGnGn0D7njyxZ63f4gMxQAwpbBnA+zS/avnw==
+ bh=MW8TuZzFZCByNIap66l9t/axblYPefvlAUBF5zCaG8k=;
+ b=RRKZO7FbjhwaXmGf0K3fMAmuJF3+aPUvPbMs9mLmbbR40DDrS0GSCYVpKdP8qPa1lxj9sFyhr36BEuto/QFgk/bmJ37c0jCplEsZTTaNMbwk9kuEja+/Qg0uQRbskXJ/cBDllruRMIHXkP10ibDWtxW6OBVVI0MO3a1SYPaWUZFpb7PK222pZN5uoNaOFPbgBlRprFR99VyZYe2vy9UZMIXKb8Tl0HKE0dWrZ7HUzJoQ/rHEga1ceWqa4KhywMcmUmnWORxg8+Jf+OrTFjQkvZCb/AyOWPOgt4FaS3HWDsoNS8IFUc5MrWwg5S7IGmwklCJmJRzeEuYJc94F51gdQg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YS8lWMP16RyyrdgtEDEABYCTwvt1h2alYjROlxZgEeA=;
- b=proBvEk/gK2HkFmMXd9pcfpMw+/oAj3dOfr5SbaEuV7WumxTGESFKgTIFZEVHOokMniCeAafm9zaYSyIKZrXC+mnfwn4WwC2oTBH4r0lP0nRpOQ8rSX+wau3vcz1ICDBbKP8WIXcWeD8792n8Q5o2jnJlCcNhBntmplf6Agnf72D6a8CDQ3eHB8QwIU7q5uGH5n+9aT7rFoytqYCTJwj+fQ12Iz7s+EG8nvHJZt7u8LMLkPC4dhARPDVGQTDO+uHMt++ImsiwEmMDUswk+vCHJ5lzHawWv3DLFl3OxeHG0Y9ExaeOFsQ6C02YsF4YR/prsPf+Y2CxhM7XPxoXS4Clw==
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by IA1PR12MB6628.namprd12.prod.outlook.com (2603:10b6:208:3a0::17) with
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by MN6PR11MB8194.namprd11.prod.outlook.com (2603:10b6:208:477::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 11:18:08 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
- 11:18:07 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 10 Sep 2025 20:18:03 +0900
-Message-Id: <DCP2UI9NGTQ6.3O0ARTPL4WCA2@nvidia.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Joel
- Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v3 02/11] gpu: nova-core: move GSP boot code out of
- `Gpu` constructor
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Danilo Krummrich" <dakr@kernel.org>, "Alexandre Courbot"
- <acourbot@nvidia.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250902-nova_firmware-v3-0-56854d9c5398@nvidia.com>
- <20250902-nova_firmware-v3-2-56854d9c5398@nvidia.com>
- <843554b1-f4c5-43f5-a23b-583339708bea@kernel.org>
- <DCIZ79KKSSF1.25NJT5ZWR3OOS@nvidia.com>
- <DCJ0UA7KM9AP.OGO7EJB4ORQP@kernel.org>
- <DCOBWF0EZLHF.3FFVAB16SJ3FW@nvidia.com>
- <DCOCL398HXDH.3QH9U6UGGIUP1@kernel.org>
- <DCOUK0Z4YV6M.2R0CFE57DY5CR@nvidia.com>
- <DCOYNWXYKBOK.XCRA4Z34RUXP@kernel.org>
-In-Reply-To: <DCOYNWXYKBOK.XCRA4Z34RUXP@kernel.org>
-X-ClientProxiedBy: TYCP286CA0072.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31a::20) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+ 2025 11:18:28 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%4]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 11:18:28 +0000
+Date: Wed, 10 Sep 2025 19:18:15 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <acme@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<john.allen@amd.com>, <mingo@kernel.org>, <mingo@redhat.com>,
+	<minipli@grsecurity.net>, <mlevitsk@redhat.com>, <namhyung@kernel.org>,
+	<pbonzini@redhat.com>, <prsampat@amd.com>, <rick.p.edgecombe@intel.com>,
+	<seanjc@google.com>, <shuah@kernel.org>, <tglx@linutronix.de>,
+	<weijiang.yang@intel.com>, <x86@kernel.org>, <xin@zytor.com>
+Subject: Re: [PATCH v14 06/22] KVM: x86: Load guest FPU state when access
+ XSAVE-managed MSRs
+Message-ID: <aMFedyAqac+S38P2@intel.com>
+References: <20250909093953.202028-1-chao.gao@intel.com>
+ <20250909093953.202028-7-chao.gao@intel.com>
+ <be3459db-d972-4d46-a48a-2fab1cde7faa@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <be3459db-d972-4d46-a48a-2fab1cde7faa@intel.com>
+X-ClientProxiedBy: SG2PR02CA0115.apcprd02.prod.outlook.com
+ (2603:1096:4:92::31) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,269 +119,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|IA1PR12MB6628:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c28487f-97cf-41f3-6ea7-08ddf05bb7ba
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|MN6PR11MB8194:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7425a4de-716d-4209-590e-08ddf05bc40f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|366016|376014|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NW15L05VV2Z4dUxVQU9ldWR4cVRxM2xmWEY5d3JTMWV1bHNYVERHZFBtWlgy?=
- =?utf-8?B?dG1Rb3JjK3dnN2JTZ1VHTmx0RkJlK052ekd0OWIwRlZRYXZsQnc2c0VsMTZ2?=
- =?utf-8?B?T2VPRlk2N1hvRDJlaCtCclVXM25IUDlzRHduSWwvU2NvM25WTkhUWGM3Skl5?=
- =?utf-8?B?Zkh0MVR4QXFodU03VDNoNW9kaDU5cFNEQktITWtyL1I0R1RyY0g5c1NGblpM?=
- =?utf-8?B?NWQ1Nllxd2NXMnpFUTQxQVJ4QmE4RjBPL0RXSVdiMVpZTEFGRWFpMGFmODBm?=
- =?utf-8?B?dUl5RFJVYm1IcHZXaW5WTUtPdDVVWkpkbStsc1YrekFZWjlwK0Q3VVRmRGkw?=
- =?utf-8?B?RHAxRmI3Wk1LWGhDN1Btd0puMm9VOWtDcVZTUEhIbEdYQnN2U2c2dzdJK3Rt?=
- =?utf-8?B?REZDRkdDRXo2TkM4U2U3RHNCa04wNnI5Yi8vcVgyY0daNnZwYVpxcjZ6dkZ0?=
- =?utf-8?B?djBDcElWUUMzUWRaMCtVbzFJM21uTmdQcFJ4d2JmOE9sbzBGWHJuWFNUakRW?=
- =?utf-8?B?SUpBTExFc1BEK2hudlBENUE3WWRGSGxoNFp2bFNjeWJGZGt1VlJQRVQ1b1E4?=
- =?utf-8?B?V2RjREZaaURKa1YvU1haVFJjVjdodzU2YnkrWVFPRHBFQkJtZTN2bExwcnpH?=
- =?utf-8?B?b3ZRdmxOQjBtL3NBTGRPZzVZa3FqbWtsSFE2UVNxc3BvaWV5cC9ScDQ5cG1l?=
- =?utf-8?B?YXpVTElqbkNDOVNocDBUY2pmRnlXWnBBbjZJR2JIOVBPckpDR0dOUUhLbXll?=
- =?utf-8?B?aENVOHFJZVJEcEtQSUcvYTFVT3N1bU01WTBSdjI3bDdEV2gvUXVHK1Vmcnpn?=
- =?utf-8?B?alZSNzlybG02YVpNUE13R200UHFqOE4xR3VkbVAzQmhZRFdOR0VLSFdORENk?=
- =?utf-8?B?ZVNJalNyN2dnVUphc2Fhc1RzRksxd0tTeDBMUmVsODlXY2ZIWm12aWEzUlhJ?=
- =?utf-8?B?MGFzMkZnLzMzN1c2aDZiNWQ0bTFCS3lWTWZlck16cUxjVVcxcG05UXVybGVn?=
- =?utf-8?B?YXRuSTlmZFg4WlVSM3NnT2c5SHloZ2Y1QVZSSS9xOGRDdFkxK2JhNSt1MlFi?=
- =?utf-8?B?VjM4dHpYOGgxZGpRV2dSWitaYzZydmRLVUM2a3ZTRW9USVdyazE3MUhlWEhP?=
- =?utf-8?B?WkgxY3p3VTA3K2dVQ2RZZVdWb2c4UUZBUzI3MWQwUExGVGV0cXFvd1lxY3VL?=
- =?utf-8?B?ZDB4QWZhSFBWenBqVUxoS3BoTUYwOE42R24wZ2oyYjJjdlNQL3B2Yk03dm8x?=
- =?utf-8?B?NC9ETC9kYmx3WUJVY284MnhjWk5pbnRsN0RTbDlmbjh1cjVHZmZpOTNYVGF4?=
- =?utf-8?B?NVI5TENqQjlMdnBOUGNXa09rMWlyZk1naVJvMldJTVc5ZFI5bjN2eTR3QTE1?=
- =?utf-8?B?akpVTW1LWm1ubCtZTGR6VGpSejVMWW5oYVlTSmNhYVo2OUQ0WTh6dHJld0Yx?=
- =?utf-8?B?a3hobnF1ejRVWWdpN0Y2cC8zdVhwRkg4SG5raEtKcVZZd0Y3L1ZwbkF1TkFZ?=
- =?utf-8?B?NHRpUDdpR0JCQmNGTjNjWnpjamRYT1l2Y1A4UWsyVnpmMGRDcC8wZmJFT0xv?=
- =?utf-8?B?UVZ3QUhwcmRwNlBuMDE2QkEwZVBRalFVWWl1T3NoUVRvY1NaMXN0bUxtLzR1?=
- =?utf-8?B?Smt6WU16K1Z2NEtXcFFyZFJLeGx1S2VwdGt1WDNNWnM0cFRCNTcrQ3Y2bzNB?=
- =?utf-8?B?SnhmcWM2YmxzNStpbXp0L0M2SHg4R1cyM0hpYnZpYkhEaEpna3dkejBLRHJv?=
- =?utf-8?B?ZzFuYm5ReGtvbk16TlNwUEhHNWJ2OFVuVk01c2s1U3RpM2MxVnllaTNBRXN5?=
- =?utf-8?B?VGFGeXN0SU5CNjNMVEppZWwzbnpCdUp0VlYxTmJpMkdtdzFHUUk0SmkzNG5C?=
- =?utf-8?B?V1k0dUxMeVBCdk5VVENYajNxbzR0dFN4V1YzQ2UweU0vZWQzclZuaGUrbGdR?=
- =?utf-8?Q?a/FxQxK+UtA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(10070799003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?IM/pNHprtwa2pO6JwePYsgqnAfK/oyc9XYMmwOG4mZ8/Q+tbq6gGHPEKwusr?=
+ =?us-ascii?Q?yFEGXIbfdR/MWU+au/mil2njFXazGSQB7PKFiWkrbo/+35y4r0A0BIVu3QeE?=
+ =?us-ascii?Q?59L5Z/YDouBEEIZQ+09CvSkvdXhGXsfPB2oo1Tco7rooLT6oruG/lXydTfX/?=
+ =?us-ascii?Q?DxkFF4BbGPyNCxwKCY08kV3yYKwhad+whmsqGmsIRTwqKeneTjQBU8IucngF?=
+ =?us-ascii?Q?T0V4axCC4b8JENlnq2PDnRdlYYPw54vHuHzb8uy5IC6aF3fket+fWWS3TDDo?=
+ =?us-ascii?Q?+MF8glKfuDoKBw402fJyQLV2imZioBec6TfSXxl1hEUurKgQXq+4MOqHSwRR?=
+ =?us-ascii?Q?/YxC0bPVScrfjWFiMvpMw79ozfqvDV4h8l4cbd1Bm4cIPCunWyP5UCe1uht7?=
+ =?us-ascii?Q?8pbjFbs5Gl4A+7MVvt2TDfMHCWjofeYxZmgRh16JxwYGbBN6T/sgiPZaQBAg?=
+ =?us-ascii?Q?3BHlNbKQDYLAc8SbkIAYjKFH9utr2SOqUMHYaAwmZNyFdzSy9wr+G/bYsAHJ?=
+ =?us-ascii?Q?AFbjo9CImLtl4+3bkIrkx83hHKWGNE2YhdlPMToXZH4S/hPwU14SbtIQKEyi?=
+ =?us-ascii?Q?HkrQJU5ZGYIVaafX3AiPfR1Yfs85i/5+flxAYSc1n7lRWgKJNA1XMidS8SsI?=
+ =?us-ascii?Q?2XiDzZyuv0SW/K6GlM8vlC7Hm6Trtxl1q+be2TppnOrue6Hy/r1oDZo895YP?=
+ =?us-ascii?Q?+gBtNvgzUceCYhejlPE3Pba/E8IK3VAtdE2Essy/vLhwtbsPuxqC5zcueTFn?=
+ =?us-ascii?Q?GVWA+6ZlS4B/t0iFrZCOd8raT9iYZFGFAfcy2Ug23YeUsAzF3Q5CmynE2o3v?=
+ =?us-ascii?Q?mw5/6686EJ5Ic8pzOYYy8QNa1pPLno0Vmo92fpE2WgoylSVuALqZOBMO6w7J?=
+ =?us-ascii?Q?ciAKLcLPAIY1Fbo6VnInPogfP8b91tZIX4u0yBWqOvjt+YtlR8m3auKQ6qG5?=
+ =?us-ascii?Q?lC/272Vw9pe7u0HnHMRfJp66gn2hv1q/U4PxA87wXu8SbAo0Gb52uCBWWfrO?=
+ =?us-ascii?Q?NJdV9XMHIKxrUc2Sg+0aOaw0ph9NGk0bGzkj9B8JxerZtA2WFEt7XieVraiT?=
+ =?us-ascii?Q?hrC0HIbn54dsLPlFkGc0OiEToLOK5CUeG27RdreGRhAN3Z7OIt3XIjv3224W?=
+ =?us-ascii?Q?Ay2SE4RWkREp9VQLJFZeYh2oSntLtbfwbNay4azTn11aI0GeD1IEVCy7pA/O?=
+ =?us-ascii?Q?SuKFu1fi3IV8tKgrXgSUu9AtatgacQHSkY+WdVXuVl8tTFlRHUj3seA5S0/4?=
+ =?us-ascii?Q?0Y8Qd3JN4ehUh0C97CKT7kBzPRe4HOTBDSzQxxk7AIjtG775z2ZtG2PXqH5U?=
+ =?us-ascii?Q?duGmIMp9UVk+tkcM/5IgwrZ5lpEpmKfYSkI6X9ENsMxAhnmegegKqJ0NIHXd?=
+ =?us-ascii?Q?GJ1blY+4Ei4qLRa2KOJ3ThZFDrf1wSIJnPNuGwIj0r0ski2i5MB7MGJi0nDt?=
+ =?us-ascii?Q?tgedMgZ99t8=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cWxQWW1PL1VaVTZISkJXWHh4UXlhL3BmV2FDZzJnQk5JdHBodEcwbW1JU2lv?=
- =?utf-8?B?d3cyUkgzcVNXaW5kamR4c05EdklzanJwRDZMc2pBbnBUc0NqeFAvbVI5b045?=
- =?utf-8?B?OFJFbDZiKzFuck9LZm9BMU5aNlZjOGMrT0VIMFBnVUF5cXA2bXkvSDh1RWpX?=
- =?utf-8?B?OWZzcDV5TTFhcElodmhDV0NJVkNib25XbnJCMXNKa3lMVUkxWXhTcnM3VVZx?=
- =?utf-8?B?eDlVdG5McTdQVE56eU40ck5qdjZuUjZXVEJ6Ukk0VlNSMlg1ZFlndC94RmRk?=
- =?utf-8?B?UTlheFVjU09CVVRVMFJzOUlIbTc5Y0Z2Sit2Q1NzTW5KS1d5S2NBQVA1VDlq?=
- =?utf-8?B?Ukpyb3ZyclN5M2U5U1FTRnBUdWwxUlJ6QWsxVnFlMkJzdjJVTjdPckVWM0xa?=
- =?utf-8?B?Zkpjd3JKd2d6OVlYQnVGaVlrTWFIS0o3aXpTSUQ3RlF3MGZ6cUJCcm9nOHJw?=
- =?utf-8?B?SmllVGp6QWo3ck1udWJBNStRUDFVc1EyaFBYWWpJcWQwNUlWTm0xenRFV1dR?=
- =?utf-8?B?SDZONFZnUm1WcjdnaHBOaWJxRXVhQXNzVHBnT052bW9xYVFBR1NWY1BWZ3Vz?=
- =?utf-8?B?WjJzN3FDclNZYWJXbmRlL0NnVWV5L29Ma3BkL016YStJYkxaTHdlcGZHSjZo?=
- =?utf-8?B?VFdKam1rZnh2RkFmMHJQclBOWHE4b3B6Y1BaZFI0bUdFbllScUxYelltaHZQ?=
- =?utf-8?B?SUhIR0J3N0QvM2ZlMGlGaCtvODNkSVVWREx5UDVBUU14S0ZWNGphUDlqT0NZ?=
- =?utf-8?B?MEZ4cGFUOWpKNEk4WjRpaVlHbXlickowS0tjSUp4Y2hjeXhDUCt0NUFVckRW?=
- =?utf-8?B?Z1JmWXVaTG5wMkZ5bjZwdWlIeU5JeFZHMGR6UjYxN3ppbWhGam9OTnFPWVFj?=
- =?utf-8?B?Yk9mMmZZZzczdk05dHU5SnR4WXFFMW52WjNaYjRDTXA4RVN0U2packdzUmRH?=
- =?utf-8?B?dlEwb3ZuK1ppUDhXRFBncXRlQm9la0ZGOWxLYUF0amR3WTZSVVFRallyd0ds?=
- =?utf-8?B?bVQ1WGo1K21BSjY1RkRlRWxrUUNGVTRSYiszVFpUQ0VuZzdHUUN0bmF4Q0F6?=
- =?utf-8?B?K0laUGswUVVCOWhEblBpVkZiUGViMlZaeWxoOGxzVlVPVkZBRjVpelk0L2Rn?=
- =?utf-8?B?RXljRGR5T1pyT3pwd1RsQk5hR01DeHZoZ2dxa0VFUXJIZndFYXhpRHJQVlpo?=
- =?utf-8?B?STJaNWVwNWZmRzJjTWM1VDVQTFhzMVJUWWwvT3JVeWV5Z1U0WGlRL3ZRcTl5?=
- =?utf-8?B?WnVqbE9oazhzNXpZUE50Q0tySk11Vmk5dFVFekgyWjdHbTVVZVpMTXM5dTdZ?=
- =?utf-8?B?U29ZaEdJRjgvK2pwaUtBNDJEWTF2RDF0OXNHT0VnREN2VVdJbmxIUVhrdWNv?=
- =?utf-8?B?RjhZdUczZGU4WkRXbmZCNnZ5aFZ5bkhCd3FnT3ZheFZzM3AwK2dWdmNBdW14?=
- =?utf-8?B?bS9oRUZJbWdOaDNHWi95a3BXZ1NQemVCeHRreDM0MlJSVjNVMXdBM2xsdzRN?=
- =?utf-8?B?NEFQeVRpYlZoRGlHUE9KaEZldG1HVW1xRmprZldsSUFXOXB4RlNHeTZhUlZj?=
- =?utf-8?B?YnRrWDVhR2g3RlkxNWZWTzdxNFBxTlNya1IyajMxK3ZlT0FEcDFjcFVSMjRN?=
- =?utf-8?B?OXRjWVNRYVMxRkJKaTZJWVZGRXBqcEpZTmdJSEx4NXVSYUpQWE5xVkEvdk1Q?=
- =?utf-8?B?VHRsbVZQVWZSdTRUWkx6a245NkR6QzI2N0tCVWpjZ2V5OUNIUVBuNEQxKzU0?=
- =?utf-8?B?OU5zRHdlWWl1V0l0VE8rek4rdHB6RlQwVjhlTVZEWStNZzJLYUdNNkZ2T3Uw?=
- =?utf-8?B?TXJKcXRHbnNWUElidWZLTWxtc05zQTNzdUN1V0s0cWE1V1k5c25FWERVRGlB?=
- =?utf-8?B?MjFFU1pVL1BNMmVKMkJDVWxHT0VBZ0FLb05aN0xiNDlFTkNkbFUxNXlpaEhO?=
- =?utf-8?B?alBQTlowNnUvazFXbkZkMzNGZHIyeis2MGRIaS8vNVdDcDgzL0xZU3F2ZVdw?=
- =?utf-8?B?SXBoc0t3dnMxdWFYMGdhQlZRZDhnL21jdEk0dy9EK2MycnUzTmcvQ3RPeHBi?=
- =?utf-8?B?T3RURU9vU1Vib0JDaGZCMGhpZGdrVnRlV2ZSR1hRTlpZQmRsbU9lMW9WRWlF?=
- =?utf-8?B?Z1IvNi80MDI1R0FROFNFZWxoeFFvU2pNMlVEb3NjQUM1RVdscEJubTJpaW5k?=
- =?utf-8?Q?/TYnZ3MTmfSmd4UTel0vEOLuHPeVQHgixik+4/YSCvCy?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c28487f-97cf-41f3-6ea7-08ddf05bb7ba
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?PoEJK9esNO63ihU4rrv9kIj4DaZOVWg6uox/Il6OVfzPUhMW7tOfy+T90shq?=
+ =?us-ascii?Q?Xb/mDcDkK1EeQvkYspbF3FXHV08h6wCUT9ESZ0T27YwoulvwksGXVbJqyvL7?=
+ =?us-ascii?Q?Ioq5GDVVojc2mneNwMCIOn3QCDuEQSXSXRFpg03KlIgXgNgqrGKR0rq/WZ4H?=
+ =?us-ascii?Q?asxYTSBJRuhgOWbyJFRdBra3D7HkWwPUWavXNV/qvm6HH2jf6eoN95xwmVTM?=
+ =?us-ascii?Q?XK3hEx8bf27yoGWKsLJF8rtrtSNZyCeZjld0tUNQstE5g6qVnAH7hcEusapm?=
+ =?us-ascii?Q?vI5s3ghjN1Q6T2omQqUY3UzfhWRW3BbUyQCnVdE6sNkajceFn9U5QRrePQ2q?=
+ =?us-ascii?Q?S1PpOKprwP3M4+yn+8z96wI4et5LJ49ISeFHyl8kjZm9XfmBJPQxSlYiIbrF?=
+ =?us-ascii?Q?tLHtLf9BPyN2SAuFCSqEjzTZifs+oxW1TW8AaNYu3AOc+qfrhVaVzZUyE2qM?=
+ =?us-ascii?Q?k6OYqCWWPDqABLt5jPNB2u4c9aO0L/Ftxl8SWw3MXPH2IE5RWER8AKqTTB+o?=
+ =?us-ascii?Q?bMkZ8IXOKcn5SbIHs4PSHO/6OYDFZ3nbsxKQzwNqKkcwqOWDuTNaLwWJyntT?=
+ =?us-ascii?Q?Q0AO7XvRmYEP5ZWDIBt6q8+SMx3HfblAiXQolJQvKIWKRYtGOqOzt5mgmfSc?=
+ =?us-ascii?Q?9mOuWuyBVuVF2l4MjKkIo6nIJreHnkv0NhUl2LqyT4An6ElltVi9FPDROrV4?=
+ =?us-ascii?Q?XMSm5GWtdky8tA4MlU/ajoji2kOhVRtVFKle5JdLAy6oMnc+xkOxpu5AVynw?=
+ =?us-ascii?Q?XBMLnAl2bXxTr4v+AwsAzOvG/hqCoVr5Zo2Eo5XdztiRHUaTJ7BtUw1flepV?=
+ =?us-ascii?Q?U0iy3b6EX3qVJ3xfMzBZqiO93ZYRhrMKuPHe//YU6WbERjBhV7WP8Lnzsz2g?=
+ =?us-ascii?Q?hfW6cVnY+n+nViOV++LqYb8WzAmo+VzSXxe43jwcq4WagiWjZW88AnslguY1?=
+ =?us-ascii?Q?tB2D2K7fdY39Fb5LuwbhUsKkVb7jeP9hmf3hPbl4xmwtUbqRfIDTqMEVHYFb?=
+ =?us-ascii?Q?Kz9znsil4NWdC1zcgYptpkayEmjfBbcDcjao7cg/Cf0ZxpxVDda3/zrkAWXk?=
+ =?us-ascii?Q?9LtloHD5kp98EhaLMx88hadW8blwi/KSviqPcfnKSXNfA8p3Q2H7s1f2M8BM?=
+ =?us-ascii?Q?gCmWCGu/Jr0lWN7fhtHnHAaeY+Bi6fNQ9nks3iUSjBq5cFSKrszqdf8lD1m4?=
+ =?us-ascii?Q?4L9Ez/c7tMfwtswHa1AmXUAlRvt6VSSuWxt0SnjO4jGmlhA+RvsXdsPyK0F5?=
+ =?us-ascii?Q?nK2Rw5MixndAvWQ0KFO0ObIuEBh33wNpuGFAD/X6Xmb0gajN67nd5Jdnli/E?=
+ =?us-ascii?Q?PC/ZIFOBiCT2Cnq6rtMqIpGMPJDD0u1aueoojEPFf93H1qpJiPbDd71/hhFS?=
+ =?us-ascii?Q?+AXPVA6WSKY4KYwckAOiZnxyUQZWfpCoiSZuJ5Snt9pFsPHLnLlnOqBPjzaV?=
+ =?us-ascii?Q?SnR0oS4whSvhKnqofnEEZ4yReGAgrEA1dTq5NquZgbRKj7fH7FvwCD9ISRE4?=
+ =?us-ascii?Q?tmNw387k7qsTq2RTe95h5s+ykY9PxEtvqbOrdJve5RqPdOviUN6jJ0B6lqp8?=
+ =?us-ascii?Q?+DNp1b1KyDU68lBMGBRXYuMOarD6Z+bJsuny6aLb?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7425a4de-716d-4209-590e-08ddf05bc40f
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 11:18:07.6247
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 11:18:27.9975
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3Irizhk1snB0PaNbzscTt30A7FNGXmiV6iNx+OX8qWaGtEoECVUGWJ8QR9YQhjH+jZwANMVO+VU8vmvXJI0Puw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6628
+X-MS-Exchange-CrossTenant-UserPrincipalName: /MmjKfPSj6Kfw8xQaDK0/+bMQYrTW7nBL9Y9tt33ira4szyEnOmpcplurfEgAIYeRnV16aJB05AoD07Wxms71g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8194
+X-OriginatorOrg: intel.com
 
-On Wed Sep 10, 2025 at 5:01 PM JST, Danilo Krummrich wrote:
-> On Wed Sep 10, 2025 at 6:48 AM CEST, Alexandre Courbot wrote:
->> On Tue Sep 9, 2025 at 11:43 PM JST, Danilo Krummrich wrote:
->>> 	impl Gpu {
->>> 	    pub(crate) fn new<'a>(
->>> 	        dev: &'a Device<Bound>,
->>> 	        bar: &'a Bar0
->>> 	        devres_bar: Arc<Devres<Bar0>>,
->>> 	    ) -> impl PinInit<Self, Error> + 'a {
->>> 	        try_pin_init(Self {
->>> 	            bar: devres_bar,
->>> 	            spec: Spec::new(bar)?,
->>> 	            gsp_falcon: Falcon::<Gsp>::new(dev, spec.chipset)?,
->>> 	            sec2_falcon: Falcon::<Sec2>::new(dev, spec.chipset)?,
->>> 	            sysmem_flush: SysmemFlush::register(dev, bar, spec.chipset=
-)?
->>> 	            gsp <- Gsp::new(gsp_falcon, sec2_falcon, sysmem_flush)?,
->>> 	        })
->>> 	    }
->>> 	}
->>
->> It does work. The bizareness of passing the `bar` twice aside,
->
-> Yeah, but it really seems like a minor inconvinience. (Especially, since =
-this
-> will be the only occurance of this we'll ever have.)
+On Wed, Sep 10, 2025 at 05:37:50PM +0800, Xiaoyao Li wrote:
+>On 9/9/2025 5:39 PM, Chao Gao wrote:
+>> From: Sean Christopherson <seanjc@google.com>
+>> 
+>> Load the guest's FPU state if userspace is accessing MSRs whose values
+>> are managed by XSAVES. Introduce two helpers, kvm_{get,set}_xstate_msr(),
+>> to facilitate access to such kind of MSRs.
+>> 
+>> If MSRs supported in kvm_caps.supported_xss are passed through to guest,
+>> the guest MSRs are swapped with host's before vCPU exits to userspace and
+>> after it reenters kernel before next VM-entry.
+>> 
+>> Because the modified code is also used for the KVM_GET_MSRS device ioctl(),
+>> explicitly check @vcpu is non-null before attempting to load guest state.
+>> The XSAVE-managed MSRs cannot be retrieved via the device ioctl() without
+>> loading guest FPU state (which doesn't exist).
+>> 
+>> Note that guest_cpuid_has() is not queried as host userspace is allowed to
+>> access MSRs that have not been exposed to the guest, e.g. it might do
+>> KVM_SET_MSRS prior to KVM_SET_CPUID2.
 
-It's definitely not a big deal.
+...
 
+>> +	bool fpu_loaded = false;
+>>   	int i;
+>> -	for (i = 0; i < msrs->nmsrs; ++i)
+>> +	for (i = 0; i < msrs->nmsrs; ++i) {
+>> +		/*
+>> +		 * If userspace is accessing one or more XSTATE-managed MSRs,
+>> +		 * temporarily load the guest's FPU state so that the guest's
+>> +		 * MSR value(s) is resident in hardware, i.e. so that KVM can
+>> +		 * get/set the MSR via RDMSR/WRMSR.
+>> +		 */
+>> +		if (vcpu && !fpu_loaded && kvm_caps.supported_xss &&
 >
->> here is what it looks like when I got it to compile:
->
-> This looks great!
->
->>     pub(crate) fn new<'a>(
->>         pdev: &'a pci::Device<device::Bound>,
->>         devres_bar: Arc<Devres<Bar0>>,
->>         bar: &'a Bar0,
->>     ) -> impl PinInit<Self, Error> + 'a {
->>         try_pin_init!(Self {
->>             spec: Spec::new(bar).inspect(|spec| {
->>                 dev_info!(
->>                     pdev.as_ref(),
->>                     "NVIDIA (Chipset: {}, Architecture: {:?}, Revision: =
-{})\n",
->>                     spec.chipset,
->>                     spec.chipset.arch(),
->>                     spec.revision
->>                 );
->>             })?,
->
-> +             _: {
-> +                 gfw::wait_gfw_boot_completion(bar)
-> +                     .inspect_err(|_| dev_err!(pdev.as_ref(), "GFW boot =
-did not complete"))?;
-> +             },
->>
->>             sysmem_flush: SysmemFlush::register(pdev.as_ref(), bar, spec=
-.chipset)?,
->>
->>             gsp_falcon: Falcon::<Gsp>::new(
->>                 pdev.as_ref(),
->>                 spec.chipset,
->>                 bar,
->>                 spec.chipset > Chipset::GA100,
->>             )
->>             .inspect(|falcon| falcon.clear_swgen0_intr(bar))?,
->>
->>             sec2_falcon: Falcon::<Sec2>::new(pdev.as_ref(), spec.chipset=
-, bar, true)?,
->>
-> -             gsp: Self::start_gsp(pdev, bar, spec.chipset, gsp_falcon, s=
-ec2_falcon)?,
-> +             gsp <- Self::start_gsp(pdev, bar, spec.chipset, gsp_falcon,=
- sec2_falcon),
->>
->>             bar: devres_bar,
->>         })
->>     }
->>
->> The wait for GFW initialization had to be moved to `probe`, but that's
->> fine IMO.
->
-> That's not necessary, you can keep it in Gpu::new() -- I don't see what's
-> preventing us from that. I inserted it in the code above.
+>why not check vcpu->arch.guest_supported_xss?
 
-This one didn't work for me, but maybe you have a newer version of the
-internal references patch:
-
-error: no rules expected reserved identifier `_`
-    --> drivers/gpu/nova-core/gpu.rs:323:13
-     |
-323  |             _: {
-     |             ^ no rules expected this token in macro call
-     |
-note: while trying to match `)`
-
->
->> I do however find the code less readable in this form, less
->> editable as well. And LSP seems lost, so I don't get any syntax
->> highlighting in the `try_pin_init` block.
->
-> Benno is working on a syntax update, so automatic formatting etc. will pr=
-operly
-> work.
->
-> Otherwise, I can't see how this is a downgrade. It represents the initial=
-ization
-> process in a much clearer way that the current implementation of Gsp::new=
-(),
-> which is rather messy.
->
->> Fundamentally, this changes the method from a fallible method returning
->> a non-fallible initializer into a non-fallible method returning a
->> fallible initializer.
->
-> Yeah, that's the best case when working with pin-init.
->
->> I'm ok with that, and maybe this new form will
->> encourage us to keep this method short, which is what we want, but other
->> than that what benefit are we getting from this change?
->
-> The immediate benefit is that we don't need an extra allocation for the G=
-sp
-> structure.
->
-> The general benefit is that once we need to add more fields to
-> structures that require pinning (such as locks -- and we will need a lot =
-of
-> them) we're prepared for it.
->
-> If we're not prepared for it, I'm pretty sure that everytime someone need=
-s to
-> add e.g. a new lock for something, it will just result in a new Pin<KBox<=
-T>>,
-> because the initial pin-init hierarchy just isn't there, and creating a n=
-ew
-> allocation is more convinient than fixing the existing code.
->
-> This is exactly what pin-init was introduced for in the kernel, such that=
- we're
-> not doing worse than equivalent C code.
->
-> 	struct Foo {
-> 	   struct Bar bar;
-> 	   void *data;
-> 	   struct mutex data_lock;
-> 	}
->
-> 	struct Bar {
-> 	   void *data;
-> 	   struct mutex data_lock;
-> 	}
->
-> In C you can just kmalloc(sizeof(Foo), GFP_KERNEL) and subsequently initi=
-alize
-> all fields.
->
-> In Rust I don't want to fall back having to allocate for Bar *and* for Fo=
-o
-> separately.
->
-> If there are things to improve with pin-init, let's improve them, but let=
-'s not
-> do worse than C code in this aspect.
-
-Maybe I need to get used to this way of initializing, but in any case I
-can definitely live with it. And it we split initialization into proper
-functions the code should remain readable.
-
-I'll try and slip this into the next revision of this patchset, or as a
-follow-up if there isn't one.
+Looks like Sean anticipated someone would ask this question.
 
