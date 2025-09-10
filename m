@@ -1,218 +1,227 @@
-Return-Path: <linux-kernel+bounces-810783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040E5B51F52
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:46:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2157B51F58
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A12774602EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:46:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D909B188F7B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA56C205E3B;
-	Wed, 10 Sep 2025 17:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5C8335BBB;
+	Wed, 10 Sep 2025 17:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Hlnol447"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hnoGWGmD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A312834164A
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 17:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBEF261B9A;
+	Wed, 10 Sep 2025 17:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757526305; cv=none; b=qmaGuYcnxXtzHDRvGL/W/9r3phJ+u3WyoFHwOO7m9IXbjVWIVQQolfhW9Ysv89lQqqw4/Wd3TMRg15jNqdzG7U7Z6Vl8Zx9vFsjN4zu8cmzM77UvmF5yNyqi5K3UTyxB6AX6IRSXogURpqhyBAyR2MYgzj1qHJE7mHtFJOK81UM=
+	t=1757526385; cv=none; b=X3VAOByE9HIhx/67C0EzWFhAG3Aso3WDyLTUPWV8wskmv3sdzAbxIE2L7khZ39wAjuTZ9xQhlWyTjw+A36jniTgA2E9hi7dj14nQUCVwIH3MPxz+JEwqrZ0iusv8KuODthZJTMTfAL225EUKiTqIJPvS/F4HQzgXyATyG38FknU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757526305; c=relaxed/simple;
-	bh=iVAsp8qEuGbdNZHLXAbc2lkWeVf27QoVgSrG092m6WI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LQXLVBkJVV5983t2R93aqXnzh6LitOj8vj81WTkrjBEBtdplussbJGF5JkFA0nT8h3+KPdSFJx0FS9K7Lwo0I9WxKJ+Sp/H2nuScFUiav9BFy3sZZYo2KTRlduC39xeEWI6s0VNBMuG3p64bh5tvUfauE1Ve78e6ZGMrDYmnbYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Hlnol447; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58AGxWBb022908;
-	Wed, 10 Sep 2025 17:44:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=pWnY6x0dhUtbDJ5O2
-	ZYRjeNVPeRHQ8+KZd7THg2oo6I=; b=Hlnol4472RO8JFDXP1nWeDopkFjfgHIWp
-	McCYLt2B99EBfmrgmjH1WqZhGn6E8wn3iyrFyd4RUKe7UvmgSBiUMHNqCmWZtcIh
-	4TX8i2e0TVbPRAJqMDarmKJI7RY/DumXnGBPOV+9Fu9xOAGLNGI9g+ucdjQFs432
-	PkyTc4qwZRp3e0kvOzQhSy7AAgGgOws6BXRTq9Z+S3YlCaUZ/LHKOlYlMs/9Am2k
-	q9m+82U3oWT4JiEqWOLxCyKm/pvZT5WBC40ZrUHOR2+awPFU1r5ac/8FmEd/+CvR
-	XdXGuwZDROd8SBmMXsh2Xh/H31Y8oznJcAU4sM6nQfG87B+4mGzIA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cfffx6j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 17:44:48 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58AHiC36013900;
-	Wed, 10 Sep 2025 17:44:48 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cfffx6e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 17:44:47 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58AGfaG1020700;
-	Wed, 10 Sep 2025 17:44:46 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 490yp11vn0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Sep 2025 17:44:46 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58AHig1W57016654
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Sep 2025 17:44:42 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 90D5420043;
-	Wed, 10 Sep 2025 17:44:42 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 814EB20040;
-	Wed, 10 Sep 2025 17:44:36 +0000 (GMT)
-Received: from li-7bb28a4c-2dab-11b2-a85c-887b5c60d769.ibm.com.com (unknown [9.124.208.171])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 10 Sep 2025 17:44:36 +0000 (GMT)
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, tglx@linutronix.de, yury.norov@gmail.com,
-        maddy@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, gregkh@linuxfoundation.org
-Cc: sshegde@linux.ibm.com, vschneid@redhat.com, iii@linux.ibm.com,
-        huschle@linux.ibm.com, rostedt@goodmis.org, dietmar.eggemann@arm.com,
-        vineeth@bitbyteword.org, jgross@suse.com, pbonzini@redhat.com,
-        seanjc@google.com
-Subject: [HELPER PATCH] sysfs: Provide write method for paravirt
-Date: Wed, 10 Sep 2025 23:12:10 +0530
-Message-ID: <20250910174210.1969750-11-sshegde@linux.ibm.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250910174210.1969750-1-sshegde@linux.ibm.com>
-References: <20250910174210.1969750-1-sshegde@linux.ibm.com>
+	s=arc-20240116; t=1757526385; c=relaxed/simple;
+	bh=0dXcKztqcBTIOPXYflckkwx4jmeZlOxeJTyT5RrxD4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P6vStQQ4/Fqd18JEePhO6PPYkpZDZ9e4/ZFMV0MvN3TWCRHojxgu858aP39HxnU2Jz5AmqTsgeViqNn+LIpAlpP6OPxJ+wJ+gx9MNumYlNvIrerklnfacoWH/75rXS+6CveqlQSDghVaQpZswlOj1zYztKSuZ9TF+EuuSQatTY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hnoGWGmD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94622C4CEEB;
+	Wed, 10 Sep 2025 17:46:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757526385;
+	bh=0dXcKztqcBTIOPXYflckkwx4jmeZlOxeJTyT5RrxD4E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hnoGWGmDsGGsuBI8+xP9ocNVkgIr1W7X79Iy8FHpqHRwlfqsr0bcNw97A2akFb9ab
+	 H4vfxU/L377lNc6Y3f9tdzKpp9XAIIJtCboHfGPpPoYVVy9W4lnqzaB9yxdw1Ri3Xs
+	 BBZPJO8lzXJjTYZXiCd8L0rSxHl7WbDBiS5Td53z2yzj8liwKQqfq9sAFhvukRjRvk
+	 HpSqobSH5GbYN4S69SgLIB+MEoPA4YepCjpb0bkodHkQ/oK6gTVSq9AYMq01lccK11
+	 AprDuLOpqW8/99B4l7wMDJW86FpeSpxmxmaxpzdspoa9/OXvG0sF8CHPw8u4x7bZgp
+	 F3/jPcySK/r5A==
+Date: Wed, 10 Sep 2025 18:46:19 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+Message-ID: <20250910184619.0303163d@jic23-huawei>
+In-Reply-To: <20250910-bd79112-v4-2-f82f43746a8c@gmail.com>
+References: <20250910-bd79112-v4-0-f82f43746a8c@gmail.com>
+	<20250910-bd79112-v4-2-f82f43746a8c@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: XT3ksZmm9QlEKIkodWb63ERvrS0E7n_h
-X-Proofpoint-GUID: ZB_Bn-8CmcrKQNtpeQwPHXsYm5HCug7w
-X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c1b910 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=QYAN427j3e14qLe-yhwA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX+cgA+CNx7dSY
- DghYLUJKuqy2XQvTjeRiqsiikngHVgziVOVSHk9iEP1hL6sQVANCDlqR5SJRJujBAV3WMBfJ2dR
- HPZzGbT3BwtSb0d5VTajjwcQXexXsJC+wW9uu9GWgLdH1H6+nYArOJmZNap3ZNYOKOcreqYbjof
- SQyEyT2hgRZD1GELMQnrFiJXhpspQjh9Oi//PgCNCBypeQViCqDbBMjEHjBxriRNJ5Qq6aJQeeH
- 6IAQPAQ7iAKCwf79l9tuLIZeIEJILGRkm1NGwoZJEIaZuSa/+Y/kHG96CwDtIo7dtMIkNh7I/zx
- 7eGX5k+j/dmt9HQ6/QgdXq1eyvqnm835prdrppMUOgwHtEfmkQAYdIyMahI28dsJ+9S524W9cXG
- h8RNjg8M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_03,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This is helper patch which could be used to set the range of CPUs as
-paravirt. One could make use of this for quick testing of this infra
-instead of writing arch specific code.
+On Wed, 10 Sep 2025 14:24:35 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-This is currently not meant be merged, since paravirt sysfs file is meant
-to be Read-Only.
+> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
+> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
+> 
+> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
+> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
+> daisy-chain configuration) and maximum sampling rate is 1MSPS.
+> 
+> The IC does also support CRC but it is not implemented in the driver.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-echo 100-200,600-700 >  /sys/devices/system/cpu/paravirt
-cat /sys/devices/system/cpu/paravirt
-100-200,600-700
+Hi Matti,
 
-echo > /sys/devices/system/cpu/paravirt
-cat /sys/devices/system/cpu/paravirt
+A few trivial things that I'll tidy up if nothing else comes up (I might not
+bother given how trivial they are!)
 
-Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
----
-Idea was borrowed from Ilya's patch shared to me internally.
+Also one question. I couldn't immediately follow why any random register
+read is sanity checking if an ADC pin is configured as GPIO.
 
-It is up for debate to have something like this or like powerpc patch.
+Jonathan
 
- drivers/base/base.h |  4 ++++
- drivers/base/cpu.c  | 43 ++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 46 insertions(+), 1 deletion(-)
+> diff --git a/drivers/iio/adc/rohm-bd79112.c b/drivers/iio/adc/rohm-bd79112.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..a2a3affe2c6dc86a237a164139c27ec66dc9d131
+> --- /dev/null
+> +++ b/drivers/iio/adc/rohm-bd79112.c
+> @@ -0,0 +1,553 @@
 
-diff --git a/drivers/base/base.h b/drivers/base/base.h
-index 123031a757d9..bd93b2895b24 100644
---- a/drivers/base/base.h
-+++ b/drivers/base/base.h
-@@ -264,3 +264,7 @@ static inline int devtmpfs_delete_node(struct device *dev) { return 0; }
- 
- void software_node_notify(struct device *dev);
- void software_node_notify_remove(struct device *dev);
-+
-+#ifdef CONFIG_PARAVIRT
-+DECLARE_STATIC_KEY_FALSE(cpu_paravirt_push_tasks);
-+#endif
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index 902747ff4988..d66cbd0c3060 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -375,12 +375,53 @@ static int cpu_uevent(const struct device *dev, struct kobj_uevent_env *env)
- #endif
- 
- #ifdef CONFIG_PARAVIRT
-+static ssize_t store_paravirt_cpus(struct device *dev,
-+				   struct device_attribute *attr,
-+				   const char *buf, size_t count)
-+{
-+	cpumask_var_t temp_mask;
-+	int retval = 0;
-+
-+	if (!alloc_cpumask_var(&temp_mask, GFP_KERNEL))
-+		return -ENOMEM;
-+
-+	retval = cpulist_parse(buf, temp_mask);
-+	if (retval)
-+		goto free_mask;
-+
-+	/* ALL cpus can't be marked as paravirt */
-+	if (cpumask_equal(temp_mask, cpu_online_mask)) {
-+		retval = -EINVAL;
-+		goto free_mask;
-+	}
-+	if (cpumask_weight(temp_mask) > num_online_cpus()) {
-+		retval = -EINVAL;
-+		goto free_mask;
-+	}
-+
-+	/* No more paravirt cpus */
-+	if (cpumask_empty(temp_mask)) {
-+		static_branch_disable(&cpu_paravirt_push_tasks);
-+		cpumask_copy((struct cpumask *)&__cpu_paravirt_mask, temp_mask);
-+
-+	} else {
-+		static_branch_enable(&cpu_paravirt_push_tasks);
-+		cpumask_copy((struct cpumask *)&__cpu_paravirt_mask, temp_mask);
-+	}
-+
-+	retval = count;
-+
-+free_mask:
-+	free_cpumask_var(temp_mask);
-+	return retval;
-+}
-+
- static ssize_t print_paravirt_cpus(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
- 	return sysfs_emit(buf, "%*pbl\n", cpumask_pr_args(cpu_paravirt_mask));
- }
--static DEVICE_ATTR(paravirt, 0444, print_paravirt_cpus, NULL);
-+static DEVICE_ATTR(paravirt, 0644, print_paravirt_cpus, store_paravirt_cpus);
- #endif
- 
- const struct bus_type cpu_subsys = {
--- 
-2.47.3
+
+> +/*
+> + * The BD79112 requires "R/W bit" to be set for SPI register (not ADC data)
+> + * reads and an "IOSET bit" to be set for read/write operations (which aren't
+> + * reading the ADC data).
+> + */
+
+> +/*
+> + * Read transaction consists of two 16-bit sequences separated by CSB.
+> + * For register read, 'IOSET' bit must be set. For ADC read, IOSET is cleared
+> + * and ADDR equals the channel number (0 ... 31).
+> + *
+> + * First 16-bit sequence, MOSI as below, MISO data ignored:
+> + * - SCK: | 1 | 2 |   3   |    4   | 5 .. 8 | 9 .. 16 |
+> + * - MOSI:| 0 | 0 | IOSET | RW (1) |  ADDR  |  8'b0   |
+> + *
+> + * CSB released and re-acquired between these sequences
+> + *
+> + * Second 16-bit sequence, MISO as below, MOSI data ignored:
+> + *   For Register read data is 8 bits:
+> + *   - SCK: | 1 .. 8 |   9 .. 16   |
+> + *   - MISO:|  8'b0  | 8-bit data  |
+> + *
+> + *   For ADC read data is 12 bits:
+> + *   - SCK: | 1 .. 4 |   4 .. 16   |
+> + *   - MISO:|  4'b0  | 12-bit data |
+> + */
+> +static int bd79112_reg_read(void *context, unsigned int reg, unsigned int *val)
+> +{
+> +	struct bd79112_data *data = context;
+> +	int ret;
+> +
+> +	if (reg & BD79112_BIT_IO)
+> +		reg |= BD79112_BIT_RW;
+> +
+> +	data->read_tx[0] = reg;
+> +
+> +	ret = spi_sync(data->spi, &data->read_msg);
+> +	if (!ret)
+> +		*val = be16_to_cpu(data->read_rx);
+> +
+> +	if (reg & BD79112_BIT_IO && *val & BD79112_ADC_STATUS_FLAG)
+> +		dev_err(data->dev, "ADC pin configured as GPIO\n");
+
+Why are we checking this in a regmap callback?
+Maybe it needs rewording and the point is some missmatch in what we
+can read vs the state?
+
+> +
+> +	return ret;
+> +}
+
+> +
+> +static int bd79112_probe(struct spi_device *spi)
+> +{
+> +	struct bd79112_data *data;
+> +	struct iio_dev *iio_dev;
+> +	struct iio_chan_spec *cs;
+> +	struct device *dev = &spi->dev;
+> +	unsigned long gpio_pins, pin;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	iio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+> +	if (!iio_dev)
+> +		return -ENOMEM;
+> +
+> +	data = iio_priv(iio_dev);
+> +	data->spi = spi;
+> +	data->dev = dev;
+> +	data->map = devm_regmap_init(&spi->dev, NULL, data, &bd79112_regmap);
+
+	data->mpa = devm_regmap_init(dev, ...
+
+
+> +	if (IS_ERR(data->map))
+> +		return dev_err_probe(dev, PTR_ERR(data->map),
+> +				     "Failed to initialize Regmap\n");
+> +
+> +	ret = devm_regulator_get_enable_read_voltage(dev, "vdd");
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to get the Vdd\n");
+> +
+> +	data->vref_mv = ret / 1000;
+> +
+> +	ret = devm_regulator_get_enable(dev, "iovdd");
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to enable I/O voltage\n");
+> +
+> +	data->read_xfer[0].tx_buf = &data->read_tx[0];
+> +	data->read_xfer[0].len = sizeof(data->read_tx);
+> +	data->read_xfer[0].cs_change = 1;
+> +	data->read_xfer[1].rx_buf = &data->read_rx;
+> +	data->read_xfer[1].len = sizeof(data->read_rx);
+> +	spi_message_init_with_transfers(&data->read_msg, data->read_xfer, 2);
+> +
+> +	data->write_xfer.tx_buf = &data->reg_write_tx[0];
+> +	data->write_xfer.len = sizeof(data->reg_write_tx);
+> +	spi_message_init_with_transfers(&data->write_msg, &data->write_xfer, 1);
+> +
+> +	ret = devm_iio_adc_device_alloc_chaninfo_se(dev, &bd79112_chan_template,
+> +						    BD79112_MAX_NUM_CHANNELS - 1,
+> +						    &cs);
+> +
+> +	/* Register all pins as GPIOs if there are no ADC channels */
+> +	if (ret == -ENOENT)
+> +		goto register_gpios;
+> +
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	iio_dev->num_channels = ret;
+> +	iio_dev->channels = cs;
+> +
+> +	for (i = 0; i < iio_dev->num_channels; i++) {
+> +		unsigned int ch = cs[i].channel;
+> +
+> +		cs[i].datasheet_name = bd79112_chan_names[ch];
+
+Could have done
+
+		cs[i].datasheet_name = bd79112_chan_names[cs[i].channel];
+
+and I don't think it makes it harder to read, but doesn't matter enough to respin.
+
+> +	}
+
 
 
