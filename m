@@ -1,84 +1,94 @@
-Return-Path: <linux-kernel+bounces-810672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ACD6B51DC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:32:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF9DB51D9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70E497B0415
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:26:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE5891C80815
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D6C3314BC;
-	Wed, 10 Sep 2025 16:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED78D335BCC;
+	Wed, 10 Sep 2025 16:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7VfaJ6R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3N1bM+YG"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E1223958A;
-	Wed, 10 Sep 2025 16:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5B99463;
+	Wed, 10 Sep 2025 16:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757521676; cv=none; b=FeoTjLF04AYKiIirVxNXh9+kH5WyKFmYRd24+5l6rOXYYjESftMDy+B/WgvHe6W/zW9P/HXfUMDmUpyADjNDBoEihIimKa4sRXkTmliFkoQbWgBeXDkP+kYDepi3zq3Jyw8BtiXZvcWmiaPsXhKY6ZNCzQZaxecWdJOXrqEOeB0=
+	t=1757521691; cv=none; b=P0qPMfiaCV4zNTFBNHkYXli2XO762THBMORyhN35T8WXjzTM4Tys5npRc/c8mHyb+zBTZRFkl6vDVuXxr1Sj6rK8yUnPpzzRTwKOXDox50sRsW1VBLOdJb55nlICOu3AxI3QCXpznWtlulOuSgI8gruOrBaNh9d3aFbFISGTIOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757521676; c=relaxed/simple;
-	bh=/1FSxR9TTupSEy6uKX3Zjqa5kVmdzmGXNNMfvSwrgWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OA7dvlGQNMMTHLkyZYeyY/J1JvjOd30J2OSdZtZmY+huMUlcRIWRUwBGLY3f09+2X43PTMejeUpiOzUU9RrJR8BOkGfwrpnudwMwu8TlrbF64cR6AC4xv3wBaoahhO+PhWC4fyoM1WMeJLmydn+T7pZ6NmI/fjU4QtkyvlH8iuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L7VfaJ6R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B321C4CEEB;
-	Wed, 10 Sep 2025 16:27:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757521675;
-	bh=/1FSxR9TTupSEy6uKX3Zjqa5kVmdzmGXNNMfvSwrgWw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=L7VfaJ6RYxagN6Y2G4qUTgOX7ogAEsIv/dFtNRHrapc9bE4LnkpjdF1L969ZiSIPn
-	 kwyisPgMcQ6mB10zrjaPHoMfQb1IUbAmBBVjGnWvc5q6wluuwwc4AMGyOSFbicgJw4
-	 FJuP3wahkq8nlGQMJtSDvPFQKYhfdFFg29gjp1vQ2jLUX5ekCyxCH/g+rfhe8rH6XJ
-	 zCvLbWxILozVFeowfJyujzYzkeRQD1GpRYdFOu5UosI+Ggc2KPxNSWAqfPyBB1wH8n
-	 QN7bdnve8YJ+M8w7Bopvv/lkmKPoDR05DLeqxvvDoFCFv+kuS4RLcau0DfjgeKmFej
-	 RZHQMZvKuFVFg==
-Date: Wed, 10 Sep 2025 17:27:50 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] iio: adc: ad7124: use guard(mutex) to simplify
- return paths
-Message-ID: <20250910172750.156bb1ae@jic23-huawei>
-In-Reply-To: <20250907110652.295b296b@jic23-huawei>
-References: <20250905-iio-adc-ad7124-add-filter-support-v1-0-aee3834be6a9@baylibre.com>
-	<20250905-iio-adc-ad7124-add-filter-support-v1-3-aee3834be6a9@baylibre.com>
-	<20250907110652.295b296b@jic23-huawei>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757521691; c=relaxed/simple;
+	bh=Ip/KN2ZBg4uirjUszlcMbTp+luH52XTz8G/cRfWRFX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJSlrcG2jYfxcHbAFD53+H4VsUhwkfoeyN8Vrbwv0ahV/ryrHO9MPNm3fcKEkOmdoU+ON8AcZIYryh0NFBHawPBAyjYTyLQuKNXnmKakrAecAYACfGyJZsDv5U2nWK0E961oNu3paREFarUU7nYuWKu2leTK+vvLk6pu0ntPv+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3N1bM+YG; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=/xjGoP5vn/+OHaRa5itQ8wKINnejO/BR/dQQpInoLBQ=; b=3N1bM+YGSMC9Ti8OTLgjBhKB0T
+	Ldrt3k3BjutpLirPelsVDJ9tkzlbslgsdsIHSDwGQIBWGhVDRLR3UYN4ZvPaH1MqKR+6AoFUJwWBp
+	VYdccpB8p18eo2HU3gQT6dPWJ7iPNUPVzVMwdMW/ucXpIwoEjt4FEQjSgoY45hgiNpYw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uwNfm-007yKv-RE; Wed, 10 Sep 2025 18:27:54 +0200
+Date: Wed, 10 Sep 2025 18:27:54 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+	Pascal Eberhard <pascal.eberhard@se.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/2] net: dsa: microchip: Add strap
+ configuration during reset
+Message-ID: <393f0c41-57f2-491a-9ac6-5069c7db089e@lunn.ch>
+References: <20250910-ksz-strap-pins-v1-0-6308bb2e139e@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910-ksz-strap-pins-v1-0-6308bb2e139e@bootlin.com>
 
-On Sun, 7 Sep 2025 11:06:52 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
-
-> On Fri, 05 Sep 2025 13:11:58 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
+On Wed, Sep 10, 2025 at 04:55:23PM +0200, Bastien Curutchet wrote:
+> Hi all,
 > 
-> > Use guard(mutex) in a couple of functions to allow direct returns. This
-> > simplifies the code a bit and will make later changes easier.
-> > 
-> > Signed-off-by: David Lechner <dlechner@baylibre.com>  
-> Another nice improvement that stands on it's own.
+> This small series aims to allow to configure the KSZ8463 switch at
+> reset. This configuration is determined by pin states while the chip is
+> held in reset. Normally, this kind of configuration is handled with
+> pull-ups/pull-downs. However, in some designs these pull-ups/pull-downs
+> can be missing (either intentionally to save power or simply by mistake).
+> In such cases, we need to manually drive the configuration pins during
+> reset to ensure the switch is set up correctly.
 > 
-> Applied.
+> PATCH 0 adds a new property to the bindings that describes the GPIOs to
+> be set during reset in order to configure the switch properly. Alongside
+> this new property, a new 'reset' pinctrl state is introduced.
 > 
+> PATCH 1 implements the use of this property in the driver. I only have a
+> KSZ8463 to test with, so only its configuration is supported.
 
-Unapplied due to drop of the precursor fix.  Same with patches 1 and 2.
+Are you setting switch state which cannot be set via register writes?
 
-J
+	Andrew
 
