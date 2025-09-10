@@ -1,268 +1,187 @@
-Return-Path: <linux-kernel+bounces-809254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF3EB50AAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:03:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 879D2B50A95
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 292057A1E0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:02:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A7A4165D46
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AC322B8B5;
-	Wed, 10 Sep 2025 02:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651D0225A3E;
+	Wed, 10 Sep 2025 01:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hehpeL5m"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013045.outbound.protection.outlook.com [52.101.83.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gHsU3iZm"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6312D1F3B8A;
-	Wed, 10 Sep 2025 02:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757469817; cv=fail; b=CRtHfOj/85D0iJJTqTmtduyJwKK3aUHyGCBbyTtKMS7Vho+95kA06H1XoyOHkuPNDcTZr4SeC3P5cAWLvvdhdqWtlfkbmTa9gstQEwYzKYlGFU4T/TaGCn0Hxiue9W30Rrvvot+bPFua6awF6LoTIIqiHl9hiRDpLdGCLNqszPE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757469817; c=relaxed/simple;
-	bh=xb8YrGJPNM100arYgCFdCGMMZP/2Lj+9mj+5PrHhXVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=u0KgilvYmAQsuV7hkhgHKYu/xtVkNelipyiDaQ8gcCTfimTyRWssu1hnxtDBgcKBp4esUkwDyEbCimGtgylyaT3o4PPZyPtAtS/2YtmlIFt7tXJCGPmpyUrzuet5+MKizook0sEiFuWvytdgkdtEkrYLoF8mSHGYj8zuj+nxdgU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hehpeL5m; arc=fail smtp.client-ip=52.101.83.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ddvMsuLfHdEM/e4fUSH1GjAZu/4Pc64LQMGrbA96lNiuNUM8/KQv60aeUwble8VWoRHcJ5FpHopdFOXF8lJYc6r12Xm8mz0Nfp7jsnSKDuRtAKt4irzxrziTpDiRUpf2Be6KCD0nX7py+tsPcOCqkCyqhbHNfn2wLn1cYS4x6K/AK+B4/xQte8Pn6GQSujcbpLUsn86wNxxXXXyI+zCdpIyvKrN4lNk2Z8UP94nGXrh2f9gAw4DQpUbRkDW3D/2jiNzBJ6kuEL/0DiQSSJ/dVZRQ1VTSAeo/XREi7l9LWw2q5c2a8zZt95FSXxoucVjeRHHHfRtrOECWy1foJpX6lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BRknlA2K1eNOXlh2hrTNKcmhhfBuUGS+fb+G+RVVCkk=;
- b=MBkf3IKRs+DPC51j/i0c0/IkfqJQbPx9ZmJjy3Rilt9pKeijbfyYTgQQC4hnvw5TIbX16xjgm595kfNmIAk4lUhro+VW/3G0/rB1/y+HP93IpP0VtaGrPsy9bORI0+28P6dr4GqbVGoiAkkQOSZaEIOgZwOuLK3xB/5fsd/Zb4Be5wCenXfxoZ+v/sYzA5FoSBk27naV763F9fo4Cpl4vWzePeyk0K4Lc+xijncbpMGKbK6zbUF0X8l+I6G/xOjoMXHCR3S3JzAGdafm9KeK+oX+eZEyT8w91bHpn2ZITaK+hNwrYHQerHytjV0sFm+JtyqlhtcnO/k3DHlxl6z1ag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BRknlA2K1eNOXlh2hrTNKcmhhfBuUGS+fb+G+RVVCkk=;
- b=hehpeL5mz7yru9lp8ELbe5kvGsvfSK4uB9/PS2StS0gkZHfZK1ayyIUX4+JowHdZ1ukagk3Fdj/sVVDYCNuRXfDbiFfTtP12S9qSsbAKY+uqMnaRinwwsouJrM02BBJFRQpYpuBeA4jFs9YrWc8RPSzGQqP4DctrPnXbx5Z+FK46AeQsqT2ucqPmAH46lg1aKj21j3bCFNzgqeehsLigXCcKCevOFmPXLCFt3mRPlz/A85LpLIS1vPY2FT7J6dkAnKvZcR6IBvu0DePg7nW6tUOX1ru5F+TTcde3tw1veSgKeLsk9cIUTeLDWaiqev/q6kzDo4ZN6KgKvP+btUXS9w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
- by DU4PR04MB11316.eurprd04.prod.outlook.com (2603:10a6:10:5d3::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.15; Wed, 10 Sep
- 2025 02:03:31 +0000
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::c67b:71cd:6338:9dce]) by DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::c67b:71cd:6338:9dce%4]) with mapi id 15.20.9115.010; Wed, 10 Sep 2025
- 02:03:31 +0000
-Date: Wed, 10 Sep 2025 09:57:33 +0800
-From: Xu Yang <xu.yang_2@nxp.com>
-To: krzk@kernel.org, myungjoo.ham@samsung.com, cw00.choi@samsung.com, 
-	robh@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org
-Cc: swboyd@chromium.org, heikki.krogerus@linux.intel.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	jun.li@nxp.com
-Subject: Re: [RESEND v4 1/4] usb: typec: Stub out typec_switch APIs when
- CONFIG_TYPEC=n
-Message-ID: <sd3icq365ndmdw6jzo2xnlc5hkir5fb6po3fd3v2ahtikre4jt@hnftxhiygpfn>
-References: <20250908053335.36685-1-xu.yang_2@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908053335.36685-1-xu.yang_2@nxp.com>
-X-ClientProxiedBy: SI1PR02CA0005.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::13) To DU2PR04MB8822.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A771F473A;
+	Wed, 10 Sep 2025 01:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757469482; cv=none; b=Q9BxpZRkhGKkDnlcEePI0fl/E4iQY5r36nclPDC0H2Dhg9dz6uhll1v1tZtwH1IpzNPb9t8Rml1vL+Ud0FJynrSvQAxbc6E7zs4bb/J17sgEn1fdbsfanqD4EUs/jgnFt3L0XrusX8UgKhuGsM9EOAkItfciY3nj9ZuovkUHWsY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757469482; c=relaxed/simple;
+	bh=DwwSWKWua2fP1JnFtxyFfbR/mFvTt5o9hP0QEXPJ7UY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dd9JG02gIlNlQBs1L30c32UvKzu+dNkszNDB8xKEbHWzo1xq2+CvFu9vfyomJ8tfPJLFKzIElCPpYF4H/dUpY5oAUEuptHcKDjp7bw20uEz5IaRaTjG4h1iWuHueA/2fz7IYK25qnqrvthP9ZiOgq+ggxaM2ZFC7Z8SIlkILWLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gHsU3iZm; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-772679eb358so5904457b3a.1;
+        Tue, 09 Sep 2025 18:58:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757469480; x=1758074280; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5GZjnq9AmQvvJ2VMhIbxJpK0z8GY39o/fsj+KeVvFsc=;
+        b=gHsU3iZmVhkqPH9Ov1ENuEaMrkNCZ8vuf/0yd0axHRva2og8/bKWoXd3cpqtfun5C3
+         DxvgfWA5bB6s1GCgxwH1kR9hKAgoj/LhdhQVSrJYfuNf6Jip5akWH9H1R6flV//WffQe
+         4chGWnzCNJvds+8eE/tIspT4wi/ocmZFd8NmazUQUTH2IRgHTk4s2RvcVgEQt4vDfQrr
+         jyMvlfpJdQtvxnKeVyTovXPb6onTgC46/mqny496j4+Mcdz4AeTnCv8eql9Cq6RRqr2T
+         3KmCiy9pWN/fyP3nnTOa0sG8Z95ZEm0UBSljYoMaPguC6mztczWO8iWkgtUFxLERb1Kt
+         Ds7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757469480; x=1758074280;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5GZjnq9AmQvvJ2VMhIbxJpK0z8GY39o/fsj+KeVvFsc=;
+        b=nUbeIhRt0I2ldfaAHsIMkmV2L4tYyy7JOkBsRX0GL9Tmdk1uLlbvJCAGg5YLD5O2PW
+         HyN0Zz0AMaoF+DxVqR6JBDTPMRo/Yu91DmNpjg/KRRh1FmtX+QWKRD3TyV4q+GMIRJyJ
+         MI+0MZV/ViGiCF9WRZVxoV8kv5PANzVcubDtbOb3rWCkJQ7LpFLM7WFWTn1lIzw4J/AU
+         n8O4qY+NeVzO2iamcVO1GMD+JAkVJbalbcLRjz8G6n/9ON4mSPM8o6rg5OUNtGfTpuGA
+         6LKDNWu1GfjDZlgL3KgerutOX/BitnPID4c9iLAba+pa37Bw8Movod6xcHDeMHB00Zs4
+         Olpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWejTRFOx7HCC2Re1mnXI7eyevsrORbqqsU1SbhDiWG3FAeW9Bl/9qDOgkLq3zOsq0MXbT8OD2QYi8T@vger.kernel.org, AJvYcCWqZA1M14u0PJRPzjmhjMUePqQ/YvpZyjbXA+lxRZ/0RvUCIcgpit+wfDipsZjicO/1Xuov+h4fVKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWYybmOsERGP/thURvdOSwL5+R3uWqkLnjF3JzYVMPZyUu1uFF
+	meq96rRm2W1lY58VJFZjDyX9ZhcRpr+e0KUK+YgTdtAvRKxpOPP5fUSGYXSOqd1l
+X-Gm-Gg: ASbGncv+cjT5m40bNJfuEf7kxVIguKRegHkW6DgDpN7D2E+a+LilXYS03c0WGvB+VD6
+	1QAc5QEpz542MuhjFRjAhho5CpNJGDRYA2/rbDN+VQ+xsq/wBb0nfVNfHo8SFca8f5dFC27pjpm
+	oBuGoxLsCDFh3VYQJBryKMhFH0btr4uNIBZ7R6liZQGiGmKdpve9qgoQgPHx5000rRF1xW4IPMI
+	Qkjp2Rh1qm/e7IE0WirGzhkgJIObm5TWNDLrr7UoenUJkS+ORBzAQbJQMrt91nB4H+cqWKMjgtZ
+	PWFLXom0iVrv3Qihvff0JriLwy0uZTTQYL1jAZzgYzlSMYUZXBDUitrFCdIi2HLyn1Aa4vdr/ne
+	YJFctHz12f0Jc3NMqJBxv7aSonzgyQ68TYa0K1N5s7JlkVzs=
+X-Google-Smtp-Source: AGHT+IF9ZvsbQcYo1OI1i2Nra/8Uzua4Ps3+RVKqPqc+4dH6P2hNuY3FstQmH2W39cN4w5gWqaTbLw==
+X-Received: by 2002:a05:6a00:148d:b0:771:bfed:bd61 with SMTP id d2e1a72fcca58-7742dde5047mr19743321b3a.17.1757469480435;
+        Tue, 09 Sep 2025 18:58:00 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774660e545bsm3452584b3a.19.2025.09.09.18.57.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 18:57:59 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 1E31841FA3A1; Wed, 10 Sep 2025 08:57:57 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux EFI <linux-efi@vger.kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+Subject: [PATCH] x86/Documentation: explain LINUX_EFI_INITRD_MEDIA_GUID
+Date: Wed, 10 Sep 2025 08:57:39 +0700
+Message-ID: <20250910015738.14848-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8822:EE_|DU4PR04MB11316:EE_
-X-MS-Office365-Filtering-Correlation-Id: cefec5e8-70d2-457a-6f90-08ddf00e3d7e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|19092799006|38350700014|27256017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?mXGPY0/V/fjh9KDVQlwn6iVkWuItyjuOAqXSc3rNHJNi4rdjyeObstroMwCB?=
- =?us-ascii?Q?0MmXKJ7uEdc395qLPxBHvt1nV2XcJGxwmGXgJYRImzSK0wfDNbVmi5n4FjJC?=
- =?us-ascii?Q?7avHr3Ee3KxVq/NHnl9zS0ecwftUjpyor/3EZhMzCH4Hi09WrNW+Ir/6f+s5?=
- =?us-ascii?Q?KSsucLTCVGh4Io8YsBZ7pYLQjviuVf8Ht66tQGiQSp1713MsYYhkffzax2tu?=
- =?us-ascii?Q?lYjeXOUa3TBc/bhbR47WQGoX7+3nnIo1UIlIEOyAxzz4CT30tYcXmMOZJpB2?=
- =?us-ascii?Q?jeN+Agudwkxo7vasLsgaGDwuCJ4odUKBuExxF8axoGhPaX3+ZybnNp+AOjbZ?=
- =?us-ascii?Q?cYuMAo+WTOCgZSn58oTSVuH4AuaYqs1NsUTAKLJdbHCiBJ8cbHbAyTs0Ns3r?=
- =?us-ascii?Q?HplBQYkIm8Vh0JPRsUbWPttha7s1lCJc0cD6GN2mzZIAEOCnv0DGbsm2JvSt?=
- =?us-ascii?Q?prwb1HXPu2UuGnwIPrv70IabePxeudBi1z4eSjysMKCFNzeJdwFMTLM0kZji?=
- =?us-ascii?Q?5HWHtU+kc+VCt9OhYbdi3ficMVN8SU6jO0hQHH7YIFvSsavMuGLqi0NHDz8n?=
- =?us-ascii?Q?WGGOl3knzrF4v/4pL0Z09YAMKxJZgOAguO6bCcBmXBIYa1+wDFtu1h3Hx6tQ?=
- =?us-ascii?Q?S1imPiXIeJdsWDwRFehsvvv4WQHzzXAYOVE7t8GW2P5kDE2NUXlS08nqR71F?=
- =?us-ascii?Q?xkJwv9ge2AJfUDZpFl+KabmuRlFc7iAXzenpDLGdb/7lvtPF1T+Lcu0bFbmq?=
- =?us-ascii?Q?fxxzx9/E2FIMaAaLf7XXLGwsc9TuGpW/2ncEKDg+SBoU+2w4G/NZHoS3zwAX?=
- =?us-ascii?Q?9Ro67GqabBnQuowwOwIeY7p6HKoHF6MP34ac+kNdGkyHLgK64u1HbLKv/tzY?=
- =?us-ascii?Q?ouHNCY7aO4pAPV+t/nTx6FkcpgywSizcfYK/Lm3ZzoXBSuKijU2zdGE2XwF0?=
- =?us-ascii?Q?ULfxHJH/YXAIdor6XSL6YKnfsm7GHyj3v0PiWpzmsP4+8wItz7BxkjNqpex2?=
- =?us-ascii?Q?Xwn0B+S/dRESI5W4iUrZaxF39dr3ql4ubYW66S4YdRYZgsJTJ8atfQKPTEGj?=
- =?us-ascii?Q?WWTj3z0Xmnq2UujonUVIq9SXSSf3BqvqK7XcVe5KomiHbM9Ou+F4PbSPEZWa?=
- =?us-ascii?Q?XCokfKdRypG0VJf2gxigb9lmBn0L2jeSf1Y8bSN1ByEWZ9w2x+yTtPCd8oAm?=
- =?us-ascii?Q?59xusKo77pSrlkHQCvlA9zBcdlN/Tiu8aGtpazNMMgz4lztyOI+dL0pLFWXd?=
- =?us-ascii?Q?vKQRJ/CMkgAPXcXL1UZgHG1Gl2FDprIm1nY5kGdpUsAbLhHTgocra+6VTH9E?=
- =?us-ascii?Q?KnHbPQ+MYosirAEqkFjFEzLDRFsttvktuj9ECpQPKvQtWNibyTw3d2nytSK/?=
- =?us-ascii?Q?wPLkztQnxjCUJD1KT6gctv5TLZjAT5F4XbroO8k8O+g1NGhB+gjQZEAUjYXJ?=
- =?us-ascii?Q?dzcm8n9xbp9xBqqImK87s5FrTQ2k5xMCbU74dVzMO7dACLOyNUxQ1CzPSUy8?=
- =?us-ascii?Q?ZmW84xpNueKFmScqW89GpAfhk7UyaqO9v8Su?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8822.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(19092799006)(38350700014)(27256017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ZHUegCFQaYTchAYgskl7//rvJs0AtrmFQQN0pyH0mdjcJS/2TtO7i0lGbO3V?=
- =?us-ascii?Q?jzULJ9kerGZc1bKq8sAEEluFeB9Y7cSVcg89DMnD3FWoIO6GB7mEBiyTPbVZ?=
- =?us-ascii?Q?7f8k1j8AdX/vvoTofBT7W5TzcS6qjkIGmio8C5V3C/3L+l7ib0fLHy1wq8No?=
- =?us-ascii?Q?BZ0B/pHS4JOnMrWcHoDaZ8LZA6lpLlrojS0OPcW1oy+QS/f05cjtRGF0F3wa?=
- =?us-ascii?Q?nl99H8a5aCrzqVHcySmd76k+UUzLcpNc7L2s+33uc4TE8M/kwk0nHqvIBEVI?=
- =?us-ascii?Q?x7yVOrTGaPUXWmQWDKYGcqMShdIH9KIRGs770OvQunz5wu1hguK+MgIdaeLQ?=
- =?us-ascii?Q?5bxHMnxSDtVqIh9rrWwpEgOg5oD4jNuUIVgx1aDbEx4RpvwCDZysslUQDviT?=
- =?us-ascii?Q?3GMFBAI9zMwlEBJuSTqPKyqVnrFIaxyxLemIfdXJ8MVODZihSThwwGl9TS00?=
- =?us-ascii?Q?/zFn4ZL6Fbp56me0Vr5nM4lVcW4qveggopg1Kbm8LRYkuosazOwt8cjvBfxO?=
- =?us-ascii?Q?7DF5y0/ec3gFj6iKsYQkUJDqdHSbztN3UOXWf/IqKuxaNihnRhXeuLjRhK8E?=
- =?us-ascii?Q?+1uIIaX4Rj0Bg+PEeqIH/PxMFkCKTK39u+DKCahAZKqQaIZxArvop/fGXzgg?=
- =?us-ascii?Q?lhThbqBsBMSQzw6PwIRiu4k5I8AD7FMBIPjC545RmcFKXU7XCo12Da9vfGAz?=
- =?us-ascii?Q?Q5BMhkWflB6rEHs7nSLDAdLR+7LaDLy067wXKldjU3BGOxM3dWlodLOKXyPO?=
- =?us-ascii?Q?5FHhlir3hMeycbiclY6DGgygqQTLlfSR8JbxVoy239TYmVOVoaima28PhaBT?=
- =?us-ascii?Q?6aPiNN43STP4ApuxunAPr8XOsWFkBRlg6IBSrvfVwuL/kW0QIm8rAQZ/GEBR?=
- =?us-ascii?Q?qLHx1hKJAWyoCKgznEQU0k+sxJnd2bY9fVqmI1PUhTPHENTPxYeV8k+LebMI?=
- =?us-ascii?Q?zWbG7xur7vfdgq8BsjKsQ7SotNq7aB+dGmy4vkbRyKPemFAkgflL+6FRi1JM?=
- =?us-ascii?Q?2NJ0Damy0U70m5iuR5mOzP+Ce8DM1QoJ13vw4w5PeABDTptUhnnzWLJRPseY?=
- =?us-ascii?Q?xCtvGD2i9N5HwV6lj3JtU/lKH9bO1VZRo3FUknUHDABohZpeR+MdWk7Bv4T7?=
- =?us-ascii?Q?S/RVg4Ym0fkB6z5qKLUDCLS2pteq7J7+CdEcG93EnkfUU7UrRg5G1q5+OD49?=
- =?us-ascii?Q?vwKDeH7Aw1qu4QUQke2SYWDuU/aTx5wNIfZq5oF8zzrWQbER0UZ0UPvHvOIg?=
- =?us-ascii?Q?Jk0eGIgIaRNm046pCUwLODr0Q5knIl3rVpcpKb888EEQytREhirnEaQhbixz?=
- =?us-ascii?Q?0rcx9Bg20X23NcwIWZMxNiWKgRTeX32Pu+lF0rL6CEcOa4tWVO4lbJRsFJR8?=
- =?us-ascii?Q?iPc+ZxAFYjWGaStX9FCEi71OUHo6hA7hkLBeW57fW62uOnEfevb1c3aeNM1E?=
- =?us-ascii?Q?bvkqVQE9Yj2FuzbuqoNDUb1WbKsSKIqUGV+Xbo33uCQ8fUgcRjwTVX7o7ybS?=
- =?us-ascii?Q?MKNtvEVCitiKgGeQQXr1ceF1xruBUYXw9r6jcv9qAJKKpxlNdw/TkNEaPM3n?=
- =?us-ascii?Q?yyXk1Z0nkSvDbvXQEycCZ78pw6amWN6pNFSq6ZQ6?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cefec5e8-70d2-457a-6f90-08ddf00e3d7e
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8822.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 02:03:30.9972
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RUIdLaNXs1krj8j9NtvAYa7kytatK+wQjLc1cT6nvTIyZY2dudcRll/aabOS7Y6M1b4nQ4PnUt7nEX603R9LWw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB11316
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4037; i=bagasdotme@gmail.com; h=from:subject; bh=EBUSWss9E9WENovDBzaOhhA52uBfbXMQiYxAZXQrvQc=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBkHbk1Svfbda0dru3/3Tf2iM9+j57vPehbc4mobe+phq NyTyr1zO0pZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjCR/g+MDO1JPBPe/Luy9+pq DY7/k6Ve7X9/nOmZo/i+yX+3zZkUu+4Qw//4oivrYgSuKK/VCvRom+P47Onsj9UhgT9exueFVOu Zt3IBAA==
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-Hi Chanwoo and Greg,
+From: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
 
-Where should the first patch be merged? The other 3 patches have been
-merged by Chanwoo, the build may fail without this patch and if
-CONFIG_TYPEC=n.
+Since the Handover Protocol was deprecated, the recommended approach is
+to provide an initrd using a UEFI boot service with the
+LINUX_EFI_INITRD_MEDIA_GUID device path. Documentation for the new
+approach has been no more than an admonition with a link to an existing
+implementation.
 
-Thanks,
-Xu Yang
+Provide a short explanation of this functionality, to ease future
+implementations without having to reverse engineer existing ones.
 
-On Mon, Sep 08, 2025 at 01:33:32PM +0800, Xu Yang wrote:
-> From: Stephen Boyd <swboyd@chromium.org>
-> 
-> Ease driver development by adding stubs for the typec_switch APIs when
-> CONFIG_TYPEC=n. Copy the same method used for the typec_mux APIs to be
-> consistent.
-> 
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
-> 
-> ---
-> Changes in v4:
->  - no changes
-> Changes in v3:
->  - add my Signed-off-by
->  - add Acked-by tag
-> Changes in v2:
->  - pick up this patch to fix build error in v1
->  - refer to https://lore.kernel.org/linux-usb/Ztb1sI2W7t5k2yT7@kuha.fi.intel.com/
-> ---
->  include/linux/usb/typec_mux.h | 43 +++++++++++++++++++++++++++++++----
->  1 file changed, 38 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/usb/typec_mux.h b/include/linux/usb/typec_mux.h
-> index 2489a7857d8e..efb5ed32b813 100644
-> --- a/include/linux/usb/typec_mux.h
-> +++ b/include/linux/usb/typec_mux.h
-> @@ -3,6 +3,7 @@
->  #ifndef __USB_TYPEC_MUX
->  #define __USB_TYPEC_MUX
->  
-> +#include <linux/err.h>
->  #include <linux/property.h>
->  #include <linux/usb/typec.h>
->  
-> @@ -24,16 +25,13 @@ struct typec_switch_desc {
->  	void *drvdata;
->  };
->  
-> +#if IS_ENABLED(CONFIG_TYPEC)
-> +
->  struct typec_switch *fwnode_typec_switch_get(struct fwnode_handle *fwnode);
->  void typec_switch_put(struct typec_switch *sw);
->  int typec_switch_set(struct typec_switch *sw,
->  		     enum typec_orientation orientation);
->  
-> -static inline struct typec_switch *typec_switch_get(struct device *dev)
-> -{
-> -	return fwnode_typec_switch_get(dev_fwnode(dev));
-> -}
-> -
->  struct typec_switch_dev *
->  typec_switch_register(struct device *parent,
->  		      const struct typec_switch_desc *desc);
-> @@ -42,6 +40,41 @@ void typec_switch_unregister(struct typec_switch_dev *sw);
->  void typec_switch_set_drvdata(struct typec_switch_dev *sw, void *data);
->  void *typec_switch_get_drvdata(struct typec_switch_dev *sw);
->  
-> +#else
-> +
-> +static inline struct typec_switch *
-> +fwnode_typec_switch_get(struct fwnode_handle *fwnode)
-> +{
-> +	return NULL;
-> +}
-> +static inline void typec_switch_put(struct typec_switch *sw) {}
-> +static inline int typec_switch_set(struct typec_switch *sw,
-> +		     enum typec_orientation orientation)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline struct typec_switch_dev *
-> +typec_switch_register(struct device *parent,
-> +		      const struct typec_switch_desc *desc)
-> +{
-> +	return ERR_PTR(-EOPNOTSUPP);
-> +}
-> +static inline void typec_switch_unregister(struct typec_switch_dev *sw) {}
-> +
-> +static inline void typec_switch_set_drvdata(struct typec_switch_dev *sw, void *data) {}
-> +static inline void *typec_switch_get_drvdata(struct typec_switch_dev *sw)
-> +{
-> +	return ERR_PTR(-EOPNOTSUPP);
-> +}
-> +
-> +#endif /* CONFIG_TYPEC */
-> +
-> +static inline struct typec_switch *typec_switch_get(struct device *dev)
-> +{
-> +	return fwnode_typec_switch_get(dev_fwnode(dev));
-> +}
-> +
->  struct typec_mux_state {
->  	struct typec_altmode *alt;
->  	unsigned long mode;
-> -- 
-> 2.34.1
-> 
+Signed-off-by: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+Link: https://lore.kernel.org/r/20250428131206.8656-2-hugo@whynothugo.nl
+[Bagas: Don't use :ref: link to EFI stub documentation]
+Co-developed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Documentation/admin-guide/efi-stub.rst |  3 +++
+ Documentation/arch/x86/boot.rst        | 35 ++++++++++++++++++++------
+ 2 files changed, 30 insertions(+), 8 deletions(-)
+
+diff --git a/Documentation/admin-guide/efi-stub.rst b/Documentation/admin-guide/efi-stub.rst
+index 090f3a185e1897..2f0f040f6913a4 100644
+--- a/Documentation/admin-guide/efi-stub.rst
++++ b/Documentation/admin-guide/efi-stub.rst
+@@ -79,6 +79,9 @@ because the image we're executing is interpreted by the EFI shell,
+ which understands relative paths, whereas the rest of the command line
+ is passed to bzImage.efi.
+ 
++.. hint::
++   It is also possible to provide an initrd using UEFI boot services. See
++   :ref:`pe-coff-entry-point` for details.
+ 
+ The "dtb=" option
+ -----------------
+diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
+index 77e6163288db08..fadbe66517bdf2 100644
+--- a/Documentation/arch/x86/boot.rst
++++ b/Documentation/arch/x86/boot.rst
+@@ -1431,12 +1431,31 @@ The boot loader *must* fill out the following fields in bp::
+ All other fields should be zero.
+ 
+ .. note::
+-     The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
+-     entry point, combined with the LINUX_EFI_INITRD_MEDIA_GUID based initrd
+-     loading protocol (refer to [0] for an example of the bootloader side of
+-     this), which removes the need for any knowledge on the part of the EFI
+-     bootloader regarding the internal representation of boot_params or any
+-     requirements/limitations regarding the placement of the command line
+-     and ramdisk in memory, or the placement of the kernel image itself.
++   The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
++   entry point described below.
+ 
+-[0] https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
++.. _pe-coff-entry-point:
++
++PE/COFF entry point
++===================
++
++When compiled with ``CONFIG_EFI_STUB=y``, the kernel can be executed as a
++regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
++implementation details.
++
++The stub loader can request the initrd via a UEFI protocol. For this to work,
++the firmware or bootloader needs to register a handle which implements the
++``EFI_LOAD_FILE2`` protocol with the ``LINUX_EFI_INITRD_MEDIA_GUID`` device
++path. In this case, a kernel booting via the EFI stub will use the ``LoadFile``
++function on the registered handle to obtain a reference to the initrd.
++
++This approach removes the need for any knowledge on the part of the EFI
++bootloader regarding the internal representation of boot_params or any
++requirements/limitations regarding the placement of the command line and
++ramdisk in memory, or the placement of the kernel image itself.
++
++For sample implementations, refer to `the original u-boot implementation`_ or
++`the implementation in candyboot`_.
++
++.. _the original u-boot implementation: https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
++.. _the implementation in candyboot: https://git.sr.ht/~whynothugo/candyboot/tree/4097b2538d7f1cf85f03922bf42409490b666202/item/src/main.rs#L225
+
+base-commit: f44a29784f685804d9970cfb0d3439c9e30981d7
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
