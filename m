@@ -1,153 +1,107 @@
-Return-Path: <linux-kernel+bounces-810244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4400EB517A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:10:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4836FB517AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26D457B2EA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:09:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F771C21FC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636C531B117;
-	Wed, 10 Sep 2025 13:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MSd/rdoj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cWe8bxX7";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MSd/rdoj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cWe8bxX7"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFED231D729;
+	Wed, 10 Sep 2025 13:10:58 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E88280318
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5CC31A54A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757509824; cv=none; b=oHi4HHQ4IbF8/hMvCvLmVJndMUmXDFfX2u0LfzvOJID7nMTuJig8DEQOhmEA1iFEQnc9MgPVnM1j9MYGgx6umA4LPR83wcQY2yBPepNz14OOMqAp/Qyu7gQ+hImpUSiWPFAuPDvlgquNSYm1t61YC6d25sK4C67xpZtVroS+txg=
+	t=1757509858; cv=none; b=rQQy8yBp7SMe+7QmcRaZj8lUkGXDTKba9SvuHWD1+w9byls3DFnwcZNeJeAquygsylH1TUgHUO27rwyWfSV9uaLL03WdhUeWDkHNIcbvfjnGbgsKT+gF65iVIo/4Y0+zKSggDBsamZXMB6lz7TjLjtCodauI/Hw+8FCnii0CG1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757509824; c=relaxed/simple;
-	bh=URcr2AvWi9qCsAjFB5mM9HsH9NKagVcDD7gGqcPXsYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqzPgzjDkPX493H3QfgrGIfXqFdSWTi9KH2YUz9BFSrYSXDpRIepuWQFfC4DKrKopYbrPpCqe0be1AO5D3AwGvE6XR66Nfdb4DcUvblz8/wuyveYDKDXpUFNz/ob2NK6CB8yYF2oqvCJ64hqLl9dkHSDIgwtTgXL7VerVpFhDPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MSd/rdoj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cWe8bxX7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MSd/rdoj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cWe8bxX7; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AF33220153;
-	Wed, 10 Sep 2025 13:10:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757509820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4hwjqp0O6NkHQyzQDGVKaUnlGbWM+Yny9R70phZ0CHc=;
-	b=MSd/rdojyUhqonn2szGh795WAtRe4vVpNUcM1fnZMfgvyPVY79146G1QvRfqPdYswafanr
-	ocLkbzeHhmo8/AggLo+tS2LfOZ0bIzBxZFu+eUsft9IlYgGi0vvm2yNtKfCfsoKHzea8X+
-	PQ4m2UUceKh/1roujql6Es+gOw6ZFm0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757509820;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4hwjqp0O6NkHQyzQDGVKaUnlGbWM+Yny9R70phZ0CHc=;
-	b=cWe8bxX7zPngm88WR4JbCxlYYPa8d9d6Y1GpDJdc0ajvH5TCe2wSp5jqOUrdX26xvqLYk0
-	3kdxxMGi/rEEo6DQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757509820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4hwjqp0O6NkHQyzQDGVKaUnlGbWM+Yny9R70phZ0CHc=;
-	b=MSd/rdojyUhqonn2szGh795WAtRe4vVpNUcM1fnZMfgvyPVY79146G1QvRfqPdYswafanr
-	ocLkbzeHhmo8/AggLo+tS2LfOZ0bIzBxZFu+eUsft9IlYgGi0vvm2yNtKfCfsoKHzea8X+
-	PQ4m2UUceKh/1roujql6Es+gOw6ZFm0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757509820;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4hwjqp0O6NkHQyzQDGVKaUnlGbWM+Yny9R70phZ0CHc=;
-	b=cWe8bxX7zPngm88WR4JbCxlYYPa8d9d6Y1GpDJdc0ajvH5TCe2wSp5jqOUrdX26xvqLYk0
-	3kdxxMGi/rEEo6DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8041013301;
-	Wed, 10 Sep 2025 13:10:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pqsMHLt4wWjWCQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 10 Sep 2025 13:10:19 +0000
-Date: Wed, 10 Sep 2025 14:10:17 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	maple-tree@lists.infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
-	Charan Teja Kalla <quic_charante@quicinc.com>, shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
-	bhe@redhat.com, baohua@kernel.org, chrisl@kernel.org, 
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v1 7/9] mm: Introduce unmap_desc struct to reduce
- function arguments
-Message-ID: <ss4haln3wwk4gv62hhhdmx7tyog4dyd6auogvupm26idludj4k@abasio3iebze>
-References: <20250909190945.1030905-1-Liam.Howlett@oracle.com>
- <20250909190945.1030905-8-Liam.Howlett@oracle.com>
+	s=arc-20240116; t=1757509858; c=relaxed/simple;
+	bh=gO2Ks0VHsePKcc510DSGBUvhSSCMEAo5Wf85gCZL4zA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UJvrkMXo5bDldrZmFh7JE7PaTyvh8Pj18jRb1Tv9zGtyK7iN4TLx7G543CoYkEQqKvPX+mg3i/N7aMtvaafT/TLVBpP52i0yN1QjwS3QFNaG6DRRMyn6s9UfQYcQoC+pOZnTn20uMbmYv8p+DDYsuDUa/ls4rnv7bd+46iQnRW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPV6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	(Exim 4.92)
+	(envelope-from <s.kerkmann@pengutronix.de>)
+	id 1uwKb0-0006er-EU; Wed, 10 Sep 2025 15:10:46 +0200
+Message-ID: <c3f3370f-1f2c-4e35-81a4-4303aed2d438@pengutronix.de>
+Date: Wed, 10 Sep 2025 15:10:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909190945.1030905-8-Liam.Howlett@oracle.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lists.infradead.org,kvack.org,vger.kernel.org,redhat.com,oracle.com,suse.cz,google.com,suse.com,quicinc.com,huaweicloud.com,tencent.com,gmail.com,kernel.org,infradead.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,oracle.com:email,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] wifi: mwifiex: fix double free in
+ mwifiex_send_rgpower_table()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Brian Norris <briannorris@chromium.org>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Johannes Berg <johannes.berg@intel.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Jeff Chen <jeff.chen_1@nxp.com>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aLqZBh5_dSHUb4AE@stanley.mountain>
+From: Stefan Kerkmann <s.kerkmann@pengutronix.de>
+Content-Language: en-US, de-DE
+In-Reply-To: <aLqZBh5_dSHUb4AE@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.kerkmann@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Sep 09, 2025 at 03:09:43PM -0400, Liam R. Howlett wrote:
-> The unmap_region code uses a number of arguments that could use better
-> documentation.  With the addition of a descriptor for unmap (called
-> unmap_desc), the arguments can be more self-documenting and increase the
-> descriptions within the declaration.
+Hi Dan,
+
+thanks for spotting and fixing the double free error. I converted the 
+code to use the cleanup helper late in the dev process and forgot to 
+remove the call. I sent a patch for the endianness bug as well.
+
+On 05.09.25 10:02, Dan Carpenter wrote:
+> The "hostcmd" is freed using cleanup.h, so calling kfree() will lead to
+> a double free.  Delete the kfree().
 > 
-> No functional change intended
+> Fixes: 7b6f16a25806 ("wifi: mwifiex: add rgpower table loading support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   drivers/net/wireless/marvell/mwifiex/sta_cmd.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+> index 6d9e2af29a69..91d5098081e8 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+> @@ -1521,10 +1521,8 @@ int mwifiex_send_rgpower_table(struct mwifiex_private *priv, const u8 *data,
+>   		return -ENOMEM;
+>   
+>   	_data = kmemdup(data, size, GFP_KERNEL);
+> -	if (!_data) {
+> -		kfree(hostcmd);
+> +	if (!_data)
+>   		return -ENOMEM;
+> -	}
+>   
+>   	pos = _data;
+>   	ptr = hostcmd->cmd;
 
-Neat, new helper struct just dropped!
-
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+Thank you,
+Stefan
 
 -- 
-Pedro
+Pengutronix e.K.                       | Stefan Kerkmann             |
+Steuerwalder Str. 21                   | https://www.pengutronix.de/ |
+31137 Hildesheim, Germany              | Phone: +49-5121-206917-128  |
+Amtsgericht Hildesheim, HRA 2686       | Fax:   +49-5121-206917-9    |
+
 
