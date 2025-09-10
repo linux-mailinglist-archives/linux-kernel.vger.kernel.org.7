@@ -1,243 +1,270 @@
-Return-Path: <linux-kernel+bounces-810764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7CDB51F04
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:32:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 755F6B51F06
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC5E57BBCBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:31:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D8721899857
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8AE3314C5;
-	Wed, 10 Sep 2025 17:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29311327A03;
+	Wed, 10 Sep 2025 17:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DMQGIhCG"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2069.outbound.protection.outlook.com [40.107.102.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O1M5Dfoi"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D578232ED44;
-	Wed, 10 Sep 2025 17:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757525551; cv=fail; b=CemuiOwVHGNQxeyi9+loAVPw1OGbZ0FdhQdFslepb6aQCeCTSZ0JtgAyPAPJfHn9zSSAXx1R5AWFVZqAkbMnjRMTlZhWzPb5/xBBB+s2yV3EdLhfEQsNaud4QduHAlNFORh71t6IY6SWX//H804WJ69C9C0F/up9a0AtWLaACcg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757525551; c=relaxed/simple;
-	bh=9SqaUiQsiWeVAg3S4tCP2eUuet+i4W4dVU9/GqymHqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=L8JBzC8nPEoKeUTni5LHLY67cyLwZhG+7vncSpfHuVQ4ImWq/9WUMtMYbXj1fXi6YxgPKFAvYMKp5jRYT3jm6EALK5KQYEZ6V16wmDYmmMvKg8MQL5qLCQVh5KNe0MrLCUtRsQ3wByUwA9EfR3/Qd2JmAOAlfIQx70cS5Yb7cz0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DMQGIhCG; arc=fail smtp.client-ip=40.107.102.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yC8A+yPruI+ZeLXyzg4cq/qXhIgb822oKlQ5JS8ylAfsJbCDK8t/zRzEQdOqMLYg2rwWMkw+4QJODvp6qbwXzdloRniW1z2+TuC+lXpHjTOCDzZDDgVEKBK0F17slx3I8+0x0JHdZL7CbTa+VjlhK+VdGKCz4UtFwjAsG4vpqTrasRG9gZOFXF2kgwkQ7T0dHT2bjdTBTVhyFEnHPs0dLf0iXvyjwMMxvDC/TutpzxZk6G4Cpxo1koD3U9jBiTwYFdV2yYAFcprVHy2s/mx+vBpCddLZFc8L61mm575yI7cKiZ+nFu5ZA+flRsovc87DgiZxeMHZnU1Olw9seMQfiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8RjPaec7o2Nv16e9Dj6U5w6RvbYd/Jlcsl2JUO9LM4c=;
- b=qp+9EYqc1SKIX4gnyxkCYVcNSJun/uLZIswr6jGtLemvOF/Gj1flubRe4BKCMTbjl4A23Jt1jHSwSwRCkg5ftvczOKYHG3567bBWuTSOGumiMZDWgkMHIPF7mlDJgeoNpRqDibhTRZJwTdsTCQGLDiWx41c3H5HQPBkhHOPDDyO2ZEK4S9Zkg9XrboNbUGUbH1qAYP0YEgsSHpyV7s2UyeDuzVKEvTEQYnBiAhm+uow2V3/b6RIvjWO5OxYsDWv0PNeaxvHoEokx3mvx7j/HJC7r5kfFBZ2YAXumpZBCDfyFRFIIR3gcIkdoVtr86mrTJ/sdrmZi67neFUjQex0oHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8RjPaec7o2Nv16e9Dj6U5w6RvbYd/Jlcsl2JUO9LM4c=;
- b=DMQGIhCGetsBJZT999VrF1KgEjx+0iHmalSuJxnEDQGOr/kKsB/e/nffwS9KrfM8qfs9UAjNhHF3WVSeP1plZ7ikJxLuOtz4840RINDZQh3qVwT0be2ymnHOyIHyY1+S/gvHE0T8ojrng99sqrNOPqyuQwBQO8wU1YpkUc3ncOD+uEKNmtgBf2ChrizfAHueXbl3oNTFPZ4JGJa4zZK81M9QSdqypBgBfcbD3Jk1RRxb6R5q36z/yFpUWbQyH8G7zewNdp61fP79w0UEExQu7+h82KU8OsKvATmyGNEZ9NOnhN97KI0r4yEdiK159dams8sYFPNxrxf56CgDO0VmbA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by CY5PR12MB6574.namprd12.prod.outlook.com (2603:10b6:930:42::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 17:32:25 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
- 17:32:25 +0000
-Date: Wed, 10 Sep 2025 19:32:12 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, longman@redhat.com,
-	hannes@cmpxchg.org, mkoutny@suse.com, void@manifault.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 00/14] sched: Support shared runqueue locking
-Message-ID: <aMG2HAWhgAYBdh6Q@gpd4>
-References: <20250910154409.446470175@infradead.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910154409.446470175@infradead.org>
-X-ClientProxiedBy: MI1P293CA0025.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:3::11) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCE88488
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 17:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757525634; cv=none; b=STot+rpVaX28XkBk/cDsaM7Glrvmlu2a60psthtJyo7p4brn3rk7vgXrdMzLCaKMKOsffOxP7Z1BnB/qUGt6VohWWwi9DnUuLsxZVEzG9fB36c+n38097ZwNJPTooji0beS6reukS2DIlFheJWRefmOqidweygT5Wna9zfWrDTo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757525634; c=relaxed/simple;
+	bh=J7gB9Z38NODsqaTbWLcs+XK+Ps9YUEGTomCZhU0fQzY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SglJlMHpbMhVwu3xPXCaH8gZD5QYWO3bzKiTps9u5Zq6NRrsgfLvAJdCHMLLG3tOJtvHMipuHgh0O3EvSwbrMfi9zDGlyh9Bhp5VGA1IDnsv1f06scTwXTIJaWfST1sRgAKDujshkyRlCTps9fW+hdFFNqHJubX1L4imONudxZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O1M5Dfoi; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74382041c9eso5192349a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:33:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757525630; x=1758130430; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N2Xb0Z0taUQW7f25FPwYUA0qCuGXG5HY2O077HuGpHw=;
+        b=O1M5DfoiH4mWWsM1R7bHUE/6yKrICeoAFNGKikfxhdWD2oE3dR9KIZc+1sL/wibFkw
+         h1DVUOnLpMIKTrUE+EP8kdIdteD2bgC86JVe2mLigfKI5hJecLwg+RpqCjSHJ2nlVeRK
+         oTvAZrnGK4h2AZjpvcJe5lYvusLIyzO2QrBDlbOqud+8SmlVOIjQgOfpYr7MjcOPCpmy
+         cK8taW2EbCnvhgkO+Fph1VQlRE4VKj8MYrjZz3/Cvla9L6flHaxdobwMIbcen+qJg6rC
+         mlV1S8cE2bYD+lDqdo8U71uGw+6XuuVPi+GioUp1N1vSrUf8CcntKH2iOTna4mPzZ9Js
+         Jjhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757525630; x=1758130430;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N2Xb0Z0taUQW7f25FPwYUA0qCuGXG5HY2O077HuGpHw=;
+        b=OImgGM1hnCoJxvHHC08DZYOzneW06YxjhCGjoHKq/VgC45Fbvrr5Z/ogYC1/R1kqK+
+         dDiVRYBPtAUoeEdZcMncLmeuXMBP7MAC6AWz/zVsqEn4kmnZxIcE9o7uoFzxOQfxXieQ
+         sIGMb6GV/+JUe1B+S2upIjpmykMCAcDSbW0LYuNpwc+XiUZJC7S0NBYxB4uhnMqStJ6A
+         ZvhwnOfGs8JWww4rKbUcfQ3KPqYSX0qEGXSwHnH0as2g8H3P/th765/Va+0lr7vW2NGw
+         ahRSwKMbDjJwisxiULTKTT+6lO+79NvgU4iG2VW75M4Rn2fRD0F2uJDTX76AikMRxH2i
+         iO5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWuGI9341ZtxGLekHIeHSnLzH2REZw7WUVm5DfLFjvo2cwwBRXOBTgY1xE/0TnSG3ByHslX3QSXsGPIxKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7oN3lzsjdl1zMgByKciWiaToyWlUAXFQioqptQnNz2Wd24i6w
+	tRcSeLE4LZMhrkDGFw3c3fCq20tyLpMTg3JbKiTmLE2yIsvOaSZThErn85WR2nG6lGU=
+X-Gm-Gg: ASbGncuVxbxmWHrki6EZLuvh2G6GE5JfDa05OTa1Jjf5Jsd5PsN0caSFQzSCRBeXnmg
+	Wic0THR7MqDnQnJsml1NrQxrBtg8/FZL91vSpxmmO//arT5MKP3xOZksAtzv0QIkcQABlsFh+34
+	mN/xdNM3r+Ok3W8D4cB+oVBO/xG9TQ065lz0j+Di/QQwu9O3gVwaGPgZW2YVhTm8ImRLaEnenHL
+	v6BM6Lbjr1cJcD6vTYqvI6ESpqO5jFcY5vBedhgbMZxbTwuwVA1C7cKJnrWOlzjjGVgmSfhV4hI
+	/IojZwpQAovnc6IkJXifuDA26S3D8Mi+DiFwGtFmAIfdXE4NPPd84GhqqS9oGcnEGds7HxxT4Xt
+	eoY/lNPz5qEEGqfOHLHiFhh7/cqM=
+X-Google-Smtp-Source: AGHT+IHwxhIvt5PLXpTXwHQhyJxRLqO+skdbWcLPjSCafGejX4kGmiQpDD5IwbTqDvgaXQzUCem4EQ==
+X-Received: by 2002:a05:6830:915:b0:746:d7f2:b735 with SMTP id 46e09a7af769-74c771b8c18mr7855259a34.27.1757525630221;
+        Wed, 10 Sep 2025 10:33:50 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:21f9:be5b:476:1ae3])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-746d6647459sm5540595a34.21.2025.09.10.10.33.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 10:33:48 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 10 Sep 2025 12:33:29 -0500
+Subject: [PATCH v4] iio: adc: ad7124: fix sample rate for multi-channel use
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CY5PR12MB6574:EE_
-X-MS-Office365-Filtering-Correlation-Id: 91603434-8e84-4b4a-6c91-08ddf0900138
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zrGAcNlgU/AqLn34D6Lax1gD5JZi1yu3rborSBvUnyVfdIXeOxaunsIIeJkU?=
- =?us-ascii?Q?xY5bVhNpBGYNJh/K4r/LYcSPJv0lWXLdEtMvguFnXaoJFjJpmbKK3t5uvQ43?=
- =?us-ascii?Q?nHGhoJFv6Chu5hmsWmfBPn2MB+KnTHQBHwiMPDOUEMYYOBKJrkR5DUFcrkpJ?=
- =?us-ascii?Q?tVphwPNdlyXOdt8xaBIfvGipdtP4PeGvDhok7QDf3+254AkQu/Mbw4HNuLXN?=
- =?us-ascii?Q?83slMsZmWOTY+HJpqaUaFSZbJufqNE35oonN5KHrx1vf609ynrSzSMV9F/ll?=
- =?us-ascii?Q?syTtLT+PsuqBA83wm8AkpHwHP4Ha1y67cjhqKVqYL4ErV7JQhlTevFwdMIpD?=
- =?us-ascii?Q?6ga7Bh836FsXaAir6z+YO5D2sGGUXRfBqUZSGAj6WB2Q/a7QVe4NqAe3NvuD?=
- =?us-ascii?Q?OUbF/xarg2FWxEKkFd2zdvuzzCI9xpEzp2K6VeGd2FxHN1Vp2gKN79sZsogI?=
- =?us-ascii?Q?4+GAZU2lvOOV/nhpygfopQRFI+YvWQZHAQ9NS3U4Vdkj97FyObbp8FrUnlRk?=
- =?us-ascii?Q?U/3tPxhZ5JP7yMyTJlVWpB84lNuN1llMd3Z+K1QSdGhAS1+d6JtMrVdFEsZS?=
- =?us-ascii?Q?aEYBgqOhVc4/N4Mrvl7IN6tnXAoUOIo29XzKB0TuQmdUrLYxhKgynN27UiWy?=
- =?us-ascii?Q?oKnBcRMlThqz1SgaDVHg8SQxix7NCjtqiyX73Km3b4n0kXIrZpfTzjxsQMIu?=
- =?us-ascii?Q?2HeEMmm6EaqnzrhiH3E7IUtOdjs3lHdBTkgOc46XUMSHkFd2t0Zyfu5AGgL/?=
- =?us-ascii?Q?QyVKouEQQb28pD63I7hlAjv6XMtCYcYxlZeriocUZn+yHoDtPB5oSkZCb5/2?=
- =?us-ascii?Q?UwritPqCDyjBaq4+Al6rqfhNz4r358Tv4sVR7YrpFBmCliAotOkVq9mY9YUg?=
- =?us-ascii?Q?Sg7oT7KnMkCMq9xGfQTioa2beKVY51gsx4Jj8mBQQhLZfmsJHFiZuUXV/uJa?=
- =?us-ascii?Q?gUZ61ZwcwDQjGHDQRAYUAYA0HTPwEgjiMQAck/348ok0BjIf729XYyhQvvnG?=
- =?us-ascii?Q?+FA2sUy/EJsB6xFmRCYSFEgbsDQxi+jOu0IIj/bLITkx+h03gmuw+r9SjTno?=
- =?us-ascii?Q?m1co+ihLbmqE6zHpaghVu6CYCntu4Hkqm5WatgLF12X9/omN3enkKWbqWyqP?=
- =?us-ascii?Q?f6h/kUf8pBFDzAGdH6NeKHkAskE43ACaoZ3OStGlHCYzCRvitwMt1MKvwTDj?=
- =?us-ascii?Q?bq64gJ4+NzGOuT74oYfklIDOYLyy8a7UBA07Hzijq/eyEoxJAeDRCXtyfDQ3?=
- =?us-ascii?Q?tYEDnZ5E1XzqmOb8H6YNyPSX+jsQW+lbTiAMkWys0dlLERsf93e6JfxhXMrh?=
- =?us-ascii?Q?q3K7qPOn/T3nhBqG9mW1q3LEthma1eywteQ+ZSE9oVhoEi7SGReefKtIO/6W?=
- =?us-ascii?Q?9FQxaRMA1CmiV624kXI42wFmCduI56clzFySZ01qg36AFjOSWVa4xbIUkkb2?=
- =?us-ascii?Q?rPgwdDUKJeg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Web3D72i/IY2vSMUSuRFnO6f16MVCNvAo007AF9ketIsG95W/KTWNgHT+qP8?=
- =?us-ascii?Q?DRG88W5zatw3542NRnXNJL8V2HuRgc0Kz8OC6CvjH1rlvH5UEvhA7gfOYbD5?=
- =?us-ascii?Q?VEmAePwGJodniUuSsuoTdBUw1CM14DepVFCuNV0JOkNGUKk76vQ37G0QnHXT?=
- =?us-ascii?Q?yHKJUVXx5kYPAob2dZK/mh3SpMyfl1jUoxN0ctSU+VTF2k7arjGKq4ObwwGo?=
- =?us-ascii?Q?s6gkRrWmckJXveC9v2cz9XH/0su397B5plAoy+a9L3ekN7QHf+WmR2WRY/1C?=
- =?us-ascii?Q?n5tNHmxOW6JV3dBX24gGdJNN7cg8eYahciEMk2IpbYMD6W8wXZGJz9tcYYNB?=
- =?us-ascii?Q?tgD4JTv8FJFn/rbMgmtPVfEaxM6Td+83dwbmpHWc0GWTO20dpz+GIgygkI1b?=
- =?us-ascii?Q?vVlofXVOqd+iKcbsEblDs74THZ2WHtA5JT/y4YokWBNs1wKUsugByFTjpViu?=
- =?us-ascii?Q?KU9ts5wt4hI600AphYiu98pcCizG08+ZAKEbDg0T5nXiz42zi+t1P/vqRRos?=
- =?us-ascii?Q?n+P8HieiAaDOTMbBQ74dRq2uWuW0kUmA6OZMAxw3YkC9xQwkAAsu8rdc2y4t?=
- =?us-ascii?Q?r8497vQJW/NrPUPV7PMrtQo9cawXx40ig/DLHhHb12r2CAx47UhyNU0fHfZR?=
- =?us-ascii?Q?aSlslhf2dIHCQDZOQWCCTTaynqFi9CdgUQCo41fyPD/lh4cw/DTNpD64OIG6?=
- =?us-ascii?Q?GccVrlVbxU2Y5P4OkENMotntAVbbaF3Y7DwgXeTx07HEiVLqWo4IUNPdl4I/?=
- =?us-ascii?Q?MBm4KOJueFp/oTe39t3qMYMXefByt0/bTjrpbCjlprT6E/OujCU03ULPTjC9?=
- =?us-ascii?Q?872kZEtnIHgJYYWK7ktYGRG4p4Y0PkFwHkbWn9PSLd9f7PDkjB3YEENNwMB/?=
- =?us-ascii?Q?oSqt9hFp4jc1RGlolKeRZDk5Y7hyCLyAeUqRkbjSptZDuVxgjwAPH63Y0DcJ?=
- =?us-ascii?Q?kCVZmgNK5WoYYTshnAmrKyb0NYkzj/zJlBBNFj6m4XV3t03pgzpbQ8ceB17i?=
- =?us-ascii?Q?k5RCx0Lq8fqJzVIVwtkfoTsZlkE0nlWEH4fzAWrEvrHgR7oBQwHtGraVTu5e?=
- =?us-ascii?Q?/vYI4TUt5SHAYHUONFGSK0xaPi4kYZTplGInPa4d6oHmLd0njsLAQZDfXVtt?=
- =?us-ascii?Q?IGfjgZ4Fi1GIFG0W7/jNMm9Hy/rKKpaWLMv5AgSrkHOyx8CqW75U/oV0wO3N?=
- =?us-ascii?Q?0o67osgWNw65BzNuj6t/6UcYD0Up3k+eNLQoXDuMINgBkzGeP5VE2QajQlhn?=
- =?us-ascii?Q?pukzXb6NTxrAcyF9DNHqEowigAt8i4Pu1bhNF+SZtc4A9LucVU9nVENk43hQ?=
- =?us-ascii?Q?+uI0/AToPS7BSNpIZd4sUq2wAZ8yORZktT8EmYOAS7J9s59DzLHEkIKpXt0H?=
- =?us-ascii?Q?pwjHKHzob2auqnjetH9nEXNjTsc7gvldL30XcM2oGlSyXSScCB3E0dQLKHMP?=
- =?us-ascii?Q?HKES1h9aZFUCuBlR8HBJMETbv4VNJbiQNOk77Z4orIdeRh35kyXlaushfQS1?=
- =?us-ascii?Q?N9Ka6w995QYBvO17tTkWjLUT+p5atuVAL11rM9d62t7+2JIBQY4+qCS7pvdS?=
- =?us-ascii?Q?tDeHt27X6uSvnOFKngSIcbxLlCrXYqMl6PKy6LLk?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91603434-8e84-4b4a-6c91-08ddf0900138
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 17:32:24.8110
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: N0+5wwQqhh/zI+NPPONp47JnJGvOC8tX0jRrZRzHhtKgJKa91NgqaO+Tbn6G57sqWVUWXyi1Yjm+nUjBl28jtg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6574
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250910-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v4-1-8ca624c6114c@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAGi2wWgC/53OQW7DIBAF0KtYrDs1EBKbrHqPqgvAQzKSbRJwr
+ EaR796Js2hVdZMuEBrg8/5NFMyEReyrm8g4U6E08mBeKhGObjwgUMez0FJvZatbIErgusCrUdp
+ ApE8objhBzHiGmDIMl34iuIdH7KH1WgfT+jYGKfjTU0aOrOD7x2Pm4IXd6XEovCsIIQ0DTfuKX
+ 5c645D4tma65n2i8SDu2SOVKeXr2n1Wa/i/NWcFCmLbmWC1dDtr37y79uQzvnKVVZv1t2CleVr
+ QLHgfdZSdtQ26P4TNT2H7tLBhoZE6RqkMhp36JSzL8gX/uvRu7wEAAA==
+X-Change-ID: 20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-8b22c48b8fc0
+To: Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6666; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=J7gB9Z38NODsqaTbWLcs+XK+Ps9YUEGTomCZhU0fQzY=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBowbZtkvd73eSOKh3OBWb5pmn1jnoYJXzTW9RFV
+ JRLoFI7A9iJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaMG2bQAKCRDCzCAB/wGP
+ wPIVB/462Rbel/ux9/NS+/FxKElSN5YgOSls+JEHcAdH4/Tn7eUsPgEoFnEyeyTYQma9bEYsuKy
+ ZAfuJybYvJqi2B/pr3G5FG91xEap0dvvM6+b0noJGTt5XihLGyHGaucUsQMEOA7QoqosaFNPMnW
+ 5g2R96+X7WQrwNKlqYu4F39aJNyav3/KPkRdeSquHk1PNt8bEpby25mruuBeMOp2dAtwe5uJ0dX
+ 2ul3swB5ZarulPctOHIXnEC/hR+ZtxjQtAWd/tpHD3Ktr6ZiKf8y5oTgnvAGFysDLZbN7QQWH5a
+ FoHvZYUY07X0TJcxHLfIaj9kPLYz37omFam03mmJn39P6j9k
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Hi Peter,
+Change how the FS[10:0] field of the FILTER register is calculated to
+get consistent sample rates when only one channel is enabled vs when
+multiple channels are enabled in a buffered read.
 
-thanks for jumping on this. Comment below.
+By default, the AD7124 allows larger sampling frequencies when only one
+channel is enabled. It assumes that you will discard the first sample or
+so to allow for settling time and then no additional settling time is
+needed between samples because there is no multiplexing due to only one
+channel being enabled. The conversion formula to convert between the
+sampling frequency and the FS[10:0] field is:
 
-On Wed, Sep 10, 2025 at 05:44:09PM +0200, Peter Zijlstra wrote:
-> Hi,
-> 
-> As mentioned [1], a fair amount of sched ext weirdness (current and proposed)
-> is down to the core code not quite working right for shared runqueue stuff.
-> 
-> Instead of endlessly hacking around that, bite the bullet and fix it all up.
-> 
-> With these patches, it should be possible to clean up pick_task_scx() to not
-> rely on balance_scx(). Additionally it should be possible to fix that RT issue,
-> and the dl_server issue without further propagating lock breaks.
-> 
-> As is, these patches boot and run/pass selftests/sched_ext with lockdep on.
-> 
-> I meant to do more sched_ext cleanups, but since this has all already taken
-> longer than I would've liked (real life interrupted :/), I figured I should
-> post this as is and let TJ/Andrea poke at it.
-> 
-> Patches are also available at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/cleanup
-> 
-> 
-> [1] https://lkml.kernel.org/r/20250904202858.GN4068168@noisy.programming.kicks-ass.net
+    fADC = fCLK / (FS[10:0] x 32)
 
-I've done a quick test with this patch set applied and I was able to
-trigger this:
+which is what the driver has been using.
 
-[   49.746281] ============================================
-[   49.746457] WARNING: possible recursive locking detected
-[   49.746559] 6.17.0-rc4-virtme #85 Not tainted
-[   49.746666] --------------------------------------------
-[   49.746763] stress-ng-race-/5818 is trying to acquire lock:
-[   49.746856] ffff890e0adacc18 (&dsq->lock){-.-.}-{2:2}, at: dispatch_dequeue+0x125/0x1f0
-[   49.747052]
-[   49.747052] but task is already holding lock:
-[   49.747234] ffff890e0adacc18 (&dsq->lock){-.-.}-{2:2}, at: task_rq_lock+0x6c/0x170
-[   49.747416]
-[   49.747416] other info that might help us debug this:
-[   49.747557]  Possible unsafe locking scenario:
-[   49.747557]
-[   49.747689]        CPU0
-[   49.747740]        ----
-[   49.747793]   lock(&dsq->lock);
-[   49.747867]   lock(&dsq->lock);
-[   49.747950]
-[   49.747950]  *** DEADLOCK ***
-[   49.747950]
-[   49.748086]  May be due to missing lock nesting notation
-[   49.748086]
-[   49.748197] 3 locks held by stress-ng-race-/5818:
-[   49.748335]  #0: ffff890e0f0fce70 (&p->pi_lock){-.-.}-{2:2}, at: task_rq_lock+0x38/0x170
-[   49.748474]  #1: ffff890e3b6bcc98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x20/0xa0
-[   49.748652]  #2: ffff890e0adacc18 (&dsq->lock){-.-.}-{2:2}, at: task_rq_lock+0x6c/0x170
+On the other hand, when multiple channels are enabled, there is
+additional settling time needed when switching between channels so the
+calculation to convert between becomes:
 
-Reproducer:
+    fADC = fCLK / (FS[10:0] x 32 x N)
 
- $ cd tools/sched_ext
- $ make scx_simple
- $ sudo ./build/bin/scx_simple
- ... and in another shell
- $ stress-ng --race-sched 0
+where N depends on if SINGLE_CYCLE is set, the selected filter type and,
+in some cases, the power mode.
 
-I added an explicit BUG_ON() to see where the double locking is happening:
+The FILTER register has a SINGLE_CYCLE bit that can be set to force the
+single channel case to use the same timing as the multi-channel case.
 
-[   15.160400] Call Trace:
-[   15.160706]  dequeue_task_scx+0x14a/0x270
-[   15.160857]  move_queued_task+0x7d/0x2d0
-[   15.160952]  affine_move_task+0x6ca/0x700
-[   15.161210]  __set_cpus_allowed_ptr+0x64/0xa0
-[   15.161348]  __sched_setaffinity+0x72/0x100
-[   15.161459]  sched_setaffinity+0x261/0x2f0
-[   15.161569]  __x64_sys_sched_setaffinity+0x50/0x80
-[   15.161705]  do_syscall_64+0xbb/0x370
-[   15.161816]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Before this change, the first formula was always used, so if all of the
+in_voltageY_sampling_frequency attributes were set to 10 Hz, then doing
+a buffered read with 1 channel enabled would result in the requested
+sampling frequency of 10 Hz. But when more than one channel was
+enabled, the actual sampling frequency would be 2.5 Hz per channel,
+which is 1/4 of the requested frequency.
 
-Are we missing a DEQUEUE_LOCKED in the sched_setaffinity() path?
+After this change, the SINGLE_CYCLE flag is now always enabled and the
+multi-channel formula is now always used. This causes the sampling
+frequency to be consistent regardless of the number of channels enabled.
 
-Thanks,
--Andrea
+For now, we are hard-coding N = 4 since the driver doesn't yet support
+other filter types other than the default sinc4 filter.
+
+The AD7124_FILTER_FS define is moved while we are touching this to
+keep the bit fields in descending order to be consistent with the rest
+of the file.
+
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+This is one of those unfortunate cases where we are fixing a bug but we
+risk breaking userspace that may be depending on the buggy behavior.
+
+I intentionally didn't include a Fixes: tag for this reason.
+
+Given some of the other shortcomings of this driver, like using an
+integer IIO_CHAN_INFO_SAMP_FREQ value when it really needs to allow a
+fractional values, it makes me hopeful that no one is caring too much
+about the exact value of the sampling frequency. So I'm more willing
+than I would normally be to take a risk on making this change.
+
+[1] https://lore.kernel.org/linux-iio/20250825-iio-adc-ad7124-proper-clock-support-v2-0-4dcff9db6b35@baylibre.com/
+---
+Changes in v4:
+- Removed unused macros.
+- Fixed typo in comment.
+- Link to v3: https://lore.kernel.org/r/20250905-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v3-1-702ff014ec61@baylibre.com
+
+Changes in v3:
+- Removed the ad7124_get_avg() and harded-coded N = 4 for now.
+- Link to v2: https://lore.kernel.org/r/20250904-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v2-1-bbf2f0d997ea@baylibre.com
+
+Changes in v2:
+- Improved comment explaining why the new factor always applies.
+- Fixed merge conflict with iio/testing branch.
+- Replaced avg parameter with ad7124_get_avg() function.
+- Link to v1: https://lore.kernel.org/r/20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v1-1-f8d4c920a699@baylibre.com
+---
+ drivers/iio/adc/ad7124.c | 26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+index c6435327d431e5f4ba28aa3332ec6eb90da7c83d..15d98b78ec2709e14c354a64f14e7deefc3bcb56 100644
+--- a/drivers/iio/adc/ad7124.c
++++ b/drivers/iio/adc/ad7124.c
+@@ -93,10 +93,11 @@
+ #define AD7124_CONFIG_PGA		GENMASK(2, 0)
+ 
+ /* AD7124_FILTER_X */
+-#define AD7124_FILTER_FS		GENMASK(10, 0)
+ #define AD7124_FILTER_FILTER		GENMASK(23, 21)
+ #define AD7124_FILTER_FILTER_SINC4		0
+ #define AD7124_FILTER_FILTER_SINC3		2
++#define AD7124_FILTER_SINGLE_CYCLE	BIT(16)
++#define AD7124_FILTER_FS		GENMASK(10, 0)
+ 
+ #define AD7124_MAX_CONFIGS	8
+ #define AD7124_MAX_CHANNELS	16
+@@ -285,18 +286,20 @@ static u32 ad7124_get_fclk_hz(struct ad7124_state *st)
+ 
+ static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel, unsigned int odr)
+ {
+-	unsigned int fclk, odr_sel_bits;
++	unsigned int fclk, factor, odr_sel_bits;
+ 
+ 	fclk = ad7124_get_fclk_hz(st);
+ 
+ 	/*
+-	 * FS[10:0] = fCLK / (fADC x 32) where:
++	 * FS[10:0] = fCLK / (fADC x 32 * N) where:
+ 	 * fADC is the output data rate
+ 	 * fCLK is the master clock frequency
++	 * N is number of conversions per sample (depends on filter type)
+ 	 * FS[10:0] are the bits in the filter register
+ 	 * FS[10:0] can have a value from 1 to 2047
+ 	 */
+-	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * 32);
++	factor = 32 * 4; /* N = 4 for default sinc4 filter. */
++	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * factor);
+ 	if (odr_sel_bits < 1)
+ 		odr_sel_bits = 1;
+ 	else if (odr_sel_bits > 2047)
+@@ -306,7 +309,8 @@ static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel
+ 		st->channels[channel].cfg.live = false;
+ 
+ 	/* fADC = fCLK / (FS[10:0] x 32) */
+-	st->channels[channel].cfg.odr = DIV_ROUND_CLOSEST(fclk, odr_sel_bits * 32);
++	st->channels[channel].cfg.odr = DIV_ROUND_CLOSEST(fclk, odr_sel_bits *
++								factor);
+ 	st->channels[channel].cfg.odr_sel_bits = odr_sel_bits;
+ }
+ 
+@@ -439,10 +443,20 @@ static int ad7124_write_config(struct ad7124_state *st, struct ad7124_channel_co
+ 	if (ret < 0)
+ 		return ret;
+ 
++	/*
++	 * NB: AD7124_FILTER_SINGLE_CYCLE is always set so that we get the same
++	 * sampling frequency even when only one channel is enabled in a
++	 * buffered read. If it was not set, the N in ad7124_set_channel_odr()
++	 * would be 1 and we would get a faster sampling frequency than what
++	 * was requested.
++	 */
+ 	tmp = FIELD_PREP(AD7124_FILTER_FILTER, cfg->filter_type) |
++		AD7124_FILTER_SINGLE_CYCLE |
+ 		FIELD_PREP(AD7124_FILTER_FS, cfg->odr_sel_bits);
+ 	return ad7124_spi_write_mask(st, AD7124_FILTER(cfg->cfg_slot),
+-				     AD7124_FILTER_FILTER | AD7124_FILTER_FS,
++				     AD7124_FILTER_FILTER |
++				     AD7124_FILTER_SINGLE_CYCLE |
++				     AD7124_FILTER_FS,
+ 				     tmp, 3);
+ }
+ 
+
+---
+base-commit: b8902d55155cec7bd743dc1129e0b32e70b1751f
+change-id: 20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-8b22c48b8fc0
+
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
