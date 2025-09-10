@@ -1,39 +1,74 @@
-Return-Path: <linux-kernel+bounces-809920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F39DB5137F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:08:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E0A5B51389
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 633F01C266C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:09:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 499A14E3922
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015C62D1932;
-	Wed, 10 Sep 2025 10:08:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BBE315D25
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AC93164A3;
+	Wed, 10 Sep 2025 10:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gqvu3Lla"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914BE3148D2;
+	Wed, 10 Sep 2025 10:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757498907; cv=none; b=f/zVJ1c6yFYHKg2hrwDNECAiFaxn5/a6qld5TGSgGHuF260YhJVGYbJyWJHmrrovCUwOBPsd359x1y8N3sFNlS+Qq8UEQuS9MIuNgQuRsV39JCR6gwYf04Vy2ufaKWyyeqZGn79DF44fhcKCFbXrZxQVRpKs+GUiwSyhaDe2YIc=
+	t=1757498948; cv=none; b=PYzW31/O1YE5IKmbfDZk6XfLt6OMxu/GHJ4i+vgyms8UWRKYQCKqh+LXwbqml6R+IrUUGazn+W34jTp3cww5XQSFcJMU9d4MQzC+d9E6bBtdNU3tschat1b2CTxAfWFq3rq1BgLaqd7CEmqaeDhDNd4BkJjsr1si86WQMJ4TR5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757498907; c=relaxed/simple;
-	bh=MnqbWyDA2EOd2xFAHwBhdGG8jY7mWY+9asdBzyGANb4=;
+	s=arc-20240116; t=1757498948; c=relaxed/simple;
+	bh=Yw7urFo1XJkTV6Rbao9ijZVc+2mkTbZoWD4FeI7e3R0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j1Ywt9a7jJsdssRyTednzNOIRlWc7BQykJJEu5SkxOumb3LMEV4pDD7mU6DYyAIuYNUs2LK9b6M1TXucMtLz/bK3uoX5Ke2ftSCM+MXTwTaWP7iZlbYNuifyq2Kc4DlfJH3ktpICMmphQhYn47FSRml6PGeT002qUBa4mW8Y73E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AFAC71756;
-	Wed, 10 Sep 2025 03:08:16 -0700 (PDT)
-Received: from [10.1.25.55] (e122027.cambridge.arm.com [10.1.25.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F11C3F66E;
-	Wed, 10 Sep 2025 03:08:21 -0700 (PDT)
-Message-ID: <ea4b657e-13fa-485e-9d3c-5b395ad3d8e2@arm.com>
-Date: Wed, 10 Sep 2025 11:08:19 +0100
+	 In-Reply-To:Content-Type; b=Di0YPtM0cXLRr0/g0wv2kDf4g48pVD6+hhQnAQD4XBXSUTtA6cnKTpkHBKLOSpF2G5Uwr79Nup42HAUnrbU8+vpvU3oEj3DyN3Ikvubx2HCMYSZnWTHiCfL6D1cOqur+qZIJlOAM+1GA45TZLQxfKLBxTGSQJSpT3zNlp6USwFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gqvu3Lla; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58A9os0M029387;
+	Wed, 10 Sep 2025 10:08:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=likaU/
+	FOcKZAkm8jAvvUDMPBbTRjF/U2gkyAfC8RkQI=; b=gqvu3LladePLAGqk4b4YfI
+	uq5WTrpieCOvePE+Q8po2aVC6QrcH7rnoTs1omrxd8VKcQ0ub81jFUPzZVGCjWfW
+	6Z8ezDeLhiiNEHb+5uDLsw5Z/5r3kDKK7Zrj9tfbizLJMeKZCzBkNJnSvgxgJVO0
+	ISHVx9DpT/TC6JnJpfgtPzb+T+7H7QaO5cHXkjMWAGJrLr+NY2YFOWOAdlGz5253
+	XIhdNSDjgzz/DFjfuB3tcbs/kKS58ZtcVBQfxQ1aXI36Bh/z8hwgKp+MVKZcIumA
+	wbcZDhm2cfupFup3pSbCqPkxUhsXxFAr1E64hzlZKAfKYtJ2aP85o+EpQGDuDujw
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffdct1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Sep 2025 10:08:51 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58A9b1Sl020492;
+	Wed, 10 Sep 2025 10:08:50 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 490yp100tp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Sep 2025 10:08:50 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58AA8oAv32964884
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 10 Sep 2025 10:08:50 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1E52858066;
+	Wed, 10 Sep 2025 10:08:50 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E798058055;
+	Wed, 10 Sep 2025 10:08:45 +0000 (GMT)
+Received: from [9.43.57.88] (unknown [9.43.57.88])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 10 Sep 2025 10:08:45 +0000 (GMT)
+Message-ID: <384ce5cf-a404-483a-bac0-6307b62c52e8@linux.ibm.com>
+Date: Wed, 10 Sep 2025 15:38:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,82 +76,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
- properly aligned
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Suzuki K Poulose
- <suzuki.poulose@arm.com>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-coco@lists.linux.dev, will@kernel.org, maz@kernel.org,
- tglx@linutronix.de, robin.murphy@arm.com, akpm@linux-foundation.org
-References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
- <aLrh_rbzWLPw9LnH@arm.com> <yq5aikht1e0z.fsf@kernel.org>
- <aL7AoPKKKAR8285O@arm.com> <b5ee1ab3-f91f-4982-95c7-516f4968a6c9@arm.com>
- <20250908145845.GA699673@ziepe.ca>
- <d8687b08-6bb4-4645-8172-72936a51b0d8@arm.com> <aL8RdvuDbtbUDk2D@arm.com>
-Content-Language: en-GB
-From: Steven Price <steven.price@arm.com>
-In-Reply-To: <aL8RdvuDbtbUDk2D@arm.com>
+Subject: Re: [PATCH v2 for-6.18/block 06/10] blk-mq: split bitmap grow and
+ resize case in blk_mq_update_nr_requests()
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, ming.lei@redhat.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+        johnny.chenyi@huawei.com
+References: <20250910080445.239096-1-yukuai1@huaweicloud.com>
+ <20250910080445.239096-7-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20250910080445.239096-7-yukuai1@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: gFqNYJDuSvoNvfTazYoA7z1TIP18aucD
+X-Proofpoint-GUID: gFqNYJDuSvoNvfTazYoA7z1TIP18aucD
+X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c14e33 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8
+ a=V5-dstEP5heE38FwefgA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX7nTxIKUUcVAw
+ X3IBexlUCE7snELaN55UaIakraK7M/hiJgrPx4QDxCu02cmw5ULYzegI09w0fyTXG1oGD6cYoHg
+ Hy7A0l168KPfJ4vE/n658yz1leTZ5J1lSPK5gn2suvW4WCiZM2dA7boey7JKMpME2vgAUcASX3S
+ TeucYivcr4t67zac8K9s+r8vsGTZ1iAPEbYyUsnY3C6xuieSzJGcCxiH0UQi0UMBVn99dlXq1vP
+ uImbgnRtbCbULfZyrT5sOaJnVetuaD7uBCUtTFcDbN1fLbPKbbp7YAP3SBX48RyvDw+hUoZotn/
+ VyXrGoMYBZdVwe4ShbXvF5Gk1vZHG/p77LdE8RyNEmGzxBw01PiDwL6VLh/sAynjvxvNtrrgv/f
+ ZvsfrTy9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-09_03,2025-09-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
 
-On 08/09/2025 18:25, Catalin Marinas wrote:
-> On Mon, Sep 08, 2025 at 04:39:13PM +0100, Steven Price wrote:
->> On 08/09/2025 15:58, Jason Gunthorpe wrote:
->>> If ARM has proper faulting then you don't have an issue mapping 64K
->>> into a userspace and just segfaulting the VMM if it does something
->>> wrong.
->>
->> ...the VMM can cause problems. If the VMM touches the memory itself then
->> things are simple - we can detect that the fault was from user space and
->> trigger a SIGBUS to kill of the VMM.
-> 
-> Similarly for uaccess.
-> 
->> But the VMM can also attempt to pass the address into the kernel and
->> cause the kernel to do a get_user_pages() call (and this is something we
->> want to support for shared memory). The problem is if the kernel then
->> touches the parts of the page which are protected we get a fault with no
->> (easy) way to relate back to the VMM.
-> 
-> I assume the host has a mechanism to check that the memory has been
-> marked as shared by the guest and the guest cannot claim it back as
-> private while the host is accessing it (I should dig out the CCA spec).
-> 
->> guest_memfd provided a nice way around this - a dedicated allocator
->> which doesn't allow mmap(). This meant we don't need to worry about user
->> space handing protected memory into the kernel. It's now getting
->> extended to support mmap() but only when shared, and there was a lot of
->> discussion about how to ensure that there are no mmap regions when
->> converting memory back to private.
-> 
-> That's indeed problematic and we don't have a simple way to check that
-> a user VMM address won't fault when accessed via the linear map. The
-> vma checks we get with mmap are (host) page size based.
-> 
-> Can we instead only allow mismatched (or smaller) granule sizes in the
-> guest if the VMM doesn't use the mmap() interface? It's not like
-> trapping TCR_EL1 but simply rejecting such unaligned memory slots since
-> the host will need to check that the memory has indeed been shared. KVM
-> can advertise higher granules only, though the guest can ignore them.
-> 
 
-Yes, mismatched granules sizes could be supported if we disallowed
-mmap(). This is assuming the RMM supports the required size - which is
-currently true, but the intention is to optimise the S2 in the future by
-matching the host page size.
 
-But I'm not sure how useful that would be. The VMMs of today don't
-expect to have to perform read()/write() calls to access the guest's
-memory, so any user space emulation would need to also be updated to
-deal with this restriction.
+On 9/10/25 1:34 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> No functional changes are intended, make code cleaner and prepare to fix
+> the grow case in following patches.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-But that seems like a lot of effort to support something that doesn't
-seem to have a use case. Whereas there's an obvious use case for the
-guest and VMM sharing one (or often more) pages of (mapped) memory. The
-part that CCA makes this tricky is that we need to pick the VMM's page
-size rather than the guest's.
-
-Steve
-
+Looks good to me:
+Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
 
