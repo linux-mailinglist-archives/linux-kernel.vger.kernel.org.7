@@ -1,177 +1,221 @@
-Return-Path: <linux-kernel+bounces-810967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E3BB52279
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 428BBB5228C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B95DA1C859EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:43:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0DB1C85BDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6293009C2;
-	Wed, 10 Sep 2025 20:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DAF3093B6;
+	Wed, 10 Sep 2025 20:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1+/QzR1i"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZOBlVaq"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8112FABF8
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA014304BA8
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757536904; cv=none; b=cuNaxPuH0lJloJYBjlp5rYCPIVqA/c6lfs0p9Eh8ICm81oeJwZHX3BewoMxp0hQahyddnevSSI9aLdgrvq8kr+6ndbN28/vt2Dp7cywYp4bGAfXhGYMWGPTdkVYDJGUd41uIO7C7Ibzv25alo9tbHX810B9+9FtPoHzNytmVt2Q=
+	t=1757536910; cv=none; b=sTOoSOy4PE7sq6QjakxMakee7az/EgqPTeZOoPCKvRFrQV1L6Q3BZhK/HyIuslymRXvm+s5tmsQawPix60suMeIKf+voMV0UJ2wcDdpt8h8a3CA/Q6kfMN22IyRz/asewLFr32/rju4sBKcT8+lPClKRXMME+/QDkIPU7J23wsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757536904; c=relaxed/simple;
-	bh=RpQu8B19MEio3rAI2hB/X5DPqqs/M0gi/GwdHg8XiK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SNfrbo4FVIzpPEPQWCy5ydi8+NMb70NOeHUV22HkmKJy6dNX3p4LmNogFTy3c23mxSBig4U6wbVMP0AEMXA3Ur2fSVOzTKBFiKO0e70olzD82567rmZSq3vxaf1YvWVFMs82Za+/wCF/0iEAyEMvjgE6H4fCmkkQZvI839449k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1+/QzR1i; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b4bcb9638aso164201cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:41:42 -0700 (PDT)
+	s=arc-20240116; t=1757536910; c=relaxed/simple;
+	bh=k2U0NYyEKHtgpAev2ghnZsb3/qPyjZBLMwoarsWqCG0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dy5Wl0Mmcig6cux2eaJ++fQNIb+fA3nyqpgUFYUxlaf50rczOT1u00Vigp/0TiwgloKeJfT4qVAcRfW3CW7bgSSpo6h3aRlDQXQPqdjvtaoqmzoxH4FJwYP/YlhkeY/YCg/JUeB4nqd7l+F2/1vupOV7Ya8DPQ/u9ly7qlJBqyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZOBlVaq; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45de6490e74so174995e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:41:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757536901; x=1758141701; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757536906; x=1758141706; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RpQu8B19MEio3rAI2hB/X5DPqqs/M0gi/GwdHg8XiK4=;
-        b=1+/QzR1iaWF1dZpLSinswu8+5BlDV1Mz44JFxDO18vHd0RaIQhC3n+SdmvEVh4JsSG
-         7WqhZHQc44AMTp8fTjoyumK3MFSM09ryotKdXCFjaxOm9DCjczMn2Rg2MLZ4S+TLkefO
-         1laskm4ZO/uK9bn7GcAN6MzXGfr810Lg6U6B4LIEbsKV7GRXdhlUF8Uu3HZS+TWpfXiW
-         99IvmkujIZvj3LQTlfNrh1WQq0Qp1Mz+jmnGO4J7lhHj0a7/Hr0Cx+Jbzt/b67aAlZlM
-         rakEYBlP0b7WJwgq8gfQwrjpTzQ293HDsPskTqz1pkgpoi8rWSUVaG1KfC0BogKSisl5
-         nm5Q==
+        bh=uWelwUVBuuos1qOHG9IBB45ilO6ZU4Ljr34GA9uf6EU=;
+        b=FZOBlVaqqcC7OsBLBCQh7FyCql5u/GW4sz/rtfTNS14cJc99R5oQ4FHwq/9AImeD6e
+         kNJzlH+gpAw5PIB/6y47XxMBOdAbgG2W8Rio16LLi15xzGbQq6iUS1pROKdBkGtZzbKl
+         SdFD8a/LfaZ6OX6BHd0HoIJTPcReVF68OPbipUDScNtwCPUZwxf5fs80KKYekKuVKGuF
+         qjHQsoM0pZi0vqaWtD4cVekVbMvmnkK0Dtpb8zqqder8ex9SNIsSbqGo99KG8MeIhT4H
+         m6ZrxaGtk+EKVInwbpjJfw7Optnj51wNkxiGRXZXpdNVFgAL8s6dxziwVmERp+iEqGMc
+         Cuuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757536901; x=1758141701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757536906; x=1758141706;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RpQu8B19MEio3rAI2hB/X5DPqqs/M0gi/GwdHg8XiK4=;
-        b=gGPFykpaNmod3IxbHD0vclWRMMdlMPijF/QJ7eCzv61qOKnVJGr1GzhzKTxn6+Fqpn
-         Jr1tmo/4TpvecRKXcjHXJ04YOzr1HKAZsUs6l1KMxvA5bhi32RZTcouYs7H/1VTdH6mI
-         M03x+3/a2Sb+CJ1mekNg+5GVyltLWkaj+aEw3gyimn8zPrIWTwn39EPX3SvDEiWydhxM
-         3W2Hy/UATiLmbrlehFxki2EGWVPHISHH7ApkU/tEQgnr07KNOakq7LxY7z/z/+2j3ddV
-         3DyEQ+DW02qX4zvZeq6k8KOG8UK2/u3PpphJTJsSSjdCTRDI+ah4iHWhtMo7NvAGkZKZ
-         6zIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmCLcMAL7QmFv0bflNWpypqkEU4HHUEq2X4vRuDA4GQHhS/qd2WVTgm3MaJ6FnWVoyZrs4oEQMRkZ/Yts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOZ6lAZf9IY8cd5CoAa1PgczA1T8R078E73tgOKdx/AEATAi/z
-	cdaL3hT1Ka5dg1vCxzSgrOQtZ41Nvx/L9E9MWBI3iRYy7cDEUoBLnlXu1EPTm4oEaw3YpMX2MnP
-	AnXMFYiAyB7HG+8cSTQleXE7Ho7yl7JGFAusSYvHl
-X-Gm-Gg: ASbGncuaG9wTHPX4MistoStqkX1jGn7RhibTnmKkQtm1l87rqD/TEJXcJwOs4PBXl+k
-	FjDGlpATZUOGifEJGIrACms0TbTXmBuwEGWY7+0lTXciqbRahW9iVOeKNlDVUWUVXNKCj/UtDZi
-	NEygs2syjkNtRkB1d97ev80OAlVVw9R9TI8+z+X9L8Oxu0wi3nz9qHi5Tb6gvUwgVZlWIzygRXa
-	6ndFI5bZm/jgufD08KA9p94Uxal9sb2o8xB/1kdrGvbBZWW5SDkfw==
-X-Google-Smtp-Source: AGHT+IHbQlhskzm2umaiSCVK7F4asqf8KLiAUVgJOpxaNfiXFJRF7QoxeR9wlR3GvPVF+MNtKa/jSV5VrLPSsQR7N2s=
-X-Received: by 2002:a05:622a:311:b0:4b0:85b7:ea77 with SMTP id
- d75a77b69052e-4b626dac8a6mr7249681cf.3.1757536900773; Wed, 10 Sep 2025
- 13:41:40 -0700 (PDT)
+        bh=uWelwUVBuuos1qOHG9IBB45ilO6ZU4Ljr34GA9uf6EU=;
+        b=YAcYeAztIF2BMxnF/NHeoHz1hORNqsnD09q2GAPsbEFkbIvG8x6WVMS7p3IxRAFBaQ
+         R6Nb8K02CA1wYEY3A5HcZGn6rjxOnyb7cEElGYZsmu9u5eMWgMiA0iHAxntc/j3q84p8
+         k+o0EsaDMwtHwj/EbJil1dnbG6zKnAKyAk8KjElT4z8v0FMcI4IvZhRaq6LbeofBk+97
+         CsBX9jhREj0lH8QiPCmqRSxUAAK41hM4PbkWumtf1cG4+yjXiJnCVQP/zq8cj25qZBNG
+         i2t/gwFLhEoqOp22eF+n8YOKl9hoMaVDdSnHl8KraAmKbYrK4GxVr0oC7p+yJNHmso/w
+         tumA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8V/PB21LhigCUWqFhUcf9gmtKxVsfFHxa428+JKC3sU6qr/Bk83YakB31Z70bOkZdTTPHSG7aYmUoqNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0DNDBhpRZ+0VGeTyfrbgRmYgd3r61ZpegYkpU2/l3v2caHMn6
+	1na+ESg7jJmHtSMvu4akkeCTgnjmI1ktPuSlC1AhOyDpcRaCwsVibAiM
+X-Gm-Gg: ASbGncsBsCTjLyrqOr4AVmHkuifgzDkOBMlw4qpIEz5SA5Wk1Z1MnBNg2LT0QuZaEZx
+	Lmxb+Ql28t3VFYF0WnYvvxMFpAwPXNakQ5Ch1QqD3FqiV39QU1/Fh4YzN/HijUiCvlc0hm8Yii7
+	iJzzwpVnMjqcCJk1f+hv0HacCGXMUGPANXjc6or11YyXSjs7CbGP72Dy3Sk1rvD5PyOMOtAxMQN
+	n4diOMEXZpDo7WsQqoCYoL8Od0KUMHQJ5R6BjvGHBB326OYs0V45q56OvS8ERqAoZEDwJl1i52a
+	X9ISirwb355npK2CEtaoJiQC3KH943ObA92Z5jvO/Y1uNS16ptKmUiWLY40dA2nmIrvLgmnW8p5
+	xRjVPGBke6qAg8z7qWIOiOuDA8SJDqF/fsJ43IciX4IaxTP4=
+X-Google-Smtp-Source: AGHT+IEx9TgeKssRAdhlUZivpFswe+DpuuWCCEbBX19Y4It+DwJLIOvtm0Q7IRCVZgXGeqHIDzir1Q==
+X-Received: by 2002:a05:600c:3b23:b0:45b:9c93:d21d with SMTP id 5b1f17b1804b1-45ddde957e4mr179410105e9.8.1757536905783;
+        Wed, 10 Sep 2025 13:41:45 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:ee64:b92b:f8fd:6cd8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0157d68esm320085e9.6.2025.09.10.13.41.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 13:41:45 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH net-next v3 8/9] net: pcs: rzn1-miic: Add per-SoC control for MIIC register unlock/lock
+Date: Wed, 10 Sep 2025 21:41:29 +0100
+Message-ID: <20250910204132.319975-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250910204132.319975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250910204132.319975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909065349.574894-1-liulei.rjpt@vivo.com> <fszpgct7ywqy6qq3qnjflol3theovmgnau2wgdqqdxin4q7ezm@zumgw533hxon>
- <CAJuCfpFaTj8PsXkoYRQKQ0sOu+mKikUAE8Wbcx+YpZXZ4M7cMA@mail.gmail.com> <qisfqncqgkgxh2nj5axafunlfjen6oiciobcrmpus6l3xwrbyj@blxv73pbhzez>
-In-Reply-To: <qisfqncqgkgxh2nj5axafunlfjen6oiciobcrmpus6l3xwrbyj@blxv73pbhzez>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 10 Sep 2025 13:41:29 -0700
-X-Gm-Features: AS18NWANf9zf8-wwlTuHfifwdfaJCLJSeFkghtgQl5BDc45w4ZtnmTyIc9pxfNM
-Message-ID: <CAJuCfpF1deAfZfWQZkAdws9FDNsmZp3KMQap-LqcX1NzOoknhA@mail.gmail.com>
-Subject: Re: [PATCH v0 0/2] mm: swap: Gather swap entries and batch async release
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Lei Liu <liulei.rjpt@vivo.com>, Michal Hocko <mhocko@suse.com>, 
-	David Rientjes <rientjes@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	Chris Li <chrisl@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Chen Yu <yu.c.chen@intel.com>, 
-	Hao Jia <jiahao1@lixiang.com>, "Kirill A. Shutemov" <kas@kernel.org>, 
-	Usama Arif <usamaarif642@gmail.com>, Oleg Nesterov <oleg@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Fushuai Wang <wangfushuai@baidu.com>, 
-	"open list:MEMORY MANAGEMENT - OOM KILLER" <linux-mm@kvack.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" <cgroups@vger.kernel.org>, "T.J. Mercier" <tjmercier@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 10, 2025 at 1:10=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> On Tue, Sep 09, 2025 at 12:48:02PM -0700, Suren Baghdasaryan wrote:
-> > On Tue, Sep 9, 2025 at 12:21=E2=80=AFPM Shakeel Butt <shakeel.butt@linu=
-x.dev> wrote:
-> > >
-> > > On Tue, Sep 09, 2025 at 02:53:39PM +0800, Lei Liu wrote:
-> > > > 1. Problem Scenario
-> > > > On systems with ZRAM and swap enabled, simultaneous process exits c=
-reate
-> > > > contention. The primary bottleneck occurs during swap entry release
-> > > > operations, causing exiting processes to monopolize CPU resources. =
-This
-> > > > leads to scheduling delays for high-priority processes.
-> > > >
-> > > > 2. Android Use Case
-> > > > During camera launch, LMKD terminates background processes to free =
-memory.
-> > >
-> > > How does LMKD trigger the kills? SIGKILL or cgroup.kill?
-> >
-> > SIGKILL
-> >
-> > >
-> > > > Exiting processes compete for CPU cycles, delaying the camera previ=
-ew
-> > > > thread and causing visible stuttering - directly impacting user
-> > > > experience.
-> > >
-> > > Since the exit/kill is due to low memory situation, punting the memor=
-y
-> > > freeing to a low priority async mechanism will help in improving user
-> > > experience. Most probably the application (camera preview here) will =
-get
-> > > into global reclaim and will compete for CPU with the async memory
-> > > freeing.
-> > >
-> > > What we really need is faster memory freeing and we should explore al=
-l
-> > > possible ways. As others suggested fix/improve the bottleneck in the
-> > > memory freeing path. In addition I think we should explore paralleliz=
-ing
-> > > this as well.
-> > >
-> > > On Android, I suppose most of the memory is associated with single or
-> > > small set of processes and parallelizing memory freeing would be
-> > > challenging. BTW is LMKD using process_mrelease() to release the kill=
-ed
-> > > process memory?
-> >
-> > Yes, LMKD has a reaper thread which wakes up and calls
-> > process_mrelease() after the main LMKD thread issued SIGKILL.
-> >
->
-> Thanks Suren. I remember Android is planning to use Apps in cgroup. Is
-> that still the plan? I am actually looking into cgroup.kill, beside
-> sending SIGKILL, putting the processes of the target cgroup in the oom
-> reaper list. In addition, making oom reaper able to reap processes in
-> parallel. I am hoping that functionality to be useful to Android as
-> well.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Yes, cgroups v2 with per-app hierarchy is already enabled on Android
-as of about a year or so ago. The first usecase was the freezer. TJ
-(CC'ing him here) also changed how ActivityManager Service (AMS) kills
-process groups to use cgroup.kill (think when you force-stop an app
-that's what will happen). LMKD has not been changed to use cgroup.kill
-but that might be worth doing now. TJ, WDYT?
+Make MIIC accessory register unlock/lock behaviour selectable via SoC/OF
+data. Add init_unlock_lock_regs and miic_write to struct miic_of_data so
+the driver can either perform the traditional global unlock sequence (as
+used on RZ/N1) or use a different policy for other SoCs (for example
+RZ/T2H, which does not require leaving registers unlocked).
 
+miic_reg_writel() now calls the per-SoC miic_write callback to perform
+register writes. Provide miic_reg_writel_unlocked() as the default writer
+and set it for the RZ/N1 OF data so existing platforms keep the same
+behaviour. Add a miic_unlock_regs() helper that implements the accessory
+register unlock sequence so the unlock/lock sequence can be reused where
+needed (for example when a SoC requires explicit unlock/lock around
+individual accesses).
 
-> > >
+This change is preparatory work for supporting RZ/T2H.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+v2->v3:
+- Dropped inlining of miic_unlock_regs().
+- Fixed checkpatch warning to fit within 80 columns.
+- Added Tested-by tag.
+
+v1->v2:
+- No change.
+---
+ drivers/net/pcs/pcs-rzn1-miic.c | 29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
+index 75009b30084a..ef10994d8c11 100644
+--- a/drivers/net/pcs/pcs-rzn1-miic.c
++++ b/drivers/net/pcs/pcs-rzn1-miic.c
+@@ -155,6 +155,9 @@ struct miic {
+  * @sw_mode_mask: Switch mode mask
+  * @reset_ids: Reset names array
+  * @reset_count: Number of entries in the reset_ids array
++ * @init_unlock_lock_regs: Flag to indicate if registers need to be unlocked
++ *  before access.
++ * @miic_write: Function pointer to write a value to a MIIC register
+  */
+ struct miic_of_data {
+ 	struct modctrl_match *match_table;
+@@ -169,6 +172,8 @@ struct miic_of_data {
+ 	u8 sw_mode_mask;
+ 	const char * const *reset_ids;
+ 	u8 reset_count;
++	bool init_unlock_lock_regs;
++	void (*miic_write)(struct miic *miic, int offset, u32 value);
+ };
+ 
+ /**
+@@ -190,11 +195,25 @@ static struct miic_port *phylink_pcs_to_miic_port(struct phylink_pcs *pcs)
+ 	return container_of(pcs, struct miic_port, pcs);
+ }
+ 
+-static void miic_reg_writel(struct miic *miic, int offset, u32 value)
++static void miic_unlock_regs(struct miic *miic)
++{
++	/* Unprotect register writes */
++	writel(0x00A5, miic->base + MIIC_PRCMD);
++	writel(0x0001, miic->base + MIIC_PRCMD);
++	writel(0xFFFE, miic->base + MIIC_PRCMD);
++	writel(0x0001, miic->base + MIIC_PRCMD);
++}
++
++static void miic_reg_writel_unlocked(struct miic *miic, int offset, u32 value)
+ {
+ 	writel(value, miic->base + offset);
+ }
+ 
++static void miic_reg_writel(struct miic *miic, int offset, u32 value)
++{
++	miic->of_data->miic_write(miic, offset, value);
++}
++
+ static u32 miic_reg_readl(struct miic *miic, int offset)
+ {
+ 	return readl(miic->base + offset);
+@@ -421,10 +440,8 @@ static int miic_init_hw(struct miic *miic, u32 cfg_mode)
+ 	 * is going to be used in conjunction with the Cortex-M3, this sequence
+ 	 * will have to be moved in register write
+ 	 */
+-	miic_reg_writel(miic, MIIC_PRCMD, 0x00A5);
+-	miic_reg_writel(miic, MIIC_PRCMD, 0x0001);
+-	miic_reg_writel(miic, MIIC_PRCMD, 0xFFFE);
+-	miic_reg_writel(miic, MIIC_PRCMD, 0x0001);
++	if (miic->of_data->init_unlock_lock_regs)
++		miic_unlock_regs(miic);
+ 
+ 	/* TODO: Replace with FIELD_PREP() when compile-time constant
+ 	 * restriction is lifted. Currently __ffs() returns 0 for sw_mode_mask.
+@@ -645,6 +662,8 @@ static struct miic_of_data rzn1_miic_of_data = {
+ 	.miic_port_start = 1,
+ 	.miic_port_max = 5,
+ 	.sw_mode_mask = GENMASK(4, 0),
++	.init_unlock_lock_regs = true,
++	.miic_write = miic_reg_writel_unlocked,
+ };
+ 
+ static const struct of_device_id miic_of_mtable[] = {
+-- 
+2.51.0
+
 
