@@ -1,94 +1,111 @@
-Return-Path: <linux-kernel+bounces-809927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB19FB5138F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:10:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C06F5B51395
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DAB24E20EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:10:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29F9A3B1220
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DA4315772;
-	Wed, 10 Sep 2025 10:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AX0hEfls"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6333168F6;
+	Wed, 10 Sep 2025 10:09:54 +0000 (UTC)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A78A3093C9;
-	Wed, 10 Sep 2025 10:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C983093C9;
+	Wed, 10 Sep 2025 10:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757498982; cv=none; b=OuKqv8xFkdq0AxbqgAMJmfBzV+16MidjIC/2LRbWqfMu1wm8dEU05wWXJjUkRTorgywNH7Xe/axRMWMilKdP2ix6GZtwMY/qjLZCg8wLCPJnP+l1hf4qwjQxnFtQnPm8JZVD1ECZl9dQRyoREVMTEAFkSJ8eCPxI7Cycj6oVIi4=
+	t=1757498994; cv=none; b=EioniPxye1st6r4zqzDB35TaiyXjzUgqbqjHUUgd2B2183TfqEm9AJXxu8uMmpTB43KH5xMQSG6Iv/2AFFsd3hXN2424wWMrhmSMXWMw1l5vpAZC1FcTtp/99xae42Q8gnzeJTOhK3QaKOKMMod1ESnaRbnrf870+ye/kEeOFZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757498982; c=relaxed/simple;
-	bh=1UvNFkY9J6CckYEK5bZDHatUQZ3qeTYpEL85P5I5lHc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=l5N+OBIW+RNP63F4VrZ2sxjW/U3HSSRirYliCeaVuMDE26AYiCKtZmmEKgiulUO7ag7iaZ/I2uoquyvlSqtdk96GTrYT08/S6+iPFNqrgnTln2yy5ONN/Dno7AT/ih0h2AgmgOY/t8XaJs/Ko25LgPgSiufLKgNRdfsyH5TjTLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AX0hEfls; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C297CC4CEF0;
-	Wed, 10 Sep 2025 10:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757498982;
-	bh=1UvNFkY9J6CckYEK5bZDHatUQZ3qeTYpEL85P5I5lHc=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=AX0hEflskIl9B/vFLEUSTKk6AnoTe9UBYRjcSGuK2QLWGx6jgxPCvO56N8sDtALTb
-	 RxrD/y/OA/AN0mjw6DltCgw67PlLAPoeAy0+Tmgo6TJbjdIbW9R8OUJEYf0qIgOdjT
-	 YWJG/Ir25IwtaQnhMa2+jEdO/lRJESEILDEH7za3pWzv/WAztMeQ0Y/1Z/NOXNxlMn
-	 GupwBvbPQIHKqQkRtN6sBSvaMUGdOtsjnG3PUsEmakMVFMdR0c/elor0IA9uRG39DF
-	 wEjquPgEnXAJdRr31fn02lIbQeLR9howH2rrgOlImauVukGM6nLjfYlNwuom8MnRQ9
-	 4cmolwxpT7e3A==
+	s=arc-20240116; t=1757498994; c=relaxed/simple;
+	bh=41hj1LsqBEEnUu/oVfgAQEkzuLRxVVACzyHYDG+AJQA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ec49JuGBHh8jc80Y5YVRrTTYd2LxtrA6rkV8P3U8pafmRRNXiGDJjyWRdOL1GEvRlHMyiTKfSnriOg/Q6KMZ+niClwNu5z26EiAHuVUPwnZT6HceC1g+NpPCU+VxwwJzjH/dzfmqg+T+zzSqRBBQFUkW7vPVKwmI6i9AFdi9+OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-890190d9f89so3419642241.2;
+        Wed, 10 Sep 2025 03:09:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757498991; x=1758103791;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oQbItlL6nJ3jExzsgpoE75BEbZRvOH9P0SgufEiofto=;
+        b=DP9IePtDxeCvkXlRcRMahRxsIaSEAO7ci1goVWIDc3cj+gewIXVRTdlLCfHj9AHa7W
+         yw5gnlNQlsyh1h+vXD6yHojB0nPn0xAh7TebVTBVi7qZl6iP/b6dn4G0YcfxeVTeK3F6
+         aDQ+DzEUExU5kKpQedWhqj6/4uxEt2R8yygnzvzZll9x8u033M4CvlRWwAdawWyZAlsz
+         Ezyfqo74EgHDzC18K6PpDrn9L/wdMkfDWorYsCIXQSbvzDsM24UUqJBBdTFO6z4f1PcY
+         Jc39w1tZ0TyhOpEGWJ3AYt+VvIEIHTG2GLfBhKIGQTIldsGcEe4cw8PHnLm4zk++A6ko
+         CdZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHfQ/F3AWE/sDS/nlWKWFPVg0Kth86W2v+Li0ddTstmHVf79+vfu98GuZh8z5jwQX/V9KooVqYqKFiqRCZ@vger.kernel.org, AJvYcCUbLR8fER0KQd5NQMI+JVwLV1AkfEnI0gMbH6YVyHKURwh4FusjalKwIwN05/RHBAGeuZvg9+18POk=@vger.kernel.org, AJvYcCXXSJuo5MvGGi/V71vl3LTAMJlB7tyJBqnMKTabRQqiXlv8StiVqdFfv6NXkMU9cuMyXbAG+hqB5bTerPQGsjFxl8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRPLEZM9Np5EVe4iq+3dBN0cJjZ+2o2pEFCHXzc10ybS9pCU2R
+	Mu/SCk2Y/fFLn3tITIJ1pqEl8INbCVZZr6x5yr52MZASHUd4ZUp0ZQDrKoZ8tEVs
+X-Gm-Gg: ASbGncvj/zGqvCNyL4ePcR8PmuZe8ghJbhWEx43HRQxQIYKCOujwxvI5L13e4/fmi4c
+	ZqGVwMXWgko3vymiqjygBbT/HR0a1MxebioMwUDf8wbGXKecv7wNTAZ8H0JxdKMtfhgjRxb9am6
+	2+jaxwFmrePS2PjY5Vec+hbpbyVTN4pOWj4JPpChenfh2Ui6YZxwWSlL5KbXcCgE/cGsTRlgOgv
+	QSATqtrA0gMObEJUGJ2QMTgU+vPtKoRtnasBPMttfNoNwrurmowZwxsqs/J+X9VxHiKZDnfDPIA
+	W1zTw0VPVZEEsyBGtdzlSRtJisWM+EKSquoUY52BZR27Djd/lnglRTh2CSVp5ewLrsNNgyiZjQx
+	xKTgHJH/50g7GQsMrdLE4ml1g+MwVZi2fRnFwU25LYcjWBBbrwV8L0o388AnrCc+N3FgXUt0=
+X-Google-Smtp-Source: AGHT+IHFa+FneQ2dAsvLh1J4CUylut4MM8CvnNR2Lf7ssTCFE1KHtNl7MBqZh0P6br1wvjXRFBn2xg==
+X-Received: by 2002:a05:6102:6447:b0:527:d1de:893b with SMTP id ada2fe7eead31-53d21db6e02mr4408863137.18.1757498991292;
+        Wed, 10 Sep 2025 03:09:51 -0700 (PDT)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-52af191584fsm12507232137.11.2025.09.10.03.09.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 03:09:51 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-8c1e1b6ecd5so915219241.1;
+        Wed, 10 Sep 2025 03:09:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDhuJ7NlCBC6tspw2oT98FViBcfQO0+7bwDiLIUBxLg7DnDO9HGM++iFfLC8lO15ZL4IPC4AoGtm4=@vger.kernel.org, AJvYcCVzEbqiEiTG/E6WcnL5ftT9uQRJF+OcKJRge5nSxJygo4ENKszB9aX73hgJmWPV9oTL5FlI/mQ43Fc5H20u@vger.kernel.org, AJvYcCXiTkwTdqwwUVTXNEWgTponAjDypekqDZmGXH9TWOXm9C2QrdBUDyzoN5arb3It68pYxQt4TDitw5qs3b4WCnaj3hg=@vger.kernel.org
+X-Received: by 2002:a05:6102:290e:b0:530:f657:c25 with SMTP id
+ ada2fe7eead31-53d1aeac1efmr4496496137.5.1757498990898; Wed, 10 Sep 2025
+ 03:09:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 10 Sep 2025 12:09:38 +0200
-Message-Id: <DCP1E4UJ385D.JEXXJV4PPLJS@kernel.org>
-To: "Greg KH" <gregkh@linuxfoundation.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH] USB: core: remove the move buf action
-Cc: "Edward Adam Davis" <eadavis@qq.com>,
- <syzbot+b6445765657b5855e869@syzkaller.appspotmail.com>,
- <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <rafael@kernel.org>, <syzkaller-bugs@googlegroups.com>
-References: <68c118e8.a70a0220.3543fc.000e.GAE@google.com>
- <tencent_B32D6D8C9450EBFEEE5ACC2C7B0E6C402D0A@qq.com>
- <2025091007-stricken-relock-ef72@gregkh>
-In-Reply-To: <2025091007-stricken-relock-ef72@gregkh>
+MIME-Version: 1.0
+References: <20250904155507.245744-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250904155507.245744-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250904155507.245744-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 10 Sep 2025 12:09:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVrx3Nhf10CeJrDV8fWuNXLRjjecYGHJfELAuxN3mY5KA@mail.gmail.com>
+X-Gm-Features: AS18NWCMc88swLPhTeoQZ5Wh_5YjKE_T8q-ASGiuYTxiLp8_dhkCPysbVkNQThc
+Message-ID: <CAMuHMdVrx3Nhf10CeJrDV8fWuNXLRjjecYGHJfELAuxN3mY5KA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: r9a09g056: Add clock and reset entries
+ for I3C
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed Sep 10, 2025 at 11:00 AM CEST, Greg KH wrote:
-> On Wed, Sep 10, 2025 at 03:58:47PM +0800, Edward Adam Davis wrote:
->> The buffer size of sysfs is fixed at PAGE_SIZE, and the page offset
->> of the buf parameter of sysfs_emit_at() must be 0, there is no need
->> to manually manage the buf pointer offset.
->>=20
->> Fixes: 711d41ab4a0e ("usb: core: Use sysfs_emit_at() when showing dynami=
-c IDs")
->> Reported-by: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=3Db6445765657b5855e869
->> Tested-by: syzbot+b6445765657b5855e869@syzkaller.appspotmail.com
->> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
->> ---
->>  drivers/usb/core/driver.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
+On Thu, 4 Sept 2025 at 17:55, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> While this fix looks correct, your cc: list is very odd as this is a
-> linux-usb bug, not a driver core issue, right?
+> Add module clock entries for the I3C controller on the RZ/V2N
+> (R9A09G056) SoC.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-I think Edward derived the Cc: list from the recipients of the syzbot repor=
-t
-in [1].
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.18.
 
-Not sure how syzbot figures out the relevant recipients to send the report =
-to
-though. :)
+Gr{oetje,eeting}s,
 
-[1] https://lore.kernel.org/all/68c118e8.a70a0220.3543fc.000e.GAE@google.co=
-m/
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
