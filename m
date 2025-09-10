@@ -1,171 +1,101 @@
-Return-Path: <linux-kernel+bounces-809610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F735B50FCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:43:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A259DB50FD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA1B445B3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:43:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6E0B1C82096
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDDB30C37D;
-	Wed, 10 Sep 2025 07:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F0930C37E;
+	Wed, 10 Sep 2025 07:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="g1K7H1SU"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aoe6EdWM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jCR4cp+J"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3B330CD92
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF20630BB81;
+	Wed, 10 Sep 2025 07:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757490192; cv=none; b=NKj1BzXTe+lG/9ZQ5t9V1uVaHZNL9gLKAH7XbxHR+0pkr2ZEIr/3VAg0s167ktRIy1Iay6lyyulxT53D6lPfHA+ePIUVxkYjHyEsy/iDVpEFE8DEMAL1O7+zwaCpxiz5xaz5tBqDiw3qpD/xq9E8fcUaOEe4Hyp2zYBv2sZ8QAA=
+	t=1757490224; cv=none; b=kcJskM2xzk6hHFH9LEUcUacsb/hW4Wa7Uu8+RtDAcIN2EeJUV7vrsJrRTR2pg8nW0bSApuulKTR7luDsiG3cknKJwrLTPc3CWymyK8byIQ8R+PKEPDmkgbgguifAebaHXO8UkpuwXY3US3Yx8tOv0Oi/VKSP3ZFgnPadC+YRSi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757490192; c=relaxed/simple;
-	bh=oYh90tcsDpw7CrDcG/7P8GueqMyroIAKQgKmfVUY8Ds=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=g5ScFDzL+JFBZWzo2yvcnZ/V++5H96S7reaxhCHSyTKbjwJZwiGbUTS7q2EdWVwXNHtseAbW6UwIZGNONFrjsmhsXsQBjBbYnMwjwtR4TUCK11Hp53OERj0jK1Heh2ICgmEmSAKexxN3iXNPTT4g2pLiL1231F9f1FwKlH7zvYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=g1K7H1SU; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250910074302epoutp0122706ffc51a65e6622092f089ab31734~j3AJeCKDl2707527075epoutp01F
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:43:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250910074302epoutp0122706ffc51a65e6622092f089ab31734~j3AJeCKDl2707527075epoutp01F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1757490182;
-	bh=9expbpYhVgObgPfAlnk7ZtalLHtzPTqZxjjfHnnvWUM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=g1K7H1SU6dBatpr+nVZDuSvnVweadziYubv6VvWrbYUdErO4isxWKjE+t0m0F2S7x
-	 xRokdIcLB6iGJH15yqGdvwYcQbZPDH81bkB30udnnuLew5+5vIYbwn93CXEq/CTb8o
-	 3dHLk7pm9lzCCOM94o2JASGFp75N07/5luOOzJKg=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250910074301epcas2p4adda38d3e6226f46dd5097b221807b46~j3AIfxcA_0054800548epcas2p4W;
-	Wed, 10 Sep 2025 07:43:01 +0000 (GMT)
-Received: from epcas2p4.samsung.com (unknown [182.195.36.101]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cMCN44DMnz6B9mS; Wed, 10 Sep
-	2025 07:43:00 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250910074259epcas2p294790d53f9e2c7a7b9ecea003ad66092~j3AHRKlPC2105321053epcas2p2P;
-	Wed, 10 Sep 2025 07:42:59 +0000 (GMT)
-Received: from KORCO190374.samsungds.net (unknown [12.36.160.50]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250910074259epsmtip14649612a61786e5a6a1da6aee4d8f6af~j3AHOfeQs2861828618epsmtip1O;
-	Wed, 10 Sep 2025 07:42:59 +0000 (GMT)
-From: Sehee Jeong <sehee1.jeong@samsung.com>
-To: anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
-	corbet@lwn.net
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	sehee1.jeong@samsung.com
-Subject: [PATCH v2 1/1] timers/migration: add 'tmigr' kernel parameter to
- optionally disable timer migration
-Date: Wed, 10 Sep 2025 16:42:51 +0900
-Message-Id: <20250910074251.8148-2-sehee1.jeong@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250910074251.8148-1-sehee1.jeong@samsung.com>
+	s=arc-20240116; t=1757490224; c=relaxed/simple;
+	bh=ysPC8gIDUEZev6CRLE3O8KdZ2ZIncnjG7LDJ3jrnh4I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Q5XBgQW0yqY+x6qwMwKbOF0qkaVRQjfQsbuS7MlxBNQ0OPBp0k/gj5bkx+QsDyQPScr3wZ4rVvRcVvBdxBJUvqnCOb3Wyn4JzE1fo0uiwJIxENp10f20P55FLaeS7lMGR++PDN7952Lieok73bhjZ7td6OfaUA3XDQSy7kU1AY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aoe6EdWM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jCR4cp+J; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757490220;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=igumClIvpx2cwaJ/4/9En28rMWl016wmiHMG4dR/RVo=;
+	b=aoe6EdWMLibP2L1yiuXeMLVrnBCJVyutM8lCtMs3SQWbCxosgfZlcp4arOHxrebf293tTb
+	MuX7p048WTbTQbbZfaga55UG0sEdsBLjpzeEcMcXDQXRxs7Pw0BVpodL3AK0iUY/AkVn1K
+	qrF+orNpgYaYo+0+D+EWMiTe/senYaaNaz+jHkHHTAMuTYXlp1/P1rWJSJd8Ixqln8DXWv
+	+1SXRw48B2Kf7XtH4W6E1HCIDinV23GFO4rd02QnrLKQSzBBpc/nGXwhKGHdvREUNtOtPc
+	ECzg81IgTWJ9taV/Fm98cVyDpfJyNmpIgZ49YmDV+ETkGS71oe3RPpLrTEIM0g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757490220;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=igumClIvpx2cwaJ/4/9En28rMWl016wmiHMG4dR/RVo=;
+	b=jCR4cp+Jbka9j+05Dv4UjCgxgIeLhdG/g9qrPMDiZe9IJkTucQItFi5A9LrrWEfSRUmbIT
+	FXjiL0VhzoZr2WDA==
+To: Gabriele Monaco <gmonaco@redhat.com>, schuster.simon@siemens-energy.com,
+ Steven Rostedt <rostedt@goodmis.org>, Christian Brauner
+ <brauner@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Hildenbrand <david@redhat.com>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, Arnd Bergmann <arnd@arndb.de>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel
+ test robot <lkp@intel.com>
+Subject: Re: [PATCH] rv/ltl_monitor: adapt handle_task_newtask to u64
+ clone_flags
+In-Reply-To: <93a46874ceadf0080891e06d930336e120f2d753.camel@redhat.com>
+References: <20250904-trace-task-newtask-fix-callbacks-v1-1-8edb3d557365@siemens-energy.com>
+ <93a46874ceadf0080891e06d930336e120f2d753.camel@redhat.com>
+Date: Wed, 10 Sep 2025 09:43:39 +0200
+Message-ID: <87jz26ah1w.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250910074259epcas2p294790d53f9e2c7a7b9ecea003ad66092
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250910074259epcas2p294790d53f9e2c7a7b9ecea003ad66092
-References: <20250910074251.8148-1-sehee1.jeong@samsung.com>
-	<CGME20250910074259epcas2p294790d53f9e2c7a7b9ecea003ad66092@epcas2p2.samsung.com>
+Content-Type: text/plain
 
-On heterogeneous systems with big.LITTLE architectures, timer migration
-may cause timers from little cores to run on big cores, or vice versa,
-because core type differences are not considered in the current timer
-migration logic. This can be undesirable in systems that require
-strict power management.
+Gabriele Monaco <gmonaco@redhat.com> writes:
+> On Thu, 2025-09-04 at 13:36 +0200, Simon Schuster via B4 Relay wrote:
+>> From: Simon Schuster <schuster.simon@siemens-energy.com>
+>> 
+>> Since commit edd3cb05c00a ("copy_process: pass clone_flags as u64
+>> across
+>> calltree") the task_newtask trace event exposes clone_flags as u64 to
+>> its callbacks.
+>> 
+>> However, ltl_monitor was not adapted, resulting in a faulty callback.
+>> This also resulted in an lkp build warning due to
+>> -Wincompatible-pointer-types.
+>> 
+>
+> Looks good to me, thanks!
+>
+> Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
+>
+> Adding Nam (author of LTL) to the loop.
 
-For example, if timers are frequently migrated to a big CPU, it must
-handle callbacks that could have run on a little CPU. This reduces the
-big CPU's idle residency and increases overall energy consumption due to
-higher power draw on the big CPU.
+Acked-by: Nam Cao <namcao@linutronix.de>
 
-To avoid this issue, introduce an early boot parameter to optionally
-disable timer migration:
+I see no problem merging this to vfs, if vfs folks want that.
 
-    tmigr=on|off	(default: on)
-
-When set to "off", timer migration initialization is skipped entirely.
-
-Signed-off-by: Sehee Jeong <sehee1.jeong@samsung.com>
----
- .../admin-guide/kernel-parameters.txt         |  4 ++++
- kernel/time/timer_migration.c                 | 19 +++++++++++++++++++
- 2 files changed, 23 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index ab4c049faba9..0f5d42c046bb 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6783,6 +6783,10 @@
- 			Force threading of all interrupt handlers except those
- 			marked explicitly IRQF_NO_THREAD.
- 
-+	tmigr		[KNL,EARLY] Enable/disable timer migration
-+			Valid parameters: on, off
-+			Default: on
-+
- 	topology=	[S390,EARLY]
- 			Format: {off | on}
- 			Specify if the kernel should make use of the cpu
-diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index 72538baa7a1f..00e3740aec98 100644
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -422,6 +422,8 @@ static unsigned int tmigr_crossnode_level __read_mostly;
- 
- static DEFINE_PER_CPU(struct tmigr_cpu, tmigr_cpu);
- 
-+static bool tmigr_enabled = true;
-+
- #define TMIGR_NONE	0xFF
- #define BIT_CNT		8
- 
-@@ -1790,6 +1792,9 @@ static int __init tmigr_init(void)
- 
- 	BUILD_BUG_ON_NOT_POWER_OF_2(TMIGR_CHILDREN_PER_GROUP);
- 
-+	if (!tmigr_enabled)
-+		return 0;
-+
- 	/* Nothing to do if running on UP */
- 	if (ncpus == 1)
- 		return 0;
-@@ -1854,3 +1859,17 @@ static int __init tmigr_init(void)
- 	return ret;
- }
- early_initcall(tmigr_init);
-+
-+static int __init tmigr_setup(char *str)
-+{
-+	if (!str)
-+		return 0;
-+
-+	if (!strcmp(str, "off"))
-+		tmigr_enabled = false;
-+	else if (!strcmp(str, "on"))
-+		tmigr_enabled = true;
-+
-+	return 0;
-+}
-+early_param("tmigr", tmigr_setup);
--- 
-2.49.0
-
+Nam
 
