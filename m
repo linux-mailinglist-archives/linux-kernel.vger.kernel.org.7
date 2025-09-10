@@ -1,62 +1,79 @@
-Return-Path: <linux-kernel+bounces-809930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF90FB51396
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:11:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3378DB51391
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F355A1896642
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:11:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F08484E26B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DD3315772;
-	Wed, 10 Sep 2025 10:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212092BE65B;
+	Wed, 10 Sep 2025 10:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uuDdA3CH"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y9ZPgArC"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2923148D2
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E8A4A21
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757499023; cv=none; b=n9gSSnLdk4p70IN5UQp89s/hcyqS4ZWWuPUQU17Y3c8YFK7rABFDGZzb43oUkpZP2GSYf6w5YsHtpBtrnaTJDpa3gWdf+5F9VPFx1gUK+urmSqy+kNHjtP4b9Of/fWTsRiSlffmr1vSEPXl63EWuSZUEfU5QCCpCU7GbWkR2DcI=
+	t=1757499015; cv=none; b=pCb/G4EeJ46VfQcCD1LjmepBfmhO9k9eS7BuwoTGNw7PDHe0gpjByTWoQrz2ttFTlhkt63mCKBTKcSXUKT8VLGdDyRfASoOCA7gaD7cZNhDkQxMBoZofz//jHAFtWJD23frhPdZ+XIDlSoYw6u7ZzpvIVSDrd+w3wtjR2Wh05MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757499023; c=relaxed/simple;
-	bh=cSJC9AklCMuQzOPbFW/TsnQF0GKE5ZQyhu6BndCDmdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q5zo7zox58Y+GNshH9TnivQueZPYBA+GLQH8r5RIEK1WSk1Beb9pvpL5yfpRo4IAnkI32I+W/nWSUR5zVQcaPrLMhbLldEVcrYSthkvwyQGVwQANVWHj2FBWhNJRh9XzN/xZjh/EULiHi+6Pjr4WpW3GZ1MHkVNqb+dv2hoBeQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uuDdA3CH; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58AA9nr2492949;
-	Wed, 10 Sep 2025 05:09:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757498989;
-	bh=znnqxf7boYFG9fLCUkVzQf86NfSBTt6HzdNMyhs47Yk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=uuDdA3CHIY2OKxSIwetvB78Zw5NXJPAqVlaauF7iPeL50acScP4NBJc0Q22OrO/RO
-	 8Js7j/XYAR2FdlBTSWcgkocqVW+KwH1CnDkComo2iiN7g7tAsc+ZpQkj3EdLGMMRa9
-	 porWkZRh0S4L+bZ4gnrEM2lW32/u7Y1ZBKb8qxWM=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58AA9nQQ294004
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 10 Sep 2025 05:09:49 -0500
-Received: from DLEE200.ent.ti.com (157.170.170.75) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 10
- Sep 2025 05:09:48 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE200.ent.ti.com
- (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 10 Sep 2025 05:09:48 -0500
-Received: from [172.24.233.20] (a0512632.dhcp.ti.com [172.24.233.20])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58AA9i9Y319332;
-	Wed, 10 Sep 2025 05:09:44 -0500
-Message-ID: <17f60699-e69c-45d2-8afd-46c831638d9d@ti.com>
-Date: Wed, 10 Sep 2025 15:39:43 +0530
+	s=arc-20240116; t=1757499015; c=relaxed/simple;
+	bh=0wzAX6XLcPfWv4S7WjABIA+S/nn9xC+k9TcmNTAl62g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jsUF84iTuTFuiCt649P+6OQ+0SjI9HsV7Nc6PXjHyAqZquEbKFM754z/bPXYCgKjZD15mPA3FhGr+Z1RJGBbPbE+oUOMN+BWFI/imK+x2vxYBRbZtK0USmXZo2IFsdZhOFDERdccp0mypW4iXSrLQIr2JoY5/r3TacIsrGEEUmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y9ZPgArC; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7704f3c46ceso5605127b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 03:10:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757499013; x=1758103813; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YZxYlfJSrjlXVbtmua7/1wg5EWnu3hRQY8kU5+OMn1k=;
+        b=Y9ZPgArCwSzZtAhXNdVTJOKSEVHO/ovDyagUVdxFQ9qJKLIIpgZF6OCWq/mzEb3CAe
+         Scvac0busq3jVnt7tTK48Nexx58A4qGYTWjFULbE42e+w6zzLhlq8Zin8vqgq8BWmNg3
+         Ag9vn+5/+6+nJvF1qGx91Vv2pT3rA1B4XT5v0V7kf2bx39vN/bDZvrEHTGM7DgzuBekA
+         etqIFyZE6V/HHRCGXpaIygEPqvJv9Gy0SI7rb+LVCPEzjhiR/HwZsA6yfyEK7egFTZCr
+         8oi0Mn7ey7kdAeiS5xu8efNPrQ15raqefjQp6++WBUGjlJFnZ8q5rCeXqAhKsOUnp/DK
+         m+Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757499013; x=1758103813;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YZxYlfJSrjlXVbtmua7/1wg5EWnu3hRQY8kU5+OMn1k=;
+        b=Vl9s4DJz86OurbkSKjcCSU2HEsjpf+wu75J99oHpU0bqUhYZWR65IYo7l1jUVkzvdh
+         QNUIJgQKguoEVmwbRJqikw/SE8rd2BsRcODh+E2UUEaXxmjqwJdO2fXXYxFraXHmyqwJ
+         ASzA5c/H8/DaMc61jwYaVDP0itCSnSzpZovttVl5ggsx7RJTK98gPyXpuy4WNbJxHCc2
+         yu9uADSYU0J7dRWnHA+oe/AuVFayZYwnFFxwxA27YGtKKw/z65HiH0SM6XLO/8RJHEQJ
+         OieENlrZT8FtgWZuw8D79lVyzilqOWH6nK1XTYQC2gGOhq7qvL8bYCddNzgValoB3q0N
+         dZUw==
+X-Gm-Message-State: AOJu0Yy8bJlEIiMZL2igbQ3BzinWt7DUHoG4d9it7yqBD6qG1Is3vCI9
+	tp1h92+Sm36RF9XFoVMYm2JkFcog7eJ6xJFvMNbZjTco9VVQotqXPG4s
+X-Gm-Gg: ASbGncseo8HGNU6nkPL4IplkpdrlmjjJvYQ1xeOdYerNliIYfk1+tdjRGX8bTbdkyJA
+	qiC2NkjN2RMUl0G3tWk/NWhvpsX4zzNVJp7yP2XOpY6T6lAqP1UKoeKmW/tqLik7fywKJg040mt
+	0rdOz6p9PMe7W35OP5ogP+lrRSXOjhT1IuDLGkztpESVUIyd8aKos2yqEHI5mJgdFXbcCf3CLOt
+	YmzSGXC2RsiBK0jnX4YOQNM3N8vjX4TrQDYUhZDeAF7tnVv84Qvn9wOOmYmDhijKWfZ9FpbX9jO
+	LKzTq5ZlPnH+gBT/jpPuzWGfOYGifDvUvvBrE+eTXnSiRFTCzfpU8sOKknL99QdQmNjnR41ALu/
+	iCjdMLhFVfC6t/uHLyuWKAyoxzcpKh3LP+r3jeu5nDgZESUjK7Q4wCh0oVR53KbM20nIQmuDUkd
+	kDry8=
+X-Google-Smtp-Source: AGHT+IEiqPtvulEqXvlbxC9thsrV5txImnHY1UJ/R4NtYAywySUcO/eKgpetuP6Dde4Uo58Yi3WsHA==
+X-Received: by 2002:a05:6a20:9186:b0:249:824c:c61d with SMTP id adf61e73a8af0-2533e853406mr20841414637.17.1757499012955;
+        Wed, 10 Sep 2025 03:10:12 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b548a3f28b4sm2148203a12.6.2025.09.10.03.10.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 03:10:12 -0700 (PDT)
+Message-ID: <8ff91be7-7cb7-492b-b1be-2d03516c8386@gmail.com>
+Date: Wed, 10 Sep 2025 19:10:09 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,282 +81,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] drm/tidss: Remove max_pclk_khz from tidss display
- features
-To: Maxime Ripard <mripard@kernel.org>
-CC: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, <h-shenoy@ti.com>,
-        <devarsht@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>,
-        <u-kumar1@ti.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <jyri.sarha@iki.fi>,
-        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-        <airlied@gmail.com>, <simona@ffwll.ch>, <aradhya.bhatia@linux.dev>
-References: <20250819192113.2420396-1-s-jain1@ti.com>
- <20250819192113.2420396-3-s-jain1@ti.com>
- <b95b60c3-5988-4238-a8d4-73bd8bbf8779@ideasonboard.com>
- <20250827-illegal-splendid-coyote-aff8cc@houat>
- <c3488e85-5cf0-4c97-85c3-64f4c2f5c9c5@ideasonboard.com>
- <c7f6958f-2c05-4887-88fa-a36bba3c73b6@ti.com>
- <20250909-noisy-elated-quetzal-07ec4e@houat>
+Subject: Re: [PATCH 13/13] docs: kdoc: a few more dump_typedef() tweaks
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org
+References: <20250909204349.123680-1-corbet@lwn.net>
+ <20250909204349.123680-14-corbet@lwn.net>
 Content-Language: en-US
-From: Swamil Jain <s-jain1@ti.com>
-In-Reply-To: <20250909-noisy-elated-quetzal-07ec4e@houat>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20250909204349.123680-14-corbet@lwn.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Maxime,
+Hi Jon,
 
-On 9/9/25 12:21, Maxime Ripard wrote:
-> On Wed, Sep 03, 2025 at 02:08:28PM +0530, Swamil Jain wrote:
->> Hi Tomi, Maxime,
->>
->> On 8/27/25 15:19, Tomi Valkeinen wrote:
->>> Hi,
->>>
->>> On 27/08/2025 12:27, Maxime Ripard wrote:
->>>> On Wed, Aug 27, 2025 at 11:49:22AM +0300, Tomi Valkeinen wrote:
->>>>> On 19/08/2025 22:21, Swamil Jain wrote:
->>>>>> From: Jayesh Choudhary <j-choudhary@ti.com>
->>>>>>
->>>>>> TIDSS hardware by itself does not have variable max_pclk for each VP.
->>>>>> The maximum pixel clock is determined by the limiting factor between
->>>>>> the functional clock and the PLL (parent to the VP/pixel clock).
->>>>>
->>>>> Hmm, this is actually not in the driver, is it? We're not limiting the
->>>>> pclk based on the fclk.
->>>>>
->>>>>> The limitation that has been modeled till now comes from the clock
->>>>>> (PLL can only be programmed to a particular max value). Instead of
->>>>>> putting it as a constant field in dispc_features, we can query the
->>>>>> DM to see if requested clock can be set or not and use it in
->>>>>> mode_valid().
->>>>>>
->>>>>> Replace constant "max_pclk_khz" in dispc_features with
->>>>>> max_successful_rate and max_attempted_rate, both of these in
->>>>>> tidss_device structure would be modified in runtime. In mode_valid()
->>>>>> call, check if a best frequency match for mode clock can be found or
->>>>>> not using "clk_round_rate()". Based on that, propagate
->>>>>> max_successful_rate and max_attempted_rate and query DM again only if
->>>>>> the requested mode clock is greater than max_attempted_rate. (As the
->>>>>> preferred display mode is usually the max resolution, driver ends up
->>>>>> checking the highest clock the first time itself which is used in
->>>>>> subsequent checks).
->>>>>>
->>>>>> Since TIDSS display controller provides clock tolerance of 5%, we use
->>>>>> this while checking the max_successful_rate. Also, move up
->>>>>> "dispc_pclk_diff()" before it is called.
->>>>>>
->>>>>> This will make the existing compatibles reusable if DSS features are
->>>>>> same across two SoCs with the only difference being the pixel clock.
->>>>>>
->>>>>> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
->>>>>> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
->>>>>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
->>>>>> Signed-off-by: Swamil Jain <s-jain1@ti.com>
->>>>>> ---
->>>>>>    drivers/gpu/drm/tidss/tidss_dispc.c | 85 +++++++++++++----------------
->>>>>>    drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
->>>>>>    drivers/gpu/drm/tidss/tidss_drv.h   | 11 +++-
->>>>>>    3 files changed, 47 insertions(+), 50 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
->>>>>> index c0277fa36425..c2c0fe0d4a0f 100644
->>>>>> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
->>>>>> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
->>>>>> @@ -58,10 +58,6 @@ static const u16 tidss_k2g_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
->>>>>>    const struct dispc_features dispc_k2g_feats = {
->>>>>>    	.min_pclk_khz = 4375,
->>>>>> -	.max_pclk_khz = {
->>>>>> -		[DISPC_VP_DPI] = 150000,
->>>>>> -	},
->>>>>> -
->>>>>>    	/*
->>>>>>    	 * XXX According TRM the RGB input buffer width up to 2560 should
->>>>>>    	 *     work on 3 taps, but in practice it only works up to 1280.
->>>>>> @@ -144,11 +140,6 @@ static const u16 tidss_am65x_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
->>>>>>    };
->>>>>>    const struct dispc_features dispc_am65x_feats = {
->>>>>> -	.max_pclk_khz = {
->>>>>> -		[DISPC_VP_DPI] = 165000,
->>>>>> -		[DISPC_VP_OLDI_AM65X] = 165000,
->>>>>> -	},
->>>>>> -
->>>>>>    	.scaling = {
->>>>>>    		.in_width_max_5tap_rgb = 1280,
->>>>>>    		.in_width_max_3tap_rgb = 2560,
->>>>>> @@ -244,11 +235,6 @@ static const u16 tidss_j721e_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
->>>>>>    };
->>>>>>    const struct dispc_features dispc_j721e_feats = {
->>>>>> -	.max_pclk_khz = {
->>>>>> -		[DISPC_VP_DPI] = 170000,
->>>>>> -		[DISPC_VP_INTERNAL] = 600000,
->>>>>> -	},
->>>>>> -
->>>>>>    	.scaling = {
->>>>>>    		.in_width_max_5tap_rgb = 2048,
->>>>>>    		.in_width_max_3tap_rgb = 4096,
->>>>>> @@ -315,11 +301,6 @@ const struct dispc_features dispc_j721e_feats = {
->>>>>>    };
->>>>>>    const struct dispc_features dispc_am625_feats = {
->>>>>> -	.max_pclk_khz = {
->>>>>> -		[DISPC_VP_DPI] = 165000,
->>>>>> -		[DISPC_VP_INTERNAL] = 170000,
->>>>>> -	},
->>>>>> -
->>>>>>    	.scaling = {
->>>>>>    		.in_width_max_5tap_rgb = 1280,
->>>>>>    		.in_width_max_3tap_rgb = 2560,
->>>>>> @@ -376,15 +357,6 @@ const struct dispc_features dispc_am625_feats = {
->>>>>>    };
->>>>>>    const struct dispc_features dispc_am62a7_feats = {
->>>>>> -	/*
->>>>>> -	 * if the code reaches dispc_mode_valid with VP1,
->>>>>> -	 * it should return MODE_BAD.
->>>>>> -	 */
->>>>>> -	.max_pclk_khz = {
->>>>>> -		[DISPC_VP_TIED_OFF] = 0,
->>>>>> -		[DISPC_VP_DPI] = 165000,
->>>>>> -	},
->>>>>> -
->>>>>>    	.scaling = {
->>>>>>    		.in_width_max_5tap_rgb = 1280,
->>>>>>    		.in_width_max_3tap_rgb = 2560,
->>>>>> @@ -441,10 +413,6 @@ const struct dispc_features dispc_am62a7_feats = {
->>>>>>    };
->>>>>>    const struct dispc_features dispc_am62l_feats = {
->>>>>> -	.max_pclk_khz = {
->>>>>> -		[DISPC_VP_DPI] = 165000,
->>>>>> -	},
->>>>>> -
->>>>>>    	.subrev = DISPC_AM62L,
->>>>>>    	.common = "common",
->>>>>> @@ -1347,25 +1315,57 @@ static void dispc_vp_set_default_color(struct dispc_device *dispc,
->>>>>>    			DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
->>>>>>    }
->>>>>> +/*
->>>>>> + * Calculate the percentage difference between the requested pixel clock rate
->>>>>> + * and the effective rate resulting from calculating the clock divider value.
->>>>>> + */
->>>>>> +unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
->>>>>> +{
->>>>>> +	int r = rate / 100, rr = real_rate / 100;
->>>>>> +
->>>>>> +	return (unsigned int)(abs(((rr - r) * 100) / r));
->>>>>> +}
->>>>>> +
->>>>>> +static int check_pixel_clock(struct dispc_device *dispc,
->>>>>> +			     u32 hw_videoport, unsigned long clock)
->>>>>> +{
->>>>>> +	unsigned long round_clock;
->>>>>> +
->>>>>> +	if (dispc->tidss->is_ext_vp_clk[hw_videoport])
->>>>>> +		return 0;
->>>>>> +
->>>>>> +	if (clock <= dispc->tidss->max_successful_rate[hw_videoport])
->>>>>> +		return 0;
->>>>>> +
->>>>>> +	if (clock < dispc->tidss->max_attempted_rate[hw_videoport])
->>>>>> +		return -EINVAL;
->>>>>> +
->>>>>> +	round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
->>>>>> +
->>>>>> +	if (dispc_pclk_diff(clock, round_clock) > 5)
->>>>>> +		return -EINVAL;
->>>>>> +
->>>>>> +	dispc->tidss->max_successful_rate[hw_videoport] = round_clock;
->>>>>> +	dispc->tidss->max_attempted_rate[hw_videoport] = clock;
->>>>>
->>>>> I still don't think this logic is sound. This is trying to find the
->>>>> maximum clock rate, and optimize by avoiding the calls to
->>>>> clk_round_rate() if possible. That makes sense.
->>>>>
->>>>> But checking for the 5% tolerance breaks it, in my opinion. If we find
->>>>> out that the PLL can do, say, 100M, but we need pclk of 90M, the current
->>>>> maximum is still the 100M, isn't it?
->>>>
->>>> 5% is pretty large indeed. We've been using .5% in multiple drivers and
->>>> it proved to be pretty ok. I would advise you tu use it too.
->>>
->>> The 5% comes from OMAP DSS, where we had to do pixel clock with a few
->>> dividers and multipliers. The rates were quite coarse, and we ended up
->>> having quite a large tolerance.
->>>
->>> I think with tidss, we always have a PLL we control, so we should always
->>> have very exact clocks. So I'm fine with dropping it to .5%. However,
->>> this patch and series is about removing the a-bit-too-hardcoded VP clk
->>> max rate code in the driver, so I would leave everything else to another
->>> series.
->>>
->>>> It's not clear to me why avoiding a clk_round_rate() call is something
->>>> worth doing though?
->>>
->>> Hard to say if it's worth doing, someone should make some perf tests.
->>> However, afaik, the calls do go to the firmware, so it involves
->>> inter-processor calls. On OMAP DSS checking the clock rates was slow, as
->>> it involved lots of iterating with dividers and multipliers. Perhaps
->>> it's much faster here.
->>>
->>>> Even caching the maximum rate you have been able to reach before is
->>>> pretty fragile: if the PLL changes its rate, or if a sibling clock has
->>>> set some limits on what the PLL can do, your maximum isn't relevant
->>>> anymore.
->>>
->>> You're right, although afaik it should not happen with TI's SoCs. We
->>> would be in trouble anyway if that were the case (e.g. someone starts
->>> the camera, and suddenly we can't support 1080p anymore).
->>>
->>>> in other words, what's wrong with simply calling clk_round_rate() and
->>>> checking if it's within a .5% deviation?
->>>
->>> This started with discussions how to replace the hardcoded max VP clock
->>> rate (used to quickly weed out impossible rates), which in reality was
->>> actually PLL max clock rate. We don't know the PLL max rate, and can't
->>> query it, so this approach was taken.
->>>
->>>> At the very least, this should be explained in comments or the commit
->>>> message.
->>>
->>> I agree.
->>>
->>> Swamil, can you do some perf tests with clk_round_rate()? If it's fast
->>> (enough), it will simplify the driver.
->>
->> Average execution time is around 112 us.
->> Trace file including the execution time for clk_round_rate():
->> https://gist.github.com/swamiljain/2abe86982cdeba1d69223d2d525e0cb6
->> It is better to reduce calls to clk_round_rate().
+A quick report on minor regression. Please see below.
+
+On Tue,  9 Sep 2025 14:43:49 -0600, Jonathan Corbet wrote:
+> Merge "typedef" into the typedef_type pattern rather than repeating it
+> later, and add some comments.
+
+I'm seeing new warnings after applying 13/13:
+
+WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno ./include/media/demux.h' processing failed with: NameError("name '_type' is not defined")
+WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno ./include/media/v4l2-ioctl.h' processing failed with: NameError("name '_type' is not defined")
+WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno ./include/media/v4l2-ctrls.h' processing failed with: NameError("name '_type' is not defined")
+WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno ./include/media/v4l2-dv-timings.h' processing failed with: NameError("name '_type' is not defined")
+WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno ./include/media/videobuf2-core.h' processing failed with: NameError("name '_type' is not defined")
+WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno ./include/linux/hte.h' processing failed with: NameError("name '_type' is not defined")
+WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno ./include/linux/xarray.h' processing failed with: NameError("name '_type' is not defined")
+WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno -function gen_pool_add ./include/linux/genalloc.h' processing failed with: NameError("name '_type' is not defined")
+WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno -function gen_pool_alloc ./include/linux/genalloc.h' processing failed with: NameError("name '_type' is not defined")
+WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno -function vdso_sgx_enter_enclave_t ./arch/x86/include/uapi/asm/sgx.h' processing failed with: NameError("name '_type' is not defined")
+
+Thanks,
+Akira
+
 > 
-> But why?
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 20 +++++++++++---------
+>  1 file changed, 11 insertions(+), 9 deletions(-)
 > 
-> 100us is ridiculously small in that context. Even assuming you have like
-> 10 modes, we're in the millisecond order of magnitude. Assuming no
-> contention on the bus, it's about the same than reading the EDIDs.
-> Hotplug pulses in HDMI take 100 *milli* seconds. Sync time is in
-> seconds.
-> 
-> Unless you have a real world benchmark that shows that it's too slow,
-> you shouldn't care. And if you do have that benchmark, it should be
-> fixed for all drivers.
-Used ftrace to get execution time for dispc_vp_mode_valid(), below are 
-the stats:
-
-With caching logic:
-   Function                               Hit    Time          Avg
-   --------                               ---    ----          --------
-   dispc_vp_mode_valid                     30    107.870 us    3.595 us
-
-Without caching logic:
-   Function                               Hit    Time             Avg
-   --------                               ---    ----          --------
-   dispc_vp_mode_valid                     30    3531.215 us   117.707 us
-> 
-> Either way, you don't need your caching logic in the tidss driver.
->
-Ack, will not use caching logic, can provide a link to the caching logic 
-patch in commit msg if someone is concerned about optimization. Will 
-respin a v6 without caching logic.
-
-Regards,
-Swamil> Maxime
-
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index ad9df0536bbf..8215948dd548 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -1026,13 +1026,15 @@ class KernelDoc:
+>          """
+>          Stores a typedef inside self.entries array.
+>          """
+> -
+> -        typedef_type = r'((?:\s+[\w*]+\b){0,7}\s+(?:\w+\b|\*+))\s*'
+> +        #
+> +        # We start by looking for function typedefs.
+> +        #
+> +        typedef_type = r'typedef((?:\s+[\w*]+\b){0,7}\s+(?:\w+\b|\*+))\s*'
+>          typedef_ident = r'\*?\s*(\w\S+)\s*'
+>          typedef_args = r'\s*\((.*)\);'
+>  
+> -        typedef1 = KernRe(r'typedef' + typedef_type + r'\(' + typedef_ident + r'\)' + typedef_args)
+> -        typedef2 = KernRe(r'typedef' + typedef_type + typedef_ident + typedef_args)
+> +        typedef1 = KernRe(typedef_type + r'\(' + typedef_ident + r'\)' + typedef_args)
+> +        typedef2 = KernRe(typedef_type + typedef_ident + typedef_args)
+>  
+>          # Parse function typedef prototypes
+>          for r in [typedef1, typedef2]:
+> @@ -1048,16 +1050,16 @@ class KernelDoc:
+>                                f"expecting prototype for typedef {self.entry.identifier}. Prototype was for typedef {declaration_name} instead\n")
+>                  return
+>  
+> -            decl_type = 'function'
+> -            self.create_parameter_list(ln, decl_type, args, ',', declaration_name)
+> +            self.create_parameter_list(ln, 'function',_type, args, ',', declaration_name)
+>  
+> -            self.output_declaration(decl_type, declaration_name,
+> +            self.output_declaration('function', declaration_name,
+>                                      typedef=True,
+>                                      functiontype=return_type,
+>                                      purpose=self.entry.declaration_purpose)
+>              return
+> -
+> -        # Parse simple typedefs
+> +        #
+> +        # Not a function, try to parse a simple typedef.
+> +        #
+>          r = KernRe(r'typedef.*\s+(\w+)\s*;')
+>          if r.match(proto):
+>              declaration_name = r.group(1)
 
