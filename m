@@ -1,106 +1,130 @@
-Return-Path: <linux-kernel+bounces-810937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93A9B521B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:23:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AFC9B52249
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E5063B2507
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:23:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 306F156055E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BECE2EF655;
-	Wed, 10 Sep 2025 20:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417702FE57C;
+	Wed, 10 Sep 2025 20:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="asz8WCyf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N7gQndas"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCc3TpYH"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95362EF648
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB702EF661;
+	Wed, 10 Sep 2025 20:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757535788; cv=none; b=lkMvfrx1j3Gg6Uj4GU0oSFEXVEAw4AUkmA2R0A4uisY15g48tDKjJCNsfgSVZALx0ZUZzGJJawPynj6zVRgm8VpPt52D1eSHmAoEZJp7R1C6S0nPZBDE/YY1MXZ0Lz7xZXoVaOv0hq+guKBpKPESrs4/PM0oDEabcp41pC5hZjI=
+	t=1757535902; cv=none; b=iPDTsuP1eJ6iN641EWfDXCHs34Z6lDuFe7R3/NEYqkVKDPn8hB/Jw/YOnHzwUT9gfwvoktW+PEC1qqmIaEiwI7dS8RO+ryQbrVBkptWCuR7ecJQEusMLcV8V00MVZA21yWxnY82EzAxBX0SO9LsQbEDSD/UBEuUbfGfpurxrRbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757535788; c=relaxed/simple;
-	bh=Qt9fEPDDSAxfSjWKJn2lptREGY68byhg4Qt0ZZytO2M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MeH4eqJqrlMrY3rjkBbehEpm/USB87gtdgE/Lx+jMRQH4su51SBAeVtBQJ0xUvduJDPYT2wzHV6y4CuIVmmEkYdm9TdpBlS/YIdp4K7UrSEuLgnRkSmeoBNXylnYVXNleSxY3OocNgjenz6iZZ4KO+kpc+P75sxjiE55Dz/H72Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=asz8WCyf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N7gQndas; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757535785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z6JppIYrmEDWEBmdblA7ULIVxZIHJ3mliKKCj/J+dUc=;
-	b=asz8WCyf9cnS3BMBwtrU3ZqPWzgbaNDidcLL/dq7mwu+tfHouh4PlTUSVHH2aevv6qaiiH
-	mrFRl4Ffda2v4nbsGVWwJpSXd0AWFZS4ixEpY0w2s/zsJ3CwVjx0fUwb3xYY6doaOYPBCu
-	7TWTlLTtVFU3GodRA0gVBSJS+wFyBAohRtGm0EegZuo5JtvQJ62TslVKJ53vNaW7K/ZKvk
-	FwzRmBtruktBOAwqctDK8yB4IPdPQPIL+unA31zsjlybTc1Boz8DuyopiK38ghL0h+nfpK
-	RagXnDR1bh3kcMMvL5+xcQBzmejEh9UxWpC4rYNhujuDSu37sn/bfrcuqOfPmg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757535785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z6JppIYrmEDWEBmdblA7ULIVxZIHJ3mliKKCj/J+dUc=;
-	b=N7gQndas+HW+vhHMKOorVfZL45dU91oZcvccxJZRsxCAxGlqVlCitko6PEVkq+D+6Ov6Q+
-	hATZLZFP+SUt2cBw==
-To: Guillaume La Roque <glaroque@baylibre.com>, Nishanth Menon <nm@ti.com>
-Cc: vigneshr@ti.com, Santosh Shilimkar <ssantosh@kernel.org>, Tero Kristo
- <kristo@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] soc: ti: ti_sci_inta_msi: Enable module
- compilation support
-In-Reply-To: <0bc124c7-55af-4a25-b02d-3bd9aabf0266@baylibre.com>
-References: <20250812-timsi-v2-0-90c8500f3f18@baylibre.com>
- <20250812-timsi-v2-2-90c8500f3f18@baylibre.com>
- <20250813152610.akcdxrzhev6e2kfa@unturned>
- <0bc124c7-55af-4a25-b02d-3bd9aabf0266@baylibre.com>
-Date: Wed, 10 Sep 2025 22:23:04 +0200
-Message-ID: <87ldmmrr9z.ffs@tglx>
+	s=arc-20240116; t=1757535902; c=relaxed/simple;
+	bh=LN/Pm2aI3unWGjOpaEmse7ymvqMA+LS9/qIBzvcXW8s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=app4mfwjiuBHvdg32cdH8uIs9FVxlty0ezpo/SPNZgR3iHX0ULWSNpXVMsbv75Wj0SCKaa3219YQfYpUsXH2GTzeItCebdy7e6Hgcg+7BKO3yWGKek3pWCBWCKTdjuDHCfgSDHmaF4YnwKBtF2ZU5SyOtWY8Z4i9Ng2hd2xkfiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LCc3TpYH; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb78ead12so1023200466b.1;
+        Wed, 10 Sep 2025 13:25:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757535899; x=1758140699; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LN/Pm2aI3unWGjOpaEmse7ymvqMA+LS9/qIBzvcXW8s=;
+        b=LCc3TpYHIO97dd2ysGPeYxDZfs7kZ3vcV6yxhLXmyIcKp2Q+aS/sXBvbm9jW5CuO6Z
+         wXRDWeUKhFDiSq8kkHJAxQt6CM6KHPRtZFq9QOgXq7YkwqI7z4NRukU+PwG9UtwkrJma
+         TFAV2cfndlfTDm7E4g67xEZ4m2B9a+JWg4gysK8aWY1sBJLXaxsV+PQse4bBDu5rSZyH
+         KdqqTv5GqKV1DRP0+zE/JeUwLphCv0EzpPaPz62V6Hbh0TuuL/pGMWB6PdueSSfl6NBN
+         F8GE1uFEIM9DnVpFawvqScJtt/jbgRW30S5+sLR67dHDG4lKzRuIu8AFiGfZP+DYiWFY
+         nChA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757535899; x=1758140699;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LN/Pm2aI3unWGjOpaEmse7ymvqMA+LS9/qIBzvcXW8s=;
+        b=VKalyUMUL/OzBWW0G3ezHFdo5LdB9GWucpmwcDChYigav2lxjwAxnheziSXnjNIyFp
+         /9dq4bnRwvbMSEujgxLn77YX1T2Pf8OMBCh18Box5+q06vUpH6xolyyQggnVcAOOmDx1
+         E9ctZ7/Wcn0ZMGVKv6ELVo0DG7aGlgQEgz0DnvmAawVhynr8IXPOf3o9e6BIKII/gLvR
+         k1bsJAf1qfcy9IkDrPgd6QBRnivzXqQn/RrCXJ890XYZ1uhgA0bUgGqPSyBns7X3uv5m
+         GmGheuEVmFN6VWbH3t3v8Bu61rl3zIDZyEkPVGUHYvwCZMSRMwhNQejMi0cSAJUlEc8L
+         34zA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6nnRj7k59jYqDmvQkB99X/kRCP7Kd9pltRTVipXPMAhH+HFDJvtVtRPKNCdFTuBScWZwDZ9sI884=@vger.kernel.org, AJvYcCWl2U4xsAsC8inFOI9AxotBlzsi4VeuwWmFIdQB29hNAZZgpK4ZqizQYFNeLmzOXJPPp/A3fYYNyyS6+X0G@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC8FKsY3QD3rugaz4sd0uTMy+T8rs7EO7b5YPKZ/7oY7syMSUn
+	ZwxeOKTYlnJ5cMsOMEtqzVXyc3vZT4b0l61EmoJYdPY2kRPScelnahWxIc+LUCCgZWjZpWVPJy0
+	NUttmUpIlQtO0qnmPrnU2CBgNIAyUf28=
+X-Gm-Gg: ASbGnctRDCDY7J5Se64I6kk3tqfRvzu2qOfV3VOm6GPkjoqYNgQTJwTgsDGFlXjcVQC
+	32XzWfaSn6iFd3vbcEgiMpzvs5ghpkOvJ3h/PJ2U8YEGHrq+2gNL7+DjyjS1w9pqahSBo535oCv
+	s3s8BkDgr7so/5bu8SXRLva8JaUTwOkkiITbWHkEFWSBj0NH/r+lbfqBeXvPqFVjV/LM4ESa+uP
+	UcKbcM2vHlyeBh+Kw==
+X-Google-Smtp-Source: AGHT+IGBsTe8YlXdloB6d1QMc4VNEWTut14w8qqlJ9oDkQ88tR0CVNqgs5k9wYhiqlwu9RRj7n4D3wOUrVlpb/uhwiE=
+X-Received: by 2002:a17:907:9721:b0:b04:241c:e70e with SMTP id
+ a640c23a62f3a-b04b1452820mr1737673066b.19.1757535899125; Wed, 10 Sep 2025
+ 13:24:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250909194649.10512-1-akshayaj.lkd@gmail.com>
+ <CAHp75VfpQ9c4cptnNGzFYakQxY7JjtUEMDsysS9KJ60xrzaE4g@mail.gmail.com>
+ <CAE3SzaTZ8PXM_B8FBetOTSfz2myGZ=WzPp8h2d79Q95zKLq5hw@mail.gmail.com> <20250910201212.5d9f57bc@jic23-huawei>
+In-Reply-To: <20250910201212.5d9f57bc@jic23-huawei>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 10 Sep 2025 23:24:22 +0300
+X-Gm-Features: AS18NWBK41AZZ2Dj4c-vwky0-M0fZ_qHwr0WtyVqNC3GsukO78bcqi7Ubbo6Tfg
+Message-ID: <CAHp75Vf+9PJgR5Eev_Z+QB4cp+VMctFfqpTMWuE3VsnGpZ6dJQ@mail.gmail.com>
+Subject: Re: [PATCH v7] iio: light: ltr390: Implement runtime PM support
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Akshay Jindal <akshayaj.lkd@gmail.com>, anshulusr@gmail.com, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 02 2025 at 16:40, Guillaume La Roque wrote:
+On Wed, Sep 10, 2025 at 10:12=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
+> wrote:
+> On Wed, 10 Sep 2025 18:06:32 +0530
+> Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
 
-Can you please trim your replies?
+> > Thank you very much for your valuable feedback.
+> > I do have a small request regarding the review process. Over the past 3=
+=E2=80=934
+> > versions,most of the comments have been about fixing indentations and
+> > improving code readability. I would kindly request if it would be possi=
+ble
+> > to consolidate such cosmetic comments into a single review round.
+> >
+> > I completely understand that incremental feedback makes sense when the =
+code
+> > is actively changing, but if the changes are minimal, spreading out min=
+or
+> > suggestions over multiple review cycles tends to unnecessarily increase=
+ the
+> > turnaround time.
+> >
+> > Your support in this would help me address the comments more efficientl=
+y.
 
-> I will resend weries because something look not ok i don't find serie in 
-> lore or patchwork.
+I can't always see _all_ problems at once, I am not a robot. I will
+try my best, though.
 
->> If Thomas doesn't mind picking the full series,
+...
 
-Is this actually addressing my previous feedback on this?
+> Andy, if you are fine with the explanation I'll tidy up the minor stuff
+> whilst applying.
 
-   https://lore.kernel.org/all/87cy87zx87.ffs@tglx
+Yes, I am fine, go with it, thanks!
 
->>>   config TI_SCI_INTA_MSI_DOMAIN
->>> -	bool
->>> +	tristate "TI SCI INTA MSI Domain driver"
->>>   	select GENERIC_MSI_IRQ
->>>   	help
->>>   	  Driver to enable Interrupt Aggregator specific MSI Domain.
->>> +
->>> +	  Say Y here to compile it into the kernel or M to compile it as a
->>> +	  module. The module will be called ti_sci_inta_msi.
-
-I doubt it, otherwise this would not exist anymore.
-
-If you disagree with me, then have the courtesy to tell me why. Just
-ignoring me is not an option.
-
-Thanks
-
-        tglx
+--=20
+With Best Regards,
+Andy Shevchenko
 
