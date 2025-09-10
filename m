@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-810381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED92B51982
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:36:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 417D9B51987
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61D901892DBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:36:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831551C806F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B8932A3DE;
-	Wed, 10 Sep 2025 14:36:10 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED2632A835;
+	Wed, 10 Sep 2025 14:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcziRYTY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FB130F812
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7302A32A3D7;
+	Wed, 10 Sep 2025 14:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757514969; cv=none; b=rhS0jLYe2c0Lyx9fvIpbJ5Rv6ccjN7CHjizbD9Zp903dcMla3fKA9LUMycmE+InkMWAyyRj+8cHBHoQIY+kJeoAoRIqVnGgkbXRtrFNYFZpi6fKKCAKUh4gztt/V3b8OIuGjJ8wvCtnHs5N6XmQ4ZrE8Dw3yvGlod26xJXs6Adk=
+	t=1757514979; cv=none; b=CYMHBXlJiwDkclCcpCuNLynvgz7mysVt3FS1yVMdexdBIsVVj3scXDHFlbWFKjFt1JRGb/HRn3b7ocvraa81/qBZTmVuPja87/iVoAm1FOpQfKsXRQxJp8HymP4S6WjiPgWxDYsFe50c9lyrjO4aJztY5sO3js6muNdGv0omYyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757514969; c=relaxed/simple;
-	bh=Qcv9VypQ5CrpXUdBUIiKcNieFWwbjJkp9RmJQnfPYd4=;
+	s=arc-20240116; t=1757514979; c=relaxed/simple;
+	bh=YzN2vCtNXOfPmEUy/QtzOmDZxzWZ2vYAup9vdx715rk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pPm2k1En0cbVODJC+dz17kH0WYc1Yp0pxS7dfe2K2ml7oadylVm/Rp2WuhEU8QsIsmaFJtGT6/YZj6BLPTnaNLd5dkt+5UhiNXlIaeutxFWjgf23ESwSd3I3HCY0ERlrhneumL2qjdRHo2TX4qCg7DpxCT9wAe4aP1aup740+aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uwLvU-0007bu-E8; Wed, 10 Sep 2025 16:36:00 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uwLvS-000bjF-35;
-	Wed, 10 Sep 2025 16:35:58 +0200
-Received: from pengutronix.de (glittertind.blackshift.org [116.203.23.228])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 8A5AD46B034;
-	Wed, 10 Sep 2025 14:35:58 +0000 (UTC)
-Date: Wed, 10 Sep 2025 16:35:56 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Patrik Flykt <patrik.flykt@linux.intel.com>, 
-	Dong Aisheng <b29396@freescale.com>, Varka Bhadram <varkabhadram@gmail.com>, 
-	Wu Bo <wubo.oduw@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH v2 7/7] can: m_can: add optional support for reset
-Message-ID: <20250910-gay-rigorous-kingfisher-abafca-mkl@pengutronix.de>
-References: <20250909-m_can-fix-state-handling-v2-0-af9fa240b68a@pengutronix.de>
- <20250909-m_can-fix-state-handling-v2-7-af9fa240b68a@pengutronix.de>
- <DCP0LDEOSFXS.1E937SV1347BX@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u8RbOC+1yq+Dm1tC747pIYaZSrjq4CWBOlUxRsOpNHUari0XWdOSmKEZoU921vvMrajyA6PiSaPGVXwxRXWhg0sErL94HaG7psYe3P1WcBozA8FfeKtOGuL7o3/66LZ99Q1/pYN5gDQHkkuPDp6GGqiO3RGcZhs8b0ElnVcocv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcziRYTY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3EC0C4CEEB;
+	Wed, 10 Sep 2025 14:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757514978;
+	bh=YzN2vCtNXOfPmEUy/QtzOmDZxzWZ2vYAup9vdx715rk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TcziRYTYjchVtxoB9c9jxPGdTtH8mRcmyM0KzU+MT9Wvq7cTN3ItuzY3bIARaBIQ0
+	 maLWUpobcoR0VBLEhkZQtzjsRyGo5BQrMjAvQU1kuWrgkrnQ2JOXsP1Rqcl0FyYFRZ
+	 MgY3Z1fV4VgFb8slQlwvM8aTQbqcrE4wiViC2hkhs3XXOcNBx/gH+aa24Byz2Bq9xH
+	 YDcQN6Mg00HsekKooHydArdlKbBPtw3EatWrexA5irgomMXn/0wjp/3cJQ3lFqXJ2t
+	 Er39O+Ouvu8cFbvN8cO71In7Sk+0MoLdX/YjJ/eB6on0oDpqYWfMIwBlI8co8JhIa3
+	 auGJTVRYZcT7A==
+Date: Wed, 10 Sep 2025 09:36:18 -0500
+From: Rob Herring <robh@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Eric Dumazet <edumazet@google.com>, linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>, Vinod Koul <vkoul@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, devicetree@vger.kernel.org,
+	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/9] dt-bindings: net: qcom: document the ethqos device
+ for SCMI-based systems
+Message-ID: <20250910143618.GA4072335-robh@kernel.org>
+References: <20250910-qcom-sa8255p-emac-v1-0-32a79cf1e668@linaro.org>
+ <20250910-qcom-sa8255p-emac-v1-2-32a79cf1e668@linaro.org>
+ <175751081352.3667912.274641295097354228.robh@kernel.org>
+ <CAMRc=Mfom=QpqTrTSc_NEbKScOi1bLdVDO7kJ0+UQW9ydvdKjQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="66zxwyxnktomwrop"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <DCP0LDEOSFXS.1E937SV1347BX@baylibre.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mfom=QpqTrTSc_NEbKScOi1bLdVDO7kJ0+UQW9ydvdKjQ@mail.gmail.com>
 
+On Wed, Sep 10, 2025 at 03:43:38PM +0200, Bartosz Golaszewski wrote:
+> On Wed, Sep 10, 2025 at 3:38 PM Rob Herring (Arm) <robh@kernel.org> wrote:
+> >
+> >
+> > On Wed, 10 Sep 2025 10:07:39 +0200, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > Describe the firmware-managed variant of the QCom DesignWare MAC. As the
+> > > properties here differ a lot from the HLOS-managed variant, lets put it
+> > > in a separate file.
+> > >
+> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > ---
+> > >  .../devicetree/bindings/net/qcom,ethqos-scmi.yaml  | 101 +++++++++++++++++++++
+> > >  .../devicetree/bindings/net/snps,dwmac.yaml        |   4 +-
+> > >  MAINTAINERS                                        |   1 +
+> > >  3 files changed, 105 insertions(+), 1 deletion(-)
+> > >
+> >
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> >
+> > yamllint warnings/errors:
+> >
+> > dtschema/dtc warnings/errors:
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.example.dtb: ethernet@44000000 (renesas,r9a06g032-gmac): power-domains: [[4294967295]] is too short
+> >         from schema $id: http://devicetree.org/schemas/net/renesas,rzn1-gmac.yaml#
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.example.dtb: ethernet@44000000 (renesas,r9a06g032-gmac): Unevaluated properties are not allowed ('clock-names', 'clocks', 'interrupt-names', 'interrupts', 'phy-mode', 'power-domains', 'reg', 'rx-fifo-depth', 'snps,multicast-filter-bins', 'snps,perfect-filter-entries', 'tx-fifo-depth' were unexpected)
+> >         from schema $id: http://devicetree.org/schemas/net/renesas,rzn1-gmac.yaml#
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.example.dtb: ethernet@44000000 (renesas,r9a06g032-gmac): power-domains: [[4294967295]] is too short
+> >         from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): power-domains: [[4294967295, 4]] is too short
+> >         from schema $id: http://devicetree.org/schemas/net/mediatek-dwmac.yaml#
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): Unevaluated properties are not allowed ('mac-address', 'phy-mode', 'reg', 'snps,reset-delays-us', 'snps,reset-gpio', 'snps,rxpbl', 'snps,txpbl' were unexpected)
+> >         from schema $id: http://devicetree.org/schemas/net/mediatek-dwmac.yaml#
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): power-domains: [[4294967295, 4]] is too short
+> >         from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yaml#
+> >
+> 
+> These seem to be a false-positives triggered by modifying the
+> high-level snps.dwmac.yaml file?
 
---66zxwyxnktomwrop
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 7/7] can: m_can: add optional support for reset
-MIME-Version: 1.0
+No. You just made 3 power-domains required for everyone.
 
-On 10.09.2025 11:32:04, Markus Schneider-Pargmann wrote:
-> > diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_ca=
-n.c
-> > index 9528af8500af..93085bf1c267 100644
-> > --- a/drivers/net/can/m_can/m_can.c
-> > +++ b/drivers/net/can/m_can/m_can.c
+You have to test without DT_SCHEMA_FILES set so that every example is 
+tested with every possible schema.
 
-[...]
-
-> > +	cdev->rst =3D devm_reset_control_get_optional_shared(cdev->dev, NULL);
-> > +	if (IS_ERR(cdev->rst))
-> > +		return PTR_ERR(cdev->rst);
->=20
-> Should this print an error message here?
-
-makes sense
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---66zxwyxnktomwrop
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjBjMkACgkQDHRl3/mQ
-kZzgrQgApzmQ/kzhOLSRpvMqZhnGhK7PjEmu8YpSzK0Mixg4Ev7U55o3GciGL8Ei
-mzn5AjRrRJTUje7pd+RS7DQ6hCpXzI/B/lBHPgYLGYES9cRefQXR1oitWOFKDiwD
-994zjarSrr7h/6VoFYfGeXO/UvduULD3V8eSKhYBDxEuYwES8csIJp5pSE7oTx4R
-CYLpVxI21sui/Bjgu+OwadFsFkrR08EIK4pJvfMx4e8L8ZdyVnn2acj5O9qMXdOI
-ptRobYRsF8uSeDCm550HTiGnGfJv3LHXMm7C3ZOzRaVKfpjZ0NT4kxJjZ0cz29yT
-qcJ5PSLZV7QjGnKOCCFFm3ivDfNpzA==
-=EJob
------END PGP SIGNATURE-----
-
---66zxwyxnktomwrop--
+Rob
 
