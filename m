@@ -1,148 +1,132 @@
-Return-Path: <linux-kernel+bounces-809589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E95B50F84
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:34:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1851B50F89
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 749513AE26A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:33:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78159178267
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E2430BF4E;
-	Wed, 10 Sep 2025 07:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaweH+z8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB78930BF60;
+	Wed, 10 Sep 2025 07:34:19 +0000 (UTC)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34001E5219;
-	Wed, 10 Sep 2025 07:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC3630B532;
+	Wed, 10 Sep 2025 07:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757489629; cv=none; b=FABDb6HuMJeDZvBOvhzjWHoIBvNmRdJBaRlu7qBSIKYTxtTVtNgO8qfYmBFWEp5AzheyGFtCzOwfnIdu0h8mFEAUjSh2XOKGlTO1tls7SVvmQq7t9cVTH6nf9TeoDhvPOv0eVOCtf4t+FipGuE5opkgmkKXDm6CN6TRhvwVqxlI=
+	t=1757489659; cv=none; b=N05B1plaEZz0tIbVgRM3RWZ6Ia46iGGehlVWCanMG3s0/ddTVJ3vuTGKDXNq8QFVjza5fGeKqVyUc5RDhlp7261ht6Jqc8YFrfZjLTd5yfb5NZsfZ1hszkIvgfISdeC2BPfsSKsOyJ1qRJaA8odkp610fNayWrE2WshliiWL+mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757489629; c=relaxed/simple;
-	bh=/XnpTWNk/kv+NQgAdTS1A1Ab76RuactuTcyAflw/L7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ao2FaGswLqsDr1A8ZnOZlTQxQtMQgde0Ba+gkapSTeEksQHoxHvAVG0GwRCb8bZJxBg5NzqwtyXHeCbu3UMG/5ET60hqQFdI8/67i/UQ5VZyNmFaeCUTT2+gDu2nTlW+jh8OhKJkIPR9jiUdaPIg/QVyod+3Pgr48zSMTWo/Akg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaweH+z8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB517C4CEF0;
-	Wed, 10 Sep 2025 07:33:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757489628;
-	bh=/XnpTWNk/kv+NQgAdTS1A1Ab76RuactuTcyAflw/L7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qaweH+z8BxmkKE1ouYJdFNhlYQj7OSwPR6vei84660qDGY3b2ayba8Xa4NjRhRKqQ
-	 epTHEwqDw7OOhz42xo6a3A9e4uehd2Gr9neNldgZ9djYFdeMgDg6V+foFy5QOBv1Uz
-	 i5lSzewoRPlG06mEm7cYk9DdBcniCZXb3KefyLLOO0rU0dNm8ZAzQghWHi8bEbRCZZ
-	 itXMl6OPuDhFdNfzXYphQv+ZxGx9804vA4czk6CZ+ZJKTCTXrw2LrYXR+A50evfJXv
-	 0Dz0F9RPM0QrdZrLUO7hYRN5OtTtEbg/6vJXWYoBn7vmo0i1GvF7n0DyV82UuAVK0n
-	 lJ87BRzJ4JaEg==
-Date: Wed, 10 Sep 2025 09:33:45 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Davis <afd@ti.com>, Jared Kangas <jkangas@redhat.com>, 
-	Mattijs Korpershoek <mkorpershoek@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	iommu@lists.linux.dev, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v7 0/5] dma-buf: heaps: Create a CMA heap for each CMA
- reserved region
-Message-ID: <20250910-vigorous-attractive-gorilla-af6fec@houat>
-References: <20250721-dma-buf-ecc-heap-v7-0-031836e1a942@kernel.org>
- <20250826-vagabond-catfish-of-courtesy-cbfa76@houat>
+	s=arc-20240116; t=1757489659; c=relaxed/simple;
+	bh=7JVCTuxNSSrD3gp30fd3z1ICk15oPmTaX7Cu1euHSkM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DRPr85UAK/YcO6oxGYusnEE7xtMg4b62fyc1coAumKWNGKXCvVohovsfFRpX4/kySXSpAyHygeJi5PaKS1et7DiGCI1yQXLXwmCvtnCXKmMseiXlOsWMFt/l59N+LbTd94fQ1VQuY05tmLUAjlxD/aAcTbjuPN7UJpLQh9eyl3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-53410d0f4e7so5084178137.0;
+        Wed, 10 Sep 2025 00:34:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757489654; x=1758094454;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FmLXE0lZ84N+xSM1hxrqEkto2TV6tPUT28zoISyt35g=;
+        b=weyEneUHM33R3yV32qjP2qwivB4PTMVD6SxasglWcIjARU5TWVLFSHoQJJCq+bYHzO
+         5hWZOew3ooLSo/BaRgLPQSNdKKisL6zIGqUt1oLDnlwG89SMGJ9j8kn0gS0fLd73qsqM
+         Sc3dnX0TqjKJpbEULlSLt5eiJ9flGG2MZnMdWaeXsmVY4iaBzj75QgCg8u1guBd/+y0G
+         HQxuopcalB48R+tCb19o2+HAbS4e75wZkLRw7FDmknYM9FZaXq/ehtFHFx1YHV4JEKpX
+         ymCledvhwBgiilfim4slXnhmlyj2io5zX5WVh4+rMKMsOYeGYGq1Q1KMf4M/p3+Ovpre
+         pvQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIy1fT6huDQfQrPjo7pZrD/UaDsiLdVci0vXqpMR6N0ahR6li2mZbMMHCVRfYqo0T9qocgdcXJR5x4358=@vger.kernel.org, AJvYcCVzPsezo66BiUcyhThd5tjMMcL8eOk0sNGDL+HhtMluQTRJ1WunMaYfdxNa+TzSvIExMecqx7pS@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKCjGk15SfTCsFqxEzN0PMNrvmi2A9NE+X+lLPBceJBEXugBFy
+	l0frsb+37cHHiJo2/jXn2otqkVrRPNxiJAGmomqHc0hdd/SdqcQ1XuzMCOWujfW9
+X-Gm-Gg: ASbGncvNfWJXTBtUUi1+GxBhXi5NIioLjgNIsLbZ5n0psx+GbH2xIe5DO5ef/lzU9Um
+	BYeWy0sgcOiWiPekiJWRE0Z50yM+AWtLBcvs4KGvW3YyHt24mAbQzaUwq09Qu0iC+ArSviItLEu
+	bZFHVBxr/GHS7C64M9wxL5eRRN7KZGVvOvkbxXVTKuDBtriBz9IpzCMZ4ELkKyNcHEBVxegs61J
+	xrGw8mlZKtKuo5mDr09HeIpjuzHp5wkSdV/5grY0dkLStlPctOvu3eUfuOwvi3zxLMpk7xlCpjI
+	M8S3I5TrfJFXT1dAD3/uX0QXxd3LcMx3mCrHXPEtdlqxJ3Au0expUc5c/uV03zCaje9PY8AOzef
+	lhEzX6XmIVS/L1p4F8DkOHYi/l9pROPv0gQBEqSjU2ypV7k8lMOi7s9fBgfn4Vsr8lKxzqSA=
+X-Google-Smtp-Source: AGHT+IF1pdYJmL8lY5Um+FQWAdWQl1HNKnEQ6zcaLTAcKPk7CCZJPvcMokltoiFUPNY7CEvqDDTe1w==
+X-Received: by 2002:a05:6102:1612:b0:521:d81:6dc2 with SMTP id ada2fe7eead31-53d2490eb0bmr4921349137.33.1757489653959;
+        Wed, 10 Sep 2025 00:34:13 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8943b7f2516sm11692667241.7.2025.09.10.00.34.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 00:34:13 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-890190d9f89so3349541241.2;
+        Wed, 10 Sep 2025 00:34:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUVBXCId7mZeFfVDUB4Z3CXS6Y4s1h05lmsjrlHT5YVRwLCsYPbLFYURf1AV8OSgusCvU1xxJBuGtgLjn8=@vger.kernel.org, AJvYcCUqbD+rbOEvecRI8URtb6xSkld4D5XrUmS8145t0qN5incxv3Q7W+fA/ujJKnIhlIUVaiwFXqMM@vger.kernel.org
+X-Received: by 2002:a67:e7cc:0:b0:51c:77b:2999 with SMTP id
+ ada2fe7eead31-53d1aead9a3mr4809500137.2.1757489653635; Wed, 10 Sep 2025
+ 00:34:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="nkmy2zjqcls5g6m2"
-Content-Disposition: inline
-In-Reply-To: <20250826-vagabond-catfish-of-courtesy-cbfa76@houat>
+References: <20250909145243.17119-1-lance.yang@linux.dev> <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
+ <b7db49106e6e7985ea949594f2e43cd53050d839.camel@physik.fu-berlin.de>
+In-Reply-To: <b7db49106e6e7985ea949594f2e43cd53050d839.camel@physik.fu-berlin.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 10 Sep 2025 09:34:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVMw3nUMtXhfhB5mgmsEZNuagna=6ywOuRsRRMFXHYwbA@mail.gmail.com>
+X-Gm-Features: AS18NWB-ENOaKkolta8T4p93QhD1mf7fceGRiGIwhtOyM-0RvPLUO80okR5zeVM
+Message-ID: <CAMuHMdVMw3nUMtXhfhB5mgmsEZNuagna=6ywOuRsRRMFXHYwbA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock pointers
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Lance Yang <lance.yang@linux.dev>, 
+	akpm@linux-foundation.org, amaindex@outlook.com, anna.schumaker@oracle.com, 
+	boqun.feng@gmail.com, fthain@linux-m68k.org, ioworker0@gmail.com, 
+	joel.granados@kernel.org, jstultz@google.com, leonylgao@tencent.com, 
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
+	longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com, 
+	mingzhe.yang@ly.com, oak@helsinkinet.fi, peterz@infradead.org, 
+	rostedt@goodmis.org, senozhatsky@chromium.org, tfiga@chromium.org, 
+	will@kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 9 Sept 2025 at 18:55, John Paul Adrian Glaubitz
+<glaubitz@physik.fu-berlin.de> wrote:
+> On Tue, 2025-09-09 at 12:46 -0400, Kent Overstreet wrote:
+> > On Tue, Sep 09, 2025 at 10:52:43PM +0800, Lance Yang wrote:
+> > > From: Lance Yang <lance.yang@linux.dev>
+> > >
+> > > The blocker tracking mechanism assumes that lock pointers are at least
+> > > 4-byte aligned to use their lower bits for type encoding.
+> > >
+> > > However, as reported by Eero Tamminen, some architectures like m68k
+> > > only guarantee 2-byte alignment of 32-bit values. This breaks the
+> > > assumption and causes two related WARN_ON_ONCE checks to trigger.
+> >
+> > Isn't m68k the only architecture that's weird like this?
+>
+> Yes, and it does this on Linux only. I have been trying to change it upstream
+> though as the official SysV ELF ABI for m68k requires a 4-byte natural alignment [1].
 
---nkmy2zjqcls5g6m2
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7 0/5] dma-buf: heaps: Create a CMA heap for each CMA
- reserved region
-MIME-Version: 1.0
+M68k does this on various OSes and ABIs that predate or are not
+explicitly compatible with the SysV ELF ABI.
 
-On Tue, Aug 26, 2025 at 09:36:03AM +0200, Maxime Ripard wrote:
-> Hi,
->=20
-> On Mon, Jul 21, 2025 at 01:17:29PM +0200, Maxime Ripard wrote:
-> > Here's another attempt at supporting user-space allocations from a
-> > specific carved-out reserved memory region.
-> >=20
-> > The initial problem we were discussing was that I'm currently working on
-> > a platform which has a memory layout with ECC enabled. However, enabling
-> > the ECC has a number of drawbacks on that platform: lower performance,
-> > increased memory usage, etc. So for things like framebuffers, the
-> > trade-off isn't great and thus there's a memory region with ECC disabled
-> > to allocate from for such use cases.
-> >=20
-> > After a suggestion from John, I chose to first start using heap
-> > allocations flags to allow for userspace to ask for a particular ECC
-> > setup. This is then backed by a new heap type that runs from reserved
-> > memory chunks flagged as such, and the existing DT properties to specify
-> > the ECC properties.
-> >=20
-> > After further discussion, it was considered that flags were not the
-> > right solution, and relying on the names of the heaps would be enough to
-> > let userspace know the kind of buffer it deals with.
-> >=20
-> > Thus, even though the uAPI part of it had been dropped in this second
-> > version, we still needed a driver to create heaps out of carved-out mem=
-ory
-> > regions. In addition to the original usecase, a similar driver can be
-> > found in BSPs from most vendors, so I believe it would be a useful
-> > addition to the kernel.
-> >=20
-> > Some extra discussion with Rob Herring [1] came to the conclusion that
-> > some specific compatible for this is not great either, and as such an
-> > new driver probably isn't called for either.
-> >=20
-> > Some other discussions we had with John [2] also dropped some hints that
-> > multiple CMA heaps might be a good idea, and some vendors seem to do
-> > that too.
-> >=20
-> > So here's another attempt that doesn't affect the device tree at all and
-> > will just create a heap for every CMA reserved memory region.
-> >=20
-> > It also falls nicely into the current plan we have to support cgroups in
-> > DRM/KMS and v4l2, which is an additional benefit.
-> >=20
-> > Let me know what you think,
-> > Maxime
->=20
-> Any chance we can get this merged?
+Other architectures like CRIS (1-byte alignment!) are no longer supported
+by Linux.
 
-Guys, can we move forward on this?
+FWIW, doubles (and doublewords) are not naturally aligned in the
+SysV ELF ABI for i386, while doubles (no mention of doublewords)
+are naturally aligned in the SysV ELF ABI for m68k.
 
-Maxime
+Gr{oetje,eeting}s,
 
---nkmy2zjqcls5g6m2
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMEp2QAKCRAnX84Zoj2+
-dsg7AXsGZJPtUsHUnHvNADap4iyMsh/caF3U64tQkHWWAcnVwP1ptV6A6FmBCXx9
-Lw0xiv8BgKYytEtc6THWvRv6a29zx8LVSv9EuNTYDZshPTgSqETUzAx4CVEAAA/O
-//tQ1dcNeA==
-=tTl0
------END PGP SIGNATURE-----
-
---nkmy2zjqcls5g6m2--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
