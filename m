@@ -1,124 +1,120 @@
-Return-Path: <linux-kernel+bounces-809749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F219B5118D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:37:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7077B51191
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14EEB464D3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83EEB3B029A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA100310628;
-	Wed, 10 Sep 2025 08:37:22 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.142.27])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7982C11DB;
-	Wed, 10 Sep 2025 08:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.142.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE602C21F2;
+	Wed, 10 Sep 2025 08:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N/j2GoIt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89402652B4;
+	Wed, 10 Sep 2025 08:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757493442; cv=none; b=pUCMyF0G/h7avYwbzvctD0dXI7awHDOkj/eu5zQ4B2BCKaQF3sm1lwXZTdFtCK/PzEquW3WcmlAQ5DqDsgIbz0kOC/HiATGf56hEKCQWZkmZ1Lr08zEqxn0qaZLioLkeP1EsOOs3azwDd4IEUrVdhUW85+ym6Q9xV1flM7g5jIk=
+	t=1757493490; cv=none; b=evqszAWRInV4WpHk+jw3+zsM2AiFeM7K/DTeIWlA/uTa945NfTsP8oqPm5LjHWpX0zK7pSOYTRkxV/VLfFkgm7zHLUD8seOA5nNmJXLWhvX2O3XRhIGCu1fw4kJX2Jm9CE6AO99hwXLzSqyfeTsdeVDLcEwbftG4fdPz3H8CzGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757493442; c=relaxed/simple;
-	bh=cRjq8XWD+5JGqB7JhkYl6nl7QM3sj5UrtQ721rRgubY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=Si2fOnrcXuEupbqvYpD8MFWi6iWi6uHdXwJJXmiZeZ7OIyWD6iI+bSFvWuCKe+HFfVsC+6YYyUWKmD9t6HqYw+eOddmI/fc5znU6NllPv1JFTZReM/oxGdJQAwHV9xipUMrM6GMx9AV+z5aaPmnydHw1c1W7kUFjxea7cj2CzDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.76.142.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from weishangjuan$eswincomputing.com ( [10.12.96.155] ) by
- ajax-webmail-app2 (Coremail) ; Wed, 10 Sep 2025 16:36:19 +0800 (GMT+08:00)
-Date: Wed, 10 Sep 2025 16:36:19 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?6Z+m5bCa5aif?= <weishangjuan@eswincomputing.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, yong.liang.choong@linux.intel.com,
-	vladimir.oltean@nxp.com, rmk+kernel@armlinux.org.uk,
-	faizal.abdul.rahim@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
-	jan.petrous@oss.nxp.com, jszhang@kernel.org, p.zabel@pengutronix.de,
-	boon.khai.ng@altera.com, 0x1207@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	emil.renner.berthing@canonical.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, lizhi2@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v5 1/2] dt-bindings: ethernet: eswin: Document for
- EIC7700 SoC
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <20250905-hissing-papaya-badger-1b2ddf@kuoka>
-References: <20250904085913.2494-1-weishangjuan@eswincomputing.com>
- <20250904090055.2546-1-weishangjuan@eswincomputing.com>
- <20250905-hissing-papaya-badger-1b2ddf@kuoka>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1757493490; c=relaxed/simple;
+	bh=XBDNBJDNr0UJjLQYcndQN6qQVg9Go32A+2tj/Iq5mCQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iM4pieJ1iMrYAgXarR3xhc4efsYKrlsss5kMzRbSxsfaGAY+VjCI5YkNf5xqJclp01mwyNvXd9e0iUnK6jOjdGvSfrjLf+INsYUbKri2+huo8nQRMvOBB681Q9ZKDP57zZEUCB4OwhjPjbQfXcQQiKJfiYf0XHLx5Q4WY13lDm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N/j2GoIt; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757493489; x=1789029489;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=XBDNBJDNr0UJjLQYcndQN6qQVg9Go32A+2tj/Iq5mCQ=;
+  b=N/j2GoItqatyiLpnMCWMtQH5JzGWyZysz+VZVJQnOcrZ1zy/ScG95Dgd
+   PHLHMxHtnMKZJr51CqOYgPnLrdTeEd9CDDHE4c0fs20fH5kBjLhE39les
+   seS7IGZB+VdLkGkbud/YARBxf8ub1nZaK7MxCYpDO39yvbZvpgs7MyCsG
+   sJXONdw32rMaLmx5I9HTPbot5bd8qvM/NUpMZfHEjDrjYCqtVLEa9JL+d
+   BXGhbGns42L6Qf7hbK0tfv0PXGzRvxvj72AosDpKMmk60w87DgghyrcGz
+   6K7OLGITYSxkGYMMeOcjNlUd5zL05kTdry7MMPMkcVUV7F5whBiqKJe+w
+   Q==;
+X-CSE-ConnectionGUID: gPtF5F89TamNs5ZNORUxNQ==
+X-CSE-MsgGUID: ECryIo+xQ5iFxq1k/lUM3A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="63626418"
+X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
+   d="scan'208";a="63626418"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 01:38:08 -0700
+X-CSE-ConnectionGUID: mOXX6+MBRPOQHir+HpMmDg==
+X-CSE-MsgGUID: 8gaJWDXoSQyrfbX904jhDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
+   d="scan'208";a="173239179"
+Received: from baandr0id001.iind.intel.com ([10.66.253.151])
+  by fmviesa006.fm.intel.com with ESMTP; 10 Sep 2025 01:38:06 -0700
+From: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+To: dave@stgolabs.net,
+	paulmck@kernel.org,
+	josh@joshtriplett.org,
+	frederic@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	rostedt@goodmis.org
+Cc: linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org,
+	Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+Subject: [PATCH] rcu/rcutorture: Improve error handling in rcu_torture_fwd_prog_init()
+Date: Wed, 10 Sep 2025 14:06:30 +0530
+Message-Id: <20250910083630.3735022-1-kaushlendra.kumar@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <3579e9ca.106c.19932c4c2f0.Coremail.weishangjuan@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgAXt5WDOMFo7PzMAA--.25110W
-X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/1tbiAQEBEGjAVn
-	gdDwAAsF
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Transfer-Encoding: 8bit
 
-RGVhciBLcnp5c3p0b2YgS296bG93c2tpLAoKSSBob3BlIHRoaXMgZW1haWwgZmluZHMgeW91IHdl
-bGwuIEZpcnN0LCBwbGVhc2UgYWxsb3cgbWUgdG8gYXBvbG9naXplIGZvciBhbnkgaW5jb252ZW5p
-ZW5jZQpjYXVzZWQgYnkgdGhlIHByZXZpb3VzIHZlcnNpb24gb2YgdGhlIHlhbWwgZGVzY3JpcHRp
-b24uIFdlIGhhdmUgbm93IHJldmlzZWQgdGhlIGRlc2NyaXB0aW9uCmNvbnRlbnQgYWNjb3JkaW5n
-bHkgYXMgZm9sbG93OgoKZGVzY3JpcHRpb246CsKgIFBsYXRmb3JtIGdsdWUgbGF5ZXIgaW1wbGVt
-ZW50YXRpb24gZm9yIFNUTU1BQyBFdGhlcm5ldCBkcml2ZXIuCgpJbiBhZGRpdGlvbiwgdGhlIGxp
-bmsgdG8gdjUgcGF0Y2hlcyBpcyBhcyBmb2xsb3dz77yaCmh0dHBzOi8vbG9yZS5rZXJuZWwub3Jn
-L2FsbC8yMDI1MDkwNDA5MDA1NS4yNTQ2LTEtd2Vpc2hhbmdqdWFuQGVzd2luY29tcHV0aW5nLmNv
-bS8KCkkgaGF2ZSBhIHF1ZXN0aW9uIHRvIHNlZWsgeW91ciBhZHZpY2UuCkFmdGVyIHNlbmRpbmcg
-dGhlIHY1IHBhdGNoZXMsIHdlIHJlY2VpdmVkIHlvdXIgZmVlZGJhY2suIE9yaWdpbmFsbHksIHdo
-ZW4gcHJlcGFyaW5nIHRoZSB2NiBwYXRjaGVzLAp3ZSBpbnRlbmRlZCB0byBpbmNsdWRlIHRoZSAi
-UmV2aWV3ZWQtYnk6IEtyenlzenRvZiBLb3psb3dza2kga3J6eXN6dG9mLmtvemxvd3NraUBsaW5h
-cm8ub3JnIiB0YWcuCkhvd2V2ZXIsIGdpdmVuIHRoYXQgd2UgaGF2ZSByZXZpc2VkwqB0aGUgeWFt
-bCBkZXNjcmlwdGlvbiwgSSBhbSB1bmNlcnRhaW4gd2hldGhlciB0aGlzIHRhZyBzaG91bGQKc3Rp
-bGwgYmUgaW5jbHVkZWQgaW4gdGhlIHY2IHBhdGNoZXMuIFBlcnNvbmFsbHksIEkgYmVsaWV2ZSBp
-dCB3b3VsZCBiZSBhcHByb3ByaWF0ZSB0byByZXRhaW4gdGhlCiJSZXZpZXdlZC1ieSIgdGFnLiBD
-b3VsZCB5b3UgcGxlYXNlIGNvbmZpcm0gaWYgdGhpcyBpcyBjb3JyZWN0PwpUaGFuayB5b3UgZm9y
-IHlvdXIgdGltZSBhbmQgZ3VpZGFuY2UuIEkgbG9vayBmb3J3YXJkIHRvIHlvdXIgcmVzcG9uc2Uu
-CkJlc3QgcmVnYXJkcywKU2hhbmdqdWFuIFdlaQoKCj4gLS0tLS3ljp/lp4vpgq7ku7YtLS0tLQo+
-IOWPkeS7tuS6ujogIktyenlzenRvZiBLb3psb3dza2kiIDxrcnprQGtlcm5lbC5vcmc+Cj4g5Y+R
-6YCB5pe26Ze0OjIwMjUtMDktMDUgMTU6NTM6MzAgKOaYn+acn+S6lCkKPiDmlLbku7bkuro6IHdl
-aXNoYW5nanVhbkBlc3dpbmNvbXB1dGluZy5jb20KPiDmioTpgIE6IGRldmljZXRyZWVAdmdlci5r
-ZXJuZWwub3JnLCBhbmRyZXcrbmV0ZGV2QGx1bm4uY2gsIGRhdmVtQGRhdmVtbG9mdC5uZXQsIGVk
-dW1hemV0QGdvb2dsZS5jb20sIGt1YmFAa2VybmVsLm9yZywgcGFiZW5pQHJlZGhhdC5jb20sIHJv
-YmhAa2VybmVsLm9yZywga3J6aytkdEBrZXJuZWwub3JnLCBjb25vcitkdEBrZXJuZWwub3JnLCBs
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcsIG1jb3F1ZWxpbi5zdG0zMkBnbWFp
-bC5jb20sIGFsZXhhbmRyZS50b3JndWVAZm9zcy5zdC5jb20sIHlvbmcubGlhbmcuY2hvb25nQGxp
-bnV4LmludGVsLmNvbSwgdmxhZGltaXIub2x0ZWFuQG54cC5jb20sIHJtaytrZXJuZWxAYXJtbGlu
-dXgub3JnLnVrLCBmYWl6YWwuYWJkdWwucmFoaW1AbGludXguaW50ZWwuY29tLCBwcmFiaGFrYXIu
-bWFoYWRldi1sYWQucmpAYnAucmVuZXNhcy5jb20sIGlub2NoaWFtYUBnbWFpbC5jb20sIGphbi5w
-ZXRyb3VzQG9zcy5ueHAuY29tLCBqc3poYW5nQGtlcm5lbC5vcmcsIHAuemFiZWxAcGVuZ3V0cm9u
-aXguZGUsIGJvb24ua2hhaS5uZ0BhbHRlcmEuY29tLCAweDEyMDdAZ21haWwuY29tLCBuZXRkZXZA
-dmdlci5rZXJuZWwub3JnLCBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnLCBsaW51eC1zdG0z
-MkBzdC1tZC1tYWlsbWFuLnN0b3JtcmVwbHkuY29tLCBlbWlsLnJlbm5lci5iZXJ0aGluZ0BjYW5v
-bmljYWwuY29tLCBuaW5neXVAZXN3aW5jb21wdXRpbmcuY29tLCBsaW5taW5AZXN3aW5jb21wdXRp
-bmcuY29tLCBsaXpoaTJAZXN3aW5jb21wdXRpbmcuY29tLCBwaW5rZXNoLnZhZ2hlbGFAZWluZm9j
-aGlwcy5jb20KPiDkuLvpopg6IFJlOiBbUEFUQ0ggdjUgMS8yXSBkdC1iaW5kaW5nczogZXRoZXJu
-ZXQ6IGVzd2luOiBEb2N1bWVudCBmb3IgRUlDNzcwMCBTb0MKPiAKPiBPbiBUaHUsIFNlcCAwNCwg
-MjAyNSBhdCAwNTowMDo1NVBNICswODAwLCB3ZWlzaGFuZ2p1YW5AZXN3aW5jb21wdXRpbmcuY29t
-IHdyb3RlOgo+ID4gRnJvbTogU2hhbmdqdWFuIFdlaSA8d2Vpc2hhbmdqdWFuQGVzd2luY29tcHV0
-aW5nLmNvbT4KPiA+IAo+ID4gQWRkIEVTV0lOIEVJQzc3MDAgRXRoZXJuZXQgY29udHJvbGxlciwg
-c3VwcG9ydGluZyBjbG9jawo+ID4gY29uZmlndXJhdGlvbiwgZGVsYXkgYWRqdXN0bWVudCBhbmQg
-c3BlZWQgYWRhcHRpdmUgZnVuY3Rpb25zLgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBaaGkgTGkg
-PGxpemhpMkBlc3dpbmNvbXB1dGluZy5jb20+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBTaGFuZ2p1YW4g
-V2VpIDx3ZWlzaGFuZ2p1YW5AZXN3aW5jb21wdXRpbmcuY29tPgo+IAo+IFJldmlld2VkLWJ5OiBL
-cnp5c3p0b2YgS296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+Cj4gCj4g
-QmVzdCByZWdhcmRzLAo+IEtyenlzenRvZgo=
+Restructure error handling in rcu_torture_fwd_prog_init() to provide
+cleaner allocation failure paths. The current code checks both
+allocations
+in a single condition, making error handling less efficient and clear.
+
+The improved approach:
+- Check rfp allocation immediately and return early on failure
+- Separately handle fwd_prog_tasks allocation failure with proper
+  cleanup
+- Remove redundant kfree(fwd_prog_tasks) since it would be NULL on
+  failure
+
+Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+---
+ kernel/rcu/rcutorture.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 807fbf6123a7..6af0d207adba 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -2995,11 +2995,11 @@ static int __init rcu_torture_fwd_prog_init(void)
+ 	if (fwd_progress_div <= 0)
+ 		fwd_progress_div = 4;
+ 	rfp = kcalloc(fwd_progress, sizeof(*rfp), GFP_KERNEL);
++	if (!rfp)
++		return -ENOMEM;
+ 	fwd_prog_tasks = kcalloc(fwd_progress, sizeof(*fwd_prog_tasks), GFP_KERNEL);
+-	if (!rfp || !fwd_prog_tasks) {
++	if (!fwd_prog_tasks) {
+ 		kfree(rfp);
+-		kfree(fwd_prog_tasks);
+-		fwd_prog_tasks = NULL;
+ 		fwd_progress = 0;
+ 		return -ENOMEM;
+ 	}
+-- 
+2.34.1
+
 
