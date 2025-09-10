@@ -1,691 +1,1668 @@
-Return-Path: <linux-kernel+bounces-810758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5329EB51EEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:29:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 908A0B51EF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A7B01885B94
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:30:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40B813BFFA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD12327A35;
-	Wed, 10 Sep 2025 17:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437C528C2D2;
+	Wed, 10 Sep 2025 17:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="V9VAPw5x"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DttwO0Gi"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C29EACD;
-	Wed, 10 Sep 2025 17:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757525365; cv=pass; b=W74ZW2v8uc6ladXzBQWsBknmaLAIzdV4OIc/LooNluQ9WvOjyKa6kGMBzjMDPkLfythfqOz69MpeQOKmNlLMn89Ie6HJISPTYecSn0QP68DrqhUfuVe+tz8oKac6D07Ksyp7snSszFpODNtyBKVi62m8v0dYqsVWpNDCCp07w3g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757525365; c=relaxed/simple;
-	bh=XODW2rcYZU6/0S+Skf5rKGhiMDxjaszxBbFUE8o87S0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DvyYO17aWNrAAOTwYEBAzKTbRoREiLUffv7hFwJpGV6wLOOP3IosOwq4QhB8JgHviGEXEk1/VWLhvydKF0mv8w7G3hlAgVND7yn8EixRenWwLvMG9+xSME4X10bw4r9iYFe9W4Do1eey4lofctb1fguF0Jw6EfIUrBGYAqwFDtE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=V9VAPw5x; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757525342; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=i6MqW1w7OTN63uHXjWSWsqLCtSlqceEWyjamg8uFy9wY8shxq4R4qAp9Q5WRHDnUonZybUA/e6unJuYTdaPG0+cyBeVRHSYAUwsFl32YafbjxHcpCrXlQcEpXKW5oF2TuzCKCpjaRAoGwZRcuVqgXlYFZ8ZHpSQQXzYD35fnaRE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757525342; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ylokrcKo+mYw/Ac9qIlw/AzcGFeSfhuuXJ88u7lLhks=; 
-	b=hm0UHfQ+vsTrQtO58lpJZRHWiQech2q1apVTnoX1Sz9+zX5S4tmZTZ07Ba5tQxWakhqthChIQgwdXBTJCAF7ykRaCZo0BRf1NWN8yEoSWgt/HZXrhQyNgDnOwJLQM2UvPdiL2ei4JO5M6RzQwncpVEx4UfcvA8FCGqvSoBOpS5g=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757525342;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=ylokrcKo+mYw/Ac9qIlw/AzcGFeSfhuuXJ88u7lLhks=;
-	b=V9VAPw5xoV0q8eo+5zlPyNKMUtwDpvlwBDB50Y/vf6Yu0xmwVvHiRHz9VKH4Qzfd
-	cGntXLDcmhDqQ1GtOk2GL/EukEBWaE12jngrFMR3PaWdwbpE/8yqcL+75h38nSk/Oc1
-	aEwmxX/mbHYmf26vDlFxf3kuEUg4B9JJtMt2InYo=
-Received: by mx.zohomail.com with SMTPS id 1757525340156252.1637121391359;
-	Wed, 10 Sep 2025 10:29:00 -0700 (PDT)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Wed, 10 Sep 2025 14:28:28 -0300
-Subject: [PATCH v2 2/2] rust: clk: use the type-state pattern
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C905629ACC5;
+	Wed, 10 Sep 2025 17:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757525421; cv=none; b=ItpxhF6UUEkzUCMWkXfjRaMrizAlu7Vdj+5aO9LAibNVTV4iDa14LzhAD7uYHE/pa9NbZxkmEY9cgfgpdgaFI/Y+4Ml/Lw+2ksa7O+gEgXuHjPUnfKZEf9kY3X09D4l3JxxZcRuwXOWZc8z9kDJiESzSyAweljdjWWBIouIUpNI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757525421; c=relaxed/simple;
+	bh=7ksjb6VZLD+tnxtP+E98W+MggmvbmsXQYsM9UII/I6U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ChVLw9GANESNlqDqmjIOGMZINvQaUiJHqYxZEpJ+z8yKy3UpWPP0j+4W4CJxQhwZ/aueuKUYcsctcuoUy3+4DmZ7TdA64Td5HA8Jixy1kMCSDpjNwzZ+hC8T8hRM2Jr1/tOEaKGYx/kTNtluRQYrLr3RBlSiUsy/49ONdNqOyg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DttwO0Gi; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-62733e779bbso5099524a12.1;
+        Wed, 10 Sep 2025 10:30:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757525416; x=1758130216; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ijQq2MmaxE0rHESfDC4prGfsl57ijVqB1363ttzFk/U=;
+        b=DttwO0Gi6nk0ZhFwLzBS2ejTHY4SgsEM++2d90aJzowSJl+LnqjZVvuQKNYZP+cBMw
+         j54HlfBl8LEbeFjPcxbHBD3+Z9ban43/3vetZ+u0S/j+baVq0UutETjS09wElLEmGUQW
+         i99jj/dgaj8IQy47/rhcz+inJKgD7LHKhRADF9x2TLF+wKyH4pt8g7QQW7JKD5tqL/JO
+         17mP9VuMQuzw8gCsLpzQdGxfvIZtgzCpQ1E8mA5fJtk2uSphQzXyIoFVa+CqRRxMsRz7
+         1Dj/DbOHyzmxUYos0Bs9BYAkaKxft4oXos6lwexm+bKbf+BB6tLK2N+QxOY7smgwPp7J
+         eY4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757525416; x=1758130216;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ijQq2MmaxE0rHESfDC4prGfsl57ijVqB1363ttzFk/U=;
+        b=ZDdQnwISK4cxRBU30TGYi6WnAPQzr/GYereAKuY+Drx+uzCNAK8f9oN5OfP/2/pV64
+         nKSUWTqn1xaKA4vdLjkT+V0gbXA+bzL7TGqwgOpz8zNzqIhSazB7fAnM1E9Bk9IbFHFo
+         ZMCokP5kJk/m7AJkh5jKRLjcM6M/UabfTPh5GctK37qbedxbCiPSOdG2JRHk2X4EIIBE
+         Sjdl6iN57zHELSxG3/Iv+6soX1ozRhzG4PfggZai52E5njuCUCCRyPSkRVS+dH2zQPMQ
+         XpFCRzt3l0VWewhZGS+cmszjm7BPsNQsT2q6EWEXrMytnAzmRLLabCcMgOw/6mUxg9Dg
+         gglg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIwO3ETIf542CXZjkWxbjrmtH+77SbyZ5JKodU+r7ihHcdtzb9nnhWt4f3XlIjwHCWaKLjjxZZscNOynirWQ==@vger.kernel.org, AJvYcCV5+gL7hifcUEG10v0/RPgy3wdrmycCjc3b9wtaIIg9GDnFPwNTbxIdDlvd8sDMLQ0L+m2JPRBc@vger.kernel.org, AJvYcCVOq57ZTEBiHeOdgOsZUSkeU0EkTZ/qzJwtnzWdwR2FBg8Q4j3Ka67BWM7I4cxcVhoQrrYv9T5B0UAceXmE@vger.kernel.org, AJvYcCVlPlIV7iiFQT3TurYIVCBFqmNJu25qA4dLw1zl7cjJjnqPQJeBM8gk0k8VmHm7P8YTqVUue9sc@vger.kernel.org, AJvYcCWgOIjHf69J8wFjye3mFl0P+tqc5B6NpXkm1O7mIZDMiI1P8vKGiZ+pDY2cn5wl6YO+2Tzpwi3RAydO@vger.kernel.org, AJvYcCXF53CAGuFZAD+rtBbkUzdiQaBW6sl5feZYZPoorbhEXAPlIfyYR99K9dHIxHqk5LaJpYldw0skj+FPuxI=@vger.kernel.org, AJvYcCXFIvZqj2QWLpTmj75BMGHl1U2XWbKLnvCz/oxEn6cVBp7RiSKU4945lp0leZMQ9elNJcJZBItSTIWarSVCoj6Z@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPzv/IZ2sEfGQDqIx2GLphf7Q3xjwUyWjml9cChwFx7viWh3Lt
+	HhqKj2bkyctjZa9X9bLwy/uJHTU0qQOwPp66ncyeI7FSZmYGjvVZG3m/XiJBP8bLTUP8kKDQf3J
+	hQpqKOP7blDNOzznSVO0zqkGSFAH4GTg=
+X-Gm-Gg: ASbGncvbQqf1z5xEn6vwVS8PbJe8ESIERk236tld7+TsxWBvI3nvZgj2wF2km8C82N5
+	Z1kLXctDDsJobT/1RDp5vulT7HW15bUcbM4MkQqoViEWLNKdAg3/gFgaKkEOu5hTkBVtkquGlPV
+	0lqDv9nnb1HGu+yxFfaN4P+S/ePoxIDomo0zUH4L49LQh3qLHSvwHzBC/UtoSwjbkmJrEMMkcYU
+	Rcs9oA=
+X-Google-Smtp-Source: AGHT+IF/kSpvgxpMFr7z/pqzrqX7HroNg36kcFo/pXltIB0NGQxLUtZF88G5OIqyFTE8GM1tI2ctbWuAoBOwM/U3IKc=
+X-Received: by 2002:a05:6402:d0d:b0:628:79f4:b050 with SMTP id
+ 4fb4d7f45d1cf-62879f4b986mr9648891a12.30.1757525415693; Wed, 10 Sep 2025
+ 10:30:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-clk-type-state-v2-2-1b97c11bb631@collabora.com>
-References: <20250910-clk-type-state-v2-0-1b97c11bb631@collabora.com>
-In-Reply-To: <20250910-clk-type-state-v2-0-1b97c11bb631@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
- Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- Daniel Almeida <daniel.almeida@collabora.com>
-X-Mailer: b4 0.14.2
-X-ZohoMailClient: External
+References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org> <20250910-work-namespace-v1-32-4dd56e7359d8@kernel.org>
+In-Reply-To: <20250910-work-namespace-v1-32-4dd56e7359d8@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 10 Sep 2025 19:30:03 +0200
+X-Gm-Features: AS18NWDxW6JTWqT4RCe5H_x6IXY4E-emwUFbLYLV_O5URPqKDZoOZ-SG5YEp7f8
+Message-ID: <CAOQ4uxhwJBLCzfKs0dVFOpcgP=LQU5hkRxVeLLR6g-qOxb9ocQ@mail.gmail.com>
+Subject: Re: [PATCH 32/32] selftests/namespaces: add file handle selftests
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
+	Lennart Poettering <mzxreary@0pointer.de>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The current Clk abstraction can still be improved on the following issues:
+On Wed, Sep 10, 2025 at 4:40=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> Add a bunch of selftests for namespace file handles.
+>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-a) It only keeps track of a count to clk_get(), which means that users have
-to manually call disable() and unprepare(), or a variation of those, like
-disable_unprepare().
+Obviously, I did not go over every single line, but for the general
+test template and test coverage you may add:
 
-b) It allows repeated calls to prepare() or enable(), but it keeps no track
-of how often these were called, i.e., it's currently legal to write the
-following:
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-clk.prepare();
-clk.prepare();
-clk.enable();
-clk.enable();
+However, see my comment on file handle support patch.
+The test matrix is incomplete.
+Maybe it would be complete if test is run as root and then
+as non root, but then I think the test needs some changes
+for running as root and opening non-self ns.
 
-And nothing gets undone on drop().
+I am not sure what the standard is wrt running the selftests
+as root /non-root.
 
-c) It adds a OptionalClk type that is probably not needed. There is no
-"struct optional_clk" in C and we should probably not add one.
+I see that the userns isolation tests do:
+/* Map current uid/gid to root in the new namespace */
 
-d) It does not let a user express the state of the clk through the
-type system. For example, there is currently no way to encode that a Clk is
-enabled via the type system alone.
+Are you assuming that non root is running this test
+or am I missing something?
 
-In light of the Regulator abstraction that was recently merged, switch this
-abstraction to use the type-state pattern instead. It solves both a) and b)
-by establishing a number of states and the valid ways to transition between
-them. It also automatically undoes any call to clk_get(), clk_prepare() and
-clk_enable() as applicable on drop(), so users do not have to do anything
-special before Clk goes out of scope.
+Wouldn't mapping uid 0 to uid 0 in the new userns cause
+the test to fail because opening by handle will succeed?
 
-It solves c) by removing the OptionalClk type, which is now simply encoded
-as a Clk whose inner pointer is NULL.
+Thanks,
+Amir.
 
-It solves d) by directly encoding the state of the Clk into the type, e.g.:
-Clk<Enabled> is now known to be a Clk that is enabled.
 
-The INVARIANTS section for Clk is expanded to highlight the relationship
-between the states and the respective reference counts that are owned by
-each of them.
-
-The examples are expanded to highlight how a user can transition between
-states, as well as highlight some of the shortcuts built into the API.
-
-The current implementation is also more flexible, in the sense that it
-allows for more states to be added in the future. This lets us implement
-different strategies for handling clocks, including one that mimics the
-current API, allowing for multiple calls to prepare() and enable().
-
-The users (cpufreq.rs/ rcpufreq_dt.rs) were updated by this patch (and not
-a separate one) to reflect the new changes. This is needed, because
-otherwise this patch would break the build.
-
-Link: https://crates.io/crates/sealed [1]
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
----
- drivers/cpufreq/rcpufreq_dt.rs |   2 +-
- rust/kernel/clk.rs             | 412 +++++++++++++++++++++++++++--------------
- rust/kernel/cpufreq.rs         |   8 +-
- 3 files changed, 283 insertions(+), 139 deletions(-)
-
-diff --git a/drivers/cpufreq/rcpufreq_dt.rs b/drivers/cpufreq/rcpufreq_dt.rs
-index 7e1fbf9a091f74065f9e14e7e9b5195213642452..79b12d75f4e5df67b413624514bc297573b483e6 100644
---- a/drivers/cpufreq/rcpufreq_dt.rs
-+++ b/drivers/cpufreq/rcpufreq_dt.rs
-@@ -45,7 +45,7 @@ struct CPUFreqDTDevice {
-     freq_table: opp::FreqTable,
-     _mask: CpumaskVar,
-     _token: Option<opp::ConfigToken>,
--    _clk: Clk,
-+    _clk: Clk<kernel::clk::Unprepared>,
- }
- 
- #[derive(Default)]
-diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-index 0a290202da69669d670ddad2b6762a1d5f1d912e..0c65b8c10390624e2528aa2d726216ad3df8274c 100644
---- a/rust/kernel/clk.rs
-+++ b/rust/kernel/clk.rs
-@@ -85,12 +85,116 @@ mod common_clk {
-         prelude::*,
-     };
- 
--    use core::{ops::Deref, ptr};
-+    use core::{marker::PhantomData, mem::ManuallyDrop, ptr};
-+
-+    mod private {
-+        pub trait Sealed {}
-+
-+        impl Sealed for super::Unprepared {}
-+        impl Sealed for super::Prepared {}
-+        impl Sealed for super::Enabled {}
-+    }
-+
-+    /// Obtains and enables a [`devres`]-managed [`Clk`] for a device.
-+    ///
-+    /// [`devres`]: crate::devres::Devres
-+    pub fn devm_enable(dev: &Device, name: Option<&CStr>) -> Result {
-+        let name = name.map_or(ptr::null(), |n| n.as_ptr());
-+
-+        // SAFETY: It is safe to call [`devm_clk_get_enabled`] with a valid
-+        // device pointer.
-+        from_err_ptr(unsafe { bindings::devm_clk_get_enabled(dev.as_raw(), name) })?;
-+        Ok(())
-+    }
-+
-+    /// Obtains and enables a [`devres`]-managed [`Clk`] for a device.
-+    ///
-+    /// This does not print any error messages if the clock is not found.
-+    ///
-+    /// [`devres`]: crate::devres::Devres
-+    pub fn devm_enable_optional(dev: &Device, name: Option<&CStr>) -> Result {
-+        let name = name.map_or(ptr::null(), |n| n.as_ptr());
-+
-+        // SAFETY: It is safe to call [`devm_clk_get_optional_enabled`] with a
-+        // valid device pointer.
-+        from_err_ptr(unsafe { bindings::devm_clk_get_optional_enabled(dev.as_raw(), name) })?;
-+        Ok(())
-+    }
-+
-+    /// Same as [`devm_enable_optional`], but also sets the rate.
-+    pub fn devm_enable_optional_with_rate(
-+        dev: &Device,
-+        name: Option<&CStr>,
-+        rate: Hertz,
-+    ) -> Result {
-+        let name = name.map_or(ptr::null(), |n| n.as_ptr());
-+
-+        // SAFETY: It is safe to call
-+        // [`devm_clk_get_optional_enabled_with_rate`] with a valid device
-+        // pointer.
-+        from_err_ptr(unsafe {
-+            bindings::devm_clk_get_optional_enabled_with_rate(dev.as_raw(), name, rate.as_hz())
-+        })?;
-+        Ok(())
-+    }
-+
-+    /// A trait representing the different states that a [`Clk`] can be in.
-+    pub trait ClkState: private::Sealed {
-+        /// Whether the clock should be disabled when dropped.
-+        const DISABLE_ON_DROP: bool;
-+
-+        /// Whether the clock should be unprepared when dropped.
-+        const UNPREPARE_ON_DROP: bool;
-+    }
-+
-+    /// A state where the [`Clk`] is not prepared and not enabled.
-+    pub struct Unprepared;
-+
-+    /// A state where the [`Clk`] is prepared but not enabled.
-+    pub struct Prepared;
-+
-+    /// A state where the [`Clk`] is both prepared and enabled.
-+    pub struct Enabled;
-+
-+    impl ClkState for Unprepared {
-+        const DISABLE_ON_DROP: bool = false;
-+        const UNPREPARE_ON_DROP: bool = false;
-+    }
-+
-+    impl ClkState for Prepared {
-+        const DISABLE_ON_DROP: bool = false;
-+        const UNPREPARE_ON_DROP: bool = true;
-+    }
-+
-+    impl ClkState for Enabled {
-+        const DISABLE_ON_DROP: bool = true;
-+        const UNPREPARE_ON_DROP: bool = true;
-+    }
-+
-+    /// An error that can occur when trying to convert a [`Clk`] between states.
-+    pub struct Error<State: ClkState> {
-+        /// The error that occurred.
-+        pub error: kernel::error::Error,
-+
-+        /// The [`Clk`] that caused the error, so that the operation may be
-+        /// retried.
-+        pub clk: Clk<State>,
-+    }
- 
-     /// A reference-counted clock.
-     ///
-     /// Rust abstraction for the C [`struct clk`].
-     ///
-+    /// A [`Clk`] instance represents a clock that can be in one of several
-+    /// states: [`Unprepared`], [`Prepared`], or [`Enabled`].
-+    ///
-+    /// No action needs to be taken when a [`Clk`] is dropped. The calls to
-+    /// `clk_unprepare()` and `clk_disable()` will be placed as applicable.
-+    ///
-+    /// An optional [`Clk`] is treated just like a regular [`Clk`], but its
-+    /// inner `struct clk` pointer is `NULL`. This interfaces correctly with the
-+    /// C API and also exposes all the methods of a regular [`Clk`] to users.
-+    ///
-     /// # Invariants
-     ///
-     /// A [`Clk`] instance holds either a pointer to a valid [`struct clk`] created by the C
-@@ -99,20 +203,39 @@ mod common_clk {
-     /// Instances of this type are reference-counted. Calling [`Clk::get`] ensures that the
-     /// allocation remains valid for the lifetime of the [`Clk`].
-     ///
-+    /// The [`Prepared`] state is associated with a single count of
-+    /// `clk_prepare()`, and the [`Enabled`] state is associated with a single
-+    /// count of `clk_enable()`, and the [`Prepared`] state is associated with a
-+    /// single count of `clk_prepare()` and `clk_enable()`.
-+    ///
-+    /// All states are associated with a single count of `clk_get()`.
-+    ///
-     /// # Examples
-     ///
-     /// The following example demonstrates how to obtain and configure a clock for a device.
-     ///
-     /// ```
-     /// use kernel::c_str;
--    /// use kernel::clk::{Clk, Hertz};
-+    /// use kernel::clk::{Clk, Enabled, Hertz, Unprepared, Prepared};
-     /// use kernel::device::Device;
-     /// use kernel::error::Result;
-     ///
-     /// fn configure_clk(dev: &Device) -> Result {
--    ///     let clk = Clk::get(dev, Some(c_str!("apb_clk")))?;
-+    ///     // The fastest way is to use a version of `Clk::get` for the desired
-+    ///     // state, i.e.:
-+    ///     let clk: Clk<Enabled> = Clk::<Enabled>::get(dev, Some(c_str!("apb_clk")))?;
-+    ///
-+    ///     // Any other state is also possible, e.g.:
-+    ///     let clk: Clk<Prepared> = Clk::<Prepared>::get(dev, Some(c_str!("apb_clk")))?;
-+    ///
-+    ///     // Later:
-+    ///     let clk: Clk<Enabled> = clk.enable().map_err(|error| {
-+    ///         error.error
-+    ///     })?;
-     ///
--    ///     clk.prepare_enable()?;
-+    ///     // Note that error.clk is the original `clk` if the operation
-+    ///     // failed. It is provided as a convenience so that the operation may be
-+    ///     // retried in case of errors.
-     ///
-     ///     let expected_rate = Hertz::from_ghz(1);
-     ///
-@@ -120,111 +243,173 @@ mod common_clk {
-     ///         clk.set_rate(expected_rate)?;
-     ///     }
-     ///
--    ///     clk.disable_unprepare();
-+    ///     // Nothing is needed here. The drop implementation will undo any
-+    ///     // operations as appropriate.
-+    ///     Ok(())
-+    /// }
-+    ///
-+    /// fn shutdown(clk: Clk<Enabled>) -> Result {
-+    ///     // The states can be traversed "in the reverse order" as well:
-+    ///     let clk: Clk<Prepared> = clk.disable().map_err(|error| {
-+    ///         error.error
-+    ///     })?;
-+    ///
-+    ///     // This is of type `Clk<Unprepared>`.
-+    ///     let clk = clk.unprepare();
-+    ///
-     ///     Ok(())
-     /// }
-     /// ```
-     ///
-     /// [`struct clk`]: https://docs.kernel.org/driver-api/clk.html
-     #[repr(transparent)]
--    pub struct Clk(*mut bindings::clk);
--
--    // SAFETY: It is safe to call `clk_put` on another thread than where `clk_get` was called.
--    unsafe impl Send for Clk {}
--
--    // SAFETY: It is safe to call any combination of the `&self` methods in parallel, as the
--    // methods are synchronized internally.
--    unsafe impl Sync for Clk {}
-+    pub struct Clk<T: ClkState> {
-+        inner: *mut bindings::clk,
-+        _phantom: core::marker::PhantomData<T>,
-+    }
- 
--    impl Clk {
-+    impl Clk<Unprepared> {
-         /// Gets [`Clk`] corresponding to a [`Device`] and a connection id.
-         ///
-         /// Equivalent to the kernel's [`clk_get`] API.
-         ///
-         /// [`clk_get`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_get
--        pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-+        #[inline]
-+        pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Clk<Unprepared>> {
-             let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
- 
-             // SAFETY: It is safe to call [`clk_get`] for a valid device pointer.
--            //
-+            let inner = from_err_ptr(unsafe { bindings::clk_get(dev.as_raw(), con_id) })?;
-+
-             // INVARIANT: The reference-count is decremented when [`Clk`] goes out of scope.
--            Ok(Self(from_err_ptr(unsafe {
--                bindings::clk_get(dev.as_raw(), con_id)
--            })?))
-+            Ok(Self {
-+                inner,
-+                _phantom: PhantomData,
-+            })
-         }
- 
--        /// Obtain the raw [`struct clk`] pointer.
-+        /// Behaves the same as [`Self::get`], except when there is no clock
-+        /// producer. In this case, instead of returning [`ENOENT`], it returns
-+        /// a dummy [`Clk`].
-         #[inline]
--        pub fn as_raw(&self) -> *mut bindings::clk {
--            self.0
-+        pub fn get_optional(dev: &Device, name: Option<&CStr>) -> Result<Clk<Unprepared>> {
-+            let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
-+
-+            // SAFETY: It is safe to call [`clk_get`] for a valid device pointer.
-+            let inner = from_err_ptr(unsafe { bindings::clk_get_optional(dev.as_raw(), con_id) })?;
-+
-+            // INVARIANT: The reference-count is decremented when [`Clk`] goes out of scope.
-+            Ok(Self {
-+                inner,
-+                _phantom: PhantomData,
-+            })
-         }
- 
--        /// Enable the clock.
-+        /// Attempts to convert the [`Clk`] to a [`Prepared`] state.
-         ///
--        /// Equivalent to the kernel's [`clk_enable`] API.
-+        /// Equivalent to the kernel's [`clk_prepare`] API.
-         ///
--        /// [`clk_enable`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_enable
-+        /// [`clk_prepare`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_prepare
-         #[inline]
--        pub fn enable(&self) -> Result {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
--            // [`clk_enable`].
--            to_result(unsafe { bindings::clk_enable(self.as_raw()) })
-+        pub fn prepare(self) -> Result<Clk<Prepared>, Error<Unprepared>> {
-+            // We will be transferring the ownership of our `clk_get()` count to
-+            // `Clk<Prepared>`.
-+            let clk = ManuallyDrop::new(self);
-+
-+            // SAFETY: By the type invariants, self.0 is a valid argument for [`clk_prepare`].
-+            to_result(unsafe { bindings::clk_prepare(clk.as_raw()) })
-+                .map(|()| Clk {
-+                    inner: clk.inner,
-+                    _phantom: PhantomData,
-+                })
-+                .map_err(|error| Error {
-+                    error,
-+                    clk: ManuallyDrop::into_inner(clk),
-+                })
-         }
-+    }
- 
--        /// Disable the clock.
-+    impl Clk<Prepared> {
-+        /// Obtains a [`Clk`] from a [`Device`] and a connection id and prepares it.
-         ///
--        /// Equivalent to the kernel's [`clk_disable`] API.
--        ///
--        /// [`clk_disable`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_disable
-+        /// Equivalent to calling [`Clk::get`], followed by [`Clk::prepare`],
-         #[inline]
--        pub fn disable(&self) {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
--            // [`clk_disable`].
--            unsafe { bindings::clk_disable(self.as_raw()) };
-+        pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Clk<Prepared>> {
-+            Clk::<Unprepared>::get(dev, name)?
-+                .prepare()
-+                .map_err(|error| error.error)
-         }
- 
--        /// Prepare the clock.
--        ///
--        /// Equivalent to the kernel's [`clk_prepare`] API.
-+        /// Attempts to convert the [`Clk`] to an [`Unprepared`] state.
-         ///
--        /// [`clk_prepare`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_prepare
-+        /// Equivalent to the kernel's [`clk_unprepare`] API.
-         #[inline]
--        pub fn prepare(&self) -> Result {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
--            // [`clk_prepare`].
--            to_result(unsafe { bindings::clk_prepare(self.as_raw()) })
-+        pub fn unprepare(self) -> Clk<Unprepared> {
-+            // We will be transferring the ownership of our `clk_get()` count to
-+            // `Clk<Unprepared>`.
-+            let clk = ManuallyDrop::new(self);
-+
-+            // SAFETY: By the type invariants, self.0 is a valid argument for [`clk_unprepare`].
-+            unsafe { bindings::clk_unprepare(clk.as_raw()) }
-+
-+            Clk {
-+                inner: clk.inner,
-+                _phantom: PhantomData,
-+            }
-         }
- 
--        /// Unprepare the clock.
-+        /// Attempts to convert the [`Clk`] to an [`Enabled`] state.
-         ///
--        /// Equivalent to the kernel's [`clk_unprepare`] API.
-+        /// Equivalent to the kernel's [`clk_enable`] API.
-         ///
--        /// [`clk_unprepare`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_unprepare
-+        /// [`clk_enable`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_enable
-         #[inline]
--        pub fn unprepare(&self) {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
--            // [`clk_unprepare`].
--            unsafe { bindings::clk_unprepare(self.as_raw()) };
-+        pub fn enable(self) -> Result<Clk<Enabled>, Error<Prepared>> {
-+            // We will be transferring the ownership of our `clk_get()` and
-+            // `clk_prepare()` counts to `Clk<Enabled>`.
-+            let clk = ManuallyDrop::new(self);
-+
-+            // SAFETY: By the type invariants, self.0 is a valid argument for [`clk_enable`].
-+            to_result(unsafe { bindings::clk_enable(clk.as_raw()) })
-+                .map(|()| Clk {
-+                    inner: clk.inner,
-+                    _phantom: PhantomData,
-+                })
-+                .map_err(|error| Error {
-+                    error,
-+                    clk: ManuallyDrop::into_inner(clk),
-+                })
-         }
-+    }
- 
--        /// Prepare and enable the clock.
-+    impl Clk<Enabled> {
-+        /// Gets [`Clk`] corresponding to a [`Device`] and a connection id and
-+        /// then prepares and enables it.
-         ///
--        /// Equivalent to calling [`Clk::prepare`] followed by [`Clk::enable`].
-+        /// Equivalent to calling [`Clk::get`], followed by [`Clk::prepare`],
-+        /// followed by [`Clk::enable`].
-         #[inline]
--        pub fn prepare_enable(&self) -> Result {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
--            // [`clk_prepare_enable`].
--            to_result(unsafe { bindings::clk_prepare_enable(self.as_raw()) })
-+        pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Clk<Enabled>> {
-+            Clk::<Prepared>::get(dev, name)?
-+                .enable()
-+                .map_err(|error| error.error)
-         }
- 
--        /// Disable and unprepare the clock.
--        ///
--        /// Equivalent to calling [`Clk::disable`] followed by [`Clk::unprepare`].
-         #[inline]
--        pub fn disable_unprepare(&self) {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
--            // [`clk_disable_unprepare`].
--            unsafe { bindings::clk_disable_unprepare(self.as_raw()) };
-+        /// Attempts to disable the [`Clk`] and convert it to the [`Prepared`]
-+        /// state.
-+        pub fn disable(self) -> Result<Clk<Prepared>, Error<Enabled>> {
-+            // We will be transferring the ownership of our `clk_get()` and
-+            // `clk_enable()` counts to `Clk<Prepared>`.
-+            let clk = ManuallyDrop::new(self);
-+
-+            // SAFETY: By the type invariants, self.0 is a valid argument for [`clk_disable`].
-+            unsafe { bindings::clk_disable(clk.as_raw()) };
-+
-+            Ok(Clk {
-+                inner: clk.inner,
-+                _phantom: PhantomData,
-+            })
-         }
- 
-         /// Get clock's rate.
-@@ -252,85 +437,40 @@ pub fn set_rate(&self, rate: Hertz) -> Result {
-         }
-     }
- 
--    impl Drop for Clk {
--        fn drop(&mut self) {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for [`clk_put`].
--            unsafe { bindings::clk_put(self.as_raw()) };
-+    impl<T: ClkState> Clk<T> {
-+        /// Obtain the raw [`struct clk`] pointer.
-+        #[inline]
-+        pub fn as_raw(&self) -> *mut bindings::clk {
-+            self.inner
-         }
-     }
- 
--    /// A reference-counted optional clock.
--    ///
--    /// A lightweight wrapper around an optional [`Clk`]. An [`OptionalClk`] represents a [`Clk`]
--    /// that a driver can function without but may improve performance or enable additional
--    /// features when available.
--    ///
--    /// # Invariants
--    ///
--    /// An [`OptionalClk`] instance encapsulates a [`Clk`] with either a valid [`struct clk`] or
--    /// `NULL` pointer.
--    ///
--    /// Instances of this type are reference-counted. Calling [`OptionalClk::get`] ensures that the
--    /// allocation remains valid for the lifetime of the [`OptionalClk`].
--    ///
--    /// # Examples
--    ///
--    /// The following example demonstrates how to obtain and configure an optional clock for a
--    /// device. The code functions correctly whether or not the clock is available.
--    ///
--    /// ```
--    /// use kernel::c_str;
--    /// use kernel::clk::{OptionalClk, Hertz};
--    /// use kernel::device::Device;
--    /// use kernel::error::Result;
--    ///
--    /// fn configure_clk(dev: &Device) -> Result {
--    ///     let clk = OptionalClk::get(dev, Some(c_str!("apb_clk")))?;
--    ///
--    ///     clk.prepare_enable()?;
--    ///
--    ///     let expected_rate = Hertz::from_ghz(1);
--    ///
--    ///     if clk.rate() != expected_rate {
--    ///         clk.set_rate(expected_rate)?;
--    ///     }
--    ///
--    ///     clk.disable_unprepare();
--    ///     Ok(())
--    /// }
--    /// ```
--    ///
--    /// [`struct clk`]: https://docs.kernel.org/driver-api/clk.html
--    pub struct OptionalClk(Clk);
--
--    impl OptionalClk {
--        /// Gets [`OptionalClk`] corresponding to a [`Device`] and a connection id.
--        ///
--        /// Equivalent to the kernel's [`clk_get_optional`] API.
--        ///
--        /// [`clk_get_optional`]:
--        /// https://docs.kernel.org/core-api/kernel-api.html#c.clk_get_optional
--        pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
--            let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
-+    impl<T: ClkState> Drop for Clk<T> {
-+        fn drop(&mut self) {
-+            if T::DISABLE_ON_DROP {
-+                // SAFETY: By the type invariants, self.as_raw() is a valid argument for
-+                // [`clk_disable`].
-+                unsafe { bindings::clk_disable(self.as_raw()) };
-+            }
-+
-+            if T::UNPREPARE_ON_DROP {
-+                // SAFETY: By the type invariants, self.as_raw() is a valid argument for
-+                // [`clk_unprepare`].
-+                unsafe { bindings::clk_unprepare(self.as_raw()) };
-+            }
- 
--            // SAFETY: It is safe to call [`clk_get_optional`] for a valid device pointer.
--            //
--            // INVARIANT: The reference-count is decremented when [`OptionalClk`] goes out of
--            // scope.
--            Ok(Self(Clk(from_err_ptr(unsafe {
--                bindings::clk_get_optional(dev.as_raw(), con_id)
--            })?)))
-+            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
-+            // [`clk_put`].
-+            unsafe { bindings::clk_put(self.as_raw()) };
-         }
-     }
- 
--    // Make [`OptionalClk`] behave like [`Clk`].
--    impl Deref for OptionalClk {
--        type Target = Clk;
-+    // SAFETY: It is safe to call `clk_put` on another thread than where `clk_get` was called.
-+    unsafe impl<T: ClkState> Send for Clk<T> {}
- 
--        fn deref(&self) -> &Clk {
--            &self.0
--        }
--    }
-+    // SAFETY: It is safe to call any combination of the `&self` methods in parallel, as the
-+    // methods are synchronized internally.
-+    unsafe impl<T: ClkState> Sync for Clk<T> {}
- }
- 
- #[cfg(CONFIG_COMMON_CLK)]
-diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-index afc15e72a7c37ac781f25a8a6edd804fa4c9658a..9b0d0e4198c7388af59e7b89ba8ac7b3f4fe1561 100644
---- a/rust/kernel/cpufreq.rs
-+++ b/rust/kernel/cpufreq.rs
-@@ -553,8 +553,12 @@ pub fn cpus(&mut self) -> &mut cpumask::Cpumask {
-     /// The caller must guarantee that the returned [`Clk`] is not dropped while it is getting used
-     /// by the C code.
-     #[cfg(CONFIG_COMMON_CLK)]
--    pub unsafe fn set_clk(&mut self, dev: &Device, name: Option<&CStr>) -> Result<Clk> {
--        let clk = Clk::get(dev, name)?;
-+    pub unsafe fn set_clk(
-+        &mut self,
-+        dev: &Device,
-+        name: Option<&CStr>,
-+    ) -> Result<Clk<crate::clk::Unprepared>> {
-+        let clk = Clk::<crate::clk::Unprepared>::get(dev, name)?;
-         self.as_mut_ref().clk = clk.as_raw();
-         Ok(clk)
-     }
-
--- 
-2.51.0
-
+> ---
+>  tools/testing/selftests/namespaces/.gitignore      |    1 +
+>  tools/testing/selftests/namespaces/Makefile        |    2 +-
+>  .../selftests/namespaces/file_handle_test.c        | 1410 ++++++++++++++=
+++++++
+>  3 files changed, 1412 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testin=
+g/selftests/namespaces/.gitignore
+> index c1e8d634dd21..7639dbf58bbf 100644
+> --- a/tools/testing/selftests/namespaces/.gitignore
+> +++ b/tools/testing/selftests/namespaces/.gitignore
+> @@ -1 +1,2 @@
+>  nsid_test
+> +file_handle_test
+> diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/=
+selftests/namespaces/Makefile
+> index 9280c703533e..f6c117ce2c2b 100644
+> --- a/tools/testing/selftests/namespaces/Makefile
+> +++ b/tools/testing/selftests/namespaces/Makefile
+> @@ -1,7 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  CFLAGS +=3D -Wall -O0 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
+>
+> -TEST_GEN_PROGS :=3D nsid_test
+> +TEST_GEN_PROGS :=3D nsid_test file_handle_test
+>
+>  include ../lib.mk
+>
+> diff --git a/tools/testing/selftests/namespaces/file_handle_test.c b/tool=
+s/testing/selftests/namespaces/file_handle_test.c
+> new file mode 100644
+> index 000000000000..87573fa06990
+> --- /dev/null
+> +++ b/tools/testing/selftests/namespaces/file_handle_test.c
+> @@ -0,0 +1,1410 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#define _GNU_SOURCE
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <grp.h>
+> +#include <limits.h>
+> +#include <sched.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <sys/mount.h>
+> +#include <sys/stat.h>
+> +#include <sys/types.h>
+> +#include <sys/wait.h>
+> +#include <unistd.h>
+> +#include <linux/unistd.h>
+> +#include "../kselftest_harness.h"
+> +
+> +#ifndef FD_NSFS_ROOT
+> +#define FD_NSFS_ROOT -10003 /* Root of the nsfs filesystem */
+> +#endif
+> +
+> +TEST(nsfs_net_handle)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       char ns_path[256];
+> +       struct stat st1, st2;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Open a namespace file descriptor */
+> +       snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/net");
+> +       ns_fd =3D open(ns_path, O_RDONLY);
+> +       ASSERT_GE(ns_fd, 0);
+> +
+> +       /* Get handle for the namespace */
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       ASSERT_GT(handle->handle_bytes, 0);
+> +
+> +       /* Try to open using FD_NSFS_ROOT */
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +       if (fd < 0 && (errno =3D=3D EINVAL || errno =3D=3D EOPNOTSUPP)) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return,
+> +                          "open_by_handle_at with FD_NSFS_ROOT not suppo=
+rted");
+> +       }
+> +       ASSERT_GE(fd, 0);
+> +
+> +       /* Verify we opened the correct namespace */
+> +       ASSERT_EQ(fstat(ns_fd, &st1), 0);
+> +       ASSERT_EQ(fstat(fd, &st2), 0);
+> +       ASSERT_EQ(st1.st_ino, st2.st_ino);
+> +       ASSERT_EQ(st1.st_dev, st2.st_dev);
+> +
+> +       close(fd);
+> +       close(ns_fd);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_uts_handle)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       char ns_path[256];
+> +       struct stat st1, st2;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Open UTS namespace file descriptor */
+> +       snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/uts");
+> +       ns_fd =3D open(ns_path, O_RDONLY);
+> +       ASSERT_GE(ns_fd, 0);
+> +
+> +       /* Get handle for the namespace */
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       ASSERT_GT(handle->handle_bytes, 0);
+> +
+> +       /* Try to open using FD_NSFS_ROOT */
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +       if (fd < 0 && (errno =3D=3D EINVAL || errno =3D=3D EOPNOTSUPP)) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return,
+> +                          "open_by_handle_at with FD_NSFS_ROOT not suppo=
+rted");
+> +       }
+> +       ASSERT_GE(fd, 0);
+> +
+> +       /* Verify we opened the correct namespace */
+> +       ASSERT_EQ(fstat(ns_fd, &st1), 0);
+> +       ASSERT_EQ(fstat(fd, &st2), 0);
+> +       ASSERT_EQ(st1.st_ino, st2.st_ino);
+> +       ASSERT_EQ(st1.st_dev, st2.st_dev);
+> +
+> +       close(fd);
+> +       close(ns_fd);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_ipc_handle)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       char ns_path[256];
+> +       struct stat st1, st2;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Open IPC namespace file descriptor */
+> +       snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/ipc");
+> +       ns_fd =3D open(ns_path, O_RDONLY);
+> +       ASSERT_GE(ns_fd, 0);
+> +
+> +       /* Get handle for the namespace */
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       ASSERT_GT(handle->handle_bytes, 0);
+> +
+> +       /* Try to open using FD_NSFS_ROOT */
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +       if (fd < 0 && (errno =3D=3D EINVAL || errno =3D=3D EOPNOTSUPP)) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return,
+> +                          "open_by_handle_at with FD_NSFS_ROOT not suppo=
+rted");
+> +       }
+> +       ASSERT_GE(fd, 0);
+> +
+> +       /* Verify we opened the correct namespace */
+> +       ASSERT_EQ(fstat(ns_fd, &st1), 0);
+> +       ASSERT_EQ(fstat(fd, &st2), 0);
+> +       ASSERT_EQ(st1.st_ino, st2.st_ino);
+> +       ASSERT_EQ(st1.st_dev, st2.st_dev);
+> +
+> +       close(fd);
+> +       close(ns_fd);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_pid_handle)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       char ns_path[256];
+> +       struct stat st1, st2;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Open PID namespace file descriptor */
+> +       snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/pid");
+> +       ns_fd =3D open(ns_path, O_RDONLY);
+> +       ASSERT_GE(ns_fd, 0);
+> +
+> +       /* Get handle for the namespace */
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       ASSERT_GT(handle->handle_bytes, 0);
+> +
+> +       /* Try to open using FD_NSFS_ROOT */
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +       if (fd < 0 && (errno =3D=3D EINVAL || errno =3D=3D EOPNOTSUPP)) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return,
+> +                          "open_by_handle_at with FD_NSFS_ROOT not suppo=
+rted");
+> +       }
+> +       ASSERT_GE(fd, 0);
+> +
+> +       /* Verify we opened the correct namespace */
+> +       ASSERT_EQ(fstat(ns_fd, &st1), 0);
+> +       ASSERT_EQ(fstat(fd, &st2), 0);
+> +       ASSERT_EQ(st1.st_ino, st2.st_ino);
+> +       ASSERT_EQ(st1.st_dev, st2.st_dev);
+> +
+> +       close(fd);
+> +       close(ns_fd);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_mnt_handle)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       char ns_path[256];
+> +       struct stat st1, st2;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Open mount namespace file descriptor */
+> +       snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/mnt");
+> +       ns_fd =3D open(ns_path, O_RDONLY);
+> +       ASSERT_GE(ns_fd, 0);
+> +
+> +       /* Get handle for the namespace */
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       ASSERT_GT(handle->handle_bytes, 0);
+> +
+> +       /* Try to open using FD_NSFS_ROOT */
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +       if (fd < 0 && (errno =3D=3D EINVAL || errno =3D=3D EOPNOTSUPP)) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return,
+> +                          "open_by_handle_at with FD_NSFS_ROOT not suppo=
+rted");
+> +       }
+> +       ASSERT_GE(fd, 0);
+> +
+> +       /* Verify we opened the correct namespace */
+> +       ASSERT_EQ(fstat(ns_fd, &st1), 0);
+> +       ASSERT_EQ(fstat(fd, &st2), 0);
+> +       ASSERT_EQ(st1.st_ino, st2.st_ino);
+> +       ASSERT_EQ(st1.st_dev, st2.st_dev);
+> +
+> +       close(fd);
+> +       close(ns_fd);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_user_handle)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       char ns_path[256];
+> +       struct stat st1, st2;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Open user namespace file descriptor */
+> +       snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/user");
+> +       ns_fd =3D open(ns_path, O_RDONLY);
+> +       ASSERT_GE(ns_fd, 0);
+> +
+> +       /* Get handle for the namespace */
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       ASSERT_GT(handle->handle_bytes, 0);
+> +
+> +       /* Try to open using FD_NSFS_ROOT */
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +       if (fd < 0 && (errno =3D=3D EINVAL || errno =3D=3D EOPNOTSUPP)) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return,
+> +                          "open_by_handle_at with FD_NSFS_ROOT not suppo=
+rted");
+> +       }
+> +       ASSERT_GE(fd, 0);
+> +
+> +       /* Verify we opened the correct namespace */
+> +       ASSERT_EQ(fstat(ns_fd, &st1), 0);
+> +       ASSERT_EQ(fstat(fd, &st2), 0);
+> +       ASSERT_EQ(st1.st_ino, st2.st_ino);
+> +       ASSERT_EQ(st1.st_dev, st2.st_dev);
+> +
+> +       close(fd);
+> +       close(ns_fd);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_cgroup_handle)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       char ns_path[256];
+> +       struct stat st1, st2;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Open cgroup namespace file descriptor */
+> +       snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/cgroup");
+> +       ns_fd =3D open(ns_path, O_RDONLY);
+> +       if (ns_fd < 0) {
+> +               SKIP(free(handle); return, "cgroup namespace not availabl=
+e");
+> +       }
+> +
+> +       /* Get handle for the namespace */
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       ASSERT_GT(handle->handle_bytes, 0);
+> +
+> +       /* Try to open using FD_NSFS_ROOT */
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +       if (fd < 0 && (errno =3D=3D EINVAL || errno =3D=3D EOPNOTSUPP)) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return,
+> +                          "open_by_handle_at with FD_NSFS_ROOT not suppo=
+rted");
+> +       }
+> +       ASSERT_GE(fd, 0);
+> +
+> +       /* Verify we opened the correct namespace */
+> +       ASSERT_EQ(fstat(ns_fd, &st1), 0);
+> +       ASSERT_EQ(fstat(fd, &st2), 0);
+> +       ASSERT_EQ(st1.st_ino, st2.st_ino);
+> +       ASSERT_EQ(st1.st_dev, st2.st_dev);
+> +
+> +       close(fd);
+> +       close(ns_fd);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_time_handle)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       char ns_path[256];
+> +       struct stat st1, st2;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Open time namespace file descriptor */
+> +       snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/time");
+> +       ns_fd =3D open(ns_path, O_RDONLY);
+> +       if (ns_fd < 0) {
+> +               SKIP(free(handle); return, "time namespace not available"=
+);
+> +       }
+> +
+> +       /* Get handle for the namespace */
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       ASSERT_GT(handle->handle_bytes, 0);
+> +
+> +       /* Try to open using FD_NSFS_ROOT */
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +       if (fd < 0 && (errno =3D=3D EINVAL || errno =3D=3D EOPNOTSUPP)) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return,
+> +                          "open_by_handle_at with FD_NSFS_ROOT not suppo=
+rted");
+> +       }
+> +       ASSERT_GE(fd, 0);
+> +
+> +       /* Verify we opened the correct namespace */
+> +       ASSERT_EQ(fstat(ns_fd, &st1), 0);
+> +       ASSERT_EQ(fstat(fd, &st2), 0);
+> +       ASSERT_EQ(st1.st_ino, st2.st_ino);
+> +       ASSERT_EQ(st1.st_dev, st2.st_dev);
+> +
+> +       close(fd);
+> +       close(ns_fd);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_user_net_namespace_isolation)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       pid_t pid;
+> +       int status;
+> +       int pipefd[2];
+> +       char result;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Create pipe for communication */
+> +       ASSERT_EQ(pipe(pipefd), 0);
+> +
+> +       /* Get handle for current network namespace */
+> +       ns_fd =3D open("/proc/self/ns/net", O_RDONLY);
+> +       ASSERT_GE(ns_fd, 0);
+> +
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd); close(pipefd[0]);
+> +                    close(pipefd[1]);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       close(ns_fd);
+> +
+> +       pid =3D fork();
+> +       ASSERT_GE(pid, 0);
+> +
+> +       if (pid =3D=3D 0) {
+> +               /* Child process */
+> +               close(pipefd[0]);
+> +
+> +               /* First create new user namespace to drop privileges */
+> +               ret =3D unshare(CLONE_NEWUSER);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "U",
+> +                             1); /* Unable to create user namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Write uid/gid mappings to maintain some capabilities *=
+/
+> +               int uid_map_fd =3D open("/proc/self/uid_map", O_WRONLY);
+> +               int gid_map_fd =3D open("/proc/self/gid_map", O_WRONLY);
+> +               int setgroups_fd =3D open("/proc/self/setgroups", O_WRONL=
+Y);
+> +
+> +               if (uid_map_fd < 0 || gid_map_fd < 0 || setgroups_fd < 0)=
+ {
+> +                       write(pipefd[1], "M", 1); /* Unable to set mappin=
+gs */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Disable setgroups to allow gid mapping */
+> +               write(setgroups_fd, "deny", 4);
+> +               close(setgroups_fd);
+> +
+> +               /* Map current uid/gid to root in the new namespace */
+> +               char mapping[64];
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getuid());
+> +               write(uid_map_fd, mapping, strlen(mapping));
+> +               close(uid_map_fd);
+> +
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getgid());
+> +               write(gid_map_fd, mapping, strlen(mapping));
+> +               close(gid_map_fd);
+> +
+> +               /* Now create new network namespace */
+> +               ret =3D unshare(CLONE_NEWNET);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "N",
+> +                             1); /* Unable to create network namespace *=
+/
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Try to open parent's network namespace handle from new=
+ user+net namespace */
+> +               fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +
+> +               if (fd >=3D 0) {
+> +                       /* Should NOT succeed - we're in a different user=
+ namespace */
+> +                       write(pipefd[1], "S", 1); /* Unexpected success *=
+/
+> +                       close(fd);
+> +               } else if (errno =3D=3D ESTALE) {
+> +                       /* Expected: Stale file handle */
+> +                       write(pipefd[1], "P", 1);
+> +               } else {
+> +                       /* Other error */
+> +                       write(pipefd[1], "F", 1);
+> +               }
+> +
+> +               close(pipefd[1]);
+> +               exit(0);
+> +       }
+> +
+> +       /* Parent process */
+> +       close(pipefd[1]);
+> +       ASSERT_EQ(read(pipefd[0], &result, 1), 1);
+> +
+> +       waitpid(pid, &status, 0);
+> +       ASSERT_TRUE(WIFEXITED(status));
+> +       ASSERT_EQ(WEXITSTATUS(status), 0);
+> +
+> +       if (result =3D=3D 'U') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new user namespace");
+> +       }
+> +       if (result =3D=3D 'M') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot set uid/gid mappings");
+> +       }
+> +       if (result =3D=3D 'N') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new network namespace");
+> +       }
+> +
+> +       /* Should fail with permission denied since we're in a different =
+user namespace */
+> +       ASSERT_EQ(result, 'P');
+> +
+> +       close(pipefd[0]);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_user_uts_namespace_isolation)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       pid_t pid;
+> +       int status;
+> +       int pipefd[2];
+> +       char result;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Create pipe for communication */
+> +       ASSERT_EQ(pipe(pipefd), 0);
+> +
+> +       /* Get handle for current UTS namespace */
+> +       ns_fd =3D open("/proc/self/ns/uts", O_RDONLY);
+> +       ASSERT_GE(ns_fd, 0);
+> +
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd); close(pipefd[0]);
+> +                    close(pipefd[1]);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       close(ns_fd);
+> +
+> +       pid =3D fork();
+> +       ASSERT_GE(pid, 0);
+> +
+> +       if (pid =3D=3D 0) {
+> +               /* Child process */
+> +               close(pipefd[0]);
+> +
+> +               /* First create new user namespace to drop privileges */
+> +               ret =3D unshare(CLONE_NEWUSER);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "U",
+> +                             1); /* Unable to create user namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Write uid/gid mappings to maintain some capabilities *=
+/
+> +               int uid_map_fd =3D open("/proc/self/uid_map", O_WRONLY);
+> +               int gid_map_fd =3D open("/proc/self/gid_map", O_WRONLY);
+> +               int setgroups_fd =3D open("/proc/self/setgroups", O_WRONL=
+Y);
+> +
+> +               if (uid_map_fd < 0 || gid_map_fd < 0 || setgroups_fd < 0)=
+ {
+> +                       write(pipefd[1], "M", 1); /* Unable to set mappin=
+gs */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Disable setgroups to allow gid mapping */
+> +               write(setgroups_fd, "deny", 4);
+> +               close(setgroups_fd);
+> +
+> +               /* Map current uid/gid to root in the new namespace */
+> +               char mapping[64];
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getuid());
+> +               write(uid_map_fd, mapping, strlen(mapping));
+> +               close(uid_map_fd);
+> +
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getgid());
+> +               write(gid_map_fd, mapping, strlen(mapping));
+> +               close(gid_map_fd);
+> +
+> +               /* Now create new UTS namespace */
+> +               ret =3D unshare(CLONE_NEWUTS);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "N",
+> +                             1); /* Unable to create UTS namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Try to open parent's UTS namespace handle from new use=
+r+uts namespace */
+> +               fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +
+> +               if (fd >=3D 0) {
+> +                       /* Should NOT succeed - we're in a different user=
+ namespace */
+> +                       write(pipefd[1], "S", 1); /* Unexpected success *=
+/
+> +                       close(fd);
+> +               } else if (errno =3D=3D ESTALE) {
+> +                       /* Expected: Stale file handle */
+> +                       write(pipefd[1], "P", 1);
+> +               } else {
+> +                       /* Other error */
+> +                       write(pipefd[1], "F", 1);
+> +               }
+> +
+> +               close(pipefd[1]);
+> +               exit(0);
+> +       }
+> +
+> +       /* Parent process */
+> +       close(pipefd[1]);
+> +       ASSERT_EQ(read(pipefd[0], &result, 1), 1);
+> +
+> +       waitpid(pid, &status, 0);
+> +       ASSERT_TRUE(WIFEXITED(status));
+> +       ASSERT_EQ(WEXITSTATUS(status), 0);
+> +
+> +       if (result =3D=3D 'U') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new user namespace");
+> +       }
+> +       if (result =3D=3D 'M') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot set uid/gid mappings");
+> +       }
+> +       if (result =3D=3D 'N') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new UTS namespace");
+> +       }
+> +
+> +       /* Should fail with ESTALE since we're in a different user namesp=
+ace */
+> +       ASSERT_EQ(result, 'P');
+> +
+> +       close(pipefd[0]);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_user_ipc_namespace_isolation)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       pid_t pid;
+> +       int status;
+> +       int pipefd[2];
+> +       char result;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Create pipe for communication */
+> +       ASSERT_EQ(pipe(pipefd), 0);
+> +
+> +       /* Get handle for current IPC namespace */
+> +       ns_fd =3D open("/proc/self/ns/ipc", O_RDONLY);
+> +       ASSERT_GE(ns_fd, 0);
+> +
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd); close(pipefd[0]);
+> +                    close(pipefd[1]);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       close(ns_fd);
+> +
+> +       pid =3D fork();
+> +       ASSERT_GE(pid, 0);
+> +
+> +       if (pid =3D=3D 0) {
+> +               /* Child process */
+> +               close(pipefd[0]);
+> +
+> +               /* First create new user namespace to drop privileges */
+> +               ret =3D unshare(CLONE_NEWUSER);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "U",
+> +                             1); /* Unable to create user namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Write uid/gid mappings to maintain some capabilities *=
+/
+> +               int uid_map_fd =3D open("/proc/self/uid_map", O_WRONLY);
+> +               int gid_map_fd =3D open("/proc/self/gid_map", O_WRONLY);
+> +               int setgroups_fd =3D open("/proc/self/setgroups", O_WRONL=
+Y);
+> +
+> +               if (uid_map_fd < 0 || gid_map_fd < 0 || setgroups_fd < 0)=
+ {
+> +                       write(pipefd[1], "M", 1); /* Unable to set mappin=
+gs */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Disable setgroups to allow gid mapping */
+> +               write(setgroups_fd, "deny", 4);
+> +               close(setgroups_fd);
+> +
+> +               /* Map current uid/gid to root in the new namespace */
+> +               char mapping[64];
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getuid());
+> +               write(uid_map_fd, mapping, strlen(mapping));
+> +               close(uid_map_fd);
+> +
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getgid());
+> +               write(gid_map_fd, mapping, strlen(mapping));
+> +               close(gid_map_fd);
+> +
+> +               /* Now create new IPC namespace */
+> +               ret =3D unshare(CLONE_NEWIPC);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "N",
+> +                             1); /* Unable to create IPC namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Try to open parent's IPC namespace handle from new use=
+r+ipc namespace */
+> +               fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +
+> +               if (fd >=3D 0) {
+> +                       /* Should NOT succeed - we're in a different user=
+ namespace */
+> +                       write(pipefd[1], "S", 1); /* Unexpected success *=
+/
+> +                       close(fd);
+> +               } else if (errno =3D=3D ESTALE) {
+> +                       /* Expected: Stale file handle */
+> +                       write(pipefd[1], "P", 1);
+> +               } else {
+> +                       /* Other error */
+> +                       write(pipefd[1], "F", 1);
+> +               }
+> +
+> +               close(pipefd[1]);
+> +               exit(0);
+> +       }
+> +
+> +       /* Parent process */
+> +       close(pipefd[1]);
+> +       ASSERT_EQ(read(pipefd[0], &result, 1), 1);
+> +
+> +       waitpid(pid, &status, 0);
+> +       ASSERT_TRUE(WIFEXITED(status));
+> +       ASSERT_EQ(WEXITSTATUS(status), 0);
+> +
+> +       if (result =3D=3D 'U') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new user namespace");
+> +       }
+> +       if (result =3D=3D 'M') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot set uid/gid mappings");
+> +       }
+> +       if (result =3D=3D 'N') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new IPC namespace");
+> +       }
+> +
+> +       /* Should fail with ESTALE since we're in a different user namesp=
+ace */
+> +       ASSERT_EQ(result, 'P');
+> +
+> +       close(pipefd[0]);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_user_mnt_namespace_isolation)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       pid_t pid;
+> +       int status;
+> +       int pipefd[2];
+> +       char result;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Create pipe for communication */
+> +       ASSERT_EQ(pipe(pipefd), 0);
+> +
+> +       /* Get handle for current mount namespace */
+> +       ns_fd =3D open("/proc/self/ns/mnt", O_RDONLY);
+> +       ASSERT_GE(ns_fd, 0);
+> +
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd); close(pipefd[0]);
+> +                    close(pipefd[1]);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       close(ns_fd);
+> +
+> +       pid =3D fork();
+> +       ASSERT_GE(pid, 0);
+> +
+> +       if (pid =3D=3D 0) {
+> +               /* Child process */
+> +               close(pipefd[0]);
+> +
+> +               /* First create new user namespace to drop privileges */
+> +               ret =3D unshare(CLONE_NEWUSER);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "U",
+> +                             1); /* Unable to create user namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Write uid/gid mappings to maintain some capabilities *=
+/
+> +               int uid_map_fd =3D open("/proc/self/uid_map", O_WRONLY);
+> +               int gid_map_fd =3D open("/proc/self/gid_map", O_WRONLY);
+> +               int setgroups_fd =3D open("/proc/self/setgroups", O_WRONL=
+Y);
+> +
+> +               if (uid_map_fd < 0 || gid_map_fd < 0 || setgroups_fd < 0)=
+ {
+> +                       write(pipefd[1], "M", 1); /* Unable to set mappin=
+gs */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Disable setgroups to allow gid mapping */
+> +               write(setgroups_fd, "deny", 4);
+> +               close(setgroups_fd);
+> +
+> +               /* Map current uid/gid to root in the new namespace */
+> +               char mapping[64];
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getuid());
+> +               write(uid_map_fd, mapping, strlen(mapping));
+> +               close(uid_map_fd);
+> +
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getgid());
+> +               write(gid_map_fd, mapping, strlen(mapping));
+> +               close(gid_map_fd);
+> +
+> +               /* Now create new mount namespace */
+> +               ret =3D unshare(CLONE_NEWNS);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "N",
+> +                             1); /* Unable to create mount namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Try to open parent's mount namespace handle from new u=
+ser+mnt namespace */
+> +               fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +
+> +               if (fd >=3D 0) {
+> +                       /* Should NOT succeed - we're in a different user=
+ namespace */
+> +                       write(pipefd[1], "S", 1); /* Unexpected success *=
+/
+> +                       close(fd);
+> +               } else if (errno =3D=3D ESTALE) {
+> +                       /* Expected: Stale file handle */
+> +                       write(pipefd[1], "P", 1);
+> +               } else {
+> +                       /* Other error */
+> +                       write(pipefd[1], "F", 1);
+> +               }
+> +
+> +               close(pipefd[1]);
+> +               exit(0);
+> +       }
+> +
+> +       /* Parent process */
+> +       close(pipefd[1]);
+> +       ASSERT_EQ(read(pipefd[0], &result, 1), 1);
+> +
+> +       waitpid(pid, &status, 0);
+> +       ASSERT_TRUE(WIFEXITED(status));
+> +       ASSERT_EQ(WEXITSTATUS(status), 0);
+> +
+> +       if (result =3D=3D 'U') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new user namespace");
+> +       }
+> +       if (result =3D=3D 'M') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot set uid/gid mappings");
+> +       }
+> +       if (result =3D=3D 'N') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new mount namespace");
+> +       }
+> +
+> +       /* Should fail with ESTALE since we're in a different user namesp=
+ace */
+> +       ASSERT_EQ(result, 'P');
+> +
+> +       close(pipefd[0]);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_user_cgroup_namespace_isolation)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       pid_t pid;
+> +       int status;
+> +       int pipefd[2];
+> +       char result;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Create pipe for communication */
+> +       ASSERT_EQ(pipe(pipefd), 0);
+> +
+> +       /* Get handle for current cgroup namespace */
+> +       ns_fd =3D open("/proc/self/ns/cgroup", O_RDONLY);
+> +       if (ns_fd < 0) {
+> +               SKIP(free(handle); close(pipefd[0]); close(pipefd[1]);
+> +                    return, "cgroup namespace not available");
+> +       }
+> +
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd); close(pipefd[0]);
+> +                    close(pipefd[1]);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       close(ns_fd);
+> +
+> +       pid =3D fork();
+> +       ASSERT_GE(pid, 0);
+> +
+> +       if (pid =3D=3D 0) {
+> +               /* Child process */
+> +               close(pipefd[0]);
+> +
+> +               /* First create new user namespace to drop privileges */
+> +               ret =3D unshare(CLONE_NEWUSER);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "U",
+> +                             1); /* Unable to create user namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Write uid/gid mappings to maintain some capabilities *=
+/
+> +               int uid_map_fd =3D open("/proc/self/uid_map", O_WRONLY);
+> +               int gid_map_fd =3D open("/proc/self/gid_map", O_WRONLY);
+> +               int setgroups_fd =3D open("/proc/self/setgroups", O_WRONL=
+Y);
+> +
+> +               if (uid_map_fd < 0 || gid_map_fd < 0 || setgroups_fd < 0)=
+ {
+> +                       write(pipefd[1], "M", 1); /* Unable to set mappin=
+gs */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Disable setgroups to allow gid mapping */
+> +               write(setgroups_fd, "deny", 4);
+> +               close(setgroups_fd);
+> +
+> +               /* Map current uid/gid to root in the new namespace */
+> +               char mapping[64];
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getuid());
+> +               write(uid_map_fd, mapping, strlen(mapping));
+> +               close(uid_map_fd);
+> +
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getgid());
+> +               write(gid_map_fd, mapping, strlen(mapping));
+> +               close(gid_map_fd);
+> +
+> +               /* Now create new cgroup namespace */
+> +               ret =3D unshare(CLONE_NEWCGROUP);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "N",
+> +                             1); /* Unable to create cgroup namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Try to open parent's cgroup namespace handle from new =
+user+cgroup namespace */
+> +               fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
+> +
+> +               if (fd >=3D 0) {
+> +                       /* Should NOT succeed - we're in a different user=
+ namespace */
+> +                       write(pipefd[1], "S", 1); /* Unexpected success *=
+/
+> +                       close(fd);
+> +               } else if (errno =3D=3D ESTALE) {
+> +                       /* Expected: Stale file handle */
+> +                       write(pipefd[1], "P", 1);
+> +               } else {
+> +                       /* Other error */
+> +                       write(pipefd[1], "F", 1);
+> +               }
+> +
+> +               close(pipefd[1]);
+> +               exit(0);
+> +       }
+> +
+> +       /* Parent process */
+> +       close(pipefd[1]);
+> +       ASSERT_EQ(read(pipefd[0], &result, 1), 1);
+> +
+> +       waitpid(pid, &status, 0);
+> +       ASSERT_TRUE(WIFEXITED(status));
+> +       ASSERT_EQ(WEXITSTATUS(status), 0);
+> +
+> +       if (result =3D=3D 'U') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new user namespace");
+> +       }
+> +       if (result =3D=3D 'M') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot set uid/gid mappings");
+> +       }
+> +       if (result =3D=3D 'N') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new cgroup namespace");
+> +       }
+> +
+> +       /* Should fail with ESTALE since we're in a different user namesp=
+ace */
+> +       ASSERT_EQ(result, 'P');
+> +
+> +       close(pipefd[0]);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_user_pid_namespace_isolation)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       pid_t pid;
+> +       int status;
+> +       int pipefd[2];
+> +       char result;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Create pipe for communication */
+> +       ASSERT_EQ(pipe(pipefd), 0);
+> +
+> +       /* Get handle for current PID namespace */
+> +       ns_fd =3D open("/proc/self/ns/pid", O_RDONLY);
+> +       ASSERT_GE(ns_fd, 0);
+> +
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd); close(pipefd[0]);
+> +                    close(pipefd[1]);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       close(ns_fd);
+> +
+> +       pid =3D fork();
+> +       ASSERT_GE(pid, 0);
+> +
+> +       if (pid =3D=3D 0) {
+> +               /* Child process */
+> +               close(pipefd[0]);
+> +
+> +               /* First create new user namespace to drop privileges */
+> +               ret =3D unshare(CLONE_NEWUSER);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "U",
+> +                             1); /* Unable to create user namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Write uid/gid mappings to maintain some capabilities *=
+/
+> +               int uid_map_fd =3D open("/proc/self/uid_map", O_WRONLY);
+> +               int gid_map_fd =3D open("/proc/self/gid_map", O_WRONLY);
+> +               int setgroups_fd =3D open("/proc/self/setgroups", O_WRONL=
+Y);
+> +
+> +               if (uid_map_fd < 0 || gid_map_fd < 0 || setgroups_fd < 0)=
+ {
+> +                       write(pipefd[1], "M", 1); /* Unable to set mappin=
+gs */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Disable setgroups to allow gid mapping */
+> +               write(setgroups_fd, "deny", 4);
+> +               close(setgroups_fd);
+> +
+> +               /* Map current uid/gid to root in the new namespace */
+> +               char mapping[64];
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getuid());
+> +               write(uid_map_fd, mapping, strlen(mapping));
+> +               close(uid_map_fd);
+> +
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getgid());
+> +               write(gid_map_fd, mapping, strlen(mapping));
+> +               close(gid_map_fd);
+> +
+> +               /* Now create new PID namespace - requires fork to take e=
+ffect */
+> +               ret =3D unshare(CLONE_NEWPID);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "N",
+> +                             1); /* Unable to create PID namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Fork again for PID namespace to take effect */
+> +               pid_t child_pid =3D fork();
+> +               if (child_pid < 0) {
+> +                       write(pipefd[1], "N",
+> +                             1); /* Unable to fork in PID namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               if (child_pid =3D=3D 0) {
+> +                       /* Grandchild in new PID namespace */
+> +                       /* Try to open parent's PID namespace handle from=
+ new user+pid namespace */
+> +                       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_=
+RDONLY);
+> +
+> +                       if (fd >=3D 0) {
+> +                               /* Should NOT succeed - we're in a differ=
+ent user namespace */
+> +                               write(pipefd[1], "S",
+> +                                     1); /* Unexpected success */
+> +                               close(fd);
+> +                       } else if (errno =3D=3D ESTALE) {
+> +                               /* Expected: Stale file handle */
+> +                               write(pipefd[1], "P", 1);
+> +                       } else {
+> +                               /* Other error */
+> +                               write(pipefd[1], "F", 1);
+> +                       }
+> +
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Wait for grandchild */
+> +               waitpid(child_pid, NULL, 0);
+> +               exit(0);
+> +       }
+> +
+> +       /* Parent process */
+> +       close(pipefd[1]);
+> +       ASSERT_EQ(read(pipefd[0], &result, 1), 1);
+> +
+> +       waitpid(pid, &status, 0);
+> +       ASSERT_TRUE(WIFEXITED(status));
+> +       ASSERT_EQ(WEXITSTATUS(status), 0);
+> +
+> +       if (result =3D=3D 'U') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new user namespace");
+> +       }
+> +       if (result =3D=3D 'M') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot set uid/gid mappings");
+> +       }
+> +       if (result =3D=3D 'N') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new PID namespace");
+> +       }
+> +
+> +       /* Should fail with ESTALE since we're in a different user namesp=
+ace */
+> +       ASSERT_EQ(result, 'P');
+> +
+> +       close(pipefd[0]);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_user_time_namespace_isolation)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       pid_t pid;
+> +       int status;
+> +       int pipefd[2];
+> +       char result;
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Create pipe for communication */
+> +       ASSERT_EQ(pipe(pipefd), 0);
+> +
+> +       /* Get handle for current time namespace */
+> +       ns_fd =3D open("/proc/self/ns/time", O_RDONLY);
+> +       if (ns_fd < 0) {
+> +               SKIP(free(handle); close(pipefd[0]); close(pipefd[1]);
+> +                    return, "time namespace not available");
+> +       }
+> +
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd); close(pipefd[0]);
+> +                    close(pipefd[1]);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       close(ns_fd);
+> +
+> +       pid =3D fork();
+> +       ASSERT_GE(pid, 0);
+> +
+> +       if (pid =3D=3D 0) {
+> +               /* Child process */
+> +               close(pipefd[0]);
+> +
+> +               /* First create new user namespace to drop privileges */
+> +               ret =3D unshare(CLONE_NEWUSER);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "U",
+> +                             1); /* Unable to create user namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Write uid/gid mappings to maintain some capabilities *=
+/
+> +               int uid_map_fd =3D open("/proc/self/uid_map", O_WRONLY);
+> +               int gid_map_fd =3D open("/proc/self/gid_map", O_WRONLY);
+> +               int setgroups_fd =3D open("/proc/self/setgroups", O_WRONL=
+Y);
+> +
+> +               if (uid_map_fd < 0 || gid_map_fd < 0 || setgroups_fd < 0)=
+ {
+> +                       write(pipefd[1], "M", 1); /* Unable to set mappin=
+gs */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Disable setgroups to allow gid mapping */
+> +               write(setgroups_fd, "deny", 4);
+> +               close(setgroups_fd);
+> +
+> +               /* Map current uid/gid to root in the new namespace */
+> +               char mapping[64];
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getuid());
+> +               write(uid_map_fd, mapping, strlen(mapping));
+> +               close(uid_map_fd);
+> +
+> +               snprintf(mapping, sizeof(mapping), "0 %d 1", getgid());
+> +               write(gid_map_fd, mapping, strlen(mapping));
+> +               close(gid_map_fd);
+> +
+> +               /* Now create new time namespace - requires fork to take =
+effect */
+> +               ret =3D unshare(CLONE_NEWTIME);
+> +               if (ret < 0) {
+> +                       write(pipefd[1], "N",
+> +                             1); /* Unable to create time namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Fork again for time namespace to take effect */
+> +               pid_t child_pid =3D fork();
+> +               if (child_pid < 0) {
+> +                       write(pipefd[1], "N",
+> +                             1); /* Unable to fork in time namespace */
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               if (child_pid =3D=3D 0) {
+> +                       /* Grandchild in new time namespace */
+> +                       /* Try to open parent's time namespace handle fro=
+m new user+time namespace */
+> +                       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_=
+RDONLY);
+> +
+> +                       if (fd >=3D 0) {
+> +                               /* Should NOT succeed - we're in a differ=
+ent user namespace */
+> +                               write(pipefd[1], "S",
+> +                                     1); /* Unexpected success */
+> +                               close(fd);
+> +                       } else if (errno =3D=3D ESTALE) {
+> +                               /* Expected: Stale file handle */
+> +                               write(pipefd[1], "P", 1);
+> +                       } else {
+> +                               /* Other error */
+> +                               write(pipefd[1], "F", 1);
+> +                       }
+> +
+> +                       close(pipefd[1]);
+> +                       exit(0);
+> +               }
+> +
+> +               /* Wait for grandchild */
+> +               waitpid(child_pid, NULL, 0);
+> +               exit(0);
+> +       }
+> +
+> +       /* Parent process */
+> +       close(pipefd[1]);
+> +       ASSERT_EQ(read(pipefd[0], &result, 1), 1);
+> +
+> +       waitpid(pid, &status, 0);
+> +       ASSERT_TRUE(WIFEXITED(status));
+> +       ASSERT_EQ(WEXITSTATUS(status), 0);
+> +
+> +       if (result =3D=3D 'U') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new user namespace");
+> +       }
+> +       if (result =3D=3D 'M') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot set uid/gid mappings");
+> +       }
+> +       if (result =3D=3D 'N') {
+> +               SKIP(free(handle); close(pipefd[0]);
+> +                    return, "Cannot create new time namespace");
+> +       }
+> +
+> +       /* Should fail with ESTALE since we're in a different user namesp=
+ace */
+> +       ASSERT_EQ(result, 'P');
+> +
+> +       close(pipefd[0]);
+> +       free(handle);
+> +}
+> +
+> +TEST(nsfs_open_flags)
+> +{
+> +       struct file_handle *handle;
+> +       int mount_id;
+> +       int ret;
+> +       int fd;
+> +       int ns_fd;
+> +       char ns_path[256];
+> +
+> +       handle =3D malloc(sizeof(*handle) + MAX_HANDLE_SZ);
+> +       ASSERT_NE(handle, NULL);
+> +
+> +       /* Open a namespace file descriptor */
+> +       snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/net");
+> +       ns_fd =3D open(ns_path, O_RDONLY);
+> +       ASSERT_GE(ns_fd, 0);
+> +
+> +       /* Get handle for the namespace */
+> +       handle->handle_bytes =3D MAX_HANDLE_SZ;
+> +       ret =3D name_to_handle_at(ns_fd, "", handle, &mount_id, AT_EMPTY_=
+PATH);
+> +       if (ret < 0 && errno =3D=3D EOPNOTSUPP) {
+> +               SKIP(free(handle); close(ns_fd);
+> +                    return, "nsfs doesn't support file handles");
+> +       }
+> +       ASSERT_EQ(ret, 0);
+> +       ASSERT_GT(handle->handle_bytes, 0);
+> +
+> +       /* Test invalid flags that should fail */
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_WRONLY);
+> +       ASSERT_LT(fd, 0);
+> +       ASSERT_EQ(errno, EPERM);
+> +
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_RDWR);
+> +       ASSERT_LT(fd, 0);
+> +       ASSERT_EQ(errno, EPERM);
+> +
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_CREAT);
+> +       ASSERT_LT(fd, 0);
+> +       ASSERT_EQ(errno, EINVAL);
+> +
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_TRUNC);
+> +       ASSERT_LT(fd, 0);
+> +       ASSERT_EQ(errno, EINVAL);
+> +
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_APPEND);
+> +       ASSERT_LT(fd, 0);
+> +       ASSERT_EQ(errno, EINVAL);
+> +
+> +       fd =3D open_by_handle_at(FD_NSFS_ROOT, handle, O_DIRECT);
+> +       ASSERT_LT(fd, 0);
+> +       ASSERT_EQ(errno, EINVAL);
+> +
+> +       close(ns_fd);
+> +       free(handle);
+> +}
+> +
+> +TEST_HARNESS_MAIN
+>
+> --
+> 2.47.3
+>
 
