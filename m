@@ -1,111 +1,143 @@
-Return-Path: <linux-kernel+bounces-810689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C77EB51DF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:39:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE90B51E04
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8F617A3DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:38:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABF7B1888FD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4D52727E7;
-	Wed, 10 Sep 2025 16:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8212749C8;
+	Wed, 10 Sep 2025 16:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="RHS/O7Wp"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="KVg4UAqh";
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="ASTI7upd"
+Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C9427145C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78184262FD4;
+	Wed, 10 Sep 2025 16:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757522390; cv=none; b=Nnsc8sky86Ru91cUmhiTUWbhuhbuaNxdv/5iV15SO8Btt9offNYc7tsq5ZRJGl3OYbvyQRFVRAOj2vc+4nGItwbVGt80Yi19PB8jNMbYLfPcsc3S2KMKx3P+E1IWlqRDM3KYf9Q4+mpQqzhqVX2Twv4dHuU2f0+DAN6E0hvEncI=
+	t=1757522459; cv=none; b=U91tZhXPrYwNEzs6aHrg2GtMt62EI/pyS1rJLaPetIQlevt3ggW7PqfYGBYIhYYF6C8fGJR0ALEZmNDICu/bkUV5uOu81PcDkakhjPCI0QhOkBFhYCrpdv8iyQaxGoXD1oowXW2Se7XXCcXBtsSrHYDI8BM/0Ib2rMaCeXgVw8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757522390; c=relaxed/simple;
-	bh=hbjFWc/M1u0JtUeGDfraCyEfZ1LuYrMt6ic+SN3g7Vs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tVvSAWZyRqYUc8M2BLim/f+14qLZWs5I1iwWNDRRuWyZgyDcI1xpDls+ds1t0u9g1otclLJxPQuds83DhHWyU1OxNhK5iNGlKBAbn9qH7lNpkOoLiDm6iM3pVOe9613YcBhkhQpzDVweTPKQp4Ga9L28Tctrv1AXf43fiH7dbgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=RHS/O7Wp; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3f663c571e2so63124535ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:39:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757522387; x=1758127187; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/+f5haOvY7V5aJLRvqMe+OKgyMJap2D1kg9AHRnXBFo=;
-        b=RHS/O7WpW2bKu3dkD3GuvUB5YTGA6gb7LyRfu04M+JBfGeQSuhkT/9v/nk/R+dCoyX
-         mZsi1sKflT/XdZwHcNBieE1AylK3Qix8qUwrzhYZBj750TLxjVeOdcOWZXYvcj2GenBj
-         MSoClkJ/PsF+80kRfPRItEj7Tm8QePGqSzJ+QsmXJFA9doy+ahyquicL0MG8caYp2OlB
-         12byJ3aQN9mNWsdieeNi/AazOX86gv6oqRz8IP9rkgCUTTxmZp3BM2oUxPZN3vW0lahe
-         xvDFzSbVRTFzXeitmxBk2z2OUGa+MHihFvw3YurqqUNqs94s3BNYsz99KAOAQOFDWNFA
-         OV0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757522387; x=1758127187;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/+f5haOvY7V5aJLRvqMe+OKgyMJap2D1kg9AHRnXBFo=;
-        b=H+rula5q73lFhZwVfPvaxze2D8bXSJH5F9Mcxd68Ln43ZAuUeZ2j6p0rt8t/XuvQkt
-         Qo0IM2G0EIcpNpsbg1ZyMzV4/x+Ou/gkgXvo8hw1NyTp7RBmOSRTG0iKxIriECgr9zL6
-         gmRbe2O9oSfuZyQu1IR/bWYEVTk3iohfxobPkml0JbZcgmuBRVKjy/EGd4m/61cxx213
-         NE2vSgwpowamZ/KylGRH33dv8bN8X9ESXCITTeFvOXwwO9AA5hZkoU4FMAIVGM7fbzsZ
-         qhImXfddwQY8Bs96MEdN4dyqEWSs2T9Dmd1xEYO81b2VbsvXp6LF+ndQUZ2PnRyWZqpY
-         vJeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpA+AklZotIYmjEV88tZNvg1MkdO6oB0iWnl13Bbs7yEoanOEn6b2qDFUvkV6Blo1i236OojdBDJk0nvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxHwaYbyPbBKJa4QixLWPOLwi15liwvOSYkP8xM7Kcqm8rP72L
-	I4ulPgZ0sHi+2r6YRl0zpcjLtpJVihQj5u7+zIY4IMUoTmVBlnAbpNsrKMGZQhSNRVA=
-X-Gm-Gg: ASbGncuswV6wBtw5Sm26XOEFsLUeNi9iGSIZuiT7RpOOofwAKZ4NzVg7kCfOfTqvK6k
-	NsCiEltZ0BxFRrDNaplIygwR9ggHXortJRXNDnM4v/oJDlcbz88HWYGb0+o72uWEW2k533tYGMJ
-	usUUczJdfUGBBuqVp48kQS8H+AggAUie3Cz11VbaI6tThudCUYoCEnAPsP1s7w+ka8SdNUHIt7s
-	AYSWLJhIFxo+z64MjSkYr7IlslakKuBnFnZDt5GpM/j5BDIb3C0UFzzUaRGpJm/OIAFgARukM3X
-	JEN3OzeBDWO5/jJD8TGKl/thm4uCFDZNq/F8msp2QKV2y2rWGxrandVLAxGUj2a+IVdnSQLSQF9
-	LxvEOse0Cg7CQElPrTs8=
-X-Google-Smtp-Source: AGHT+IEb5WYlYRXj9KAGrUB6b6ycfigzKegEaHb0jkZarvr/Z/Q5oCi/e4o3PHKyP6WP+mXNVGSbxw==
-X-Received: by 2002:a05:6e02:1a69:b0:3fd:1d2e:2e5f with SMTP id e9e14a558f8ab-3fd86264465mr231635655ab.21.1757522387509;
-        Wed, 10 Sep 2025 09:39:47 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-417c8f03f9csm8607825ab.43.2025.09.10.09.39.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 09:39:47 -0700 (PDT)
-Message-ID: <a2d770aa-737b-43f5-8d1e-0c139c09dc0c@kernel.dk>
-Date: Wed, 10 Sep 2025 10:39:45 -0600
+	s=arc-20240116; t=1757522459; c=relaxed/simple;
+	bh=gGA8cxzPPsutuIQEV9d2uVQQve6kWVH4sV8F3OXwkNw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=icg9SnUCjuko7qfRLMlHJdxVimpylwmkHsR3d+1PleYizwcrGB3JgG5I+PqNtuRhI/+H87azeBmVFwJNwtk/yjN69V/LRwrz2+ZhlCdecDBbA9P67uDM+386VH1b56UhG5GzwMEhC3VKME/5WUXs3z1cSQI9yaMunHoAjqPj0rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=KVg4UAqh; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=ASTI7upd; arc=none smtp.client-ip=24.134.29.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1757522445; bh=gGA8cxzPPsutuIQEV9d2uVQQve6kWVH4sV8F3OXwkNw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=KVg4UAqhExq5W4BPJ0AUN6X9ac+QyfeuqfcqPeEvbpOCTDV/f1H16raNanB2zNg5d
+	 oBSLw+IOuHRRxvJRBwzfKoHPaPEkccmPDyQH7ohamoLcmjKWPSVbqHuwTGvEIhtJ2E
+	 Pb1NJcpw4Qx0lH+j9cDiquvlVpj8DkIV9ezoZmqOacvoIEECRWZbZMAG6dyL7IRAm8
+	 eAC2mNl7zqeY/yevbW3wHQRBMPGmPLG5V1H2yQ9h+wS1caCw/PyRn2TQhHkV7Mu53M
+	 scz7Xp3wjOYs22nTBMo6ewVntSKKXZZDewgQSbn6ujdojRShh/5kwrnGCCXlUBBGtr
+	 pzUGnHw6QjlAQ==
+Received: from localhost (localhost [127.0.0.1])
+	by honk.sigxcpu.org (Postfix) with ESMTP id C7C77FB08;
+	Wed, 10 Sep 2025 18:40:45 +0200 (CEST)
+Received: from honk.sigxcpu.org ([127.0.0.1])
+	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id jZ6L5AInDSPs; Wed, 10 Sep 2025 18:40:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1757522442; bh=gGA8cxzPPsutuIQEV9d2uVQQve6kWVH4sV8F3OXwkNw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ASTI7updRCjTGFaeNzPiRlJfEeiO76QbNEdX5hJmAQ70gkshVAG3HHrJc6yvopGC/
+	 9h2jNEnAUay1NilDt3rBCDB/kKOmQyvmx3a/Sky7QcvGSqw9QfRK8ObCXn4SKX4gvI
+	 welO+SWrl+11RioqOgC66OZr/hVebasnDRWN4C+TAhOFwR5pXHksyQYB0/PEZ+LG12
+	 M4EDVr61o14M+FcJO32BttYVbgR0FbwWqr318YQ9UhNJYuJdg+RR9QPbUOqt5UwAUD
+	 2Now39vf+vibjTE2nSZTRj3X/4rcs2mVuqpOlGEyB2jQxbSjwGGdxj4tDKhMn+eUlE
+	 wD7USndeOFcTA==
+From: =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Subject: [PATCH v3 0/3] drm/panel: visionox-rm69299: Add backlight support
+ and small fixes
+Date: Wed, 10 Sep 2025 18:39:55 +0200
+Message-Id: <20250910-shift6mq-panel-v3-0-a7729911afb9@sigxcpu.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/32] block: use extensible_ioctl_valid()
-To: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
-Cc: Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>,
- Mike Yuan <me@yhndnzj.com>, =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?=
- <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>,
- Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, netdev@vger.kernel.org
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-3-4dd56e7359d8@kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <20250910-work-namespace-v1-3-4dd56e7359d8@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANupwWgC/3XMSw6CMBSF4a2QO7amLS0PR+7DOGjhAjdRwBYbD
+ GHvFkYa4/A/yfkW8OgIPZySBRwG8jT0MdJDAlVn+hYZ1bFBcql5yQXzHTVTdn+w0fR4Y6Uubcq
+ LHKtaQjyNDhuad/Byjd2Rnwb32v0gtvUvFQTjTClllbG2MWjOntq5Gp/HwbWwYUF+AtkPICNgj
+ EZd6LrIRf4NrOv6BncWShDvAAAA
+X-Change-ID: 20250901-shift6mq-panel-959b3087ecd2
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Matthias Kaehlcke <mka@chromium.org>, Sam Ravnborg <sam@ravnborg.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ phone-devel@vger.kernel.org, 
+ =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1308; i=agx@sigxcpu.org;
+ h=from:subject:message-id; bh=gGA8cxzPPsutuIQEV9d2uVQQve6kWVH4sV8F3OXwkNw=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0VCYlFLUy9aQU5Bd0FJQVNXL2hsSksvT
+ UhqQWNzbVlnQm93YW56NUczUjJTZHRRLzFMbHZUell0UFZPanRWCjd1ellWY0V0ZGdJcjFBd2xZ
+ UkdKQWpNRUFBRUlBQjBXSVFSajlzemZsaUtkQ1NocktzTWx2NFpTU3Z6QjR3VUMKYU1HcDh3QUt
+ DUkFsdjRaU1N2ekI0eUQyRC80ekV2Q3dKS1lsS0hEcDJGSWVmb3h4bHVkZHl3bDNGdjFOWVd0TA
+ pWT3p0QTFHempHSVpGRW1EZlBjSUdJUXdqbnExMkd5UjA4UXJSUDE0VXFEQ2dCT2JreCtVbGpsY
+ 29KdVhrOHcrClNVM0N5TjFyWFFWdnlQQ2hmWkxiSmFWUUlrL0RRRm1pMVpDUWJ5RHRlc2lnUFlD
+ K2NZNkViN0Y1R0p6ZTN4VzEKeHU1RHFyOVVtVWYvaUNzVzZucmN2WngvWUdYcXd5eVdoVm44OUJ
+ QRzEvbUJhZjhTRTkvcFJXakYxUHFza2plcwo3dXYvNGFwL3VYcnpHc3lpRVNkZDlOMmcxVjhEZV
+ VGdHQwSG8xVk9WeVdWZDZZTW1IK0RzZ25WZmM0Zit1S3drCkxTazc1VjlTZHQwejhWMW5sYjdlK
+ zRPaXpUT2IyN0VtMCsrTXkzWkgvcEtOc2REUUwrZndrR3hhN2g1OHdpZFkKaVRjbjA0SXZBbVhC
+ NHpkYTJVUklaQjVFQ1hqaUdxd3V5dlR1YVlyYzhERVRkNkp1bktUSUVpRjdaLzRLSGdWZwpBSmZ
+ MZnFxcnhFNGhZcUxBM21TanN0eENHVHN5ZTl4WUFjY05YSW1lZmZ2aTBXdFg0cFFXWjAxSzB5SV
+ I3a1UwCk1mYlZJMVRWN1gxMlhPZ0llbTFZVjFuOEFQckNUakVFc1grMHNYTnY2dGNvdllVeU5HT
+ 2g3cEdjS1ViTTF0alcKRFg1ZDZVQ25KTlB1VERHSXltQzhvNWdoQm5TcWluYldaRXptd3gwWDl4
+ UnRnZHkyQXN5YUhCRmNseGFGOHdsWAo3Z25CQTJ1WnpmUjdEVVpPdEdVbExtMmdxemhDN0dOcmt
+ Fa1BxSld1MTBYaHE2ZlhnaDdoRTZ2ZmJCb1pBZnZiCmJCYzdUdz09Cj1ZK0NlCi0tLS0tRU5EIF
+ BHUCBNRVNTQUdFLS0tLS0K
+X-Developer-Key: i=agx@sigxcpu.org; a=openpgp;
+ fpr=0DB3932762F78E592F6522AFBB5A2C77584122D3
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+This adds optional backlight support via DSI commands. If
+a max_brightness is set in the panel description the backlight
+is created.
 
+While at that we fold in the already sent out clock fix and
+a fix that prevents us from clearing all mode flags when we
+only want HS mode.
+
+Signed-off-by: Guido Günther <agx@sigxcpu.org>
+---
+Changes in v3:
+- Use clock formula in `visionox_rm69299_1080x2160_60hz` rather than the
+  calculated value, thanks Dmitry Baryshkov
+- Link to v2: https://lore.kernel.org/r/20250906-shift6mq-panel-v2-0-aa5e585d8717@sigxcpu.org
+
+Changes in v2:
+- Add Fixes: to the first two commits to make backports simpler
+- Collect Reviewed-by:, thanks Neil Armstrong
+- Link to v1: https://lore.kernel.org/r/20250901-shift6mq-panel-v1-0-444b4abbfaea@sigxcpu.org
+
+---
+Guido Günther (3):
+      drm/panel: visionox-rm69299: Fix clock frequency for SHIFT6mq
+      drm/panel: visionox-rm69299: Don't clear all mode flags
+      drm/panel: visionox-rm69299: Add backlight support
+
+ drivers/gpu/drm/panel/panel-visionox-rm69299.c | 71 +++++++++++++++++++++++++-
+ 1 file changed, 69 insertions(+), 2 deletions(-)
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250901-shift6mq-panel-959b3087ecd2
+
+Best regards,
 -- 
-Jens Axboe
+Guido Günther <agx@sigxcpu.org>
+
 
