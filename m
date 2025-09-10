@@ -1,233 +1,90 @@
-Return-Path: <linux-kernel+bounces-810709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 146C7B51E2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3F05B51E35
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7030A02DD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:48:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0324841B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D56B2741B5;
-	Wed, 10 Sep 2025 16:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B479427B4FA;
+	Wed, 10 Sep 2025 16:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IScuGs4x"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rALV00yq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0409722D4F1
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009C325CC40;
+	Wed, 10 Sep 2025 16:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757522889; cv=none; b=lVn5dhM0TY3xf7IpEiJky5nzRwt0IjyuKzM6vGd+xU3rztRdWk4T2IcqPJ7A6hGghF3VZctg2k6kfmEyCT9TRkpvuYA041apQ/uu4u2ClXBW/qVT63fvPGRcDfTBUbXjENPh47/PQsl6gqA0ajKiDUGBwAESbjqgeWlEO7uvAps=
+	t=1757522932; cv=none; b=jAB69W4fsv9qkRb2azoOQHyKMfqAr0vYG2WMIzJzaiXe6QqJ6r/wqxIm3Yd0wI6T1chscLssxAhgXBaEd3foFyVyXK1Xszw8ClZHoPzBW1gCoolb2c1jzenu5q7ILYIofoanpPk528dq9nqvaH59MuT5pFEEzsJYeKxFmtnfJac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757522889; c=relaxed/simple;
-	bh=wcpXvDUV6NpZ0oE6jLnpkJu9W1+jpqGtglhsbEr7MGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ea70dSY4URLxEeTUNhsyyy00MsE7+8NIcZ6yVYG+MUTI8bJRMrDUd7+DHMxWVVAS1rICSK+tWXrV+1mIDtJfh+zPQLE9cpIxGwZlAZ1XDT7Zw92Ap4ftf0K0OCeI1S8Y3rcSlLYK8vCBzTp9saQ2RYw6cAzB7SZcb6B9i4A5aYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IScuGs4x; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 7AF22C6B3B2;
-	Wed, 10 Sep 2025 16:47:48 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 365CE606D4;
-	Wed, 10 Sep 2025 16:48:04 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 196D2102F28A8;
-	Wed, 10 Sep 2025 18:47:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757522882; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=LT2pdz7Z3NCO0Y4ooBCD3GxfpwJ9fLBoOs3KJyv+Iic=;
-	b=IScuGs4xj81gT1eBiedKgCoo3JOg7z4DU78MOyknA31lSy6JnSX6NUsMSLmtXDiOfjA/y7
-	NjS6NizfRliphi5fXLCw8jKyAY/X9b1+GrbuC32f5MqJ3CQb49qr50RHvemgRHaazE3yeh
-	aFZGzl204nYoK/n7oJITO8Z/kYCBqTaSNlPeBYPtU6Kp8Urz6K4r/wU/kv26wta9/43iEM
-	EljXhucpmtvlD1igzaA/qn/tBKgy0M5vy4GmGwV32f7630geu8ASsl3Ff1bxHZYxgJ+X2T
-	FoKJ1Mg8Cr4ij7o7Grz8zokwUCsXCO8Z9W7OIzMAzJ97qH+JnZMIyO+78R5T6Q==
-Date: Wed, 10 Sep 2025 18:47:52 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Dmitry Baryshkov <lumag@kernel.org>
-Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
- on unplug
-Message-ID: <20250910184752.6c42f004@booty>
-In-Reply-To: <20250910-glittering-serval-of-piety-b32844@houat>
-References: <20250808-drm-bridge-atomic-vs-remove-v1-0-a52e933b08a8@bootlin.com>
-	<20250808-drm-bridge-atomic-vs-remove-v1-2-a52e933b08a8@bootlin.com>
-	<l2orbpdoh3cqqgqudbnbdlogo3bd57uu4nv3ax74uoahknzjgr@gbxxuky3huw6>
-	<20250820131302.6a2da5ef@booty>
-	<20250827-charming-arcane-stingray-cfb8b6@houat>
-	<20250908154906.16693078@booty>
-	<20250910-glittering-serval-of-piety-b32844@houat>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757522932; c=relaxed/simple;
+	bh=CaZJB936f6x6jAPejT2mFRYLV0h4EVhdrhS9aolT+HM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V9dfemnuYJRvB5FvRqpSZUmJO96Nn6BMKl5OIIEzWIezI9uTxrH17va3Sg/z6qzU/I5EVfqVue2nrBYd9TAtPUdB9qHO1vSGcLNSaMYRB1O7GxSKHt38CDgscVL9Cdo4BgaYoSyh8p/dpHjCqjtvTyuFL0hbjTGLv6AYSfrISUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rALV00yq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0A5EC4CEEB;
+	Wed, 10 Sep 2025 16:48:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757522931;
+	bh=CaZJB936f6x6jAPejT2mFRYLV0h4EVhdrhS9aolT+HM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rALV00yq13zFBYaiTVxZZKExTyQ8ddoSKuBGN4RZz8Zj86KPpAuEyasGAEq6SILcY
+	 ZKvPbZ4FkCmVVwzdgvcOPViWrVUdVxIZuiaNL+ETAcxoDv1nNvWv6aavhlVM2Ug9rn
+	 BwR7V3Hen3mjLAqkubyEg9Lj8X2OGd95JZh7fwx8oVefPaNtdgfkbLR6U6yTHCdcKG
+	 vZinpis7sVfGRSYdmKHYpqIsHViXi/0A01COPCjj+LrW8pTBpNlXv/oLAJBnlL5zFv
+	 LZxQ3o6zDCPFDGljHlWss/zxFhFgqxeg0BOf2ESGDKFH8UDvSKcR5h54sSEaua4G7x
+	 S9Uzs2rzC+QWg==
+Date: Wed, 10 Sep 2025 06:48:50 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 18/32] cgroup: support iterator
+Message-ID: <aMGr8q9q0kFE0JHt@slm.duckdns.org>
+References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
+ <20250910-work-namespace-v1-18-4dd56e7359d8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910-work-namespace-v1-18-4dd56e7359d8@kernel.org>
 
-On Wed, 10 Sep 2025 12:59:12 +0200
-Maxime Ripard <mripard@kernel.org> wrote:
+On Wed, Sep 10, 2025 at 04:37:03PM +0200, Christian Brauner wrote:
+> Support the generic namespace iterator and lookup infrastructure to
+> support file handles for namespaces.
 
-> On Mon, Sep 08, 2025 at 03:49:06PM +0200, Luca Ceresoli wrote:
-> > Hi Maxime,
-> > 
-> > On Wed, 27 Aug 2025 09:46:03 +0200
-> > Maxime Ripard <mripard@kernel.org> wrote:
-> >   
-> > > On Wed, Aug 20, 2025 at 01:13:02PM +0200, Luca Ceresoli wrote:  
-> > > > Hello Maxime,
-> > > > 
-> > > > On Tue, 19 Aug 2025 14:29:32 +0200
-> > > > Maxime Ripard <mripard@kernel.org> wrote:
-> > > >     
-> > > > > > @@ -1005,7 +1041,24 @@ static void sn65dsi83_remove(struct i2c_client *client)
-> > > > > >  {
-> > > > > >  	struct sn65dsi83 *ctx = i2c_get_clientdata(client);
-> > > > > >  
-> > > > > > +	drm_bridge_unplug(&ctx->bridge);
-> > > > > >  	drm_bridge_remove(&ctx->bridge);      
-> > > > > 
-> > > > > Shouldn't we merge drm_bridge_unplug with the release part of
-> > > > > devm_drm_bridge_alloc?    
-> > > > 
-> > > > I'm not sure I got what you are suggesting here, sorry.
-> > > > 
-> > > > Do you mean that __devm_drm_bridge_alloc() should add a devres action
-> > > > to call drm_bridge_unplug(), so the unplug is called implicitly and
-> > > > does not need to be called explicitly by all drivers?    
-> > > 
-> > > Yes
-> > >   
-> > > > If that's what you mean, I don't think that would work. Unless I'm
-> > > > missing something, devres actions are always invoked just after the
-> > > > driver .remove callback.    
-> > > 
-> > > Yes, they are called in reverse order of registration, after remove.
-> > >   
-> > > > But we need to call drm_bridge_unplug() at the beginning (or just
-> > > > before) .remove, at least for drivers that need to do something in
-> > > > .remove that cannot be done by devm.
-> > > > 
-> > > > In pseudocode:
-> > > > 
-> > > > mybridge_remove()
-> > > > {
-> > > >   drm_bridge_unplug(); <-- explicit call as in my patch
-> > > >   xyz_disable();
-> > > >   drm_bridge_unplug(); <-- implicitly done by devres
-> > > > }
-> > > > 
-> > > > We want xyz_disable() to be done after drm_bridge_unplug(), so other
-> > > > code paths using drm_bridge_enter/exit() won't mess with xyz.    
-> > > 
-> > > It's not clear to me why doing it before xyz_disable() is important
-> > > here? If anything, it would prevent from disabling the hardware for
-> > > example, even though you still have your memory mapping, clocks, power
-> > > domains, regulators, etc. to properly disable it.
-> > > 
-> > > You're still correct that it's a bad idea though because we want to do
-> > > it before we start freeing all those, so it needs to execute as the
-> > > before the devm actions ...
-> > >   
-> > > > devres actions cannot be added to be executed _before_ .remove, AFAIK.    
-> > > 
-> > > ... and we can't do that either.  
-> > 
-> > I understand your words as "the drm_bridge_unplug() is OK where it is,
-> > your patch is OK in this respect". Correct?
-> > 
-> > So if this is correct, and my reply on the devres cleanups is also
-> > correct (other reply in this thread), that means the whole patch is OK.  
-> 
-> I'm still confused why it's so important than in your example
-> xyz_disable must be called after drm_bridge_unplug.
+The patch subject seems a bit too generic and could be misleading. Maybe it
+should mention it's for namespaces? Other than that,
 
-Let me clarify with an example.
+Acked-by: Tejun Heo <tj@kernel.org>
 
-As I wrote in another reply, I have moved from a flag
-(disable_resources_needed) to a devres action as you had suggested, but
-the example here is based on the old flag because it is more explicit,
-code would be executed in the same order anyway, and, well, because I
-had written the example before the devres action conversion.
-
-Take these two functions (stripped versions of the actual ones):
-
-/* Same as proposed, but with _unplug moved at the end */
-static void sn65dsi83_remove()
-{
-	struct sn65dsi83 *ctx = i2c_get_clientdata(client);
-
-	drm_bridge_remove(&ctx->bridge);
-	
-	/* 
-	 * I moved the following code to a devm action, but keeping it
-	 * explicit here for the discussion
-	 */
-	if (ctx->disable_resources_needed) {
-		sn65dsi83_monitor_stop(ctx);
-		regulator_disable(ctx->vcc);
-	}
-	
-	drm_bridge_unplug(&ctx->bridge);     // At the end!
-}
-
-static void sn65dsi83_atomic_disable()
-{
-	if (!drm_bridge_enter(bridge, &idx))
-		return;
-
-	/* These 3 lines will be replaced by devm_release_action() */
-	ctx->disable_resources_needed = false;
-	sn65dsi83_monitor_stop(ctx);
-	regulator_disable(ctx->vcc);
-
-	drm_bridge_exit(idx);
-}
-
-Here the xyz_disable() in my pseudocode is the sn65dsi83_monitor_stop()
-+ regulator_disable().
-
-If sn65dsi83_remove() and sn65dsi83_atomic_disable() were to happen
-concurrently, this sequence of events could happen:
-
-1. atomic_disable:  drm_bridge_enter() -> OK, can go
-2. remove:          drm_bridge_remove()
-3. remove:          sn65dsi83_monitor_stop()
-4. remove:          regulator_disable()
-5. remove:          drm_bridge_unplug() -- too late to stop atomic_disable
-6. atomic_disable:  ctx->disable_resources_needed = false -- too late to stop .remove
-7. atomic_disable:  sn65dsi83_monitor_stop() -- twice, maybe no problem
-8. atomic_disable:  regulator_disable() -- Twice, en/disable imbalance!
-
-So there is an excess regulator disable, which is an error. I don't see
-how this can be avoided if the drm_bridge_unplug() is called after the
-regulator_disable().
-
-Let me know whether this clarifies the need to _unplug at the beginning
-of the .remove function.
-
-Best regards,
-Luca
+Thanks.
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+tejun
 
