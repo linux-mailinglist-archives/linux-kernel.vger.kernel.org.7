@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-809505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFAEB50E72
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:48:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12410B50E7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A2387B9033
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:46:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3CA0175AF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37E22BD001;
-	Wed, 10 Sep 2025 06:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3322D1F6B;
+	Wed, 10 Sep 2025 06:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDi/ogUs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="clr6bm+D"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284C417C77;
-	Wed, 10 Sep 2025 06:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B3925C802;
+	Wed, 10 Sep 2025 06:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757486901; cv=none; b=utYzaLxwI/+szUlJMuraFtZY5AFXRldyzpk0r4aTo8ASwHXXeSE+G6vLrjo4ef0PIaheO+BDMk7oN/dLsNNj5uB0yHuyk1OzL5/cimr+zJqTFhACDmDEqYuLgBoUOdnW390aGPoaOvmzhKZMxy2A3kXKZQs4yfl4CyI7K10Lk48=
+	t=1757486986; cv=none; b=dtTBt6BQX9s/ZDOABi/iZy1Gy4uVnMSvFFq6czuXtRZ5MdNZAcwPwJh6gI0GkWiYLTh3KdeQo4dFR+PH3nymMDd/bVMvT7tiRv0vJiFc53EE+NI2YqaHby7AcNpmxdLQ+ozuNjcDDPPav2SM5f2NCs+uiuNN4GnNUUl0m8QQnpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757486901; c=relaxed/simple;
-	bh=BQr82IEm2HzzR0RyddG06kxcr8HJUdSHOUt66sRHl74=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KDd8xHvxUJeNzN9CCn0S7YexwD19Wz46OrnwgrpValqT6pCxvGeDC8BRCAdxZAxVjBG2YyRRTYAzV1TUvzSDZ/dY1LOTzkgitk0jTzCJ3pAg0oOX8OA0SapTlHphSmaWm+xShJGGGAr7rJPzqCCXSd6lk+AiH//JSxB/HQl0hbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDi/ogUs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3189C4CEF0;
-	Wed, 10 Sep 2025 06:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757486900;
-	bh=BQr82IEm2HzzR0RyddG06kxcr8HJUdSHOUt66sRHl74=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=QDi/ogUsqKp2SezNfGkOzRr5z2iQN1xQnqyKQXkAOukd4qnbOUCs1p7mICGP+coa/
-	 4UaFCApkjpYJ0dfncgw0RU2vrtCXpKjgir0SElve+UvokjgC8TEp0ejoiFlAykY0Db
-	 +HD11oTQsKcwMbub+A9Q33+wqfT7zccxV+WB2hJX9mAAHt0jpXjVbB9jk0D8/Moryw
-	 3Cn15JgkXXHw3G+kwNwN6fs1W0OpDOG2aV2GwvSS4f1HR89PUfcUVLxnKiuAmXuwtC
-	 ytQ2387dsScrrg5bjWSUgKRIk1GLVVX3FWcuiY2PzZSJWG2vh3bbL5kWdWKUtri6Pj
-	 c7/ivy0YRQEYQ==
-Message-ID: <39724768-c8e2-4efa-ac08-cce3d30414b8@kernel.org>
-Date: Wed, 10 Sep 2025 08:48:16 +0200
+	s=arc-20240116; t=1757486986; c=relaxed/simple;
+	bh=tM264F131NSVRDDSixKUn6MfaXc6ISwBU0d2l7UtgHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VR16yqsKrKlGahCIN5zPYEjuybUsKtORifVRwimLyrhB4YVG0YRfZVDT8w3uADWhujE6XdCKIIjRCKb66v0dley/pI/MV49JxeiS+hLTA6MAp47alWfS6Dqw3RINA21COCF+KFM8IC1uAhokwiSWheI7VjWZh5jdH1iO0whMU+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=clr6bm+D; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757486985; x=1789022985;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=tM264F131NSVRDDSixKUn6MfaXc6ISwBU0d2l7UtgHE=;
+  b=clr6bm+DMt8JAv4bU7yLppSuw6rmjs2aN8q4BjPMeyJkZSCxIYgz7Ik2
+   NO1B4o+80hIK6nVxPnvlCv1ZaN3lBW71LOFxUFsCAR6j3JAVCP6xP80T8
+   1NOcSBjGf3S81RiyeCBhNNb4/2SgX4DI3N1YOwrp7xnz6PPmPBGgJzaGV
+   4vkZ1yLbWsas9/f1nZYetfgEGICCfbmO/XKCvd9KE61WNCD+mioO+/qLy
+   pBhjwJYutsWMU7Snp8CsoHpCKeyAosKxAByqY8CSselav8D040TSZxaz3
+   0lhD2RovQUGim1u49NgcdkREuPKFz9LZTubdne6AtWJujG/2Sg534wKi6
+   g==;
+X-CSE-ConnectionGUID: xSQ+AJYNQ2CeVLTUr6YeUg==
+X-CSE-MsgGUID: EBYoJiNOQ8itdl1bHsZlqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="63616652"
+X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
+   d="scan'208";a="63616652"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 23:49:44 -0700
+X-CSE-ConnectionGUID: eJBOefZ2RaGYOfcyOR9Wgg==
+X-CSE-MsgGUID: zWcCrSzfTn+nVXkT9u3aiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
+   d="scan'208";a="177637509"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 23:49:39 -0700
+Message-ID: <461c050a-b1f6-445a-867e-d43997046581@linux.intel.com>
+Date: Wed, 10 Sep 2025 14:49:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,88 +66,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [serial?] general protection fault in vc_deallocate
-To: syzbot <syzbot+f6cb41c144427dc0796a@syzkaller.appspotmail.com>,
- calixte.pernot@grenoble-inp.org, eadavis@qq.com, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- npitre@baylibre.com, syzkaller-bugs@googlegroups.com
-References: <68c118ce.a70a0220.3543fc.000d.GAE@google.com>
+Subject: Re: [PATCH v10 13/21] KVM: selftests: Add helpers to init TDX memory
+ and finalize VM
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <20250904065453.639610-1-sagis@google.com>
+ <20250904065453.639610-14-sagis@google.com>
 Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <68c118ce.a70a0220.3543fc.000d.GAE@google.com>
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250904065453.639610-14-sagis@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10. 09. 25, 8:21, syzbot wrote:
-> syzbot has bisected this issue to:
-> 
-> commit 23743ba64709a9c137c1b928f8b8e00d846af9cc
-> Author: Calixte Pernot <calixte.pernot@grenoble-inp.org>
-> Date:   Mon Aug 25 12:56:09 2025 +0000
-> 
->      vt: add support for smput/rmput escape codes
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16fded62580000
-> start commit:   3e8e5822146b Add linux-next specific files for 20250908
-> git tree:       linux-next
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=15fded62580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11fded62580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=69cfefa929ab96f7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f6cb41c144427dc0796a
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17230934580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15984642580000
-> 
-> Reported-by: syzbot+f6cb41c144427dc0796a@syzkaller.appspotmail.com
-> Fixes: 23743ba64709 ("vt: add support for smput/rmput escape codes")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-#syz test: 
-https://git.kernel.org/pub/scm/linux/kernel/git/jirislaby/linux.git/ tty-fix
 
--- 
-js
-suse labs
+On 9/4/2025 2:54 PM, Sagi Shahar wrote:
+> From: Ackerley Tng <ackerleytng@google.com>
+>
+> TDX protected memory needs to be measured and encrypted before it can be
+> used by the guest. Traverse the VM's memory regions and initialize all
+> the protected ranges by calling KVM_TDX_INIT_MEM_REGION.
+>
+> Once all the memory is initialized, the VM can be finalized by calling
+> KVM_TDX_FINALIZE_VM.
+>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> Co-developed-by: Erdem Aktas <erdemaktas@google.com>
+> Signed-off-by: Erdem Aktas <erdemaktas@google.com>
+> Co-developed-by: Sagi Shahar <sagis@google.com>
+> Signed-off-by: Sagi Shahar <sagis@google.com>
+> ---
+>   .../selftests/kvm/include/x86/tdx/tdx_util.h  |  2 +
+>   .../selftests/kvm/lib/x86/tdx/tdx_util.c      | 61 +++++++++++++++++++
+>   2 files changed, 63 insertions(+)
+>
+> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+> index a2509959c7ce..2467b6c35557 100644
+> --- a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+> +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+> @@ -71,4 +71,6 @@ void vm_tdx_load_common_boot_parameters(struct kvm_vm *vm);
+>   void vm_tdx_load_vcpu_boot_parameters(struct kvm_vm *vm, struct kvm_vcpu *vcpu);
+>   void vm_tdx_set_vcpu_entry_point(struct kvm_vcpu *vcpu, void *guest_code);
+>   
+> +void vm_tdx_finalize(struct kvm_vm *vm);
+> +
+>   #endif // SELFTESTS_TDX_TDX_UTIL_H
+> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+> index 1b5c01faf1cd..d5df2de81a75 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+> @@ -273,3 +273,64 @@ void vm_tdx_init_vm(struct kvm_vm *vm, uint64_t attributes)
+>   
+>   	free(init_vm);
+>   }
+> +
+> +static void tdx_init_mem_region(struct kvm_vm *vm, void *source_pages,
+> +				uint64_t gpa, uint64_t size)
+> +{
+> +	uint32_t metadata = KVM_TDX_MEASURE_MEMORY_REGION;
+> +	struct kvm_tdx_init_mem_region mem_region = {
+> +		.source_addr = (uint64_t)source_pages,
+> +		.gpa = gpa,
+> +		.nr_pages = size / PAGE_SIZE,
+> +	};
+> +	struct kvm_vcpu *vcpu;
+> +
+> +	vcpu = list_first_entry_or_null(&vm->vcpus, struct kvm_vcpu, list);
+> +
+> +	TEST_ASSERT((mem_region.nr_pages > 0) &&
+> +		    ((mem_region.nr_pages * PAGE_SIZE) == size),
+> +		    "Cannot add partial pages to the guest memory.\n");
+> +	TEST_ASSERT(((uint64_t)source_pages & (PAGE_SIZE - 1)) == 0,
+> +		    "Source memory buffer is not page aligned\n");
+> +	vm_tdx_vcpu_ioctl(vcpu, KVM_TDX_INIT_MEM_REGION, metadata, &mem_region);
+> +}
+> +
+> +static void load_td_private_memory(struct kvm_vm *vm)
+> +{
+> +	struct userspace_mem_region *region;
+> +	int ctr;
+> +
+> +	hash_for_each(vm->regions.slot_hash, ctr, region, slot_node) {
+> +		const struct sparsebit *protected_pages = region->protected_phy_pages;
+> +		const vm_paddr_t gpa_base = region->region.guest_phys_addr;
+> +		const uint64_t hva_base = region->region.userspace_addr;
+> +		const sparsebit_idx_t lowest_page_in_region = gpa_base >> vm->page_shift;
+> +
+
+A spare white line?
+
+> +		sparsebit_idx_t i;
+> +		sparsebit_idx_t j;
+
+i and j could be defined in one line.
+
+> +
+> +		if (!sparsebit_any_set(protected_pages))
+> +			continue;
+> +
+> +		TEST_ASSERT(region->region.guest_memfd != -1,
+> +			    "TD private memory must be backed by guest_memfd");
+> +
+> +		sparsebit_for_each_set_range(protected_pages, i, j) {
+> +			const uint64_t size_to_load = (j - i + 1) * vm->page_size;
+> +			const uint64_t offset =
+> +				(i - lowest_page_in_region) * vm->page_size;
+> +			const uint64_t hva = hva_base + offset;
+> +			const uint64_t gpa = gpa_base + offset;
+> +
+> +			vm_set_memory_attributes(vm, gpa, size_to_load,
+> +						 KVM_MEMORY_ATTRIBUTE_PRIVATE);
+Nit:
+There is a helper vm_mem_set_private() for it.
+
+> +			tdx_init_mem_region(vm, (void *)hva, gpa, size_to_load);
+> +		}
+> +	}
+> +}
+> +
+> +void vm_tdx_finalize(struct kvm_vm *vm)
+> +{
+> +	load_td_private_memory(vm);
+> +	vm_tdx_vm_ioctl(vm, KVM_TDX_FINALIZE_VM, 0, NULL);
+> +}
+
 
