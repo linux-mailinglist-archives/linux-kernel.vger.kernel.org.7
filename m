@@ -1,277 +1,410 @@
-Return-Path: <linux-kernel+bounces-809189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905F1B509D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:15:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 637B6B509D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 452557A8AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:12:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C9893B8D0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D13F1D9A5D;
-	Wed, 10 Sep 2025 00:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D7F70823;
+	Wed, 10 Sep 2025 00:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="I+XGAoiS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="plZorGeo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773471F428F
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A0D3770B
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757463102; cv=none; b=u6mR0tRb/ANrbZdNZRFiHUjbDsHS9XnOQ7Begqbo/AzoZmICu+Xx/fGa9VITBvqYpxSlV50dDIfJeVx12x5135gIEV39Zgr/LtlQ0unsrngeWF0RrXI22SLYcEi1BXXqzqP5szyHX8cQrlYNuFVYMRtlizohcE3xUPwVSwIptZU=
+	t=1757463304; cv=none; b=r1ckX3ORPkW5ksHIBfUbBIvKgDCIFg06gjIOJ0AJUNK3sW3jrUtGWrQMFPxIzhYkn2KhjHbIBjmUgg+sJCwlnyNjuIls7F2SMwiNs7ihAurHMww2YkLjnUBzfrO91plICgMfTLZAQMbhHy9IaN/or1pYOw0/SO7S9Y2hQBNBnRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757463102; c=relaxed/simple;
-	bh=696U7/FWwaaFIGlzeZRWykn9zjUkr8pce7ma6fekJEY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pGVyo75gwY5hKd8fH+QiPqOgaOBRsSnsMCSz0PXGOWtdLOeKvGhtORlWU4FsMHs8RwnG8VbdR0Ku+fTNLD2ZPuZez1qfoVQJUjyamUzJUQfey/fllNgEpUa8l6sdGECFkM2hEOT+724TXVsrJcwyB6JEaryh9LsY25AODjBO0cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=I+XGAoiS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 589HQs0B001029
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:11:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4C5VhC/4pFCnYsmQJ5EmNbV8HXu0TRSksgnPURzlR3I=; b=I+XGAoiSsp98TQ5x
-	6e41NhkRmZ6L5Kid75CcmVKFH9YO7mxf/7QjQ6Z7AYipA+hINDWTRIigDW2guaUT
-	TtSi0Rop725hS7g0+80aIzm5HF2sLYvIOdJSr+EJz690Wyf+p/65yGgXm42N0XZK
-	DN2I4MKDUxQugIw77lqLYw/b2k+9uKo2M1bEEIAZJwdvoF94JVFuFSn5IKTxxu22
-	PaRxo9J7SDEa4DRe9AHR9Vzrd2ZPYbLcl20a5vb8ncbU2W10oTuEdn5iOzu5quC3
-	TaoIRVh+tawxZq2JLVqXf+6KQ8dXW8lXXdXjYEd3py/b5hgV88wWltWEN1AOA6Zq
-	LGYeFQ==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490e4m1wae-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:11:38 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-329dfdc23d2so5670273a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 17:11:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757463098; x=1758067898;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4C5VhC/4pFCnYsmQJ5EmNbV8HXu0TRSksgnPURzlR3I=;
-        b=jl5ccg32yAHJUDPXwSXq0k2JCvKMjNFRUQ3udHMIo1kNIWM+kMIXtpWbwFTcf37kgI
-         1UgBRkh89ZBqeIIuP74Swbzcv4JC/IKlrygD1P562XjNclVUC2dQt6+tdLzQiv8uB7iz
-         fdA9nJQBl6aYuxLzqTVz7Z2sm+XCNK7MhhuWWCmmOU2wjFbBOGzhNEjlfbpjpGIbhJ+p
-         qLAxm00TB9mti0ZLduvBxZ/ovD/tfNvp8qVsfvi8ScF08KzpIVE4N1QtbRTO6+lOMCP7
-         f01dV7bFTTBr+T2XlqG6JPSLjNIDVFCybo0sN9QHHWIIlIe3nM87ZYticn24hL2kk35J
-         TF3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUl70M6GnwbKFVIppTbqTftWqrehpT8Dx+mt0ME2Bzw1r7aWzu0xd0tpD0SrYmY4lI/jcrH9QCszIVmSi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLeOUJGxQOq5+VSN7rJDUq7s3LYkwqjGiA14hV+fG6Nlx2SpUZ
-	wDDfobqiseDFmLlzo6BbeZ7lU5PPL9wxLmpekq2yE7jmSZxDeXQuEcB/sL3Vz/8/e/CsosGWhUk
-	XPhvQTG1PPrj+XF+yq4QTPhyKLfF4HPl7sMUG5C2sL9uGJhiEeol12x3eCNRRIHN6Rw==
-X-Gm-Gg: ASbGncuLqKHrYurWumEVQfSgAAdu0zBBuNxDr+XlGeanh6Wwbv2FBtr0A5BC+D8KEZY
-	Z+5nwlcW4ji0kIIXGFUyF/mKmwUPEcJ3SEWZG/Hlq80lRAqVtB2brXFUwYVHMghGK/ak0Q1ewR/
-	7elZSXQuIrtUZPaXnDWExmzLrOWqouNpTeLrs9m0Xpfe6Ci8pLxqTLBUNMPFRdqADHQIVd6TJIW
-	vknDgjOPmI1bz/ckLDqA2X82DikrZ+GL0aUU6NITnVEDOrMnJCBlFui4jjMz+Z0zCrbKQnPM9kg
-	s6lqWpvC3wGxaqyHc2C1X6HuYkwnfOm+9EgmmgEpzPkwNwKEPNArxO8iJvsVggv0uS0Yax+XpCx
-	uoK+S8HY8SmlC0WtUHiu97O4=
-X-Received: by 2002:a17:90b:3e83:b0:32b:dfd4:95c9 with SMTP id 98e67ed59e1d1-32d43f65178mr18315518a91.23.1757463097221;
-        Tue, 09 Sep 2025 17:11:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpzGJa3zoFNB42rtvfjajYvfcc9erQFUhwdKHNTg2RVQc2elCXFRJ+X/Uvoa7tYLTxRWAgEw==
-X-Received: by 2002:a17:90b:3e83:b0:32b:dfd4:95c9 with SMTP id 98e67ed59e1d1-32d43f65178mr18315479a91.23.1757463096596;
-        Tue, 09 Sep 2025 17:11:36 -0700 (PDT)
-Received: from hu-azarrabi-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dab6bb655sm1285672a91.10.2025.09.09.17.11.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 17:11:35 -0700 (PDT)
-From: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-Date: Tue, 09 Sep 2025 17:11:13 -0700
-Subject: [PATCH v10 11/11] Documentation: tee: Add Qualcomm TEE driver
+	s=arc-20240116; t=1757463304; c=relaxed/simple;
+	bh=2uVLhJlplgb89JbQ1bHQcmHQq2uVTcHCutoz8vCMPxY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pRCS24dzhfhZTqu7ZV137txHYCOtkNQF89BfrOCJmQawOKXu+cj2OB+TtfkBHNltdF3RWZReIZpMd4o2wv+laMo6FvfUU1vjnl3BSrUUB5L/5+32LiIdZKjsJRhBCUlKrXGlZCB6FRJW7gSFHGezXDS54prsnYGsedwn71vTN98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=plZorGeo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34FEBC116C6
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:15:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757463304;
+	bh=2uVLhJlplgb89JbQ1bHQcmHQq2uVTcHCutoz8vCMPxY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=plZorGeoPWo2T5EhgvhEq5wFluNA3gzovgxofLq8S/tbpEeMY13X5OpTR06vugk4L
+	 M9OQpyM8sRmdC3RqjlD/N/yFuk7PqugyGiRu11QV9qpLbD9j4UhrJhgUBfDu+IkvFT
+	 HG/l3yBxV98/QFFmF6AiIjPZm+tr+bGE7WMUm15BnHzW6g/RedKJzE8ajrzTL259ck
+	 kqz+xMOptbF2e7PimrQueO9qy32oMMulx3b6ufEWFFhvcBheRpyZqHl6/1yoGyRSWP
+	 eiAoV+RtySuRMj8sHqSPskGCMir6FXlBZLPIvxrdVpNr1LdwMtg3j8y3j4CH2uwvBp
+	 HFKiOesMH+ghw==
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45ddca76f22so15815e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 17:15:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVbcB/sjVKXAChj9ihBjnt7/Fi0jzzC7ERUjPNToovNXbAVOGpIl3iuhAWijGexLeNCdaKKinltg9nso5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXKJPBMDSPitOaZSpuFgVcHnMPGdHWA1/UqS8uxEjLmCyEOrUu
+	BrfPJ+6ySo9yEoPeONjcPwvL8sB1YAVveaI8/2O/ntgO5qkyFK0fjpXto6xtEGG9ONcC7azZPVJ
+	UgTrygOMUXI0S1LNpG1CswkFFR0iRFoTZB/Jo4o4Q
+X-Google-Smtp-Source: AGHT+IE+gORxRI4n+sJBerwONXQn7eJVE2j/M+YKqRRdaYDPhNkkE+0dgIwwzoUwnzwsuDSbg7hspHrV0zfkTUgJm94=
+X-Received: by 2002:a05:600c:a59a:b0:458:92d5:3070 with SMTP id
+ 5b1f17b1804b1-45df74f82aemr519715e9.6.1757463302636; Tue, 09 Sep 2025
+ 17:15:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250909-qcom-tee-using-tee-ss-without-mem-obj-v10-11-20b17855ef31@oss.qualcomm.com>
-References: <20250909-qcom-tee-using-tee-ss-without-mem-obj-v10-0-20b17855ef31@oss.qualcomm.com>
-In-Reply-To: <20250909-qcom-tee-using-tee-ss-without-mem-obj-v10-0-20b17855ef31@oss.qualcomm.com>
-To: Jens Wiklander <jens.wiklander@linaro.org>,
-        Sumit Garg <sumit.garg@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Apurupa Pattapu <quic_apurupa@quicinc.com>,
-        Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
-        Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
-        Sumit Garg <sumit.garg@oss.qualcomm.com>
-X-Mailer: b4 0.13.0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzOCBTYWx0ZWRfX5n9HmhrJFK47
- OiTX0DN/yvm+Nv0kTXgKS1rNZgr1i/jC9YFb3lHFkDvPQneOIXe2s+ZNCbp1iC9qqxjT6wtRF5f
- o4Lm+/POJAt6lStyIbxh1Drz7xsZfTtAqH6mSg+Jp2CPYilnnB4wWsn+Mi147dnj/7ZmjFk1lkE
- E9eINQN0UrYUeIClinDl7cNpjXs+KymaqwRbRfu4ixqL4l96YTSRYEcd/j+ozS7B0eA/UXbrxh3
- z/80mmWtEDTB6ijFPwSNVjOZLT+ggSI18wYiTHcw/R+wGBKMTTGaEq3qtKlPqXvB5Ay6ae3ZNXt
- 8AzN2nRDuFK1H5p+DYN3VoGXqf+eY3ePxXZqyBR+zL2ndwNSuvRsi8MnZzhrSEt0a8hprt0BRnG
- Hx5XcqAZ
-X-Authority-Analysis: v=2.4 cv=J66q7BnS c=1 sm=1 tr=0 ts=68c0c23a cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=7CQSdrXTAAAA:8
- a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=vCTlBN6rBY5pDr9NrAkA:9 a=QEXdDO2ut3YA:10
- a=M0EVDjxxv-UA:10 a=iS9zxrgQBfv6-_F4QbHw:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-GUID: i38atp1tPxuiv3j4HFytjBGUxAM4K7vb
-X-Proofpoint-ORIG-GUID: i38atp1tPxuiv3j4HFytjBGUxAM4K7vb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-09_03,2025-09-08_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 clxscore=1015 spamscore=0 phishscore=0
- adultscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060038
+References: <aK2vIdU0szcu7smP@yjaykim-PowerEdge-T330> <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
+ <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330> <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
+ <aLRTyWJN60WEu/3q@yjaykim-PowerEdge-T330> <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
+ <aLXEkRAGmTlTGeQO@yjaykim-PowerEdge-T330> <CACePvbXAXbxqRi3_OoiSJKVs0dzuC-021AVaTkE3XOSx7FWvXQ@mail.gmail.com>
+ <aLqDkpGr4psGFOcF@yjaykim-PowerEdge-T330> <CAF8kJuPuOWUEMg6C9AnAA-mddgHRjuMVqURrbk6bUHxAmEvgFQ@mail.gmail.com>
+ <aL3Dav4RLvtLliYC@yjaykim-PowerEdge-T330>
+In-Reply-To: <aL3Dav4RLvtLliYC@yjaykim-PowerEdge-T330>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 9 Sep 2025 17:14:51 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuPnaJi=aKFwEknoh-eNgUPoje29EiKApmaWur+GqBGc0g@mail.gmail.com>
+X-Gm-Features: AS18NWAK32hgWYeSFL1FKe9s338QbW5OndmA7PMxvUwghvs2UAWhM87vV_oYI2U
+Message-ID: <CAF8kJuPnaJi=aKFwEknoh-eNgUPoje29EiKApmaWur+GqBGc0g@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
+ cgroup-based swap priority
+To: YoungJun Park <youngjun.park@lge.com>
+Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
+	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
+	bhe@redhat.com, baohua@kernel.org, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com, 
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com, 
+	Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, Kairui Song <ryncsn@gmail.com>, 
+	Wei Xu <weixugc@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add documentation for the Qualcomm TEE driver.
+On Sun, Sep 7, 2025 at 10:40=E2=80=AFAM YoungJun Park <youngjun.park@lge.co=
+m> wrote:
+>
+> Hi, Chris Li
+>
+> Thank you for your thoughtful and quick feedback.
+>
+> > > If you remove the
+> > > swap tier. the range of that tier merges to the neighbour tier.  That
+> > > way you don't need to worry about the swap file already having an
+> > > entry in this tier you swap out.
+> >
+> > Should the configured mask simply be left as-is,
+> > even if (a) the same key is later reintroduced with a different order (=
+e.g.,
+> > first =E2=86=92 third), or (b) a merge causes the cgroup to use a lower=
+ tier it did not
+>
+> Let me clarify my concern with a concrete example.
+> Suppose:
+> 1. SSD =E2=86=92 tier "A" (31=E2=80=9340), HDD =E2=86=92 "B" (21=E2=80=93=
+30), HDD2 =E2=86=92 "C" (10=E2=80=9320), HDD3 =E2=86=92 "D" (0=E2=80=939)
+> 2. A cgroup uses tier "A"
+> 3. SSD is swapped off =E2=86=92 tier "A" becomes a hole
 
-Acked-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
-Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
----
- Documentation/tee/index.rst |  1 +
- Documentation/tee/qtee.rst  | 96 +++++++++++++++++++++++++++++++++++++++++++++
- MAINTAINERS                 |  1 +
- 3 files changed, 98 insertions(+)
+There is just no swap device in A. A still (31-40).
 
-diff --git a/Documentation/tee/index.rst b/Documentation/tee/index.rst
-index 4be6e69d7837..62afb7ee9b52 100644
---- a/Documentation/tee/index.rst
-+++ b/Documentation/tee/index.rst
-@@ -11,6 +11,7 @@ TEE Subsystem
-    op-tee
-    amd-tee
-    ts-tee
-+   qtee
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/tee/qtee.rst b/Documentation/tee/qtee.rst
-new file mode 100644
-index 000000000000..2fa2c1bf6384
---- /dev/null
-+++ b/Documentation/tee/qtee.rst
-@@ -0,0 +1,96 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=============================================
-+QTEE (Qualcomm Trusted Execution Environment)
-+=============================================
-+
-+The QTEE driver handles communication with Qualcomm TEE [1].
-+
-+The lowest level of communication with QTEE builds on the ARM SMC Calling
-+Convention (SMCCC) [2], which is the foundation for QTEE's Secure Channel
-+Manager (SCM) [3] used internally by the driver.
-+
-+In a QTEE-based system, services are represented as objects with a series of
-+operations that can be called to produce results, including other objects.
-+
-+When an object is hosted within QTEE, executing its operations is referred
-+to as "direct invocation". QTEE can also invoke objects hosted in the non-secure
-+world using a method known as "callback request".
-+
-+The SCM provides two functions to support direct invocation and callback requests:
-+
-+- QCOM_SCM_SMCINVOKE_INVOKE: Used for direct invocation. It can return either
-+  a result or initiate a callback request.
-+- QCOM_SCM_SMCINVOKE_CB_RSP: Used to submit a response to a callback request
-+  triggered by a previous direct invocation.
-+
-+The QTEE Transport Message [4] is stacked on top of the SCM driver functions.
-+
-+A message consists of two buffers shared with QTEE: inbound and outbound
-+buffers. The inbound buffer is used for direct invocation, and the outbound
-+buffer is used to make callback requests. This picture shows the contents of
-+a QTEE transport message::
-+
-+                                      +---------------------+
-+                                      |                     v
-+    +-----------------+-------+-------+------+--------------------------+
-+    | qcomtee_msg_    |object | buffer       |                          |
-+    |  object_invoke  |  id   | offset, size |                          | (inbound buffer)
-+    +-----------------+-------+--------------+--------------------------+
-+    <---- header -----><---- arguments ------><- in/out buffer payload ->
-+
-+                                      +-----------+
-+                                      |           v
-+    +-----------------+-------+-------+------+----------------------+
-+    | qcomtee_msg_    |object | buffer       |                      |
-+    |  callback       |  id   | offset, size |                      | (outbound buffer)
-+    +-----------------+-------+--------------+----------------------+
-+
-+Each buffer is started with a header and array of arguments.
-+
-+QTEE Transport Message supports four types of arguments:
-+
-+- Input Object (IO) is an object parameter to the current invocation
-+  or callback request.
-+- Output Object (OO) is an object parameter from the current invocation
-+  or callback request.
-+- Input Buffer (IB) is (offset, size) pair to the inbound or outbound region
-+  to store parameter to the current invocation or callback request.
-+- Output Buffer (OB) is (offset, size) pair to the inbound or outbound region
-+  to store parameter from the current invocation or callback request.
-+
-+Picture of the relationship between the different components in the QTEE
-+architecture::
-+
-+         User space               Kernel                     Secure world
-+         ~~~~~~~~~~               ~~~~~~                     ~~~~~~~~~~~~
-+   +--------+   +----------+                                +--------------+
-+   | Client |   |callback  |                                | Trusted      |
-+   +--------+   |server    |                                | Application  |
-+      /\        +----------+                                +--------------+
-+      ||  +----------+ /\                                          /\
-+      ||  |callback  | ||                                          ||
-+      ||  |server    | ||                                          \/
-+      ||  +----------+ ||                                   +--------------+
-+      ||       /\      ||                                   | TEE Internal |
-+      ||       ||      ||                                   | API          |
-+      \/       \/      \/   +--------+--------+             +--------------+
-+   +---------------------+  | TEE    | QTEE   |             | QTEE         |
-+   |   libqcomtee [5]    |  | subsys | driver |             | Trusted OS   |
-+   +-------+-------------+--+----+-------+----+-------------+--------------+
-+   |      Generic TEE API        |       |   QTEE MSG                      |
-+   |      IOCTL (TEE_IOC_*)      |       |   SMCCC (QCOM_SCM_SMCINVOKE_*)  |
-+   +-----------------------------+       +---------------------------------+
-+
-+References
-+==========
-+
-+[1] https://docs.qualcomm.com/bundle/publicresource/topics/80-70015-11/qualcomm-trusted-execution-environment.html
-+
-+[2] http://infocenter.arm.com/help/topic/com.arm.doc.den0028a/index.html
-+
-+[3] drivers/firmware/qcom/qcom_scm.c
-+
-+[4] drivers/tee/qcomtee/qcomtee_msg.h
-+
-+[5] https://github.com/quic/quic-teec
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5086db700aeb..bac9436f65c7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20984,6 +20984,7 @@ QUALCOMM TEE (QCOMTEE) DRIVER
- M:	Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
- L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
-+F:	Documentation/tee/qtee.rst
- F:	drivers/tee/qcomtee/
- 
- QUALCOMM TRUST ZONE MEMORY ALLOCATOR
 
--- 
-2.34.1
+> 4. Tier "D" is removed
+> 5. Tier "A" is reassigned to range (0=E2=80=939)
+> 6. Then a cgroup configured with "A" cannot actually use "A" (0~9)
 
+That would require each cgroup to hold a reference count of A.
+So A can't be re-assign while having a cgroup using A. in 5.
+
+> 7. Later a new tier "E" is added and assigned (31=E2=80=9340)
+> 8. A cgroup now configured with "E" refers to the same numeric range (31=
+=E2=80=9340),
+>    but the meaning has changed compared to when it used "A".
+
+I consider the user reassigning the same tier name with different
+ranges is a user error. They want to shoot themself in the foot, we
+can't stop them. Maybe we shouldn't even try to stop them. It does not
+make sense to complicate things just to prevent users from doing
+nonsense things. It has no additional complexity cost, sure.
+
+>
+> This feels unintuitive. I would prefer invalidating the mask if the refer=
+enced
+> tier is removed, so stale references don=E2=80=99t silently point to a di=
+fferent tier.
+
+If there is a life cycle of the invalidation? Forever does not seem to
+be good either. It will prevent user reuse the tier range even there
+is no cgroup referencing that before.
+
+If you want this kind of invalidation, I suggest just make a reference
+count on the "A", each cgroup that references "A" holds a reference
+count. It will be tricky to reference count the default on case
+though, basically every tier is reference counted.
+
+> > I think my intention may not have come across clearly. I was not trying
+> > to propose a new optimization, but to describe a direction that require=
+s
+> > almost no changes from the current behavior. Looking back, I realize th=
+e
+> > ideas I presented may not have looked like small adjustments, even
+> > though that was my intent.
+> >
+> > I see. We don't need to jump to implementation details yet. I can help
+> > you resolve the swap allocator internals as well. Let's have the
+> > user's visible behavior settle down first.
+>
+> Ack. Let=E2=80=99s settle user-visible semantics first and defer allocato=
+r internals.
+> We can revisit per-CPU cluster cache handling as a lower-priority topic w=
+hen we
+> move to patchwork.
+
+Ack.
+
+>
+> > I talked to Wei about swap tiers a bit. Add him to the CC as well. He
+> > made me realize that we need two level things in the cgroup
+> > "swap.tiers".
+> > ...
+> > For the operation, each tier will need two bits, including the
+> > default. One bit select this timer off, one bit select this tier on.
+> > e.g. we have 16 tiers including the default, then all 16 tiers take up =
+32 bits.
+>
+> My understanding is:
+>
+> Per tier (2-bit state)
+> - `+` =E2=86=92 always on (bit 10)
+> - `-` =E2=86=92 always off (bit 01)
+> - missing =E2=86=92 inherit from parent (bit 00)
+> - `11` is invalid
+
+Right.
+
+>
+> Default tier
+> - `+` means inherit parent as the base
+> - `-` means start from zero (ignore parent)
+> - missing means (this is the part I want to confirm) nothing?
+
++ means override default to "on" for all, allow every tier. (starting
+for every tier)
+- means override default to "off" for all. disallow every tier.
+(starting from zero)
+
+> So in my view =E2=80=9Cdefault=E2=80=9D is an **inheritance control knob*=
+*, whereas in your
+> explanation =E2=80=9Cdefault=E2=80=9D is also a **special tier** with its=
+ own 2-bit state.
+> Is that the right reading?
+
+It is a knob to override all. Yes it is a special tier wild cast. If
+the tier was not mentioned using +tier_name or -tier_name, the tier
+uses the default on/off value. If a tier has more than one on/off
+operation, the last write wins (closer to the leaf node cgroup) wins.
+
+Therefore, if the cgroup has default override was set, there is no
+need to lookup the parent any more, it overrides every tier already.
+That provides a way for the child cgroup to overwrite all parent swap
+tiers selection.
+
+>
+> If my understanding is correct, I=E2=80=99m also happy to adopt the inter=
+face format
+> you proposed.
+>
+> Over the weekend I kept thinking about it, and your proposal looks like a
+> more flexible interface. It also has clear similarities to how cgroup
+> controllers are added, so the format seems acceptable to me.
+
+It is more flexible and I have a simple way to perform the parent
+lookup on/off evaluation with short cuts. I send that out in the other
+email.
+
+
+> I have one remaining concern about cgroup semantics.
+> The inheritance and resource model we=E2=80=99re discussing seems to dive=
+rge
+> somewhat from existing cgroup v2 conventions. Since we=E2=80=99ve aligned=
+ that
+> this effectively acts as QoS control, it also makes me wonder whether we
+> should proactively propose a doc update to the =E2=80=9CResource Distribu=
+tion
+> Models=E2=80=9D section so the concept is explicitly covered. This may be=
+ me
+> being overcautious, so I=E2=80=99d appreciate your view.
+
+More documents is better. Yes it diverges from the existing V2
+convention as the parent contains the child. QoS is a policy, it is
+relative indpendent of parents, unlike the containing relationship.
+
+> > Wei also raises one very important point. Because zswap is not tight
+> > to a swap device. We might want a predefined tier bit to describe
+> > zswap. e.g. the first tier bit is always given to zswap and the tier
+> > name is always zswap, the priority range can be assigned from
+> > mm/swap/tiers interface.
+>
+> Ack. Reserving a predefined tier bit for zswap makes sense.
+>
+> As a passing thought (not a strong proposal): a few common tiers (e.g., z=
+swap,
+> ssd, hdd, remote) could be predefined and non-removable, with users inser=
+ting
+> custom ranges between or apart from them. For example, if an SSD tier is
+> predefined, `swapon` for SSD devices could be limited to that tier=E2=80=
+=94this would
+> align with grouping by service speed and nudge users toward sensible conf=
+igs.
+
+Then we will need to assign a fixed default range for them thus might
+make this more complex when people actually define their own tiers.
+I think the kernel should avoid making any default scheme on the user
+space swap tiers. Just like the software that manages the cgroup
+controls it.
+
+There are other complications. e.g. I have priority 3: first SSD drive
+1, then priority 2: HDD, then priority 1: SSD driver 2.
+Pre-configured SSD tier will not be able to describe this, the first
+and third drive in the list is SSD. It create conflict in ordering. I
+think it is best to avoid defining any customer definable tier.
+
+> > > * **Tier specification**
+> > >   - Priority >=3D 0 range is divided into intervals, each identified =
+by a
+> > >     tier name. The full 0+ range must be covered.
+> >
+> > Not necessarily true if we allow removal of the tier and generate
+> > holes removed range as we discussed above. Unless I understand the
+> > previous hole idea incorrectly.
+>
+> Ack. I prefer allowing holes, so we don=E2=80=99t need to enforce coverin=
+g the full
+> range simply.
+> (I had considered usage making full-range coverage coexist with holes,
+> but on reflection that doesn=E2=80=99t seem necessary. complicated)
+
+Ack.
+
+>
+> > >   - Each tier has an order (tier1 is highest priority) and an interna=
+l
+> >
+> > The order you mean swap device priority order or the tier internal bit =
+order?
+>
+> I meant the order implied by the priority ranges. In the interface I sugg=
+ested,
+> the `-` operator specifies ordered ranges, so a notion of tier order matt=
+ers.
+> With your format this may not be needed or not that important.
+
+I see. the '-' you mean the '-' between two tiers. The leading '-'
+will mean "off".
+
+> > >   - Until it is set, there is no default tier.
+> >
+> > Does that mean you can't do incremental add or incremental subtract tie=
+rs?
+>
+> > >     (may internally conceptually used? but not exported)
+> >
+> > My suggestion now is "swap.tiers" is an operation rather than a
+> > bitmask. It can include "default", Each tier can select on or off or
+> > missing so 3 operation states. "default" tier has no name, if
+> > specified, must be listed as the first in "swap.tiers"
+>
+> When I said =E2=80=9Cdefault tier,=E2=80=9D I meant a conceptual tier tha=
+t covers the full
+> priority range when nothing is specified. From your reply, your =E2=80=9C=
+default=E2=80=9D
+> sounds closer to a *default value* (inheritance control) rather than a
+> standalone tier. Did I get that right?
+
+It is the wild cast tier that controls on/off  for tier names that
+haven't been mentioned with "+/-" "on/off" operation.
+e.g.:
+"- +ssd -hdd", that means default is off, turn on ssd and turn off hdd
+(don't need to say that, default is already off).
+But if there is also a zswap tier, it is not in the on/off operation
+list. It is default to off because the leading "-".
+
+> > >     Note: a space must follow "+" or "-" before the tier name.
+> > >   - Edge cases:
+> > >       * If not all ranges are specified: input is accepted, but cgrou=
+ps
+> > >         cannot use incomplete ranges. (TBD)
+> > >         e.g) echo "hdd:50" > /sys/kernel/mm/swap/tiers. (0~49 not spe=
+cifeid)
+> >
+> > Because removing the tier will generate holes in the priority range
+> > anyway. 0-49 is not specified in the same as if a tier is there
+> > previously then gets removed.
+>
+> As discussed above, we=E2=80=99re allowing holes, so we can accept inputs=
+ that don=E2=80=99t
+> cover the full range.
+>
+> > >       * Overlap with existing range: removal fails until all swap
+> > >         devices in that range are swapped off.
+> >
+> > Specifically a new tier priority landing in the middle of a tier
+> > range, the new tier will split the range with the existing one.
+>
+> If swapoff is complete but removal has not occurred and a new tier comes =
+in,
+> we can allow splitting. If a tier reference is still held, splitting shou=
+ld not
+> be allowed. A corner case: a tier spans 50=E2=80=93100 but only prioritie=
+s 55 and 60
+> have active swap; inserting a split at 70 (no active refs) =E2=80=94 to k=
+eep rules
+> simple, I=E2=80=99d still **not** accept the split while any references e=
+xist anywhere
+> in the original range.
+
+In that case you want refcount the tiers by cgroup that reference it.
+I am open to suggestion, I haven't give this too deep thought.
+
+>
+> > > * **Cgroup interface**
+> > >   - New files (under memcg): memory.swap.tier, memory.swap.tier.effec=
+tive
+> >
+> > I don't think we need two interface files. We can live with one just
+> > "memory.swap.tiers"
+> > We can list the local one first then effective one on the second line
+> > or separate with "#"
+>
+> Ack. One file is simpler; show local then effective. For now, a newline
+> separator looks clearer than =E2=80=9C#=E2=80=9D.
+
+Ack.
+
+>
+> > >   - Syntax modeled after cpuset:
+> > >       echo "ssd-hdd,net" > memory.swap.tier
+> >
+> > Need discussion for incremental subtract. That syntax is incremental ad=
+d.
+>
+> I think the format you suggest (+, -)
+> is appropriate from a flexibility perspective.
+
+Ack, thank you.
+
+>
+> > > * **Swap allocation**
+> > >   - Simple, workable implementation (TBD; to be revisited with
+> > >     measurements).
+>
+> Ack.
+
+Great.
+
+More agreement now.
+
+Chris
 
