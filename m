@@ -1,141 +1,258 @@
-Return-Path: <linux-kernel+bounces-810469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B5BCB51B12
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:12:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE58EB51B0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D9CD1890B56
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:08:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 087B5188BC8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F362C11E1;
-	Wed, 10 Sep 2025 15:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F6C329F0A;
+	Wed, 10 Sep 2025 15:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ipFymVzJ"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgnE+HzF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001C425A35D
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F891329F12;
+	Wed, 10 Sep 2025 15:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757516874; cv=none; b=RTCDnE3AXeAXsNExmJUoPMjChf8u35mBu2hn3tTgsugc+AoAFcOkWIeqlfmpLXF27pkHRH3D8UL7IcCaccROSUnLrn46/Vc2r2wf/6oBSiEo4bMwO+O4AEdCD3u6Y97R0B2SXPk2+KANzHamg4Z7+fVYwWxzSYz0b5yZFe+D69k=
+	t=1757516854; cv=none; b=TmAI2z1UM91CdQ8VPazSojGAnYw5x1irI7RJzMJIWG0MbTZNE259W0VqWHI40aG7cfzi80jDzYrSMb5bUm47wLeHtlKOrkEZgNtk+7eLqb1OirEAm4H5H+gWDFTShwPsUbzoaLwGN8h1DtxOle9pMRsgBuF1/Mq4IstLyXNsHqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757516874; c=relaxed/simple;
-	bh=y8m0jBS7QF7mSBtjPTJejL0GU8BqumBmxws5w8K4d4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EyEkQePbRE3iIXghVzK1qcDlO8z3sLIUZm0FNA9zupnLMw1y1G4H7kNhnE3L4I7QAoXAo52oImc0l2ro4iGTlPiv0ywGnTseQRnMJ+Xaau6f79Q4H22Phfx5Mte+LLdFdwh93SK67YXlD+DWyZTCDtoYuTItm2Ooa8t0NI1OJRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ipFymVzJ; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-71b9d805f2fso61153826d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:07:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1757516871; x=1758121671; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TNdY3PgAZdaOe7FmnSpRTxifjOSbXP7fn6IEcFySgc0=;
-        b=ipFymVzJsbb4kNskatPk1haPjllc0CtQTO6Q2vE1M0fomeDiY3jPgSYK5JnrgmxOVH
-         bpn+imRs4dO1+yopf2Zt43nXDvarl017ns0DF8hUxQWXp1h1HTQermFcpbgMz1gPO1Vh
-         Hh9q+9hRJyMC3J+uMOsaZk1eHiDnfrFZFf22pvLBLUZKlfJUKKM8VI89MUS3pcNV3I4P
-         Yjx/sY7thJyi/a5H7YwO/jT39O70ik/PG+BKmq4ZxmPc2XqAucAsOAbRO/IdoDYAbvYI
-         0ee6Z19dh8rXGDysh3ALPC2ZeZ4egBQzCvl29CJIUub8tE5TA4qVIytygULUfyr+XtrD
-         0Efg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757516871; x=1758121671;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TNdY3PgAZdaOe7FmnSpRTxifjOSbXP7fn6IEcFySgc0=;
-        b=vVUGF/a5no/OXzEXDZaHELqbAughP1lC/Xt4oIBErFu9IkRR+9k2LqmIXChFCFknt3
-         O9dhF3hNR0NcPBYirQYZeyxAWQmjFajTAc/tTEPxA4sDJxeOvqJ5OaE4zQIf5vLOXO+T
-         EWzmUac6p3dE/UUhFSGdvsoEpKqcTdfhcpdNjn5Te0/5UNxcr3LJ5Sc5Iv8tkG2J1sJH
-         g+wOqMGWZLUiwf/nmtLbgb2mAlCMppipxxw0Ym60F6G0B/sUQprd1V88kqe4xxCRuyrM
-         T5DV4c93OyuH8+z0+edc+QPZiWOZpLF96LP3ZiMczDu7z2zOjMGZFWurtJO/SU4HAAkl
-         Oa2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXOCZ/fbXGvXIslKTXL2FPZRrBmPofVQIIQPZYTB/vJsiwUKNRBwyZ0Alj+11hSxIZ04LT7GKGIDW0A1hg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWbWTJi42/EPjXjAiB8QY3gBRQxI5lELMeQptpc/5VP+S3BDoy
-	ah/5hSCB7pgs1yO2gyy4x9DAu0waQmg36ePJZ+63bgg3a0KPvkPWHbBnjQWL1Wmamz0=
-X-Gm-Gg: ASbGncvZV626k6vnDMRdEKw2I0mG2g4NROvAeNcD7tG3gU2HIKyItZSHiWKg1wdzIOK
-	79MuxakEA4VSfN8dIRVQPMhLhRI4+gTseg42699KdjV0mZsCq3bQLOw6rrxQlJidGTeLLzqGP4h
-	fkWIdye5Ldw1dzsUcveCVLt68BlmyUHfvIj6HasmxG1SNfk+v79GOg4fu5siKF4SJp7Gfasf4ST
-	4D3uKJt6drUtQrmbD97T38Bz5fwHUE7Z45CW7NdppsSrjnAgUZC4XdkV+7hNb7LP8d7RA9aS2iq
-	aBRKeNYfnyuU+OdzJxRdfY3JdCMKXiMcMBzPQSwyhvoM5pUSjgbYxXFUmSf8emEVqCyleZC2GeS
-	Udo+uiaLaLTqP2QMzyT8=
-X-Google-Smtp-Source: AGHT+IH+BJW22LupObBGk6NPwobuFYb41PxuJvvB4HPRo4i7+jxyExborwUK24gXOQ4lS4LmrCtzlw==
-X-Received: by 2002:a05:6214:2386:b0:71b:6414:fd06 with SMTP id 6a1803df08f44-739256bd5bdmr177377526d6.27.1757516852901;
-        Wed, 10 Sep 2025 08:07:32 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F ([2620:10d:c091:500::3:1704])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-75856b44ac5sm23806886d6.2.2025.09.10.08.07.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 08:07:31 -0700 (PDT)
-Date: Wed, 10 Sep 2025 11:07:28 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, dan.j.williams@intel.com,
-	bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com,
-	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
-	dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
-	lukas@wunner.de, Benjamin.Cheatham@amd.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com,
-	linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v11 23/23] CXL/PCI: Disable CXL protocol error interrupts
- during CXL Port cleanup
-Message-ID: <aMGUMACDTT5a2-XA@gourry-fedora-PF4VCD3F>
-References: <20250827013539.903682-1-terry.bowman@amd.com>
- <20250827013539.903682-24-terry.bowman@amd.com>
+	s=arc-20240116; t=1757516854; c=relaxed/simple;
+	bh=umxHN0eSqhWGYImhBQzS1cHIh4vrTZ/y67rXoJWxDJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mz7HwYL+aKkxbgFwkiig5tF94uQWIXhKShTQFpiLQSkNKR5T4uu4WBHh6U45gWrRqzizRPUFV0dBuHfDUe1p61fwojBYgdxevqgaccTMY2BB33zfJRD2th3CTCPwLJFh+Eeybmhslhw2OoMzWU8IYw2CYWCkS13s4WwReFF6Pok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgnE+HzF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CDA4C4CEEB;
+	Wed, 10 Sep 2025 15:07:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757516853;
+	bh=umxHN0eSqhWGYImhBQzS1cHIh4vrTZ/y67rXoJWxDJE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DgnE+HzF4jsYdoJvzQQmArzEeAF8hOnexC6z7f9yZs3esjDd916767upJxvCjl8LW
+	 U0AQfZEescGT4PbF2LvrnNB1yyShHOlPWBPMuVOnalW/MlDEQ74+W+ZWBvH3S/YgqO
+	 0pmmMJyWC1qerXbM+OYXNGx3xy+4XufahXq7D+b1b68srydRB5mIYXBGC6DQxGm6Jx
+	 WT2tnuEj96CEbrPqawb7l4Gl3x+bzoehX06l6UFjs4GYAGkbVDWeW//HfBn46saLPV
+	 93Mh4g2tMAsBt+m+ZwHGOXXkTCqnni+zvYW9yHNmaA/R6SC2EI0nSSViEMGm1LksPl
+	 pdwsN0dnaYosA==
+Message-ID: <0f358cc9-c8cf-4fd9-80d5-b524cc5b6c3c@kernel.org>
+Date: Wed, 10 Sep 2025 17:07:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827013539.903682-24-terry.bowman@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fbdev/simplefb: Fix use after free in
+ simplefb_detach_genpds()
+To: Janne Grunau <j@jannau.net>, Helge Deller <deller@gmx.de>,
+ Thierry Reding <treding@nvidia.com>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Daniel Huhardeaux <tech@tootai.net>,
+ stable@vger.kernel.org
+References: <20250908-simplefb-genpd-uaf-v2-1-f88a0d9d880f@jannau.net>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20250908-simplefb-genpd-uaf-v2-1-f88a0d9d880f@jannau.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Terry,
+Hi Janne,
 
-On Tue, Aug 26, 2025 at 08:35:38PM -0500, Terry Bowman wrote:
-> Introduce cxl_mask_proto_interrupts() to call pci_aer_mask_internal_errors().
-> Add calls to cxl_mask_proto_interrupts() within CXL Port teardown for CXL
-> Root Ports, CXL Downstream Switch Ports, CXL Upstream Switch Ports, and CXL
-> Endpoints. Follow the same "bottom-up" approach used during CXL Port
-> teardown.
+On 8-Sep-25 11:23 PM, Janne Grunau wrote:
+> The pm_domain cleanup can not be devres managed as it uses struct
+> simplefb_par which is allocated within struct fb_info by
+> framebuffer_alloc(). This allocation is explicitly freed by
+> unregister_framebuffer() in simplefb_remove().
+> Devres managed cleanup runs after the device remove call and thus can no
+> longer access struct simplefb_par.
+> Call simplefb_detach_genpds() explicitly from simplefb_destroy() like
+> the cleanup functions for clocks and regulators.
 > 
-...
-> @@ -1471,6 +1475,8 @@ static void cxl_detach_ep(void *data)
->  {
->  	struct cxl_memdev *cxlmd = data;
+> Fixes an use after free on M2 Mac mini during
+> aperture_remove_conflicting_devices() using the downstream asahi kernel
+> with Debian's kernel config. For unknown reasons this started to
+> consistently dereference an invalid pointer in v6.16.3 based kernels.
+
+Thank you for your patch.
+
+This patch seems to miss adding a simplefb_detach_genpds()
+on error-exit from simplefb_probe() after a successful
+simplefb_attach_genpds() call ?
+
+Regards,
+
+Hans
+
+
+
+
+> 
+> [    6.736134] BUG: KASAN: slab-use-after-free in simplefb_detach_genpds+0x58/0x220
+> [    6.743545] Read of size 4 at addr ffff8000304743f0 by task (udev-worker)/227
+> [    6.750697]
+> [    6.752182] CPU: 6 UID: 0 PID: 227 Comm: (udev-worker) Tainted: G S                  6.16.3-asahi+ #16 PREEMPTLAZY
+> [    6.752186] Tainted: [S]=CPU_OUT_OF_SPEC
+> [    6.752187] Hardware name: Apple Mac mini (M2, 2023) (DT)
+> [    6.752189] Call trace:
+> [    6.752190]  show_stack+0x34/0x98 (C)
+> [    6.752194]  dump_stack_lvl+0x60/0x80
+> [    6.752197]  print_report+0x17c/0x4d8
+> [    6.752201]  kasan_report+0xb4/0x100
+> [    6.752206]  __asan_report_load4_noabort+0x20/0x30
+> [    6.752209]  simplefb_detach_genpds+0x58/0x220
+> [    6.752213]  devm_action_release+0x50/0x98
+> [    6.752216]  release_nodes+0xd0/0x2c8
+> [    6.752219]  devres_release_all+0xfc/0x178
+> [    6.752221]  device_unbind_cleanup+0x28/0x168
+> [    6.752224]  device_release_driver_internal+0x34c/0x470
+> [    6.752228]  device_release_driver+0x20/0x38
+> [    6.752231]  bus_remove_device+0x1b0/0x380
+> [    6.752234]  device_del+0x314/0x820
+> [    6.752238]  platform_device_del+0x3c/0x1e8
+> [    6.752242]  platform_device_unregister+0x20/0x50
+> [    6.752246]  aperture_detach_platform_device+0x1c/0x30
+> [    6.752250]  aperture_detach_devices+0x16c/0x290
+> [    6.752253]  aperture_remove_conflicting_devices+0x34/0x50
+> ...
+> [    6.752343]
+> [    6.967409] Allocated by task 62:
+> [    6.970724]  kasan_save_stack+0x3c/0x70
+> [    6.974560]  kasan_save_track+0x20/0x40
+> [    6.978397]  kasan_save_alloc_info+0x40/0x58
+> [    6.982670]  __kasan_kmalloc+0xd4/0xd8
+> [    6.986420]  __kmalloc_noprof+0x194/0x540
+> [    6.990432]  framebuffer_alloc+0xc8/0x130
+> [    6.994444]  simplefb_probe+0x258/0x2378
+> ...
+> [    7.054356]
+> [    7.055838] Freed by task 227:
+> [    7.058891]  kasan_save_stack+0x3c/0x70
+> [    7.062727]  kasan_save_track+0x20/0x40
+> [    7.066565]  kasan_save_free_info+0x4c/0x80
+> [    7.070751]  __kasan_slab_free+0x6c/0xa0
+> [    7.074675]  kfree+0x10c/0x380
+> [    7.077727]  framebuffer_release+0x5c/0x90
+> [    7.081826]  simplefb_destroy+0x1b4/0x2c0
+> [    7.085837]  put_fb_info+0x98/0x100
+> [    7.089326]  unregister_framebuffer+0x178/0x320
+> [    7.093861]  simplefb_remove+0x3c/0x60
+> [    7.097611]  platform_remove+0x60/0x98
+> [    7.101361]  device_remove+0xb8/0x160
+> [    7.105024]  device_release_driver_internal+0x2fc/0x470
+> [    7.110256]  device_release_driver+0x20/0x38
+> [    7.114529]  bus_remove_device+0x1b0/0x380
+> [    7.118628]  device_del+0x314/0x820
+> [    7.122116]  platform_device_del+0x3c/0x1e8
+> [    7.126302]  platform_device_unregister+0x20/0x50
+> [    7.131012]  aperture_detach_platform_device+0x1c/0x30
+> [    7.136157]  aperture_detach_devices+0x16c/0x290
+> [    7.140779]  aperture_remove_conflicting_devices+0x34/0x50
+> ...
+> 
+> Reported-by: Daniel Huhardeaux <tech@tootai.net>
+> Cc: stable@vger.kernel.org
+> Fixes: 92a511a568e44 ("fbdev/simplefb: Add support for generic power-domains")
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> ---
+> Changes in v2:
+> - reworked change due to missed use of `par->num_genpds` before setting
+>   it. Missed in testing due to FB_SIMPLE vs. SYSFB_SIMPLEFB.
+> - Link to v1: https://lore.kernel.org/r/20250901-simplefb-genpd-uaf-v1-1-0d9f3a34c4dc@jannau.net
+> ---
+>  drivers/video/fbdev/simplefb.c | 22 ++++++++++++++++------
+>  1 file changed, 16 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
+> index 1893815dc67f4c1403eea42c0e10a7ead4d96ba9..2f3e5449509d1824a3d26f73e103af82d56d558a 100644
+> --- a/drivers/video/fbdev/simplefb.c
+> +++ b/drivers/video/fbdev/simplefb.c
+> @@ -93,6 +93,7 @@ struct simplefb_par {
 >  
-> +	cxl_mask_proto_interrupts(cxlmd->cxlds->dev);
+>  static void simplefb_clocks_destroy(struct simplefb_par *par);
+>  static void simplefb_regulators_destroy(struct simplefb_par *par);
+> +static void simplefb_detach_genpds(void *res);
+>  
+>  /*
+>   * fb_ops.fb_destroy is called by the last put_fb_info() call at the end
+> @@ -105,6 +106,7 @@ static void simplefb_destroy(struct fb_info *info)
+>  
+>  	simplefb_regulators_destroy(info->par);
+>  	simplefb_clocks_destroy(info->par);
+> +	simplefb_detach_genpds(info->par);
+>  	if (info->screen_base)
+>  		iounmap(info->screen_base);
+>  
+> @@ -451,7 +453,7 @@ static int simplefb_attach_genpds(struct simplefb_par *par,
+>  				  struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	unsigned int i;
+> +	unsigned int i, num_genpds;
+>  	int err;
+>  
+>  	err = of_count_phandle_with_args(dev->of_node, "power-domains",
+> @@ -465,26 +467,33 @@ static int simplefb_attach_genpds(struct simplefb_par *par,
+>  		return err;
+>  	}
+>  
+> -	par->num_genpds = err;
+> +	num_genpds = err;
+>  
+>  	/*
+>  	 * Single power-domain devices are handled by the driver core, so
+>  	 * nothing to do here.
+>  	 */
+> -	if (par->num_genpds <= 1)
+> +	if (num_genpds <= 1)
+>  		return 0;
+>  
+> -	par->genpds = devm_kcalloc(dev, par->num_genpds, sizeof(*par->genpds),
+> +	par->genpds = devm_kcalloc(dev, num_genpds, sizeof(*par->genpds),
+>  				   GFP_KERNEL);
+>  	if (!par->genpds)
+>  		return -ENOMEM;
+>  
+> -	par->genpd_links = devm_kcalloc(dev, par->num_genpds,
+> +	par->genpd_links = devm_kcalloc(dev, num_genpds,
+>  					sizeof(*par->genpd_links),
+>  					GFP_KERNEL);
+>  	if (!par->genpd_links)
+>  		return -ENOMEM;
+>  
+> +	/*
+> +	 * Set par->num_genpds only after genpds and genpd_links are allocated
+> +	 * to exit early from simplefb_detach_genpds() without full
+> +	 * initialisation.
+> +	 */
+> +	par->num_genpds = num_genpds;
 > +
->  	for (int i = cxlmd->depth - 1; i >= 1; i--) {
->  		struct cxl_port *port, *parent_port;
->  		struct detach_ctx ctx = {
-
-While testing v10 of this patch set, we found ourselves with a deadlock
-on boot with the following stack in the hung task:
-
-[  252.784440]  <TASK>
-[  252.789090]  schedule+0x5d6/0x1670
-[  252.796629]  ? schedule_preempt_disabled+0xa/0x10
-[  252.807061]  schedule_preempt_disabled+0xa/0x10
-[  252.817108]  __mutex_lock+0x245/0x7b0
-[  252.825229]  cxl_mask_proto_interrupts+0x23/0x50
-[  252.835470]  cxl_detach_ep+0x25/0x2e0
-
-This occurs on a system which fails to probe ports fully due to the
-duplicate id error resolved by the Delayed HB patch set.  
-
-But it's concerning that there's a deadlock condition without that
-patch set. Can you help try to eyeball this?  I'm trying to get more
-debug info, but testing system availability is limited.
-
-~Gregory
+>  	for (i = 0; i < par->num_genpds; i++) {
+>  		par->genpds[i] = dev_pm_domain_attach_by_id(dev, i);
+>  		if (IS_ERR(par->genpds[i])) {
+> @@ -506,9 +515,10 @@ static int simplefb_attach_genpds(struct simplefb_par *par,
+>  			dev_warn(dev, "failed to link power-domain %u\n", i);
+>  	}
+>  
+> -	return devm_add_action_or_reset(dev, simplefb_detach_genpds, par);
+> +	return 0;
+>  }
+>  #else
+> +static void simplefb_detach_genpds(void *res) { }
+>  static int simplefb_attach_genpds(struct simplefb_par *par,
+>  				  struct platform_device *pdev)
+>  {
+> 
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250901-simplefb-genpd-uaf-352704761a29
+> 
+> Best regards,
 
 
