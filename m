@@ -1,72 +1,99 @@
-Return-Path: <linux-kernel+bounces-810931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5D7B521A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:11:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9266FB521A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8270D3BD352
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:11:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 641647B22DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B744C2F0670;
-	Wed, 10 Sep 2025 20:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674C32EFD84;
+	Wed, 10 Sep 2025 20:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wYzwEVRQ"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ErlaYb0+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390412EE610
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711612EDD45
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757535072; cv=none; b=AbxQ9RfAJnNRZ3I0swZ5B8Tza/8Qtsv8ocs16t/1U0P4QN3NuaszNFeeAkz7LJX8MV39lK0MvP9+ivkjkVHsipsg+BSXlCo9GZYoKOSg1eo/NWof4bvbmiv+yvvvxhfdI+s+rIEtozdcGVEKGUO5fTySwnPIG8H0A3ukJUnb/RM=
+	t=1757535066; cv=none; b=oD6wu5+VQwriQT6ZUreyltdxQ1dJmc/fdqvrh0oT+b/jPboa0hVT+Ev3EV4qMJZLnzw9qZkcB1AkeP2rzDNoRihW0xBmT/857/TLFt809H7GH53BGSlo8agMLuA30I/1YjvTVnCpIxhxOXXFyJazJfb1+FKm4OIQlCT2KmAlOso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757535072; c=relaxed/simple;
-	bh=ylKTcQHSRL5RMvOHqG8C6MhC6SqMyvQve4rvJ7Q9Xzc=;
+	s=arc-20240116; t=1757535066; c=relaxed/simple;
+	bh=M9rs45BclqrR7RDn/E4nZDTTrDqW2Ow06JD4zd8FxsI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n74Ql9AAdMbacow4xf4UnRYJENiATXQoYqf8se6uqTlqRQMFL6oaDILO4bGI3+cLnT7D1lwYRCBcLdFZe55dVXsZCog4nERKF9hDBCj46HG7sRT2u6ih3aOPKpGBZp7KakhcnxSV5wj2RJ1iyz+COnPug4QmrL6K//sKzR5WqaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wYzwEVRQ; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 10 Sep 2025 13:10:46 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757535057;
+	 Content-Type:Content-Disposition:In-Reply-To; b=kDb+n5osNe5pqYKN4/mU6tmxd84/XcyRiWqO2tSRaXDGYTIUNDSBF+xjHKgTM4wXUQkR4uqwUzCGsqDe9TUhTgw+4Dp5r/vDbO3Tvoyey+2Nc35YPUuipPeemJ2vM59r8igVdyz1Xo7Yb2ut50dGXwVpAa4Dp8pSOwWMz2//kHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ErlaYb0+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757535063;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hroFfDYim2M+I/skY/6mfFB67MLHNWA5J2KjItQQBug=;
-	b=wYzwEVRQKupEK0mCQ9z8hXiGFJmQcdgWnSF2QejHrWUqwPc9FmKhqCW8nLgEiBdbTXahBI
-	C0nyztrs4gxTVU0gdhZCitVEdqtLNht7iWU+G5fa/ysQ4BRBtKRFuCzKrwUamQKF9m7dKA
-	Md7kHIiRsVdnyAQ0xIaDbBPdwTre8vk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Lei Liu <liulei.rjpt@vivo.com>, Michal Hocko <mhocko@suse.com>, 
-	David Rientjes <rientjes@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Chen Yu <yu.c.chen@intel.com>, Hao Jia <jiahao1@lixiang.com>, 
-	"Kirill A. Shutemov" <kas@kernel.org>, Usama Arif <usamaarif642@gmail.com>, 
-	Oleg Nesterov <oleg@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Fushuai Wang <wangfushuai@baidu.com>, "open list:MEMORY MANAGEMENT - OOM KILLER" <linux-mm@kvack.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" <cgroups@vger.kernel.org>
-Subject: Re: [PATCH v0 0/2] mm: swap: Gather swap entries and batch async
- release
-Message-ID: <qisfqncqgkgxh2nj5axafunlfjen6oiciobcrmpus6l3xwrbyj@blxv73pbhzez>
-References: <20250909065349.574894-1-liulei.rjpt@vivo.com>
- <fszpgct7ywqy6qq3qnjflol3theovmgnau2wgdqqdxin4q7ezm@zumgw533hxon>
- <CAJuCfpFaTj8PsXkoYRQKQ0sOu+mKikUAE8Wbcx+YpZXZ4M7cMA@mail.gmail.com>
+	bh=aKoWosxFgpK29fihdSNgo4FnGkJl7K9hPqUMHK2P0DU=;
+	b=ErlaYb0+nAgYi/xNZw1ZpmSldfmuz2w96JryVgnuHY9iilNj8+acHlDLNkS84tDeDHOFbP
+	h9V68BVMXVi+DuZgX6s8di1snKA3drVF0jn0U6KQ4pCTgvzO+aSL+4JwKvJP6pr+mrSyIS
+	iOq1tzWe8XkZoU4mhgAji1eCEVdGE0Q=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-341-LHXjT49BMX2Dslov5F8lPQ-1; Wed, 10 Sep 2025 16:11:01 -0400
+X-MC-Unique: LHXjT49BMX2Dslov5F8lPQ-1
+X-Mimecast-MFC-AGG-ID: LHXjT49BMX2Dslov5F8lPQ_1757535061
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45de14da365so36039715e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:11:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757535060; x=1758139860;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aKoWosxFgpK29fihdSNgo4FnGkJl7K9hPqUMHK2P0DU=;
+        b=mtyqMfhe+618rfTUPv66jMvalWOYg2iD2yKZT6czWMBTRverWc5f1v731jkDobj/Mv
+         Fi7HwUJk95eYtXHK7Cz6HX+UCsTNaXLJD4XIHQ5yMr/3F9YwJSI1l424+l08RCxYOQ1A
+         ZR8bXDXnGjgZfI6NOGFK49ZfeLG91+/YXUymynk9RsKtoOXudPYAMLLoQMlEWisEkCUd
+         ZW/IloI/HLCcUjGJlrGrb9OoAHyJWx+NjCJBvPAMjtOSahq2nMrz7raliXAt6l93QA+J
+         Jg9rtfMopNm5aVRMhNyFt43+Fab52n9C0pGfz29LtyGyWSf9W4hXlA922wjtAlDvaVRC
+         NOOg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGTV5L6sVqV7Jea9AlgjLI5KEJPFe9V+0lqwRcIswLw2nkqyJO3R0Mw/ZhKo+1F7LVt6Qn9bmvtoPOp80=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6iioBUJPVXIHioF9K1wrD0eRGl2C6MlATXHnJhkIz5Tf5MRBP
+	8Y/Tj/0yJBB8/LqtHHIVfzEjzUFqRWc3L7/OZODQF0tth4/w2bTp+TzyUIri3w2P9MM3dwKw/FW
+	TiPAO0Z6sqGzpfAdL0VlA6zXcTKSspm3WYG8adcQQXCwRWcobfw81/0iS+UVSN1FLIQ==
+X-Gm-Gg: ASbGncv/09fkrEollra13e9sTCbLdwCJL3gtZbepCVMeauhG3Tk5VAQksBXIivSPIq8
+	nS2ANoWc8W03xJ6IwlrlK2W5ilX9Z8rUyzbNTKI/JlUipnbsBscM/KZUGFf80fWV4PP2+2HkTGa
+	LuyiB+Zstcaf11FoMWroFRzh+8rs2WemKY3w9xX7LRQjhnjj5CnCeDkN6/7ldwStSeftVrMFWBg
+	xya2FvVJxFKoMbVFHxxpZTcpWy02FKY14IV/uee6Jzy+HktiTlfXLBuXUz0rH3jvwXLadfoJX7P
+	5sXoMQUtSNHf768enHFMDOy9E2P0SrZX
+X-Received: by 2002:a05:600c:4fc5:b0:456:1204:e7e6 with SMTP id 5b1f17b1804b1-45dddea5200mr161600415e9.11.1757535060034;
+        Wed, 10 Sep 2025 13:11:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwDU5c1ugQxFP7QxwbfpT0k7jbMs7uYrWGkkMGStvkE2ZSAGTODtDaLdgdJB1KHSINetX4XA==
+X-Received: by 2002:a05:600c:4fc5:b0:456:1204:e7e6 with SMTP id 5b1f17b1804b1-45dddea5200mr161600225e9.11.1757535059523;
+        Wed, 10 Sep 2025 13:10:59 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1536:c800:2952:74e:d261:8021])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e752238997sm8663044f8f.37.2025.09.10.13.10.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 13:10:59 -0700 (PDT)
+Date: Wed, 10 Sep 2025 16:10:56 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jon Kohler <jon@nutanix.com>
+Cc: "patchwork-bot+netdevbpf@kernel.org" <patchwork-bot+netdevbpf@kernel.org>,
+	"jasowang@redhat.com" <jasowang@redhat.com>,
+	"eperezma@redhat.com" <eperezma@redhat.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: vhost_iotlb_miss tight loop lockup - RE vhost/net: Defer TX
+ queue re-enable until after sendmsg
+Message-ID: <20250910155110-mutt-send-email-mst@kernel.org>
+References: <20250501020428.1889162-1-jon@nutanix.com>
+ <174649563599.1007977.10317536057166889809.git-patchwork-notify@kernel.org>
+ <154EA998-3FBB-41E9-B07E-4841B027B1B5@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,56 +103,175 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpFaTj8PsXkoYRQKQ0sOu+mKikUAE8Wbcx+YpZXZ4M7cMA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <154EA998-3FBB-41E9-B07E-4841B027B1B5@nutanix.com>
 
-On Tue, Sep 09, 2025 at 12:48:02PM -0700, Suren Baghdasaryan wrote:
-> On Tue, Sep 9, 2025 at 12:21 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > On Tue, Sep 09, 2025 at 02:53:39PM +0800, Lei Liu wrote:
-> > > 1. Problem Scenario
-> > > On systems with ZRAM and swap enabled, simultaneous process exits create
-> > > contention. The primary bottleneck occurs during swap entry release
-> > > operations, causing exiting processes to monopolize CPU resources. This
-> > > leads to scheduling delays for high-priority processes.
-> > >
-> > > 2. Android Use Case
-> > > During camera launch, LMKD terminates background processes to free memory.
-> >
-> > How does LMKD trigger the kills? SIGKILL or cgroup.kill?
+On Wed, Sep 10, 2025 at 06:58:18PM +0000, Jon Kohler wrote:
 > 
-> SIGKILL
 > 
-> >
-> > > Exiting processes compete for CPU cycles, delaying the camera preview
-> > > thread and causing visible stuttering - directly impacting user
-> > > experience.
-> >
-> > Since the exit/kill is due to low memory situation, punting the memory
-> > freeing to a low priority async mechanism will help in improving user
-> > experience. Most probably the application (camera preview here) will get
-> > into global reclaim and will compete for CPU with the async memory
-> > freeing.
-> >
-> > What we really need is faster memory freeing and we should explore all
-> > possible ways. As others suggested fix/improve the bottleneck in the
-> > memory freeing path. In addition I think we should explore parallelizing
-> > this as well.
-> >
-> > On Android, I suppose most of the memory is associated with single or
-> > small set of processes and parallelizing memory freeing would be
-> > challenging. BTW is LMKD using process_mrelease() to release the killed
-> > process memory?
+> > On May 5, 2025, at 9:40 PM, patchwork-bot+netdevbpf@kernel.org wrote:
+> > 
+> > Hello:
+> > 
+> > This patch was applied to netdev/net-next.git (main)
+> > by Jakub Kicinski <kuba@kernel.org>:
 > 
-> Yes, LMKD has a reaper thread which wakes up and calls
-> process_mrelease() after the main LMKD thread issued SIGKILL.
+> Hey all,
+> Writing to fire up a flare and point out a problem that we’re seeing
+> with this patch internally, specifically when we enable iommu on the
+> virtio-net device.
+> 
+> With this patch applied on 6.12.y-based bare metal instance and then
+> starting a 6.12.y based guest with iommu enabled, we see lockups
+> within the guest in short order, as well as vmm (qemu) stuck in a tight
+> loop responding to iommu misses from vhost net loop.
+> 
+> We've bisected this in our internal tree, and for sure it is this
+> patch that is alledgedly causing the problem, so I wanted to point out
+> there is some sort of issue here. 
+> 
+> Working on trying to figure this out, but if jumps off the page to
+> anyone, happy to take advice!
+> 
+> Flamegraph:
+> https://gist.github.com/JonKohler/0e83c014230ab59ddc950f10441335f1#file-iotlb-lockup-svg
+> 
+> Guest dmesg errors like so:
+> [   66.081694] virtio_net virtio0 eth0: NETDEV WATCHDOG: CPU: 1: transmit queue 0 timed out 5500 ms
+> [   68.145155] virtio_net virtio0 eth0: TX timeout on queue: 0, sq: output.0, vq: 0x1, name: output.0, 7560000 usecs ago
+> [  112.907012] virtio_net virtio0 eth0: NETDEV WATCHDOG: CPU: 1: transmit queue 0 timed out 5568 ms
+> [  124.117540] virtio_net virtio0 eth0: TX timeout on queue: 0, sq: output.0, vq: 0x1, name: output.0, 16776000 usecs ago
+> [  124.118050] virtio_net virtio0 eth0: NETDEV WATCHDOG: CPU: 1: transmit queue 0 timed out 16776 ms
+> [  124.118447] virtio_net virtio0 eth0: TX timeout on queue: 0, sq: output.0, vq: 0x1, name: output.0, 16776000 usecs ago
+> 
+> Host level top output
+> 3992758 qemu      20   0   16.6g  52168  26704 R  99.9   0.0  21:23.72 qemu-kvm       <<< this is the qemu main thread
+> 3992769 qemu      20   0   16.6g  52168  26704 R  58.8   0.0  13:33.44 vhost-3992758 <<< this is the vhost-net kthread
+> 
+> For qemu-kvm main thread: 
+> Samples: 13K of event 'cycles:P', 4000 Hz, Event count (approx.): 5131922583 lost: 0/0 drop: 0/0
+>   Children      Self  Shared Object     Symbol
+> -   87.41%     0.30%  [kernel]          [k] entry_SYSCALL_64_after_hwframe
+>    - 87.11% entry_SYSCALL_64_after_hwframe
+>       - do_syscall_64
+>          - 44.79% ksys_write
+>             - 43.74% vfs_write
+>                - 40.96% vhost_chr_write_iter
+>                   - 38.22% vhost_process_iotlb_msg
+>                      - 13.72% vhost_iotlb_add_range_ctx
+>                         - 7.43% vhost_iotlb_map_free
+>                            - 4.37% vhost_iotlb_itree_remove
+>                                 rb_next
+>                              1.78% __rb_erase_color
+>                              0.73% kfree
+>                           1.15% __rb_insert_augmented
+>                           0.68% __kmalloc_cache_noprof
+>                      - 10.73% vhost_vq_work_queue
+>                         - 7.65% try_to_wake_up
+>                            - 2.55% ttwu_queue_wakelist
+>                               - 1.72% __smp_call_single_queue
+>                                    1.36% call_function_single_prep_ipi
+>                            - 1.32% __task_rq_lock
+>                               - _raw_spin_lock
+>                                    native_queued_spin_lock_slowpath
+>                            - 1.30% select_task_rq
+>                               - select_task_rq_fair
+>                                  - 0.88% wake_affine
+>                                       available_idle_cpu
+>                           2.06% llist_add_batch
+>                      - 4.05% __mutex_lock.constprop.0
+>                           2.14% mutex_spin_on_owner
+>                           0.72% osq_lock
+>                        3.00% mutex_lock
+>                      - 1.72% kfree
+>                         - 1.16% __slab_free
+>                              slab_update_freelist.constprop.0.isra.0
+>                        1.37% _raw_spin_lock
+>                        1.08% mutex_unlock
+>                     1.98% _copy_from_iter
+>                - 1.86% rw_verify_area
+>                   - security_file_permission
+>                      - 1.13% file_has_perm
+>                           0.69% avc_has_perm
+>               0.63% fdget_pos
+>          - 27.86% syscall_exit_to_user_mode
+>             - syscall_exit_to_user_mode_prepare
+>                - 25.96% __audit_syscall_exit
+>                   - 25.03% __audit_filter_op
+>                        6.66% audit_filter_rules.constprop.0
+>                  1.27% audit_reset_context.part.0.constprop.0
+>          - 10.86% ksys_read
+>             - 9.37% vfs_read
+>                - 6.67% vhost_chr_read_iter
+>                     1.48% _copy_to_iter
+>                     1.36% _raw_spin_lock
+>                   - 1.30% __wake_up
+>                        0.81% _raw_spin_lock_irqsave
+>                   - 1.25% vhost_enqueue_msg
+>                        _raw_spin_lock
+>                - 1.83% rw_verify_area
+>                   - security_file_permission
+>                      - 1.03% file_has_perm
+>                           0.64% avc_has_perm
+>               0.65% fdget_pos
+>               0.57% fput
+>          - 2.56% syscall_trace_enter
+>             - 1.25% __seccomp_filter
+>                  seccomp_run_filters
+>               0.54% __audit_syscall_entry
+>               
+> vhost-net thread
+> Samples: 20K of event 'cycles:P', 4000 Hz, Event count (approx.): 7796456297 lost: 0/0 drop: 0/0
+>   Children      Self  Shared Object     Symbol
+> -  100.00%     3.38%  [kernel]          [k] vhost_task_fn
+>      38.26% 0xffffffff930bb8c0
+>    - 3.36% 0
+>         ret_from_fork_asm
+>         ret_from_fork
+>    - 1.16% vhost_task_fn
+>       - 2.35% vhost_run_work_list
+>          - 1.67% handle_tx
+>             - 7.09% __mutex_lock.constprop.0
+>                  6.64% mutex_spin_on_owner
+>             - 0.84% vq_meta_prefetch
+>                - 3.22% iotlb_access_ok
+>                     2.50% vhost_iotlb_itree_first
+>               0.80% mutex_lock
+>             - 0.75% handle_tx_copy
+>            0.86% llist_reverse_order
+> 
+> > 
+> > On Wed, 30 Apr 2025 19:04:28 -0700 you wrote:
+> >> In handle_tx_copy, TX batching processes packets below ~PAGE_SIZE and
+> >> batches up to 64 messages before calling sock->sendmsg.
+> >> 
+> >> Currently, when there are no more messages on the ring to dequeue,
+> >> handle_tx_copy re-enables kicks on the ring *before* firing off the
+> >> batch sendmsg. However, sock->sendmsg incurs a non-zero delay,
+> >> especially if it needs to wake up a thread (e.g., another vhost worker).
+> >> 
+> >> [...]
+> > 
+> > Here is the summary with links:
+> >  - [net-next,v3] vhost/net: Defer TX queue re-enable until after sendmsg
+> >    https://urldefense.proofpoint.com/v2/url?u=https-3A__git.kernel.org_netdev_net-2Dnext_c_8c2e6b26ffe2&d=DwIDaQ&c=s883GpUCOChKOHiocYtGcg&r=NGPRGGo37mQiSXgHKm5rCQ&m=0XoR6N9VbkaJ_wBENy8Z28uDdqjCe4HRNCyV-8o4etqXeEJOqoFFGjeGGP5sQcmt&s=-X8si_rU8pXKNyWNNzBqx5Fmv-ut9w2gS5E6coMDApM&e= 
+> > 
+> > You are awesome, thank you!
+> > -- 
+> > Deet-doot-dot, I am a bot.
+> > https://urldefense.proofpoint.com/v2/url?u=https-3A__korg.docs.kernel.org_patchwork_pwbot.html&d=DwIDaQ&c=s883GpUCOChKOHiocYtGcg&r=NGPRGGo37mQiSXgHKm5rCQ&m=0XoR6N9VbkaJ_wBENy8Z28uDdqjCe4HRNCyV-8o4etqXeEJOqoFFGjeGGP5sQcmt&s=sydedZsBCMSJM9_Ldw6Al-BplvM7FokLwV_80bJpGnM&e= 
+> > 
+> > 
 > 
 
-Thanks Suren. I remember Android is planning to use Apps in cgroup. Is
-that still the plan? I am actually looking into cgroup.kill, beside
-sending SIGKILL, putting the processes of the target cgroup in the oom
-reaper list. In addition, making oom reaper able to reap processes in
-parallel. I am hoping that functionality to be useful to Android as
-well.
-> >
+
+Well it seems that if  get_tx_bufs failed with -EAGAIN then we
+previously bailed out, but now we will redo poll and so on, forever.
+
+
+No?
+
+
+-- 
+MST
+
 
