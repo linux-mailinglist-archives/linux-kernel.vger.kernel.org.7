@@ -1,360 +1,136 @@
-Return-Path: <linux-kernel+bounces-809990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAEEDB51468
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:49:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9338B5145C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B34FD7BE0D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:45:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11A577BE3E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18D5238D42;
-	Wed, 10 Sep 2025 10:45:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3EA3164C8
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC1A3164B5;
+	Wed, 10 Sep 2025 10:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xr012LlV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD79230648D
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 10:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757501109; cv=none; b=RDxrzCBOf+dTlMAPeFDOAa2fML6hYmDaCvUv9Thn3p2UVRfxcFcx+p5zivyagnbQ62y3O21SaOh1/2O6Aq7S6lBTegHIhg8mE3HVo0Mr4kbTf7EJSwHnIssiRIO2wmTUbN+qdK1A1UP0BYNfgOND7yit5hSeco7r3QyBVG6rV9w=
+	t=1757501173; cv=none; b=q/Krcuf+wJSAPOmJBdC0l8CmNAnxfrbGfeUAHXyUbu3jZtwXG/7Hc3ngO4Azhe+WnRuJv+vBMAEwmGfJH50uLYfUQ107GIcfkmWqywa9XGxPScNNXqfs/RiUD9s0/B790pQ48q0W6Oa1BEABSnLKiS80+3m5eWoYTt3iii6mJIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757501109; c=relaxed/simple;
-	bh=ofXBXq9c6SMXO25BMXx4sHiuk3nK3z6Gv52WCxyl9lU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z82Spa2OCrgiklhIcncwEk+/5Z4EkBxmKusGLraVKHBzYkoHVj3GzdkyYUL7EjqmfafrIRAPNrQE0NCnVmKh2BO5xyX2Yiq5JeIWAAqNUERPMC7HLXLa4cLyJyNiNTs6Wv4QHwl+xvJeH9Cr9YxVhDPQqe9mWSgwmh2bkCSRCkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D6DB16F8;
-	Wed, 10 Sep 2025 03:44:58 -0700 (PDT)
-Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 988173F66E;
-	Wed, 10 Sep 2025 03:45:04 -0700 (PDT)
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Kees Cook <kees@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH] arm64: mm: Move KPTI helpers to mmu.c
-Date: Wed, 10 Sep 2025 11:44:54 +0100
-Message-ID: <20250910104454.317067-1-kevin.brodsky@arm.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1757501173; c=relaxed/simple;
+	bh=YdQDjKnCp0fZZEDL6h7rSAoz3IU0LZop9X2eKSzS2tg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=a0jQakyek4E6WYizy2i4fPgHz/0+TzFzp3pq+XM9GYpIOATnu48MBmnP6/BFrHFRJaXyUzBVSe76HZgNR0uC4RG4s9A7Wq8ktoZafSn9YfNdYtBzFHDBAtrYs5u98QrzDFGZ8LLzEEQ/VycfM9Y8d3QJPGJqSjQubYk/cf/oPJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xr012LlV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757501170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ish3TOdF5itkEce/x1a+uOeE11uGbtv2vXkIso/jAMo=;
+	b=Xr012LlVME+G5KE53VkVKcXsTgQr7rHHsplHBscAVTHICNCy0lKfEu0DfpSAbIHhkRFyPd
+	TC2RW59ixnnXpAahfQOPEFfEyUFq792/LkiOY6hD14X5ovve2ons0pgQDqTz8pV3YBjI6e
+	VwH0UgRG9v/g2qWFeFDhWAgnynxC7/M=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-477-9jGcO4QUOuqtVOU_xpY2Ag-1; Wed, 10 Sep 2025 06:46:09 -0400
+X-MC-Unique: 9jGcO4QUOuqtVOU_xpY2Ag-1
+X-Mimecast-MFC-AGG-ID: 9jGcO4QUOuqtVOU_xpY2Ag_1757501168
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45cb4f23156so38344035e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 03:46:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757501168; x=1758105968;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ish3TOdF5itkEce/x1a+uOeE11uGbtv2vXkIso/jAMo=;
+        b=gPcuSIrVMbJ8L2pfwhlq4e1fF5RErwZQyLjiSJ4nwH54+JZV7NOYFA3d8QgblicTwE
+         RO2SzLs5EEVDs0Oh/gtiWyfACpeVoaSHU9XvNRUyY9IxJSAEwAdHq0MHQxIivwanPzm8
+         gg0wnXbMWe/Bt1oIUbLqJGCKN2riHKCMdpUuuI6iLU4BZiS/tLzXi35qfFFlA8UUO/bG
+         MmvZmJkPDl4tNmIALMkhaUp0Q6QpHYnMWWQ9e8bpXrO3x3puw2FN8TR5zNOAQCoPKNLq
+         QnSQiMSYc+SoLtUdagfr1VHknRJMePCj1RHyBcdR+l3BMfNuGGJALzA7mjmhUIZG5QIi
+         qyjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8h1WfwgNKQuiR3/KSCfBezDbjDeG3fMJ2Pbdhkp5elC9NU5Alz57THr+/mS819i6a9QjulUykU28K7UA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyyWT20xaQtoDC3g0pV72EBMI8h7IEVyDgInRS7AnIQx+OOshy
+	cmqXJlU6UBYXlZAVLn0owHKmBIOejZiLB4KrbwnMajwDJgb9fH/7XiSxlUuiFXhmLpe1Uz/trvx
+	ubDIfYlYqvNP8FoI6XOdPHIU9gDd+2eC3VRnNtVsfyrU1386SjkkZ7nShltPfCoj3sA==
+X-Gm-Gg: ASbGncsT1MVimwH8hSmjBMnQP2Cnbp1peLGKHExK11zu0vHWMTmQVSmjhqiWhvTyV5i
+	adMVp4TDmOupzZDUxIPY52wRMPJf1W6xbaaVP86oe9YQutV1UIr70t4brs6cGT3POn3ryotmjME
+	H96A5GY4LaL3gyY8COSTresJDYJLtXKiBi6mEBUznlouCdTwEwQesZ7UYuswQckzUxGlyH0msnu
+	KvQyUzgPThNN8EycgEy+WOXsHtnkOE4B6QeCJp2CqXDwP/WVVRz7gy84iqBwB8EJ9xUX0rlGEnF
+	Q8NGQGgSC6E/vyajVdOOWn16+E851gB0fSnCZCkZQeRk34yeOksrTF2KDtWYhWs/L0xmF/yEyXk
+	JlZhkXqbN9gpdF0khd/FR1A==
+X-Received: by 2002:a05:600c:45cc:b0:459:dde3:1a55 with SMTP id 5b1f17b1804b1-45dddec78d3mr134563145e9.24.1757501168142;
+        Wed, 10 Sep 2025 03:46:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE41It7Gch3Cc7HmzlNTf33KcOKcEcqR+1x/JRLAyd/4r51Mnyjg/51A7Gwi/T9TvTKWE/bSA==
+X-Received: by 2002:a05:600c:45cc:b0:459:dde3:1a55 with SMTP id 5b1f17b1804b1-45dddec78d3mr134562745e9.24.1757501167668;
+        Wed, 10 Sep 2025 03:46:07 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df81d193esm23564835e9.6.2025.09.10.03.46.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 03:46:05 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Brett A C Sheffield <bacs@librecast.net>, stable@vger.kernel.org
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Simona
+ Vetter <simona@ffwll.ch>, Helge Deller <deller@gmx.de>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Murad Masimov
+ <m.masimov@mt-integration.ru>, Yongzhen Zhang <zhangyongzhen@kylinos.cn>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin
+ <sashal@kernel.org>, Brett A C Sheffield <bacs@librecast.net>
+Subject: Re: [PATCH 1/1] Revert "fbdev: Disable sysfb device registration
+ when removing conflicting FBs"
+In-Reply-To: <20250910095124.6213-5-bacs@librecast.net>
+References: <20250910095124.6213-3-bacs@librecast.net>
+ <20250910095124.6213-5-bacs@librecast.net>
+Date: Wed, 10 Sep 2025 12:46:04 +0200
+Message-ID: <87frcuegb7.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-create_kpti_ng_temp_pgd() is currently defined (as an alias) in
-mmu.c without matching declaration in a header; instead cpufeature.c
-makes its own declaration. This is clearly not pretty, and as commit
-ceca927c86e6 ("arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc
-function signature") showed, it also makes it very easy for the
-prototypes to go out of sync.
+Brett A C Sheffield <bacs@librecast.net> writes:
 
-All this would be much simpler if kpti_install_ng_mappings() and
-associated functions lived in mmu.c, where they logically belong.
-This is what this patch does:
-- Move kpti_install_ng_mappings() and associated functions from
-  cpufeature.c to mmu.c, add a declaration to <asm/mmu.h>
-- Make create_kpti_ng_temp_pgd() a static function that simply calls
-  __create_pgd_mapping_locked() instead of aliasing it
-- Mark all these functions __init
-- Move __initdata after kpti_ng_temp_alloc (as suggested by
-  checkpatch)
+Hello Brett,
 
-Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
----
-Note: as things stand, create_kpti_ng_temp_pgd() could be removed,
-but a separate patch [1] will make use of it to add an
-assertion.
+> This reverts commit 13d28e0c79cbf69fc6f145767af66905586c1249.
+>
+> Commit ee7a69aa38d8 ("fbdev: Disable sysfb device registration when
+> removing conflicting FBs") was backported to 5.15.y LTS. This causes a
+> regression where all virtual consoles stop responding during boot at:
+>
+> "Populating /dev with existing devices through uevents ..."
+>
+> Reverting the commit fixes the regression.
+>
+> Signed-off-by: Brett A C Sheffield <bacs@librecast.net>
+> ---
 
-[1] https://lore.kernel.org/all/20250813145607.1612234-3-chaitanyas.prakash@arm.com/
----
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Kees Cook <kees@kernel.org>,
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>
----
- arch/arm64/include/asm/mmu.h   |   6 ++
- arch/arm64/kernel/cpufeature.c |  97 ------------------------------
- arch/arm64/mm/mmu.c            | 106 ++++++++++++++++++++++++++++++---
- 3 files changed, 103 insertions(+), 106 deletions(-)
+In the other email you said:
 
-diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
-index 49f1a810df16..624edd6c4964 100644
---- a/arch/arm64/include/asm/mmu.h
-+++ b/arch/arm64/include/asm/mmu.h
-@@ -104,5 +104,11 @@ static inline bool kaslr_requires_kpti(void)
- 	return true;
- }
- 
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+void kpti_install_ng_mappings(void);
-+#else
-+static inline void kpti_install_ng_mappings(void) {}
-+#endif
-+
- #endif	/* !__ASSEMBLY__ */
- #endif
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index ef269a5a37e1..b99eaad48c14 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1940,103 +1940,6 @@ static bool has_pmuv3(const struct arm64_cpu_capabilities *entry, int scope)
- }
- #endif
- 
--#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
--#define KPTI_NG_TEMP_VA		(-(1UL << PMD_SHIFT))
--
--extern
--void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
--			     phys_addr_t size, pgprot_t prot,
--			     phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags);
--
--static phys_addr_t __initdata kpti_ng_temp_alloc;
--
--static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
--{
--	kpti_ng_temp_alloc -= PAGE_SIZE;
--	return kpti_ng_temp_alloc;
--}
--
--static int __init __kpti_install_ng_mappings(void *__unused)
--{
--	typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
--	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
--	kpti_remap_fn *remap_fn;
--
--	int cpu = smp_processor_id();
--	int levels = CONFIG_PGTABLE_LEVELS;
--	int order = order_base_2(levels);
--	u64 kpti_ng_temp_pgd_pa = 0;
--	pgd_t *kpti_ng_temp_pgd;
--	u64 alloc = 0;
--
--	if (levels == 5 && !pgtable_l5_enabled())
--		levels = 4;
--	else if (levels == 4 && !pgtable_l4_enabled())
--		levels = 3;
--
--	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
--
--	if (!cpu) {
--		alloc = __get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
--		kpti_ng_temp_pgd = (pgd_t *)(alloc + (levels - 1) * PAGE_SIZE);
--		kpti_ng_temp_alloc = kpti_ng_temp_pgd_pa = __pa(kpti_ng_temp_pgd);
--
--		//
--		// Create a minimal page table hierarchy that permits us to map
--		// the swapper page tables temporarily as we traverse them.
--		//
--		// The physical pages are laid out as follows:
--		//
--		// +--------+-/-------+-/------ +-/------ +-\\\--------+
--		// :  PTE[] : | PMD[] : | PUD[] : | P4D[] : ||| PGD[]  :
--		// +--------+-\-------+-\------ +-\------ +-///--------+
--		//      ^
--		// The first page is mapped into this hierarchy at a PMD_SHIFT
--		// aligned virtual address, so that we can manipulate the PTE
--		// level entries while the mapping is active. The first entry
--		// covers the PTE[] page itself, the remaining entries are free
--		// to be used as a ad-hoc fixmap.
--		//
--		create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc),
--					KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
--					kpti_ng_pgd_alloc, 0);
--	}
--
--	cpu_install_idmap();
--	remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
--	cpu_uninstall_idmap();
--
--	if (!cpu) {
--		free_pages(alloc, order);
--		arm64_use_ng_mappings = true;
--	}
--
--	return 0;
--}
--
--static void __init kpti_install_ng_mappings(void)
--{
--	/* Check whether KPTI is going to be used */
--	if (!arm64_kernel_unmapped_at_el0())
--		return;
--
--	/*
--	 * We don't need to rewrite the page-tables if either we've done
--	 * it already or we have KASLR enabled and therefore have not
--	 * created any global mappings at all.
--	 */
--	if (arm64_use_ng_mappings)
--		return;
--
--	stop_machine(__kpti_install_ng_mappings, NULL, cpu_online_mask);
--}
--
--#else
--static inline void kpti_install_ng_mappings(void)
--{
--}
--#endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
--
- static void cpu_enable_kpti(struct arm64_cpu_capabilities const *cap)
- {
- 	if (__this_cpu_read(this_cpu_vector) == vectors) {
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 183801520740..eff3295393ee 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -27,6 +27,7 @@
- #include <linux/kfence.h>
- #include <linux/pkeys.h>
- #include <linux/mm_inline.h>
-+#include <linux/stop_machine.h>
- 
- #include <asm/barrier.h>
- #include <asm/cputype.h>
-@@ -466,14 +467,6 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
- 	mutex_unlock(&fixmap_lock);
- }
- 
--#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
--extern __alias(__create_pgd_mapping_locked)
--void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
--			     phys_addr_t size, pgprot_t prot,
--			     phys_addr_t (*pgtable_alloc)(enum pgtable_type),
--			     int flags);
--#endif
--
- static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm,
- 				       enum pgtable_type pgtable_type)
- {
-@@ -735,7 +728,102 @@ static void __init declare_vma(struct vm_struct *vma,
- }
- 
- #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
--static pgprot_t kernel_exec_prot(void)
-+#define KPTI_NG_TEMP_VA		(-(1UL << PMD_SHIFT))
-+
-+static phys_addr_t kpti_ng_temp_alloc __initdata;
-+
-+static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
-+{
-+	kpti_ng_temp_alloc -= PAGE_SIZE;
-+	return kpti_ng_temp_alloc;
-+}
-+
-+static void __init create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys,
-+					   unsigned long virt, phys_addr_t size,
-+					   pgprot_t prot,
-+					   phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-+					   int flags)
-+{
-+	__create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
-+				    pgtable_alloc, flags);
-+}
-+
-+static int __init __kpti_install_ng_mappings(void *__unused)
-+{
-+	typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
-+	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
-+	kpti_remap_fn *remap_fn;
-+
-+	int cpu = smp_processor_id();
-+	int levels = CONFIG_PGTABLE_LEVELS;
-+	int order = order_base_2(levels);
-+	u64 kpti_ng_temp_pgd_pa = 0;
-+	pgd_t *kpti_ng_temp_pgd;
-+	u64 alloc = 0;
-+
-+	if (levels == 5 && !pgtable_l5_enabled())
-+		levels = 4;
-+	else if (levels == 4 && !pgtable_l4_enabled())
-+		levels = 3;
-+
-+	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
-+
-+	if (!cpu) {
-+		alloc = __get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
-+		kpti_ng_temp_pgd = (pgd_t *)(alloc + (levels - 1) * PAGE_SIZE);
-+		kpti_ng_temp_alloc = kpti_ng_temp_pgd_pa = __pa(kpti_ng_temp_pgd);
-+
-+		//
-+		// Create a minimal page table hierarchy that permits us to map
-+		// the swapper page tables temporarily as we traverse them.
-+		//
-+		// The physical pages are laid out as follows:
-+		//
-+		// +--------+-/-------+-/------ +-/------ +-\\\--------+
-+		// :  PTE[] : | PMD[] : | PUD[] : | P4D[] : ||| PGD[]  :
-+		// +--------+-\-------+-\------ +-\------ +-///--------+
-+		//      ^
-+		// The first page is mapped into this hierarchy at a PMD_SHIFT
-+		// aligned virtual address, so that we can manipulate the PTE
-+		// level entries while the mapping is active. The first entry
-+		// covers the PTE[] page itself, the remaining entries are free
-+		// to be used as a ad-hoc fixmap.
-+		//
-+		create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc),
-+					KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
-+					kpti_ng_pgd_alloc, 0);
-+	}
-+
-+	cpu_install_idmap();
-+	remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
-+	cpu_uninstall_idmap();
-+
-+	if (!cpu) {
-+		free_pages(alloc, order);
-+		arm64_use_ng_mappings = true;
-+	}
-+
-+	return 0;
-+}
-+
-+void __init kpti_install_ng_mappings(void)
-+{
-+	/* Check whether KPTI is going to be used */
-+	if (!arm64_kernel_unmapped_at_el0())
-+		return;
-+
-+	/*
-+	 * We don't need to rewrite the page-tables if either we've done
-+	 * it already or we have KASLR enabled and therefore have not
-+	 * created any global mappings at all.
-+	 */
-+	if (arm64_use_ng_mappings)
-+		return;
-+
-+	stop_machine(__kpti_install_ng_mappings, NULL, cpu_online_mask);
-+}
-+
-+static pgprot_t __init kernel_exec_prot(void)
- {
- 	return rodata_enabled ? PAGE_KERNEL_ROX : PAGE_KERNEL_EXEC;
- }
+> Newer stable kernels with this
+> patch (6.1.y, 6.6.y, 6.12,y, 6.15.y, 6.16.y) and mainline are unaffected.
 
-base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+But are you proposing to revert the mentioned commit in mainline too
+or just in the 5.15.y LTS tree ?
+
 -- 
-2.47.0
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
 
