@@ -1,90 +1,117 @@
-Return-Path: <linux-kernel+bounces-810640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31BCB51D3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:15:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39606B51D35
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801275806DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:12:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBDA43BEECA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE1733A020;
-	Wed, 10 Sep 2025 16:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2cziucY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1D83314BC;
-	Wed, 10 Sep 2025 16:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AABA334363;
+	Wed, 10 Sep 2025 16:12:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B0F32CF80;
+	Wed, 10 Sep 2025 16:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757520638; cv=none; b=gxXi/rIR49fXmlDoKjCK0bh/2dvoxf0l8HVvb2OTjD8iqC5obKKzrzf9hM2JyudQiTffkWd/PdRZh0mle7PsyoNre7Kj5u81YlJe9/3++PXwM9CMp6Rf04Uar5uxYCcou7W7gN8Y0prwNs0z0oMLgTX+g/PQdqzj4X4atxg2Wro=
+	t=1757520726; cv=none; b=pBigdv2zEZ3pkcXAfXKNSpMUgWTek+8x8VNoDOMzzc6WPziikVH7FkO6eostasv1xwOKPXa0nc83GOB2sSjjxKKezB+cs2htTOspLmfcxxSUXTdTQryzUQ9xqo8yvr/aWM3JP83r4aqTKXYkS/A+8m4BVDYDy2ReILxjzMgbpMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757520638; c=relaxed/simple;
-	bh=SuHO9tUa2OF0OUV6fs2hnkWnqH3DjUqS7DcINbUCcT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qCd5t17Up1LYfMBrgzKycP2faEGAYMRF/LM2y2SIxHtotMcxbRxjHItYzWG9foWMrjqi4G73S93zk0RIPL1eqfZ+rmOHmJDuVO+j9z5JpQ22iEs97qmN+lgKs76IE2Mjed15qEjrz2QdD2h6gwYP58mS5F8FtJJcz0S/goz1CA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r2cziucY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84DC2C4CEEB;
-	Wed, 10 Sep 2025 16:10:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757520638;
-	bh=SuHO9tUa2OF0OUV6fs2hnkWnqH3DjUqS7DcINbUCcT4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r2cziucYHfube3BjQlaYNvlVr34dxKCenN+Mpzq8EIm1zENyj+tz56NRqoigXQ8vf
-	 /jcV5dJQqrN9XPMKFAw6Spm6hNzrsCjeUxNgWcNrdKJdPsov6kZmK7Yw2Z6ZJS72na
-	 ob+ZPfl4hkKMyAuDnzFmNpqPsbuNiGOIGyQFNQT/sBU+Bbw91IWTFYokvmwNYSvUEo
-	 M8vfybJy+58nFcqcj64vm3Qm99XgU+y613S2EggvP40NOdDbSeEiOqo8HPLj+Zo63A
-	 avP9ruRF4RghKknOMMsbVSL3B/PjwYERYa5AFZxFZxa9P9GrUUDxIuOVrHIYrxHMzp
-	 37fwWf+spb/qg==
-Date: Wed, 10 Sep 2025 09:10:36 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, Jason
- Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
- =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- kernel-team@meta.com
-Subject: Re: [PATCH net-next 4/7] net: ethtool: add get_rx_ring_count
- callback to optimize RX ring queries
-Message-ID: <20250910091036.3054eb94@kernel.org>
-In-Reply-To: <20250909-gxrings-v1-4-634282f06a54@debian.org>
-References: <20250909-gxrings-v1-0-634282f06a54@debian.org>
-	<20250909-gxrings-v1-4-634282f06a54@debian.org>
+	s=arc-20240116; t=1757520726; c=relaxed/simple;
+	bh=cdS8DQ91Fk2KRig7JcdWAE1Tb1sePXx/4ByqYYrByXY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O3CkWBJnjuAby8b4h0emDdVjvnxhbkNqQaGu91oaCKNTwS0UyQbUPk4ilWUEz3KDlRfRzeikFL30NR8uQcHqBHCkcV/eO83nNyAiDhOxDH7j2mifxlL5L8y70UZAZ0JBRrvoZL6CBTrvSmWwvmX3WQNLkDP1ulXDs+iDUnrEEUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B91C716F2;
+	Wed, 10 Sep 2025 09:11:55 -0700 (PDT)
+Received: from [10.57.67.148] (unknown [10.57.67.148])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F3D43F63F;
+	Wed, 10 Sep 2025 09:11:56 -0700 (PDT)
+Message-ID: <250835cd-f07a-4b8a-bc01-ace24b407efc@arm.com>
+Date: Wed, 10 Sep 2025 18:11:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+ Mark Rutland <Mark.Rutland@arm.com>
+References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
+ <20250908073931.4159362-3-kevin.brodsky@arm.com>
+ <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
+ <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
+ <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
+ <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
+ <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
+ <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
+ <b2e52967-7ca1-411e-9c66-8d3483624ca7-agordeev@linux.ibm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <b2e52967-7ca1-411e-9c66-8d3483624ca7-agordeev@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 09 Sep 2025 13:24:02 -0700 Breno Leitao wrote:
-> +static int get_num_rxrings(struct net_device *dev)
+On 09/09/2025 16:38, Alexander Gordeev wrote:
+>>>>> Would that integrate well with LAZY_MMU_DEFAULT etc?
+>>>> Hmm... I though the idea is to use LAZY_MMU_* by architectures that
+>>>> want to use it - at least that is how I read the description above.
+>>>>
+>>>> It is only kasan_populate|depopulate_vmalloc_pte() in generic code
+>>>> that do not follow this pattern, and it looks as a problem to me.
+>> This discussion also made me realise that this is problematic, as the
+>> LAZY_MMU_{DEFAULT,NESTED} macros were meant only for architectures'
+>> convenience, not for generic code (where lazy_mmu_state_t should ideally
+>> be an opaque type as mentioned above). It almost feels like the kasan
+>> case deserves a different API, because this is not how enter() and
+>> leave() are meant to be used. This would mean quite a bit of churn
+>> though, so maybe just introduce another arch-defined value to pass to
+>> leave() for such a situation - for instance,
+>> arch_leave_lazy_mmu_mode(LAZY_MMU_FLUSH)?
+> What about to adjust the semantics of apply_to_page_range() instead?
+>
+> It currently assumes any caller is fine with apply_to_pte_range() to
+> enter the lazy mode. By contrast, kasan_(de)populate_vmalloc_pte() are
+> not fine at all and must leave the lazy mode. That literally suggests
+> the original assumption is incorrect.
+>
+> We could change int apply_to_pte_range(..., bool create, ...) to e.g.
+> apply_to_pte_range(..., unsigned int flags, ...) and introduce a flag
+> that simply skips entering the lazy mmu mode.
 
-ethtool_get_rx_ring_count()
+This is pretty much what Ryan proposed [1r] some time ago, although for
+a different purpose (avoiding nesting). There wasn't much appetite for
+it then, but I agree that this would be a more logical way to go about it.
 
-> +{
-> +	const struct ethtool_ops *ops = dev->ethtool_ops;
-> +	struct ethtool_rxnfc rx_rings;
+- Kevin
 
-You need to initialize this..
-
-> +	int ret;
-> +
-> +	if (ops->get_rx_ring_count)
-> +		return ops->get_rx_ring_count(dev);
-> +
-> +	ret = ops->get_rxnfc(dev, &rx_rings, NULL);
-> +	if (ret < 0)
-> +		return ret;
--- 
-pw-bot: cr
+[1r]
+https://lore.kernel.org/all/20250530140446.2387131-4-ryan.roberts@arm.com/
 
