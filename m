@@ -1,110 +1,233 @@
-Return-Path: <linux-kernel+bounces-810739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71B5B51EAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:12:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0446FB51EAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 784A9A00144
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:12:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 170347B47FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4582DECBC;
-	Wed, 10 Sep 2025 17:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D242305077;
+	Wed, 10 Sep 2025 17:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2mN0BFx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oQSndI/b"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2055.outbound.protection.outlook.com [40.107.236.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778D0329F1B;
-	Wed, 10 Sep 2025 17:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757524368; cv=none; b=lW6H34gr9FqGSvkkt5zHTLzCHRHLOMLQ88GwevAjbW5UZt3yzYoVDPKd7uSBMpX75mKbL9I6IH6MiJSMOcSc7p3iarbyBRQgYftj2oeCdPw/aJUc/8KFj01p7CT0Wm4riLciAelBSVFapPCdv1AhDpvz+AoRLSY16f1NvsDratQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757524368; c=relaxed/simple;
-	bh=O1xBmujHe+zclGHff4jsAavjp8DRvHEtrb9dfd4byaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fL6ZLB9TUe51EVoeL7eXJhV0RPAqAKIJcQhhMgC3Ltqu7V9z2z1UZbmj54uXvvbk615TXip27PzgcrXl0WzALUBPQQzn9RAKVT9DCOTy9zXN/NfPrnVadyQPYuC7/UreXpNJaHSxUO0S0sJ6hOWkQCxgS1aLX0lSXSzXNayePqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2mN0BFx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3305C4CEEB;
-	Wed, 10 Sep 2025 17:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757524368;
-	bh=O1xBmujHe+zclGHff4jsAavjp8DRvHEtrb9dfd4byaI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k2mN0BFx21o+JiImj6Ta8/92oaqDmsjxHyxm5zlYPivZEPAw4i0dFzhJ2SlBkNLOL
-	 bWY6tU9WDAyAlTs4YJFigLoTaLzZv61I9DLl0aYqR06Qz2M88j/ziR9g19VIXRPCn+
-	 eJAeBa0LzOW39ANEM+IF3vYKkrNXG6GoXNLVtLpbWpgr/BBCVot+E723oXLQToYoju
-	 z8sJIOFkA+9AtvbMtjcVDY38hFrzJ86wQ2f94S43wKQVxvjd51d6q2JsWhbNXhNZeg
-	 Kb1mVjAAUCxxYzQkI1rWVa1iWyVI5vtE51WybxUKwHip7NWW0rPvcYwPaqGEyKXmB0
-	 EonB/VxVp5czg==
-Date: Wed, 10 Sep 2025 20:12:44 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/sgx: Replace kmalloc() + copy_from_user() with
- memdup_user()
-Message-ID: <aMGxjHIfPU9cbGq1@kernel.org>
-References: <20250908201229.440105-2-thorsten.blum@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83288329F0B;
+	Wed, 10 Sep 2025 17:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757524478; cv=fail; b=T8DeM2WITGbNe+K5AzsjDiMjCAdS85ul1KePCUV/X1xnptOhIpM1e/+3jS+Rvr8oSOMishXsa78XGyzbMfhSvOAfmLCsh4J8ys+tLY6TVIq1jXRESHmOMh5ANX8WVmYQBFqUOKLBGjb1/FcvUdmx0uJi2lbStv+QV3ec2mLsmRA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757524478; c=relaxed/simple;
+	bh=eo1gOvc3N98bAaeAHa9YLPZ/YUa1XTBHgJzNR8TWLJE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uKOltdkJSWLNwvgd7oPUYXPXsYZugOrNsaTQfJEiATxesKjrvtBE6Q/m2MmAV5j/vasZ4kNstFGoXC60ICsIQJJNpLtALrjH+6+zQss9Okg7UfFZBfAbTyHvBJ4EG0Eq53e0cEzy3YIYNBHMemUbDT4HJseaWY+85qoJwMFqnoA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oQSndI/b; arc=fail smtp.client-ip=40.107.236.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wQma+jVf+W0LCVEoLRZG+kU98P6EivAHxYUnYFjoDFM6QeZ964uAghdzsPTZNhSju4do2oiP+MSFhG+w0nvCgjlWChGjWf2fXB/0h/yHrtv1VGbtj1Qxt8Gjh9b2Hid871P2WhimvvpWVHmBQEckNhHQr7fDlQrDInJvhlZFHcB9IsjQsxLoYW/VMMD2MdoeE9OYNmi6XJ3YN/OqPi7man9zHKPkbGlA4F2p6qjoiRJ2mXtH/ti/50bdUsaglZWzkTtHWwWofb8wktyZ9Np0LAlnHYWBKraLbsXr8cxgquMgD7H8QStgKfTZGxbpxabMfUalRwj5kcaYXuo1REebiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m/WHqlEieSdAEidT1vQbjDvj4mrx3eeRaciDspbJTkQ=;
+ b=M56cM/7BbY9kqKXwYTSC/E6Tr7YtTLetVDUZQv79PZ4qwzl5fi8OHYPmio6E+DjHf1RK+h8ZOquNzT9M+D86H77hsc/kJsUV33QO1zbWYxVyYwWGdw3VCzueaWifvXxmmGB/JTJh92V7JFgVmKl+9JI3r6JEhwTVvr7jA+l71e8qbGOSKT6BTC3658HRJc4xgmMRnaevI/LJrGi5M1C/RKKhkdNTARmuo24src6EHN92ePAuIftiUCFCq333aYi5okj/wkPT9nSrR6R8cN1QdnNau7+NXbPd8hbCD7Q+uFo4oBn6BCzL1HIjBswg0phvnQT1xEehlMzEX43gu33fKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m/WHqlEieSdAEidT1vQbjDvj4mrx3eeRaciDspbJTkQ=;
+ b=oQSndI/btxMzLsMrFFTMX+dAdpE5k7ilpCBXcNO81JlQWtHpuGjNl62JuKygWVpGM6L4Zhbk8sVp4ySXa8fekjEAe9vebRZk8/fLIfyH2ryAwriONP6kwSLvfVjEsq/B04nf7M1tevMzLMBNBokffMWyRneao15mHkW7ITeMBJo=
+Received: from DM6PR01CA0008.prod.exchangelabs.com (2603:10b6:5:296::13) by
+ PH8PR12MB6891.namprd12.prod.outlook.com (2603:10b6:510:1cb::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 17:14:32 +0000
+Received: from CY4PEPF0000EE3C.namprd03.prod.outlook.com
+ (2603:10b6:5:296:cafe::2b) by DM6PR01CA0008.outlook.office365.com
+ (2603:10b6:5:296::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Wed,
+ 10 Sep 2025 17:14:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CY4PEPF0000EE3C.mail.protection.outlook.com (10.167.242.13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Wed, 10 Sep 2025 17:14:31 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 10 Sep
+ 2025 10:14:30 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 10 Sep
+ 2025 10:14:30 -0700
+Received: from r9-mach.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Wed, 10 Sep 2025 10:14:25 -0700
+From: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+To: <broonie@kernel.org>, <alsa-devel@alsa-project.org>
+CC: <Vijendar.Mukunda@amd.com>, <Basavaraj.Hiregoudar@amd.com>,
+	<Sunil-kumar.Dommati@amd.com>, <syed.sabakareem@amd.com>, "Venkata Prasad
+ Potturu" <venkataprasad.potturu@amd.com>, Liam Girdwood
+	<lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>, Greg KH <gregkh@linuxfoundation.org>, Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+	Peter Zijlstra <peterz@infradead.org>, "open list:SOUND - SOC LAYER / DYNAMIC
+ AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] ASoC: amd: acp: Fix incorrect retrival of acp_chip_info
+Date: Wed, 10 Sep 2025 22:43:59 +0530
+Message-ID: <20250910171419.3682468-1-venkataprasad.potturu@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250908201229.440105-2-thorsten.blum@linux.dev>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3C:EE_|PH8PR12MB6891:EE_
+X-MS-Office365-Filtering-Correlation-Id: 643eae52-6160-41be-73ec-08ddf08d81b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7V9qS1xvN/pOs1sqyWUcVeON6DLViixYDxOKM0p6Em7CNy8YV0hy/RAUjoPN?=
+ =?us-ascii?Q?XgJk3gR/G9xS6t68qXKVPUd+ssPpQ38dBDDnqVUvd8OAKlKxifkdTWpLoRpA?=
+ =?us-ascii?Q?+6UTF2XpCkyBxRMkKFK4IxamFJhPToL0LxLYDxR/qzYTL3fKlTffOX5S7oUt?=
+ =?us-ascii?Q?F1rveQSQFMkcyznUeHiJzDb4QjfeQI0Yj1Te+PBljQvDUWFPNnkrUOoijUwy?=
+ =?us-ascii?Q?YHuQxm+Wt39U3pcUK0odpOTkNlR21ssgC9K82Ep4n7tEf80C8UrzHvKgSmS+?=
+ =?us-ascii?Q?xFremJH5Q0oPbBCBFhNtNWiyAqvlhCMxVtsTOFYEMi1XahdmiLitGDNv9ZrN?=
+ =?us-ascii?Q?+sA0wIb7wq17g3UpAuMCAJPp71apPu51uzj3VuYRNuswwelLJ1pASInzcCXK?=
+ =?us-ascii?Q?sNCpilXBIO/IKhaxqxTna69fA0oIQN7Dk8THe2BMhv46/2zg3/htqWFNVlw6?=
+ =?us-ascii?Q?ufAuIZYgI2CdT3pp5ZMVxrZEHV0IXDJX8UujLLyp8V14VXDMNzItmYAI+kaq?=
+ =?us-ascii?Q?sjCcgMU0EdRswIor7XDx7PAAbCAhbcysC3sS7LgJADDH75JMdNcUwlFAP43l?=
+ =?us-ascii?Q?JOFbbQKvYqHN3eUMAaMGaLe3QRPz4E/04wZh2ABQwqQuFHZrVqbxNcrmW4nM?=
+ =?us-ascii?Q?S+D0koeLBC9ZZsT3HZmG03JVn081W2vM6m6qJQS/Ac1+1fvpd96efXL0BBrZ?=
+ =?us-ascii?Q?Gs44ga9kHK0UJLiCqw+xdPdnSh5dWMi3FlTO7Fq9SePZVRXQZO0FkWteNjQW?=
+ =?us-ascii?Q?NEnz/5hzKLkzwCUndgdW8QkPi3ogJB0zcGx+Tm8auxPVbzqQQukmEtnv81Nn?=
+ =?us-ascii?Q?0TgXSJmcsQkY27WxMZnzTwWsZhiDeYM8RQAv7jZaXw2QtQimbeUPJHaYf6p1?=
+ =?us-ascii?Q?+Do6bdQCkGLn17AUW0C7Np3KoETyPVMsOj4cEgMySNI+p02BZPSrj1e3Qs3x?=
+ =?us-ascii?Q?4zN8v5J+QiiPREpQhpubEs4vswVueubWEj2l2zPBch3MiyIYPUTTI6PXGXnm?=
+ =?us-ascii?Q?akx7nCMnfWbWScGaDGnr8CtJsvp06puAouWAQckJYkhPe6V9XRfCZaSb6mew?=
+ =?us-ascii?Q?UgcYqDA4Kp1I7Fi1is4rhxiV38d9OZ/iTbVBYoHcJNx5qvC49TK7h5Frrm+0?=
+ =?us-ascii?Q?zLMVxWZrCXe2HNz4DGP/DMWwfdWwGprBYCp1VV2UTF6hMvZjtSKreIp93LhB?=
+ =?us-ascii?Q?P9+IvLRy3u/ulX/qy0pydgvRZ9gvRUCMjaDyGXYILxsDedpFxhWbixN25R8D?=
+ =?us-ascii?Q?wXdB21gtEnfnyqQj2qcSnvY9SuKqQQX1FI5xoztq4WakD0tl3sDkRWEbxn9G?=
+ =?us-ascii?Q?6YEN900GB+7oU/t5M6hnIKVRAdxQLpOkp0/8funG113MqohTt/FjFH5iLkhK?=
+ =?us-ascii?Q?MsopzM4gZdGb2E+MFWu3rAn/8YfjPE4DtLn3QBnzxNSlgjrikM+T2ImG58Tx?=
+ =?us-ascii?Q?gQpNvS5/JyLuRgvwDAbDwY/vdFRO/ihyHX32szAHNE4d2ub2arzF71IIkKBP?=
+ =?us-ascii?Q?nb/1hNPJEWb19wk4dlhlGihApLqST8PlbNN1?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 17:14:31.2735
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 643eae52-6160-41be-73ec-08ddf08d81b4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE3C.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6891
 
-On Mon, Sep 08, 2025 at 10:12:29PM +0200, Thorsten Blum wrote:
-> Replace kmalloc() followed by copy_from_user() with memdup_user() to
-> improve and simplify sgx_ioc_enclave_create().
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  arch/x86/kernel/cpu/sgx/ioctl.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-> index 66f1efa16fbb..e99fc38f1273 100644
-> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-> @@ -164,15 +164,11 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
->  	if (copy_from_user(&create_arg, arg, sizeof(create_arg)))
->  		return -EFAULT;
->  
-> -	secs = kmalloc(PAGE_SIZE, GFP_KERNEL);
-> -	if (!secs)
-> -		return -ENOMEM;
-> -
-> -	if (copy_from_user(secs, (void __user *)create_arg.src, PAGE_SIZE))
-> -		ret = -EFAULT;
-> -	else
-> -		ret = sgx_encl_create(encl, secs);
-> +	secs = memdup_user((void __user *)create_arg.src, PAGE_SIZE);
-> +	if (IS_ERR(secs))
-> +		return PTR_ERR(secs);
->  
-> +	ret = sgx_encl_create(encl, secs);
->  	kfree(secs);
->  	return ret;
->  }
-> -- 
-> 2.51.0
-> 
-> 
+Use dev_get_drvdata(dev->parent) instead of dev_get_platdata(dev)
+to correctly obtain acp_chip_info members in the acp I2S driver.
+Previously, some members were not updated properly due to incorrect
+data access, which could potentially lead to null pointer
+dereferences.
 
-Agreed:
+This issue was missed in the earlier commit
+("ASoC: amd: acp: Fix NULL pointer deref in acp_i2s_set_tdm_slot"),
+which only addressed set_tdm_slot(). This change ensures that all
+relevant functions correctly retrieve acp_chip_info, preventing
+further null pointer dereference issues.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Fixes: e3933683b25e ("ASoC: amd: acp: Remove redundant acp_dev_data structure")
 
-BR, Jarkko
+Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+
+---
+
+Changes since v1:
+- Update the commit description.
+
+ sound/soc/amd/acp/acp-i2s.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/amd/acp/acp-i2s.c b/sound/soc/amd/acp/acp-i2s.c
+index 617690362ad7..4ba0a66981ea 100644
+--- a/sound/soc/amd/acp/acp-i2s.c
++++ b/sound/soc/amd/acp/acp-i2s.c
+@@ -73,7 +73,7 @@ static int acp_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
+ 			   unsigned int fmt)
+ {
+ 	struct device *dev = cpu_dai->component->dev;
+-	struct acp_chip_info *chip = dev_get_platdata(dev);
++	struct acp_chip_info *chip = dev_get_drvdata(dev->parent);
+ 	int mode;
+ 
+ 	mode = fmt & SND_SOC_DAIFMT_FORMAT_MASK;
+@@ -199,7 +199,7 @@ static int acp_i2s_hwparams(struct snd_pcm_substream *substream, struct snd_pcm_
+ 	u32 reg_val, fmt_reg, tdm_fmt;
+ 	u32 lrclk_div_val, bclk_div_val;
+ 
+-	chip = dev_get_platdata(dev);
++	chip = dev_get_drvdata(dev->parent);
+ 	rsrc = chip->rsrc;
+ 
+ 	/* These values are as per Hardware Spec */
+@@ -386,7 +386,7 @@ static int acp_i2s_trigger(struct snd_pcm_substream *substream, int cmd, struct
+ {
+ 	struct acp_stream *stream = substream->runtime->private_data;
+ 	struct device *dev = dai->component->dev;
+-	struct acp_chip_info *chip = dev_get_platdata(dev);
++	struct acp_chip_info *chip = dev_get_drvdata(dev->parent);
+ 	struct acp_resource *rsrc = chip->rsrc;
+ 	u32 val, period_bytes, reg_val, ier_val, water_val, buf_size, buf_reg;
+ 
+@@ -516,14 +516,13 @@ static int acp_i2s_trigger(struct snd_pcm_substream *substream, int cmd, struct
+ static int acp_i2s_prepare(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
+ {
+ 	struct device *dev = dai->component->dev;
+-	struct acp_chip_info *chip = dev_get_platdata(dev);
++	struct acp_chip_info *chip = dev_get_drvdata(dev->parent);
+ 	struct acp_resource *rsrc = chip->rsrc;
+ 	struct acp_stream *stream = substream->runtime->private_data;
+ 	u32 reg_dma_size = 0, reg_fifo_size = 0, reg_fifo_addr = 0;
+ 	u32 phy_addr = 0, acp_fifo_addr = 0, ext_int_ctrl;
+ 	unsigned int dir = substream->stream;
+ 
+-	chip = dev_get_platdata(dev);
+ 	switch (dai->driver->id) {
+ 	case I2S_SP_INSTANCE:
+ 		if (dir == SNDRV_PCM_STREAM_PLAYBACK) {
+@@ -632,7 +631,7 @@ static int acp_i2s_startup(struct snd_pcm_substream *substream, struct snd_soc_d
+ {
+ 	struct acp_stream *stream = substream->runtime->private_data;
+ 	struct device *dev = dai->component->dev;
+-	struct acp_chip_info *chip = dev_get_platdata(dev);
++	struct acp_chip_info *chip = dev_get_drvdata(dev->parent);
+ 	struct acp_resource *rsrc = chip->rsrc;
+ 	unsigned int dir = substream->stream;
+ 	unsigned int irq_bit = 0;
+-- 
+2.43.0
+
 
