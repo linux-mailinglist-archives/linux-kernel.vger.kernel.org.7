@@ -1,117 +1,145 @@
-Return-Path: <linux-kernel+bounces-810920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB709B52186
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:00:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF12B52182
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12DDC1BC4891
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:01:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70DED188F2B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CA22EDD51;
-	Wed, 10 Sep 2025 20:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF862EB5A2;
+	Wed, 10 Sep 2025 20:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MBm8ZZIX"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f6vpSGTo"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216172D6E74;
-	Wed, 10 Sep 2025 20:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA6E2DF14F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 19:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757534436; cv=none; b=tAGJL4yY3Z6Ci2SmdULZxqFVQRt9Le+rv3J2WP7+EiztmnyZ8D/uk3UPC22QI4wcJMV4XdutpHVSSx//K0JVQRiDqi39jrVqpvyJapLNreEUe8CMa9ZLtfKQnr+PbngcUKtP5kdbvLNtePgMUEHxlkTCRnpKbvCJhDJpOGZNRT8=
+	t=1757534400; cv=none; b=AgADUM9R1pNobT7i4s3fqs3D56jFevJoK+Zybtnd0LQ78OP3Pr/obty7U0uLcyE/K3gCRx9aTvRFDTOsHOsZjGgX2jFS3WX5/UAM2agBrJBHyLsDgTSz/Z/qQ9j1ibKQ7edqFr7/GuCZ9/2eyePiF6S+qec0PdkKaA1zTUWxz5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757534436; c=relaxed/simple;
-	bh=EKTQ7/KKk06PC4P0hrBSaQFg209GpQVgW+Z8KM2n3tk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WLSTcmtUL/XsBMlFHE7Y76UGUk94Gk47dq6EnEs1cAX1g2XRKA16UcUpWIOeWXco67EgxEqqyeekAh2+u6KWJypNnvVTiRNPt/njFk8NyDe+ox1cGcgk3Ajb+9TsGtrsRi5UZuiTF6cjdOZQ0z1vFDoCqYj2j8l0SeCtaF3je/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MBm8ZZIX reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3FA8140E00DD;
-	Wed, 10 Sep 2025 20:00:31 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 7Rba-gI6y12Q; Wed, 10 Sep 2025 20:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757534427; bh=tTP7WJCPA0F+L78sq3fAHJi/fZvPP2QjtFGkh16jzvk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MBm8ZZIXpeiwEFsNoNXjttLv44Pi8fbzsOCoein670ovE7xQz638krZknHGzwyTno
-	 gusHc8We5VrAJOHSmhvEh4eEeDLj9MBak9t50vlVjx6kn9J92Hoo69qiaBjkBukDd+
-	 GNg0Do18zD265RFs2k7bihM64E3vCPCUWy+3PMQtuO2ZNe6ixg/G0zd6MfHuitg42i
-	 inMdkR1ElxD3+F8bQAAIXx9ENo2LolVsml3B2e4tZ6kjhzEBPo0+wPwx0KAaQaqK2X
-	 9WVREVn+z/7tFn928gIK9tVaKkxgE02wemggrGfr4oxytA2lcp6Pvo03IzQ0mFM5op
-	 fy9ryiBeHpyvwTgB0pBZUay3HTuVoZmKeZbAaasRLQbnJd3c2y6k8L4VgBkOFR8xS7
-	 ejtye3nd8ETo1kCi4EtKdFShRwaVbJUCr3sHpGZI5RwLTnO0yfh39Ah6NAt7Q672u/
-	 lOWq2pmGynH/6dptXRmCSO86xq5H+DzLqz0jsqsCn10Cft+i20/FM+IDgpc7sSEC8R
-	 OHhVI2jEqgFxQK277O3KSBuHJyVboSCun1VgwYf2UMoCQTEOJLEDpMZWOYzY3SHueJ
-	 2N6Wi0L2XXkLiXlNSJlawA7CzidgQDN8pVOUuK8WZ9J3H9JH2Q3N4QNCwPXtyxge46
-	 JgAMknovkq4d+JBgd8QJEor4=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 100A440E01D2;
-	Wed, 10 Sep 2025 19:59:45 +0000 (UTC)
-Date: Wed, 10 Sep 2025 21:59:38 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Moger, Babu" <babu.moger@amd.com>
-Cc: corbet@lwn.net, tony.luck@intel.com, reinette.chatre@intel.com,
-	Dave.Martin@arm.com, james.morse@arm.com, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, kas@kernel.org, rick.p.edgecombe@intel.com,
-	akpm@linux-foundation.org, paulmck@kernel.org, frederic@kernel.org,
-	pmladek@suse.com, rostedt@goodmis.org, kees@kernel.org,
-	arnd@arndb.de, fvdl@google.com, seanjc@google.com,
-	thomas.lendacky@amd.com, pawan.kumar.gupta@linux.intel.com,
-	perry.yuan@amd.com, manali.shukla@amd.com, sohil.mehta@intel.com,
-	xin@zytor.com, Neeraj.Upadhyay@amd.com, peterz@infradead.org,
-	tiala@microsoft.com, mario.limonciello@amd.com,
-	dapeng1.mi@linux.intel.com, michael.roth@amd.com,
-	chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
-	kvm@vger.kernel.org, peternewman@google.com, eranian@google.com,
-	gautham.shenoy@amd.com
-Subject: Re: [PATCH v18 14/33] x86/resctrl: Add data structures and
- definitions for ABMC assignment
-Message-ID: <20250910195938.GAaMHYqjfOdFQmllbQ@fat_crate.local>
-References: <cover.1757108044.git.babu.moger@amd.com>
- <1eb6f7ba74f37757ebf3a45cfe84081b8e6cd89a.1757108044.git.babu.moger@amd.com>
- <20250910172627.GCaMG0w6UP4ksqZZ50@fat_crate.local>
- <1096bc24-2bac-4bc2-bc4f-9d653839e81d@amd.com>
+	s=arc-20240116; t=1757534400; c=relaxed/simple;
+	bh=uBXOGlCMnQlsjVVSJTHl0fyM5k1HHTXNsd7ZIyoRfFk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WuXhYG1/HAoMW/6ruH9f/7BGjd2B6KzVTFpRjKC9TJ/LC+GNMBUkzW+voCEmjVHfLpSYiKpEFtGG9G3vtyqrcZ35hygaZKGha4hgnnfbazeUlkkQE7mjiZozY9Iru2jaB862agwq2BMGox2IyhANPgoiwjTm7rddC1+kfEvvzQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f6vpSGTo; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3c6abcfd142so5793f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757534397; x=1758139197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ng6TDWf6XlZYiajdaz3TZ112Ah6XVvc29LELuzSu4Wo=;
+        b=f6vpSGTo1ufZzZA3r7oDXpt2IsxKbBrA9FmVLAF2NX7NrRaFBE/apToMKKHuEAQa6Q
+         YrsaH1wGLWdex4rZzxji0apv8Nlap3GNKXR+Ux5+QepftIMQoy2zfGVOAciXKUvjEO+x
+         reNvaOy+UDiVD2pJXRsIZIMw+MAkVBnnmPeZY/ib+YmaK8Mq21jUhVFU3IXWxV7q7+pL
+         O1YSBMdu35tLSRpvKARWZPn7YaPV1fftFidKlzFdzwsgrdEprHxV6Ht+KLvp+yPh5D83
+         G7zIOny9V/PQ4IPeJoYZBeyUCYDmvEQIuic/UYfHJr85xmpUxEPCvAv3Sko6ElAxY1Br
+         KG3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757534397; x=1758139197;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ng6TDWf6XlZYiajdaz3TZ112Ah6XVvc29LELuzSu4Wo=;
+        b=Ritx/R89g5WynNX8ICd+HOa0PZYqMC9jRv7K9LZXp7aK2XyGziaicTFybTOtN/zZ0Z
+         /K8Ui9lHbiFmaI2I5PBxsq0/eDCIkGTl4J4TRsTSd2zucHS3ZpzLQ8diQmQ8moNLFuCx
+         FmnOK51TMd2M059063X4wghePQnr7kP1JUOGOf4OxjFZAx7kq9hdqFBdftrkEnoO3hPa
+         kTwyX+8FNakbk5xOAIAoZYmMNIgfWcsWFsuoM1GOxWYG+qCEgim52sk1xWhuyKvzkEWI
+         9txFc2lIvppGp7FJkHpZy60D99yRSZefn2Nyl+vc4148gEKx9AHLb7i05+9IM3R4Sefz
+         6Xow==
+X-Forwarded-Encrypted: i=1; AJvYcCVhLj8BSqYgn038NrzFh43w53SlhHJwng9MWo4CZJRinrAUdB1nhpb1as9wyF6Bf08b976D+ygAJWmNypg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPbyZXDv2qh+wjSwqqXMuYo6/C+f/FzE5eWBzKAWEggob9acoC
+	8YGpYmNjadbX58O0A9k+wABUxvRg7NIf40dXcbRrwVDbUg2uzRekRiK6
+X-Gm-Gg: ASbGncuK4VLmi8g31TRQc4mUEh9ku3/dwXkDnLJTZUnrMnQxQqen2SKFpABF4e+mOMu
+	fbXqzLQMtOkN0QmrPadUM53shWPmr+eGNmc+C+EetNbU+6c9WOVkadK9XItaJlSovaeVqMF32y9
+	SMGo74CZictkE3u6+ApsSH0zPksXWrYHbvTddAnDFiPBJaMekwjkXcFfn8oehuxym2oOrq7pJPK
+	u8faE9tlNVatzaA3V4XlbcDsznEhYwlAiRkG2Iqf7d6vdX9koAP+s1JvzC0Bl0tlmTDIINAuJPi
+	n3gWk7YkHNlLFHZ0mBluT1dU5XV9grsS3NhZTBsKw2e36eraRJSSTq62ZQcWPCYzdp+iZaWVH1a
+	PWnRdinuQqypc/kMI1+Tuud0dTaAK
+X-Google-Smtp-Source: AGHT+IEUZwFaC1J2bBuG5ahfJdmOHm77RmnVlTVKmGXWf2OqqxuOZ7IqccrUBn6fCuTpw/09PVWvQw==
+X-Received: by 2002:a05:6000:2084:b0:3e6:4b2:b9bf with SMTP id ffacd0b85a97d-3e6426e265cmr13549939f8f.24.1757534396405;
+        Wed, 10 Sep 2025 12:59:56 -0700 (PDT)
+Received: from pc.. ([105.163.1.135])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e75215c51csm8086771f8f.0.2025.09.10.12.59.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 12:59:55 -0700 (PDT)
+From: Erick Karanja <karanja99erick@gmail.com>
+To: broonie@kernel.org
+Cc: julia.lawall@inria.fr,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Erick Karanja <karanja99erick@gmail.com>
+Subject: [PATCH] spi: Replace lock/unlock patterns to use guard
+Date: Wed, 10 Sep 2025 22:59:49 +0300
+Message-ID: <20250910195949.273553-1-karanja99erick@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1096bc24-2bac-4bc2-bc4f-9d653839e81d@amd.com>
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 10, 2025 at 02:49:23PM -0500, Moger, Babu wrote:
-> No particular reason =E2=80=94 it was just carried over from older MSRs=
- by copy-paste.
->=20
-> In fact, all five of them are AMD-specific in this case. Let me know th=
-e
-> best way to handle this.
+Replace lock/unlock patterns with scoped based cleanup
+macro.This simplifies the code control flow.
 
-You could s/IA32/AMD/ them later, when the dust settles.
+Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+---
+ drivers/spi/spi-fsl-espi.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-"AMD64" would mean they're architectural which doesn't look like it ... y=
-et.
+diff --git a/drivers/spi/spi-fsl-espi.c b/drivers/spi/spi-fsl-espi.c
+index f2f1d3298e6c..eae0fac911de 100644
+--- a/drivers/spi/spi-fsl-espi.c
++++ b/drivers/spi/spi-fsl-espi.c
+@@ -379,9 +379,8 @@ static int fsl_espi_bufs(struct spi_device *spi, struct spi_transfer *t)
+ 	fsl_espi_write_reg(espi, ESPI_SPIM, mask);
+ 
+ 	/* Prevent filling the fifo from getting interrupted */
+-	spin_lock_irq(&espi->lock);
+-	fsl_espi_fill_tx_fifo(espi, 0);
+-	spin_unlock_irq(&espi->lock);
++	scoped_guard (spinlock_irq, &espi->lock)
++		fsl_espi_fill_tx_fifo(espi, 0);
+ 
+ 	/* Won't hang up forever, SPI bus sometimes got lost interrupts... */
+ 	ret = wait_for_completion_timeout(&espi->done, 2 * HZ);
+@@ -558,15 +557,13 @@ static irqreturn_t fsl_espi_irq(s32 irq, void *context_data)
+ 	struct fsl_espi *espi = context_data;
+ 	u32 events, mask;
+ 
+-	spin_lock(&espi->lock);
++	guard(spinlock)(&espi->lock);
+ 
+ 	/* Get interrupt events(tx/rx) */
+ 	events = fsl_espi_read_reg(espi, ESPI_SPIE);
+ 	mask = fsl_espi_read_reg(espi, ESPI_SPIM);
+-	if (!(events & mask)) {
+-		spin_unlock(&espi->lock);
++	if (!(events & mask))
+ 		return IRQ_NONE;
+-	}
+ 
+ 	dev_vdbg(espi->dev, "%s: events %x\n", __func__, events);
+ 
+@@ -575,8 +572,6 @@ static irqreturn_t fsl_espi_irq(s32 irq, void *context_data)
+ 	/* Clear the events */
+ 	fsl_espi_write_reg(espi, ESPI_SPIE, events);
+ 
+-	spin_unlock(&espi->lock);
+-
+ 	return IRQ_HANDLED;
+ }
+ 
+-- 
+2.43.0
 
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
