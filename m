@@ -1,189 +1,181 @@
-Return-Path: <linux-kernel+bounces-810278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81ADDB5182C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:44:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACDDEB51833
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD3117C9DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:44:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680273AFEF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9B631E10A;
-	Wed, 10 Sep 2025 13:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DFD320398;
+	Wed, 10 Sep 2025 13:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YANOrVFy"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lf/LWaAR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3DB31E0EC
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2B91494CC;
+	Wed, 10 Sep 2025 13:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757511834; cv=none; b=fo2wT1sHKxhx3hcwYkUVyTbE+vvTlXomtxnbCN95Lu00lK6fxSFH0Lld0i1MKeU3HAx9DGDMJrYODM40dWL3bl3fafmD9Q7LGshglr40vpg2HCS1tZIHBdzuOZMpIOOsfPz1X+F9EWw9tBfejyzteLDi8p8E65m6518CSGFw9rI=
+	t=1757511888; cv=none; b=Gj/eXX8bYfubLJmyQXdF1WgJePqPbPFJ6rZ2FU1cIAe+bHf1F/+/6jMrCzuy9IT/H0UXCuMt0WOVX4FGi7zOt1apgMndDR6C1matUchqVmafSXg3jXSQ81RXq/hsHKqhud7N3/Hao9PCCm05Hfzfkd2F8DhO9ffWLspVw4BuHhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757511834; c=relaxed/simple;
-	bh=geyyEYjk1K6ztSTDk78aVJVN3bfFFO7mnbJHVuJmCv0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BJTuXAIozBghBd1NpG8d2hDiIFZXsWS9nJSuOKayJ2GOM0HpK9wURLxvcRbfKog7+A5/zhtPZJIe62R4eF9zT0BeNR3HOWAePG64fd2Lod+eeAEjrzJGDvVTNXyMqQRVj2dIQuyffgTXOJQeFNVgdxVxjd4Oi8R3637DM+AdzlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YANOrVFy; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-33730e1cda7so62302171fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 06:43:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757511831; x=1758116631; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KYusx74gMgivYw43mzCgiUQelBrscv4e9WlUdU22ggg=;
-        b=YANOrVFyFccA1JYWsWJbTWW/GzUPp2wituaBGlY/cQFANxiYpX2YQzm5AtuuKPBZWG
-         ruA3Rze3+tjNKS4MuOg8ctXb0Ncp8+zW1hlJ9pL+1KQ5T/9T7Sha17FpiCIP7btqHzOE
-         UiiBUczdbzwcK5NF6ZX8s/h2Goz2hznUDfTDEKmpFTGn9iqi+qXJZW+Gv0C/4hFD8j0J
-         cikR+XdDEiOwcDmwyJupwUAna2MQSuit2jUVZPmYbdnPwQ1dLT1W/s6mMJ6Km7e2zVo3
-         I9WMzb3L5jMZ+X502hsxWSj6ZADlmySD33MmZ5i4mRRdbEE3S/xFDzYlegq7Cz9USrDi
-         aGxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757511831; x=1758116631;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KYusx74gMgivYw43mzCgiUQelBrscv4e9WlUdU22ggg=;
-        b=oZqCsOPTRhYO3YMM/k0ne5djwS3MOkGXUn3H+jOjUUNcLtPUYSJJMzXRr64pmcWou/
-         0SvYjNEXogmW2zT6EvipZs2GG1pxppLQxpKugve/5USNKWCOAZsQYqPm18lVmb6azzqY
-         F5nhMMsy8KDACnrCnEdiQdYCmVfEErP1DIM4QoVfz7UJbZangEHCEbaviDJSLAtXgx3F
-         V2vThpeT5eF0Zk/gNRw+H8oTaQ25/upYIA6lyK+BucWULemx4sQhTwQ5E/tVcdd+Oeur
-         fi6isUVNp+pfL/TwPFPanuR9mTdC/GVxu3Dcg9cnpWZyfomx9ha/GD1DYgH8WpdG43NX
-         TNYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQbK7OXzh+e8qR+zSzLRMwJnm9zW3A9fcl9+RhwPeZS9Ky1bfFpSULTuuDWJYOh51zbxN+eymr/gia/NY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznW4ENkFibOxXBbC3tH1iR93HRocPFndkDfTGrOJQKlPMAPQ8b
-	huinqpvFiAYsveU/vpgknqpJPuOVTHL0FN2Y7qJ6PHMGiDlNujexkGBQO6NScO5p2mtbJ/7GDL6
-	/4QB2Hgd7cpkC6oSMcEHJHBDjbCTi/16h+VkDVGJa8Q==
-X-Gm-Gg: ASbGnctL3fZjrx6viB+0XdQ1SNO7TQVHH4lxychiLh0CHePqm9PW7ZZKZ72kZPoHPuE
-	lTXIpNJHrtqctENiUGD5uNGPYX4hcjNVkPW6nEHGn0KNDZqUXcbqEGK5JZDWgt/ICAAXoKkpWq8
-	6EIq7YoCPx3aQMOZac7vXY8+5C54ctabZRsxBsZ3NmymVWJ0ia8DWgZLGgq/ztmCefMkRnzRL1P
-	j5IYevXIv2DstjolwRDOueODQ/wOkpzws7hWbU=
-X-Google-Smtp-Source: AGHT+IFm09bgx/eETS+zxh47Y2IF1gRYf9rbRYIHHMrehDx0L8qn2Ht4Uw5vNEiZ6L2mWS3ck3SpU2dCp6qBpa01PJo=
-X-Received: by 2002:a2e:be0e:0:b0:337:f57a:6844 with SMTP id
- 38308e7fff4ca-33b5a3fdaa8mr43894421fa.43.1757511830680; Wed, 10 Sep 2025
- 06:43:50 -0700 (PDT)
+	s=arc-20240116; t=1757511888; c=relaxed/simple;
+	bh=lQtS1uAvZyCIoOaVmx4Kjk/94Sw+HBfw4GcgLVbEaBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=awjqoHYh6+Hd1HeAKZBDXrQbDjvYGyrLrdwABuLD7BEkvLmCtfT/pGiIaKPkks+/4ZqczAcklUxkQwy1uKO26vU1Tog9W8iHr8hH3+N2HNbV+1HvoZa53cPT6rHv8nZ/UFAXSouZ1bNP3KL42Yh249kdcxLuoWUXIeh3FL9oWiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lf/LWaAR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A457C4CEF0;
+	Wed, 10 Sep 2025 13:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757511886;
+	bh=lQtS1uAvZyCIoOaVmx4Kjk/94Sw+HBfw4GcgLVbEaBA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lf/LWaARgNYUiFbHFsFtVjyFH8HFYjWCzyl1Y41QLK+pYBfO5yQs0F4JyuMrT0vlZ
+	 nxXzMsM7ujPcVBkPiVsfRCvmcRbPxqvh+hL8VDf1pl4x68gtJf1/40DuKCZvI7dg6v
+	 txKPIb8/FgUR+Kc1e/v0dKCHAwNZGfL+v0SZoh75LkO8X0eu2J6a3DHSimPml/E7Kq
+	 MMh+8z6eijjQ9DKcmgRbB8z8k6MFHLdKmeSblm/VQdK4ADEdZDN8dNLe4cJOouSsHz
+	 mwP0zzSco/lp97bKe1ipPtEXDcQbsJrgkA3W+EXAtaVo4AWXdr7CQXIPReD6WP2Q/L
+	 t+pxtFM7t41IQ==
+Date: Wed, 10 Sep 2025 15:44:35 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>,
+	Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+	baisheng.gao@unisoc.com,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH 04/33] ACPI / PPTT: Stop acpi_count_levels() expecting
+ callers to clear levels
+Message-ID: <aMGAw4+/IAWBPiqn@lpieralisi>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-39-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-qcom-sa8255p-emac-v1-0-32a79cf1e668@linaro.org>
- <20250910-qcom-sa8255p-emac-v1-2-32a79cf1e668@linaro.org> <175751081352.3667912.274641295097354228.robh@kernel.org>
-In-Reply-To: <175751081352.3667912.274641295097354228.robh@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 10 Sep 2025 15:43:38 +0200
-X-Gm-Features: Ac12FXyZX2mI5u5h6corBWI5JwEw3xwlMcAzjYN5jnXKYMZIVsaIzZH2ILMwq1U
-Message-ID: <CAMRc=Mfom=QpqTrTSc_NEbKScOi1bLdVDO7kJ0+UQW9ydvdKjQ@mail.gmail.com>
-Subject: Re: [PATCH 2/9] dt-bindings: net: qcom: document the ethqos device
- for SCMI-based systems
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, Eric Dumazet <edumazet@google.com>, 
-	linux-kernel@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	Vinod Koul <vkoul@kernel.org>, Paolo Abeni <pabeni@redhat.com>, devicetree@vger.kernel.org, 
-	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822153048.2287-39-james.morse@arm.com>
 
-On Wed, Sep 10, 2025 at 3:38=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
->
->
-> On Wed, 10 Sep 2025 10:07:39 +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Describe the firmware-managed variant of the QCom DesignWare MAC. As th=
-e
-> > properties here differ a lot from the HLOS-managed variant, lets put it
-> > in a separate file.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  .../devicetree/bindings/net/qcom,ethqos-scmi.yaml  | 101 +++++++++++++=
-++++++++
-> >  .../devicetree/bindings/net/snps,dwmac.yaml        |   4 +-
-> >  MAINTAINERS                                        |   1 +
-> >  3 files changed, 105 insertions(+), 1 deletion(-)
-> >
->
-> My bot found errors running 'make dt_binding_check' on your patch:
->
-> yamllint warnings/errors:
->
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/n=
-et/renesas,rzn1-gmac.example.dtb: ethernet@44000000 (renesas,r9a06g032-gmac=
-): power-domains: [[4294967295]] is too short
->         from schema $id: http://devicetree.org/schemas/net/renesas,rzn1-g=
-mac.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/n=
-et/renesas,rzn1-gmac.example.dtb: ethernet@44000000 (renesas,r9a06g032-gmac=
-): Unevaluated properties are not allowed ('clock-names', 'clocks', 'interr=
-upt-names', 'interrupts', 'phy-mode', 'power-domains', 'reg', 'rx-fifo-dept=
-h', 'snps,multicast-filter-bins', 'snps,perfect-filter-entries', 'tx-fifo-d=
-epth' were unexpected)
->         from schema $id: http://devicetree.org/schemas/net/renesas,rzn1-g=
-mac.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/n=
-et/renesas,rzn1-gmac.example.dtb: ethernet@44000000 (renesas,r9a06g032-gmac=
-): power-domains: [[4294967295]] is too short
->         from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yam=
-l#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/n=
-et/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): po=
-wer-domains: [[4294967295, 4]] is too short
->         from schema $id: http://devicetree.org/schemas/net/mediatek-dwmac=
-.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/n=
-et/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): Un=
-evaluated properties are not allowed ('mac-address', 'phy-mode', 'reg', 'sn=
-ps,reset-delays-us', 'snps,reset-gpio', 'snps,rxpbl', 'snps,txpbl' were une=
-xpected)
->         from schema $id: http://devicetree.org/schemas/net/mediatek-dwmac=
-.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/n=
-et/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): po=
-wer-domains: [[4294967295, 4]] is too short
->         from schema $id: http://devicetree.org/schemas/net/snps,dwmac.yam=
-l#
->
+On Fri, Aug 22, 2025 at 03:30:19PM +0000, James Morse wrote:
+> acpi_count_levels() passes the number of levels back via a pointer argument.
+> It also passes this to acpi_find_cache_level() as the starting_level, and
+> preserves this value as it walks up the cpu_node tree counting the levels.
+> 
+> This means the caller must initialise 'levels' due to acpi_count_levels()
+> internals. The only caller acpi_get_cache_info() happens to have already
+> initialised levels to zero, which acpi_count_levels() depends on to get the
+> correct result.
+> 
+> Two results are passed back from acpi_count_levels(), unlike split_levels,
+> levels is not optional.
+> 
+> Split these two results up. The mandatory 'levels' is always returned,
+> which hides the internal details from the caller, and avoids having
+> duplicated initialisation in all callers. split_levels remains an
+> optional argument passed back.
+> 
+> Suggested-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> 
+> ---
+> Changes since RFC:
+>  * Made acpi_count_levels() return the levels value.
+> ---
+>  drivers/acpi/pptt.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> index 4791ca2bdfac..8f9b9508acba 100644
+> --- a/drivers/acpi/pptt.c
+> +++ b/drivers/acpi/pptt.c
+> @@ -181,10 +181,10 @@ acpi_find_cache_level(struct acpi_table_header *table_hdr,
+>   * levels and split cache levels (data/instruction).
+>   * @table_hdr: Pointer to the head of the PPTT table
+>   * @cpu_node: processor node we wish to count caches for
+> - * @levels: Number of levels if success.
+>   * @split_levels:	Number of split cache levels (data/instruction) if
+> - *			success. Can by NULL.
+> + *			success. Can be NULL.
 
-These seem to be a false-positives triggered by modifying the
-high-level snps.dwmac.yaml file?
+Nit: tempting but this change does not belong here.
 
-Bart
+>   *
+> + * Returns number of levels.
+>   * Given a processor node containing a processing unit, walk into it and count
+>   * how many levels exist solely for it, and then walk up each level until we hit
+>   * the root node (ignore the package level because it may be possible to have
+> @@ -192,14 +192,18 @@ acpi_find_cache_level(struct acpi_table_header *table_hdr,
+>   * split cache levels (data/instruction) that exist at each level on the way
+>   * up.
+>   */
+> -static void acpi_count_levels(struct acpi_table_header *table_hdr,
+> -			      struct acpi_pptt_processor *cpu_node,
+> -			      unsigned int *levels, unsigned int *split_levels)
+> +static int acpi_count_levels(struct acpi_table_header *table_hdr,
+> +			     struct acpi_pptt_processor *cpu_node,
+> +			     unsigned int *split_levels)
+>  {
+> +	int starting_level = 0;
+> +
+>  	do {
+> -		acpi_find_cache_level(table_hdr, cpu_node, levels, split_levels, 0, 0);
+> +		acpi_find_cache_level(table_hdr, cpu_node, &starting_level, split_levels, 0, 0);
+>  		cpu_node = fetch_pptt_node(table_hdr, cpu_node->parent);
+>  	} while (cpu_node);
+> +
+> +	return starting_level;
+>  }
+>  
+>  /**
+> @@ -731,7 +735,7 @@ int acpi_get_cache_info(unsigned int cpu, unsigned int *levels,
+>  	if (!cpu_node)
+>  		return -ENOENT;
+>  
+> -	acpi_count_levels(table, cpu_node, levels, split_levels);
+> +	*levels = acpi_count_levels(table, cpu_node, split_levels);
 
-> doc reference errors (make refcheckdocs):
->
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/202509=
-10-qcom-sa8255p-emac-v1-2-32a79cf1e668@linaro.org
->
-> The base for the series is generally the latest rc1. A different dependen=
-cy
-> should be noted in *this* patch.
->
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
->
-> pip3 install dtschema --upgrade
->
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your sch=
-ema.
->
+Looks fine to me - though initializing
+
+*levels = 0
+
+upper in the function now becomes superfluous (?) (well, it initializes
+*levels to 0 if an error path is hit but on that case the caller should
+not expect *levels to be initialized to anything IIUC).
+
+Apart from these (very) minor things:
+
+Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+
+>  	pr_debug("Cache Setup: last_level=%d split_levels=%d\n",
+>  		 *levels, split_levels ? *split_levels : -1);
+> -- 
+> 2.20.1
+> 
 
