@@ -1,152 +1,158 @@
-Return-Path: <linux-kernel+bounces-809774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33B4B511E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:57:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FBBBB511EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14C0F3A75C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:57:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39EB1C81994
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF79D311595;
-	Wed, 10 Sep 2025 08:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9641A312831;
+	Wed, 10 Sep 2025 08:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WjVvp14w"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GgvWlbTH"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B42831D39A
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA0731196A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757494648; cv=none; b=YqtsQpFLJV53MyGqFQZeR9raSoqjHUWaWyWPECjkcojo+Z2eqjetxiRpKcEoOaR2Xw694ra1b+IS/5dMJ8ZojGINFqAKmmNj0Ue7MNve9+mJo13/r5I0Om5G7HM70MXQIDxlj2WRsz/WCgtcpuqTrBl5/hgIYyIum4QYddDMjd0=
+	t=1757494650; cv=none; b=XUGbSc4W97NhJCzPaX+N14bVtIZQw0zd6dhc13GYNDLA8ig0T5AtEeLxbrIeG23le1N499NCSJ9zkCK8mKOmBKrjwwvYQoJkqyiz8Lt7tDNvIRT7CQiGiX8+qUKaRpNmYu1X2MMD9xi7VQw7T84UnNzHCnxS50JkgDSPFQapu6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757494648; c=relaxed/simple;
-	bh=qoU3pKTQTic8pv+RfjHcpe00Wy+NEhUJEG/5b653yUM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=deXG6kiQe9XAXC80Z+bTLgb9NHzV/3DJepyjGGLXU1zsZhB0ZbGbAZQ4c+rzJkBUzagyWpoj14QsiZ8Hi0nIrdYh6VS+W4mXkP0XZL0K/jH+7QAYBiav/mXqYik84GMnAIXuL2H8zEi6QpV1NemggzrCiqOpTUAYs/S3KJPgJGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WjVvp14w; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b0787fc3008so83657666b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757494643; x=1758099443; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=heZhxHLHkvE/mBdXQ2bJ/hfBM5y74AYhJs78IlNsTHo=;
-        b=WjVvp14wZZ1DaTZ/bSlVHnr3h1ulIADB8FMF9bn2IL+5AXYsAIrCjU8wKACgwXAQKA
-         O+5HfVNBDLwETPn94bb84f2fukiLG517lwvxlifn/EPQaKivwEt1+Tzjjk0gZAsrLRgG
-         MXMkD8rxoGm4PNW4tdYewzk7mWu+lmTjGTbM9tF4mYLgLFIK3oh3WHNmCR4ETzmCEqui
-         QTqdr6GvED4o7V7Q29oiL0p33TzHC+I0O2qDwXoojAYeMQfVdHIp5+sjARD3noDErDYm
-         DaABmS0znOfKT7G89uaPI/MtXvS4AsZKj10O3HiLt3adCj6kt8H2GbQumETarvxCxLLp
-         YWTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757494643; x=1758099443;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=heZhxHLHkvE/mBdXQ2bJ/hfBM5y74AYhJs78IlNsTHo=;
-        b=gU5USoVCrrx2WFtjeuqYyU3PLjF0sUDMsXf4I3/HTpEPd7mOyEUduewVBcojdg1fmS
-         bcQyH+Nal6WLWYqgroBiZrcICwxqkVSxCApzO1NUz/+Or9wgo+8nfLFSF6bltYOrzz0b
-         itMeW08hynmEg97Y5DCtz0QfC85y+/gsO8hfY+ekBeJtxSlfT8CVqi4KlhrmIyD55uz4
-         p0fdwtDc8NhErul8/e8U696nVrvbMXGtlMRAPQ3GBX+djfXwym1husmC6p+ptXPTfgVT
-         qc9aa+RJ49159rPlhPhKHry4qdu47CenMQ6UmzE6CB3IUaonlMgHM9frg7hWbAVGmVz4
-         SYOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkfklpC/ZwAhzWEcdOMxZWICHMKMn0ndH36y3s6drrs5d8J+xs2+Mr8scmmp+N+2wkzmBu+MASvOKY/PY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYj4JThvNTLI0sKudIJFdkOoPH5J05tr9uJ9YiWd1lKaXQ1w7u
-	NPQTffZpFwivUCvUE9eIPsInGsyV7sPdrme6Ox6C43402JWw4RP722xLI639q0l3bFQ=
-X-Gm-Gg: ASbGncs3zM2PDaBYTSLEDrnrl1icFP7W0Udo+BCDjoOBvSfv2p0GtIQtx3/hub4Yxxj
-	el3wDRHQGNvWzAvksBsO+T15F5p0ic75vtB5CRa6Fx+DsT1+/ETPs+ZBK0/c3hIeVCIpcFuWotu
-	b161HC0XZjT33eClxQuIO4aYAmIwLvUKwcTJ2C/QK1bIVBcyVxhpBwQInICAXc5znczS933jRjy
-	rcEdtpfK/wUdYxP6FbLv2zSaJbDckgW1Yo6fX36q37RwWoskm10mC03pk/gnkQAhKza169BCaSt
-	SVZpAtcC0gd1MjkNhPyN9sfGNkV8W1d3J/BkoFOL1d4UU5ds983xTz1O5jDQ34e/YDYEnUoOxwh
-	0j12FSVy/0b9AelFozE/O3Xv6nA==
-X-Google-Smtp-Source: AGHT+IEt2vwUHtHjKBZF2us6O9DmadgnAagqk9KkLFli/Ox9nZChWE5tuK6SmcWYPMKeP8iB58R8VQ==
-X-Received: by 2002:a17:906:6a17:b0:b04:25e6:2dc7 with SMTP id a640c23a62f3a-b04b140a60dmr1468322066b.18.1757494642610;
-        Wed, 10 Sep 2025 01:57:22 -0700 (PDT)
-Received: from localhost ([195.52.61.108])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-62c01bdb977sm2946470a12.53.2025.09.10.01.57.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 01:57:21 -0700 (PDT)
+	s=arc-20240116; t=1757494650; c=relaxed/simple;
+	bh=K6CuNbXh/6H/Gh2D9iJwoMepH5zA9BF1H1uH/YfbI+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cFFIxhZqG3gBs4r9TnTCWz/9mc9ZZZN9pEnH7YYAREQaLrqnu97f07x2tK5NDsZ1v0C/h65e5U86PfjoTNlQFPPs/66hzLWcmlPEbENcmRfz3NCWlHtQsKupN2wQaKFMICDavavCIkDYN6HFhZhvB8Mn24O0AvY9bIjl8adWVqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GgvWlbTH; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58A7fFJm010489;
+	Wed, 10 Sep 2025 08:57:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ECIEW0
+	PGugRg9d1uFzxZma7AlkWVruV3XIpKDi5wbKI=; b=GgvWlbTHQyQCC8P6Ohpq2O
+	S3OW2SDO6MaEYqLta7SEoLxvbqlpsCazMmN2BQjAhYkCb4BAB+TbaG2yJEfRoEte
+	dKbd0T7+v7TlsJjOKLRQ3CdqqetzWTQkAJOLmu4Sz3WByC59354Gw9sC9QdPhxub
+	FVcjChd3VZDj6Q+SQzJl3cnc7f+cfR/ZuQT5pNZfqyDWfAYhogkwqHJLtEkj2u1T
+	EqHVMCDcNO85DudY7OzGFG6FsamMm/l67KJ/bS9V1mOKP7l91aETXfaGNgfgpD9I
+	XTTe3xjk5JLa8NMyrlbWSxq5lfYBWjyMbt2mvl6752clEnoRRI+L/IwOzHoTCIbQ
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffd0hj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Sep 2025 08:57:19 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58A70fSo017187;
+	Wed, 10 Sep 2025 08:57:18 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gmfcrv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Sep 2025 08:57:18 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58A8vHPC32637644
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 10 Sep 2025 08:57:17 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 230A32004B;
+	Wed, 10 Sep 2025 08:57:17 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E5EFD20049;
+	Wed, 10 Sep 2025 08:57:16 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.152.224.66])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 10 Sep 2025 08:57:16 +0000 (GMT)
+Date: Wed, 10 Sep 2025 10:57:15 +0200
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton
+ <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard
+ <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Christian Borntraeger
+ <borntraeger@de.ibm.com>
+Subject: Re: [PATCH v1] mm/gup: fix handling of errors from
+ arch_make_folio_accessible() in follow_page_pte()
+Message-ID: <20250910105715.7f4f8495@p-imbrenda>
+In-Reply-To: <1228a0a7-660e-4993-887d-66bc2c37b8f4@redhat.com>
+References: <20250908094517.303409-1-david@redhat.com>
+	<20250909180757.1114d727@p-imbrenda>
+	<1228a0a7-660e-4993-887d-66bc2c37b8f4@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=e839a8b678f6ec040c6f11d995a891083537e68a99b38219f0c9d06ab188;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Wed, 10 Sep 2025 10:57:13 +0200
-Message-Id: <DCOZUOS67P02.1SZS876C49XTP@baylibre.com>
-Subject: Re: [PATCH v2 4/7] can: m_can: m_can_chip_config(): bring up
- interface in correct state
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Marc Kleine-Budde" <mkl@pengutronix.de>, "Chandrasekar Ramakrishnan"
- <rcsekar@samsung.com>, "Vincent Mailhol" <mailhol.vincent@wanadoo.fr>,
- "Patrik Flykt" <patrik.flykt@linux.intel.com>, "Dong Aisheng"
- <b29396@freescale.com>, "Varka Bhadram" <varkabhadram@gmail.com>, "Wu Bo"
- <wubo.oduw@gmail.com>, "Philipp Zabel" <p.zabel@pengutronix.de>
-Cc: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <kernel@pengutronix.de>
-X-Mailer: aerc 0.20.1
-References: <20250909-m_can-fix-state-handling-v2-0-af9fa240b68a@pengutronix.de> <20250909-m_can-fix-state-handling-v2-4-af9fa240b68a@pengutronix.de>
-In-Reply-To: <20250909-m_can-fix-state-handling-v2-4-af9fa240b68a@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: QRrBKBaZ89nXHwCvmJ9dEt-qtRQn2gBd
+X-Proofpoint-GUID: QRrBKBaZ89nXHwCvmJ9dEt-qtRQn2gBd
+X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c13d6f cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8 a=nCIUJmz4GBJYDfQ3j3gA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX9b9+jsRX4zrI
+ BlQMWMK5YlVzA97p2eodgwolIMp/eLO+pHH+HHJZS2VYUKORt2Ibt2r5yYE22ESNd9VYYFb7FVu
+ M6NGrV9M1/QFyyLXD0NWhT5pjOBZ23FjYyPdm38n3dRL3kBXTVAudv64vdHWj3oRnksHzKOMo8S
+ uz9H8dzH++wQVXvMZIhZjPfwdlaPS5pVFqKHpvj2xRQXwPiQEHcIjkBWU7fROQ9CxtAP386FQwW
+ uzXDD8uCqL+PkiySP9tURCz/+cskJ8HKyPmB1bIPsYgnIgZCD6l+OLi2F/5IiFAz2oSafHbgTpI
+ PEpIZLQcom1SQlttAtnQBIEEpErwvTxrpBTHSxmJxqsH52PwXW6XUhsP1qcj9xKWUGlF47VqWuJ
+ eq6TWflf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-09_03,2025-09-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
 
---e839a8b678f6ec040c6f11d995a891083537e68a99b38219f0c9d06ab188
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Tue, 9 Sep 2025 18:15:17 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
-On Tue Sep 9, 2025 at 7:53 PM CEST, Marc Kleine-Budde wrote:
-> In some SoCs (observed on the STM32MP15) the M_CAN IP core keeps the
-> CAN state and CAN error counters over an internal reset cycle. An
-> external reset is not always possible, due to the shared reset with
-> the other CAN core. This caused the core not always be in Error Active
-> state when bringing up the controller.
->
-> Instead of always setting the CAN state to Error Active in
-> m_can_chip_config(), fix this by reading and decoding the Protocol
-> Status Regitser (PSR) and set the CAN state accordingly.
->
-> Fixes: e0d1f4816f2a ("can: m_can: add Bosch M_CAN controller support")
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> On 09.09.25 18:07, Claudio Imbrenda wrote:
+> > On Mon,  8 Sep 2025 11:45:17 +0200
+> > David Hildenbrand <david@redhat.com> wrote:
+> >   
+> >> In case we call arch_make_folio_accessible() and it fails, we would
+> >> incorrectly return a value that is "!= 0" to the caller, indicating that
+> >> we pinned all requested pages and that the caller can keep going.
+> >>
+> >> follow_page_pte() is not supposed to return error values, but instead
+> >> "0" on failure and "1" on success -- we'll clean that up separately.
+> >>
+> >> In case we return "!= 0", the caller will just keep going pinning
+> >> more pages. If we happen to pin a page afterwards, we're in trouble,
+> >> because we essentially skipped some pages in the requested range.
+> >>
+> >> Staring at the arch_make_folio_accessible() implementation on s390x, I
+> >> assume it should actually never really fail unless something unexpected
+> >> happens (BUG?). So let's not CC stable and just fix common code to do
+> >> the right thing.
+> >>
+> >> Clean up the code a bit now that there is no reason to store the
+> >> return value of arch_make_folio_accessible().
+> >>
+> >> Fixes: f28d43636d6f ("mm/gup/writeback: add callbacks for inaccessible pages")  
+> > 
+> > Ooops!
+> > 
+> > thanks for finding and fixing this  
+> 
+> Thanks! Is my assumption correct that this is not stable material?
+> 
 
-Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
-
-> ---
->  drivers/net/can/m_can/m_can.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.=
-c
-> index 3edf01b098a4..efd9c23edd4a 100644
-> --- a/drivers/net/can/m_can/m_can.c
-> +++ b/drivers/net/can/m_can/m_can.c
-> @@ -1620,7 +1620,7 @@ static int m_can_start(struct net_device *dev)
->  	netdev_queue_set_dql_min_limit(netdev_get_tx_queue(cdev->net, 0),
->  				       cdev->tx_max_coalesced_frames);
-> =20
-> -	cdev->can.state =3D CAN_STATE_ERROR_ACTIVE;
-> +	cdev->can.state =3D m_can_state_get_by_psr(cdev);
-> =20
->  	m_can_enable_all_interrupts(cdev);
-> =20
-
-
---e839a8b678f6ec040c6f11d995a891083537e68a99b38219f0c9d06ab188
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaME9aRsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlOP
-pAEA/xv1ypzQcN1eVWohScU7gQS0TJo8V0ZWJ2NMrajS0FQBAKSDGYrugKKXCpN/
-5Ie6QRWTjmoM1bXa34OObYQzZK0G
-=z0YW
------END PGP SIGNATURE-----
-
---e839a8b678f6ec040c6f11d995a891083537e68a99b38219f0c9d06ab188--
+your assessment looks correct, an error return value can only be caused
+by a bug
 
