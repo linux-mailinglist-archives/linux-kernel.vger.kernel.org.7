@@ -1,74 +1,57 @@
-Return-Path: <linux-kernel+bounces-809741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 243FBB51175
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:35:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52560B51157
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D289C1891892
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:35:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E06511C82D13
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FD33101BD;
-	Wed, 10 Sep 2025 08:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B2D30FC2A;
+	Wed, 10 Sep 2025 08:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="TTC97Rhn"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXA0u7/N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9828D309EEF;
-	Wed, 10 Sep 2025 08:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4570A30DECE;
+	Wed, 10 Sep 2025 08:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757493291; cv=none; b=cr8g+tM4DSOYTEp2bsM9U7cdB8N8nMyF6pnYN7975UnbobnL5O6h+M/R89uuJW4zsEXizmmWF98qeNvm2qAy5grEAb2MpMviFttp1KmIfW4Wpk/3TPitFXBme0juFUggHpTvBBjf0gvPdylntqV6woJEsJKEHMwM0TSJmhAijGM=
+	t=1757493155; cv=none; b=ErH4fPQBMu6E24pXceA+lc9axrsHg9XSJa7gfkCIWqLgprYiZKQXD3Bka8/oQicRYzm/uczKITUzJmzzCGSR2bUOYJVDAixw1V3MZbVDf3UoDSW8WX1g/PNC9wvebSMz8rpUUYaRJ0tBFZDazi7LQs5HVoxmFKrVjbx01StjMVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757493291; c=relaxed/simple;
-	bh=b30MO4zp9p/RKhKI6RZvaV69XNrXjRj73xkh/4Xi8jM=;
+	s=arc-20240116; t=1757493155; c=relaxed/simple;
+	bh=MekfQso4OasphqWcIs0CDtSKKcqX6OBMrfPleEPRA8U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WU+fpiOLxSREt1g8quH4mzaRZCgVnVKYGbXjfJD4YetzfDK378Z+POYcuE7Rh5qVK7QB1PmtwLdz1w/eSc3Yc4Fc2NzAQFeMlWtLKFIK7Nrd3FCdJ/7ajaeFh3uWV+JC9zxOVfgOVvgX+gMzEGyOzrO+Sxf7CqcegXsrLOQfFqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=TTC97Rhn; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=ZfdHANOehTUP1HPo2Io2Zx+Al3fFDMd7EV9Pa2pY7UU=;
-	b=TTC97RhnEgJfdlDzGW47lqFtg2e6cVlsSCFfrsS/oXpiK2FMEG2qNi5T/ibO0f
-	vlpeixtVmt1bFDP4BvEV0nNZDFTnVMZhDOA/n2fPXrb7JnyIKu8wBGBocSMbxJwL
-	sE+NWsgAtsE0QI2yAAAtP0WKCTHAT8Tu4r4IigBUOgd8k=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgBnJW+NN8FoDMs8BA--.39270S3;
-	Wed, 10 Sep 2025 16:32:16 +0800 (CST)
-Date: Wed, 10 Sep 2025 16:32:13 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank.Li@nxp.com
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Anup Patel <apatel@ventanamicro.com>, Marc Zyngier <maz@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Shuah Khan <shuah@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org,
-	jdmason@kudzu.us, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v21 9/9] arm64: dts: imx95: Add msi-map for pci-ep device
-Message-ID: <aME3jbmlRVcT2biX@dragon>
-References: <20250710-ep-msi-v21-0-57683fc7fb25@nxp.com>
- <20250710-ep-msi-v21-9-57683fc7fb25@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dfGus5JGn7IosJRIMviBhpin9DOiHEXlmRHLc7f1EqWVNvsH5dmuCs6ECV5GxHw9Qgy3Jg4VQLA4fSytXAENO3j/ZbylFN/AgEbplOe6zJ4i7oBZJMb+y4GEigzdeYxjlmM3F65V4AvCE86LSrt5Oz0YNBPHqdz9yhZ/wNSNZXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXA0u7/N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE92C4CEF0;
+	Wed, 10 Sep 2025 08:32:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757493154;
+	bh=MekfQso4OasphqWcIs0CDtSKKcqX6OBMrfPleEPRA8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DXA0u7/NTCqsAQ+gAFiiXHMTq8v6RmUl/o07E1E00vlq4n6qMO3ESb0UKovfxCAS4
+	 yEK3K3caQeHCxBe1Yh0sSTN66s5kv2GI9ds4IK0zZucDtkV614LPUvTsJbPIJ2rXpR
+	 k5v2Cl5nFkgdFN7y8wHDAvoeULsN46PqdYc14/eWvyVIDP2Zk8DWGfW2p/bb7J9GIV
+	 q19Z9u2Lx1FK8ZVICel/BtYBYDSU4H0HNlzZCa2U5a3CFjCXoWqV25qJr/mKB/FSGL
+	 2xitda5tXYigKputVvagBEERplgPZyUMMSW4OuYPS0EjGYVpz8kjkQI8fcJRfIC3xf
+	 FEscXmPXG2r2g==
+Date: Wed, 10 Sep 2025 11:32:29 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Edward Srouji <edwards@nvidia.com>
+Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	parav@nvidia.com, cratiu@nvidia.com, vdumitrescu@nvidia.com,
+	kuba@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+	gal@nvidia.com
+Subject: Re: [PATCH 2/4] RDMA/core: Resolve MAC of next-hop device without
+ ARP support
+Message-ID: <20250910083229.GK341237@unreal>
+References: <20250907160833.56589-1-edwards@nvidia.com>
+ <20250907160833.56589-3-edwards@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,20 +60,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250710-ep-msi-v21-9-57683fc7fb25@nxp.com>
-X-CM-TRANSID:M88vCgBnJW+NN8FoDMs8BA--.39270S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU8zVbUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIhB84WjBN5DjOQAA37
+In-Reply-To: <20250907160833.56589-3-edwards@nvidia.com>
 
-On Thu, Jul 10, 2025 at 03:13:55PM -0400, Frank Li via B4 Relay wrote:
-> From: Frank Li <Frank.Li@nxp.com>
+On Sun, Sep 07, 2025 at 07:08:31PM +0300, Edward Srouji wrote:
+> From: Parav Pandit <parav@nvidia.com>
 > 
-> Add msi-map for pci-ep device.
+> Currently, if the next-hop netdevice does not support ARP resolution,
+> the destination MAC address is silently set to zero without reporting
+> an error. 
+
+Not an expert here, but from my understanding this is right behavior.
+IFF_NOARP means "leave" MAC address as is (zero).
+
+> This leads to incorrect behavior and may result in packet transmission failures.
 > 
-> Acked-by: Manivannan Sadhasivam <mani@kernel.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Fix this by deferring MAC resolution to the IP stack via neighbour
+> lookup, allowing proper resolution or error reporting as appropriate.
 
-Applied, thanks!
+What is the difference here? For IPv4, neighbour lookup is ARP, no?
 
+> 
+> Fixes: 7025fcd36bd6 ("IB: address translation to map IP toIB addresses (GIDs)")
+> Signed-off-by: Parav Pandit <parav@nvidia.com>
+> Reviewed-by: Vlad Dumitrescu <vdumitrescu@nvidia.com>
+> Signed-off-by: Edward Srouji <edwards@nvidia.com>
+> ---
+>  drivers/infiniband/core/addr.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
+> index 594e7ee335f7..ca86c482662f 100644
+> --- a/drivers/infiniband/core/addr.c
+> +++ b/drivers/infiniband/core/addr.c
+> @@ -454,14 +454,10 @@ static int addr_resolve_neigh(const struct dst_entry *dst,
+>  {
+>  	int ret = 0;
+>  
+> -	if (ndev_flags & IFF_LOOPBACK) {
+> +	if (ndev_flags & IFF_LOOPBACK)
+>  		memcpy(addr->dst_dev_addr, addr->src_dev_addr, MAX_ADDR_LEN);
+> -	} else {
+> -		if (!(ndev_flags & IFF_NOARP)) {
+> -			/* If the device doesn't do ARP internally */
+> -			ret = fetch_ha(dst, addr, dst_in, seq);
+> -		}
+> -	}
+> +	else
+> +		ret = fetch_ha(dst, addr, dst_in, seq);
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.21.3
+> 
 
