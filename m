@@ -1,54 +1,63 @@
-Return-Path: <linux-kernel+bounces-810732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130C0B51E8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:06:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5C0B51E8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C0A5E46F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:06:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 088C35E4AFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F4A2D0C91;
-	Wed, 10 Sep 2025 17:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B150C2D63F2;
+	Wed, 10 Sep 2025 17:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSj6NG1f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sV0mD3uV"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D2A199BC;
-	Wed, 10 Sep 2025 17:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72046199BC;
+	Wed, 10 Sep 2025 17:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757524003; cv=none; b=tTcsWtuCFm035tABz69Ejw/pBJjHZji3Vo4acTufc13rgDhpyKgFJ5/K+nuH6NPLyVesBQVzbs/h9VDzNFOIc3620kkwAU+D8uVM52+jtQ0z3IF15YYTHUdTJK9gyRB5/BJ3z0PHEpXqy95+0UvZSqaGjbV17mQ2A+Slq8HrTMg=
+	t=1757524018; cv=none; b=oK7OJUwPL/yaqoonf0MuL+t+fUbpVW1WgS8UZh6/9+q610TkeASXTxHol+PhsoT+8vmTUYC/JR8sfO9gFR5GfuZQlRirmQKeIUZUN49hOsH8mz41e7ShbRQv4W5tqDQvHRf+1Pa9va3/23C9val/ojktGyIlprYoWzutiR4E4sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757524003; c=relaxed/simple;
-	bh=EmUAw9Ks8dlPjJt/KtW3b6vR5sZRMZTlMch3sN9sarI=;
+	s=arc-20240116; t=1757524018; c=relaxed/simple;
+	bh=G5nh0715UpWLzRXg9YmQPgMBShNPvGJQvOPZKNYY0Mg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iK8dlsWrF9K1ErJxVUjTLLP0KuM+Js3D5myNow5F4gcqMUe+JwpCCo0AcGlGPFZAA0UaFaH+ALm7QRBQy6vMHUIzcJM0zEZoc8GA6yjYwBydtjZiMwJ5O+6PEVqFS8vMk7FMnBwmtev2ZPKp+yh0Xh6a224LJh9/G9SKuhj8KYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSj6NG1f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0602AC4CEEB;
-	Wed, 10 Sep 2025 17:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757524003;
-	bh=EmUAw9Ks8dlPjJt/KtW3b6vR5sZRMZTlMch3sN9sarI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BSj6NG1fJoBrcwWAVBQWDdvE24RjFpDrA/pGavijp37CeRDcUadYmsjhiAapw/n8F
-	 nLygviE4eNrC9OATvmHnM25I2AbAnduaPg9Frac+jqcXOTIgLtMb+zz64SST5S0FjF
-	 mwOZibWiC69ws1gL2eNu7vK+bVVVaLh7aymFYSXOvn9mFyksZPzeQUwFEL6uEZuGPy
-	 6onydqMhf/DVOpvIuHBHBym1775Nmi6A0h60RjcRXs+O6df/PsFixIr8CVXT5L6Ffi
-	 0iIykpkbzcJYhVOI8i/XWNdSiEeCKNMT6LdrkUaQwGeArR8Jryj35UOhs+7SNn3paZ
-	 gv/15YNQSDIgQ==
-Date: Wed, 10 Sep 2025 20:06:39 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Jonathan McDowell <noodles@earth.li>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 4/4] tpm: Require O_EXCL for exclusive /dev/tpm access
-Message-ID: <aMGwH3zYX0pWe-hg@kernel.org>
-References: <cover.1756833527.git.noodles@meta.com>
- <aad903683a912d6e36904c2d4ad1230a224e0780.1756833527.git.noodles@meta.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cbFVG7h75IT5YtTiLbI4SLMp7E3l/WaDmoQzoY7whJJvKXdZgwtQSa5xNwAuw83svUvmRIjHIeArNE82tOJA5FjHF5giX7jOSXXmBNupvSRRo27hVl2L0X2m+tI7U4onmg7uv1al6WgrcXSqG8+NpChyaR0bhkC5jc6iY6exZ2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sV0mD3uV; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=vZCSWRx40v1Xaci7gNOMPkqd2PjvYShFNY03kXoEdMg=; b=sV0mD3uVJkNCGFPAieYuLXDtnU
+	ITwIPagjApnS7+inyGrbjMgiRsrW4r/uNzBUkOplEQ+8gAtYOwN7DoodXYFJ43CYZaEMYa6MsEHYq
+	RLeRWNmPaP86iAAqlKRHvwWmWrjN63kSZM8atJH9jK3X+/8+yLq1ncprPjJursE6IEfM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uwOHN-007ygK-SF; Wed, 10 Sep 2025 19:06:45 +0200
+Date: Wed, 10 Sep 2025 19:06:45 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Prathosh Satish <Prathosh.Satish@microchip.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] dpll: zl3073x: Allow to use custom phase
+ measure averaging factor
+Message-ID: <10886c5f-1265-46ec-8caa-41bde6888905@lunn.ch>
+References: <20250910103221.347108-1-ivecera@redhat.com>
+ <acfc8c63-4434-4738-84a9-00360e70c773@lunn.ch>
+ <0817610a-e3dd-427e-b0ad-c2d503bb8a4f@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,101 +66,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aad903683a912d6e36904c2d4ad1230a224e0780.1756833527.git.noodles@meta.com>
+In-Reply-To: <0817610a-e3dd-427e-b0ad-c2d503bb8a4f@redhat.com>
 
-On Tue, Sep 02, 2025 at 06:27:17PM +0100, Jonathan McDowell wrote:
-> From: Jonathan McDowell <noodles@meta.com>
+On Wed, Sep 10, 2025 at 06:50:47PM +0200, Ivan Vecera wrote:
+> On 10. 09. 25 6:13 odp., Andrew Lunn wrote:
+> > On Wed, Sep 10, 2025 at 12:32:21PM +0200, Ivan Vecera wrote:
+> > > The DPLL phase measurement block uses an exponential moving average,
+> > > calculated using the following equation:
+> > > 
+> > >                         2^N - 1                1
+> > > curr_avg = prev_avg * --------- + new_val * -----
+> > >                           2^N                 2^N
+> > > 
+> > > Where curr_avg is phase offset reported by the firmware to the driver,
+> > > prev_avg is previous averaged value and new_val is currently measured
+> > > value for particular reference.
+> > > 
+> > > New measurements are taken approximately 40 Hz or at the frequency of
+> > > the reference (whichever is lower).
+> > > 
+> > > The driver currently uses the averaging factor N=2 which prioritizes
+> > > a fast response time to track dynamic changes in the phase. But for
+> > > applications requiring a very stable and precise reading of the average
+> > > phase offset, and where rapid changes are not expected, a higher factor
+> > > would be appropriate.
+> > > 
+> > > Add devlink device parameter phase_offset_avg_factor to allow a user
+> > > set tune the averaging factor via devlink interface.
+> > > 
+> > > Tested-by: Prathosh Satish <Prathosh.Satish@microchip.com>
+> > > Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+> > > ---
+> > >   Documentation/networking/devlink/zl3073x.rst |  4 ++
+> > >   drivers/dpll/zl3073x/core.c                  |  6 +-
+> > >   drivers/dpll/zl3073x/core.h                  |  8 ++-
+> > >   drivers/dpll/zl3073x/devlink.c               | 67 ++++++++++++++++++++
+> > >   4 files changed, 82 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/Documentation/networking/devlink/zl3073x.rst b/Documentation/networking/devlink/zl3073x.rst
+> > > index 4b6cfaf386433..ddd159e39e616 100644
+> > > --- a/Documentation/networking/devlink/zl3073x.rst
+> > > +++ b/Documentation/networking/devlink/zl3073x.rst
+> > > @@ -20,6 +20,10 @@ Parameters
+> > >        - driverinit
+> > >        - Set the clock ID that is used by the driver for registering DPLL devices
+> > >          and pins.
+> > > +   * - ``phase_offset_avg_factor``
+> > > +     - runtime
+> > > +     - Set the factor for the exponential moving average used by DPLL phase
+> > > +       measurement block. The value has to be in range <0, 15>.
+> > 
+> > Maybe put the text in the commit message here as well?
 > 
-> Given that /dev/tpm has not had exclusive access to the TPM since the
-> existence of the kernel resource broker and other internal users, stop
-> defaulted to exclusive access to the first client that opens the device.
-> Continue to support exclusive access, but only with the use of the
-> O_EXCL flag on device open.
-> 
-> Signed-off-by: Jonathan McDowell <noodles@meta.com>
-> ---
->  drivers/char/tpm/tpm-dev.c | 25 +++++++++++++++++++------
->  drivers/char/tpm/tpm-dev.h |  1 +
->  2 files changed, 20 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
-> index 80c4b3f3ad18..8921bbb541c1 100644
-> --- a/drivers/char/tpm/tpm-dev.c
-> +++ b/drivers/char/tpm/tpm-dev.c
-> @@ -19,15 +19,21 @@ static int tpm_open(struct inode *inode, struct file *file)
->  {
->  	struct tpm_chip *chip;
->  	struct file_priv *priv;
-> +	int rc;
->  
->  	chip = container_of(inode->i_cdev, struct tpm_chip, cdev);
->  
->  	/*
-> -	 * Only one client is allowed to have /dev/tpm0 open at a time, so we
-> -	 * treat it as a write lock. The shared /dev/tpmrm0 is treated as a
-> -	 * read lock.
-> +	 * If a client uses the O_EXCL flag then it expects to be the only TPM
-> +	 * user, so we treat it as a write lock. Otherwise we do as /dev/tpmrm
-> +	 * and use a read lock.
->  	 */
-> -	if (!down_write_trylock(&chip->open_lock)) {
-> +	if (file->f_flags & O_EXCL)
-> +		rc = down_write_trylock(&chip->open_lock);
-> +	else
-> +		rc = down_read_trylock(&chip->open_lock);
-> +
-> +	if (!rc) {
->  		dev_dbg(&chip->dev, "Another process owns this TPM\n");
->  		return -EBUSY;
->  	}
-> @@ -35,13 +41,17 @@ static int tpm_open(struct inode *inode, struct file *file)
->  	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
->  	if (priv == NULL)
->  		goto out;
-> +	priv->exclusive = (file->f_flags & O_EXCL);
->  
->  	tpm_common_open(file, chip, priv, NULL);
->  
->  	return 0;
->  
->   out:
-> -	up_write(&chip->open_lock);
-> +	if (file->f_flags & O_EXCL)
-> +		up_write(&chip->open_lock);
-> +	else
-> +		up_read(&chip->open_lock);
->  	return -ENOMEM;
->  }
->  
-> @@ -53,7 +63,10 @@ static int tpm_release(struct inode *inode, struct file *file)
->  	struct file_priv *priv = file->private_data;
->  
->  	tpm_common_release(file, priv);
-> -	up_write(&priv->chip->open_lock);
-> +	if (priv->exclusive)
-> +		up_write(&priv->chip->open_lock);
-> +	else
-> +		up_read(&priv->chip->open_lock);
->  	kfree(priv);
->  
->  	return 0;
-> diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-> index f3742bcc73e3..0ad8504c73e4 100644
-> --- a/drivers/char/tpm/tpm-dev.h
-> +++ b/drivers/char/tpm/tpm-dev.h
-> @@ -17,6 +17,7 @@ struct file_priv {
->  	ssize_t response_length;
->  	bool response_read;
->  	bool command_enqueued;
-> +	bool exclusive;
->  
->  	u8 data_buffer[TPM_BUFSIZE];
->  };
-> -- 
-> 2.51.0
-> 
+> Do you mean to put the equation and details from commit message here?
+> This is pretty long.
 
-I'll hold with testing to +1 version but overall patch set looks good.
+So what if it is long? At the moment, it is hiding in the commit
+message. It is not easy to find, you effectively need to be a kernel
+developer to find it. If it is in the documentation of the device, it
+will be much easier to find and understand what this knob actually
+does.
 
-BR, Jarkko
+	Andrew
 
