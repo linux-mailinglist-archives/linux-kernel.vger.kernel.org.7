@@ -1,106 +1,102 @@
-Return-Path: <linux-kernel+bounces-810708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2368B51E2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:48:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1583DB51E24
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8235E72BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:48:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1501B18933BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703AC28641F;
-	Wed, 10 Sep 2025 16:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0zO5tM1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23C9279792;
+	Wed, 10 Sep 2025 16:46:59 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4B8285417;
-	Wed, 10 Sep 2025 16:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E52433A0;
+	Wed, 10 Sep 2025 16:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757522859; cv=none; b=TFMF80Cl3nkhfMhy/roYyKJnSfbtClN1qzT4hGJ9IIpqP8/3fRwFo6aIZoTKDupyBz8xZQVLHHLM2H0dWHxZzUebLV8qBgrbgEbZ612nJwgDtXU8yRATpOnxRB97QphyGWhNxC3xxvdHRXvN9PpwcrAbGzIh9QoLGu/Q6k4UpM4=
+	t=1757522819; cv=none; b=XfS6SHkLSD7Dc3enTaFQYuSxd7mCvoTLAWsbaF1W+KKQv+vll9ZTf+AGpU63151O4DpUx8yiNFx8Bzg9DYJJ1Vz4ksbtHpmwRLzC5LFRYYuedqzWmQnX5sctlK/w/7Wl17PsORA9+WV3L0qLbPRiteJn0fUa8KqCHNAAdWChJVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757522859; c=relaxed/simple;
-	bh=5LVOay0CBSTzKX6JQb+omIyOhnTXbtPDOJBt3OJI80U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=HaQlR0cYb0dfIJpWNFDN/dVkFZKHYdg5kNVp82c3qLS7TeCq7KRf/yaof6YIOLeHKDjdQuxJTkqtBQR6HNv79vpZ1WtbpFMxKAzyu09qcWyNWTVPzHtlf2XWQHo9CJaWDmTxbRkS1D92oLF9AK6wDF3Rm+hpi6CYQPeC8ZXM+WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0zO5tM1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80388C4CEF9;
-	Wed, 10 Sep 2025 16:47:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757522858;
-	bh=5LVOay0CBSTzKX6JQb+omIyOhnTXbtPDOJBt3OJI80U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=s0zO5tM1IFmM+YDTx3+eUjNq80Vk0WVQ5hpj3j1jEG1rmZUYEX1OZDKOH2XNRAS95
-	 X1wL4schmp48KEFQjOmi6xash8eHMiP54yqP4d77D2PbfYJ1pCy4iriDnSECOUB8J/
-	 b6q37uHO0fW/DgcgJgOmX/PUc1vxSP4xdQVyDPOJXwREgy8HpPhVEtsCAoo/OxOA3c
-	 MVk68IchiwQ+qzWpwB9yGeuEDVtYocvjMvzOyxpDk+ww0bu38FiseL95MY2C3JPXYN
-	 aPR4zTs9SJlWAM3bG2XXeprrgLvP8fm13dkSdhtrHem84BgZz4IyrWhCg+D+Z524yM
-	 wm2qvXkYyiG2w==
-From: Vinod Koul <vkoul@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Kever Yang <kever.yang@rock-chips.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Diederik de Haas <didi.debian@cknow.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Heiko Stuebner <heiko@sntech.de>, 
- Collabora Kernel Team <kernel@collabora.com>, 
- Michael Riesch <michael.riesch@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-phy@lists.infradead.org, stable@kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250616-rk3588-csi-dphy-v4-0-a4f340a7f0cf@collabora.com>
-References: <20250616-rk3588-csi-dphy-v4-0-a4f340a7f0cf@collabora.com>
-Subject: Re: (subset) [PATCH v4 0/7] phy: rockchip:
- phy-rockchip-inno-csidphy: add support for rk3588 variant
-Message-Id: <175752285211.484319.18097786132863236205.b4-ty@kernel.org>
-Date: Wed, 10 Sep 2025 22:17:32 +0530
+	s=arc-20240116; t=1757522819; c=relaxed/simple;
+	bh=3UE4uHR6aO+OFaypXOwwNEdnfkfmlNq6uFNa5BjW4uI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l9zepmheKeCkIHGh6LILkp1o1kmA5aBzodA2PCidkomojDNUv3LQmKP5JCckwYMi7YEMnASCK3v2ox8fA8fvzic8Wj+v/JF1Dy2fOUrQ4C+Di8rrA1lmcpy7rlfmxVTqi7CF0P3W91fSOmOj4qUgWZ5WebbTL7jKkYAdJvN6mY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 5C5F61179B7;
+	Wed, 10 Sep 2025 16:46:55 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id F405F20024;
+	Wed, 10 Sep 2025 16:46:51 +0000 (UTC)
+Date: Wed, 10 Sep 2025 12:47:42 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev,
+ joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+ kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ jstultz@google.com, qperret@google.com, will@kernel.org,
+ aneesh.kumar@kernel.org, kernel-team@android.com,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 15/24] KVM: arm64: Support unaligned fixmap in the
+ pKVM hyp
+Message-ID: <20250910124742.34185645@gandalf.local.home>
+In-Reply-To: <20250821081412.1008261-16-vdonnefort@google.com>
+References: <20250821081412.1008261-1-vdonnefort@google.com>
+	<20250821081412.1008261-16-vdonnefort@google.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+X-Stat-Signature: q9cbx38hryj33o5fwyipu7ui3mmw96do
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: F405F20024
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19JP+3dHgVZ3OldSVYgQj0MefUC8Z85EjM=
+X-HE-Tag: 1757522811-725488
+X-HE-Meta: U2FsdGVkX18yi2o/B62gDqm8AYG/9T+wf5t8LxVLQsiafH2QQ0ZSJcX1Vb7j7AiT4OouF7YoGLFO2B2fGds+ZHAWLiDNewTEYVHdqKFpaeyLhLEv9JLayHPnToecZQWsjUPlDVCbcqL3bL4AeMUcrCTQb4kM6TyxEqIA+jRCS/V3seDhQUEPG0w8Fa/+uWh0Uou/l/T1IRlDdcVFx6Kb7kaJ1gtG2oReVEQomDU1nXZWBWMF5eFh4PUamQfSfxJPHT0Q2JNTiLTuW7BnjLlcz0p2nXNAoVRZjazY3QOnAkakhg8Unj47qVdWCCseW1W1wQstnQ5n7CfASD/U738xhId8P4KuziyF
 
 
-On Wed, 03 Sep 2025 19:04:48 +0200, Michael Riesch wrote:
-> Habidere,
+Would be nice if the arm KVM folks could review the second part of this
+patch series.
+
+Vincent, I finished my review, and you can post a new version. But it would
+still be good to get some input from the architecture folks.
+
+-- Steve
+
+
+On Thu, 21 Aug 2025 09:14:03 +0100
+Vincent Donnefort <vdonnefort@google.com> wrote:
+
+> Return the fixmap VA with the page offset, instead of the page base
+> address. This allows to use hyp_fixmap_map() seamlessly regardless of
+> the address alignment.
 > 
-> The Rockchip RK3588 features two MIPI CSI-2 DPHYs (not to be confused with
-> the two combo MIPI DSI/CSI CPHY/DPHY blocks). The CSI-2 DPHYs can be
-> supported using the existing phy-rockchip-inno-csidphy driver, the notable
-> differences being
->  - the control bits in the GRF
->  - the additional reset line
-> This patch series adds support for this variant.
+> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
 > 
-> [...]
-
-Applied, thanks!
-
-[2/7] dt-bindings: phy: rockchip-inno-csi-dphy: make power-domains non-required
-      commit: c254815b02673cc77a84103c4c0d6197bd90c0ef
-[3/7] dt-bindings: phy: rockchip-inno-csi-dphy: add rk3588 variant
-      commit: 5072b8e98eef4685a5a9a8bae56072cb65a2ef69
-[4/7] phy: rockchip: phy-rockchip-inno-csidphy: allow writes to grf register 0
-      commit: 8c7c19466c854fa86b82d2148eaa9bf0e6531423
-[5/7] phy: rockchip: phy-rockchip-inno-csidphy: allow for different reset lines
-      commit: 260435153c90c8e90553e456ec43578834a14a71
-
-Best regards,
--- 
-~Vinod
-
+> diff --git a/arch/arm64/kvm/hyp/nvhe/mm.c b/arch/arm64/kvm/hyp/nvhe/mm.c
+> index ae8391baebc3..75014dc7d82e 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/mm.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/mm.c
+> @@ -239,7 +239,7 @@ static void *fixmap_map_slot(struct hyp_fixmap_slot *slot, phys_addr_t phys)
+>  	WRITE_ONCE(*ptep, pte);
+>  	dsb(ishst);
+>  
+> -	return (void *)slot->addr;
+> +	return (void *)slot->addr + offset_in_page(phys);
+>  }
+>  
+>  void *hyp_fixmap_map(phys_addr_t phys)
 
 
