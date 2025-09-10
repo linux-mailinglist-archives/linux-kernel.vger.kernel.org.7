@@ -1,145 +1,112 @@
-Return-Path: <linux-kernel+bounces-810343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E028B51908
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:12:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3863DB51907
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A1C03AD74A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:12:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AFEE7B0775
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6342F1A76D4;
-	Wed, 10 Sep 2025 14:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VxFLj6Tv"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49216322C67;
+	Wed, 10 Sep 2025 14:12:10 +0000 (UTC)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B0A2D1911;
-	Wed, 10 Sep 2025 14:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2BB1A76D4;
+	Wed, 10 Sep 2025 14:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757513518; cv=none; b=WABNhgaUaiM/qKU8jJBXg/Xh9uio0XoMZScsYLjq9TkulWagG+f+ClYx/n6VW+iuOd9qXhFulGRXe2lUBNseI8kFl6Ddp5+bxW1ixtVKNd3JvaGfJ1Kczqh/T9yJ6EkCrXxZBKN9W+NfMXgEwKU56ntA4fUIsy09FQB0essqpzU=
+	t=1757513529; cv=none; b=DKlp6BrCpe7z08YDXL5B113ueRj/Wdqz19qYY2oEzbFITWpW18B4Sp1d9tVRhewOaXxggTStG1hEl9IKpzfoSbA7dFElgjVTDVqRmox+tZAfpYxTwwj+xg4/E7cW7XrPy1y81vMDAF2cujSlxjUZyeyUsT9gzRJ62zz1Tf7uPSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757513518; c=relaxed/simple;
-	bh=Tjx19ie3EbA6JXX4PPjcm4OpioyY9LLMZLfe89/rjQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dFovjTiLve8wd+NURr06vya2H+IDQtxN0KLY74PK5QlMIAYnkuVYqZglf5a/2JGJmyDtdoydxt5jEXC4bzLm8bQq/WRwMEfvlxOAycNAN0fCyCbdyBhCPGx3Kcz2AtrmSwJBZuqWMyrDebLQvt9etJxpwjkofOkKR4ECcurlreU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VxFLj6Tv; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1757513529; c=relaxed/simple;
+	bh=BuH07/Cum8ilWq7fktbOKN73y+hgVGVExicH3rzWbsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CKJ6rLd9qJEBLYCQn3iOP8BXQkLnAVrclQKd3TyTZMQr03I08GVk/nQEe0YtMAS0cgYcYRbpL7zv3baPOd6o/1JDpvUMu2qN6OldVhbuDztmNWQ1Kkesh3e/8uYI0y4lBdSK+jgPcMepidTT0km10CyoBswCDRXdtArwff3SjP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-329b760080fso6795963a91.1;
-        Wed, 10 Sep 2025 07:11:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757513516; x=1758118316; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BlRKv4Ffw1WSJlEgW2U45BRnwP3DdRL++Z1Dtw1fySY=;
-        b=VxFLj6TvWyvNyrjZiuaAWvaPRn4zKpcq/086Tv3Fyihupgy+ckpalFEzmZ8utIRRpH
-         aZhywfYeess5ezkwDcf5HrtfWgsH/u+e1fVE82ZFLEy//N9iqzK4PhCrTH5nuRvlch5w
-         pjblRICosmFhKbB2CmixJ4GpmShd09Lf2u2GSAlN3Rg0tf0O3BTqOsMK0sBJCF2H2Q5s
-         ZllRAa20RHPPgL8dnobroRC2a/PvBIOaIwWktU/Iu4YwEh43ieXCyFwlAWq8ewVAhKxY
-         csGYNRMQsiaetPVTVn8pRjVjBO04aWcuLeyLyw00nfSWwMuBn9dO5WygurCdxx1o0DGe
-         kJDw==
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b0418f6fc27so1137565066b.3;
+        Wed, 10 Sep 2025 07:12:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757513516; x=1758118316;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BlRKv4Ffw1WSJlEgW2U45BRnwP3DdRL++Z1Dtw1fySY=;
-        b=sjJN8dhvVRj+JVZx0Qhd+to0b0ZNDav2tRNX0ehYRE/y0JtOilYIM0pZ7zkb8caNT2
-         xOB8aVU+rziWEuy5DsXCaacHVLU1PVlJ16HGxZ9vPc3ZWzzhLA2sUQwDQ0/mbL5h0cqR
-         t+22EafN6uoXpU4PWhtlqIWSfJH3AwKJpQEul5xuW9G4sU1HvcQYw2anq8BnKK4gGpXN
-         O/1DE/M8FOpblkcX3JenC4i+Tjbhhk/YYFRAWOARAJIPYFc80p5QzRRAvOmvDbIS4aju
-         FYWB3iuqCIb+VaRXyFxi4puWoFLHq7ZYb0R65yq7yPWrFm48+OyjrhsKC1cjxTwhqbjS
-         SR+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVh+5hnyn4b6r35uCkUVOg+4fFqaqe793vvZpTU8zB1+vQDryyXeBJinxsXLv8bDT7L6pDJxKkO1InSxnA=@vger.kernel.org, AJvYcCXlw6ahmhrfk6HtAosXOavX6nH6EkNFVR51B4Or6evLhz1huwims/aC4dnkuMRC06vlkVydjgtbqg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnF8+BUlhmyLHAtolScnw6QgJ47og9D381/D0cD4eDUf7mejC3
-	aJIO8de3KegJdi94IXQlB3w7E8e+SiW/PLijDVDN/QrZOZt43+JTIEFaXycvFjlfget4kih4OwX
-	6fuZA0Hav01UgEp9cVreqG9E5EfQeI6c=
-X-Gm-Gg: ASbGncsKoIWCiKs39cqzUj6JXfgEbFITHokZ+BtXtu5ZdVvawjC/1ZLcQ4f3wRdNfwG
-	M1IOv8f4XIByfF2r7zHTHDe+uZOLnGGXA95lok1XIO2HkxL++0qk2pP/gaciyUdMHRvcVkUYUAs
-	kFRHtXWV1RBERCPWrryWBV7tShHDl1QXxYNy2yM1Q1WEg5y0TdFUczjylntuF3eC/mWgTWs3m0G
-	0x89SzogU+hI5Wl0Q==
-X-Google-Smtp-Source: AGHT+IHr3ufdkLP58eojNDk71ENCQSGX78v8/v1O3w06BE4KGtrzjSiK02IAwnxG6XMYkG603b7v+dDCvt5fLh3Lzi4=
-X-Received: by 2002:a17:90b:4e83:b0:32b:b514:3912 with SMTP id
- 98e67ed59e1d1-32d43ee5afamr20100886a91.2.1757513516641; Wed, 10 Sep 2025
- 07:11:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757513526; x=1758118326;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zeRS2yB/lYI/APOxiGv1ZbIrveAk9ANoUQjTZkTU2z0=;
+        b=YbfXI7/rv1/ynIW/7Ab1LCiOQSmmaqXmDb3YpjJILODJN6r7uoTjRONFW8vjwiJ661
+         cEbcmdeT7tnu3bQmjs076QHm5HU4g0+5yP3lw4j1Vpn7aCLO4t/0kN8DSsMHfO1V2fq1
+         PZFu+YOQ9OYfd6kkr/aZEZ5xhUhduT589ZXZCRDM3ZUS3J4c78lRiiVNR5dmZTDUyQDf
+         cUVh6KNecGoN+rcw23WJSuLTQJtwCxjau45wWv8uUNyMdF01rhouaNL78Hbq+v0rumIU
+         8nS6+2iWojLzKKF+TA5vXPsLIqnsB5pSR1oxmVZI32BgQZGyTpiYVnPcgGUh7nHhvjDv
+         seNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaOM5ZtLl4m9z6gj0R+hHar4QG/r3Jvf74wvYGsj1ow+UgFs3GbSoGyBxCBepny5sL3wKo4u7n@vger.kernel.org, AJvYcCVP4t3GM8GPgampVqOfSwp6rH/czsozFUpgphgnhqh1wNRLPej4mVHNZ4bA7f82ULY1CUnsaDWN/75FDZ4=@vger.kernel.org, AJvYcCVYYhniQwhvQOo5Vgm8uD+qDGX/fygN40onQJhvNvDQXzsJd2RlzI/Zgtqy7Apxzu3RAlwfaBdb5WGBM37vTItJ@vger.kernel.org, AJvYcCXukpDQQp6M5fceZg8RiGaQaWHudmSANk2FsnZVbyUXYafD6qPIMt0xUhbA8w/pTuQTfz9mJyeI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwETpuPK2zOqz2w1MiWxiCzmpCWCO+IunMLA+sp86NO/zsykoK1
+	eRKiQ1TcewJOyyYtK6QU7L+yOLdE9vLV4E9Vjk4A7GUdmukpENvkEXaX
+X-Gm-Gg: ASbGncuKXGE6PQcAU+YXCxXpXopWZROX5Hp9wl5xZMf4f0D+zjRzBzoge8fU6/I1b+3
+	1cV68DZJlPNAezeCrcmFdP/j7RQBJSzVlTCkfDHPZzYWNf0Z0LKpnEfpEITEl3hxLQVhruESJXY
+	wV+PAUsgiwp3UK1PMBZW9HODNT8GG7P9kVpCsXp7h533XsgFkviXHLVOfO9VQWyF/ZWtSwpyXzo
+	4LF8FAr3E0NGoGH7U6IToSYYacOKG4QPnokqsXYoVyEriFZGhs9ZUk+VL+0ZPtM4eWQ0vdf+Znf
+	7ElXzt0fTfkxtnTK2tIpfNYr81O0pRIH+N8yzi+XS/k6k8l3QYEXFU2Yyjb3cxevNdX4xR6e1Tm
+	A3+CVycGg030Keg==
+X-Google-Smtp-Source: AGHT+IFmFSyfrWgMwdgHc71VO7KWawXXU+herwPNHRT2RcvmhjfTOzg1KJW7L0A2P6w4UTRGZBMcfg==
+X-Received: by 2002:a17:907:3c91:b0:af9:76cd:d836 with SMTP id a640c23a62f3a-b04b1458c7fmr1486696466b.13.1757513526255;
+        Wed, 10 Sep 2025 07:12:06 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:70::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b078334c317sm171503566b.63.2025.09.10.07.12.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 07:12:05 -0700 (PDT)
+Date: Wed, 10 Sep 2025 07:12:03 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Calvin Owens <calvin@wbinvd.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
+	david decotigny <decot@googlers.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, kernel-team@meta.com, 
+	stable@vger.kernel.org, jv@jvosburgh.net
+Subject: Re: [PATCH net v3 1/3] netpoll: fix incorrect refcount handling
+ causing incorrect cleanup
+Message-ID: <jibftqm5ihdgazmk3p5gsjhlc536itqaq7r5uag5fuiqtth6cp@abihzyykh4gy>
+References: <20250905-netconsole_torture-v3-0-875c7febd316@debian.org>
+ <20250905-netconsole_torture-v3-1-875c7febd316@debian.org>
+ <aL9A3JDyx3TxAzLf@mozart.vkv.me>
+ <20250908182958.23dc4ba0@kernel.org>
+ <kmvkrqkkrbfctpramlchpwqikg2x3btb3debshabqctt7azu2j@tv4ziqd4gldh>
+ <20250909161625.470d2835@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828170503.2323187-1-nkapron@google.com>
-In-Reply-To: <20250828170503.2323187-1-nkapron@google.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Wed, 10 Sep 2025 10:11:45 -0400
-X-Gm-Features: Ac12FXyiDeyreEY4DrnfvbM_XMuE5GsA0S-i3oG_AeN9fiYaT3v8SZlvHCmmQ8g
-Message-ID: <CAEjxPJ7e6GVBzi2O7xv_A0+iJTWePRmMeN+jH0Z2Wo5qh6Om2w@mail.gmail.com>
-Subject: Re: [PATCH v3] libsepol: Support functionfs_seclabel policycap
-To: Neill Kapron <nkapron@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909161625.470d2835@kernel.org>
 
-On Thu, Aug 28, 2025 at 1:05=E2=80=AFPM Neill Kapron <nkapron@google.com> w=
-rote:
->
-> This adds the necessary userspace pieces to support the
-> functionfs_seclabel policycap which enables per-file labels in
-> functionfs and the ability for userspace to apply the labels.
->
-> With the policycap disabled, legacy behaviors are maintained and
-> per-file labeling is disallowed.
->
-> Signed-off-by: Neill Kapron <nkapron@google.com>
+On Tue, Sep 09, 2025 at 04:16:25PM -0700, Jakub Kicinski wrote:
+> On Tue, 9 Sep 2025 13:17:27 -0700 Breno Leitao wrote:
+> > On Mon, Sep 08, 2025 at 06:29:58PM -0700, Jakub Kicinski wrote:
+> > > On Mon, 8 Sep 2025 13:47:24 -0700 Calvin Owens wrote:  
+> > > > I wonder if there might be a demon lurking in bonding+netpoll that this
+> > > > was papering over? Not a reason not to fix the leaks IMO, I'm just
+> > > > curious, I don't want to spend time on it if you already did :)  
+> > > 
+> > > +1, I also feel like it'd be good to have some bonding tests in place
+> > > when we're removing a hack added specifically for bonding.  
+> > 
+> > Do you prefer to have a separated bonding selftest, or, is it better to
+> > add some bond operations in the torture selftest?
+> 
+> Normal test is preferable, given the flakiness rate and patch volume
+> I'm a bit scared of randomized testing as part of CI.
 
-Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+Ok, I will create a selftest to cover the netpoll part of bonding, as
+soon as my understanding is good enough. I don't think it will be quick,
+but, it is on my hi-pri todo list.
 
->
-> Changes since v2:
-> - Sending as separate patches
-> ---
->  libsepol/include/sepol/policydb/polcaps.h | 1 +
->  libsepol/src/polcaps.c                    | 1 +
->  2 files changed, 2 insertions(+)
->
-> diff --git a/libsepol/include/sepol/policydb/polcaps.h b/libsepol/include=
-/sepol/policydb/polcaps.h
-> index 0835ea21..bbaebf1a 100644
-> --- a/libsepol/include/sepol/policydb/polcaps.h
-> +++ b/libsepol/include/sepol/policydb/polcaps.h
-> @@ -19,6 +19,7 @@ enum {
->         POLICYDB_CAP_NETLINK_XPERM,
->         POLICYDB_CAP_NETIF_WILDCARD,
->         POLICYDB_CAP_GENFS_SECLABEL_WILDCARD,
-> +       POLICYDB_CAP_FUNCTIONFS_SECLABEL,
->         __POLICYDB_CAP_MAX
->  };
->  #define POLICYDB_CAP_MAX (__POLICYDB_CAP_MAX - 1)
-> diff --git a/libsepol/src/polcaps.c b/libsepol/src/polcaps.c
-> index 7ac0ae7c..83eb6143 100644
-> --- a/libsepol/src/polcaps.c
-> +++ b/libsepol/src/polcaps.c
-> @@ -18,6 +18,7 @@ static const char * const polcap_names[POLICYDB_CAP_MAX=
- + 1] =3D {
->         [POLICYDB_CAP_NETLINK_XPERM]                    =3D "netlink_xper=
-m",
->         [POLICYDB_CAP_NETIF_WILDCARD]                   =3D "netif_wildca=
-rd",
->         [POLICYDB_CAP_GENFS_SECLABEL_WILDCARD]          =3D "genfs_seclab=
-el_wildcard",
-> +       [POLICYDB_CAP_FUNCTIONFS_SECLABEL]              =3D "functionfs_s=
-eclabel",
->  };
->
->  int sepol_polcap_getnum(const char *name)
-> --
-> 2.51.0.318.gd7df087d1a-goog
->
+Do you want to have the selftest done before merging this patch, or, can
+they go in parallel?
 
