@@ -1,146 +1,110 @@
-Return-Path: <linux-kernel+bounces-810747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A365B51EC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:20:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B71B5B51EAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1548E5684E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:20:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 784A9A00144
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D635826D4F9;
-	Wed, 10 Sep 2025 17:20:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9881A26F2AA;
-	Wed, 10 Sep 2025 17:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4582DECBC;
+	Wed, 10 Sep 2025 17:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2mN0BFx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778D0329F1B;
+	Wed, 10 Sep 2025 17:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757524837; cv=none; b=oahTLGcYYiAeovcoAvNx75aCeuvCmsKV2XYfuDIuymECNrFErOkkHk51yOU9os9qor23/6Q7y/91R044ZPv0x/ZU1x9HPptUwznVi+0+X0tOSJSF+QJKwRhUtQRDb62Ej2lnZqCY+KVRyOaiHK2U2BMLs/F855jkhbD2OVVY9UA=
+	t=1757524368; cv=none; b=lW6H34gr9FqGSvkkt5zHTLzCHRHLOMLQ88GwevAjbW5UZt3yzYoVDPKd7uSBMpX75mKbL9I6IH6MiJSMOcSc7p3iarbyBRQgYftj2oeCdPw/aJUc/8KFj01p7CT0Wm4riLciAelBSVFapPCdv1AhDpvz+AoRLSY16f1NvsDratQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757524837; c=relaxed/simple;
-	bh=Y0vM/C+i7FrhaWc22NPICuucZw/FXOkJVrmqKIyqWFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k+1koEQOuKB3SxuZ5XT09qNtGyXU/LeTSbaU7geoHlqoCG9RB9rtKjnl2Yf/pX4E8XOstBrOoFbrsfOC/TddK1BllyxVqoEpoajn3nePpQk1LZuVcYRKMTqKCq5pUmKWcaM+ySLGn2hH4YXPW/8DC/+tBtzmIqBHXhGK5f6jdPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cMS006bWmz9sj9;
-	Wed, 10 Sep 2025 19:11:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id mnbxQRtTxTSD; Wed, 10 Sep 2025 19:11:28 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cMS005XY2z9sj8;
-	Wed, 10 Sep 2025 19:11:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8550B8B7A7;
-	Wed, 10 Sep 2025 19:11:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id tVGSEt2GMt0K; Wed, 10 Sep 2025 19:11:28 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C99E88B764;
-	Wed, 10 Sep 2025 19:11:26 +0200 (CEST)
-Message-ID: <d9caedb4-41c8-4ef7-99b9-51d891aee555@csgroup.eu>
-Date: Wed, 10 Sep 2025 19:11:26 +0200
+	s=arc-20240116; t=1757524368; c=relaxed/simple;
+	bh=O1xBmujHe+zclGHff4jsAavjp8DRvHEtrb9dfd4byaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fL6ZLB9TUe51EVoeL7eXJhV0RPAqAKIJcQhhMgC3Ltqu7V9z2z1UZbmj54uXvvbk615TXip27PzgcrXl0WzALUBPQQzn9RAKVT9DCOTy9zXN/NfPrnVadyQPYuC7/UreXpNJaHSxUO0S0sJ6hOWkQCxgS1aLX0lSXSzXNayePqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2mN0BFx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3305C4CEEB;
+	Wed, 10 Sep 2025 17:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757524368;
+	bh=O1xBmujHe+zclGHff4jsAavjp8DRvHEtrb9dfd4byaI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k2mN0BFx21o+JiImj6Ta8/92oaqDmsjxHyxm5zlYPivZEPAw4i0dFzhJ2SlBkNLOL
+	 bWY6tU9WDAyAlTs4YJFigLoTaLzZv61I9DLl0aYqR06Qz2M88j/ziR9g19VIXRPCn+
+	 eJAeBa0LzOW39ANEM+IF3vYKkrNXG6GoXNLVtLpbWpgr/BBCVot+E723oXLQToYoju
+	 z8sJIOFkA+9AtvbMtjcVDY38hFrzJ86wQ2f94S43wKQVxvjd51d6q2JsWhbNXhNZeg
+	 Kb1mVjAAUCxxYzQkI1rWVa1iWyVI5vtE51WybxUKwHip7NWW0rPvcYwPaqGEyKXmB0
+	 EonB/VxVp5czg==
+Date: Wed, 10 Sep 2025 20:12:44 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/sgx: Replace kmalloc() + copy_from_user() with
+ memdup_user()
+Message-ID: <aMGxjHIfPU9cbGq1@kernel.org>
+References: <20250908201229.440105-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-To: Richard Weinberger <richard@nod.at>, Arnd Bergmann <arnd@arndb.de>
-Cc: ksummit <ksummit@lists.linux.dev>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linuxppc-dev@lists.ozlabs.org, linux-mips <linux-mips@vger.kernel.org>,
- linux-mm <linux-mm@kvack.org>, imx@lists.linux.dev,
- Lucas Stach <l.stach@pengutronix.de>,
- Linus Walleij <linus.walleij@linaro.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Ankur Arora <ankur.a.arora@oracle.com>, David Hildenbrand
- <david@redhat.com>, Mike Rapoport <rppt@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Matthew Wilcox <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, vbabka <vbabka@suse.cz>,
- Suren Baghdasaryan <surenb@google.com>, Ira Weiny <ira.weiny@intel.com>,
- Nishanth Menon <nm@ti.com>, heiko <heiko@sntech.de>,
- Alexander Sverdlin <alexander.sverdlin@gmail.com>,
- "Chester A. Unal" <chester.a.unal@arinc9.com>,
- Sergio Paracuellos <sergio.paracuellos@gmail.com>,
- Andreas Larsson <andreas@gaisler.com>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
- <497308537.21756.1757513073548.JavaMail.zimbra@nod.at>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <497308537.21756.1757513073548.JavaMail.zimbra@nod.at>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908201229.440105-2-thorsten.blum@linux.dev>
 
-Hi Richard,
-
-Le 10/09/2025 à 16:04, Richard Weinberger a écrit :
-> Arnd,
+On Mon, Sep 08, 2025 at 10:12:29PM +0200, Thorsten Blum wrote:
+> Replace kmalloc() followed by copy_from_user() with memdup_user() to
+> improve and simplify sgx_ioc_enclave_create().
 > 
-> ----- Ursprüngliche Mail -----
->> Von: "Arnd Bergmann" <arnd@arndb.de>
->> High memory is one of the least popular features of the Linux kernel.
->> Added in 1999 for linux-2.3.16 to support large x86 machines, there
->> are very few systems that still need it. I talked about about this
->> recently at the Embedded Linux Conference on 32-bit systems [1][2][3]
->> and there were a few older discussions before[4][5][6].
->>
->> While removing a feature that is actively used is clearly a regression
->> and not normally done, I expect removing highmem is going to happen
->> at some point anyway when there are few enough users, but the question
->> is when that time will be.
->>
->> I'm still collecting information about which of the remaining highmem
->> users plan to keep updating their kernels and for what reason. Some
->> users obviously are alarmed about potentially losing this ability,
->> so I hope to get a broad consensus on a specific timeline for how long
->> we plan to support highmem in the page cache and to give every user
->> sufficient time to migrate to a well-tested alternative setup if that
->> is possible, or stay on a highmem-enabled LTS kernel for as long
->> as necessary.
+> No functional changes intended.
 > 
-> I am part of a team responsible for products based on various 32-bit SoCs,
-> so I'm alarmed.
-> These products, which include ARMv7 and PPC32 architectures with up to 2 GiB of RAM,
-> are communication systems with five-figure deployments worldwide.
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  arch/x86/kernel/cpu/sgx/ioctl.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
 > 
-> Removing high memory will have an impact on these systems.
-> The oldest kernel version they run is 4.19 LTS, with upgrades to a more recent
-> LTS release currently in progress.
-> We typically upgrade the kernel every few years and will continue to support
-> these systems for at least the next 10 years.
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> index 66f1efa16fbb..e99fc38f1273 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -164,15 +164,11 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
+>  	if (copy_from_user(&create_arg, arg, sizeof(create_arg)))
+>  		return -EFAULT;
+>  
+> -	secs = kmalloc(PAGE_SIZE, GFP_KERNEL);
+> -	if (!secs)
+> -		return -ENOMEM;
+> -
+> -	if (copy_from_user(secs, (void __user *)create_arg.src, PAGE_SIZE))
+> -		ret = -EFAULT;
+> -	else
+> -		ret = sgx_encl_create(encl, secs);
+> +	secs = memdup_user((void __user *)create_arg.src, PAGE_SIZE);
+> +	if (IS_ERR(secs))
+> +		return PTR_ERR(secs);
+>  
+> +	ret = sgx_encl_create(encl, secs);
+>  	kfree(secs);
+>  	return ret;
+>  }
+> -- 
+> 2.51.0
 > 
-> Even with a new memory split, which could utilize most of the available memory,
-> I expect there to be issues with various applications and FPGA device drivers.
+> 
 
-Can you tell which PPC32 model/family you are using ? Is it mpc85xx or 
-and/or other variants ? Maybe we can look at keeping CONFIG_HIGHMEM or 
-find alternatives for that subset of PPC32 only.
+Agreed:
 
-Could you also elaborate a bit on the kind of issues you forsee or fear 
-with applications and FPGA device drivers.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-FWIW I sent out today a patch that removes CONFIG_HIGHMEM complely on 
-powerpc in order to get a better view of the impacted areas and allow 
-people to test what it looks like on their system without 
-CONFIG_HIGHMEM. See [1].
-
-Christophe
-
-[1] 
-https://patchwork.ozlabs.org/project/linuxppc-dev/patch/28d908b95fe358129db18f69b30891788e15ada0.1757512010.git.christophe.leroy@csgroup.eu/
-
+BR, Jarkko
 
