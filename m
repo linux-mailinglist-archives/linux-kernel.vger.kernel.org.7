@@ -1,166 +1,137 @@
-Return-Path: <linux-kernel+bounces-810567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A9DB51C79
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:52:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D47EB51C8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A66D2161F2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1B041C86363
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EC0327A19;
-	Wed, 10 Sep 2025 15:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAE4212FA0;
+	Wed, 10 Sep 2025 15:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadavpratyush.com header.i=@yadavpratyush.com header.b="MQ1jVJwO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="biG+FHOs"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D75hVEwW"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5235B1A2C0B
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6093E32A817
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757519530; cv=none; b=av5X5Xd1/iUzpFK86Ovsbn0rr2hVv7qYa5ZusK2ZVa+EMNpU7d8B1joZIHYTZ10x6DumJKCGJe4ql/xawWhMpYwvVrMhv0IrpxBLZ6xFUiFb7XIDmD1XfF5TLxuBPWWnbZG/C6S/sU3F8iMo7D6N8eD+cAIIT9bTCqP6Cm33B5A=
+	t=1757519556; cv=none; b=VvXPdMEBxRE8/sExV0oEE7w5KHoQ4RkN7gzSfW29WoVYWQzIgZShqQa55/7IRmnZ7jwIg4V0z1MvVuAS/k/EmNuM04F5uIgeVEkfq9vTfxmEfqVyy6SMKUTnIxMvBJ6i3IeXK/OJpF1RTdvdNxxFg5inFa2odv3nysuuehlWC74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757519530; c=relaxed/simple;
-	bh=DU5u50LviqOpNOHb+nJj7OHxRaLw1n7ssupT8NJfOD8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IUCZtoSg7W9MtCN0WLD6sbKM6mrz9YWEhsUrDaXPZe1n/fm3vCJrN9sGSvmhEIgQkJWT/QMPliCV15oosw9eU6vGP5UP0MHMJvf35sX5lAODfvS5W9s2g9Kw3ar1YppIFa6YJ3Lm/jgBRqnNJM9DgUkB+UTLAmKjpHrMTPRbe+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadavpratyush.com; spf=pass smtp.mailfrom=yadavpratyush.com; dkim=pass (2048-bit key) header.d=yadavpratyush.com header.i=@yadavpratyush.com header.b=MQ1jVJwO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=biG+FHOs; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadavpratyush.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadavpratyush.com
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 71AE6EC0456;
-	Wed, 10 Sep 2025 11:52:07 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Wed, 10 Sep 2025 11:52:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	yadavpratyush.com; h=cc:cc:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1757519527;
-	 x=1757605927; bh=TisYwmvR90ER1jazweHvbvoeDDNC29k3gBI9kEQjEok=; b=
-	MQ1jVJwOLKEK4TRtKuCZUWuuAQageX7JSvcKV/AAQjDLP1FOkBUGIxQeArtXOyvw
-	RiCJOOQLE8dwH2yBZAmJUOZUH2cS8m0H8hQ0tq8RmBLEJ98dlLW+VO5WzwfTEiEp
-	ZcHcL0j4TRgHRbzBPMVoXIN/TgUBSUkl0EwJIqNRU7bOY8hHPzRUQp5tomfYSYM4
-	aaRy1m76V6CftjP7Er2hbHpueVeKDrzxiDB6gIEceqSRYYK3MlhkOMyHKszxkfLi
-	RUbQ8ocKfpbnjZs4bPUh+x0Cqc6aVNmdHryM8Awp3jeJeLtIUlbZWLsONvCvHPyW
-	mZCD/zorvOHIoYCH40mnnQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757519527; x=1757605927; bh=TisYwmvR90ER1jazweHvbvoeDDNC29k3gBI
-	9kEQjEok=; b=biG+FHOsup8r5uP8IEey1OrJpI5629ob7gPzDpQqOAtxnhL3Zr0
-	lAYHLmLmOnkk/ZFWAy4flV1Zywb3xJ/C9lu8b58qrFjRd1jGE0FnuxDKv1eLqzEC
-	LdNQpk67UX6aieSLbuXzA1Vg/QFxHGWYD0Ncs9fWOg5ffSWPr+e2foIt7hOvmQzy
-	iLlzxsge5Wr1zuVQhZZPD8cgQf80LhnC8Hn+wf2wU+wIA3OsFlc8DTwywa9Wv8MO
-	sEfliZTWg+RaFEbiBvoEfwFRHJ48CPhT4kQMt6cZzi73U66cwxwe/KmU+RdG2VXD
-	ivj6MGO/UgwX/gij06eXHRG+djGwjM9eu7A==
-X-ME-Sender: <xms:pp7BaKOFqY52w3lZOybWzINO3ENFBHOBl4cBomOTthhrWe4PrdUqzQ>
-    <xme:pp7BaHfg7LePI0HEfWmF70EegQxkrN3FIH16nDhz1Qs3U6sgN8W0Qp7GkMEZZEBcj
-    yWK80xxSLGCsqAdFlU>
-X-ME-Received: <xmr:pp7BaMy7WN_9-GXpOn0pRXi8Q9lVHX5GEN0I4gRAYoByjs7OssS_3SPKgmZPxv2wyT4IYbQ_d0nVYjLqZuQ-oN4ZEFZM_2LMeoJyu6JvhNyhs7e0IjPCTdEhtDBDylClO-gMWbLx>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvfeejtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufgjfhffkfgfgggtsehttdertddtredtnecuhfhrohhmpefrrhgrthihuhhs
-    hhcujggruggrvhcuoehmvgeshigruggrvhhprhgrthihuhhshhdrtghomheqnecuggftrf
-    grthhtvghrnhepleejgfdufeffuefhiefghfdugeegieejudelgedthfeuudffheeugfel
-    hfevvdelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgvseihrggurghvphhrrghthihushhhrdgtohhmpdhnsggprhgtphhtthhopedugedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrd
-    horhhgpdhrtghpthhtohepkhgvgigvtgeslhhishhtshdrihhnfhhrrgguvggrugdrohhr
-    ghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehjrghsohhnmhhiuhesghhoohhglhgvrdgtohhmpdhrtghpthht
-    oheptghhrhhishhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjghhgsehnvhhiug
-    hirgdrtghomhdprhgtphhtthhopehprghshhgrrdhtrghtrghshhhinhesshholhgvvghn
-    rdgtohhmpdhrtghpthhtohepsghhvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprg
-    hkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrgh
-X-ME-Proxy: <xmx:pp7BaE3RDLytsa2QtWwRt9RRI1nVOsBEmidFKrSV6h3zaLVCSt-7Iw>
-    <xmx:pp7BaLfLXI8An1b0AqP9N5_8fMLlNdqhMGYiu_I6fX6GdOZu6vb0Cw>
-    <xmx:pp7BaBW4-CrB3M9I16AqpIjPSXOniBsClKfdNAAulDJcszXWj21hbA>
-    <xmx:pp7BaL9T2jEtjmUP7XxYzydsA-Me-77SLflDvRcsv8WP84tmxnRDrw>
-    <xmx:p57BaIxU2zpoDgcYwn06gdAIZWSihVls11YMgzeC1z3eF4bswK9AsSHl>
-Feedback-ID: i93f149c1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 10 Sep 2025 11:52:05 -0400 (EDT)
-From: Pratyush Yadav <me@yadavpratyush.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  Alexander Graf <graf@amazon.com>,
-  Mike Rapoport <rppt@kernel.org>,  Changyuan Lyu <changyuanl@google.com>,
-  Andrew Morton <akpm@linux-foundation.org>,  Baoquan He <bhe@redhat.com>,
-  Pasha Tatashin <pasha.tatashin@soleen.com>,  Jason Gunthorpe
- <jgg@nvidia.com>,  Chris Li <chrisl@kernel.org>,  Jason Miu
- <jasonmiu@google.com>,  linux-kernel@vger.kernel.org,
-  kexec@lists.infradead.org,  linux-mm@kvack.org
-Subject: Re: [PATCH] kho: make sure folio being restored is actually from KHO
-In-Reply-To: <aMGc-ExhkqwAyY_C@casper.infradead.org>
-References: <20250910153443.95049-1-pratyush@kernel.org>
-	<aMGc-ExhkqwAyY_C@casper.infradead.org>
-Date: Wed, 10 Sep 2025 17:52:04 +0200
-Message-ID: <mafs08qimjoez.fsf@yadavpratyush.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1757519556; c=relaxed/simple;
+	bh=fWH8Nf4h9/OJX4+QIGjJv9ZWY9S5RuEQyk9/GAp4N0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gn2VBAGHeQMWCprxNz26nJnZS++vk5MzE9SgkoYXBlEfAdfPxXQ7RYcNrm8HeWnln/293vh9ZvHsSKPAjqxHUqa7UC/BvLEinNsPoOWzbxlvePF4FvSqBtzVYHq3I4QxiuoBxMpPoNLdw6L5V7wPrwMaBwW9ziXHzeU5HHjJHOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D75hVEwW; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757519552;
+	bh=fWH8Nf4h9/OJX4+QIGjJv9ZWY9S5RuEQyk9/GAp4N0w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D75hVEwWNjjaQWUDh9nwfqU7y6DgSxtAg8MTNYv+vYBXuGchnV0VP1VFqZWWfj5m+
+	 BtmbQe4OQPUiulpOZljvRD2hCwlVGSx+C07HLVY9JR6ePKbKDcxdwy4XplHYkIGH4p
+	 +kQQ69ICnWHc6x47bSh5/+38YZBNoSRtIGMNIzyMKVoGZ05Q4bnHMQW57TeErmEmVh
+	 hnbo5A+Q7V1QZyQofOMloHvitObzGDTCVKfHZIikzhILdMtQH2O3359oXzWFN+3Oew
+	 dMm3ShandhEd4Ky1fNZY8+WGKVGlWLZNsoagbih7qui8g+OdCoItLSF2U6Pq0P1R5S
+	 540uNiD73kelw==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E132517E0100;
+	Wed, 10 Sep 2025 17:52:31 +0200 (CEST)
+Date: Wed, 10 Sep 2025 17:52:13 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ kernel@collabora.com, Rob Herring <robh@kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH v2 2/4] drm/panfrost: Introduce JM contexts for manging
+ job resources
+Message-ID: <20250910175213.542fdb4b@fedora>
+In-Reply-To: <99a903b8-4b51-408d-b620-4166a11e3ad1@arm.com>
+References: <20250904001054.147465-1-adrian.larumbe@collabora.com>
+	<20250904001054.147465-3-adrian.larumbe@collabora.com>
+	<99a903b8-4b51-408d-b620-4166a11e3ad1@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10 2025, Matthew Wilcox wrote:
+On Wed, 10 Sep 2025 16:42:32 +0100
+Steven Price <steven.price@arm.com> wrote:
 
-> On Wed, Sep 10, 2025 at 05:34:40PM +0200, Pratyush Yadav wrote:
->> +#define KHO_PAGE_MAGIC 0x4b484f50U /* ASCII for 'KHOP' */
->> +
->> +/*
->> + * KHO uses page->private, which is an unsigned long, to store page metadata.
->> + * Use it to store both the magic and the order.
->> + */
->> +union kho_page_info {
->> +	unsigned long page_private;
->> +	struct {
->> +		unsigned int order;
->> +		unsigned int magic;
->> +	};
->
-> KHO is only supported on 64-bit?
+> > +int panfrost_jm_ctx_create(struct drm_file *file,
+> > +			   struct drm_panfrost_jm_ctx_create *args)
+> > +{
+> > +	struct panfrost_file_priv *priv = file->driver_priv;
+> > +	struct panfrost_device *pfdev = priv->pfdev;
+> > +	enum drm_sched_priority sched_prio;
+> > +	struct panfrost_jm_ctx *jm_ctx;
+> > +
+> > +	int ret;
+> > +
+> > +	jm_ctx = kzalloc(sizeof(*jm_ctx), GFP_KERNEL);
+> > +	if (!jm_ctx)
+> > +		return -ENOMEM;
+> > +
+> > +	kref_init(&jm_ctx->refcnt);
+> > +
+> > +	/* Same priority for all JS within a single context */
+> > +	jm_ctx->config = JS_CONFIG_THREAD_PRI(args->priority);
+> > +
+> > +	ret = jm_ctx_prio_to_drm_sched_prio(file, args->priority, &sched_prio);
+> > +	if (ret)
+> > +		goto err_put_jm_ctx;
+> > +
+> > +	for (u32 i = 0; i < NUM_JOB_SLOTS - 1; i++) {
+> > +		struct drm_gpu_scheduler *sched = &pfdev->js->queue[i].sched;
+> > +		struct panfrost_js_ctx *js_ctx = &jm_ctx->slots[i];
+> > +
+> > +		ret = drm_sched_entity_init(&js_ctx->sched_entity, sched_prio,
+> > +					    &sched, 1, NULL);
+> > +		if (ret)
+> > +			goto err_put_jm_ctx;
+> > +
+> > +		js_ctx->enabled = true;
+> > +	}
+> > +
+> > +	ret = xa_alloc(&priv->jm_ctxs, &args->handle, jm_ctx,
+> > +		       XA_LIMIT(0, MAX_JM_CTX_PER_FILE), GFP_KERNEL);
+> > +	if (ret)
+> > +		goto err_put_jm_ctx;  
+> 
+> On error here we just jump down and call panfrost_jm_ctx_put() which
+> will free jm_ctx but won't destroy any of the drm_sched_entities. There
+> seems to be something a bit off with the lifetime management here.
+> 
+> Should panfrost_jm_ctx_release() be responsible for tearing down the
+> context, and panfrost_jm_ctx_destroy() be nothing more than dropping the
+> reference?
 
-Yes. Currently only x86_64 and ARM64. It is mainly for hypervisor live
-update so there isn't much reason to support it on 32-bit platforms.
+The idea was to kill/cancel any pending jobs as soon as userspace
+releases the context, like we were doing previously when the FD was
+closed. If we defer this ctx teardown to the release() function, we're
+basically waiting for all jobs to complete, which:
 
->
->> @@ -210,16 +226,16 @@ static void kho_restore_page(struct page *page, unsigned int order)
->>  struct folio *kho_restore_folio(phys_addr_t phys)
->>  {
->>  	struct page *page = pfn_to_online_page(PHYS_PFN(phys));
->> -	unsigned long order;
->> +	union kho_page_info info;
->>  
->>  	if (!page)
->>  		return NULL;
->>  
->> -	order = page->private;
->> -	if (order > MAX_PAGE_ORDER)
->> +	info.page_private = page->private;
->> +	if (info.magic != KHO_PAGE_MAGIC || info.order > MAX_PAGE_ORDER)
->>  		return NULL;
->>  
->> -	kho_restore_page(page, order);
->> +	kho_restore_page(page, info.order);
->>  	return page_folio(page);
->
-> This all looks very confused.  Before your patch as well as after it.
-> I don't see anything in the current KHO code that requires the
-> phys_addr_t to be order-aligned.
-
-Right, good point. I can send that as a follow up patch. But I think
-this patch stands on its own without that fix too.
-
--- 
-Regards,
-Pratyush Yadav
+1. doesn't encourage userspace to have proper control over the contexts
+   lifetime
+2. might use GPU/mem resources to execute jobs no one cares about
+   anymore
 
