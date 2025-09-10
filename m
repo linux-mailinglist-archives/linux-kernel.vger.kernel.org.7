@@ -1,489 +1,153 @@
-Return-Path: <linux-kernel+bounces-810039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABAF8B5150C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:10:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 656A3B51511
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BBFB5465F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:10:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F30D1546AEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AFC31985D;
-	Wed, 10 Sep 2025 11:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAC531B82F;
+	Wed, 10 Sep 2025 11:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MvSdtWYE"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e5FYc8ld"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4F031985B
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B179231A550
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757502567; cv=none; b=Vg5zDqO5oBO35hVi2DHJqasUlzwt/wsJ7W3H7Tev6FU3Ji144MiDSsHPeuisfvKYue2tHu2gJqsha2TO4Dqf+K4j2R1fqH38B1JniHmSBN8vOoK7XGhE9D8i/dT9LAnQdPzxZomg9mPw7RxaWIb2IlXnoLgt1fBKI+3tX8frWn4=
+	t=1757502570; cv=none; b=V79pZ3VV5JiJHnj5erpMcaLEZfC/6pMfi7sGPRm86qmhmwJjJqyEOomvdMD7LtHEeWIGA5Nk+9Lrr5+oz+bcUYZGhrWA7XES2F/pwBQQZAa+i2phtJnZ5ZzldCr+LO25FgjitSNOrewaNk7mc+K/Xkt5j9PSRQA1jiISmyTQuGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757502567; c=relaxed/simple;
-	bh=LFxsKrv7w0XeDMi0IXILemHLMp0psNWxyEhzq5JWm5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=muLdKaihGehXf9eeXQGoCbVymXJykBU6F+07a+VmHZ5wToT7+6ZxEMfkFTXyP4CY0zInGLiZWm/zcsp1e6TnAt7pr+cBt+/kwsGv4J8eXRSEpBLk2Ktt+FgQjI8epzbfYYSuFSxaikAF4PnDmDPthXXXxKlkrH7n6h3395J35m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MvSdtWYE; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45dd5e24d16so48731075e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:09:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757502562; x=1758107362; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=if7M7RKUKGcoaoiSFxqVOJi3gDv8Oj4Mq2vP44awa+0=;
-        b=MvSdtWYEs9SELHbfYkNcvY8AI9ZZnMKIA/tYqMByD2eRS+QUYXprFNLOh22gkou0iA
-         +vsOkouHpOPHiqzq0rvK6UKwqweqeiWPhbUYYeA14ZpQOcJwMQoXX96wtHn93XToPFmk
-         FkKVaCVvitbiu/y54TRFeC47yDW9UWmRRWhms0acWXJgWSfvKxTtoQKOEn17TkKvUw7C
-         A0k89x9zHwnQEHCW6DADkrHS39RLZ5oDHkagwzMms6O/CcfNwGkJw1KRFTPmbMamY8kG
-         /a4/NOYVs0aagp3CmHFoBeY6YOVbScgSUngDY6Rtea8ivFPnvb9KNjNbNxDYWpe7+HqW
-         X7Kg==
+	s=arc-20240116; t=1757502570; c=relaxed/simple;
+	bh=BQ2XtYRwei+F/8LMUKBdKEm+z8pxUaNiGAkH40rNEKc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BDFymAN28NP85Wn3FyCjKBhPxUoU5+2t8fWUPTjBIJn6nGBLAjTrA8iy+XuiB/hCUaNBXOSOW2wouIaZZwaY6zkiaC4dVuPxkk9obPVSEHbMKDa0g6XvUKkRkEIs7WOGr3wYwT8BF9GVQTtmzhAaREXdp4RXUOUzQAIIY+YdV08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e5FYc8ld; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757502567;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EEfKAAgF77B0N35cHlVCZR8H3qoPVBq2FQNy2mJIamk=;
+	b=e5FYc8ldR7PPsH5vOcJ5DT3Ww9LNNW9YV4bar2Rql4ltUim3s+ALQGexwwKQmLYhaS4512
+	0m9Q5uT8uYpGsgSf2WT9/C79qG88J1a0UWJcRO/OUMXdQXRxet3IEg+hSj5EwXJpZ1dZQF
+	5mArQFaLfyIv5ttnfBHtw2/Fc8iKNLI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-354-_KbLgDXxOf2TV1oC3L-i0g-1; Wed, 10 Sep 2025 07:09:26 -0400
+X-MC-Unique: _KbLgDXxOf2TV1oC3L-i0g-1
+X-Mimecast-MFC-AGG-ID: _KbLgDXxOf2TV1oC3L-i0g_1757502564
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b467f5173so47610075e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:09:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757502562; x=1758107362;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=if7M7RKUKGcoaoiSFxqVOJi3gDv8Oj4Mq2vP44awa+0=;
-        b=GpjsBnND4vkxzxgzHx+4L9l3/kMOuh06zxLBKV0b7Vw8XfhkJl+GGuv3rLEVZwdMnM
-         IzTS5fJ4Jaisi25lvMZc/uVffsMO1V4CgNFwTszGHRY8UhsgMVinofOFIsqnlavyddpo
-         UBjGQIy3kBWX3IO3yTDfQi8Fa/SZ9kOwUd3cLAxkNKoYVG4kJumHim8RRWfqMmd5rlsg
-         fNiplPrCYtym5erAiObonwySfgK9DtAWsjUBPw4uSVIpgwpExKxk9swqfpX/eFeR0ZhX
-         4s1IziL0tFefzXauliAj8itngQ8W27wMchXe4eizlvCkr/RPQYActmXVcIEc/Dsb/oAD
-         0/9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUiTlrPgxKLBOs8Q6kRm6flnCSlDMO7nFXOO5tPsOncpNZHhl7hE94OtBNJR0I5S9IbiSPMdCqp4PxAyzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySQVXrcUWhtGFQz0I434CAvb64cgpYazH7XwEB6va83CKTYbXX
-	Ysahv+sTbHlaIzeYZkfme3DQ1rNiT4MXn24yadu9p+/orQhZiNfPI6lMNldeDsxBlvIoTtTqx9f
-	S3OQY9KM=
-X-Gm-Gg: ASbGncuaM6MLTpO/oJ9Y/fbiaMX6oY4tPgh2wGCvZpRYrrYjKI+qSLLSdbePaiSQeP7
-	eGJ8GkiZPbauvKmZq8p5nNbw1rvNiDMNdOnb6atK0l9cKFv3P1qfsjTaGkMW2Fu00lISOyrl9LN
-	78vrLw95n8fg5eVyQIbY3NLwrGbuij2EyiJMs7oKZXFkdUI577nlZd3NDxli2Wg2++u5lpjU45J
-	cPpPHTQkxjxdLWTzOcPr5Awt1f7pLqcSFh23t5CxPpWZHqxSO22L5Bmr3e7/WTOGGLJkmMhBRRC
-	BFgP8sZ0YRi6eVgE40z+Uh26wVvHbP+GWPUO7N5gxI+lQSS3c5t9heu8UPBsGuUL0ypi0evmSVW
-	zn0Fi4RwNbJI+oN7TxkdNLTh3a0z+qc/rvgp6m1jogqdXRHFDFPckOxlf6SCUQzDrQObweTiHy7
-	Zfl4klKe6jlk+JaG0mbrs=
-X-Google-Smtp-Source: AGHT+IGg0t7NqCuRxCIOdvsDJR8ASoSstEqT+u0u8z4qPedmjk9nJEjwqQ+1EZp6Z/+hH33LOU4yJA==
-X-Received: by 2002:a05:600c:4592:b0:45c:b575:1aa4 with SMTP id 5b1f17b1804b1-45dddeef4admr144185385e9.19.1757502562339;
+        d=1e100.net; s=20230601; t=1757502563; x=1758107363;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EEfKAAgF77B0N35cHlVCZR8H3qoPVBq2FQNy2mJIamk=;
+        b=B0Kv4kUabVMs8FbRn4LaMkQLRyK0OMaOjXCdi0jSd+SOslC2KG2ez//Afu/p6QEJNt
+         xfVMT0mYpv2bNNb8E4uJflNgsOegoOE8EoGHjgxzIwaBd7MlBJxaHpXaCyuR2Lun1OLt
+         XqVQVyVxA4ECpsIMO/X4bpUQtie9hc7m5UouZ75hH8IZXtnKk68xklZcUbdemyE0PmPO
+         kIZiOzVfLZAfWBv2f68XsReKFuS8a/9wGKYU95KxWu2KPKpi9Eelj/F1jPrxF88Sc0Yk
+         V9mIpH1+ur2chijDao9P6jv9M+UciR7EBLiZCX5FqTwiNN1IhXiIkMQ7NcJNJEkzgbsK
+         ZOaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURH+f/OsIqVGslYt1JcpseFLRn/niiJ0/h6bFHsMg9ewTYiyIObs3E/zJ281ZevVy6hRc9gw3WtIwyDdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYLfevXCUd60KoK6PBF/VriCJ/G8rG9Y+pPeaOVTybSNjbFfHW
+	AYQgc1v812Ki1RIE4ZiOjg9QDCV5V9c/egju9Ka87NnnKHzVBzUK+55xLTs8NDv915JySXq0zvC
+	OnK+1Zt1C9Bolbkeeip6wcsjOijhVB2rzQY+3EEzfxGJybYTDJLL5LKzEr4T2K4HSyA==
+X-Gm-Gg: ASbGncuCJHfWIRnrKHGWiz5jk9masPBAklh6v7ziKGOWiWlybmy2peDWy6REnV7Cn+w
+	0g86PnkO/QIzjl+zkfqm3LU+xS9btrToW3lLfvUwD2TKAPEjaTOVpB4WG5TUcQvUO39VFoX8jpJ
+	/Ql13J8odq/57f8wA6xrHJq+eM5xQ9qklxeNlv20K3eu0kbWkmlfJ6f8TdfbxXecFr1NY/PgBfD
+	In6KtjCWiVwY1sJe2j6gg980kDkN0bv1yLag6mP9VcF8QqLWvlt0NPue22Nn/LwBkXFqZwOxpZe
+	9UPZlZu0fE/I4GLhlLAlxWFxo9KcDZ/Z2UrfVzkI3sRVOVF80x40s67bbOPgMzIN5M4PxxUTLeu
+	XdCITgGAabhCfp2QQ12nZqQ==
+X-Received: by 2002:a05:6000:2889:b0:3e5:50:e044 with SMTP id ffacd0b85a97d-3e643555859mr13543070f8f.45.1757502563451;
+        Wed, 10 Sep 2025 04:09:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEtsE6TP99LwCM9DefOr4NgVBIR7vSn0IU371t63+HnR3UaFYs5LDu32sAvz1H1Dto10pgN1g==
+X-Received: by 2002:a05:6000:2889:b0:3e5:50:e044 with SMTP id ffacd0b85a97d-3e643555859mr13543046f8f.45.1757502563021;
+        Wed, 10 Sep 2025 04:09:23 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df1ba282dsm26332925e9.5.2025.09.10.04.09.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 10 Sep 2025 04:09:22 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df16b11b6sm26494715e9.6.2025.09.10.04.09.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 04:09:21 -0700 (PDT)
-Message-ID: <0ac2c3f4-d71d-48eb-ac0f-8e736e7acace@linaro.org>
-Date: Wed, 10 Sep 2025 12:09:20 +0100
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Brett A C Sheffield <bacs@librecast.net>
+Cc: stable@vger.kernel.org, regressions@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Simona Vetter <simona@ffwll.ch>, Helge
+ Deller <deller@gmx.de>, Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones
+ <lee@kernel.org>, Murad Masimov <m.masimov@mt-integration.ru>, Yongzhen
+ Zhang <zhangyongzhen@kylinos.cn>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 1/1] Revert "fbdev: Disable sysfb device registration
+ when removing conflicting FBs"
+In-Reply-To: <aMFYeV4UdD7NnrSC@karahi.gladserv.com>
+References: <20250910095124.6213-3-bacs@librecast.net>
+ <20250910095124.6213-5-bacs@librecast.net>
+ <87frcuegb7.fsf@minerva.mail-host-address-is-not-set>
+ <aMFYeV4UdD7NnrSC@karahi.gladserv.com>
+Date: Wed, 10 Sep 2025 13:09:20 +0200
+Message-ID: <87cy7yef8f.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3.1] media: dt-bindings: Add qcom,qcs8300-camss
- compatible
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
-References: <20250813053724.232494-2-quic_vikramsa@quicinc.com>
- <20250910104915.1444669-1-quic_vikramsa@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250910104915.1444669-1-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 10/09/2025 11:49, Vikram Sharma wrote:
-> Add the compatible string "qcom,qcs8300-camss" to support the
-> Camera Subsystem (CAMSS) on the Qualcomm QCS8300 platform.
-> 
-> The QCS8300 platform provides:
-> - 2 x VFE (version 690), each with 3 RDI
-> - 5 x VFE Lite (version 690), each with 6 RDI
-> - 2 x CSID (version 690)
-> - 5 x CSID Lite (version 690)
-> - 3 x CSIPHY (version 690)
-> - 3 x TPG
-> 
-> Co-developed-by: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
-> Signed-off-by: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
-> changes since v3:
-> - Adding supplies to enable camera sensor imx577 on monaco-evk.
->    link for camera sensor enablement chagges:
->    https://lore.kernel.org/all/20250909114241.840842-1-quic_vikramsa@quicinc.com/
-> - Dropped RB from Bryan and Krzysztof to review again.
-> ---
->   .../bindings/media/qcom,qcs8300-camss.yaml    | 349 ++++++++++++++++++
->   1 file changed, 349 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/media/qcom,qcs8300-camss.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/qcom,qcs8300-camss.yaml b/Documentation/devicetree/bindings/media/qcom,qcs8300-camss.yaml
-> new file mode 100644
-> index 000000000000..559db6d67f06
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/qcom,qcs8300-camss.yaml
-> @@ -0,0 +1,349 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/qcom,qcs8300-camss.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm QCS8300 CAMSS ISP
-> +
-> +maintainers:
-> +  - Vikram Sharma <quic_vikramsa@quicinc.com>
-> +
-> +description:
-> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,qcs8300-camss
-> +
-> +  reg:
-> +    maxItems: 21
-> +
-> +  reg-names:
-> +    items:
-> +      - const: csid_wrapper
-> +      - const: csid0
-> +      - const: csid1
-> +      - const: csid_lite0
-> +      - const: csid_lite1
-> +      - const: csid_lite2
-> +      - const: csid_lite3
-> +      - const: csid_lite4
-> +      - const: csiphy0
-> +      - const: csiphy1
-> +      - const: csiphy2
-> +      - const: tpg0
-> +      - const: tpg1
-> +      - const: tpg2
-> +      - const: vfe0
-> +      - const: vfe1
-> +      - const: vfe_lite0
-> +      - const: vfe_lite1
-> +      - const: vfe_lite2
-> +      - const: vfe_lite3
-> +      - const: vfe_lite4
-> +
-> +  clocks:
-> +    maxItems: 26
-> +
-> +  clock-names:
-> +    items:
-> +      - const: camnoc_axi
-> +      - const: core_ahb
-> +      - const: cpas_ahb
-> +      - const: cpas_fast_ahb_clk
-> +      - const: cpas_vfe_lite
-> +      - const: cpas_vfe0
-> +      - const: cpas_vfe1
-> +      - const: csid
-> +      - const: csiphy0
-> +      - const: csiphy0_timer
-> +      - const: csiphy1
-> +      - const: csiphy1_timer
-> +      - const: csiphy2
-> +      - const: csiphy2_timer
-> +      - const: csiphy_rx
-> +      - const: gcc_axi_hf
-> +      - const: gcc_axi_sf
-> +      - const: icp_ahb
-> +      - const: vfe0
-> +      - const: vfe0_fast_ahb
-> +      - const: vfe1
-> +      - const: vfe1_fast_ahb
-> +      - const: vfe_lite
-> +      - const: vfe_lite_ahb
-> +      - const: vfe_lite_cphy_rx
-> +      - const: vfe_lite_csid
-> +
-> +  interrupts:
-> +    maxItems: 20
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: csid0
-> +      - const: csid1
-> +      - const: csid_lite0
-> +      - const: csid_lite1
-> +      - const: csid_lite2
-> +      - const: csid_lite3
-> +      - const: csid_lite4
-> +      - const: csiphy0
-> +      - const: csiphy1
-> +      - const: csiphy2
-> +      - const: tpg0
-> +      - const: tpg1
-> +      - const: tpg2
-> +      - const: vfe0
-> +      - const: vfe1
-> +      - const: vfe_lite0
-> +      - const: vfe_lite1
-> +      - const: vfe_lite2
-> +      - const: vfe_lite3
-> +      - const: vfe_lite4
-> +
-> +  interconnects:
-> +    maxItems: 2
-> +
-> +  interconnect-names:
-> +    items:
-> +      - const: ahb
-> +      - const: hf_0
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    items:
-> +      - description: Titan GDSC - Titan ISP Block, Global Distributed Switch Controller.
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: top
-> +
-> +  vdda-phy-supply:
-> +    description:
-> +      Phandle to a regulator supply to PHY core block.
-> +
-> +  vdda-pll-supply:
-> +    description:
-> +      Phandle to 1.8V regulator supply to PHY refclk pll block.
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    description:
-> +      CSI input ports.
-> +
-> +    patternProperties:
-> +      "^port@[0-2]+$":
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Input port for receiving CSI data on CSIPHY 0-2.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +            required:
-> +              - data-lanes
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +  - interrupt-names
-> +  - interconnects
-> +  - interconnect-names
-> +  - iommus
-> +  - power-domains
-> +  - vdda-phy-supply
-> +  - vdda-pll-supply
-> +  - power-domain-names
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,sa8775p-camcc.h>
-> +    #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
-> +    #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
-> +    #include <dt-bindings/interconnect/qcom,icc.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/power/qcom-rpmpd.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        isp@ac78000 {
-> +            compatible = "qcom,qcs8300-camss";
-> +
-> +            reg = <0x0 0xac78000 0x0 0x1000>,
-> +                  <0x0 0xac7a000 0x0 0x0f00>,
-> +                  <0x0 0xac7c000 0x0 0x0f00>,
-> +                  <0x0 0xac84000 0x0 0x0f00>,
-> +                  <0x0 0xac88000 0x0 0x0f00>,
-> +                  <0x0 0xac8c000 0x0 0x0f00>,
-> +                  <0x0 0xac90000 0x0 0x0f00>,
-> +                  <0x0 0xac94000 0x0 0x0f00>,
-> +                  <0x0 0xac9c000 0x0 0x2000>,
-> +                  <0x0 0xac9e000 0x0 0x2000>,
-> +                  <0x0 0xaca0000 0x0 0x2000>,
-> +                  <0x0 0xacac000 0x0 0x0400>,
-> +                  <0x0 0xacad000 0x0 0x0400>,
-> +                  <0x0 0xacae000 0x0 0x0400>,
-> +                  <0x0 0xac4d000 0x0 0xd000>,
-> +                  <0x0 0xac60000 0x0 0xd000>,
-> +                  <0x0 0xac85000 0x0 0x0d00>,
-> +                  <0x0 0xac89000 0x0 0x0d00>,
-> +                  <0x0 0xac8d000 0x0 0x0d00>,
-> +                  <0x0 0xac91000 0x0 0x0d00>,
-> +                  <0x0 0xac95000 0x0 0x0d00>;
-> +            reg-names = "csid_wrapper",
-> +                        "csid0",
-> +                        "csid1",
-> +                        "csid_lite0",
-> +                        "csid_lite1",
-> +                        "csid_lite2",
-> +                        "csid_lite3",
-> +                        "csid_lite4",
-> +                        "csiphy0",
-> +                        "csiphy1",
-> +                        "csiphy2",
-> +                        "tpg0",
-> +                        "tpg1",
-> +                        "tpg2",
-> +                        "vfe0",
-> +                        "vfe1",
-> +                        "vfe_lite0",
-> +                        "vfe_lite1",
-> +                        "vfe_lite2",
-> +                        "vfe_lite3",
-> +                        "vfe_lite4";
-> +
-> +            clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-> +                     <&camcc CAM_CC_CORE_AHB_CLK>,
-> +                     <&camcc CAM_CC_CPAS_AHB_CLK>,
-> +                     <&camcc CAM_CC_CPAS_FAST_AHB_CLK>,
-> +                     <&camcc CAM_CC_CPAS_IFE_LITE_CLK>,
-> +                     <&camcc CAM_CC_CPAS_IFE_0_CLK>,
-> +                     <&camcc CAM_CC_CPAS_IFE_1_CLK>,
-> +                     <&camcc CAM_CC_CSID_CLK>,
-> +                     <&camcc CAM_CC_CSIPHY0_CLK>,
-> +                     <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-> +                     <&camcc CAM_CC_CSIPHY1_CLK>,
-> +                     <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-> +                     <&camcc CAM_CC_CSIPHY2_CLK>,
-> +                     <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-> +                     <&camcc CAM_CC_CSID_CSIPHY_RX_CLK>,
-> +                     <&gcc GCC_CAMERA_HF_AXI_CLK>,
-> +                     <&gcc GCC_CAMERA_SF_AXI_CLK>,
-> +                     <&camcc CAM_CC_ICP_AHB_CLK>,
-> +                     <&camcc CAM_CC_IFE_0_CLK>,
-> +                     <&camcc CAM_CC_IFE_0_FAST_AHB_CLK>,
-> +                     <&camcc CAM_CC_IFE_1_CLK>,
-> +                     <&camcc CAM_CC_IFE_1_FAST_AHB_CLK>,
-> +                     <&camcc CAM_CC_IFE_LITE_CLK>,
-> +                     <&camcc CAM_CC_IFE_LITE_AHB_CLK>,
-> +                     <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
-> +                     <&camcc CAM_CC_IFE_LITE_CSID_CLK>;
-> +            clock-names = "camnoc_axi",
-> +                          "core_ahb",
-> +                          "cpas_ahb",
-> +                          "cpas_fast_ahb_clk",
-> +                          "cpas_vfe_lite",
-> +                          "cpas_vfe0",
-> +                          "cpas_vfe1",
-> +                          "csid",
-> +                          "csiphy0",
-> +                          "csiphy0_timer",
-> +                          "csiphy1",
-> +                          "csiphy1_timer",
-> +                          "csiphy2",
-> +                          "csiphy2_timer",
-> +                          "csiphy_rx",
-> +                          "gcc_axi_hf",
-> +                          "gcc_axi_sf",
-> +                          "icp_ahb",
-> +                          "vfe0",
-> +                          "vfe0_fast_ahb",
-> +                          "vfe1",
-> +                          "vfe1_fast_ahb",
-> +                          "vfe_lite",
-> +                          "vfe_lite_ahb",
-> +                          "vfe_lite_cphy_rx",
-> +                          "vfe_lite_csid";
-> +
-> +            interrupts = <GIC_SPI 565 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 564 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 759 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 758 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 604 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 545 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 546 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 547 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 761 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 760 IRQ_TYPE_EDGE_RISING>,
-> +                         <GIC_SPI 605 IRQ_TYPE_EDGE_RISING>;
-> +            interrupt-names = "csid0",
-> +                              "csid1",
-> +                              "csid_lite0",
-> +                              "csid_lite1",
-> +                              "csid_lite2",
-> +                              "csid_lite3",
-> +                              "csid_lite4",
-> +                              "csiphy0",
-> +                              "csiphy1",
-> +                              "csiphy2",
-> +                              "tpg0",
-> +                              "tpg1",
-> +                              "tpg2",
-> +                              "vfe0",
-> +                              "vfe1",
-> +                              "vfe_lite0",
-> +                              "vfe_lite1",
-> +                              "vfe_lite2",
-> +                              "vfe_lite3",
-> +                              "vfe_lite4";
-> +
-> +            interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> +                             &config_noc SLAVE_CAMERA_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
-> +                            <&mmss_noc MASTER_CAMNOC_HF QCOM_ICC_TAG_ALWAYS
-> +                             &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-> +            interconnect-names = "ahb",
-> +                                 "hf_0";
-> +
-> +            iommus = <&apps_smmu 0x2400 0x20>;
-> +
-> +            power-domains = <&camcc CAM_CC_TITAN_TOP_GDSC>;
-> +            power-domain-names = "top";
-> +
-> +            vdda-phy-supply = <&vreg_l4a_0p88>;
-> +            vdda-pll-supply = <&vreg_l1c_1p2>;
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +            };
-> +        };
-> +    };
+Brett A C Sheffield <bacs@librecast.net> writes:
 
-OK LGTM thanks for your update.
+> On 2025-09-10 12:46, Javier Martinez Canillas wrote:
+>> Brett A C Sheffield <bacs@librecast.net> writes:
+>> 
+>> Hello Brett,
+>> 
+>> > This reverts commit 13d28e0c79cbf69fc6f145767af66905586c1249.
+>> >
+>> > Commit ee7a69aa38d8 ("fbdev: Disable sysfb device registration when
+>> > removing conflicting FBs") was backported to 5.15.y LTS. This causes a
+>> > regression where all virtual consoles stop responding during boot at:
+>> >
+>> > "Populating /dev with existing devices through uevents ..."
+>> >
+>> > Reverting the commit fixes the regression.
+>> >
+>> > Signed-off-by: Brett A C Sheffield <bacs@librecast.net>
+>> > ---
+>> 
+>> In the other email you said:
+>> 
+>> > Newer stable kernels with this
+>> > patch (6.1.y, 6.6.y, 6.12,y, 6.15.y, 6.16.y) and mainline are unaffected.
+>> 
+>> But are you proposing to revert the mentioned commit in mainline too
+>> or just in the 5.15.y LTS tree ?
+>
+> Only the 5.15.y tree. Sorry - that could have been clearer.  There's no
+> regression anywhere else. Mainline and other stable kernels are all ok.
+>
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+That's what I thought but just wanted to confirm that was the case. Thanks!
+
+> Cheers,
+>
+>
+> Brett
+>
+
+-- 
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
 
