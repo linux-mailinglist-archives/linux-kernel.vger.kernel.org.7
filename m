@@ -1,133 +1,97 @@
-Return-Path: <linux-kernel+bounces-810236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90AAB51793
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:07:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D7D8B51791
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45F48486BEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:07:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C2D87A79F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D8731A54A;
-	Wed, 10 Sep 2025 13:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="i/wMpz5c"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDF22D24B5;
+	Wed, 10 Sep 2025 13:07:40 +0000 (UTC)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C0028751A;
-	Wed, 10 Sep 2025 13:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727832264B2
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757509662; cv=none; b=P+B+6s4Aq2PIPS0lsNTgfLHN8zsf8w6YOYfphFvo9OeVxtrGd1o5SdIDcCFRMEP4Kr6J32EhTyT+l7e0aJtanrBTEXRAyQm4PrngAHTweNvRrpzhqpr+LNY6jTgol9fgPiGrIJu7f7uUc5pgenSftXvJq9RGh7GInHqFNEL18wU=
+	t=1757509660; cv=none; b=UzOAAU2JvSHLg5ewzy0OfdVOf9OkacmmlPyrg4sfznjs3MtHN8WZzsuHVrrknMrCUGF50qoyAT7BmeN4YGkPvb3XrV5OXEPc32+1bRpLAaTKbXc4tRfpmiubL3/li8br7HwU5O65wXJuXj2WK5Y48yO+BYbpW2Hou38AOHRjqjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757509662; c=relaxed/simple;
-	bh=MXqsGbYWSiofoLCT6vUM7yK8s7VLuwMfb/Rz5sSo/+g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uIOaGcrgq4uW5GpxyK5hDS4gNWDQCOru3R619oYuLPP6p7lytP5uXbg220rieLwfVwF/xVk+FudPgOWoGKlXC4rKduFg0JG8Uj4/4Z2WgQk6MlhiPqpXTau67lfDh9PyDfLpFmFoaiRd20IL4mdC1cR1RR58uJfIdRdNCvW38uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=i/wMpz5c; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 2C482C653F9;
-	Wed, 10 Sep 2025 13:07:21 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D92BB606D4;
-	Wed, 10 Sep 2025 13:07:36 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9FB93102F24D7;
-	Wed, 10 Sep 2025 15:07:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757509655; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=r2SJ9l9HI7zA+U/h8NvB9xjHxSc96b4EXJRsV7IaaWU=;
-	b=i/wMpz5cwN1rOjapDwtjmOXkr0rl6ZCiorIMpYFmVjAasnl89iqqxPZEEitX80owYgwd7E
-	LvimZDdtWEU5VVS0f4lS0Td8pWTjzaeGRDCN5cjayEXCX2us4+CfiJpri9ccNFy1c3Qs5K
-	D18eNZYQ83i5GWgUplyXAgMyV0cQDtgF/LaOpLO+WkBgrgUgZ9MMg9yNF2rI8U1e4Lp5mg
-	IgAwjS7Akp8Yv1p70sQvsE7948VoMQGfclra001gH84HpIFnOr2XopMCgvTAUMOHMHWVB9
-	RRc+clCW5JK+yV0PL/rNPDSjPeZ+AQk2DMH5a1RoJdtAejkj86uSH1Xt0ORuyA==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Date: Wed, 10 Sep 2025 15:07:21 +0200
-Subject: [PATCH net] net: dsa: microchip: Select SPI_MODE 0 for KSZ8463
+	s=arc-20240116; t=1757509660; c=relaxed/simple;
+	bh=ywXRFT91ICNiuMZ0jbSsX1fMmPlMp8bNjl1jHSg+6Rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GkzvSlPVjRZcw/+uAEbmkto3NZcP8FDd4m1sVoIwUUD0QVBa9Ver91S6+2asK0AnqXg5KF2YwTfnpJKjcw6ivbMGCJadWTVWjbsr+eCFK3F0SUMbHACUqCuYql7F5b2vmul/+/EsstUm/P87e63fYYGCswF4OevBpZb2G5W2LmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b0787fc3008so123418066b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 06:07:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757509656; x=1758114456;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NIcITXX9hS4Db8ikKrpCJbZMjA0TkvI/2W7w/bFCI98=;
+        b=EnVHPjJkQhmbTsEmP+VVqxginEdlmPIM62Q27YlXMIrrUWw7yx5qEog8ujuSDoFUUt
+         UcoUKTx+xUDuG0LFg78IkFYhi244AGnlcDN5uuGVsWm6H7UmcP7+CQcq0wUes+vAlpJZ
+         xu/Kpbuj/jsoeexXztRqux5lZ9jJ1E4Z60q4Lw2fIch7H7t/XIF7j9AOVuwNwNWhN60S
+         hmnWNKyRiBuQSDNmVe9eaz6zJ9WaejpHmvMrmCSHLD8eyjQFIiDCGM83DS7frwBdZjf9
+         lxI8NgkbbDBfKOj7cbV4wcxJ4ZiuR67E0+uUuJehAFMDuPfy9WU3ZzH4pcGUHlAjf85l
+         xwHA==
+X-Forwarded-Encrypted: i=1; AJvYcCURq/i9wZAiRt97wAIU9Zvg5VQFiTX2mkFQxXj7RSJ0+kNmNjLCbVp+iYjs0gDzXELhO5XQFNQ7Cy0/ZtI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9WsJm0iiCPljVIehXFEpWZzGPIeYKqAhd6Qs8lSwyWVwY2C0F
+	l/vYyB4aSzNjWlxICCjxNGQGyg80SRcsJSkcjUfrVV33vaI8hM5r7IIF
+X-Gm-Gg: ASbGncvs5TPgqo1SYjf5RF2UjKKg4p3/opKjit55jQJwqz+vCPFnUen9f568Q7R5194
+	hpQ08bo7joxka5HUq14+MpMfKESunZSGf8MimVtBNu1e52NCnOXkrhTYqmIZxPrsiayxgCdiY4T
+	Wdcb/llg8j7t32FzzMf92hjnYA8ekdod4FI/QMAPpdk1KUbss2o2jg3MDbK5UCgd0N6MNd3e7l0
+	JcVDIwBSpzHxKDq90BRZHpxR/ShYUapJowZOALZv7TR8014gVYAfn0mg/vzpf39k40w9+061viP
+	c9bKVLeJMqMZKCbX6TQi+I+gwZfdonii8qZbV9UgiVfZyW2eAVrfgMdt9Hrpp+R4luC887aNy5p
+	HlZLOlGYwZ/sGA5kNT39x
+X-Google-Smtp-Source: AGHT+IGsbjtxSRoV3JebL//nTu0M1E8u8tcv8+m8aNSPSkocR1/EsvDgvP9SxEsOCJGMx+VMoDP1BQ==
+X-Received: by 2002:a17:907:c09:b0:b04:4975:e648 with SMTP id a640c23a62f3a-b04b1547774mr1503623466b.35.1757509656342;
+        Wed, 10 Sep 2025 06:07:36 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07830ab325sm164418666b.26.2025.09.10.06.07.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 06:07:35 -0700 (PDT)
+Date: Wed, 10 Sep 2025 06:07:33 -0700
+From: Breno Leitao <leitao@debian.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Carlos Llamas <cmllamas@google.com>, Elliot Berman <quic_eberman@quicinc.com>, 
+	Stephen Boyd <swboyd@chromium.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] scripts/decode_stacktrace.sh: symbol: avoid trailing
+ whitespaces
+Message-ID: <2t2c26teepdqq42sx4tbwgithyn63jgy2y23qfv2zy4xff35jf@tesnotcstkzb>
+References: <20250908-decode_strace_indent-v1-0-28e5e4758080@kernel.org>
+ <20250908-decode_strace_indent-v1-1-28e5e4758080@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-fix-omap-spi-v1-1-fd732c42b7be@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAAh4wWgC/x2MywqAIBAAf0X23IJKD+pXooPkWntIRSOC6N9bO
- g7DzAOVClOFST1Q6OLKKQqYRsG6u7gRshcGq22nR6Mx8I3pcBlrZvTD2rfBtqb3ASTJhcT/uxk
- inbC87wcc2QLYYwAAAA==
-X-Change-ID: 20250910-fix-omap-spi-d7c64f2416df
-To: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com, 
- Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Tristram Ha <tristram.ha@microchip.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
- Pascal Eberhard <pascal.eberhard@se.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- "Bastien Curutchet (Schneider Electric)" <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908-decode_strace_indent-v1-1-28e5e4758080@kernel.org>
 
-KSZ8463 expects the SPI clock to be low on idle and samples data on
-rising edges. This fits SPI mode 0 (CPOL = 0 / CPHA = 0) but the SPI
-mode is set to 3 for all the switches supported by the driver. This
-can lead to invalid read/write on the SPI bus.
+On Mon, Sep 08, 2025 at 05:41:57PM +0200, Matthieu Baerts (NGI0) wrote:
+> Lines having a symbol to decode might not always have info after this
+> symbol. It means ${info_str} might not be set, but it will always be
+> printed after a space, causing trailing whitespaces.
+> 
+> That's a detail, but when the output is opened with an editor marking
+> these trailing whitespaces, that's a bit disturbing. It is easy to
+> remove them by printing this variable with a space only if it is set.
+> 
+> While at it, do the same with ${module} and print everything in one line.
+> 
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
-Set SPI mode to 0 for the KSZ8463.
-Leave SPI mode 3 as default for the other switches.
-
-Signed-off-by: Bastien Curutchet (Schneider Electric) <bastien.curutchet@bootlin.com>
-Fixes: 84c47bfc5b3b ("net: dsa: microchip: Add KSZ8463 switch support to KSZ DSA driver")
----
- drivers/net/dsa/microchip/ksz_spi.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/dsa/microchip/ksz_spi.c b/drivers/net/dsa/microchip/ksz_spi.c
-index d8001734b05741446fa78a1e88c2f82e894835ce..dcc0dbddf7b9d70fbfb31d4b260b80ca78a65975 100644
---- a/drivers/net/dsa/microchip/ksz_spi.c
-+++ b/drivers/net/dsa/microchip/ksz_spi.c
-@@ -139,6 +139,7 @@ static int ksz_spi_probe(struct spi_device *spi)
- 	const struct regmap_config *regmap_config;
- 	const struct ksz_chip_data *chip;
- 	struct device *ddev = &spi->dev;
-+	u32 spi_mode = SPI_MODE_3;
- 	struct regmap_config rc;
- 	struct ksz_device *dev;
- 	int i, ret = 0;
-@@ -155,8 +156,10 @@ static int ksz_spi_probe(struct spi_device *spi)
- 	dev->chip_id = chip->chip_id;
- 	if (chip->chip_id == KSZ88X3_CHIP_ID)
- 		regmap_config = ksz8863_regmap_config;
--	else if (chip->chip_id == KSZ8463_CHIP_ID)
-+	else if (chip->chip_id == KSZ8463_CHIP_ID) {
- 		regmap_config = ksz8463_regmap_config;
-+		spi_mode = SPI_MODE_0;
-+	}
- 	else if (chip->chip_id == KSZ8795_CHIP_ID ||
- 		 chip->chip_id == KSZ8794_CHIP_ID ||
- 		 chip->chip_id == KSZ8765_CHIP_ID)
-@@ -185,7 +188,7 @@ static int ksz_spi_probe(struct spi_device *spi)
- 		dev->pdata = spi->dev.platform_data;
- 
- 	/* setup spi */
--	spi->mode = SPI_MODE_3;
-+	spi->mode = spi_mode;
- 	ret = spi_setup(spi);
- 	if (ret)
- 		return ret;
-
----
-base-commit: c65e2aee8971eb9d4bc2b8edc3a3a62dc98f0410
-change-id: 20250910-fix-omap-spi-d7c64f2416df
-
-Best regards,
--- 
-Bastien Curutchet <bastien.curutchet@bootlin.com>
-
+Reviewed-by: Breno Leitao <leitao@debian.org>
 
