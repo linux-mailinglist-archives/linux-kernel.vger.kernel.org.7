@@ -1,195 +1,250 @@
-Return-Path: <linux-kernel+bounces-809390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F473B50D1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:23:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 399F8B50D1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17C121B2799D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:23:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E328A4E329B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A3F275AEB;
-	Wed, 10 Sep 2025 05:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912E827CCE2;
+	Wed, 10 Sep 2025 05:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ShhnhUE8"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2058.outbound.protection.outlook.com [40.107.236.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B5UxE4Gy"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A143C31D39F;
-	Wed, 10 Sep 2025 05:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757481794; cv=fail; b=Cl6VGGZUgYcCytxo8ZoeAta8ahJ/Nv6KU6vUUXXKnlQuXLOM6nGl+zVhSn/ytAeUmVWlnzlYfRPJcnCjX4KilJEK7pcJWUJTBGFMdw384ZuTPE0YObzlroshQz2EC5kK4xUskk1zYjWPxSADluun0jnionaaJwCNEzrR7EYV6d8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757481794; c=relaxed/simple;
-	bh=RIrSzzmzTrXTJ9Ujvzs6WC9eBl23CxiI1KRN5f3dicg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QxWjwE/B6uR2p04MHSpQ2Nk5zelxsesqzY6mfeeq5xitkHjubom3NdeQXTirUnR6GguO/DsBNv6sEwSgcUMS0ybdMzGoxM8fl3eoyKSKPgP3m9LDM2OHgUfqm7phf6QEOTHdDmzpNdYTdOFV2FZyBz8s4HLLR3qm5eaKdMv2aDs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ShhnhUE8; arc=fail smtp.client-ip=40.107.236.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dvKJKd5HkvSw5A2+E0WdUus9CIz53sE6rKY8hGz5NkATJfysHTD7HdtAOLlbdOGDW9ZyCE5PaSoIprIE6zhPMrIylV5C0UKSjlsAxKn69eJiESXmA+irr/Ts+0j/qfA14m9YtmTwzb9dkuvrbzffm1tmeFfmfFMkpxwrPjnLuYQKFIkGPeqLwVeI1qDBidH6zobsmiJKVBiW1pu/+3K+VV0DhBcZagybWV7rnqIjWMdV3A+qiShVbQ8RjxvmvtcS4zPtmYDcPiJbNHfYtL8BtAO9km2GC9MOd0uWKe101wZ9dVn5OlH6P3JkOnqAdiSZKH6XQU9z264udhqHQTCq1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OxMY3cqctP/ebaQP/tRkaJ7pR0Rfe8M3PVOLyTVh+/I=;
- b=CJWgb0j2bObHIDYGoUcgRaEf1UqSTU6/xf31B2SU1Nlr0hfMPYk0qadorCDtqvlifoJdbgT07Ul/kIy4TYxvAm33D/3Rrxsaz+ef6GeFU4E91BjCNvHhqSqPBOYgo3uODBL7xmtmEQqfk0/aumswFf7K0D6u2qFYMKnZTMozBzbnftXHZ5tYZF1OBuewS5j4i+XKTYCne9lNr369fQmA8Rh7OlCJaDby2UIQuZtLxOjjI578SnmuI+3Q0dSHAn1L2Mxo9A8Wp+T0l8JyVqUyj5YjmuSAYrdXOCt1Eb4uEGNFFPA2Z47WzBC9FHzIWT4aXnwzTKPqQTYTVP4OxjIVKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OxMY3cqctP/ebaQP/tRkaJ7pR0Rfe8M3PVOLyTVh+/I=;
- b=ShhnhUE84YBg/ZtgXi9zw1WHsRC9DL3StGtyBBVRoRVlzXPiYuy5GkpE1ofk2KyG9e76MPBYfEaszhed1DpaJiegeCR0Avew6Xz+LhHbOE6kz1JnPIQ+J5CyPVm1zPD0FhXIMkzGQBDwLgcEE5YQxH6pxqTd9BXGUNWsRxvLo9Q=
-Received: from MN0P220CA0029.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:52e::9)
- by IA0PR12MB8894.namprd12.prod.outlook.com (2603:10b6:208:483::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 05:23:09 +0000
-Received: from BN1PEPF0000468E.namprd05.prod.outlook.com
- (2603:10b6:208:52e:cafe::bd) by MN0P220CA0029.outlook.office365.com
- (2603:10b6:208:52e::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.22 via Frontend Transport; Wed,
- 10 Sep 2025 05:23:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BN1PEPF0000468E.mail.protection.outlook.com (10.167.243.139) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Wed, 10 Sep 2025 05:23:09 +0000
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 9 Sep
- 2025 22:22:55 -0700
-Received: from [10.85.34.232] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 9 Sep 2025 22:22:51 -0700
-Message-ID: <45b4a0db-dab6-4b9d-9ee8-f564eaa202bf@amd.com>
-Date: Wed, 10 Sep 2025 10:52:50 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408BD31D39F;
+	Wed, 10 Sep 2025 05:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757481850; cv=none; b=WniLmIzIL2h3Q60HZd5wIaTnoMqa991vdKKcBFdMisJYFdF5yFnRZ6riZx64Lv9NelP9onFT/bQj+NDqcHiIeAISROOVjWox+KnGSIQ2OPTEmisDlAJd7u2NDOzgABWUjgGYVwfzlVbqyhT8EeLiyv/JGJrAvKtQ0on3czg6Q0o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757481850; c=relaxed/simple;
+	bh=4VptlxtALKSeGPwHcSWmQZXyu6v8EKXiviUiiXDOKR4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iAV3mB/8618dcLyb8yn9PAJHa9pXiA8EHGJq15gep0cMJON2FFurl1quBJlYuOyGgsKAvD3Gy2+7J779YKh3YU/EGSjFh0uTF7pBUZXqNeBjaopZXoRsiF7ka6xQkyTFv+igbumJQCvJpKeVUXfX/BqyLVUAhCafgH26uOF2wtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B5UxE4Gy; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24456ce0b96so2978885ad.0;
+        Tue, 09 Sep 2025 22:24:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757481848; x=1758086648; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cftv6dbe1p8dhP2DYhCN2AZkHpit5y+1p22q3P/B8ik=;
+        b=B5UxE4GyWupM/uLm+2bPC+ptu6QY3wVNIjP+WQLDzpvcFam/8IxYNsYBz1z7Z9KE8I
+         nUw3zsD2+jSb58iOLUfzXF+toUjATWuHAgGLRNA3bp5/RGOvAMDxFrwrNauc3rnVYzyK
+         lb6KwNCPm6Ifm43Qh9iHSzi29GOqGMjHm76APcm7cHJIJqJa0vfzp4gcN9HGFkG8YtZT
+         cMeefU1FsWiGKqo5qn7C3l1d1z9gudzAIhFUjLGt7txhisYJf/tSKTCtHnBRVgIoPN4p
+         GHIrlrkUiNSKkVmbFTYF2nfdfUeoKlPW0i4lMptTPU5kNSlqvf7PizM/KpwqIwQlxGnI
+         tSPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757481848; x=1758086648;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cftv6dbe1p8dhP2DYhCN2AZkHpit5y+1p22q3P/B8ik=;
+        b=DXQHSdHTNCDLU8cIzj4lUdBfAfoXAkwE/xF6Rc9oy0xA6AuMdVNcY8XplHbW77ORR8
+         wcM8wKb/pyIVnUPDqrzpVBOS0+N/8fUZpLBuBkhTfW4H3uuM6ULYtZ8G0TJsiLRZbeRH
+         Gx8Hty9akQUPNXoXUFme9LyXr+vMWLL02Gv0LKwoynjzRhOCsNCiQsVxES9WlVX8xvVZ
+         RoLfr1JyvkooHTiSYUNrCfSqaTI/XFehVuvlUvy3MBAa8cmqUmys0ke7yX3Q/N/bd2SS
+         eaVG+5EsGIQq0fMIjJT9eGW6LSwH8azff949AH0r0GHYF2UvlGZGZrY3vWKMaSlWRAnt
+         +NkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKsMa9QSVsginvbBMRGyeWKsEUVQT6TO1rTG2ypMO4PZckNBQ2tYof/y4HMLl4b8jaaFYE00PWYFpLMPtG+uH+28OY@vger.kernel.org, AJvYcCUnEfQov6bq2rp/mlfeI4NrWKO0r4idRvPMiiLPPQ0edAJR2mZbeWYlXOhVksJoyy33ZIOLgEc9HYh4pfYiOjav@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXQ1ng1tsH9NjBXc4RQUYT7K0m3gGr9spuPj56xoCnWly8qnF3
+	Nug98hyZj+Bpkea0z6SGzUcGeYBbcd+1l/XA9hcaYzQG3mZpo7I3D1M6DnblUma2QRFkhQ==
+X-Gm-Gg: ASbGncuNDpeMpLBjOFK+D3O6zbvfX5r8kzeSX1v7glCMjC3Vp7eP9n7TDSaeDqQqj1P
+	XI37oLEm3AhRJBCihvsCbxn7dqsUilJoM77E1kSbqHmnaIxOSLC29gAUhDVTbxd8ShWgBeyhPzM
+	ATHpuKzpPqJE884a/Ndla2038wp9xqv9xBTSpkKhFD5SR4JauDDJg+ZDNRZW5KTK347jxIQcDlc
+	Q4Z7Tb5nTAB1yObJd2LpK0jyRiENHMVlSfWxkivg15+3qwd1aNgoYUcPFVuayhtAqvCOpfG0tR7
+	LhfvbXkk8cQpAKj3pBGNIkvKVqM9qyMv8etmvpJtwJmJCFvK2jPdBkz4J623iajjgHycwgpk1f9
+	aj7RgWpZQj24HaaMFRglDC/Py6axTe0n5Rw==
+X-Google-Smtp-Source: AGHT+IFuloiwaEGV/DNI2axiJL2dsg2gHw5eX6v8DVF0szm1gYxcXDzTuZF1jNHa7zPM4+MQqK3LqQ==
+X-Received: by 2002:a17:903:986:b0:240:417d:8166 with SMTP id d9443c01a7336-251788fd271mr178360345ad.19.1757481848399;
+        Tue, 09 Sep 2025 22:24:08 -0700 (PDT)
+Received: from localhost.localdomain ([2403:2c80:17::10:4007])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a27422ebcsm14815125ad.29.2025.09.09.22.23.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Sep 2025 22:24:07 -0700 (PDT)
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	"Naveen N . Rao" <naveen@kernel.org>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	kasan-dev@googlegroups.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Jinchao Wang <wangjinchao600@gmail.com>
+Subject: [PATCH v3 00/19] mm/ksw: Introduce real-time Kernel Stack Watch debugging tool
+Date: Wed, 10 Sep 2025 13:23:09 +0800
+Message-ID: <20250910052335.1151048-1-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch 07/12] rseq: Implement syscall entry work for time slice
- extensions
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-CC: Peter Zijlstra <peterz@infradead.org>, Mathieu Desnoyers
-	<mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Prakash
- Sangappa <prakash.sangappa@oracle.com>, Madadi Vineeth Reddy
-	<vineethr@linux.ibm.com>, Steven Rostedt <rostedt@goodmis.org>, Sebastian
- Andrzej Siewior <bigeasy@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-	<linux-arch@vger.kernel.org>
-References: <20250908225709.144709889@linutronix.de>
- <20250908225753.012514970@linutronix.de>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250908225753.012514970@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF0000468E:EE_|IA0PR12MB8894:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3930a424-150b-4981-b01b-08ddf02a212b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b0RRc0hoZHNXNTVjMkZ0bGFlRm04Qy85ckhLTER4OHkvWmRCNU1UMjhvM053?=
- =?utf-8?B?NzNaNEd1UytpalE3MC9pK1JtTEZ6VlNlTVFTRG9STUV2TWR6ZmpPRm1DTVdj?=
- =?utf-8?B?aXBvNUhyaElsSVNJWlZvZGNmMTZzR0xhYk1hc2ZRQVhZVnh0d2RkdVR0aTI2?=
- =?utf-8?B?V0dpelF0UXZFb2NMZDBOV08wWmNPbGFaQktyZlNFV2kzRVJHM2FmUzhEYXIz?=
- =?utf-8?B?REJ6QXhjcFlKUUx2VzlvMXFGc0EyTTZWK1AxTThmMVc2TkpkbHlpd3lOSVND?=
- =?utf-8?B?Mm8rb3V6WThrL2RlanlycHVodHR4dlJqL0hnTHJscGovQUxNOSs4dDBrNkMw?=
- =?utf-8?B?bVQzR0pFd1JTdWtOdFRWN2U5V0Fac3ZkTG5UZ0Y0UjZ2REpHT3JZMlJVaERu?=
- =?utf-8?B?TGNmQTgwL1gxRHl5UUVkT3g0QkxBeUZJaE9RaW1XalFUbzIrTzl6UnBwV25u?=
- =?utf-8?B?MEswR0JrU0Y4WlpNWU1KME1hWDZBNXg4cnpCS0NVRXBzdWRLWDJhcG1Td1pp?=
- =?utf-8?B?Ull0UUhUQzEycGpRVFE1WFplbDROY3FFclpQamc0Q1hDemVtOTUyNUZyOWJw?=
- =?utf-8?B?V1psdDczNG92a2VWSDlEQkJBWVBqYVJKSFhObUJ1K0I2REIvVDAxTmpjdkQy?=
- =?utf-8?B?ZkdXYU9EbGkySjBpNVdkWmcwUEZzSU9rYSs4dXZ2YlRuTmZZa0tKS20ra0N5?=
- =?utf-8?B?bXo5Uzc2RFBWb2d2b1hXc3RCaGRiZTlrcnJIM1VGdEJjeU9Ndms0akh0RUpQ?=
- =?utf-8?B?ai9xZ0JwcWZjNVFyaXFTNWxjSFB0eGtzdDdlV2JrK0srUWNtNUVaSk1yM0Yv?=
- =?utf-8?B?N294amRDc203UGRZM0wvY0JzMmtJV2FvL044M0hJMXkwRVVpdmEyYlpCMjRn?=
- =?utf-8?B?RkZ1QTc3bmRoZWpWYll2SmNGRzk3QloxUk1QYXVITTczQzV4L3RaNkV2aDQ4?=
- =?utf-8?B?T0pPSUFUeW5hWWt0cHNtb3YydzUyRmdEb2g4MnQ1SHJlaWhkeU4vQnR5Ym52?=
- =?utf-8?B?ZlVDZVRQQ2syNGYyVkdLNk5ZRFFtU3ludWR3bG1WdE5ZQ2poZGs3eGRwdHpa?=
- =?utf-8?B?eHJaZjJvNi8rOTE0N2dDWlVOYU04WWR1S3p0cU5odWNFWkczalhoc1JtNG5P?=
- =?utf-8?B?RE5jRUE5dnR6NnhtOWRuU3VHemY5NGh2b3JPQk9HTzQxYkl5QWQxeGJXdkkx?=
- =?utf-8?B?dFc1OERYWVhmUVVaV0dwMnFkd3VaUG9oa0NjVU9DWUYyYk1sTVdVOTFDcThh?=
- =?utf-8?B?WitWTlZ6ZHhtOWpMK0NWUldGNkFIRUFzbkJieU9DWGc4eG42UWEwTmZHVmpH?=
- =?utf-8?B?cFNtUWQ4YUZPU3RIV3hPNXByN1EyeEFlTkRBK0RUbTh4d2Fib0NsSWU4S1ZW?=
- =?utf-8?B?RlZCNWx1QytueU5vb1YreUxLZk95NVgzbzg4WTZJOXZvd2dsRE1odExWajVr?=
- =?utf-8?B?TGpTR3lIS1BTZlN4TnluZWJqTVNKMnFkTGZpSENYVFY0eDBjOFRRMEtxVkFl?=
- =?utf-8?B?WlBWa1ZuODdlR05WeHVFdzkrZFRqQkN1dmVZTktwSGgzcC9JS1lpV29KTk5C?=
- =?utf-8?B?VVBqSXVMWTM5N3Y2YWZxWjcxaVBNYkpBV016VCs3RWtFYmI5N0d6aFFtUzd1?=
- =?utf-8?B?ZnlLR3VGa2M3cW5zTXNEclFtUlcxbEVIeCtpaDZjek5BWm9MR2FyZjE1QlQx?=
- =?utf-8?B?UnVzdFZ3d3N1OU8wMmFZVkRMTk4rWmdOSHRKaytzQ1ZpS0pDTFpWekwwSXhR?=
- =?utf-8?B?V1p3WTJNY2Y5ZmJxRkpPQ2lPMm9qUkx0VlRYdEpUcDlCOENrS3ZBSmltaHVB?=
- =?utf-8?B?ak1xdDlGTU1qWFprQkZ1cFpHSWpBS0FIRy9TZnJPMjBRZDVpZ0FlbWdpYkdN?=
- =?utf-8?B?bWR0V0NlL2MrZUl0UDZ4cmFOdy9lcGJyKzdZL3BPekJSWGdERzBucVJ6VnhO?=
- =?utf-8?B?Uld1SENSSzdLdldON05zNlRvU0s5aFllM1JyZVZ5NFJoOHJyT25SK3VhaVl0?=
- =?utf-8?B?UVplYm5RWTdTdDg2U2haMEtLbXVlSWxtcnUwVS83MDFTTlVrK3lsdVBXNktm?=
- =?utf-8?Q?9Ai7Mo?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 05:23:09.1861
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3930a424-150b-4981-b01b-08ddf02a212b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF0000468E.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8894
+Content-Transfer-Encoding: 8bit
 
-Hello Thomas,
+This patch series introduces **KStackWatch**, a lightweight kernel debugging tool
+for detecting kernel stack corruption in real time.
 
-On 9/9/2025 4:30 AM, Thomas Gleixner wrote:
-> +static inline void rseq_slice_set_need_resched(struct task_struct *curr)
-> +{
-> +	/*
-> +	 * The interrupt guard is required to prevent inconsistent state in
-> +	 * this case:
-> +	 *
-> +	 * set_tsk_need_resched()
-> +	 * --> Interrupt
-> +	 *       wakeup()
-> +	 *        set_tsk_need_resched()
-> +	 *	  set_preempt_need_resched()
-> +	 *     schedule_on_return()
-> +	 *        clear_tsk_need_resched()
-> +	 *	  clear_preempt_need_resched()
-> +	 * set_preempt_need_resched()		<- Inconsistent state
-> +	 *
-> +	 * This is safe vs. a remote set of TIF_NEED_RESCHED because that
-> +	 * only sets the already set bit and does not create inconsistent
-> +	 * state.
-> +	 */
-> +	scoped_guard(irq)
-> +		set_need_resched_current();
+The motivation comes from scenarios where corruption occurs silently in one function
+but manifests later as a crash in another. Using KASAN may not reproduce the issue due
+to its heavy overhead. with no direct call trace linking the two. Such bugs are often
+extremely hard to debug with existing tools.
+I demonstrate this scenario in **test2 (silent corruption test)**.
 
-nit. any specific reason for using a scoped_guard() instead of just a
-guard() here (and in rseq_cancel_slice_extension_timer()) other than to
-prominently highlight what is being guarded?
+KStackWatch works by combining a hardware breakpoint with kprobe and fprobe.
+It can watch a stack canary or a selected local variable and detects the moment the
+corruption actually occurs. This allows developers to pinpoint the real source rather
+than only observing the final crash.
 
-> +}
+Key features include:
+
+  - Lightweight overhead with minimal impact on bug reproducibility
+  - Real-time detection of stack corruption
+  - Simple configuration through `/proc/kstackwatch`
+  - Support for recursive depth filter
+
+To validate the approach, the patch includes a test module and a test script.
+
+---
+Changelog
+
+V3:
+  Main changes:
+    * Use modify_wide_hw_breakpoint_local() (from Masami)
+    * Add atomic flag to restrict /proc/kstackwatch to a single opener
+    * Protect stack probe with an atomic PID flag
+    * Handle CPU hotplug for watchpoints
+    * Add preempt_disable/enable in ksw_watch_on_local_cpu()
+    * Introduce const struct ksw_config *ksw_get_config(void) and use it
+    * Switch to global watch_attr, remove struct watch_info
+    * Validate local_var_len in parser()
+    * Handle case when canary is not found
+    * Use dump_stack() instead of show_regs() to allow module build
+
+  Cleanups:
+    * Reduce logging and comments
+    * Format logs with KBUILD_MODNAME
+    * Remove unused headers
+
+  Documentation:
+    * Add new document
+
+V2:
+  https://lore.kernel.org/all/20250904002126.1514566-1-wangjinchao600@gmail.com/
+  * Make hardware breakpoint and stack operations architecture-independent.
+
+V1:
+  https://lore.kernel.org/all/20250828073311.1116593-1-wangjinchao600@gmail.com/
+  Core Implementation
+    *   Replaced kretprobe with fprobe for function exit hooking, as suggested
+        by Masami Hiramatsu
+    *   Introduced per-task depth logic to track recursion across scheduling
+    *   Removed the use of workqueue for a more efficient corruption check
+    *   Reordered patches for better logical flow
+    *   Simplified and improved commit messages throughout the series
+    *   Removed initial archcheck which should be improved later
+
+
+  Testing and Architecture
+
+    *   Replaced the multiple-thread test with silent corruption test
+    *   Split self-tests into a separate patch to improve clarity.
+
+  Maintenance
+    *   Added a new entry for KStackWatch to the MAINTAINERS file.
+
+RFC:
+  https://lore.kernel.org/lkml/20250818122720.434981-1-wangjinchao600@gmail.com/
+---
+
+The series is structured as follows:
+
+Jinchao Wang (18):
+  x86/hw_breakpoint: introduce arch_reinstall_hw_breakpoint() for atomic
+    context
+  mm/ksw: add build system support
+  mm/ksw: add ksw_config struct and parser
+  mm/ksw: add /proc/kstackwatch interface
+  mm/ksw: add HWBP pre-allocation
+  mm/ksw: add atomic watch on/off operations
+  mm/ksw: support CPU hotplug
+  mm/ksw: add probe management helpers
+  mm/ksw: resolve stack watch addr and len
+  mm/ksw: add recursive depth tracking
+  mm/ksw: manage start/stop of stack watching
+  mm/ksw: add self-debug helpers
+  mm/ksw: add test module
+  mm/ksw: add stack overflow test
+  mm/ksw: add silent corruption test case
+  mm/ksw: add recursive stack corruption test
+  tools/ksw: add test script
+  docs: add KStackWatch document
+
+Masami Hiramatsu (Google) (1):
+  HWBP: Add modify_wide_hw_breakpoint_local() API
+
+ Documentation/dev-tools/kstackwatch.rst |  94 ++++++++
+ MAINTAINERS                             |   7 +
+ arch/Kconfig                            |  10 +
+ arch/x86/Kconfig                        |   1 +
+ arch/x86/include/asm/hw_breakpoint.h    |   1 +
+ arch/x86/kernel/hw_breakpoint.c         |  50 +++++
+ include/linux/hw_breakpoint.h           |   6 +
+ kernel/events/hw_breakpoint.c           |  36 ++++
+ mm/Kconfig.debug                        |  21 ++
+ mm/Makefile                             |   1 +
+ mm/kstackwatch/Makefile                 |   8 +
+ mm/kstackwatch/kernel.c                 | 239 ++++++++++++++++++++
+ mm/kstackwatch/kstackwatch.h            |  53 +++++
+ mm/kstackwatch/stack.c                  | 276 ++++++++++++++++++++++++
+ mm/kstackwatch/test.c                   | 259 ++++++++++++++++++++++
+ mm/kstackwatch/watch.c                  | 205 ++++++++++++++++++
+ tools/kstackwatch/kstackwatch_test.sh   |  40 ++++
+ 17 files changed, 1307 insertions(+)
+ create mode 100644 Documentation/dev-tools/kstackwatch.rst
+ create mode 100644 mm/kstackwatch/Makefile
+ create mode 100644 mm/kstackwatch/kernel.c
+ create mode 100644 mm/kstackwatch/kstackwatch.h
+ create mode 100644 mm/kstackwatch/stack.c
+ create mode 100644 mm/kstackwatch/test.c
+ create mode 100644 mm/kstackwatch/watch.c
+ create mode 100755 tools/kstackwatch/kstackwatch_test.sh
 
 -- 
-Thanks and Regards,
-Prateek
+2.43.0
 
 
