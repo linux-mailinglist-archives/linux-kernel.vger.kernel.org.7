@@ -1,87 +1,164 @@
-Return-Path: <linux-kernel+bounces-809731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DA7B5114D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:31:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00FF0B51150
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89B31892CA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E50C1C804A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E1930FF31;
-	Wed, 10 Sep 2025 08:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4250309EEF;
+	Wed, 10 Sep 2025 08:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="mFyTMIbV"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMLu5Y9Z"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5673289E0B;
-	Wed, 10 Sep 2025 08:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7167E30F544;
+	Wed, 10 Sep 2025 08:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757493099; cv=none; b=sK8Z4aF6a04L1TLGqnrAJUoZCr4jK2BHg0Ghn1muQzC2hEKVvYq8J4UPOccxu3tVz4PdDerSqlAz9+tMgnxJH82QEwcH1wt4sM8Wo72JIJNdMthsh7Vm5lEB9cBgdTOD+vxy2Xwdir3YDGzp6tyguVayRaxhz/3zORXWkEtcZso=
+	t=1757493105; cv=none; b=dQ/NOycQydU1GMOD2Njk+oXcntXMr8FOefBnOsN6RvDt97lq8lEquaO5o6+HzfZjRN7MAeYeZ0uQgTVPLlBNkOCmexxx9rJeIBHS+Gd7ezk3ErS9O2j1Rw0sRZhe3zk08RXBaPp45KmbbZMECzbzqBGqlB3xOggVXisp5mIUSdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757493099; c=relaxed/simple;
-	bh=+9CyyhiBqsqEEkMgmiWTIUJkdrwkBNWrz2XsxrlGKzc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XyKxENajqL0wHaAsAGdpn8Us30sUV0tgWXNZD/843w7qfXmx3Hmv1RZPuLcZcZ0b2E3phDdjcePABtNWWBoT1y0rkl9qdcr7KMsvXeva2WWM24BwGqLRzkaIPxQObe8ymHkoHf9c7a6hcD5ICMkB0S7338wuefJ3A9Giyixbyzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=mFyTMIbV; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=nuTppplujsMKzus0pB3OrPfOinZEAxgSflrOcbgbuCM=;
-	t=1757493097; x=1758702697; b=mFyTMIbVMyhxCNv7de47LEAb3zRu6wf/RvBPrjrVQW8/ukH
-	x7Sbh1O4mN/AFGBihe4NKIuecaoZYqxlV1b2xx/E4aMwJ2VqzfKeZ6odxywLibLmEqhKAjA7lpC1d
-	+9XrqWxG/cEKAlD5XPLN/oDLt/KT+fXA3+R3YopjMLnC87U4FKTTPgCCYBc62TCAMnjIb/3jA/UrO
-	40AW5ZwxJskJ71gIbVYT+dWRrmoqba0QP7R9RiaUkNG3wCQpL7ZaMzqUcQwJ6eJI6Xcorkx+/GiAA
-	yRS8biyXUn2Bp6zW+2bBnTDDKkuaEjKCqIyaoaL9s0/VIg94KSPR1rGI5nvYiY2w==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uwGEo-0000000CSl9-2I6x;
-	Wed, 10 Sep 2025 10:31:34 +0200
-Message-ID: <285c7cd9935d5c245ad478c5692faa927bcda245.camel@sipsolutions.net>
-Subject: Re: IWL Error Log Dump since 6.17.0-rc5
-From: Johannes Berg <johannes@sipsolutions.net>
-To: David Wang <00107082@163.com>, miriam.rachel.korenblit@intel.com
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 10 Sep 2025 10:31:33 +0200
-In-Reply-To: <487c99e0.6ed4.19932979ca5.Coremail.00107082@163.com>
-References: <20250909165811.10729-1-00107082@163.com>
-	 <487c99e0.6ed4.19932979ca5.Coremail.00107082@163.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1757493105; c=relaxed/simple;
+	bh=YMeOTS2s5UrKb4GkderWVzhb5EkilUWg4YaxZ3sZMjo=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EGiMIT0GhEiQzqmJCGR8NWVwEjUYd7nG7WKejqJQOQBb0u26ytRtBfs7EBQyVK1odrmqnONoLPnEFce+Kq5g9YerG4yxOQPI+gETsoPUfKm7Uw6YX8eKaTyFz2aO7wgkjKm0TevmxYVCEpsawpg6vJs3YpT6QnJSg2ahTNQ+C3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mMLu5Y9Z; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3e4aeaa57b9so3572717f8f.1;
+        Wed, 10 Sep 2025 01:31:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757493102; x=1758097902; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=7+Vq3ysZS2lc4WhA67yDwpubRjl51dbZS1N3bA03ln0=;
+        b=mMLu5Y9Z+xIV9D6wXsHKyKeOSJhjqfKqg65wIsoDACdgp+Zz3gbYHFwCp7t/HpiqPx
+         rh2q7dCOaResaXyXtcE/4DMvOi+lo6CCfjbT7xuXCksdLVdshuOauv23Jzo8i0+6cAiq
+         BWGNEmCmdZX3NGyQkHgVoY9kNfKcoAexLdfxqFL9CG4GmQyeqYVkjgiPDS7vVH4E+pIz
+         +Z+BBdyEVmrz4QXTSLAs5aIieDUqJU06/n2Fs7MvDURs8INSmQsIV39NFqF21yfBCiQJ
+         Qlco7PRcVw42IiDZ9+TPBBQotkruzBSO3pjoK34PO6rbqY8S48sORgPxU5OmQiFm8s0V
+         dVrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757493102; x=1758097902;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7+Vq3ysZS2lc4WhA67yDwpubRjl51dbZS1N3bA03ln0=;
+        b=vl5BB7dVg14NRGycmqsB4itDxph6YNItq8+4buGCNjOchj3O0bACfPgMUXKFVOlZKK
+         NTn/Sg0b133MX0x6iUbEFVeWQrTvgzhp/Jl20rPRflfGWvPgaMfB51hIA9ZzDv8j5Thn
+         p0PWaXOB+DGsETqP5zm4eLbGQ5k5I/NI7aJz46ohGJpPafbxfU6sM2bmvZVAUJA2RGIF
+         8hXMjqBwvLubOORO8EPzKRmKlAswrndfSqjee511fmJi33HRkvXgtREMRLrMpMERirvi
+         kLONLwrbbC7HkqkUOd99P+2Bo/8j4Tq5O7ItDJpwvE3aXyYsEv+fUdkd03qvvfc1d8Pf
+         ZXGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWNdMs3enasyWcFVRkfFkbgGGKls/bjr2Kaz6qnJrNX21y8FlGz4FUDsp83qwBHc2oROPvXciBqI2+@vger.kernel.org, AJvYcCWqrKsevEG1g2LBdqiv5EdMgA7wr+B8lepcNdC+c9922WkgCQJJHYttP05752Hik4n9wjy6ROJm@vger.kernel.org, AJvYcCXnkYK9GEqoLDw9vE1FiI/htUUw+3VB8Um0kPatlegG8P6i6Tp6OEljw1bur74a6ZgWh7isCOQ1TWT3BQJX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRjrH8SOTNUq18dpqvl2ZsV41qiPz0aWWM7Eu3j+eYmIzb5A7r
+	fqduaQUqRMlF6msan1619B7wPt2ffBQtV0yI3ENykxynyOmL6M84t3MX
+X-Gm-Gg: ASbGnctF3ZucoMhQCC+cKQzRkHvAREKoENUUBlb1nRqvg2XJ4vYH62aifUOd1nsiM5I
+	MElK8FHhuzOoSRgFghncDBxWJTElWHoRXYSTllrRWw6tdOyKxhtr8p8CDUnfTokb0yu9Zg5Gcn0
+	sAjPajrRDnpqGq2sVNDEvQwayNrLN0XCmFnyCamZAdMlND5kMiXD46e9WDC4NvnHQUuYZt6ovIa
+	qpErz0Jt5y0+pUthTPyGmMjPIlfVQicKvzQfu6zaNJBhcjtH1ObRrf4KBHauN7mQ7yztAvuntQ0
+	p5ZPnIGSq6BEDCl/cdRRT2sS9XMVL2FHwaKRkTVrB811FFQObue3VIht73bhnpQma5ngv2ir4aI
+	DT2mDXlI7rnzvsQy1yn0D8pg8GR+qz+1eiQcm2b9ZsidYZl2RoafRf5wWhVqH5/muwbGGUA==
+X-Google-Smtp-Source: AGHT+IGx/xbJUIH4+beV7q9PMqx0glsggALR4qg5rZZAhjCkYIwZFcTKRYd4C8GT0jF1ei0YocGGkA==
+X-Received: by 2002:a05:6000:2f87:b0:3d7:df92:5e31 with SMTP id ffacd0b85a97d-3e641e3b09amr13400380f8f.16.1757493101468;
+        Wed, 10 Sep 2025 01:31:41 -0700 (PDT)
+Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7521ca2aesm6060026f8f.26.2025.09.10.01.31.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 01:31:41 -0700 (PDT)
+Message-ID: <68c1376d.050a0220.2085dc.675b@mx.google.com>
+X-Google-Original-Message-ID: <aME3Z0CacqPJNZT8@Ansuel-XPS.>
+Date: Wed, 10 Sep 2025 10:31:35 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Chester A. Unal" <chester.a.unal@arinc9.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>, Simon Horman <horms@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH v16 10/10] net: dsa: tag_mtk: add comments about
+ Airoha usage of this TAG
+References: <20250909004343.18790-1-ansuelsmth@gmail.com>
+ <20250909004343.18790-1-ansuelsmth@gmail.com>
+ <20250909004343.18790-11-ansuelsmth@gmail.com>
+ <20250909004343.18790-11-ansuelsmth@gmail.com>
+ <20250910082017.hjlq3664xvg5qjub@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910082017.hjlq3664xvg5qjub@skbuf>
 
-On Wed, 2025-09-10 at 15:47 +0800, David Wang wrote:
-> Hi,=20
->=20
-> I think those error dump is introduced by commit 586e3cb33ba6890054b95aa0=
-ade0a165890efabd("wifi: iwlwifi: fix byte count table for old devices")
->=20
-> My wireless pcie card has device_family 15 which is less than IWL_DEVICE_=
-FAMILY_9000, and the changes in the commit have changed the behavior for my=
- devices.
->=20
-> -       if (trans->mac_cfg->device_family < IWL_DEVICE_FAMILY_AX210)
-> +       if (trans->mac_cfg->device_family >=3D IWL_DEVICE_FAMILY_9000 &&
-> +           trans->mac_cfg->device_family < IWL_DEVICE_FAMILY_AX210)
->                 len =3D DIV_ROUND_UP(len, 4);
+On Wed, Sep 10, 2025 at 11:20:17AM +0300, Vladimir Oltean wrote:
+> On Tue, Sep 09, 2025 at 02:43:41AM +0200, Christian Marangi wrote:
+> > Add comments about difference between Airoha AN8855 and Mediatek tag
+> > bitmap.
+> > 
+> > Airoha AN88555 doesn't support controlling SA learning and Leaky VLAN
+> 
+> Is there an extra 5 in AN88555?
+> 
+> > from tag. Although these bits are not used (and even not defined for
+> > Leaky VLAN), it's worth to add comments for these difference to prevent
+> > any kind of regression in the future if ever these bits will be used.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  net/dsa/tag_mtk.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/net/dsa/tag_mtk.c b/net/dsa/tag_mtk.c
+> > index b670e3c53e91..ac3f956abe39 100644
+> > --- a/net/dsa/tag_mtk.c
+> > +++ b/net/dsa/tag_mtk.c
+> > @@ -18,6 +18,9 @@
+> >  #define MTK_HDR_XMIT_TAGGED_TPID_88A8	2
+> >  #define MTK_HDR_RECV_SOURCE_PORT_MASK	GENMASK(2, 0)
+> >  #define MTK_HDR_XMIT_DP_BIT_MASK	GENMASK(5, 0)
+> > +/* AN8855 doesn't support SA_DIS and Leaky VLAN
+> > + * control in tag as these bits doesn't exist.
+> > + */
+> 
+> I think it would be good to present the AN8855 tag using a different
+> string, so that libpcap knows it shouldn't decode these bits. The code
+> can be reused for now.
+>
 
-I think I just got confused, and that 9000 should be 7000. Presumably
-that'd work for you, I'll send a patch.
+Do you think I can implement 2 tagger in the same driver or do I need to
+make a library of this driver? Just asking what is the correct way to
+generalize it.
 
-johannes
+> >  #define MTK_HDR_XMIT_SA_DIS		BIT(6)
+> >  
+> >  static struct sk_buff *mtk_tag_xmit(struct sk_buff *skb,
+> > -- 
+> > 2.51.0
+> > 
+> 
+
+-- 
+	Ansuel
 
