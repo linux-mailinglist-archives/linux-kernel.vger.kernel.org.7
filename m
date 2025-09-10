@@ -1,270 +1,139 @@
-Return-Path: <linux-kernel+bounces-811137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AB8B524D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:57:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB4A6B524CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5FD1A05321
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:57:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297E91C22069
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBF52F28E3;
-	Wed, 10 Sep 2025 23:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFD6278E71;
+	Wed, 10 Sep 2025 23:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M1Db7Ecp"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2mCtkSek"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C20283CB5
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CE9268C73
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757548664; cv=none; b=Y0iJjSk/ITBjZsrB5rL8bFT4gtcqQHX33COz81kIs5JpOaxr3pehED9TQf8d+99AnnvNc+C2xtMrPVuyvHv48TFsqpMl9l2JIUML9ph5eMNbm8kl003xACjXpCOc6MtYSWDeLHlUUOy3SfBzaccxBk/2YFdA6oHlduXYdefckiI=
+	t=1757548335; cv=none; b=Am1di1iKf30fWJuQp0DZZTOT2mt/BnEi5CZowAJ5OF81xF7nKaEQsYEKUEGMdjL2cPCp+xG+fmqcfGfOLv/JaWumJuYfv3UB+OyDJH46si8OntJC0C5IgriDWMRnzK/4MEe+YV3I3+vYWKcHKTkh5cN5HWODeaX+FPbapmcstDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757548664; c=relaxed/simple;
-	bh=RAKRMgWwtIaRTYCDXz6ui8zqoTkb0gxlZp+dl5xc8KY=;
+	s=arc-20240116; t=1757548335; c=relaxed/simple;
+	bh=tVUpNQOROq9+jlSa8LLGRdwgNWfNk74taL5qHGVt9Xg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=agtg75pIJ7aTyJejDWXfB9XMXJFQ/2KTvhB7SzCwPs4hIZW6FUF+mz0EQyIpL66ID1mhGwZgkWgEtVA5NDZ/aCt08icmahR6YBrkweQg+mD3qL7cuPsBs13NcXq+2W3nIaXsUoFg0Xa9MPbbv41W83sriItYGfZ6rUwwj0GC6Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M1Db7Ecp; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=q6zXtvlCCnI7GhseLSHSAxaOu7lGiCI7NrK4P6NDNPM4qQF99T7OWUWT7jj0lv5nGVfx8oNTIgKtBG7EryJW2AGxgTeBnjFB02D2KrtRsksJ/iB+ePtaH7qcRtqonIk4JUFTa/qdVI2OZcI+jvMPEJnDIssYI8sIm0U/bUjdHag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2mCtkSek; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24c8264a137so1012175ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:57:42 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2445806b18aso954325ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:52:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757548662; x=1758153462; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757548333; x=1758153133; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bGwQF+CXl3vYtzdP9mbgCIJA/DkcNggZlxUnpS7TgbA=;
-        b=M1Db7EcpaaIkYOjJIVF+s64nO1jNRkqQiK2umCay2BTkC/lSZG9V5A2vOGCgKx0Kd6
-         nQ8a7FhQj/c7E0r7Pgz51N/hbGmT/PszNhWILamLr+hKzATW4zCQRrWfQvzwsUQiw2lA
-         HQ+EhKGXJojrYCOt+SAAPefpN+3tZFWdz27YfXVOsbKaGFS2dY0ss+9HWvtWVDULzW+F
-         k7v/pKw2AQcVwiQdQsroepeIWxZeJAGKWao+R3qCNoamNFbe5EaPYvDEsCnMuKTltl3l
-         APlQFzpmU6oGlY4OmN65X2CUO0Kk42B/LZfxBlYYiGecvAbnpSskINnEackTr1Hz1ZpQ
-         F++w==
+        bh=3rAHhmeH8sJTP78PdX0dK4yvZeVt6rR4NVHVr4IfA9M=;
+        b=2mCtkSekZ89YjIRXyhPbBeHL9DGPAgDTiN4NTKVvVrwiKBJWoaXd+ZiUS8Yc1bqdbq
+         9QiLkWBT/bEF6NA7Trv95G6uAK+xzBt2GX0GkLxE6JwYvsqdUwCaIXxb/Gc8AR7rbze0
+         3dJG80NhUW1ghWntGY+REVvdV2D6tx5tB4AD0lnmNFrfYKaAT9cZqiS0F6Rq+QmJ+kxJ
+         HuRZ3CZUu20IZLQ5fVFQ8N4QarhMIKi2OaCUgE83fv8PNwnUCJkyT+gXAxbj7EI6gCp1
+         m7Is8vo3XmwF40XIEptGncGODkM5IPZzwHy7acas7XxX92OEBcIHLvpxRFQVEs5nUXV8
+         MXmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757548662; x=1758153462;
+        d=1e100.net; s=20230601; t=1757548333; x=1758153133;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bGwQF+CXl3vYtzdP9mbgCIJA/DkcNggZlxUnpS7TgbA=;
-        b=Npwj65Z0A64frGKDyUN9XLw7r5SRB1hjRIFHjenLby7y0UJ+ekhtySHeCwRIGMeSUh
-         5KcNZg6aC1YBQYASpRakPJsa7kRmplM0WhKKWnl4quX7lD7H7gFyxxpGssYgir1yplWB
-         TNwr7xVgJ2/DAgKZB97MyeomSasgNMF/ilWUbmzqOdZc+eMOkAyN3BvI/YuYhNIQDUJt
-         WzXEQDfdqE1vj99WYDF4XHTXlG5EiQMfgjeVtMZbsOIoPgWEW2S9b/OZZ88kt+F/1t24
-         aUp3ftAwP6xFZk+d6cnXb2IDV+ye6Td232ed7khCRnDwktJznVTS/D+s8R0C16+MyxLq
-         zqVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmjZ1X44SHseNRzyqG+OUSAXEoP0xU2vLWDB6HavCpgqJMClHa7vtyBT2CNQTLQtQ1Mr+NAx75euhhw7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwREWUZN/9AItBANpxZjzX2J1gw93DEGeQ0vdH+DSib83QksU+W
-	AsjMpDZfbhhb3yk7sEfqfoKc9gxUEXT/ot7rTJT+FvO2agNZxwGh7OfuoXGNYI+Kc81D3orZD6Q
-	ssyLWk+5QqVbSOA==
-X-Google-Smtp-Source: AGHT+IFgMc9+BRlDZ/xcmHEhHQ3WZP/Hvgh8+t59rNiHJPd+WEnbMa1Kj1RSd0TLn33KhEA3jAl11A/Teaqamg==
-X-Received: from pljf9.prod.google.com ([2002:a17:902:ff09:b0:24c:b6ae:fcb0])
- (user=kinseyho job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:3d05:b0:24c:a417:4490 with SMTP id d9443c01a7336-2516ce60006mr244218345ad.5.1757548661978;
- Wed, 10 Sep 2025 16:57:41 -0700 (PDT)
-Date: Wed, 10 Sep 2025 16:51:21 -0700
-In-Reply-To: <20250910235121.2544928-1-kinseyho@google.com>
+        bh=3rAHhmeH8sJTP78PdX0dK4yvZeVt6rR4NVHVr4IfA9M=;
+        b=AwqXOlWZatfGG3XQ7VV09RuK3ZEmfUP7lF7+1B0y+64YI5DRquCTowfeX/bXhqTc69
+         gOTEkjKLQbNkwPqk6/F3FajuqyHkIcFfGNcig7W2B3y9KjKFwW8ISbVwkalQyn1b0JaC
+         VviAHYRQenwuh+QDR3dbibbtHRQ80zHTnYz0YPV2l2XDEifChmmaKYuIuSrqGZGT1PKL
+         Nlpk9flJOB6RT4AmtaIgpypzm1r2xz8Usmv1h3VOfW14n+a612HUMOTlErVf3UTtZXID
+         fb/eIfL9t4/wrUDhU1uQcC5kew3dFI0MO0Hxp2G89dRuDOZHLVKfjagSOJ98Gngly43J
+         7LMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvS5Bv2hOmde8hrHtCjvwt4rV/OOAeYPtLAr1zv1N8xWMrFt3EMONvseUPcoCgomOtfWmb8MuTKmtRnU8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3MhIVtNUUPK7v3rAOxfMx5sxTw7BiD46HXZJhV78F/B1+kE6a
+	cp3eYZOLoF6KI1dFjMjvfxPyyHt4ADa7IlJoeoeIOcFnZR31vGZEId+bRTnN+Psj1EyHFDGcKKH
+	RPXEBsQ==
+X-Google-Smtp-Source: AGHT+IFA3ruNLr+sT0ree4DZgAhIHgbm/pxlct4LCBwnUU2QphoTyCXP+uQnYftz53uytoX5q83Ncq51mIQ=
+X-Received: from pjbso4.prod.google.com ([2002:a17:90b:1f84:b0:32b:97a3:490b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ce82:b0:256:3dfa:1c98
+ with SMTP id d9443c01a7336-2563dfa1e6cmr166065135ad.11.1757548333161; Wed, 10
+ Sep 2025 16:52:13 -0700 (PDT)
+Date: Wed, 10 Sep 2025 16:52:11 -0700
+In-Reply-To: <20250718001905.196989-6-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250910235121.2544928-1-kinseyho@google.com>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250910235121.2544928-3-kinseyho@google.com>
-Subject: [RFC PATCH v2 2/2] mm: klruscand: use mglru scanning for page promotion
-From: Kinsey Ho <kinseyho@google.com>
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Jonathan.Cameron@huawei.com, dave.hansen@intel.com, gourry@gourry.net, 
-	hannes@cmpxchg.org, mgorman@techsingularity.net, mingo@redhat.com, 
-	peterz@infradead.org, raghavendra.kt@amd.com, riel@surriel.com, 
-	rientjes@google.com, sj@kernel.org, weixugc@google.com, willy@infradead.org, 
-	ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net, 
-	nifan.cxl@gmail.com, xuezhengchu@huawei.com, yiannis@zptcorp.com, 
-	akpm@linux-foundation.org, david@redhat.com, byungchul@sk.com, 
-	kinseyho@google.com, joshua.hahnjy@gmail.com, yuanchu@google.com, 
-	balbirs@nvidia.com, alok.rathore@samsung.com, lorenzo.stoakes@oracle.com, 
-	axelrasmussen@google.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
-	zhengqi.arch@bytedance.com, shakeel.butt@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+References: <20250718001905.196989-1-dapeng1.mi@linux.intel.com> <20250718001905.196989-6-dapeng1.mi@linux.intel.com>
+Message-ID: <aMIPK6ZeTi3_iLzc@google.com>
+Subject: Re: [PATCH v2 5/5] KVM: selftests: Relax branches event count check
+ for event_filter test
+From: Sean Christopherson <seanjc@google.com>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>, 
+	Zide Chen <zide.chen@intel.com>, Das Sandipan <Sandipan.Das@amd.com>, 
+	Shukla Manali <Manali.Shukla@amd.com>, Yi Lai <yi1.lai@intel.com>, 
+	Dapeng Mi <dapeng1.mi@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Introduce a new kernel daemon, klruscand, that periodically invokes the
-MGLRU page table walk. It leverages the new callbacks to gather access
-information and forwards it to the kpromoted daemon for promotion
-decisions.
+On Fri, Jul 18, 2025, Dapeng Mi wrote:
+> As the branches event overcount issue on Atom platforms, once there are
+> VM-Exits triggered (external interrupts) in the guest loop, the measured
+> branch event count could be larger than NUM_BRANCHES, this would lead to
+> the pmu_event_filter_test print warning to info the measured branches
+> event count is mismatched with expected number (NUM_BRANCHES).
+> 
+> To eliminate this warning, relax the branches event count check on the
+> Atom platform which have the branches event overcount issue.
+> 
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> Tested-by: Yi Lai <yi1.lai@intel.com>
+> ---
 
-This benefits from reusing the existing MGLRU page table walk
-infrastructure, which is optimized with features such as hierarchical
-scanning and bloom filters to reduce CPU overhead.
+This can be squashed with the previous patch, "workaround errata" is a single
+logical change as far as I'm concerned.
 
-As an additional optimization to be added in the future, we can tune
-the scan intervals for each memcg.
+>  tools/testing/selftests/kvm/x86/pmu_event_filter_test.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/x86/pmu_event_filter_test.c b/tools/testing/selftests/kvm/x86/pmu_event_filter_test.c
+> index c15513cd74d1..9c1a92f05786 100644
+> --- a/tools/testing/selftests/kvm/x86/pmu_event_filter_test.c
+> +++ b/tools/testing/selftests/kvm/x86/pmu_event_filter_test.c
+> @@ -60,6 +60,8 @@ struct {
+>  	uint64_t instructions_retired;
+>  } pmc_results;
+>  
+> +static uint8_t inst_overcount_flags;
+> +
+>  /*
+>   * If we encounter a #GP during the guest PMU sanity check, then the guest
+>   * PMU is not functional. Inform the hypervisor via GUEST_SYNC(0).
+> @@ -214,8 +216,10 @@ static void remove_event(struct __kvm_pmu_event_filter *f, uint64_t event)
+>  do {											\
+>  	uint64_t br = pmc_results.branches_retired;					\
+>  	uint64_t ir = pmc_results.instructions_retired;					\
+> +	bool br_matched = inst_overcount_flags & BR_RETIRED_OVERCOUNT ?			\
+> +			  br >= NUM_BRANCHES : br == NUM_BRANCHES;			\
+>  											\
+> -	if (br && br != NUM_BRANCHES)							\
+> +	if (br && !br_matched)								\
+>  		pr_info("%s: Branch instructions retired = %lu (expected %u)\n",	\
+>  			__func__, br, NUM_BRANCHES);					\
+>  	TEST_ASSERT(br, "%s: Branch instructions retired = %lu (expected > 0)",		\
+> @@ -850,6 +854,9 @@ int main(int argc, char *argv[])
+>  	if (use_amd_pmu())
+>  		test_amd_deny_list(vcpu);
+>  
+> +	if (use_intel_pmu())
 
-Signed-off-by: Kinsey Ho <kinseyho@google.com>
-Signed-off-by: Yuanchu Xie <yuanchu@google.com>
----
- mm/Kconfig     |   8 ++++
- mm/Makefile    |   1 +
- mm/klruscand.c | 118 +++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 127 insertions(+)
- create mode 100644 mm/klruscand.c
-
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 8b236eb874cf..6d53c1208729 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1393,6 +1393,14 @@ config PGHOT
- 	  by various sources. Asynchronous promotion is done by per-node
- 	  kernel threads.
- 
-+config KLRUSCAND
-+	bool "Kernel lower tier access scan daemon"
-+	default y
-+	depends on PGHOT && LRU_GEN_WALKS_MMU
-+	help
-+	  Scan for accesses from lower tiers by invoking MGLRU to perform
-+	  page table walks.
-+
- source "mm/damon/Kconfig"
- 
- endmenu
-diff --git a/mm/Makefile b/mm/Makefile
-index ecdd5241bea8..05a96ec35aa3 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -148,3 +148,4 @@ obj-$(CONFIG_EXECMEM) += execmem.o
- obj-$(CONFIG_TMPFS_QUOTA) += shmem_quota.o
- obj-$(CONFIG_PT_RECLAIM) += pt_reclaim.o
- obj-$(CONFIG_PGHOT) += pghot.o
-+obj-$(CONFIG_KLRUSCAND) += klruscand.o
-diff --git a/mm/klruscand.c b/mm/klruscand.c
-new file mode 100644
-index 000000000000..1ee2ac906771
---- /dev/null
-+++ b/mm/klruscand.c
-@@ -0,0 +1,118 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <linux/memcontrol.h>
-+#include <linux/kthread.h>
-+#include <linux/module.h>
-+#include <linux/vmalloc.h>
-+#include <linux/random.h>
-+#include <linux/migrate.h>
-+#include <linux/mm_inline.h>
-+#include <linux/slab.h>
-+#include <linux/sched/clock.h>
-+#include <linux/memory-tiers.h>
-+#include <linux/sched/mm.h>
-+#include <linux/sched.h>
-+#include <linux/pghot.h>
-+
-+#include "internal.h"
-+
-+#define KLRUSCAND_INTERVAL 2000
-+#define BATCH_SIZE (2 << 16)
-+
-+static struct task_struct *scan_thread;
-+static unsigned long pfn_batch[BATCH_SIZE];
-+static int batch_index;
-+
-+static void flush_cb(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < batch_index; i++) {
-+		unsigned long pfn = pfn_batch[i];
-+
-+		pghot_record_access(pfn, NUMA_NO_NODE,
-+					PGHOT_PGTABLE_SCAN, jiffies);
-+
-+		if (i % 16 == 0)
-+			cond_resched();
-+	}
-+	batch_index = 0;
-+}
-+
-+static bool accessed_cb(unsigned long pfn)
-+{
-+	WARN_ON_ONCE(batch_index == BATCH_SIZE);
-+
-+	if (batch_index < BATCH_SIZE)
-+		pfn_batch[batch_index++] = pfn;
-+
-+	return batch_index == BATCH_SIZE;
-+}
-+
-+static int klruscand_run(void *unused)
-+{
-+	struct lru_gen_mm_walk *walk;
-+
-+	walk = kzalloc(sizeof(*walk),
-+		       __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN);
-+	if (!walk)
-+		return -ENOMEM;
-+
-+	while (!kthread_should_stop()) {
-+		unsigned long next_wake_time;
-+		long sleep_time;
-+		struct mem_cgroup *memcg;
-+		int flags;
-+		int nid;
-+
-+		next_wake_time = jiffies + msecs_to_jiffies(KLRUSCAND_INTERVAL);
-+
-+		for_each_node_state(nid, N_MEMORY) {
-+			pg_data_t *pgdat = NODE_DATA(nid);
-+			struct reclaim_state rs = { 0 };
-+
-+			if (node_is_toptier(nid))
-+				continue;
-+
-+			rs.mm_walk = walk;
-+			set_task_reclaim_state(current, &rs);
-+			flags = memalloc_noreclaim_save();
-+
-+			memcg = mem_cgroup_iter(NULL, NULL, NULL);
-+			do {
-+				struct lruvec *lruvec =
-+					mem_cgroup_lruvec(memcg, pgdat);
-+				unsigned long max_seq =
-+					READ_ONCE((lruvec)->lrugen.max_seq);
-+
-+				lru_gen_scan_lruvec(lruvec, max_seq, accessed_cb, flush_cb);
-+				cond_resched();
-+			} while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)));
-+
-+			memalloc_noreclaim_restore(flags);
-+			set_task_reclaim_state(current, NULL);
-+			memset(walk, 0, sizeof(*walk));
-+		}
-+
-+		sleep_time = next_wake_time - jiffies;
-+		if (sleep_time > 0 && sleep_time != MAX_SCHEDULE_TIMEOUT)
-+			schedule_timeout_idle(sleep_time);
-+	}
-+	kfree(walk);
-+	return 0;
-+}
-+
-+static int __init klruscand_init(void)
-+{
-+	struct task_struct *task;
-+
-+	task = kthread_run(klruscand_run, NULL, "klruscand");
-+
-+	if (IS_ERR(task)) {
-+		pr_err("Failed to create klruscand kthread\n");
-+		return PTR_ERR(task);
-+	}
-+
-+	scan_thread = task;
-+	return 0;
-+}
-+module_init(klruscand_init);
--- 
-2.51.0.384.g4c02a37b29-goog
-
+Checking for an Intel CPU should be done by the library.
 
