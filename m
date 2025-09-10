@@ -1,307 +1,202 @@
-Return-Path: <linux-kernel+bounces-810767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E365B51F1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6976EB51F22
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25A3144385B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:38:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 256B1445662
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273F132F769;
-	Wed, 10 Sep 2025 17:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47F2335BD0;
+	Wed, 10 Sep 2025 17:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vLW/YJpD"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2057.outbound.protection.outlook.com [40.107.93.57])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TrgE+i+o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724B025B1C7;
-	Wed, 10 Sep 2025 17:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757525932; cv=fail; b=IKYdoByHAch5X4SeEhekQ66B8aZhtIDgVDGmspGp+PE3bQcqbRG03COT6nhSZDEd6op+EUlLHkKdWvXjaSImzDep/l5n3EK2G2tIoMMlTR++/MOBHlqzEVuiQP72bz9pq+kgCNwrm7kQvhj2PSYeLwbLiHWMtY/Y/gVJhtGAbuA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757525932; c=relaxed/simple;
-	bh=ePkk1nYZrVlqYbkB6HHZNHKuIOh1m/EnIXYPsO6FjbM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=L9KL+wBFLSsBrUXZD9DNlxUMPKkE66T9Majky1pazoprsiANq1oIxYcdN2NIb4jECIEHZIH+S6VKoN9KaleXaBl9JCY0cQz0b0wDpUp5FUKQuWRI6R/wHvMEZg4LXhUbNKkYlUVZ7NwntBkWVqImY+BTkH8Da1kS06HjKjE3+x4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vLW/YJpD; arc=fail smtp.client-ip=40.107.93.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=parHGsLchiQ1eTo7QYgdP6qIR1Fa13zVRbSHn2fQKT60YCx50aiK9rOJSjIu/KWX6tEz6tjfGSJZU0hy6ABgpeFu9/rwE6Y02GOWYtS974n3bv1GQTzc5jkV+LRJm4+mmll4L7+VEwxEssK0cu1QMIfsDDnGhsM98murvMMHK5t1ybatOj8dPCQS9U1EE1v1ijn5iTezBwLnjZWIx5L54QHSXzpHQn/H2yqWhoR13AiobfsTDj4pOgxezFMS2cgg+Px3C7M6oSDnzFfb5ZK+X/bUkaqAkC67sZlp16kBCAxz6mYb4yd9BcxXGe+L3TK3atP+rGGpULttFUeB2IbXrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c9hZIgcKrAwOu5wN/bV7p/mi6kXrLG4M/GOB/YxoJMQ=;
- b=vVLQNQmT6QezECm7mEbbO3BwugVGXcxykVfGHv3PrVKqIvtjC2OTJIjXEvCalsxstyqeZQeMB+YnZ0L6vNhwPwo8uXRFqyXsDpClQL9uLMLgvFuvNltNjoimvc5VpvH4eo9NZ2G6Tt3VTzkB0bPAzS/r/1LIVLnsWl1ROLYnuGai26uyN6eRUPYwnLND2PhqXdhcxFW0Fr4HqTZykLVCejK1zGNFQOCbvg2ZnakMDf/fCNuaQhPo2id6nFwQ2QY1RjQvSeojdQBwPjDF7B4FJ1MvpXhHcgn4OGiNJXYRlDK8vABc8HTFxDCHjKcrtOMtviL2Iysp8eiIqdVGIVpAFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c9hZIgcKrAwOu5wN/bV7p/mi6kXrLG4M/GOB/YxoJMQ=;
- b=vLW/YJpDiWnbhSqOXVIEBHbkz47yuexNANiqT+ao5xxLjudc2nDfSMSpMcJlBZGVK/GUc9e8MeUC45OlZNZz7iEpL3aRit9HxgrKBRB6m3UL38Kybs8HZocuJSFexMeexGFHHX3zJqKpP4TqNVm4BDmanifjhapE1W2xKifRGHE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH0PR12MB5388.namprd12.prod.outlook.com (2603:10b6:610:d7::15)
- by DS0PR12MB7947.namprd12.prod.outlook.com (2603:10b6:8:150::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 17:38:47 +0000
-Received: from CH0PR12MB5388.namprd12.prod.outlook.com
- ([fe80::a363:f18a:cdd1:9607]) by CH0PR12MB5388.namprd12.prod.outlook.com
- ([fe80::a363:f18a:cdd1:9607%5]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
- 17:38:46 +0000
-Message-ID: <ba326dbd-5216-4294-b645-c4ff2a2f6578@amd.com>
-Date: Wed, 10 Sep 2025 12:38:44 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] EDAC/mc_sysfs: Begin deprecating legacy sysfs EDAC
- interface
-To: Yazen Ghannam <yazen.ghannam@amd.com>, Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-edac@vger.kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org
-References: <20250909185748.1621098-1-avadhut.naik@amd.com>
- <20250909185748.1621098-6-avadhut.naik@amd.com>
- <20250910152427.GH11602@yaz-khff2.amd.com>
-Content-Language: en-US
-From: "Naik, Avadhut" <avadnaik@amd.com>
-In-Reply-To: <20250910152427.GH11602@yaz-khff2.amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR03CA0008.namprd03.prod.outlook.com
- (2603:10b6:806:20::13) To CH0PR12MB5388.namprd12.prod.outlook.com
- (2603:10b6:610:d7::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE33425B1C7;
+	Wed, 10 Sep 2025 17:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757525965; cv=none; b=A3BTyVRC0D4lubGpH5HaZAJHfWfu3iVN3bvHtalBwQ0zEUpO2aPylY68S6FrBU2lUNLKXubau05Gh9FMWtQroiigoNaDSu/6vnetTth0jD0wn3dqvZAIGCw/ptFouiI0PnsyFk6gn8ptKyIqQllrxwLdAHczPyP328ZHmTOMhYQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757525965; c=relaxed/simple;
+	bh=D0MKaZD2Bc9mfUZsr9ayTEVMOhpnqSdYew565pJ4bks=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q3YCzUMku8QrkGtuANwb3eS3rAS0DU3vNZ6+TKJ9e2BRlnstZgNyAUqn4CupIWRAjFPdtOp5XlcTEOW5mYGZeX6kNgcdqqZXzbgv/vBHIFkCkw80x7iTMvAUDmmDoO/gY5BL4IC1rgX3ewxK73/GbyGn8y3NYJQuuGMDdt4gV7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TrgE+i+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AA881C4CEEB;
+	Wed, 10 Sep 2025 17:39:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757525964;
+	bh=D0MKaZD2Bc9mfUZsr9ayTEVMOhpnqSdYew565pJ4bks=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=TrgE+i+oRRANN+tPZkSNTudZ+pYmp3aNyGdeb9fgaGq9ZkG1PI/XJSCVGxRwC5vQa
+	 06XseEQmXEw/y8tTtD+5xzJhJE5vKDOlZHAyKxNXnPWY7DipNaEhY2eeyZd5278/j0
+	 9D2SuoHJUdwnUc9OZKkU/Ka6HTcqwrtRatXH2bM91dRaCnZyls9R1yJxUshyc3wvFs
+	 kNJwOiMyRrDvy+WzrR2HAahLb10BW1KGHuaLC5i2P1A3iXFccu3ReQ8Tgjy1Bd8jZD
+	 pbD9g6SKKyC4hFDl/53Y2tZz0nG+Wo1KULjtKnDixtOiDEOCSBP6BgN8xxaOUrjQqY
+	 r8Gda0tpV1Zdg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1E7CAC587;
+	Wed, 10 Sep 2025 17:39:24 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org>
+Subject: [PATCH 0/2] PCI: Fix ACS enablement for Root Ports in DT platforms
+Date: Wed, 10 Sep 2025 23:09:19 +0530
+Message-Id: <20250910-pci-acs-v1-0-fe9adb65ad7d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR12MB5388:EE_|DS0PR12MB7947:EE_
-X-MS-Office365-Filtering-Correlation-Id: 528bc71a-03ed-47eb-1ad7-08ddf090e4d2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MmtuaC80ZHB6WW9qYzBJTGJDcE1ZTVNsWld1RHVVSURrR2loNFFTTGNtMG1P?=
- =?utf-8?B?UDhJYzl3ZFlkV1YyUXdwVnBsc29zWVpVUVQySWZ0Z3ViVm9EUE4ybXg3a0tM?=
- =?utf-8?B?NlVZNG01eDdURHE5WFJLai9rQ3dka3c5eFVLakJaMTBzV2FtQWRRZDBNVUxl?=
- =?utf-8?B?YmUzQkhDbjZTK0o3ZzVlUjVQNkplb3lnMjZQYjNYamdSRkR4cEpnblRPZWRS?=
- =?utf-8?B?TWY3c010cTlHRnlQUVNGTG5ZTDgwM1ltdGs4emdWNlBGaDJpa1FOMDFOMXp6?=
- =?utf-8?B?bnNuTjRWZU9vU09LNjRjWXNMMmZGWnRkeXVmdUwxNXpiUnZJbEpzT21XOTJl?=
- =?utf-8?B?cmhDc0lMcTkydlBJZkVMSGhhVG5scDZkbFA0WmtiYURsR0cvWnpzRitBOWpw?=
- =?utf-8?B?RDgwZHVoYzRkTmEyTGpvbzJtY1pocHVESTRSdTZEQUc5czQ0UkpLb2tRR29y?=
- =?utf-8?B?YUdYM3B1akhqVjMxWXVsOGMyQmFQUGlUMnJBSC9ZOHlhVXlVcHFhUUdKVnRS?=
- =?utf-8?B?OGZ3OEVpWGRsajFqSjVNakloYWx5dGJUcUp0RUlwNzcweStWK2d1dE1tZnp6?=
- =?utf-8?B?RmhUbzNaM0Q4R0ZYeExFdjE5RTdGSnkvQWRuN1B3UGdrNVB2NElvN0JoaFhD?=
- =?utf-8?B?VzNvOTArMWgxblM5dHoxeHZwN09nVXllNmk4UElkRkErN2FIcDA0MGdDRGNO?=
- =?utf-8?B?RWI2cUlycHdTYU9tSS9RcWdxdzNIRXdoM1piZGhpbUhXMWhNMjZzTUdKYzhL?=
- =?utf-8?B?NURBbnZ0RzY3dVl3YkZJNUN3Wm9IeDJnR1NxQWtGcXNWRmpDTzJjVXA1bkZR?=
- =?utf-8?B?S001VXBLTFRBTGUwRXJSUW92VWhZOFpBWXZTNENQNkpVbUt6ZTZmTmdGZmdT?=
- =?utf-8?B?ejkrUm9Jd1daS0lGekpLTDZyRnduNkJkZVUyeEJmWGhOOGhrc3RaeHB1Ni9r?=
- =?utf-8?B?Q3FIMThVZ0gyUjlIMEZ1YnRta1RvY0puTjQwVHFWZU03R0JwRDVwajBZVTVj?=
- =?utf-8?B?ditNaXQzUVg2QWVleUcvN1dzanZpbndFZ3diOHFpa1JtbTdpWnlPUU5XTEww?=
- =?utf-8?B?Zk9BMit2VXVtMUJmK0lvbG4xRzJtOVVzNUtRWXJUV2tiQjE1RUo1VTdadlJQ?=
- =?utf-8?B?enYzcEh1SU8rVXZneUZEbVY5NTFmbkFOUG9ZelVMM2xEd3NTaTRudm9XUnJ1?=
- =?utf-8?B?TWxpL0lNblRuWHZ3WG5pSklVV1VpdFBSNjdnZzVjc21JV3UwSEdPRENoaEI1?=
- =?utf-8?B?anZocUdIZGdwb2lLTTR0b1B5SmgzdVgwUVJ6THFDdGVnb3ZnVitjUy9nQXNk?=
- =?utf-8?B?WTZOVUFDd0Q1V0k3eEZxd3JCV3hIejF6bElGT3FQSEJ3SjJhajFYNWQzRm55?=
- =?utf-8?B?eFFUaS8zNDRKM2dHclVucGhQTVhNMWdhZGxqcWQyVVQ3djdpOVBjRWRkL0E1?=
- =?utf-8?B?MlEvSy93dGpZdnFLcXArMDdyRnJLYnFNSzVvM01hSlR4S1pFQ2tuVEt2Q1FD?=
- =?utf-8?B?WmQxeDh2QjRXbGttYVBXTUxxd1ovSTlPMy95SWxVRUtlYm9ZSWtRNEF3VmJy?=
- =?utf-8?B?ek9PcG83Vjh4dmlKeTBTKzRvMDVyemtPUEV0RWZjNUlRejRGL3A4bGJad2VO?=
- =?utf-8?B?TnVzSVpwUVRHNHk5enlhSkNyK0dGQVJvNVlWTFJoWXpxMmZKbHArNE01RHFV?=
- =?utf-8?B?Q2NNV2lWd1lKU1BwakF4cnRFSExJTHNiWnJyOGhPWCtoWkIxSnc0QXBRUEo0?=
- =?utf-8?B?NS93WWdJRHMxOWR6MkdZM1pUaDE3YkVXY1Y3K0JmczdTYjJrU0NUUzk4R0dZ?=
- =?utf-8?B?clEwaUdiQ0RnUTJselBZUG1XVXRqMkYwVlM2N1pUM3NTMjZJVjRwM3I1M09l?=
- =?utf-8?B?Y2J0TVMxazV3YU1GUnBnazRGZzRkSjM3VFhaTys3V3FkazF6YXVRclB3VmlC?=
- =?utf-8?Q?cGwO8E0njs8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR12MB5388.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cXFEWU1rRmJmbEU4OXpGWGcxL21VdklSb3RjakR0M0cvVWF4YXl2ak1nYllh?=
- =?utf-8?B?b0FLT1dXTDl2MHp2SG43RTFvaXdjcnB1RDhqRkVPRitKU1ljcVBjU3RycHdF?=
- =?utf-8?B?TkRjUjdQSGFURDAwaEphYzA1bG43ajd6V215bXFnKzdsNHF1NE9sUFl4Y3Jm?=
- =?utf-8?B?MjFjL0FUcjNHRTN1c0dIRUJKcFp5aWFZYVlIRlpxL1dsTytyK1RVZ3VSSDNz?=
- =?utf-8?B?bzU3NERBNlZhWmNuUVNGRjEzQkwzYmpFKzRkeU15MUJjMUova2V6dFd3UW85?=
- =?utf-8?B?TXRLRnZ3bjdoc0dicWFGN2pkQXd3azMwbk81QnZIS3EzK1pQZnJpT0RMZUVm?=
- =?utf-8?B?elFyTWM4YVJ6TmdtNVZ5eWE3SVROclVuNmEwR0hqZGtsQm9jeFVqMG9qYmhU?=
- =?utf-8?B?aVhScDI3bVRZY2JtanF4dVJxYloreERnVldTN1d2cjBWdFNBaFppODY5NllC?=
- =?utf-8?B?ZGdldGdYVG15YXlnUnp6SG1GOHZjazBqSXdPRjB2aDdXS3F0NmVuSEJNelNx?=
- =?utf-8?B?UG8wWjdqUmVDMS9KWXI2MWtaRHB3SXlUc0VDN2tXZFhEMTJjTTNwenl2NUlP?=
- =?utf-8?B?ZmE2REg1TDBYSG4vSEdzbE1OeFpEdWo3SDI5V2FMbVpMWHdxT3g1Mk1Uc1pG?=
- =?utf-8?B?OGNZVlNkM3hWQWVobHROK05NTVorMjAxbzNpOHd5WW1EOC9RaUk2bFlNWDNM?=
- =?utf-8?B?Z1diNisyay9HSThodG04OVFYaVpqS0hkR2lZV2QyK3cxSHpKK0dLUWpHeWZk?=
- =?utf-8?B?NDM4Qm15T2FDY3p6MmVXR3pBNERGb0Z4MUN4TkJlOFgwcFZjWDUwRFNTUTZ1?=
- =?utf-8?B?K240ejVvOFNob08zb1VxcmI0emJzQ2RiazAzMy91VmVTL1QwQ3BCSFlsbFBC?=
- =?utf-8?B?cnFRb28vL29Ib2xqNElyajk3V3h6b0c4YmxWdnFlQUx3SEJZUjJPb3JtaHZp?=
- =?utf-8?B?b3dicklJRzg4UDhVMXF2RUl6ODEvSG5IMkFZYkVNRnRlaVhtR2tnSGtxdWVi?=
- =?utf-8?B?cGxBQ0ZrNXBJaDBEQWgvOTNiMFpkMTEvM1FtRmgvTFc1V1RUaGVia1dsbUNw?=
- =?utf-8?B?bktwODNmSHlqa1ovamJCWFNxUU5DaVBUYktRMkM0a3pzRHVTMWtMUDdQZDVa?=
- =?utf-8?B?TGN3RjYyL0RsckFYT2k0Q014bzd1MCs4L1AwbjI5WVlUNXZjQmp5NDV0TlM1?=
- =?utf-8?B?RXZHNkNLVGhnenVRZzQ0MVZMYUdodWNrR3Q5OEN0Mm5WcXc1N0twU3l6Qk5z?=
- =?utf-8?B?L1pGTFQ1UHJEYnRjdkpUdDZtaFBDUEsySkhFZThDSm1uSU82dElSV2ZRaXBN?=
- =?utf-8?B?aUowalVmcE1uTVZ5MVdWM3hZM05HMkk4c1ZGZDdDV1lKR3ZVS0xOQ2NxTXdr?=
- =?utf-8?B?QS9XVGp3S1RHbVltbkVjNjgwbUNNU2hlVzBlaFFySFZEVldDTFlYNUM0S2Vm?=
- =?utf-8?B?RjArcklQbUg4K1oxYWlzRzl2Ly9NOTFCQjZSU09aNFMvdWIwLzA4ZGlIcWxp?=
- =?utf-8?B?MUlTTGo1eGdUNnNTbWplRVRBRGJyYUZBU3ZTaWZNSlBwU2V2MlE2c1FMbmdl?=
- =?utf-8?B?ZkNXN2FERTlRUXp0eFBuZUNHMHdNQUVBMm4rZGVRaUhiaGVaZXJ5OGE1bUpw?=
- =?utf-8?B?UFQ0RDNzVXIyK1VnT2JvWjB6c1lWK1JpNnJsdHZSU1U0QmFPQk0wZEtIK2Rw?=
- =?utf-8?B?emQzeHU5Z2J0SHRQZXo4cXR4aGdxaXRTbmdyQ3RuNFdRL1JBL3UybCtHWTBq?=
- =?utf-8?B?YkpDN0t2R01zd1RUdnJlb1ZaQ0FsRm95SEpHKzBSd3MzZm52Tlg4VGVGd0M2?=
- =?utf-8?B?b0ptSzZzay8wbFFtK3ppSkJ0TXhhR1MrcnJLTkd6M3lVM3RPWHQ2aWRPMHBm?=
- =?utf-8?B?VWlIbkFwSUxmbnBBaW8yT0M5UzF5aCtzcC81eEwyaFRuU08vYW55UlNWQXJl?=
- =?utf-8?B?Qm5ralNDMXlWdnhpdWRGSzc0WVBmQ1BOQlhqU3VuS3BFQ3hTN2RhVGRFZ0Fz?=
- =?utf-8?B?K242MEV5c2hCNzZKY1R1cm4vZW9ncXhKZElCREhadFNsc0JIeTlVVldVbjU1?=
- =?utf-8?B?M2VJQUNaaGkwR0FhWGcrRVJwSjZKSFdiZVlTQUVWUUd4R01hcEkxcFJzWTI2?=
- =?utf-8?Q?eEdhF4iOZ8xMog/WkW4fyPBY+?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 528bc71a-03ed-47eb-1ad7-08ddf090e4d2
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR12MB5388.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 17:38:46.3513
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kKXNL4FO0JyqaZKsxck3d6SDxblnGzrpUKNO6iYjdrL6EPqPE5HBlBUPuW91O/Zw0GPIkE0tnJNC6Z/kS9YRoQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7947
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMe3wWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDS0MD3YLkTN3E5GLd5CSTtERjSwvjRKNkJaDqgqLUtMwKsEnRsbW1AP9
+ n8A9ZAAAA
+X-Change-ID: 20250910-pci-acs-cb4fa3983a2c
+To: Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Joerg Roedel <jroedel@suse.de>, iommu@lists.linux.dev, 
+ Anders Roxell <anders.roxell@linaro.org>, 
+ Naresh Kamboju <naresh.kamboju@linaro.org>, 
+ Pavankumar Kondeti <quic_pkondeti@quicinc.com>, 
+ Xingang Wang <wangxingang5@huawei.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5832;
+ i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
+ bh=D0MKaZD2Bc9mfUZsr9ayTEVMOhpnqSdYew565pJ4bks=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBowbfKaSSs6qB9cQXVcS7V+k7hyZRMibbBHAsW/
+ ggxoOlb+U+JATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaMG3ygAKCRBVnxHm/pHO
+ 9Zq4CACmAWwLE/yoLMnF2wrmoe/PZCDW8qpAszZ0rM3Gwv6j1WNbP2N/mZoGBxYlt4rswVD2I8F
+ xlDCmGidLBzFUgoRWDr9/IEQnT8MOoYSqO4Jc3dAtDk1WOKbwGw0DmCXe4YWGUGi/YTqlRzaxnt
+ yYR5ZtcAh26QdL09N0sJPnUJG8bdBnpy/5hSHKoTBkEMCLx/Gun2CZslCPKxsAVsrHBQYhoU5Q1
+ nPrCD0lAVj9mPErgbuUDeyaZ/ktxJuiChpNTlW2S6f7AnUVPAzWIE/WHP1pp2dJ2hEA19+xNZw9
+ 059ey1kADsNPqzfuai5tEUwwa7TiB9E4jU2xEm/76g9/buT9
+X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@oss.qualcomm.com/default with auth_id=461
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Reply-To: manivannan.sadhasivam@oss.qualcomm.com
 
+Hi,
 
+This series fixes the long standing issue with ACS in DT platforms. There are
+two fixes in this series, both fixing independent issues on their own, but both
+are needed to properly enable ACS on DT platforms (well, patch 1 is only needed
+for Juno board, but that was a blocker for patch 2, more below...).
 
-On 9/10/2025 10:24, Yazen Ghannam wrote:
-> On Tue, Sep 09, 2025 at 06:53:14PM +0000, Avadhut Naik wrote:
->> The legacy sysfs EDAC interface has been made obsolete more than a decade
->> ago through the introduction of a new per-DIMM interface.
->>
->> The legacy interface however, hasn't been removed till date.
->>
->> Begin deprecating it so that it can eventually be removed two releases
->> later.
->>
->> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
->> ---
->> Changes in v3:
->> Patch introduced.
->> ---
->>  drivers/edac/Kconfig         |  2 +-
->>  drivers/edac/edac_mc_sysfs.c | 14 ++++++++++++++
->>  2 files changed, 15 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
->> index b824472208c4..19470f4efee7 100644
->> --- a/drivers/edac/Kconfig
->> +++ b/drivers/edac/Kconfig
->> @@ -25,7 +25,7 @@ if EDAC
->>  
->>  config EDAC_LEGACY_SYSFS
->>  	bool "EDAC legacy sysfs"
->> -	default y
->> +	default n
->>  	help
->>  	  Enable the compatibility sysfs nodes.
->>  	  Use 'Y' if your edac utilities aren't ported to work with the newer
->> diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
->> index 8689631f1905..3840eef942f8 100644
->> --- a/drivers/edac/edac_mc_sysfs.c
->> +++ b/drivers/edac/edac_mc_sysfs.c
->> @@ -144,6 +144,8 @@ struct dev_ch_attribute {
->>  static ssize_t csrow_ue_count_show(struct device *dev,
->>  				   struct device_attribute *mattr, char *data)
->>  {
->> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
->> +
->>  	struct csrow_info *csrow = to_csrow(dev);
->>  
->>  	return sysfs_emit(data, "%u\n", csrow->ue_count);
->> @@ -152,6 +154,8 @@ static ssize_t csrow_ue_count_show(struct device *dev,
->>  static ssize_t csrow_ce_count_show(struct device *dev,
->>  				   struct device_attribute *mattr, char *data)
->>  {
->> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
->> +
->>  	struct csrow_info *csrow = to_csrow(dev);
->>  
->>  	return sysfs_emit(data, "%u\n", csrow->ce_count);
->> @@ -160,6 +164,8 @@ static ssize_t csrow_ce_count_show(struct device *dev,
->>  static ssize_t csrow_size_show(struct device *dev,
->>  			       struct device_attribute *mattr, char *data)
->>  {
->> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
->> +
->>  	struct csrow_info *csrow = to_csrow(dev);
->>  	int i;
->>  	u32 nr_pages = 0;
->> @@ -172,6 +178,8 @@ static ssize_t csrow_size_show(struct device *dev,
->>  static ssize_t csrow_mem_type_show(struct device *dev,
->>  				   struct device_attribute *mattr, char *data)
->>  {
->> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
->> +
->>  	struct csrow_info *csrow = to_csrow(dev);
->>  
->>  	return sysfs_emit(data, "%s\n", edac_mem_types[csrow->channels[0]->dimm->mtype]);
->> @@ -180,6 +188,8 @@ static ssize_t csrow_mem_type_show(struct device *dev,
->>  static ssize_t csrow_dev_type_show(struct device *dev,
->>  				   struct device_attribute *mattr, char *data)
->>  {
->> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
->> +
->>  	struct csrow_info *csrow = to_csrow(dev);
->>  
->>  	return sysfs_emit(data, "%s\n", dev_types[csrow->channels[0]->dimm->dtype]);
->> @@ -189,6 +199,8 @@ static ssize_t csrow_edac_mode_show(struct device *dev,
->>  				    struct device_attribute *mattr,
->>  				    char *data)
->>  {
->> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
->> +
->>  	struct csrow_info *csrow = to_csrow(dev);
->>  
->>  	return sysfs_emit(data, "%s\n", edac_caps[csrow->channels[0]->dimm->edac_mode]);
->> @@ -199,6 +211,7 @@ static ssize_t channel_dimm_label_show(struct device *dev,
->>  				       struct device_attribute *mattr,
->>  				       char *data)
->>  {
->> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
->>  	struct csrow_info *csrow = to_csrow(dev);
->>  	unsigned int chan = to_channel(mattr);
->>  	struct rank_info *rank = csrow->channels[chan];
->> @@ -238,6 +251,7 @@ static ssize_t channel_dimm_label_store(struct device *dev,
->>  static ssize_t channel_ce_count_show(struct device *dev,
->>  				     struct device_attribute *mattr, char *data)
->>  {
->> +	pr_warn_once("Depcreated interface! Will be removed within two future releases. Please switch to using the new interface!\n");
->>  	struct csrow_info *csrow = to_csrow(dev);
->>  	unsigned int chan = to_channel(mattr);
->>  	struct rank_info *rank = csrow->channels[chan];
->> -- 
-> 
-> Depcreated -> Deprecated
-> 
-Will change.
+Issue(s) background
+===================
 
-> And maybe the warning can go in an short inline function? Sorry, I
-> forgot if this came up already.
-> 
-> Also, "two future releases" is vague. And it may be confusing if this is
-> backported.
->
-> Does anyone have a better suggestion, or is this good as-is?
->
+Back in 2024, Xingang Wang first noted a failure in attaching the HiSilicon SEC
+device to QEMU ARM64 pci-root-port device [1]. He then tracked down the issue to
+ACS not being enabled for the QEMU Root Port device and he proposed a patch to
+fix it [2].
 
-How about explicitly stating a release?
-6.20, for example.
- 
-> Thanks,
-> Yazen
+Once the patch got applied, people reported PCIe issues with linux-next on the
+ARM Juno Development boards, where they saw failure in enumerating the endpoint
+devices [3][4]. So soon, the patch got dropped, but the actual issue with the
+ARM Juno boards was left behind.
 
+Fast forward to 2024, Pavan resubmitted the same fix [5] for his own usecase,
+hoping that someone in the community would fix the issue with ARM Juno boards.
+But the patch was rightly rejected, as a patch that was known to cause issues
+should not be merged to the kernel. But again, no one investigated the Juno
+issue and it was left behind again.
+
+Now it ended up in my plate and I managed to track down the issue with the help
+of Naresh who got access to the Juno boards in LKFT. The Juno issue is with the
+PCIe switch from Microsemi/IDT, which triggers ACS Source Validation error on
+Completions received for the Configuration Read Request from a device connected
+to the downstream port that has not yet captured the PCIe bus number. As per the
+PCIe spec r6.0 sec 2.2.6.2, "Functions must capture the Bus and Device Numbers
+supplied with all Type 0 Configuration Write Requests completed by the Function
+and supply these numbers in the Bus and Device Number fields of the Requester ID
+for all Requests". So during the first Configuration Read Request issued by the
+switch downstream port during enumeration (for reading Vendor ID), Bus and
+Device numbers will be unknown to the device. So it responds to the Read Request
+with Completion having Bus and Device number as 0. The switch interprets the
+Completion as an ACS Source Validation error and drops the completion, leading
+to the failure in detecting the endpoint device. Though the PCIe spec r6.0, sec
+6.12.1.1, states that "Completions are never affected by ACS Source Validation".
+This behavior is in violation of the spec.
+
+This issue was already found and addressed with a quirk for a different device
+from Microsemi with 'commit, aa667c6408d2 ("PCI: Workaround IDT switch ACS
+Source Validation erratum")'. Apparently, this issue seems to be documented in
+the erratum #36 of IDT 89H32H8G3-YC, which is not publicly available.
+
+Solution for Juno issue
+=======================
+
+To fix this issue, I've extended the quirk to the Device ID of the switch
+found in Juno R2 boards. I believe the same switch is also present in Juno R1
+board as well.
+
+With Patch 1, the Juno R2 boards can now detect the endpoints even with ACS
+enabled for the Switch downstream ports. Finally, I added patch 2 that properly
+enables ACS for all the PCI devices on DT platforms.
+
+It should be noted that even without patch 2 which enables ACS for the Root
+Port, the Juno boards were failing since 'commit, bcb81ac6ae3c ("iommu: Get
+DT/ACPI parsing into the proper probe path")' as reported in LKFT [6]. I
+believe, this commit made sure pci_request_acs() gets called before the
+enumeration of the switch downstream ports. The LKFT team ended up disabling
+ACS using cmdline param 'pci=config_acs=000000@pci:0:0'. So I added the above
+mentioned commit as a Fixes tag for patch 1.
+
+Also, to mitigate this issue, one could enumerate all the PCIe devices in
+bootloader without enabling ACS (as also noted by Robin in the LKFT thread).
+This will make sure that the endpoint device has a valid bus number when it
+responds to the first Configuration Read Request from the switch downstream
+port. So the ACS Source Validation error doesn't get triggered.
+
+Solution for ACS issue
+======================
+
+To fix this issue, I've kept the patch from Xingang as is (with rewording of the
+patch subject/description). This patch moves the pci_request_acs() call to
+devm_of_pci_bridge_init(), which gets called during the host bridge
+registration. This makes sure that the 'pci_acs_enable' flag set by
+pci_request_acs() is getting set before the enumeration of the Root Port device.
+So now, ACS will be enabled for all ACS capable devices of DT platforms.
+
+[1] https://lore.kernel.org/all/038397a6-57e2-b6fc-6e1c-7c03b7be9d96@huawei.com
+[2] https://lore.kernel.org/all/1621566204-37456-1-git-send-email-wangxingang5@huawei.com
+[3] https://lore.kernel.org/all/01314d70-41e6-70f9-e496-84091948701a@samsung.com
+[4] https://lore.kernel.org/all/CADYN=9JWU3CMLzMEcD5MSQGnaLyDRSKc5SofBFHUax6YuTRaJA@mail.gmail.com
+[5] https://lore.kernel.org/linux-pci/20241107-pci_acs_fix-v1-1-185a2462a571@quicinc.com
+[6] https://lists.linaro.org/archives/list/lkft-triage@lists.linaro.org/message/CBYO7V3C5TGYPKCMWEMNFFMRYALCUDTK
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+---
+Manivannan Sadhasivam (1):
+      PCI: Extend pci_idt_bus_quirk() for IDT switch with Device ID 0x8090
+
+Xingang Wang (1):
+      iommu/of: Call pci_request_acs() before enumerating the Root Port device
+
+ drivers/iommu/of_iommu.c | 1 -
+ drivers/pci/of.c         | 8 +++++++-
+ drivers/pci/probe.c      | 2 +-
+ 3 files changed, 8 insertions(+), 3 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250910-pci-acs-cb4fa3983a2c
+
+Best regards,
 -- 
-Thanks,
-Avadhut Naik
+Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+
 
 
