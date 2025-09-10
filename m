@@ -1,225 +1,129 @@
-Return-Path: <linux-kernel+bounces-810329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5D5B518CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:05:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 385EBB518C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78E125644B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DB5A5E6D1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6EA32BF2E;
-	Wed, 10 Sep 2025 14:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="EFSce7eS"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCEF322DAB;
+	Wed, 10 Sep 2025 14:03:30 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C398932A815
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4E33218C9;
+	Wed, 10 Sep 2025 14:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757513018; cv=none; b=fZyjoZHOwj0ZUhDZ4qOX7p282RRafBQyJpclEmTwtItil7mAzV5pP7F8NvtYho2IU7MJVeT0IwMZULYxy9Et09AZ/A/m06LVZHahseaNEpxmXJSXRP/OV2JL5Rw/FMF0QKwBILRzfVz0V5miiZQX7GKNteAVMiITDdl+OQUL/IE=
+	t=1757513009; cv=none; b=OppHyfvRvf0JWvihpyQXSVNFFwWv6yPLXFR4TLC0l1v2TMMoUF25UTroWcrr6E2rBG77H/u24ALAPTbB6SCUxOboTS0dGhm7Tw9391esvGfke/a0x4oo5FXPRZtSzf7IWZCLNNDGdwQsV0MMfcnnMT/iaQeJk2Xs7tnrqO1fr/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757513018; c=relaxed/simple;
-	bh=jqmkr1CKyO8Kzo8l85xpMLlf222rza5Yy5Zgh4ZGlAg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j3fTesHYxWhPvSGAgE/Z9uQ0HfJ+LFrJzajWC6Nt1CC1wFYhXcvblpX5FEN9ozOC9FGdtgiLEzzgGoamdnPfYqlPYtLunP8iLNQQFP/o1JucW8hKuqNVlVaRaFtjWHXF9FLe7stMC2pDTdpfCZOuoqeu/Au1gbPthFFHIQfuB1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=EFSce7eS; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45df7dc034cso7088115e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 07:03:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1757513015; x=1758117815; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Vgkpc23fN6nK/odOpcRYynIEnb9BnHAmEaecrAACIc=;
-        b=EFSce7eSqx6zfpQ6wOPPxU0GZPZuUGvklkiNZK5NNA9YO8/+1mzj01VrdZ07Bb3uah
-         3ipxS+odXPlddvUj3/uW4EY//fonsuTiqsiK3sFFa0qxQ+FHQE9LdWp+qWyz/N/MiSMu
-         hoSI6eEjANt14Jyh9H993e5CEzYiTT1oftGwAZhZHuQe30rpLRaPkdA8xI+TzyfxOzOl
-         Nk+hT0pnL4Tuqii0S6uC6bv26OuXz1brzukHzW4BUQAOVxfgy6fbVa39KMCnX9Ek5CxN
-         hulbFwQjehWfnAxV/zm3/QeQ3U3Tvl4g2ENMb0AYS0iPxOGI3qnqwqkln1RiIfM0cPmV
-         1n3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757513015; x=1758117815;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Vgkpc23fN6nK/odOpcRYynIEnb9BnHAmEaecrAACIc=;
-        b=efYXVPaYaQWeOLQGkZ8qgWr0ZRIN+iFkEoCjzROrDpVVKlYPPZYqAYXpFHgFs+k+d7
-         +/fpDUu7vVqX0UbjlKxcw48etioSWA3AqYT4R6XoFZ97/EbwSdKZ5yiVjP/c6z9HgdNZ
-         laM500q1Sqr3MLiefh/r42SyBRqgWhY/o6ioci551JXWtElQxhv5OuUOIyXF54Qw45T5
-         EjxU3X/i0LUSzJ9wHWNuSjjUYEH6edXoCF+lOA0XOVy0vA4jqOE++BZVEzVc1VSUVvkN
-         +6FSD1L3QMHQaYwEl+bIm9C2j7yPFqkSw8ZTIqkuyhGN85hy/v2iNzFOvzQfcRD8Ong6
-         S19A==
-X-Forwarded-Encrypted: i=1; AJvYcCWGKLu2OziGHQl2E4HCHtEcjRRrBsc5R+pFngrTLhbTWuUMetDdTXKVvw9yVf2Bf3LOV/Co8M5rXo5hgjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ8QDI6Sj+T5ZfNjn7ylDEBR0NjbLSsB5i1A/8OWTbZcYqlzFP
-	XOwxgkMrC1dON9Nn3XTmJxG7t9XHzjFaDeP7Wququ+kqNrk74GpBwqfXvzHjgY9WLyc=
-X-Gm-Gg: ASbGncvBrTRuxQI0djpNTAPguBXxd3HyvZmARB9fcgkcnYZoiMsy9kGut8bWg7qA1DJ
-	DapDw7LhXlJdS7UwAUmj0F9pIDSHFCK3O1XYflJ6VLh3MVDgzw4osNMDy62nQkMYS47EmNl1T9j
-	GQJ6F+/m4WslAbVMFLUPS9zHWatXJ3OlqDMxrtQ44d1tWtzPR2OHHrEnpnYSMSP4ojfasOeFvDD
-	uS8jK3ejOQpCU87otsv9uLQX8jcrFac0TnzCuWt15eVX4WHRz87iQ2SK4ZavIaDsA4MT8TTBpQU
-	VHl6F4LWW+rxNHejt960pqVt2YFvXVuoTxTdnrgJWCV1baQFmB/ivcgU8RuKJovqZ+t+Ugcx3Sn
-	I1UlwVQbNK/XrA2PNyxP0jUsoBVsHwhEOmLWKmJ16eK9TvkJThSJp
-X-Google-Smtp-Source: AGHT+IHnE7nzywVvSHlmb2zbeRqa3AQllCmLxwfyN9Q2qj8wPtYZa4cnGeIFXnAXsV38qH1n0GUl8A==
-X-Received: by 2002:a05:600c:3ba0:b0:45b:8adf:cf2b with SMTP id 5b1f17b1804b1-45dfb641d03mr9711805e9.21.1757513015047;
-        Wed, 10 Sep 2025 07:03:35 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.139])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df804bce3sm29523875e9.0.2025.09.10.07.03.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 07:03:34 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	p.zabel@pengutronix.de,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	yoshihiro.shimoda.uh@renesas.com,
-	biju.das.jz@bp.renesas.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v6 7/7] arm64: dts: renesas: rzg3s-smarc: Enable USB support
-Date: Wed, 10 Sep 2025 17:03:05 +0300
-Message-ID: <20250910140305.541961-8-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250910140305.541961-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250910140305.541961-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1757513009; c=relaxed/simple;
+	bh=TQDrVeY3489/FH/73wZC6CHaQ0RWriZ2IW3o9GYBPSE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZmXvWz2X5hcgqevx4w296gtVekX1nHUBUcKonlLOtrB30b6nwpebSfp54O9aBg6R4bcQSEPoYIkohIbn3RksTkFGzlnk21KFkcl/wNQ0hYEj5evDU+EvSo8ft098dwPUt3Qi0rwc/I4nsU3on7ET92iJVfJKMPy+heM4xBG1fOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMMkB0cgMz6K5xZ;
+	Wed, 10 Sep 2025 21:59:14 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id AD2FF1402F7;
+	Wed, 10 Sep 2025 22:03:24 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 10 Sep
+ 2025 16:03:23 +0200
+Date: Wed, 10 Sep 2025 15:03:22 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>
+CC: Dave Jiang <dave.jiang@intel.com>, <linux-cxl@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<gost.dev@samsung.com>, <a.manzanares@samsung.com>, <vishak.g@samsung.com>,
+	<neeraj.kernel@gmail.com>, <cpgs@samsung.com>
+Subject: Re: [PATCH V2 05/20] nvdimm/region_label: Add region label updation
+ routine
+Message-ID: <20250910150322.00001ea4@huawei.com>
+In-Reply-To: <158453976.61757055783236.JavaMail.epsvc@epcpadp2new>
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d@epcas5p4.samsung.com>
+	<20250730121209.303202-6-s.neeraj@samsung.com>
+	<534936cc-4ecc-46e5-8196-bc3992e086ab@intel.com>
+	<158453976.61757055783236.JavaMail.epsvc@epcpadp2new>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Thu, 4 Sep 2025 19:42:31 +0530
+Neeraj Kumar <s.neeraj@samsung.com> wrote:
 
-Enable USB support (host, device, USB PHYs).
+> On 15/08/25 02:55PM, Dave Jiang wrote:
+> >
+> >
+> >On 7/30/25 5:11 AM, Neeraj Kumar wrote:  
+> >> Added __pmem_region_label_update region label update routine to update
+> >> region label.
+> >>
+> >> Also used guard(mutex)(&nd_mapping->lock) in place of mutex_lock() and
+> >> mutex_unlock()
+> >>
+> >> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>  
+> >
+> >Subject, s/updation/update/ ?  
+> 
+> Thanks Dave, Sure. Will fix it in next patch-set
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
-
-Changes in v6:
-- collected tags
-
-Changes in v5:
-- none
-
-Changes in v4:
-- none
-
-Changes in v3:
-- collected tags
-
-Changes in v2:
-- this was patch 15/16 in v1:
-- dropped sysc enablement as it is now done in SoC dtsi file
-
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 57 ++++++++++++++++++++
- 1 file changed, 57 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-index 5e044a4d0234..5586dd43c4d5 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-@@ -92,6 +92,20 @@ &audio_clk2 {
- 	clock-frequency = <12288000>;
- };
+Hi Neeraj,
  
-+&ehci0 {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&hsusb {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-@@ -132,6 +146,15 @@ power-monitor@44 {
- 	};
- };
- 
-+&ohci0 {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
-+
- &pinctrl {
- 	audio_clock_pins: audio-clock {
- 		pins = "AUDIO_CLK1", "AUDIO_CLK2";
-@@ -207,6 +230,27 @@ ssi3_pins: ssi3 {
- 			 <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
- 			 <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
- 	};
-+
-+	usb0_pins: usb0 {
-+		peri {
-+			pinmux = <RZG2L_PORT_PINMUX(5, 0, 1)>, /* VBUS */
-+				 <RZG2L_PORT_PINMUX(5, 2, 1)>; /* OVC */
-+		};
-+
-+		otg {
-+			pinmux = <RZG2L_PORT_PINMUX(5, 3, 1)>; /* OTG_ID */
-+			bias-pull-up;
-+		};
-+	};
-+
-+	usb1_pins: usb1 {
-+		pinmux = <RZG2L_PORT_PINMUX(5, 4, 5)>, /* OVC */
-+			 <RZG2L_PORT_PINMUX(6, 0, 1)>; /* VBUS */
-+	};
-+};
-+
-+&phyrst {
-+	status = "okay";
- };
- 
- &scif0 {
-@@ -242,3 +286,16 @@ &ssi3 {
- 	pinctrl-0 = <&ssi3_pins>, <&audio_clock_pins>;
- 	status = "okay";
- };
-+
-+&usb2_phy0 {
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+	vbus-supply = <&usb0_vbus_otg>;
-+	status = "okay";
-+};
-+
-+&usb2_phy1 {
-+	pinctrl-0 = <&usb1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
--- 
-2.43.0
+Really small process point.  We all get too many emails, so
+when replying crop out anything that doesn't need more discussion.
+Where you are just saying you agree, leave that for the change logs of the
+next version (and appropriate thanks can go there as well).
 
+I know not replying can feel little rude, but trust me when I say all
+or almost all who review a lot appreciate efficiency!
+
+It also makes it a lot harder to miss the more substantial replies.
+
+> >> +int nd_pmem_region_label_update(struct nd_region *nd_region)
+> >> +{
+> >> +	int i, rc;
+> >> +
+> >> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
+> >> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+> >> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+> >> +
+> >> +		/* No need to update region label for non cxl format */
+> >> +		if (!ndd->cxl)
+> >> +			continue;  
+> >
+> >Would there be a mix of different nd mappings? I wonder if you can just 'return 0' if you find ndd->cxl on the first one and just skip everything.  
+> 
+> When we create cxl region with two mem device, then we will have two separate
+> nd_mapping for both mem devices. But Yes, I don't see difference in both device
+> nd_mapping characters. So instead of "continue", I will just "return 0".
+> 
+
+This for instance is good discussion and well worth the reply!
+
+Good discussion is great, but reducing the noise is key to keeping
+things manageable.
+
+Jonathan
+
+p.s. I'm having a full day or reviewing code so getting a little grumpier
+than I was first thing this morning when I might not have given this feedback!
 
