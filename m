@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-809783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55BE5B511FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:01:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63859B51201
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3C231627ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68E2848209B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BE13126C4;
-	Wed, 10 Sep 2025 09:01:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA2730C351;
-	Wed, 10 Sep 2025 09:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44EA3311C1B;
+	Wed, 10 Sep 2025 09:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JgTTFU4W"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9899310628;
+	Wed, 10 Sep 2025 09:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757494870; cv=none; b=PX9vK0EwJt7Um2g0F/gSFy3WukUT7nKjdjNl87lan2YwMbJmV5MFpqenYzAQ6UQu3VT8taioP3aAVWv5kh1dtwHQuRvoTptXSybec0MPPWaEplYcmIXI5JymfLbArXIEFUESOHrGobxEjDe7wyH9PWVxqF5JU90qUtBSDwzIZzs=
+	t=1757494890; cv=none; b=SHXxWLSRtiAFZS/pphcLdZhCI65B7tGHKZbDaQJDTpIwMkgfhUZKafecGZQgq+HDY+SH3kHwSq3aGU1mReuBcj2ZF8+vWkm7GHUUqrfLKSuPOQGULozhIP+rU9plXbD5b/c+Q97eGMRct9BNUsLYnEzmFiJgrOqut5+iSYupStM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757494870; c=relaxed/simple;
-	bh=1ejmRaKPPiRElvXHDKAuk+uu/4bmfOebIKtynk7aOV8=;
+	s=arc-20240116; t=1757494890; c=relaxed/simple;
+	bh=Rybcg1Vh4BsYqStJeY+6Xh4rBXoC7PDoI6Pf3cCJR4M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CtF44i0KY9c5jGCskv/kYL7/P8+aJBnz3J9UCgPDbxP56Wz/FCrWFpuDKvpiMfm6ZLeRCROjrFKsiX/v4Q0AY+NZRn8F7kSu+J1eqjdjZ6qECWFZl5ElXytBcDpMCkOBCM2wUPZ/BRJRjNcfWNg32pfzhMOv+hbZzqNSO2HzrlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D26316F8;
-	Wed, 10 Sep 2025 02:00:58 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8718D3F63F;
-	Wed, 10 Sep 2025 02:01:01 -0700 (PDT)
-Message-ID: <e8d05e0f-044f-485d-8630-1c4ec48b8032@arm.com>
-Date: Wed, 10 Sep 2025 10:01:00 +0100
+	 In-Reply-To:Content-Type; b=PG+QI3A7JKeiRbcHM8B3xGzmMJRBcTW8NlC54AaJpV4wej+PrXhynpRbn7pxcBIvqVNGn9Jp1mBAnvOS5p711runBDA67EUUclQauJRrHR36FfWmgOgxgQ1VWrhoZ6eiupiFjbHVKuEliEW/nQmknW4pHLK/j1ddm47OQJHUWNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JgTTFU4W; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757494890; x=1789030890;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Rybcg1Vh4BsYqStJeY+6Xh4rBXoC7PDoI6Pf3cCJR4M=;
+  b=JgTTFU4WvTQdM4JG735AA421dCNKeO0L+qP3mgL65GyPqZG+hR2PceKR
+   O0LO6rR1eL5816606zNUE6ihWFLpghOP8/tJo2WXkgva1J6KxEgVG+xn6
+   nQPPHIhFyiZ3BFTMZilo3quERh1t92ZoNjaG7ii3Qtc04YHRe1MdNh8zi
+   mWsnhs20edcsneln2wgVxdyhtP7+N5Ou3wx7UBqOF3aDlL5w2LZ/5Ib55
+   zy0okopo8IIvv5m1CMvwQ+Kv7kdT3zvnBgGrCACYSqP7GsVegvscxmAm1
+   MU1CuPEyftGBRihQxZEULRIpduWKkvPnZGKWFyuMDNbjzN64OQ7wVNg6/
+   Q==;
+X-CSE-ConnectionGUID: LUe6vn+0SdaofmdbJkGZ5w==
+X-CSE-MsgGUID: xKom4FZkQY+CAgNakVWKpg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="77253122"
+X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
+   d="scan'208";a="77253122"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 02:01:28 -0700
+X-CSE-ConnectionGUID: 278oqUfEQFK6KZQ0zMoLkA==
+X-CSE-MsgGUID: NqAI8bN5SRK//ir8qeJxEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
+   d="scan'208";a="204321581"
+Received: from mylly.fi.intel.com (HELO [10.237.72.52]) ([10.237.72.52])
+  by fmviesa001.fm.intel.com with ESMTP; 10 Sep 2025 02:01:22 -0700
+Message-ID: <c25bf384-a312-47a9-a27a-a943cbd33050@linux.intel.com>
+Date: Wed, 10 Sep 2025 12:01:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,104 +66,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/33] arm_mpam: Probe MSCs to find the supported
- partid/pmg values
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-16-james.morse@arm.com>
- <507919cd-a6d0-42b7-8721-d35f232edfa5@arm.com>
- <cbc2a9e2-4919-4ade-9d1b-afd0464f43bf@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
+Subject: Re: [PATCH 2/4] i3c: master: add Microchip SAMA7D65 I3C HCI master
+ driver
+To: Durai.ManickamKR@microchip.com, Frank.li@nxp.com
+Cc: linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ Balamanikandan.Gunasundar@microchip.com, Nicolas.Ferre@microchip.com
+References: <20250909111333.170016-1-durai.manickamkr@microchip.com>
+ <20250909111333.170016-3-durai.manickamkr@microchip.com>
+ <aMCZw2v8Ey6aGbqk@lizhi-Precision-Tower-5810>
+ <3229da67-9d67-47ff-9f01-0d71bfabb6a6@microchip.com>
 Content-Language: en-US
-In-Reply-To: <cbc2a9e2-4919-4ade-9d1b-afd0464f43bf@arm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <3229da67-9d67-47ff-9f01-0d71bfabb6a6@microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi James,
+Hi
 
-On 9/9/25 17:56, James Morse wrote:
-> Hi Ben,
+On 9/10/25 9:12 AM, Durai.ManickamKR@microchip.com wrote:
+> On 10/09/25 02:48, Frank Li wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> On Tue, Sep 09, 2025 at 04:43:31PM +0530, Durai Manickam KR wrote:
+>>> Add support for microchip SAMA7D65 I3C HCI master only IP. This
+>>> hardware is an instance of the MIPI I3C HCI Controller implementing
+>>> version 1.0 specification. This driver adds platform-specific
+>>> support for SAMA7D65 SoC.
 > 
-> On 28/08/2025 14:12, Ben Horgan wrote:
->> On 8/22/25 16:29, James Morse wrote:
->>> CPUs can generate traffic with a range of PARTID and PMG values,
->>> but each MSC may have its own maximum size for these fields.
->>> Before MPAM can be used, the driver needs to probe each RIS on
->>> each MSC, to find the system-wide smallest value that can be used.
->>>
->>> While doing this, RIS entries that firmware didn't describe are create
->>> under MPAM_CLASS_UNKNOWN.
->>>
->>> While we're here, implement the mpam_register_requestor() call
->>> for the arch code to register the CPU limits. Future callers of this
->>> will tell us about the SMMU and ITS.
+> Hi Frank,
 > 
->>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
->>> index 9d6516f98acf..012e09e80300 100644
->>> --- a/drivers/resctrl/mpam_devices.c
->>> +++ b/drivers/resctrl/mpam_devices.c
->>> @@ -106,6 +116,74 @@ static inline u32 _mpam_read_partsel_reg(struct mpam_msc *msc, u16 reg)
+> We have integrated the I3C HCI IP from synopsys. But the IP which we
+> integrated into our SAMA7D65 SoC does not support DMA feature, Endianess
+> check and few other interrupt status. So we have to introduce a
+> microchip SoC specific macro to modify this driver. So we have below 2
+> approaches,
 > 
->>> +int mpam_register_requestor(u16 partid_max, u8 pmg_max)
+I'd try to avoid creating a copy driver for the same base IP as much as 
+possible.
+
+MIPI I3C HCI driver supports both PIO and DMA. Not sure are there 
+implementations where IP is synthezied to support both but for example 
+AMD platform with ACPI ID AMDI5017 is PIO only and Intel is DMA only.
+
+I have two concrete examples below showing how difficult is to keep sync 
+changes and one sidenote about unneeded code for your HW.
+
+>>> +static void mchp_hci_dat_v1_set_dynamic_addr(struct mchp_i3c_hci *hci,
+>>> +                                        unsigned int dat_idx, u8 address)
 >>> +{
->>> +	int err = 0;
+>>> +        u32 dat_w0;
 >>> +
->>> +	lockdep_assert_irqs_enabled();
+>>> +        dat_w0 = dat_w0_read(dat_idx);
+>>> +        dat_w0 &= ~(DAT_0_DYNAMIC_ADDRESS | DAT_0_DYNADDR_PARITY);
+>>> +        dat_w0 |= FIELD_PREP(DAT_0_DYNAMIC_ADDRESS, address) |
+>>> +                  (dynaddr_parity(address) ? DAT_0_DYNADDR_PARITY : 0);
+>>> +        dat_w0_write(dat_idx, dat_w0);
+>>> +}
+
+This code calculates the parity wrong. See commit e55905a3f33c ("i3c: 
+mipi-i3c-hci: use parity8 helper instead of open coding it").
+
+If I recall correctly this becomes visible with the 3rd or 4th device on 
+the bus and therefore was for long unnoticed.
+
+>>> +static int mchp_i3c_hci_alloc_safe_xfer_buf(struct mchp_i3c_hci *hci,
+>>> +                                    struct mchp_hci_xfer *xfer)
+>>> +{
+>>> +     if (hci->io == &mchp_mipi_i3c_hci_pio ||
+>>> +         xfer->data == NULL || !is_vmalloc_addr(xfer->data))
+>>> +             return 0;
+>>> +     if (xfer->rnw)
+>>> +             xfer->bounce_buf = kzalloc(xfer->data_len, GFP_KERNEL);
+>>> +     else
+>>> +             xfer->bounce_buf = kmemdup(xfer->data,
+>>> +                                        xfer->data_len, GFP_KERNEL);
 >>> +
->>> +	spin_lock(&partid_max_lock);
->>> +	if (!partid_max_init) {
->>> +		mpam_partid_max = partid_max;
->>> +		mpam_pmg_max = pmg_max;
->>> +		partid_max_init = true;
->>> +	} else if (!partid_max_published) {
->>> +		mpam_partid_max = min(mpam_partid_max, partid_max);
->>> +		mpam_pmg_max = min(mpam_pmg_max, pmg_max);
-> 
->> Do we really need to reduce these maximum here? If, say, we add an SMMU
->> requester which supports fewer partids than the cpus don't we want to be
->> able to carry on using those partids from the cpus. In this case the
->> SMMU requestor can, without risk of error interrupts, just use all the
->> partids it supports.
-> 
-> How would it do that?
-> 
-> We're probably going to expose that SMMU, or the devices behind it, via resctrl. You can
-> create 10 control groups in resctrl - but can't assign the SMMU/devices to the last two
-> because it doesn't actually support that many...
+>>> +     return xfer->bounce_buf == NULL ? -ENOMEM : 0;
+>>> +}
+>>> +
+>>> +static void mchp_i3c_hci_free_safe_xfer_buf(struct mchp_i3c_hci *hci,
+>>> +                                    struct mchp_hci_xfer *xfer)
+>>> +{
+>>> +     if (hci->io == &mchp_mipi_i3c_hci_pio || xfer->bounce_buf == NULL)
+>>> +     return;
+>>> +     if (xfer->rnw)
+>>> +             memcpy(xfer->data, xfer->bounce_buf, xfer->data_len);
+>>> +
+>>> +     kfree(xfer->bounce_buf);
+>>> +}
 
+Sidenote, these bounce buf stuff are complete unneeded if your HW 
+supports only PIO transfers.
 
-Ok. If that's how it's going to be exposed to the user then it make sense.
+>>> +static int mchp_i3c_hci_attach_i3c_dev(struct i3c_dev_desc *dev)
+>>> +{
+>>> +     struct i3c_master_controller *m = i3c_dev_get_master(dev);
+>>> +     struct mchp_i3c_hci *hci = to_i3c_hci(m);
+>>> +     struct mchp_i3c_hci_dev_data *dev_data;
+>>> +     int ret;
+>>> +
+>>> +     dev_data = kzalloc(sizeof(*dev_data), GFP_KERNEL);
+>>> +     if (!dev_data)
+>>> +             return -ENOMEM;
+>>> +     if (hci->cmd == &mchp_mipi_i3c_hci_cmd_v1) {
+>>> +             ret = mchp_mipi_i3c_hci_dat_v1.alloc_entry(hci);
+>>> +             if (ret < 0) {
+>>> +                     kfree(dev_data);
+>>> +                     return ret;
+>>> +             }
+>>> +             mchp_mipi_i3c_hci_dat_v1.set_dynamic_addr(hci, ret, dev->info.dyn_addr);
+>>> +             dev_data->dat_idx = ret;
+>>> +     }
+>>> +     i3c_dev_set_master_data(dev, dev_data);
+>>> +     return 0;
+>>> +}
 
-> 
-> 
-> Thanks,
-> 
-> James
-
-Thanks,
-
-Ben
+See commit 2b50719dd92f ("i3c: mipi-i3c-hci: Support SETDASA CCC").
 
 
