@@ -1,120 +1,97 @@
-Return-Path: <linux-kernel+bounces-809751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7077B51191
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0783B51185
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83EEB3B029A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FD3C4E4562
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE602C21F2;
-	Wed, 10 Sep 2025 08:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F7F30FF09;
+	Wed, 10 Sep 2025 08:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N/j2GoIt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cSy7CkpF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89402652B4;
-	Wed, 10 Sep 2025 08:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BFA303C8A;
+	Wed, 10 Sep 2025 08:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757493490; cv=none; b=evqszAWRInV4WpHk+jw3+zsM2AiFeM7K/DTeIWlA/uTa945NfTsP8oqPm5LjHWpX0zK7pSOYTRkxV/VLfFkgm7zHLUD8seOA5nNmJXLWhvX2O3XRhIGCu1fw4kJX2Jm9CE6AO99hwXLzSqyfeTsdeVDLcEwbftG4fdPz3H8CzGM=
+	t=1757493415; cv=none; b=i6cAdAJDz5XYjw54xciVtniDN4meAhw75/hOMn9HEvjBRG/YMUX5pRaZXkemY7vhrbBoPIctu8Du3v5DhAMGLH9zrE8OgupOB9MadBN8VRKZZbuCC6+7nSWLMaTYgWIHiYRlr4upBv0+nwSdAFRVzWV40BvZ/AJYvBbIzxidfn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757493490; c=relaxed/simple;
-	bh=XBDNBJDNr0UJjLQYcndQN6qQVg9Go32A+2tj/Iq5mCQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iM4pieJ1iMrYAgXarR3xhc4efsYKrlsss5kMzRbSxsfaGAY+VjCI5YkNf5xqJclp01mwyNvXd9e0iUnK6jOjdGvSfrjLf+INsYUbKri2+huo8nQRMvOBB681Q9ZKDP57zZEUCB4OwhjPjbQfXcQQiKJfiYf0XHLx5Q4WY13lDm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N/j2GoIt; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757493489; x=1789029489;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=XBDNBJDNr0UJjLQYcndQN6qQVg9Go32A+2tj/Iq5mCQ=;
-  b=N/j2GoItqatyiLpnMCWMtQH5JzGWyZysz+VZVJQnOcrZ1zy/ScG95Dgd
-   PHLHMxHtnMKZJr51CqOYgPnLrdTeEd9CDDHE4c0fs20fH5kBjLhE39les
-   seS7IGZB+VdLkGkbud/YARBxf8ub1nZaK7MxCYpDO39yvbZvpgs7MyCsG
-   sJXONdw32rMaLmx5I9HTPbot5bd8qvM/NUpMZfHEjDrjYCqtVLEa9JL+d
-   BXGhbGns42L6Qf7hbK0tfv0PXGzRvxvj72AosDpKMmk60w87DgghyrcGz
-   6K7OLGITYSxkGYMMeOcjNlUd5zL05kTdry7MMPMkcVUV7F5whBiqKJe+w
-   Q==;
-X-CSE-ConnectionGUID: gPtF5F89TamNs5ZNORUxNQ==
-X-CSE-MsgGUID: ECryIo+xQ5iFxq1k/lUM3A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="63626418"
-X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
-   d="scan'208";a="63626418"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 01:38:08 -0700
-X-CSE-ConnectionGUID: mOXX6+MBRPOQHir+HpMmDg==
-X-CSE-MsgGUID: 8gaJWDXoSQyrfbX904jhDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
-   d="scan'208";a="173239179"
-Received: from baandr0id001.iind.intel.com ([10.66.253.151])
-  by fmviesa006.fm.intel.com with ESMTP; 10 Sep 2025 01:38:06 -0700
-From: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-To: dave@stgolabs.net,
-	paulmck@kernel.org,
-	josh@joshtriplett.org,
-	frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	rostedt@goodmis.org
-Cc: linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org,
-	Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-Subject: [PATCH] rcu/rcutorture: Improve error handling in rcu_torture_fwd_prog_init()
-Date: Wed, 10 Sep 2025 14:06:30 +0530
-Message-Id: <20250910083630.3735022-1-kaushlendra.kumar@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757493415; c=relaxed/simple;
+	bh=kL8JdtYxkCjMHxc3tftWuYV1C7ek+ybfz3gA+i5iLcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K6t2mdtdJBDK8oxHXPaTzgGfTpeve+faUxrdP8xVJhpFe5fNDPTTAM6FrZJ4csAjcFz7vf8xhD4zCuPUAMA0piPvqFhj7BN5K4sMPd6JIbZiqjhXcz9D6oNEBzNI4KEnJh2Uak25munglT6ylXrVB1K135enSE/7NhF+f07Mcus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cSy7CkpF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82CABC4CEF0;
+	Wed, 10 Sep 2025 08:36:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757493414;
+	bh=kL8JdtYxkCjMHxc3tftWuYV1C7ek+ybfz3gA+i5iLcU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cSy7CkpFKtJfvYuQFBHnPomdbuLhLUcylOxxd4C3YX296LXTl8QpPyhhD8yhx4AJe
+	 6MSzWvlnJBc1a6mLw2wtYrV6SOIbXZ0sSMCcrDhbOQn0yJnIjUooUSSdHeyrMUfyha
+	 tr0IL1jM8LiTNR9AZxJjC6GUKU13Qa5XXwdUNSqltD4sR/SpLpRgtO8bnondXLL7Vz
+	 BnN59i2gO/J+0CUKy9YN7S1AeTxDPTCpGf7rktAzRwESLTM12cpoazsR3SgLUnOLjw
+	 YU08vIR5OEEuulaQ2kt4K47O5HZmwn2jllJR2kIexel0GzmsCbVQ9Q21Q1sda/FvKv
+	 T/bvbG10EZ7WQ==
+Date: Wed, 10 Sep 2025 09:36:49 +0100
+From: Simon Horman <horms@kernel.org>
+To: Carolina Jubran <cjubran@nvidia.com>
+Cc: Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+	Cosmin Ratiu <cratiu@nvidia.com>, Nimrod Oren <noren@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 net 0/2] selftests: drv-net: Fix issues in
+ devlink_rate_tc_bw.py
+Message-ID: <20250910083649.GI20205@horms.kernel.org>
+References: <20250909101353.3778751-1-cjubran@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909101353.3778751-1-cjubran@nvidia.com>
 
-Restructure error handling in rcu_torture_fwd_prog_init() to provide
-cleaner allocation failure paths. The current code checks both
-allocations
-in a single condition, making error handling less efficient and clear.
+On Tue, Sep 09, 2025 at 01:13:51PM +0300, Carolina Jubran wrote:
+> This series fixes issues in devlink_rate_tc_bw.py selftest that made
+> its checks unreliable and its documentation inconsistent with the
+> actual configuration.
+> 
+> V2:
+> - Dropped the patch that relaxed the total bandwidth check. Jakub
+>   suggested addressing the instability with interval-based measurement
+>   and by migrating to load.py. That will be handled in a follow-up.
+> - Link to V1: https://lore.kernel.org/netdev/20250831080641.1828455-1-cjubran@nvidia.com/
+> 
+> Thanks
+> 
+> Carolina Jubran (2):
+>   selftests: drv-net: Fix and clarify TC bandwidth split in
+>     devlink_rate_tc_bw.py
+>   selftests: drv-net: Fix tolerance calculation in devlink_rate_tc_bw.py
+> 
+>  .../drivers/net/hw/devlink_rate_tc_bw.py      | 100 ++++++++----------
+>  1 file changed, 43 insertions(+), 57 deletions(-)
 
-The improved approach:
-- Check rfp allocation immediately and return early on failure
-- Separately handle fwd_prog_tasks allocation failure with proper
-  cleanup
-- Remove redundant kfree(fwd_prog_tasks) since it would be NULL on
-  failure
+Hi Carolina,
 
-Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
----
- kernel/rcu/rcutorture.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+It isn't strictly related to these changes.
+But CI flaggs that devlink_rate_tc_bw.py should
+be present in the Makefile for in the same directory.
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 807fbf6123a7..6af0d207adba 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -2995,11 +2995,11 @@ static int __init rcu_torture_fwd_prog_init(void)
- 	if (fwd_progress_div <= 0)
- 		fwd_progress_div = 4;
- 	rfp = kcalloc(fwd_progress, sizeof(*rfp), GFP_KERNEL);
-+	if (!rfp)
-+		return -ENOMEM;
- 	fwd_prog_tasks = kcalloc(fwd_progress, sizeof(*fwd_prog_tasks), GFP_KERNEL);
--	if (!rfp || !fwd_prog_tasks) {
-+	if (!fwd_prog_tasks) {
- 		kfree(rfp);
--		kfree(fwd_prog_tasks);
--		fwd_prog_tasks = NULL;
- 		fwd_progress = 0;
- 		return -ENOMEM;
- 	}
--- 
-2.34.1
-
+Given the wildcard in the Makefile I'm unsure if that
+is true or not. Could you take a look?
 
