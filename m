@@ -1,201 +1,130 @@
-Return-Path: <linux-kernel+bounces-810858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD31B520BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:18:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43BFB5218B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E8FF189D087
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 19:18:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62D467ABE72
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D1F2D5940;
-	Wed, 10 Sep 2025 19:18:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF1B29E115;
-	Wed, 10 Sep 2025 19:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DC82ED871;
+	Wed, 10 Sep 2025 20:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="S/DgMXTG"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5420329F0E;
+	Wed, 10 Sep 2025 20:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757531898; cv=none; b=psbJCugmTCLMn+nyXFq34THKHrRNDnwN03wwCy5OLTPnqFY20V5+kglcdnEmP4xcEOcE8/mdKCruvyWsodamxaktK8jRztcpuIzQYST4pqD9vFYB4T0CkcM6mf/hMZPLGXWp+8F3+9CUiy9NC2n5FdTuh6CiTBpwsfkuY7rDjBc=
+	t=1757534545; cv=none; b=IZgiaHVWb/9mV5ghAIMxuGMdq3+qONW2x1fec9FRd6/iJg7sdPlaja34JgMF8bF5oBUuS5Qf4jiIgcCva5+QAImFGW8tF6zdUdEScerpyMtVbWLqkqDeUzpsS73PjTnkKJ9P9JzDuSf4iX9S9uRRyCkV9OBzShyDiMPqGzw91HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757531898; c=relaxed/simple;
-	bh=6ZhvNApiwNne/iED8kMddCkIdEPXUm1lKqU71yCipag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yv+yETLYjw2apm+T/Sgs3nxU6WAmLa0glEDZVL59vQEtLfDffa779Lo7XZ7kckOiWjfqX6tHymFggKUqDvfVVKgrrmtmwNnmsqgBtj3k9gnpjZDFoDgWtAUa4vpZDWZ72P8VWmXMi7IJOYN0ICWFxEsNpwkLbQ+XJQpZJqBXXxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6233B16F2;
-	Wed, 10 Sep 2025 12:18:04 -0700 (PDT)
-Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D71143F694;
-	Wed, 10 Sep 2025 12:18:06 -0700 (PDT)
-Message-ID: <cc3b3335-8474-404a-a424-adc070760a9f@arm.com>
-Date: Wed, 10 Sep 2025 20:18:04 +0100
+	s=arc-20240116; t=1757534545; c=relaxed/simple;
+	bh=a+dv0UV8rJBpw5xyo6IBTrbeTMXkPWVPM8ER8nxUixY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mzJGmStJ1X9YzmwYPHWXHvtw6IULmj+hGa5NcnKq68vAbSXqgT93mg+TCUhWWkSfvyIOQ4xF3CH3kiZZ88Z2xR3Jz/V3cR5+d0+dWCyhquT1I0zfPH+KsgtMmaUYChS52Q50TY4K6CsvEIHPy1GKqTPzj3kRiTxYfCVu+Z/7Ugw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=S/DgMXTG; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=6gz3FXQu3DOFyH5Z/Yxt5ftIBimKEIJZnXppi88qYoQ=; b=S/DgMXTG9T1+Ocjo962KJ96UaF
+	anWelgQmGO/UfRZPPlKdjlmpkrnpewf2mmdKcL4ZnXofMfK6ODsm6s7oh7b4M5k4RMXWCfp/XPBXH
+	3MwMaQj1B/0RTfum51nzotVj5vc+982luD2HDTLjF8cIQzn1Vj0w4MDeXodebLl1aTafz+DLIzGER
+	+DKZKKCIylemE0bvBATwKOZY0uaIobx1bhiUVmBdE3x0j9iXHdnloksfYoIR0No9Yrb2L8fUiMY1y
+	ozK9zlaRZpU9/STU323PodgcPRhe0nOxqdYY9iyRN+/snTgZFbX4fH306Fg//Ji/s/RUcgW/GpgS1
+	gZ3CSndA==;
+Date: Wed, 10 Sep 2025 21:18:04 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Andreas Kemnade <akemnade@kernel.org>, Lee Jones <lee@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Alistair Francis <alistair@alistair23.me>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Shawn
+ Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: mfd: sy7636a: Add missing gpio pins
+ and supply
+Message-ID: <20250910211804.5d88f12b@akair>
+In-Reply-To: <aMGdH7Ab+9t/v3CB@lizhi-Precision-Tower-5810>
+References: <20250909-sy7636-rsrc-v2-0-cfd9f44fd259@kernel.org>
+	<20250909-sy7636-rsrc-v2-1-cfd9f44fd259@kernel.org>
+	<aMGdH7Ab+9t/v3CB@lizhi-Precision-Tower-5810>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/33] ACPI / PPTT: Add a helper to fill a cpumask from a
- cache_id
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-41-james.morse@arm.com> <aMGiE10e/MAlghGw@lpieralisi>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <aMGiE10e/MAlghGw@lpieralisi>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi Lorenzo,
+Am Wed, 10 Sep 2025 11:45:35 -0400
+schrieb Frank Li <Frank.li@nxp.com>:
 
-On 10/09/2025 17:06, Lorenzo Pieralisi wrote:
-> On Fri, Aug 22, 2025 at 03:30:21PM +0000, James Morse wrote:
->> MPAM identifies CPUs by the cache_id in the PPTT cache structure.
->>
->> The driver needs to know which CPUs are associated with the cache,
->> the CPUs may not all be online, so cacheinfo does not have the
->> information.
->>
->> Add a helper to pull this information out of the PPTT.
-
->> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
->> index 660457644a5b..cb93a9a7f9b6 100644
->> --- a/drivers/acpi/pptt.c
->> +++ b/drivers/acpi/pptt.c
->> @@ -971,3 +971,65 @@ int find_acpi_cache_level_from_id(u32 cache_id)
->>  
->>  	return -ENOENT;
->>  }
->> +
->> +/**
->> + * acpi_pptt_get_cpumask_from_cache_id() - Get the cpus associated with the
->> + *					   specified cache
->> + * @cache_id: The id field of the unified cache
->> + * @cpus: Where to build the cpumask
->> + *
->> + * Determine which CPUs are below this cache in the PPTT. This allows the property
->> + * to be found even if the CPUs are offline.
->> + *
->> + * The PPTT table must be rev 3 or later,
->> + *
->> + * Return: -ENOENT if the PPTT doesn't exist, or the cache cannot be found.
->> + * Otherwise returns 0 and sets the cpus in the provided cpumask.
->> + */
->> +int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id, cpumask_t *cpus)
->> +{
->> +	u32 acpi_cpu_id;
->> +	int level, cpu, num_levels;
->> +	struct acpi_pptt_cache *cache;
->> +	struct acpi_pptt_cache_v1 *cache_v1;
->> +	struct acpi_pptt_processor *cpu_node;
->> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_PPTT, 0);
->> +
->> +	cpumask_clear(cpus);
->> +
->> +	if (IS_ERR(table))
->> +		return -ENOENT;
->> +
->> +	if (table->revision < 3)
->> +		return -ENOENT;
->> +
->> +	/*
->> +	 * If we found the cache first, we'd still need to walk from each cpu.
->> +	 */
->> +	for_each_possible_cpu(cpu) {
->> +		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
->> +		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
->> +		if (!cpu_node)
->> +			return 0;
+> On Tue, Sep 09, 2025 at 10:33:02PM +0200, Andreas Kemnade wrote:
+> > To be able to fully describe how the SY7636A is connected to the system,
+> > add properties for the EN and VCOM_EN pins. To squeeze out every bit
+> > of unused current, in many devices it is possible to power off the
+> > complete chip. Add an input regulator to allow that.
+> >
+> > Signed-off-by: Andreas Kemnade <akemnade@kernel.org>
+> > ---
+> >  .../devicetree/bindings/mfd/silergy,sy7636a.yaml         | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml b/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
+> > index ee0be32ac0204..054b97dd0c5c7 100644
+> > --- a/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
+> > +++ b/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
+> > @@ -32,6 +32,22 @@ properties:
+> >        Specifying the power good GPIOs.
+> >      maxItems: 1
+> >
+> > +  enable-gpios:
+> > +    description:
+> > +      If EN pin is not hardwired, specify it here to have it set up.  
 > 
-> If for a possible cpu you don't get an acpi_pptt_processor node we return 0,
-> is that correct ? Should not the loop continue ? Forgive me if that's a
-> dumb question.
-
-That looks like me throwing my hands up in the air and bailing out!
-Yes, the loop continue-ing would be better as only possible CPUs that are missing a
-PPTT description (...and cache hierarchy...) would be missing form the bitmap.
-
-It's probably worth a WARN_ON_ONCE() too.
-
-Thanks for spotting that!
-
-
->> +		num_levels = acpi_count_levels(table, cpu_node, NULL);
->> +
->> +		/* Start at 1 for L1 */
->> +		for (level = 1; level <= num_levels; level++) {
->> +			cache = acpi_find_cache_node(table, acpi_cpu_id,
->> +						     ACPI_PPTT_CACHE_TYPE_UNIFIED,
->> +						     level, &cpu_node);
->> +			if (!cache)
->> +				continue;
->> +
->> +			cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
->> +						cache,
->> +						sizeof(struct acpi_pptt_cache));
->> +
->> +			if (cache->flags & ACPI_PPTT_CACHE_ID_VALID &&
->> +			    cache_v1->cache_id == cache_id)
->> +				cpumask_set_cpu(cpu, cpus);
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
->> index 30c10b1dcdb2..4ad08f5f1d83 100644
->> --- a/include/linux/acpi.h
->> +++ b/include/linux/acpi.h
->> @@ -1555,6 +1555,7 @@ int find_acpi_cpu_topology_package(unsigned int cpu);
-
->> @@ -1582,6 +1583,11 @@ static inline int find_acpi_cache_level_from_id(u32 cache_id)
->>  {
->>  	return -EINVAL;
->>  }
->> +static inline int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id,
->> +						      cpumask_t *cpus)
->> +{
->> +	return -EINVAL;
+> Need descript function of enabel-gpios, you can ref data sheet sy7636a.
 > 
-> Nit: You might want the return value here to be coherent with what the function
-> documentation states (ie return -ENOENT;)
-
-Makes sense,
-
-
-> Other than that:
+> "enable-gpios" is good self documented by property name, needn't
+> description at all.
 > 
-> Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+What you are saying is contradictory. I would prefer to have a mapping
+crystal clear visible between properties and pins. That is why I want
+that description. I remember I have got the datasheet from the company
+site with registration without acknowledging any terms. But I do not
+find that site.
 
+> > +    maxItems: 1
+> > +
+> > +  vcom-en-gpios:
+> > +    description:
+> > +      If VCOM_EN pin is not hardwired, specify it here to have it set up.
+> > +    maxItems: 1
+> > +
+> > +  vin-supply:
+> > +    description:
+> > +      Supply for the chip. Some vendor kernels and devicetrees declare this
+> > +      as a GPIO named "pwrall" which does not exist in the datasheet,
+> > +      disabling it makes the chip disappear on the bus.
+> > +  
+> 
+> The same here, descript function. such as power supply for whole chip.
 
-Thanks!
+I think it is useful what I am writing here. DT maintainers are
+apparently fine with it, since it has earned a Reviewed-By.
 
-James
+Regards,
+Andreas
 
