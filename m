@@ -1,228 +1,119 @@
-Return-Path: <linux-kernel+bounces-809458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AABA1B50DE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:13:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860E4B50DEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 657DD4412E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:13:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A66C4E7DCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2101D2D7DFF;
-	Wed, 10 Sep 2025 06:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qgvGcVJo"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437612DAFD8;
+	Wed, 10 Sep 2025 06:13:48 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6432D24A7;
-	Wed, 10 Sep 2025 06:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E1F2C030E
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 06:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757484806; cv=none; b=dpC8FNwUOhbF8nsSYOHjjYTxMT9oewdFrVfZBXAmPBfk8dpbY+ljwfZYeuNT/0437cQgaBBEBZL+DRr4FaxwDdzdZm16piqgdWkTS0drKLkFTlgwXK5QWGc4IfsCcR4e4JSmsrvId4hbu7VTz7ykp7lX/IwslarUjYyFpG2WY+Q=
+	t=1757484827; cv=none; b=u23kFaRt+4+JFURpuESaOH6rKKnbPsTezZmaMsD/6lOXA097vsvDorEurH52e1YB55NiXhWunSmWmLzosY9arUn7P5+mj2x8MaSQnFrFvHJQyr214JS0c7RHWXIznDETiVn/JyrMRAhHW07C9SMUCwz52MivgUzR4Ijeuk0pWwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757484806; c=relaxed/simple;
-	bh=TfRMU+9Gdx1HC4JtInnhupQ4idDhmQVckLzwHxwUqzY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eo2MHED3+EgaiULtjhPhvjSu797GbZuGX1FChTl3afg5ZVz6kwA6u7MpQ9eBZDdLM5j1FICjqVTiOpyV8mVlDRPG7d7nf4D8v3o+V4muUXNksrJ9W8y94VmPmMkDb1JeFnzS2+tH7NZbe9dc2qGP8aeIxcZaPImgJ0MQ9bDrNsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qgvGcVJo; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=67Gw54VTjVoR7AIVRUVgTTN6sTGR1jOjlc8cyyIBWo0=; b=qgvGcVJoFyUqHE7JepjL2lDInc
-	ME+w7KYYabpVHhce4yFXxS1h7tInMh8jP4rrMcaPTxQy/XSv+G92cpU1SgmW4d49YvYujMjAI5/m6
-	y7A8l/N/aiWq2XScZQpNPHJmiQmaL7gHAX+f+OaLO9OptEqFmYjnBq+YtcwPiFCjYUoKDpcS2j+Wt
-	pf+H6ZFzPyBJ0sxaMYXnaDhv8u08OvNsvD+PPq5qn2+wCoCVMN4dfuB5z6sLk/oZ1i1bu0WIyodHD
-	BnDtmnUSuY6LVniHrBsnQbFFCCzOtC9vcG4Cq+yOO1ov3tWyPm4AgMwArY7b72ga7cb0pPy+RjHmT
-	K+zQL5kQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uwE56-0000000CG6N-29BK;
-	Wed, 10 Sep 2025 06:13:24 +0000
-Message-ID: <c5262290-38e3-4c48-af00-b91f03a065a8@infradead.org>
-Date: Tue, 9 Sep 2025 23:13:24 -0700
+	s=arc-20240116; t=1757484827; c=relaxed/simple;
+	bh=TXW5EsKPgr4c5ONJ0jDE+fwkqy249IWWjNFMOAMcdyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kEZBR3p1rGBXnq6R7nDWdCnWwIkoVxKxk/uNAj5h4dAlgYFdKK+qp14GMZWOItSbvoGAjzn4fl6FJHkdsIvKVggFHLTE7xj3pr6+FI+33c4hS+1Jf4nSsFyFfoKIZH1CTDJdAgXmF7MvLQ2i5rzUwxgeXDsYhD/3KhwrGihN8HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uwE5E-0002c3-W8; Wed, 10 Sep 2025 08:13:33 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uwE5C-000XuT-1e;
+	Wed, 10 Sep 2025 08:13:30 +0200
+Received: from pengutronix.de (glittertind.blackshift.org [116.203.23.228])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 2585F46AA4A;
+	Wed, 10 Sep 2025 06:13:30 +0000 (UTC)
+Date: Wed, 10 Sep 2025 08:13:29 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vincent Mailhol <mailhol@kernel.org>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>, 
+	=?utf-8?B?U3TDqXBoYW5l?= Grosjean <stephane.grosjean@hms-networks.com>, Robert Nawrath <mbro1689@gmail.com>, 
+	Minh Le <minh.le.aj@renesas.com>, Duy Nguyen <duy.nguyen.rh@renesas.com>, 
+	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/20] can: netlink: refactor can_validate_bittiming()
+Message-ID: <20250910-outrageous-liberal-falcon-9215d3-mkl@pengutronix.de>
+References: <20250910-canxl-netlink-prep-v2-0-f128d4083721@kernel.org>
+ <20250910-canxl-netlink-prep-v2-4-f128d4083721@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kernel-doc: add support for handling global variables
-From: Randy Dunlap <rdunlap@infradead.org>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
-References: <80f85eacc306e62de8c9c68712c653ba290c2ff2.1757262141.git.mchehab+huawei@kernel.org>
- <d85e3f24-dbcd-4f28-b31f-a77661fc66fb@infradead.org>
- <20250909215824.1968220c@foz.lan>
- <5dc41508-43e8-4e80-b4e0-149af7bbdf19@infradead.org>
- <20250910010903.5388bffc@foz.lan>
- <0d190bf0-b9d4-4d5c-a1cc-6d5d79be3886@infradead.org>
- <656591ff-fa7d-4763-8759-0a0af3a4039a@infradead.org>
- <c195c68f-e815-4428-9134-8746198a4611@infradead.org>
- <20250910062323.059bb078@foz.lan>
- <14133b75-a984-4244-a18d-f02f0b81d1b7@infradead.org>
-Content-Language: en-US
-In-Reply-To: <14133b75-a984-4244-a18d-f02f0b81d1b7@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lp4tox2vxh5x4cj5"
+Content-Disposition: inline
+In-Reply-To: <20250910-canxl-netlink-prep-v2-4-f128d4083721@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--lp4tox2vxh5x4cj5
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 04/20] can: netlink: refactor can_validate_bittiming()
+MIME-Version: 1.0
 
-On 9/9/25 10:59 PM, Randy Dunlap wrote:
-> Hi Mauro,
-> 
-> On 9/9/25 9:23 PM, Mauro Carvalho Chehab wrote:
->> Em Tue, 9 Sep 2025 17:02:00 -0700
->> Randy Dunlap <rdunlap@infradead.org> escreveu:
->>
->>> On 9/9/25 4:50 PM, Randy Dunlap wrote:
->>>>
->>>>
->>>> On 9/9/25 4:49 PM, Randy Dunlap wrote:  
->>>>>
->>>>>
->>>>> On 9/9/25 4:09 PM, Mauro Carvalho Chehab wrote:  
->>>>>> Em Tue, 9 Sep 2025 14:06:43 -0700
->>>>>> Randy Dunlap <rdunlap@infradead.org> escreveu:
->>>>>>  
->>>>>>> On 9/9/25 12:58 PM, Mauro Carvalho Chehab wrote:  
->>>>>>>> Em Tue, 9 Sep 2025 00:27:20 -0700
->>>>>>>> Randy Dunlap <rdunlap@infradead.org> escreveu:  
->>>>>>  
->>>>>>>>> +.. kernel-doc:: init/kdoc-globals-test.c
->>>>>>>>> +   :identifiers:
->>>>>>>>>
->>>>>>>>> The html output says
->>>>>>>>> "Kernel Globals"
->>>>>>>>> but nothing else.    
->>>>>>>>
->>>>>>>> I usually don't add :identifiers: on kernel-doc entries. If you use
->>>>>>>> identifiers, you need to explicitly tell what symbols you want.    
->>>>>>>
->>>>>>> Well, it worked/works without using having any identifiers listed, and
->>>>>>> the docs in Documentation/doc-guide/kernel-doc.rst says that they are
->>>>>>> optional:
->>>>>>>
->>>>>>> identifiers: *[ function/type ...]*
->>>>>>>   Include documentation for each *function* and *type* in *source*.
->>>>>>>   If no *function* is specified, the documentation for all functions
->>>>>>>   and types in the *source* will be included.
->>>>>>>   *type* can be a struct, union, enum, or typedef identifier.  
->>>>>>
+On 10.09.2025 15:03:29, Vincent Mailhol wrote:
+> Whenever can_validate_bittiming() is called, it is always preceded by
+> some boilerplate code which was copy pasted all over the place. Move
+> that repeated code directly inside can_validate_bittiming().
+>=20
+> Finally, the mempcy() is not needed. Just use the pointer returned by
+> nla_data() as-is.
 
+The memcpy()'ed struct is guaranteed to be properly aligned, is this
+also the case for the casted nla_data() pointer?
 
+regards,
+Marc
 
->>>>> Anyway, does this take away something that currently works?  
->>>
->>> The output looks the same with this patch AFAICT.
->>
->> run it in verbose mode to see what command line was passed to
->> the file:
->>
->> 	$ make SPHINXDIRS=your_test_dir V=1 htmldocs
->>
->> This should be printing how the kernel-doc.py command line would be(*):
->>
->> 	scripts/kernel-doc.py -rst -enable-lineno ./include/linux/peci.h
->> 	./include/linux/peci.h:20 Scanning doc for struct peci_controller_ops
->> 	./include/linux/peci.h:32 Scanning doc for struct peci_controller
->> 	./include/linux/peci.h:58 Scanning doc for struct peci_device
->> 	./include/linux/peci.h:88 Scanning doc for struct peci_request
->>
->> (*) the kerneldoc.py extension doesn't call kernel-doc.py, but instead
->>     run directly the Python classes from the library. Yet, to help one
->>     to debug it, the command line is displayed.
-> 
-> I see. Thanks.
-> 
-> I get this if I list all of them (on 2 separate identifiers lines):
-> 
-> ../scripts/kernel-doc.py -rst -enable-lineno -function ROOT_DEV -function system_state -function saved_command_line -function diskseq ../init/kdoc-globals-test.c
-> ../init/kdoc-globals-test.c:5 Scanning doc for global ROOT_DEV
-> ../init/kdoc-globals-test.c:15 Scanning doc for global system_state
-> ../init/kdoc-globals-test.c:27 Scanning doc for global saved_command_line
-> ../init/kdoc-globals-test.c:33 Scanning doc for global loops_per_jiffy
-> ../init/kdoc-globals-test.c:40 Scanning doc for global preset_lpj
-> ../init/kdoc-globals-test.c:49 Scanning doc for global linux_proc_banner
-> ../init/kdoc-globals-test.c:63 Scanning doc for global linux_banner
-> ../init/kdoc-globals-test.c:72 Scanning doc for global diskseq
-> ../init/kdoc-globals-test.c:80 Scanning doc for global rtnl_mutex
-> ../scripts/kernel-doc.py -rst -enable-lineno -function loops_per_jiffy -function preset_lpj -function linux_proc_banner -function linux_banner ../init/kdoc-globals-test.c
-> 
-> or this is I don't use the identifiers line at all:
-> 
-> ../scripts/kernel-doc.py -rst -enable-lineno ../init/kdoc-globals-test.c
-> ../init/kdoc-globals-test.c:5 Scanning doc for global ROOT_DEV
-> ../init/kdoc-globals-test.c:15 Scanning doc for global system_state
-> ../init/kdoc-globals-test.c:27 Scanning doc for global saved_command_line
-> ../init/kdoc-globals-test.c:33 Scanning doc for global loops_per_jiffy
-> ../init/kdoc-globals-test.c:40 Scanning doc for global preset_lpj
-> ../init/kdoc-globals-test.c:49 Scanning doc for global linux_proc_banner
-> ../init/kdoc-globals-test.c:63 Scanning doc for global linux_banner
-> ../init/kdoc-globals-test.c:72 Scanning doc for global diskseq
-> ../init/kdoc-globals-test.c:80 Scanning doc for global rtnl_mutex
-> 
-> 
-> And then both of them report these warnings (already discussed):
-> 
-> Documentation/core-api/kernel-api:435: ../init/kdoc-globals-test.c:10: WARNING: Invalid C declaration: Expected end of definition. [error at 32]
->   enum system_states system_state __read_mostly;
->   --------------------------------^
-> Documentation/core-api/kernel-api:435: ../init/kdoc-globals-test.c:20: WARNING: Invalid C declaration: Expected end of definition. [error at 25]
->   char *saved_command_line __ro_after_init;
->   -------------------------^
-> 
-> and the 3 globals with initialization values are skipped/omitted.
-> 
-> So to get "all identifiers," I should just omit the :identifiers:
-> line completely. kernel-doc.rst could use some clarification on that
-> point.
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
+--lp4tox2vxh5x4cj5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Oh darn, the html output is different:
+-----BEGIN PGP SIGNATURE-----
 
-when I omit the :identifiers: line, I see:
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjBFwQACgkQDHRl3/mQ
+kZzT3ggAkmLLYYObiNDEQcKIbz8ncVsf7o15v9oDTS0lvYnLSw4dB4mKzFk9/ktg
+PUMvr9x0Jl7ZyangtE6ehI+xNlLPB4nd0U68tIBEFfPpjzO0Y+Oo9+g7x3lg6FZM
+6A4uO2SFnvvKxDLc9PtLRXgk4edQf5WaN+6/RwJ4TlCPuX2zeq0eOm1RsBQ4A9tO
+FtUNhO9I1Z8NM6xlig3qa/bKbypRwfY8E6UGOmUTqfXClm91gVN7ftknqmLDpU07
+IpKpTEPlxHRYyb/yE25grmB0E/IC1O4Y2VPBQU2SRwUrvQE6MVLL7SZxeU73YxUh
+zfzlU1h7ZSs+Xa8OO3h6W+PMAN87BQ==
+=Tbxj
+-----END PGP SIGNATURE-----
 
-Kernel Globals
-dev_t ROOT_DEV;
-system root device
-
-enum system_states system_state __read_mostly;
-system state used during boot or suspend/hibernate/resume
-
-char *saved_command_line __ro_after_init;
-kernel’s command line, saved from use at any later time in the kernel.
-
-unsigned long preset_lpj;
-lpj (loops per jiffy) value set from kernel command line using “lpj=VALUE”
-
-static atomic64_t diskseq;
-unique sequence number for block device instances
-
-and when I list all 8 identifiers (on 2 separate lines), I see:
-
-Kernel Globals
-dev_t ROOT_DEV;
-system root device
-
-static atomic64_t diskseq;
-unique sequence number for block device instances
-
-unsigned long preset_lpj;
-lpj (loops per jiffy) value set from kernel command line using “lpj=VALUE”
-
-so for some reason, system_state, saved_command_line, and diskseq are
-skipped/omitted when I list all 8 identifiers.
-
-
--- 
-~Randy
-
+--lp4tox2vxh5x4cj5--
 
