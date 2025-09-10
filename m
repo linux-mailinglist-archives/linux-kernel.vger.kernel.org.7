@@ -1,262 +1,212 @@
-Return-Path: <linux-kernel+bounces-811079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E09B52428
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:20:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 457DFB5242F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54E4B468126
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:20:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9401BC3CEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A8430BBB7;
-	Wed, 10 Sep 2025 22:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDC03112D6;
+	Wed, 10 Sep 2025 22:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hYBgkz/q"
-Received: from mail-yb1-f228.google.com (mail-yb1-f228.google.com [209.85.219.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="kCGBfrCW"
+Received: from LO3P265CU004.outbound.protection.outlook.com (mail-uksouthazon11020119.outbound.protection.outlook.com [52.101.196.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEC03093D7
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 22:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.228
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757542777; cv=none; b=cEkB8McktER3+QoY6caVon4h60+9aSZUkeDXXUvsGLHFDuoc9xg2nuDS21tBgz8FcRrlAIuitR1L1sAwzZtVzPtyrm9ZQBTi/WuQSYRDS8OErxYU9jmLKoJ70u5kNkGVqZjoUzBbUVKe9nzftnyk2B9NwM2kPLt0IXb0UDVVoUQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757542777; c=relaxed/simple;
-	bh=qryd9d3EcpC0AlezfGs+ybYlxKIarlPyMa63kBcjQPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TASXfJzDxdAMzQ8bQ4z5MaUrb4MI1/mt2ptbMbAW5lUu1wy9/tVhUMPBfyUb+XvLJWoTBWJpcje51x2ORcqPiF6z0mPdoxiv+c3+MlcCNhth6nXX1kBjuHtv8n+fMRxlymouZsLSSsCJcjntBJ7Bn6rzOUDM69qdUa/JV6oa65M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=hYBgkz/q; arc=none smtp.client-ip=209.85.219.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-yb1-f228.google.com with SMTP id 3f1490d57ef6-e96e5535fcdso1159716276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:19:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757542775; x=1758147575;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DYkMluAXoUU9ziRsn/K2ST3c55WCNeely9VEl19vgTc=;
-        b=TDCtl3kB/XF67s3HFlNE7/PTDl9Uiilbngg44toZz9KIsovrOhsFX600bzbd+yR0th
-         U0s06vaDlOvdVAlHDp2K61dThoNn5rrUgXEAUtHvkTl7Ggb7x7COwzmP1qOTZFAcwXkr
-         NbdvXVF9JI9wIb9r9QTLzYKm0C1RpYrha0hnlaSUnX5jRLfh89FwbepHNuc8C3E4N26A
-         H+1mjiscFxwaIcqGLQcJUpcWrwJCLPKt7Oo+AcKu96Vf0ZqM7wSDRy4kqdwpDH9d1Bsf
-         Ka1qNnafHAouzk7lTCrN2cGzK4DJ13zbN970uK9pOxkqaFY8isxFd5tiCIl4yQPJSW9E
-         tNPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaGzL4h+LLTqC9W8MIRO9qlE8wICxKYERCsSegcbQniEiKXx1eLnqDlr/w3PTW5aQi2eOqV2ImHxSrZPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaqGlWLZG8p9ZyzY0UeEYfJ3RPP326Q0NEm0hHOoiF8qarloVd
-	CkMVomfTpKPzCCUKcNZw6zK+2dpJK8aB2icBcjdKc/I20PDl+jjSTWykKF4jOBzZO2h7EMkM52C
-	d9+/ncjaErk54tg3iMI5seP04U6aXTGfr40plDW+4GPria45rL0IKm/oFGRJLRhvzXD2VEDDrwt
-	fdOXqMeyJEHsUT5lz7W6jBpcvfKh5SFGd7Rg2FI5zCH1wg3DaJvj0NFx7RJJmPls+zKEut2XUNJ
-	I0QQFff94ykUDDv0yKNGx+4
-X-Gm-Gg: ASbGncs3xQ3JbZj9God7IebmTPOKAd4QJUcC/jhxh+Hhz4BAEHKzA9VKl/OpvSRcZjs
-	zNxV/FDsIEtaYOnqjtkPspZ/gyrbVIa8zGsnhVpQmmrUJNy2yZsyd+Km8AvDAR0oMFE7mBOdHf3
-	lc9LFuRZrd6z0hhm/7E9/3g8hOIvoYg+3aVDRMbspL+N2hKEYt8gVj4aG7r1XVVHV6L73TS/m8Y
-	RlQNAXIR7gIrpktOm2icnYCeMbiIk/NDkGiZ3GQU2kV16ZKMvMPMQwEP3Gz1IeUB0e7KMotJEx8
-	bPPc+y/2Wndf3gGNzc3qNuRONYU0YwakWRmdFjJiRVEBVzu2nWaiKUKiXj426unFqYXJlqFSO+t
-	YgNEbz5qfgOs3klRl0nyMa/sSAngnTtbRUcHF5bf2hqAHmntUqs+nS74qWW8eEt3RNZjJBwVgZY
-	G7A9HZ
-X-Google-Smtp-Source: AGHT+IGRhiOvEdmtcZp58AibL6PGpbatrT8CzsdnM8+rAs/4mnljuIw4E5a7SW5VzF0W+cpUr8bA7XfpXloT
-X-Received: by 2002:a53:c782:0:b0:616:f33c:2416 with SMTP id 956f58d0204a3-6233dade5e0mr1029802d50.10.1757542774706;
-        Wed, 10 Sep 2025 15:19:34 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-10.dlp.protect.broadcom.com. [144.49.247.10])
-        by smtp-relay.gmail.com with ESMTPS id 3f1490d57ef6-ea3cb6310ecsm43074276.6.2025.09.10.15.19.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Sep 2025 15:19:34 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e86f8f27e1so30648785a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:19:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1757542774; x=1758147574; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=DYkMluAXoUU9ziRsn/K2ST3c55WCNeely9VEl19vgTc=;
-        b=hYBgkz/qJ4SVNEXbhuTCeoahZ303YQomicntRSwuzndbwenlnScgpsJ04SIg2Tyx7h
-         DnWUmNhxzOR7UCZyXjBp1Rmg1Lplfncc9X8ti3cYfUotaoY5ABW4VXroUnraRuuJKPQ3
-         oLtww6njyvqCM3RTg3XC6EGyspx2xukWZTbMY=
-X-Forwarded-Encrypted: i=1; AJvYcCVJR2OonR6p9Skaqwy9pl6U7De4nd8mkrMSb1kvGg16jSHthvOtRQ941LfX/T6CbRD7Rni+S+R883wVa4I=@vger.kernel.org
-X-Received: by 2002:a05:620a:1984:b0:804:4a23:38e0 with SMTP id af79cd13be357-81ff3a4feefmr183980885a.4.1757542773801;
-        Wed, 10 Sep 2025 15:19:33 -0700 (PDT)
-X-Received: by 2002:a05:620a:1984:b0:804:4a23:38e0 with SMTP id af79cd13be357-81ff3a4feefmr183977285a.4.1757542773297;
-        Wed, 10 Sep 2025 15:19:33 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-81b59f8786fsm364672285a.29.2025.09.10.15.19.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 15:19:32 -0700 (PDT)
-Message-ID: <8015ec3f-778f-43e9-b91d-fe76b814157f@broadcom.com>
-Date: Wed, 10 Sep 2025 15:19:28 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0D02EB844;
+	Wed, 10 Sep 2025 22:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.196.119
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757542839; cv=fail; b=UTbP1vAP2CxJwD4ggryReDLjtYwWwTfryGfBusGVADx8oek+qnb/LITy61CSEWRY3HbJuvYmDuiEy1GueDURvTOhQjdi62b4y3oJZzzpUBfh8rLJlRwaGv40jdz1OBHpJifuOKuM0sGGgwSy903DYYiljyLQz1EW4toKjVB7Bso=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757542839; c=relaxed/simple;
+	bh=f+KGu+Lgkvrc25ORAgoVess2zm9MC5IVd32BPMZ0Cf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CEHI2l/RZJ0Hp75R6c9haUeDxRDMaMlp8p7FcyQmwESKQW7ISCPA6z4ZlaFi6QmtiCctqzh28gq99wL1GFCr/JM2UORlUYwXP1F5kJD5xuWNbZKVnGwcUOwvqr6gTtYIMUyU9pbwVBHcz9Sh7FA+EBK/HWbiZ1WfOWvCCDgQVAk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=kCGBfrCW; arc=fail smtp.client-ip=52.101.196.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g3bJhQo3Y0+GbjCwTICQTjwfQdy5JvoJpD0j4DwRMw8k73Rwi8tl5IWjP3dZyz8atA5TlaCkjaBNZvB0f3KI20ZE0ne3eHuQ6u15tDbjKsemiGOgq5f17MH6KlETHxpS3RxM5KWjrPbVOP0zjzOeMC2C9mouYKx2o9LdErpHEryCFnmL+Sqm82bjVzU7HXF4EXh1jDVuUqG/F23C6pHjJZuz6aYH6Zl9D4O51i4Qb5hLafKstCc5EX2zLYg5YUemfnsWVNVrpeRj1291fHWsuIUpqX6rz+Lzi1juloy1RqLQlCyiWXHwBvZezGAHHvJ9zsGYT8j6KDdiPhTzVJ+0vA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DiE05x4FB90MAUyHouCHmT76VjniUuQWb/uBQi+VdjE=;
+ b=symYM91HamBlButliKkGjzhq6PZ1PbsIf6T35K3BjhQHg7tcuvYeI1rC1YGADnI2FwekBmp66CYZLbPGJ9aRDAb/x1UZjX8OmIEA0ZqA4KTlNbMe72F/WCJN99ctcT0PKS2CpKyrdDRS3runu+2WGtYSEDbUt6HPnQJKCVM4eookJd71qga7B+wS5wlc/zrf4iD8HXWa3qT4mAiEE4AQ8PW0IEvrgEEDfgqHTtkmj90vwXIswLiZvcymB6P2EzP0k+vx8wke4Zq+O/E+n5UHyywNnJ1/4wvlyMwO+Wu3teGHYESzCCvyO8l9ZK+ZL/BgfHE2GycAU1D11DvX6CEj8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DiE05x4FB90MAUyHouCHmT76VjniUuQWb/uBQi+VdjE=;
+ b=kCGBfrCWMGVUXL+dcdl3rjhMIR1sAr1TMvUY0FYhMPrWdasFRvJ+RPXom12oRXzrSh0uBKWekrPmX0A374xv//80k7Ed9FMuT4APPvTIau91rwybnVBuvRYQVcrcbyn3ambMrwyyd6+ASc55g0mrazYPpLPt+4WYJda+YQYWoK4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from CWLSPRMB0017.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1e7::6) by
+ CWXP265MB2151.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:75::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.22; Wed, 10 Sep 2025 22:20:33 +0000
+Received: from CWLSPRMB0017.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::dbab:6b2e:209f:660a]) by CWLSPRMB0017.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::dbab:6b2e:209f:660a%5]) with mapi id 15.20.9094.018; Wed, 10 Sep 2025
+ 22:20:33 +0000
+Date: Wed, 10 Sep 2025 23:20:27 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?B?QmrDtnJu?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
+ Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
+ Krummrich <dakr@kernel.org>, Tejun Heo <tj@kernel.org>, Tamir Duberstein
+ <tamird@gmail.com>, Dirk Behme <dirk.behme@gmail.com>, Alban Kurti
+ <kurti@invicto.ai>, Fiona Behrens <me@kloenk.dev>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rust: pin-init: add pin projections to
+ `#[pin_data]`
+Message-ID: <20250910232027.332a840a.gary@garyguo.net>
+In-Reply-To: <20250905171209.944599-2-lossin@kernel.org>
+References: <20250905171209.944599-1-lossin@kernel.org>
+	<20250905171209.944599-2-lossin@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0376.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18e::21) To CWLSPRMB0017.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:400:1e7::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next v12 00/18] net: phy: Introduce PHY ports
- representation
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, thomas.petazzoni@bootlin.com,
- Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Herve Codina <herve.codina@bootlin.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
- =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
- Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
- Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Romain Gantois <romain.gantois@bootlin.com>,
- Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-References: <20250909152617.119554-1-maxime.chevallier@bootlin.com>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250909152617.119554-1-maxime.chevallier@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CWLSPRMB0017:EE_|CWXP265MB2151:EE_
+X-MS-Office365-Filtering-Correlation-Id: d19dd6bb-6258-4e03-2a99-08ddf0b84228
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|10070799003|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?x/PGJt4M5aUnWv+dA64PVmUmdbWA1+RkSh/Ev5WQGqhlUZiiDrLJo8Bbb6Ag?=
+ =?us-ascii?Q?OUkCyvbBv8cyWQ3kENvLlankbm6v7B1mxDRpJOnABno14qi/BP2QqRcKeU9H?=
+ =?us-ascii?Q?IeME7D6Ujim4cUxobpTH086VXz/A1MamW3The7tCWdmWroLVzI8yfcvN0sxr?=
+ =?us-ascii?Q?QiCpHF66UIYIb2TiVh9N7VCSHSZYMxi5WO6O0bYJgp8CJUbgITwXbUa1Gb8K?=
+ =?us-ascii?Q?iDokPzRGGKo3iqUx2yFoBGv4s0b3p8xPB6Bgmf/KIAQT07tkO/NU+zrbKtlY?=
+ =?us-ascii?Q?rVqPxu/LfVm97Ery/i+mhSsPbEyr4UJGOXaZKVcyyoRWf8LaXk2GDXA6JmWL?=
+ =?us-ascii?Q?o3EDyzh8P5pdi907Gg1MYkjU6vR2RSqm3O80RD1RplwtdkA+34z5//kVHeGA?=
+ =?us-ascii?Q?6J3JMc1UP9KkZmn9+KrUKjylDyo3XL6t6QSDYEbGEkHPNzyKQH0gBjvqtil/?=
+ =?us-ascii?Q?oKnT8dNzCUzTN67a8hH1Fu6zYW7lxewswxOIqvvDTAM99t/6EWLCpr7QbvF5?=
+ =?us-ascii?Q?evA/6f8eaY9plJLBd6TV1vE4NfYzB+VEml7qpxNe5y2CJtAQ6mxcdr5efdzx?=
+ =?us-ascii?Q?I3W3hQngHyfpdCUSIRN+h1F44Zb+rkFLLqxV6Ykc2t7m1dG2lWguA4gvX90W?=
+ =?us-ascii?Q?cF3nOxYTtheWW85DY4qoG2O8LmSC/NonO11Dx1WLsm8Jm1a6Z5IOwXuKcHy+?=
+ =?us-ascii?Q?DelJQrZZZ64RSqO99zmcKCFSCqoglgK18X13G6utF6RwIGnxF4O22aUUNtYF?=
+ =?us-ascii?Q?zav021KtDTxysLgcWzqa+Ij943q2bPCwRHBuKkZwh4X5y/Zw6hRcdNe/Tz9y?=
+ =?us-ascii?Q?EVQo/bZL8EjGWQuEyttYpAnELWdOCMtEgXAQjROeaFa2w9KSVWfOU0CbY6/t?=
+ =?us-ascii?Q?FUX7JbzU/o8RQnhUFTPT3hUVJNSS32iTPCrhMZMdWmB6nesqTsvjiTgU6qnz?=
+ =?us-ascii?Q?pP9QBIsz/l2jLMNcEx0wKcZzU0vKyvh9uBnfdruPV3+HUbffbbKZazm6qQ7t?=
+ =?us-ascii?Q?//KbmVnKH/j9JyZkY4dqcllBMEal3Hs8JndSgTDG+vl6lHE89JDOD7hKM8bS?=
+ =?us-ascii?Q?Ck5+Ivi/Yfs6G909TIAJ2YvIdnQsjK6uRzPzwLcouxhl0goSMe87TdjIDMMf?=
+ =?us-ascii?Q?5dUEsU9ic6F1eGNOw+OMDNEFDTvX9kGO8i3srTUN8Bv3U/4RHfFIFce0tkvn?=
+ =?us-ascii?Q?r4U2HMWOiBWZzmeya7xKYa5imY5XXbvenXNqBfN5OGWQBViBZW5hAJOBxVe7?=
+ =?us-ascii?Q?EnKex2E/KqTcuaqVC598NJC+NUJZq90u+AGX6YhfEFfUGzQNGp/avnQMp12p?=
+ =?us-ascii?Q?Jvci7im4yalnNCJVTgJHv1CauoOD+Lj+SpCbnz+UarusGl99Kf2gETxU+u8A?=
+ =?us-ascii?Q?gKO3ZoqXX1xQsg2IxBTjftIhJrlfjMUyzRsScHpW4QDVI+zzuE/boyWqEufa?=
+ =?us-ascii?Q?684Ny/P9iHY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLSPRMB0017.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(10070799003)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tbF5V1aQ0oGQKawvt4lEG6HwJrIqsYjrB0G7I9H/k+ND5f78Ac5apQtgOqYv?=
+ =?us-ascii?Q?txpOJO7j7dGdvgQXCODz+qdajGQ6BOFiBv2uXNHcnKTMaH40osVvQhGORWH8?=
+ =?us-ascii?Q?4IOUno6sE0ld9MGlUcSQTc/3P1qIq2tkuJUdYJmlD4biBzWFUh0RGG+kUPo8?=
+ =?us-ascii?Q?geuCL+mjowlo1IWrp6DnSbJkXRSxz165+y4uYXRFxpZ372qS5VYIN9OOjek5?=
+ =?us-ascii?Q?ejSkNLZm+zFhkHgu4X16ngSCfGDJodaGlcpSJUfcBnTRCoBIhEhaDil69hKv?=
+ =?us-ascii?Q?gP5ttgVyNiDrKmQKJNX280GxQuh+6Krwq20FAWVlribHvb4xmj/s1XrvWRet?=
+ =?us-ascii?Q?Dg6gPXaxcLJpuJaaOJTdoByBhbpEJQS8MFvZzE1PFgC0spIWFTRxyWawbGNK?=
+ =?us-ascii?Q?xcjyEJW8jobWxDszZRlPZbcfwb6qySfJgqpBPbogaZ9NcWwWqbRySS6VwKM3?=
+ =?us-ascii?Q?BCU6GGDdXD/1WKoSDu2JsTJNpy6YxXU5YGzuZWFogokIBTVOS4qzU35LwJYH?=
+ =?us-ascii?Q?/xlv8MIwZo+b5kDv0dISNWGtHmEMqAPKTihBbkm/z+esQ9hfv7U/FQwwlddd?=
+ =?us-ascii?Q?h9wOtK+k3kGLIo6e+fKWy47L1fDE7tkqvbeCkYd2sCYWHGS5HIQgR0SitZhu?=
+ =?us-ascii?Q?y/IADPXiT5jygz5xtwMmYws5ZLMZ1Bn5id/DvE0XfdZozo8O+N+kUnrpf08x?=
+ =?us-ascii?Q?odPEkacqE7XoJ+1MPmXerxNT7SyfeC39x2fnGWkwAowkAqq4w7iZPLbcLgyk?=
+ =?us-ascii?Q?sGKhrbH1syeisQTCepaaKbCIe9J1TigMLcOdmpZ64Ai2Xd0g/Z0Gyx09UcU2?=
+ =?us-ascii?Q?Vq80FR1UcsORuhWTbk9d4F4ISKOlMQ/ZFUf31wmCK9QEbF5OCTEJbzOxmeE2?=
+ =?us-ascii?Q?nFF5uPlrPeHlIL9bXp6QZJ/p2oWP8liZuHRlcXbGbtskrKN96daKLkxIRsjj?=
+ =?us-ascii?Q?uwM/zwr2Uyow6PyubtGAmJZTo5ZPqnUnt2HHX6I3tQytuP+BL+9i+0fMXQ4x?=
+ =?us-ascii?Q?SC34+Z/1Y/fwmE3HR5bA6Byf9e/ifedwHV5JG3OX6putMXy/qDFls75hPPpu?=
+ =?us-ascii?Q?5vdsj2e5dtNzjLr8efe5tJaK1dG9VBFTxeGkWFG5ZIACHmkEcy3amO3r5Tva?=
+ =?us-ascii?Q?WB3isr09dOSPgG2gYggHkMdgLUJt8R6v8ucO4K+RoOW8uwm4QA+jJMm94AES?=
+ =?us-ascii?Q?LxmUzv6p6H+iw7IEObq/38wV1OT7bQ688q9hPnCy9sUhYwD/y3+GAoYRYinG?=
+ =?us-ascii?Q?LS5d0ZpyBMkKvYmnH4zQstZqybU2KWfpTmuUAZO/EXpeyd4iCRdMun/RAMDB?=
+ =?us-ascii?Q?iqCYZuJLy90fdxV0LMJCL0hkRDGQR6wdnWgo9GwqsqQZx/JOOWqPZ4Z/ShPx?=
+ =?us-ascii?Q?nKrePlwcEV2PLs1fKYXQ8s0+EX6AlJzkuQrUnk8MAgiu5pt+k48ADUYxGGPe?=
+ =?us-ascii?Q?DagGpAu6sYYPM4ray0ykw097jby5XDTXFmqlLqGoIbzwhR1Do+DlkXIvS8Fj?=
+ =?us-ascii?Q?V1IdZD9iHLkCKlBEnyHaaJeQZJsGIkb6yI4DFaw8z3AT3bgdcH6Il9LjQaFG?=
+ =?us-ascii?Q?mu0VdqMzlGL4blG3xhQROBectfKPSLJ3fGboi5957C19ccAZBtR9qaZTNEAT?=
+ =?us-ascii?Q?2Q=3D=3D?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: d19dd6bb-6258-4e03-2a99-08ddf0b84228
+X-MS-Exchange-CrossTenant-AuthSource: CWLSPRMB0017.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 22:20:33.2924
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: buaWZaEVaGOHg5rZuBn998bAMt8jQlaQoPWQ6GxXfgWkFhkvde51YLiBlR0uiI39OUYAsGvOUtlx6XzU53fyAg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWXP265MB2151
 
-On 9/9/25 08:25, Maxime Chevallier wrote:
-> Hi everyone,
-> 
-> Here is a V12 for the phy_port work, aiming at representing the
-> connectors and outputs of PHY devices.
-> 
-> Last round was 16 patches, and now 18, if needed I can split some
-> patches out such as the 2 phylink ones.
-> 
-> this V12 address the SFP interface selection for PHY driver SFPs, as
-> commented by Russell on v10.
-> 
-> This and Rob's review on the dp83822 patch are the only changes.
-> 
-> As a remainder, a few important notes :
-> 
->   - This is only a first phase. It instantiates the port, and leverage
->     that to make the MAC <-> PHY <-> SFP usecase simpler.
-> 
->   - Next phase will deal with controlling the port state, as well as the
->     netlink uAPI for that.
-> 
->   - The end-goal is to enable support for complex port MUX. This
->     preliminary work focuses on PHY-driven ports, but this will be
->     extended to support muxing at the MII level (Multi-phy, or compo PHY
->     + SFP as found on Turris Omnia for example).
-> 
->   - The naming is definitely not set in stone. I named that "phy_port",
->     but this may convey the false sense that this is phylib-specific.
->     Even the word "port" is not that great, as it already has several
->     different meanings in the net world (switch port, devlink port,
->     etc.). I used the term "connector" in the binding.
-> 
-> A bit of history on that work :
-> 
-> The end goal that I personnaly want to achieve is :
-> 
->              + PHY - RJ45
->              |
->   MAC - MUX -+ PHY - RJ45
-> 
-> After many discussions here on netdev@, but also at netdevconf[1] and
-> LPC[2], there appears to be several analoguous designs that exist out
-> there.
-> 
-> [1] : https://netdevconf.info/0x17/sessions/talk/improving-multi-phy-and-multi-port-interfaces.html
-> [2] : https://lpc.events/event/18/contributions/1964/ (video isn't the
-> right one)
-> 
-> Take the MAchiatobin, it has 2 interfaces that looks like this :
-> 
->   MAC - PHY -+ RJ45
->              |
-> 	    + SFP - Whatever the module does
-> 
-> Now, looking at the Turris Omnia, we have :
-> 
-> 
->   MAC - MUX -+ PHY - RJ45
->              |
-> 	    + SFP - Whatever the module does
-> 
-> We can find more example of this kind of designs, the common part is
-> that we expose multiple front-facing media ports. This is what this
-> current work aims at supporting. As of right now, it does'nt add any
-> support for muxing, but this will come later on.
-> 
-> This first phase focuses on phy-driven ports only, but there are already
-> quite some challenges already. For one, we can't really autodetect how
-> many ports are sitting behind a PHY. That's why this series introduces a
-> new binding. Describing ports in DT should however be a last-resort
-> thing when we need to clear some ambiguity about the PHY media-side.
-> 
-> The only use-cases that we have today for multi-port PHYs are combo PHYs
-> that drive both a Copper port and an SFP (the Macchiatobin case). This
-> in itself is challenging and this series only addresses part of this
-> support, by registering a phy_port for the PHY <-> SFP connection. The
-> SFP module should in the end be considered as a port as well, but that's
-> not yet the case.
-> 
-> However, because now PHYs can register phy_ports for every media-side
-> interface they have, they can register the capabilities of their ports,
-> which allows making the PHY-driver SFP case much more generic.
-> 
-> Let me know what you think, I'm all in for discussions :)
-> 
-> Regards,
+On Fri,  5 Sep 2025 19:12:07 +0200
+Benno Lossin <lossin@kernel.org> wrote:
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> Make the `#[pin_data]` macro generate a `*Projection` struct that holds
+> either `Pin<&mut Field>` or `&mut Field` for every field of the original
+> struct. Which version is chosen depends on weather there is a `#[pin]`
+> or not respectively. Access to this projected version is enabled through
+> generating `fn project(self: Pin<&mut Self>) -> SelfProjection<'_>`.
+> 
+> Link: https://github.com/Rust-for-Linux/pin-init/pull/75/commits/2d698367d646c7ede90e01aa22842c1002d017b3
+> [ Adapt workqueue to use the new projection instead of its own, custom
+>   one - Benno ]
+> Signed-off-by: Benno Lossin <lossin@kernel.org>
 
-Tested with bcmgenet which is single MAC + PHY using phylib.
+LGTM, make sure to remove the spurious comment that Alice mentioned.
 
-Tested with bcm_sf2 which uses phylink and has a combination of internal 
-and external PHYs.
---
-Florian
--- 
-Florian
+Reviewed-by: Gary Guo <gary@garyguo.net>
 
+> ---
+>  rust/kernel/workqueue.rs    | 10 ++-----
+>  rust/pin-init/src/macros.rs | 60 +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 62 insertions(+), 8 deletions(-)
+> 
+> diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
+> index b9343d5bc00f..6ca14c629643 100644
+> --- a/rust/kernel/workqueue.rs
+> +++ b/rust/kernel/workqueue.rs
+> @@ -356,18 +356,12 @@ struct ClosureWork<T> {
+>      func: Option<T>,
+>  }
+>  
+> -impl<T> ClosureWork<T> {
+> -    fn project(self: Pin<&mut Self>) -> &mut Option<T> {
+> -        // SAFETY: The `func` field is not structurally pinned.
+> -        unsafe { &mut self.get_unchecked_mut().func }
+> -    }
+> -}
+> -
+>  impl<T: FnOnce()> WorkItem for ClosureWork<T> {
+>      type Pointer = Pin<KBox<Self>>;
+>  
+>      fn run(mut this: Pin<KBox<Self>>) {
+> -        if let Some(func) = this.as_mut().project().take() {
+> +        if let Some(func) = this.as_mut().project().func.take() {
+> +            // if let Some(func) = this.as_mut().project_func().take() {
+>              (func)()
+>          }
+>      }
 
