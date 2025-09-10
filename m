@@ -1,156 +1,150 @@
-Return-Path: <linux-kernel+bounces-811122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 723C5B524AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:27:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84659B524AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5409917FDCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 421A1467F14
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AF226E708;
-	Wed, 10 Sep 2025 23:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB5F28C2A6;
+	Wed, 10 Sep 2025 23:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDZjflnT"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2wcCo+I"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4546926F280
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6177F26F280
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757546826; cv=none; b=FjoLVvTokqpq/HEtkLfxLnWNM+UkGjTkm51soQDcHPlpKAEAVioLufLSqUru3o/40qBYNXaSFu/YygXUGC7P/NfZTjiAHxMhRK0T0FmhFAQh+yDI3eN7mme48L1NUpzXLll2tzM/Vm5BgAzZLEVS+AfP9v4IEtWbfonOlwlbNxw=
+	t=1757546873; cv=none; b=tFpf8TsTThrz7n9bFQvZ7NwCdFV69kBf2AiEqEC4a61hGe05687atDQ/7rJq0OrWfPwrWqzs/n+sqPKCdaNV7Mz7bDK8BtQqGiCtYMSVaHs5jbhwZU4jjjXvz8AxyME38QC3+qk3rr435X5BU8t1HqaoxinukqQ21IKC1v1VNpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757546826; c=relaxed/simple;
-	bh=Rso4kMNY++0mX+1Zk731FKkeDHtrEi4q28Veb4zHENY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BRlQxBgmg5FgE9SfGpYxI+HCCeScAc2T6oTkzetd0oHpV6kcRVGxyKMXYHSIjZ2WUzJ6eY7OmnhNGotDsMi/invu/ePOz1PQa5RYlejIX6qi6QQ2ZqMYxXq9wxHsV7dVVL82KqKfUQue9LAWnfc89fIMt5UApbWxXYIgvbBoP3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XDZjflnT; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1757546873; c=relaxed/simple;
+	bh=3edQ3wiuOkl5Ew2p1AsKKEjc24a+bOKfcgFFJgKaYyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SNnzC3Gr9j79oWjyIyZPeidWC/VvvXiWYpD5nFYQ1xfPLU9zYvzCBy7fv9e8Uvn2E1hSlt+CT4N6RYBUKzwP8MGBJxVjGzIkIdRSNVRX9Z+dYPcbTRjC1X+hxUoafGKGb/ulwY1LakwSb+LYnqXyOiV3pwNeddRCkTxGj+68aJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2wcCo+I; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7725fb32e1bso132497b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:27:05 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24af8cd99ddso1242075ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:27:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757546824; x=1758151624; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=z00uyoYaPpbnnyjTQiKQAeAb5AJf67lVttafJphDMJg=;
-        b=XDZjflnTJn4qE5VdkvpfubzrBvIxzx5tJhsrqJYv6IvCWhH+pAwALxZErqNkzPuTrL
-         ojtHVlFS1w3dCINqZPDK0sz9IIBHRMga9V1mLk1AKnIJkLC0iQ4enoqrn75GbcssgsT3
-         oXcH7ZDAyuJ/OrtpyDTIc+nNhKdnpT9FSf59QQuza3FXaeOulu4oYyPMPF8S1ITrJ17Y
-         l0uMzoBKq/muNdYfYrsEoCP5qCA0nxgvZXP5T5lu3loDXMMuJxuJQUULB8dBZ84Im2aQ
-         J50JtYlnQIURqXs7wyZ9eiu8a9WFEkV7IFefBhDHLRWH9eTZKmhk08/P3A2Tp60ZYPzO
-         U1hw==
+        d=gmail.com; s=20230601; t=1757546871; x=1758151671; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cBvz8G4X1Zkxg6w/J/7iMCCyjPI7vNKrmBzdJOfaZII=;
+        b=B2wcCo+Ig5qbMOS/cw9vFoO3tNPXKdDlfivBubLZOkoMliZjXdNYvBo9eZ95M0Jcv8
+         pboKT6a7jMacVJTVQBmGG9blA6psy+nTmw484RKh6qpc5pOaup9v/79lNm3uNpTPR/u/
+         HByjBFhxW4McyXWM4adpkRfnrbgUU1irMG17N4XPA1vDjN1haxMPvRWKt6kEDnGin2RU
+         eBJGJeXh4nrK7+HAT3wPYCWqwTvf1FiBoKeJdyHoCwxDgiuZ6Bnv08qtG14MUpmmbrgf
+         hcvcYCW8jUsE1hTcTAgjY5kEtS+ArEi7bHJ9y9c4jH/euVaZ4isW8Ss4sMGbX7zubbh3
+         e/Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757546824; x=1758151624;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z00uyoYaPpbnnyjTQiKQAeAb5AJf67lVttafJphDMJg=;
-        b=ZS1h6wzWzCjxvm2eNPt8Ybmuu4F4vEeCdeHlRONO5nHha7byTZlaonVYrylqSdtqsj
-         ilbBcsqVF9uqh9iFMsZicJ4/qarpdZgK/jwxVjS7z/r1+f+MDcmxpYz2pNHnTX0Nelm8
-         4ywMpxE0AHbeS0DeI7+yRBTqlb3U8wo9Oh/3myutSc8BW4sPLjlrDSXDe4ByFFfWFxeS
-         f1GCqwZapksMszGzXN6UyWBcZAQ3Hc1Cf3A+a8qE1mZJ+9RrZFmT28eD4mqjP0OxajDs
-         HL6RamQLIepSSuBrZcaZAKqUpeYI/7Fg0MY2A5L/DS0uQFmcwZ6DIJ1KGE3l6kgd5OU2
-         YMXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUANdcIxYEgerA9jCE3qNp9IOudv5ehXsdreEYadE+q1rRcOQ1EzatKkEx8EjmRLAGafIhRw84WTIaE3CI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD9bnwTMtEtFaGllevxV7YwZMYE+GxkUG5sCAT6+33OY5eANvw
-	JX5cxl9oVgxl3VVnsQ9K9SJoQhn8uRcreRVqMQKlX37wtw8KgTVypseN
-X-Gm-Gg: ASbGncuY7/fQMfkOke32b4KYkyNNJESJqHjCl9hijfYnt04IhV92R+SWsMshUsBB/tU
-	NqnDiX00+XiM05zcPe+DGyI78yf4EHEt01ME1gyaOcXMwZONUn8sn3GRQ+bkyux+72Y0JYOLeEx
-	ZoSjcuQCrYlbhGMAFXI630eqfj9z3LvT3WL7ke1cxfWRg9G7gdcCMw+Ig/MZMjrQkD29GpJ9C+H
-	IQD0jNW4EEkm8YyVE7G2AZz+GqlGVuUVcl1kC9QaVTGruXyKFDeW8SEpIiDG5QKPt0+bqARt+jj
-	Q1ASH24devFmKZ+prpIjIv5xZSgcgfS/bkHersKTXfeokv9d2S//3yV2vSiyB5Mr5FXTLOAgfK6
-	AlSGwSPazrNKXjYvTQFEpS7O6NA==
-X-Google-Smtp-Source: AGHT+IGSdFMet7QzaqJU44i0rtMUiewSHAuR0CqaJljLhbdxhTDCAcDD4IqcG5WSei/TU75yGs6IqA==
-X-Received: by 2002:a05:6a00:8c11:b0:775:fab1:18ba with SMTP id d2e1a72fcca58-775fab11ae4mr3595184b3a.26.1757546824265;
-        Wed, 10 Sep 2025 16:27:04 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-774662d2395sm6288491b3a.88.2025.09.10.16.27.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 16:27:03 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id C7DC941FA3A1; Thu, 11 Sep 2025 06:27:00 +0700 (WIB)
-Date: Thu, 11 Sep 2025 06:27:00 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Tejun Heo <tj@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux cgroups <cgroups@vger.kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrea Righi <arighi@nvidia.com>,
-	Johannes Bechberger <me@mostlynerdless.de>,
-	Changwoo Min <changwoo@igalia.com>,
-	Shashank Balaji <shashank.mahadasyam@sony.com>,
-	Ingo Molnar <mingo@kernel.org>, Jake Rice <jake@jakerice.dev>,
-	Cengiz Can <cengiz@kernel.wtf>
-Subject: Re: [PATCH 2/2] Documentation: cgroup-v2: Replace manual table of
- contents with contents:: directive
-Message-ID: <aMIJRB2-G6zZDZMV@archie.me>
-References: <20250910072334.30688-1-bagasdotme@gmail.com>
- <20250910072334.30688-3-bagasdotme@gmail.com>
- <6geggl3iu2hffdop43rtd6yp2ivd26ytfn4xdclurwce6mapal@4ve46y652dbj>
- <875xdqtp7m.fsf@trenco.lwn.net>
- <aMGq5tNNAk5DsJWo@slm.duckdns.org>
+        d=1e100.net; s=20230601; t=1757546871; x=1758151671;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cBvz8G4X1Zkxg6w/J/7iMCCyjPI7vNKrmBzdJOfaZII=;
+        b=WGFGHfZY9BzuSPfkaHK6MhlHBjBRRrwjxK1krdspsRRg/GB/TOFU9gXcWqCxknDLzB
+         B/X9utmVQs/KyBh+eKylYb+m99SQcOl/kMHpy3ER6jls0Oe6lKNHXc0hD2VxZMA7wzKl
+         RROoSQyCtuLpVb4EH9fMYWeQpQcBXANztI+lwb5IJFQfLFt126Ja1LfB9CDZQyRQv1w5
+         Uj8AM8uRnnBPEDuPw+naGteOO63ROFzdFWqeg2l67g1638uhsqlzsogVBqJ7EyIyCg+B
+         F1fvjzrbOP1tX9D+m4/dCLCToaDVszMjj/bRbVk7FsgWTM4oiehlLyOpz8xgOiTda8W2
+         FJRw==
+X-Gm-Message-State: AOJu0YxkzvUenPC8McF1BdxKaloN1UswmIMJ1NnYyzih7URoRCTDuTZj
+	JivMUZps9Vrs4x0uLFLySTTSR1q9KDYA8co+mG1k9+hjKPYd9qLyq/Ps
+X-Gm-Gg: ASbGnctJYuGize/+XXoSdZlhq8XMldzJIFwD6WW+bxLRDgDW9aNqKR8wP8vVqPVGCiF
+	VQk+MvBotFzAlROTQNC2tdjmkl5Z+etlwnQZeox8JXWxSUvw09O6aUPek4JSNXDo0iW3HmesEMw
+	ORkJogROme2FK+OGyf/zSpZ5taS1x7Uxim+e3b/kTCbspQl/WyvVHzW5WP+JLXMAbFB2ZQqoQv+
+	cwxYSbCAfPFlhoBFiUc0IktRRs0mJI9yWavWJMUTtDSrrqeJLkv2mUHrqdSdEbPg5hGU+mxGuma
+	fceOtinIlEP43FKsP0KQ6nZ2V2UFqkHAJrh7LMaahw4mPpfaL8aqQI4Hs0fDnirNeaQsUeuLLSe
+	kj2Gt/N2i6FYWhPClXth18QXMmvxpFr72ZAyqb9SvqjZ3WjNEmq1G3vDNJLpLF8TUqMyoqBcMHA
+	HnJuMd3FHnrwgUeA==
+X-Google-Smtp-Source: AGHT+IEw6OJxHhulxO5W0vyjKqEL9UiUEJnQ+QQ+8UVkxR4wstp6ma0MGrwjjjphA87JzXJdOl+Ovg==
+X-Received: by 2002:a17:903:f83:b0:246:4077:455b with SMTP id d9443c01a7336-25171cbfb5cmr242343295ad.36.1757546865940;
+        Wed, 10 Sep 2025 16:27:45 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a2a924eeasm38717835ad.108.2025.09.10.16.27.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 16:27:45 -0700 (PDT)
+Message-ID: <cd7cb4b5-561b-49cb-babb-393b608c98bb@gmail.com>
+Date: Thu, 11 Sep 2025 08:27:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dLjR6Upv5iA7nyab"
-Content-Disposition: inline
-In-Reply-To: <aMGq5tNNAk5DsJWo@slm.duckdns.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/13] docs: kdoc: a few more dump_typedef() tweaks
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org
+References: <20250909204349.123680-1-corbet@lwn.net>
+ <20250909204349.123680-14-corbet@lwn.net>
+ <8ff91be7-7cb7-492b-b1be-2d03516c8386@gmail.com>
+ <87segus9nb.fsf@trenco.lwn.net>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <87segus9nb.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On Wed, 10 Sep 2025 07:46:16 -0600, Jonathan Corbet wrote:
+> Akira Yokosawa <akiyks@gmail.com> writes:
+> 
+>> Hi Jon,
+>>
+>> A quick report on minor regression. Please see below.
+>>
+>> On Tue,  9 Sep 2025 14:43:49 -0600, Jonathan Corbet wrote:
+>>> Merge "typedef" into the typedef_type pattern rather than repeating it
+>>> later, and add some comments.
+>>
+>> I'm seeing new warnings after applying 13/13:
+>>
+>> WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno ./include/media/demux.h' processing failed with: NameError("name '_type' is not defined")
 
---dLjR6Upv5iA7nyab
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[...]
 
-On Wed, Sep 10, 2025 at 06:44:22AM -1000, Tejun Heo wrote:
-> Hello,
->=20
-> On Wed, Sep 10, 2025 at 07:24:45AM -0600, Jonathan Corbet wrote:
-> ...
-> > I fairly routinely get patches fixing manual TOCs that are not updated
-> > to match changes elsewhere.  We have a nice system that can manage the
-> > TOC automatically for us, it seems best to me to use it.
-> >=20
-> > That said, if having the TOC in the plain-text version of the document
-> > is deemed to be important, then it needs to be kept and manually
-> > maintained.
->=20
-> Wouldn't it be better to have some automated script which triggers on
-> mismatching TOC so that these get fixed up. I think people (including me)=
- do
-> read the plain text version, so it'd be a shame if we lose TOC in the sou=
-rce
-> file.
+> 
+> OK, that is embarrassing, not sure how that got through.  My apologies.
+> 
+> An add-on fix is appended if you have the patience to try it; I'll
+> update the series before too long in any case.
 
-In that case, I think we need to standardize these manual toctrees (perhaps
-using custom directive?).
+Testing the one-liner ... , and yes it silenced the warnings.
 
-Thanks.
+I can't do any serious reviews on python code, but can do tests on your
+"improvements".
 
---=20
-An old man doll... just what I always wanted! - Clara
+All those noisy warnings current docs-next carries ...
 
---dLjR6Upv5iA7nyab
-Content-Type: application/pgp-signature; name=signature.asc
+Regards,
+Akira
 
------BEGIN PGP SIGNATURE-----
+> 
+> Thanks for testing!
+> 
+> jon
+> 
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index 8215948dd548..2376f180b1fa 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -1050,7 +1050,7 @@ class KernelDoc:
+>                                f"expecting prototype for typedef {self.entry.identifier}. Prototype was for typedef {declaration_name} instead\n")
+>                  return
+>  
+> -            self.create_parameter_list(ln, 'function',_type, args, ',', declaration_name)
+> +            self.create_parameter_list(ln, 'function', args, ',', declaration_name)
+>  
+>              self.output_declaration('function', declaration_name,
+>                                      typedef=True,
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMIJQAAKCRD2uYlJVVFO
-o46MAP95YJS79Vxocx2+Wr21CjPGuK8+il4Kna7PGwSba9gVPQD8DKHHYG83I+XS
-vgMpfToA++8RL+VVaRxBn/3LsveIfAg=
-=iQTb
------END PGP SIGNATURE-----
-
---dLjR6Upv5iA7nyab--
 
