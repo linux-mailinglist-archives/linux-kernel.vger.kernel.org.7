@@ -1,94 +1,215 @@
-Return-Path: <linux-kernel+bounces-810456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E01B51AE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:08:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33922B51B0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B52707A6A42
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:00:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1457AA02200
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4606F334379;
-	Wed, 10 Sep 2025 14:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="UIgyjwIK"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3B533769D;
+	Wed, 10 Sep 2025 14:57:24 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FBB324B08
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDBF32C33B;
+	Wed, 10 Sep 2025 14:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757516242; cv=none; b=uqyDRYPjLc2pleAJ/MdxCFZOhKiX3Gu1SUeEfoufYQv15QrKXy9THZoDF5sE2wfRaUVjY0glZV1B+sEd0Jqibf4KjDQXMtkEdnu1LhaopG1WI3Jd86GJfdjH7W4sYOPicRQ+Fi5/lzZbpPNmWA7IV5mavFzSJ3j0/lD6PHXiXp8=
+	t=1757516244; cv=none; b=nQqVZ3dGtiKKIE96NliPfKrGoZIDTu5i2FgyY5eO0EdJwqL2/O0c3Qy1p2E1XqMveWO3OSrGTn7PzlOfWg/8f757SGMxWGiIlfwZil3rqQRH4JRkVMfJ8tpIZtiFv0cW+kB1foMxUE0WY9iWSrCb78pdF0uYs/rlTuK+XJA2kPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757516242; c=relaxed/simple;
-	bh=+QrigESGpr9hgmU0mA4QuhpmdPuqTsQah12G6csugZY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Zl4DSw00/EwJgARYPL61UZBB/Wi6dbTE8vgJWQ19G7kw3dl5ZMlnUNJQLxMb9zRIaV6uMiXiSsWQqiQH0gT9elAmGqPHKArBt34YT+REtY6QIYK2BCjq1uF3UP78vSAofqDO8NBh/SOB2mwtDoo7e1sIpmJrvBxKaP48ld+4a7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=UIgyjwIK; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 58AEujRG2718629
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 10 Sep 2025 07:56:45 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 58AEujRG2718629
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025082201; t=1757516206;
-	bh=5kLM77iWVpG9hgu9n1GirrVA1IEAql5WifnbjB8jA8I=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=UIgyjwIKuyj+PNSh8VBX6J1TUgaXWPkfiikK9fphyvRxEsndg8DY+GxZOW1qjPs9X
-	 WYgzmsis2rNZV1eIMtzMrI5yHTBcfHFB4UKk5G2fqrYmY90nkCjMgcqgRv/aWswQJ8
-	 AHHUB+7eX0O3fDBeTeAY1e8XALgbRQZc661m3dcOg1JD2QDcbC4UNGBHX4Kmi6fIu3
-	 D4VbDUFABCzcnqdxpqMCH0G092Kh714II5B6ez4OByIFjdQBg8KYW/B+/ah5KsMePN
-	 yDXk3n8VF+XZImzzvI4ntLqUF+Yc2s6EvOu4wVaVIp5scAjwCjmSb0GOOwPfbViiui
-	 YMeDIvSDDBfSg==
-Date: Wed, 10 Sep 2025 07:56:44 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Dave Hansen <dave.hansen@intel.com>,
-        Jinchao Wang <wangjinchao600@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-CC: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] x86/hw_breakpoint: Unify breakpoint install/uninstall
-User-Agent: K-9 Mail for Android
-In-Reply-To: <cae9c81e-84ac-4da4-abb5-9ff9e20c6d3d@intel.com>
-References: <20250910093951.1330637-1-wangjinchao600@gmail.com> <cae9c81e-84ac-4da4-abb5-9ff9e20c6d3d@intel.com>
-Message-ID: <332DA932-2A5A-48B1-AEF6-84D4CCDB7BA1@zytor.com>
+	s=arc-20240116; t=1757516244; c=relaxed/simple;
+	bh=i9kGLzuwhgZ00stfvmGeDFvOj/l2RLR+XHCvs78CoAU=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Y1YvasOvhViOdMycswQYBKu6+8HpWAZBj/DQduxGaON2g9PJen5RWYA9cTa1dO/keFegUzwqISgCUhDAJHGgraVwyuHbGtnsatHB6x4E0oiHJXNPBqIUHBVHIsyJCZrsbh87hD8ZTCJzPl+kKOyr11HpyGEA+j0B/EaqZ4s0eAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cMNvm1wDvzRkFf;
+	Wed, 10 Sep 2025 22:52:36 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 45D53180B63;
+	Wed, 10 Sep 2025 22:57:13 +0800 (CST)
+Received: from [10.174.178.247] (10.174.178.247) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 10 Sep 2025 22:57:12 +0800
+Subject: Re: [PATCH v3] ACPI: APEI: EINJ: Allow more types of addresses except
+ MMIO
+To: Jiaqi Yan <jiaqiyan@google.com>, <tony.luck@intel.com>,
+	<rafael@kernel.org>
+CC: <dan.j.williams@intel.com>, <bp@alien8.de>, <mchehab@kernel.org>,
+	<xueshuai@linux.alibaba.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250910044531.264043-1-jiaqiyan@google.com>
+From: Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <88893809-ed13-dbb9-2446-8fd680f57693@huawei.com>
+Date: Wed, 10 Sep 2025 22:57:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250910044531.264043-1-jiaqiyan@google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On September 10, 2025 7:47:06 AM PDT, Dave Hansen <dave=2Ehansen@intel=2Eco=
-m> wrote:
->On 9/10/25 02:39, Jinchao Wang wrote:
->> Consolidate breakpoint management into a single helper function to
->> reduce code duplication=2E This introduces new static helpers for
->> slot management and debug register manipulation=2E
->>=20
->> Also, add `<linux/types=2Eh>` to the header file to fix a build
->> dependency=2E
->>=20
->> Signed-off-by: Jinchao Wang <wangjinchao600@gmail=2Ecom>
->> ---
->>  arch/x86/include/asm/hw_breakpoint=2Eh |   7 +-
->>  arch/x86/kernel/hw_breakpoint=2Ec      | 151 ++++++++++++++++---------=
---
->>  2 files changed, 96 insertions(+), 62 deletions(-)
->
->That diffstat doesn't look like it's reducing code duplication=2E
+On 2025/9/10 12:45, Jiaqi Yan wrote:
+> EINJ driver today only allows injection request to go through for two
+> kinds of IORESOURCE_MEM: IORES_DESC_PERSISTENT_MEMORY and
+> IORES_DESC_SOFT_RESERVED. This check prevents user of EINJ to test
+> memory corrupted in many interesting areas:
+> 
+> - Legacy persistent memory
+> - Memory claimed to be used by ACPI tables or NV storage
+> - Kernel crash memory and others
+> 
+> There is need to test how kernel behaves when something consumes memory
+> errors in these memory regions. For example, if certain ACPI table is
+> corrupted, does kernel crash gracefully to prevent "silent data
+> corruption". For another example, legacy persistent memory, when managed
+> by Device DAX, does support recovering from Machine Check Exception
+> raised by memory failure, hence worth to be tested.
+> 
+> However, attempt to inject memory error via EINJ to legacy persistent
+> memory or ACPI owned memory fails with -EINVAL.
+> 
+> Allow EINJ to inject at address except it is MMIO. Leave it to the BIOS
+> or firmware to decide what is a legitimate injection target.
+> 
+> In addition to the test done in [1], on a machine having the following
+> iomem resources:
+> 
+>      ...
+>      01000000-08ffffff : Crash kernel
+>      768f0098-768f00a7 : APEI EINJ
+>      ...
+>    768f4000-77323fff : ACPI Non-volatile Storage
+>    77324000-777fefff : ACPI Tables
+>    777ff000-777fffff : System RAM
+>    77800000-7fffffff : Reserved
+>    80000000-8fffffff : PCI MMCONFIG 0000 [bus 00-ff]
+>    90040000-957fffff : PCI Bus 0000:00
+>    ...
+>    300000000-3ffffffff : Persistent Memory (legacy)
+>    ...
+> 
+> I commented __einj_error_inject during the test and just tested when
+> injecting a memory error at each start address shown above:
+> - 0x80000000 and 0x90040000 both failed with EINVAL
+> - request passed through for all other addresses
+> 
+> Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
+> ---
+> 
+> Changelog
+> 
+> v2 [2] -> v3:
+> - Remove unnecessary IORES_DESC_CXL per comment from Hanjun [3].
+> - Minor update to code comment.
+> 
+> v1 [1] -> v2:
+> - In addition to allow IORES_DESC_PERSISTENT_MEMORY_LEGACY, open the
+>    door wider and only exclude MMIO per suggestion from Tony [4].
+> - Rebased to commit 11e7861d680c ("Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm").
+> 
+> [1] https://lore.kernel.org/linux-acpi/20250825223348.3780279-1-jiaqiyan@google.com
+> [2] https://lore.kernel.org/linux-acpi/20250830030226.918555-1-jiaqiyan@google.com
+> [3] https://lore.kernel.org/linux-acpi/bc8ad4b8-c000-0298-efd1-4a332c4c7820@huawei.com
+> [4] https://lore.kernel.org/linux-acpi/SJ1PR11MB60835824926BEE57F094DE6FFC39A@SJ1PR11MB6083.namprd11.prod.outlook.com
+> 
+> drivers/acpi/apei/einj-core.c | 51 ++++++++++++++++++++++++++++-------
+>   1 file changed, 42 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
+> index 2561b045acc7b..3c87953dbd197 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
+> @@ -656,6 +656,43 @@ static int __einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
+>   	return rc;
+>   }
+>   
+> +/* Allow almost all types of address except MMIO. */
+> +static bool is_allowed_range(u64 base_addr, u64 size)
+> +{
+> +	int i;
+> +	/*
+> +	 * MMIO region is usually claimed with IORESOURCE_MEM + IORES_DESC_NONE.
+> +	 * However, IORES_DESC_NONE is treated like a wildcard when we check if
+> +	 * region intersects with known resource. So do an allow list check for
+> +	 * IORES_DESCs that definitely or most likely not MMIO.
+> +	 */
+> +	int non_mmio_desc[] = {
+> +		IORES_DESC_CRASH_KERNEL,
+> +		IORES_DESC_ACPI_TABLES,
+> +		IORES_DESC_ACPI_NV_STORAGE,
+> +		IORES_DESC_PERSISTENT_MEMORY,
+> +		IORES_DESC_PERSISTENT_MEMORY_LEGACY,
+> +		/* Treat IORES_DESC_DEVICE_PRIVATE_MEMORY as MMIO. */
+> +		IORES_DESC_RESERVED,
+> +		IORES_DESC_SOFT_RESERVED,
+> +	};
+> +
+> +	if (region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
+> +			      == REGION_INTERSECTS)
+> +		return true;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(non_mmio_desc); ++i) {
+> +		if (region_intersects(base_addr, size, IORESOURCE_MEM, non_mmio_desc[i])
+> +				      == REGION_INTERSECTS)
+> +			return true;
+> +	}
+> +
+> +	if (arch_is_platform_page(base_addr))
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+>   /* Inject the specified hardware error */
+>   int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 param3,
+>   		      u64 param4)
+> @@ -702,19 +739,15 @@ int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 param3,
+>   	 * Disallow crazy address masks that give BIOS leeway to pick
+>   	 * injection address almost anywhere. Insist on page or
+>   	 * better granularity and that target address is normal RAM or
+> -	 * NVDIMM.
+> +	 * as long as is not MMIO.
 
-He does add a *lot* of comments=2E
+Thanks for updating this as well.
+
+>   	 */
+>   	base_addr = param1 & param2;
+>   	size = ~param2 + 1;
+>   
+> -	if (((param2 & PAGE_MASK) != PAGE_MASK) ||
+> -	    ((region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
+> -				!= REGION_INTERSECTS) &&
+> -	     (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DESC_PERSISTENT_MEMORY)
+> -				!= REGION_INTERSECTS) &&
+> -	     (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DESC_SOFT_RESERVED)
+> -				!= REGION_INTERSECTS) &&
+> -	     !arch_is_platform_page(base_addr)))
+> +	if ((param2 & PAGE_MASK) != PAGE_MASK)
+> +		return -EINVAL;
+> +
+> +	if (!is_allowed_range(base_addr, size))
+>   		return -EINVAL;
+>   
+>   	if (is_zero_pfn(base_addr >> PAGE_SHIFT))
+
+Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
+
+Thanks
+Hanjun
 
