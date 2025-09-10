@@ -1,109 +1,61 @@
-Return-Path: <linux-kernel+bounces-810519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB33B51BBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:33:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 233FDB51BBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 519B7188B17D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:34:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9A12545D8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21227255F5E;
-	Wed, 10 Sep 2025 15:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KRHc1bx9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qEsMitKb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KRHc1bx9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qEsMitKb"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4134417736;
+	Wed, 10 Sep 2025 15:34:09 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913282609C5
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37BA1E9B35;
+	Wed, 10 Sep 2025 15:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757518417; cv=none; b=oYBg5zsasSvoBMTw650N9QgkCEd5/1qusxqrHd6VXMdLCZ8slAlMTIgKDV9TYnrFsN8IAKYgBnILbIIkbQElAvQGAyKqEt7i1in0eiXsUOoBaFLCVMMBRUDSMmhdnCblec4P47ZK4cD4JF3LehK0MzDvAHUHCHz2jJwf270Akxc=
+	t=1757518448; cv=none; b=jkAV8qetjo4M6eHTytnVrtVEAUVBd04hsH8/Q4ijkPP/MnButrsEuYfpGlKgEmQkQerPeoIfrNlD+gqI8OuJDOYzPEcJ/l5Cdp7p5jUxhcVkOGyeVZI2mUo/odqw+EAUfEbV34vNcRBP0vU52itzPe3l08CqY6nuSswQD4DlV0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757518417; c=relaxed/simple;
-	bh=lE6jA7p7IHcGMhIIhCmy/1BlcN99Vgk0Rz/tO0YufPA=;
+	s=arc-20240116; t=1757518448; c=relaxed/simple;
+	bh=Sv7roDT6usIvwyk5ZedLVq8hKq6aL3E/4rmb1800EwU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lykWkvc3sSE0zTFQax6ifyG6A2xSyyzoYAHHCgOKAQ+DFsP0F9FWyJnEiiu+J+zdCrjjavtdtEULKiL1YogIsD/cSnx3VraA4HFD1LtyZZ3a/8pBLF6gsiUKBqb1BUn5AnL1lkBqLSdpHdOW5zg3eC1deb53NwPJpBVQxPxk1LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KRHc1bx9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qEsMitKb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KRHc1bx9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qEsMitKb; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=BdPPGrhHM2tAmlcTqiQMyC/jTUEZbnbwxKOCr8to/2lYXzROJjTfuqoYzhHFeGMz8+1FJNWJL2ZsMdb9T1Xc69QdluIwQZCO760SOTdeqYXXHlFMOBRzyuO8KaYk1ukE5zgF42CqesomGPfB5cITaVcnf6RTFRn4KaQGwC1ZKRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9382D38689;
-	Wed, 10 Sep 2025 15:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757518412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N+vVaYJZe/SeETDd76D8KQfnhKlDAMSjPgTY3xHnUJA=;
-	b=KRHc1bx9mBUGexHdDhHiY9svNhz7m5dWa5rtOmbk9lRRezDW/qSK6IFhT8Pu/KbIykAbAY
-	L45B6aph0QIXXzl8jpGSfnNzIfxfL73k35CmJ1vbNH076UxlCawwc7nyZUQ8dOHhahnssZ
-	/+yHZXY+phttyPipVnmlelJMmKLwVls=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757518412;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N+vVaYJZe/SeETDd76D8KQfnhKlDAMSjPgTY3xHnUJA=;
-	b=qEsMitKbtLYp2C0/5PO528EyE8Ie+NzeUkZPBDX9fWRwhk24vSp4qGLXYQIWb8JQKoQLm5
-	zf0wICfqlQuCfMAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757518412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N+vVaYJZe/SeETDd76D8KQfnhKlDAMSjPgTY3xHnUJA=;
-	b=KRHc1bx9mBUGexHdDhHiY9svNhz7m5dWa5rtOmbk9lRRezDW/qSK6IFhT8Pu/KbIykAbAY
-	L45B6aph0QIXXzl8jpGSfnNzIfxfL73k35CmJ1vbNH076UxlCawwc7nyZUQ8dOHhahnssZ
-	/+yHZXY+phttyPipVnmlelJMmKLwVls=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757518412;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N+vVaYJZe/SeETDd76D8KQfnhKlDAMSjPgTY3xHnUJA=;
-	b=qEsMitKbtLYp2C0/5PO528EyE8Ie+NzeUkZPBDX9fWRwhk24vSp4qGLXYQIWb8JQKoQLm5
-	zf0wICfqlQuCfMAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4F8EC13301;
-	Wed, 10 Sep 2025 15:33:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ISZqE0yawWjuOAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 10 Sep 2025 15:33:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AAC4FA0A2D; Wed, 10 Sep 2025 17:33:27 +0200 (CEST)
-Date: Wed, 10 Sep 2025 17:33:27 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 01/32] pidfs: validate extensible ioctls
-Message-ID: <myq5fyn7mlxqxxy4bw4sujz6k6otw5x4b2u3dhsb2lgohrjqtr@bxziyyawq3jk>
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-1-4dd56e7359d8@kernel.org>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id D25072C064E1;
+	Wed, 10 Sep 2025 17:33:55 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id A8C7B531EE7; Wed, 10 Sep 2025 17:33:55 +0200 (CEST)
+Date: Wed, 10 Sep 2025 17:33:55 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: "Bowman, Terry" <terry.bowman@amd.com>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com,
+	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
+	dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
+	Benjamin.Cheatham@amd.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com,
+	linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v11 09/23] PCI/AER: Report CXL or PCIe bus error type in
+ trace logging
+Message-ID: <aMGaY-d9Xl427hqh@wunner.de>
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+ <20250827013539.903682-10-terry.bowman@amd.com>
+ <aK6101l5vMZA3MUs@wunner.de>
+ <910f6bda-4f18-47a9-9150-8489685c857d@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,93 +64,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250910-work-namespace-v1-1-4dd56e7359d8@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLbyy5b47ky7xssyr143sji8pp)];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+In-Reply-To: <910f6bda-4f18-47a9-9150-8489685c857d@amd.com>
 
-On Wed 10-09-25 16:36:46, Christian Brauner wrote:
-> Validate extensible ioctls stricter than we do now.
+On Wed, Sep 10, 2025 at 10:26:19AM -0500, Bowman, Terry wrote:
+> On 8/27/2025 2:37 AM, Lukas Wunner wrote:
+> > On Tue, Aug 26, 2025 at 08:35:24PM -0500, Terry Bowman wrote:
+> >> The AER service driver and aer_event tracing currently log 'PCIe Bus Type'
+> >> for all errors. Update the driver and aer_event tracing to log 'CXL Bus
+> >> Type' for CXL device errors.
+> >>
+> >> This requires the AER can identify and distinguish between PCIe errors and
+> >> CXL errors.
+> >>
+> >> Introduce boolean 'is_cxl' to 'struct aer_err_info'. Add assignment in
+> >> aer_get_device_error_info() and pci_print_aer().
+> >>
+> >> Update the aer_event trace routine to accept a bus type string parameter.
+> > aer_print_error() has a pointer to the struct pci_dev and you've added
+> > an is_cxl bit to that struct in the preceding patch.
+> >
+> > Is there a reason why you can't just use that dev->is_cxl bit, in lieu of
+> > adding another is_cxl bit to struct aer_err_info?
+> >
+> > If so, please document it in a code comment or at least in the commit
+> > message.  If there isn't, please use dev->is_cxl.
 > 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> [..] the
+> actual device bus state can change between capturing the AER status and
+> handling/logging. An example is a training HW error. Caching the 'is_cxl'
+> will allow the drivers to properly identify the error bus type for
+> further logging and handling.
 
-Looks good. Feel free to add:
+Thanks for the explanation.  Could you document this in a code comment?
+It's not obvious at least to me.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/pidfs.c         |  2 +-
->  include/linux/fs.h | 14 ++++++++++++++
->  2 files changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index edc35522d75c..0a5083b9cce5 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -440,7 +440,7 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
->  		 * erronously mistook the file descriptor for a pidfd.
->  		 * This is not perfect but will catch most cases.
->  		 */
-> -		return (_IOC_TYPE(cmd) == _IOC_TYPE(PIDFD_GET_INFO));
-> +		return extensible_ioctl_valid(cmd, PIDFD_GET_INFO, PIDFD_INFO_SIZE_VER0);
->  	}
->  
->  	return false;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index d7ab4f96d705..2f2edc53bf3c 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -4023,4 +4023,18 @@ static inline bool vfs_empty_path(int dfd, const char __user *path)
->  
->  int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
->  
-> +static inline bool extensible_ioctl_valid(unsigned int cmd_a,
-> +					  unsigned int cmd_b, size_t min_size)
-> +{
-> +	if (_IOC_DIR(cmd_a) != _IOC_DIR(cmd_b))
-> +		return false;
-> +	if (_IOC_TYPE(cmd_a) != _IOC_TYPE(cmd_b))
-> +		return false;
-> +	if (_IOC_NR(cmd_a) != _IOC_NR(cmd_b))
-> +		return false;
-> +	if (_IOC_SIZE(cmd_a) < min_size)
-> +		return false;
-> +	return true;
-> +}
-> +
->  #endif /* _LINUX_FS_H */
-> 
-> -- 
-> 2.47.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Lukas
 
