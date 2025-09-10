@@ -1,214 +1,235 @@
-Return-Path: <linux-kernel+bounces-809379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB2BB50CD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:23:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1F4B50CD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E134E87EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:23:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 769EF462913
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC902877F1;
-	Wed, 10 Sep 2025 04:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DC129993E;
+	Wed, 10 Sep 2025 04:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntc5FemF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RDMbaym/"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA58C8248C;
-	Wed, 10 Sep 2025 04:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A961E296BCD
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 04:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757478209; cv=none; b=VXoXtW8dVCQGV9O8/gPI2DJhZBPu3KwhXX07zKN8plCG6aExCYGAh4A3aYW9NGoUibUqNJBgPzDpPXcpVVazbSx3S5C2vnr9/R4KaFBvm8FTbO2UYFvKnJKtrOL1yfKD9QO2lzACm5T+ufm6/2Ejh9HS3Si8btH8NtffYrDi4oM=
+	t=1757478563; cv=none; b=eu+7bJlp/vmtXPRWomhuKdoNpcyDO+URjBQFmzdUvG9ZzCEPjUxQ+wtJwBRNMl371XZET6v6IUGrVHyX47GX5NRWrwfQmFlz2CNoLg0mrlTt1gFO8bN/O2IbnrfeYm3eV+QzTfF7OBkfDBuxerDULtEFJCaD2+Wh1Qrn9kbhfSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757478209; c=relaxed/simple;
-	bh=rE8gJPwTFV7yXLUljHlupB2t0ikdiGeonTdVcLTIHsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q29EkVKCfwsMmjseezcyttCdJGafiBOo/NxFyiQnzWaZWcoER2bbTBEnQ6obEe6IwYdOXs59+ctlQ8HjEotT6cnCuWB/HKycW7xlLx4VnqZoNO1J0WB/vrW9AncSHgTXuDGzOh8Kw5sHqUShv861zGIs60yv983lt6iB3+Iqz3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ntc5FemF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11FDEC4CEF0;
-	Wed, 10 Sep 2025 04:23:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757478207;
-	bh=rE8gJPwTFV7yXLUljHlupB2t0ikdiGeonTdVcLTIHsw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ntc5FemFlZh2pP3IxVGJVZpGv2GGSe19vt7QsOivy6KqDKXIHHaYDMZcKUYUn8VpJ
-	 Ow3nFbm3QXEQ4BUooY6wmXlIjw2yjsfRo95LIOSistM4xwI6Mvij49ijaJclU8ky1b
-	 YFdPhBLGlOp2JLwEaHj8/ypOAX9S5eJtgfEQiDEo8SVsoUxZVonOuho0EKbjbVxP0k
-	 RHknYfLEUbPrYVlOEjHwZK2l7VdWMpLce6PuCdeP0LeIwnzhbmOHOZxUkvTo8jml8Y
-	 1TgITq+fAXUVYG2WkxbpjfPT9vk3LzfUvv+h0wfpxvQ20JweZIphT32MvLmr/p2uIT
-	 bBE81EtsxOqgg==
-Date: Wed, 10 Sep 2025 06:23:23 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel-doc: add support for handling global variables
-Message-ID: <20250910062323.059bb078@foz.lan>
-In-Reply-To: <c195c68f-e815-4428-9134-8746198a4611@infradead.org>
-References: <80f85eacc306e62de8c9c68712c653ba290c2ff2.1757262141.git.mchehab+huawei@kernel.org>
-	<d85e3f24-dbcd-4f28-b31f-a77661fc66fb@infradead.org>
-	<20250909215824.1968220c@foz.lan>
-	<5dc41508-43e8-4e80-b4e0-149af7bbdf19@infradead.org>
-	<20250910010903.5388bffc@foz.lan>
-	<0d190bf0-b9d4-4d5c-a1cc-6d5d79be3886@infradead.org>
-	<656591ff-fa7d-4763-8759-0a0af3a4039a@infradead.org>
-	<c195c68f-e815-4428-9134-8746198a4611@infradead.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757478563; c=relaxed/simple;
+	bh=h8SlZrKBvGr7wtd1dtfVP38edu74TWfY89Z0KAjy3x8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ED4QLYcGBP9vEjeRNFl4ypGzJsYkLDa8D/Bj2mzNHA4NmebSF1gG2jqmGGOMba2oVfQrVR3kCT4viQI2Q0wMtWve7/Zz3UdlkRS3Zao+tPU7J/+U4oHs2ij42xZWCCAUGlgKBTqTDq5v1CnqAwiyg2rOEmxeW8uBqcHsS1G4jkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RDMbaym/; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45de54bfc36so40855e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 21:29:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757478560; x=1758083360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4ARzwmlt6yrpEllGOQjdlWSlNXfWI6GpT8+MnSbYCDU=;
+        b=RDMbaym/AWI9Gezp1usFiqu0UeobRZnbH1pA4Jp3RIXEqy/UvHa+/rTgK5JiBh/N8g
+         6ArmpRHY1arzqsTlVcFFWEt9SPExn3eP3U0p0e93QIqvyGbru9IbH9z3QsQ0ld5JjPS4
+         em+lTiJSop5qivjUQ4YizeeVUCoKJyz8GkoJg8zHafqzbZVsw0k2TBoGyX4qeUV62ekV
+         qf1JXXaib0mtelvpUreqmCxsj4qipLBKHd9K6v8j2McDequ1TTh5rRpLZO13gt73xHGf
+         M7Fn8oXdhYQhajfA93P3nYQ2NL+339U7xmJ0XYRlUx+KEaZyif0ITXJo1xkxqWw0UVVV
+         jo5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757478560; x=1758083360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4ARzwmlt6yrpEllGOQjdlWSlNXfWI6GpT8+MnSbYCDU=;
+        b=qJ30F0Qr/gockpqKvU8iw3RdCNf9JWXhsshhBNqb7q0WWwCZbrN2HaqdEPEfcloOLs
+         eQKR1Ptw65BCfibFYtCyMElb2oNsxMsbPLuqtFAJdWQrlnAV2lsG6OeeS0SGyx63xC/D
+         ODuCmzGBpp5m4yZQSNJyHdG0IUgP13WM4z+wE9iYODUFbUGWceO0aIm1vR0hiy/Lo1uG
+         rsUqdVxgFLv3iUaa34pqv78FMD+gNQedaaZo3OPsq9uVpfpLDnvJbZ6m/xjEREaa9V1d
+         0QVQjuGgMT8vM/Z7vO1JM6U/VZkKy92mC3ZdNt0uh9ao5d9kdXt59BZsoSqesvIyuvBP
+         FuAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ3E2KjWocAP3xnRvC3BIowaaa2h4L29oaJMfBmOmN5+DOkufIVbaKOYnEhd3t1O9k47s7+/dxyOheKeg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq4QTgLoEWkCkXJCl/CVqqGKaz1odHNOkdVXR+ujV6TRJAXs6V
+	WEiLS5Yl47wkub68SM9ebGTqb5MccDYQCUDQHD0A8rmInJ/vvjLU0CYVAIGcHsuIJ2Ixu40I8Jt
+	gWxhWcAmRJF/Bt7GQ0k7UXJoSaew++EeblxXv5k6o
+X-Gm-Gg: ASbGncvifIC/IBqeLMv35jgBVzWmUWUsJimA80B+10kBRPASwrIbHWXCl8ro8cH+bk+
+	1JEjOniIrd+R6qfKDoMmC6XnT7pzbXlGPGpfk7xTRA2xHFlwsUVuSml9BGpCIOCHozZO90O5qnj
+	KyQ9b8okprISXztSjMF1V0td+dx+jZw/YkmhVmztmD9byrqgi/wkVt9FUXBFqEQBR39OlUvtuWg
+	Mb1+VihHz31q1D8ktYFqbnVCg8MXIq2LRrEEs8p4+k+lUlBDWStPSmF
+X-Google-Smtp-Source: AGHT+IEvzXimzLkbrQbhKOggU+1RyKhM1bG28XJ4hXT+Lqyr4ASfwjZrJpFKuoBhUEgwp3EGxJOqutfamhcQAHtcJH4=
+X-Received: by 2002:a05:600c:8584:b0:45b:b6c8:833 with SMTP id
+ 5b1f17b1804b1-45df81fc2b8mr632305e9.3.1757478559480; Tue, 09 Sep 2025
+ 21:29:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250830030226.918555-1-jiaqiyan@google.com> <bc8ad4b8-c000-0298-efd1-4a332c4c7820@huawei.com>
+In-Reply-To: <bc8ad4b8-c000-0298-efd1-4a332c4c7820@huawei.com>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Tue, 9 Sep 2025 21:29:08 -0700
+X-Gm-Features: AS18NWBt91Dwe-VR2UyuyHOgPzSqlS7haP5iXxB9mXtktyngCmw2r4m2kCIj4bw
+Message-ID: <CACw3F53y=B5nJyS=OWTS7pOpcskgQ6Qt9u7Ts-TAZXig-J64oA@mail.gmail.com>
+Subject: Re: [PATCH v2] ACPI: APEI: EINJ: Allow all types of addresses except MMIO
+To: Hanjun Guo <guohanjun@huawei.com>
+Cc: tony.luck@intel.com, rafael@kernel.org, dan.j.williams@intel.com, 
+	bp@alien8.de, mchehab@kernel.org, xueshuai@linux.alibaba.com, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Em Tue, 9 Sep 2025 17:02:00 -0700
-Randy Dunlap <rdunlap@infradead.org> escreveu:
+On Tue, Sep 9, 2025 at 1:35=E2=80=AFAM Hanjun Guo <guohanjun@huawei.com> wr=
+ote:
+>
+> On 2025/8/30 11:02, Jiaqi Yan wrote:
+> > EINJ driver today only allows injection request to go through for two
+> > kinds of IORESOURCE_MEM: IORES_DESC_PERSISTENT_MEMORY and
+> > IORES_DESC_SOFT_RESERVED. This check prevents user of EINJ to test
+> > memory corrupted in many interesting areas:
+> >
+> > - Legacy persistent memory
+> > - Memory claimed to be used by ACPI tables or NV storage
+> > - Kernel crash memory and others
+> >
+> > There is need to test how kernel behaves when something consumes memory
+> > errors in these memory regions. For example, if certain ACPI table is
+> > corrupted, does kernel crash gracefully to prevent "silent data
+> > corruption". For another example, legacy persistent memory, when manage=
+d
+> > by Device DAX, does support recovering from Machine Check Exception
+> > raised by memory failure, hence worth to be tested.
+> >
+> > However, attempt to inject memory error via EINJ to legacy persistent
+> > memory or ACPI owned memory fails with -EINVAL.
+> >
+> > Allow EINJ to inject at address except it is MMIO. Leave it to the BIOS
+> > or firmware to decide what is a legitimate injection target.
+> >
+> > In addition to the test done in [1], on a machine having the following
+> > iomem resources:
+> >
+> >      ...
+> >      01000000-08ffffff : Crash kernel
+> >      768f0098-768f00a7 : APEI EINJ
+> >      ...
+> >    768f4000-77323fff : ACPI Non-volatile Storage
+> >    77324000-777fefff : ACPI Tables
+> >    777ff000-777fffff : System RAM
+> >    77800000-7fffffff : Reserved
+> >    80000000-8fffffff : PCI MMCONFIG 0000 [bus 00-ff]
+> >    90040000-957fffff : PCI Bus 0000:00
+> >    ...
+> >    300000000-3ffffffff : Persistent Memory (legacy)
+> >    ...
+> >
+> > I commented __einj_error_inject during the test and just tested when
+> > injecting a memory error at each start address shown above:
+> > - 0x80000000 and 0x90040000 both failed with EINVAL
+> > - request passed through for all other addresses
+> >
+>
+> ...
+>
+> > Changelog
+> >
+> > v1 [1] -> v2:
+> > - In addition to allow IORES_DESC_PERSISTENT_MEMORY_LEGACY, open the
+> >    door wider and only exclude MMIO per suggestion from Tony [2]
+> > - Rebased to commit 11e7861d680c ("Merge tag 'for-linus' of git://git.k=
+ernel.org/pub/scm/virt/kvm/kvm")
+> >
+> > [1] https://lore.kernel.org/linux-acpi/20250825223348.3780279-1-jiaqiya=
+n@google.com
+> > [2] https://lore.kernel.org/linux-acpi/SJ1PR11MB60835824926BEE57F094DE6=
+FFC39A@SJ1PR11MB6083.namprd11.prod.outlook.com
+>
+> For the Changelog, it's better to move it to below...
+>
+> >
+> > Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
+> > ---
+>
+> ... here.
 
-> On 9/9/25 4:50 PM, Randy Dunlap wrote:
-> > 
-> > 
-> > On 9/9/25 4:49 PM, Randy Dunlap wrote:  
-> >>
-> >>
-> >> On 9/9/25 4:09 PM, Mauro Carvalho Chehab wrote:  
-> >>> Em Tue, 9 Sep 2025 14:06:43 -0700
-> >>> Randy Dunlap <rdunlap@infradead.org> escreveu:
-> >>>  
-> >>>> On 9/9/25 12:58 PM, Mauro Carvalho Chehab wrote:  
-> >>>>> Em Tue, 9 Sep 2025 00:27:20 -0700
-> >>>>> Randy Dunlap <rdunlap@infradead.org> escreveu:  
-> >>>  
-> >>>>>> +.. kernel-doc:: init/kdoc-globals-test.c
-> >>>>>> +   :identifiers:
-> >>>>>>
-> >>>>>> The html output says
-> >>>>>> "Kernel Globals"
-> >>>>>> but nothing else.    
-> >>>>>
-> >>>>> I usually don't add :identifiers: on kernel-doc entries. If you use
-> >>>>> identifiers, you need to explicitly tell what symbols you want.    
-> >>>>
-> >>>> Well, it worked/works without using having any identifiers listed, and
-> >>>> the docs in Documentation/doc-guide/kernel-doc.rst says that they are
-> >>>> optional:
-> >>>>
-> >>>> identifiers: *[ function/type ...]*
-> >>>>   Include documentation for each *function* and *type* in *source*.
-> >>>>   If no *function* is specified, the documentation for all functions
-> >>>>   and types in the *source* will be included.
-> >>>>   *type* can be a struct, union, enum, or typedef identifier.  
-> >>>
-> >>> Hmm.. looking the entire logic:
-> >>>
-> >>>         elif 'identifiers' in self.options:
-> >>>             identifiers = self.options.get('identifiers').split()
-> >>>             if identifiers:
-> >>>                 for i in identifiers:
-> >>>                     i = i.rstrip("\\").strip()
-> >>>                     if not i:
-> >>>                         continue
-> >>>
-> >>>                     cmd += ['-function', i]
-> >>>                     self.msg_args["symbol"].append(i)
-> >>>             else:
-> >>>                 cmd += ['-no-doc-sections']
-> >>>                 self.msg_args["no_doc_sections"] = True
-> >>>
-> >>> I suspect that an empty identifier could be raising an exception.  
-> 
-> and it's being caught and ignored (not printed)?
+Noted, thanks!
 
-there is a try/except block to capture exceptions. It is supposed to
-print something, though:
+>
+> >   drivers/acpi/apei/einj-core.c | 50 +++++++++++++++++++++++++++++-----=
+-
+> >   1 file changed, 42 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-cor=
+e.c
+> > index 2561b045acc7b..904930409fdb2 100644
+> > --- a/drivers/acpi/apei/einj-core.c
+> > +++ b/drivers/acpi/apei/einj-core.c
+> > @@ -656,6 +656,44 @@ static int __einj_error_inject(u32 type, u32 flags=
+, u64 param1, u64 param2,
+> >       return rc;
+> >   }
+> >
+> > +/* Allow almost all types of address except MMIO. */
+> > +static bool is_allowed_range(u64 base_addr, u64 size)
+> > +{
+> > +     int i;
+> > +     /*
+> > +      * MMIO region is usually claimed with IORESOURCE_MEM + IORES_DES=
+C_NONE.
+> > +      * However, IORES_DESC_NONE is treated like a wildcard when we ch=
+eck if
+> > +      * region intersects with known resource. So do an allow list che=
+ck for
+> > +      * IORES_DESCs that definitely or most likely not MMIO.
+> > +      */
+> > +     int non_mmio_desc[] =3D {
+> > +             IORES_DESC_CRASH_KERNEL,
+> > +             IORES_DESC_ACPI_TABLES,
+> > +             IORES_DESC_ACPI_NV_STORAGE,
+> > +             IORES_DESC_PERSISTENT_MEMORY,
+> > +             IORES_DESC_PERSISTENT_MEMORY_LEGACY,
+> > +             /* Treat IORES_DESC_DEVICE_PRIVATE_MEMORY as MMIO. */
+> > +             IORES_DESC_RESERVED,
+> > +             IORES_DESC_SOFT_RESERVED,
+> > +             IORES_DESC_CXL,
+>
+> Sorry, I'm not familiar with CXL, but I see the code in einj_error_inject=
+():
+>
+> /*
+>   * Injections targeting a CXL 1.0/1.1 port have to be injected
+>   * via the einj_cxl_rch_error_inject() path as that does the proper
+>   * validation of the given RCRB base (MMIO) address.
+>   */
+> if (einj_is_cxl_error_type(type) && (flags & SETWA_FLAGS_MEM))
+>         return -EINVAL;
+>
+> So eject an error for CXL memory, there is a new interface which
+> means it's not handled here, do we need to remove IORES_DESC_CXL?
 
-        try:
-            if kfiles:
-                return self.run_kdoc(cmd, kfiles)
-            else:
-                return self.run_cmd(cmd)
+Thanks for catching this. I agree we should remove IORES_DESC_CXL. It
+is unnecessary to check if base_addr intersects IORES_DESC_CXL.
 
-        except Exception as e:  # pylint: disable=W0703
-            logger.warning("kernel-doc '%s' processing failed with: %s" %
-                           (cmd_str(cmd), pformat(e)))
-            return [nodes.error(None, nodes.paragraph(text = "kernel-doc missing"))]
+My previous (and totally wrong) thought was, if the error type happens
+to be vendor-defined CXL memory, that is, for some reason a vendor
+implements EINJ for CXL but not using type bit[12:17],
+einj_is_cxl_error_type will be false and the checks for base_addr will
+happen, and I wanted the check pass through. Now I think this weird
+case should be impossible given no vendor ever tries to add
+IORES_DESC_CXL to the previous check.
 
-> >>> The right logic should be, instead:
-> >>>
-> >>> -        elif 'identifiers' in self.options:
-> >>> -            identifiers = self.options.get('identifiers').split()
-> >>> -            if identifiers:
-> >>> -                for i in identifiers:
-> >>> +        elif 'identifiers' in self.options:
-> >>> +            identifiers = self.options.get('identifiers')
-> >>> +            if identifiers:
-> >>> +                for i in identifiers.split():
-> >>>
-> >>> (tests needed)  
-> >>
-> >> Sheesh, I can't find that code so that I can patch it.
-> >> (in today's linux-next 20250909)  
-> > 
-> > oops, I was looking in scripts/ and not in Documentation/.
-> > got it.
-> >   
-> >> Anyway, does this take away something that currently works?  
-> 
-> The output looks the same with this patch AFAICT.
+Will fix both places in V3.
 
-run it in verbose mode to see what command line was passed to
-the file:
-
-	$ make SPHINXDIRS=your_test_dir V=1 htmldocs
-
-This should be printing how the kernel-doc.py command line would be(*):
-
-	scripts/kernel-doc.py -rst -enable-lineno ./include/linux/peci.h
-	./include/linux/peci.h:20 Scanning doc for struct peci_controller_ops
-	./include/linux/peci.h:32 Scanning doc for struct peci_controller
-	./include/linux/peci.h:58 Scanning doc for struct peci_device
-	./include/linux/peci.h:88 Scanning doc for struct peci_request
-
-(*) the kerneldoc.py extension doesn't call kernel-doc.py, but instead
-    run directly the Python classes from the library. Yet, to help one
-    to debug it, the command line is displayed.
-
-for instance, on a more complex kernel-doc tags case:
-
-	$ make SPHINXDIRS=driver-api/cxl/ V=1 htmldocs 2>&1 |grep scripts/kernel-doc.py
-	scripts/kernel-doc.py -rst -enable-lineno -function 'cxl pci' ./drivers/cxl/pci.c
-	scripts/kernel-doc.py -rst -enable-lineno -internal ./drivers/cxl/pci.c
-	scripts/kernel-doc.py -rst -enable-lineno -function 'cxl mem' ./drivers/cxl/mem.c
-	scripts/kernel-doc.py -rst -enable-lineno -internal ./drivers/cxl/cxlmem.h
-	scripts/kernel-doc.py -rst -enable-lineno -no-doc-sections ./drivers/cxl/core/memdev.c
-	scripts/kernel-doc.py -rst -enable-lineno -function 'cxl port' ./drivers/cxl/port.c
-	scripts/kernel-doc.py -rst -enable-lineno -function 'cxl objects' ./drivers/cxl/cxl.h
-	scripts/kernel-doc.py -rst -enable-lineno -internal ./drivers/cxl/cxl.h
-	scripts/kernel-doc.py -rst -enable-lineno -function add_cxl_resources ./drivers/cxl/acpi.c
-	scripts/kernel-doc.py -rst -enable-lineno -function 'cxl core hdm' ./drivers/cxl/core/hdm.c
-	scripts/kernel-doc.py -rst -enable-lineno -no-doc-sections ./drivers/cxl/core/hdm.c
-	scripts/kernel-doc.py -rst -enable-lineno -no-doc-sections ./drivers/cxl/core/cdat.c
-	scripts/kernel-doc.py -rst -enable-lineno -function 'cxl core' ./drivers/cxl/core/port.c
-	scripts/kernel-doc.py -rst -enable-lineno -no-doc-sections ./drivers/cxl/core/port.c
-	scripts/kernel-doc.py -rst -enable-lineno -function 'cxl core pci' ./drivers/cxl/core/pci.c
-	scripts/kernel-doc.py -rst -enable-lineno -no-doc-sections ./drivers/cxl/core/pci.c
-	scripts/kernel-doc.py -rst -enable-lineno -function 'cxl pmem' ./drivers/cxl/core/pmem.c
-	scripts/kernel-doc.py -rst -enable-lineno -no-doc-sections ./drivers/cxl/core/pmem.c
-	scripts/kernel-doc.py -rst -enable-lineno -function 'cxl registers' ./drivers/cxl/core/regs.c
-	scripts/kernel-doc.py -rst -enable-lineno -no-doc-sections ./drivers/cxl/core/regs.c
-	scripts/kernel-doc.py -rst -enable-lineno -function 'cxl mbox' ./drivers/cxl/core/mbox.c
-	scripts/kernel-doc.py -rst -enable-lineno -no-doc-sections ./drivers/cxl/core/mbox.c
-	scripts/kernel-doc.py -rst -enable-lineno -function 'cxl features' ./drivers/cxl/core/features.c
-	scripts/kernel-doc.py -rst -enable-lineno -function 'cxl core region' ./drivers/cxl/core/region.c
-	scripts/kernel-doc.py -rst -enable-lineno -no-doc-sections ./drivers/cxl/core/region.c
-	scripts/kernel-doc.py -rst -enable-lineno -function UAPI ./include/uapi/linux/cxl_mem.h
-	scripts/kernel-doc.py -rst -enable-lineno -internal ./include/uapi/linux/cxl_mem.h
-
-
-Thanks,
-Mauro
+>
+> Thanks
+> Hanjun
 
