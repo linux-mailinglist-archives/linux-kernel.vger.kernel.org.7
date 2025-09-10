@@ -1,161 +1,109 @@
-Return-Path: <linux-kernel+bounces-811126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7142B524B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:35:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A74DB524BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A819B7B65BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:33:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90E9D7A987F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBA0309DC1;
-	Wed, 10 Sep 2025 23:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811E4309DC1;
+	Wed, 10 Sep 2025 23:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCvxi0ew"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="R3HsBAO9"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3D7282F5;
-	Wed, 10 Sep 2025 23:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8283F303C85;
+	Wed, 10 Sep 2025 23:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757547297; cv=none; b=jSaBsRCHUjErcQiRU+5ysc/UzsYloLfRE2V7N5L1DtkJXOA6y9/XB4b1yjTbs6Hwj/mVC3YCqmfOyjKYQgOEs7HaQhM/ETjTO/Qn27zI5bT7+qYXTsz9CRcQKZ972WtTzAlk5yRc7nRv5W6S7DvsRkrF9zpA1IlraXBWNP8Bfvs=
+	t=1757547362; cv=none; b=GADHxHlFXObEUWM82d9vnU36KJIXEdnIkf9mS4x/93hLJSV4miEcW+hLWUxBYN1ZNEH+NveGHD96sNOEvUKUormmKut03kybNiV3n3fmejJxclhM6bcerE54Ug7qk94Hm1R6WaT+aFRYi0IXUvmWGWoyiZlHZ7br76Z8wAf6WeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757547297; c=relaxed/simple;
-	bh=eFxtgKR83MrEuA47DhOIbgBHX+KlIG8hTh2LQqjlSlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I6Cl6/gJn7GX2K6FItdRTFi11782mJRp0XYozsKzOc+SQ62aWseErmsetoDlbTkeMEe6Ag6qYVj8cPqnnNZvsHWHpdHlhjEqvS7Hj8liGQxOpFEsKttoQ3SJwoe1uL9J1eB0XsMkve7jrd0AVOq5cZm7t/61bm9NLv1UqxeWKJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCvxi0ew; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7726c7ff7e5so106858b3a.3;
-        Wed, 10 Sep 2025 16:34:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757547295; x=1758152095; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L83OmJnlnRObHJm5rh4huVP1DHkzrTe/WeiSjIPyfoA=;
-        b=WCvxi0ewQ5jGvLscjsSIrpcFXNf+qQ4Yrb+I392bsFYb6XuTXElFNSO1tJEPurxHqj
-         mezu0Ck1L4Jkqj7f8ake1ESYhiUE8PAPTPzb+Zie5+PCSCJ4EBia8HkqjjWmrEKd+7Hp
-         mEb7T7cJGrmhK7ivsnZ1hWsb7p/lg+Rj7VI6zQ5JXHsNxOS+Jj2L9K+9KPPak6hbIFt0
-         NcSwBrlsP8VsK8YJ2/9q/7590NK6l6vk6z284C0ZTvA99i0uLuGUR3ezZtD1PyNlMCkM
-         8h2Zfv0XbVS+ZezEaDPzcECQFfJX55p6P6TYeZgNNM8lZGgYVLtVpfLrt+gSWmV6eYWN
-         UYcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757547295; x=1758152095;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L83OmJnlnRObHJm5rh4huVP1DHkzrTe/WeiSjIPyfoA=;
-        b=aCshBl0DUNFVjgO6ffzmjgXcHkCLpYocT26YKXgKxNJTqPPH4nHRdBFvw+NneE1h31
-         a0K9RVlCUCtIOXS4PrezjbEyn3/f+A+1aFezqsNly+16j/bes+IZcqizkgkg+JS2xz9e
-         bJ5yoP04cIEdOfGPKKmEFKd+zpuR21XtoBLuEaPTUOfCW26/nJrvD5+6rP0SmGSeb8Qi
-         aw2ZvTSXwdLIhrUsULOWmVqiTto1mJSsJfOzziCXM9pcK5jZ0VYD0i4/FNT7Lsw5SWLb
-         4keWovGrDqtSTkSbpOxJbf5hH2XxaROQqJniEDOyOosfwYe+1l6JvPx+5+H2FH2G5ebO
-         c+FA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbc84hLGz4mVuc6CqPHvre6k6KEzGZ8KJiZHq9P+NjHB+MyUUNlespTwWhO8tRFWoyykhFcX+fK3Kj@vger.kernel.org, AJvYcCUmxbVfeqQ4BdevFhFYBwvO+pFFgKuJ36LGHu4rdUm8x/uNsobEZGNEwnPvvaDugvl/D61HQQxX@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzjlZJX692rc+jcBY2cvow9AlA4v14VZjVX+74S0yfWgTRSR39
-	KEIJDpkfucNadBXAGqv1Lim0mO+JkBQLECqoKbIUKExHL+NS7jdeQyiq
-X-Gm-Gg: ASbGncsXSSF3kaCshVswrtREp8opDfvgoGSA4j0lBXacOSBs+eP1m6tloMUbn/N2YY0
-	d7YosFhN+fCw53GUmCbOBiBgnqtw2bux+X/DXHPs0cHcH5q5la1/pvkgBlnYo/TFiU0xz+yR/rX
-	0KEHwACdbQd4HQEsiJ9IHNN4vIhziP5pMptZNz4Dtnj57GwWwvQZ0xrZZws08ZxpCGDJ5gMwLaC
-	1IRUbwDccCNLQrT1/htqR0lVncFpKhT/U0XAOtti98nf6WHVyTnFKTwOnTmjGCOxHRXvosoHh2L
-	ficCZXE91VKA1pT7Dod8IPZUxNLINT5ZisVow8oSUZRqee79U/hHtX7srfcsdQaSG2V4z9HLP/5
-	+SvILrws3A2vo319pJ7LpgA+V9Q==
-X-Google-Smtp-Source: AGHT+IH1VBXQZF9Pbgh0Y0oOXEX86Q5eTMHk/H1cMk3qgJg7DkCYSDiwZfGuYRp99w8BfskwDEDxAQ==
-X-Received: by 2002:a17:902:e551:b0:24d:cd5a:5e88 with SMTP id d9443c01a7336-2516da07750mr226912245ad.2.1757547295042;
-        Wed, 10 Sep 2025 16:34:55 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a2acff5a7sm39108455ad.121.2025.09.10.16.34.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 16:34:54 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 0283241FA3A1; Thu, 11 Sep 2025 06:34:50 +0700 (WIB)
-Date: Thu, 11 Sep 2025 06:34:50 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux cgroups <cgroups@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrea Righi <arighi@nvidia.com>,
-	Johannes Bechberger <me@mostlynerdless.de>,
-	Changwoo Min <changwoo@igalia.com>,
-	Shashank Balaji <shashank.mahadasyam@sony.com>,
-	Ingo Molnar <mingo@kernel.org>, Jake Rice <jake@jakerice.dev>,
-	Cengiz Can <cengiz@kernel.wtf>
-Subject: Re: [PATCH 2/2] Documentation: cgroup-v2: Replace manual table of
- contents with contents:: directive
-Message-ID: <aMILGtrAHb3dKVq7@archie.me>
-References: <20250910072334.30688-1-bagasdotme@gmail.com>
- <20250910072334.30688-3-bagasdotme@gmail.com>
- <6geggl3iu2hffdop43rtd6yp2ivd26ytfn4xdclurwce6mapal@4ve46y652dbj>
- <875xdqtp7m.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1757547362; c=relaxed/simple;
+	bh=COCftBxOnSX0BkrEej1pO9OWUgxO7Uzxua1VEK7JlyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KBp6Q9A3wZOF1D93U7ztrIRq/jh90EOopfx5q7OM+VVxD3M5go3Fd+iCjRMs9bHbfu1lFcN0qcqryCpbVFBH8i2lqSiPRrsWLcX2xs2Wi2drG+J+m+3eYRWJefuHlzPNzeQyY/L2iv+Oc/wlScB1CjKiKQy1d2gYo0YbElYKgik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=R3HsBAO9; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1757547356;
+	bh=lr94aX+Q7laEM9WVzRffJBmYDfOeI1H8ZifEcvqx1Yo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=R3HsBAO9RgphCiPG1l729cgMc39OaG+Wf7cmkJhANsFnO94C4da0CLFskC45GX5t6
+	 1bU7PvWg7yNerg0K/VL3bXYrOv3lvlD9/cjyyfn4oy3fqdzXt1K3IodOuM2UMQXhqW
+	 TVoZeeJs4+rHnhG0+ZGSZ34CdnyXA2y6fidAeeBlZAuPeroFfQZO6YZLnrWIQPQCV5
+	 ikwpk5WsFJxEQ/WtMJRNvJ13xy/+FW5CHkUsV34zGnbU/bhk0ks3aLlNpsV7Yki705
+	 gP3J6gsOnnG1BXQiUF7DYRXvEKYRbkopaQmmoObGiAkHl0kB1y1mVOg8ZAwFE6b4aA
+	 /D+rEqXCk84cA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cMcWb59m7z4w2Q;
+	Thu, 11 Sep 2025 09:35:55 +1000 (AEST)
+Date: Thu, 11 Sep 2025 09:35:54 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Rakuram Eswaran <rakuram.e96@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the cxl tree
+Message-ID: <20250911093554.0ce45f3b@canb.auug.org.au>
+In-Reply-To: <20250822091206.7d0d57be@canb.auug.org.au>
+References: <20250822091206.7d0d57be@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UsU7vGubNiLv2087"
-Content-Disposition: inline
-In-Reply-To: <875xdqtp7m.fsf@trenco.lwn.net>
+Content-Type: multipart/signed; boundary="Sig_/EWg/HNXMBihab6uycFII0Pg";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-
---UsU7vGubNiLv2087
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+--Sig_/EWg/HNXMBihab6uycFII0Pg
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 10, 2025 at 07:24:45AM -0600, Jonathan Corbet wrote:
-> Michal Koutn=C3=BD <mkoutny@suse.com> writes:
->=20
-> > On Wed, Sep 10, 2025 at 02:23:34PM +0700, Bagas Sanjaya <bagasdotme@gma=
-il.com> wrote:
-> >> manually-arranged table of contents (as reST comments) gets out-of-sync
-> >> with actual toctree as not all of these are added to it.
-> >
-> > Is this true? I generated HTML with this patch and the resulting ToC
-> > matches what's in the comment.
-> >
-> >> Replace it with automatically-generated table of contents via contents=
-::
-> >> directive.
-> >
-> > Mauro, what's the best practice wrt consistent ToC and having it in
-> > plaintext form?
->=20
-> I fairly routinely get patches fixing manual TOCs that are not updated
-> to match changes elsewhere.  We have a nice system that can manage the
-> TOC automatically for us, it seems best to me to use it.
->=20
-> That said, if having the TOC in the plain-text version of the document
-> is deemed to be important, then it needs to be kept and manually
-> maintained.
+Hi all,
 
-So for the v2, should I fix up the manual toctree to match autogenerated
-one?
+On Fri, 22 Aug 2025 09:12:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Commit
+>=20
+>   561c4e30bff9 ("Documentation/driver-api: Fix typo error in cxl")
 
-Thanks.
+This is now commit a414408126d1
+
+> is missing a Signed-off-by from its author.
+>=20
+> There is a SoB line in the original mail, but it is after the '---'
+> separator.
 
 --=20
-An old man doll... just what I always wanted! - Clara
+Cheers,
+Stephen Rothwell
 
---UsU7vGubNiLv2087
-Content-Type: application/pgp-signature; name=signature.asc
+--Sig_/EWg/HNXMBihab6uycFII0Pg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMILGgAKCRD2uYlJVVFO
-oy3PAP4yTquF7DXoT96XrGn5T6IGDvwCzQg3+0dEjrX0lyLC7QEAzwEi6CO3ZnGr
-3wkojXo+RTN8o3V0Y1letnvGzguC1A0=
-=4FUJ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmjCC1oACgkQAVBC80lX
+0GybKAf9GfWVq9fQZcrU2u/r5uDIDmOto4xbUYp1/fvpXiHv/0V8u6xGa2H2vQQc
+MExrbzu6J87oe1SeMJLR6h3cW3puRuh0l07Gtwx7LggCwvZ+knjAr6PfTHMz2L3H
+PpfrCgimS1jc86f+RDUTTdTg2Ie8aD5xVZ0CEK/7j8Mt3+/MAN6VgUfU/2gRwloS
+MugHrPX041bv1i/WD0VYqlm8rhEDK9hbYyGbdSoPtIfqtvSbu0IE1vSPBr45Ftq/
+DQx7HMUIQHVBXBtrjeub/FdkIkTg3lqCgiRUCdezhRPGt14+XRKmhxhbiQy/D1wm
+BastZ28hELzBWSMBPcDXUN3iAZIZ4g==
+=yhsm
 -----END PGP SIGNATURE-----
 
---UsU7vGubNiLv2087--
+--Sig_/EWg/HNXMBihab6uycFII0Pg--
 
