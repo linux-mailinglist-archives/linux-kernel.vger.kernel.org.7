@@ -1,135 +1,156 @@
-Return-Path: <linux-kernel+bounces-810813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E111B51FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:07:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B53AB51FB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E8657BBFBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:05:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D333168F57
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06AB33A006;
-	Wed, 10 Sep 2025 18:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C3433A01E;
+	Wed, 10 Sep 2025 18:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XxNtZegD"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Inyajxy6"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC79C3376A7
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 18:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFAE23F42D
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 18:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757527593; cv=none; b=RC1EvwzrRntOXZTYe2wuedb2pMtuiM4QF+FRa5lwynPPdsXtI2TgAWDU2s+u9HF+gOmH2AfnoZWvdX/xNWgHxToyD+xuwidb9OziFH9OBEiEUkf0xH+Km+V2UqwvjXpE7z4vkrtMtdMk3gPThr/fS00MzuwSyljEN22ie07xfwY=
+	t=1757527582; cv=none; b=eK/0+3Xfum3Ne0e0LQq4jaJs+5x+TA6XVuEDqynU28wsAtFNDDfH99s09DSft1S8LerAU5/2RJXZQ49B9BQlFl1l20jkfHik0nQyg4OV9u1/abovXpy4cPpamNFaThXtB8lMq19n5+BhYWIGkqDt4uzOK/tQo5xGu+D9tShiWP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757527593; c=relaxed/simple;
-	bh=p1K1r7QiSjUuPGqQLi4Dtbb3OFi1h0fLaBfxqHPJQcg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=el47CyYKf6IzLbDplbPdgE7CSf6IqF6KR8O+4itD94wQHMxPFu3Enmg+JRj+EzhvNytCUNb7LAuQGCccznWeCHgmutirPPQ0mQ+gZeheXPLiAk42MD/jQgc8NCaK2QTE96v8WhOoRIdbsFU2cAxqipoDLiuQgDC7QLdzhng37Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XxNtZegD; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-325006ff07eso611497a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:06:31 -0700 (PDT)
+	s=arc-20240116; t=1757527582; c=relaxed/simple;
+	bh=OUrGVouFgRVC1KBlj4tFW8fG8b2yPwjv/geLcZRlEdc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=UTrILtGyBOafVvbAh/+Li+1XpKz2LeM1uYDCRD0mOgZ+pzlRv0O3ZPXu4nzNf0CP6tgWQgV5kzf4miOSWANf2amH08YdGJ0lLATD4vdnEX9l1H+628OlLnA8tTXj2R7DZvQNdDwRzHBjlC+2lobI4ImWE/p9xY1h8W2g9QzGcKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Inyajxy6; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-25177b75e38so54399205ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:06:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757527591; x=1758132391; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hGGo2FqzU3GfR0P/K8YS6WMuWrLlPcudWZNlFzJbBN0=;
-        b=XxNtZegDm6GNBs35QuoMYQ5zD/WgnTH6obcTb5lOfuVgoVpRmjZWpEcC2uZkfR6D4v
-         Kno/wDxqp74EKwfnfJb/zxaTbvfj2LzEWLUV0tIxrYthwR5kHdRGdOA9vslnaNGhvxPX
-         cxXyglSroDn2yoAdRXO9mrvy0oL74011noweqN9BGK7S1PdtLyESypDaIJeRu69H3QMB
-         5CeIpmgkwaKSJGRB6/L6vQ4lSWX6iU0lzecOoYc0Dwx0iksYGtW584wbTBSf3UrwiXAq
-         JFWt9pK8jznBTwYGIbkxgDuUrKLlCIkYN24CPOyakm8A/4YkRJTxhIu4Em/aVRUT4f1O
-         mU1w==
+        d=google.com; s=20230601; t=1757527580; x=1758132380; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UVGOVWtRHXvatY0bYJx5CVZgGyj363t5d9nI3Zws7Pk=;
+        b=Inyajxy6EJwv0mNHHpP+3Nraek3HZgkeOIBqz1Ev/LZPiPEClGPYPQSFcDeTE8clh1
+         dv7ifnUopplBtkjVDgsrmSRmOgjqqYlfr64zHOVBVrjKiuNMwAIIS116tJR8eiD5N4hb
+         y+WV7XG1YFHr2QztcerXMEbAD+jXwskUsxlj0Y0Gqsj4N2F+Nm2X7arBRVvRRfL2b4Dv
+         OX4l5f/Wpp4nUxUIdz8Bq1YG72tCt1j+eoa8tCWX8xUchC29TMgvmCCUL1lAriP5Seq+
+         soPXjH7Bzog2IKqjYaO8UGDa75g1xjqsDzv0c0VBZ619mtxQiMw8aH0wv03xt6DfUPMF
+         Wf/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757527591; x=1758132391;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hGGo2FqzU3GfR0P/K8YS6WMuWrLlPcudWZNlFzJbBN0=;
-        b=JIzBf9MuY6xz+AOPmqiKPOppToWJ+/8JxNsIGTTZkDKq2ueTmpzAhN0hP2rwyinfwP
-         zlVzNMcj1NyNnn8vfaxM+sb2cl3ZTH9XAMqmeqGQxWvbfIkRRQEi6ZpShsIKV4EhPX5n
-         GTXza/Rr5yAzWtKRbjz2cxZ+eZyhDB0nMYFBAA1OHhAlMXcqdlJAi003Z0Lc5XRiC/jT
-         mJXVAqC6JthMg47lN16TG1aSRK+RZS9/MW55NWn3jdUn2VV0JIBxsEKeHx3yL1FDSApT
-         USTOqNqzN64OZdGG788Sg1Tk29xKuH9/aWqEbI9ey+JCjs7l5pLI0QBARJXX2Ol7owOY
-         i9Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxmuUznjSUSXO+AwgpW0TfRkEEpT1/zeNt6zRHKLh2zmNwGZbGJNojqxmx5fmzn4k4lfGpRlIfA/v60R4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpjjJAHNbyBCZf9iaPP4CFA7c6WeIARcrUfzWCIYnuTS/PpTJy
-	Ysmnj8PcLl4Mrcv3meUnrNCswyqIiOl4dYtivx2VNgFtBhmSBrK7KBhy
-X-Gm-Gg: ASbGncuStehgwHp5n+R04pJa+BQrtdzA6Gt0rohsyDddzUAXdPY2koW4uLoQSUxjcxU
-	X5fiKbTG6BN5QhWyydYXA09GYIahfMpfp2Jq3fNEGowh+CyW6+8SneW2YS7Yk1IDWp8Wz2iud4i
-	dXHLDoy5w/8s5Tj7VUZ8jt33xEXHcVFYAjrYGDKsCuQX7FpZbmuK308o4OhmT04/Pa3ETGx23UP
-	oVGvQDrqZ4usTc24vAKDTBfWAfZ3PiE9wgNmNIqIHadI1f1Nt3vl/ZYkzN5ZRNuNIMvQxfw7ccS
-	QGtwKi7LvzOlXf7mdz1h3gcUJVCaWJLyVqyszA/eJbYKB6mrbkm/tLSd1F2ll08mMc68WmR+fK3
-	cBtn+5MI03O2xradSZLhgTW7Q1/pGCA==
-X-Google-Smtp-Source: AGHT+IEzw+HMhtbClo177HVd/w1cVZeS4EdrLYZApgOY0nZ482UsPgyuJQa51LNrMY3+KaXBnksi2g==
-X-Received: by 2002:a17:90b:180d:b0:32b:dfd7:e42c with SMTP id 98e67ed59e1d1-32d43fb8b5amr13570751a91.5.1757527591266;
-        Wed, 10 Sep 2025 11:06:31 -0700 (PDT)
-Received: from ranganath.. ([2406:7400:98:777f:f183:f24a:5cd4:ead3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dbb313dafsm3279188a91.6.2025.09.10.11.06.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 11:06:30 -0700 (PDT)
-From: Ranganath V N <vnranganath.20@gmail.com>
-To: vnranganath.20@gmail.com
-Cc: brauner@kernel.org,
-	broonie@kernel.org,
-	jlayton@kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	shuah@kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH] selftests/filesystems: Fix build warning on anon_inode_test
-Date: Wed, 10 Sep 2025 23:36:15 +0530
-Message-ID: <20250910180616.4324-1-vnranganath.20@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250730192748.39517-1-vnranganath.20@gmail.com>
-References: <20250730192748.39517-1-vnranganath.20@gmail.com>
+        d=1e100.net; s=20230601; t=1757527580; x=1758132380;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UVGOVWtRHXvatY0bYJx5CVZgGyj363t5d9nI3Zws7Pk=;
+        b=dhS1HPPeYBuNM5JV1pfs8Gc88BP/55KapCJ5NStEfksDE5R3JPKI0S9OjS8AVq6BlN
+         ZgDYZUfcye95aNHKo9ITPBSPap2bAS5+kr/xpgiBGX/YlOH7sM9SOkssLye+s0xBfyjw
+         QjsOjKWDxpS3AIF20Jb7wkh7+3qbD36cZc5S3xMOUa7mttp8HUDCFYrzLKkQzwCeLFuL
+         gtXNyBIaehv4rP9Yt88KUTVXKk4YNs0y107AH5WjvTob+4OZINXzrJICwCxcwC2GxBAg
+         Eylg57P7fWaZW4gaBPI7XGlQmWHNG46FDmu1w23gHfx0ZjYeqKFrgSi/31d+DhE/i22X
+         pn4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXU5Z+ds1BnXeeC7No/gizRzne7wLCaEaCZkwXJiSZz62+Oc9NTc2EE3GSLMnjGDTONjQtAq+f30hNn59s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx8AT50cPN+ar+Z84vM6ccSqoLTi4kD4EjaFdlxydX6IcqBQSy
+	u0iXhzEW+WcqV3MrW3MzDh3LzZtvQTgusts0NROLcGKgppG+vOpqBI8yo2ge6hk/1mVJRLDLLCa
+	yDyqs8w==
+X-Google-Smtp-Source: AGHT+IE/5ogtjOVM49AIkJg96HNYIRC2cVumzLNlxW2YPKSDkeUIvZ0HyOM1ZQI2TOugK9y0O3Wf9/5cigU=
+X-Received: from pjuw5.prod.google.com ([2002:a17:90a:d605:b0:32b:8ba7:306a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:cf04:b0:24c:c58e:9d91
+ with SMTP id d9443c01a7336-25172e339e2mr233912515ad.59.1757527580330; Wed, 10
+ Sep 2025 11:06:20 -0700 (PDT)
+Date: Wed, 10 Sep 2025 11:06:18 -0700
+In-Reply-To: <20250909093953.202028-23-chao.gao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250909093953.202028-1-chao.gao@intel.com> <20250909093953.202028-23-chao.gao@intel.com>
+Message-ID: <aMG-GoL5Sfn1WSG5@google.com>
+Subject: Re: [PATCH v14 22/22] KVM: selftest: Add tests for KVM_{GET,SET}_ONE_REG
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, john.allen@amd.com, 
+	mingo@kernel.org, mingo@redhat.com, minipli@grsecurity.net, 
+	mlevitsk@redhat.com, namhyung@kernel.org, pbonzini@redhat.com, 
+	prsampat@amd.com, rick.p.edgecombe@intel.com, shuah@kernel.org, 
+	tglx@linutronix.de, weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com, 
+	xiaoyao.li@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
->clang warning null passed where non-null argument is expected.
->
->anon_inode_test.c:45:19: warning: argument 3 null where non-null expected [-Wnonnull]
->   45 |         ASSERT_LT(execveat(fd_context, "", NULL, NULL, AT_EMPTY_PATH), 0);
->      |                   ^~~~~~~~
->
->Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
->---
-> tools/testing/selftests/filesystems/anon_inode_test.c | 4 +++-
-> 1 file changed, 3 insertions(+), 1 deletion(-)
->
->diff --git a/tools/testing/selftests/filesystems/anon_inode_test.c b/tools/testing/selftests/filesystems/anon_inode_test.c
->index 73e0a4d4fb2f..f796dad679db 100644
->--- a/tools/testing/selftests/filesystems/anon_inode_test.c
->+++ b/tools/testing/selftests/filesystems/anon_inode_test.c
->@@ -38,11 +38,13 @@ TEST(anon_inode_no_chmod)
-> TEST(anon_inode_no_exec)
-> {
-> 	int fd_context;
->+	static char *argv[] = { NULL };
->+	static char *envp[] = { NULL };
+On Tue, Sep 09, 2025, Chao Gao wrote:
+> Add tests for newly added KVM_{GET,SET}_ONE_REG support for x86. Verify the
+> new ioctls can read and write real MSRs and synthetic MSRs.
 > 
-> 	fd_context = sys_fsopen("tmpfs", 0);
-> 	ASSERT_GE(fd_context, 0);
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> ---
+>  tools/arch/x86/include/uapi/asm/kvm.h         | 29 ++++++++++++++++++
+>  tools/testing/selftests/kvm/Makefile.kvm      |  1 +
+>  .../selftests/kvm/x86/get_set_one_reg.c       | 30 +++++++++++++++++++
+>  3 files changed, 60 insertions(+)
+>  create mode 100644 tools/testing/selftests/kvm/x86/get_set_one_reg.c
 > 
->-	ASSERT_LT(execveat(fd_context, "", NULL, NULL, AT_EMPTY_PATH), 0);
->+	ASSERT_LT(execveat(fd_context, "", argv, envp, AT_EMPTY_PATH), 0);
-> 	ASSERT_EQ(errno, EACCES);
-> 
-> 	EXPECT_EQ(close(fd_context), 0);
+> diff --git a/tools/arch/x86/include/uapi/asm/kvm.h b/tools/arch/x86/include/uapi/asm/kvm.h
+> index 6f3499507c5e..59ac0b46ebcc 100644
+> --- a/tools/arch/x86/include/uapi/asm/kvm.h
+> +++ b/tools/arch/x86/include/uapi/asm/kvm.h
 
-Hi,
-Please let me know the feedback for this patch.
+Don't copy KVM headers to tools/, KVM selftests don't actually use them (i.e.
+copying them is confusing/misleadling).  The copied headers are mainly used by
+tools/perf, and they run a script to synchronize everything.
 
-Thanks,
-Ranganath
+> diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
+> index f6fe7a07a0a2..9a375d5faf1c 100644
+> --- a/tools/testing/selftests/kvm/Makefile.kvm
+> +++ b/tools/testing/selftests/kvm/Makefile.kvm
+> @@ -136,6 +136,7 @@ TEST_GEN_PROGS_x86 += x86/max_vcpuid_cap_test
+>  TEST_GEN_PROGS_x86 += x86/triple_fault_event_test
+>  TEST_GEN_PROGS_x86 += x86/recalc_apic_map_test
+>  TEST_GEN_PROGS_x86 += x86/aperfmperf_test
+> +TEST_GEN_PROGS_x86 += x86/get_set_one_reg
+>  TEST_GEN_PROGS_x86 += access_tracking_perf_test
+>  TEST_GEN_PROGS_x86 += coalesced_io_test
+>  TEST_GEN_PROGS_x86 += dirty_log_perf_test
+> diff --git a/tools/testing/selftests/kvm/x86/get_set_one_reg.c b/tools/testing/selftests/kvm/x86/get_set_one_reg.c
+> new file mode 100644
+> index 000000000000..8a4dbc812214
+> --- /dev/null
+> +++ b/tools/testing/selftests/kvm/x86/get_set_one_reg.c
+> @@ -0,0 +1,30 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <fcntl.h>
+> +#include <stdint.h>
+> +#include <sys/ioctl.h>
+> +
+> +#include "test_util.h"
+> +#include "kvm_util.h"
+> +#include "processor.h"
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	struct kvm_vcpu *vcpu;
+> +	struct kvm_vm *vm;
+> +	u64 data;
+> +
+> +	TEST_REQUIRE(kvm_has_cap(KVM_CAP_ONE_REG));
+> +
+> +	vm = vm_create_with_one_vcpu(&vcpu, NULL);
+> +
+> +	TEST_ASSERT_EQ(__vcpu_get_reg(vcpu, KVM_X86_REG_MSR(MSR_EFER), &data), 0);
+> +	TEST_ASSERT_EQ(__vcpu_set_reg(vcpu, KVM_X86_REG_MSR(MSR_EFER), data), 0);
+> +
+> +	if (kvm_cpu_has(X86_FEATURE_SHSTK)) {
+> +		TEST_ASSERT_EQ(__vcpu_get_reg(vcpu, KVM_X86_REG_KVM(KVM_REG_GUEST_SSP), &data), 0);
+> +		TEST_ASSERT_EQ(__vcpu_set_reg(vcpu, KVM_X86_REG_KVM(KVM_REG_GUEST_SSP), data), 0);
+
+This isn't a very useful test, nor is it extensible.  I finally bit the bullet
+and created an MSR test to mostly replace KUT's msr.c, and to add coverage for
+KVM_{G,S}ET_ONE_REG and KVM_GET_REG_LIST.
 
