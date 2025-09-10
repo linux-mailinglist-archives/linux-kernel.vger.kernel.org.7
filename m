@@ -1,232 +1,290 @@
-Return-Path: <linux-kernel+bounces-810146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9458B51697
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:13:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F56B5169C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E4804E1510
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:13:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 920661C284FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508BB30F812;
-	Wed, 10 Sep 2025 12:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076C3312812;
+	Wed, 10 Sep 2025 12:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="coLWEfQD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RyV7cZg/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RfTf8OSN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fKNFrAng"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pxUK7Ex4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9Ky4gXRZ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pxUK7Ex4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9Ky4gXRZ"
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A0D27AC21
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CFE27AC21
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757506433; cv=none; b=JEkQWoBdjqOQ/IRVo6T9eA56bZgdTajrc4pdcN2Zp/GjPWehXtc4/3z33DyEvdva250FASuEFm8B1tomplEJowtcTmbx1OFEPGTSPI5dwvjkm6d3GE7EESGNaWB6rIXd+BfONv+7ymh30Ukm7YGayg1p3f3tnXPPw/GJD5lQhj4=
+	t=1757506468; cv=none; b=mbd3Fv7Pv4jZJeQ8hL5IcJ+Q94y/kXSDCa0ihiDboSn2NkPMxt5fm851xn2DyaIAzLvaLUMfjgLay8YI2b5JRNP1vd0vMjZQo7t4G0X/CK4JDPxQzwnJaqrWxG92QZcz99QROxbfeYZE39UJrqeZaxnmqRFlzqh8merbPgpcv40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757506433; c=relaxed/simple;
-	bh=gxJtCOehdfwbx4mhg0qP2v9d6BYlYVbM838PyJ8ipN0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TL80lu7GWmakpIcbvt8NALN38sRs17xlOlOs9ipsL+35xk+PNlCDThYHVv0X8rC6redEP0Rn/f8Dtqll+58keC50ibH+ijpRXkfiBiWz9u1WoVfps3aE4gYX717RVnIRpLlgeHRMk/LXsx6s+IwwI3XASJJejrh64c15QU50Bv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=coLWEfQD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RyV7cZg/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RfTf8OSN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fKNFrAng; arc=none smtp.client-ip=195.135.223.130
+	s=arc-20240116; t=1757506468; c=relaxed/simple;
+	bh=EC7sFF7I2rLgk4E0lip3iu04YahpP6G6VRpjsv6Adoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FJ/MUwmtKLJTqwuLJsRTFOGdV5kkPcy4+WJxVWoPv3yBCnetPmyHr1I+NOar1Ui+G8P/EIVrhQsBOwdgAfHEsVxuHbRUPWOJgwULwkE/aJLprpXQplL+RJi6QaD9nO+HJTPrz0NL/5p58GeJvobCSlmKLKj4KOq3AZlSV4Eo80g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pxUK7Ex4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9Ky4gXRZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pxUK7Ex4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9Ky4gXRZ; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D020B37D09;
-	Wed, 10 Sep 2025 12:13:49 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4790221C86;
+	Wed, 10 Sep 2025 12:14:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757506430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1757506462; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XYwAkKX+fl6ayhAOtR6UK3xhLhDrTnjYN0qEyFto1zw=;
-	b=coLWEfQDXgKiVJYE3bM0RmncY7XE5LeXcmsW1dw6GqgedUr8hR21pLVKiN9POWnU9S/lY5
-	OCluDHATw2PP50er4GK1bDQChDFmyPge67PipupRGxQn9gOpINuAmQQYJt1ivqLShx0gvn
-	Dwtj1KZvCjhrL8Ax8Mmol4lacgffyNY=
+	 in-reply-to:in-reply-to:references:references;
+	bh=N5gaLRnDjWbSxcnFQcn+mJTPFqz2bFPqndDkLtin1DQ=;
+	b=pxUK7Ex4yGUYNZN5PAhw/Tv8WMvIaGVpDrwKkZypT8Tt/i7D8ZuxmpL/UcajxPIzwF7tEo
+	7yqX/56rfaO8T8K4BA4kzZnZPmDrnda+0l6EoZmlxsQdE57FoTbaB1XrLnopGf2+mQL/Nh
+	4zD0nijuHe6aMZY7DbzDYqXQEBWdGVo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757506430;
+	s=susede2_ed25519; t=1757506462;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XYwAkKX+fl6ayhAOtR6UK3xhLhDrTnjYN0qEyFto1zw=;
-	b=RyV7cZg/qsUemWum1WVXdsvjnRG41JVAHFH251kAA6ks42pWEvactFSSPjfO62crdy8Bid
-	ASSUbVhET4JUboAg==
+	 in-reply-to:in-reply-to:references:references;
+	bh=N5gaLRnDjWbSxcnFQcn+mJTPFqz2bFPqndDkLtin1DQ=;
+	b=9Ky4gXRZ131dmOszA0mfrMQRRdIB/H1HsExL07hjq7MUHDiFjy1R943NmRUPW9NaYMiMeh
+	5Y3L9e/6vzRzwxBA==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RfTf8OSN;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=fKNFrAng
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=pxUK7Ex4;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=9Ky4gXRZ
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757506429; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1757506462; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XYwAkKX+fl6ayhAOtR6UK3xhLhDrTnjYN0qEyFto1zw=;
-	b=RfTf8OSNLV24MWTWuBhm+azm4s5qgbL/Q36mexG2Frx8tZw/FLed4l14f4dEKIEwPqHO/c
-	Abtn9w8yOVAShwylnF/iseA6+JwwU1Y2ZBtuDL/2rUJP4oFNNW3BfZ20hw5bI5iwpSXJXf
-	IMiO/aydUwdqwk98RazYs/7+Ld1k5bQ=
+	 in-reply-to:in-reply-to:references:references;
+	bh=N5gaLRnDjWbSxcnFQcn+mJTPFqz2bFPqndDkLtin1DQ=;
+	b=pxUK7Ex4yGUYNZN5PAhw/Tv8WMvIaGVpDrwKkZypT8Tt/i7D8ZuxmpL/UcajxPIzwF7tEo
+	7yqX/56rfaO8T8K4BA4kzZnZPmDrnda+0l6EoZmlxsQdE57FoTbaB1XrLnopGf2+mQL/Nh
+	4zD0nijuHe6aMZY7DbzDYqXQEBWdGVo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757506429;
+	s=susede2_ed25519; t=1757506462;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XYwAkKX+fl6ayhAOtR6UK3xhLhDrTnjYN0qEyFto1zw=;
-	b=fKNFrAngJp6pootj3qyXHClk9CdNX3N+FrLqJpgsRSb6L5pKixjllLfsWKYDUSiUv/4EXh
-	DsTg2zNMWcCynxCQ==
+	 in-reply-to:in-reply-to:references:references;
+	bh=N5gaLRnDjWbSxcnFQcn+mJTPFqz2bFPqndDkLtin1DQ=;
+	b=9Ky4gXRZ131dmOszA0mfrMQRRdIB/H1HsExL07hjq7MUHDiFjy1R943NmRUPW9NaYMiMeh
+	5Y3L9e/6vzRzwxBA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A270113310;
-	Wed, 10 Sep 2025 12:13:49 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7870713310;
+	Wed, 10 Sep 2025 12:14:19 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IAZnJn1rwWgrdQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 10 Sep 2025 12:13:49 +0000
-Message-ID: <d3f47a4e-0692-4f0f-9092-cb109fc805fd@suse.de>
-Date: Wed, 10 Sep 2025 14:13:49 +0200
+	id 4cE8GptrwWhadQAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 10 Sep 2025 12:14:19 +0000
+Date: Wed, 10 Sep 2025 13:14:13 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Anthony Yznaga <anthony.yznaga@oracle.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, andreyknvl@gmail.com, 
+	arnd@arndb.de, bp@alien8.de, brauner@kernel.org, bsegall@google.com, 
+	corbet@lwn.net, dave.hansen@linux.intel.com, david@redhat.com, 
+	dietmar.eggemann@arm.com, ebiederm@xmission.com, hpa@zytor.com, jakub.wartak@mailbox.org, 
+	jannh@google.com, juri.lelli@redhat.com, khalid@kernel.org, 
+	liam.howlett@oracle.com, linyongting@bytedance.com, lorenzo.stoakes@oracle.com, 
+	luto@kernel.org, markhemm@googlemail.com, maz@kernel.org, mhiramat@kernel.org, 
+	mgorman@suse.de, mhocko@suse.com, mingo@redhat.com, muchun.song@linux.dev, 
+	neilb@suse.de, osalvador@suse.de, pcc@google.com, peterz@infradead.org, 
+	rostedt@goodmis.org, rppt@kernel.org, shakeel.butt@linux.dev, surenb@google.com, 
+	tglx@linutronix.de, vasily.averin@linux.dev, vbabka@suse.cz, 
+	vincent.guittot@linaro.org, viro@zeniv.linux.org.uk, vschneid@redhat.com, 
+	willy@infradead.org, x86@kernel.org, xhao@linux.alibaba.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v3 01/22] mm: Add msharefs filesystem
+Message-ID: <do7cmy4eiiqd5ux62r3u2ghizc62ljg5m3mqx7qzy3im4kc2p6@upmigdbp7eat>
+References: <20250820010415.699353-1-anthony.yznaga@oracle.com>
+ <20250820010415.699353-2-anthony.yznaga@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/pixpaper: Fix return type of pixpaper_mode_valid()
-To: Nathan Chancellor <nathan@kernel.org>,
- LiangCheng Wang <zaq14760@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250908-drm-pixpaper-fix-mode_valid-return-type-v1-1-705ceaf03757@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250908-drm-pixpaper-fix-mode_valid-return-type-v1-1-705ceaf03757@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820010415.699353-2-anthony.yznaga@oracle.com>
 X-Spam-Level: 
 X-Spam-Flag: NO
-X-Rspamd-Queue-Id: D020B37D09
+X-Rspamd-Queue-Id: 4790221C86
 X-Rspamd-Action: no action
 X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
+X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[kernel.org,gmail.com,linux.intel.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[49];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,googlemail.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLziudqfrzo6b7hzgpxksh1d9i)];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email];
+	FREEMAIL_CC(0.00)[kvack.org,linux-foundation.org,gmail.com,arndb.de,alien8.de,kernel.org,google.com,lwn.net,linux.intel.com,redhat.com,arm.com,xmission.com,zytor.com,mailbox.org,oracle.com,bytedance.com,googlemail.com,suse.de,suse.com,linux.dev,infradead.org,goodmis.org,linutronix.de,suse.cz,linaro.org,zeniv.linux.org.uk,linux.alibaba.com,vger.kernel.org];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
 	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
+X-Spam-Score: -4.01
 
-
-
-Am 08.09.25 um 22:24 schrieb Nathan Chancellor:
-> When building with -Wincompatible-function-pointer-types-strict, a
-> warning designed to catch kernel control flow integrity (kCFI) issues at
-> build time, there is an instance in the new tiny DRM pixpaper driver:
->
->    drivers/gpu/drm/tiny/pixpaper.c:982:16: error: incompatible function pointer types initializing 'enum drm_mode_status (*)(struct drm_crtc *, const struct drm_display_mode *)' with an expression of type 'int (struct drm_crtc *, const struct drm_display_mode *)' [-Werror,-Wincompatible-function-pointer-types-strict]
->      982 |         .mode_valid = pixpaper_mode_valid,
->          |                       ^~~~~~~~~~~~~~~~~~~
->
-> While 'int' and 'enum drm_mode_status' are ABI compatible, hence no
-> regular warning from -Wincompatible-function-pointer-types, the mismatch
-> will trigger a kCFI violation when pixpaper_mode_valid() is called
-> indirectly.
->
-> Update the return type of pixpaper_mode_valid() to be
-> 'enum drm_mode_status' to clear up the warning and kCFI violation.
->
-> Fixes: c9e70639f591 ("drm: tiny: Add support for Mayqueen Pixpaper e-ink panel")
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Thanks for the fix.
-
+On Tue, Aug 19, 2025 at 06:03:54PM -0700, Anthony Yznaga wrote:
+> From: Khalid Aziz <khalid@kernel.org>
+> 
+> Add a pseudo filesystem that contains files and page table sharing
+> information that enables processes to share page table entries.
+> This patch adds the basic filesystem that can be mounted, a
+> CONFIG_MSHARE option to enable the feature, and documentation.
+> 
+> Signed-off-by: Khalid Aziz <khalid@kernel.org>
+> Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
 > ---
->   drivers/gpu/drm/tiny/pixpaper.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/tiny/pixpaper.c b/drivers/gpu/drm/tiny/pixpaper.c
-> index b1379cb5f030..32598fb2fee7 100644
-> --- a/drivers/gpu/drm/tiny/pixpaper.c
-> +++ b/drivers/gpu/drm/tiny/pixpaper.c
-> @@ -968,8 +968,8 @@ static const struct drm_crtc_funcs pixpaper_crtc_funcs = {
->   	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
->   };
->   
-> -static int pixpaper_mode_valid(struct drm_crtc *crtc,
-> -			       const struct drm_display_mode *mode)
-> +static enum drm_mode_status
-> +pixpaper_mode_valid(struct drm_crtc *crtc, const struct drm_display_mode *mode)
->   {
->   	if (mode->hdisplay == PIXPAPER_WIDTH &&
->   	    mode->vdisplay == PIXPAPER_HEIGHT) {
->
-> ---
-> base-commit: 490b30fbaca2abbd6afa8bdc7e2df329b5d82412
-> change-id: 20250908-drm-pixpaper-fix-mode_valid-return-type-4228e531193b
->
-> Best regards,
-> --
-> Nathan Chancellor <nathan@kernel.org>
->
+>  Documentation/filesystems/index.rst    |  1 +
+>  Documentation/filesystems/msharefs.rst | 96 +++++++++++++++++++++++++
+>  include/uapi/linux/magic.h             |  1 +
+>  mm/Kconfig                             | 11 +++
+>  mm/Makefile                            |  4 ++
+>  mm/mshare.c                            | 97 ++++++++++++++++++++++++++
+>  6 files changed, 210 insertions(+)
+>  create mode 100644 Documentation/filesystems/msharefs.rst
+>  create mode 100644 mm/mshare.c
+> 
+> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+> index 11a599387266..dcd6605eb228 100644
+> --- a/Documentation/filesystems/index.rst
+> +++ b/Documentation/filesystems/index.rst
+> @@ -102,6 +102,7 @@ Documentation for filesystem implementations.
+>     fuse-passthrough
+>     inotify
+>     isofs
+> +   msharefs
+>     nilfs2
+>     nfs/index
+>     ntfs3
+> diff --git a/Documentation/filesystems/msharefs.rst b/Documentation/filesystems/msharefs.rst
+> new file mode 100644
+> index 000000000000..3e5b7d531821
+> --- /dev/null
+> +++ b/Documentation/filesystems/msharefs.rst
+> @@ -0,0 +1,96 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=====================================================
+> +Msharefs - A filesystem to support shared page tables
+> +=====================================================
+> +
+> +What is msharefs?
+> +-----------------
+> +
+> +msharefs is a pseudo filesystem that allows multiple processes to
+> +share page table entries for shared pages. To enable support for
+> +msharefs the kernel must be compiled with CONFIG_MSHARE set.
+> +
+> +msharefs is typically mounted like this::
+> +
+> +	mount -t msharefs none /sys/fs/mshare
+> +
+> +A file created on msharefs creates a new shared region where all
+> +processes mapping that region will map it using shared page table
+> +entries. Once the size of the region has been established via
+> +ftruncate() or fallocate(), the region can be mapped into processes
+> +and ioctls used to map and unmap objects within it. Note that an
+> +msharefs file is a control file and accessing mapped objects within
+> +a shared region through read or write of the file is not permitted.
+> +
+
+Welp. I really really don't like this API.
+I assume this has been discussed previously, but why do we need a new
+magical pseudofs mounted under some random /sys directory?
+
+But, ok, assuming we're thinking about something hugetlbfs like, that's not too
+bad, and programs already know how to use it.
+
+> +How to use mshare
+> +-----------------
+> +
+> +Here are the basic steps for using mshare:
+> +
+> +  1. Mount msharefs on /sys/fs/mshare::
+> +
+> +	mount -t msharefs msharefs /sys/fs/mshare
+> +
+> +  2. mshare regions have alignment and size requirements. Start
+> +     address for the region must be aligned to an address boundary and
+> +     be a multiple of fixed size. This alignment and size requirement
+> +     can be obtained by reading the file ``/sys/fs/mshare/mshare_info``
+> +     which returns a number in text format. mshare regions must be
+> +     aligned to this boundary and be a multiple of this size.
+> +
+
+I don't see why size and alignment needs to be taken into consideration by
+userspace. You can simply establish a mapping and pad it out.
+
+> +  3. For the process creating an mshare region:
+> +
+> +    a. Create a file on /sys/fs/mshare, for example::
+> +
+> +        fd = open("/sys/fs/mshare/shareme",
+> +                        O_RDWR|O_CREAT|O_EXCL, 0600);
+
+Ok, makes sense.
+
+> +
+> +    b. Establish the size of the region::
+> +
+> +        fallocate(fd, 0, 0, BUF_SIZE);
+> +
+> +      or::
+> +
+> +        ftruncate(fd, BUF_SIZE);
+> +
+
+Yep.
+
+> +    c. Map some memory in the region::
+> +
+> +	struct mshare_create mcreate;
+> +
+> +	mcreate.region_offset = 0;
+> +	mcreate.size = BUF_SIZE;
+> +	mcreate.offset = 0;
+> +	mcreate.prot = PROT_READ | PROT_WRITE;
+> +	mcreate.flags = MAP_ANONYMOUS | MAP_SHARED | MAP_FIXED;
+> +	mcreate.fd = -1;
+> +
+> +	ioctl(fd, MSHAREFS_CREATE_MAPPING, &mcreate);
+
+Why?? Do you want to map mappings in msharefs files, that can themselves be
+mapped? Why do we need an ioctl here?
+
+Really, this feature seems very overengineered. If you want to go the fs route,
+doing a new pseudofs that's just like hugetlb, but without the hugepages, sounds
+like a decent idea. Or enhancing tmpfs to actually support this kind of stuff.
+Or properly doing a syscall that can try to attach the page-table-sharing
+property to random VMAs.
+
+But I'm wholly opposed to the idea of "mapping a file that itself has more
+mappings, mappings which you establish using a magic filesystem and ioctls".
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+Pedro
 
