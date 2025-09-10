@@ -1,113 +1,212 @@
-Return-Path: <linux-kernel+bounces-810123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8CAB5163F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:58:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9CEB51638
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF9CA7B214C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:55:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC329487C0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E28F319858;
-	Wed, 10 Sep 2025 11:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NxH5+lKL"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299983164D2;
+	Wed, 10 Sep 2025 11:57:14 +0000 (UTC)
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931A6259CA9
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C5B25A355;
+	Wed, 10 Sep 2025 11:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757505436; cv=none; b=R0TEkOwcCadb7wUYDMzvg47BEn9VzwKFHZURl22sFP1YkiWYpWNRSkdoazQgwIrFqch+CTEpjiDs6GEm07QzxB/kSH9uAA8v7x6dgOkm8c5tPkkrYzyAib7qra1+C4XCRB4a9ythsSRoFS2wnb8OUkJlhq4AGvaW79SN8J06maM=
+	t=1757505433; cv=none; b=M1lJnMyz2HE92e5Z+/XKDa7iixJUp5SIvfO41R75FDNwY0ckdKvlySuPMLUQiO/flyqfYGkRYyKYQY0nRyXovW2WeGjtCd9HCzSjl9dzQxquAzP6+pyxG30e/j59g9vtgINunqJvbyt3lYhT728rh5/eX+Up3SWEwrYA7q4eD9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757505436; c=relaxed/simple;
-	bh=qpiVJjWEyw0flVEUf2pEXKX4Ry0xXatYYHCE5Flni1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lTVSnqMLzpDL32oGJR5mj37JgXli+7/LwLUttsp9qSFdOckPxbDdbU5ohnSTNj1CvsP67V99ffXzjeMzULqobBYJb93VIcEN9UACoP1bSJNpa5Z44/YPypcAd8xLhse2M3u3uhhIaAPVFaMRqvC8mV/88pRwkp2SKQ9luNQhnXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NxH5+lKL; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 10 Sep 2025 07:57:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757505429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uA3jzP0gvgqj8vfQCUNaxIEfEE9Vd+4Ci6oFMhsFfFI=;
-	b=NxH5+lKL7ChnYpL8vxoi0rJPUz6nTSQFO3OTIBCYeiUuuJR1NWN/zTS8pF4hqP5ZnlalOr
-	f78Z+8Mh7l6f7JhQwZVjrpAQp3RlRBZXmFMtlnMQbvcCL9AWxe5qfuwlL7FkAWWFa08m8O
-	jUpIofExq0THR8tHQ7Lxnr8s0F87e34=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Finn Thain <fthain@linux-m68k.org>, Lance Yang <lance.yang@linux.dev>, 
-	akpm@linux-foundation.org, amaindex@outlook.com, anna.schumaker@oracle.com, 
-	boqun.feng@gmail.com, ioworker0@gmail.com, joel.granados@kernel.org, 
-	jstultz@google.com, leonylgao@tencent.com, linux-kernel@vger.kernel.org, 
-	linux-m68k@lists.linux-m68k.org, longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com, 
-	mingzhe.yang@ly.com, oak@helsinkinet.fi, peterz@infradead.org, rostedt@goodmis.org, 
-	senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
- pointers
-Message-ID: <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp>
-References: <20250909145243.17119-1-lance.yang@linux.dev>
- <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
- <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
- <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
+	s=arc-20240116; t=1757505433; c=relaxed/simple;
+	bh=BNAymGbsk/LLslNv3KQi0+YNC2Er1zFt+MJxHW7z8Sc=;
+	h=Message-ID:Date:MIME-Version:Subject:References:To:Cc:From:
+	 In-Reply-To:Content-Type; b=edcpvIEBg+xOfUXGlKJxYwpzsWtJfvd2KNy4w+KxkzC2y5w2iKVVs/DNEc/6RV14NC1m/oZaCzqp3CrWmWmdyWh8HsX1bYkXdvMjNdGU9LzYGkiA3PI6NF75sxwVnV+/916AClgYMOstzN4QcHZTc+cybRt+9cygkD78sb0mjag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cMK1F4jMYz9tZT;
+	Wed, 10 Sep 2025 13:57:05 +0200 (CEST)
+Message-ID: <9d3cce84-451d-4af1-a54a-e6de8cb9699e@timmermann.space>
+Date: Wed, 10 Sep 2025 13:57:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Subject: [PATCH v8 2/2] leds: as3668: Driver for the ams Osram 4-channel i2c
+ LED driver
+Content-Language: en-US, de-DE
+References: <32c7324f-60cb-4cae-beff-0a177a7986ea@timmermann.space>
+To: Lee Jones <lee@kernel.org>
+Cc: pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Lukas Timmermann <linux@timmermann.space>
+In-Reply-To: <32c7324f-60cb-4cae-beff-0a177a7986ea@timmermann.space>
+X-Forwarded-Message-Id: <32c7324f-60cb-4cae-beff-0a177a7986ea@timmermann.space>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10, 2025 at 09:36:34AM +0200, Geert Uytterhoeven wrote:
-> On Wed, 10 Sept 2025 at 02:07, Finn Thain <fthain@linux-m68k.org> wrote:
-> > On Tue, 9 Sep 2025, Kent Overstreet wrote:
-> > > On Tue, Sep 09, 2025 at 10:52:43PM +0800, Lance Yang wrote:
-> > > > From: Lance Yang <lance.yang@linux.dev>
-> > > >
-> > > > The blocker tracking mechanism assumes that lock pointers are at least
-> > > > 4-byte aligned to use their lower bits for type encoding.
-> > > >
-> > > > However, as reported by Eero Tamminen, some architectures like m68k
-> > > > only guarantee 2-byte alignment of 32-bit values. This breaks the
-> > > > assumption and causes two related WARN_ON_ONCE checks to trigger.
-> > >
-> > > Isn't m68k the only architecture that's weird like this?
-> >
-> > No. Historically, Linux/CRIS did not naturally align integer types either.
-> > AFAIK, there's no standard that demands natural alignment of integer
-> > types. Linux ABIs differ significantly.
-> >
-> > For example, Linux/i386 does not naturally align long longs. Therefore,
-> > x86 may be expected to become the next m68k (or CRIS) unless such
-> > assumptions are avoided and alignment requirements are made explicit.
-> >
-> > The real problem here is the algorithm. Some under-resourced distros
-> > choose to blame the ABI instead of the algorithm, because in doing so,
-> > they are freed from having to work to improve upstream code bases.
-> >
-> > IMHO, good C doesn't make alignment assumptions, because that hinders
-> > source code portability and reuse, as well as algorithm extensibility.
-> > We've seen it before. The issue here [1] is no different from the pointer
-> > abuse which we fixed in Cpython [2].
-> >
-> > Linux is probably the only non-trivial program that could be feasibly
-> > rebuilt with -malign-int without ill effect (i.e. without breaking
-> > userland) but that sort of workaround would not address the root cause
-> > (i.e. algorithms with bad assumptions).
-> 
-> The first step to preserve compatibility with userland would be to
-> properly annotate the few uapi definitions that would change with
-> -malign-int otherwise.  I am still waiting for these patches...
-
-I think it'd need a new gcc attribute to do it sanely...
+On Tue, 02 Sep 2025, Lee Jones wrote:
+> On Tue, 02 Sep 2025, Lukas Timmermann wrote:
+>
+>> On Tue, 02 Sep 2025, Lee Jones wrote:> On Fri, 08 Aug 2025, Lukas 
+>> Timmermann
+>> wrote:
+>>>
+>>>> Since there were no existing drivers for the AS3668 or related devices,
+>>>> a new driver was introduced in a separate file. Similar devices were
+>>>> reviewed, but none shared enough characteristics to justify code reuse.
+>>>> As a result, this driver is written specifically for the AS3668.
+>>>>
+>>>> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
+>>>> ---
+>>>> MAINTAINERS | 1 +
+>>>> drivers/leds/Kconfig | 13 +++
+>>>> drivers/leds/Makefile | 1 +
+>>>> drivers/leds/leds-as3668.c | 202 +++++++++++++++++++++++++++++++++++++
+>>>> 4 files changed, 217 insertions(+)
+>>>> create mode 100644 drivers/leds/leds-as3668.c
+>>>>
+>>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>>> index 091206c54c63..945d78fef380 100644
+>>>> --- a/MAINTAINERS
+>>>> +++ b/MAINTAINERS
+>>>> @@ -3511,6 +3511,7 @@ M: Lukas Timmermann <linux@timmermann.space>
+>>>> L: linux-leds@vger.kernel.org
+>>>> S: Maintained
+>>>> F: Documentation/devicetree/bindings/leds/ams,as3668.yaml
+>>>> +F: drivers/leds/leds-as3668.c
+>>>> ASAHI KASEI AK7375 LENS VOICE COIL DRIVER
+>>>> M: Tianshu Qiu <tian.shu.qiu@intel.com>
+>>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>>>> index a104cbb0a001..8cfb423ddf82 100644
+>>>> --- a/drivers/leds/Kconfig
+>>>> +++ b/drivers/leds/Kconfig
+>>>> @@ -100,6 +100,19 @@ config LEDS_ARIEL
+>>>> Say Y to if your machine is a Dell Wyse 3020 thin client.
+>>>> +config LEDS_AS3668
+>>>> + tristate "LED support for AMS AS3668"
+>>>> + depends on LEDS_CLASS
+>>>> + depends on I2C
+>>>> + help
+>>>> + This option enables support for the AMS AS3668 LED controller.
+>>>> + The AS3668 provides up to four LED channels and is controlled via
+>>>> + the I2C bus. This driver offers basic brightness control for each
+>>>> + channel, without support for blinking or other advanced features.
+>>>> +
+>>>> + To compile this driver as a module, choose M here: the module
+>>>> + will be called leds-as3668.
+>>>> +
+>>>> config LEDS_AW200XX
+>>>> tristate "LED support for Awinic AW20036/AW20054/AW20072/AW20108"
+>>>> depends on LEDS_CLASS
+>>>> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+>>>> index 2f170d69dcbf..983811384fec 100644
+>>>> --- a/drivers/leds/Makefile
+>>>> +++ b/drivers/leds/Makefile
+>>>> @@ -14,6 +14,7 @@ obj-$(CONFIG_LEDS_ADP5520) += leds-adp5520.o
+>>>> obj-$(CONFIG_LEDS_AN30259A) += leds-an30259a.o
+>>>> obj-$(CONFIG_LEDS_APU) += leds-apu.o
+>>>> obj-$(CONFIG_LEDS_ARIEL) += leds-ariel.o
+>>>> +obj-$(CONFIG_LEDS_AS3668) += leds-as3668.o
+>>>> obj-$(CONFIG_LEDS_AW200XX) += leds-aw200xx.o
+>>>> obj-$(CONFIG_LEDS_AW2013) += leds-aw2013.o
+>>>> obj-$(CONFIG_LEDS_BCM6328) += leds-bcm6328.o
+>>>> diff --git a/drivers/leds/leds-as3668.c b/drivers/leds/leds-as3668.c
+>>>> new file mode 100644
+>>>> index 000000000000..0cfd3b68f90c
+>>>> --- /dev/null
+>>>> +++ b/drivers/leds/leds-as3668.c
+>>>> @@ -0,0 +1,202 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>>>> +/*
+>>>> + * Osram AMS AS3668 LED Driver IC
+>>>> + *
+>>>> + * Copyright (C) 2025 Lukas Timmermann <linux@timmermann.space>
+>>>> + */
+>>>> +
+>>>> +#include <linux/bitfield.h>
+>>>> +#include <linux/i2c.h>
+>>>> +#include <linux/leds.h>
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/uleds.h>
+>>>> +
+>>>> +#define AS3668_MAX_LEDS 4
+>>>> +#define AS3668_EXPECTED_I2C_ADDR 0x42
+>>>> +
+>>>> +/* Chip Ident */
+>>>> +
+>>>> +#define AS3668_CHIP_ID1_REG 0x3e
+>>>
+>>> Can you tab out all of the values please.
+>>>
+>>>> +#define AS3668_CHIP_ID2_REG 0x3f
+>>>> +#define AS3668_CHIP_ID1_EXPECTED_IDENTIFIER 0xa5
+>>>
+>>> This is odd. What do you mean by expected?
+>>>
+>>> What kind of ID is this? Board ID, platform ID, Chip ID?
+>>>
+>>> Call it that instead.
+>> Calling it just AS3668_CHIP_ID1 then?
+>> It's the identifier of the chip model burned into silicon in the CHIP_ID1
+>> register. Checking it isn't critical in the first place.
+>> It catches errors made in DT files but nothing else. You haven't 
+>> commented
+>> about that so i guess it's okay. Are drivers in the led subsystem 
+>> supposed
+>> to check that?>
+>
+> CHIP_ID1 is the register, but what does the number signify?
+>
+> What version of the chip? Does the chip have a name?
+>
+> What's the difference between the values in ID1 and ID2?
+>
+CHIP_ID1 is a register which contains a fixed magic number so a driver 
+can check if it's talking to the correct chip. There is no deeper 
+meaning to the number as far as the datasheet is concerned. We simply 
+check the number. It's supposed to be 10100101b according to the datasheet.
+CHIP_ID2 contains two fixed values. The upper four bits indicate a 
+serial number of some sorts. The datasheet doesn't specify an expected 
+value and doesn't state it's purpose. I suspect it to change between 
+production runs. The lower four bits of the CHIP_ID2 register contains 
+the revision of the chip.
+None of these values are particulary important for the function of the 
+driver. My suggested driver does check CHIP_ID1 just to fail early.
+>>>> +#define AS3668_CHIP_ID2_SERIAL_MASK GENMASK(7, 4)
+>>>> +#define AS3668_CHIP_ID2_REV_MASK GENMASK(3, 0)
+>>>> +
+>>>> +/* Current Control */
+>>>> +
+>>>
+>>> The X thing (below) is weirding me out.
+>>>
+>>>> +#define AS3668_CURRX_CONTROL_REG 0x01
+>>>
+>>> Drop the X.
+>> The datasheet explictly calls this "CurrX control". It configures the
+>> outputs for different modes like off/on and pwm or pattern generation for
+>> all four channels simultaneously.
+>> I could imagine AS3668_MODE_REG being more descriptive but we would 
+>> diverge
+>> from the datasheet. Is that acceptable?>
+>
+> It is if you say it is. Some authors like to stick to the datasheet,
+> which I would respect. Others think that datasheet authors / register
+> namers are bonkers and the S/W should be much more friendly to readers.
+>
+All the register names are taken from the datasheet. I considered 
+renaming them but I think it would do more harm than good as the 
+datasheet is publicly available and could be helpful for future changes.
 
