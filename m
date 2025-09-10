@@ -1,135 +1,197 @@
-Return-Path: <linux-kernel+bounces-809253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A21D1B50AAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:03:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2D6B50AAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57E35162018
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286A61C62CD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231F122B594;
-	Wed, 10 Sep 2025 02:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AABD22F76F;
+	Wed, 10 Sep 2025 02:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZcP96CAh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ixv4HO+c"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2073.outbound.protection.outlook.com [40.107.237.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061FF14F9FB;
-	Wed, 10 Sep 2025 02:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757469785; cv=none; b=i6O5RpI7GLteQcP/a3CuOzkIxqyfb9Iyrd5R5+TN4LPEzZSnJ4klYyWF4cB6mEr+aUggYbWFuB9hiBsbZ9gOjROBvTrJ8Mh6G1KaVcS+pLMvY/A9qBZWdyzujJ+FZF7DkhQ7cXtF+BKURP6PnVw9IMAp05VESCBFWo7X8kFVROA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757469785; c=relaxed/simple;
-	bh=yQC5/Pr9dIleX6ToR5xP6NjHGoOIn0D5FwPIi+ZIUXE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UQFDtuFAEkY1QQ5Cf3GVUJD71nyMQhvrWdY4ws/p4jWlza4Umm7jyFdOhRy20cDIxvjHO3CMOSbEKUE4cHlRBht0KU9MTaT3emQ0KctOsS+o3kiMUedsp/MNfbQbW6n/jtwrb+DAPYfvljGCfxieIeGP2oFFtZVJR7xN700Zlvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZcP96CAh; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757469784; x=1789005784;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yQC5/Pr9dIleX6ToR5xP6NjHGoOIn0D5FwPIi+ZIUXE=;
-  b=ZcP96CAhoqooSiHU0sL5Wp7g92+jS7BR+93+37ejtxlCsrlGZstIECRU
-   BIrMt/OchRwYzdIFbNVwxRVkBydz7JlaRwM92RvZ40DspF0Ar9xidu68L
-   pRhPxmNB+mqvd7lpJC/Fn/gCHMkY2FxnzYp1mmo/3PttnHejlJC+sBJH9
-   oKZTLkoeYk1srApw/+1hrKiLoCJMRb9jOFtAlmbGthrZpC8MovFP9GPOh
-   gK4u7YEWpzepUIduaTv+cuWAgu+fATro+XWysZwT92WOBwocm5HWLyAo9
-   aDezS4jj7jJFuSZvuc8i8VTdGiY2Ul5Xl9iSqe1rRCMsdp03U80W97LBa
-   A==;
-X-CSE-ConnectionGUID: k1fZdoU1S9ClKm/jAWOKuQ==
-X-CSE-MsgGUID: iVXjUoyKTZKETPJR+oUfFA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63599824"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63599824"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 19:03:04 -0700
-X-CSE-ConnectionGUID: IpTMBQPHTuOmy+/ArxaHJw==
-X-CSE-MsgGUID: 0RVQFBxYR1+QCKDB/a25tA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,252,1751266800"; 
-   d="scan'208";a="196924902"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 19:03:01 -0700
-Message-ID: <9fa411a9-08d2-44fa-8ef8-18d3f2c8acad@linux.intel.com>
-Date: Wed, 10 Sep 2025 10:02:59 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AF922A4F6
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757469828; cv=fail; b=GS6E6ikmwcQq/xCkug2XktwqQ5bSdTLmBsHC3VvHv8erJi22ZOOpHzFY8gjnAkKpYORQUsFDmB3VMvV7nmNazGYG8eo94jVBuBrokW9i/9ij5O0PLcoA8zkK6acH3GBR16pM7SQ/mebur6OhKvD8nUiitLgj4lp8H4RSM2t3kr4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757469828; c=relaxed/simple;
+	bh=g1+tSd2E/1pJ5apbHezuNEBViHDWtQcCGAwBqY+JIKY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=muWONjQ1GskMc6ONQgJLWVTGzPHh5MYxErF34t8XvnBC7NWNA2dBsbspJse8BVfqfQPQfWYZ4/wDJgvbZwUI+HnFOEYlRDHRDdrfUngsMH2ql8Lzg/kEnfYHVD0Cm1YxwQ8OMRwxNzkahU8m880IhYXraWILMR04H7XV8fOiJOY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ixv4HO+c; arc=fail smtp.client-ip=40.107.237.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IMZz30cWX/Xm5UTFk5FESN2vH1qXe0Op9ShJws2hG/XajEBeIx88Bj14EG7ESfaksbg+JL02nCF7gNIE4xxH0xaVnEBaIsTqPGH9HBw+Xk1xQISY1QX/6eUwlvB2BUynKc9rih4a9JdXBpEfoqNbN772ARlDzySndU5tvF50LHxEIiaOMc5uCr4fU4CJ+4TR7gFN5qF/m8hsLRJBXhzCQrl0z2DvH8SSY55iMw4UFsMPWIb6y+4CNAISPjlxDs+O9JJBpvNXWqRGLOac2uZ2/K8WIPkqFGwzPspD3112aXy6bnGn2ubwv9asdjp51XwLT7w0Ynaj3Y7zke4e+UptTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jByL5tfNGOiM90GWwL/gOaalcpj+vbWhJVSeYgbZZVg=;
+ b=xc1Y0lIsjvCq1VqYvbd675xW0ES53qpVr7i7yej2qmShITZaJZN1q2qSIWfjd1YzlQ16LO0oIAecFl9AIq4H6D/czi8iMWxGQWb3ufP8d1mrA625g7QlosTRVYr3inQsY3E74x8pLFEb/Yj72pWl/cnvRVKuK7OIyQsFLruPeiZnK4M7HLTzHxuS+nk9kHnIDP7pG99ABwfkJH05m7FKG2IhmtJXM3ukCZ0X0YZfojcAWsgkziztdd2BqLzXbS3u9wKIc3pPXyFeQZTKxL1N6xj2yh/jmipaUcmqTtSC22cFfd5LFEdONT/CGqiwcB4vVz3jbToUVdjsbYv2313anw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jByL5tfNGOiM90GWwL/gOaalcpj+vbWhJVSeYgbZZVg=;
+ b=ixv4HO+ch0Vr59j1IRfPpmuQqLtp7JZQuLtqVj3p/y4G+wSijwPe9AJ9AequJoC4VovAOoChPvXaYTPiN0Q2l1LVnWIq1DhbC5tiQ2GCunqglSFDZGPau4lyY/fH1W54GRjK4OjKCO3UvF/WEO0BQTUASDdlj4gt+9Ef3ixFyPVn6PsQ8uD1o/A46yRi3E0I2UBqgP4W6JBRJttu9h3T8kS0olJtLySeiiS+ci4Rr0vxBk6UaTvYYY4PKTUztPdUs80IzpYKH3HldernSxv/7q7omd4E/siyimXtYno8+F/Ds2Av1JLPC9QlPUkcWZyNnXMfDllRqdxTPe988aoBDA==
+Received: from SA1P222CA0067.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:2c1::17)
+ by MN0PR12MB5713.namprd12.prod.outlook.com (2603:10b6:208:370::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 02:03:43 +0000
+Received: from SN1PEPF0002636B.namprd02.prod.outlook.com
+ (2603:10b6:806:2c1:cafe::9e) by SA1P222CA0067.outlook.office365.com
+ (2603:10b6:806:2c1::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Wed,
+ 10 Sep 2025 02:03:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SN1PEPF0002636B.mail.protection.outlook.com (10.167.241.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Wed, 10 Sep 2025 02:03:43 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 9 Sep
+ 2025 19:03:37 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 9 Sep 2025 19:03:36 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Tue, 9 Sep 2025 19:03:36 -0700
+Date: Tue, 9 Sep 2025 19:03:34 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Balbir Singh <balbirs@nvidia.com>
+CC: <jgg@nvidia.com>, <will@kernel.org>, <robin.murphy@arm.com>,
+	<joro@8bytes.org>, <jean-philippe@linaro.org>, <miko.lenczewski@arm.com>,
+	<peterz@infradead.org>, <smostafa@google.com>, <kevin.tian@intel.com>,
+	<praan@google.com>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH rfcv2 1/8] iommu/arm-smmu-v3: Clear cmds->num after
+ arm_smmu_cmdq_batch_submit
+Message-ID: <aMDcdmlyCH2ZALPA@Asurada-Nvidia>
+References: <cover.1757373449.git.nicolinc@nvidia.com>
+ <2f7f5fff38d43221fd60139323d23b258e34cf8d.1757373449.git.nicolinc@nvidia.com>
+ <d2852d21-60bf-4ca4-a0d2-e70c0c6dc010@nvidia.com>
+ <aL++Qv8bNvL5qjL8@nvidia.com>
+ <9d463bc4-78e0-43f3-ae69-2746ab72e318@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] KVM: TDX: Do not retry locally when the retry is
- caused by invalid memslot
-To: Sean Christopherson <seanjc@google.com>
-Cc: Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com,
- reinette.chatre@intel.com, rick.p.edgecombe@intel.com,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20250822070305.26427-1-yan.y.zhao@intel.com>
- <20250822070523.26495-1-yan.y.zhao@intel.com>
- <2257f7a6-e4f5-4b90-bb18-cb0af756323f@linux.intel.com>
- <aMA3LjGP9nezNM7e@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <aMA3LjGP9nezNM7e@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <9d463bc4-78e0-43f3-ae69-2746ab72e318@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002636B:EE_|MN0PR12MB5713:EE_
+X-MS-Office365-Filtering-Correlation-Id: deab1174-f6d7-4f77-4178-08ddf00e44ee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?iH/Qkmuo+8otsU+PiVybdl/drK6ext2LkJfaokmfl3WamsshERDZA2ey9foF?=
+ =?us-ascii?Q?4eS4L/CAYkdLbNlKVZRZWc5Wi91XcQnhOJ+Qxe4EjMHYnkBG6iNUdbn1rAOF?=
+ =?us-ascii?Q?mW+3GnBm+vqv9HWzxqtSQkr3VkdHhtAW0YtTEJDN/lCF2jKto7o+tXEbye4D?=
+ =?us-ascii?Q?3Rbd0ajdr9We2Wp233MBqnnrwEqC+B+N0Cu4qc55PmZ5VDL0boIUTGkMJrl5?=
+ =?us-ascii?Q?7vnf6pnFRQVJJ/XeIGawaQN3dSrri55+ThilYjbJHbcvOHaSsT+O+Rggu2+l?=
+ =?us-ascii?Q?KnDSLMt4roIxzUAG7tUkU3Tb5drLtB9RPSa1bElyPP02jmdIMuZbwrFEkdFl?=
+ =?us-ascii?Q?uQv5ue0JarcHck/lUlxaXFWJinoomSCgdOX9Arp6Hh6tAvIsXKgnnfilKKCu?=
+ =?us-ascii?Q?1pUN80uvgwuOlyQMDq4SqJnaF99kLpYzoMFm2P6PBeT4EGk9X1USWUMtNuUi?=
+ =?us-ascii?Q?zhCA7GdgYVZDclAQn4tafvTUyKlxPQp9Ot3qdSE0Seaxe2dvftQnKMghn65j?=
+ =?us-ascii?Q?wBGTIfXTX4RacmlkDiyba7OquBE6fovnJJx6+oJI1P7i4S8uF8XUgt3RUZ55?=
+ =?us-ascii?Q?oW85f8hFlUyD2emsugu0lQH9ocw0nUf6WylwVQxb//yb2GOnIuHd1zcRp6xy?=
+ =?us-ascii?Q?cvPIEfhv12vYctxe56suMmhS8LxPAXVd3qKXm7oW3k8MgdSku0K1ubNvlQGz?=
+ =?us-ascii?Q?leqWN/PhR4wB09IVlVc/vyj1g/SzKXWK/km4YBip4BLGhTiA5Dbm+LsyfN77?=
+ =?us-ascii?Q?Gtd6PbhMdcrPgmpNB6oLtT9f8bm92EEwGB6/7IqY6thgn62rvVAaJF+93Ub/?=
+ =?us-ascii?Q?utyNBgQi78zs8sQPtHgOxpdrjQG9sU00397SZ8x0oS1Z2NNcuWxHcEig9HS4?=
+ =?us-ascii?Q?rX83yT7K50O6/it88LS6AoUVa4wU64Emm1Nkx7n71nnwJTydLXrhvikVC+W2?=
+ =?us-ascii?Q?ofn9b+Agp5nSwCqZGnVn912ZqkPCsHCWQD3fUpKqCNT1dTPCt4IoV809fsRI?=
+ =?us-ascii?Q?O/BUBvnZIM/C9rzXSqD1/o6XQPaXikcaqpnOGct96EZjpiy140vYfhvZ14Vp?=
+ =?us-ascii?Q?UI8qIaZlT488FCKKaRpz0lFF8lwZ+3CZ9WjoTLVVY+s2N/Ncyd0nM+nD/ryT?=
+ =?us-ascii?Q?e1g8jNVYVflyr79y+W0QBCChR0EnI1S3igvAw9rV5VTE/CoA0eD1UWw8BLaI?=
+ =?us-ascii?Q?lnINu5duEwDy37kobJn5gb+Pz9qTOrcBUr3hpshZk0ZJ6v53kbvpVM+KvmjO?=
+ =?us-ascii?Q?f7ENhdXmAOb/lMEx3LyHob7LsUJZPlorLCTfsTkdZWOuOhMid2Ia5hSp+4vN?=
+ =?us-ascii?Q?IL5MYGcB0X+QxIOcR00iItGFLQEg5zM8eZLpYlcquXSA0Dhdxr+ty9WhDKIr?=
+ =?us-ascii?Q?Wrw/XxFNOUwxLixG14NBMw/E0TQ9AP/w+hvRPcuJQ/KzmwPZ4/zYMwVRcQ4E?=
+ =?us-ascii?Q?ljf7VN9ffO7U+bPZ3cwQ+IxwA43pFt6FGvsqCvNioMditAiiPDAjk2SKQmoR?=
+ =?us-ascii?Q?Qv3Rov60ZRq6gAAjmafM2n/RuwA+kOx93dPM?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 02:03:43.1817
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: deab1174-f6d7-4f77-4178-08ddf00e44ee
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002636B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5713
 
+On Wed, Sep 10, 2025 at 08:49:52AM +1000, Balbir Singh wrote:
+> On 9/9/25 15:42, Nicolin Chen wrote:
+> > On Tue, Sep 09, 2025 at 01:16:11PM +1000, Balbir Singh wrote:
+> >> On 9/9/25 09:26, Nicolin Chen wrote:
+> >>> None of the callers of arm_smmu_cmdq_batch_submit() cares about the batch
+> >>> after a submission. So, it'll be certainly safe to nuke the cmds->num, at
+> >>> least upon a successful one. This will ease a bit a wrapper function, for
+> >>> the new arm_smmu_invs structure.
+> >>>
+> >>> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> >>> ---
+> >>>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 10 ++++++++--
+> >>>  1 file changed, 8 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> >>> index 2a8b46b948f05..cccf8f52ee0d5 100644
+> >>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> >>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> >>> @@ -974,11 +974,17 @@ static void arm_smmu_cmdq_batch_add(struct arm_smmu_device *smmu,
+> >>>  	cmds->num++;
+> >>>  }
+> >>>  
+> >>> +/* Clears cmds->num after a successful submission */
+> >>>  static int arm_smmu_cmdq_batch_submit(struct arm_smmu_device *smmu,
+> >>>  				      struct arm_smmu_cmdq_batch *cmds)
+> >>>  {
+> >>
+> >> Nit: arm_smmu_cmdq_batch_submit_clear()?
+> > 
+> > Probably not. There is no particular point in highlighting it in
+> > the function name, as there is no use case wanting an uncleared
+> > version.
+> 
+> I did not suggest we need an uncleared version, I suggested the change
+> in name to highlight that the function has a side-effect of clearing
+> the cmds->num
 
+No caller cares about the "side effect"...
 
-On 9/9/2025 10:18 PM, Sean Christopherson wrote:
-> On Tue, Sep 09, 2025, Binbin Wu wrote:
->> On 8/22/2025 3:05 PM, Yan Zhao wrote:
->>> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
->>> index 6784aaaced87..de2c4bb36069 100644
->>> --- a/arch/x86/kvm/vmx/tdx.c
->>> +++ b/arch/x86/kvm/vmx/tdx.c
->>> @@ -1992,6 +1992,11 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
->>>    	 * blocked by TDs, false positives are inevitable i.e., KVM may re-enter
->>>    	 * the guest even if the IRQ/NMI can't be delivered.
->>>    	 *
->>> +	 * Breaking out of the local retries if a retry is caused by faulting
->>> +	 * in an invalid memslot (indicating the slot is under removal), so that
->>> +	 * the slot removal will not be blocked due to waiting for releasing
->>> +	 * SRCU lock in the VMExit handler.
->>> +	 *
->>>    	 * Note: even without breaking out of local retries, zero-step
->>>    	 * mitigation may still occur due to
->>>    	 * - invoking of TDH.VP.ENTER after KVM_EXIT_MEMORY_FAULT,
->>> @@ -2002,6 +2007,8 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
->>>    	 * handle retries locally in their EPT violation handlers.
->>>    	 */
->>>    	while (1) {
->>> +		struct kvm_memory_slot *slot;
->>> +
->>>    		ret = __vmx_handle_ept_violation(vcpu, gpa, exit_qual);
->>>    		if (ret != RET_PF_RETRY || !local_retry)
->>> @@ -2015,6 +2022,10 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
->>>    			break;
->>>    		}
->>> +		slot = kvm_vcpu_gfn_to_memslot(vcpu, gpa_to_gfn(gpa));
->>> +		if (slot && slot->flags & KVM_MEMSLOT_INVALID)
->> The slot couldn't be NULL here, right?
-> Uh, hmm.  It could be NULL.  If the memslot deletion starts concurrently with the
-> S-EPT violation, then the memslot could be transitioned to INVALID (prepared for
-> deletion) prior to the vCPU acquiring SRCU after the VM-Exit.  Memslot deletion
-> could then assign to kvm->memslots with a NULL memslot.
->
->    vCPU                          DELETE
->    S-EPT Violation
->                                  Set KVM_MEMSLOT_INVALID
->                                  synchronize_srcu_expedited()
->    Acquire SRCU
->    __vmx_handle_ept_violation()
->    RET_PF_RETRY due to INVALID
->                                  Set memslot NULL
->    kvm_vcpu_gfn_to_memslot()
-Got it, thanks!
+Nicolin
 
