@@ -1,114 +1,201 @@
-Return-Path: <linux-kernel+bounces-810974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E199B5229E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:45:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12ED3B522A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 22:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4907E18992FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:45:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E0261C86EA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C1A2FB083;
-	Wed, 10 Sep 2025 20:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JH+b4YIT"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEE32F83D9
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD1A2EE29F;
+	Wed, 10 Sep 2025 20:43:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4582F39B0;
+	Wed, 10 Sep 2025 20:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757536953; cv=none; b=cn6MvGbdNU1MVJOxGc9Fq84oOvxA//vFb/IOHN4xMV3fLurSJ+QB3lHa3ewu2PLsKGn+Hf9nDVUl0eNcNid0hPYav4o/FJS14RVVnTCAIdg9M3JYh+A7k/7AzzrqV6qQV1jJTJERo9xCZ2PIl55S/uWpuvXF30GBeDmbMVgfSK4=
+	t=1757537008; cv=none; b=O7U+n98aXsrtGQ97xaZe1JQoE9wcTc3g83vvmJZVb4/bxBQQYBg1BYgtIW07ZzpB0/hccL5CR53J5tC2aTzxhYVbYhcVG8k/mqRutbzOB6reSHUKt/7dIw/1Mc1x+l8XxPz+Yu5u3qC936DMGhX3A7WN4rAI7dYG7X7zlh+fSgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757536953; c=relaxed/simple;
-	bh=C88Z6yKSJr7bB/FUWb+rZ6Hdjykf0Z3txcxqaDpT7Fk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MVNKj043xBjDkNMP5T+Nc2lnnM2m7CT8KAx5N9irCKzLv3DnBl5aV9dals/Amjr9a1tGmfMz2tLZDfs4jXjYk37JTg+l5zegQWAyfhrFKWtq1Vt2I9xh0X6QT5fRU/ezBO84DfISPDMoOr/oUon+xPbBrta9s4wVaPpaomTUkTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JH+b4YIT; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62bec18abe6so5125052a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:42:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1757536948; x=1758141748; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QQKuGly96CNimNGwzLAgsvxPKJmLcpk/7vDNtAXEJDU=;
-        b=JH+b4YITZV31e5mp7HoptSP7QkzTuMEIs8LoYHFON6Yato2UjdhVK83WJAB4ZnAamS
-         LErkMsSI0v15M63rZ1XR0GHFAh6eFAMNUkJLABtkCIdfV8gYBp3Y1R1++UqFtanhmmc2
-         Fnzy+/T7t9oAOSKW8jbcn9BoP7ifKxr+Cyk7Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757536948; x=1758141748;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QQKuGly96CNimNGwzLAgsvxPKJmLcpk/7vDNtAXEJDU=;
-        b=K+uKox08sgYDY6KLT2gdOFHiFotF8X9XsOn2K7Koy14NrbSk9+h69dkbrwITnyxhrD
-         GvLYoWYKVgPleKaMoXnieHkmq5EvduD458vT1PJjaQ0TzcclM1zVwMjmsIW6GQ7kl7vC
-         Od5CGdepkn75lTPHS3V2ZN4iArBsSLmjjtxj4DvAtACYr1hBTagULGXl5NbaoEPenjls
-         lfmd4H1uF0D9HMzwP3s/xovHnhL3IrHtkE5xrOxnlF1hj8oRtqUZK+LKJjXcxZOWTITJ
-         mYRc1EjqNhnQz+Mp+AA5gS+Zxvd1MiGeQp2Py4f3SksaFlrRpMC4hV77x48lE0vD6LMH
-         /rbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmjVxFBlEbCI0kBy174QtEfmeBxU88bQ+SokTHD1OejknlsTaJmgfB7/B+BnGAN+BcwaspPiwsU6U3zbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrsTnx5Kx0qyWN5K6KTJkYme3dkJeay0mK7NYolkWUtw2VoTCe
-	z41PHjV/cK40T8kiX+gomXXN9ng4pLv4lrvJWIle3YiwXz4COJsAqQxBnDjs4HDuO7vEpWlrXFM
-	WcCzqARoUYw==
-X-Gm-Gg: ASbGncs48Q4w4ydlPqCQdIjSb8ksJpBZ69N85zJJ2quiZ2e3vvYDiSj5CAMGUhWlsJP
-	mUVyNAtX66BCTRlJtEFmt7GDzdT95pirKEz4TicOCdGag0tjmFJS8Ag1eAdTbeZj4OjSpQztM+q
-	w1ucrg3xiE6xDC9K4LPq8Uu6d5/COQNt+yqdigLxo4Y8U+9wOZB5VlboprHid+2TVWYKC3PvOtR
-	3QiWOCsJXuXEW+2BVfWtXnvDBxTUSrtqfhOHC8nOGmypg7IrAsU3uFME6/a6uNl5njOhDH/Y4BP
-	aCNS8MRmc6lsQ1kLrqSdOWZGCf+zXKZQTLj6QwjTA3DzNezUKsWodtzIp/QnvEx9vz2uqbc/f5y
-	Z9oqZgj30ilozcCke2ScVbMp2ea6wreuFGbDDroRsNdizjnSAde/htipxE1z09+erZ1uaCUPopC
-	Vn/EowZxs93qtcircT7Q==
-X-Google-Smtp-Source: AGHT+IGT6mxgQMQms7zczogFHYTfH/n4VaYwK/lC/sgyhWGD133NpVIm/FHFaMHZi+RWqVlU7fW5qg==
-X-Received: by 2002:a17:907:7f13:b0:b07:88ae:4b80 with SMTP id a640c23a62f3a-b0788ae5ed1mr342331066b.65.1757536948445;
-        Wed, 10 Sep 2025 13:42:28 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b078304655dsm234054666b.11.2025.09.10.13.42.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 13:42:26 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so353666b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:42:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWnijfEtun4xKTI82JLaXsmCmYH99S+faJIoll9mMx+GZp1Y2TXAdTew6aFVZ0ibo+ofq8N44eELlEHhmw=@vger.kernel.org
-X-Received: by 2002:a17:907:70d:b0:b04:8c45:4bdb with SMTP id
- a640c23a62f3a-b04b1666fa4mr1469786966b.34.1757536946156; Wed, 10 Sep 2025
- 13:42:26 -0700 (PDT)
+	s=arc-20240116; t=1757537008; c=relaxed/simple;
+	bh=A0tVBinvsXkfOohjrnd7BVpaj/ByOF9hpnfGYKaiA9E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L2ZYv+lBKWkhO8qvKM7F0117MBDIrRzxAZJ0cAoSJLSIDWWAvnmqDR5r1HMZQkLfRZawPvOc3smbYkbjp/9UZriMVOK9/QKFRAkpROwhH9rcvDLJOYVHYGje9g9IXGvpVD/N+3tWKPgcP8KQ/OxIYEZdyZjHh9qPo70A4BhfO9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDE4C153B;
+	Wed, 10 Sep 2025 13:43:16 -0700 (PDT)
+Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F1223F63F;
+	Wed, 10 Sep 2025 13:43:20 -0700 (PDT)
+From: James Morse <james.morse@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org
+Cc: James Morse <james.morse@arm.com>,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com,
+	lcherian@marvell.com,
+	bobo.shaobowang@huawei.com,
+	tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>,
+	peternewman@google.com,
+	dfustini@baylibre.com,
+	amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Dave Martin <dave.martin@arm.com>,
+	Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	fenghuay@nvidia.com,
+	baisheng.gao@unisoc.com,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Rob Herring <robh@kernel.org>,
+	Rohit Mathew <rohit.mathew@arm.com>,
+	Rafael Wysocki <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v2 00/29] arm_mpam: Add basic mpam driver
+Date: Wed, 10 Sep 2025 20:42:40 +0000
+Message-Id: <20250910204309.20751-1-james.morse@arm.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909162155.76756fe3@gandalf.local.home> <CAHk-=wi0c5oBqQiZctP1SYAW7XGHYEDchJWBUSXvQA-XGmNk3w@mail.gmail.com>
- <CAHk-=wiDe+V=kc1HL-jT-C9Pn1AibAU_6CG4Bh9DLeJHfhrHWw@mail.gmail.com> <20250910162106.6624752c@gandalf.local.home>
-In-Reply-To: <20250910162106.6624752c@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 10 Sep 2025 13:42:08 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiMwTgHbkZ+Cie6EF-T8kF71Egw1e_KBtVufxX6kzSAnA@mail.gmail.com>
-X-Gm-Features: Ac12FXxzxolGVbmyvt9tl-VWN9U2oKAtrInN6tOA_54AXjMph1kMGfVf3LCFEzs
-Message-ID: <CAHk-=wiMwTgHbkZ+Cie6EF-T8kF71Egw1e_KBtVufxX6kzSAnA@mail.gmail.com>
-Subject: Re: [GIT PULL] tracing: Fixes for v6.17
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Luo Gengkun <luogengkun@huaweicloud.com>, Pu Lehui <pulehui@huawei.com>, 
-	Qianfeng Rong <rongqianfeng@vivo.com>, Vladimir Riabchun <ferr.lambarginio@gmail.com>, 
-	Wang Liang <wangliang74@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 10 Sept 2025 at 13:20, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> We figured out in the discussion that the user that triggered this had
-> CONFIG_PREEMPT_NONE, where in_atomic() always returns false.
+Hello,
 
-Ahh, ok. That explains it. Then that in_atomic() ends up being a no-op. Ack.
+The major changes since v1 are:
+ * DT got ripped out - see below.
+ * The mon_sel locking was simplified - but that will come back.
+ 
+ Otherwise the myriad of changes are noted on each patch.
+ 
+~
 
-So the patch is fine and should fix things. Good.
+This is just enough MPAM driver for ACPI. DT got ripped out. If you need DT
+support - please share your DTS so the DT folk know the binding is what is
+needed.
+This doesn't contain any of the resctrl code, meaning you can't actually drive it
+from user-space yet. Becuase of that, its hidden behind CONFIG_EXPERT.
+This will change once the user interface is connected up.
 
-            Linus
+This is the initial group of patches that allows the resctrl code to be built
+on top. Including that will increase the number of trees that may need to
+coordinate, so breaking it up make sense.
+
+The locking got simplified, but is still strange - this is because of the 'mpam-fb'
+firmware interface specification that is still alpha. That thing needs to wait for
+an interrupt after every system register write, which significantly impacts the
+driver. Some features just won't work, e.g. reading the monitor registers via
+perf.
+
+I've not found a platform that can test all the behaviours around the monitors,
+so this is where I'd expect the most bugs.
+
+The MPAM spec that describes all the system and MMIO registers can be found here:
+https://developer.arm.com/documentation/ddi0598/db/?lang=en
+(Ignored the 'RETIRED' warning - that is just arm moving the documentation around.
+ This document has the best overview)
+
+The expectation is this will go via the arm64 tree.
+
+
+This series is based on v6.17-rc4, and can be retrieved from:
+https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/driver/v2
+
+The rest of the driver can be found here:
+https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/snapshot/v6.17-rc4
+
+What is MPAM? Set your time-machine to 2020:
+https://lore.kernel.org/lkml/20201030161120.227225-1-james.morse@arm.com/
+
+This series was previously posted here:
+[v1] lore.kernel.org/r/20250822153048.2287-1-james.morse@arm.com
+[RFC] lore.kernel.org/r/20250711183648.30766-2-james.morse@arm.com
+
+
+Bugs welcome,
+Thanks,
+
+James Morse (27):
+  ACPI / PPTT: Add a helper to fill a cpumask from a processor container
+  ACPI / PPTT: Stop acpi_count_levels() expecting callers to clear
+    levels
+  ACPI / PPTT: Find cache level by cache-id
+  ACPI / PPTT: Add a helper to fill a cpumask from a cache_id
+  arm64: kconfig: Add Kconfig entry for MPAM
+  ACPI / MPAM: Parse the MPAM table
+  arm_mpam: Add probe/remove for mpam msc driver and kbuild boiler plate
+  arm_mpam: Add the class and component structures for firmware
+    described ris
+  arm_mpam: Add MPAM MSC register layout definitions
+  arm_mpam: Add cpuhp callbacks to probe MSC hardware
+  arm_mpam: Probe hardware to find the supported partid/pmg values
+  arm_mpam: Add helpers for managing the locking around the mon_sel
+    registers
+  arm_mpam: Probe the hardware features resctrl supports
+  arm_mpam: Merge supported features during mpam_enable() into
+    mpam_class
+  arm_mpam: Reset MSC controls from cpu hp callbacks
+  arm_mpam: Add a helper to touch an MSC from any CPU
+  arm_mpam: Extend reset logic to allow devices to be reset any time
+  arm_mpam: Register and enable IRQs
+  arm_mpam: Use a static key to indicate when mpam is enabled
+  arm_mpam: Allow configuration to be applied and restored during cpu
+    online
+  arm_mpam: Probe and reset the rest of the features
+  arm_mpam: Add helpers to allocate monitors
+  arm_mpam: Add mpam_msmon_read() to read monitor value
+  arm_mpam: Track bandwidth counter state for overflow and power
+    management
+  arm_mpam: Add helper to reset saved mbwu state
+  arm_mpam: Add kunit test for bitmap reset
+  arm_mpam: Add kunit tests for props_mismatch()
+
+Rohit Mathew (2):
+  arm_mpam: Probe for long/lwd mbwu counters
+  arm_mpam: Use long MBWU counters if supported
+
+ arch/arm64/Kconfig                  |   25 +
+ drivers/Kconfig                     |    2 +
+ drivers/Makefile                    |    1 +
+ drivers/acpi/arm64/Kconfig          |    3 +
+ drivers/acpi/arm64/Makefile         |    1 +
+ drivers/acpi/arm64/mpam.c           |  361 ++++
+ drivers/acpi/pptt.c                 |  224 ++-
+ drivers/acpi/tables.c               |    2 +-
+ drivers/resctrl/Kconfig             |   24 +
+ drivers/resctrl/Makefile            |    4 +
+ drivers/resctrl/mpam_devices.c      | 2668 +++++++++++++++++++++++++++
+ drivers/resctrl/mpam_internal.h     |  676 +++++++
+ drivers/resctrl/test_mpam_devices.c |  389 ++++
+ include/linux/acpi.h                |   26 +
+ include/linux/arm_mpam.h            |   58 +
+ 15 files changed, 4455 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/acpi/arm64/mpam.c
+ create mode 100644 drivers/resctrl/Kconfig
+ create mode 100644 drivers/resctrl/Makefile
+ create mode 100644 drivers/resctrl/mpam_devices.c
+ create mode 100644 drivers/resctrl/mpam_internal.h
+ create mode 100644 drivers/resctrl/test_mpam_devices.c
+ create mode 100644 include/linux/arm_mpam.h
+
+-- 
+2.39.5
+
 
