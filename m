@@ -1,164 +1,142 @@
-Return-Path: <linux-kernel+bounces-809559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11087B50F17
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:18:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C75C7B50F0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF6D5E07A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:16:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2B0E5613E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1443E30B512;
-	Wed, 10 Sep 2025 07:14:44 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0123081D0;
-	Wed, 10 Sep 2025 07:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DD630C367;
+	Wed, 10 Sep 2025 07:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUzrr3Yw"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BED83081B7;
+	Wed, 10 Sep 2025 07:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757488483; cv=none; b=mOjD8PEQuC7sU6H2eP/7R8oawBAYD5Eh1pCZnuCMO29oFcUFQ8oNUWl819/n2CTX45LMhruY2wEkG2r07XorZQNWn0S6bt0jRt2y5KiX5nG8ACn3ZwqiM+wq9P1B4Z92ewRZ87jGfJnjDK4QdDIe95VLXX+bJYvbKo4MYoffxr8=
+	t=1757488507; cv=none; b=Rel8RJfnP5mRFkz7Oad1ozy1ikbuFXdj5lG6xEMf2xxLlnc49+OLo1fAW0Nl0CN6wgp9XU7cLeDtWTDZ7u3ln7TZmrsTFp/+yK6ySwNR0ZojqGldmjmGYYhTdEbIDozd54qLOyPYU+88w8CVqqonzTIHSh6XEVUfLXz8lgmy2BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757488483; c=relaxed/simple;
-	bh=xLA71r6c4GbYPtkzPxfvjMrHMJLa5QUEkYcbkv1pbkw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sjBcPZekcSgwFtb6CCniphhlSsGL8QYRhVdEzeff1Mk1WM2FKttLmlmacPouegXJvbVmRs1FZUpSujUiDRF/VxBo2YLJN+qfmCbrTVQtUv751g80Xkuy9P/gWhVajwRztT6EGTWqANl1FgmbaQIJ2sfA5szryriWqKmwjKxBEko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8Cx5tBWJcFoc7MIAA--.18528S3;
-	Wed, 10 Sep 2025 15:14:30 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowJAxQMJVJcFot5+LAA--.44735S2;
-	Wed, 10 Sep 2025 15:14:30 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] LoongArch: KVM: Fix VM migration failure with PTW enabled
-Date: Wed, 10 Sep 2025 15:14:29 +0800
-Message-Id: <20250910071429.3925025-1-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1757488507; c=relaxed/simple;
+	bh=sM6630zadGmQZqR1u8pau40s9sWY4wkiWmZiLgUunsg=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=byCrnNvtrhnFgUa1MulwnrhRGyyc0MSRuE2LzfndWZgqnHVktOZev/K694opvUWPZTx3oHhng+hJ0UdMaQbszpWCr5xyAmEy/lg0eSph7Mhd3bw2qkwF2KDz9qT2UX9Gs++luYxJE4JJDyRSDsbOcyB5sxJB3wLpH/4KhcBx48o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUzrr3Yw; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3da4c14a5f9so148115f8f.0;
+        Wed, 10 Sep 2025 00:15:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757488504; x=1758093304; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=7rviqFC6fi/TZM3n7DN7u+8LmUKozVvS35AUpDZHHJY=;
+        b=hUzrr3YwUjsBbWShwt0VG07p52gI39toWLH0MvwePJBgt2yn8Py2yjg7XLbWuPYx4E
+         V5JQh7vYDllJQkXNSMbmPf8Ip+AI0OCGu1git6EXibrEr6RSrDeGDRPjU74WaphUK6C9
+         U2KfEL7mzoFr/p4HUFmp0yf4u90EbYVOlP5v6yK80DCoR2N3QDlc+4PE8VWKect5iv25
+         /nUsmAOKUX8d46GoO2RM7I/cuQR4unXTuudiFYI/wD9f9XzwjA52WzXMstOEth75x2yS
+         HEOriFzm7JJcBC4pJENpK6QOYW1LcQhRHbgtnSsWp1+QX/kfD8kSOfJER/T8NsXUkIq9
+         dI9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757488504; x=1758093304;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7rviqFC6fi/TZM3n7DN7u+8LmUKozVvS35AUpDZHHJY=;
+        b=b6YnU3cl76A2IrLeDXh1ntlvEMKcfPye+TxEY5TBYTCbeBOX8tbWYcf7AVUi8M7bu9
+         Bhs2NQSJazwyTU+vQl8ZmTUL47ZLKXhx1Tat/2MguK4dopjeurNe4CgzA33bceSZWIbz
+         DIZ1L1APkebi/wyYgKJ1HuS/n1AAWQiMI/rxMMa90rB8XnY8G/19Q5/VJlTe6QgJuK6p
+         lXdoIEItrbqClCVI4gZccOcFx4NZz4qi5voZYImzlHHbci8UVtMhMTYRdU0imyleQq5t
+         MswazMIs82U01reaTkfJv5SVpsYdX3QLGDNcjYfLd5WD51L0bQDxHylKLMABE73HbGQo
+         l20A==
+X-Forwarded-Encrypted: i=1; AJvYcCUdY6raaDMhXYSkODyf9j6T8RvPccLJucMm+y8SmPgtSDjTQNRDrsP1btyfHYc9N07mBI55F8Gz8MF3@vger.kernel.org, AJvYcCXpCd0RSgPYMc2+ZcJ+cst7AvAOy/6g1QMLQImT8IW0k1R9JdBNs0ShW31M0aYSje2duU3vP1yehUhDpKn5@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGvU+MDLGBtQAZTZd5Gw0k/IXlS1JBQGIyZumzgD0IOaLcGE7h
+	J68vYJ9/dFYBxLedNEZrCWao/89RAvPFN7EPymHhW73vuZkE2fXgCs1T
+X-Gm-Gg: ASbGncu9tngGoRClh3s2v9vTX1jLApVRcjSBxsQw55UVD53MOEaj4KbWcfEk/obx/cG
+	MUvu4OFcougnKRZamDPO1aR3jgLQIjVYz73D+oABylqhcBlZh0OA7KVcIP6h8/K/e7g/5AQR3pL
+	hOkaGy+7CnOQnVxqpHR3FkbQRJ3pUEm8TSKJ+pF0LKgZZirVIbjYrnRFEfEiypCewRH0sDLm49r
+	F27mhO3Vct7gL+hQpA+VnSBPvOI1UzptQS9nTYScOKE5/u7H4VvIRLq66JHk7Hl3rp695vCqHA5
+	i6jxxwnbOPLEMN3hYE+PNyGtQRYbfe5fm18q0Wh37igXfNECrDnmlaEzN53WF95qlD3K3aTCVSr
+	sCd3l4WNPi8fXCggCLShb9R8fHeRy+tDAJYRfDCOR+WZ+d1RKDE/NaTLtcvSqyc0OvFk98HU9z4
+	XucLh34wKFgF2ZXdA=
+X-Google-Smtp-Source: AGHT+IFG+idW3YLhpTGmVPGFSEnkJNW+nzVsFTThsQbfnIgS3JeXNSm3rp7SBWpMcUqM9FIU0yiuDw==
+X-Received: by 2002:a05:6000:288a:b0:3df:22a3:d240 with SMTP id ffacd0b85a97d-3e2ffd7fe96mr14642158f8f.4.1757488503299;
+        Wed, 10 Sep 2025 00:15:03 -0700 (PDT)
+Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df8259524sm15913775e9.21.2025.09.10.00.15.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 00:15:02 -0700 (PDT)
+Message-ID: <68c12576.050a0220.37714e.38b3@mx.google.com>
+X-Google-Original-Message-ID: <aMElcbso_bBVXRcR@Ansuel-XPS.>
+Date: Wed, 10 Sep 2025 09:14:57 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: netdev@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>,
+	linux-kernel@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"Chester A. Unal" <chester.a.unal@arinc9.com>,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Lee Jones <lee@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Sean Wang <sean.wang@mediatek.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: Re: [net-next PATCH v16 02/10] dt-bindings: net: dsa: Document
+ support for Airoha AN8855 DSA Switch
+References: <20250909004343.18790-1-ansuelsmth@gmail.com>
+ <20250909004343.18790-3-ansuelsmth@gmail.com>
+ <175747155888.3660326.7601418632786886363.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxQMJVJcFot5+LAA--.44735S2
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <175747155888.3660326.7601418632786886363.robh@kernel.org>
 
-With PTW disabled system, bit Dirty is HW bit for page writing, however
-with PTW enabled system, bit Write is HW bit for page writing. Previously
-bit Write is treated as SW bit to record page writable attribute for fast
-page fault handling in the secondary MMU, however with PTW enabled machine,
-this bit is used by HW already.
+On Tue, Sep 09, 2025 at 09:32:39PM -0500, Rob Herring (Arm) wrote:
+> 
+> On Tue, 09 Sep 2025 02:43:33 +0200, Christian Marangi wrote:
+> > Document support for Airoha AN8855 5-port Gigabit Switch.
+> > 
+> > It does expose the 5 Internal PHYs on the MDIO bus and each port
+> > can access the Switch register space by configurting the PHY page.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  .../net/dsa/airoha,an8855-switch.yaml         | 86 +++++++++++++++++++
+> >  1 file changed, 86 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
+> > 
+> 
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> 
 
-Here define KVM_PAGE_SOFT_WRITE with SW bit _PAGE_MODIFIED, so that it can
-work on both PTW disabled and enabled machines. And with HW write bit, both
-bit Dirty and Write is set or clear.
+Hi Rob,
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- arch/loongarch/include/asm/kvm_mmu.h | 20 ++++++++++++++++----
- arch/loongarch/kvm/mmu.c             |  8 ++++----
- 2 files changed, 20 insertions(+), 8 deletions(-)
+I'm about to send new revision of this but the nvmem DT patch got merged
+in his owm branch so it won't be included in this series, hence the BOT
+will totally complain on the MFD patch.
 
-diff --git a/arch/loongarch/include/asm/kvm_mmu.h b/arch/loongarch/include/asm/kvm_mmu.h
-index 099bafc6f797..efcd593c42b1 100644
---- a/arch/loongarch/include/asm/kvm_mmu.h
-+++ b/arch/loongarch/include/asm/kvm_mmu.h
-@@ -16,6 +16,13 @@
-  */
- #define KVM_MMU_CACHE_MIN_PAGES	(CONFIG_PGTABLE_LEVELS - 1)
- 
-+/*
-+ * _PAGE_MODIFIED is SW pte bit, it records page ever written on host
-+ * kernel, on secondary MMU it records page writable in order to fast
-+ * path handling
-+ */
-+#define KVM_PAGE_SOFT_WRITE	_PAGE_MODIFIED
-+
- #define _KVM_FLUSH_PGTABLE	0x1
- #define _KVM_HAS_PGMASK		0x2
- #define kvm_pfn_pte(pfn, prot)	(((pfn) << PFN_PTE_SHIFT) | pgprot_val(prot))
-@@ -52,11 +59,16 @@ static inline void kvm_set_pte(kvm_pte_t *ptep, kvm_pte_t val)
- 	WRITE_ONCE(*ptep, val);
- }
- 
--static inline int kvm_pte_write(kvm_pte_t pte) { return pte & _PAGE_WRITE; }
--static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte & _PAGE_DIRTY; }
-+static inline int kvm_pte_soft_write(kvm_pte_t pte) { return pte & KVM_PAGE_SOFT_WRITE; }
-+static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte & __WRITEABLE; }
- static inline int kvm_pte_young(kvm_pte_t pte) { return pte & _PAGE_ACCESSED; }
- static inline int kvm_pte_huge(kvm_pte_t pte) { return pte & _PAGE_HUGE; }
- 
-+static inline kvm_pte_t kvm_pte_mksoft_write(kvm_pte_t pte)
-+{
-+	return pte | KVM_PAGE_SOFT_WRITE;
-+}
-+
- static inline kvm_pte_t kvm_pte_mkyoung(kvm_pte_t pte)
- {
- 	return pte | _PAGE_ACCESSED;
-@@ -69,12 +81,12 @@ static inline kvm_pte_t kvm_pte_mkold(kvm_pte_t pte)
- 
- static inline kvm_pte_t kvm_pte_mkdirty(kvm_pte_t pte)
- {
--	return pte | _PAGE_DIRTY;
-+	return pte | __WRITEABLE;
- }
- 
- static inline kvm_pte_t kvm_pte_mkclean(kvm_pte_t pte)
- {
--	return pte & ~_PAGE_DIRTY;
-+	return pte & ~__WRITEABLE;
- }
- 
- static inline kvm_pte_t kvm_pte_mkhuge(kvm_pte_t pte)
-diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
-index ed956c5cf2cc..68749069290f 100644
---- a/arch/loongarch/kvm/mmu.c
-+++ b/arch/loongarch/kvm/mmu.c
-@@ -569,7 +569,7 @@ static int kvm_map_page_fast(struct kvm_vcpu *vcpu, unsigned long gpa, bool writ
- 	/* Track access to pages marked old */
- 	new = kvm_pte_mkyoung(*ptep);
- 	if (write && !kvm_pte_dirty(new)) {
--		if (!kvm_pte_write(new)) {
-+		if (!kvm_pte_soft_write(new)) {
- 			ret = -EFAULT;
- 			goto out;
- 		}
-@@ -856,9 +856,9 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsigned long gpa, bool write)
- 		prot_bits |= _CACHE_SUC;
- 
- 	if (writeable) {
--		prot_bits |= _PAGE_WRITE;
-+		prot_bits = kvm_pte_mksoft_write(prot_bits);
- 		if (write)
--			prot_bits |= __WRITEABLE;
-+			prot_bits = kvm_pte_mkdirty(prot_bits);
- 	}
- 
- 	/* Disable dirty logging on HugePages */
-@@ -904,7 +904,7 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsigned long gpa, bool write)
- 	kvm_release_faultin_page(kvm, page, false, writeable);
- 	spin_unlock(&kvm->mmu_lock);
- 
--	if (prot_bits & _PAGE_DIRTY)
-+	if (kvm_pte_dirty(prot_bits))
- 		mark_page_dirty_in_slot(kvm, memslot, gfn);
- 
- out:
-
-base-commit: 9dd1835ecda5b96ac88c166f4a87386f3e727bd9
--- 
-2.39.3
+Any hint on what tag to include to the patch to make the bot include
+that patch from the external branch?
 
 
