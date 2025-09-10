@@ -1,149 +1,144 @@
-Return-Path: <linux-kernel+bounces-810838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 948ADB52065
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:48:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8AEB5205E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83B221BC2E1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:48:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524621BC2B11
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA241299947;
-	Wed, 10 Sep 2025 18:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900C42D060D;
+	Wed, 10 Sep 2025 18:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="GkcNQmbd"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o9ELnF49"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266692C327D;
-	Wed, 10 Sep 2025 18:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757530088; cv=pass; b=tpEdN0abXrvFlQ3ezMJW/OWvYDv9WqQiXlWVDSpVT2rnET6hKmO6NuQr4QAJ9DvxgSllJN2xGUqe99GkIkRoYsDUB29GliMCkbC+/I2NIDsJg6PJ6u5jXUa6mTBI8ZlQj2RIhfTyC+64zC60asE9Mh8c7ML/+Etx57eaPqtFyJo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757530088; c=relaxed/simple;
-	bh=kHtbzXKfHdHrysnt3opP0i4Y53tRzGXtXRDDkUtThCY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=V0qOpMy8ZCMqwNTPjrBBBetNh2OiONTlZYL/z6oUgkZ3QoduhTAn0UYnRSYhXHO3LklCpMKZP7j+3yyKVBY4PX3CnmBqo3xYsWOwqhqrPQiqNjG/oC/0S6eoGcaH7zgVE3DN2wKJrUl3PJMoh86Tgk4g6idJbLA1an3MhJXAZHY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=GkcNQmbd; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757530070; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=DEHYULVKqa84NpaY5mX0necWyQXRRqKVtyHInBjSxbq7JsY4OKKXdEunDua8IkwgmZjaRP36QSWoBWmxxOQWsW8CDOBV0KxIX0cYsMazeFGd8p02TLOjuWalWbSZI/Pg8HHa83fNP+//HJ1XnYDrCXi65xmBeBUK/6Cnp9UtK5M=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757530070; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=kHtbzXKfHdHrysnt3opP0i4Y53tRzGXtXRDDkUtThCY=; 
-	b=b0WdN9xvHz+MkXLfrtGG088aYKr53XVlKZTNFqDrr7cNNEV3ZTRejDQ9YLpCCXjhtxECu9fg/GxQQ8NvLhaN43WWmeN3P+K15zyLcFtL+SlO5hlmQNNpNo4zYRYNS0UvfSjvybGjpCw/rfA+zJ+qsM/iA+zAijqMQxkNPlS11rg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757530070;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=kHtbzXKfHdHrysnt3opP0i4Y53tRzGXtXRDDkUtThCY=;
-	b=GkcNQmbdQ8xOJJGKK6p2Qe1XPK+A6s5ZtaIn4+kJSPpgNcAaYoqD9+YXoW9jj0IU
-	oJliIdYPAxQZ3Li/yShpgQgvkyPCvF5PtUkhs2ZI/G98hiBjV9RVMG9bQv7/r9i0Fb/
-	zcCc2KVf/H5CnhbQf6V4ZSy3DpQ//j1fYYCZ3KEk=
-Received: by mx.zohomail.com with SMTPS id 1757530067158368.13632757724474;
-	Wed, 10 Sep 2025 11:47:47 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB7223B623
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 18:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757530059; cv=none; b=Du7T8QfQce2hFtaIuhPr8dAZ+ClSmBHrGcZe2TJcqRkdu8IGEs7IkyQh0kTthEQtUNUmqc1pKRRBEPrbhdEHll/0iEwF3+0CVUeIKeAal6i4wLt0gb3w31s8YxGDlkLZDwM7YDt/HskBZoRUak+1fxuQImILO5aLdp3FNOVjEws=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757530059; c=relaxed/simple;
+	bh=3wVIa3kxzyn1jKBO4FKiY5s1rZ0DI2Qt/ZAzIledNSc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JL1OsTl2raV9sEXmv/T5CmcQK1oR+JR5STIXQvMPv2GLgsFvsqQuZ8TzzUCRKyoAq8ZTIwZJ127KyOTYWrwkUoVadZaNUmpgFZrFDRXzHkiQDghbckrNNaDxl0hg548Io6e8+83sgQHxnf3U0uOGyKj75SMikgg7prCXhbz5Jqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o9ELnF49; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b52047b3f1dso9716120a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:47:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757530057; x=1758134857; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FIyVRSowSoxm0jH+PFTbTpx3TzBNK5EeRuMI4ty+SJc=;
+        b=o9ELnF49FhZqb7uHldeq1GZno6Ag9KzL7aDnQPqDYnR+d4ci7mksUNkStxaIqm7hOS
+         agxn1OWCEBd6pzJl26tc8O9zwuAllbQZM/9IZIqzNnVOmQkKTf0itrRiGTaYap60cW9v
+         q4CQ35qBGZAkBtZID67wnJ1Vc899DeqeVoeHHDGhnUKpmgg5041Ho8XPId4J0mJmkvcV
+         9+xmZlD7hWQMl1VDvct5I+iOQlFNpaTh71R/vhsajVs8kd5eoQtyTcb1JpmsZiZ4Res6
+         qcegzplU7UCao2ra9YmN9QpnRZW3oxXhRQL9e/gR/Gt0WK1V96ZS9yzFFlCvcxiNIS3z
+         FSUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757530057; x=1758134857;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FIyVRSowSoxm0jH+PFTbTpx3TzBNK5EeRuMI4ty+SJc=;
+        b=toToVoVU/SraL3M813jZ07vzNDtYXodCPSf3oAxOPiAe12ZEArnt4ga6y4viFyAxNc
+         lC8ErapbSduggd9S1hPYQN5lzUCEUEy4pgHQMR+MpFdOQ9z//+5Eyi/NTgCi/n4qBbWd
+         Di3noI4S83d1/1gm0lZ8mcbHyB9SoJF8nDRSirxvHgB63fPFKQyrxFSBYga1ynxS1Uxu
+         9LTXE3zkDJzfoyOml7UJActlDHbeZzn3EpT232hUNleADzYg41LZTawoN56gQLBN+9bF
+         Q28f6eER2jhSpkeimYYyakymr1W98xEQqQOWmwM5rhEMBSC1z7X+zA3lV+37uU1+zwId
+         WwGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUXQr9KdvFtake0u5gm3vv2/WxfwGXqoI0TkW064GEtKg1JL4vHRhJ5BcayCBIrH+kozB0e3eShJE3too=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyWMB7lPNIMyTgxUzFZvIsmloyYBrsT9fxl3Y1slYw0avRsHY3
+	0bq5NhKrKjDqcZN9YSG1l9YPINt6ULYF8T59mC2JVbNjt94jtj752ObCDeY6dSFe0R+Jz04T8C9
+	+ASFaRQ==
+X-Google-Smtp-Source: AGHT+IEDLJGMO3AphcAHDNXaSjkdvGKKt2jtxrGUIyclDPwEC7z8NsNkYyuOZtHLhM94tSbrdteIaNUcsSs=
+X-Received: from pgke16.prod.google.com ([2002:a63:f550:0:b0:b47:6f88:6843])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:6a06:b0:250:720a:2915
+ with SMTP id adf61e73a8af0-2534441548fmr22969863637.35.1757530056588; Wed, 10
+ Sep 2025 11:47:36 -0700 (PDT)
+Date: Wed, 10 Sep 2025 11:47:35 -0700
+In-Reply-To: <aMFiBZARu5pD+Zzq@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2 1/2] rust: clk: implement Send and Sync
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aMG6JVMcMxVuX7De@tardis-2.local>
-Date: Wed, 10 Sep 2025 15:47:30 -0300
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3D936C1B-FBA9-4964-859C-84BB665BBE3B@collabora.com>
-References: <20250910-clk-type-state-v2-0-1b97c11bb631@collabora.com>
- <20250910-clk-type-state-v2-1-1b97c11bb631@collabora.com>
- <aMG6JVMcMxVuX7De@tardis-2.local>
-To: Boqun Feng <boqun.feng@gmail.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+Mime-Version: 1.0
+References: <20250909093953.202028-1-chao.gao@intel.com> <20250909093953.202028-4-chao.gao@intel.com>
+ <c0e5cd9b-6bdd-4f42-9d1b-d61a8f52f4b8@intel.com> <aMFiBZARu5pD+Zzq@intel.com>
+Message-ID: <aMHHx4Pu4eWdNQJj@google.com>
+Subject: Re: [PATCH v14 03/22] KVM: x86: Check XSS validity against guest CPUIDs
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	acme@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	john.allen@amd.com, mingo@kernel.org, mingo@redhat.com, 
+	minipli@grsecurity.net, mlevitsk@redhat.com, namhyung@kernel.org, 
+	pbonzini@redhat.com, prsampat@amd.com, rick.p.edgecombe@intel.com, 
+	shuah@kernel.org, tglx@linutronix.de, weijiang.yang@intel.com, x86@kernel.org, 
+	xin@zytor.com
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Boqun,
+On Wed, Sep 10, 2025, Chao Gao wrote:
+> On Wed, Sep 10, 2025 at 05:22:15PM +0800, Xiaoyao Li wrote:
+> >On 9/9/2025 5:39 PM, Chao Gao wrote:
+> >> Maintain per-guest valid XSS bits and check XSS validity against them
+> >> rather than against KVM capabilities. This is to prevent bits that are
+> >> supported by KVM but not supported for a guest from being set.
+> >> 
+> >> Opportunistically return KVM_MSR_RET_UNSUPPORTED on IA32_XSS MSR accesses
+> >> if guest CPUID doesn't enumerate X86_FEATURE_XSAVES. Since
+> >> KVM_MSR_RET_UNSUPPORTED takes care of host_initiated cases, drop the
+> >> host_initiated check.
+> >> 
+> >> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> >
+> >Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> >
+> ><snip>
+> >> @@ -4011,15 +4011,14 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> >>   		}
+> >>   		break;
+> >>   	case MSR_IA32_XSS:
+> >> -		if (!msr_info->host_initiated &&
+> >> -		    !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
+> >> -			return 1;
+> >> +		if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
+> >> +			return KVM_MSR_RET_UNSUPPORTED;
+> >>   		/*
+> >>   		 * KVM supports exposing PT to the guest, but does not support
+> >>   		 * IA32_XSS[bit 8]. Guests have to use RDMSR/WRMSR rather than
+> >>   		 * XSAVES/XRSTORS to save/restore PT MSRs.
+> >>   		 */
+> >
+> >Not an issue of this patch, there seems not the proper place to put above
+> >comment.
+> 
+> Agreed.
 
-> On 10 Sep 2025, at 14:49, Boqun Feng <boqun.feng@gmail.com> wrote:
->=20
-> On Wed, Sep 10, 2025 at 02:28:27PM -0300, Daniel Almeida wrote:
->> From: Alice Ryhl <aliceryhl@google.com>
->>=20
->> These traits are required for drivers to embed the Clk type in their =
-own
->> data structures because driver data structures are usually required =
-to
->> be Send. See e.g. [1] for the kind of workaround that drivers =
-currently
->> need due to lacking this annotation.
->>=20
->> Link: =
-https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3dc9da95@coll=
-abora.com/ [1]
->> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
->> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
->=20
-> This tag list looks a bit weird to me. Why is there a SoB from you
-> before Alice's SoB? At least for the usage I'm familiar with, outside
-> the case of Co-developed-bys, multiple SoBs is used for recording how
-> the patches are routed. For example, if I have a patch that has my SoB
-> and I send it to you, you queue in your tree and then send out to =
-other
-> maintainers for merging, in general you would put your SoB after mine =
-in
-> that case. But I don't think that's case here? Alice's patch has only
-> her SoB:
->=20
-> =
-https://lore.kernel.org/rust-for-linux/20250904-clk-send-sync-v1-1-48d0233=
-20eb8@google.com/
->=20
-> What's the intention of the SoB tag here?
->=20
-> Otherwise the patch looks good to me. If we get the tag list resolved,
-> feel free to add:
->=20
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
->=20
-> Regards,
-> Boqun
->=20
+It was there to call out that KVM doesn't support any XSS bits even though KVM
+supports a feature that architecturally can be context switched via XSS+XSTATE.
+I'll find a better home for the comment (probably move it in patch 5 as
+Xiaoyao suggested).
 
-You have to include your SOB when submitting patches from others.
+> I am curious why PT state isn't supported, which is apparently missing from
+> the comment. If it is due to lack of host FPU support, I think the recent
+> guest-only xfeatures we built for CET can help.
 
-This is something I tend to forget often, so I made sure it was there. =
-The
-order may be indeed off though.
+Presumably, perf uses PT across multiple tasks, i.e. doesn't want to context
+switch PT state along with everything else.  For KVM, PT virtualization is
+intertwined with perf, and so wholesale swapping guest PT state simply won't
+work.
+ 
+> Anyway, PT is only visible on BROKEN kernels. so we won't do anything for
+> now besides documenting the reason.
 
-=E2=80=94 Daniel
-
+Yeah, PT virtualization is riddled with problems, just ignore it.
 
