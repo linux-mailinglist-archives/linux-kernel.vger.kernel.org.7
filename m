@@ -1,249 +1,226 @@
-Return-Path: <linux-kernel+bounces-810302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0376BB51878
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:56:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91AA3B51867
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C157F563E90
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:56:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39A77462138
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA4631CA59;
-	Wed, 10 Sep 2025 13:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1751121FF21;
+	Wed, 10 Sep 2025 13:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MjQ0qGMv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="JsDw9EE6"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB889220685;
-	Wed, 10 Sep 2025 13:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757512573; cv=fail; b=VX2ugS/DcjQ4Ak0dOh9AXwj72g1BB251do92w3SlOKBNTazInOf7uN8MKV/FPKgL5gALusfME9w56iU1QQ/9XJillpnz70N8cE0lxrNBUOF5rauBcUb72pdVlN3TRoUhOi2mOWl9PmaO3JTqFpn5B/9nNdTawA+8jPi1hQNxzwg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757512573; c=relaxed/simple;
-	bh=4HwJcW6qrfvOe1AaRHiKEbtqUpQSFuoYgq3grEr+/JU=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EmtXrSK4cEjI92v18L6S2bpwL8QxEK5xUKWTmMFMNeNO9EwSuia/QI1EwbGuc4Q82XLsfcr5CTcVgl39ZhotTz/HOSxjTQBmX178rhfMSyNDuGCDEUceFcz1ARI2ibniAX87FWnd5hUChuyb8CbHeCaNfh+S2U5J9a70Wn6QBN8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MjQ0qGMv; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757512572; x=1789048572;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=4HwJcW6qrfvOe1AaRHiKEbtqUpQSFuoYgq3grEr+/JU=;
-  b=MjQ0qGMvl6uGGEzko4TxaU1ZF6iES8BBGbFT1YrckjNDN6DLgfz8ZfaY
-   YpafFCW1try3sYh/PHZw98y8tZLpYmQqYXOjYUyeoBRt5Qe4ksEM1gk5+
-   TjQz6uwHrEHumAaWT8oXwAZaGqs6RWV6x9lj43ljB+j3AolcW78i2xMm5
-   0oCGUK4y7UAG552l+EW5nbAspwAKg5LN6ZmGDanzx1iWxQMak5JA3q4Rv
-   A8lwHvQSDfYA26CySsFMJ7c7/91km8CYYxqu9CxRN1Bt1hP6N44Wsu1hB
-   +JgBYSgiDarByQiZKVG3r2bV4psp6sK+O5g2BATbAFCJoi43ySO2KsKyC
-   A==;
-X-CSE-ConnectionGUID: uaUq/b1zTGG9EWkhIwNuRQ==
-X-CSE-MsgGUID: ZnxvnzP3QjeF/rokLaUr6A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="59897910"
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="59897910"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 06:53:41 -0700
-X-CSE-ConnectionGUID: prdKfRt8Tc+Jv8YUsRObiQ==
-X-CSE-MsgGUID: jZXAMeBnQVOOKbJHv8UkfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="197077657"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 06:53:41 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 10 Sep 2025 06:53:40 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 10 Sep 2025 06:53:40 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (40.107.100.67)
- by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 10 Sep 2025 06:53:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d0iHZRIgOaipUy1yLw8pA6eeJBDAxTCiaqkyN+fsk3Z8UpuaGKKounBofwSBIZEyBMwkUtFgUDaKKd8G3rmms9s53lgB3A6hc3AVUHihBjJGsL7pnYJiKM2/i9Ejfp8NWtHuJbqNKo9ijaEru6V8d3zyYJ8YiPwL8FN49rQbBPCTKSRLETiOTojaPojL5frlO/cNwtPzHGbC+BNYl99BW3WbLY216Q1UbFWIhQcEYPlZy0et4zVz7Ug7qHS84KU+V/B0b/44nJSM5OG4kqvtys7dnT0h/x0zOkSNEN/Ckch8qy/XDqkrSW1jW2sfHYv2+RZfmAkP4EzvyIYVAauBeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NUJf+AR1921bFghy00DGZpuHqvqwdjiobaqJFI/fLc0=;
- b=rB2i1N+j1gxyhoS1wxcQT1bMqSWDCgqCp7P+OgTyrWDS6cZ9U54DeYQ/yucud+dJkLAsN+k7LFC6N4yJDVdSZUPKbRT04qhXBwuZuGGKexeX56ijLAWyi4l5pR5+pra+BjR68g+ZoqnF/jcMASYwD4jgT8muyphsdMlXknIga7I5Vc5uY2dXaIAj/ZV3tpYViMtiKWPiVxaluK+xt/+huhfgeZEIjb0y4P/onRv+yjNmYRoWiKdupiHWgfx0lb7F9+UIK46G4d2GMF6xMc95GpBG9uLMgxL/w9WVQj1bi4v53zlC1Fw4m+eFLZ0Sy2RtEju9QzeimnbyqlMGLooMpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8283.namprd11.prod.outlook.com (2603:10b6:806:26c::16)
- by SJ0PR11MB8272.namprd11.prod.outlook.com (2603:10b6:a03:47d::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Wed, 10 Sep
- 2025 13:53:36 +0000
-Received: from SN7PR11MB8283.namprd11.prod.outlook.com
- ([fe80::3:e0a:87af:d4b6]) by SN7PR11MB8283.namprd11.prod.outlook.com
- ([fe80::3:e0a:87af:d4b6%6]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
- 13:53:36 +0000
-Message-ID: <d2f8e45e-c289-4649-b764-8ded15f0bb16@intel.com>
-Date: Wed, 10 Sep 2025 15:53:29 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: amd: acp: Fix incorrect retrival of acp_chip_info
-To: "Prasad, Prasad" <venkataprasad.potturu@amd.com>
-CC: "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>, "Hiregoudar, Basavaraj"
-	<Basavaraj.Hiregoudar@amd.com>, "Dommati, Sunil-kumar"
-	<Sunil-kumar.Dommati@amd.com>, "Saba Kareem, Syed" <Syed.SabaKareem@amd.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Greg KH <gregkh@linuxfoundation.org>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Ranjani Sridharan
-	<ranjani.sridharan@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
-	Daniel Baluta <daniel.baluta@nxp.com>, "open list:SOUND - SOC LAYER / DYNAMIC
- AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
-	<linux-kernel@vger.kernel.org>, "broonie@kernel.org" <broonie@kernel.org>,
-	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
-References: <20250909061959.2881158-1-venkataprasad.potturu@amd.com>
- <0f631a47-d487-4770-a046-af2c33ad670a@intel.com>
- <PH7PR12MB5951638E3C707F3B97B46567E90EA@PH7PR12MB5951.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: Cezary Rojewski <cezary.rojewski@intel.com>
-In-Reply-To: <PH7PR12MB5951638E3C707F3B97B46567E90EA@PH7PR12MB5951.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA2P291CA0018.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1e::13) To SN7PR11MB8283.namprd11.prod.outlook.com
- (2603:10b6:806:26c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5970D21B9DE
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 13:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757512452; cv=none; b=n0eXM5qxGhYXps/5i6JHHRMP8z8JvUTBcKQ+1tWostrUhNkyysqidSiDcwHqlv/4GOOY+2m+E6IVfFtQdNutc+Eu4gd+7c9Ny5KB2HWU26Rwsu5RQvJDoam4cyAorwGPThcXjhgTq8IM3H7dz+q3FTFH4uADDRqYEuxShBOW6K4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757512452; c=relaxed/simple;
+	bh=ZNExSFBtSY4KwkE9ok++oqfXqaqfhD5fnhkK/8TGQ1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqH2tOaWuqFJ0YbO8U8xaUMT2FKPnPphdVCbBDF4vzLIh1Na81bDCZ0fkN2fUGeZUiHzq764a96K46Fg9878FzGorNyqKqLVZZcbwih6vQd95oSbvD70cgch4Jq0ibOWJFxi+wKsptm0E0DEVFYv6L/nYarSwVytIaA8emkyCNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=JsDw9EE6; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 13ABC101622F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 19:24:08 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 13ABC101622F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1757512448; bh=ZNExSFBtSY4KwkE9ok++oqfXqaqfhD5fnhkK/8TGQ1E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JsDw9EE6G7kZfs1wq+4ifhrlrUVo9FHoghmuT/MRUHQ/fWkK2idRtWXKSBcUUTGbj
+	 cc7mIFB/2x/21/jHjqVUjN3dYzTHYzRsBob6KoS9tpx2ItqKXepqnjfiVc+gWRMJEZ
+	 EAAV7zjGiUtZg7CplIRJDmljIkF/ijarY5MYOqbw=
+Received: (qmail 7984 invoked by uid 510); 10 Sep 2025 19:24:08 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.64767 secs; 10 Sep 2025 19:24:08 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 10 Sep 2025 19:24:04 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id AB1323414DD;
+	Wed, 10 Sep 2025 19:24:03 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 359751E813E1;
+	Wed, 10 Sep 2025 19:24:03 +0530 (IST)
+Date: Wed, 10 Sep 2025 19:23:58 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: alexandre.belloni@bootlin.com, krzk+dt@kernel.org, robh@kernel.org,
+	conor+dt@kernel.org
+Cc: skhan@linuxfoundation.org, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akhileshpatilvnit@gmail.com
+Subject: [PATCH v2 4/6] rtc: m41t93: Add alarm support
+Message-ID: <f7be854b705df1a396128692784da144d2068245.1757510157.git.akhilesh@ee.iitb.ac.in>
+References: <cover.1757510157.git.akhilesh@ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8283:EE_|SJ0PR11MB8272:EE_
-X-MS-Office365-Filtering-Correlation-Id: 275a99aa-9046-44b4-70e4-08ddf0717076
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?YUFFVlRuTEpQMEhQdFY0V2JMZ09BUG9RYlJhTXZyV2tlSllCUDFXY0paQTJk?=
- =?utf-8?B?YnVFTnROdUNYSWtZa3N5UndQVTE3MGxreDBET0duRjlNS2JXclJDSjJIbVNn?=
- =?utf-8?B?WjJqM0lWaE8yUHZxZldqLzlnRkQ1OFlsN3FXdFpCMFp6OXQ1eDF3TklDNzEy?=
- =?utf-8?B?YUJjMTZZVUZSU21WV05aZ0JVUzZzR1dnOGRKZCtZdFRjNytacDdLVDZkVjk4?=
- =?utf-8?B?V3ByajZWdFVwWUNsbUQxZFdKc0RiMFdBcFNuTGc1U3FmUEZPT0E1dXlCZ0kz?=
- =?utf-8?B?MHBVc09yZGd5SFd6VkJsaG1vMC9uM2pucE5ENHBFTjhMalV3cmFYRDJ2U3di?=
- =?utf-8?B?MXRnUlFFNmVqSzRqNGhoamVYR1FUSmJNeElJT3hwKzF3MjZYU29oUnhLcG9i?=
- =?utf-8?B?akdYNVBST0FaSGlZWStIZCt4bFNPV2ZPdzVoZm93WDhqc29MSHFiMzZlUjF3?=
- =?utf-8?B?SVBmRTgycUhPeVc3eVMwM29LRXpWam0wZFN0L3BGMENJUXdoUFBIbmNPazFO?=
- =?utf-8?B?bWErZUFyOXVzQUpiZkh1NUNlVVBRMGprU3pjamxIYXU1NVlGZjRyQi9Vd1BU?=
- =?utf-8?B?VTJhbU5lSDhMVEg5YS9ZdGlLTFh4d1Zna0hIQjVmUGVrSnNyRHZrbFpodnRa?=
- =?utf-8?B?ZFVvWVhFalhScldtWFk1eGwxQzlSU0pRSjllUjJYU1h1T2RLb20xbHE4RlJm?=
- =?utf-8?B?THZ3Mjc2blFlZnBqMHc3MzFIT3BXdkhPVUt6bWE4OEEyM0cyTTVXaUg5MXli?=
- =?utf-8?B?M20rY0NHOFlQd0FiS1hiWmpRa09WWExHVnBwK3NrdEdGbWp3ZG80Qkg4MEli?=
- =?utf-8?B?WlR6K0FLWWR2cHI1ZXE0THRZV0hOczA5ZUFPZlFjVG1IVmNHRUpzNUJqbEkr?=
- =?utf-8?B?cFVUSGVhT2RwaWZxQ21RaVRtNEgydnpSVWZFSnNxZWN6OTkvUnB0TEhYZlg0?=
- =?utf-8?B?MmxRNVRKZlFiMWpPd0d5WnJzZGc0RXpjY2F4aXp6a0dibDVjTUx1VnJvcERq?=
- =?utf-8?B?dTJxanN3T1pMbjgya1pkeStMRmxUZm5SeUJObzR3ZG5DdTdkUjN6bHowRGk0?=
- =?utf-8?B?Mkk2RWVoL2xZRTEvNWd3SFpISFhDaGdzRGxkYllaY0lxTjMxKzg2NkdIRUd4?=
- =?utf-8?B?VS9Cd0t0SnVwRWRKUVpaMThzdnNpemxOemZpWUF4NHZJMm1HcmhNVWdQL3FD?=
- =?utf-8?B?Vko4OHhKek12NytpRG1ZWlFlU1BOL2I5NllpK1I3cUF4SC9KMndQRGF0Q2xu?=
- =?utf-8?B?ZTExUjg4NTh1dXBabjl2L0NyU3kxWDJ0Ty96MSttYXltUG55aXJ3endXeUc2?=
- =?utf-8?B?YlMxL2NvZHlrMmdBbmV0NWRHdVJIT2RGYlFYOVBObFp4dXgzWE1SWk4rMEYw?=
- =?utf-8?B?cTM3SDhKZENWaWU0SjQxZmN3TzlsbXQyM0hkelVFcGNqVHZjOFdiV24zc2tJ?=
- =?utf-8?B?RWJmVXArNy85cW95T2lBTk04eFlEZDdZOUxQNjAyajUza2tCSjJFdjI0dGhZ?=
- =?utf-8?B?WTRwMlZyWjZobStMbFBZc2dHNmViL0dIUUE0L2F5aEF2Q01zbmwvQnBtaVMv?=
- =?utf-8?B?YjVIYnpmcU5ONkUrUzlTQ3B6Ynd1OVBsMkVaUEdDQmxnYTNHUFpFc09xY0Rs?=
- =?utf-8?B?SVZCTi8yVmtUNDZURTlqWVR0SmEveVZtbEdVc0JyZU42aW42RDhPU3c4czdC?=
- =?utf-8?B?bmZxOExXNFhaMlF0NU5xM0VSa3N2NVh2MWlkdjhLWUt6NlBjQk9RckNHRHYx?=
- =?utf-8?B?SThtL0UvYXNnS1czYnBpZDJVY1hKSGYvRytVY2hwRnByVHA5TVAvVm9OQnBa?=
- =?utf-8?B?NWErQXJDMnlyWGRkVDlubGZ6dDVzeThaTjFUUFQ1WFE3c3oxd3ZiVHVvVStw?=
- =?utf-8?B?VEZPSEd5dFlVbWpFMERMVmJFcDlwalRlMFcrZ2JTUmNNaW9zbWJXWHJwWTRT?=
- =?utf-8?Q?JtnB8LpltTs=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR11MB8283.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dmwxZDhHV05ZMHNNV0dNU2NWTVlPc0t6Wi9XQUtUVWY5K1JxcVpYbjFqTS9R?=
- =?utf-8?B?bXFwdm9xS0wxLzZ6YWZLYkZITmd6TDZ6UDZ0b29KOXlpRkxYYUFtZWxjU0Fr?=
- =?utf-8?B?aXlLQzJQTFRoeXVOK1ZKQWhxUjJzb24zSGM2a3Fxc1Q1YkUvU0dqeXJvTHhm?=
- =?utf-8?B?dUIvNmcyd0RKSmFEWWJIUXZzQzcybEFTSmxISFQwT2lReWVpNjM1Sk8wdmNt?=
- =?utf-8?B?eUJobUdZYnQ2a3U3VFNyT2cwN2x4SkNLVFFIak51RDFRRGc2VU5hSHJBQnlr?=
- =?utf-8?B?cllyWGlkQko2d3JDWHpWaFVWUlpDbjdJMXlIREZuQXJwQUZRMm04a3ZaditT?=
- =?utf-8?B?dWdqYlZvOXJqbmxOaWh5MlcvZm9ZanVNbk5ZeW5pcFhtTG1pbVF6TTlHS0FR?=
- =?utf-8?B?STBiMnBHZURodG9veWxIY3FIa3VXcmY5NjJ2Q09LOHhKbTkwbG1BVW53OG1T?=
- =?utf-8?B?dDJBN2dGT0JzR1lITzdJMFp5cjBMbWJPbitoYkVDVE54YUhxWElmT3BBY3RI?=
- =?utf-8?B?QUtWQ2I1bWNKaTUzVFFRNEtGQzlRVldhR0FrSndmSC8vNHIzdi9jRysyRm9t?=
- =?utf-8?B?eHdsWkU0VHdKVHRKaDhnYk5BVGIrRHZHWFBSSnNDNFowdDh4cHo1dXpBcW1X?=
- =?utf-8?B?RWVCVnhRY0lNb2xKaHkvQkhmeDMyVkViQVhYY2ZEQ2Z1ZEl6T0Y3cDdxL0RK?=
- =?utf-8?B?bWtEZWRCYlFaazVJQkJKVkV0WlBCYlYvZmNsK2xmY2l5bUgvM21rR1dVYi9i?=
- =?utf-8?B?bHdJdTVWQURvcjFzeGhZc1kra1A0aDBGb3FHZWhmM1czVWk3dlZIUUtoaWpP?=
- =?utf-8?B?S0Y2K3ZoYjdhNlpPUDFXUnY3SDJyZ3dJaFhIY3FwR2k2aUFVM2VnczNITlhJ?=
- =?utf-8?B?VUV3YnE2dm0vZS9JdHpwOTlHcS9WUkZYeVZtbHo1MUx6MUxGOTU4MkhPV3Zp?=
- =?utf-8?B?V05XbFd6R2g1OGJWUzhSNTRpVmFqcHg0YVJtczZqdkhtVU5Zd0Vab2V5cmU3?=
- =?utf-8?B?Q0hEa2hRN3hNN21RNUtlejVmTS9sWnNjOU93SDRJeVFKZGdocy9XUFV6N2ZM?=
- =?utf-8?B?dTE3dkduaVlNRytXN2Y4akJNUFpodmdjVFRWK0xCdEsvdHJaZkRhL0pmMWIz?=
- =?utf-8?B?K0o5ekduWVVnWXVqSk9MeXNlTjJyRE9XQkRhbzdxTFRmQXhocCt1LzdYeisx?=
- =?utf-8?B?Tkx5QU1iZVVxeHRjTzFOWVFUWkR0bFd6MkpWMzRqSC9LMVFFTjBKRSt4L0xH?=
- =?utf-8?B?M3EyN2I1ZytMcmF5eWpPS09lcGpmTzM2akFIOW9uTXFkNmIyL01TeTl2R01B?=
- =?utf-8?B?RksxYlVTbk1SYVppcGFDY29scjA0ZldxbVFjNExMWUkxcFU5QzZ3WmEyZnlB?=
- =?utf-8?B?dlgybEV1aXpWU1BtWEQvUWJGSkw3cFYvenl0ZkNTamw2RnFITHp5V3cxKzhO?=
- =?utf-8?B?ejUxZXNTSG5vMlpoaWtzcXNtSEZlSkk0eVpJbVdyenRlTytLd0owaWw3YU01?=
- =?utf-8?B?SW9jdnA2YWpNV0FUN1FXeVA5SUl6bU5LYkNmMlRRclhBRUExc2pFL0JRS1Fh?=
- =?utf-8?B?NExzUEhOUllWUjVLYStxemlYd0s2cERZbENrOExUR3kxUE03eVNQTFUwcXBv?=
- =?utf-8?B?WE5Eb01mK0FzNGZVUk9BZWRKUmdrTjg1YkVkeGVIQWdqOVdLcXlZUWM1eE94?=
- =?utf-8?B?Q3JjMzdDYWVmUkk0Q2prbEx4TThiT0d2UUxGZUpyd3hmRUpJRWxQVjMxVVl0?=
- =?utf-8?B?L0FMR2E5ckhTQWpQeWxpVXpwb05ObUhMNm93RjBRNnBJdTVCSWU3WERRNEZY?=
- =?utf-8?B?dDFtcTlUbWI2WSs5ekRiUk1lTXNaVS9RVW9JY04wVk5JOFhoaHBEZ21IZ1dw?=
- =?utf-8?B?dlVFaEFwRHdLS0dUcDJDdko5QXBDUnRXOFV0TG9WUkhDSS90aXI0NmhoOGdO?=
- =?utf-8?B?WlVHaXFUVUhFUDRRVzE1bktXWnlvL3ltQnpOOWNER2doUHFXZ2g3S3J6TE5Z?=
- =?utf-8?B?MDBqOEtnNUlKRUI4djZIb2QwNlUwTmNUanRRZGpjT3ZnZlNxbW9hTEczamJG?=
- =?utf-8?B?M0tJaU53S1BTZzJiR0lyU2dDYkxJQUg0MHJSVmpld0ZhWlYwSXNyMTdVUTFJ?=
- =?utf-8?B?U1J1WUs4U3RpdTJmTnRuZlU1YVFLak1BeXRReXdFY0lTeW45d2ZVTlAxNzU2?=
- =?utf-8?B?ZEE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 275a99aa-9046-44b4-70e4-08ddf0717076
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8283.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 13:53:36.6924
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rruguyQIeLDhaLAug0JlENaKC25dWxFsbcoriokXLKk9Q3D9wzQQ547JRo1yLecUV8kVIYoIyUsaZgz0oGkAs66res3cFQ300fFduRrTQ7E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB8272
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1757510157.git.akhilesh@ee.iitb.ac.in>
 
-On 2025-09-10 3:39 PM, Prasad, Prasad wrote:
-> 
-> On 9/10/2025 2:41 PM, Cezary Rojewski wrote:
->> On 2025-09-09 8:19 AM, Venkata Prasad Potturu wrote:
->>> Use dev_get_drvdata(dev->parent) instead of dev_get_platdata(dev)
->>> to correctly get acp_chip_info members in acp I2S driver.
->>> This resolves issues where some members were zero due to incorrect
->>> data access.
->>
->> Hi,
->>
->> 'some members were zero' meaning null-ptr-deref? If so, please reword
->> to make it more explicit.
-> It's not a null-ptr-deref, members were not updated properly, will
-> rephrase the commit description
->>
->> Given the history of this file, mainly Commit 6d9b64156d84 ("ASoC:
->> amd: acp: Fix NULL pointer deref in acp_i2s_set_tdm_slot") it's kind
->> of surprising that the issue is addressed in staggered fashion. Why
->> was set_tdm_slot() fixed separately?
-> This fix was missed earlier at the time of this commit 6d9b64156d84.
+Implement alarm feature for rtc-m41t93 by adding necessary
+callbacks - set_alarm, read_alarm and alarm_irq_enable.
+Enable support to configure alarm 1 out of 2 alarms present in this rtc.
+Support only alarm configuration in this commit. This commit does not
+implement alarm irq handling.
 
-Let's mention that in the commit message then. It's clear now that the 
-earlier fix is insufficient and null-ptr-derefs may still occur.
+Use selftests/rtc/rtctest for testing. Tested by observing IRQ pin
+(pin 12 of SOX18 package) on logic analyzer going low after alarm
+condition is met.
 
->>
->>> Fixes: e3933683b25e ("ASoC: amd: acp: Remove redundant acp_dev_data
->>> structure")
->>>
->>> Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
->>
->> No newline between the tags, please.
-> Okay, will send v2 patch.
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+---
+ drivers/rtc/rtc-m41t93.c | 105 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 105 insertions(+)
+
+diff --git a/drivers/rtc/rtc-m41t93.c b/drivers/rtc/rtc-m41t93.c
+index ad862bf706b6..911852820853 100644
+--- a/drivers/rtc/rtc-m41t93.c
++++ b/drivers/rtc/rtc-m41t93.c
+@@ -22,6 +22,14 @@
+ #define M41T93_REG_DAY			5
+ #define M41T93_REG_MON			6
+ #define M41T93_REG_YEAR			7
++#define M41T93_REG_AL1_MONTH		0xa
++#define M41T93_REG_AL1_DATE		0xb
++#define M41T93_REG_AL1_HOUR		0xc
++#define M41T93_REG_AL1_MIN		0xd
++#define M41T93_REG_AL1_SEC		0xe
++#define M41T93_BIT_A1IE                 BIT(7)
++#define M41T93_BIT_ABE			BIT(5)
++#define M41T93_FLAG_AF1                 BIT(6)
+ 
+ 
+ #define M41T93_REG_ALM_HOUR_HT		0xc
+@@ -153,10 +161,107 @@ static int m41t93_get_time(struct device *dev, struct rtc_time *tm)
+ 	return ret;
+ }
+ 
++static int m41t93_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
++{
++	struct m41t93_data *m41t93 = dev_get_drvdata(dev);
++	int ret;
++	unsigned int val;
++	u8 alarm_vals[5] = {0};
++
++	ret = regmap_bulk_write(m41t93->regmap, M41T93_REG_AL1_DATE, alarm_vals, 4);
++	if (ret)
++		return ret;
++
++	/* Set alarm values */
++	alarm_vals[0] = bin2bcd(alrm->time.tm_mon + 1) & 0x1f;
++	alarm_vals[1] = bin2bcd(alrm->time.tm_mday) & 0x3f;
++	alarm_vals[2] = bin2bcd(alrm->time.tm_hour) & 0x3f;
++	alarm_vals[3] = bin2bcd(alrm->time.tm_min) & 0x7f;
++	alarm_vals[4] = bin2bcd(alrm->time.tm_sec) & 0x7f;
++
++	if (alrm->enabled) {
++		/* Enable alarm IRQ generation */
++		alarm_vals[0] |= M41T93_BIT_A1IE | M41T93_BIT_ABE;
++	}
++
++	/* Preserve SQWE bit */
++	ret = regmap_read(m41t93->regmap, M41T93_REG_AL1_MONTH, &val);
++	if (ret)
++		return ret;
++
++	alarm_vals[0] |= val & 0x40;
++
++	ret = regmap_bulk_write(m41t93->regmap, M41T93_REG_AL1_MONTH,
++				alarm_vals, sizeof(alarm_vals));
++	if (ret)
++		return ret;
++
++	/* Device address pointer is now at FLAG register, move it to other location
++	 * to finish setting alarm, as recommended by the datasheet.
++	 * We do read of AL1_MONTH register to achieve this.
++	 */
++	ret = regmap_read(m41t93->regmap, M41T93_REG_AL1_MONTH, &val);
++	if (ret)
++		return ret;
++
++	if (bcd2bin(val & 0x1f) == (alrm->time.tm_mon & 0x1f))
++		dev_notice(dev, "Alarm set successfully\n");
++
++	return 0;
++}
++
++static int m41t93_get_alarm(struct device *dev, struct rtc_wkalrm *alrm)
++{
++	struct m41t93_data *m41t93 = dev_get_drvdata(dev);
++	int ret;
++	unsigned int val;
++	u8 alarm_vals[5] = {0};
++
++	ret = regmap_bulk_read(m41t93->regmap, M41T93_REG_AL1_MONTH,
++			       alarm_vals, sizeof(alarm_vals));
++	if (ret)
++		return ret;
++
++	alrm->time.tm_mon = bcd2bin(alarm_vals[0] & 0x1f) - 1;
++	alrm->time.tm_mday = bcd2bin(alarm_vals[1] & 0x3f);
++	alrm->time.tm_hour = bcd2bin(alarm_vals[2] & 0x3f);
++	alrm->time.tm_min = bcd2bin(alarm_vals[3] & 0x7f);
++	alrm->time.tm_sec = bcd2bin(alarm_vals[4] & 0x7f);
++
++	alrm->enabled =  !!(alarm_vals[0] & M41T93_BIT_A1IE);
++
++	ret = regmap_read(m41t93->regmap, M41T93_REG_FLAGS, &val);
++	if (ret)
++		return ret;
++
++	alrm->pending = (val & M41T93_FLAG_AF1) && alrm->enabled;
++
++	return 0;
++}
++
++static int m41t93_alarm_irq_enable(struct device *dev, unsigned int enabled)
++{
++	struct m41t93_data *m41t93 = dev_get_drvdata(dev);
++	unsigned int val;
++	int ret;
++
++	val = enabled ? M41T93_BIT_A1IE | M41T93_BIT_ABE : 0;
++
++	ret = regmap_update_bits(m41t93->regmap, M41T93_REG_AL1_MONTH,
++				 M41T93_BIT_A1IE | M41T93_BIT_ABE, val);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
+ 
+ static const struct rtc_class_ops m41t93_rtc_ops = {
+ 	.read_time	= m41t93_get_time,
+ 	.set_time	= m41t93_set_time,
++	.set_alarm	= m41t93_set_alarm,
++	.read_alarm	= m41t93_get_alarm,
++	.alarm_irq_enable = m41t93_alarm_irq_enable,
+ };
+ 
+ static struct spi_driver m41t93_driver;
+-- 
+2.34.1
+
 
