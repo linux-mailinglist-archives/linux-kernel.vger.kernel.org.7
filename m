@@ -1,123 +1,154 @@
-Return-Path: <linux-kernel+bounces-809824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B95F8B51280
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:30:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C842B5127D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C35817B38BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:28:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A89481CF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF59F313E07;
-	Wed, 10 Sep 2025 09:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CE3313E0A;
+	Wed, 10 Sep 2025 09:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YQwukn2D"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="ZhxPSqLj"
+Received: from fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.72.182.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9615E308F38;
-	Wed, 10 Sep 2025 09:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B18A313544;
+	Wed, 10 Sep 2025 09:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.72.182.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757496601; cv=none; b=Sr8EzDTbDRB1LLeL4qZpzHaezTktgumQZcRKVg/wkOXmoCwN0PGU5QLCjKuuBFsmN7ZEZx/JXNucYavcCDtqib1DWxp4DluCK8ZWPUMycwIrDbhc44ZcQ5AdQlxU7GZPIf/Vf8zBSV7cIPuFILPaGvgRHagKdr5i7q+5f3Sg+wQ=
+	t=1757496532; cv=none; b=ZE50O22Y3pZ657K3qQ9V327ZPZ2pgb1D0wbebPx0vpw4jvMtBn0Nmc8SgmX7wqajaUnJJxPtD1V1i0CN9gtOKXtrgmEjmkv2ec4w3qB3pTLLbvUzs95P5UK9ejltKZaUcR93TTzeSiqf9tjoXbFjvcHS5ww7C+7lJXzwWJH6HBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757496601; c=relaxed/simple;
-	bh=kv801gF345C4oB+f+aQrqm6mpUznJyW9VneKUbtHrJM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ePokqRAG46exutauhG/KaJfPVEvGBcnprDez5Wy0MqVU2wcDcRUBdR8wRkSV6OVSL5UKoSPuz72R4DXkzE6tQYgd7bd98Yw2eh+7AeLnaiY+f+L6KKrVo4Ch3GXDK5bpgUWS8+W9muetqJL3dTGjpRcLcN3EV17AdLcYaI5a3Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YQwukn2D; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757496600; x=1789032600;
-  h=from:to:cc:subject:date:message-id:mime-version:
+	s=arc-20240116; t=1757496532; c=relaxed/simple;
+	bh=8M1NClmvgIt+dhiZcZXDzCJ1AB1iwZ1egz2MFeaVKyw=;
+	h=From:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=QTUeqEE+xCD3eEvy0ovmbGp+KNRKgdBGoS3V/GnqlpgLSBqo3N9B+YpsMfjCq98Su63QDSJzWg4Nw21Mxk/v6EJVhVolFJERS3lXn5mMFCO3lrReAYT9UoHTTlAd62jKrzt6GpUFQrgTLZG9h8d3Koey004vwPqMgXtSH4joPvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=ZhxPSqLj; arc=none smtp.client-ip=3.72.182.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1757496529; x=1789032529;
+  h=from:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=kv801gF345C4oB+f+aQrqm6mpUznJyW9VneKUbtHrJM=;
-  b=YQwukn2DTLSc7FfB1P2gGWFo0jYIWdmS4OyKdGjjCpdcAs1tpzsq8Dxh
-   rQOhHn5LUDshxbMr6z8HbtitWviKIkWbE4H23e4WgtatSh1XJwejnlwcV
-   sad83t0jPEnI9UchiNTSnwG8FzD1qRd2PpdWlLJuuA3tHlXbIMUMSH5iB
-   IipeCRTsrKGe2cdOaAN2KV0U60yqVMjzMqGBVdFE948NMK7aHLWaJJRlc
-   3/ZEsJX5b8G2oGJCSt8Rh0Si/YRsBszLtaNgCrFI/3e/SOKnrdJ0R2DlU
-   +hbT5ixhWzRNPdyrXA/xjArmlCGFjHhTy7M+uC970VMfE9xzmbsCEMQQx
-   Q==;
-X-CSE-ConnectionGUID: NGzgq0G2R9WR+HpeswV74A==
-X-CSE-MsgGUID: ilTYxnqwSxOYbhpgB9Q0hQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="77257126"
-X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
-   d="scan'208";a="77257126"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 02:29:59 -0700
-X-CSE-ConnectionGUID: UjLmF5dtR3eP67o4uAu2Iw==
-X-CSE-MsgGUID: AOlBc/kCS7CIl0vTvM13Mw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
-   d="scan'208";a="173724380"
-Received: from baandr0id001.iind.intel.com ([10.66.253.151])
-  by fmviesa008.fm.intel.com with ESMTP; 10 Sep 2025 02:29:56 -0700
-From: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-To: dave@stgolabs.net,
-	paulmck@kernel.org,
-	josh@joshtriplett.org,
-	frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	rostedt@goodmis.org
-Cc: linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org,
-	Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-Subject: [PATCH v2] rcu/rcutorture: Improve error handling in rcu_torture_fwd_prog_init()
-Date: Wed, 10 Sep 2025 14:58:20 +0530
-Message-Id: <20250910092820.3736526-1-kaushlendra.kumar@intel.com>
-X-Mailer: git-send-email 2.34.1
+  bh=UYBeIk1Sgl6VARFAnYk+1Npq0eTLyrVghsS0KiRYD80=;
+  b=ZhxPSqLjvcFSH7Nn25m6NEGkNESDX6JV2WbMCqIW7JBpVf88V6t6ypTu
+   cpxL9Q3Mpm3xH48feges+VAZ8Iw12VjVxhcRiLJxR3T9z3c/ireBMTVKa
+   BiOEL4xESeMyhlx580sNNcSfw+dQaVOIEkta9K2eKpmgBgIQ4eQIpX5FH
+   Ny7DDE2HRtkjiVOuxZ3rlWLTk6XrGb4FaaS2pQujxalWnWll8y9JalupK
+   nAPj1vpgkOwCXqNj0qGsO+au9OLYtamHOMVssjNw9WHn6Jwm6zZopGfVm
+   Pn9Z8YbYhirV1Gtb5kIO5GwmW9WQoTneIoWmoardngyEPsO9w8xzCM41F
+   A==;
+X-CSE-ConnectionGUID: u/IpeAocSuWjQ6qjoMuysA==
+X-CSE-MsgGUID: s0vP7LJQR2CHqKOPqmdAug==
+X-IronPort-AV: E=Sophos;i="6.18,214,1751241600"; 
+   d="scan'208";a="1890739"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 09:28:38 +0000
+Received: from EX19MTAEUC001.ant.amazon.com [54.240.197.225:14793]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.16.14:2525] with esmtp (Farcaster)
+ id 2040ec64-2b97-42f5-bda1-4ba39ea8b2d5; Wed, 10 Sep 2025 09:28:38 +0000 (UTC)
+X-Farcaster-Flow-ID: 2040ec64-2b97-42f5-bda1-4ba39ea8b2d5
+Received: from EX19D008EUC003.ant.amazon.com (10.252.51.205) by
+ EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Wed, 10 Sep 2025 09:28:38 +0000
+Received: from EX19D008EUC001.ant.amazon.com (10.252.51.165) by
+ EX19D008EUC003.ant.amazon.com (10.252.51.205) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Wed, 10 Sep 2025 09:28:37 +0000
+Received: from EX19D008EUC001.ant.amazon.com ([fe80::9611:c62b:a7ba:aee1]) by
+ EX19D008EUC001.ant.amazon.com ([fe80::9611:c62b:a7ba:aee1%3]) with mapi id
+ 15.02.2562.020; Wed, 10 Sep 2025 09:28:37 +0000
+From: "Heyne, Maximilian" <mheyne@amazon.de>
+CC: "Heyne, Maximilian" <mheyne@amazon.de>, "Matthieu Baerts (NGI0)"
+	<matttbe@kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>,
+	Thomas Dreibholz <dreibh@simula.no>, Mat Martineau <martineau@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Mat Martineau
+	<mathew.j.martineau@linux.intel.com>, Matthieu Baerts
+	<matthieu.baerts@tessares.net>, "David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "mptcp@lists.01.org" <mptcp@lists.01.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH 5.10] mptcp: pm: kernel: flush: do not reset ADD_ADDR limit
+Thread-Topic: [PATCH 5.10] mptcp: pm: kernel: flush: do not reset ADD_ADDR
+ limit
+Thread-Index: AQHcIjVJBuGE8H44G0WWr6MpfYiLLg==
+Date: Wed, 10 Sep 2025 09:28:37 +0000
+Message-ID: <20250910-nicety-alert-0e004251@mheyne-amazon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-Restructure error handling in rcu_torture_fwd_prog_init() to provide
-cleaner allocation failure paths. The current code checks both
-allocations in a single condition, making error handling less
-efficient and clear.
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
 
-The improved approach:
-- Check rfp allocation immediately and return early on failure
-- Separately handle fwd_prog_tasks allocation failure with proper
-  cleanup
-- Remove redundant kfree(fwd_prog_tasks) since it would be NULL on
-  failure
+commit 68fc0f4b0d25692940cdc85c68e366cae63e1757 upstream.
 
-Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+A flush of the MPTCP endpoints should not affect the MPTCP limits. In
+other words, 'ip mptcp endpoint flush' should not change 'ip mptcp
+limits'.
+
+But it was the case: the MPTCP_PM_ATTR_RCV_ADD_ADDRS (add_addr_accepted)
+limit was reset by accident. Removing the reset of this counter during a
+flush fixes this issue.
+
+Fixes: 01cacb00b35c ("mptcp: add netlink-based PM")
+Cc: stable@vger.kernel.org
+Reported-by: Thomas Dreibholz <dreibh@simula.no>
+Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/579
+Reviewed-by: Mat Martineau <martineau@kernel.org>
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Link: https://patch.msgid.link/20250815-net-mptcp-misc-fixes-6-17-rc2-v1-2-=
+521fe9957892@kernel.org
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+[adjusted patch by removing WRITE_ONCE to take into account the missing
+ commit 72603d207d59 ("mptcp: use WRITE_ONCE for the pernet *_max")]
+Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
 ---
-Changes in v2:
-- Fixed word wrapping in commit message to follow kernel guidelines
+For some reason only the corresponding selftest patch was backported and
+it's now failing on 5.10 kernels. I tested that with this patch the
+selftest is succeeding again.
 ---
- kernel/rcu/rcutorture.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/mptcp/pm_netlink.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 807fbf6123a7..6af0d207adba 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -2995,11 +2995,11 @@ static int __init rcu_torture_fwd_prog_init(void)
- 	if (fwd_progress_div <= 0)
- 		fwd_progress_div = 4;
- 	rfp = kcalloc(fwd_progress, sizeof(*rfp), GFP_KERNEL);
-+	if (!rfp)
-+		return -ENOMEM;
- 	fwd_prog_tasks = kcalloc(fwd_progress, sizeof(*fwd_prog_tasks), GFP_KERNEL);
--	if (!rfp || !fwd_prog_tasks) {
-+	if (!fwd_prog_tasks) {
- 		kfree(rfp);
--		kfree(fwd_prog_tasks);
--		fwd_prog_tasks = NULL;
- 		fwd_progress = 0;
- 		return -ENOMEM;
- 	}
--- 
-2.34.1
+diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
+index 32379fc706cac..c31a1dc69f835 100644
+--- a/net/mptcp/pm_netlink.c
++++ b/net/mptcp/pm_netlink.c
+@@ -869,7 +869,6 @@ static void __flush_addrs(struct pm_nl_pernet *pernet)
+ static void __reset_counters(struct pm_nl_pernet *pernet)
+ {
+ 	pernet->add_addr_signal_max =3D 0;
+-	pernet->add_addr_accept_max =3D 0;
+ 	pernet->local_addr_max =3D 0;
+ 	pernet->addrs =3D 0;
+ }
+-- =
+
+2.47.3
+
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
 
 
