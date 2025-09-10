@@ -1,101 +1,138 @@
-Return-Path: <linux-kernel+bounces-809809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8705B51249
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:18:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEDFB5124D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 241BA7ADD3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:16:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 526B2463E27
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF143128D3;
-	Wed, 10 Sep 2025 09:17:58 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561DD3112D8;
-	Wed, 10 Sep 2025 09:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2CC313E13;
+	Wed, 10 Sep 2025 09:18:03 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE282877E9
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757495877; cv=none; b=G0h9SH4qJmz/OuFGH3NBnVnWTTWV/fRqIczOyI8C5f/Z37U+Ve07e2BLmGqMrMJH9NMuydlu0oOc0KYWyeKtcGonxJV85q86E95rjrj40suRI5nfh5kcrf5kjtgtDExczmhTNpqf1hu4znVo3k44cLgT2tfAcZiDIHlB5qDNEiw=
+	t=1757495883; cv=none; b=f8tmTam3+aVntIn8mv+nsK1pyPTTt7S5WLoz6MxyhEqaZNQBkZ6cCcJHSdDKDRrNJdKYHvmZln1R6Kse+P/oUTeniXNwxBepLFasYnuDOGbw9hzVgzGAUX9WhXMx5TK6oh8BWeuhrto6p/arm54sQ6NldYRXYyzAgqI+f3wTOG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757495877; c=relaxed/simple;
-	bh=RLLm9pnVH37H7xjf5OXNxYNi/k874wPLIP1MoO6qGR0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q1eUGOD80lwFgwhxaAz/XOMVvaW1Armc9p5Rzg4C3YOApV8YF1xDzQ/G1gO6/hB8k0vcPa7c6fyOTW0piQWtwVRpBLy9lbaMEXue+twKJV0tesSBdK4JbTTZBbpg3aGivH2n8DwqQLw+IFOqauz0sBo5AjPuvME+EV75efu5xaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee468c14237dd6-58e69;
-	Wed, 10 Sep 2025 17:17:47 +0800 (CST)
-X-RM-TRANSID:2ee468c14237dd6-58e69
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from Z04181454368174 (unknown[10.55.1.71])
-	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee468c14238228-95f8e;
-	Wed, 10 Sep 2025 17:17:47 +0800 (CST)
-X-RM-TRANSID:2ee468c14238228-95f8e
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: mst@redhat.com
-Cc: jasowang@redhat.com,
-	eperezma@redhat.com,
-	kvm@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] vhost: vringh: Modify the return value check
-Date: Wed, 10 Sep 2025 17:17:38 +0800
-Message-ID: <20250910091739.2999-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1757495883; c=relaxed/simple;
+	bh=aX8Pf9ddMfci242FHyX4blRsVEE0teAgfojzmfOU8Vk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Eu9rdZe4jNU7phwJvaVjDXe4w54HwrsmiGNJDTpIkahJmxcHoePf/mKchoYhVtb3EWOwZx5R8pVrKQzDoEhytPgD+oOH+ooBYqTPt4FDz3DPZnrP3pM0VQt715dgupCW8I8D0fECwCDPWfuczyIids1dA7vZrMzOgadTj5BWvBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uwGxc-000560-GV; Wed, 10 Sep 2025 11:17:52 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uwGxb-000ZEw-2M;
+	Wed, 10 Sep 2025 11:17:51 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uwGxb-0007LM-27;
+	Wed, 10 Sep 2025 11:17:51 +0200
+Message-ID: <94ce63da0edee178a49781b2c6ac9a863f13333f.camel@pengutronix.de>
+Subject: Re: [PATCH v2 04/11] phy: renesas: Add Renesas RZ/G3E USB3.0 PHY
+ driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Biju <biju.das.au@gmail.com>, Vinod Koul <vkoul@kernel.org>, Kishon
+ Vijay Abraham I <kishon@kernel.org>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org, Prabhakar
+	Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Wed, 10 Sep 2025 11:17:51 +0200
+In-Reply-To: <20250909180803.140939-5-biju.das.jz@bp.renesas.com>
+References: <20250909180803.140939-1-biju.das.jz@bp.renesas.com>
+	 <20250909180803.140939-5-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On Di, 2025-09-09 at 19:07 +0100, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>=20
+> Add Renesas RZ/G3E USB3.0 PHY driver. This module is connected
+> between USB3 Host and PHY module. The main functions of this
+> module are:
+>  1) Reset control
+>  2) Control of PHY input pins
+>  3) Monitoring of PHY output pins
+>=20
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v1->v2:
+>  * Replaced magic numbers with macros.
+> ---
+>  drivers/phy/renesas/Kconfig          |   7 +
+>  drivers/phy/renesas/Makefile         |   1 +
+>  drivers/phy/renesas/phy-rzg3e-usb3.c | 271 +++++++++++++++++++++++++++
+>  3 files changed, 279 insertions(+)
+>  create mode 100644 drivers/phy/renesas/phy-rzg3e-usb3.c
+>=20
+[...]
+> diff --git a/drivers/phy/renesas/phy-rzg3e-usb3.c b/drivers/phy/renesas/p=
+hy-rzg3e-usb3.c
+> new file mode 100644
+> index 000000000000..6463519b2c22
+> --- /dev/null
+> +++ b/drivers/phy/renesas/phy-rzg3e-usb3.c
+> @@ -0,0 +1,271 @@
+[...]
+> +static int rzg3e_phy_usb3_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct phy_provider *provider;
+> +	struct rz_usb3 *r;
+> +	struct phy *phy;
+> +	int ret;
+> +
+> +	r =3D devm_kzalloc(dev, sizeof(*r), GFP_KERNEL);
+> +	if (!r)
+> +		return -ENOMEM;
+> +
+> +	r->base =3D devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(r->base))
+> +		return PTR_ERR(r->base);
+> +
+> +	r->rstc =3D devm_reset_control_get_shared(dev, NULL);
+> +	if (IS_ERR(r->rstc))
+> +		return dev_err_probe(dev, PTR_ERR(r->rstc), "failed to get reset\n");
+> +
+> +	ret =3D reset_control_deassert(r->rstc);
+> +	if (ret)
+> +		return ret;
 
-The return value of copy_from_iter and copy_to_iter can't be negative,
-check whether the copied lengths are equal.
+It looks like you should be able to use
+devm_reset_control_get_shared_deasserted() and let devres handle reset
+control assertion on error and driver removal.
 
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
- drivers/vhost/vringh.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/vhost/vringh.c b/drivers/vhost/vringh.c
-index 9f27c3f6091b..0c8a17cbb22e 100644
---- a/drivers/vhost/vringh.c
-+++ b/drivers/vhost/vringh.c
-@@ -1115,6 +1115,7 @@ static inline int copy_from_iotlb(const struct vringh *vrh, void *dst,
- 		struct iov_iter iter;
- 		u64 translated;
- 		int ret;
-+		size_t size;
- 
- 		ret = iotlb_translate(vrh, (u64)(uintptr_t)src,
- 				      len - total_translated, &translated,
-@@ -1132,9 +1133,9 @@ static inline int copy_from_iotlb(const struct vringh *vrh, void *dst,
- 				      translated);
- 		}
- 
--		ret = copy_from_iter(dst, translated, &iter);
--		if (ret < 0)
--			return ret;
-+		size = copy_from_iter(dst, translated, &iter);
-+		if (size != translated)
-+			return -EFAULT;
- 
- 		src += translated;
- 		dst += translated;
--- 
-2.33.0
+As is, the driver is missing a reset_control_assert() in the probe
+error paths.
 
 
-
+regards
+Philipp
 
