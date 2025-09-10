@@ -1,486 +1,245 @@
-Return-Path: <linux-kernel+bounces-809363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAC09B50C7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:58:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E9F1B50C7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 05:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E3FA5400CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132451C62AE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2A126D4C1;
-	Wed, 10 Sep 2025 03:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F83826D4C1;
+	Wed, 10 Sep 2025 03:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fetCA905017.onmicrosoft.com header.i=@fetCA905017.onmicrosoft.com header.b="Ldt9fXQF"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022073.outbound.protection.outlook.com [52.101.126.73])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="gW4S65pk";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="gW4S65pk"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011030.outbound.protection.outlook.com [52.101.65.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B20247299;
-	Wed, 10 Sep 2025 03:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757476704; cv=fail; b=IQpgTvRk47v8ACDNcsZm1omCa3gIBEa32RqrTcgJApmPq8RlF8DdMb/owr/5ZGsl+ebbO42oE8CA2JfACTEm/PSFeFd1dC+noq3/0fheX86DIG3KnVMdJBopOfF3oCOErr0IuRDthD37sp4W5/ZUQ6RdIfDmtRk0vDAQ50Ff10w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757476704; c=relaxed/simple;
-	bh=gn0NxSi+ptsw6zRO6LFHC7uvXAxUcE86LpxLGtVZoqY=;
-	h=Message-ID:Date:From:Subject:To:Cc:Content-Type:MIME-Version; b=Lgj//SFPTqst27JmRRvTy1LGkEG8TtEwFCf5OdWsBZR3TWMMSZijh87JUmg9xxPSc0xflWzqE4lyRmXE0Qp2I8C4R2bATjxe2N8DCBPFV81JGDtrIwEQU1QJ9S3ecy4PEZFTUDQ19qOu6FOAqvfjHdde8Kr7R8bi254sqxUzxe4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=portwell.com.tw; spf=pass smtp.mailfrom=portwell.com.tw; dkim=pass (2048-bit key) header.d=fetCA905017.onmicrosoft.com header.i=@fetCA905017.onmicrosoft.com header.b=Ldt9fXQF; arc=fail smtp.client-ip=52.101.126.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=portwell.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=portwell.com.tw
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3650247299;
+	Wed, 10 Sep 2025 03:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.30
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757476769; cv=fail; b=dtYfvvjWVWzMS+UY5MkPkM9DDNsG6uOPYOdkjZESAUCwZrdTH2O1XIpPfQzLIN2Pk+mpQr6DVrcwjfKqFFIiycP9iR46L+ao5uUGGD9tzrzcz3nkwjbiy8bNgy7dHu/rvn+MFYIrHVZyIzeKfstav+rM+l1h3JN7LikIth7JxWA=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757476769; c=relaxed/simple;
+	bh=roiW/xWKPIAwEbemTZ8iRRl0eTCgi9BtatFqsFhX3CM=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IOsIfsU371WzIoePbCsqN6aBH759XYMLInYuzxU/gdbsrgzaiA2PMMuUaicBXW7MfSXuoF6nBYKJAEocZ/v1tkxo8VMWQs00T85hwhIAGZPl2ajEVCqx8RSUEOamVNZLXh1GTf0cfIvQobxc3OjTB4C7IN1MeqqBtKN0ceW8GMo=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=gW4S65pk; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=gW4S65pk; arc=fail smtp.client-ip=52.101.65.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=LV2piHj4vCYuOJfyAYSoj5HRaTIeABo62D3JUUQxuxrwq7fa1FVohEI5+kLKwhxXMVrGXQYvRh+J5YaWnT4MQZQP12fIqsCOJ2HEgPdaU4xSW86jRgAXa3tvznpADWhZ715mj01VQ/PItR3mfEHt4wvT+DgICR/S0l1N/Foxn9+e4M+HnY62DsZpbHsObind1kHXKUbcdDUF32hFq75XoHey5Ixk08e5nx6Ah4pQ9D0birDkbH9202NrQXXdwmlIyXzX7vEv38W5WBIVrs67TJhMheUi+6LRpDZl1tiug9c9/g2BCLFmu4kfUineFl4fabPHTbqpS/ERA8FRI8c8/w==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=roiW/xWKPIAwEbemTZ8iRRl0eTCgi9BtatFqsFhX3CM=;
+ b=ezIPiK11mU/rHihEHljMMXj803v7kf7s4gxpa/kJiaBkQkf4JTH3WBSyBZxFrqNz+RlItsVUWZ22G0YfpFpxfkmu61x4hXDFA7rGtZaWYKg5iCpNnMSREOg/BKox+0xDqFEalxcN/rWPChSLMJS/JvlOF8QCtx/U+mkDSsPd7NORqGulmVFW11x9UYkDsY5CfJ4qP8BLTcUlk/8ZrfmUqHAzUqsccOzm8RQGDzJO43K/VOAJJ2dfXjzGFrSdfG3ofBK1uUZjxngpeRJyY9p2+W62VlWwhHkHmwmR9nln6c0ydPiwQm2JpktHGWSoDrcqglXX3CJJCvWjkEpk7FGqUg==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=google.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=roiW/xWKPIAwEbemTZ8iRRl0eTCgi9BtatFqsFhX3CM=;
+ b=gW4S65pk/7F/4jYWS715sirSdNUevN8OyVDk9ymup5UriIg6PcE9eysYPFH6CsUgBZEtvlnpoAFoT0EGl/Xbi2LqLCAWXfcW/KrOeQxXRr4JQVUHOQXl6Ie2wX8xnMau0+nmpHR3Ewi9zEvUWYgFebEBuC6ml7U+KOdvbo39a7s=
+Received: from DB7PR05CA0042.eurprd05.prod.outlook.com (2603:10a6:10:2e::19)
+ by AS8PR08MB8134.eurprd08.prod.outlook.com (2603:10a6:20b:54f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 03:59:22 +0000
+Received: from DB1PEPF000509E5.eurprd03.prod.outlook.com
+ (2603:10a6:10:2e:cafe::b2) by DB7PR05CA0042.outlook.office365.com
+ (2603:10a6:10:2e::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Wed,
+ 10 Sep 2025 03:59:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB1PEPF000509E5.mail.protection.outlook.com (10.167.242.55) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.13
+ via Frontend Transport; Wed, 10 Sep 2025 03:59:20 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Arq6d42ezYO5CxLHUdiG2Q88jkWMIVTWTJoNjlaXedrWIek5G5O+vh3gIV39AlFYkYog8jzE0wE6X9jcVqYiAqCNFwCf+GAlEUcW2jYxvIeeCU+IjVwQke6MoXYBtxaP+v2ucgtE5hjP4e0Td3VUGpPnheL/F+4iV7owI3IP8AI7RWLoWi11MV53dIICXnzJOJEDTVz5yBPJjPhyB76NWsPu8Nz5xVoRNtFl1tBgFi+UNpXM1tZ9zHfsNrLLv2YmTNCkXo22hazj7QZzyVVS7imEhOJeBALNknUuOA2UypeEy5S05WNLg6Ilby2YFM2q2JvtgWfZWIT1Nx8ehTqh1w==
+ b=uBSrYhLWnWxkOmajPw9uXIuPFyQwOBCYMS1J6/AYn326KJwrYXmard9nHeSYClGMumdYyN0njAlSuKqJP4SUEqu3cWIbSbl4EAZ601IF5oPrW+LOuSYZXDjln8CaUG1SldLhPos7q8i+t8swtLAS3K/uNo59MBIa1aZ3c7ihv8lZOiLGjjhFo+m1s6p8zFmpSx4of8X5saQDQV8dae4/tLugtBA33yGWIYXR4aTSDPufD1vwfp75HqGqIAxzXeWHXMQPlCr3jhGXpoh/a5XlyDqODp3X0FWcxmRWKkroakNPhxVRgktXhNOIh7fgl+P21WHAb1HIFcwpL/xpmt3ZIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=myd/65ULvn1geBVUQmNtuaK/4EwEFtzbgvQJdXZ2UfI=;
- b=jnFWclR5JwaETp3m1X6nQPGj4H5neQsakK+JZD/cyX80ovKS5klD2QSh07DlIJLH6f7mapvJa2E660UH1m2a33rbxyXPHhxXymSt5kcdr6Sp9DOUlrd53eWACgZ7rEritPCWKgYRYiHL/xyc1i6h1B1dI+u8Z69gTEWfsbXxV6jAMTQPOVxSMAEgIG1fJ0vp9ngUbF4rb3Qtyoyi1thFnTByDmBwYk0Ij7x0Bo0eknqp842028btHMuolyhgh4mDAVQX4iZKM/J+c04o6W/s8ZLcxV3Fu5jYGaTDqaTt68iV70UWB+OZmPp1kRSkOpQHu330DiCqytvwj1HUyJegMA==
+ bh=roiW/xWKPIAwEbemTZ8iRRl0eTCgi9BtatFqsFhX3CM=;
+ b=GAJAvl++yAFJ5K71mYhcndCrN/c4GEgFiPyDQZmw39OEyFiiStqjWWcfqWkMQNVENjyyOe/b+jZnUD3CV0qDUghVr3dRY33EX6rpy9OMGIMUVEqs2BrPEVPtbwB9w91HwYcXrdQsezjn6i2kZW3tzHg6tqIWFXOma6YPE0UZMzl/SN7ZFYu8EyycWzcNkfO2+8Sdxc6Vc5DaMCkq6tQNvG6zMsu8Ou01DOPes55iTLszrnmEmwavbOUZShiKZP05dqb4BCgZHfFZcB7EFAbvb0iUL4RWMXHOElwTTQRo7Pa9o7YFXqUGPVsECEOyJIXC4iN+SuuZAY3YlmqPPwDItQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=portwell.com.tw; dmarc=pass action=none
- header.from=portwell.com.tw; dkim=pass header.d=portwell.com.tw; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fetCA905017.onmicrosoft.com; s=selector1-fetCA905017-onmicrosoft-com;
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=myd/65ULvn1geBVUQmNtuaK/4EwEFtzbgvQJdXZ2UfI=;
- b=Ldt9fXQFNg7qtLSr/RJjZ9q7JoLwr1agnsD0r2nx7Kox8Iv9uqAXLy/SiOIN9L9sCJyrM2RGkB3kDsBSIx9CNDDFvMmkrPJt58EQV8pxpq5E34ajW2U2XLHQfOcaYroz4SrW37bupFJis5nK9/QjAMnqUeqH85Au4rg6H7ET3mov3iEupZd9FW9+iQQcmbEeLCbZvkv4JwzSrMiaLaR4KYPkYhe/ey7ZUcAVyrPd/Lsv6oPc05895vlcOQQW2NVRLHBoflu7aOR+L2SEtUbgWSaufhWXfLK8i3Y/sG2eESjg4MpEf4X6GtwmmC8F4zoIuchzL03kIH02swocZ1RgOA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=portwell.com.tw;
-Received: from KL1PR06MB6395.apcprd06.prod.outlook.com (2603:1096:820:e7::10)
- by JH0PR06MB6317.apcprd06.prod.outlook.com (2603:1096:990:19::8) with
+ bh=roiW/xWKPIAwEbemTZ8iRRl0eTCgi9BtatFqsFhX3CM=;
+ b=gW4S65pk/7F/4jYWS715sirSdNUevN8OyVDk9ymup5UriIg6PcE9eysYPFH6CsUgBZEtvlnpoAFoT0EGl/Xbi2LqLCAWXfcW/KrOeQxXRr4JQVUHOQXl6Ie2wX8xnMau0+nmpHR3Ewi9zEvUWYgFebEBuC6ml7U+KOdvbo39a7s=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from AM9PR08MB7120.eurprd08.prod.outlook.com (2603:10a6:20b:3dc::22)
+ by AM7PR08MB5479.eurprd08.prod.outlook.com (2603:10a6:20b:104::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 03:58:17 +0000
-Received: from KL1PR06MB6395.apcprd06.prod.outlook.com
- ([fe80::8aad:9193:92da:7ec3]) by KL1PR06MB6395.apcprd06.prod.outlook.com
- ([fe80::8aad:9193:92da:7ec3%3]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
- 03:58:17 +0000
-Message-ID: <0d73c577-1941-44b4-917e-3aed6f1f664a@portwell.com.tw>
-Date: Wed, 10 Sep 2025 11:58:13 +0800
+ 2025 03:58:44 +0000
+Received: from AM9PR08MB7120.eurprd08.prod.outlook.com
+ ([fe80::2933:29aa:2693:d12e]) by AM9PR08MB7120.eurprd08.prod.outlook.com
+ ([fe80::2933:29aa:2693:d12e%5]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 03:58:44 +0000
+Message-ID: <0ab335cd-a1f6-447d-8f52-30260b8ae400@arm.com>
+Date: Wed, 10 Sep 2025 09:28:30 +0530
 User-Agent: Mozilla Thunderbird
-From: Yen-Chi Huang <jesse.huang@portwell.com.tw>
-Subject: [PATCH v5] platform/x86: portwell-ec: Add hwmon support for voltage
- and temperature
-To: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, jdelvare@suse.com,
- linux@roeck-us.net
-Cc: platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, jay.chen@canonical.com,
- jesse.huang@portwell.com.tw
+Subject: Re: [PATCH] selftests/mm: remove PROT_EXEC req from file-collapse
+ tests
+To: Zach O'Keefe <zokeefe@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Shuah Khan <shuah@kernel.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250909190534.512801-1-zokeefe@google.com>
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <20250909190534.512801-1-zokeefe@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TPYP295CA0025.TWNP295.PROD.OUTLOOK.COM
- (2603:1096:7d0:a::15) To KL1PR06MB6395.apcprd06.prod.outlook.com
- (2603:1096:820:e7::10)
+X-ClientProxiedBy: SI1PR02CA0049.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::18) To AM9PR08MB7120.eurprd08.prod.outlook.com
+ (2603:10a6:20b:3dc::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6395:EE_|JH0PR06MB6317:EE_
-X-MS-Office365-Filtering-Correlation-Id: 120eaac5-930e-45c9-9df3-08ddf01e45e1
+X-MS-TrafficTypeDiagnostic:
+	AM9PR08MB7120:EE_|AM7PR08MB5479:EE_|DB1PEPF000509E5:EE_|AS8PR08MB8134:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44c91377-2443-466e-23c7-08ddf01e6c2b
+x-checkrecipientrouted: true
+NoDisclaimer: true
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020|7053199007;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?UGRJejhMSmUwak9FbjhwU05EQmFadlJjK1ZWS1ZubHVoQWhhTXlwQ1MyYk5u?=
+ =?utf-8?B?RUUvOGErcXZaRWJEREFPd3g4VXdFamwrSmRnUThaNEt3VGxKcVJ2Um0xZ3JY?=
+ =?utf-8?B?Q1RXeVZYdzdHL1ZVM3RGa0VJcHZYc0FKUXJkNDIvUU9VY1NEbmhLSWI0YWpR?=
+ =?utf-8?B?di9ncHZyYTdadWpVSC92QXVzZk51RzRpeisrNStKOGtObW1ZT0NGenZveFNk?=
+ =?utf-8?B?QkFlSVNTOTlKTWlrNjQ4OFRzTThTNXdTVHdCRDNQRlZ0THVlUWVMZHpZTXkx?=
+ =?utf-8?B?M3c0ejFnSktibTNqTDZDUTg0ZWM1TWVyUk9XKzlHYWtIME1yZGttVGxUeVJF?=
+ =?utf-8?B?cGgwVUhJNnlldXRON3hQODdkSlRsM2pBbU44VGVjQ0hIRnlKWVRzVjJvKzVP?=
+ =?utf-8?B?LzNsSGJUdnRVbjl1QUhDaUwrOGREanFpZDNkbGJ1OW4wRHNjdDdNeG9YbHFY?=
+ =?utf-8?B?RDc5WkxPL1dZaHZDenVWRFJzYnVxdXJDN1VLYmxDczhqZnlWZE1uODFWTWNq?=
+ =?utf-8?B?N1Iwd0VMUzNWWEJybmEwU0t2OWs0cUFlNFlDanlwWVZIZHlhR3RicVFibWFR?=
+ =?utf-8?B?MUloUGlNTkxyUlZXb0NTVEs4eUphZUk1RWtIaEgvVFJaL0YyM1pXMWdmMk95?=
+ =?utf-8?B?QXFxcVYwKzhrb1JKUWF6T1UzUUlPVzB3aSswb1JZcEZzYmxvRkRORHMvOTNx?=
+ =?utf-8?B?MDFpbThPNGFUdzRzZVRyanJDalJvNHNEMzVraDlhNDVBSUlBUW9UQTZjRzNE?=
+ =?utf-8?B?VWFCZ0F3ZURoSTZxL1BPK3ZFTUpmQ3ZTc3RUT1BxYjQ3ekhZYjhwQ0VqSHha?=
+ =?utf-8?B?R3Z0RGlObjhyME9OR2FuK3RMdzVkSzZlYjd6T2daU1dHa3JIbU1EbmNzUFBX?=
+ =?utf-8?B?ajZyazZTMVp4amdGUjNFd3A4bFUrMTl1SFJwYlg2dEhNSk5SZUEwY3Q4akRr?=
+ =?utf-8?B?a0gxeVJCbENscmJiYTc0czAzME5nUThnYUZpV1kwSkt2L1dsQ3p0NURaQUZ0?=
+ =?utf-8?B?ck4zMDBPRVg2Ujg2ZmRzcW5FYlVXb1NLdHdPc2pOaG9VWHN4dXhZN3NJWTdj?=
+ =?utf-8?B?KytnRGdWb1UwcG05UWdTRnF1eWZCVGNzbzlkOEQzU1dCVk1NbnkzUmt4bnVW?=
+ =?utf-8?B?U1g3MVhvWWtRL1AwckNhSWZiZFNCY0RTdjVNYXNvTXhKdVJpYldRU2s0VGJT?=
+ =?utf-8?B?SXJIYzNWN0E3SURpelI2c2FBZUU2ejByRW4zc1NXbEV6V1lBYnM1MW12Q0p6?=
+ =?utf-8?B?a1lFQ3BaMFN3eVQ0QlVvYVdMR29DTWwzcGtOVDltdEdGM1RNTTl2bWVVR0x0?=
+ =?utf-8?B?N0c5cHVDUlNSRkJYeWU3czc3aFdKb0MxeHdJdHdvaVRoSG5oVWhCM3c5VXhm?=
+ =?utf-8?B?TGVnUEhOK1g0OU1wNzVGK3AxcmxzdyswWCs4TWRSS2NOa3RxaDZGand0MDkz?=
+ =?utf-8?B?NkFOTUUwRlBPMjhCUXVrNkozTkt1U2thY2VnK2pLTnh2NlBaQjZpOEVxdmxn?=
+ =?utf-8?B?MG1OVUdjZ0xPQ1V0Si8ySVhYeTBHeDZQeUJFMEx5VVJWM2RHN0N6VEQrVjgr?=
+ =?utf-8?B?NjEzWFFtUVBVY216N3R1RWUvMGNWVTNnVEIvMDF5QjJNcHlQaUlrSkR1SDFo?=
+ =?utf-8?B?bkdRa083cnN3cFZsc01tK1dMekNjbzF6MGY4ZW80MXIwRjJob1lIcEN6ZjRq?=
+ =?utf-8?B?a1FKUHk3VkMxZnJYZXl5UTFDU1J5ZWhTdW9GRUFPY1dqR3NDb1BycXRmVVgv?=
+ =?utf-8?B?cTV2RC9xWm4yQk5oZ1VlMlk0MVpPVmtLa3dYWXpKRXBBN2FjM1I1Q3dYMjk5?=
+ =?utf-8?B?d2Q3OEdvZWtjM2ZLWmpDT0VINnR1Z3RtWjJNbFlTUDh6SGRreTFvUC81ZWFG?=
+ =?utf-8?B?cEtxQzlIZlNQMEwvN1VsTFFhOWRFRDFtc0VHYjBmUklZQ3hidHIrYlhVVGFC?=
+ =?utf-8?B?Z1hCYVdlWUlSajNFZTFuTWIyait5U3ZMWjgyMlN5TWFzcjFUZnAxVTRiM2g5?=
+ =?utf-8?B?QXZSb2daY3J3PT0=?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB7120.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR08MB5479
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB1PEPF000509E5.eurprd03.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	af61d3dc-04c9-4166-58d2-08ddf01e562e
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|35042699022|14060799003|82310400026|1800799024|376014|7416014|921020|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N2FiU3dDZzhpVklqQ0FiUHhVYklybWhkN0pxcDFoWng0NFNza1I5Z083alFR?=
- =?utf-8?B?R244eE1DZmVBVUphR2JtUG4zWnk5MWR6NXhsUURLYk42NStEOWNJbmh3NWNn?=
- =?utf-8?B?cU9mV0k5KzRIRTNYUldac3VUcWlUcjhmK3YvdnUvWG9BNUFLQ2szbTBTM1Yy?=
- =?utf-8?B?b1hoaC9mWU8vd1diZjd4dFV1alZrMXpSOVI2dXB3U0grazFzQ0t1ZlJkaHRt?=
- =?utf-8?B?VVp2VnIzelBDKzY1OUdZa2V0c25RUnBJMmFuUzZMSEpieTJYaTNpZkpkTlhD?=
- =?utf-8?B?ZG9XbE5BMWxpaXVXTWMrVjlkTFRWY3UvNlVtNzdKNzhBdEwzbnc5aFhJeExo?=
- =?utf-8?B?SWV2ZHVGVjdYZEJSYWFsUHNrOGsxVGd2V1Q4UDdCdG1RaW01alpxUWY2SlNU?=
- =?utf-8?B?cGdXendBenZXRGdSUDJrRVkxVnJhbFBpdFBSc29MVXZSaDNaZWd3cXVZL2dn?=
- =?utf-8?B?VWNuc05UeDhuSkRXMDdKQW1vOUJ0RkRpZFc5bER2YWJsV3loY0ltRW1zczIx?=
- =?utf-8?B?bTNEV25lU25nZGI1YmdiejZpVVdiQ2t4YlpMYTZqbzV2eFJST1NlS1gwQU9K?=
- =?utf-8?B?VExzdlZ5NXlxajNkRWV1Qk1QaDJ6RnVoZVpvbnM0QS83Q00vODdRL28wQ1Vy?=
- =?utf-8?B?dHZ5OWVIZHB3enM0M2NFU1pPb1VHR3d3OHk2NkZXaGZQYmc5RDd1YWdyYVU0?=
- =?utf-8?B?eTU2dTF5TFhUeUhLMTZNS3dYS0pQZ0k3SWFHMnpsa0ZFYXpURlJhbnk3Y0Jk?=
- =?utf-8?B?d0NzNC9ISW9VZjlwc2RQQnlUaG8yZkFQakdkSjB1UGRiZkE5ZVBNVlZLNmRG?=
- =?utf-8?B?UHRsMWFHR25HK1IyM3BydEpMWnF1YkRERDd2aTJVL3RySHA5TC9Vbzdjekpz?=
- =?utf-8?B?ZGZyd0FNYUtUWm1GWWJlSXppUDliejVDQ216TUxqZnFWS1NFU0V1MEpFeGIv?=
- =?utf-8?B?a0dzM1cwVURCK3N1MFQvNnd0QWVaTHdMSzdBQ0YyL2dlQlJmaEYrckkzZmZq?=
- =?utf-8?B?ZlI0QmJOVnZRMktyZVRSQzYzT1RlUDlXV1dOa0xZS0owUnR5UEs4ZWxHWDJD?=
- =?utf-8?B?Q1dtS3VHMFpoVXRQSzUyblVSVm9vTFdYb0VPVWpqK2diL1R4NHpPSS9haDUx?=
- =?utf-8?B?MnhNTDc3V0tiT2luVTYrYW9sK05YWWxZQXF4UHhpR1IyUmU4Wnh4TWR6RHNs?=
- =?utf-8?B?T0xjTnJ3Zzl3WXR3STF5L0Nhc2EzRGtZRTlLS3pxNDNpeC81dkMwdGFBay9u?=
- =?utf-8?B?V0tRU1EyMitvU0htSitZVnZIZUI4aWtSMDcyNHZoS3pCZ1ErRGl6bWNBMmw5?=
- =?utf-8?B?R3VpQmdlVllKVjZVRmtqZWlodXFXNDFKZ1VkSGFyREpNQ1FDQUh2Y0lFRFlm?=
- =?utf-8?B?aXBPUzJtUFQxWHNxN3htUkdtejNzQVlJYWxVN0R5bjNaaXNVVXZnTEtqSzBy?=
- =?utf-8?B?dEo5RU5mTC81YVJweE9GdFhGUGlTQXpkbFJHNkpDazhuMDg4ck9hWjZkR3Fn?=
- =?utf-8?B?b0RQbTJFTTVZYzkvTFBJa2o2eHE3YS91N2ZDbWVuRmlMcXgzdVUwcGJ0Ukx5?=
- =?utf-8?B?K1F0MnNXcUdjUks5TWpMVE5IK2Y2c1JsbkFaMDhNTy9MOHhFYkthTzB5ZHFS?=
- =?utf-8?B?eEY5ZENNVm81ZldZaEEvd2JZSFJmMWlzOUQrL0VOcXQwYVJ5ZlR5SmtwMU1G?=
- =?utf-8?B?dTIwc0ZGWGU5T08zU0FBNmcyYnJyK0lOclZEdDdSSU5EYkovTm9nYTNlWjRH?=
- =?utf-8?B?R0VKNDRXbXp0Z3ZzMytBYmhjWEFJQTM1ZThyYnR4S002ZWlSQ2cvdjhpdGxs?=
- =?utf-8?B?Um5WcnRPKzVJZCs5WjBJMndyTEQxNGgvelBqakxRZFdEdWFid0JDZG1uWnYx?=
- =?utf-8?Q?/H0sbQ2XxLHZS?=
+	=?utf-8?B?SElZMTk3ZUNUcGZicEE4NmNVSk03WG8zazZEblFWd1AxcWZkdDVlaXF2YUFX?=
+ =?utf-8?B?VzR5Q2F2THpHMzIzcDA3QzE5bC9nTUU1T2dqbHVTZkQwSzIrRlcyemRWY0Ji?=
+ =?utf-8?B?MDhVWjFiR2gwT1k3TmFnNGIxbzFqYnhoQ2EzbTlsbnB4VEdDNWdabEVnbHNZ?=
+ =?utf-8?B?QU9GS3FQYUFLQ2hoOXlUQnBtcG1kaUdyZkNuVkdxWEV4QnVVN0lOUzB4ODJX?=
+ =?utf-8?B?TW5JN3Z6Q0RLVTRDdnkwSk1EM2llRm9MSUlRbWFSRVZidXJmeXMvdHJsRkg2?=
+ =?utf-8?B?L0l1ZmZkbS9NN1B6T2JwdG4vNDdQNmFkNzlFaDlEWmxNR0Jpb2VBaU14azVo?=
+ =?utf-8?B?Rkh4Z1hGQWR5Z282UEsxSXpGNVdSUmhFQ2kvd0ZjUWZxa0Y2SWFRL1Q4b2VG?=
+ =?utf-8?B?WnVjMjU4dmFTT1FHZG1SOUZabTFhQWN4TEt5eHZRZDF0T2crWWdXbzh2Ti9V?=
+ =?utf-8?B?ZTNGOGFiV1loK2s4Um42RURHZzIxYUNWcHI0dW9TN21CSldkNTVrTXRHTXZ5?=
+ =?utf-8?B?OElTaENzd1Z3a3RoNFI3Tm1zTXJTZmtBNjgzMjRobTNnd1hrOW8xREhsTzFO?=
+ =?utf-8?B?N0FFUzFvVzV3NTc2YjRnZ3lCeCtOcTdBTWRnV2lYZHNnUkZWMDFZL3FuSXR0?=
+ =?utf-8?B?QmRHL1hMaW1RaWJZeTA4RnFBYnJQVU05OGlPRjk5c0R1QVo4N2h3b3R5QlUx?=
+ =?utf-8?B?cXRUa25wSjJ1c1Y5dktqTEVpVGZNS2E1bFpzUTc1M2J4QWpSenR5NDBIbnVn?=
+ =?utf-8?B?Y2k0LzNlU0xGOEZja0x6MUkxM28rTnNwM2tlbDJRL2VwWmU1R2c2UFlrR0Fs?=
+ =?utf-8?B?M2hINk9hNVV3TUxFOHpkUkhaNjcrdnh5N2FRNkFML0xHUzBsdkZJR0pjaWx6?=
+ =?utf-8?B?cjB6N24zSXdrRDducTV1WlZJR1ZmdTZMbXBEWldXZ2dOM0tpcS9ubU9kbVJu?=
+ =?utf-8?B?bmtlbk1BN2tLS3JYZXd5RWhiVEVac1ZSbDdGVlA4WGN0NGtEcVlSSlNNclBW?=
+ =?utf-8?B?N1ZPWS82ZDNhOUlFSHdSYzhab2ZnaFRPUU9NZk5XT3ZSczU2M2lWa2lhbi8x?=
+ =?utf-8?B?OHhBVkVjL21QY2FscUVUdTZvUG5mckxlTS9HVGY3VDBTWVpaR2RyaE03aG5C?=
+ =?utf-8?B?eDlSelduTnozc2tPcEYyektBLzFnT2xuWE5XNmh5RSs4ZzVzUTBqTUhSUWZu?=
+ =?utf-8?B?SytPZXNRaitWOXVRazBwVUZRNnpkUWh5Q3VuOVVncFBEdjRpenNyZjlKNm9n?=
+ =?utf-8?B?ZnkwU0NYTEYrcTlKZ3pCNnNPcUExbFBSejVGaCtyTUxiVDBrVUhYTk5XZ1cr?=
+ =?utf-8?B?eU5YaURCbkViVXhJRzJCa2pvZEdDSk10U2JMei8zK0dBMHhmckR1ZUlUZ3Y0?=
+ =?utf-8?B?UEdvT0paQ0F2T3VwWUxlMTF5UmpDTWx2Sk1WZnZscFg2WUFXRnVQNGZnN2sy?=
+ =?utf-8?B?OGlMUmoveG15YityeGVONDVhK081TVd6eUNFZCtGV05DSzcwcVd5VE9pUUIy?=
+ =?utf-8?B?VERnK0gwSlFTK3V4aWxmYXhydXpiOENyYlUrZkF3ZC9QcjBGR2t5K1UrSUl3?=
+ =?utf-8?B?WGV6TjgyM3hRK2RjZW9JN0xRU0lKZHFXd2VqWW1Xa0FCVS9xc2VmTnBnZllX?=
+ =?utf-8?B?UHBRUW5Xby9hR05oVndWd1RqbXlpL1JuUHJycEF3ZzcwWWkzbmNva3lDQWta?=
+ =?utf-8?B?UTYyUVk3VG5aMTVkSEtxekkzVGZSVUtUQVhkVDkrYmljTTllbmRCV3pRNEJW?=
+ =?utf-8?B?d1V4VEp5QWE4R2VKbDYrbk1xRFo3Uk9pQVFXVWlHbjV6RmE3ajIycTA2dGtt?=
+ =?utf-8?B?cmt4SEZJN1pLMFBGYVZVNFJtaVhsQmZnTmtsYU4zREdzUjFXb0dWY3dXU1Zl?=
+ =?utf-8?B?TUdxY2V1UUpENENkeEdtQnA5TXJzbU41U1RkQkhVOTNsWTJiNGY3enNKTWFJ?=
+ =?utf-8?B?TGJMN0VwMitpditvZ0IxUjJvT3pRTWwwUXgxbE9xYllORlhGTWRjanJrOTJY?=
+ =?utf-8?B?T25PODhhaGVKNHo5VlVlbUR0VjB6dlE4a2QwNVZ1NlcrbWV4b1ZQdFpFWTNs?=
+ =?utf-8?B?ZGNacTFtTENUM1Jpek1KeUZxeFdVWWlYTnRuQT09?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6395.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MjRVNk9nM3g3OThQQVFHWlpsS3AyU0svK2pUMlo3aDJ2Sk80MjJkNXVqQ1p4?=
- =?utf-8?B?SHhkNXpZajNJRzF6S0p2MFVFWUY2cGYzTThQK0taaGdhcUl3Vm1KWUdZNU8v?=
- =?utf-8?B?UmZEeHNYcXdqaDRiY1gvbElNL3Axak9pd3VUS013QnRyY0YxMmJ6SUJyUVpr?=
- =?utf-8?B?Z3FxYXpPclFXYzB6R2RlaGZGSnpweitJK2h5bmh2VnAzR3I0K2ttcXlhRDd5?=
- =?utf-8?B?czZ6TVI3dU1rSEY2SVBpZEw2Vi91aWVhU05JaG5WVE9KZWFnTVJlS3FVKy9h?=
- =?utf-8?B?YWsxUjRyVGdnV3Q2eW1vckJVWDRCeHlMSlhaNmtyNlc1c29DOGVTYktPTUcx?=
- =?utf-8?B?di9CUWVYUEZJaGdkSUFhZFpGMVlSVHBBSkwwNW4wSGtlSHVrOHJvQlhqeTZL?=
- =?utf-8?B?alhFUDcwMTJuVDd2dkwwd2VPSzdXMy8rNW0wSk9ramtWTEl0R0tCS3dXNmNB?=
- =?utf-8?B?QmU1eDZuT3k0eWZzSSs5SmdwL0V4MFdIWjJ6YXA1b0tpWjNGUnJLZzV1dS9t?=
- =?utf-8?B?QWtjZEFuZjFkWlN1eVJlb003OHorWU9jQVlTUFR0TFNhNzlVWWo4MTEzUXJu?=
- =?utf-8?B?Y292QXpCa1hDc3NyWGdMa1FhVGRCRURKR3VyUS9WNVVJZXdjUUUyanBUVXdn?=
- =?utf-8?B?QUdmQTFITTkvSEFmblZlbU9xc1BqdVE0anlVaWZ1cEhiMC9BUUxWSkxKVU1W?=
- =?utf-8?B?Y3lNeXBIM1h2ZWhSc3N4dUxZemhQWVhteU45bHRVc0VDdzF1NkdFNURmbVVz?=
- =?utf-8?B?YUJKNWFWaXlyV2VvWjZLaGM3SzlZNDNJaWFiYVMyVTRTTys3RFlZTC9OMEJD?=
- =?utf-8?B?VkhnczIrQ1U4RlExZ0txd2hCOHRyQkFXNER4Mi9YdFpiUm9HcThna0ZBZ1VZ?=
- =?utf-8?B?alZJeWFkWFJRY0ZHanJuendwNE9LUm83bnpYeUZQcktZZS9JSCtPSEZRSit0?=
- =?utf-8?B?NWs4eWRKTEdBRDJMMnBCZFppWGdhQ01MU1ZSZUU2cU9zTXVpRlcybytFVG9F?=
- =?utf-8?B?MTM1UUN3MlRFV2lSamx2MFZKdVJQRmJIVkFVMnQ1SjJYMU91clV5RnUxTWpL?=
- =?utf-8?B?aWd2OXY1YWQvQVlMOEhwZUlkcE9SaWxwM2Uxb0ZvVlNUamswa0lIZnhmWXNs?=
- =?utf-8?B?cDFhY1JUWG1aSWJ1OXFGZUtWQkM3U2RUOXZoNm9TRFRUUXNRVWVYZkI5Smo4?=
- =?utf-8?B?SWpFQUxuZU1SQXF3UkVZVHpzejhVU3dlVk5Fb3lvaVdHaUQ1dFpxMGtKWmdM?=
- =?utf-8?B?UU1jZW1aKzNkcXh2bzl6Z2Q5dG9sZ3ZUcis4T1ZOVEFCLzJqUnJHK2RKQ2M4?=
- =?utf-8?B?V1V5S29ENE9zZkZJZ3k0bFAzVWYxZEJMOUVhRzNjSjZNN0cwaGl6ZGJ6ZE1B?=
- =?utf-8?B?eWxUc3hSL1FxY2dXRm16L1dZSE9LRFV3d2xXS2t1RVJTcXFjR0FNd3ExY2Q2?=
- =?utf-8?B?OTlKMkxoUFdwV3hqS1Iyck5tdnJ2aVRoa3B4dmFUN0dITXBGdGZmcXQ3ZGk1?=
- =?utf-8?B?R1VFNE5kUjNETGl0Wm84V3B3ZFRDZ0l1NmRUM1NMWExON2RNajNFd2U1d2o2?=
- =?utf-8?B?SDFSMUl1K28vUnhTK0JOazVEamZZYWtDWWkyZUErNzhuVVYvd3FpK3hQUVhX?=
- =?utf-8?B?TmRZMXk3dlpEVjhPaWpOVzIyT0ErMjNJWGdHazFISVZjeVRKZGF3YnJ2WkhO?=
- =?utf-8?B?SEREY0dvYjFUYUlBeUxNKzF0UDA2TktITG9maU9wM0VCT2JDbjYyaVlyT2lD?=
- =?utf-8?B?ZHNHUm1ROVR6UDd4UWJENFJWUTFRV2lsdmhaclFtZ0tDSDFvRWF5aktqSGZa?=
- =?utf-8?B?dHdxOXlURG9QTG83N1ovNGttbTZ0SEhlbmFyUm5EdXJoRWVPQk0yZjMrSVdW?=
- =?utf-8?B?RlN2M1dlSmNzYWZlcUlhM3M4VmpYU1lpR0hMREYxaVBlS1ZpZUpTZXpQTkhh?=
- =?utf-8?B?QXpxL2hxdGRlZ2x0UVJFNWdoWWV3dlY3OTBqZGlpUEdjdlBybWNpdFF4d1Zl?=
- =?utf-8?B?UFhtcTRHaU5DUEVQcWZqZFFoNzBMYnNmdXpzZksyUEkwOUgyUHo3dmxybDFt?=
- =?utf-8?B?R05QUS9oYmdBVlV3enQxbzRiZ2x2eTBncXVtTzdlRk9qTEU5eUgzTFFpOHY2?=
- =?utf-8?B?Skx6cVdGdXpYKzlRaVZGazYzcjFPdVZ2SlQveWZpUFV4cVdLMUVnNXdWL25C?=
- =?utf-8?B?dVE9PQ==?=
-X-OriginatorOrg: portwell.com.tw
-X-MS-Exchange-CrossTenant-Network-Message-Id: 120eaac5-930e-45c9-9df3-08ddf01e45e1
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6395.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 03:58:17.1869
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(35042699022)(14060799003)(82310400026)(1800799024)(376014)(7416014)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 03:59:20.9942
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e309f7e-c3ee-443b-8668-97701d998b2c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qKMoxNO3OENf0viuAdIa6T7MS4b2mwr5GdoZXiMxyaLGZvyURMWZT9pnrHc0W5MTUoPIoRycLhZ0rDxGzaMP6eN6EA4bfkVfe/B7vP7JYcY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6317
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44c91377-2443-466e-23c7-08ddf01e6c2b
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509E5.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB8134
 
-Integrates voltage and temperature monitoring into the driver via the hwmon
-subsystem, enabling standardized reporting via tools like lm-sensors.
 
-Signed-off-by: Yen-Chi Huang <jesse.huang@portwell.com.tw>
----
-Thanks to Guenter Roeck for clarifying that sensors.conf should only be used
-as a fallback when board-specific scaling is unknown, and for pointing out the
-missing .is_visible in v4.
+On 10/09/25 12:35 am, Zach O'Keefe wrote:
+> As of v6.8 commit 7fbb5e188248 ("mm: remove VM_EXEC requirement for THP eligibility")
+> thp collapse no longer requires file-backed mappings be created with
+> PROT_EXEC.
+>
+> Remove the overly-strict dependency from thp collapse tests so we test
+> the least-strict requirement for success.
+>
+> Signed-off-by: Zach O'Keefe <zokeefe@google.com>
 
-v4->v5:
-  - Restore .is_visible callback to fix sysfs attribute regression in v4.
-  - Re-architect hwmon data handling to use a master data structure
-    and a per-board bitmask for scalable configuration.
-  - Rename hwmon device to 'portwell_ec' to satisfy naming rules.
+LGTM
 
-v3->v4:
-  - Remove .driver_data and related per-board hwmon data structures.
-  - Remove unused pwec_hwmon_is_visible() and pwec_hwmon_init().
-  - Clarify driver header comments.
+Reviewed-by: Dev Jain <dev.jain@arm.com>
 
-V2->V3:
-  - Replace hardcoded `1000` with `MILLIDEGREE_PER_DEGREE` and double check
-  - Fix comma placement and spacing coding style issues
-  - Simplify pwec_hwmon_is_visible() with ternary operator
-
-V1->V2:
-  - Removed `msb_reg` from `struct pwec_hwmon_data`
-  - Updated `pwec_read16_stable()` to assume MSB follows LSB
-  - Moved `hwmon_channel_info` to per-board data and assigned it to `.info` at runtime
-  - Replaced the `pwec_board_data[]` array with a standalone struct
-  - Replaced literal `1000` with `MILLIDEGREE_PER_DEGREE`
-  - Removed unused include and sorted header includes
-
-Previous versions (for reference):
-  v3 patch: https://lore.kernel.org/platform-driver-x86/d6429164-46dc-4c0d-8d6f-4650e0b92f22@portwell.com.tw/
-
----
- drivers/platform/x86/portwell-ec.c | 170 +++++++++++++++++++++++++++--
- 1 file changed, 162 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/platform/x86/portwell-ec.c b/drivers/platform/x86/portwell-ec.c
-index 322f296e9315..c3b078c3c812 100644
---- a/drivers/platform/x86/portwell-ec.c
-+++ b/drivers/platform/x86/portwell-ec.c
-@@ -5,15 +5,13 @@
-  * Tested on:
-  *  - Portwell NANO-6064
-  *
-- * This driver provides support for GPIO and Watchdog Timer
-- * functionalities of the Portwell boards with ITE embedded controller (EC).
-+ * This driver supports Portwell boards with an ITE embedded controller (EC).
-  * The EC is accessed through I/O ports and provides:
-+ *  - Temperature and voltage readings (hwmon)
-  *  - 8 GPIO pins for control and monitoring
-  *  - Hardware watchdog with 1-15300 second timeout range
-  *
-- * It integrates with the Linux GPIO and Watchdog subsystems, allowing
-- * userspace interaction with EC GPIO pins and watchdog control,
-- * ensuring system stability and configurability.
-+ * It integrates with the Linux hwmon, GPIO and Watchdog subsystems.
-  *
-  * (C) Copyright 2025 Portwell, Inc.
-  * Author: Yen-Chi Huang (jesse.huang@portwell.com.tw)
-@@ -22,9 +20,11 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/acpi.h>
-+#include <linux/bits.h>
- #include <linux/bitfield.h>
- #include <linux/dmi.h>
- #include <linux/gpio/driver.h>
-+#include <linux/hwmon.h>
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/ioport.h>
-@@ -32,6 +32,7 @@
- #include <linux/platform_device.h>
- #include <linux/sizes.h>
- #include <linux/string.h>
-+#include <linux/units.h>
- #include <linux/watchdog.h>
- 
- #define PORTWELL_EC_IOSPACE              0xe300
-@@ -41,6 +42,9 @@
- #define PORTWELL_GPIO_DIR_REG            0x2b
- #define PORTWELL_GPIO_VAL_REG            0x2c
- 
-+#define PORTWELL_HWMON_TEMP_NUM          3
-+#define PORTWELL_HWMON_VOLT_NUM          5
-+
- #define PORTWELL_WDT_EC_CONFIG_ADDR      0x06
- #define PORTWELL_WDT_CONFIG_ENABLE       0x1
- #define PORTWELL_WDT_CONFIG_DISABLE      0x0
-@@ -52,16 +56,60 @@
- #define PORTWELL_EC_FW_VENDOR_LENGTH     3
- #define PORTWELL_EC_FW_VENDOR_NAME       "PWG"
- 
-+#define PORTWELL_EC_ADC_MAX              1023
-+
- static bool force;
- module_param(force, bool, 0444);
- MODULE_PARM_DESC(force, "Force loading EC driver without checking DMI boardname");
- 
-+/* A sensor's metadata (label, scale, and register) */
-+struct pwec_sensor_prop {
-+	const char *label;
-+	u8 reg;
-+	u32 scale;
-+};
-+
-+/* Master configuration with properties for all possible sensors */
-+static const struct {
-+	const struct pwec_sensor_prop temp_props[PORTWELL_HWMON_TEMP_NUM];
-+	const struct pwec_sensor_prop in_props[PORTWELL_HWMON_VOLT_NUM];
-+} pwec_master_data = {
-+	.temp_props = {
-+		{ "CPU Temperature",    0x00, 0 },
-+		{ "System Temperature", 0x02, 0 },
-+		{ "Aux Temperature",    0x04, 0 },
-+	},
-+	.in_props = {
-+		{ "Vcore", 0x20, 3000 },
-+		{ "3.3V",  0x22, 6000 },
-+		{ "5V",    0x24, 9600 },
-+		{ "12V",   0x30, 19800 },
-+		{ "VDIMM", 0x32, 3000 },
-+	},
-+};
-+
-+struct pwec_board_info {
-+	u32 temp_mask; /* bit N = temperature channel N */
-+	u32 in_mask; /* bit N = voltage channel N */
-+};
-+
-+static const struct pwec_board_info pwec_board_info_default = {
-+	.temp_mask = GENMASK(PORTWELL_HWMON_TEMP_NUM - 1, 0),
-+	.in_mask   = GENMASK(PORTWELL_HWMON_VOLT_NUM - 1, 0),
-+};
-+
-+static const struct pwec_board_info pwec_board_info_nano = {
-+	.temp_mask = BIT(0) | BIT(1),
-+	.in_mask = GENMASK(4, 0),
-+};
-+
- static const struct dmi_system_id pwec_dmi_table[] = {
- 	{
- 		.ident = "NANO-6064 series",
- 		.matches = {
- 			DMI_MATCH(DMI_BOARD_NAME, "NANO-6064"),
- 		},
-+		.driver_data = (void *)&pwec_board_info_nano,
- 	},
- 	{ }
- };
-@@ -79,6 +127,20 @@ static u8 pwec_read(u8 address)
- 	return inb(PORTWELL_EC_IOSPACE + address);
- }
- 
-+/* Ensure consistent 16-bit read across potential MSB rollover. */
-+static u16 pwec_read16_stable(u8 lsb_reg)
-+{
-+	u8 lsb, msb, old_msb;
-+
-+	do {
-+		old_msb = pwec_read(lsb_reg + 1);
-+		lsb = pwec_read(lsb_reg);
-+		msb = pwec_read(lsb_reg + 1);
-+	} while (msb != old_msb);
-+
-+	return (msb << 8) | lsb;
-+}
-+
- /* GPIO functions */
- 
- static int pwec_gpio_get(struct gpio_chip *chip, unsigned int offset)
-@@ -204,6 +266,81 @@ static struct watchdog_device ec_wdt_dev = {
- 	.max_timeout = PORTWELL_WDT_EC_MAX_COUNT_SECOND,
- };
- 
-+/* HWMON functions */
-+
-+static umode_t pwec_hwmon_is_visible(const void *drvdata, enum hwmon_sensor_types type,
-+				   u32 attr, int channel)
-+{
-+	const struct pwec_board_info *info = drvdata;
-+
-+	switch (type) {
-+	case hwmon_temp:
-+		return (info->temp_mask & BIT(channel)) ? 0444 : 0;
-+	case hwmon_in:
-+		return (info->in_mask & BIT(channel)) ? 0444 : 0;
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static int pwec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
-+			   u32 attr, int channel, long *val)
-+{
-+	u16 tmp16;
-+
-+	switch (type) {
-+	case hwmon_temp:
-+		*val = pwec_read(pwec_master_data.temp_props[channel].reg) * MILLIDEGREE_PER_DEGREE;
-+		return 0;
-+	case hwmon_in:
-+		tmp16 = pwec_read16_stable(pwec_master_data.in_props[channel].reg);
-+		*val = (tmp16 * pwec_master_data.in_props[channel].scale) / PORTWELL_EC_ADC_MAX;
-+		return 0;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+static int pwec_hwmon_read_string(struct device *dev, enum hwmon_sensor_types type,
-+				  u32 attr, int channel, const char **str)
-+{
-+	switch (type) {
-+	case hwmon_temp:
-+		*str = pwec_master_data.temp_props[channel].label;
-+		return 0;
-+	case hwmon_in:
-+		*str = pwec_master_data.in_props[channel].label;
-+		return 0;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+static const struct hwmon_channel_info *pwec_hwmon_info[] = {
-+	HWMON_CHANNEL_INFO(temp,
-+		HWMON_T_INPUT | HWMON_T_LABEL,
-+		HWMON_T_INPUT | HWMON_T_LABEL,
-+		HWMON_T_INPUT | HWMON_T_LABEL),
-+	HWMON_CHANNEL_INFO(in,
-+		HWMON_I_INPUT | HWMON_I_LABEL,
-+		HWMON_I_INPUT | HWMON_I_LABEL,
-+		HWMON_I_INPUT | HWMON_I_LABEL,
-+		HWMON_I_INPUT | HWMON_I_LABEL,
-+		HWMON_I_INPUT | HWMON_I_LABEL),
-+	NULL
-+};
-+
-+static const struct hwmon_ops pwec_hwmon_ops = {
-+	.is_visible = pwec_hwmon_is_visible,
-+	.read = pwec_hwmon_read,
-+	.read_string = pwec_hwmon_read_string,
-+};
-+
-+static const struct hwmon_chip_info pwec_chip_info = {
-+	.ops = &pwec_hwmon_ops,
-+	.info = pwec_hwmon_info,
-+};
-+
- static int pwec_firmware_vendor_check(void)
- {
- 	u8 buf[PORTWELL_EC_FW_VENDOR_LENGTH + 1];
-@@ -218,6 +355,8 @@ static int pwec_firmware_vendor_check(void)
- 
- static int pwec_probe(struct platform_device *pdev)
- {
-+	struct device *hwmon_dev;
-+	void *drvdata = dev_get_platdata(&pdev->dev);
- 	int ret;
- 
- 	if (!devm_request_region(&pdev->dev, PORTWELL_EC_IOSPACE,
-@@ -236,6 +375,14 @@ static int pwec_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	if (IS_REACHABLE(CONFIG_HWMON)) {
-+		hwmon_dev = devm_hwmon_device_register_with_info(&pdev->dev,
-+				"portwell_ec", drvdata, &pwec_chip_info, NULL);
-+		ret = PTR_ERR_OR_ZERO(hwmon_dev);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	ec_wdt_dev.parent = &pdev->dev;
- 	ret = devm_watchdog_register_device(&pdev->dev, &ec_wdt_dev);
- 	if (ret < 0) {
-@@ -257,19 +404,26 @@ static struct platform_device *pwec_dev;
- 
- static int __init pwec_init(void)
- {
-+	const struct dmi_system_id *match;
-+	const struct pwec_board_info *hwmon_data;
- 	int ret;
- 
--	if (!dmi_check_system(pwec_dmi_table)) {
-+	match = dmi_first_match(pwec_dmi_table);
-+	if (!match) {
- 		if (!force)
- 			return -ENODEV;
--		pr_warn("force load portwell-ec without DMI check\n");
-+		hwmon_data = &pwec_board_info_default;
-+		pr_warn("force load portwell-ec without DMI check, using full display config\n");
-+	} else {
-+		hwmon_data = match->driver_data;
- 	}
- 
- 	ret = platform_driver_register(&pwec_driver);
- 	if (ret)
- 		return ret;
- 
--	pwec_dev = platform_device_register_simple("portwell-ec", -1, NULL, 0);
-+	pwec_dev = platform_device_register_data(NULL, "portwell-ec", PLATFORM_DEVID_NONE,
-+						hwmon_data, sizeof(*hwmon_data));
- 	if (IS_ERR(pwec_dev)) {
- 		platform_driver_unregister(&pwec_driver);
- 		return PTR_ERR(pwec_dev);
--- 
-2.34.1
 
