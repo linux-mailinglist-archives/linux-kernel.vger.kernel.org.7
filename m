@@ -1,154 +1,123 @@
-Return-Path: <linux-kernel+bounces-810053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86154B51540
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:16:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88CB2B51543
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4E703A39BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:16:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EC99444554
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C975E2737E7;
-	Wed, 10 Sep 2025 11:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B9826A0A7;
+	Wed, 10 Sep 2025 11:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWzGmc8p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQ5PQ1l/"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9A425A355;
-	Wed, 10 Sep 2025 11:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD6925A355;
+	Wed, 10 Sep 2025 11:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757502956; cv=none; b=pFlkZPxPCG1GEtwny3QWQ5ZOkeJ0LuSb+bz2w3KReaWkfm43iD7aaWeDq527bZetBEi+6DCIUJ0oYBtFH2IQ3EZE8du2X1QtUEbJnf1jbrHgTucPh/9ss7wRyiZEl/yT9Td9tOGpnPbr3ZY+WiXSXVaBMvsF27aarl3X0CipYiA=
+	t=1757502980; cv=none; b=c/QXowCy22ykHk1mg9vV8dv+4yvZZaavdKsImyQyz+egF5wWES68FAF/Bi9ziE+3C7bIdVfeNHsRbUrMx7MsDo+xIv4HLV5xNIzSflnHGPHUdPCDQUhcO0L80LnQXeJEJJEkxokAE3c4gjk5OEB1KSvL8eK69STP4aqtKwCSvbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757502956; c=relaxed/simple;
-	bh=BdC2G/sPdAAcWM8ibb7077nWQaIdcyBi3i4pvQB9Mn4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=GD1Gv/G4fe9eilNOIANf4RU0uQTw+JA+1wWoINJeY6uZhZOSLtw2dSbw01AM8X3tbt4C6URLo/vT7fhxsOkZjJpNdT8aZF5qp1EP08nckFcmyCyXE1CrSsSgi6e+Ccw0QolXgND3faYP6Z/+SqngHLqZ7TeIUdbTmpoIHXHTW0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pWzGmc8p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60833C4CEF0;
-	Wed, 10 Sep 2025 11:15:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757502954;
-	bh=BdC2G/sPdAAcWM8ibb7077nWQaIdcyBi3i4pvQB9Mn4=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=pWzGmc8pSRElyq4MLXJdB+mp2TyP1/q0W+/TF+r7eOyXCEvqEMj5iuno0Ff4iJEJN
-	 CdGp/fDFxjXggrgxlIIv9Ag4ctNkIXyxtvksZxZFOknM9aWFoEhu2EFP5/aVZ9WrQ2
-	 tfCEpvBMuXKGeU44LF/kRSyG0C+1bhe8k50hR8F7mQVyAPaOQ4J9KmDXl3HzNqc9tf
-	 mhWzK5wKEzOAXtHYdB8XUnc44GWXLYB93ROFnfd1Sfry6lEZ78VM2i1doEPLUK/BdY
-	 FgZ92sVS92KYw+UMis0bYYfniksCt245FOv2RE5g/eMHrZTCC1qifSIr4/DsJ/HxFb
-	 Q9zTlzMrKj7Pg==
+	s=arc-20240116; t=1757502980; c=relaxed/simple;
+	bh=2rASD+s8QFj1eS4oF5z2j1I3AkxBGsqd2eCLiUasoB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cxl1YdsGDDzOeimlAFMnFyh2YP261bYUQl6m1+IF7sL3/jZ46asd9+VtTqcjxypaugS8sG4zdMVT1cUZc4+ss4SnhLp/WItxYd1QK+IMI+korNogbsdAkSyc8YAeIkE75eTRZ2ex4MVNKLaIHHoi5gPWoNaT7SnAxbZ3jxvC264=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQ5PQ1l/; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4ee87cc81eso6054255a12.1;
+        Wed, 10 Sep 2025 04:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757502978; x=1758107778; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MZbusY2YZDJHUgvIqP5aq8nFaPzc4Ije89rvbFvkmb4=;
+        b=UQ5PQ1l/iUadLMXI3f99zhGMgEzVVCq4bl1lzsRKSrsADYZ8hrc9PlTqNDdBPOpMP3
+         NZouYJGke5QN/uNvkV94v8KGV0rhe0GpZqdc7ajOh67GFo+BARP8KMc/Vf2BPxJ7lSLp
+         by6guwdiYfQHH4ACLhYV8BPXzoWZ+V3ygz6a725i7TQGCxAELdufYcK76hFZGp2zoEKW
+         44KEf7+3+QouM9aXPfjrjaDVvxQBWXCJivwhzh6vqoKeDDMDfnF7X4znq1gjwFSSZb4x
+         hjR3w8nYrbsDiTURqhmAKU2MAESOpvgtk2QZsIQSSRdGL3G+crTr/yAo8gU3OLtHbsLm
+         lfrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757502978; x=1758107778;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MZbusY2YZDJHUgvIqP5aq8nFaPzc4Ije89rvbFvkmb4=;
+        b=abQcBXMnGvgRy84rE7srwkvOVi4ypmDYPk8+MjaWzOUT1fQYPiHz7zELcG+AYN9tiV
+         muxDuijyjVAuptsdXk0wWW+POsLh/4I6rw2YUqGfuH9TFtG0tjgX4zm6Z+etz9dHXPIh
+         d+HKYaUzFwTuL7qZZH97Q8Bh4qsu+LqD7orWpyGtTVo9m868C2Hqg7wwUqVNWxghseOX
+         PkO0tux2knOMGM9fysp0NTHqBEMES1hCgXuKmp7NPrdZwKpY6N123ODkLQv0jSVCNdih
+         EBZBPDqBIEtyCE7F1j5dJ6vH140AHYjmFMSMkC2ejwjA0B6pRtEC1g0GVZCzmaqEd74m
+         kA0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUcEsjqnheP+7ZqxILVK/uZP2OI9A2/1LBPCzEypPaTpA3ExIolRy5aTWcBxMyKwM7wzG2sihQtwCZdzFo=@vger.kernel.org, AJvYcCUuKF/4ad2iBDxdZGuE+2IndJ09W/wFRDfz7HD6I8BvQDPk36ftYjvzsNTojdt4f1FM5+ZKnzUkKIkTj5TEX8Re@vger.kernel.org, AJvYcCXiI6Qf2/HXZXaZPXEs0sQllJg4lQ2W95Y3TYdw/ATIr07VdT/cQzqBnbcM6dgpfYwA3dl25B5D@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfbEAFQC/09ZOGLba0YFVEDeFdh7fo7zjbYG3lPrItR7EFWxz3
+	BiLPU6ijkk4PG/z5XxLPoiVCdV/GIJiRTYvv++aMtfdzBFE3cjFZ+Cie
+X-Gm-Gg: ASbGnctv9g6mUq6tpxzj1JzdneQiZmT0W0+z1rRMDVQS/yPYT9QS79hnWkVrzXA0jks
+	WpNkiucV5jOYjicz7fo6T1CW9TL+2jqnDlgu5IGw2hfeNjE5sXk6uGXFDO3lIJNhqjHyzrG/f8p
+	TsiaTskpGToxpTXilqR2KltVOmgkGA5FseWFpSoEN3+c7bEuORs4yoHznnkwOcOI7wVj3U0QYT5
+	dXST3x3vkTaUOfSB+61fByzKkk4A11EciqhwNzr3id1zSeals8j6bn+PW1k0FK1uI19MwxYD92n
+	8tvnCtb5wpBraf8IOGpq+1hgfunMByG9wjNfZ5sloKtGdnVF4y7fizCYa9lXoUh8jRHjM++rJhM
+	tVseULboUXIF0Zm6pvV//EZ4SmNXr6f4Tcf7kcHWbjEiQ1kMBnsUkMbkM+2sJOARn3K230OL7NX
+	056V5B6JdDf7ueQ+Z2RggvfilupGmNn5OupOee94FCF7XL9XKpw2Kq+YVkucHcnNid
+X-Google-Smtp-Source: AGHT+IHYJUR0byJaWrm8+KNFqANo8zElvFbaG5ym9raoJ7ygPAvqG0hpZXLy2KjyUuPvUxUS73wvMQ==
+X-Received: by 2002:a17:902:fc45:b0:246:464d:1194 with SMTP id d9443c01a7336-2516d81836dmr194708695ad.2.1757502978484;
+        Wed, 10 Sep 2025 04:16:18 -0700 (PDT)
+Received: from ?IPV6:2001:b400:e28d:ed7:4d5a:39b4:7c51:4c71? (2001-b400-e28d-0ed7-4d5a-39b4-7c51-4c71.emome-ip6.hinet.net. [2001:b400:e28d:ed7:4d5a:39b4:7c51:4c71])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a2ac085f9sm23656115ad.117.2025.09.10.04.16.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 04:16:18 -0700 (PDT)
+Message-ID: <270488a6-ec6b-4b38-aa30-b5c9e08cdd18@gmail.com>
+Date: Wed, 10 Sep 2025 19:16:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 10 Sep 2025 13:15:50 +0200
-Message-Id: <DCP2STI9M1XX.3RHBQDPQOC3JO@kernel.org>
-Subject: Re: [PATCH v2] rust: pin-init: add `#[bind]` attribute to access
- previously initialized fields
-Cc: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, "Fiona Behrens" <me@kloenk.dev>, "Alban
- Kurti" <kurti@invicto.ai>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250910100755.2361281-1-lossin@kernel.org>
- <aMFQL-Hq1KvBG5lh@google.com> <DCP1Y8N4SRRF.25V7F6PV5ODCQ@kernel.org>
- <CAH5fLgg+-oz_cP9=ke+ukp9qYZAsD=hKqvvGfkJWRcCKdrTQ-g@mail.gmail.com>
-In-Reply-To: <CAH5fLgg+-oz_cP9=ke+ukp9qYZAsD=hKqvvGfkJWRcCKdrTQ-g@mail.gmail.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/net: fix unused return value warnings in ksft.h
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+References: <20250906-selftests-net-ksft-v1-1-f1577cea3f68@gmail.com>
+ <20250908182018.28d9ff10@kernel.org>
+ <a3d1c5ca-cdce-428d-8c1c-6a1f59e2dd76@gmail.com>
+ <20250909162551.5224a3dc@kernel.org>
+Content-Language: en-US
+From: "Nai-Chen(Simone) Cheng" <bleach1827@gmail.com>
+In-Reply-To: <20250909162551.5224a3dc@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed Sep 10, 2025 at 12:40 PM CEST, Alice Ryhl wrote:
-> On Wed, Sep 10, 2025 at 12:36=E2=80=AFPM Benno Lossin <lossin@kernel.org>=
- wrote:
->>
->> On Wed Sep 10, 2025 at 12:17 PM CEST, Alice Ryhl wrote:
->> > On Wed, Sep 10, 2025 at 12:07:53PM +0200, Benno Lossin wrote:
->> >> Assigning a field a value in an initializer macro can be marked with =
-the
->> >> `#[bind]` attribute. Doing so creates a `let` binding with the same
->> >> name. This `let` binding has the type `Pin<&mut T>` if the field is
->> >> structurally pinned or `&mut T` otherwise (where `T` is the type of t=
-he
->> >> field).
->> >>
->> >> Signed-off-by: Benno Lossin <lossin@kernel.org>
->> >
->> > Is there a reason we can't apply this to all fields and avoid the
->> > attribute?
->>
->> Adding the attribute was due to Boqun's concern on v1 [1]. I think it
->> might be surprising too, but I'm also happy with no attribute.
->>
->> [1]: https://lore.kernel.org/all/aLshd0_C-1rh3FAg@tardis-2.local
->
-> IMO the ideal is if it works without an attribute. Perhaps trying that
-> in the kernel is a reasonable experiment to find out whether that's
-> reasonable to do for the general language feature?
->
->> > Do we have a place that might be able to use this?
->>
->> I didn't find one, but Danilo plans to base some changes on top this
->> cycle that need this.
 
-We can use it in devres right away:
+Hi Jakub,
 
-diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-index d04e3fcebafb..97c616a1733d 100644
---- a/rust/kernel/devres.rs
-+++ b/rust/kernel/devres.rs
-@@ -137,10 +137,11 @@ pub fn new<'a, E>(
-     {
-         let callback =3D Self::devres_callback;
-=20
--        try_pin_init!(&this in Self {
-+        try_pin_init!(Self {
-             dev: dev.into(),
-             callback,
-             // INVARIANT: `inner` is properly initialized.
-+            #[bind]
-             inner <- Opaque::pin_init(try_pin_init!(Inner {
-                     devm <- Completion::new(),
-                     revoke <- Completion::new(),
-@@ -150,8 +151,7 @@ pub fn new<'a, E>(
-             //
-             // [1] https://github.com/Rust-for-Linux/pin-init/pull/69
-             _add_action: {
--                // SAFETY: `this` is a valid pointer to uninitialized memo=
-ry.
--                let inner =3D unsafe { &raw mut (*this.as_ptr()).inner };
-+                let inner =3D core::ptr::from_ref(inner.into_ref().get_ref=
-());
-=20
-                 // SAFETY:
-                 // - `dev.as_raw()` is a pointer to a valid bound device.
-@@ -160,7 +160,7 @@ pub fn new<'a, E>(
-                 //    properly initialized, because we require `dev` (i.e.=
- the *bound* device) to
-                 //    live at least as long as the returned `impl PinInit<=
-Self, Error>`.
-                 to_result(unsafe {
--                    bindings::devm_add_action(dev.as_raw(), Some(callback)=
-, inner.cast())
-+                    bindings::devm_add_action(dev.as_raw(), Some(callback)=
-, inner.cast_mut().cast())
-                 }).inspect_err(|_| {
-                     let inner =3D Opaque::cast_into(inner);
-=20
+On 2025-09-10 07:25, Jakub Kicinski wrote:
+> Sounds good!
 
-Together with the initializer code blocks this becomes quite nice. :)
+I tried the direct void casting approach, but it still generates 
+warnings with GCC 14.2.0:
+     (void)write(fd, msg, sizeof(msg));
+     still shows: warning: ignoring return value of 'write'...
 
-> Danilo, what plans do you have?
+After further researching, I found this appears to be a known GCC/glibc 
+issue dating back to 2015 where direct void casting doesn't work for 
+functions with __warn_unused_result__. [1] Since this is a long-standing 
+toolchain issue and direct void casting won't suppress warning, I think 
+you can skip this patch. Thank you!
 
-Besides that, the plan is [1].
+[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66425
 
-[1] https://lore.kernel.org/all/DCL32RUQ6Z56.1ERY7JBK6O1J6@kernel.org/
+Best Regards,
+Nai-Chen Cheng
 
