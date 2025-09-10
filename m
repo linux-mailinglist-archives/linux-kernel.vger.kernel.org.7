@@ -1,114 +1,105 @@
-Return-Path: <linux-kernel+bounces-809243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170D4B50A70
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:46:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A95B50A98
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B89E1C61B3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 622C04E6B78
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46977221FDA;
-	Wed, 10 Sep 2025 01:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54E2225760;
+	Wed, 10 Sep 2025 01:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f0FcUSZZ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="GNfUxdvE"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFD014658D;
-	Wed, 10 Sep 2025 01:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67827224AFA
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757468801; cv=none; b=oknEi1CPL2VCOciZKPPAxQ/5nRgFt6T6Zmaszci6UsRkKQx0NYGJ0aqNCh62lqlT84kQG1lWXW6osadwDoNxsAtfNDXPRMrDwAqFPzbXO+IcC52iDrJKB1OzIo4SZj5/sA5x7GkdFE5crx0Ykhued1m45HmdDlUsars3nwu2ums=
+	t=1757469578; cv=none; b=jnuawD4YzpUk5fTfg7UGutUnp22rjyTkgw2kwAESzncKfCVC7tr89LZiwZi3iJ9OEJ9nGD39KwoFPOwHKdPOdNQGrAM9KDubwfgThx+77I0jyRaSvasza+1phd/Cb45bkCqfGkwKD4ylns1DzoERrJ0csvOeFt0onyTyTIM5OeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757468801; c=relaxed/simple;
-	bh=N6r+NwraDR9bO2wqlxtmcB56JXP9+yvGR4trx8ttnmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PANA5qeFWfJdG0egHQcLtYMgiy1tXyPvI8igso1HQyQaaX+kh34sat2CxfP//oVSa8nuWOM5LA5bxe4W4TkQppM/lRbrYhSf6kSM8SZobKTC4aDHCjwC3G9g5Uu3bMxrqAQF+EzGFqn5HAo6ufROoZKot8bgnSf5uIEGUf1GTuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f0FcUSZZ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iVZDanYB1GEfuIgx7b8oUnFAcvHUmEEb2jsYYOOe4vA=; b=f0FcUSZZjVJBUU1eRiHtLrYC8B
-	fX8ygyKP47lN6S0QCXn5v2gT9H3CAbs8IRUKYD4o4ahPPQW9SC1LbIjyzIFy5IpYnJc/Zi35KMKl6
-	GdUlF1LCy0kzBtNQT9ZzXDOjZmQlcu+Xai7VaAjWD7/8ywjnmbm5Ol0aHh6nNDZ+nK+u02Mi2LTbP
-	KkIhdzSbwdYhFuN6+BCgg6md5Cbqr9Wtb/OQnYkHd+LUsIIIrFqJgd3p4eVkD/vtGMjJRJWTj736c
-	yd2K/AZ2RcClBL8DLGKuOfEPa42TkTPx7o/71xbtDzWPW6D8jMVCQK4Hk2xdsrLnqU6R/xPghQ5S7
-	5PHe08Rw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uw9uo-00000000UeR-417j;
-	Wed, 10 Sep 2025 01:46:31 +0000
-Date: Wed, 10 Sep 2025 02:46:30 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Richard Weinberger <richard@nod.at>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Ankur Arora <ankur.a.arora@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Ira Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-	Andreas Larsson <andreas@gaisler.com>
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-Message-ID: <aMDYdp3H-yOHU1Pm@casper.infradead.org>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
+	s=arc-20240116; t=1757469578; c=relaxed/simple;
+	bh=eWW5f2UcZzlbQe5XSAzAS5PyzDhhi4LY7mxDHExKlVA=;
+	h=Message-ID:From:To:Subject:Date:MIME-Version; b=DE4Xi1Z26tP9alhfeIm/rKeafU9/rfaHqugD/xyPJL7+WmzF4gwZMQqEYYhpaX52avcefYvAWzUQ2DH2IgFvLcz5rdPrfn7+ktoKF5C7fmhD70tWWKEyIkYhekdrwhkUIxjVKtPMMMiV/+P+eLd6p+aUmG+cDCt53X+ftZHlJXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=GNfUxdvE; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1757469263; bh=9nQMQerLehG9FQEhBGEdRePggt2lPTLGqDaDNYRlCKU=;
+	h=From:To:Subject:Date;
+	b=GNfUxdvE7/+QWgHiClWq/2PG9qwCNRhWKnAq9gDl4fvfBM5TyNSp9LkPo8S2jXFGT
+	 TSdlxigphVANcGiWwnkeAhJ+zRO0Weifi7n7RF23SDIFmveXlsKOmTGKO8DeLDHwyU
+	 A5LTFSkq57W2mb9ACMW0VngrXuajxrhUbKNd+UoA=
+Received: from localhost.localdomain ([2408:8411:2492:7e81:ab2:ed63:ee9c:f36e])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id C00B16EC; Wed, 10 Sep 2025 09:48:00 +0800
+X-QQ-mid: xmsmtpt1757468880t1hl4uaoy
+Message-ID: <tencent_9F7BD0CB08BE82E158610B7568B3EBD96B09@qq.com>
+X-QQ-XMAILINFO: OVFdYp27KdlJaw15E0ut52TKfRqtnQNKhFTrZHZojOH4XeyntjTAQigDELlbFZ
+	 rQY8BOrgnjtBQRvafcBm3zrJiG/gjOYRcXa+zzQNTQM/NiUEcAqdUj/5f4XrZ6Eev1TCfylDHvM2
+	 2tNcAh8b0LSLq4xCaJJ3NRS3bxQRRaOnKua182eK7ijAo+UnB0ihoC+PVjRi/O66+VNpo7MgkufZ
+	 RZaWG+cTATuaRo933zexcUie9TrS3EneLK+vPaWeBu0rTzfVWSu4howPxr9O3IgT96mt11kSP+wp
+	 N3qknE3kffWwzqqC1jtIcuXuzhBCsqguYOO6R4eOBItSMm8g/6Pz/1MmUQ0lMZgCEhwN2ns02BJr
+	 f2q1gBRVhdRHQpcW77hWt113c9if8slgF8aX6vPvDtL2aB03fYH5InywaoJs+1coJvSbFUrDzUJ6
+	 /jaURFYHjrT9s5P11FewN6p7MQ+sJNRoLrpPcJM7SAoXGcTPDGUTpv01MVMasDjPzVEz68czjNoT
+	 KkQLee0ITGcAaUa3QvKxzcpoKYTImr9GEM3IQhycKfCWkEDm4RB6OoLax82gJqR0A7GmcKgRRDQR
+	 KJgEbbZh9bh/8bqi+fM28Trgtws2bYEQK/MhqNnvkCMcXa4RxN9SHaynNuKlmoNqHF7+2B+cznoM
+	 DGXetMH8zNcTy8z520nNYwo2l4p6QiPjvx7bjJKEEXj9nhhNqfgyvB4zhhui0DowV5rQ18zLyHD6
+	 l/HFdC7EFoHgxcNQJy9T5wdXniiBBE/b+P7VDp3z54sTQ+wcybhrYY0Vn64bnVd+BEUM6PAOaEff
+	 328to+6h5kMaZ1w3Wn3RR1SalVtyxi11qAc9sooIKMkx+HXRqkImq4Wr9NkXjFWHEnl6svuihI9J
+	 jqEuHy3HHv7M7QgmQfmamJRYlICA/qSyF9nv8n8BD7lxwK73McJse6U9uWaCgjTZ9T5D8ZLSiO7G
+	 iZBWfpFJK6Zk5Ka9KckDXBqKi19AjvgvZsK/+dJDSqv6gBI/ulZEWpwb87CRctNzQUNrcZXba2o6
+	 IA1W6RQc+XpRe1rlV7Cz1UeKSCIN8=
+X-QQ-XMRINFO: NhdyCYpGN2QZqWzjAb9u7a0=
+From: Enlin Mu <2277901360@qq.com>
+To: jstultz@google.com,
+	tglx@linutronix.de,
+	sboyd@kernel.org,
+	linux-kernel@vger.kernel.org,
+	enlinmu@gmail.com,
+	enlin.mu@unisoc.com,
+	enlin.mu@outlook.com
+Subject: [PATCH] clocksource: delete unnecessary comments
+Date: Wed, 10 Sep 2025 09:47:59 +0800
+X-OQ-MSGID: <20250910014759.8223-1-2277901360@qq.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 09, 2025 at 11:23:37PM +0200, Arnd Bergmann wrote:
-> While removing a feature that is actively used is clearly a regression
-> and not normally done, I expect removing highmem is going to happen
-> at some point anyway when there are few enough users, but the question
-> is when that time will be.
+From: Enlin Mu <enlin.mu@unisoc.com>
 
-I don't mind that the feature remains ... unless it causes us trouble.
-Which it currently does.  Perhaps we could start by removing HIGHPTE?
-There was a certain amount of complexity introduced into the page fault
-path when support for that was introduced.  x86 removed support for it,
-so it's just ARM left before we can remove the complexity again.
+The new format is as follows:
+  clocksource: jiffies mask:0xfff max_cycles:0xffff,max_idle_ns: 7645000 ns
 
-Most of the other pain points are around storing metadata (directories,
-superblocks, etc) in page cache highmem.  I think we can get rid of that
-now too.
+Signed-off-by: Enlin Mu <enlin.mu@unisoc.com>
+---
+ kernel/time/clocksource.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I don't see any particular need to gt rid of file data stored in highmem,
-nor anonymous memory stored in highmem.  And if we're only talking
-about hundreds of megabytes of memory, I think anon+ file pagecache is
-probably most of the memory in the system already unless you have some
-very weird workloads.
-
-Where we may want to be a bit careful is some people have Plans to
-reuse the kmap infrastructure to support things like unmapping the
-pagecacheto protect against spectre-eqsue attacks.  I know Intel was
-working on this when 3dxp was going to be a Thing, but it's recently
-been brought back:
-
-https://lore.kernel.org/linux-mm/20250812173109.295750-1-jackmanb@google.com/
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 0aef0e349e49..c70880376ec6 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -1218,7 +1218,7 @@ void __clocksource_update_freq_scale(struct clocksource *cs, u32 scale, u32 freq
+ 
+ 	clocksource_update_max_deferment(cs);
+ 
+-	pr_info("%s: mask: 0x%llx max_cycles: 0x%llx, max_idle_ns: %lld ns\n",
++	pr_info("%s mask: 0x%llx max_cycles: 0x%llx, max_idle_ns: %lld ns\n",
+ 		cs->name, cs->mask, cs->max_cycles, cs->max_idle_ns);
+ }
+ EXPORT_SYMBOL_GPL(__clocksource_update_freq_scale);
+-- 
+2.39.5
 
 
