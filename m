@@ -1,273 +1,249 @@
-Return-Path: <linux-kernel+bounces-810488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78912B51B54
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C03B51B55
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 17:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3661899D42
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:17:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3B4188DC0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 15:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0022571B8;
-	Wed, 10 Sep 2025 15:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2484201032;
+	Wed, 10 Sep 2025 15:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QxGzkRd4"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="22daUxzJ"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2089.outbound.protection.outlook.com [40.107.100.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658751F4289
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 15:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757517438; cv=none; b=WGiEC+na4hqSC4ejztkj8yiaqHFwXqN8VSS/fDAA95qZRo/sww+jMnTyFWMflj6+UdDaWkhK/azO1xVoMd6r4QqxUMBm3RNJlRusnMj+mHRDMRYvx0glHi/gmyBQMmlTwSZVKbWLbbiWpGts8bG1NYL1fOJ92BJAKifsb8FzzLE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757517438; c=relaxed/simple;
-	bh=j58Ug4xAazb5e4BSWh0QoB9IC+jg9pk4B5u7PD4jvkk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M2/kpeUV0n7H1tFUmcpMG/01uUdjHPWVY01RYZdl4tNGA0wCJbX6+or7YiR857tR1+sBgbXcwvxn/v4y6bx7ubVs1omJ8YGN25Yxy3X1XzHbACdpjEblVKiEbIlAiF+KV1Bzv0n+2n5/1OhPusmbYVHdGov5fw4+H4p3RdOOb8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QxGzkRd4; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2445826fd9dso82745125ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:17:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757517434; x=1758122234; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GOQkYwriVDSKMxqkuzjKeOZZnOVXvsFhF9wM7M7C4ek=;
-        b=QxGzkRd4OMKkmO+urPITJIrwZ4k9gcNgyPmEZ6CAvCZ++xMlh5Qvo8gkX0U2VX6OT3
-         +zL10Sq0vdKxPKdyU2Cwz+iGoWLC1OylofjodH4vemplFywRhMkiAfTQplL8eLjNQhss
-         8AYg7qec6+g2mte/3X6GKWc00UyHaIK6sbSr+dZEq3ElAjEcEik/M7JKPjfemftc4nMP
-         eguadWZ+2+vnUwYm22TWTxc8hJqW8TmPbs+4RVo8+o9rQklLGGYQtiOHGTl/te8AwAOk
-         d3ZMXZC9u+KFII4Q3GKSmrJnmfRHXsZQVF0Ae0gLdga4kmR2so0ZLyNrpDM1CEEcxP5Z
-         3+QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757517434; x=1758122234;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GOQkYwriVDSKMxqkuzjKeOZZnOVXvsFhF9wM7M7C4ek=;
-        b=UKdc1LYBGtRTHeckDKXIhjBMcf3Z2+TitPpLhXKPFDfzMCDbzlsJBlteoC19S4o0LF
-         ZqcVPhAHWDY6L+eoPxi7g9jhVOdhV+QPIKYSrFd04CP8vqDjMhBkePbiQcZY8gX6N9pW
-         SEkLnn+gESPf/tJW+9820wEv4HqDd/8k0P/guRmTIsoyHxKV654N6st+r7hO4w5/0b6M
-         7AxJJMeqZdkxcXgYD4taJPLb5q72PYGSj2vQ5jlBerduVxAST6lY1DnVv8VNLltpoRgh
-         uZg2XQfm1NfMjjE80z1hwoia0BpaLuqvewF+gnao7f+3AVyS9sttmxPmgkob2/BiFQcA
-         fmXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXd0191ae03YrJazOT4mik+H+P/mtNkWdivM0gZmsk+OQBnYgb7c8Dh5E4aAu/8sIvKsmZ0qbdmc5vALzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAOfGwpe81NdoCqcsgeBjl6QVLdV07yBhIdYMNdisvYEWvI1Q+
-	85NhMJNSm4xlnbwJQAkx/sRsKgAV/zcabM6aVXs10DnzPH9lGzVO2hxJ+hQMZ/5EdqU=
-X-Gm-Gg: ASbGncseyC4Ff12evXNe26LGqsgz3DlYyE+jb9X+V/6M7CR19p5b9/e3LernHkoGavj
-	eiqvqrqLx9zoOxa/cseu8q83bV5O9gVkI/fH8ukD4MOD+Rcj3umfKIdff49kUBTBb5bRB+GBKJp
-	MIetOYMBO45hpofTOUMQ2u8CMdcq2923lPs2fGb3JI9NCaS4+vm6XGFuAiQct6/5e/agIqGgeOF
-	pguUJ5pqXx/uvJ5eARSd/7V1QQPAj6G1X6BXYt+on53fmeCZOGPoCpiloaU7S7KVj4vcCCgcj7F
-	jPqUI5eIbCKxIuWObGbyeAlGThpqryLfMeLr6VEo9ZFTZx3sktvOdN9LbC9kIlTcmlS0YNIVkjw
-	N+ClbyNZoaMLeyuEZtLeZbJ+LrO6ItDWh66W4HsZ1+61XdOmvwzaPQg==
-X-Google-Smtp-Source: AGHT+IEwRx8/O/DEAP8DJpiN/GPPSAmWaGA6Oc5zIGvkeOWwhsN6U5j/+KWlpC0rHUTO7NUIPnzWiw==
-X-Received: by 2002:a17:903:1c2:b0:249:1213:6725 with SMTP id d9443c01a7336-251753d88d0mr219820145ad.50.1757517434355;
-        Wed, 10 Sep 2025 08:17:14 -0700 (PDT)
-Received: from yangwen.localdomain ([117.88.134.52])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a2ab0f924sm29795595ad.115.2025.09.10.08.17.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 08:17:13 -0700 (PDT)
-From: YangWen <anmuxixixi@gmail.com>
-To: almaz.alexandrovich@paragon-software.com
-Cc: ntfs3@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	YangWen <anmuxixixi@gmail.com>,
-	syzbot+d77c546c60db651a389c@syzkaller.appspotmail.com
-Subject: [PATCH] ntfs3: fix use-after-free of sbi->options in cmp_fnames
-Date: Wed, 10 Sep 2025 23:17:08 +0800
-Message-ID: <20250910151708.28810-1-anmuxixixi@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181FF2571B8;
+	Wed, 10 Sep 2025 15:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757517446; cv=fail; b=Zaz18FcWdsa6xzS9dGzB/hCAICW/D1NXIeg0qee0RGeuSfOTO7dWXteoyV7FBG23GL7R4fYhTuBArpW+Vce/mWt6xjOQfknsjkBKgT7b47rn6fl6TMhs3v0Ibrz1XZJjEypxwAqbgM26tJFiJzVQY7dbmPxoXaJhiVIOEfpNEqM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757517446; c=relaxed/simple;
+	bh=UxRIReVqvZhjYIZoqbWPjfPYKxiHkeBPC0tt3PPLolk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=TAv05lm8TlU0NpNjKQQ7PGguW754EA8H2nndNToLMx69gxQw6cuBQPKHJBGYXXpfgBSdp0hMMvHLAqrEUZ0qeCJ0CV3il8gmt7wRvh4oyGHz87b5wlmaFcSGYqV1TPL+kTOid1mt3k1+wlBWeCfPsgxtBbr0B1a1aYJrYIF0khU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=22daUxzJ; arc=fail smtp.client-ip=40.107.100.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PsRb9FdQoxGT1dQFRydU7HWTgIWMSi/GPcWDSvSQvql55GOv8F2PxRAHkdZnjK/RFKVFR62YRkLG9p9iux3361f3mFJamg7p0m1zRcl6T+21EFOHRve5GGxkbvgrUKgtfOeIQBez71rBUKlRt3oNOOjGNieFyMgStsmwmu6iZbI8gj5LLh/0JwbNciJ0gTy4eHnt/vGPkt/AD1UoTNSxX2VKMZ00oHJFXHmH/j2LRt8l464ONa/dz16gyMoPnSyjQ1uKqj3775CB0EGoeP9z55xxBP3JjfZ1sKQB+fb/aij8R7hNICJL1ra/HfEOdxxyh6PP+ssvD5CXLuXroR3eGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nnPm1N+ryRgo7KRW9zaCoeoESWX6EInqB8QbNPCjYQk=;
+ b=Uj1DCSxa8D2HUA5mvr1mmY1fbU7Y87aCo95kX/OSz5MgaGR73U/p8aqo/DDgJMp9xzpJ0aupxA4Vs0Vueu87NG/R4JP+A+ccPoDp3ebDHFPkBO+yZTmjNnurdTPPtXc0mbmvB2Pq5LE9zyKz8PJWy5hvrHZdoeFGYkxOtX5OZrsQZFf/ygQ7RD9morSydyoXFp4xE9q816rSxn0JJ9uNubLRWJ44QPfGy9v8MCo9DgsBUe99FLRudZ60EuJ9/qg8Mu2hs3D61oGJgesVvqP4CY281uSHG1CBRVDMNtua9Da5An/PLgZgxEHLxbHulvY3iH0on/gPHRZNx2h1M5JKTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nnPm1N+ryRgo7KRW9zaCoeoESWX6EInqB8QbNPCjYQk=;
+ b=22daUxzJgPDUfZeA8Nd3Rond7Ku9gyRyA+BUhIEtsqc7tTS5ogmG5nMiURemL/u/0RBrjOiMdDjYYk3mAhnXVDQqy79svrSiv8Z1Df70/5k6zYOoBJQGPj1rxM8RIKcWZYvSuXm7GX6DYjiz948Q89LsPwVTcmn/OcMk6qIQiZE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CY5PR12MB6369.namprd12.prod.outlook.com (2603:10b6:930:21::10)
+ by LV2PR12MB5943.namprd12.prod.outlook.com (2603:10b6:408:170::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 15:17:18 +0000
+Received: from CY5PR12MB6369.namprd12.prod.outlook.com
+ ([fe80::d4c1:1fcc:3bff:eea6]) by CY5PR12MB6369.namprd12.prod.outlook.com
+ ([fe80::d4c1:1fcc:3bff:eea6%4]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 15:17:18 +0000
+Date: Wed, 10 Sep 2025 11:17:13 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Avadhut Naik <avadhut.naik@amd.com>
+Cc: linux-edac@vger.kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] EDAC/mc_sysfs: Increase legacy channel support to
+ 16
+Message-ID: <20250910151713.GG11602@yaz-khff2.amd.com>
+References: <20250909185748.1621098-1-avadhut.naik@amd.com>
+ <20250909185748.1621098-5-avadhut.naik@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909185748.1621098-5-avadhut.naik@amd.com>
+X-ClientProxiedBy: MN0P220CA0030.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:208:52e::24) To CY5PR12MB6369.namprd12.prod.outlook.com
+ (2603:10b6:930:21::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6369:EE_|LV2PR12MB5943:EE_
+X-MS-Office365-Filtering-Correlation-Id: 926f7efe-c98c-49c0-7fad-08ddf07d2156
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6tOL8TKfVcUqv1+LXRtfsKuyDt0ociNLHBZOci+jeCW/T9K9KNPgBDNRty3F?=
+ =?us-ascii?Q?/G//qkkV+63roSqi27iiG+4F38tqsDAvVMTlsg4F/hUVnuLDXKMwR2rLT48z?=
+ =?us-ascii?Q?/fnGf2G9lArFZ6Mt3R3nG0W89sVZbrLHHTKHTc95Rt6k6Cub/qiSfR4X1AzM?=
+ =?us-ascii?Q?eINvn3SIlA2LupmqrOrPGhCyLjLWvNo3XtiokWg7zYNT1M18AxApw0GQmVS4?=
+ =?us-ascii?Q?EzmNROCgdcX6aDOzcXs3WhnE+jn2vZYF50sbG8tXmaToVKElec3ULb69CMZ9?=
+ =?us-ascii?Q?GflZzYGx02uHx5koF3m3haTS+wRv9HRsG7krWQcTbh6iQiHVaZ4ekdXfrSPX?=
+ =?us-ascii?Q?rN8iwD4C5gTYS13hUsST2E+7GVr24fEGkkYmePcSgvkRu0xC4hmFxbNXz9Y9?=
+ =?us-ascii?Q?L/mD6R7bAq37wKZHx0OnqTZbtE8t9e/c7ZqiH95ovxAd6KRHDl+nS5vVER+p?=
+ =?us-ascii?Q?V6TIjKxXFjXRL86PdLoUKH+9p4xJcWCrN6gtK/9Iie41HjCEcmO03n0+D/nT?=
+ =?us-ascii?Q?MvZUfRnX4Wm6vjriciUbR530DJTBIqWAMw7Ap6yVQrF/LGmeS9XQJ6XbbdXD?=
+ =?us-ascii?Q?KINsedEVOa3EUSLPS32p94U8MRDlXrjGJ9af1DKqBUUQk+cbGMt24PXuZiNP?=
+ =?us-ascii?Q?UaTPuUHLQJFo1l0qWDpB8BSMXJ+lX6+pd1TKoiUs3SQ8mzLwgSR9syOb9j3o?=
+ =?us-ascii?Q?en1Awv913moGt8VaEQkzL5WTtcxLyYChuPVOYGMUSgk573WI/M8ZzWmtiVYZ?=
+ =?us-ascii?Q?YYFloSTl20zSL5rHhEa54D7q8g/7pKcByza0ppx6XiIKtX3CESrl2td+IeCT?=
+ =?us-ascii?Q?OZzloT6QU0X5M+W8ru+6Lf31Nbyo5suiMrC4CKWGbusaoBV8LNJImlbi0Otw?=
+ =?us-ascii?Q?UoR8zrZ8rHi1fm9vzSSZUJR0i5xuc5+kikL52tf2O6yJVvnIQuqugsrwr2oi?=
+ =?us-ascii?Q?PJ4Oup3mtLEtvGRFi2RYZdZBbNWjQtf12gLnZv+qNMvTp3nydZkkaGHnu52n?=
+ =?us-ascii?Q?dSfkBP916BxY5qiybtmXxoPNk/nTI71J4BZn++G4VjVhHbolLD7bqDxqs5Tz?=
+ =?us-ascii?Q?CKMY5HDxUlE3a20ZREP7XZXpzAE5CmvFSTqPJWHmpwEajkVlPIBv5YEWAG8Z?=
+ =?us-ascii?Q?WuTABbo4zXA6Geg/yYm5YunWQsEmCEXw4MghQN9aN5jSnY+Qsy8nds0EAAi3?=
+ =?us-ascii?Q?8J9+7AUpfWYJnRsFmKyBlihPWniuQtGcs/kj5+nNraroRHA8Z0fPoDnadsL+?=
+ =?us-ascii?Q?wHU0t1MFX5ts+6kp5uxQN1D1P3jVt5I1acEGVrUlQSlNoa7CcZI7X5fr5TB5?=
+ =?us-ascii?Q?unZa7wBuTKcr+cdpyjMOICl/a7P7KmbMthLwG/bpjplyBBfq0DvgPSbPFcSD?=
+ =?us-ascii?Q?4kaFMaSu3fBpB57w71hODt3hGm2l8RF5hRiu1576TYc2PSeexqzjyan5XOzc?=
+ =?us-ascii?Q?C+Fy9VYRQk0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6369.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vxvydfqDj5VGxf6F7QL28mMbPw1JVC1sjyWwgHOo0513CkJ4qdP4HWYYT+He?=
+ =?us-ascii?Q?JhHpI6i77f13pKiyPwXXK4wp+ujuJ2b87OozLi2kluhSlmi75TNnHaJQnfJx?=
+ =?us-ascii?Q?Zfyptbw8qZ+f+YCrXYZd43VyGAuVc5WPEwub3uCWSyepnKG4ViKYgpdENFTA?=
+ =?us-ascii?Q?1EfAS+g+vY+Y3CkRq3x/R+y0/dTiWgaziBPNxNS9roQZ9yhw0lM0HHnaqm0k?=
+ =?us-ascii?Q?ogUFGeE6po7npyCsNmr6GydbyRFIqvx9W+rhJolA6B2hg1rW4pdY+sTm5Dcr?=
+ =?us-ascii?Q?KnvpMNkGWdeUsWzk4SDRS01wFSVHr7EHxBhDj4+J8Y1d/mD/DFMBiy6BdRp5?=
+ =?us-ascii?Q?MxlDbhFVFxlceDzOJnxcnJmTJOuPHikgOinuGhX5Q9AD+2x7r2+pZCV/sUkF?=
+ =?us-ascii?Q?uiPgKYdG/OowtZLVfbi1ZOIp9dlStaGRZkgM3yEDVCkfVarxTeawoKZHR2r1?=
+ =?us-ascii?Q?eezAXR1rmvAaiFtHZwy/55Fp0lrejP14F0qFsoM5LbqeCwaibvC230fN6UhH?=
+ =?us-ascii?Q?rVCmxbpXnC2nAB/f7M5aheGUYXjt/oRKVKsaahlyMLNfLxJ7Mh/izs58XaJH?=
+ =?us-ascii?Q?DtPgpDWp6MOISPnSwQL2NS7NODSardGYimi71z3RmpI5ZRnkf+toGfCWilzZ?=
+ =?us-ascii?Q?9l+RAwlDnHK5c1ynsPeH4bZbKK8BVry5fLnK4q5ki3pM5LlqRcCBvqP3lxvS?=
+ =?us-ascii?Q?YtpuFnYFW6x2gzCqrXPWEYx5md9DrrWeHwdqv104mWm1tLHwxsg6K52y+TK/?=
+ =?us-ascii?Q?S3dIKdXzCPzYRjZU79m9Tl+076G30sOy1QfCyhedi8ZYXdwYBFfgpbB6Jflw?=
+ =?us-ascii?Q?OmVdPebgUogR7a+XaCb2US/6vb5BJYdNowJF0IEgh1EXQfFDd1uBmvrYn5xz?=
+ =?us-ascii?Q?sPU0V/i5lYBUkZxBDGvxlVoBkC/10IuyP8lsPBx27KIJAJDbi/JrK2hak4IK?=
+ =?us-ascii?Q?hT8TDWCjMQGfvvbJIu0OcTxQ718v38cWZ/PqOH7LAuU8hTcNu1c4UyYCcgnJ?=
+ =?us-ascii?Q?hbLSCxC+Fd0ISe7aOCXglRfcFzxoBxbqhcjhRDcovVWRLAJ91t0nu5Z1NHzQ?=
+ =?us-ascii?Q?8ZWm53myiFxBO6Znw0rXPIsqc3aC4VZpU8W45zhEPWzSFqqXTXM+Xh9O5hFj?=
+ =?us-ascii?Q?FTsWUFs90z71ActYoBr2VRDtUK5WbC6LH1nDxUcgD3Ghw4HsvXj1sFzh2ke8?=
+ =?us-ascii?Q?kEsjyxtCLyKdQn+i1oZmLMkiln+wz4m5w9lvCZOQ2sFv0sWltM03HPEBs7Go?=
+ =?us-ascii?Q?3k1Si8cpoWjGQrFEW+tG9sHYUGgPykBcBjZK0kFFwuw+JGzB1rLSPcIeXjIP?=
+ =?us-ascii?Q?LZzpE3r3GMbH25/m4+LJwgXVDJFEK48y4DDM/4dtnpR1NtNcyhvq7k1t0Zo7?=
+ =?us-ascii?Q?l8LEoOzVPGn3zMuvQCgq8EDPtwvYh7OYgwGff0+rrkiGt1YEbYsNFbgrlqBS?=
+ =?us-ascii?Q?mCiRW8OtcFSs9iq/7nmVSx935OHXICrZu9S6SGJdmWwzMv0CbZjHA7rm+CGK?=
+ =?us-ascii?Q?1Vk0MR1JxT/VmQzq6jYi7T9NSmUn7ywdCOoIJzhArWV0K4zVeh5v9WZ4Y2PU?=
+ =?us-ascii?Q?lzTnMgGJeOpbEHnf6SLjMQJjdB4jEriXMlID7T0T?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 926f7efe-c98c-49c0-7fad-08ddf07d2156
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6369.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 15:17:17.9870
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8knKtfbrXyfDTloRtxdaWVmPsfwR7nji6MSNB1oJuVG9EKx3LUC0TscgR5dGmhUdSK1YNQX00r08VwmiH2NRdw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5943
 
-BUG: KASAN: slab-use-after-free in cmp_fnames+0x292/0x2a0 fs/ntfs3/index.c:50
-Read of size 2 at addr ffff88801f6da2dc by task syz.7.385/9323
+On Tue, Sep 09, 2025 at 06:53:13PM +0000, Avadhut Naik wrote:
+> Newer AMD systems can support up to 16 channels per EDAC "mc" device.
+> These are detected by the EDAC module running on the device, and the
+> current EDAC interface is appropriately enumerated.
+> 
+> The legacy EDAC sysfs interface however, provides device attributes for
+> channels 0 through 11 only. Consequently, the last four channels, 12
+> through 15, will not be enumerated and will not be visible through the
+> legacy sysfs interface.
+> 
+> Add additional device attributes to ensure that all 16 channels, if
+> present, are enumerated by and visible through the legacy EDAC sysfs
+> interface.
+> 
+> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+> ---
+> Changes in v2:
+> Patch introduced.
+> 
+> Changes in v3:
+> No changes.
+> ---
+>  drivers/edac/edac_mc_sysfs.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
+> index 0f338adf7d93..8689631f1905 100644
+> --- a/drivers/edac/edac_mc_sysfs.c
+> +++ b/drivers/edac/edac_mc_sysfs.c
+> @@ -305,6 +305,14 @@ DEVICE_CHANNEL(ch10_dimm_label, S_IRUGO | S_IWUSR,
+>  	channel_dimm_label_show, channel_dimm_label_store, 10);
+>  DEVICE_CHANNEL(ch11_dimm_label, S_IRUGO | S_IWUSR,
+>  	channel_dimm_label_show, channel_dimm_label_store, 11);
+> +DEVICE_CHANNEL(ch12_dimm_label, S_IRUGO | S_IWUSR,
+> +	channel_dimm_label_show, channel_dimm_label_store, 12);
+> +DEVICE_CHANNEL(ch13_dimm_label, S_IRUGO | S_IWUSR,
+> +	channel_dimm_label_show, channel_dimm_label_store, 13);
+> +DEVICE_CHANNEL(ch14_dimm_label, S_IRUGO | S_IWUSR,
+> +	channel_dimm_label_show, channel_dimm_label_store, 14);
+> +DEVICE_CHANNEL(ch15_dimm_label, S_IRUGO | S_IWUSR,
+> +	channel_dimm_label_show, channel_dimm_label_store, 15);
+>  
+>  /* Total possible dynamic DIMM Label attribute file table */
+>  static struct attribute *dynamic_csrow_dimm_attr[] = {
+> @@ -320,6 +328,10 @@ static struct attribute *dynamic_csrow_dimm_attr[] = {
+>  	&dev_attr_legacy_ch9_dimm_label.attr.attr,
+>  	&dev_attr_legacy_ch10_dimm_label.attr.attr,
+>  	&dev_attr_legacy_ch11_dimm_label.attr.attr,
+> +	&dev_attr_legacy_ch12_dimm_label.attr.attr,
+> +	&dev_attr_legacy_ch13_dimm_label.attr.attr,
+> +	&dev_attr_legacy_ch14_dimm_label.attr.attr,
+> +	&dev_attr_legacy_ch15_dimm_label.attr.attr,
+>  	NULL
+>  };
+>  
+> @@ -348,6 +360,14 @@ DEVICE_CHANNEL(ch10_ce_count, S_IRUGO,
+>  		   channel_ce_count_show, NULL, 10);
+>  DEVICE_CHANNEL(ch11_ce_count, S_IRUGO,
+>  		   channel_ce_count_show, NULL, 11);
+> +DEVICE_CHANNEL(ch12_ce_count, S_IRUGO,
+> +		   channel_ce_count_show, NULL, 12);
+> +DEVICE_CHANNEL(ch13_ce_count, S_IRUGO,
+> +		   channel_ce_count_show, NULL, 13);
+> +DEVICE_CHANNEL(ch14_ce_count, S_IRUGO,
+> +		   channel_ce_count_show, NULL, 14);
+> +DEVICE_CHANNEL(ch15_ce_count, S_IRUGO,
+> +		   channel_ce_count_show, NULL, 15);
+>  
+>  /* Total possible dynamic ce_count attribute file table */
+>  static struct attribute *dynamic_csrow_ce_count_attr[] = {
+> @@ -363,6 +383,10 @@ static struct attribute *dynamic_csrow_ce_count_attr[] = {
+>  	&dev_attr_legacy_ch9_ce_count.attr.attr,
+>  	&dev_attr_legacy_ch10_ce_count.attr.attr,
+>  	&dev_attr_legacy_ch11_ce_count.attr.attr,
+> +	&dev_attr_legacy_ch12_ce_count.attr.attr,
+> +	&dev_attr_legacy_ch13_ce_count.attr.attr,
+> +	&dev_attr_legacy_ch14_ce_count.attr.attr,
+> +	&dev_attr_legacy_ch15_ce_count.attr.attr,
+>  	NULL
+>  };
+>  
+> -- 
 
-CPU: 0 UID: 0 PID: 9323 Comm: syz.7.385 Tainted: G        W           6.17.0-rc1-syzkaller-00211-g90d970cade8e #0 PREEMPT_{RT,(full)}
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- cmp_fnames+0x292/0x2a0 fs/ntfs3/index.c:50
- hdr_find_e+0x3c6/0x630 fs/ntfs3/index.c:762
- indx_find+0x516/0xba0 fs/ntfs3/index.c:1186
- dir_search_u+0x15f/0x2c0 fs/ntfs3/dir.c:254
- ntfs_lookup+0xfb/0x1f0 fs/ntfs3/namei.c:85
- lookup_one_qstr_excl+0x12e/0x360 fs/namei.c:1697
- filename_create+0x224/0x3c0 fs/namei.c:4140
- do_mknodat+0x184/0x4d0 fs/namei.c:4272
- __do_sys_mknodat fs/namei.c:4313 [inline]
- __se_sys_mknodat fs/namei.c:4310 [inline]
- __x64_sys_mknodat+0xa7/0xc0 fs/namei.c:4310
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f763f38ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f763d5d5038 EFLAGS: 00000246 ORIG_RAX: 0000000000000103
-RAX: ffffffffffffffda RBX: 00007f763f5b6090 RCX: 00007f763f38ebe9
-RDX: 00000000000021c0 RSI: 0000200000000040 RDI: ffffffffffffff9c
-RBP: 00007f763f411e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000103 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f763f5b6128 R14: 00007f763f5b6090 R15: 00007ffca1693878
- </TASK>
+There are many checkpatch warnings here.
 
-Allocated by task 9322:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:405
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __kmalloc_cache_noprof+0x1a8/0x320 mm/slub.c:4396
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- __ntfs_init_fs_context fs/ntfs3/super.c:1761 [inline]
- ntfs_init_fs_context+0x54/0x4c0 fs/ntfs3/super.c:1806
- alloc_fs_context+0x659/0x7e0 fs/fs_context.c:318
- do_remount fs/namespace.c:3299 [inline]
- path_mount+0xc25/0xfe0 fs/namespace.c:4112
- do_mount fs/namespace.c:4133 [inline]
- __do_sys_mount fs/namespace.c:4344 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4321
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Maybe it'd be prudent to note this in the commit message?
 
-Freed by task 9322:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2417 [inline]
- slab_free mm/slub.c:4680 [inline]
- kfree+0x195/0x550 mm/slub.c:4879
- put_fs_context+0x123/0x790 fs/fs_context.c:524
- do_remount fs/namespace.c:3326 [inline]
- path_mount+0xe57/0xfe0 fs/namespace.c:4112
- do_mount fs/namespace.c:4133 [inline]
- __do_sys_mount fs/namespace.:qc:4344 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4321
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Something like "checkpatch warnings ignored to maintain coding style"
+and maybe "affected lines are deprecated and will be removed", etc.?
 
-The root cause is that sbi->options points directly to fc->fs_private.
-If fc->fs_private is freed while sbi still exists, sbi->options becomes
-a dangling pointer.
+Otherwise, I expect there will be some "checkpatch warning" fixes coming
+our way.
 
-This patch ensures that sbi->options is a separate copy of fc->fs_private
-and duplicates nls_name if present. On superblock release or error,
-sbi->options->nls_name and sbi->options are freed and sbi->options
-is set to NULL to avoid any dangling pointer.
-
-Reported-by: syzbot+d77c546c60db651a389c@syzkaller.appspotmail.com
-Signed-off-by: YangWen <anmuxixixi@gmail.com>
----
- fs/ntfs3/super.c | 47 +++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 39 insertions(+), 8 deletions(-)
-
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index ddff94c091b8..6f4aab96e999 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -697,6 +697,14 @@ static void ntfs_put_super(struct super_block *sb)
- 
- 	/* Mark rw ntfs as clear, if possible. */
- 	ntfs_set_state(sbi, NTFS_DIRTY_CLEAR);
-+
-+	if (sbi->options) {
-+		unload_nls(sbi->options->nls);
-+		kfree(sbi->options->nls);
-+		kfree(sbi->options);
-+		sbi->options = NULL;
-+	}
-+
- 	ntfs3_put_sbi(sbi);
- }
- 
-@@ -1198,7 +1206,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	int err;
- 	struct ntfs_sb_info *sbi = sb->s_fs_info;
- 	struct block_device *bdev = sb->s_bdev;
--	struct ntfs_mount_options *options;
-+	struct ntfs_mount_options *fc_opts;
-+	struct ntfs_mount_options *options = NULL;
- 	struct inode *inode;
- 	struct ntfs_inode *ni;
- 	size_t i, tt, bad_len, bad_frags;
-@@ -1215,21 +1224,36 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	ref.high = 0;
- 
- 	sbi->sb = sb;
--	sbi->options = options = fc->fs_private;
--	fc->fs_private = NULL;
-+	fc_opts = fc->fs_private;
-+	if (!fc_opts) {
-+		errorf(fc, "missing mount options");
-+		return -EINVAL;
-+	}
-+	options = kmemdup(fc_opts, sizeof(*fc_opts), GFP_KERNEL);
-+	if (!options)
-+		return -ENOMEM;
-+
-+	if (fc_opts->nls_name) {
-+		options->nls_name = kstrdup(fc_opts->nls_name, GFP_KERNEL);
-+		if (!options->nls_name) {
-+			kfree(options);
-+			return -ENOMEM;
-+		}
-+	}
-+	sbi->options = options;
- 	sb->s_flags |= SB_NODIRATIME;
- 	sb->s_magic = 0x7366746e; // "ntfs"
- 	sb->s_op = &ntfs_sops;
- 	sb->s_export_op = &ntfs_export_ops;
- 	sb->s_time_gran = NTFS_TIME_GRAN; // 100 nsec
- 	sb->s_xattr = ntfs_xattr_handlers;
--	if (options->nocase)
-+	if (sbi->options->nocase)
- 		set_default_d_op(sb, &ntfs_dentry_ops);
- 
--	options->nls = ntfs_load_nls(options->nls_name);
--	if (IS_ERR(options->nls)) {
--		options->nls = NULL;
--		errorf(fc, "Cannot load nls %s", options->nls_name);
-+	sbi->options->nls = ntfs_load_nls(sbi->options->nls_name);
-+	if (IS_ERR(sbi->options->nls)) {
-+		sbi->options->nls = NULL;
-+		errorf(fc, "Cannot load nls %s", fc_opts->nls_name);
- 		err = -EINVAL;
- 		goto out;
- 	}
-@@ -1641,6 +1665,13 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- put_inode_out:
- 	iput(inode);
- out:
-+	if (sbi && sbi->options) {
-+		unload_nls(sbi->options->nls);
-+		kfree(sbi->options->nls);
-+		kfree(sbi->options);
-+		sbi->options = NULL;
-+	}
-+
- 	ntfs3_put_sbi(sbi);
- 	kfree(boot2);
- 	ntfs3_put_sbi(sbi);
--- 
-2.43.0
-
+Thanks,
+Yazen
 
