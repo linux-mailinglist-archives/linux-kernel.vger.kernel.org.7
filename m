@@ -1,169 +1,147 @@
-Return-Path: <linux-kernel+bounces-809816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26171B51261
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:23:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0297B51265
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66D43487CC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:23:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB3144E2C73
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DF1313556;
-	Wed, 10 Sep 2025 09:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDF3313293;
+	Wed, 10 Sep 2025 09:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="CgSV/a87"
-Received: from mail-24421.protonmail.ch (mail-24421.protonmail.ch [109.224.244.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EZ3SgC95"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616CF30CD92;
-	Wed, 10 Sep 2025 09:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706742C21DE;
+	Wed, 10 Sep 2025 09:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757496182; cv=none; b=DpsyVFTqIuLJZVeDNc+PAFP8Y4m4CBDNDv7LUAzUp0VPhAKD7bwqof6z+vIN3pJ1ockoRs2qPhrunQpKRKX1xy9pQl49irDib3sPOkG8Po8ehz3w3vvQ0OVahVCwm7zztEMmgUNmsGR4nKdaOnMElwZWR5dXU1oYHUodjVTtKBA=
+	t=1757496208; cv=none; b=qhgTjdnDUZs4tAW1CDIVxl99Fue3KEE7q3qtHAgnYBmLrrfOBYHpE33Qd0MbZk0hCncW5D5jRiOBqhAVSQu3GLCPZ83K+sOe6sBThAT6lX/CmTi/UPnPLqRTJ8U7K8u14l2Myj2igWMr8I1jvS7JQtaFp+EaETcjdQFi2vw6laA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757496182; c=relaxed/simple;
-	bh=4onIzWMeUt//GL9CyNwI0FhKhKNi3drWUGjY2yv9wa8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SCTC+z9CjpD1MICUxskOoj4P2PBSWyb1GRR6osajHEg/EelJ57kpi5LEOHsEa6CmRyA0ENiYKbROhm2s90jkz1Uq9eZkFEdRWk2+OCMCsSSw+7GgLIwbi4w5JyEUooa0NT1lCpQEcDdnRpX7UtIbvjyqftUAJi7QfV4JfbVt7wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=CgSV/a87; arc=none smtp.client-ip=109.224.244.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
-	s=protonmail; t=1757496176; x=1757755376;
-	bh=4onIzWMeUt//GL9CyNwI0FhKhKNi3drWUGjY2yv9wa8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=CgSV/a87QtXOKD/VDNEQGeFeRKWFFnJ6lSD75SjxX+25xcJS98O1Q03OS2+6GyoJX
-	 dVsNSU+kX8vPlH6gjCnciUUOu9vVEeMNzIOWzdChcANqCdfYdTSWFKod5ArUKSC61l
-	 izs9Lm4GDxHHqV6YVkPmX/6r9jptLfaqrQXXAejA5i310zJjwbJFPoMsy8QoBsFXfl
-	 VjEl5k+XM2SBxGpwz/JG++f3o27ExkInkiwecwS9vwYYUTxQGpiRqAHWuoU2Tasn80
-	 WtX1M8Fe7pABIvrYWUewDoSx4ro/vdyepm1xYazylM43ahXvWopM/IygBZET6BtWDq
-	 Th5nwOvvJPe5Q==
-Date: Wed, 10 Sep 2025 09:22:53 +0000
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-From: Aleksandrs Vinarskis <alex@vinarskis.com>
-Cc: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: leds: add generic LED consumer documentation
-Message-ID: <u6ZY13Lkl_fUDmiudck6EB28tChZkCOAUHGYLWvwJAQCWGBVio_VmhdPHlS1WBmN9XrftBvjSjwT7Ok-IpeW57AX2xv7u4dMPoC-1iO5z0g=@vinarskis.com>
-In-Reply-To: <108895ac-0c4d-4aee-86b1-96461e00def3@oss.qualcomm.com>
-References: <20250908-leds-v3-0-5944dc400668@vinarskis.com> <20250908-leds-v3-1-5944dc400668@vinarskis.com> <MOj2NUVAdyu9bvVkEON8rhAlGJ9FRRh9gJABkrOR_6gKhE8rmeZ5Isbj9noA1bDZ12gY4dlDpEtmEjxlRTucCssKwTo4f5nCowMOin85IKk=@vinarskis.com> <d957d16f-d206-4f7d-b52e-a2cad9e4abfc@kernel.org> <108895ac-0c4d-4aee-86b1-96461e00def3@oss.qualcomm.com>
-Feedback-ID: 158356072:user:proton
-X-Pm-Message-ID: d2805003f1d5c8c724396ed245543dea6900c2f6
+	s=arc-20240116; t=1757496208; c=relaxed/simple;
+	bh=OWqK1fNIxz74fbD5C825NvD1zunFGKKo4hQp3TrKVBc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qAl/4IKNDGCi6nRQSSl2C2KKm1+/gTn2rPSQrB7rRBonkwFYVOVRV4veKXwS5Ft8pIIBhyEYfW3h9MVnTW8tvRPwapnDY1OfvhSWhsKfB2W3zEhaq2xSSiPMeZiucmwEJgJVkEESF1F0yPY/rP0vNhTzAvv7sc8pw9ibWPLKWa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EZ3SgC95; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757496206; x=1789032206;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OWqK1fNIxz74fbD5C825NvD1zunFGKKo4hQp3TrKVBc=;
+  b=EZ3SgC95uf8W0WHAfq8APN+g4ShF1VWHCqnksfImWHFhL/Hu1tj/1iyq
+   yz5gMAkb/6eAEZXDMQAhWGukqYeblj9W6eT7qDc/YRxnsA7Q0XzngIAV8
+   KH7rC6bwt/ilMS3m9wy9LAPKAMHMJwMATGlilLHNWRFgsfYE9/GRZZBQi
+   PeKkwx4M0AZ/Fg9wLh1dUS73affpv6CL50yybH5sqr0WeqPkwg1oYqsYR
+   u7TMS2CBqCPh4Cab0D+cOyWjUpkxqWFKSUeO/NMdgb93JnGh3Ap9//lcn
+   YE/KxyQp5n1hzDV1LI3fYIxL31EDR1gqrvP3/l84XAyWtTkSoQkctsQv7
+   Q==;
+X-CSE-ConnectionGUID: sxGkwBpXS8KaVNtGLKdiqA==
+X-CSE-MsgGUID: Tpa8bGEIQgucMjCBaLeMzA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="77256444"
+X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
+   d="scan'208";a="77256444"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 02:23:26 -0700
+X-CSE-ConnectionGUID: dDCRoZBQS12sI/CsIQAR1g==
+X-CSE-MsgGUID: h56gYN/hQ+yx/GGHMTg4IA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
+   d="scan'208";a="204103643"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 02:23:21 -0700
+Message-ID: <ad6a3c7c-92df-421a-aee2-f9fe6afda8e9@intel.com>
+Date: Wed, 10 Sep 2025 17:23:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 04/22] KVM: x86: Refresh CPUID on write to guest
+ MSR_IA32_XSS
+To: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: acme@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, john.allen@amd.com, mingo@kernel.org, mingo@redhat.com,
+ minipli@grsecurity.net, mlevitsk@redhat.com, namhyung@kernel.org,
+ pbonzini@redhat.com, prsampat@amd.com, rick.p.edgecombe@intel.com,
+ seanjc@google.com, shuah@kernel.org, tglx@linutronix.de,
+ weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com
+References: <20250909093953.202028-1-chao.gao@intel.com>
+ <20250909093953.202028-5-chao.gao@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250909093953.202028-5-chao.gao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 9/9/2025 5:39 PM, Chao Gao wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+> 
+> Update CPUID.(EAX=0DH,ECX=1).EBX to reflect current required xstate size
+> due to XSS MSR modification.
+> CPUID(EAX=0DH,ECX=1).EBX reports the required storage size of all enabled
+> xstate features in (XCR0 | IA32_XSS). The CPUID value can be used by guest
+> before allocate sufficient xsave buffer.
+> 
+> Note, KVM does not yet support any XSS based features, i.e. supported_xss
+> is guaranteed to be zero at this time.
+> 
+> Opportunistically skip CPUID updates if XSS value doesn't change.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
 
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
+> ---
+>   arch/x86/kvm/cpuid.c | 3 ++-
+>   arch/x86/kvm/x86.c   | 2 ++
+>   2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 46cf616663e6..b5f87254ced7 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -316,7 +316,8 @@ static void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
+>   	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 1);
+>   	if (best && (cpuid_entry_has(best, X86_FEATURE_XSAVES) ||
+>   		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
+> -		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
+> +		best->ebx = xstate_required_size(vcpu->arch.xcr0 |
+> +						 vcpu->arch.ia32_xss, true);
+>   }
+>   
+>   static bool kvm_cpuid_has_hyperv(struct kvm_vcpu *vcpu)
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 6c167117018c..bbae3bf405c7 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -4020,6 +4020,8 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   		 */
+>   		if (data & ~vcpu->arch.guest_supported_xss)
+>   			return 1;
+> +		if (vcpu->arch.ia32_xss == data)
+> +			break;
+>   		vcpu->arch.ia32_xss = data;
+>   		vcpu->arch.cpuid_dynamic_bits_dirty = true;
+>   		break;
 
-
-
-On Wednesday, September 10th, 2025 at 10:35, Konrad Dybcio <konrad.dybcio@o=
-ss.qualcomm.com> wrote:
-
->=20
->=20
-> On 9/9/25 10:39 PM, Hans de Goede wrote:
->=20
-> > Hi,
-> >=20
-> > On 9-Sep-25 6:57 PM, Aleksandrs Vinarskis wrote:
-> >=20
-> > > On Monday, September 8th, 2025 at 01:18, Aleksandrs Vinarskis alex@vi=
-narskis.com wrote:
-> > >=20
-> > > > Introduce common generic led consumer binding, where consumer defin=
-es
-> > > > led(s) by phandle, as opposed to trigger-source binding where the
-> > > > trigger source is defined in led itself.
-> > > >=20
-> > > > Add already used in some schemas 'leds' parameter which expects
-> > > > phandle-array. Additionally, introduce 'led-names' which could be u=
-sed
-> > > > by consumers to map LED devices to their respective functions.
-> > > >=20
-> > > > Signed-off-by: Aleksandrs Vinarskis alex@vinarskis.com
-> > > >=20
-> > > > ---
-> > > > .../devicetree/bindings/leds/leds-consumer.yaml | 89 ++++++++++++++=
-++++++++
-> > > > 1 file changed, 89 insertions(+)
-> > > >=20
-> > > > diff --git a/Documentation/devicetree/bindings/leds/leds-consumer.y=
-aml b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
-> > > > new file mode 100644
-> > > > index 0000000000000000000000000000000000000000..d50a3850f6336e9e3a5=
-2eb1374e36ea50de27f47
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
-> > > > @@ -0,0 +1,89 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/leds/leds-consumer.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Common leds consumer
-> > > > +
-> > > > +maintainers:
-> > > > + - Aleksandrs Vinarskis alex@vinarskis.com
-> > > >=20
-> > > > +
-> > > > +description:
-> > > > + Some LED defined in DT are required by other DT consumers, for ex=
-ample
-> > > > + v4l2 subnode may require privacy or flash LED. Unlike trigger-sou=
-rce
-> > > > + approach which is typically used as 'soft' binding, referencing L=
-ED
-> > > > + devices by phandle makes things simpler when 'hard' binding is de=
-sired.
-> > > > +
-> > > > + Document LED properties that its consumers may define.
-> > > > +
-> > > > +select: true
-> > > > +
-> > > > +properties:
-> > > > + leds:
-> > > > + oneOf:
-> > > > + - type: object
-> > > > + - $ref: /schemas/types.yaml#/definitions/phandle-array
-> > > > + description:
-> > > > + A list of LED device(s) required by a particular consumer.
-> > > > + items:
-> > > > + maxItems: 1
-> > > > +
-> > > > + led-names:
-> > >=20
-> > > While going over the feedback I realized `leds` and `led-names` do
-> > > not follow `property`, `property-names` convention. Any objections
-> > > if I rename `led-names` to `leds-names` for consistency?
-> >=20
-> > No objections from me, `leds-names` indeed is better.
->=20
->=20
-> FWIW we have "clocks"/"clock-names", "resets"/"reset-names" etc.
->=20
-> I sometimes refer to "property"/"property-names" during review to
-> bring attention to the preferred style (ordering of such entries),
-> which is maybe what confused you
-
-Hmm fair. Just thought 'led-names' looks a bit ugly under 'leds'. But
-you are right, since there are already "clocks"/"clock-names",
-"resets"/"reset-names", lets keep it that way.
-
-Thanks for clarification,
-
-Alex
-
->=20
-> Konrad
 
