@@ -1,101 +1,112 @@
-Return-Path: <linux-kernel+bounces-809247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0676BB50A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:50:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAE69B50A91
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5067C5660D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:50:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E90F1B2563D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3B522B5AC;
-	Wed, 10 Sep 2025 01:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERPEx6gW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D23226CF6;
+	Wed, 10 Sep 2025 01:56:24 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E742264BD;
-	Wed, 10 Sep 2025 01:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8762248B8;
+	Wed, 10 Sep 2025 01:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757469008; cv=none; b=no5zcPKloI4EtOQJf9kC5X+13Cmih+o2/MCWeUQfR/mONIZRowB/hxyGe7e784ULQNzacet/G57nwrtJVFgRefIQvlbdIQdhRlLZ4/r8wH2/ISUBoc/WAGjiQa5oyf7Xd/qHoYGQ/e3JWTDvjRYZVMEri2F89AAEuurK5DwVc5U=
+	t=1757469383; cv=none; b=kvGk7iDbzCCMXEswgihrlWdu8NipZFfeHEvwJB9D+mN65YZ2UyHtaqjffjWdihmG8QjG7nKqGogiUvHJ6Y7TV1T8qF13LPADFB+CIjMTomF8YTWMl+4OJPtQxfhD97QyAdqGvyCEgW8SRND6yAVummObRG0hct3gcC310Z0X0ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757469008; c=relaxed/simple;
-	bh=31ynHaSExIvuDjwFnZXBu1eJN+TxHwjKcZZvJ6vRyiw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=iVUffFC9UYpkr7hXsfCCEeSc4rmikwBrXdCgpMlxP1llJgIjMc0WRUxmbaW0aW7/kkGgCRq8Q+iaByOiiNCPaoKKDCnPU1q7Hqd6ztFp/I1BpI4VfvX1CdEFffBnjseDZk6xAhkan2j8/94y0BqQPjBFaFVbUFaow+z5S0t24QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERPEx6gW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B44BC4CEF4;
-	Wed, 10 Sep 2025 01:50:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757469008;
-	bh=31ynHaSExIvuDjwFnZXBu1eJN+TxHwjKcZZvJ6vRyiw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ERPEx6gWeL3OsSIDwqsS85e9D0L2BOG2I8nnz8It68KBzFjRKlIx7+37//AxqCphC
-	 5LJbO/3lmVaBYHEG7Bb5vV+aP82/3W6DJE7uYtQpPtk+IC4owCuSCVXUfY+QTB+S20
-	 XZsgmB6kB0ak5RI+cX9vAEIHh7wYcIC/RKpZWqJWdLQxHdHcWIw2RrRQBAPsnDMQBf
-	 hj7M2LMpAsdTmf96RV/jLIhIxC/CrhSsKYDDKOA6zz6xJDttvyBrSiYlw+YT+1d0qv
-	 dyFHbJdGi47h3yRt+j8l/rV+2xf6XtE9F5p5EOMKD+G9WoQhDK5iDYcUzWqEHdKh3d
-	 LM58qe8WA/gEQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE05C383BF69;
-	Wed, 10 Sep 2025 01:50:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757469383; c=relaxed/simple;
+	bh=zxesjLZpmWK0+n8WPq3ApNudAoBG+yunYX61OkpW7Lg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PMSt2gBw62hDib+x0tuBVKBDJ4jeOgoFobt7OUdFfwx0w68+sW/GzI3mrjMmQ4O8l0A0stkCy4p2IxtSscFz+bZL4iYQNENFIF1GW3FQMK4zpSduq5PuKgrfrKugCY7dHYuz3h60ogb3yMgWPq5YAzC4DOIdT56HSl/K+THMy+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 5471350a8de911f0b29709d653e92f7d-20250910
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:57630198-5744-4314-ae95-7e6c36ec0f92,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:f3531b3caf06b19c5753c8f07bf8d171,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5471350a8de911f0b29709d653e92f7d-20250910
+Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
+	(envelope-from <tanzheng@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1203768447; Wed, 10 Sep 2025 09:56:13 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 07333160042A0;
+	Wed, 10 Sep 2025 09:56:13 +0800 (CST)
+X-ns-mid: postfix-68C0DABC-783697334
+Received: from localhost.localdomain (unknown [10.42.20.101])
+	by node4.com.cn (NSMail) with ESMTPA id 4FF6C16004295;
+	Wed, 10 Sep 2025 01:56:12 +0000 (UTC)
+From: Zheng tan <tanzheng@kylinos.cn>
+To: johannes@sipsolutions.net
+Cc: arend.vanspriel@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	tanzheng@kylinos.cn
+Subject: [PATCH v5] wifi: cfg80211: Remove the redundant wiphy_dev
+Date: Wed, 10 Sep 2025 09:55:56 +0800
+Message-Id: <20250910015556.219298-1-tanzheng@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] mptcp: sockopt: make sync_socket_options propagate
- SOCK_KEEPOPEN
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175746901150.871782.13982454785645572183.git-patchwork-notify@kernel.org>
-Date: Wed, 10 Sep 2025 01:50:11 +0000
-References: <aL8dYfPZrwedCIh9@templeofstupid.com>
-In-Reply-To: <aL8dYfPZrwedCIh9@templeofstupid.com>
-To: Krister Johansen <kjlx@templeofstupid.com>
-Cc: matttbe@kernel.org, martineau@kernel.org, geliang@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, fw@strlen.de, netdev@vger.kernel.org,
- mptcp@lists.linux.dev, linux-kernel@vger.kernel.org, me@davidreaver.com
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+There is no need to call wiphy_dev again.Simplifying the
+code makes it more readable.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Zheng tan <tanzheng@kylinos.cn>
+Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
+---
+Changes in v5:
+-Modify the From and Signed-off-by.
 
-On Mon, 8 Sep 2025 11:16:01 -0700 you wrote:
-> Users reported a scenario where MPTCP connections that were configured
-> with SO_KEEPALIVE prior to connect would fail to enable their keepalives
-> if MTPCP fell back to TCP mode.
-> 
-> After investigating, this affects keepalives for any connection where
-> sync_socket_options is called on a socket that is in the closed or
-> listening state.  Joins are handled properly. For connects,
-> sync_socket_options is called when the socket is still in the closed
-> state.  The tcp_set_keepalive() function does not act on sockets that
-> are closed or listening, hence keepalive is not immediately enabled.
-> Since the SO_KEEPOPEN flag is absent, it is not enabled later in the
-> connect sequence via tcp_finish_connect.  Setting the keepalive via
-> sockopt after connect does work, but would not address any subsequently
-> created flows.
-> 
-> [...]
+Changes in v4:
+-Keep the from and Signed-off-by tags consistent.
 
-Here is the summary with links:
-  - [net,v2] mptcp: sockopt: make sync_socket_options propagate SOCK_KEEPOPEN
-    https://git.kernel.org/netdev/net/c/648de37416b3
+Changes in v3:
+- Modify the patch description.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Changes in v2:
+- Delete the use of dev_name instead of pdev->driver->name.
+  This is incorrect.
 
+ net/wireless/ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/wireless/ethtool.c b/net/wireless/ethtool.c
+index 2613d6ac0fda..46e4317cbd7e 100644
+--- a/net/wireless/ethtool.c
++++ b/net/wireless/ethtool.c
+@@ -23,7 +23,7 @@ void cfg80211_get_drvinfo(struct net_device *dev, struc=
+t ethtool_drvinfo *info)
+ 	else
+ 		strscpy(info->fw_version, "N/A", sizeof(info->fw_version));
+=20
+-	strscpy(info->bus_info, dev_name(wiphy_dev(wdev->wiphy)),
++	strscpy(info->bus_info, dev_name(pdev),
+ 		sizeof(info->bus_info));
+ }
+ EXPORT_SYMBOL(cfg80211_get_drvinfo);
+--=20
+2.25.1
 
 
