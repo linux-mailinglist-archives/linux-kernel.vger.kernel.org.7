@@ -1,124 +1,91 @@
-Return-Path: <linux-kernel+bounces-809642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B19B51048
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:01:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8C4B51017
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D83B4613E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:00:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7E8717210F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D5B3126A9;
-	Wed, 10 Sep 2025 07:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A9030DD3D;
+	Wed, 10 Sep 2025 07:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="YSZ4poHY"
-Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQ+7M+e8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5CC3101AB;
-	Wed, 10 Sep 2025 07:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC17305E19;
+	Wed, 10 Sep 2025 07:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491096; cv=none; b=cwMdWBtXZc3++HMX80GeZ0nvagPK4kjkvMCj6JsgEv8rViK/Ayp9jk8IFI7EKJawxOZ9xc9iGUVboZ9Dkr+8Ah3SI9xKRTdvj3V2KaCuR1H5MY8fBzszRl+l6lKB5QzDaCZhjE0IGb1u8gq4YIJdt7WqEGDlc+u4kLO1BMZvlvE=
+	t=1757491076; cv=none; b=WZYxbljNNYYhZDcl/Pp/PT9dKmHYH4Q4KOI3v85t8SX+qHQf9m/eOnnh7dLMMNcShPJjPw01jBgAt1K6eZj6QWAQlgszM3LBdrnccuhnCN0LyMaoUOru6toN7Ftd6UNEfwDgzC0p9zCnEfMxsxhTrEx7Nb8X87Hm5eR/szoWOJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491096; c=relaxed/simple;
-	bh=/4zN9lAblT0/99lYnfhdg1WFLieqr7yBVjvAKHYmEwQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=a8Pagbu4bG9bh2EwCTpFHqFATH8DyodgBNg7or2rmwUbbH/xMbWQF9JjE0eOgNyEe0yO1JOR2aLSE4QrpSgOiRx0nvAQH8wB9/KTVhO4kF2oFk8JlT+2c9obLvmI1EGH5Fr01drfkT/O2wAEayARvPMAZn+Nz+UqW1Pf4DHspTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=YSZ4poHY; arc=none smtp.client-ip=172.105.74.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
-Received: from [10.212.0.13] (unknown [IPv6:2a02:2f0e:3503:4a00:e2d5:5eff:fed9:f1c4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.subdimension.ro (Postfix) with ESMTPSA id CB295173BF6;
-	Wed, 10 Sep 2025 10:58:07 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
-	s=mail; t=1757491088;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oBVWElmnKoZWfiu+W3DAEuKmhtUcJOutX7gM+xyCT/0=;
-	b=YSZ4poHYLa7t+NByxsJdnS3ubRhWWN5Ylo5moL6tafU5AiCHY2pFj/Bphild9Fav9JQMBL
-	A/KhwfNxygqO9WpNb4xtJwaGoEDSvoH1EfyILtix/0kqzBBXYw5L/d/AiXAF/uudpivc+I
-	iHUNgXqmWPoiTM9uPfsSZObMEfkYVkUqrrvLy5va+MaSHnO8SMX37CLLwMU7oZkm+MZsq1
-	dxhOdfcaLYGmVedh/yRBopdlgFKYfxQxDJcGgFd/gRkBn0TGTQ2Lmujz9WHFqkJrp2KE57
-	x8yJPKreA/GjsyNQHPYhLb6yqW4KcaQk+YxpUgWKqiBOULHvwcfRy7rRK0iZvg==
-From: Petre Rodan <petre.rodan@subdimension.ro>
-Date: Wed, 10 Sep 2025 10:57:19 +0300
-Subject: [PATCH v2 14/14] iio: accel: bma220: add maintainer
+	s=arc-20240116; t=1757491076; c=relaxed/simple;
+	bh=6uVpYxLKgfz2XvbYZoJ8wzUbrjvZJR0Y4MBIqOJj0J0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDBF+gOBiK61oRzfcDzuwYLPILHCTRQHSWrqXWI33OcAZxFmehZkmGMj8cmvFfq825YByMlHTcJdmvunHlOW+bQeyeic9sp7hY6T/8CmwAhL64CZgZHgU6alFjyd4Lw6Q1nh7ucdDLbpj48IqTEE1gJQaYixhsqist0J29AqmVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQ+7M+e8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41744C4CEF0;
+	Wed, 10 Sep 2025 07:57:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757491074;
+	bh=6uVpYxLKgfz2XvbYZoJ8wzUbrjvZJR0Y4MBIqOJj0J0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eQ+7M+e8mrS/qUabUDxQGA+IrOlNrJ/W1e/kVNdL2rEOx9xwy5R0VZYrC5aKWmoN0
+	 CFlRAkOhoJl0/qGhK75yDnQ1nmMpzrHL05fQvr8Ex6EA1HFx2t3MRamt8EcGv0wzbE
+	 zsB8nSvKD+dQ7hyH6b2v/bs3POgOGyWqDgOlmRFbinttriUvWAUYF5hwLoVS5kUtI+
+	 c6/hrqv5mVWzzmHUaTwalsO5jeGyG9DS4AFuJQHLVYQK1D+gCZ3bZYqIdEXA5hj/Dk
+	 mJxUw5rUzCSLkV4Ayzz4Mi+U+N6J8JDprluIx8uja7fPPNfuE/9FvgKzGiPW1/OzV1
+	 6wGhQ70VBn9xw==
+Date: Wed, 10 Sep 2025 09:57:52 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?Q?Cl=C3=A9ment?= Le Goffic <legoffic.clement@gmail.com>
+Cc: Gatien Chevallier <gatien.chevallier@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>, Julius Werner <jwerner@chromium.org>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org, 
+	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>
+Subject: Re: [PATCH v6 12/20] dt-bindings: perf: stm32: introduce DDRPERFM
+ dt-bindings
+Message-ID: <20250910-encouraging-masterful-dodo-3d1f60@kuoka>
+References: <20250909-b4-ddrperfm-upstream-v6-0-ce082cc801b5@gmail.com>
+ <20250909-b4-ddrperfm-upstream-v6-12-ce082cc801b5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-bma220_improvements-v2-14-e23f4f2b9745@subdimension.ro>
-References: <20250910-bma220_improvements-v2-0-e23f4f2b9745@subdimension.ro>
-In-Reply-To: <20250910-bma220_improvements-v2-0-e23f4f2b9745@subdimension.ro>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Petre Rodan <petre.rodan@subdimension.ro>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=868;
- i=petre.rodan@subdimension.ro; h=from:subject:message-id;
- bh=/4zN9lAblT0/99lYnfhdg1WFLieqr7yBVjvAKHYmEwQ=;
- b=owEBbQKS/ZANAwAIAc8mmZmETn8wAcsmYgBowS+H4A6LtCJHII2vKHnVxOJivcCT+5zMAibi3
- nh7cjCHiF+JAjMEAAEIAB0WIQTYCn/BdhUZNew+X6nPJpmZhE5/MAUCaMEvhwAKCRDPJpmZhE5/
- MP8xEACVIrH4hJGpvJQtu9YlB/zRRcGF0QTywNNETqL2pDw4HO55vMOIP1gXkVMvMZC2P0ul6bu
- lgIxx8SGrVHpa2CcibHplQ/3ItrMRG0jlVEEFft6MMIohy379n/hUwfjfrJGiRZcGkwQZEWiQWj
- lCOZn8sCDYrDob47CKOyabLFVHVRDFVbXkZ5zXXs0P6/GnDn8RgZtGNpunfgImKYMeW7cK5JaEu
- f2UnpwWUOotSGVNuiXpyjmPfmVL463XuZM4seuhfz6yhqgTecKii4buTtuzOaIhw2eB+fv4fDFJ
- 9u01o3cCYYEpA+RW2WGgFLw5DNkZzVGc7mqLgJ964DaYodZevuXKcBFi27aEyHC2p3UbtprGPF7
- ekZt94k4+MBhqZnBAOYmKXKOGATt0FoteorcmREDbMUkN1PNV69vIyNvzf/GodzMdhCSL+KUHtz
- x7FdTazMiVhv3nh9tsE09EeHyR2ta0sTfZltB2el3YwfJ/TojxaVi6juGgEqzLRPdMGHL1+W+tC
- vIZ2/78RNkCQcNHnrPLhRE4a5h6wFq1UKnSXPJMAa/syD/s/kk6fcV5gjcknaxKR7ObxKUGEJH/
- NIJ+YKejhF/VqMYjJqhoE7ct272vPu11/W1G1nZ+r0ulk1jrdVzg9hTgUBUu2dXTe/ekj9LfwPu
- cdhGrYOk4He3HXQ==
-X-Developer-Key: i=petre.rodan@subdimension.ro; a=openpgp;
- fpr=D80A7FC176151935EC3E5FA9CF269999844E7F30
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250909-b4-ddrperfm-upstream-v6-12-ce082cc801b5@gmail.com>
 
-Add maintainer for this driver.
+On Tue, Sep 09, 2025 at 12:12:19PM +0200, Cl=C3=A9ment Le Goffic wrote:
+> From: Cl=C3=A9ment Le Goffic <clement.legoffic@foss.st.com>
+>=20
+> DDRPERFM is the DDR Performance Monitor embedded in STM32MPU SoC.
+> It allows to monitor DDR events that come from the DDR Controller
+> such as read or write events.
 
-Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
----
-no change
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Also:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 75615d82593e173a9e07fd269163fecdc4711e8b..eb985bd06b7d960bbc25941a8ea7b420d83483b0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4402,6 +4402,13 @@ F:	include/net/bond*
- F:	include/uapi/linux/if_bonding.h
- F:	tools/testing/selftests/drivers/net/bonding/
- 
-+BOSCH SENSORTEC BMA220 ACCELEROMETER IIO DRIVER
-+M:	Petre Rodan <petre.rodan@subdimension.ro>
-+L:	linux-iio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/iio/accel/bosch,bma220.yaml
-+F:	drivers/iio/accel/bma220*
-+
- BOSCH SENSORTEC BMA400 ACCELEROMETER IIO DRIVER
- M:	Dan Robertson <dan@dlrobertson.com>
- L:	linux-iio@vger.kernel.org
+A nit, subject: drop second/last, redundant "dt-bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/=
+bindings/submitting-patches.rst#L18
 
--- 
-2.49.1
+Best regards,
+Krzysztof
 
 
