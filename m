@@ -1,138 +1,125 @@
-Return-Path: <linux-kernel+bounces-809758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56194B511AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:41:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D38B511B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69B46189E98B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:42:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B352A189B680
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0022D3ED9;
-	Wed, 10 Sep 2025 08:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD42F305E1D;
+	Wed, 10 Sep 2025 08:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MpRI2CqC"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GqIcVkn4"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8DD2BE7D5;
-	Wed, 10 Sep 2025 08:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B472C026F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757493707; cv=none; b=ZQ7u8jcNEPHrO/13mqUcXPJfIBK4G0sqawwESK456ugccrEW3O18A2xse0viNW5LqF0Bs5ONZXjueWwBj/nrMBxG2b/BDlBO9TfuO9dEJRvLchsh9rFhk6GwMO44prV55Dl/2bn6NdAL7dqpQZ3TJc6II5U5dKuS0LFneVZDR4Q=
+	t=1757493766; cv=none; b=IRTCFYCUjIO6O6ixhipovWQo+HZJ9P7YSjRRKmYsfTvMFkeRx5xUPEed1R+YJltE7MbVLEykRZQaCq4VbIK6hMCgrjfq8Xk4PVm0/uUmZMU6JhHULTQ+49rDi0HQ12HDAraTqnt7ZIu+2G/HnDOxIqt1Pm/D147LfMv5R6h79iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757493707; c=relaxed/simple;
-	bh=WXEEu67YxLZJ0AVlikwwITZAXBcBgZXrS90WmG7/K0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kfVvCYexzPipzCUd6pIxr8Op50zy3FCSXvhvU+KPvhKx5Q4NK/y87nLFlZXjcWh2M7rVYqzNlHexgqmrL3lljiFVjoQ6piwkZ2pdshEiHvPTzkk5eAZv9fC8VyY6ceAaZWh5cAJwiJle9rZ3RDiA8YukCN38k2FV/p+3tpDCFSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MpRI2CqC; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1757493766; c=relaxed/simple;
+	bh=wciHuAgMx+2GJhChDhOKQ4rJ/R9yGdHCN3IlbgGwiU8=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Kg1h/DWqRdilTXoZo6zSG9p/4CBhfewAAX60nCDRzXju229JIXNWp+pXLKU5FFvVTTEBWBtUbGw8L5o/uL+3Bez8nUkmN9ROhdAFPGObnSvtZRuEqi1PWBUk78O0cA1Vi3GrvqxAhotVjq6KEM5SZHPvC+ZahCKmidK0gqjxiIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GqIcVkn4; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45dcff2f313so40558585e9.0;
-        Wed, 10 Sep 2025 01:41:45 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-772301f8ae2so5284604b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 01:42:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757493704; x=1758098504; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P3IKUpQfaLekPKjen96M//7ifX26lwnIh4aj6a3++lk=;
-        b=MpRI2CqCBsG0v1sLGeXXpbe6zcal6XaDBbzaNfxzVyYHxTvynE5srpo2ZHAIFIjxAj
-         nTa2CVx1SQG0XyMRnaLQfxc9x+O0hdSFZYDeWPte2YNxZDdfm+F5+ZVIN1b7HMyr69H8
-         4hkoGm/7nLtQ9OVRgC490djfSXkK5RpDkNmz7Q3Ktzm71Ujg3pflDBqEtdNnkhqgJ7Qx
-         K7Wiw23lm8cwi4gHw5Cc44HpFJBf7KzG+5yag1nLPzNCEcsATHNefCMngBJJvQ0EzQy+
-         K5fG3IbBnKsI4rae88EaoTTsOUd+BpOkHzer5jy6k854auZM5Zlev0N+ybodTDUD2Pdx
-         vFcA==
+        d=gmail.com; s=20230601; t=1757493764; x=1758098564; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ImzPRgDObsfgy5RyQ+yQw0Lu3cbWU0zwkYDqCowNcKE=;
+        b=GqIcVkn4ZW1mmv7a9u7Kn1i081/ARcIuFPiI9VUSTfzmSUbf3dkbg3LY1rkjQRbaJr
+         XFs0X/Hea9W1Q9MDokEXh7/peFbSlS1X5ETBQrv8OeZcW9NspqOyLbNCU5hb7jD5LZUK
+         9uApmZQRrSXfXXT2DfA6DDQsG5/HhfL4Fjeu4jQFmglc1SpSF3/W9kKn0LtQE2h4Nwpf
+         XOBW0+Hr1SlWTWvZRZ8gR5f8yDmw4rYO4w291ZgS4Dy6V7crnyN2uEdZiXbSar7GBqPM
+         loLjJSjxumkffYdOFuZdshTAVMfeStsuYBVnywbCjaGPJub4c9jgJHeXNOTbkq9643y+
+         1nSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757493704; x=1758098504;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P3IKUpQfaLekPKjen96M//7ifX26lwnIh4aj6a3++lk=;
-        b=f8pImHltOEx6MiGT/kPYJn9GMSd34OQ++jBMDUmFPQPXQJZPpABbWsnY4TFI6UJ3dU
-         UZA6UQ97FefxdivRJCimaUqePwmQQlLtpYNCaPRvAxdpUsoX+CSh3rPqN0EP6TTrLeyg
-         iWdNKKqhx8ngV7DP+r4AtRc4wuD5ysWqDOsgPBW0boUYo0lVa3/ldg2qGo26JRdzFfzq
-         3Sy8bTGvVzMulEY/ftPbggPTji3rwoghuIWQZzO3a1D/j6/b3s3gXc/dxPhn1zpiKfzk
-         gUGf5vHGzxYjOSSFxhb8BVyFZzJPt0+e5ThQgMk4rylnIZSrZhTK2lcYoBoQdsU+/XVX
-         IuPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUR3VoLNvesKy7Cob8Fq1jYWGGbTDRjhC70fcIEoTyheOuN/8PoYZ+9zelcrK6TJbLvZOLADZZXMpHy@vger.kernel.org, AJvYcCVvB7qT6V+1rE3WIIF+te9wpB9nZi+KD++uqJKZQM/ZSWHNVvTajhLELRcgkBYasSaTM4O7sQIwqboatY7u@vger.kernel.org, AJvYcCWnmPuq0aRBpw1IfpMZS6Xf7X9MbLiLY9K1Dv/JBZPhT1DC0SovNTWVj0iKOvC09188hX3hnzC15Y3B@vger.kernel.org, AJvYcCWwusylzWsjpaSw9si7Qh58UTzAHAkwBUgkweomF7AH9EsKYHOnpTDVCMBKAZMyGSzOuIv5Yn5h+fcA@vger.kernel.org, AJvYcCXAFC3GwuTw8TBG+pjsCEwbndYDIN/GuClaSUp+Q6GVsJQIgSfrmEnfo6LTAccZJNtxQGStrXYaVuubI7YC5L8uGg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqk7XqjYVLz+9aNHh4uT2fICD/1kYCEzMNw318KZsLWJN2OqtQ
-	64rtfw7u+get86A+LC/FOYxhnpOJ+wqZlLvgNDOL4RP8p7a/BifMpKR3
-X-Gm-Gg: ASbGncuaf16pYCO9GRVGIPbop1HNG0vodPSjHEDppUjiZ5fVDKrLFLNI9GFKMdY1Rp5
-	l2uDLnu/wWXPRGiSwTEH1awPR5N9Tr6miXm0FsFX66RHla4Nzpv1354MvU07Kj5nYLs9yZqfDZT
-	WEzbyJOQHBMSDuLgGYdVyLvJ1CrqVCwtCkZhuJhXbSOeJwyorhBLfCBfCHS2cganWQdI0BIuUvD
-	0DbA8G9GaVLLll1sHRYaNn4CEYkPE8Fv8xg4aCPXyyV3TxyKARwZ4MALXGC0G9AmE1VU5v+cnSC
-	Y55b8IZ+5xy76EfF/JvbR+sNlgmtHwS0ihcG77x0MlPe/R8OYXIQCYu8S2e4461KAfbK0plJTdB
-	To6fZtL9Vs9PU5ckLWG/zqHh4p6baCimHQiFi63H4CBDYmvbCCQGQbYkPlnP3sJWAC8pQGT5zND
-	T5gBM6WoILQvrbsyRSfnIJncWwtniILHPXFJJUWOweEBHZqPcpp+lrPuAIz3dmXzm47X1HpmrcD
-	A==
-X-Google-Smtp-Source: AGHT+IFAC+KaKdWZCDt0F29FwBEVeFET6FJu2DQLhogXKqRlrNmNAmvGOz7dmZmfwY3vjWPcfaiR9g==
-X-Received: by 2002:a05:600c:1387:b0:45b:9c93:d237 with SMTP id 5b1f17b1804b1-45dddeb93f1mr119978935e9.14.1757493703536;
-        Wed, 10 Sep 2025 01:41:43 -0700 (PDT)
-Received: from ?IPV6:2a02:8440:7135:4f4c:9000:7072:695b:3ef? (2a02-8440-7135-4f4c-9000-7072-695b-03ef.rev.sfr.net. [2a02:8440:7135:4f4c:9000:7072:695b:3ef])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45df81d3ee4sm19382275e9.6.2025.09.10.01.41.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 01:41:43 -0700 (PDT)
-Message-ID: <899eb863-6b6d-42f0-9e7c-e2020ee45f4d@gmail.com>
-Date: Wed, 10 Sep 2025 10:41:41 +0200
+        d=1e100.net; s=20230601; t=1757493764; x=1758098564;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ImzPRgDObsfgy5RyQ+yQw0Lu3cbWU0zwkYDqCowNcKE=;
+        b=N1dlTWUqDh5LkN4UDpzVlwcCdUbj5Yzju/QmQR8cRgtQjoxQqAirMd8LugQuvRESsg
+         zLSu2IfEydoE2AFK2t591L4RCab2ELLoLp4TClJeAinrLYGZn19aHCKQPX14XyNRtKGJ
+         j/nZUYKFRUhNBmo0IF+0wymkFMZbFeK6aQnmZYc00I993ZsJhtItwI/5paUgj51jZ/P9
+         FfommqvPt/jwZq/aKjlMImWASQ0fjjvun7tfKb8vWruA+gx/N+2hyvwYeW5wEGPiVtaW
+         f2wxMgX08Aw7gifRj9XfkggPlcpJQNeIwGmAa4v0oC+r5DH7lOQv8fpmZfwemPw993Rt
+         zOtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoaEkH7B3aCs5zPkxCAyZ8u6T/MuB/MN8Mg3MXfh+vdmASrPTYiSOiacBmSi9HWUU5nBCwbRGe4WZa+tc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvvCRC4k9h2TG7QODylSY2Lic1Si4k3aK4IslrPXYlNzy7m+Sr
+	icnq43qXT0Pgy0WYYc0M4dSCaKjT2nonvijvFRx+7vzNJzGBQXsC67pH7YwJlVkVgmo=
+X-Gm-Gg: ASbGncskNPLpAHY0O04KNSPXT1ubpek0RdpOU8Le4SlMRJ7BicbLjnWY+EBrIvyAGIv
+	iFMMu8LeneS0DFB5lmtMQ/LT1oK0m2URasws0AX1rd4XtuLwsr6jKs9RjKPw1+IQDAjd96+wCzi
+	XDSijFRi9vOIpS+nCgV1DT2VudrFU0dt6YOb1qRj7pQKwCwSm2xvnZPWIYhgI+zopVQg6rw+6On
+	EDMb2fKahGHePZcKALfz1yuw11ZUeDP1Dxfl29M+SB/iI8/ZzcoIwg65slbD+LTWI+TVuHP6BBZ
+	ZLx8GjxvHYwmvuLKDw7oaPrBfwidGqOpO9S7kRxXKNqe36IJXYr64T4SebNnrnhzAv7yGIr/0+t
+	ghwbv0JASm6W7R2fWRX+spBiRw8b+Wo/qfKxed8ICf28i2ZZTZ3ZXM617Xielxfegzw8eqpqlgA
+	==
+X-Google-Smtp-Source: AGHT+IETufX5eGXswBWfONkkjs2mG4X/3qG9UfNw/it3L+63kjQY2ng38lS96kK0Oo6oyMasEeziaA==
+X-Received: by 2002:a05:6a21:7781:b0:253:6b75:bc00 with SMTP id adf61e73a8af0-2536b75bea1mr17103823637.37.1757493763816;
+        Wed, 10 Sep 2025 01:42:43 -0700 (PDT)
+Received: from linux.internal.baidu.com ([111.108.111.137])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b548a24fc29sm1953653a12.0.2025.09.10.01.42.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 01:42:42 -0700 (PDT)
+From: lirongqing <roy.qing.li@gmail.com>
+X-Google-Original-From: lirongqing <lirongqing@baidu.com>
+To: dhowells@redhat.com,
+	marc.dionne@auristor.com,
+	linux-afs@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	oleg@redhat.com
+Cc: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH][v3] afs: Remove erroneous seq |= 1 in volume lookup loop
+Date: Wed, 10 Sep 2025 16:42:35 +0800
+Message-Id: <20250910084235.2630-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 05/20] dt-bindings: memory: factorise LPDDR props into
- SDRAM props
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
- Julius Werner <jwerner@chromium.org>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Jonathan Corbet <corbet@lwn.net>, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
- =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-References: <20250909-b4-ddrperfm-upstream-v6-0-ce082cc801b5@gmail.com>
- <20250909-b4-ddrperfm-upstream-v6-5-ce082cc801b5@gmail.com>
- <20250910-flat-raptor-of-temperance-5e8c7c@kuoka>
-Content-Language: en-US
-From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-In-Reply-To: <20250910-flat-raptor-of-temperance-5e8c7c@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 10/09/2025 09:54, Krzysztof Kozlowski wrote:
-> On Tue, Sep 09, 2025 at 12:12:12PM +0200, Clément Le Goffic wrote:
->> From: Clément Le Goffic <clement.legoffic@foss.st.com>
->>
->> LPDDR and DDR bindings are SDRAM types and are likely to share the same
->> properties (at least for density, io-width and reg).
->> To avoid bindings duplication, factorise the properties.
->>
->> The compatible description has been updated because the MR (Mode
->> registers) used to get manufacturer ID and revision ID are not present
->> in case of DDR.
->> Those information should be in a SPD (Serial Presence Detect) EEPROM in
->> case of DIMM module or are known in case of soldered memory chips as
->> they are in the datasheet of the memory chips.
->>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-> 
-> Is this email defunct now, that you add second SoB?
+From: Li RongQing <lirongqing@baidu.com>
 
-Yes, but I still want to upstream it and was thinking to keep the 
-"original" author even if it is me.
-Am I wrong here ? What should I do ?
+The `seq |= 1` operation in the volume lookup loop is incorrect because:
+seq is already incremented at start, making it odd in next iteration
+which triggers lock, but The `|= 1` operation causes seq to be even
+and unintended lockless operation
 
->> Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
+Remove this erroneous operation to maintain proper lock sequencing.
 
+Fixes: 32222f09782f ("afs: Apply server breaks to mmap'd files in the call processor")
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+---
+Diff with v2: add Reviewed-by, and Fixes tag
+Diff with v1: rewrite the changelog
+
+ fs/afs/callback.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/afs/callback.c b/fs/afs/callback.c
+index 69e1dd5..2c0d274 100644
+--- a/fs/afs/callback.c
++++ b/fs/afs/callback.c
+@@ -140,7 +140,6 @@ static struct afs_volume *afs_lookup_volume_rcu(struct afs_cell *cell,
+ 			break;
+ 		if (!need_seqretry(&cell->volume_lock, seq))
+ 			break;
+-		seq |= 1; /* Want a lock next time */
+ 	}
+ 
+ 	done_seqretry(&cell->volume_lock, seq);
+-- 
+2.9.4
 
 
