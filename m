@@ -1,157 +1,163 @@
-Return-Path: <linux-kernel+bounces-809901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25D6B5134E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:55:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824FAB5134F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E30616C3CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:55:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78E463B39E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633DF314A6A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF903148C7;
 	Wed, 10 Sep 2025 09:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JP8VSGb8"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="orwxfTZ0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5221518FC97
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736E23019CB;
+	Wed, 10 Sep 2025 09:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757498129; cv=none; b=kMRnrSQcsSWJI1ZE2gZ+d/GLPJYwMtxm7WxhV/cl4TTVyeGq+nVcLKpmXZiv484ZzSzjJSr0medR4GLNIK16ffZfINnAEZFVk3P5hb2bwwzr7BfmoEuX3kTf2MJj30tTw4bd+xyolaRb9nwYTgnNo1jYAuivXqnGh2d/I+oqX0w=
+	t=1757498129; cv=none; b=F5t49Sxufy6joSATcQi75GcqjVxcOgPQtqb3RGs4WuCDdU9lrD2k944B+Zqi6u3VDe7a4Cze2RzJyos1qZrxYWWmk1ISKO9X41vKTR56XMh2rZI2dOmrF0JqhBfpZ33g2jNk1/3krYsXkNLn6928VcHSx9ix4TDcCigfDdeyKhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757498129; c=relaxed/simple;
-	bh=xfTqnHdvgd+w7nvWVenmv/Zl+heyzHkpemmTdjv859E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rCPCg33mIUTBo9e3Dkvo/+kB5asqvncDviguPjmZjE1/vtCi7UQORVIDbUsapy8JPNLGh7gel1Edl+S8aSN8IBnJeiwAncU0hyuK2zPv4821cs8Wn/MAzP6Cjs39KyIYQ/BLD87Fe3nS+iuLuS9+EW6uicRNG/eiXfMFJQk6lgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JP8VSGb8; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7741991159bso6230036b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:55:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1757498128; x=1758102928; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HCDCW1DJDwjeVUsbjWyUYxZAgB9l/KJebELwDQQoPFg=;
-        b=JP8VSGb8Ck7n+3ZhZkekFtRjnJjikAE+htg4//7eC5nDBavtLgNgv7WeiDvw2KDC+k
-         g4fZVlqiwFVFhmf4dgQKm+UI9yCHcFGxJ4EfQFkISBVZEPVOVe5TMBGQJGIYorZmcFKY
-         zZp0ImfOb9K0gcy+MjfYegcX4fUMSc3nWzX3dSJ1z4vLU+T1xZJr6Zc5RDAsTYfpahxY
-         mqwxwetdbPcdFOQ3eDX/GYu/NZOpnUq1itvrKAtyGCnLOcSTA8wJURSKpWZSsL6oFHWz
-         4G8Dp5vTnjgtDhGAwzaEQpqfLW0rEvOXcQ6Lfb/oq9Y7PxBbS30MBCOUKz5W1cShSgUt
-         +wJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757498128; x=1758102928;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HCDCW1DJDwjeVUsbjWyUYxZAgB9l/KJebELwDQQoPFg=;
-        b=N2fS1woP+77MOy9QMvtrDPVwNRT/Iba0Zb4x8BdAX4RqGuirHshT8qUe8K6ETI8U0E
-         UjfGlaqXWBVXbckDDyjwyi84nIaAxrLJ5FFEcL5aUD0t5s59Ld0AW2bLunO1x1iTldYx
-         rBS75j/ULCwF+acN3a1H86yadF0AzZ8hR4K8pL7kKOuBfoFczZ1yr66bAs79FmZdT4a5
-         NDDk0YfChRYxR4bS5UXhl1XZpzKhlq/hkzWLtqGepsmvhcaGhjWO25bgczeSRw3Qv0Ca
-         /xPipRHi+A646fCttfPfO4aWq9+dWpLYiYWyqJatCqqMsibbImWDycwwnIA0PU8o4fRl
-         fpKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWaKwrZPJN7iQK9oPz17pkI7lZmgtU4I8pVOVVA7NFaxioQntIj+YpTm1M/bsICeY1tG/TXa3VbeN9ozfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvigyTzM90QXkwHvS0juQf9PUOU0jP58KM4hUKmw48suYB3whV
-	S52lQlngpaTdmL/w9epxFLTMK/yXHNyYAevVyz4n3bXoJ7JDvWcdi+1AmTEgaAjT5g==
-X-Gm-Gg: ASbGncvKMCUIK+EmXuMsPKP49vrtvblA0r8Q2uYkbFTi07g3uZMb2I10dEm+UuyjkJM
-	wF8d8T+VImTk7y9ePaczkDez3VbKm6NrMBNJf1bOaBYRRJ4mWP3SDEWtA+Asf8dn2x3xeSl7a7v
-	GEQ01gKsSmbqzSBuOgSW2mlMOLjbk/0JMyrV5/Y+405Xnl98pBaAL8+mBjrl/IYb90gfnWBTNMd
-	6cSa9yhTcj8iphj+oF8VXQGSNYvjeOvqayZvlBnNB0LB/y2TByuG2uPV2tQkVsMmKpMWT/I8IVa
-	zWBxryoIMLwMRlvYlmIPZCfXTTHpJAa3oaYYffvySw7x86DX+EjLILcFhNBj+YdR3GDT6i4h3DO
-	zV10WZfKZXEbzoUAQi8/F4r0jzFfP0UVJKTj+Jn1VnR7u9fNyAQ==
-X-Google-Smtp-Source: AGHT+IFmU3xrUacDZpXLML8Y+6XKXJYFALe5fXyF/Z8mNdu2z6DBp0qPcfflXDumO96Ad3U8GHtFWg==
-X-Received: by 2002:a05:6a20:258c:b0:251:9f29:4544 with SMTP id adf61e73a8af0-2534441f61emr23884742637.34.1757498127563;
-        Wed, 10 Sep 2025 02:55:27 -0700 (PDT)
-Received: from bytedance ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b548a50cb23sm2065239a12.19.2025.09.10.02.55.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 02:55:27 -0700 (PDT)
-Date: Wed, 10 Sep 2025 17:55:03 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
-	Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	Michal <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH] sched/fair: Propagate load for throttled cfs_rq
-Message-ID: <20250910095503.GA261@bytedance>
-References: <20250908110548.GA35@bytedance>
- <202509091233.f6nP3BVh-lkp@intel.com>
- <20250909061746.GB35@bytedance>
- <fd017cc8-0eb0-4961-8f59-575505f27a68@amd.com>
- <20250909062715.GC35@bytedance>
+	bh=gwB7IsSFnafsHhjWiTmkHgy5V/fzmzLmzwOnP4sv0Sk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SM1F9g9VS2mJfsQjg6VWf7oz5AC6ANGNPm4x648ZQzoYorhgFn2wRE3sxPN+h6F4fL7S0+uYNVRNAMXbBJqfWLJVySXKkEMHolcGNNTjKl3q+c20Z1DQU6k3blnoh6yCoJXvbrK877sBflUZz+ZnlHS4DpfECQYyPaeeFNemQoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=orwxfTZ0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B23E0C4CEF0;
+	Wed, 10 Sep 2025 09:55:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757498129;
+	bh=gwB7IsSFnafsHhjWiTmkHgy5V/fzmzLmzwOnP4sv0Sk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=orwxfTZ0ex27Hl9cR5OrLc6DngPR8k5DtzR3ge2XhatQIgmqS1LLO9nVwygWnaSRk
+	 PxUcY6zDjdQNzuzOTVOVhrBR6KcNoPBKus2U5e466UOzvUz5PQ1F2vTTOutdmqeoP7
+	 QpCuEN1GgwkZuY21Nzee7izs5Vp41v6H4irqkEiJmpZFlzb1Dzn9laDKADT4drNlcZ
+	 V9gZfU1431Rs/bTD9DXwosuKyqCmQQ4cyJL+ejJrkmZxo1qqTAOjJhp3AZ7BgigDIO
+	 YZtrVjxMl2XRGdQrqPYP5Q9fsqqdafU2tRuKRn94hiAkjoz1+H4UwjjqIL6DPBNalu
+	 8N7IP/yKnL9QQ==
+Message-ID: <5b0b81b3-aaa1-4b5f-886e-8083276b7f65@kernel.org>
+Date: Wed, 10 Sep 2025 11:55:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909062715.GC35@bytedance>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH 5.10] mptcp: pm: kernel: flush: do not reset ADD_ADDR
+ limit
+Content-Language: en-GB, fr-BE
+To: "Heyne, Maximilian" <mheyne@amazon.de>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ Thomas Dreibholz <dreibh@simula.no>, Mat Martineau <martineau@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>,
+ Mat Martineau <mathew.j.martineau@linux.intel.com>,
+ Matthieu Baerts <matthieu.baerts@tessares.net>,
+ "David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "mptcp@lists.01.org" <mptcp@lists.01.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250910-nicety-alert-0e004251@mheyne-amazon>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20250910-nicety-alert-0e004251@mheyne-amazon>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 09, 2025 at 02:27:15PM +0800, Aaron Lu wrote:
-> On Tue, Sep 09, 2025 at 11:52:55AM +0530, K Prateek Nayak wrote:
-> > Hello Aaron,
-> > 
-> > On 9/9/2025 11:47 AM, Aaron Lu wrote:
-> > >>>> kernel/sched/fair.c:6747:1: error: expected identifier or '(' before '+' token
-> > >>     6747 | +static inline bool cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
-> > >>          | ^
-> > > 
-> > > Sigh, I remembered I did a build test with !CFS_BANDWIDTH and now I went
-> > > to check that build directory and noticed I didn't have CFS_BANDWIDTH
-> > > disabled...
-> > > 
-> > > Sorry for the trouble, will send an updated patch later.
-> > 
-> > While at it, another nit.
-> > 
-> > On 9/8/2025 4:35 PM, Aaron Lu wrote:
-> > > @@ -13151,10 +13161,13 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
-> > >  {
-> > >  	struct cfs_rq *cfs_rq = cfs_rq_of(se);
-> > >  
-> > > -	if (cfs_rq_throttled(cfs_rq))
-> > > -		return;
-> > > -
-> > > -	if (!throttled_hierarchy(cfs_rq))
-> > > +	/*
-> > > +	 * If a task gets attached to this cfs_rq and before being queued,
-> > > +	 * it gets migrated to another CPU due to reasons like cpuset change,
-> > > +	 * we need to make sure this cfs_rq stays on leaf cfs_rq list to
-> > > +	 * have that removed load decayed or it can cause faireness problem.
-> > > +	 */
-> > > +	if(!cfs_rq_pelt_clock_throttled(cfs_rq))
-> > 
-> >           ^ Can you also add a space after the "if" here.
-> >
-> 
-> Yeah, I definitely should do that, thanks for catching this.
-> 
-> > >  		list_add_leaf_cfs_rq(cfs_rq);
-> > 
+Hi Maximilian,
 
-Just a note that the updated patch is sent here:
-https://lore.kernel.org/lkml/20250910095044.278-2-ziqianlu@bytedance.com/
+On 10/09/2025 11:28, Heyne, Maximilian wrote:
+> From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+> 
+> commit 68fc0f4b0d25692940cdc85c68e366cae63e1757 upstream.
+> 
+> A flush of the MPTCP endpoints should not affect the MPTCP limits. In
+> other words, 'ip mptcp endpoint flush' should not change 'ip mptcp
+> limits'.
+> 
+> But it was the case: the MPTCP_PM_ATTR_RCV_ADD_ADDRS (add_addr_accepted)
+> limit was reset by accident. Removing the reset of this counter during a
+> flush fixes this issue.
+> 
+> Fixes: 01cacb00b35c ("mptcp: add netlink-based PM")
+> Cc: stable@vger.kernel.org
+> Reported-by: Thomas Dreibholz <dreibh@simula.no>
+> Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/579
+> Reviewed-by: Mat Martineau <martineau@kernel.org>
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> Link: https://patch.msgid.link/20250815-net-mptcp-misc-fixes-6-17-rc2-v1-2-521fe9957892@kernel.org
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> [adjusted patch by removing WRITE_ONCE to take into account the missing
+>  commit 72603d207d59 ("mptcp: use WRITE_ONCE for the pernet *_max")]
+> Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+> ---
+> For some reason only the corresponding selftest patch was backported and
+> it's now failing on 5.10 kernels. I tested that with this patch the
+> selftest is succeeding again.
+
+Thank you for this backport. It looks good to me!
+
+Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
+
+I was waiting for the FAILED notification for this patch before adapting
+it for v5.10, but it looks like I never got it, see:
+
+https://lore.kernel.org/017c0cd3-7391-4d53-9e3e-ebdea5fa26da@kernel.org
+
+No problem, that was not critical, and we now have a fix :)
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
+
 
