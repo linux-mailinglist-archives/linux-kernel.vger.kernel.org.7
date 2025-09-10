@@ -1,93 +1,122 @@
-Return-Path: <linux-kernel+bounces-809523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE274B50EA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84FEFB50E84
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14EC21BC63C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 07:01:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB89B1894B3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 06:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746C3303A00;
-	Wed, 10 Sep 2025 07:00:42 +0000 (UTC)
-Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB4B30597D;
+	Wed, 10 Sep 2025 06:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ezNvTq1t"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA4A1DF99C;
-	Wed, 10 Sep 2025 07:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C10219D89E;
+	Wed, 10 Sep 2025 06:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757487642; cv=none; b=mn1Rl9ey71i3Jp6PIG3KR2oMyxxohYdO3noiLfnpw4V7mz7XVHf+3s6VN9zQNY5VYAMwlL8mu3kez0494m4Mh/QNp8s1vl9lUEbqKQDikQQ1/ESnWgrzQiYPKTUCDMxQVt+TPU8PdzC4tmFzKNbcERZMM1d2bXA23e/OEgh5+4k=
+	t=1757487168; cv=none; b=sLn0VwOF2IovQgiyDCzLTki1hH+5Py4vjOTT7q7mtiU1WP2YxMISr2w999mn7w8I0R78Z0CQWNdHQz8ht/HPtldEaWE0fseRhq02KPIsvkIoa4X9oRJmVgj6+dc8cPYZCjP4Q2pal76G4tUOz03kVaowO8qGhJhLDM8E3g2Jryo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757487642; c=relaxed/simple;
-	bh=O5vcD4Ldjc71ve0d02RfmDHc6hlfFFueKhpbZB+vRrM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WToCNDB6gbWmayAglbszjUULBzYCEYzh3lsqldJERpuBkGwyE/PyBUy5VGh83UEebqMiUoNxNXYqAd8VxdOi2z057TEQxK8VSmSe1U7FVJue/mwsKTFjfA9AL3Fy9fTcpAiqQaYRi2wdC7C+052zBjI+1eE77ciKMGLcrc5SSlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=nefkom.net; arc=none smtp.client-ip=212.18.0.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nefkom.net
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-	by mail-out.m-online.net (Postfix) with ESMTP id 4cMBFy3BPqz1r5hQ;
-	Wed, 10 Sep 2025 08:52:38 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.68])
-	by mail.m-online.net (Postfix) with ESMTP id 4cMBFy0d40z1qqlS;
-	Wed, 10 Sep 2025 08:52:38 +0200 (CEST)
-X-Virus-Scanned: amavis at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
- by localhost (dynscan1.mail.m-online.net [192.168.6.68]) (amavis, port 10024)
- with ESMTP id r6oSkNIfIRpU; Wed, 10 Sep 2025 08:52:28 +0200 (CEST)
-X-Auth-Info: GsbNNI76Sv79L7YvGPmcrwtzn4oM1W/t9R3+pP9F4xssEftMcVyEECTVPJd+4YJQ
-Received: from igel.home (aftr-82-135-83-103.dynamic.mnet-online.de [82.135.83.103])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.mnet-online.de (Postfix) with ESMTPSA;
-	Wed, 10 Sep 2025 08:52:28 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-	id 1C52A2C1920; Wed, 10 Sep 2025 08:52:28 +0200 (CEST)
-From: Andreas Schwab <schwab@linux-m68k.org>
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,  Lance Yang
- <lance.yang@linux.dev>,  akpm@linux-foundation.org,  amaindex@outlook.com,
-  anna.schumaker@oracle.com,  boqun.feng@gmail.com,  geert@linux-m68k.org,
-  ioworker0@gmail.com,  joel.granados@kernel.org,  jstultz@google.com,
-  leonylgao@tencent.com,  linux-kernel@vger.kernel.org,
-  linux-m68k@lists.linux-m68k.org,  longman@redhat.com,
-  mhiramat@kernel.org,  mingo@redhat.com,  mingzhe.yang@ly.com,
-  oak@helsinkinet.fi,  peterz@infradead.org,  rostedt@goodmis.org,
-  senozhatsky@chromium.org,  tfiga@chromium.org,  will@kernel.org,
-  stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
- pointers
-In-Reply-To: <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org> (Finn
-	Thain's message of "Wed, 10 Sep 2025 10:07:04 +1000 (AEST)")
-References: <20250909145243.17119-1-lance.yang@linux.dev>
-	<yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
-	<99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
-Date: Wed, 10 Sep 2025 08:52:28 +0200
-Message-ID: <875xdqsssz.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1757487168; c=relaxed/simple;
+	bh=Xbxzbd9N/J4R8JD9GiiHN7QemzWWqNtVAcebecs6kMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OW4GA04T9cqGtsmMaowyS4OdAtCwnyRj7/0hOMmGbK0EkybW+/VQ0A98ibnq35/6kFsbIEbg6s8PPnLOP05k8oCN4thlcNAjcJH4wx79/RBTMEqFf3/dvvPn9cka/9FimnHO6HAq4AJmfty12OEAkgkaV008/gLCkdKlO2gtox8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ezNvTq1t; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757487167; x=1789023167;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Xbxzbd9N/J4R8JD9GiiHN7QemzWWqNtVAcebecs6kMo=;
+  b=ezNvTq1tO5XqYhDZlDjPmYguvYxgjfCw3cpMG/gxQot8zN/WCRC5eba9
+   YIdLH69dpEPtOnZ9DG0++mzBs/TvkhtpZ4sD0CMByffacD1bVmebLkBwz
+   OgapBoyIdWnWq85fLN/Xx7Rca3BeZAvOty2SvqdPyq080omW4MolxGf8X
+   QhFM0dxLrRMTfQnP2VBP7ZJGl+9rSEta0kYyoCxp5ZK+3lJN/h2zJwwaW
+   zsOszKL2Ee6aNQHnB/H0t6PG/DOZMbpnmdStuvDyXkLVNLrI79htlSDrh
+   Pgmgh3n0wsSitnNKqGkKYvhnx4TX6lUhbUysE6B3Y0p1lJ19HFlZzX7UI
+   w==;
+X-CSE-ConnectionGUID: FuRUlq+LTf+HZHuex1/yeg==
+X-CSE-MsgGUID: XvsxKj7PQbquIsvk25WMvg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="59009251"
+X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
+   d="scan'208";a="59009251"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 23:52:46 -0700
+X-CSE-ConnectionGUID: hrfBlALWRS+/KWf7YVGKMw==
+X-CSE-MsgGUID: S5OAHpV4SDW3E4KxEva7sQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,253,1751266800"; 
+   d="scan'208";a="177579067"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.14])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2025 23:52:42 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 932A71201B4;
+	Wed, 10 Sep 2025 09:52:38 +0300 (EEST)
+Date: Wed, 10 Sep 2025 09:52:38 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Julien Massot <julien.massot@collabora.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v7 00/24] media: i2c: add Maxim GMSL2/3 serializer and
+ deserializer drivers
+Message-ID: <aMEgNtjcy1-NuBds@kekkonen.localdomain>
+References: <20250718152500.2656391-1-demonsingur@gmail.com>
+ <aLBqxQQsnY3ZK4eT@kekkonen.localdomain>
+ <d558ede0-5838-4a69-b25d-cafaa3b6cc97@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d558ede0-5838-4a69-b25d-cafaa3b6cc97@gmail.com>
 
-On Sep 10 2025, Finn Thain wrote:
+Hi Cosmin,
 
-> Linux is probably the only non-trivial program that could be feasibly 
-> rebuilt with -malign-int without ill effect (i.e. without breaking 
-> userland)
+On Thu, Sep 04, 2025 at 10:52:09AM +0300, Cosmin Tanislav wrote:
+> Hi Sakari.
+> 
+> I recently left Analog Devices but I will continue to try upstreaming
+> this driver. After the upstreaming is done we can switch the
+> maintainer status to someone else.
 
-No, you can't.  It would change the layout of basic user-level
-structures, breaking the syscall ABI.
+Ack, thank you.
+
+> 
+> Here's the output for the commands you asked, provided by my
+> ex-coworker. It's for MAX96716 + 2xMAX96717 + 2x IMX219.
+> 
+> Do we need to fix anything based on the compliance tests?
+
+Looking at the errors, it looks like some fixing is needed, possibly also
+on v4l2-compliance side.
+
+Regarding GMSL, are the image width, height or mbus code used for anything
+by the serialiser or deserialiser drivers?
 
 -- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+Kind regards,
+
+Sakari Ailus
 
