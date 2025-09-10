@@ -1,175 +1,101 @@
-Return-Path: <linux-kernel+bounces-809807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB1AB51244
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:17:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8705B51249
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F3694E25CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:17:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 241BA7ADD3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F58311C27;
-	Wed, 10 Sep 2025 09:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wpQ4RqM4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9XA33nXs";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wpQ4RqM4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9XA33nXs"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEB13081B6
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF143128D3;
+	Wed, 10 Sep 2025 09:17:58 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561DD3112D8;
+	Wed, 10 Sep 2025 09:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757495854; cv=none; b=EJ71oYVkrPGuipDA9olaD2XYnnU533hiAo8Wam58Q2DAzTJW48u81IN/xf9Cyu0E1yrLIaRAJiYPNtDXxKXO1IsOqZTVzmyw0LoFRnDJGzMteQOjlKL/JSseC6aQI8D1Rva7wfjbn/KqIN/VbUEKYs0XvjLTzrO1QEc2B0MFfeQ=
+	t=1757495877; cv=none; b=G0h9SH4qJmz/OuFGH3NBnVnWTTWV/fRqIczOyI8C5f/Z37U+Ve07e2BLmGqMrMJH9NMuydlu0oOc0KYWyeKtcGonxJV85q86E95rjrj40suRI5nfh5kcrf5kjtgtDExczmhTNpqf1hu4znVo3k44cLgT2tfAcZiDIHlB5qDNEiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757495854; c=relaxed/simple;
-	bh=SjKs9oCrenImG0RG3XvxaFxGywWDapdI/0foyNwUtiY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mewRYbdYeWderusNrXmFKC5NGU0Lh7s42kIE16cljR8w6WuqzSYSYfvwZGSiOSbZxIxmKUDDkCpTnR7v1grSHHVrho8YJN6Cw1F0bl+uLVd5vRMGouNGWzyK7cDEezJtmVterJwvYirZ5cZQ5wHNRy90yaMoFpasNHYISjczZCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wpQ4RqM4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9XA33nXs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wpQ4RqM4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9XA33nXs; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2E932371F6;
-	Wed, 10 Sep 2025 09:17:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757495850; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/JapfLJgp168zjhr+Azwnb5KVJmSjxr/r/6m5rjAdZ4=;
-	b=wpQ4RqM4hoyqGskZ/trspeAImZoKmWXUtwxQoZP8HXj9sMw/cVJOcn+upqK+T2nFuqfIiw
-	tReqlEZbEZIm+YwEkJQ3Xw2sToiijex8+bcR0c1MxlQUmK4vDPEycXYtycY1V030M7EdvX
-	2captUHoWBH0Lec8nxSs0xpgE00px9M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757495850;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/JapfLJgp168zjhr+Azwnb5KVJmSjxr/r/6m5rjAdZ4=;
-	b=9XA33nXssEmV4bGhbKRKt4k4+6qcNP+rnvlv7wxtcEO8i1LJQ045V3QgPK0w9Qfjn8OlGR
-	boRCwt6pwhTDE8DQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=wpQ4RqM4;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=9XA33nXs
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757495850; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/JapfLJgp168zjhr+Azwnb5KVJmSjxr/r/6m5rjAdZ4=;
-	b=wpQ4RqM4hoyqGskZ/trspeAImZoKmWXUtwxQoZP8HXj9sMw/cVJOcn+upqK+T2nFuqfIiw
-	tReqlEZbEZIm+YwEkJQ3Xw2sToiijex8+bcR0c1MxlQUmK4vDPEycXYtycY1V030M7EdvX
-	2captUHoWBH0Lec8nxSs0xpgE00px9M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757495850;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/JapfLJgp168zjhr+Azwnb5KVJmSjxr/r/6m5rjAdZ4=;
-	b=9XA33nXssEmV4bGhbKRKt4k4+6qcNP+rnvlv7wxtcEO8i1LJQ045V3QgPK0w9Qfjn8OlGR
-	boRCwt6pwhTDE8DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A8F2513301;
-	Wed, 10 Sep 2025 09:17:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +/D5JylCwWiXPAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 10 Sep 2025 09:17:29 +0000
-Date: Wed, 10 Sep 2025 11:17:29 +0200
-Message-ID: <87zfb2vf86.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Patrick Lai <plai@qti.qualcomm.com>,
-	Annemarie Porter <annemari@quicinc.com>,
-	srinivas.kandagatla@oss.qualcomm.com,
-	linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1757495877; c=relaxed/simple;
+	bh=RLLm9pnVH37H7xjf5OXNxYNi/k874wPLIP1MoO6qGR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q1eUGOD80lwFgwhxaAz/XOMVvaW1Armc9p5Rzg4C3YOApV8YF1xDzQ/G1gO6/hB8k0vcPa7c6fyOTW0piQWtwVRpBLy9lbaMEXue+twKJV0tesSBdK4JbTTZBbpg3aGivH2n8DwqQLw+IFOqauz0sBo5AjPuvME+EV75efu5xaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee468c14237dd6-58e69;
+	Wed, 10 Sep 2025 17:17:47 +0800 (CST)
+X-RM-TRANSID:2ee468c14237dd6-58e69
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from Z04181454368174 (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee468c14238228-95f8e;
+	Wed, 10 Sep 2025 17:17:47 +0800 (CST)
+X-RM-TRANSID:2ee468c14238228-95f8e
+From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+To: mst@redhat.com
+Cc: jasowang@redhat.com,
+	eperezma@redhat.com,
+	kvm@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	kernel@oss.qualcomm.com,
-	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-Subject: Re: [PATCH v2 1/2] ALSA: compress: add raw opus codec define and opus decoder structs
-In-Reply-To: <20250910-opus_codec_rfc_v1-v2-1-35fb6536df6b@linaro.org>
-References: <20250910-opus_codec_rfc_v1-v2-0-35fb6536df6b@linaro.org>
-	<20250910-opus_codec_rfc_v1-v2-1-35fb6536df6b@linaro.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Subject: [PATCH] vhost: vringh: Modify the return value check
+Date: Wed, 10 Sep 2025 17:17:38 +0800
+Message-ID: <20250910091739.2999-1-zhangjiao2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,perex.cz,suse.com,gmail.com,qti.qualcomm.com,quicinc.com,oss.qualcomm.com,vger.kernel.org,linaro.org,linux.dev];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 2E932371F6
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 10 Sep 2025 10:11:41 +0200,
-Alexey Klimov wrote:
-> +struct snd_dec_opus {
-> +	union {
-> +		struct {
-> +			__u8 minor:4;
-> +			__u8 major:4;
-> +		} __attribute__((packed)) fields;
+From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-Bit fields aren't really good for ABI definition, as it's not well
-defined.  I'd rather leave it as a u8.  If any, you can provide a
-bitmask definition or a macro to retrieve the version numbers.
+The return value of copy_from_iter and copy_to_iter can't be negative,
+check whether the copied lengths are equal.
 
-Also, don't forget to bump the API protocol number.
-It's been already increased to 0.4.0 for 64bit tstamp support, and
-yours need to increase one more.
+Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+---
+ drivers/vhost/vringh.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-(That is, please make sure to create patches based on linux-next, or
- for-next branch of sound git tree.)
+diff --git a/drivers/vhost/vringh.c b/drivers/vhost/vringh.c
+index 9f27c3f6091b..0c8a17cbb22e 100644
+--- a/drivers/vhost/vringh.c
++++ b/drivers/vhost/vringh.c
+@@ -1115,6 +1115,7 @@ static inline int copy_from_iotlb(const struct vringh *vrh, void *dst,
+ 		struct iov_iter iter;
+ 		u64 translated;
+ 		int ret;
++		size_t size;
+ 
+ 		ret = iotlb_translate(vrh, (u64)(uintptr_t)src,
+ 				      len - total_translated, &translated,
+@@ -1132,9 +1133,9 @@ static inline int copy_from_iotlb(const struct vringh *vrh, void *dst,
+ 				      translated);
+ 		}
+ 
+-		ret = copy_from_iter(dst, translated, &iter);
+-		if (ret < 0)
+-			return ret;
++		size = copy_from_iter(dst, translated, &iter);
++		if (size != translated)
++			return -EFAULT;
+ 
+ 		src += translated;
+ 		dst += translated;
+-- 
+2.33.0
 
 
-thanks,
 
-Takashi
 
