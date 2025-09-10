@@ -1,280 +1,135 @@
-Return-Path: <linux-kernel+bounces-810069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0966B5156C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C183CB51571
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 13:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C95F01B286E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:24:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0273189F772
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24043112CF;
-	Wed, 10 Sep 2025 11:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD7F31986D;
+	Wed, 10 Sep 2025 11:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYPyBuF3"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FL/dj5me"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AE927B343;
-	Wed, 10 Sep 2025 11:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6AE27B343;
+	Wed, 10 Sep 2025 11:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757503455; cv=none; b=duojfEBqKMJpgx8w5MYvMJ+GSbal+cDDyG6fa2/Yn+N1BX4WCLzcPjx+ebJ2mkXBe4NN49JaEtVLTpp5H3MUhI7Ff781jDkIdsLuTc86izoFRBXnd67ex/evCOyLyQt+9zX7a7xkSsdGoVwRvyCL2Dix2tUHkAtotnAmNrB+ggU=
+	t=1757503460; cv=none; b=iEiyZ056nNztb4xFtmWdsyC7zP0L2c8ezw65fWNgffuhwSzg/bgIo6aAeT3dq5RC5U/BBvJv5d7WDG/NEBiUVUJSvyEsAHv2wJOfr+s+TzO1egC6rb+u40HyYeaoN80eUZfayTzaMqOKihHCPRZAliF5RmmkSqXAxtfAbsTbyI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757503455; c=relaxed/simple;
-	bh=wpa4q3p3EsV3E2H05DNlRQHr7Fm+gWL/8Zz+03Rmda4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9GJDfGn4iZmF7bfRUYD+JfPObjQNwyE7XAnsMCT9R4ulXC2FUl2S2Dqs+2DTuyn6ujeEZ1O18uRmj1KtEQbuhE2QmSuyCozThWDsRLetNcy0diLKfAWuq36M1Too2G2Mbo6RAJt83InWjFtaOvdW4IEBIiNm7BlxGsnjRhBloI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYPyBuF3; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-56088927dcbso8199250e87.3;
-        Wed, 10 Sep 2025 04:24:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757503452; x=1758108252; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KR0vKP+eM32S8H3L31SnWgV0UccCcsyZbHsgICsXzec=;
-        b=gYPyBuF33avl4oJk5rZ8IQPgDo/Nvq3kpb7OZ3MkrUy7GKBTBHD/m9oNWkgYI82mGq
-         DEbXF2anoYuQlaccKc/LDzm4UEHgqT7k03/cKlzLdwVZzlyHhOBvgzRrxNKq68iaUoqS
-         +skvyCOdzEtE+kRx57K7c7JStkzIZWw4J/TK4RPqavZlVhBG2BziAsBl4w/WLA9Uorih
-         zl7rxl8qhNgZsl7n7OjAcWSEsitntfYO80Pi0YDBuq6G48uzx46ko57s22+0bBQ/3qQ5
-         RNZVlQQiqSdb4MetUQMcmoAD3XShxjVAPSiLyYFjoK1PoqxSTqw5MmlO6Qk1JqOnvtQg
-         0a7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757503452; x=1758108252;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KR0vKP+eM32S8H3L31SnWgV0UccCcsyZbHsgICsXzec=;
-        b=aiAN6iwo+QA+wGvA97QYE42MTwCVgzqJfO2qJ0fRC3tiX1KaUYdk3UhUT3JnVoiFLB
-         EBwV6xxPUE9lXFNO3hhAphtvIiU2tMYy2NmJvqJqZEPdrnqXK8G0vUFBV4W9g0TxCfNR
-         rATSD7n7L33gP2veXzpR28vt2XVazQ8FJkhywUqjYYOKLOnBy2ux8hQuBQGzqgBXpnfl
-         odyYnqbtOA4G3XB7fJtn4QErOvG9nKCwbvvZ7XRLWOb/BvadynK9BVAHtzMaonAB2g+s
-         wmqzv4cpT6wtjmYz844Ds0HykQ8xGARzANlkX8qkgsFqDA7xGBi4+PNxYsmcus+IEN4w
-         Q9Og==
-X-Forwarded-Encrypted: i=1; AJvYcCU1zGrK1qkEyISK7ObRUkFNGM19LQCtgEuhkA6PQ1q0OILFaGCkFysjTebIfRt9KHYr90XiJPxgwlMKTRqo@vger.kernel.org, AJvYcCVH4BEC5QpilXLAPW3MiPdeDmBBBWGV+SZJ50uPL0klZkINWxk5CCE5YXg9te2FGQLseJgbLaAx6eyI@vger.kernel.org, AJvYcCWn/jCdfIPef059Rtd7XCkJB34ofMDZZ+ozbvLlYdmsw4kTx4rOphQGrvJsfrlsUS+4cpzkw5fbuOZDLQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsfTnxQOdbIY634zEccC0e9GotgjtiD/STXsr9bNFP1mhWo1Rz
-	9+so2CJaiTKu3J3gOABtmXog5+ZviqYhToR3Z/y6KDB7BQauH8IybO/e
-X-Gm-Gg: ASbGncv1sjm2LqosZYj+ha3Kn3Wgr3IVY6NH10UDmJH95OL0ZfyQtd/116gRFExJKtY
-	IM+UEGwRxlIFKZjWCvqpN7CpShtv/7wTF7eA5qWXo7tPfRVHbpOZ1UbeqtGT7prfFDS1J8pUZD1
-	V/XUu8Bb3u6vIevxl2OSbs/elVlHxhuiT3c3IdNlwM4AnF+N0So9CFD1SxcEvKdw9UmnL8GZ9+r
-	17GuTueRgVHetjPtF12uA7EyNxNnOSZbOs4BBsp3PqL1+qOfIU6fc1ty6NJ9ggitCT7u/58w40R
-	y78ZquSoCdiCZvkSQ/Hm3jtvpMVQjYqP1H2Z5o2r11oxvonPyhtry6JHq9AJIop6v6T0gyATiQ2
-	9zKZi0iQXvQkkasII+ZkuqBJuiZGu7ojuEzOcidJh
-X-Google-Smtp-Source: AGHT+IHKpvMa5s3+nE++NnYM74FEMfo148Wo22o6hH1L4tcWnAgaSlMeUWd6jpdX9ok88HTMFIHukQ==
-X-Received: by 2002:a05:6512:63cf:10b0:562:1159:5161 with SMTP id 2adb3069b0e04-56261219d12mr5013712e87.31.1757503451427;
-        Wed, 10 Sep 2025 04:24:11 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5680c8fa580sm1203749e87.42.2025.09.10.04.24.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 04:24:10 -0700 (PDT)
-Date: Wed, 10 Sep 2025 14:24:06 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v4 1/3] dt-bindings: iio: adc: ROHM BD79112 ADC/GPIO
-Message-ID: <20250910-bd79112-v4-1-f82f43746a8c@gmail.com>
-References: <20250910-bd79112-v4-0-f82f43746a8c@gmail.com>
+	s=arc-20240116; t=1757503460; c=relaxed/simple;
+	bh=CoSMwZcgIoslrmBoSGqaGNgWs2/5Mw7JyzF+gXEqWtg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P2k5VFi1p0ig8CkeewxjHf6TnrCQ5w4VYmNtEvK3UIARbrsROMLCtiUzZ3sz6hDNU/R5lcrMoqOMXa+o0yYCrS8FCyk+QdjwntB4NZ8Fe88MtYdwk+0IaDXWFC193rHxDqxReYZDalMRjc1JXhisfRW4EaYp5NMfBnPeU4iGb24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FL/dj5me; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5974DC4CEF0;
+	Wed, 10 Sep 2025 11:24:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757503460;
+	bh=CoSMwZcgIoslrmBoSGqaGNgWs2/5Mw7JyzF+gXEqWtg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FL/dj5menRiOl+NR5GfZHb6iwp+vkn53WgsdTkxmdpzGC3JikS9wOUwUofZJcPgka
+	 I7b3+KvCQlzqFdENbc1LyyzPyve+UTt6RrHly+huBYzmYSyIdDdk0BkExnBC3YFeCU
+	 SioZJFQ7ACJUjOJIekdTYZeZuIaAbREWpv/BizYOimkJdzDVCRgXavfw/ydraDQW1l
+	 +16iu90ooYyxOISK7sKoYnE1PnWe2jd4FzEglEcfoXlWowBd4ec71ysm3zSRydA5YE
+	 vT+7FLXT2fpLexhr4RY3wM1AHf9Mog2bx/zjbH/HNxwqks37B+3UCiislcAqbhzaHv
+	 zLR1UCKvbxuVw==
+Message-ID: <ad8fbd0c-4e94-4edd-abb3-84ee9563fac3@kernel.org>
+Date: Wed, 10 Sep 2025 13:24:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i2uIKOJtXFbDDFSu"
-Content-Disposition: inline
-In-Reply-To: <20250910-bd79112-v4-0-f82f43746a8c@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3384;
- i=mazziesaccount@gmail.com; h=from:subject:message-id;
- bh=q+PdYztni/yNFMmXAS+zMK1I2vs1JpjrImQBvaSjEjs=;
- b=owEBbQGS/pANAwAKAXhQN/9N2qHFAcsmYgBowV8JqVxxxYSX7+PJuHZntJIVa9yWGALHeMTQy
- wD/t5kHDA2JATMEAAEKAB0WIQQjH5/zBlvbx8soSFN4UDf/TdqhxQUCaMFfCQAKCRB4UDf/Tdqh
- xVieCADUYkIlMiSWqkzfYBevobhIjXBuoDQLOk014GlSkhC9UQiEgYEmtikzZsGw9x/LGOhBqvH
- 15kkDoKgn25lnSavUYaSnzZ2chC4RJl248Dq9KPOTdO8BmYE52dugfwFTpGkjIAWw6JRa3J6NMD
- R1B+YZyd/+cDR/SzJorxrBUHcCtwNjyHd6O59bfuNczH4V4oWvwlpNxMuluMGHxxTXNcxJUWIce
- hAWVdeqKyAKj/ZwYhHBc7et669lp2U/bGKdFTQ8cEr4BAgMQWJjSv6KKG4FNOIpGSst0XLC/wAL
- pW/VOLRowc3CB+EjtRw38QGadWvQyIYVaWegD2GBy12dWQtH
-X-Developer-Key: i=mazziesaccount@gmail.com; a=openpgp;
- fpr=83351EE69759B11AF0A3107B40497F0C4693EF47
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] ASoC: dt-bindings: qcom,sm8250: Add QCS8300 sound
+ card
+To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
+ Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@oss.qualcomm.com, prasad.kumpatla@oss.qualcomm.com,
+ ajay.nandam@oss.qualcomm.com
+References: <20250905142647.2566951-1-mohammad.rafi.shaik@oss.qualcomm.com>
+ <20250905142647.2566951-2-mohammad.rafi.shaik@oss.qualcomm.com>
+ <43090acb-ea36-4015-b14f-78d44d789d42@kernel.org>
+ <a9507045-b900-49ee-8841-0f8fd30816ba@kernel.org>
+ <abc66798-dc91-4860-b0b4-de39a58b5745@oss.qualcomm.com>
+ <a8dcffa4-c578-46d7-8fdf-cd4f5a29a2a6@kernel.org>
+ <4c6e7e6b-2ef4-4ea8-8bf2-26c7aa8c94b8@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <4c6e7e6b-2ef4-4ea8-8bf2-26c7aa8c94b8@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 10/09/2025 13:17, Mohammad Rafi Shaik wrote:
+>>
+>> So this is the same hardware? Then no, we do not rename compatibles.
+>>
+> 
+> Agree, the existing compatible is discontinued naming convention,
+> will remove existing qcs8275 and go with qcs8300.
+> 
 
---i2uIKOJtXFbDDFSu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That would be a rename, so again "no, we do not rename compatibles".
 
-The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
-be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
+You are stuck with qcs8275.
 
-The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
-voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
-daisy-chain configuration) and maximum sampling rate is 1MSPS.
-
-Add a device tree binding document for the ROHM BD79112.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
----
-Revision history:
-v3 =3D> v4:
- - shorten the example by dropping some channels.
-
-v1 =3D> v2:
- - BD79112 can act as a GPIO controller.
----
- .../devicetree/bindings/iio/adc/rohm,bd79112.yaml  | 104 +++++++++++++++++=
-++++
- 1 file changed, 104 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/iio/adc/rohm,bd79112.yaml b/=
-Documentation/devicetree/bindings/iio/adc/rohm,bd79112.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..aa8b07c3fac1096c0d48ec64361=
-263624f2bb9fc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/rohm,bd79112.yaml
-@@ -0,0 +1,104 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/adc/rohm,bd79112.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ROHM BD79112 ADC/GPO
-+
-+maintainers:
-+  - Matti Vaittinen <mazziesaccount@gmail.com>
-+
-+description: |
-+  The ROHM BD79112 is a 12-bit, 32-channel, SAR ADC. ADC input pins can be
-+  also configured as general purpose inputs/outputs. SPI should use MODE 3.
-+
-+properties:
-+  compatible:
-+    const: rohm,bd79112
-+
-+  reg:
-+    maxItems: 1
-+
-+  spi-cpha: true
-+  spi-cpol: true
-+
-+  gpio-controller: true
-+  "#gpio-cells":
-+    const: 2
-+
-+  vdd-supply: true
-+
-+  iovdd-supply: true
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+patternProperties:
-+  "^channel@([0-9]|[12][0-9]|3[01])$":
-+    type: object
-+    $ref: /schemas/iio/adc/adc.yaml#
-+    description: Represents ADC channel. Omitted channels' inputs are GPIO=
-s.
-+
-+    properties:
-+      reg:
-+        description: AIN pin number
-+        minimum: 0
-+        maximum: 31
-+
-+    required:
-+      - reg
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - iovdd-supply
-+  - vdd-supply
-+  - spi-cpha
-+  - spi-cpol
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    spi {
-+        #address-cells =3D <1>;
-+        #size-cells =3D <0>;
-+        adc: adc@0 {
-+            compatible =3D "rohm,bd79112";
-+            reg =3D <0x0>;
-+
-+            spi-cpha;
-+            spi-cpol;
-+
-+            vdd-supply =3D <&dummyreg>;
-+            iovdd-supply =3D <&dummyreg>;
-+
-+            #address-cells =3D <1>;
-+            #size-cells =3D <0>;
-+
-+            gpio-controller;
-+            #gpio-cells =3D <2>;
-+
-+            channel@0 {
-+                reg =3D <0>;
-+            };
-+            channel@1 {
-+                reg =3D <1>;
-+            };
-+            channel@2 {
-+                reg =3D <2>;
-+            };
-+            channel@16 {
-+                reg =3D <16>;
-+            };
-+            channel@20 {
-+                reg =3D <20>;
-+            };
-+        };
-+    };
-
---=20
-2.51.0
-
-
---i2uIKOJtXFbDDFSu
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmjBX9YACgkQeFA3/03a
-ocXwDAgAhmqpgYoe1oSwMCnUa9QqWoYyrSqjCKIYpv6nqIrQlshDXlT4XoQvomuN
-vvyvlg1b5dgH1HYEKBEJZYIzBhon3DwHIjCBZSY0MRdRklNgAw43r2AyTl/u+FRI
-Gz6LDq48x9vXKXnphXz0dGh5g0DVJfJLXLsIWmLDEcTlvjDqRRQaKXh7QWdg26w4
-IG2k0OpiXPIMTrr0JEAF664RvDVsMMAX+rEJwSv1mhkMbFeZlCJd8ZIgwnxyGldS
-ljtScmxE+CXPEKK+qNoEUJDJWItl+lFVJSfjVAZ18KjnvshFkdk3h5kzyuv5f1RB
-DlTZ+aIrS2nx90MukjZCcXqlPBnBFg==
-=t8za
------END PGP SIGNATURE-----
-
---i2uIKOJtXFbDDFSu--
+Best regards,
+Krzysztof
 
