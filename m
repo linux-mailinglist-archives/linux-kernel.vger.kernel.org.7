@@ -1,192 +1,191 @@
-Return-Path: <linux-kernel+bounces-811050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E1DB52372
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:24:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 505F3B52374
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:25:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEDF21C23654
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:24:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5AE618970F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABFC3148A8;
-	Wed, 10 Sep 2025 21:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0153101A7;
+	Wed, 10 Sep 2025 21:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eyZhsvi3"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i3S6fLUu"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3150E30FC3D;
-	Wed, 10 Sep 2025 21:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A6F30F7F2
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 21:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757539440; cv=none; b=s9d/s4kYtpSNndutJN/yjpoUufvRxew5DOt/auLx4qZ9tqTXYfcYxsXb9bNTao6kBKkgZXlvP5X83FWctI+fXAzDANFvriPPE2wlHDXaBahw5VBMmJvk5wEjMxr7TunKcsgyWx7cBO5LdULrNZr8UtIVBtXZqMG32lvgmfMnSKs=
+	t=1757539473; cv=none; b=SHnMT4qapm0vIHkkHYGrKiN6FiUbOzV9HVUxu0z+UloT5K3bV8HDd/ly7veZu0kGy6HIF8o9Lq4DIXxs5j27wl4VF6TbHldOLdTrSPyp5DgT7xLEPwCtQqeodOopAES1aCRIYWkiwHcn/hUvYOT/SeGuxOFF/M4HOhnncQKx2F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757539440; c=relaxed/simple;
-	bh=u01b/oiLKeGK9/KT8JgvFv/p5W3E/aZpSOzfJMIofiA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=e7ifzOie9I+4HBKDuOfiYw3PqQ3ABzPjwLa+/5LAyvKpP7z/SDJVzaxxgT1tsxeLyLoPUXoWIc3fkCC2nc6r2w0ijERjrB4T5cvqKuf0CsVvrhhuneU2VxhBMLOlr0PTLw47yxJ3+VzyOU1CBO7kJg0rqWvfZkZLHD+j2HJq+7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eyZhsvi3; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58ALNoxC600362;
-	Wed, 10 Sep 2025 16:23:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757539430;
-	bh=iUPPMaqnvzEwIfBCj818WmKjsFyCRvzYa1dHNs7kXjU=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=eyZhsvi3iaznKcVFErdQnz7XSr0MBi7TfhhgHH3baqpln4iRB6LMtVGAbbaAT2vIf
-	 dWzSspz3PLhBpoM4W6ifFUFSzvcbpJbSVaamcr8WUFgzrLd4OQsyqPaOMjQOIZpi5P
-	 0pwF+icWCLVYOoVbLOoT+WaSnbxfIkooqiJve6ww=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58ALNnFp572646
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 10 Sep 2025 16:23:49 -0500
-Received: from DFLE203.ent.ti.com (10.64.6.61) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 10
- Sep 2025 16:23:49 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE203.ent.ti.com
- (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 10 Sep 2025 16:23:49 -0500
-Received: from [127.0.1.1] (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58ALNnZ51097742;
-	Wed, 10 Sep 2025 16:23:49 -0500
-From: Kendall Willis <k-willis@ti.com>
-Date: Wed, 10 Sep 2025 16:23:32 -0500
-Subject: [PATCH v2 2/2] serial: 8250: omap: Support wakeup pinctrl state on
- suspend
+	s=arc-20240116; t=1757539473; c=relaxed/simple;
+	bh=9IQRtSHr1628ofW6kQUbKbDpJQ94kMCTSCn5PHWbJt4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Dotjvu6npetmlhwIcQy7JjQHNgpdwMrnZ1xOSGYUgNIUQcag2qUs52arWPVwHfMioX8sXiqnOh+/6LQoRUOMiuBBJHZ5xqf/60hnFSYWQUa+raHE9YrsATvlJ5dDWbXctsmvFCaq/VCIuXYvHR1+Aqo1E4lJNlJ19sHHspOteqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i3S6fLUu; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24458345f5dso101549905ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:24:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757539471; x=1758144271; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7K25irIRP6gkMb+usONBcKAqyqrONPXTNhVmIFHvEbQ=;
+        b=i3S6fLUuNx1KvSnpCJigdRmsDqCke664+0KYvxaAfKghNKGpYouhXHkGlrfs3K2F5q
+         XnGT1vPsRFpnE0KhEGGk6lrEdyYcFHBcubvDTt1tmNi8WimfEIP1wyv4JfymW0WyXJYP
+         4MGL6p/c5RF4SQEuKU8dQ8ToQarXyLdBkMdseasGOHgGzkzEpInLpn49u/DtOGOjTQMR
+         nrg+vOdyhTOTyWXvJP5Xi5utkw6/ZfCi0CHrjlBkjf6cJ9tHakiDv+oq7hKvQ6CLk5dI
+         6zcyt2EI2uCR2shtYmpe+bO82178LG8QpqwItmi0ZFAvqpdEljbB/lcyHZuvq8qQ7e33
+         ujeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757539471; x=1758144271;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7K25irIRP6gkMb+usONBcKAqyqrONPXTNhVmIFHvEbQ=;
+        b=h1Ic4vsCAFyDhme1mbrgDUsQG54hr7wh0F/aJbBz6jZLTiRW4Gz4zhhJETfx+Ry+Rq
+         XD9wk5xwx2PtovXFR4Lh6E1q/fUnA3FY4GxDCeWLh/eX/U5s/iRbko8XUTj9WfaouMpB
+         YrU7BH45PMVfLpjnoHDH4ApI39mzjeJmJJHtVLm+l3vNNWuKL2blRCo1QvuRH6jZ7um/
+         IEee/JZ6yzZfmTM0JvTNzcaTvDLbsjllq/H7DNM1rSPnd2BApjBG2X2tgRApmKEIX3sS
+         CAXBHFrp6FMWxuCR3H+4TuyONKxnQSL4BM+R52xJye5dsrDOVx44OmJnmFF8pSy2I6oW
+         fIkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfmDhpegvG2NGN2Z4+lFTPPQTdzO/BJ5GVYa+jMSotZqRUk46CxovOS+4VvcsnDZAcuVpEdkzSdua8moQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGnQo32CmAxDUvEoi3HpNIZgtq3MFwCE4LtiQmJ+p45IvNblFp
+	FbtMIk8fcMF9CnegZZ5aBC5RdZXEQA9xyHoihb2mlxEM0xpUdOM6lJRECMWbLSi0KkmbR1K0l2s
+	FGTuI+g==
+X-Google-Smtp-Source: AGHT+IELnivaoN7uLl4I6Rm5FrgSDDRAim2bOXj5yg5qLtdGI08FzJyUExDTu6fZz4/zzccXrCwowFnFk+4=
+X-Received: from pjbsw12.prod.google.com ([2002:a17:90b:2c8c:b0:327:7070:5b73])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:240b:b0:250:a6ae:f4aa
+ with SMTP id d9443c01a7336-2516f24000cmr219432165ad.25.1757539471255; Wed, 10
+ Sep 2025 14:24:31 -0700 (PDT)
+Date: Wed, 10 Sep 2025 14:24:29 -0700
+In-Reply-To: <20250908201750.98824-5-john.allen@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20250908201750.98824-1-john.allen@amd.com> <20250908201750.98824-5-john.allen@amd.com>
+Message-ID: <aMHsjTjog6SqPRpD@google.com>
+Subject: Re: [PATCH v4 4/5] KVM: SVM: Add MSR_IA32_XSS to the GHCB for
+ hypervisor kernel
+From: Sean Christopherson <seanjc@google.com>
+To: John Allen <john.allen@amd.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	pbonzini@redhat.com, dave.hansen@intel.com, rick.p.edgecombe@intel.com, 
+	mlevitsk@redhat.com, weijiang.yang@intel.com, chao.gao@intel.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com, 
+	tglx@linutronix.de, thomas.lendacky@amd.com
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250910-uart-daisy-chain-8250-omap-v2-2-e90d44c1a9ac@ti.com>
-References: <20250910-uart-daisy-chain-8250-omap-v2-0-e90d44c1a9ac@ti.com>
-In-Reply-To: <20250910-uart-daisy-chain-8250-omap-v2-0-e90d44c1a9ac@ti.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby
-	<jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <d-gole@ti.com>, <vishalm@ti.com>,
-        <sebin.francis@ti.com>, <msp@baylibre.com>, <khilman@baylibre.com>,
-        <a-kaur@ti.com>, <andriy.shevchenko@linux.intel.com>,
-        <yujiaoliang@vivo.com>, <b-liu@ti.com>, <u.kleine-koenig@baylibre.com>,
-        Kendall Willis
-	<k-willis@ti.com>
-X-Mailer: b4 0.14.2
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: quoted-printable
 
-From: Markus Schneider-Pargmann <msp@baylibre.com>
+On Mon, Sep 08, 2025, John Allen wrote:
+> When a guest issues a cpuid instruction for Fn0000000D_x0B_{x00,x01}, KVM=
+ will
+> be intercepting the CPUID instruction and will need to access the guest
+> MSR_IA32_XSS value. For SEV-ES, the XSS value is encrypted and needs to b=
+e
+> included in the GHCB to be visible to the hypervisor.
+>=20
+> Signed-off-by: John Allen <john.allen@amd.com>
+> ---
+> v2:
+>   - Omit passing through XSS as this has already been properly
+>     implemented in a26b7cd22546 ("KVM: SEV: Do not intercept
+>     accesses to MSR_IA32_XSS for SEV-ES guests")
+> v3:
+>   - Move guest kernel GHCB_ACCESSORS definition to new series.
 
-UART can be used as a wakeup source for am62 from suspend to ram states.
-To enable wakeup from UART am62 requires a wakeup flag being set in the
-pinctrl.
+Except that broke _this_ series.
 
-If the device is marked as wakeup enabled, select the 'wakeup' pinctrl
-state on suspend and restore the default pinctrl state on resume.
+arch/x86/kvm/svm/sev.c: In function =E2=80=98sev_es_sync_from_ghcb=E2=80=99=
+:
+arch/x86/kvm/svm/sev.c:3293:39: error: implicit declaration of function =E2=
+=80=98ghcb_get_xss=E2=80=99;
+                                       did you mean =E2=80=98ghcb_get_rsi=
+=E2=80=99? [-Wimplicit-function-declaration]
+ 3293 |                 vcpu->arch.ia32_xss =3D ghcb_get_xss(ghcb);
+      |                                       ^~~~~~~~~~~~
+      |                                       ghcb_get_rsi
+  AR      drivers/base/built-in.a
+  AR      drivers/built-in.a
 
-Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-Signed-off-by: Kendall Willis <k-willis@ti.com>
----
- drivers/tty/serial/8250/8250_omap.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+> v4:
+>   - Change logic structure to be more intuitive.
+> ---
+>  arch/x86/kvm/svm/sev.c | 5 +++++
+>  arch/x86/kvm/svm/svm.h | 1 +
+>  2 files changed, 6 insertions(+)
+>=20
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index f4381878a9e5..33c42dd853b3 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -3310,6 +3310,11 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm =
+*svm)
+>  		vcpu->arch.cpuid_dynamic_bits_dirty =3D true;
+>  	}
+> =20
+> +	if (kvm_ghcb_xss_is_valid(svm)) {
+> +		vcpu->arch.ia32_xss =3D ghcb_get_xss(ghcb);
 
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index bb23afdd63f29353351aa21fccf6c8de99011a65..9e49ef48b851bf6cd3b04a77a4d0d7b4e064dc5f 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -27,6 +27,8 @@
- #include <linux/pm_wakeirq.h>
- #include <linux/dma-mapping.h>
- #include <linux/sys_soc.h>
-+#include <linux/reboot.h>
-+#include <linux/pinctrl/consumer.h>
- 
- #include "8250.h"
- 
-@@ -145,6 +147,9 @@ struct omap8250_priv {
- 	spinlock_t rx_dma_lock;
- 	bool rx_dma_broken;
- 	bool throttled;
-+
-+	struct pinctrl *pinctrl;
-+	struct pinctrl_state *pinctrl_wakeup;
- };
- 
- struct omap8250_dma_params {
-@@ -1349,6 +1354,18 @@ static int omap8250_no_handle_irq(struct uart_port *port)
- 	return 0;
- }
- 
-+static int omap8250_select_wakeup_pinctrl(struct device *dev,
-+					  struct omap8250_priv *priv)
-+{
-+	if (IS_ERR_OR_NULL(priv->pinctrl_wakeup))
-+		return 0;
-+
-+	if (!device_may_wakeup(dev))
-+		return 0;
-+
-+	return pinctrl_select_state(priv->pinctrl, priv->pinctrl_wakeup);
-+}
-+
- static struct omap8250_dma_params am654_dma = {
- 	.rx_size = SZ_2K,
- 	.rx_trigger = 1,
-@@ -1573,6 +1590,11 @@ static int omap8250_probe(struct platform_device *pdev)
- 	priv->line = ret;
- 	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
-+
-+	priv->pinctrl = devm_pinctrl_get(&pdev->dev);
-+	if (!IS_ERR_OR_NULL(priv->pinctrl))
-+		priv->pinctrl_wakeup = pinctrl_lookup_state(priv->pinctrl, "wakeup");
-+
- 	return 0;
- err:
- 	pm_runtime_dont_use_autosuspend(&pdev->dev);
-@@ -1630,6 +1652,13 @@ static int omap8250_suspend(struct device *dev)
- 	struct uart_8250_port *up = serial8250_get_port(priv->line);
- 	int err = 0;
- 
-+	err = omap8250_select_wakeup_pinctrl(dev, priv);
-+	if (err) {
-+		dev_err(dev, "Failed to select wakeup pinctrl, aborting suspend %pe\n",
-+			ERR_PTR(err));
-+		return err;
-+	}
-+
- 	serial8250_suspend_port(priv->line);
- 
- 	err = pm_runtime_resume_and_get(dev);
-@@ -1651,6 +1680,13 @@ static int omap8250_resume(struct device *dev)
- 	struct uart_8250_port *up = serial8250_get_port(priv->line);
- 	int err;
- 
-+	err = pinctrl_select_default_state(dev);
-+	if (err) {
-+		dev_err(dev, "Failed to select default pinctrl state on resume: %pe\n",
-+			ERR_PTR(err));
-+		return err;
-+	}
-+
- 	if (uart_console(&up->port) && console_suspend_enabled) {
- 		err = pm_runtime_force_resume(dev);
- 		if (err)
+Honestly, I think the ghcb_get_xxx() helpers do more harm than good.  For s=
+et()
+and if_valid(), I'm totally on board with a wrapper.  For get(), unless we =
+WARN
+on trying to read an invalid field, I just don't see the point.  Ugh, and w=
+e
+_can't_ WARN, at least not in KVM, because of the whole TOCTOU mess.
 
--- 
-2.34.1
+Case in point, this and the xcr0 check can elide setting cpuid_dynamic_bits=
+_dirty
+if XCR0/XSS isn't actually changing, but then this
 
+	if (kvm_ghcb_xcr0_is_valid(svm) && vcpu->arch.xcr0 !=3D ghcb_get_xcr0(ghcb=
+)) {
+		vcpu->arch.xcr0 =3D ghcb_get_xcr0(ghcb);
+		vcpu->arch.cpuid_dynamic_bits_dirty =3D true;
+	}
+
+looks wonky unless the reader knows that ghcb_get_xcr0() is just reading a =
+struct
+field, which obviously isn't terribly difficult to figure out, but the macr=
+os
+make it more than a bit annoying.
+
+Argh, even worse, that check is technically subject to a TOCTOU bug as well=
+.  It
+just doesn't matter in practice because the guest can only hose it self, e.=
+g. by
+swizzling XCR0/XSS.  But it's still flawed.
+
+And for both XCR0/XSS, KVM lets the guest throw garbage into vcpu->arch.xcr=
+0 and
+now vcpu->arch.xss.  Maybe that's not problematic in practice, but I'd rath=
+er not
+find out the hard way.
+
+Lastly, open coding the write to cpuid_dynamic_bits_dirty and vcpu->arch.xc=
+r0 is
+just gross.
+
+So to avoid a rather pointless dependency for CET, which I'm trying my darn=
+dest
+to land in 6.18, I'm going to put together a separate fixup patch and repla=
+ce
+this patchh to end up with code that does:
+
+	if (kvm_ghcb_xcr0_is_valid(svm)
+		__kvm_set_xcr(vcpu, 0, kvm_ghcb_get_xcr0(ghcb));
+
+	if (kvm_ghcb_xss_is_valid(svm))
+		__kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(ghcb));
 
