@@ -1,92 +1,111 @@
-Return-Path: <linux-kernel+bounces-809171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDBE8B50989
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:08:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7904EB50990
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 785DD5620E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:08:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36F1E3B2A5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 00:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C1518E1F;
-	Wed, 10 Sep 2025 00:08:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAE817BA1
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 00:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC8AEEC3;
+	Wed, 10 Sep 2025 00:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="J7uxB8LO"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7DF533D8;
+	Wed, 10 Sep 2025 00:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757462884; cv=none; b=qHQqK4MSLiG8jJ/L1q3kpbq5SBQkiOWjBRxU/fN9qMHfybYY79IPesYVw2or1naPv5SCRGF/HCkAKPvYewU7o6WgOJ27jHKS6mgHcD4LqYWF7BgdSqCg1FP643C2R7vI6SBC7TPnJ2dJkXMYf6RoC8VHdmo6ubMWO/OgRyJ7W9A=
+	t=1757463031; cv=none; b=PkAGr9xkO0sV2nyArNFUDXMqlvt+r2noNWybrNns5xQGQu4wn6+GWHb0l+l2QAVQL5j8u3CXHqQEskwv3XQcGwcqL3Z+7DsTOjv7Ro4s3IM6cJTcnW+MxkljHgs2mFawg47lJ8zQxW8bcQ4tgmmU8lyzwdi+oJ85Th7QYVVRflI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757462884; c=relaxed/simple;
-	bh=Y0FueEj4ovAwS98JIIHmMsJveQ2bjrRXOL6WNpNLJCo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OAHYSAIgcDTLknrdEfi/u3DacfFgm1GNsO0VJrRGTOojiRkvd8Hh6cuaJCjHYcm8dw+9TKEHrc64Hw4AEOcT6tyfrhAtQDMhTBNbrO1vAHG4xg0YJHKoHrnQnJceiz5VhTO6wyBd7LzYfQXB2ytK/8tLd5NqxTtlPhUfXZ+7TpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-40babea9468so34273895ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Sep 2025 17:08:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757462882; x=1758067682;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B48eG2pE6UmtGQsdEorhi4Kz49vrL4LIBEaiUoQ1ack=;
-        b=C23tQ2FsgYlmS8WwmB9atKCAPbpe4pgGkvRn2SgFvFG9H+zjGWoNk+ZPce2ZsrUOKj
-         uPRSJFM/w28yrpvP+2V/lRaP79jIS/50ijeDqyU1gpu35JHMU+YXzrPcmwbDU4eYD9sl
-         bZ8TooM9MEOtM31gFM7msxwToC0nwCmJUJu5Lq+iGZbf71Zho/ixfYPJS6ome8zA2G5C
-         v8hjBkYRf5+r1Zq5qHfHrfYaFEnj1jTDp1TMh1VGZmXpMY03fCz8GxHvHqm4yJ9pfylf
-         NOl7SVeiPP8ZsyqXOFryRDXGAnjHmVlO045KFGq5XaV3GMSlKIA2VJVB01PbROg2Me+e
-         vYig==
-X-Forwarded-Encrypted: i=1; AJvYcCW4S61U4FxgahzgG4AF91DGcQY/mGoNT81ClswtA4ttsdl/IPa9cn+uYus0w8u01O15a/xN/ehAOUnMQj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHzAc1gmbkB2WWn1hOqExQwGNtYa4poT2YgxMNcQ0NfFRa32AZ
-	J+2RxsJKJPTSN82MvxpqQiXjyUTlu/L9CiZ7VTzPvr3Tn9mkKhr+bB+1hWv0lz/gMgbHI2FnRiX
-	e4SWYlkMw5OENrHHQcG1btjfIKCmCMzcWhcMwzZ4KhuKgyYJw2P/vU7akCEY=
-X-Google-Smtp-Source: AGHT+IEc3Xlig2C+ezYLq6Le2Uydz707fZ7kOaTGcnmjiUoX5GndFDgFeAd1y0BFHSGOllVSy39Jjf/rLsye3GnwZSdtWkrgHRNj
+	s=arc-20240116; t=1757463031; c=relaxed/simple;
+	bh=v+XwwYjaCKwKmCzqPuPwPUlkXDMjSnKRqcKnO1v5T30=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D2xCouLc3wj/McZpy3zHvJQwGWWtulH3s+MDzNruRDN/FpQEtyswSbVhHjuFsGd+yv5DrpR0giQ31YgxiXF5Td7PbaxCSmbVrAGQjprRbac11GQpLMNSXkSHCfKjwDq2jEmyRuWxvcciLnwGK1p/p/DrgPPv8AIwx7GmWxQA/G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=J7uxB8LO; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from mrdev.corp.microsoft.com (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 71F572018E45;
+	Tue,  9 Sep 2025 17:10:28 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 71F572018E45
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757463028;
+	bh=+a5fs37jsW/++xb/vpujvsFmRh+v83z/FhyFtY41Skg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=J7uxB8LOt9kTNj0SO0EBEN7f/9i5HA+cL1w+z3Ww6lh1g//OpkBstIixQzpo8bmg4
+	 YhW+2rqLUUrXa9yCF/hhb2pv6QUXrpjjg2ZJBVDnBzTwsH/1Fr1RuHqIKILAe1GSor
+	 MPmv1IZAFI2uFzXZ58VvB0SfrcmOrY44qIGMPgQ0=
+From: Mukesh Rathor <mrathor@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org
+Cc: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	arnd@arndb.de
+Subject: [PATCH v1 0/6] Hyper-V: Implement hypervisor core collection
+Date: Tue,  9 Sep 2025 17:10:03 -0700
+Message-Id: <20250910001009.2651481-1-mrathor@linux.microsoft.com>
+X-Mailer: git-send-email 2.36.1.vfs.0.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168e:b0:3f6:69ec:ea1e with SMTP id
- e9e14a558f8ab-3fd963dc775mr179254695ab.23.1757462882139; Tue, 09 Sep 2025
- 17:08:02 -0700 (PDT)
-Date: Tue, 09 Sep 2025 17:08:02 -0700
-In-Reply-To: <68c09802.050a0220.3c6139.000e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c0c162.050a0220.3c6139.0016.GAE@google.com>
-Subject: Re: [syzbot] [f2fs?] kernel BUG in clear_inode (4)
-From: syzbot <syzbot+90266696fe5daacebd35@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+This patch series implements hypervisor core collection when running
+under linux as root (aka dom0). By default initial hypervisor ram is
+already mapped into linux as reserved. Further any ram deposited comes
+from linux memory heap. The hypervisor locks all that ram to protect
+it from dom0 or any other domains. At a high level, the methodology
+involes devirtualizing the system on the fly upon either linux crash
+or the hypervisor crash, then collecting ram as usual. This means
+hypervisor ram is automatically collected into the vmcore.
 
-commit c240c87bcd44a1a2375fc8ef8c645d1f1fe76466
-Author: Chao Yu <chao@kernel.org>
-Date:   Tue May 21 06:23:18 2024 +0000
+Hypervisor pages are then accessible via crash command (using raw mem
+dump) or windbg which has the ability to read hypervisor pdb symbol
+file.
 
-    f2fs: fix to do sanity check on blocks for inline_data inode
+V1:
+ o Describe changes in imperative mood. Remove "This commit"
+ o Remove pr_emerg: causing unnecessary review noise
+ o Add missing kexec_crash_loaded()
+ o Remove leftover unnecessary memcpy in hv_crash_setup_trampdata
+ o Address objtool warnings via annotations
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17754b12580000
-start commit:   f777d1112ee5 Merge tag 'vfs-6.17-rc6.fixes' of git://git.k..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14f54b12580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f54b12580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=429771c55b615e85
-dashboard link: https://syzkaller.appspot.com/bug?extid=90266696fe5daacebd35
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15a43562580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164dad62580000
+Mukesh Rathor (6):
+  x86/hyperv: Rename guest crash shutdown function
+  hyperv: Add two new hypercall numbers to guest ABI public header
+  hyperv: Add definitions for hypervisor crash dump support
+  x86/hyperv: Add trampoline asm code to transition from hypervisor
+  x86/hyperv: Implement hypervisor ram collection into vmcore
+  x86/hyperv: Enable build of hypervisor crashdump collection files
 
-Reported-by: syzbot+90266696fe5daacebd35@syzkaller.appspotmail.com
-Fixes: c240c87bcd44 ("f2fs: fix to do sanity check on blocks for inline_data inode")
+ arch/x86/hyperv/Makefile        |   6 +
+ arch/x86/hyperv/hv_crash.c      | 622 ++++++++++++++++++++++++++++++++
+ arch/x86/hyperv/hv_init.c       |   1 +
+ arch/x86/hyperv/hv_trampoline.S | 105 ++++++
+ arch/x86/kernel/cpu/mshyperv.c  |   5 +-
+ include/asm-generic/mshyperv.h  |   9 +
+ include/hyperv/hvgdk_mini.h     |   2 +
+ include/hyperv/hvhdk_mini.h     |  55 +++
+ 8 files changed, 803 insertions(+), 2 deletions(-)
+ create mode 100644 arch/x86/hyperv/hv_crash.c
+ create mode 100644 arch/x86/hyperv/hv_trampoline.S
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+2.36.1.vfs.0.0
+
 
