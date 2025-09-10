@@ -1,84 +1,142 @@
-Return-Path: <linux-kernel+bounces-810220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F62AB51763
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:57:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A0FB5176A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06F50467372
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:56:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B8A75E059D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C19A31CA4A;
-	Wed, 10 Sep 2025 12:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6044E31CA66;
+	Wed, 10 Sep 2025 12:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="lkR1tk78"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Olf4fOkj"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3533226D1F;
-	Wed, 10 Sep 2025 12:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB7D31DDAC
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757509002; cv=none; b=Vf4Qa+8knR9xv5Cbwu4NIh014Wi+zlqh5yTNtypoM9sAcXE3OFRF9upgXWFCQjBZIXUQLVHNLt/Y3vsIBxwQ44tPNIuQbayEM348wD0dgQtUbBb5mck406KBKvQ3eqVP2BVakzeMHq0qIFP+ZODMG7A8I0iDXga81H4fEnDhKF4=
+	t=1757509020; cv=none; b=L1bFeEkAN3oQLNFllV1RETIhoS3QKnqWB4v2Uq93FyA3VXOVL09LxtoibMspJfpA1gDWny0ryZxjS+EFLaT+n9CjWWCTq6+QoJE6gG03jLUgA2YU9TuWF4+SkIfA4M8pm4qz6Nehd/4N3lzYStyluc5F2YDLYr30hsPIm0rUWCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757509002; c=relaxed/simple;
-	bh=0hauiEl/ij9Ej4OYJZOwnnhNDJNogKnuzNv8eCt7tYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JF1r6nAIfo+MMevOeE60EIjc+0fbhLt2/NQd/jw/hTHl9iV3N3ue06HkwPdVWBQJYJOar74C2Q/t0Qk5piw6wx3Xw8FIbtUe+ffgDbhMcm86v6CL1/ZNzGPZK6M1xsObhYYiVHzPci8NkSiv2Wur3jz6m0jZcuF5qVypiJN0qHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=lkR1tk78; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=8TgsJAPG+gvJuGo1mADyM4jldixKGYBoLgCB1sss4qk=; b=lkR1tk78PoV+Tma7HPr7R4vg4F
-	89G9DYvsE0UEMbP3/X/fB068fW1Iba2c7JfnYajxoZlZ7vXiPSUusxi4rdETc8BwDacD0hfzRWikb
-	F324HDIyWpZl/15fv3FvAq5siiiSaVLPbOmBefKd7SYlI8uqISsyAdq9a5wMbuSPg1Ss=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uwKN1-007wR1-Mv; Wed, 10 Sep 2025 14:56:19 +0200
-Date: Wed, 10 Sep 2025 14:56:19 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Donald Shannon <donalds@nvidia.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	joel@jms.id.au, andrew@codeconstruct.com.au,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	openbmc@lists.ozlabs.org, etanous@nvidia.com
-Subject: Re: [PATCH v3 2/2] ARM: dts: aspeed: Add NVIDIA VR144NVL board
-Message-ID: <3114a51c-47a2-4b67-8965-33841ee87fd5@lunn.ch>
-References: <20250910040601.240162-1-donalds@nvidia.com>
- <20250910040601.240162-3-donalds@nvidia.com>
+	s=arc-20240116; t=1757509020; c=relaxed/simple;
+	bh=ggmBScy3Dq2wfaxRKxoM0Fquk3b6bViu168f83JKzOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bpjRoKJDkPiXbMxAdq7iCWsDYWeGqtMSB/R+snyy/ZlAdTIGaK8d42s+7NpGj3xc+En/BEZQ8BNvxSoJxQYBE6H5EWEH4KiUzHPRnKxHqCvpkW+jLVm56EwaJIGQc6XVsodItnromiCpgFb/V8HXyLb5xbcLURGdLC3+NPwsGAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Olf4fOkj; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-625e1dfc43dso7301544a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 05:56:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757509017; x=1758113817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MMKyDunwSGtBRbm9G/rqnpc3sRFNucd0BdvyVxUFvLg=;
+        b=Olf4fOkjPeSlqq67BciUKKsU+xz9VC322LJ4pGidHhqFFfr6a6IuuA5ju6nDVeBjrp
+         g+3yT+LhFZdDNnHvFPzBlOSJ+WKYquWJrrS6nesp8LtJiAT/9dJgpGmrmZ4/5xQ6v73z
+         yEAb85/9LuhP34tZS/c9OzTjIf0BkApxRKFwjt3PEk8v8DUyxm0u6IIHYvoy9Udi0xJE
+         HF4DnSNnliArkJRi9gkEzZo8MlzAvNJFAGKbO47ssFPEkkh2H/rRvL48dBgO6381eodN
+         enXCmwy5G2+SLlww+zlfcIH4uS+9Oa4q7xK4mi8i4E75//ejfMiDTY+jO9W1ox0XpVvx
+         2kiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757509017; x=1758113817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MMKyDunwSGtBRbm9G/rqnpc3sRFNucd0BdvyVxUFvLg=;
+        b=CfmoxSPBomf+6NrEns/kAbw0jIEaIEHMEz1KxNPJnucrAxomk3X+v7fLNhw9kveRJ9
+         sIarmVU0TtYnenngzRk6ySav17kQm6H1ggAZbXwhM0y650XWBTG3LdL1RspEZ7sRBMuj
+         JeFv1DnuVNM/tfhT/1pdpxXUXA6/hM18hSAL1lt+lrDQiq1V5Wz8fs4QaIVE7Hm0rRNf
+         iVr2k0hQzX9S7EARVEwMcjQ4FLf+HKFBECniMcUdtQICJXt/udxiqPOL1fHT1Owh+kqP
+         vq0LFHvJixbWXRbbQzZ9HCV2EPjwQzX0u9225MvHatebplpKGixqJzt/k/yxCs0YpIup
+         aiBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNiFnS19SSTU0GrOe+83xqHvRqC5OKc9GnA84SKIaeEYHi5eE79vvjeWxOm5wM9f/AEeheoBYcQINxnLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0u5uU28gEoD1VJtkizDQjkefUaykpWwilyClF8/WCCTNmycIR
+	xQVq6AlNrZMD8KJEPdAVvM+SmqXVdxDKNlDKqjlR4bZgMKEvBJzeUhVa9/4rhXa1C6agUQtaVjE
+	jshB6FLM9KeS1y4FkvlpGlTDkmHApezw=
+X-Gm-Gg: ASbGncsvxR+5oHDwGNiKDdiOmruBaM76q0El+dw5sdNUQfOWoKvzoyBYi5c+ACU53+Z
+	FWFltlf2uPYdpV9LG6LzyebiloMqutL+FBm/r33h93U4MEShbDUCaOocMTHrUsj6EVvaVwLX0zI
+	HXRXueC+Dmy9MiuBVC+5Ta9q4KG7tTE9RelnVPAmNH1tiVGYZ4jPeeJVRSUzHWR4LBm4TpeoPZp
+	YFG9guu25MeFxx6Nmy5uw==
+X-Google-Smtp-Source: AGHT+IEv9eLVpjjBvqrFpdRX6L3iK/v3rJwHC4f9FyOGjkK+DZCBoaCqi9xQ3rFk6LzHDIS4tktgKLhkDhbSow62Vc8=
+X-Received: by 2002:a05:6402:4305:b0:629:7973:e8b1 with SMTP id
+ 4fb4d7f45d1cf-6297973ec5fmr7558603a12.7.1757509017250; Wed, 10 Sep 2025
+ 05:56:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910040601.240162-3-donalds@nvidia.com>
+References: <20250905191357.78298-1-ryncsn@gmail.com> <20250905191357.78298-6-ryncsn@gmail.com>
+ <0bbda135-068a-45bd-afd6-3f5cdf4e570d@redhat.com> <CAMgjq7CsKYWzAD0Ev7q0cocQO8kOYLmhgLD0wk6AX-HUzWFJZQ@mail.gmail.com>
+ <283fc6d5-caca-4a67-916e-55246a5a4cbb@redhat.com>
+In-Reply-To: <283fc6d5-caca-4a67-916e-55246a5a4cbb@redhat.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 10 Sep 2025 20:56:20 +0800
+X-Gm-Features: AS18NWCq6G6AFq-R6ytPum-lAXwcxsOSJmLax7Xy0V_qYAvPUPQFSkeoLQETCvU
+Message-ID: <CAMgjq7Axhj-OGe6p1_KHAcR=j92=3MjMMz1YafsPxHWqsmemiA@mail.gmail.com>
+Subject: Re: [PATCH v2 05/15] mm, swap: always lock and check the swap cache
+ folio before use
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Yosry Ahmed <yosryahmed@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Changes v2 -> v3:
->   - Removed unused phy-mode property from mac0
+On Tue, Sep 9, 2025 at 11:19=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 09.09.25 16:58, Kairui Song wrote:
+> > On Mon, Sep 8, 2025 at 10:08=E2=80=AFPM David Hildenbrand <david@redhat=
+.com> wrote:
+> >>
+> >>
+> >>>
+> >>>                folio_lock(folio);
+> >>> +             if (!folio_matches_swap_entry(folio, entry)) {
+> >>> +                     folio_unlock(folio);
+> >>> +                     folio_put(folio);
+> >>> +                     continue;
+> >>> +             }
+> >>> +
+> >>
+> >> I wonder if we should put that into unuse_pte() instead. It checks for
+> >> other types of races (like the page table entry getting modified) alre=
+ady.
+> >
+> > Doing this earlier here might help to avoid the folio_wait_writeback
+> > below?
+>
+> Why would we care about optimizing that out in that corner case?
+>
+> And checking the folio right after locking seems to follow the
+> > convention more strictly.
+>
+> I'd just slap it into unuse_pte() where you can return immediately and
+> we don't need another duplicated
+>
+>         folio_unlock(folio);
+>         folio_put(folio);
+>         continue;
 
-> +&mac0 {
-> +	pinctrl-names = "default";
-> +	phy-handle = <&ethphy0>;
-> +	pinctrl-0 = <&pinctrl_rgmii1_default>;
-> +	status = "okay";
-> +};
+Yeah, removing the duplication is a very good point.
 
-Oh, fun.
-
-Please don't do that. At some point Aspeed it going to clean up the
-mess they made with RGMII delays. And at that point, it is very likely
-your board will mysteriously break, if nobody remembers it is doing
-something probably no other board does.
-
-	Andrew
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
 
