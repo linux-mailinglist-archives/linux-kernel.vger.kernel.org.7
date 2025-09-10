@@ -1,97 +1,97 @@
-Return-Path: <linux-kernel+bounces-809655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15DE6B51070
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:04:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD078B51072
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 10:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D1381C80BB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:04:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AC8A7BB298
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 08:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87830311969;
-	Wed, 10 Sep 2025 08:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC603112C1;
+	Wed, 10 Sep 2025 08:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZIRf3cRQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/wVAxdHP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZIRf3cRQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/wVAxdHP"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S8o6M1Oj";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Ww9I553";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S8o6M1Oj";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Ww9I553"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D8231196F
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1993112DC
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 08:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757491303; cv=none; b=TkllncoZtU94xLJwhXHzlVqfwI2PC3oifTDMBRnudndPqQQLZ7oWUK8IqzSj55OBgBPWdyQO9x2raypROFAYOgb2eUSkXOGaRGJf/FRAiwjRtVYPzvrL1b8egJTSZoQ9LNGY7ive3qVRhz/xnkuvqz0TIFbtkbIvyVAH+4LhiOs=
+	t=1757491297; cv=none; b=T0lXjpQJBsQylgvjkS2CjR+cU1YMTY+yo+IfEBj9NIm4G4BDJUrT5/9aN9siPapx4FQC8K2CUbo29wmc5Di4A9AzKGJw67+AxGnO9AYgo49tK++76p4zdshqtMVHpzgQ6lxde1fwyKITk/349pO/4xWWY2px3gTJTNSwYwtVeGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757491303; c=relaxed/simple;
-	bh=aL2nWErz5p6fHWAf468/JnPT2VZiBsM7veP0wYqatpM=;
+	s=arc-20240116; t=1757491297; c=relaxed/simple;
+	bh=EXAOnPXjefoUrecgIHjn7X8EjCKh7/2qQPPq0aUcBXQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Sj9AYHXhoZVy6FiQPgheD5bzhncoVNH29yWrKzNEqMDgipG4bvpbiWSbNjbu0K/prvsYfA6wFHj1P5evSxEolqxAsuhQmYfUNKYsG3agJkR90YQR5lQtUuMgdE006LmQRfUEcp/dRo5xqVl8h7wDNrdRi9Z8jzPVUav7kV8dhf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZIRf3cRQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/wVAxdHP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZIRf3cRQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/wVAxdHP; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:To:Cc; b=uvydeqB9ujrkCCMVutB9cBBpcMsZGO6+kqL3rjwLk5f3Ru/c/z1zaGU4QoArT8NylvOCt73UV3jjvDkmUuTmvzBxr7861Li7xA34NlobecizKHithoGdvkXrOhNkuUmvk6azcRH54GciBOdBGEVGk4g4y3O+YIjrfGYOHz/EuIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S8o6M1Oj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Ww9I553; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S8o6M1Oj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Ww9I553; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2871E34C34;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 27A965CAD6;
 	Wed, 10 Sep 2025 08:01:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1757491267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e6xXnWAdQI//pOYwufYbMgKCqE7B9/pqugFW+usImNk=;
-	b=ZIRf3cRQDIeoF8QNqTpe70Yezy2fsPpQaCTF2Rph+2e91RhK9uLhMcyRX6xt/30bQz/f3k
-	xHb3BvvHe1ZfUTvyigy2R3x/tEqjnfPKhw/Ib1ECB8ueKhvougCBI+NMQxZp0ZHBmrcU9p
-	/9nSL/oO2H+ic655SZK63lvlwJz5h8o=
+	bh=ojBiEAx4m3ERLpo5puWtBF2UDNNQAO38/NqqWUvTcPs=;
+	b=S8o6M1Ojk7gzwtMKOg8b976ug9apuNL7AsBon9WvCsdf1c83u5FxrjupOHFFPs58D+Iiwq
+	B+/uTgRJguGcB5Nl4xz44wkda+FSReOQCGUlsgaxXdEINUgWvXzYxCshzN8sQPBT5P/jHg
+	sjOVfEIqcZNS5XqKaaAtkaX1Px53jDc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1757491267;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e6xXnWAdQI//pOYwufYbMgKCqE7B9/pqugFW+usImNk=;
-	b=/wVAxdHPTbII3WwcuHbYke6k+S/Itkv3pMv6JozOngvB1ipL/GOotw3E/8W6cDygDH48fY
-	HXURtXKx+6ILpuCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ZIRf3cRQ;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="/wVAxdHP"
+	bh=ojBiEAx4m3ERLpo5puWtBF2UDNNQAO38/NqqWUvTcPs=;
+	b=1Ww9I5532MCXIeEO2xHKhlJsON+aojWDoH4RgLrJ+654npRn7I6iTXr8bUP3P4A6l4X3Pq
+	gKZHFInyKPTGPlAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=S8o6M1Oj;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=1Ww9I553
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1757491267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e6xXnWAdQI//pOYwufYbMgKCqE7B9/pqugFW+usImNk=;
-	b=ZIRf3cRQDIeoF8QNqTpe70Yezy2fsPpQaCTF2Rph+2e91RhK9uLhMcyRX6xt/30bQz/f3k
-	xHb3BvvHe1ZfUTvyigy2R3x/tEqjnfPKhw/Ib1ECB8ueKhvougCBI+NMQxZp0ZHBmrcU9p
-	/9nSL/oO2H+ic655SZK63lvlwJz5h8o=
+	bh=ojBiEAx4m3ERLpo5puWtBF2UDNNQAO38/NqqWUvTcPs=;
+	b=S8o6M1Ojk7gzwtMKOg8b976ug9apuNL7AsBon9WvCsdf1c83u5FxrjupOHFFPs58D+Iiwq
+	B+/uTgRJguGcB5Nl4xz44wkda+FSReOQCGUlsgaxXdEINUgWvXzYxCshzN8sQPBT5P/jHg
+	sjOVfEIqcZNS5XqKaaAtkaX1Px53jDc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1757491267;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e6xXnWAdQI//pOYwufYbMgKCqE7B9/pqugFW+usImNk=;
-	b=/wVAxdHPTbII3WwcuHbYke6k+S/Itkv3pMv6JozOngvB1ipL/GOotw3E/8W6cDygDH48fY
-	HXURtXKx+6ILpuCA==
+	bh=ojBiEAx4m3ERLpo5puWtBF2UDNNQAO38/NqqWUvTcPs=;
+	b=1Ww9I5532MCXIeEO2xHKhlJsON+aojWDoH4RgLrJ+654npRn7I6iTXr8bUP3P4A6l4X3Pq
+	gKZHFInyKPTGPlAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3C87813AE0;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5101A13AF8;
 	Wed, 10 Sep 2025 08:01:06 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0Pd+DkIwwWgGJAAAD6G6ig
+	id +EiDE0IwwWgGJAAAD6G6ig
 	(envelope-from <vbabka@suse.cz>); Wed, 10 Sep 2025 08:01:06 +0000
 From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 10 Sep 2025 10:01:09 +0200
-Subject: [PATCH v8 07/23] slab: skip percpu sheaves for remote object
- freeing
+Date: Wed, 10 Sep 2025 10:01:10 +0200
+Subject: [PATCH v8 08/23] slab: allow NUMA restricted allocations to use
+ percpu sheaves
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,7 +100,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-slub-percpu-caches-v8-7-ca3099d8352c@suse.cz>
+Message-Id: <20250910-slub-percpu-caches-v8-8-ca3099d8352c@suse.cz>
 References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
 In-Reply-To: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
 To: Suren Baghdasaryan <surenb@google.com>, 
@@ -112,11 +112,6 @@ Cc: Roman Gushchin <roman.gushchin@linux.dev>,
  linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
  maple-tree@lists.infradead.org, vbabka@suse.cz
 X-Mailer: b4 0.14.2
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 2871E34C34
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-4.51 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -125,8 +120,8 @@ X-Spamd-Result: default: False [-4.51 / 50.00];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	ARC_NA(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[13];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
@@ -136,7 +131,7 @@ X-Spamd-Result: default: False [-4.51 / 50.00];
 	RCVD_TLS_ALL(0.00)[];
 	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz];
@@ -145,157 +140,113 @@ X-Spamd-Result: default: False [-4.51 / 50.00];
 	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	DKIM_TRACE(0.00)[suse.cz:+];
 	R_RATELIMIT(0.00)[to_ip_from(RLfsjnp7neds983g95ihcnuzgq)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 27A965CAD6
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
 X-Spam-Score: -4.51
 
-Since we don't control the NUMA locality of objects in percpu sheaves,
-allocations with node restrictions bypass them. Allocations without
-restrictions may however still expect to get local objects with high
-probability, and the introduction of sheaves can decrease it due to
-freed object from a remote node ending up in percpu sheaves.
-
-The fraction of such remote frees seems low (5% on an 8-node machine)
-but it can be expected that some cache or workload specific corner cases
-exist. We can either conclude that this is not a problem due to the low
-fraction, or we can make remote frees bypass percpu sheaves and go
-directly to their slabs. This will make the remote frees more expensive,
-but if if's only a small fraction, most frees will still benefit from
-the lower overhead of percpu sheaves.
-
-This patch thus makes remote object freeing bypass percpu sheaves,
-including bulk freeing, and kfree_rcu() via the rcu_free sheaf. However
-it's not intended to be 100% guarantee that percpu sheaves will only
-contain local objects. The refill from slabs does not provide that
-guarantee in the first place, and there might be cpu migrations
-happening when we need to unlock the local_lock. Avoiding all that could
-be possible but complicated so we can leave it for later investigation
-whether it would be worth it. It can be expected that the more selective
-freeing will itself prevent accumulation of remote objects in percpu
-sheaves so any such violations would have only short-term effects.
+Currently allocations asking for a specific node explicitly or via
+mempolicy in strict_numa node bypass percpu sheaves. Since sheaves
+contain mostly local objects, we can try allocating from them if the
+local node happens to be the requested node or allowed by the mempolicy.
+If we find the object from percpu sheaves is not from the expected node,
+we skip the sheaves - this should be rare.
 
 Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- mm/slab_common.c |  7 +++++--
- mm/slub.c        | 42 ++++++++++++++++++++++++++++++++++++------
- 2 files changed, 41 insertions(+), 8 deletions(-)
+ mm/slub.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 46 insertions(+), 7 deletions(-)
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 005a4319c06a01d2b616a75396fcc43766a62ddb..b6601e0fe598e24bd8d456dce4fc82c65b342bfd 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1623,8 +1623,11 @@ static bool kfree_rcu_sheaf(void *obj)
- 
- 	slab = folio_slab(folio);
- 	s = slab->slab_cache;
--	if (s->cpu_sheaves)
--		return __kfree_rcu_sheaf(s, obj);
-+	if (s->cpu_sheaves) {
-+		if (likely(!IS_ENABLED(CONFIG_NUMA) ||
-+			   slab_nid(slab) == numa_mem_id()))
-+			return __kfree_rcu_sheaf(s, obj);
-+	}
- 
- 	return false;
- }
 diff --git a/mm/slub.c b/mm/slub.c
-index 35274ce4e709c9da7ac8f9006c824f28709e923d..9699d048b2cd08ee75c4cc3d1e460868704520b1 100644
+index 9699d048b2cd08ee75c4cc3d1e460868704520b1..3746c0229cc2f9658a589416c63c21fbf2850c44 100644
 --- a/mm/slub.c
 +++ b/mm/slub.c
-@@ -472,6 +472,7 @@ struct slab_sheaf {
- 	};
- 	struct kmem_cache *cache;
- 	unsigned int size;
-+	int node; /* only used for rcu_sheaf */
- 	void *objects[];
- };
+@@ -4888,18 +4888,43 @@ __pcs_replace_empty_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs,
+ }
  
-@@ -5828,7 +5829,7 @@ static void rcu_free_sheaf(struct rcu_head *head)
- 	 */
- 	__rcu_free_sheaf_prepare(s, sheaf);
+ static __fastpath_inline
+-void *alloc_from_pcs(struct kmem_cache *s, gfp_t gfp)
++void *alloc_from_pcs(struct kmem_cache *s, gfp_t gfp, int node)
+ {
+ 	struct slub_percpu_sheaves *pcs;
++	bool node_requested;
+ 	void *object;
  
--	barn = get_node(s, numa_mem_id())->barn;
-+	barn = get_node(s, sheaf->node)->barn;
+ #ifdef CONFIG_NUMA
+-	if (static_branch_unlikely(&strict_numa)) {
+-		if (current->mempolicy)
+-			return NULL;
++	if (static_branch_unlikely(&strict_numa) &&
++			 node == NUMA_NO_NODE) {
++
++		struct mempolicy *mpol = current->mempolicy;
++
++		if (mpol) {
++			/*
++			 * Special BIND rule support. If the local node
++			 * is in permitted set then do not redirect
++			 * to a particular node.
++			 * Otherwise we apply the memory policy to get
++			 * the node we need to allocate on.
++			 */
++			if (mpol->mode != MPOL_BIND ||
++					!node_isset(numa_mem_id(), mpol->nodes))
++
++				node = mempolicy_slab_node();
++		}
+ 	}
+ #endif
  
- 	/* due to slab_free_hook() */
- 	if (unlikely(sheaf->size == 0))
-@@ -5914,10 +5915,12 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
++	node_requested = IS_ENABLED(CONFIG_NUMA) && node != NUMA_NO_NODE;
++
++	/*
++	 * We assume the percpu sheaves contain only local objects although it's
++	 * not completely guaranteed, so we verify later.
++	 */
++	if (unlikely(node_requested && node != numa_mem_id()))
++		return NULL;
++
+ 	if (!local_trylock(&s->cpu_sheaves->lock))
+ 		return NULL;
  
- 	rcu_sheaf->objects[rcu_sheaf->size++] = obj;
+@@ -4911,7 +4936,21 @@ void *alloc_from_pcs(struct kmem_cache *s, gfp_t gfp)
+ 			return NULL;
+ 	}
  
--	if (likely(rcu_sheaf->size < s->sheaf_capacity))
-+	if (likely(rcu_sheaf->size < s->sheaf_capacity)) {
- 		rcu_sheaf = NULL;
--	else
-+	} else {
- 		pcs->rcu_free = NULL;
-+		rcu_sheaf->node = numa_mem_id();
+-	object = pcs->main->objects[--pcs->main->size];
++	object = pcs->main->objects[pcs->main->size - 1];
++
++	if (unlikely(node_requested)) {
++		/*
++		 * Verify that the object was from the node we want. This could
++		 * be false because of cpu migration during an unlocked part of
++		 * the current allocation or previous freeing process.
++		 */
++		if (folio_nid(virt_to_folio(object)) != node) {
++			local_unlock(&s->cpu_sheaves->lock);
++			return NULL;
++		}
 +	}
++
++	pcs->main->size--;
  
  	local_unlock(&s->cpu_sheaves->lock);
  
-@@ -5944,7 +5947,11 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
- 	bool init = slab_want_init_on_free(s);
- 	unsigned int batch, i = 0;
- 	struct node_barn *barn;
-+	void *remote_objects[PCS_BATCH_MAX];
-+	unsigned int remote_nr = 0;
-+	int node = numa_mem_id();
+@@ -5011,8 +5050,8 @@ static __fastpath_inline void *slab_alloc_node(struct kmem_cache *s, struct list
+ 	if (unlikely(object))
+ 		goto out;
  
-+next_remote_batch:
- 	while (i < size) {
- 		struct slab *slab = virt_to_slab(p[i]);
+-	if (s->cpu_sheaves && node == NUMA_NO_NODE)
+-		object = alloc_from_pcs(s, gfpflags);
++	if (s->cpu_sheaves)
++		object = alloc_from_pcs(s, gfpflags, node);
  
-@@ -5954,7 +5961,15 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
- 		if (unlikely(!slab_free_hook(s, p[i], init, false))) {
- 			p[i] = p[--size];
- 			if (!size)
--				return;
-+				goto flush_remote;
-+			continue;
-+		}
-+
-+		if (unlikely(IS_ENABLED(CONFIG_NUMA) && slab_nid(slab) != node)) {
-+			remote_objects[remote_nr] = p[i];
-+			p[i] = p[--size];
-+			if (++remote_nr >= PCS_BATCH_MAX)
-+				goto flush_remote;
- 			continue;
- 		}
- 
-@@ -6024,6 +6039,15 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
- 	 */
- fallback:
- 	__kmem_cache_free_bulk(s, size, p);
-+
-+flush_remote:
-+	if (remote_nr) {
-+		__kmem_cache_free_bulk(s, remote_nr, &remote_objects[0]);
-+		if (i < size) {
-+			remote_nr = 0;
-+			goto next_remote_batch;
-+		}
-+	}
- }
- 
- #ifndef CONFIG_SLUB_TINY
-@@ -6115,8 +6139,14 @@ void slab_free(struct kmem_cache *s, struct slab *slab, void *object,
- 	if (unlikely(!slab_free_hook(s, object, slab_want_init_on_free(s), false)))
- 		return;
- 
--	if (!s->cpu_sheaves || !free_to_pcs(s, object))
--		do_slab_free(s, slab, object, object, 1, addr);
-+	if (s->cpu_sheaves && likely(!IS_ENABLED(CONFIG_NUMA) ||
-+				     slab_nid(slab) == numa_mem_id())) {
-+		if (likely(free_to_pcs(s, object))) {
-+			return;
-+		}
-+	}
-+
-+	do_slab_free(s, slab, object, object, 1, addr);
- }
- 
- #ifdef CONFIG_MEMCG
+ 	if (!object)
+ 		object = __slab_alloc_node(s, gfpflags, node, addr, orig_size);
 
 -- 
 2.51.0
