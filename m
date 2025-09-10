@@ -1,63 +1,59 @@
-Return-Path: <linux-kernel+bounces-809870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2938AB51303
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:45:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A201B512D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E039C4E0452
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75BD71883044
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F193164BA;
-	Wed, 10 Sep 2025 09:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38E0306492;
+	Wed, 10 Sep 2025 09:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="yLv3faF7"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FmflZhe0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F5D315789;
-	Wed, 10 Sep 2025 09:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287F0241139;
+	Wed, 10 Sep 2025 09:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497511; cv=none; b=q74yRxQgCaw+RnHA2eg/7jZUqVoTW/giypWsWSxlj17v3ERtT5qTg+JgbturBN1fixLW5tuX64pWxP8egp/86ObArMnWDy1sLrWzN89ozBBF5+K51wL1T2yS2hB+Qe0M1gOyxaAi6Ub/lm+9HZ5pYJ9O2m9kgnGV0bBIKi8tCSA=
+	t=1757497264; cv=none; b=fA/mL1YkB5QUZ89aC2FJECB7wfPZ0sDCFMxz9Qh7fQ3WFKODWXWDtr5Ty7/3PzMiCEPz3fv9Ix5yqTI1lf8YaIJytNWOgEUwx+2v330V4Ne8DXi320VF7PE9xJO4gD55+AjbOL4QDfSZ2X5rDkO3ILJIQOP9oEXrvs3CVU7/nY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497511; c=relaxed/simple;
-	bh=UxDHk+nyHGn6znzf9nre7X54TYbPp1T3sedDzWOhoZM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uefd/U0OtzkgjAY2zTAUhdlSztAadJaqJtWaWFbUg9Is16VjvONCO+Lx1FScWyGlJIYjJbqxSvsghFUqZvdbhhNQltjcSppv6nmVgj1QiQlep45usxMbnpbSciX2nNmYl9odt3h8hrBp4BzcRlouYoBbuQrKwkdZIjks19Y3iYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=yLv3faF7; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757497506; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=NDjRMqnwvSDtCzogc+S2Va17N1AuCGT5lTb/FjGa+Hk=;
-	b=yLv3faF7ZoiQR1Sy3HsUKNqvsG/jIzA2Ujc8uyd7ZxJh8ZJwDMyKaj1x7kwhPrZbrXInxF43h4XSNFimCfIqZvj1uSs+kxPAmJziF+id97lec8Exdjee69i2oSZwR7dNUm2ECiGfc2RG/PL1x9o9Vc2YwY+bAXVjs/Ha18817mA=
-Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WnhXu7j_1757497190 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 10 Sep 2025 17:39:52 +0800
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-To: rafael@kernel.org,
-	lenb@kernel.org,
-	robert.moore@intel.com
-Cc: andrew@kernel.org,
-	bfaccini@nvidia.com,
-	eahariha@linux.microsoft.com,
-	dan.j.williams@intel.com,
-	thorsten.blum@linux.dev,
-	gourry@gourry.net,
-	xueshuai@linux.alibaba.com,
-	nunodasneves@linux.microsoft.com,
-	wangyuquan1236@phytium.com.cn,
-	Jonathan.Cameron@huawei.com,
-	linux-acpi@vger.kernel.org,
+	s=arc-20240116; t=1757497264; c=relaxed/simple;
+	bh=lvYn9eg1hctElf592ouO63bzTtzzMC1s11sttsG3hY8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gj9ORfb5ExuRdL+ksEXj5kG8ppEq2XLBZf21lBpwpLV5igMbJrms/rN2ST7fxL7NUinMxtm+KLBeQ6M1RU9BxhoU+MohKkaWoVsMQV9HJv6JlM7dviH9XpCdwc4m8Mw2M81bpuf5iwtiYhpfqDgHqeOOhYCKLdNvtZguLFwfaCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FmflZhe0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2411C4CEF0;
+	Wed, 10 Sep 2025 09:41:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757497263;
+	bh=lvYn9eg1hctElf592ouO63bzTtzzMC1s11sttsG3hY8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FmflZhe0+ZE/C3s5kFN9yHv/9+4iXIfFth7Px5CjvIQcKjN1hW/AJWLptjUS3SadT
+	 t6JHC6Xg40h8/7/TCCKDj/BgVmg2KZ6hzlS+SQKqkfd9jqCWgeW01++zeUXUxRN1Kg
+	 wYrAE5ScFxKKrGIUdO9Gk5l+FyvJEOFTBgR+sYxYKLKOr//Lb113mHJOLMv+9i6wMz
+	 t2J6aYuZwxUGz0f+ulS+hJ6s1hZUOHc+Sb62j1wTj7cUw4KapRvKnq6T/jBwLE2U3f
+	 BcWtsUTTR15vXZnqVz4miQn1ohkQaXxqOISSyBR6Ja05xFuISIC13ibYQiQyv3S9QW
+	 IkX/Gsg5a0i+g==
+From: Danilo Krummrich <dakr@kernel.org>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	abdiel.janulgue@gmail.com,
+	daniel.almeida@collabora.com,
+	robin.murphy@arm.com,
+	a.hindborg@kernel.org,
+	ojeda@kernel.org
+Cc: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	acpica-devel@lists.linux.dev
-Subject: [PATCH] acpi,srat: Fix incorrect device handle check for Generic Initiator
-Date: Wed, 10 Sep 2025 17:39:49 +0800
-Message-Id: <20250910093949.5793-1-xueshuai@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH] MAINTAINERS: Update the DMA Rust entry
+Date: Wed, 10 Sep 2025 11:40:03 +0200
+Message-ID: <20250910094015.11551-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,53 +62,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Generic Initiator Affinity Structure in SRAT table uses device
-handle type field to indicate the device type. According to ACPI
-specification, the device handle type value of 1 represents PCI device,
-not 0.
+Update the DMA Rust maintainers entry in the following two aspects:
 
-Fix this by defining explicit macros for device handle types and using
-the correct check for PCI devices:
+  (1) Change Abdiel's entry to 'Reviewer'.
 
-- ACPI_SRAT_ACPI_DEVICE_HANDLE (0): ACPI device handle
-- ACPI_SRAT_PCI_DEVICE_HANDLE (1): PCI device handle
+  (2) Take patches through the driver-core tree.
 
-Fixes: 894c26a1c274 ("ACPI: Support Generic Initiator only domains")
-Reported-by: Wu Zongyong <wuzongyong@linux.alibaba.com>
-Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+Abdiel won't do any more maintainer work on the DMA (or scatterlist)
+infrastructure, but he'd like to be kept in the loop, hence change is
+entry to 'R:'.
+
+Analogous to [1], the DMA (and scatterlist) helpers are closely coupled
+with the core device infrastructure and the device lifecycle, hence take
+patches through the driver-core tree by default.
+
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Link: https://lore.kernel.org/r/20250725202840.2251768-1-ojeda@kernel.org [1]
+Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- drivers/acpi/numa/srat.c | 2 +-
- include/acpi/actbl3.h    | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-index 53816dfab645..de71b370a275 100644
---- a/drivers/acpi/numa/srat.c
-+++ b/drivers/acpi/numa/srat.c
-@@ -237,7 +237,7 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
- 		struct acpi_srat_generic_affinity *p =
- 			(struct acpi_srat_generic_affinity *)header;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fed6cd812d79..281149d9b821 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7239,15 +7239,15 @@ F:	include/linux/swiotlb.h
+ F:	kernel/dma/
  
--		if (p->device_handle_type == 0) {
-+		if (p->device_handle_type == ACPI_SRAT_PCI_DEVICE_HANDLE) {
- 			/*
- 			 * For pci devices this may be the only place they
- 			 * are assigned a proximity domain
-diff --git a/include/acpi/actbl3.h b/include/acpi/actbl3.h
-index 79d3aa5a4bad..c8488614429c 100644
---- a/include/acpi/actbl3.h
-+++ b/include/acpi/actbl3.h
-@@ -284,6 +284,9 @@ struct acpi_srat_gic_its_affinity {
-  * 6: ACPI_SRAT_TYPE_GENERIC_PORT_AFFINITY
-  */
- 
-+#define ACPI_SRAT_APCI_DEVICE_HANDLE	(0)
-+#define ACPI_SRAT_PCI_DEVICE_HANDLE	(1)
-+
- #define ACPI_SRAT_DEVICE_HANDLE_SIZE	16
- 
- struct acpi_srat_generic_affinity {
+ DMA MAPPING HELPERS DEVICE DRIVER API [RUST]
+-M:	Abdiel Janulgue <abdiel.janulgue@gmail.com>
+ M:	Danilo Krummrich <dakr@kernel.org>
++R:	Abdiel Janulgue <abdiel.janulgue@gmail.com>
+ R:	Daniel Almeida <daniel.almeida@collabora.com>
+ R:	Robin Murphy <robin.murphy@arm.com>
+ R:	Andreas Hindborg <a.hindborg@kernel.org>
+ L:	rust-for-linux@vger.kernel.org
+ S:	Supported
+ W:	https://rust-for-linux.com
+-T:	git https://github.com/Rust-for-Linux/linux.git alloc-next
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git
+ F:	rust/helpers/dma.c
+ F:	rust/kernel/dma.rs
+ F:	samples/rust/rust_dma.rs
+
+base-commit: 3c9ba2777d6c86025e1ba4186dc5cd930e40ec5f
 -- 
-2.39.3
+2.51.0
 
 
