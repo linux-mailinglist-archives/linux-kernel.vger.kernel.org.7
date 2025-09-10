@@ -1,128 +1,141 @@
-Return-Path: <linux-kernel+bounces-810666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A81B51D8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:24:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A9BB51D95
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA265A02E47
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:24:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CD0B7AF8B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366B93375DE;
-	Wed, 10 Sep 2025 16:24:33 +0000 (UTC)
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660C025C80E;
+	Wed, 10 Sep 2025 16:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="QzkQ1Lc6"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBCC334728
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED5226B75C;
+	Wed, 10 Sep 2025 16:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757521472; cv=none; b=KwTFQxcHEinS+exWeHGaDEuP/7K11/WgU0KmMZN3tzXlXeKA5pdwf+Z4TO6/s4LERVHNyXKQ5n4M3dJ3SsAQu8E9P3+LBuqo1y6J5KJzB6/qEDg1RjsAQpkYwLeTrpbz4DpNa4IMoqdkSrUCCFsTsWIZsNethScCmE+A6HH/oqY=
+	t=1757521550; cv=none; b=KTx23R4RiaCLDAx/Za5M3yll8kRqMnq0HmILh1H4YdOsQxP+qdAw46QkqRHlPW/kfhdtfH6fnS67QQoihXyldUyBLZlYp2YHKXOoS8Rn3VS/OV+oOVmSOF/bwKdWgbnDy2e9u0SAw6sHGuok+gKkFYFGqjOc89vtWAx3OQHGcL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757521472; c=relaxed/simple;
-	bh=XKhu0ButZfP1eFEp10IuKdFzc3bsJodNLb7lW4zaCgw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sFz+kVLzg6o4AVKviAE8RTqHVZGseIy/osuMm98ta5CY4myuzDtP4y541BStZyjABnPPMbf+0+X5+u9a4AefWjcoMAZ6CtS0OxqNEDr1gz12KG7xdQjyZwe9ZeWGYmRADzmFOvOCR0AUkeCgYQWscvXrRaygr0yk9g9/WakHfD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b47173749dbso4903565a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:24:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757521470; x=1758126270;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p83w/Q/IRim7hnms2A7dQTsuzOFdw9GVdjRXWe+p5Ww=;
-        b=QAnZG1YFEeSO+k0dogXMazUDcu1HAjnsBtipGZxOWuOiwBKBBBpxne/Be2YlNF3IcX
-         EqXJzUzpK9/p/m/ppfAfy3FFdT4fMxcDbvK9I8n15SCDzRoxNTMyVZ34QP+LSPDWF1JQ
-         LjFt6ltQGBdS4i0WdGxzQYtNcRcx8W5yHNUqed8a3WoLJrUEdWSJJKpFSq+Q3yDhFbZ9
-         YOy7S1qEg6DhNHJcYKl4XV5Dze41mUOX70lLFCsgKgF7psjL4xjk8ueJVd9dj3PUpwrT
-         nrg34MBYiFNSVPQvXGilo1EvrZyYUiSv4TbBKJ/6fhNciGaC3yQE0YkV5LxhrPqb9pTw
-         fAiw==
-X-Forwarded-Encrypted: i=1; AJvYcCURROoRKVro0b0FCZQx5RoeSp5503ekLBpdTexqGJ5dL8qHL3rK2Z+Y6gc3zciq1peclTlxOSQiQwSvoxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhdVgv3s/je+GIqw4MH582Gp48zSYUBQPOek4SLMmXMoRJLNR/
-	Wo4YeZBZSKJoYfZ4bKfr900xxL13qhiQMol42NboWs1fh48q8AcAeGg=
-X-Gm-Gg: ASbGncsL7nhK8DGwn+8fZ764Hv5HBffkxegi6z2yp7eHYoInMwlFFUrVPblbUyWrSaH
-	EoJwY9fN7p7Rhxn5doMHq29YGMgLdLYXIOoBB0R04rIiucfem0/aTypYiYCQ2j6huNHv29WEKxI
-	tnuNUZrX966smj1CoUJCBv//fTsjUvMqjFokmk+AuYGN7HtLa1uPE68ntvTAP4W01B8BGxrlbI2
-	lDhYJn5dv5D8Uil80w5fFaCw7Rf1eRamd8xeb56JK6y8UfUlZ2B9bdnV7mmr2aVS7yUDXMOf09b
-	HBtCVz4Z73uchEQ44hS0EtJzwpo151oaMaEaLjnn/SOIA5KXBZcs8nrud5aBSgehcH6M7E+0P3F
-	mkA7lUIBm9lsJffeNhaPStuB2jeTxtoxz7X+C2EK5KFmxdusW4fwdQkWJHuIpp77/1MFDwlJI8c
-	dF8bxigqKaeulRGH+a1e87n0Ay7Cluv5l+jIBZ0Mcp4SZH1RdIUFUr5IIQP1MfcNj79zZ+xvoPX
-	I5P2E3pRLsQNBA=
-X-Google-Smtp-Source: AGHT+IFiww+cMWoD4/EmybvtoEqMGorFwlUf88+GYf5wrs1Lt1yUTpI2n83Aakd3i8q2nSdM+bs55g==
-X-Received: by 2002:a17:902:ef48:b0:259:5284:f87b with SMTP id d9443c01a7336-2595284fe1fmr78470345ad.16.1757521470367;
-        Wed, 10 Sep 2025 09:24:30 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-25a27425dc1sm31958965ad.20.2025.09.10.09.24.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 09:24:30 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ncardwell@google.com,
-	kuniyu@google.com,
-	dsahern@kernel.org,
-	horms@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mina Almasry <almasrymina@google.com>
-Subject: [PATCH net-next v2] net: devmem: expose tcp_recvmsg_locked errors
-Date: Wed, 10 Sep 2025 09:24:29 -0700
-Message-ID: <20250910162429.4127997-1-sdf@fomichev.me>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757521550; c=relaxed/simple;
+	bh=yxsZly4e4NNU/BnRyZTfCx+kf32JMESOMXhbZsii9A8=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=J9MKZwnh0jYQ5+twJM9tgCFaeyMs6Q9WmDOvdmtoRFMpyvbTExkba/7CujIghw5jJ2nhWSgkD+7LiZiTnZYZq9XZ8HSGVc9IRljAbxtObmN75EDyhXDVAEuoPMemA3Uvr6jfdLLJ2yZmY0e4aasx+45xLSfTOoshfO9+bSSkc1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=QzkQ1Lc6; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 8CB6B25B19;
+	Wed, 10 Sep 2025 18:25:45 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id KKyL2TSpdQ30; Wed, 10 Sep 2025 18:25:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1757521544; bh=yxsZly4e4NNU/BnRyZTfCx+kf32JMESOMXhbZsii9A8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=QzkQ1Lc6ExLEV1/UmoYpaz5DQ71e9J9VxxTTkjjG8Qx3SduHlePv6WK4cb5E+o7cC
+	 jqzp40ctssOgp1/HPhaadt3gm69iXskPEkhRD6rMCjXYi+X3rApjYV5av0mrUGeW8s
+	 WyZ3c72njeDfFUs7x8NnbW24U8ze9Bp2kiEFXouA8av6Lk6cEdZcroVL5qqftbKchw
+	 ZZKEI27gp5M4utH6NJgLSvjspwWc5gIVo7NOjJL4t3aC1rpNXQlrw7SF3yKY/0bcd8
+	 9yYUJAaudozmVkfGdUQCpcLU2GgEVCHmjfkT5Ptg9Db3SD+bjfUFDCp5D/1CTDqr0K
+	 N87zpNJJM+fuA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Wed, 10 Sep 2025 16:25:40 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang
+ <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jessica Zhang
+ <jessica.zhang@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v5 0/2] Support for Synaptics TDDI series panels
+In-Reply-To: <20250820-panel-synaptics-tddi-v5-0-d4e3fd4987c6@disroot.org>
+References: <20250820-panel-synaptics-tddi-v5-0-d4e3fd4987c6@disroot.org>
+Message-ID: <38e3a32db8402c1cbf3dc2fdf9f04ac3@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-tcp_recvmsg_dmabuf can export the following errors:
-- EFAULT when linear copy fails
-- ETOOSMALL when cmsg put fails
-- ENODEV if one of the frags is readable
-- ENOMEM on xarray failures
+Hi,
 
-But they are all ignored and replaced by EFAULT in the caller
-(tcp_recvmsg_locked). Expose real error to the userspace to
-add more transparency on what specifically fails.
+Bumping to collect some reviews on this series. Thanks!
 
-In non-devmem case (skb_copy_datagram_msg) doing `if (!copied)
-copied=-EFAULT` is ok because skb_copy_datagram_msg can return only EFAULT.
-
-Reviewed-by: David Ahern <dsahern@kernel.org>
-Reviewed-by: Mina Almasry <almasrymina@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
---
-v2: s/err <= 0/err < 0/ since we never return 0 (Jakub)
----
- net/ipv4/tcp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index 588932c3cf1d..9c576dc9a1f7 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2818,9 +2818,9 @@ static int tcp_recvmsg_locked(struct sock *sk, struct msghdr *msg, size_t len,
- 
- 				err = tcp_recvmsg_dmabuf(sk, skb, offset, msg,
- 							 used);
--				if (err <= 0) {
-+				if (err < 0) {
- 					if (!copied)
--						copied = -EFAULT;
-+						copied = err;
- 
- 					break;
- 				}
--- 
-2.51.0
-
+On 2025-08-20 14:24, Kaustabh Chakraborty wrote:
+> Synaptics' Touch and Display Driver Integration (TDDI) technology [1]
+> employs a single chip for both touchscreen and display capabilities.
+> Such designs reportedly help reducing costs and power consumption.
+> 
+> Although the touchscreens, which are powered by Synaptics'
+> Register-Mapped Interface 4 (RMI4) touch protocol via I2C or SPI have
+> driver support in the kernel, the MIPI DSI display panels don't.
+> 
+> This series introduces a rudimentary driver for controlling said 
+> display
+> panels, which supports TD4101 and TD4300 panels.
+> 
+> [1] https://www.synaptics.com/technology/display-integration
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+> Changes in v5:
+> - added missing Reviewed-by tag from Krzysztof in [v3 1/2]
+> - Link to v4: 
+> https://lore.kernel.org/r/20250819-panel-synaptics-tddi-v4-0-448f466d16a6@disroot.org
+> 
+> Changes in v4:
+> - utilized drm_connector_helper_get_modes_fixed() (dmitry.baryshkov)
+> - constified backlight properties (dmitry.baryshkov)
+> - Link to v3: 
+> https://lore.kernel.org/r/20250720-panel-synaptics-tddi-v3-0-43a5957f4b24@disroot.org
+> 
+> Changes in v3:
+> - fixed various dt_binding_check errors (robh's bot)
+> - adjusted commit description of [v2 1/2] (robh)
+> - utilized devm_drm_panel_alloc() and devm_regulator_bulk_get_const()
+> - Link to v2: 
+> https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
+> 
+> Changes in v2:
+> - fixed various dt_binding_check errors (conor)
+> - did s/tddi_update_brightness/tddi_update_status
+> - added check for panel enable in tddi_update_status()
+> - used backlight_get_brightness() in appropriate places
+> - Link to v1: 
+> https://lore.kernel.org/r/20250612-panel-synaptics-tddi-v1-0-dfb8a425f76c@disroot.org
+> 
+> ---
+> Kaustabh Chakraborty (2):
+>       dt-bindings: display: panel: document Synaptics TDDI panel
+>       drm: panel: add support for Synaptics TDDI series DSI panels
+> 
+>  .../display/panel/synaptics,td4300-panel.yaml      |  89 +++++++
+>  drivers/gpu/drm/panel/Kconfig                      |  11 +
+>  drivers/gpu/drm/panel/Makefile                     |   1 +
+>  drivers/gpu/drm/panel/panel-synaptics-tddi.c       | 276 
+> +++++++++++++++++++++
+>  4 files changed, 377 insertions(+)
+> ---
+> base-commit: 5303936d609e09665deda94eaedf26a0e5c3a087
+> change-id: 20250523-panel-synaptics-tddi-0b0b3f07f814
+> 
+> Best regards,
+> --
+> Kaustabh Chakraborty <kauschluss@disroot.org>
 
