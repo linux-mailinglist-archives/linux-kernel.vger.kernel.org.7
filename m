@@ -1,248 +1,167 @@
-Return-Path: <linux-kernel+bounces-809319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56C4B50C00
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:56:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C614B50C05
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 04:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 477067B72B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:55:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CD667B7D98
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 02:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E372472A8;
-	Wed, 10 Sep 2025 02:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A9C242D9E;
+	Wed, 10 Sep 2025 02:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ImSsWBc8"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cXx4kd97"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2073.outbound.protection.outlook.com [40.107.236.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40502246BD8;
-	Wed, 10 Sep 2025 02:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757472989; cv=none; b=bnQiR5PttMH+JIfhJ10URVwbV2M+SkkIfEbjDJefFswWlwaiUA1yY9rD2XBdUFuasAcEKTvWdTjvXeV9BF/sm5f7ZcpQpknD6YFbltWVOCI/bQRMwwWgiQpWGo5ejtCgd1fUjFdN8F30Btng7CGWWOj0W1z8olwRMBKr4MBdlfY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757472989; c=relaxed/simple;
-	bh=9aZWBowem9quzBxMewIkYmZOsbgydJUvO2LjN/H0tPI=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C9LJztbJ40tPcuNs3XyCpcDo9fVdj+AQ4HEnw899eZf8SQ5psVGaR2ZBB9YhjykprOAK32yqrYSV3sGhZkjZHZKEPJJeMvAus+Vm/UL7u+eMjxr539zm6RuGPvQaPZjS7XUWZkSu2CsiYbp07urz4+m4YHXswBuuama0UQHersY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ImSsWBc8; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24cbd9d9f09so82071285ad.2;
-        Tue, 09 Sep 2025 19:56:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757472987; x=1758077787; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bccMpZ/9BOkjWFOHbeJr/ZW3cHQMAN90oKmu+ORNptc=;
-        b=ImSsWBc8FLTnx56pKlA6dHUdl9HzQ5g4yCl3McTfult02hgK4Sx8sJRbX6SzXEMTT/
-         hbwHR+Ga2OXlVB8POcCXcNNwia/8ZGgEZKKR7xG8mxb/zhT3zAp9QjQEZ9tTmHQWUi+l
-         y/5JeIE+jj+ayUTtBsxUvUx2iVMOL4To311pYzbm7SBhIEa9yhFsxhjB7Q67P7QeXWRP
-         nzmCfLGYgAVjwhAcVhmDvu6334O/c5xAL7mBHqCu5SR0tWbD3nbsbyvLX93dV8GGrYYb
-         56hjn/HXWIUgU1cyENBWpcJRwsyK5s/ht9Cnh1ciRmebfSRqxDhQh9Fmg4qkcg8BdHan
-         9+dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757472987; x=1758077787;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bccMpZ/9BOkjWFOHbeJr/ZW3cHQMAN90oKmu+ORNptc=;
-        b=boX+C4mAuqMMvpjvDB1Uhs5RQXY38ZJHg6stXt8R9wMfuIYDmRg27uMi/RWofoAi/a
-         gAuvJPQCDmFczNl3nIHPvt0JQuiv5SkNUTbfaB5QqywM95jsbHDFR/L7xPHgA14PKPGO
-         s3QWuGYc+ljUl2IGpqNAvEQ0saW+0FCfzKvzCi1BSAN+CDnRUIhD84oM0q8mGwdFFhZy
-         bxZEaaF/0+V//btC/UA7jkSU67Fl+Lv2mQriUwLuDVuSiqa+Xcr9HL82lRgtcVW8iHZf
-         eems2Aq43J2CgcvdchOdlsVJibccBsdbk31oMfZIaZrLdjr3baKSMBOg65znnKXAzDrL
-         F/ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWcN0diVLSLyd1UpjcdV9mQTFKTZmnxanYlUBmOE5xnVSoMTuIGUr07sesLza7cipMhQRslq93x0kYM@vger.kernel.org, AJvYcCXN+8ZSkRveaXInp6FfYX48mSr0Dc5yX23btDwXqDcJ97ub7e17vkcZ0F3vtXdd6X1iVnEmLMDTiDHUUJYU@vger.kernel.org, AJvYcCXYT/5aS5w16rCpQNOC6ExPMVKUI2wuYU9ZiithAdJh4OnbFY/EOf674UK/xq2I5+L0CKBmwBcR678V@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzovAgZpbU8x/zQ3Tof0TgCJLTxhx3v/iivmzkNu90ajQdJJF5
-	JpWiIY7G1HxrCuaXUxoESaoRPhQwqj/ramsnLj3DHBxgCttUwqrrsxG9
-X-Gm-Gg: ASbGncs+JNLtWY44fLpwpulIKpLyHrm6o0p58D/GIo8hOLr3rR3ucmXkTbcifSi/WGz
-	K8hG2BnwTAB9gk3dP88zlP/n0SPK6Hl/PiJiioKPCzdJ0lxKCMa0VrStcSAdkR51FklUuhUF/LC
-	yHdXa4oXf5stQHEg2/VYOxV1em4HG5J1UFRFheMNX3IgLnbwSuYSkgCn+O+RK1GFPopQo1SeDCt
-	f1uCvoYYWXQdy7pO4EYRl9qqJxYnx0v+6hq267SWHP5Aan3hHZhneKocNTBeb84pJqbDbLRxgnP
-	JoJV7C7K7Z6bKCTv+Wy+71vEMYFOYFFp3nE+Ig9pGdvgmkPuDnizpXaKSfzsVXvcpO6zB59wkWX
-	0RFD2msOueLPgQDV4zCquwegAuwKPcHsd
-X-Google-Smtp-Source: AGHT+IFNBos7noDUln9W5GM7yi+/GGgz4QmYFcZtpZbyom0FkxzLpYxnYCZbcxZV/hMMSxTnIj0g7Q==
-X-Received: by 2002:a17:903:1c2:b0:249:1213:6725 with SMTP id d9443c01a7336-251753d88d0mr190803255ad.50.1757472987403;
-        Tue, 09 Sep 2025 19:56:27 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-32dbb5efe7asm650016a91.17.2025.09.09.19.56.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 19:56:27 -0700 (PDT)
-Date: Wed, 10 Sep 2025 10:56:23 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Chen Wang <unicornxw@gmail.com>, kwilczynski@kernel.org, 
-	u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu, alex@ghiti.fr, arnd@arndb.de, 
-	bwawrzyn@cisco.com, bhelgaas@google.com, unicorn_wang@outlook.com, 
-	conor+dt@kernel.org, 18255117159@163.com, inochiama@gmail.com, kishon@kernel.org, 
-	krzk+dt@kernel.org, lpieralisi@kernel.org, mani@kernel.org, palmer@dabbelt.com, 
-	paul.walmsley@sifive.com, robh@kernel.org, s-vadapalli@ti.com, tglx@linutronix.de, 
-	thomas.richard@bootlin.com, sycamoremoon376@gmail.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	sophgo@lists.linux.dev, rabenda.cn@gmail.com, chao.wei@sophgo.com, 
-	xiaoguang.xing@sophgo.com, fengchun.li@sophgo.com
-Subject: Re: [PATCH v2 3/7] PCI: sg2042: Add Sophgo SG2042 PCIe driver
-Message-ID: <xmk5uvnw7mcizxpaoarvx2c2sejaz2skaiyyac7oo5y6loyjgp@5v3sldwbqpw5>
-References: <cover.1757467895.git.unicorn_wang@outlook.com>
- <162d064228261ccd0bf9313a20288e510912effd.1757467895.git.unicorn_wang@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A4F246782
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 02:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757473039; cv=fail; b=dwfd2VWNlFE17aBfeW6X6y2LYwlBumPsln8RfiBC3rxaDKz9nAgl+ORTRNgLXXmG9GA3XlP5hexK00beDeHfSBmyIymHO/OfRHuC5BXQhX5USN97Trybfw+sNRqywA0VuahjkGIMvpFeIkQVL1vv9dmoqiWbotmgFUMkqE9QFT0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757473039; c=relaxed/simple;
+	bh=7Ae6p/oQhFRWNN3HB9SNLB8324YW2M5FvKHnsNF2nCI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NIuasw+PV0YjO1+oBLSQt66i0V4lKEqKw2EBIr6qmPyBiQrEDtXk3fmUK6CYvv4fAYhKjGoq4/l/GHP3BpQ2nhSh8m5ZWNxXHLq+0nJOxDMwb6pf56rp/En67KRXEba7AmWUorW1lKW19u+DPNez+qdSowuiy2UDbmV9Z8WR9iU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cXx4kd97; arc=fail smtp.client-ip=40.107.236.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y+WxC2vvdsAp+LpYH+ngeWhDG4C/iFHRPPrldVb+IQf1uU2Zxtwfv1jcmooGAsvS6C7/Eo99F4lAjtGcqcbey8GBIC409oW4hRq9K1CYiCpj5FINJYjmW8qglmQhf4pI+QyngwLnXhNF7buH613g6f4WBgfz6FUScqUA3T1W2fv4oCqZtqrPJaOio3jKlrr0IGfee0UmE/NwRL8quj332dyZyjuYKbby/s8xBwu32BgMoFzyEichb4T9N9UiWpfQZrDEcCWOmqLQO05rcgxFzQ4+9RaX1lASsVqzHNXp+OavqAjwjpKU3S/mUnlVVIDzc2rBv3m3PKGbwD6g14Pv4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7Ae6p/oQhFRWNN3HB9SNLB8324YW2M5FvKHnsNF2nCI=;
+ b=Ej16RizhroYDw7fu22eqOwqy4MBszX+lFQl4Grk0czSC46fKvetNXukoNV8D85KeldnvCJxzMQpf0/jVK40wU38y1lc8ErvvDUPzHdOoMhXH2lkwXmtntuE7f/4/B9Hk6r0fsBskKaWH/qENRpFwIYQD2SY7ZYIR3HgD89sZz3xZ6UEUkJsRbITUWVpSYfiXKaTTaIsf1DeIMwSVDppTh/CCNLPsJzda4bKKn61yW/cyKHBjH6MAG1C+ol1cVG5zbTF8m1p+P0kmXHIS32oTcTipzq/fCApBJpV/zZZR1MYieB0KDKe7Eti+0oXez7klkXgMog0/i4t+bluC3Nsc6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7Ae6p/oQhFRWNN3HB9SNLB8324YW2M5FvKHnsNF2nCI=;
+ b=cXx4kd97qSTRBr6WpU6G8sPUuDeLQEQa4/hoaT4osGyynPmnNvddkWWesgUc80ndQOrxEALceqMlZpAwALmsEd2al5UEnYsdAvCFB7agHybXY9wWeBYCL+p7ZU8lxbeelya8ZyxWpRGEDCPejFYcOG15pHj57XA+BpIquzBFgxOHdfOHnC8+bnPcnlMjZ4zPfW00hInB/2LUDNwOvqTAqiUP3jPwwkpxJBzcx90+zJNqlcH0C+uX9w1mEQWfJuPOzwPGFsJwFbNGkCLRy18tNjsdrkSgIlkM4eByz0l8K46V4xNb4xFJG6Pcp+eekGmZEDq06+t+dgh4lhdvY9Czzw==
+Received: from BYAPR07CA0027.namprd07.prod.outlook.com (2603:10b6:a02:bc::40)
+ by CY3PR12MB9704.namprd12.prod.outlook.com (2603:10b6:930:102::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
+ 2025 02:57:13 +0000
+Received: from SA2PEPF000015C7.namprd03.prod.outlook.com
+ (2603:10b6:a02:bc:cafe::1e) by BYAPR07CA0027.outlook.office365.com
+ (2603:10b6:a02:bc::40) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Wed,
+ 10 Sep 2025 02:57:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SA2PEPF000015C7.mail.protection.outlook.com (10.167.241.197) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Wed, 10 Sep 2025 02:57:12 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 9 Sep
+ 2025 19:56:49 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 9 Sep
+ 2025 19:56:48 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Tue, 9 Sep 2025 19:56:47 -0700
+Date: Tue, 9 Sep 2025 19:56:46 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <jgg@nvidia.com>, <will@kernel.org>, <robin.murphy@arm.com>
+CC: <joro@8bytes.org>, <jean-philippe@linaro.org>, <miko.lenczewski@arm.com>,
+	<balbirs@nvidia.com>, <peterz@infradead.org>, <smostafa@google.com>,
+	<kevin.tian@intel.com>, <praan@google.com>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
+Subject: Re: [PATCH rfcv2 1/8] iommu/arm-smmu-v3: Clear cmds->num after
+ arm_smmu_cmdq_batch_submit
+Message-ID: <aMDo7vljVeeWWzRE@Asurada-Nvidia>
+References: <cover.1757373449.git.nicolinc@nvidia.com>
+ <2f7f5fff38d43221fd60139323d23b258e34cf8d.1757373449.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <162d064228261ccd0bf9313a20288e510912effd.1757467895.git.unicorn_wang@outlook.com>
+In-Reply-To: <2f7f5fff38d43221fd60139323d23b258e34cf8d.1757373449.git.nicolinc@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015C7:EE_|CY3PR12MB9704:EE_
+X-MS-Office365-Filtering-Correlation-Id: 03596709-dc1b-4403-845a-08ddf015bdd2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FXNh4nZkqFdWbTGo919Uwn1pmg7vjZcYYh4Zpcx2O6lTrMfdoV4qAtBKoJUQ?=
+ =?us-ascii?Q?QPZKu8ieLhxRKg5Sq8BfKe4uFXXvhv7DczTaAQoiFPtC1C04tZQX2+j414tZ?=
+ =?us-ascii?Q?qXp+9yltz1owESbfpk1fF5k0100dZ29AGJReGdhfuOhsh7/zgpyKL7rxx6ud?=
+ =?us-ascii?Q?RH/aI9DOHeJWvYq4wuV/I64iMC8rcDhBqcOfIrhRVEYw+dS4hHvuZeu2Me+2?=
+ =?us-ascii?Q?DKKiEjUAR4YIZXT7d7VSn0gjGDZLcVVJ6hHm8PSQB9YMSOb7KUVm3aIYokNR?=
+ =?us-ascii?Q?TxsbijlX7Sip5ChMdhXxojy0ljAjXGKywwZaB/1XcIHgin9ft8lJ6xQdB1Mo?=
+ =?us-ascii?Q?T92HynpvharhbRPJVivPU9EnwGWjEVeAxuTyPGivd2HLwmmo3VtcFg1aQAQd?=
+ =?us-ascii?Q?zvKSrK669tTJBDNv+c4tqKCysxRCDjeMYnDhbGEA43cSGqdc/GvhVLxyC2Af?=
+ =?us-ascii?Q?E9EdpdqhQeZRpFWqrGF6oiwxsUSF4QD+W0i/INgNKP4oxeQHijD928tk90t6?=
+ =?us-ascii?Q?Fqb0rJt+xE35CRPCZZYz0ymVuXvzB9hZdaglppAujbT/FkNOwlDQEDQKwuDR?=
+ =?us-ascii?Q?d8DJJK8S+CqugTAnNVgm4bgRPTVngz1/EfXiOLI5NRXarxdVBdRfwbZKDpQm?=
+ =?us-ascii?Q?iLkYQElHO3qNI5bYTjPAEsPfl8NbjNf9LDIGGv3Ku93igmgGP48YD4i+ZFd/?=
+ =?us-ascii?Q?WRdrEMthyPVksuML987voLrB0QuJOD5jUESWdnxuXggg4pPnyvQw/tHp4svt?=
+ =?us-ascii?Q?rWXZoxu44wuS0Y/7lU7P5ngqAGzsJbSrlWeGfJfQnmw6Pemqoun3jbwmPpZ8?=
+ =?us-ascii?Q?71zc/FiWGV3QNbVk3FbAUVR/OdYs35ilz3eQ98JZ+N4p+4+VpZt7BZQSxdMP?=
+ =?us-ascii?Q?MfIoCd5/MPB3boUXd/YNfwR0UZqfs2fhflBSfIjeg0rAea1DqpHpN/Tsi7nZ?=
+ =?us-ascii?Q?vz52RVJjzXaoedQZQoux+ziueDvvLIlOzwcoJyDlusmqn6bkGvGeae51MLcU?=
+ =?us-ascii?Q?DSMWadVGg4ol+lB2wbnQ79Qx3FYKSFtAx1EhdBI5gxSDex/BSFHGrfU162+u?=
+ =?us-ascii?Q?AH2mOrC59FDxe0ELEB1QlbIf0Vk1UmNOo7cKd5VhTIfkY2bRTZDE28LS2VZf?=
+ =?us-ascii?Q?tHDhsqugm86l9MBXp6s4nXXdRGeT2qzURwXhO6jgBj1mwoZj4p0xV3vayRiw?=
+ =?us-ascii?Q?z5vzS5himXUPoIQ77dvDqoiUeQMKUVl4PVRDokcBt1sLK8X498ENDYANs3pO?=
+ =?us-ascii?Q?fyXhQ1F8Pq1ouQPSW0/QlPNcfk5lSSknzEuae1xB6BSJejtXcFXhnEThWses?=
+ =?us-ascii?Q?C7jOyDHXd3mg8ZuwOsmozPGWiwrtdUsNI0Eizgrn10y7VTNAkLu8UDgjb/Kc?=
+ =?us-ascii?Q?nUGC4Icap0g8NuMztPwwyr3nZ/66aVp4e5HeW6MOZ3MFAXnpZY4ak3b4wT3q?=
+ =?us-ascii?Q?vWXvRM8f0Wmg1ymL+QJcu11/DBXDkndrE/Snkr9VDlwRmYU8vYrUYe9+l2Td?=
+ =?us-ascii?Q?0JiDBrPk7EojBiYdi/q5+ZYxNWPQr3R0dv/E?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 02:57:12.3449
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 03596709-dc1b-4403-845a-08ddf015bdd2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF000015C7.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9704
 
-On Wed, Sep 10, 2025 at 10:08:39AM +0800, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
-> 
-> Add support for PCIe controller in SG2042 SoC. The controller
-> uses the Cadence PCIe core programmed by pcie-cadence*.c. The
-> PCIe controller will work in host mode only, supporting data
-> rate(gen4) and lanes(x16 or x8).
-> 
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> ---
->  drivers/pci/controller/cadence/Kconfig       |  10 ++
->  drivers/pci/controller/cadence/Makefile      |   1 +
->  drivers/pci/controller/cadence/pcie-sg2042.c | 104 +++++++++++++++++++
->  3 files changed, 115 insertions(+)
->  create mode 100644 drivers/pci/controller/cadence/pcie-sg2042.c
-> 
-> diff --git a/drivers/pci/controller/cadence/Kconfig b/drivers/pci/controller/cadence/Kconfig
-> index 666e16b6367f..02a639e55fd8 100644
-> --- a/drivers/pci/controller/cadence/Kconfig
-> +++ b/drivers/pci/controller/cadence/Kconfig
-> @@ -42,6 +42,15 @@ config PCIE_CADENCE_PLAT_EP
->  	  endpoint mode. This PCIe controller may be embedded into many
->  	  different vendors SoCs.
->  
-> +config PCIE_SG2042_HOST
-> +	tristate "Sophgo SG2042 PCIe controller (host mode)"
-> +	depends on OF && (ARCH_SOPHGO || COMPILE_TEST)
-> +	select PCIE_CADENCE_HOST
-> +	help
-> +	  Say Y here if you want to support the Sophgo SG2042 PCIe platform
-> +	  controller in host mode. Sophgo SG2042 PCIe controller uses Cadence
-> +	  PCIe core.
-> +
->  config PCI_J721E
->  	tristate
->  	select PCIE_CADENCE_HOST if PCI_J721E_HOST != n
-> @@ -67,4 +76,5 @@ config PCI_J721E_EP
->  	  Say Y here if you want to support the TI J721E PCIe platform
->  	  controller in endpoint mode. TI J721E PCIe controller uses Cadence PCIe
->  	  core.
-> +
->  endmenu
-> diff --git a/drivers/pci/controller/cadence/Makefile b/drivers/pci/controller/cadence/Makefile
-> index 9bac5fb2f13d..5e23f8539ecc 100644
-> --- a/drivers/pci/controller/cadence/Makefile
-> +++ b/drivers/pci/controller/cadence/Makefile
-> @@ -4,3 +4,4 @@ obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host.o
->  obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep.o
->  obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
->  obj-$(CONFIG_PCI_J721E) += pci-j721e.o
-> +obj-$(CONFIG_PCIE_SG2042_HOST) += pcie-sg2042.o
-> diff --git a/drivers/pci/controller/cadence/pcie-sg2042.c b/drivers/pci/controller/cadence/pcie-sg2042.c
-> new file mode 100644
-> index 000000000000..c026e1ca5d6e
-> --- /dev/null
-> +++ b/drivers/pci/controller/cadence/pcie-sg2042.c
-> @@ -0,0 +1,104 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * pcie-sg2042 - PCIe controller driver for Sophgo SG2042 SoC
-> + *
-> + * Copyright (C) 2025 Sophgo Technology Inc.
-> + * Copyright (C) 2025 Chen Wang <unicorn_wang@outlook.com>
-> + */
-> +
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/pci.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +
-> +#include "pcie-cadence.h"
-> +
-> +/*
-> + * SG2042 only supports 4-byte aligned access, so for the rootbus (i.e. to
-> + * read/write the Root Port itself, read32/write32 is required. For
-> + * non-rootbus (i.e. to read/write the PCIe peripheral registers, supports
-> + * 1/2/4 byte aligned access, so directly using read/write should be fine.
-> + */
-> +
-> +static struct pci_ops sg2042_pcie_root_ops = {
-> +	.map_bus	= cdns_pci_map_bus,
-> +	.read		= pci_generic_config_read32,
-> +	.write		= pci_generic_config_write32,
-> +};
-> +
-> +static struct pci_ops sg2042_pcie_child_ops = {
-> +	.map_bus	= cdns_pci_map_bus,
-> +	.read		= pci_generic_config_read,
-> +	.write		= pci_generic_config_write,
-> +};
-> +
-> +static int sg2042_pcie_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct pci_host_bridge *bridge;
-> +	struct cdns_pcie *pcie;
-> +	struct cdns_pcie_rc *rc;
-> +	int ret;
-> +
-> +	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*rc));
-> +	if (!bridge) {
-> +		dev_err_probe(dev, -ENOMEM, "Failed to alloc host bridge!\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	bridge->ops = &sg2042_pcie_root_ops;
-> +	bridge->child_ops = &sg2042_pcie_child_ops;
-> +
-> +	rc = pci_host_bridge_priv(bridge);
-> +	pcie = &rc->pcie;
-> +	pcie->dev = dev;
-> +
-> +	platform_set_drvdata(pdev, pcie);
-> +
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_no_callbacks(dev);
-> +	devm_pm_runtime_enable(dev);
-> +
-> +	ret = cdns_pcie_init_phy(dev, pcie);
-> +	if (ret) {
-> +		dev_err_probe(dev, ret, "Failed to init phy!\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = cdns_pcie_host_setup(rc);
-> +	if (ret) {
-> +		dev_err_probe(dev, ret, "Failed to setup host!\n");
-> +		cdns_pcie_disable_phy(pcie);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
+On Mon, Sep 08, 2025 at 04:26:55PM -0700, Nicolin Chen wrote:
+> None of the callers of arm_smmu_cmdq_batch_submit() cares about the batch
+> after a submission. So, it'll be certainly safe to nuke the cmds->num, at
+> least upon a successful one. This will ease a bit a wrapper function, for
+> the new arm_smmu_invs structure.
 
-> +static void sg2042_pcie_remove(struct platform_device *pdev)
-> +{
-> +	struct cdns_pcie *pcie = platform_get_drvdata(pdev);
-> +
-> +	cdns_pcie_disable_phy(pcie);
-> +}
-> +
+This was added when arm_smmu_cmdq_batch_submit() was needed by a
+new arm_smmu_invs helper that used it at a few places. But after
+a few rounds of rework, I found that there is only one call now.
 
-I think this remove is useless, as it is almost impossible to
-remove a pcie at runtime.
+I will drop this patch.
 
-Regards,
-Inochi
+Thanks
+Nicolin
 
