@@ -1,124 +1,246 @@
-Return-Path: <linux-kernel+bounces-810197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 397EEB51725
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:42:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D93B5172B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 14:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81BE27B8D13
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:40:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 693701C830D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 12:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE5E31B13C;
-	Wed, 10 Sep 2025 12:42:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE5031196C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 12:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17A131C56B;
+	Wed, 10 Sep 2025 12:43:43 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88BF31B117;
+	Wed, 10 Sep 2025 12:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757508133; cv=none; b=IYK8kWW7FyJL8CBSWPnyX/rM05QRAmrK/LZfrnrHuiJkM/sKlxttOKCC047BiCNSHFj+wi2SMIeWdHW6qqSfsfm8mRb+6C0pJLa7u2DlzP175qPV3LnnWXKp3Oeg0bE8pcXQhHPWRtQQCaf2w/4Z/Fd16o4U59DMzje5dMyLFZY=
+	t=1757508223; cv=none; b=t3i6MbTpg0hjR+Czb/6TIYSNMmcPt056pBsUbFlQ5DDbkf27xaKj00CLfmD4xvkHD0AHhGfY4gESaqeB8JbayeM93g7a2Tu/eJNr9WTwReOLJm5D2vY1AAbfHbzJTtDBpYK70W7O9SIXgnoxXybHbs3je/6zJRrB9p6IVnUMdkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757508133; c=relaxed/simple;
-	bh=XOdgTh/pATs6Eu2+69y/VeWBsYiCPjDIHDA6a/qj4cc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IxtnG3wcWK4NXR2WLAFKriQ6/9rmPrJdwKC7o2R1iibVLyCLmt/HXd2GCYRFUnX41OEW8/5nmMQTXB8Kxu6TgaWMHvNA95kKN0imb+1EogkT9EhLcgSmYpU3rGTI7+jRvP5HKIo/ObJvJcYTeeTt2QCF+56JGP8Fk8qcZxqok8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F3E116F8;
-	Wed, 10 Sep 2025 05:42:02 -0700 (PDT)
-Received: from [10.57.90.208] (unknown [10.57.90.208])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A547E3F694;
-	Wed, 10 Sep 2025 05:42:09 -0700 (PDT)
-Message-ID: <f660749e-d515-4208-9610-ffc4155b4a0d@arm.com>
-Date: Wed, 10 Sep 2025 13:42:08 +0100
+	s=arc-20240116; t=1757508223; c=relaxed/simple;
+	bh=+2TZJn/jYbEmFbdJjtRnq4il2VAT+CuLLgJ3y2/AIr4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kSns5WEGhNaJFkFlbNekTTeGibtTZMKsEaPNY0GmtDWU73JolhApGSUM5uWK93U0gugWWhGL1V5Tbxk0vvRZRlFS0oiTufViEBCT+rn+JvfkB2z9lUQSRnZcjgarO1yuBwSycKU3PJdsWAflzKQ9v1JnPqAGgglIYhdyRxAqJ90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMKzt3Bzsz6LDJ9;
+	Wed, 10 Sep 2025 20:40:58 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D0F431400C8;
+	Wed, 10 Sep 2025 20:43:36 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 10 Sep
+ 2025 14:43:35 +0200
+Date: Wed, 10 Sep 2025 13:43:34 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
+	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v11 06/23] CXL/AER: Introduce rch_aer.c into AER driver
+ for handling CXL RCH errors
+Message-ID: <20250910134334.000062b5@huawei.com>
+In-Reply-To: <20250827013539.903682-7-terry.bowman@amd.com>
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+	<20250827013539.903682-7-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/2] Don't broadcast TLBI if mm was only active on
- local CPU
-Content-Language: en-GB
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, James Morse <james.morse@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250829153510.2401161-1-ryan.roberts@arm.com>
- <87segumv6w.fsf@DESKTOP-5N7EMDA>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <87segumv6w.fsf@DESKTOP-5N7EMDA>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 10/09/2025 11:57, Huang, Ying wrote:
-> Ryan Roberts <ryan.roberts@arm.com> writes:
-> 
->> Hi All,
->>
->> This is an RFC for my implementation of an idea from James Morse to avoid
->> broadcasting TBLIs to remote CPUs if it can be proven that no remote CPU could
->> have ever observed the pgtable entry for the TLB entry that is being
->> invalidated. It turns out that x86 does something similar in principle.
->>
->> The primary feedback I'm looking for is; is this actually correct and safe?
->> James and I both believe it to be, but it would be useful to get further
->> validation.
->>
->> Beyond that, the next question is; does it actually improve performance?
->> stress-ng's --tlb-shootdown stressor suggests yes; as concurrency increases, we
->> do a much better job of sustaining the overall number of "tlb shootdowns per
->> second" after the change:
->>
->> +------------+--------------------------+--------------------------+--------------------------+
->> |            |     Baseline (v6.15)     |        tlbi local        |        Improvement       |
->> +------------+-------------+------------+-------------+------------+-------------+------------+
->> | nr_threads |     ops/sec |    ops/sec |     ops/sec |    ops/sec |     ops/sec |    ops/sec |
->> |            | (real time) | (cpu time) | (real time) | (cpu time) | (real time) | (cpu time) |
->> +------------+-------------+------------+-------------+------------+-------------+------------+
->> |          1 |        9109 |       2573 |        8903 |       3653 |         -2% |        42% |
->> |          4 |        8115 |       1299 |        9892 |       1059 |         22% |       -18% |
->> |          8 |        5119 |        477 |       11854 |       1265 |        132% |       165% |
->> |         16 |        4796 |        286 |       14176 |        821 |        196% |       187% |
->> |         32 |        1593 |         38 |       15328 |        474 |        862% |      1147% |
->> |         64 |        1486 |         19 |        8096 |        131 |        445% |       589% |
->> |        128 |        1315 |         16 |        8257 |        145 |        528% |       806% |
->> +------------+-------------+------------+-------------+------------+-------------+------------+
->>
->> But looking at real-world benchmarks, I haven't yet found anything where it
->> makes a huge difference; When compiling the kernel, it reduces kernel time by
->> ~2.2%, but overall wall time remains the same. I'd be interested in any
->> suggestions for workloads where this might prove valuable.
->>
->> All mm selftests have been run and no regressions are observed. Applies on
->> v6.17-rc3.
-> 
-> I have used redis (a single threaded in-memory database) to test the
-> patchset on an ARM server.  32 redis-server processes are run on the
-> NUMA node 1 to enlarge the overhead of TLBI broadcast.  32
-> memtier-benchmark processes are run on the NUMA node 0 accordingly.
-> Snapshot is triggered constantly in redis-server, which fork(), saves
-> memory database to disk, exit(), so that COW in the redis-server will
-> trigger a large amount of TLBI.  Basically, this tests the performance
-> of redis-server during snapshot.  The test time is about 300s.  Test
-> results show that the benchmark score can improve ~4.5% with the
-> patchset.
-> 
-> Feel free to add my
-> 
-> Tested-by: Huang Ying <ying.huang@linux.alibaba.com>
-> 
-> in the future versions.
+On Tue, 26 Aug 2025 20:35:21 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-Thanks for this - very useful!
+> The restricted CXL Host (RCH) AER error handling logic currently resides
+> in the AER driver file, drivers/pci/pcie/aer.c. CXL specific changes are
+> conditionally compiled using #ifdefs.
+> 
+> Improve the AER driver maintainability by separating the RCH specific logic
+> from the AER driver's core functionality and removing the ifdefs. Introduce
+> drivers/pci/pcie/rch_aer.c for moving the RCH AER logic into.
+> 
+> Move the CXL logic into the new file but leave helper functions in aer.c
+> for now as they will be moved in future patch for CXL virtual hierarchy
+> handling.
+> 
+> 2 changes are required to maintain compilation after the move. Change
+> cxl_rch_handle_error() & cxl_rch_enable_rcec() to be non-static inorder for
+> accessing from the AER driver in aer.c.
+> 
+> Introduce CONFIG_CXL_RCH_RAS in cxl/Kconfig. Update pcie/pcie/Makefile to
+> conditionally compile rch_aer.c file using CONFIG_CXL_RCH_RAS.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+Hi Terry,
+
+Sorry it took me so long to get back this.
+
+Anyhow a few 'scope' of export questions inline.
+
+Jonathan
+
 
 > 
 > ---
-> Best Regards,
-> Huang, Ying
+> Changes in v10->v11:
+> - Remove changes in code-split and move to earlier, new patch
+> - Add #include <linux/bitfield.h> to cxl_ras.c
+> - Move cxl_rch_handle_error() & cxl_rch_enable_rcec() declarations from pci.h
+> to aer.h, more localized.
+> - Introduce CONFIG_CXL_RCH_RAS, includes Makefile changes, ras.c ifdef changes
+> ---
+>  drivers/cxl/Kconfig        |   9 +++-
+>  drivers/cxl/core/ras.c     |   3 ++
+>  drivers/pci/pci.h          |  20 +++++++
+>  drivers/pci/pcie/Makefile  |   1 +
+>  drivers/pci/pcie/aer.c     | 108 +++----------------------------------
+>  drivers/pci/pcie/rch_aer.c |  99 ++++++++++++++++++++++++++++++++++
+>  6 files changed, 138 insertions(+), 102 deletions(-)
+>  create mode 100644 drivers/pci/pcie/rch_aer.c
+> 
+> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
+> index 1c7c8989fd8b..028201e24523 100644
+> --- a/drivers/cxl/Kconfig
+> +++ b/drivers/cxl/Kconfig
+> @@ -235,5 +235,12 @@ config CXL_MCE
+>  
+>  config CXL_RAS
+>  	def_bool y
+> -	depends on ACPI_APEI_GHES && PCIEAER_CXL
+> +	depends on ACPI_APEI_GHES && PCIEAER && CXL_PCI
+> +
+> +config CXL_RCH_RAS
+> +	bool "CXL: Restricted CXL Host (RCH) protocol error handling"
+> +	def_bool n
+
+Isn't that the default anyway?  So probably drop that explicit default.
+
+
+> +	depends on CXL_RAS
+> +	help
+> +	  RAS support for Restricted CXL Host (RCH) defined in CXL1.1.
+>  endif
+
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 12215ee72afb..c8a0c0ec0073 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+
+> +#ifdef CONFIG_CXL_RAS
+> +void pci_aer_unmask_internal_errors(struct pci_dev *dev);
+> +bool cxl_error_is_native(struct pci_dev *dev);
+> +bool is_internal_error(struct aer_err_info *info);
+> +#else
+> +static inline void pci_aer_unmask_internal_errors(struct pci_dev *dev) { }
+> +static inline bool cxl_error_is_native(struct pci_dev *dev) { return false; }
+> +static inline bool is_internal_error(struct aer_err_info *info) { return false; }
+
+For me the ifdef makes sense for the cxl specific one, but not the other two
+which I think are reasonable interfaces to expose more generally.
+
+> +#endif
+> +
+>  #endif /* DRIVERS_PCI_H */
+> diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
+> index 173829aa02e6..07c299dbcdd7 100644
+> --- a/drivers/pci/pcie/Makefile
+> +++ b/drivers/pci/pcie/Makefile
+> @@ -8,6 +8,7 @@ obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o bwctrl.o
+>  
+>  obj-y				+= aspm.o
+>  obj-$(CONFIG_PCIEAER)		+= aer.o err.o tlp.o
+> +obj-$(CONFIG_CXL_RCH_RAS)	+= rch_aer.o
+>  obj-$(CONFIG_PCIEAER_INJECT)	+= aer_inject.o
+>  obj-$(CONFIG_PCIE_PME)		+= pme.o
+>  obj-$(CONFIG_PCIE_DPC)		+= dpc.o
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 7fe9f883f5c5..29de7ee861f7 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -1098,7 +1098,7 @@ static bool find_source_device(struct pci_dev *parent,
+>   * Note: AER must be enabled and supported by the device which must be
+>   * checked in advance, e.g. with pcie_aer_is_native().
+>   */
+> -static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+> +void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+>  {
+>  	int aer = dev->aer_cap;
+>  	u32 mask;
+> @@ -1111,119 +1111,25 @@ static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+>  	mask &= ~PCI_ERR_COR_INTERNAL;
+>  	pci_write_config_dword(dev, aer + PCI_ERR_COR_MASK, mask);
+>  }
+> +EXPORT_SYMBOL_NS_GPL(pci_aer_unmask_internal_errors, "CXL");
+Why put this one in the CXL namespace? 
+
+Maybe check the others as well. For instance is_internal_error()
+doesn't feel CXL specific either.
+
+
+>  
+>  /**
+>   * pci_aer_handle_error - handle logging error into an event log
+
+> diff --git a/drivers/pci/pcie/rch_aer.c b/drivers/pci/pcie/rch_aer.c
+> new file mode 100644
+> index 000000000000..bfe071eebf67
+> --- /dev/null
+> +++ b/drivers/pci/pcie/rch_aer.c
+
+
+> +static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
+> +{
+> +	struct aer_err_info *info = (struct aer_err_info *)data;
+> +	const struct pci_error_handlers *err_handler;
+> +
+> +	if (!is_cxl_mem_dev(dev) || !cxl_error_is_native(dev))
+> +		return 0;
+> +
+> +	/* Protect dev->driver */
+> +	device_lock(&dev->dev);
+
+Probably not one to bury in this patch (maybe you do it later in which
+case ignore this) but given we are touching the code,
+	guard(device)(&dev->dev);
+
+to allow early returns and no need to have the goto.
+
+> +
+> +	err_handler = dev->driver ? dev->driver->err_handler : NULL;
+> +	if (!err_handler)
+> +		goto out;
+> +
+> +	if (info->severity == AER_CORRECTABLE) {
+> +		if (err_handler->cor_error_detected)
+> +			err_handler->cor_error_detected(dev);
+> +	} else if (err_handler->error_detected) {
+> +		if (info->severity == AER_NONFATAL)
+> +			err_handler->error_detected(dev, pci_channel_io_normal);
+> +		else if (info->severity == AER_FATAL)
+> +			err_handler->error_detected(dev, pci_channel_io_frozen);
+> +	}
+> +out:
+> +	device_unlock(&dev->dev);
+> +	return 0;
+> +}
 
 
