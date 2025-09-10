@@ -1,230 +1,132 @@
-Return-Path: <linux-kernel+bounces-809845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E06B512B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:38:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F06B51338
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A669F4E2A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:38:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E36BB1C282E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7852A314B6E;
-	Wed, 10 Sep 2025 09:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CUCm+0Cc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FF1311C31;
+	Wed, 10 Sep 2025 09:52:36 +0000 (UTC)
+Received: from bregans-1.gladserv.net (bregans-1.gladserv.net [185.128.211.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB93314A7F;
-	Wed, 10 Sep 2025 09:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08762FFDF3;
+	Wed, 10 Sep 2025 09:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.211.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497083; cv=none; b=XoGXaCQX79PC2H/5cWVWlo248RsgCNgnc2tKfNp7ZCl0b5zDcfIeioDzgBJ7Zmyt2UngYWzibpsUCWQssn4gatj0+Ra9H1R/2zx44ZkOIl1MN4eQeKQ64hb8SZYIvzDEZ2Fe1eGGCz5Z2FGO6EvOAf54fxZp3g6nJ/DAmnKsS3I=
+	t=1757497956; cv=none; b=tS3vmmOpCoE+Qphq4oCiCS/NCqRWZxcrvVMcpg2wn1fjNNO5IhMLOR842pYgipR2gBgQCDMDIsVsgZP48xeUMZPUvjY0gDV2nuDWuKlWatSCE31AkYqWeTaV4Uoy/AzHJ0F31kKL3eIqOUYicfaaDCMLnSBo7of3aTN/cWuiiLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497083; c=relaxed/simple;
-	bh=K3S4/YYR0q8eWSDj5bQrQ8p7/okLw1YwfbW83NtyxJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZUtMTqbieoUss0ipuakEKZzx0uaFn3bhCN1uu/PIcuBianXgCP1zuKXuO0mlH45Z2GozUEG/mlNsHeqRorHO8KCRvDjpVyDX9k5Z4z7uGizpgTVCjB5TmelnFGun8V89Px7mJzIURoWsiZdMT7xDEKMNUTJbzTzCJ5Y4yHZvA4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CUCm+0Cc; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757497082; x=1789033082;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=K3S4/YYR0q8eWSDj5bQrQ8p7/okLw1YwfbW83NtyxJk=;
-  b=CUCm+0CcRMnQxPRsd3/WPaJHmpXf9Fb47d7btCGotty7HdUU50fT356l
-   2LGVLmoFqA5mqbG9gjU7R1Ie58RSsZMQlF4pfzfQQ2QKa8cnrG1DwLs6H
-   iwINZB4skhrehCe+7Ybt/HOJan99YiAH5vEABzxusRAysV92r6OTHfBhO
-   AgJbMBFf+19FM6fwI/pPUFyHGGgPlaL72OBFlCDHiVwAZ8j8/iE7v7fAH
-   jMO2kR4MFKN4iPB8aq2iKXBxtdZCI3gudMEauhrPOfNIL5zBZTt+hGro2
-   kv4nHwqeUwf4morHzmg+UU5b4m7KIqr1rFJLKCXHVtCO6BpgaIczLzm5U
-   w==;
-X-CSE-ConnectionGUID: NWsILvWZR5C4/b/unB1nfQ==
-X-CSE-MsgGUID: 9AXy5W7ZTza7PEDFTNI1pQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="71216806"
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="71216806"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 02:38:01 -0700
-X-CSE-ConnectionGUID: nYyyuxHNT0WdC4Vb/XqFhg==
-X-CSE-MsgGUID: pTxQS5PpTXmqP5Puv2L3NQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; 
-   d="scan'208";a="173255428"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 02:37:56 -0700
-Message-ID: <be3459db-d972-4d46-a48a-2fab1cde7faa@intel.com>
-Date: Wed, 10 Sep 2025 17:37:50 +0800
+	s=arc-20240116; t=1757497956; c=relaxed/simple;
+	bh=u1QIKXzBsENyeCgcrXRUzfKMMd5JUjni4MdiJztllnQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cNJBhSL6VRBIWScSPvKy5fWe+e8XcnCOalFfj01iUn0IaE4Z3wtaSGeHzLv3D1HhFvMFq6VvsmNiMbSwBYOcA6vwrrsB1TfbyD4Fb4Ap3Ws9GLvAriAHwJWgOeBbIWuyAU9/XVXtCxaDk8ppwhw3GkwzDNtuJmp9Aj6yhJsaZMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.211.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
+From: Brett A C Sheffield <bacs@librecast.net>
+To: stable@vger.kernel.org
+Cc: regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Helge Deller <deller@gmx.de>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Lee Jones <lee@kernel.org>,
+	Murad Masimov <m.masimov@mt-integration.ru>,
+	Yongzhen Zhang <zhangyongzhen@kylinos.cn>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Brett A C Sheffield <bacs@librecast.net>
+Subject: [REGRESSION 5.15.y][BISECTED][PATCH 0/1] console hangs at uevents
+Date: Wed, 10 Sep 2025 09:38:01 +0000
+Message-ID: <20250910095124.6213-3-bacs@librecast.net>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 06/22] KVM: x86: Load guest FPU state when access
- XSAVE-managed MSRs
-To: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: acme@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- hpa@zytor.com, john.allen@amd.com, mingo@kernel.org, mingo@redhat.com,
- minipli@grsecurity.net, mlevitsk@redhat.com, namhyung@kernel.org,
- pbonzini@redhat.com, prsampat@amd.com, rick.p.edgecombe@intel.com,
- seanjc@google.com, shuah@kernel.org, tglx@linutronix.de,
- weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com
-References: <20250909093953.202028-1-chao.gao@intel.com>
- <20250909093953.202028-7-chao.gao@intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250909093953.202028-7-chao.gao@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/9/2025 5:39 PM, Chao Gao wrote:
-> From: Sean Christopherson <seanjc@google.com>
-> 
-> Load the guest's FPU state if userspace is accessing MSRs whose values
-> are managed by XSAVES. Introduce two helpers, kvm_{get,set}_xstate_msr(),
-> to facilitate access to such kind of MSRs.
-> 
-> If MSRs supported in kvm_caps.supported_xss are passed through to guest,
-> the guest MSRs are swapped with host's before vCPU exits to userspace and
-> after it reenters kernel before next VM-entry.
-> 
-> Because the modified code is also used for the KVM_GET_MSRS device ioctl(),
-> explicitly check @vcpu is non-null before attempting to load guest state.
-> The XSAVE-managed MSRs cannot be retrieved via the device ioctl() without
-> loading guest FPU state (which doesn't exist).
-> 
-> Note that guest_cpuid_has() is not queried as host userspace is allowed to
-> access MSRs that have not been exposed to the guest, e.g. it might do
-> KVM_SET_MSRS prior to KVM_SET_CPUID2.
-> 
-> The two helpers are put here in order to manifest accessing xsave-managed
-> MSRs requires special check and handling to guarantee the correctness of
-> read/write to the MSRs.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> Co-developed-by: Yang Weijiang <weijiang.yang@intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> ---
-> v14:
-> - s/rdmsrl/rdmsrq, s/wrmsrl/wrmsrq (Xin)
-> - return true in is_xstate_managed_msr() for MSR_IA32_S_CET
-> ---
->   arch/x86/kvm/x86.c | 36 +++++++++++++++++++++++++++++++++++-
->   arch/x86/kvm/x86.h | 24 ++++++++++++++++++++++++
->   2 files changed, 59 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index c15e8c00dc7d..7c0a07be6b64 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -136,6 +136,9 @@ static int __set_sregs2(struct kvm_vcpu *vcpu, struct kvm_sregs2 *sregs2);
->   static void __get_sregs2(struct kvm_vcpu *vcpu, struct kvm_sregs2 *sregs2);
->   
->   static DEFINE_MUTEX(vendor_module_lock);
-> +static void kvm_load_guest_fpu(struct kvm_vcpu *vcpu);
-> +static void kvm_put_guest_fpu(struct kvm_vcpu *vcpu);
-> +
->   struct kvm_x86_ops kvm_x86_ops __read_mostly;
->   
->   #define KVM_X86_OP(func)					     \
-> @@ -4566,6 +4569,22 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->   }
->   EXPORT_SYMBOL_GPL(kvm_get_msr_common);
->   
-> +/*
-> + *  Returns true if the MSR in question is managed via XSTATE, i.e. is context
-> + *  switched with the rest of guest FPU state.
-> + */
-> +static bool is_xstate_managed_msr(u32 index)
-> +{
-> +	switch (index) {
-> +	case MSR_IA32_S_CET:
-> +	case MSR_IA32_U_CET:
-> +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
->   /*
->    * Read or write a bunch of msrs. All parameters are kernel addresses.
->    *
-> @@ -4576,11 +4595,26 @@ static int __msr_io(struct kvm_vcpu *vcpu, struct kvm_msrs *msrs,
->   		    int (*do_msr)(struct kvm_vcpu *vcpu,
->   				  unsigned index, u64 *data))
->   {
-> +	bool fpu_loaded = false;
->   	int i;
->   
-> -	for (i = 0; i < msrs->nmsrs; ++i)
-> +	for (i = 0; i < msrs->nmsrs; ++i) {
-> +		/*
-> +		 * If userspace is accessing one or more XSTATE-managed MSRs,
-> +		 * temporarily load the guest's FPU state so that the guest's
-> +		 * MSR value(s) is resident in hardware, i.e. so that KVM can
-> +		 * get/set the MSR via RDMSR/WRMSR.
-> +		 */
-> +		if (vcpu && !fpu_loaded && kvm_caps.supported_xss &&
+Commit ee7a69aa38d8 ("fbdev: Disable sysfb device registration when removing
+conflicting FBs") was backported to 5.15.y LTS. This causes a regression where
+all virtual consoles stop responding during boot at:
 
-why not check vcpu->arch.guest_supported_xss?
+"Populating /dev with existing devices through uevents ..."
 
-> +		    is_xstate_managed_msr(entries[i].index)) {
-> +			kvm_load_guest_fpu(vcpu);
-> +			fpu_loaded = true;
-> +		}
->   		if (do_msr(vcpu, entries[i].index, &entries[i].data))
->   			break;
-> +	}
-> +	if (fpu_loaded)
-> +		kvm_put_guest_fpu(vcpu);
->   
->   	return i;
->   }
-> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> index eb3088684e8a..34afe43579bb 100644
-> --- a/arch/x86/kvm/x86.h
-> +++ b/arch/x86/kvm/x86.h
-> @@ -701,4 +701,28 @@ int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, int cpl,
->   
->   int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
->   
-> +/*
-> + * Lock and/or reload guest FPU and access xstate MSRs. For accesses initiated
-> + * by host, guest FPU is loaded in __msr_io(). For accesses initiated by guest,
-> + * guest FPU should have been loaded already.
-> + */
-> +
-> +static inline void kvm_get_xstate_msr(struct kvm_vcpu *vcpu,
-> +				      struct msr_data *msr_info)
-> +{
-> +	KVM_BUG_ON(!vcpu->arch.guest_fpu.fpstate->in_use, vcpu->kvm);
-> +	kvm_fpu_get();
-> +	rdmsrq(msr_info->index, msr_info->data);
-> +	kvm_fpu_put();
-> +}
-> +
-> +static inline void kvm_set_xstate_msr(struct kvm_vcpu *vcpu,
-> +				      struct msr_data *msr_info)
-> +{
-> +	KVM_BUG_ON(!vcpu->arch.guest_fpu.fpstate->in_use, vcpu->kvm);
-> +	kvm_fpu_get();
-> +	wrmsrq(msr_info->index, msr_info->data);
-> +	kvm_fpu_put();
-> +}
-> +
->   #endif
+The console is no longer responding, nor is it possible to switch to another
+virtual console. It is possible to force a reboot with CTRL+ALT+DEL.
+
+The system is otherwise still working normally, and can be connected to over
+ssh.
+
+This patch was not backported to 5.4.y or 5.10.y. Newer stable kernels with this
+patch (6.1.y, 6.6.y, 6.12,y, 6.15.y, 6.16.y) and mainline are unaffected.
+
+There are a bunch of patches that touch fbmem.c in later stable kernels, and I
+started looking at this but it gets messy very quickly as e23a5e14aa27 is a
+merge commit.
+
+Given this was an autoselected patch that was not backported to fix any specific
+issue the simplest and cleanest fix is to simply revert.
+
+
+Bisection log:
+
+git bisect start
+# status: waiting for both good and bad commits
+# good: [8bb7eca972ad531c9b149c0a51ab43a417385813] Linux 5.15
+git bisect good 8bb7eca972ad531c9b149c0a51ab43a417385813
+# status: waiting for bad commit, 1 good commit known
+# bad: [c275eaaaa34260e6c907bc5e7ee07c096bc45064] Linux 5.15.125
+git bisect bad c275eaaaa34260e6c907bc5e7ee07c096bc45064
+# bad: [ff2932ac8ee1ce6f66ba1b5017843c87492cd1a8] tcp: Fix a data-race around sysctl_tcp_challenge_ack_limit.
+git bisect bad ff2932ac8ee1ce6f66ba1b5017843c87492cd1a8
+# good: [72ea28d88d30cefc5b0184e4666cf4817f2a0fa8] arm64: dts: marvell: armada-37xx: Remap IO space to bus address 0x0
+git bisect good 72ea28d88d30cefc5b0184e4666cf4817f2a0fa8
+# good: [acd12d16528152b32fa09be2c5ef95047f69af05] KVM: x86/mmu: fix NULL pointer dereference on guest INVPCID
+git bisect good acd12d16528152b32fa09be2c5ef95047f69af05
+# good: [ce49b94ddb70e607c476a12d26002715d694b23a] random: avoid checking crng_ready() twice in random_init()
+git bisect good ce49b94ddb70e607c476a12d26002715d694b23a
+# good: [6886327780254ba749b770373653b6afc2a339fc] fbcon: Disallow setting font bigger than screen size
+git bisect good 6886327780254ba749b770373653b6afc2a339fc
+# bad: [1f068f9da7436b11276f23ebf65dd641c8ae0b62] x86/entry: Avoid very early RET
+git bisect bad 1f068f9da7436b11276f23ebf65dd641c8ae0b62
+# good: [5a4bb158f4c638d1fc494d2730357cfb6f5a4eea] netfilter: nf_tables: replace BUG_ON by element length check
+git bisect good 5a4bb158f4c638d1fc494d2730357cfb6f5a4eea
+# bad: [e71d0e1370b162271a0053e1f1215961c31dc4cb] ASoC: codecs: rt700/rt711/rt711-sdca: initialize workqueues in probe
+git bisect bad e71d0e1370b162271a0053e1f1215961c31dc4cb
+# good: [2d84fcb6e6f74c96eb03e6a1b9eed0a164e37b2c] seg6: bpf: fix skb checksum in bpf_push_seg6_encap()
+git bisect good 2d84fcb6e6f74c96eb03e6a1b9eed0a164e37b2c
+# good: [06f818de1621ea4da689fd45f1eb54ff7617342b] scsi: hisi_sas: Limit max hw sectors for v3 HW
+git bisect good 06f818de1621ea4da689fd45f1eb54ff7617342b
+# bad: [7a2294c5f2e5636772afe6bd6c5b28218e0ea154] nvme: fix regression when disconnect a recovering ctrl
+git bisect bad 7a2294c5f2e5636772afe6bd6c5b28218e0ea154
+# good: [b952569e03168e23258fabf3faa4d6d2b8e08835] firmware: sysfb: Add sysfb_disable() helper function
+git bisect good b952569e03168e23258fabf3faa4d6d2b8e08835
+# bad: [833ecd0eae76eadf81d6d747bb5bc992d1151867] net: tipc: fix possible refcount leak in tipc_sk_create()
+git bisect bad 833ecd0eae76eadf81d6d747bb5bc992d1151867
+# bad: [13d28e0c79cbf69fc6f145767af66905586c1249] fbdev: Disable sysfb device registration when removing conflicting FBs
+git bisect bad 13d28e0c79cbf69fc6f145767af66905586c1249
+# first bad commit: [13d28e0c79cbf69fc6f145767af66905586c1249] fbdev: Disable sysfb device registration when removing conflicting FBs
+
+
+
+Brett A C Sheffield (1):
+  Revert "fbdev: Disable sysfb device registration when removing
+    conflicting FBs"
+
+ drivers/video/fbdev/core/fbmem.c | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+-- 
+2.49.1
 
 
