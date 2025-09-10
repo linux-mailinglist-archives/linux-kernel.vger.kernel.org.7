@@ -1,47 +1,81 @@
-Return-Path: <linux-kernel+bounces-809892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560C3B51334
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:52:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA4F4B51336
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 469D67B1323
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:50:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE1C1C25E53
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAC525DB06;
-	Wed, 10 Sep 2025 09:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67AF30E0FE;
+	Wed, 10 Sep 2025 09:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmijofgf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLH3rhrH"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21ED3115B8
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CE6265609;
+	Wed, 10 Sep 2025 09:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497904; cv=none; b=Fls9ibywFKAxh68dr8buJdHYrF3EEAaI1ZL5IqOLJ5WTIAQ6arG5/wLyJp6oOG/8+oXZ94/GY3nl3kSmAS8mzYw11lhHpSJ+fhW0wNnQGPlxb/eVDfbQdR5zO8Iu3+UTXYH5Hxvea2NXcmwpecErJkI1+pVqnnsDLiPtWsW4ffI=
+	t=1757497935; cv=none; b=XZBcsKCgcMirR2NOeCyER6kdXbATkKp/ANvE4yHE/9OYtsWrihVuBpjgegHQRmEEjiOAmafqm/qL2+WoeTLmlkHy4m8JBidTp0uGUvTMV+sJLp7T1NWwm+UIcm7dt1o6VwJ+QZyzGChugAIJKqwcjsm4C4KQr6c5qyDjjp2ykig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497904; c=relaxed/simple;
-	bh=V3TH6teKuqGP+qaeHsXMAY/wkqGVW8w7CJZ/OeEeDtY=;
+	s=arc-20240116; t=1757497935; c=relaxed/simple;
+	bh=Dayr28Tqd2NOreKB0wNsAkvU5AyQwzcIHuITFGBIIEw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cGIM9JR5zr8OsMK5VKa92mguoJgC6GvNv6xEWwrpNGvbk10eyuFtfRrL57YlRjxJP+AJnEMWGn/DF/PE901/nAxQMF5UVDx+vHgGOtuKDYMxpCDoza2QX4ReLdRzxchgKQcFwm52HzshZo1t7djQ2C4VGaBPsQf3dTGe4g576BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmijofgf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EBD6C4CEF0;
-	Wed, 10 Sep 2025 09:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757497903;
-	bh=V3TH6teKuqGP+qaeHsXMAY/wkqGVW8w7CJZ/OeEeDtY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cmijofgfP5d2trBwIYZJEIDR0QkzVce3qQBKWiaWJnvLFrcDfZ+q3t7PjfvpOnqrG
-	 jFbqHROFZ+ID75LZKWFFb+F/AA0R8vgwgl/4mnU/xCWSQ9pc5JlnjeOmCbgsfdRvZ0
-	 hhRSWNklxLj1gwgBP/sPnIWRJ0Ni8By6OJC7xZzCVXceEU1fNhjvtWuRd+N7peOq6r
-	 kXSdBPQ8/ecIbYkilgejPlULwdWZcocKMmT/BRr2SsI9QmnYkz3xFiIRUA1Z1yF4NX
-	 XJejuOvuJmDL3m63aOh3nQB1BpC+3RPGz+u8rp0CPXpUEw4ZUKTcns97Dp0bY8agnv
-	 BZ6o+5qhPlQyw==
-Message-ID: <b12ed3b1-fc61-4db8-a504-9adeb168dd7c@kernel.org>
-Date: Wed, 10 Sep 2025 11:51:40 +0200
+	 In-Reply-To:Content-Type; b=EO3bz7QAbldt+85zrt1YtizxeIE1tuchKutCSklrIbkORrLTnogmSfl8ag4Iwh9CkBbXaTaNddqSD5ORme5aSec4Tc0v0lUOAcksl/wZ3HPRtslymgPHO1x+TsQ6j7vOLjTclbBn6gLkiTV31fQZdYrzUEQl0J1CFQHZnRtzIIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hLH3rhrH; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3d19699240dso264000f8f.1;
+        Wed, 10 Sep 2025 02:52:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757497931; x=1758102731; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fkwu36sIqKlccEWXHkKiOjIdmvv3IpUTfWruAp8yJD4=;
+        b=hLH3rhrHAHSvCp6TPSmA3lsSxIyVUJAtYUmD6TgV/h/L9CDCeBgZZ02ijOwkYFBtpF
+         /MOxnu/P1rXPAymA1wyZVf9uBEEG3yJbBIBh6z75vZB9aKEPL3LVO2UohpWejw6mxQRD
+         QavIu3gE97P0Bqlc5rY0XvMmX2mRxvjUwZHGaRtCXned32UswusuLXYJ/7En6KD2gsYi
+         refJ9xd1/cuE6NacJBzJCtPJBUdCK6BE/bvR8LdA8wHQu+DaBe1pNVyLEz84FJguGLvs
+         r0+su40gAStMna+1YjTV4vA8oECJjBbnOoaAbXTYgjVT7J65PJOM2xllLR0BBXu1r5by
+         +RTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757497931; x=1758102731;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fkwu36sIqKlccEWXHkKiOjIdmvv3IpUTfWruAp8yJD4=;
+        b=RQP3zZXnhwVQOtauVzeGHfWfsWjwRjx8v3qsSKHruC2otjsE5zvlxFyucTAir/ACE5
+         qbDJCF1BgvoF/LzQbVIsSke4yRm58Q9t3er5nKeuuSnr9M3m2G0FbTCBa1fJCMicxJY7
+         Yj3C7+ZU3nuoUajjSMyJ8rVWnRQ+KrzDhiVXPaALzoOvSii68v/vi08XYHB7Ki4TB88x
+         1ZtYzJxic6hyRsUcJ6/EU9/8Hvp1Ti7kgwECoNtuNLo9V1azXsl/pDayCOYWA5nxUEes
+         KnrNzHR5zvIhLco9uxQiz4KXljuXctMlEUnQObXck45lFvwYj1t5b13fVrUjF5zlxS6y
+         1puQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnsjsShmXGQcb+Bx5p9L9ClMf+O/DqHTdwOMXTyLCuvzD5en46YzEf3HDF+hgyIps5ivVx2VAI1hha@vger.kernel.org, AJvYcCWrjeY/za50SAzaIydrvSF5TfbWExecRS8cblwV79CkrMwnCS8QbX8tYVlmb7pFsf2bIlbFnpsu82CrHVNB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjc5BkiKRxbm/Rq7wAPXyH6eRQK24Gu7VTP/siFP+6eohUpHB8
+	V79E47MYzW4P+wBbERB4Bj0ik9GYl2vmlb3aVZnBC5/yovBD4eDyAKR5AQFJyA==
+X-Gm-Gg: ASbGncuNDwP/JzzRxiDnVfiLeYUsFpfHi+WfLe6G6rsbwD/CpR+6MSjwtXp85b1gyUj
+	cddyhE2PXiNPKraN7MqEHyDxaGmbAMp27/iQF7VOQqXgwHuc/YbmQY43FqBa7b8w6dCpTotgM2E
+	evCtcKveRsReqOsMAgszht3JDUX2MF1/sB+2xrALBbNPg1Ix0ItG9E7al6puSyHs4+JiayzVtN0
+	kx2YpXHsuJo5GTiSGXxPbN2QfJcXpx03PqNSISRAGGTedwDRKwYdLfEfjRj/GxD0Eu6Kt3ZK1dV
+	+Ltk+duxaLZQm9+uKlLrz5e+KQ7Ts2y8ACTDoGkn9HRDdmHbOg+7cnjL5Uwn7D+3/Mf1QdC+RRa
+	bAnCfLXKZAnhrZokZ/FF0iHDlcwE5Juby9gtbZnu1TaujrW7JatYIZ3Zz2AxhoDZBsRCrCHKz8k
+	1s+cqOvlU=
+X-Google-Smtp-Source: AGHT+IHm66PjMPCOgJddrhyW/UFJ502yp0yYCzeOV7xdKQ14Xo/bl1MIKxHU3kUumA8xFUXACR4S1Q==
+X-Received: by 2002:a5d:64e6:0:b0:3e1:ca94:3199 with SMTP id ffacd0b85a97d-3e629b44341mr14421484f8f.14.1757497931132;
+        Wed, 10 Sep 2025 02:52:11 -0700 (PDT)
+Received: from [192.168.0.24] (static-39-127-60-95.ipcom.comunitel.net. [95.60.127.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e752238760sm6091362f8f.34.2025.09.10.02.52.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 02:52:10 -0700 (PDT)
+Message-ID: <0730bb06-46fe-4451-af50-fe79daa44f28@gmail.com>
+Date: Wed, 10 Sep 2025 11:52:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +83,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] soc: mediatek: mtk-svs: fix device leaks on probe
- failure
-To: Johan Hovold <johan@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Roger Lu <roger.lu@mediatek.com>, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250909095651.5530-1-johan@kernel.org>
+Subject: Re: [PATCH v4 0/4] Add support for Grinn GenioSBC-510/700 boards
+To: Mateusz Koza <mateusz.koza@grinn-global.com>,
+ angelogioacchino.delregno@collabora.com, robh@kernel.org
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, marcin.czarnecki@grinn-global.com,
+ b.bilas@grinn-global.com, andrew@lunn.ch
+References: <20250908130620.2309399-1-mateusz.koza@grinn-global.com>
 Content-Language: en-US, ca-ES, es-ES
-From: Matthias Brugger <matthias.bgg@kernel.org>
+From: Matthias Brugger <matthias.bgg@gmail.com>
 Autocrypt: addr=matthias.bgg@gmail.com; keydata=
  xsFNBFP1zgUBEAC21D6hk7//0kOmsUrE3eZ55kjc9DmFPKIz6l4NggqwQjBNRHIMh04BbCMY
  fL3eT7ZsYV5nur7zctmJ+vbszoOASXUpfq8M+S5hU2w7sBaVk5rpH9yW8CUWz2+ZpQXPJcFa
@@ -101,30 +136,66 @@ Autocrypt: addr=matthias.bgg@gmail.com; keydata=
  +zFJv9fVUpo/bjePOL4PMP1y+PYrp4PmPmRwoklBpy1ep8m8XURv46fGUHUEIsTwPWs2Q87k
  7vjYyrcyAOarX2X5pvMQvpAMADGf2Z3wrCsDdG25w2HztweUNd9QEprtJG8GNNzMOD4cQ82T
  a7eGvPWPeXauWJDLVR9jHtWT9Ot3BQgmApLxACvwvD1a69jaFKov28SPHxUCQ9Y1Y/Ct
-In-Reply-To: <20250909095651.5530-1-johan@kernel.org>
+In-Reply-To: <20250908130620.2309399-1-mateusz.koza@grinn-global.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Patch 2 and 4 queued, thanks
 
+Matthias
 
-On 09/09/2025 11:56, Johan Hovold wrote:
-> This series fixes mostly benign device leaks in case the svs driver
-> probe defers (or is ever unbound), but which should be fixed if only to
-> reduce the risk of such bugs being reproduced in places where it matter
-> more.
+On 08/09/2025 15:05, Mateusz Koza wrote:
+> This patch series adds support for Grinn GenioSBC-510 and GenioSBC-700
+> boards based on MediaTek MT8370 and MT8390 SoCs, respectively. It
+> includes device tree files for both boards, updates to the device tree
+> bindings, and necessary modifications to the Makefile.
 > 
-
-Series queued, thanks!
-
-> Johan
+> As far as I know, <angelogioacchino.delregno@collabora.com> has access
+> to the schematics for these boards, as we've shared them under NDA with
+> Collabora.
 > 
+> Signed-off-by: Mateusz Koza <mateusz.koza@grinn-global.com>
+> ---
+> v2:	Fixed the subject prefixes,
+> 	Fixed alignment in dts files,
+> 	Added missing SPDX-License-Identifier,
+> 	Fixed the ordering in dt-bindings,
+> 	Dropped redundant info from commit messages,
+> 	Run checkpatch.pl on the patchset and fixed the issues,
+> 	as suggested by Krzysztof Kozlowski <krzk@kernel.org>.
 > 
-> Johan Hovold (2):
->    soc: mediatek: mtk-svs: fix device leaks on mt8183 probe failure
->    soc: mediatek: mtk-svs: fix device leaks on mt8192 probe failure
+> v3:	Changed eth phy-mode to 'rgmii-id',
+> 	Changed eth mediatek,tx-delay-ps to 30,
+> 	as suggested by Andrew Lunn <andrew@lunn.ch>.
 > 
->   drivers/soc/mediatek/mtk-svs.c | 23 +++++++++++++++++++++++
->   1 file changed, 23 insertions(+)
+> v4:	Removed the nodes that are not present in upstream,
+> 	as suggested by Louis-Alexis <angelogioacchino.delregno@collabora.com>.
+> 
+> 	Added default pinctrl to ssusb0,
+> 	Enabled the scp_cluster node,
+> 	as suggested by Bartosz Biłas <b.bilas@grinn-global.com>.
+> ---
+> 
+> Bartosz Bilas (1):
+>    arm64: dts: mediatek: mt8370-grinn-genio-510-sbc: Add Grinn
+>      GenioSBC-510
+> 
+> Mateusz Koza (3):
+>    arm64: dts: mediatek: mt8390-genio-700-evk: Add Grinn GenioSBC-700
+>    dt-bindings: arm: mediatek: Add grinn,genio-700-sbc
+>    dt-bindings: arm: mediatek: Add grinn,genio-510-sbc
+> 
+>   .../devicetree/bindings/arm/mediatek.yaml     |   2 +
+>   arch/arm64/boot/dts/mediatek/Makefile         |   2 +
+>   .../mediatek/mt8370-grinn-genio-510-sbc.dts   |  19 +
+>   .../mediatek/mt8390-grinn-genio-700-sbc.dts   |  19 +
+>   .../dts/mediatek/mt8390-grinn-genio-sbc.dtsi  | 538 ++++++++++++++++++
+>   .../dts/mediatek/mt8390-grinn-genio-som.dtsi  | 209 +++++++
+>   6 files changed, 789 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8370-grinn-genio-510-sbc.dts
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8390-grinn-genio-700-sbc.dts
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8390-grinn-genio-sbc.dtsi
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8390-grinn-genio-som.dtsi
 > 
 
 
