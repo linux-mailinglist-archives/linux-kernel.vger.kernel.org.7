@@ -1,144 +1,185 @@
-Return-Path: <linux-kernel+bounces-810836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8AEB5205E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:47:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F497B52068
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 20:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524621BC2B11
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:48:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A120447FD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900C42D060D;
-	Wed, 10 Sep 2025 18:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8A62D0616;
+	Wed, 10 Sep 2025 18:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o9ELnF49"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wow6v4bd"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB7223B623
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 18:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4ECA27381E;
+	Wed, 10 Sep 2025 18:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757530059; cv=none; b=Du7T8QfQce2hFtaIuhPr8dAZ+ClSmBHrGcZe2TJcqRkdu8IGEs7IkyQh0kTthEQtUNUmqc1pKRRBEPrbhdEHll/0iEwF3+0CVUeIKeAal6i4wLt0gb3w31s8YxGDlkLZDwM7YDt/HskBZoRUak+1fxuQImILO5aLdp3FNOVjEws=
+	t=1757530136; cv=none; b=dLxReQhlAH6NEUL1OUfd76H7Pu8hD54T1SobOFxA41FOOyxI+UyTtd2U8a04kOof0aMRHFsYSs1mbnXVjmsOWtTkG50AgGZQPEfVuTIBTFXUYOI0GEdSM53w5SucXAAH1G4zUSQjydqRd1/VTgE5K7kXjeyhhpsW9unD24cCB2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757530059; c=relaxed/simple;
-	bh=3wVIa3kxzyn1jKBO4FKiY5s1rZ0DI2Qt/ZAzIledNSc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JL1OsTl2raV9sEXmv/T5CmcQK1oR+JR5STIXQvMPv2GLgsFvsqQuZ8TzzUCRKyoAq8ZTIwZJ127KyOTYWrwkUoVadZaNUmpgFZrFDRXzHkiQDghbckrNNaDxl0hg548Io6e8+83sgQHxnf3U0uOGyKj75SMikgg7prCXhbz5Jqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o9ELnF49; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b52047b3f1dso9716120a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 11:47:37 -0700 (PDT)
+	s=arc-20240116; t=1757530136; c=relaxed/simple;
+	bh=4ORbpdMUpYNGJsNem4Iy7fPKZBEsyh86L0Wxrru4w20=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oAm/nLIZcV623YFSQutoHROBBMpQyt7oZqAf7AAV2Qi3MeYDJLNqo/HC9E4kf/8cM8xwiyoFbUHE+uEmcWqUAM46dmaTO6C/C707qgTuM1RIntWXb9INyuvPzoQBS0MUqdfm37GnrM2DatBdpfQcPZFlJf05RiCyO9f8BVYUR+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wow6v4bd; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b6304714a1so7036871cf.2;
+        Wed, 10 Sep 2025 11:48:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757530057; x=1758134857; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FIyVRSowSoxm0jH+PFTbTpx3TzBNK5EeRuMI4ty+SJc=;
-        b=o9ELnF49FhZqb7uHldeq1GZno6Ag9KzL7aDnQPqDYnR+d4ci7mksUNkStxaIqm7hOS
-         agxn1OWCEBd6pzJl26tc8O9zwuAllbQZM/9IZIqzNnVOmQkKTf0itrRiGTaYap60cW9v
-         q4CQ35qBGZAkBtZID67wnJ1Vc899DeqeVoeHHDGhnUKpmgg5041Ho8XPId4J0mJmkvcV
-         9+xmZlD7hWQMl1VDvct5I+iOQlFNpaTh71R/vhsajVs8kd5eoQtyTcb1JpmsZiZ4Res6
-         qcegzplU7UCao2ra9YmN9QpnRZW3oxXhRQL9e/gR/Gt0WK1V96ZS9yzFFlCvcxiNIS3z
-         FSUw==
+        d=gmail.com; s=20230601; t=1757530133; x=1758134933; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9DhJOzemU6EaJThIiquMzmhs8hxD9vT8pUjHzzfSgf8=;
+        b=Wow6v4bdmqHH9lpZ+vOFlugaLgM4wCffppcVt6G1nqB4KzTGo428T0glljuc9wbPuX
+         lPK/8iA2fBEMGU7g7Aw5fpbtIWcZNIWpm5GSNzqu0uJiEZ1VG/zdtY4sTNoibGOl1fYl
+         WZTieqlLFSVXIUct91n7zqCI+FYhq/qFsUmjt5WploNuA4GasylJ9uOORC2uhB5NG2ze
+         QctgjFwMxtEl94Ucad9rQnFoGOqrWo98+u47iayGgV6U0COUHtT/6R+WH6h7xxka1vVC
+         XiuaR8a88gQL5JyhdURVHCUCggjbQukC00Ud3CW0Rbw0Hf0ukzGsSJwCRfYyor7Tj4Kf
+         EdPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757530057; x=1758134857;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FIyVRSowSoxm0jH+PFTbTpx3TzBNK5EeRuMI4ty+SJc=;
-        b=toToVoVU/SraL3M813jZ07vzNDtYXodCPSf3oAxOPiAe12ZEArnt4ga6y4viFyAxNc
-         lC8ErapbSduggd9S1hPYQN5lzUCEUEy4pgHQMR+MpFdOQ9z//+5Eyi/NTgCi/n4qBbWd
-         Di3noI4S83d1/1gm0lZ8mcbHyB9SoJF8nDRSirxvHgB63fPFKQyrxFSBYga1ynxS1Uxu
-         9LTXE3zkDJzfoyOml7UJActlDHbeZzn3EpT232hUNleADzYg41LZTawoN56gQLBN+9bF
-         Q28f6eER2jhSpkeimYYyakymr1W98xEQqQOWmwM5rhEMBSC1z7X+zA3lV+37uU1+zwId
-         WwGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUXQr9KdvFtake0u5gm3vv2/WxfwGXqoI0TkW064GEtKg1JL4vHRhJ5BcayCBIrH+kozB0e3eShJE3too=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyWMB7lPNIMyTgxUzFZvIsmloyYBrsT9fxl3Y1slYw0avRsHY3
-	0bq5NhKrKjDqcZN9YSG1l9YPINt6ULYF8T59mC2JVbNjt94jtj752ObCDeY6dSFe0R+Jz04T8C9
-	+ASFaRQ==
-X-Google-Smtp-Source: AGHT+IEDLJGMO3AphcAHDNXaSjkdvGKKt2jtxrGUIyclDPwEC7z8NsNkYyuOZtHLhM94tSbrdteIaNUcsSs=
-X-Received: from pgke16.prod.google.com ([2002:a63:f550:0:b0:b47:6f88:6843])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:6a06:b0:250:720a:2915
- with SMTP id adf61e73a8af0-2534441548fmr22969863637.35.1757530056588; Wed, 10
- Sep 2025 11:47:36 -0700 (PDT)
-Date: Wed, 10 Sep 2025 11:47:35 -0700
-In-Reply-To: <aMFiBZARu5pD+Zzq@intel.com>
+        d=1e100.net; s=20230601; t=1757530133; x=1758134933;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9DhJOzemU6EaJThIiquMzmhs8hxD9vT8pUjHzzfSgf8=;
+        b=eWRxU9DVFl0WTW2b+q100LDyIlR9NezlaUgbHMRktLSeNfH9T5/sfek8Q76ItoTwv3
+         048kiwpHKDnz0J9r4vs6ZDdv2GZt6gDKYdl0uzeWNhRm6XhORWeoW9vJRvrMRIDKn/mp
+         dh70kO6uecswX0+zY2jfqTuH8mwzupls6kjZgoisTWRtGWAVY4SEAKuC9GwsGuvLZh07
+         4sJRTmSz50+x6JMqG9QjuVeSo5GqCbfbce7i+4Mh2YB2s8sxFw0RBJPNTk6mkqQuVAKX
+         awVh9fNnduT51ywSAn69LMx7EPNJearY7+T069xcpr9kUcYcmtzlqODJpK14Y/X12SHK
+         HRqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUy4qtMj3YgyCLJRU3KyKH1z5XMNxvaNtTfhG1zML7HdGxCk/oIkTTLyTvHRSuJhZso9WfGkpJ8pPTA91Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxJbUtUyAx6KHPj9JpD87VhGV58U4UzMMyXaMKnAR79ea1lB4Q
+	05n2TVfN9rdtebRN4gVlGluc0oBeMFDlEbFSlIpKV9Rr/zWhh8WFFPg3
+X-Gm-Gg: ASbGnculN/q1s38apNt6TPOoq6I88MUZxmCq3L5TDJWSLZYFNzrGsGEyuuZ/KR8JwPg
+	Qt6ESIH8j5tZQvSYPuNvSFVHXg727MkuwNhIkqM/YRz7ZFmghgZBlOg7w52UCCsVGKPSLGKB24q
+	lWwKZ7F6sSW3aHB3vZCdsgb0ki4sOUUGmAsBuda9OX+SnJD6c7ngr6VqH/uAm4JvWeW6NNwtUhZ
+	7uBYo7xU51stDjfe/EjMOgKQiq7H2v33PUlt4gADPU1oRAfWXSCjWOx7YepyoKGHguDQfPeFhJ8
+	b+rZmQ1Jg3D8IH5egca4b7Z7wnhV07aVNrDmZ1vhCLVd55AvRdJi9ImyZ9vYop8DgsnjqI7pl36
+	7MJVFeY1B8tjeu2WZqh1QWyywE4FAfARSUao+PTEnbqj3o3434yC79B1dDK4CTgJfhPX8t8WRzB
+	nMnI7c1Q==
+X-Google-Smtp-Source: AGHT+IHZ4XDe+siBts0szSeE7KvT1HEvIJV4FJIJ1DHOqtVs2/ICpzbYcgku3ytPvAnOp9zFhHL78A==
+X-Received: by 2002:a05:622a:1a19:b0:4b3:b34:9395 with SMTP id d75a77b69052e-4b5f846e130mr136899911cf.65.1757530133278;
+        Wed, 10 Sep 2025 11:48:53 -0700 (PDT)
+Received: from instance-20230512-1534.taildd7ada.ts.net ([158.101.111.136])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b62e251ccesm8896461cf.20.2025.09.10.11.48.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 11:48:52 -0700 (PDT)
+From: Roshan Kumar <roshaen09@gmail.com>
+To: bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Roshan Kumar <roshaen09@gmail.com>
+Subject: [PATCH] pci: access: fixed coding style issues in access.c
+Date: Wed, 10 Sep 2025 18:48:09 +0000
+Message-Id: <20250910184809.392702-1-roshaen09@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250909093953.202028-1-chao.gao@intel.com> <20250909093953.202028-4-chao.gao@intel.com>
- <c0e5cd9b-6bdd-4f42-9d1b-d61a8f52f4b8@intel.com> <aMFiBZARu5pD+Zzq@intel.com>
-Message-ID: <aMHHx4Pu4eWdNQJj@google.com>
-Subject: Re: [PATCH v14 03/22] KVM: x86: Check XSS validity against guest CPUIDs
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	acme@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	john.allen@amd.com, mingo@kernel.org, mingo@redhat.com, 
-	minipli@grsecurity.net, mlevitsk@redhat.com, namhyung@kernel.org, 
-	pbonzini@redhat.com, prsampat@amd.com, rick.p.edgecombe@intel.com, 
-	shuah@kernel.org, tglx@linutronix.de, weijiang.yang@intel.com, x86@kernel.org, 
-	xin@zytor.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 10, 2025, Chao Gao wrote:
-> On Wed, Sep 10, 2025 at 05:22:15PM +0800, Xiaoyao Li wrote:
-> >On 9/9/2025 5:39 PM, Chao Gao wrote:
-> >> Maintain per-guest valid XSS bits and check XSS validity against them
-> >> rather than against KVM capabilities. This is to prevent bits that are
-> >> supported by KVM but not supported for a guest from being set.
-> >> 
-> >> Opportunistically return KVM_MSR_RET_UNSUPPORTED on IA32_XSS MSR accesses
-> >> if guest CPUID doesn't enumerate X86_FEATURE_XSAVES. Since
-> >> KVM_MSR_RET_UNSUPPORTED takes care of host_initiated cases, drop the
-> >> host_initiated check.
-> >> 
-> >> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> >
-> >Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> >
-> ><snip>
-> >> @@ -4011,15 +4011,14 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-> >>   		}
-> >>   		break;
-> >>   	case MSR_IA32_XSS:
-> >> -		if (!msr_info->host_initiated &&
-> >> -		    !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
-> >> -			return 1;
-> >> +		if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
-> >> +			return KVM_MSR_RET_UNSUPPORTED;
-> >>   		/*
-> >>   		 * KVM supports exposing PT to the guest, but does not support
-> >>   		 * IA32_XSS[bit 8]. Guests have to use RDMSR/WRMSR rather than
-> >>   		 * XSAVES/XRSTORS to save/restore PT MSRs.
-> >>   		 */
-> >
-> >Not an issue of this patch, there seems not the proper place to put above
-> >comment.
-> 
-> Agreed.
+Fixed coding style warnings and errors in drivers/pci/access.c
 
-It was there to call out that KVM doesn't support any XSS bits even though KVM
-supports a feature that architecturally can be context switched via XSS+XSTATE.
-I'll find a better home for the comment (probably move it in patch 5 as
-Xiaoyao suggested).
+Signed-off-by: Roshan Kumar <roshaen09@gmail.com>
+---
+ drivers/pci/access.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
-> I am curious why PT state isn't supported, which is apparently missing from
-> the comment. If it is due to lack of host FPU support, I think the recent
-> guest-only xfeatures we built for CET can help.
-
-Presumably, perf uses PT across multiple tasks, i.e. doesn't want to context
-switch PT state along with everything else.  For KVM, PT virtualization is
-intertwined with perf, and so wholesale swapping guest PT state simply won't
-work.
+diff --git a/drivers/pci/access.c b/drivers/pci/access.c
+index b123da16b63b..5ed434d3763d 100644
+--- a/drivers/pci/access.c
++++ b/drivers/pci/access.c
+@@ -25,16 +25,16 @@ DEFINE_RAW_SPINLOCK(pci_lock);
+ #define PCI_dword_BAD (pos & 3)
  
-> Anyway, PT is only visible on BROKEN kernels. so we won't do anything for
-> now besides documenting the reason.
+ #ifdef CONFIG_PCI_LOCKLESS_CONFIG
+-# define pci_lock_config(f)	do { (void)(f); } while (0)
+-# define pci_unlock_config(f)	do { (void)(f); } while (0)
++# define pci_lock_config(f) ((void)(f))
++# define pci_unlock_config(f) ((void)(f))
+ #else
+ # define pci_lock_config(f)	raw_spin_lock_irqsave(&pci_lock, f)
+ # define pci_unlock_config(f)	raw_spin_unlock_irqrestore(&pci_lock, f)
+ #endif
+ 
+ #define PCI_OP_READ(size, type, len) \
+-int noinline pci_bus_read_config_##size \
+-	(struct pci_bus *bus, unsigned int devfn, int pos, type *value)	\
++noinline int pci_bus_read_config_##size \
++	(struct pci_bus *bus, unsigned int devfn, int pos, type * value)	\
+ {									\
+ 	unsigned long flags;						\
+ 	u32 data = 0;							\
+@@ -55,7 +55,7 @@ int noinline pci_bus_read_config_##size \
+ }
+ 
+ #define PCI_OP_WRITE(size, type, len) \
+-int noinline pci_bus_write_config_##size \
++noinline int pci_bus_write_config_##size \
+ 	(struct pci_bus *bus, unsigned int devfn, int pos, type value)	\
+ {									\
+ 	unsigned long flags;						\
+@@ -72,17 +72,16 @@ int noinline pci_bus_write_config_##size \
+ }
+ 
+ PCI_OP_READ(byte, u8, 1)
+-PCI_OP_READ(word, u16, 2)
+-PCI_OP_READ(dword, u32, 4)
+-PCI_OP_WRITE(byte, u8, 1)
+-PCI_OP_WRITE(word, u16, 2)
+-PCI_OP_WRITE(dword, u32, 4)
+-
+ EXPORT_SYMBOL(pci_bus_read_config_byte);
++PCI_OP_READ(word, u16, 2)
+ EXPORT_SYMBOL(pci_bus_read_config_word);
++PCI_OP_READ(dword, u32, 4)
+ EXPORT_SYMBOL(pci_bus_read_config_dword);
++PCI_OP_WRITE(byte, u8, 1)
+ EXPORT_SYMBOL(pci_bus_write_config_byte);
++PCI_OP_WRITE(word, u16, 2)
+ EXPORT_SYMBOL(pci_bus_write_config_word);
++PCI_OP_WRITE(dword, u32, 4)
+ EXPORT_SYMBOL(pci_bus_write_config_dword);
+ 
+ int pci_generic_config_read(struct pci_bus *bus, unsigned int devfn,
+@@ -226,7 +225,7 @@ static noinline void pci_wait_cfg(struct pci_dev *dev)
+ /* Returns 0 on success, negative values indicate error. */
+ #define PCI_USER_READ_CONFIG(size, type)				\
+ int pci_user_read_config_##size						\
+-	(struct pci_dev *dev, int pos, type *val)			\
++	(struct pci_dev *dev, int pos, type * val)			\
+ {									\
+ 	u32 data = -1;							\
+ 	int ret;							\
+@@ -247,7 +246,7 @@ int pci_user_read_config_##size						\
+ 									\
+ 	return pcibios_err_to_errno(ret);				\
+ }									\
+-EXPORT_SYMBOL_GPL(pci_user_read_config_##size);
++EXPORT_SYMBOL_GPL(pci_user_read_config_##size)
+ 
+ /* Returns 0 on success, negative values indicate error. */
+ #define PCI_USER_WRITE_CONFIG(size, type)				\
+@@ -268,7 +267,7 @@ int pci_user_write_config_##size					\
+ 									\
+ 	return pcibios_err_to_errno(ret);				\
+ }									\
+-EXPORT_SYMBOL_GPL(pci_user_write_config_##size);
++EXPORT_SYMBOL_GPL(pci_user_write_config_##size)
+ 
+ PCI_USER_READ_CONFIG(byte, u8)
+ PCI_USER_READ_CONFIG(word, u16)
+-- 
+2.34.1
 
-Yeah, PT virtualization is riddled with problems, just ignore it.
 
