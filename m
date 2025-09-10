@@ -1,113 +1,177 @@
-Return-Path: <linux-kernel+bounces-809830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4B0B5128D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:33:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCCB1B51290
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A45B41C24FBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:34:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82FBA4E235E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB19313E25;
-	Wed, 10 Sep 2025 09:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120F4313E33;
+	Wed, 10 Sep 2025 09:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cd/oGOOJ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="i10WYDv7"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1283126DD
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41027312807;
+	Wed, 10 Sep 2025 09:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757496819; cv=none; b=CU9mmRWoxbEpZ+fLlBkIrpQ3zAkWPGz0LeoAlRVYHUkWV0cIpycwhU+gQdR25gnzqmAsnGumr60fIBr0FEuMr/70N1pvtZt12zB5AkdZtXYjI0tJStkyG+ktbM9g+qP2wcNozte1P/HUkBVD/zon4iH46yM3T136k4cHvwLoz5o=
+	t=1757496844; cv=none; b=bJZHxYbQKInhAMkzroEAb1Dqui4naVS39JkAK7kVcxy6WnuUU23sV+14Cb0QgMz9OQ68ILBlNFAoI+IEX7yiJns7Knsz9Q2DGi2Ypg86yEcnsEyp5EivhJNw8BsAJdbMqBQSTsfNEHwrucAOTwWZGTM6MzOZJirlYM1oexsLJR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757496819; c=relaxed/simple;
-	bh=4TW25vHkdcjLk7pdZ8NdI1vAv/tKPvhm66WuGiHLE+k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YdMfK4WpWyvcKeTQizZIe8kTD+j7M8zgjOSu2Buw4xtxWFe+tiMzJB75bAbgWRcqsZwtYf3s4SOqG/7GB+wfKh72ua+x3NqogsqCghzjTs98hXkTF1ITh2TxhcsuuFbg+VO8D0Py/0XbjnpmxntElr/65VcFRjfRblkZ3EskgZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cd/oGOOJ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757496810;
-	bh=4TW25vHkdcjLk7pdZ8NdI1vAv/tKPvhm66WuGiHLE+k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cd/oGOOJc4U2WUp7XJXVtXpOjWP/MDcbgLpQZb8xexNryDX/Joz7CozswDCywThc1
-	 0Or8g/UM46NVvS7NpgT7mEh6BSpi80p1qFnCsTC7iPjTGn2zjscp6eVSCWIOLp2mEn
-	 161E4AjeuJyoMnIHMRbxSv7RYt3yXWx4wNoO46z5zIW7I4LRUnAL49//HIMqPEfnUA
-	 6tm/4jFzAYL7bk/RCG29RF2bsWpZ6Dse7IlGjhLSZgveMzrqowkzeNSAIoy2rNRyNO
-	 QqY4QCmobYYIWms9Ea8aDykmcY0MN1+CJnDaXVtlnUiozXTe1nyUq/kQ+LbmwBVO/s
-	 S2socrRuR3ktw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E342417E0100;
-	Wed, 10 Sep 2025 11:33:29 +0200 (CEST)
-Message-ID: <cb896db9-6fed-4e83-baa1-c075fdf1df1e@collabora.com>
-Date: Wed, 10 Sep 2025 11:33:29 +0200
+	s=arc-20240116; t=1757496844; c=relaxed/simple;
+	bh=Cj4I9JJrSQKu7kDeTHshNLcQrlZ2TEFNJRQmrPSoc00=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OpbWYXQk4I1ISDdu2l6S9s4heH20QGT5OQJk6SjhZeA50hr39gmsESOUN2OTE9bH5/ccTddZnLxYJl6pn3+mteVoSDLQqNRivjtrzURlbpgnYmtON2VIAh8zK4wq38DyRnyHS49TDy0gtOp98m7Q36gpkGZe/J8bDrnz/T2ZSeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=i10WYDv7; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1757496833; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	bh=kUn2anvFDF2qqR807aTGWlj36Qp+tfcJksS6Q6qbn5w=;
+	b=i10WYDv7wFS8ypa8W+sVUlo1Ue1rsfI4Rk/DU3D/Mky8aUMgXRv2prz1H4uGBecdqgXlKX5TLWaJ5UKZos4KuvvoXoBAVRuv9p6K2FPMUQ3QRSRtzpvmM16EW6hA62WNQZ753c3wuDOFGHsBBhenZt/J8rgZ8rEuC+Q0JJ58vPo=
+Received: from localhost(mailfrom:tianruidong@linux.alibaba.com fp:SMTPD_---0WnhgSX4_1757496830 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 10 Sep 2025 17:33:52 +0800
+From: Ruidong Tian <tianruidong@linux.alibaba.com>
+To: xueshuai@linux.alibaba.com,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: james.morse@arm.com,
+	tony.luck@intel.com,
+	cleger@rivosinc.com,
+	hchauhan@ventanamicro.com,
+	tianruidong@linux.alibaba.com
+Subject: [RFC PATCH 0/5] riscv: Handle synchronous hardware error exception
+Date: Wed, 10 Sep 2025 17:33:42 +0800
+Message-Id: <20250910093347.75822-1-tianruidong@linux.alibaba.com>
+X-Mailer: git-send-email 2.33.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] drm/mediatek: fix potential OF node use-after-free
-To: Johan Hovold <johan@kernel.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Matthias Brugger <matthias.bgg@gmail.com>, Ma Ke <make24@iscas.ac.cn>,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250829090345.21075-1-johan@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250829090345.21075-1-johan@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Il 29/08/25 11:03, Johan Hovold ha scritto:
-> A recent change (included in the drm pull request for 6.17-rc4) fixed a
-> device reference leak but also introduced a potential OF node
-> use-after-free.
-> 
-> This series fixes the new OF node reference imbalance and drops the
-> unnecessary gotos introduced by the broken fix, effectively reverting
-> that change in favour of the minimal fix I had previously posted here:
-> 
-> 	https://lore.kernel.org/lkml/20250722092722.425-1-johan@kernel.org/
-> 
-> These should go into 6.17 which (soon) has the broken fix, which was
-> also marked for stable backport.
-> 
-> Johan
-> 
-> 
-> Johan Hovold (2):
->    drm/mediatek: fix potential OF node use-after-free
->    drm/mediatek: clean up driver data initialisation
-> 
->   drivers/gpu/drm/mediatek/mtk_drm_drv.c | 23 +++++++++--------------
->   1 file changed, 9 insertions(+), 14 deletions(-)
-> 
+Hi all,
+This patch series introduces support for handling synchronous hardware errors 
+on RISC-V, laying the groundwork for more robust kernel-mode error recovery.
 
-The whole series is
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+1. Background
+Hardware error reporting mechanisms typically fall into two categories: 
+asynchronous and synchronous.
 
-*** URGENT ***
+- Asynchronous errors (e.g., memory scrubbing errors) repoted by a asynchronous
+exceptions or a interrupt, are usually handled by GHES subsystems. For instance,
+ARM uses SDEI, and a similar SSE specification is being proposed for RISC-V.
+- Synchronous errors (e.g., reading poisoned data) cause the processor core to 
+take a precise exception. This is known as a Synchronous External Abort (SEA)
+on ARM, a Machine Check Exception (MCE) on x86, and is designated as trap with
+mcause 19 on RISC-V.
 
-CK, please send this immediately, because [1] breaks *ALL MediaTek boards* making
-them *unbootable*.
+Discussions within the RVI PRS TG have already led to proposals[0] to UEFI for 
+standardizing two notification methods, SSE and Hardware Error Exception, 
+on RISC-V. 
+This series focuses on implementing Hardware Error Exception notification to
+handle synchronous errors. Himanshu Chauhan has already started working on SSE[1].
 
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/mediatek?h=next-20250910&id=1f403699c40f0806a707a9a6eed3b8904224021a
+2. Motivation
+While a synchronous hardware errors occurring in kernel context (e.g., during 
+get_user, put_user, CoW, etc.). The kernel requires a fixup mechanism (via
+extable) to recover from such errors and prevent a system panic. However, the 
+APEI/GHES subsystem, being asynchronous, cannot directly leverage the synchronous
+extable fixup path.
 
-This series fixes the situation and makes them boot again.
+By handling the synchronous exception directly, we enable the use of this fixup
+mechanism, allowing the kernel to gracefully recover from hardware errors
+encountered during kernel execution. This brings RISC-V's error handling
+capabilities closer to the robustness found on ARM[2] and x86[3].
 
-Regards,
-Angelo
+3. What This Patch Series Does
+This initial series lays the foundational infrastructure. It primarily:
+- Introduces a new exception handler for synchronous hardware errors (mcause=19).
+- Establishes the core exception path, which is a prerequisite for kernel
+  context error recovery.
+
+Please note that this version does not yet implement the full kernel fixup logic
+for recovery. That functionality is planned for the next formal version.
+
+Some adaptations for GHES are included, based on the work from Himanshu Chauhan[1]
+
+4. Future Plans
+- Implement full kernel fixup support to handle and recover from errors in 
+  some kernel context[2].
+- Add support for handling "double trap" scenarios.
+
+5. Testing Methodology
+
+test program: ras-tools: https://kernel.googlesource.com/pub/scm/linux/kernel/git/aegl/ras-tools/
+qemu: https://github.com/winterddd/qemu
+offcial opensbi and edk2:
+
+- Run qemu:
+qemu-system-riscv64 -M virt,pflash0=pflash0,pflash1=pflash1,acpi=on,aia=aplic-imsic 
+ -cpu max -m 64G -smp 64 -device virtio-gpu-pci -full-screen -device qemu-xhci 
+ -device usb-kbd -device virtio-rng-pci 
+ -blockdev node-name=pflash0,driver=file,read-only=on,filename=RISCV_VIRT_CODE.fd 
+ -blockdev node-name=pflash1,driver=file,filename=RISCV_VIRT_VARS.fd 
+ -bios fw_dynamic.bin -device virtio-net-device,netdev=net0 
+ -netdev user,id=net0,hostfwd=tcp::2223-:22 
+ -kernel Image -initrd rootfs
+ -append "rdinit=/sbin/init earlycon verbose debug strict_devmem=0 nokaslr" 
+ -monitor telnet:127.0.0.1:5557,server,nowait -nographic
+
+- Run ras-tools:
+./einj_mem_uc -j -k single &
+$ 0: single   vaddr = 0x7fff86ff4400 paddr = 107d11b400
+
+- Inject poison
+telnet localhost 5557
+poison_enable on
+poison_add 0x107d11b400
+
+- Read poison
+echo trigger > ./trigger_start
+$ triggering ...
+$ signal 7 code 3 addr 0x7fff86ff4400
+
+[0]: https://lists.riscv.org/g/tech-prs/topic/risc_v_ras_related_ecrs/113685653 
+[1]: https://patchew.org/linux/20250227123628.2931490-1-hchauhan@ventanamicro.com/
+[2]: https://lore.kernel.org/lkml/20241209024257.3618492-1-tongtiangen@huawei.com/
+[3]: https://github.com/torvalds/linux/blob/9dd1835ecda5b96ac88c166f4a87386f3e727bd9/arch/x86/kernel/cpu/mce/core.c#L1514
+
+Himanshu Chauhan (2):
+  riscv: Define ioremap_cache for RISC-V
+  riscv: Define arch_apei_get_mem_attribute for RISC-V
+
+Ruidong Tian (3):
+  acpi: Introduce SSE and HEE in HEST notification types
+  riscv: Introduce HEST HEE notification handlers for APEI
+  riscv: Add Hardware Error Exception trap handler
+
+ arch/riscv/Kconfig              |  1 +
+ arch/riscv/include/asm/acpi.h   | 22 +++++++++++++
+ arch/riscv/include/asm/fixmap.h |  6 ++++
+ arch/riscv/include/asm/io.h     |  3 ++
+ arch/riscv/kernel/acpi.c        | 55 +++++++++++++++++++++++++++++++
+ arch/riscv/kernel/entry.S       |  4 +++
+ arch/riscv/kernel/traps.c       | 19 +++++++++++
+ drivers/acpi/apei/Kconfig       | 12 +++++++
+ drivers/acpi/apei/ghes.c        | 58 +++++++++++++++++++++++++++++++++
+ include/acpi/actbl1.h           |  4 ++-
+ include/acpi/ghes.h             |  6 ++++
+ 11 files changed, 189 insertions(+), 1 deletion(-)
+
+-- 
+2.43.7
+
 
