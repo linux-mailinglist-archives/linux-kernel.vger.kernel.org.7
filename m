@@ -1,334 +1,235 @@
-Return-Path: <linux-kernel+bounces-809844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C7FB512AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80ED7B5129C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 11:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34C881C8276C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:38:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE261C82180
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 09:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA7B3126DF;
-	Wed, 10 Sep 2025 09:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20E53148A8;
+	Wed, 10 Sep 2025 09:34:43 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B5C313E2D
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B80B3148A2
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 09:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757497080; cv=none; b=Tfc2hqGC53uDVLy36R0STHstmN+hS4qnf/LrrWCJMpyHPOdw9i6kD90zikwOmyvKIn7fvsbAtJ1e9/OTejh9WXD0wcK+EfHm81063uQSEGqJIj+gjWBjh0dw9lbW3nHe2goVf08ro0UyhEe59hNxlKNQGzVVczP29oeYI8S/W08=
+	t=1757496883; cv=none; b=uX3uu56FPlo3bntpX/zhczsGzwd5e4Yls0UaOSR4EwaFOvCCAQhdMc9xfhe9OjfoV6ZMCc9Lzkt12UYruMJVzJJ24LkFUT8mdYuLqJPJhGoetLa6bQLQrnFb7O4U3C3XWzopHEArqGqZ4nMKrWpdlb7m6F5nlyTeScyCoZSHff0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757497080; c=relaxed/simple;
-	bh=5SV8L6x3HJ6R7zEONs4fhj8HkTB0HxhgWa8yz90iYk8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TT7n8okf8Q7Rtgv7RoRfmX3SjrHpcA4dVn3MtVlpIoBj+NijUGeZ+Gb+AS37AnpjS8PdisC9YUmY9ThmHmPMgqJK3RlMAPGXhgs0ehWs8gj83yf4h9bH9/8+1VdXwX+FStufa8yw4BSXAFqtiA23307ADoZQeJTMcP7evTokv3U=
+	s=arc-20240116; t=1757496883; c=relaxed/simple;
+	bh=ftDfmHApYEI/kLahMFO4fkdDsJP51o7c9whkaMg8jO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WCnayGzuv52HDrS+h6Oc2nnUbDeC9K3mf5bFxBBBaYBRINoE9YPhthIzorzMfQa5QysCfWzsuuSf8oc/j897XTBQ+WMKXPgRjiMJLVKtsnWVs71IhKppZO6Ssce4F01DDEnFKEX8L+YbTQ2MI2u+XuLmXVYJtnmw2l2f5/GergA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
-	(envelope-from <s.kerkmann@pengutronix.de>)
-	id 1uwHGt-0007uO-Ja; Wed, 10 Sep 2025 11:37:47 +0200
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwHDh-0007O8-2b; Wed, 10 Sep 2025 11:34:29 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
-	(envelope-from <s.kerkmann@pengutronix.de>)
-	id 1uwHGs-000ZLe-3A;
-	Wed, 10 Sep 2025 11:37:46 +0200
-Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
-	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.98.2)
-	(envelope-from <s.kerkmann@pengutronix.de>)
-	id 1uwHGs-000000090kl-3lGO;
-	Wed, 10 Sep 2025 11:37:46 +0200
-From: Stefan Kerkmann <s.kerkmann@pengutronix.de>
-Date: Wed, 10 Sep 2025 11:34:06 +0200
-Subject: [PATCH v2 2/2] ASoC: codecs: pcm1754: add pcm1754 dac driver
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwHDg-000ZLH-1S;
+	Wed, 10 Sep 2025 11:34:28 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwHDg-00GDJG-12;
+	Wed, 10 Sep 2025 11:34:28 +0200
+Date: Wed, 10 Sep 2025 11:34:28 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] dmaengine: add support for device_link
+Message-ID: <20250910093428.qq5vskqhvumgjsow@pengutronix.de>
+References: <20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de>
+ <20250903-v6-16-topic-sdma-v1-9-ac7bab629e8b@pengutronix.de>
+ <aLhUv+mtr1uZTCth@lizhi-Precision-Tower-5810>
+ <20250909120309.5zgez5exbvxn5z3y@pengutronix.de>
+ <aMA88W/rDxFesEx+@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250910-v6-12-topic-pcm1754-v2-2-0917dbe73c65@pengutronix.de>
-References: <20250910-v6-12-topic-pcm1754-v2-0-0917dbe73c65@pengutronix.de>
-In-Reply-To: <20250910-v6-12-topic-pcm1754-v2-0-0917dbe73c65@pengutronix.de>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- =?utf-8?q?Alvin_=C5=A0ipraga?= <alvin@pqrs.dk>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel@pengutronix.de, 
- Stefan Kerkmann <s.kerkmann@pengutronix.de>, 
- =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMA88W/rDxFesEx+@lizhi-Precision-Tower-5810>
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.kerkmann@pengutronix.de
+X-SA-Exim-Mail-From: mfe@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Alvin Šipraga <alsi@bang-olufsen.dk>
+On 25-09-09, Frank Li wrote:
+> On Tue, Sep 09, 2025 at 02:03:09PM +0200, Marco Felsch wrote:
+> > Hi Frank,
+> >
+> > On 25-09-03, Frank Li wrote:
+> > > On Wed, Sep 03, 2025 at 03:06:17PM +0200, Marco Felsch wrote:
+> > > > Add support to create device_links between dmaengine suppliers and the
+> > > > dma consumers. This shifts the device dep-chain teardown/bringup logic
+> > > > to the driver core.
+> > > >
+> > > > Moving this to the core allows the dmaengine drivers to simplify the
+> > > > .remove() hooks and also to ensure that no dmaengine driver is ever
+> > > > removed before the consumer is removed.
+> > > >
+> > > > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > > > ---
+> > >
+> > > Thank you work for devlink between dmaengine and devices. I have similar
+> > > idea.
+> > >
+> > > This patch should be first patch.
+> >
+> > I can shuffle it of course!
+> >
+> > > The below what planned commit message in my local tree.
+> >
+> > Okay, so you focused on runtime PM handling. Not quite sure if I can
+> > test this feature with the SDMA engine. I also have limited time for
+> > this feature.
+> >
+> > Is it okay for you and the DMA maintainers to add the runtime PM feature
+> > as separate patch (provided by NXP/Frank)?
+> 
+> we can support runtime pm later.
+> 
+> >
+> > > Implementing runtime PM for DMA channels is challenging. If a channel
+> > > resumes at allocation and suspends at free, the DMA engine often remains on
+> > > because most drivers request a channel at probe.
+> > >
+> > > Tracking the number of pending DMA descriptors is also problematic, as some
+> > > consumers append new descriptors in atomic contexts, such as IRQ handlers,
+> > > where runtime resume cannot be called.
+> > >
+> > > Using a device link simplifies this issue. If a consumer requires data
+> > > transfer, it must be in a runtime-resumed state, ensuring that the DMA
+> > > channel is also active by device link. This allows safe operations, like
+> > > appending new descriptors. Conversely, when the consumer no longer requires
+> > > data transfer, both it and the supplier (DMA channel) can enter a suspended
+> > > state if no other consumer is using it.
+> > >
+> > > Introduce the `create_link` flag to enable this feature.
+> > >
+> > > also suggest add create_link flag to enable this feature in case some
+> > > side impact to other dma-engine. After some time test, we can enable it
+> > > default.
+> >
+> > What regressions do you have in mind? I wouldn't hide the feature behind
+> > a flag because this may slow done the convert process, because no one is
+> > interessted in, or has no time for testing, ...
+> 
+> Unlike other devices, like phys, regulator, mailbox..., which auto create
+> devlink at probe. I am not clear why dma skip this one. So I think there
+> should be some reason behind. Maybe other people, rob or Vinod Koul know
+> the reason.
+> 
+> static const struct supplier_bindings of_supplier_bindings[] = {
+>         ...
+> 	{ .parse_prop = parse_dmas, .optional = true, },
+> 
+> If remove "optional = true", devlink will auto create. I am not sure why
+> set true here.
 
-The Texas Instruments PCM1754[1] is a simple stereo DAC without any
-digital
-management interface but soft mute, PCM input format and 44.1 kHz
-digital de-emphasis can be configured via strapping pins. Only soft mute
-and PCM input format selection is currently exposed via optional GPIOs
-in the driver.
+I've seen this too. Could be because DMA controllers + users aren't OF
+related and therefore should be handled within the framework itself.
 
-[1]: https://www.ti.com/product/PCM1754
+> > > >  drivers/dma/dmaengine.c | 8 ++++++++
+> > > >  1 file changed, 8 insertions(+)
+> > > >
+> > > > diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+> > > > index 758fcd0546d8bde8e8dddc6039848feeb1e24475..a50652bc70b8ce9d4edabfaa781b3432ee47d31e 100644
+> > > > --- a/drivers/dma/dmaengine.c
+> > > > +++ b/drivers/dma/dmaengine.c
+> > > > @@ -817,6 +817,7 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+> > > >  	struct fwnode_handle *fwnode = dev_fwnode(dev);
+> > > >  	struct dma_device *d, *_d;
+> > > >  	struct dma_chan *chan = NULL;
+> > > > +	struct device_link *dl;
+> > > >
+> > > >  	if (is_of_node(fwnode))
+> > > >  		chan = of_dma_request_slave_channel(to_of_node(fwnode), name);
+> > > > @@ -858,6 +859,13 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+> > > >  	/* No functional issue if it fails, users are supposed to test before use */
+> > > >  #endif
+> > > >
+> > > > +	dl = device_link_add(dev, chan->device->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
+> > >
+> > > chan->device->dev is dmaengine devices. But some dmaengine's each channel
+> > > have device, consumer should link to chan's device, not dmaengine device
+> > > because some dmaengine support per channel clock\power management.
+> >
+> > I get your point. Can you give me some pointers please? To me it seems
+> > like the dma_chan_dev is only used for sysfs purpose according the
+> > dmaengine.h.
+> 
+> Not really, there are other dma engineer already reuse it for other purpose.
+> So It needs update kernel doc for dma_chan_dev.
 
-Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
-Co-developed-by: Stefan Kerkmann <s.kerkmann@pengutronix.de>
-Signed-off-by: Stefan Kerkmann <s.kerkmann@pengutronix.de>
----
- sound/soc/codecs/Kconfig   |   5 ++
- sound/soc/codecs/Makefile  |   2 +
- sound/soc/codecs/pcm1754.c | 185 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 192 insertions(+)
+Okay.
 
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 7092842480ef17d705920a6ac62a85158119352e..7b2d677453872b5e8d7c115c5f5618be55b7a4a1 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -170,6 +170,7 @@ config SND_SOC_ALL_CODECS
- 	imply SND_SOC_NAU8825
- 	imply SND_SOC_HDMI_CODEC
- 	imply SND_SOC_PCM1681
-+	imply SND_SOC_PCM1754
- 	imply SND_SOC_PCM1789_I2C
- 	imply SND_SOC_PCM179X_I2C
- 	imply SND_SOC_PCM179X_SPI
-@@ -1367,6 +1368,10 @@ config SND_SOC_PCM1681
- 	tristate "Texas Instruments PCM1681 CODEC"
- 	depends on I2C
- 
-+config SND_SOC_PCM1754
-+	tristate "Texas Instruments PCM1754 CODEC"
-+	depends on GPIOLIB
-+
- config SND_SOC_PCM1789
- 	tristate
- 
-diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-index 54cbc3feae3277ae29d6ea8fe891d4d17e5c9b17..1c6fbdc752309ab75486a979b21be50c3f67fdcf 100644
---- a/sound/soc/codecs/Makefile
-+++ b/sound/soc/codecs/Makefile
-@@ -191,6 +191,7 @@ snd-soc-nau8824-y := nau8824.o
- snd-soc-nau8825-y := nau8825.o
- snd-soc-hdmi-codec-y := hdmi-codec.o
- snd-soc-pcm1681-y := pcm1681.o
-+snd-soc-pcm1754-y := pcm1754.o
- snd-soc-pcm1789-codec-y := pcm1789.o
- snd-soc-pcm1789-i2c-y := pcm1789-i2c.o
- snd-soc-pcm179x-codec-y := pcm179x.o
-@@ -593,6 +594,7 @@ obj-$(CONFIG_SND_SOC_NAU8824)   += snd-soc-nau8824.o
- obj-$(CONFIG_SND_SOC_NAU8825)   += snd-soc-nau8825.o
- obj-$(CONFIG_SND_SOC_HDMI_CODEC)	+= snd-soc-hdmi-codec.o
- obj-$(CONFIG_SND_SOC_PCM1681)	+= snd-soc-pcm1681.o
-+obj-$(CONFIG_SND_SOC_PCM1754)	+= snd-soc-pcm1754.o
- obj-$(CONFIG_SND_SOC_PCM179X)	+= snd-soc-pcm179x-codec.o
- obj-$(CONFIG_SND_SOC_PCM1789_I2C)	+= snd-soc-pcm1789-i2c.o
- obj-$(CONFIG_SND_SOC_PCM1789)	+= snd-soc-pcm1789-codec.o
-diff --git a/sound/soc/codecs/pcm1754.c b/sound/soc/codecs/pcm1754.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..b68a528000be89b15c1d7770ba8f55fbdadeb6b8
---- /dev/null
-+++ b/sound/soc/codecs/pcm1754.c
-@@ -0,0 +1,185 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * PCM1754 DAC ASoC codec driver
-+ *
-+ * Copyright (c) 2022 Alvin Šipraga <alsi@bang-olufsen.dk>
-+ * Copyright (c) 2025 Stefan Kerkmann <s.kerkmann@pengutronix.de>
-+ */
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <sound/pcm_params.h>
-+#include <sound/soc.h>
-+
-+struct pcm1754_priv {
-+	unsigned int format;
-+	struct gpio_desc *gpiod_mute;
-+	struct gpio_desc *gpiod_format;
-+};
-+
-+static int pcm1754_set_dai_fmt(struct snd_soc_dai *codec_dai,
-+				   unsigned int format)
-+{
-+	struct snd_soc_component *component = codec_dai->component;
-+	struct pcm1754_priv *priv = snd_soc_component_get_drvdata(component);
-+
-+	priv->format = format;
-+
-+	return 0;
-+}
-+
-+static int pcm1754_hw_params(struct snd_pcm_substream *substream,
-+				 struct snd_pcm_hw_params *params,
-+				 struct snd_soc_dai *codec_dai)
-+{
-+	struct snd_soc_component *component = codec_dai->component;
-+	struct pcm1754_priv *priv = snd_soc_component_get_drvdata(component);
-+	int format;
-+
-+	switch (priv->format & SND_SOC_DAIFMT_FORMAT_MASK) {
-+	case SND_SOC_DAIFMT_RIGHT_J:
-+		switch (params_width(params)) {
-+		case 16:
-+			format = 1;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+		break;
-+	case SND_SOC_DAIFMT_I2S:
-+		switch (params_width(params)) {
-+		case 16:
-+			fallthrough;
-+		case 24:
-+			format = 0;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+		break;
-+	default:
-+		dev_err(component->dev, "Invalid DAI format\n");
-+		return -EINVAL;
-+	}
-+
-+	gpiod_set_value_cansleep(priv->gpiod_format, format);
-+
-+	return 0;
-+}
-+
-+static int pcm1754_mute_stream(struct snd_soc_dai *dai, int mute, int stream)
-+{
-+	struct pcm1754_priv *priv = snd_soc_component_get_drvdata(dai->component);
-+
-+	gpiod_set_value_cansleep(priv->gpiod_mute, mute);
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_dai_ops pcm1754_dai_ops = {
-+	.set_fmt = pcm1754_set_dai_fmt,
-+	.hw_params = pcm1754_hw_params,
-+	.mute_stream = pcm1754_mute_stream,
-+};
-+
-+static const struct snd_soc_dai_driver pcm1754_dai = {
-+	.name = "pcm1754",
-+	.playback = {
-+		.stream_name	= "Playback",
-+		.channels_min	= 2,
-+		.channels_max	= 2,
-+		.rates		= SNDRV_PCM_RATE_CONTINUOUS,
-+		.rate_min	= 5000,
-+		.rate_max	= 200000,
-+		.formats	= SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE
-+	},
-+	.ops = &pcm1754_dai_ops,
-+};
-+
-+static const struct snd_soc_dapm_widget pcm1754_dapm_widgets[] = {
-+	SND_SOC_DAPM_REGULATOR_SUPPLY("VCC", 0, 0),
-+
-+	SND_SOC_DAPM_DAC("DAC1", "Channel 1 Playback", SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_DAC("DAC2", "Channel 2 Playback", SND_SOC_NOPM, 0, 0),
-+
-+	SND_SOC_DAPM_OUTPUT("VOUTL"),
-+	SND_SOC_DAPM_OUTPUT("VOUTR"),
-+};
-+
-+static const struct snd_soc_dapm_route pcm1754_dapm_routes[] = {
-+	{ "DAC1", NULL, "Playback" },
-+	{ "DAC2", NULL, "Playback" },
-+
-+	{ "DAC1", NULL, "VCC" },
-+	{ "DAC2", NULL, "VCC" },
-+
-+	{ "VOUTL", NULL, "DAC1" },
-+	{ "VOUTR", NULL, "DAC2" },
-+};
-+
-+static const struct snd_soc_component_driver soc_component_dev_pcm1754 = {
-+	.dapm_widgets = pcm1754_dapm_widgets,
-+	.num_dapm_widgets = ARRAY_SIZE(pcm1754_dapm_widgets),
-+	.dapm_routes = pcm1754_dapm_routes,
-+	.num_dapm_routes = ARRAY_SIZE(pcm1754_dapm_routes),
-+};
-+
-+static int pcm1754_probe(struct platform_device *pdev)
-+{
-+	struct pcm1754_priv *priv;
-+	struct device *dev = &pdev->dev;
-+	struct snd_soc_dai_driver *dai_drv;
-+	int ret;
-+
-+	dai_drv = devm_kmemdup(dev, &pcm1754_dai, sizeof(*dai_drv), GFP_KERNEL);
-+	if (!dai_drv)
-+		return -ENOMEM;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->gpiod_mute = devm_gpiod_get_optional(dev, "mute", GPIOD_OUT_HIGH);
-+	if (IS_ERR(priv->gpiod_mute))
-+		return dev_err_probe(dev, PTR_ERR(priv->gpiod_mute),
-+					 "failed to get mute gpio");
-+
-+	priv->gpiod_format = devm_gpiod_get_optional(dev, "format", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->gpiod_format))
-+		return dev_err_probe(dev, PTR_ERR(priv->gpiod_format),
-+					 "failed to get format gpio");
-+
-+	dev_set_drvdata(dev, priv);
-+
-+	ret = devm_snd_soc_register_component(
-+		&pdev->dev, &soc_component_dev_pcm1754, dai_drv, 1);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register");
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id pcm1754_of_match[] = {
-+	{ .compatible = "ti,pcm1754" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, pcm1754_of_match);
-+#endif
-+
-+static struct platform_driver pcm1754_codec_driver = {
-+	.driver = {
-+		.name = "pcm1754-codec",
-+		.of_match_table = of_match_ptr(pcm1754_of_match),
-+	},
-+	.probe = pcm1754_probe,
-+};
-+
-+module_platform_driver(pcm1754_codec_driver);
-+
-+MODULE_DESCRIPTION("ASoC PCM1754 driver");
-+MODULE_AUTHOR("Alvin Šipraga <alsi@bang-olufsen.dk>");
-+MODULE_AUTHOR("Stefan Kerkmann <s.kerkmann@pengutronix.de>");
-+MODULE_LICENSE("GPL");
+> > > chan's device's parent devices is dmaengine devices. it should also work
+> > > for sdma case
+> >
+> > I see, this must be tested of course.
+> > > >         if (chan->device->create_devlink) {
+> > >                 u32 flags = DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_CONSUMER;
+> >
+> > According device_link.rst: using DL_FLAG_STATELESS and
+> > DL_FLAG_AUTOREMOVE_CONSUMER is invalid.
+> >
+> > >                 if (pm_runtime_active(dev))
+> > >                         flags |= DL_FLAG_RPM_ACTIVE;
+> >
+> > This is of course interessting, thanks for the hint.
+> >
+> > > When create device link (apply channel), consume may active.
+> >
+> > I have read it as: "resue the supplier and ensure that the supplier
+> > follows the consumer runtime state".
+> >
+> > >                 dl = device_link_add(chan->slave, &chan->dev->device, flags);
+> >
+> > Huh.. you used the dmaengine device too?
+> 
+> /**
+>  * struct dma_chan_dev - relate sysfs device node to backing channel device
+>  * @chan: driver channel device
+>  * @device: sysfs device
+>  * @dev_id: parent dma_device dev_id
+>  * @chan_dma_dev: The channel is using custom/different dma-mapping
+>  * compared to the parent dma_device
+>  */
+> struct dma_chan_dev {
+> 	struct dma_chan *chan;
+> 	struct device device;
+> 	int dev_id;
+> 	bool chan_dma_dev;
+> };
+> 
+> struct dma_chan {
+> 	struct dma_device *device; /// this one should be dmaengine
+> 	struct dma_chan_dev *dev; /// this one is pre-chan device.
+> }
 
--- 
-2.47.3
+Argh.. mixed it within my head while writing the mail :/
 
+Regards,
+  Marco
 
