@@ -1,107 +1,128 @@
-Return-Path: <linux-kernel+bounces-809211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-809212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B7CB50A0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:05:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3B1B50A11
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 03:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD474E3B1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:05:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D30A5458D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 01:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5651E1DE9;
-	Wed, 10 Sep 2025 01:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981E61DF98F;
+	Wed, 10 Sep 2025 01:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgGi8bke"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="krjcZ1dS"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E961C2324;
-	Wed, 10 Sep 2025 01:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378911DF99C;
+	Wed, 10 Sep 2025 01:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757466345; cv=none; b=gCjnXaFSw6lGV7qriffW6yxKQaCnrIvPvgZVwRdFURMqVK45/9KqSzLyy1720rTzvaQyFGU+ef/Eridqlkpj3FhVhlALnR7xlEiXhXRrraIewLdSeCObREQGx6a+AKSKhKfdJb3SjN6Q0wxxBScN0x1yNw2vt+sfxhdgw+jK1G0=
+	t=1757466367; cv=none; b=WvESHgrkaMaLju5lYKwSBH8aBt8fxk/Txf5F39EXtGYpbL9wQ0rDbIfQyo/ye3NSgBXOXGyWOSwZXGTTGR+YligyHzV+IT9irB5e78bp4FFIXdya7dXepdl5fNLrqkzHROO0LK4EIocvgEOy68tnBiIFbzsTogsuYFptWzlB0SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757466345; c=relaxed/simple;
-	bh=fOthtt3sHAR4XK1Blw8fcDEW53BygTROv/INF8rmzWc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=SkAWt86bO5GIXOfN9pnrW7vKHdElpRdUovjztYPUnDaBw9nLP36DanUGXypxXQLXgyp4cgRQpG/XGHMVYUz3cIsW6r/Lf2QK856Xa0JdShddyrOePlHVy16D0AC01jq4SiakIyeX4p1TB8tWKCpLWHac60+EVJCBdm4d5Hz8kLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgGi8bke; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899E6C4CEF4;
-	Wed, 10 Sep 2025 01:05:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757466345;
-	bh=fOthtt3sHAR4XK1Blw8fcDEW53BygTROv/INF8rmzWc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mgGi8bkebjd3F7vpKdiW4vKmob23iQCHYOErV/87iaHw1Oaf7i19LUu0ZEMOFc+jt
-	 yJDEDdauZ7P7n6gGM8SqzyfaUxUeL5Wf/lxU7FNT0ixWzt8imm0xGK9HNQ6FhzANAd
-	 1z3R4Rd3kLBUX+rjrrTR7wOwzVzSEwtA+fewJY+rYjIBFsb/e1chXlIXddYzH13Q+h
-	 iCMG6cUXZcvEvv8HcmXBg9VObYe+mP0Z14rIQy83JPHHgFuYZ1Zcy5Lp1RyapPrdAf
-	 st0nPSnlvB49YimrKwsEQhBUudVlQMW8der0yiCxWBMkvp/Y/wJUvC/F9wguoEwQ3K
-	 fKNV+n1evoBGg==
-Date: Wed, 10 Sep 2025 10:05:38 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: jolsa@kernel.org, oleg@redhat.com, andrii@kernel.org,
- linux-kernel@vger.kernel.org, alx@kernel.org, eyal.birger@gmail.com,
- kees@kernel.org, bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- x86@kernel.org, songliubraving@fb.com, yhs@fb.com,
- john.fastabend@gmail.com, haoluo@google.com, rostedt@goodmis.org,
- alan.maguire@oracle.com, David.Laight@ACULAB.COM, thomas@t-8ch.de,
- mingo@kernel.org, rick.p.edgecombe@intel.com
-Subject: Re: [PATCH 6/6] uprobes/x86: Add SLS mitigation to the trampolines
-Message-Id: <20250910100538.9289cc4adfa34d616bc59f39@kernel.org>
-In-Reply-To: <20250821123657.277506098@infradead.org>
-References: <20250821122822.671515652@infradead.org>
-	<20250821123657.277506098@infradead.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757466367; c=relaxed/simple;
+	bh=i4RESWh/U9IijTR7kjtC1xewNFoRiMOQyOIAkv3bc6A=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Kk/p94ebhCmPD8co9iTHM3IWby/LT2d2O1+quS+ja0cfmefjnMQ1F+Vvp5DenMUSkKA6ocUzh5GYKmZlR5WkjMMFlbpGQ1xAd2tel89+2vd/hpNeEUr2XQRKLx0t/9wwLZ0moW+N/5KgM0rWTGEkyEw6K3QJPkAG0u/NxayMM6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=krjcZ1dS; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b043a33b060so980852866b.1;
+        Tue, 09 Sep 2025 18:06:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757466364; x=1758071164; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PDZwAXLouP084B9hVHdN4iMIIVS5iU06EyLqPH/Ivgo=;
+        b=krjcZ1dSfjyeNDfkrnxiu+6b/2czHU6xiYRaOqq4hHefEk+xXAQ1GFfvIhPXAW5zzP
+         RzoxHCoiZ51Bj4wV7h8CEN15LjKQyU0RPOI8x/tH5llqQnswZET7kAhkpecLpv85dxok
+         KY6QwZkj04+9wuwh+LWym72m+/w+2JxyVS2vY6rrhHNoh1VmBwgM3hxPHHxfdvoxrDHe
+         IUZeU72WZqsasU/OBj87/yNxaWrmHWNwlIlMhaW/2gzkMI5ccP0J6aALUshTDvX37m9X
+         ETfxBUm2AouV3CShY4I2lRdj/4ousXMBXoXOQWqHgeFbfh5Rz/Qw7gLGmpedT5tqNKN2
+         Cz+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757466364; x=1758071164;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PDZwAXLouP084B9hVHdN4iMIIVS5iU06EyLqPH/Ivgo=;
+        b=i9sBayB7sI/4Lb4nTE5To+bQTUkdslNmge+3fnkEr5fEzhrU/4ysYvMVOmwbz+eI7X
+         87PvaZHmUZyWBumxv9PmxyUa9mp5PM1Bj38QugSnMUFPGZJPOQ8mkHjSEF0RkdoZWTJZ
+         sPFNYe/paJnqH1GEkhaVbrK9S+qrn3qaIkT7HmW+8fDI9rvCZ1hVZsZt5vbIqHncP0yM
+         3gl6bcIMMXNamFYeBqjgScatxV+TAdVVxUXyGOn1wuDqrmawdrZhjZfqwrwGHE3gcT9i
+         ZNJZgqr33UfFDeDu+3GGeJYS/3aeQhEglql6zeR1QHAiSTx6xKTu58pGxtnCvWCEwYzE
+         ZzEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjKkMpK/YYCJoqcGbmOdv7pZcSTGFwK/sAmxwciXK0dBbLst5r9B14ueqoLXf4cRtn9COu2u92s/o5TAc=@vger.kernel.org, AJvYcCWtx19me9IOb6Nb85UAuPwqx4Vbzz6snCLM5GRwQxRjwH72+vLYUoW27mrKAbPT81wgAPSv+dmnJu7y4A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9Yrj/i4Jx7XsxdixXmhVsLFHrgOuqD39uxKp+4uhFNJoB7Sp9
+	myVRToGXwDKgdN3sI2vJfBi3d/5RJK3kkYewKacFnt2KN/akUO9vQYyD
+X-Gm-Gg: ASbGncuiBDvf49NyZs1Z1evykmNRRIgYGkGal8L94LP2roLNlk7V40G+WOV8NL2JrhN
+	HaiIjb8NG70n2a9artKfXdPc+vGAXdRPl9IhObjjdDO18F8uKDrjHYlK9dUUijQsr+L5xOco2KS
+	xT/OjRMvC415H8e1FZnEk4hIMZFQjMK6O9uSZ9P37FcXqrNZC7283QSp/6P5H5cRGlAz33N+O8M
+	UfGVbUDVe6rREQ0ZAMTi9YlVQ+PzdI5/C3Esn2YNTUm7P1EwYCim0/BRysHC+aMuKEbMR0uZ4R6
+	0DJjH8+16Nl4SlYINkinMeuKONPxq1TqX0PkwPnZ0tkzYKNPdSeU1s0obiDdMui+xBxBuWHjuHz
+	HXzaTFl6jgtowB/pd6aRXiFw+ji8sdey9h/ECQESAzonG61ddCDHtb6Eln+YgBJUfjnQ5fPt6
+X-Google-Smtp-Source: AGHT+IFjBmxeo0iihWNvQGW9XaPHPBKL/NIGGGOL86gq7iDWLkzDSZTSGw6FlnjUE/qdjGTpbeIhew==
+X-Received: by 2002:a17:907:72c9:b0:b04:4ba7:4e0d with SMTP id a640c23a62f3a-b04b148a54emr1331824166b.26.1757466364453;
+        Tue, 09 Sep 2025 18:06:04 -0700 (PDT)
+Received: from [192.168.0.51] (217-62-96-139.cable.dynamic.v4.ziggo.nl. [217.62.96.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07830464f9sm78316966b.9.2025.09.09.18.06.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Sep 2025 18:06:03 -0700 (PDT)
+Message-ID: <bf46e8f6-221a-40c7-9da5-8003397ff113@gmail.com>
+Date: Wed, 10 Sep 2025 03:06:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: torvalds@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org,
+ alexander.sverdlin@gmail.com, andreas@gaisler.com, ankur.a.arora@oracle.com,
+ arnd@arndb.de, chester.a.unal@arinc9.com, christophe.leroy@csgroup.eu,
+ david@redhat.com, geert+renesas@glider.be, heiko@sntech.de, hpa@zytor.com,
+ imx@lists.linux.dev, ira.weiny@intel.com, ksummit@lists.linux.dev,
+ l.stach@pengutronix.de, linus.walleij@linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mm@kvack.org,
+ linuxppc-dev@lists.ozlabs.org, lorenzo.stoakes@oracle.com, nm@ti.com,
+ richard@nod.at, rppt@kernel.org, sergio.paracuellos@gmail.com,
+ surenb@google.com, vbabka@suse.cz, willy@infradead.org
+References: <CAHk-=wg0bp-_kqmfaDYQLRJO30LYxEsMu3EKi65sKoi83EUZ3Q@mail.gmail.com>
+Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
+Content-Language: en-US
+From: =?UTF-8?Q?Ren=C3=A9_Herman?= <rene.herman@gmail.com>
+In-Reply-To: <CAHk-=wg0bp-_kqmfaDYQLRJO30LYxEsMu3EKi65sKoi83EUZ3Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, 21 Aug 2025 14:28:28 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> It is trivial; no reason not to.
+> Well, while on x86 1GB systems did use highmem, they'd typically not 
+> use very much of it.
 > 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-
-Looks good to me :)
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-> ---
->  arch/x86/kernel/uprobes.c |    2 ++
->  1 file changed, 2 insertions(+)
+> IOW, they'd have about 900MB as lowmem (ok, I think it was 896MB to
+> be exact), with something like 120MB highmem.
 > 
-> --- a/arch/x86/kernel/uprobes.c
-> +++ b/arch/x86/kernel/uprobes.c
-> @@ -336,6 +336,7 @@ asm (
->  	 * call ret.
->  	 */
->  	"ret\n"
-> +	"int3\n"
->  	".global uretprobe_trampoline_end\n"
->  	"uretprobe_trampoline_end:\n"
->  	".popsection\n"
-> @@ -891,6 +892,7 @@ asm (
->  	"pop %r11\n"
->  	"pop %rcx\n"
->  	"ret\n"
-> +	"int3\n"
->  	".balign " __stringify(PAGE_SIZE) "\n"
->  	".popsection\n"
->  );
-> 
-> 
+> So they'd either lose a bit of memory, or they'd use the 2G:2G
+> split.
+Right, 1G-128M of VMALLOC_RESERVE, but they didn't generally use 2G/2G 
+but ever since it was introduced late in the 32-bit era VMSPLIT_3G_OPT, 
+i.e., PAGE_OFFSET = 0xb0000000, i.e., 3G-256M/1G+256M.
 
+Although at the time the patches died an unceremonious death, 4G/4G 
+patches for x86 were also around; I used to be a (conceptual) fan of 
+them: it takes quite a number of TLB-flushes to suck more than highmem.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Not one hint of clue if spectre/meltdown is applicable to these systems 
+and if so, if they in fact do or should already be suffering through 
+those same flushes anyway but maybe it'd be an option to dig those 
+patches out of some archive somewhere.
+
+I promise I'll test them on an AMD Duron with 768MB RAM :)
+
+Rene.
 
