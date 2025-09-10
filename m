@@ -1,137 +1,146 @@
-Return-Path: <linux-kernel+bounces-811057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4587B52381
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:32:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5408CB5238B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 23:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CFD0A051CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837A71C800AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 21:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49BF3112A0;
-	Wed, 10 Sep 2025 21:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC63311C3A;
+	Wed, 10 Sep 2025 21:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fFwj/L7x"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fNkmLWoP"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58852308F32
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 21:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E264F2DCC1C;
+	Wed, 10 Sep 2025 21:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757539961; cv=none; b=U+mY9wcGxedA8NfnfKX2YbniM23UnIfCUUVjPlW6ihq+vXJw7HAnSn9+s9blMIJDH//8ezpAuR8dzzETVaBPfNVQWpODVbLgnKCduiWPhbU07YABxndhD5yq3/S2OOSxcuUP2y2YlJErRdR3E+hpRY5ElbLEVLlnqIUhSYO8AT8=
+	t=1757540149; cv=none; b=il94IRYTTRX+jof4/D1VdEx8pwnfKGLbteUzLYMmuz8fuj8+2V84jRGHxCzs9FI9jLvpf6Jvsci7W3Y0HJ65rc9YE4e0/sMZJBBxr5RGBuFMBibycEAo5iqy0NJkWCHl6dygFlVkvCFuDH4SZJNQau2yeoBlrmC9BDg+IznRiw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757539961; c=relaxed/simple;
-	bh=tDgFFo1KURd80WOddqneN0YLx5E89K1CqsHmGyLdaRg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dc1fEsJcEfnCaOvUltVOaDjbm/vmM93pesCRM5MF9Mn1m1vS0tBZytZ6XlDLkqapQPLb4XSk5xrnbNE9VGM3rPlsQyR60XbgOBGBYiqO06IEuSQWQjk8NYWLm5GPRk79AcRWXN2hS0RXnPmSRKICZ2eVhY5g24oiU6XXRre7Hcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fFwj/L7x; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f6bb0a364so7939656e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 14:32:39 -0700 (PDT)
+	s=arc-20240116; t=1757540149; c=relaxed/simple;
+	bh=qjBjUv5snqHXXynANQ0UNS91NtSdBGR+HOLxkT2GCF0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BdSbKkXV/jjuLHNv40CX3OzygaxgLMcRA+yDpX/Wf5gv/CLxqa7WjtUUhslncjGfSd98NHzvjmQXjnTHRIivVTmxVRo4J+lVVVCn7utMI55Nm2ehKzpkOT2BgFUwPecORiViTBNHoJN9HiT505vPxlu3g5GM152uCOLM+YmBNWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fNkmLWoP; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3e751508f21so73264f8f.0;
+        Wed, 10 Sep 2025 14:35:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757539957; x=1758144757; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tDgFFo1KURd80WOddqneN0YLx5E89K1CqsHmGyLdaRg=;
-        b=fFwj/L7xMVLXbrafsiUBxoD7MAxOhttI7KRIebIj5TOl47/6pHUwstG+oyhVRiQKiH
-         buogzFmlUB5f2PQDjgejothGY0K4DlSLuyCsKaBhZ0tYy4lRUpzbyL08aFN1uSKZ1bDG
-         SwaDZh5OI7T4EXyuLarVGg7+a6/LkS9bvhR6We4NQQQm9ACEpOD1JoyqZFNVG0pMxHyT
-         OnmyyfB8iOnrNVa4+KqMOsaWig6syyIUVmE81K0XpMJikbhDfgBXGfer5BF+4pI3T2Bv
-         edIUKPC/nO4m6z21NHco09MtuTcljb4aeAAEChVIS3lO2OjtwTogOrriBFrM20qnVhOD
-         xiCQ==
+        d=gmail.com; s=20230601; t=1757540146; x=1758144946; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1uZ4Gecv3Q3BldTcSK34g4YoCJ5ltF3zPUz6IX1qhgs=;
+        b=fNkmLWoPvlJWqwjBKGBtfDSeKUugvt/4iNIZllSCkcroGYZzoTrt6HwuUg6txTA/vL
+         kJrnKin8/8vxX5Whk4cjcIUksTfqlVfuQWKPqzu32OTZLh5DrYT5ISkdVpxljNPwSN0P
+         VHsG6WpjOmTaDw63/69ttg0GQPlRA9aFuCpF2K2oSppuwScuCNjKgkGjg0g586AW1V0N
+         9ugQpVy8oC/3WIwNawxVmqv3TqaEcVJnkjv1QgYSJ9jUy/cwPJqGOXrIdgWHKlj3jZAg
+         zJ6M0XyFFXKpd5U6gUcDSeBRvH7ZlmDM5n3El7CID2uzm7KhJ2//OpiV66u0IuYxNQIi
+         Vy+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757539957; x=1758144757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tDgFFo1KURd80WOddqneN0YLx5E89K1CqsHmGyLdaRg=;
-        b=I57wjQXRkf6KXjaH9sOZHl+IlrAcfqBGCRiddFN5zI/yQV1qL9DZuka3lUI/2k2Ggt
-         PDbXSyY7N5GwIW1zBJoc2nlDCZ34Obx3D21QSIeG6cDmvlUyZy0R8+d6qPU+E/qtW9RV
-         SkS2RA8hl8t7Gyv/BddZd1PGFFZYJr0bRqXVsRDT7z1pk1GYq5D/DqRNxnYoasYhPToh
-         V6uWwA4w3teHGuA08m+GbdNjov13iYv7H9NWjL0RpMCxplKDJEHsrP+gKxbWi18/5Cl6
-         9IxUg9aZFHbOHJYdY8wDu51hoKqR/7pMuBKAg3JyBHTkv5RcRdZhp5E3TXeu+FVcBKKd
-         w65Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXTkH/OSKYSZumNlqZKKeHSccOvFpcVfCfJO1Utk8xM7PAYZsGb1dwnnSsttdaFqZgVEsAjNfOUPvTjzbQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjPRjyAPghL1RgvFIBhp3ozC3r0nnb7zeadooXxojoQ99D1zk0
-	arHP+axMapz/WD6yjngV6yogRJ/w5qOCyF1B9HIedc+JrKfK1m2xf0H/c/RfAUhjjRH6TfWpH3m
-	N0kW49y/1O9TtrDcNqg5Y0mU0T5Yeh+LjBLdmz/kp1Q==
-X-Gm-Gg: ASbGncsUNUlsJCWEb7sCFPbGeodQa9XAPsoQSBKOwZN+dX5zEe5pGl+eWkfv2NPKtTV
-	poGb+Y5SpduMcdk2JChloaUs4+jOY3n4hhWAV+5mzfaDDLX8ZnJNnjQ9YvMzamqk7KKF0E2yaYm
-	2sK1PamRRYZf/9y6mu5QKE28LO0LekSr6GQgHwfWHy8W/z0BG8VHxGQFpN08QgZtUGQEGuf8EOK
-	i3I5fCI/Ve1QVisMw==
-X-Google-Smtp-Source: AGHT+IEDFgI45XU5cTVW9FtG8gM2JjDzoZENa8d1uC1g5vQQ+iix+RIzuYFh88VfTx91WSF4c7ZJi4duHEmeM7k85Mw=
-X-Received: by 2002:a05:6512:6404:b0:55f:595f:9a31 with SMTP id
- 2adb3069b0e04-56262f11dd2mr5910272e87.51.1757539957420; Wed, 10 Sep 2025
- 14:32:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757540146; x=1758144946;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1uZ4Gecv3Q3BldTcSK34g4YoCJ5ltF3zPUz6IX1qhgs=;
+        b=uf2YWl+IqilcCoyFI2frMYF+ltz3L004Ov/E1jqewRAOn7hKxe9ikmEY1m9GzogCEJ
+         zEjsIDpyGYwUJCsYv/1faBnUxeWcIjBnxQEv5jnLFaYx54bDx8ChoqmmX66D/e7sd22J
+         5iWHujCsHeJx59NuppOuK5o6mWTZxYFkOzc+ppvpUz7vr6ciBArPKpLZYsh3zLVSjyz0
+         lZjXsPdCMIJuRqB7+Xb9Jsou6A1+DEonfd3g/fzR5u2sxUzLUkzrGjIwdpg5thGqmKr5
+         amdD482UPhs6NFif5ul+qTQ2fwM+DAaaKLKKV6pe7nzuxqqrkwcSqsEl8ktrqQro7n/Q
+         LBSA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1EmeMgHFzF/kKh0fz1/wP5SRAxzXqmc2I9VjkIGqDaiY/h6BLD5OruZvUzJ2heNtJyCItN9Kg8nVXmKA=@vger.kernel.org, AJvYcCXECnb1KbyFLIfnVRFdXbO3h67YD5RVYVOEOBWK6CKnBx+yim/F+jqIi14D4OuYCN9BPuYaL1CG24USP3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPhfJ0JsOJygKah4wdGBB5SZKEHHHQNWI2/4RpRQO8UqzBEC8c
+	03hZ+HIWBK8BPaTUriWqCI7kgAupLmGTtd5jqIO6SPHzo6uGifmpz0DF
+X-Gm-Gg: ASbGncupjD1nioxkRbiTkFGBecloQslh9fIbh8UhYBewmGQgAuGuEILt5hL1O54JeAZ
+	BWos2Lp2YfotaTbuifFLCBl/nJ8RsKrGPGo5I1+YEYHJbdICWYINuFt0GlAlXt5B3DqEKn9JseX
+	UsLvwbIPjsKfmGQYRTsFozrZInJGQBpU7FwQ0txwwhHB1V8Dl3q7Nz/ct60Wlshen7qmN/080XD
+	7zRnhqjcyS7DsriaOYT300qSEBVrIGdV2atJbcaLCEtN3EdfNeMJ6Zb6mCE+4CKMmkWDPg6BAnM
+	9ZZ7j1n5RuF1xUf9/N7aFwihKFP3ZWLynhwBHjkanRo9Z7PXPy7Y3ep5KXYqk50aYcYK3ZfUOku
+	vEk3uwDHDDMtmSPhMdVNlV+JWuR/I
+X-Google-Smtp-Source: AGHT+IFs1IObFmSvEQSjOTKOvzzXzWVoiuuIoqFs4VlqyZQPeQAZsT/ju7a+bazAtF4B6KrU8nfmmQ==
+X-Received: by 2002:a05:6000:2186:b0:3e7:4071:186e with SMTP id ffacd0b85a97d-3e740711d5bmr8851748f8f.4.1757540146183;
+        Wed, 10 Sep 2025 14:35:46 -0700 (PDT)
+Received: from pc.. ([105.163.1.135])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e752238832sm8073502f8f.31.2025.09.10.14.35.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 14:35:44 -0700 (PDT)
+From: Erick Karanja <karanja99erick@gmail.com>
+To: ldewangan@nvidia.com,
+	broonie@kernel.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: linux-spi@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	julia.lawall@inria.fr,
+	Erick Karanja <karanja99erick@gmail.com>
+Subject: [PATCH] spi: Replace lock/unlock patterns to guard
+Date: Thu, 11 Sep 2025 00:35:37 +0300
+Message-ID: <20250910213537.553673-1-karanja99erick@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-gpio-mmio-gpio-conv-part4-v2-0-f3d1a4c57124@linaro.org>
-In-Reply-To: <20250910-gpio-mmio-gpio-conv-part4-v2-0-f3d1a4c57124@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 10 Sep 2025 23:32:26 +0200
-X-Gm-Features: Ac12FXzHQO4QoWSTSppUbrZutew2n-HjqWu5POboMsRGiUcu6mJnWXdH0E38Eq0
-Message-ID: <CACRpkdb=J+hiC5cu+g0Z-gqzpG8PgX01CXc4P98FfSSAf7PZEA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/15] gpio: replace legacy bgpio_init() with its
- modernized alternative - part 4
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>, 
-	Doug Berger <opendmb@gmail.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Yixun Lan <dlan@gentoo.org>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 10, 2025 at 9:12=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
+Replace lock/unlock pattern with guard cleanup macro.
+This simplifies the code flow path by replacing the conditional
+jump with an early return.
 
-> Here's the final part of the generic GPIO chip conversions. Once all the
-> existing users are switched to the new API, the final patch in the
-> series removes bgpio_init(), moves the gpio-mmio fields out of struct
-> gpio_chip and into struct gpio_generic_chip and adjusts gpio-mmio.c to
-> the new situation.
->
-> Down the line we could probably improve gpio-mmio.c by using lock guards
-> and replacing the - now obsolete - "bgpio" prefix with "gpio_generic" or
-> something similar but this series is already big as is so I'm leaving
-> that for the future.
->
-> Tested in qemu on vexpress-a9.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Generated-by: Coccinelle SmPL
 
-The patch set is a beauty, hands down.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+---
+ drivers/spi/spi-tegra20-sflash.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-I especially like where you caught local spinlocks being
-(ab)used instead of the generic irqchip ones.
+diff --git a/drivers/spi/spi-tegra20-sflash.c b/drivers/spi/spi-tegra20-sflash.c
+index d5c8ee20b8e5..5367aee56545 100644
+--- a/drivers/spi/spi-tegra20-sflash.c
++++ b/drivers/spi/spi-tegra20-sflash.c
+@@ -359,7 +359,7 @@ static irqreturn_t handle_cpu_based_xfer(struct tegra_sflash_data *tsd)
+ {
+ 	struct spi_transfer *t = tsd->curr_xfer;
+ 
+-	spin_lock(&tsd->lock);
++	guard(spinlock)(&tsd->lock);
+ 	if (tsd->tx_status || tsd->rx_status || (tsd->status_reg & SPI_BSY)) {
+ 		dev_err(tsd->dev,
+ 			"CpuXfer ERROR bit set 0x%x\n", tsd->status_reg);
+@@ -370,7 +370,7 @@ static irqreturn_t handle_cpu_based_xfer(struct tegra_sflash_data *tsd)
+ 		udelay(2);
+ 		reset_control_deassert(tsd->rst);
+ 		complete(&tsd->xfer_completion);
+-		goto exit;
++		return IRQ_HANDLED;
+ 	}
+ 
+ 	if (tsd->cur_direction & DATA_DIR_RX)
+@@ -383,13 +383,11 @@ static irqreturn_t handle_cpu_based_xfer(struct tegra_sflash_data *tsd)
+ 
+ 	if (tsd->cur_pos == t->len) {
+ 		complete(&tsd->xfer_completion);
+-		goto exit;
++		return IRQ_HANDLED;
+ 	}
+ 
+ 	tegra_sflash_calculate_curr_xfer_param(tsd->cur_spi, tsd, t);
+ 	tegra_sflash_start_cpu_based_transfer(tsd, t);
+-exit:
+-	spin_unlock(&tsd->lock);
+ 	return IRQ_HANDLED;
+ }
+ 
+-- 
+2.43.0
 
-I don't know about merging patch 15/15 into just the GPIO
-tree, that can make things fail in other subsystems depending
-on merge order into Torvalds tree or linux-next if your tree is
-merged first.
-
-I would merge the first 14 and keep the last for the later part
-of the merge window when all other trees with conversions
-are merged.
-
-(You probably already thought of this.)
-
-Yours,
-Linus Walleij
 
