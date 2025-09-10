@@ -1,117 +1,124 @@
-Return-Path: <linux-kernel+bounces-810641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-810642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39606B51D35
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:13:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AADB51D42
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 18:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBDA43BEECA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:12:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9C1858096E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Sep 2025 16:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AABA334363;
-	Wed, 10 Sep 2025 16:12:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B0F32CF80;
-	Wed, 10 Sep 2025 16:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4552C33471C;
+	Wed, 10 Sep 2025 16:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufXSslpA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6FA33436A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 16:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757520726; cv=none; b=pBigdv2zEZ3pkcXAfXKNSpMUgWTek+8x8VNoDOMzzc6WPziikVH7FkO6eostasv1xwOKPXa0nc83GOB2sSjjxKKezB+cs2htTOspLmfcxxSUXTdTQryzUQ9xqo8yvr/aWM3JP83r4aqTKXYkS/A+8m4BVDYDy2ReILxjzMgbpMM=
+	t=1757520763; cv=none; b=tB6fg8G+qGlT/Yd6iddgjqy/VRtj4x2FwJvZHoe6oyXnWg5URN1BFSbJAz4SjxyJz99VMRbHjohTw8qhbz8WPMIJyyF6wbDnb9s5z4XgOqJWXba5lMHjpdpsoJ+XmqFoqvozA4oNK2wJ5c5pwefsKfYLdlYgvFvX8F6soudZ6Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757520726; c=relaxed/simple;
-	bh=cdS8DQ91Fk2KRig7JcdWAE1Tb1sePXx/4ByqYYrByXY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O3CkWBJnjuAby8b4h0emDdVjvnxhbkNqQaGu91oaCKNTwS0UyQbUPk4ilWUEz3KDlRfRzeikFL30NR8uQcHqBHCkcV/eO83nNyAiDhOxDH7j2mifxlL5L8y70UZAZ0JBRrvoZL6CBTrvSmWwvmX3WQNLkDP1ulXDs+iDUnrEEUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B91C716F2;
-	Wed, 10 Sep 2025 09:11:55 -0700 (PDT)
-Received: from [10.57.67.148] (unknown [10.57.67.148])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F3D43F63F;
-	Wed, 10 Sep 2025 09:11:56 -0700 (PDT)
-Message-ID: <250835cd-f07a-4b8a-bc01-ace24b407efc@arm.com>
-Date: Wed, 10 Sep 2025 18:11:54 +0200
+	s=arc-20240116; t=1757520763; c=relaxed/simple;
+	bh=Bs8gvnoRFpg3lsXpvS6O6gij8IOPpjQN/wWX9IFRQ6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tIe+YlTJKqm4IL3Lp/meFTOwBTNaxDbYm8m/eiz7GcnPFEQEFxufZ1PE+NTosP7/EHxPnI/xqgrw1yGFh/4xkr88S/4XNp31OJhsVcN7puBU8dUq+PtX6BaR/tNu2thEZM5e7rf1D/bAu6wldbRQjtalcqyYfsVxzW1FVw12Mk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufXSslpA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9035C4CEEB;
+	Wed, 10 Sep 2025 16:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757520763;
+	bh=Bs8gvnoRFpg3lsXpvS6O6gij8IOPpjQN/wWX9IFRQ6w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ufXSslpAktrx49XrR/MZoVymVA8KqyOv2N12h1wFQSjpn0Qz0CowUHIMjDGqc/ofA
+	 X6yVrHZuCJlTsWmD2ia4+i0Tdi8fUnry6GqD70BlzdY3IKApwmfEPWfT1ZKlVklam5
+	 Rv2TNXXVtukCiWwaW415odpn5a2BV+ptlkgKt7JRTEDqaT3xXOpt5n4Dfh0ncHeioc
+	 lwnc9ZgDokXLbxqtjLd2nMx+BHMgcJlW499I32zyQPOqZ+8psrL6JzN/my4eA7IWAm
+	 OF2jpnDDN90rmctrgdXxzn/DAjmZozpLAomwVuKyat5YQDmskvM1wHe9dDD+RPi/pV
+	 Vy9NVntdQVF2w==
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfauth.phl.internal (Postfix) with ESMTP id EF88CF40069;
+	Wed, 10 Sep 2025 12:12:41 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Wed, 10 Sep 2025 12:12:41 -0400
+X-ME-Sender: <xms:eaPBaNqk0Sr04sOJ-mlNxT_LVHsbgbmb5trTazOMvtD0a5hkh9RweA>
+    <xme:eaPBaC_76JB4tGdk2yeF_wRov8UNpZKCdL85vtV6VvoxzbE28DmOr-wVxR0Ox4JAX
+    JLSbNhhRp_65R9drJU>
+X-ME-Received: <xmr:eaPBaOTWamSDqEhaM0KlzBTBLEhrCUXdLsdUWfQR6rVf6EwkZmYwIS-jeBtsbw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvfeejgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+    hnpeehieekueevudehvedtvdffkefhueefhfevtdduheehkedthfdtheejveelueffgeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrih
+    hllhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeiudduiedvieehhedq
+    vdekgeeggeejvdekqdhkrghspeepkhgvrhhnvghlrdhorhhgsehshhhuthgvmhhovhdrnh
+    grmhgvpdhnsggprhgtphhtthhopeefkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohepuggrvhgvrdhhrghnshgvnhesihhnthgvlhdrtghomhdprhgtphhtthhopegurghvvg
+    drhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglh
+    igsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepmhhinhhgohesrhgvughhrght
+    rdgtohhmpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepgiekie
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhprgesiiihthhorhdrtghomhdprhgt
+    phhtthhopehrihgtkhdrphdrvggughgvtghomhgsvgesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:eaPBaPSgjcUVsdIP1wCcOgctUaxt29OXsP0AV9-3KxnSHqlAx4KR3Q>
+    <xmx:eaPBaC0DraQPvuWoLdxYkCCykp9ZpvAzFoIlRyuTu4U8xrHv8INT5w>
+    <xmx:eaPBaC_O1foow97SQ8loCqXhH8WsDgZcVJ9q3U9XytRoyegdnaiM4A>
+    <xmx:eaPBaD94cGXegx_HLMPRC9fD8SU7IoaRFQxokL1U0bho7gxNPBeGBA>
+    <xmx:eaPBaFEqElTFxOTFG-iqGR9tkL7l9w3oYFNOMgRQ-yWPSjSiiC0wN_25>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 10 Sep 2025 12:12:41 -0400 (EDT)
+Date: Wed, 10 Sep 2025 17:12:39 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Kai Huang <kai.huang@intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Thomas Huth <thuth@redhat.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-coco@lists.linux.dev, kvm@vger.kernel.org, 
+	Farrah Chen <farrah.chen@intel.com>
+Subject: Re: [PATCH] x86/virt/tdx: Use precalculated TDVPR page physical
+ address
+Message-ID: <766raob5ltycizxfzcqh5blvdyk5girzfu2575n7gu4g7cmco5@zttwu3qwmjlm>
+References: <20250910144453.1389652-1-dave.hansen@linux.intel.com>
+ <oyagitkaefceadeqoqgycqhubw4hnlsjxf6lytazxpjnzueb4k@bmcvegkzrycq>
+ <684e83b3-756b-4995-9804-6b1d0cfa4103@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
- Mark Rutland <Mark.Rutland@arm.com>
-References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
- <20250908073931.4159362-3-kevin.brodsky@arm.com>
- <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
- <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
- <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
- <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
- <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
- <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
- <b2e52967-7ca1-411e-9c66-8d3483624ca7-agordeev@linux.ibm.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <b2e52967-7ca1-411e-9c66-8d3483624ca7-agordeev@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <684e83b3-756b-4995-9804-6b1d0cfa4103@intel.com>
 
-On 09/09/2025 16:38, Alexander Gordeev wrote:
->>>>> Would that integrate well with LAZY_MMU_DEFAULT etc?
->>>> Hmm... I though the idea is to use LAZY_MMU_* by architectures that
->>>> want to use it - at least that is how I read the description above.
->>>>
->>>> It is only kasan_populate|depopulate_vmalloc_pte() in generic code
->>>> that do not follow this pattern, and it looks as a problem to me.
->> This discussion also made me realise that this is problematic, as the
->> LAZY_MMU_{DEFAULT,NESTED} macros were meant only for architectures'
->> convenience, not for generic code (where lazy_mmu_state_t should ideally
->> be an opaque type as mentioned above). It almost feels like the kasan
->> case deserves a different API, because this is not how enter() and
->> leave() are meant to be used. This would mean quite a bit of churn
->> though, so maybe just introduce another arch-defined value to pass to
->> leave() for such a situation - for instance,
->> arch_leave_lazy_mmu_mode(LAZY_MMU_FLUSH)?
-> What about to adjust the semantics of apply_to_page_range() instead?
->
-> It currently assumes any caller is fine with apply_to_pte_range() to
-> enter the lazy mode. By contrast, kasan_(de)populate_vmalloc_pte() are
-> not fine at all and must leave the lazy mode. That literally suggests
-> the original assumption is incorrect.
->
-> We could change int apply_to_pte_range(..., bool create, ...) to e.g.
-> apply_to_pte_range(..., unsigned int flags, ...) and introduce a flag
-> that simply skips entering the lazy mmu mode.
+On Wed, Sep 10, 2025 at 09:10:06AM -0700, Dave Hansen wrote:
+> On 9/10/25 09:06, Kiryl Shutsemau wrote:
+> >>  struct tdx_vp {
+> >>  	/* TDVP root page */
+> >>  	struct page *tdvpr_page;
+> >> +	/* precalculated page_to_phys(tdvpr_page) for use in noinstr code */
+> >> +	phys_addr_t tdvpr_pa;
+> > Missing newline above the new field?
+> 
+> I was actually trying to group the two fields together that are aliases
+> for the same logical thing.
+> 
+> Is that problematic?
 
-This is pretty much what Ryan proposed [1r] some time ago, although for
-a different purpose (avoiding nesting). There wasn't much appetite for
-it then, but I agree that this would be a more logical way to go about it.
+No. Just looks odd to me. But I see 'struct tdx_td' also uses similar
+style.
 
-- Kevin
-
-[1r]
-https://lore.kernel.org/all/20250530140446.2387131-4-ryan.roberts@arm.com/
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
