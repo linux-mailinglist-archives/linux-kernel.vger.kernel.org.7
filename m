@@ -1,84 +1,80 @@
-Return-Path: <linux-kernel+bounces-811178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F7EB5254C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:03:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A38B5257D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9567B1C2059C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:04:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07A8B189E246
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9134189906;
-	Thu, 11 Sep 2025 01:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7771C7012;
+	Thu, 11 Sep 2025 01:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MAcvMqRP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="k0j2tXMd"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DA2134AC;
-	Thu, 11 Sep 2025 01:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224402AD22;
+	Thu, 11 Sep 2025 01:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757552616; cv=none; b=X0tQ4CHrjkS0pioZWB5DP/cG2q0X2+4DBVZOzggK6qHZCukDIUYdkY16gpyFhaYq9crRwdVRS39WmK+sn16ee7A5V/CrT2SpmPv3qieZFaYsKRkGxkov/iEDPmjxoVP1ulV9pZJt52D5Mh4QPWqa4HEH+STgt79TCSCwfGi9ueo=
+	t=1757552804; cv=none; b=CODpdEtO65NM5cjKAWKARLUnqQAnQ+++wADvJ+u+nPEYeLGfb1tssONLvk6FoRA3cAqw/gpLZokDXTrt7IC/GHPFvtwjT6e3Mha7dgra13yLQDiCKTwbyYD3gTZtI6nUwg3ovtYsNskIAsm6ZhEyJSwNlJ05Dv5WUB4tzxXSWwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757552616; c=relaxed/simple;
-	bh=LiMD7Yq8EeLwK5zzNdXzm03hL0chXJW8TQsnqED26ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GzbAOsiL5rJ/0oJL2XX+TwYjzbpONBKNs2YEWVWJZj6aLktHepDAPUCwDBC45dY+FyAlm65YKSAQSy1CmBzfr1655+WVf4HZw1+spsETda/flD71Qs88T8AtdbwDnhAOFpJYeGRxhRRVEOKz7wGGsHDb6x9opqdOBzEVlGGeQ9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MAcvMqRP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBCFFC4CEEB;
-	Thu, 11 Sep 2025 01:03:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757552615;
-	bh=LiMD7Yq8EeLwK5zzNdXzm03hL0chXJW8TQsnqED26ic=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MAcvMqRPeEyt1jEI51QFCvbEs0DTyNajUlwxAi9iEJOPoSo4Znoo5ZcYHo2BIwCQ0
-	 yuKsHV3W3oYqgxm/kpDolSDeCNUuTteesua6ewy0ir7EeuH/OkUj5lDpVoYJPQyJ2A
-	 cu45ksWlIfMGodrB3RilXsCr9nRXXmZYuSmpPDPRoTiB+MwiqbTu0Q+h1uozvgo1hE
-	 koZiiwFxl14zkDWZxnEbv2kpOAR7UViSJfbgA9yRlJlGNMfzrrx8GwoiuW919/I267
-	 G3MQyMU8UHLO0bfyqXfadM53mpTawNkOx0fHElOELpBAeHnL2UDSOPJQlZi0UKHKPR
-	 0ZbYEIhMzqlhg==
-Date: Wed, 10 Sep 2025 18:03:34 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yibo Dong <dong100@mucse.com>
-Cc: "Anwar, Md Danish" <a0501179@ti.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
- maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
- gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
- Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
- alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
- gustavoars@kernel.org, rdunlap@infradead.org, vadim.fedorenko@linux.dev,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v11 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <20250910180334.54e55869@kernel.org>
-In-Reply-To: <00A30C785FE598BA+20250910060821.GB1832711@nic-Precision-5820-Tower>
-References: <20250909120906.1781444-1-dong100@mucse.com>
-	<20250909120906.1781444-5-dong100@mucse.com>
-	<68fc2f5c-2cbd-41f6-a814-5134ba06b4b5@ti.com>
-	<20250909135822.2ac833fc@kernel.org>
-	<00A30C785FE598BA+20250910060821.GB1832711@nic-Precision-5820-Tower>
+	s=arc-20240116; t=1757552804; c=relaxed/simple;
+	bh=JYSW4MB9pMusPzumKqihWAqFYMngihvRZKS64yMKi6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BcvI7YNQdolyXoberZoknT8SOd/P0+5RDkibaKWUxXvi0isrXKZcftYd0yTB6paxmwmYzMIjC8ZFKJkVPcrji71KX9VFrCt/2h/3NE1GZ1TEX9RES2c0k/T8D7fdD5U2wsBXgRv/K5qyTjqc0fhd4NxC9wquhNiPp2p24NsBs54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=k0j2tXMd; arc=none smtp.client-ip=220.197.32.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=KbYMnuTWyfN0Gz6b3slKCQiIkGgeBPU1rlOHaU7fi2E=;
+	b=k0j2tXMd+2VFECbFDfy941g+mbxW1NBDwcrE3/wLDkiaqNbzwytmU1S/CelBXR
+	junfLtIVEt0g+hIijhJoz7K9h+uaVeNmC32B+tplAEFhVyeq4yIbFT6Hgtf4xr9U
+	9NL6g6GKuA3VzM+iZUIjYAByrm7KOCd/HHcX4pxq6cttg=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgAHP_d_IMJoJQFfBA--.42211S3;
+	Thu, 11 Sep 2025 09:06:09 +0800 (CST)
+Date: Thu, 11 Sep 2025 09:06:07 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Richard Hu <richard.hu@technexion.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Ray Chang <ray.chang@technexion.com>
+Subject: Re: [PATCH v5 0/2] Add TechNexion EDM-G-IMX8M-PLUS SOM and WB-EDM-G
+ carrier board support
+Message-ID: <aMIgf50uRVg7fxKx@dragon>
+References: <20250822-add-technexion-edm-g-imx8m-plus-som-v5-0-bf745447345a@technexion.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822-add-technexion-edm-g-imx8m-plus-som-v5-0-bf745447345a@technexion.com>
+X-CM-TRANSID:Ms8vCgAHP_d_IMJoJQFfBA--.42211S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUOksqUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIQHyWGjCIIEAowAA3i
 
-On Wed, 10 Sep 2025 14:08:21 +0800 Yibo Dong wrote:
-> 	do {
-> 		err = mucse_mbx_get_info(hw);
-> 		if (err != -ETIMEDOUT)
-> 			break;
-> 		/* only retry with ETIMEDOUT, others just return */
-> 	} while (try_cnt--);
+On Fri, Aug 22, 2025 at 03:33:07PM +0800, Richard Hu wrote:
+> Ray Chang (1):
+>       dt-bindings: arm: fsl: Add EDM-G-IMX8M-PLUS SOM and WB-EDM-G carrier board
+> 
+> Richard Hu (1):
+>       arm64: dts: imx8mp: Add TechNexion EDM-G-IMX8M-PLUS SOM on WB-EDM-G carrier board
 
-	do {
-		err = bla();
-	} while (err == -ETIMEDOUT && try_cnt--);
+Applied both, thanks!
+
 
