@@ -1,79 +1,38 @@
-Return-Path: <linux-kernel+bounces-811814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 996ABB52E35
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:22:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D753B52E42
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFB4D1C82813
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:22:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6658B169104
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655EC30FC3E;
-	Thu, 11 Sep 2025 10:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PcWnWvkB"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4DD310640;
+	Thu, 11 Sep 2025 10:24:27 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171F92EA74B
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF94630F93E;
+	Thu, 11 Sep 2025 10:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757586138; cv=none; b=RhGXF8hUT1JjEz1/sJUcgRK5fMPKUJkHOqawlmrjGGIcaZg8E+bDqDGxyoiDHRzJU19cqWLfmswX64qrdN0DfTfDz++k5YohGKHUU4QsWQMg9augJ0kTra0MLosiLViVHaRUsVPfgMAgmB5KxOXMiZ+bRRV8m0u/FqWQjwomlhE=
+	t=1757586266; cv=none; b=uKNkwjEaqUsfmrjw7wf1yPcUgpg5ODQrx10iYy+yy2N7rARht7WIwa/BHU+L1JMqzBEjhjDMCykwrrWvI4D7XZCB5oU8RuS4ybs4SBh0BTSsnA5LK8OpjyTOC365tjvEZIhFW7LHTGqzOUPoV23YuQJsW1tYPOlVL1yL7TnKjZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757586138; c=relaxed/simple;
-	bh=XrchZecD+iM0UHQWDWdbk069oueZ5j4zUVkEyhba5FA=;
+	s=arc-20240116; t=1757586266; c=relaxed/simple;
+	bh=uMraBvcxnOW3qr8ZpGaYaLUWx50wDsuxhEvd7ZJe6Fk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=coxQfUi1T0zuMTJ/2bmLvZk991gRE2k5Pq5kZggSEM4UosufMDkiC1AM/Ikkiaqd8qUKLxxWhYqh1sff+d8MyTxNx2rWlflj9r1BX+55vWkVBEkrWxoC+Gzx1C+Wn/yQ35yGB2mcgXiKNtA6xUj98r+1xx9VSERECrj/TUqPIEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PcWnWvkB; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso482844f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 03:22:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757586133; x=1758190933; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VaCvqUSodMr/1P2WtmBAIMqveOipHOIUI7cFp3Ss9Ls=;
-        b=PcWnWvkB3iPoBTeA0nh9D2k7ccmlWyznXVGUl4GhqBz4HtkOWo33DA7p7pJqlO4KN8
-         l59H0o/XmraFZ5d93/e6H+vxd9unI5KEqdLdQ4omfw49dCl4yrQxFwa4h3hos4aXsS3R
-         c6pKLIml89XzmMSVvHAS5VzYFuLv60Aac7qLFpwOOc7ScMLSbeInCpzfGiyc/pDfj5eS
-         754yoR9m2On8B1t3MMzL6sGEbmx5S22Cm5rtsCe4pDPjBkV2ciSvk3HuClsxMadtiUOg
-         pnn6BpH88LjBwyB5alhgb2EeEUiky9hJsrZxCM02rAz6pERSLQexnKJjSzqL0BdDfEQj
-         QBLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757586133; x=1758190933;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VaCvqUSodMr/1P2WtmBAIMqveOipHOIUI7cFp3Ss9Ls=;
-        b=CCyGMgvyjaxUk1qbhboPocMO9O97VUbgyUcL1Pb+L5Ugtyk3XCJdKu8qVgzltSs96B
-         EubAPJ+58EQLkNWv9IyfVuHMpmVot25SfhNAPNQu5q9xGtUSwX1L3/XcKKWvHgNZ4Zas
-         GZe9VeE8jpEYZwsbR35C/aJ4M25pdp3+f6e03/4WqMX8faczJ7b2TcIsYDosKueev2/8
-         pH5ObyT8tWjnOIspSS3IUACysN4VjxXZ4vrLo39ahGJegyZiI4sWGNjlR7k116x9aBGl
-         7tK3ovSHCuqs1a2vsRMeKhsFE0fDk7xEVTFDPA1YOpqPiHvadTfkmHsQLTP2cZNh4Wu6
-         Nw8w==
-X-Gm-Message-State: AOJu0YwQ5438cPatZHZtopCG5beI8SL5t4e5Ya2neqsp/HY7xekU7CIa
-	dNHd37mg4D2wpAGC2MOVpI5EuO4BpGS1lWF//vLmwapzQyXvvid+sahqnqqI910Fa2A=
-X-Gm-Gg: ASbGncsyb4XL8vvcVJs1Z6qISubaW5km6LkyV3na+0V8i9bmkVzbeowDjGVvYzkCc9R
-	DqAMUqCUASYEKUb0gkuEviGg4ww76gR54VWVbj1bh3qqgrlaDqJIqeM4V9yI3muj6lNDLxh7/qc
-	C3BcU2bb5pJMBea4aN95f37O55dCUEFBfiVdbwgHZnOVfWypaOtmj6pNTwY+20etdotxBfQ4Dq+
-	0+ypgI7GWzF5r/apk+XbqpRN2Zoqw5pDrBCiybmGZ/Gfw3VwkoJXgO8tw0AO5QA+cbliasj9NsH
-	q+jvdlCOwAR6Dno+Wlbv6GmwPELQC658L8WVJar6Kt6Wfn9zR0vhxvMprFgk560S45p6iauEvfj
-	8lFopDgfmjqaEmoIoDzxCDB3hxg==
-X-Google-Smtp-Source: AGHT+IEecA9OPjkM3C+7UWPq2SdB0g7szX8lW/R9PZkVY1wz6UP3d6yUKt66x8EDdhmdc25mwV4zFA==
-X-Received: by 2002:a05:6000:40da:b0:3e2:b2f0:6e57 with SMTP id ffacd0b85a97d-3e642f91589mr16285645f8f.36.1757586133265;
-        Thu, 11 Sep 2025 03:22:13 -0700 (PDT)
-Received: from [192.168.0.20] ([212.21.159.60])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e015621a3sm12130445e9.0.2025.09.11.03.22.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 03:22:12 -0700 (PDT)
-Message-ID: <d5377e66-dbbc-4883-b223-ef6c0360e0dd@suse.com>
-Date: Thu, 11 Sep 2025 13:22:10 +0300
+	 In-Reply-To:Content-Type; b=XwpRFy4O1TIChJskQE28CmL8kxEV+9DyIG9IBWQlIC3Ldz/D2dYGiYLejs+bo9IISXr50puTP7MuVIPX2H5X3fGQ7r8HC6qhb/MAovBo/wjnOtcU27vK5t0LasA31Tz4Gv0cZry9SzPgGjzY2r5WZM4CiWXAvfCqqX1DbDPr0hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.105] (unknown [114.241.87.235])
+	by APP-05 (Coremail) with SMTP id zQCowAD3mBIQo8Joe2xDAg--.40639S2;
+	Thu, 11 Sep 2025 18:23:12 +0800 (CST)
+Message-ID: <7895b23a-2b50-4f3e-bdef-f9b7397beef2@iscas.ac.cn>
+Date: Thu, 11 Sep 2025 18:23:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,137 +40,340 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/15] x86/mce/amd: Enable interrupt vectors once
- per-CPU on SMCA systems
-To: Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org,
- Tony Luck <tony.luck@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- Smita.KoralahalliChannabasappa@amd.com, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
- linux-acpi@vger.kernel.org
-References: <20250908-wip-mca-updates-v6-0-eef5d6c74b9c@amd.com>
- <20250908-wip-mca-updates-v6-10-eef5d6c74b9c@amd.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
+Subject: Re: [PATCH net-next v10 2/5] net: spacemit: Add K1 Ethernet MAC
+To: Simon Horman <horms@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Vadim Fedorenko
+ <vadim.fedorenko@linux.dev>, Junhui Liu <junhui.liu@pigmoral.tech>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, Vivian Wang <uwu@dram.page>
+References: <20250908-net-k1-emac-v10-0-90d807ccd469@iscas.ac.cn>
+ <20250908-net-k1-emac-v10-2-90d807ccd469@iscas.ac.cn>
+ <20250911094404.GE30363@horms.kernel.org>
 Content-Language: en-US
-Autocrypt: addr=nik.borisov@suse.com; keydata=
- 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
-In-Reply-To: <20250908-wip-mca-updates-v6-10-eef5d6c74b9c@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <20250911094404.GE30363@horms.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:zQCowAD3mBIQo8Joe2xDAg--.40639S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKr4UGF43WF4fWF17ZFyxZrb_yoWfGw4UpF
+	WUKa1DAFW0vF1xtrsFqayDJrnIv34ftr1j9FyYy3yI9FnIy3WSyas5KrWY934kuryq9r1F
+	vw4jv3srGa90vrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvqb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
+	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
+	1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x07bIBTOUUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
+Hi Simon,
 
+On 9/11/25 17:44, Simon Horman wrote:
+> On Mon, Sep 08, 2025 at 08:34:26PM +0800, Vivian Wang wrote:
+>> The Ethernet MACs found on SpacemiT K1 appears to be a custom design
+>> that only superficially resembles some other embedded MACs. SpacemiT
+>> refers to them as "EMAC", so let's just call the driver "k1_emac".
+>>
+>> Supports RGMII and RMII interfaces. Includes support for MAC hardware
+>> statistics counters. PTP support is not implemented.
+>>
+>> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
+>> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+>> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+>> Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+>> Tested-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>> Tested-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+>> ---
+>>  drivers/net/ethernet/Kconfig            |    1 +
+>>  drivers/net/ethernet/Makefile           |    1 +
+>>  drivers/net/ethernet/spacemit/Kconfig   |   29 +
+>>  drivers/net/ethernet/spacemit/Makefile  |    6 +
+>>  drivers/net/ethernet/spacemit/k1_emac.c | 2156 +++++++++++++++++++++++++++++++
+> This is a large patch, so I'm sure I've missed some things.
+> But, overall, I think this is coming together.
+> Thanks for your recent updates.
+>
+> As the Kernel Patch Robot noticed a problem,
+> I've provided some minor feedback for your consideration.
 
-On 9/8/25 18:40, Yazen Ghannam wrote:
-> Scalable MCA systems have a per-CPU register that gives the APIC LVT
-> offset for the thresholding and deferred error interrupts.
-> 
-> Currently, this register is read once to set up the deferred error
-> interrupt and then read again for each thresholding block. Furthermore,
-> the APIC LVT registers are configured each time, but they only need to
-> be configured once per-CPU.
-> 
-> Move the APIC LVT setup to the early part of CPU init, so that the
-> registers are set up once. Also, this ensures that the kernel is ready
-> to service the interrupts before the individual error sources (each MCA
-> bank) are enabled.
-> 
-> Apply this change only to SMCA systems to avoid breaking any legacy
-> behavior. The deferred error interrupt is technically advertised by the
-> SUCCOR feature. However, this was first made available on SMCA systems.
-> Therefore, only set up the deferred error interrupt on SMCA systems and
-> simplify the code.
-> 
-> Guidance from hardware designers is that the LVT offsets provided from
-> the platform should be used. The kernel should not try to enforce
-> specific values. However, the kernel should check that an LVT offset is
-> not reused for multiple sources.
-> 
-> Therefore, remove the extra checking and value enforcement from the MCE
-> code. The "reuse/conflict" case is already handled in
-> setup_APIC_eilvt().
-> 
-> Tested-by: Tony Luck <tony.luck@intel.com>
-> Reviewed-by: Tony Luck <tony.luck@intel.com>
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> ---
-> 
-> Notes:
->      Link:
->      https://lore.kernel.org/r/20250825-wip-mca-updates-v5-15-865768a2eef8@amd.com
->      
->      v5->v6:
->      * Applied "bools to flags" and other fixups from Boris.
->      
->      v4->v5:
->      * Added back to set.
->      * Updated commit message with more details.
->      
->      v3->v4:
->      * Dropped from set.
->      
->      v2->v3:
->      * Add tags from Tony.
->      
->      v1->v2:
->      * Use new per-CPU struct.
->      * Don't set up interrupt vectors.
-> 
->   arch/x86/kernel/cpu/mce/amd.c | 121 ++++++++++++++++++------------------------
->   1 file changed, 53 insertions(+), 68 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-> index 1b1b83b3aef9..a6f5c9339d7c 100644
-> --- a/arch/x86/kernel/cpu/mce/amd.c
-> +++ b/arch/x86/kernel/cpu/mce/amd.c
-> @@ -43,9 +43,6 @@
->   /* Deferred error settings */
->   #define MSR_CU_DEF_ERR		0xC0000410
+(That's the function at the end)
 
-nit: While touching this code why not finally rename this in line with 
-the APM, section 9.3.1.4: MCA_INTR_CFG
+> ...
+>
+>> +static void emac_wr(struct emac_priv *priv, u32 reg, u32 val)
+>> +{
+>> +	writel(val, priv->iobase + reg);
+>> +}
+>> +
+>> +static int emac_rd(struct emac_priv *priv, u32 reg)
+> nit: maybe u32 would be a more suitable return type.
+>
+Ah, right, will change to u32 in the next version.
 
-Perhaps as a separate patch. I see that you did send a patch containing 
-this rename: 
-https://lore.kernel.org/all/20231118193248.1296798-13-yazen.ghannam@amd.com/ 
-But I guess it didn't land.
+>> +{
+>> +	return readl(priv->iobase + reg);
+>> +}
+> ...
+>
+>> +static int emac_alloc_tx_resources(struct emac_priv *priv)
+>> +{
+>> +	struct emac_desc_ring *tx_ring = &priv->tx_ring;
+>> +	struct platform_device *pdev = priv->pdev;
+>> +	u32 size;
+>> +
+>> +	size = sizeof(struct emac_tx_desc_buffer) * tx_ring->total_cnt;
+>> +
+>> +	tx_ring->tx_desc_buf = kzalloc(size, GFP_KERNEL);
+> nit: I think you can use kcalloc() here.
+>
+>> +	if (!tx_ring->tx_desc_buf)
+>> +		return -ENOMEM;
+>> +
+>> +	tx_ring->total_size = tx_ring->total_cnt * sizeof(struct emac_desc);
+>> +	tx_ring->total_size = ALIGN(tx_ring->total_size, PAGE_SIZE);
+>> +
+>> +	tx_ring->desc_addr = dma_alloc_coherent(&pdev->dev, tx_ring->total_size,
+>> +						&tx_ring->desc_dma_addr,
+>> +						GFP_KERNEL);
+>> +	if (!tx_ring->desc_addr) {
+>> +		kfree(tx_ring->tx_desc_buf);
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	tx_ring->head = 0;
+>> +	tx_ring->tail = 0;
+>> +
+>> +	return 0;
+>> +}
+> ...
+>
+>> +static int emac_alloc_rx_resources(struct emac_priv *priv)
+>> +{
+>> +	struct emac_desc_ring *rx_ring = &priv->rx_ring;
+>> +	struct platform_device *pdev = priv->pdev;
+>> +	u32 buf_len;
+>> +
+>> +	buf_len = sizeof(struct emac_rx_desc_buffer) * rx_ring->total_cnt;
+>> +
+>> +	rx_ring->rx_desc_buf = kzalloc(buf_len, GFP_KERNEL);
+> Ditto.
+
+Will change these uses of kcalloc for these array allocations in next
+version.
+
+>> +	if (!rx_ring->rx_desc_buf)
+>> +		return -ENOMEM;
+>> +
+>> +	rx_ring->total_size = rx_ring->total_cnt * sizeof(struct emac_desc);
+>> +
+>> +	rx_ring->total_size = ALIGN(rx_ring->total_size, PAGE_SIZE);
+>> +
+>> +	rx_ring->desc_addr = dma_alloc_coherent(&pdev->dev, rx_ring->total_size,
+>> +						&rx_ring->desc_dma_addr,
+>> +						GFP_KERNEL);
+>> +	if (!rx_ring->desc_addr) {
+>> +		kfree(rx_ring->rx_desc_buf);
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	rx_ring->head = 0;
+>> +	rx_ring->tail = 0;
+>> +
+>> +	return 0;
+>> +}
+> ...
+>
+>> +static int emac_mii_read(struct mii_bus *bus, int phy_addr, int regnum)
+>> +{
+>> +	struct emac_priv *priv = bus->priv;
+>> +	u32 cmd = 0, val;
+>> +	int ret;
+>> +
+>> +	cmd |= phy_addr & 0x1F;
+>> +	cmd |= (regnum & 0x1F) << 5;
+> nit: I think this could benefit from using FIELD_PREP
+>      Likewise for similar patterns in this patch.
+>
+Right... I'll take a look, thanks.
+
+>> +	cmd |= MREGBIT_START_MDIO_TRANS | MREGBIT_MDIO_READ_WRITE;
+>> +
+>> +	emac_wr(priv, MAC_MDIO_DATA, 0x0);
+>> +	emac_wr(priv, MAC_MDIO_CONTROL, cmd);
+>> +
+>> +	ret = readl_poll_timeout(priv->iobase + MAC_MDIO_CONTROL, val,
+>> +				 !((val >> 15) & 0x1), 100, 10000);
+>> +
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	val = emac_rd(priv, MAC_MDIO_DATA);
+>> +	return val;
+>> +}
+> ...
+>
+>> +/*
+>> + * Even though this MAC supports gigabit operation, it only provides 32-bit
+>> + * statistics counters. The most overflow-prone counters are the "bytes" ones,
+>> + * which at gigabit overflow about twice a minute.
+>> + *
+>> + * Therefore, we maintain the high 32 bits of counters ourselves, incrementing
+>> + * every time statistics seem to go backwards. Also, update periodically to
+>> + * catch overflows when we are not otherwise checking the statistics often
+>> + * enough.
+>> + */
+>> +
+>> +#define EMAC_STATS_TIMER_PERIOD		20
+>> +
+>> +static int emac_read_stat_cnt(struct emac_priv *priv, u8 cnt, u32 *res,
+>> +			      u32 control_reg, u32 high_reg, u32 low_reg)
+>> +{
+>> +	u32 val;
+>> +	int ret;
+>> +
+>> +	/* The "read" bit is the same for TX and RX */
+>> +
+>> +	val = MREGBIT_START_TX_COUNTER_READ | cnt;
+>> +	emac_wr(priv, control_reg, val);
+>> +	val = emac_rd(priv, control_reg);
+>> +
+>> +	ret = readl_poll_timeout_atomic(priv->iobase + control_reg, val,
+>> +					!(val & MREGBIT_START_TX_COUNTER_READ),
+>> +					100, 10000);
+>> +
+>> +	if (ret) {
+>> +		netdev_err(priv->ndev, "Read stat timeout\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	*res = emac_rd(priv, high_reg) << 16;
+>> +	*res |= (u16)emac_rd(priv, low_reg);
+> nit: I think lower_16_bits() and lower_16_bits() would be appropriate here.
+
+This one is building up a 32-bit value instead of splitting a 32-bit
+value in two, and we don't have those macros in linux/wordpart.h. So I
+think I'll make a local helper:
+
+static u32 emac_make_stat(u16 high, u16 low)
+
+>> +
+>> +	return 0;
+>> +}
+> ...
+>
+>> +static void emac_update_counter(u64 *counter, u32 new_low)
+>> +{
+>> +	u32 old_low = (u32)*counter;
+>> +	u64 high = *counter >> 32;
+> Similarly, lower_32_bits() and upper_32_bits here.
+>
+Thanks, this one I'll change to {lower,upper}_32_bits.
+
+>> +
+>> +	if (old_low > new_low) {
+>> +		/* Overflowed, increment high 32 bits */
+>> +		high++;
+>> +	}
+>> +
+>> +	*counter = (high << 32) | new_low;
+>> +}
+>> +
+>> +static void emac_stats_update(struct emac_priv *priv)
+>> +{
+>> +	u64 *tx_stats_off = (u64 *)&priv->tx_stats_off;
+>> +	u64 *rx_stats_off = (u64 *)&priv->rx_stats_off;
+>> +	u64 *tx_stats = (u64 *)&priv->tx_stats;
+>> +	u64 *rx_stats = (u64 *)&priv->rx_stats;
+> nit: I think it would be interesting to use a union containing
+>      1. the existing tx/rx stats struct and 2. an array of u64.
+>      This may allow avoiding this cast. Which seems nice to me.
+>      But YMMV.
+
+Looks like I can use a union with a DECLARE_FLEX_ARRAY for this. I'll
+change it in the next version.
+
+>> +	u32 i, res;
+>> +
+>> +	assert_spin_locked(&priv->stats_lock);
+>> +
+>> +	if (!netif_running(priv->ndev) || !netif_device_present(priv->ndev)) {
+>> +		/* Not up, don't try to update */
+>> +		return;
+>> +	}
+>> +
+>> +	for (i = 0; i < sizeof(priv->tx_stats) / sizeof(*tx_stats); i++) {
+>> +		/*
+>> +		 * If reading stats times out, everything is broken and there's
+>> +		 * nothing we can do. Reading statistics also can't return an
+>> +		 * error, so just return without updating and without
+>> +		 * rescheduling.
+>> +		 */
+>> +		if (emac_tx_read_stat_cnt(priv, i, &res))
+>> +			return;
+>> +
+>> +		/*
+>> +		 * Re-initializing while bringing interface up resets counters
+>> +		 * to zero, so to provide continuity, we add the values saved
+>> +		 * last time we did emac_down() to the new hardware-provided
+>> +		 * value.
+>> +		 */
+>> +		emac_update_counter(&tx_stats[i], res + (u32)tx_stats_off[i]);
+> nit: maybe lower_32_bits(tx_stats_off[i]) ?
+>
+>> +	}
+>> +
+>> +	/* Similar remarks as TX stats */
+>> +	for (i = 0; i < sizeof(priv->rx_stats) / sizeof(*rx_stats); i++) {
+>> +		if (emac_rx_read_stat_cnt(priv, i, &res))
+>> +			return;
+>> +		emac_update_counter(&rx_stats[i], res + (u32)rx_stats_off[i]);
+> Likewise, here for rx_stats_off[i].
+>
+Thanks, these I will use lower_32_bits in these two places in the next
+version.
+
+>> +	}
+>> +
+>> +	mod_timer(&priv->stats_timer, jiffies + EMAC_STATS_TIMER_PERIOD * HZ);
+>> +}
+> ...
+>
+>> +static u64 emac_get_stat_tx_dropped(struct emac_priv *priv)
+>> +{
+>> +	u64 result;
+>> +	int cpu;
+>> +
+>> +	for_each_possible_cpu(cpu) {
+>> +		result += READ_ONCE(per_cpu(*priv->stat_tx_dropped, cpu));
+>> +	}
+> nit: no need for {} here ?
+
+Thanks for the catch, but with regards to this entire function, I'm
+moving tx_dropped to dstats, so this would be moot.
+
+>> +
+>> +	return result;
+>> +}
+> ...
+
+Thanks for your review.
+
+Vivian "dramforever" Wang
+
 
