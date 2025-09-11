@@ -1,88 +1,93 @@
-Return-Path: <linux-kernel+bounces-812440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EAAFB53826
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:49:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50445B53829
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B50331CC1E4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:50:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E85527AF161
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3769B3469E4;
-	Thu, 11 Sep 2025 15:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F388353346;
+	Thu, 11 Sep 2025 15:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="b/azIl2x"
-Received: from YT6PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11022077.outbound.protection.outlook.com [40.107.193.77])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="C6w8A73a"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013047.outbound.protection.outlook.com [40.107.159.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBEE21C16A;
-	Thu, 11 Sep 2025 15:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.193.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B66322536;
+	Thu, 11 Sep 2025 15:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.47
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757605776; cv=fail; b=Gcrwz4CdGCo7Y+LlawEhRrTOrG+kmXRLVnEUjgyHjW2ndDXSbPsD1SrERScIOsIT3eKAY7LuIV+d7BJ/EYrgKJeIdk/3MFlnTJsV76+/ra4IM6bsoZiose+KBe1cwsfu8fCMOqnEq2STf2ubJnhLtpvLVOnowkCDWxj7XYDQOQg=
+	t=1757605786; cv=fail; b=D5jO7po3bPNQyDeSEvBeJpqkm5v44s16ZoW6Tz6cX83ELfLNwGvxLN2oOjeXcNAAFzsXPCsrUW2HyQcJy6pOzfNWQkpukpFUrVf6K7Gd+4c2hfW17yCOEPKgoptWG5H1cTmqPxP4/dgUpxJ7U+/cY+LT1OJdhgulpftGUQTI5FY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757605776; c=relaxed/simple;
-	bh=BhMS2+R/KaAWrBiwFu43FvHEWvz2MUtVRt8WmkSCUm4=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LeZNrlOtwKcwWueT/DleCK/esaCm2/HE0St9bl9j/4cdX2bqKrcMqulxtbFmCyZw69n6E3N9EnxMlLgsjVitSUZav6fyftPBhAHuxXc0pyXPp1hvN34wPOv+2bOFreqbMqK1bakOOOXG+ccSzQiZ3BoD6Y7w9O0gSo7GCBmd6Xk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=b/azIl2x; arc=fail smtp.client-ip=40.107.193.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+	s=arc-20240116; t=1757605786; c=relaxed/simple;
+	bh=kzjG/DnUnsJCwK+j4pZke3oJNPdcDmqObTnxBGL756E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ARLOvR9MD+POTlKUKfXBoS9k92PuyJRyrv3iNRUJaTodl7yLXHsBFXZ3k8UVAZnyET7/DavSmrgt78HQJpIJSnHmszJt5XTGWIx5JRFu8uQFheSIrgIGRhGmktln5YP0LzHQev9e1qlXAuHzHqaDQVFrSA+c0p3toxLy70uQro8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=C6w8A73a; arc=fail smtp.client-ip=40.107.159.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i3Ta+1EA45Dt3MRRChvwpff3dkCmWEhZfGCEcY+HBBKHXxaPhMSYQEXvflohHlZmapMKNM6s70cl8dBC2EidsJ97Fs3R5l6Sevilou89671WkmsAZy20I7s6cC68pkJMgtURZlQM2CZiC/szE5keXeTZo29+NewToBo5ourMPxsfgY2NR2TI/kTb5bDXvAsbIfI+kNZzeLtjbjFLbfdGwlzuo+KepsG0VelLqqkPFsI33UVo2xGSqpdpBUj1SPMFbLt18O82HyQXeNp+c6zjjntrXx/TKC9hAJhVXrKEmoe5wYaY1g9J0uan0zGG+eqwIDYNQygxeoSxX7NCzaUTzg==
+ b=N+HR92Er4DeX5i/R3zR8LQoP+I56la6KGk1ozSPES4y23TQKaB6KDZ8zBni7UPvsjNRpS9VcvLtaCGYx5RFXfc+2/3CNZJ32P65xyZxFTDEGzjZ6ZI7AnFfnPkt/6DPEhske/YRPBWugO9euL9b3/WOzhuc5S9IThcWPkN/oo13l7UX44vFzCiGnsf0/N2XABVySQ0GDTj0HQiFIWUNZ9zOVDwlKQIrqi0IKciV4YXXRu3SAk+mqkwb+qTH+m/A+c0Wk2dLjYBj834BcyyNyw2aZIXCv91mdn4/1s8dhFTOLa2uGfzywMXWt9QSB7/YyLsldtBtGDGhXb8MjXozHrw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U/z7lNaA0EbPhj4fk2DjYqC1ZqsurdoZZph/j3hag0c=;
- b=yQaeImtDaahYJ/kschSAXGZENl/EXLVcu+qbNQfa2Mw1BLsxJIhYXM5nJMwtzzPH2yeFE7ChDOiZkqnnp7roSx31S78XKPBkruQvmqRUSeutu+lHGa2OJzjXn8IrXRTHcRmRyM7p7CZplu2yTwNRok1ICF/Vcyif3Sb8WuaezX1s+xAG4weE7nMnbNQwD6ZHNTkz179tsVr0loPUeFQvz1FgjHDYK/f8qcOFlKu1+o832DGN0yGJqAPiQ0SgGFfokRnMSAhYGOR5xdwVNDq92bCkYcEQXbdBVJgY7ay8eLFKI23hKoaYH1K+pGRK1T3N94t5WDouF4iqEliTHha1Zg==
+ bh=wRbndY2ppD2vdkWzYhggzXNrZclMmLOaLopyIpNVKSU=;
+ b=Sa3t4SkFXQyMSP1nUqwVemQSD+tqfgVSyYiUbNQntbLskStTeG7vBqVy8XaeSlYk92W6N0YQytVXSsSeDuGvGTfZ9t+4ziJXE901CYvFBwIyWZUdrriNL7gr/Nq85Asy+riYQIlMWPDthQlfPzndq3aN5N7aY+/wRFDwiK60cdXE5Fx6Zq0LQXAEEUXm95KEFrCWm9pZ+2YJrZi8XjVncAaO0Eri0Al+h/iqsBHKwQNl6gk7Wv9DglG6PrsG3t6ci5UUkbLn7M0qFJ1uMbwPC2SB0KJ0rgMOTF2lr6D91HMUQCo1exnsAz+tUoxxU1XdAfS5xNVvSZ0P7jf4K0tPcw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U/z7lNaA0EbPhj4fk2DjYqC1ZqsurdoZZph/j3hag0c=;
- b=b/azIl2xfqF8LH5ZDk93k1jZM9/YANhyJt29CwfNeQyIZ+L9z+Y8YzduNZZGrXBy4NuqVQ+sg/TrURtnWdUqC3iTzg4en+nkuyfgdbhv7E8Re9pkjF32uwdDzj6VssYHRCeN/FdvncdvdVxQnSY5WaWiFi7WBbzcj+a8xPzOUQUMR66BncvJEBJTgd4tyA8H73+ihFP1Uq+cZnvpeUBre6f33Iq3+gElnVJ1dqfc06dBdeL1HKxFQO5WFA6k/dj9nEMmgpuw542/mbtKMvmaVzD+wfju7msjl75MsGU0c8R4TudKZhqcRt6mGQfyRxqw1Smv0K3sbKX2ofEywzpYfw==
+ bh=wRbndY2ppD2vdkWzYhggzXNrZclMmLOaLopyIpNVKSU=;
+ b=C6w8A73aaHQWqROXwC6//qtO0Bs1nWcRHEsPug2t4z7jg1eEMdFj9LeUzCfxJqBl2yjk/2Eh9Bj9gjqwgB22FEiT3yskUGVw92int/r7QkR7i9p1hWTRMDPLKEIo0QGgrC7pr71uS3nfo/UNVzZNIChmDIcvVqvhlSmRI5b8jhHg8DnvPDT85/VJlK2njjWo2qv4GvdGCLg+wGGptzV2avg3d7Njz5w1E6HzQBDapSMzaf/7lzGxvY2xU/uI+GkKY5ERwRQRhnQyUmd2s9NnwxAFoTkmkWVRxEaBMHDN+72HxpqE9uplO9MkMzAWuMJV6zyYmqGzYgvzARyv7ipRjA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT2PR01MB9030.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:bd::9) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by AS8PR04MB8248.eurprd04.prod.outlook.com (2603:10a6:20b:3fd::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 15:49:26 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 15:49:26 +0000
-Message-ID: <010dbadb-0eef-4a35-95c1-932ad26cff21@efficios.com>
-Date: Thu, 11 Sep 2025 11:49:24 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch 02/12] rseq: Add fields and constants for time slice
- extension
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Prakash Sangappa <prakash.sangappa@oracle.com>,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>
-References: <20250908225709.144709889@linutronix.de>
- <20250908225752.679815003@linutronix.de>
- <2ce887bd-f0f1-46bd-a56e-7e35d60880dc@efficios.com>
-Content-Language: en-US
-In-Reply-To: <2ce887bd-f0f1-46bd-a56e-7e35d60880dc@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: YQXPR0101CA0010.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c00:15::23) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.16; Thu, 11 Sep
+ 2025 15:49:36 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9115.015; Thu, 11 Sep 2025
+ 15:49:36 +0000
+Date: Thu, 11 Sep 2025 11:49:25 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-staging@lists.linux.dev, Luis Oliveira <lolivei@synopsys.com>
+Subject: Re: [PATCH v3 00/31] media: add imx93 mipi/controller csi support
+Message-ID: <aMLvhdJRGHM+8yIH@lizhi-Precision-Tower-5810>
+References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
+X-ClientProxiedBy: PH0PR07CA0073.namprd07.prod.outlook.com
+ (2603:10b6:510:f::18) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,266 +95,196 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB9030:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0de7698b-ab1f-4e1d-4dac-08ddf14ac8f2
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AS8PR04MB8248:EE_
+X-MS-Office365-Filtering-Correlation-Id: e3d63617-cc93-4a72-d7ba-08ddf14acf40
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|7416014|52116014|376014|366016|1800799024|19092799006|38350700014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U0daUGtueGNXMDdtRzBmcFNzeWJpZHZ0L2Z0eVZTN2ZBNXg2RGZwQUFTdWpT?=
- =?utf-8?B?UUJDTWZ3aUZ5Zkdqa1l1MGxtL1A5TnRnaWsvQmxYVEFteTY5TnZtbDArYTVj?=
- =?utf-8?B?dm8weU9WQ2hXa1NrNStGVzlZT0VoT1pTUDYrNElBbTdVZmxnTDN1eVFtaWdz?=
- =?utf-8?B?eU9LR0dTeU4yVytiQUh0YksyK3JSQjJRcUxXT3NLMk9ZaHlyeHl5RVpGbmUv?=
- =?utf-8?B?V1F2b2NsaWluV2R3OWUzYjdQTVdEVGVtVHlnT0NIUG4rMXU3Nk83b1I3TDRr?=
- =?utf-8?B?U3Y5SXdGSU56YVQ3emRSdDRNTDc0a0t6cXp1R2lSdzlndHA5NFRwMTlEcVF4?=
- =?utf-8?B?UTZzdmtWczVjTkZZbDM4dlJRU1NaYVBvQlFkdkZnbGhFdytIa0pFSEU0ZjJZ?=
- =?utf-8?B?U1NQK1RMQXV5Rm1NaGoxK1A4dDhic1pCNDdVVHNCU2NnVXZTNnk2eWhrWUg0?=
- =?utf-8?B?cEx6bngwV3A3SXFOQXR1dkJoY2VlUFY1RzNQc1lEaS8raGpMcFY1N091eXJy?=
- =?utf-8?B?UmNqLytBZTlEN2xleE1sY1U0a1BtWEh6dUdPaCt0NXVsekJnMEc4RVFSRVpW?=
- =?utf-8?B?aXJ5TC9jK25oODRrdjdkek01RFdvWTVldUlycGtMa2dibmtwaTRuc1dNTWg1?=
- =?utf-8?B?b1JVendlVWk0QkxCRTNwUEVML0JRWHpGVVpMRXZNcTFsM0FHaFdiM1lBNFlP?=
- =?utf-8?B?cjI3LzBqWHFkMC92T0ZtbU1BVWI4U1FNdm5ZODJybmFSbW1vTkpobnJzUWxO?=
- =?utf-8?B?N3hYRjQrc1RNYzRteTZscjJVSFI3djUrLzdhOFhhUS9kRG1OWkNyK1ZDdTZ5?=
- =?utf-8?B?Mmh2RzRzVGVGaTZMeG4rZ2NHQmxoQ1o3M3d5b1p5ZTlzN0NkMStVOURvZTVz?=
- =?utf-8?B?U1hZVW5LN0RIelVnWUF6bzVrYXEvbFRRQXNPR1NQK1RDYzNnSlcxcnM4alZj?=
- =?utf-8?B?UTlZeXRrMll5THNKYnRyMVRzOUR0ZitLc1pnWlhZTnlnWncrYTRLL1o4bW45?=
- =?utf-8?B?bGlXd21vOWlvVGgvRVFVZDFOVTJHa1dablFWazZSNDMya2s3aDJqVTJaRVBB?=
- =?utf-8?B?ckE0R3dIQmo2dlA2WCt6T2ZteHIwK3FpdkdIQi9kcHlrZ3NFWVdURUZyNG5C?=
- =?utf-8?B?cEtaeEFlc2FoZFNmK1k3SDJrOWpxZjV3eDljanZ5cllOUWlxdmp1R0ZRdSsx?=
- =?utf-8?B?UmtTWmZud21IVGxLK3VXUStNQkoyeHRod1ZNdEJaNFFKYlZaNGl6dk1vRHNt?=
- =?utf-8?B?V1RidXVrR3c5TURLV0tIcktWSGFPODYrNFhMa21malVyRlpzZVU1UEdKbW80?=
- =?utf-8?B?MHJXZEo1MCsxYUtlU2txaDFqL3p2aWszNmxBUXZjUEFFREhtSEMxSnNCdUZE?=
- =?utf-8?B?alpoN1cwM0N4bFhadWxNdlBNK2NHTTlvRzl6a0l1UXpIazlXU2o5Q3hZa3VI?=
- =?utf-8?B?VkhtQ1hEZ29WOWFIK09wUDE1Tk0wY1Z0YmpZZkZlMnNsRG0yMnNOSWdlWmZP?=
- =?utf-8?B?Wm9NeHhvY2F6N2dlL3I4RVROempaTzliZDlCMG9jekpkUGpwL1dKU0prZlRZ?=
- =?utf-8?B?eVdPRURleWU1ZDF2K3BZQVc5c1hCWTRpVEJBcEpGVnJRWmpPeGN5S3JPVk96?=
- =?utf-8?B?M1p4MDB0QmZ4ekYzdjlYSERWYWpmQ0s3WDZOMlhXQnBkZURkb1Y5YnVlYkl2?=
- =?utf-8?B?NlZFdmpHdDNUK2dHaEpFYzNEUWNnQm9pTW11VHo2S3dOL1BiUURUZmFiTFN1?=
- =?utf-8?B?OFMrREhUempwS0hvYmlNbmNaYTF5UnBDS05xbGh5N3hJUUtjRVQ2NFd3bXox?=
- =?utf-8?Q?AUCGdSrv7qC+bmxe4oRyb0VHbAvm4SKdNO6ZY=3D?=
+ =?us-ascii?Q?8cFjLdlRzbn9399XgyZlXk765g9K3oYJj2Y57jOxQnOoEVFwbrWV7e5Bm7gy?=
+ =?us-ascii?Q?lVKLA678IlUt++VXDPTkq8PGai7QMbiKNaVRKibff0Bb4ydIRJWfx7W/qp/e?=
+ =?us-ascii?Q?KfHRKRfVu3F0a9OhfE2T2f340a8qzG2yk79YOqAkE9IZ6bTpSaasEZoGp80q?=
+ =?us-ascii?Q?35xEu9rWpramsbFykaWxIP9DLQW+KVewlzV1qOU8tl6btx+2l9736pXyoteN?=
+ =?us-ascii?Q?RVEYkJVNoWI99HAU89O+RU9ct3o7aKsb0BSj5DhU+lRuTd1kKHfJWZQk+Gf3?=
+ =?us-ascii?Q?lKfJwQn88svLZfXUGecC7dybxPATS3f/UM2jD0aLDP/LurP1pTdNuPXwvbhy?=
+ =?us-ascii?Q?ue+mplnMwL2Dxjxg7NLMzQKPoVECBGmM92u1DmSMBLZdUgWpWhVKyZNlPigN?=
+ =?us-ascii?Q?ocXocnSUrG+3av6mu62V4UJmcRbd02K3ZkdiS1OlNbss3VArr+zb1u30/L67?=
+ =?us-ascii?Q?KOPalPyeJJ55T5svo1sUbRo+l6avSs8GNQsEsKn4Dna0K+5m+SkCUAyVRIQr?=
+ =?us-ascii?Q?qM/9BFmoBNct6L06lViftrwrenUM0JNFbNPtKKcvvYIncrklvCcL6F1upEib?=
+ =?us-ascii?Q?DO/Cty2QhhOF/dRbYOqyrmNCu/0vJj6rvMRQq6sVxfa8YtPFpIPLxfLAjDMd?=
+ =?us-ascii?Q?T18agfLPlfkKkEApEZubOk8DMLftuehbB77g1NaGFksRKH7VecrTDWb1rCw+?=
+ =?us-ascii?Q?0pvq2awznVFvp5azCADiM32f/cp2B5GFqpkjL0eWzmfaZbslNLiPTE3nufoG?=
+ =?us-ascii?Q?sDJDTAPQYDVc/uMhLnxq829hIYsN9kwF9b5J3D2cL9tmUhaGE1TIkuJbdO23?=
+ =?us-ascii?Q?prMExXq5mS/WpJhfQPW6bYyQunHzMDjJdLU+4wHAvA587npp/Jm3DhgjZcdU?=
+ =?us-ascii?Q?33VxNRDmoTEck4V46hUzjFPlUjJIRihB78Z5hOlDUlUlhmt3kvXhaQ4eVyLj?=
+ =?us-ascii?Q?wiSItGFVa1EdW09QVMnBEDg7cZIgwLrOpzNNtap3hDubrC5LDVFshFPmHRBk?=
+ =?us-ascii?Q?6Ng2dsRReVrP7OuJbmYiZbmA1e96/+Q2zVoUYn6QXicMvbU6xfRe2RAhjkYX?=
+ =?us-ascii?Q?ZAM73Luh0l1nbDR8BN1w10tVYGa5pzTynALwnr4/6r3Z585upIx4xq/D2gJk?=
+ =?us-ascii?Q?oQWMlmLBeEc/RcsUj/y9ejoogGM1pLgul6evlStoOjTvk8LbjmqFlKVDIBw3?=
+ =?us-ascii?Q?OcHB5SBL+3j0U8DVNibDhrr+DevQF2+ak17oZZdL9pv6UV9YG3lffyhnEHev?=
+ =?us-ascii?Q?f7Auka+fg1k+oF1xxvaf4y4DfxsPjww9xradHLGLWDAtkfm/ze+gkf2Kv0WP?=
+ =?us-ascii?Q?VpWNuztE6iidtK6AadH44q/YqXL4Mk2ttwniFUP9SHox/SQfnaskaNvSa9zL?=
+ =?us-ascii?Q?NhQxA5dNcK7CBPcicmYw6vkvg05B/vdow02MJflXtLBTb/H0giE2vILsJE1a?=
+ =?us-ascii?Q?Nn73/hCA3w0dQ1yM6Wb994kmNSTmeUjkavFvzasajCtP8e9R6TFT+vVFn4Yo?=
+ =?us-ascii?Q?5xHNG68+7L6yis0nF0wAkqbYLW9KZb1sjKUC?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(1800799024)(19092799006)(38350700014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGdmSFNEK1dBTkM0RGkyRWJZVXl6aWptbFJQRGp6OUJIM3d6eHZGRnJJMDkz?=
- =?utf-8?B?MjZqTnQ1WHk2emdiSkZzdlJkQi8zSjNadlRsUE85M0JqTENUK1JYd3Zac3kz?=
- =?utf-8?B?ZFREQ21mM0x3a2p4WFB2eTZKM0F6VmtHL3h3dy9XeXRBQ2w5Mmt1bUc1S2E5?=
- =?utf-8?B?ODc1OG01V3J1RGZGa1ZiSm8vMnFham5UckoweXR5SmlPTEZ5YVJTSHJSOUpF?=
- =?utf-8?B?MGllOG1MZndUK1lHU2F4eVBIWUtUQVAyOEJCOGJaQzJ2Yy9xelo3Z3pBeGM2?=
- =?utf-8?B?TWtQNWFSaVJqeVJnT0lvdG9UL2tSYWVFckRRNnRxTmJtZGMxZlRjb1h6cHZH?=
- =?utf-8?B?SSs0WXdjSFpwdkdEVGcyOWJuaGhIaEJwcTdyOUhVR2xSRE1ZT0RQM3FjSE1E?=
- =?utf-8?B?SUowN3VoMTFWN3BINkpWK3BaSnNNeUQ3SEh1WmN1RUhHM3BhYzJJUVk3NlZB?=
- =?utf-8?B?ZitOdFZIUlZ4MEw5Q0NqMXhqc0NNSC84UU1OS29lczNLaTlMalVWdVludWI2?=
- =?utf-8?B?dksrUFAxRjhkSXlXanQzVVZaL0lNVXBkeUhGOXk0RVloS2VyWlZiMTkwaldm?=
- =?utf-8?B?Sy84TWRrTWgvdzhCNmNQTmcwdGl0RHZuR3czaXc3OEJmYmNYOUU5RlN1Nm5m?=
- =?utf-8?B?MGFSd1l6WjRnUDFXRGpJbXl6QmxKKzUvcTNTTXRvSEM0UURXbzVaMWRDT1Na?=
- =?utf-8?B?OHJiYlZCTkV5bm1lazQzbUZUdG1OdUxDMVg0bUZLQWVQT3hiamRDZml4aXRj?=
- =?utf-8?B?V2Q1NE5sWmlqUTYxbmY0S0xRbEoraUVFdFhBTVF2alFROEwvTG1Vc3U3ZEtX?=
- =?utf-8?B?K1lXT1lBUmNrZWRVeFNKZjFYZkw5OGpQeW9xaUtxZmw1VXE5TVZ0RTRERkxt?=
- =?utf-8?B?Z0l3bWhKRmRBa2tVT0hVNHJDMndUSGVaVnlRVmZtamVvbDBhTS9GVWJsVlJv?=
- =?utf-8?B?aFJ1dDVORkp3djZxS2VneE13MzhCYXZabDJ4RDF5aWlaRFltNzB4Q2ZqOXJ6?=
- =?utf-8?B?YUhkRjdSS0dMMkZSNnlQTjNiNGFGNGdWMGQ4dUpGZ0FlV1pPNm0vMkFzWVp6?=
- =?utf-8?B?U1BnTU1xNGgvYUdzT3pYVUhGelFwejFiMEJDQTg5UjVEdFRhSkcxNm1TWVky?=
- =?utf-8?B?dHJ1RkRnd3pmNU5zSy8zN1NDa2FSMmR3NEJZM252NW1sajQ2NWgzMGNGTUFZ?=
- =?utf-8?B?QXhrcko2QTNRa05NUXhwcTArengwdEw1ZGpUdGJyc2lQUmFzOHozaklxSGND?=
- =?utf-8?B?U3N3MTlHc1cyQlpmbkQ1Q1pabkF0Q1IxR1YzVWFhN0s0cnN1N3NYamFoL1p1?=
- =?utf-8?B?UDYzaW5qK1RMVWNxd2txcWhzQ2pVbVl5OGpYQ1dYVGpKSlRoRDlmQ053MUdP?=
- =?utf-8?B?MUhCUnJ0M1lOZndudXBleU5VYUg1aUQ2UU01aVY0VTNUejY4TzBIemJkMmFi?=
- =?utf-8?B?a2crQXRVbGZqVUlWK0VQSkIrTTRiMWVRdTI1MmRCUUpKV1JPMFMxZFltbDBv?=
- =?utf-8?B?aW5jTTM1SWFBcHNRMmZCUkhiRTcxV0dYSjYvRDl1aWZlRjBwZE9rQ0IyTzg1?=
- =?utf-8?B?M0ZoajlNYkh0WUZ5bzBqeE5YQWc2OFl1cDl1S1Rhc01RamVoeVY1TVNUVm8z?=
- =?utf-8?B?aUZWZ3NuZzlKOEV6WWpndFEwT0ZtcmgzUGs3TUpJdmU4clNqd0RLaGhzSWsw?=
- =?utf-8?B?Qm1DdVhjd3hscTA5bVdObkRwV1lzcHhvaUY3ZEpTTW5rV2NYTXViN3RqZG8w?=
- =?utf-8?B?QTBNQ0FycnFKZ3k0TE1QTGl5bmFZOHg4Tm90S0pjZWNzay9qYi9WTlQxcmJJ?=
- =?utf-8?B?eDJXTTBFbmh4L0dZcXd2dnRlWUFPYlJjL0VKM1ZZOW9WZ0ZPeWJFKzhBOVR6?=
- =?utf-8?B?ZlVFRnNVTzNHMGEwMG1Yb2JSK1Uyd3hUaTBtMTBuYjBrWFpCaWoyS0tKNFFY?=
- =?utf-8?B?bWtsWWNQS3Iwc05YeDl1UE5VeW9Bb1JydzhZd2ZFN0JQVEVTdGlXZGJ6THAz?=
- =?utf-8?B?WXdMbFpnSXF0WTdZQklhTnlwTzZoUmRVbWFkL3dWZmFoaThYa3pVdU1VdTk1?=
- =?utf-8?B?N3FhTUJZRnpXa2ZidkdEOFdJVHppWnYvMysxWUt3MFBtM1hPT0J4NDdBdzJk?=
- =?utf-8?B?d05SVittT0M1cnR2SFVqZkRWa0Z0WGs4THc5dG15bGc0WFhxVUZTMDJjMmZE?=
- =?utf-8?Q?Su/VfklZAWhxn5DRVmjk294=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0de7698b-ab1f-4e1d-4dac-08ddf14ac8f2
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ =?us-ascii?Q?5yxTW2n1R8J/oItIh9IMyFybLQ62j3TOz1tZ3EkEr3ZJhlBnAb/59QXRq9N0?=
+ =?us-ascii?Q?NbeB5sXUThdrVLnHRRJJUv5X+IOfZEZQGBdM5B6VeEfg3Xx8CQcya2kApi3u?=
+ =?us-ascii?Q?4Q4naH1KMVH0qYsglLxt9R52UBIfdjS5OkDNMV++Buh0oNSBoawTOmSMNfpL?=
+ =?us-ascii?Q?CthTPmivoZtqVe6W+dMnqeSF/cxL/3IbT/YmSeWweOiQ2vfYQC5mJVitwLAq?=
+ =?us-ascii?Q?w0wSkTGXdORWGp3FN4f2dCFXb7KW4xAVdwVW/agLGRghJAY0TpV4ivvdCeUl?=
+ =?us-ascii?Q?lkzu5rPRtK1oBYPrulnyVAbEi+TwCtxtWk2rdz3LY65k7rC4+DLxAIJSTqg/?=
+ =?us-ascii?Q?nXzFFcvD7nC/E/vTFC0PUD6xhkh8VEoUSpmUFY21oNMhtauRTXWPVGylnLtz?=
+ =?us-ascii?Q?jxJgY7oSjCZAbeu2w95G76HlRQw3AI6oeL4wc/JncwXUlXKcc3baCrYskmy5?=
+ =?us-ascii?Q?7mcqDgyJrIi5PUZ24X7NR9cFHb0ABptrJDoFLRMC+2twsMbc0T5tlhx8cus5?=
+ =?us-ascii?Q?vIidhJnnwZbWgbNij0WrgK2qfBt542XnhulbQL0o5KwnJJMtz6uHcsW3Lbz8?=
+ =?us-ascii?Q?9/4L+aMj0A/7hkPzmUEGDMwFZ0PhNbQNkPEo+Xzvackuybz7ujIkWfiS1FjG?=
+ =?us-ascii?Q?VaxigkmqaUodH5oV+/u+uu+SpMUbpvvx1fspu3Swk2GlSxMoBnETFqIPcNEx?=
+ =?us-ascii?Q?rOeVfSkYyncpLAQ7Nbs/t6s9rccPlj0GvZu759UCcpKK8uMQpWL3dDb9qWuW?=
+ =?us-ascii?Q?FGtBooAfaejmkzql0YK5PqtwsT5pslOnzUfBW9j7C7nQ4lP8evp/qhH7g2q2?=
+ =?us-ascii?Q?FxKipVGEQm0DOXx6dcBzMwAPwLs0K7JMyQNUkGgw60Q/OnU3h0WYf9OKcs1I?=
+ =?us-ascii?Q?kJpwxuCgf+wgg8+BHOkaXr+X1UJD2OfBavD57xO2GQTNzIABKcccOtGCWxW+?=
+ =?us-ascii?Q?qp2kAH19WrG/kAbUEr40RLh5IqKwNE6kyr10HVaIwB63bZZezKeeZaQ6tR4Q?=
+ =?us-ascii?Q?dC7fFAznqbzLh+ib4kNDnFdY9zlXFuW4Lu+CcVQfDlZjZbqybmdaH4+gBfQZ?=
+ =?us-ascii?Q?LINgpoe6zxeadAJxKteXC2gJfrkik6EXJkNbYn+9NjVTdEqpuNnnimQxyUee?=
+ =?us-ascii?Q?2nBvjwIbkxn63UxG6VLvY0HJPyzn82VhLj8G8H0JPGgYRcxdvQ5h2wIZ7zdv?=
+ =?us-ascii?Q?2kz/bjZfzpIxauPeqEzQ3/fmFJYZ70QJnTH7JpQjNSSYld0zuMGb8T1GN2qS?=
+ =?us-ascii?Q?QBQ16MQkOxM3RKUdotFkNBh7CvA6lYNlDWmKZJgtxqhJLXdcvmzOx/h06G90?=
+ =?us-ascii?Q?Z+P0qhyFjx71O6GVINS1+V7+8khaH+bs6dVZIlWa/JKopKg+7+q3A97PNb6J?=
+ =?us-ascii?Q?zRCkWEY3JnjE2+o1Aa9xiibgFQ5rWP1mgwroTNCPoBGPdNVGX19AIGKDd7Ai?=
+ =?us-ascii?Q?ZNLxJjYII6j/t8s+jqr8M75kBBWegpdQjrjY02d1dgYSc2kybLqzqaq7Yly/?=
+ =?us-ascii?Q?a82mWXe+VR2Sukut6LwJ2X6gLihihlhYFnkV5cygLiKb15j5OZztmhto5GCl?=
+ =?us-ascii?Q?DjJO/okqXnB+fvXwjdazm+M5ZmhxCPqh3x/aC/k8?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e3d63617-cc93-4a72-d7ba-08ddf14acf40
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 15:49:25.9356
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 15:49:36.5703
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mj+fggrOS18V2lGL4/pfjkE0KxJLe4PqyAQsaObqsOSDhGLpCCArikNbVk30fjoHKbGS1+K4GLLH+/sXmrYgOVNLesW8JRB+KE1rVUWPuCU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB9030
+X-MS-Exchange-CrossTenant-UserPrincipalName: RZyQf94by45J6Vy3HA9Xg3YPzvNZPPDyY8mU/1kdISaaxGVsylVOZrHGr4+bcw+6q23hJFTEQ9BLDDApjhxQSA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8248
 
-On 2025-09-11 11:41, Mathieu Desnoyers wrote:
-> On 2025-09-08 18:59, Thomas Gleixner wrote:
-[...]
+On Thu, Aug 21, 2025 at 04:15:35PM -0400, Frank Li wrote:
+> Totally rewrite CSI part driver compared to V1.
 
-> 
->> +
->> +The kernel enforces flag consistency and terminates the thread with 
->> SIGSEGV
->> +if it detects a violation.
->> --- a/include/linux/rseq_types.h
->> +++ b/include/linux/rseq_types.h
->> @@ -71,12 +71,35 @@ struct rseq_ids {
->>   };
->>   /**
->> + * union rseq_slice_state - Status information for rseq time slice 
->> extension
->> + * @state:    Compound to access the overall state
->> + * @enabled:    Time slice extension is enabled for the task
->> + * @granted:    Time slice extension was granted to the task
->> + */
->> +union rseq_slice_state {
->> +    u16            state;
->> +    struct {
->> +        u8        enabled;
->> +        u8        granted;
->> +    };
->> +};
->> +
->> +/**
->> + * struct rseq_slice - Status information for rseq time slice extension
->> + * @state:    Time slice extension state
->> + */
->> +struct rseq_slice {
->> +    union rseq_slice_state    state;
->> +};
->> +
->> +/**
->>    * struct rseq_data - Storage for all rseq related data
->>    * @usrptr:    Pointer to the registered user space RSEQ memory
->>    * @len:    Length of the RSEQ region
->>    * @sig:    Signature of critial section abort IPs
->>    * @event:    Storage for event management
->>    * @ids:    Storage for cached CPU ID and MM CID
->> + * @slice:    Storage for time slice extension data
->>    */
->>   struct rseq_data {
->>       struct rseq __user        *usrptr;
->> @@ -84,6 +107,9 @@ struct rseq_data {
->>       u32                sig;
->>       struct rseq_event        event;
->>       struct rseq_ids            ids;
->> +#ifdef CONFIG_RSEQ_SLICE_EXTENSION
->> +    struct rseq_slice        slice;
->> +#endif
+Laurent Pinchart:
 
-Note: we could move this #ifdef to surround the definition
-of both union rseq_slice_state and struct rseq_slice,
-and emit an empty structure in the #else case rather than
-do the ifdef here.
+	can you help review these patches? especial first two patches
 
-Thanks,
+media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
+media: v4l2-common: Add helper function media_bus_fmt_to_csi2_(bpp|dt)()
 
-Mathieu
+After that, I can start do more code clean up work.
 
->>   };
->>   #else /* CONFIG_RSEQ */
->> --- a/include/uapi/linux/rseq.h
->> +++ b/include/uapi/linux/rseq.h
->> @@ -23,9 +23,15 @@ enum rseq_flags {
->>   };
->>   enum rseq_cs_flags_bit {
->> +    /* Historical and unsupported bits */
->>       RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT_BIT    = 0,
->>       RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL_BIT    = 1,
->>       RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE_BIT    = 2,
->> +    /* (3) Intentional gap to put new bits into a seperate byte */
->> +
->> +    /* User read only feature flags */
->> +    RSEQ_CS_FLAG_SLICE_EXT_AVAILABLE_BIT    = 4,
->> +    RSEQ_CS_FLAG_SLICE_EXT_ENABLED_BIT    = 5,
->>   };
->>   enum rseq_cs_flags {
->> @@ -35,6 +41,22 @@ enum rseq_cs_flags {
->>           (1U << RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL_BIT),
->>       RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE    =
->>           (1U << RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE_BIT),
->> +
->> +    RSEQ_CS_FLAG_SLICE_EXT_AVAILABLE    =
->> +        (1U << RSEQ_CS_FLAG_SLICE_EXT_AVAILABLE_BIT),
->> +    RSEQ_CS_FLAG_SLICE_EXT_ENABLED        =
->> +        (1U << RSEQ_CS_FLAG_SLICE_EXT_ENABLED_BIT),
->> +};
->> +
->> +enum rseq_slice_bits {
->> +    /* Time slice extension ABI bits */
->> +    RSEQ_SLICE_EXT_REQUEST_BIT        = 0,
->> +    RSEQ_SLICE_EXT_GRANTED_BIT        = 1,
->> +};
->> +
->> +enum rseq_slice_masks {
->> +    RSEQ_SLICE_EXT_REQUEST    = (1U << RSEQ_SLICE_EXT_REQUEST_BIT),
->> +    RSEQ_SLICE_EXT_GRANTED    = (1U << RSEQ_SLICE_EXT_GRANTED_BIT),
->>   };
->>   /*
->> @@ -142,6 +164,12 @@ struct rseq {
->>       __u32 mm_cid;
->>       /*
->> +     * Time slice extension control word. CPU local atomic updates from
->> +     * kernel and user space.
->> +     */
->> +    __u32 slice_ctrl;
->> +
->> +    /*
->>        * Flexible array member at end of structure, after last feature 
->> field.
->>        */
->>       char end[];
->> --- a/init/Kconfig
->> +++ b/init/Kconfig
->> @@ -1908,6 +1908,18 @@ config RSEQ_DEBUG_DEFAULT_ENABLE
->>         If unsure, say N.
->> +config RSEQ_SLICE_EXTENSION
->> +    bool "Enable rseq based time slice extension mechanism"
->> +    depends on RSEQ && HIGH_RES_TIMERS && GENERIC_ENTRY && 
->> HAVE_GENERIC_TIF_BITS
->> +    help
->> +          Allows userspace to request a limited time slice extension 
->> when
->> +      returning from an interrupt to user space via the RSEQ shared
->> +      data ABI. If granted, that allows to complete a critical section,
->> +      so that other threads are not stuck on a conflicted resource,
->> +      while the task is scheduled out.
->> +
->> +      If unsure, say N.
->> +
->>   config DEBUG_RSEQ
->>       default n
->>       bool "Enable debugging of rseq() system call" if EXPERT
->> --- a/kernel/rseq.c
->> +++ b/kernel/rseq.c
->> @@ -387,6 +387,8 @@ static bool rseq_reset_ids(void)
->>    */
->>   SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len, 
->> int, flags, u32, sig)
->>   {
->> +    u32 rseqfl = 0;
->> +
->>       if (flags & RSEQ_FLAG_UNREGISTER) {
->>           if (flags & ~RSEQ_FLAG_UNREGISTER)
->>               return -EINVAL;
->> @@ -448,6 +450,12 @@ SYSCALL_DEFINE4(rseq, struct rseq __user
->>       if (put_user_masked_u64(0UL, &rseq->rseq_cs))
->>           return -EFAULT;
->> +    if (IS_ENABLED(CONFIG_RSEQ_SLICE_EXTENSION))
->> +        rseqfl |= RSEQ_CS_FLAG_SLICE_EXT_AVAILABLE;
->> +
->> +    if (put_user_masked_u32(rseqfl, &rseq->flags))
->> +        return -EFAULT;
->> +
->>       /*
->>        * Activate the registration by setting the rseq area address, 
->> length
->>        * and signature in the task struct.
->>
-> 
-> 
+	all of "media: staging: media: imx6-mipi-csi2 *" are trivial cleanup
+patches.
 
+Frank
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+>
+> This only includes CSI related patches.
+>
+> DTS part: see https://lore.kernel.org/imx/20250701-95_cam-v1-6-c5172bab387b@nxp.com/
+> PHY part: see https://lore.kernel.org/imx/20250701-95_cam-v1-4-c5172bab387b@nxp.com/
+> AP1302 part: see https://lore.kernel.org/imx/20250701-95_cam-v1-7-c5172bab387b@nxp.com/
+> 	upstream: https://lore.kernel.org/imx/20250623-ap1302-v3-0-c9ca5b791494@nxp.com/
+>
+> First 3 patches add some common helper function to simple code and remove
+> duplicated code in difference CSI2 drivers.
+>
+> Clean up stage imx6 old version csi2 driver, and prepare create common
+> dw csi2 library for difference IP version.
+>
+> Move stage driver under driver/media/synosis.
+>
+> Create simple platform driver for common dw csi2 use case.
+>
+> TODO:
+> 	1. create bus, to probe phy driver under "test_if" interface for
+> specific phys under CSI2.
+> 	2. support to combine phy, (which connect to both dw CSI and DSI's
+> test_if). Need use DSI's test_if to config combo phy to switch to RX mode.
+> and also need config RX part's phy register by use CSI's testif.
+> 	3. move other vendor's csi driver to use this common DWC CSI
+> library.
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Changes in v3:
+> - update binding doc
+> - combine two add helper function's patch to one. and use media_bus_fmt_info
+> data structure.
+> - Link to v2: https://lore.kernel.org/r/20250808-95_cam-v2-0-4b29fa6919a7@nxp.com
+>
+> Changes in v2:
+> - totally rewrite, see above section
+> - Link to v1: https://lore.kernel.org/r/20250701-95_cam-v1-0-c5172bab387b@nxp.com
+>
+> ---
+> Eugen Hristev (1):
+>       dt-bindings: media: add DW MIPI CSI-2 Host support
+>
+> Frank Li (30):
+>       media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
+>       media: v4l2-common: Add helper function media_bus_fmt_to_csi2_(bpp|dt)()
+>       media: staging: media: imx6-mipi-csi2: replace space with tab for alignment
+>       media: staging: media: imx6-mipi-csi2: use devm_add_action_or_reset() to simplify code
+>       media: staging: media: imx6-mipi-csi2: use devm_clk_bulk_get_all() to fetch clocks
+>       media: staging: media: imx6-mipi-csi2: use devm_mutex_init() to simplify code
+>       media: staging: media: imx6-mipi-csi2: use guard() to simplify code
+>       media: staging: media: imx6-mipi-csi2: use register structure to match hardware
+>       media: staging: media: imx6-mipi-csi2: use devm_platform_ioremap_resource() simplify code
+>       media: staging: media: imx6-mipi-csi2: move probe part to imx6-csi2.c
+>       media: staging: media: imx6-mipi-csi2: move sd imx6's specific initialization into imx6-sci2.c
+>       media: staging: media: imx6-mipi-csi2: move csi2ipu_gasket_init() to imx6-csi2.c
+>       media: staging: media: imx6-mipi-csi2: move number pad macro define into imx6-csi2.c
+>       media: staging: media: imx6-mipi-csi2: move dphy init part to imx6-csi2.c
+>       media: staging: media: imx6-mipi-csi2: use runtime_pm frame to control clks
+>       media: synopsys: move imx6-mipi-csi2.c to synopsys/mipi-csi2.c
+>       media: synopsys: csi2: Remove deprecated s_stream and use v4l2_subdev_pad_ops
+>       media: synopsys: csi2: Add phy interface support
+>       media: synopsys: csi2: Add basic v150* version register
+>       media: synopsys: csi2: Add irq support to record error count
+>       media: synopsys: csi2: Handle alignment requirement for width
+>       media: synopsys: csi2: Add register prefix to register field definitions
+>       media: synopsys: csi2: Add need_dphy_reset in config
+>       media: synopsys: csi2: Add default simple dw_csi2_subdev_init_state
+>       media: synopsys: csi2: Add v150 lane stop state register bit define
+>       media: synopsys: csi2: use standard v4l2_subdev_get_fmt() function
+>       media: synopsys: csi2: Add customize get_frame_desc() callback
+>       media: synopsys: csi2: Add Image Pixel Interface (IPI) support for v150
+>       media: synopsys: csi2: Remove source pad connected check at dw_csi2_enable_streams()
+>       media: synopsys: csi2: Add simple synopsys platform driver
+>
+>  .../bindings/media/snps,dw-mipi-csi2-v150.yaml     |  151 +++
+>  MAINTAINERS                                        |    1 +
+>  drivers/media/platform/synopsys/Kconfig            |   20 +
+>  drivers/media/platform/synopsys/Makefile           |    3 +
+>  drivers/media/platform/synopsys/mipi-csi2-simple.c |   75 ++
+>  drivers/media/platform/synopsys/mipi-csi2.c        | 1260 ++++++++++++++++++++
+>  drivers/media/v4l2-core/v4l2-common.c              |  149 +++
+>  drivers/staging/media/imx/Kconfig                  |    1 +
+>  drivers/staging/media/imx/Makefile                 |    2 +-
+>  drivers/staging/media/imx/imx6-csi2.c              |  181 +++
+>  drivers/staging/media/imx/imx6-mipi-csi2.c         |  846 -------------
+>  include/media/dw-mipi-csi2.h                       |  120 ++
+>  include/media/mipi-csi2.h                          |   30 +
+>  include/media/v4l2-common.h                        |   30 +
+>  14 files changed, 2022 insertions(+), 847 deletions(-)
+> ---
+> base-commit: ad0a162e543964443feec3a6a9395a64fe6c35c9
+> change-id: 20250606-95_cam-b74c094ad1fb
+>
+> Best regards,
+> --
+> Frank Li <Frank.Li@nxp.com>
+>
 
