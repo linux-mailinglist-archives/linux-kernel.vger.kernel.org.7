@@ -1,152 +1,137 @@
-Return-Path: <linux-kernel+bounces-812142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E300B5338B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:22:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1B37B53392
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53CBF5869C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:22:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05413A0274A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46FF322DCA;
-	Thu, 11 Sep 2025 13:22:42 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86F3326D77;
+	Thu, 11 Sep 2025 13:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GKcBWjJY"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E507F320CD9
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E323112D9
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757596962; cv=none; b=rmq5sHCHU5re7CwizZdVvpuig44V9++y8OjkGNAzMAOUD2npyhgB3mO19oXSyPKR3PRSb2vw+pdpsn60Zi0hmFHt3UuQHEc1899IPsyQa2455zlhLEmCDnywZngUSPm4O7E1fwkTU+vUxSeOgS2l6qUq4Q8m2PALfd3L3mLgnyo=
+	t=1757597017; cv=none; b=LEVcfHavb6reIdAeAHu1ine2t0Y11WI7bsBSg5asDz2aFTnO4mNqx0YRUQ/TSXiPpYGyx+G8qd8eBEdSPGca9bgvnyKzm4q2e+Fx7qOXv7NhXFEmLFDFvZLnc+KB3bVzSTTZdNqcS8vZ0qmvaQHW4YLKUChQFugi3sNa78Acn5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757596962; c=relaxed/simple;
-	bh=Yd2EJLm8t0kF+CBlgDQcCM+kwX0M3TihxOMA7uYg4F4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Amy910g19jDUIS+Qk5pHA+fYn6vgJRirNgalLSssiLyMcJYhTyNFVC6kDak3MzzqF0RBPsLQ7MoCYkHM5BcxCB9/YYeYUbGvoyRXropX5mbubWXgQw092IajO5hPMirXdqO7N5MI4rOzEYZomQXRekOlN4ROwxUlXjFcSCJ3CvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4cMyth6Tbwz3tZbc;
-	Thu, 11 Sep 2025 21:23:40 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 94B701A0188;
-	Thu, 11 Sep 2025 21:22:31 +0800 (CST)
-Received: from kwepemn100008.china.huawei.com (7.202.194.111) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 11 Sep 2025 21:22:31 +0800
-Received: from [10.67.120.139] (10.67.120.139) by
- kwepemn100008.china.huawei.com (7.202.194.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 11 Sep 2025 21:22:30 +0800
-Message-ID: <54fb6d7e-3c42-4dff-9bc7-b98cba75e3e1@huawei.com>
-Date: Thu, 11 Sep 2025 21:22:27 +0800
+	s=arc-20240116; t=1757597017; c=relaxed/simple;
+	bh=ILd6AoO/Vzfm3lniJYA7jVJUimFQ42DfyFd54iH4owU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G+bYouUnzEmMD3E0Z3IL+1x1YvSQtaWQFgtiG7BbtYHlwuCkqNkRvTHyhMLe4pn0staNtazdNrDzNusBc6eYPhLpFF0Za2vmgFhp4FcohIiwh2AZNnkkvM84L0fK0TGe9YYywXE4ROd0fFhH0uwcitqAL9/zRG74xGTk8TXZMSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GKcBWjJY; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32326e8005bso630382a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:23:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757597015; x=1758201815; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j6ymZmvGcwqVr201+2/9iequakcC0qkHxj9+m5M5hyk=;
+        b=GKcBWjJYfPvyFfGG+9963ltE6xdz5Vc2NewPd95vRS7iMsefJIA4mE3vfE42h1lP8N
+         V7reqFQVxf7Gq8dd/GJI2JUkjo1pq+eHc95+B2RcK+tvWN/CydtmZlhiHI/XYHKw57su
+         HHfBhnYiSMxuWM2QK1FwdYkDBXZ/avK9CGFmb6snkI40IVX2L5OHQ0LVfxXk3eJlcMn7
+         qYCPXJeHxMfr5ihvHcXCkzlX4ZulplszSh33SWm9jrWNEY2la5aLzFUYcb6Or94VfNp7
+         K6H0eQBkEaGBvSkC+r496xjH78PrTiVl0VF6rekBJ6Xc5dcbHUhTdmvXMjvdJ90n7FrL
+         /sTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757597015; x=1758201815;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j6ymZmvGcwqVr201+2/9iequakcC0qkHxj9+m5M5hyk=;
+        b=IYl8MHzJvsFewgzuN1p1xrKcjFp53LntagKCT96k5ioyxQIOtnrDtUYzsRSzQyBuLq
+         AlDAMaDGxImpqXFApht6abBzohBd325UnRVAOk1GLP18ih0qQ4996orvhCqsneooU4W6
+         v0kcg6YOcoxfph0Qjj1DPrOvjLFqMKCy8y7gRs8jftL7MbOjANy6Ro5Zxs+dhFPkD9sA
+         WURdXoNity/d4i/EJOcXZyIKcoFIbcS2iMoqbFkko4oqP29O1gBVhZebosEIdBeBNlHI
+         J+j/C7AvU/a0sCIxbk1WSymWzHU6TaNdwrBXz6x2NxrtQPNYm46W6s/O/FJpe3SXrapJ
+         RxUQ==
+X-Gm-Message-State: AOJu0YyoM3Ib2OwfWQOcsDnsQ18fv8WjXJ8hLrPMFRksOhlh7QXMSqHV
+	aPNUJ3ADMJAG+qKofUH6tGjO8fqDyBF5ePePbfdgT7c67xX7kZ9mNT6JMJm4Nx+ZuYVLvPhuCav
+	ZepkITBQfOuU6HRN+ylQqogfr+WO2UAw=
+X-Gm-Gg: ASbGncvzVXgTRt7MmdcJryc7gWMT/uVjN5vcMvcAykmQdRGDMVMsQvzWO+OvIbmPh3w
+	1ORdA7jMUr2YJ48ayeV+MHXR1ZGGqBZRFPBOcf2FhdiLkrRWWKaM22sSUu/gidlanQX/DUGGhpH
+	Yrv6zbTb1T2RrLXLtVSN/a+KQYp+Jc3PznFmZOcfRHB6MB7+t/JDPkRDL3fHpMc7foiIOewQZLZ
+	nTGXMW7jYV8ChbNiSynEnZQjkBW
+X-Google-Smtp-Source: AGHT+IE0fCHUJBZyLWfLL6NHxo0c1V0gVO6H2lI8rIpZlNULNyRYtxb1MghxXTwxbDrWyEB+kS+XLAcH2klufL8f6Zw=
+X-Received: by 2002:a17:90b:1802:b0:32b:ca6f:1231 with SMTP id
+ 98e67ed59e1d1-32d43f05005mr22897820a91.1.1757597013058; Thu, 11 Sep 2025
+ 06:23:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/9] Updates of HiSilicon Uncore L3C PMU
-To: <will@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <robin.murphy@arm.com>, <yangyicong@huawei.com>,
-	<Jonathan.Cameron@huawei.com>, <liuyonglong@huawei.com>,
-	<wanghuiqiang@huawei.com>, <prime.zeng@hisilicon.com>,
-	<hejunhao3@h-partners.com>, <fanghao11@huawei.com>, Linuxarm
-	<linuxarm@huawei.com>
-References: <20250829101427.2557899-1-wangyushan12@huawei.com>
-Content-Language: en-US
-From: wangyushan <wangyushan12@huawei.com>
-In-Reply-To: <20250829101427.2557899-1-wangyushan12@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemn100008.china.huawei.com (7.202.194.111)
+References: <CAEjxPJ4-+WfGPLev5QU_+_NgBx68zdBBQ6x_+aonzbk4f9BNEw@mail.gmail.com>
+ <20250911130653.967139-1-zhanghongru@xiaomi.com>
+In-Reply-To: <20250911130653.967139-1-zhanghongru@xiaomi.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Thu, 11 Sep 2025 09:23:21 -0400
+X-Gm-Features: Ac12FXxczdBxkZ0DHcWwMtzZjg9qMvci9_-8tA8VfmWk7TD-1Qaz5Ek7HY0P9Ho
+Message-ID: <CAEjxPJ6upN5e7XD9HC970pKvHox-qPjZLdzm=bV-tu8GgFrYoA@mail.gmail.com>
+Subject: Re: [PATCH] selinux: Make avc cache slot size configurable during boot
+To: Hongru Zhang <zhanghongru06@gmail.com>
+Cc: linux-kernel@vger.kernel.org, omosnace@redhat.com, paul@paul-moore.com, 
+	selinux@vger.kernel.org, zhanghongru@xiaomi.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-A gentle ping...
+On Thu, Sep 11, 2025 at 9:07=E2=80=AFAM Hongru Zhang <zhanghongru06@gmail.c=
+om> wrote:
+>
+> > >  static inline u32 avc_hash(u32 ssid, u32 tsid, u16 tclass)
+> > >  {
+> > > -       return (ssid ^ (tsid<<2) ^ (tclass<<4)) & (AVC_CACHE_SLOTS - =
+1);
+> > > +       return (ssid ^ (tsid<<2) ^ (tclass<<4)) & (avc_cache_slots - =
+1);
+> >
+> > If you are making the number of buckets adjustable, you should also
+> > change the hash function to better deal with multiple numbers of
+>
+> Thank you for the advice. When running the test model, I sampled
+> /sys/fs/selinux/avc/hash_stats once per second for a total of 1800 times
+> and analyzed the distribution uniformity of the hash algorithm using the
+> sampled data.
+>
+> Baseline: 512 nodes, 512 buckets
+> Comparison: 8192 nodes, 8192 buckets
+>
+> Metrics (Average value over 1800 samples):
+> * Bucket utilization rate (higher -> better, same chain length assumed)
+>         * Baseline: 52.5%
+>         * Comparison: 49.5%
+> * Max chain length (lower -> better, positive correlation with worst-case=
+ latency)
+>         * Baseline: 7.5
+>         * Comparison: 11.4
+>
+> Experimental results show that scaling buckets and nodes from 512 to 8192=
+:
+> 1. The distribution uniformity under the current hash algorithm does not
+> degrade significantly;
+> 2. The maximum chain length rise significantly, potentially degrading
+> worst-case performance (ignoring other code in avc_search_node function).
+>
+> Details:
+> url: https://gist.github.com/zhr250/cb7ebca61ff5455098082677d75b1795
+>
+> I will modify the hash algorithm in the avc_hash function and collect dat=
+a
+> again to see if we can achieve performance improvements.
 
-On 8/29/2025 6:14 PM, Yushan Wang wrote:
-> Support new version of L3C PMU, which supports extended events space
-> which can be controlled in up to 2 extra address spaces with separate
-> overflow interrupts.  The layout of the control/event registers are kept
-> the same.  The extended events with original ones together cover the
-> monitoring job of all transactions on L3C.
->
-> That's said, the driver supports finer granual statistics of L3 cache
-> with separated and dedicated PMUs, and a new option `ext` to give a
-> hint of to which part should perf counting command be delivered.
->
-> The extended events is specified with `ext=[1|2]` option for the driver
-> to distinguish:
->
-> perf stat -e hisi_sccl0_l3c0_0/event=<event_id>,ext=<ext>/
->
-> Currently only event option using config bit [7, 0]. There's still
-> plenty unused space. Make ext using config [16, 17] and reserve
-> bit [15, 8] for event option for future extension.
->
-> With the capability of extra counters, number of counters for HiSilicon
-> uncore PMU could reach up to 24, the usedmap is extended accordingly.
->
-> The hw_perf_event::event_base is initialized to the base MMIO address
-> of the event and will be used for later control, overflow handling and
-> counts readout.
->
-> We still make use of the Uncore PMU framework for handling the events
-> and interrupt migration on CPU hotplug. The framework's cpuhp callback
-> will handle the event migration and interrupt migration of orginial
-> event, if PMU supports extended events then the interrupt of extended
-> events is migrated to the same CPU choosed by the framework.
->
-> A new HID of HISI0215 is used for this version of L3C PMU.
->
-> Some necessary refactor is included, allowing the framework to cope with
-> the new version of driver.
->
-> Depends-on: drivers/perf: hisi: Add support for HiSilicon NOC and MN PMU driver
-> Depends-on: Message-ID: <20250717121727.61057-1-yangyicong@huawei.com>
->
-> ---
->
-> Changes:
->
-> v2 -> v3:
->    - Refactor made for better readability.
->    - Fixed failure examination in cpu offline callback.
->    - Some minor reword of documentation, and droped subsection titles as
->      suggested by Yicong.
->    - Link to v2: https://lore.kernel.org/all/20250821135049.2010220-1-wangyushan12@huawei.com/
->
-> v1 -> v2:
->    - Don't call disable_irq() and simply return success when there is no
->      CPU available for irq migration.
->    - Documentation patch split.
->    - Fix of a few other issues etc. per Jonathan.
->    - Link to v1: https://lore.kernel.org/all/20250729153823.2026154-1-wangyushan12@huawei.com/
->
-> Yicong Yang (7):
->    drivers/perf: hisi: Relax the event ID check in the framework
->    drivers/perf: hisi: Export hisi_uncore_pmu_isr()
->    drivers/perf: hisi: Simplify the probe process of each L3C PMU version
->    drivers/perf: hisi: Extract the event filter check of L3C PMU
->    drivers/perf: hisi: Extend the field of tt_core
->    drivers/perf: hisi: Refactor the event configuration of L3C PMU
->    drivers/perf: hisi: Add support for L3C PMU v3
->
-> Yushan Wang (2):
->    Documentation: hisi-pmu: Fix of minor format error
->    Documentation: hisi-pmu: Add introduction to HiSilicon V3 PMU
->
->   Documentation/admin-guide/perf/hisi-pmu.rst  |  38 +-
->   drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c | 528 +++++++++++++++----
->   drivers/perf/hisilicon/hisi_uncore_pmu.c     |   5 +-
->   drivers/perf/hisilicon/hisi_uncore_pmu.h     |   6 +-
->   4 files changed, 481 insertions(+), 96 deletions(-)
->
-
+If you look elsewhere in the SELinux code, you'll see that others have
+been converting other hash tables to using the jhash functions, so may
+want to try those here too.
 
