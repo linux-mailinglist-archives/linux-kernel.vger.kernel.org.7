@@ -1,72 +1,155 @@
-Return-Path: <linux-kernel+bounces-812039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24331B5320E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:28:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B37EFB5321F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D26695864F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:28:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80673A82F9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F73321440;
-	Thu, 11 Sep 2025 12:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E1223D7D1;
+	Thu, 11 Sep 2025 12:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="j0OsoiFs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z9C0vXjP"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640372D238F;
-	Thu, 11 Sep 2025 12:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F4E320CD7
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757593698; cv=none; b=OOkocSK/x+i4WevttSZzov+4hhEXxdRZ2cNLsXOfgwiXHpABgvZcyIO3TsPY0QoXyvCUs5L0zk2WkXSaJZhgxxpIoR+noYnloM5O4voWP0suqjp/BuUHeWIt8aLYH4hK8refnRSdYoA1JEM0J14hbDRtSMe6Ewx/u2s6moiVXrI=
+	t=1757593757; cv=none; b=RO5Ejawb43U9DexaET9kPBD8vntXBAGUL5JZKB0Dr8LfgNmlDLcr2xEnjnxyUidpJGThLaCN/T0RCkGBxty4QzPE/oWD2cSGHsIl+p9LQHyeiYvtMlobxZecThwsIBQhcwk/KUH1Eq7BSRvE1yG4LN58Nv25b0eH6b7n+YVGyNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757593698; c=relaxed/simple;
-	bh=yMm15wm7p6yVRRHMtojewEs35ZvuYj2fnBFo76gA58c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qq/fLD9IARhy/X/aulLc+CCWLiyg3C2tKvVcwViRjA8D5MxcJz9CJ2U8CF9Oip6s4ibExGQ0wPgECdI5CI2sGm1Swdk3AbG8vS3V2zOVuU9cmUrXriEYA9RYFgtgVgnaXeWBsOiMiyy1byXKfnoMm77CT0mXfEATpwPQSxSXXS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=j0OsoiFs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B6DAC4CEF0;
-	Thu, 11 Sep 2025 12:28:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757593698;
-	bh=yMm15wm7p6yVRRHMtojewEs35ZvuYj2fnBFo76gA58c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j0OsoiFs4yi/hN07JhGsEabSS1Rfga8QjhFg9Ke98bZ+/xQq44QL1R/7mlGLhuZD9
-	 0beK5Sn4H48gkBetSowIsis3enXM2rhZ5Yc5LihPMu3x61TT3Pi16EjxSK3MYVuELs
-	 pf8tSbh3zqrwgXfP+QT502buCklQ2E3jNRnL2isg=
-Date: Thu, 11 Sep 2025 14:28:15 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Hsin-Te Yuan <yuanhsinte@chromium.org>, linux-pm@vger.kernel.org,
-	Chen-Yu Tsai <wenst@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] driver core: Export
- device_link_flag_is_sync_state_only()
-Message-ID: <2025091137-breeding-cannon-1384@gregkh>
-References: <20250911112058.3610201-1-treapking@chromium.org>
+	s=arc-20240116; t=1757593757; c=relaxed/simple;
+	bh=UQ5TvznCATcmW7TKNpwWYXlNr4pPB+TVdlMyODvkOAE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eQYfwgPqj2RZ+2EKaaO6Fy7q/qdORMJdlnuUMeBSt7owY1ad2F0UwZVTlz55RhI5N4LRr25qsDYaKaPL5YDKaKNoK/81Md8mlH6cq3I2AZvMgq9SApygpZDm11rK1v5+7jalBM7DC0c06k/UZo69xSyMMLIINeA6wl/H+F5Ff2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z9C0vXjP; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3e2055ce7b3so463479f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 05:29:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757593754; x=1758198554; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M7jUWByvFECPwazBbFEH1CWu4/FyyuDx2jex9LWCqcg=;
+        b=Z9C0vXjPsI/XNh2g0OSS/Jh+HRKlXw2rNt5MwUVtxZ2tKS9Jd96ocO6uit6TD4Tse1
+         mKb+4SDEyl07977AI+ScoD7guX5ZpUfw80UI5OyJIeKi3n3zQqDtZyfJLmLfwlzs4r8B
+         cc6bxblvimENE67zEcBQnLnfFM8pu3D/KTX7stoLylbKS6Y+3Udyy0cApTTavAJYkX2V
+         L2QA/g7DrUN/zAJ2iA/BYL4wxlm6Esrux7BvKu6RB18Fw01vCiEPMSVkkiMVLNDUsahC
+         6sjdhQlSIf9v8EP2k94fdPx6vHhaYzubbjByU0n0WMpzJ0Epqmg1cYPTlEODbWxKxLbS
+         UFUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757593754; x=1758198554;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M7jUWByvFECPwazBbFEH1CWu4/FyyuDx2jex9LWCqcg=;
+        b=LnQWKho9oNUaOr7rOQnvT7fj9hcwwG6XkDReZOozT+2MRmuGiDvl41jj4+An0Mb9pi
+         ZmsoTCzqTIvgG5xDpf9Y+GEwd7hPZ9uFmcuP1dMBKVdqACJVsKYOVPa1DI/m5N0nrCjB
+         lfieFE+G+UV+4gPTnV7g3QqyW9iVrJLrVR+0J017JWxvWVVZdRmMR2tmXzFo32l2EDFI
+         9qiAjAVFSgK/dc4f7bnrig/tqyqIc6MZA9EXKvbnDGEcyNFUDFNHdTU4r5dZY6z+JBto
+         6gnR/bXd0srzaRRVsTtYArgakaJWhz+Sb4lne9qi4vGc+/EWwIvvX7DliWHF4Dh1dkgl
+         B3eA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+QTHXT4D93CTb5fiyxPq3Nog+SaW+jex4Oqsk1mVntb4yRpKnIFmFpm2KRfhzhpMoBa3zFn1Ybavr+yA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhQ8PwK/OuayJDUOL6EgO0E0HHrHgvwNEgH7Jg6ywL3d9kZM2+
+	Uwv3N3ORF0of03DyBBk+iQfhBwoLhm3mqLZjFgXRx4qsZjk3qGVZeYCxpolQHFYbWmc=
+X-Gm-Gg: ASbGncsrhi7ZlZD+6KZ0yquLuxsgZG4dFPoUELBXs6/8so0qGyi086GUUFM6rHXTRLM
+	9mdeJm28SjEzlvnYyY1sGxgscIFuMZ06ujlxvI9pc66P/ZybsXMMf4q+ikNtwFAtmoy9ippONYj
+	t08JfxptyPF6g3DIxUeer4MLslgdAwjs8JIL/TUyCFAWqQJ2AOexgo6ouno5kl4FJ6ysKU9TViw
+	/0Bjusf9anc6A4YdSX9N8/bqpU71tYOcAOxsM3+jn7v8+zrOJlN2TczBYMyHLoW07SOAqwKT0IL
+	etw2/OEVPfrYcZXTclU5LO0UVjzN5KxfwliLbmKa++6VsIKtRSEKzv3mFD6QzSBl+Lpwp0D9jTR
+	G79gRBlO/sJWcvCXBJYyFHQ1EmUqnO/nQFg==
+X-Google-Smtp-Source: AGHT+IFivbwBDhax9/vD1/Z2k59af0UA+udS9AYGBjFC3i8fowSQAZAx/4n6gr0/W/KZf7ttitcR8A==
+X-Received: by 2002:a05:6000:25c5:b0:3e7:5edd:ce07 with SMTP id ffacd0b85a97d-3e75eddd171mr2860539f8f.40.1757593754308;
+        Thu, 11 Sep 2025 05:29:14 -0700 (PDT)
+Received: from hackbox.lan ([86.121.170.194])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd424sm2230444f8f.36.2025.09.11.05.29.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 05:29:13 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH 0/6] drm/msm: Add display support for Glymur platform
+Date: Thu, 11 Sep 2025 15:28:47 +0300
+Message-Id: <20250911-glymur-display-v1-0-d391a343292e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911112058.3610201-1-treapking@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH/AwmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDS0MD3fScytzSIt2UzOKCnMRKXUOjFEOLRKOkFHMTQyWgpoKi1LTMCrC
+ B0bG1tQBqC2ypYAAAAA==
+X-Change-ID: 20250910-glymur-display-12d18a2bd741
+To: Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kuogee Hsieh <quic_khsieh@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1453; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=UQ5TvznCATcmW7TKNpwWYXlNr4pPB+TVdlMyODvkOAE=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBowsCHPeqOhMBzz4He/Z4IkOQmFd0kfNeUmdPAN
+ g5tuRd0NFKJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaMLAhwAKCRAbX0TJAJUV
+ Vgd4EACf0BbVhV+xN5B/TsmSSgYOg73ZeFP+I+GoXeHKWl32iz7eGNPrvOTY1m10FUSnDMVZ/Dg
+ WFyvv9ffTz9Gu1AkOLjT+Hgx1sIgVv0AYil1bwHNNaUbNqEUJOk4vwNUXZAe6g7XCsGLjDlMJ/l
+ derLO34kRwFpSNoucU+yJuQJ32zt5knYJWwQ0Pz+2w6o2odUrf5Fpy80XtjV4YaCOGwhm0Npu/P
+ AaqZluigHo5oCRZitxRBlmtPj/wU9c8i3i89RnCqelO9ir00YEsfItkshbNVMP+7OLlrHSsViwE
+ KmK5mvW1Jxa1hhAifrha7x1oLxHUqlLGE4sA0ONLBvikYvgvQkFVErT/ZotpcpNzmdVo9UwN1CC
+ 1AMMokEvHrzqSbgsg7vhdbgwE2fFil3U9/Y4jtlq+QEkizyvZiI6hpg8gLGwM2Tqm10mtWu4xG6
+ L3++ryTG9eWYrmb9yzgHT9UQnPYazDBH0VDtLXLkuKac2js3Q8Bk/2RFhLyhyuOney8Poqp0Tdp
+ Ea8tCYp6zfKavtlqHnMiBy5RX9zdr0V7dOV8WfyQLfAWRN8hSZd7BHO2fdTQWp7t3BwQEVIuflg
+ RoMBpbfFp6ujyS/Bas5yfEUt1ku6Q71YqR2SejHpCEXqKFIUMyfA1KAf+q1ZzEBOCD4rdAZabd7
+ wZh2R2gzu7SdHOA==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On Thu, Sep 11, 2025 at 07:16:02PM +0800, Pin-yen Lin wrote:
-> Export device_link_flag_is_sync_state_only() for future patches.
+The Glymur MDSS is based on the one found in SM8750, with 2 minor number
+version bump. Differences are mostly in the DPU IP blocks numbers and
+their base offsets.
 
-That says what, but not why.  This feels like an odd thing to export,
-what should care about this type of thing?  What should a driver do
-based on that information?  We need more information here.
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+Abel Vesa (6):
+      dt-bindings: display: msm: Document the Glymur Mobile Display SubSystem
+      dt-bindings: display: msm: Document the Glymur Display Processing Unit
+      dt-bindings: display: msm: Document the Glymur DiplayPort controller
+      drm/msm/mdss: Add Glymur device configuration
+      drm/msm/dpu: Add support for Glymur
+      drm/msm/dp: Add support for Glymur
 
-thanks,
+ .../bindings/display/msm/dp-controller.yaml        |   3 +
+ .../bindings/display/msm/qcom,glymur-mdss.yaml     | 260 ++++++++++
+ .../bindings/display/msm/qcom,sm8650-dpu.yaml      |   1 +
+ .../drm/msm/disp/dpu1/catalog/dpu_12_2_glymur.h    | 541 +++++++++++++++++++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |   1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h        |   6 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
+ drivers/gpu/drm/msm/dp/dp_display.c                |   9 +
+ drivers/gpu/drm/msm/msm_mdss.c                     |   1 +
+ 10 files changed, 824 insertions(+)
+---
+base-commit: 65dd046ef55861190ecde44c6d9fcde54b9fb77d
+change-id: 20250910-glymur-display-12d18a2bd741
 
-greg k-h
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
+
 
