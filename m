@@ -1,187 +1,217 @@
-Return-Path: <linux-kernel+bounces-811608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46807B52B6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:18:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD8C5B52B5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 525681C84676
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:18:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9950E3A976C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176CC2E6CAC;
-	Thu, 11 Sep 2025 08:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB172E1EE1;
+	Thu, 11 Sep 2025 08:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="b7yuYE3K"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KmlIBjGW"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6FE2DF158;
-	Thu, 11 Sep 2025 08:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13A72E2679;
+	Thu, 11 Sep 2025 08:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757578554; cv=none; b=OGmlsXTuexoZONkRVE9C+w4nt87O3LGIYViQ7Fk5fcDcOy2ARWB0Yf0k+0bGgYLOXZMDAkEAOr+sTN23jl3zQrcUBQzOG2PzkTU0tVkskeQIMC4Bt3D/MX6FB6WHl/9xMiCpFC7aTPi5Mzpg5k93DNg24NljttW5lQYiydRuu90=
+	t=1757578526; cv=none; b=oqVNgRPM/RBTZs4wOd+7sEZoewjsch7TywuT6Y7WqOaRvs2uZWERf1+iviiN8zL1PDe1n9MrW8E9232/FRoveQUkBLfL7mXQMPs2CfBpQnHwr9TEBtbf5XK22H9hHXGPb3BzWhTiEpnQRvZDxG+3aiv3BKIVBz5uboZ7JN8oQDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757578554; c=relaxed/simple;
-	bh=59zBBGBXVwiK8KdUtCF+f5sq/Ca4rZOdlUR6YSCmksE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ckvJmBWJEDsRgo20V6nJRa5yh3O9Lbm1cHZzuU5xggkpS17kdohku0KPFiEJgaYZQL/6vBe947EJ4XoyOzbGwKu0gc27pueckpmhAhbvSpkTYCSsD6GOCtSrUxCAQpHdGd5Q+JV5/vxFyVWer/uQmbV602kVilm+LugbCDX7fe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=b7yuYE3K; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c66:c9e9:75f9:f434:33cd:e4fe])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A0FD66F3;
-	Thu, 11 Sep 2025 10:14:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757578477;
-	bh=59zBBGBXVwiK8KdUtCF+f5sq/Ca4rZOdlUR6YSCmksE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=b7yuYE3KdzifpPGrkIN+DmVo9oD2tkHdZdZqHa6ZV2STwkuYNtQTS+XXB73AeZrxe
-	 egZ9sZ0/x2uSXU5fGsTAC8DrkvlR4mIL+Kb08ZNaj6DcsOVifq3Q1Xkfm9VnadfqYA
-	 X+Sv2MMvkyemkaGssP6zTFOWTieZOJ0dLln+F0CE=
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Thu, 11 Sep 2025 13:44:24 +0530
-Subject: [PATCH v2 8/8] media: imx335: Switch to {enable,disable}_streams
+	s=arc-20240116; t=1757578526; c=relaxed/simple;
+	bh=sWbPf7+kNfG1EA2QI6Aw6Y1H/91adzKDkDy0MSMAesY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UqHbeZwQafSROEKM4FgfRVX2YoobGfsziMZuqSbNR41nN8MHtPCDq8gsnju4n0z4dXKSnvZTXC+YOJCNMdNA9GQN3KDBsxElE3GciBiltJLibHMIaKs5xPcH5aBqbS3eoYrzkcIz+xKCzr3qT6od+kZ7ikwRW4lhK0GfXNcWvTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KmlIBjGW; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso2309510a12.0;
+        Thu, 11 Sep 2025 01:15:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757578523; x=1758183323; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EtBJ7XRZRXHnb1oRAlJMLn1CzpEHjZeP/Tjuzyg5UAo=;
+        b=KmlIBjGWh2mgCPlrmpvNV1jH/oewn701CjzGV5lalo0Rj9+7UxeIF7O0Za2jNUFk0h
+         9ltRkEgVQiNuz/UMmw8Yfk00URUUp/DSKedgvXwpTfNOEyg1mTfPaY0uLo9aVZirmi3w
+         x8M/sWbhGOMJi2EhCtrmiH21ilDEXN/MArNxvr1ZJiuAGm7xQqUNG80Fa4npTFn6rQlv
+         1SXErzTV+22aYtmfdYs6IHxcXh1U2Wx+J9usRNZbE31CYj1k8cXMUvtxvK5kKfN0d0Qf
+         RRti4N2tWisDlS46Gia0KKz7SrUNgvqcdEMa1bOfWiAd7YR4UBfyXAC81QGo0Zppz1SX
+         2O0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757578523; x=1758183323;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EtBJ7XRZRXHnb1oRAlJMLn1CzpEHjZeP/Tjuzyg5UAo=;
+        b=oJpmViQuRk1EN0wZo3j3VkR94WtcE4rUbIcTdOh0AzMWoW/yhj/wDCtWfHdW7HjMQZ
+         Wj7b452i6JBN/rA527BpwEqG2fPpbiRafQXUJ7v3gd2Vj01H7Ad4n5gxUqqXkAPtNcNW
+         QyotiPAKBCGH7kXp5T4x6WBHiVtqSF/FFqAqTz2pXqu0VqCXeaFETxKvvRZrHGTIvUo1
+         8blum22yZttoNOLm+Fw1nmPntAQ8DGpWFO92NfqzjZXNbLIzM/1erZtJgKaYoqfLlMIB
+         GE3MyFqP7v7ll6qNKNNQf9zaDVNC6Zls+XcAEe8Dgd+pd0RoNOKlL0ejdZWPgW4ztEyd
+         9atg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUnmPBcj6nQ+7G6xivxEXxYrwchHXS78ug4gJvZyDGq5fCJkKCGIQ7k/UY23lw1AKRpAi6LXYfXlo4TO42@vger.kernel.org, AJvYcCVUSImXpvCFbgfBmurP8e0cXFTVg9pc9j9w7mheYTP5OWkJ5B1GgA3dQjlBHTk4mfD1JN/PmTFupByL@vger.kernel.org, AJvYcCWF0lIxXwtiUOUO9fnJcdwFcpRi/13HVHj/WPferpx6o9sYsD+AHMua+bAKVC8TA8H2kYK38msLnN1Q@vger.kernel.org, AJvYcCWs7r7Pd/ycjtFgLV3OxghZiOhojc5gebPMlRDV8GAZGParh0kWn7ihknH7xF/Z1SCVJb7rg4JtQroIVwWu67lwDE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0+NbYCFtaQiCUIe6mftORHYgxXPr0Vi5vHSW75cRCazc8xbNu
+	j1tkogW8d1Aa6lWypJaUQ41UjcQPK81IGkveoV6/0Bm/6WQDFDptccWe/N0GR99EOLfOjRy+OJy
+	WQEYaW6+qXaAMrSSf4T2oY2qgNNe2Edc=
+X-Gm-Gg: ASbGnctL8awUbzu/Um7k0tI9xMb1Csv4E6dJsbwAA2/69e96vrWAdzjf36M6Z4lrLWT
+	5xlccSZwT55EnEMiauVhrFzei8KLWmPAbVy8C6k14SmPeG4gGkbSN5vxNdFDSNqZTldBLEK7OBt
+	V9nJJTyavqSo/h9iEfwIGY34OV2V1Vu3fKFswNEmQrKg+WqpH5J602yt2tmt3gLVlTzP5cHR3ev
+	mWlQZVIrPsdp3hx+syG5G2qDm9U96sM6E6mzb/EkWhnu7TNDgk=
+X-Google-Smtp-Source: AGHT+IEnp+5Pp/hKtvuNcvkPD7ilbt2E7mIP6OMzOLx6fAXAtKZDlirtxajpgqUgKHbow62KqE/NON7LEPov9/q3UY0=
+X-Received: by 2002:a17:907:2da5:b0:b04:4579:486e with SMTP id
+ a640c23a62f3a-b07a6403229mr286982766b.28.1757578522708; Thu, 11 Sep 2025
+ 01:15:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250911-imx335_binning-v2-8-30a28df74df6@ideasonboard.com>
-References: <20250911-imx335_binning-v2-0-30a28df74df6@ideasonboard.com>
-In-Reply-To: <20250911-imx335_binning-v2-0-30a28df74df6@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tommaso Merciai <tomm.merciai@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3358;
- i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=59zBBGBXVwiK8KdUtCF+f5sq/Ca4rZOdlUR6YSCmksE=;
- b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBowoTzE7ORwzfIdbEPtzwpnhY0b0mfq6Qhx68rM
- uQFquS1nYeJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaMKE8wAKCRBD3pH5JJpx
- RTs6D/sFYv62KI1RA7ppIgWdWrtNcDP0mRUhFtpqd/1kMk9L1UdSOEywu3yNv4yjgl/MrcsT5as
- FilZruRPT7NM0/uoJYs1+bhE0qOFZ3eGHOPOrG2GezJUtqKA0Ypzad1tHyyAr3pM1jFQWI/01Bc
- r/4KFeRGb7jtF+dwF1DOJDwN0xo+cgwstP7sFqNltc0FoHXZ8AGTaVjt+PvbAztbvhNXZI2BSdr
- y8L7eoAhldMup3Y2Kt1uGefL42nhfXo4cwKmse/DudeApgk1kFCt46wXFz4uRMEFgxuWV186vWm
- 7dW3z4P8oOIfHZJQt3V23Fgo7odzRPT+iUgEV8iD1E7J0e3B2r9Uw9SDZPU3UXwXdnjwp/FKxdQ
- nvpbphug5xBjypeaPE2tJbRP1q0ibkqviJsfLI3E7h6sRTwUVKNpzxdFQ+v5z/ko0wM8EO02Gjx
- mvUq/XdQkGHNriufLNhjChw4xFl4PSOmqeT/JX9PCyEv8rtYM4GvYtPbhrSonN29rP8URMdTZ0g
- UKC0lXV+E8jgiqvbfmFSFbuxZWq9ChCxCIbdhVXkAm94U/sksiR7PmiwkEL7KGDhi2mkOrVHYS1
- o+ereArtjcoyIfk2UmSXIHaWLIZVlVuWh2f5kcQHz5nFqglrmXqERNub452/UNkYPxgp1eJ7+hm
- zw8Co9mU1GJ5pvw==
-X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+References: <20250903161718.180488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250903161718.180488-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <db2fc907-218c-4688-aebf-4a929f21b074@ideasonboard.com>
+In-Reply-To: <db2fc907-218c-4688-aebf-4a929f21b074@ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 11 Sep 2025 09:14:56 +0100
+X-Gm-Features: Ac12FXwA2G13xPdRFdy3yeIIErYfrkajYLbpZADAiTZT6Kl8ibBEbrC_wV_N2u8
+Message-ID: <CA+V-a8vghwkHKWoqU8NQ3O9ZdHxB+cEvMv7Z9LQOMsZcx9vjPA@mail.gmail.com>
+Subject: Re: [PATCH v8 2/6] clk: renesas: rzv2h-cpg: Add support for DSI clocks
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Switch from s_stream to enable_streams and disable_streams callbacks.
+Hi Tomi,
 
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
----
- drivers/media/i2c/imx335.c | 53 +++++++++++++++++++++-------------------------
- 1 file changed, 24 insertions(+), 29 deletions(-)
+On Wed, Sep 10, 2025 at 1:30=E2=80=AFPM Tomi Valkeinen
+<tomi.valkeinen+renesas@ideasonboard.com> wrote:
+>
+> Hi,
+>
+> On 03/09/2025 19:17, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add support for PLLDSI and PLLDSI divider clocks.
+> >
+> > Introduce the `renesas-rzv2h-cpg-pll.h` header to centralize and share
+> > PLLDSI related data structures, limits, and algorithms between the
+> > RZ/V2H(P) CPG and DSI drivers.
+> >
+> > The DSI PLL is functionally similar to the CPG's PLLDSI, but has slight=
+ly
+> > different parameter limits and omits the programmable divider present i=
+n
+> > CPG. To ensure precise frequency calculations, especially for milliHz-l=
+evel
+> > accuracy needed by the DSI driver, the shared algorithm allows both dri=
+vers
+> > to compute PLL parameters consistently using the same logic and input
+> > clock.
+>
+> Can you elaborate a bit more why a new clock APIs are needed for the DSI
+> PLL? This is the first time I have heard a DSI TX (well, any IP) require
+> more precision than Hz. Is that really the case? Are there other reasons?
+>
+Im pasting the same reply from Fab
+(https://lore.kernel.org/all/TYCPR01MB12093A7D99392BC3D6B5E5864C2BC2@TYCPR0=
+1MB12093.jpnprd01.prod.outlook.com/#t)
+for the similar concern.
 
-diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
-index c985edab7e2a965ccd9427b013cbb3fa8778de2b..a1af70d050bca79255ac9303e8508de919bc4fdc 100644
---- a/drivers/media/i2c/imx335.c
-+++ b/drivers/media/i2c/imx335.c
-@@ -1019,13 +1019,19 @@ static int imx335_set_framefmt(struct imx335 *imx335)
- }
- 
- /**
-- * imx335_start_streaming() - Start sensor stream
-- * @imx335: pointer to imx335 device
-+ * imx335_enable_streams() - Enable sensor streams
-+ * @sd: V4L2 subdevice
-+ * @state: V4L2 subdevice state
-+ * @pad: The pad to enable
-+ * @streams_mask: Bitmask of streams to enable
-  *
-  * Return: 0 if successful, error code otherwise.
-  */
--static int imx335_start_streaming(struct imx335 *imx335)
-+static int imx335_enable_streams(struct v4l2_subdev *sd,
-+				 struct v4l2_subdev_state *state, u32 pad,
-+				 u64 streams_mask)
- {
-+	struct imx335 *imx335 = to_imx335(sd);
- 	const struct imx335_reg_list *reg_list;
- 	int ret;
- 
-@@ -1099,37 +1105,24 @@ static int imx335_start_streaming(struct imx335 *imx335)
- }
- 
- /**
-- * imx335_stop_streaming() - Stop sensor stream
-- * @imx335: pointer to imx335 device
-- */
--static void imx335_stop_streaming(struct imx335 *imx335)
--{
--	cci_write(imx335->cci, IMX335_REG_MODE_SELECT,
--		  IMX335_MODE_STANDBY, NULL);
--	pm_runtime_put(imx335->dev);
--}
--
--/**
-- * imx335_set_stream() - Enable sensor streaming
-- * @sd: pointer to imx335 subdevice
-- * @enable: set to enable sensor streaming
-+ * imx335_disable_streams() - Disable sensor streams
-+ * @sd: V4L2 subdevice
-+ * @state: V4L2 subdevice state
-+ * @pad: The pad to disable
-+ * @streams_mask: Bitmask of streams to disable
-  *
-  * Return: 0 if successful, error code otherwise.
-  */
--static int imx335_set_stream(struct v4l2_subdev *sd, int enable)
-+static int imx335_disable_streams(struct v4l2_subdev *sd,
-+				   struct v4l2_subdev_state *state, u32 pad,
-+				   u64 streams_mask)
- {
- 	struct imx335 *imx335 = to_imx335(sd);
--	struct v4l2_subdev_state *state;
--	int ret = 0;
--
--	state = v4l2_subdev_lock_and_get_active_state(sd);
--
--	if (enable)
--		ret = imx335_start_streaming(imx335);
--	else
--		imx335_stop_streaming(imx335);
-+	int ret;
- 
--	v4l2_subdev_unlock_state(state);
-+	ret = cci_write(imx335->cci, IMX335_REG_MODE_SELECT,
-+			IMX335_MODE_STANDBY, NULL);
-+	pm_runtime_put(imx335->dev);
- 
- 	return ret;
- }
-@@ -1249,7 +1242,7 @@ static int imx335_parse_hw_config(struct imx335 *imx335)
- 
- /* V4l2 subdevice ops */
- static const struct v4l2_subdev_video_ops imx335_video_ops = {
--	.s_stream = imx335_set_stream,
-+	.s_stream = v4l2_subdev_s_stream_helper,
- };
- 
- static const struct v4l2_subdev_pad_ops imx335_pad_ops = {
-@@ -1259,6 +1252,8 @@ static const struct v4l2_subdev_pad_ops imx335_pad_ops = {
- 	.set_selection = imx335_get_selection,
- 	.get_fmt = v4l2_subdev_get_fmt,
- 	.set_fmt = imx335_set_pad_format,
-+	.enable_streams = imx335_enable_streams,
-+	.disable_streams = imx335_disable_streams,
- };
- 
- static const struct v4l2_subdev_ops imx335_subdev_ops = {
+The PLL found inside the DSI IP is very similar to the PLLDSI found in
+the CPG IP block, although the limits for some of the parameters are
+different. Also, the PLLDSI is followed by a programmable divider,
+whereas there is no such thing in the DSI PLL IP.
 
--- 
-2.51.0
+The limits for the PLL found within the DSI IP are:
+1 <=3D PLL_P <=3D 4
+64 <=3D PLL_M <=3D 1023
+0 <=3D PLL_S <=3D 5
+=E2=88=9232768 <=3D PLL_K <=3D 32767
 
+The limits for PLLDSI (found in CPG) are:
+1 <=3D PLL_P <=3D 4
+64 <=3D PLL_M <=3D 533
+0 <=3D PLL_S <=3D 6
+=E2=88=9232768 <=3D PLL_K <=3D 32767
+The limits for the PLLDSI related divider are:
+CSDIV =3D 1/(2 + 2 * n), with n=3D0,...,15
+
+Header file `renesas-rzv2h-cpg-pll.h` is added so that both the CPG
+and DSI drivers can reuse exactly the same data structures and
+algorithm, although they'll drive  rzv2h_get_pll*pars() with different
+limits.
+
+While the CPG driver only needs visibility of the limits for the
+PLLDSI, the DSI driver is going to need visibility of the limits for
+both PLLDSI and for the PLL inside the DSI IP.
+
+The DSI driver requires a resolution higher than Hz (which is what the
+clock subsystem currently does not support), namely: mHz. This is
+vital to allow the DSI driver to keep the error between the calculated
+value of HSFREQ and the generated value of HSFREQ below a certain
+threshold. The difficulty in achieving a small error is down to the
+accuracy of the VCLK representation.
+Since the clock subsystem only allows for Hz, a 1/2 Hz error on the
+representation of VCLK (down to the selection of frequencies that
+cannot be precisely achieved and related rounding errors) may lead to
+a very big error in the calculation of HSFREQ, which uses the below
+formula:
+HSFREQ =3D (VCLK * bpp) / num_lanes
+In the worst case scenario (1 lane and 24 bpp), a 1/2 Hz error on the
+representation of VCLK will lead to an error of 12Hz(!) on the
+calculation of HSFREQ, leading to a non working video output.
+
+By granting the DSI driver access to the PLL calculations and PLLDSI
+(CPG) limits, the DSI driver can work out the best solution for VCLK
+independently from the CPG driver, and it can set VCLK accordingly
+(knowing that the CPG driver will use exactly the same parameters
+determined by the DSI driver, as it will be using the same input
+frequency and the same algorithm for the calculations).
+
+For convenience, macro RZV2H_CPG_PLL_DSI_LIMITS() is added to avoid
+replicating the declaration of the PLLDSI limits and therefore it can
+be used in both the CPG driver and in the DSI driver.
+
+Make use of the data structures and algorithm defined in header file
+`renesas-rzv2h-cpg-pll.h` to add PLLDSI support, including its
+divider.
+
+Since we need to make sure that the DSI driver knows exactly which
+frequency the PLLDSI + divider combo is going to generate, the CPG
+driver is instructed to calculate the parameters for the PLLDSI +
+divider combo (by calling into rzv2h_get_pll_dtable_pars()) only from
+rzv2h_cpg_plldsi_div_determine_rate(). rzv2h_cpg_plldsi_div_set_rate()
+will simply reuse the pre-calculated parameter values."
+
+
+> If such precision is really needed, does it then indicate that it could
+> be needed on other IPs too? Thus, we need improvements to the common clk
+> API.
+>
+As of now, this requirement is specific to the DSI IP on the RZ/V2H(P)
+SoC. For other IPs we haven=E2=80=99t seen a need yet. Once similar cases
+arise in the future, we can certainly revisit the clock subsystem and
+look into extending the common clk API to support this more generally.
+
+Cheers,
+Prabhakar
 
