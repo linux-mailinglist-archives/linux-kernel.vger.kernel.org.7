@@ -1,175 +1,123 @@
-Return-Path: <linux-kernel+bounces-812838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8421B53D60
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:57:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED942B53D54
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2B971B27F3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:58:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C729488293
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3412D9796;
-	Thu, 11 Sep 2025 20:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071DF2D839F;
+	Thu, 11 Sep 2025 20:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="cSQfZyXH"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h41+vAFc"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993DF27A454;
-	Thu, 11 Sep 2025 20:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A155527A454
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 20:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757624262; cv=none; b=qTC8KQlYOcz/J69+d4CQrRIXvdpZMqqFmTZVFk78xGIlNEvpvUi/c9tNBLG853xy+CO9uND3PcAIMhiDe/ncgFeAL9CXQWqNoj59lQV6E/i8jLS6V8hJmvK5kb8OYswbzaxZM6qjvHYnDsj0LrpmMOwdNs1U4wn2Z4oNefIBesk=
+	t=1757624225; cv=none; b=PXXcsWqlC2y876ZnqIx9XNDcszbDcHua43NAajUbG9otEwVtO03bpKDHVJNY5qGQYnfkExW47LS0+426WP8i5bEDbWTLXNAblAWhqQUO16i2XwfNDeyJ2jR31wS1D0rUK1UYVgeZggPJRzWgnVkp9WsUpJ++9q6j1UmcKcKfJw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757624262; c=relaxed/simple;
-	bh=bSsPa9XEyW8z/su++j6tQWWmZoPbZWL/uldiO/VimDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ld77nKsQP3eIAmXFVSo6G/iAwE7765ERfIFlrABO4kAB/uWn+jV5GMnQhyOse6JFYL8KXl62RSiwheuS35anfJ5yLP0ezlKOsyA1BZndOO+4c01kDgHC3rHCp3a35AIQG66SIvHKLN5fpka0HHFmlVMNVAwN2q7vT/41xen2nd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=cSQfZyXH; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150241.ppops.net [127.0.0.1])
-	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BFINgC007212;
-	Thu, 11 Sep 2025 20:56:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pps0720; bh=J0ID9F64YdLXnEJhVLSOMHkdqi
-	2X6q7O8dZhA/oVjxI=; b=cSQfZyXHw97+qAk5GLrVBgwewFdz885Cteb9qF6kZC
-	cl0B/IlTfIYZlYVAQL80a6ViC3RMb7LwXyVxWpyeUQW2ZjFRH89J7JwZPy7swLK8
-	bfJdi8MluU5znLPe19N6KRAHsTlRVjl9hc2fwjmchGWfXeicxabPj8CO4JJ95aRV
-	D+zFfqrdQw7/J2i1jmRyxhcTzHsKKP8MGvlaz9Bm3J2WYbe576VycumLp3m3y7wL
-	cmgGV0a94bE4YbFXaAsE3e48TESw/6B8qRdJ7MM59bacGyVJ3D/ggJqoVo67Ocpm
-	Hq8fo4AFsLG/i0MW3vGgTuCEWf3aENH+ykwjbcc2Wq1Q==
-Received: from p1lg14879.it.hpe.com ([16.230.97.200])
-	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 493p9xfpef-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 20:56:34 +0000 (GMT)
-Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id 206FD132D3;
-	Thu, 11 Sep 2025 20:56:32 +0000 (UTC)
-Received: from HPE-5CG20646DK.localdomain (unknown [16.231.227.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 708208118D1;
-	Thu, 11 Sep 2025 20:56:28 +0000 (UTC)
-Date: Thu, 11 Sep 2025 15:56:26 -0500
-From: Kyle Meyer <kyle.meyer@hpe.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
-        corbet@lwn.net, linmiaohe@huawei.com, shuah@kernel.org,
-        Liam.Howlett@oracle.com, bp@alien8.de, hannes@cmpxchg.org,
-        jack@suse.cz, jane.chu@oracle.com, jiaqiyan@google.com,
-        joel.granados@kernel.org, laoar.shao@gmail.com,
-        lorenzo.stoakes@oracle.com, mclapinski@google.com, mhocko@suse.com,
-        nao.horiguchi@gmail.com, osalvador@suse.de, rafael.j.wysocki@intel.com,
-        rppt@kernel.org, russ.anderson@hpe.com, shawn.fan@intel.com,
-        surenb@google.com, vbabka@suse.cz, linux-acpi@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] mm/memory-failure: Disable soft offline for HugeTLB
- pages by default
-Message-ID: <aMM3elPmG1MdUNrJ@hpe.com>
-References: <aMGkAI3zKlVsO0S2@hpe.com>
- <749511a8-7c57-4f97-9e49-8ebe8befe9aa@redhat.com>
- <aMMNVA9EXXHYvmKH@agluck-desk3>
+	s=arc-20240116; t=1757624225; c=relaxed/simple;
+	bh=+xC6CDNXn1oK/byMrY52lfJ4BmZyeGSkuVmtXln3irE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=imb4w2YfDeZql7OT5memLDkuYBiVS6ACvqjpkxBi/m7WnG+GojiwJUCef98eE5wmZtMXaLnv6dOBk1/W3gByUDOOwJLGc9jF9WKjXlmauUiraij8qqYAri9CnXYYO2Ng3kgrYon23lV3lJBuQN/tHFvLE2CDwfv3qYrqIFhv09c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h41+vAFc; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-62105d21297so2413403a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:57:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757624222; x=1758229022; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=upBaP5+a1jJVAeaFjcJnnOQrDZsY89ZwYZc9GW+jCr8=;
+        b=h41+vAFcux3r57nvQsg+1UYe2iqHPxUfPxIyBEgrIGSWK/Vcu0Ydyh7ZFFbGqNKLXu
+         iAoLMiE/Uj3WqnxW1Wl14ukC9wlMUTdJn8cohoj3I7vTMyvfZvEs6uEkQfTINFg8Y4sO
+         WoyM1LQpN9Lo3LOpb3Ctfz2zd7ovQMtq+sMAUP20O+KNzOTh6RJCS13HANc3TiQ+yjPk
+         Jz+N4TEZJKtarvJjEf1FkzfIQS8goGoNxrT6AnqBorWh7lBn/nk5er97v21DyPQ0RsGh
+         ISpqap1cEKaTCMuDmD9hJbbcThTzDLwS3lRfYzC86RQPnF7IaeEQ7iNtTvU0gP8Ro1dt
+         9Acg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757624222; x=1758229022;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=upBaP5+a1jJVAeaFjcJnnOQrDZsY89ZwYZc9GW+jCr8=;
+        b=ppCqOPg1OOLjDk5JD6td2l46wdxlUJRCSXxNJS9CF/nVcPBersGRgce4AATjRRm9Jb
+         YkvOz6zKSGzmbsGzz0trCHW26SPll53PkCeeMEeXUQYvs52WgHjxvs4uORxfz2Klm8cb
+         kJyhBt0UTdEJYgR8FIXR02wMhMW1UeTVS2M6kvDtYL7M9y8G/DKlpGwAlqgTwm54qY6p
+         D1ykqJjvzWDg4pqZLHCSHM416ja5f+ZreD3yIOJoG3tJ+I6rgwEDDtgPnmf5lNbIiR+h
+         gpfpQtCoyzx1cQCj7Qns+oCRGD+RGqBJpwUh+yAzRs9nUghXS3vodQbi+Warv0N8G4AZ
+         itUw==
+X-Forwarded-Encrypted: i=1; AJvYcCX33AwHddMm6mtz0olaRLjKEGwzeS2eucnNLdOda3+rK5J0/H8eDEOYEx0Uni6/EE/m2DHhDInNAhN6WHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNBDy2YlJUmFC3crBZtk9UMxu28AG4kneXODgS+tlIjiFwRMKp
+	dZwUsXgtugOq4KUCVYobpZjhKDO5by1PgyC8f2dmmA949qp04Vzq4dq+
+X-Gm-Gg: ASbGncuIlU3zzxYeuFAU3xpAY6/DfFyPusKa303BPCZkiTucuL7w1QHtpV+pnx6QOca
+	+jH1tMx9AFcadX2QqzPmSLfVqwn1FVKjRtvHutldZq329ER19L7j1GyQ5WAzajfEihL3OIshGf2
+	nlaRRSE3puBXjXdH7XnpQmLR/TYAUvtxlr9PNQMgy++V3Rj0IEJ+X18Ku/Bj8cx7PX0WjxbyHcm
+	99YDZU9bPNcigYqu+TKkqRnWXpq68I1pB7hjqPyEJ17uVXkU/y/AY91rJaDUjUBzWhkeklVQ63x
+	VVLUgtVwS42CjhCDT2a+MYGDZMBJounzJgwYF+wO2gftyyZqVxOIb+AHuvKk5C//nb7YNgMqLm7
+	2x6H8j8SXSViSYPcSL1d1
+X-Google-Smtp-Source: AGHT+IF3xSfm287Jw/nknYwrZ2LBDEPdKd8SDnq3Oal/V+V7iI+rqO0Aq2HugZCC3qrU/cmfxHPyWQ==
+X-Received: by 2002:a17:907:da2:b0:b01:af25:ebbe with SMTP id a640c23a62f3a-b07c3a9c8f0mr47113566b.63.1757624221743;
+        Thu, 11 Sep 2025 13:57:01 -0700 (PDT)
+Received: from [127.0.1.1] ([46.53.240.27])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b07c28f190fsm38775366b.39.2025.09.11.13.57.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 13:57:01 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH 0/2] arm64: dts: qcom: sdm845-starqltechn: add support for
+ slpi
+Date: Thu, 11 Sep 2025 23:56:55 +0300
+Message-Id: <20250911-starqltechn_slpi-v1-0-93ebf951a932@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMMNVA9EXXHYvmKH@agluck-desk3>
-X-Proofpoint-ORIG-GUID: Ethw6hHnLfczx3VAEZBXc-08gscPDyGN
-X-Proofpoint-GUID: Ethw6hHnLfczx3VAEZBXc-08gscPDyGN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTExMDAyNiBTYWx0ZWRfXyI2+SdrKv+fr
- J09MeyCR3Ioip+tv+DaUAAlfVfIk22LrAWmlkzH/QV5q4UAWPgfHNFOl4+ub//1Adee37pHPb4b
- 764zMHo5pXXt1CcHaobNJvfMfwFmUUV/nH/D82/1aTPO6jutWA9MvX8an2UNfGrfTzL9DSk8XRW
- WdZT5V1erw/xxDMTunGIMHe9T2MS+FKEBZCOwsxI4yn8gC3OcGhueHg0cu+lqePY9/N+YX888Hk
- 3sUbWytd+nDRfz/JfHwjdEa8Usy/cqfyazlCUsltcgMUe3O7HboftW1ebSfQdBIJZ49UPQ+CDK2
- gt4/eks53CHvrIBOELJSndItTN1QUeIx7bgqpZ1GHhLx5QsJwOy/K+Q1x9blJwm1hm8x2x3EJNQ
- nmqPYiXa
-X-Authority-Analysis: v=2.4 cv=Ke/SsRYD c=1 sm=1 tr=0 ts=68c33782 cx=c_pps
- a=5jkVtQsCUlC8zk5UhkBgHg==:117 a=5jkVtQsCUlC8zk5UhkBgHg==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=e0XSXhz86abGffj2R7MA:9
- a=CjuIK1q_8ugA:10
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-11_03,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 malwarescore=0 adultscore=0 clxscore=1015
- phishscore=0 bulkscore=0 impostorscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509110026
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJc3w2gC/x3MSwqAMAwA0atI1hbS4v8qIiKaakBqbYoI4t0tL
+ t9i5gGhwCTQZQ8Eulj4cAk6z2DeJreS4iUZDJoSW62VxCmce6R5c6PsnlVV14iNLQgrCynzgSz
+ f/7If3vcD/X6FZGIAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757624220; l=617;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=+xC6CDNXn1oK/byMrY52lfJ4BmZyeGSkuVmtXln3irE=;
+ b=2/vi7Z8dTokGlwGsIgeDjhYuEzLxyig6OuVJ0HniY7V+mJts8FqQUd7yjQcPlpKAzjy5sjbdb
+ ICnFgcgBDd2DQFdhC9uThYrRqj65QOvZR6cuVXwJEPu6ptEAUEwblCs
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-On Thu, Sep 11, 2025 at 10:56:36AM -0700, Luck, Tony wrote:
-> On Thu, Sep 11, 2025 at 10:46:10AM +0200, David Hildenbrand wrote:
-> > On 10.09.25 18:15, Kyle Meyer wrote:
-> > > Soft offlining a HugeTLB page reduces the available HugeTLB page pool.
-> > > Since HugeTLB pages are preallocated, reducing the available HugeTLB
-> > > page pool can cause allocation failures.
-> > > 
-> > > /proc/sys/vm/enable_soft_offline provides a sysctl interface to
-> > > disable/enable soft offline:
-> > > 
-> > > 0 - Soft offline is disabled.
-> > > 1 - Soft offline is enabled.
-> > > 
-> > > The current sysctl interface does not distinguish between HugeTLB pages
-> > > and other page types.
-> > > 
-> > > Disable soft offline for HugeTLB pages by default (1) and extend the
-> > > sysctl interface to preserve existing behavior (2):
-> > > 
-> > > 0 - Soft offline is disabled.
-> > > 1 - Soft offline is enabled (excluding HugeTLB pages).
-> > > 2 - Soft offline is enabled (including HugeTLB pages).
-> > > 
-> > > Update documentation for the sysctl interface, reference the sysctl
-> > > interface in the sysfs ABI documentation, and update HugeTLB soft
-> > > offline selftests.
-> > 
-> > I'm sure you spotted that the documentation for
-> > "/sys/devices/system/memory/soft_offline_pag" resides under "testing".
-> 
-> But that is only one of several places in the kernel that
-> feed into the page offline code.
-> 
-> This patch was motivated by the GHES path where BIOS indicates
-> a corrected error threshold was exceeded. There's also the
-> drivers/ras/cec.c path where Linux does it's own threshold
-> counting.
-> > 
-> > If your read about MADV_SOFT_OFFLINE in the man page it clearly says:
-> > 
-> > "This feature is intended for testing of memory error-handling code; it is
-> > available  only if the kernel was configured with CONFIG_MEMORY_FAILURE."
-> 
-> Agreed that this all depends on CONFIG_MEMORY_FAILURE ... so if any
-> part of the flow is compiled in when that is "=n" then some
-> changes are needed to fix that.
-> 
-> > 
-> > So I'm sorry to say: I miss why we should add all this complexity to make a
-> > feature used for testing soft-offlining work differently for hugetlb folios
-> > -- with a testing interface.
+This series add support for Qualcomm sensor low power island for Galaxy
+S9 (starqltechn).
 
-I would also like to note that the current sysctl interface already affects
-testing interfaces. Please see the following commit:
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Dzmitry Sankouski (2):
+      arm64: dts: qcom: sdm845-starqltechn: fix slpi reserved mem
+      arm64: dts: qcom: sdm845-starqltechn: add slpi support
 
-56374430c5dfc ("mm/memory-failure: userspace controls soft-offlining pages")
+ .../boot/dts/qcom/sdm845-samsung-starqltechn.dts   | 26 +++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
+---
+base-commit: be5d4872e528796df9d7425f2bd9b3893eb3a42c
+change-id: 20250911-starqltechn_slpi-677008f4e06f
 
-The sysctl interface should probably be mentioned in
-sysfs-memory-page-offline with or without this patch.
+Best regards,
+-- 
+Dzmitry Sankouski <dsankouski@gmail.com>
 
-Thanks,
-Kyle Meyer
 
