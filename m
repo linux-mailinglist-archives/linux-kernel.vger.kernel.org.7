@@ -1,118 +1,340 @@
-Return-Path: <linux-kernel+bounces-812065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658AFB53274
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:38:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9AA9B5328F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A8323A70B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:38:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6068E3A8FB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CABD322549;
-	Thu, 11 Sep 2025 12:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D65431D362;
+	Thu, 11 Sep 2025 12:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="InVXk5tU"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CcVTjDgd"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BEB31D362;
-	Thu, 11 Sep 2025 12:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8035630BF7B;
+	Thu, 11 Sep 2025 12:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757594323; cv=none; b=tP+8iu9aO+qJC250SJHFWMXaWH+ItI7VOpqiPMAIwaf7+Yb3CTecr47ZtxeHYzkaHiBts4J1ZZ6OLuqKRALS2p3GB8vQzakPOjVznh2n5PnU5rms32m18D7g84kD76FnQrZSJuLAsacCp0S95UqTIgosw7M8MUhzdANuuVcaDQ8=
+	t=1757594384; cv=none; b=Ui29i2ncmUvkh1JWKa7VN6gnE67YiQbVfu07ghipH7KlWpv20WnRZyikAFM0diyg2KGqMYLFpt0b37SagDc9j33wVf6Oqmzi51seDZgCJIZ/ng94KAtdNH3hR/roQhfvEkPtV/OhDkIb3+gdJyH/0MIRktMnYWUxFY2m/7KMp/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757594323; c=relaxed/simple;
-	bh=3hbK9wf2+mxCowDDtmc5Ops79VGnUo1EqG4EIVO6VFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jbcXh1506DpziVPa54VCbv54juFZNeX32myGSh2//UTNuwwoRs7d7Ms+UWU+GgSfgCKGoDigqeYsuY3C4IVqAwPhUYtY1pgafCzRk8rwop0HaDEbOtXbtf5FcryvnmVbbiEqwa5p4R5BhUfRofnCFcWaewuKz3lr5iIQnJARFUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=InVXk5tU; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Uez8W5u/gbkeD8LK5BeMMMrUWwpOmn67Ekut9N1X2AY=; b=InVXk5tUMol00XxMVVnl/6yzM+
-	h+7kLVi6/C8v+326tvaYONoPE86kKtqpzbQvFncjVfuBY4j6VD83r53GV/3uejNBCAn6738Vmh0Mn
-	FigGoq77bYScFtze/coslyp3C1pBjMLDBqRKszZ+tfthYJtzP3FRmYsPKSvI1MvoIEA0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uwgZL-0084p5-TM; Thu, 11 Sep 2025 14:38:31 +0200
-Date: Thu, 11 Sep 2025 14:38:31 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jonas Rebmann <jre@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] net: phy: micrel: Update Kconfig help text
-Message-ID: <74a34c78-fed8-4438-9a9e-027d4a4762a7@lunn.ch>
-References: <20250911-micrel-kconfig-v2-1-e8f295059050@pengutronix.de>
+	s=arc-20240116; t=1757594384; c=relaxed/simple;
+	bh=ZrctxyvnXYiaVMve4hAPpN6QSvgdEACuwuibUshXyiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=idvmUC1vlQc1xvq+LylTeZMSZq45b0csIwj5M0KUfgdAa5xTQtwTFWwo599KA1qOxMGQFdsIZYyFHZFPIuuMgkdVP0xjsVabUKIuPbQ/92eRRsB8lbCzsdAsYqlyPV6eS9bWzKWkTrjQm7RTTVQfTUzLJzBS6rZg2WDR6YOdRsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CcVTjDgd; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757594380;
+	bh=ZrctxyvnXYiaVMve4hAPpN6QSvgdEACuwuibUshXyiA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CcVTjDgd7nSS/oGyWsgxJK83BFtTlasQwcZApdQeFH2mGZs391b8U2AlFRMaiMaiy
+	 vFOHi+un9GqUUbaz4dDIMibse/dvZSdmaZ5ElWWpYpPZED9O3d17FIauz9nxs/6aah
+	 fQKqZDnLOJsJeZsgqzgqUGVVAPYrlfL/ucV80uhC60HO/dcemTSUnU7sQaVm9W+8ts
+	 5wXdnZhEM1SI8HYjT4GsQpoU4GchMQdZFAPN/TdQUb9lcWj8UMRrp82BOd1VKymDbk
+	 pwbKRS+TMIhFJSiiyetX84gU/exC7KL7SDKE2ghmwNqhxsysDQ9HMiJEitU0DMYsgL
+	 j+1lUJJzZgT+A==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3B10117E00FC;
+	Thu, 11 Sep 2025 14:39:40 +0200 (CEST)
+Date: Thu, 11 Sep 2025 14:38:50 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Brost
+ <matthew.brost@intel.com>, "Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?="
+ <thomas.hellstrom@linux.intel.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Steven Price <steven.price@arm.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>, Liviu Dudau
+ <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] panthor: use drm_gpuva_unlink_defer()
+Message-ID: <20250911143850.5d79c3a3@fedora>
+In-Reply-To: <20250909-vmbo-defer-v2-2-9835d7349089@google.com>
+References: <20250909-vmbo-defer-v2-0-9835d7349089@google.com>
+	<20250909-vmbo-defer-v2-2-9835d7349089@google.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911-micrel-kconfig-v2-1-e8f295059050@pengutronix.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 11, 2025 at 10:29:03AM +0200, Jonas Rebmann wrote:
-> This driver by now supports 17 different Microchip (formerly known as
-> Micrel) chips: KSZ9021, KSZ9031, KSZ9131, KSZ8001, KS8737, KSZ8021,
-> KSZ8031, KSZ8041, KSZ8051, KSZ8061, KSZ8081, KSZ8873MLL, KSZ886X,
-> KSZ9477, LAN8814, LAN8804 and LAN8841.
+On Tue, 09 Sep 2025 13:36:23 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
+
+> Instead of manually deferring cleanup of vm_bos, use the new GPUVM
+> infrastructure for doing so.
 > 
-> Support for the VSC8201 was removed in commit 51f932c4870f ("micrel phy
-> driver - updated(1)")
+> To avoid manual management of vm_bo refcounts, the panthor_vma_link()
+> and panthor_vma_unlink() methods are changed to get and put a vm_bo
+> refcount on the vm_bo. This simplifies the code a lot. I preserved the
+> behavior where panthor_gpuva_sm_step_map() drops the refcount right away
+> rather than letting panthor_vm_cleanup_op_ctx() do it later.
 > 
-> Update the help text to reflect that, list families instead of models to
-> ease future maintenance.
-> 
-> Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
-> Changes in v2:
-> - Don't capitalize "micrel" in commit message (Thanks, Jakub)
-> - Name chip families with the common xxx-placeholders (Thanks, Jakub)
-> - Be a bit more specific as to which families
-> - Link to v1: https://lore.kernel.org/r/20250909-micrel-kconfig-v1-1-22d04bb90052@pengutronix.de
-> ---
->  drivers/net/phy/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 113 ++++++----------------------------
+>  1 file changed, 19 insertions(+), 94 deletions(-)
 > 
-> diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-> index a7fb1d7cae94..e543eef36d98 100644
-> --- a/drivers/net/phy/Kconfig
-> +++ b/drivers/net/phy/Kconfig
-> @@ -298,7 +298,7 @@ config MICREL_PHY
->  	depends on PTP_1588_CLOCK_OPTIONAL
->  	select PHY_PACKAGE
->  	help
-> -	  Supports the KSZ9021, VSC8201, KS8001 PHYs.
-> +	  Supports the KSZ8xxx, KSZ9xxx, and LAN88xx families of Micrel/Microchip PHYs.
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index 6dec4354e3789d17c5a87fc8de3bc86764b804bc..fd9ed88a4259e5fb88e5acffcf6d8a658cc7115d 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -181,20 +181,6 @@ struct panthor_vm_op_ctx {
+>  		u64 range;
+>  	} va;
+>  
+> -	/**
+> -	 * @returned_vmas: List of panthor_vma objects returned after a VM operation.
+> -	 *
+> -	 * For unmap operations, this will contain all VMAs that were covered by the
+> -	 * specified VA range.
+> -	 *
+> -	 * For map operations, this will contain all VMAs that previously mapped to
+> -	 * the specified VA range.
+> -	 *
+> -	 * Those VMAs, and the resources they point to will be released as part of
+> -	 * the op_ctx cleanup operation.
+> -	 */
+> -	struct list_head returned_vmas;
+> -
+>  	/** @map: Fields specific to a map operation. */
+>  	struct {
+>  		/** @map.vm_bo: Buffer object to map. */
+> @@ -1081,47 +1067,18 @@ void panthor_vm_free_va(struct panthor_vm *vm, struct drm_mm_node *va_node)
+>  	mutex_unlock(&vm->mm_lock);
+>  }
+>  
+> -static void panthor_vm_bo_put(struct drm_gpuvm_bo *vm_bo)
+> +static void panthor_vm_bo_free(struct drm_gpuvm_bo *vm_bo)
+>  {
+>  	struct panthor_gem_object *bo = to_panthor_bo(vm_bo->obj);
+> -	struct drm_gpuvm *vm = vm_bo->vm;
+> -	bool unpin;
+> -
+> -	/* We must retain the GEM before calling drm_gpuvm_bo_put(),
+> -	 * otherwise the mutex might be destroyed while we hold it.
+> -	 * Same goes for the VM, since we take the VM resv lock.
+> -	 */
+> -	drm_gem_object_get(&bo->base.base);
+> -	drm_gpuvm_get(vm);
+> -
+> -	/* We take the resv lock to protect against concurrent accesses to the
+> -	 * gpuvm evicted/extobj lists that are modified in
+> -	 * drm_gpuvm_bo_destroy(), which is called if drm_gpuvm_bo_put()
+> -	 * releases sthe last vm_bo reference.
+> -	 * We take the BO GPUVA list lock to protect the vm_bo removal from the
+> -	 * GEM vm_bo list.
+> -	 */
+> -	dma_resv_lock(drm_gpuvm_resv(vm), NULL);
+> -	mutex_lock(&bo->base.base.gpuva.lock);
+> -	unpin = drm_gpuvm_bo_put(vm_bo);
+> -	mutex_unlock(&bo->base.base.gpuva.lock);
+> -	dma_resv_unlock(drm_gpuvm_resv(vm));
+>  
+> -	/* If the vm_bo object was destroyed, release the pin reference that
+> -	 * was hold by this object.
+> -	 */
+> -	if (unpin && !drm_gem_is_imported(&bo->base.base))
+> +	if (!drm_gem_is_imported(&bo->base.base))
+>  		drm_gem_shmem_unpin(&bo->base);
+> -
+> -	drm_gpuvm_put(vm);
+> -	drm_gem_object_put(&bo->base.base);
+> +	kfree(vm_bo);
+>  }
+>  
+>  static void panthor_vm_cleanup_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+>  				      struct panthor_vm *vm)
+>  {
+> -	struct panthor_vma *vma, *tmp_vma;
+> -
+>  	u32 remaining_pt_count = op_ctx->rsvd_page_tables.count -
+>  				 op_ctx->rsvd_page_tables.ptr;
+>  
+> @@ -1134,16 +1091,12 @@ static void panthor_vm_cleanup_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+>  	kfree(op_ctx->rsvd_page_tables.pages);
+>  
+>  	if (op_ctx->map.vm_bo)
+> -		panthor_vm_bo_put(op_ctx->map.vm_bo);
+> +		drm_gpuvm_bo_put_deferred(op_ctx->map.vm_bo);
+>  
+>  	for (u32 i = 0; i < ARRAY_SIZE(op_ctx->preallocated_vmas); i++)
+>  		kfree(op_ctx->preallocated_vmas[i]);
+>  
+> -	list_for_each_entry_safe(vma, tmp_vma, &op_ctx->returned_vmas, node) {
+> -		list_del(&vma->node);
+> -		panthor_vm_bo_put(vma->base.vm_bo);
+> -		kfree(vma);
+> -	}
+> +	drm_gpuvm_bo_deferred_cleanup(&vm->base);
+>  }
+>  
+>  static struct panthor_vma *
+> @@ -1232,7 +1185,6 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+>  		return -EINVAL;
+>  
+>  	memset(op_ctx, 0, sizeof(*op_ctx));
+> -	INIT_LIST_HEAD(&op_ctx->returned_vmas);
+>  	op_ctx->flags = flags;
+>  	op_ctx->va.range = size;
+>  	op_ctx->va.addr = va;
+> @@ -1243,7 +1195,9 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+>  
+>  	if (!drm_gem_is_imported(&bo->base.base)) {
+>  		/* Pre-reserve the BO pages, so the map operation doesn't have to
+> -		 * allocate.
+> +		 * allocate. This pin is dropped in panthor_vm_bo_free(), so
+> +		 * once we call drm_gpuvm_bo_create(), GPUVM will take care of
+> +		 * dropping the pin for us.
+>  		 */
+>  		ret = drm_gem_shmem_pin(&bo->base);
+>  		if (ret)
+> @@ -1263,9 +1217,6 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+>  
+>  	preallocated_vm_bo = drm_gpuvm_bo_create(&vm->base, &bo->base.base);
+>  	if (!preallocated_vm_bo) {
+> -		if (!drm_gem_is_imported(&bo->base.base))
+> -			drm_gem_shmem_unpin(&bo->base);
 
-Much better, thanks.
+Aren't we leaking a pin ref here? If drm_gpuvm_bo_create() returns
+NULL, ::vm_bo_free() won't be called, meaning we never return the pin
+ref we acquired earlier in this function.
 
-> Best regards,
-> --  
-> Jonas Rebmann <jre@pengutronix.de>
-
-It is a bit unusual to see a signature, git send-email, or b4 send
-would not do that. But patch(1) should be able to figure this out.
-
-For future reference, the Subject line should have the tree inside the
-[].
-
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
-
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+> -
+>  		ret = -ENOMEM;
+>  		goto err_cleanup;
+>  	}
+> @@ -1282,16 +1233,6 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+>  	mutex_unlock(&bo->base.base.gpuva.lock);
+>  	dma_resv_unlock(panthor_vm_resv(vm));
+>  
+> -	/* If the a vm_bo for this <VM,BO> combination exists, it already
+> -	 * retains a pin ref, and we can release the one we took earlier.
+> -	 *
+> -	 * If our pre-allocated vm_bo is picked, it now retains the pin ref,
+> -	 * which will be released in panthor_vm_bo_put().
+> -	 */
+> -	if (preallocated_vm_bo != op_ctx->map.vm_bo &&
+> -	    !drm_gem_is_imported(&bo->base.base))
+> -		drm_gem_shmem_unpin(&bo->base);
+> -
+>  	op_ctx->map.bo_offset = offset;
+>  
+>  	/* L1, L2 and L3 page tables.
+> @@ -1339,7 +1280,6 @@ static int panthor_vm_prepare_unmap_op_ctx(struct panthor_vm_op_ctx *op_ctx,
+>  	int ret;
+>  
+>  	memset(op_ctx, 0, sizeof(*op_ctx));
+> -	INIT_LIST_HEAD(&op_ctx->returned_vmas);
+>  	op_ctx->va.range = size;
+>  	op_ctx->va.addr = va;
+>  	op_ctx->flags = DRM_PANTHOR_VM_BIND_OP_TYPE_UNMAP;
+> @@ -1387,7 +1327,6 @@ static void panthor_vm_prepare_sync_only_op_ctx(struct panthor_vm_op_ctx *op_ctx
+>  						struct panthor_vm *vm)
+>  {
+>  	memset(op_ctx, 0, sizeof(*op_ctx));
+> -	INIT_LIST_HEAD(&op_ctx->returned_vmas);
+>  	op_ctx->flags = DRM_PANTHOR_VM_BIND_OP_TYPE_SYNC_ONLY;
+>  }
+>  
+> @@ -2033,26 +1972,13 @@ static void panthor_vma_link(struct panthor_vm *vm,
+>  
+>  	mutex_lock(&bo->base.base.gpuva.lock);
+>  	drm_gpuva_link(&vma->base, vm_bo);
+> -	drm_WARN_ON(&vm->ptdev->base, drm_gpuvm_bo_put(vm_bo));
+>  	mutex_unlock(&bo->base.base.gpuva.lock);
+>  }
+>  
+> -static void panthor_vma_unlink(struct panthor_vm *vm,
+> -			       struct panthor_vma *vma)
+> +static void panthor_vma_unlink(struct panthor_vma *vma)
+>  {
+> -	struct panthor_gem_object *bo = to_panthor_bo(vma->base.gem.obj);
+> -	struct drm_gpuvm_bo *vm_bo = drm_gpuvm_bo_get(vma->base.vm_bo);
+> -
+> -	mutex_lock(&bo->base.base.gpuva.lock);
+> -	drm_gpuva_unlink(&vma->base);
+> -	mutex_unlock(&bo->base.base.gpuva.lock);
+> -
+> -	/* drm_gpuva_unlink() release the vm_bo, but we manually retained it
+> -	 * when entering this function, so we can implement deferred VMA
+> -	 * destruction. Re-assign it here.
+> -	 */
+> -	vma->base.vm_bo = vm_bo;
+> -	list_add_tail(&vma->node, &vm->op_ctx->returned_vmas);
+> +	drm_gpuva_unlink_defer(&vma->base);
+> +	kfree(vma);
+>  }
+>  
+>  static void panthor_vma_init(struct panthor_vma *vma, u32 flags)
+> @@ -2084,12 +2010,12 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
+>  	if (ret)
+>  		return ret;
+>  
+> -	/* Ref owned by the mapping now, clear the obj field so we don't release the
+> -	 * pinning/obj ref behind GPUVA's back.
+> -	 */
+>  	drm_gpuva_map(&vm->base, &vma->base, &op->map);
+>  	panthor_vma_link(vm, vma, op_ctx->map.vm_bo);
+> +
+> +	drm_gpuvm_bo_put_deferred(op_ctx->map.vm_bo);
+>  	op_ctx->map.vm_bo = NULL;
+> +
+>  	return 0;
+>  }
+>  
+> @@ -2128,16 +2054,14 @@ static int panthor_gpuva_sm_step_remap(struct drm_gpuva_op *op,
+>  		 * owned by the old mapping which will be released when this
+>  		 * mapping is destroyed, we need to grab a ref here.
+>  		 */
+> -		panthor_vma_link(vm, prev_vma,
+> -				 drm_gpuvm_bo_get(op->remap.unmap->va->vm_bo));
+> +		panthor_vma_link(vm, prev_vma, op->remap.unmap->va->vm_bo);
+>  	}
+>  
+>  	if (next_vma) {
+> -		panthor_vma_link(vm, next_vma,
+> -				 drm_gpuvm_bo_get(op->remap.unmap->va->vm_bo));
+> +		panthor_vma_link(vm, next_vma, op->remap.unmap->va->vm_bo);
+>  	}
+>  
+> -	panthor_vma_unlink(vm, unmap_vma);
+> +	panthor_vma_unlink(unmap_vma);
+>  	return 0;
+>  }
+>  
+> @@ -2154,12 +2078,13 @@ static int panthor_gpuva_sm_step_unmap(struct drm_gpuva_op *op,
+>  		return ret;
+>  
+>  	drm_gpuva_unmap(&op->unmap);
+> -	panthor_vma_unlink(vm, unmap_vma);
+> +	panthor_vma_unlink(unmap_vma);
+>  	return 0;
+>  }
+>  
+>  static const struct drm_gpuvm_ops panthor_gpuvm_ops = {
+>  	.vm_free = panthor_vm_free,
+> +	.vm_bo_free = panthor_vm_bo_free,
+>  	.sm_step_map = panthor_gpuva_sm_step_map,
+>  	.sm_step_remap = panthor_gpuva_sm_step_remap,
+>  	.sm_step_unmap = panthor_gpuva_sm_step_unmap,
+> 
 
 
