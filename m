@@ -1,88 +1,127 @@
-Return-Path: <linux-kernel+bounces-812942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2743B53E91
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:13:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46456B53E92
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB6F47BD675
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:11:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A182D7BDA7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF81A34DCEB;
-	Thu, 11 Sep 2025 22:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F97B34DCE4;
+	Thu, 11 Sep 2025 22:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RUSWSziV"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="F/cUGYZS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ded1Os2X"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF38C342C9D;
-	Thu, 11 Sep 2025 22:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD1F1957FC
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 22:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757628781; cv=none; b=qb2qWdlQowmpcjMyJdTcokX/Btns8lE09ZII2e3J82NRW4OxwCI65qPu0mdLOl+1WfKIC+2sJrLryCCt6bK9KAjCYZTP8uhuI3fMIm2+g0rWUQvbSoNHOVpH1dMr1PVdCTuAV3RfkGPwXd3IImN/SC7choRQIMgtwI1Nqwg7o4s=
+	t=1757628801; cv=none; b=j8G1zeEQP3VxYXkZemRv6s9nxHj1TEKMwf8hLNd77CeccUbj7nLvib1iso8L5SGv3gxG3cuuCg2GY89N1UAHdEF+Gebvppjay0AuvFlqRJbtx1iwb2RS12lN2z5X65uRDZ3SNPGIzpgzM1ZqDAe5Gvy92kUwMNgmbTCtVt2cos4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757628781; c=relaxed/simple;
-	bh=8qAW7k+pdxj330R+9BUzLfefS6+eHgrjIwHtht4fASY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUMK5KIthjZ5Mm/e4CxunImaOagY2Jj3hkHd9d8z96n3/CW271fBpw0qE9arUY6cyezgLP5ErE+kYY4H/PKL4MG/+SMnZ9X387o7Der8B462LskygHtZ4e6ZYCcy0c/Rkv2dLj+TCy2jxek0tiWoYuOAdQmtwLxFwl2e0Dyldzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RUSWSziV; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=k38r4YA5840dqQerOX6ASJvj7ltULIdsb+/xx7kZDp4=; b=RUSWSziVQseGJ3SzEMC5DuSIof
-	xSJSdXq3E10/hf6iFm61jJPQi3jJswsp5oxz3zVxrfjSr1J+Fj4l0qv7VTcMtkWc3f4O/Crfd6iS1
-	Hf7hA9A83Kwc+SfQwLkSz19rrepirv6/5Kt8JLN/PLhz6IcJge/qJUMMLi3dNf6wkFxc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uwpX6-0088t2-RU; Fri, 12 Sep 2025 00:12:48 +0200
-Date: Fri, 12 Sep 2025 00:12:48 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Josua Mayer <josua@solid-run.com>
-Cc: Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] arm64: dts: marvell: cn9132-clearfog: fix
- multi-lane pci x2 and x4 ports
-Message-ID: <9272b233-b710-4e57-b3ff-735f45c03c74@lunn.ch>
-References: <20250911-cn913x-sr-fix-sata-v2-0-0d79319105f8@solid-run.com>
- <20250911-cn913x-sr-fix-sata-v2-3-0d79319105f8@solid-run.com>
+	s=arc-20240116; t=1757628801; c=relaxed/simple;
+	bh=zaPKl5bPhpHDaK/jvMkwCqifAdyixpMVgWw/aRgZ2VY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tdOS3OH+oWej+0fb/ZbGc3n7Dje5ajXGz83WfuRZLPomd0W3bSF6vswcNTg6SE37tIVYo1za2FB3XX74+yYuNaM6uFvMWPyjTM2Qy6fEF355y/tZiOnFkXKsKfLN7byHs9JhRRJK7zl3F3JB3OhRkY5N7IZ5zBJwhg3y5EMKkTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=F/cUGYZS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ded1Os2X; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id CD7931400371;
+	Thu, 11 Sep 2025 18:13:17 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Thu, 11 Sep 2025 18:13:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1757628797; x=1757715197; bh=eNjR1LB7bR
+	YZ3xIvKQ3Zc+CVsQG5+qT7pKALYdttNsw=; b=F/cUGYZSSUsWUHuxttfCnJ4+3O
+	EUfyc295V5nKxoYdvcv9b6ZnSA0HgdCheAiAOHFeGWS3jo1LQx6GSIbD+eIG6Qk7
+	KTHbVIGsu1V+z4iy0D8DmpNyrMK029dJFI00QwcX+Y6P6p8JTKnMlfiz4e3Fv1Jq
+	tO8jk6/Q3ovBBm0i7RGgxcq2cOsHL6lHHpE2tWPnVZQL/QFA2jbxpLzHs8SD3RmW
+	efAg4H6I9ItOaDs/I4SqkLvA1v2rC0R0+wFm4M20k/Miybp9uBeop308pQTpnHC1
+	tTp3ljQdE/G965Y3ftGYto2BnU1CfqtOBOMYx3acuJQPPuVrgV6QStgO8/4Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1757628797; x=1757715197; bh=eNjR1LB7bRYZ3xIvKQ3Zc+CVsQG5+qT7pKA
+	LYdttNsw=; b=ded1Os2XBRMvNCnHPrzMzU3znZG6Po4P69FYCXPUiXq4zKTG+8p
+	xyuY67q49aprKj/SpYQSavcS+Hv7K0RNLjy22dRn4BTPriV0oipKWCz18bl+VxVe
+	LKqUgfIHf8sf5BusYAtfnnfjqdCVlODiJbfzWprjTTIFHTI8GVleqvAvka9ByMQQ
+	Vxaj74I72kh7rynJUyAZYmmQyqg1mw6uVvaIb8kU22yNRbvYqzY+wnnv/9zKPPDj
+	3EwnWGymiK2fklRVBzqVMOhudFNVLSWkhJIAX397S6yj3BVVUwA1QJlN3bN88cpw
+	tJ4FtrgDkD9lcMkdYEuyEHJDhjk9YKOuR3g==
+X-ME-Sender: <xms:fUnDaHw8WFC8wfc-V3Fm_YSQQHzzUdv-SxZqYZx1T8RMWpbwLt1CVg>
+    <xme:fUnDaIOm_69CYmfCvK1ymsnaezp4briY8Py_6Dow3tslKZfGbOuN_8J4qbSSM2ITW
+    QdtgB6Ws8zQ-hNY7N4>
+X-ME-Received: <xmr:fUnDaDSDz1eDSudcN74rjGPfaeCprvKRoE72DpJaqcEPZPFJZi_ubC_950Ok4GAdLgncIiodNae8FM8JLwoskuyp4uBduAotfUJUmeEaVTRE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvjeefgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
+    enucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihes
+    shgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepffdvueelffevkeduhf
+    etjeduffeghfettdfguedtgfdvgfeufeduheevheevkeeknecuvehluhhsthgvrhfuihii
+    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmh
+    hotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhr
+    tghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtggvfh
+    horhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:fUnDaOZHwLpYWSoPEx3Xsa_gur9S2XGQG9txYMKKjbruLKfMcpYh2A>
+    <xmx:fUnDaI04UbJ00cqhca8WllCTRfUjb93H-62qjuTa-mxdxRTWZJkRnA>
+    <xmx:fUnDaGXK3YF2EMpaFteXGYDvr0XLPXWm6UJVIBBwMK5iutcn_wYEqQ>
+    <xmx:fUnDaKVuLKMjomb15CJYQHxKImfUoGeNIw6lZhbQmN81_GkBfrmAAA>
+    <xmx:fUnDaI1YmrULcjLP6oyfKCQ6aKt13AbETAGm1oVvat5WtDPnhvfyvcds>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 11 Sep 2025 18:13:16 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] firewire: core: remove useless lockdep_assert_held()
+Date: Fri, 12 Sep 2025 07:13:11 +0900
+Message-ID: <20250911221312.678076-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911-cn913x-sr-fix-sata-v2-3-0d79319105f8@solid-run.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 11, 2025 at 08:28:06PM +0200, Josua Mayer wrote:
-> The mvebu-comphy driver does not currently know how to pass correct
-> lane-count to ATF while configuring the serdes lanes.
-> 
-> This causes the system to hard reset during reconfiguration, if a pci
-> card is present and has established a link during bootloader.
-> 
-> Remove the comphy handles from the respective pci nodes to avoid runtime
-> reconfiguration, relying solely on bootloader configuration - while
-> avoiding the hard reset.
-> 
-> When bootloader has configured the lanes correctly, the pci ports are
-> functional under Linux.
+The bm_work work item should be scheduled after holding fw_card reference
+counting. At a commit 25feb1a96e21 ("firewire: core: use cleanup function
+in bm_work"), I misinterpreted it as fw_card spinlock and inserted
+lockdep_assert_hold() wrongly.
 
-Does this require a specific bootloader? Can i use mainline grub or
-bareboot?
+This commit removes the useless line.
 
-	Andrew
+Fixes: 25feb1a96e21 ("firewire: core: use cleanup function in bm_work")
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/core-card.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/firewire/core-card.c b/drivers/firewire/core-card.c
+index 474d8066e090..32cf6b3344cd 100644
+--- a/drivers/firewire/core-card.c
++++ b/drivers/firewire/core-card.c
+@@ -294,8 +294,6 @@ static void bm_work(struct work_struct *work)
+ 	int expected_gap_count, generation, grace;
+ 	bool do_reset = false;
+ 
+-	lockdep_assert_held(&card->lock);
+-
+ 	spin_lock_irq(&card->lock);
+ 
+ 	if (card->local_node == NULL) {
+-- 
+2.48.1
+
 
