@@ -1,183 +1,414 @@
-Return-Path: <linux-kernel+bounces-811391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20670B5287F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:08:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B789CB52880
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D799AA049EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:08:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9CE56837F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D62225487B;
-	Thu, 11 Sep 2025 06:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D1E25487B;
+	Thu, 11 Sep 2025 06:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="iE1JY8se"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010039.outbound.protection.outlook.com [52.101.229.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9fI4+Oy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C2F178372;
-	Thu, 11 Sep 2025 06:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757570930; cv=fail; b=vCKDP3C78a6qTVbL1DR8vS4ppxBtwwExKA35YRkUfVxuzCHtJHkbhB/1z4SVMi3Ch3dkb0fHt5sXzw6nlduQilCOrVLITy/CAX4A0GDw/AyNxj4A++KYNGTq4YRaXNbMfc5/yYdMBWYZJ8vmh2+LcfoI/mbgz3D5a8HmiFaXMRM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757570930; c=relaxed/simple;
-	bh=bVuW2j0rBPoXx7lgPR4hsb1g1iGmrGLDJe7divqA+JQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=KkPRp20An+GdTQ+ZVH1A+uCETyw29jbAkB2BplAoOu0wZajXVu782HsdTaSTwPviemL6+gzqjafSPLc/dQFLIO0m5n7d3hHxdKo6C/nmjOAmUMAIeRmCcRd5+wHYJu3t2dYmZvzY8XCwvI80hv9SVRrmbhvazrDjdqa1tlxConI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=iE1JY8se; arc=fail smtp.client-ip=52.101.229.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BJd0+oPyaAWHFmCzXQbPPFpRDAmS8H/zpK3ircjCpNJwalsiOOML4pB04/mRYPW9Uu2fWL7lsANGKaRuu83VXFub3SUQak5PCw9cSfDNXKxtHkePn2+DFjlkQvWkzakzGBENkpKgOzF+aSRhJTATSqhO/F0vCdMVrICIqoaTPkaW9gC8x2MuFkxuiahwNaJ97xgeeH/z+w/gdCTYsXf+BgrIj6iLB5jX0dRF1mO6latlf06xIYI4felKw/m5e6ZLdXbDy1pzl5hnm0Km3YNq2bYM/7DzbDvFFHd6OQ2qkkI3PC0Qfpf82GArBkdYtoIj4ep2QgveIZPoA3q21iFX+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bVuW2j0rBPoXx7lgPR4hsb1g1iGmrGLDJe7divqA+JQ=;
- b=e3qgRyxufuNdkDUOpNqCcHcx4NJuRvvGjZJrQLKex+oDbQhBPUq3UzfR7IJxvADYi4AKJ5ry+1cgQeYs7Exf8cbyjqMwpf1BcPCwkY/f0rhibRbfjV7TAGrq+bGgrHXhhKQJIyni0d4zhdbiZYVMn2Qt9Ammx3bLvbuxezBW89Vk59g2X6CCdGbOn1tivlMTDVNWqSe9dRq57kNGvZ2shCZzkRPFgB9kLyye1giCpj/as5470m00uwpJpfQrcFwawXtumx+dx59q9cSyDRav2QBchQgm8EFcTJUk4/36Z8Czv2Hyfg0VdOmb3WXtrdR9GzKreo4jtnyQYhsXpJfluw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bVuW2j0rBPoXx7lgPR4hsb1g1iGmrGLDJe7divqA+JQ=;
- b=iE1JY8sedF4NbgO7g114RN12s0FO26zKcGp8GRuK+eP5Re5gX5g+pY7bgIq81wtvkrm0CiaE0ZP45weMOHer45Rtn2wm8M8GV3ebEJyLmW4B8S25GOQlzrVw7sm1fR1oIx3eVKB8lVtfuEnOwdmh0/ALb0/1TAHQl/dxHlx92AQ=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TY3PR01MB11553.jpnprd01.prod.outlook.com (2603:1096:400:40b::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 06:08:39 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 06:08:39 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-CC: Lee Jones <lee@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Cosmin-Gabriel Tanislav
-	<cosmin-gabriel.tanislav.xa@renesas.com>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: RE: [PATCH] mfd: rz-mtu3: fix MTU5 NFCR register offset
-Thread-Topic: [PATCH] mfd: rz-mtu3: fix MTU5 NFCR register offset
-Thread-Index: AQHcInyxKhDbPc9T6U++vqTR8C25sbSNf9CA
-Date: Thu, 11 Sep 2025 06:08:39 +0000
-Message-ID:
- <TY3PR01MB1134611D6044793CD6D5AFB0A8609A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250910175914.12956-1-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20250910175914.12956-1-cosmin-gabriel.tanislav.xa@renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY3PR01MB11553:EE_
-x-ms-office365-filtering-correlation-id: fc5b9800-5d32-4f98-a244-08ddf0f9a6ba
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?zq1Rt6prUDkaYelF2k9RhxFgsoxHv8NkoxC0BPEFaus0faMIqIkX7n6ZS+M8?=
- =?us-ascii?Q?rT34LF/wdl+S0+NiOgV2vIkxPhxlz6Bp1nrv9BsKPfBUNRZCgJ13Gmh5YtU0?=
- =?us-ascii?Q?s3UvRM8QM5jSt+QcKt6xnleuutJP/JcXPGnL/RwksBYl/ysOd4tiT9zZtDmF?=
- =?us-ascii?Q?J87aVmRlqvhGvs64anSztGt5zrzbyxB2APZAR/E9IFx1o0I2jZhQbatSjXol?=
- =?us-ascii?Q?t7+AfnmCAi4wCwJnGTLfrY3EmNDRDeZ7VeFbyRdz1czILJncm0OwgaqOWloF?=
- =?us-ascii?Q?aev9Q8j6XgFMrLZ0QqSIV0ZKFDHAmgvMVdh7fBLQvXhcke+MPTRqEaLUETC7?=
- =?us-ascii?Q?yGJ54Blyuud+FThYRxfZyj37iKLy0w7BPFDP/rKmhppE++c8W8VgGDGPJnV7?=
- =?us-ascii?Q?QYXXoO7PaXwfkfK0E3uxBWut9SkKRnnE98xU+FlhfnGsipRnI24CUf3PaZoB?=
- =?us-ascii?Q?fsxpeIePXIpx6gygsDY+hfK2thz7R2dOymRaxuN1NxR9QmdTLrb5pUw4b8TE?=
- =?us-ascii?Q?M7s/nlet+Tyqwup8PByPAv1qLN/MPKuUJ4Gl2FFb+6IKp5kHOOw6bP18wE3A?=
- =?us-ascii?Q?MrDyZJL5EZBC0weFnHed4cMHutu1H8r2p6aPdu3jKsFYD3ILMOzTkm3DVKXg?=
- =?us-ascii?Q?7XzAET4/lptyisruoepItX763r2KdHSOWzKpa6OB5hsiTw17Mb9MaCtGoGvm?=
- =?us-ascii?Q?D0skZ5Uha3Mg+14rMjX0ASFFq8Mfp35nCi0x9dBp45yxZ9hBvOLq0QUb3cD9?=
- =?us-ascii?Q?wYM7MBJA9dE0vyTNCsXIGCxtAK8BtNypZgrMxbLG8eTfS1Z8geOvYhJ1zqpS?=
- =?us-ascii?Q?LMKFvH6n86tUBlRq8HDYqO9lWTOJQ3FUOuGilGZ+u1HvKoFEU1mZ0YKT4vGp?=
- =?us-ascii?Q?Z91P8i1kW8/fT51xKZp1J9DrHxU2yFRnPTfG9RtgKOg+2aCHQh+iYlL9tWb3?=
- =?us-ascii?Q?k7uwgNEy4afyyLO+CiIohJ40pjADwU7qX2ljRgnZlHcf/n9saV8cuS/UQPow?=
- =?us-ascii?Q?002DpJc8m/A35mnArUhvzEKAbtWvmfaUCWE+J0Yez1TinMsfT8hN7fUCcmE1?=
- =?us-ascii?Q?BwMY9czjw+FQmk9OSJnde6FgLTnaE1XaBEe9nlY7aWLqjfIwosRbFx6Gngji?=
- =?us-ascii?Q?r+wbjy7h7tAdxGWfQEPUZ4YG3GlppNWHRhEOfYRH96zR0uhg+7y09Bq3vkfF?=
- =?us-ascii?Q?D2r31uyIVe4QYXsbvybXr/WyiVhpX0C20OXZV5Iyyp71rsvaImq80l5i9SvI?=
- =?us-ascii?Q?nvJRqiiqhIy+38UTVaZg7jb4Y2dT8djHPwn3X1GYVUlYNvj8Kle2MgFFGi3e?=
- =?us-ascii?Q?5hl4QibCY3g6isQn/bfMW478iylK9ZoUqKsnblb3qz5U+PFINSPa4PJAUSyL?=
- =?us-ascii?Q?0x1AVX76aclnx1GIp6cmm39KytkCl7zunrIdWEJLkww904EBJQGvPpZDxM45?=
- =?us-ascii?Q?kQfEseCFqwEFvlQOw1c99ht07am8OMjqgad8+82lRkmAsM2OEFLjSQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?YQwl4XZXY7IuG0s+YcSRTfoGGjMM65ma/Lmeo++caEB9NclFpToAAT+1mzql?=
- =?us-ascii?Q?ZEhbapEokuj9r8J4sRNY9A8TSeBC6aQFIPeS/KwnRZyd1MrmDODCgmRZhv4P?=
- =?us-ascii?Q?MhIvyqz3HtkJh64yJbc2s5uT4fVRvaio4aLTRsDqa8/RVKbNVHUc03cPQr/I?=
- =?us-ascii?Q?qEKgrEudMjnv/juqwgJ2vLxFSycMkmosoZhlp/gzC1YGXSihxYLo7h+N9YH0?=
- =?us-ascii?Q?saIUGeuRY/sHvGBlMXfxDWZLQmc8/Pb1t3YjrFI/SalxdCIEV3iTDkz//2gT?=
- =?us-ascii?Q?CtyZdvz7cTjrmBxK2Vd4HrIzYC4CNjBI5xQXaaZ0pPClaGCOhVPOXbZLtrvG?=
- =?us-ascii?Q?ID5zbII1xDRosRIsFIzygc7pdOqHViaqb8+f0CXgQ9TB3nvALAcBPtm2Dz2S?=
- =?us-ascii?Q?bINYI4S3lbyLoXI2sdh2k+9v0fcrMpvE/KlmhpYXIW9EsyO+jE2nUX4erdkC?=
- =?us-ascii?Q?Fg0SswISE+JFQAkCaE+erTiykxT0XiXHY2JVgHyUFlMPsRvL8xpXpkAPuph5?=
- =?us-ascii?Q?PXqTeevz5fMkmgjuqHb58dHymQq2xS+/cL57/9P0ZGWWSG7TPFgY8nBk/kAF?=
- =?us-ascii?Q?Mtpln85C5xs66tzUzvQIhDX9jgoTmXA2m4erY64U6c6+nhJv6awhATLNB4dD?=
- =?us-ascii?Q?pQHkQVQhMXjW0oTDqIoNhnYi44u6IOtzL4xMY8EQ+i63I3T7GItjbemdH7JW?=
- =?us-ascii?Q?+lM1zRsde2kh1tTL0pXlnKadF+g1bvPahu5ru+KNivYm2vNcKNAOcBIh50OB?=
- =?us-ascii?Q?Y7+fXPyTHtRNa9j0qZCvVM6phBWasqFJ35qpnzTamnWDCr250dXjVO/7T+/Q?=
- =?us-ascii?Q?1k/Qejy40DvZvRD92Rh+YEalCizkgJuy7r69nFxB3TjKCq8IwgZ6KBUVR9wj?=
- =?us-ascii?Q?FcfLczK78DR3zae7k3cRneoIFc7lBuKLbCVFXEmcKYtNZGZnuMGL78tZRZvi?=
- =?us-ascii?Q?KaT8QEEK3ovR2hWXqRoYe1ra5AEwy5vYz9Ht7P5SOQPE0altertZ9Y+4943K?=
- =?us-ascii?Q?uOL39P0hdHAE8ZFjv1sw42xeY6IDfyTCGL8uAK5yeL8N0lcjr7yff93dDVUY?=
- =?us-ascii?Q?mJ6s+MMY9m0hmnwwJ0r1gtPsIUIEO3dxyFF+OKZS1HWjzQQp7Aq1nrvAUWD8?=
- =?us-ascii?Q?9FYvwrUfjmK/EZyOWmmxMPyMLRVK6YHiVXqeBvqKptCW4qh1awYbLM24+N+d?=
- =?us-ascii?Q?LZ7B3KBGxhEczsCKzp1lZYXS8F9x4NeAJj9dCQ4L+YwEEsXi2SV8VwXpSUII?=
- =?us-ascii?Q?IfjsytXIqLb7JGoNjXFicchMp1+RUIQ23GUJW2OJPQy+EszfwHCdRY7LEnqv?=
- =?us-ascii?Q?rFtF88fjTT49z0ISxRM+9NEN4ZjhWkn23+g/9nB8e7DBN7IdUQQa14rGVBe+?=
- =?us-ascii?Q?J4ma2QaHCpLJhC2FFm3ZwfgNMR5FLYJ9Mq1gyqZlEAN70z12SyDjXZf6l6z8?=
- =?us-ascii?Q?uWA8QqepEYMhnh9Di+d7x+HuRz9UurX1KTp6e20rTRetkHWItDtqEVCmZEnG?=
- =?us-ascii?Q?QtJe7m7zSFLYaPg1yuILeVMeCez0mXmcOXNQLcyj7GgpH66vk15s5rz5G8B2?=
- =?us-ascii?Q?Vmzljrol4+4KCjRVFX1C3DxdbfzR16lw6Y8024CFjbVY1DelsiJVX86Iv7RW?=
- =?us-ascii?Q?Ug=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E29247280
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757570946; cv=none; b=Quo5ot7KRbWHDcro0LidC4TEB07XoOSnv4r7eYxVrEeMBqfSr6vfSjz5nK0+gvJCmaWSGOT+mVPFTjgRzHI3tNtjjNJqCrSSxfFv/MpKWNmWvmhBwCRW7FgoR+E6EPAWDt3D+1N//NI15SfHk+NiliyuzL2QYfjTQjBSREYGoKM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757570946; c=relaxed/simple;
+	bh=4l/sgeuvL16E6QGwkt7DH8G9HIgPj/gFpODwQHwsK6g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kkOI7sS4umsVP5L/mgLYwjknEA2hRTbi5fyhww9yIFsGq4HV4KX1AxDE/KJOCGul1DyqwXA/nESuQ+5C6uAm/uxMHRDM01HO4KizODUmF8HSiz82CpUJimvXgfdCCYaBa6Wg87TkUm6WTxLJ/1+JNUvCBLjG6hW5saxX15q4yeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9fI4+Oy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32DCFC4CEF7
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:09:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757570946;
+	bh=4l/sgeuvL16E6QGwkt7DH8G9HIgPj/gFpODwQHwsK6g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=f9fI4+OysVwMD1AENPdmiefqzG9xXe2bb8ARx81JA/Q2xlbZkraX/LEMn7luvAazu
+	 WE2AXeX45AiZDFn5NkrqDbofvxjmkNecWA9OcGy7QWVxdETVIRT7JDq2kNUQrdjq0X
+	 CCcApAhkb0Tb0pnwTSOZVU+SqMT3r1U2VVFCsYXvK5H0LF9S6y/6+WpuxshEK3Gk7y
+	 0rrlhunTlbHQB2l3fSyieArzqbWhMs8eqrIdcueE9LINW+7oVNeHmfYevLi5kpQyCr
+	 YKiX85Ey3cIoOmQDOJ3+27F3gRI2F9rYJNQVquNZ1UA6CyOjTHIfzsvKOT0LWxOCgE
+	 DeS1NPlxDXfGg==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5608b619cd8so345491e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:09:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWc/yW46qTnUgzhWlBd7nzdKqM6UxzTR7kBBGqXT8R0bY8r8QXz9ehpErxfkgPV8O/Kid4QSEMJGy78XWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVKIhOJ50yjo2wbjkBLekzk22MvcuKADFnzaVBUqEXPWLHqXMj
+	OUQ6A5RLJ2i3FufzkNDizJt8Fih6O6E2IB2beBiSOQ/BjMmE1lyEubAeY0RzSsas5+gMCiysDoS
+	cqqF029MrVbsMdHzLk3KJ426q3J8YDgE=
+X-Google-Smtp-Source: AGHT+IGY3WOjekJ6qJ43Jy5UpK9jc6qB/kaPrzvJn81RTPFSgaRCfsVXO4s4jdV6GhcnmLfJGQc0Rz9bHvxlBhkUN5A=
+X-Received: by 2002:a05:6512:613:10b0:564:8df6:f0ca with SMTP id
+ 2adb3069b0e04-5648e063869mr5087250e87.51.1757570944528; Wed, 10 Sep 2025
+ 23:09:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc5b9800-5d32-4f98-a244-08ddf0f9a6ba
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2025 06:08:39.0841
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oSwioiEqqu5bLiXwYuXA8jlRBo+StLMkqN/RiwmSqgUcXBzMmt9JPRI9hoCAl86FA2+L8CTiuwDAntqaiRj2IsgNy7ZYPKRXbpXCCmsEZA0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11553
+References: <20250910104454.317067-1-kevin.brodsky@arm.com> <41f3227e-b945-4303-90b7-732affb0a101@arm.com>
+In-Reply-To: <41f3227e-b945-4303-90b7-732affb0a101@arm.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 11 Sep 2025 08:08:53 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEmfCHpssFjn_+4ZjKCUaWPeiVwznCpGumTfz33k-rfkg@mail.gmail.com>
+X-Gm-Features: Ac12FXxGPiAiUgpISOErtzNQVo4vC18qMAWqqG4GDTeh8bKldkAYztNZVWFIs-I
+Message-ID: <CAMj1kXEmfCHpssFjn_+4ZjKCUaWPeiVwznCpGumTfz33k-rfkg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: mm: Move KPTI helpers to mmu.c
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
+	Kees Cook <kees@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Cosmin,
+On Thu, 11 Sept 2025 at 07:13, Anshuman Khandual
+<anshuman.khandual@arm.com> wrote:
+>
+>
+>
+> On 10/09/25 4:14 PM, Kevin Brodsky wrote:
+> > create_kpti_ng_temp_pgd() is currently defined (as an alias) in
+> > mmu.c without matching declaration in a header; instead cpufeature.c
+> > makes its own declaration. This is clearly not pretty, and as commit
+> > ceca927c86e6 ("arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc
+> > function signature") showed, it also makes it very easy for the
+> > prototypes to go out of sync.
+> >
+> > All this would be much simpler if kpti_install_ng_mappings() and
+> > associated functions lived in mmu.c, where they logically belong.
+> > This is what this patch does:
+> > - Move kpti_install_ng_mappings() and associated functions from
+> >   cpufeature.c to mmu.c, add a declaration to <asm/mmu.h>
+> > - Make create_kpti_ng_temp_pgd() a static function that simply calls
+> >   __create_pgd_mapping_locked() instead of aliasing it
+> > - Mark all these functions __init
+> > - Move __initdata after kpti_ng_temp_alloc (as suggested by
+> >   checkpatch)
+> >
+> > Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> > ---
+> > Note: as things stand, create_kpti_ng_temp_pgd() could be removed,
+> > but a separate patch [1] will make use of it to add an
+> > assertion.
+> >
+> > [1] https://lore.kernel.org/all/20250813145607.1612234-3-chaitanyas.prakash@arm.com/
+> > ---
+> > Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+> > Cc: Ard Biesheuvel <ardb@kernel.org>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Kees Cook <kees@kernel.org>,
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Ryan Roberts <ryan.roberts@arm.com>
+> > Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: Yeoreum Yun <yeoreum.yun@arm.com>
+> > ---
+> >  arch/arm64/include/asm/mmu.h   |   6 ++
+> >  arch/arm64/kernel/cpufeature.c |  97 ------------------------------
+> >  arch/arm64/mm/mmu.c            | 106 ++++++++++++++++++++++++++++++---
+> >  3 files changed, 103 insertions(+), 106 deletions(-)
+> >
+> > diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+> > index 49f1a810df16..624edd6c4964 100644
+> > --- a/arch/arm64/include/asm/mmu.h
+> > +++ b/arch/arm64/include/asm/mmu.h
+> > @@ -104,5 +104,11 @@ static inline bool kaslr_requires_kpti(void)
+> >       return true;
+> >  }
+> >
+> > +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+> > +void kpti_install_ng_mappings(void);
+>
+> Could the declarations be moved here instead ?
 
-Thanks for the patch.
+Why?
 
-> -----Original Message-----
-> From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-> Sent: 10 September 2025 18:59
-> Subject: [PATCH] mfd: rz-mtu3: fix MTU5 NFCR register offset
->=20
-> The NFCR register for MTU5 is at 0x1a95 offset according to Datasheet Pag=
-e 725, Table 16.4. The address
-> of all registers is offset by 0x1200, making the proper address of MTU5 N=
-FCR register be 0x895.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 654c293e1687 ("mfd: Add Renesas RZ/G2L MTU3a core driver")
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Cheers,
-Biju
+> Otherwise LGTM.
+>
+> diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+> index 624edd6c4964..062465939192 100644
+> --- a/arch/arm64/include/asm/mmu.h
+> +++ b/arch/arm64/include/asm/mmu.h
+> @@ -106,6 +106,8 @@ static inline bool kaslr_requires_kpti(void)
+>
+>  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  void kpti_install_ng_mappings(void);
+> +typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
+> +kpti_remap_fn idmap_kpti_install_ng_mappings;
+>  #else
+>  static inline void kpti_install_ng_mappings(void) {}
+>  #endif
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index eff3295393ee..1b5c3c590e95 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -750,8 +750,6 @@ static void __init create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys,
+>
+>  static int __init __kpti_install_ng_mappings(void *__unused)
+>  {
+> -       typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
+> -       extern kpti_remap_fn idmap_kpti_install_ng_mappings;
+>         kpti_remap_fn *remap_fn;
+>
+>         int cpu = smp_processor_id();
+>
+> > +#else
+> > +static inline void kpti_install_ng_mappings(void) {}
+> > +#endif
+> > +
+> >  #endif       /* !__ASSEMBLY__ */
+> >  #endif
+> > diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> > index ef269a5a37e1..b99eaad48c14 100644
+> > --- a/arch/arm64/kernel/cpufeature.c
+> > +++ b/arch/arm64/kernel/cpufeature.c
+> > @@ -1940,103 +1940,6 @@ static bool has_pmuv3(const struct arm64_cpu_capabilities *entry, int scope)
+> >  }
+> >  #endif
+> >
+> > -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+> > -#define KPTI_NG_TEMP_VA              (-(1UL << PMD_SHIFT))
+> > -
+> > -extern
+> > -void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
+> > -                          phys_addr_t size, pgprot_t prot,
+> > -                          phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags);
+> > -
+> > -static phys_addr_t __initdata kpti_ng_temp_alloc;
+> > -
+> > -static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
+> > -{
+> > -     kpti_ng_temp_alloc -= PAGE_SIZE;
+> > -     return kpti_ng_temp_alloc;
+> > -}
+> > -
+> > -static int __init __kpti_install_ng_mappings(void *__unused)
+> > -{
+> > -     typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
+> > -     extern kpti_remap_fn idmap_kpti_install_ng_mappings;
+> > -     kpti_remap_fn *remap_fn;
+> > -
+> > -     int cpu = smp_processor_id();
+> > -     int levels = CONFIG_PGTABLE_LEVELS;
+> > -     int order = order_base_2(levels);
+> > -     u64 kpti_ng_temp_pgd_pa = 0;
+> > -     pgd_t *kpti_ng_temp_pgd;
+> > -     u64 alloc = 0;
+> > -
+> > -     if (levels == 5 && !pgtable_l5_enabled())
+> > -             levels = 4;
+> > -     else if (levels == 4 && !pgtable_l4_enabled())
+> > -             levels = 3;
+> > -
+> > -     remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
+> > -
+> > -     if (!cpu) {
+> > -             alloc = __get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
+> > -             kpti_ng_temp_pgd = (pgd_t *)(alloc + (levels - 1) * PAGE_SIZE);
+> > -             kpti_ng_temp_alloc = kpti_ng_temp_pgd_pa = __pa(kpti_ng_temp_pgd);
+> > -
+> > -             //
+> > -             // Create a minimal page table hierarchy that permits us to map
+> > -             // the swapper page tables temporarily as we traverse them.
+> > -             //
+> > -             // The physical pages are laid out as follows:
+> > -             //
+> > -             // +--------+-/-------+-/------ +-/------ +-\\\--------+
+> > -             // :  PTE[] : | PMD[] : | PUD[] : | P4D[] : ||| PGD[]  :
+> > -             // +--------+-\-------+-\------ +-\------ +-///--------+
+> > -             //      ^
+> > -             // The first page is mapped into this hierarchy at a PMD_SHIFT
+> > -             // aligned virtual address, so that we can manipulate the PTE
+> > -             // level entries while the mapping is active. The first entry
+> > -             // covers the PTE[] page itself, the remaining entries are free
+> > -             // to be used as a ad-hoc fixmap.
+> > -             //
+> > -             create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc),
+> > -                                     KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
+> > -                                     kpti_ng_pgd_alloc, 0);
+> > -     }
+> > -
+> > -     cpu_install_idmap();
+> > -     remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
+> > -     cpu_uninstall_idmap();
+> > -
+> > -     if (!cpu) {
+> > -             free_pages(alloc, order);
+> > -             arm64_use_ng_mappings = true;
+> > -     }
+> > -
+> > -     return 0;
+> > -}
+> > -
+> > -static void __init kpti_install_ng_mappings(void)
+> > -{
+> > -     /* Check whether KPTI is going to be used */
+> > -     if (!arm64_kernel_unmapped_at_el0())
+> > -             return;
+> > -
+> > -     /*
+> > -      * We don't need to rewrite the page-tables if either we've done
+> > -      * it already or we have KASLR enabled and therefore have not
+> > -      * created any global mappings at all.
+> > -      */
+> > -     if (arm64_use_ng_mappings)
+> > -             return;
+> > -
+> > -     stop_machine(__kpti_install_ng_mappings, NULL, cpu_online_mask);
+> > -}
+> > -
+> > -#else
+> > -static inline void kpti_install_ng_mappings(void)
+> > -{
+> > -}
+> > -#endif       /* CONFIG_UNMAP_KERNEL_AT_EL0 */
+> > -
+> >  static void cpu_enable_kpti(struct arm64_cpu_capabilities const *cap)
+> >  {
+> >       if (__this_cpu_read(this_cpu_vector) == vectors) {
+> > diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> > index 183801520740..eff3295393ee 100644
+> > --- a/arch/arm64/mm/mmu.c
+> > +++ b/arch/arm64/mm/mmu.c
+> > @@ -27,6 +27,7 @@
+> >  #include <linux/kfence.h>
+> >  #include <linux/pkeys.h>
+> >  #include <linux/mm_inline.h>
+> > +#include <linux/stop_machine.h>
+> >
+> >  #include <asm/barrier.h>
+> >  #include <asm/cputype.h>
+> > @@ -466,14 +467,6 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+> >       mutex_unlock(&fixmap_lock);
+> >  }
+> >
+> > -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+> > -extern __alias(__create_pgd_mapping_locked)
+> > -void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
+> > -                          phys_addr_t size, pgprot_t prot,
+> > -                          phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> > -                          int flags);
+> > -#endif
+> > -
+> >  static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm,
+> >                                      enum pgtable_type pgtable_type)
+> >  {
+> > @@ -735,7 +728,102 @@ static void __init declare_vma(struct vm_struct *vma,
+> >  }
+> >
+> >  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+> > -static pgprot_t kernel_exec_prot(void)
+> > +#define KPTI_NG_TEMP_VA              (-(1UL << PMD_SHIFT))
+> > +
+> > +static phys_addr_t kpti_ng_temp_alloc __initdata;
+> > +
+> > +static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
+> > +{
+> > +     kpti_ng_temp_alloc -= PAGE_SIZE;
+> > +     return kpti_ng_temp_alloc;
+> > +}
+> > +
+> > +static void __init create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys,
+> > +                                        unsigned long virt, phys_addr_t size,
+> > +                                        pgprot_t prot,
+> > +                                        phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> > +                                        int flags)
+> > +{
+> > +     __create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
+> > +                                 pgtable_alloc, flags);
+> > +}
+> > +
+> > +static int __init __kpti_install_ng_mappings(void *__unused)
+> > +{
+> > +     typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
+> > +     extern kpti_remap_fn idmap_kpti_install_ng_mappings;
+> > +     kpti_remap_fn *remap_fn;
+> > +
+> > +     int cpu = smp_processor_id();
+> > +     int levels = CONFIG_PGTABLE_LEVELS;
+> > +     int order = order_base_2(levels);
+> > +     u64 kpti_ng_temp_pgd_pa = 0;
+> > +     pgd_t *kpti_ng_temp_pgd;
+> > +     u64 alloc = 0;
+> > +
+> > +     if (levels == 5 && !pgtable_l5_enabled())
+> > +             levels = 4;
+> > +     else if (levels == 4 && !pgtable_l4_enabled())
+> > +             levels = 3;
+> > +
+> > +     remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
+> > +
+> > +     if (!cpu) {
+> > +             alloc = __get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
+> > +             kpti_ng_temp_pgd = (pgd_t *)(alloc + (levels - 1) * PAGE_SIZE);
+> > +             kpti_ng_temp_alloc = kpti_ng_temp_pgd_pa = __pa(kpti_ng_temp_pgd);
+> > +
+> > +             //
+> > +             // Create a minimal page table hierarchy that permits us to map
+> > +             // the swapper page tables temporarily as we traverse them.
+> > +             //
+> > +             // The physical pages are laid out as follows:
+> > +             //
+> > +             // +--------+-/-------+-/------ +-/------ +-\\\--------+
+> > +             // :  PTE[] : | PMD[] : | PUD[] : | P4D[] : ||| PGD[]  :
+> > +             // +--------+-\-------+-\------ +-\------ +-///--------+
+> > +             //      ^
+> > +             // The first page is mapped into this hierarchy at a PMD_SHIFT
+> > +             // aligned virtual address, so that we can manipulate the PTE
+> > +             // level entries while the mapping is active. The first entry
+> > +             // covers the PTE[] page itself, the remaining entries are free
+> > +             // to be used as a ad-hoc fixmap.
+> > +             //
+> > +             create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc),
+> > +                                     KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
+> > +                                     kpti_ng_pgd_alloc, 0);
+> > +     }
+> > +
+> > +     cpu_install_idmap();
+> > +     remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
+> > +     cpu_uninstall_idmap();
+> > +
+> > +     if (!cpu) {
+> > +             free_pages(alloc, order);
+> > +             arm64_use_ng_mappings = true;
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +void __init kpti_install_ng_mappings(void)
+> > +{
+> > +     /* Check whether KPTI is going to be used */
+> > +     if (!arm64_kernel_unmapped_at_el0())
+> > +             return;
+> > +
+> > +     /*
+> > +      * We don't need to rewrite the page-tables if either we've done
+> > +      * it already or we have KASLR enabled and therefore have not
+> > +      * created any global mappings at all.
+> > +      */
+> > +     if (arm64_use_ng_mappings)
+> > +             return;
+> > +
+> > +     stop_machine(__kpti_install_ng_mappings, NULL, cpu_online_mask);
+> > +}
+> > +
+> > +static pgprot_t __init kernel_exec_prot(void)
+> >  {
+> >       return rodata_enabled ? PAGE_KERNEL_ROX : PAGE_KERNEL_EXEC;
+> >  }
+> >
+> > base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+>
 
