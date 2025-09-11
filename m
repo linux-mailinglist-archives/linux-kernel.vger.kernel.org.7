@@ -1,187 +1,182 @@
-Return-Path: <linux-kernel+bounces-811404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B88B528A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:20:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C909BB528A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B855175A82
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:20:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8491BA056A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5BA2580EC;
-	Thu, 11 Sep 2025 06:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A158C258ED8;
+	Thu, 11 Sep 2025 06:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xn79Xbsq"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MhCjIrjM"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C7611CBA
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F693201278;
+	Thu, 11 Sep 2025 06:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757571614; cv=none; b=XHskawv8Hn/r9URkunqmApLA8JvHYKYwMWK5z+39dlWwkE7gc0Myl5FhxStLNHFwf4OWgX/Wrs7bXxTPClfQ2YzRS0LLYQ2h+5ZpD0spvS8u5jpKUbVteSX9h8ibZHFwsHwIJshASviRuC8zZrYg7J0rStnFPA3rp7NVTtKXQp0=
+	t=1757571789; cv=none; b=i7X+Wu4v5veIPlkjofpIu2jUn/S5z4U2N66Co6hOse7YhwiqvLUUHgoCYMUQeB3Tyd/8Rtu+f42paniTmcykD8QkjCXGIC8onUVSVDF8DmyeZzauDIXhxCU3m6/Hy0JG/VIQVBXd4xUTyt9gTFB16XjZWmjqqdZH6WiGgzV/5Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757571614; c=relaxed/simple;
-	bh=+OcTPhDXmteRe1PNLIfDFfpfOT4FMCkRaR60k0PaIgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DSCVaWTt08e/2ZaiSWL9JBV3LbuUu07hUthd9FcejEbv3EvJbhtulSWgaZhV+v+8FUqB/u/uE+FlLSYVnzLr0Fokqlpw01kdR5M3nh6I1RhsEw9cDDlMQ6+Q7LHwR9t16obKgSbOO8if/2WzeYXShbltSVg8gmk0CiQaYfVP/dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xn79Xbsq; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Forwarded-Encrypted: i=1; AJvYcCVpV05arJb/df2LDqwEGY92EPwb11YSWgjJEikbBwl0I5TUc5tGst6LWPnFnhBF/GFKOq2aSav3HIXNnxQ=@vger.kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757571608;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gW9kGgY5O1ezjweXONJKB6kktYtOO1YmCHdIBztrWyg=;
-	b=Xn79XbsqbLl4R1+fOVr4W+sHo7icAgTQQF762ElORdpIJGIq1riEe6VeIEROhw+rk5uPSt
-	zy7mi3q4ramyhrBcASxCrvxigNBdoKaVOvEqwY917SNCnPOmjHHl7YyGhXonOgiyVeD/Df
-	KYxjD+uO0ItBOresAqjq4Q6Y/JyDPjU=
-X-Gm-Message-State: AOJu0Yx00gkSnCPV4O5sfxga6KfTQGetWGKEGe1+ktGYoP7BuFkzgxlK
-	wCVAUxqa1ewyrsMmM6noGVLVJMtQY4N6l2SYrPUN/ntXKABCaYls49zujsSGd5507jxmVbUScD2
-	lVHLgECmf1PJIdYC2VOWAAgNK7UNcdi8=
-X-Google-Smtp-Source: AGHT+IFGtnt2Vv6SnW1AjDnoJHfVqQd98eP0nU8GK5mtsYSq4Y3GNWAX/MZSUTzZwyESeMv3dbmLCN1SIFPpKRJDb6Q=
-X-Received: by 2002:a05:6214:20a1:b0:720:e4bd:d3f3 with SMTP id
- 6a1803df08f44-762245144aamr20961806d6.26.1757571592842; Wed, 10 Sep 2025
- 23:19:52 -0700 (PDT)
+	s=arc-20240116; t=1757571789; c=relaxed/simple;
+	bh=mR2TVaT7oI0714GEW5XuhlwycbP1Ty/5Q+rPPkwY94g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XUlN+pNJe9jQjduJ2BuQyICxWjB/yI8FujvPj9bRB/cL2qTj3pWaBQKi67kMEa0LQVhQ50b07RqK/RexMuC87ms8DkGTifKT3X+xGCJERHq4U5LWj0oH3GjD5N5mOQyKk9/V43oK7dtXjF+3aNGC0sAlbQyIWfIfJIB3J15pQ/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MhCjIrjM; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58B6MVLl313999;
+	Thu, 11 Sep 2025 01:22:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757571751;
+	bh=VV4j2uohNmTsnTHXLlqzjhM3fCN2LIgoOEGp00OVD7w=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=MhCjIrjMDrZ7MCBSArxYv1pVgWnd+XuITrtTYVf7xa148UBjy1hmHMOVfUd6+JcZQ
+	 zm+76Oj9z2+0xqLUMb4CzKIa6h6roipL+VX6eW1ba0cxwnuIp85n99S8cU2bkCcpTw
+	 atcXaidA1C5Qj5lVrJwUqJeroXpXyuaMpu86vY7o=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58B6MVRr857555
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 11 Sep 2025 01:22:31 -0500
+Received: from DLEE208.ent.ti.com (157.170.170.97) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 11
+ Sep 2025 01:22:31 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE208.ent.ti.com
+ (157.170.170.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 11 Sep 2025 01:22:31 -0500
+Received: from [172.24.233.254] (santhoshkumark.dhcp.ti.com [172.24.233.254])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58B6MRVf1685850;
+	Thu, 11 Sep 2025 01:22:28 -0500
+Message-ID: <454e092d-5b75-4758-a0e9-dfbb7bf271d7@ti.com>
+Date: Thu, 11 Sep 2025 11:52:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911021401.734817-1-balrogg+code@gmail.com> <9CD4E5BC-185A-47E6-9A2C-1B5416DC57EE@nvidia.com>
-In-Reply-To: <9CD4E5BC-185A-47E6-9A2C-1B5416DC57EE@nvidia.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-Date: Thu, 11 Sep 2025 14:19:13 +0800
-X-Gmail-Original-Message-ID: <CABzRoyYo_dmzEJHQGiA3zc4uC_M9yKzEZ6L+VSbdG-t6fnahZA@mail.gmail.com>
-X-Gm-Features: AS18NWAZxQBFYdwpNshSnWdM9G9E87ityKhXYKHZyrw40T9emGfPhd7ZwGCqXPs
-Message-ID: <CABzRoyYo_dmzEJHQGiA3zc4uC_M9yKzEZ6L+VSbdG-t6fnahZA@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid poison consumption when splitting THP
-To: Zi Yan <ziy@nvidia.com>, Andrew Zaborowski <balrogg@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Miaohe Lin <linmiaohe@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mtd: core: always verify OOB offset in
+ mtd_check_oob_ops()
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger
+	<richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Gabor Juhos
+	<j4g8y7@gmail.com>
+CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, Daniel Golle <daniel@makrotopia.org>,
+        <s-k6@ti.com>
+References: <20250901-mtd-validate-ooboffs-v2-1-c1df86a16743@gmail.com>
+ <175708415877.334139.11409801733118104229.b4-ty@bootlin.com>
+Content-Language: en-US
+From: Santhosh Kumar K <s-k6@ti.com>
+In-Reply-To: <175708415877.334139.11409801733118104229.b4-ty@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Sep 11, 2025 at 12:11=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
->
-> On 10 Sep 2025, at 22:14, Andrew Zaborowski wrote:
->
-> > Handling a memory failure pointing inside a huge page requires splittin=
-g
-> > the page.  The splitting logic uses a mechanism, implemented in
-> > migrate.c:try_to_map_unused_to_zeropage(), that inspects contents of
-> > individual pages to find zero-filled pages.  The read access to the
-> > contents may cause a new, synchronous exception like an x86 Machine
-> > Check, delivered before the initial memory_failure() finishes, ending
-> > in a crash.
-> >
-> > Luckily memory_failure() already sets the has_hwpoisoned flag on the
-> > folio right before try_to_split_thp_page().  Don't enable the shared
-> > zeropage mechanism (RMP_USE_SHARED_ZEROPAGE flag) down in
-> > __split_unmapped_folio() when the original folio has has_hwpoisoned.
+Hello,
 
-Nit: s/__split_unmapped_folio/__folio_split/
+On 05/09/25 20:25, Miquel Raynal wrote:
+> On Mon, 01 Sep 2025 16:24:35 +0200, Gabor Juhos wrote:
+>> Using an OOB offset past end of the available OOB data is invalid,
+>> irregardless of whether the 'ooblen' is set in the ops or not. Move
+>> the relevant check out from the if statement to always verify that.
+>>
+>> The 'oobtest' module executes four tests to verify how reading/writing
+>> OOB data past end of the devices is handled. It expects errors in case
+>> of these tests, but this expectation fails in the last two tests on
+>> MTD devices, which have no OOB bytes available.
+>>
+>> [...]
+> 
+> Applied to mtd/next, thanks!
+> 
+> [1/1] mtd: core: always verify OOB offset in mtd_check_oob_ops()
+>        commit: bf7d0543b2602be5cb450d8ec5a8710787806f88
 
-As Zi mentioned, remap_page() is called in __folio_split() ;)
+I'm seeing a failure in SPI NOR flashes due to this patch:
+(Tested on AM62x SK with S28HS512T OSPI NOR flash)
 
-> >
-> > Note: we're disabling a potentially useful feature, some of the
-> > individual pages that aren't poisoned might be zero-filled.  One
-> > argument for not trying to add a mechanism to maybe re-scan them later,
-> > apart from code cost, is that the owning process is likely being
-> > killed and the memory released.
->
-> Sounds reasonable to me.
+root@am62xx-evm:~# uname -a
+Linux am62xx-evm 6.17.0-rc1-00011-gbf7d0543b260 #3 SMP PREEMPT Wed Sep 
+10 20:44:34 IST 2025 aarch64 GNU/Linux
+root@am62xx-evm:~# dmesg | grep mtd
+[    8.018107] I/O error, dev mtdblock6, sector 0 op 0x0:(READ) flags 
+0x80700 phys_seg 1 prio class 2
+[    8.032806] I/O error, dev mtdblock6, sector 0 op 0x0:(READ) flags 
+0x0 phys_seg 1 prio class 2
+[    8.043229] Buffer I/O error on dev mtdblock6, logical block 0, async 
+page read
+[    8.055082] I/O error, dev mtdblock4, sector 0 op 0x0:(READ) flags 
+0x80700 phys_seg 1 prio class 2
+[    8.065883] I/O error, dev mtdblock4, sector 0 op 0x0:(READ) flags 
+0x0 phys_seg 1 prio class 2
+[    8.075022] Buffer I/O error on dev mtdblock4, logical block 0, async 
+page read
+[    8.381213] I/O error, dev mtdblock6, sector 0 op 0x0:(READ) flags 
+0x80700 phys_seg 1 prio class 2
+[    8.394621] I/O error, dev mtdblock2, sector 0 op 0x0:(READ) flags 
+0x80700 phys_seg 1 prio class 2
+[    8.394704] I/O error, dev mtdblock2, sector 0 op 0x0:(READ) flags 
+0x0 phys_seg 1 prio class 2
+[    8.394714] Buffer I/O error on dev mtdblock2, logical block 0, async 
+page read
+[    8.410152] I/O error, dev mtdblock0, sector 0 op 0x0:(READ) flags 
+0x80700 phys_seg 1 prio class 2
+[    8.456064] I/O error, dev mtdblock0, sector 0 op 0x0:(READ) flags 
+0x0 phys_seg 1 prio class 2
+[    8.465774] Buffer I/O error on dev mtdblock0, logical block 0, async 
+page read
+[    8.469771] I/O error, dev mtdblock6, sector 0 op 0x0:(READ) flags 
+0x0 phys_seg 1 prio class 2
+[    8.469804] Buffer I/O error on dev mtdblock6, logical block 0, async 
+page read
+[    8.505866] Buffer I/O error on dev mtdblock5, logical block 0, async 
+page read
+[    8.522665] Buffer I/O error on dev mtdblock4, logical block 0, async 
+page read
+[    8.845572] Buffer I/O error on dev mtdblock3, logical block 0, async 
+page read
+[    8.855938] Buffer I/O error on dev mtdblock1, logical block 0, async 
+page read
+[    8.878292] Buffer I/O error on dev mtdblock2, logical block 0, async 
+page read
+root@am62xx-evm:~# hexdump /dev/mtd6
+hexdump: /dev/mtd6: Invalid argument
+root@am62xx-evm:~#
 
-Makes sense to me as well!
 
->
-> >
-> > Signed-off-by: Andrew Zaborowski <balrogg+code@gmail.com>
-> > ---
-> >  mm/huge_memory.c    | 3 ++-
-> >  mm/memory-failure.c | 6 ++++--
-> >  2 files changed, 6 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 9c38a95e9f0..1568f0308b9 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -3588,6 +3588,7 @@ static int __folio_split(struct folio *folio, uns=
-igned int new_order,
-> >               struct list_head *list, bool uniform_split)
-> >  {
-> >       struct deferred_split *ds_queue =3D get_deferred_split_queue(foli=
-o);
-> > +     bool has_hwpoisoned =3D folio_test_has_hwpoisoned(folio);
->
-> The state needs to be stored here because __split_unmapped_folio()
-> clears the flag. Maybe add a comment here to prevent people
-> from =E2=80=9Coptimizing=E2=80=9D it by calling folio_test_has_hwpoisoned=
-(folio)
-> in the code below.
->
-> (I wanted to until I checked the definition of folio_test_has_hwpoisoned(=
-))
+Reverting this works fine:
 
-folio_test_has_hwpoisoned() requires a large folio. That is safe in this
-context, since this path is only ever called for large folios.
+root@am62xx-evm:~# uname -a
+Linux am62xx-evm 6.17.0-rc5-next-20250910-00001-g5f216cdf2764 #5 SMP 
+PREEMPT Thu Sep 11 11:38:06 IST 2025 aarch64 GNU/Linux
+root@am62xx-evm:~# dmesg | grep mtd
+root@am62xx-evm:~# hexdump /dev/mtd6
+0000000 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+0040000
+root@am62xx-evm:~#
 
-Cheers,
-Lance
+Regards,
+Santhosh.
 
->
-> >       XA_STATE(xas, &folio->mapping->i_pages, folio->index);
-> >       struct folio *end_folio =3D folio_next(folio);
-> >       bool is_anon =3D folio_test_anon(folio);
-> > @@ -3858,7 +3859,7 @@ static int __folio_split(struct folio *folio, uns=
-igned int new_order,
-> >       if (nr_shmem_dropped)
-> >               shmem_uncharge(mapping->host, nr_shmem_dropped);
-> >
-> > -     if (!ret && is_anon)
-> > +     if (!ret && is_anon && !has_hwpoisoned)
-> >               remap_flags =3D RMP_USE_SHARED_ZEROPAGE;
-> >       remap_page(folio, 1 << order, remap_flags);
-> >
-> > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> > index fc30ca4804b..2d755493de9 100644
-> > --- a/mm/memory-failure.c
-> > +++ b/mm/memory-failure.c
-> > @@ -2352,8 +2352,10 @@ int memory_failure(unsigned long pfn, int flags)
-> >                * otherwise it may race with THP split.
-> >                * And the flag can't be set in get_hwpoison_page() since
-> >                * it is called by soft offline too and it is just called
-> > -              * for !MF_COUNT_INCREASED.  So here seems to be the best
-> > -              * place.
-> > +              * for !MF_COUNT_INCREASED.
-> > +              * It also tells __split_unmapped_folio() to not bother
->
-> s/__split_unmapped_folio/__folio_split/, since remap_page() is
-> called in __folio_split().
->
-> > +              * using the shared zeropage -- the all-zeros check would
-> > +              * consume the poison.  So here seems to be the best plac=
-e.
-> >                *
-> >                * Don't need care about the above error handling paths f=
-or
-> >                * get_hwpoison_page() since they handle either free page
-> > --
-> > 2.45.2
->
-> Otherwise, Acked-by: Zi Yan <ziy@nvidia.com>
->
-> Best Regards,
-> Yan, Zi
->
+> 
+> Patche(s) should be available on mtd/linux.git and will be
+> part of the next PR (provided that no robot complains by then).
+> 
+> Kind regards,
+> Miquèl
+> 
+> 
+
 
