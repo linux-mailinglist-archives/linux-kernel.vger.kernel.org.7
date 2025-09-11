@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-812818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78768B53D24
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:26:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0468B53D1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC74F7B2250
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:23:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0D685688EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC0D28B4FE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E91328AB16;
 	Thu, 11 Sep 2025 20:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DpjYmvhV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfLo38YN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9152D2877CA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917122877D5;
 	Thu, 11 Sep 2025 20:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757622236; cv=none; b=SJI27cWLJ3/evzbZimmu7LktNqCE1qfjYmfgxcHDgItUEW8p6PSeGLMjP5Fh170rRqUNnBIbLfLm9M6ZvrEn2ZbNaHBlXWnOVgmf22s1U/vf2FJztVfvyZLBH+6ku4WV3kSY6GHgFSyjHd5Vgxqa7O/geFjW104MVePpQh61Ii8=
+	t=1757622236; cv=none; b=Pim67VLNRrLTnxYnLQ0ADnvkRGSIAQSjc8INJC8W76ZRk7LADFFAZ3itwmzJoviHz7Z3WznsjOHveS2gwPM1RplCnU0jXqO6wpCspF9BGm0u0rT4krjGk0dWuX2TG7KCmSKdStrDhnjj1+nlEB1UJ3jJXMMH6Wy22K/2V+jVy/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757622236; c=relaxed/simple;
-	bh=EbMD20lOlZxBydAK7zCQataQpHJmiIQr5rbqpG7Zzpc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NI9+q8XsVlNTMwMoUGrIa8nKpD00rAUU4Byfht2ZO0DExnXilISvNUfGMcY5a51AAKReKib1eg3OswfZZcW71+IUZ/HB5GuAEbbCv89E8d2qfHMK1aihLos7xuM34T3SC1W6K4aajxAbHN50Q26f5A6WI0t2R6ELRzRzyUe9j+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DpjYmvhV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 25865C4CEF0;
+	bh=jJN/CVQ4Z0j0qCr/H8XKJBMu2Fbgqv5mOAyr2KXEcTA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=sc0ZjL62YRTzGQPoRLR40xc1T2LjaclxBHJMprcwo7U16rCNiXgVyfJlBwMxyjGyja/j9lGFopG7laaKqUx/9OCXFFUjpDdJ2OSlnrYnIbgmeqQX3RaIIhwT3jc5QyjFIGK0ZhzeiNts82czbhCE9g05mG9oBfHc2avNlRS5kOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfLo38YN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 34C5FC4CEF5;
 	Thu, 11 Sep 2025 20:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1757622236;
-	bh=EbMD20lOlZxBydAK7zCQataQpHJmiIQr5rbqpG7Zzpc=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=DpjYmvhVHH2069jY8Xk+ovmziVk63trTPnxw8lWwh//40wIZFF7azO8G3FOVbmNDU
-	 YV7wb/ATHm5u60ySQGT9TIqxg6S3vLMPDPI4z7H/ibGwMC/HVU8NWsvDe5Oqyh/Bit
-	 5YV/pdA26H4veimr2BEaCKET2DAP9RkzNPh3qsaq/HkuWBba08d+RDr/IIlNe7jCEd
-	 w+mjgtz+ggbQgdfPpYqIiO0JiJHyBskWnuOCDoAyoCk/ZemsliCKUAa6twB8oMHUcX
-	 3cSeKMTDQBZaT+gVaPU3CZ9iGX8utS+AWn7EPZ6SShv+wHA7JIAzBto/wGXDPBumDn
-	 JN5yUxIH0+eNQ==
+	bh=jJN/CVQ4Z0j0qCr/H8XKJBMu2Fbgqv5mOAyr2KXEcTA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=cfLo38YNLgCaBRXyhWEJKqEhLFUodB3gv66ew+Nwj+iEfZnkz4wg3/xtMPvFF7bTq
+	 TW5sC099WQJb7y2I6AVwUaqduq5Vruu60Gebtm75zCIdzfzXzRsCWmakxwvU3Lx+dp
+	 b0/HjqBjokPLpFhD0vFMqm1ZWFW3HFUydtdpfHc6VOipkCLKuXeY1eiMkmmcppuFJg
+	 Ag603e4Ep2ib8GmmNXnG356LZEQ+0qcLysfeVjpt3NSx2XqLlGM5Zqge4jZfsGulJD
+	 RJEVAp8SmFKasKKS5nJYTy7GIrGPZZhLx4qor9KuYpu7vftgnzg6zt+Psgq/qBdRO8
+	 h5bNTIxSMgODA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EF3CAC58F;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 245AECAC58E;
 	Thu, 11 Sep 2025 20:23:56 +0000 (UTC)
 From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Subject: [PATCH v3 0/3] Audio and other peripherals on Orange Pi Zero
-Date: Thu, 11 Sep 2025 22:23:54 +0200
-Message-Id: <20250911-opz-audio-v3-0-9dfd317a8163@posteo.net>
+Date: Thu, 11 Sep 2025 22:23:55 +0200
+Subject: [PATCH v3 1/3] ARM: dts: allwinner: orangepi-zero: Add default
+ audio routing
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,11 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIANovw2gC/1WMwQ6CMBAFf4X07Jq2tLJ48j+MBwqL9EJJWxuV8
- O8WEiMe5+XNzCyQtxTYuZiZp2SDdWOG8lCwdmjGO4HtMjPJpeZKVOCmNzSPzjrAmqOqWzRGEsv
- /yVNvn1vress82BCdf23pJNb1W8FdJQkQoAhPxmjTVqW6TC5EcseRIlszSf5U5PVelcChV30nt
- NayQfmnLsvyAewWE7DeAAAA
-X-Change-ID: 20250417-opz-audio-890849c8bb2e
+Message-Id: <20250911-opz-audio-v3-1-9dfd317a8163@posteo.net>
+References: <20250911-opz-audio-v3-0-9dfd317a8163@posteo.net>
+In-Reply-To: <20250911-opz-audio-v3-0-9dfd317a8163@posteo.net>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
  Jernej Skrabec <jernej.skrabec@gmail.com>, 
@@ -67,11 +66,11 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
  =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757622235; l=1167;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757622235; l=1327;
  i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=EbMD20lOlZxBydAK7zCQataQpHJmiIQr5rbqpG7Zzpc=;
- b=wrDUZIaMhF3qOeFIsCo2Hiqq6KZy/a7n1QcgKTmhRJX9sBv2YeeyfbFOsg1KkbXU4p7XXCuuU
- /H5tiRvvRcXB2dd2l6Syk5t8My1EdZRf2a9hUdq3dBNHUuRh8m4r6LV
+ bh=jlkkNRSXPvyKb7VkFE4rQa+2nclFteLVP/Fzwz7oW+A=;
+ b=Z8C6IY54/f4oSOkqb/qp4iZvO2BDFKeNxw7f4oP0smdBBrUsLMOPexmO5cGlajmBQS//udCD7
+ tabOi9+px2mBlP+zxypShC9lYgL2dP2II4X9n+YQnNYEq9z4d9CohaH
 X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
  pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
 X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
@@ -79,36 +78,51 @@ X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
 X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
 Reply-To: j.ne@posteo.net
 
+From: "J. Neuschäfer" <j.ne@posteo.net>
+
+Line out playback and microphone capture work, after enabling the
+corresponding ALSA controls. Tested with the Orange Pi Zero interface
+board.
+
 Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 ---
-Changes in v3:
-- Fix name of orangepi-zero-plus2 in patch title
-- Link to v2: https://lore.kernel.org/r/20250809-opz-audio-v2-0-f4fd15552a82@posteo.net
+v3:
+- no change
 
-Changes in v2:
-- Rebase on (almost) 6.17-rc1
-- Disable audio pins by default
-- Provide separate DT overlay for the Orange Pi Zero Interface Board
-- Link to v1: https://lore.kernel.org/r/20250418-opz-audio-v1-1-4e86bb5bc734@posteo.net
-
+v2:
+- Add an explanatory comment
 ---
-J. Neuschäfer (3):
-      ARM: dts: allwinner: orangepi-zero: Add default audio routing
-      ARM: dts: allwinner: orangepi-zero-plus2: Add default audio routing
-      ARM: dts: allwinner: Add Orange Pi Zero Interface Board overlay
+ .../arm/boot/dts/allwinner/sun8i-h2-plus-orangepi-zero.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
- arch/arm/boot/dts/allwinner/Makefile               |  7 ++++
- .../dts/allwinner/sun8i-h2-plus-orangepi-zero.dts  | 14 +++++++
- .../dts/allwinner/sun8i-h3-orangepi-zero-plus2.dts | 14 +++++++
- .../sun8i-orangepi-zero-interface-board.dtso       | 46 ++++++++++++++++++++++
- 4 files changed, 81 insertions(+)
----
-base-commit: 29fdda97f8d5797b160aa8ad1c7248710bb8ffda
-change-id: 20250417-opz-audio-890849c8bb2e
+diff --git a/arch/arm/boot/dts/allwinner/sun8i-h2-plus-orangepi-zero.dts b/arch/arm/boot/dts/allwinner/sun8i-h2-plus-orangepi-zero.dts
+index 1b001f2ad0efd2e77218742efe6d8edfdd18a816..b23cec5b89ebf61701e1d917929589eb6e884afd 100644
+--- a/arch/arm/boot/dts/allwinner/sun8i-h2-plus-orangepi-zero.dts
++++ b/arch/arm/boot/dts/allwinner/sun8i-h2-plus-orangepi-zero.dts
+@@ -112,6 +112,20 @@ wifi_pwrseq: pwrseq {
+ 	};
+ };
+ 
++/*
++ * Audio input/output is exposed on the 13-pin header and can't be used for
++ * anything else. However, adapter boards may use different audio routing.
++ * - https://linux-sunxi.org/Xunlong_Orange_Pi_Zero#Expansion_Port
++ * - Allwinner H3 Datasheet, section 3.1. Pin Characteristics
++ */
++&codec {
++	allwinner,audio-routing =
++		"Line Out", "LINEOUT",
++		"MIC1", "Mic",
++		"Mic",  "MBIAS";
++	status = "disabled";
++};
++
+ &cpu0 {
+ 	cpu-supply = <&reg_vdd_cpux>;
+ };
 
-Best regards,
 -- 
-J. Neuschäfer <j.ne@posteo.net>
+2.48.0.rc1.219.gb6b6757d772
 
 
 
