@@ -1,99 +1,124 @@
-Return-Path: <linux-kernel+bounces-812830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B63B53D36
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:42:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C1DB53D39
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 445DC3A85B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:42:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 045DC1B278C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF302C3253;
-	Thu, 11 Sep 2025 20:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DD02C3262;
+	Thu, 11 Sep 2025 20:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="POQG0Xu4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcrG6NH0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5092299A94;
-	Thu, 11 Sep 2025 20:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76AB2DC77C;
+	Thu, 11 Sep 2025 20:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757623372; cv=none; b=THHyvQrTLENFQ+e3b1n2ZWni841McMrSNKkfPj0zGAV4Qx+szNajNVutSsTPdDO+yNmGuON1FqzLtyVrUa0xLK97Yfm0IbRkagSNJiWS3akpTDykxjo4REtui3RDtJuWss1qz5M9bQkwSWrn3lu7aTKf6wlQ64eFBDIWAnwFG8s=
+	t=1757623422; cv=none; b=CDz5AoSFDSAMkq8TpehqwwYAeNOWGmxVblE/Nyg32wrMCbGa9ToFaKABAtbLi4JKYyqISxlaD7K6Hlz+dgnn346o5eNyVo3qVy0GUUDl+YHmLkoCGU9UyghLMZwgWU6vTK1mT75NfwvuN17Lf0WrtIGoD/FVDZQPjjKf9byYqJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757623372; c=relaxed/simple;
-	bh=yKFoksqOnjhdBg3VMJYRRHTOnSUiSHGvaITeCwnt+/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4INiC0PXPPBZ7KXiQEcQK8Fg2beElS7w/wCKQAMWM729J8uEpFXBDPE8rJZM+Sk0LrPHYfE1NxopuPvk8UazcLfvnl/xx+ZSEabT3PWLvlenlaLu8UmkKIMaAGnlV+cJX1mjHvYi5OSDoTZW4NNkn2ous27liZFPROpnyaTztI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=POQG0Xu4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79E07C4CEF0;
-	Thu, 11 Sep 2025 20:42:49 +0000 (UTC)
+	s=arc-20240116; t=1757623422; c=relaxed/simple;
+	bh=5jfTK8qp37ri/0OUIgzUb+MsW/3Rl3jCY4BUaO8ZRk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Gr9xXmG35+3tpulBw78F5Zix/qYaGDwADT8ymiD71TcGmk2iLTsvfa0VG+BLp11K4DBdLIq0V/nVc9MIFCkBxKNoew6qM10GSmZUmAR+G5iT9Vhq9HiaPxgBCOg4/4BIg09iyl4YsfBNx5/BQGn/bapBU4FQ3RR7aSiN8zEI4sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcrG6NH0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 454FEC4CEF0;
+	Thu, 11 Sep 2025 20:43:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757623371;
-	bh=yKFoksqOnjhdBg3VMJYRRHTOnSUiSHGvaITeCwnt+/Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=POQG0Xu4BTTEOUBkrGfzOs586UxaKHSuEC1ZpyIEHN4BnWzfAvoMVrykFLk+J0JCk
-	 sjCbrGso4NflF90OU+J5O3McLOjzhEdwHyzDGiZe5v8wi4K2ahWqnXzRyF8rcBtO4D
-	 Isg/zzjv4Uw+WD4u7Px0ufqHjhcdm3T/LILYhTKobst30BaQLSZn1cPoSfoX0JVSp+
-	 hp4FH+EhDhRYw7JXDGq+uG+kRf8uJqDEeltx+3WOtEoUqRNjYmMcW9EU89yOJUZeXI
-	 9wVsxNHz21GEGXezklYJ6GKnv7pi/GKCti4oHiE5SPXOmpe6hSVhOkBOBW0RKTrW/r
-	 IRjpUeHfZe12w==
-Date: Thu, 11 Sep 2025 13:42:46 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Heiko Carstens <hca@linux.ibm.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Juergen Christ <jchrist@linux.ibm.com>,
-	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: Re: [PATCH 1/3] Compiler Attributes: Add __assume macro
-Message-ID: <20250911204246.GA69679@ax162>
-References: <20250910151216.646600-1-hca@linux.ibm.com>
- <20250910151216.646600-2-hca@linux.ibm.com>
- <20250911013243.GA292340@ax162>
- <20250911145659.8894Dea-hca@linux.ibm.com>
- <20250911184429.GA2395987@ax162>
- <CANiq72kJ9L_Kpv9+z5=xZvbWxLRYXpKS-76XwwvQP+wMWsMJtg@mail.gmail.com>
+	s=k20201202; t=1757623422;
+	bh=5jfTK8qp37ri/0OUIgzUb+MsW/3Rl3jCY4BUaO8ZRk4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=XcrG6NH0QU8sxJwMSCVQ8O1tF/RhSxEzF48HPagONuJ0RGiZ73/oKqRhbJr1t/RmI
+	 ZxlerT6npf6usu9olJV4ZOOnNOXBQBuxMZ9zx57ZjBwU2nxDC1bycQagKEHrYacU1o
+	 YMC2/Femf2nYL3dOm8WBzuaYDhZicOOrw+bFO6L7n6FfL0umfy1QYEWhrnD8V1sMtb
+	 Id27n2rZCUwzDUdhg0b7o6sNGwK4BWl7FrZBGpuBSs4iK9bjQ8md3/9MkjVY/5EyLa
+	 R7gCTBPXxfdGxkdzQw+gTpW9UK1/ljvfHUf3FB+EqpxNiejr9uu+GcZaOx8/qItWFi
+	 nJh5fRysOE7/w==
+Date: Thu, 11 Sep 2025 15:43:40 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Verma, Devendra" <Devendra.Verma@amd.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+	"mani@kernel.org" <mani@kernel.org>,
+	"vkoul@kernel.org" <vkoul@kernel.org>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Simek, Michal" <michal.simek@amd.com>
+Subject: Re: [PATCH 2/2] dmaengine: dw-edma: Add non-LL mode
+Message-ID: <20250911204340.GA1584422@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72kJ9L_Kpv9+z5=xZvbWxLRYXpKS-76XwwvQP+wMWsMJtg@mail.gmail.com>
+In-Reply-To: <SA1PR12MB812027AB20BEE7C28F30A5FE9509A@SA1PR12MB8120.namprd12.prod.outlook.com>
 
-On Thu, Sep 11, 2025 at 09:04:36PM +0200, Miguel Ojeda wrote:
-> On Thu, Sep 11, 2025 at 8:44 PM Nathan Chancellor <nathan@kernel.org> wrote:
+On Thu, Sep 11, 2025 at 11:42:31AM +0000, Verma, Devendra wrote:
+> > -----Original Message-----
+> > From: Bjorn Helgaas <helgaas@kernel.org>
+
+> > On Wed, Sep 10, 2025 at 12:30:39PM +0000, Verma, Devendra wrote:
+> > > > From: Bjorn Helgaas <helgaas@kernel.org>
 > >
-> > I do not think anyone really owns compiler_types.h so unless Miguel has
-> > any objections from the compiler attributes perspective, I think you can
-> > just take this via the s390 tree with the other two changes.
+> > [redundant headers removed]
+> >
+> > > > On Fri, Sep 05, 2025 at 03:46:59PM +0530, Devendra K Verma wrote:
+> > > > > AMD MDB IP supports Linked List (LL) mode as well as non-LL mode.
+> > > > > The current code does not have the mechanisms to enable the DMA
+> > > > > transactions using the non-LL mode. The following two cases are
+> > > > > added with this patch:
+> >
+> > > > > +static u64 dw_edma_get_phys_addr(struct pci_dev *pdev,
+> > > > > +                              struct dw_edma_pcie_data *pdata,
+> > > > > +                              enum pci_barno bar) {
+> > > > > +     if (pdev->vendor == PCI_VENDOR_ID_XILINX)
+> > > > > +             return pdata->phys_addr;
+> > > > > +     return pci_bus_address(pdev, bar);
+> > > >
+> > > > This doesn't seem right.  pci_bus_address() returns pci_bus_addr_t,
+> > > > so pdata->phys_addr should also be a pci_bus_addr_t, and the
+> > > > function should return pci_bus_addr_t.
+> > > >
+> > > > A pci_bus_addr_t is not a "phys_addr"; it is an address that is
+> > > > valid on the PCI side of a PCI host bridge, which may be different
+> > > > than the CPU physical address on the CPU side of the bridge because
+> > > > of things like IOMMUs.
+> > > >
+> > > > Seems like the struct dw_edma_region.paddr should be renamed to
+> > > > something like "bus_addr" and made into a pci_bus_addr_t.
+> > >
+> > > In case of AMD, it is not an address that is accessible from host via
+> > > PCI, it is the device side DDR offset of physical address which is not
+> > > known to host,that is why the VSEC capability is used to let know host
+> > > of the DDR offset to correctly programming the LLP of DMA controller.
+> > > Without programming the LLP controller will not know from where to
+> > > start reading the LL for DMA processing. DMA controller requires the
+> > > physical address of LL present on its side of DDR.
+> >
+> > I guess "device side DDR offset" means this Xilinx device has some
+> > DDR internal to the PCI device, and the CPU cannot access it via a
+> > BAR?
 > 
-> No objections from me, and thanks for spotting the OpenMP thing above.
-> 
-> I would say, though, that this is a fairly general and subtle tool to
-> have around, so it would be nice to have others chime in. In other
-> words, do we want to start using `assume`s? Should we constrain its
-> use a bit, e.g. say its use should really be justified etc.? (In the
-> Rust side, a tool like this would require a SAFETY comment on top with
-> a justification, which may give a developer pause).
+> The host can access the DDR internal to the PCI device via BAR, but
+> it involves an iATU translation. The host can use the virtual /
+> physical address to access that DDR.  The issue is not with the host
+> rather DMA controller which does not understand the physical address
+> provided by the host, eg, the address returned by pci_bus_addr(pdev,
+> barno).
 
-I do think justification at the source level (i.e., a comment) would be
-a good baseline. I thought I remember a similar discussion around
-likely() / unlikely() annotations since those should have some evidence
-of benefit behind it. Applying the same policy to __assume() usage would
-help ensure there is sufficient justification for adding and maintaining
-such annotations, especially if they turn out to cause problems later.
-Not sure if there should be a format standard like exists for SAFETY
-comments but something is better than nothing.
+Does this mean dw_edma_get_phys_addr() depends on iATU programming
+done by the PCI controller driver?  Is it possible for that driver to
+change the iATU programming after dw_edma_get_phys_addr() in a way
+that breaks this?
 
-Cheers,
-Nathan
+Bjorn
 
