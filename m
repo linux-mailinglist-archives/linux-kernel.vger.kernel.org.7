@@ -1,158 +1,119 @@
-Return-Path: <linux-kernel+bounces-811407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405BDB528AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:25:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7E8B528AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73AC37A596E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:23:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C171A3A5522
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8633258ED8;
-	Thu, 11 Sep 2025 06:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358CC2594B9;
+	Thu, 11 Sep 2025 06:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+Bb9zpG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Jr18M6bk"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01716257453
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9CE11CBA;
+	Thu, 11 Sep 2025 06:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757571897; cv=none; b=SPM1LqPytQtSFHEIgjCdpF5XLn+I7W4F6u4yVUQcUphFPqCb1EQQkClWKrnpTvjUtPrLw54OdeEbL5cWk7AcfxbuUWYFjKN8C08WWIsMMW4imlxH8WzeH8yhKeyxBwX6POd4Kkw6ml0bw2HdCydt/L82/5zxAdq5ol8kTWjAd1E=
+	t=1757572047; cv=none; b=d1Uvv5Hs4j8s5WxF5bhCiTDW24V+Yh2BQVp+wVo+2Kt/UURjsq0FR7pQ8C4PKdwprYtiKqGuLvDUQMC9nkRujE8FAMonv17FSyoPdFDykjfbFX54GmrH09pkWs0m0EKkq0oalfjPZqLjeo6TZm3wsi/ZjY8ItobNS9LaVv4BoXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757571897; c=relaxed/simple;
-	bh=LWISxWpZIWpayb7lXXH/jdmlK51vVZcbwDDS5/tVFd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bvJI7bhjpWmnSet52Uc/eUACkRB0wvGi0tdyuV+3kXLd1VzEobOOm3c00QrvAA5vcc34AkBWgfZZGOp3M4TIENfDGyfMIlfnZ9VkZdoudkqPtEOdlv28BwmBoaBdp4Ve5Zxc2vwPc2ZjycXMwmCuArZxBFuoGHmCFQMH5c5ATnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+Bb9zpG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C145FC4CEF1
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:24:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757571896;
-	bh=LWISxWpZIWpayb7lXXH/jdmlK51vVZcbwDDS5/tVFd8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=r+Bb9zpG0WNuifHbdn917sxYe4G7Q6CVr3RZuYgsWQxd6sQTnI+jiRMtCiMpzgz+l
-	 Evi5xB/R44jOGxR+16dMvn0DjwdeRzppiLH9jRD7MTQZF8eTczmOv1pcJIRqMNdQa8
-	 0NS8f6sKONLkfy6YRhziFLpjrqW42VXcFNeI6e9ILuy1ruX+z5rgxKGY8qE+OTrreT
-	 UMyxKyWpub8WmQKplsRcxk8hLIqcwTQTy4K0DmmfeeVg1YWPtJgtnqh+h1TfXnamAZ
-	 yMU5rCZvjI5dPnCiQsDZQlMGogGCZPKqkXK50XVhJcMnr3oEh0lZ8uZRV9+0qpKA0O
-	 MUEIN2gYhnCpg==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f69cf4b77so319464e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:24:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWrnvCRo3xECfO07vax5H9OL9Y9e2gZvHzqdOkYlLoGqEK/5f5er2Cm1MW2lEcqTmyN4WX802V9s/1jLh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4Kes+9J61fPtPU9HyQRDRbhekvDKHjM1hSSHXY5uw7SujjnCS
-	pmBORHhTHmxpr/ppydD2zvhNIx3CXdV++W2OQGX+UjL+wIwqEp3fAGOHmYxQaqhGypGR9AO7aPY
-	R+0v6Vhhz0p1ZXQ8km5eRWUvflwYrMzk=
-X-Google-Smtp-Source: AGHT+IG29ahrAP8GFbMhC5SlNYOdpYF2cGBGuOOogKOlf0rutSht7MwWOV0kTpYrOZDoYWwhMGpLaYSS4D9ns3F7NW8=
-X-Received: by 2002:a2e:b8c1:0:b0:337:f217:a785 with SMTP id
- 38308e7fff4ca-33b5cbcec6amr58212641fa.23.1757571895136; Wed, 10 Sep 2025
- 23:24:55 -0700 (PDT)
+	s=arc-20240116; t=1757572047; c=relaxed/simple;
+	bh=EUvYqGDiJLGmIwW1ylFx+Hel2HdePd43zUQeNp8WenY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bsCyR0MDemVrfd3tmhHdwlGVvpiCzb1i+qBhVJoZlEx1uIR8zUUQE+0A2i0KHmeO9+yKaVeY+MGKq4T+q6T4dr7vfYcwxAgzBGuf347YDPPtQsO/jF0RkS9qneFMdemN8ltUoyaa97fc0CPMb8n+ajamcNrpM7r4ya8vk6nMHzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Jr18M6bk; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58B6RBpI686260;
+	Thu, 11 Sep 2025 01:27:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757572031;
+	bh=pynGki2wuhAp/x5o6nU8x3fWXbJe9s1R84Vuq3q03wQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Jr18M6bkjXJa/7VWlDecx5vJX78aoEdqz2z1VC9rWBqQBDo7e5j54wIj3EU64raSm
+	 8Lk00DpMgrtD+lQ9VW6apgwCjlphSScm1N2zBpIb7DGy5WvKbBBbeD8X2rT74JGXrU
+	 a6CMIazA47lkEHVHCN/Aj8F5UH21F4OZHxsiUwuc=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58B6RBKB859708
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 11 Sep 2025 01:27:11 -0500
+Received: from DLEE212.ent.ti.com (157.170.170.114) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 11
+ Sep 2025 01:27:10 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE212.ent.ti.com
+ (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 11 Sep 2025 01:27:10 -0500
+Received: from [172.24.233.254] (santhoshkumark.dhcp.ti.com [172.24.233.254])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58B6R6jr1691109;
+	Thu, 11 Sep 2025 01:27:07 -0500
+Message-ID: <96bc8718-8902-4f2e-be96-1cd5e19a6355@ti.com>
+Date: Thu, 11 Sep 2025 11:57:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910104454.317067-1-kevin.brodsky@arm.com>
- <41f3227e-b945-4303-90b7-732affb0a101@arm.com> <CAMj1kXEmfCHpssFjn_+4ZjKCUaWPeiVwznCpGumTfz33k-rfkg@mail.gmail.com>
- <f8c268ce-798a-4d3a-bab2-16eea633f9db@arm.com>
-In-Reply-To: <f8c268ce-798a-4d3a-bab2-16eea633f9db@arm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 11 Sep 2025 08:24:44 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHDKGsaOn96zecba=-6Bib0SVYs=voMr5DLjWOn_qAqAQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzciR3IyG7PAaM9LIGz6dBGdo1fkr-R21kJeV_W4pyF-M5kwwVrYSYE318
-Message-ID: <CAMj1kXHDKGsaOn96zecba=-6Bib0SVYs=voMr5DLjWOn_qAqAQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: mm: Move KPTI helpers to mmu.c
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
-	Kees Cook <kees@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] Miscellaneous fixes and clean-ups
+To: <miquel.raynal@bootlin.com>, <broonie@kernel.org>, <vigneshr@ti.com>,
+        <marex@denx.de>, <computersforpeace@gmail.com>,
+        <theo.lebrun@bootlin.com>
+CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <praneeth@ti.com>, <p-mantena@ti.com>, <a-dutta@ti.com>,
+        <u-kumar1@ti.com>, <s-k6@ti.com>
+References: <20250905185958.3575037-1-s-k6@ti.com>
+Content-Language: en-US
+From: Santhosh Kumar K <s-k6@ti.com>
+In-Reply-To: <20250905185958.3575037-1-s-k6@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, 11 Sept 2025 at 08:18, Anshuman Khandual
-<anshuman.khandual@arm.com> wrote:
->
->
->
-> On 11/09/25 11:38 AM, Ard Biesheuvel wrote:
-> > On Thu, 11 Sept 2025 at 07:13, Anshuman Khandual
-> > <anshuman.khandual@arm.com> wrote:
-> >>
-> >>
-> >>
-> >> On 10/09/25 4:14 PM, Kevin Brodsky wrote:
-> >>> create_kpti_ng_temp_pgd() is currently defined (as an alias) in
-> >>> mmu.c without matching declaration in a header; instead cpufeature.c
-> >>> makes its own declaration. This is clearly not pretty, and as commit
-> >>> ceca927c86e6 ("arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc
-> >>> function signature") showed, it also makes it very easy for the
-> >>> prototypes to go out of sync.
-> >>>
-> >>> All this would be much simpler if kpti_install_ng_mappings() and
-> >>> associated functions lived in mmu.c, where they logically belong.
-> >>> This is what this patch does:
-> >>> - Move kpti_install_ng_mappings() and associated functions from
-> >>>   cpufeature.c to mmu.c, add a declaration to <asm/mmu.h>
-> >>> - Make create_kpti_ng_temp_pgd() a static function that simply calls
-> >>>   __create_pgd_mapping_locked() instead of aliasing it
-> >>> - Mark all these functions __init
-> >>> - Move __initdata after kpti_ng_temp_alloc (as suggested by
-> >>>   checkpatch)
-> >>>
-> >>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> >>> ---
-> >>> Note: as things stand, create_kpti_ng_temp_pgd() could be removed,
-> >>> but a separate patch [1] will make use of it to add an
-> >>> assertion.
-> >>>
-> >>> [1] https://lore.kernel.org/all/20250813145607.1612234-3-chaitanyas.prakash@arm.com/
-> >>> ---
-> >>> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> >>> Cc: Ard Biesheuvel <ardb@kernel.org>
-> >>> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> >>> Cc: Kees Cook <kees@kernel.org>,
-> >>> Cc: Mark Rutland <mark.rutland@arm.com>
-> >>> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> >>> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>> Cc: Will Deacon <will@kernel.org>
-> >>> Cc: Yeoreum Yun <yeoreum.yun@arm.com>
-> >>> ---
-> >>>  arch/arm64/include/asm/mmu.h   |   6 ++
-> >>>  arch/arm64/kernel/cpufeature.c |  97 ------------------------------
-> >>>  arch/arm64/mm/mmu.c            | 106 ++++++++++++++++++++++++++++++---
-> >>>  3 files changed, 103 insertions(+), 106 deletions(-)
-> >>>
-> >>> diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
-> >>> index 49f1a810df16..624edd6c4964 100644
-> >>> --- a/arch/arm64/include/asm/mmu.h
-> >>> +++ b/arch/arm64/include/asm/mmu.h
-> >>> @@ -104,5 +104,11 @@ static inline bool kaslr_requires_kpti(void)
-> >>>       return true;
-> >>>  }
-> >>>
-> >>> +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-> >>> +void kpti_install_ng_mappings(void);
-> >>
-> >> Could the declarations be moved here instead ?
-> >
-> > Why?
->
-> To avoid both typedef and external instance declaration in the C
-> code even though there is just a single call site in there.
+Hello,
 
-But why would we want to avoid those in the first place?
+On 06/09/25 00:29, Santhosh Kumar K wrote:
+> This series introduces some small but important fixes and cleanups in
+> the Cadence QSPI Controller.
+> 
+> Changes in v2:
+>   - Use max_t() instead of if case
+>   - Add a logic to return failure if there are no flash device declared.
+>   - Convert all the open coded bit shifts to BIT() macro
+>   - Link to v1: https://lore.kernel.org/linux-spi/20250904133130.3105736-1-s-k6@ti.com/T/#m2a5b6024ae6f147615e54e12688d8ceb5acc6228
+> 
+> Tested on TI's AM62A SK and AM62P SK:
+> Logs: https://gist.github.com/santhosh21/0d25767b58d9a1d9624f2c502dd8f36b
+> 
+> Signed-off-by: Santhosh Kumar K s-k6@ti.com
 
-Moving these into mmu.h pollutes the global namespace with
-declarations that must never be used outside of
-__kpti_install_ng_mappings() to begin with.
+Gentle ping on this!
 
-> Also
-> is not bit cleaner as well ?
+Regards,
+Santhosh.
 
-That is highly subjective, but personally, I think it only adds confusion.
+> 
+> Pratyush Yadav (2):
+>    spi: cadence-quadspi: Flush posted register writes before INDAC access
+>    spi: cadence-quadspi: Flush posted register writes before DAC access
+> 
+> Santhosh Kumar K (1):
+>    spi: cadence-quadspi: Fix cqspi_setup_flash()
+> 
+> Vignesh Raghavendra (1):
+>    spi: cadence-quadspi: Use BIT() macros where possible
+> 
+>   drivers/spi/spi-cadence-quadspi.c | 34 +++++++++++++++++++------------
+>   1 file changed, 21 insertions(+), 13 deletions(-)
+> 
+
 
