@@ -1,125 +1,129 @@
-Return-Path: <linux-kernel+bounces-812087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959BCB532C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:50:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E74B532C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4CB5189E432
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:51:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6BBF585A21
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C85322747;
-	Thu, 11 Sep 2025 12:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE67C32252A;
+	Thu, 11 Sep 2025 12:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="0cSGvd0V"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNlaDRcg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D7832143B
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D1D322767
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757595039; cv=none; b=S7K5/Ir6rvEZ4Crudk3h5jV8nkVD8WEhWwjrTz9Wp3Ebt57ukOZxHic/JKFtsE15j+Ao1uYLxuIZHo20kayuilRsX8fl8j62S6r9xxT7QZKL5RNjnAybO/N5v8SBZSYYvVWvQfOO8ZaQ4pb8MVwwLSOSGGKbCsY4E/jYFfXVuB8=
+	t=1757595049; cv=none; b=bfxtAvbxm2/CKf4WWbQHO0vucQx1mOOR8Mzms6VOJrkIpfubjqWSAADXv0kGUlRJ6hYbQcyA7baVpqVkt0+YXa/E1DCvLtZScHETzQT/IYz9rOrlmXMtdW6Qvj5u3zsjecOjjbJ6Fh8z3vXoeOTGKXndNK8kQCsPCl7bg15zemw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757595039; c=relaxed/simple;
-	bh=lic2gVyra2Fci9kjsobQWbVL/mughWwS6st0tFnXd3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b4XvaGQomLQXNdMGjsrt0zBWCxFsRDrXnt4heyKSXWtq7b8qf4hHS0/QM2Yk8YjPcTyEiAi78d4pizsT6CnArIytA75opf3+CNFXFCYnSaTPZfODYo30MCmG6UgIjag7SZbDgpdh9d22pqacYZanSCPblAIqBaPcn8+GhN6hOcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=0cSGvd0V; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 86DE81A0DEA;
-	Thu, 11 Sep 2025 12:50:29 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5A76D60630;
-	Thu, 11 Sep 2025 12:50:29 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B85C9102F286D;
-	Thu, 11 Sep 2025 14:50:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757595027; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=SLEM14Bc3F7M85qjcLqahAIN620oKBeJlXHCNZSNKo0=;
-	b=0cSGvd0V3ky4ridmXNRbRRun5K9w3uXdqT/pIvja9hkdUrZqFZ0xBo97NoHhjP8hPlNk5g
-	5uDRFx0/WdkAFxDaIn7rLFDoWp4yBiHTPzVx4F2wiXFGu3RMWH/kZrFzHugLw9vNTYU0oY
-	JTsdbiZ8mHtVZis7nGrWam29AgowuPiJfkn/OOWvmrDbD2BxCHf51m2n/NvPHR91vWor69
-	9FP9Yjc5p49ye7jRTaVzJNwcHBFE6ObsU754jL6vfKLKsuqiLQ/bwNqtf6hJr/J8RjGnhz
-	3+D/ov48BGWxZeUez/ywx9EFeOOZHcfiEeRd+3Ph1fXpsMhFE5xCmZf/sHU0Mw==
-Message-ID: <012046ab-d866-4b3a-8c8a-e130bc2b9628@bootlin.com>
-Date: Thu, 11 Sep 2025 14:49:59 +0200
+	s=arc-20240116; t=1757595049; c=relaxed/simple;
+	bh=tJGoCAXqOzuddBjl4jN3Sc3VycflEXLnDPekZVtOt+4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gLTEPO85S/OgjdZnxOsW6MvmBscdI/LlR2xGmUfStxwQ03H0a5r63AYh2W1Kyr9fAnQGLyn9YWIUbty3tcZcVs9unHXCg0PqAduJqwHsmQ4q8H1XqVesobnTyATe3eIhGop7WPGkyjJB2CSdPdXy9A/IHFRyDVV6Yx9nJTlRzFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNlaDRcg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEAD0C4AF09
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:50:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757595048;
+	bh=tJGoCAXqOzuddBjl4jN3Sc3VycflEXLnDPekZVtOt+4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cNlaDRcgWbChNThLzsHJ0nSPSPwbSBoZs1iK1fDrhnZ/mROkqzmdcUkZdn5wTfWho
+	 jpg0Nps06leWAHtJ1leacWlB9HcLbNgMvG9D1C7USUjSLyzbj2KoQi6PVyDGZ2mrHJ
+	 a6DtEJzpmP+EfBr6ToU+qmYUcUelwjqg9fFXRRvNzGdkNydus1PLdDfpisQQu0X4LP
+	 g5KXJQ5VNCfIrx14LcF8hBlXKHOlklrIpUD6n39Fzn7/Lm506FQ+Z3o5yMf3HiZW0u
+	 YQT7UOTWycWQfWnSRiQheq1eUc2eW3r1gPPmHIvW1mec2dtAACms3tZgVETOiTsMiW
+	 ouqN+ObMLMgBA==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-61bd4e002afso174605eaf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 05:50:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUMpVsxy9URXLseXU3RG7F8YpRWOYDBSiiGQaStz9ra7ZjQ7JBE6OqcWtvExhhjOEJyKUNE3svp/TTrnm0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqP79+vZ9E+BKR3jPMZ+OZ79/WBrhgtFPzryT3lr2KkJROGqfz
+	0YPc5kaclsKCT7c3UtNP2xO88Vtl3GsNU2Gj2r+h0N1z5Wl+S0tMPHr+cNQ5cs2YnICHUn3hA+b
+	mHJQDKxFQu6VNd/JnqZqTdX6sT9w7/nc=
+X-Google-Smtp-Source: AGHT+IHxJsKUfu0kNJmQcWf2p4gCIbzxH4/zmcLfjneUPJkQ11l+6BwO9/YIzjCoKy5wdYDt3DB/P7BJc9MXRsm29dE=
+X-Received: by 2002:a05:6820:168d:b0:621:a8cc:3a6d with SMTP id
+ 006d021491bc7-621a8cc3fafmr2679459eaf.3.1757595048159; Thu, 11 Sep 2025
+ 05:50:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/bridge: ite-it66121: Add drm_connector support
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Phong LE <ple@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
- miquel.raynal@bootlin.com, kory.maincent@bootlin.com,
- romain.gantois@bootlin.com, praneeth@ti.com,
- Aradhya Bhatia <a-bhatia1@ti.com>
-References: <20250909-it66121-fix-v1-1-bc79ca83df17@bootlin.com>
- <do5zciwcanpiciy52zj3nn6igmwlgmbcfdwbibv2ijxm2fif5s@ib6jhzi5h2jo>
- <6164422a-6265-4726-8da5-68bb8eafb9e6@bootlin.com>
- <20250911-innocent-daffodil-macaque-797f13@houat>
-Content-Language: en-US
-From: Miguel Gazquez <miguel.gazquez@bootlin.com>
-In-Reply-To: <20250911-innocent-daffodil-macaque-797f13@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20250911112058.3610201-1-treapking@chromium.org>
+In-Reply-To: <20250911112058.3610201-1-treapking@chromium.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 11 Sep 2025 14:50:36 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jMXzka7XgG7eXHOFntbSupHrhYvUsLP_YvDz10HpbMcQ@mail.gmail.com>
+X-Gm-Features: Ac12FXy1al6eSJJVOZe39AB-nzoBqzW7cKPlPDQxDvKD9wP_zx2hUDROhAJfMXY
+Message-ID: <CAJZ5v0jMXzka7XgG7eXHOFntbSupHrhYvUsLP_YvDz10HpbMcQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] driver core: Export device_link_flag_is_sync_state_only()
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Hsin-Te Yuan <yuanhsinte@chromium.org>, linux-pm@vger.kernel.org, 
+	Chen-Yu Tsai <wenst@chromium.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 11, 2025 at 1:21=E2=80=AFPM Pin-yen Lin <treapking@chromium.org=
+> wrote:
+>
+> Export device_link_flag_is_sync_state_only() for future patches.
+>
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+>
+> ---
+>
+> Changes in v2:
+> - New in v2
+>
+>  drivers/base/core.c    | 3 ++-
+>  include/linux/device.h | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index d22d6b23e758..cc6af9b0d59d 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -287,10 +287,11 @@ static bool device_is_ancestor(struct device *dev, =
+struct device *target)
+>  #define DL_MARKER_FLAGS                (DL_FLAG_INFERRED | \
+>                                  DL_FLAG_CYCLE | \
+>                                  DL_FLAG_MANAGED)
+> -static inline bool device_link_flag_is_sync_state_only(u32 flags)
+> +bool device_link_flag_is_sync_state_only(u32 flags)
+>  {
+>         return (flags & ~DL_MARKER_FLAGS) =3D=3D DL_FLAG_SYNC_STATE_ONLY;
+>  }
+> +EXPORT_SYMBOL_GPL(device_link_flag_is_sync_state_only);
 
+As Greg said, this isn't necessary.
 
-Le 11/09/2025 à 11:50, Maxime Ripard a écrit :
-> On Thu, Sep 11, 2025 at 10:51:06AM +0200, Miguel Gazquez wrote:
->>
->>
->> Le 10/09/2025 à 04:28, Dmitry Baryshkov a écrit :
->>> On Tue, Sep 09, 2025 at 06:16:43PM +0200, Miguel Gazquez wrote:
->>>> From: Aradhya Bhatia <a-bhatia1@ti.com>
->>>>
->>>> Add support for DRM connector and make the driver support the older
->>>> format of attaching connectors onto the encoder->bridge->connector
->>>> chain.
->>>> This makes the driver compatible with display controller that only
->>>> supports the old format.
->>>>
->>>> [Miguel Gazquez: Rebased + made driver work with or without
->>>> DRM_BRIDGE_ATTACH_NO_CONNECTOR]
->>>
->>> What is the use case for not using DRM_BRIDGE_ATTACH_NO_CONNECTOR?
->>
->> Some display controller drivers (like the tilcdc) call drm_bridge_attach
->> without DRM_BRIDGE_ATTACH_NO_CONNECTOR, so the bridge must support both with
->> and without DRM_BRIDGE_ATTACH_NO_CONNECTOR to be compatible with all display
->> controllers.
-> 
-> I'd rather convert tilcdc to use DRM_BRIDGE_ATTACH_NO_CONNECTOR then.
+>
+>  /**
+>   * device_is_dependent - Check if one device depends on another one
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 0470d19da7f2..e27d0bf7c43d 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -1197,6 +1197,7 @@ const char *dev_driver_string(const struct device *=
+dev);
+>  struct device_link *device_link_add(struct device *consumer,
+>                                     struct device *supplier, u32 flags);
+>  void device_link_del(struct device_link *link);
+> +bool device_link_flag_is_sync_state_only(u32 flags);
 
-The problem is that doing that break devicetrees using the tilcdc and a 
-bridge who doesn't support DRM_BRIDGE_ATTACH_NO_CONNECTOR (there are 
-multiple bridges that don't support DRM_BRIDGE_ATTACH_NO_CONNECTOR), and 
-if my understanding is correct breaking devicetrees is not allowed.
+No, you only need it in drivers/base/base.h
 
-> 
-> Maxime
-
--- 
-Miguel Gazquez, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+>  void device_link_remove(void *consumer, struct device *supplier);
+>  void device_links_supplier_sync_state_pause(void);
+>  void device_links_supplier_sync_state_resume(void);
+> --
 
