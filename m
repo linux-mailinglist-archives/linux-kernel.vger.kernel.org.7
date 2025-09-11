@@ -1,137 +1,192 @@
-Return-Path: <linux-kernel+bounces-812477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCDCB538A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:04:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C309B538AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67048188500A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:04:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CC7D16508B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86FC35A2B3;
-	Thu, 11 Sep 2025 16:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0F2353366;
+	Thu, 11 Sep 2025 16:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PlwUJn2t"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GTl8MfBr"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFFB3570AA;
-	Thu, 11 Sep 2025 16:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEB2322DB5;
+	Thu, 11 Sep 2025 16:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757606622; cv=none; b=eukq72YuUDEXOYL+3wc5jH4V1ZAQ/i6QRp/5N/0863TZcafXzfAkMvrh3tETu2gkOoBOGgBcw+CH278dfkTUSNbUi/Q16LknYAPIanBSzgKHxnq6CZ/r1zxZHatRiTPZPmioDjkoGfVkwQCmevGkkyh03YtLTLljWPJx5sa7Jl0=
+	t=1757606695; cv=none; b=BvJGbSaUMetY+IUsqsd1Rnt/eHGZvNQTr+laDbMoORyqdiM/kghToIiYVpZYp+ifzs/wDSdrhJB2FGR/J/3It/QQ31+e2eFNO027/6MlQiHZ5nKB7z23uR09M6av45/6FrgzwTIW9IE1Uj2pCz/aEuFVsgKWTCc8NpIG0uLv+WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757606622; c=relaxed/simple;
-	bh=ad1+GlOebaA4Dc7BMXCco+gstM8+RUWWlpqN5ZlppNQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YGQgIzuY7elsRQUI6ibptJ47BfarPkq020awTto3W9nBM87ejn5ScQR90Ii94f0t8TVwLMOWPmqFuKit0JDSMVi3SFxhD+eopzhAl3zSgVS0i2IMfYT77gbXNDILJU2fHkloWLYaM5wUn3rQvgaXa8Mt67soBogESFxP1HKmiWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PlwUJn2t; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dd7b15a64so8037465e9.0;
-        Thu, 11 Sep 2025 09:03:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757606619; x=1758211419; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kV+vM5AtMDqiziiosp5lKYMmFySjFk/a9glOkvxYm9c=;
-        b=PlwUJn2tWhi/A9iRsILp8PW67z6MYhhtFtJNKZssdAdcnZqzya9T+tnhrBN2dYaOqa
-         zSIuk5Pwbkt3WOcQH/St9i2GGIlgdBfkCtwB/6pyIRPr6U2Bh8HLnlEBhIAVfSwfRZOB
-         qSV1bHwms1p6ydvzVlZksaPdvdBFZCzgDGGRa9JlDoqDVOa08yX2kDRXo3hdSP2wdpy+
-         4DXBg98qji+BShDhFd4cq5G0++f61ovBNB03uFnd6k6Hmbcyr/Dxk7RkkFLYn+h9goFS
-         eOpVW29piHuClLsuinWEwPKdMIkUXHQ7A5nn6QVixBqh6Qki+XctnW8tCmpvFo2u1gwH
-         mm9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757606619; x=1758211419;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kV+vM5AtMDqiziiosp5lKYMmFySjFk/a9glOkvxYm9c=;
-        b=qhwKPtxZrBu26lMrX/ot2L4mte4UkXApxn4Yx+0471S6i2B6hbGbohPNAypLN5pYj2
-         UDXlP17at9lkKVfIvjwuQWgAVJI3i8AGXrobdOpTVsjr3HtVRqOPVzNK7r6chbKhWXXX
-         Mi3+Qy5wtyeBAmI46e5+HB3NUfTjszztCx5ukc+rgyUBJub03DbVDeZN4tnMF/+WKJ7X
-         EMAjkCjuZm1JWLSaWWXVag5S7rfUJ+lsAerB2QyZB8d+jQAvNv2NTqkAkJMb1FuLnP5U
-         pE3/jcKmpBUpX/z9WKQ4fwnVjE//cYd5NLGngAbwschDfa5gfkMCe5Wv3g4pYhR/0P3I
-         mgVg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5pBBm2jrcPreOu/urSNx/nAGxNKLGedpYH+m00N76uAEA2ORY8aAdvqJCL6hPsht6/ruSTbm6DyAq@vger.kernel.org, AJvYcCU7PxC/0jEdRZ4I+uKdAL1eVCUatrL99voaWOWNrRTgds1aXEEhhV5WkwSt3JcACRqd+Ya0C3fJrgQ+5Jg=@vger.kernel.org, AJvYcCUNgXFwBg5zPmLdkogE4H0qG89AMlvp2E3Qpqq3KyEjD48l0fydz2CN2/2dESdtxHVkyrj8d7tMvLKq3hUc@vger.kernel.org, AJvYcCUoy7mmWvwi1zr+r7vSHEKP7K3wjnZ9x6arfDNPMHvmjq8CVq+0bi3mKEOe7KJ2pRG+fzBSM/UU0yc3@vger.kernel.org, AJvYcCVubqL2pPpdOGdpbYhRJRGY7B0v/bUgGfqudznfjOJg7DObj7x80Nea/7+GyjRjew1MSzp5xSIjcQK/R/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbaYu8YOG/X0zRSsyQAgekXV+/dvQqCAKGA1oe6cHd/VFRADLY
-	pH6Kr5RmtlkvlDfJDRTgE0WE5/cp7gp9+557yvDikBExOlB/TZFUjYkM
-X-Gm-Gg: ASbGncvzxIJRemoOHpzwVoDZ+iCUo34rlUA4o5cysD3BGpJoXRuGelqlxbJ6svg+zOg
-	tvg9LcegXuDyUWZM/rRRLmjztR+nDwWlHydcru6bxpLJT77oIm6hwWoXKisl0Eikru40urAP5ly
-	AHL4T/mjkpahil6nNxcNs/0+J4XCOBqY1sXcNybZoazrAvpWK/ut0bIhOtIr2pRwVWx4hcFlUel
-	lyPhkSTRi2l/l465mv3toRushBK6QBUI5MfYzv5eXs4/pWXDfTuNNsx9fn1N2l+cV99fUGbbEy2
-	rvrJ5dnFiAPm2HxHSvlQdK6v+Z1YLAomz5e39FZcd+Lw+48BhUDJawhWkAriQGwSnWmqgLGdMWY
-	GA/oqzaxsYf0jHF0TwU712wEilhikX8QriRjspidEoJxkhdJD9zcl4SkkFw6rnpeQtrGMvwzkFw
-	9UfiCCd6exMhokdA==
-X-Google-Smtp-Source: AGHT+IFkmvpn+ZMkR/ME/h210TOWfj/zRgJxKTOHh3DWlG10Yj3oOfPv3c1/HhofEdM287nETYtnIw==
-X-Received: by 2002:a05:600c:5d1:b0:45d:d86b:b386 with SMTP id 5b1f17b1804b1-45dfd5eec3bmr25128185e9.14.1757606618353;
-        Thu, 11 Sep 2025 09:03:38 -0700 (PDT)
-Received: from localhost (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e017c0643sm30454515e9.23.2025.09.11.09.03.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 09:03:37 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: (subset) [PATCH v2 00/23] tegra-video: add CSI support for Tegra20 and Tegra30
-Date: Thu, 11 Sep 2025 18:03:30 +0200
-Message-ID: <175760648464.2794963.6510932759569440897.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250906135345.241229-1-clamor95@gmail.com>
-References: <20250906135345.241229-1-clamor95@gmail.com>
+	s=arc-20240116; t=1757606695; c=relaxed/simple;
+	bh=Rg1cLGPHrDGi6eu2u7u9y4lqNZzrSGrthed4Rc2DdIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=syjPuuZjKHYDBYJqR90ZbT2NAUxIimA/9Gh8PBh3fxwDXEDoMfmVNmce4jKtsON7qE/i+/sUykhoOt+SrPMUV18ZcoM3U+Vyr0Cbiro7ARqXRcD0EfpV8hX/luVsaqVN92bIvdNSIw2lnPDqykem851ti5aXfgKPXZ8wZl6NrKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GTl8MfBr; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58BG44O7782625;
+	Thu, 11 Sep 2025 11:04:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757606644;
+	bh=gnk++fDRlR1tET7Jo2SrqfiscV2zrd53RgS0QDeJAgk=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=GTl8MfBrW6VXw5f/iRgISeTDyxOovQJpbLknnUFJfl40SYWBPzNyRYJLdnlLjW1+D
+	 y3BiEOZbrimiQK8QcLWrIxlvMCLhyoA1aZ0d937U2Jpcr1gv2oklFP3XR6fNF3+3bo
+	 5IXNS0xWD9GjKcjNYvVfbWJAIboG2M029V0Xr+kE=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58BG43ZG1170996
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 11 Sep 2025 11:04:03 -0500
+Received: from DLEE205.ent.ti.com (157.170.170.85) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 11
+ Sep 2025 11:04:03 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE205.ent.ti.com
+ (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 11 Sep 2025 11:04:03 -0500
+Received: from [128.247.81.0] (ula0226330.dhcp.ti.com [128.247.81.0] (may be forged))
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58BG43nf2080997;
+	Thu, 11 Sep 2025 11:04:03 -0500
+Message-ID: <8a20160e-1528-4d0e-9347-0561fc3426b4@ti.com>
+Date: Thu, 11 Sep 2025 11:04:02 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 0/7] Add RPMSG Ethernet Driver
+To: MD Danish Anwar <danishanwar@ti.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Nishanth Menon
+	<nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo
+	<kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        Mengyuan Lou <mengyuanlou@net-swift.com>,
+        Lei Wei
+	<quic_leiwei@quicinc.com>, Xin Guo <guoxin09@huawei.com>,
+        Michael Ellerman
+	<mpe@ellerman.id.au>, Fan Gong <gongfan1@huawei.com>,
+        Lorenzo Bianconi
+	<lorenzo@kernel.org>,
+        Parthiban Veerasooran
+	<Parthiban.Veerasooran@microchip.com>,
+        Lukas Bulwahn
+	<lukas.bulwahn@redhat.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+References: <20250911113612.2598643-1-danishanwar@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250911113612.2598643-1-danishanwar@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Thierry Reding <treding@nvidia.com>
-
-
-On Sat, 06 Sep 2025 16:53:21 +0300, Svyatoslav Ryhel wrote:
-> Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
-> with a set of changes required for that.
+On 9/11/25 6:36 AM, MD Danish Anwar wrote:
+> This patch series introduces the RPMSG Ethernet driver, which provides a
+> virtual Ethernet interface for communication between a host processor and
+> a remote processor using the RPMSG framework. The driver enables
+> Ethernet-like packet transmission and reception over shared memory,
+> facilitating inter-core communication in systems with heterogeneous
+> processors.
 > 
 
-Applied, thanks!
+This is neat and all but I have to ask: why? What does this provide
+that couldn't be done with normal RPMSG messages? Or from a userspace
+TAP/TUN driver on top of RPMSG?
 
-[12/23] dt-bindings: display: tegra: move avdd-dsi-csi-supply from VI to CSI
-        (no commit info)
+This also feels like some odd layering, as RPMSG sits on virtio, and
+we have virtio-net, couldn't we have a firmware just expose that (or
+would the firmware be vhost-net..)?
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+Andrew
+
+> Key features of this driver:
+> 
+> 1. Virtual Ethernet interface using RPMSG framework
+> 2. Shared memory-based packet transmission and reception
+> 3. Support for multicast address filtering
+> 4. Dynamic MAC address assignment
+> 5. NAPI support for efficient packet processing
+> 6. State machine for managing interface states
+> 
+> This driver is designed to be generic and vendor-agnostic. Vendors can
+> develop firmware for the remote processor to make it compatible with this
+> driver by adhering to the shared memory layout and communication protocol
+> described in the documentation.
+> 
+> This patch series has been tested on a TI AM64xx platform with a
+> compatible remote processor firmware. Feedback and suggestions for
+> improvement are welcome.
+> 
+> Changes from v3 to v4:
+> - Addressed comments from Parthiban Veerasooran regarding return values in
+>    patch 4/7
+> - Added "depends on REMOTEPROC" in Kconfig entry for RPMSG_ETH as it uses a
+>    symbol from REMOTEPROC driver.
+> 
+> Changes from v2 to v3:
+> - Removed the binding patches as suggested by Krzysztof Kozlowski <krzk@kernel.org>
+> - Dropped the rpmsg-eth node. The shared memory region is directly added to the
+>    "memory-region" in rproc device.
+> - Added #include <linux/io.h> header for memory mapping operations
+> - Added vendor-specific configuration through rpmsg_eth_data structure
+> - Added shared memory region index support with shm_region_index parameter
+> - Changed RPMSG channel name from generic "shm-eth" to vendor-specific "ti.shm-eth"
+> - Fixed format string warning using %zu instead of %lu for size_t type
+> - Updated Documentation to include shm_region_index
+> - Added MAINTAINERS entry for the driver
+> 
+> v3 https://lore.kernel.org/all/20250908090746.862407-1-danishanwar@ti.com/
+> v2 https://lore.kernel.org/all/20250902090746.3221225-1-danishanwar@ti.com/
+> v1 https://lore.kernel.org/all/20250723080322.3047826-1-danishanwar@ti.com/
+> 
+> MD Danish Anwar (7):
+>    net: rpmsg-eth: Add Documentation for RPMSG-ETH Driver
+>    net: rpmsg-eth: Add basic rpmsg skeleton
+>    net: rpmsg-eth: Register device as netdev
+>    net: rpmsg-eth: Add netdev ops
+>    net: rpmsg-eth: Add support for multicast filtering
+>    MAINTAINERS: Add entry for RPMSG Ethernet driver
+>    arch: arm64: dts: k3-am64*: Add shared memory region
+> 
+>   .../device_drivers/ethernet/index.rst         |   1 +
+>   .../device_drivers/ethernet/rpmsg_eth.rst     | 424 ++++++++++++
+>   MAINTAINERS                                   |   6 +
+>   arch/arm64/boot/dts/ti/k3-am642-evm.dts       |  11 +-
+>   drivers/net/ethernet/Kconfig                  |  11 +
+>   drivers/net/ethernet/Makefile                 |   1 +
+>   drivers/net/ethernet/rpmsg_eth.c              | 653 ++++++++++++++++++
+>   drivers/net/ethernet/rpmsg_eth.h              | 294 ++++++++
+>   8 files changed, 1399 insertions(+), 2 deletions(-)
+>   create mode 100644 Documentation/networking/device_drivers/ethernet/rpmsg_eth.rst
+>   create mode 100644 drivers/net/ethernet/rpmsg_eth.c
+>   create mode 100644 drivers/net/ethernet/rpmsg_eth.h
+> 
+> 
+> base-commit: 1f24a240974589ce42f70502ccb3ff3f5189d69a
+
 
