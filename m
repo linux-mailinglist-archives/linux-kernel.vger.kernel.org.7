@@ -1,154 +1,137 @@
-Return-Path: <linux-kernel+bounces-812178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5313EB53413
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0140CB5341F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EA021C87976
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:43:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2891D18995C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEB133EB1B;
-	Thu, 11 Sep 2025 13:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A68E337694;
+	Thu, 11 Sep 2025 13:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SuxQAa98"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="NsRlRzli"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B50733EB18
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757598046; cv=none; b=Zql7KWxioSusJfY/SwO3jzDBZ8jdacIILw3QxKGjMI6bnnlNrR+dZvTxxcG6agKVj8FUD2r7gSWOAjQ3XhMC2lH1ULRVpN5Ly9YMV6Cm7+fRk0rKhYz0EmgSdBjIfJeIHLatMNyXtzQ6E3F/Mv0k7sV+WF9Vz5PoRyx7z3bVzPQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757598046; c=relaxed/simple;
-	bh=cR+i0j2nFSKam+gq7FWSsr5apx+a/lZwZMhEZIsHfcA=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OlgqE6qo55DsUa617C3UXVMWNS7vxs5WpcjF3K2xyXR56zIVwQvy5PHOK3kE+aVTP3iDvGsPOm4GNb2sJlNpUY60PAUVHCSVgUoVNdaPUqefgLD/JWZtdhnV94WaHtKPObhu0rO+Sq8DM6kJk5G/rHwtoERagnWAoLoTuX+Q6fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SuxQAa98; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45de6490e74so7344605e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:40:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757598043; x=1758202843; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HxXWRqnFqGYPd1tnhNthT3WKgGhl9VmDbyQfQ/+snwM=;
-        b=SuxQAa98uT2YzbAANMDIZgzMnMCwLVaPwBorQtAJ78TaFoSm9A+mQBTfz4UaT1YVGM
-         hVCzl0sBQHjmOSqH9D7dSO37jV0QmrDSv1MsN+WIf3ZN0F8mLBngYU7dWVBkKDPiYddw
-         HoenTvB6+lfZge9JbhdCMMc3Nun9SLoVOZM5sEBhnLpB27a/Ayt9FI046y5bDY7dIq/+
-         4WO+nEdPW8OV1mLQDw3DlSkgxeRD+KuVYlX/IpsVFk7GdyiGkCwk2KqF/K1uK43RBX4J
-         LA6phTA10kNDC+JAjDFuqJBqkReBQyD8TsCvj0nnoJmhBV2V+mh87//oJIgarJxWK/u5
-         husQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757598043; x=1758202843;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HxXWRqnFqGYPd1tnhNthT3WKgGhl9VmDbyQfQ/+snwM=;
-        b=ZmLDOZ5A5EeotrrpPr9eyNfU/uvO1FgdCdxQgf7QjkC0JniXdozFBQeCTEuWkUJVeK
-         bltu+evOtAb9+XTzvcjshNO4E8x7zSRqaN3TZq1l701kSdBCoPjnvGONJJerBwXATty1
-         vt54gPv1RBBgO7HaB11C54sn2ioplMNzVFpuNhVtUqM6GkTg5aaslCarlnhS2BrDZc70
-         ZR3yR3ju3TrRm2n8qaX7oRHrlWoO17hPv5qUG81agZWOfjb8pJUUhaYgiN7xEPi5vZoi
-         wPIwpTxhGg0spJ0ko90Nlr70r0+gRCJ8vccpCQowgzd7e6ypTtloake2+PrMW2qAf0bh
-         VmhA==
-X-Forwarded-Encrypted: i=1; AJvYcCV47R4vfrRGYDaV/PRGuUUJf+qZpr6wAaJF2swjoKXQELsXiMLlTI0H6Oc237YFTiRcy+2VPu4o0rE9888=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRVmWb2q+34hZtvX+bo/YhVDOm1HB8QJhsZEkiItAAbLiG+GQ5
-	j6MR0xy1d6deXe2rhBBVty4yBhnuo1tofTT29FyBj0VVAVxQpZerWpp6
-X-Gm-Gg: ASbGnct91Mc9nxBdhvU5yUmOeazH7+IJB2MTZshZ5p/StpANS1SbjjqO6N35HR58QVH
-	FqUs4d0IIcbz1/mZY3VhZ7kQfZrKJqOmx4XeOXFsP4throWPXhUnl+USV0eTkeAabL0kBG5eTZo
-	v+H/m4qne+wDmL0i9NJ5mWxL9aJLrOAoTVf87Z9VIZdI5KxGQQ4N3OZfCn7Rtb+AwNJtDcn1vu0
-	I3gPIFk15s5oUMJkXBSqQggC7sd8k6i/x96Uu0A9uPSVVkVa0cJCdVrOi8W3tmrnsgHuZAoSL1E
-	yvBPbjsSe7XPCS2UPEpPNwrB/6L8kKiJf41H2i0lagd7nlX3gC3K8Wv0Sxaa1MEC1fQwBLmiA5g
-	yzFw1sm58qHIZshOOmzx+ggQAP3KX+Cy9JHgO4MdBCnpfv7ZdS94txjSCqGfMEdugH+7I/h+60O
-	zhjKoUpw==
-X-Google-Smtp-Source: AGHT+IG2KpWHVxRYHBojS5qhqOAZS3ZPHK9ADJy0kEMpbU3Dfi9X/AHkq0y0EQaVaEvtw7HYElj84g==
-X-Received: by 2002:a05:600c:1d16:b0:45d:dd94:7c09 with SMTP id 5b1f17b1804b1-45ddde955c3mr180709415e9.1.1757598043155;
-        Thu, 11 Sep 2025 06:40:43 -0700 (PDT)
-Received: from Ansuel-XPS24 (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45e037d741asm23413475e9.23.2025.09.11.06.40.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 06:40:41 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>,
-	Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Simon Horman <horms@kernel.org>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [net-next PATCH v17 8/8] MAINTAINERS: add myself as maintainer for AN8855
-Date: Thu, 11 Sep 2025 15:39:23 +0200
-Message-ID: <20250911133929.30874-9-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250911133929.30874-1-ansuelsmth@gmail.com>
-References: <20250911133929.30874-1-ansuelsmth@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD42C32CF87;
+	Thu, 11 Sep 2025 13:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757598125; cv=pass; b=O7S7Ls6tDoSkl/0IzZOUjn5TDtk4mWkVnOx/Pxh/V8ieknVDFpEdoIqBKyimAhTheEJAbliKFRkR70kqvsh+gqVqz19/Cb/o3gasNqFFW35ZaLVjU+PT+ZxH9QFMh95eMkvCNrVWDBR7EMGrFny3yCImNCf/tz3XlQ3i3H5W+5c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757598125; c=relaxed/simple;
+	bh=+j7wH6J9TwHPLevUCUsfv49hVVIfmnnJ50vL4o03eGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g0NQbJJa1PT1tE3smNzd6Aj6LIXqEGnI6zLKCb3QguR6IkOinaKLdQsgYv4M3GNOfIvJGWzIDj5A+C5yzlaeNkM1VcGDZFyONDqSbkoG8MXGGvX9n6Lq1YCtEHVHggIV6TRMuBaXW21ckdvvDEqZn9gd+7QAoPKKC9ch+qO96RI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=NsRlRzli; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757598055; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Wd4WA6Er9cB9s6Hkt5aT6OBU5Qo5bfiy5l1P+Xa+5VFE3pcj0EYC1irYclVw44xfA/LGEE1P3H5NoyDRj8g5aYL5DO6LFfOSdTi8Xo68/Y7PYyTuxxfNdOv2I+XK48iy/vJy4GjAsgOcqTkVjb0ACFfdnqJgaw2FRauP6e/Vqb0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757598055; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=akxgWnU52qi2aW5V4nycRXC1MA1p0XXtUX8b0SkdlHI=; 
+	b=LfUX1aQVAVFdHj8+y0//AJhf1fsHBn+VlpRO4LG22OXZv6/dMLXEYKunDdZoe364LrK8PnREgYhBB/fWBvWDinro5SWb85l1HU8gYCD9V+RoB8cvwAKdJEOq+hDpLHGB00DB6JJkrLd/THhPkaxSJdT3eQR6r8MibvY/ip2bat8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757598055;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=akxgWnU52qi2aW5V4nycRXC1MA1p0XXtUX8b0SkdlHI=;
+	b=NsRlRzlifXvTvvkDhLOg2YrB9VbwSR8DvKqJVdp8u4HzCFR5KM3LbVsfzq9vFNLv
+	HWBTS+duRr9SPP50E7s5ev8uzaDXlk5sQhS7q0jMxjng1FJa7tsWMU7IDEw8Cg44Nka
+	20rr30YjpaoW+uxdoNzBf0ZcDiNq8aysDR0/skEo=
+Received: by mx.zohomail.com with SMTPS id 1757598052583569.5590919976829;
+	Thu, 11 Sep 2025 06:40:52 -0700 (PDT)
+Message-ID: <c473c6ff-856a-4950-9c75-7bace41886ca@collabora.com>
+Date: Thu, 11 Sep 2025 10:40:36 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 03/14] dt-bindings: arm: mediatek: mmsys: Add
+ assigned-clocks/rates properties
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+ andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
+ broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
+ conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
+ edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
+ jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
+ krzk+dt@kernel.org, kuba@kernel.org,
+ kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
+ linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
+ maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
+ mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
+ p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
+ sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
+ tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-4-ariel.dalessandro@collabora.com>
+ <20250821-electric-kestrel-of-awe-cb89dc@kuoka>
+ <1cf0b296-adaa-4c80-864c-9b78f09cd3e3@collabora.com>
+ <898bf39e-1b34-40e9-bdfa-ec4eca1c3f7d@kernel.org>
+Content-Language: en-US
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+In-Reply-To: <898bf39e-1b34-40e9-bdfa-ec4eca1c3f7d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Add myself as maintainer for AN8855 DSA driver and all the related
-subdriver (mfd, mdio, phy, nvmem)
+Krzysztof,
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- MAINTAINERS | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+On 9/9/25 3:29 AM, Krzysztof Kozlowski wrote:
+> On 08/09/2025 21:19, Ariel D'Alessandro wrote:
+>> Krzysztof,
+>>
+>> On 8/21/25 3:43 AM, Krzysztof Kozlowski wrote:
+>>> On Wed, Aug 20, 2025 at 02:12:51PM -0300, Ariel D'Alessandro wrote:
+>>>> Current, the DT bindings for MediaTek mmsys controller is missing the
+>>>> assigned-clocks and assigned-clocks-rates properties. Add these and
+>>>
+>>> No, they do not miss them. I don't understand why you are adding these.
+>>
+>> The reason I added these is due to the following check error:
+>>
+>> $ make -j$(nproc) CHECK_DTBS=y mediatek/mt8173-elm.dtb
+>>     DTC [C] arch/arm64/boot/dts/mediatek/mt8173-elm.dtb
+>> [...]
+>> arch/arm64/boot/dts/mediatek/mt8173-elm.dtb: syscon@14000000
+>> (mediatek,mt8173-mmsys): 'assigned-clock-rates', 'assigned-clocks' do
+>> not match any of the regexes: '^pinctrl-[0-9]+$'
+>> 	from schema $id:
+>> http://devicetree.org/schemas/arm/mediatek/mediatek,mmsys.yaml#
+> 
+> This is looking like missing clocks or other unevaluated property by the
+> binding.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b81595e9ea95..818fe884fb0a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -740,6 +740,22 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/net/airoha,en7581-eth.yaml
- F:	drivers/net/ethernet/airoha/
- 
-+AIROHA AN8855 DSA DRIVER
-+M:	Christian Marangi <ansuelsmth@gmail.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
-+L:	netdev@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/mfd/airoha,an8855.yaml
-+F:	Documentation/devicetree/bindings/net/airoha,an8855-phy.yaml
-+F:	Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
-+F:	Documentation/devicetree/bindings/nvmem/airoha,an8855-efuse.yaml
-+F:	drivers/mfd/airoha-an8855.c
-+F:	drivers/net/dsa/an8855.c
-+F:	drivers/net/dsa/an8855.h
-+F:	drivers/net/phy/air_an8855.c
-+F:	drivers/nvmem/an8855-efuse.c
-+
- AIROHA PCIE PHY DRIVER
- M:	Lorenzo Bianconi <lorenzo@kernel.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+Agreed, the rate assignment has to be moved in other DT nodes, it's not 
+a binding issue.
+
+Thanks,
+
 -- 
-2.51.0
+Ariel D'Alessandro
+Software Engineer
+
+Collabora Ltd.
+Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
+Registered in England & Wales, no. 5513718
 
 
