@@ -1,264 +1,136 @@
-Return-Path: <linux-kernel+bounces-812663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F91B53B29
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:14:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CC0B53B3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06ECAA54CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:14:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297215A008E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB603680BC;
-	Thu, 11 Sep 2025 18:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0805A369983;
+	Thu, 11 Sep 2025 18:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ROmY7FUr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHF/RmRF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F4D368083
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E02435CEB6;
+	Thu, 11 Sep 2025 18:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757614454; cv=none; b=Pe5jPjOkxD0XruqJkqFN7L5CjYngFGvEUW/JB4hj/nvAorozTKRha3a6T3wJ6sjRZEj7bM9dsrVJkaNW6hW/V1AYv7LDvHeNYXiRIm7p2Q+Z4FINSUq9IudvN3LOAfRsIkbEOTtDZySWmbFCE2IOtHRo5RY7PrY5AAu0VeLLTd4=
+	t=1757614540; cv=none; b=Z5V4Z6JICv1+ZZexwAJSjUwvaekCaBAxLaBFLJpqtDw3EXtj9KCKgpOMDi7biZBbvRsLPaw1MBNbk6RbxGcOiHPJR/e8lzGAt8Yvo0uoOXUygCZM5EISby+U3h6knCtvDUPZBo9no+5ECUCX5AfMge086zC4NszEMTR2JjKWETg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757614454; c=relaxed/simple;
-	bh=8acp39icuP1gsgYnq3IwhGCg1C0+PwnA3PnkjiOutjc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tr8ENR8/iKmCNzIYDBFEUmwuFNWZiFvqWTt54lmwEigd5mIn9QUgHy60QsmNZrC64yMWnlf13QEUv30N9HtWh8k+J1W9zGiGl8T6jr4IfUo6RUH6upjQBR0xRbuT0bB7EobP+1AqDQW4IPnhDNsUBv2o4DNoB02DDGOFAWWJcZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ROmY7FUr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757614452;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fO/wiS6u6wjvvJi4t2wKktGS6aYq1CiRm5gJANXSAXc=;
-	b=ROmY7FUr4RFL/ZaJdrsNgxHvb34/pAbXIlb5WxbBwVKDvroNMtrDVkA7rzCQcYhEqSXRQA
-	0VFaqRk3jkv/sWR13uf/Zx5Uy6ZZXnT/pLJX/OgNKiWbPBcIoPslsk8bRSG1mp0j3ZqF+8
-	6b5EBJooQIW0NgT5Tk70lsJr6Axak8M=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-656-74Mk_jPZP8Kpze7bEpIi7w-1; Thu, 11 Sep 2025 14:14:10 -0400
-X-MC-Unique: 74Mk_jPZP8Kpze7bEpIi7w-1
-X-Mimecast-MFC-AGG-ID: 74Mk_jPZP8Kpze7bEpIi7w_1757614449
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45de13167aaso10292785e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:14:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757614449; x=1758219249;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fO/wiS6u6wjvvJi4t2wKktGS6aYq1CiRm5gJANXSAXc=;
-        b=lEz9nVONY4E8Ax+wqYpnV0EQd48aFavfeH/diCzctWEGUuHYKOWiicIpaeaZGxaAgc
-         5JtQJd3gDff/DC+ckjNMSTCnq9JPZ8LFNBS7O15uz88M7z81oMeDLk7U1zT6oUAzBIYN
-         smVVWvEclO9fwSo6FqVBTRF8WLJ6VhYXL4RmEj1ArspjikD8gBkACx/YSIEC38M8mJbf
-         OaT4KQQdeF1IeMxKOIQgtCjMx3kR+jtKIpubwMMRNewsNkHiqTe3QaC/7qx34KnkIGdb
-         OpQ1OjT6EwzfWcSkxer4v1atND+XSdLgEHWYi9vqe4+0lBGWwXyQuthZgUZnoJ/HNlLQ
-         uCJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDkrCrjghr4IHEJLB2VzNimq5HdboIWUISHenq/KN+aZfLS8iNg6AV0jZjHHL0c+Scnm2zxWbnFfVXIC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8T4Lq0c0aYq+wPRWnWrMtZTLobCUraSXgaCM8SFl/IE2xP5zb
-	zmR6uPl3+tgKwXnerrEOnpyNAX7n64ER5TNUPK24njJiok/Kp7C9ndnvQ7RH8TswbJUfQtfPmVq
-	fhxxuar4oCOxHKoj/flWPabk6L75XS+1cMbbrAVDiLQvAmq02wiEsrSofkjuj46K2mw==
-X-Gm-Gg: ASbGncu0QslVGHoUuLDdkYuQdWteciX8zJUwl6sOHYSOYQPS0GM5E6cis/7ds5HYodJ
-	ZMsVRkC8BIsJh0E7skUFXT+5hDc1mly64l8m5W2IskdSATfvoAMR+VQF0P5T6IgsUEPwlnpOD2g
-	Hfu+I5WGwQtR16hgD357F9MNgOZeyBzDmiZuDaWbiHGTfbMgDv85BK2CguzKnND8zIzpjelU4Iq
-	837OL1xpXlhtmE7DwHbuuP8c4JWNf/W0m+NvJVem4haLo01GtTsSITsjH6GyNa/6RnaBGAX2Gxf
-	/ldspHRztfBicpuwiNGZeH0AdZYg6uo2aywSTtatO7tKWZ7yQVO3KC8+DFKU44pECSVSwGe5nTy
-	HRc8gi0WHiFIhxksR50nPBQdYRSKOQhLjwJDwLphPpbPLTvmbt8Oe0K8c3+J74QD3IZQ=
-X-Received: by 2002:a05:600c:1387:b0:45b:88d6:8ddb with SMTP id 5b1f17b1804b1-45f211fc2dbmr3761345e9.37.1757614449384;
-        Thu, 11 Sep 2025 11:14:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHYPRnitXgQzHDt7U0vwEWEhdUB9NK1hJir7NlpKTdRzaPw5ybQNZDXnkL32l5S2EQ4JRmc7Q==
-X-Received: by 2002:a05:600c:1387:b0:45b:88d6:8ddb with SMTP id 5b1f17b1804b1-45f211fc2dbmr3760825e9.37.1757614448886;
-        Thu, 11 Sep 2025 11:14:08 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f42:b000:db8b:7655:f60f:812b? (p200300d82f42b000db8b7655f60f812b.dip0.t-ipconnect.de. [2003:d8:2f42:b000:db8b:7655:f60f:812b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e016b5cbcsm35354055e9.11.2025.09.11.11.14.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 11:14:08 -0700 (PDT)
-Message-ID: <4aa28016-5678-4c66-8104-8dcc3fa2f5ce@redhat.com>
-Date: Thu, 11 Sep 2025 20:14:05 +0200
+	s=arc-20240116; t=1757614540; c=relaxed/simple;
+	bh=a2Lob0n3/+GCVE61Fr7ySrkcY2m5OqzFFOAuvId4MiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRii2xACpnN8jzDBNexlT2L0HV4vk99Ars4EEH38hOPExMZNr1JglMnlq7KGQ6Fxz3cEOts/Cjnv5AxfE3faRTKTMWkXfWtrqXV8i8UIS6fy3PK0P80aRB0m990DspSeFMirh4ldMrE/fL1W/wyShP1Po+NhrpQHrPs/6cTKOVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHF/RmRF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CC65C4CEF0;
+	Thu, 11 Sep 2025 18:15:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757614540;
+	bh=a2Lob0n3/+GCVE61Fr7ySrkcY2m5OqzFFOAuvId4MiE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YHF/RmRFumOOHkEnaB3xMYiqo0WcAPOUsR5NQ2XhQl2SJLAVBfc3/wjdHBHX8Wmbe
+	 KQVdxrNGKmWY3qjbhOJzzbYoQ2Q5sjebQoSSnx7vv4VBXx0lAc1fDEKsY760hrlSnB
+	 cw0Cc6hS1Ykvt7RXoXZHMCn8MkIP3zzIZQxrLMkYrj7Yqnd5FYs9DRrBQBYLsM9/i5
+	 Ttq9vEAAXQhJPUxn4tJq3w2kSNphEY2nNwbwJlSRhVN8rrpjajtaojIRtId1AT7kxM
+	 nrIuRYtF5Z6Y8vUInleEY8memGNegfHCnpeDFpjJm5uAL8eDpW7AqF7lVG6duhuZ0j
+	 ioWusQwGr+YtA==
+Date: Thu, 11 Sep 2025 11:14:18 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+Cc: akpm@linux-foundation.org, axboe@kernel.dk, ceph-devel@vger.kernel.org,
+	hch@lst.de, home7438072@gmail.com, idryomov@gmail.com,
+	jaegeuk@kernel.org, kbusch@kernel.org,
+	linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, sagi@grimberg.me, tytso@mit.edu,
+	visitorckw@gmail.com, xiubli@redhat.com
+Subject: Re: [PATCH v2 1/5] lib/base64: Replace strchr() for better
+ performance
+Message-ID: <20250911181418.GB1376@sol>
+References: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
+ <20250911073204.574742-1-409411716@gms.tku.edu.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
-To: Kevin Brodsky <kevin.brodsky@arm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
- Mark Rutland <Mark.Rutland@arm.com>
-References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
- <20250908073931.4159362-3-kevin.brodsky@arm.com>
- <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
- <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
- <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
- <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
- <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
- <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
- <29383ee2-d6d6-4435-9052-d75a263a5c45@redhat.com>
- <9de08024-adfc-421b-8799-62653468cf63@arm.com>
- <ef343405-c394-4763-a79f-21381f217b6c@redhat.com>
- <4b4971fd-0445-4d86-8f3a-6ba3d68d15b7@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <4b4971fd-0445-4d86-8f3a-6ba3d68d15b7@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911073204.574742-1-409411716@gms.tku.edu.tw>
 
->>> On the other hand, with a pagefault_disabled-like approach, there is no
->>> way to instruct call {3} to fully exit lazy_mmu regardless of the
->>> nesting level.
->>
->> Sure there is, with a better API. See below. :)
+On Thu, Sep 11, 2025 at 03:32:04PM +0800, Guan-Chun Wu wrote:
+> From: Kuan-Wei Chiu <visitorckw@gmail.com>
 > 
-> I meant while keeping the existing shape of the API but yes fair enough!
-
-Time to do it properly I guess :)
-
-[...]
-
->> Assume we store in the task_struct
->>
->> uint8_t lazy_mmu_enabled_count;
->> bool lazy_mmu_paused;
+> The base64 decoder previously relied on strchr() to locate each
+> character in the base64 table. In the worst case, this requires
+> scanning all 64 entries, and even with bitwise tricks or word-sized
+> comparisons, still needs up to 8 checks.
 > 
-> I didn't think of that approach! I can't immediately see any problem
-> with it, assuming we're fine with storing arch-specific context in
-> thread_struct (which seems to be the case as things stand).
-
-Right, just to complete the picture:
-
-a) We will have some CONFIG_ARCH_LAZY_MMU
-
-b) Without that config, all lazy_mmu_*() functions are a nop and no 
-lazy_mmu_state is stored in task_struct
-
-struct lazy_mmu_state {
-	uint8_t enabled_count;
-	bool paused;
-}
-
-c) With that config, common-code lazy_mmu_*() functions implement the 
-updating of the lazy_mmu_state in task_struct and call into arch code
-on the transition from 0->1, 1->0 etc.
-
-Maybe that can be done through exiting 
-arch_enter_lazy_mmu_mode()/arch_leave_lazy_mmu_mode() callbacks, maybe 
-we need more. I feel like
-we might be able to implement that through the existing helpers.
-
+> Introduce a small helper function that maps input characters directly
+> to their position in the base64 table. This reduces the maximum number
+> of comparisons to 5, improving decoding efficiency while keeping the
+> logic straightforward.
 > 
->>
->> We can do things like
->>
->> a) Sanity check that while we are paused that we get no more
->> enable/disable requests
->> b) Sanity check that while we are paused that we get no more pause
->> requests.
+> Benchmarks on x86_64 (Intel Core i7-10700 @ 2.90GHz, averaged
+> over 1000 runs, tested with KUnit):
 > 
-> These are good points - and this is only possible with such global
-> state. (Similarly we can check that the counter never underflows.)
-
-Exactly.
-
-[..]
-
+> Decode:
+>  - 64B input: avg ~1530ns -> ~126ns (~12x faster)
+>  - 1KB input: avg ~27726ns -> ~2003ns (~14x faster)
 > 
-> Overall what you're proposing seems sensible to me, the additional
-> fields in task_struct don't take much space and we can keep the API
-> unchanged in most cases. It is also good to have the option to check
-> that the API is used correctly. I'll reply to the cover letter to let
-> anyone who didn't follow this thread chip in, before I go ahead and try
-> out that new approach.
+> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> ---
+>  lib/base64.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/base64.c b/lib/base64.c
+> index b736a7a43..9416bded2 100644
+> --- a/lib/base64.c
+> +++ b/lib/base64.c
+> @@ -18,6 +18,21 @@
+>  static const char base64_table[65] =
+>  	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+>  
+> +static inline const char *find_chr(const char *base64_table, char ch)
+> +{
+> +	if ('A' <= ch && ch <= 'Z')
+> +		return base64_table + ch - 'A';
+> +	if ('a' <= ch && ch <= 'z')
+> +		return base64_table + 26 + ch - 'a';
+> +	if ('0' <= ch && ch <= '9')
+> +		return base64_table + 26 * 2 + ch - '0';
+> +	if (ch == base64_table[26 * 2 + 10])
+> +		return base64_table + 26 * 2 + 10;
+> +	if (ch == base64_table[26 * 2 + 10 + 1])
+> +		return base64_table + 26 * 2 + 10 + 1;
+> +	return NULL;
+> +}
+> +
+>  /**
+>   * base64_encode() - base64-encode some binary data
+>   * @src: the binary data to encode
+> @@ -78,7 +93,7 @@ int base64_decode(const char *src, int srclen, u8 *dst)
+>  	u8 *bp = dst;
+>  
+>  	for (i = 0; i < srclen; i++) {
+> -		const char *p = strchr(base64_table, src[i]);
+> +		const char *p = find_chr(base64_table, src[i]);
+>  
+>  		if (src[i] == '=') {
+>  			ac = (ac << 6);
 
-And on top of the proposal above we will have some
+But this makes the contents of base64_table no longer be used, except
+for entries 62 and 63.  So this patch doesn't make sense.  Either we
+should actually use base64_table, or we should remove base64_table and
+do the mapping entirely in code.
 
-struct arch_lazy_mmu_state;
-
-define by the architecture (could be an empty struct on most).
-
-We can store that inside "struct lazy_mmu_state;" or if we ever have to, 
-start returning only that from the enable/disable etc. functions.
-
-For now, I'd say just store it in the task struct in the lazy_mmu_state. 
-But we can always adjust later if required.
-
-In the first (this) series we probably don't even have to introduce 
-arch_lazy_mmu_state.
-
--- 
-Cheers
-
-David / dhildenb
-
+- Eric
 
