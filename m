@@ -1,162 +1,122 @@
-Return-Path: <linux-kernel+bounces-812267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC41B5353F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:26:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070D5B53541
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59AC01CC06DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:27:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 174BA3A2B9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAB933A005;
-	Thu, 11 Sep 2025 14:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F9E33CE9D;
+	Thu, 11 Sep 2025 14:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kpzjQl4g"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Retvw+pJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9DF338F27;
-	Thu, 11 Sep 2025 14:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87057338F27;
+	Thu, 11 Sep 2025 14:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757600797; cv=none; b=NzDnpQ7k/HPAxjUM3Yly8XAC3K50V3IzVpAUgxtZThZcGq0KlzLlds2sYyhyVAGLtT7x7epZN/yc7ZD5/53CLxqGNOiPFlQ6N2byOCx6XBAGB70PYwV91AtGN2dM4sADP7CXNbN38nmYmFapvs7fqJwpAdz/atfhXCs4UBAIlhQ=
+	t=1757600803; cv=none; b=nK4dP8yR7tMvwwUEMKtbs/Xu+PdORjpC7xhJMjBszbAo3ySUY7beZTXJKSBfc2MaadZnTliG2JvnZAMBqyGierMWH01mJMCONdYZFe/505dsH7J/Tftg9TsyhHToiGjomuBOMd0wuycOE/9PKSXuAtEILtxI0R0CXm7V1yffX7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757600797; c=relaxed/simple;
-	bh=qReZW+H6OyZz2AFMbvTmZJxvwut6V42yTPOtJKgTkkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dY9vp19RAsuIts1Bt0PQU8YSXJ1D6CcFbHi1OrqOsUDN9FJDEKUNWsxpIivnjWEFPVq1MZyC8kcfvbgODIIUaIEiNEyaVeQQgw/tcEtJ2C78rx/dPJSj6onJwH9+5vZOQ5DyWhQziiM/6O8+xUlU1pTk8svwCAl05bD9tZNav54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kpzjQl4g; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AA8114A4;
-	Thu, 11 Sep 2025 16:25:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757600718;
-	bh=qReZW+H6OyZz2AFMbvTmZJxvwut6V42yTPOtJKgTkkU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kpzjQl4gHzaXfBaGIdp3zuciJs1QF8I/wYVcHwLnl59KOl7jEas+jL5LeJ96wC5Ub
-	 zGuq1AJN7MzcYbfZTRr8d+DxG8OQJKotvXXy/fday67G0eqfN0+IJ1Yxa4Hjt8sAVI
-	 qjKQNZLyubtI9u63SW/VYvSbd4XDTS7yEGqj8nBg=
-Message-ID: <f1e671a3-77af-4ae2-aa6e-bde93aaa54b7@ideasonboard.com>
-Date: Thu, 11 Sep 2025 17:26:28 +0300
+	s=arc-20240116; t=1757600803; c=relaxed/simple;
+	bh=lnRsl96nMI9E4v3DQ/pjk8ucXdErNbdVIuuJ+55bhPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TDD6+vvR8HNsbuaBVd76ZAOgZMW91quZn+SHHQJ6qlFa0xHXrRP9cG62jeuqJo2gW/v1MNCAGsO2XMkXldHKDAfdDMekJDuF0F255eUjrRfkRNEBBWGo/CIcC2/kNsOr+WoPO0JDPhsDJu2BBzzhmzrtcTBZZKVjifyuHWjpKY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Retvw+pJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E94C4CEF0;
+	Thu, 11 Sep 2025 14:26:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757600803;
+	bh=lnRsl96nMI9E4v3DQ/pjk8ucXdErNbdVIuuJ+55bhPs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Retvw+pJ+CrqlqfCe0AVelzQ0n3uvOFUQNqUbhk2Eq6pBTPXg5C5//ERxardEsBBb
+	 50jJEaewYwKSpQLEP7V2sRNSmQuMwUxrK/MkQLu12VMFRm+Wj2tjlY9UFzsmo+R/ty
+	 MIhG8+N0dLOoKrQ7jD9a+Fl+m3qMBS2kY0jiNd3kXDeK6h5iEptVRSBKe+QWrucKnW
+	 o30vim3qvqESuGrG3nNvhVmpR9MNsemB+fshZiXmT3qu+qEz1HhpKnTrLBqqXRJank
+	 vTnY+MF7IcLy2mdqZ3f7UaGwXMveoaqrvTfQ7ZzH6JfK2fvsnBDMaFhXWe9siHbkpe
+	 g0gia4+xaEVOQ==
+Date: Thu, 11 Sep 2025 15:26:38 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	linux-integrity@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: tpm: SLM9670 does not work on T1023
+Message-ID: <644b0f0f-9e02-44fb-a0d4-f4018816e156@sirena.org.uk>
+References: <aMLUIVjHZ6CFvd33@fue-alewi-winx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/6] clk: renesas: rzv2h-cpg: Add support for DSI
- clocks
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>,
- Magnus Damm <magnus.damm@gmail.com>
-References: <20250903161718.180488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250903161718.180488-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <db2fc907-218c-4688-aebf-4a929f21b074@ideasonboard.com>
- <CA+V-a8vghwkHKWoqU8NQ3O9ZdHxB+cEvMv7Z9LQOMsZcx9vjPA@mail.gmail.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-In-Reply-To: <CA+V-a8vghwkHKWoqU8NQ3O9ZdHxB+cEvMv7Z9LQOMsZcx9vjPA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JmIts2jpKcR2DYEP"
+Content-Disposition: inline
+In-Reply-To: <aMLUIVjHZ6CFvd33@fue-alewi-winx>
+X-Cookie: Your domestic life may be harmonious.
 
-Hi,
 
-On 11/09/2025 11:14, Lad, Prabhakar wrote:
-> Hi Tomi,
-> 
-> On Wed, Sep 10, 2025 at 1:30 PM Tomi Valkeinen
-> <tomi.valkeinen+renesas@ideasonboard.com> wrote:
->>
->> Hi,
->>
->> On 03/09/2025 19:17, Prabhakar wrote:
->>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->>>
->>> Add support for PLLDSI and PLLDSI divider clocks.
->>>
->>> Introduce the `renesas-rzv2h-cpg-pll.h` header to centralize and share
->>> PLLDSI related data structures, limits, and algorithms between the
->>> RZ/V2H(P) CPG and DSI drivers.
->>>
->>> The DSI PLL is functionally similar to the CPG's PLLDSI, but has slightly
->>> different parameter limits and omits the programmable divider present in
->>> CPG. To ensure precise frequency calculations, especially for milliHz-level
->>> accuracy needed by the DSI driver, the shared algorithm allows both drivers
->>> to compute PLL parameters consistently using the same logic and input
->>> clock.
->>
->> Can you elaborate a bit more why a new clock APIs are needed for the DSI
->> PLL? This is the first time I have heard a DSI TX (well, any IP) require
->> more precision than Hz. Is that really the case? Are there other reasons?
->>
-> Im pasting the same reply from Fab
-> (https://lore.kernel.org/all/TYCPR01MB12093A7D99392BC3D6B5E5864C2BC2@TYCPR01MB12093.jpnprd01.prod.outlook.com/#t)
-> for the similar concern.
-> 
-> The PLL found inside the DSI IP is very similar to the PLLDSI found in
-> the CPG IP block, although the limits for some of the parameters are
+--JmIts2jpKcR2DYEP
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks. As discussed on chat, this confused me: There's a PLLDSI on CPG,
-which doesn't provide a DSI clock, but a pixel clock. And then there's a
-PLL in the DSI D-PHY which provides the DSI clock.
+On Thu, Sep 11, 2025 at 03:52:33PM +0200, Alexander Wilhelm wrote:
 
-A few comments overall some for this driver but also the dsi driver:
+> However, the driver reads an incorrect vendor ID (0x1000000) and hangs du=
+ring
+> the startup sequence. A logic analyzer shows that the chip select line go=
+es high
+> immediately after transmitting 4 bytes, which, according to various forum
+> discussions, does not comply with the TPM specification. Unfortunately, I
+> haven't found a definitive solution to this issue.
 
-This hardcodes the refclk rate to 24 MHz with RZ_V2H_OSC_CLK_IN_MEGA in
-the header file. That doesn't feel right, shouldn't the refclk rate come
-from the clock framework with clk_get_rate()?
+That sounds like the controller is configured in word mode and is
+bouncing chip select after every word it sends.  The Freescale
+controllers are fond of implementing and using that, no idea about this
+specific one.  I see there's some non-standard DT properties it has
+which look like they're related to chip select modes but no idea what
+they do.
 
-While not v2h related, I think it would be good to have a comment in the
-dsi driver about how the g2l hs clock rate is derived directly from the
-pixel clock.
+> Could this be a bug in the `spi-fsl-espi` driver, or is it possibly a har=
+dware
+> limitation of the T1023? I've come across some suggestions that involve u=
+sing a
+> GPIO as an alternative chip select instead of the one provided by the SPI
+> controller. Can anyone confirm whether this workaround is viable? I=E2=80=
+=99d prefer to
+> avoid a PCB redesign unless it's absolutely necessary.
 
-I still don't see why all the code here has to be in a header file.
-Usually headers contain only a few lines of inline code. Is there a
-reason why it's not in a .c file?
+Can you not pinmux the signal from the SoC to a GPIO instead of the SPI
+controller?  It's fairly common to do that since controllers often have
+regrettably limited or unhelpful chip select features so GPIOs are often
+the better choice.  The controller does what it likes with the chip
+select signal but it's not actually connected to anything and we do
+everything in software.
 
-And last, we discussed the milliHz a bit on chat, you said you'll come
-back to that. I don't think it's a blocker, but I'm very curious why
-exactly it is needed in the DSI. +/- 12 Hz with, say 3.6GHz clock does
-not sound very much to me, and there should be enough time every line
-during blanking period to empty any fifos and "catch up".
+I'd recommend contacting whoever looks after the relevant controller
+driver, though it looks rather abandoned TBH.
 
-In fact, if the DSI is so picky about the rate, I find the HW design
-odd: in g2l the pixel clock and the DSI clock come from a single source,
-which keeps them neatly in sync. If that is required, why change the
-design here so that the DSI PLL is independent of the pixel clock, yet
-still the DSI PLL must be programmed to be exactly matched to the pixel
-clock.
+--JmIts2jpKcR2DYEP
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The docs say v2h supports burst mode. Isn't the idea with DSI burst mode
-that you run the DSI much faster than the display controller (i.e. with
-much higher clock than HSFREQ = (VCLK * bpp) / num_lanes), so that the
-DSI can burst the data out from its fifos and then go to sleep? The
-separate PLL in v2h allows independent DSI clock config, allowing burst
-mode. If the HW can support that, then there shouldn't be a strict
-requirement for HSFREQ = (VCLK * bpp) / num_lanes, or hitting the
-pclk-hsfreq ratio exactly to milliHz precision.
+-----BEGIN PGP SIGNATURE-----
 
- Tomi
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjC3B4ACgkQJNaLcl1U
+h9AqVwgAhuZX1XfoLYOS0NGawkwPZIRBOt8mho3SyMC+M0JhWRnetSmnWgOYjr+4
+cOfwrXH5o9UDVC9gnmZoOZfR6l4IfXE5L0rFYk6kIZebrT9YuaDDHnWt33h8QGRr
+yOVPuIUBxtD1vslQP1/ayw7cc0nsdgyq3Rego6qhln7eQfS+VlTVFguR94mhyAxY
+WyfzTooNQknNOd/YqsXiIfoXdytYF/tPnpHuV1ln4BIUGe95R08nmwIPT10gxxYm
+xu4jHNOeFgEaQxb8eGCLkJi/Y2qv+o5Bb1FP8WE19NE0ZUAVKVlfUZw6P7uCWAnj
+YcCibVFRYY8z3uzMM9ItByJW+l8RZg==
+=3JyB
+-----END PGP SIGNATURE-----
 
+--JmIts2jpKcR2DYEP--
 
