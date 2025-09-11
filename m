@@ -1,190 +1,274 @@
-Return-Path: <linux-kernel+bounces-811815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D72B52E38
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:23:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0509B52E3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F4EC3B6A17
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:23:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FC3A16BBCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2651530FF37;
-	Thu, 11 Sep 2025 10:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E043101C7;
+	Thu, 11 Sep 2025 10:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hQs2yNsV"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TNbyJizt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA662EA74B
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491FE2EA74B;
+	Thu, 11 Sep 2025 10:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757586224; cv=none; b=hzkUU/5wE+2uVgrKISxu/11l1/IlC+1Vp5Rm7bWeJ/KyI713Mq1umIZf0s6SoIpk6Pw5yLt7ySv8oxo3e5RlcZG5gb4qe+DW/NxOLVQaquylMtNLMNdHIgde94Zq0k1Ep/wjj3AIzTHbGiXvsHqIujTjNdVC7dlc8A8pQ+SkwBw=
+	t=1757586245; cv=none; b=t9JdQrMNdNCp5+7dGR4Mjd8sS5arpxje4b3dsDsco4rjh86H8lR8lY3kuvwQbX5HpRqM0Wx+YuSYt7OBqGoH798mBzcUYCJ4+66RW036ApTtvVOU0tLy/n6YxTFRdGFqmeul/c03ZVvtQbVPeOFt5Xm4u4wCopd5zbp6jepWMJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757586224; c=relaxed/simple;
-	bh=zj395NGtLp3wWDRiU7x8MlIhLyNVVrYHtjTxo8ibqjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qur2TC4GB/95Q57hUSmCCHkcMnvJlBf3AmeTU8aB97oKOW8lbldBuXxZh//ZVMURky80A7cFF7nigtc0zGJVo/scJZAKnXETJj7QsQ9iLrUJDEdcngObwAqfuDGUHg79Y1TV/TxyaYZqxJLKXOga5MqMlakJmXInXx0Jvx36M4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hQs2yNsV; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 80647C6B3AB;
-	Thu, 11 Sep 2025 10:23:24 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 58977606BB;
-	Thu, 11 Sep 2025 10:23:40 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B87C5102F28D9;
-	Thu, 11 Sep 2025 12:23:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757586219; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=fSrvBtmVDJ/Y7zdKA6slVDKkHGqVbp66YbTHBWoJXqg=;
-	b=hQs2yNsVa7EzafMz5eljtqbV6kcvXx7k0u/ZW1wswB2c97Ub3rdAKVqN1LvzvkqmDkXvqp
-	7c8SOTs2izMjM9g8P4ZrAjQ1LXOCkCVg4BGwpCupNkLcrK03a1SVSaTLfEMk6yUJZuF1yR
-	3jyZ83dBWoIxB4yZ7oW01zrhAZwVFua3dRg4lEYD4/NZMaZNyYhg8tMiUUhOKLRVVFqlTh
-	jaqkS3tE/4xKlqN5fOvJpFqHwP8PCN0Xoc4jUpPoywCeqBnI+6fA8hnVMi2wl0U5kKL9+h
-	j1wHNqetzwYceeERZqWJ2MAPYR0T+MWA0E6ia5r1rzxdMgEv5NIFH6eGE15fdQ==
-Date: Thu, 11 Sep 2025 12:23:33 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: David Gibson <david@gibson.dropbear.id.au>, Ayush Singh
- <ayush@beagleboard.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, Rob
- Herring <robh@kernel.org>, Jason Kridner <jkridner@gmail.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Davis <afd@ti.com>
-Subject: Re: Device tree representation of (hotplug) connectors: discussion
- at ELCE
-Message-ID: <20250911122333.2e25e208@bootlin.com>
-In-Reply-To: <CAMuHMdUUGoaetdsTEVx27TYQZ_khzyCn0wzi2+TibYcvkg1fXw@mail.gmail.com>
-References: <20250902105710.00512c6d@booty>
-	<aLkiNdGIXsogC6Rr@zatzit>
-	<337281a8-77f9-4158-beef-ae0eda5000e4@beagleboard.org>
-	<aL5dNtzwiinq_geg@zatzit>
-	<20250908145155.4f130aec@bootlin.com>
-	<aL-2fmYsbexEtpNp@zatzit>
-	<20250909114126.219c57b8@bootlin.com>
-	<aMD_qYx4ZEASD9A1@zatzit>
-	<20250911104828.48ef2c0e@bootlin.com>
-	<CAMuHMdUUGoaetdsTEVx27TYQZ_khzyCn0wzi2+TibYcvkg1fXw@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757586245; c=relaxed/simple;
+	bh=l83JyltFbxLN9ZdpMJJt8oCqrMGADRRAdA3f1EVdvj8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GTzPk85iKhUZlzXovbWrGhkg4Pu8B0NM1tGsx6NtcC4Ml0uWJJ3fvb1+km32PmZrrZnVKGe6DnUoJcAD4ybEmY3Nltcc7703b3otLl17kq8jD2M1zjcbo+MkJxxoL65H4YZmkP9P0Vjrejfs6b6a/62s+3lPggmRsQFcuZKugLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TNbyJizt; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757586244; x=1789122244;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=l83JyltFbxLN9ZdpMJJt8oCqrMGADRRAdA3f1EVdvj8=;
+  b=TNbyJiztY1vx1Wv34UUr0b0ma7xQgc7p6Z6IVk5IRcZA9+udhbjf47IE
+   ZV3NqAU1oj8H6mDEYfYRsWoG83qFz7dzBvzYlHP2X+uHZo1C7NUWdC+Br
+   8CYHfR6t/tkR4uWB+j/SrFpFKp1uuuI1020uNevBv1aTWHiVvkwXjyPuZ
+   UlDjmrLWFMFtBMj5Ewc4BxEwhkaNC6TybrqtAvMm/PeEAFndx+/8qwaVx
+   EBgETazi9RRvwxNS9B5w+DI66LMRJg+tVZOqXYLIWYWAd4EEolK+fgSwM
+   bJgoegkaNWhXmgwF8TGJPHK1XGoK3zrmNj2BAstYCQHvSpHoZQgANsI0s
+   g==;
+X-CSE-ConnectionGUID: Dap+xi0AQ+6K3TgfMg1nBA==
+X-CSE-MsgGUID: zjdKUkymRN6/sFIeWDLYSg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="71013894"
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="71013894"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 03:24:03 -0700
+X-CSE-ConnectionGUID: VwNRGGacSSin4IlJYcsbww==
+X-CSE-MsgGUID: TAgzjslaRlu/9yo2/yeF2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="178846753"
+Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.136])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 03:23:58 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Linux Doc Mailing List
+ <linux-doc@vger.kernel.org>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Alice Ryhl <aliceryhl@google.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, Trevor
+ Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v4 08/19] tools/docs: sphinx-build-wrapper: add a
+ wrapper for sphinx-build
+In-Reply-To: <20250910145926.453f5441@foz.lan>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1756969623.git.mchehab+huawei@kernel.org>
+ <e019f951190a732f9ac0b21bcda7e49af3bd5cbd.1756969623.git.mchehab+huawei@kernel.org>
+ <e13837a0ac46dffe39c600d11fdf33f538bdc9c3@intel.com>
+ <20250910145926.453f5441@foz.lan>
+Date: Thu, 11 Sep 2025 13:23:55 +0300
+Message-ID: <45888ca6c88071c754784495b4ef69460ea67b4f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain
 
-Hi Geert,
+On Wed, 10 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> Em Wed, 10 Sep 2025 13:46:17 +0300
+> Jani Nikula <jani.nikula@linux.intel.com> escreveu:
+>
+>> On Thu, 04 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+>> > There are too much magic inside docs Makefile to properly run
+>> > sphinx-build. Create an ancillary script that contains all
+>> > kernel-related sphinx-build call logic currently at Makefile.
+>> >
+>> > Such script is designed to work both as an standalone command
+>> > and as part of a Makefile. As such, it properly handles POSIX
+>> > jobserver used by GNU make.
+>> >
+>> > On a side note, there was a line number increase due to the
+>> > conversion:
+>> >
+>> >  Documentation/Makefile          |  131 +++----------
+>> >  tools/docs/sphinx-build-wrapper |  293 +++++++++++++++++++++++++++++++
+>> >  2 files changed, 323 insertions(+), 101 deletions(-)
+>> >
+>> > This is because some things are more verbosed on Python and because
+>> > it requires reading env vars from Makefile. Besides it, this script
+>> > has some extra features that don't exist at the Makefile:
+>> >
+>> > - It can be called directly from command line;
+>> > - It properly return PDF build errors.
+>> >
+>> > When running the script alone, it will only take handle sphinx-build
+>> > targets. On other words, it won't runn make rustdoc after building
+>> > htmlfiles, nor it will run the extra check scripts.  
+>> 
+>> I've always strongly believed we should aim to make it possible to build
+>> the documentation by running sphinx-build directly on the
+>> command-line. Not that it would be the common way to run it, but to not
+>> accumulate things in the Makefile that need to happen before or
+>> after. To promote handling the documentation build in Sphinx. To be able
+>> to debug issues and try new Sphinx versions without all the hacks.
+>
+> That would be the better, but, unfortunately, this is not possible, for 
+> several reasons:
+>
+> 1. SPHINXDIRS. It needs a lot of magic to work, both before running
+>    sphinx-build and after (inside conf.py);
 
-On Thu, 11 Sep 2025 10:54:02 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Makes you wonder if that's the right solution to the original
+problem. It was added as a kind of hack, and it stuck.
 
-> Hi Hervé,
-> 
-> On Thu, 11 Sept 2025 at 10:48, Herve Codina <herve.codina@bootlin.com> wrote:
-> > On Wed, 10 Sep 2025 14:33:45 +1000
-> > David Gibson <david@gibson.dropbear.id.au> wrote:  
-> > > On Tue, Sep 09, 2025 at 11:41:26AM +0200, Herve Codina wrote:  
-> > > > Suppose a base board with 2 connectors:
-> > > >  - connA
-> > > >  - connB
-> > > >
-> > > > Case 1: Addons are independant
-> > > >                +--------+
-> > > >   connA <----> | AddonA |
-> > > >                +--------+
-> > > >                           +--------+
-> > > >   connB <---------------->| AddonB |
-> > > >                           +--------+
-> > > >
-> > > > With addonA and B two addon board each connected at one connector without any
-> > > > relationship between addon A and B
-> > > >
-> > > > Case 2: Only one Addons using ressources from both connector
-> > > >
-> > > >                 +------+
-> > > >   connA <-----> |Addon |
-> > > >                 |      |
-> > > >   connB <-----> |      |
-> > > >                 +------+  
-> > >
-> > > Case 2 is what I'm talking about.  Case 1 is the easy one.
-> > >  
-> > > > The addon is connected to both connector and uses ressources from connA and
-> > > > connB in a dependent manner.
-> > > >
-> > > >
-> > > > The Case 2 can be solved using a connector that described both connA and connB.
-> > > > Having the split connA and connB is a mechanical point of view.  
-> > >
-> > > I don't think that's a good solution, because it means you have to
-> > > make that decision at the board layer.  If I understand his case
-> > > correctly, you have a board where you could do either case 1 or case 2
-> > > at runtime.  We'd want the differences between these cases to only be
-> > > reflected on the addon device tree, not the base board device tree.  
-> >
-> > Based on my understanding of Geer's use-case, I think decision at base
-> > board level will be needed.
-> >
-> > base board        addon board
-> >   connA +--------+conn1
-> >   connB +--------+conn2
-> >   connC +
-> >
-> > Or
-> >
-> > base board        addon board
-> >   connA +--------+conn1
-> >   connB +    ,---+conn2
-> >   connC +---'
-> >
-> > Or any other combination that would match.
-> >
-> > From the addon board point of view, the only think we can
-> > say is "me, as an addon board, I need a connector of type 'foo' and a
-> > connector of type 'bar'".
-> >
-> > Also, at base board level, statically defined in the DT
-> > connA is described (type 'foo'), connB and connC are
-> > described (type 'bar').  
-> 
-> Correct.
-> 
-> > The choice to map connA to the type 'foo' connector expected by the addon
-> > and the choice to map connB or connC to the type 'bar' connector expected by
-> > the addon can only be done at runtime and probably with the help of a driver
-> > that have the knowledge of the 3 connectors.
-> >
-> > I have the feeling that the choice of physical connectors to which the addon
-> > board is connected to is a human choice when the board is connected.  
-> 
-> All these choices and decisions apply to single-connector add-on boards, too.
-> 
+> 2. Several extensions require kernel-specific environment variables to
+>    work. Calling sphinx-build directly breaks them;
 
-Yes, in our use case (me and Luca), each addon has an eeprom, wired exactly the
-same on all supported addon, which allows to known the exact addon. Also addon
-insertions and removals are detected using some gpios wired to the connector.
+The extensions shouldn't be using environment variables for
+configuration anyway. Add config options and set them in conf.py like
+everything else?
 
-Based on that our specific driver handling our specific connector perform the
-following operations on addon insertion detection:
-  - load a first addon DT to have access to the eeprom
-  - Read the eeprom to determine the addon type
-  - load the DT matching with the addon type
+> 3. Sphinx itself doesn't build several targets alone. Instead, they create
+>    a Makefile, and an extra step is needed to finish the build. That's 
+>    the case for pdf and texinfo, for instance;
 
-This part is of course connector type specific. I mean having an eeprom with
-some encoded addon type values and hotplug detection with gpio is a part of
-the contract between the board and the addon (part of connector specification).
+That's not true for the Makefile currently generated by
+sphinx-quickstart. Granted, I haven't used Sphinx much for pdf output.
 
-Best regards,
-Hervé
+> 4. Man pages generation. Sphinx support to generate it is very poor;
 
+In what way?
+
+> 5. Rust integration adds more complexity to the table;
+>
+> I'm not seeing sphinx-build supporting the above needs anytime soon,
+> and, even if we push our needs to Sphinx and it gets accepted there,
+> we'll still need to wait for quite a while until LTS distros merge
+> them.
+
+I'm not suggesting to add anything to Sphinx upstream.
+
+>> This patch moves a bunch of that logic into a Python wrapper, and I feel
+>> like it complicates matters. You can no longer rely on 'make V=1' to get
+>> the build commands, for instance.
+>
+> Quite the opposite. if you try using "make V=1", it won't show the
+> command line used to call sphinx-build anymore.
+>
+> This series restore it.
+>
+> See, if you build with this series with V=1, you will see exactly
+> what commands are used on the build:
+>
+> 	$ make V=1 htmldocs
+> 	...
+> 	python3 ./tools/docs/sphinx-build-wrapper htmldocs \
+> 	        --sphinxdirs="." --conf="conf.py" \
+>         	--builddir="Documentation/output" \
+> 	        --theme= --css= --paper=
+> 	python3 /new_devel/docs/sphinx_latest/bin/sphinx-build -j25 -b html -c /new_devel/docs/Documentation -d /new_devel/docs/Documentation/output/.doctrees -D kerneldoc_bin=scripts/kernel-doc.py -D version=6.17.0-rc1 -D release=6.17.0-rc1+ -D kerneldoc_srctree=. /new_devel/docs/Documentation /new_devel/docs/Documentation/output
+> 	...
+>
+>
+>
+>> Newer Sphinx versions have the -M option for "make mode". The Makefiles
+>> produced by sphinx-quickstart only have one build target:
+>> 
+>> # Catch-all target: route all unknown targets to Sphinx using the new
+>> # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
+>
+> I didn't know about this, but from [1] it sounds it covers just two
+> targets: "latexpdf" and "info".
+
+sphinx-build -M help gives a list of 24 targets.
+
+> The most complex scenario is still not covered: SPHINXDIRS.
+>
+> [1] https://www.sphinx-doc.org/en/master/man/sphinx-build.html
+>
+>> %: Makefile
+>>         @$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+>> 
+>> That's all.
+>
+> Try doing such change on your makefile. it will break:
+>
+> 	- SPHINXDIRS;
+> 	- V=1;
+> 	- rustdoc
+
+I know it does. That's the problem.
+
+> and will still be dependent on variables that are passed via
+> env from Kernel makefile. So, stil you can't run from command
+> line. Also, if you call sphinx-build from command line:
+>
+> 	$ sphinx-build -j25 -b html Documentation Documentation/output
+> 	...
+> 	      File "<frozen os>", line 717, in __getitem__
+> 	    KeyError: 'srctree'
+>
+> It won't work, as several parameters that are required by conf.py and by
+> Sphinx extensions would be missing (the most important one is srctree, but
+> there are others in the line too).
+>
+>> The proposed wrapper duplicates loads of code that's supposed to be
+>> handled by sphinx-build directly.
+>
+> Once we get the wrapper, we can work to simplify it, but still I
+> can't see how to get rid of it.
+
+I just don't understand the mentality of first adding something complex,
+and then working to simplify it.
+
+Don't make it a Rube Goldberg machine in the first place.
+
+>> Including the target/builder names.
+>
+> True, but this was a design decision taken lots of years ago: instead
+> of:
+> 	make html
+>
+> we're using:
+>
+> 	make htmldocs
+>
+> This series doesn't change that: either makefile or the script need
+> to tho the namespace conversion.
+
+In the above Makefile snippet that conversion would be $(@:docs=)
+
+The clean Makefile way of checking for having Sphinx and the required
+versions of Python and dependencies etc. would be a .PHONY target that
+just checks, and doesn't do *anything* else. It shouldn't be part of the
+sphinx-build rules.
+
+PHONY += check-versions
+check-versions:
+	sphinx-pre-install --version-check
+
+htmldocs: check-versions
+	...
+
+Or something like that.
+
+>> Seems to me the goal should be to figure out *generic* wrappers for
+>> handling parallelism, not Sphinx aware/specific.
+>> 
+>> 
+>> BR,
+>> Jani.
+
+-- 
+Jani Nikula, Intel
 
