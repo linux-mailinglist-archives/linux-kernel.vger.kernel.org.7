@@ -1,106 +1,86 @@
-Return-Path: <linux-kernel+bounces-812466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B1EB5387A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:59:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3268B5385E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3AB6A035F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:59:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 020CB7B2AE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0C635FC3D;
-	Thu, 11 Sep 2025 15:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LBqbaRvV"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2A5345726;
+	Thu, 11 Sep 2025 15:56:58 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133B535A296;
-	Thu, 11 Sep 2025 15:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0600921C17D;
+	Thu, 11 Sep 2025 15:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757606255; cv=none; b=Rb3XM9gF6Os/ZYpA1VVrs2s9ALR/YvFf0ye/FTPLDuAcutf3DuoAlJ/1hZENXOJwkpi1030LRnaRfFLUj99t3xCIFeawT+d231uoqj5FvtgwhMLEPtjCPj32MQiAjNd/3kaoc+FxuKstJOiEguaNJcLf07Kvcgkljgx4Wc9XiNk=
+	t=1757606217; cv=none; b=EIghaJPq+ot4LhNXgGoYbx9I+RaVE/NguylsfuwffXPCjlEIGlrqHQT1PJOvIbvUfXjWf1EPkNqpnmWQ2GRF0L1CfNS6ZjdepknzKxZz7yUS9gk8q9DLGsEEK1X3ZvRzpyifQtNXhqQOY84Rwh1iPt1koiTkTGi7Am3JWdCJSXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757606255; c=relaxed/simple;
-	bh=sKradN4hrPLBamEcgVbncnL2328TDnqxw+EAoEE13DU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G8NNT9o0+9/RdqirN0E8vQD0Ue3zaNSPKwElsNVQaXgcrrCXJE+ISvRQth+IOF6lGaXCK5gmnfIfw4ZtdO0HZYh8TecR1mu3qGHFqmaozOFQIJhGI2Kbt8CViXglctAbzdjDQAxt6kTwraLMqYE6UK0ey++ghDvVL7j8zHZR4fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LBqbaRvV; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757606250;
-	bh=sKradN4hrPLBamEcgVbncnL2328TDnqxw+EAoEE13DU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LBqbaRvVoCT5HxikVs99b2Vpp/Y43wAVEtPNK2dYruWkcJpViO3FhXKiWedvSmpt/
-	 s0BtO0HyXHffiJXtW7Lfd0F5N8mhbfoKo8RP7gFXOqglKttSJYdUBgDwinE7PlKKJW
-	 synSVnIgYEG90e3C2xB7Q5Pg+KkByOOoxwFC94ZEszUs2PZ2p947h1CEY1jgLfZIFd
-	 jmECAjfXU120BnBsc6fc4LDFIQNy98qAe2xrEHqGlEBvCxJLzMeLTIdnimavYP7Uz4
-	 N3Shzy8KETSqCiAeehpKbR5eWO0g9V1jarqCySbweksiYmA+beiM/nnMqYU36B4lDK
-	 JBoPwvP3w8Jbw==
-Received: from benjamin-XPS-13-9310.. (unknown [IPv6:2a01:e0a:120:3210:36e5:357f:56a7:54dd])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: benjamin.gaignard)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6B3DF17E12B8;
-	Thu, 11 Sep 2025 17:57:30 +0200 (CEST)
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-To: joro@8bytes.org,
-	robin.murphy@arm.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	nicolas.dufresne@collabora.com,
-	jgg@ziepe.ca,
-	p.zabel@pengutronix.de,
-	mchehab@kernel.org
-Cc: iommu@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	kernel@collabora.com,
-	linux-media@vger.kernel.org,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: [PATCH v9 7/7] arm64: defconfig: enable Verisilicon IOMMU for Rockchip RK3588
-Date: Thu, 11 Sep 2025 17:57:17 +0200
-Message-ID: <20250911155720.180465-8-benjamin.gaignard@collabora.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250911155720.180465-1-benjamin.gaignard@collabora.com>
-References: <20250911155720.180465-1-benjamin.gaignard@collabora.com>
+	s=arc-20240116; t=1757606217; c=relaxed/simple;
+	bh=uYQoJ8DmKxwuZVDUtDLgM2EFNWwooLacDimwsOtLlOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=egjeO13GZG/q6CP8ReTJDsKtppSDHzdY+693OJ2xTRar89785eiQ4udXbj4XwN72GMSek1KMEHQNDIPtxUHjVXTUA2Vmaf5otURwZBTRew2OgYfdherQ42eY/3nbju+cjxaeMxCm5W00GFMxWG8SvbDDQtrusLH51VXWj7cLe30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id AF15A1199DD;
+	Thu, 11 Sep 2025 15:56:53 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 2D6F218;
+	Thu, 11 Sep 2025 15:56:52 +0000 (UTC)
+Date: Thu, 11 Sep 2025 11:57:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Gabriele Monaco <gmonaco@redhat.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>
+Subject: [PATCH] rv: Add Gabriele Monaco as maintainer for Runtime
+ Verification
+Message-ID: <20250911115744.66ccade3@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: zrp5wyknhbynjx4exdhweupa4xumhieg
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 2D6F218
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19rzrVYCXXIkn/2m1CXtLNslN64FjSIT88=
+X-HE-Tag: 1757606212-483953
+X-HE-Meta: U2FsdGVkX1/siI8TarA4ncG0767dmo4WXZ0CFVAdxbKWqGI5BQvLQ+uXYi/MbrzwakCd1wDYm1C8vWqFkX04zN+ykzRCuctDY4G8jpCOMu7l1onkhv+RU7t0oqsjxxHBFMwTnJAOi2I25r356FKTPbjKkVW7nfjrFWU8p+4ke2TepAiriQzlzmjrCy40MUn0IN/LaLiGTTPKWFL6/KMeRmXsp2n8NUp2AimVynZYUjm0AWLBDZIba+h3/Qwkw+H7kHXCLY8nWGUSyf6ZB4xrrTsFjPEBuO17UWjuD///i9UAPLKJe6Q7V6cm/6oftmZzI5Iec5CPbULiNZMs2yZScEx287q8yE0yfITyv0wx6Hf5xphKdT0RKEMVn583zDFr+vShIocEnePk5iAY3NyBgl9MEKbxyQI6GTzbg+ANICQWDVglOJF9LZGsLkOZoZqmfnySXYGuQ6M=
 
-Enable Verisilicon IOMMU used by Rockchip RK3588 AV1 hardware codec.
-This hardware block could be found in Radxa Rock 5B board.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Gabriele will start taking over managing the changes to the Runtime
+Verification. Make him officially one of the maintainers.
+
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- arch/arm64/configs/defconfig | 1 +
+ MAINTAINERS | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 58f87d09366c..04547bcc904b 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1470,6 +1470,7 @@ CONFIG_ARM_SMMU=y
- CONFIG_ARM_SMMU_V3=y
- CONFIG_MTK_IOMMU=y
- CONFIG_QCOM_IOMMU=y
-+CONFIG_VSI_IOMMU=m
- CONFIG_REMOTEPROC=y
- CONFIG_IMX_REMOTEPROC=y
- CONFIG_MTK_SCP=m
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6dcfbd11efef..689d690d85ac 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22046,6 +22046,7 @@ F:	drivers/infiniband/ulp/rtrs/
+ 
+ RUNTIME VERIFICATION (RV)
+ M:	Steven Rostedt <rostedt@goodmis.org>
++M:	Gabriele Monaco <gmonaco@redhat.com>
+ L:	linux-trace-kernel@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/trace/rv/
 -- 
-2.43.0
+2.50.1
 
 
