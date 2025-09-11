@@ -1,91 +1,130 @@
-Return-Path: <linux-kernel+bounces-811852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E0F6B52EA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:37:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A9EB52E9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61359483934
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:35:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340515A3171
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168D5314B90;
-	Thu, 11 Sep 2025 10:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F6831158A;
+	Thu, 11 Sep 2025 10:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y6Y1WTGU"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFiT8THp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBC7313543
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9569C3115A0
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757586693; cv=none; b=bFFUFzmTUJl+ysR9PW9KMNV/ic9Iqyskv0Tt0SbEBpRockWVVS+1sd53mndDODwVHe3BCklf7W3OIbjNNKU+bHupAyVz+/EdexBDIDk94fl3JKzxtV+tkqUoTpjXf/WknmsOLoeHWhqDdbIv+KBt+E9oiKMmJnv8zBmek6zh57c=
+	t=1757586709; cv=none; b=QcI73tk//8UHsel7ysd5IMN689qrX3WcSTadd7LexYuDD228oVbPkrCnJL7DbeYgg5SrGoYQOlMieyO2JMcTeyJhvhETJYkS19+N/hExMXPiD+ANf/Y995KVpf2bKTtU+sRQYc67TsMBxYOg0+ntWHxASjMzeOg23WK3hbbjlgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757586693; c=relaxed/simple;
-	bh=lfBUtU4iM2RJHdeJnReG8H2A3ekirusk3Dc18yqJUto=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jiCMD99JfjXQZgHhxODqXet+vgTc+9DmJZkCgDeEJhB6qpRWqdmtKLSzAYww6V7z2glthSLPxK4UeUaIgod49NKWtDJJdXwPJ++vLcfdE1hnHaOYVCta43/lSE/4CvH/PBKiT99oECAufVllygJHHN/uNj7J+HoLcfi/b7oewhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y6Y1WTGU; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757586688;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1HaKN9EHGGkH+qeMdMIV0aPN9YFfC1ADL32ArNEpz84=;
-	b=Y6Y1WTGULyh17HWxZJwEz4PVT2yRYIy7Ieua9FbrjRBP2wKpPao3DBHnjcDvwgPBoM7meU
-	WkQqfJw7U+rLOIUrseDY2E8mPv1vPob0gMeiP6mybGHQ3ko5u9mc3DG9Iy9CxYqKmc+Gmt
-	6BBNHGeI5hv1bUfxr2Eho2ubGqvTDPo=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] completion: Use designated initializers for struct completion
-Date: Thu, 11 Sep 2025 12:30:03 +0200
-Message-ID: <20250911103005.1341545-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1757586709; c=relaxed/simple;
+	bh=xaPe7WTboY6+/tPQNyhe8Htaun8q0KWDYpAJ4c9xb4g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FvJeoAVmbGUm+ETQtqsxZ2Sg8W4ARRLO0Ol7BGAWP89weErAqWaTJvBJFmRxTt9SYXdM8q0BpJhr/+Baibtv6dsCY3PxDHjLg4mAcPx4EppavEX71kaXpGAtP0WpNr2T9iIyzJKwGtZwZJQ92wafYcETEPZBE8GzQ4WA8M9s7vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DFiT8THp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F73C4CEF0
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:31:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757586709;
+	bh=xaPe7WTboY6+/tPQNyhe8Htaun8q0KWDYpAJ4c9xb4g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DFiT8THp5lZHrVka74NLFyRStJbrTYWBc4EmtpFwYy66jD4REiTMvhBAWpPp/vUPE
+	 IfMUeltYdNawHOcxkgmUPQsukgiewWPRolOOUGCQCqJoqQpFRZJWKfe8FWQDGL0nDf
+	 bzRSgmLWwjfdUbeDfiPFqdYXmTUTIgJ7WXKLrsVEhScF0I/r/I9n7Co73pypwTzqJ+
+	 d4+sjPkouu5J6qZVHevWiZWtWyfQxgZNgBL5zDmOgq+YJ5Jn1hy1oBTaI2OfZ4miWg
+	 kE9p7D6Z9XOjLqrLf4lILkEeVObPVR51m4e9M6Q69YOWayNNlUCBS37Z/pfqQGR8vs
+	 PZPdxfio5q8lg==
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7459fa1ef2aso577953a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 03:31:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUqdowsRnfLRZ4+XwmDT3yDJCujLxoA8V649MZ5Qy8DmvVRoAo8jqOTeI//ddqLPCb2vuMHSf6bZj0hI10=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4wgqZwxppDIl8KM0sut/qvUR+SHRHmBswvDkQcG9HQalVp4pp
+	Nb1Nv1+SvDpd+bKD9fBxcyUXdltw4sSD/5oqe7j0jQ4I1V2DyS3/veOGxM2HWzRsgfTwH/cIHKP
+	caXDK+wnh6I7LliIr1lNkD0GBr0G84Ok=
+X-Google-Smtp-Source: AGHT+IHHqcVDj1OR3RKUpL+hwMYtQNeAHfRxOjE8VI69WXeSCnFBIKD4xZFw5ff9F2oLdfPcCewT212Xf+wkZvrkyjs=
+X-Received: by 2002:a05:6830:348e:b0:74b:3422:f33d with SMTP id
+ 46e09a7af769-74c66acfea9mr10519629a34.0.1757586708559; Thu, 11 Sep 2025
+ 03:31:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <12740505.O9o76ZdvQC@rafael.j.wysocki> <871polxs9c.ffs@tglx>
+ <CAJZ5v0jyN0=aGFOwE8fzuXi=1LgiLR5wgvvsAihGB0qpUp=mUQ@mail.gmail.com>
+ <CAJZ5v0gsiuK5iFY6cHaqEgP8R1sz_pWGoqac2orYvXqLE2xbDQ@mail.gmail.com>
+ <87o6rowrsp.ffs@tglx> <CAJZ5v0htmEeivbQaumRc7zw_Zx68GpUy98ksA9L42LupjO6tWA@mail.gmail.com>
+ <87ldmqwgjc.ffs@tglx>
+In-Reply-To: <87ldmqwgjc.ffs@tglx>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 11 Sep 2025 12:31:36 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gW+A-eyckySFrHc7=Qr9URdRX6NqvPgkq4gZEvs_uBWg@mail.gmail.com>
+X-Gm-Features: Ac12FXzgGiowTvScHQ01Ay90U85oEzvZ5PQbqDaWOC0Z8BaVn36F5KL13kIgeVI
+Message-ID: <CAJZ5v0gW+A-eyckySFrHc7=Qr9URdRX6NqvPgkq4gZEvs_uBWg@mail.gmail.com>
+Subject: Re: [PATCH v1] cpu: Add missing check to cpuhp_smt_enable()
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux PM <linux-pm@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Christian Loehle <christian.loehle@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Switch COMPLETION_INITIALIZER to the more modern and flexible designated
-initializers. This improves readability and allows struct fields to be
-reordered.  No functional changes intended.
+On Sun, Sep 7, 2025 at 3:14=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de>=
+ wrote:
+>
+> On Fri, Sep 05 2025 at 22:56, Rafael J. Wysocki wrote:
+> > On Fri, Sep 5, 2025 at 10:47=E2=80=AFPM Thomas Gleixner <tglx@linutroni=
+x.de> wrote:
+> >>
+> >> On Fri, Sep 05 2025 at 15:27, Rafael J. Wysocki wrote:
+> >> > On Fri, Sep 5, 2025 at 3:13=E2=80=AFPM Rafael J. Wysocki <rafael@ker=
+nel.org> wrote:
+> >> >> Well, manual online can be used for onlining the secondary thread o=
+f a
+> >> >> core where the primary thread is offline, so this is technically
+> >> >> possible already.
+> >> >>
+> >> >> > Something like the completely untested below.
+> >> >>
+> >> >> So given the above, shouldn't topology_is_core_online() check if an=
+y
+> >> >> thread in the given core is online?
+> >> >
+> >> > Besides, this would cause the siblings of offline SMT threads to be
+> >> > skipped while enabling SMT via sysfs (using
+> >> > /sys/devices/system/cpu/smt/control), but I'm not sure if this is th=
+e
+> >> > expectation in the field today.  The current behavior is to online a=
+ll
+> >> > secondary SMT threads (and more, but that part is quite arguably
+> >> > broken).
+> >>
+> >> It is broken, because the initial logic is to bring up primary threads
+> >> unconditionally and then refuse to bring up sibling threads.
+> >>
+> >> With "maxcpus=3Dxxx" this obviously limits the amount of primary threa=
+ds,
+> >> so there is arguably no point to online any of the related secondary
+> >> threads of them.
+> >>
+> >> The initial implementation was naively making that assumption, but the
+> >> core check which was added due to PPC made this actually correct.
+> >>
+> >> It just did not snap with me back then, but it's actually the correct
+> >> thing to do, no?
+> >
+> > It would at least be consistent with the existing PPC behavior. :-)
+>
+> Correct.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- include/linux/completion.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So are you going to send a patch or do you want me to do something?
 
-diff --git a/include/linux/completion.h b/include/linux/completion.h
-index fb2915676574..36291cb3c0df 100644
---- a/include/linux/completion.h
-+++ b/include/linux/completion.h
-@@ -33,7 +33,7 @@ static inline void complete_acquire(struct completion *x) {}
- static inline void complete_release(struct completion *x) {}
- 
- #define COMPLETION_INITIALIZER(work) \
--	{ 0, __SWAIT_QUEUE_HEAD_INITIALIZER((work).wait) }
-+	{ .done = 0, .wait = __SWAIT_QUEUE_HEAD_INITIALIZER((work).wait) }
- 
- #define COMPLETION_INITIALIZER_ONSTACK_MAP(work, map) \
- 	(*({ init_completion_map(&(work), &(map)); &(work); }))
--- 
-2.51.0
-
+From a user standpoint, this issue is a regression in 6.16, so it
+would be good to address it before final 6.17.
 
