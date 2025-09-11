@@ -1,47 +1,57 @@
-Return-Path: <linux-kernel+bounces-812272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9957B5354D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:29:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C616B53563
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E074807A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:29:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E0C16A93C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E03233A02C;
-	Thu, 11 Sep 2025 14:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F7733EAF3;
+	Thu, 11 Sep 2025 14:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kbiDFCgx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="ZCWq2Dt/"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7120B7261A;
-	Thu, 11 Sep 2025 14:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757600976; cv=none; b=Ek/hDId6A0aKTK6xTpo2q8P1VA4hnMUu9n9DSC0fUd2b+mQCvwIZwUrO1WMyzGYS8Gdutu8a9IShdOHP1sFaDbzJ/qh+n9Q1qPKlQr62ykO1XJacv1g70ZVfwE7MVRnAq58rTbax+YubUKX6mfCVzuNsjkxPF+OdcOMWaSAQ0KU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757600976; c=relaxed/simple;
-	bh=IOMooGk7tgj3+tr2czPzP2MtFcWvInvG0irfMgR4E8A=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCD122259B;
+	Thu, 11 Sep 2025 14:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757601071; cv=pass; b=AxW569ca/UZ9VVbILIlOHvBwNV5H7uKXnt7AW5X+Rql6M9tRF8W/EPfsAt4+0u5dwKj0umNqXkLGDckr+v7MSZfyBXXW/hKE0/81GePp+AEL/yi2PeCOEWZIQ11kj1c+ysiKl247Dc82LPnlCYWma2mpzVUSOnMK0WYWGU3SQeE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757601071; c=relaxed/simple;
+	bh=ENyo8hlExL0a64lneN3wYIQx9ceQ4J02gvt6LoyVFaY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CXXLD1uei8gY++Eku5wWmYywyS8L/7joFDF6boi76HxuxnmCQ8XxUh1bc7W+SbAehwDQudHu1qXex9Gbe0DFdUhH0OJKREb+AIu0lUsT8JXMrwKOTMJQQ9Yz+h8tdybcdeJdEZ77mjfj+hIWucfQ1fzDt+i2BvmsAotEp/B7Wwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kbiDFCgx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D961CC4CEF1;
-	Thu, 11 Sep 2025 14:29:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757600976;
-	bh=IOMooGk7tgj3+tr2czPzP2MtFcWvInvG0irfMgR4E8A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kbiDFCgxP7KXvcP8v4/aoH3EBosq1CpE0n9+W944yyRm4vx5n8DEsqzUU5ZzlZG33
-	 koUMNe9tD51n2TE3Rg2Owx61wOzaz3T2DpWtFLkUCNhLe+dmVvGp6thSdkf9cHZp7H
-	 oFipCkPEhGRx6Nls+AxbtPa1c7bYHkwvWp7Kf9OhQj/XArF6eDEdHTIKD8oMu2Y/qO
-	 tA2On83d4U9pY0p6m0bsJIhEk18Lxk8qDYNg7LraIoRxbiu/pYPw4nWiajmxkGrP8L
-	 S2WoYpMR2xk0yPWEJUfr6woAGmHxh2SJET6JLul0+6ka03P5TaQ1x2Q8yQlt0lCQLv
-	 52oes0DIPws3A==
-Message-ID: <6df0e227-896b-438a-913e-95b637aa2b14@kernel.org>
-Date: Thu, 11 Sep 2025 16:29:28 +0200
+	 In-Reply-To:Content-Type; b=cmdEz6WnYVzJogjLHGGT7dHaNP7KbvF289LTQcJkzHcILlYjDPF0QXKsM6z7zrgwZLd+F+g2PCd9S7qQ20mvYrJbN1hy57upXwzq3vIE/JFDuhCTgwihrvyXioR96Y5mIWM0rVYgGMvn7z3ubc1chgK4i1tYhhDs3ABzpKPVgFs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=ZCWq2Dt/; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757601008; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fKylatfoGlWuRdvSCbn3egSlJ82Cbc81pjdBqhTrxvRWzYzpTEHGB+pEol0MxJFv7cSofmdSTGfeMveBJ4mREx8G0LNwE4bLDqwId4ZgLEBpbzxFN5xNm3TfnYFrjN4gd9GASWxHA6CkqAJFTwF8ahTJVfVL7hALfGHbVQ+PHwE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757601008; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Mt87tHkCDrz9K7C85pTFu77GL3qr/zrL67mBd2f4Ly4=; 
+	b=ggbsi/0msrtWqOmLEDVikyKSGUHKt7JutW13zHhtrhLZBh0iFNMP/iLNtcBHMM8VJQQloVCdWfwAJp/kcnqt5JjF3WtDZmfGJbgZoBeqeXi4CvWMjPiwUzZUx0ukViLgRPnLZVHklPCxqzP1hm9l0qN0YxKWLqXUyk6AsisUGWc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757601008;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Mt87tHkCDrz9K7C85pTFu77GL3qr/zrL67mBd2f4Ly4=;
+	b=ZCWq2Dt/O+0lXM5sUN/qed2Rp3/lwSfyQJVEzLijcl+pa7YXFipLOLT0myJB/N9/
+	Oq1o7TaV4NBQPNCrbWbExkBpxQABWH1+bda9C3mCLe1Nwh8zGc7CcC7tk4gO6ltwUvI
+	XH41PpeHAD6HBnluijWBcoUR53jddWzEKR6ukUKA=
+Received: by mx.zohomail.com with SMTPS id 1757601005694334.08530516479357;
+	Thu, 11 Sep 2025 07:30:05 -0700 (PDT)
+Message-ID: <5486a77a-7c5b-4316-9ff9-4cd458fb1001@collabora.com>
+Date: Thu, 11 Sep 2025 11:29:48 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,134 +59,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] tty: serial: samsung: Remove unused artpec-8 specific
- code
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Ravi Patel <ravi.patel@samsung.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, jesper.nilsson@axis.com,
- lars.persson@axis.com, alim.akhtar@samsung.com, arnd@kernel.org,
- andriy.shevchenko@linux.intel.com, geert+renesas@glider.be,
- thierry.bultel.yh@bp.renesas.com, dianders@chromium.org,
- robert.marko@sartura.hr, schnelle@linux.ibm.com, kkartik@nvidia.com,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
- ksk4725@coasia.com, kenkim@coasia.com, smn1196@coasia.com,
- pjsin865@coasia.com, shradha.t@samsung.com
-References: <CGME20250911141714epcas5p29f591a1d645c9c69dc5b7d2c2d12af50@epcas5p2.samsung.com>
- <20250911141605.13034-1-ravi.patel@samsung.com>
- <20250911141605.13034-4-ravi.patel@samsung.com>
- <CAMuHMdVe-FULHWk3QCBENG7TsbEZyxj0N5shhESxWBWd49JmOw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v1 00/14] MediaTek dt-bindings sanitization (MT8173)
+To: Mark Brown <broonie@kernel.org>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+ andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
+ chunkuang.hu@kernel.org, ck.hu@mediatek.com, conor+dt@kernel.org,
+ davem@davemloft.net, dmitry.torokhov@gmail.com, edumazet@google.com,
+ flora.fu@mediatek.com, houlong.wei@mediatek.com, jeesw@melfas.com,
+ jmassot@collabora.com, kernel@collabora.com, krzk+dt@kernel.org,
+ kuba@kernel.org, kyrie.wu@mediatek.corp-partner.google.com,
+ lgirdwood@gmail.com, linus.walleij@linaro.org,
+ louisalexis.eyraud@collabora.com, maarten.lankhorst@linux.intel.com,
+ matthias.bgg@gmail.com, mchehab@kernel.org, minghsiu.tsai@mediatek.com,
+ mripard@kernel.org, p.zabel@pengutronix.de, pabeni@redhat.com,
+ robh@kernel.org, sean.wang@kernel.org, simona@ffwll.ch,
+ support.opensource@diasemi.com, tiffany.lin@mediatek.com,
+ tzimmermann@suse.de, yunfei.dong@mediatek.com, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <9401aab0-1168-4570-a0a1-1310f37142eb@sirena.org.uk>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAMuHMdVe-FULHWk3QCBENG7TsbEZyxj0N5shhESxWBWd49JmOw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+In-Reply-To: <9401aab0-1168-4570-a0a1-1310f37142eb@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On 11/09/2025 16:27, Geert Uytterhoeven wrote:
-> Hi Ravi,
-> 
-> On Thu, 11 Sept 2025 at 16:17, Ravi Patel <ravi.patel@samsung.com> wrote:
->> Since ARTPEC-8 is using exynos8895 driver data, remove the unused
->> artpec-8 specific driver data.
+Mark,
+
+On 8/20/25 2:19 PM, Mark Brown wrote:
+> On Wed, Aug 20, 2025 at 02:12:48PM -0300, Ariel D'Alessandro wrote:
+>> This patch series continues the effort to address Device Tree validation
+>> warnings for MediaTek platforms, with a focus on MT8173. It follows the initial
+>> cleanup series by Angelo (https://www.spinics.net/lists/kernel/msg5780177.html)
 >>
->> ARTPEC-8 is using exynos4210 for earlycon, so earlycon code
->> for ARTPEC-8 is also not required.
->>
->> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+>> Similarly to the ongoing MT8183 work done by Julien Massot, this patchset
+>> eliminates several of the remaining warnings by improving or converting DT
+>> bindings to YAML, adding missing properties, and updating device tree files
+>> accordingly.
 > 
-> Thanks for your patch!
+> Same question as for that series, what's the story with
+> interdependencies between the patches?
 > 
->> --- a/drivers/tty/serial/samsung_tty.c
->> +++ b/drivers/tty/serial/samsung_tty.c
-> 
->> @@ -2655,8 +2621,6 @@ static const struct of_device_id s3c24xx_uart_dt_match[] = {
->>                 .data = S5L_SERIAL_DRV_DATA },
->>         { .compatible = "samsung,exynos850-uart",
->>                 .data = EXYNOS850_SERIAL_DRV_DATA },
->> -       { .compatible = "axis,artpec8-uart",
->> -               .data = ARTPEC8_SERIAL_DRV_DATA },
->>         { .compatible = "google,gs101-uart",
->>                 .data = GS101_SERIAL_DRV_DATA },
->>         { .compatible = "samsung,exynos8895-uart",
->> @@ -2828,8 +2792,6 @@ OF_EARLYCON_DECLARE(s5pv210, "samsung,s5pv210-uart",
->>                         s5pv210_early_console_setup);
->>  OF_EARLYCON_DECLARE(exynos4210, "samsung,exynos4210-uart",
->>                         s5pv210_early_console_setup);
->> -OF_EARLYCON_DECLARE(artpec8, "axis,artpec8-uart",
->> -                       s5pv210_early_console_setup);
->>
->>  static int __init gs101_early_console_setup(struct earlycon_device *device,
->>                                             const char *opt)
-> 
-> Removing these breaks backwards-compatibility with existing DTBs,
-> which lack the new "samsung,exynos8895-uart" fallback compatible value.
+> Please submit patches using subject lines reflecting the style for the
+> subsystem, this makes it easier for people to identify relevant patches.
+> Look at what existing commits in the area you're changing are doing and
+> make sure your subject lines visually resemble what they're doing.
+> There's no need to resubmit to fix this alone.
 
-This was just applied, so ABI break would be fine. It should be however
-clearly expressed in the commit msg.
+I'm resubmitting patchset v2 with several fixes addressing feedback on 
+each patch. While doing so, I've updated each subject line according to 
+each subsystem log.
 
-I have a feeling that not much testing was happening in Samsung around
-this patchset and only now - after I applied it - some things happen.
-But it is damn too late, my tree is already closed which means this is
-going to be the ABI.
+Of course let me know if this still need some work.
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Thanks for your help!
 
+-- 
+Ariel D'Alessandro
+Software Engineer
 
-Best regards,
-Krzysztof
+Collabora Ltd.
+Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
+Registered in England & Wales, no. 5513718
+
 
