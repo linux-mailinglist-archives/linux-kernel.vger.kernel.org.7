@@ -1,175 +1,262 @@
-Return-Path: <linux-kernel+bounces-812222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1AEB534B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B227B534B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 797C21BC2805
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:59:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85BEE1BC677C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EBB7337684;
-	Thu, 11 Sep 2025 13:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4897954763;
+	Thu, 11 Sep 2025 13:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pwtPwLsW"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="M1/pwIJ1"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D924335BC5
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D377832F762
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757599147; cv=none; b=TMfC35P3yl83ewIwEpz+iPXXJ+PWlBZ4dIdE7Jvg4xHdWTlRWKVntmx79fyd9aVuowShh3CM38aQ8JdVPQ5iTmodpfLm6GqUNVCo39oDHvGtpQEWouFBI1dmLz72p4fkC6nCpRoMZqkFwEv26gK+r0LHcEgF01K/aAHbCBdeCnk=
+	t=1757599144; cv=none; b=UGNpAi52QTsbV1OoUn1DdHotSeNY6dnNeeiXmSdURqNQBZ5zPOtTxFF+rWtYVAugC4ilXSmB9QcDlfZAiubEDAvU7RFfH681TVKshohCMRpQaa3I66sDyt4r7XGsTWHjTYayFDnzO4hnM1WGmrNKyyZLX6q9hHAgM8shjJbRiG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757599147; c=relaxed/simple;
-	bh=qY/6Z3LIv8VbCEzNVffBnUKWU/mQp4fwaBY5DM7L6GM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Je8kzD9hlj/FWN29OqcFH9dDyZ41x8CXwVArEb6BKGfg9b8XmotxwQnUIQV2KqwBKgg9ZppwegJonoSvZ+6Cxa3/AmvkfmDGH6yGKtwlf1Ow/5fqyZGz2TCfUxbWvM53IIjuWGgDbB8fQp2eYihYUC+/wII/VbKLh8rtyQJr3GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pwtPwLsW; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id D95041A0DE4;
-	Thu, 11 Sep 2025 13:59:03 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id AE59260630;
-	Thu, 11 Sep 2025 13:59:03 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7015D102F27C2;
-	Thu, 11 Sep 2025 15:58:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757599143; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=q4NyUiSlwN/QIJ4/CiLt9yupjZEnKIdTbEP4BifWV0c=;
-	b=pwtPwLsW7c8kZgcztgq70QltwJ2lkPJLvjQsKAHgP6vnZ6EKc/HMivgYrKXENsXgXCfEfb
-	CvWadoWe0K+xNQfwH5e3tFhzs7pedXrpOr0I3UQwwlPcXT92ThYrknHZKSGWtW6vHtRzdw
-	UcQGDPr2v7wVhdONNCAAof/m94LcUAKhIbo+E5OY2/VFhJgZ/8ELGtDjc3wEQblFBUCh6W
-	3DA3MgWxp9y9rvmX5qEdMZvlNrlw8fiKh17qwMfUoZ+oUNBsil+yweleBpOeVXuC9Uq75r
-	2mPUEoesq5cJGkt6UKlaowsvpiRJiIGpNZc96CdTY41hY3eI50PwDXcwndcx+w==
-Date: Thu, 11 Sep 2025 15:58:42 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ayush Singh <ayush@beagleboard.org>, David Gibson
- <david@gibson.dropbear.id.au>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, Rob
- Herring <robh@kernel.org>, Jason Kridner <jkridner@gmail.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Davis <afd@ti.com>
-Subject: Re: Device tree representation of (hotplug) connectors: discussion
- at ELCE
-Message-ID: <20250911155842.796c47fa@bootlin.com>
-In-Reply-To: <CAMuHMdULiX83n5bLEipE1j99HyuyXCpAYS9qYu-8y_vmEyO_ag@mail.gmail.com>
-References: <20250902105710.00512c6d@booty>
-	<aLkiNdGIXsogC6Rr@zatzit>
-	<337281a8-77f9-4158-beef-ae0eda5000e4@beagleboard.org>
-	<aL5dNtzwiinq_geg@zatzit>
-	<20250908145155.4f130aec@bootlin.com>
-	<aL-2fmYsbexEtpNp@zatzit>
-	<20250909114126.219c57b8@bootlin.com>
-	<aMD_qYx4ZEASD9A1@zatzit>
-	<20250911104828.48ef2c0e@bootlin.com>
-	<CAMuHMdUUGoaetdsTEVx27TYQZ_khzyCn0wzi2+TibYcvkg1fXw@mail.gmail.com>
-	<20250911122333.2e25e208@bootlin.com>
-	<36a85af7-75b1-46db-8df8-e83372d33b93@beagleboard.org>
-	<20250911144506.51809eb3@bootlin.com>
-	<CAMuHMdULiX83n5bLEipE1j99HyuyXCpAYS9qYu-8y_vmEyO_ag@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757599144; c=relaxed/simple;
+	bh=fHBHCQmnDZz6FRpjpKWMXovmU8dVnIIVwcvWahYEhes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Lz4k7PII6ZCB7Q/mNE+pMLPRpC49/SXAlbP7kI//Uqmg+qlOzd6C9en2dls4jnvvowdyBqblQL+c3khy5e+IgkHpn2u7u1cyxx5OSgDnzYRQ9MYLhPr9Q2iCm7fYk+DlxMNSkGjhvHVgNuBVZizMzffIxo+1m1k8OTQ+tgMP+To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=M1/pwIJ1; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250911135853euoutp01bdf5c75a25b901eb1f0e55371d55fdb4~kPxmQhqRs1230112301euoutp01g
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:58:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250911135853euoutp01bdf5c75a25b901eb1f0e55371d55fdb4~kPxmQhqRs1230112301euoutp01g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757599133;
+	bh=01UFvrYlJ970r9Bcj467+Hwxw2DXN8UdPW70CypFosc=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=M1/pwIJ1orJH0+nnFXJdQFgTOKWgBLbQyWXSf9UUP7NWRjXeLQoxyKbyaony9kHhY
+	 mDEAy3Vfc9OyPpBS1aMgftDFlmeFdgxAR0QVYvt2KfheZGG595DxJN8uLEN7T+oay3
+	 Hg/s9tMr3DZPEDEPBisSx8sepekf7BC3vtlZwnTI=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250911135853eucas1p283b1afd37287b715403cd2cdbfa03a94~kPxltjvy-0341403414eucas1p2Y;
+	Thu, 11 Sep 2025 13:58:53 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250911135851eusmtip1c3fabbd783fee7b6f83d8a3c99979aa5~kPxkUDm1p0287802878eusmtip1E;
+	Thu, 11 Sep 2025 13:58:51 +0000 (GMT)
+Message-ID: <b5ea8296-f981-445d-a09a-2f389d7f6fdd@samsung.com>
+Date: Thu, 11 Sep 2025 15:58:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH net v1 1/1] net: usb: asix: ax88772: drop phylink use in
+ PM to avoid MDIO runtime PM wakeups
+To: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+	Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>
+Cc: =?UTF-8?Q?Hubert_Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
+	stable@vger.kernel.org, kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Lukas Wunner <lukas@wunner.de>, Russell King
+	<linux@armlinux.org.uk>, Xu Yang <xu.yang_2@nxp.com>,
+	linux-usb@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250908112619.2900723-1-o.rempel@pengutronix.de>
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-CMS-MailID: 20250911135853eucas1p283b1afd37287b715403cd2cdbfa03a94
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250911135853eucas1p283b1afd37287b715403cd2cdbfa03a94
+X-EPHeader: CA
+X-CMS-RootMailID: 20250911135853eucas1p283b1afd37287b715403cd2cdbfa03a94
+References: <20250908112619.2900723-1-o.rempel@pengutronix.de>
+	<CGME20250911135853eucas1p283b1afd37287b715403cd2cdbfa03a94@eucas1p2.samsung.com>
 
-On Thu, 11 Sep 2025 15:08:33 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On 08.09.2025 13:26, Oleksij Rempel wrote:
+> Drop phylink_{suspend,resume}() from ax88772 PM callbacks.
+>
+> MDIO bus accesses have their own runtime-PM handling and will try to
+> wake the device if it is suspended. Such wake attempts must not happen
+> from PM callbacks while the device PM lock is held. Since phylink
+> {sus|re}sume may trigger MDIO, it must not be called in PM context.
+>
+> No extra phylink PM handling is required for this driver:
+> - .ndo_open/.ndo_stop control the phylink start/stop lifecycle.
+> - ethtool/phylib entry points run in process context, not PM.
+> - phylink MAC ops program the MAC on link changes after resume.
+>
+> Fixes: e0bffe3e6894 ("net: asix: ax88772: migrate to phylink")
+> Reported-by: Hubert Wiśniewski <hubert.wisniewski.25632@gmail.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
 
-> Hi Hervé,
-> 
-> On Thu, 11 Sept 2025 at 14:45, Herve Codina <herve.codina@bootlin.com> wrote:
-> > On Thu, 11 Sep 2025 17:45:17 +0530
-> > Ayush Singh <ayush@beagleboard.org> wrote:  
-> > > On 9/11/25 15:53, Herve Codina wrote:  
-> > > > On Thu, 11 Sep 2025 10:54:02 +0200
-> > > > Geert Uytterhoeven <geert@linux-m68k.org> wrote:  
-> > > >> On Thu, 11 Sept 2025 at 10:48, Herve Codina <herve.codina@bootlin.com> wrote:  
-> > > >>> The choice to map connA to the type 'foo' connector expected by the addon
-> > > >>> and the choice to map connB or connC to the type 'bar' connector expected by
-> > > >>> the addon can only be done at runtime and probably with the help of a driver
-> > > >>> that have the knowledge of the 3 connectors.
-> > > >>>
-> > > >>> I have the feeling that the choice of physical connectors to which the addon
-> > > >>> board is connected to is a human choice when the board is connected.  
-> > > >> All these choices and decisions apply to single-connector add-on boards, too.
-> > > >>  
-> > > > Yes, in our use case (me and Luca), each addon has an eeprom, wired exactly the
-> > > > same on all supported addon, which allows to known the exact addon. Also addon
-> > > > insertions and removals are detected using some gpios wired to the connector.
-> > > >
-> > > > Based on that our specific driver handling our specific connector perform the
-> > > > following operations on addon insertion detection:
-> > > >    - load a first addon DT to have access to the eeprom
-> > > >    - Read the eeprom to determine the addon type
-> > > >    - load the DT matching with the addon type
-> > > >
-> > > > This part is of course connector type specific. I mean having an eeprom with
-> > > > some encoded addon type values and hotplug detection with gpio is a part of
-> > > > the contract between the board and the addon (part of connector specification).  
-> > >
-> > > My usecase is a bit more complicated, since I am trying to model all the
-> > > available headers on BeagleBoard.org sbcs (particularly PocketBeagle 2
-> > > initially) as connectors. However, that still ends up being a single
-> > > connector which can have multiple addon-boards simultaneously instead of
-> > > the other way around.  
-> >
-> > In that case, a connector cannot have the state "free" or "used" handled
-> > globally by a core part.
-> >
-> > IMHO, each connector drivers should handle this kind of state if relevant.
-> > I mean, in case of "pmods" compatible driver having this state per PMOD
-> > connector could make sense whereas in "beagle-connector" it doesn't.  
-> 
-> It depends on whether the add-on board has stacking headers, or not ;-)
-> 
-> > Also, on my side, with my 2-step DT loading, the first loading should not
-> > consider the connector as 'used'.
-> >
-> > All of that is implied by the "contract" between the board and the addon.
-> > It is connector specific and so should be handled by the specific connector
-> > driver itself.  
-> 
-> Since stacking boards is a fairly common use case (beagle, rpi), perhaps
-> it makes sense to have a simple method to re-export / forward a connector?
-> The alternative would be to re-describe and re-export everything.
+This patch landed in today's linux-next as commit 5537a4679403 ("net: 
+usb: asix: ax88772: drop phylink use in PM to avoid MDIO runtime PM 
+wakeups"). In my tests I found that it breaks operation of asix ethernet 
+usb dongle after system suspend-resume cycle. The ethernet device is 
+still present in the system, but it is completely dysfunctional. Here is 
+the log:
 
-You re-apply an addon DT on the same connector. You should see the exact same
-symbols without re-exporting anything.
+root@target:~# time rtcwake -s10 -mmem
+rtcwake: wakeup from "mem" using /dev/rtc0 at Thu Sep 11 13:02:23 2025
+PM: suspend entry (deep)
+Filesystems sync: 0.002 seconds
+Freezing user space processes
+Freezing user space processes completed (elapsed 0.003 seconds)
+OOM killer disabled.
+Freezing remaining freezable tasks
+Freezing remaining freezable tasks completed (elapsed 0.024 seconds)
+...
+usb usb1: root hub lost power or was reset
+...
+usb usb2: root hub lost power or was reset
+xhci-hcd xhci-hcd.7.auto: xHC error in resume, USBSTS 0x401, Reinit
+usb usb3: root hub lost power or was reset
+usb usb4: root hub lost power or was reset
+asix 2-1:1.0 eth0: Failed to write reg index 0x0000: -113
+asix 2-1:1.0 eth0: Failed to enable software MII access
+asix 2-1:1.0 eth0: Failed to read reg index 0x0000: -113
+asix 2-1:1.0 eth0: Failed to write reg index 0x0000: -113
+asix 2-1:1.0 eth0: Failed to enable software MII access
+... (the above error repeated many times)
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 9 at drivers/net/phy/phy.c:1346 
+_phy_state_machine+0x158/0x2d0
+phy_check_link_status+0x0/0x140: returned: -110
+Modules linked in: cmac bnep mwifiex_sdio mwifiex btmrvl_sdio btmrvl 
+sha256 bluetooth cfg80211 s5p_mfc exynos_gsc v4l2_mem2mem 
+videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_common 
+videodev ecdh_generic ecc mc s5p_cec
+CPU: 0 UID: 0 PID: 9 Comm: kworker/0:0 Not tainted 
+6.17.0-rc4-00221-g5537a4679403 #11106 PREEMPT
+Hardware name: Samsung Exynos (Flattened Device Tree)
+Workqueue: events_power_efficient phy_state_machine
+Call trace:
+  unwind_backtrace from show_stack+0x10/0x14
+  show_stack from dump_stack_lvl+0x68/0x88
+  dump_stack_lvl from __warn+0x80/0x1d0
+  __warn from warn_slowpath_fmt+0x124/0x1bc
+  warn_slowpath_fmt from _phy_state_machine+0x158/0x2d0
+  _phy_state_machine from phy_state_machine+0x24/0x44
+  phy_state_machine from process_one_work+0x24c/0x70c
+  process_one_work from worker_thread+0x1b8/0x3bc
+  worker_thread from kthread+0x13c/0x264
+  kthread from ret_from_fork+0x14/0x28
+Exception stack(0xf0879fb0 to 0xf0879ff8)
+...
+irq event stamp: 221553
+hardirqs last  enabled at (221559): [<c01bae94>] __up_console_sem+0x50/0x60
+hardirqs last disabled at (221564): [<c01bae80>] __up_console_sem+0x3c/0x60
+softirqs last  enabled at (219346): [<c013b93c>] handle_softirqs+0x328/0x520
+softirqs last disabled at (219327): [<c013bce0>] __irq_exit_rcu+0x144/0x1f0
+---[ end trace 0000000000000000 ]---
+asix 2-1:1.0 eth0: Failed to write reg index 0x0000: -113
+asix 2-1:1.0 eth0: Failed to enable software MII access
+asix 2-1:1.0 eth0: Failed to write reg index 0x0000: -113
+asix 2-1:1.0 eth0: Failed to write Medium Mode mode to 0x0000: ffffff8f
+asix 2-1:1.0 eth0: Link is Down
+asix 2-1:1.0 eth0: Failed to read reg index 0x0000: -113
+asix 2-1:1.0 eth0: Failed to write reg index 0x0000: -113
+asix 2-1:1.0 eth0: Failed to enable software MII access
+asix 2-1:1.0 eth0: Failed to read reg index 0x0000: -113
+asix 2-1:1.0 eth0: Failed to write reg index 0x0000: -113
+asix 2-1:1.0 eth0: Failed to enable software MII access
+... (the above error repeated many times)
+usb 2-1: reset high-speed USB device number 2 using exynos-ehci
+OOM killer enabled.
+Restarting tasks: Starting
+Restarting tasks: Done
+PM: suspend exit
 
-I think that you have to re-export stuff only if, on the addon board itself,
-you wire some pins from one connector to an other one.
+real    0m14.105s
+user    0m0.002s
+sys     0m2.025s
+root@target:~#
+root@target:~# ifconfig -a
+eth0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 192.168.100.17  netmask 255.255.255.0  broadcast 
+192.168.100.255
+        inet6 fe80::250:b6ff:fe18:92ee  prefixlen 64  scopeid 0x20<link>
+        ether 00:50:b6:18:92:ee  txqueuelen 1000  (Ethernet)
+        RX packets 242  bytes 18250 (17.8 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 258  bytes 22474 (21.9 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
-       +-----------------------------+
-       |        Addon board          |
-   +---------+                   +--------+
-   + conn A  +-------------------+ conn B +
-   +         +--,   +--------+   +--------+
-   +---------+   '--+ device |       |        
-       |            +--------+       |
-       +-----------------------------+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
-Here the resource available at conn A directly wired to conn B should be
-re-exported in order to allow another addon connected to conn B to use this
-signal.
+root@target:~# ping host
+PING host (192.168.100.1) 56(84) bytes of data.
+^C
+--- host ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 1053ms
 
-Multiple addons with conn A connector stacked should see all symbols exported
-from the based board related to conn A.
 
-Best regards,
-Hervé
+Reverting $subject on top of today's linux-next restores ethernet 
+operation after system suspend-resume cycle.
+
+
+>   drivers/net/usb/asix_devices.c | 13 -------------
+>   1 file changed, 13 deletions(-)
+>
+> diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
+> index 792ddda1ad49..1e8f7089f5e8 100644
+> --- a/drivers/net/usb/asix_devices.c
+> +++ b/drivers/net/usb/asix_devices.c
+> @@ -607,15 +607,8 @@ static const struct net_device_ops ax88772_netdev_ops = {
+>
+>   static void ax88772_suspend(struct usbnet *dev)
+>   {
+> -	struct asix_common_private *priv = dev->driver_priv;
+>   	u16 medium;
+>
+> -	if (netif_running(dev->net)) {
+> -		rtnl_lock();
+> -		phylink_suspend(priv->phylink, false);
+> -		rtnl_unlock();
+> -	}
+> -
+>   	/* Stop MAC operation */
+>   	medium = asix_read_medium_status(dev, 1);
+>   	medium &= ~AX_MEDIUM_RE;
+> @@ -644,12 +637,6 @@ static void ax88772_resume(struct usbnet *dev)
+>   	for (i = 0; i < 3; i++)
+>   		if (!priv->reset(dev, 1))
+>   			break;
+> -
+> -	if (netif_running(dev->net)) {
+> -		rtnl_lock();
+> -		phylink_resume(priv->phylink);
+> -		rtnl_unlock();
+> -	}
+>   }
+>
+>   static int asix_resume(struct usb_interface *intf)
+> --
+> 2.47.3
+>
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
