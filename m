@@ -1,149 +1,386 @@
-Return-Path: <linux-kernel+bounces-812945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44F0B53E9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:23:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E30B53EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6FAA0846F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:23:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4180C3B99E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8222EDD5A;
-	Thu, 11 Sep 2025 22:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C854B2EE279;
+	Thu, 11 Sep 2025 22:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oYf4Wl/v"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="NrQVbjPN"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911AB2ECD01;
-	Thu, 11 Sep 2025 22:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889402ED86D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 22:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757629407; cv=none; b=PNoWpCppkbpDmsYIomnC0Ooo7H+tekXALNQeFvlhj2sfK9VPhUPP0mHOrLVahrQeOQew+mVjIm9by+NDUtH+DE4VY37R8PSA6cu+luF77175HmJ2djaZ6iPbWh5iUlMcPTn+e7LHhom7iDezOVxeUWd3jTGzKrlH6JhNaW6X6NA=
+	t=1757629512; cv=none; b=Ncsp5xOYZO2JwNtVWMnV22+rI5LAEwajKEyuQOMBkNC6vybOm0zEoXhH1837648LbICJkGvfRdxd8FIXck9JeZf6Nz49SoTjer+xbjHQgLOebNdjI5l3tB5eHmnELFd3UberwSVg8T4sfWzg7s9XOflFB2DqGyMfsJFqPLm27t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757629407; c=relaxed/simple;
-	bh=On+cXG/cutfpnJd9WieYdLKcKJAFhg2OkttN+UNQ654=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=UaUiZVZdAEq82Oubfzo7q4cgT46yvZdXB506mxtDsyfnVt2drTcMnhZhSDSWBCho9L9RmeLM/icCj0aronWS09fdrAqlqsqsfStkYLZkDvdHBtgw4DfqiQe0DN1q0QYf+e3qtgNTbqJ3e+/3xYnKdhAhZpg6u7S9Mp6pNKA3yNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oYf4Wl/v; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250911222322euoutp011634560d57af0d6769ea82508ee6c7b3~kWqER7Qs81513015130euoutp01K;
-	Thu, 11 Sep 2025 22:23:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250911222322euoutp011634560d57af0d6769ea82508ee6c7b3~kWqER7Qs81513015130euoutp01K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1757629402;
-	bh=9atdt/om7OmffbDgov9WTxIsiO59X0BmEMtINP1uP9A=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=oYf4Wl/vK4mtCwLnlaPuk0Vbqm1kIIG4/GofumuhdavmIiBHyUZQRceOU6BgMduk5
-	 UPpbMvZbaMJvAX41rCofkjz8fUum8Xd7cFaLczcWfrjE46zM7Gw77+bY+gxYbnaXwW
-	 jL8zkycMTQXVpPJyDpmR0+MuvHwC/4FUakNYU3YU=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250911222321eucas1p114043a72e011e2fff92df33a2133b21e~kWqDhtt8p0600006000eucas1p18;
-	Thu, 11 Sep 2025 22:23:21 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250911222317eusmtip2aabd06b78078a7146730dff557f2cb71~kWqAG3AB-1019110191eusmtip2F;
-	Thu, 11 Sep 2025 22:23:17 +0000 (GMT)
-Message-ID: <5ffc63e9-19bd-4e12-92fc-57fe12d10f4f@samsung.com>
-Date: Fri, 12 Sep 2025 00:23:17 +0200
+	s=arc-20240116; t=1757629512; c=relaxed/simple;
+	bh=OLA6H3dOKdGtTjWb6cUYqb9i0nz6g5+/PTRkGJGAb6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tmvmwAfxXgD+9Yv3FuwGsP3W0sK4e0GINArhaz/pm88FIKeUQE0ewSqxN/OFT43qYpky7TOxMhj+bWJoDQurSXIluGLIV9iLOrqSSax2ItxuQSikl9PhKKFoaNkLvoaaBvjrwDeXeYNJpE4JOfuc0KAFzu1HCYp2YBAH4NydyIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=NrQVbjPN; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45dec026c78so12672185e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:25:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1757629508; x=1758234308; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0HU88kHOl9gAPudh0H7aVaOnm6bfOSCFa9GmnAENnw4=;
+        b=NrQVbjPNdwUAYiYO2ELcne7Nh17RAhefXmL8NTpPHYat5DYPsje+3rmY4mKr3XTCsz
+         SmXmsUyA9kDHg+DyToPD1XtIFBHZsd2dNu4viU6XsMofAvU6LY/co3C0rf/lbqkO3TRL
+         Fq1+ARSW24Sm3MEGGpoFgP6yHbYx/IOTbv4qI2CUkKYamblBHojqSlIBKA7d3G9PmI3T
+         DKbxqxbWSnJNrPJFm1c6Q0W3SWaQrJOhwan6XhauOHWof48P9NcYLH1aTj1HO/imN/DH
+         tdjcPtfO8BT4NPGX2FIPArQlCr1jBk1vlw+CUIhkf43bmmoTYsl3mSdrI92VXPSUAXKx
+         UQkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757629508; x=1758234308;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0HU88kHOl9gAPudh0H7aVaOnm6bfOSCFa9GmnAENnw4=;
+        b=JpbTahRxt9KS25QEmtTpGwUWSUD+injcyQSr9ElAS4qtfj6u5hFK8VZYob0H5IDJ/C
+         ilvXWZLs4oovvytlrikrD2VKA97gPxDzArGofzSfiQJIhjUISq8hMO4y6Pjygjt8eccE
+         J3PZScKEscTmBQpz/HWqiXyfOXDA/Ixv9mlwMF/hgWGXffnUy1P+SYHAPlvQv4hxJGAU
+         dlQ81CbAu8ums9aW6Flm7LU5OxqNewXd8eRHVU6In8AvTx0SbyoQY+6oDIEoU93FeUlb
+         /NTGL3somoVPKEaVmiBUfaPbQ7EzhGC0AZoPe2H0E2kkkJFmZp0S9+7d0N0CT3dzkyUd
+         qMNw==
+X-Forwarded-Encrypted: i=1; AJvYcCU64/na8BkJXW38XSNb5AB8Wx+kd78eTFaKRoRhPNpNGN/au6czk48sSsBHHA88glHvnmDJm8oC67FxlTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRt/UMmhQGRNHfkUvIl1zX0jKOVbW/LHu+dPzx3gyocdnA7T+N
+	f776orXtIsBqLMSyWxIkTpoBvgsvjDh8Qi/zWJF1tZAIYPmNrPsmssCLrk6lxxUxale6s67Fbrm
+	2UHzI
+X-Gm-Gg: ASbGnctEaDnr8UvUEdPv1pRxrscShtnGLQ7VsSl8qAK/jNgAq6ooxTNnYwbRvskehZ1
+	iwI2r4xqJ2L4anAbJF7TGenWdf6BeDfuZQZeBRTciHNr6h1yX0WOMXiX/IlOvgDum+KezuukW4u
+	rLM4s9LDvMCSLBLxvBQg1PQOJbCGYmjo1m/E8IpR9ZS5IxMPBOB3OGdZuhgap012X/VPTS1Txyd
+	JzwwvR8GnPboPc9L3I5rME5SeQH6rwm/S8ASk1eqVA3OFJ5EtfI/eOuUJPTVcytACBw2uSEOY4O
+	TTxlLQuPMIpZq8XmMrfLUYUYDudmEbAhGASQs/ev+pSzabLsuslcab3yNoZjIOS8n92OVM51mGb
+	jELFcf+zYRU7CGi6hDpyrHUUXqwHogveOb5VYBoIzVkcj5XBSnCUaNJ6nrvwkMXGLApyfZvXofl
+	iJOz9A6im6FZ3TDaSXFLgiV8XrU1fZS6ZsHg==
+X-Google-Smtp-Source: AGHT+IFzUWHt1FmF+C/wk/FOIlG+YUuC9WWFQbrDsh7m4yHC7FeXyz7QWRRtcdcrtgXf+5CuR6yXoQ==
+X-Received: by 2002:a5d:5c84:0:b0:3e5:f1e2:6789 with SMTP id ffacd0b85a97d-3e765a22eafmr700299f8f.59.1757629507723;
+        Thu, 11 Sep 2025 15:25:07 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f31f700023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f31:f700:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0156b0a8sm42537815e9.3.2025.09.11.15.25.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 15:25:07 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Christian Brauner <brauner@kernel.org>,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+	linux-stable@vger.kernel.org
+Subject: [PATCH] fs/netfs: fix reference leak
+Date: Fri, 12 Sep 2025 00:24:59 +0200
+Message-ID: <20250911222501.1417765-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v6 03/16] dma-debug: refactor to use physical addresses
- for page mapping
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Abdiel Janulgue
-	<abdiel.janulgue@gmail.com>, Alexander Potapenko <glider@google.com>, Alex
-	Gaynor <alex.gaynor@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>, David
-	Hildenbrand <david@redhat.com>, iommu@lists.linux.dev, Jason Wang
-	<jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>, Joerg Roedel
-	<joro@8bytes.org>, Jonathan Corbet <corbet@lwn.net>, Juergen Gross
-	<jgross@suse.com>, kasan-dev@googlegroups.com, Keith Busch
-	<kbusch@kernel.org>, linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-trace-kernel@vger.kernel.org, Madhavan Srinivasan
-	<maddy@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, Michael
-	Ellerman <mpe@ellerman.id.au>, "Michael S. Tsirkin" <mst@redhat.com>, Miguel
-	Ojeda <ojeda@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	rust-for-linux@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>, Stefano
-	Stabellini <sstabellini@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250910052618.GH341237@unreal>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250911222321eucas1p114043a72e011e2fff92df33a2133b21e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250910052628eucas1p160daa0dadb6f81d7831d8047628aa9d4
-X-EPHeader: CA
-X-CMS-RootMailID: 20250910052628eucas1p160daa0dadb6f81d7831d8047628aa9d4
-References: <cover.1757423202.git.leonro@nvidia.com>
-	<56d1a6769b68dfcbf8b26a75a7329aeb8e3c3b6a.1757423202.git.leonro@nvidia.com>
-	<20250909193748.GG341237@unreal>
-	<CGME20250910052628eucas1p160daa0dadb6f81d7831d8047628aa9d4@eucas1p1.samsung.com>
-	<20250910052618.GH341237@unreal>
+Content-Transfer-Encoding: 8bit
 
-On 10.09.2025 07:26, Leon Romanovsky wrote:
-> On Tue, Sep 09, 2025 at 10:37:48PM +0300, Leon Romanovsky wrote:
->> On Tue, Sep 09, 2025 at 04:27:31PM +0300, Leon Romanovsky wrote:
->>> From: Leon Romanovsky <leonro@nvidia.com>
->> <...>
->>
->>>   include/linux/page-flags.h         |  1 +
->> <...>
->>
->>> --- a/include/linux/page-flags.h
->>> +++ b/include/linux/page-flags.h
->>> @@ -614,6 +614,7 @@ FOLIO_FLAG(dropbehind, FOLIO_HEAD_PAGE)
->>>    * available at this point.
->>>    */
->>>   #define PageHighMem(__p) is_highmem_idx(page_zonenum(__p))
->>> +#define PhysHighMem(__p) (PageHighMem(phys_to_page(__p)))
->> This was a not so great idea to add PhysHighMem() because of "else"
->> below which unfolds to maze of macros and automatically generated
->> functions with "static inline int Page##uname ..." signature.
->>
->>>   #define folio_test_highmem(__f)	is_highmem_idx(folio_zonenum(__f))
->>>   #else
->>>   PAGEFLAG_FALSE(HighMem, highmem)
-> After sleeping over it, the following hunk will help:
->
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index dfbc4ba86bba2..2a1f346178024 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -614,11 +614,11 @@ FOLIO_FLAG(dropbehind, FOLIO_HEAD_PAGE)
->    * available at this point.
->    */
->   #define PageHighMem(__p) is_highmem_idx(page_zonenum(__p))
-> -#define PhysHighMem(__p) (PageHighMem(phys_to_page(__p)))
->   #define folio_test_highmem(__f)        is_highmem_idx(folio_zonenum(__f))
->   #else
->   PAGEFLAG_FALSE(HighMem, highmem)
->   #endif
-> +#define PhysHighMem(__p) (PageHighMem(phys_to_page(__p)))
->
->   /* Does kmap_local_folio() only allow access to one page of the folio? */
->   #ifdef CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP
+Commit 20d72b00ca81 ("netfs: Fix the request's work item to not
+require a ref") modified netfs_alloc_request() to initialize the
+reference counter to 2 instead of 1.  The rationale was that the
+requet's "work" would release the second reference after completion
+(via netfs_{read,write}_collection_worker()).  That works most of the
+time if all goes well.
 
-Okay, I will add this fixup while applying the patches.
+However, it leaks this additional reference if the request is released
+before the I/O operation has been submitted: the error code path only
+decrements the reference counter once and the work item will never be
+queued because there will never be a completion.
 
-Best regards
+This has caused outages of our whole server cluster today because
+tasks were blocked in netfs_wait_for_outstanding_io(), leading to
+deadlocks in Ceph (another bug that I will address soon in another
+patch).  This was caused by a netfs_pgpriv2_begin_copy_to_cache() call
+which failed in fscache_begin_write_operation().  The leaked
+netfs_io_request was never completed, leaving `netfs_inode.io_count`
+with a positive value forever.
+
+All of this is super-fragile code.  Finding out which code paths will
+lead to an eventual completion and which do not is hard to see:
+
+- Some functions like netfs_create_write_req() allocate a request, but
+  will never submit any I/O.
+
+- netfs_unbuffered_read_iter_locked() calls netfs_unbuffered_read()
+  and then netfs_put_request(); however, netfs_unbuffered_read() can
+  also fail early before submitting the I/O request, therefore another
+  netfs_put_request() call must be added there.
+
+A rule of thumb is that functions that return a `netfs_io_request` do
+not submit I/O, and all of their callers must be checked.
+
+For my taste, the whole netfs code needs an overhaul to make reference
+counting easier to understand and less fragile & obscure.  But to fix
+this bug here and now and produce a patch that is adequate for a
+stable backport, I tried a minimal approach that quickly frees the
+request object upon early failure.
+
+I decided against adding a second netfs_put_request() each time
+because that would cause code duplication which obscures the code
+further.  Instead, I added the function netfs_put_failed_request()
+which frees such a failed request synchronously under the assumption
+that the reference count is exactly 2 (as initially set by
+netfs_alloc_request() and never touched), verified by a
+WARN_ON_ONCE().  It then deinitializes the request object (without
+going through the "cleanup_work" indirection) and frees the allocation
+(without the "call_rcu" indirection).  This should be safe because
+this is the same context that allocated/initialized the request and
+nobody else has a pointer to this object.
+
+All code paths that fail early have been changed to call
+netfs_put_failed_request() instead of netfs_put_request().
+Additionally, I have added a netfs_put_request() call to
+netfs_unbuffered_read() as explained above because the
+netfs_put_failed_request() approach does not work there.
+
+Fixes: 20d72b00ca81 ("netfs: Fix the request's work item to not require a ref")
+Cc: linux-stable@vger.kernel.org
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/netfs/buffered_read.c | 10 +++++-----
+ fs/netfs/direct_read.c   |  7 ++++++-
+ fs/netfs/direct_write.c  |  6 +++++-
+ fs/netfs/internal.h      |  1 +
+ fs/netfs/objects.c       | 32 +++++++++++++++++++++++++++++---
+ fs/netfs/read_pgpriv2.c  |  2 +-
+ fs/netfs/read_single.c   |  2 +-
+ fs/netfs/write_issue.c   |  3 +--
+ 8 files changed, 49 insertions(+), 14 deletions(-)
+
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index 18b3dc74c70e..37ab6f28b5ad 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -369,7 +369,7 @@ void netfs_readahead(struct readahead_control *ractl)
+ 	return netfs_put_request(rreq, netfs_rreq_trace_put_return);
+ 
+ cleanup_free:
+-	return netfs_put_request(rreq, netfs_rreq_trace_put_failed);
++	return netfs_put_failed_request(rreq);
+ }
+ EXPORT_SYMBOL(netfs_readahead);
+ 
+@@ -472,7 +472,7 @@ static int netfs_read_gaps(struct file *file, struct folio *folio)
+ 	return ret < 0 ? ret : 0;
+ 
+ discard:
+-	netfs_put_request(rreq, netfs_rreq_trace_put_discard);
++	netfs_put_failed_request(rreq);
+ alloc_error:
+ 	folio_unlock(folio);
+ 	return ret;
+@@ -532,7 +532,7 @@ int netfs_read_folio(struct file *file, struct folio *folio)
+ 	return ret < 0 ? ret : 0;
+ 
+ discard:
+-	netfs_put_request(rreq, netfs_rreq_trace_put_discard);
++	netfs_put_failed_request(rreq);
+ alloc_error:
+ 	folio_unlock(folio);
+ 	return ret;
+@@ -699,7 +699,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
+ 	return 0;
+ 
+ error_put:
+-	netfs_put_request(rreq, netfs_rreq_trace_put_failed);
++	netfs_put_failed_request(rreq);
+ error:
+ 	if (folio) {
+ 		folio_unlock(folio);
+@@ -754,7 +754,7 @@ int netfs_prefetch_for_write(struct file *file, struct folio *folio,
+ 	return ret < 0 ? ret : 0;
+ 
+ error_put:
+-	netfs_put_request(rreq, netfs_rreq_trace_put_discard);
++	netfs_put_failed_request(rreq);
+ error:
+ 	_leave(" = %d", ret);
+ 	return ret;
+diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
+index a05e13472baf..a498ee8d6674 100644
+--- a/fs/netfs/direct_read.c
++++ b/fs/netfs/direct_read.c
+@@ -131,6 +131,7 @@ static ssize_t netfs_unbuffered_read(struct netfs_io_request *rreq, bool sync)
+ 
+ 	if (rreq->len == 0) {
+ 		pr_err("Zero-sized read [R=%x]\n", rreq->debug_id);
++		netfs_put_request(rreq, netfs_rreq_trace_put_discard);
+ 		return -EIO;
+ 	}
+ 
+@@ -205,7 +206,7 @@ ssize_t netfs_unbuffered_read_iter_locked(struct kiocb *iocb, struct iov_iter *i
+ 	if (user_backed_iter(iter)) {
+ 		ret = netfs_extract_user_iter(iter, rreq->len, &rreq->buffer.iter, 0);
+ 		if (ret < 0)
+-			goto out;
++			goto error_put;
+ 		rreq->direct_bv = (struct bio_vec *)rreq->buffer.iter.bvec;
+ 		rreq->direct_bv_count = ret;
+ 		rreq->direct_bv_unpin = iov_iter_extract_will_pin(iter);
+@@ -238,6 +239,10 @@ ssize_t netfs_unbuffered_read_iter_locked(struct kiocb *iocb, struct iov_iter *i
+ 	if (ret > 0)
+ 		orig_count -= ret;
+ 	return ret;
++
++error_put:
++	netfs_put_failed_request(rreq);
++	return ret;
+ }
+ EXPORT_SYMBOL(netfs_unbuffered_read_iter_locked);
+ 
+diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
+index a16660ab7f83..a9d1c3b2c084 100644
+--- a/fs/netfs/direct_write.c
++++ b/fs/netfs/direct_write.c
+@@ -57,7 +57,7 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *
+ 			n = netfs_extract_user_iter(iter, len, &wreq->buffer.iter, 0);
+ 			if (n < 0) {
+ 				ret = n;
+-				goto out;
++				goto error_put;
+ 			}
+ 			wreq->direct_bv = (struct bio_vec *)wreq->buffer.iter.bvec;
+ 			wreq->direct_bv_count = n;
+@@ -101,6 +101,10 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *
+ out:
+ 	netfs_put_request(wreq, netfs_rreq_trace_put_return);
+ 	return ret;
++
++error_put:
++	netfs_put_failed_request(wreq);
++	return ret;
+ }
+ EXPORT_SYMBOL(netfs_unbuffered_write_iter_locked);
+ 
+diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
+index d4f16fefd965..4319611f5354 100644
+--- a/fs/netfs/internal.h
++++ b/fs/netfs/internal.h
+@@ -87,6 +87,7 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
+ void netfs_get_request(struct netfs_io_request *rreq, enum netfs_rreq_ref_trace what);
+ void netfs_clear_subrequests(struct netfs_io_request *rreq);
+ void netfs_put_request(struct netfs_io_request *rreq, enum netfs_rreq_ref_trace what);
++void netfs_put_failed_request(struct netfs_io_request *rreq);
+ struct netfs_io_subrequest *netfs_alloc_subrequest(struct netfs_io_request *rreq);
+ 
+ static inline void netfs_see_request(struct netfs_io_request *rreq,
+diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
+index e8c99738b5bb..9a3fbb73325e 100644
+--- a/fs/netfs/objects.c
++++ b/fs/netfs/objects.c
+@@ -116,10 +116,8 @@ static void netfs_free_request_rcu(struct rcu_head *rcu)
+ 	netfs_stat_d(&netfs_n_rh_rreq);
+ }
+ 
+-static void netfs_free_request(struct work_struct *work)
++static void netfs_deinit_request(struct netfs_io_request *rreq)
+ {
+-	struct netfs_io_request *rreq =
+-		container_of(work, struct netfs_io_request, cleanup_work);
+ 	struct netfs_inode *ictx = netfs_inode(rreq->inode);
+ 	unsigned int i;
+ 
+@@ -149,6 +147,14 @@ static void netfs_free_request(struct work_struct *work)
+ 
+ 	if (atomic_dec_and_test(&ictx->io_count))
+ 		wake_up_var(&ictx->io_count);
++}
++
++static void netfs_free_request(struct work_struct *work)
++{
++	struct netfs_io_request *rreq =
++		container_of(work, struct netfs_io_request, cleanup_work);
++
++	netfs_deinit_request(rreq);
+ 	call_rcu(&rreq->rcu, netfs_free_request_rcu);
+ }
+ 
+@@ -167,6 +173,26 @@ void netfs_put_request(struct netfs_io_request *rreq, enum netfs_rreq_ref_trace
+ 	}
+ }
+ 
++/*
++ * Free a request (synchronously) that was just allocated but has
++ * failed before it could be submitted.
++ */
++void netfs_put_failed_request(struct netfs_io_request *rreq)
++{
++	/* new requests have two references (see
++	 * netfs_alloc_request(), and this function is only allowed on
++	 * new request objects
++	 */
++	WARN_ON_ONCE(refcount_read(&rreq->ref) != 2);
++
++	trace_netfs_rreq_ref(rreq->debug_id, 0, netfs_rreq_trace_put_failed);
++
++	netfs_deinit_request(rreq);
++
++	mempool_free(rreq, rreq->netfs_ops->request_pool ?: &netfs_request_pool);
++	netfs_stat_d(&netfs_n_rh_rreq);
++}
++
+ /*
+  * Allocate and partially initialise an I/O request structure.
+  */
+diff --git a/fs/netfs/read_pgpriv2.c b/fs/netfs/read_pgpriv2.c
+index 8097bc069c1d..a1489aa29f78 100644
+--- a/fs/netfs/read_pgpriv2.c
++++ b/fs/netfs/read_pgpriv2.c
+@@ -118,7 +118,7 @@ static struct netfs_io_request *netfs_pgpriv2_begin_copy_to_cache(
+ 	return creq;
+ 
+ cancel_put:
+-	netfs_put_request(creq, netfs_rreq_trace_put_return);
++	netfs_put_failed_request(creq);
+ cancel:
+ 	rreq->copy_to_cache = ERR_PTR(-ENOBUFS);
+ 	clear_bit(NETFS_RREQ_FOLIO_COPY_TO_CACHE, &rreq->flags);
+diff --git a/fs/netfs/read_single.c b/fs/netfs/read_single.c
+index fa622a6cd56d..5c0dc4efc792 100644
+--- a/fs/netfs/read_single.c
++++ b/fs/netfs/read_single.c
+@@ -189,7 +189,7 @@ ssize_t netfs_read_single(struct inode *inode, struct file *file, struct iov_ite
+ 	return ret;
+ 
+ cleanup_free:
+-	netfs_put_request(rreq, netfs_rreq_trace_put_failed);
++	netfs_put_failed_request(rreq);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(netfs_read_single);
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index 0584cba1a043..dd8743bc8d7f 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -133,8 +133,7 @@ struct netfs_io_request *netfs_create_write_req(struct address_space *mapping,
+ 
+ 	return wreq;
+ nomem:
+-	wreq->error = -ENOMEM;
+-	netfs_put_request(wreq, netfs_rreq_trace_put_failed);
++	netfs_put_failed_request(wreq);
+ 	return ERR_PTR(-ENOMEM);
+ }
+ 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.47.3
 
 
