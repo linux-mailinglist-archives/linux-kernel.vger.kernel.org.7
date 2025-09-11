@@ -1,124 +1,154 @@
-Return-Path: <linux-kernel+bounces-812827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C354AB53D2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:34:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA0FFB53D2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E8191738BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:34:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775E1165601
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBBA2D0602;
-	Thu, 11 Sep 2025 20:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E7D2C2361;
+	Thu, 11 Sep 2025 20:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KU8izAxH"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CvjyN5vx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188A627381E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 20:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AE7261B71;
+	Thu, 11 Sep 2025 20:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757622869; cv=none; b=knueLSqe9l8hTeLAfPmDyLQHNyGcPBC7G+HYsfLirWB3HnmhYI63WfqgwgX7IRaQs3z2gQ4ra8KZiioeYY49tLRsSZJbp8lGcDb2okqwAjGFodxQYdnc1/FFUNaSmj0cnguFlv1tOYLZjiFg3UdgJf28OY5bWLYDhOdE4kkhWJI=
+	t=1757622863; cv=none; b=I1RAYNDyyQ+TgW2IpVsUcS2k7OinL4H6xN+blLzslu4meQIzprBQDxaI21ETCFjepuPhCUrb9mLLhV5zE8/SUCxgN7KR8snWvhQqflQnO/7JKqhuz3M4PMY3ej3RWMhDdr2fAppzuRvg6wexTksmVJzHjZIaRUshakjrBY3gplk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757622869; c=relaxed/simple;
-	bh=23JJq+roFifUeF8C6bU5RojD6718sgxi/PjX0hdr5ck=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bJi/Cws4gzKgpD3kSG1bbvnOJvDR7SlqEidHS9LJa0qrqxeE5PmdRHQZOp3lL7oYz6UZ+K9OEZECuCWx6BwpKxrjdLGp5qJ4t7rZQsuqh00NP1vateSez/tY0AenoSREZVuS/kcUZFCNEj+FcCg6oD0nn3JpqcbpeE/5c15f1mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KU8izAxH; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so1072505b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:34:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1757622867; x=1758227667; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Pc/MNKgT1tpkpWwiHPHXGDjYhl41JOtHh7+jToyEzk=;
-        b=KU8izAxHzcPkaZYujWS2E3mxi5NBZgZxNagCCQ/CjlMzanbo970ZOnfDHe6OMxgcIp
-         4BPzPxdkByqJ7N+AXRUDj2omnu/kHLJ75iYeI3p+SCh/QpTfJiuwp04Uw1C+h/BPUb21
-         Aj+zLJlYOFlNw5s1CnHgUwFlOfI9igbcsAW/U3L2g+f7eBYsrwuqUyUH7JjfG4byHtMu
-         hk9q512pIEtch8fVsG5w6JHD4Iamwiyq7MinkP6ihhsnQkh+3ygeH3AA6SlEErzclDS1
-         9oW5EMXlvBCMtiSnXrL4oEJt1LZhdZSSN1NPqZhvtTPtG/5fEVjngqzxsC3RdTFmGDtX
-         HGvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757622867; x=1758227667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Pc/MNKgT1tpkpWwiHPHXGDjYhl41JOtHh7+jToyEzk=;
-        b=kDeqWsYfSib+ftb6Fu34zfuezb7vl6Nn1f/q6N6YRBM1wiQHBw9wqCcZ5YnxDNYldI
-         6cHHZSnHN1bI9BFe93xaxRmuQew3T01gfqsgc7p6WXs2x/PkB4JL45Y0qpNqWE67FMmN
-         quythhWYgZsL/0tYxTszbB9Ne7KMZYnGlw88ewD1jrbN+SocKqGVotqVyeJisfVAA+hP
-         75vmYPrC2yctxsAKsZpHb791N1m0b+g9UsVBfRjviPFn3C4OY6C5BlayUC5PGU09Bnuq
-         l1B8yze/+sbb60mq4F8SYBvxIizyk2TgpiD2VzA5v/LTHyV8bPEIBsyNBwnEhY1o0Z3j
-         VIig==
-X-Forwarded-Encrypted: i=1; AJvYcCXPrG50rJXsSY3VMrSeeJn0uuC5e8pbTziJf6X4EW5RL0sdlkN6u9kIR9Gu/XY2l5yPZCNk7jXLf+wLOuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxibd1PnL51JT92NUxGlSgFfY/KvE1GJ90WmuiFlfyZjeAxVfFo
-	I5Ugtg0mew2DCtOx2Rinh2jc6hkGkATwit2q01WMZd2YE7Xmf51nPejSsZPJN0Q8ok0BxP4odja
-	FI4/o9pTrqkAhJMVCXARZPYmYr/MKWMU95B4/BTVI
-X-Gm-Gg: ASbGnctq4OJ5BXZMAi0OpnE13FnM2t3YId/glA62MV6pQq1cavCJ0Zx2P0v9lgUdiHv
-	dYUFEJD2oWDrjmCjAEEjwOMYo7ejLCjrQvKVIzLog4ijlGeAaGD1VJKSVSX3wiUPU6lX4H+JbqV
-	DWMSGq0vjTQmrH7JwU0pcAzU1bMhfVTs0NkrBIlPQYdRA5XQkIpeK/pLZLvfBNYUkHcpeJUn8wX
-	XKKVL0=
-X-Google-Smtp-Source: AGHT+IFYyJWjNuAI2LwN0HbeQn4fud3Pe3JigFs4PckWumJaQYpd+6Yx/XHQjaMSpQzmhS14qX49gT1B4tGgjj6Tpe8=
-X-Received: by 2002:a05:6a20:a109:b0:24d:7926:bb22 with SMTP id
- adf61e73a8af0-2602a49b15cmr487751637.9.1757622867423; Thu, 11 Sep 2025
- 13:34:27 -0700 (PDT)
+	s=arc-20240116; t=1757622863; c=relaxed/simple;
+	bh=PwiTUdsdKjtwPrO614rq/+6R+VG37tYxbhPVowLUnyc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=JSgHJszvNE6gb4qc/2jqiOybK2CVdeUZjTy2JEk7kada18CCXZB8EyincBuXU6VveQ86BneYhaL6BEsGEP7eDKBmwReyueMgusVa/KzxZetZKXq5np4EPIATvVumxHyAw07nDA2hkp+/X477OgcAiXC82APlLII9EfEaoYvA5VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CvjyN5vx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C539C4CEF0;
+	Thu, 11 Sep 2025 20:34:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757622863;
+	bh=PwiTUdsdKjtwPrO614rq/+6R+VG37tYxbhPVowLUnyc=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=CvjyN5vxeViqPaDQv2IiF+KNe/or8yTABIe5zBmvFsUcfgvmgKIOvO9OEFZeNMYJV
+	 zjR5fnn7mt2dIvbseba9zV0igdXIUlfBKufrhnDpmvB7WXulMdmyBW1CnimrVwODC9
+	 PLZp0g+5NRv6a+xelxbdRu7jYKf93woBjrQ4mcnaBbWS+/kwbvy4lw4vijkUZuNZBe
+	 1oOHnluxF47wWpZV5jjWi2yuWEt9HU+R0uOo5PspzuV6YlInnQawCcJcv8pOAvQRBN
+	 FMHB312KtzQJw8yVhYHpCUJEbAGkaCpqyHw+QfBlRPBk0ogVFm/RBzgXXYhoSzFreH
+	 SYPKLm8tK350g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250824222813.92300-1-rdunlap@infradead.org> <aKzot67f7F3wtHs7@kernel.org>
-In-Reply-To: <aKzot67f7F3wtHs7@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 11 Sep 2025 16:34:15 -0400
-X-Gm-Features: Ac12FXw48kSzm76Yb9aQ6HZ2usu4bEgbnBioWlHWDs4daytc5ayhNulgG_v7YI8
-Message-ID: <CAHC9VhQsVMKN6YyHFF81rPvxirtM7UwwAJSpOZdeybGCuO1c2g@mail.gmail.com>
-Subject: Re: [PATCH] security: keys: use menuconfig for KEYS symbol
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 11 Sep 2025 22:34:17 +0200
+Message-Id: <DCQ9AXZ5APKN.1835AK0PVA3S5@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v5 2/3] rust: i2c: add manual I2C device creation
+ abstractions
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Viresh Kumar"
+ <viresh.kumar@linaro.org>, "Asahi Lina" <lina+kernel@asahilina.net>,
+ "Wedson Almeida Filho" <wedsonaf@gmail.com>, "Alex Hung"
+ <alex.hung@amd.com>, "Tamir Duberstein" <tamird@gmail.com>, "Xiangfei Ding"
+ <dingxiangfei2009@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-i2c@vger.kernel.org>
+To: "Igor Korotin" <igor.korotin.linux@gmail.com>
+References: <20250911154717.96637-1-igor.korotin.linux@gmail.com>
+ <20250911155015.97250-1-igor.korotin.linux@gmail.com>
+In-Reply-To: <20250911155015.97250-1-igor.korotin.linux@gmail.com>
 
-On Mon, Aug 25, 2025 at 6:50=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
-> On Sun, Aug 24, 2025 at 03:28:13PM -0700, Randy Dunlap wrote:
-> > Give the KEYS kconfig symbol and its associated symbols a separate
-> > menu space under Security options by using "menuconfig" instead of
-> > "config".
-> >
-> > This also makes it easier to find the security and LSM options.
-> >
-> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> > ---
-> > Cc: David Howells <dhowells@redhat.com>
-> > Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> > Cc: keyrings@vger.kernel.org
-> > Cc: linux-security-module@vger.kernel.org
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Cc: James Morris <jmorris@namei.org>
-> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> >
-> >  security/keys/Kconfig |   14 ++++++--------
-> >  1 file changed, 6 insertions(+), 8 deletions(-)
+On Thu Sep 11, 2025 at 5:50 PM CEST, Igor Korotin wrote:
+> +impl I2cAdapter {
+> +    /// Gets pointer to an `i2c_adapter` by index.
+> +    pub fn get(index: i32) -> Result<ARef<Self>> {
 
-...
+Where do we get this index usually from? OF, ACPI, etc. I assume? I feel li=
+ke it
+could make sense to wrap it into a new type. Even though it is not safety
+relevant it eliminates a source for mistakes.
 
-> I wote for this at least. Definitely an improvement:
->
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> +        // SAFETY: `index` must refer to a valid I2C adapter; the kernel
+> +        // guarantees that `i2c_get_adapter(index)` returns either a val=
+id
+> +        // pointer or NULL. `NonNull::new` guarantees the correct check.
+> +        let adapter =3D NonNull::new(unsafe { bindings::i2c_get_adapter(=
+index) }).ok_or(ENODEV)?;
+> +
+> +        // SAFETY: `adapter` is non-null and points to a live `i2c_adapt=
+er`.
+> +        // `I2cAdapter` is #[repr(transparent)], so this cast is valid.
+> +        Ok(unsafe { (&*adapter.as_ptr().cast::<I2cAdapter<device::Normal=
+>>()).into() })
+> +    }
+> +}
+> +
+> +impl<Ctx: device::DeviceContext> Drop for I2cAdapter<Ctx> {
+> +    fn drop(&mut self) {
+> +        // SAFETY: This `I2cAdapter` was obtained from `i2c_get_adapter`=
+,
+> +        // and calling `i2c_put_adapter` exactly once will correctly rel=
+ease
+> +        // the reference count in the I2C core. It is safe to call from =
+any context
+> +        unsafe { bindings::i2c_put_adapter(self.as_raw()) }
+> +    }
+> +}
 
-I'm guessing you're planning to take this patch Jarkko?
+The Drop implementation is not needed, you only ever give out an
+ARef<I2cAdapter>, but never a "raw" I2cAdapter, which is the correct thing =
+to
+do.
 
---=20
-paul-moore.com
+> +
+> +// SAFETY: `I2cAdapter` is a transparent wrapper of a type that doesn't =
+depend on `I2cAdapter`'s generic
+> +// argument.
+> +kernel::impl_device_context_deref!(unsafe { I2cAdapter });
+> +kernel::impl_device_context_into_aref!(I2cAdapter);
+> +
+> +// SAFETY: Instances of `I2cAdapter` are always reference-counted.
+> +unsafe impl crate::types::AlwaysRefCounted for I2cAdapter {
+> +    fn inc_ref(&self) {
+> +        // SAFETY: The existence of a shared reference guarantees that t=
+he refcount is non-zero.
+> +        unsafe { bindings::i2c_get_adapter((*self.as_raw()).nr) };
+
+Please make accessing the nr field a separate inline function, or at least =
+put
+it in a separate unsafe block.
+
+> +    }
+> +
+> +    unsafe fn dec_ref(obj: NonNull<Self>) {
+> +        // SAFETY: The safety requirements guarantee that the refcount i=
+s non-zero.
+> +        unsafe { bindings::i2c_put_adapter(&raw mut (*obj.as_ref().as_ra=
+w())) }
+
+Same here, separate unsafe blocks please.
+
+> +    }
+> +}
+> +
+> +impl<Ctx: device::DeviceContext> AsRef<I2cAdapter<Ctx>> for I2cAdapter<C=
+tx> {
+> +    fn as_ref(&self) -> &I2cAdapter<Ctx> {
+> +        &self
+> +    }
+> +}
+
+This AsRef implementation doesn't seem to do anything?
 
