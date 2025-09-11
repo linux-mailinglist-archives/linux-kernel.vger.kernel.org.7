@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-811232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A853B52641
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:02:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B75B52648
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14AB483639
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:02:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90EE1C83C45
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC3F228CB8;
-	Thu, 11 Sep 2025 02:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3A3216605;
+	Thu, 11 Sep 2025 02:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVFT2FaN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="TgXMS//u"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10B320ADD6;
-	Thu, 11 Sep 2025 02:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CB11990D9;
+	Thu, 11 Sep 2025 02:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757556116; cv=none; b=WXZHP02TU6yHcLc6+TT4lB+j8/DQHKT0KUn7qYA2C26MNBf4hyVEzlwnsunwfMJKCzWZWOeJS5x98A/76h+6apyJwrZUIPbF6HqqBRbjy7GCPGmQg5S6I+61YRZcS0Jx5FdXmEvyvs+DIs16Bx8oKgSCdbrUgpVeMnDy/3tQdXA=
+	t=1757556266; cv=none; b=tyLBwbRK7KRs1DAq+qAk5PP6K4O9SRixhbFzQpvwhoBNG3QDjGBbgEJfTL7QdbX/nQwl59dY+kn/+M8GMOE/bTanoft+lCqsBMxna4LhiiipcULqFBHMgQTW3q/ynTXtoQOe1oghvzX1boASn5/bRYiTQ5AoQsbA7NPEACUpfK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757556116; c=relaxed/simple;
-	bh=M4vZtHDVg/z2yDq3EPvR1/N1D3KTDv8X9LniEfN5BcM=;
+	s=arc-20240116; t=1757556266; c=relaxed/simple;
+	bh=ormrv/kurQQ3uyKZks3x990bi2mrbiWK19RpJlCssQg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCZtINpE8g9FJ0+b/FPqXvBVGjOFd7BlvvLRwdoFbPnbUXanZmQjAc4MToH5MTzJhmQONlnKuI/GLR+UITS9UEdYpxm2ApBKnAzgnGQJjYTTXk5SRuzAAoWQSs5Oebxv6YRFlfyccMJZHXUiIomvrChRoKm7sSgEziu8LbnhCyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVFT2FaN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14FFFC4CEF0;
-	Thu, 11 Sep 2025 02:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757556116;
-	bh=M4vZtHDVg/z2yDq3EPvR1/N1D3KTDv8X9LniEfN5BcM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JVFT2FaNxdoz7WjlYRaU2KocZJNQ1rzTZwSfSShX8nGumRK0RD09dbVq2/pvDK3pu
-	 Mgv+/fc1k1DBfVVYyzL0FWrVQmoD3vl0BpYugAztRnPiRVwy5heD3BVJFQ5exWAlvq
-	 Abw2RvH2xJeRjIGQnx9uTX2/ESMYpifUyfB0btcfOKfANpfolPvveS0b9lkAeTgMUQ
-	 BFPIJBGxIWCsm7khkXzqLFTHbxT/fnd7pde2dZSHn4Zo7XLFlNJUU9hh2KbqAKoAIR
-	 9J+Lgi//ezj1vqUG3IYQAHRpDEViRx2NtlPa7adVY/DadaF7MVH6AJgHclliK2u57g
-	 3uXTlI9cEWgQA==
-Date: Wed, 10 Sep 2025 16:01:55 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 13/14] sched: Add {DE,EN}QUEUE_LOCKED
-Message-ID: <aMItk3c5H6Z2CD4X@slm.duckdns.org>
-References: <20250910154409.446470175@infradead.org>
- <20250910155809.800554594@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MCHxLvVjDhdo7UMdhpE+rzH92Lsm/5sEnFpdwIoLwv2Xi1pDzDBGoa0PkXz69HAwseOXUdRIVpiu3LU3f21Aw+CsDbSf0VUn7f8GtR5GffqKLURgVlCDJTQCPlP1ZCcBDHRbi0f4g6QoZFwqCLyab7UYwftgA4qzXdUcRYbk0ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=TgXMS//u; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=/ovddB11c5XSfbN+IkHJ3Pb74oXCQSIbUsT6dab88c8=;
+	b=TgXMS//u0UN4LXuhEDFiSmVTQVOmuO9rWuV914TrFeefb9eLpMKvnY4/aI/7Qr
+	KkM5Cmy5sy7+4z8djApZG7eCUIn28DQPP68UnJgbyAX8pFSk9hFdIbBS2otTcpjO
+	8Qdh3H+CjydhZRQ/igAFVOzpFTyezJoGCT7TfgHzZI/R4=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgD399gHLsJo9n5OBA--.47148S3;
+	Thu, 11 Sep 2025 10:03:53 +0800 (CST)
+Date: Thu, 11 Sep 2025 10:03:51 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Bence =?iso-8859-1?B?Q3Pza+Fz?= <csokas.bence@prolan.hu>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Csaba Buday <buday.csaba@prolan.hu>
+Subject: Re: [PATCH v2] ARM: dts: imx6ul-tx6ul: Switch away from deprecated
+ `phy-reset-gpios`
+Message-ID: <aMIuBwgtrWDe-5Fk@dragon>
+References: <20250825-b4-tx6ul-dt-phy-rst-v2-1-0d3ba9736b0e@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250910155809.800554594@infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250825-b4-tx6ul-dt-phy-rst-v2-1-0d3ba9736b0e@prolan.hu>
+X-CM-TRANSID:Mc8vCgD399gHLsJo9n5OBA--.47148S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUc1xRDUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBLFZWjCB7lcQQAAs-
 
-Hello, Peter.
-
-On Wed, Sep 10, 2025 at 05:44:22PM +0200, Peter Zijlstra wrote:
-> Provide a LOCKED queue flag, indicating that the {en,de}queue()
-> operation is in task_rq_lock() context.
+On Mon, Aug 25, 2025 at 02:52:09PM +0200, Bence Csókás wrote:
+> The Ethernet PHY's reset GPIO should be specified in the node of the PHY
+> itself, instead of the MAC (`fec`). The latter is deprecated, and was an
+> i.MX-specific extension, incompatible with the new reset controller
+> subsystem.
 > 
-> Note: the sched_change in scx_bypass() is the only one that does not
-> use task_rq_lock(). If that were fixed, we could have sched_change
-> imply LOCKED.
+> Co-developed-by: Csaba Buday <buday.csaba@prolan.hu>
+> Signed-off-by: Csaba Buday <buday.csaba@prolan.hu>
+> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
 
-I don't see any harm in doing task_rq_lock() in the scx_bypass() loop.
-Please feel free to switch that for simplicity.
+Applied, thanks!
 
-Thanks.
-
--- 
-tejun
 
