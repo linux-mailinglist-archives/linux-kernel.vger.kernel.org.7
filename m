@@ -1,137 +1,158 @@
-Return-Path: <linux-kernel+bounces-812188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C574BB5343B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:46:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01635B5344A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 113E41888C0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:47:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC82D3AB631
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BC91A9FB5;
-	Thu, 11 Sep 2025 13:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F9032A807;
+	Thu, 11 Sep 2025 13:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rsa6rTlZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbT2x4cC"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A3630DEC5;
-	Thu, 11 Sep 2025 13:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D962C1F03C5;
+	Thu, 11 Sep 2025 13:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757598392; cv=none; b=oqp0WQuWLBdejtOjBnLxc/MDYBFu0i+jeUvuB+k3uCcIU+Y3X4WXv1uEUVLHbFkgmKQkm9l7aY+voVTQSC5hjGrNN/iF6V55bV29GeS3qKP/cmaWnAUViDdmGAHpIw0kgS+ODfsbPoHmoG6Cs+T3A7+MILlBTqqaVyf7y38Pxaw=
+	t=1757598580; cv=none; b=gGCPiFwaJzzPg/kguZCLDVlttB3HTl+L3VrLNPSV8m39spagjhaMdMLe02bAGiPFtL+Rb5jvcaNXzf6KncsHFbaGP4OsA4D9VRd183esDvsphbo7PgA3GZJ2JcBv/yvxla3/jpcGGVAU+jsEc0OrjHl8e6Y3HTF0HScyRpM6v3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757598392; c=relaxed/simple;
-	bh=nwaA6pBbNkt9OEu1XRiosiUzvl3gbDI6NZNZnQZFH0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ct3t+2GAKLfQs48ja7ba3WEAWjTGzRKmFLaYUIRwdl10hl2APAH/DrWGec83hMuyOSJ83UALZAxfW5RMjTUNOBn3miPsgwOE/YLCCzw8iU8AFzqDephBnSq8341hD1WJti6iSxS3gvWu2Vti+wYhmflW63PoAqxveFZ9+4Z4BcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rsa6rTlZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE046C4CEF0;
-	Thu, 11 Sep 2025 13:46:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757598391;
-	bh=nwaA6pBbNkt9OEu1XRiosiUzvl3gbDI6NZNZnQZFH0M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rsa6rTlZSxu0hZpwhq5OpLFaRC+PuHUopzh9T8aXYNVssZnBLvzlh2i4kvJ8mubkq
-	 Wp1/8UJpHHEKXyEkwiRkBVWC8ujuyGN6VKq6MF1GB7Wmr+cfmLV6sj/TpUMpdv0Uw0
-	 eZ+MQMKTw2J4gQv2nSgkINV7itvgHqhLaUNtcjezyvmIBWtCTHdD53wxgidq5XETmx
-	 4Wc/Qhg4VfLuDkkQ91sLWhbt2lChwTC1KINkL5X8ca4wl4w/XZ4LEIrfIU0FdJfpHO
-	 X0G5UpnyLFvKWe48D2yxU/D4/r0aYRc2+zWTrWlZVGBKgdd4SyfYZYuOMSoYiUA/N0
-	 O4U0v7/BmJQHQ==
-Message-ID: <fd9629df-0718-4968-b22b-cad36d870f63@kernel.org>
-Date: Thu, 11 Sep 2025 08:46:29 -0500
+	s=arc-20240116; t=1757598580; c=relaxed/simple;
+	bh=T8VtWbZoh0VIipzuyBrHjr9wwGoQSoHS3Ynzhj6XMgs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DEs431QpzrAZMBF93OvU33iE/e4+lMHY4pUA8TxL+XipXzsjPhJ9XLoGUVJZEMSePPr9lVWiHbbrrxreU0n2UNcZNRewU0J9HqiziG+qEZsI/gHrQd0mjeYHrZYnZETCcCFKXx+9sHkus6AjADojLSk8kh0XPTlWCS1erBQpOaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HbT2x4cC; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3e537dc30f7so459154f8f.2;
+        Thu, 11 Sep 2025 06:49:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757598577; x=1758203377; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vEbc34OfcWsmZ87K3FZrtli36glSfRnoXSobn53PJa0=;
+        b=HbT2x4cC4bNjR/QYhSReIWByOFl75zoZ/5YsLd7pi964+gaFuBGuQ7PzYP/+ywC4ai
+         3gg78gEsDryBmeX9TDZEPA1nn0+UG257sM3sDtXbgL3MV+Ry9Dx/gfQXT0uthdYo45Qb
+         aCI8pzpPiG/KPhDmsKKiy0Hll5TvBQvBT6cKD3DTdIGVV8hahWjUH57025Hv6ieqDIaG
+         vQH0YzNniC41EZvkOwa29w7hD0K0cYY3fYu50/3mc5hLHYAjfjLPReIlcoot5z35kCFs
+         M+lHlIk8e3IgzxBfQPF0+pCnFkT7sNzhbQpYHJ67o77vOrovU2s1Gg05bWPtVQaq2ayX
+         XENA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757598577; x=1758203377;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vEbc34OfcWsmZ87K3FZrtli36glSfRnoXSobn53PJa0=;
+        b=ZSq7SGQcfiet8KxYkorwNFVAFPF/hlZqFmzHCp7e9H04H9eQmzr4lO3GFV2tfLI2JV
+         L9TdF2SPfbg+3xRnFG/94Auico3mLHELSD4JDkhIDkZLouZyohzavkC1gsRHCZXXBC+E
+         AXyIXaJgsIbuyOS4d2FmbDqhluQsgsB2PVhtw1/Tz5bH99QU6FjuoekMNyYrwTVNETPO
+         6i6jtrFXWmrZC31JXe6v8cpyz4jMMg6s3MvdDdqn4KT22cHxR1bP6MBTfdom08QyxXlA
+         7wsx7crMBgLDNtiNdth2SmMAMB2IJOvjYrV/cVnwtXWKOhdSRU9LnN7mAbvYqdYs1DK7
+         XKcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCgi9FEjnoKT7fAbIk66PEu2PwbaTlWz2Ir18nmf5Taq9eauUrM5RgEpjjkduiH6zRBDt4PpRpkCS9uwI=@vger.kernel.org, AJvYcCVrV3IsXNWIKmn0FNnJtKvyf8huvfZ2x+h5cMenOFghxDvoCPd0E50k2HOmaZ8glUwPEUDYkNvPVnQZ/6lkPjtv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV0OKJqhn9Ql8sIOtjRYG+tqteyHMCMoAxjpVD2P1AOY/jemji
+	yz7b0Ki2hCYWFcYGBfgg8dKkxj6mwO0SWKz2TDwkwDNq1JuMgYvR61co
+X-Gm-Gg: ASbGncs8ZTrQqr7vKLHgg60RUZJWyPIoEzJzEonIM1vj0Gt9+Zr+sk8qe3tjT2F4UM1
+	xBXYENzf9yeT+GSQGkCuLXkmErSXneRearhKu9Si6azdZc4utyhuvBrMvBIUl7ceEm7hHS78/iu
+	etK8vPisuUo17HRA7YCoPDpmc0vNWYkauXyxLuBLjMtA/0HZVR1VlvKOP07RXdy4y1XmTXeThVx
+	28+GvgHI+cMnI22iIax63FgE7rOwxW89iLd+NIOkIojaVHKApzGhU9v+Jtk3tQwrUAgfs/aCdzP
+	vkg5l3Q3mKYzeA+QNllPwyAVgou28BT40qB5dNFsee3dhZQn/EB/OWwQ5O/y58lEjn4sWv6MC7d
+	6aCXkuMyvyclBVE/KIRS4m9ws9YwG6PCQdaIJ/mt4IfYN+EgsxcZPIGvQ/3zhzXpwTrmHyhgabn
+	7HpKc+/A8=
+X-Google-Smtp-Source: AGHT+IFuIFRdqHBZCko8vFOdNi4YwrG+SNtH2f5JJFAo5fww3TZYrgIbpWxJK/MEue66sSX1sYEkLQ==
+X-Received: by 2002:a05:6000:1ac6:b0:3df:f065:ca13 with SMTP id ffacd0b85a97d-3e64392b761mr17129810f8f.33.1757598577050;
+        Thu, 11 Sep 2025 06:49:37 -0700 (PDT)
+Received: from f4d4888f22f2.ant.amazon.com.com ([15.248.2.27])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e760778915sm2608361f8f.12.2025.09.11.06.49.35
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 11 Sep 2025 06:49:36 -0700 (PDT)
+From: Jack Thomson <jackabt.amazon@gmail.com>
+To: maz@kernel.org,
+	oliver.upton@linux.dev,
+	pbonzini@redhat.com
+Cc: joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	shuah@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	isaku.yamahata@intel.com,
+	roypat@amazon.co.uk,
+	kalyazin@amazon.co.uk,
+	jackabt@amazon.com
+Subject: [PATCH 0/6] KVM ARM64 pre_fault_memory
+Date: Thu, 11 Sep 2025 14:46:42 +0100
+Message-Id: <20250911134648.58945-1-jackabt.amazon@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/PM: Move ASUS EHCI workaround out of generic code
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>,
- Alan Stern <stern@rowland.harvard.edu>, linux-pci@vger.kernel.org,
- linux-pm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
- Oleksij Rempel <o.rempel@pengutronix.de>, Timo Jyrinki
- <timo.jyrinki@iki.fi>, Ernst Persson <ernstp@gmail.com>,
- Steven Harms <sjharms@gmail.com>, James Ettle <james@ettle.org.uk>,
- Nick Coghlan <ncoghlan@gmail.com>, Weng Xuetian <wengxt@gmail.com>,
- Andrey Rahmatullin <wrar@wrar.name>, Boris Barbour <boris.barbour@ens.fr>,
- Vlastimil Zima <vlastimil.zima@gmail.com>, David Banks <amoebae@gmail.com>,
- Michal Jaegermann <michal@harddata.com>, Chris Moeller <kode54@gmail.com>,
- Daniel Fraga <fragabr@gmail.com>, Javier Marcet <jmarcet@gmail.com>,
- Pavel Pisa <pisa@cmp.felk.cvut.cz>
-References: <75e4ae507fa4faddd063a3a9e17d319ed84529b6.1757562971.git.lukas@wunner.de>
- <80980751-64db-4dc2-9516-03046e8b4b31@kernel.org>
- <CAJZ5v0idqEPUpA0uBb_PAaKe0KNqCt0xLskPThPwtsfh3eCdxg@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <CAJZ5v0idqEPUpA0uBb_PAaKe0KNqCt0xLskPThPwtsfh3eCdxg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 9/11/25 8:43 AM, Rafael J. Wysocki wrote:
-> On Thu, Sep 11, 2025 at 3:34 PM Mario Limonciello <superm1@kernel.org> wrote:
->>
->> On 9/11/25 8:11 AM, Lukas Wunner wrote:
->>> In 2012, commit dbf0e4c7257f ("PCI: EHCI: fix crash during suspend on ASUS
->>> computers") amended pci_pm_suspend_noirq() to work around a BIOS issue by
->>> clearing the Command register if the suspended device is a USB EHCI host
->>> controller.
->>>
->>> Commit 0b68c8e2c3af ("PCI: EHCI: Fix crash during hibernation on ASUS
->>> computers") subsequently amended pci_pm_poweroff_noirq() to do the same.
->>>
->>> Two years later, commit 7d2a01b87f16 ("PCI: Add pci_fixup_suspend_late
->>> quirk pass") introduced the ability to execute arbitrary quirks
->>> specifically in pci_pm_suspend_noirq() and pci_pm_poweroff_noirq().
->>>
->>> This allows moving the ASUS workaround out of generic code and into a
->>> proper quirk to improve maintainability and readability.  Constrain to x86
->>> since the ASUS BIOS doesn't seem to have been used on other arches.
->>>
->>> lspci output of affected EHCI host controllers reveals that the only bits
->>> set in the Command register are Memory Space Enable and Bus Master Enable:
->>>     https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=658778
->>>
->>> The latter is cleared by:
->>>     hcd_pci_suspend()
->>>       suspend_common()
->>>         pci_disable_device()
->>>
->>> pci_disable_device() does not clear I/O and Memory Space Enable, although
->>> its name suggests otherwise.
->>
->> That was my gut reaction as well.
->>
->>> The kernel has never disabled these bits
->>> once they're enabled.  Doing so would avoid the need for the quirk, but it
->>> is unclear what will break if this fundamental behavior is changed.
->>>
->>
->> It's too late for this cycle to do so, but how would you feel about
->> making this change at the start of the next cycle so it had a whole
->> cycle to bake in linux-next and see if there is a problem in doing so?
-> 
-> One cycle in linux-next may not be sufficient I'm afraid because
-> linux-next is not tested on the majority of systems running Linux.
-> 
-> We'd probably learn about the breakage from distro vendors.
-> 
->> If there is it could certainly be moved back to a quirk.
-> 
-> Most likely, it would work on the majority of systems, but there would
-> be a tail of systems where it would break.  That tail would then need
-> to be quirked somehow and it may be worse than just one quirk we have
-> today.
+From: Jack Thomson <jackabt@amazon.com>
 
-But is that a reason not to *try* and rid the tech debt?
+Overview:
 
-We could just all agree that *if* there is breakage we revert back to 
-the quirk just for EHCI.
+This patch series adds ARM64 support for the KVM_PRE_FAULT_MEMORY
+feature, which was previously only available on x86 [1]. This allows
+a reduction in the number of stage-2 faults during execution. This is
+beneficial in post-copy migration scenarios, particularly in memory
+intensive applications, where high latencies are experienced due to
+the stage-2 faults when pre-populating memory via UFFD / memcpy.
+
+Patch Overview:
+
+ - The first patch is a preparatory refactor.
+
+ - The second patch is adding a page walk flag for pre-faulting.
+
+ - The third patch adds support for the KVM_PRE_FAULT_MEMORY ioctl
+   on arm64.
+
+ - The fourth patch fixes an issue with unaligned mmap allocations
+   in the selftests.
+
+ - The fifth patch updates the pre_fault_memory_test to support
+   arm64.
+
+ - The last patch extends the pre_fault_memory_test to cover
+   different vm memory backings.
+
+[1]: https://lore.kernel.org/kvm/20240710174031.312055-1-pbonzini@redhat.com
+
+Jack Thomson (6):
+  KVM: arm64: Add __gmem_abort and __user_mem_abort
+  KVM: arm64: Add KVM_PGTABLE_WALK_PRE_FAULT walk flag
+  KVM: arm64: Add pre_fault_memory implementation
+  KVM: selftests: Fix unaligned mmap allocations
+  KVM: selftests: Enable pre_fault_memory_test for arm64
+  KVM: selftests: Add option for different backing in pre-fault tests
+
+ arch/arm64/include/asm/kvm_pgtable.h          |   3 +
+ arch/arm64/kvm/Kconfig                        |   1 +
+ arch/arm64/kvm/arm.c                          |   1 +
+ arch/arm64/kvm/hyp/pgtable.c                  |   6 +-
+ arch/arm64/kvm/mmu.c                          |  97 +++++++++++++--
+ tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  12 +-
+ .../selftests/kvm/pre_fault_memory_test.c     | 110 +++++++++++++-----
+ 8 files changed, 186 insertions(+), 45 deletions(-)
+
+
+base-commit: 42188667be387867d2bf763d028654cbad046f7b
+-- 
+2.43.0
+
 
