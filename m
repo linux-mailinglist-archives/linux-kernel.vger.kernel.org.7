@@ -1,146 +1,139 @@
-Return-Path: <linux-kernel+bounces-812563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67377B539CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:00:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2C8B539D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D609C5A5896
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:00:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 511917AB337
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352E734A33D;
-	Thu, 11 Sep 2025 17:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A106522AE45;
+	Thu, 11 Sep 2025 17:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WB7FGuEg"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WbgY6OLf"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD572B9A4
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D9F329F05
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757610050; cv=none; b=rg+PWWJXJiLXrxk8+4gqkFFFwAFMfg/3qKdKANU/KhFSHUXe2KFFTQEPfjFHxLBj6gtt3D61L1/OZcSjFBO5PoEacFlWambb7YkNiwvILyPYvhygllhIB1Cov7pyA4iQlQWvOjRRAxF+G0ODszSU5nDclFzWBA6pgNV1jD3NxFY=
+	t=1757610139; cv=none; b=JhPh8vNgFIPlKZz34G/5rKfgQNw0oPfsH26+fz3/3JUvEc0KDAxFGg6ForS+FygnxUWy2wTIebf6lAkSZ5OTBgiP3alD8872sNvfS+YhD1BukZM0CW3iNh9uNK0snJyxiRJHqR6+aQk+AZMaJnF1AYaEHwPC3LJi1plbb/LByxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757610050; c=relaxed/simple;
-	bh=y3ENDcuottwL/DKrenKbQJZ1eqbV0Flkl/Xv//bodSM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Se6rvXQoK0YNzZnY45DL76R67/hQ8HL1tORrh16uplHIFQVuK8y8rrGZKBOgmCRkEnOFA8tPTb/gjvXXMr9SCNaeCyF7Mh38LxmcTHsdrQLfZ9x4G/S8QZ4jYTBFevEdKo5U4es7y7kmF9HIVJY8YoJMV/JfU6/o/cqHxCRWFDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WB7FGuEg; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1757610139; c=relaxed/simple;
+	bh=8R6+RH+mErEiPPdYOOstKc0iqhFv59uOICnzE3FZ1Uc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=t9x/wIK5X62FHJPHS7TJqN29kYrCBM8dWxdug7vFLr/fqmDI5D5exPNT5BzVuWq9CkFDYWGU+raD3NlfVyR+XBsJs/ImRvDQv6sgR7H7zDYG+xnWRAk/4DL2GLzf+nYa5T7kd6yxhce7fDeI4FN9tcUnhjPUQf/OHAT2Ba1+xAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WbgY6OLf; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-56097de96fcso94399e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:00:47 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso3096673a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:02:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757610046; x=1758214846; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=69yPHnIsLNbjSOnGkb91deN9ujmIDIbQEy9l+ZyKWrc=;
-        b=WB7FGuEguO+dYY55g/XFi4KCU0jRGHuGSL9+qp9LdxGIDf2yI4Gi17Jx2dtnNIAiVa
-         jN1zWB/qdU1yFy8Kp4fdEPnFSR1njgIUZA/p6G8GE3ikUfZ4fTRSGeqRh/3HbrhfD8RG
-         GQEvncpTXWA7A8+ww5oUQv/aoE2hE43lk1b5T6ai1+EI8QeY8l6zLcHDtkxjDSXIoMPo
-         wJIb/5eBgdrfthTMoL/VDodIamBydoef/c9sarbqXPUBKYBN2ZPqg2dxvFPKX3ITAcnl
-         4ushg6y3FL3AUGOyGpHDRKXuVftol+KSiJkuTd/d7+6jL1C0LMN53KXbBSZMbB3p/9Qg
-         XB9w==
+        d=gmail.com; s=20230601; t=1757610137; x=1758214937; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RSnllEdABgmRcLsHtfpUL8gI7RsqTdIWFArVq050vuk=;
+        b=WbgY6OLfqLdDd/PnqcGDOegxagDsMiHcHjMBhJlpHjO+Ax0+3ftUJBazdAKaGwOKiV
+         3ubcTV3tgojFNWTV5xnJyydkgjncU1iR+UK1Ggv4CUK7j8J0ir5vw4p8WLQtphKIGI+c
+         wlJ/JKZuGUOJCggvN7FULGK+/BJ7GDdQeO+5tbN5fsM8SygOyh+FzoddCbJuDwWiniU2
+         5LGeH86H2rZpaJxNgIWqJ4AgWrvxLBIrtUg/Z4DxuIVS6w/33RjmnI8REZdluDz0Or1J
+         rUhYwOb/VbLoEThZsdMZfex985ybyhXn5UGt0DaT7JB80ssWcpqsKd1dmPXvQ25FBbpx
+         k7eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757610046; x=1758214846;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=69yPHnIsLNbjSOnGkb91deN9ujmIDIbQEy9l+ZyKWrc=;
-        b=jkZGjTBxyFS5nMaWCErgV2KYbLtCaTV5snO71OVV3Cl/4ww/itKF8FD65WG3tB9TOA
-         +/C2sHEKokJdKwg6muabQ6X/zIyMKkqLkC0TkR7yECmrp4zI56GU6FZRJxFnulSSVQiC
-         eKz8MP10PSzYC7JzO/qqxmySsPGAsq8k/6qSvmKHHK5LioGrWmADPlgb5M1dnYVJ3YzH
-         Ne4dDNy6wX/4NfXLlypFhPD1pyN2FJubfVfPMa2MR6FR+5OTFurEcQF6W3n96iuRhGbM
-         Pwxjit5Pyv9EfJMqAEpiEGtSL2Q5DPQTUUFSpSZa8ku1Uep7xe8sgvF8f3nC+WvLq6Vr
-         6/Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVaJYs7A9fimBdfEiSncS1Z9X9fhFDBOY9mRVUcMh2zj6PqWroupaGpaurqlJpgLA4FAl0ASigWvdZaK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeRKdxjGtGp71OPCQ9ljSjmHFBy7XTHhlV5RT/y5cydlt3v4cd
-	6tqDgS0n8QHWrPpch83vIwcyAetIURWYrkG4d40RuTsgp0YYsLSeDpgZ
-X-Gm-Gg: ASbGnctrypJzbO88OXs17CIGud621f7wXZbQwQE03ocUhoXt0qrFaHBQ6//Kd25dIvZ
-	6zsgQul0waIMhzt58Y/uusIxOoH+/y8KRlh33pTugYFQHvNtQKD7XUxvT7IYJNiPhQSTMHPUx1u
-	QX29IWqGnCK2sHp26oNu1NQpyOba5iMXuyaBslH2ncCG9h1MWvpt5AIhwuYdq2EZRTptw9bm/U3
-	7MzmFTvAyZX+mkRiA+5t1xEKaOZj3T488J4cDpZDo9ukAh7zU2MOo1ab0giFXP4bhZjncnUCEKY
-	dS9TKlC86Y2SwvmPzAGwU6qU47LMZXuQYmu2esk/s925kCPOBr9C6R9TpZta61sPYy/zr9OIOfb
-	BHrOJbv5hZquDnijwiBvsWnITcHxwmAX5efHrlFc=
-X-Google-Smtp-Source: AGHT+IHnjKPKaFzoMDps2A1lwwHuk+aMxy5X6+2P1DS5X0ZAITIfcYgwM13XJrpIiuwwI6P6z7dSYA==
-X-Received: by 2002:a05:6512:3da1:b0:553:252f:adf4 with SMTP id 2adb3069b0e04-57051f3c81cmr19486e87.10.1757610045703;
-        Thu, 11 Sep 2025 10:00:45 -0700 (PDT)
-Received: from [10.214.35.248] ([80.93.240.68])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e6460dec4sm523403e87.103.2025.09.11.10.00.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 10:00:45 -0700 (PDT)
-Message-ID: <9f548efd-babf-45f2-99bb-e013c810ef72@gmail.com>
-Date: Thu, 11 Sep 2025 19:00:12 +0200
+        d=1e100.net; s=20230601; t=1757610137; x=1758214937;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RSnllEdABgmRcLsHtfpUL8gI7RsqTdIWFArVq050vuk=;
+        b=wiLmLjLlndr4+1SBV8EUfPRMnvhRJS14TciLXt2inwi/jDh73+LYambx4ATS2KRSBd
+         mCVrNBSDhx7J+m0Fsn06+vZxkJHxhTC7pFw7jSzcmR6Ut+x2fNSzEqaKh4GSZT5i7mAW
+         OvLiVA0Qfh1gk11U5wc6mfNmwqNEXOnh6kZk4M+m6MOQznliwBr4hJ99asTM6iA5P4r4
+         EGeyG59g2sXi6jSG1KlmB6WLckIpV/OkvbJqltA/rXFHkdARw9J5fWKBqzFNqrkX34O2
+         IkML2qg5E3LuAnoZvM5igUL3mg+62ljIHYhoBZXoylRpb1o/f75EvO0eFhd3BREkkyFp
+         s70A==
+X-Forwarded-Encrypted: i=1; AJvYcCUxCUsBNzX2NAk6/57gLmmhGwI8pYO1/FMU8N36hAoip9aoqVbXsrqP05IRkbpPU2/iK73Ruo7bUoWW7+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoDLBy0DAE+9SjvfLrt4RUIzdYQmhzMiQUa9+rBjr+ZUgm8zep
+	e7gvCn3wNA1W+BALJlAfYOvqqBw415q6AEFwGslVvhDfLiRaoUkdkyo=
+X-Gm-Gg: ASbGncvZ5Q9zyyHVLp3GPMzTo7k4IWvdzXZmUeEKY4mf+zOKgEyb1lsJEvyZufSA3oX
+	CRgvWhMzbmEm2VKISggQGKfh7Pg6/QM0RoEZuQojd3hcFu6phwQhbVn1TgLmWIkaryqkh9QTKdW
+	HME6EhalhsOxHc5MxFtFv0iy3gGPEkpGfpTXZG5Pr9X+uiBTIt2ortsl+mFVxRDonbsCsH6Vqwk
+	zCj6D3khfZ6foB4W4ydQ77gVsShRgtVYjNw05XOFoxmqT9J/XYkFibBiiMVJWHUIV0iGqZMf8Iy
+	qvt01o/eoGXKor7TpmldML1WDsAYOQC8QAP1yqrqsphuvbbnlO+XX+h7Mw/qr+GbtB/Yu8hSV8B
+	8ni/do71eOuUJ60mmrBF/T+eOEbyBXPalRyRU/4WsW3yWumgpaqBTZ6T+kc3s40AzkNeeR5xdPX
+	rAUIuIyYIHm/cYsE116Mhk
+X-Google-Smtp-Source: AGHT+IGVr9IIEZr+8Z2efkcqBDn+wu417ZpSCDs1Qv8LcIf/zr0I3mWUWCQKBCdz8daDEq9iNNIPEg==
+X-Received: by 2002:a17:907:9623:b0:afa:1d2c:bbd1 with SMTP id a640c23a62f3a-b07c25b5bf1mr8227066b.30.1757610136353;
+        Thu, 11 Sep 2025 10:02:16 -0700 (PDT)
+Received: from [192.168.1.17] (host-79-12-163-148.retail.telecomitalia.it. [79.12.163.148])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b30da43esm166632966b.14.2025.09.11.10.02.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 10:02:15 -0700 (PDT)
+From: Anna Maniscalco <anna.maniscalco2000@gmail.com>
+Subject: [PATCH 0/2] Make hang check aware of preemption
+Date: Thu, 11 Sep 2025 19:01:03 +0200
+Message-Id: <20250911-preemption_aware_hangcheck-v1-0-974819876819@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/7] kstate, test: add test module for testing kstate
- subsystem.
-To: Randy Dunlap <rdunlap@infradead.org>,
- Andrey Ryabinin <arbn@yandex-team.com>, linux-kernel@vger.kernel.org
-Cc: Alexander Graf <graf@amazon.com>, Mike Rapoport <rppt@kernel.org>,
- James Gowans <jgowans@amazon.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-mm@kvack.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Baoquan He
- <bhe@redhat.com>, kexec@lists.infradead.org,
- Pratyush Yadav <ptyadav@amazon.de>, Jason Gunthorpe <jgg@nvidia.com>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- David Rientjes <rientjes@google.com>, Pratyush Yadav <pratyush@kernel.org>,
- Changyuan Lyu <changyuanl@google.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, Chris Li <chrisl@kernel.org>,
- Ashish.Kalra@amd.com, William Tu <witu@nvidia.com>,
- David Matlack <dmatlack@google.com>
-References: <20250909201446.13138-1-arbn@yandex-team.com>
- <20250909201446.13138-6-arbn@yandex-team.com>
- <1c79b3c7-5847-4960-9454-0c70d02a6441@infradead.org>
-Content-Language: en-US
-From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-In-Reply-To: <1c79b3c7-5847-4960-9454-0c70d02a6441@infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE8Aw2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDS0ND3YKi1NTcghKgsvjE8sSi1HiQquSM1ORsXYskyyRjcwOL1LTkZCW
+ gAUClaZkVYMOjY2trAfxZh5lsAAAA
+X-Change-ID: 20250911-preemption_aware_hangcheck-8b9b3708efcc
+To: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Anna Maniscalco <anna.maniscalco2000@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757610134; l=1269;
+ i=anna.maniscalco2000@gmail.com; s=20240815; h=from:subject:message-id;
+ bh=8R6+RH+mErEiPPdYOOstKc0iqhFv59uOICnzE3FZ1Uc=;
+ b=pxPb5b9aCV51Le4kGnwLMyZIQhK3o8Ug+ZnmnU6U5fkPwQolNF6qcJjTKzmy8b1c8ePzdfTmi
+ FM4IB/E95smA3LI7KRo9fVl+MPFLaG0croAd8N0tJ33O723VIYSQ2nd
+X-Developer-Key: i=anna.maniscalco2000@gmail.com; a=ed25519;
+ pk=0zicFb38tVla+iHRo4kWpOMsmtUrpGBEa7LkFF81lyY=
 
+Ever since we added support for preemption hangcheck has been somewhat
+broken as it is not aware of multiple rings.
 
+In some cases it might not recognize that one ring is stuck if the gpu
+switches in and out of it.
 
-On 9/10/25 2:33 AM, Randy Dunlap wrote:
-> 
-> 
-> On 9/9/25 1:14 PM, Andrey Ryabinin wrote:
->> diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
->> index b6ea861006bf..af9a25bdcd6e 100644
->> --- a/kernel/liveupdate/Kconfig
->> +++ b/kernel/liveupdate/Kconfig
->> @@ -69,6 +69,14 @@ config KSTATE
->>  	  state, save it into the memory and restore the state after kexec
->>  	  in new kernel.
->>  
->> +config KSTATE_TEST
->> +	bool "KSTATE test code"
->> +	help
->> +	  Build a simple test/playground code that is useful for kstate
-> 
-> 	  Build simple
-> 
->> +	  subsystem development. It contains some structure with different
-> 
-> 	                                          structures
-> ?
-> 
->> +	  kind of data which migrated across kexec to the new kernel
-> 
-> 	  kinds        which are migrated
-> 
->> +	  using KSTATE.
->> +
-> 
+Signed-off-by: Anna Maniscalco <anna.maniscalco2000@gmail.com>
+---
+Anna Maniscalco (2):
+      drm/msm/registers: Sync GPU registers from mesa
+      drm/msm: preemption aware hangcheck
 
-Thanks, Randy. I'll fix this up, and the documentation as well.
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |  3 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c         |  3 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c         | 28 +++++++++++++--
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.h         |  1 +
+ drivers/gpu/drm/msm/adreno/a6xx_preempt.c     | 25 +++++++++----
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c       |  3 +-
+ drivers/gpu/drm/msm/msm_gpu.c                 | 51 +++++++++++++++++++++------
+ drivers/gpu/drm/msm/msm_gpu.h                 |  3 ++
+ drivers/gpu/drm/msm/msm_ringbuffer.h          |  6 ++++
+ drivers/gpu/drm/msm/registers/adreno/a6xx.xml |  1 +
+ 10 files changed, 103 insertions(+), 21 deletions(-)
+---
+base-commit: b5bad77e1e3c7249e4c0c88f98477e1ee7669b63
+change-id: 20250911-preemption_aware_hangcheck-8b9b3708efcc
+
+Best regards,
+-- 
+Anna Maniscalco <anna.maniscalco2000@gmail.com>
+
 
