@@ -1,247 +1,505 @@
-Return-Path: <linux-kernel+bounces-811409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EA4B528B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:28:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64127B528B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0F431B248E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:28:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BD4F7A2694
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78319258EFE;
-	Thu, 11 Sep 2025 06:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BDF259CB3;
+	Thu, 11 Sep 2025 06:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UZmjvnGf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1pKxW5G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093A411CBA;
-	Thu, 11 Sep 2025 06:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757572070; cv=fail; b=dBJIcQcFVw/et+9paABAFTs9lTc/jexBK2YALnToHUOXpqBS8+pLZVZq/yZUDby9nd1iHmPVTg2wbDJC8Zs1WyLgrDTFDbTYJMG407kD3HL/gw881xF1S3ue/DXRj52MKeWuRHmYXe1MeRC6BTIONCpMgmab9Z4+Iwv0FxeV2Dw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757572070; c=relaxed/simple;
-	bh=Vx9l/Ilvs2/oF5DFlS5Upt7BNPyDJWywScbPZ312Cxw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=a0S7hu5fU7TbJ4YuFXfWSUjcNDg8LSrzYfAW6v5o1gJ5dgFB+MscRL/v1R/HSDbhDT71J4tv/nF8NcS6P727A/S9M3ijufeBBGE40JHCfyMG6V0SZ9f5tPxiplF2UAH57qzLYYSPr7Ed6MFKWXAcGookA7cIKau2w9X+JTZP2c8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UZmjvnGf; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757572068; x=1789108068;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Vx9l/Ilvs2/oF5DFlS5Upt7BNPyDJWywScbPZ312Cxw=;
-  b=UZmjvnGf+j1/227hmV6edBV9MS03ySeeevTjH1jD7U++0Mt6UKyDLAAz
-   VUAmgkfj09qH4a2aFioxRbszDn/y53HQ2jwm9cIbsa3a5BL5j2HBpGJ3s
-   NMS+WUeFpeOMfeP6bZr71+QUlcXSU+CCmAphIZ9dIYjGbpHQjvrDjtx1R
-   1INa8og1uIFMksTshcZaYFPJVULtBXRiy2A/KNcJROKzZBNJokYpCUInT
-   jpjZDNJp5SXAPRMLjTzOiUHm8zzjCP3m7QmqJVkW0oYUIt8jRHSQ2SLXe
-   NdpcAK29rnlnU0pBy55ALkiN0kCi2+NIHhr4iM1Y25FA4AlEgiua5/LAc
-   w==;
-X-CSE-ConnectionGUID: Zzn0PqscTlCt9581xmTTRg==
-X-CSE-MsgGUID: NOuWQV9NQWqhgrNGOWaY5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="71317833"
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="71317833"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 23:27:48 -0700
-X-CSE-ConnectionGUID: 6lpeaUrkTsq/5zUOhXMkqw==
-X-CSE-MsgGUID: KNAqoZ2US0qfXh1hby3juA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="173164885"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 23:27:47 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 10 Sep 2025 23:27:46 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 10 Sep 2025 23:27:46 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.89) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 10 Sep 2025 23:27:46 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GoIAri3SAQf8heC3zzU5vMxptTbBNvKcmaKg9Dee7wV+cC9zAvVPL8dhGuSIeH6eP4/ZJFqzJHTYmIGUvWsT5b+c+r3uAGgr+Qf6icNgIk5CHS9arX6P0Sg7X+Mbhd73QNZPVw6WehsZqx1pwTJ1/Wk3mUH2K9ivbpA/JPn5E/JpGosMFQ8weaG5a+/KweFLjQe7ncOTdbcNh58w+KwRB9cZqkUr2OrASpIlCz5aWpm3p27epT8mLXnwAOehiVlXjIkKEFVCWyn4+HWwzAc6lc8X64+j86U3+IvV1FeLhNPx+XkXzEITmDFlGRYt2A+1uijAA0J5om7V4cn7RBbEDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vx9l/Ilvs2/oF5DFlS5Upt7BNPyDJWywScbPZ312Cxw=;
- b=weRQfWlKUJ+hspObha5bbbq1h8QmX12B7/lav/MD31cNN6sLl6cDP8Rue7sQ4xr5TL/DffGV+BPRzTRzHjYBh6KkMvv0HDX9UlHAQ5OWXdz00UXqTys1GepMP5nsUmCsYxHH934lJBYLvJuoYkMyfTrFk73T0KSmbNGiAorxtrRImtvXp8RufMbXLKVi8URBgWUtw8nPaMywZ80lkg4i74USZK+8sZI6BgGcy5juzQUNvPoL3t7+nsHekvYL5j1Cl2zgHa9stMjqm8SHfl3lLekBxy8xGbthajtq6w0oJ/RVVTIZ0t7i3pUKu5nRV2N4sLQHqzV8nStZRJ3fPHT8pg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com (2603:10b6:208:577::21)
- by DS0PR11MB7507.namprd11.prod.outlook.com (2603:10b6:8:150::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 06:27:44 +0000
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408]) by IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408%4]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 06:27:44 +0000
-From: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
-To: "Farber, Eliav" <farbere@amazon.com>, Greg KH <gregkh@linuxfoundation.org>
-CC: "jesse.brandeburg@intel.com" <jesse.brandeburg@intel.com>, "Nguyen,
- Anthony L" <anthony.l.nguyen@intel.com>, "davem@davemloft.net"
-	<davem@davemloft.net>, "kuba@kernel.org" <kuba@kernel.org>, "Lifshits,
- Vitaly" <vitaly.lifshits@intel.com>, "post@mikaelkw.online"
-	<post@mikaelkw.online>, "intel-wired-lan@lists.osuosl.org"
-	<intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Chocron, Jonathan" <jonnyc@amazon.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH 5.10.y] e1000e: fix EEPROM length types for overflow
- checks
-Thread-Topic: [PATCH 5.10.y] e1000e: fix EEPROM length types for overflow
- checks
-Thread-Index: AQHcIuNFzNDu3xP25kGnitxOrKkyMLSNg8Tw
-Date: Thu, 11 Sep 2025 06:27:43 +0000
-Message-ID: <IA3PR11MB898660189DDF668D00B1364FE509A@IA3PR11MB8986.namprd11.prod.outlook.com>
-References: <20250910173138.8307-1-farbere@amazon.com>
- <2025091131-tractor-almost-6987@gregkh>
- <f524c24888924a999c3bb90de0099b78@amazon.com>
-In-Reply-To: <f524c24888924a999c3bb90de0099b78@amazon.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA3PR11MB8986:EE_|DS0PR11MB7507:EE_
-x-ms-office365-filtering-correlation-id: e2d1a438-42ea-4abd-b5b4-08ddf0fc5120
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?aHBrNFVrZDE2R3J2c28rdXh1R3BRS1Z4QVFRMlpHb2ErYUpXY0JYaWRHdDUx?=
- =?utf-8?B?RTRYUzYyanNYNWlGWHZmY2tidytic1B0RWM1bEFLaEM2WE5mQ0pFRzh2ZU5w?=
- =?utf-8?B?cEMrUHJQblZqTVpITkJtZnNjYTlRWXd2S2pRdkliS2lEY0FsUEx6d1pJelZC?=
- =?utf-8?B?R1E2ZE51TlFGYTJyb1lYRmRKTlJoK2V0T1Ixb3ZnNFMyaFNZSEhlWDdKVzlp?=
- =?utf-8?B?eWkxVHEwN2R1T2ZTWGZSY3g2aXZCTmIySUFYU1M1QTR5bHF3V0Z3NEtYZ3FE?=
- =?utf-8?B?dG9TbkRqVFVDcmxHSHpydGdMbi9ab1ptZ3NCWVF2d2xCVjdVcVJ2TUFpMWxR?=
- =?utf-8?B?bDZDYzVVYWdSWmF5K21VSzVHQk9pUXF5Rk9Fdis5djBxcm91TzVwb1JRd2du?=
- =?utf-8?B?VU1FeTZGYVlsNWJVSnVlZzJkYU0za3NXdGFLTTVONjJ6YnBPamZuTXNlbjkx?=
- =?utf-8?B?Z3JOT1VHQ3JtZ0g1YkpmNEJmRUg2OFUyM1J2UmV5anhPQUJUZ3gzaHl6dXdI?=
- =?utf-8?B?ZmEvSENITkM5cFhQUStYeGlRVndUNXFaZWY2NWRLbzY1Vy9NU0R3Tk5UNUx2?=
- =?utf-8?B?a0JOMU9lTTJ1OHRkNkhDMUxEckQwOG1UakNBWVF0bU5oYVNBd2dXV0duWmNE?=
- =?utf-8?B?U09STEVJcTBCUEdINWsxUy9PTC9qVTEyWHdJQjN2SlRSMEgvcUNEWmdGTTdo?=
- =?utf-8?B?by9veDI0WUVQSXhnVFIzQ1NIVDYxcm9lOHMwalFaOUZBKzJlcVFVZTdUNzVk?=
- =?utf-8?B?cjRJWDMrZndCUDJmdUl5bU5iZ3k4TTdRT0o5ZkJEbE5rbzlJNk9nT010S21G?=
- =?utf-8?B?bUJtanNVaElsdmI0b05NQ05FazJyMitoRE45YjJjeVh5VGdOakh6dEppTG80?=
- =?utf-8?B?TkVsaFh1ZDRZdDNwcEEvc2RWbUVRWVhsM3BrM1hsRGhaZnlkSXg3OEFOQmlz?=
- =?utf-8?B?RFRXWHB0eGhyQWE4eHdpQVBsYnl2bU1QbUxWaTlmMW5GQVBreEsyUDlzWWda?=
- =?utf-8?B?YmNVQldpVzhZUXNGVHBSWjFLOHk1OFhRT0g4cXZPY2NEaTRPcStIT01ndjJt?=
- =?utf-8?B?ZisxR1hydDNqd09RL1FpaWUxcWI1WlJyTS9qbG80aGZKRGpZaldaSlVSRnlX?=
- =?utf-8?B?V0R0NkJtYTdzRkZaVmJHZ0xuRjRGUS9FVmxXbStWVjhrK3oxR0ROUlFRcExw?=
- =?utf-8?B?ZndvUklIaE41MnJZY0YwSnhtdmV4T2FFb2xxYjBRaldKb2tiWURwQmV3TS9X?=
- =?utf-8?B?QWtlWFZYN1VSRkJyU25QMHZzNVR4QkpVWmVINUtMcWJ1a04zVFlsL2Vud09H?=
- =?utf-8?B?UWsxWENLRE5mSzBmd1FxaEZGeTJYZHloOTJrdHpLb3ROWXk2azE3RTVhRVBv?=
- =?utf-8?B?SDdDbzVrcGJWR2k4cjF1U20ycVVvdkxYQ0RDTHF3eERLK3piZEI3L1dpbzRG?=
- =?utf-8?B?TnVHTFhpSXFmS0VDQkRXZ2U2QngzZkU3eTcwQUZLTDBSRTFtRklyMHNCUGZW?=
- =?utf-8?B?dG8rQjVNMmxpZ25yd1dhemFjdE1yZyszdjRmSk1mRFh0QlMvNXZWYmE1cHBC?=
- =?utf-8?B?OGhMeVRYWFRtWTBkbXRBYi9Eek9aZWIzVnhGYldhWUxNeWpLV29QQm9GMkhV?=
- =?utf-8?B?ZEtKaEdMOWVNaWcvZ09jQmpTc1gxcWU3eXZ4OVJpQ2haam4wL2NVUGt6Lzgw?=
- =?utf-8?B?emN4ZGNjVVVSOTU1NUFQR0tYaXlDMU1RVkp6bnRMdzVNSDFvRWhKSzQvS3Qw?=
- =?utf-8?B?bFdNR1oyK0dLSE9TSUdYUDdaazQ0eSt6Q2o2N2pLeUdDTVlWcEtaUE1QMjU5?=
- =?utf-8?B?SzFDZkVFWktpMStqN3F6Q251S1NMSWlyNTFpcDlPUTJ0K0N6MVZFL2o5elQy?=
- =?utf-8?B?K2VIeTZWZUxDQkFZWVdtSkl3OXhYcndlM2NtT2g3V2tIM2ZIZjN5U3VENEdu?=
- =?utf-8?B?Ni9yS09xdFprbEtSdmEzcWJPTG9yT1VjaVdRKzhJVlRlWWpzbmFETUM4cG5U?=
- =?utf-8?B?UWkxTWhkMGxRPT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8986.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MlY4Y0ZhT1lTcGlLZStuTnpQZVUyZk1GTGx3UEJNQzQzU3NQa2RuQ3dZeEJS?=
- =?utf-8?B?OHludGNmSjRUVmp4NEZReGNmK3kzWVRzaURsbThHVFZ1SzRNRWZNZG95Q1VD?=
- =?utf-8?B?QUNHejY3alNtajRNbjArSzNadzhQR0hBYkhoNUR4NHgveDhDVHRNTHZua211?=
- =?utf-8?B?bm1lMzJBdWRaeUxzR0FSbXVRMHlkTWExaWttU2JnWmlaWmN0RWpSZy9DcDBT?=
- =?utf-8?B?MkkyenhuSkQ0MHZVVXltWnlCNzA2NVE3RVdNYWZlejRRZi9ueUJXcXkxbVhX?=
- =?utf-8?B?QWc1aVl5Q3RSTkVQdk1NSTdUVFI1d0NXaVdjdDJIMGdKcGtkSTlSbkt6UlhS?=
- =?utf-8?B?ZHVpS2daNUdQWk54Q2VzOERKWEQreUoxOEltL3pFWWdYNGwvdXBVVXpyY00z?=
- =?utf-8?B?SE5ZTTBzYXJ3aHJobElhMHE5V2NCMU1lSlJoQXhuNUdEaXlJOHh4N2JGWVZL?=
- =?utf-8?B?MHNaK2Q3R2NvcFRXYXRnM2txTlRMbmw5UTF6U0E1eG1qS2FKU2swelVqVEV1?=
- =?utf-8?B?d0MwNzk5NEszcXhGVFJjVzlQYUhCaEQ4K1RQdmZKaDlJN0JWcDhSRFo2SFZi?=
- =?utf-8?B?Rk03MWpzOXpQaDhITHBhMlU4M1Y1RXVTUUdBejdubC9QS1pKNDh2VHQ5MS9R?=
- =?utf-8?B?VzEvS25DZmprQVdSY2NGK24yNEVrSFh5NElDRGtaUFdicWI1YzYrTzEyQ2h6?=
- =?utf-8?B?TFU1TW9nUjd3WVJXVnluN1pFZ0FML1VHdW4zbFc1bngrZmp2dUFGTllBMkxD?=
- =?utf-8?B?ZXVxZXNtcFByZ1owN2hXRUU2KzZvZDdueXAwYTV6SUxvYzRCWjR3YnRLdTZQ?=
- =?utf-8?B?NVNla0xKWnNUbWJtd3J0YnBScEQxTEdNYi8xMElqejdRNUx1emlSd3BFUndl?=
- =?utf-8?B?cjVMbk93THdWaFI4Y0daVGdBVXJGVnVqTk53SHNkeHJnelJVTFBTNmJDcWM2?=
- =?utf-8?B?em9qbW42VGNyUUVvVWttaDJSK2M5Z2hyMjNuRXcrQWVPSDhlbGZWVzZtR1lT?=
- =?utf-8?B?V0c1MDRoVHM4OVd2L2ltaStQaWQ3d21PekpNSzRlVm9yME9kRWFEelBPdFpD?=
- =?utf-8?B?cWYzeXByMjk1anZmMzBpcldOaGxod3Z4K1Z4VStDdEYyK1Q3YUtXb2JrS09U?=
- =?utf-8?B?aWwvU3lrdHNyY3VBTzV1dkp1MzFCa20yMFg1WURNblRkOWdDTzI4Y2svOGQy?=
- =?utf-8?B?OFRhTkNtRXd1aUtWUmY3UkM2MUNkcGxSWUpYM1dSTjhTWWRicVdYMFVnNXFK?=
- =?utf-8?B?SWtHWUZmbjJ4c3lTNWJ2THpCOXhnaDllQm93WGJiMHZCd1RiZSsxU3hxaFpj?=
- =?utf-8?B?eEViRjlTdjZjbUpvajJtdjc5NnNzejMwdURjK29ocjRQMy9VekZWK3J3K0g1?=
- =?utf-8?B?dE16cDUxaHQ5NSt1RnB3ZWNHTHFpbXJqZHZmYU1YU25zcEFOcFVpWXZyTmdn?=
- =?utf-8?B?ajBmRWhPejMzbEo0ZkMxL1liQ3Z5UVJtOVdmM2xBOXZ1V0xKbk5Uc2V2THFD?=
- =?utf-8?B?SHdGdDluQ2lkckdIcW5SNGpJNlYxNTVDYTN2SzZQdjJyak9udDlMb2xNVTZB?=
- =?utf-8?B?UE9lZjZJeGRyVytNM0xCQ2hMd1BYOW84cHRBSUtzaE9RZTd6dFJDbHcrOUY2?=
- =?utf-8?B?T0IraThiSmREMzFrZm01akpZNlNLVHFzQ2VSNDdETk0zMEtLeVZaNHR5ZTFP?=
- =?utf-8?B?VGtGMDJZNXoyVjIwTkV0QmV2YmVtdEFlNm40dmhzSkhqdE81aHNOcjBGM1Vl?=
- =?utf-8?B?aTZMTjEwR1lIYzJrRUlIN3AvRTE3WTh5cGM4bEVsMWoycHdaSDFBekpjemtj?=
- =?utf-8?B?N3N1VTRWTkMxTVd4cjdBZGxaK0RPMEdMSm9qdkIwaVNpTHdKSXJzUlRkUTd6?=
- =?utf-8?B?NW00aG1LSmpHM3VDMkpNN2NnWStWSUJnUmFzQ1R0Qmw3Qkx0NzdYQXpxQXVq?=
- =?utf-8?B?K1VoZ081UEJ5TjFybGdMc0M4OVlIOUN6bGt1OEFSc29TS1VISGVMV2xXUmZQ?=
- =?utf-8?B?TnJLYllUSFN6a3A1cWs3ZFRkNWVzNDA4U2YyNGVWZ29DVWVjNzVKZGRRLzRF?=
- =?utf-8?B?L0Q2RDhWQzVYMitoZ3BiQWt1YTRUWEg1WmZSOUh2Y01uT0R5VjFFTVdxbVlQ?=
- =?utf-8?B?aXpRcHIrYW1zNElvRmlRVGdLUGJJejFMbUZsbTRPMFRTQW9lRWF4b0w1Y1kr?=
- =?utf-8?B?U0E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0701511CBA;
+	Thu, 11 Sep 2025 06:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757572161; cv=none; b=gdAQ+Zq+m29Zczy1CW4ox0MHueVeSz9vbSfx/uVUHZ0xCqJbIoffaxpd9WwYN3c/7tgQzmADgV2FDuxxPeMfVitr+0/Z3aqg/1WOVaqzfLJy1iMtx/URiMOzpyxtILi9a7cjVXjMGzzE0+UD/dzsw41kg7AKmyOGAIDnUwXVUEc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757572161; c=relaxed/simple;
+	bh=3ww/jS1fs9nHT7j3wCS68DaL7+qVCfA7ppHd8n2uUdc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YvyofcobAu2ObpmvJLQbdcBDinGzSWR3iAUeoUXe6LBP9qhUZApFIWRthGprAsXeHn0Yt/O8nDU+o3poOgcM+fD/tknTEWM8WnpTPaIo0GNkGPvLoTcGUjFjcQL64kucry9a+XgWgvHO70G3TXAO2xKhB9qRCz/vzNdu5fqVjaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1pKxW5G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDFB1C4CEF1;
+	Thu, 11 Sep 2025 06:29:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757572160;
+	bh=3ww/jS1fs9nHT7j3wCS68DaL7+qVCfA7ppHd8n2uUdc=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=E1pKxW5GoaZaQISBvQIQBAM789VE3o8LUozMR/afizF4FZtKfNilMWZWF5gfvmzG1
+	 JuzdssHiZQlyOJvhDBte4ceKkZp0C+1X2V9Mpoziiv6OemWZszlsU/BwnOx6/BKaSK
+	 GkJpftKyTzApRYpb2MwOe2aGrFWuVZhGsJhSxCRxpRbD0iJxyHFR8mKkXyLi27JyhO
+	 oT9uTFt7Q81J99/r6qRF2gX0U4GbgajEvd5GVmGfanY92V+pFheOurjajrANiHMh7w
+	 /FBKmpbfLYMUDvKgBd0cH/kbEBHg66Zt8n8SvNoPUz4GIKmi9BxpMoGsG3WHX9cUlX
+	 gbXI0AYJJJ5rA==
+Message-ID: <1e4c65c6-4745-45e2-9e20-9d2e69ae2ea4@kernel.org>
+Date: Thu, 11 Sep 2025 08:29:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8986.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2d1a438-42ea-4abd-b5b4-08ddf0fc5120
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2025 06:27:43.9799
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gy4w1FPeeLCzjh+yzm+cdR7mg38y+/DMWu58cOk4aSyKemLvhLdlO3t8kamwttHZs8Oihmg3K8axcE5rEAPB/c3TtaNtcEx9QZLReaXFL7A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7507
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ARM: dts: aspeed: add device tree for ASRock Rack
+ ALTRAD8 BMC
+To: Rebecca Cran <rebecca@bsdio.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20250911051009.4044609-1-rebecca@bsdio.com>
+ <20250911051009.4044609-3-rebecca@bsdio.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250911051009.4044609-3-rebecca@bsdio.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSW50ZWwtd2lyZWQtbGFu
-IDxpbnRlbC13aXJlZC1sYW4tYm91bmNlc0Bvc3Vvc2wub3JnPiBPbiBCZWhhbGYNCj4gT2YgRmFy
-YmVyLCBFbGlhdg0KPiBTZW50OiBUaHVyc2RheSwgU2VwdGVtYmVyIDExLCAyMDI1IDg6MTQgQU0N
-Cj4gVG86IEdyZWcgS0ggPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPg0KPiBDYzogamVzc2Uu
-YnJhbmRlYnVyZ0BpbnRlbC5jb207IE5ndXllbiwgQW50aG9ueSBMDQo+IDxhbnRob255Lmwubmd1
-eWVuQGludGVsLmNvbT47IGRhdmVtQGRhdmVtbG9mdC5uZXQ7IGt1YmFAa2VybmVsLm9yZzsNCj4g
-TGlmc2hpdHMsIFZpdGFseSA8dml0YWx5LmxpZnNoaXRzQGludGVsLmNvbT47IHBvc3RAbWlrYWVs
-a3cub25saW5lOw0KPiBpbnRlbC13aXJlZC1sYW5AbGlzdHMub3N1b3NsLm9yZzsgbmV0ZGV2QHZn
-ZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IENob2Nyb24s
-IEpvbmF0aGFuIDxqb25ueWNAYW1hem9uLmNvbT47DQo+IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmc7
-IEZhcmJlciwgRWxpYXYgPGZhcmJlcmVAYW1hem9uLmNvbT4NCj4gU3ViamVjdDogUmU6IFtJbnRl
-bC13aXJlZC1sYW5dIFtQQVRDSCA1LjEwLnldIGUxMDAwZTogZml4IEVFUFJPTQ0KPiBsZW5ndGgg
-dHlwZXMgZm9yIG92ZXJmbG93IGNoZWNrcw0KPiANCg0KLi4uDQoNCj4gPj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2UxMDAwZS9ldGh0b29sLmMNCj4gPj4gYi9kcml2
-ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9lMTAwMGUvZXRodG9vbC5jDQo+ID4+IGluZGV4IDRhY2E4
-NTQ3ODNlMi4uNTg0Mzc4MjkxZjNmIDEwMDY0NA0KPiA+PiAtLS0gYS9kcml2ZXJzL25ldC9ldGhl
-cm5ldC9pbnRlbC9lMTAwMGUvZXRodG9vbC5jDQo+ID4+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVy
-bmV0L2ludGVsL2UxMDAwZS9ldGh0b29sLmMNCj4gPj4gQEAgLTU1OSw3ICs1NTksNyBAQCBzdGF0
-aWMgaW50IGUxMDAwX3NldF9lZXByb20oc3RydWN0IG5ldF9kZXZpY2UNCj4gPj4gKm5ldGRldiwg
-IHsNCj4gPj4gICAgICAgc3RydWN0IGUxMDAwX2FkYXB0ZXIgKmFkYXB0ZXIgPSBuZXRkZXZfcHJp
-dihuZXRkZXYpOw0KPiA+PiAgICAgICBzdHJ1Y3QgZTEwMDBfaHcgKmh3ID0gJmFkYXB0ZXItPmh3
-Ow0KPiA+PiAtICAgICBzaXplX3QgdG90YWxfbGVuLCBtYXhfbGVuOw0KPiA+PiArICAgICB1MzIg
-dG90YWxfbGVuLCBtYXhfbGVuOw0KSSdkIGxpa2UgdG8gcmVjb21tZW5kIGFkZGluZyBhIGNvbW1l
-bnQgdG8gcHJldmVudCBmdXR1cmUgcmVncmVzc2lvbnMsIGxpa2U6DQovKiBVc2UgdTMyIHRvIG1h
-dGNoIHR5cGVzIGluIGNoZWNrX2FkZF9vdmVyZmxvdygpIHdpdGggZWVwcm9tLT5vZmZzZXQgYW5k
-IGVlcHJvbS0+bGVuICovDQpBbnl3YXksIGl0J3MgZ29vZCBjb21taXQuDQpSZXZpZXdlZC1ieTog
-QWxla3NhbmRyIExva3Rpb25vdiA8YWxla3NhbmRyLmxva3Rpb25vdkBpbnRlbC5jb20+DQoNCg0K
-Li4uDQo+ID4gQWxzbywgd2h5IGlzIGl0IG5vdCBjYzogc3RhYmxlQHZnZXIua2VybmVsLm9yZz8N
-Cj4gQWRkZWQgdG8gY2MuDQo+IA0KPiAtLS0NCj4gUmVnYXJkcywgRWxpYXYNCg==
+On 11/09/2025 07:10, Rebecca Cran wrote:
+> The ALTRAD8 BMC is an Aspeed AST2500-based BMC for the ASRock Rack
+> ALTRAD8UD-1L2T and ALTRAD8UD2-1L2Q boards.
+> 
+> Signed-off-by: Rebecca Cran <rebecca@bsdio.com>
+> ---
+>  arch/arm/boot/dts/aspeed/Makefile                      |   1 +
+>  arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dts | 647 ++++++++++++++++++++
+>  2 files changed, 648 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
+> index aba7451ab749..6bffb7130839 100644
+> --- a/arch/arm/boot/dts/aspeed/Makefile
+> +++ b/arch/arm/boot/dts/aspeed/Makefile
+> @@ -9,6 +9,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
+>  	aspeed-bmc-ampere-mtjefferson.dtb \
+>  	aspeed-bmc-ampere-mtmitchell.dtb \
+>  	aspeed-bmc-arm-stardragon4800-rep2.dtb \
+> +	aspeed-bmc-asrock-altrad8.dtb \
+>  	aspeed-bmc-asrock-e3c246d4i.dtb \
+>  	aspeed-bmc-asrock-e3c256d4i.dtb \
+>  	aspeed-bmc-asrock-romed8hm3.dtb \
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dts
+> new file mode 100644
+> index 000000000000..61f6cf8018c0
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dts
+> @@ -0,0 +1,647 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/dts-v1/;
+> +#include "aspeed-g5.dtsi"
+> +#include <dt-bindings/gpio/aspeed-gpio.h>
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/i2c/i2c.h>
+> +
+> +/ {
+> +	model = "ASRock ALTRAD8 BMC";
+> +	compatible = "asrock,altrad8-bmc", "aspeed,ast2500";
+> +
+> +	aliases {
+> +		serial4 = &uart5;
+> +		i2c50 = &m2_2;
+> +		i2c51 = &pcie4;
+> +		i2c52 = &pcie5;
+> +		i2c53 = &pcie6;
+> +		i2c54 = &pcie7;
+> +		i2c55 = &ocu_2;
+> +		i2c56 = &ocu_1;
+> +		i2c57 = &m2_1;
+> +		i2c58 = &slim1_1;
+> +		i2c59 = &slim2_1;
+> +		i2c60 = &slim3_1;
+> +		i2c61 = &slim4_1;
+> +		i2c62 = &slim1_2;
+> +		i2c63 = &slim2_2;
+> +		i2c64 = &slim3_2;
+> +		i2c65 = &slim4_2;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = &uart5;
+> +		bootargs = "console=ttyS4,115200 earlycon";
+
+
+Please drop bootargs. Baud rate goes to stdout-path and earlycon is
+debugging tool, not suitable for mainline.
+
+> +	};
+> +
+> +	memory@80000000 {
+> +		reg = <0x80000000 0x20000000>;
+> +	};
+> +
+> +	reserved-memory {
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		gfx_memory: framebuffer {
+> +			size = <0x01000000>;
+> +			alignment = <0x01000000>;
+> +			compatible = "shared-dma-pool";
+> +			reusable;
+> +		};
+> +
+> +		vga_memory: framebuffer@9f000000 {
+> +			no-map;
+> +			reg = <0x9f000000 0x01000000>; /* 16M */
+> +		};
+> +
+> +		video_engine_memory: jpegbuffer {
+> +			size = <0x02000000>;	/* 32M */
+> +			alignment = <0x01000000>;
+> +			compatible = "shared-dma-pool";
+> +			reusable;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		systemfault {
+
+Never tested.
+
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+Maybe you need to update your dtschema and yamllint. Don't rely on
+distro packages for dtschema and be sure you are using the latest
+released dtschema.
+
+
+> +			gpios = <&gpio ASPEED_GPIO(G,3) GPIO_ACTIVE_LOW>;
+> +			label = "platform:red:fault";
+> +			color = <LED_COLOR_ID_RED>;
+> +			function = LED_FUNCTION_FAULT;
+> +		};
+> +
+> +		enclosure_identify {
+> +			gpios = <&gpio ASPEED_GPIO(G,0) GPIO_ACTIVE_LOW>;
+> +			label = "platform:green:indicator";
+> +			color = <LED_COLOR_ID_GREEN>;
+> +			function = LED_FUNCTION_INDICATOR;
+> +		};
+> +	};
+> +
+> +	leds-fanfail {
+> +		compatible = "gpio-leds";
+> +
+> +		fan1 {
+> +			retain-state-shutdown;
+> +			default-state = "off";
+> +			gpios = <&pca0 0 GPIO_ACTIVE_LOW>;
+> +			label = "fan1:red:fault";
+> +			color = <LED_COLOR_ID_RED>;
+> +			function = LED_FUNCTION_FAULT;
+> +		};
+> +
+> +		fan2 {
+> +			retain-state-shutdown;
+> +			default-state = "off";
+> +			gpios = <&pca0 1 GPIO_ACTIVE_LOW>;
+> +			label = "fan2:red:fault";
+> +			color = <LED_COLOR_ID_RED>;
+> +			function = LED_FUNCTION_FAULT;
+> +		};
+> +
+> +		fan3 {
+> +			retain-state-shutdown;
+> +			default-state = "off";
+> +			gpios = <&pca0 2 GPIO_ACTIVE_LOW>;
+> +			label = "fan3:red:fault";
+> +			color = <LED_COLOR_ID_RED>;
+> +			function = LED_FUNCTION_FAULT;
+> +		};
+> +
+> +		fan4 {
+> +			retain-state-shutdown;
+> +			default-state = "off";
+> +			gpios = <&pca0 3 GPIO_ACTIVE_LOW>;
+> +			label = "fan4:red:fault";
+> +			color = <LED_COLOR_ID_RED>;
+> +			function = LED_FUNCTION_FAULT;
+> +		};
+> +
+> +		fan5{
+> +			retain-state-shutdown;
+> +			default-state = "off";
+> +			gpios = <&pca0 4 GPIO_ACTIVE_LOW>;
+> +			label = "fan5:red:fault";
+> +			color = <LED_COLOR_ID_RED>;
+> +			function = LED_FUNCTION_FAULT;
+> +		};
+> +	};
+> +
+> +	iio-hwmon {
+> +		compatible = "iio-hwmon";
+> +		io-channels =	<&adc 0>, <&adc 1>, <&adc 2>, <&adc 3>,
+> +				<&adc 4> ,<&adc 5>, <&adc 6>, <&adc 7>,
+> +				<&adc 8>, <&adc 9>, <&adc 10>, <&adc 11>,
+> +				<&adc 12>, <&adc 13>, <&adc 14>, <&adc 15>;
+> +	};
+> +};
+> +
+> +&fmc {
+> +	status = "okay";
+> +	flash@0 {
+> +		status = "okay";
+> +		label = "bmc";
+> +		m25p,fast-read;
+> +		spi-max-frequency = <50000000>;
+> +#include "openbmc-flash-layout-64.dtsi"
+> +	};
+> +};
+> +
+> +&spi1 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_spi1_default>;
+> +
+> +	flash@0 {
+> +		status = "okay";
+> +		m25p,fast-read;
+> +		label = "pnor";
+> +		spi-max-frequency = <100000000>;
+> +
+> +		partitions {
+> +			compatible = "fixed-partitions";
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			code@400000 {
+> +				reg = <0x400000 0x1C00000>;
+> +				label = "pnor-code";
+> +			};
+> +			tfa@400000 {
+> +				reg = <0x400000 0x200000>;
+> +				label = "pnor-tfa";
+> +			};
+> +			uefi@600000 {
+> +				reg = <0x600000 0x1A00000>;
+> +				label = "pnor-uefi";
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&uart1 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_txd1_default
+> +			 &pinctrl_rxd1_default
+> +			 &pinctrl_ncts1_default
+> +			 &pinctrl_nrts1_default>;
+> +};
+> +
+> +&uart2 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_txd2_default
+> +			 &pinctrl_rxd2_default>;
+> +};
+> +
+> +&uart3 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_txd3_default
+> +			 &pinctrl_rxd3_default>;
+> +};
+> +
+> +&uart4 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_txd4_default
+> +			 &pinctrl_rxd4_default>;
+> +};
+> +
+> +/* The BMC's uart */
+> +&uart5 {
+> +	status = "okay";
+> +};
+> +
+> +&mac0 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_rmii1_default>;
+> +	clocks = <&syscon ASPEED_CLK_GATE_MAC1CLK>,
+> +		 <&syscon ASPEED_CLK_MAC1RCLK>;
+> +	clock-names = "MACCLK", "RCLK";
+> +	use-ncsi;
+> +
+> +	nvmem-cells = <&eth0_macaddress>;
+> +	nvmem-cell-names = "mac-address";
+> +};
+> +
+> +&mac1 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_rgmii2_default &pinctrl_mdio2_default>;
+> +
+> +	nvmem-cells = <&eth1_macaddress>;
+> +	nvmem-cell-names = "mac-address";
+> +};
+> +
+> +&i2c0 {
+> +	status = "okay";
+> +	bus-frequency = <100000>;
+> +
+> +	ipmb0@10 {
+
+0 suffix is not generic.
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+If you cannot find a name matching your device, please check in kernel
+sources for similar cases or you can grow the spec (via pull request to
+DT spec repo).
+
+
+> +		compatible = "ipmb-dev";
+> +		reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
+> +		i2c-protocol;
+> +	};
+> +
+> +};
+> +
+> +&i2c1 {
+> +	status = "okay";
+> +	bus-frequency = <100000>;
+> +
+> +	pca9548@73 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+If you cannot find a name matching your device, please check in kernel
+sources for similar cases or you can grow the spec (via pull request to
+DT spec repo).
+
+
+> +		compatible = "nxp,pca9548";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		reg = <0x73>;
+> +		i2c-mux-idle-disconnect;
+> +
+> +		m2_2: i2c@0 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0>;
+> +		};
+> +
+> +		pcie4: i2c@1 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <1>;
+> +		};
+> +
+> +		pcie5: i2c@2 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <2>;
+> +		};
+> +
+> +		pcie6: i2c@3 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <3>;
+> +		};
+> +
+> +		pcie7: i2c@4 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <4>;
+> +		};
+> +
+> +		ocu_2: i2c@5 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <5>;
+> +		};
+> +
+> +		ocu_1: i2c@6 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <6>;
+> +		};
+> +
+> +		m2_1: i2c@7 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <7>;
+> +		};
+> +	};
+> +
+> +	pca9548@75 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+If you cannot find a name matching your device, please check in kernel
+sources for similar cases or you can grow the spec (via pull request to
+DT spec repo).
+
+... and same comments everywhere else.
+
+Since this wasn't ever tested, I am not doing full review.
+
+
+Best regards,
+Krzysztof
 
