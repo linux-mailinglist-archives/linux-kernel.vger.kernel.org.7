@@ -1,93 +1,220 @@
-Return-Path: <linux-kernel+bounces-812484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2354DB538BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:08:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9163B538C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C08D43A79F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:08:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 999141676B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5261135082D;
-	Thu, 11 Sep 2025 16:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6243352FC8;
+	Thu, 11 Sep 2025 16:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kCy1I/4p";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/b8oBpzf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cGYUHMG1"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2054.outbound.protection.outlook.com [40.107.220.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDEA1ACEAF
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 16:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757606912; cv=none; b=CWyWPuu+H7SYSb+zlnw9WRylUJbYp5AnLdJ20FUNwJNbKf81gFceyfG3Orlnri0XhE5Sqbj4l4aSJHEJKF5d4spYbLDSjI8BeDeQz1PkBMqnZeGFbKY6SKq4Vk3sQZZExkVRtURBpsR+wTTZMyctLSMMTGXMpxAOXnDPhnOeeME=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757606912; c=relaxed/simple;
-	bh=ALtwD3nkFpsn21nflnW8WCMBoCvlqLFjp+n+CDq8Bmw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FIzvnvvm6foPnOgneTfK7sgW6vD5AvOHD6PsctqriGKUggyUB9qVuA2dxzeyiajZRlJxTKzCdWYPAgWxqVuY3ouUoyuiEPF61/ULvmLUfNbjwQqBfP3Tc3CchVHhTYv7l+iW9VPgvKPxpEXGJADmvW4bB/nUhv0zD+us5fDm2Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kCy1I/4p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/b8oBpzf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757606909;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rtftTCr0uyk0T0ztP7XLXAUwMAADbprFx8itfTXteEE=;
-	b=kCy1I/4puobbmlTUbVi+NM+ZYA68sonMMx+uu557/2pb3effPuwXdvdZYa/YvVOk/H70pV
-	uL/c1a7iahcQyyd2ZLmoy0GgKBaFYP2sRWOro4a1lkjWbuACJ9YA2VXS7qn46sfFMDG9z1
-	H7JJlHIY3eg1c+PJFIKJAopZyl34vlUhAzJLUw7NI+44gTOdUjUofimFYPK4YrQfUYGc3M
-	ZLQ92Ib/B75/3im1YsubJBbTTMcjOfqhtoEXSAwpQ/FxH2xEKZytW20Y8YPipb1IKZW4pz
-	f0gGczqBfeNMeGxV65lJLVWjCFG8djJDWpcOMZH0AMApClR/ypom1yTNroqTog==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757606909;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rtftTCr0uyk0T0ztP7XLXAUwMAADbprFx8itfTXteEE=;
-	b=/b8oBpzfeKPXwSqCktu0sLKkl1kXAL+oRsUHzYVHkzCxk5k0poUMvvdvQEeBc7DZU/Spgk
-	ZplaIVN0VCSC28Ag==
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
- Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Wei Liu
- <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, x86@kernel.org,
- Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [patch V4 27/36] rseq: Implement fast path for exit to user
-In-Reply-To: <ad0e0d2c-75e0-42c2-85d4-5232a5fb8af9@efficios.com>
-References: <20250908212737.353775467@linutronix.de>
- <20250908212926.993963056@linutronix.de>
- <ad0e0d2c-75e0-42c2-85d4-5232a5fb8af9@efficios.com>
-Date: Thu, 11 Sep 2025 18:08:28 +0200
-Message-ID: <87y0qlq8eb.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548AA32A821
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 16:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757607006; cv=fail; b=dqSFfzEIw0yDhZLR/ruM0kP9hK/QpjtnUbCIYGWKYGgaUy89B3ir/uoIcUnlEZBBrG+2dVtwONWEHkvXn6xfdRhhFwyd/GeS3A9WQFuK6lkZPiPZUxr4w6MNH/Y5mk6X3dV+LSG8p7wS+xBCxTkTHXuS+c/5a7DcIV9mueX3yQk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757607006; c=relaxed/simple;
+	bh=expvZbrEIDe3eZrYS4Z54HNy2p5bzo8o0/QFeb8fBPg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Sjx5Rw4LJQsuRolyxyPUEvEkP3lAWbcBvlI7VLC8+z+rQb1aCKd/dgUDPmvDXGkk/aX77u54yHPr7h5ta2GNuOVoxastg1ub0QioAb46THBHmS4Ehp2ae7W4iFFzCc1W4+2Wh0pZCM6NGygfW4hKWb0HTTYF2reEsfwiqvXqsh8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cGYUHMG1; arc=fail smtp.client-ip=40.107.220.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a4RDa1XC+P23uAaJJ6qiHIs0Ejmsxa5jtxNcQ1zSDx54MWnFx1VIj7hprE+TbEs5PZMwMp1sH06g7GpQl7ZNO4QVjA5Q0Ma1f4XmMEDWSCOrK0UQxMrfEW7NfmFnSyEpNX2CeALtSIldB+XfuGO9parAo6qj4n+usCez8CkrKX3EbKSIjQ6qdzU5pDc45EA3hEEK7PcqlcxMYy1CqaspNpI0Wc3WXEa0wANG7bl9U6dqqa5YWVN+ilRzywkUWwWw1JaqABfhWfUgpbFjr9RVnLhZ+Dpg1twYzQuXayB5NyQGG0yh/17gq+/rnfNPSx4FdM8fQrkm8LQaLCrHt36L4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ou8EwgLEC8v6QbXG2n6EDg6hIdNidMS1SslwVEkAHqc=;
+ b=vHpkaZVBS3POCtaMts8vwj9RjeTHLH19NYJnmHF3Ad/vsdgwmgnUiYyZAJUGDaQh123aG0Fg3+2WM8yRn0I8v6B+nuYrgG5anfdQPi/PzTFXkpmr23qU3O2w4wDeFnzdd0L+COn7VpxbElsdAuiss95JkY+xnuoap6MxJAZ4A/yOCrRxPm/eXZKAjobHJujJCsQ3pCDbMLlHBD3iX+6Pb0uHPdHsMVpAqu8nyNUCuRNJbvNSorqzFmJUo2egkie2eNZHj/36PGRqTqjKBIgEDfRUk+3xPzTbTi+UKPGhIvzVqJVoL8eU9rD6W8TNTBBgJE+z7DPEDUYUGniZai3Ilw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ou8EwgLEC8v6QbXG2n6EDg6hIdNidMS1SslwVEkAHqc=;
+ b=cGYUHMG1ktZgXG/pAAJKf1I7JFYYcwMuvC7RM9dMpiHSk+B/UBaCjVrjFme5CYVryCab6So1+oP9mwf44O5lOpuJO7x3+i9yrev2tWmLf+pHHwrXa51FxI1SooX0l+T0GuvRhtdb7PoZlclHuA5BH3OxPr4e7ZbTSNvTXNdjlxc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by BL1PR12MB5730.namprd12.prod.outlook.com (2603:10b6:208:385::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
+ 2025 16:09:59 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
+ 16:09:58 +0000
+Message-ID: <66061cfd-d2b2-4254-95ab-891fa2017194@amd.com>
+Date: Thu, 11 Sep 2025 18:09:52 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: ttm: do not direct reclaim when allocating high
+ order pages
+To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
+ Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-dev@igalia.com, Sergey Senozhatsky <senozhatsky@chromium.org>
+References: <20250910-ttm_pool_no_direct_reclaim-v1-1-53b0fa7f80fa@igalia.com>
+ <e79a134b-89de-4da1-b64b-b890227fce8a@amd.com>
+ <aMF0fe7CIVD-8zVo@quatroqueijos.cascardo.eti.br>
+ <262a176a-4c80-40de-96e0-c97f50c20fe6@mailbox.org>
+ <b7c57dc3-ed0e-402f-8a3c-f832357f8763@amd.com>
+ <c6cbaa8d-cb90-45d5-b3b6-279196f958ce@mailbox.org>
+ <3227b440-5dbf-433d-8658-f37f9561554a@amd.com>
+ <979f8223-68b0-4a75-b410-fd86cfe6c372@mailbox.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <979f8223-68b0-4a75-b410-fd86cfe6c372@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0124.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b9::16) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|BL1PR12MB5730:EE_
+X-MS-Office365-Filtering-Correlation-Id: 77194036-2565-480a-e888-08ddf14da7cf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZEt6ZFZuM0hkMnIxNHJCTVhjbUM4cDN3aHBFRW1yelUvNS9QK21aUERqdkpN?=
+ =?utf-8?B?b2JtVTJkbnQ1QWkyL3htaWo4WlIvVVlzMW1QN2NQTWxXOWNSZzkyUTBRYUVO?=
+ =?utf-8?B?djdQaGlOQXRMb2NoK2VPT2NxRUpXeEhVbk5wTFhKOFN2bnd0andQSTNZU3dJ?=
+ =?utf-8?B?dVQ0aXA5bUhKWGVFYTJXMURRUFRqVW5vOGtlQkh0QjlpSEpiQ1NERE1DeXht?=
+ =?utf-8?B?c09XVm5sSytaUXZLc1BPMXlZL0p5YURESGR6K1VqQkZpUTFUYnN0UVkwR3ll?=
+ =?utf-8?B?TUZQNEZ2MDlPbm1VbWdPQTh5VHg3NFJXY0xrWmtpK01wRkhpblQ3d2p4enFW?=
+ =?utf-8?B?MzF1eHREa2lnY2l2TzVRN1JJSDZJK21vN3dpY0FPZGorTkFIaDl5Nk1CdGVi?=
+ =?utf-8?B?cFI1dmd4VHlnWDZUNHdmcWxlc0xWV2p2a1plREtwTWw2S1J5dElha1BFWDdG?=
+ =?utf-8?B?dnIzNytFQ2trdHNyZTE1TXhuZEVHS1pWMGx0Z1JsOWw1VDdkaFloQXljREZH?=
+ =?utf-8?B?c2I1ekZCNGF3aStHU0V3VlMzRnlac2hIY3lRc2diQjRlTThsSHg1SUUwUmFX?=
+ =?utf-8?B?U0xqcjdNWmtCNExUZ0ZCZWx1eXBJRk80aGNob0tBNXlXbjFiMEZGeDZESTUz?=
+ =?utf-8?B?QXdOenBuUjdCVUZjdzVZaUpYa2ZveDFjZVZrSW1pYVRrYWxwWExBcEd5M0Ur?=
+ =?utf-8?B?RUJjN010ODdBV2p5RElBSTV6eHZJbmQ3Y0R5cmh6SnFxc09Ba1dHYnNtK2Fj?=
+ =?utf-8?B?STN5akMxUDNYWmVhTFhIcHFscDNnS2VZZzlVVHVaQzZBeVBvcFlIODFRL1Fi?=
+ =?utf-8?B?bVRnOE9mV1ZZZVFGZDBSSWZpRE54VnF3OHZ3Q3NLN3c0a2tHNEhFcFA2Tzds?=
+ =?utf-8?B?dGVOYlE4R3lKcU83ZFF5RHk4dk12WnZIL0NRNEZMaEZOZUJSSTh5dDlYTHJr?=
+ =?utf-8?B?M3dUbmRUaEtpcU4rcXAybHlMaGtOUUVHRnI0TmV3SGFTNHV6WG1Bb0ZJLzU2?=
+ =?utf-8?B?cXE4OXpucTIrbkhyWkZOYUdHZUJPUGtBeHI0cmdQaWU4UGFTTjlzTVRFNlo2?=
+ =?utf-8?B?emVoUnlKeXdFSXRWQ1dKMk83VjB0dUN2YkMwL0NmUHpDZUtjd1VaMkJHdytZ?=
+ =?utf-8?B?Q3pEM3BXdXVaMzMxQkxzVXM0UndoeGpuTWxENEhLNGY2b0pCTWViZ1pjMk1Q?=
+ =?utf-8?B?L3VNS0s1dFFyR2ZLWTcya1U0NzV6ZTNyY0VVcXdYTkRHV0svdVNYOU15dXJT?=
+ =?utf-8?B?VTYxZ0tqdXBYQXh4N2o0Ly80WEUxT2NjS2Fpb1FoTi9YeTFPeE9UZlZKNzJW?=
+ =?utf-8?B?amwvQmpCTHRaT1U4Z3Z1WC9pWVlhTWZTSEFwWU9LWDZNM2w5NWREc2RabFlH?=
+ =?utf-8?B?ajR3aG04Y2piQ1drN2w2VXhGOUF3Z2FIUmlMYklDN3diMjlxUWZiNVR0R1V2?=
+ =?utf-8?B?a0p5cm1MMml6K0lWZHNFbHBLZ3BBOXd5d3NrVThuL1NXRUNIUUVFektXU0Zr?=
+ =?utf-8?B?STU2OCtBdDIyOU5UM1VicVhQNVBTT0NyNEh0N016T2wrR05BWHVqb094bFB0?=
+ =?utf-8?B?Q1FGTUVwS3FQRG1iV0lqM1lqQXNwdzFNRTRTZmVqUkp2Ky9rWG91cFlWTnNR?=
+ =?utf-8?B?Vm5OajFSTXRIT0JnNEFvR1hUcGdhZ2ErZEh0bGRXb092MEMwKy8vQy9jYU16?=
+ =?utf-8?B?eHk0TDdzRFBsQ1U2Q3Eya0w1V2U1Zks4T24wSlpNQnZEejRTcmlWUjNqZlYw?=
+ =?utf-8?B?azRvQjI0Rm5RNjhmNnh1YnFYZ0tlTFlPdmNXZW5tUks2K0Q2VmI2T01rWXdO?=
+ =?utf-8?B?Z3Ivd3pEd2k1M1VERExIZTdORys4ME9IWldGOTk5T1FQZzFyL3JJWi9aRk1J?=
+ =?utf-8?B?NW9Pdm4yN0NoWVlBa0NuQ2JzRkpQRDV4N0tGUjZOeTFYMExNK1lRU1lqKzli?=
+ =?utf-8?Q?R9PebWJzSpI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?M2pPT2lRZWw5Tjl2TkYrYm8xc1RNdExDeEJQT3NwL3ZKTjBrZFNBT1FzQ2RJ?=
+ =?utf-8?B?dHczckV3c0dZK0E5MjNjNkV3TnoxVmtsSitFT3JZVXliTDlWMmR3TmhMRTlR?=
+ =?utf-8?B?eW9PakhoREVVMUZqN041VEc1SlVUUG9ydE90ZGtIVVlIV0ZOdDdiVE1oVE04?=
+ =?utf-8?B?NTdma2NRNlhCNWdid3dVS2VkVnVUd29iU3YwVzgyaFE0bHlIek8zeEVXci9D?=
+ =?utf-8?B?Y0t2Z1NYN2Y4Znd5STdpRGRzLzNlOFZadmJpY01RcTJGOUtOZk9MeUNMelRm?=
+ =?utf-8?B?QUZUeXdFZGlwWDRsUnBibkU4MHM3VndnWFMwaEJkRmFZczVadGtiSTN1SkQ2?=
+ =?utf-8?B?cG5YNjhmZ1l3aVNqWDJVUlB4RUp4MVgxVkpTS2Rra0NkQkhzQ0toZnBzUEps?=
+ =?utf-8?B?YTlkRE1zMXFycm04eWh2TUdOOE9aeDBhQ1RtZk90b3dHa3R0R1dMaU91ZXBZ?=
+ =?utf-8?B?R1JqL1U0SXhtVnZIT1hRcUNiek1SUnRIVmMyUm04NXl0Vnl1UkFUd2JzOHZr?=
+ =?utf-8?B?RG51OTVJNmdTcG5wcHRiMWNZOGYrWjZVT0NGSkFxYlduVUN5d1pQWitzUWhD?=
+ =?utf-8?B?a2lRV21zczBCVzYwSVc3eTdSbEVCTnNnUDlQYk4rTjlaTkE1QlpZaERhVnY4?=
+ =?utf-8?B?dTdvY3FEcWFlV3N6Y2Mwc2VwV1MwZFVCUWR5TmQ5VG9WNjltSklzVFkyOW81?=
+ =?utf-8?B?aGpKSmJQYldQQUZwb2hDMXVCVENqNnRzc0I3eDlLbStyTFV2YmNFVWVQcUJL?=
+ =?utf-8?B?ZkhDK01aQzlNQkxSNzFNYnJtRnJFTUwwVmExcGNaRHU5SU10L0NzcVU0SGxn?=
+ =?utf-8?B?bk1vczlMRzVOdXZ3MlJFbmZXTmFEMUhQMmZ5dWtFS2NPejVZRE1rc2txNDZE?=
+ =?utf-8?B?OTV3NE9FR1d4ZEtNaXdHRGxZaC9oWEdObzZlNm9KbHhKOGhTYmhGYkIzZEI4?=
+ =?utf-8?B?emdINnJuZWdGcHRRTTVXSjJML1FXemVJNDNFRnplRyt3MDRMa2ZhS3c4Z0dS?=
+ =?utf-8?B?R2lqdEs0MU5BcUJzOTBxQ2Q0TVRkS2pFUmV0a2ZnZlgxWU9Yc3RLNys2cmoz?=
+ =?utf-8?B?Ymt5TnVsNGpVV3V4UmJMV0YwaWxRUzkxa3N6WnRVRkJhLzFFOW9FRDhFaVRV?=
+ =?utf-8?B?YXJCNHRxYnZvZ0VSQ1FxK21QeVNha0V3RGpzeHUxZFJubGtUbFdxUzZlRlI5?=
+ =?utf-8?B?TTJZb2hCbHA4U3B5Q29ObXBmQkRmNTNWdkpCUFRJT1h0Rng4akJSQ2c5RUZm?=
+ =?utf-8?B?dkd6TGlRMWdKKzhoYi9LOGFKM2piSnZTYzVJWE14eTg0akZLQTFDNUtPcFpY?=
+ =?utf-8?B?bzJXK2x2dk9Oay9STThFSnB0bzVTdzhUMUVycERaQVBDS3VQTFBiUVBmYVoy?=
+ =?utf-8?B?cjBiR2l3cGE2TW5jRC9jOTE4UlNzSElhYWFGSjRiM1IyTXMzQnR1SG5ma3BX?=
+ =?utf-8?B?eFdxYzZaMHUyNk00WDhhallDRUkyQVdqL2tzOWtxY3VmV3Z4clB6YzNEM1F5?=
+ =?utf-8?B?T0FKa0YyeURoNEZ6VitrRkdnZytuQTR4WW1NQlNDSnlBdmtFOXBJa1VqUjR1?=
+ =?utf-8?B?TlJCck4yRGwvK0Rlckl5aURXTUd3M29wWlJ6b0JwNnRabHlROVViODdTUXgw?=
+ =?utf-8?B?R0xQMkdUQ3Q4RDNxMllLM2pvUTEwK2E2MDlLVjBzQUZsNmpQaVVhY2NQWjVM?=
+ =?utf-8?B?OWlPT3gwSWR3TktDOURtSnBQNExOLzl5cDZ5a0tNMHl0S2ExSUgwWTJjS093?=
+ =?utf-8?B?Unlmd3lONHN6MXVTU3ArU1pJMUVxREhYRDN5dlVOZEdTREZoelozakhIcnFH?=
+ =?utf-8?B?eWY1dStnaXo4ekt0R2lXZ1BmMGRpYThjTEtnRXdNdE9ucXZDQ3BGQjJUN096?=
+ =?utf-8?B?MFJMK3ZlQWxhell3dFFvMCsvL1owSk5paHVSUUNoOEMxcnBSMHhpVHBEQXBU?=
+ =?utf-8?B?MlB4LzF1SUNTV09LdUxhUUNPQ00vMnZGbE43WHFxbmdQUWJrMVlvaEZYNUFy?=
+ =?utf-8?B?Z2RIWVgxcGJOY1hHRHU2ZnB1dWpLbVU5T3ZrV0YxVXNsYjIwT1RyZWNNMVF5?=
+ =?utf-8?B?MWllMnd6dVVVK3crTExEekJ2RnJDd3IyRW0wNkVxMG9obXVzU3pXV0dGKzQ3?=
+ =?utf-8?Q?nVJ+Iq9ay7Neu9zC7t/AAK71X?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77194036-2565-480a-e888-08ddf14da7cf
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 16:09:58.9174
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: snrEV5u3OLpU+Zr/mc90J2+8Dr3zaqqGxgNNMhizE15ISZz2kOGGaoE5nHoImlm7
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5730
 
-On Thu, Sep 11 2025 at 10:27, Mathieu Desnoyers wrote:
-> On 2025-09-08 17:32, Thomas Gleixner wrote:
->> The initial decision to invoke any of this is based on two flags in the
->> event struct: @has_rseq and @sched_switch. The decision is in pseudo ASM:
->> 
->>        load	tsk::event::has_rseq
->>        and	tsk::event::sched_switch
->
-> I suspect that my earlier comment about has_rseq and AND applies here
-> as well. We could probably remove the has_rseq load and the AND
-> altogether and just load sched_switch for the conditional branch ?
+On 11.09.25 16:48, Michel Dänzer wrote:
+> On 11.09.25 16:31, Christian König wrote:
+>> On 11.09.25 14:49, Michel Dänzer wrote:
+>>>>>> What we are seeing here is on a low memory (4GiB) single node system with
+>>>>>> an APU, that it will have lots of latencies trying to allocate memory by
+>>>>>> doing direct reclaim trying to allocate order-10 pages, which will fail and
+>>>>>> down it goes until it gets to order-4 or order-3. With this change, we
+>>>>>> don't see those latencies anymore and memory pressure goes down as well.
+>>>>> That reminds me of the scenario I described in the 00862edba135 ("drm/ttm: Use GFP_TRANSHUGE_LIGHT for allocating huge pages") commit log, where taking a filesystem backup could cause Firefox to freeze for on the order of a minute.
+>>>>>
+>>>>> Something like that can't just be ignored as "not a problem" for a potential 30% performance gain.
+>>>>
+>>>> Well using 2MiB is actually a must have for certain HW features and we have quite a lot of people pushing to always using them.
+>>>
+>>> Latency can't just be ignored though. Interactive apps intermittently freezing because this code desperately tries to reclaim huge pages while the system is under memory pressure isn't acceptable.
+>>
+>> Why should that not be acceptable?
+> 
+> Sounds like you didn't read / understand the scenario in the 00862edba135 commit log:
+> 
+> I was trying to use Firefox while restic was taking a filesystem backup, and it froze for up to a minute. After disabling direct reclaim, Firefox was perfectly usable without noticeable freezes in the same scenario.
+> 
+> Show me the user who finds it acceptable to wait for a minute for interactive apps to respond, just in case some GPU operations might be 30% faster.
 
-Same comment as before.
+Ok granted, a minute is rather extreme. But IIRC the issue you described was solved by using __GFP_NORETRY, that here is about completely disabling direct reclaim.
+
+As far as I know with __GFP_NORETRY set the direct reclaim path results in latency in the milliseconds range.
+
+The key point is we tried to completely disable direct reclaim before and that made the datacenter customers scream out because now the performance was totally unstable.
+
+E.g. something like compiling software first and then running a benchmark was like 30% slower than running the benchmark directly after boot.
+
+Regards,
+Christian.
 
