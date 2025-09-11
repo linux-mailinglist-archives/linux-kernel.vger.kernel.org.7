@@ -1,148 +1,191 @@
-Return-Path: <linux-kernel+bounces-812151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14E3B533AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:27:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4DDB533B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3521C162901
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:26:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 350EBA8819A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FD63277BA;
-	Thu, 11 Sep 2025 13:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4412432BF32;
+	Thu, 11 Sep 2025 13:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="baDCvOhg"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrnZIKv5"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEAD204096;
-	Thu, 11 Sep 2025 13:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37E632A824
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757597151; cv=none; b=gwyF4FSfuayzWe7j6pSsok+yAsVq1RBB7KRNvKYKdGdXNldSLqTrTnzR5P/S8v157AXFAt7MmA9Al6zx1j+H3cGUVSVH9vIkLuDE4a+7xUVWJxjuy/zT+WoxG+kRRNknKaIQV3DoFXcqahwtfqF/VezUJQqtZO4HZdfdPf+RwWY=
+	t=1757597165; cv=none; b=dRi6of3SRxaV9jgX666m89noi9vsVCtuSndAAky6DVoJeB1MZi+XvftcKR/Hku/pWsFxxeIT2CtZT6667e4wl4xMNjxTURDtq1MtxwurPnbt6hd6a0EFgR7QkuqkZhGia6t0NjLD0yHSAqzQTlfNsKBiSi1EkisKEPozlT+VW4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757597151; c=relaxed/simple;
-	bh=FIMY/3NZ6Rz/ebm9TPGOIX0XStBA+bqI6cEJjsslY9A=;
+	s=arc-20240116; t=1757597165; c=relaxed/simple;
+	bh=bck2b0HUyvf0F/4ArW7/OnJRrl2YOIY5cBIvwDrnajM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CNaQQY3eTXXhtlWCsBoWtGv3xpa+gbcWC7Cxl1tb2fTZz32Iab4qmurhMM6Kpln5Rl29PfPIi1XPXKNONoc6JX1s3WGiI6ZvT4ueSrtiN2TXpmaxy3aX7a898mbc14Y+VLDUQ5RMxxdWcCfVrhg1IKbSrS8woun2a9Un+Ks4pjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=baDCvOhg; arc=none smtp.client-ip=209.85.215.176
+	 To:Cc:Content-Type; b=nBeqQ+CpnadG0cNAEqqvbBO8GevBzPCWSTFq3fRrM8SMScggG8l+Y13VrlnPWiXXyOJMEwP6jisfmkC6Yk9mA0S+gWSXHMIaSXugw7hQm7o7SgLesf3bDjWmVkDi6ovgkaC4VMzkIlVPat0ED9Oamul+wAo/CWb8sU1UNoQpmAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrnZIKv5; arc=none smtp.client-ip=209.85.217.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b4d1e7d5036so454333a12.1;
-        Thu, 11 Sep 2025 06:25:50 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-50f8bf5c518so591835137.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:26:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757597149; x=1758201949; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757597163; x=1758201963; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FMtSHaulXrhyRXZXHDwWRgMU8kQQ1GTRKtPp9+9HmKI=;
-        b=baDCvOhgC8hs5OlsSfJ1FZoUUbx2Grm2RrT+MbypI6NoCpGsQdgmN5Ahe6S+VdxRec
-         DoajYrJ78gm6D55VCUk5rq1UNV/5EfSlQUZindHo+76pKrvGRcNHnG030DhEr/lWWVoF
-         1pFpklWQCSEoZTike9XERlWptminst0BA3V/ZBaKbOMUOFGf9+sivQ7XfIs3//+MOmlD
-         DDBVEwvk8LNs2QxOlockBSDRTAKYi2VfGTyZJJeCk2t6/JNbM4Z217VVBNv14pyLqVbf
-         8LJHGT+KI+yfbhUp1hnEw1qM20xs5dWM0Q3d0+8l7h+rathjjHNqRXXiVYXL/iW6EBHQ
-         upeQ==
+        bh=4fdmTjQ3zuf0zvoi7FPSNx1/h36C75iwg/2B5LQDt1k=;
+        b=QrnZIKv5mhGqugMTADC6dnpRI2/8eP0/fCiqDI9eiGuQvhy6SnYn8LFdSv2c8BI4hQ
+         KuhCURF7G8pGTXDCGQUXAeWtiolgUPrIsvtU18H7G1Y3/SeVfMuHrqae4gdWzW3YiAS2
+         qJPn5XgCjQ13ShN/peFfBiH8PV6eSrgQnNT+YZmM6RjJ9Fh5YFtIVG1u/GYOHJgXXMRO
+         2UWoNtrpE5K0u54WVjskPJ7xY0cUkTSV5gzK19K1w4Dn5F66PxEr9dJbRpIjsd4agbCa
+         mbOl3LoGOYgKKRPJY2LUTOKr+X9G8wYDcBPGRhxdDmMAgyMjSpV688lrMiaGoyp7IDuw
+         k18w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757597149; x=1758201949;
+        d=1e100.net; s=20230601; t=1757597163; x=1758201963;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FMtSHaulXrhyRXZXHDwWRgMU8kQQ1GTRKtPp9+9HmKI=;
-        b=iC1/cu3f21P0wG/QmMAQbD5PlRqTZkehx7fSGCwuV8KdOuO7+B2TqOUiEAdjNDvhJr
-         Y8ZlZYC+L89jSINOAr09ly96POIwo2KRq61Z/kT0+b5rAvMgszto82pK+Wxsd9Q00lyH
-         IRydHM82/mJVpoKkywXHLSvh5rc1GVIkOol5KCn33OC2lWJbvkNFSUOUfJhIuv3CcwBr
-         gwg0vxcIiKYg3JHgUpyGax3vhbAZq0ZoZ2kUsyZBGMJxxyLnVkCmld7XZrhgbjUlSaoQ
-         tXcAfTfeyYJDXjnJ2aaL0phu21pguaNww9mhn1LVOwWW1OQFAQEWX+3NGoijc0EjVjnJ
-         VoKw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7KoaeiSkCriYJLVsZM7WOsoKm3/4L9/dvK31Ie1vrHmRJ3ntOWqn+8svTmf3V7w38QmVFsVGB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAxrvW8Czzfud3mN0HAax1ELQTbe5qLmK1TnLG0IfiT+RD5V3E
-	LMexQVUE/qetmZOcxdWSWodbKeolxpynJGjP+4pXw9H4SSkQ/c6Zg3V9EhFqj/DkaTZ1mV6vXVF
-	0Q9yiUBpNk9wa/0FU6G95cI4LGY+JLFU=
-X-Gm-Gg: ASbGncuBA06/lgP/51Wume8NeKUZ42G1gxoKTyOPwE6u81MrZ9P4NpPU0Pi9LUY8LNK
-	xDiEV7ulGdwnIKeBUoWAcMcGqolx+g8LoAiT0RAV0o39N1asybX+6Xgri0glXY6IP8IZFejNRvZ
-	gjhR5ll3LtXJn0pQs3V3ZgHPJ6HDsnDpRM05LJQosjaymRjbvV4+wLVX5rhsc77VQF2RSG8fdzK
-	wHasOM=
-X-Google-Smtp-Source: AGHT+IFkYH1X9yw/iBKEbT0ofFylkWgGn23ocaHAuJDNdtfa3OMZZcsxvlopvVBM2ETIvs3vzosAHW6bANHGVReJxnQ=
-X-Received: by 2002:a17:90b:3c85:b0:32d:dd7c:c3d8 with SMTP id
- 98e67ed59e1d1-32ddd7cc580mr1215965a91.25.1757597149453; Thu, 11 Sep 2025
- 06:25:49 -0700 (PDT)
+        bh=4fdmTjQ3zuf0zvoi7FPSNx1/h36C75iwg/2B5LQDt1k=;
+        b=f/TTbo368spehgH/0v7LW/4VoSwiQwDiTZOLqokXIUtMGScPde/0PtIbLb+mf5IfMr
+         092THrckEplC4+vN9IgAso+szV6hV8bW5aO7eBrEbWTEboXf6YAei8z3JdlNYA/QSqpz
+         m8C1J6fEP32Tpur8c4fda/XkIcQmx7wT8kl1hsx/rC0o3f/H/y6kW9zfErbbS6ggu0K/
+         tvraUFR+I3fHvvSejGaHKGHtKYNDFV7i2ZDv+Y8PQ9TSJE67vw2RB6OHSwJgYkWakdPx
+         PucTjI+uUhf4/Ol3Yh30Q4knVzGXcvQYkkpqn4AUWQOXtD0k4M4vkNR3ouH/Waw9uf9b
+         ITZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRYaYfBf7FyD8bAjPwv1Ez2KPhAOMiKUqskoVD2W2xWShms62n0pMRgfDnYrV8YMT0eVbhDM3AzlzIulY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxii840fuwH++KI7lbt1s75aiUe22o1Po2CzOxdItHC3/urJB1h
+	gsvRDH1wJyFmn7zHbUiLlhdNAPurg1j/S0eLI7oXZlf7BAP/s3NUHpJ99JhGC1jrPRV+ohr8MsZ
+	muBmjb/SIqC2HX9DBSg8/8HdqvY0WBcA=
+X-Gm-Gg: ASbGncvZdZ4H4CH3YX+Ne8wf2tDG6HbMC+Mqd8XLhz0CVQDCIdn3ab37gyNXhhrGka0
+	R500XZAGV730jhEY0+o5A7xNO++bqfJirR28qbZuBiLtOrdS5nN6+y6TkX1Ko8+WZ+OIUCNVkVX
+	L2iFkmEUVVLtatFs6Q0v6Y887+5EivEkhGzmPOk/KuVRsPxqSErJqa1wB1UP+7ZYX7QNU0S7x9w
+	ub1z1qO3pBICHadSLIPDaDcvFq1rQd8/EolM+xu5LfYIA==
+X-Google-Smtp-Source: AGHT+IF9HHTf/6XsZ4xmdiVceKWAiZfJlu2nUBunXuEeleQrXxA2m4sgS4aY/AJqPtQQMw8wN97GSp36mzUPZNs+cMc=
+X-Received: by 2002:a05:6102:d89:b0:4f9:6a91:cc96 with SMTP id
+ ada2fe7eead31-53d231f8bcamr6485049137.26.1757597162651; Thu, 11 Sep 2025
+ 06:26:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEjxPJ4-+WfGPLev5QU_+_NgBx68zdBBQ6x_+aonzbk4f9BNEw@mail.gmail.com>
- <20250911130653.967139-1-zhanghongru@xiaomi.com> <CAEjxPJ6upN5e7XD9HC970pKvHox-qPjZLdzm=bV-tu8GgFrYoA@mail.gmail.com>
-In-Reply-To: <CAEjxPJ6upN5e7XD9HC970pKvHox-qPjZLdzm=bV-tu8GgFrYoA@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 11 Sep 2025 09:25:38 -0400
-X-Gm-Features: Ac12FXzA6a-Ajo7aWVfmOKrXqLP0A5E8_8atC7kIMPksDVQ-AJWjXL4er4kjKMg
-Message-ID: <CAEjxPJ4naa66Aum5YO0jntY5-reXxF5Z-=JYTcmb7WFCBODAHg@mail.gmail.com>
-Subject: Re: [PATCH] selinux: Make avc cache slot size configurable during boot
-To: Hongru Zhang <zhanghongru06@gmail.com>
-Cc: linux-kernel@vger.kernel.org, omosnace@redhat.com, paul@paul-moore.com, 
-	selinux@vger.kernel.org, zhanghongru@xiaomi.com
+References: <385dccf3-234a-4f83-9610-81ac30bf1466@rowland.harvard.edu>
+ <20250909161901.10733-1-ryanzhou54@gmail.com> <2025090959-italicize-silly-f628@gregkh>
+ <CAPwe5RPxRhvYmoDZF792Vwv638kt+Hk+CYoJJCmcjewGp8NfYQ@mail.gmail.com> <2025091023-joylessly-finlike-8382@gregkh>
+In-Reply-To: <2025091023-joylessly-finlike-8382@gregkh>
+From: ryan zhou <ryanzhou54@gmail.com>
+Date: Thu, 11 Sep 2025 21:25:51 +0800
+X-Gm-Features: AS18NWCxyjTDGGLxyQAVfnWFUrASUcULEFlA34l1zFRHyjFJ7Q9X875EKse4BK0
+Message-ID: <CAPwe5RNF6gPkD7yt6AgZs=0ATeGrzBdeQEcWx9j=1MJwzfn5OA@mail.gmail.com>
+Subject: Re: [PATCH v2] drvier: usb: dwc3: Fix runtime PM trying to activate
+ child device xxx.dwc3 but parent is not active
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: stern@rowland.harvard.edu, Thinh.Nguyen@synopsys.com, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-usb@vger.kernel.org, rafael@kernel.org, royluo@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 11, 2025 at 9:23=E2=80=AFAM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
+Greg KH <gregkh@linuxfoundation.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=8810=E6=
+=97=A5=E5=91=A8=E4=B8=89 21:07=E5=86=99=E9=81=93=EF=BC=9A
 >
-> On Thu, Sep 11, 2025 at 9:07=E2=80=AFAM Hongru Zhang <zhanghongru06@gmail=
-.com> wrote:
+> On Wed, Sep 10, 2025 at 08:56:36PM +0800, ryan zhou wrote:
+> > Hi Greg KH,
+> > Sorry, I didn't understand your question. Are you asking for my patch
+> > commit ID? I've resubmitted patch v3, and the commit details are as
+> > follows:
 > >
-> > > >  static inline u32 avc_hash(u32 ssid, u32 tsid, u16 tclass)
-> > > >  {
-> > > > -       return (ssid ^ (tsid<<2) ^ (tclass<<4)) & (AVC_CACHE_SLOTS =
-- 1);
-> > > > +       return (ssid ^ (tsid<<2) ^ (tclass<<4)) & (avc_cache_slots =
-- 1);
-> > >
-> > > If you are making the number of buckets adjustable, you should also
-> > > change the hash function to better deal with multiple numbers of
+> > commit 92bc5086f53404f6d14d8550209d1c8cd3fa9036 (HEAD -> usb-next-devel=
+op)
 > >
-> > Thank you for the advice. When running the test model, I sampled
-> > /sys/fs/selinux/avc/hash_stats once per second for a total of 1800 time=
-s
-> > and analyzed the distribution uniformity of the hash algorithm using th=
-e
-> > sampled data.
-> >
-> > Baseline: 512 nodes, 512 buckets
-> > Comparison: 8192 nodes, 8192 buckets
-> >
-> > Metrics (Average value over 1800 samples):
-> > * Bucket utilization rate (higher -> better, same chain length assumed)
-> >         * Baseline: 52.5%
-> >         * Comparison: 49.5%
-> > * Max chain length (lower -> better, positive correlation with worst-ca=
-se latency)
-> >         * Baseline: 7.5
-> >         * Comparison: 11.4
-> >
-> > Experimental results show that scaling buckets and nodes from 512 to 81=
-92:
-> > 1. The distribution uniformity under the current hash algorithm does no=
-t
-> > degrade significantly;
-> > 2. The maximum chain length rise significantly, potentially degrading
-> > worst-case performance (ignoring other code in avc_search_node function=
-).
-> >
-> > Details:
-> > url: https://gist.github.com/zhr250/cb7ebca61ff5455098082677d75b1795
-> >
-> > I will modify the hash algorithm in the avc_hash function and collect d=
-ata
-> > again to see if we can achieve performance improvements.
+> > Or do you need the commit that introduced this issue?
 >
-> If you look elsewhere in the SELinux code, you'll see that others have
-> been converting other hash tables to using the jhash functions, so may
-> want to try those here too.
+> Sorry, I mean "what commit does this fix", so that you can add a
+> "Fixes:" tag to it.
 
-Or you could follow the example of ss/avtab.c which was converted to
-MurmurHash3.
+I initially targeted these two issues:
+commit1=EF=BC=9A 0227cc84c44417a29c8102e41db8ec2c11ebc6b2
+usb: dwc3: core: don't do suspend for device mode if already suspended
+commit2=EF=BC=9A 68c26fe58182f5af56bfa577d1cc0c949740baab
+usb: dwc3: set pm runtime active before resume common
+
+When the DWC3 controller is in a runtime suspend state, an interruption occ=
+urs
+during the system sleep transition, resulting in USB failure to resume
+properly after wakeup.
+The detailed sequence is as follows:=EF=BC=88refer to commit e3a9bd247cddf
+merged by Ray Chi=EF=BC=89
+    EX.
+    RPM suspend: ... -> dwc3_runtime_suspend()
+                          -> rpm_suspend() of parent device
+    ...
+    PM suspend: ... -> dwc3_suspend() -> pm_suspend of parent device
+                                     ^ interrupt, so resume suspended devic=
+e
+              ...  <-  dwc3_resume()  <-/
+                          ^ pm_runtime_set_active() returns erro
+
+Post-analysis reveals:
+    =E2=80=8CCommit 2=E2=80=8C generates unexpected error logs ( runtime PM=
+ trying to
+activate child device xxx.dwc3 but parent is not active).
+    =E2=80=8CCommit 1=E2=80=8C disrupts USB recovery in this context, attri=
+butable to
+the following factors:
+
+    EX.
+    RPM suspend: ... -> dwc3_runtime_suspend()
+                          -> rpm_suspend() of parent device
+    ...
+
+    PM suspend: ... -> dwc3_suspend()
+                                     |___dwc3_suspend_common()
+                                              ^ if
+(pm_runtime_suspended(dwc->dev)) then skip suspend process
+                                          |___dwc3_core_exit()
+                                               |___dwc3_phy_exit()
+      PM resume   ...  <-  dwc3_resume()
+                          |___dwc3_resume_common()
+                                       ^ pm_runtime_set_active()
+report error(error logs : runtime PM trying to activate child device
+xxx.dwc3 but parent is not active).
+                              |___dwc3_core_init_for_resume()
+                                  |___dwc3_core_init()
+                                      |___dwc3_phy_init()
+                                               ^ phy->init_count++ and
+phy->power_count++
+     ... Next,usb connect (Note: dwc3 is always in runtime suspend)
+      RPM resume   ...  <-  dwc3_runtime_resume()
+                          |___dwc3_resume_common()
+                              |___dwc3_core_init_for_resume()
+                                  |___dwc3_core_init()
+                                      |___dwc3_phy_init()
+                                              ^PHY reinitialization is
+prevented due to non-zero values in phy->init_count and phy->power_on.
+
+However, during my submission process, I found that Ray Chi
+encountered the same issue and has already merged commit e3a9bd247cddf
+(usb: dwc3:
+Skip resume if pm_runtime_set_active() fails), which fixed the problem
+introduced by commit 2. But the error logs (runtime PM trying to
+activate child
+device xxx.dwc3 but parent is not active) introduced by commit 1 still rema=
+ins.
+I will now evaluate whether to proceed with further fixes for the
+issue introduced by commit 1, based on Ray Chi's submission. And also
+I will incorporate
+the relevant background details in the subsequent commit.In my view,
+commit e3a9bd247cddf (usb: dwc3:Skip resume if pm_runtime_set_active()
+fails)
+appears to be more of a workaround solution.
+
+
+thanks,
+
+Ryan
 
