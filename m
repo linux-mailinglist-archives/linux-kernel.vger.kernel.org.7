@@ -1,255 +1,206 @@
-Return-Path: <linux-kernel+bounces-811452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711B9B52945
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:53:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22E6B52949
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 092E37A30CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:51:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD7F1C214C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD1E266B67;
-	Thu, 11 Sep 2025 06:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076FD258CF7;
+	Thu, 11 Sep 2025 06:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="liA0bLaX"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="g5/UuQQB"
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022C61DF97D
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FA6145A05
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757573584; cv=none; b=Kml03Rf3s/wkl52hIGF9x5ZH+3xVAIgGwvSOjVgSCbolqYz7w0nlI3ENESTDRbT4LnIu6gq1zDIUlxwsOdtrWwxZ/cBbQp+H4QQyDSFz/USiLOF9578vJekZLOUJMD3bH2/s3dXQhthJOhVFCim7WrxqKNIu7aggQOmUvfgLSiQ=
+	t=1757573756; cv=none; b=ZB75Brw1mNjVhXE5xMoMIC/IagM52gMaFnXOEWJp2weU7VVaLbjyRgcMkr/kv8DswLwQ5PCf6RhausPUm5iKJmlm0HHtQlVn6hrGWRcU1ZqtlXe7uXwxw+MdaHEp+bLh7pUUDngUZ8w1Samo6ZQo5b9MiQKQ7VW8/TiHg6j82YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757573584; c=relaxed/simple;
-	bh=MosfAOPXggOaMXmK1NE1OB2KAznkuBaD9gE8puz8LQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sNjxngR8VLHdgFgGJlvCrxsF84TdyJL0MeUIrSqlk1GwYQ1XycSdMSJvvpLukCEnQwgA3sqU5xFD5vbShwHa+hs7AMEWqliUYT1KWld++k9oQgXJjzGTRiPUzkHt7gk5IsFlKBMRGl4dH5XcpbSeXCKnIxVNoIGXACb4i5c0+VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=liA0bLaX; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7726c7ff7e5so338807b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:53:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1757573581; x=1758178381; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GmZdHMjW2ierOJlMW2a8YzsyJfuW1roryoxn9+9Fw3c=;
-        b=liA0bLaX+joYazF+rBZL5B5lAGkvvl6Flwzx7mbFtKhxg4nhURdpf9BXcSj72R2fDH
-         EG7cCWYeuHH7xp2s4XEwqPF+ol+Npt+llfkGNBN2OW6dqMxN2Ei8DbTj+dKJg3pVmo1q
-         SxWOSGK6wgVJhPwjDELYH2WZ9EBV+JO9GUIedMSKs4FmmQx+csm3dB6BcIA3C4ehYiKt
-         ynTmysU3oVBh9ITHWs31RgRocOAn9BdN61hht8XwMMdp7QEArWp8pAq/oHbT50HAIJOQ
-         cILKNzanuM7rMoX6T1VcLOfosUPwjPCsRtlrTb0sylGxi/i26xnomE3tpR85MYmi46Lo
-         /Klw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757573581; x=1758178381;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GmZdHMjW2ierOJlMW2a8YzsyJfuW1roryoxn9+9Fw3c=;
-        b=uaCIt8NMsoBSSs/8WiLJkRspRHc86B9vo+OX9J+no7rhOGFpLToTBZZEWABzaAPM5r
-         VLUX0PXJuVzEKCgWAwnulTIw+YrNssAwRQk3tvtqlkj66M7l3uxCB9WQUjq3M2WGh+Z4
-         Be0fp/F25UYatsXR4x2FCOLmpT8sQ6ybVkGkGDZPUDK4vVi4034dKX5kPp5zgSb74JFF
-         6ALDxsStXUpZnqxbEy5QyDr7uQsIZ5dxXwYZoAgH3F+TG8o2BWchd7LXVhqWfAvgqKcu
-         BUMKWw4IbW7Bi2fPES0WaLp3f1Y25vdPYfgmrt4FZ0v+ZqbID55BZRisGbvsRjE9Oscx
-         ZkhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzY3LOl7KtHemkfD3oQ5rHQY1K/KONWcqcfiC5np9d7+X334ErlJfY0rfRZ2f/q0p/ZsDKQB2jry/5gwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfP0pXpwGPjw8FBNq+12mzhVSO7CMjhLm9sAq9WfSqTPqU/R/q
-	+VGhMSfVCEgJUPtp1mPKsLWVM18xgmD+7R8nzH3rfwBcGv4V8jaWZIz1yCbolcPYtrM=
-X-Gm-Gg: ASbGncvqADot9+juAcjj05xsBYmpdaeFASaxu3Mn1sJgfu2Zp2cKX8Jwt8l7A2J8NUP
-	FuLX4GVQAnk6FuHd1yVB5/RqY6i0kAkJSoXmTMc0zzFNorBpxCBDuhMpF8IGYwGqHDYaBeyOo3q
-	dhLTrl+1mIwjA4LYucl7cWadB6cr83Lxg6rUV2ADF6ecJ+Vlejwh9oLy7broSl16YhIxKFd6z+Y
-	Gmdv/57MXmQL1L6zb/V2gxw5nCMV9lufftm0FWgjm+y+mcr4LBNTHLqpA+/u3dusRpWuyVNgeZt
-	Y1+ywmvM6M1w2fSpTPEpjGtK66f+0iJhDiAUx5w1bKpRUvGUjUMv7/ARqSAJ40Kfsw68v+Dg6Ur
-	zdhcRcknvY9dDvatHwzb3NeXz257SMnrzsUuMJUYgYXvMHdP7SZ/qH82207h19bm8ntqIa2w9Xk
-	FEy3tuSHWq
-X-Google-Smtp-Source: AGHT+IGasaLzOYam5A1QsgyXdSjCVIvWR7XOAwof9JLu91tc4jZXAZZcaQdzlfPlVrkI/CXhO/i++w==
-X-Received: by 2002:a05:6a21:6d9f:b0:248:4d59:93dd with SMTP id adf61e73a8af0-2534640cda7mr22645053637.52.1757573581062;
-        Wed, 10 Sep 2025 23:53:01 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a387b5c5sm835488a12.34.2025.09.10.23.53.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 23:53:00 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1uwbAv-00000000RJK-3hpp;
-	Thu, 11 Sep 2025 16:52:57 +1000
-Date: Thu, 11 Sep 2025 16:52:57 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com,
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, ocfs2-devel@lists.linux.dev
-Subject: Re: [PATCH v3 2/4] fs: hide ->i_state handling behind accessors
-Message-ID: <aMJxydmz_azN7Kce@dread.disaster.area>
-References: <20250911045557.1552002-1-mjguzik@gmail.com>
- <20250911045557.1552002-3-mjguzik@gmail.com>
+	s=arc-20240116; t=1757573756; c=relaxed/simple;
+	bh=SLthlOhaJGA95i5s9TcubNYUQfB7xXOGHWUxx/fc6CU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E5OERef10Sc8V0o/e0BhOIE+lcJ+MemGEbvoH9uol/OQWidWEUTnzYSllsTR+8b0KPNnys1UGFBiMY7vBCciJBQQwiar+xf55gGOtW2GdtrzM8TexHBhW6sriFPDt5pi9urEZxkSDT7YLiC5IHOjld8yZqHTCI9UlQbAa5q6QhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=g5/UuQQB; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=To:From;
+	bh=XOFayJC+PaTyeYE+oOlYMFS/9p9GqfLdhmodvRmn3SY=;
+	b=g5/UuQQBomgKxgCsmze2dlhfNE2jwKOUGT9hZWsLCHTPJOmET3bjShuhEuy0iWNYC0gL8oM2g
+	tvgDWGoEFx8BF6DUTKL5gkowtUuTvpwQid26CSwi7rrXDb8GAMf4/MDqJLC4QYCXPFDMGSuFQD2
+	31iorsFx4NRCaQ3dynvszQc=
+Received: from w012.hihonor.com (unknown [10.68.27.189])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4cMpGr6XyLzYlZK3;
+	Thu, 11 Sep 2025 14:55:32 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w012.hihonor.com
+ (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 11 Sep
+ 2025 14:55:50 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 11 Sep
+ 2025 14:55:50 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <linux-f2fs-devel@lists.sourceforge.net>
+CC: <chao@kernel.org>, <feng.han@honor.com>, <jaegeuk@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <wangzijie1@honor.com>
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix wrong extent_info data for precache extents
+Date: Thu, 11 Sep 2025 14:55:49 +0800
+Message-ID: <20250911065549.2929967-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <ad627632-298e-428b-9cfa-a5b5b50c147e@kernel.org>
+References: <ad627632-298e-428b-9cfa-a5b5b50c147e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911045557.1552002-3-mjguzik@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a011.hihonor.com
+ (10.68.31.243)
 
-On Thu, Sep 11, 2025 at 06:55:55AM +0200, Mateusz Guzik wrote:
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-
-So why did you choose these specific wrapper functions?
-
-Some commentary on why you choose this specific API would be very
-useful here.
-
-> ---
->  block/bdev.c                     |   4 +-
->  drivers/dax/super.c              |   2 +-
->  fs/buffer.c                      |   4 +-
->  fs/crypto/keyring.c              |   2 +-
->  fs/crypto/keysetup.c             |   2 +-
->  fs/dcache.c                      |   8 +-
->  fs/drop_caches.c                 |   2 +-
->  fs/fs-writeback.c                | 123 ++++++++++++++++---------------
->  fs/inode.c                       | 103 +++++++++++++-------------
->  fs/libfs.c                       |   6 +-
->  fs/namei.c                       |   8 +-
->  fs/notify/fsnotify.c             |   2 +-
->  fs/pipe.c                        |   2 +-
->  fs/quota/dquot.c                 |   2 +-
->  fs/sync.c                        |   2 +-
->  include/linux/backing-dev.h      |   5 +-
->  include/linux/fs.h               |  55 +++++++++++++-
->  include/linux/writeback.h        |   4 +-
->  include/trace/events/writeback.h |   8 +-
->  mm/backing-dev.c                 |   2 +-
->  security/landlock/fs.c           |   2 +-
->  21 files changed, 198 insertions(+), 150 deletions(-)
+> On 9/10/25 21:58, wangzijie wrote:
+> > When the data layout is like this:
+> > dnode1:                     dnode2:
+> > [0]      A                  [0]    NEW_ADDR
+> > [1]      A+1                [1]    0x0
+> > ...                         ....
+> > [1016]   A+1016
+> > [1017]   B (B!=A+1017)      [1017] 0x0
+> > 
+> > We can build this kind of layout by following steps(with i_extra_isize:36):
+> > ./f2fs_io write 1 0 1881 rand dsync testfile
+> > ./f2fs_io write 1 1881 1 rand buffered testfile
+> > ./f2fs_io fallocate 0 7708672 4096 testfile
+> > 
+> > And when we map first data block in dnode2, we will get wrong extent_info data:
+> > map->m_len = 1
+> > ofs = start_pgofs - map->m_lblk = 1882 - 1881 = 1
+> > 
+> > ei.fofs = start_pgofs = 1882
+> > ei.len = map->m_len - ofs = 1 - 1 = 0
 > 
-> diff --git a/block/bdev.c b/block/bdev.c
-> index b77ddd12dc06..77f04042ac67 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -67,7 +67,7 @@ static void bdev_write_inode(struct block_device *bdev)
->  	int ret;
->  
->  	spin_lock(&inode->i_lock);
-> -	while (inode->i_state & I_DIRTY) {
-> +	while (inode_state_read(inode) & I_DIRTY) {
->  		spin_unlock(&inode->i_lock);
->  		ret = write_inode_now(inode, true);
->  		if (ret)
+> Hi Zijie,
+> 
+> I tried to reproduce w/ below steps:
+> 
+> f2fs_io write 1 0 1881 rand dsync testfile
+> f2fs_io write 1 1881 1 rand buffered testfile
+> f2fs_io fallocate 0 7708672 4096 testfile
+> umount
+> mount
+> f2fs_io precache_extents testfile
+> 
+>          f2fs_io-921     [013] .....  1049.855817: f2fs_lookup_start: dev = (253,16), pino = 3, name:testfile, flags:65537
+>          f2fs_io-921     [013] .....  1049.855870: f2fs_submit_read_bio: dev = (253,16)/(253,16), rw = READ(), DATA, sector = 139280, size = 4096
+>          f2fs_io-921     [013] .....  1049.856116: f2fs_submit_folio_bio: dev = (253,16), ino = 1, folio_index = 0x5, oldaddr = 0x5553, newaddr = 0x5553, rw = READ(), type = HOT_NODE
+>          f2fs_io-921     [013] .....  1049.856147: f2fs_submit_read_bio: dev = (253,16)/(253,16), rw = READ(), NODE, sector = 174744, size = 4096
+>          f2fs_io-921     [013] .....  1049.856273: f2fs_iget: dev = (253,16), ino = 5, pino = 3, i_mode = 0x81ed, i_size = 7712768, i_nlink = 1, i_blocks = 15080, i_advise = 0x0
+>          f2fs_io-921     [013] .....  1049.856305: f2fs_lookup_end: dev = (253,16), pino = 3, name:testfile, ino:5, err:0
+>          f2fs_io-921     [013] .....  1049.856316: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 0, type = Read
+>          f2fs_io-921     [013] .....  1049.856317: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 0, read_ext_info(fofs: 0, len: 512, blk: 1055744)
+>          f2fs_io-921     [013] .....  1049.856317: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 0, start blkaddr = 0x101c00, len = 0x200, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+>          f2fs_io-921     [013] .....  1049.856318: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 512, type = Read
+>          f2fs_io-921     [013] .....  1049.856318: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 512, read_ext_info(fofs: 0, len: 0, blk: 0)
+>          f2fs_io-921     [013] .....  1049.856323: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 5, pgofs = 512, len = 352, blkaddr = 18432, c_len = 0
+>          f2fs_io-921     [013] .....  1049.856328: f2fs_submit_folio_bio: dev = (253,16), ino = 1, folio_index = 0x6, oldaddr = 0x5556, newaddr = 0x5556, rw = READ(), type = HOT_NODE
+>          f2fs_io-921     [013] .....  1049.856329: f2fs_submit_read_bio: dev = (253,16)/(253,16), rw = READ(), NODE, sector = 174768, size = 4096
+>          f2fs_io-921     [021] .....  1049.856968: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 5, pgofs = 864, len = 160, blkaddr = 18784, c_len = 0
+>          f2fs_io-921     [021] .....  1049.857002: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 512, start blkaddr = 0x4800, len = 0x200, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+>          f2fs_io-921     [021] .....  1049.857003: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 1025, type = Read
+>          f2fs_io-921     [021] .....  1049.857004: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 1025, read_ext_info(fofs: 0, len: 0, blk: 0)
+>          f2fs_io-921     [021] .....  1049.857010: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 5, pgofs = 1025, len = 511, blkaddr = 19457, c_len = 0
+>          f2fs_io-921     [021] .....  1049.857011: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 1025, start blkaddr = 0x4c01, len = 0x1ff, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+>          f2fs_io-921     [021] .....  1049.857012: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 1537, type = Read
+>          f2fs_io-921     [021] .....  1049.857012: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 1537, read_ext_info(fofs: 0, len: 0, blk: 0)
+>          f2fs_io-921     [021] .....  1049.857016: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 5, pgofs = 1537, len = 344, blkaddr = 20993, c_len = 0
+>          f2fs_io-921     [021] .....  1049.857016: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 1537, start blkaddr = 0x5201, len = 0x158, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+>          f2fs_io-921     [021] .....  1049.857017: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 1882, type = Read
+>          f2fs_io-921     [021] .....  1049.857017: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 1882, read_ext_info(fofs: 0, len: 0, blk: 0)
+>          f2fs_io-921     [021] .....  1049.857024: f2fs_submit_folio_bio: dev = (253,16), ino = 1, folio_index = 0x7, oldaddr = 0x5555, newaddr = 0x5555, rw = READ(), type = HOT_NODE
+>          f2fs_io-921     [021] .....  1049.857026: f2fs_submit_read_bio: dev = (253,16)/(253,16), rw = READ(), NODE, sector = 174760, size = 4096
+>          f2fs_io-921     [021] .....  1049.857156: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 1882, start blkaddr = 0x5201, len = 0x0, flags = 0, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+> 
+> It seems f2fs_update_read_extent_tree_range() won't insert a zero-sized extent?
+> Or am I missing something?
+> 
+> Thanks,
 
-This isn't an improvement.
+Hi, Chao
+I test it again with below steps:
 
-It makes the code harder to read, and now I have to go look at the
-implementation of a set of helper functions to determine if that's
-the right helper to use for the context the code is operating in.
+./f2fs_io write 1 0 1881 rand dsync testfile
+./f2fs_io fallocate 0 7708672 4096 testfile
+./f2fs_io write 1 1881 1 rand buffered testfile
+fsync testfile
+umount
+mount
+./f2fs_io precache_extents testfile
 
-What would be an improvement is making all the state flags disappear
-behind the same flag APIs as other high level objects that
-filesystems interface with. e.g. folio flags use
-folio_test.../folio_set.../folio_clear...
+         f2fs_io-8749    [003] .....    86.759281: f2fs_lookup_start: dev = (254,57), pino = 45485, name:testfile, flags:257
+         f2fs_io-8749    [003] .....    86.759954: f2fs_iget: dev = (254,57), ino = 501391, pino = 45485, i_mode = 0x81ed, i_size = 7712768, i_nlink = 1, i_blocks = 15080, i_advise = 0x0
+         f2fs_io-8749    [003] .....    86.759968: f2fs_lookup_end: dev = (254,57), pino = 45485, name:testfile, ino:501391, err:0
+         f2fs_io-8749    [003] .....    86.760000: f2fs_lookup_extent_tree_start: dev = (254,57), ino = 501391, pgofs = 0, type = Read
+         f2fs_io-8749    [003] .....    86.760020: f2fs_lookup_read_extent_tree_end: dev = (254,57), ino = 501391, pgofs = 0, read_ext_info(fofs: 0, len: 1881, blk: 3164707)
+         f2fs_io-8749    [003] .....    86.760020: f2fs_map_blocks: dev = (254,57), ino = 501391, file offset = 0, start blkaddr = 0x304a23, len = 0x759, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+         f2fs_io-8749    [003] .....    86.760021: f2fs_lookup_extent_tree_start: dev = (254,57), ino = 501391, pgofs = 1881, type = Read
+         f2fs_io-8749    [003] .....    86.760022: f2fs_lookup_read_extent_tree_end: dev = (254,57), ino = 501391, pgofs = 1881, read_ext_info(fofs: 0, len: 0, blk: 0)
+         f2fs_io-8749    [005] .....    86.760162: f2fs_update_read_extent_tree_range: dev = (254,57), ino = 501391, pgofs = 1881, len = 1, blkaddr = 2688335, c_len = 0
+    *****f2fs_io-8749    [005] .....    86.760324: f2fs_update_read_extent_tree_range: dev = (254,57), ino = 501391, pgofs = 1882, len = 0, blkaddr = 2688336, c_len = 0  ******
+         f2fs_io-8749    [005] .....    86.760326: f2fs_map_blocks: dev = (254,57), ino = 501391, file offset = 1881, start blkaddr = 0x29054f, len = 0x1, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
 
-Looking wider, at least XFS, ext4 and btrfs use these same
-set/test/clear flag APIs for feature and mount option flags. XFS
-also uses them for oeprational state in mount, journal and per-ag
-structures, etc. It's a pretty common pattern.
 
-Using it for the inode state flags would lead to code like this:
+inode:
+i_ext: fofs:0 blkaddr:304a23 len:759
+i_addr[0x9]     [0x  304a23 : 3164707]
+....
+i_addr[0x368]   [0x  304d82 : 3165570]
 
-	spin_lock(&inode->i_lock);
-	while (inode_test_dirty(inode)) {
-	.....
+dnode1:
+[0]    [0x  304d83 : 3165571]
+[1016] [0x  30517b : 3166587]
+...
+[1017] [0x  29054f : 2688335]
 
-That's far cleaner and easier to understand and use than an API that
-explicitly encodes the locking context of the specific access being
-made in the helper names.
+dnode2:
+[0]  	NEW_ADDR
+[1]     [0x       0 : 0]
+...
 
-IOWs, the above I_DIRTY flag ends up with a set of wrappers that
-look like:
 
-bool inode_test_dirty_unlocked(struct inode *inode)
-{
-	return inode->i_state & I_DIRTY;
-}
 
-bool inode_test_dirty(struct inode *inode)
-{
-	lockdep_assert_held(&inode->i_lock);
-	return inode_test_dirty_unlocked(inode);
-}
 
-void inode_set_dirty(struct inode *inode)
-{
-	lockdep_assert_held(&inode->i_lock);
-	inode->i_state |= I_DIRTY;
-}
+> > 
+> > Fix it by skipping updating this kind of extent info.
+> > 
+> > Signed-off-by: wangzijie <wangzijie1@honor.com>
+> > ---
+> >  fs/f2fs/data.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 7961e0ddf..b8bb71852 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -1649,6 +1649,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+> >  
+> >  		switch (flag) {
+> >  		case F2FS_GET_BLOCK_PRECACHE:
+> > +			if (__is_valid_data_blkaddr(map->m_pblk) &&
+> > +				start_pgofs - map->m_lblk == map->m_len)
+> > +				map->m_flags &= ~F2FS_MAP_MAPPED;
+> >  			goto sync_out;
+> >  		case F2FS_GET_BLOCK_BMAP:
+> >  			map->m_pblk = 0;
 
-void inode_clear_dirty(struct inode *inode)
-{
-	lockdep_assert_held(&inode->i_lock);
-	inode->i_state &= ~I_DIRTY;
-}
-
-With this, almost no callers need to know about the I_DIRTY flag -
-direct use of it is a red flag and/or an exceptional case.  It's
-self documenting that it is an exceptional case, and it better have
-a comment explaining why it is safe....
-
-This also gives us the necessary lockdep checks to ensure the right
-locks are held when modifications are being made.
-
-And best of all, the wrappers can be generated by macros; they don't
-need to be directly coded and maintained.
-
-Yes, we have compound state checks, but like page-flags.h we can
-manually implement those few special cases such as this one:
-
-> @@ -1265,7 +1265,7 @@ void sync_bdevs(bool wait)
->  		struct block_device *bdev;
->  
->  		spin_lock(&inode->i_lock);
-> -		if (inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW) ||
-> +		if (inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_NEW) ||
-
--		if (inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW) ||
-+		if (inode_test_new_or_freeing(inode)) ||
-
-bool inode_test_new_or_freeing(struct inode *inode)
-{
-	lockdep_assert_held(&inode->i_lock);
-	return inode->i_state & (I_FREEING | I_WILL_FREE | I_NEW);
-}
-
-Or if we want to avoid directly using flags in these wrappers,
-we write them like this:
-
-bool inode_test_new_or_freeing(struct inode *inode)
-{
-	return inode_test_freeing(inode) ||
-		inode_test_will_free(inode) ||
-		inode_test_new(inode);
-}
-
-Writing the compound wrappers this way then allows future
-improvements such as changing the state flags to atomic bitops so
-we can remove all the dependencies on holding inode->i_lock to
-manipulate state flags safely.
-
-Hence I think moving the state flags behind an API similar to folio
-state flags makes the code easier to read and use correctly, whilst
-also providing the checking that the correct locks are held at the
-correct times. It also makes it  easier to further improve the
-implementation in future because all the users of the API are
-completely isolated from the implmentation....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
