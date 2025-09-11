@@ -1,187 +1,382 @@
-Return-Path: <linux-kernel+bounces-812119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 757D2B53337
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:08:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84E18B53343
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 286453B03E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:08:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 574BF7BA523
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C657322C66;
-	Thu, 11 Sep 2025 13:08:50 +0000 (UTC)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388EB327A30;
+	Thu, 11 Sep 2025 13:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBoL7eii"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55BF61FFE;
-	Thu, 11 Sep 2025 13:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B67326D73
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757596129; cv=none; b=YoMSQuuUYwmeMlK4AH5YkwlobEaNWW+i0iweF6nVG5dLBLCA+Dx1TwO6UXgvDPUaU30r8rRLoR3T1Fy826IM5UgqmHgWLdNsLGJ8Rl5F1DcWjUJMh6zhG8fKWU77q57a9EdurX5uYlCNv5XFUv+BiiaDwEiGg2f9kaOLQJ+Kd9w=
+	t=1757596148; cv=none; b=Fyq/ymG/A5XsOUqIlWPLsz+0EljLScQ44nFmRLSoEFvXg85FIDe8OzyWaSYdQAfHQw35B+TXkKNBePM9fw7LxtzXFQPoMR6V3cOfzdoNoLGbt+8TAhV9cul+xLJJhR2h8qCnhj3wtANlQ3gBxn1t1Lz3dvqsRl8auU09fJTtekY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757596129; c=relaxed/simple;
-	bh=xnazJWXBcfz2KniCGMVpI1ypAbJdIZM7Pkx9ejLmHbs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ew6z2IFhfUfzlKA3VWmRLDpnWl2MSk44tR7JlyPSBihHuzwGQgIyxq20ejJMYwRo1iUepuB2PLFQjV/TmCeUS65Z3SD7KNJxj3lDUc8/tB02Hjh0ePylEpVqzrSHt6BDH97Tya75l+SK2TaRXvlGzII1f3/TiFTT650UO1YqZpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1757596148; c=relaxed/simple;
+	bh=gbCJ/JI0sV4odmSDDVw1aZd/1Uy/Eu8emVmSico8Lmo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=re4TDDo/UYaH6mChMLmCtZsUNCX1oq8rwNW+jjAtT9X8IE0Hwe+8BQ4lZFfZzNbQYD4ia+jaiRzOsxw3VgOFT+SxfXnmHzIvR6y4fhaOBTBAXh9zMDE9X0hoAeSwSKq3vfcke3teZb1NrwvWc2X2Imfg2u6eZ+BbJur1BvwIqNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jBoL7eii; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-54492cc6eb1so425223e0c.2;
-        Thu, 11 Sep 2025 06:08:47 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61cd6089262so1063445a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:09:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757596144; x=1758200944; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YQSC/FD+wflENpBEDnlDT881chiIhoZfXx8Ey9AQDQk=;
+        b=jBoL7eiiM4iSo0ycvZqMKg0RHGBxNjyFYtlcYgB/Qu7WVLaIV/Q3lVNV8v13N+eWKc
+         pYhFLikgMPblj/EG560Yr6lrIjfxPLgI3ufzDlRREisg9aoMDYOzvLYoWNkG50z3/KTo
+         AE68tiRkDkCQiQwT4v8X9m1+ngbr/oJCV1lEqr9+spq18baxob5ILwfWqCmDXasEc51H
+         6yvh2YUCnc/JSRDMsO0Ashtu7QlC/K1xHWoI0j952941HWAZDvbir1YMkVGDMjl4gaUp
+         YVZSQF+NvsFgTZb+QdWSDukhZFir6aJEgE5dxYYElQGcR1Ls9AU9RIsCEsmP1JxVRxAC
+         kQfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757596126; x=1758200926;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757596144; x=1758200944;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CG5K1nBleVisCU6FRznqNgmm5nk8FGFClvtyMXzVxV4=;
-        b=mE16GKznSw7R4D+sOGvVRz28r/dPHZu3VaEwLY5oXj8X5iLXPMnoGiUiFHtTjj+XIP
-         Tv7LnqOej2AxhMzU5/xdIuHUWR5R9V+btfA3bEUDsSnHOVLiSECPLknJMaeI16e06NSN
-         DwJW/uGHdRlefoOKfT2suJ3mbW5vfP7oloikBKOBpLPMaAISnPLBFzYqiUhulaz3byyn
-         4S9svGhPx9CGX5hiecPaj7K2oGawXUljK7AAmLi1/kFdLnIiP5eVnA3jA8rbDDsdaM5T
-         QmxYrVOPhHpQc5+BxYVNlq0ST+ErmTWi2XtgJbHALi7gSxN56/ufTWHRSOB5VvaFi/r3
-         MnSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0b6Vtb4ATOOkDMmztTG0SlIaNlweUze28Ma03PgzXE8dICDN+Pl0LA6JSDDFQQUgyBgnhkQeoV1Qq8Q==@vger.kernel.org, AJvYcCUK2FgK06mb2xRgEiN67xB0J4Yp1DVLmhmyuZRPwvHg6MrAr14RiiuNCq+yQVAj9jklPCC+ZIJdBItRqGE2C4rFShjs@vger.kernel.org, AJvYcCUmQCCquGTDkATONNY5GQmtSkDuxaYzrhcxaybPIwtDSnU1IO7uI+E13gS3M9JNtmD4O0+WniV7Bmig7+RN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxy3wrwh1eQYawPc2Tig6m5a4oWh9PR05wggm45XVi1IAG3wRH
-	DF8DA4DYDlIucHX1UhrnlNu9otWork/iv5mV5PAsDOTMWNHjjkQbs1Iaedh3Nryb
-X-Gm-Gg: ASbGncvF/S7qyHgtWvjm5wgg9dUCX+R+Rn6eq0wf1U/y8ZAqmrmBSWTNtqN9Ob5UQzx
-	s5KBLs8pE2nkglgJX2E/RtszFluvmkqlN4l0gZkKJlS2SvqXCcotBLV5P7B6E0flZUwfazADgGJ
-	DV3Cn+jVbU+u6DnHsC3JUqWC4fSF2sw2/AR/OYx9TgEQyLU3lpUZzEuuexXgIDDYMu0UTi5uKQu
-	DNQ7T6Outeev5wMxCGMBMOut8o+0vNWEeLzOFNqHHVieeUI32aXWMS8H4QKmkLA9hknH11RK5dc
-	TqtyNLKWQxep3/jUXLlyQYGqog8MvDtsSHKTimIViHdwnV8fqESorJh6RWmxBtDLlDRRoR26DzE
-	Yx+A4D0br2jwBuGRhonvbtuw/mwftg2EnULRIikV0Z7k8WrhzjFBMU+0FfyU/P/PnSiJfj6U=
-X-Google-Smtp-Source: AGHT+IGzL/CY0kZABIxLgFRNp1VwmErV/BXkJOZZzEs8xd8q0QhVQAAd6bY6gG80iofntF0TgE37qg==
-X-Received: by 2002:a05:6122:658b:b0:544:4ee5:1334 with SMTP id 71dfb90a1353d-5472a006752mr6459760e0c.2.1757596126118;
-        Thu, 11 Sep 2025 06:08:46 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54a0d424de5sm226943e0c.26.2025.09.11.06.08.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 06:08:45 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-8a00c77a62dso475553241.1;
-        Thu, 11 Sep 2025 06:08:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEELFMiePh9rxmJIBcpY2pTqRBhc8o6NS+xHNlUqBODIQLouY687bkcaGvH5u0rG8Ad47EIyI+T00D28THCDqsvB/7@vger.kernel.org, AJvYcCUODt5RiujDffl9VOT40/mJcTeyf0/SbnFNCuESZ5o3gOScJMgrNqbSFOwG0mwnDHMlBvGtGxkzI9mjexUR@vger.kernel.org, AJvYcCVrJkhxl7I7h2vM5mjdSlWtdbzZjMrUekUSl8Fhyn2atQTDoXFL+Mns7Glj+Rvr/UVDhSm+AiZNO8ID7Q==@vger.kernel.org
-X-Received: by 2002:a05:6102:5107:b0:534:cfe0:f861 with SMTP id
- ada2fe7eead31-53d21db953bmr573995137.18.1757596125422; Thu, 11 Sep 2025
- 06:08:45 -0700 (PDT)
+        bh=YQSC/FD+wflENpBEDnlDT881chiIhoZfXx8Ey9AQDQk=;
+        b=O7KGq9Yvui6K2S/o0JRRa1o6SXytsXfRT/azxHiwi0jP/tROR2RJOaSaQqYbMqj4Ry
+         5AHR508k2XB4CfBPhjPWKohuEHSl6Ygl9f2vNaPkazheceQRLlLClvgh4oA+MR2PS41C
+         FQIP9r35oVdAJy8j9iV/BlmKgJ5sZDtwp0yF9Jw9jfNan+dsCxI0hu69zS7jg43f3Kz9
+         gAkfXi8/m2HehD4yep4bxMm+gM43xJ7RG8jUTQKMExJqYD4cbeqmMxWgXOnhy1HHUI6+
+         Pcg5GuooWtVLbxxZuW6dk2u5wl/5Z79lJmEduMi2JA9+JNtl9IWSWafW+JK6g1HmHqsK
+         SMtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyVJKSy997Ri+ZHhbaiUbCLMqvzaWrZig/DeTB3oSDrxErGnJpHgLPnSjoKuciZ0VOBz3tP6BeCpx7Bew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLncAqw7tDwT6Tp3VwIOHXF1pK/eExOkEN/5byoN83dN1l+HT7
+	KpRPYQkfqgkaxAxkLuHNmDpNGg1cX3cFgAdFmhTbeTTKqkeaGqZn99++
+X-Gm-Gg: ASbGncuN8T9/1WoLtpQnzlEuV36XGHUtr+c0AI5GeAbj/ELK6qD+NSOcziD/xHERNok
+	JMV0x+nNJ3wVziaGKNg9+BOaym4gmRk6HKE/bfoIZMs5/++XgXUFTd6g+9sL9MToCB8kUzeTziD
+	YjZy4Dhu4SACN7jgDWptePPKcSBJ9GY3w0DiVCr4FecFFX6YYktZHUXTL3beP8S+/0VNN5rivSE
+	K5/h7qhhF2sUsrB586lJRALRnrTLKN7ZXjmiMBZgCx5P/7uQjUebiIHHk/4mvYyn5IeKT37M9zu
+	7cn2HUcm0UeKr5+oXexWvX2mRXpGsaGmPFKb4OeXbK1jilU35hoHJ7ToSbGuKUJpFBtlJ/vWv82
+	Hb76s4to6NHaQX1n3ym9uY4hyEcibykIQuQg2834rtzG9Rmuyvi0kQarhzuscQLiBYS4cY2Py6t
+	c7BtXG7w==
+X-Google-Smtp-Source: AGHT+IHq0OdXVctcqU++WXvEAOiO5lablfJye/NJHjvpKjHZc1WMpzWIIVzAzGiiN9ZKzakCDIbxgg==
+X-Received: by 2002:a05:6402:847:b0:628:aace:ee7f with SMTP id 4fb4d7f45d1cf-628aacef003mr13332401a12.15.1757596144349;
+        Thu, 11 Sep 2025 06:09:04 -0700 (PDT)
+Received: from Ansuel-XPS24 (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-62ec33f3b16sm1133038a12.24.2025.09.11.06.08.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 06:09:03 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [net-next PATCH v2 3/3] net: phy: broadcom: Convert to PHY_ID_MATCH_MODEL macro
+Date: Thu, 11 Sep 2025 15:08:33 +0200
+Message-ID: <20250911130840.23569-3-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250911130840.23569-1-ansuelsmth@gmail.com>
+References: <20250911130840.23569-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902105710.00512c6d@booty> <aLkiNdGIXsogC6Rr@zatzit>
- <337281a8-77f9-4158-beef-ae0eda5000e4@beagleboard.org> <aL5dNtzwiinq_geg@zatzit>
- <20250908145155.4f130aec@bootlin.com> <aL-2fmYsbexEtpNp@zatzit>
- <20250909114126.219c57b8@bootlin.com> <aMD_qYx4ZEASD9A1@zatzit>
- <20250911104828.48ef2c0e@bootlin.com> <CAMuHMdUUGoaetdsTEVx27TYQZ_khzyCn0wzi2+TibYcvkg1fXw@mail.gmail.com>
- <20250911122333.2e25e208@bootlin.com> <36a85af7-75b1-46db-8df8-e83372d33b93@beagleboard.org>
- <20250911144506.51809eb3@bootlin.com>
-In-Reply-To: <20250911144506.51809eb3@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 11 Sep 2025 15:08:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdULiX83n5bLEipE1j99HyuyXCpAYS9qYu-8y_vmEyO_ag@mail.gmail.com>
-X-Gm-Features: AS18NWC8F9c9Xz1zFrQjM9AgyEVI6jdiBD3mJBt-Ew68CVPoMvwon9xnR63ml5U
-Message-ID: <CAMuHMdULiX83n5bLEipE1j99HyuyXCpAYS9qYu-8y_vmEyO_ag@mail.gmail.com>
-Subject: Re: Device tree representation of (hotplug) connectors: discussion at ELCE
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Ayush Singh <ayush@beagleboard.org>, David Gibson <david@gibson.dropbear.id.au>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
-	Rob Herring <robh@kernel.org>, Jason Kridner <jkridner@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Davis <afd@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Herv=C3=A9,
+Convert the pattern phy_id phy_id_mask to the generic PHY_ID_MATCH_MODEL
+macro to drop hardcoding magic mask.
 
-On Thu, 11 Sept 2025 at 14:45, Herve Codina <herve.codina@bootlin.com> wrot=
-e:
-> On Thu, 11 Sep 2025 17:45:17 +0530
-> Ayush Singh <ayush@beagleboard.org> wrote:
-> > On 9/11/25 15:53, Herve Codina wrote:
-> > > On Thu, 11 Sep 2025 10:54:02 +0200
-> > > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > >> On Thu, 11 Sept 2025 at 10:48, Herve Codina <herve.codina@bootlin.co=
-m> wrote:
-> > >>> The choice to map connA to the type 'foo' connector expected by the=
- addon
-> > >>> and the choice to map connB or connC to the type 'bar' connector ex=
-pected by
-> > >>> the addon can only be done at runtime and probably with the help of=
- a driver
-> > >>> that have the knowledge of the 3 connectors.
-> > >>>
-> > >>> I have the feeling that the choice of physical connectors to which =
-the addon
-> > >>> board is connected to is a human choice when the board is connected=
-.
-> > >> All these choices and decisions apply to single-connector add-on boa=
-rds, too.
-> > >>
-> > > Yes, in our use case (me and Luca), each addon has an eeprom, wired e=
-xactly the
-> > > same on all supported addon, which allows to known the exact addon. A=
-lso addon
-> > > insertions and removals are detected using some gpios wired to the co=
-nnector.
-> > >
-> > > Based on that our specific driver handling our specific connector per=
-form the
-> > > following operations on addon insertion detection:
-> > >    - load a first addon DT to have access to the eeprom
-> > >    - Read the eeprom to determine the addon type
-> > >    - load the DT matching with the addon type
-> > >
-> > > This part is of course connector type specific. I mean having an eepr=
-om with
-> > > some encoded addon type values and hotplug detection with gpio is a p=
-art of
-> > > the contract between the board and the addon (part of connector speci=
-fication).
-> >
-> > My usecase is a bit more complicated, since I am trying to model all th=
-e
-> > available headers on BeagleBoard.org sbcs (particularly PocketBeagle 2
-> > initially) as connectors. However, that still ends up being a single
-> > connector which can have multiple addon-boards simultaneously instead o=
-f
-> > the other way around.
->
-> In that case, a connector cannot have the state "free" or "used" handled
-> globally by a core part.
->
-> IMHO, each connector drivers should handle this kind of state if relevant=
-.
-> I mean, in case of "pmods" compatible driver having this state per PMOD
-> connector could make sense whereas in "beagle-connector" it doesn't.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+Changes v2:
+- Add review tag
 
-It depends on whether the add-on board has stacking headers, or not ;-)
+ drivers/net/phy/broadcom.c | 105 +++++++++++++++----------------------
+ 1 file changed, 42 insertions(+), 63 deletions(-)
 
-> Also, on my side, with my 2-step DT loading, the first loading should not
-> consider the connector as 'used'.
->
-> All of that is implied by the "contract" between the board and the addon.
-> It is connector specific and so should be handled by the specific connect=
-or
-> driver itself.
+diff --git a/drivers/net/phy/broadcom.c b/drivers/net/phy/broadcom.c
+index 46ca739dcd4a..3459a0e9d8b9 100644
+--- a/drivers/net/phy/broadcom.c
++++ b/drivers/net/phy/broadcom.c
+@@ -1436,8 +1436,7 @@ static int bcm54811_read_status(struct phy_device *phydev)
+ 
+ static struct phy_driver broadcom_drivers[] = {
+ {
+-	.phy_id		= PHY_ID_BCM5411,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM5411),
+ 	.name		= "Broadcom BCM5411",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1449,8 +1448,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.handle_interrupt = bcm_phy_handle_interrupt,
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ }, {
+-	.phy_id		= PHY_ID_BCM5421,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM5421),
+ 	.name		= "Broadcom BCM5421",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1462,8 +1460,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.handle_interrupt = bcm_phy_handle_interrupt,
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ }, {
+-	.phy_id		= PHY_ID_BCM54210E,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM54210E),
+ 	.name		= "Broadcom BCM54210E",
+ 	/* PHY_GBIT_FEATURES */
+ 	.flags		= PHY_ALWAYS_CALL_SUSPEND,
+@@ -1481,8 +1478,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.set_wol	= bcm54xx_phy_set_wol,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id		= PHY_ID_BCM5461,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM5461),
+ 	.name		= "Broadcom BCM5461",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1495,8 +1491,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id		= PHY_ID_BCM54612E,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM54612E),
+ 	.name		= "Broadcom BCM54612E",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1511,8 +1506,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.suspend	= bcm54xx_suspend,
+ 	.resume		= bcm54xx_resume,
+ }, {
+-	.phy_id		= PHY_ID_BCM54616S,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM54616S),
+ 	.name		= "Broadcom BCM54616S",
+ 	/* PHY_GBIT_FEATURES */
+ 	.soft_reset     = genphy_soft_reset,
+@@ -1525,8 +1519,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id		= PHY_ID_BCM5464,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM5464),
+ 	.name		= "Broadcom BCM5464",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1541,8 +1534,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id		= PHY_ID_BCM5481,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM5481),
+ 	.name		= "Broadcom BCM5481",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1556,8 +1548,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id         = PHY_ID_BCM54810,
+-	.phy_id_mask    = 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM54810),
+ 	.name           = "Broadcom BCM54810",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1575,8 +1566,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id         = PHY_ID_BCM54811,
+-	.phy_id_mask    = 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM54811),
+ 	.name           = "Broadcom BCM54811",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1594,8 +1584,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id		= PHY_ID_BCM5482,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM5482),
+ 	.name		= "Broadcom BCM5482",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1608,8 +1597,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id		= PHY_ID_BCM50610,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM50610),
+ 	.name		= "Broadcom BCM50610",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1624,8 +1612,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.resume		= bcm54xx_resume,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id		= PHY_ID_BCM50610M,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM50610M),
+ 	.name		= "Broadcom BCM50610M",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1640,8 +1627,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.resume		= bcm54xx_resume,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id		= PHY_ID_BCM57780,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM57780),
+ 	.name		= "Broadcom BCM57780",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1654,8 +1640,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id		= PHY_ID_BCMAC131,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCMAC131),
+ 	.name		= "Broadcom BCMAC131",
+ 	/* PHY_BASIC_FEATURES */
+ 	.config_init	= brcm_fet_config_init,
+@@ -1664,8 +1649,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.suspend	= brcm_fet_suspend,
+ 	.resume		= brcm_fet_config_init,
+ }, {
+-	.phy_id		= PHY_ID_BCM5241,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM5241),
+ 	.name		= "Broadcom BCM5241",
+ 	/* PHY_BASIC_FEATURES */
+ 	.config_init	= brcm_fet_config_init,
+@@ -1674,8 +1658,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.suspend	= brcm_fet_suspend,
+ 	.resume		= brcm_fet_config_init,
+ }, {
+-	.phy_id		= PHY_ID_BCM5221,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM5221),
+ 	.name		= "Broadcom BCM5221",
+ 	/* PHY_BASIC_FEATURES */
+ 	.config_init	= brcm_fet_config_init,
+@@ -1686,8 +1669,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.config_aneg	= bcm5221_config_aneg,
+ 	.read_status	= bcm5221_read_status,
+ }, {
+-	.phy_id		= PHY_ID_BCM5395,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM5395),
+ 	.name		= "Broadcom BCM5395",
+ 	.flags		= PHY_IS_INTERNAL,
+ 	/* PHY_GBIT_FEATURES */
+@@ -1698,8 +1680,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id		= PHY_ID_BCM53125,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM53125),
+ 	.name		= "Broadcom BCM53125",
+ 	.flags		= PHY_IS_INTERNAL,
+ 	/* PHY_GBIT_FEATURES */
+@@ -1713,8 +1694,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id		= PHY_ID_BCM53128,
+-	.phy_id_mask	= 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM53128),
+ 	.name		= "Broadcom BCM53128",
+ 	.flags		= PHY_IS_INTERNAL,
+ 	/* PHY_GBIT_FEATURES */
+@@ -1728,8 +1708,7 @@ static struct phy_driver broadcom_drivers[] = {
+ 	.link_change_notify	= bcm54xx_link_change_notify,
+ 	.led_brightness_set	= bcm_phy_led_brightness_set,
+ }, {
+-	.phy_id         = PHY_ID_BCM89610,
+-	.phy_id_mask    = 0xfffffff0,
++	PHY_ID_MATCH_MODEL(PHY_ID_BCM89610),
+ 	.name           = "Broadcom BCM89610",
+ 	/* PHY_GBIT_FEATURES */
+ 	.get_sset_count	= bcm_phy_get_sset_count,
+@@ -1745,27 +1724,27 @@ static struct phy_driver broadcom_drivers[] = {
+ module_phy_driver(broadcom_drivers);
+ 
+ static const struct mdio_device_id __maybe_unused broadcom_tbl[] = {
+-	{ PHY_ID_BCM5411, 0xfffffff0 },
+-	{ PHY_ID_BCM5421, 0xfffffff0 },
+-	{ PHY_ID_BCM54210E, 0xfffffff0 },
+-	{ PHY_ID_BCM5461, 0xfffffff0 },
+-	{ PHY_ID_BCM54612E, 0xfffffff0 },
+-	{ PHY_ID_BCM54616S, 0xfffffff0 },
+-	{ PHY_ID_BCM5464, 0xfffffff0 },
+-	{ PHY_ID_BCM5481, 0xfffffff0 },
+-	{ PHY_ID_BCM54810, 0xfffffff0 },
+-	{ PHY_ID_BCM54811, 0xfffffff0 },
+-	{ PHY_ID_BCM5482, 0xfffffff0 },
+-	{ PHY_ID_BCM50610, 0xfffffff0 },
+-	{ PHY_ID_BCM50610M, 0xfffffff0 },
+-	{ PHY_ID_BCM57780, 0xfffffff0 },
+-	{ PHY_ID_BCMAC131, 0xfffffff0 },
+-	{ PHY_ID_BCM5221, 0xfffffff0 },
+-	{ PHY_ID_BCM5241, 0xfffffff0 },
+-	{ PHY_ID_BCM5395, 0xfffffff0 },
+-	{ PHY_ID_BCM53125, 0xfffffff0 },
+-	{ PHY_ID_BCM53128, 0xfffffff0 },
+-	{ PHY_ID_BCM89610, 0xfffffff0 },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM5411) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM5421) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM54210E) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM5461) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM54612E) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM54616S) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM5464) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM5481) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM54810) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM54811) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM5482) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM50610) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM50610M) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM57780) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCMAC131) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM5221) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM5241) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM5395) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM53125) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM53128) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_BCM89610) },
+ 	{ }
+ };
+ 
+-- 
+2.51.0
 
-Since stacking boards is a fairly common use case (beagle, rpi), perhaps
-it makes sense to have a simple method to re-export / forward a connector?
-The alternative would be to re-describe and re-export everything.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
