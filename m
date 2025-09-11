@@ -1,169 +1,258 @@
-Return-Path: <linux-kernel+bounces-811534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE08B52A65
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05216B52A68
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7515B1BC53CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:46:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86A841BC5804
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08658295DBD;
-	Thu, 11 Sep 2025 07:46:02 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BEB29B8E5;
+	Thu, 11 Sep 2025 07:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="g10tbuW9"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5232B672;
-	Thu, 11 Sep 2025 07:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1794B29A9C9
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757576761; cv=none; b=SUyk5nEDKyvElT8BVCSWjEBCn7V8CCputAi4qYyBcZB0fbMwxMuFnzhgcXggsLJsOcUgDZ9cHRosIWqGfdP0T9vLkJ0kvPbuXo0yUAsCgbkOWCHlSV8iqXt+jvrO+YDy+Z1kS4Mw3ELxk1Jpfjq4CJl0JAzcfJLSYWWdagLTuvo=
+	t=1757576764; cv=none; b=VQOA3hKXlEMV7GN2YY+GQIEwxvL1wgZ4QZu7V7wiHy7I7ejBOPmBehEHat7kTvWtoDd5R199BWub8Le+hFzl44tzsNdE5N0iKi5uA4pPcCrGYXok/4ekVPQKY+DKNn7nXUc5QHAA3zZQn5sAEK5l/uFltCU6TS2gGLsJEkNCEMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757576761; c=relaxed/simple;
-	bh=vkIGQbHkugE0tGswCHkXzir8pJjgyHbVzjLHSc/Y/U8=;
+	s=arc-20240116; t=1757576764; c=relaxed/simple;
+	bh=O71eOxXN8qtxCpJO9bMs63EIF1c0j2xDoLcNf4kljL0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C6IiXEZtpSs82/9yJ8jVex6xVii9S16JaRmA2MtFnR60p2J/rJ30tDtJEUl/sRk3WyFrw7C8VzFiwIUYmYKCmCTX97FgxtGpMRZomVxbVjHaJqOMV3tVDGyN9eUGBwJTzEOzyVkqUzBMmcojiHrTp5+ux/8mdCjTmmIth4fnCHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 534404b48ee311f0b29709d653e92f7d-20250911
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:c5962ed0-bfaf-437b-91dc-b5969a4463ea,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:c29d9a1ff7d9b3695e5edbfa991638e4,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|817|850,TC:nil,Content:-
-	10|-8|-5|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
-	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 534404b48ee311f0b29709d653e92f7d-20250911
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 149988089; Thu, 11 Sep 2025 15:45:45 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 2870BE009008;
-	Thu, 11 Sep 2025 15:45:45 +0800 (CST)
-X-ns-mid: postfix-68C27E29-117221580
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 29335E009007;
-	Thu, 11 Sep 2025 15:45:44 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: hansg@kernel.org
-Cc: lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
+	 MIME-Version; b=J+nizy9e1KyhQc+ZCzgxJlMm5qL7YGTZ0RTXDCkuMgCyJOjPpoCYoY1hucInVMRdTAhlSDp3vwB18cWspQc0+3GUzaIEulHA4bpcqs9jA6P0YuPXy+zwbnOKqn0RGjLEtgKKBazCS+xBjqe2QuzXHUmb4HV2Xpu9melsWrZ+zjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=g10tbuW9; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7725fb32e1bso449962b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 00:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1757576762; x=1758181562; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9sqCK5RjxgMvTS/KMSGZswVuHs/rB1hx6QH50USYYeg=;
+        b=g10tbuW9C+sdkHbwh7urrPDyrm5TOiaVt9kYOHfwfutBNr6w2JLnzInh++vN6KghRk
+         FEdfY3vqOOEPP30LZ3/g587DNZn2zUSYZEOJZnCwIThETSvDuE86uJp/cO2I+L3yuoxt
+         EEBlJRDONMCnbcIFEC8CGztF4y8eCYKCOYKfRadPxNcUDffbQmSv8jms6l5MAS792DnJ
+         9ww1QfZlWdbxOkipCyfSEErOoiMjPWHSRcRUyou3nmlTykSJ096iyXHynBNVKX7vquW+
+         8gE47TMqsVrGR1eWBTSHtrrR02bIX8KWrsQ2i3zBRrho0/ibU+m3rfjQq+QH8KZLKE2K
+         rhBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757576762; x=1758181562;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9sqCK5RjxgMvTS/KMSGZswVuHs/rB1hx6QH50USYYeg=;
+        b=V0tbC9AZp/F0luAAhqAC/1Pn60jTC8w7B+Dnl3cgd6ysA/jLrLt1fs9bzG8mwhjHgW
+         JoCXHxY0Caz/dMWAOPDpMU0QBuUixGHvRYY76KjJ3RNS7dNSjk2SFcKP9fkqzb+VVHfb
+         2jY8DV8EuKI4r14SHPtZadeRvdBe3p+/slWokHEHWqaVzPngNfZVbSjj3KQVyv61F28s
+         jtZ5Vyj8kNa2ZyZVTo5DzuJyY2LtjGJ6UfEOEj9aMIzLGitPFlBWN40KLOwQi+vQVtzG
+         gXFDgWKWxKlH7+y7DDNMDzuygmAmouuxA+VY0QeU50VYsaeRCZK78UO5g7EUi6ieHQwF
+         suqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhSpI4j1f+K3TSlOz4oLQXYkb9T4RSMEpYXH3AtilaRmznLbFDTHMEb9F9cJSmDf3sITndat+nl62Zn+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFmWsvZXANo01mlV2fouE7+rz++DxymnidvZXwYiLlKir/8iM3
+	NuNCZRTiWWZX00yZPLZ7ESFexEbfV8XiXzXsBRZozDGT3R9LD/pbInvZKJBusxWWIyU=
+X-Gm-Gg: ASbGncsVCxlgFYfGeclQTKDEKIYMuw1qH7wow9kAaJkF0VaR8DmIhw3xNw2mMir7rJI
+	hRUG3kDDD3cfGIEuu+5Rw2qSEZFxqJFoN60+4PmpoZqda28l2KV1RIw+aNlbQdpVlxD6+uz7V7Y
+	OGTwxlsqjzvbc4JSWC4jYqJR2qniCMHG6qmCJ1f1U7566Q5JGnAAly6sF4wZXX+nvzSY/4IZj+S
+	Izvb3tRXWAxIkS9kIpytU/LxHc2p/Bamw1gFCAtYfJ5t1KBSR5m/XG4bw2fpp5Oyv3YcZ7naCCQ
+	IA2HVQZ1aQm/Nd9okS4xsJD/+NeSA2B/doMGMDbdTRNONxcLiy8l0TzWxKkj5yA5YsZHAIZWMK7
+	UTFqBl1Uj9wt6xqQ5r1XzBPcPXohM093JebwMsghkRAPFckLUtO3+li5DrG8S6yQTtYUK
+X-Google-Smtp-Source: AGHT+IFTtCHwqNfIBOXwlFvy/P0nkEKjAL4uI3LrM5NYhtuUi4RxaoEj1xk7ImpRtf5RyJZJwkkNeg==
+X-Received: by 2002:a05:6a00:1a8f:b0:772:2850:783d with SMTP id d2e1a72fcca58-7742dedf06emr24743666b3a.22.1757576762510;
+        Thu, 11 Sep 2025 00:46:02 -0700 (PDT)
+Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:7811:c085:c184:85be])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b18424sm1134273b3a.63.2025.09.11.00.45.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 00:46:01 -0700 (PDT)
+From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+To: 409411716@gms.tku.edu.tw
+Cc: akpm@linux-foundation.org,
+	axboe@kernel.dk,
+	ceph-devel@vger.kernel.org,
+	ebiggers@kernel.org,
+	hch@lst.de,
+	home7438072@gmail.com,
+	idryomov@gmail.com,
+	jaegeuk@kernel.org,
+	kbusch@kernel.org,
+	linux-fscrypt@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	mario.limonciello@amd.com,
-	rafael@kernel.org,
-	stable@vger.kernel.org,
-	zhangzihuan@kylinos.cn
-Subject: Re: [PATCH v1] ACPI: video: Fix missing backlight node creation on
-Date: Thu, 11 Sep 2025 15:45:43 +0800
-Message-Id: <20250911074543.106620-1-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <de4b5ec6-1e42-44b8-b5d3-5a452d7401ef@kernel.org>
-References: <de4b5ec6-1e42-44b8-b5d3-5a452d7401ef@kernel.org>
+	linux-nvme@lists.infradead.org,
+	sagi@grimberg.me,
+	tytso@mit.edu,
+	visitorckw@gmail.com,
+	xiubli@redhat.com
+Subject: [PATCH v2 4/5] fscrypt: replace local base64url helpers with generic lib/base64 helpers
+Date: Thu, 11 Sep 2025 15:45:56 +0800
+Message-Id: <20250911074556.691401-1-409411716@gms.tku.edu.tw>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
+References: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
->  Oh wait, now I understand the trick is that you now return
->  acpi_backlight_video without setting *auto_detect =3D true.
-> =20
->  Which in turn causes this code in drivers/acpi/acpi_video.c:
-> =20
->          /*
->           * If backlight-type auto-detection is used then a native back=
-light may
->           * show up later and this may change the result from video to =
-native.
->           * Therefor normally the userspace visible /sys/class/backligh=
-t device
->           * gets registered separately by the GPU driver calling
->           * acpi_video_register_backlight() when an internal panel is d=
-etected.
->           * Register the backlight now when not using auto-detection, s=
-o that
->           * when the kernel cmdline or DMI-quirks are used the backligh=
-t will
->           * get registered even if acpi_video_register_backlight() is n=
-ot called.
->           */
->          acpi_video_run_bcl_for_osi(video);
->          if (__acpi_video_get_backlight_type(false, &auto_detect) =3D=3D=
- acpi_backlight_video &&
->              !auto_detect)
->                  acpi_video_bus_register_backlight(video);
-> =20
->  To immediately register the backlight rather then waiting for the nati=
-ve
->  GPU driver to call acpi_video_register_backlight() after the native GP=
-U
->  driver has completed probing for native GPU backlight control which is
->  often preferred.
-> =20
->  So as you say the issue is that you have no native GPU driver calling
->  acpi_video_register_backlight().
+Replace the existing local base64url encoding and decoding functions in
+fscrypt with the generic base64_encode_custom and base64_decode_custom
+helpers from the kernel's lib/base64 library.
 
-I'm very happy that you got it.
+This removes custom implementations in fscrypt, reduces code duplication,
+and leverages the well-maintained, standard base64 code within the kernel.
 
-> First of all I assume that there is some sort of builtin GPU on these
-> Lenovo and Inspur machines with Zhaoxin CPUs. Even if the GPU driver
-> is not in the mainline kernel then I assume there is some out of tree
-> driver. Can that driver not call acpi_video_register_backlight() ?
+The new helpers preserve RFC 4648-compliant URL-safe Base64 encoding
+without padding behavior, ensuring no functional changes.
 
-We are currently working with Zhaoxin on this matter, and we expect to ha=
-ve some results in a few days.
-I will keep you updated once we have progress.
+At the same time, they also deliver significant performance gains: with the
+optimized encoder and decoder, encoding runs about 2.7x faster and decoding
+achieves 12-15x improvements over the previous implementation.
 
-> If this is not possible then we will need to add some quirk based
-> on CPUID matching e.g. something like this:
->=20
-> diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
-> index d507d5e08435..24dd79ec1b72 100644
-> --- a/drivers/acpi/video_detect.c
-> +++ b/drivers/acpi/video_detect.c
-> @@ -1011,6 +1011,18 @@ enum acpi_backlight_type __acpi_video_get_backli=
-ght_type(bool native, bool *auto
->  	if (acpi_backlight_dmi !=3D acpi_backlight_undef)
->  		return acpi_backlight_dmi;
-> =20
-> +	/*
-> +	 * ATM Zhaoxin CPU systems have no native GPU driver, instead ACPI vi=
-deo
-> +	 * should be used to control the backlight. The lack of a GPU driver
-> +	 * means that acpi_video_register_backlight() will never get called
-> +	 * causing things to not work.
-> +	 * This special case for these systems returns acpi_backlight_video
-> +	 * without setting auto_detect =3D true, causing acpi_video.c to
-> +	 * immediately register the backlight, working around this issue.
-> +	 */
-> +	if ((video_caps & ACPI_VIDEO_BACKLIGHT) && cpu_is_zhaoxin())
-> +		return acpi_backlight_video;
-> +
->  	if (auto_detect)
->  		*auto_detect =3D true;
-> =20
->=20
-> Note you will need to provide a cpu_is_zhaoxin() helper for this.
+This improves maintainability and aligns fscrypt with other kernel
+components using the generic base64 helpers.
 
-Thanks a lot for your patch and for looking into this issue.
+Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+---
+ fs/crypto/fname.c | 86 ++++-------------------------------------------
+ 1 file changed, 6 insertions(+), 80 deletions(-)
 
-At the moment, we are still confirming with Zhaoxin whether this behavior=
- is consistent across all their platforms,
-so we are not sure if the special handling should always apply.
-
-Also, on kernel 5.4 these machines seem to work fine without requiring a =
-native GPU driver, while on 6.6+ the backlight node is missing.=20
-Could you please clarify what design change or intention caused this beha=
-vioral difference between 5.4 and newer kernels?
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index f9f6713e1..38be85cd5 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -17,6 +17,7 @@
+ #include <linux/export.h>
+ #include <linux/namei.h>
+ #include <linux/scatterlist.h>
++#include <linux/base64.h>
+ 
+ #include "fscrypt_private.h"
+ 
+@@ -72,7 +73,7 @@ struct fscrypt_nokey_name {
+ 
+ /* Encoded size of max-size no-key name */
+ #define FSCRYPT_NOKEY_NAME_MAX_ENCODED \
+-		FSCRYPT_BASE64URL_CHARS(FSCRYPT_NOKEY_NAME_MAX)
++		BASE64_CHARS(FSCRYPT_NOKEY_NAME_MAX)
+ 
+ static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
+ {
+@@ -166,81 +167,6 @@ static int fname_decrypt(const struct inode *inode,
+ static const char base64url_table[65] =
+ 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+ 
+-#define FSCRYPT_BASE64URL_CHARS(nbytes)	DIV_ROUND_UP((nbytes) * 4, 3)
+-
+-/**
+- * fscrypt_base64url_encode() - base64url-encode some binary data
+- * @src: the binary data to encode
+- * @srclen: the length of @src in bytes
+- * @dst: (output) the base64url-encoded string.  Not NUL-terminated.
+- *
+- * Encodes data using base64url encoding, i.e. the "Base 64 Encoding with URL
+- * and Filename Safe Alphabet" specified by RFC 4648.  '='-padding isn't used,
+- * as it's unneeded and not required by the RFC.  base64url is used instead of
+- * base64 to avoid the '/' character, which isn't allowed in filenames.
+- *
+- * Return: the length of the resulting base64url-encoded string in bytes.
+- *	   This will be equal to FSCRYPT_BASE64URL_CHARS(srclen).
+- */
+-static int fscrypt_base64url_encode(const u8 *src, int srclen, char *dst)
+-{
+-	u32 ac = 0;
+-	int bits = 0;
+-	int i;
+-	char *cp = dst;
+-
+-	for (i = 0; i < srclen; i++) {
+-		ac = (ac << 8) | src[i];
+-		bits += 8;
+-		do {
+-			bits -= 6;
+-			*cp++ = base64url_table[(ac >> bits) & 0x3f];
+-		} while (bits >= 6);
+-	}
+-	if (bits)
+-		*cp++ = base64url_table[(ac << (6 - bits)) & 0x3f];
+-	return cp - dst;
+-}
+-
+-/**
+- * fscrypt_base64url_decode() - base64url-decode a string
+- * @src: the string to decode.  Doesn't need to be NUL-terminated.
+- * @srclen: the length of @src in bytes
+- * @dst: (output) the decoded binary data
+- *
+- * Decodes a string using base64url encoding, i.e. the "Base 64 Encoding with
+- * URL and Filename Safe Alphabet" specified by RFC 4648.  '='-padding isn't
+- * accepted, nor are non-encoding characters such as whitespace.
+- *
+- * This implementation hasn't been optimized for performance.
+- *
+- * Return: the length of the resulting decoded binary data in bytes,
+- *	   or -1 if the string isn't a valid base64url string.
+- */
+-static int fscrypt_base64url_decode(const char *src, int srclen, u8 *dst)
+-{
+-	u32 ac = 0;
+-	int bits = 0;
+-	int i;
+-	u8 *bp = dst;
+-
+-	for (i = 0; i < srclen; i++) {
+-		const char *p = strchr(base64url_table, src[i]);
+-
+-		if (p == NULL || src[i] == 0)
+-			return -1;
+-		ac = (ac << 6) | (p - base64url_table);
+-		bits += 6;
+-		if (bits >= 8) {
+-			bits -= 8;
+-			*bp++ = (u8)(ac >> bits);
+-		}
+-	}
+-	if (ac & ((1 << bits) - 1))
+-		return -1;
+-	return bp - dst;
+-}
+-
+ bool __fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
+ 				    u32 orig_len, u32 max_len,
+ 				    u32 *encrypted_len_ret)
+@@ -387,8 +313,8 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
+ 		       nokey_name.sha256);
+ 		size = FSCRYPT_NOKEY_NAME_MAX;
+ 	}
+-	oname->len = fscrypt_base64url_encode((const u8 *)&nokey_name, size,
+-					      oname->name);
++	oname->len = base64_encode((const u8 *)&nokey_name, size,
++				   oname->name, false, base64url_table);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(fscrypt_fname_disk_to_usr);
+@@ -467,8 +393,8 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
+ 	if (fname->crypto_buf.name == NULL)
+ 		return -ENOMEM;
+ 
+-	ret = fscrypt_base64url_decode(iname->name, iname->len,
+-				       fname->crypto_buf.name);
++	ret = base64_decode(iname->name, iname->len,
++			    fname->crypto_buf.name, false, base64url_table);
+ 	if (ret < (int)offsetof(struct fscrypt_nokey_name, bytes[1]) ||
+ 	    (ret > offsetof(struct fscrypt_nokey_name, sha256) &&
+ 	     ret != FSCRYPT_NOKEY_NAME_MAX)) {
+-- 
+2.34.1
 
 
