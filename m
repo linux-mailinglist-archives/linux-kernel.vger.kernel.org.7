@@ -1,132 +1,103 @@
-Return-Path: <linux-kernel+bounces-811936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D86BB53059
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:27:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9303B53065
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67F08A85D5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:27:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 265FD1CC0586
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4977531A544;
-	Thu, 11 Sep 2025 11:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92FE27603A;
+	Thu, 11 Sep 2025 11:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="OK6//3tD"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6s6oloT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47E6314B8A;
-	Thu, 11 Sep 2025 11:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB8C1CAA4;
+	Thu, 11 Sep 2025 11:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757590010; cv=none; b=Er3ki9Nj5EQVjBl9w1bxH6nk5dHSie4b4vqv8qakgBtbFasOU/Jd0gl2Fet+tO5qrHevXsBbX2OrX+JfWUdavbsxFliT01K2A5Ol9qyCPWBb025Xqh8Bs+yVuqxusygh3KZzwbJBweigoUHUug5GS8hbdI9TRR+lIYlw+boFun8=
+	t=1757590042; cv=none; b=OkhjMN6ziBzKlRSzuWpvGXZtMiggaPqL5mRCqpEZ8V9xDPZzU8C8wvPbfg7XLxFixmC+cIX84tba3GAzCsoNOBY3xbO/e5ZGsaiL/uIwGWEYXqSMUo1+rpqugrJx9VkmdwVFhKk+fvgIIqVjI4jfRPZHdgqYS/0O+6hh+r5EpLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757590010; c=relaxed/simple;
-	bh=qGc5jx2TlqmbUZ05luhkqYaO/xLYnwqJRdeDDTtSO8g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=icVPye5fZY5+SeO/y2BUYomGyL6py/7faiJOZKQIgw+NoX6phNBdWWQybCq1LM7otTNsY6RN8fKC2FUBEtLmsP4HMYBK8d4Fe/g0isJZIl/LSSkrB3vuz0um8r1AQodgG9g3YJ9P/d8w3gADSfAuY7Kn2jVw/GC4cW6SE3xFraQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=OK6//3tD; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=CO
-	EvvwlmwDoA2pMwxCwzNYrjaVFZy7dLqFs2BwEoIHo=; b=OK6//3tDLUruKVY1Kv
-	ky9P3ZkpMmjV4pTgaXXpfAryC3TqorVxaAXrr+LN3tkbOeGjuU3td51LekpDU+xF
-	nXYIGO8+bIABGt5WQBTshER3pX/fUwBVdD2UsJEMl0WcsnS5apfmsO4VoAFYULEJ
-	5KmwEdRg0XjlUoVZWbDHhhvFs=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgA3ThalscJozfgyCg--.64583S2;
-	Thu, 11 Sep 2025 19:25:26 +0800 (CST)
-From: yicongsrfy@163.com
-To: linux@armlinux.org.uk
-Cc: andrew@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	hkallweit1@gmail.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	yicong@kylinos.cn
-Subject: Re: [PATCH] net: phy: avoid config_init failure on unattached PHY during resume
-Date: Thu, 11 Sep 2025 19:25:25 +0800
-Message-Id: <20250911112525.3824360-1-yicongsrfy@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <aMFKvS-Dm0hhJVnO@shell.armlinux.org.uk>
-References: <aMFKvS-Dm0hhJVnO@shell.armlinux.org.uk>
+	s=arc-20240116; t=1757590042; c=relaxed/simple;
+	bh=7x9RX4R0yGFt9SaAULfJv4ZUVpGgjrzTlX6Xxo5HDj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QEo16diLnnx0wn8XOrED3xpZ5g8aV2sURRPzzlz2jhlErhp2qJXktl0NfVcXw9Qf3yfyRPQZ3zOj+Rpyy+GFx716XeMyI8JF79W6KEeNc9DTmdGgNRSJ0APrYld1dxWZ/W0Is6opa6A//UDs/ogIzB13g7NnNICmzDpfOyMVCJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6s6oloT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26B95C4CEF0;
+	Thu, 11 Sep 2025 11:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757590041;
+	bh=7x9RX4R0yGFt9SaAULfJv4ZUVpGgjrzTlX6Xxo5HDj0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=X6s6oloTndlDJx3ztDIKJjVQuau4BdMbUCgEE2426w1z25y0vF/BBN4xZaip6KGkx
+	 Opk7ATGu2XKrpJiQjZmtwwmJqERYR/ZmF+T+7ZtJ4vJzx6Cjb0pWZ0fJk5dXwGB5Wh
+	 YkTTscOP670GDAdp4tLEnZd/xcXO7gYwRFwtvnoslqOFmbSRTw1i89WUO44Zmj73A5
+	 qLrUzSiIObVzcYGloBs9mWNce92zUE1eYdaahTOZqasQkwN9BK0NtoDiNEq6xtjGkv
+	 AX01MzpcTWjejjKSq6lyGTplwojxksvOtjWDTOAWy9K/uAhhjgGu/7kMlLV+9w071p
+	 EWe788vRpfbzg==
+Message-ID: <9c1a7902-4e14-4b25-ba32-57a475a0bccc@kernel.org>
+Date: Thu, 11 Sep 2025 13:27:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgA3ThalscJozfgyCg--.64583S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZrWkJrW8Jr4UurW8uw1rZwb_yoW5Xw4kpa
-	y3WrWFkr1DJF1fCrWDZr40y34jvanavryUGF9xtr9Yyr15XF9a9wnrKr47ZFW7Crn5Cayj
-	qFWjvayjva909aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UzT5LUUUUU=
-X-CM-SenderInfo: p1lf00xjvuw5i6rwjhhfrp/1tbiUATF22jCq-mYPQABsW
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 08/12] gpu: nova-core: firmware: process and prepare
+ the GSP firmware
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20250911-nova_firmware-v5-0-5a8a33bddca1@nvidia.com>
+ <20250911-nova_firmware-v5-8-5a8a33bddca1@nvidia.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250911-nova_firmware-v5-8-5a8a33bddca1@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 10 Sep 2025 10:54:05 +0100, "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
->
-> On Wed, Sep 10, 2025 at 05:17:03PM +0800, yicongsrfy@163.com wrote:
-> > Then, because `phydev->interface != PHY_INTERFACE_MODE_SGMII`, it attempts
-> > to enter `ytphy_rgmii_clk_delay_config` to configure the RGMII tx/rx delay.
-> > However, since this PHY device is not associated with any GMAC and is not
-> > connected via an RGMII interface, the function returns `-EOPNOTSUPP`.
->
-> It seems the problem is this code:
->
->         /* set rgmii delay mode */
->         if (phydev->interface != PHY_INTERFACE_MODE_SGMII) {
->                 ret = ytphy_rgmii_clk_delay_config(phydev);
->
-> which assumes that phydev->interface will be either SGMII or one of
-> the RGMII modes. This is not the case with a PHY that has been
-> freshly probed unless phydev->interface is set in the probe function.
->
-> I see the probe function decodes the PHYs operating mode and
-> configures stuff based on that. Maybe, as it only supports RGMII
-> and SGMII, it should also initialise phydev->interface to the initial
-> operating condition of the PHY if other code in the driver relies
-> upon this being set to either SGMII or one of the RGMII types.
->
+On 9/11/25 1:04 PM, Alexandre Courbot wrote:
+> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
+> index 06a7ee8f4195759fb55ad483852724bb1ab46793..8505ee81c43e7628d1f099aff285244f8908c633 100644
+> --- a/drivers/gpu/nova-core/gpu.rs
+> +++ b/drivers/gpu/nova-core/gpu.rs
+> @@ -8,6 +8,7 @@
+>  use crate::fb::SysmemFlush;
+>  use crate::firmware::booter::{BooterFirmware, BooterKind};
+>  use crate::firmware::fwsec::{FwsecCommand, FwsecFirmware};
+> +use crate::firmware::gsp::GspFirmware;
+>  use crate::firmware::{Firmware, FIRMWARE_VERSION};
+>  use crate::gfw;
+>  use crate::regs;
+> @@ -285,6 +286,11 @@ pub(crate) fn start_gsp(
+>  
+>          let bios = Vbios::new(dev, bar)?;
+>  
+> +        let _gsp_fw = KBox::pin_init(
+> +            GspFirmware::new(dev, chipset, FIRMWARE_VERSION)?,
+> +            GFP_KERNEL,
+> +        )?;
 
-Thank you for your reply!
+Since we now have the infrastructure in place and the change is trival, I'd
+prefer to make this a member of struct Gsp and make it part of the Gpu structure
+directly (without separate allocation).
 
-What you mentioned above is correct.
-However, there is a particular scenario as follows:
-
-Some PHY chips support two addresses, using address 0 as a broadcast address
-and address 1 as the hardware address. Both addresses respond to GMAC's MDIO
-read/write operations. As a result, during 'mdio_scan', both PHY addresses are
-detected, leading to the creation of two PHY device instances (for example,
-as in my previous email: xxxxmac_mii_bus-XXXX:00:00 and xxxxmac_mii_bus-XXXX:00:01).
-
-The GMAC will only attach to one of these PHY addresses. Some GMAC drivers
-select the first available PHY address (via calling 'phy_find_first'), leaving
-the other address idle and unattached. However, during the system resume
-process, it attempts to resume this unused PHY instance.
-
-When resuming this PHY instance, because 'phydev->interface' hasn't been
-set to a valid interface mode supported by the chip (such as RGMII or SGMII),
-we encounter the EOPNOTSUPP error.
-
-I've tried modifying motorcomm.c as a workaround, but logically speaking,
-it's not an ideal solution:
-1. If I return 0 from the driver's resume function, mdio_bus_phy_resume will proceed.
-2. If I return an error, the system will still report an error.
-
-The key issue is: does the current kernel provide any field or mechanism
-to indicate that two PHY addresses (instances) actually refer to the same
-physical PHY device?
-
-I haven't found any such mechanism in the kernel. Do you have any
-suggestions on how to properly handle this?
-
-Looking forward to your advice. Thank you!
-
+Should we need dynamic dispatch in the future, it's also trivial to make it its
+own allocation again, but maybe we also get around the dyn dispatch. :)
 
