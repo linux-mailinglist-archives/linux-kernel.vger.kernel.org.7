@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-811410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64127B528B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:29:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0668FB528BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BD4F7A2694
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:27:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAEE4A0691E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BDF259CB3;
-	Thu, 11 Sep 2025 06:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839D325A2C3;
+	Thu, 11 Sep 2025 06:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1pKxW5G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+IboIes"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0701511CBA;
-	Thu, 11 Sep 2025 06:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0100258EF9;
+	Thu, 11 Sep 2025 06:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757572161; cv=none; b=gdAQ+Zq+m29Zczy1CW4ox0MHueVeSz9vbSfx/uVUHZ0xCqJbIoffaxpd9WwYN3c/7tgQzmADgV2FDuxxPeMfVitr+0/Z3aqg/1WOVaqzfLJy1iMtx/URiMOzpyxtILi9a7cjVXjMGzzE0+UD/dzsw41kg7AKmyOGAIDnUwXVUEc=
+	t=1757572175; cv=none; b=TdFHjbh6L+EuCUzfBKQysAucfKaxM0akfZDKrcwcbFqcd2tyhU2Y/g2LZMDv6UxXtgWKpKDB/IhVohE9om7KhTTx1FLJLCdABB7TDjWzHXRxCFFVY1mF9v90EsP0Z7oNSLpLQ5Ul14IW3DDw/4IMTlT9pxHLn7IPjQEN6o4Rdt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757572161; c=relaxed/simple;
-	bh=3ww/jS1fs9nHT7j3wCS68DaL7+qVCfA7ppHd8n2uUdc=;
+	s=arc-20240116; t=1757572175; c=relaxed/simple;
+	bh=HH8pm2TzBanivE2VNFEmUQehhv/+sFfQjKIF+rowc3g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=YvyofcobAu2ObpmvJLQbdcBDinGzSWR3iAUeoUXe6LBP9qhUZApFIWRthGprAsXeHn0Yt/O8nDU+o3poOgcM+fD/tknTEWM8WnpTPaIo0GNkGPvLoTcGUjFjcQL64kucry9a+XgWgvHO70G3TXAO2xKhB9qRCz/vzNdu5fqVjaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1pKxW5G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDFB1C4CEF1;
-	Thu, 11 Sep 2025 06:29:17 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=PAMtztpS9ALqqor/g/ARpKLlCCs7zP0UM00ZS0c9oPjl2i/5ZqsT0bpdM9QIkPvAUPI6P6ODjCtygspv7V+7yLCGj5teWoIb0wOiTLGjmOBUHPaVlC3OhAFAMJ7Xn6bHVUqVllnF0B674bQePpdr+O3Q2Lc+h7J58iUVMGdmD1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+IboIes; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10A2CC4CEF1;
+	Thu, 11 Sep 2025 06:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757572160;
-	bh=3ww/jS1fs9nHT7j3wCS68DaL7+qVCfA7ppHd8n2uUdc=;
+	s=k20201202; t=1757572175;
+	bh=HH8pm2TzBanivE2VNFEmUQehhv/+sFfQjKIF+rowc3g=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=E1pKxW5GoaZaQISBvQIQBAM789VE3o8LUozMR/afizF4FZtKfNilMWZWF5gfvmzG1
-	 JuzdssHiZQlyOJvhDBte4ceKkZp0C+1X2V9Mpoziiv6OemWZszlsU/BwnOx6/BKaSK
-	 GkJpftKyTzApRYpb2MwOe2aGrFWuVZhGsJhSxCRxpRbD0iJxyHFR8mKkXyLi27JyhO
-	 oT9uTFt7Q81J99/r6qRF2gX0U4GbgajEvd5GVmGfanY92V+pFheOurjajrANiHMh7w
-	 /FBKmpbfLYMUDvKgBd0cH/kbEBHg66Zt8n8SvNoPUz4GIKmi9BxpMoGsG3WHX9cUlX
-	 gbXI0AYJJJ5rA==
-Message-ID: <1e4c65c6-4745-45e2-9e20-9d2e69ae2ea4@kernel.org>
-Date: Thu, 11 Sep 2025 08:29:15 +0200
+	b=b+IboIesEGrSanJ+6tc7s/2/BNbmVC4p6HqGVIGX197dEDGYwgfitGBjsQzynnaOY
+	 fUd/krWHwpC4tWyok4kBBBr4rRV8dw6B3+hGvBqTpzhB/qO124N6wUpHashB9ZGQ0i
+	 oWVR9xk9K4AUP5zZNb58aLuuR1Hzp9B2Lh/C9ffFkX+hCI+0OxLnYsUgs45upr6T7c
+	 4Md3L7NA/wIR/dF0YqgQuamodWy7/CB812peCVDGO+Sf4eTUrt4MTzQMmMgIheimg7
+	 DPM3FOXfZzsl2L4Hx7VIg5zb8XzU1kGNICWN7plx6zl5A2xxLKbyndNfhtqHi8GxpB
+	 HcNMNGrvXp2rA==
+Message-ID: <3a2fe895-2849-4cb1-b4f7-fe5c0e1a76cc@kernel.org>
+Date: Thu, 11 Sep 2025 08:29:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] ARM: dts: aspeed: add device tree for ASRock Rack
- ALTRAD8 BMC
+Subject: Re: [PATCH 1/2] dt-bindings: arm: aspeed: add ASRock Rack ALTRAD8
+ board
 To: Rebecca Cran <rebecca@bsdio.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
@@ -58,7 +58,7 @@ To: Rebecca Cran <rebecca@bsdio.com>, Rob Herring <robh@kernel.org>,
  linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
  linux-kernel@vger.kernel.org
 References: <20250911051009.4044609-1-rebecca@bsdio.com>
- <20250911051009.4044609-3-rebecca@bsdio.com>
+ <20250911051009.4044609-2-rebecca@bsdio.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,401 +104,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250911051009.4044609-3-rebecca@bsdio.com>
+In-Reply-To: <20250911051009.4044609-2-rebecca@bsdio.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 11/09/2025 07:10, Rebecca Cran wrote:
-> The ALTRAD8 BMC is an Aspeed AST2500-based BMC for the ASRock Rack
-> ALTRAD8UD-1L2T and ALTRAD8UD2-1L2Q boards.
+> Document ASRock Rack ALTRAD8 (ALTRAD8UD-1L2T and ALTRAD8UD2-1L2Q)
+> compatibles.
 > 
 > Signed-off-by: Rebecca Cran <rebecca@bsdio.com>
 > ---
->  arch/arm/boot/dts/aspeed/Makefile                      |   1 +
->  arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dts | 647 ++++++++++++++++++++
->  2 files changed, 648 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
-> index aba7451ab749..6bffb7130839 100644
-> --- a/arch/arm/boot/dts/aspeed/Makefile
-> +++ b/arch/arm/boot/dts/aspeed/Makefile
-> @@ -9,6 +9,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
->  	aspeed-bmc-ampere-mtjefferson.dtb \
->  	aspeed-bmc-ampere-mtmitchell.dtb \
->  	aspeed-bmc-arm-stardragon4800-rep2.dtb \
-> +	aspeed-bmc-asrock-altrad8.dtb \
->  	aspeed-bmc-asrock-e3c246d4i.dtb \
->  	aspeed-bmc-asrock-e3c256d4i.dtb \
->  	aspeed-bmc-asrock-romed8hm3.dtb \
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dts
-> new file mode 100644
-> index 000000000000..61f6cf8018c0
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dts
-> @@ -0,0 +1,647 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/dts-v1/;
-> +#include "aspeed-g5.dtsi"
-> +#include <dt-bindings/gpio/aspeed-gpio.h>
-> +#include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/i2c/i2c.h>
-> +
-> +/ {
-> +	model = "ASRock ALTRAD8 BMC";
-> +	compatible = "asrock,altrad8-bmc", "aspeed,ast2500";
-> +
-> +	aliases {
-> +		serial4 = &uart5;
-> +		i2c50 = &m2_2;
-> +		i2c51 = &pcie4;
-> +		i2c52 = &pcie5;
-> +		i2c53 = &pcie6;
-> +		i2c54 = &pcie7;
-> +		i2c55 = &ocu_2;
-> +		i2c56 = &ocu_1;
-> +		i2c57 = &m2_1;
-> +		i2c58 = &slim1_1;
-> +		i2c59 = &slim2_1;
-> +		i2c60 = &slim3_1;
-> +		i2c61 = &slim4_1;
-> +		i2c62 = &slim1_2;
-> +		i2c63 = &slim2_2;
-> +		i2c64 = &slim3_2;
-> +		i2c65 = &slim4_2;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = &uart5;
-> +		bootargs = "console=ttyS4,115200 earlycon";
 
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Please drop bootargs. Baud rate goes to stdout-path and earlycon is
-debugging tool, not suitable for mainline.
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, just skip it entirely
+(please do not feel offended by me posting it here - no bad intentions
+intended, no patronizing, I just want to avoid wasted efforts). If you
+do not know the process, here is a short explanation:
 
-> +	};
-> +
-> +	memory@80000000 {
-> +		reg = <0x80000000 0x20000000>;
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		gfx_memory: framebuffer {
-> +			size = <0x01000000>;
-> +			alignment = <0x01000000>;
-> +			compatible = "shared-dma-pool";
-> +			reusable;
-> +		};
-> +
-> +		vga_memory: framebuffer@9f000000 {
-> +			no-map;
-> +			reg = <0x9f000000 0x01000000>; /* 16M */
-> +		};
-> +
-> +		video_engine_memory: jpegbuffer {
-> +			size = <0x02000000>;	/* 32M */
-> +			alignment = <0x01000000>;
-> +			compatible = "shared-dma-pool";
-> +			reusable;
-> +		};
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +
-> +		systemfault {
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here ('b4 trailers -u ...'). However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for tags received on the version they apply.
 
-Never tested.
-
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
-Maybe you need to update your dtschema and yamllint. Don't rely on
-distro packages for dtschema and be sure you are using the latest
-released dtschema.
-
-
-> +			gpios = <&gpio ASPEED_GPIO(G,3) GPIO_ACTIVE_LOW>;
-> +			label = "platform:red:fault";
-> +			color = <LED_COLOR_ID_RED>;
-> +			function = LED_FUNCTION_FAULT;
-> +		};
-> +
-> +		enclosure_identify {
-> +			gpios = <&gpio ASPEED_GPIO(G,0) GPIO_ACTIVE_LOW>;
-> +			label = "platform:green:indicator";
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			function = LED_FUNCTION_INDICATOR;
-> +		};
-> +	};
-> +
-> +	leds-fanfail {
-> +		compatible = "gpio-leds";
-> +
-> +		fan1 {
-> +			retain-state-shutdown;
-> +			default-state = "off";
-> +			gpios = <&pca0 0 GPIO_ACTIVE_LOW>;
-> +			label = "fan1:red:fault";
-> +			color = <LED_COLOR_ID_RED>;
-> +			function = LED_FUNCTION_FAULT;
-> +		};
-> +
-> +		fan2 {
-> +			retain-state-shutdown;
-> +			default-state = "off";
-> +			gpios = <&pca0 1 GPIO_ACTIVE_LOW>;
-> +			label = "fan2:red:fault";
-> +			color = <LED_COLOR_ID_RED>;
-> +			function = LED_FUNCTION_FAULT;
-> +		};
-> +
-> +		fan3 {
-> +			retain-state-shutdown;
-> +			default-state = "off";
-> +			gpios = <&pca0 2 GPIO_ACTIVE_LOW>;
-> +			label = "fan3:red:fault";
-> +			color = <LED_COLOR_ID_RED>;
-> +			function = LED_FUNCTION_FAULT;
-> +		};
-> +
-> +		fan4 {
-> +			retain-state-shutdown;
-> +			default-state = "off";
-> +			gpios = <&pca0 3 GPIO_ACTIVE_LOW>;
-> +			label = "fan4:red:fault";
-> +			color = <LED_COLOR_ID_RED>;
-> +			function = LED_FUNCTION_FAULT;
-> +		};
-> +
-> +		fan5{
-> +			retain-state-shutdown;
-> +			default-state = "off";
-> +			gpios = <&pca0 4 GPIO_ACTIVE_LOW>;
-> +			label = "fan5:red:fault";
-> +			color = <LED_COLOR_ID_RED>;
-> +			function = LED_FUNCTION_FAULT;
-> +		};
-> +	};
-> +
-> +	iio-hwmon {
-> +		compatible = "iio-hwmon";
-> +		io-channels =	<&adc 0>, <&adc 1>, <&adc 2>, <&adc 3>,
-> +				<&adc 4> ,<&adc 5>, <&adc 6>, <&adc 7>,
-> +				<&adc 8>, <&adc 9>, <&adc 10>, <&adc 11>,
-> +				<&adc 12>, <&adc 13>, <&adc 14>, <&adc 15>;
-> +	};
-> +};
-> +
-> +&fmc {
-> +	status = "okay";
-> +	flash@0 {
-> +		status = "okay";
-> +		label = "bmc";
-> +		m25p,fast-read;
-> +		spi-max-frequency = <50000000>;
-> +#include "openbmc-flash-layout-64.dtsi"
-> +	};
-> +};
-> +
-> +&spi1 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_spi1_default>;
-> +
-> +	flash@0 {
-> +		status = "okay";
-> +		m25p,fast-read;
-> +		label = "pnor";
-> +		spi-max-frequency = <100000000>;
-> +
-> +		partitions {
-> +			compatible = "fixed-partitions";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			code@400000 {
-> +				reg = <0x400000 0x1C00000>;
-> +				label = "pnor-code";
-> +			};
-> +			tfa@400000 {
-> +				reg = <0x400000 0x200000>;
-> +				label = "pnor-tfa";
-> +			};
-> +			uefi@600000 {
-> +				reg = <0x600000 0x1A00000>;
-> +				label = "pnor-uefi";
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&uart1 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_txd1_default
-> +			 &pinctrl_rxd1_default
-> +			 &pinctrl_ncts1_default
-> +			 &pinctrl_nrts1_default>;
-> +};
-> +
-> +&uart2 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_txd2_default
-> +			 &pinctrl_rxd2_default>;
-> +};
-> +
-> +&uart3 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_txd3_default
-> +			 &pinctrl_rxd3_default>;
-> +};
-> +
-> +&uart4 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_txd4_default
-> +			 &pinctrl_rxd4_default>;
-> +};
-> +
-> +/* The BMC's uart */
-> +&uart5 {
-> +	status = "okay";
-> +};
-> +
-> +&mac0 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_rmii1_default>;
-> +	clocks = <&syscon ASPEED_CLK_GATE_MAC1CLK>,
-> +		 <&syscon ASPEED_CLK_MAC1RCLK>;
-> +	clock-names = "MACCLK", "RCLK";
-> +	use-ncsi;
-> +
-> +	nvmem-cells = <&eth0_macaddress>;
-> +	nvmem-cell-names = "mac-address";
-> +};
-> +
-> +&mac1 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_rgmii2_default &pinctrl_mdio2_default>;
-> +
-> +	nvmem-cells = <&eth1_macaddress>;
-> +	nvmem-cell-names = "mac-address";
-> +};
-> +
-> +&i2c0 {
-> +	status = "okay";
-> +	bus-frequency = <100000>;
-> +
-> +	ipmb0@10 {
-
-0 suffix is not generic.
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-If you cannot find a name matching your device, please check in kernel
-sources for similar cases or you can grow the spec (via pull request to
-DT spec repo).
-
-
-> +		compatible = "ipmb-dev";
-> +		reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
-> +		i2c-protocol;
-> +	};
-> +
-> +};
-> +
-> +&i2c1 {
-> +	status = "okay";
-> +	bus-frequency = <100000>;
-> +
-> +	pca9548@73 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-If you cannot find a name matching your device, please check in kernel
-sources for similar cases or you can grow the spec (via pull request to
-DT spec repo).
-
-
-> +		compatible = "nxp,pca9548";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		reg = <0x73>;
-> +		i2c-mux-idle-disconnect;
-> +
-> +		m2_2: i2c@0 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0>;
-> +		};
-> +
-> +		pcie4: i2c@1 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <1>;
-> +		};
-> +
-> +		pcie5: i2c@2 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <2>;
-> +		};
-> +
-> +		pcie6: i2c@3 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <3>;
-> +		};
-> +
-> +		pcie7: i2c@4 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <4>;
-> +		};
-> +
-> +		ocu_2: i2c@5 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <5>;
-> +		};
-> +
-> +		ocu_1: i2c@6 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <6>;
-> +		};
-> +
-> +		m2_1: i2c@7 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <7>;
-> +		};
-> +	};
-> +
-> +	pca9548@75 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-If you cannot find a name matching your device, please check in kernel
-sources for similar cases or you can grow the spec (via pull request to
-DT spec repo).
-
-... and same comments everywhere else.
-
-Since this wasn't ever tested, I am not doing full review.
-
+Full context and explanation:
+https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
+</form letter>
 
 Best regards,
 Krzysztof
