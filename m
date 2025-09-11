@@ -1,124 +1,304 @@
-Return-Path: <linux-kernel+bounces-812778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D312DB53C80
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:48:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42CD8B53C82
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FBB61BC43A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:48:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 223ADAC20F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72DD261B71;
-	Thu, 11 Sep 2025 19:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47392261B93;
+	Thu, 11 Sep 2025 19:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="CACiR/2O"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fl2JtG+k"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310FA2DC780;
-	Thu, 11 Sep 2025 19:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDBF4A04;
+	Thu, 11 Sep 2025 19:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757620080; cv=none; b=HnHmBVNQOMC4LUY0wk6qtDoOyZDVn/tuAygpI9u77/ofbIh6NMdMHlGzMTc6mirVpq5w1Tu+Ch5+i4JG7M/CAOpgJNtfGyQ2Y6+fK7HvFXF0nwzI6gv7BZPzbobsSREugo0WhPPhzh3xPyVB+ZgHvahZzyHf0CuzrIxs4wJ9DiA=
+	t=1757620121; cv=none; b=HZRKDt0en4+O4PO9MF9ljEblb4+m1OpGSDmF+5Jd5qOFYkqBpAJgysAjPVD3mR8hYmMqejO2JVUSbYOGQyardxP8Rj2EsI42eFBNRtWmVICmi25kWEILsoScYIyg5Gp8vqSryf6u8pchV7hCYtb9d3nFGyqMlaKAVt4e+AQPVu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757620080; c=relaxed/simple;
-	bh=eep2ZyyHKwsadbfskNNkjdITDV953pA8vh5UGir4adY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XYGUjImYowqXpNHjVFyz5Ntp1Ba09hio6n/H1JAIX0/2n3xbuo/BrQGfmr5vS3SM4vlb7lzQw3NpDWMzNdeqxI8MVmlQXJCl1niIjjbraV4VET+akMf2ohNrvm/h2yH+SN/oIkm+5ZWZrPSK+4Nas+9dFnERnTpktbFBXWSw8rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=CACiR/2O; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3654140B01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1757620075; bh=VLix0HeEfh5QxyT/kSxDA1EzDXRWZ8h9TgrVv6Ps8Cw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=CACiR/2O1sqIa1d88W0ILwv97CJNrUHGohbq7Iv445VJrxvm6fkMfeVjVO4Hlu1YK
-	 hs1Gs5odos9/HegcPALWZCjpZT4XIje1O0tYKHSVZccO8rTRGUQgWnnxvbUabXW+qK
-	 VOSI6rMCb2oq2yfcI+WO1zNadsI9DQx5QFbIe5MqkZ1Q5/aLcuB61R7zLk7KA0sAMe
-	 QMxVnO2qzu9c8kwf141lnL8xoVbaR6HgRuuw38Mms6X3F4W6U1eVZb89MeavZTrJ1y
-	 ZVQAGn9v0/j/cUdVm++ucR64JJOkJyaL0+KD55Bj3FbeX+7pe97EkH0uIaVlXYJUu+
-	 dZhcQfHEndJVA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 3654140B01;
-	Thu, 11 Sep 2025 19:47:55 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Jani Nikula <jani.nikula@linux.intel.com>, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Alice
- Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, Trevor Gross <tmgross@umich.edu>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v4 08/19] tools/docs: sphinx-build-wrapper: add a
- wrapper for sphinx-build
-In-Reply-To: <a1333c717bb5bcea7f7c616cbf8604fa259c3158@intel.com>
-References: <cover.1756969623.git.mchehab+huawei@kernel.org>
- <e019f951190a732f9ac0b21bcda7e49af3bd5cbd.1756969623.git.mchehab+huawei@kernel.org>
- <e13837a0ac46dffe39c600d11fdf33f538bdc9c3@intel.com>
- <20250910145926.453f5441@foz.lan>
- <45888ca6c88071c754784495b4ef69460ea67b4f@intel.com>
- <fuv4p45tvjfdvwu2625s2l2kvcw64p4ohherlwyum3vmogmrfz@yb47nt66xgm6>
- <87zfb1p0r3.fsf@trenco.lwn.net>
- <a1333c717bb5bcea7f7c616cbf8604fa259c3158@intel.com>
-Date: Thu, 11 Sep 2025 13:47:54 -0600
-Message-ID: <87ldmkojo5.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1757620121; c=relaxed/simple;
+	bh=uQOsad0nz/KYJh5/hj8ZWUnDMLnxZP/+FjfS1WQCY4c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=paPCKBMc0PyZBbXQxBi+Kh1DiMIx0xj6RYKOMp3bof8f3iRLN34dnVIa6TZHY5pJTp+DF9Ikkw37sVB4MJZvTH4KZpICYex4xkzG9lEBtLdvNFpxxbNRQF4FJzr8AknTzwL2v/sG23/bvecFPU4kLtZIitKBeaGpyvYc994X9GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fl2JtG+k; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757620119; x=1789156119;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=uQOsad0nz/KYJh5/hj8ZWUnDMLnxZP/+FjfS1WQCY4c=;
+  b=Fl2JtG+kPHCLWFNQkfIsrkb71TuKmFAUP7shPwWAK9XjXxC57/b/tmAD
+   /7763ZsuUUTkBjVyP07yJhgoq32zPbLLVnDLrN9RsL/21ktZFzLZvAeZl
+   YexMWnpwjXYNy5pMOAbag2ZnxzubqpoXmglWX+ZvblYPS4oaj4lyLtZSJ
+   Ym1sJTuffVudE+TQgzAHT6rnCoZFSPmYjn+VE38IIIIOcEhvo8EIWdbvs
+   zk52pyVtNsv1MpUzCIesmF4OudgJ3bOe4uP6MrRlvB7bzx0KwxKS04ktv
+   TYNCXnmVUA+otfwLCbXFoXlPqGcqQCaOZGY5CJMTOEs82Ex+BMGBq44/y
+   g==;
+X-CSE-ConnectionGUID: 4le8YkKISs6yAS5gNPvWZA==
+X-CSE-MsgGUID: Qkt8Yp4LQhiPgDQpoDjvdg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11550"; a="85404405"
+X-IronPort-AV: E=Sophos;i="6.18,258,1751266800"; 
+   d="scan'208";a="85404405"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 12:48:38 -0700
+X-CSE-ConnectionGUID: 4PHrH3kaQJacKju9XG3LPA==
+X-CSE-MsgGUID: 5vrI3QVzTNqG5Vpf5yhzQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,258,1751266800"; 
+   d="scan'208";a="172958126"
+Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.111.21]) ([10.125.111.21])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 12:48:37 -0700
+Message-ID: <a439ac23-2f8e-463c-a3bb-467c27b4a8b6@intel.com>
+Date: Thu, 11 Sep 2025 12:48:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 21/23] CXL/PCI: Introduce CXL uncorrectable protocol
+ error recovery
+To: "Bowman, Terry" <terry.bowman@amd.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
+ ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
+ rrichter@amd.com, dan.carpenter@linaro.org,
+ PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
+ Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+ <20250827013539.903682-22-terry.bowman@amd.com>
+ <7a59101b-4ccd-4d86-b97b-21602ebcd1a5@intel.com>
+ <67d11134-8916-4ef8-ab78-06bcbb87d9cb@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <67d11134-8916-4ef8-ab78-06bcbb87d9cb@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Jani Nikula <jani.nikula@linux.intel.com> writes:
 
-> On Thu, 11 Sep 2025, Jonathan Corbet <corbet@lwn.net> wrote:
->> A couple of times I have looked into using intersphinx, making each book
->> into an actually separate book.  The thing I always run into is that
->> doing a complete docs build, with working references, would require
->> building everything twice.  This is probably worth another attempt one
->> of these years...
->
-> I think the main factor in that should be whether it makes sense from
-> overall documentation standpoint, not the technical details.
->
-> Having several books might make sense. It might even be helpful in
-> organizing the documentation by audiences. But having the granularity of
-> SPHINXDIRS with that would be overkill. And there needs to be a book to
-> bring them together, and link to the other books, acting as the landing
-> page.
 
-Well, I think that the number of existing directories needs to be
-reduced rather further.  I made progress in that direction by coalescing
-all the arch docs under Documentation/arch/.  I would like to do
-something similar with all the device-specific docs, creating
-Documentation/devices/.  Then we start to get to a reasonable number of
-books.
+On 9/11/25 12:19 PM, Bowman, Terry wrote:
+> 
+> 
+> On 9/3/2025 5:30 PM, Dave Jiang wrote:
+>>
+>> On 8/26/25 6:35 PM, Terry Bowman wrote:
+>>> Populate the cxl_do_recovery() function with uncorrectable protocol error (UCE)
+>>> handling. Follow similar design as found in PCIe error driver,
+>>> pcie_do_recovery(). One difference is cxl_do_recovery() will treat all UCEs
+>>> as fatal with a kernel panic. This is to prevent corruption on CXL memory.
+>>>
+>>> Introduce cxl_walk_port(). Make this analogous to pci_walk_bridge() but walking
+>>> CXL ports instead. This will iterate through the CXL topology from the
+>>> erroring device through the downstream CXL Ports and Endpoints.
+>>>
+>>> Export pci_aer_clear_fatal_status() for CXL to use if a UCE is not found.
+>>>
+>>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+>>>
+>>> ---
+>>> Changes in v10->v11:
+>>> - pci_ers_merge_results() - Move to earlier patch
+>>> ---
+>>>  drivers/cxl/core/port.c |  1 +
+>>>  drivers/cxl/core/ras.c  | 94 +++++++++++++++++++++++++++++++++++++++++
+>>>  drivers/pci/pci.h       |  2 -
+>>>  include/linux/aer.h     |  2 +
+>>>  4 files changed, 97 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+>>> index 758fb73374c1..085c8620a797 100644
+>>> --- a/drivers/cxl/core/port.c
+>>> +++ b/drivers/cxl/core/port.c
+>>> @@ -1347,6 +1347,7 @@ struct cxl_port *find_cxl_port(struct device *dport_dev,
+>>>  	port = __find_cxl_port(&ctx);
+>>>  	return port;
+>>>  }
+>>> +EXPORT_SYMBOL_NS_GPL(find_cxl_port, "CXL");
+>>>  
+>>>  static struct cxl_port *find_cxl_port_at(struct cxl_port *parent_port,
+>>>  					 struct device *dport_dev,
+>>> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+>>> index 536ca9c815ce..3da675f72616 100644
+>>> --- a/drivers/cxl/core/ras.c
+>>> +++ b/drivers/cxl/core/ras.c
+>>> @@ -6,6 +6,7 @@
+>>>  #include <cxl/event.h>
+>>>  #include <cxlmem.h>
+>>>  #include <cxlpci.h>
+>>> +#include <cxl.h>
+>>>  #include "trace.h"
+>>>  
+>>>  static void cxl_cper_trace_corr_port_prot_err(struct pci_dev *pdev,
+>>> @@ -468,8 +469,101 @@ void cxl_endpoint_port_init_ras(struct cxl_port *ep)
+>>>  }
+>>>  EXPORT_SYMBOL_NS_GPL(cxl_endpoint_port_init_ras, "CXL");
+>>>  
+>>> +static int cxl_report_error_detected(struct device *dev, void *data)
+>>> +{
+>>> +	struct pci_dev *pdev = to_pci_dev(dev);
+>>> +	pci_ers_result_t vote, *result = data;
+>>> +
+>>> +	guard(device)(dev);
+>>> +
+>>> +	if (pci_pcie_type(pdev) == PCI_EXP_TYPE_ENDPOINT)
+>>> +		vote = cxl_error_detected(dev);
+>>> +	else
+>>> +		vote = cxl_port_error_detected(dev);
+>>> +
+>>> +	vote = cxl_error_detected(dev);
+>>> +	*result = pci_ers_merge_result(*result, vote);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int match_port_by_parent_dport(struct device *dev, const void *dport_dev)
+>>> +{
+>>> +	struct cxl_port *port;
+>>> +
+>>> +	if (!is_cxl_port(dev))
+>>> +		return 0;
+>>> +
+>>> +	port = to_cxl_port(dev);
+>>> +
+>>> +	return port->parent_dport->dport_dev == dport_dev;
+>>> +}
+>>> +
+>>> +static void cxl_walk_port(struct device *port_dev,
+>>> +			  int (*cb)(struct device *, void *),
+>>> +			  void *userdata)
+>>> +{
+>>> +	struct cxl_dport *dport = NULL;
+>>> +	struct cxl_port *port;
+>>> +	unsigned long index;
+>>> +
+>>> +	if (!port_dev)
+>>> +		return;
+>>> +
+>>> +	port = to_cxl_port(port_dev);
+>>> +	if (port->uport_dev && dev_is_pci(port->uport_dev))
+>>> +		cb(port->uport_dev, userdata);
+>>> +
+>>> +	xa_for_each(&port->dports, index, dport)
+>>> +	{
+>>> +		struct device *child_port_dev __free(put_device) =
+>>> +			bus_find_device(&cxl_bus_type, &port->dev, dport,
+>>> +					match_port_by_parent_dport);
+>>> +
+>>> +		cb(dport->dport_dev, userdata);
+>>> +
+>>> +		cxl_walk_port(child_port_dev, cxl_report_error_detected, userdata);
+>>> +	}
+>>> +
+>>> +	if (is_cxl_endpoint(port))
+>>> +		cb(port->uport_dev->parent, userdata);
+>>> +}
+>>> +
+>>>  static void cxl_do_recovery(struct device *dev)
+>>>  {
+>>> +	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
+>>> +	struct pci_dev *pdev = to_pci_dev(dev);
+>>> +	struct cxl_dport *dport;
+>>> +	struct cxl_port *port;
+>>> +
+>>> +	if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT) ||
+>>> +	    (pci_pcie_type(pdev) == PCI_EXP_TYPE_DOWNSTREAM)) {
+>>> +		port = find_cxl_port(&pdev->dev, &dport);
+>>> +	} else	if (pci_pcie_type(pdev) == PCI_EXP_TYPE_UPSTREAM) {
+>>> +		struct device *port_dev = bus_find_device(&cxl_bus_type, NULL,
+>>> +							  &pdev->dev, match_uport);
+>>> +		port = to_cxl_port(port_dev);
+>>> +	}
+>> Do we not attempt recovery if the device is an endpoint? Is it because it is handled directly by AER callback of the cxl_pci driver? Should endpoint error just not be forwarded from the AER kfifo producer instead of being checked on the consumer end after going through the kfifo mechanism?
+>>
+>> DJ
+> 
+> The UCE fatal case is handled in the PCIe AER handling callback which is 
+> what I used for testing. I need to add EP support here for use in the EP 
+> UCE non-fatal case. 
 
-> I believe it should be possible to generate the intersphinx inventory
-> without generating the full html or pdf documentation. So I don't think
-> it's actually two complete docs builds. It might speed things up to have
-> a number of independent documentation builds.
+I think that's what's missing. My point is why forward the information to just be dropped. Maybe a comment to make note of that if the support is not there yet.
 
-That's a good point, I hadn't looked into that part.  The builder phase
-takes a lot of the time, if that could be cut out things would go
-faster. 
+DJ
 
-> As to the working references, IIUC partial builds with SPHINXDIRS
-> doesn't get that part right if there are references outside of the
-> designated dirs, leading to warnings.
+> 
+> I don't think bypassing the kfifo for EPs is ideal. The only headache with 
+> the EPs is EP fatal UCE is handled in PCIe AER callbacks. We may be able to 
+> improve with future series by adding logic to detect the link health and then 
+> access if ok in the UCE fatal case. 
+> 
+> Terry
+> 
+>>> +
+>>> +	if (!port)
+>>> +		return;
+>>> +
+>>> +	cxl_walk_port(&port->dev, cxl_report_error_detected, &status);
+>>> +	if (status == PCI_ERS_RESULT_PANIC)
+>>> +		panic("CXL cachemem error.");
+>>> +
+>>> +	/*
+>>> +	 * If we have native control of AER, clear error status in the device
+>>> +	 * that detected the error.  If the platform retained control of AER,
+>>> +	 * it is responsible for clearing this status.  In that case, the
+>>> +	 * signaling device may not even be visible to the OS.
+>>> +	 */
+>>> +	if (cxl_error_is_native(pdev)) {
+>>> +		pcie_clear_device_status(pdev);
+>>> +		pci_aer_clear_nonfatal_status(pdev);
+>>> +		pci_aer_clear_fatal_status(pdev);
+>>> +	}
+>>> +	put_device(&port->dev);
+>>>  }
+>>>  
+>>>  static void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base)
+>>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>>> index 69ff7c2d214f..0c4f73dd645f 100644
+>>> --- a/drivers/pci/pci.h
+>>> +++ b/drivers/pci/pci.h
+>>> @@ -1170,13 +1170,11 @@ static inline void cxl_rch_enable_rcec(struct pci_dev *rcec) { }
+>>>  
+>>>  #ifdef CONFIG_CXL_RAS
+>>>  void pci_aer_unmask_internal_errors(struct pci_dev *dev);
+>>> -bool cxl_error_is_native(struct pci_dev *dev);
+>>>  bool is_internal_error(struct aer_err_info *info);
+>>>  bool is_cxl_error(struct pci_dev *pdev, struct aer_err_info *info);
+>>>  void cxl_forward_error(struct pci_dev *pdev, struct aer_err_info *info);
+>>>  #else
+>>>  static inline void pci_aer_unmask_internal_errors(struct pci_dev *dev) { }
+>>> -static inline bool cxl_error_is_native(struct pci_dev *dev) { return false; }
+>>>  static inline bool is_internal_error(struct aer_err_info *info) { return false; }
+>>>  static inline bool is_cxl_error(struct pci_dev *pdev, struct aer_err_info *info) { return false; }
+>>>  static inline void cxl_forward_error(struct pci_dev *pdev, struct aer_err_info *info) { }
+>>> diff --git a/include/linux/aer.h b/include/linux/aer.h
+>>> index 1f79f0be4bf7..751a026fea73 100644
+>>> --- a/include/linux/aer.h
+>>> +++ b/include/linux/aer.h
+>>> @@ -81,10 +81,12 @@ static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
+>>>  int cxl_proto_err_kfifo_get(struct cxl_proto_err_work_data *wd);
+>>>  void cxl_register_proto_err_work(struct work_struct *work);
+>>>  void cxl_unregister_proto_err_work(void);
+>>> +bool cxl_error_is_native(struct pci_dev *dev);
+>>>  #else
+>>>  static inline int cxl_proto_err_kfifo_get(struct cxl_proto_err_work_data *wd) { return 0; }
+>>>  static inline void cxl_register_proto_err_work(struct work_struct *work) { }
+>>>  static inline void cxl_unregister_proto_err_work(void) { }
+>>> +static inline bool cxl_error_is_native(struct pci_dev *dev) { return false; }
+>>>  #endif
+>>>  
+>>>  void pci_print_aer(struct pci_dev *dev, int aer_severity,
+> 
 
-That is true.  My point though is that, to get the references right with
-a *full* build, a two-pass approach is needed though, as you suggest,
-perhaps the first pass could be faster.
-
-Thanks,
-
-jon
 
