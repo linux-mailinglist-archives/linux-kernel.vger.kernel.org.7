@@ -1,114 +1,123 @@
-Return-Path: <linux-kernel+bounces-812309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BFD3B5360E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:45:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F7EB53611
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B215B17F398
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:44:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C896563FAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7D2342C95;
-	Thu, 11 Sep 2025 14:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CF134321C;
+	Thu, 11 Sep 2025 14:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sQpF3d/z"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJm2WOiw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130122BAF4;
-	Thu, 11 Sep 2025 14:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A45A3431E4;
+	Thu, 11 Sep 2025 14:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757601872; cv=none; b=QrG47DPk7TlHuGfX11MAm6UzyeELMRC9xV1ux6Icu1IY0WFxBv6uTpV8Enx62g0+njAI+QUMHwLOg2lkJyUz4sqVJ7fHLDtWDiNc0sDUZciAhXsAqY5tVUxNbouumoP6xAmExcspTKvxylfR6f476/ak4hCaMXVymxzeM6HeyKo=
+	t=1757601873; cv=none; b=PVzUlloGyB5a7aC1Skr8gxsy2BaRRj+x4pY3lzXaUbReumabNpRb8kzsoD+pNuf6Zit67g+deubS/Aylw5SirfNp7b9aGrqqCEprdbZ91G7B0ClHWg0b3Kl1PPWQadFu8B1xifkkb8pzWsT8VRnpTvRiv5g8RA06zn6FWYGYIVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757601872; c=relaxed/simple;
-	bh=m3ajYNmfet3CdR3EZgfsuom2tyz84b+auKpeWzRrHTA=;
+	s=arc-20240116; t=1757601873; c=relaxed/simple;
+	bh=lmmtnK8fJFLpac/RpjkQ9F3NKtL5pl6Ms4pIay15Owg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4CSQi1zTW0AjIL27IhaGkXVksRkzUeH1KfNZc8y1I8qMjrgQCjERJuOxfQaI3ASJ4J5QrZrnrVc5vnJ5UmXo82muafQCotEOXbG88lErlFUcZya+nWLeu8xb6jCeRkCGK7X/dMHDTJ9LZHXk/ZpTg37la5v4opfGJVNa+u8X6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sQpF3d/z; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=X471W6C5BJj+29v84eIqNLNrrNpVlRO4QaYvcFi48zE=; b=sQpF3d/z1GhHDsLdbG/bw/wEgu
-	3mVTMTS+Ablfa3ymbUs2jnkxJvB3GfJFmDtxD8gobIGumsD4ZSBhlxsHZU6AxQeQW9wMbi1SWEESH
-	vs7N0PKwIHO84viHz6oQ9OixJpRRgWYZKDcY3g0trVR1Nd59Foi0Sgs2Q+eFDUTLFUik=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uwiX2-00862T-QQ; Thu, 11 Sep 2025 16:44:16 +0200
-Date: Thu, 11 Sep 2025 16:44:16 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Suraj Gupta <suraj.gupta2@amd.com>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, michal.simek@amd.com,
-	radhey.shyam.pandey@amd.com, horms@kernel.org,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, harini.katakam@amd.com
-Subject: Re: [PATCH net-next 2/2] net: xilinx: axienet: Add inline comment
- for stats_lock mutex definition
-Message-ID: <633175ac-97c8-42d0-8f3b-767e89aa4132@lunn.ch>
-References: <20250911072815.3119843-1-suraj.gupta2@amd.com>
- <20250911072815.3119843-3-suraj.gupta2@amd.com>
- <0dc424bf-c19b-4eeb-82db-88bff4f85d46@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XUhLBpSHoRqCw8R/R6C9Iuq2ODLn3Pm2vmpf5f8H+maWoJiayVdTbX3Ocqz8xQYZuRyynohssovnUeXjcK+tx7WT5d2badN2slSoAzgbflsH9kplu6Mx9P5q5YiJXi7+0h9zXVaT8ro8FhI14NO9PSsXR2A2L/u2ZqRNQy8+1Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJm2WOiw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4749EC4CEF1;
+	Thu, 11 Sep 2025 14:44:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757601872;
+	bh=lmmtnK8fJFLpac/RpjkQ9F3NKtL5pl6Ms4pIay15Owg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NJm2WOiwIll1IOIO859Q8G3JU7MYIs/uUjDeOZ0SLERwPXoldqPhX/jvkbsFm/r9m
+	 cHu1Jz7esykQZSginWKI8v4E/vaTZaEUdPfXf9R7I8SGalTBLoIaaFviP82NB9C0Ro
+	 NJAbKhyUD/cKyY7ChvmSCLkD8ksi8wUDDbuCVjOzHrb3e33T5dQgJw2vc1LZixY7Fz
+	 wyuYwDQGjVxm1uD8dErSh2p8lex8NUFpMbj7XbHYIEdOfJLahMatp6nOGHOaQRsI+7
+	 v6tvmuLIWUyZfOcuaEJ4GCrOvToaIq7nRiMi6Pmup7SZ2iSmZZvAzfNpQ7y71TGLtp
+	 /CCr2grOyk8eQ==
+Date: Thu, 11 Sep 2025 15:44:28 +0100
+From: Lee Jones <lee@kernel.org>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Srinivas Kandagatla <srini@kernel.org>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] nvmem: add driver for the eeprom in qnap-mcu
+ controllers
+Message-ID: <20250911144428.GN9224@google.com>
+References: <20250730172248.1875122-1-heiko@sntech.de>
+ <8721df1d-d8db-4b05-b450-107d936d8715@kernel.org>
+ <20250911084119.GF9224@google.com>
+ <2273730.1BCLMh4Saa@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0dc424bf-c19b-4eeb-82db-88bff4f85d46@linux.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2273730.1BCLMh4Saa@diego>
 
-On Thu, Sep 11, 2025 at 10:35:22AM -0400, Sean Anderson wrote:
-> On 9/11/25 03:28, Suraj Gupta wrote:
-> > Add inline comment to document the purpose of the stats_lock mutex in
-> > the axienet_local structure. This mutex protects the hw_stats_seqcount
-> > sequence counter used for hardware statistics synchronization.
-> > 
-> > Fixes checkpatch warning:
-> > CHECK: struct mutex definition without comment
-> > 
-> > Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> > ---
-> >  drivers/net/ethernet/xilinx/xilinx_axienet.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> > index 5ff742103beb..99b9c27bbd60 100644
-> > --- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> > +++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> > @@ -598,7 +598,7 @@ struct axienet_local {
-> >  
-> >  	u64 hw_stat_base[STAT_COUNT];
-> >  	u32 hw_last_counter[STAT_COUNT];
-> > -	seqcount_mutex_t hw_stats_seqcount;
-> > +	seqcount_mutex_t hw_stats_seqcount; /* Lock for hardware statistics */
-> >  	struct mutex stats_lock;
-> >  	struct delayed_work stats_work;
-> >  	bool reset_in_progress;
+On Thu, 11 Sep 2025, Heiko Stübner wrote:
+
+> Hi Lee,
 > 
-> NAK. This is already documented in the kernel-doc comment.
+> Am Donnerstag, 11. September 2025, 10:41:19 Mitteleuropäische Sommerzeit schrieb Lee Jones:
+> > On Tue, 09 Sep 2025, Srinivas Kandagatla wrote:
+> > > On 7/30/25 6:22 PM, Heiko Stuebner wrote:
+> > > > The qnap-mcu also has an eeprom connected to it, that contains some
+> > > > specific product-information like the mac addresses for the network
+> > > > interfaces.
+> > > > 
+> > > > Add a nvmem driver for it.
+> > > > 
+> > > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > > > ---
+> > > >  drivers/mfd/qnap-mcu.c          |   1 +
+> > > >  drivers/nvmem/Kconfig           |   9 +++
+> > > >  drivers/nvmem/Makefile          |   2 +
+> > > >  drivers/nvmem/qnap-mcu-eeprom.c | 110 ++++++++++++++++++++++++++++++++
+> > > >  4 files changed, 122 insertions(+)
+> > > >  create mode 100644 drivers/nvmem/qnap-mcu-eeprom.c
+> > > > 
+> > > In case Lee you want to take this via MFD,
+> > > 
+> > > Acked-by: Srinivas Kandagatla <srini@kernel.org>
+> > 
+> > Actually this patch should be split up.
+> > 
+> > I'll take the MFD part, you can take the NVMEM part.
+> 
+> (1) the original problem was, that this patch essentially requires
+>   "mfd: qnap-mcu: Include linux/types.h in qnap-mcu.h shared header" [0]
+> to not break builds, hence was "supposed" go into the mfd tree after [0]
+> got applied.
+> 
+> But as we're close to -rc6 anyway, we can also just move things after the
+> next merge-window if that is better.
+> 
+> (2) For the splitting part, just to make sure I understand correctly, you'd
+> like the part of
+> 
+> @@ -346,6 +346,7 @@ static const struct qnap_mcu_variant qnap_ts433_mcu = {
+>  };
+>  
+>  static struct mfd_cell qnap_mcu_cells[] = {
+> +       { .name = "qnap-mcu-eeprom", },
+>         { .name = "qnap-mcu-input", },
+>         { .name = "qnap-mcu-leds", },
+>         { .name = "qnap-mcu-hwmon", }
+> 
+> to be its own patch for the mfd subsystem?
 
-Agreed. checkpatch is just a guide, it does get things wrong, and we
-don't insist it is 100% clean.
+Correct.
 
-And the existing comment is much more specific:
-
-   Sequence counter for @hw_stat_base, @hw_last_counter,
-   and @reset_in_progress.
-
-This makes it clear exactly what it should protect, and what it does
-not protect.
-
-    Andrew
-
----
-pw-bot: cr
+-- 
+Lee Jones [李琼斯]
 
