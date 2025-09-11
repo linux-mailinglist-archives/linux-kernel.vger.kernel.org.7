@@ -1,355 +1,175 @@
-Return-Path: <linux-kernel+bounces-811742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C5BB52D58
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:31:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B646B52D5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 965071C85714
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:32:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2285817C783
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A172EA754;
-	Thu, 11 Sep 2025 09:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaoX3LOV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2072EA464;
+	Thu, 11 Sep 2025 09:32:54 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B3B207A32;
-	Thu, 11 Sep 2025 09:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0330F207A32
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757583099; cv=none; b=lc8IRGGTXzLQniZHiBoMe9zTOgg/t/AgZ/GuzOxGxdnx+UbIpjX0mbSp21g3zGa9ntqe7tq9u4yA7DZJBhT1OIs8R56+N4IsgbSBv0r4IY0cZNmuXTuuWAr03HZXaIskNhTM86BVI8u3pdtcO+UgX3qdE13nKc4DVMjDyH9t/Ac=
+	t=1757583174; cv=none; b=SI7zeECyqf5NkMe9zPm5UbbqJXDXS4ltjg5wSzPbKn21TDSYe/43e6WO3mAwsfhDshJfmXQQaD8Yu+pTDzeXH4p9BBa4TFdR/PUcsylhdPU6YucEgD0w8/l2REANh/OFJflOGoOnn79EK3tmNS/8luO5rJGMsUeO4eujihwYFys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757583099; c=relaxed/simple;
-	bh=z75pw58mpU1J8jn8uDK81j/Jt6tUNtkYOdcRD35A4/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSlVXTxblyII5LZHMFb7yLqZR3c6WstVeVKfI+85SXyqyFF/bXUABRRs+zEiAIFD7Fg8iWBebfjMPvMrNVE2oqz8bjlO2+SD2vg+6R5i83mHOv8ct1OC2qWBGXvG9Pfs0CSNZfGJpMf4WaTbQJcDjdY/d2vaxbFTkMdhl52kQzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaoX3LOV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F021C4CEF0;
-	Thu, 11 Sep 2025 09:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757583099;
-	bh=z75pw58mpU1J8jn8uDK81j/Jt6tUNtkYOdcRD35A4/A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DaoX3LOV/jnceBoXDY0xHveKTV+2Iv/EfwWkiwJE6aNm57SGFK25WfhxafNju5RJy
-	 iz/QiR2A19eGrqXnNXpg+AyR+ipcRR0nBnXyEgJdGiMJmouIuaaA559rhYXeD/eF4+
-	 iyvnu5SQdc1qh0li51LCmsdDh4ByxqaIvEI7v0r5Lq96pqSX0IbpKTt+1gE6JAKAIB
-	 1utZ83kizHL1Yk7zSIF8IJuw3DNtG7Y3q+QjrFNF74VkPNT+K5n0V4sq8kRQ8liGfA
-	 x22V1tXu98kmCdVkkKN+gdULo1tIH7pCd//ufri8sZ6fVTfJbTTiA9A7J4UqtEBYVj
-	 4mRQg1Pq+Wq3w==
-Date: Thu, 11 Sep 2025 11:31:30 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 27/32] nsfs: support file handles
-Message-ID: <20250911-werken-raubzug-64735473739c@brauner>
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-27-4dd56e7359d8@kernel.org>
- <CAOQ4uxgtQQa-jzsnTBxgUTPzgtCiAaH8X6ffMqd+1Y5Jjy0dmQ@mail.gmail.com>
+	s=arc-20240116; t=1757583174; c=relaxed/simple;
+	bh=+xy9vSCW1vOiGdtWUI+vgUyp2VkBQCyz6hSxHM45Vxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nvlCWC3fOgaAQruBmVCu+tN4SRlos7+c7vzgVICtEC2aM5czYF7oam3SO9ag07VjugEPA5Mkiuv6AVhoabaV7sPYyphQSX+BjbARF4z+kvsgLx9XfxOsznVakGVRRl86WkaNZygCyuY/hmA8HkonTfeEozpe8UW68hvrBw+O338=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cMsfy2fm9z2CgjF;
+	Thu, 11 Sep 2025 17:28:10 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0CA4F1400CB;
+	Thu, 11 Sep 2025 17:32:43 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 11 Sep 2025 17:32:42 +0800
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 11 Sep 2025 17:32:42 +0800
+Message-ID: <8bbfd02f-138d-420c-b456-10d0c913f46e@huawei.com>
+Date: Thu, 11 Sep 2025 17:32:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgtQQa-jzsnTBxgUTPzgtCiAaH8X6ffMqd+1Y5Jjy0dmQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 drm-dp 02/11] drm/hisilicon/hibmc: fix dp
+ probabilistical detect errors after HPD irq
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <fengsheng5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20250813094238.3722345-1-shiyongbang@huawei.com>
+ <20250813094238.3722345-3-shiyongbang@huawei.com>
+ <aayi7zjrmru2ancexrqmcutams6ohde3nrkhqacixwp45dsk4v@7ig6hqzahdxf>
+ <1dd93bb7-4f67-4b9b-8b6a-d7c5c77cf807@huawei.com>
+ <ce47v3y77uc4dunlwyvmfe6j7d7mza4zfrbvu5dz67t66jdlop@vqgv47saj37i>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <ce47v3y77uc4dunlwyvmfe6j7d7mza4zfrbvu5dz67t66jdlop@vqgv47saj37i>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-On Wed, Sep 10, 2025 at 07:21:22PM +0200, Amir Goldstein wrote:
-> On Wed, Sep 10, 2025 at 4:39 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > A while ago we added support for file handles to pidfs so pidfds can be
-> > encoded and decoded as file handles. Userspace has adopted this quickly
-> > and it's proven very useful.
-> 
-> > Pidfd file handles are exhaustive meaning
-> > they don't require a handle on another pidfd to pass to
-> > open_by_handle_at() so it can derive the filesystem to decode in.
-> >
-> > Implement the exhaustive file handles for namespaces as well.
-> 
-> I think you decide to split the "exhaustive" part to another patch,
-> so better drop this paragraph?
 
-Yes, good point. I've dont that.
+> On Thu, Aug 14, 2025 at 08:19:41PM +0800, Yongbang Shi wrote:
+>>> On Wed, Aug 13, 2025 at 05:42:29PM +0800, Yongbang Shi wrote:
+>>>> From: Baihan Li <libaihan@huawei.com>
+>>>>
+>>>> The debouncing when HPD pulled out still remains sometimes, 200ms still can
+>>>> not ensure helper_detect() is correct. So add a flag to hold the sink
+>>>> status, and changed detect_ctx() functions by using flag to check status.
+>>> THis doesn't explain what is wrong with
+>>> drm_connector_helper_detect_from_ddc(). In the end, this function
+>>> doesn't use the HPD pin.
+>> I'm sorry about the misunderstanding.
+>> The issue is that after plugging or unplugging the monitor, the driver takes no action sometimes
+>> even though an interrupt is triggered. The root cause is that drm_connector_helper_detect_from_ddc()
+>> still returns connected status when the monitor is unplugged.
+>> And I will fix the way in the end.
+> Can you perform a normal DP detection: read DPCD and check that there is
+> a DPRX attached and that it's either non-branch device or it has one or
+> more sinks?
 
-> I am missing an explanation about the permissions for
-> opening these file handles.
-> 
-> My understanding of the code is that the opener needs to meet one of
-> the conditions:
-> 1. user has CAP_SYS_ADMIN in the userns owning the opened namespace
-> 2. current task is in the opened namespace
+I'm very sorry that I didn't get the last sentence's asking before.
+It's a non-branch device. We just connect a DP monitor.
 
-Yes.
+Thanks,
+Baihan Li!
 
-> 
-> But I do not fully understand the rationale behind the 2nd condition,
-> that is, when is it useful?
-
-A caller is always able to open a file descriptor to it's own set of
-namespaces. File handles will behave the same way.
-
-> And as far as I can tell, your selftest does not cover this condition
-> (only both true or both false)?
-
-I've added this now.
-
-> 
-> I suggest to start with allowing only the useful and important
-> cases, so if cond #1 is useful enough, drop cond #2 and we can add
-> it later if needed and then your selftests already cover cond #1 true and false.
-> 
-> >
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> 
-> After documenting the permissions, with ot without dropping cond #2
-> feel free to add:
-> 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-Thanks!
-
-> 
-> > ---
-> >  fs/nsfs.c                | 176 +++++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/exportfs.h |   6 ++
-> >  2 files changed, 182 insertions(+)
-> >
-> > diff --git a/fs/nsfs.c b/fs/nsfs.c
-> > index 6f8008177133..a1585a2f4f03 100644
-> > --- a/fs/nsfs.c
-> > +++ b/fs/nsfs.c
-> > @@ -13,6 +13,12 @@
-> >  #include <linux/nsfs.h>
-> >  #include <linux/uaccess.h>
-> >  #include <linux/mnt_namespace.h>
-> > +#include <linux/ipc_namespace.h>
-> > +#include <linux/time_namespace.h>
-> > +#include <linux/utsname.h>
-> > +#include <linux/exportfs.h>
-> > +#include <linux/nstree.h>
-> > +#include <net/net_namespace.h>
-> >
-> >  #include "mount.h"
-> >  #include "internal.h"
-> > @@ -417,12 +423,182 @@ static const struct stashed_operations nsfs_stashed_ops = {
-> >         .put_data = nsfs_put_data,
-> >  };
-> >
-> > +struct nsfs_fid {
-> > +       u64 ns_id;
-> > +       u32 ns_type;
-> > +       u32 ns_inum;
-> > +} __attribute__ ((packed));
-> > +
-> > +#define NSFS_FID_SIZE (sizeof(struct nsfs_fid) / sizeof(u32))
-> > +
-> > +static int nsfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
-> > +                         struct inode *parent)
-> > +{
-> > +       struct nsfs_fid *fid = (struct nsfs_fid *)fh;
-> > +       struct ns_common *ns = inode->i_private;
-> > +       int len = *max_len;
-> > +
-> > +       /*
-> > +        * TODO:
-> > +        * For hierarchical namespaces we should start to encode the
-> > +        * parent namespace. Then userspace can walk a namespace
-> > +        * hierarchy purely based on file handles.
-> > +        */
-> > +       if (parent)
-> > +               return FILEID_INVALID;
-> > +
-> > +       if (len < NSFS_FID_SIZE) {
-> > +               *max_len = NSFS_FID_SIZE;
-> > +               return FILEID_INVALID;
-> > +       }
-> > +
-> > +       len  = NSFS_FID_SIZE;
-> > +
-> > +       fid->ns_id = ns->ns_id;
-> > +       fid->ns_type = ns->ops->type;
-> > +       fid->ns_inum = inode->i_ino;
-> > +       *max_len = len;
-> > +       return FILEID_NSFS;
-> > +}
-> > +
-> > +static struct dentry *nsfs_fh_to_dentry(struct super_block *sb, struct fid *fh,
-> > +                                       int fh_len, int fh_type)
-> > +{
-> > +       struct path path __free(path_put) = {};
-> > +       struct nsfs_fid *fid = (struct nsfs_fid *)fh;
-> > +       struct user_namespace *owning_ns = NULL;
-> > +       struct ns_common *ns;
-> > +       int ret;
-> > +
-> > +       if (fh_len < NSFS_FID_SIZE)
-> > +               return NULL;
-> > +
-> > +       switch (fh_type) {
-> > +       case FILEID_NSFS:
-> > +               break;
-> > +       default:
-> > +               return NULL;
-> > +       }
-> > +
-> > +       scoped_guard(rcu) {
-> > +               ns = ns_tree_lookup_rcu(fid->ns_id, fid->ns_type);
-> > +               if (!ns)
-> > +                       return NULL;
-> > +
-> > +               VFS_WARN_ON_ONCE(ns->ns_id != fid->ns_id);
-> > +               VFS_WARN_ON_ONCE(ns->ops->type != fid->ns_type);
-> > +               VFS_WARN_ON_ONCE(ns->inum != fid->ns_inum);
-> > +
-> > +               if (!refcount_inc_not_zero(&ns->count))
-> > +                       return NULL;
-> > +       }
-> > +
-> > +       switch (ns->ops->type) {
-> > +#ifdef CONFIG_CGROUPS
-> > +       case CLONE_NEWCGROUP:
-> > +               if (!current_in_namespace(to_cg_ns(ns)))
-> > +                       owning_ns = to_cg_ns(ns)->user_ns;
-> > +               break;
-> > +#endif
-> > +#ifdef CONFIG_IPC_NS
-> > +       case CLONE_NEWIPC:
-> > +               if (!current_in_namespace(to_ipc_ns(ns)))
-> > +                       owning_ns = to_ipc_ns(ns)->user_ns;
-> > +               break;
-> > +#endif
-> > +       case CLONE_NEWNS:
-> > +               if (!current_in_namespace(to_mnt_ns(ns)))
-> > +                       owning_ns = to_mnt_ns(ns)->user_ns;
-> > +               break;
-> > +#ifdef CONFIG_NET_NS
-> > +       case CLONE_NEWNET:
-> > +               if (!current_in_namespace(to_net_ns(ns)))
-> > +                       owning_ns = to_net_ns(ns)->user_ns;
-> > +               break;
-> > +#endif
-> > +#ifdef CONFIG_PID_NS
-> > +       case CLONE_NEWPID:
-> > +               if (!current_in_namespace(to_pid_ns(ns))) {
-> > +                       owning_ns = to_pid_ns(ns)->user_ns;
-> > +               } else if (!READ_ONCE(to_pid_ns(ns)->child_reaper)) {
-> > +                       ns->ops->put(ns);
-> > +                       return ERR_PTR(-EPERM);
-> > +               }
-> > +               break;
-> > +#endif
-> > +#ifdef CONFIG_TIME_NS
-> > +       case CLONE_NEWTIME:
-> > +               if (!current_in_namespace(to_time_ns(ns)))
-> > +                       owning_ns = to_time_ns(ns)->user_ns;
-> > +               break;
-> > +#endif
-> > +#ifdef CONFIG_USER_NS
-> > +       case CLONE_NEWUSER:
-> > +               if (!current_in_namespace(to_user_ns(ns)))
-> > +                       owning_ns = to_user_ns(ns);
-> > +               break;
-> > +#endif
-> > +#ifdef CONFIG_UTS_NS
-> > +       case CLONE_NEWUTS:
-> > +               if (!current_in_namespace(to_uts_ns(ns)))
-> > +                       owning_ns = to_uts_ns(ns)->user_ns;
-> > +               break;
-> > +#endif
-> > +       default:
-> > +               return ERR_PTR(-EOPNOTSUPP);
-> > +       }
-> > +
-> > +       if (owning_ns && !ns_capable(owning_ns, CAP_SYS_ADMIN)) {
-> > +               ns->ops->put(ns);
-> > +               return ERR_PTR(-EPERM);
-> > +       }
-> > +
-> > +       /* path_from_stashed() unconditionally consumes the reference. */
-> > +       ret = path_from_stashed(&ns->stashed, nsfs_mnt, ns, &path);
-> > +       if (ret)
-> > +               return ERR_PTR(ret);
-> > +
-> > +       return no_free_ptr(path.dentry);
-> > +}
-> > +
-> > +/*
-> > + * Make sure that we reject any nonsensical flags that users pass via
-> > + * open_by_handle_at().
-> > + */
-> > +#define VALID_FILE_HANDLE_OPEN_FLAGS \
-> > +       (O_RDONLY | O_WRONLY | O_RDWR | O_NONBLOCK | O_CLOEXEC | O_EXCL)
-> > +
-> > +static int nsfs_export_permission(struct handle_to_path_ctx *ctx,
-> > +                                  unsigned int oflags)
-> > +{
-> > +       if (oflags & ~(VALID_FILE_HANDLE_OPEN_FLAGS | O_LARGEFILE))
-> > +               return -EINVAL;
-> > +
-> > +       /* nsfs_fh_to_dentry() is performs further permission checks. */
-> > +       return 0;
-> > +}
-> > +
-> > +static struct file *nsfs_export_open(struct path *path, unsigned int oflags)
-> > +{
-> > +       /* Clear O_LARGEFILE as open_by_handle_at() forces it. */
-> > +       oflags &= ~O_LARGEFILE;
-> > +       return file_open_root(path, "", oflags, 0);
-> > +}
-> > +
-> > +static const struct export_operations nsfs_export_operations = {
-> > +       .encode_fh      = nsfs_encode_fh,
-> > +       .fh_to_dentry   = nsfs_fh_to_dentry,
-> > +       .open           = nsfs_export_open,
-> > +       .permission     = nsfs_export_permission,
-> > +};
-> > +
-> >  static int nsfs_init_fs_context(struct fs_context *fc)
-> >  {
-> >         struct pseudo_fs_context *ctx = init_pseudo(fc, NSFS_MAGIC);
-> >         if (!ctx)
-> >                 return -ENOMEM;
-> >         ctx->ops = &nsfs_ops;
-> > +       ctx->eops = &nsfs_export_operations;
-> >         ctx->dops = &ns_dentry_operations;
-> >         fc->s_fs_info = (void *)&nsfs_stashed_ops;
-> >         return 0;
-> > diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-> > index cfb0dd1ea49c..3aac58a520c7 100644
-> > --- a/include/linux/exportfs.h
-> > +++ b/include/linux/exportfs.h
-> > @@ -122,6 +122,12 @@ enum fid_type {
-> >         FILEID_BCACHEFS_WITHOUT_PARENT = 0xb1,
-> >         FILEID_BCACHEFS_WITH_PARENT = 0xb2,
-> >
-> > +       /*
-> > +        *
-> > +        * 64 bit namespace identifier, 32 bit namespace type, 32 bit inode number.
-> > +        */
-> > +       FILEID_NSFS = 0xf1,
-> > +
-> >         /*
-> >          * 64 bit unique kernfs id
-> >          */
-> >
-> > --
-> > 2.47.3
-> >
+>> Thanks,
+>> Baihan Li!
+>>
+>>
+>>>> Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
+>>>> Signed-off-by: Baihan Li <libaihan@huawei.com>
+>>>> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+>>>> ---
+>>>> ChangeLog:
+>>>> v3 -> v4:
+>>>>     - remove link training process in hibmc_dp_detect(), suggested by Dmitry Baryshkov.
+>>>>     - remove if (dev->registered), suggested by Dmitry Baryshkov.
+>>>> ---
+>>>>    drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  1 +
+>>>>    .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 19 ++++++++++++-------
+>>>>    2 files changed, 13 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>>>> index 665f5b166dfb..68867475508c 100644
+>>>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>>>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>>>> @@ -50,6 +50,7 @@ struct hibmc_dp {
+>>>>    	struct drm_dp_aux aux;
+>>>>    	struct hibmc_dp_cbar_cfg cfg;
+>>>>    	u32 irq_status;
+>>>> +	int hpd_status;
+>>>>    };
+>>>>    int hibmc_dp_hw_init(struct hibmc_dp *dp);
+>>>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>>>> index d06832e62e96..ded38530ecda 100644
+>>>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>>>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>>>> @@ -34,9 +34,12 @@ static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+>>>>    static int hibmc_dp_detect(struct drm_connector *connector,
+>>>>    			   struct drm_modeset_acquire_ctx *ctx, bool force)
+>>>>    {
+>>>> -	mdelay(200);
+>>>> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
+>>>> -	return drm_connector_helper_detect_from_ddc(connector, ctx, force);
+>>>> +	if (dp->hpd_status)
+>>>> +		return connector_status_connected;
+>>>> +	else
+>>>> +		return connector_status_disconnected;
+>>>>    }
+>>>>    static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
+>>>> @@ -115,21 +118,23 @@ irqreturn_t hibmc_dp_hpd_isr(int irq, void *arg)
+>>>>    {
+>>>>    	struct drm_device *dev = (struct drm_device *)arg;
+>>>>    	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
+>>>> +	struct hibmc_dp *dp = &priv->dp;
+>>>>    	int idx;
+>>>>    	if (!drm_dev_enter(dev, &idx))
+>>>>    		return -ENODEV;
+>>>> -	if (priv->dp.irq_status & DP_MASKED_SINK_HPD_PLUG_INT) {
+>>>> +	if (((dp->irq_status & DP_MASKED_SINK_HPD_PLUG_INT) && !dp->hpd_status)) {
+>>>>    		drm_dbg_dp(&priv->dev, "HPD IN isr occur!\n");
+>>>> -		hibmc_dp_hpd_cfg(&priv->dp);
+>>>> +		hibmc_dp_hpd_cfg(dp);
+>>>> +		dp->hpd_status = 1;
+>>>>    	} else {
+>>>>    		drm_dbg_dp(&priv->dev, "HPD OUT isr occur!\n");
+>>>> -		hibmc_dp_reset_link(&priv->dp);
+>>>> +		hibmc_dp_reset_link(dp);
+>>>> +		dp->hpd_status = 0;
+>>>>    	}
+>>>> -	if (dev->registered)
+>>>> -		drm_connector_helper_hpd_irq_event(&priv->dp.connector);
+>>>> +	drm_connector_helper_hpd_irq_event(&priv->dp.connector);
+>>>>    	drm_dev_exit(idx);
+>>>> -- 
+>>>> 2.33.0
+>>>>
 
