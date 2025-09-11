@@ -1,119 +1,117 @@
-Return-Path: <linux-kernel+bounces-812959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CDCB53EDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:55:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D109CB53EE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86A5B1B23A21
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0650B1CC24AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE552F3C2F;
-	Thu, 11 Sep 2025 22:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F7E2F546E;
+	Thu, 11 Sep 2025 23:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IE3kYxL3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DY1vZauC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1552279334;
-	Thu, 11 Sep 2025 22:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D38D2701C0
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 23:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757631299; cv=none; b=u/R4nAHAarxQRvxMSF444VcWEfspeB0Vr/u89AaaheTyRCh04LPY/f/ns+yrO/AqTed0UFLtgMq6GTr0n11Bi3vC/uDyS/4nyr62yxrWIgtgzdMqrhI5XFfNAfoCGZFtGy0QY4LF4vC0ed7CYME5VUCkTvB+ipWie6T3IKzzWtI=
+	t=1757631739; cv=none; b=fera3V26Pt288xv2EiA7k4Cgdkqpwk6JcSpIFAcjplpHOR9IaRYbBIdqh/GJjIOwJ9xvSKnRoZzHIFyUQSujxHp6VzPe33Kq44NbzUYh33JnmvW+3MUCiSJNQS5VwGGIGd1fbjNjJp9OtO0++q8FJkoSX2QwVtUoKmBc+q3rY8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757631299; c=relaxed/simple;
-	bh=9wA1L6p2PKuguKMkeIHlsJ7+VV03bsUAvg+8nv3mAs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Jsi65TPYgfzi3KoC4D1z5JLZDuwu+Wt9GszyCd69lZJlFjiRZtkLRgmoQ1lLc51+MzTOuVOtU5FQF4f2ln0gh8/itheLnIdtmyAE4NFGOmJhN34VeSBgb66jggF0tmWqwvV2veoI73pRwbQL42wwOKmEXqiaLJpvb8N8dZqeduY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IE3kYxL3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6991AC4CEF0;
-	Thu, 11 Sep 2025 22:54:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757631298;
-	bh=9wA1L6p2PKuguKMkeIHlsJ7+VV03bsUAvg+8nv3mAs8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=IE3kYxL3j5ylxA9XwchT2l/UJCmXRe7xcP+pSsmNkKbs9B0khvd6aAXnJYdRV4jv5
-	 MIYAIa4DXhp1LhxJYplXrppof8YZEgFKXTfGUJOWbYhvQMwSRo+oGplW5L/9uPO+Ob
-	 J1zmkFspz+G3t4gvkjatMQYdASc4LHFKt5boqHny3xeR/XKpEn+JapLaZkVe+1IKcC
-	 h9X4Ui5auC75CbrBY2fGH6MfFlTOwCXdZ6/kYduefY11XhKV+x+gS+b9saQHIgmhUj
-	 ImvnkQXASqmZppEdl0fCXggHM7BPhNIM4dTILDAzaVoLGy4Mh9LfiX7eNyQu9HtGI9
-	 nKr6b3EPhtZWw==
-Date: Thu, 11 Sep 2025 17:54:57 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Vernon Yang <vernon2gm@gmail.com>
-Cc: mahesh@linux.ibm.com, bhelgaas@google.com, oohall@gmail.com,
-	linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Vernon Yang <yanglincheng@kylinos.cn>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Robert Richter <rrichter@amd.com>, linux-cxl@vger.kernel.org,
-	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
-	Dongdong Liu <liudongdong3@huawei.com>
-Subject: Re: [PATCH] PCI/AER: Fix NULL pointer access by aer_info
-Message-ID: <20250911225457.GA1596803@bhelgaas>
+	s=arc-20240116; t=1757631739; c=relaxed/simple;
+	bh=51+j2G3jX1/iwGsa3g5HjuCNaEHNhi9fYTSqPl/nCho=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UUEofAEIM4Lj0Mg9201qGzBmZPmbUDcA6SAOwuCWxsybR+HkoLQpGR8B9k3jxBr7FvZE5mvEBfmG9XplaSJ9FmvUee4tfjCUT7JXRDsKAu62ERNHvTg7+wp4EpfXaMY59a6SdV62tDYLi7bQ7pJioyDN0BU1oAyYsc/0et+J8Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DY1vZauC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757631736;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jX539gy4ga1WpoOhYjw4dFCHXo3YsCbMfzCE1qBcZAA=;
+	b=DY1vZauCK3oHYvq5xq/zVVwGznupeWCKllpRVo7rOp3RE+Q4AmkUjk8csQJeHX0HTbx+Jg
+	lCQZmsQgYxmMSuhv9OQ2uanCJUUF9j/RMSUxP5JrRb+COhWQonU/q3JG9RFa2r8e07ZJaZ
+	cQgWpfRI/L81BN1J0FVkrGMRv+2E6zg=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-226-1Fv0UuF0PEavtQJteIAALQ-1; Thu,
+ 11 Sep 2025 19:02:11 -0400
+X-MC-Unique: 1Fv0UuF0PEavtQJteIAALQ-1
+X-Mimecast-MFC-AGG-ID: 1Fv0UuF0PEavtQJteIAALQ_1757631728
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D33C1955D86;
+	Thu, 11 Sep 2025 23:02:08 +0000 (UTC)
+Received: from chopper.redhat.com (unknown [10.22.64.100])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9DE721944CCA;
+	Thu, 11 Sep 2025 23:02:04 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
+	linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b)
+Subject: [PATCH v4 0/3] Batch 2 of rust gem shmem work
+Date: Thu, 11 Sep 2025 18:57:37 -0400
+Message-ID: <20250911230147.650077-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904182527.67371-1-vernon2gm@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-[+cc Terry, Robert, CXL list, Smita, Dongdong]
+Now that we're getting close to reaching the finish line for upstreaming
+the rust gem shmem bindings, we've got another batch of patches that
+have been reviewed and can be safely pushed to drm-rust-next
+independently of the rest of the series.
 
-On Fri, Sep 05, 2025 at 02:25:27AM +0800, Vernon Yang wrote:
-> From: Vernon Yang <yanglincheng@kylinos.cn>
-> 
-> The kzalloc(GFP_KERNEL) may return NULL, so all accesses to
-> aer_info->xxx will result in kernel panic. Fix it.
-> 
-> Signed-off-by: Vernon Yang <yanglincheng@kylinos.cn>
+These patches of course apply against the drm-rust-next branch, and are
+part of the gem shmem series, the latest version of which can be found
+here:
 
-Applied to pci/aer for v6.18, thanks, Vernon!
+https://patchwork.freedesktop.org/series/146465/
 
-Not directly related to this patch, but I'm concerned about some users
-of dev->aer_cap.
+Lyude Paul (3):
+  drm/gem/shmem: Extract drm_gem_shmem_init() from
+    drm_gem_shmem_create()
+  drm/gem/shmem: Extract drm_gem_shmem_release() from
+    drm_gem_shmem_free()
+  rust: Add dma_buf stub bindings
 
-Most users of dev->aer_cap either (a) check that it's set before using
-it or (b) are called in paths obviously only reachable via an AER
-interrupt.
+ drivers/gpu/drm/drm_gem_shmem_helper.c | 98 ++++++++++++++++++--------
+ include/drm/drm_gem_shmem_helper.h     |  2 +
+ rust/kernel/dma_buf.rs                 | 40 +++++++++++
+ rust/kernel/lib.rs                     |  1 +
+ 4 files changed, 111 insertions(+), 30 deletions(-)
+ create mode 100644 rust/kernel/dma_buf.rs
 
-But there are a few users of dev->aer_cap that use it without checking
-it for zero, and it's not obvious to me that it must be valid:
 
-  - pci_aer_unmask_internal_errors(), added by b7e9392d5d46 ("PCI/AER:
-    Unmask RCEC internal errors to enable RCH downstream port error
-    handling")
+base-commit: cf4fd52e323604ccfa8390917593e1fb965653ee
+-- 
+2.51.0
 
-  - dpc_get_aer_uncorrect_severity(), added by 9f08a5d896ce ("PCI/DPC:
-    Fix print AER status in DPC event handling")
-
-  - dpc_is_surprise_removal(), added by 2ae8fbbe1cd4 ("PCI/DPC: Ignore
-    Surprise Down error on hot removal")
-
-> ---
->  drivers/pci/pcie/aer.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index e286c197d716..aeb2534f50dd 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -383,6 +383,10 @@ void pci_aer_init(struct pci_dev *dev)
->  		return;
->  
->  	dev->aer_info = kzalloc(sizeof(*dev->aer_info), GFP_KERNEL);
-> +	if (!dev->aer_info) {
-> +		dev->aer_cap = 0;
-> +		return;
-> +	}
->  
->  	ratelimit_state_init(&dev->aer_info->correctable_ratelimit,
->  			     DEFAULT_RATELIMIT_INTERVAL, DEFAULT_RATELIMIT_BURST);
-> -- 
-> 2.51.0
-> 
 
