@@ -1,201 +1,127 @@
-Return-Path: <linux-kernel+bounces-812127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70783B5334D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:11:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DEE5B53353
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25E67A01A74
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:11:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 785BC1C261FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B70322C8B;
-	Thu, 11 Sep 2025 13:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCAE326D49;
+	Thu, 11 Sep 2025 13:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RY7o4wJK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cXyEsJH6"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAA11E51D;
-	Thu, 11 Sep 2025 13:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1B4324B16
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757596253; cv=none; b=IzlbYmWCNn9MA5iLfHG3sPRtgPkFeB5npla+Uaepb1Xq3ariy4dFUhgvnnpOdx9+JTFhz1IvdjiYTMG3KYe41OFaYoUAmchWHF8KpIh0AMCbU28jQ7f6JRoQHqOMcDw5aVIE9TRFGPiUkfgZjqrmPJ0SCWqvFjy6uOKTlIc8TVc=
+	t=1757596259; cv=none; b=rngDIt0quRyYriYHDn4KAgNLR3X8F2Ixrk67kTzHj3ZtBmBdg4Oq1n5G1bRd6RGQM9IcyK/M4LfHzKAVZ9DYh2PNY0UB6R0uDn5nEM2NaXp2JcDw4vTZ92TNY+/YHYUTOaXfQTFFYLpL9X1AF0dWXdC5+Y70CaisXJFBDfp40jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757596253; c=relaxed/simple;
-	bh=H4k8Q9rq9zdMEl/Dh5piHrCi/KZ2gwLETPP99gB1EbA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ENtVpwpSBfeK13Pi4SaaipZqRWSgfPSNoMxRFM9H1OYiWdUjWAA22ldt/0mivzMNUjdbcdbzWIcvWPBGWg+oQm56kNc+qluruI7fsyImHx6u7wM6XVv9biBK7Ck1jOUfD58oTXqeTyNaiYEL4ryqHx9+lvlOZ+phJYGjh1wqMyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RY7o4wJK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EFCAC4CEF7;
-	Thu, 11 Sep 2025 13:10:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757596252;
-	bh=H4k8Q9rq9zdMEl/Dh5piHrCi/KZ2gwLETPP99gB1EbA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RY7o4wJKOjS5DgP78W9KZNIiXa6FdVpifM6A1AWdML9p5GoVE62FIniyCJNzqoQSn
-	 U7Lik8009k1poAP52p4DKEHOa3hBTPhIBlQ67oLuO2VdLD9NvaAdarJr0D+TLldKw1
-	 tEF+/8/bb6y1AjfgaqxwoDjRGBs0Pk9hMiiGJFtQPNjirVah/1GsykSSYbw/6x+FyD
-	 X/tDtiCmuvDv1YI0tFf4qejc1Nx13NEtACWVPBXxJFSpWmv+ts4MPnMwCPWglp4mCa
-	 S0iScmXZ2kGA4y+Zgzq23opwRAuuI4Hh+dCLdZRl6GPxUiKblJdn/qNmrRbiErZEb8
-	 BOQ+bIJjXAgCA==
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-61e74e59d8fso337279eaf.0;
+	s=arc-20240116; t=1757596259; c=relaxed/simple;
+	bh=y11RZU91qqT+9OqY84wNPfLsXkcQjITVyypPfQ+m9DQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mU1gOiG1gLVUYqQJJC4mvvywVS8qbajSoMWpYkNB4Dnv12F6jdfWUXnNB8lb4yJbowBxb1jJwdU4MWPbkRK1AbMFdI/2cagDMDdtjutJu7pXOxtxzppgJFvDCMY8t3ibD48iCWwKiz6isXyiUmbnslAHbzDujUhYWdI6HtrpkrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cXyEsJH6; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso2724358a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:10:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757596253; x=1758201053; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fICK12mWNRBHNb8epgyR7UU//hrM63BrRhLGMx3EInI=;
+        b=cXyEsJH6eOo+DwJcAdCVR3iNKEDybDke2yNhMqHc/SYkvd5i17dTpI1QLiRO8ELn+I
+         gRzniKjTHPXk6iIHDrSfOXVAzVRSIrfD5PsriMAgEQhu8rr/SzVW+AEQnOWSOit4aEhN
+         CFAH+RJhC/BKA+evUapFmdi00piVXMrbolOO0wDCSrzrD44V77kmE2Nk0tXedFrqdNRZ
+         bOghWiURj7cATmIGFVUfMk7Qe+yQH1f848nWlx0p+NFNv7GHuvaRHT5nbHBJi0RjGKNh
+         ZHT3c9hpyIfDu9JOl+YCvAwenM8IQmAsl3Z/qqEih5hAPrrZXrupDuvY0/Q4rZHmdfk6
+         NLgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757596253; x=1758201053;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fICK12mWNRBHNb8epgyR7UU//hrM63BrRhLGMx3EInI=;
+        b=AWGAq7Uxa6CSxw8WIkHwA6OtpIZq/ULtQQLRtNAQ0ZLPVrOWY4TDavTb14MdkNiEMU
+         jvznfjV48YKS2UlJ/N8szqExH9WcIgaLIT29ljRcuFSOqIpI+5dTlpNuaVQlAm0vknFS
+         D6kL41EqVpX1qgYVjLdN9vwmGPEKw6MIVKlw/cI5la9v9LkL49gInC+mywHPK6GvcWOC
+         liPQDm6TzftoNwTgBO48UHjme9Kfc02gndOyg8nsmx9l/itv9i5Oy+X/3Kev87COpVbQ
+         wE6fRwlwUVHzVphkQqirAUE+Pen5wPlBcGdjb8FGm48qTvuVwlDUn1nePunTS1OmYCyB
+         GCOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWE9529xq6xS/JCPsiSDh7xdAMZI2p7HrtJBwVC/uL1jkSahHEDVoeS7YpTRFWe9y/vQC5OEFC7g1yMc1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyIq7o3VbJBy7xMiQuy+ztryFLV1i+g875A6y1QWOQTadunOge
+	ighcNZ7B+cs+Atsb26PwPsFnCZYWIvQUUnYcmQkelwp4DrkZIv2iy2vAYj8UhCkDkVw=
+X-Gm-Gg: ASbGnct7yFEWNXa8GEYfl0DwtR0DAkrU82cI1pZYuApPBKNuQTqS0CCgP3wYLeEx/UH
+	bMW8nHALmxvH8XAHqLQJ4h8X9PFmRQnID+fo8wsTbbiyE73N7KnJZjnlalGeOaYJgkTy6CpoEKD
+	9ky7z0D7ckbT1zB/P3Hp8vzUoI++dcoGbzxk/NPBdspPhOSN5wfS2oiOxVm3lncz2krfhKsajBh
+	mxsf7GOy4tPvBEER5YkGMPMfZArCZ0Pd/4xOwl5Km0Fir5KVUYAhPeQfhNfLDJcCQ9+250CFElq
+	kKscpUEBu+DOTF4nArK+rzOGNL70lPJnXV6Ku6sUQDL+JxUdE/JM7ytAJJ+tjXQEge/xl9LyJAv
+	ho2j+K7+WB3SRtaaBf+mb/w==
+X-Google-Smtp-Source: AGHT+IH66fznEUgFxllILMqdvheHS0RsLBD6Wse+F7QEzo8HkwTr8xnUsQ0CB7hpJuztOUV/n+dF7g==
+X-Received: by 2002:a17:907:7205:b0:b04:3e43:eca2 with SMTP id a640c23a62f3a-b07a633d68emr423207366b.13.1757596252775;
         Thu, 11 Sep 2025 06:10:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVRMlCDE6HrUuVwEatFCvIAQ7J2Bnjma4ScJ2ct8cjqD3bnwFQvPT8C+lcVg649Jfd+GI0gnkweOjo=@vger.kernel.org, AJvYcCXEic1ZkyhBvk36kykOlKCDn1UgzFlZrnkRi1nycEwRI7q/xCstGVu+oRwlAZXHSQoMm5ThNfphyhJoftk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxPyuuYE9jqyPkeYDcOxMS+/LcY64IdZI5WqnlwoJ4JxbDHEpk
-	nBK/ldV+NP00hHFOYJVOMPu/8h4KbEmKOr9b6PNeuoNRFbZKGuJ8ovBX0LfJsjSdclt8rpvFCnM
-	SvYt3y26R44cs50wpD/CTq2An/96b48o=
-X-Google-Smtp-Source: AGHT+IEp4oZb5hKSSK2t02v0yzfkPM/CgXSwAhnURJANNfuQmeKFvSkfxAvZim4eOVOp213gLdLmqFSoqal5A3Zlxto=
-X-Received: by 2002:a05:6820:3307:b0:61b:f98a:2f19 with SMTP id
- 006d021491bc7-621b2f0f23fmr1129291eaf.2.1757596251914; Thu, 11 Sep 2025
- 06:10:51 -0700 (PDT)
+Received: from linaro.org ([86.121.170.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b30da250sm132121066b.9.2025.09.11.06.10.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 06:10:52 -0700 (PDT)
+Date: Thu, 11 Sep 2025 16:10:50 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] drm/msm: Add display support for Glymur platform
+Message-ID: <kasmte3rxr3ukz2eqbwlzbpeam2qq2qimzdqta5dl5xsthnokc@smvts77lhirb>
+References: <20250911-glymur-display-v1-0-d391a343292e@linaro.org>
+ <xjtg6emrb7svloz2fkaotfbj4m2wzmddxdsdnjk5wkbmocqzmd@l656suk46pkd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1757577879.git.luoxueqin@kylinos.cn> <86d4e558707e7b03c248ef67cb76ec635a875d9b.1757577879.git.luoxueqin@kylinos.cn>
-In-Reply-To: <86d4e558707e7b03c248ef67cb76ec635a875d9b.1757577879.git.luoxueqin@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 11 Sep 2025 15:10:39 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hL_q9t2Tdu5DVZNqV_YkNpofV9S+N-rRRrAY3er5X_7Q@mail.gmail.com>
-X-Gm-Features: Ac12FXw74ytzQQDwGB4nu1cTpiup9Fq3YTm8PT-v9dUnNGDt7lsHx4oTc4z8Y3s
-Message-ID: <CAJZ5v0hL_q9t2Tdu5DVZNqV_YkNpofV9S+N-rRRrAY3er5X_7Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] PM: hibernate: dynamically allocate
- crc->unc_len/unc for configurable threads
-To: Xueqin Luo <luoxueqin@kylinos.cn>
-Cc: rafael@kernel.org, pavel@kernel.org, lenb@kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xjtg6emrb7svloz2fkaotfbj4m2wzmddxdsdnjk5wkbmocqzmd@l656suk46pkd>
 
-On Thu, Sep 11, 2025 at 10:10=E2=80=AFAM Xueqin Luo <luoxueqin@kylinos.cn> =
-wrote:
->
-> The current implementation uses fixed-size arrays for crc->unc_len and
-> crc->unc, which limits the number of compression threads to a compile-tim=
-e
-> constant (CMP_THREADS). This patch converts them to dynamically allocated
-> arrays, sized according to the actual number of threads selected at runti=
-me.
+On 25-09-11 16:02:40, Dmitry Baryshkov wrote:
+> On Thu, Sep 11, 2025 at 03:28:47PM +0300, Abel Vesa wrote:
+> > The Glymur MDSS is based on the one found in SM8750, with 2 minor number
+> > version bump. Differences are mostly in the DPU IP blocks numbers and
+> > their base offsets.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> > Abel Vesa (6):
+> >       dt-bindings: display: msm: Document the Glymur Mobile Display SubSystem
+> >       dt-bindings: display: msm: Document the Glymur Display Processing Unit
+> >       dt-bindings: display: msm: Document the Glymur DiplayPort controller
+> >       drm/msm/mdss: Add Glymur device configuration
+> >       drm/msm/dpu: Add support for Glymur
+> >       drm/msm/dp: Add support for Glymur
+> > 
+> 
+> This will not work without the UBWC config for this paltform. Please
+> include it into the next submission.
 
-Please don't say "this patch" (or similar) in patch changelogs.  It's
-better to use imperative sentences like "Convert them to dynamically
-allocated arrays, ...".
+Ofcourse it won't work, but wouldn't the UBWC be merged though a different tree?
+I thought I should send it separately because of that.
 
->
-> Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
-> ---
->  kernel/power/swap.c | 44 ++++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 40 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-> index 0beff7eeaaba..bd149a54c081 100644
-> --- a/kernel/power/swap.c
-> +++ b/kernel/power/swap.c
-> @@ -585,8 +585,8 @@ struct crc_data {
->         wait_queue_head_t go;                     /* start crc update */
->         wait_queue_head_t done;                   /* crc update done */
->         u32 *crc32;                               /* points to handle's c=
-rc32 */
-> -       size_t *unc_len[CMP_THREADS];             /* uncompressed lengths=
- */
-> -       unsigned char *unc[CMP_THREADS];          /* uncompressed data */
-> +       size_t **unc_len;                                     /* uncompre=
-ssed lengths */
-> +       unsigned char **unc;                              /* uncompressed=
- data */
->  };
->
->  /*
-> @@ -721,7 +721,21 @@ static int save_compressed_image(struct swap_map_han=
-dle *handle,
->
->         crc =3D kzalloc(sizeof(*crc), GFP_KERNEL);
->         if (!crc) {
-> -               pr_err("Failed to allocate crc\n");
-> +               pr_err("Failed to allocate crc structure\n");
-> +               ret =3D -ENOMEM;
-> +               goto out_clean;
-> +       }
-> +
-> +       crc->unc_len =3D kcalloc(nr_threads, sizeof(size_t *), GFP_KERNEL=
-);
-> +       if (!crc->unc_len) {
-> +               pr_err("Failed to allocate crc->unc_len for %d threads\n"=
-, nr_threads);
-> +               ret =3D -ENOMEM;
-> +               goto out_clean;
-> +       }
-> +
-> +       crc->unc =3D kcalloc(nr_threads, sizeof(unsigned char *), GFP_KER=
-NEL);
-> +       if (!crc->unc) {
-> +               pr_err("Failed to allocate crc->unc for %d threads\n", nr=
-_threads);
->                 ret =3D -ENOMEM;
->                 goto out_clean;
->         }
+I'll add it to this patchset in the next version.
 
-Can you avoid code duplication by defining helpers for allocating and
-freeing them both and using those helpers where applicable (image
-creation and uncompression)?
-
-> @@ -886,6 +900,10 @@ static int save_compressed_image(struct swap_map_han=
-dle *handle,
->  out_clean:
->         hib_finish_batch(&hb);
->         if (crc) {
-> +               if (crc->unc)
-> +                       kfree(crc->unc);
-> +               if (crc->unc_len)
-> +                       kfree(crc->unc_len);
->                 if (crc->thr)
->                         kthread_stop(crc->thr);
->                 kfree(crc);
-> @@ -1241,7 +1259,21 @@ static int load_compressed_image(struct swap_map_h=
-andle *handle,
->
->         crc =3D kzalloc(sizeof(*crc), GFP_KERNEL);
->         if (!crc) {
-> -               pr_err("Failed to allocate crc\n");
-> +               pr_err("Failed to allocate crc structure\n");
-> +               ret =3D -ENOMEM;
-> +               goto out_clean;
-> +       }
-> +
-> +       crc->unc_len =3D kcalloc(nr_threads, sizeof(size_t *), GFP_KERNEL=
-);
-> +       if (!crc->unc_len) {
-> +               pr_err("Failed to allocate crc->unc_len for %d threads\n"=
-, nr_threads);
-> +               ret =3D -ENOMEM;
-> +               goto out_clean;
-> +       }
-> +
-> +       crc->unc =3D kcalloc(nr_threads, sizeof(unsigned char *), GFP_KER=
-NEL);
-> +       if (!crc->unc) {
-> +               pr_err("Failed to allocate crc->unc for %d threads\n", nr=
-_threads);
->                 ret =3D -ENOMEM;
->                 goto out_clean;
->         }
-> @@ -1507,6 +1539,10 @@ static int load_compressed_image(struct swap_map_h=
-andle *handle,
->         for (i =3D 0; i < ring_size; i++)
->                 free_page((unsigned long)page[i]);
->         if (crc) {
-> +               if (crc->unc)
-> +                       kfree(crc->unc);
-> +               if (crc->unc_len)
-> +                       kfree(crc->unc_len);
->                 if (crc->thr)
->                         kthread_stop(crc->thr);
->                 kfree(crc);
-> --
-> 2.43.0
->
+Thanks.
 
