@@ -1,162 +1,245 @@
-Return-Path: <linux-kernel+bounces-812081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A1BB532B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:49:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5047BB532B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 065AC7AD643
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:47:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 159D73ACF1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3DC243367;
-	Thu, 11 Sep 2025 12:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84115322770;
+	Thu, 11 Sep 2025 12:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ulLDjnv5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NzShJT34"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2057.outbound.protection.outlook.com [40.107.236.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9E815746E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757594962; cv=none; b=Ggz+T5qP99ihZnQVAZqzkL02FFf2kNwoxkE3nL3fKn2yak+FUYCDD4thMruuCkncJitkI/ozY+9+oSggIs8b6nZfttlZfaWMYqUk5cC7Tcng7A/cj0XzJOFAdWW+IU27o5UuW36GThHpAwGhrHOMHiM0PQEZ4uIaknRhkDW/rkA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757594962; c=relaxed/simple;
-	bh=C+IX8JQ2COSyVo9kw+3dxUx1yrGzrT5oSKuWeoymk8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q7uXgnxspzI/bb5DUES41vnA7LPpjjrndO7E4tv8WofAdDbiHc8TF8bSbiBt61K5jm5cBIaMiWmpWPSnwJUON0uvXn8YfRrtQGMDmYbMfGZrRqQEMX2WpR+wzXVVJ6BWoIWyloAu42ocCTSqwn2isTnADqNa20zeAW7ay9t3bA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ulLDjnv5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C127AC4CEF0
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:49:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757594961;
-	bh=C+IX8JQ2COSyVo9kw+3dxUx1yrGzrT5oSKuWeoymk8w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ulLDjnv5s2w9RYBclhdpuAJs1GHrigt0gpobBci4xdrs4EHC4pxSZCOllmlQm4mBS
-	 yDvmp+YtntA81dcy0Gv5W+AGWq5/gVY2aGMVYgyz53L8nNQqElh/flXj/+jS6Md9N6
-	 /u8quAjxDpOCr9Jk6CMnb+2034puv+gRX3GygubXjQ7j9V9l3yU8kncP1g+uZPr28Q
-	 cYyS9Hlm4jIqcyyOvytMfmCiLYgXIOSAVJLXqQrW9DH1roATZLVNDCuJ0Aw+7V90B4
-	 Gb1LxaYzzE4jmNpZJ7aWPyHb695KyLaiHl4Qv42mbgfXr8Ncp6nPWvru3QQRW4T45R
-	 Eohs1uRziz8Rg==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-61da7b78978so368186eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 05:49:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWdF3NfX4wAk+Ho8WIYLzctqh8Bjx9+MLKUxmsJqxB+zs7HNrbrHYUYRUvJNzdHaqU0Zxil/KkerQD6B00=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGcByo9wh2PPA1FkaXfyhYblxFNAgjS70KpMiUd7riTM+wCcio
-	dim7pIGb/Yx2Zr02OtMKQeqjcOx4nQqJIAf3jfNVbX5joXE8ChbOSiqifi+JqrUKUZmVocodYIV
-	t7e/uSxdvNsj4z7G5vc5ciV3+Qus+z08=
-X-Google-Smtp-Source: AGHT+IE0SZNhbg9/joMdRy/snswIByXzzTetPcERXhI96bVCxl0PqbwsRuWEUn2JI5L4Xv306WxjljMtTRct025/xTs=
-X-Received: by 2002:a05:6820:515:b0:621:9802:d190 with SMTP id
- 006d021491bc7-6219802d300mr5397523eaf.7.1757594961098; Thu, 11 Sep 2025
- 05:49:21 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5C8322A05
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757594997; cv=fail; b=dD3u3c25ZupdVrOqlDvIpZZZy95SW80wqBrq2ivRvzJTszGnE45jgRypyuvzhrRmD90kv4NBP0zh2CA2rCkLMvtsfUT4eRRI3uaUWEba+FmG7lz/Cco8S0VvoHf7ComodMJGbfY/G/kDmpfg4VcSELrkmiPRjLEwWBGsLyUVlJg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757594997; c=relaxed/simple;
+	bh=tIoKQXKeFxdoTRlwzkG540IiSLMviUHLRV3n3ZAf9I4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=loGrdjZ4tMiy1FAst8pV2euqu1C79ciYll7+u6YDD6CuOpUiqqkB8uUL7DrQMX9NL7vXH912qDX9l2WWOytMYofaFhqQyn8qXpbXeFBmrxwe3QJW9P+amNbDwqhaZNqOdrna/1zV005fK6xGLNnkR3rX1/+5scLOYGnepPNLzjA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NzShJT34; arc=fail smtp.client-ip=40.107.236.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ifoiDIbw+IhUXhkMTDfcKf2VsbbOI/t20C5NR06egPaEG//EwN+tMdO0l4uBZbei9lrH26y1D0sQbVhB08fjMjUCxRNJ1PzlTg+Q+HOwrcljELNNcP5AkwEf/HJwVSaohgtBMgrJSH5o3PJKLhXDKHDY6Im6Lp42uCBVmDHPmnjY0+Eku5kMLB6U+QDdyEN1fBBjSDF4xmpXRHqLwhAFIXIlKVQQqwmLz2lZfV0CdD4NL4qxb1k8e7Qq8CjCxkSWfb+aOyCb0bS7tH44tuuni7yPZFQ/KNExlUznuvErLeFs5oD09sOsc7s99NLvZDDu5oEY8vuuPDLmubbQHE5/6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IIfxXfVO35vmZzZjOosdGVDvKLNmO+sgG5bf12Uyqes=;
+ b=qn1JlpwOfkLV7chq3iDQYEYmMaj3Rk1FNv+Fhv4EyVWw0jCZO27zgCzGKOw6hrW8n5fyGzT5BA/mdvzc/MmevUA2G2GzyhepudoGzdyKpWSOpc7D8WpCXlA1S+kCZnWrhGIuMNImE1ISjyLkJ7/X8XlD5sepN452uuuz+X/ig7HifwgnWvZ4+y7qpRPKVhqiqltbkciehywoQudYm1WoiKOrD0jT/SZuK+5j5cE6FyO6F7LVJw3it9GttiV9EOR7XA0ziSpLKRqu9DC2vljH1OkrPPEiZ3nYj1yb1HVxCD47SUiLa1gAZm8+CzU0snpLIGsWmVhTLkD2LC18SPmwiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IIfxXfVO35vmZzZjOosdGVDvKLNmO+sgG5bf12Uyqes=;
+ b=NzShJT34hmIzXEjSEkJlTdO1S6hDVLbskTvgRjY6EtkWRZJuBtYu5Py+DKOw4yuClI57yFIoekMwg/tdXjpMUa/Tw/lxt4JNWjdxDc24D16uc+HN9wpBO3RAE/L76Rwou2h2AQriTn0hynKluzafJk1w4kikLFhZ1iry9CNDe3kQ28cdUFvzagmBtaLaRWbjr4ErNuRiGtweCeP4hf66z2367QMa/KHYankJNtKB6cxbfWakA1zm0KgOl8SDq6ApFWx9kkRH0INSdPPtOXnt8agVfazuSRzdmPCtXB9Y/JPuUdBRXANmNRAVybgI6dYQe5t7mM/H3S69h3oNWIKLCg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by BN5PR12MB9464.namprd12.prod.outlook.com (2603:10b6:408:2ab::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
+ 2025 12:49:51 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
+ 12:49:51 +0000
+Message-ID: <f98d3149-9cc1-4211-af8f-e49547134b8c@nvidia.com>
+Date: Thu, 11 Sep 2025 22:49:44 +1000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v5 01/15] mm/zone_device: support large zone device private
+ folios
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250908000448.180088-1-balbirs@nvidia.com>
+ <20250908000448.180088-2-balbirs@nvidia.com>
+ <8c5267ec-cc85-4eff-b890-eb705472e2b2@redhat.com>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <8c5267ec-cc85-4eff-b890-eb705472e2b2@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BY3PR03CA0003.namprd03.prod.outlook.com
+ (2603:10b6:a03:39a::8) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911112058.3610201-1-treapking@chromium.org>
- <20250911112058.3610201-2-treapking@chromium.org> <2025091129-harmonics-clambake-6240@gregkh>
-In-Reply-To: <2025091129-harmonics-clambake-6240@gregkh>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 11 Sep 2025 14:49:09 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0incdNCxt=0AAdtbsBVdazZMCWG=15PUAnnpz8Rvr=psg@mail.gmail.com>
-X-Gm-Features: Ac12FXyGERKfjrx2iuB_mbuxwFyy1_UKlI57GpG116b6xucqLEYqrQVyDeENyJw
-Message-ID: <CAJZ5v0incdNCxt=0AAdtbsBVdazZMCWG=15PUAnnpz8Rvr=psg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] PM: sleep: Don't wait for SYNC_STATE_ONLY device links
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pin-yen Lin <treapking@chromium.org>
-Cc: Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Hsin-Te Yuan <yuanhsinte@chromium.org>, linux-pm@vger.kernel.org, 
-	Chen-Yu Tsai <wenst@chromium.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|BN5PR12MB9464:EE_
+X-MS-Office365-Filtering-Correlation-Id: a5b66118-fd53-413b-a0e2-08ddf131b2f2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|10070799003|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L1FydkgvT0k2SHkrNHN4RUwyaTh3cUU4RDVLMWZRSE9QWEIyRFdsejZDTm9R?=
+ =?utf-8?B?ZkVkYlhnVHJsay95N1hycFpaTWU0RkZBalpDREtNK3h3K2pMUThBa3B5S09m?=
+ =?utf-8?B?c3JkMGdMYkM0d1RrS2s2UlBFOE5PVVQ2REdBejIxdExrWGJNVG0yQXJma1cv?=
+ =?utf-8?B?RzZiTHZTNDFZUG1pbUlWSjFYU2RMQ0pmcUJ4RC96VytVUnpyQ3JLOVZsOEdW?=
+ =?utf-8?B?bWxkcFVIcUVxTmxqaDUvc3krclhHVWhFNjJvZWlxVGJCVDFJdFVmdkxjQkRs?=
+ =?utf-8?B?MnJPWWh0L2dvOXMxaEVTYmlxOGtyTWJXZ1NLczBNNE1iY1ZlOGNHczIvNFpm?=
+ =?utf-8?B?bFNLWm5hcEJSWnNScmJ6UTFUVDYxcHAzbEpCUUdydTd2Y2VLRHJPL25rRmdO?=
+ =?utf-8?B?dTNZbUNLQzhDTG1BTldtZ2tWTTJjaFhQMDRkanNBdzZXeUxDSnByMGpZYzR6?=
+ =?utf-8?B?WDdTOExqVVZiZjg1RFM4ZmdOTlpRby9jcENqT3c4WkRKb0N5SCtpZW04YmFX?=
+ =?utf-8?B?WitWaFlVMnJHNm9QY0U0TjFjek5DNXU3QVFWRHIyZHZNTU41TStTMnpsRDAw?=
+ =?utf-8?B?bGMwcUJRN3hlZ1V3VmpXQ2F2Nit1ZVdZMndLMUhZNGQ0cmpvT3J0c2lLVmwz?=
+ =?utf-8?B?N3o1aUc0dWtMeHptSDlmQUgvRkc1RERaNmxKRllDaVhkL09qS2RRcnpndmlW?=
+ =?utf-8?B?K1BOTVdQd2lINUhOcUhabEhaZG5pdWUvL2RoY0FwZ1FybGQzdFROYVlmTHh4?=
+ =?utf-8?B?WGNxM1RxS0dHeFR5c2doUGJPcXFCOWRmYzJkWHFoRis2S2hnbmNtdEZGTEhX?=
+ =?utf-8?B?cDA0ZjJLVE1CeGZvMjJQeVRYcGkvN205bFk2RWdhekpNakloOWVRMjVZK0t4?=
+ =?utf-8?B?TGMxTlV3a2VZdmRBNlkyb0ErU3Rla3BvZGdGdUI4NmVmTXR4cEx1L2Fucm8x?=
+ =?utf-8?B?Q0l3UHN1MWgvd2JaZ29CVlBSZEVoS0RiRkVzaHNHTXpGeFVMSVIwczI3WGV0?=
+ =?utf-8?B?dGI2NlVESktKNFFXOTJHQTlRK1FZVVZIY0I0SGpVNWExRHFieEt2b3pqTkMr?=
+ =?utf-8?B?OUIrY0NjK0xjSmVRMG5KV24vQUxwWnFLcDVtR3lQempDV0c4K1hSWUNQRjU3?=
+ =?utf-8?B?YU93c2NRVFZSak8zQXNHaG1VQ0ozUSs4ajFkTlBsM1cvZ0RsRTFJTnNWQVVm?=
+ =?utf-8?B?aUFhNmhiNmJYaEllS0JmVC8vWHZUcXdkbXZpcGxheVllc0s1SVU2bFMrS0to?=
+ =?utf-8?B?OTJFbk1kVHVJUlhrSnVSOFE0R0tmbDZ3NlhETys2RTNxTnNWcXRzU3VwTUtp?=
+ =?utf-8?B?RHBSUFFpL0FjWjQwMjJ0em92NjRLcWpSNHRBU2JmS1hvbVdpNnAvT0VRb2V3?=
+ =?utf-8?B?WGEyN21leDd3bldYUlVUWDlaWlBLa0pqakxIRnJzTTZ6ZzVZaG9hcmZ5ZlN0?=
+ =?utf-8?B?V1RQdEdVaFdKaXlhSllBaEFqRlhneEt0ejBWbUk2OWZlNWtEMkQ2RlhOemd3?=
+ =?utf-8?B?MFk4cnpQS0dLWVpDTkhoQm9tdjU3R0FXRkpaZGhYNUVlRkdsYi9FSU52bnpB?=
+ =?utf-8?B?ZStnVytuVXJ1NFZ2MVZBWXhUOVpGcFdPUTVHZloxRlo0cjJpSVMyV0wwU2Vy?=
+ =?utf-8?B?Y1IwaHRBOW92bzdkRzZSRm9wQVdjK21TbUcyeVRRWlN3NHlGd0JiWk1CZGtu?=
+ =?utf-8?B?d2lrc2dSVnU5VVZ5YWNmbklEVGF2WHNqSU5la25KVlNhVlBOSU5wcWIxZ0FR?=
+ =?utf-8?B?VXVIY0pBRnpvYW94V1FrZlYwVG1CUlJJMktKRXNnYXJqL0x4SlBPZEVFajZ2?=
+ =?utf-8?B?djFYSUFTOHgzMWtpSy9oNGR1bGE0TE1ZNlVVSUdEdm4vbkpGTGpqYmFXb3ph?=
+ =?utf-8?B?Qm1ZMFVkelZWblZRcEY5RlVwMW1IMEZJTDhmZjF2elVBa3pLSWk4OE1nVzkr?=
+ =?utf-8?Q?l3WFkTqokDU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(10070799003)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Qm93V0x6M0NhVWhyRXZMTFVrNWpCZXhIWm5ZZGt4NzBlMFVtT3RwVEJGQnpN?=
+ =?utf-8?B?ai9zeFErNHU0WTU5bEJzYmdOM2R6RHBuZ051TXFaeWdieEFyb3VBdXFjdlpu?=
+ =?utf-8?B?bzM0QUpMNC93OXJOd1VIcHcyaGFJU0FXanN6UGFYVWo3aXZ3NzFLcklPbUtG?=
+ =?utf-8?B?b3RmSUJCdUZ0anVJWEgrUU1rVlNKMWVmc1NsbXp0VUUyd0JYOGY4N3BEOEcy?=
+ =?utf-8?B?cTVzUFJXZGR3QlZBQ0dvc0ZTdHFMb3JOK085Nk1CVEdoY1BqRm9LYUpFL0Q5?=
+ =?utf-8?B?V1hpQzdDN2NvUTdRVnNLbTRnRlB6cEY4azhUMnB0TFZsZm5CYzFiOEZYYW9i?=
+ =?utf-8?B?SjJpbW5Rc0pMclZUa3JvaEpxK3BteGlSZWg1ZlVieVh4ZXRYY1kxR2VIckN2?=
+ =?utf-8?B?TS9TUzZZWkxRZGlUZHhJcllKVXZLQmtNajRJbm12N3RoT0ZNNjdNMEpOdXd4?=
+ =?utf-8?B?TFJhMjVtOXJiK1prUlZnN2VVakYvMm5SemdkamRZaUZVMEY1VVlSMk9CMEY5?=
+ =?utf-8?B?d2wzLy85UWhhdG9TblZXTGd4elZyR3ptMGZwbEh2Wk1rMEJKQ2JrYzhYM1Zy?=
+ =?utf-8?B?MU85eHRkUU5NKzgyUTZzcmMyK0lNckVWU1NQc1RoUXFQZCswbWd2ZnFnUVV4?=
+ =?utf-8?B?cmJGbjV4YXJDaXBpL1Y4V2szclFBMFF6OEhXdTFWdElLYmRHZzUzZ1BKOUxL?=
+ =?utf-8?B?NWhVeGJRcnNVT1F2TlkwMnRrY2J6S3YveUxJUHBTcEhPL0tha0Zyb0dTUDJU?=
+ =?utf-8?B?M2tKeU5iakVBcENmUk83MzEwMFIvYXl4eTdVeFJtRjdjU0R4WGRPOEdMa2d3?=
+ =?utf-8?B?OWdIR3AxTUZENWZ0Z1p5K3lxbEFoSDg2N2ZLcHdKTTBQeWRoRHhTeWUrOEw0?=
+ =?utf-8?B?a3o0SHd3L2oxU09qVU40NGdYWWE0TjkxYVZjajNXVGF2dUw1VkEyaHFvOXRo?=
+ =?utf-8?B?K3E2QnFITlB3NW9VaGRZVHdVZzZoQXUvMzMyKytpR1ZnY0VaeG5aZ2M2VGJi?=
+ =?utf-8?B?TWFIbVFjL281WHlTajZVcmdsQVJKcXdFdlNvcFpNWllpdEJoTlIreUxmVGhn?=
+ =?utf-8?B?MTFrTk0rRERWUnNZUnpock55RUEwZkk0NkxjTDZvK2x2MytINDFoaXlQbFJM?=
+ =?utf-8?B?SGlyclBxb2M1eEFtRnZveTZIQnNmREZWajNLTnA4dEFmdk5PT2Y4QkpLcElp?=
+ =?utf-8?B?cDB0azJ0QXNhd1VwU0ltTlhFVW5RVHVqWThScjN1b21KUTN5QmtvVGVUQzJO?=
+ =?utf-8?B?aGRuMjVZMVYyUXp3a0dmMVkzVER5VS8zOEdkbDdjeFlNbXV4bm9yemRTZU9n?=
+ =?utf-8?B?ZU5EOGhDZFQ2WmlkaE1CSTlNa2E5RzdlZ0p4ZG14TDZ6YkovSTJFNGw0VVdU?=
+ =?utf-8?B?bXpVeE1qSWE3cXkrZmdCRHVaWDNvMjdDT1RKeE1DdGhaNDYxeEY4MUxBOWNH?=
+ =?utf-8?B?V1lLSVBiUnFwdk55NXA4UEE3eGlxaGl4OVMvY1pkcXRxMzZ0L3lhc1hBVFFx?=
+ =?utf-8?B?K3NHSXlQY3VxMThSc3lRYTU2R0ZjY2pKenllVjZWNzJXYlR5SS9HTkVrSURB?=
+ =?utf-8?B?N0ZtcndKQm5MOERoTnF5QnM1NE81eWFjWksrdFgrS2FFQ1dGMWVBS3BHbkx3?=
+ =?utf-8?B?d2dxOVJnRy9DbTYvdVNHbGQ0SUlGSXR1dlBaaXNoZXZrZEhiOE5KdnB1TUpU?=
+ =?utf-8?B?NFhwTEhtcnJISlc1UEZGQisvaUR2VEZtN1BJRUNSWmxlMEtBSnRnT0pDak9O?=
+ =?utf-8?B?Ykd2UG1jZ3oxeDZRUytycHl4bGVyTzlnclVtL05ST3RmSWwvZnI2cDRZTkNU?=
+ =?utf-8?B?U21PbGMzQ2ZBRkdNbmFPd2dacGlIVHMxRFJqZ3ROb1ZwbjNsZWtnd1IzUTBt?=
+ =?utf-8?B?cHZsdGlrOVQ1SncxMnhXZDB5VmxCdUxaaklscUQxUnlUYzQ4UENJSDdyVjdH?=
+ =?utf-8?B?TkYva05rOG1OdGpVaXUxMW9sNTlpdjVHVUxja0lyMnVsWC9vSmp6YWNCU1dZ?=
+ =?utf-8?B?NkIzcTNEalZMWmJkUkJYZ0pzMlM3OHpZY3JQLzBEYWhQS1hFMzlaRit5ZmJw?=
+ =?utf-8?B?YmZyTmVUeVZaOVF1S3VTU2Jvd1g3NytRekQxLzJ1b1UrMHc4L3ZQa25mWUtN?=
+ =?utf-8?B?MDVkbW83WjFyREdRaTB6eDRpdE5Mamd4dGhwa2RNVlMzUTkzbUx0aUlwOHMv?=
+ =?utf-8?Q?N3VKjtoxhiHy8AvTUewZm9uzJyY0Ky6PTD23bZ5frLQ6?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5b66118-fd53-413b-a0e2-08ddf131b2f2
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 12:49:51.5785
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /GI+TrTg+k1alCCFXL8BOJnAh2zxTanfnipzSdDEQgbdFGkFK2XS/uaouR3lEd69LdSXMBjkqAI4HoTDeT9OIA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9464
 
-On Thu, Sep 11, 2025 at 2:28=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Sep 11, 2025 at 07:16:03PM +0800, Pin-yen Lin wrote:
-> > Device links with DL_FLAG_SYNC_STATE_ONLY should not affect suspend
-> > and resume, and functions like device_reorder_to_tail() and
-> > device_link_add() doesn't try to reorder the consumers with such flag.
-> >
-> > However, dpm_wait_for_consumers() and dpm_wait_for_suppliers() doesn't
-> > check this flag before triggering dpm_wait, leading to potential hang
-> > during suspend/resume.
-> >
-> > This can be reproduced on MT8186 Corsola Chromebook with devicetree lik=
-e:
-> >
-> > usb-a-connector {
-> >         compatible =3D "usb-a-connector";
-> >         port {
-> >                 usb_a_con: endpoint {
-> >                         remote-endpoint =3D <&usb_hs>;
-> >                 };
-> >         };
-> > };
-> >
-> > usb_host {
-> >         compatible =3D "mediatek,mt8186-xhci", "mediatek,mtk-xhci";
-> >         port {
-> >                 usb_hs: endpoint {
-> >                         remote-endpoint =3D <&usb_a_con>;
-> >                 };
-> >         };
-> > };
-> >
-> > In this case, the two nodes form a cycle and a SYNC_STATE_ONLY devlink
-> > between usb_host (supplier) and usb-a-connector (consumer) is created.
-> >
-> > Use device_link_flag_is_sync_state_only() to check this in
-> > dpm_wait_for_consumers() and dpm_wait_for_suppliers() to fix this.
-> >
-> > Fixes: 05ef983e0d65a ("driver core: Add device link support for SYNC_ST=
-ATE_ONLY flag")
-> > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> > ---
-> >
-> > Changes in v2:
-> > - Update commit message
-> > - Use device_link_flag_is_sync_state_only()
-> >
-> >  drivers/base/power/main.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> > index 2ea6e05e6ec9..73a1916170ae 100644
-> > --- a/drivers/base/power/main.c
-> > +++ b/drivers/base/power/main.c
-> > @@ -282,7 +282,8 @@ static void dpm_wait_for_suppliers(struct device *d=
-ev, bool async)
-> >        * walking.
-> >        */
-> >       list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_nod=
-e)
-> > -             if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
-> > +             if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
-> > +                 !device_link_flag_is_sync_state_only(link->flags))
-> >                       dpm_wait(link->supplier, async);
-> >
-> >       device_links_read_unlock(idx);
-> > @@ -339,7 +340,8 @@ static void dpm_wait_for_consumers(struct device *d=
-ev, bool async)
-> >        * unregistration).
-> >        */
-> >       list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_nod=
-e)
-> > -             if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
-> > +             if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
-> > +                 !device_link_flag_is_sync_state_only(link->flags))
-> >                       dpm_wait(link->consumer, async);
-> >
-> >       device_links_read_unlock(idx);
->
-> The way you use this new function does not require it to have been
-> exported to modules :(
+On 9/11/25 21:45, David Hildenbrand wrote:
+> On 08.09.25 02:04, Balbir Singh wrote:
+>> Add routines to support allocation of large order zone device folios
+>> and helper functions for zone device folios, to check if a folio is
+>> device private and helpers for setting zone device data.
+>>
+>> When large folios are used, the existing page_free() callback in
+>> pgmap is called when the folio is freed, this is true for both
+>> PAGE_SIZE and higher order pages.
+>>
+>> Zone device private large folios do not support deferred split and
+>> scan like normal THP folios.
+>>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Zi Yan <ziy@nvidia.com>
+>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+>> Cc: Rakie Kim <rakie.kim@sk.com>
+>> Cc: Byungchul Park <byungchul@sk.com>
+>> Cc: Gregory Price <gourry@gourry.net>
+>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+>> Cc: Alistair Popple <apopple@nvidia.com>
+>> Cc: Oscar Salvador <osalvador@suse.de>
+>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>> Cc: Nico Pache <npache@redhat.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: Dev Jain <dev.jain@arm.com>
+>> Cc: Barry Song <baohua@kernel.org>
+>> Cc: Lyude Paul <lyude@redhat.com>
+>> Cc: Danilo Krummrich <dakr@kernel.org>
+>> Cc: David Airlie <airlied@gmail.com>
+>> Cc: Simona Vetter <simona@ffwll.ch>
+>> Cc: Ralph Campbell <rcampbell@nvidia.com>
+>> Cc: Mika Penttilä <mpenttil@redhat.com>
+>> Cc: Matthew Brost <matthew.brost@intel.com>
+>> Cc: Francois Dugast <francois.dugast@intel.com>
+>>
+>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>> ---
+> 
+> You missed my comments of this patch in v3.
+> 
 
-Also, I'd just make it non-static (without exporting it to modules)
-and use it in the same patch because the new usage is the reason for
-exporting.
+Hi, David
+
+Looks I missed your comments, just checked those were largely about alignment and
+integrating the code for DEVICE_COHERENT and DEVICE_PRIVATE cases into similar looking
+bits for zone device folio free and code-alignment. I'll take a look and update as needed.
+
+Balbir Singh
 
