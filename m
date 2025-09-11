@@ -1,251 +1,156 @@
-Return-Path: <linux-kernel+bounces-811869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BFDFB52ED8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:44:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1969BB53007
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AB455A1026
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C863188420F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FBA3101D2;
-	Thu, 11 Sep 2025 10:43:46 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830053164D1;
+	Thu, 11 Sep 2025 11:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BY5usAHu"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E7130F54E;
-	Thu, 11 Sep 2025 10:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E51431355A
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757587426; cv=none; b=EZwwlGlOvUNo8wNMrr9ExeeTWz22bIwFuVF37Kv7GdLgeZnuY2Zw8Sq+tfEwYYPcjp7V23uo/rC41zJXYlduLQEQ/Exe/tVrsfP8uR0jVGqA9p80Gnx9KrILtaCtcu4ZiNOmcpsPSgZvV/m7Aa98X1U0IYBKr3GdmXd8KfPGuR0=
+	t=1757589655; cv=none; b=V4GM6EsYkG9V0ZoYqoJIFngKBwTxvcbr3VRRgNnGn/Bf5tE73dSNrET1AALRa8tI+EFwf+fW0Lgud8pAMfbzllbESnHychY5qANhidrE1BeNCsa5qHGDV2gE7i6qtluYY5DxKs3PAdlHnLIY6CAl8eb+8DsLHc6+WgAOqkti34Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757587426; c=relaxed/simple;
-	bh=4cjYNEq/0tkKAtFt1DgMEOaNIksXO5aYo797muokHU8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mksG5JozSiR32p+g8Ft7eLQ26D/RJYAIw8m17ebWyfJlXPxtjK4tvN88Ic9GA4rrHK5lcB04zLB2McQNckjIoy0vqn57/DIhb7FMRAmlXMr3yZzSH1f1ld/klznKOisen5sUb+agnjhY9R4nSi4VWO2b8MOT7mQfE1HhkI/pcrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMvJc3Dk8z6L56v;
-	Thu, 11 Sep 2025 18:42:24 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7BFCE1400D3;
-	Thu, 11 Sep 2025 18:43:39 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 11 Sep
- 2025 12:43:38 +0200
-Date: Thu, 11 Sep 2025 11:43:37 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2 01/29] ACPI / PPTT: Add a helper to fill a cpumask
- from a processor container
-Message-ID: <20250911114337.0000487e@huawei.com>
-In-Reply-To: <20250910204309.20751-2-james.morse@arm.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
-	<20250910204309.20751-2-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757589655; c=relaxed/simple;
+	bh=H8yk+xrqMoi1BmiRtNvzwsuYwehWP27jlscfOOwW9g0=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=CcS8qDitGRKpZKsZA7tD7MuHw0ptRjLIH+3ZgQwvQh3b3l6vJX3vx5jiDi8rF1K+yzvlYMM4HZc+QfCV7sjVYMgub1lGzKMFmaeP8S0E/KU8bZHq7c21yBVos27vsXnOKorfKlqQocn2SHx8Lig3aQKItZEPYl3sTzHep8CgqkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BY5usAHu; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45cb6428c46so7572955e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 04:20:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757589652; x=1758194452; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h2HQS+cQinE0HErUF+RK2/CMrXAUaYTUSDi0hoQyZeM=;
+        b=BY5usAHuL0pcxURLrYzKIpLS9bohcNiHdFZGsM/RAQJaGFnRX2PgBX/kQRB5VeygMT
+         2/EKGTXw6usiTZnn8ISx8WWdmHJDCXZKnia4D9r+l8uVdSqH0AgtQ3wgFBbpB0zBUCND
+         j1D5sUOWavyIDoYKtWUEPeXT8BHs9A0UjnH1XSdlouQxV1JM6+b4BRjv+4XGWE2RWf6h
+         Yn7DyUgbZe7ypeUI3lna7zBODaeZW5gBi6qr+YoJ+n5vPnBGNS0M28PHzzTVRjC+CbHg
+         pm2S/cL/3LmOy+4tSpPiGtzCEWgZacwHeEJt+kzooMj6SV4eWbQokBeVI0ZIrHFSUYfs
+         hgiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757589652; x=1758194452;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h2HQS+cQinE0HErUF+RK2/CMrXAUaYTUSDi0hoQyZeM=;
+        b=cP4H/F0gxn9jb955KjfSajS2tPvOVKaU0ksrxQscFBWwfdtlTcuGCWlJOie0+TQkZe
+         E4K3iMFq0fVKhkZ+XdSRJXmw8knqQ2bcRsduYU7tqysm5CzodbS7vSbgqXJazAapVpy9
+         s99cgbdo0KCkpMimDIgI0wKIthY4fzVSDyvwQqRfBFYVEHU75Y+loUIr7i2qfOq2Le6f
+         D1fM6EpOJnE+MSPRSjAYQBRYDdH6ZtDZJidabRxHKaQVNkbSO48145Ctup91sqVJ6PWU
+         d0nwTq+Ttbnui4aWPjO1QlcBsC3793pBztVNghKkbicuxe9Te5mKmW4pJGSOTq8UsUGp
+         nCjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUdvBABn1B1Onuzk37bj11Wxx7+yCRc8/JwYntKqWgXD/S3btT61eXZE/lY/wu+NLNYq9gWfq2y1RC8lI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmCNmC7C2MA4D+PCEHq3QQp4pamScEYUflps/birkAF1ugYzwm
+	+wHMecOL/HmmPpWuWdnQe8tPcURTrBBfPPyxGUVCPKR7jFI9LWdG/Us6gRf/Hg==
+X-Gm-Gg: ASbGncth9jXpeFop1pCitjpy6ykUepIqKNGoJDptoSJn+GidGekwTyY7KCY1l64540m
+	8RtJy6xHINv4zHgpTZ9bMTWg87G/QRSdZhtwC6RDhh/kmRA4Pw/RHQ/Qyn2/lk+PBM9CTnMyJij
+	4x3xOSPxG9M15uL8A4z6yypd0KXvUHv8NHj6Np1nFbGPm2cLGEcUR9VzofjrIFqzJgFvRSldnmC
+	9THOkqGAgvZ63DAY5yB2LL9sUvf3QIkQ+/QiQahw1N1LxjoeQfDjGwPgOwlDFZHJXvnJyKkkGxs
+	B03bDH0tCYvAY7rKNjvHgA9YRlv6V6QAYQlTL7mfgyL0Gc7guiBjlT4hs2OnrUrtA0FIYMZPZik
+	+pKe47uxxWAfpAtHE9ByDXdpwJTamlefk2R/7Rqg=
+X-Google-Smtp-Source: AGHT+IGo+F4NUZA5jrtFJZ3gols7D7bXthNGq85BXY2ZGDeIz6G8pf+puXsiQ9wTfeZ6/fjO6sDA+Q==
+X-Received: by 2002:a5d:64e7:0:b0:3da:e7d7:f1ec with SMTP id ffacd0b85a97d-3e646257889mr15832414f8f.32.1757589651961;
+        Thu, 11 Sep 2025 04:20:51 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:18f9:fa9:c12a:ac60])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e760786ceasm2152003f8f.16.2025.09.11.04.20.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 04:20:51 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,  Jakub Kicinski <kuba@kernel.org>,
+  "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Paolo Abeni <pabeni@redhat.com>,  Simon Horman
+ <horms@kernel.org>,  linux-doc@vger.kernel.org,  netdev@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] tools: ynl: rst: display attribute-set doc
+In-Reply-To: <20250910-net-next-ynl-attr-doc-rst-v1-1-0bbc77816174@kernel.org>
+Date: Thu, 11 Sep 2025 11:44:55 +0100
+Message-ID: <m2v7lpuv2w.fsf@gmail.com>
+References: <20250910-net-next-ynl-attr-doc-rst-v1-1-0bbc77816174@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain
 
-On Wed, 10 Sep 2025 20:42:41 +0000
-James Morse <james.morse@arm.com> wrote:
+"Matthieu Baerts (NGI0)" <matttbe@kernel.org> writes:
 
-> The ACPI MPAM table uses the UID of a processor container specified in
-> the PPTT to indicate the subset of CPUs and cache topology that can
-> access each MPAM System Component (MSC).
-> 
-> This information is not directly useful to the kernel. The equivalent
-> cpumask is needed instead.
-> 
-> Add a helper to find the processor container by its id, then walk
-> the possible CPUs to fill a cpumask with the CPUs that have this
-> processor container as a parent.
-> 
-> CC: Dave Martin <dave.martin@arm.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
+> Some attribute-set have a documentation (doc:), but it was not displayed
+> in the RST / HTML version. Such field can be found in ethtool, netdev,
+> tcp_metrics and team YAML files.
+>
+> Only the 'name' and 'attributes' fields from an 'attribute-set' section
+> were parsed. Now the content of the 'doc' field, if available, is added
+> as a new paragraph before listing each attribute. This is similar to
+> what is done when parsing the 'operations'.
 
-Hi James,
+This fix looks good, but exposes the same issue with the team
+attribute-set in team.yaml.
 
-Sorry I missed v1.  Busy few weeks.
+The following patch is sufficient to generate output that sphinx doesn't
+mangle:
 
-I think one resource leak plus a few suggested changes that
-I'm not that bothered about.
+diff --git a/Documentation/netlink/specs/team.yaml b/Documentation/netlink/specs/team.yaml
+index cf02d47d12a4..fae40835386c 100644
+--- a/Documentation/netlink/specs/team.yaml
++++ b/Documentation/netlink/specs/team.yaml
+@@ -25,7 +25,7 @@ definitions:
+ attribute-sets:
+   -
+     name: team
+-    doc:
++    doc: |
+       The team nested layout of get/set msg looks like
+           [TEAM_ATTR_LIST_OPTION]
+               [TEAM_ATTR_ITEM_OPTION]
 
-Jonathan
-
-
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 > ---
-> Changes since v1:
->  * Replaced commit message with wording from Dave.
->  * Fixed a stray plural.
->  * Moved further down in the file to make use of get_pptt() helper.
->  * Added a break to exit the loop early.
-> 
-> Changes since RFC:
->  * Removed leaf_flag local variable from acpi_pptt_get_cpus_from_container()
-> 
-> Changes since RFC:
->  * Dropped has_leaf_flag dodging of acpi_pptt_leaf_node()
->  * Added missing : in kernel-doc
->  * Made helper return void as this never actually returns an error.
+> Note: this patch can be applied without conflicts on top of net-next and
+> docs-next. To be honest, it is not clear to me who is responsible for
+> applying it :)
 > ---
->  drivers/acpi/pptt.c  | 83 ++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/acpi.h |  3 ++
->  2 files changed, 86 insertions(+)
-> 
-> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> index 54676e3d82dd..1728545d90b2 100644
-> --- a/drivers/acpi/pptt.c
-> +++ b/drivers/acpi/pptt.c
-> @@ -817,3 +817,86 @@ int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
->  	return find_acpi_cpu_topology_tag(cpu, PPTT_ABORT_PACKAGE,
->  					  ACPI_PPTT_ACPI_IDENTICAL);
->  }
-
-> +/**
-> + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPUs in a
-> + *                                       processor container
-> + * @acpi_cpu_id:	The UID of the processor container.
-> + * @cpus:		The resulting CPU mask.
-> + *
-> + * Find the specified Processor Container, and fill @cpus with all the cpus
-> + * below it.
-> + *
-> + * Not all 'Processor' entries in the PPTT are either a CPU or a Processor
-> + * Container, they may exist purely to describe a Private resource. CPUs
-> + * have to be leaves, so a Processor Container is a non-leaf that has the
-> + * 'ACPI Processor ID valid' flag set.
-> + *
-> + * Return: 0 for a complete walk, or an error if the mask is incomplete.
-> + */
-> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
-> +{
-> +	struct acpi_pptt_processor *cpu_node;
-> +	struct acpi_table_header *table_hdr;
-> +	struct acpi_subtable_header *entry;
-> +	unsigned long table_end;
-> +	u32 proc_sz;
+>  tools/net/ynl/pyynl/lib/doc_generator.py | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/tools/net/ynl/pyynl/lib/doc_generator.py b/tools/net/ynl/pyynl/lib/doc_generator.py
+> index 403abf1a2edaac6936d0e9db0623cd3e07aaad8e..3a16b8eb01ca0cf61a5983d3bd6a866e04c75844 100644
+> --- a/tools/net/ynl/pyynl/lib/doc_generator.py
+> +++ b/tools/net/ynl/pyynl/lib/doc_generator.py
+> @@ -289,6 +289,10 @@ class YnlDocGenerator:
+>          for entry in entries:
+>              lines.append(self.fmt.rst_section(namespace, 'attribute-set',
+>                                                entry["name"]))
 > +
-> +	cpumask_clear(cpus);
+> +            if "doc" in entry:
+> +                lines.append(self.fmt.rst_paragraph(entry["doc"], 0) + "\n")
 > +
-> +	table_hdr = acpi_get_pptt();
-
-This calls acpi_get_table() so you need to put it again or every call
-to this leaks a reference count.  I messed around with DEFINE_FREE() for this
-but it doesn't fit that well as the underlying call doesn't return the table.
-This one does though so you could do a pptt specific one.  
-
-Or just acpi_put_table(table_hdr); at exit path from this function.
-
-
-> +	if (!table_hdr)
-> +		return;
-> +
-> +	table_end = (unsigned long)table_hdr + table_hdr->length;
-> +	entry = ACPI_ADD_PTR(struct acpi_subtable_header, table_hdr,
-> +			     sizeof(struct acpi_table_pptt));
-Hmm. Not related to this patch but I have no idea why acpi_get_pptt()
-doesn't return a struct acpi_table_pptt as if it did this would be a simple
-+ 1 and not require those who only sometimes deal with ACPI code to go
-check what that macro actually does!
-
-
-> +	proc_sz = sizeof(struct acpi_pptt_processor);
-Maybe sizeof (*cpu_node) is more helpful to reader.
-Also shorter so you could do
-	while ((unsigned long)entry + sizeof(*cpu_node) <= table_end)
-
-> +	while ((unsigned long)entry + proc_sz <= table_end) {
-> +		cpu_node = (struct acpi_pptt_processor *)entry;
-
-For me, assigning this before checking the type is inelegant.
-but the nesting does get deep without it so I guess this is ok maybe, though
-I wonder if better reorganized to combine a different bunch of conditions.
-I think this is functionally identival.
-
-		if (entry->type == ACPI_PTT_TYPE_PROCESSOR) {
-			struct acpi_pptt_processor *cpu_node = 
-				(struct acpi_pptt_processor *)entry;
-			if ((cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) &&
-			    (!acpi_pptt_leaf_node(table_hdr, cpu_node) &&
-			    (cpu_node->acpi_processor_id == acpi_cpu_id)) {
-				acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
-				break;
-		
-			}
-		}
-		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
-				     entry->length);
-
-More generally I wonder if it is worth adding a for_each_acpi_pptt_entry() macro.
-There is some precedence in drivers acpi such as for_each_nhlt_endpoint()
-
-That's probably material for another day though unless you think it brings
-enough benefits to do it here.
-
-
-> +		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
-> +		    cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) {
-> +			if (!acpi_pptt_leaf_node(table_hdr, cpu_node)) {
-> +				if (cpu_node->acpi_processor_id == acpi_cpu_id) {
-> +					acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
-> +					break;
-> +				}
-> +			}
-> +		}
-> +		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
-> +				     entry->length);
-> +	}
-> +}
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 1c5bb1e887cd..f97a9ff678cc 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -1541,6 +1541,7 @@ int find_acpi_cpu_topology(unsigned int cpu, int level);
->  int find_acpi_cpu_topology_cluster(unsigned int cpu);
->  int find_acpi_cpu_topology_package(unsigned int cpu);
->  int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
-> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus);
->  #else
->  static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
->  {
-> @@ -1562,6 +1563,8 @@ static inline int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
->  {
->  	return -EINVAL;
->  }
-> +static inline void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id,
-> +						     cpumask_t *cpus) { }
->  #endif
->  
->  void acpi_arch_init(void);
-
+>              for attr in entry["attributes"]:
+>                  if LINE_STR in attr:
+>                      lines.append(self.fmt.rst_lineno(attr[LINE_STR]))
+>
+> ---
+> base-commit: deb105f49879dd50d595f7f55207d6e74dec34e6
+> change-id: 20250910-net-next-ynl-attr-doc-rst-b61532634245
+>
+> Best regards,
 
