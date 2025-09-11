@@ -1,214 +1,217 @@
-Return-Path: <linux-kernel+bounces-811863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDA5B52EC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:41:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2A7B52ECC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A88C91C84E05
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:41:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFA0C1C84EF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD7C3101B6;
-	Thu, 11 Sep 2025 10:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FEF30FF3F;
+	Thu, 11 Sep 2025 10:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ilt+Asw2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YnGqK1oT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F3F347D0;
-	Thu, 11 Sep 2025 10:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757587278; cv=none; b=Da7h+2B8SsM7g68cfpx9iXpJaKpDI5gvYxum6OipkshpLGsSuqY0fArw2jGFPuZtUKEEsxxJeznqxVP7d/krTTpQoLXEF7kACtLnDrYvedNdt/vC+kDEbKGFKUenSSOi+ODuSaMFmfOm/d9mDVU7/5LyZQ5QQ5mdWRtadJo3fc4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757587278; c=relaxed/simple;
-	bh=bwZFuRK+Ee6O6yC+tgc/4fMUaRu02+9RtrCMwHyVXig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nkJUO4+HSe8/QppUT7zEZNkQuqgvWYq+YzRWXzXEjm/6BPUeJA+zquQkfaaNS7wz1Egemlo4zC3bn9hmti671Qjl/g69eyHkjvwn1tuIlmVQx48OUe6/g4cut+qHiO9Xd6gtFhN/WRXwXQCMcrkySBiELSzRgZ3+PmYLWraeam0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ilt+Asw2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3430DC4CEF0;
-	Thu, 11 Sep 2025 10:41:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757587277;
-	bh=bwZFuRK+Ee6O6yC+tgc/4fMUaRu02+9RtrCMwHyVXig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ilt+Asw21gs3C8lyX6FR2JqS7xsNTANlACpsqq/4ClF+JsOdXeX336v5PsFKHUfsz
-	 pAIY/rYWEcZEdf1KyCZMP2UZ15IH0ZFhfaR/r6px0inyIjhEqvPC4uuPfTZkLR7Hew
-	 yyzrlsLcPsvA32bI4HadZsJLv7RqrD84TzREOB8A=
-Date: Thu, 11 Sep 2025 12:41:14 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andrei Kuchynski <akuchynski@chromium.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	Guenter Roeck <groeck@chromium.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	"Christian A. Ehrhardt" <lk@c--e.de>,
-	Venkat Jayaraman <venkat.jayaraman@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] usb: typec: Implement alternate mode priority
- handling
-Message-ID: <2025091106-absinthe-wired-46e1@gregkh>
-References: <20250905142206.4105351-1-akuchynski@chromium.org>
- <20250905142206.4105351-5-akuchynski@chromium.org>
- <2025091029-snarl-decimal-aea2@gregkh>
- <CAMMMRMdOiGQdmgQ7COa1Nf9Rh9BQLD79TJ77VW4ejadx_bNyeg@mail.gmail.com>
- <2025091117-herring-crazy-d13c@gregkh>
- <CAMMMRMck=YzbN6g8-4qUx=YX+=S4HgKqHaYoUuQ0CsJUYd9GOw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C8229A2;
+	Thu, 11 Sep 2025 10:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757587356; cv=fail; b=YODmuqpjtOlO1mERsjCB3SSy5oJi1HWo2EdG687l1dkK2TlPAN03m/q7G+eKtwdadQqBMh3X8QR9ber0d+Eh7o7HbZc+VPkCQURYgNNVwUJo//WWDDHQP4+vEmM/1mODJh3an0Q633EanCZFcdX90RuU2fnbyl9wFNgbhgsp9qM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757587356; c=relaxed/simple;
+	bh=WdPEmG+XTOUchgQf0TWLGqTliRGqVBIkg16yK3eXJiQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RLRIp34AXoVw31NrF+PdIU69D7VVQL2kjJ3PxmO9/lvOCZti5itgkpsYpxmMm8rXrwT4jlSOKvRr59eXv/10xQgdeHBiaK02w8u4ngsAx/d1YY6DTd8mksJgwgddarq/sFWeYQuQe6Ai/wk1VmPK/QOViO5u2t8Ursi7hyFvtZM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YnGqK1oT; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757587355; x=1789123355;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=WdPEmG+XTOUchgQf0TWLGqTliRGqVBIkg16yK3eXJiQ=;
+  b=YnGqK1oTUCChEcs432/YOF69G8Jx9aHu4SnVIpGR80FwKPvvm/X1oZo2
+   zOjnBI8A8qC/9KJyT5J9Lds/2Dhc0NI4WwjVicyf/mK6/dehJdNqAAihV
+   DmPMJhF8WaZl8tKIRz9CPKfyo9u0+yMT9tqq/XXnEYA++fSMRzAzGerh/
+   z2s/65LYklfJIIX7c7Oy52fONE47T9Ohu2fEEsG2K2dE8B3cL6MyrjksL
+   TafOxALznMh864pKkZWW4Ipd7ybsyxTKFBBp+z3odKwnqWRd26o9Wrbjr
+   YuJS79cGR+I/XpJN8fpmYlDuRYiNPmloQEbtHcF9yntQL5ANZ0Tdqqcl2
+   Q==;
+X-CSE-ConnectionGUID: ZcVujgydRxOuJkIfjOzETQ==
+X-CSE-MsgGUID: dkIds7KxQNOCFtfaPah2hA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="47486555"
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="47486555"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 03:42:34 -0700
+X-CSE-ConnectionGUID: H6FeXPW7RfKmXCmlW1c59Q==
+X-CSE-MsgGUID: no739WhBQOCsHwJkUkciaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="197336706"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 03:42:34 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 11 Sep 2025 03:42:33 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 11 Sep 2025 03:42:33 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.68)
+ by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 11 Sep 2025 03:42:33 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YjyMxVK4IaNgeveXQV/j0mLuDJebve/E/LgHmNHUynwLa8zbH3apGJ01vPseAsjBy3GKTR/+fWdCm5y4vQu6vWLtlpe63Kq+UzGl2tG2pOxpq8PITYB6f4sTUwGdIOPKOtHVWdzR0oSYDxfcc71SHOsHVwgjpwIlfL3riLx6a5ppDq4Mkb2+3HF/oEbQKp+S+O3B1KUUs4dDXWT53ZbASIkG4MdbmcFaKK9yyBRRbY7YanJZaUhK9FNykSSx17SJ8CShtDCkJyL3h9ExtO0m2CHgDYnnZ/ojYwDgt79pgs3dy4ewzA9HPTu1XOoF4PRw9kYVTnozxCGgUpU4Fc5oMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+iR2BI0E5KTxJOqyV0ovMZvV/vrtPD1WWTZzAlK0Mc4=;
+ b=uVG9dcVn43KbPJSd3aakD9LreWvERBNrgpmCGSs2ki1NWNjYb+EMdZoZBCg1vdB9Skaj4S207rm5O4KHDjaFkocnBqujcoDCnxqi8YO9Ke4pQDF26MzHxcGEECDrJlUABdOxLNKdapjTkycrGTGcrXShY4kTjXUPAcTDobZ4H6YcbYefbhaLEHpZNtxOYah4ExpKQzrj9tQbg+UR3KAfqAGNRJMHx6pIKYQtbKmhBmthn7Ll6g/9kY38qMx04IX4bfTCe1t50Bo58PEkQ376vYUzvdlDeP/uL7ZmbMzOLQwBtac0UnbkatZ2q3lmxfPDPL/ClstfmoXoTxfGPf8yoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by SJ0PR11MB5894.namprd11.prod.outlook.com (2603:10b6:a03:42a::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
+ 2025 10:42:31 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%4]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
+ 10:42:30 +0000
+Date: Thu, 11 Sep 2025 18:42:17 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <acme@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<john.allen@amd.com>, <mingo@kernel.org>, <mingo@redhat.com>,
+	<minipli@grsecurity.net>, <mlevitsk@redhat.com>, <namhyung@kernel.org>,
+	<pbonzini@redhat.com>, <prsampat@amd.com>, <rick.p.edgecombe@intel.com>,
+	<seanjc@google.com>, <shuah@kernel.org>, <tglx@linutronix.de>,
+	<weijiang.yang@intel.com>, <x86@kernel.org>, <xin@zytor.com>
+Subject: Re: [PATCH v14 15/22] KVM: x86: Don't emulate instructions guarded
+ by CET
+Message-ID: <aMKniY+GguBPe8tK@intel.com>
+References: <20250909093953.202028-1-chao.gao@intel.com>
+ <20250909093953.202028-16-chao.gao@intel.com>
+ <8121026d-aede-4f78-a081-b81186b96e9b@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <8121026d-aede-4f78-a081-b81186b96e9b@intel.com>
+X-ClientProxiedBy: SG2PR06CA0206.apcprd06.prod.outlook.com
+ (2603:1096:4:68::14) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMMMRMck=YzbN6g8-4qUx=YX+=S4HgKqHaYoUuQ0CsJUYd9GOw@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SJ0PR11MB5894:EE_
+X-MS-Office365-Filtering-Correlation-Id: cc7c7e67-4671-40b8-da53-08ddf11fe894
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?DvI9womgY9aiZ9nsXS6zqnd6wHHS7lNlIQHzoI74KAt6NX563iUvM5koEVtt?=
+ =?us-ascii?Q?vfBaj+3tysKB8ehSfj/WWr1tLvxGyQClKnygZIZSz5gR2QmF6Ar9DypXEEIA?=
+ =?us-ascii?Q?DPNIYpzNJOMXgbMgH39OFj5Hmrm8zl6qZf5GCFWWjLRUmgRGTZp/8x9ybWad?=
+ =?us-ascii?Q?J6L7U4prIVBW1+FyAQj+vb8wVZUMLMKTYVPrgYBOVzXeUObetoFwGBJv9UKT?=
+ =?us-ascii?Q?k91FvYQe4vkihw6cisVyCUx56+anzKNmBnwbq+b/t8vs9qdjm2w/QCd/BcEn?=
+ =?us-ascii?Q?TV0R37l9juIkELqr3dDQjGFKiILdtlCPr8E/sCQOhjsaufmJCbdz3UA7F08q?=
+ =?us-ascii?Q?ONaHzT5PFxXfZpMWg8sOHU1mJpC2tk2mOaCFah3ynjNmwYbpoZzJ8j94hkTI?=
+ =?us-ascii?Q?tTm7F+PAe98E4OO4HPgu0ZdhPtX0whNBT2ALVmgLCtUzStAGaUpwbHzoZXST?=
+ =?us-ascii?Q?0ZhlacFfbJGjs5LDpApmWujZzRhZ8K1jB16RP2cqtGRCmvr3pLKuPWBihk8V?=
+ =?us-ascii?Q?Vqe/RQmjXt681zrY9u49iplSxscW04PrjZdB/TAr85J/9Ab2sNmkRsBObOO9?=
+ =?us-ascii?Q?cMsor+bjmV1e4O4EZToVZ+W8zzEkMKdqpcTE5enRusBn3hg2TvUF5EI+WCYQ?=
+ =?us-ascii?Q?HG8afzHk8/tZ2hxYDiOvG+nnFdec3Eg0boSBqsdFyw14Qd25qALimmNZVFf7?=
+ =?us-ascii?Q?4iKNDya66vYjhMYgmdERm4R+rca5kSIzJ3CENmbrGEYtllQAgfk03sAwzWKZ?=
+ =?us-ascii?Q?05+UFMhTWGD134+oUHpTiXwv8+7aQGC2B9AkOWjEoek8BCcD2B6ST0GpHtiv?=
+ =?us-ascii?Q?Di4kbUHUMb9QXY7+obWUX9Pn/R83fz3fpo/x9HVfdRW1qabboERZJfXEUcyT?=
+ =?us-ascii?Q?bufBn3K7V3PksLVf0C+cWmxMzF8J6A0npofeYSxp3scDVUwPp8b+4OVtzPm/?=
+ =?us-ascii?Q?fW6bjtjJd859HKJfMcIObPkEB0cfncLE56jpeXKBipTndTdFzEV9vWJ+hh19?=
+ =?us-ascii?Q?OvcKeZlEz/n98SolDGWcHO2b/+iKHG2P8DdLa2Ozj9r105GlwegW+58bcITH?=
+ =?us-ascii?Q?CDgAWZ5mYzsuzdEczljFaKrUgk5wVU3fOAubJmv+jvlAptr1GkVdECjCd/DG?=
+ =?us-ascii?Q?UzzB+TLgLRN9qMTbYrhanmiU0LOK+GHfvRKi2qDk/qj5QrjQcfyf0V32vdnU?=
+ =?us-ascii?Q?XeIqLP8KS+T4UDBwAK+i2sYoYCPKSGWQpkbi13wIfmjIsV6yiqOsSjlryYUB?=
+ =?us-ascii?Q?zCFq4lLnqxQL+uDH1SafqSFL/BtYpp7+5N2ev9zt4j7tBZOrSWm32kRemJML?=
+ =?us-ascii?Q?dNobZCAzSGeGX2dE7NKYyqeKafluzG+wtRr19ATQrkshgJqCruHyod0t/mgN?=
+ =?us-ascii?Q?T6z8QNmfHpOnoUDn0C3JNjwmn1iD?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FZ76AC0qBal/0qOl89axuH+jFTsf/VgogChQT1sIQ7of0xffWgAEoNoq07dC?=
+ =?us-ascii?Q?hcAaz1Hfow64tgaWenuyILjLDSxoCq+iY0rQmylwJ+LfZU6MoBwnGOBJdgI3?=
+ =?us-ascii?Q?nMKQDk5IWDiAolpzzN6s+putncpQ5t14po8GDmChxK31MxOve4kinslK8oFh?=
+ =?us-ascii?Q?gdxqY1RUo7vUVvRpBRMkZ7rEWBCg2d8h7Kv+UTuWpWinVeQJX3TK7ZczzBBR?=
+ =?us-ascii?Q?6Q+6CgdaFiPZ3Uz2e4Qq7y2TEpkvlBStcrV3tqJWD4TAtoRudMhRapcDH18X?=
+ =?us-ascii?Q?KeA0AKNa8oyn/hajaGeuFpbJ7AKzBdAVPzEvWX418XY6xKedXUz2oaGyx+aM?=
+ =?us-ascii?Q?JTpZYH50aTbdPHKqgTokIiAfnF1bg+DcPT0snBc3j1VBygJCakE01/Mw2yZ1?=
+ =?us-ascii?Q?J65mh/AI91DVGivSwB6WUS5M0fE0HZNMePeLOJdEmxw2NHmXoNpNRnebR+6j?=
+ =?us-ascii?Q?Ol77l6wUK3TaAPgyF1yowpfZeccjk4exKjb+bNOWJIO0KBUsAc2cTAudMvRh?=
+ =?us-ascii?Q?Zcdgvq8ghKnrGCHhqQSejSaYof8t9aX+tDzHQI7LtzHTDtO7MB/qXtSbhrPw?=
+ =?us-ascii?Q?FvFXXUG8dAy9SKjch1sNnPWT9S2uIBGv34eQBD5rISkZoZfecfSiJS3QIQ6S?=
+ =?us-ascii?Q?sERJ7ri+V57xwTrLBncSevqEO/Rf+apdw/ne4O6LOOFAyCtqfUMqKe8sqzNM?=
+ =?us-ascii?Q?m/jlwt2Ql9ldntGkCZtEE1r30IxmCSck6r80ptxUCpFLxcQOEUaCTxfwRISD?=
+ =?us-ascii?Q?itQdbHPcPF1x+eHmmSE4eRptPjIxUoHpfCid/XIyXlCZ+Iyyb5Y+Nw3iCRuZ?=
+ =?us-ascii?Q?R6Ah88+Lym1Toi8Hfxru+XLm4adg7ssXvkaTk9Lyo4UFC+0YdWbKuM2nLcNl?=
+ =?us-ascii?Q?XVcDjIjXEIArYkCg2Oeg2JCxsjk5LH5Hvt7y7PbZN9UieaMT3NYN7fF2T9wN?=
+ =?us-ascii?Q?ojvsPOPD70u3sy/EGvjHQDw60phQwaSlO8mmHYJQPEdN1f49/uMI/rBc5vqZ?=
+ =?us-ascii?Q?H/+73/We6uAq0jYneIFfZ0lJjeoSztIRIejdFbqJLaxKYTVhaLruc005Ti6j?=
+ =?us-ascii?Q?zJzxwBH9ap2PeLz2hJHAbt3HearKXTJu2RV5+RfpI1k2BnBFmjB8mymVO4P7?=
+ =?us-ascii?Q?oqdIqFI79c2/thcFomR6WD+ccDSqyXlez6ZItAiBYCbQiQp7H6D8MidnNG8q?=
+ =?us-ascii?Q?wkmYOU/wuppD4b6NvL8FTkIVMM3gDYEGOnrHzShEk7kY8twefJ7Cj5u9u8Nj?=
+ =?us-ascii?Q?jsdtgLOYY37/q9sdY6tm6wWEyvb517QWX3SukJSiOhtQuYVOVgBf+ajM9jGz?=
+ =?us-ascii?Q?ZslCB0V9RDft8SmQgoL8M7iH1LQ86WPE/SY0GIU8B2Lp6XAG/BCgH8nR8apa?=
+ =?us-ascii?Q?WmAAgLhjzFsfZ6nPqvJCwOOw2W4OSbT8jjk49qMDJcWJ73pv5ZLmzlAtDFgy?=
+ =?us-ascii?Q?ZN3FENxIS/unAmsY5t07RyaVBDyqzPmF0K278jiNx0KoAqwJQNHCgqT5tHVz?=
+ =?us-ascii?Q?b2csywkJJIqOziES04hFOddURQ5Q1Gr8pFYWpDEO0f33fcVFo48QCBKQu17G?=
+ =?us-ascii?Q?o1YRfjY36hCBDPJxec8s3AWCoQ/avXvWsaSWHIct?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc7c7e67-4671-40b8-da53-08ddf11fe894
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 10:42:30.7641
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: asV/F21OwhPq26ZEuHGT+7rifk4gMBVlkRLdUtfFTJOdMx8bZjdHgYTHy+UC3wlnLzEIv6PtRWncfQZzsZPWWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5894
+X-OriginatorOrg: intel.com
 
-On Thu, Sep 11, 2025 at 10:46:52AM +0200, Andrei Kuchynski wrote:
-> On Thu, Sep 11, 2025 at 7:07 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Sep 10, 2025 at 07:35:42PM +0000, Andrei Kuchynski wrote:
-> > > On Wed, Sep 10, 2025 at 1:31 PM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Fri, Sep 05, 2025 at 02:22:05PM +0000, Andrei Kuchynski wrote:
-> > > > > This patch introduces APIs to manage the priority of USB Type-C alternate
-> > > > > modes. These APIs allow for setting and retrieving a priority number for
-> > > > > each mode. If a new priority value conflicts with an existing mode's
-> > > > > priority, the priorities of the conflicting mode and all subsequent modes
-> > > > > are automatically incremented to ensure uniqueness.
-> > > > >
-> > > > > Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
-> > > > > ---
-> > > > >  drivers/usb/typec/Makefile         |  2 +-
-> > > > >  drivers/usb/typec/mode_selection.c | 38 ++++++++++++++++++++++++++++++
-> > > > >  drivers/usb/typec/mode_selection.h |  6 +++++
-> > > > >  include/linux/usb/typec_altmode.h  |  1 +
-> > > > >  4 files changed, 46 insertions(+), 1 deletion(-)
-> > > > >  create mode 100644 drivers/usb/typec/mode_selection.c
-> > > > >  create mode 100644 drivers/usb/typec/mode_selection.h
-> > > > >
-> > > > > diff --git a/drivers/usb/typec/Makefile b/drivers/usb/typec/Makefile
-> > > > > index 7a368fea61bc..8a6a1c663eb6 100644
-> > > > > --- a/drivers/usb/typec/Makefile
-> > > > > +++ b/drivers/usb/typec/Makefile
-> > > > > @@ -1,6 +1,6 @@
-> > > > >  # SPDX-License-Identifier: GPL-2.0
-> > > > >  obj-$(CONFIG_TYPEC)          += typec.o
-> > > > > -typec-y                              := class.o mux.o bus.o pd.o retimer.o
-> > > > > +typec-y                              := class.o mux.o bus.o pd.o retimer.o mode_selection.o
-> > > > >  typec-$(CONFIG_ACPI)         += port-mapper.o
-> > > > >  obj-$(CONFIG_TYPEC)          += altmodes/
-> > > > >  obj-$(CONFIG_TYPEC_TCPM)     += tcpm/
-> > > > > diff --git a/drivers/usb/typec/mode_selection.c b/drivers/usb/typec/mode_selection.c
-> > > > > new file mode 100644
-> > > > > index 000000000000..2179bf25f5d4
-> > > > > --- /dev/null
-> > > > > +++ b/drivers/usb/typec/mode_selection.c
-> > > > > @@ -0,0 +1,38 @@
-> > > > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > > > +/*
-> > > > > + * Copyright 2025 Google LLC.
-> > > > > + */
-> > > > > +
-> > > > > +#include "mode_selection.h"
-> > > > > +#include "class.h"
-> > > > > +#include "bus.h"
-> > > > > +
-> > > > > +static int increment_duplicated_priority(struct device *dev, void *data)
-> > > > > +{
-> > > > > +     struct typec_altmode **alt_target = (struct typec_altmode **)data;
-> > > > > +
-> > > > > +     if (is_typec_altmode(dev)) {
-> > > > > +             struct typec_altmode *alt = to_typec_altmode(dev);
-> > > > > +
-> > > > > +             if (alt != *alt_target && alt->priority == (*alt_target)->priority) {
-> > > > > +                     alt->priority++;
-> > > > > +                     *alt_target = alt;
-> > > > > +                     return 1;
-> > > > > +             }
-> > > > > +     }
-> > > > > +
-> > > > > +     return 0;
-> > > > > +}
-> > > > > +
-> > > > > +void typec_mode_set_priority(struct typec_altmode *alt,
-> > > > > +             const unsigned int priority)
-> > > > > +{
-> > > > > +     struct typec_port *port = to_typec_port(alt->dev.parent);
-> > > > > +     int res = 1;
-> > > > > +
-> > > > > +     alt->priority = priority;
-> > > > > +
-> > > > > +     while (res)
-> > > > > +             res = device_for_each_child(&port->dev, &alt,
-> > > > > +                             increment_duplicated_priority);
-> > > > > +}
-> > > > > diff --git a/drivers/usb/typec/mode_selection.h b/drivers/usb/typec/mode_selection.h
-> > > > > new file mode 100644
-> > > > > index 000000000000..cbf5a37e6404
-> > > > > --- /dev/null
-> > > > > +++ b/drivers/usb/typec/mode_selection.h
-> > > > > @@ -0,0 +1,6 @@
-> > > > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > > > +
-> > > > > +#include <linux/usb/typec_altmode.h>
-> > > > > +
-> > > > > +void typec_mode_set_priority(struct typec_altmode *alt,
-> > > > > +             const unsigned int priority);
-> > > > > diff --git a/include/linux/usb/typec_altmode.h b/include/linux/usb/typec_altmode.h
-> > > > > index b3c0866ea70f..571c6e00b54f 100644
-> > > > > --- a/include/linux/usb/typec_altmode.h
-> > > > > +++ b/include/linux/usb/typec_altmode.h
-> > > > > @@ -28,6 +28,7 @@ struct typec_altmode {
-> > > > >       int                             mode;
-> > > > >       u32                             vdo;
-> > > > >       unsigned int                    active:1;
-> > > > > +     unsigned int                    priority;
-> > > >
-> > > > What is the range of this?  And this value is only incremented, never
-> > > > decremented?
-> > > >
-> > >
-> > > The range extends from 0 to UINT_MAX. The value is only incremented.
-> > > The only exception is that If the user sets UINT_MAX for two alternate
-> > > modes in turn, the priority of the first mode becomes 0. This does not
-> > > break the algorithm, and the user can check all priorities via
-> > > ‘priority’ attributes.
-> >
-> > Why not use u32 to define a sane range?  Or u8?  How many different
-> > priorities will actually be used in the real world?
-> >
-> 
-> The priority can be u32 or u8, but not bool. I use unsigned int as the
-> precise bit count is not important here.
+>> @@ -4941,6 +4947,24 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
+>>   	if (ctxt->d == 0)
+>>   		return EMULATION_FAILED;
+>> +	if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_CET) {
+>> +		u64 u_cet, s_cet;
+>> +		bool stop_em;
+>> +
+>> +		if (ctxt->ops->get_msr(ctxt, MSR_IA32_U_CET, &u_cet) ||
+>> +		    ctxt->ops->get_msr(ctxt, MSR_IA32_S_CET, &s_cet))
+>> +			return EMULATION_FAILED;
+>> +
+>> +		stop_em = ((u_cet & CET_SHSTK_EN) || (s_cet & CET_SHSTK_EN)) &&
+>> +			  (opcode.flags & ShadowStack);
+>> +
+>> +		stop_em |= ((u_cet & CET_ENDBR_EN) || (s_cet & CET_ENDBR_EN)) &&
+>> +			   (opcode.flags & IndirBrnTrk);
+>
+>Why don't check CPL here? Just for simplicity?
 
-But the range is, that needs to be documented.
+I think so. This is a corner case and we don't want to make it very precise
+(and thus complex). The reason is that no one had a strong opinion on whether
+to do the CPL check or not. I asked the same question before [*], but I don't
+have a strong opinion on this either.
 
-> Three different priorities are enough for DisplayPort, Thunderbolt,
-> USB4, at least for now. The algorithm is designed to accommodate any
-> number of modes, as it does not rely on predefined MAX_ALTMODE or
-> MAX_PRIORITY values.
-
-Great, then let's use u8 for now.
-
-> > And what happens when it wraps?
-> >
-> 
-> If a user sets all priorities (either 2 or 3) to UINT_MAX, the
-> resulting mode sequence will not be as expected due to overflow.
-
-That sounds like a bug :(
-
-thanks,
-
-greg k-h
+[*]: https://lore.kernel.org/kvm/ZaSQn7RCRTaBK1bc@chao-email/
 
