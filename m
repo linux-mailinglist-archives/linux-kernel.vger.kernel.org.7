@@ -1,147 +1,163 @@
-Return-Path: <linux-kernel+bounces-812132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0758B53363
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:14:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4187B53364
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70567177A32
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:14:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9E983AE112
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7085324B1D;
-	Thu, 11 Sep 2025 13:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDE8324B3A;
+	Thu, 11 Sep 2025 13:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMNY8ka5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="spibFGlQ"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F078A2E8E17;
-	Thu, 11 Sep 2025 13:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACF4312802
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757596481; cv=none; b=iXSoCuNQ+BLQ2uiGYft7FEpe/hzs3Ktl59+RkfEfvj1nc7YCr7rTz7MZMl031ciWi9pOkzKlAzJ6odNFsTk2k8eLETGj0i1rA2SufEocK6S2JpLhxQ8H/VKjMhbjp6s0RvuJeSzpp/rPuTJGLgJTrptSflkjrxHPAe0CSFax6r8=
+	t=1757596504; cv=none; b=eEky53eF5EpCJMtyzWBUGdSgmq0uusI00FiVbdutUEDI4WFDT6A7sSRzkBSaSGpGHWD4WUI7fVVSPbn87PTF3d8HbZKcdcLdMD+eRzFaHAVheCmxnjexcU5WcyWv+sdwAh7hPpibH58oMDGmp5cPywE0ebtlz9lv/VSUvbKPgcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757596481; c=relaxed/simple;
-	bh=KX7xrHa+olS2oROnPjX8J2BFoTeFIgxJ4Lv3gDXpUMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GX3V14Xn2ZpYGQK/bY2awgq4BF4HuKsM1SYB2PVvk65zddQ69iJAbVeha+CrqB+Abz6pVbK9xaOczzuiKp3sZ/dm6+X6ATv5hpDOzMbrh4LCs6V6qV7DewqCcimcUZEv+NRugqJcL7HmgfpOz8hvF1LyEfKt0XV4tgTCA1bToZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMNY8ka5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C8EDC4CEF8;
-	Thu, 11 Sep 2025 13:14:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757596480;
-	bh=KX7xrHa+olS2oROnPjX8J2BFoTeFIgxJ4Lv3gDXpUMk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BMNY8ka5NU+VI1MvoMs8tdN9twEhfEOt6uHnMuw/zG9gVEyVe/5lVgCJ02DWkmQLq
-	 Fdl3RoRxTueqgHTHfbVxagk8VtPvmwoEyZEau6cD7wse+rO2nbfwmJmmiS553+DP2B
-	 yZ2WsSAMYwSJGbjThMmq184i//iYfBog+QuW84FpNFuhkUyC2+JoPzcfaD9Ztl8I78
-	 1gPLPfUZkieEE52ZtrlTwyr5e027kXiXhtJhWQuAYcNDC9WqmWB1PVx6ZfIC6jcIQd
-	 XfPzPxjtqx1fJ5gagtreHl0mLS/Bz0TnTtqOcTBQYcwz+rQz/XSLpRvbtAo6AeJly1
-	 9KlPyFS3bVuoQ==
-Date: Thu, 11 Sep 2025 14:14:33 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Asuna <spriteovo@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Han Gao <rabenda.cn@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kbuild@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2] RISC-V: re-enable gcc + rust builds
-Message-ID: <20250911-reprogram-conductor-f02af5f6d03e@spud>
-References: <20250909-gcc-rust-v2-v2-1-35e086b1b255@gmail.com>
- <20250910-harmless-bamboo-ebc94758fdad@spud>
- <6bceca9d-44cd-4373-a456-7c2129b418e3@gmail.com>
+	s=arc-20240116; t=1757596504; c=relaxed/simple;
+	bh=x1Ibz1Ro2+nP+d06nbtfG9UfdciPBYtybc/DZr0g6OQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s3OwTxz4xpUKV6zOWx7jKQdzkrecExB7rZW3T7v4ndBiMGLhY70Xdvv6wCxH/J+5rTDSWqOz7hNsS32ZaEA0Ghx+rlukANZb4zfSh6OnytbBW6bUl1n+qEKfXEZ43Fuu1BhdSrnqL44jbbSoIoIW5+e/E1qiP1kRUbdAu2lD9rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=spibFGlQ; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b5e4fc9b4fso6614131cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:15:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757596502; x=1758201302; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m89lThiGHpcn4DUoXeNLI6soHQXzWM/QJgRk2t7Qa7M=;
+        b=spibFGlQ16o8UipR6OnZfXW9NpIg+mkvTyfX89ZyRn4J9jjq1itbq/VV4DHIflPd/X
+         M16qYNzYXa+dLd80GT/FluOFS4mue4iynZnWL7HoAsIbjGg4mAenh1hf1hc1/tmji5Em
+         KrdD8/VainiB2U8WAnZ+A/OQhRasWRCBTYPBHrg+X38CV8z5tNiHB0eBDiCzU8yrUNvx
+         8p0ar8MvL5Ev5Fh/mWb5ym+TBb8n1I72uNXe95uByrdHb3+xfSLuhTlwbhHzzUKxcD/a
+         yahuT7+8qZet65bvg/5ktTsz72DLJtm2Tq2YTkybmyq5X5invgoXOF+O55fU+nEwaUdM
+         ibuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757596502; x=1758201302;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m89lThiGHpcn4DUoXeNLI6soHQXzWM/QJgRk2t7Qa7M=;
+        b=ihjNf2xExq/ZidLOwRTk/8IqSMSiySmyk7hhe9L6PDL4dhJZval/LFR9QC5RVGliqh
+         ghcvMyKONO9E1D8FjXIB4yinSfr2tT7P/i9EjMynmUlqpbUiz3bk5wDeSs/OGnErEg5G
+         YFqcM7SMHsQnxuWoWelcMX0KexXRgkqFdIs8pc6XDJi2ozTpGWdqwYukPnSHfyAO2ThX
+         kbPvb4O7N1XHpuyYuKsUotcq04j7Zl+FdpxNli5bgcCZ6Mi72NUbAZJn+o7NjTAb/EBk
+         oc5k8zmSXMxKCY7rYUY7YLU8HSoyich4fF7E+AJnC8Uy6PfivONgHGstePGDWuTVIosI
+         tEUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWr2eLaOebJrjHcX5d9QG0KYCFcfg/q7Rn3gtt8wlaIEAgogDbPrRzquLqKIl7jM8MpkX4Zf4+vNekBwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/VY6hM/GO8hOKGxxTcGz/LE0HqIhRp+Spcm+lO2TJFw+XD2cC
+	5WYG6vZbzxDBoMCU2XZYCTYPma40NTJDb2Y8+eQx0JT2lpD8/GvcvIx/qvB4y4tYg9aaZsi+NyF
+	mL04jDTzH/OKP8M4Bix3B+9EA2SEW1MWpinmTq+B/
+X-Gm-Gg: ASbGncvIKvWLGVp664XjWKoVc0ohimQzU4nyzPP0zb6TXQc+t9MQHSb2W2rvP8TvmEc
+	XsHUOgvzR52hPFFC35hgVc/W9vfW9Z1sCyxMpuR862QJGUo4mn2GmVdyFpVZQ+ojMrUMt+9K45p
+	JU/of0E7SEh8g2dcrXtZCJQwSm33rCNrjXvZpuRTe2K9frL60IcdUDR12pTmJLIpVgCpOCqmO1P
+	iazvnu9Gn+SelzmBjoBH+s8
+X-Google-Smtp-Source: AGHT+IGIFHagHDSkEorcDOmHFA0hr15/XcJBaSlOhnPlKEK6spa+aRn1vk32LO8prgZjy2sfuW+qceEq4tHAHByM7ls=
+X-Received: by 2002:a05:622a:55:b0:4b2:8ac5:25a3 with SMTP id
+ d75a77b69052e-4b5f84b5754mr252983901cf.76.1757596500594; Thu, 11 Sep 2025
+ 06:15:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Pv6XXkkXxcuB8WU5"
-Content-Disposition: inline
-In-Reply-To: <6bceca9d-44cd-4373-a456-7c2129b418e3@gmail.com>
-
-
---Pv6XXkkXxcuB8WU5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250911034337.43331-2-anderson@allelesecurity.com>
+In-Reply-To: <20250911034337.43331-2-anderson@allelesecurity.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 11 Sep 2025 06:14:49 -0700
+X-Gm-Features: Ac12FXyGkA7EfDNm73LKWj5ZRtRA_sD8e4Ox-VzRGuY9LKyWNf3W4me3uIIm1UU
+Message-ID: <CANn89iKUKof727RDZkbfA-Q3pbV0U-pTH19L-kSvhhhtkKYGTA@mail.gmail.com>
+Subject: Re: [PATCH v2] net/tcp: Fix a NULL pointer dereference when using
+ TCP-AO with TCP_REPAIR.
+To: Anderson Nascimento <anderson@allelesecurity.com>, Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: ncardwell@google.com, kuniyu@google.com, davem@davemloft.net, 
+	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 11, 2025 at 12:46:01PM +0800, Asuna wrote:
-> On 9/10/25 10:27 PM, Conor Dooley wrote:
-> > FWIW, this --- breaks git, and anything after this line (including your
-> > signoff) is lost when the patch is applied.
->=20
-> I used b4 command to prepare and send the cover letter and patch for v2, =
-not
-> sure what happened.
+On Wed, Sep 10, 2025 at 8:49=E2=80=AFPM Anderson Nascimento
+<anderson@allelesecurity.com> wrote:
+>
+> A NULL pointer dereference can occur in tcp_ao_finish_connect() during a
+> connect() system call on a socket with a TCP-AO key added and TCP_REPAIR
+> enabled.
+>
+> The function is called with skb being NULL and attempts to dereference it
+> on tcp_hdr(skb)->seq without a prior skb validation.
+>
+> Fix this by checking if skb is NULL before dereferencing it. If skb is
+> not NULL, the ao->risn is set to tcp_hdr(skb)->seq. If skb is NULL,
+> ao->risn is set to 0 to keep compatibility with calls made from
+> tcp_rcv_synsent_state_process().
+>
+> int main(void){
+>         struct sockaddr_in sockaddr;
+>         struct tcp_ao_add tcp_ao;
+>         int sk;
+>         int one =3D 1;
+>
+>         memset(&sockaddr,'\0',sizeof(sockaddr));
+>         memset(&tcp_ao,'\0',sizeof(tcp_ao));
+>
+>         sk =3D socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+>
+>         sockaddr.sin_family =3D AF_INET;
+>
+>         memcpy(tcp_ao.alg_name,"cmac(aes128)",12);
+>         memcpy(tcp_ao.key,"ABCDEFGHABCDEFGH",16);
+>         tcp_ao.keylen =3D 16;
+>
+>         memcpy(&tcp_ao.addr,&sockaddr,sizeof(sockaddr));
+>
+>         setsockopt(sk, IPPROTO_TCP, TCP_AO_ADD_KEY, &tcp_ao,
+>         sizeof(tcp_ao));
+>         setsockopt(sk, IPPROTO_TCP, TCP_REPAIR, &one, sizeof(one));
+>
+>         sockaddr.sin_family =3D AF_INET;
+>         sockaddr.sin_port =3D htobe16(123);
+>
+>         inet_aton("127.0.0.1", &sockaddr.sin_addr);
+>
+>         connect(sk,(struct sockaddr *)&sockaddr,sizeof(sockaddr));
+>
+> return 0;
+> }
+>
+> $ gcc tcp-ao-nullptr.c -o tcp-ao-nullptr -Wall
+> $ unshare -Urn
+> # ip addr add 127.0.0.1 dev lo
+> # ./tcp-ao-nullptr
+>
+> BUG: kernel NULL pointer dereference, address: 00000000000000b6
+>
 
-Dunno. Maybe while editing your commit message you omitted the signoff
-somehow? I don't use b4-submit, so I don't know how it formats stuff. If
-it inserted the --- and what was below it was your intended cover
-letter, your patch itself might be missing the signoff?
->=20
-> I see that other people's patches have a [PATCH 0/n] email as a start that
-> describes their patch series, this is called a cover-letter in b4 and
-> git-send-email right?
+CC Dmitry Safonov <0x7f454c46@gmail.com>
 
-Yes it is. Not really needed if you only have one patch though.
+<cut many useless details>
 
-> > The riscv patchwork CI stuff is really unhappy with this change:
-> > init/Kconfig:87: syntax error
-> > init/Kconfig:87: invalid statement
-> > init/Kconfig:88: invalid statement
-> > init/Kconfig:89:warning: ignoring unsupported character '`'
-> > init/Kconfig:89:warning: ignoring unsupported character '`'
-> > init/Kconfig:89:warning: ignoring unsupported character '.'
-> > init/Kconfig:89: unknown statement "This"
-> >=20
-> > Is this bogus, or can rustc-bindgen-libclang-version return nothing
-> > under some conditions where rust is not available?
-> > Should this have 2 default lines like some other options in the file?
->=20
-> This is because rustc-bindgen-libclang-version can't find the bindgen and
-> returns nothing. Sorry I forgot to mention this, it's another reason why I
-> wanted to separate the script, in a separate script we can easily fallback
-> to return 0 when an error is encountered.
->=20
-> Adding a second line `default 0` doesn't work, I'll try to fix it. BTW, w=
-hen
-> I fix it, if the diff isn't too large, do I need to open a v3 patch, or
-> simply replying to the thread just fine?
+Really I do not think you need to include the crash in the changelog.
 
-Feel free to reply with the diff if you're looking to discuss the
-implantation, but for the sake of the various bits of automation
-(patchwork, ci bots etc) please submit a v3 when you're happy with what
-you've produced.
+Just mentioning a possible NULL deref should be enough, it seems
+obvious skb can be NULL here
+now you mention it.
 
---Pv6XXkkXxcuB8WU5
-Content-Type: application/pgp-signature; name="signature.asc"
+Real question is : can a TCP-AO socket be fully checkpointed/restored
+with TCP_REPAIR ?
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMLLNgAKCRB4tDGHoIJi
-0sTWAQDdTuuMdgIe7i+D0GfClKSNwZiGeo6RL2W+QEs7l4LftQD7BqPNj+VBOnFy
-pCrKuAA/4HOvXEmHWCYJdIAAEL+4bA0=
-=CuGR
------END PGP SIGNATURE-----
-
---Pv6XXkkXxcuB8WU5--
+If not, we should just reject the attempt much earlier, and add needed
+socket options to support it in the future if there is interest.
 
