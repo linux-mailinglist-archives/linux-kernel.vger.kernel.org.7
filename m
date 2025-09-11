@@ -1,206 +1,125 @@
-Return-Path: <linux-kernel+bounces-812791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E551B53CD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:03:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB9DB53CDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A361BC7707
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:03:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B73AA1671
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DBA23D289;
-	Thu, 11 Sep 2025 20:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC3F274FCE;
+	Thu, 11 Sep 2025 20:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMH8itYR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="EyrPqhWg"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E1E2DC784;
-	Thu, 11 Sep 2025 20:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105CB1E1E1C;
+	Thu, 11 Sep 2025 20:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757620976; cv=none; b=G1B3muWSNwai4stPsl3RaU1lOFImm40CJVn2/ueDgS9/NbLX+qSFEGdutsVFsP7LkCUg14H2RLYYVZbLJM8CfNK+0Uz4FoS2C0R9R1SViFfDFfg2H9Oio6Xhw6hVdV8KqOdk9On/ppBXUrhnOh7xhnTgLgx0OpTADUn/eYRFIfU=
+	t=1757621134; cv=none; b=bmVjeBvIAJi7CW5RgucH6B1tvC28qroHSdj61rAF0oS4kYcbptRH5Hu3IeRSsIIbh48pCD7WHnWeYndRt7llL101AQ5hXF/XA/I062+AVStLlaGmP+dRkYnxVDCIoyx4Y3plX1+vmBUAgf1CFErpo4+0MKapGteiiuH1E5HMBPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757620976; c=relaxed/simple;
-	bh=3KJhUTZStrKSNw941DcrJQXDDDDh7YHFRcDvZTwrj1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QZ2lUgqW5NHSRsHKCBDxf04FOsqKpQLewH8L/yNISx8PGUE5cRRXkmC3CeO3Y3PY5R4JBwZC3dCo314P/PA0b+ZQg2PimrV3Zu1jYYisHFDoW/3agVvUS1oq+9iCQDblz2mGq8K/wsQEYMQQW6hEfP810o7IxxpyhqQzsM+LXKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMH8itYR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 702D6C4CEF5;
-	Thu, 11 Sep 2025 20:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757620975;
-	bh=3KJhUTZStrKSNw941DcrJQXDDDDh7YHFRcDvZTwrj1g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CMH8itYRgBG1MobCioEwJ5oRa52f8eQAXGM/N4UGIjGzKVcjkm7VAMMeQP2qwY7GF
-	 KW44gg9IDund728mY1HPtSi117F75T/3yGlxjyu9s9tIhJ9t7GekxDjNjRXBHMw8cv
-	 CiSbffBqQCm5V/XyNYfSQ1FFssflGZQaQubGDYAc8G0ggqDKxv9bKkqLdB/bImtm2b
-	 B9UHskwI7qfOGolZwDb/8uTw8x4WidAgv+3YRzqV5UGN7RlAHbY1Lx/y8DlmtbQ5XC
-	 S739yrirILjjbjFRKTJopkHvtA7Ub5PlISXDWBfIy9t9dSfmTMJWCtx5l8mx0Xhurk
-	 Iqizo4Byg9+BA==
-Date: Thu, 11 Sep 2025 17:02:52 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Guilherme Amadio <amadio@gentoo.org>
-Cc: Ian Rogers <irogers@google.com>, namhyung@kernel.org,
-	adrian.hunter@intel.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, mingo@kernel.org,
-	peterz@infradead.org
-Subject: Re: perf --help triggers an assertion
-Message-ID: <aMMq7I5TBoL7SX6z@x1>
-References: <20250701201027.1171561-3-namhyung@kernel.org>
- <20250909094953.106706-1-amadio@gentoo.org>
- <CAP-5=fVCeBz+hgCsctCe7BByaL7GqKVUbDcW4R=2th0C1O0m0w@mail.gmail.com>
- <aMF0iWh4yTK5KwcJ@gentoo.org>
+	s=arc-20240116; t=1757621134; c=relaxed/simple;
+	bh=QmKA1EaeZnLUYZFxoQZW+o4tE5dP97c0rSfG3Wrs1k8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JzrXz0TwLtrtkN/1+N3640O/adBYxAuL+AHgNVlfSkVY6jBHUAAz2mB5lm9pzwKPlSg+bx9JTQ7H/19BJm6Bd0d9/02ysSQ+njuhY4GFyBc865VrI0dvWu/1mteEG/lczw8uT72/PTniDwtfycuON9PPSJQ14F6hVrK7za2xOHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=EyrPqhWg; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1757621127;
+	bh=QmKA1EaeZnLUYZFxoQZW+o4tE5dP97c0rSfG3Wrs1k8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EyrPqhWgz6Xi5fI+L9X+zRloxLMXvFd7JFYxQiEt9VW7c21g7lYtVSG6rcamU4KDm
+	 wC1LX9MhdK0s2yZLVYyRZrBrwqqsMLBIte2ETFRtWan242Zc5NcAb4ZNme1eYcO4zw
+	 ffZJZty8tE2XgVd+NUOFypL7PBV1bYQ53H1zrv9xCGo5k3GO4ZwAmbcTEYw7+h4b63
+	 ij0yDx0Jt9peLPvzXRCPYws63TLF5V/cxO6rgrdP15RSZgay/JHoSolQ3Gv7vv4mtc
+	 kmbyoJjpMvdojjR+By88cj2qm+5nfXxidE5ORAE1YhBTuzxPYWj09iyiIci+KhrS0T
+	 BJSuX65DqIRXQ==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id EF3986012E;
+	Thu, 11 Sep 2025 20:05:26 +0000 (UTC)
+Received: by x201s (Postfix, from userid 1000)
+	id D033A202855; Thu, 11 Sep 2025 20:05:20 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	wireguard@lists.zx2c4.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v3 00/13] tools: ynl: prepare for wireguard
+Date: Thu, 11 Sep 2025 20:04:53 +0000
+Message-ID: <20250911200508.79341-1-ast@fiberby.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMF0iWh4yTK5KwcJ@gentoo.org>
 
-On Wed, Sep 10, 2025 at 02:52:25PM +0200, Guilherme Amadio wrote:
-> On Tue, Sep 09, 2025 at 11:31:51AM -0700, Ian Rogers wrote:
-> > On Tue, Sep 9, 2025 at 2:49 AM Guilherme Amadio <amadio@gentoo.org> wrote:
-> > > I was updating perf's package in Gentoo Linux and noticed some problems
-> > > which were not there before. I tested with the version below and the problem
-> > > still seems to be there. perf --help triggers an assertion (see below).
-> > > Looking in the list, it seems related to the patch below:
+This series contains the last batch of YNL changes to support
+the wireguard YNL conversion.
 
-> > > https://lore.kernel.org/linux-perf-users/20250701201027.1171561-3-namhyung@kernel.org/
+The wireguard changes, to be applied on top of this series,
+has been posted as an RFC series here:
+  https://lore.kernel.org/netdev/20250904-wg-ynl-rfc@fiberby.net/
 
-<SNIP>
+---
+v3:
+- Rebased on top of new net-next, after Matthieu's cleanup.
+- Added a Reviewed-by (thanks Donald).
+- Added the parsing local vars cleanup as patch 7
+- In patch 4, change to use set() for deduplication.
+- In patch 8, declare __ynl_attr_validate() as static.
+v2: https://lore.kernel.org/netdev/20250910230841.384545-1-ast@fiberby.net/
+- Added Reviewed-by's to unchanged patches. Thanks to all reviewers.
+- Patch 4, refactors local variables for .attr_put() callers, and
+  replaces the old patch 4 and 5.
+- Patch 5 and 6 are new, and reduces the differences between the 3
+  .attr_put() callers, so it might be easier to keep them in sync.
+- Patch 7, now validates the nested payload (thanks Jakub).
+- Patch 8, now renames more variables (thanks Jakub),
+- Patch 10, got a dead line removed (thanks Donald).
+- Patch 11, revised hex input to support macsec (suggested by Sabrina).
+v1: https://lore.kernel.org/netdev/20250904-wg-ynl-prep@fiberby.net/
 
-> > I tried to reproduce the same version with various options: DEBUG=1
-> > -UNDEBUG in EXTRA_CFLAGS, -fsanitize=address. Being in various
-> > directories with "perf-" prefixed files. I'm afraid I wasn't able to
-> > reproduce. The assert is trying to avoid a memory leak, so
-> > non-critical, and I couldn't in a quick inspection eye-ball an issue.
-> > Without getting a reproduction I don't think I can make progress with
-> > the issue.
- 
-> I do not have any special setup on my machine (if you consider Gentoo
-> not special, of course). I just did a git bisect and arrived at commit
-> 9401d1771dad99bfc795dd2ae0c292343fd1f78d, which is the commit I linked
-> above. I used>
+Asbjørn Sloth Tønnesen (13):
+  tools: ynl-gen: allow overriding name-prefix for constants
+  tools: ynl-gen: generate nested array policies
+  tools: ynl-gen: add sub-type check
+  tools: ynl-gen: refactor local vars for .attr_put() callers
+  tools: ynl-gen: add CodeWriter.p_lines() helper
+  tools: ynl-gen: deduplicate fixed_header handling
+  tools: ynl-gen: avoid repetitive variables definitions
+  tools: ynl-gen: only validate nested array payload
+  tools: ynl-gen: rename TypeArrayNest to TypeIndexedArray
+  tools: ynl: move nest packing to a helper function
+  tools: ynl: encode indexed-arrays
+  tools: ynl: decode hex input
+  tools: ynl: add ipv4-or-v6 display hint
 
-⬢ [acme@toolbx perf-tools-next]$ git show 9401d1771dad99bfc795dd2ae0c292343fd1f78d
-fatal: bad object 9401d1771dad99bfc795dd2ae0c292343fd1f78d
-⬢ [acme@toolbx perf-tools-next]$ 
+ Documentation/netlink/genetlink-legacy.yaml |   2 +-
+ tools/net/ynl/lib/ynl-priv.h                |   2 +
+ tools/net/ynl/lib/ynl.c                     |  17 +-
+ tools/net/ynl/pyynl/lib/ynl.py              |  38 ++++-
+ tools/net/ynl/pyynl/ynl_gen_c.py            | 164 +++++++++++---------
+ 5 files changed, 140 insertions(+), 83 deletions(-)
 
-Looking for the patch title I got to this one:
+-- 
+2.51.0
 
-commit 1fdf938168c4d26fa279d4f204768690d1f9c4ae
-Author: Namhyung Kim <namhyung@kernel.org>
-Date:   Tue Jul 1 13:10:27 2025 -0700
-
-    perf tools: Fix use-after-free in help_unknown_cmd()
-
-?
-
-- Arnaldo
- 
-> $ make -C tools/perf clean && make -B -j16 -C tools/perf DEBUG=1 WERROR=0 NO_SHELLCHECK=1
-> 
-> then called perf --help each time (but perf help record or equivalent
-> also triggers the assertion). I'm using GCC 14 on a 3950X. The features
-> I have enabled and installed dependencies are below. This patch has been
-> backported to at least 6.12 stable, and I can reproduce this with
-> v6.12.45.
-> 
-> gentoo linux $ tools/perf/perf version --build-options
-> perf version 6.16.g45effee4b85a
->                    aio: [ on  ]  # HAVE_AIO_SUPPORT
->                    bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
->          bpf_skeletons: [ on  ]  # HAVE_BPF_SKEL
->             debuginfod: [ on  ]  # HAVE_DEBUGINFOD_SUPPORT
->                  dwarf: [ on  ]  # HAVE_LIBDW_SUPPORT
->     dwarf_getlocations: [ on  ]  # HAVE_LIBDW_SUPPORT
->           dwarf-unwind: [ on  ]  # HAVE_DWARF_UNWIND_SUPPORT
->               auxtrace: [ on  ]  # HAVE_AUXTRACE_SUPPORT
->                 libbfd: [ OFF ]  # HAVE_LIBBFD_SUPPORT ( tip: Deprecated, license incompatibility, use BUILD_NONDISTRO=1 and install binutils-dev[el] )
->            libcapstone: [ on  ]  # HAVE_LIBCAPSTONE_SUPPORT
->              libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
->     libdw-dwarf-unwind: [ on  ]  # HAVE_LIBDW_SUPPORT
->                 libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
->                libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
->             libopencsd: [ OFF ]  # HAVE_CSTRACE_SUPPORT
->                libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
->                libpfm4: [ on  ]  # HAVE_LIBPFM
->              libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
->               libslang: [ on  ]  # HAVE_SLANG_SUPPORT
->          libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
->              libunwind: [ OFF ]  # HAVE_LIBUNWIND_SUPPORT ( tip: Deprecated, use LIBUNWIND=1 and install libunwind-dev[el] to build with it )
->                   lzma: [ on  ]  # HAVE_LZMA_SUPPORT
-> numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
->                   zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
->                   zstd: [ on  ]  # HAVE_ZSTD_SUPPORT
-> 
-> And here are the version of all dependencies I have installed:
-> 
->  * dependency graph for dev-util/perf-6.16-r1
->  `--  dev-util/perf-6.16-r1
->    `--  dev-util/babeltrace-1.5.11
->    `--  dev-libs/libbpf-1.6.2
->    `--  dev-util/bpftool-7.6.0
->    `--  dev-util/pahole-1.30
->    `--  llvm-core/clang-18.1.8-r6
->    `--  llvm-core/llvm-18.1.8-r6
->    `--  llvm-core/clang-19.1.7
->    `--  llvm-core/llvm-19.1.7
->    `--  llvm-core/clang-20.1.8
->    `--  llvm-core/llvm-20.1.8
->    `--  llvm-core/clang-21.1.0
->    `--  llvm-core/llvm-21.1.0
->    `--  sys-libs/libcap-2.76
->    `--  dev-libs/capstone-5.0.6
->    `--  dev-libs/openssl-3.5.2
->    `--  x11-libs/gtk+-2.24.33-r3
->    `--  virtual/jre-21
->    `--  dev-libs/libpfm-4.13.0
->    `--  dev-libs/libtraceevent-1.8.4
->    `--  dev-libs/libtracefs-1.8.2
->    `--  app-arch/xz-utils-5.8.1-r1
->    `--  sys-process/numactl-2.0.19
->    `--  dev-lang/perl-5.42.0
->    `--  dev-lang/python-0.3.13.7
->    `--  dev-lang/python-0.3.14.0_rc2
->    `--  dev-lang/python-3.11.13_p1
->    `--  dev-lang/python-3.12.11_p1
->    `--  dev-lang/python-3.13.9999
->    `--  dev-lang/python-3.14.0_rc2
->    `--  sys-libs/slang-2.3.3-r1
->    `--  dev-debug/systemtap-5.3
->    `--  dev-util/google-perftools-2.17.2
->    `--  sys-libs/libunwind-1.8.2-r1
->    `--  app-arch/zstd-1.5.7-r1
->    `--  dev-libs/elfutils-0.193
->    `--  sys-libs/binutils-libs-2.45-r1
->    `--  sys-libs/zlib-1.3.1-r1
->    `--  virtual/libcrypt-2-r1
->    `--  sys-kernel/linux-headers-6.16
->    `--  virtual/jdk-21
->    `--  app-arch/tar-1.35
->    `--  dev-python/setuptools-80.9.0-r1
->    `--  app-alternatives/yacc-1-r2
->    `--  app-alternatives/lex-0-r1
->    `--  sys-apps/which-2.23
->    `--  virtual/pkgconfig-3
->    `--  app-text/asciidoc-10.2.1
->    `--  app-text/sgml-common-0.6.3-r7
->    `--  app-text/xmlto-0.0.28-r11
->    `--  sys-process/time-1.9-r1
-> 
-> I hope that this helps with reproducing the problem, but if not, let me
-> know which additional information you'd like to have and I will send it.
-> My running kernel is 6.16.4, and glibc is version 2.42.
-> 
-> Best regards,
-> -Guilherme
 
