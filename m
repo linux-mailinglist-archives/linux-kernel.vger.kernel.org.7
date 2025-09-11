@@ -1,186 +1,170 @@
-Return-Path: <linux-kernel+bounces-812210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19787B5348C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:55:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D3FB53488
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70FA6586CF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:54:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4E1E1CC1558
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8B4345731;
-	Thu, 11 Sep 2025 13:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DCD334371;
+	Thu, 11 Sep 2025 13:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="A8TDZ5kV"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlT860eg"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508BB3451A6
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA39F327A00;
+	Thu, 11 Sep 2025 13:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757598669; cv=none; b=KJTMOQ5xiIYCl6RzpdANAMPwfWFYks4Lftq1ML4bnR1P6SduXWYLcTLl4ifKS/+FC7wqoBxkuiShbAI6XtYvbxlH9rcR0grSnbPSGP1pTwQN96ukoV0eE5WkLsdHTSt0dI+WqIyXXyYL6UtmHFzRVTIOrUV5iyjNLrF39KcYY+Y=
+	t=1757598725; cv=none; b=f2MdPHMoRmHJHgiJ1mJ7vmbVtP+AZs5f1sXgKuB8FXBEwnlhHeQzl7Sv2E/Lf+EbAfzaUSBAKr7AD6wuIc9A/lJgxrNkTmRx61wON/Qo8ozE2sGZCXaQse0giZ4edWTA80CbagK9NAQTpZjArPa0/Ui0OfTIrQ058b/lVMqU6Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757598669; c=relaxed/simple;
-	bh=aKsAZFYuBd/AQWpaWEX8ThXsjnBnZ6NLciQvyn21cDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bfffpWuYoSnbfRY8wlBlz8Tj0KJMPjDZoCLOu0cjeEvdSKKzp3x39watw8stXrWky1YxEDz8kG9FShTHgS5esSkkjU194Wt+HCmqYxem3UKKd2oBTl3BN1G3HCVdc+RGal1lvb7h0YRCyi3qyoHlkatcKGx+eeAeUFOWGIENT60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=A8TDZ5kV; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3e4b5aee522so555134f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:51:07 -0700 (PDT)
+	s=arc-20240116; t=1757598725; c=relaxed/simple;
+	bh=oXQUqn25nnJsMzhF9F1nXOg6Ycgm/P1u5nJ4QuFi05w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JPW9VaVQFpkzJMXGzE+wjA+iNNgFXK+/njHIR2/mrd504zVPGa/XJYI1RtYHo3jlfLsvJVcrSDi8ohBsZmT6HGgN8JbEyzEfclYc7T+b9cwU49MUDaZV1ua1qf5nGnuLWol1abFquxUHgWRaX6IeIKJDe+gkau8DtCHL1gBdJFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RlT860eg; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-8a756436f44so404992241.3;
+        Thu, 11 Sep 2025 06:52:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1757598666; x=1758203466; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcWiaBosOtX/ctQvR+tRX52W6WE3mA+pedyBvnIGg6w=;
-        b=A8TDZ5kV11UbCt3NHOV+1GQTg+lKHzi4he8QUaloh0hCRiIUjuxJi08CRZ+drTR9UM
-         NHFHRpqQzX1XmjjJFnos2DekiqfR/Ve4VOw+PgJVfcrb3OaCtFpkhfGM51oZS+aG+QEp
-         cfXBRpJGuKI/u2nPU3h39S1zh3IJMx8vjgGPIiEhb8j/O/LDkj9ilGuKnHi2Cnf7P1dX
-         ayn/P+uBK8NPVM/gFEGUQu7fiAPdKn4l9TNwsBjoKEzbzc4unerT42JaPiExX4shnpO4
-         8tPLmNU4lQK24ATh5IgzEO+3upLfNO9yDs7KTJDmzHPJxjJFLdxcxLGpRLDK5Tt9IOVu
-         n9hg==
+        d=gmail.com; s=20230601; t=1757598722; x=1758203522; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GEE00+6hvF6rmsi4WJZpiTuvESHAQjXYHBJkPHyecw0=;
+        b=RlT860eg2TtMcp+7r8W7yQcwqx17+mZwaDe1NiSt/6zV0Wv1fvrpOsmXRq+bQCWZKP
+         hRI3dyVYkmsgYnzbEbehwyYxz0LEq3hVvXN52gKgpQ7RH0dydlqmP25ENYBJ4X+VwcEc
+         M59nKu5wHc+fZhAJeylEoDvj5+ooMzg2/c4fktScYL2Nc52PcnOVXzcK65pIKtGH4UQi
+         V5kzfqn9z1amYRTqwtpGDKouVUYrUVyIdFuJb6NCqVUAVgXVlUizsk2ZOZhQLiShl6fj
+         Jcq4dChK1gA2MOh8jyr+caBSjd4DWsLg/i6QC05RVo0soWQV4gzwOUt7sfeBK0XkoKGN
+         whFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757598666; x=1758203466;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcWiaBosOtX/ctQvR+tRX52W6WE3mA+pedyBvnIGg6w=;
-        b=YpVqNk7o/hgSzWPCeBE+1T3auK5S3FyBqjkaicX+Y4vk1hkoRq9Zc/MkLlIFidLu6Q
-         6yx6uaLxW/+qNwXsejxCIGzoe9sNtCVIvWSdl5HH6luWXjRaR5BclMDjgdfDoksqEDEB
-         buaStWjUZPmai2kY0pYiziUpqRX2SsCyLSp36F4jbk5USyHfGLAg+L6CA+Ub/wl/8kob
-         bPOEyeI0qxiLns1yWapHJUkIBp4rhReX8smMMSieQ0GSc3dMWJ+NAz3mQurTBWU4BKAd
-         gceATVXyKYvjCkP3YThDR7LcoytJ+mfiZKoQcqWcDOWufNvlnmHS3iTo+lMmSEOFSGbe
-         AHvA==
-X-Forwarded-Encrypted: i=1; AJvYcCV33zb78xCZQnCb2Lq3+vy7ouqrgAxpVlsBKtQWduZpwdzT2PlDhEoMlLWHA64GdjO2ZWMLtM1Y9Wxi6n4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1VzibFHwvKq74Lu28k3Rb8jSqCgjl/teUl5y8byb+k+f30ukf
-	DpXtYEDFhGACOTkOC1xSb/IEc/f2Vw+TxXumIQwZKip9Hw4+p4nI+Z36J+DBXBF00IE=
-X-Gm-Gg: ASbGncsG6Xw8loyuaKhhZBt/bTrll1iqilkuVHDZ+lo3ZzFG4SfGsgsdmyCZwNaUQP/
-	aOm6frdntNEexcmodLeC6ppPZbf/7WnKbK+1gOfuKWVaqGfHMBxS/k9tlaz1sgIXHBlY2j6sK44
-	pPCKQVu+2HxWVh5b+RG+eJHlw0xziZj0wIU9t0NkufFXqpuab2ddL2okewGVX0SY+kghuQ5rJGx
-	I2YPjjxSA1jrAElWWzxbchTBxuOVKbYnhlDnftqQnbCOjjdIsmsIdNcidtA/tlMBLFjpEdAFRqo
-	5XwgG5aP0Z3KRvr3nsdwoG6lNqtCNyPJaFOS9Ja0EIhT9zDhnrQhMXAphQsJ/iBKzT7j+fLkiex
-	ZZUNPxD1IpBwQlsHF8iLqfJX9P36pc8qbyTOCyuvtUw==
-X-Google-Smtp-Source: AGHT+IHq9qlr5SVbxPXrHpqCsoSxO3Cd+428J/sKOCg7NzkP9nlaNJcC4VfpZGPRxO+l3VOLPYaElQ==
-X-Received: by 2002:a05:6000:240c:b0:3df:c5e3:55fe with SMTP id ffacd0b85a97d-3e64392d4bemr15907531f8f.29.1757598665615;
-        Thu, 11 Sep 2025 06:51:05 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.139])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e760787604sm2596615f8f.24.2025.09.11.06.51.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 06:51:04 -0700 (PDT)
-Message-ID: <0d0aeb02-aff4-4932-b785-ce156cc4902d@tuxon.dev>
-Date: Thu, 11 Sep 2025 16:51:03 +0300
+        d=1e100.net; s=20230601; t=1757598722; x=1758203522;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GEE00+6hvF6rmsi4WJZpiTuvESHAQjXYHBJkPHyecw0=;
+        b=rM7hF4KGe7tSzOePT3jUbkPj8K004oGjq1Ds6Qt/ofQOcCMUXtaev0qnRz9SCUa6TK
+         wpWN+oIOyEdlLgGHlZwXxGM7AGpCGl5mQ5u5+JWdulMcvxTQtTGXXlsZyCAjyJzzI/f8
+         IzlwCSMn+BHzan21xTbfA5BfCMR4itzU3MNKYgPedlVWmmaUd9PhaU3hD4kY8PfhkayS
+         Yi7a1MwuhQO+aKtP/dJkHT0OdMzlE+VejtXRUmyp2TGxfJ2Vrp96qAOhBtWKYml/Fk1o
+         jkNT5pU6ruXzD3d448aRvWATxLkNe/Jgi3DyO58OAJs4/sb97M9XInWxDHZkwrCs4UfQ
+         jR6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUJd136XsbbHg6yg+nyRTNQIVkwyd7+My32nKbUVeqOys2+FnYUXYfsf/amBlQcrBArcv0X4S2h3GE=@vger.kernel.org, AJvYcCUvjsYlYkdv0AWX62lAzHmg+yW2z6nOA9l1dV0b3gdvkJxgLBmeVMdzYliiNtWFzDSJi+vl3nv8zrMK@vger.kernel.org, AJvYcCXI4hZqprNX/1Wr0TMvbZG3MxHNjxtKUYJnhFdG2gZoi/JQDTpU1ajjLzaDwiiLfaTMR5l57kdJB2fztCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrsbY1v6e7rBsl6978i+FE5n7iq6iOdJC9xzaC+8SY2IoFQ4aP
+	kT9kqYnoxT1BOTKWWyideTK163xcix0Zfq9JFGAkXeWsFP3kTxxfYlxKEH8C4p/wMYT9ZaVCPhE
+	tDevpzjBIpWkp3Cernk55pZxCtMWOLuHzIPFbm38=
+X-Gm-Gg: ASbGncvTAk0wNyhmEfvB1++orBQxZgCH6L2FQ7GCgCv6coYK4RmHvzsd+/YATcz0R8V
+	EWPG3Kjv4/BWJZq/hOW5/2XhC/CCeYGfpdID/Hi0aLEvJrKFfU5OgKCrUwKqQWO18SpAo7Q1WM+
+	jlUaYI8XkZm4y4EUz3nEoTNQoNNJoKl3ORk7WJB2xhb8sDL7rO8vZxtk8+7XREtD637J0DLGbYT
+	DbuhhPiUECyLPUyZYH8Y8Bn1cF7ndAMvJAyxgavrPNgiA==
+X-Google-Smtp-Source: AGHT+IGIHPz0RBFl/nm1DjVtb9Rh3E0Rvz3E+f3+Bkjasib3i3qRcuIpsUrg8FbZUBt7+s9qysRmXR5UjQTOfOHapuc=
+X-Received: by 2002:a05:6102:3e0b:b0:4fb:fa84:2e64 with SMTP id
+ ada2fe7eead31-53d1c8a24f2mr5963295137.14.1757598722320; Thu, 11 Sep 2025
+ 06:52:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Fix ISEL restore on resume
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20250908144250.1269294-1-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB113460BE4B4D20305021D85328609A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <54d7c3b2-762f-4f61-af21-02247a471251@tuxon.dev>
- <TY3PR01MB113469D5FBD53A8B507E5DC4A8609A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <TY3PR01MB113469D5FBD53A8B507E5DC4A8609A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <385dccf3-234a-4f83-9610-81ac30bf1466@rowland.harvard.edu>
+ <20250909161901.10733-1-ryanzhou54@gmail.com> <20250911013242.oxm2kwfaqvmybbhk@synopsys.com>
+ <xbfvykzfi26pyaycd7efbqvmraxcu6zzgqjfxtk33wcsjsnnal@5e3g4pq5qcj3>
+In-Reply-To: <xbfvykzfi26pyaycd7efbqvmraxcu6zzgqjfxtk33wcsjsnnal@5e3g4pq5qcj3>
+From: ryan zhou <ryanzhou54@gmail.com>
+Date: Thu, 11 Sep 2025 21:51:50 +0800
+X-Gm-Features: AS18NWDtmlDggqyp6K0v_e1uqwqAiIfa83fbw9mVmNTcQYr6GUERskSZVB3YZKg
+Message-ID: <CAPwe5RNZuUB0ri=cuO4yMUq2nAwTYy_qwNg+wgfXhTHBFO6baA@mail.gmail.com>
+Subject: Re: [PATCH v2] drvier: usb: dwc3: Fix runtime PM trying to activate
+ child device xxx.dwc3 but parent is not active
+To: Xu Yang <xu.yang_2@nxp.com>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	"stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, 
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "rafael@kernel.org" <rafael@kernel.org>, 
+	"royluo@google.com" <royluo@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Xu=EF=BC=8C
 
+Xu Yang <xu.yang_2@nxp.com> =E4=BA=8E2025=E5=B9=B49=E6=9C=8811=E6=97=A5=E5=
+=91=A8=E5=9B=9B 18:58=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hi Ryan,
+>
+> On Thu, Sep 11, 2025 at 01:32:47AM +0000, Thinh Nguyen wrote:
+> > On Wed, Sep 10, 2025, Ryan Zhou wrote:
+> > > Issue description:During the wake-up sequence, if the system invokes
+> > >  dwc3->resume and detects that the parent device of dwc3 is in a
+> > > runtime suspend state, the system will generate an error: runtime PM
+> > > trying to activate child device xxx.dwc3 but parent is not active.
+> > >
+> > > Solution:At the dwc3->resume entry point, if the dwc3 controller
+> > > is detected in a suspended state, the function shall return
+> > > immediately without executing any further operations.
+> > >
+> > > Signed-off-by: Ryan Zhou <ryanzhou54@gmail.com>
+> > > ---
+> > >  drivers/usb/dwc3/core.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > > index 370fc524a468..06a6f8a67129 100644
+> > > --- a/drivers/usb/dwc3/core.c
+> > > +++ b/drivers/usb/dwc3/core.c
+> > > @@ -2687,6 +2687,9 @@ int dwc3_pm_resume(struct dwc3 *dwc)
+> > >     struct device *dev =3D dwc->dev;
+> > >     int             ret =3D 0;
+> > >
+> > > +   if (pm_runtime_suspended(dev))
+> > > +           return ret;
+> > > +
+> >
+> > Is this a documented behavior where the device should remain runtime
+> > suspend on system resume? I feel that that this should be configurable
+> > by the user or defined the PM core. I don't think we should change
+> > default behavior here just to workaround the issue that we're facing.
+> >
+> > What if the user wants to keep the old behavior and resume up the devic=
+e
+> > on system resume?
+>
+> What about resume the device firstly if it's already runtime suspended wh=
+en
+> call dwc3_pm_suspend(). Therefor, the old behavior can be kept and the is=
+sue
+> can be avoided.
 
-On 9/11/25 16:39, Biju Das wrote:
-> HI Caludiu,
-> 
->> -----Original Message-----
->> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->> Sent: 11 September 2025 14:24
->> Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Fix ISEL restore on resume
->>
->> Hi, Biju,
->>
->> On 9/11/25 13:43, Biju Das wrote:
->>> Hi Claudiu,
->>>
->>>> -----Original Message-----
->>>> From: Claudiu <claudiu.beznea@tuxon.dev>
->>>> Sent: 08 September 2025 15:43
->>>> Subject: [PATCH] pinctrl: renesas: rzg2l: Fix ISEL restore on resume
->>>>
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> Commit 1d2da79708cb ("pinctrl: renesas: rzg2l: Avoid configuring ISEL
->>>> in
->>>> gpio_irq_{en,dis}able*()") dropped the configuration of ISEL from
->>>> rzg2l_gpio_irq_enable()/rzg2l_gpio_irq_disable() and moved it to
->>>> rzg2l_gpio_child_to_parent_hwirq()/rzg2l_gpio_irq_domain_free() to fix spurious IRQs.
->>>>
->>>> The resume code used rzg2l_gpio_irq_enable() (called from
->>>> rzg2l_gpio_irq_restore()) to reconfigure the wakeup interrupts. Some
->>>> drivers (e.g. Ethernet) may also reconfigure interrupts in their own
->>>> code, eventually calling rzg2l_gpio_irq_enable(), when these are not wakeup interrupts.
->>>>
->>>> After commit 1d2da79708cb ("pinctrl: renesas: rzg2l: Avoid
->>>> configuring ISEL in gpio_irq_{en,dis}able*()"), ISEL was no longer configured properly after resume.
->>>>
->>>> Fix this by adding rzg2l_gpio_irq_endisable() back into
->>>> rzg2l_gpio_irq_enable(), and by using its unlocked variant in
->>>> rzg2l_gpio_irq_restore(). Having IRQs enable in
->>>> rzg2l_gpio_irq_enable() should be safe with respect to spurious IRQs,
->>>> as in the probe case IRQs are enabled anyway in rzg2l_gpio_child_to_parent_hwirq(). No spurious IRQs
->> were detected on suspend/resume tests (executed on RZ/G3S).
->>>
->>> IIRC, I believe the issue is ISEL is not restored during resume.
->>
->> Yes
->>
->>> Can we restore this register just like Schmitt register
->>> suspend/restore[1]
->>
->> The IA55 would have to be configured for interrupts as well. Doing it in other order will lead to
->> spurious interrupts while resuming. The commit 254203f9a94c ("pinctrl: renesas: rzg2l: Add
->> suspend/resume support") that introduced this approach, mentions the following:
->>
->>     Because interrupt signals are routed to IA55 interrupt controller and
->>     IA55 interrupt controller resumes before pin controller, patch restores
->>     also the configured interrupts just after pin settings are restored to
->>     avoid invalid interrupts while resuming.
-> 
-> OK. So enable/disable Keep ISEL configuration as it is, so the pin gpio int always.
+Originally, I also believed that forcing the device to remain active
+before PM suspend
+ was necessary. However, this approach has two drawbacks:
+    1. It prolongs the system's sleep transition time.
+    2. Worse, if a USB insertion wakes the system during enumeration,
+the system may
+    re-enter sleep before the USB device is fully recognized.
 
-Yes
-
-> Which commit 1d2da79708cb ("pinctrl: renesas: rzg2l: Avoidconfiguring ISEL in gpio_irq_{en,dis}able*()")
-> is doing.
-> 
-> The new addition is suspend/resume restores ISEL along with reconfiguring interrupts.
-> 
-> Is it correct?
-
-This commit only fixes the ISEL restore on resume. The rest of interrupt
-reconfiguration on resume was in place from previous commits.
-
-Thank you,
-Claudiu
-
-> 
-> Cheers,
-> Biju
-> 
-> 
-> 
-
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index 370fc524a468..1b8dbb260017 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -2672,6 +2672,9 @@ int dwc3_pm_suspend(struct dwc3 *dwc)
+>         struct device *dev =3D dwc->dev;
+>         int             ret;
+>
+> +       if (pm_runtime_suspended(dev))
+> +               pm_runtime_resume(dev);
+> +
+>         ret =3D dwc3_suspend_common(dwc, PMSG_SUSPEND);
+>         if (ret)
+>                 return ret;
 
