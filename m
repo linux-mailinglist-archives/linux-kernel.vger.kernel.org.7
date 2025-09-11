@@ -1,113 +1,153 @@
-Return-Path: <linux-kernel+bounces-812389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311CDB53797
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:24:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F7EB536EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF9061C239E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:21:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D152188C9D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA36D34F46A;
-	Thu, 11 Sep 2025 15:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E653451CC;
+	Thu, 11 Sep 2025 15:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="KoO2UY5t"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XEipPzJn"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328A4350822
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F96532A3C3
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757604052; cv=none; b=mcACjyxFjXd+tUQJaw990fmpJj3rkBGE2Y7ImCuWawWPWDswNskl8GgWPWYcTI5SI4z9ULryWz6wKVVnA3C7M0itRQWu4OjD6u1WGX277ibmdYBg1sNVSHXU1I87Ecluc++R0lK81cVbU+tt6mX8Jqzk3otUYsOflwodElTmgQs=
+	t=1757603087; cv=none; b=Gxjpo4JFhiq1/HC1F2acVyCNmWMJo44NgUFDY7lZJojTruPikekaF2duWBC9VlIni3Qg4AcAK8zA7l+r8ff4KITuPD4Jkqi+qKrb2fIWWWmK7mFEnuRhEwsaiiQvK1kdV5iZ6Hbb6OKyFpj53JKIenyKG5/9EeeEQlyKG6t2UnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757604052; c=relaxed/simple;
-	bh=R9HM9zIlGy82epQdECWeMo8XaOByczUIim9micFq2Ic=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=UZQdeXBTNuCJCO4MBxZJUcghR5JHR4zkgBIgeXzJ/ES/2hbL+KbxHjbA/63zfNH/ivvsKqVwzR6QKGB0mT4TrbY09t/fbdHDQbiqFUzStYRmjOrXuGSFxAkxbNMNAU3pqDQGz7+KscRO7CfFLcG0dbDG90StkUDMQH6TlqHkskM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=KoO2UY5t reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=zT13f5E8NapKoHf1bvUnYWcJqBwdVmg+t2G4vMoo2nk=; b=K
-	oO2UY5t+ZDFloK72DQPnCscC5fZRfRTy9f1PLz6QspKCK8VxHA6Qm7VWugpA1XC9
-	fj2O4XtqiERgCL+97vlqAaoZWj+BUWPZuwBCDwxwfZxpjYP/XqIvdg3YRtpRQrYs
-	72bh32IifnaEIF956GpPoz0x9ri6MDLf7YJjqP1qgU=
-Received: from 00107082$163.com ( [111.35.190.173] ) by
- ajax-webmail-wmsvr-40-122 (Coremail) ; Thu, 11 Sep 2025 23:03:50 +0800
- (CST)
-Date: Thu, 11 Sep 2025 23:03:50 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Suren Baghdasaryan" <surenb@google.com>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, vbabka@suse.cz,
-	hannes@cmpxchg.org, usamaarif642@gmail.com, rientjes@google.com,
-	roman.gushchin@linux.dev, harry.yoo@oracle.com,
-	shakeel.butt@linux.dev, pasha.tatashin@soleen.com,
-	souravpanda@google.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re:[PATCH 1/1] alloc_tag: mark inaccurate allocation counters in
- /proc/allocinfo output
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20250723(a044bf12) Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <20250909234942.1104356-1-surenb@google.com>
-References: <20250909234942.1104356-1-surenb@google.com>
-X-NTES-SC: AL_Qu2eBfqbvEgo5iCQYOkZnEYQheY4XMKyuPkg1YJXOp80qSTW1A0GU1FlInXn6t6RBSGwlyeUcjhi6ehqfah2XYRFpFuYvfayCeL9QuJ6t6c1
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1757603087; c=relaxed/simple;
+	bh=4YrZyyB8Rfh+T+OQdySIWTJZ0Z8Gm32c75Hx6y54/Jk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nd3Ho5HC673NPp2YMX1w1PFuTo/dQgR9Q5aM8+vRhlpItMFmrG/n8naFtXokkY53p2eNr9g/Be2EvknFS1uOyMCHaA/Y+vS0JNUAd/gVEopyRIBP8do31KXFxGHYMiPgEPYg4wPkfVeEaAtXsXCXqrvIU501So57YIUCX57+RPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XEipPzJn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BBSICs025658
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:04:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6FKGH0QcPq3zUDyOCCypdh5UbCID7mN5vXsMYkcjroE=; b=XEipPzJnvAcMMuSp
+	rQ3ee6JkPG3R8DPRaI7rTSrrfrayqYsM6hwMWsZfks66TdYvX/cx4bnBGuROXhRg
+	vot5BBI/Fs1CmMWqS7rSc2e/WVQqmYqLP6hbJPuX1jn2A7sGP1fr5+Q24xFUVQxt
+	Qp+DpKkv6bjRzSmeToebculihMnO5yxbEyHTo4l7eiicZiavfJ3imkGhX3mtaTOq
+	m0gPy8oZWiLBDBzb94AQ7EZVMvg1cLFrQrnoYw4Wdq7oKCp4j5Z+yDqkl1OsKXbI
+	jS7DthkM8CUeyLTHuReci23rdT8UgocSEzDSHvy2GLeu+MKs7R2E5RnlG4ykO3W+
+	pLZwIg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490cj105f4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:04:45 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b612061144so869911cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:04:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757603084; x=1758207884;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6FKGH0QcPq3zUDyOCCypdh5UbCID7mN5vXsMYkcjroE=;
+        b=WrBO+J+rGZgS8VHJNwtDCANXTshkEXtlu+onL7yX5mYtH38xy34s5Tbd92IYUgLWMJ
+         APmt6mibAowryhVs6Wh/YQ9jhxDCxoCkIa8GjFInucFrmtyfAnlZehDNfRKB2PRC3ETi
+         3yJDOE104LMX6i0wNIRvuE8b7dQl5J+hH6v8RYFJaHD9gvViWN5AgRiXbwpCU9G2+2AU
+         TaQQdrRj62vioDZETaMfbwHZEJ7CxVbT9mf0i7MoyiE8uS36f+IjLFS/WPvBdqKAlOg+
+         xO+aaY3ZiAEQ2uDyHotmeHbLMKcvh3tWZK8NT2Ab8mQoL36/VFtolqGIvcjYMofZq4T8
+         +2ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOI1MY7DDWb5XYAH+l0WxxbpNhVV1tk6j/BBWRWpILb3Qm2EEIOUI2QPbSF3wzKf3LKZiWRiF1bGFpLmA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuxlJfvuUh1JkkH/MErR12oI1+TWSvz4SS+rrpr6QT84Qhfcq0
+	6IkMPSIlNtKl9wNkQQseGdRCMp1EGaHObO6f2BXWB2Hg2hdsQIfnq7y7nKjZux419UoJgYTRcdH
+	3kF22OINASpScRPLYU8AU2zTakIL4A36X7aTanH57FaK6tJOVwyz4cBiXKkK7tBraYXE=
+X-Gm-Gg: ASbGncvuGGLwAqCoMETT0d3y/VYjF51je94Pne88TeoJ02QFLYOAXETzDqObeK4rVNn
+	dDp9g5p6qsu08/XLhZo/zzet5gojTCVTH5k7J4BWx30+OyhWFei4vQr33FGAtoVZDaI3AGNQ+92
+	JMFfwjB5hc4EU1yuwkeUN0J0GHtvaKhlSQ08VP0cMo0PhDLBDIQm/ZPz8Txi56IPNN3WGZI9DaP
+	e6osuipxAqgtSc5d8IBRq2fAJDQUi17UP0/NA78kDtRH92HH+n32IYn5FUUSr+PumjvR+tu0z+s
+	13NsU7lxcdsByeCd791zaIcO19qGYBOlYiOFdAY23i0B/WUfRGTIRkjNe3gsdlSHXOv+jSx/y1D
+	arJEN9idh7CTazk9whpzxSA==
+X-Received: by 2002:ac8:5f14:0:b0:4b4:9175:fd48 with SMTP id d75a77b69052e-4b5f830417amr151528361cf.0.1757603084224;
+        Thu, 11 Sep 2025 08:04:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE0FppMif3cYGizhNCQ1L/ibDbAQ5mYytEfu5gYANTSlZP+Xwy1nadB0B3Hzn2U//SYcIlZqw==
+X-Received: by 2002:ac8:5f14:0:b0:4b4:9175:fd48 with SMTP id d75a77b69052e-4b5f830417amr151527391cf.0.1757603083289;
+        Thu, 11 Sep 2025 08:04:43 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b317124esm149966666b.46.2025.09.11.08.04.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 08:04:42 -0700 (PDT)
+Message-ID: <53f1e121-302c-4b35-9dad-114d16c2a9a6@oss.qualcomm.com>
+Date: Thu, 11 Sep 2025 17:04:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <20cafc1c.a658.199394de44e.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:eigvCgD3P2zX5MJoXO0uAA--.16302W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBEA7FqmjCuoTPRgAGsq
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] phy: qcom: edp: Fix the DP_PHY_AUX_CFG registers
+ count
+To: Abel Vesa <abel.vesa@linaro.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250911-phy-qcom-edp-add-glymur-support-v3-0-1c8514313a16@linaro.org>
+ <20250911-phy-qcom-edp-add-glymur-support-v3-2-1c8514313a16@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250911-phy-qcom-edp-add-glymur-support-v3-2-1c8514313a16@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: deHHCEVPndsAHP-BohHGppF6h-OcyRDI
+X-Proofpoint-GUID: deHHCEVPndsAHP-BohHGppF6h-OcyRDI
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNCBTYWx0ZWRfX8eFY8Ds8FRdA
+ OAdemtGeNG+lcsprgxFCgD4a4dVXVobFZVl6+e+sQVysG84sHkropsAoQv7r6tgMFKsVttNSIXB
+ XBwRuvESGhWNiWc118tE8tEAVbXDJ6MHLLCyJmk/KgnbgUW8vutWiA9bb/EOzcfesRsAz6N93F3
+ ECrasZY8DzMBA/txy9ZlYMNnTvHWYooxQ/CYLjOt08tYGa7JflkcV6TDQIIq/N9zFg8dpznCI9N
+ adPsD4f5sQtSeia0Pqeo3FTA5zvag6uXjWaL2ITFNRfw1jYdGZn3wBF2XQ2bHTqNWBaXk2pEB5V
+ FgdIxvo2IvnC7RHKGh8mSBxG8g9+7snnu2h8gJDIV6YJIS6o4v+NudD1JmRvpNOkjFR5peWNnIC
+ qzRPBR2p
+X-Authority-Analysis: v=2.4 cv=QeFmvtbv c=1 sm=1 tr=0 ts=68c2e50d cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=c4sUNlcVcd6a9V-9oyAA:9 a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-11_01,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 clxscore=1015 spamscore=0 impostorscore=0
+ bulkscore=0 suspectscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060024
 
-CkF0IDIwMjUtMDktMTAgMDc6NDk6NDIsICJTdXJlbiBCYWdoZGFzYXJ5YW4iIDxzdXJlbmJAZ29v
-Z2xlLmNvbT4gd3JvdGU6Cj5XaGlsZSByYXJlLCBtZW1vcnkgYWxsb2NhdGlvbiBwcm9maWxpbmcg
-Y2FuIGNvbnRhaW4gaW5hY2N1cmF0ZSBjb3VudGVycwo+aWYgc2xhYiBvYmplY3QgZXh0ZW5zaW9u
-IHZlY3RvciBhbGxvY2F0aW9uIGZhaWxzLiBUaGF0IGFsbG9jYXRpb24gbWlnaHQKPnN1Y2NlZWQg
-bGF0ZXIgYnV0IHByaW9yIHRvIHRoYXQsIHNsYWIgYWxsb2NhdGlvbnMgdGhhdCB3b3VsZCBoYXZl
-IHVzZWQKPnRoYXQgb2JqZWN0IGV4dGVuc2lvbiB2ZWN0b3Igd2lsbCBub3QgYmUgYWNjb3VudGVk
-IGZvci4gVG8gaW5kaWNhdGUKPmluY29ycmVjdCBjb3VudGVycywgbWFyayB0aGVtIHdpdGggYW4g
-YXN0ZXJpc2sgaW4gdGhlIC9wcm9jL2FsbG9jaW5mbwo+b3V0cHV0Lgo+QnVtcCB1cCAvcHJvYy9h
-bGxvY2luZm8gdmVyc2lvbiB0byByZWZsZWN0IGNoYW5nZSBpbiB0aGUgZmlsZSBmb3JtYXQuCj4K
-PkV4YW1wbGUgb3V0cHV0IHdpdGggaW52YWxpZCBjb3VudGVyczoKPmFsbG9jaW5mbyAtIHZlcnNp
-b246IDIuMAo+ICAgICAgICAgICAwICAgICAgICAwIGFyY2gveDg2L2tlcm5lbC9rZGVidWdmcy5j
-OjEwNSBmdW5jOmNyZWF0ZV9zZXR1cF9kYXRhX25vZGVzCj4gICAgICAgICAgIDAgICAgICAgIDAg
-YXJjaC94ODYva2VybmVsL2FsdGVybmF0aXZlLmM6MjA5MCBmdW5jOmFsdGVybmF0aXZlc19zbXBf
-bW9kdWxlX2FkZAo+ICAgICAgICAgIDAqICAgICAgIDAqIGFyY2gveDg2L2tlcm5lbC9hbHRlcm5h
-dGl2ZS5jOjEyNyBmdW5jOl9faXRzX2FsbG9jCj4gICAgICAgICAgIDAgICAgICAgIDAgYXJjaC94
-ODYva2VybmVsL2ZwdS9yZWdzZXQuYzoxNjAgZnVuYzp4c3RhdGVyZWdzX3NldAo+ICAgICAgICAg
-ICAwICAgICAgICAwIGFyY2gveDg2L2tlcm5lbC9mcHUveHN0YXRlLmM6MTU5MCBmdW5jOmZwc3Rh
-dGVfcmVhbGxvYwo+ICAgICAgICAgICAwICAgICAgICAwIGFyY2gveDg2L2tlcm5lbC9jcHUvYXBl
-cmZtcGVyZi5jOjM3OSBmdW5jOmFyY2hfZW5hYmxlX2h5YnJpZF9jYXBhY2l0eV9zY2FsZQo+ICAg
-ICAgICAgICAwICAgICAgICAwIGFyY2gveDg2L2tlcm5lbC9jcHUvYW1kX2NhY2hlX2Rpc2FibGUu
-YzoyNTggZnVuYzppbml0X2FtZF9sM19hdHRycwo+ICAgICAgNDkxNTIqICAgICAgNDgqIGFyY2gv
-eDg2L2tlcm5lbC9jcHUvbWNlL2NvcmUuYzoyNzA5IGZ1bmM6bWNlX2RldmljZV9jcmVhdGUKPiAg
-ICAgICAzMjc2OCAgICAgICAgMSBhcmNoL3g4Ni9rZXJuZWwvY3B1L21jZS9nZW5wb29sLmM6MTMy
-IGZ1bmM6bWNlX2dlbl9wb29sX2NyZWF0ZQo+ICAgICAgICAgICAwICAgICAgICAwIGFyY2gveDg2
-L2tlcm5lbC9jcHUvbWNlL2FtZC5jOjEzNDEgZnVuYzptY2VfdGhyZXNob2xkX2NyZWF0ZV9kZXZp
-Y2UKPgoKSGksIApUaGUgY2hhbmdlcyBtYXkgIGJyZWFrIHNvbWUgY2xpZW50IHRvb2xzLCBtaW5l
-IGluY2x1ZGVkLi4uLiAKSSBkb24ndCBtaW5kIGFkanVzdGluZyBteSB0b29scywgYnV0IHN0aWxs
-CklzIGl0IGFjY2VwdGFibGUgIHRvIGNoYW5nZSAKICAgICAgNDkxNTIqICAgICAgNDgqIGFyY2gv
-eDg2L2tlcm5lbC9jcHUvbWNlL2NvcmUuYzoyNzA5IGZ1bmM6bWNlX2RldmljZV9jcmVhdGUKdG8K
-ICAgICAgKzQ5MTUyICAgICAgKzQ4IGFyY2gveDg2L2tlcm5lbC9jcHUvbWNlL2NvcmUuYzoyNzA5
-IGZ1bmM6bWNlX2RldmljZV9jcmVhdGUqCgpUaGUgJysnIHNpZ24gbWFrZSBpdCBzdGlsbCBzdGFu
-ZG91dCB3aGVuIHZpZXcgZnJvbSBhIHRlcm1pbmFsLCBhbmQgY2xpZW50IHRvb2xzLCBub3QgYWxs
-IG9mIHRoZW0gdGhvdWdoLCBtaWdodCBub3QgbmVlZCBhbnkgY2hhbmdlcy4gCkFuZCB3aGVuIGNs
-aWVudCB3YW50IHRvIGZpbHRlciBvdXQgaW5hY2N1cmF0ZSBkYXRhIGl0ZW1zLCBpdCBjb3VsZCBi
-ZSBkb25lIGJ5IGNoZWNraW5nIHRoZSB0YWlsaW5nICcqIiBvZiBmdW5jIG5hbWUuCgooVGhlcmUg
-d291bGQgYmUgc29tZSBjb3JuZXIgY2FzZXMsIGZvciBleGFtcGxlLCB0aGUgJysnIHNpZ24gbWF5
-IG5vdCBuZWVkZWQgd2hlbiB0aGUgdmFsdWUgcmVhY2ggYSBuZWdhdGl2ZSB2YWx1ZSBpZiBzb21l
-IHVuZGVyZmxvdyBidWcgaGFwcGVuZWQpCgoKVGhhbmtzCkRhdmlkLgoKCj5TdWdnZXN0ZWQtYnk6
-IEpvaGFubmVzIFdlaW5lciA8aGFubmVzQGNtcHhjaGcub3JnPgo+U2lnbmVkLW9mZi1ieTogU3Vy
-ZW4gQmFnaGRhc2FyeWFuIDxzdXJlbmJAZ29vZ2xlLmNvbT4KPi0tLQoK
+On 9/11/25 4:45 PM, Abel Vesa wrote:
+> On all platforms supported by this driver, there are 13 DP_PHY_AUX_CFGx
+> registers. This hasn't been an issue so far on currently supported
+> platforms, because the init sequence never spanned beyond DP_PHY_AUX_CFG9.
+> 
+> However, on the new upcoming Glymur platform, these are updated along
+> with the rest of the init sequence.
+> 
+> So update the size of the array holding the config to 13.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
 
