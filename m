@@ -1,109 +1,185 @@
-Return-Path: <linux-kernel+bounces-812050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC539B5324A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:32:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FD8B532C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3678A06ABD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:31:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB146A80D15
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68214321F33;
-	Thu, 11 Sep 2025 12:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JdOhMc8s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9FE3218D2;
-	Thu, 11 Sep 2025 12:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE76322763;
+	Thu, 11 Sep 2025 12:50:38 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E56322747
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757593816; cv=none; b=kaH2sCL7huCoTtb5DYdry5bu8YMrWeAi7V5Wbhyze/uXRRSFbjodHK85yuQUoSP+HXnrh1hBjJdcZvpxrZ1vc9Sklz+PlYclMoCN3qdMzRJ+CR+rTNeELn0r4qRilb8l+3xhNgCvCLScmbOkkhpX2MZ8wfuR10RY694R8sZNiL4=
+	t=1757595037; cv=none; b=Z4zGVRIjbX10Oz6TZ4wwG3XJNH1Du+1qsOJH0X0d0oCRSvbmblBVxQgvSb9uzMOJe8Sfuwfle9q9o5TwljPS1wbTyGWgeNT0hgLkmQAjO79fMzZUb3is6VYolDV16fFJ/X2BnrJP7FMFpmAK1EPuPudWfLLx94yiiTkXOM1znV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757593816; c=relaxed/simple;
-	bh=gZ1dZ/ElhQhLoCMCCotria6+48Ot75ZaRc+i3BwpA5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LYfaIISIJ3EdK+UpuLmQJ6urY6rqekr1n65MQ9aVoQrrlPwYAoRL9UklFjnb70TkBZRWzki8xkg0Fd23uTWmZFGgLUBOzga6Jj+g5Fo1oPawLvF9jTb4lr8bC8BxGIe1iRSyD6bJcFjOJhAhy9PdZ3odmHsKYl2h9JUslY33hV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JdOhMc8s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 969A5C4CEF0;
-	Thu, 11 Sep 2025 12:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757593815;
-	bh=gZ1dZ/ElhQhLoCMCCotria6+48Ot75ZaRc+i3BwpA5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JdOhMc8stCim9HV3ZLDrTlgni74zo23htGVDKm4/Fy1BopuclwCWvaPgeTeP6E5iW
-	 97ReJt5nw8C662GsFS8BQ6EmQ7NYBfghxkejoozfA+fHz5TTtOv9kd8GXHu56PNwBF
-	 hf7mwbobaqOrAclEY6DvyJSL3Hv5UKhDQATbFtfS3hOPg2IYBGPLy+0EqYxnlq4aQW
-	 84SCDwAFPYu7LnWnxTj+iyJ1jOQV3omXtQVK6OeN+/Iv90sF7dYUAxreTr0KLnG4aZ
-	 OJ5benKi4btjtOvvcjo/dpQV7ykocacn3gEM8hu1C3uScA8hPQJDMg4eKAmw+R4T6H
-	 t1cce+LKipgUg==
-Date: Thu, 11 Sep 2025 13:30:08 +0100
-From: Simon Horman <horms@kernel.org>
-To: Fan Gong <gongfan1@huawei.com>
-Cc: Zhu Yikai <zhuyikai1@h-partners.com>, netdev@vger.kernel.org,
+	s=arc-20240116; t=1757595037; c=relaxed/simple;
+	bh=Y2VsstfCYQSjNLkadzNiJFV+r4Li8EgPQiOKkwciHnI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R1NPtSlFEdux60UeW6K1aJ7K4Ch+6h920IxpkZY9kNur5Qmv/utzO/NUc8RzpGZNu/qVUKrEC3i4xGmm82PtqHYXNfCmkNTnvdiQypl7bgCW96dqHWgzWyb9BSb4CWG3RY3qT0xmGe4Y1Ac9+cqT5E9fsR7Wcpqgme9/mLfdES0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cMxjb6Cb5z9sj9;
+	Thu, 11 Sep 2025 14:30:43 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id rohlHAx5DXGK; Thu, 11 Sep 2025 14:30:43 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cMxjZ03x8z9sjB;
+	Thu, 11 Sep 2025 14:30:42 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DE8CC8B7A7;
+	Thu, 11 Sep 2025 14:30:41 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id obEC7Z_HFJXJ; Thu, 11 Sep 2025 14:30:41 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 986958B764;
+	Thu, 11 Sep 2025 14:30:41 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
-	Xin Guo <guoxin09@huawei.com>,
-	Shen Chenyang <shenchenyang1@hisilicon.com>,
-	Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
-	Shi Jing <shijing34@huawei.com>,
-	Luo Yang <luoyang82@h-partners.com>,
-	Meny Yossefi <meny.yossefi@huawei.com>,
-	Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Suman Ghosh <sumang@marvell.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Joe Damato <jdamato@fastly.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH net-next v05 09/14] hinic3: Queue pair context
- initialization
-Message-ID: <20250911123008.GF30363@horms.kernel.org>
-References: <cover.1757401320.git.zhuyikai1@h-partners.com>
- <8323dc5ce83f9d442c00824dd7dd24e55ddfb666.1757401320.git.zhuyikai1@h-partners.com>
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2] powerpc/32: Restore clearing of MSR[RI] at interrupt/syscall exit
+Date: Thu, 11 Sep 2025 14:30:12 +0200
+Message-ID: <66d0ab070563ad460ed481328ab0887c27f21a2c.1757593807.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8323dc5ce83f9d442c00824dd7dd24e55ddfb666.1757401320.git.zhuyikai1@h-partners.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757593814; l=3541; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=Y2VsstfCYQSjNLkadzNiJFV+r4Li8EgPQiOKkwciHnI=; b=wcihNTn6ThrJFc/HKm+48uiC25s2PwFT0YcZbpDrPAORdV2YZOfQvc2kSIHQ39gbOQtw4lI/e RJMCOlWGintARmyBAUOq8wMdu0CV8Ck0Mk6b5AD+jXWXDvcALOWQOQL
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 09, 2025 at 03:33:34PM +0800, Fan Gong wrote:
-> Initialize queue pair context of hardware interaction.
-> 
-> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Fan Gong <gongfan1@huawei.com>
+Commit 13799748b957 ("powerpc/64: use interrupt restart table to speed
+up return from interrupt") removed the inconditional clearing of
+MSR[RI] when returning from interrupt into kernel. But powerpc/32
+doesn't implement interrupt restart table hence still need MSR[RI]
+to be cleared.
 
-The nit below notwithstanding, this looks good to me.
+It could be added back in interrupt_exit_kernel_prepare() but it is
+easier and better to add it back in entry_32.S for following reasons:
+- Writing to MSR must be followed by a synchronising instruction
+- The smaller the non recoverable section is the better it is
 
-...
+So add a macro called clr_ri and use it in the three places that play
+up with SRR0/SRR1. Use it just before another mtspr for synchronisation
+to avoid having to add an isync.
 
-> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_io.c b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_io.c
+Now that's done in entry_32.S, exit_must_hard_disable() can return
+false for non book3s/64, taking into account that BOOKE doesn't have
+MSR_RI.
 
-...
+Also add back blacklisting syscall_exit_finish for kprobe. This was
+initially added by commit 7cdf44013885 ("powerpc/entry32: Blacklist
+syscall exit points for kprobe.") then lost with
+commit 6f76a01173cc ("powerpc/syscall: implement system call
+entry/exit logic in C for PPC32").
 
-> +static int clean_qp_offload_ctxt(struct hinic3_nic_dev *nic_dev)
-> +{
-> +	/* clean LRO/TSO context space */
-> +	return (clean_queue_offload_ctxt(nic_dev, HINIC3_QP_CTXT_TYPE_SQ) ||
-> +		clean_queue_offload_ctxt(nic_dev, HINIC3_QP_CTXT_TYPE_RQ));
+Fixes: 6f76a01173cc ("powerpc/syscall: implement system call entry/exit logic in C for PPC32")
+Fixes: 13799748b957 ("powerpc/64: use interrupt restart table to speed up return from interrupt")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ arch/powerpc/kernel/entry_32.S  | 18 +++++++++++++++++-
+ arch/powerpc/kernel/interrupt.c |  2 +-
+ 2 files changed, 18 insertions(+), 2 deletions(-)
 
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index c37480176a1c..16f8ee6cb2cd 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -101,6 +101,17 @@ SYM_FUNC_END(__kuep_unlock)
+ .endm
+ #endif
+ 
++.macro	clr_ri trash
++#ifndef CONFIG_BOOKE
++#ifdef CONFIG_PPC_8xx
++	mtspr   SPRN_NRI, \trash
++#else
++	li	\trash, MSR_KERNEL & ~MSR_RI
++	mtmsr	\trash
++#endif
++#endif
++.endm
++
+ 	.globl	transfer_to_syscall
+ transfer_to_syscall:
+ 	stw	r3, ORIG_GPR3(r1)
+@@ -149,6 +160,7 @@ ret_from_syscall:
+ 	cmpwi	r3,0
+ 	REST_GPR(3, r1)
+ syscall_exit_finish:
++	clr_ri	r4
+ 	mtspr	SPRN_SRR0,r7
+ 	mtspr	SPRN_SRR1,r8
+ 
+@@ -168,6 +180,7 @@ syscall_exit_finish:
+ 	REST_GPR(0, r1)
+ 	REST_GPRS(3, 12, r1)
+ 	b	1b
++_ASM_NOKPROBE_SYMBOL(syscall_exit_finish)
+ 
+ #ifdef CONFIG_44x
+ .L44x_icache_flush:
+@@ -224,10 +237,11 @@ fast_exception_return:
+ 	/* Clear the exception marker on the stack to avoid confusing stacktrace */
+ 	li	r10, 0
+ 	stw	r10, 8(r11)
+-	REST_GPR(10, r11)
++	clr_ri	r10
+ 	mtspr	SPRN_SRR1,r9
+ 	mtspr	SPRN_SRR0,r12
+ 	REST_GPR(9, r11)
++	REST_GPR(10, r11)
+ 	REST_GPR(12, r11)
+ 	REST_GPR(11, r11)
+ 	rfi
+@@ -256,6 +270,7 @@ interrupt_return:
+ .Lfast_user_interrupt_return:
+ 	lwz	r11,_NIP(r1)
+ 	lwz	r12,_MSR(r1)
++	clr_ri	r4
+ 	mtspr	SPRN_SRR0,r11
+ 	mtspr	SPRN_SRR1,r12
+ 
+@@ -298,6 +313,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_NEED_PAIRED_STWCX)
+ 	cmpwi	cr1,r3,0
+ 	lwz	r11,_NIP(r1)
+ 	lwz	r12,_MSR(r1)
++	clr_ri	r4
+ 	mtspr	SPRN_SRR0,r11
+ 	mtspr	SPRN_SRR1,r12
+ 
+diff --git a/arch/powerpc/kernel/interrupt.c b/arch/powerpc/kernel/interrupt.c
+index e0c681d0b076..aea6f7e8e9c6 100644
+--- a/arch/powerpc/kernel/interrupt.c
++++ b/arch/powerpc/kernel/interrupt.c
+@@ -38,7 +38,7 @@ static inline bool exit_must_hard_disable(void)
+ #else
+ static inline bool exit_must_hard_disable(void)
+ {
+-	return true;
++	return false;
+ }
+ #endif
+ 
+-- 
+2.49.0
 
-nit: unnecessary outer parentheses
-
-> +}
-
-...
 
