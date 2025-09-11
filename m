@@ -1,147 +1,134 @@
-Return-Path: <linux-kernel+bounces-812682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09ABAB53B5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:28:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7009FB53B51
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EA1C1CC58F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:28:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F69D3BFB9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1663680B9;
-	Thu, 11 Sep 2025 18:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD64C368083;
+	Thu, 11 Sep 2025 18:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="WeeGD9P7"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jEIpqAl0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC561DA55;
-	Thu, 11 Sep 2025 18:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F411DA55
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757615310; cv=none; b=LqsG2nN3GbEjnkvzajGSZDFHgWPOdL+ugc/DpOpocw4lcJORO2RugwFY1JMKoDhchcLJttf7URoKYRIU/hxpSYUUK/UhuSpQRoo6qWrNSDMBjTSDAwp6Pf9sD+q6qb+kLPiEul3/SHicdlE6dXwLUL+mtCaq7fpCbPQGbii4+qk=
+	t=1757615044; cv=none; b=FJ8/1hcroT1PUoRoH7AWQojMgE0dn78m5nCt9BNBRrUA+ocB3IpUjry8BFWyIRVx+wED4wdb2rvhjHDaKA5hpo2mhsO2iqdLPaA2Yx9RQsagEzvYJO2WvhtUlWKkAndQaVyZiNgcYOMPW5k5HwFES5Vy91Dn2NXLSTY7eEUkLwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757615310; c=relaxed/simple;
-	bh=fU17BlJqP+JTf2WgZvr+C25w0Q0fI9ElCxG01p6OgIQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=OAQR30QHOoMvgOCmJfcQKvCog4bezi26QEEf1QQNudTWln0AZHwIYq2zEAvsKiYkm9Cd1pA+C8WOwq0CC8+xjvalItxUqBFWMKitdeK30bvAaTPebQjkb6YxueOgPa8obPkhNG6NKXPormrpeEjFRxyY38mRsiDXbO3oZzA4rbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=WeeGD9P7; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1757615306; x=1758220106; i=rwarsow@gmx.de;
-	bh=fU17BlJqP+JTf2WgZvr+C25w0Q0fI9ElCxG01p6OgIQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=WeeGD9P7imVjeZRCnx4UB1JnDvrro1kwzAHz09qwaFHOd4O0Jb11Gi23/HQIpOwB
-	 zBpMc1nkiPk5ncBwivzJ7XZoyoF3bEwf8ztXW+uyyRaXTsPFZnvKzr11PlSikDwh4
-	 i+6oOojLyqtE8cEpvTfZZdIhz4seCDAwbZF/euz76770/uwS4sfqPSbXiy+Sk4tn5
-	 A3LXhawKkhft8hfzagqnQNOde5yEvBFaFWeoWcgdE4EVuevUqUrycfdQcFzxqDgnV
-	 H+GaQ8o55jbUqCGU83MwaUWdrhwDusAqK0NufpsiwsMrOupvW9u8crJwvqGGTANA/
-	 PPBqrFbKnNhi7nnnrQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.200.20] ([46.142.32.170]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MNt0C-1ulpmz3Pw0-00KbAe; Thu, 11
- Sep 2025 20:28:25 +0200
-Message-ID: <63e8b619-beae-42f5-a79c-62537b84a5d5@gmx.de>
-Date: Thu, 11 Sep 2025 20:28:25 +0200
+	s=arc-20240116; t=1757615044; c=relaxed/simple;
+	bh=CXnuhkfK+uwg885kqdXtUcY5ZhAHGMIw7hGXcJi6Frw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JxulAAfeAeV3qm/azoW5fXF8HB8z4o5YLh+7gseLaO3B5fdLEteUMJz9+Sm4IcXgP0CX1/8cJ/NEoE+UP1KDrtkKgs0nVoXf8dnDopssQFi/yLgqgFDGpkzGSL/53cybNF6vt5Mmdh1QFtcQXeu1whF0MfwVcFwILQuzjDCbWUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jEIpqAl0; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757615042; x=1789151042;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=CXnuhkfK+uwg885kqdXtUcY5ZhAHGMIw7hGXcJi6Frw=;
+  b=jEIpqAl0sIF8vwirIQfZjKMqJXARaNfjzP2QkzBjkO2Et8seSHyw8V6z
+   RVdKFFW8fBYEhZXM0fpew8nP9mYMreYX1+sDeK2AkbqdJ4TWAIoQgDgrt
+   dEw1Ig9Jwpswb23dyxqe9jDaKxGv65VDPp18GXRm6fbcMM+H6cWFLX/1E
+   CbJec2KnN31v5i/CNxN/3o7nhE7GdA3NnTFOydaA/ZsFSbae5hSfEdBUn
+   Eodedyb2M0/FgZR+IFDYuHIW5YN8i7IQNub8cYRTmKVdvWzoT/aIRD9ZG
+   Wa2wRd4Fcs49bQBoETE2t7p4/YtKyFi7heRkpqCnqW6HRfGJB3J7DaXRB
+   Q==;
+X-CSE-ConnectionGUID: SBwBiYpoRxS2CtmZyi9/Vg==
+X-CSE-MsgGUID: xLb7DjJ8R0+46Q/B9xesGQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="77413621"
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="77413621"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 11:24:02 -0700
+X-CSE-ConnectionGUID: UafFj3t9RA6q71it5dqINw==
+X-CSE-MsgGUID: 07eMOzuMRAe9Lar6ziTlrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="173058302"
+Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
+  by orviesa010.jf.intel.com with ESMTP; 11 Sep 2025 11:24:02 -0700
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Tim Chen <tim.c.chen@intel.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Libo Chen <libo.chen@oracle.com>,
+	Abel Wu <wuyun.abel@bytedance.com>,
+	Len Brown <len.brown@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Chen Yu <yu.c.chen@intel.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Zhao Liu <zhao1.liu@intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Subject: [PATCH v3 0/2] Fix NUMA sched domain build errors for GNR and CWF 
+Date: Thu, 11 Sep 2025 11:30:55 -0700
+Message-Id: <cover.1757614784.git.tim.c.chen@linux.intel.com>
+X-Mailer: git-send-email 2.32.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-Subject: Re: Linux 6.16.7
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:3jWUavsTV+V8W0gmvbgN1zmcxxg6+Be8DDM2RNdnVYGsOGhh32h
- p6cHxFmOczoZOAK1GoKTGOcENbX1Vq9qSxMTEsMPaB+rzANhheiMnJn/0GHxPMpStEr+eyy
- +DtQ3Y37En+BC1WvHMNdu+JTCSq122BgUhuraq+UUXNOMcFDd0hVQKcMrMqQax62DR4G5RW
- meIPEhtUlkS9u++m+ZzKg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:5U+vG4/RV1I=;SBUKKj8qd2H2bB0UwMs/rd5huJL
- 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
- 2QcmpQT3R0xYkyIYYis7tfQSANcdOLS3J4=
+Content-Transfer-Encoding: 8bit
 
-Hallo
+While testing Granite Rapids (GNR) and Clearwater Forest (CWF) in
+SNc-3 mode, we encountered sched domain build errors reported in dmesg.
+Asymmetric node distances from local node to nodes in remote package
+was not expected by the scheduler domain code and also led to excessive
+number of sched domain hierarchy levels.
 
-...
+Simplify the remote node distances for the purpose of building sched
+domains for GNR and CWF to fix the domain build errors and reduce
+the number of NUMA sched domain levels.
 
-Urrggghhh, fetched the wrong kernel (6.6.17 instead 6.16.7)
+Changes in v3:
+- Simplify sched_record_numa_dist() by getting rid of max distance
+  computation. 
+- minor clean ups.
+- Link to v2:
+  https://lore.kernel.org/lkml/61a6adbb845c148361101e16737307c8aa7ee362.1757097030.git.tim.c.chen@linux.intel.com/
 
-sorry for the noise
+Changes in v2:
+- Allow modification of NUMA distances by architecture to be the
+  sched domain NUMA distances for building sched domains to
+  simplify NUMA domains.
+  Maintain separate NUMA distances for the purpose of building
+  sched domains from actual NUMA distances.
+- Use average remote node distance as the distance to nodes in remote
+  packages for GNR and CWF.
+- Remove the original fix for topology_span_sane() that's superseded
+  by better fix from Pratek.
+  https://lore.kernel.org/lkml/175688671425.1920.13690753997160836570.tip-bot2@tip-bot2/.
+- Link to v1: https://lore.kernel.org/lkml/cover.1755893468.git.tim.c.chen@linux.intel.com/
 
+Tim Chen (2):
+  sched: Create architecture specific sched domain distances
+  sched: Fix sched domain build error for GNR, CWF in SNC-3 mode
 
-=2D-=20
+ arch/x86/kernel/smpboot.c      |  28 ++++++++
+ include/linux/sched/topology.h |   2 +
+ kernel/sched/topology.c        | 114 ++++++++++++++++++++++++++++-----
+ 3 files changed, 127 insertions(+), 17 deletions(-)
 
-Ronald
+-- 
+2.32.0
 
 
