@@ -1,110 +1,149 @@
-Return-Path: <linux-kernel+bounces-812449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E63CB53846
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:53:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB23B5383F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FE7E3BD653
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:52:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1AE61684ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520D7352072;
-	Thu, 11 Sep 2025 15:52:00 +0000 (UTC)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DBA238166;
+	Thu, 11 Sep 2025 15:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eKLHp68P"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25575238166;
-	Thu, 11 Sep 2025 15:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B03A32F747
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757605919; cv=none; b=GucsN0YvVmeyzmkwM9cGqKqN5CbMvcjkXjQlPBK9COCTXcJamWV5+zWi187zVqaNoqekH4aNq417mlACDYNeAZq+CWBY9cBnbE1nJnXgO83ncbBEid/XbCkSqBVu0R0teqQ2tAj4vKVy4pU3wvXkpRhF0aR8MVzYEXTNlYEqKhs=
+	t=1757605952; cv=none; b=eoiACng4M9q2YivykdgvQqmMY+Jmm/m91S7B/eQhnAgJxAUrdJkwrESYCti6//p8zUYMgH3zJroCTEfl2kXU3AWpoXpFjsH8ThiZn4kcMQahz9dAIyXQY5rNwYreFL/p7obcPgwghIFPVFPx3zYek+vuTjyAIllLwleVZfSuNtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757605919; c=relaxed/simple;
-	bh=8yGGs9PcX1G2CwsqTIrEZDc76oLA76D2bXONsh7z4O4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a8N60Ry2u5cc1HJN/Sb+uOYOwSFTedtHIO0Yri/9uY3Qr4du8/asRrYNVktL+flHhf9hgsKPqHpsIz+490d5bLg/Gkv0/GXl4tPvxtZ83tk+vn7h6pEJV5qWrjU2/f2MtvIYHUi3A+6xwiaHY5Pd52Wy3XAX9BrzeGgUnTNhXFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5449cfbc489so570807e0c.1;
-        Thu, 11 Sep 2025 08:51:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757605917; x=1758210717;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7WmDTtoX4Nu+x93mK7k7FtNeJY+MFNl3VRMgKJ2eEv4=;
-        b=VIWnRME6wXGjpSNBaa/nX68S8NskMgfhB91CtFEESr3soLm7SydjEBGIp/wy+ZwtG4
-         4qertg06tURsb41flZfRcLvuKSYwHYAWz2jHkt5XRQ7eOS+MidBfH2z06Xxx2vFghiyT
-         Vbks47o73t36u0PYMCVI8uJyTD/yp9SNwDrTNY2IBxOxLATHUa2G++EH4IyXHq/hNYfS
-         XvLtAEAOIKgoQrft3wEyZUOCoCmKOhok7NzV568tzGnzNPXxpJ2qbPcMB2Und8UVrVcD
-         pfGIPCoiMjU/xlE3rNcVEfMF+1I8SApM9rHNqCIHW0nNx6sHqDq9J3IIdAZaZOQxjuG0
-         43Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5TyokCBIal8JxYgzelrcM/fihAibcGZimiRVkFpfyXpK9e2IDwcOPU0y8D46gmICKSkCJpVB4JxRo@vger.kernel.org, AJvYcCWCrfpPztMyE5kRg+WYvanAkHaILMLDscAb/pC37X3VM2kePARbVpY+O03eQpWHzQeTCT8bAJXHXyFakYWW@vger.kernel.org, AJvYcCWw8H/gnyZ4be16ycI+nxVIMHsRDQ1lVqrQP9XRRXOMPSkVvMmkHD/SIKYmnCqCbwVUi9mxkMAG9ma/Go+JCW6PL8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykxbJcpzCp5weKcXJCKdCboYaJ1WSV7m9N1GBllq9t3hq7eiv0
-	0nMpt2bMQE4PniXn2kOOjb/tRHICNmalE1Fn/LoWjdjDHjjiL59TRycjyTBzGSSz
-X-Gm-Gg: ASbGncvi1dZ9FIkT89Rj6LUEAEC33Flg6Ub1MLxagWV/U8qZwZDZko5uT/GxiZ/JB93
-	u4fb+wIzC8NNJi3t/i2iNBC90kJ94o+U7s78nWSwMD+vbD2Gd04eL5gy4AJ8/UopkYrotph+A7e
-	KllaSvZumC59dddWqg+Sb8sO9UIPFu1VYxvoQ/+AWP9/eylPSComdPgzKGaDsF3blCxZg08V4vd
-	FIdgj7DVLhPYnkXG+nyNi3TB+H47QWGN35lY7mvtuAJ5WTHfrpBNVWX2O3LS7Zy3QfNfIQDgJxS
-	vLJqad9mJHlGOmvy3pK41GRI4ulYaBr4B/NaIusvlDurMhvq0OIedkRUFPupQJSBkwGr2hvFTuu
-	nLQgeyo+Vuyti2Gl92fC8N1D8TN+6H+Tp8acXtGhXTdim7Q52epa54yMTdJvGPTY/
-X-Google-Smtp-Source: AGHT+IHggu40QDEMt7NU6jeixcvznNHqKgTmxNSBn/MaV3BEwB1o0KoC5bvaIwb0D87lmalCt8yrXQ==
-X-Received: by 2002:a05:6122:251f:b0:53c:6d68:1d39 with SMTP id 71dfb90a1353d-54a098941dbmr1576737e0c.8.1757605915563;
-        Thu, 11 Sep 2025 08:51:55 -0700 (PDT)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54a0d1bd550sm328690e0c.5.2025.09.11.08.51.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 08:51:55 -0700 (PDT)
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-549f51cb12bso1220971e0c.1;
-        Thu, 11 Sep 2025 08:51:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUrwfVdpP9s27mprvfF+YH1autmDUOZx9rs3rXRrYZzgSMGMDgcflfaGyhqWAb+fFvOd7LUdb3PeufE@vger.kernel.org, AJvYcCUzS2T4XvZr/Fb/hAu1/APtsF5O8ABgQ74cFrl8wKLjvlN33hi434oBLDPyEOXAmdDd2azunuSiCGsfMVeC@vger.kernel.org, AJvYcCXXEkx2GfRAXTzTJCDFhOilmKITxePfNLCAMfR+fMKSDiW3OxDyatkQKSS7oz5e5pvuLkbcIgKKCo/fm+MV+h30GSs=@vger.kernel.org
-X-Received: by 2002:a05:6122:8288:b0:545:f7df:4769 with SMTP id
- 71dfb90a1353d-54a095f398fmr2008582e0c.0.1757605914992; Thu, 11 Sep 2025
- 08:51:54 -0700 (PDT)
+	s=arc-20240116; t=1757605952; c=relaxed/simple;
+	bh=kB0PcEHHl5mi05isLvthbmDv7jXVGde9iru/Ft+xJoc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=EXrnrvW3sV6SbRTikcRJggEu7yLJTjs/EaNdb2DycEFVylfAe+TieORJAS8DA3e/HIdnrI172UCKieY3RWH8tRmLjYn6KIU35ki7utC97welni0aYL0cxkcLALcFpPL8/AbYNNXQBQK7c63kS/9nty23RDQa6E0fY7Nn/qMHZdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eKLHp68P; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250911155228epoutp030c8a535be87ffcd1f6bd2d1cd3d153e3~kRUxC4JyJ1145911459epoutp031
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:52:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250911155228epoutp030c8a535be87ffcd1f6bd2d1cd3d153e3~kRUxC4JyJ1145911459epoutp031
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757605948;
+	bh=PIwqjCKaBtnZ2f92Qn6L1rSKvFT+8xiThxIV5Da48ic=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=eKLHp68PLUqMq6bvZsQ4PrBsti8H1WEeFxtNLK/Yhko+cKVYg91/ohw1rNku5zKdA
+	 SHMb0aENu6G3wmM5qQ1LNZj1wPFttrISLvDMlnFtUlKl4fTsriQASb0bZrAqaHQ/UO
+	 RxDqUih+H2ssR7BbGrPXk72DI4uueNg6gRxsei/E=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250911155227epcas5p28ffdbdbbc5fb99ede41166173acf4fbf~kRUwMy0ZP1886018860epcas5p2_;
+	Thu, 11 Sep 2025 15:52:27 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cN2BL3vpFz6B9m5; Thu, 11 Sep
+	2025 15:52:26 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250911155225epcas5p4f39dd82d8c40e0f51e8a0b2ab33039be~kRUuJaSAC1471514715epcas5p49;
+	Thu, 11 Sep 2025 15:52:25 +0000 (GMT)
+Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250911155221epsmtip167c1cabfb1160a05e746d1c73091c81d~kRUqyOpq40708107081epsmtip1i;
+	Thu, 11 Sep 2025 15:52:21 +0000 (GMT)
+From: "Ravi Patel" <ravi.patel@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <gregkh@linuxfoundation.org>,
+	<jirislaby@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <jesper.nilsson@axis.com>, <lars.persson@axis.com>,
+	<alim.akhtar@samsung.com>, <arnd@kernel.org>
+Cc: <andriy.shevchenko@linux.intel.com>, <geert+renesas@glider.be>,
+	<thierry.bultel.yh@bp.renesas.com>, <dianders@chromium.org>,
+	<robert.marko@sartura.hr>, <schnelle@linux.ibm.com>, <kkartik@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-arm-kernel@axis.com>,
+	<ksk4725@coasia.com>, <kenkim@coasia.com>, <smn1196@coasia.com>,
+	<pjsin865@coasia.com>, <shradha.t@samsung.com>
+In-Reply-To: <b9a2c3cc-49d6-480c-8c57-fffe0cf9d527@kernel.org>
+Subject: RE: [PATCH 1/3] dt-bindings: serial: samsung: Update
+ axis,artpec8-uart to use samsung,uart-fifosize
+Date: Thu, 11 Sep 2025 21:22:20 +0530
+Message-ID: <000001dc2334$117ae310$3470a930$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904165909.281131-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250904165909.281131-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250904165909.281131-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 11 Sep 2025 17:51:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW2LQg-UW9C5DJ-KwA2=RByNpbp+hW+oessFUvBf4q1vg@mail.gmail.com>
-X-Gm-Features: AS18NWB6RK2PjMzC4cFWm6yb3i47myg6SKk63Fy4i09p9QY3VWn0N8LzYVflx50
-Message-ID: <CAMuHMdW2LQg-UW9C5DJ-KwA2=RByNpbp+hW+oessFUvBf4q1vg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: r9a09g056: Add I3C node
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHCvJCefXNgXa49SBfbwsspKb9l0wIPxsz+Ajb57S8CO2v7oLSM3O1g
+Content-Language: en-in
+X-CMS-MailID: 20250911155225epcas5p4f39dd82d8c40e0f51e8a0b2ab33039be
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250911141706epcas5p29ba4f0af11e3a95a9754fd6255f7b5a7
+References: <20250911141605.13034-1-ravi.patel@samsung.com>
+	<CGME20250911141706epcas5p29ba4f0af11e3a95a9754fd6255f7b5a7@epcas5p2.samsung.com>
+	<20250911141605.13034-2-ravi.patel@samsung.com>
+	<b9a2c3cc-49d6-480c-8c57-fffe0cf9d527@kernel.org>
 
-On Thu, 4 Sept 2025 at 18:59, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add I3C node to RZ/V2N ("R9A09G056") SoC DTSI.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.18.
 
-Gr{oetje,eeting}s,
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: 11 September 2025 20:03
+...
+> 
+> On 11/09/2025 16:16, Ravi Patel wrote:
+> > Update the axis,artpec8-uart compatible such that it uses the
+> > samsung,uart-fifosize as required property.
+> >
+> > This is to remove the axis,artpec8-uart specific code (which is
+> > kind of duplicated) from the driver and use the other matching
+> > exynos8895 uart code for ARTPEC-8.
+> >
+> > Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> > ---
+> >  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> > index 1a1f991d5364..08eceaae2921 100644
+> > --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> > +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> > @@ -152,7 +152,6 @@ allOf:
+> >            contains:
+> >              enum:
+> >                - apple,s5l-uart
+> > -              - axis,artpec8-uart
+> >                - samsung,exynos4210-uart
+> >                - samsung,exynos5433-uart
+> 
+> You need to start testing patches, because this obviously fails basic
+> tests. And toolset would tell you if you bothered.
 
-                        Geert
+Oh my bad, somehow I missed it.
+Will fix (dtbs_check) in next version
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Thanks for pointing out.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Ravi
+
+> 
+> This does not fit documented Samsung SoC maintainer rules (because of (1)).
+> 
+> Best regards,
+> Krzysztof
+
 
