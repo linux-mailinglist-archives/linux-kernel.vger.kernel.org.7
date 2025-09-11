@@ -1,54 +1,97 @@
-Return-Path: <linux-kernel+bounces-811171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB786B52535
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:55:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C492B52542
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E818C1C21BEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:55:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41924817E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0EE1DED63;
-	Thu, 11 Sep 2025 00:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CE01F03C5;
+	Thu, 11 Sep 2025 01:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="USDNm4tN"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nb9a94fx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E642C17D2;
-	Thu, 11 Sep 2025 00:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50A31519B9;
+	Thu, 11 Sep 2025 01:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757552111; cv=none; b=nGc7ZW5HaYTn2IX43quVuG7ErrmVRatQTdjvNX3CKWOQBwO/b0UH6np9GxZFi24iwf2BbLTvtY7I9Bm+984avTmusLlBe47cAfgDEYXLs8aRxSL2hqF+1mmlUntDmktDwvZj1LjFktf9Uvrd0u8UflCFvW6P59EfMgoEXV7KBYU=
+	t=1757552432; cv=none; b=nJEeybBIibZ2JleVY7bOIseaIqVHtjS2gpSKY5vTo0OhM/0BzSZQaHqCnvHbRP7eUz1BgOoUEiAw1s8DkbVrvJU6SleXpHeRHh9+NTWRsxEZ1IbiWZb7Boju9Q2tcMWdIV6KGB1F7P1MFbzv9lDZpZ42/jUdRvQbm6jJCqSmvkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757552111; c=relaxed/simple;
-	bh=lZzCS+MeXaNofG/AVijdQBYuo0tukXfrPem+nM3WxZQ=;
+	s=arc-20240116; t=1757552432; c=relaxed/simple;
+	bh=XeSikDz3/rCknydEBrqESWnjjoPx806qZ8IdQkhjSTI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lYT0btTPuV0dHkX7YbJJ+vnkcU6AAieb1UNqSCUCp+hgoD7ft4Y5h1xZOO/0E3gU7qDS8o4kryGa+vBt1OiWOIPheMwjqbl5bX3kTYMjyjwX35lB9wKFhN4LK34elb+OfQHGzLtAhcgA/9gUcTDKpNksz9odNX/qTDKzi+0P7L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=USDNm4tN; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=VWNzekpPLwPTQVybzuyW2DHLqEF96+Dlyy5rNIWbA7o=;
-	b=USDNm4tNkU2k64S9XzIbZLGDzVIk/XC/RsjSRoSgD+c3gEduwW9DX55lUZQHyA
-	L7y6RVcSz/gQaAE67AWdTUdElPAgD7yA0CmulF/oyjOWRqruFciH0Swpmn2jbcPJ
-	pqWimNutWW7FyJzXMfA23UfhFa//WTCZhcZvgFhkQ31iI=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgB3b7rOHcJoCbFNBA--.8694S3;
-	Thu, 11 Sep 2025 08:54:40 +0800 (CST)
-Date: Thu, 11 Sep 2025 08:54:38 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: imx8mp: add interconnect for lcdif-hdmi
-Message-ID: <aMIdzu2eLMXk_OLp@dragon>
-References: <20250821160137.108735-1-m.felsch@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XDEQdlP9WLgtzwA7MrJdmyX5SX6JIVLMoHMM7QrkjqnZSpmMMkrYbZIVXl98Vfy+/h0Qa8YXHaOiThG9pIZuzVUU3tZXC9jgjZi41OWyeEtOXBFg8fiWfW92cF2Zyk8phYdcDyfsP0YQoDFra2SMvEFT+0V24Mblu93pdRIbCxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nb9a94fx; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757552431; x=1789088431;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XeSikDz3/rCknydEBrqESWnjjoPx806qZ8IdQkhjSTI=;
+  b=Nb9a94fxhKYxVTed5b6Xuyy8mDIO4xmWwjAjnODQq6BNs5EhTV9CN3oW
+   vUhmNXSbodYYpRGkWCP4Yc5iBfU7JQltpaN8n6GTZ20egr8nrxKUWp6hR
+   nBkfcboiFR4vOe10yNqqClSyHPE13pYbbNS6A/Is1eKj5AySGUL+WIiMS
+   7pjZhOvsFBcLND0irbfegoVpxTkU4ZDO4LlkFyeMc3F46VnD+de/Ozr1R
+   Ff1P4z87YEEPTcplHhZ4Rkb/aV0N6/jdFAH2MXWsLQoRVFyKvdQATcTKo
+   0LHThZKu7ymzEX3GiCEkrK0W4NjxerBzptnCkr8jlSOx8LzND4tCAT3Pw
+   A==;
+X-CSE-ConnectionGUID: uBYKdiP6RrOUXA2eLQlY1w==
+X-CSE-MsgGUID: N36bxgagR82qXQp0yIXWfw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="85320724"
+X-IronPort-AV: E=Sophos;i="6.18,255,1751266800"; 
+   d="scan'208";a="85320724"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 18:00:30 -0700
+X-CSE-ConnectionGUID: KgU3xY3NQhWIRsn18xSuHA==
+X-CSE-MsgGUID: cHaGfah0QLCNJg8PMluWrg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,255,1751266800"; 
+   d="scan'208";a="173382583"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 10 Sep 2025 18:00:23 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uwVfg-0006OT-14;
+	Thu, 11 Sep 2025 01:00:20 +0000
+Date: Thu, 11 Sep 2025 08:59:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
+Cc: oe-kbuild-all@lists.linux.dev,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Daniel Golle <daniel@makrotopia.org>
+Subject: Re: [PATCH net-next v12 09/18] net: phylink: Move sfp interface
+ selection and filtering to phy_caps
+Message-ID: <202509110810.9Kjzuszo-lkp@intel.com>
+References: <20250909152617.119554-10-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,17 +100,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250821160137.108735-1-m.felsch@pengutronix.de>
-X-CM-TRANSID:Mc8vCgB3b7rOHcJoCbFNBA--.8694S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUOksqUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNxBGq2jCHdDDJgAA3I
+In-Reply-To: <20250909152617.119554-10-maxime.chevallier@bootlin.com>
 
-On Thu, Aug 21, 2025 at 06:01:37PM +0200, Marco Felsch wrote:
-> Add the missing interconnect for the lcdif-hdmi.
-> 
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Hi Maxime,
 
-Applied, thanks!
+kernel test robot noticed the following build errors:
 
+[auto build test ERROR on net-next/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-Chevallier/dt-bindings-net-Introduce-the-ethernet-connector-description/20250909-233858
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250909152617.119554-10-maxime.chevallier%40bootlin.com
+patch subject: [PATCH net-next v12 09/18] net: phylink: Move sfp interface selection and filtering to phy_caps
+config: arm-randconfig-001-20250910 (https://download.01.org/0day-ci/archive/20250911/202509110810.9Kjzuszo-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250911/202509110810.9Kjzuszo-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509110810.9Kjzuszo-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "phy_caps_filter_sfp_interfaces" [drivers/net/phy/phylink.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
