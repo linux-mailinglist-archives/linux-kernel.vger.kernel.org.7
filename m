@@ -1,81 +1,106 @@
-Return-Path: <linux-kernel+bounces-812165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4DEB533E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:38:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 453E7B533E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 915505669D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:38:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 047CB566DD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32C232C302;
-	Thu, 11 Sep 2025 13:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602B732BF4B;
+	Thu, 11 Sep 2025 13:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wg5RzKyG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngpVkeOr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357F432A3F2;
-	Thu, 11 Sep 2025 13:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F4E311958;
+	Thu, 11 Sep 2025 13:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757597881; cv=none; b=OcEZZFjQ7pDXom0CECu4RMuHmlM9zqwhItYI3otlHmtCTD6e7KZVfXtYSrqclCDLczk5BmvlmR8JXleUGeR2RTMJC49VIGdB+UmyzR+1Gme6f+kaypIHnExeuztU+5p2fpvWEOI/Os0RS7YlnWUihmpkkTX/Xs5jjYL4gJjZxEc=
+	t=1757597897; cv=none; b=Thgbzo15b4i0e5po6xJWt6zHotxiQMRF4JLOgVcprQziSCo9ri6HQmozdhmOTJpUsbM/rWf4/QHB//VRWNTX923/UYDtOGqlSUG7G/NrDyflfcbYtYW2MCLc7pWDUzELLD+toB01qGtLCFsHWyutHfHThMBgXvKrm9tCbxVTIOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757597881; c=relaxed/simple;
-	bh=35slho7IDk7RLH0t7N9+HIbGDcfyTAvEe6vQK5ZVd40=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UH5iGcMSZ9p5K7Z7/rNQ2KArSRZFn3tLsgXWTO6JiJHzF7va5KdcjRgXzOxewOMIIC9ltBxlC+/LWgnykjoMk8sHKC9WBMFOpIzHbeNB+mB1S/lcXjJN2U7ShjXprH0SdXj1tMoh0ouHiRm9o7X6y/Y6KrrGOSHqrEW4+pI8Nqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wg5RzKyG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D491C4CEF0;
-	Thu, 11 Sep 2025 13:38:00 +0000 (UTC)
+	s=arc-20240116; t=1757597897; c=relaxed/simple;
+	bh=JHwWqnTYn3Fug9+bvZh4zonn/Ba9kH7IhAH8TdW5lkM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=aaYHjCSXnMdApGeCokGSd+C1UFQdSXc6uSjtE1zV704yC3Do1PgF8aXRRDqvRV0dOaI3xBTKbnDohH7HqDekDix5gWLgIJ74i6a6hJs9TXhM/6iYotNUzHgPzlVx5ktggcoZevSFdbPpLyOUUw8HB1uIWSErcE5mi0/mImsnOok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngpVkeOr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC7FEC4CEF0;
+	Thu, 11 Sep 2025 13:38:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757597880;
-	bh=35slho7IDk7RLH0t7N9+HIbGDcfyTAvEe6vQK5ZVd40=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wg5RzKyGO5Wp3wGScP2quWzilznyS9upJ26fnaTCSeJGqG0ErWtDXfSzztgeg6HmK
-	 450sfD5+M0tLoKjlCNapUn+Yc6c38+PB3JsjI3H48bUYl6slJjAHGqYJFRV40aY9BQ
-	 BU8EnlYr3RkZPMUpvejG9aNVID327DViNvKfrRoNFtUzCeYHcQwC+er1IZEKsyl8RB
-	 y/O5Y2s2YFdV/KvhU28vB/p2B9wK7TAL0s1/jwIhbGQL8QUYPuOed5rYX1NbcEYWK1
-	 2McjEEyAF2PTBDf6JviuZRAFiDnyJ6vEx3/c1iUrhEfyL38UZwpqdshchab857qJcy
-	 Qe1goKgXOEkbQ==
-Date: Thu, 11 Sep 2025 15:37:58 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Christian Loehle <christian.loehle@arm.com>
-Subject: Re: [PATCH v1 2/3] cpuidle: governors: menu: Rearrange main loop in
- menu_select()
-Message-ID: <aMLQtifgkYyNxedE@localhost.localdomain>
-References: <2804546.mvXUDI8C0e@rafael.j.wysocki>
- <2389215.ElGaqSPkdT@rafael.j.wysocki>
+	s=k20201202; t=1757597897;
+	bh=JHwWqnTYn3Fug9+bvZh4zonn/Ba9kH7IhAH8TdW5lkM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ngpVkeOrZI/HZin0pxo06kf9Fz4kB7zHNNeZ6SM0o/jGOSnc5/k5UNUZTDJO3X2RV
+	 SnEyaZiddFF3Q88VmQ3HA6gm96mFYTv97rj5cokh1yFeCd5gsq8rZbliqX0+tOkYjN
+	 rN0HOQnKmFyoa/+A5gjK28QDyWBQRblo0Bs+46poybkP7IoN9qHZ2q5wto9Yc4pnFA
+	 8Lrjstp75JQn2X8pg8eIOSwp/3gRdbbwYeFA+GBfC2qnKv7zWfhP0w64NE/n/XnMvj
+	 mZlG/5WVFq3RXCYlD+gMrT7HxPWwruR+BJXCfBba6kEBjUUMsMohkXJbpVPRf3u3PL
+	 5cnkkMcZLvPQg==
+Date: Thu, 11 Sep 2025 22:38:13 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+Cc: rostedt@goodmis.org, mhiramat@kernel.org, mark.rutland@arm.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] ftrace: Fix softlockup in ftrace_module_enable
+Message-Id: <20250911223813.58c894b4c8ce8e3eba298c71@kernel.org>
+In-Reply-To: <aMLPm__QGrQCwz1t@vova-pc>
+References: <aMLPm__QGrQCwz1t@vova-pc>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2389215.ElGaqSPkdT@rafael.j.wysocki>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Le Wed, Aug 13, 2025 at 12:26:35PM +0200, Rafael J. Wysocki a écrit :
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Reduce the indentation level in the main loop of menu_select() by
-> rearranging some checks and assignments in it.
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, 11 Sep 2025 15:33:15 +0200
+Vladimir Riabchun <ferr.lambarginio@gmail.com> wrote:
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> A soft lockup was observed when loading amdgpu module,
+> this is the same issue that was fixed in
+> commit d0b24b4e91fc ("ftrace: Prevent RCU stall on PREEMPT_VOLUNTARY
+> kernels") and commit 42ea22e754ba ("ftrace: Add cond_resched() to
+> ftrace_graph_set_hash()").
+> 
+> Fix it the same way by adding cond_resched() in ftrace_module_enable.
+> 
+
+Looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks,
+
+> Signed-off-by: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+> ---
+>  kernel/trace/ftrace.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index a69067367c29..23c4d37c7bcd 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -7526,6 +7526,9 @@ void ftrace_module_enable(struct module *mod)
+>  
+>  	do_for_each_ftrace_rec(pg, rec) {
+>  		int cnt;
+> +
+> +		cond_resched();
+> +
+>  		/*
+>  		 * do_for_each_ftrace_rec() is a double loop.
+>  		 * module text shares the pg. If a record is
+> -- 
+> 2.43.0
+> 
+
 
 -- 
-Frederic Weisbecker
-SUSE Labs
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
