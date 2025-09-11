@@ -1,216 +1,309 @@
-Return-Path: <linux-kernel+bounces-812275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D94B5355A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:31:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5357B5355B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E349F1CC2AD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:31:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D56DAA39F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AFF33CEB1;
-	Thu, 11 Sep 2025 14:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB6E33CE98;
+	Thu, 11 Sep 2025 14:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="ZYgtspXS"
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2080.outbound.protection.outlook.com [40.107.114.80])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="d8E578KP"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30551136351;
-	Thu, 11 Sep 2025 14:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.114.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757601049; cv=fail; b=affJw1hNrse9wfq3PQmSgYICCaAdVdSwHQ9MRkWp5B1ELc4d5YqF77qN5F1+HoP8BRePmRemmG9ET39YqODm0BcetIDzwEVh7lJCELxyus0zoxdKubM8gibmRHj2DEBXxDJoitvwYJXjUOFLsbJBYtf9wSKhArzJO9Irce168R0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757601049; c=relaxed/simple;
-	bh=4NrdeUmrLAz0Y4ZonA377ATag/YNJRFHuubcu40vw9Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rGYclSrJtpc2OMGITK+bTy4tHvaRq9217OgJOw4dEvSQfj6G/onIcJygVd15Cd3Ku9+/jb+xAuGObnnGP3opesHFqfjRMa/celp9sV+zWmwIB4B9WmgM3sN+E1zyuffNGmmP8mE6bDyvfgfDKYfyOfK9YV7HtYKDtgxEvxst9zs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=ZYgtspXS; arc=fail smtp.client-ip=40.107.114.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fm41EJdKAI7Mo4/kdyteYk75BCB/P7888k2m7/FCtOK1WraH7cWKvpzsXkSjrihMn0K/tbisAejlo4pRUvJMYF2mPBqM/Cnh5oahB5jM5+gw/e3cAg6m7pVCe1dAiooKyWe+wEdJ8dzDD4HMUjPyaMhII/xExWt1Jq/sC9XKbPPY1MKbAX/uPetCv+qYJa76he5mMgPZRJ2RYhYts0k1wbGFxgDh2MVQ3NpPQ4F3YJSScaUIgdXV09QG4HNIvnslHssjKaKwhUvkAJcr/WrWT5R6+tTfBE3o+RpNz4Dn5guE74kQNom/r9Tqvrx75RWnmYoXohgV3TB4gWVGrjVuDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4NrdeUmrLAz0Y4ZonA377ATag/YNJRFHuubcu40vw9Y=;
- b=XYi+loQ436sX2jmA4dZpU+41yDTtO3yoqbdSw3w9IRfABaLX/8OwqTsCDBGy8CB+wKcTsrqEAosD8iUGQ4mSRLPlrgBHA8cNGwQgPjwlAqPjPb2qqqui2VEeSsmPZBMzi/xe6fGO4ODlqYI17JeRNmuQW4fZKIpZr+UYA0qMUUWewsFLKn+ezU5LkSObTo9lwMVcynZQHAoXZrEpNsxkNkl6e/zqnkNxaDibe78qM2qhd6vudDnn9nVWWHMC1wQPfXZcKmTt+npUP2evxj6fJLWC6y6M4rvIDL13S2XWBRHHe4AsrH7eOYaR9tsw+gSz63I17iaduOwGKu8KKCY1jg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4NrdeUmrLAz0Y4ZonA377ATag/YNJRFHuubcu40vw9Y=;
- b=ZYgtspXSeupMXcsho1qvGPnH8pq2tgNKDQWhCRQDodGCCOtUx48nJR6s1jQPXXrA00ZaH2FDkGHvWytiMj7PqAyu6rcIcXO70dtfRQCmkq9aupMpcp3fGpRYPlQhKPs73ghosrGfM/CXCGJ3HT+FxG/psGH24Hu3BWrmuD/Udv4=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS3PR01MB7706.jpnprd01.prod.outlook.com (2603:1096:604:17b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 14:30:42 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 14:30:42 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, "Lad, Prabhakar"
-	<prabhakar.csengg@gmail.com>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Fabrizio Castro
-	<fabrizio.castro.jz@renesas.com>, Tommaso Merciai
-	<tommaso.merciai.xr@bp.renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Andrzej Hajda
-	<andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, Robert
- Foss <rfoss@kernel.org>, laurent.pinchart
-	<laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, magnus.damm
-	<magnus.damm@gmail.com>
-Subject: RE: [PATCH v8 2/6] clk: renesas: rzv2h-cpg: Add support for DSI
- clocks
-Thread-Topic: [PATCH v8 2/6] clk: renesas: rzv2h-cpg: Add support for DSI
- clocks
-Thread-Index: AQHcHO5DkziJYuZpG0uP0S9PdlSgdLSMY2uAgAFLCQCAAGfOAIAAANyA
-Date: Thu, 11 Sep 2025 14:30:42 +0000
-Message-ID:
- <TY3PR01MB113460EF10FB5D9067D61358F8609A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250903161718.180488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250903161718.180488-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <db2fc907-218c-4688-aebf-4a929f21b074@ideasonboard.com>
- <CA+V-a8vghwkHKWoqU8NQ3O9ZdHxB+cEvMv7Z9LQOMsZcx9vjPA@mail.gmail.com>
- <f1e671a3-77af-4ae2-aa6e-bde93aaa54b7@ideasonboard.com>
-In-Reply-To: <f1e671a3-77af-4ae2-aa6e-bde93aaa54b7@ideasonboard.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB7706:EE_
-x-ms-office365-filtering-correlation-id: 181c0ee4-f367-4156-27e6-08ddf13fc9ce
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|1800799024|7416014|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?SEU4dXdKa3hTUHh4RE5SeS93bUlmRXpqU0pRcGdkVHV5UkpFK1d4NDVKTDNB?=
- =?utf-8?B?MU9tOXhwc0lubHUrMTlkSGF5OXg0RGdIT2FvVjhyUFdVRkZaSzlaUytHR0c2?=
- =?utf-8?B?aVFqeTdHSDNVVmpUTFpkRFFua3BYTE1La2ZYWjRnc3JGQkxTNGh2SUtxRTRu?=
- =?utf-8?B?QmJLL1MzT1ZYems0WVE3OHNVV1RZNE4vUG9oVW5HYzFPdlhSNmtqTTdtYkRC?=
- =?utf-8?B?ZGF6WXIvaDdjUW5HakZucFVpdEd3Uzc3M3lvODJpUWQveitlODNvSmM1L0d5?=
- =?utf-8?B?MnhnWVUweVhzYnpUKzVDL3RIbTVEd3p0T2xWUHNjKzk3MzNxYXQzWHV6T0Nk?=
- =?utf-8?B?Wm8vMVhuQUNpMXRUT1FXRVVKRmFtYXhaU1plb0ZIeFhlQzE1VjZydGVERlA4?=
- =?utf-8?B?ZUUvcWVmbnpBZ2RtQm0wZXpJSHNwR084TUN6S1dJQ3JSWjRBVDdSQWUxSC9H?=
- =?utf-8?B?UDhUc0UvNEVuclB3S3lOUjk3U2U4UTdZd1lBRXBuQ2dQMXNvMEpKam5qQVJu?=
- =?utf-8?B?bzZlSGdaMzl4NE5FTEFHVC9KMDQzMXU1UXpqY2E0amp0bitrV01wZFJwYUZH?=
- =?utf-8?B?OGVEak5UMlNCTlJBWFB0bnAwS2pnbjRZSyt6aGpHbStveklwaWpXS0YxM2U5?=
- =?utf-8?B?dmxTWWViQmxzTGhacjFmVXdRQldlMVRaR0xwQVdwSExKSEFRdVk1b3BkTjFv?=
- =?utf-8?B?dzZoWkIzRUFVR0VXekpJcnp5VXBMTUNYYUhQQmEvRkJCMGxDbXlpc1dGMmw3?=
- =?utf-8?B?d29LSzhXdFpWdWRoUlc5UG1QSmlwdXQrelBBMVMybnZYTkFWTVZVWEVwallH?=
- =?utf-8?B?YlhZT2VJdHRoQjVvallsRmZNWjkrdW5YcFNqSkFBSjJpSm80TGhOMjA3bG9h?=
- =?utf-8?B?bWNVN0YvSm0yQkZHdEQwYWxtMUlSelN1NjFLTGVaUmNLWmJNU2x5cnloU0dE?=
- =?utf-8?B?YjMrbjAvdGNGSVZNbG5EeEplZ0Z4YmNxYnAvS04vUUxhQU9tOUloaUlFdmtZ?=
- =?utf-8?B?aDlZRU05RmlsenRNTVlvaVo2amJPRVp3NWV0Ny90SVhldzZYL011dC9SQTVR?=
- =?utf-8?B?ZXk2WkxqNVN0RWdEajhlNlQrQ1hmbk4zRFpvVXBGc1BqMklqcEsrcFYwbFlU?=
- =?utf-8?B?eG5oWWt5V2VPOG4vc3J4bUxNZndYa3NPdDE0Y2YzZGs2THhqaEFnZmc3aDN0?=
- =?utf-8?B?eEV5bnArVSsyT1NXSzAySVJuNytlNmtzYUtJNUozd2VxTExmTC9iU3Y3N3dv?=
- =?utf-8?B?YkRyeDZIUnI1WExkbmZUSThOaXA3b2pZdlRTOUl1cWQwL2x4WEIreURFWnR0?=
- =?utf-8?B?S09kOTRBTFZVbXpNMUN2OTJNaEdCMDNibzl3ZnAreThpWStUZzhFS3ZxWHBj?=
- =?utf-8?B?WjQ5QitYL1RBK0JjZ1FVRGdpVU5mMjIyRmt3QkpFeXh1anhLS3crWFBibzhl?=
- =?utf-8?B?L0RpRFMrdThsK20raFl2enliQmFQV0xWYWZxRkJoTWUrdmNvNWVWVEVGeDAw?=
- =?utf-8?B?ZGR1QVFLMTVFc1JsaDlHamVZVTdTOU9uVTNTd3kzMy9waVEwb29CNzM4UzJi?=
- =?utf-8?B?MUprT3J0MEZ5ZW9IaVdMVmRXVU1aVUFXOGk4OWkxZTE1aXRKVnpPVHRoVHlW?=
- =?utf-8?B?cHY0MVhRdmpQN2FONXhiUFFZaDc0RHBWQVVLaTBBZnFYRW1CZU01QVVZS2Jn?=
- =?utf-8?B?NzFFNXg2SVBHU0hURnQ0MHFnTnk5SHpEUmRJUWhKTkdvRXMvNHFsZnVZRTEw?=
- =?utf-8?B?M24vbG5mbnB4TU1VaUwyRHBMbWZCWG4yUzNhREtiS3NDQ2ZLUUhkaTRNL2Vq?=
- =?utf-8?B?eFd1UzcxZWxTM3kwdFF4REM4NlhvMjVSRGhwZVIrbFZiZ3IvVmJpenBqNTI3?=
- =?utf-8?B?emYrZkNJNVBuY0hodVN1MjQ5enE1QUtkZWp3MUFMUWdmb2JWUUpRNFQ1cW9H?=
- =?utf-8?B?T0IvK3EzejRaYVh4dnYrM25aL3RSdUc3WFRjRUx1a2x0aTRpbXlCWkxjTm05?=
- =?utf-8?Q?CMAdJRRy4M5vqwx6k5LipAl6/hpLzc=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?RU9LUUtYb1psMlVpeTFiZmhXbm5TY2lUV0Fqd0JJNnc4a3pnRVBhczY0aGcv?=
- =?utf-8?B?aEprdi81TGpyYUJMc3RoUHhxUnhhaCt6a2dBRzZudko3QVpRUVhwYmIxZDdS?=
- =?utf-8?B?cmhtUUEwV2NLZ2Y0UHAzYTU5Q0xSSnNsY28vMmFrdDVEU0V0VXl2QStreFht?=
- =?utf-8?B?SDN0LytBSVlsNUZZOEU2TkZNcVJDT2x6QVNLRGZuNTNnVHQ0ZUNCa3ppUFZD?=
- =?utf-8?B?dlZja2I2MUc1ZWkycklYdHJyK21JNHg1L3JHT1BRR0RFendJdjRGZUlUMU1L?=
- =?utf-8?B?RUwvSkVWUVFWQTF5MTgyYkNmbGRtalMrdDZXK0Njc3FaOFBPbk91SGFTek0w?=
- =?utf-8?B?Q2s3T25ieFlHRzVPVWJ6Q0FReGhndVhCQmFIVngwMzFzUXphRU1GUTBmQ2Ry?=
- =?utf-8?B?S0dUc2k5em5hM2hvNVZwUkVEaVhkb2ZnbVQ2NzVZNVFpWjh6Sy8vbWhndTVn?=
- =?utf-8?B?NWM1c1VVeFNiQUF4KzdodEpiMWhlUkprTEozblVSc1VtNHM0Nkh6NkROVlZE?=
- =?utf-8?B?anhHWHZDM3BDb2JhakpWQkNIK0VSQmRKUXZMSlM5VUhBS1ZMN015cWwyNGNW?=
- =?utf-8?B?bVpBb0tUcjFLZFFBaFpuUU42U2hOTGdER0F6T1JXalFTU1dEb3U4Ly8rcm1N?=
- =?utf-8?B?cnhjOFZWS0p5Snk3Zk5pUWxEOWpLb3R6U1FNUlBVS3JwQ3hhckFyeXI4S1Rx?=
- =?utf-8?B?Rk5naVdSVHBVWmQva0R6dkVSczh0citocEd6by9PT1pEZThDSmtBdmtmeFZD?=
- =?utf-8?B?bXRYalVEQmo3QzdhUVZZeEJBL3ZLOHNOOFczcHFERDNxTWlNejRSWlhMbVh3?=
- =?utf-8?B?bnV4YUZFa1NSa0VvOENJUDk3QTRSYllhQldVdDNXc2hEbnk1VkF2TTdpeEZ2?=
- =?utf-8?B?UnM4SER2ejRWbVpEZHZDY1Q2UXVhaUpsSTZ2UGhrNTZ3VHV6bUZ6N3I4ck1o?=
- =?utf-8?B?RWZ5d3g2TFRUZW1BM3lvRml1U2Q5ZFZJNE9Hdk1POEV2cDlPL2xTZlo4NVlX?=
- =?utf-8?B?NjJMMi9kdTNDN2c2RlRZMnNKekNpelQvWWx4MGQ4dnVOZ3RNLytHdWc1NG8y?=
- =?utf-8?B?TXhsNkZ2dER6ZFVTZ21KS25MNkFkMEthcXhEeHFJM1JSSkdNeG5yVm1lOE90?=
- =?utf-8?B?N0xkTld1Q1c2SUdHSmdBNm5uM01jRGZPVkVld0N6UU9zNitkTU44OHBFcGRm?=
- =?utf-8?B?UTdXR1RTVjNEV1NWVTYvQTZobURKejVnRE1jTWdnbWVPak9ZdXdhanlpL2lh?=
- =?utf-8?B?RVFlVEc2MDNTclR4TkdySEZyVkpQWVZzRHZ3Q0NRQ1ZxZkQrQ1JMK1N3bTF2?=
- =?utf-8?B?RnZWYUJEbi9tRWdJZ1c5b0cwSjYwTm5LaTNWMEdrZWoxenV4ZGhCYjlkcmVk?=
- =?utf-8?B?YlpRMTBGdzAwUytnNnFJdld1RWJWTWdKV20xVkRaaW5rZ0NLdGhWYkhrTVV2?=
- =?utf-8?B?QktyazBXRE1Nc1ZFMnppWkt4QkdzRFY1UHJLazA5S1NPWE1JcWlxOGxDOE1y?=
- =?utf-8?B?NzdnUk1WWTd1NGlYS2xKQ0wxSmVuRHM5SlUzR2lqNUR0T09MazdRYTZWSXRx?=
- =?utf-8?B?d3VtTDZ5TzEyMzBIZzErSzRaTkliS0lMMkF0cHJyekJpOHRwWGUyajROeEQw?=
- =?utf-8?B?bnR6RGsxOXRBanF1ay94eGVLRENLMy9XMmhHaDhxL3RKTncwSW91aHVNaFJD?=
- =?utf-8?B?M1BuWTExNFdoekVQOEpYakJMbzl6ajFoY2ttbUlNNlNBWVM3Q2pQOFNpOEN0?=
- =?utf-8?B?ZjlZY2dYc1lpN1JwUzV3Tk5aVzFLcnBGRlVHOFYvbkhzYTN0dWNaYmRFRUth?=
- =?utf-8?B?MmJRWnFhWmVpVzFZMzM4WWlVSEM3aVNDMUt0RjdtMjJUL1hvQ1IrUy9Tdzhh?=
- =?utf-8?B?aVZwMGdKK3dEOHZpd2NhR3krOWdoSGhIWUc0ZXlrRTNtVVh2Z1pnVnUvNHlj?=
- =?utf-8?B?R2lKNDhZa1RJbmJ6TmM2TXgyR0NvRlJrSHduZGNDV0JNeVBBb29TcHNUWnRS?=
- =?utf-8?B?K3YzUUhianFYaTBPR0RIZTNJMDRldWpNQ2tuOVBFZFpLblllTVo4YWJFRStF?=
- =?utf-8?B?N3pUekFKbkNQUTNieURIOGcxTmlpeFJqYXlmdStaWHJKamdmaW91WW9GbWg1?=
- =?utf-8?B?YXgvZ0x4ci9DSEI1QjVWQzRqOUtLZTk5c0tjV1BTMmwxNk1kdUd4clhjN3dl?=
- =?utf-8?B?U2c9PQ==?=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F28DF72;
+	Thu, 11 Sep 2025 14:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757601050; cv=none; b=S+0neyHkhAch/qgOqiQcNS16P0waXxcENO3AHsY0Xd6SdvwZmXY3Evvy+9+C45lc7dfKoAvxnh4tzXD7qwi9ewc8fqBcoHmWJYbKe9e3KWIErYVvLw5RcIEfRtzdcpsvyoT1F+piTTUVnOerPnBqS4d4EzZgeLOD3Tarh/AUXZ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757601050; c=relaxed/simple;
+	bh=+huU836wZDjjaqzLBWYiHUYyOun/h+KtkKUh4oB0sao=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=ZWZoGJMtFN6Y6xgWF5t5RAW8hnakHYLLoPWN4S6goX1Oxei7cO0ev9h94iK6Y1SmPiglQg6y8qJNQWh9n5zvP9DLNdGfXpUJFfO5aV4nwHN+1cPub+FEpCsgLBqiTg4GGcQnMAQ7iEBVkSaQUrfmQfvur1wLCvvV/Z13MNQlY7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=d8E578KP; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AC5194A4;
+	Thu, 11 Sep 2025 16:29:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757600971;
+	bh=+huU836wZDjjaqzLBWYiHUYyOun/h+KtkKUh4oB0sao=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=d8E578KPzdT9qfI1vBkYrpkeRGXrj6cSwWuK5Iza02S1L1S2zz8gkf/HY7JaJVQfS
+	 wCdqqBsf6tzNosFMWdX9k8CLsFOnZO5R7eSfghRTHj0AMi+fbrIcWhUrDJ2a/aazBH
+	 OaHcfXuZzVUF8eOdtzNBBG8fVx+LtsdSCJu9i96s=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 181c0ee4-f367-4156-27e6-08ddf13fc9ce
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2025 14:30:42.7391
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qxygiHLi/4U1VjGOGERdPfMuBB656rsKzkkh93HLfztbuBcJwAnx3nM/XKykyFABOlfigg2mn1Oz2jBDGD32hWRPsIJQHnTvb6a8+eKcoyE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB7706
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250911-imx335_binning-v2-6-30a28df74df6@ideasonboard.com>
+References: <20250911-imx335_binning-v2-0-30a28df74df6@ideasonboard.com> <20250911-imx335_binning-v2-6-30a28df74df6@ideasonboard.com>
+Subject: Re: [PATCH v2 6/8] media: imx355: Use subdev active state
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Tommaso Merciai <tomm.merciai@gmail.com>
+To: Jai Luthra <jai.luthra@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Date: Thu, 11 Sep 2025 15:30:43 +0100
+Message-ID: <175760104354.935713.5466359754087343394@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-SGkgVG9taSwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBUb21pIFZh
-bGtlaW5lbiA8dG9taS52YWxrZWluZW4rcmVuZXNhc0BpZGVhc29uYm9hcmQuY29tPg0KPiBTZW50
-OiAxMSBTZXB0ZW1iZXIgMjAyNSAxNToyNg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY4IDIvNl0g
-Y2xrOiByZW5lc2FzOiByenYyaC1jcGc6IEFkZCBzdXBwb3J0IGZvciBEU0kgY2xvY2tzDQo+IA0K
-PiBIaSwNCj4gDQo+IA0KPiBJbiBmYWN0LCBpZiB0aGUgRFNJIGlzIHNvIHBpY2t5IGFib3V0IHRo
-ZSByYXRlLCBJIGZpbmQgdGhlIEhXIGRlc2lnbg0KPiBvZGQ6IGluIGcybCB0aGUgcGl4ZWwgY2xv
-Y2sgYW5kIHRoZSBEU0kgY2xvY2sgY29tZSBmcm9tIGEgc2luZ2xlIHNvdXJjZSwgd2hpY2gga2Vl
-cHMgdGhlbSBuZWF0bHkgaW4NCj4gc3luYy4gSWYgdGhhdCBpcyByZXF1aXJlZCwgd2h5IGNoYW5n
-ZSB0aGUgZGVzaWduIGhlcmUgc28gdGhhdCB0aGUgRFNJIFBMTCBpcyBpbmRlcGVuZGVudCBvZiB0
-aGUgcGl4ZWwNCj4gY2xvY2ssIHlldCBzdGlsbCB0aGUgRFNJIFBMTCBtdXN0IGJlIHByb2dyYW1t
-ZWQgdG8gYmUgZXhhY3RseSBtYXRjaGVkIHRvIHRoZSBwaXhlbCBjbG9jay4NCg0KRzJMIERTSSBp
-cyBmcm9tIFJlbmVzYXMgd2hlcmUgYXMgVjJIIGZyb20gZGlmZmVyZW50IHZlbmRvci4gSGVuY2Ug
-dGhlIGRpZmZlcmVuY2UuDQoNCkNoZWVycywNCkJpanUNCg==
+Quoting Jai Luthra (2025-09-11 09:14:22)
+> Port the driver to use the subdev active state. This simplifies locking,
+> and makes it easier to support different crop sizes for binned modes, by
+> storing the crop rectangle inside the subdev state.
+>=20
+> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> ---
+>  drivers/media/i2c/imx335.c | 79 ++++++++++++----------------------------=
+------
+>  1 file changed, 21 insertions(+), 58 deletions(-)
+>=20
+> diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
+> index 7631f41e6f1e65695fb76a66d9ac5a3588c69658..9b9bbe6473d545bc5618c0fe8=
+191df0b18037cd8 100644
+> --- a/drivers/media/i2c/imx335.c
+> +++ b/drivers/media/i2c/imx335.c
+> @@ -204,7 +204,6 @@ struct imx335_mode {
+>   * @vblank: Vertical blanking in lines
+>   * @lane_mode: Mode for number of connected data lanes
+>   * @cur_mode: Pointer to current selected sensor mode
+> - * @mutex: Mutex for serializing sensor controls
+>   * @link_freq_bitmap: Menu bitmap for link_freq_ctrl
+>   * @cur_mbus_code: Currently selected media bus format code
+>   */
+> @@ -231,7 +230,6 @@ struct imx335 {
+>         u32 vblank;
+>         u32 lane_mode;
+>         const struct imx335_mode *cur_mode;
+> -       struct mutex mutex;
+>         unsigned long link_freq_bitmap;
+>         u32 cur_mbus_code;
+>  };
+> @@ -766,36 +764,6 @@ static void imx335_fill_pad_format(struct imx335 *im=
+x335,
+>         fmt->format.xfer_func =3D V4L2_XFER_FUNC_NONE;
+>  }
+> =20
+> -/**
+> - * imx335_get_pad_format() - Get subdevice pad format
+> - * @sd: pointer to imx335 V4L2 sub-device structure
+> - * @sd_state: V4L2 sub-device configuration
+> - * @fmt: V4L2 sub-device format need to be set
+> - *
+> - * Return: 0 if successful, error code otherwise.
+> - */
+> -static int imx335_get_pad_format(struct v4l2_subdev *sd,
+> -                                struct v4l2_subdev_state *sd_state,
+> -                                struct v4l2_subdev_format *fmt)
+> -{
+> -       struct imx335 *imx335 =3D to_imx335(sd);
+> -
+> -       mutex_lock(&imx335->mutex);
+> -
+> -       if (fmt->which =3D=3D V4L2_SUBDEV_FORMAT_TRY) {
+> -               struct v4l2_mbus_framefmt *framefmt;
+> -
+> -               framefmt =3D v4l2_subdev_state_get_format(sd_state, fmt->=
+pad);
+> -               fmt->format =3D *framefmt;
+> -       } else {
+> -               imx335_fill_pad_format(imx335, imx335->cur_mode, fmt);
+> -       }
+> -
+> -       mutex_unlock(&imx335->mutex);
+> -
+> -       return 0;
+> -}
+> -
+>  /**
+>   * imx335_set_pad_format() - Set subdevice pad format
+>   * @sd: pointer to imx335 V4L2 sub-device structure
+> @@ -809,12 +777,12 @@ static int imx335_set_pad_format(struct v4l2_subdev=
+ *sd,
+>                                  struct v4l2_subdev_format *fmt)
+>  {
+>         struct imx335 *imx335 =3D to_imx335(sd);
+> +       struct v4l2_mbus_framefmt *format;
+>         const struct imx335_mode *mode;
+>         int i, ret =3D 0;
+> =20
+> -       mutex_lock(&imx335->mutex);
+> -
+>         mode =3D &supported_mode;
+> +
+>         for (i =3D 0; i < ARRAY_SIZE(imx335_mbus_codes); i++) {
+>                 if (imx335_mbus_codes[i] =3D=3D fmt->format.code)
+>                         imx335->cur_mbus_code =3D imx335_mbus_codes[i];
+> @@ -822,19 +790,15 @@ static int imx335_set_pad_format(struct v4l2_subdev=
+ *sd,
+> =20
+>         imx335_fill_pad_format(imx335, mode, fmt);
+> =20
+> -       if (fmt->which =3D=3D V4L2_SUBDEV_FORMAT_TRY) {
+> -               struct v4l2_mbus_framefmt *framefmt;
+> +       format =3D v4l2_subdev_state_get_format(sd_state, fmt->pad);
+> +       *format =3D fmt->format;
+> =20
+> -               framefmt =3D v4l2_subdev_state_get_format(sd_state, fmt->=
+pad);
+> -               *framefmt =3D fmt->format;
+> -       } else {
+
+It's nice to drop that - and clean up the locking.
+
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+
+> +       if (fmt->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE) {
+>                 ret =3D imx335_update_controls(imx335, mode);
+>                 if (!ret)
+>                         imx335->cur_mode =3D mode;
+>         }
+> =20
+> -       mutex_unlock(&imx335->mutex);
+> -
+>         return ret;
+>  }
+> =20
+> @@ -854,12 +818,10 @@ static int imx335_init_state(struct v4l2_subdev *sd,
+>         fmt.which =3D sd_state ? V4L2_SUBDEV_FORMAT_TRY : V4L2_SUBDEV_FOR=
+MAT_ACTIVE;
+>         imx335_fill_pad_format(imx335, &supported_mode, &fmt);
+> =20
+> -       mutex_lock(&imx335->mutex);
+>         __v4l2_ctrl_modify_range(imx335->link_freq_ctrl, 0,
+>                                  __fls(imx335->link_freq_bitmap),
+>                                  ~(imx335->link_freq_bitmap),
+>                                  __ffs(imx335->link_freq_bitmap));
+> -       mutex_unlock(&imx335->mutex);
+> =20
+>         return imx335_set_pad_format(sd, sd_state, &fmt);
+>  }
+> @@ -1001,16 +963,17 @@ static void imx335_stop_streaming(struct imx335 *i=
+mx335)
+>  static int imx335_set_stream(struct v4l2_subdev *sd, int enable)
+>  {
+>         struct imx335 *imx335 =3D to_imx335(sd);
+> +       struct v4l2_subdev_state *state;
+>         int ret =3D 0;
+> =20
+> -       mutex_lock(&imx335->mutex);
+> +       state =3D v4l2_subdev_lock_and_get_active_state(sd);
+> =20
+>         if (enable)
+>                 ret =3D imx335_start_streaming(imx335);
+>         else
+>                 imx335_stop_streaming(imx335);
+> =20
+> -       mutex_unlock(&imx335->mutex);
+> +       v4l2_subdev_unlock_state(state);
+> =20
+>         return ret;
+>  }
+> @@ -1138,7 +1101,7 @@ static const struct v4l2_subdev_pad_ops imx335_pad_=
+ops =3D {
+>         .enum_frame_size =3D imx335_enum_frame_size,
+>         .get_selection =3D imx335_get_selection,
+>         .set_selection =3D imx335_get_selection,
+> -       .get_fmt =3D imx335_get_pad_format,
+> +       .get_fmt =3D v4l2_subdev_get_fmt,
+>         .set_fmt =3D imx335_set_pad_format,
+>  };
+> =20
+> @@ -1233,9 +1196,6 @@ static int imx335_init_controls(struct imx335 *imx3=
+35)
+>         if (ret)
+>                 return ret;
+> =20
+> -       /* Serialize controls with sensor device */
+> -       ctrl_hdlr->lock =3D &imx335->mutex;
+> -
+>         /* Initialize exposure and gain */
+>         lpfr =3D mode->vblank + mode->height;
+>         imx335->exp_ctrl =3D v4l2_ctrl_new_std(ctrl_hdlr,
+> @@ -1355,12 +1315,10 @@ static int imx335_probe(struct i2c_client *client)
+>                 return ret;
+>         }
+> =20
+> -       mutex_init(&imx335->mutex);
+> -
+>         ret =3D imx335_power_on(imx335->dev);
+>         if (ret) {
+>                 dev_err(imx335->dev, "failed to power-on the sensor\n");
+> -               goto error_mutex_destroy;
+> +               return ret;
+>         }
+> =20
+>         /* Check module identity */
+> @@ -1393,11 +1351,18 @@ static int imx335_probe(struct i2c_client *client)
+>                 goto error_handler_free;
+>         }
+> =20
+> +       imx335->sd.state_lock =3D imx335->ctrl_handler.lock;
+> +       ret =3D v4l2_subdev_init_finalize(&imx335->sd);
+> +       if (ret < 0) {
+> +               dev_err(imx335->dev, "subdev init error\n");
+> +               goto error_media_entity;
+> +       }
+> +
+>         ret =3D v4l2_async_register_subdev_sensor(&imx335->sd);
+>         if (ret < 0) {
+>                 dev_err(imx335->dev,
+>                         "failed to register async subdev: %d\n", ret);
+> -               goto error_media_entity;
+> +               goto error_subdev_cleanup;
+>         }
+> =20
+>         pm_runtime_set_active(imx335->dev);
+> @@ -1406,14 +1371,14 @@ static int imx335_probe(struct i2c_client *client)
+> =20
+>         return 0;
+> =20
+> +error_subdev_cleanup:
+> +       v4l2_subdev_cleanup(&imx335->sd);
+>  error_media_entity:
+>         media_entity_cleanup(&imx335->sd.entity);
+>  error_handler_free:
+>         v4l2_ctrl_handler_free(imx335->sd.ctrl_handler);
+>  error_power_off:
+>         imx335_power_off(imx335->dev);
+> -error_mutex_destroy:
+> -       mutex_destroy(&imx335->mutex);
+> =20
+>         return ret;
+>  }
+> @@ -1427,9 +1392,9 @@ static int imx335_probe(struct i2c_client *client)
+>  static void imx335_remove(struct i2c_client *client)
+>  {
+>         struct v4l2_subdev *sd =3D i2c_get_clientdata(client);
+> -       struct imx335 *imx335 =3D to_imx335(sd);
+> =20
+>         v4l2_async_unregister_subdev(sd);
+> +       v4l2_subdev_cleanup(sd);
+>         media_entity_cleanup(&sd->entity);
+>         v4l2_ctrl_handler_free(sd->ctrl_handler);
+> =20
+> @@ -1437,8 +1402,6 @@ static void imx335_remove(struct i2c_client *client)
+>         if (!pm_runtime_status_suspended(&client->dev))
+>                 imx335_power_off(&client->dev);
+>         pm_runtime_set_suspended(&client->dev);
+> -
+> -       mutex_destroy(&imx335->mutex);
+>  }
+> =20
+>  static const struct dev_pm_ops imx335_pm_ops =3D {
+>=20
+> --=20
+> 2.51.0
+>
 
