@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-812921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2731B53E2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:57:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 762E6B53E30
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D1F61B26C81
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:57:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 770BA5A10A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656432DF15C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622402D97B6;
 	Thu, 11 Sep 2025 21:56:58 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826F72DE6F4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4352D1319
 	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757627817; cv=none; b=ZipbldzVyecqb/BCIzzbnO0+3wHNgjtmOnHyp3pyawwKRKG+pBqFKjIp0ZZmb7nJxhrowWHbIIRa8mYzDuIoxqhQb6YAj9ilAIuXmydZJv0VYWxCW5m+bdBUbUVr10WEfcpShZKSy5sGEvbjlDjFJ+/LrrT789N5gHNJ22b77dY=
+	t=1757627817; cv=none; b=RapfCZmvAgTCu5arbFyGJxvx7TCUyH4nyURueMkvrFSYj6bmPX2ZP3bzbRqNtExpVVvXJjd8zvLk30yXyAxHtd7xaAJ5aTx0HxpAUewaHZ8WKSaygo61Aal63O2LuYx8rPB8GUMG6ciwiTNMi6q6JUz+Ihi83DEqf6S2PSqcGEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757627817; c=relaxed/simple;
-	bh=JArEK4n+a/w0HvNnxmxDlCIQJnQfiMESKmv6ycA8i+M=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=r9ahgvQZ/f4emcw63OMJj+rouQq2OMsGf7JbL1WukIXx2NCGOOJIR9lSSo3cuK0YObib16vQomLljT6xIGfNMtugZ3QOHK3+VcRvjlKR3LVnJHOyjECquKzJVlk+C7TXtWCUJONnOxV3oZyu770CjxIXgUlqchDWg8GfTG7Uoyk=
+	bh=9zF4mej1ibTbrnImtNt9POEB2AmOALM3WqplmmIKV4Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=SseBMyhOuZTzmPF0caia3XWJ14c4s94m2OYU8xkwBc92ZarjPD4PQt5XkVbwlYcJZKTlfWwJ4EkLQWB29qciyIL55JD01JuB4UpwRSmJILL2CK2Do95a4DxbT0jEem/YOEP5H2adLbGtsYQzTl1x2Z2eTU4HCaQPZvLIPCEcmZM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <m.felsch@pengutronix.de>)
-	id 1uwpHd-0004g5-VH; Thu, 11 Sep 2025 23:56:49 +0200
+	id 1uwpHe-0004g5-0q; Thu, 11 Sep 2025 23:56:50 +0200
 From: Marco Felsch <m.felsch@pengutronix.de>
-Subject: [PATCH v2 00/10] i.MX SDMA cleanups and fixes
-Date: Thu, 11 Sep 2025 23:56:41 +0200
-Message-Id: <20250911-v6-16-topic-sdma-v2-0-d315f56343b5@pengutronix.de>
+Date: Thu, 11 Sep 2025 23:56:42 +0200
+Subject: [PATCH v2 01/10] dmaengine: imx-sdma: fix missing
+ of_dma_controller_free()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,71 +44,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJpFw2gC/32NOw6DMBAFr4K2zkbGJPyq3COi8GeBLWIjm1hEi
- LvH4QApZ6Q3b4dIgSlCX+wQKHFk7zLISwFmVm4iZJsZpJB30YkKU41ljatf2GC0L4U304620lo
- 0VQt5tgQaeTuTzyHzzHH14XM+pPJn/8RSiQKVabTSteyo1Y+F3PReg3e8XS3BcBzHF7H9iEO1A
- AAA
-X-Change-ID: 20250903-v6-16-topic-sdma-4c8fd3bb0738
+Message-Id: <20250911-v6-16-topic-sdma-v2-1-d315f56343b5@pengutronix.de>
+References: <20250911-v6-16-topic-sdma-v2-0-d315f56343b5@pengutronix.de>
+In-Reply-To: <20250911-v6-16-topic-sdma-v2-0-d315f56343b5@pengutronix.de>
 To: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
  Sascha Hauer <s.hauer@pengutronix.de>, 
  Pengutronix Kernel Team <kernel@pengutronix.de>, 
  Fabio Estevam <festevam@gmail.com>, Jiada Wang <jiada_wang@mentor.com>
 Cc: dmaengine@vger.kernel.org, imx@lists.linux.dev, 
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Marco Felsch <m.felsch@pengutronix.de>, Frank Li <Frank.Li@nxp.com>
+ Marco Felsch <m.felsch@pengutronix.de>
 X-Mailer: b4 0.14.2
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::28
 X-SA-Exim-Mail-From: m.felsch@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi,
+Add the missing of_dma_controller_free() to free the resources allocated
+via of_dma_controller_register() during probe(). The missing free was
+introduced long time ago  by commit 23e118113782 ("dma: imx-sdma: use
+module_platform_driver for SDMA driver") while adding a proper .remove()
+implementation.
 
-by this series the i.MX SDMA handling for i.MX8M devices is fixed. This
-is required because these SoCs do have multiple SPBA busses.
+Use the driver remove() callback to make it possible to backport this
+commit.
 
-Furthermore this series does some cleanups to prepare the driver for the
-upcoming DMA devlink support. The DMA devlink support is required to fix
-the consumer <-> provider issue because the current i.MX SDMA driver
-doesn't honor current active DMA users once the i.MX SDMA driver is
-getting removed. Which can lead into very situations e.g. hang the whole
-system.
-
-Regards,
-  Marco
-
+Fixes: 23e118113782 ("dma: imx-sdma: use module_platform_driver for SDMA driver")
 Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 ---
-Changes in v2:
-- Link to v1: https://lore.kernel.org/r/20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de
-- Split DMA devlink support and SDMA driver fixes&cleanups into two series
-- Make of_dma_controller_free() fix backportable
-- Update struct sdma_channel documentation
-- Shuffle patches to have fixes patches at the very start of the series
-- Fix commit message wording
-- Check return value of devm_add_action_or_reset()
+ drivers/dma/imx-sdma.c | 1 +
+ 1 file changed, 1 insertion(+)
 
----
-Marco Felsch (10):
-      dmaengine: imx-sdma: fix missing of_dma_controller_free()
-      dmaengine: imx-sdma: fix spba-bus handling for i.MX8M
-      dmaengine: imx-sdma: drop legacy device_node np check
-      dmaengine: imx-sdma: sdma_remove minor cleanups
-      dmaengine: imx-sdma: cosmetic cleanup
-      dmaengine: imx-sdma: make use of devm_kzalloc for script_addrs
-      dmaengine: imx-sdma: make use of devm_clk_get_prepared()
-      dmaengine: imx-sdma: make use of devm_add_action_or_reset to unregiser the dma_device
-      dmaengine: imx-sdma: make use of devm_add_action_or_reset to unregiser the dma-controller
-      dmaengine: imx-sdma: make use of dev_err_probe()
+diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+index 02a85d6f1bea2df7d355858094c0c0b0bd07148e..3ecb917214b1268b148a29df697b780bc462afa4 100644
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -2418,6 +2418,7 @@ static void sdma_remove(struct platform_device *pdev)
+ 	struct sdma_engine *sdma = platform_get_drvdata(pdev);
+ 	int i;
+ 
++	of_dma_controller_free(sdma->dev->of_node);
+ 	devm_free_irq(&pdev->dev, sdma->irq, sdma);
+ 	dma_async_device_unregister(&sdma->dma_device);
+ 	kfree(sdma->script_addrs);
 
- drivers/dma/imx-sdma.c | 181 ++++++++++++++++++++++++++-----------------------
- 1 file changed, 96 insertions(+), 85 deletions(-)
----
-base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-change-id: 20250903-v6-16-topic-sdma-4c8fd3bb0738
-
-Best regards,
 -- 
-Marco Felsch <m.felsch@pengutronix.de>
+2.47.3
 
 
