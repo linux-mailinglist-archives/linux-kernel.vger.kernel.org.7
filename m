@@ -1,184 +1,146 @@
-Return-Path: <linux-kernel+bounces-811858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A11B52EB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:38:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFD6B52EB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B63B3BB1CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:38:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1082A188B3DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0585A30E824;
-	Thu, 11 Sep 2025 10:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70AA32D1F72;
+	Thu, 11 Sep 2025 10:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qVqPpvt2"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2082.outbound.protection.outlook.com [40.107.244.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E+2XIHN8"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3712206A9;
-	Thu, 11 Sep 2025 10:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757587079; cv=fail; b=NrDpUcAN1smnxWHHrjrBL6EvDb6Crmv5g6l9reUgpz6wUtZSxgfXGfnHbnU2XHylRSuUIqqjQuTtpvK+JlsDPBTOWcl5hfJaIyV02x3Yf8kVkYwyecvF/yZcHEEOoGZ/XNu8pX9crxdjAXyFV6hK1iHUidYlFXWZ/eiX7OS4/tc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757587079; c=relaxed/simple;
-	bh=BLO2hZrQsjITBD7Im2+Vv0sRraoHSBiStI5Y0gwenCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XfmQDR/xlUdDkOLaxOQuXJLWWcZ5jRYyJOa7woFkMppPYQ9okb3X51pvIU5UihRjvo/+ap1QPLJOXMPdS3rKkKk72fDTcUOuSSoePWHQFAbTVVx+efYPMcxdJ79oMmQbRcV3hZVCaPLwzDUXPBDfGxLY17kyem+vzcYJcxSGhQg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qVqPpvt2; arc=fail smtp.client-ip=40.107.244.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yWwRHFOHAQUCKzXBPfy3pfyIHNcUIBmGZM8OF4PKiGN6QImE1EftRC1Zalv0BZD9oKl4i1pghar/wvur3wQjder1XR3a149jBCDr9RNc5Hdta1t7LA+hUIf1ptDP++RDNAljHk925ndciwoBv/zoeu7J9bAVD5pd5ASihB59ppVSq542Do+dFgQnnByI1pR6U5wbwPYFKBkyadJgagHHC5mXiSeAfbRQOWlb6BAsa+RutlLHsJ4y9MzBntMpCECRTFZuxWe/rkUbRCxP0g9SvOg0jaKdpnU8MblnO7n810UwWukZ68p/Va98D+S/jb4H40bGp1Tnbvx95OpeCcH9Vg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KBr2zny4dhn8r/trGVFxdoLSX2rKE4JZze3sqr3bUE0=;
- b=JoQuQYdcAE3MKIrudjPC7Ein76FGsmx3vbEFhpiLQh9u+NFfUhovf+MxATJV4ZqjrIdxSCZpRO1N0IbAJ2BE98/2qv5TyoGBpPR9tVNktNVxkAqaO2OzUZ4FLh3yGKhxrNaFRhEOg1OCzRtP3hL+osID2hXuHAiSdR2WCaLV4JiiNJSxkRb0eaTxsROCuxNzmBP5l/1y4K0OZA3YkzZtbY+N6eWOotm6h0t7FeHj/vaWowYIHgxvfznnjN9f7KkCGMeJVqXDg83hq/bQQvnVxOaXn8AelBrz243LCGy0+F3ue+4yhK39+8nZPIaQ8IBbxso3Z7LdW4BzADvNJKMVWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KBr2zny4dhn8r/trGVFxdoLSX2rKE4JZze3sqr3bUE0=;
- b=qVqPpvt216Gwm6VuioP5gOVvNBwxkSpFVixen1FyuPRVMF3B76OAYnVIulDj5IyCRYHsg3KMs5pKGVHlJTswMXh4oJ6GfyystbjBBlTyA/fZl7vg+rew0v/PLiUo7gYfzSH+qfnA6p0NT5QsyGvuS6kflAgb31IurdrQ5QgoEoo=
-Received: from MN2PR10CA0015.namprd10.prod.outlook.com (2603:10b6:208:120::28)
- by SJ2PR12MB9007.namprd12.prod.outlook.com (2603:10b6:a03:541::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 10:37:55 +0000
-Received: from BN2PEPF000044A3.namprd02.prod.outlook.com
- (2603:10b6:208:120:cafe::e4) by MN2PR10CA0015.outlook.office365.com
- (2603:10b6:208:120::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Thu,
- 11 Sep 2025 10:37:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- BN2PEPF000044A3.mail.protection.outlook.com (10.167.243.154) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Thu, 11 Sep 2025 10:37:55 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 11 Sep
- 2025 03:37:55 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 11 Sep
- 2025 05:37:54 -0500
-Received: from [172.31.178.191] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 11 Sep 2025 03:37:47 -0700
-Message-ID: <cdca0902-f6a6-406f-a52a-1172c02f442a@amd.com>
-Date: Thu, 11 Sep 2025 16:07:46 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A7A30DD15
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757587118; cv=none; b=XhAfSE0Cg9H3wmjtC71mXzksKFQqoIPLc5vkO8UzEvIomTTwM7iaegVgsxCtMu8yo7RN0tTDGO2ZEuDueRP9YX4dsQXYEwDsAP4dnjzOsceBCZ3DfJT/bY5vVhW1j9RKb7PPcRsaG9geNaHilMBWpg1yt/5gj76PEMXtQAOR/8g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757587118; c=relaxed/simple;
+	bh=PzZndjRhCyfeDaH3rPUOnP5JNre8OuaxnyLSwSi5YvI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ZGj/tCqMWIx6EO5ovJXInz6Juk/kVpnOtFy2CmzGBX/qiVsMuMS0VaCmEzx/rNzCpmtGFJRmSO48m8HLwdjNsGscE+x3kiB7W+FLglabAsitXPCbXvQ0akhhawnbqJpr8kWXk9RpWQpbTjeMTwRU40ehtT+XdgxY8AYleiyjKKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E+2XIHN8; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-77269d19280so486724b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 03:38:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757587116; x=1758191916; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hwCf+x6+iQDwlYTBOswpM6ZU+Uqffi/8oPlDvFPRj5I=;
+        b=E+2XIHN83JrkTtWtnfVArOW1stjba3GZAR+sxfXoWV66mivLCdXMcgQ57yN7ekyFFS
+         7p7ApaaqcIBZXWmyZ++JbUWpjdEKBL+zymfwyT01WG4fCGNNNnonya+FCmQi/eGk0A9m
+         jNC6Fn3X5IahwBItGtKB/mJ9JuEkYuqlOdeallFBCSUT26PQ6cDPXQewpO/5uRYYQrZb
+         lbc4yOYb7b2UWTRDkz96vWVrIazJnIrfaHkJJhF8ZJz8x2tCWTWNvNVEBAbs76VDu3dV
+         uxquICVsQumq1cSenFb0GkzgzVJHDNYspe0pRGapaI6C2ZhkszDDjid4op0RW7I/6U+H
+         YC8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757587116; x=1758191916;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hwCf+x6+iQDwlYTBOswpM6ZU+Uqffi/8oPlDvFPRj5I=;
+        b=YxBS9mp+yYlCsTHsQt5G143M7Ef+47f4DMBBTvOaCPZj2MkFqsvYyGmbtRrFNS1MgT
+         +EGhAlI869GnPqoa5SJO5wrHUB7L9mGWY2lcVIBs7X0fot/gRafnunaAZMpCrPRcauuw
+         oXd77Sz3qU86CH+2oRAZs5kwRZNoMZmsPCwcBqIyHs0+MOF9NCZS6lqKddwkLQB/Lpqk
+         fijNH8dU+5iMh/lUzadGiVqmDYvi+1VxvzOKn9xnJttV9fAKubVgGIlY4wAlqmADcW1Z
+         7kVjJ5Iye2nGwXxndN2pOtbp6+dzBdM5kjE8y/oT9upO1IMyS34aXg4oprhKSKlCZz83
+         Gurw==
+X-Gm-Message-State: AOJu0YxMQDMAA/ZB5DlRT9nuJTUIC+RPNYeetXSRDHlPrX6VJhzXUHFe
+	k5OroOw/RT1CNdut5g1hIj8LsTStcLzaDN+ijUTj2WhTVkTsJr42lJYlUZIjzA9exylS1J2S+4Y
+	vXNB+erPVXG2yFh9kudlpb+v/1O20Rs1tplpOkIXuArKvXZqevjFBweU=
+X-Gm-Gg: ASbGnctb8vwAUK6tlctdlASfWW82HXaIBt1UP5xLXACUR6Se99snmojWtZDS7yIM0tX
+	JpB+VZVaJi7Ogd1C4ATLZ+fgGdpI8EjcI9z0jsxflmCXzBo5wLUPrtMUVgwN6HL7MyiE+oPMljT
+	XegQx4m9kMufZPR/y4ohiOuaeNCVuy2xQ4uAWzrNAjxGkB2ZtKO705GUw22ZNIAtnsSVHQ8vgd/
+	T3WSDju5cg4DyKc3/04TmrZWXAuhRak8sNOoG1uq+o/yO0e7EQaHmQPeWC0byozkImllie0zwNY
+	eOeMIq4=
+X-Google-Smtp-Source: AGHT+IFF9nLAlf5H5zTpQVUA1xDoSRqbppJFcEnC+SSt2NXKIJkElcllJglnQQoxzmnCvg9l74mXa81/q4BpW7N5QUs=
+X-Received: by 2002:a05:6a20:1585:b0:24c:f8f:2b95 with SMTP id
+ adf61e73a8af0-2534557a863mr28371984637.40.1757587115788; Thu, 11 Sep 2025
+ 03:38:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/14] sched: Employ sched_change guards
-To: Peter Zijlstra <peterz@infradead.org>
-CC: <tj@kernel.org>, <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
-	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
-	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
-	<mgorman@suse.de>, <vschneid@redhat.com>, <longman@redhat.com>,
-	<hannes@cmpxchg.org>, <mkoutny@suse.com>, <void@manifault.com>,
-	<arighi@nvidia.com>, <changwoo@igalia.com>, <cgroups@vger.kernel.org>,
-	<sched-ext@lists.linux.dev>, <liuwenfang@honor.com>, <tglx@linutronix.de>
-References: <20250910154409.446470175@infradead.org>
- <20250910155808.415580225@infradead.org>
- <c4955d95-8d23-49da-9214-da481f28f797@amd.com>
- <20250911095523.GX3289052@noisy.programming.kicks-ass.net>
- <20250911101008.GD1386988@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250911101008.GD1386988@noisy.programming.kicks-ass.net>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 11 Sep 2025 16:08:24 +0530
+X-Gm-Features: AS18NWDU1yGbFPHd1Xuf1CRGujHNL9_s9RGs2SutoTfTFAoxI3RGpotdfxd9IuI
+Message-ID: <CA+G9fYsenOs88SO8ZRYnuDXU8tk=o-kS1Q=fvLbV3=6WKSJR2g@mail.gmail.com>
+Subject: next-20250911 acct01.c 123 TFAIL acct(.) expected EISDIR EACCES (13)
+To: open list <linux-kernel@vger.kernel.org>, LTP List <ltp@lists.linux.it>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Jens Axboe <axboe@kernel.dk>, Jani Nikula <jani.nikula@intel.com>, 
+	Jeff Layton <jlayton@kernel.org>, Arnd Bergmann <arnd@arndb.de>, chrubis <chrubis@suse.cz>, 
+	Petr Vorel <pvorel@suse.cz>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A3:EE_|SJ2PR12MB9007:EE_
-X-MS-Office365-Filtering-Correlation-Id: 37f95efb-c056-43ab-4da9-08ddf11f449a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Wnk0VDN2N0RTQXJGNlBvNCtpNE1yZTZoMHd2eSs4bWNGcXlHWDgyTEdMTTBD?=
- =?utf-8?B?VUlPS1JHRjB6NDNFbDhDRUhhRXJSTVYvM3dWMU9KOUM5YlpsSXFKTTlRTVJx?=
- =?utf-8?B?WmlxZ25kTytWVDE4UEM2RGpBUzEyckpBZ1Fxa3NkNG0zaHJKRVRPVHZ0R01l?=
- =?utf-8?B?L1ZReFFac0dQYVVCbUxCWFNLMWl2WkdieDkxQ3ErNGF6bE5yV3VLcDN6TEdI?=
- =?utf-8?B?cnozL1MxYVZjMGM3WUlCRlp5VmFhZ0svR28xWEhRWXVOY09jSnNXTjltSlBa?=
- =?utf-8?B?NDFrdklQMHE0NWtsbUpDNUltWjBuM255UzA3emIvakhnWldQY3RIcDBHMmR5?=
- =?utf-8?B?bHVQbFZmS2FUY2VIeTJHMkdqT3hJSm1Va1c1WTdUM0dzRis4WW02NHFodGRl?=
- =?utf-8?B?dU1kZVAzbnc1emN4dGlSMnBmeWk4cTVWZ0k4ekVPTng4RU50TlA5SXNtMk9k?=
- =?utf-8?B?QmtKZTI5d0QvZ0VwUEwzRktac3NVeHBRN0hwSVdaWm1ENmZtK1Q4Q2Nrb3Ry?=
- =?utf-8?B?Y3FNSWgwckMycDNsazhyUUFkbzNCbVpQb0NFN1NUMU5NNHEwby9FZTlJNFJt?=
- =?utf-8?B?bmpXemtvVC9WUThha1MycERqZDlOVDdQTFQrdnQ1dXJlWGErcUgwN1BCbXJx?=
- =?utf-8?B?ZjNRMUZqYUJSSG9Ob0dtUE5od2FDUW1BMThSOGFmZEFqSVZ4RnM3M21FeHIr?=
- =?utf-8?B?NXh3NGNyT3huL2hQKys2cCtrYVhvS3A2N2Fya1Q5a01iSFU2bnBwSUlXSDhS?=
- =?utf-8?B?Z2xIbzl6cU9FdWlNSC8zd2xmRjA5SVBPRm9PK0tHU0xsRVl4R1ZHRDkwUjky?=
- =?utf-8?B?MzA4cU9OcTBGVEdTY1ZNYXVlL0NsWHJydld3NFBvbFdzRGhLYU5kQ3RCMEZo?=
- =?utf-8?B?MFUzb3ZPTVNxRHZkdDBWU0FOQ2F3cmV1OUhVeG53M0hLZUZncVpSa0xsWHhW?=
- =?utf-8?B?c09rd3RmNXRvNXRQVGRURFB1SXliRW9kbFhDWXNtZVJZcG8vTVdYKzREN29I?=
- =?utf-8?B?Z3NIdHlVQW9wUWNHMUJqZkxZRGZsR2xENTd6U3VBdUNYcE5lM0ZuMWZDY1g5?=
- =?utf-8?B?Rld6c25BNzM2T0pLaFArYjl4QUVSNk1TOWM2bXFOUWhXTFJnVHJGSFY2SnhP?=
- =?utf-8?B?SXJaMmtSTlQ5ekpWQkdNQnNURjU5d3U3SDBPdWV5eVdHRURLSm96N2ZLV05s?=
- =?utf-8?B?aHM4Nml3MG8rTTZHL0lya1FGMzhyNE5HT2RFUzg0bitHWVdKRkJNbCtaS3M4?=
- =?utf-8?B?bHRGeDRjQUVUNnlnYUZDcUtDU0NsMUZVeERJbGM2WmxYeGdiY0NpQ1dLNFF3?=
- =?utf-8?B?MGFCNy9NdW1UazY2S1lPdmphbjgxclRTY1JZSG1BTmVmQU1nMVZhcDM1V3da?=
- =?utf-8?B?bGdPMk1sb3MzdUtOcTczRlY2MXczZXZ4WHlReVZWUzFrSlNNdmRyYWl6cDNo?=
- =?utf-8?B?dzJWQzExZXN1ZGcvLzQrNmJIdnFXa3BWdHZ3c1NMMUVCZktUOEdZUkgraFFv?=
- =?utf-8?B?MmJ3WXR2eUFYcHVuTnVVSkRqdEFQd1QwbUdSMk1vcE1Ec3ljZGNOSzBqUHRL?=
- =?utf-8?B?SVF1ZGpMNHp0V2JBZnhKNE9TcjRTc3FqZEEwb1VVdkRHdVZxaHlHUDFnWm1J?=
- =?utf-8?B?d0lrVk1VYndyNk9ZMmxvY25TaU84WFJyYVo4NTI4ZVdPN0ZrRURPY0ZLS0tj?=
- =?utf-8?B?NmoxaWVXQnhad2ZweE5NL3lXRUdyRUZ0TER5VG9ZenZxUHZ5K052NnpiZTlz?=
- =?utf-8?B?SXQ1NWdCVDFHZzYvQVBEdk5kZnJLRHlDTG1PeE9kVlp6ajNqR2RCaHVaUWx4?=
- =?utf-8?B?blVwQm5jZ2dzNVJQYmZhWTU3Mnd2UUtpTFFpc1dUb291M3JxbVVKU1lGaVEr?=
- =?utf-8?B?TFNORXNXNWF4RjRDR2NtMmF4ekI3dDJwRTRrVkp1SGMzdzdwSUpuamxoT0pK?=
- =?utf-8?B?a1d3TjFRQUV5T0ptYWxsWm1FTHZxbGNQdG14RHlCd0tIa2NwUzBWVlBrbEZX?=
- =?utf-8?B?clRMeTdwekJENmR1cm9DTzhCNGFvMzhCWnNxOENQdm5OR09JdDVPemZnUUdr?=
- =?utf-8?Q?Mr/Zbj?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 10:37:55.3294
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37f95efb-c056-43ab-4da9-08ddf11f449a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044A3.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9007
 
-Hello Peter,
+The following LTP syscalls acct01 test failed on qemu-arm64, qemu-x86_64,
+x86-64 and rock-pi-4b running the Linux next-20250911 tag kernel.
 
-On 9/11/2025 3:40 PM, Peter Zijlstra wrote:
->> Yeah, I suppose we could. But let me try and do that in a later patch,
->> on-top of all this.
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
 
-Sure thing.
+Test regression: next-20250911 acct01.c 123 TFAIL acct(.) expected
+EISDIR EACCES (13)
 
-> 
-> Something like so?
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Yup! That whole lot look better. Thank you.
+Initial investigation pointing to this commit id, (Need to bisect)
+$ git log --oneline next-20250910..next-20250911  -- kernel/acct.c
+   ccc54b556054d kernel/acct.c: saner struct file treatment
 
-> 
->  [..snip..]
--- 
-Thanks and Regards,
-Prateek
+## Test log
+tst_test.c:1953: TINFO: LTP version: 20250530
+tst_test.c:1956: TINFO: Tested kernel: 6.17.0-rc5-next-20250911 #1 SMP
+PREEMPT @1757575072 aarch64
+tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
+tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
+which might slow the execution
+tst_test.c:1774: TINFO: Overall timeout per run is 0h 21m 36s
+acct01.c:123: TFAIL: acct(.) expected EISDIR: EACCES (13)
+acct01.c:123: TPASS: acct(/dev/null) : EACCES (13)
+acct01.c:123: TPASS: acct(/tmp/does/not/exist) : ENOENT (2)
+acct01.c:123: TPASS: acct(./tmpfile/) : ENOTDIR (20)
+acct01.c:123: TPASS: acct(./tmpfile) : EPERM (1)
+acct01.c:123: TPASS: acct(NULL) : EPERM (1)
+acct01.c:123: TPASS: acct(test_file_eloop1) : ELOOP (40)
+acct01.c:123: TPASS: acct(aaaa...) : ENAMETOOLONG (36)
+acct01.c:123: TPASS: acct(ro_mntpoint/file) : EROFS (30)
+acct01.c:123: TPASS: acct(Invalid address) : EFAULT (14)
+Summary:
+passed   9
+failed   1
 
+## Source
+* Kernel version: 6.17.0-rc5
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git describe: 6.17.0-rc5-next-20250911
+* Git commit: 8f21d9da46702c4d6951ba60ca8a05f42870fe8f
+* Architectures:  qemu-arm64, qemu-x86_64, x86_64 and rock-pi-4b
+* Toolchains: gcc-13
+* Kconfigs: defconfig+lkftconfigs
+
+## Build
+* Test log: https://qa-reports.linaro.org/api/testruns/29854528/log_file/
+* Test details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250911/ltp-syscalls/acct01/
+* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/32XlIYnaqlBd51NRfEjNdOSzoa9
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32XlFRJ0UBKszjvazzyFA2gCmdT/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/32XlFRJ0UBKszjvazzyFA2gCmdT/config
+
+--
+Linaro LKFT
 
