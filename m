@@ -1,149 +1,97 @@
-Return-Path: <linux-kernel+bounces-812242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7476CB534E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:09:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15670B534EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D8A15A3946
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:09:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA205AA276B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D4B3375A9;
-	Thu, 11 Sep 2025 14:09:02 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB07B337682;
+	Thu, 11 Sep 2025 14:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zAYMqDb3"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB6F1DACA1
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DB83314CC;
+	Thu, 11 Sep 2025 14:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757599742; cv=none; b=u30csR0x1c3pTXfboKy0QW4MEm2ITUIIS0CvaoUu1vtLyyvSIk+bqVKy541Zw1ct+G8aP/mt0Zv4KYJbOfih4shhkhGu4EPDJ3YCM3Pk1IuteHXUnuBOupnoSYmEwRxxq0I8KYTDf1JMKFZKGzRMP/nImC+n4APeJtVasgXk3fE=
+	t=1757599794; cv=none; b=BShRcSC6Y2I8ugcM6cZS1xQJt+byqErK+3RDCckj8qUh6mXckEs7Fv/tFzoAB8ZATxX6PZFLFSultOjo3pe7AxI9rnL87ECK1G1dTeKd5HIa3HapxLndCaEV4fIGrSwX9jwIJ9W0SLkJNGNYpthZLcW9xyiHFCMnIVCMbUKwxiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757599742; c=relaxed/simple;
-	bh=2pqgafZIU6dCGuLxRRcQ4J9D0AL2bMkEFuyleWWTbWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eu0hBLpyeRFSRu0qRiOhaKgk4hSBoZkMYLsro6/L52ZiHVTkFbXHC0yAeQnspXBG32G+OBrpJ2Mke2vgeOhaeMDYXOur3GS6yoh1hjGpDpRDgCuieuUw+5JpSEHddoJ3ykuXX2TkB01d6fsW1BocDS2oQZZqfVCbpVxvqkz/JtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cMzq66vynz2VRgH;
-	Thu, 11 Sep 2025 22:05:38 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 64F2F140296;
-	Thu, 11 Sep 2025 22:08:56 +0800 (CST)
-Received: from [10.67.120.170] (10.67.120.170) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 11 Sep 2025 22:08:55 +0800
-Message-ID: <bb4c3f0b-06da-46e6-9769-efe3dc00e9fb@huawei.com>
-Date: Thu, 11 Sep 2025 22:08:55 +0800
+	s=arc-20240116; t=1757599794; c=relaxed/simple;
+	bh=oEpQbz08KIQIjmYjW4TF8QaIfqdMPLGPiCOahYPFnu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XycrcBneMfaSg5yGJN7J7UsWJNRO6sBDt2YEBRML5V18/oAu+i4QeJnmqIBxSItPwBZ16tfZHqi9AULwEIN8/KKiUhdcbh1oUDnLoXVCRb3CVs8RI2fj5Yc2LxI03n6qDpCC/CdJGEIDQM3M0XwLjFQX6PPQ115+Ew1TMzstNMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zAYMqDb3; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=UTOFlXWDRobea92uCzaSAenu3tACfKoporlUKOZNwkA=; b=zAYMqDb3NB78c7pxSOBOHgTqCO
+	zH9pcex8Gn8Bl2yKiHF1FxhZm3/Sj1cNPlYKcA2EG0Y9eCbwBx+ALxGJt498GEKlMUupshhaQK1q7
+	YoLAowsS0fLwn5NeD5tOEeDYjU9XScIYzBhn5J3o4oaBGYmo/CXkfeYFWN3E1cpUEVwQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uwhzS-0085aR-Vh; Thu, 11 Sep 2025 16:09:34 +0200
+Date: Thu, 11 Sep 2025 16:09:34 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rebecca Cran <rebecca@bsdio.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: dts: aspeed: add device tree for ASRock Rack
+ ALTRAD8 BMC
+Message-ID: <58a092c5-5dd0-4718-831a-e25ecb184087@lunn.ch>
+References: <20250911051009.4044609-1-rebecca@bsdio.com>
+ <20250911051009.4044609-3-rebecca@bsdio.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] iommu: Add io_ptdump debug interface for iommu
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<yangyicong@huawei.com>, <wangzhou1@hisilicon.com>,
-	<prime.zeng@hisilicon.com>, <xuwei5@huawei.com>, <fanghao11@huawei.com>,
-	<jonathan.cameron@huawei.com>, <linuxarm@huawei.com>
-References: <20250814093005.2040511-1-xiaqinxin@huawei.com>
- <20250902161028.GC184112@ziepe.ca>
- <f2720f17-5e81-4f69-aaf5-791b47973178@huawei.com>
- <20250910141547.GD882933@ziepe.ca>
-From: Qinxin Xia <xiaqinxin@huawei.com>
-In-Reply-To: <20250910141547.GD882933@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemj200003.china.huawei.com (7.202.194.15)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911051009.4044609-3-rebecca@bsdio.com>
 
+> +&mac0 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_rmii1_default>;
+> +	clocks = <&syscon ASPEED_CLK_GATE_MAC1CLK>,
+> +		 <&syscon ASPEED_CLK_MAC1RCLK>;
+> +	clock-names = "MACCLK", "RCLK";
+> +	use-ncsi;
+> +
+> +	nvmem-cells = <&eth0_macaddress>;
+> +	nvmem-cell-names = "mac-address";
+> +};
 
+There is no phy-handle here, and no mdio node in this file. What is
+the MAC connected to? Does it connect to the hosts Ethernet interface?
 
-On 2025/9/10 22:15:47, Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> On Wed, Sep 10, 2025 at 11:20:08AM +0800, Qinxin Xia wrote:
->> Ok, I see, my colleague Wang Zhou also released a version of io_ptdump
->> a long time ago, which is implemented in smmu debugfs. Will recommends that
->> io_ptdump be implemented in a way similar to CPU page table dump. Using
->> debugfs to expose the data and using format-specific callbacks to implement
->> specific data dumps, I'll talk to him about this as well.
-> 
-> I feel we should have a iommu subsystem debugfs and per-iommu_domain
-> directories to dump the page tables.
-> 
-> The smmu debugfs can report what iommu_domains each STE/CD is
-> referencing.
-> 
-> This also needs RCU freeing of page table levels as a locking
-> strategy.
-> 
-> Jason
-> 
+> +
+> +&mac1 {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_rgmii2_default &pinctrl_mdio2_default>;
+> +
+> +	nvmem-cells = <&eth1_macaddress>;
+> +	nvmem-cell-names = "mac-address";
+> +};
 
-Thanks, I'll add RCU in the next version, but there's some confusion, Do 
-you mean to create a directory for each domain? like：
+RGMII pinctrl is referenced here. This opens up the question about
+RGMII delays. What is this MAC connected to?
 
-/sys/kernel/debug/io_page_tables/domain_xxxx (xxxx=domain addr)
-
-tree domain_xxxx like:
-domain_xxxx
-└── group x
-│ └── device
-└── io_ptdump
-
-And the current design is such:
-
-User Space Interface
-└── DebugFS file: /sys/kernel/debug/io_page_tables
-└── Operation: Reading this file triggers the entire debug information 
-collection process
-
-Kernel Space Components
-├── Configuration option (CONFIG_IO_PTDUMP_DEBUGFS)
-├── Initialization module (mm/io_ptdump.c)
-│ └── device_initcall(io_ptdump_init)
-│ └── io_ptdump_debugfs_register("io_page_tables")
-├── DebugFS backend (mm/io_ptdump_debugfs.c)
-│ └── DEFINE_SHOW_ATTRIBUTE(io_ptdump)
-│ └── .show = io_ptdump_show
-│ └── iommu_group_and_iova_dump(m)
-└── IOMMU core extension (drivers/iommu/iommu.c)
-└── iommu_group_and_iova_dump()
-├── Traverse all IOMMU groups (via iommu_group_kset)
-├── Filter groups with default domain using DMA_IOVA cookie
-├── Build domain-group hierarchy
-│ ├── domain_list: list head
-│ ├── dump_domain: domain entry
-│ │ ├── domain: pointer to iommu_domain
-│ │ └── groups: list head of groups
-│ └── dump_group: group entry
-│ └── group: pointer to iommu_group
-├── Output domain information
-├── Output group and device information
-└── Call iommu_iova_info_dump() to output IOVA mappings
-└── Traverse IOVA red-black tree
-└── Call domain->ops->dump_iova_prot() to get protection information
-└── ARM SMMUv3 implementation (drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c)
-└── arm_smmu_dump_iova_prot()
-└── Call io_pgtable_ops->dump_iova_prot()
-└── ARM LPAE implementation (drivers/iommu/io-pgtable-arm.c)
-└── arm_lpae_dump_iova_prot()
-├── Use __arm_lpae_iopte_walk() to traverse page tables
-├── Obtain page table entry and level information
-├── Format and output mapping range and information
-└── Call dump_prot() to output protection flags
-└── Use prot_bits array to parse permission bits
-
-Do you mean that the interface in io-pgtable-arm.c is directly invoked 
-during the process of obtaining page table information without passing 
-through arm-smmu-v3.c?
-
-I'll add STE and CD dumps to the next release. Any other suggestions?
+	Andrew
 
