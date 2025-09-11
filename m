@@ -1,146 +1,218 @@
-Return-Path: <linux-kernel+bounces-812622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 198A0B53A92
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:42:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C097BB53A96
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D38A03DE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:42:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED232166462
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F8136CDF4;
-	Thu, 11 Sep 2025 17:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A65362086;
+	Thu, 11 Sep 2025 17:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnasG9BH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o3ftaxQ0"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4C936C064;
-	Thu, 11 Sep 2025 17:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F1335A2B4
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757612438; cv=none; b=XcBId+D9j8ecUVA2mnxAYAM11gGi6SbLDpQS5k/iJu18yBg1hDZiTosKfKoCTDe/GmfB9h8J2/W/UPnjWd4M4y1JLmm46H0Pvku6aMkzefeBg/iyFSwJmBPQ9JROE6MfM4qB+6s33GtRYiKNicN5UIjCy9ZOcA/Wjj8+64E8jIg=
+	t=1757612687; cv=none; b=hZWXb4W07nJPPj+3p9fAuncisnsTC64r0DO3WhQvESznB6KxxozGjElrVjyceg4NbPBKaeMLJpi5NTEjgyUtHwDpDkRdDvFuTmCF8l4cR43E31u8abf5ntFPbLYqonvw095YWBWGN5J8+Gb6CvfwmwTabwcVeIPNpDZNWYHs/kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757612438; c=relaxed/simple;
-	bh=zJ4rq1A7rDmdHeQfB8ynFE9503F7ovKFxfivFN/5hPw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Xaenb82TRNF9aWMoLRvXOkz+SQtqeMkAtAUDmkDGmkm1NFN8JIjWCFd6B/ztcZmHN+Won6HycDESuaxzQ3sDhE+SQO+GRnzoS7bo6rkhCX/IgmhHFdTtHllQUs7dIdxIY4D/McE3U3zXyC/JsBTiPa/bBn8EfhxLzTFcJcNC5qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnasG9BH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C835C4CEF9;
-	Thu, 11 Sep 2025 17:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757612438;
-	bh=zJ4rq1A7rDmdHeQfB8ynFE9503F7ovKFxfivFN/5hPw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fnasG9BHdhytwzOrujWzGt7ku0MY+Ga1Eo74frSUsOw115y/In/LVC3P0toE+NOeC
-	 +ufEmua4MOgy3ps88zcw/iEJkmXtlru13Ylw5O32oaGENEONx9j+cl1nPuqmbXjCnX
-	 LxzYeuW6STgS6pfpdKe5/WxuzLwwgfZug+mmP4G5m20nWS5w2sgdk67Y1DCad1wuSq
-	 T/ylpjnKbBOZzWaQG31CwJvGYq0hLiYtjifb/IyPT7RCXi6svbVWCD9Im97oCAWsIl
-	 v/EPS/RD8U1epL75Xe3n5DOb6OKdmURdBM4NLjTedfC5UPTUlY/8kxHjqBUmQygZIl
-	 QO2LZ/z5Yzxkg==
-Received: by wens.tw (Postfix, from userid 1000)
-	id 504CA5FF03; Fri, 12 Sep 2025 01:40:33 +0800 (CST)
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej@kernel.org>,
-	Samuel Holland <samuel@sholland.org>
-Cc: netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>
-Subject: [PATCH net-next v5 6/6] arm64: dts: allwinner: t527: orangepi-4a: Enable Ethernet port
-Date: Fri, 12 Sep 2025 01:40:32 +0800
-Message-Id: <20250911174032.3147192-7-wens@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250911174032.3147192-1-wens@kernel.org>
-References: <20250911174032.3147192-1-wens@kernel.org>
+	s=arc-20240116; t=1757612687; c=relaxed/simple;
+	bh=pbhMO13ZY5GqoqdYOtMMsHmtwMybBAHzcr1+lrCzXbA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pRrNDtyPdIZHF+F2l1AvMWNvL5C0ew1VpIDef4qJGxvzTCnMBF+aJJ5frGFyDIhioaMMd5AYXH6j6qBQvOko8Yvc5oD65GnGjHyuQyNgFnMbtNwjF9WFOlQsvSsGqHnzpbtSyuTtC887uWqegrjWSO++hc5GUhXCb/3ed42Hn2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o3ftaxQ0; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24af8cd99ddso13724495ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:44:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757612684; x=1758217484; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rz1KF1fng6KUijdJHOF61HINUn1DY6RMLW+n7igx57A=;
+        b=o3ftaxQ0jcC/wXlHi54vgazVyRwwr4iH8pciBU2bbKJ8AWB9qy3pz4ScKLBtPGF5Xj
+         Yvg5pjGAe9epKi7NHbumSBNwqXihUdBSyP4C5UcgI/nKXNafEoYbLGCM87KVbI69Rgui
+         uKuiA5fjoow53xNIMCzDrz3Eznwdmsi0C0KZvL4qggBXSVoT6ixtK4l5OV1ULS6GwWEl
+         gndOtRw+S3/qU4qKbuqezI2gba/56KPTmsR8QCS0P7tsVEs+oj3IVheafqylgfMb+Jpj
+         5TjVk/H6Q37uE7KYm9BnTVgEGlcBFCC6h49fiNHM7GYRrP/2bi4Z4g9VkXO0H9E87vOM
+         BoxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757612684; x=1758217484;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rz1KF1fng6KUijdJHOF61HINUn1DY6RMLW+n7igx57A=;
+        b=naamBRLn1xDaIRWbP2hRhnNEFHK+wKHtNJYUp5uxUyE299hBiOeXbTaa9sGxR3uR80
+         kg+DHpXig63hLLsxsF9DaD24tST3FwmUv371oQJdkMVOpcE83mNFCTDLFxlA25DzvWLE
+         AKpqGz6JYr2ELDEHdXDszIk12xYuvST3W1nh7SoCw0K/eY+XvqMBUPgJhEWafMGqH8l+
+         dKl/PwS2MRBy0MMDqwHrat9OqgscQ21ULzlLx4MrUCO+WorwKdSv/arolATnAw1DSpJG
+         2Xqx5XKRW9EJe18358TLmBVTormqZ43KPA/Z/zHje0c2oTk4WuPfxlwCL4FL5uzVXa0y
+         7y4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVa6GI8o6Vmve/XpoAKRyPn62qg9tDyRPkIJBbHrj2ZnYWFQ3Tr1HiXINJZIDYCleaEHD2WwJ4iV5F0MIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlQEd94GnjetRiTUiuM+liNbz332R3ACr5J0mlqmCVwuX8ttRT
+	tcQpvzunf21N+cEpkpidUs33SZdEPwQas8DTUEC+LucadIHwTsu67POO0i4G9aNLTJFc4/2JXM/
+	1VDlUuHCzzEAtUwWFRwolJbpEMaTrJ78bssAWeG2S1A==
+X-Gm-Gg: ASbGncvhFw+z4eaFise2etoR9ekVCn1DVY6l+61O3uP8s5dHbYzfU5syz0emgjfgdl0
+	Csk7PuHYla0iTtshoZCRCXKxqVevWLm6dCvZAdRQhlLJbU1mYzkJdstyZkrGGjUAd7fTrPEfCT3
+	koowHfhgZwZKXCoUAE/OXlqMqPR2Gs4S3Xep1YBaVT45HjZmytCQwXLrNbOc6692l8V/VPimPCV
+	aDPVVfvYZPf6powbcX7ROva3AvB9EKEDqENUD0jdvFXl4197kcH9jzp6NN9A4d9gjCXui4=
+X-Google-Smtp-Source: AGHT+IHKvaF18ohXsPsL72THHHDkwdYvNLb3qlPEho/vRrC5yGFzk7JsCnpNSS1pajW0C+okn9T5G60r8QGqr7wiZ+k=
+X-Received: by 2002:a17:903:41ca:b0:24c:e6a6:9e59 with SMTP id
+ d9443c01a7336-25d245dd6f8mr3157985ad.6.1757612684132; Thu, 11 Sep 2025
+ 10:44:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250910-pci-acs-v1-0-fe9adb65ad7d@oss.qualcomm.com>
+In-Reply-To: <20250910-pci-acs-v1-0-fe9adb65ad7d@oss.qualcomm.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 11 Sep 2025 23:14:32 +0530
+X-Gm-Features: AS18NWC_m5FW6D-agm1h0PvPSN-t5mnK-nNZJhLfFxbja72xJDHUDp2R2a5Rjwc
+Message-ID: <CA+G9fYv_h22MCs380DwW+G5_M=H-GdFvGGo4vq_-gARL8trCOQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] PCI: Fix ACS enablement for Root Ports in DT platforms
+To: manivannan.sadhasivam@oss.qualcomm.com
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Joerg Roedel <jroedel@suse.de>, iommu@lists.linux.dev, 
+	Anders Roxell <anders.roxell@linaro.org>, Pavankumar Kondeti <quic_pkondeti@quicinc.com>, 
+	Xingang Wang <wangxingang5@huawei.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	stable@vger.kernel.org, lkft-triage@lists.linaro.org, LKFT <lkft@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Chen-Yu Tsai <wens@csie.org>
+On Wed, 10 Sept 2025 at 23:09, Manivannan Sadhasivam via B4 Relay
+<devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org> wrote:
+>
+> Hi,
+>
+> This series fixes the long standing issue with ACS in DT platforms. There are
+> two fixes in this series, both fixing independent issues on their own, but both
+> are needed to properly enable ACS on DT platforms (well, patch 1 is only needed
+> for Juno board, but that was a blocker for patch 2, more below...).
+>
+> Issue(s) background
+> ===================
+>
+> Back in 2024, Xingang Wang first noted a failure in attaching the HiSilicon SEC
+> device to QEMU ARM64 pci-root-port device [1]. He then tracked down the issue to
+> ACS not being enabled for the QEMU Root Port device and he proposed a patch to
+> fix it [2].
+>
+> Once the patch got applied, people reported PCIe issues with linux-next on the
+> ARM Juno Development boards, where they saw failure in enumerating the endpoint
+> devices [3][4]. So soon, the patch got dropped, but the actual issue with the
+> ARM Juno boards was left behind.
+>
+> Fast forward to 2024, Pavan resubmitted the same fix [5] for his own usecase,
+> hoping that someone in the community would fix the issue with ARM Juno boards.
+> But the patch was rightly rejected, as a patch that was known to cause issues
+> should not be merged to the kernel. But again, no one investigated the Juno
+> issue and it was left behind again.
+>
+> Now it ended up in my plate and I managed to track down the issue with the help
+> of Naresh who got access to the Juno boards in LKFT. The Juno issue is with the
+> PCIe switch from Microsemi/IDT, which triggers ACS Source Validation error on
+> Completions received for the Configuration Read Request from a device connected
+> to the downstream port that has not yet captured the PCIe bus number. As per the
+> PCIe spec r6.0 sec 2.2.6.2, "Functions must capture the Bus and Device Numbers
+> supplied with all Type 0 Configuration Write Requests completed by the Function
+> and supply these numbers in the Bus and Device Number fields of the Requester ID
+> for all Requests". So during the first Configuration Read Request issued by the
+> switch downstream port during enumeration (for reading Vendor ID), Bus and
+> Device numbers will be unknown to the device. So it responds to the Read Request
+> with Completion having Bus and Device number as 0. The switch interprets the
+> Completion as an ACS Source Validation error and drops the completion, leading
+> to the failure in detecting the endpoint device. Though the PCIe spec r6.0, sec
+> 6.12.1.1, states that "Completions are never affected by ACS Source Validation".
+> This behavior is in violation of the spec.
+>
+> This issue was already found and addressed with a quirk for a different device
+> from Microsemi with 'commit, aa667c6408d2 ("PCI: Workaround IDT switch ACS
+> Source Validation erratum")'. Apparently, this issue seems to be documented in
+> the erratum #36 of IDT 89H32H8G3-YC, which is not publicly available.
+>
+> Solution for Juno issue
+> =======================
+>
+> To fix this issue, I've extended the quirk to the Device ID of the switch
+> found in Juno R2 boards. I believe the same switch is also present in Juno R1
+> board as well.
+>
+> With Patch 1, the Juno R2 boards can now detect the endpoints even with ACS
+> enabled for the Switch downstream ports. Finally, I added patch 2 that properly
+> enables ACS for all the PCI devices on DT platforms.
+>
+> It should be noted that even without patch 2 which enables ACS for the Root
+> Port, the Juno boards were failing since 'commit, bcb81ac6ae3c ("iommu: Get
+> DT/ACPI parsing into the proper probe path")' as reported in LKFT [6]. I
+> believe, this commit made sure pci_request_acs() gets called before the
+> enumeration of the switch downstream ports. The LKFT team ended up disabling
+> ACS using cmdline param 'pci=config_acs=000000@pci:0:0'. So I added the above
+> mentioned commit as a Fixes tag for patch 1.
+>
+> Also, to mitigate this issue, one could enumerate all the PCIe devices in
+> bootloader without enabling ACS (as also noted by Robin in the LKFT thread).
+> This will make sure that the endpoint device has a valid bus number when it
+> responds to the first Configuration Read Request from the switch downstream
+> port. So the ACS Source Validation error doesn't get triggered.
+>
+> Solution for ACS issue
+> ======================
+>
+> To fix this issue, I've kept the patch from Xingang as is (with rewording of the
+> patch subject/description). This patch moves the pci_request_acs() call to
+> devm_of_pci_bridge_init(), which gets called during the host bridge
+> registration. This makes sure that the 'pci_acs_enable' flag set by
+> pci_request_acs() is getting set before the enumeration of the Root Port device.
+> So now, ACS will be enabled for all ACS capable devices of DT platforms.
 
-On the Orangepi 4A board, the second Ethernet controller, aka the GMAC200,
-is connected to an external Motorcomm YT8531 PHY. The PHY uses an external
-25MHz crystal, has the SoC's PI15 pin connected to its reset pin, and
-the PI16 pin for its interrupt pin.
+I have applied this patch series on top of Linux next-20250910 and
+next-20250911 tags and tested.
 
-Enable it.
+>
+> [1] https://lore.kernel.org/all/038397a6-57e2-b6fc-6e1c-7c03b7be9d96@huawei.com
+> [2] https://lore.kernel.org/all/1621566204-37456-1-git-send-email-wangxingang5@huawei.com
+> [3] https://lore.kernel.org/all/01314d70-41e6-70f9-e496-84091948701a@samsung.com
+> [4] https://lore.kernel.org/all/CADYN=9JWU3CMLzMEcD5MSQGnaLyDRSKc5SofBFHUax6YuTRaJA@mail.gmail.com
+> [5] https://lore.kernel.org/linux-pci/20241107-pci_acs_fix-v1-1-185a2462a571@quicinc.com
+> [6] https://lists.linaro.org/archives/list/lkft-triage@lists.linaro.org/message/CBYO7V3C5TGYPKCMWEMNFFMRYALCUDTK
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
 
-Changes since v1:
-- Switch to generic (tx|rx)-internal-delay-ps properties
----
- .../dts/allwinner/sun55i-t527-orangepi-4a.dts | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+> ---
+> Manivannan Sadhasivam (1):
+>       PCI: Extend pci_idt_bus_quirk() for IDT switch with Device ID 0x8090
+>
+> Xingang Wang (1):
+>       iommu/of: Call pci_request_acs() before enumerating the Root Port device
+>
+>  drivers/iommu/of_iommu.c | 1 -
+>  drivers/pci/of.c         | 8 +++++++-
+>  drivers/pci/probe.c      | 2 +-
+>  3 files changed, 8 insertions(+), 3 deletions(-)
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250910-pci-acs-cb4fa3983a2c
+>
+> Best regards,
+> --
+> Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+>
+>
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts b/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-index 38cd8c7e92da..7afd6e57fe86 100644
---- a/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-@@ -15,6 +15,7 @@ / {
- 	compatible = "xunlong,orangepi-4a", "allwinner,sun55i-t527";
- 
- 	aliases {
-+		ethernet0 = &gmac1;
- 		serial0 = &uart0;
- 	};
- 
-@@ -95,11 +96,33 @@ &ehci1 {
- 	status = "okay";
- };
- 
-+&gmac1 {
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&ext_rgmii_phy>;
-+	phy-supply = <&reg_cldo4>;
-+
-+	tx-internal-delay-ps = <0>;
-+	rx-internal-delay-ps = <300>;
-+
-+	status = "okay";
-+};
-+
- &gpu {
- 	mali-supply = <&reg_dcdc2>;
- 	status = "okay";
- };
- 
-+&mdio1 {
-+	ext_rgmii_phy: ethernet-phy@1 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <1>;
-+		interrupts-extended = <&pio 8 16 IRQ_TYPE_LEVEL_LOW>; /* PI16 */
-+		reset-gpios = <&pio 8 15 GPIO_ACTIVE_LOW>; /* PI15 */
-+		reset-assert-us = <10000>;
-+		reset-deassert-us = <150000>;
-+	};
-+};
-+
- &mmc0 {
- 	vmmc-supply = <&reg_cldo3>;
- 	cd-gpios = <&pio 5 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; /* PF6 */
--- 
-2.39.5
-
+--
+Linaro LKFT
 
