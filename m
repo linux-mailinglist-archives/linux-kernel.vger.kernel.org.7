@@ -1,133 +1,169 @@
-Return-Path: <linux-kernel+bounces-812061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA7BB53268
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:35:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFE7B53269
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B823BA84F10
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:34:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DFF73B55F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB90321442;
-	Thu, 11 Sep 2025 12:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B028A321F40;
+	Thu, 11 Sep 2025 12:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cjTBt33t"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jo9fc+EG"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC443218A8;
-	Thu, 11 Sep 2025 12:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E16530BF7B
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757594038; cv=none; b=Cvuz2sGPv4IMVDai7dbTLEKdg+TLwqEvI4jLjf6ovS1g+cMvyVkfYreIZ3RuNuQPJ6oSod9GFzE0wgoVJS/lag4sla+6y0ALYTjWglX86Gz0ZcypLccaEQ+gw1POON+kQ7kztKhXmXAOCHNjBtagGJniW1GO8RV1EX1ExYcQWRw=
+	t=1757594070; cv=none; b=US5l6ZdeTWnWa68eI3q70Ti7EbCqwTwRiejbjdShUiZyMmyoOYZBPxDfgdMtQUGTULFnd6J5ebFYQ3Q6mwRBlOLg2atIJwmrR4hFHoKs8fCfqM3DNJFqQAkcBk38dNufyoZZO0wNdfL0YSUx5cAdvhzVwl70s479f4llDC2+lQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757594038; c=relaxed/simple;
-	bh=5BSLEmmZfBl3Yfv1/mzYUDJC2GYRHmDh0UNrwBqh1S8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BJTltpVtnzVKoYHKf5B0HGVxsYEE9+qJzpxFtGvuKBi/mWTJx6Qmp1kKP5uraQ3HBs/KabF0zWjVxImg2hAQDvIYdT1kSPAW12qrZeqg+GTMYXKsIq+qchNl616JjehZkRD8HgZcOFbyY8cn3F03L6H1FPzkCXJlnujNsZENXRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cjTBt33t; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BCTbFo032212;
-	Thu, 11 Sep 2025 12:33:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=RVFkoRRBKKz5sipdqgF9mKvUy2RClS
-	ffA3CKrweZn1g=; b=cjTBt33tZraloKZ0Q9HIuzjJdeu6uh4HJfRtNATeZH4MWk
-	4V1wUbl1LljoqhmZgQkzeXXuob1fk6UbvvTC/5Dyi8p8oQLre3wG8068nWrOvhjZ
-	CzsYceKJmqyMuSTLeY03Nk0UVUknaB0ZSszAx/ZIp0vDpLgmvLgO7hUSDVJRN1mU
-	JIqLycwZ4tbg6AVbx1DHGcJQ8hhp0Jcwzfm5+nlkJGoCxgdr58CBGxC7MZm7Nvrq
-	MoO67MrkcGGCr8ukIJZDf9NofI+1EvtITVzPTgs0HHnTZvKEY40XNdmJHYsuLujs
-	MvTZWFODSbWCG/Qv7IBnzklQUP2MFrCkTrgK1wqg==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bct3xjg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 12:33:53 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58BAGII5017188;
-	Thu, 11 Sep 2025 12:33:53 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gmnk8a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 12:33:53 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58BCXnqH49283398
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Sep 2025 12:33:49 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8D69C2004B;
-	Thu, 11 Sep 2025 12:33:49 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 73ACF20043;
-	Thu, 11 Sep 2025 12:33:49 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 11 Sep 2025 12:33:49 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Heiko Carstens
- <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH] s390/entry: Remove unused TIF flags
-In-Reply-To: <27e149cc-ff11-4007-a0fe-5f7b0e8263c5-agordeev@linux.ibm.com>
-	(Alexander Gordeev's message of "Thu, 11 Sep 2025 14:29:38 +0200")
-References: <20250911092806.3262481-1-svens@linux.ibm.com>
-	<27e149cc-ff11-4007-a0fe-5f7b0e8263c5-agordeev@linux.ibm.com>
-Date: Thu, 11 Sep 2025 14:33:49 +0200
-Message-ID: <yt9dms71rwwi.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1757594070; c=relaxed/simple;
+	bh=Qkmu/wKW6LvpafE4Xy2cqwoVQ0oWYEtqLtcR/d1ndsY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sUrNK+z3e7gch15HBTwxeNkqH+t1W497Ypn2mn50kqcMqDLxX+FCwic7VBQeNQIiK5zaPpjTzQJavKYw2mMuprHWvAAWH5ngH85+wJIuBdHhQ/7dHA69YUy4gIO6ITlbowEQLnv7OP+W5Jv9MYWNiVCaCR64KFPTOeW26fM1MSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jo9fc+EG; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45de5fdda1aso3819635e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 05:34:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757594066; x=1758198866; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pKAhhQ7EQT3ITqPJPLmtcPIPJOPizGgbnSGyXoCBRDE=;
+        b=jo9fc+EGV5FjLL1TfbEdI0X1fU1eUy39fwfXnZSusY9qMWkX3ByNGeF7Kmn7VmyGCR
+         6XhmfRVei5kx1Dw6iRWaSfwA4xMb5uK+pJvTHkrD9q8ngdOg4MS/86ke1gaWUafHQkir
+         KHr6TRXlbt2+AIonCxC1PvUl2F2JyDL9/BvCkhaqdYzsT5m3S2+A3aN2Q9uJtqHSwsqT
+         EnLA73l85xHOGpe3zcibTCaG/jLwcrfY/qJ5PRCrq0o3lhDSd3EtaM7kG7dC8goEq7cE
+         dSqxDPkrcoVed6J1Vq9O3Gm8/fDhPtofKJXAGrqXUkl8IfWqyX5dkb1HP1ZDriDN+Qwm
+         E+hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757594066; x=1758198866;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pKAhhQ7EQT3ITqPJPLmtcPIPJOPizGgbnSGyXoCBRDE=;
+        b=mGUI1LpVE5r09a+U96K4a+0JTtHKkeWtNTc0Ftd4VmsvkEdfGF7vcxZlaLPH/vudOZ
+         7NJ/YaagKeoGGQVHDWiaPxN8Ybw7j9obMvjc0jT8D6VmwLddiCYwiiMrKVxiFsgsALiB
+         Y5h164jvzNEfOsdmnZhxjBJ7wn9vWHNoZae2hwc+rJ57QIaC766ZLX7DIF9mQSp/GbKg
+         SiioSXZDg++DZxGmrW9sIdj0qg6Z0y5WDZyeYe8tI3u89u/Jy13KZ43iDJou2I0apPaO
+         BQauZfyNtqybvGjrADUNCAAifjrAtYuT3O6YHI2dTE+MHDLGoApMMjwa8tJYL+PeKmc8
+         I8fg==
+X-Forwarded-Encrypted: i=1; AJvYcCU41NzJxswl+GDs33hvk5g3aexLkz73XyYlce7KiAhi64derkTV2OHWT9mBJYZxzxvRzRHVTJ/cT+wliQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJDME/RGuJVC1beBvsjCYvG22zt2llaagTDNUNgLvNToqHTmCc
+	ecE0fdfydm7IjtSE0RZHUZ9xbVM8bTBC8a1DeAwO4EYkLaXWGRk3XPOq5Bz9vK7Dc8Mqy4me4LK
+	m06lDKMPBnFZEopKd3A==
+X-Google-Smtp-Source: AGHT+IGl8w80l5VRfy9+dUQff20OHdHaZJ3RYQuhQiruTdXc/3L59+Ug0OGhP0Boqr2Ywaymx5xbgF0/dbgrrNw=
+X-Received: from wmbdo21.prod.google.com ([2002:a05:600c:6815:b0:45d:d059:f534])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:a4c:b0:45b:7bee:db8f with SMTP id 5b1f17b1804b1-45de727c608mr133801165e9.25.1757594066620;
+ Thu, 11 Sep 2025 05:34:26 -0700 (PDT)
+Date: Thu, 11 Sep 2025 12:34:25 +0000
+In-Reply-To: <20250910-tyr-v3-1-dba3bc2ae623@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfX6k9cppJso/2i
- VIdW8p4UOXSVnNHMKFiGjvrcLX952/qDto/h4aYWZ0soW0E2vaZZOCfhyfcfIjqWXgFZY5KbMRX
- +H4z+hgmQagXN6GFHKsjlFF6Wco6y7z1rA7TMYJap58tbhOtwCipTWufpR00nFpI0i/tJjoHVQd
- Pe7nrCqvU7mPazE7mKpdTprc6XR2bMYvM0mi2u8Fmg2liLDCotrK26KH5E+mcRX5khKVP0dqinV
- H9squxylmG5e3hCvftHfdXcZJi4kcrd2Hf+7e3B7Chd2g23evDyg0H1CAVscXm+wXMpkQ7PXQkF
- CI89KluJpwb/Tb+vvTd5+djvg10khLRsshmzlxZzdzmM/O87LXVuA6rWjOwj9h1So0CywdqCkOz
- AO+UAbox
-X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68c2c1b2 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=a09s8FFkOzqO_mdx6S4A:9
-X-Proofpoint-GUID: lpJdG9Ut0YpC1iOhpKUg7zsBjv9jURvQ
-X-Proofpoint-ORIG-GUID: lpJdG9Ut0YpC1iOhpKUg7zsBjv9jURvQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_04,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
+Mime-Version: 1.0
+References: <20250910-tyr-v3-1-dba3bc2ae623@collabora.com>
+Message-ID: <aMLB0Vs0dJ_AkU4z@google.com>
+Subject: Re: [PATCH v3] rust: drm: Introduce the Tyr driver for Arm Mali GPUs
+From: Alice Ryhl <aliceryhl@google.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Daniel Stone <daniels@collabora.com>, Rob Herring <robh@kernel.org>, 
+	Beata Michalska <beata.michalska@arm.com>, Carsten Haitzler <carsten.haitzler@foss.arm.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Ashley Smith <ashley.smith@collabora.com>, 
+	Steven Price <steven.price@arm.com>, Jeffrey Vander Stoep <jeffv@google.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, 
+	"Christian =?utf-8?B?S8O2bmln?=" <christian.koenig@amd.com>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
+	kernel@collabora.com
+Content-Type: text/plain; charset="utf-8"
 
-Alexander Gordeev <agordeev@linux.ibm.com> writes:
+On Wed, Sep 10, 2025 at 10:51:18AM -0300, Daniel Almeida wrote:
+> Add a Rust driver for ARM Mali CSF-based GPUs. It is a port of Panthor
+> and therefore exposes Panthor's uAPI and name to userspace, and the
+> product of a joint effort between Collabora, Arm and Google engineers.
+> 
+> The aim is to incrementally develop Tyr with the abstractions that are
+> currently available until it is consider to be in parity with Panthor
+> feature-wise.
+> 
+> The development of Tyr itself started in January, after a few failed
+> attempts of converting Panthor piecewise through a mix of Rust and C
+> code. There is a downstream branch that's much further ahead in terms of
+> capabilities than this initial patch.
+> 
+> The downstream code is capable of booting the MCU, doing sync VM_BINDS
+> through the work-in-progress GPUVM abstraction and also doing (trivial)
+> submits through Asahi's drm_scheduler and dma_fence abstractions. So
+> basically, most of what one would expect a modern GPU driver to do,
+> except for power management and some other very important adjacent
+> pieces. It is not at the point where submits can correctly deal with
+> dependencies, or at the point where it can rotate access to the GPU
+> hardware fairly through a software scheduler, but that is simply a
+> matter of writing more code.
+> 
+> This first patch, however, only implements a subset of the current
+> features available downstream, as the rest is not implementable without
+> pulling in even more abstractions. In particular, a lot of things depend
+> on properly mapping memory on a given VA range, which itself depends on
+> the GPUVM abstraction that is currently work-in-progress. For this
+> reason, we still cannot boot the MCU and thus, cannot do much for the
+> moment.
+> 
+> This constitutes a change in the overall strategy that we have been
+> using to develop Tyr so far. By submitting small parts of the driver
+> upstream iteratively, we aim to:
+> 
+> a) evolve together with Nova and rvkms, hopefully reducing regressions
+> due to upstream changes (that may break us because we were not there, in
+> the first place)
+> 
+> b) prove any work-in-progress abstractions by having them run on a real
+> driver and hardware and,
+> 
+> c) provide a reason to work on and review said abstractions by providing
+> a user, which would be tyr itself.
+> 
+> Despite its limited feature-set, we offer IGT tests. It is only tested
+> on the rk3588, so any other SoC is probably not going to work at all for
+> now.
+> 
+> The skeleton is basically taken from Nova and also
+> rust_platform_driver.rs.
+> 
+> Lastly, the name "Tyr" is inspired by Norse mythology, reflecting ARM's
+> tradition of naming their GPUs after Nordic mythological figures and
+> places.
+> 
+> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Co-developed-by: Beata Michalska  <beata.michalska@arm.com>
+> Signed-off-by: Beata Michalska  <beata.michalska@arm.com>
+> Co-developed-by: Carsten Haitzler <carsten.haitzler@foss.arm.com>
+> Signed-off-by: Carsten Haitzler <carsten.haitzler@foss.arm.com>
+> Co-developed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> 
+> Link: https://www.collabora.com/news-and-blog/news-and-events/introducing-tyr-a-new-rust-drm-driver.html
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-> On Thu, Sep 11, 2025 at 11:28:06AM +0200, Sven Schnelle wrote:
->
-> Hi Sven,
->
->> The conversion of s390 to generic entry missed to remove the
->> TIF_SYSCALL*/TIF_SECCOMP flags. Remove them as they are unused now.
->> 
->> Fixes: 56e62a737028 ("s390: convert to generic entry")
->> Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
->> ---
->>  arch/s390/include/asm/thread_info.h | 10 ----------
->>  1 file changed, 10 deletions(-)
->
-> Which branch this patch is against?
-> (It does not apply neither to devel nor to master).
+[aliceryhl: minor Kconfig update on apply]
+[aliceryhl: s/drm::device::/drm::/]
 
-It's against Thomas' branch:
+Applied to drm-rust-next. Thanks!
 
-git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/perf
 
