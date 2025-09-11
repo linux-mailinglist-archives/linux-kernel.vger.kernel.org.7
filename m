@@ -1,176 +1,189 @@
-Return-Path: <linux-kernel+bounces-812968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C31B53EF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:06:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21753B53F0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6224444AC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:06:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E4001C87660
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB732F5483;
-	Thu, 11 Sep 2025 23:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70CE2F83D5;
+	Thu, 11 Sep 2025 23:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xamq+/uq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=allelesecurity.com header.i=@allelesecurity.com header.b="ebbjXFRj"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E845E2F531A
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 23:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973A72F363A
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 23:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757631989; cv=none; b=Q0mzV0Jlm+rGW7ESI+pT8xq+E3LdNSPSo1DdtpzfaTA7E+jqljYyESilARD3q2hhUz5JBxGu4PY5YlQu106y1wzgUc7RTOXacKgG83tKULQ+I/lxzTxtg/uAooQTUSFNpaRSUwJ92yph2QXWl+EpnvvHVabfeejg6SPOScLrVdI=
+	t=1757633010; cv=none; b=IIRxp0aV+lmH8C2Jztobvlurh0S58xO3R677kcDwFuOQMw7ullCdx0Cn2/pesF9dX5Kf9VlOsTyIc/H0VjkV93uyx0DPTdBtKiCh/43kDRUJRJxbKIzt3W2s/0kwC++/1c0nRXVFwfCyWi2LQaY9GrQNr3twiXSSv5glX6pCj3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757631989; c=relaxed/simple;
-	bh=zYm0m59md0YmJAnONrIhr+tPVXmFfeUu+aOXXuIcRMY=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=auqT9/qD4tvAtNDk7pK8TVeRBrepfxBwozTpSmzfEBqdsrBTjCt/r3vHG84UuYef8s6CfyQhmIAJA9NjEThVJltzYMvv6wxy0n0ZfYnCX7s7fej4jJFYnwsf0kF4w8PNWcYjZPZMf9b6yZWvZap7DJOyy8jL1uyPpmR8aLt/d60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xamq+/uq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757631986;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OQwBcPZWGnJ87xzP7ruqoRhyhedrtIzZGOwOMMIChZg=;
-	b=Xamq+/uq82BqIkgUYI+8gjYFCh8UhuPGlrpXY3gTQAWeXAfk2AB2XgQ9is5FWjR1M2r/zS
-	vZZha5b6T9SVsN4557fs0DiCh4eZQi5UtYv0bwBQoKkHhAOrHn5/nB2iXZeh/lpuOpZtKk
-	0kDIPAtQDvclj23W2TurS/clY3gcvlI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-196-YvqObOyDPT675tMG43FfYA-1; Thu,
- 11 Sep 2025 19:06:23 -0400
-X-MC-Unique: YvqObOyDPT675tMG43FfYA-1
-X-Mimecast-MFC-AGG-ID: YvqObOyDPT675tMG43FfYA_1757631982
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A17BF1955EA4;
-	Thu, 11 Sep 2025 23:06:21 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.6])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 97BF51800451;
-	Thu, 11 Sep 2025 23:06:18 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, netdev@vger.kernel.org
-cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    Jakub Kicinski <kuba@kernel.org>,
-    "David S. Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-    Simon Horman <horms@kernel.org>, linux-afs@lists.infradead.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH net] rxrpc: Fix untrusted unsigned subtract
+	s=arc-20240116; t=1757633010; c=relaxed/simple;
+	bh=OK4EM30A44/2NRD+i7sqe2wrH7v7/w7Fs43IiXrmW/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OLorXKIy7TR5lKxsRw+odYYkvqLeDJgk6BlMUVcyc2mMzy538lhr0Hu8ECKGPXl67fQNMFaGE7e8U1z7sadTTJGNoCNxd2Gfi1yuLv+mTOGowu7SBuevwayTkzS2BfR9IqIvF252Qa4M76yoNWMlfrQ7+K/DC0r3ljSWMazmorI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=allelesecurity.com; spf=pass smtp.mailfrom=allelesecurity.com; dkim=pass (1024-bit key) header.d=allelesecurity.com header.i=@allelesecurity.com header.b=ebbjXFRj; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=allelesecurity.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allelesecurity.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7722c8d2694so1371496b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 16:23:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=allelesecurity.com; s=google; t=1757633008; x=1758237808; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xUAVZ0bvWLEB4KH4GpIrKampHs79U2eTT5vozQ57bm4=;
+        b=ebbjXFRjyCj5eIvDcF1CwlLMPTmbjFm2KyQj2hoge9FYUM2k7WThi235HJJRA6KNBd
+         aDAAMUIG9xAnvGOvxnSoKFglsrCwUo/FO+UGeGY4MZ6RVTMxGEsJ2UqhWZV//8CbUX9d
+         stHyBOPWq4s6RkJYoHvWBD0qSiCfIhHrcnU24=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757633008; x=1758237808;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xUAVZ0bvWLEB4KH4GpIrKampHs79U2eTT5vozQ57bm4=;
+        b=cMjEpF9uUchcjxDwBhOCz1rg6NYdkKM1uESUT17BetzZSBM7b6hdJ3YfLYoIqyXKXl
+         s8qToZDEjXgu8Ambjaf6jJDbK82hhLMElfQgjKzA7TufqS9HF6rDG8PQZ3xmme6VVs/W
+         HA3F/s1emt/tIqHP7X7c3S8/4Z93SaG9tQ98sIdD/BV0NtahbYYBnXPhwTUtCpJOzsrg
+         pGsshXK1O2CmBd7gajAD+OxtJjVHJFJXBdJDQlql/IUAfy4Vp2QuFT3gODn490GhdXRU
+         qYrLdkcx0kHlXuJosS7vibIRSWRpnlPLveOcDPiBJ2ptDK/w+iWBg3eoX1md3+KPFMx7
+         jMfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXR7bO/1cT6N+WCiDiOzDm0cGqwFPLyBOiA2JGxmVnZurT/69Xmm6bZJrjGv3vFlR8DkxxLsJLZwKDe/vk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylAuk15XAJOb6ItGXV9wt93Qbi9h6aGEofitlU/k5sZNnUaEFv
+	iROpwakwtUylLuB0MtZzY7WJmpEvFwMQJBpUR4C0zzV/i/iqRWw1jbD08jz1NF/lNM8=
+X-Gm-Gg: ASbGncvX/SFDHpbiGgi23D2Xrn7TlXo2ZuFnhezN76+83ik2C8lu2L4+ntu2I1RXtLG
+	maP+DvarhzkZIIpu7m7oz4pCXYv3dGG9DXVF6+y5SnjCV5iwn3k7S8jbVVFA+Zq3WHm/NOB5p9d
+	vNr3tn+8CcgWviAm8h8tXFxmZOmeulsrczESE9+PXkio92YUFyfczdKTjMgegmXFEynx3VdjwEn
+	fCmbcwDXfS9EjmVTyF+WhBUpSH/E2aJxUUgE1MgfSfSTK5zfeOPnwAOFiFR1le+cil0yu/ugRjl
+	hKXO4Y6qicXZ4t0yScmep8u6xJINy55q4invE/hazxJOfkV4Yit+/mVzacLkYvLQlbO31uuPe+h
+	fmksOSGM3iUYXsMu3BmsR03ZGRQvgF4h1X41Kp/iel5lHlQs=
+X-Google-Smtp-Source: AGHT+IFvKd338ahGShVcXp/lcPNOy/KrM/N8yKlB9s8nlHQO0F4Ghy1Sxbe8aSBOfbnPHwLPS++9sg==
+X-Received: by 2002:a05:6a00:b4e:b0:771:e451:4ee3 with SMTP id d2e1a72fcca58-776120e50c8mr1094199b3a.12.1757633007810;
+        Thu, 11 Sep 2025 16:23:27 -0700 (PDT)
+Received: from fedoraserver42research ([179.105.152.82])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760955263fsm2927152b3a.8.2025.09.11.16.23.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 16:23:27 -0700 (PDT)
+From: Anderson Nascimento <anderson@allelesecurity.com>
+To: Eric Dumazet <edumazet@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Dmitry Safonov <0x7f454c46@gmail.com>,
+	Salam Noureddine <noureddine@arista.com>,
+	Francesco Ruggeri <fruggeri@arista.com>
+Cc: Anderson Nascimento <anderson@allelesecurity.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH v3] net/tcp: Fix a NULL pointer dereference when using TCP-AO with TCP_REPAIR
+Date: Thu, 11 Sep 2025 20:07:44 -0300
+Message-ID: <20250911230743.2551-3-anderson@allelesecurity.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2039267.1757631977.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 12 Sep 2025 00:06:17 +0100
-Message-ID: <2039268.1757631977@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: 8bit
 
-Fix the following Smatch Smatch static checker warning:
+A NULL pointer dereference can occur in tcp_ao_finish_connect() during a
+connect() system call on a socket with a TCP-AO key added and TCP_REPAIR
+enabled.
 
-   net/rxrpc/rxgk_app.c:65 rxgk_yfs_decode_ticket()
-   warn: untrusted unsigned subtract. 'ticket_len - 10 * 4'
+The function is called with skb being NULL and attempts to dereference it
+on tcp_hdr(skb)->seq without a prior skb validation.
 
-by prechecking the length of what we're trying to extract in two places in
-the token and decoding for a response packet.
+Fix this by checking if skb is NULL before dereferencing it.
 
-Also use sizeof() on the struct we're extracting rather specifying the siz=
-e
-numerically to be consistent with the other related statements.
+The commentary is taken from bpf_skops_established(), which is also called
+in the same flow. Unlike the function being patched,
+bpf_skops_established() validates the skb before dereferencing it.
 
-Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class (=
-GSSAPI)")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lists.infradead.org/pipermail/linux-afs/2025-September/010=
-135.html
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Simon Horman <horms@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: netdev@vger.kernel.org
+int main(void){
+	struct sockaddr_in sockaddr;
+	struct tcp_ao_add tcp_ao;
+	int sk;
+	int one = 1;
+
+	memset(&sockaddr,'\0',sizeof(sockaddr));
+	memset(&tcp_ao,'\0',sizeof(tcp_ao));
+
+	sk = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+	sockaddr.sin_family = AF_INET;
+
+	memcpy(tcp_ao.alg_name,"cmac(aes128)",12);
+	memcpy(tcp_ao.key,"ABCDEFGHABCDEFGH",16);
+	tcp_ao.keylen = 16;
+
+	memcpy(&tcp_ao.addr,&sockaddr,sizeof(sockaddr));
+
+	setsockopt(sk, IPPROTO_TCP, TCP_AO_ADD_KEY, &tcp_ao,
+	sizeof(tcp_ao));
+	setsockopt(sk, IPPROTO_TCP, TCP_REPAIR, &one, sizeof(one));
+
+	sockaddr.sin_family = AF_INET;
+	sockaddr.sin_port = htobe16(123);
+
+	inet_aton("127.0.0.1", &sockaddr.sin_addr);
+
+	connect(sk,(struct sockaddr *)&sockaddr,sizeof(sockaddr));
+
+return 0;
+}
+
+$ gcc tcp-ao-nullptr.c -o tcp-ao-nullptr -Wall
+$ unshare -Urn
+# ip addr add 127.0.0.1 dev lo
+# ./tcp-ao-nullptr
+
+BUG: kernel NULL pointer dereference, address: 00000000000000b6
+PGD 1f648d067 P4D 1f648d067 PUD 1982e8067 PMD 0
+Oops: Oops: 0000 [#1] SMP NOPTI
+Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop
+Reference Platform, BIOS 6.00 11/12/2020
+RIP: 0010:tcp_ao_finish_connect (net/ipv4/tcp_ao.c:1182)
+
+Fixes: 7c2ffaf ("net/tcp: Calculate TCP-AO traffic keys")
+Signed-off-by: Anderson Nascimento <anderson@allelesecurity.com>
 ---
- net/rxrpc/rxgk_app.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+Changes in v3
+- Remove the attribution of 'ao->risn' to '0' in the else case.
+- Do not add the full decoded stack trace
+- Link to v2: https://lore.kernel.org/all/20250911034337.43331-2-anderson@allelesecurity.com/
+Changes in v2:
+- Wrap the description at 75 columns
+- Add full decoded stack trace
+- Link to v1: https://lore.kernel.org/all/20250911013052.2233-1-anderson@allelesecurity.com/
 
-diff --git a/net/rxrpc/rxgk_app.c b/net/rxrpc/rxgk_app.c
-index df684b5a8531..30275cb5ba3e 100644
---- a/net/rxrpc/rxgk_app.c
-+++ b/net/rxrpc/rxgk_app.c
-@@ -54,6 +54,10 @@ int rxgk_yfs_decode_ticket(struct rxrpc_connection *con=
-n, struct sk_buff *skb,
- =
+ net/ipv4/tcp_ao.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- 	_enter("");
- =
-
-+	if (ticket_len < 10 * sizeof(__be32))
-+		return rxrpc_abort_conn(conn, skb, RXGK_INCONSISTENCY, -EPROTO,
-+					rxgk_abort_resp_short_yfs_tkt);
-+
- 	/* Get the session key length */
- 	ret =3D skb_copy_bits(skb, ticket_offset, tmp, sizeof(tmp));
- 	if (ret < 0)
-@@ -195,22 +199,23 @@ int rxgk_extract_token(struct rxrpc_connection *conn=
-, struct sk_buff *skb,
- 		__be32 token_len;
- 	} container;
- =
-
-+	if (token_len < sizeof(container))
-+		goto short_packet;
-+
- 	/* Decode the RXGK_TokenContainer object.  This tells us which server
- 	 * key we should be using.  We can then fetch the key, get the secret
- 	 * and set up the crypto to extract the token.
- 	 */
- 	if (skb_copy_bits(skb, token_offset, &container, sizeof(container)) < 0)
--		return rxrpc_abort_conn(conn, skb, RXGK_PACKETSHORT, -EPROTO,
--					rxgk_abort_resp_tok_short);
-+		goto short_packet;
- =
-
- 	kvno		=3D ntohl(container.kvno);
- 	enctype		=3D ntohl(container.enctype);
- 	ticket_len	=3D ntohl(container.token_len);
- 	ticket_offset	=3D token_offset + sizeof(container);
- =
-
--	if (xdr_round_up(ticket_len) > token_len - 3 * 4)
--		return rxrpc_abort_conn(conn, skb, RXGK_PACKETSHORT, -EPROTO,
--					rxgk_abort_resp_tok_short);
-+	if (xdr_round_up(ticket_len) > token_len - sizeof(container))
-+		goto short_packet;
- =
-
- 	_debug("KVNO %u", kvno);
- 	_debug("ENC  %u", enctype);
-@@ -285,4 +290,8 @@ int rxgk_extract_token(struct rxrpc_connection *conn, =
-struct sk_buff *skb,
- 	 * also come out this way if the ticket decryption fails.
- 	 */
- 	return ret;
-+
-+short_packet:
-+	return rxrpc_abort_conn(conn, skb, RXGK_PACKETSHORT, -EPROTO,
-+				rxgk_abort_resp_tok_short);
- }
+diff --git a/net/ipv4/tcp_ao.c b/net/ipv4/tcp_ao.c
+index bbb8d5f0eae7..3338b6cc85c4 100644
+--- a/net/ipv4/tcp_ao.c
++++ b/net/ipv4/tcp_ao.c
+@@ -1178,7 +1178,9 @@ void tcp_ao_finish_connect(struct sock *sk, struct sk_buff *skb)
+ 	if (!ao)
+ 		return;
+ 
+-	WRITE_ONCE(ao->risn, tcp_hdr(skb)->seq);
++	/* sk with TCP_REPAIR_ON does not have skb in tcp_finish_connect */
++	if (skb)
++		WRITE_ONCE(ao->risn, tcp_hdr(skb)->seq);
+ 	ao->rcv_sne = 0;
+ 
+ 	hlist_for_each_entry_rcu(key, &ao->head, node, lockdep_sock_is_held(sk))
+-- 
+2.51.0
 
 
