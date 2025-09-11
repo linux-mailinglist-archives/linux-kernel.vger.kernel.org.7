@@ -1,92 +1,91 @@
-Return-Path: <linux-kernel+bounces-812943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46456B53E92
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:13:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3966B53E95
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A182D7BDA7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:11:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA1DAA0527
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F97B34DCE4;
-	Thu, 11 Sep 2025 22:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B472EC095;
+	Thu, 11 Sep 2025 22:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="F/cUGYZS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ded1Os2X"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhryYs0W"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD1F1957FC
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 22:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EF21DDDD
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 22:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757628801; cv=none; b=j8G1zeEQP3VxYXkZemRv6s9nxHj1TEKMwf8hLNd77CeccUbj7nLvib1iso8L5SGv3gxG3cuuCg2GY89N1UAHdEF+Gebvppjay0AuvFlqRJbtx1iwb2RS12lN2z5X65uRDZ3SNPGIzpgzM1ZqDAe5Gvy92kUwMNgmbTCtVt2cos4=
+	t=1757628992; cv=none; b=ji0z3kKEbK0DJfN+MOaQMYSn2poFG0aBMueGw+Kv/TP7UpqnvZ70MqIW930hjLDZwY0pet6KEZJR5qBZYJdR1sDnsUlsQ3J9WbGZfjuza1gtvQplPpQOzgI1P/fYN+GoFVnhMpPEVK4NtrO9aKI0dZvkVK0aIIeK8ghL7LhU6o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757628801; c=relaxed/simple;
-	bh=zaPKl5bPhpHDaK/jvMkwCqifAdyixpMVgWw/aRgZ2VY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tdOS3OH+oWej+0fb/ZbGc3n7Dje5ajXGz83WfuRZLPomd0W3bSF6vswcNTg6SE37tIVYo1za2FB3XX74+yYuNaM6uFvMWPyjTM2Qy6fEF355y/tZiOnFkXKsKfLN7byHs9JhRRJK7zl3F3JB3OhRkY5N7IZ5zBJwhg3y5EMKkTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=F/cUGYZS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ded1Os2X; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CD7931400371;
-	Thu, 11 Sep 2025 18:13:17 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Thu, 11 Sep 2025 18:13:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm1; t=1757628797; x=1757715197; bh=eNjR1LB7bR
-	YZ3xIvKQ3Zc+CVsQG5+qT7pKALYdttNsw=; b=F/cUGYZSSUsWUHuxttfCnJ4+3O
-	EUfyc295V5nKxoYdvcv9b6ZnSA0HgdCheAiAOHFeGWS3jo1LQx6GSIbD+eIG6Qk7
-	KTHbVIGsu1V+z4iy0D8DmpNyrMK029dJFI00QwcX+Y6P6p8JTKnMlfiz4e3Fv1Jq
-	tO8jk6/Q3ovBBm0i7RGgxcq2cOsHL6lHHpE2tWPnVZQL/QFA2jbxpLzHs8SD3RmW
-	efAg4H6I9ItOaDs/I4SqkLvA1v2rC0R0+wFm4M20k/Miybp9uBeop308pQTpnHC1
-	tTp3ljQdE/G965Y3ftGYto2BnU1CfqtOBOMYx3acuJQPPuVrgV6QStgO8/4Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757628797; x=1757715197; bh=eNjR1LB7bRYZ3xIvKQ3Zc+CVsQG5+qT7pKA
-	LYdttNsw=; b=ded1Os2XBRMvNCnHPrzMzU3znZG6Po4P69FYCXPUiXq4zKTG+8p
-	xyuY67q49aprKj/SpYQSavcS+Hv7K0RNLjy22dRn4BTPriV0oipKWCz18bl+VxVe
-	LKqUgfIHf8sf5BusYAtfnnfjqdCVlODiJbfzWprjTTIFHTI8GVleqvAvka9ByMQQ
-	Vxaj74I72kh7rynJUyAZYmmQyqg1mw6uVvaIb8kU22yNRbvYqzY+wnnv/9zKPPDj
-	3EwnWGymiK2fklRVBzqVMOhudFNVLSWkhJIAX397S6yj3BVVUwA1QJlN3bN88cpw
-	tJ4FtrgDkD9lcMkdYEuyEHJDhjk9YKOuR3g==
-X-ME-Sender: <xms:fUnDaHw8WFC8wfc-V3Fm_YSQQHzzUdv-SxZqYZx1T8RMWpbwLt1CVg>
-    <xme:fUnDaIOm_69CYmfCvK1ymsnaezp4briY8Py_6Dow3tslKZfGbOuN_8J4qbSSM2ITW
-    QdtgB6Ws8zQ-hNY7N4>
-X-ME-Received: <xmr:fUnDaDSDz1eDSudcN74rjGPfaeCprvKRoE72DpJaqcEPZPFJZi_ubC_950Ok4GAdLgncIiodNae8FM8JLwoskuyp4uBduAotfUJUmeEaVTRE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvjeefgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
-    enucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihes
-    shgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepffdvueelffevkeduhf
-    etjeduffeghfettdfguedtgfdvgfeufeduheevheevkeeknecuvehluhhsthgvrhfuihii
-    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmh
-    hotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtggvfh
-    horhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:fUnDaOZHwLpYWSoPEx3Xsa_gur9S2XGQG9txYMKKjbruLKfMcpYh2A>
-    <xmx:fUnDaI04UbJ00cqhca8WllCTRfUjb93H-62qjuTa-mxdxRTWZJkRnA>
-    <xmx:fUnDaGXK3YF2EMpaFteXGYDvr0XLPXWm6UJVIBBwMK5iutcn_wYEqQ>
-    <xmx:fUnDaKVuLKMjomb15CJYQHxKImfUoGeNIw6lZhbQmN81_GkBfrmAAA>
-    <xmx:fUnDaI1YmrULcjLP6oyfKCQ6aKt13AbETAGm1oVvat5WtDPnhvfyvcds>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 11 Sep 2025 18:13:16 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] firewire: core: remove useless lockdep_assert_held()
-Date: Fri, 12 Sep 2025 07:13:11 +0900
-Message-ID: <20250911221312.678076-1-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1757628992; c=relaxed/simple;
+	bh=gWqm9P9jpT3NwGmuN6Rh8mrFEFpNo/PCFN0JPA3juxQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MY5LSw5b4U9lZS4ifq7BiBVyMQq4wRnTAunlfIuioc05csYEKxu2pBrXXLSTrPup1jg8Y0GeDGp8XrSZi18lKsHeg5HTwgqIqDz9ImBHB4dmPL0vcRFaspfFD25Zn1KajRd0mY6uq8ZGMHhBKENNQswRCAs6nSvybsB2CSGq+KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhryYs0W; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-32dd4fa054bso1051601a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:16:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757628990; x=1758233790; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pJGbQvKOank3p6da5RP7YzMSzAjqQT4QAALgpjG02Ys=;
+        b=DhryYs0WaycxmeIisKmsJQgSMdVoBXJTpsrV8CqwLWBIdVk6m4aekZIISMPJVgJZ1d
+         leKU4fdOHpMfrOAEY0c7lC0Xa8XXIvTz69xZs0OLgRv7bn7FWZ0RsJ2F/EGf0ISG9tVY
+         YQ2kyzF6CpDiqOuzOPhfJrrhMgu0zb562dsgDO2sHuFCGLuzAgPE7at+JkezFd3LKwsY
+         N/5gAsQDNVfYPqqu7P7Bqk7BzLkKdRnNy+srOPX+pnMbQO7rP60syidOE7ayirhrvjM7
+         xYijRbyxkGjoYQFdFCT9eaAHvqdZLmCbyG/rVJfDTQrw3KOKAHi0KWL4YBaVhM34ms1A
+         SA+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757628990; x=1758233790;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pJGbQvKOank3p6da5RP7YzMSzAjqQT4QAALgpjG02Ys=;
+        b=rB00HAdvUGnwyTWR5T61bN+oVPX4IABexJGerlRo9OD82MTL2IhNhU/qs4x+qZ55Eh
+         /ctSxRaSvB1B/+jBM0FmrvbI7aBqJorHNMUlM6ddhO9+9PaDtXaJsQ4yZnWdSEJDoaAV
+         sd6hxwPW86EXI9b7Vi9eGQDb5kDMbE/tuxJomVZnFFxldyOQhX02b2MBJZfXnoJTywX3
+         LuAqWDSE3yzAf61EwW6ddo/gt+oNk9qTN/1WmIogzaR03OB3/3D8DEuod4XNs99yXN5Q
+         hcLJNPRW7rqrGgNnmRntmRqZeK71D8dHuwD4AQgz6XS2JosLyKfEManIFE0B5ikZxOXH
+         mFUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKV6LhKpAYc7lLZwuZilzt/NjtPDBNy4osCmfPo6uus4sLd2RM0LQ4S17qTICkzJ3yB5oMiV1ohZ+dt6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6fSwp6gHOWJJSdB7VUY4jNMELw9H0+YqOHFmfbB3rJ5WlAOrU
+	BOYHYkSdEwUV7myORSlM2Nj4k9OHc61/J2j10K2JSNGLsPThiBgvhxJXUqOC3g==
+X-Gm-Gg: ASbGncsuuCjOP9moG1u33IR93Vw+Sc6XxHZPRvKnfUtmIbfCaXAGMmbvDEOAFruIsJq
+	ybotIukirzdquD1oUvgGsVYaQbDhXlS/Bpvegr5qrhhQBEWFZTesTnbTFQ80MDNvdOdaLK2Dv+Y
+	28GZJu6ESniIyao+dRejpaB3BtBr3Jr4lhOyOgZgslq7qwRkkfU6BBJxgVAjBqZfJgZC3D07aw7
+	KjBzJZaTWBg+iNWFwEkzOSXvMYtYrHXa8scruE4ncwQ+j27Ud5o+EjVROoaYrZC1MjX/aX0CVJm
+	I5DKTbKqcQwblBj1CwY1f62TUydIVbyfmFk1NX4CV+sip6hB4vsEr3eFq9M6qojryxp4l3qRYDI
+	rrsPHJ1ZyU5B1vmiy1eXRCoi5CVwdAo0JiSU9B9+8tcb/LK4JfY8RmnFMkKapycctsdxx+4U=
+X-Google-Smtp-Source: AGHT+IHiZ0i/fqjHfxLIg5y5A42HChRZzH9Wsg1ARyoCs3aMcn6FX+kE2ZCfPOxdtSDNrlPgVgR80w==
+X-Received: by 2002:a17:90b:250b:b0:32d:dfb5:36d8 with SMTP id 98e67ed59e1d1-32ddfb54564mr1649322a91.8.1757628989675;
+        Thu, 11 Sep 2025 15:16:29 -0700 (PDT)
+Received: from archlinux ([2601:644:8200:ac2f::9ec])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dd9509002sm3333995a91.0.2025.09.11.15.16.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 15:16:29 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org (open list:ARM/Mediatek SoC support),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
+	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
+Subject: [PATCH] wifi: mt76: mt76_eeprom_override to int
+Date: Thu, 11 Sep 2025 15:16:19 -0700
+Message-ID: <20250911221619.16035-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,33 +94,241 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The bm_work work item should be scheduled after holding fw_card reference
-counting. At a commit 25feb1a96e21 ("firewire: core: use cleanup function
-in bm_work"), I misinterpreted it as fw_card spinlock and inserted
-lockdep_assert_hold() wrongly.
+mt76_eeprom_override has of_get_mac_address, which can return
+-EPROBE_DEFER if the nvmem driver gets loaded after mt76 for some
+reason.
 
-This commit removes the useless line.
+Make sure this gets passed to probe so that nvmem mac overrides always
+work.
 
-Fixes: 25feb1a96e21 ("firewire: core: use cleanup function in bm_work")
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- drivers/firewire/core-card.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/wireless/mediatek/mt76/eeprom.c        | 9 +++++++--
+ drivers/net/wireless/mediatek/mt76/mt76.h          | 2 +-
+ drivers/net/wireless/mediatek/mt76/mt7603/eeprom.c | 3 +--
+ drivers/net/wireless/mediatek/mt76/mt7615/eeprom.c | 4 +---
+ drivers/net/wireless/mediatek/mt76/mt7615/init.c   | 5 ++++-
+ drivers/net/wireless/mediatek/mt76/mt76x0/eeprom.c | 6 +++++-
+ drivers/net/wireless/mediatek/mt76/mt76x2/eeprom.c | 4 +++-
+ drivers/net/wireless/mediatek/mt76/mt7915/eeprom.c | 4 +---
+ drivers/net/wireless/mediatek/mt76/mt7915/init.c   | 4 +++-
+ drivers/net/wireless/mediatek/mt76/mt7921/init.c   | 4 +++-
+ drivers/net/wireless/mediatek/mt76/mt7925/init.c   | 4 +++-
+ drivers/net/wireless/mediatek/mt76/mt7996/eeprom.c | 3 +--
+ drivers/net/wireless/mediatek/mt76/mt7996/init.c   | 4 +++-
+ 13 files changed, 36 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/firewire/core-card.c b/drivers/firewire/core-card.c
-index 474d8066e090..32cf6b3344cd 100644
---- a/drivers/firewire/core-card.c
-+++ b/drivers/firewire/core-card.c
-@@ -294,8 +294,6 @@ static void bm_work(struct work_struct *work)
- 	int expected_gap_count, generation, grace;
- 	bool do_reset = false;
+diff --git a/drivers/net/wireless/mediatek/mt76/eeprom.c b/drivers/net/wireless/mediatek/mt76/eeprom.c
+index 443517d06c9f..a987c5e4eff6 100644
+--- a/drivers/net/wireless/mediatek/mt76/eeprom.c
++++ b/drivers/net/wireless/mediatek/mt76/eeprom.c
+@@ -163,13 +163,16 @@ static int mt76_get_of_eeprom(struct mt76_dev *dev, void *eep, int len)
+ 	return mt76_get_of_data_from_nvmem(dev, eep, "eeprom", len);
+ }
  
--	lockdep_assert_held(&card->lock);
+-void
++int
+ mt76_eeprom_override(struct mt76_phy *phy)
+ {
+ 	struct mt76_dev *dev = phy->dev;
+ 	struct device_node *np = dev->dev->of_node;
++	int err;
+ 
+-	of_get_mac_address(np, phy->macaddr);
++	err = of_get_mac_address(np, phy->macaddr);
++	if (err == -EPROBE_DEFER)
++		return err;
+ 
+ 	if (!is_valid_ether_addr(phy->macaddr)) {
+ 		eth_random_addr(phy->macaddr);
+@@ -177,6 +180,8 @@ mt76_eeprom_override(struct mt76_phy *phy)
+ 			 "Invalid MAC address, using random address %pM\n",
+ 			 phy->macaddr);
+ 	}
++
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(mt76_eeprom_override);
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76.h b/drivers/net/wireless/mediatek/mt76/mt76.h
+index 127637454c82..47c143e6a79a 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76.h
++++ b/drivers/net/wireless/mediatek/mt76/mt76.h
+@@ -1268,7 +1268,7 @@ void mt76_seq_puts_array(struct seq_file *file, const char *str,
+ 			 s8 *val, int len);
+ 
+ int mt76_eeprom_init(struct mt76_dev *dev, int len);
+-void mt76_eeprom_override(struct mt76_phy *phy);
++int mt76_eeprom_override(struct mt76_phy *phy);
+ int mt76_get_of_data_from_mtd(struct mt76_dev *dev, void *eep, int offset, int len);
+ int mt76_get_of_data_from_nvmem(struct mt76_dev *dev, void *eep,
+ 				const char *cell_name, int len);
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7603/eeprom.c b/drivers/net/wireless/mediatek/mt76/mt7603/eeprom.c
+index f5a6b03bc61d..88382b537a33 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7603/eeprom.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7603/eeprom.c
+@@ -182,7 +182,6 @@ int mt7603_eeprom_init(struct mt7603_dev *dev)
+ 		dev->mphy.antenna_mask = 1;
+ 
+ 	dev->mphy.chainmask = dev->mphy.antenna_mask;
+-	mt76_eeprom_override(&dev->mphy);
+ 
+-	return 0;
++	return mt76_eeprom_override(&dev->mphy);
+ }
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/eeprom.c b/drivers/net/wireless/mediatek/mt76/mt7615/eeprom.c
+index ccedea7e8a50..d4bc7e11e772 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/eeprom.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/eeprom.c
+@@ -351,8 +351,6 @@ int mt7615_eeprom_init(struct mt7615_dev *dev, u32 addr)
+ 	memcpy(dev->mphy.macaddr, dev->mt76.eeprom.data + MT_EE_MAC_ADDR,
+ 	       ETH_ALEN);
+ 
+-	mt76_eeprom_override(&dev->mphy);
 -
- 	spin_lock_irq(&card->lock);
+-	return 0;
++	return mt76_eeprom_override(&dev->mphy);
+ }
+ EXPORT_SYMBOL_GPL(mt7615_eeprom_init);
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/init.c b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+index aae80005a3c1..3e7af3e58736 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+@@ -570,7 +570,10 @@ int mt7615_register_ext_phy(struct mt7615_dev *dev)
+ 	       ETH_ALEN);
+ 	mphy->macaddr[0] |= 2;
+ 	mphy->macaddr[0] ^= BIT(7);
+-	mt76_eeprom_override(mphy);
++
++	ret = mt76_eeprom_override(mphy);
++	if (ret)
++		return ret;
  
- 	if (card->local_node == NULL) {
+ 	/* second phy can only handle 5 GHz */
+ 	mphy->cap.has_5ghz = true;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/eeprom.c b/drivers/net/wireless/mediatek/mt76/mt76x0/eeprom.c
+index 4de45a56812d..d4506b8b46fa 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x0/eeprom.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x0/eeprom.c
+@@ -332,7 +332,11 @@ int mt76x0_eeprom_init(struct mt76x02_dev *dev)
+ 
+ 	memcpy(dev->mphy.macaddr, (u8 *)dev->mt76.eeprom.data + MT_EE_MAC_ADDR,
+ 	       ETH_ALEN);
+-	mt76_eeprom_override(&dev->mphy);
++
++	err = mt76_eeprom_override(&dev->mphy);
++	if (err)
++		return err;
++
+ 	mt76x02_mac_setaddr(dev, dev->mphy.macaddr);
+ 
+ 	mt76x0_set_chip_cap(dev);
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2/eeprom.c b/drivers/net/wireless/mediatek/mt76/mt76x2/eeprom.c
+index 156b16c17b2b..221805deb42f 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x2/eeprom.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x2/eeprom.c
+@@ -499,7 +499,9 @@ int mt76x2_eeprom_init(struct mt76x02_dev *dev)
+ 
+ 	mt76x02_eeprom_parse_hw_cap(dev);
+ 	mt76x2_eeprom_get_macaddr(dev);
+-	mt76_eeprom_override(&dev->mphy);
++	ret = mt76_eeprom_override(&dev->mphy);
++	if (ret)
++		return ret;
+ 	dev->mphy.macaddr[0] &= ~BIT(1);
+ 
+ 	return 0;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/eeprom.c b/drivers/net/wireless/mediatek/mt76/mt7915/eeprom.c
+index c0f3402d30bb..38dfd5de365c 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/eeprom.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/eeprom.c
+@@ -284,9 +284,7 @@ int mt7915_eeprom_init(struct mt7915_dev *dev)
+ 	memcpy(dev->mphy.macaddr, dev->mt76.eeprom.data + MT_EE_MAC_ADDR,
+ 	       ETH_ALEN);
+ 
+-	mt76_eeprom_override(&dev->mphy);
+-
+-	return 0;
++	return mt76_eeprom_override(&dev->mphy);
+ }
+ 
+ int mt7915_eeprom_get_target_power(struct mt7915_dev *dev,
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/init.c b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
+index 3e30ca5155d2..5ea8b46e092e 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
+@@ -702,7 +702,9 @@ mt7915_register_ext_phy(struct mt7915_dev *dev, struct mt7915_phy *phy)
+ 		mphy->macaddr[0] |= 2;
+ 		mphy->macaddr[0] ^= BIT(7);
+ 	}
+-	mt76_eeprom_override(mphy);
++	ret = mt76_eeprom_override(mphy);
++	if (ret)
++		return ret;
+ 
+ 	/* init wiphy according to mphy and phy */
+ 	mt7915_init_wiphy(phy);
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7921/init.c b/drivers/net/wireless/mediatek/mt76/mt7921/init.c
+index 14e17dc90256..b9098a7331b1 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7921/init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7921/init.c
+@@ -189,7 +189,9 @@ static int __mt7921_init_hardware(struct mt792x_dev *dev)
+ 	if (ret)
+ 		goto out;
+ 
+-	mt76_eeprom_override(&dev->mphy);
++	ret = mt76_eeprom_override(&dev->mphy);
++	if (ret)
++		goto out;
+ 
+ 	ret = mt7921_mcu_set_eeprom(dev);
+ 	if (ret)
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/init.c b/drivers/net/wireless/mediatek/mt76/mt7925/init.c
+index 4249bad83c93..d7d5afe365ed 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7925/init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7925/init.c
+@@ -249,7 +249,9 @@ static int __mt7925_init_hardware(struct mt792x_dev *dev)
+ 	if (ret)
+ 		goto out;
+ 
+-	mt76_eeprom_override(&dev->mphy);
++	ret = mt76_eeprom_override(&dev->mphy);
++	if (ret)
++		goto out;
+ 
+ 	ret = mt7925_mcu_set_eeprom(dev);
+ 	if (ret)
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/eeprom.c b/drivers/net/wireless/mediatek/mt76/mt7996/eeprom.c
+index 87c6192b6384..da3231c9aa11 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7996/eeprom.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7996/eeprom.c
+@@ -334,9 +334,8 @@ int mt7996_eeprom_init(struct mt7996_dev *dev)
+ 		return ret;
+ 
+ 	memcpy(dev->mphy.macaddr, dev->mt76.eeprom.data + MT_EE_MAC_ADDR, ETH_ALEN);
+-	mt76_eeprom_override(&dev->mphy);
+ 
+-	return 0;
++	return mt76_eeprom_override(&dev->mphy);
+ }
+ 
+ int mt7996_eeprom_get_target_power(struct mt7996_dev *dev,
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/init.c b/drivers/net/wireless/mediatek/mt76/mt7996/init.c
+index a9599c286328..0537475573ad 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7996/init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7996/init.c
+@@ -667,7 +667,9 @@ static int mt7996_register_phy(struct mt7996_dev *dev, enum mt76_band_id band)
+ 		if (band == MT_BAND2)
+ 			mphy->macaddr[0] ^= BIT(6);
+ 	}
+-	mt76_eeprom_override(mphy);
++	ret = mt76_eeprom_override(mphy);
++	if (ret)
++		goto error;
+ 
+ 	/* init wiphy according to mphy and phy */
+ 	mt7996_init_wiphy_band(mphy->hw, phy);
 -- 
-2.48.1
+2.51.0
 
 
