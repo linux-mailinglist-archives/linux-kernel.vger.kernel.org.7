@@ -1,168 +1,103 @@
-Return-Path: <linux-kernel+bounces-811593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A327FB52B40
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:11:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACAFB52B43
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5703E1C21906
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:11:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE4AD1C838CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BAD2D9491;
-	Thu, 11 Sep 2025 08:10:34 +0000 (UTC)
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834FD2D6605;
+	Thu, 11 Sep 2025 08:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="eLLw0LoR"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6C12D8774;
-	Thu, 11 Sep 2025 08:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDBB2D6E6A;
+	Thu, 11 Sep 2025 08:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757578233; cv=none; b=q7Njsk+IpY3XPUa4U1NysxjSYOrHdwtunzCF6KdVM3eFDv0v8CkBKyDQy9G5doMOcPUW2xM9GKy4otBCpLdyoTHoNjkA6pYSim9dvbgPwysJfwTAYsj3GqIeZxQ3L1PdIrOTgOOdVEmNQY4UL+4unmcBRDOcaL6er3FV+tBi+cg=
+	t=1757578255; cv=none; b=dyNW/cfDx+tHy8knHszxulzr1v0SCesIa/7twmPseQpofe/jaDwb/1zcghDf8/B39DQ/yopDrmSXKkK9Oz1p9Rfo91otLELwCI7s7V1vXD99PGvzWD5ZFRbEOamX3Iz43+RQ9E4HgDZ0GtvpHTcCol+3qT1cqdW6D7UdHQefOTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757578233; c=relaxed/simple;
-	bh=8XXqdXfPe6eWtsQlvfmXCzjN4ohaMWABdqQKsH/HD+w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fi6qNshtItUJDcd+fkD6LYqZh25YTHjqEoNos18q8XOdJf7XagPqrye+hXLX8jhIUV0ZrrI0XLsHEwETaVRyh8AlKut0eb1UJ9LY4CCryRa4G3YaQUjN4h9UOxNhnIZboUhUMPsUrVIVEMT/9qQROIKdY10/jyoFFinZ7ouCuMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-25221fa3c9bso12408745ad.0;
-        Thu, 11 Sep 2025 01:10:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757578231; x=1758183031;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q+08KUqZSRhNIhJzyo8CBa+9NHM0qanryXoG/IYYe2I=;
-        b=CCYgjj5TrmwHqSqG+L4706I0BZxTwRWdjduThupsIOw7p6DCgRN5SO9OR+8sLjypku
-         xtt+IHaGjhw1wuPDRVGXpFdx+hPHrQ7XvPIRrayZZC+t+CFit8Z/lc1khHPM3+CGBl6z
-         Bz953lXKd+z90iJKfoQYtyg3eYR2Udz8b0X9q7PFJ6eUzM0tBFA0dizZlXbc8YI97iaN
-         EvIGlBMdkLzB8At0kmFWwQj6QPKNX9M88VrdqJo1k/+9yQA8QtF6ggSergSIG/BIxWQ7
-         UVQPp2UOeT/ciUqKmuLtD/eqOKA7WPsObvjqZ9nylLtDIIK7jmsvQ8sBRe4FuL4MMsuA
-         CZig==
-X-Forwarded-Encrypted: i=1; AJvYcCVcp10PyqCTEhUp0XumcVL6G6SyRDYq7r6CFoVvppgLUCk7J6pLk2z7eYgWlOaAUC0IFSIwfmIHetg=@vger.kernel.org, AJvYcCWsJVsetymmpbRxyOg51hKYT7tXRO+2EkCPO7C+1CTIubK2ije6mz6nXmOy3E3rIhgLcgpy3mVNhemeu4o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsp+VRPfgpRkqLEBHN1xhDQG5TR7XovDpSmLMu38O5wWCg3E8D
-	5Wg07Jn+ZrQvvr0YVn5Nvm2MAFwbXN+ILtnKxPAHlL5RGE3fyWMBjjNY
-X-Gm-Gg: ASbGncskGmADWi7q50VGjgY81z7CGSTxyBrS01Awmvnd+MCbCMEOM1FY2RpGD/34ma+
-	VPwLhFdW1zu2LLSslAcW29AMvsii6dUHOc9QlJ6hpUwTNuJUfzpLT2E1h8Zpbfnfk+3SYEyqtV2
-	R5xEhpSZ6gWKQ4YJyat9niLkibwamwySpIv40dlukuqwmIoHRggcsF2H1fNa34XupLMleQN464d
-	oKwOeRofcsXpdFgx+njgshptXnpYCQjkt59Eoh0s1/sAly877OVzDcquro+JTec/jmJGfILBW+P
-	kbdkTh19lk+qV2yswBXbm9ka3+x3OJba/QCSQv6ykPJtUu4pPp46lWdjpQ7vobgBbJhuwMnRyA+
-	uih9sIGv/IjgZeV2Qmdrs7kJRHUvjJGD743FBzWyyGUfJNw==
-X-Google-Smtp-Source: AGHT+IEY/3/qFSoSXZTdy4dss/0vPhLEGYLy8mBFQiBp648JiB/Y5hcZqmGb/lWb8JIaUEsQT0SxWQ==
-X-Received: by 2002:a17:903:2f92:b0:24c:b571:6f70 with SMTP id d9443c01a7336-25bace93a20mr28437475ad.15.1757578231099;
-        Thu, 11 Sep 2025 01:10:31 -0700 (PDT)
-Received: from power-ThinkBook-15-G2-ITL.. ([116.128.244.171])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c36cc5671sm11129925ad.22.2025.09.11.01.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 01:10:30 -0700 (PDT)
-From: Xueqin Luo <luoxueqin@kylinos.cn>
-To: rafael@kernel.org,
-	pavel@kernel.org,
-	lenb@kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Xueqin Luo <luoxueqin@kylinos.cn>
-Subject: [PATCH v2 2/2] PM: hibernate: make compression threads configurable
-Date: Thu, 11 Sep 2025 16:09:51 +0800
-Message-ID: <b512fe39fc6c03714fb23bf241f9e8d4b6be4ff2.1757577879.git.luoxueqin@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1757577879.git.luoxueqin@kylinos.cn>
-References: <cover.1757577879.git.luoxueqin@kylinos.cn>
+	s=arc-20240116; t=1757578255; c=relaxed/simple;
+	bh=ZbLh3w9qgdKNzwXJqgp2abe1gQ9CIj5mTrQV0DwHZoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hk5vR4rRj1CG2bm/qW5uYGjal2lQZkbN5B/x1zzGgG9foJ4Q8+S8Gh9ysJpvfaBhzgU76k3fe1xKX09REtCWGEzp9VFCbfU/d6Gc7+QwytO+sajA5SpJ1VmFf/FX+8Cg6F90eFcCJvsNSvrrCgjAQDg88YBPorOr4LJfg2M24v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=eLLw0LoR; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 51E5C22E3E;
+	Thu, 11 Sep 2025 10:10:52 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id TEID8B6EKtIt; Thu, 11 Sep 2025 10:10:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1757578251; bh=ZbLh3w9qgdKNzwXJqgp2abe1gQ9CIj5mTrQV0DwHZoI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=eLLw0LoRhdiW6rBw7ZButYxIty7OAQjCZnW82Ezd46anyExxpeN+SJMO01aeYBDJP
+	 enjvSwjZGuATAM6nFZtd846Hr4WFfs1HG26px4Fr1a6fiAjVbD3KmMF8ikf1sppeaj
+	 aVN99nSXPl4gTUNCgfmHIWk+b2nwhxBjZ4ly3RgvOaCVo+ZYYe1cIpAlwjxLC82U5b
+	 /pd4D9V1ekwXrS1/AH1EfsVHtUhxn9QJUYhPHYmhpLf8q91Mj33x/a/Q73uu0mzue6
+	 DWy7d5Zr5hy3Zt8CrE+xjnMOqY++2u0udyrvZf9SVslDNEFuGaVxyBhEB1PgyXkywU
+	 0qzbHeAiVk22w==
+Date: Thu, 11 Sep 2025 08:10:36 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: bhelgaas@google.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
+	heiko@sntech.de, jonas@kwiboo.se, krzk+dt@kernel.org,
+	kwilczynski@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, lpieralisi@kernel.org,
+	mani@kernel.org, robh@kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Enable PCIe controller on
+ Radxa E20C
+Message-ID: <aMKD_LhjdFNNu62B@pie>
+References: <20250906135246.19398-4-ziyao@disroot.org>
+ <20250909130009.2555706-1-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909130009.2555706-1-amadeus@jmu.edu.cn>
 
-The number of compression/decompression threads has a direct impact on
-hibernate image generation and resume latency. Using more threads can
-reduce overall resume time, but on systems with fewer CPU cores it may
-also introduce contention and reduce efficiency.
+On Tue, Sep 09, 2025 at 09:00:09PM +0800, Chukun Pan wrote:
+> Hi,
+> 
+> > +&pcie {
+> > +	pinctrl-names = "default";
+> > +	pinctrl-0 = <&pciem1_pins>, <&pcie_reset_g>;
+> 
+> The pciem1_pins contains PCIE20_PERSTn_M1 (GPIO1_A2)
+> This will cause conflicts, "pinctrl-0 = <&pciem1_pins>" is enough.
+> 
+> [    0.115608] rockchip-pinctrl pinctrl: not freeing pin 34 (gpio1-2) as part of deactivating group pciem1-pins - it is already used for some other setting
+> [    0.191042] rockchip-pinctrl pinctrl: pin gpio1-2 already requeste by pll_gpll; cannot claim for 140000000.pcie
+> [    0.191949] rockchip-pinctrl pinctrl: error -EINVAL: pin-34 (140000000.pcie)
+> [    0.192570] rockchip-pinctrl pinctrl: error -EINVAL: could not request pin 34 (gpio1-2) from group pciem1-pins on device rockchip-pinctrl
+> 
+> > +	reset-gpios = <&gpio1 RK_PA2 GPIO_ACTIVE_HIGH>;
+> 
+> Missing supply: "vpcie3v3-supply = <&vcc_3v3>;"
+> 
+> > +	status = "okay";
+> > +};
+> > +
 
-Performance was evaluated on an 8-core ARM system, averaged over 10 runs:
+Will fix them in v2, thanks.
 
-    cmp_threads   hibernate time (s)   resume time (s)
-    --------------------------------------------------
-          3             12.14              18.86
-          4             12.28              17.48
-          5             11.09              16.77
-          6             11.08              16.44
+> Thanks,
+> Chukun
 
-With 5–6 threads, resume latency improves by approximately 12% compared
-to the default 3-thread configuration, with negligible impact on
-hibernate time.
-
-This patch introduces a new kernel parameter, `cmp_threads=`, that allows
-users and integrators to tune the number of compression/decompression
-threads at boot. This provides a way to balance performance and CPU
-utilization across a wide range of hardware without recompiling the
-kernel.
-
-Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
----
- kernel/power/swap.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-index bd149a54c081..bf17363ff331 100644
---- a/kernel/power/swap.c
-+++ b/kernel/power/swap.c
-@@ -519,8 +519,8 @@ static int swap_writer_finish(struct swap_map_handle *handle,
- 				CMP_HEADER, PAGE_SIZE)
- #define CMP_SIZE	(CMP_PAGES * PAGE_SIZE)
- 
--/* Maximum number of threads for compression/decompression. */
--#define CMP_THREADS	3
-+/* Default number of threads for compression/decompression. */
-+static int cmp_threads = 3;
- 
- /* Minimum/maximum number of pages for read buffering. */
- #define CMP_MIN_RD_PAGES	1024
-@@ -703,7 +703,7 @@ static int save_compressed_image(struct swap_map_handle *handle,
- 	 * footprint.
- 	 */
- 	nr_threads = num_online_cpus() - 1;
--	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
-+	nr_threads = clamp_val(nr_threads, 1, cmp_threads);
- 
- 	page = (void *)__get_free_page(GFP_NOIO | __GFP_HIGH);
- 	if (!page) {
-@@ -1241,7 +1241,7 @@ static int load_compressed_image(struct swap_map_handle *handle,
- 	 * footprint.
- 	 */
- 	nr_threads = num_online_cpus() - 1;
--	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
-+	nr_threads = clamp_val(nr_threads, 1, cmp_threads);
- 
- 	page = vmalloc_array(CMP_MAX_RD_PAGES, sizeof(*page));
- 	if (!page) {
-@@ -1703,3 +1703,19 @@ static int __init swsusp_header_init(void)
- }
- 
- core_initcall(swsusp_header_init);
-+
-+static int __init cmp_threads_setup(char *str)
-+{
-+	int rc = kstrtouint(str, 0, &cmp_threads);
-+
-+	if (rc)
-+		return rc;
-+
-+	if (cmp_threads < 1)
-+		cmp_threads = 1;
-+
-+	return 1;
-+
-+}
-+
-+__setup("cmp_threads=", cmp_threads_setup);
--- 
-2.43.0
-
+Best regards,
+Yao Zi
 
