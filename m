@@ -1,185 +1,151 @@
-Return-Path: <linux-kernel+bounces-812086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3FD8B532C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:51:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C7EB5324D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB146A80D15
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:50:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64B29A837B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE76322763;
-	Thu, 11 Sep 2025 12:50:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E56322747
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7284253363;
+	Thu, 11 Sep 2025 12:30:56 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD6D13B284;
+	Thu, 11 Sep 2025 12:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757595037; cv=none; b=Z4zGVRIjbX10Oz6TZ4wwG3XJNH1Du+1qsOJH0X0d0oCRSvbmblBVxQgvSb9uzMOJe8Sfuwfle9q9o5TwljPS1wbTyGWgeNT0hgLkmQAjO79fMzZUb3is6VYolDV16fFJ/X2BnrJP7FMFpmAK1EPuPudWfLLx94yiiTkXOM1znV4=
+	t=1757593856; cv=none; b=qBy8+lS3+15+wtKiFJPNNUaz1odCsf8cqVEA+78nIBmo4Um5vF4JGXGFKFGZr8li7RcMRnQCqT/+y7832oUV2bnZUXybXq088nWqKaGghGo4xQCNlZtlV+exxG50AUMUmQrAimZnHLC6iAzJqo8PDsEXJt7sxSN5X3QYG5K69UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757595037; c=relaxed/simple;
-	bh=Y2VsstfCYQSjNLkadzNiJFV+r4Li8EgPQiOKkwciHnI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R1NPtSlFEdux60UeW6K1aJ7K4Ch+6h920IxpkZY9kNur5Qmv/utzO/NUc8RzpGZNu/qVUKrEC3i4xGmm82PtqHYXNfCmkNTnvdiQypl7bgCW96dqHWgzWyb9BSb4CWG3RY3qT0xmGe4Y1Ac9+cqT5E9fsR7Wcpqgme9/mLfdES0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cMxjb6Cb5z9sj9;
-	Thu, 11 Sep 2025 14:30:43 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id rohlHAx5DXGK; Thu, 11 Sep 2025 14:30:43 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cMxjZ03x8z9sjB;
-	Thu, 11 Sep 2025 14:30:42 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DE8CC8B7A7;
-	Thu, 11 Sep 2025 14:30:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id obEC7Z_HFJXJ; Thu, 11 Sep 2025 14:30:41 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 986958B764;
-	Thu, 11 Sep 2025 14:30:41 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v2] powerpc/32: Restore clearing of MSR[RI] at interrupt/syscall exit
-Date: Thu, 11 Sep 2025 14:30:12 +0200
-Message-ID: <66d0ab070563ad460ed481328ab0887c27f21a2c.1757593807.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1757593856; c=relaxed/simple;
+	bh=YaxswK5ei/lhvQ2pZQoMwTNmCH4do9dlvQfptK9Dxe4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BUgiX/kss9/YLo5d/stmQrTQXsazk69ZxG5g0H16xt9VSqJC8Z1R+j7u+/ZEcaYEMnvqkiSr2VuLslvysOM90b7iDBtDlLlkSIbRTZz0NT6JM2uZtOfDgqB+dM9w9azY4A4cNZ7USHgixyxpIW75LPOnOxumb87UDHbHURMezXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cMxcP52p5zdcYH;
+	Thu, 11 Sep 2025 20:26:13 +0800 (CST)
+Received: from dggpemf100009.china.huawei.com (unknown [7.185.36.128])
+	by mail.maildlp.com (Postfix) with ESMTPS id A540D140156;
+	Thu, 11 Sep 2025 20:30:46 +0800 (CST)
+Received: from [10.67.109.25] (10.67.109.25) by dggpemf100009.china.huawei.com
+ (7.185.36.128) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 11 Sep
+ 2025 20:30:45 +0800
+Message-ID: <0614bb1c-3dc9-4ad1-9135-19662e20163b@huawei.com>
+Date: Thu, 11 Sep 2025 20:30:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757593814; l=3541; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=Y2VsstfCYQSjNLkadzNiJFV+r4Li8EgPQiOKkwciHnI=; b=wcihNTn6ThrJFc/HKm+48uiC25s2PwFT0YcZbpDrPAORdV2YZOfQvc2kSIHQ39gbOQtw4lI/e RJMCOlWGintARmyBAUOq8wMdu0CV8Ck0Mk6b5AD+jXWXDvcALOWQOQL
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH stable/linux-5.10.y] sched/core: Fix potential deadlock on
+ rq lock
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <stable@vger.kernel.org>, <mingo@redhat.com>, <peterz@infradead.org>,
+	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
+	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
+	<mgorman@suse.de>, <bristot@redhat.com>, <tglx@linutronix.de>,
+	<frederic@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<tanghui20@huawei.com>, <zhangqiao22@huawei.com>
+References: <20250908084230.848195-1-wangtao554@huawei.com>
+ <2025091123-unsterile-why-ca1e@gregkh>
+From: "wangtao (EQ)" <wangtao554@huawei.com>
+In-Reply-To: <2025091123-unsterile-why-ca1e@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf100009.china.huawei.com (7.185.36.128)
 
-Commit 13799748b957 ("powerpc/64: use interrupt restart table to speed
-up return from interrupt") removed the inconditional clearing of
-MSR[RI] when returning from interrupt into kernel. But powerpc/32
-doesn't implement interrupt restart table hence still need MSR[RI]
-to be cleared.
 
-It could be added back in interrupt_exit_kernel_prepare() but it is
-easier and better to add it back in entry_32.S for following reasons:
-- Writing to MSR must be followed by a synchronising instruction
-- The smaller the non recoverable section is the better it is
+在 2025/9/11 20:20, Greg KH 写道:
+> On Mon, Sep 08, 2025 at 08:42:30AM +0000, Wang Tao wrote:
+>> When CPU 1 enters the nohz_full state, and the kworker on CPU 0 executes
+>> the function sched_tick_remote, holding the lock on CPU1's rq
+>> and triggering the warning WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3).
+>> This leads to the process of printing the warning message, where the
+>> console_sem semaphore is held. At this point, the print task on the
+>> CPU1's rq cannot acquire the console_sem and joins the wait queue,
+>> entering the UNINTERRUPTIBLE state. It waits for the console_sem to be
+>> released and then wakes up. After the task on CPU 0 releases
+>> the console_sem, it wakes up the waiting console_sem task.
+>> In try_to_wake_up, it attempts to acquire the lock on CPU1's rq again,
+>> resulting in a deadlock.
+>>
+>> The triggering scenario is as follows:
+>>
+>> CPU 0								CPU1
+>> sched_tick_remote
+>> WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3)
+>>
+>> report_bug							con_write
+>> printk
+>>
+>> console_unlock
+>> 								do_con_write
+>> 								console_lock
+>> 								down(&console_sem)
+>> 								list_add_tail(&waiter.list, &sem->wait_list);
+>> up(&console_sem)
+>> wake_up_q(&wake_q)
+>> try_to_wake_up
+>> __task_rq_lock
+>> _raw_spin_lock
+>>
+>> This patch fixes the issue by deffering all printk console printing
+>> during the lock holding period.
+>>
+>> Fixes: d84b31313ef8 ("sched/isolation: Offload residual 1Hz scheduler tick")
+>> Signed-off-by: Wang Tao <wangtao554@huawei.com>
+>> ---
+>>   kernel/sched/core.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index 40f40f359c5d..fd2c83058ec2 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -4091,6 +4091,7 @@ static void sched_tick_remote(struct work_struct *work)
+>>   		goto out_requeue;
+>>   
+>>   	rq_lock_irq(rq, &rf);
+>> +	printk_deferred_enter();
+>>   	curr = rq->curr;
+>>   	if (cpu_is_offline(cpu))
+>>   		goto out_unlock;
+>> @@ -4109,6 +4110,7 @@ static void sched_tick_remote(struct work_struct *work)
+>>   
+>>   	calc_load_nohz_remote(rq);
+>>   out_unlock:
+>> +	printk_deferred_exit();
+>>   	rq_unlock_irq(rq, &rf);
+>>   out_requeue:
+>>   
+>> -- 
+>> 2.34.1
+>>
+>>
+Sorry, we initially discovered the issue while testing the stable 
+branch, and it seems that the mainline has the same problem, but I 
+haven't submitted a patch yet.
 
-So add a macro called clr_ri and use it in the three places that play
-up with SRR0/SRR1. Use it just before another mtspr for synchronisation
-to avoid having to add an isync.
 
-Now that's done in entry_32.S, exit_must_hard_disable() can return
-false for non book3s/64, taking into account that BOOKE doesn't have
-MSR_RI.
+Thanks
 
-Also add back blacklisting syscall_exit_finish for kprobe. This was
-initially added by commit 7cdf44013885 ("powerpc/entry32: Blacklist
-syscall exit points for kprobe.") then lost with
-commit 6f76a01173cc ("powerpc/syscall: implement system call
-entry/exit logic in C for PPC32").
+Tao
 
-Fixes: 6f76a01173cc ("powerpc/syscall: implement system call entry/exit logic in C for PPC32")
-Fixes: 13799748b957 ("powerpc/64: use interrupt restart table to speed up return from interrupt")
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- arch/powerpc/kernel/entry_32.S  | 18 +++++++++++++++++-
- arch/powerpc/kernel/interrupt.c |  2 +-
- 2 files changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
-index c37480176a1c..16f8ee6cb2cd 100644
---- a/arch/powerpc/kernel/entry_32.S
-+++ b/arch/powerpc/kernel/entry_32.S
-@@ -101,6 +101,17 @@ SYM_FUNC_END(__kuep_unlock)
- .endm
- #endif
- 
-+.macro	clr_ri trash
-+#ifndef CONFIG_BOOKE
-+#ifdef CONFIG_PPC_8xx
-+	mtspr   SPRN_NRI, \trash
-+#else
-+	li	\trash, MSR_KERNEL & ~MSR_RI
-+	mtmsr	\trash
-+#endif
-+#endif
-+.endm
-+
- 	.globl	transfer_to_syscall
- transfer_to_syscall:
- 	stw	r3, ORIG_GPR3(r1)
-@@ -149,6 +160,7 @@ ret_from_syscall:
- 	cmpwi	r3,0
- 	REST_GPR(3, r1)
- syscall_exit_finish:
-+	clr_ri	r4
- 	mtspr	SPRN_SRR0,r7
- 	mtspr	SPRN_SRR1,r8
- 
-@@ -168,6 +180,7 @@ syscall_exit_finish:
- 	REST_GPR(0, r1)
- 	REST_GPRS(3, 12, r1)
- 	b	1b
-+_ASM_NOKPROBE_SYMBOL(syscall_exit_finish)
- 
- #ifdef CONFIG_44x
- .L44x_icache_flush:
-@@ -224,10 +237,11 @@ fast_exception_return:
- 	/* Clear the exception marker on the stack to avoid confusing stacktrace */
- 	li	r10, 0
- 	stw	r10, 8(r11)
--	REST_GPR(10, r11)
-+	clr_ri	r10
- 	mtspr	SPRN_SRR1,r9
- 	mtspr	SPRN_SRR0,r12
- 	REST_GPR(9, r11)
-+	REST_GPR(10, r11)
- 	REST_GPR(12, r11)
- 	REST_GPR(11, r11)
- 	rfi
-@@ -256,6 +270,7 @@ interrupt_return:
- .Lfast_user_interrupt_return:
- 	lwz	r11,_NIP(r1)
- 	lwz	r12,_MSR(r1)
-+	clr_ri	r4
- 	mtspr	SPRN_SRR0,r11
- 	mtspr	SPRN_SRR1,r12
- 
-@@ -298,6 +313,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_NEED_PAIRED_STWCX)
- 	cmpwi	cr1,r3,0
- 	lwz	r11,_NIP(r1)
- 	lwz	r12,_MSR(r1)
-+	clr_ri	r4
- 	mtspr	SPRN_SRR0,r11
- 	mtspr	SPRN_SRR1,r12
- 
-diff --git a/arch/powerpc/kernel/interrupt.c b/arch/powerpc/kernel/interrupt.c
-index e0c681d0b076..aea6f7e8e9c6 100644
---- a/arch/powerpc/kernel/interrupt.c
-+++ b/arch/powerpc/kernel/interrupt.c
-@@ -38,7 +38,7 @@ static inline bool exit_must_hard_disable(void)
- #else
- static inline bool exit_must_hard_disable(void)
- {
--	return true;
-+	return false;
- }
- #endif
- 
--- 
-2.49.0
-
+> What is the git commit id of this in Linus's tree?
+>
+> thanks,
+>
+> greg k-h
+>
 
