@@ -1,175 +1,124 @@
-Return-Path: <linux-kernel+bounces-811701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06029B52CBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:11:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FC1B52C85
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27A7C189BA2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:11:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FD5D1C84FD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6A62E8B6A;
-	Thu, 11 Sep 2025 09:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23E22E7F31;
+	Thu, 11 Sep 2025 09:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b="uBd9UPu9"
-Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [93.188.205.243])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPYTV+iw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D19420297C;
-	Thu, 11 Sep 2025 09:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.205.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD911D8DFB
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757581888; cv=none; b=Wj6TBxyc7iMn5kJObxzVxAsIAYEnp4mE7TwUvV4YueSCWuVlSa7w1qBvnP9JnAqj1RpJ4t9pRun4mEeCOpQ3Et+/ie0BF7HhZB+dsQebAz1jL3Pbrj3dt/d+mdT0Qe14DkT8g+v0Tv3Yuu8Epkb4gbndmNcb/7DjkiLGrnW64n4=
+	t=1757581310; cv=none; b=GFri+WF4Wy1PfND8qen8fSq4I3QW04/VRkGO9YjMkiTrloJLYauK2mBR6ml628OWknp0uOweNlNn9CYIYYHqfARO4noyKXsNoBikUHjwdkN0GU1ZZDe+Va2630SrgkywHpIdIGUrzM6i8KoNG0AN+f1nN3qXKDuB8giSlacSdQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757581888; c=relaxed/simple;
-	bh=Y0jxY2UoGEBpb56GCXKheJ9DTcUI1kAj+ihi2goW6+I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FxrjNlzhDZr+hRn2whnf1HvjqzO4K7226n2wJUsuB2JQOIMbzgw3JrmFslAxd4HxEy2cJgrd83npVqVWx8AHtINL4bAehrimIyGRXa245bNIs3xDNVaVeE4NU8IC4FfaHy2oC3oKYsrlvqLtX4ouk7zn09hJh4Fbl08EyxklqMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b=uBd9UPu9; arc=none smtp.client-ip=93.188.205.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=astralinux.ru;
-	s=mail; t=1757581407;
-	bh=Y0jxY2UoGEBpb56GCXKheJ9DTcUI1kAj+ihi2goW6+I=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uBd9UPu9moXhzylPqquHlyLDxSoAqx82lR9v9p91PQDAfO12PjF6yW14I+2OGOSHC
-	 YqaUX/eR1GsA3aIQoNm6PtnGCaKk8qxwtYvExcs+iRHuhoaUIJhM6P9aBL0pf3XWKV
-	 76Mo7ypL4pTlCYq5LJS3lv/OB1sIJggOA857zS78Jd+nLGpKOXqZerEVmnKOdy4gZg
-	 GZSLZjdiWODE5I8jvy0UNLxeM5f26tDYKJcLYrOOosCtSsrYRiDR5ZMH0xHMAJpRSG
-	 L5jAzojK349rq70qBF56JVjRLbYsPOOcjGIUtoD9Jc03sMqnF/RP6PqqeqJecxZKdi
-	 cNeXD/wTn+iSg==
-Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw02.astralinux.ru (Postfix) with ESMTP id 6E1E11F9EE;
-	Thu, 11 Sep 2025 12:03:27 +0300 (MSK)
-Received: from new-mail.astralinux.ru (unknown [10.177.185.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
-	Thu, 11 Sep 2025 12:03:25 +0300 (MSK)
-Received: from rbta-msk-lt-169874.astralinux.ru (rbta-msk-lt-169874.astralinux.ru [10.190.6.151])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4cMs5l6T3Bz2xBx;
-	Thu, 11 Sep 2025 12:02:51 +0300 (MSK)
-From: Mikhail Dmitrichenko <mdmitrichenko@astralinux.ru>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mikhail Dmitrichenko <mdmitrichenko@astralinux.ru>,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Shuicheng Lin <shuicheng.lin@intel.com>
-Subject: [PATCH 6.12] drm/xe/hw_engine_group: Avoid call kfree() for drmm_kzalloc()
-Date: Thu, 11 Sep 2025 12:01:15 +0300
-Message-Id: <20250911090116.47103-1-mdmitrichenko@astralinux.ru>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1757581310; c=relaxed/simple;
+	bh=qxbp7e+9AR8Ux/3zOexCQyN5CyaAPlVDs5uMsXFj02A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GA8LCxZLnanP5UAghLkGA9tFa8sIfIcV13ldX6e37wgw23UsDYCu4NYnBbUYJ3BDyCbGFgSoL/gfoOoMEPMMhEpt3sqysD2JgJhF2u1WU3fR4DKVdhPEpU9yTp/PlqNCQBf5/34hg7Lo82lbHS8RMWq3oKPzEHFbn+TYOnNvJNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPYTV+iw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B3DDC4CEF8
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:01:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757581310;
+	bh=qxbp7e+9AR8Ux/3zOexCQyN5CyaAPlVDs5uMsXFj02A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rPYTV+iwgXuGwjp/bQLLjjDvBNMZaYSj2jDj4fV1Hmo5a7mi5ICWDDFiNrAgvxKup
+	 viWSVPZ7Bt8O3ue+OQCd7Kw3Wghw2DYTHR/4EKKcJzvht2NdLSh0IfbVlPPsTceem2
+	 cq5Ca4LFTGh63VomC3h9w2ARm307MAYpbXQAWxV7ndRFnk6Kxd+gB8BpYWkN4oTu4/
+	 JJq8IWj6al4thKt2abndyKrB0a7/JwlAZTQDJ7y6WOfwCv8V0pRlHpHa7SQm4zvLBV
+	 auSVFRevEiehiZfOq1hEPnKOINpZ5ByxsaXhEhrns8x9+kIT6aH+987uxmy/iKw9SF
+	 UXzHaT6a3DbJQ==
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-61e74d053cfso102360eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 02:01:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVstRVFOyTESeoZaO979yzBRxMyBNNbhH1ICDqSw2iiRQbMxouPOaQGz9wFozb19x6F7civNSzo4qmft9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMG+F1EqYwZQ7KDm7xX6ORhYdpcrFSWAmPm0HPKdnUH8C59nNw
+	dSutqGGasiAg98MOJwutdajABNaub1vaNyb9WylwfwWV3vEzKiLv+eGgisSbROpbeuC1o4+N87T
+	O0m2hRojn1Avcd3/RCEr3AuJ5ac6u5bk=
+X-Google-Smtp-Source: AGHT+IFzYQyTb2IoEwLR0cafe5J8DGh3piPjf9LgxHTSThCZ1W9DpzlxIJhX79txh5ZADWhHIX6nd8Gej0v6iMMftAc=
+X-Received: by 2002:a05:6820:1ace:b0:61f:f932:8d64 with SMTP id
+ 006d021491bc7-621789f9f7emr8400231eaf.1.1757581309120; Thu, 11 Sep 2025
+ 02:01:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/09/11 08:15:00
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: mdmitrichenko@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 66 0.3.66 fc5dda3b6b70d34b3701db39319eece2aeb510fb, {Tracking_uf_ne_domains}, {Tracking_internal2}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;new-mail.astralinux.ru:7.1.1;lore.kernel.org:7.1.1;astralinux.ru:7.1.1, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 196178 [Sep 11 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/09/11 07:23:00 #27808108
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/09/11 08:15:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+References: <2797300.mvXUDI8C0e@rafael.j.wysocki> <bb565554-f7f8-4e40-8ca4-d265f59aec9e@kernel.org>
+In-Reply-To: <bb565554-f7f8-4e40-8ca4-d265f59aec9e@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 11 Sep 2025 11:01:36 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hX6v7Zn7_mbdNWQg-muMbfz1HDA8pp1eg7Lfpx=UZjww@mail.gmail.com>
+X-Gm-Features: Ac12FXx0-0bnXjtXJvznPr5PN6XI0qzTrvm767eJGc1L9O9t90vs_ilIV1vf8BE
+Message-ID: <CAJZ5v0hX6v7Zn7_mbdNWQg-muMbfz1HDA8pp1eg7Lfpx=UZjww@mail.gmail.com>
+Subject: Re: [PATCH v1] cpufreq: ACPI: Use on_each_cpu_mask() in drv_write()
+To: Mario Limonciello <superm1@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, "Gautham R . Shenoy" <gautham.sheoy@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Shuicheng Lin <shuicheng.lin@intel.com>
+On Wed, Sep 10, 2025 at 10:38=E2=80=AFPM Mario Limonciello <superm1@kernel.=
+org> wrote:
+>
+> On 9/9/25 6:41 AM, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Make drv_write() call on_each_cpu_mask() instead of using an open-coded
+> > equivalent of the latter.
+> >
+> > No intentional functional impact.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+>
+> I feel you should also update the comment before do_drv_write() to
+> mention it's called with a NULL conditional to
+> smp_call_function_many_cond(), or just drop that comment.
 
-commit 4846856c3a4afa882b6d1b842ed2fad6f3781f4d upstream.
+I'll drop it.
 
-Memory allocated with drmm_kzalloc() should not be freed using
-kfree(), as it is managed by the DRM subsystem. The memory will
-be automatically freed when the associated drm_device is released.
-These 3 group pointers are allocated using drmm_kzalloc() in
-hw_engine_group_alloc(), so they don't require manual deallocation.
+> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
 
-Fixes: 67979060740f ("drm/xe/hw_engine_group: Fix potential leak")
-Signed-off-by: Shuicheng Lin <shuicheng.lin@intel.com>
-Reviewed-by: Matthew Brost <matthew.brost@intel.com>
-Signed-off-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
-Link: https://lore.kernel.org/r/20250724193854.1124510-2-shuicheng.lin@intel.com
-(cherry picked from commit f98de826b418885a21ece67f0f5b921ae759b7bf)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Signed-off-by: Mikhail Dmitrichenko <mdmitrichenko@astralinux.ru>
----
- drivers/gpu/drm/xe/xe_hw_engine_group.c | 28 ++++++-------------------
- 1 file changed, 6 insertions(+), 22 deletions(-)
+Thanks!
 
-diff --git a/drivers/gpu/drm/xe/xe_hw_engine_group.c b/drivers/gpu/drm/xe/xe_hw_engine_group.c
-index 82750520a90a..d0f1bf32cdd5 100644
---- a/drivers/gpu/drm/xe/xe_hw_engine_group.c
-+++ b/drivers/gpu/drm/xe/xe_hw_engine_group.c
-@@ -84,25 +84,18 @@ int xe_hw_engine_setup_groups(struct xe_gt *gt)
- 	enum xe_hw_engine_id id;
- 	struct xe_hw_engine_group *group_rcs_ccs, *group_bcs, *group_vcs_vecs;
- 	struct xe_device *xe = gt_to_xe(gt);
--	int err;
- 
- 	group_rcs_ccs = hw_engine_group_alloc(xe);
--	if (IS_ERR(group_rcs_ccs)) {
--		err = PTR_ERR(group_rcs_ccs);
--		goto err_group_rcs_ccs;
--	}
-+	if (IS_ERR(group_rcs_ccs))
-+		return PTR_ERR(group_rcs_ccs);
- 
- 	group_bcs = hw_engine_group_alloc(xe);
--	if (IS_ERR(group_bcs)) {
--		err = PTR_ERR(group_bcs);
--		goto err_group_bcs;
--	}
-+	if (IS_ERR(group_bcs))
-+		return PTR_ERR(group_bcs);
- 
- 	group_vcs_vecs = hw_engine_group_alloc(xe);
--	if (IS_ERR(group_vcs_vecs)) {
--		err = PTR_ERR(group_vcs_vecs);
--		goto err_group_vcs_vecs;
--	}
-+	if (IS_ERR(group_vcs_vecs))
-+		return PTR_ERR(group_vcs_vecs);
- 
- 	for_each_hw_engine(hwe, gt, id) {
- 		switch (hwe->class) {
-@@ -125,15 +118,6 @@ int xe_hw_engine_setup_groups(struct xe_gt *gt)
- 	}
- 
- 	return 0;
--
--err_group_vcs_vecs:
--	kfree(group_vcs_vecs);
--err_group_bcs:
--	kfree(group_bcs);
--err_group_rcs_ccs:
--	kfree(group_rcs_ccs);
--
--	return err;
- }
- 
- /**
--- 
-2.39.2
-
+> >   drivers/cpufreq/acpi-cpufreq.c |    8 +-------
+> >   1 file changed, 1 insertion(+), 7 deletions(-)
+> >
+> > --- a/drivers/cpufreq/acpi-cpufreq.c
+> > +++ b/drivers/cpufreq/acpi-cpufreq.c
+> > @@ -335,14 +335,8 @@ static void drv_write(struct acpi_cpufre
+> >               .val =3D val,
+> >               .func.write =3D data->cpu_freq_write,
+> >       };
+> > -     int this_cpu;
+> >
+> > -     this_cpu =3D get_cpu();
+> > -     if (cpumask_test_cpu(this_cpu, mask))
+> > -             do_drv_write(&cmd);
+> > -
+> > -     smp_call_function_many(mask, do_drv_write, &cmd, 1);
+> > -     put_cpu();
+> > +     on_each_cpu_mask(mask, do_drv_write, &cmd, true);
+> >   }
+> >
+> >   static u32 get_cur_val(const struct cpumask *mask, struct acpi_cpufre=
+q_data *data)
+> >
+> >
+> >
+>
 
