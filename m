@@ -1,475 +1,180 @@
-Return-Path: <linux-kernel+bounces-812124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BED0B53345
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:10:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C7DB53342
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE9921898408
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF1EB4839D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002F0326D51;
-	Thu, 11 Sep 2025 13:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA835322DB8;
+	Thu, 11 Sep 2025 13:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L5oDXLWy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gFfuzORe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3546324B1E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DA9322C60
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757596175; cv=none; b=oP865cEAZiN4jZ9Iu7zr52027EaFb0PmMSVtC3jUoIUApyjfgrU0dCDoZzR2/GOigRI+Tnn+Owix3KZIVckQLiEeCiYbIE/AZoKGXX/eUkD/NfWF9HXOMMgMyshPZPuytRKJpjWUUs6FktTzdzOXt9pCt3PZyfOQUUu9bjbxDmI=
+	t=1757596172; cv=none; b=szDxpVek/mxn+2t2Ri5JVUqb67uFEa/dO3lJ4dtmb7DzoyFF1jxDB9XXZA9Hgh4avm2oju+kckT5BBXQ2xoV4DZ7J776kj/ZRZoDW1Jalbnn1kcilV8Ga247tJjAxCcdCLQ2sYK1OQ3Mv6d5AIyXMNtCstTs0pB3IGfHo9swDEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757596175; c=relaxed/simple;
-	bh=cgmz7xKc0Hd8BX0D6pW9C6dX7ciMoyeYbGZMJ9/LMK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fcYhSHfXunzzwdzISlMIzFfKvYeyQpUb9DgsuKyWW0ZykZY+hCYHorkBXj2Eca5NS3V5xHwi5X3+z1AP+Nel/fTjF0OryYtPPKIG0aEUTSu171vyk2Nwh+904QwrVIK/G79NJFGWla3DIdpm3Xwck/fS/PM1LU3OhZeNLfcmHkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L5oDXLWy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757596170;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=YUFyy1FRSzQ52ZqGvkXLXzMBnhMlgzM8XhXhFaEMyE0=;
-	b=L5oDXLWy9cusiCxu0Ic645CyzjqwGpQQkqixP7FLiZzm5N0sEccmZOHjbNuRbBrRkQQOLx
-	4A/DNrP1mLS7AdByI3cWMtk6e+lvcVwnKxJcN/yQ5OUS6wB6Zky1utLokKfnsS/G1sSrhP
-	we7VC5X2dBBDfWDEYM9XLBu5+Chy2T0=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-323-vnFgarPhMya44OLezUExpw-1; Thu, 11 Sep 2025 09:09:27 -0400
-X-MC-Unique: vnFgarPhMya44OLezUExpw-1
-X-Mimecast-MFC-AGG-ID: vnFgarPhMya44OLezUExpw_1757596166
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45dd9a66c3fso2645435e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:09:27 -0700 (PDT)
+	s=arc-20240116; t=1757596172; c=relaxed/simple;
+	bh=rcLSc7hHkh273I4IR9ngx+j8+RXCarvHAfoFY1lO9nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O/d4bj55zcO0lzmKMXhGdsPK18WZkgMNNmtY3i2N+94dBUSqQQE5ZMPuef8gtL60czNBpE8OMhGaZk7PeKx8rtL5zzSNxlRwRfZ4Wn2mntk3v+7mnMARaklUsDIQ4mSrvYIVk+xDSo32Me5CXK5Et8Yb5/jsgTJp8t8GTyEdmlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gFfuzORe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BB5nP1026350
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:09:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	I8RyZQ7s9En3k+A9mP9sTd12gbOqQ8qWm+XADZfrx+w=; b=gFfuzOReeKZp9Tcv
+	7BjR5bFEDvUerbezOcuNRQmikLLZAsok1Fg10+MrsDrvPocd6fG/3YuzQ3AlU0oH
+	4qtkJIdvtpsUj5jkvwNtKPI9X+Xtt4rIDeRpiiEnUxvayZXFjxGGFXfJNta1d5jI
+	OEcb1VicJF+NpHXLIFJgl6QFNRxl+vW4a5agw+fQfdqxylhFe7bTozn/QwjwzUCr
+	dPuhbxNG7d96Dlkz6Vl53sWPIsEe06bcGoDrR1+0lY+wcQGsHZmQ+ebqn+oXyK5S
+	jf+3m/pIL5s2BM8oXEQCXyvm4qOWMuWbB6eygKv9m3K5LgcHR/KagLkREhxFEWoB
+	fv8qPQ==
+Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490cj0ynm9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:09:29 +0000 (GMT)
+Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-5449f6cacd1so899518e0c.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:09:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757596166; x=1758200966;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YUFyy1FRSzQ52ZqGvkXLXzMBnhMlgzM8XhXhFaEMyE0=;
-        b=H3mtZfa1S8Fh9EPN//eFhmdU3J6y7miURL4CrrBc1nXb17JiM5wkWtrh/JLjdyKAVQ
-         /MnaGfRJ/nwWEMdSPO2N00YD+SNz7YDvrF0mjUxMxmcX3izh5tfnDl5uKgc52Q3jxizD
-         Wv02plxl81CiZAUXerpZyTIRcVrxpo5Dic3WVVF2WjPqX2H9N26AAQoPVRV1ANUOfHy/
-         wHOhAPiJ70WCamo96Tl+T0LjXFN2lHaiZwM590gQqglhjO1D0I35PwzoxNDW/wTdGO+H
-         1x9ETGzvI6wLeXPawpcGijeubsJ/uNB9otEUHmTcXMnH+m0lLpujGB6ZlsV2sWFrusCZ
-         e3BA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxsexGz7Y+OTEP8TSOYiVDNlxqM6X8HqTTIFw0LDkyP0F80c2nvYiQvwDqOBffAlCxN3TSH5PWTDnYQqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+0KZc0jITXQBp0yyNCLIiku/lLG3AqO35ORIye3tCE8wbKz1E
-	R1S9iQ6bWFVOQEFryycgMTZnlOrky9Opw0i+kCqr9DmO4t3d3ITZPm3abC4ajxXNwakyBtzlAdL
-	oPRzwEHqYIteh84iGNO9ccg9b0H0wC04BN4hulRV39HbcfJJ8OMCAaLtM4tcErahIvw==
-X-Gm-Gg: ASbGnct9RVVit/7Gm650Yi5tf1QTZJiupTU/hAn9JhWVzORefflqHbp3YxMCdnfzu9p
-	EcYvxIY3tzND8xY79gfETQOxbfN86K8dk3x/EeMlJjwZo8mInUekUzSlY4J7H0AIw+GJFqXRB6I
-	bS0rM2c3T6wfb4kvFGDdwMmUHgwpv0uXJj6k3cDQSDg4eJEK4rcTYYnDcu6KWU5kcXMIzAaKZyh
-	/M4MdTq/9SpV+r3aXcfmrRi+Tt2GQ1O7QgSVyqmBKdTGHjirOSRjFDYVVff3EHhR2W3dnIeqSR2
-	GJOKxRug3lAhUCjhcQZnuL6ydN30/Vb4tP5+RTNVlwLEXJS0YcBqp/WwnHdPOI7rFsyzRTKWofH
-	7azL6I7opoAulNr9qkOasVGhxU2RJ03M3T/XvYpJMEZt4JTeHtfGA4XDvG4UQV/jKx9k=
-X-Received: by 2002:a05:600c:5303:b0:45d:d5e2:f683 with SMTP id 5b1f17b1804b1-45de078d428mr171872885e9.25.1757596166214;
-        Thu, 11 Sep 2025 06:09:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGMVjs0jUiwGXDJa2IwLszE3cbnhFWu0Qry8o5d527djVHWalLfChIafmqiEKbHOLTHnkMNig==
-X-Received: by 2002:a05:600c:5303:b0:45d:d5e2:f683 with SMTP id 5b1f17b1804b1-45de078d428mr171872335e9.25.1757596165586;
+        d=1e100.net; s=20230601; t=1757596168; x=1758200968;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I8RyZQ7s9En3k+A9mP9sTd12gbOqQ8qWm+XADZfrx+w=;
+        b=OKr74jPJ4ZUAVszM9OybnoiyKRhnIw+ZH41ckwob6JNiFx0c871yYaIn1qV4cAvEtp
+         LnOEXxLwTfzEoNrAepsUfIneDCSD/jGOZBCafuPzWliTca/zvme059ECjD2zhIU17ekT
+         XQVj38eg0TbagEttgdvC+UTY4p2hjSvStph9Es+r2oV3/7jOy7eQiDfj28s8aHZR+osc
+         G11G5g6IaG4kvOLr30bDcnB/sojeYG5PkfJUUOCk1BAEw/LQYRG2LxQMFlZ0x/OUjPT6
+         eTQE+hx9ZLJYVkGzfW0ZGWG3ZBBF7In4I9ZmyhONXpUoCLhzPI0y/K38FiDP1obSebmz
+         yJIA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6h9+2A0wYGKFUcB+Ict2cdeaj5ku5oEKxMEBzKPDrFcQS/msicQSZQvGaDPXsYIbtgVM8KzvNaqbuAvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKAzzudikSoEWPyqzP6fx3mBbtO0frXHhGKyAh28cDEoF/EOe2
+	XRpBDQR3+4feB5l+H1WP8rNBLhSdJRVwzaRq+GP7MEA7IZIEBPGtIOYXu8p5Euvv77XdQdkWPy0
+	+QKzCwtrQF8yecEic8yhziH/hEcJ8Dvh3vSGw7RnSlG4fQSknwavMIiH6FDYsWxAb8ddbYhVGTc
+	M=
+X-Gm-Gg: ASbGncsLz3fRgmQH4qgZI9r17ls4SEfSnqjrFW/YMmE2vZmc/Gk2Insh7ktgEeyjTHZ
+	FuNmH07adeZGfRHRFq/7ddgD3hdGVBcqFTdomHuN6Py7CeGDkCbVRidMhrni/kgaNKoMq92x3e3
+	+I7pLZ7LwESzMVrp0j1uOhGipShwD077kZOWgnPmPZW/suSKtHbrrkTEZrNzgqpQaeGRr3xN0Vx
+	7bVdV/Aw/I2dGd9oIx6AbRvGubqstPoyZ/SVIMO1kTz1oB2ikPvpSrr+pop9RiM8jvrFk0ndquT
+	mCmazG3XBGA8Ecxbp9xS3qzCkx27wXuFJD9wDRiWIV1+0NOWmZ9ci95gOiuZ+mVh4LlaXBwvDwM
+	d0jJV0AoRJvkhdTKvT1glm5f/LAySrpjssMWodaxQX+NUtxNoZAWo
+X-Received: by 2002:a05:6122:a13:b0:539:5cff:8070 with SMTP id 71dfb90a1353d-5472c0d490fmr6491525e0c.9.1757596167813;
+        Thu, 11 Sep 2025 06:09:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFd/VAt6jkDmxnGnMNUH/ZV3Br3jOJxAgjfGzfoucxUs9TbwAHF++l7wDbp7nNv5hn99Y6zAA==
+X-Received: by 2002:a05:6122:a13:b0:539:5cff:8070 with SMTP id 71dfb90a1353d-5472c0d490fmr6491493e0c.9.1757596167378;
+        Thu, 11 Sep 2025 06:09:27 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f163f51desm2799101fa.25.2025.09.11.06.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 11 Sep 2025 06:09:25 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f42:b000:db8b:7655:f60f:812b? (p200300d82f42b000db8b7655f60f812b.dip0.t-ipconnect.de. [2003:d8:2f42:b000:db8b:7655:f60f:812b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e04cf2870sm10194895e9.1.2025.09.11.06.09.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 06:09:25 -0700 (PDT)
-Message-ID: <9bcaf3ec-c0a1-4ca5-87aa-f84e297d1e42@redhat.com>
-Date: Thu, 11 Sep 2025 15:09:22 +0200
+Date: Thu, 11 Sep 2025 16:09:23 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Miguel Gazquez <miguel.gazquez@bootlin.com>
+Cc: Maxime Ripard <mripard@kernel.org>, Phong LE <ple@baylibre.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, miquel.raynal@bootlin.com,
+        kory.maincent@bootlin.com, romain.gantois@bootlin.com, praneeth@ti.com,
+        Aradhya Bhatia <a-bhatia1@ti.com>
+Subject: Re: [PATCH] drm/bridge: ite-it66121: Add drm_connector support
+Message-ID: <2l5kp4ojrcsg2apcpv7mzeeypwynecyfesenks6zzvnst3qkbt@4yhbosy2zhah>
+References: <20250909-it66121-fix-v1-1-bc79ca83df17@bootlin.com>
+ <do5zciwcanpiciy52zj3nn6igmwlgmbcfdwbibv2ijxm2fif5s@ib6jhzi5h2jo>
+ <6164422a-6265-4726-8da5-68bb8eafb9e6@bootlin.com>
+ <20250911-innocent-daffodil-macaque-797f13@houat>
+ <012046ab-d866-4b3a-8c8a-e130bc2b9628@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 1/5] mm: softdirty: Add pgtable_soft_dirty_supported()
-To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
- linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>,
- Ved Shanbhogue <ved@rivosinc.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>
-References: <20250911095602.1130290-1-zhangchunyan@iscas.ac.cn>
- <20250911095602.1130290-2-zhangchunyan@iscas.ac.cn>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250911095602.1130290-2-zhangchunyan@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <012046ab-d866-4b3a-8c8a-e130bc2b9628@bootlin.com>
+X-Proofpoint-ORIG-GUID: 7Grw3YmVkxsyIo8EsZtm4zbz_fh5d_w6
+X-Proofpoint-GUID: 7Grw3YmVkxsyIo8EsZtm4zbz_fh5d_w6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNCBTYWx0ZWRfX27ZWTOcRvSd/
+ Psa1bEbJCXO8wkSA1h/fJXmmxAsgf51o1yRzTVtqsmyJmOHnBx5flIlS2uQ4d4ukqqEymHJjO1d
+ KEhKx4mFKhYqmsn2cbU5dmXUs/mAkHtmjDLBdWxuCmg6p2nNbtbb+8GBC9DEmzQ1BgZ+RIGFsvG
+ EMNxKhXKQrNbpX+HMlSjzSJ0VpxU/t6rjdg/5tJeK4VdHyzzl67k8aC4vVN5g3xv1N+JjyOfs6z
+ 9PxF4GCxjZJPQnMUfXL4TU8/13nR/DXW1Gz38GbGf+htXYAwCOQA9uiQak09PxWLAqeFoNAL5GB
+ 1dtc5gqR0gagkVJk+42lKN6JJu4TS3hguTNB/gy0UVgNlNgk3YZC6g8c44oDKegsuWqz8mK42G3
+ jFApf/34
+X-Authority-Analysis: v=2.4 cv=QeFmvtbv c=1 sm=1 tr=0 ts=68c2ca09 cx=c_pps
+ a=JIY1xp/sjQ9K5JH4t62bdg==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=yJojWOMRYYMA:10 a=sozttTNsAAAA:8 a=J4TtIqrawgGb-EQjl3IA:9 a=3ZKOabzyN94A:10
+ a=wPNLvfGTeEIA:10 a=tNoRWFLymzeba-QzToBc:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-10_04,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 clxscore=1015 spamscore=0 impostorscore=0
+ bulkscore=0 suspectscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060024
 
-On 11.09.25 11:55, Chunyan Zhang wrote:
-> Some platforms can customize the PTE PMD entry soft-dirty bit making it
-> unavailable even if the architecture provides the resource.
+On Thu, Sep 11, 2025 at 02:49:59PM +0200, Miguel Gazquez wrote:
 > 
-> Add an API which architectures can define their specific implementations
-> to detect if soft-dirty bit is available on which device the kernel is
-> running.
-
-Thinking to myself: maybe pgtable_supports_soft_dirty() would read better
-Whatever you prefer.
-
 > 
-> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> ---
->   fs/proc/task_mmu.c      | 17 ++++++++++++++++-
->   include/linux/pgtable.h | 12 ++++++++++++
->   mm/debug_vm_pgtable.c   | 10 +++++-----
->   mm/huge_memory.c        | 13 +++++++------
->   mm/internal.h           |  2 +-
->   mm/mremap.c             | 13 +++++++------
->   mm/userfaultfd.c        | 10 ++++------
->   7 files changed, 52 insertions(+), 25 deletions(-)
+> Le 11/09/2025 à 11:50, Maxime Ripard a écrit :
+> > On Thu, Sep 11, 2025 at 10:51:06AM +0200, Miguel Gazquez wrote:
+> > > 
+> > > 
+> > > Le 10/09/2025 à 04:28, Dmitry Baryshkov a écrit :
+> > > > On Tue, Sep 09, 2025 at 06:16:43PM +0200, Miguel Gazquez wrote:
+> > > > > From: Aradhya Bhatia <a-bhatia1@ti.com>
+> > > > > 
+> > > > > Add support for DRM connector and make the driver support the older
+> > > > > format of attaching connectors onto the encoder->bridge->connector
+> > > > > chain.
+> > > > > This makes the driver compatible with display controller that only
+> > > > > supports the old format.
+> > > > > 
+> > > > > [Miguel Gazquez: Rebased + made driver work with or without
+> > > > > DRM_BRIDGE_ATTACH_NO_CONNECTOR]
+> > > > 
+> > > > What is the use case for not using DRM_BRIDGE_ATTACH_NO_CONNECTOR?
+> > > 
+> > > Some display controller drivers (like the tilcdc) call drm_bridge_attach
+> > > without DRM_BRIDGE_ATTACH_NO_CONNECTOR, so the bridge must support both with
+> > > and without DRM_BRIDGE_ATTACH_NO_CONNECTOR to be compatible with all display
+> > > controllers.
+> > 
+> > I'd rather convert tilcdc to use DRM_BRIDGE_ATTACH_NO_CONNECTOR then.
 > 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 29cca0e6d0ff..9e8083b6d4cd 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1058,7 +1058,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
->   	 * -Werror=unterminated-string-initialization warning
->   	 *  with GCC 15
->   	 */
-> -	static const char mnemonics[BITS_PER_LONG][3] = {
-> +	static char mnemonics[BITS_PER_LONG][3] = {
->   		/*
->   		 * In case if we meet a flag we don't know about.
->   		 */
-> @@ -1129,6 +1129,16 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
->   		[ilog2(VM_SEALED)] = "sl",
->   #endif
->   	};
-> +/*
-> + * We should remove the VM_SOFTDIRTY flag if the soft-dirty bit is
-> + * unavailable on which the kernel is running, even if the architecture
-> + * provides the resource and soft-dirty is compiled in.
-> + */
-> +#ifdef CONFIG_MEM_SOFT_DIRTY
-> +	if (!pgtable_soft_dirty_supported())
-> +		mnemonics[ilog2(VM_SOFTDIRTY)][0] = 0;
-> +#endif
+> The problem is that doing that break devicetrees using the tilcdc and a
+> bridge who doesn't support DRM_BRIDGE_ATTACH_NO_CONNECTOR (there are
+> multiple bridges that don't support DRM_BRIDGE_ATTACH_NO_CONNECTOR), and if
+> my understanding is correct breaking devicetrees is not allowed.
 
-You can now drop the ifdef.
+How does it break devicetree? The drm_bridge_connector isn't a part of
+DT.
 
-But, I wonder if could we instead just stop setting the flag. Then we don't
-have to worry about any VM_SOFTDIRTY checks.
-
-Something like the following
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 892fe5dbf9de0..8b8bf63a32ef7 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -783,6 +783,7 @@ static inline void vma_init(struct vm_area_struct *vma, struct mm_struct *mm)
-  static inline void vm_flags_init(struct vm_area_struct *vma,
-  				 vm_flags_t flags)
-  {
-+	VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
-  	ACCESS_PRIVATE(vma, __vm_flags) = flags;
-  }
-  
-@@ -801,6 +802,7 @@ static inline void vm_flags_reset(struct vm_area_struct *vma,
-  static inline void vm_flags_reset_once(struct vm_area_struct *vma,
-  				       vm_flags_t flags)
-  {
-+	VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
-  	vma_assert_write_locked(vma);
-  	WRITE_ONCE(ACCESS_PRIVATE(vma, __vm_flags), flags);
-  }
-@@ -808,6 +810,7 @@ static inline void vm_flags_reset_once(struct vm_area_struct *vma,
-  static inline void vm_flags_set(struct vm_area_struct *vma,
-  				vm_flags_t flags)
-  {
-+	VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
-  	vma_start_write(vma);
-  	ACCESS_PRIVATE(vma, __vm_flags) |= flags;
-  }
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 5fd3b80fda1d5..40cb3fbf9a247 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1451,8 +1451,10 @@ static struct vm_area_struct *__install_special_mapping(
-  		return ERR_PTR(-ENOMEM);
-  
-  	vma_set_range(vma, addr, addr + len, 0);
--	vm_flags_init(vma, (vm_flags | mm->def_flags |
--		      VM_DONTEXPAND | VM_SOFTDIRTY) & ~VM_LOCKED_MASK);
-+	vm_flags |= mm->def_flags | VM_DONTEXPAND;
-+	if (pgtable_soft_dirty_supported())
-+		vm_flags |= VM_SOFTDIRTY;
-+	vm_flags_init(vma, vm_flags & ~VM_LOCKED_MASK);
-  	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
-  
-  	vma->vm_ops = ops;
-diff --git a/mm/vma.c b/mm/vma.c
-index abe0da33c8446..16a1ed2a6199c 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -2551,7 +2551,8 @@ static void __mmap_complete(struct mmap_state *map, struct vm_area_struct *vma)
-  	 * then new mapped in-place (which must be aimed as
-  	 * a completely new data area).
-  	 */
--	vm_flags_set(vma, VM_SOFTDIRTY);
-+	if (pgtable_soft_dirty_supported())
-+		vm_flags_set(vma, VM_SOFTDIRTY);
-  
-  	vma_set_page_prot(vma);
-  }
-@@ -2819,7 +2820,8 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
-  	mm->data_vm += len >> PAGE_SHIFT;
-  	if (vm_flags & VM_LOCKED)
-  		mm->locked_vm += (len >> PAGE_SHIFT);
--	vm_flags_set(vma, VM_SOFTDIRTY);
-+	if (pgtable_soft_dirty_supported())
-+		vm_flags_set(vma, VM_SOFTDIRTY);
-  	return 0;
-  
-  mas_store_fail:
-diff --git a/mm/vma_exec.c b/mm/vma_exec.c
-index 922ee51747a68..c06732a5a620a 100644
---- a/mm/vma_exec.c
-+++ b/mm/vma_exec.c
-@@ -107,6 +107,7 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
-  int create_init_stack_vma(struct mm_struct *mm, struct vm_area_struct **vmap,
-  			  unsigned long *top_mem_p)
-  {
-+	unsigned long flags  = VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
-  	int err;
-  	struct vm_area_struct *vma = vm_area_alloc(mm);
-  
-@@ -137,7 +138,9 @@ int create_init_stack_vma(struct mm_struct *mm, struct vm_area_struct **vmap,
-  	BUILD_BUG_ON(VM_STACK_FLAGS & VM_STACK_INCOMPLETE_SETUP);
-  	vma->vm_end = STACK_TOP_MAX;
-  	vma->vm_start = vma->vm_end - PAGE_SIZE;
--	vm_flags_init(vma, VM_SOFTDIRTY | VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP);
-+	if (pgtable_soft_dirty_supported())
-+		flags |= VM_SOFTDIRTY;
-+	vm_flags_init(vma, flags);
-  	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
-  
-  	err = insert_vm_struct(mm, vma);
-
-
-> +
->   	size_t i;
->   
->   	seq_puts(m, "VmFlags: ");
-> @@ -1531,6 +1541,8 @@ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr,
->   static inline void clear_soft_dirty(struct vm_area_struct *vma,
->   		unsigned long addr, pte_t *pte)
->   {
-> +	if (!pgtable_soft_dirty_supported())
-> +		return;
->   	/*
->   	 * The soft-dirty tracker uses #PF-s to catch writes
->   	 * to pages, so write-protect the pte as well. See the
-> @@ -1566,6 +1578,9 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
->   {
->   	pmd_t old, pmd = *pmdp;
->   
-> +	if (!pgtable_soft_dirty_supported())
-> +		return;
-> +
->   	if (pmd_present(pmd)) {
->   		/* See comment in change_huge_pmd() */
->   		old = pmdp_invalidate(vma, addr, pmdp);
-
-That would all be handled with the above never-set-VM_SOFTDIRTY.
-
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 4c035637eeb7..2a3578a4ae4c 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1537,6 +1537,18 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
->   #define arch_start_context_switch(prev)	do {} while (0)
->   #endif
->   
-> +/*
-> + * Some platforms can customize the PTE soft-dirty bit making it unavailable
-> + * even if the architecture provides the resource.
-> + * Adding this API allows architectures to add their own checks for the
-> + * devices on which the kernel is running.
-> + * Note: When overiding it, please make sure the CONFIG_MEM_SOFT_DIRTY
-> + * is part of this macro.
-> + */
-> +#ifndef pgtable_soft_dirty_supported
-> +#define pgtable_soft_dirty_supported()	IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
-> +#endif
-> +
->   #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
->   #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
->   static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
-> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> index 830107b6dd08..b32ce2b0b998 100644
-> --- a/mm/debug_vm_pgtable.c
-> +++ b/mm/debug_vm_pgtable.c
-> @@ -690,7 +690,7 @@ static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
->   {
->   	pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
->   
-> -	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> +	if (!pgtable_soft_dirty_supported())
->   		return;
->   
->   	pr_debug("Validating PTE soft dirty\n");
-> @@ -702,7 +702,7 @@ static void __init pte_swap_soft_dirty_tests(struct pgtable_debug_args *args)
->   {
->   	pte_t pte;
->   
-> -	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> +	if (!pgtable_soft_dirty_supported())
->   		return;
->   
->   	pr_debug("Validating PTE swap soft dirty\n");
-> @@ -718,7 +718,7 @@ static void __init pmd_soft_dirty_tests(struct pgtable_debug_args *args)
->   {
->   	pmd_t pmd;
->   
-> -	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> +	if (!pgtable_soft_dirty_supported())
->   		return;
->   
->   	if (!has_transparent_hugepage())
-> @@ -734,8 +734,8 @@ static void __init pmd_swap_soft_dirty_tests(struct pgtable_debug_args *args)
->   {
->   	pmd_t pmd;
->   
-> -	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) ||
-> -		!IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION))
-> +	if (!pgtable_soft_dirty_supported() ||
-> +	    !IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION))
->   		return;
->   
->   	if (!has_transparent_hugepage())
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 9c38a95e9f09..218d430a2ec6 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -2271,12 +2271,13 @@ static inline int pmd_move_must_withdraw(spinlock_t *new_pmd_ptl,
->   
->   static pmd_t move_soft_dirty_pmd(pmd_t pmd)
->   {
-> -#ifdef CONFIG_MEM_SOFT_DIRTY
-> -	if (unlikely(is_pmd_migration_entry(pmd)))
-> -		pmd = pmd_swp_mksoft_dirty(pmd);
-> -	else if (pmd_present(pmd))
-> -		pmd = pmd_mksoft_dirty(pmd);
-> -#endif
-> +	if (pgtable_soft_dirty_supported()) {
-> +		if (unlikely(is_pmd_migration_entry(pmd)))
-> +			pmd = pmd_swp_mksoft_dirty(pmd);
-> +		else if (pmd_present(pmd))
-> +			pmd = pmd_mksoft_dirty(pmd);
-> +	}
-> +
-
-Wondering, should simply the arch take care of that and we can just clal
-pmd_swp_mksoft_dirty / pmd_mksoft_dirty?
-
->   	return pmd;
->   }
->   
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 45b725c3dc03..c6ca62f8ecf3 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -1538,7 +1538,7 @@ static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
->   	 * VM_SOFTDIRTY is defined as 0x0, then !(vm_flags & VM_SOFTDIRTY)
->   	 * will be constantly true.
->   	 */
-> -	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> +	if (!pgtable_soft_dirty_supported())
->   		return false;
->   
-
-That should be handled with the above never-set-VM_SOFTDIRTY.
-
->   	/*
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index e618a706aff5..7beb3114dbf5 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -162,12 +162,13 @@ static pte_t move_soft_dirty_pte(pte_t pte)
->   	 * Set soft dirty bit so we can notice
->   	 * in userspace the ptes were moved.
->   	 */
-> -#ifdef CONFIG_MEM_SOFT_DIRTY
-> -	if (pte_present(pte))
-> -		pte = pte_mksoft_dirty(pte);
-> -	else if (is_swap_pte(pte))
-> -		pte = pte_swp_mksoft_dirty(pte);
-> -#endif
-> +	if (pgtable_soft_dirty_supported()) {
-> +		if (pte_present(pte))
-> +			pte = pte_mksoft_dirty(pte);
-> +		else if (is_swap_pte(pte))
-> +			pte = pte_swp_mksoft_dirty(pte);
-> +	}
-> +
->   	return pte;
->   }
->   
 -- 
-Cheers
-
-David / dhildenb
-
+With best wishes
+Dmitry
 
