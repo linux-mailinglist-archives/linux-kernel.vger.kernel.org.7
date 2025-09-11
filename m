@@ -1,230 +1,206 @@
-Return-Path: <linux-kernel+bounces-811261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAD9B526A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:43:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BABDB526A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBA5D5820F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:43:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75E9F1C80BB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C4221B1AA;
-	Thu, 11 Sep 2025 02:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A672223323;
+	Thu, 11 Sep 2025 02:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R70vLNmj"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XVIJFv55"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B68A74BE1;
-	Thu, 11 Sep 2025 02:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B88021D5BC
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 02:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757558572; cv=none; b=YjLj41FdaeT59fqoXFQAzj962VNSRqYWuosw10JRNbNxpwDKTXD5D5nYVLuASm46TwHm9OL8MLmWMpCYacGLrE1gt7gSdtSZQtP2Vj+QhgmLbLlp4lBuJopygDj05DDWbwd8/T8BiJgKd9k0dFcTpjNxKf1R0TfHxtZryX3C99A=
+	t=1757558671; cv=none; b=WaPH7Irim/1J3yw7pW3F6WFcA4nwVwt4A7kK96tDWvnQIKRjVjNqDoK2ECYNBw7p9UhR5jRs3TukiD+C/Ayr65+q+7Fe/ftpJhk1D96r02arvMgMwiPHEkPWDzz00qIvE3OYZJDOhrYS1oMx3oQ0I/vjDR1xORygudgzJfoqzeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757558572; c=relaxed/simple;
-	bh=4IzelWXwLIIiLQ7QUAppKHUk/ucXT8lKxeNiTvMOliU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KAI2j/dgwGXX5Abzy9tjs52tgUYn6jkQeZ9I0BwopsZclXNeYf1L1+pRFZLkBeOf3poXCKbi7XWX9P9ggwq8nU3wb+jC0OyjaKS97wzFu+bpFThUFUDFIl3hlHbs/a72UwyjGs/XyVftA1Ba9aB5C7DdihhLj/U8uvOV8Lc97OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R70vLNmj; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7722bcb989aso154549b3a.1;
-        Wed, 10 Sep 2025 19:42:50 -0700 (PDT)
+	s=arc-20240116; t=1757558671; c=relaxed/simple;
+	bh=RH/lKNWxB+jYL9Tts/+toOUQozWus/JszyD4wS05wgY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rjdPyhvugUXOeoSvAA6uOYo7DlpzAFg533h46woVppU5tmWMTKMTj1lhqmBq1balgjI5Z3MUeG4CJ+ix6BNs97uc3g42JGYad0YkZ213DnCwelkIuzvQJYW1i4qCfpXKIOy37qfg93f91fxZtgBM5b2I6sdjogHcODiFm17lHfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XVIJFv55; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso199192b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 19:44:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757558570; x=1758163370; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1757558669; x=1758163469; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lTdLtSNrCO8di/hrRDk4RHof2WOK3gGHgKy96JVEeLY=;
-        b=R70vLNmjRLKs6MUBPv4IxdD1tGNVX26WBhLcYE8ow9vkcU9cq1/4ZkYhirYhnXxci/
-         ssWfDf2RsaT6DmoZHaE6oDgPpnkt4eeuxO3ELnPydXpaCXbBUU3NHaQXqGfyUW80xtIT
-         C/rq/0rV3J53NczMzOicYrTuMvd9mOK/+emCa+K7kiWtxwYBD58Apt6B1XeDHVZu+DvG
-         d5k1rH8AyRk9pTDy1mMya1OlttxlSsoAT9hjP/udJK02tk/dRzSb7QcRCNQMbJ6CJksn
-         G7qPLM/x9SzzfjS2e88S+ZiRFv4h+MCI8GH6FDg1lEZaWvwDhmEFKqlmiSbr0/gXC8Ff
-         m4+g==
+        bh=rbwrj9MCxkMdgb4OFtqE5AwLZMYq2qhd8B6juxSX8l8=;
+        b=XVIJFv551C429ayZ1emor3JSE2hrYLwLSfUS98VacfoqUuCvmUQeJfXFeSrNfMPnGL
+         DbUgOSPqNnF8qEIU9a9yELa+w9DXbSQltb45p+7xc9rrtM18Q1N8Jfq6orjkmPPJ/jZf
+         2DerwLgVi/ZGH3bebzZpxEXcaqXU/0zBUKPlbu9nAr5RIk71mdoECxRnfJVHG7y2OyLR
+         SEtXfU9L11w4iZkxVJnjCldsAG918j23rNEGC5Q6ID7FUMgXJVORh3mo6w7AmEX5Jg1B
+         xCrxsPgA8XuNZv7UneE6Jbxye8E2khCfTrtVGXdYwM8cPG5CsUZu/BcX68Swb9jEqHGO
+         YR7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757558570; x=1758163370;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757558669; x=1758163469;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lTdLtSNrCO8di/hrRDk4RHof2WOK3gGHgKy96JVEeLY=;
-        b=V6YsaeLkxmslI4Qvk9A23h6JXujTsi1SHZ4hPI2KVzNTawIIzB3jqxRLTZt0JORPHo
-         eowsYLYGkqbGYKHgIqcyA56P8hVZY810wvfblWq5LIA15SGpaSYdc2erF35ZgRsqo22U
-         hOjl+n+gCpMbzyI/QE6t74X/6WQy3WdB3CmnGjXp5hkMnnyUga1AeXfrKysUYahSKTVF
-         2AQ0V40W2RQdYHxO/dAX2dt/zZ4+umc8PJBg/fpCtPtRrEy54t1s+5729+1gDkD8LjZC
-         zCk+qh4F4T/LfyZ6cDT2darFz83fhMPw4rq7tKib2eS9OzxV8KcjgbIdNozVJ7U4gIhI
-         BZ/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUosoEL7UQ8wPWBxWlGq/pKCXVP3xW222BnIccTvI7eiHwoTqCpJmJzcOz7e4yytH5PDrcWi59c@vger.kernel.org, AJvYcCWyZOfvDyxdu0FJyAUnhOsQ6psSuy9CPbDSVysolacYAzc5AKYGtdc6MKnFh5vu1/E+96ytFsXTvtxlfL4=@vger.kernel.org, AJvYcCXTPWBehbZSjncD7+vm8t9SCZeLc7viciL0NDW4a5p0k131R+nw263ZEJXcsFNVq81tXIxjWV4hxGwt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz26rP4I/nuhzKNDSXtZAyjyLhnolS+ltrbOyW6j36kZAcGb9hL
-	m/mhPjTH0jTcUqThiVOfkh82UyvV4UP6bRrDMxxIQTzvgK6XJffZZc5U
-X-Gm-Gg: ASbGnct4FqtuC4bCHW52a9MSjmEcwKVGamk6kPFFEpa71WFWi0D8uin8Yk9B1Rdi4Mg
-	vd+6uO6aowzaQNgIZoBu91q5CxcXBRT8QX/alqNDdggEa5p1b7iBFcepxl6ZF32kleq15MS6gPE
-	A5o+QKhEhsvLkwGclv3MNB2yItCDv9tJ8q5SarqvaX4t06rlIieUnWUvO40WCKK/+JEsLdmWYdj
-	13rRfpRKesnThFAwZ3B/JWayawYISDUBrQ8FribLmuTdaaFXb6xa+X3Dx8x8aWHvrDxYYilCJ8y
-	B/jiKI6w4Fh8iqm/sjXUXZZb7r0EKWySPCc7uOSd6+ME7tF387CdhNo/wEUtafxuV2UqULpBDrd
-	Mjh35S155VXYFgd/bGBB+KYOjw5BR0jmn2Io81Zi3HRB7FfZpJdIWS1OQr9OGCmF0RuO7BUJKVg
-	uEPmks6ZLImaEvmIx2jF7B2hChKb2TaNhTdwEIc2I=
-X-Google-Smtp-Source: AGHT+IHlACGIGryGMo2klTca88UIiOwYdyASTSgAXWNl/iX9K5HSASXRhDKLI5yRH5C8WKr28ms/jQ==
-X-Received: by 2002:a05:6a00:1a8b:b0:771:fc48:7c1a with SMTP id d2e1a72fcca58-7742de3ee2amr18270677b3a.27.1757558569717;
-        Wed, 10 Sep 2025 19:42:49 -0700 (PDT)
-Received: from arch-pc.genesyslogic.com.tw (60-251-58-169.hinet-ip.hinet.net. [60.251.58.169])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760793b4dcsm318840b3a.13.2025.09.10.19.42.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 19:42:49 -0700 (PDT)
-From: Ben Chuang <benchuanggli@gmail.com>
-To: adrian.hunter@intel.com,
-	ulf.hansson@linaro.org
-Cc: victor.shih@genesyslogic.com.tw,
-	ben.chuang@genesyslogic.com.tw,
-	HL.Liu@genesyslogic.com.tw,
-	SeanHY.Chen@genesyslogic.com.tw,
-	benchuanggli@gmail.com,
-	victorshihgli@gmail.com,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v3 3/3] mmc: sdhci-pci-gli: GL9767: Fix initializing the UHS-II interface during a power-on
-Date: Thu, 11 Sep 2025 10:42:42 +0800
-Message-ID: <f687912419cdaf198b2430ea8d2c704c9016962f.1757557996.git.benchuanggli@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <736d7edd2d361f2a8fc01b112802f7c4dd68b7d6.1757557996.git.benchuanggli@gmail.com>
-References: <736d7edd2d361f2a8fc01b112802f7c4dd68b7d6.1757557996.git.benchuanggli@gmail.com>
+        bh=rbwrj9MCxkMdgb4OFtqE5AwLZMYq2qhd8B6juxSX8l8=;
+        b=MDxceqjW4fN3irsQyZHMU7bRYmhFuvW1wTyey1TA0vUOlxgR+HlbaSbBixJfmTIpkf
+         YUavw9wUmiRRCa/JKdLZtYytKPPz6q8BdDES+m635BjEC2lfjkX2FkOmTvAgJ4t/2az7
+         1FZ3Vc0QavqzKnhFF7Vajxdu0H/mUOevqd2PBYKSs38uuqNEg2KyExIp5UZ2Z+3G/GzD
+         WKpxdyvw160reEAXWsvxAhP0ongr+Mr2YxeHt5qcy1yajBO1uI5wRloTxI7nyU55+T5+
+         DEAbrsyyZU0lkTw6QkE8HOuZPjXRTkNNa3vBl4Jp+v5pnj+/qupz8z2evZ5asaUVy4dz
+         DUwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdy3noM9hwdyBdjEQ/1R4Gof9ip34OduQ0TSMqv5QZEOnXj/nBuKJxwszQlm7npmsxf7O2/uf1G+bjlUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUVAfYaZClMuKKreV1q3vRd5mvalipG6Plx3nSSKe1BQcPA17P
+	10RN/HBX1O7PJ+M7XgMvriteJmjZ7d5QzAWQtt4R4xCkAnZzvxlVXztU45/cLkJn3WoK/kUFiuC
+	FOhDj/QvvQzA0st7U1Hp83KkVvybH1EogpDRZ/cCE
+X-Gm-Gg: ASbGncvQ3bQfqvPX0W+jiBRUpVk/krFdDt+tR8D77hiV5+rLyhFUOiYrhTsYw8ACJz1
+	lwFPWCrJEXezlLVT54awfooce8E22iiA0GLh1GLd9l/sCZtyYJzEuW7CGtPcjydM0gDEyWXYlKn
+	bTzko5vcxqA1+nLiT6XPsGY2oEpTnxRViE+gBGB2NEeHBY7NHHS0hMQaNi1DQjiKg+OjemoUzt6
+	hIn179n0PDh7PTDTN09TQ98OSCDHxMkxbocn2k88lCPMLKfHmxyqwwK8Q==
+X-Google-Smtp-Source: AGHT+IHrKxy9g6rBS4o6e1tYQEA5wZNBsvI3ufN2vHAn6MqDAkniz9SsxcxDERH5dE5CRS5+X3a0rZ33jBsa8xcSqkk=
+X-Received: by 2002:a17:903:38cf:b0:245:f7f3:6760 with SMTP id
+ d9443c01a7336-25175f72ac4mr219280335ad.55.1757558668973; Wed, 10 Sep 2025
+ 19:44:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250911013052.2233-1-anderson@allelesecurity.com>
+In-Reply-To: <20250911013052.2233-1-anderson@allelesecurity.com>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Wed, 10 Sep 2025 19:44:17 -0700
+X-Gm-Features: Ac12FXxfHhvQkAVyEXp7XmpClh4AmHOVNOOZbMkwFinVGbnJRgZPSR36H3GxaYg
+Message-ID: <CAAVpQUBoCPervZLc+-bWF5+hXX8yj0SwUcU3MiUQ514xi-F6uA@mail.gmail.com>
+Subject: Re: [PATCH] net/tcp: Fix a NULL pointer dereference when using TCP-AO
+ with TCP_REPAIR.
+To: Anderson Nascimento <anderson@allelesecurity.com>
+Cc: edumazet@google.com, ncardwell@google.com, davem@davemloft.net, 
+	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+On Wed, Sep 10, 2025 at 6:32=E2=80=AFPM Anderson Nascimento
+<anderson@allelesecurity.com> wrote:
+>
+> A NULL pointer dereference can occur in tcp_ao_finish_connect() during a =
+connect() system call on a socket with a TCP-AO key added and TCP_REPAIR en=
+abled.
 
-According to the power structure of IC hardware design for UHS-II
-interface, reset control and timing must be added to the initialization
-process of powering on the UHS-II interface.
+Thanks for the patch, the change looks good.
 
-Fixes: 27dd3b82557a ("mmc: sdhci-pci-gli: enable UHS-II mode for GL9767")
-Cc: stable@vger.kernel.org # v6.13+
-Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
-v3: add Acked-by tag.
-v2:
- * use sdhci_gl9767_uhs2_phy_reset() instead of
-   sdhci_gl9767_uhs2_phy_reset_assert() and sdhci_gl9767_uhs2_phy_reset_deassert()
- * add comments for set/clean PCIE_GLI_9767_UHS2_CTL2_FORCE_RESETN and
-   PCIE_GLI_9767_UHS2_CTL2_FORCE_PHY_RESETN_VALUE
- * use usleep_range() instead of mdelay()
+Could you wrap the description at 75 columns ?
 
-v1:
- * https://lore.kernel.org/all/20250901094224.3920-1-benchuanggli@gmail.com/
----
- drivers/mmc/host/sdhci-pci-gli.c | 68 +++++++++++++++++++++++++++++++-
- 1 file changed, 67 insertions(+), 1 deletion(-)
+See this doc for other guidelines:
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#the-=
+canonical-patch-format
 
-diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
-index 3a1de477e9af..b0f91cc9e40e 100644
---- a/drivers/mmc/host/sdhci-pci-gli.c
-+++ b/drivers/mmc/host/sdhci-pci-gli.c
-@@ -283,6 +283,8 @@
- #define   PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE	  0xb
- #define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL	  BIT(6)
- #define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE	  0x1
-+#define   PCIE_GLI_9767_UHS2_CTL2_FORCE_PHY_RESETN	BIT(13)
-+#define   PCIE_GLI_9767_UHS2_CTL2_FORCE_RESETN_VALUE	BIT(14)
- 
- #define GLI_MAX_TUNING_LOOP 40
- 
-@@ -1179,6 +1181,65 @@ static void gl9767_set_low_power_negotiation(struct pci_dev *pdev, bool enable)
- 	gl9767_vhs_read(pdev);
- }
- 
-+static void sdhci_gl9767_uhs2_phy_reset(struct sdhci_host *host, bool assert)
-+{
-+	struct sdhci_pci_slot *slot = sdhci_priv(host);
-+	struct pci_dev *pdev = slot->chip->pdev;
-+	u32 value, set, clr;
-+
-+	if (assert) {
-+		/* Assert reset, set RESETN and clean RESETN_VALUE */
-+		set = PCIE_GLI_9767_UHS2_CTL2_FORCE_PHY_RESETN;
-+		clr = PCIE_GLI_9767_UHS2_CTL2_FORCE_RESETN_VALUE;
-+	} else {
-+		/* De-assert reset, clean RESETN and set RESETN_VALUE */
-+		set = PCIE_GLI_9767_UHS2_CTL2_FORCE_RESETN_VALUE;
-+		clr = PCIE_GLI_9767_UHS2_CTL2_FORCE_PHY_RESETN;
-+	}
-+
-+	gl9767_vhs_write(pdev);
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, &value);
-+	value |= set;
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-+	value &= ~clr;
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-+	gl9767_vhs_read(pdev);
-+}
-+
-+static void __gl9767_uhs2_set_power(struct sdhci_host *host, unsigned char mode, unsigned short vdd)
-+{
-+	u8 pwr = 0;
-+
-+	if (mode != MMC_POWER_OFF) {
-+		pwr = sdhci_get_vdd_value(vdd);
-+		if (!pwr)
-+			WARN(1, "%s: Invalid vdd %#x\n",
-+			     mmc_hostname(host->mmc), vdd);
-+		pwr |= SDHCI_VDD2_POWER_180;
-+	}
-+
-+	if (host->pwr == pwr)
-+		return;
-+
-+	host->pwr = pwr;
-+
-+	if (pwr == 0) {
-+		sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
-+	} else {
-+		sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
-+
-+		pwr |= SDHCI_POWER_ON;
-+		sdhci_writeb(host, pwr & 0xf, SDHCI_POWER_CONTROL);
-+		usleep_range(5000, 6250);
-+
-+		/* Assert reset */
-+		sdhci_gl9767_uhs2_phy_reset(host, true);
-+		pwr |= SDHCI_VDD2_POWER_ON;
-+		sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
-+		usleep_range(5000, 6250);
-+	}
-+}
-+
- static void sdhci_gl9767_set_clock(struct sdhci_host *host, unsigned int clock)
- {
- 	struct sdhci_pci_slot *slot = sdhci_priv(host);
-@@ -1205,6 +1266,11 @@ static void sdhci_gl9767_set_clock(struct sdhci_host *host, unsigned int clock)
- 	}
- 
- 	sdhci_enable_clk(host, clk);
-+
-+	if (mmc_card_uhs2(host->mmc))
-+		/* De-assert reset */
-+		sdhci_gl9767_uhs2_phy_reset(host, false);
-+
- 	gl9767_set_low_power_negotiation(pdev, true);
- }
- 
-@@ -1476,7 +1542,7 @@ static void sdhci_gl9767_set_power(struct sdhci_host *host, unsigned char mode,
- 		gl9767_vhs_read(pdev);
- 
- 		sdhci_gli_overcurrent_event_enable(host, false);
--		sdhci_uhs2_set_power(host, mode, vdd);
-+		__gl9767_uhs2_set_power(host, mode, vdd);
- 		sdhci_gli_overcurrent_event_enable(host, true);
- 	} else {
- 		gl9767_vhs_write(pdev);
--- 
-2.51.0
 
+>
+> The function is called with skb being NULL and attempts to dereference it=
+ on tcp_hdr(skb)->seq without a prior skb validation.
+>
+> Fix this by checking if skb is NULL before dereferencing it. If skb is no=
+t NULL, the ao->risn is set to tcp_hdr(skb)->seq to keep compatibility with=
+ the call made from tcp_rcv_synsent_state_process(). If skb is NULL, ao->ri=
+sn is set to 0.
+>
+> The commentary is taken from bpf_skops_established(), which is also calle=
+d in the same flow. Unlike the function being patched, bpf_skops_establishe=
+d() validates the skb before dereferencing it.
+>
+> int main(void){
+>         struct sockaddr_in sockaddr;
+>         struct tcp_ao_add tcp_ao;
+>         int sk;
+>         int one =3D 1;
+>
+>         memset(&sockaddr,'\0',sizeof(sockaddr));
+>         memset(&tcp_ao,'\0',sizeof(tcp_ao));
+>
+>         sk =3D socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+>
+>         sockaddr.sin_family =3D AF_INET;
+>
+>         memcpy(tcp_ao.alg_name,"cmac(aes128)",12);
+>         memcpy(tcp_ao.key,"ABCDEFGHABCDEFGH",16);
+>         tcp_ao.keylen =3D 16;
+>
+>         memcpy(&tcp_ao.addr,&sockaddr,sizeof(sockaddr));
+>
+>         setsockopt(sk, IPPROTO_TCP, TCP_AO_ADD_KEY, &tcp_ao, sizeof(tcp_a=
+o));
+>         setsockopt(sk, IPPROTO_TCP, TCP_REPAIR, &one, sizeof(one));
+>
+>         sockaddr.sin_family =3D AF_INET;
+>         sockaddr.sin_port =3D htobe16(123);
+>
+>         inet_aton("127.0.0.1", &sockaddr.sin_addr);
+>
+>         connect(sk,(struct sockaddr *)&sockaddr,sizeof(sockaddr));
+>
+> return 0;
+> }
+>
+> $ gcc tcp-ao-nullptr.c -o tcp-ao-nullptr -Wall
+> $ unshare -Urn
+> # ip addr add 127.0.0.1 dev lo
+> # ./tcp-ao-nullptr
+>
+> [   72.414850] BUG: kernel NULL pointer dereference, address: 00000000000=
+000b6
+> [   72.414863] #PF: supervisor read access in kernel mode
+> [   72.414869] #PF: error_code(0x0000) - not-present page
+> [   72.414873] PGD 116af4067 P4D 116af4067 PUD 117043067 PMD 0
+> [   72.414880] Oops: Oops: 0000 [#1] SMP NOPTI
+> [   72.414887] CPU: 2 UID: 1000 PID: 1558 Comm: tcp-ao-nullptr Not tainte=
+d 6.16.3-200.fc42.x86_64 #1 PREEMPT(lazy)
+> [   72.414896] Hardware name: VMware, Inc. VMware Virtual Platform/440BX =
+Desktop Reference Platform, BIOS 6.00 11/12/2020
+> [   72.414905] RIP: 0010:tcp_ao_finish_connect+0x19/0x60
+
+Full decoded stack trace without timestamps would be nicer.
+
+How to decode stack trace:
+cat trace.txt | ./scripts/decode_stacktrace.sh vmlinux
+
+>
+> Fixes: 7c2ffaf ("net/tcp: Calculate TCP-AO traffic keys")
+> Signed-off-by: Anderson Nascimento <anderson@allelesecurity.com>
+> ---
+>  net/ipv4/tcp_ao.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/net/ipv4/tcp_ao.c b/net/ipv4/tcp_ao.c
+> index bbb8d5f0eae7..abe913de8652 100644
+> --- a/net/ipv4/tcp_ao.c
+> +++ b/net/ipv4/tcp_ao.c
+> @@ -1178,7 +1178,11 @@ void tcp_ao_finish_connect(struct sock *sk, struct=
+ sk_buff *skb)
+>         if (!ao)
+>                 return;
+>
+> -       WRITE_ONCE(ao->risn, tcp_hdr(skb)->seq);
+> +       /* sk with TCP_REPAIR_ON does not have skb in tcp_finish_connect =
+*/
+> +       if (skb)
+> +               WRITE_ONCE(ao->risn, tcp_hdr(skb)->seq);
+> +       else
+> +               WRITE_ONCE(ao->risn, 0);
+>         ao->rcv_sne =3D 0;
+>
+>         hlist_for_each_entry_rcu(key, &ao->head, node, lockdep_sock_is_he=
+ld(sk))
+> --
+> 2.51.0
+>
 
