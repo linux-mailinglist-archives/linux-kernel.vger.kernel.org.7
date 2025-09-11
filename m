@@ -1,146 +1,142 @@
-Return-Path: <linux-kernel+bounces-811699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABD3B52CB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:10:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7929B52CBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9A53A1170
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:10:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55A0E3B1E65
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB382E7F3F;
-	Thu, 11 Sep 2025 09:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3JHGqwgl"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FF72E888C
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953CB2E8B62;
+	Thu, 11 Sep 2025 09:10:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4179E2E8894
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757581798; cv=none; b=IGSj4AfhyQkgpgD8HYNvBgOiK9olc5uv3ZM72m5DvYaNzSWl7R34Ce0Xq9IGsq/E4z1eWrXvJUaDQOmKnfA6+vjPi8BgaK9mwIPdn59lz74MjTD4ctmdEJqcNttssaxYgp0BXjbsyvM8JRnC/wSeBwXiXM+GZDGhFu69Rq2PCaA=
+	t=1757581819; cv=none; b=bMVMfhzjXtySD/P/nalrRMUNjH0WomxgnpAZosaJKFfWiLXrwHPabr/EU9SlOzPNkGsFhiOlYWXfDLiuUrOJKnJpfrTkMk+vRYQOk1ieKOTg3/A/1wpa4ysNbdxdF0Pfnh7nqPv08UYKBZnjHkQtPMljscUAB7kywYKQn5tkC0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757581798; c=relaxed/simple;
-	bh=dcE0SznU9PyCabtb+Z2XmvyG0XBdfDSeKArLLjJbTDc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bii0fuaT8WPBXILP09DAj0hhk861vYEhXCgyrP0BLbIX3SK3gHMKJEtxL29KhujeCJ+dFSVus6yjAzaiwhVokprY4yqNQLVDTvMu+znY5EZHRrzRe05OTdB1DGHM514Ar6to6zcMFqjB4DV2d1knsCooDEU/WhnGCTul16BxMCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3JHGqwgl; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-75512f5a75cso4253206d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 02:09:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757581796; x=1758186596; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=110hIxZl/DIKAtkNXDUZdekwbiGKdHIJpSsuT6OGVlM=;
-        b=3JHGqwglbARDdmktvjjOaElzPmFC9qrBnyeBo+y+X/182Cwg46n9lLm3t4hZcYYLnf
-         ykSx6ABN2t5X8ze5j30wdg9VcrVzigYQ4+twy0FzWkK09gyfMpWYfebVFhtOGVOsCV6c
-         JMW2v8j4o4NaPP1uyKSoixsOzVvjkPrZFcgKtKKHcNSA181PD0FYDXF5FKX9f01jFeLm
-         efPXTaq66bimw33larVkEEXA6RqQMsPnZ1WMC0CvEIyAJsr5nJ43qeG/i7W5CzACP277
-         janPKaBcqrEf42iveJJsu3mMMi0d6W7STqg+kxoXJfCkgjMcIfGC9R5+Nk/+i6PY5Frw
-         D09w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757581796; x=1758186596;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=110hIxZl/DIKAtkNXDUZdekwbiGKdHIJpSsuT6OGVlM=;
-        b=kmkqtNdW2MMEsniafIhvKdaVBwTt21VJ6od6dEUQxlfhKhPtwiDKg9RxAyj4TXA4dZ
-         o8dOB9WrZeRdGJsZfiD01EQ2A4mA6rU8ayV5Mt8ScPcBOwjnJI9gfvbhBnRCIwojR9yX
-         KFfpIVeYTv3V4YywybNuoFH/DX5QDCaoSqm11JIuHLa/pndXcqckxxe8Ht12wACZV/TE
-         p3Mwd3utb88Sxs2FdWoSqzT3RpYjzsbyjawaVrmQWg9WwJNjHArb++wy74AzlTf7TgLg
-         zZEfVArWtUSvOA4j3HZY6NdnbVUZQ3YNrsrnUm2Sj5HZRba9gQeJkuK/ZmRcWaWe3VYg
-         HjjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWv8UMTbopOcji95JU7k16QEnt+0w9KWPHBc+Th3FkC8nOmFKka7kPDhHRXW4nuE3Vj/OeSrNM9PT8kLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHvQi2qCVOwZugvzyLo5IdkuKyNteRXpZoqKKr77U9Sduu+BUo
-	ILQQ1OhepSv8MQOWa4f8lDpnbHgjz5qJfiZe5ZEUzH3S6WjKSDvA5DEc4Kr5MtTZZQOuhFbh8Oy
-	uua/qY2JLPzSpLtvc3jA6RA3851gIKHPcx1uBjh2a
-X-Gm-Gg: ASbGncvqa1fYKRKWyVe5aib6RwzWtPDl8ANmFWt5iRg11YarxoZ7qN90/frxB7mYgfF
-	ouXyxS7m3ARruGzul2hhqioOZZ56IjPxjIVIa2kz+AlCqZia+Rp+H/guFf9RTN1IrNe4xQUyuKi
-	8J58vjAF7MCvjDyYzkfMswZoJXqv/84ZSFUQ9+SJCiSAgngt3M9Nu3zL2jIMDFVW3J3I0dU/TyS
-	YLlfcQ9Z+qDorlB0nHEMP+4Ltj4I42nAcYwVLpL5BocUAwLRxFVQ+o=
-X-Google-Smtp-Source: AGHT+IHgGWXglu0DsqRQzQThUm92HQPN78KOj9YY4D2b+CMNT6C+6XgOPmNb4DnIeOzj1OW6pcFMvY1Iuj4xjLps2oM=
-X-Received: by 2002:ad4:5ba3:0:b0:70d:eb6d:b7ea with SMTP id
- 6a1803df08f44-73940411c14mr198047276d6.33.1757581795396; Thu, 11 Sep 2025
- 02:09:55 -0700 (PDT)
+	s=arc-20240116; t=1757581819; c=relaxed/simple;
+	bh=Di0qckkiILABfPBUA/UucUE/MxrbBO3qar4bS40BEcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kY+jkwBhy3E93mIRerg+KF5gX9WPCpyKVfSBGRjULWxMgrKEEG4/CdnpqKvyglZen8H9y0gjOyUEtdHPIXhA03H9JOWInsj5yi0450gruObZriGWREg3jlQKR4Djt/2ZSzHPcTFTHZcQVgUYAfCToakYDGjatZ65fbN8t8ZnCEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38ED9153B;
+	Thu, 11 Sep 2025 02:10:05 -0700 (PDT)
+Received: from [10.57.70.14] (unknown [10.57.70.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 457633F694;
+	Thu, 11 Sep 2025 02:10:11 -0700 (PDT)
+Message-ID: <eb8bd2da-48be-4c4e-bf52-48ea1718e02b@arm.com>
+Date: Thu, 11 Sep 2025 11:10:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829164500.324329-1-ebiggers@kernel.org> <20250910194921.GA3153735@google.com>
-In-Reply-To: <20250910194921.GA3153735@google.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Thu, 11 Sep 2025 11:09:17 +0200
-X-Gm-Features: AS18NWCx4E3OdC7mBgPGgVUBUT-xLxLcqqp44Vqxj-OTHUNQdAnrn9pPMhbFdkc
-Message-ID: <CAG_fn=W_7o6ANs94GwoYjyjvY5kSFYHB6DwfE+oXM7TP1eP5dw@mail.gmail.com>
-Subject: Re: [PATCH] kmsan: Fix out-of-bounds access to shadow memory
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Marco Elver <elver@google.com>, kasan-dev@googlegroups.com, 
-	Dmitry Vyukov <dvyukov@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: mm: Move KPTI helpers to mmu.c
+To: Ard Biesheuvel <ardb@kernel.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Kees Cook <kees@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>,
+ Yeoreum Yun <yeoreum.yun@arm.com>
+References: <20250910104454.317067-1-kevin.brodsky@arm.com>
+ <41f3227e-b945-4303-90b7-732affb0a101@arm.com>
+ <CAMj1kXEmfCHpssFjn_+4ZjKCUaWPeiVwznCpGumTfz33k-rfkg@mail.gmail.com>
+ <f8c268ce-798a-4d3a-bab2-16eea633f9db@arm.com>
+ <CAMj1kXHDKGsaOn96zecba=-6Bib0SVYs=voMr5DLjWOn_qAqAQ@mail.gmail.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <CAMj1kXHDKGsaOn96zecba=-6Bib0SVYs=voMr5DLjWOn_qAqAQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10, 2025 at 9:49=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
-wrote:
+On 11/09/2025 08:24, Ard Biesheuvel wrote:
+> On Thu, 11 Sept 2025 at 08:18, Anshuman Khandual
+> <anshuman.khandual@arm.com> wrote:
+>>
+>>
+>> On 11/09/25 11:38 AM, Ard Biesheuvel wrote:
+>>> On Thu, 11 Sept 2025 at 07:13, Anshuman Khandual
+>>> <anshuman.khandual@arm.com> wrote:
+>>>>
+>>>>
+>>>> On 10/09/25 4:14 PM, Kevin Brodsky wrote:
+>>>>> create_kpti_ng_temp_pgd() is currently defined (as an alias) in
+>>>>> mmu.c without matching declaration in a header; instead cpufeature.c
+>>>>> makes its own declaration. This is clearly not pretty, and as commit
+>>>>> ceca927c86e6 ("arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc
+>>>>> function signature") showed, it also makes it very easy for the
+>>>>> prototypes to go out of sync.
+>>>>>
+>>>>> All this would be much simpler if kpti_install_ng_mappings() and
+>>>>> associated functions lived in mmu.c, where they logically belong.
+>>>>> This is what this patch does:
+>>>>> - Move kpti_install_ng_mappings() and associated functions from
+>>>>>   cpufeature.c to mmu.c, add a declaration to <asm/mmu.h>
+>>>>> - Make create_kpti_ng_temp_pgd() a static function that simply calls
+>>>>>   __create_pgd_mapping_locked() instead of aliasing it
+>>>>> - Mark all these functions __init
+>>>>> - Move __initdata after kpti_ng_temp_alloc (as suggested by
+>>>>>   checkpatch)
+>>>>>
+>>>>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+>>>>> ---
+>>>>> Note: as things stand, create_kpti_ng_temp_pgd() could be removed,
+>>>>> but a separate patch [1] will make use of it to add an
+>>>>> assertion.
+>>>>>
+>>>>> [1] https://lore.kernel.org/all/20250813145607.1612234-3-chaitanyas.prakash@arm.com/
+>>>>> ---
+>>>>> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+>>>>> Cc: Ard Biesheuvel <ardb@kernel.org>
+>>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>>>> Cc: Kees Cook <kees@kernel.org>,
+>>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>>>> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>>> Cc: Will Deacon <will@kernel.org>
+>>>>> Cc: Yeoreum Yun <yeoreum.yun@arm.com>
+>>>>> ---
+>>>>>  arch/arm64/include/asm/mmu.h   |   6 ++
+>>>>>  arch/arm64/kernel/cpufeature.c |  97 ------------------------------
+>>>>>  arch/arm64/mm/mmu.c            | 106 ++++++++++++++++++++++++++++++---
+>>>>>  3 files changed, 103 insertions(+), 106 deletions(-)
+>>>>>
+>>>>> diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+>>>>> index 49f1a810df16..624edd6c4964 100644
+>>>>> --- a/arch/arm64/include/asm/mmu.h
+>>>>> +++ b/arch/arm64/include/asm/mmu.h
+>>>>> @@ -104,5 +104,11 @@ static inline bool kaslr_requires_kpti(void)
+>>>>>       return true;
+>>>>>  }
+>>>>>
+>>>>> +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>>>>> +void kpti_install_ng_mappings(void);
+>>>> Could the declarations be moved here instead ?
+>>> Why?
+>> To avoid both typedef and external instance declaration in the C
+>> code even though there is just a single call site in there.
+> But why would we want to avoid those in the first place?
 >
-> On Fri, Aug 29, 2025 at 09:45:00AM -0700, Eric Biggers wrote:
-> > Running sha224_kunit on a KMSAN-enabled kernel results in a crash in
-> > kmsan_internal_set_shadow_origin():
-> >
-> >     BUG: unable to handle page fault for address: ffffbc3840291000
-> >     #PF: supervisor read access in kernel mode
-> >     #PF: error_code(0x0000) - not-present page
-> >     PGD 1810067 P4D 1810067 PUD 192d067 PMD 3c17067 PTE 0
-> >     Oops: 0000 [#1] SMP NOPTI
-> >     CPU: 0 UID: 0 PID: 81 Comm: kunit_try_catch Tainted: G             =
-    N  6.17.0-rc3 #10 PREEMPT(voluntary)
-> >     Tainted: [N]=3DTEST
-> >     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.1=
-7.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
-> >     RIP: 0010:kmsan_internal_set_shadow_origin+0x91/0x100
-> >     [...]
-> >     Call Trace:
-> >     <TASK>
-> >     __msan_memset+0xee/0x1a0
-> >     sha224_final+0x9e/0x350
-> >     test_hash_buffer_overruns+0x46f/0x5f0
-> >     ? kmsan_get_shadow_origin_ptr+0x46/0xa0
-> >     ? __pfx_test_hash_buffer_overruns+0x10/0x10
-> >     kunit_try_run_case+0x198/0xa00
->
-> Any thoughts on this patch from the KMSAN folks?  I'd love to add
-> CONFIG_KMSAN=3Dy to my crypto subsystem testing, but unfortunately the
-> kernel crashes due to this bug :-(
->
-> - Eric
+> Moving these into mmu.h pollutes the global namespace with
+> declarations that must never be used outside of
+> __kpti_install_ng_mappings() to begin with.
 
-Sorry, I was out in August and missed this email when digging through my in=
-box.
+That makes sense to me - no need for these declarations to be in a
+header as they're implementation details of
+__kpti_install_ng_mappings(). What is more common is to have them at the
+top-level in the .c file instead of inside a function, but I think
+either way is fine.
 
-Curiously, I couldn't find any relevant crashes on the KMSAN syzbot
-instance, but the issue is legit.
-Thank you so much for fixing this!
-
-Any chance you can add a test case for it to mm/kmsan/kmsan_test.c?
-
-
---
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Liana Sebastian
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+- Kevin
 
