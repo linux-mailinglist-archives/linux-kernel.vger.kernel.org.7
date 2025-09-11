@@ -1,256 +1,187 @@
-Return-Path: <linux-kernel+bounces-812711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922DCB53BBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:43:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C6FB53BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 953197B478D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:42:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13C925A101A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD772DC77C;
-	Thu, 11 Sep 2025 18:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21092DC77B;
+	Thu, 11 Sep 2025 18:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J3VTVgYa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tv0QVVLK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7s2VtNp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A141E18E25;
-	Thu, 11 Sep 2025 18:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E012DC765;
+	Thu, 11 Sep 2025 18:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757616219; cv=none; b=ah3/W8a58bdP3IRstSYnr6TQH9f8RdRO7YBRSsWb4ycV3RkY8BBAHJqst5ma9WIWITyf3Qp1eLAOID8AsjEywcdya3mhnhiOS97QwJIAppwCaYDGWXbiS6rcrfqDHLBBpOuhM/hIGU2GieQL008MRdWoWK+wVPbeGvMe3MKrpnE=
+	t=1757616275; cv=none; b=RSCbki0epuZmDKYTAvktRoNQbk86H+we9JwZY1/ShTo3vN2Q2Suj9doNVLUIbrjHNkZCAJFXkEsljMkqR5el+Gmx6/gbfmTKLt9K4O6JmHSRVYUx0MIAy3dUbSQ5jYJwwRmR1MaitxNLyOGT16nnrRSS+lWdNZrs3JuHvrXyjoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757616219; c=relaxed/simple;
-	bh=BDxQOdVVBMTn9aNH5Xz6oOcBeuuA45KdEfLblmt03T8=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=MIwQlXkY677OnkGx20K/pjfYuuyOQ1xLpiS+6BCSHRk9ANA7FDWkECQMkYBKfDZ6EZ8NihWtC/EPVaLNZ/aj0mZPrJyyGGue+PQmRcxySA1xEbJ0vqXAfL0RDU5h5js5XMFVu+SIs56DPoGH4eB3nFw4xCPNh1DQoPEzsjbcAUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J3VTVgYa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tv0QVVLK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 11 Sep 2025 18:43:34 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757616215;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=M+SwbaV+z741t7Z4xx5J9hnTfc7fGZ0sO6dSGu6a1TU=;
-	b=J3VTVgYaaaX0reWV8bIGv6hZhPlJsJwnxQB3BgDQbRSkwHsFdcEeKkMXitmIKSa4nwZTo1
-	YsUr9N3jtDq5CprJJLZDcti5ZQDwf1ke5RQyivJqqR71MOCny1cHbOUuiBTRWabPzRCqrV
-	mbl/dn/DRabBafAMDuDPkSHsIUZxTRacYbG2AkQ6kTiCfPkQb21rd4CD1eo7BYLuegkBOZ
-	WWEUc0pH7pGQNsRgtnKB+Q5p7bAUQst6RIxPhLfFB/nyfssy5svem+Dlsh1Q6RL1o54SZj
-	O8MnDYlr0smt0OV/s4tIdgri9b6z2tJgPI4wRabFVINyno51FY2SH0CdvON5Ug==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757616215;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=M+SwbaV+z741t7Z4xx5J9hnTfc7fGZ0sO6dSGu6a1TU=;
-	b=Tv0QVVLKn9tECTiU7+XWnxS+eyG9BMzhHSyxOL4tGqg4nQrNoAMZdEnLuwyi0dWMRhulZC
-	GwufA5iYAvRMcDAA==
-From: "tip-bot2 for Kai Huang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/tdx] x86/virt/tdx: Use precalculated TDVPR page physical address
-Cc: Kai Huang <kai.huang@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- Kiryl Shutsemau <kas@kernel.org>, Farrah Chen <farrah.chen@intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1757616275; c=relaxed/simple;
+	bh=w5MXgFugxnmH56tVIOnCqs0AHe/uK/jNlEbRgaWvsQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PfEfhZBMATrEUPvsrg0AIYD8iGgIzgkKlzgi8JLKiQGjwHOF0AJ44AORFqwrl0Ol/XtIdfTbv34pS3ibismAPUNgKQ8CfqfrMugyfbhJgBzmFBG9SzWH8tonFVdFeYPheT6/nTJVqVf7SgCyMi2IAzwv6DPIvFKgZ2UKPI4vLdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7s2VtNp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAD1EC4CEF0;
+	Thu, 11 Sep 2025 18:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757616274;
+	bh=w5MXgFugxnmH56tVIOnCqs0AHe/uK/jNlEbRgaWvsQI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F7s2VtNpCT6pUPhbm+TP2RoBLL+54M9Xj3c0bEYZNFBLR6bBUi4uzERLY33JjNwML
+	 SH2GSslTnR1Tz1F+ujxnzjxLlMIkmeu8dK4aWAJKpufB4hVP4JcG3TX36RMKpiAhlp
+	 28b9DD9ojSChK+EFmr3a/DL81eTNyrT5pnHFzeEfNb2FWz/A6tS3Tqj/nkX13DxVOn
+	 5IJxj+6igewdLy4PM34v+dwZBOvxU0OWfBqZtsOQZQpSOjeu1guDCPgqfOYEpLIaKT
+	 eB1MxqSpYj1+9Zc5g4meTfaAMOBIKLrJUK1D2vQo5uPjiCBR5l/yckP5NDDD5plSWO
+	 CeUp6o831T6ow==
+Date: Thu, 11 Sep 2025 11:44:29 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Juergen Christ <jchrist@linux.ibm.com>,
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCH 1/3] Compiler Attributes: Add __assume macro
+Message-ID: <20250911184429.GA2395987@ax162>
+References: <20250910151216.646600-1-hca@linux.ibm.com>
+ <20250910151216.646600-2-hca@linux.ibm.com>
+ <20250911013243.GA292340@ax162>
+ <20250911145659.8894Dea-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175761621420.709179.7149926715895756681.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911145659.8894Dea-hca@linux.ibm.com>
 
-The following commit has been merged into the x86/tdx branch of tip:
+On Thu, Sep 11, 2025 at 04:56:59PM +0200, Heiko Carstens wrote:
+> On Wed, Sep 10, 2025 at 06:32:43PM -0700, Nathan Chancellor wrote:
+> > > + *
+> > > + * Optional: only supported since GCC >= 13.1, clang >= 12.0
+> > > + *
+> > > + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html#index-assume-statement-attribute
+> > > + * clang: https://clang.llvm.org/docs/AttributeReference.html#assume
+> > 
+> > Looking at this link sent me down a bit of a rabbit hole :) Prior to
+> > Clang 19.1.0 [2], assume was an OpenMP attribute, which has completely
+> > different semantics and errors out when used in the way the series does:
+> > 
+> >   In file included from kernel/bounds.c:13:
+> >   In file included from include/linux/log2.h:12:
+> >   In file included from include/linux/bitops.h:67:
+> >   arch/s390/include/asm/bitops.h:173:12: error: expected string literal as argument of '__assume__' attribute
+> >     173 |                 __assume(bit <= 64);
+> >         |                          ^
+> > 
+> > Unfortunately, I think __assume will need to be handled in the compiler
+> > specific headers :/
+> > 
+> > [1]: https://clang.llvm.org/docs/AttributeReference.html#id13
+> > [2]: https://github.com/llvm/llvm-project/commit/c44fa3e8a9a44c2e9a575768a3c185354b9f6c17
+> 
+> Thank you for having look. This is quite surprising. So after looking into the
+> various header files it might be acceptable to add this to compiler_types.h,
+> since there seem to be a few similar constructs.
+> 
+> Maybe something like this(?):
 
-Commit-ID:     e414b1005891d74bb0c3d27684c58dfbfbd1754b
-Gitweb:        https://git.kernel.org/tip/e414b1005891d74bb0c3d27684c58dfbfbd=
-1754b
-Author:        Kai Huang <kai.huang@intel.com>
-AuthorDate:    Tue, 09 Sep 2025 19:55:53 +12:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Thu, 11 Sep 2025 11:38:28 -07:00
+Ah, yeah, that would work too. I had not considered compiler_types.h
+since most of those tend to involve dynamic checks via cc-option but I
+do like keeping the documentation attached to the attribute in a single
+location, rather than duplicating it in the individual compiler files.
+This will also make it easy to move this into compiler_attributes.h in
+the (likely distant) future when both compilers support this
+unconditionally (or clang 19.1.0 is the minimum supported version so
+__has_attribute can be used).
 
-x86/virt/tdx: Use precalculated TDVPR page physical address
+> From d9d67807e6854666507e55d9ac0c7b4ec659aa99 Mon Sep 17 00:00:00 2001
+> From: Heiko Carstens <hca@linux.ibm.com>
+> Date: Wed, 10 Sep 2025 14:18:07 +0200
+> Subject: [PATCH] compiler_types: Add __assume macro
+> 
+> Make the statement attribute "assume" with a new __assume macro available.
+> 
+> This allows compilers to generate better code, however code which makes use
+> of __assume must be written as if the compiler ignores the hint. Otherwise
+> this may lead to subtle bugs if code is compiled with compilers which do
+> not support the attribute.
+> 
+> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
 
-All of the x86 KVM guest types (VMX, SEV and TDX) do some special context
-tracking when entering guests. This means that the actual guest entry
-sequence must be noinstr.
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-Part of entering a TDX guest is passing a physical address to the TDX
-module. Right now, that physical address is stored as a 'struct page'
-and converted to a physical address at guest entry. That page=3D>phys
-conversion can be complicated, can vary greatly based on kernel
-config, and it is definitely _not_ a noinstr path today.
+I do not think anyone really owns compiler_types.h so unless Miguel has
+any objections from the compiler attributes perspective, I think you can
+just take this via the s390 tree with the other two changes.
 
-There have been a number of tinkering approaches to try and fix this
-up, but they all fall down due to some part of the page=3D>phys
-conversion infrastructure not being noinstr friendly.
-
-Precalculate the page=3D>phys conversion and store it in the existing
-'tdx_vp' structure.  Use the new field at every site that needs a
-tdvpr physical address. Remove the now redundant tdx_tdvpr_pa().
-Remove the __flatten remnant from the tinkering.
-
-Note that only one user of the new field is actually noinstr. All
-others can use page_to_phys(). But, they might as well save the effort
-since there is a pre-calculated value sitting there for them.
-
-[ dhansen: rewrite all the text ]
-
-Signed-off-by: Kai Huang <kai.huang@intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Kiryl Shutsemau <kas@kernel.org>
-Tested-by: Farrah Chen <farrah.chen@intel.com>
----
- arch/x86/include/asm/tdx.h  |  2 ++
- arch/x86/kvm/vmx/tdx.c      |  9 +++++++++
- arch/x86/virt/vmx/tdx/tdx.c | 21 ++++++++-------------
- 3 files changed, 19 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index 6120461..6b338d7 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -171,6 +171,8 @@ struct tdx_td {
- struct tdx_vp {
- 	/* TDVP root page */
- 	struct page *tdvpr_page;
-+	/* precalculated page_to_phys(tdvpr_page) for use in noinstr code */
-+	phys_addr_t tdvpr_pa;
-=20
- 	/* TD vCPU control structure: */
- 	struct page **tdcx_pages;
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 04b6d33..75326a7 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -852,6 +852,7 @@ void tdx_vcpu_free(struct kvm_vcpu *vcpu)
- 	if (tdx->vp.tdvpr_page) {
- 		tdx_reclaim_control_page(tdx->vp.tdvpr_page);
- 		tdx->vp.tdvpr_page =3D 0;
-+		tdx->vp.tdvpr_pa =3D 0;
- 	}
-=20
- 	tdx->state =3D VCPU_TD_STATE_UNINITIALIZED;
-@@ -2931,6 +2932,13 @@ static int tdx_td_vcpu_init(struct kvm_vcpu *vcpu, u64=
- vcpu_rcx)
- 		return -ENOMEM;
- 	tdx->vp.tdvpr_page =3D page;
-=20
-+	/*
-+	 * page_to_phys() does not work in 'noinstr' code, like guest
-+	 * entry via tdh_vp_enter(). Precalculate and store it instead
-+	 * of doing it at runtime later.
-+	 */
-+	tdx->vp.tdvpr_pa =3D page_to_phys(tdx->vp.tdvpr_page);
-+
- 	tdx->vp.tdcx_pages =3D kcalloc(kvm_tdx->td.tdcx_nr_pages, sizeof(*tdx->vp.t=
-dcx_pages),
- 			       	     GFP_KERNEL);
- 	if (!tdx->vp.tdcx_pages) {
-@@ -2993,6 +3001,7 @@ free_tdvpr:
- 	if (tdx->vp.tdvpr_page)
- 		__free_page(tdx->vp.tdvpr_page);
- 	tdx->vp.tdvpr_page =3D 0;
-+	tdx->vp.tdvpr_pa =3D 0;
-=20
- 	return ret;
- }
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index 330b560..eac4032 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -1504,11 +1504,6 @@ static inline u64 tdx_tdr_pa(struct tdx_td *td)
- 	return page_to_phys(td->tdr_page);
- }
-=20
--static inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
--{
--	return page_to_phys(td->tdvpr_page);
--}
--
- /*
-  * The TDX module exposes a CLFLUSH_BEFORE_ALLOC bit to specify whether
-  * a CLFLUSH of pages is required before handing them to the TDX module.
-@@ -1520,9 +1515,9 @@ static void tdx_clflush_page(struct page *page)
- 	clflush_cache_range(page_to_virt(page), PAGE_SIZE);
- }
-=20
--noinstr __flatten u64 tdh_vp_enter(struct tdx_vp *td, struct tdx_module_args=
- *args)
-+noinstr u64 tdh_vp_enter(struct tdx_vp *td, struct tdx_module_args *args)
- {
--	args->rcx =3D tdx_tdvpr_pa(td);
-+	args->rcx =3D td->tdvpr_pa;
-=20
- 	return __seamcall_dirty_cache(__seamcall_saved_ret, TDH_VP_ENTER, args);
- }
-@@ -1583,7 +1578,7 @@ u64 tdh_vp_addcx(struct tdx_vp *vp, struct page *tdcx_p=
-age)
- {
- 	struct tdx_module_args args =3D {
- 		.rcx =3D page_to_phys(tdcx_page),
--		.rdx =3D tdx_tdvpr_pa(vp),
-+		.rdx =3D vp->tdvpr_pa,
- 	};
-=20
- 	tdx_clflush_page(tdcx_page);
-@@ -1652,7 +1647,7 @@ EXPORT_SYMBOL_GPL(tdh_mng_create);
- u64 tdh_vp_create(struct tdx_td *td, struct tdx_vp *vp)
- {
- 	struct tdx_module_args args =3D {
--		.rcx =3D tdx_tdvpr_pa(vp),
-+		.rcx =3D vp->tdvpr_pa,
- 		.rdx =3D tdx_tdr_pa(td),
- 	};
-=20
-@@ -1708,7 +1703,7 @@ EXPORT_SYMBOL_GPL(tdh_mr_finalize);
- u64 tdh_vp_flush(struct tdx_vp *vp)
- {
- 	struct tdx_module_args args =3D {
--		.rcx =3D tdx_tdvpr_pa(vp),
-+		.rcx =3D vp->tdvpr_pa,
- 	};
-=20
- 	return seamcall(TDH_VP_FLUSH, &args);
-@@ -1754,7 +1749,7 @@ EXPORT_SYMBOL_GPL(tdh_mng_init);
- u64 tdh_vp_rd(struct tdx_vp *vp, u64 field, u64 *data)
- {
- 	struct tdx_module_args args =3D {
--		.rcx =3D tdx_tdvpr_pa(vp),
-+		.rcx =3D vp->tdvpr_pa,
- 		.rdx =3D field,
- 	};
- 	u64 ret;
-@@ -1771,7 +1766,7 @@ EXPORT_SYMBOL_GPL(tdh_vp_rd);
- u64 tdh_vp_wr(struct tdx_vp *vp, u64 field, u64 data, u64 mask)
- {
- 	struct tdx_module_args args =3D {
--		.rcx =3D tdx_tdvpr_pa(vp),
-+		.rcx =3D vp->tdvpr_pa,
- 		.rdx =3D field,
- 		.r8 =3D data,
- 		.r9 =3D mask,
-@@ -1784,7 +1779,7 @@ EXPORT_SYMBOL_GPL(tdh_vp_wr);
- u64 tdh_vp_init(struct tdx_vp *vp, u64 initial_rcx, u32 x2apicid)
- {
- 	struct tdx_module_args args =3D {
--		.rcx =3D tdx_tdvpr_pa(vp),
-+		.rcx =3D vp->tdvpr_pa,
- 		.rdx =3D initial_rcx,
- 		.r8 =3D x2apicid,
- 	};
+> ---
+>  include/linux/compiler_types.h | 20 ++++++++++++++++++++
+>  init/Kconfig                   | 10 ++++++++++
+>  2 files changed, 30 insertions(+)
+> 
+> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> index 16755431fc11..38a52a792e48 100644
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -329,6 +329,26 @@ struct ftrace_likely_data {
+>  #define __no_sanitize_or_inline __always_inline
+>  #endif
+>  
+> +/*
+> + * Beware: Code which makes use of __assume must be written as if the compiler
+> + * ignores the hint. Otherwise this may lead to subtle bugs if code is compiled
+> + * with compilers which do not support the attribute.
+> + * Using this attribute requires careful analysis, since in some cases it may
+> + * generate worse code (see clang documentation).
+> + *
+> + * Optional: only supported since gcc >= 13
+> + * Optional: only supported since clang >= 19
+> + *
+> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html#index-assume-statement-attribute
+> + * clang: https://clang.llvm.org/docs/AttributeReference.html#id13
+> + *
+> + */
+> +#ifdef CONFIG_CC_HAS_ASSUME
+> +# define __assume(expr)			__attribute__((__assume__(expr)))
+> +#else
+> +# define __assume(expr)
+> +#endif
+> +
+>  /*
+>   * Optional: only supported since gcc >= 15
+>   * Optional: only supported since clang >= 18
+> diff --git a/init/Kconfig b/init/Kconfig
+> index e3eb63eadc87..5882c5e74047 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -112,6 +112,16 @@ config TOOLS_SUPPORT_RELR
+>  config CC_HAS_ASM_INLINE
+>  	def_bool $(success,echo 'void foo(void) { asm inline (""); }' | $(CC) -x c - -c -o /dev/null)
+>  
+> +config CC_HAS_ASSUME
+> +	bool
+> +	# clang needs to be at least 19.1.0 since the meaning of the assume
+> +	# attribute changed:
+> +	# https://github.com/llvm/llvm-project/commit/c44fa3e8a9a44c2e9a575768a3c185354b9f6c17
+> +	default y if CC_IS_CLANG && CLANG_VERSION >= 190100
+> +	# supported since gcc 13.1.0
+> +	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106654
+> +	default y if CC_IS_GCC && GCC_VERSION >= 130100
+> +
+>  config CC_HAS_NO_PROFILE_FN_ATTR
+>  	def_bool $(success,echo '__attribute__((no_profile_instrument_function)) int x();' | $(CC) -x c - -c -o /dev/null -Werror)
+>  
+> -- 
+> 2.48.1
 
