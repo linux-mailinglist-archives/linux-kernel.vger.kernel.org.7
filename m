@@ -1,85 +1,199 @@
-Return-Path: <linux-kernel+bounces-811675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47515B52C68
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:00:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9ABB52C6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2102A5A28D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:00:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0463B3AF110
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D4C2E7646;
-	Thu, 11 Sep 2025 08:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0B32E888C;
+	Thu, 11 Sep 2025 09:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7X39oPG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CN731Js3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16AC2E6CBB;
-	Thu, 11 Sep 2025 08:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4721D8DFB;
+	Thu, 11 Sep 2025 09:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757581198; cv=none; b=qsvfk3RMjsvbFVaQpfRsNNFyZ/NmXOnj9p0tx8qZhP+6slgmPPV02SFQ0/SrPdizI41xA6pZCZWhMO9+xeV4HmWVXyOFbRmoNq7iCKJmQmEEbl4aONyZn1iXcQ35AqBKfNJ3ZCaIo/UB80J1L9dQKLKN2k4ywfGJGLFQXlWU3RE=
+	t=1757581210; cv=none; b=LoTF8iWZ7fy5Pj2cdeZhsyQ9PY0QUvQ5B0M0gy8rUsWUbHqAce8caTbWVkoXrNqWo0TI+zTxeMVTjjzXqgo1xZEbuNfzY34VEWSG5chmiQuRHMG/ZVAffHq7s8pPGbglV0VYMmutxpVMmOar8MSgvJUKbrPNOfAT0vaM0Wf+Z90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757581198; c=relaxed/simple;
-	bh=di3tOqn8KDjRSNmUzjcZz5ibzOySkfRcW/PH6lItTeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rmc7/+7WB5MB/9q/Sshafgbu6iUGcIg1YKyP0+RBF6Mb5qsqSRKbF9aIQbqb6bN5rbZuqwVC4v2nPLFnxc5Sxig47d8X5anFs/zmkCmnIfvlFrTM55dswBS4Xyp5SIHsrTEczpAmy8FeOyd0l2M/qElkJiSLz9fB6K9j5/zwpa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7X39oPG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DE82C4CEF0;
-	Thu, 11 Sep 2025 08:59:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757581197;
-	bh=di3tOqn8KDjRSNmUzjcZz5ibzOySkfRcW/PH6lItTeg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d7X39oPGOFriWKB/puO3tXJcs5u3pQmXfNPNNI8u5ge2mMCrfGBsH2Rh7NKcXunnn
-	 ObfoQli7du9d2GcWiz3ksJ57w7LGYFGJuZEsrqz1lxF9fFztZFpwweu8GBTjFMKdWd
-	 zkPbcElNMpHhcq3l0yKWfScfPTbVH2XNqm8qoZmuCWitfZdeAa/oZeWsoXXdZlx9mu
-	 S5M+MpRqQMTueSmR81hl4/YoijM9bnmlnmtRyzMgTXGtJCEvBAcQyUyWmzxy6VanGx
-	 iQETccGAWvBynljLCuzzzQgxgMZHVVp4JjtBQabjYy+linbjJ4XAqaGypJIvHsXRJw
-	 rzS47xbNu5qTQ==
-Date: Thu, 11 Sep 2025 10:59:49 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 32/32] selftests/namespaces: add file handle selftests
-Message-ID: <20250911-vorurteil-gemacht-c62d1349fc33@brauner>
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-32-4dd56e7359d8@kernel.org>
- <f65cf3ae-069d-4ade-9fc9-03f01c7e1649@acm.org>
+	s=arc-20240116; t=1757581210; c=relaxed/simple;
+	bh=apxpL+JA5234BjF+vbBSUV5l8bBfl2JCXGsBGUN2Sww=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Zyc6wszwCSkuSPqmdKy++GKILcQu/YHv9UZDX3kEsckG3eeCCikgPsUXBei4DLMVrhRz9jxYq2Wnb8f6C5gvZAKDelxx1aJDLS/kcWs5XCmXL357Lhg622aCMk1IOUZ8wViCwflN++kl2ZfkXp3RJDsfegmP7vd6wTtA21wKJ/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CN731Js3; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757581209; x=1789117209;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=apxpL+JA5234BjF+vbBSUV5l8bBfl2JCXGsBGUN2Sww=;
+  b=CN731Js3kiHGhOxf+CyNtov06/vfZ5YPLbKQGqE/m3J1C15vEJu33W3a
+   CNLhez96zaQokVhxVvYWu33EPqdIjLTbCfhxL1zKFBeD86I5295TWbmuJ
+   FEN8EHckskKlCcm5ecXwBE3MOaueS8NiCTn8We/vF7AwWeM35K1RphhOS
+   PdVnJQDBQKxFq79X0g3Pa+6TwWjKnSBb0u2Na75OEhCB03KrpInp+GUfg
+   wH2Ddx/YclPrQ6olhBNf33aDEoOal60qAuM1gqoq5I6VeEgw3TcSwa1l8
+   cNdPH0TmW2pii/I9yTFmFIseb+7KLkgOgVWoqi7uCZfUJZuq5rQ4UfAEO
+   g==;
+X-CSE-ConnectionGUID: y6YRnXHfREGMOA60rEi+VQ==
+X-CSE-MsgGUID: M7ff5+1HST66WCvZHBNMRQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="59980857"
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="59980857"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 02:00:08 -0700
+X-CSE-ConnectionGUID: DK3xpkOuRkutGbdOlc8uZg==
+X-CSE-MsgGUID: S0y7rLfnSaGwSUn6CKkovA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="173539949"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.187])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 02:00:01 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 11 Sep 2025 11:59:58 +0300 (EEST)
+To: =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>
+cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>, 
+    Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, 
+    David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, 
+    intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+    Jani Nikula <jani.nikula@linux.intel.com>, 
+    Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>, 
+    Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>, 
+    Tvrtko Ursulin <tursulin@ursulin.net>, 
+    ?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+    LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 04/11] PCI: Improve Resizable BAR functions kernel doc
+In-Reply-To: <97f8d4a7-6897-4fe5-878c-c04a887cce62@amd.com>
+Message-ID: <20c3a5f5-fa15-3889-3f56-20726aa3925b@linux.intel.com>
+References: <20250911075605.5277-1-ilpo.jarvinen@linux.intel.com> <20250911075605.5277-5-ilpo.jarvinen@linux.intel.com> <97f8d4a7-6897-4fe5-878c-c04a887cce62@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f65cf3ae-069d-4ade-9fc9-03f01c7e1649@acm.org>
+Content-Type: multipart/mixed; boundary="8323328-183604244-1757581198=:944"
 
-On Wed, Sep 10, 2025 at 02:46:21PM -0700, Bart Van Assche wrote:
-> On 9/10/25 7:37 AM, Christian Brauner wrote:
-> > +	snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/net");
-> > +	ns_fd = open(ns_path, O_RDONLY);
-> 
-> Here and also in TEST(nsfs_uts_handle), ns_path is not modified. Does
-> this mean that "/proc/self/ns/net" can be stored in a static const char
-> array and also that the snprintf() call can be left out? In case I would
-> have missed the reason why the path is copied, how about using
-> asprintf() or strdup() instead of snprintf()?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Yep, that can just be a static string. Thanks.
+--8323328-183604244-1757581198=:944
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Thu, 11 Sep 2025, Christian K=C3=B6nig wrote:
+
+> On 11.09.25 09:55, Ilpo J=C3=A4rvinen wrote:
+> > Fix the copy-pasted errors in the Resizable BAR handling functions
+> > kernel doc and generally improve wording choices.
+> >=20
+> > Fix the formatting errors of the Return: line.
+> >=20
+> > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > ---
+> >  drivers/pci/rebar.c | 29 ++++++++++++++++++-----------
+> >  1 file changed, 18 insertions(+), 11 deletions(-)
+> >=20
+> > diff --git a/drivers/pci/rebar.c b/drivers/pci/rebar.c
+> > index 020ed7a1b3aa..64315dd8b6bb 100644
+> > --- a/drivers/pci/rebar.c
+> > +++ b/drivers/pci/rebar.c
+> > @@ -58,8 +58,9 @@ void pci_rebar_init(struct pci_dev *pdev)
+> >   * @bar: BAR to find
+> >   *
+> >   * Helper to find the position of the ctrl register for a BAR.
+> > - * Returns -ENOTSUPP if resizable BARs are not supported at all.
+> > - * Returns -ENOENT if no ctrl register for the BAR could be found.
+> > + *
+> > + * Return: %-ENOTSUPP if resizable BARs are not supported at all,
+> > + *=09   %-ENOENT if no ctrl register for the BAR could be found.
+> >   */
+> >  static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
+> >  {
+> > @@ -92,12 +93,15 @@ static int pci_rebar_find_pos(struct pci_dev *pdev,=
+ int bar)
+> >  }
+> > =20
+> >  /**
+> > - * pci_rebar_get_possible_sizes - get possible sizes for BAR
+> > + * pci_rebar_get_possible_sizes - get possible sizes for Resizable BAR
+> >   * @pdev: PCI device
+> >   * @bar: BAR to query
+> >   *
+> >   * Get the possible sizes of a resizable BAR as bitmask defined in the=
+ spec
+> > - * (bit 0=3D1MB, bit 31=3D128TB). Returns 0 if BAR isn't resizable.
+> > + * (bit 0=3D1MB, bit 31=3D128TB).
+> > + *
+> > + * Return: A bitmask of possible sizes (0=3D1MB, 31=3D128TB), or %0 if=
+ BAR isn't
+> > + *=09   resizable.
+> >   */
+> >  u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
+> >  {
+> > @@ -121,12 +125,14 @@ u32 pci_rebar_get_possible_sizes(struct pci_dev *=
+pdev, int bar)
+> >  EXPORT_SYMBOL(pci_rebar_get_possible_sizes);
+> > =20
+> >  /**
+> > - * pci_rebar_get_current_size - get the current size of a BAR
+> > + * pci_rebar_get_current_size - get the current size of a Resizable BA=
+R
+> >   * @pdev: PCI device
+> > - * @bar: BAR to set size to
+> > + * @bar: BAR to get the size from
+> >   *
+> > - * Read the size of a BAR from the resizable BAR config.
+> > - * Returns size if found or negative error code.
+> > + * Reads the current size of a BAR from the Resizable BAR config.
+> > + *
+> > + * Return: BAR Size if @bar is resizable (bit 0=3D1MB, bit 31=3D128TB)=
+, or
+>=20
+> This is a bit misleading since there is no mask returned but rather the=
+=20
+> order or in other words which bit of the mask was used.=20
+
+Thanks for noticing this. I'll removed "bit" x2 from it, does that fully=20
+address your concern?
+
+--=20
+ i.
+
+> > + *=09   negative on error.
+> >   */
+> >  int pci_rebar_get_current_size(struct pci_dev *pdev, int bar)
+> >  {
+> > @@ -142,13 +148,14 @@ int pci_rebar_get_current_size(struct pci_dev *pd=
+ev, int bar)
+> >  }
+> > =20
+> >  /**
+> > - * pci_rebar_set_size - set a new size for a BAR
+> > + * pci_rebar_set_size - set a new size for a Resizable BAR
+> >   * @pdev: PCI device
+> >   * @bar: BAR to set size to
+> > - * @size: new size as defined in the spec (0=3D1MB, 31=3D128TB)
+> > + * @size: new size as defined in the PCIe spec (0=3D1MB, 31=3D128TB)
+> >   *
+> >   * Set the new size of a BAR as defined in the spec.
+> > - * Returns zero if resizing was successful, error code otherwise.
+> > + *
+> > + * Return: %0 if resizing was successful, or negative on error.
+> >   */
+> >  int pci_rebar_set_size(struct pci_dev *pdev, int bar, int size)
+> >  {
+>=20
+--8323328-183604244-1757581198=:944--
 
