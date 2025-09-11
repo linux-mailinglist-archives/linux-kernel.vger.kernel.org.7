@@ -1,143 +1,145 @@
-Return-Path: <linux-kernel+bounces-811394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DCE6B52885
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:10:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D81B5288C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76D6C7B7281
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DBC5A04C9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9298825782D;
-	Thu, 11 Sep 2025 06:10:26 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98813257437;
+	Thu, 11 Sep 2025 06:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="RiAFrEvj"
+Received: from fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.64.237.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0344F256C83;
-	Thu, 11 Sep 2025 06:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF26178372;
+	Thu, 11 Sep 2025 06:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.237.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757571026; cv=none; b=otNk0V9Ej9cxgS9FEg2vwOHYkFhDDCu+AfOeYOgEWfNb7J7AZbnrTU7sqxnh1gJwNSqCG8KR9tn2Blguxr8QtoVsvAh0TJdP5UPi9y57d0DxPnPd20I5uzo86TWoIDTxcgR5+VdrV6rrdfsvY0MpGKA4AKXNy8OUWtq9Zn6XUrs=
+	t=1757571226; cv=none; b=TBUaHmuBek801RfcgHKWueliayOdlge64buNGQ+uoo91Gk/yjuBoTVvp+j/5DogzzNr61T6yPP3D2j19rrvPfN67iIBxAs0btmOBu4fJUNeLOSel33pJZcTH1zcB1sLwbaekhqkrX7GvdyWdc/BGnS2Z0RfASpvXq/BnmPgFwf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757571026; c=relaxed/simple;
-	bh=96tYRv/WqcuuqiaQcYtdx9NTcTMadTXSNn/TNA94QIw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=qDXt7lw/cVyAKzxxnfXH+j1mPM9trWdO0k/Pgx4qfrFnPUyycY3jci3S82RTLHsanfF+KorfAsqmIDJKSGw/xnCNTKkoViArsPQEoPoIYyxvTJyD8lTXpb/BYTlOpq989Su4Op7ulTHic3RWKj0vyk66ITVd1NhznwpgvcZhlEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cMnGj74CfzYQvXQ;
-	Thu, 11 Sep 2025 14:10:21 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7E0791A0ADA;
-	Thu, 11 Sep 2025 14:10:20 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgD3QY7KZ8Jo0kB5CA--.14407S3;
-	Thu, 11 Sep 2025 14:10:20 +0800 (CST)
-Subject: Re: [PATCH] md/raid1: skip recovery of already synced areas
-To: linan666@huaweicloud.com, song@kernel.org
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, yi.zhang@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250910082544.271923-1-linan666@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <eaae71c1-8723-8f49-5bd8-01a1e67152be@huaweicloud.com>
-Date: Thu, 11 Sep 2025 14:10:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1757571226; c=relaxed/simple;
+	bh=Rd/zyPwRxZk0R7aXyuI7LZNuG4ltnWdMo8eFSAGvums=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XjmZDKCM23rOBKLUxEsym61uEyAILxonYy9Sxmu+Ekd7DYg03EwgKiipgKay0Zkijo8kpTLgeoGy5vI2i6orOTthR/I7Jf58tp88qjngHk6DauYC1rn4jJ4jtOK7NNyG5W1jYjvRaeSFRio3VXTcuJTwlywd9Fiv69q5F5oEum4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=RiAFrEvj; arc=none smtp.client-ip=3.64.237.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1757571225; x=1789107225;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-transfer-encoding:mime-version:subject;
+  bh=Rd/zyPwRxZk0R7aXyuI7LZNuG4ltnWdMo8eFSAGvums=;
+  b=RiAFrEvjCgTNcupUSuufPFM3Yx/DKCTZ9VtyG34dcaCJu31D1VMzs0IX
+   V5/nOTyy3n0gu6zoqyIIcRzGYO09kcVM7ijNBuyrYnDKnUa6Gw1zIoekj
+   EbvfuKbHWtPgMU9rPM6qR2eibNluHKpRXZaQIzOb3eMzvrXOOLbc4I2Dc
+   yPN9iaO2QDwDLWiqt0PdRdgbD/Kmu4l0XFu1wBfzQO0NU2Dy/YNj+ParF
+   4MWkzY0xoOk/+6dvFtaCuxnf7HMNM0GhFxi1WamUz3O98h8jXMveax9CJ
+   SXoVs5owv6Qeb5QjB5Zo/pD5OnSVyS/XBprZikJA3LFNKW++v6sPncq0S
+   Q==;
+X-CSE-ConnectionGUID: LFQOPYTPQFKMfvgYTj0Q/A==
+X-CSE-MsgGUID: vTdcenLPSNiInKJXfGztSw==
+X-IronPort-AV: E=Sophos;i="6.18,256,1751241600"; 
+   d="scan'208";a="1838185"
+Subject: RE: [PATCH 5.10.y] e1000e: fix EEPROM length types for overflow checks
+Thread-Topic: [PATCH 5.10.y] e1000e: fix EEPROM length types for overflow checks
+Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
+  by internal-fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 06:13:34 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:1748]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.14.93:2525] with esmtp (Farcaster)
+ id 1011adb8-4646-4d00-906a-0b591a6b3797; Thu, 11 Sep 2025 06:13:34 +0000 (UTC)
+X-Farcaster-Flow-ID: 1011adb8-4646-4d00-906a-0b591a6b3797
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 11 Sep 2025 06:13:34 +0000
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 11 Sep 2025 06:13:33 +0000
+Received: from EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d]) by
+ EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d%3]) with mapi id
+ 15.02.2562.020; Thu, 11 Sep 2025 06:13:33 +0000
+From: "Farber, Eliav" <farbere@amazon.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: "jesse.brandeburg@intel.com" <jesse.brandeburg@intel.com>,
+	"anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>,
+	"davem@davemloft.net" <davem@davemloft.net>, "kuba@kernel.org"
+	<kuba@kernel.org>, "vitaly.lifshits@intel.com" <vitaly.lifshits@intel.com>,
+	"post@mikaelkw.online" <post@mikaelkw.online>,
+	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Chocron,
+ Jonathan" <jonnyc@amazon.com>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>, "Farber, Eliav" <farbere@amazon.com>
+Thread-Index: AQHcInjMD5K1PZTplE6DLl3oGc4tIbSNe74AgAAD8ZA=
+Date: Thu, 11 Sep 2025 06:13:33 +0000
+Message-ID: <f524c24888924a999c3bb90de0099b78@amazon.com>
+References: <20250910173138.8307-1-farbere@amazon.com>
+ <2025091131-tractor-almost-6987@gregkh>
+In-Reply-To: <2025091131-tractor-almost-6987@gregkh>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250910082544.271923-1-linan666@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3QY7KZ8Jo0kB5CA--.14407S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tF13Jw48Wr1fAFyDur45KFg_yoW8tFWfpa
-	13Ja4a939rJa13Aa4kXryUGa4Fy34fGrW7Gr13W343X3s8GFyDWF4kXFy5WFyDJF13Za1j
-	q3ykXrW5uFyYgFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUBVbkUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
-
-ÔÚ 2025/09/10 16:25, linan666@huaweicloud.com Ð´µÀ:
-> From: Li Nan <linan122@huawei.com>
-> 
-> When a new disk is added during running recovery, the kernel may
-> restart recovery from the beginning of the device and submit write
-> io to ranges that have already been synchronized.
-> 
-> Reproduce:
->    mdadm -CR /dev/md0 -l1 -n3 /dev/sda missing missing
->    mdadm --add /dev/md0 /dev/sdb
->    sleep 10
->    cat /proc/mdstat	# partially synchronized
->    mdadm --add /dev/md0 /dev/sdc
->    cat /proc/mdstat	# start from 0
->    iostat 1 sdb sdc	# sdb has io, too
-> 
-> If 'rdev->recovery_offset' is ahead of the current recovery sector,
-> read from that device instead of issuing a write. It prevents
-> unnecessary writes while still preserving the chance to back up data
-> if it is the last copy.
-> 
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
->   drivers/md/raid1.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 3e422854cafb..ac5a9b73157a 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -2894,7 +2894,8 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
->   		    test_bit(Faulty, &rdev->flags)) {
->   			if (i < conf->raid_disks)
->   				still_degraded = true;
-> -		} else if (!test_bit(In_sync, &rdev->flags)) {
-> +		} else if (!test_bit(In_sync, &rdev->flags) &&
-> +			   rdev->recovery_offset <= sector_nr) {
->   			bio->bi_opf = REQ_OP_WRITE;
->   			bio->bi_end_io = end_sync_write;
->   			write_targets ++;
-> @@ -2903,6 +2904,9 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
->   			sector_t first_bad = MaxSector;
->   			sector_t bad_sectors;
->   
-> +			if (!test_bit(In_sync, &rdev->flags))
-> +				good_sectors = min(rdev->recovery_offset - sector_nr,
-> +						   (u64)good_sectors);
->   			if (is_badblock(rdev, sector_nr, good_sectors,
->   					&first_bad, &bad_sectors)) {
->   				if (first_bad > sector_nr)
-> 
-
-This patch looks correct, however, I took a long time to go through all
-the details, and there is still the same problem in the case new disk is
-added during resync.
-
-Perhaps this is a good time to cleanup raid1_sync_request() now, just
-don't mess resync and recover together in the same code path with lots
-of special handling.
-
-Thanks,
-Kuai
-
+PiBPbiBXZWQsIFNlcCAxMCwgMjAyNSBhdCAwNTozMTozOFBNICswMDAwLCBFbGlhdiBGYXJiZXIg
+d3JvdGU6DQo+PiBGaXggYSBjb21waWxhdGlvbiBmYWlsdXJlIHdoZW4gd2FybmluZ3MgYXJlIHRy
+ZWF0ZWQgYXMgZXJyb3JzOg0KPj4NCj4+IGRyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2UxMDAw
+ZS9ldGh0b29sLmM6IEluIGZ1bmN0aW9uIOKAmGUxMDAwX3NldF9lZXByb23igJk6DQo+PiAuL2lu
+Y2x1ZGUvbGludXgvb3ZlcmZsb3cuaDo3MToxNTogZXJyb3I6IGNvbXBhcmlzb24gb2YgZGlzdGlu
+Y3QgcG9pbnRlciB0eXBlcyBsYWNrcyBhIGNhc3QgWy1XZXJyb3JdDQo+PiAgICA3MSB8ICAodm9p
+ZCkgKCZfX2EgPT0gX19kKTsgICBcDQo+PiAgICAgICB8ICAgICAgICAgICAgICAgXn4NCj4+IGRy
+aXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2UxMDAwZS9ldGh0b29sLmM6NTgyOjY6IG5vdGU6IGlu
+IGV4cGFuc2lvbiBvZiBtYWNybyDigJhjaGVja19hZGRfb3ZlcmZsb3figJkNCj4+ICAgNTgyIHwg
+IGlmIChjaGVja19hZGRfb3ZlcmZsb3coZWVwcm9tLT5vZmZzZXQsIGVlcHJvbS0+bGVuLCAmdG90
+YWxfbGVuKSB8fA0KPj4gICAgICAgfCAgICAgIF5+fn5+fn5+fn5+fn5+fn5+fg0KPj4NCj4+IFRv
+IGZpeCB0aGlzLCBjaGFuZ2UgdG90YWxfbGVuIGFuZCBtYXhfbGVuIGZyb20gc2l6ZV90IHRvIHUz
+MiBpbiANCj4+IGUxMDAwX3NldF9lZXByb20oKS4NCj4+IFRoZSBjaGVja19hZGRfb3ZlcmZsb3co
+KSBoZWxwZXIgcmVxdWlyZXMgdGhhdCB0aGUgZmlyc3QgdHdvIG9wZXJhbmRzIA0KPj4gYW5kIHRo
+ZSBwb2ludGVyIHRvIHRoZSByZXN1bHQgKHRoaXJkIG9wZXJhbmQpIGFsbCBoYXZlIHRoZSBzYW1l
+IHR5cGUuDQo+PiBPbiA2NC1iaXQgYnVpbGRzLCB1c2luZyBzaXplX3QgY2F1c2VkIGEgbWlzbWF0
+Y2ggd2l0aCB0aGUgdTMyIGZpZWxkcw0KPj4gZWVwcm9tLT5vZmZzZXQgYW5kIGVlcHJvbS0+bGVu
+LCBsZWFkaW5nIHRvIHR5cGUgY2hlY2sgZmFpbHVyZXMuDQo+Pg0KPj4gRml4ZXM6IGNlODgyOWQz
+ZDQ0YiAoImUxMDAwZTogZml4IGhlYXAgb3ZlcmZsb3cgaW4gZTEwMDBfc2V0X2VlcHJvbSIpDQo+
+PiBTaWduZWQtb2ZmLWJ5OiBFbGlhdiBGYXJiZXIgPGZhcmJlcmVAYW1hem9uLmNvbT4NCj4+IC0t
+LQ0KPj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2UxMDAwZS9ldGh0b29sLmMgfCAyICst
+DQo+PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+Pg0K
+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2UxMDAwZS9ldGh0b29s
+LmMgDQo+PiBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2UxMDAwZS9ldGh0b29sLmMNCj4+
+IGluZGV4IDRhY2E4NTQ3ODNlMi4uNTg0Mzc4MjkxZjNmIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVy
+cy9uZXQvZXRoZXJuZXQvaW50ZWwvZTEwMDBlL2V0aHRvb2wuYw0KPj4gKysrIGIvZHJpdmVycy9u
+ZXQvZXRoZXJuZXQvaW50ZWwvZTEwMDBlL2V0aHRvb2wuYw0KPj4gQEAgLTU1OSw3ICs1NTksNyBA
+QCBzdGF0aWMgaW50IGUxMDAwX3NldF9lZXByb20oc3RydWN0IG5ldF9kZXZpY2UgDQo+PiAqbmV0
+ZGV2LCAgew0KPj4gICAgICAgc3RydWN0IGUxMDAwX2FkYXB0ZXIgKmFkYXB0ZXIgPSBuZXRkZXZf
+cHJpdihuZXRkZXYpOw0KPj4gICAgICAgc3RydWN0IGUxMDAwX2h3ICpodyA9ICZhZGFwdGVyLT5o
+dzsNCj4+IC0gICAgIHNpemVfdCB0b3RhbF9sZW4sIG1heF9sZW47DQo+PiArICAgICB1MzIgdG90
+YWxfbGVuLCBtYXhfbGVuOw0KPj4gICAgICAgdTE2ICplZXByb21fYnVmZjsNCj4+ICAgICAgIGlu
+dCByZXRfdmFsID0gMDsNCj4+ICAgICAgIGludCBmaXJzdF93b3JkOw0KPj4gLS0NCj4+IDIuNDcu
+Mw0KPj4NCj4NCj4gV2h5IGlzIHRoaXMgbm90IG5lZWRlZCBpbiBMaW51cydzIHRyZWU/DQpLZXJu
+ZWwgNS4xMC4yNDMgZW5mb3JjZXMgdGhlIHNhbWUgdHlwZSwgYnV0IHRoaXMgZW5mb3JjZW1lbnQg
+aXMNCmFic2VudCBmcm9tIDUuMTUuMTkyIGFuZCBsYXRlcjoNCi8qDQogKiBGb3Igc2ltcGxpY2l0
+eSBhbmQgY29kZSBoeWdpZW5lLCB0aGUgZmFsbGJhY2sgY29kZSBiZWxvdyBpbnNpc3RzIG9uDQog
+KiBhLCBiIGFuZCAqZCBoYXZpbmcgdGhlIHNhbWUgdHlwZSAoc2ltaWxhciB0byB0aGUgbWluKCkg
+YW5kIG1heCgpDQogKiBtYWNyb3MpLCB3aGVyZWFzIGdjYydzIHR5cGUtZ2VuZXJpYyBvdmVyZmxv
+dyBjaGVja2VycyBhY2NlcHQNCiAqIGRpZmZlcmVudCB0eXBlcy4gSGVuY2Ugd2UgZG9uJ3QganVz
+dCBtYWtlIGNoZWNrX2FkZF9vdmVyZmxvdyBhbg0KICogYWxpYXMgZm9yIF9fYnVpbHRpbl9hZGRf
+b3ZlcmZsb3csIGJ1dCBhZGQgdHlwZSBjaGVja3Mgc2ltaWxhciB0bw0KICogYmVsb3cuDQogKi8N
+CiNkZWZpbmUgY2hlY2tfYWRkX292ZXJmbG93KGEsIGIsIGQpIF9fbXVzdF9jaGVja19vdmVyZmxv
+dygoewlcDQogDQo+IEFsc28sIHdoeSBpcyBpdCBub3QgY2M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5v
+cmc/DQpBZGRlZCB0byBjYy4NCg0KLS0tDQpSZWdhcmRzLCBFbGlhdg0K
 
