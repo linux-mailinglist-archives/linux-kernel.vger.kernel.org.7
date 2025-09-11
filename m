@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-811636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4719B52BDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:36:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE9E1B52BCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 947683B0F6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:36:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 722531C81E28
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8F12E2852;
-	Thu, 11 Sep 2025 08:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337482E5B0E;
+	Thu, 11 Sep 2025 08:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="P3pP/gZq"
-Received: from forwardcorp1d.mail.yandex.net (forwardcorp1d.mail.yandex.net [178.154.239.200])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H407TJpZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5F22E2DDE
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AE22E2DDD;
+	Thu, 11 Sep 2025 08:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757579803; cv=none; b=g1ffgVEFrV74j0+XMRHdquxTA3YqvGDUV0mjhFCRDjc3P/1yhwPs7FMevwgM+K3sBOMQRJUCL2lAr/ammvW/aoWk1Xnk6koJ+qUvAAX69CAVbRp7c97OjKwTA/Adgz7BOy60zQ+JoCk51BS3vr9wUn09oDL14w4p1S/9S8gMXI0=
+	t=1757579716; cv=none; b=W9H+w99WYrY3RX3uD+HC9bvgpsSo9Oxemv1xWT6NjwYHfpe+Nj5nhIniM7eY+/ZAn8LJm//6so0UDL2krQ2N503bisqyt7fRULUwePjSa80y9HzRcKASavdsrOvRb7b8xkif4ETSU/N9QBtpngESos4+0YSQBeMiWdVFpu0drxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757579803; c=relaxed/simple;
-	bh=grX3KY4ya//hyp8tH6de0uVHqplm9WNkCwNifLngM8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K565DB9VpAo/g+pYd3pth9y7sJf27ufu355Ql3krbaigyS7Te6hk5qCmAQdohRbamaJpGSYfY9OmF/oN+gK6D1Hyah/I+nB/PiLMCQYU7LhU3tEg5FfYzKsih1cawNED+FMSV85sO5lmOhdZdbW/g+1nmJpWcykWqg4PKLFjHZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=P3pP/gZq; arc=none smtp.client-ip=178.154.239.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:cf2d:0:640:140f:0])
-	by forwardcorp1d.mail.yandex.net (Yandex) with ESMTPS id 4136C808C6;
-	Thu, 11 Sep 2025 11:34:56 +0300 (MSK)
-Received: from [IPV6:2a02:6bf:8080:b59::1:18] (unknown [2a02:6bf:8080:b59::1:18])
-	by mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id sYGp7G0Fk0U0-7pENpNK6;
-	Thu, 11 Sep 2025 11:34:55 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1757579695;
-	bh=2mSbqt7bF/dpUzLzF0O4X7STtkQQLozpoQa5g0Qmirg=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=P3pP/gZqeoOnTSzoTfYbaj8pMTR/21AYnSgT3rl4IBJIyZoNZ6O6HYc6Kxm3ncIqC
-	 HCA8xaDRJqTDsuOgN0F3Az+HanzX2aIzQlDA7ZCPcGv4ocknuS0eY/76prX7Y9ICis
-	 2IImOrTKAxXCmDpEnDqS//xigaF40hi7NvyRZrP8=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-Message-ID: <d4d676a4-643d-47fb-974e-fa08009ce23b@yandex-team.ru>
-Date: Thu, 11 Sep 2025 11:34:54 +0300
+	s=arc-20240116; t=1757579716; c=relaxed/simple;
+	bh=aUlg7LEpD7b3mMOp6aM+uF70jgwT3fGRPOK3IMebm2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SFKg2ssSVG0l2O0HAHPr69DStt8Vx3YTK24DbK3wervuOejD9ub08AiJyD09Tz9Qu+LphQYIFv2Ot4y1QprrXCtdBNfrEVOkMhLeui05E4kX1t1pT6lVYVukY0f4kJ7+UE2aa5vrZsh0kdPiYPESGQgiRZ7OS3VG7bwcBowErnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H407TJpZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3DC6C4CEF1;
+	Thu, 11 Sep 2025 08:35:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757579716;
+	bh=aUlg7LEpD7b3mMOp6aM+uF70jgwT3fGRPOK3IMebm2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H407TJpZfFP0RFaHZw1BGqy7boDGd0W7hmO74Llpr1MTTOceYUnujI78bwEQBtERz
+	 gR+Lv+H5ZrBPf/iKe0UhMXw8g3+Q82IC86kT5c++Uqa/G/Iy+avAslcHzjWeP2J3KT
+	 rDJQw48/k1N5q/NHGEs+tVhpoOKY0+YNAvau9ERk=
+Date: Thu, 11 Sep 2025 10:35:13 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Kuen-Han Tsai <khtsai@google.com>
+Cc: zack.rusin@broadcom.com, krzysztof.kozlowski@linaro.org,
+	namcao@linutronix.de, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@kernel.org
+Subject: Re: [PATCH] usb: gadget: f_ncm: Fix NPE in ncm_bind error path
+Message-ID: <2025091132-scenic-avalanche-7bec@gregkh>
+References: <20250904114854.1913155-1-khtsai@google.com>
+ <2025090651-unifier-award-3e0a@gregkh>
+ <CAKzKK0oi85bnyT3Lq_TXz8YwFrmBxQd8K1q7hRDv-Oww75F_tQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] printk_ringbuffer: don't needlessly wrap data
- blocks around
-To: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20250905144152.9137-1-d-tatianin@yandex-team.ru>
- <20250905144152.9137-2-d-tatianin@yandex-team.ru>
- <84tt1gex89.fsf@jogness.linutronix.de>
- <ea3b4933-49d0-4940-9f05-d8e2189606c8@yandex-team.ru>
- <84ikhwev7o.fsf@jogness.linutronix.de>
-Content-Language: en-US
-From: Daniil Tatianin <d-tatianin@yandex-team.ru>
-In-Reply-To: <84ikhwev7o.fsf@jogness.linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKzKK0oi85bnyT3Lq_TXz8YwFrmBxQd8K1q7hRDv-Oww75F_tQ@mail.gmail.com>
 
+On Thu, Sep 11, 2025 at 02:50:15PM +0800, Kuen-Han Tsai wrote:
+> Hi Greg,
+> 
+> On Sat, Sep 6, 2025 at 8:15 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Thu, Sep 04, 2025 at 07:46:13PM +0800, Kuen-Han Tsai wrote:
+> > > When an ncm_bind/unbind cycle occurs, the ncm->notify_req pointer is
+> > > left pointing to a stale address. If a subsequent call to ncm_bind()
+> > > fails to allocate the endpoints, the function jumps to the unified error
+> > > label. The cleanup code sees the stale ncm->notify_req pointer and calls
+> > > usb_ep_free_request().
+> > >
+> > > This results in a NPE because it attempts to access the free_request
+> > > function through the endpoint's operations table (ep->ops), which is
+> > > NULL.
+> > >
+> > > Refactor the error path to use cascading goto labels, ensuring that
+> > > resources are freed in reverse order of allocation. Besides, explicitly
+> > > set pointers to NULL after freeing them.
+> >
+> > Why must the pointers be set to NULL?  What is checking and requiring
+> > that?
+> 
+> I set them to null as a standard safety measure to prevent potential
+> use-after-free issues. I can remove it if you prefer.
 
-On 9/5/25 7:10 PM, John Ogness wrote:
-> On 2025-09-05, Daniil Tatianin <d-tatianin@yandex-team.ru> wrote:
->> On 9/5/25 6:27 PM, John Ogness wrote:
->>> On 2025-09-05, Daniil Tatianin <d-tatianin@yandex-team.ru> wrote:
->>>> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
->>>> index d9fb053cff67..99989a9ce4b4 100644
->>>> --- a/kernel/printk/printk_ringbuffer.c
->>>> +++ b/kernel/printk/printk_ringbuffer.c
->>>> @@ -1234,14 +1245,14 @@ static const char *get_data(struct prb_data_ring *data_ring,
->>>>    	}
->>>>    
->>>>    	/* Regular data block: @begin less than @next and in same wrap. */
->>>> -	if (DATA_WRAPS(data_ring, blk_lpos->begin) == DATA_WRAPS(data_ring, blk_lpos->next) &&
->>>> +	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next) &&
->>>>    	    blk_lpos->begin < blk_lpos->next) {
->>>>    		db = to_block(data_ring, blk_lpos->begin);
->>>>    		*data_size = blk_lpos->next - blk_lpos->begin;
->>>>    
->>>>    	/* Wrapping data block: @begin is one wrap behind @next. */
->>>> -	} else if (DATA_WRAPS(data_ring, blk_lpos->begin + DATA_SIZE(data_ring)) ==
->>>> -		   DATA_WRAPS(data_ring, blk_lpos->next)) {
->>>> +	} else if (!is_blk_wrapped(data_ring,
->>>> +		   blk_lpos->begin + DATA_SIZE(data_ring), blk_lpos->next)) {
->>> It would look nicer if the arguments of the function were indented to
->>> the function parenthesis:
->>>
->>> 	} else if (!is_blk_wrapped(data_ring, blk_lpos->begin +
->>> 				   DATA_SIZE(data_ring), blk_lpos->next)) {
->> Would you like me to resend with this addressed?
-> Knowing Petr, I would say "yes". :-)
->
-> But wait for Petr's response before sending anything.
+So either you have a use-after-free, or a NULL crash, either way it's
+bad and the real bug should be fixed if this can happen.  If it can not
+happen, then there is no need to set this to NULL.
 
-Friendly ping for Petr :)
+> > And this unwinding is tailor-made for the guard() type of logic, why not
+> > convert this code to do that instead, which will fix all of these bugs
+> > automatically, right?
+> 
+> The __free() cleanup mechanism is unfortunately infeasible in this
+> case. The usb_ep_free_request(ep, req) requires two parameters, but
+> the automatic cleanup mechanism only needs one: the resource being
+> freed.
+> 
+> Since the struct usb_request doesn't contain the pointer to its
+> associated endpoint, the @free function cannot retrieve the ep pointer
+> it needs for the cleanup call.  We would need to add an endpoint
+> pointer to usb_request to make it work. However, this will be a
+> significant change and we might also need to refactor drivers that use
+> the usb_ep_free_request(ep, req), usb_ep_queue(ep, req) and
+> usb_ep_dequeue(ep, req) as the endpoint parameter is no longer needed.
 
->
-> John
+It's odd that the ep is needed to create a request, but it's not saved.
+So yes, I think it should be saved, and that will make the cleanup logic
+a lot simpler, as well as allow us to use the __free() logic overall.
+
+> I also want to point out that this bug isn't specific to the f_ncm
+> driver. The f_acm, f_rndis and f_ecm are also vulnerable because their
+> bind paths have the same flaw. We have already observed this issue in
+> both f_ncm and f_acm on Android devices.
+> 
+> My plan was to merge this fix for f_ncm first and then apply the same
+> pattern to the other affected drivers. However, I am happy to have a
+> more thorough design discussion if you feel using __free()/guard()
+> automatic cleanup is the better path forward.
+
+I think all of them need to be fixed up, and by adding the endpoint
+pointer to the request, that should help make the logic overall for all
+of these drivers simpler and easier to maintain over time.
+
+So yes, if you could do that, it would be wonderful.
+
+thanks,
+
+greg k-h
 
