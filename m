@@ -1,281 +1,128 @@
-Return-Path: <linux-kernel+bounces-811435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE483B52909
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:39:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA17BB528F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 912281C23D52
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:39:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9650A176661
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA7426E710;
-	Thu, 11 Sep 2025 06:36:06 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6B1276031;
+	Thu, 11 Sep 2025 06:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czuRzHvM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41DE26E70D
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB9E2765E8;
+	Thu, 11 Sep 2025 06:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757572566; cv=none; b=azQ/pEkeUZcotnjz079lchr7uzkBDoxRV7MycIG5h1N4o6+Whoaj7NcqRtBni8aXEnFvHXxFGj9tDXcglcz4JjEa6xE9Z+J70j1SAYW7xTO7K2nrGrGv1cN+WufVZIEP59avnYzlQof7tpPfNBB5UAr3a0IgqSUYc7P6gdfdE1U=
+	t=1757572540; cv=none; b=V/WQhvReWSXqkh5QOLV2O729O0wIYG0LFsPT3MBTWuLZONlOuI7lZBCnjyq+HAq6FppYSMp9zZ0hu/S8Eo6P8fLLu6DMT/i5+f2s/m6+hNQIShbYFOGf/pPl6gZr7Q+tTkgdQRWUvEXFJF9P7rrwzBoNI4eAT984V6Ejkny0xLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757572566; c=relaxed/simple;
-	bh=JRTKjZGd6tnztpWsCIHsBatqp4HnMRhi88cWF6rvwc8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CwskRPe8XjPHO0n+DVkXV42kvxS7U5LQPthMrYrk7NPSE/4i626o1aQ0wzXTJ84CUoNuRPkNKO3qOC8+GywdrnqoLEM0YqxgLxXYjIzKGTUN+JVHopWuS0QrR7HO2RqijcEU6Ct76gQnN4NWCWD/1eJPhuxNdhfX5l8ZytfOofQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BB0B1683EE;
-	Thu, 11 Sep 2025 06:36:02 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 61F581372E;
-	Thu, 11 Sep 2025 06:36:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EJNYFtJtwmhjTQAAD6G6ig
-	(envelope-from <jgross@suse.com>); Thu, 11 Sep 2025 06:36:02 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	virtualization@lists.linux.dev
-Cc: Juergen Gross <jgross@suse.com>,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 14/14] x86/pvlocks: move paravirt spinlock functions into qspinlock.h
-Date: Thu, 11 Sep 2025 08:34:33 +0200
-Message-ID: <20250911063433.13783-15-jgross@suse.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250911063433.13783-1-jgross@suse.com>
-References: <20250911063433.13783-1-jgross@suse.com>
+	s=arc-20240116; t=1757572540; c=relaxed/simple;
+	bh=msWaeJylOdNznN7lCZGe+G5W85AOZcgnyTSK3DdHstY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OEk5aHwMiZYriJJDpf53xoYrBdOw7nGKLg6vYexKr+EFVVAyyud6kZ/Uwzbd8C+WhWPmw/8tmJiyJhl75MNxKPjLLHeC7764xwHzRudDl6E1e4BDD7BOnPBPxDvOgRFFG6n0nlsj750Yk6FOmtxLoYXpd10BfGE0HZn8/DrQaUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czuRzHvM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D09CC4CEF9;
+	Thu, 11 Sep 2025 06:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757572539;
+	bh=msWaeJylOdNznN7lCZGe+G5W85AOZcgnyTSK3DdHstY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=czuRzHvMYGogrUdPs6e08p+cJ/m8kf/elWNrlM+IbOrGlRTS38x2drb9lx+bXHH+J
+	 jiT9LTmDhGHpKk2luz6jsjEZqjqLQ4zTTxjhxZtharvk6b7ajRA04jG4i6rW4NMeWR
+	 hxQbpwCHYIV/HnXmyquQLkL7/5a6fcDd2RBGfkN5qJDrULuEvhfhfGv7VuwDW36vyq
+	 nVFtN5M4IsS7xl8Ey55bZLnu5hx9DFEoJALyD/fTNIz02q94YCmGIr4FzZzhgp7SYD
+	 6TG1DsLYMHv6r32RkUvRua9Fm1iIGNguxXI+xhWT087EEh6OXmD5ciK97Axa8k8NOl
+	 5L4/AQD6Mp+gw==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-56d1b40ed70so193795e87.3;
+        Wed, 10 Sep 2025 23:35:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQW1CtVFPYM/2f9/8VfK8LU4Q2iXj074VTo8klAzAubwexa91dn8sfrs+JUaIeDM6pXmjuwPX2mJfVJ8N+@vger.kernel.org, AJvYcCVVVzEHCcHQyk+jAVRsYg9rbZtsshb5GQ68y9YKMmv0ws3UTKszQrecMFKKpt/KQ0/g4j2m3G1oAfk=@vger.kernel.org, AJvYcCWPwDEXSbwJZTwkvz/oW2bpQS+znI4wIcQMThNCNAibPiccc6wOFFZMn3mTE/DxaJW/5OXEeIPQxpqA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3byULcvzPJ8myuLhQoTojvivqWNQ+oJgnZnARv91fOaMZLLiT
+	MfvQ1Hvd/ZR+NP5T59H7QfMsA6qn9Jtf5qlEAo8lBWYnSLwpEWfhetCMfuZGZ7AbU0ndshhlFkj
+	+QG3Jz/KAoXIu6m4jVYUfanCe67m57Rg=
+X-Google-Smtp-Source: AGHT+IGDbmpIyC6cqQ0O4S232jssSQfG5WdfM/lU5QQJKfEg5FWZxC+ceE0VGOhHT6WE2d0nwCz/81Q1X89lnl3mzoU=
+X-Received: by 2002:a05:6512:2c09:b0:55f:6649:45b8 with SMTP id
+ 2adb3069b0e04-5626256fe9amr6077674e87.45.1757572538000; Wed, 10 Sep 2025
+ 23:35:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: BB0B1683EE
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Score: -4.00
+References: <20250910015738.14848-2-bagasdotme@gmail.com> <0b61b6f3-f11a-494c-9d4e-94ca19fd1eb6@infradead.org>
+ <aMEUUkVQv2tqpO2L@archie.me> <0C55A642-8BC8-4C19-9FF5-8B803E2CCABA@zytor.com>
+In-Reply-To: <0C55A642-8BC8-4C19-9FF5-8B803E2CCABA@zytor.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 11 Sep 2025 08:35:26 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXF6FhVjR4chqH-aW09V0HJ=yU33f-jMvr65t_+8ahRGBQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyNgWTifalIxFLI4IJKvjRz_QzgcQR1l_pP1TvgHA8Zn_4UP3g56LrbDjY
+Message-ID: <CAMj1kXF6FhVjR4chqH-aW09V0HJ=yU33f-jMvr65t_+8ahRGBQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/Documentation: explain LINUX_EFI_INITRD_MEDIA_GUID
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Documentation <linux-doc@vger.kernel.org>, Linux EFI <linux-efi@vger.kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+Content-Type: text/plain; charset="UTF-8"
 
-Instead of having the pv spinlock function definitions in paravirt.h,
-move them into qspinlock.h where the arch specific functions for
-qspinlocks are defined already.
+On Wed, 10 Sept 2025 at 22:10, H. Peter Anvin <hpa@zytor.com> wrote:
+>
+> On September 9, 2025 11:01:54 PM PDT, Bagas Sanjaya <bagasdotme@gmail.com> wrote:
+> >On Tue, Sep 09, 2025 at 08:25:34PM -0700, Randy Dunlap wrote:
+> >> On 9/9/25 6:57 PM, Bagas Sanjaya wrote:
+> >> > +.. _pe-coff-entry-point:
+> >> > +
+> >> > +PE/COFF entry point
+> >> > +===================
+> >> > +
+> >> > +When compiled with ``CONFIG_EFI_STUB=y``, the kernel can be executed as a
+> >> > +regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
+> >> > +implementation details.
+> >> > +
+> >> > +The stub loader can request the initrd via a UEFI protocol. For this to work,
+> >> > +the firmware or bootloader needs to register a handle which implements the
+> >> > +``EFI_LOAD_FILE2`` protocol with the ``LINUX_EFI_INITRD_MEDIA_GUID`` device
+> >> > +path. In this case, a kernel booting via the EFI stub will use the ``LoadFile``
+> >> > +function on the registered handle to obtain a reference to the initrd.
+> >>
+> >> drivers/firmware/efi/libstub/efi-stub-helper.c (line 509) says LoadFile2
+> >> protocol. Is that the same as the LoadFile function?
+> >>
+> >> https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
+> >> (the link below) also says LoadFile2() 4 times (and LoadFile 0 times).
+> >
+> >From UEFI spec [1], both LoadFile and LoadFile2 protocol versions of LoadFile()
+> >function has same prototype but somewhat different in behavior. To answer
+> >your question, however, I think so.
+> >
+> >EFI folks, what are your opinions?
+> >
+> >Thanks.
+> >
+> >[1]: https://uefi.org/specs/UEFI/2.10/13_Protocols_Media_Access.html
+> >
+>
+> Sounds like the code was updated but not the documentation.
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/include/asm/paravirt.h  | 58 --------------------------------
- arch/x86/include/asm/qspinlock.h | 49 +++++++++++++++++++++++++--
- 2 files changed, 47 insertions(+), 60 deletions(-)
+The UEFI spec defines two protocols, LoadFile and LoadFile2, under two
+different GUIDs. They differ slightly in behavior when used to boot
+the OS loader from the boot manager, but are identical when used in
+other contexts.
 
-diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index 13c0e4e65467..78097a7e4214 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -20,15 +20,6 @@ struct mm_struct;
- #include <linux/cpumask.h>
- #include <asm/frame.h>
- 
--__visible void __native_queued_spin_unlock(struct qspinlock *lock);
--bool pv_is_native_spin_unlock(void);
--__visible bool __native_vcpu_is_preempted(long cpu);
--bool pv_is_native_vcpu_is_preempted(void);
--
--#ifdef CONFIG_PARAVIRT_SPINLOCKS
--void __init paravirt_set_cap(void);
--#endif
--
- /* The paravirtualized I/O functions */
- static inline void slow_down_io(void)
- {
-@@ -525,43 +516,6 @@ static inline void __set_fixmap(unsigned /* enum fixed_addresses */ idx,
- }
- #endif
- 
--#if defined(CONFIG_SMP) && defined(CONFIG_PARAVIRT_SPINLOCKS)
--
--static __always_inline void pv_queued_spin_lock_slowpath(struct qspinlock *lock,
--							u32 val)
--{
--	PVOP_VCALL2(lock.queued_spin_lock_slowpath, lock, val);
--}
--
--static __always_inline void pv_queued_spin_unlock(struct qspinlock *lock)
--{
--	PVOP_ALT_VCALLEE1(lock.queued_spin_unlock, lock,
--			  "movb $0, (%%" _ASM_ARG1 ");",
--			  ALT_NOT(X86_FEATURE_PVUNLOCK));
--}
--
--static __always_inline void pv_wait(u8 *ptr, u8 val)
--{
--	PVOP_VCALL2(lock.wait, ptr, val);
--}
--
--static __always_inline void pv_kick(int cpu)
--{
--	PVOP_VCALL1(lock.kick, cpu);
--}
--
--static __always_inline bool pv_vcpu_is_preempted(long cpu)
--{
--	return PVOP_ALT_CALLEE1(bool, lock.vcpu_is_preempted, cpu,
--				"xor %%" _ASM_AX ", %%" _ASM_AX ";",
--				ALT_NOT(X86_FEATURE_VCPUPREEMPT));
--}
--
--void __raw_callee_save___native_queued_spin_unlock(struct qspinlock *lock);
--bool __raw_callee_save___native_vcpu_is_preempted(long cpu);
--
--#endif /* SMP && PARAVIRT_SPINLOCKS */
--
- #ifdef CONFIG_PARAVIRT_XXL
- static __always_inline unsigned long arch_local_save_flags(void)
- {
-@@ -590,7 +544,6 @@ static __always_inline unsigned long arch_local_irq_save(void)
- #endif
- 
- extern void default_banner(void);
--void native_pv_lock_init(void) __init;
- 
- #else  /* __ASSEMBLER__ */
- 
-@@ -615,12 +568,6 @@ void native_pv_lock_init(void) __init;
- #endif /* __ASSEMBLER__ */
- #else  /* CONFIG_PARAVIRT */
- # define default_banner x86_init_noop
--
--#ifndef __ASSEMBLER__
--static inline void native_pv_lock_init(void)
--{
--}
--#endif
- #endif /* !CONFIG_PARAVIRT */
- 
- #ifndef __ASSEMBLER__
-@@ -636,10 +583,5 @@ static inline void paravirt_arch_exit_mmap(struct mm_struct *mm)
- }
- #endif
- 
--#ifndef CONFIG_PARAVIRT_SPINLOCKS
--static inline void paravirt_set_cap(void)
--{
--}
--#endif
- #endif /* __ASSEMBLER__ */
- #endif /* _ASM_X86_PARAVIRT_H */
-diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
-index 68da67df304d..376f89aa1d4c 100644
---- a/arch/x86/include/asm/qspinlock.h
-+++ b/arch/x86/include/asm/qspinlock.h
-@@ -28,12 +28,33 @@ static __always_inline u32 queued_fetch_set_pending_acquire(struct qspinlock *lo
- }
- 
- #ifdef CONFIG_PARAVIRT_SPINLOCKS
-+void __init paravirt_set_cap(void);
- extern void native_queued_spin_lock_slowpath(struct qspinlock *lock, u32 val);
- extern void __pv_init_lock_hash(void);
- extern void __pv_queued_spin_lock_slowpath(struct qspinlock *lock, u32 val);
- extern void __raw_callee_save___pv_queued_spin_unlock(struct qspinlock *lock);
- extern bool nopvspin;
- 
-+static __always_inline void pv_queued_spin_lock_slowpath(struct qspinlock *lock,
-+							 u32 val)
-+{
-+	PVOP_VCALL2(lock.queued_spin_lock_slowpath, lock, val);
-+}
-+
-+static __always_inline void pv_queued_spin_unlock(struct qspinlock *lock)
-+{
-+	PVOP_ALT_VCALLEE1(lock.queued_spin_unlock, lock,
-+			  "movb $0, (%%" _ASM_ARG1 ");",
-+			  ALT_NOT(X86_FEATURE_PVUNLOCK));
-+}
-+
-+static __always_inline bool pv_vcpu_is_preempted(long cpu)
-+{
-+	return PVOP_ALT_CALLEE1(bool, lock.vcpu_is_preempted, cpu,
-+				"xor %%" _ASM_AX ", %%" _ASM_AX ";",
-+				ALT_NOT(X86_FEATURE_VCPUPREEMPT));
-+}
-+
- #define	queued_spin_unlock queued_spin_unlock
- /**
-  * queued_spin_unlock - release a queued spinlock
-@@ -62,9 +83,31 @@ static inline bool vcpu_is_preempted(long cpu)
- {
- 	return pv_vcpu_is_preempted(cpu);
- }
--#endif
-+
-+#else /* CONFIG_PARAVIRT_SPINLOCKS */
-+static inline void paravirt_set_cap(void) { }
-+#endif /* !CONFIG_PARAVIRT_SPINLOCKS */
- 
- #ifdef CONFIG_PARAVIRT
-+void __init native_pv_lock_init(void);
-+__visible void __native_queued_spin_unlock(struct qspinlock *lock);
-+bool pv_is_native_spin_unlock(void);
-+__visible bool __native_vcpu_is_preempted(long cpu);
-+bool pv_is_native_vcpu_is_preempted(void);
-+
-+static __always_inline void pv_wait(u8 *ptr, u8 val)
-+{
-+	PVOP_VCALL2(lock.wait, ptr, val);
-+}
-+
-+static __always_inline void pv_kick(int cpu)
-+{
-+	PVOP_VCALL1(lock.kick, cpu);
-+}
-+
-+void __raw_callee_save___native_queued_spin_unlock(struct qspinlock *lock);
-+bool __raw_callee_save___native_vcpu_is_preempted(long cpu);
-+
- /*
-  * virt_spin_lock_key - disables by default the virt_spin_lock() hijack.
-  *
-@@ -109,7 +152,9 @@ static inline bool virt_spin_lock(struct qspinlock *lock)
- 	return true;
- }
- 
--#endif /* CONFIG_PARAVIRT */
-+#else /* CONFIG_PARAVIRT */
-+static inline void native_pv_lock_init(void) { }
-+#endif /* !CONFIG_PARAVIRT */
- 
- #include <asm-generic/qspinlock.h>
- 
--- 
-2.51.0
+The protocol definition (i.e., the struct layout) is identical: they
+both implement a LoadFile() method with the same prototype,
 
+So the answer the question: the LoadFile2 *protocol* is not the same
+as the LoadFile *function*. And to be pedantic, no LoadFile function
+is defined in the spec. It does define LoadFile::LoadFile() and
+LoadFile2::LoadFile() protocol methods.
 
