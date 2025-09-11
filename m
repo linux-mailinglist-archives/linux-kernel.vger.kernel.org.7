@@ -1,172 +1,205 @@
-Return-Path: <linux-kernel+bounces-812216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4971CB534A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:57:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE625B534A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B227179110
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:56:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AC6C3B3196
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C4032C316;
-	Thu, 11 Sep 2025 13:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CE754763;
+	Thu, 11 Sep 2025 13:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pBSErB3M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="E8XgB5JL"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910EE54763
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5396532F75F
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757599006; cv=none; b=FoExqQC71aMI7DYAlsRs0QKmIcB0ViB63RLKrClZ1NG1PVn/hKwendMS3eV7mG43lL1Apz5WEHherxhdaBXxtYGwOCBt+QpIZhc3zmharBQHDBXmX2LXLJtIrZRjkcYO4/vl5eayDAg/aNVoIslFqwAimSZNqVW7iSe9ce2TBR8=
+	t=1757599031; cv=none; b=sTUarOD+HySVPAWXUJRHg+xcWvPXcn56Uxv9tZoDyY/lpGhDiLHQlkq2hvEapUAV5ID8fVvNGggbUvYDqZer6jrNpwiq5SxPiasJjD/oWA7jN79gmK+ymIuviiJYKF22pexgXo/hD2qCSSAH1n+jeWZQJfFLpIw6QwVJ0EnU25k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757599006; c=relaxed/simple;
-	bh=XreLRLQA9VQYVf55N1pr7vao9Kkcl1FgTuDhIhX0gt0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pKcOyDTNhOJuW7V8Iulkn3FLW0bub1Egyi6qEIdPeD/KMNL013Qj82bnf18Ac0gvpCkxMosBAfK3qy6Q0J781xboY05TNhCZw4uAtHY/VuMHLL2rWQCuUMIu6h26IOzW+NfAai7gxvCKq/dWtKwSUGiuwb3nSJ449PJebPbnCdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pBSErB3M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F36C116C6
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:56:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757599006;
-	bh=XreLRLQA9VQYVf55N1pr7vao9Kkcl1FgTuDhIhX0gt0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pBSErB3Mq676ZtpVlSSDZH7F1BZSc7zHNrDK9HUhXYrHVQiYOJJsyoZYZWqDLqy8Z
-	 Ji1CX+kDxNl1olUC3EnjAa2ZHt6g89usl5+emNkSof0v5kKY2rhGpuE7xJpCoJPvyS
-	 kYNBvCij9gK+dhGu8drKA24n5lbIvEh5MeyMZiJDKt7l/zI8mgc/IinYn5fhs+AncV
-	 M9GKRsgfwEKK5p3G6C9+E1WVKtlXRSgARNu4zfH+Or7C3Mx6WSs1oi74Y118FC2itk
-	 58tPDNJzmIM4Za+ldBx7jFwsjHC5bwGN98ZBdOjRD5sWpMOz7GrgYCM9IsuXOns8wn
-	 JLa6MkRrBF1XA==
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-74595f3852cso539953a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:56:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUVMTXKGoocY6l+kQcnVOy+RmPTYn8oWhoseiF9DTZfJXpR1hbsOK3MZJDPDDcjVsUK37qm0XTKGR/1Alg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHn6SjZX+PIBDSu6lMbGcF26ZXSZhUWu+oMPJSjcF80VWBnzZf
-	fdDF2/dlltchZN2xhjf48xyIMpT5x5HBML9PWZIr1vxPOJgrNRiA8RMVkQNX4EK2yn/bhWgSKaL
-	h37XIEgDEhCRyvPoXzuw0mNsv11BEJJE=
-X-Google-Smtp-Source: AGHT+IGewrkHSVC2eTTHWTcmKSSrQ5YjkLF2A24xWJgCYYx99uWpX75B43+fO5oF3eNbSRFyBQ04mhd396ycJfKVGeM=
-X-Received: by 2002:a05:6830:348e:b0:74b:7c40:3592 with SMTP id
- 46e09a7af769-74c6f315077mr10017347a34.6.1757599005085; Thu, 11 Sep 2025
- 06:56:45 -0700 (PDT)
+	s=arc-20240116; t=1757599031; c=relaxed/simple;
+	bh=oDf5VY2SMDhWKzWUCn3C1u6sbTRxHqiOGBPOElxerfE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tIItsWVklViFhjZWAJIlK/M6T5q7qONnBHLvCF/AFVdBBoQXr/JKkPFATzjBt1m4/RoWWcZkd3y8ZmluRiFthOG0FPsimXaAiR8LQ0oShS+8Bjf0q9Q6pQBS+I2skjwH6k8YtvpzblmcVD94WfMIA18AbvxNs/9i6+IHWUKMMoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=E8XgB5JL; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 9C4DEC6B3BD;
+	Thu, 11 Sep 2025 13:56:51 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 73D0160630;
+	Thu, 11 Sep 2025 13:57:07 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A837E102F28F0;
+	Thu, 11 Sep 2025 15:56:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757599026; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=+8MOtjR/SCOGwiIdk6r9cBes34StJlpvtG+zzPpGcNk=;
+	b=E8XgB5JLS/mPkRP1zvTiKqUhwKzCA50gJAmpUmbn01XBtfVmKS4Mmx2LW+weWFYiXbLH8B
+	7U+nZamCADWhQ7XINEFNoWGdB6kbpB2qEKCacWxQ2puVuYq/3970GdAsI/HvDBhLCYI8a6
+	THjK6d4knuwr10/hrmHRGtt4684EiGcs9uAoFv8id8p42I1TgMzZQ+wTUsiwHWgitCRJV5
+	A4gtTMa0gNDS1DmQ9wLQkI4ZVAVL9rdt227qpHd/5W4ml06QAyFjhTILEGmzZzoh/rLZAU
+	TMgyahAWNFF02OROSkqTXN1H4J7HdvZERF+ls+yJlZ0wezFot/vxH8S4YrQJ1g==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Cheng Ming Lin <linchengming884@gmail.com>
+Cc: richard@nod.at,  vigneshr@ti.com,  robh@kernel.org,  krzk+dt@kernel.org,
+  conor+dt@kernel.org,  tudor.ambarus@linaro.org,
+  mmkurbanov@salutedevices.com,  Takahiro.Kuwano@infineon.com,
+  pratyush@kernel.org,  linux-mtd@lists.infradead.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  alvinzhou@mxic.com.tw,  Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: Re: [PATCH v2 1/3] dt-bindings: mtd: spi-nand: Add
+ enable-randomizer-otp property
+In-Reply-To: <CAAyq3SZUToRjWVgAX_=We7cMFjVjuGLvFYBSpOG=M_e_MD6aeQ@mail.gmail.com>
+	(Cheng Ming Lin's message of "Thu, 11 Sep 2025 16:30:11 +0800")
+References: <20250910030301.1368372-1-linchengming884@gmail.com>
+	<20250910030301.1368372-2-linchengming884@gmail.com>
+	<87wm66d67k.fsf@bootlin.com>
+	<CAAyq3SbXiPUjZE7OCAe1=uw4h82bFN7DSU4bLx1dhKe_XFtu=w@mail.gmail.com>
+	<878qilbes9.fsf@bootlin.com>
+	<CAAyq3SZUToRjWVgAX_=We7cMFjVjuGLvFYBSpOG=M_e_MD6aeQ@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Thu, 11 Sep 2025 15:56:42 +0200
+Message-ID: <87wm659jol.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <75e4ae507fa4faddd063a3a9e17d319ed84529b6.1757562971.git.lukas@wunner.de>
- <80980751-64db-4dc2-9516-03046e8b4b31@kernel.org> <CAJZ5v0idqEPUpA0uBb_PAaKe0KNqCt0xLskPThPwtsfh3eCdxg@mail.gmail.com>
- <fd9629df-0718-4968-b22b-cad36d870f63@kernel.org>
-In-Reply-To: <fd9629df-0718-4968-b22b-cad36d870f63@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 11 Sep 2025 15:56:33 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hJHxVvyNdvDSZg=Pn9=xEqO79T4Ou9toc0Qofi777NcA@mail.gmail.com>
-X-Gm-Features: Ac12FXzQaZbYxSmuA4gYIQi2t8BWAAduta2HGD5DxcN46xT6wVPS-p3q4c093YQ
-Message-ID: <CAJZ5v0hJHxVvyNdvDSZg=Pn9=xEqO79T4Ou9toc0Qofi777NcA@mail.gmail.com>
-Subject: Re: [PATCH] PCI/PM: Move ASUS EHCI workaround out of generic code
-To: Mario Limonciello <superm1@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Lukas Wunner <lukas@wunner.de>, 
-	Bjorn Helgaas <helgaas@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
-	linux-pci@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, 
-	Oleksij Rempel <o.rempel@pengutronix.de>, Timo Jyrinki <timo.jyrinki@iki.fi>, 
-	Ernst Persson <ernstp@gmail.com>, Steven Harms <sjharms@gmail.com>, James Ettle <james@ettle.org.uk>, 
-	Nick Coghlan <ncoghlan@gmail.com>, Weng Xuetian <wengxt@gmail.com>, 
-	Andrey Rahmatullin <wrar@wrar.name>, Boris Barbour <boris.barbour@ens.fr>, 
-	Vlastimil Zima <vlastimil.zima@gmail.com>, David Banks <amoebae@gmail.com>, 
-	Michal Jaegermann <michal@harddata.com>, Chris Moeller <kode54@gmail.com>, Daniel Fraga <fragabr@gmail.com>, 
-	Javier Marcet <jmarcet@gmail.com>, Pavel Pisa <pisa@cmp.felk.cvut.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Sep 11, 2025 at 3:46=E2=80=AFPM Mario Limonciello <superm1@kernel.o=
-rg> wrote:
+Hi,
+
+>> >> This is a NAND wide feature, so we should probably add a prefix, such=
+ as
+>> >> "nand,".
+>> >>
+>> >> Now, what about this "otp" suffix? Many (if not all) chips have a
+>> >> volatile setting for that. About the naming, "otp" often reflects to =
+the
+>> >> OTP area, which is not what you imply here, as you want to insist
+>> >> (rightfully) on the fact that this feature cannot be disabled.
+>> >
+>> > Yes, my intention is that once the randomizer feature is enabled, it
+>> > should not be disabled again.
+>>
+>> I believe the motivation behind this choice is incorrect and does not
+>> fit such an OS as Linux. We want to give the system administrator the
+>> choice to select and unselect features as it sees fit. So if there is a
+>> volatile way to enable something, we should go for it and we will pay
+>> the extra penalty of a set_feature() (or whatever) command after each
+>> boot. Making this type of change permanent makes development and
+>> debugging much more painful. There are plenty of configurations that we
+>> refuse to apply with non volatile configurations. In general, stateful
+>> modes are problematic if they are kept after a reboot and we try our
+>> best to avoid them.
+>>
+>> Once this feature is enabled, for the lifetime of "a product", it does
+>> not make sense to disable it indeed. And the DT must remain correct, if
+>> it is changed in a non compatible way, that's the administrator
+>> responsibility.
+>>
+>> So are there ways to enable this feature in a way that returns to the
+>> default state after a reset?
 >
-> On 9/11/25 8:43 AM, Rafael J. Wysocki wrote:
-> > On Thu, Sep 11, 2025 at 3:34=E2=80=AFPM Mario Limonciello <superm1@kern=
-el.org> wrote:
-> >>
-> >> On 9/11/25 8:11 AM, Lukas Wunner wrote:
-> >>> In 2012, commit dbf0e4c7257f ("PCI: EHCI: fix crash during suspend on=
- ASUS
-> >>> computers") amended pci_pm_suspend_noirq() to work around a BIOS issu=
-e by
-> >>> clearing the Command register if the suspended device is a USB EHCI h=
-ost
-> >>> controller.
-> >>>
-> >>> Commit 0b68c8e2c3af ("PCI: EHCI: Fix crash during hibernation on ASUS
-> >>> computers") subsequently amended pci_pm_poweroff_noirq() to do the sa=
-me.
-> >>>
-> >>> Two years later, commit 7d2a01b87f16 ("PCI: Add pci_fixup_suspend_lat=
-e
-> >>> quirk pass") introduced the ability to execute arbitrary quirks
-> >>> specifically in pci_pm_suspend_noirq() and pci_pm_poweroff_noirq().
-> >>>
-> >>> This allows moving the ASUS workaround out of generic code and into a
-> >>> proper quirk to improve maintainability and readability.  Constrain t=
-o x86
-> >>> since the ASUS BIOS doesn't seem to have been used on other arches.
-> >>>
-> >>> lspci output of affected EHCI host controllers reveals that the only =
-bits
-> >>> set in the Command register are Memory Space Enable and Bus Master En=
-able:
-> >>>     https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D658778
-> >>>
-> >>> The latter is cleared by:
-> >>>     hcd_pci_suspend()
-> >>>       suspend_common()
-> >>>         pci_disable_device()
-> >>>
-> >>> pci_disable_device() does not clear I/O and Memory Space Enable, alth=
-ough
-> >>> its name suggests otherwise.
-> >>
-> >> That was my gut reaction as well.
-> >>
-> >>> The kernel has never disabled these bits
-> >>> once they're enabled.  Doing so would avoid the need for the quirk, b=
-ut it
-> >>> is unclear what will break if this fundamental behavior is changed.
-> >>>
-> >>
-> >> It's too late for this cycle to do so, but how would you feel about
-> >> making this change at the start of the next cycle so it had a whole
-> >> cycle to bake in linux-next and see if there is a problem in doing so?
-> >
-> > One cycle in linux-next may not be sufficient I'm afraid because
-> > linux-next is not tested on the majority of systems running Linux.
-> >
-> > We'd probably learn about the breakage from distro vendors.
-> >
-> >> If there is it could certainly be moved back to a quirk.
-> >
-> > Most likely, it would work on the majority of systems, but there would
-> > be a tail of systems where it would break.  That tail would then need
-> > to be quirked somehow and it may be worse than just one quirk we have
-> > today.
+> Thank you for the detailed feedback. I understand and agree with the
+> principle of favoring volatile configurations to give administrators
+> more control and simplify debugging.
 >
-> But is that a reason not to *try* and rid the tech debt?
+> Yes, it is possible to enable this feature in a way that it returns
+> to the default state after a reset.
 >
-> We could just all agree that *if* there is breakage we revert back to
-> the quirk just for EHCI.
+> We can use the standard set_feature command to set the RANDEN bit to 1,
+> which enables the randomizer. This configuration is volatile and will
+> not persist through a power cycle. The feature will remain disabled by
+> default on each boot unless it is explicitly enabled again.
+>
+> I will update the patch to implement this volatile approach.
 
-Well, it's not that simple because how much time do you want to wait?
+I would be in favour of implementing this method. Hence, no more OTP
+constraint to express in the binding either.
 
-The distro installed on the system I'm using right now ships with a
-6.4-based kernel, so it potentially sees and may report breakage
-introduced into the mainline 2 years ago.
+>> > You are correct that this bit does not
+>> > belong to the OTP area, but rather to the v2 volatile register. The v2
+>> > volatile register has a default value that can be changed through a
+>> > special OTP configuration register program operation. Regarding the
+>> > "otp" suffix, I will remove it to avoid misunderstanding.
+>> >
+>> >>
+>> >> Also, this is a per-chip configuration, while I would have welcomed a
+>> >> per-partition configuration. I can easily imagine two cases:
+>> >>
+>> >> - The boot ROM, for longevity purposes, expects the first blocks
+>> >>   containing the bootloader to be scrambled. However the rest of the
+>> >>   system does not really care and disables randomization.
+>> >>
+>> >> - The boot ROM is not capable of de-scrambling, however the rest of t=
+he
+>> >>   system relies on the (probably) more robust scrambling feature.
+>> >>
+>> >> In both cases a chip wide variable is not relevant.
+>> >
+>> > The scrambling and descrambling are handled by the NAND flash hardware
+>> > itself. Therefore, the boot ROM does not need to support a descrambling
+>> > feature.
+>> >
+>> > In the case of Macronix parts, the randomizer is controlled through a
+>> > configuration register, and once it is enabled it covers the entire ch=
+ip
+>> > (main and/or spare depending on the randopt bit). There is no hardware
+>> > mechanism to enable it only on certain ranges.
+>>
+>> After thinking once again, I am no longer aligned with myself from the
+>> past. This is perhaps too Macronix specific in the end and if it is a
+>> fully transparent feature, then why not.
+>>
+>> Are there any ways we can read the raw data (unscrambled) once
+>> scrambling has been enabled? (I mean, without changing the user default
+>> OTP state). Maybe one big difference with the raw NAND world that needs
+>> to be taken into account is that the chip itself always return
+>> unscrambled data, hence we probably do not care much, from a Linux
+>> perspective.
+>
+> Unfortunately, there is no way to do this. If a user decides to use the
+> randomizer feature, they must enable it before programming the user OTP
+> area. If the randomizer is not enabled before the user OTP is programmed,
+> any subsequent reads will result in corrupted data.
+>
+> Marconix raw NAND chip itself does not always return unscrambled data.
+>
+> The ability to read unscrambled data is dependent on whether the
+> randomizer feature was enabled and configured correctly. When the
+> randomizer is turned on, the chip's internal hardware automatically
+> handles the unscrambling process. If the feature is not enabled, the
+> data read from the memory will be the raw, scrambled information, which
+> is unusable without the correct key and algorithm. In other words, the
+> chip only returns unscrambled data if randomizer feature is enabled.
 
-Will you decide to go back to the EHCI quirk if breakage is reported 2
-years after dropping it?
+That is interesting and might be useful. In Linux we will enable the
+scrambler if the data property is enabled before we get to play with the
+OTP anyway, so hopefully people will get it right.
 
-IMV, if a decision is made to change the pci_disable_device() behavior
-in this respect, we'll need to stick to it unless the breakage is
-common and overwhelming (which I don't really expect to be the case).
+Regarding the property name, it is going to be a per SPI NAND chip
+property. I am still not sure whether we should make this prop generic
+or not. Perhaps the safest approach is to keep it vendor specific, but
+the concept of scrambling internal data for longevity purposes is common
+enough to deserve a nand- prefix. Although it's gonna be like ECC
+engines, we'll need to decide which part of the system handles the
+scrambling (software, hardware on host or chip itself) and whether it is
+enabled per-chip or per-partition when that's possible.
+
+I am open to suggestions.
+
+Thanks,
+Miqu=C3=A8l
 
