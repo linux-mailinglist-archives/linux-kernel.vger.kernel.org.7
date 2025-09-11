@@ -1,142 +1,166 @@
-Return-Path: <linux-kernel+bounces-811751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A106B52D72
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB5CB52D74
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B562F58234E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:40:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6995758457A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC5F2EA74C;
-	Thu, 11 Sep 2025 09:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112612EA74B;
+	Thu, 11 Sep 2025 09:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snvitfwS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="auR0wkXT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502262E975A;
-	Thu, 11 Sep 2025 09:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47B022126D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757583645; cv=none; b=j+D7YX41s1X5+7gC1e+2YYsESwmSrCiw2PzLwFE7mS8bYsq6NEWtjpMLugzAvzJsocBketr+7N54kCQhWSIL+VKN8jZK49GfeKPp69UVWv8gwpSgnrjQo3lSCRk/lLCaLiD/K8jA62ecvvnTU1eFYc8vmUv7ia3dn5Fg5dHxSR8=
+	t=1757583714; cv=none; b=ftZ4vEWvfKzTwY7xkws+3liVMJi95SkQSbwd7kpdHhwzpL2FcrjPeH4fj9V/enzRcNtLvBK3Xz1usT9wwAaUFp1shB3fIZBp9UBWSTRJF9yWggHUY8zJvUnmyk+3QB0j+myjYbZYw9mbUfSPsuj82ryGqrpzvWNj65/9dey2T+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757583645; c=relaxed/simple;
-	bh=xt64zrr/lxWZUjAUgd2iHBnjkwAc3+1CEp1tCAr52z0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MtiKyZZkwrwb1WrvNJf3NsNrM25ghceQA7mXMkdcKiE2AVod6lW1tymFqiPR0kObxaym04z+biQIedKzpeOhT+mvSi9FUeb4aWLmmxgZdy/a/ajm7hW/Z01wu2SlNA4Tif6UPTTfM3eMMDj+Hax44on9+kVRvQDKGYW8+bYPNW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snvitfwS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 285CCC4CEF0;
-	Thu, 11 Sep 2025 09:40:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757583644;
-	bh=xt64zrr/lxWZUjAUgd2iHBnjkwAc3+1CEp1tCAr52z0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=snvitfwSCLkpj43x3vQbes+YL7jGFU0weXdseaNpEtt/HZB9EJbgu8Z0iDaxCFQn+
-	 HIxll5ELYaMf+aWpCIQTT9Gnkli1o2feZ1Ft6piX+FMr6mB3a2mZMi9GxtTpJO4BNn
-	 XHZaOX2GPRiEnVKFR0vjw76SFSiohkpVx4w2lYvEsLbg1d4XfxWi4+Zi+5gp/Jd7UU
-	 hJlSEso0z3sWccxycnXhRibz8zA6NV0GIoBGQZ8JgcTHkC0wQ1smrscgl09ySgAGdL
-	 mQabr6TyIYaxlY54vnGXmqAHi1MarqKnRnJY/ht0rR8+/V05GLlEBSZlgtDdhsFN41
-	 t1lfC1ptLmPHA==
-Message-ID: <6710e476-9f64-4bd7-b5e4-e065a2423c27@kernel.org>
-Date: Thu, 11 Sep 2025 11:40:39 +0200
+	s=arc-20240116; t=1757583714; c=relaxed/simple;
+	bh=tQxV2WY+J/WNmibFIFKSN4Ql06nD8wj19NMC0ffo9rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EwnrKArlPQZE7O6yvHhXHYLrGR2U2gKPSwhokzBHOsPX117eCuRhglpFxhWEL7jqHBbjVB6RISCEmWqSdxdg5D1YYcJ8H+QoPFKa+xOl2NsW8hqp7BFvcajaxE0nTzshtKdv5/gv1mkLncbDsK5s4cmHtfQhXuA5aTokGEkKyHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=auR0wkXT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757583710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ESVr/PCO5mj3Euf7na2oraMPrefSP5rEhizD9JtmFJg=;
+	b=auR0wkXT/RpshyyfTBec36ht3is5LRaUFFI/391zaf4kWe/3OkJrUWc/ATu2Fsyp5Uplzf
+	hyfn1sN40oEP4OCnaxkvLHSqKiXFU1dJKrWkuSImEbuKKB0t5fa1+7exxD38jbAMapZhmw
+	c9cF6nT5trIzXAG/uf0jsDl339XMVS4=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-573-Iz-BNOapM1ycJmmJ9f-N4g-1; Thu,
+ 11 Sep 2025 05:41:46 -0400
+X-MC-Unique: Iz-BNOapM1ycJmmJ9f-N4g-1
+X-Mimecast-MFC-AGG-ID: Iz-BNOapM1ycJmmJ9f-N4g_1757583705
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DC3AC1800378;
+	Thu, 11 Sep 2025 09:41:44 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.78])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 378AE19560BB;
+	Thu, 11 Sep 2025 09:41:42 +0000 (UTC)
+Date: Thu, 11 Sep 2025 17:41:37 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Justinien Bouron <jbouron@amazon.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Alexander Graf <graf@amazon.com>,
+	Steven Chen <chenste@linux.microsoft.com>,
+	Yan Zhao <yan.y.zhao@intel.com>, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Gunnar Kudrjavets <gunnarku@amazon.com>
+Subject: Re: [PATCH] kexec_core: Remove superfluous page offset handling in
+ segment loading
+Message-ID: <aMKZUY/zg31qN+68@MiWiFi-R3L-srv>
+References: <20250910163116.49148-1-jbouron@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: next-20250910: ERROR: modpost: "typec_switch_set"
- [drivers/extcon/extcon-ptn5150.ko] undefined!
-To: Naresh Kamboju <naresh.kamboju@linaro.org>, imx@lists.linux.dev,
- lkft-triage@lists.linaro.org, Xu Yang <xu.yang_2@nxp.com>
-Cc: open list <linux-kernel@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, Linux Regressions
- <regressions@lists.linux.dev>, MyungJoo Ham <myungjoo.ham@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Anders Roxell <anders.roxell@linaro.org>,
- Ben Copeland <benjamin.copeland@linaro.org>, Frank Li <Frank.Li@nxp.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Stephen Boyd <swboyd@chromium.org>
-References: <CA+G9fYuW3VZHpAzoL5pRXu6_K9LMHynNzMO9ULrdsC4UKY-ELA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CA+G9fYuW3VZHpAzoL5pRXu6_K9LMHynNzMO9ULrdsC4UKY-ELA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910163116.49148-1-jbouron@amazon.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 10/09/2025 14:28, Naresh Kamboju wrote:
-> The following build warnings / errors are noticed with arm64 defconfig+
-> with gcc-12 and gcc-13 toolchains on the Linux next-20250910 tag.
+On 09/10/25 at 09:31am, Justinien Bouron wrote:
+> Kexec does not accept segments for which the destination address is not
+> page aligned. Therefore there is no need for page offset handling when
+> loading segments.
+
+Do you mean we will adjust the memsz and buf_align to PAGE_SIZE aligned
+in kexec_add_buffer()? That better be explained in log.
+
+int kexec_add_buffer(struct kexec_buf *kbuf)
+{
+	......
+	/* Ensure minimum alignment needed for segments. */
+        kbuf->memsz = ALIGN(kbuf->memsz, PAGE_SIZE);
+        kbuf->buf_align = max(kbuf->buf_align, PAGE_SIZE);
+        kbuf->cma = NULL;
+	......
+}
+
 > 
-> Regression Analysis:
-> - New regression? Yes
-> - Reproducibility? yes
+> Signed-off-by: Justinien Bouron <jbouron@amazon.com>
+> Reviewed-by: Gunnar Kudrjavets <gunnarku@amazon.com>
+> ---
+>  kernel/kexec_core.c | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
 > 
-> Build regression: next-20250910: arm64: "typec_switch_set"
-> [drivers/extcon/extcon-ptn5150.ko] undefined!
-> Build regression: next-20250910: arm64: "fwnode_typec_switch_get"
-> [drivers/extcon/extcon-ptn5150.ko] undefined!
+> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> index 31203f0bacaf..7d4c9eebea79 100644
+> --- a/kernel/kexec_core.c
+> +++ b/kernel/kexec_core.c
+> @@ -761,9 +761,7 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
+>  	while (mbytes) {
+>  		size_t uchunk, mchunk;
+>  
+> -		ptr += maddr & ~PAGE_MASK;
+> -		mchunk = min_t(size_t, mbytes,
+> -				PAGE_SIZE - (maddr & ~PAGE_MASK));
+> +		mchunk = min_t(size_t, mbytes, PAGE_SIZE);
+
+I am not so eager to remove it as keeping it makes a little sense on
+defensive programming. Surely, I am not opposing it as it's truly not
+necessary for now.
+
+>  		uchunk = min(ubytes, mchunk);
+>  
+>  		if (uchunk) {
+> @@ -815,6 +813,7 @@ static int kimage_load_normal_segment(struct kimage *image, int idx)
+>  	mbytes = segment->memsz;
+>  	maddr = segment->mem;
+>  
+> +
+>  	if (image->segment_cma[idx])
+>  		return kimage_load_cma_segment(image, idx);
+>  
+> @@ -840,9 +839,7 @@ static int kimage_load_normal_segment(struct kimage *image, int idx)
+>  		ptr = kmap_local_page(page);
+>  		/* Start with a clear page */
+>  		clear_page(ptr);
+> -		ptr += maddr & ~PAGE_MASK;
+> -		mchunk = min_t(size_t, mbytes,
+> -				PAGE_SIZE - (maddr & ~PAGE_MASK));
+> +		mchunk = min_t(size_t, mbytes, PAGE_SIZE);
+>  		uchunk = min(ubytes, mchunk);
+>  
+>  		if (uchunk) {
+> @@ -905,9 +902,7 @@ static int kimage_load_crash_segment(struct kimage *image, int idx)
+>  		}
+>  		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+>  		ptr = kmap_local_page(page);
+> -		ptr += maddr & ~PAGE_MASK;
+> -		mchunk = min_t(size_t, mbytes,
+> -				PAGE_SIZE - (maddr & ~PAGE_MASK));
+> +		mchunk = min_t(size_t, mbytes, PAGE_SIZE);
+>  		uchunk = min(ubytes, mchunk);
+>  		if (mchunk > uchunk) {
+>  			/* Zero the trailing part of the page */
+> -- 
+> 2.43.0
 > 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 > 
-> The suspected patch, (The git bisection is in progress)
->   0d6a9aca15c987b4774f7fdb34114ab0d483766a
->   extcon: ptn5150: Add Type-C orientation switch support
 
-I think the patch was dropped from the next.
-
-Still some addressing from the author would be nice...
-
-
-Best regards,
-Krzysztof
 
