@@ -1,218 +1,160 @@
-Return-Path: <linux-kernel+bounces-812624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C097BB53A96
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:44:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4F0B53AA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED232166462
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:44:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B99E3AF9E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A65362086;
-	Thu, 11 Sep 2025 17:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D0B3629AA;
+	Thu, 11 Sep 2025 17:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o3ftaxQ0"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQLC+z74"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F1335A2B4
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3976541A8F;
+	Thu, 11 Sep 2025 17:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757612687; cv=none; b=hZWXb4W07nJPPj+3p9fAuncisnsTC64r0DO3WhQvESznB6KxxozGjElrVjyceg4NbPBKaeMLJpi5NTEjgyUtHwDpDkRdDvFuTmCF8l4cR43E31u8abf5ntFPbLYqonvw095YWBWGN5J8+Gb6CvfwmwTabwcVeIPNpDZNWYHs/kI=
+	t=1757612834; cv=none; b=D8siiczNkIO7u/rVbp5mbAbzRtnYacBjF08W8dX7Nq85gqBlERUo7l4ajMzOFugNeuE5I2INVp6LA/y+07N5GKo3RxtRyjvkNMHuw0O4U6A3F9PwlGYSgderRrbYPGWxSC0qE009qb/1GO4Gv3Z6uMN2AKsGcBdl3/wfpbYWCrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757612687; c=relaxed/simple;
-	bh=pbhMO13ZY5GqoqdYOtMMsHmtwMybBAHzcr1+lrCzXbA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pRrNDtyPdIZHF+F2l1AvMWNvL5C0ew1VpIDef4qJGxvzTCnMBF+aJJ5frGFyDIhioaMMd5AYXH6j6qBQvOko8Yvc5oD65GnGjHyuQyNgFnMbtNwjF9WFOlQsvSsGqHnzpbtSyuTtC887uWqegrjWSO++hc5GUhXCb/3ed42Hn2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o3ftaxQ0; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24af8cd99ddso13724495ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:44:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757612684; x=1758217484; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rz1KF1fng6KUijdJHOF61HINUn1DY6RMLW+n7igx57A=;
-        b=o3ftaxQ0jcC/wXlHi54vgazVyRwwr4iH8pciBU2bbKJ8AWB9qy3pz4ScKLBtPGF5Xj
-         Yvg5pjGAe9epKi7NHbumSBNwqXihUdBSyP4C5UcgI/nKXNafEoYbLGCM87KVbI69Rgui
-         uKuiA5fjoow53xNIMCzDrz3Eznwdmsi0C0KZvL4qggBXSVoT6ixtK4l5OV1ULS6GwWEl
-         gndOtRw+S3/qU4qKbuqezI2gba/56KPTmsR8QCS0P7tsVEs+oj3IVheafqylgfMb+Jpj
-         5TjVk/H6Q37uE7KYm9BnTVgEGlcBFCC6h49fiNHM7GYRrP/2bi4Z4g9VkXO0H9E87vOM
-         BoxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757612684; x=1758217484;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rz1KF1fng6KUijdJHOF61HINUn1DY6RMLW+n7igx57A=;
-        b=naamBRLn1xDaIRWbP2hRhnNEFHK+wKHtNJYUp5uxUyE299hBiOeXbTaa9sGxR3uR80
-         kg+DHpXig63hLLsxsF9DaD24tST3FwmUv371oQJdkMVOpcE83mNFCTDLFxlA25DzvWLE
-         AKpqGz6JYr2ELDEHdXDszIk12xYuvST3W1nh7SoCw0K/eY+XvqMBUPgJhEWafMGqH8l+
-         dKl/PwS2MRBy0MMDqwHrat9OqgscQ21ULzlLx4MrUCO+WorwKdSv/arolATnAw1DSpJG
-         2Xqx5XKRW9EJe18358TLmBVTormqZ43KPA/Z/zHje0c2oTk4WuPfxlwCL4FL5uzVXa0y
-         7y4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVa6GI8o6Vmve/XpoAKRyPn62qg9tDyRPkIJBbHrj2ZnYWFQ3Tr1HiXINJZIDYCleaEHD2WwJ4iV5F0MIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlQEd94GnjetRiTUiuM+liNbz332R3ACr5J0mlqmCVwuX8ttRT
-	tcQpvzunf21N+cEpkpidUs33SZdEPwQas8DTUEC+LucadIHwTsu67POO0i4G9aNLTJFc4/2JXM/
-	1VDlUuHCzzEAtUwWFRwolJbpEMaTrJ78bssAWeG2S1A==
-X-Gm-Gg: ASbGncvhFw+z4eaFise2etoR9ekVCn1DVY6l+61O3uP8s5dHbYzfU5syz0emgjfgdl0
-	Csk7PuHYla0iTtshoZCRCXKxqVevWLm6dCvZAdRQhlLJbU1mYzkJdstyZkrGGjUAd7fTrPEfCT3
-	koowHfhgZwZKXCoUAE/OXlqMqPR2Gs4S3Xep1YBaVT45HjZmytCQwXLrNbOc6692l8V/VPimPCV
-	aDPVVfvYZPf6powbcX7ROva3AvB9EKEDqENUD0jdvFXl4197kcH9jzp6NN9A4d9gjCXui4=
-X-Google-Smtp-Source: AGHT+IHKvaF18ohXsPsL72THHHDkwdYvNLb3qlPEho/vRrC5yGFzk7JsCnpNSS1pajW0C+okn9T5G60r8QGqr7wiZ+k=
-X-Received: by 2002:a17:903:41ca:b0:24c:e6a6:9e59 with SMTP id
- d9443c01a7336-25d245dd6f8mr3157985ad.6.1757612684132; Thu, 11 Sep 2025
- 10:44:44 -0700 (PDT)
+	s=arc-20240116; t=1757612834; c=relaxed/simple;
+	bh=oaKCNu1HF5irjj2VLGgmBQ3NkJiDvAYpfZnXM+otFg8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ja124Pxt8AxPF45eKGz2jojNCI1m5ubrDH9MDvcwpmunzdnUXoVFkCHzlTedDNYZnmF/2JUlLhQ4u/HWDDAzrXkYKMHHNnpR6fLw+TBfQw/cUch8ZHDDaIwzwI1v2GM/6bhXQ+iEM/egkI8E9NgCVbshIzTQ1BUoPlCAP8z2S0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQLC+z74; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF892C4CEF0;
+	Thu, 11 Sep 2025 17:47:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757612833;
+	bh=oaKCNu1HF5irjj2VLGgmBQ3NkJiDvAYpfZnXM+otFg8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OQLC+z74ZpongU6i4YQkD1W9RX24SDvIFBQAKIdz/HxDI1QMPjybvcLk4KeH0t0rF
+	 W1Pd6wwVHr4wceqiIh/SL9uYMN/X6onHspCCvNJ7PjuLF9vaRaL22pvrB4pbq5yIL9
+	 h1F2OqacHBUp5e2KYggoukjTY1W6VzHJO3tagaSIX5GkSmPjoNDZrqZ89AkONcnQwM
+	 8GxShsOwSG1AiR0cMK5K19chv9po/GkW2nW93ksaSWJMp01Dc1C1V/HDLoCuiXE4jz
+	 eEtXpcQW1uag5zwwTdJlZKJnJiLhNFVJ6l24Dk3/Ii8bEsMj3DCDxzPGXPkZSKqxgS
+	 xC29Pw4Rknu5Q==
+Received: by wens.tw (Postfix, from userid 1000)
+	id BD1D25FBFA; Fri, 12 Sep 2025 01:47:11 +0800 (CST)
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Andre Przywara <andre.przywara@arm.com>,
+	linux-sunxi@lists.linux.dev,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] arm64: allwinner: a523: Enable MCU PRCM and NPU
+Date: Fri, 12 Sep 2025 01:47:03 +0800
+Message-Id: <20250911174710.3149589-1-wens@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-pci-acs-v1-0-fe9adb65ad7d@oss.qualcomm.com>
-In-Reply-To: <20250910-pci-acs-v1-0-fe9adb65ad7d@oss.qualcomm.com>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 11 Sep 2025 23:14:32 +0530
-X-Gm-Features: AS18NWC_m5FW6D-agm1h0PvPSN-t5mnK-nNZJhLfFxbja72xJDHUDp2R2a5Rjwc
-Message-ID: <CA+G9fYv_h22MCs380DwW+G5_M=H-GdFvGGo4vq_-gARL8trCOQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] PCI: Fix ACS enablement for Root Ports in DT platforms
-To: manivannan.sadhasivam@oss.qualcomm.com
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Joerg Roedel <jroedel@suse.de>, iommu@lists.linux.dev, 
-	Anders Roxell <anders.roxell@linaro.org>, Pavankumar Kondeti <quic_pkondeti@quicinc.com>, 
-	Xingang Wang <wangxingang5@huawei.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	stable@vger.kernel.org, lkft-triage@lists.linaro.org, LKFT <lkft@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 10 Sept 2025 at 23:09, Manivannan Sadhasivam via B4 Relay
-<devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org> wrote:
->
-> Hi,
->
-> This series fixes the long standing issue with ACS in DT platforms. There are
-> two fixes in this series, both fixing independent issues on their own, but both
-> are needed to properly enable ACS on DT platforms (well, patch 1 is only needed
-> for Juno board, but that was a blocker for patch 2, more below...).
->
-> Issue(s) background
-> ===================
->
-> Back in 2024, Xingang Wang first noted a failure in attaching the HiSilicon SEC
-> device to QEMU ARM64 pci-root-port device [1]. He then tracked down the issue to
-> ACS not being enabled for the QEMU Root Port device and he proposed a patch to
-> fix it [2].
->
-> Once the patch got applied, people reported PCIe issues with linux-next on the
-> ARM Juno Development boards, where they saw failure in enumerating the endpoint
-> devices [3][4]. So soon, the patch got dropped, but the actual issue with the
-> ARM Juno boards was left behind.
->
-> Fast forward to 2024, Pavan resubmitted the same fix [5] for his own usecase,
-> hoping that someone in the community would fix the issue with ARM Juno boards.
-> But the patch was rightly rejected, as a patch that was known to cause issues
-> should not be merged to the kernel. But again, no one investigated the Juno
-> issue and it was left behind again.
->
-> Now it ended up in my plate and I managed to track down the issue with the help
-> of Naresh who got access to the Juno boards in LKFT. The Juno issue is with the
-> PCIe switch from Microsemi/IDT, which triggers ACS Source Validation error on
-> Completions received for the Configuration Read Request from a device connected
-> to the downstream port that has not yet captured the PCIe bus number. As per the
-> PCIe spec r6.0 sec 2.2.6.2, "Functions must capture the Bus and Device Numbers
-> supplied with all Type 0 Configuration Write Requests completed by the Function
-> and supply these numbers in the Bus and Device Number fields of the Requester ID
-> for all Requests". So during the first Configuration Read Request issued by the
-> switch downstream port during enumeration (for reading Vendor ID), Bus and
-> Device numbers will be unknown to the device. So it responds to the Read Request
-> with Completion having Bus and Device number as 0. The switch interprets the
-> Completion as an ACS Source Validation error and drops the completion, leading
-> to the failure in detecting the endpoint device. Though the PCIe spec r6.0, sec
-> 6.12.1.1, states that "Completions are never affected by ACS Source Validation".
-> This behavior is in violation of the spec.
->
-> This issue was already found and addressed with a quirk for a different device
-> from Microsemi with 'commit, aa667c6408d2 ("PCI: Workaround IDT switch ACS
-> Source Validation erratum")'. Apparently, this issue seems to be documented in
-> the erratum #36 of IDT 89H32H8G3-YC, which is not publicly available.
->
-> Solution for Juno issue
-> =======================
->
-> To fix this issue, I've extended the quirk to the Device ID of the switch
-> found in Juno R2 boards. I believe the same switch is also present in Juno R1
-> board as well.
->
-> With Patch 1, the Juno R2 boards can now detect the endpoints even with ACS
-> enabled for the Switch downstream ports. Finally, I added patch 2 that properly
-> enables ACS for all the PCI devices on DT platforms.
->
-> It should be noted that even without patch 2 which enables ACS for the Root
-> Port, the Juno boards were failing since 'commit, bcb81ac6ae3c ("iommu: Get
-> DT/ACPI parsing into the proper probe path")' as reported in LKFT [6]. I
-> believe, this commit made sure pci_request_acs() gets called before the
-> enumeration of the switch downstream ports. The LKFT team ended up disabling
-> ACS using cmdline param 'pci=config_acs=000000@pci:0:0'. So I added the above
-> mentioned commit as a Fixes tag for patch 1.
->
-> Also, to mitigate this issue, one could enumerate all the PCIe devices in
-> bootloader without enabling ACS (as also noted by Robin in the LKFT thread).
-> This will make sure that the endpoint device has a valid bus number when it
-> responds to the first Configuration Read Request from the switch downstream
-> port. So the ACS Source Validation error doesn't get triggered.
->
-> Solution for ACS issue
-> ======================
->
-> To fix this issue, I've kept the patch from Xingang as is (with rewording of the
-> patch subject/description). This patch moves the pci_request_acs() call to
-> devm_of_pci_bridge_init(), which gets called during the host bridge
-> registration. This makes sure that the 'pci_acs_enable' flag set by
-> pci_request_acs() is getting set before the enumeration of the Root Port device.
-> So now, ACS will be enabled for all ACS capable devices of DT platforms.
+From: Chen-Yu Tsai <wens@csie.org>
 
-I have applied this patch series on top of Linux next-20250910 and
-next-20250911 tags and tested.
+Hi folks,
 
->
-> [1] https://lore.kernel.org/all/038397a6-57e2-b6fc-6e1c-7c03b7be9d96@huawei.com
-> [2] https://lore.kernel.org/all/1621566204-37456-1-git-send-email-wangxingang5@huawei.com
-> [3] https://lore.kernel.org/all/01314d70-41e6-70f9-e496-84091948701a@samsung.com
-> [4] https://lore.kernel.org/all/CADYN=9JWU3CMLzMEcD5MSQGnaLyDRSKc5SofBFHUax6YuTRaJA@mail.gmail.com
-> [5] https://lore.kernel.org/linux-pci/20241107-pci_acs_fix-v1-1-185a2462a571@quicinc.com
-> [6] https://lists.linaro.org/archives/list/lkft-triage@lists.linaro.org/message/CBYO7V3C5TGYPKCMWEMNFFMRYALCUDTK
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+This is v2 of my A523 MCU PRCM and NPU support series.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Changes since v1:
+- Dropped dual divider clock rate read-back fix that is already merged
+- DT binding
+  - Moved "r-ahb" clock to the end of the list and added "r-apb0" clock
+- Add NPU clk
+  - Move .num to after list of clks
+- MCU CCU clk driver
+  - Added comment for "fixed" dividers in audio PLL clock
+  - Corrected variable names for audio PLL divider clocks
+  - Added comment for the reversed order of some of the DSP clock's
+    parents when compared to the manual
+  - Added comments for clocks and resets only found in the BSP driver
+  - Corrected register offset for i2s3-asrc and bus-mcu-pwm0 clocks
+  - Made "r-ahb" and new "r-apb0" external bus clocks the parents of the
+    bus gate clocks, with comments if guessed which one applies
+  - Moved .num_clks to after the list of clocks, making it obvious that
+    the value needs to be added if more clocks are added to the list
+- MCU CCU DT node
+  - Enlarged MCU PRCM register range to 0x200
+  - Moved "r-ahb" clock to the end of the list and added "r-apb0" clock
+- Link to v1
+  https://lore.kernel.org/all/20250830170901.1996227-1-wens@kernel.org/
 
-> ---
-> Manivannan Sadhasivam (1):
->       PCI: Extend pci_idt_bus_quirk() for IDT switch with Device ID 0x8090
->
-> Xingang Wang (1):
->       iommu/of: Call pci_request_acs() before enumerating the Root Port device
->
->  drivers/iommu/of_iommu.c | 1 -
->  drivers/pci/of.c         | 8 +++++++-
->  drivers/pci/probe.c      | 2 +-
->  3 files changed, 8 insertions(+), 3 deletions(-)
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250910-pci-acs-cb4fa3983a2c
->
-> Best regards,
-> --
-> Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
->
->
 
---
-Linaro LKFT
+The MCU PRCM is a Power, Reset & Clock Management block that has some
+clock and reset controls for the MCU, DSP and some peripherals that the
+MCU could use.
+
+The NPU is a Vivante IP block. It is clocked from the NPU PLL from the
+main clock unit, but the bus clock and reset controls lie in the MCU
+PRCM.
+
+Patch 1 adds the missing NPU module clock to the main clock control
+unit's binding.
+
+Patch 2 adds the binding for the MCU PRCM clock control unit
+
+Patch 3 adds the missing NPU module clock.
+
+Patch 4 adds support for power-of-two dividers to the sunxi-ng clk
+library.
+
+Patch 5 adds a new driver for the A523 MCU PRCM CCU.
+
+Patch 6 adds a device node for the MCU PRCM CCU.
+
+Patch 7 adds a device node for the NPU.
+
+The NPU was only lightly tested: the driver correctly probes and detects
+a model GC9000, revision 9003.
+
+Please have a look. All patches will be merged through the sunxi tree.
+
+
+Thanks
+ChenYu
+
+
+Chen-Yu Tsai (7):
+  dt-bindings: clock: sun55i-a523-ccu: Add missing NPU module clock
+  dt-bindings: clock: sun55i-a523-ccu: Add A523 MCU CCU clock controller
+  clk: sunxi-ng: sun55i-a523-ccu: Add missing NPU module clock
+  clk: sunxi-ng: div: support power-of-two dividers
+  clk: sunxi-ng: add support for the A523/T527 MCU CCU
+  arm64: dts: allwinner: a523: Add MCU PRCM CCU node
+  arm64: dts: allwinner: a523: Add NPU device node
+
+ .../clock/allwinner,sun55i-a523-ccu.yaml      |  37 +-
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi |  39 ++
+ drivers/clk/sunxi-ng/Kconfig                  |   5 +
+ drivers/clk/sunxi-ng/Makefile                 |   2 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-mcu.c    | 469 ++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c        |  21 +-
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.h        |  14 -
+ drivers/clk/sunxi-ng/ccu_div.h                |  18 +
+ include/dt-bindings/clock/sun55i-a523-ccu.h   |   1 +
+ .../dt-bindings/clock/sun55i-a523-mcu-ccu.h   |  54 ++
+ .../dt-bindings/reset/sun55i-a523-mcu-ccu.h   |  30 ++
+ 11 files changed, 671 insertions(+), 19 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-mcu.c
+ delete mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+ create mode 100644 include/dt-bindings/clock/sun55i-a523-mcu-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun55i-a523-mcu-ccu.h
+
+-- 
+2.39.5
+
 
