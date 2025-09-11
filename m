@@ -1,175 +1,140 @@
-Return-Path: <linux-kernel+bounces-812223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86BC0B534B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:59:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F0EB534BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27369AA0122
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:59:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AA371B26C7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B50334375;
-	Thu, 11 Sep 2025 13:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1CE32C316;
+	Thu, 11 Sep 2025 14:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HP5W2qtO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfx82vAF"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B427A32ED3D
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D02B335BAC;
+	Thu, 11 Sep 2025 14:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757599170; cv=none; b=l9pmgMxPW12Y3RUwfmwOz1KTQvIieIAe5MPA4Eby6d71X3SrVMytC/7Fz++CVNTORs+4IbGlSZNiM4b9muXKGYDa8vDe1S8zugDbri4gQcLvVZAZRAqvqMMj9/kq6ZwrfXsUny0O0FLTN0XHTZwxt9atfp+g4ybXiXEpey6Zqmw=
+	t=1757599208; cv=none; b=Op1uzL77bRPJJQVlB5ISs5o/y3ramMl69/lJALM4eEOVgZtczvzPCPCc09/O/A2smxoMJrDksxlM1pCxyZLSaLpZy94sWzd8VAhIyDDy1CY4W4dRDgeHXMeIew7fHZmCFeeqojZ8bEaa7IoPB3oyFH+/o+mAUEC+RpnmviGUlRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757599170; c=relaxed/simple;
-	bh=W6+oLNg0lTcwoXcBoMH7aP5iNhGZ2xPTqpbqs+BPRMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GtvHx+pioMv6Ejba/r0qn9aCZ7tYL7jf8S1AKfTX2QVR8So8gLmvhr0SkeW88YqnwkQmr40kwKim+f4DttLg8EN8VgfcFt5rbsglCNqQvfvruXmTeE0TwYwffeRsN3t7FrDjLHn4GJ+sPoCEoonR+h9nMvasntkDz8eJXcJQnDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HP5W2qtO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757599167;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RXQap9QNVW2B9eMLyddgS040sQcFoOCBukKtfe1SVA4=;
-	b=HP5W2qtOwJA3wJ83zHcoKdcSf6/yBjrQp/qDxvkOjPvG+bDu+ot9n0eZdO8E4SPDPlEkwy
-	eYCtLsDNL1HmBrDCqxN2q0+432hIh0apmOx3gHxFB3vof/QOJuIu9ip+ELuE6zs977buU9
-	aAQsKKHI4XJzLcfnZzneK53V3ZY8VfI=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-37-5FmWVmnGMJ2eOXjLQvS5ng-1; Thu, 11 Sep 2025 09:59:26 -0400
-X-MC-Unique: 5FmWVmnGMJ2eOXjLQvS5ng-1
-X-Mimecast-MFC-AGG-ID: 5FmWVmnGMJ2eOXjLQvS5ng_1757599165
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3e68a54dac2so379618f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:59:26 -0700 (PDT)
+	s=arc-20240116; t=1757599208; c=relaxed/simple;
+	bh=KAWNXHJC490Xdv/Jm2f53Hj3dPJm3UGG+5Ivgh+fgdU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XbAt4bJvLVAW3ksDvyYBqV+iE/bmHqzKsKDBFXm1mK+K/yh9tyJAUG136vjJer+F2ee9omLAfWmozbsYC0Ohw0cbvJrLdNfcNVYp4v3vjJJJZRaapu9efO/kaTP7mUvGbbeQ3YtpgGN/pftcSvG1aWRGHIPn5OCh+hx1RgWFNfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bfx82vAF; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7322da8so147391166b.0;
+        Thu, 11 Sep 2025 07:00:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757599205; x=1758204005; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KAWNXHJC490Xdv/Jm2f53Hj3dPJm3UGG+5Ivgh+fgdU=;
+        b=bfx82vAFhYi+SX740k7qwg2iP9PoEMkZ3IbRbQxka6tZT+l7zd5rCMOG/bpUXDzYmT
+         R+Tj8FUjjoPi6Semtrz/IrtH5V8mtuJhIW6w/yz7YJ/MAdVUT4ERsyfN7lMtpPcuDDEE
+         IOv5gMMtPqqxKUMHpHo0YNfwFvDHeM10sul8y5bVMY9eZ49ZLFD2X9DIILoibQTbbZW+
+         tQL3Tv8029O9aQNV7jf6GMtViZqYn7yGsmfanNr0LoJQFbiJ1ee4p/BEaHHrI4TZ8ngh
+         Ytjn4hoobaYOR6DuVl2+H0pjw0Li2/l8Z8VIC1jIGvqO6tMOWeoJbNr8LQo7S8hizorU
+         qviw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757599165; x=1758203965;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RXQap9QNVW2B9eMLyddgS040sQcFoOCBukKtfe1SVA4=;
-        b=qw5nRToUiExSGvBmdSCBrcut3l3fTE2Zkxk/bZjUBZQSoEuGiLVfTmv7deKux/zJW+
-         tqi3XGMPP5exzrODQoOpixYE/k1g3Cjy80OIockEUPhPOR67mIL2HyQPXscWwkiXeb49
-         FkFpr0zHXpeBJJlQQr3GnCakaYuj+2NaLeu5zo4ukq+Yi3EP6a3BKB6CP2KgmU5wMwnv
-         7GYufUuH+FLJCmivHrurXLPY7cB2X/FR6FbyZ5gr1h8iCHX4xi0Mz8fI1+zRL1LIaes6
-         SXH08q9XDGR1/ZmC5ntcf1j9B0MWW7PVMICU3O2usAemi2LhbOGpqVKqXQtQ0fnYMqoV
-         hLiw==
-X-Gm-Message-State: AOJu0YxZJI1aEEcgXtTZSZUQ2IYx0Ct3eXKSq4CgY7WWjez846Gkovjt
-	l/k+y0ZJmQz+hnhDgEnFguOaYmRGhMHSJcIVVn+26WE4m+up6l77hUIdCC/TfkcZAkBXHYNRlu+
-	IOyE2IVl2UFHjO23lu+KDYvqi/7nQUh2JcpESjJJ9/ByBt6538uhHmI45ANgkzlcqUg==
-X-Gm-Gg: ASbGncsIOKQCwpKfSvv7IFn3W9SZ94Vua17CkeUjyIU6Y3Jdbj3R2h5RaKYn+yCv+Az
-	JJxC80Zv+JO0Rg9qQh4bbD7Fsz4myS3AqvSxBbI7r0KjA035nQTn/aZ6u2Qgc87wYXyTUo/ckpy
-	ny3dmmFlr1wFcKSa0p3OwPOJahoBm6QE9iTc5losuwScNzMfQaqnqr70ScGG7h2AGGkQpeKhk7q
-	HQv/x2szhqbAQCmTYUtv9xNX8EjXHJz8jvyAAzB/8BbJVXX+LQDt3o1HrFFA1jy5kNRZniD6HgT
-	EC5kC/WOcPJGOXJeUQ4IyFB9ETJC05u+hI/neuqYpIQof/cviTberT+szJ0GTI7VKo7HUMM=
-X-Received: by 2002:a05:6000:2502:b0:3e4:1e29:47f0 with SMTP id ffacd0b85a97d-3e75e166452mr3031941f8f.29.1757599165176;
-        Thu, 11 Sep 2025 06:59:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEx7leHaL1+Rr6ymkfV3LwM9/xSIOUP1CO3XwNw4FGNGfvH8nKSBq2X+NK/v29mIsOIAHaBbw==
-X-Received: by 2002:a05:6000:2502:b0:3e4:1e29:47f0 with SMTP id ffacd0b85a97d-3e75e166452mr3031906f8f.29.1757599164651;
-        Thu, 11 Sep 2025 06:59:24 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.70.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e016b5c5dsm28372365e9.14.2025.09.11.06.59.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 06:59:24 -0700 (PDT)
-Date: Thu, 11 Sep 2025 15:59:21 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
-	kernel-team@android.com, Luca Abeni <luca.abeni@santannapisa.it>,
-	Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-	yurand2000@gmail.com
-Subject: Re: [RESEND][PATCH v21 0/6] Donor Migration for Proxy Execution (v21)
-Message-ID: <aMLVuZbkMEQzXPqR@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250904002201.971268-1-jstultz@google.com>
+        d=1e100.net; s=20230601; t=1757599205; x=1758204005;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KAWNXHJC490Xdv/Jm2f53Hj3dPJm3UGG+5Ivgh+fgdU=;
+        b=hWuD5MOJLmCrWJw+DTwXorx7lLfNAuVGJuR5ktpDgnDeZlV9O0eSPWcUd1ZF1loEUA
+         QLwmVH+yRJ0pIIPlR9nP2yAsLLAW9mB/xUTn8qaVXGwx/LSFMZLXAaKR0fhszBWGUaxQ
+         TSS11z3juxDWZrT29UU8yQX1Nv8poe0Xrp2ziBAe0s598lYmgWU5hUkFQE5nZd2TXd/1
+         Ww7ygy50bYy8hRMI5KuGi9yMTdt+99u5rawjN2Qk1d5ON6HbLRsxPO16GC+macKwnb31
+         MoN01+Soy+uH+j3g01iVOFnEgYJnoMq5dpsdcT8gLZAzD/TYM+DSE+H7xvddJtqbI96J
+         K2AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8s/J4se0AiILfSRGCN5oFczziv4ZK9eZsqzuXy8Ojb9vlG6v3Gry69DC0Pzn3UooRcxON88kdesy/@vger.kernel.org, AJvYcCVNCVohKGkQLX6n+QkR88nn0mSZOyzs2sqOTPjBUfYcGUFcdglT4wSxhjjLB304IlNib3z5Jusfcw+vISku@vger.kernel.org, AJvYcCWP6EKBrrm+WzEao2mehCUAJSE5n7Pxjj1A0TexV512l+Uj2mmYvby9s+Bh8uedVV4uxxhqRjSc/kD4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeLQSO+dJrFRtU+HOfo1BANkNr9fbc5i6n8Sf+2zyP8biLPArq
+	tYI3k6S0vzC0Fo5H/OEVP9j7zxzdSO6Jm/ckhXK3SMzGnw1WKRg5OBHmPU9qUvn7RereFXp+TtT
+	vQc1VzO+x+GOdlSK9kfYFLTAPcuGPUyE=
+X-Gm-Gg: ASbGnctA/zZ7xppr1/KCz/D/i90lHSZn1dRqz+EnH1UrLDKRWYpshjwY9pzURpvIInk
+	m+ctv4TfoZuoZp7t3dnm8pTbvkf3Fl61Bi6tV3J8UYKD+v1s1x/rX1GIhfBqlK0RBfg+Zdyu8BQ
+	l24B/JcDUlLobB4ma1aEgTLgHvywtz9a8m6uwA+lo+CmQW56XdRcSAOh4rN+XCVL3VPVHIKz1Hu
+	sni+2XDfw==
+X-Google-Smtp-Source: AGHT+IFMSIxT0DvJYxyQvFL1fjp2tZVRPvFNOGQw2mzuUtE1CKhFGnz+lVXAWGyHgFJrJmYFfytJFnJ0QvBeWqr9YRA=
+X-Received: by 2002:a17:906:fe08:b0:b04:3a9c:33ac with SMTP id
+ a640c23a62f3a-b04b16bc468mr1856224966b.50.1757599204251; Thu, 11 Sep 2025
+ 07:00:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250904002201.971268-1-jstultz@google.com>
+References: <20250910-bma220_improvements-v2-0-e23f4f2b9745@subdimension.ro>
+ <20250910-bma220_improvements-v2-7-e23f4f2b9745@subdimension.ro>
+ <a10a2f6d-6cb7-4922-b505-dc6994f0415f@kernel.org> <aMLCWFatVkePTxCa@sunspire>
+ <391229ff-d85a-4707-8e7c-ea64e0e3d7cb@kernel.org> <aMLUDkKhF_jhios0@sunspire>
+In-Reply-To: <aMLUDkKhF_jhios0@sunspire>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 11 Sep 2025 16:59:26 +0300
+X-Gm-Features: Ac12FXx2dgo7w9UN0OCgpi1IaYy5kDkzCRoK71yDqZm3JQPTr_NmqaDeLEStBnw
+Message-ID: <CAHp75VdGX7ntm356mm4fLKtYfpuUMnHx7xZVE90MOd_CxTwmmQ@mail.gmail.com>
+Subject: Re: [PATCH v2 07/14] iio: accel: bma220: reset registers during init stage
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, "Nuno S??" <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+On Thu, Sep 11, 2025 at 4:52=E2=80=AFPM Petre Rodan <petre.rodan@subdimensi=
+on.ro> wrote:
+> On Thu, Sep 11, 2025 at 03:07:05PM +0200, Krzysztof Kozlowski wrote:
+> > On 11/09/2025 14:36, Petre Rodan wrote:
+> > > On Thu, Sep 11, 2025 at 09:35:52AM +0200, Krzysztof Kozlowski wrote:
+> > >> On 10/09/2025 09:57, Petre Rodan wrote:
 
-On 04/09/25 00:21, John Stultz wrote:
-> Hey All,
-> 
-> I didn't get any feedback on the last iteration, so I wanted to
-> resend this next chunk of the series: Donor Migration 
+...
 
-Not ignoring you, but I had to spend some time putting together some
-testing infra I am not trying to use to see how DEADLINE behaves with
-the series, as it's somewhat difficult for me to think in abstract about
-all this. :)
+> > >> You just added this code in patch 6. Don't add code which immediatel=
+y
+> > >> you remove. I understand you re-add this later, so basically it is a
+> > >> move, but such patch diff is still confusing.
+> > >
+> > > sorry, but this is an artefact of 'git diff' I don't think I have no =
+control of.
+> >
+> >
+> > Don't think so. Before bma220_init() was above bma220_power(). After
+> > your patch bma220_init() is BELOW bma220_power(), so that's a move.
+>
+> you are correct, these two functions did change places due to the fact th=
+at
+> _init() started using _power(). I preffered to do the move instead
+> of adding a forward declaration and leaving _power() between _init() and =
+_deinit().
+> the code was optimized for how it will look at the end of all this patchi=
+ng.
 
-> Also you can find the full proxy-exec series here:
->   https://github.com/johnstultz-work/linux-dev/commits/proxy-exec-v21-6.17-rc4/
->   https://github.com/johnstultz-work/linux-dev.git proxy-exec-v21-6.17-rc4
-> 
+The idea is to balance between two, but for certain I agree with
+Krzysztof, we need to avoid "ping-pong"ing the code in the same
+series. If you need to move, create a no change patch that _just
+moves_ one function up in the code.
 
-> I’d really appreciate any feedback or review thoughts on the
-> full series as well.
+> I thought you ment the code that was added the previous patch was not rem=
+oved per
+> se from _init(), which was not the case.
 
-I current have the following on top of your complete series
 
-https://github.com/jlelli/linux/commits/experimental/eval-mbwi/
-https://github.com/jlelli/linux experimental/eval-mbwi
 
-of which
-
-https://github.com/jlelli/linux/commit/9d4bbb1aca624e76e5b34938d848dc9a418c6146
-
-introduces the testing (M-BWI is Multiprocessor Bandwidth Inheritance)
-infra and the rest some additional tracepoints (based on Gabriele's
-patch) to get more DEADLINE info out of tests (in conjuction with
-sched_tp [1]).
-
-Nothing bit to report just yet, mainly spent time getting this working.
-
-One thing I noticed thouh (and probably forgot from previous
-discussions) is that spin_on_owner might be 'confusing' from an
-RT/DEADLINE perspective as it deviates from what one expects from the
-ideal theoretical world (as tasks don't immediately block and
-potentially donate). Not sure what to do about it. Maybe special case it
-for RT/DEADLINE, but just started playing with it.
-
-Anyway, I will keep playing with all this. Just wanted to give
-you/others a quick update. Also adding Luca, Tommaso and Yuri to the
-thread so that they are aware of the testing framework. :)
-
-Thanks!
-Juri
-
-1 - https://github.com/jlelli/sched_tp/tree/deadline-tp
-    will open an MR against Qais' mainline repo as soon as TPs are
-    hopefully merged upstream as well.
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
