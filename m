@@ -1,138 +1,140 @@
-Return-Path: <linux-kernel+bounces-812492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16948B538DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:13:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C6EB538DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A550B64A61
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:12:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D19864E1370
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A7A35337F;
-	Thu, 11 Sep 2025 16:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E889F3568E2;
+	Thu, 11 Sep 2025 16:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUZScqso"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AIklWWxL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B9220ADD6;
-	Thu, 11 Sep 2025 16:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489A033EB0D;
+	Thu, 11 Sep 2025 16:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757607223; cv=none; b=KKi8qEyDv3ChMJx2tu5sm5rmmeoHc0j7Mmtpb2RVpvTiIFRDshfSFd0HIqXOKK9P6aXJD8HUAgHUzqxvTpi4fdpHTt9avyhHrWU7SodvxkdFVPighDXUJN/2NKU4Q1xG3CeLn1i0M0kLDth7E0mkMRa57QkpIKTwjUdBjz/ZL98=
+	t=1757607236; cv=none; b=DA/YTI001AzTvrnlsfdnc/JDiM+JcVwtR93jBIBoZYN8V79DOpQ2pBawvflp0cyFAVm8cW02yqY8SrH+KZrnu8nlqoZ3NbsJUOr1fKvCEUVymTF+IFzmS+FZ+IVrX6Ao3mnGxp7/I1xaq3aPlFTBIxsHJaf4Socir4lEl36DpGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757607223; c=relaxed/simple;
-	bh=1etK93HnG/U70MtpQ4yz5j14nB+hdJHjl+ApAiWS2Mo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Ttnffz2I+IJpBEr4r+NL7yoOZrrR2hF/bVoYzSw00mToXyeCJbZ04BM14sgarN2dBLqDCrFILDnlAAH9J/9I4RpDiHpyMmsiKkUmL1dw71Oy03nFe3WBzcTvYuvgGPwqe7OLsq2/iNdbTYgZYxvhJ+yuZ+0ItHS0q8+HBE11SgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUZScqso; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5D28C4CEF0;
-	Thu, 11 Sep 2025 16:13:42 +0000 (UTC)
+	s=arc-20240116; t=1757607236; c=relaxed/simple;
+	bh=I/2VPogFUvAPdDxRFIzXXpfzHkiezzIR2cEgbm5BxTI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eFg1mnxObpPLivuBXy2tDpo2qF99VMdrLIF9EyBl/S9bb7dxC5Ae1v8CMkuPe7Svk7TmnrWPTteUofEEnNsVYpMribyPcDnl5jXBMS5YwHv3OV3VI2z8X+xTR4cJgkQlVl7kP8hcIsNfKYeVcay4Vd/YhcR6eDaJyWmDmZZu0T8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AIklWWxL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5D7FC4CEF0;
+	Thu, 11 Sep 2025 16:13:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757607222;
-	bh=1etK93HnG/U70MtpQ4yz5j14nB+hdJHjl+ApAiWS2Mo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VUZScqsox3d0qSL/0Mbgt4MPOpU/rsy7a4hdYqTV5mgagrR4cIWgFI8I2A7KD+DvG
-	 uxP/vIJi0YEQ/E9sXrvNPVt1slixvGb/BThrphuGSGscOO3qxaFx0zm9PgfeMnxdqx
-	 xUfiQJM2KfldAJcV5uvbI7NwX6NKZZt2Lo2FDBWHjBjDgCfNPU6GrowJnL+x8jo0ly
-	 sMsve+0diToJfCtYfYYxMLwXMD/KP3r/5ZfC/YZOM+Iwqe7n3f+s+Z5cOgy9ZSr1Pt
-	 6wljjrg7PAzSJiy7eqn5K/cfNkWxZA+L3+G2do+p8FU/J1j5WUGl1qjpBcZFJRvqZ6
-	 jlwvQ4kGyCOcQ==
-Date: Thu, 11 Sep 2025 11:13:41 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Rob Herring <robh@kernel.org>, Lizhi Hou <lizhi.hou@amd.com>
-Subject: Re: [PATCH] PCI: of: Update parent unit address generation in
- of_pci_prop_intr_map()
-Message-ID: <20250911161341.GA1579997@bhelgaas>
+	s=k20201202; t=1757607235;
+	bh=I/2VPogFUvAPdDxRFIzXXpfzHkiezzIR2cEgbm5BxTI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AIklWWxLHs+5NpFqBlorRZgi5BhtcwmNZObEe/fZXdq2iThoZEyCjY5S3sssk5QDk
+	 c3cohzK700lOmf7SFRrvdgbc6Bgwu+gYJ5LU5kRTSDK6ux+FW8bugSSiM+lUloFJhw
+	 LONa9ByGtu30UC6Ui7ZXobwq/7iKXrPfz/jucsmBdKz+UlOg6n06sYTaNz59pPFMX8
+	 UFBOSMRYLcsBm7bjJLHegtUkDffD5l68fv4/57npS125s5mLOJkIDAia/jjJ6EsmBZ
+	 3r7zmNNy2Yy95aDWPAgWz5w4Fm1UlHagI769HLAlVCvX5Mhj8azQ4bdlz1UIwLFEDp
+	 cBVEh65woBzRg==
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-61e74e59d8fso442766eaf.0;
+        Thu, 11 Sep 2025 09:13:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWVVl42/b6pPjjj+4SN32OvNgH07dsCwcN6yS/kM5FwoukoW7FTPGZbfBvgKXbN2fhFsn/5856Wisdt884=@vger.kernel.org, AJvYcCWXXpVyPmXfzvk2egmflRvpRdU+/4xfjRL+t2m2fpnyezHnO850TBOyMlFDf5C2UU68NfisLZKyLLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJu4Bl/lnl7aTCwuG56vC3u4wiFopAkYx2IhTluf8s/puzewb3
+	f+YrQJEpJcMMZ/H6DeMzs/sUMrUTwniJWAzwZ72vg3hQWGRkBeYb9Tornzv22hHtou0WK2117BY
+	xaSngQjJLQCV19GS1RXYJ22pUBdzzMdA=
+X-Google-Smtp-Source: AGHT+IHOuAIfnm9DqiC/ZecQn8S6rKbOtnHBhA8LDng79PRBOOIOprC17snFIG++t0ONoKNX3cK9Tkt3WvNX1siRtpQ=
+X-Received: by 2002:a05:6820:1627:b0:621:a69d:bafb with SMTP id
+ 006d021491bc7-621b2e8eddemr1759288eaf.2.1757607235199; Thu, 11 Sep 2025
+ 09:13:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818093504.80651-1-lpieralisi@kernel.org>
+References: <013e03cd-6d8d-4bf9-ba52-5001d10444b7@kernel.org>
+In-Reply-To: <013e03cd-6d8d-4bf9-ba52-5001d10444b7@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 11 Sep 2025 18:13:44 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hGXdEoA=xrxotvDgTgc47Fbe06z5OW1-9eJy0COBEfzg@mail.gmail.com>
+X-Gm-Features: Ac12FXwwbRAC3Do5fEtZmyJ3Wo1ZbD0aqplbJ-TpIA9xbJxWntfykJjQG_cNGHQ
+Message-ID: <CAJZ5v0hGXdEoA=xrxotvDgTgc47Fbe06z5OW1-9eJy0COBEfzg@mail.gmail.com>
+Subject: Re: [GIT PULL] devfreq next for 6.18
+To: Chanwoo Choi <chanwoo@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	"open list:DEVICE FREQUENCY (DEVFREQ)" <linux-pm@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 11:35:04AM +0200, Lorenzo Pieralisi wrote:
-> Some interrupt controllers require an #address-cells property in their
-> bindings without requiring a "reg" property to be present.
-> 
-> The current logic used to craft an interrupt-map property in
-> of_pci_prop_intr_map() is based on reading the #address-cells
-> property in the interrupt-parent and, if != 0, read the interrupt
-> parent "reg" property to determine the parent unit address to be
-> used to create the parent unit interrupt specifier.
-> 
-> First of all, it is not correct to read the "reg" property of
-> the interrupt-parent with an #address-cells value taken from the
-> interrupt-parent node, because the #address-cells value define the
-> number of address cells required by child nodes.
-> 
-> More importantly, for all modern interrupt controllers, the parent
-> unit address is irrelevant in HW in relation to the
-> device<->interrupt-controller connection and the kernel actually
-> ignores the parent unit address value when hierarchically parsing
-> the interrupt-map property (ie of_irq_parse_raw()).
-> 
-> For the reasons above, remove the code parsing the interrupt
-> parent "reg" property in of_pci_prop_intr_map() - it is not
-> needed and as it is it is detrimental in that it prevents
-> interrupt-map property generation on systems with an
-> interrupt-controller that has no "reg" property in its
-> interrupt-controller node - and leave the parent unit address
-> always initialized to 0 since it is simply ignored by the kernel.
-> 
-> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Lizhi Hou <lizhi.hou@amd.com>
-> Link: https://lore.kernel.org/lkml/aJms+YT8TnpzpCY8@lpieralisi/
+Hi,
 
-Applied to pci/of for v6.18, thanks, Lorenzo!
+On Thu, Sep 11, 2025 at 5:10=E2=80=AFPM Chanwoo Choi <chanwoo@kernel.org> w=
+rote:
+>
+> Dear Rafael,
+>
+> This is devfreq-next pull request. I add detailed description of
+> this pull request on the following tag. Please pull devfreq with
+> following updates.
+>
+> Best Regards,
+> Chanwoo Choi
+>
+>
+> The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e=
+00:
+>
+>   Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git tags/de=
+vfreq-next-for-6.18
+>
+> for you to fetch changes up to eddb5ba91b289faa15117d4fc1c2fb223f3493c2:
+>
+>   PM / devfreq: rockchip-dfi: add support for LPDDR5 (2025-09-09 23:37:39=
+ +0900)
+>
+> ----------------------------------------------------------------
+>
+> Update devfreq next for v6.18
+>
+> Detailed description for this pull request:
+> - Add support for LPDDR5 for Rockhip RK3588 SoC on rockchip-dfi devfreq d=
+river.
+>
+> - Fix an issue where DDR cycle counts on RK3588/RK3528 with LPDDR4(X)
+>   are reported as half by adding a cycle multiplier to the DFI driver
+>   on rockchip-dfi devfreq-event driver.
+>
+> - Fix missing error pointer dereference of regulator instance
+>   and remove redundant condition on on mtk-cci-devfreq.c devfreq driver.
+>
+> ----------------------------------------------------------------
+> Dan Carpenter (1):
+>       PM / devfreq: mtk-cci: Fix potential error pointer dereference in p=
+robe()
+>
+> Liao Yuanhong (1):
+>       PM / devfreq: mtk-cci: avoid redundant conditions
+>
+> Nicolas Frattaroli (2):
+>       PM / devfreq: rockchip-dfi: double count on RK3588
+>       PM / devfreq: rockchip-dfi: add support for LPDDR5
+>
+>  drivers/devfreq/event/rockchip-dfi.c | 91 ++++++++++++++++++++++++++++--=
+------
+>  drivers/devfreq/mtk-cci-devfreq.c    |  5 +-
+>  include/soc/rockchip/rk3588_grf.h    |  8 +++-
+>  include/soc/rockchip/rockchip_grf.h  |  1 +
+>  4 files changed, 82 insertions(+), 23 deletions(-)
 
-> ---
->  drivers/pci/of_property.c | 21 ++++++++++++++-------
->  1 file changed, 14 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
-> index 506fcd507113..09b7bc335ec5 100644
-> --- a/drivers/pci/of_property.c
-> +++ b/drivers/pci/of_property.c
-> @@ -279,13 +279,20 @@ static int of_pci_prop_intr_map(struct pci_dev *pdev, struct of_changeset *ocs,
->  			mapp++;
->  			*mapp = out_irq[i].np->phandle;
->  			mapp++;
-> -			if (addr_sz[i]) {
-> -				ret = of_property_read_u32_array(out_irq[i].np,
-> -								 "reg", mapp,
-> -								 addr_sz[i]);
-> -				if (ret)
-> -					goto failed;
-> -			}
-> +
-> +			/*
-> +			 * A device address does not affect the
-> +			 * device<->interrupt-controller HW connection for all
-> +			 * modern interrupt controllers; moreover, the kernel
-> +			 * (ie of_irq_parse_raw()) ignores the values in the
-> +			 * parent unit address cells while parsing the interrupt-map
-> +			 * property because they are irrelevant for interrupts mapping
-> +			 * in modern system.
-> +			 *
-> +			 * Leave the parent unit address initialized to 0 - just
-> +			 * take into account the #address-cells size to build
-> +			 * the property properly.
-> +			 */
->  			mapp += addr_sz[i];
->  			memcpy(mapp, out_irq[i].args,
->  			       out_irq[i].args_count * sizeof(u32));
-> -- 
-> 2.48.0
-> 
+Pulled and added to linux-pm.git/linux-next, thanks!
 
