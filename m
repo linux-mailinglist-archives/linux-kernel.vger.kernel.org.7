@@ -1,296 +1,104 @@
-Return-Path: <linux-kernel+bounces-811803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C97B1B52E0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:12:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07788B52E16
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2AAD1892DB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8138C3AC583
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA1B310644;
-	Thu, 11 Sep 2025 10:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C30130E85A;
+	Thu, 11 Sep 2025 10:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1Wo5DFeq"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="P4nyxlDP"
+Received: from fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.65.3.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B997A54652
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252B522578A;
+	Thu, 11 Sep 2025 10:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.65.3.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757585492; cv=none; b=gHnlS832GAmN7XTaYD6AAZVXT/S3OEhb9qtWPtLjWpleB+nkl3nSul4LZgUqX+Jm9PCZDZa/0P0G3fapq8GvhVlJLLokFZiBGsP1DNhRiyFsAIfPQjxEmrsyq1vpQ9gRTiD+nkwVTzuJtyYWglaDGKbJ6broyV46WLy5r722dGY=
+	t=1757585599; cv=none; b=qRaygQMiAHkFZfqOSjsrooWKiDFn18DTiJ41ELZvoYQ3VzlYM6VEpMAWarKUJhufdY5KFDWdd3k62eI5xkeWJQzxPg2IIV/5q8RepeB+q8FAtgeA9xTiFq4OSsKy95W3NRfLCpFJmBStLbZkD/0BrZhaenKp0klXlOO409JCABQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757585492; c=relaxed/simple;
-	bh=wiEOdXPNQ7fjXJ3tEfgZ5DQcck3zCSzqWg3orVepiBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hcZtKBMvmkTwdTzQjIXcXObfO+WdHHhBZ8kVmMZDbWzZrEey/EA1e21d88jhxjbcu6aordIUp1TVzyY4aSiP1CnQiju2tJpX9ljhpmrFU+xeRK2iIGqHIPG8/zx+I63FSW6RmxpYDKhJsYfzAqYwYE/VRxi0djpLWm+fyBMvSP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1Wo5DFeq; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id EF6331A0DDE;
-	Thu, 11 Sep 2025 10:11:26 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B7505606BB;
-	Thu, 11 Sep 2025 10:11:26 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 90DEB102F1BF2;
-	Thu, 11 Sep 2025 12:11:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757585485; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=nKw7C3NYAy5Aaj3r8xHKrXFpWDbbwE9fY6z70DvQPug=;
-	b=1Wo5DFeqhOilTi/yYNIuH0qMj2Tz6xqaNaLR2kquaQRRH4/vW/2fLtIb2sdsxFioGcidSR
-	nzqOTn38aIx0LE467Ua1c0JHu1e+hPBei5kBpI22Y/QZqLANS9dtEQuqVSXOrpmlf6hGe6
-	6Zl6gHONtP4ITaxGu49HEWVaeWmiKF0+lKW83wEo21YRRHjNGIcYpBW+vcuvxsjl5ys2Xf
-	UeP5UmRj4u22c8CwwT1kexxcbckAgVtDo5OycsPP55DFmY8DkQOoudRVsAmLMcJ0krrEao
-	IFedE6Ntsm75yVuElXGcq+XmUYz9GZ2d3Fj966M81dq4zS2USo7Sb2efUUs3Dw==
-Date: Thu, 11 Sep 2025 12:11:03 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: David Gibson <david@gibson.dropbear.id.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Ayush Singh
- <ayush@beagleboard.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, Rob
- Herring <robh@kernel.org>, Jason Kridner <jkridner@gmail.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Davis <afd@ti.com>
-Subject: Re: Device tree representation of (hotplug) connectors: discussion
- at ELCE
-Message-ID: <20250911121103.40ccb112@bootlin.com>
-In-Reply-To: <aMEAXrAC0uEW2sCc@zatzit>
-References: <20250902105710.00512c6d@booty>
-	<aLkiNdGIXsogC6Rr@zatzit>
-	<337281a8-77f9-4158-beef-ae0eda5000e4@beagleboard.org>
-	<aL5dNtzwiinq_geg@zatzit>
-	<20250908145155.4f130aec@bootlin.com>
-	<aL-2fmYsbexEtpNp@zatzit>
-	<20250909114126.219c57b8@bootlin.com>
-	<CAMuHMdVarhTFEhQoYHWCnJp0iWRCjm0wh_ryP73aOdUwVa0X4Q@mail.gmail.com>
-	<aMEAXrAC0uEW2sCc@zatzit>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757585599; c=relaxed/simple;
+	bh=OOPu29kQ1BH24bAUxy/ULMGjObDfbqKtts7G9RxD7FI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eSnzHQwZydIfdRKB20+ExrLd7RCRymO8GfdI42yAaONE0Vj3wi3T5JlGuUk8aO4vC55zmNfsCpEb9mBUrhXkauuS3IrCDgYYmqB1BJsmAvPNSojBpBNcxi4DbgblkyUUhUrMgTf1em0B0ZXPW7TyRi3J8aeR0wuDLiv3ghb9yqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=P4nyxlDP; arc=none smtp.client-ip=3.65.3.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1757585597; x=1789121597;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=OOPu29kQ1BH24bAUxy/ULMGjObDfbqKtts7G9RxD7FI=;
+  b=P4nyxlDP3J+MEG32OQ/E6wmxy2nyN23LocXdFN2loNOXJHQh5Q2imuXQ
+   fxgO6wjfeQ+PQkhcykjkC8+Eyfk+n5Ve0pEiYux5hhakUPwU9oM+jFZ54
+   c2QVwWmlFjzTLB5lBegrWB3xJoclrBolFN2xGW7kcQAYT+/T/FlJQFhfA
+   t4YAfIYG3zw/awDGxN0iWO4fShOX29Ft3LSz7JotTQfRUTVLdCNO1bjJO
+   TFHnyTlKSsNZ42oVcMXH2PuRLbXhWAUHDLZqfFFwljCRxaGqi9qLgI0C/
+   SmiNpHswM2GI9hDEq4q8qcHrSNVNC4du0wuySX0lCwEalsoqj2qbFk7AH
+   g==;
+X-CSE-ConnectionGUID: bOYZsoX9Q6yFqFhWnhEZ/A==
+X-CSE-MsgGUID: rmJyDOMAR+KDQ1fYQgccAw==
+X-IronPort-AV: E=Sophos;i="6.18,257,1751241600"; 
+   d="scan'208";a="1955887"
+Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
+  by internal-fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 10:13:05 +0000
+Received: from EX19MTAEUC001.ant.amazon.com [54.240.197.225:8661]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.40.78:2525] with esmtp (Farcaster)
+ id 797de9ee-61f8-47a9-841f-cecc5d78cdf7; Thu, 11 Sep 2025 10:13:05 +0000 (UTC)
+X-Farcaster-Flow-ID: 797de9ee-61f8-47a9-841f-cecc5d78cdf7
+Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
+ EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 11 Sep 2025 10:13:05 +0000
+Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.110) by
+ EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 11 Sep 2025 10:12:59 +0000
+From: Fernand Sieber <sieberf@amazon.com>
+To: <wangtao554@huawei.com>
+CC: <graf@amazon.com>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<mingo@redhat.com>, <nh-open-source@amazon.com>, <peterz@infradead.org>,
+	<sieberf@amazon.com>, <tanghui20@huawei.com>, <vincent.guittot@linaro.org>,
+	<zhangqiao22@huawei.com>
+Subject: Re: [PATCH] sched/fair: Only increment deadline once on yield
+Date: Thu, 11 Sep 2025 12:12:43 +0200
+Message-ID: <20250911101243.215354-1-sieberf@amazon.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250910014353.1015060-1-wangtao554@huawei.com>
+References: <20250910014353.1015060-1-wangtao554@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-ClientProxiedBy: EX19D033UWC001.ant.amazon.com (10.13.139.218) To
+ EX19D003EUB001.ant.amazon.com (10.252.51.97)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-Hi David, Geert,
+Hi Tao,
 
-On Wed, 10 Sep 2025 14:36:46 +1000
-David Gibson <david@gibson.dropbear.id.au> wrote:
+The patch hasn't been merged yet.
+I have resent this patch with fixes tag and additional maintainers in Cc.
+Please review on the following thread:
 
-...
-> > 
-> > A PMOD Type 2A (expanded SPI) connector provides SPI and 4 GPIOS.
-> > A PMOD Type 6A (expanded I2C) connector provides I2C and 4 GPIOS.
-> > Hence a plug-in board that needs SPI, I2C, and a few GPIOs, would need
-> > to plug into two PMOD connectors.
-> > 
-> > Or:
-> > A PMOD Type 1A (expanded GPIO) connector provides 8 GPIOS.
-> > Hence a non-multiplexed dual 7-segment LED display plug-in board needs
-> > 14 or 16 GPIOS, and thus would plug into two PMOD connectors.
-> > 
-> > To plug into two connectors, a mapping needs to provided between two
-> > connectors on base and add-on board.
-> > 
+Link: https://lore.kernel.org/lkml/20250911095113.203439-1-sieberf@amazon.com
 
-Base on this, let me draft some ideas to have some basis to move forward.
-
-Suppose:
-- A base board with:
-  2x PMOD Type 2A (SPI + 4 GPIOS)
-  1x PMOD Type 6A (I2C + 4 GPIOS)
-  3x PMOD Type 1A ( 8 GPIOS)
-
-- An addon board which needs:
-  - 1x PMOD type 2A
-  - 2x PMOD type 1A
-
-Hardware connection:
-  base board               addon board
-    PMOD 2A #0    +------+ PMOD 2A
-    PMOD 2A #1
-    PMOD 6A
-    PMOD 1A #0 
-    PMOD 1A #1    +------+ PMOD 1A I
-    PMOD 1A #2    +------+ PMOD 1A II
-
-The base board 'PMOD 1A #0' is not connected to the addon board.
-The addon board uses the base board PMOD 1A #1 and #2.
+Thanks,
+Fernand
 
 
-The base board DT:
-    pmods {
-	compatible = "pmods";
 
-        pmod_2a_0: pmod-2a-0 {
-	    compatible = "pmod-2a"
+Amazon Development Centre (South Africa) (Proprietary) Limited
+29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
+Registration Number: 2004 / 034463 / 07
 
-            /* Describe 4 gpios connected to this connector */
-            gpio-map = < 0 &gpio 10>,
-                       ...
-                       < 3 &gpio 43>;
-
-            /* Describe the bus connected to this connector */
-            spi_bus_2a_0: spi-bus {
-                compatible = "spi-bus-extension";
-                spi-parent = <&spi2>;
-            };
-		
-            /* Export symbols related to this connector */
-            export-symbols {
-                pmod-2a = <&pmod_2a_0>;
-                spi = <&spi_bus_2a_0>;
-	        ...
-            };
-	};
-
-	pmod_2a_1: pmod-2a-1 {
-	    compatible = "pmod-2a"
-
-            /* Describe 4 gpios connected to this connector */
-            gpio-map = ...
-
-            /* Describe the bus connected to this connector */
-            spi_bus_2a_1: spi-bus { ... };
-		
-	    /* Export symbols related to this connector */
-            export-symbols {
-                pmod_2a = <&pmod_2a_1>;
-                spi = <&spi_bus_2a_1>;
-                ...
-            };
-	};
-
-	pmod_6a: pmod-6a {
-            compatible = "pmod-6a";
-            ...
-            export-symbols {
-               pmod_6a = <&pmod_6a>;
-			...
-		};
-	};
-
-	pmod_1a_0: pmod-1a-0 {
-            compatible = "pmod-1a"
-
-            /* Describe 8 gpios connected to this connector */
-            gpio-map = < 0 &gpio 16>,
-                       ...
-                       < 7 &gpio 33>;
-
-            export-symbols {
-                pmod_1a = <&pmod_1a_0>;
-                gpio0_muxed_as_gpio = <&pin_mux_xxxx>;
-                gpio1_muxed_as_gpio = <&pin_mux_yyyy>;
-		gpio2_muxed_as_gpio = <&pin_mux_zzzz>;
-            };
-        };
-
-        pmod_1a_1: pmod-1a-1 {
-            compatible = "pmod-1a"
-
-            /* Describe 8 gpios connected to this connector */
-            ...
-
-            export-symbols {
-                pmod_1a = <&pmod_1a_1>;
-            };
-        };
-
-        pmod_1a_2: pmod-1a-2 {
-            compatible = "pmod-1a"
-
-            /* Describe 8 gpios connected to this connector */
-            ...
-
-            export-symbols {
-                pmod_1a = <&pmod_1a_2>;
-            };
-        };
-    };
-
-
--- Question 1: How to describe resources needed by the addon
-
-On the addon side, we need to tell that we need 1 PMOD 2A and 2
-PMODs 1A (named i and ii).
-
-Proposal supposing that this description will be applied at
-base board pmods node (the one grouping pmod connectors):
-
-\{ or ??? corresponding to the entry point of the addon
-   import-symbols {
-      pmod_2a = "pmod_2a";
-      pmod_1a_i = "pmod_1a";
-      pmod_1a_ii = "pmod_1a";
-   };
-
-   &pmod_2a {
-      spi-bus {
-        regulator@0 {
-           compatible "gpio-regulator";
-	   pinctrl-0 = <&pmod_1a_i.gpio2_muxed_as_gpio>;
-           enable-gpios = <&pmod_1a_i 2>; /* Use GPIO #2 available on PMOD 1A I */
-        };
-
-        ...
-   };
-};
-
-Import-symbols asked for symbols with local name and type (compatible string ?).
-for instance 'pmod_1a_i = "pmod_2a";' means:
-  Hey I refernce localy 'pmod_1a_i' but I don't define it and so 'pmod_1a_i' should
-  be remapped to a symbol, probably a node of my expected type "pmod_2a".
-
-Also, we can node the syntax:
-  &pmod_1a_i.gpio2_muxed_as_gpio
-
-meaning I use the symbols gpio2_muxed_as_gpio provided by pmod_1a_i (namespace).
-In other word, to have the addon DT successfully applied,
-the node remapped to 'pmod_1a_i' has to export the symbol 'gpio2_muxed_as_gpio'.
-
---- Question 2: how to perform the mapping between pmods available on the
-    base board and pmods needed by the addon board.
-
-The addon board describes what it is expected:
-  import-symbols {
-      pmod_2a = "pmod_2a";
-      pmod_1a_i = "pmod_1a";
-      pmod_1a_ii = "pmod_1a";
-   };
-
-Based on compatible string:
-  pmod_2a expected by the addon can be remapped to the node
-  pmod-2a-0 or pmod-2a-1 described in the base board.
-
-  pmod_1a_i and pmod_1a_ii expected by the addon can be remapped
-  to pmod-1a-0, pmod-1a-1, pmod-1a-2.  
-
-  We need some more information to set correct mapping
-    pmod_2a <---> pmod-2a-0
-    pmod_1a_i <---> pmod-1a-1
-    pmod_1a_ii <---> pmod-1a-2
-
-  Can we imagine that this mapping is set by the compatible "pmods"
-  driver base on some specific external information.
-   - Read info from addon to have some more hardware connection
-     details (not sure it is relavant with PMODs connector)
-
-   - Expect this information from user-space ?
-
-   - Any other ideas ?
-
-
-Best regards,
-Hervé
 
