@@ -1,88 +1,129 @@
-Return-Path: <linux-kernel+bounces-812201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C858FB5346F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:52:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A97B5347A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 555211C872AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:52:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1DBB1C87B77
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A2133EB0F;
-	Thu, 11 Sep 2025 13:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298493376B9;
+	Thu, 11 Sep 2025 13:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AJeADdTl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gSqgeGis";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="n2XcOlXN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GrDqjdri";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TWbr/sHp"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CFF33EAE7;
-	Thu, 11 Sep 2025 13:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD295341AA1
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757598633; cv=none; b=pwjRo5x4HBW+YPgiCfgaQymAql8cpHa5ZUEywogFyASwiS4bSCFZI7A+N7S1tYMvP50PYQh+skSzsBFr8f02pczgZgBvOcIhF/GpBJwglFz43eJeRI1qSKkepryNsXX6fpewk0s5MQ/bSNVmVJEpblUl0rLQeKV+xzCcFQ5NGZQ=
+	t=1757598647; cv=none; b=NyLzivYaqUxpi14qr+ZY6kyjypCqe8iKXr71DBhcptTGRCRZbFciwikFLLT1SOrZfBVog9Rq+3QDcL5aOjXUj/QW7RFB3pyQctx6R/lNDR5m+NE8j1/zZYmOyYZyvMHATAp5AEqK5dpiEJRgq5FhhneUq+Emazuc9EFSFNG+FcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757598633; c=relaxed/simple;
-	bh=m4shjtrhQt8FRRF1lcL5ELoPHuhcDARb6PwIqI52w5Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RzUlTdiF8Mlc7CdhHMHu9Y/x6+Idydx+KeX+Pyr6JfHV/UVPXKXFvml3DMySX5X7JFWPUCO5Al8kqJQlHNvMb42qnc2llb/lm7wdn5Ih5wj+bOfj1xEZmBjp2GiygRbMxGY/U0h9eC4k468MIbZsTEJmAfRgV6mIcvLBMQb0EU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AJeADdTl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8595FC4CEF0;
-	Thu, 11 Sep 2025 13:50:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757598632;
-	bh=m4shjtrhQt8FRRF1lcL5ELoPHuhcDARb6PwIqI52w5Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AJeADdTlgrbUqetu5+RC4UEqVNw6aKMUcMP5Ta1p+BjUTCN2/yIzLk9p/ROs/PJuN
-	 LRNx4jeh+LJMhXfYPmNdRNsnjTkXpnoy5+OAE7qy1RleZ2KJUu8s0+EU0B2RpEbKXu
-	 pnY9+zi3smt6nBFb6XEpCr4j+cig6Z6Q/m43Sv/w=
-Date: Thu, 11 Sep 2025 09:50:31 -0400
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Vikram Sharma <quic_vikramsa@quicinc.com>, bryan.odonoghue@linaro.org, mchehab@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org, 
-	konradybcio@kernel.org, hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org, 
-	catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	quic_svankada@quicinc.com, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
-Subject: Re: [PATCH v3.1] media: dt-bindings: Add qcom,qcs8300-camss
- compatible
-Message-ID: <20250911-crystal-dexterous-ostrich-fcdf3c@lemur>
-References: <20250813053724.232494-2-quic_vikramsa@quicinc.com>
- <20250910104915.1444669-1-quic_vikramsa@quicinc.com>
- <5a087d08-273e-4740-b47d-fc25be952ebd@kernel.org>
- <2a7bd0cd-a6c4-47c3-a6ca-f9d94c9b65ec@oss.qualcomm.com>
+	s=arc-20240116; t=1757598647; c=relaxed/simple;
+	bh=D15DkPxVQrXFCQ9CvGX684z04L33a220UlGGZJTtIWM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=FFo3V5NXZz2c+uuwL9kZKYOJBtnETztdLGxmRpCd4DbswafZUDH0Kix6JpDcJaDWiY3GS60qRfFE2iwiLv7zli6pTdsVJPYOkcG/XUpEK3CDFH7wf3CFnER/ZQ3du5hZGhxPT0hb9Y76lapLenCBa+LD5+lQBwkBpuCHSLow8dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gSqgeGis; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=n2XcOlXN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GrDqjdri; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TWbr/sHp; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CFCE93F269;
+	Thu, 11 Sep 2025 13:50:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757598644; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6tfwNDG3W2Gc1HTTMYNm6h+W0ATYJ4FkFneAMnrmbcw=;
+	b=gSqgeGis870VEcBoQT30HwmpWDXAMSlBKFy+zKr1m2hsawx2dyDB9KIBkTcb/t4H1GHE3v
+	xkQa2mTChzMjEvgxezUtZJ2jiVzcH/DfgTccXhGAtl7aVueV4Avwz/MB83esPul/pecjEn
+	wGrnW0lpK7iYZf+xUfSGlmphy4Sg2Sw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757598644;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6tfwNDG3W2Gc1HTTMYNm6h+W0ATYJ4FkFneAMnrmbcw=;
+	b=n2XcOlXNaRDa/rGdCxyy7oBRUwAdIfjID2/WmqJOwv9Z2y4PQQqrEubT/RAZ0X+IeOvu2v
+	0xUnpzPsl6/NAdDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757598642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6tfwNDG3W2Gc1HTTMYNm6h+W0ATYJ4FkFneAMnrmbcw=;
+	b=GrDqjdritxxDQpMjI0P9s4CovFFoXxEYZKQGp3Iu8Fh3uPbzpF8PpGMp6DNlXw35yXZLfI
+	WCLR2URixbHr61oHjd4OIBFXGF1jYTMR5Wl3LIFdh7UEQUeDAb4V+IQMK2PvJcySfxuBOn
+	TqgODvuhXqo9l5UKqflwNRYs1P5PBro=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757598642;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6tfwNDG3W2Gc1HTTMYNm6h+W0ATYJ4FkFneAMnrmbcw=;
+	b=TWbr/sHpJX1mbxM71fdmTZ/RQeLQRX8SMto6czXKZ31gY2/IU0sx62tjl3TS3cIaciOBBj
+	TyTwhpZH2JP+UQCA==
+Date: Thu, 11 Sep 2025 15:50:42 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+cc: Josh Poimboeuf <jpoimboe@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
+    Xi Zhang <zhangxi@kylinos.cn>, live-patching@vger.kernel.org, 
+    loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] livepatch: Add config LIVEPATCH_DEBUG to get
+ debug information
+In-Reply-To: <20250909113106.22992-2-yangtiezhu@loongson.cn>
+Message-ID: <alpine.LSU.2.21.2509111549200.29971@pobox.suse.cz>
+References: <20250909113106.22992-1-yangtiezhu@loongson.cn> <20250909113106.22992-2-yangtiezhu@loongson.cn>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2a7bd0cd-a6c4-47c3-a6ca-f9d94c9b65ec@oss.qualcomm.com>
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.19)[-0.953];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[pobox.suse.cz:mid,pobox.suse.cz:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.29
 
-On Wed, Sep 10, 2025 at 02:25:30PM +0200, Konrad Dybcio wrote:
-> > Please version your patches correctly, e.g. use b4 or git format-patch
-> > -vX, and add changelog in cover letter or under '---' of individual
-> > patches describing changes from previous version.
-> > 
-> > What is v3.1? How to compare it? Try yourself:
-> 
-> This is a weird invention that some media maintainers seem to promote..
+Hi,
 
-Please tell them to stop. Patch revisions are not supposed to follow any kind
-of semver. It's a new version of a patch and it should always be a simple full
-integer increment.
+On Tue, 9 Sep 2025, Tiezhu Yang wrote:
 
-> As a b4 user, I would also like it to stop, as doing anything other than
-> v(integer) will open the door for unlimited craziness
+> Add config LIVEPATCH_DEBUG and define DEBUG if CONFIG_LIVEPATCH_DEBUG
+> is set, then pr_debug() can print a debug level message, it is a easy
+> way to get debug information without dynamic debugging.
 
-To my knowledge, no tooling will do the right thing with that -- b4,
-patchwork, patchew, etc. It's needlessly complicating things.
+I do not have a strong opinion but is it really worth it? Configuring 
+dynamic debug is not difficult, it is more targetted (you can enable it 
+just for a subset of functions in livepatch subsystem) and it can also be 
+done on the command line.
 
--K
+Miroslav
 
