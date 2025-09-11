@@ -1,125 +1,317 @@
-Return-Path: <linux-kernel+bounces-812727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001A9B53BE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:52:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C1DBB53BE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4B53169C86
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:52:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70085B62779
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA513F9C5;
-	Thu, 11 Sep 2025 18:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5F9223DD6;
+	Thu, 11 Sep 2025 18:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W6eNl/N7"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tjTxpxW8"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7F3178372
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B9B2DC79E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757616733; cv=none; b=g1Abe7pCbVKbJD3EBN1HEVbMFH+3079t3u6JLIKeJTbI/j2fMag91AlvvVYbQUX7+8fXypiDR5yM+afNv9AiApt3Y+wTZWmuromHYzFNqRSj5RGpRvbFk2fDZ7GKJQPWjTGZUswu64UH1ueOM0jk3WO5bq63JrRbu4V8VT0x7cg=
+	t=1757616800; cv=none; b=SqNCiPQ/6B8doyjGdwB22yQbsyKTHPgPko4LgmFRzsyef/QnbUY3wDsz2069P3KUgwiTQIA5aAAIwoLcvk0l2CLl5IfrM0FoU6p5WDvhgqPJDMeWvqu/jrrLT2QY0UKOOajAyolx3dY5Oe2BreldlY1cRAYL32qqA8lx3CixMAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757616733; c=relaxed/simple;
-	bh=rXd/6eNnkgwcu1obGsgNivj+t82h/1UPQb10m9TrnYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S1eFEdNS5catbez9spWIBbv3cdQU4bTlYh+K9eK+B+66AjdgO+l0nUSy3ARi9ZxAiAloSX0rUnD008TCD81R1NPCYD3IIjOtFOJ66621FLr4mTGTgV/4f3SF4uqwazUWkZuRjbIvnWKDKJng56Ixl6ni6BG8pBBHzZ2qtXDoyHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W6eNl/N7; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45dd513f4ecso7478325e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:52:09 -0700 (PDT)
+	s=arc-20240116; t=1757616800; c=relaxed/simple;
+	bh=I+ZaL0GFhXVlh/iPRMuK9rilRvA8hUk6CqIFpq/by4s=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PPnH2qGRr61Zg3Kve9JGryt4XBk+fFJdn26qRU/MOAMharvKWfx0IaY9Y7otOTSWYkEix7hciK7OQXWJt3CoQ04rXX97E8RR8bKZd2V2WqCZ7KqZwEWAefj4ZGcgv4MHev1UhMg/qRYJymPRqkHQmJzOEq1vrIg1tG+qL7G7mbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wusamuel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tjTxpxW8; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wusamuel.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24c9e2213f8so10797395ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:53:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757616728; x=1758221528; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/qPRJJ/6GDpv3hVxWcXnPmSZ8FtyUTqpKhwovBWsMd0=;
-        b=W6eNl/N7gV8Vo06nCIoLUz5Pu+3YVtPbejVGJd3GYzkkuYGXUY90wwKNAlJCVtuNSd
-         ti6nxFgnWEbB3IdNTXy67or3L8EpPhzYoN3Kqe+lmrQVd63+oJKVQv0LC+NQqwi+K1QK
-         zguqqM4zS3Q9VQ8nQGciDwTzCYquH0hIJbMaVkLY37Dg/tZj/kYgAmT8VvRoWcKAJfyo
-         ZYnFK+CDr5E0z0kNAAyVnhPF+eYtoZo+0jVW0WqQdbsT6+g00XIn4gmIpDvoJEiqPYd3
-         p4XYR19crlOijzvx1jOOHjjt6oQAZVduZFGkey0pEjshK25ue8azMIdDUhvFcF3urWn4
-         JzTg==
+        d=google.com; s=20230601; t=1757616798; x=1758221598; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZbfHHtJJPQLXr57eFwRJeaJKX+PpqcgTGzEsr7kOlM0=;
+        b=tjTxpxW8qdtjPzWfB4FG3Vm0FignMzGMbxPXaMu2oMZyD5RXRb1YWOPPC05+ZbDX5Z
+         9wfWHB5fG3HdddpBLyPnA1oRJCw6WSK9RusVxjArAIwIZRXEtfk2zwBYB2YQRd/LOLv6
+         zBfUu52crLxPIMAFazozPXMR40N7fY2uBxCyFXYGFLUsKFHgbZMDS+4oP4qVzsD7eAoR
+         wrwxHdmBRIT8F2q4itE1JV5sXoSyCOIoLr8uVaEkzbTT4r55jJXAbj2dZhxGvD1pZd2u
+         FPw2p9AYP05CuJOnyDbh8S9kSV60ZSQ2jZ0Ic1GBUMZhvogGgaU9RlSgtitxBNiBNuYI
+         PPjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757616728; x=1758221528;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/qPRJJ/6GDpv3hVxWcXnPmSZ8FtyUTqpKhwovBWsMd0=;
-        b=EGueYbTHFjr/T9e/ZEHxlOK6VtJYFD8sarD+2tlJAexqBnTS0vsQopOJflVo6FW4GE
-         Si7Pi+V4JvuPgroKYShR3GbDBL2iFxRwNEWnhVkxhypp4odwwk/H6NJTok5Zu4NFV2oH
-         T/GLWM8Gh7/gCqxzRQ0KfoMvFJF1/nIsDySC8AROlMs6J65IXVHvTeLEtNs6GM2kV8Ke
-         uYLIeTscRbKO+E97rsgmbcqy2p2ghEd7jT8ymC9OUH4yp1P9XCJlZaTSkg6PeG21DrcP
-         OZkzZIG0t+3pTqkBOS/8aMrREvRlh1yxZJQNp03KuQRWGCr5GRx1nY5P2HJZ1ZG/eg70
-         DjnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXq9DGtMQrlRSs1al0NKU+1ZNnhmaCREN2xJnj/4AO4PsC5nQKBWmDwfrqBc5og8pRleS3dnO6lwVVygqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yykr8GEq2vpLqU2R4WczziO++DoAR33JW/zmbBDuZYHhIIoB6lj
-	1rAtoBktE//9WJt1RPeBl+12Q9i8DlA8D1ICZ0u34faiaurkHEAtWGyNmJhh/JV/chc=
-X-Gm-Gg: ASbGncshekz1IHCIA4OR8n2ynT+7G0aeLyagxjA0nW9eZAIqwijpCe+NvSzUomnONLU
-	smE9EW/XiDy969+MwjVfXat1w02/1oBcLQS7PmakrpRuoth9hpiQh/pYhZa+TXiKjW48IdC0fgI
-	mlzrEV4XFgJ8QLHFZYFxL8ROBV3uFbbu0JBcScpJYA856djhjaF9M658GI1MRu34/8QJFcW2wMy
-	lMfXlNFISbsFYGOr+jnYJcdd3kjQ6m32vTEYy6yWCdkFb9AzzjWyzMM9Z6AszVWW7wByo2jFk0T
-	MUFXOjyHsI21L+O1dpQQg/00PeHcrznM1fttdNb+5Cpanj46dWtZK26Bs4Wjq50WXgc6el5njUh
-	XI+h1mUjIdSu65ixqhnBa942Taro=
-X-Google-Smtp-Source: AGHT+IGbe0i5zX7GrPZfXxtP9KwFOHD5VEyjXbbI2e/fygTlh6S6/f6eSWgbH0sRjrbQGsV2TsTPvQ==
-X-Received: by 2002:a05:600c:19d1:b0:45d:98be:ee8f with SMTP id 5b1f17b1804b1-45f212609f5mr4155545e9.26.1757616728466;
-        Thu, 11 Sep 2025 11:52:08 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3e7607e2d43sm3441866f8f.59.2025.09.11.11.52.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 11:52:08 -0700 (PDT)
-Date: Thu, 11 Sep 2025 21:52:04 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Akiyoshi Kurita <weibu@redadmin.org>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: fix typo in comment
-Message-ID: <aMMaVOSQx_8zftnp@stanley.mountain>
-References: <20250911150207.602285-1-weibu@redadmin.org>
+        d=1e100.net; s=20230601; t=1757616798; x=1758221598;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZbfHHtJJPQLXr57eFwRJeaJKX+PpqcgTGzEsr7kOlM0=;
+        b=b+2xmzOXoRx0UXH5B/FbNKYGc5WuHNqTK0O66Al57jbjN4DzntWLKhswB3orpGbFKO
+         YxrBpBiXMIuBe6lFCENwk1YFd+/C72qNqM/aghI0+FZS94gBC6QEQDYeNum9KXkfGR+k
+         t14H4BVfeIWe5Trf/382oRAASJX+4NZ4gpFU/OSuUCNKNqbsUILJ+133iCWV1SaWvhp4
+         Hbk0K+6vNHVgwJblGeVHNvTiNzvf2CJMi8qEcvpcA7sP6XIifyatYNeN6bH/BLeSl4Z7
+         uZ+GP71oSUxPTvzE+rQKP2Pgg42/DGNULBwXtWtE2SMdPWCCjxaYHJ5SR5P/2639OiTF
+         V62g==
+X-Forwarded-Encrypted: i=1; AJvYcCWXMI2JuzmN0li1upZAHjqSUCELsvhAAkqumQunpGsb9PiDN7wx4RFvNArBVHd/njTlR1fvulQKNGKVoP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoDwx23U9WGflNZ7uoFFelVg3uq200Y71+6joiW/hL++ekxwFo
+	SqFlwngm3SwuvwFkvwZvM+vHeonqSQ171akJ2W3UPiCOk4AL81l0dBeM/viVh3GYdgUTKV45U1E
+	4Yp5NFX4k7jtKHQ==
+X-Google-Smtp-Source: AGHT+IHDdcC7wlpNAANKDP2xoezTHPI0Ss2Dq53dIld4QkKZYC0E5Fr5Gjj5PhRiCRSrvacqTSTGgI4SKueNKg==
+X-Received: from plly20.prod.google.com ([2002:a17:902:7c94:b0:24c:829d:8a50])
+ (user=wusamuel job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:ea09:b0:248:a4e2:e6d6 with SMTP id d9443c01a7336-25d268660d4mr3772315ad.39.1757616797842;
+ Thu, 11 Sep 2025 11:53:17 -0700 (PDT)
+Date: Thu, 11 Sep 2025 18:53:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250911150207.602285-1-weibu@redadmin.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250911185314.2377124-1-wusamuel@google.com>
+Subject: [PATCH v4] PM: Support aborting sleep during filesystem sync
+From: Samuel Wu <wusamuel@google.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>
+Cc: Samuel Wu <wusamuel@google.com>, Saravana Kannan <saravanak@google.com>, kernel-team@android.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 12, 2025 at 12:02:07AM +0900, Akiyoshi Kurita wrote:
-> Fix a spelling mistake in hal_pwr_seq.c:
->   - 'configurtions' → 'configurations'
-> 
-> No functional change.
+At the start of suspend and hibernate, filesystems will sync to save the
+current state of the device. However, the long tail of the filesystem
+sync can take upwards of 25 seconds. If during this filesystem sync
+there is some wakeup or abort signal, it will not be processed until the
+sync is complete; from a user's perspective, this looks like the device
+is unresponsive to any form of input.
 
-This part isn't required.  It's obvious.
+This patch adds functionality to handle a sleep abort signal when in
+the filesystem sync phase of suspend or hibernate. This topic was first
+discussed specifically for suspend by Saravana Kannan at LPC 2024 [1],
+where the general consensus was to allow filesystem sync on a parallel
+thread. The same logic applies to both suspend and hibernate code paths.
 
-> 
-> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
-> ---
->  drivers/staging/rtl8723bs/hal/hal_pwr_seq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/hal/hal_pwr_seq.c b/drivers/staging/rtl8723bs/hal/hal_pwr_seq.c
-> index 2438931ca51b..fba67a7c069c 100644
-> --- a/drivers/staging/rtl8723bs/hal/hal_pwr_seq.c
-> +++ b/drivers/staging/rtl8723bs/hal/hal_pwr_seq.c
-> @@ -8,7 +8,7 @@
->  /*
->  *
->  This file includes all kinds of Power Action event for RTL8723B
-> -and corresponding hardware configurations which are released from HW SD.
-> +and corresponding hardware configurtions which are released from HW SD.
+There is extra care needed to account for back-to-back sleeps while
+still maintaining functionality to immediately abort during the
+filesystem sync stage.
 
-I don't know how you did it, but you somehow reversed this patch.
-The - lines in a patch are the old lines and the + lines are the new
-lines.
+This patch handles this by serializing the filesystem sync sequence with
+an invariant; a subsequent sleep's filesystem sync operation will only
+start when the previous sleep's filesystem sync has finished. While
+waiting for the previous sleep's filesystem sync to finish, the
+subsequent sleep will still abort early if a wakeup event is triggered,
+solving the original issue of filesystem sync blocking abort.
 
-regards,
-dan carpenter
+[1]: https://lpc.events/event/18/contributions/1845/
+
+Suggested-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: Samuel Wu <wusamuel@google.com>
+---
+Changes in v4:
+- Removed patch 1/3 of v3 as it is already picked up on linux-pm
+- Squashed patches 2/3 and 3/3 from v3 into this single patch
+- Added abort during fs_sync functionality to hibernate in addition to suspend
+- Moved variables and functions for abort from power/suspend.c to power/main.c
+- Renamed suspend_fs_sync_with_abort() to pm_sleep_fs_sync()
+- Renamed suspend_abort_fs_sync() to abort_sleep_during_fs_sync()
+- v3 link: https://lore.kernel.org/all/20250821004237.2712312-1-wusamuel@google.com/
+
+Changes in v3:
+- Split v2 patch into 3 patches
+- Moved pm_wakeup_clear() outside of if(sync_on_suspend_enabled) condition
+- Updated documentation and comments within kernel/power/suspend.c
+- v2 link: https://lore.kernel.org/all/20250812232126.1814253-1-wusamuel@google.com/
+
+Changes in v2:
+- Added documentation for suspend_abort_fs_sync()
+- Made suspend_fs_sync_lock and suspend_fs_sync_complete declaration static
+- v1 link: https://lore.kernel.org/all/20250815004635.3684650-1-wusamuel@google.com
+
+ drivers/base/power/wakeup.c |  8 +++++
+ include/linux/suspend.h     |  4 +++
+ kernel/power/hibernate.c    |  5 ++-
+ kernel/power/main.c         | 70 +++++++++++++++++++++++++++++++++++++
+ kernel/power/suspend.c      |  7 ++--
+ 5 files changed, 91 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index d1283ff1080b..daf07ab7ac3f 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -570,6 +570,13 @@ static void wakeup_source_activate(struct wakeup_source *ws)
+ 
+ 	/* Increment the counter of events in progress. */
+ 	cec = atomic_inc_return(&combined_event_count);
++	/*
++	 * wakeup_source_activate() aborts sleep only if events_check_enabled
++	 * is set (see pm_wakeup_pending()). Similarly, abort sleep during
++	 * fs_sync only if events_check_enabled is set.
++	 */
++	if (events_check_enabled)
++		abort_sleep_during_fs_sync();
+ 
+ 	trace_wakeup_source_activate(ws->name, cec);
+ }
+@@ -899,6 +906,7 @@ EXPORT_SYMBOL_GPL(pm_wakeup_pending);
+ void pm_system_wakeup(void)
+ {
+ 	atomic_inc(&pm_abort_suspend);
++	abort_sleep_during_fs_sync();
+ 	s2idle_wake();
+ }
+ EXPORT_SYMBOL_GPL(pm_system_wakeup);
+diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+index 317ae31e89b3..c961bdb00bb6 100644
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -444,6 +444,8 @@ void restore_processor_state(void);
+ extern int register_pm_notifier(struct notifier_block *nb);
+ extern int unregister_pm_notifier(struct notifier_block *nb);
+ extern void ksys_sync_helper(void);
++extern void abort_sleep_during_fs_sync(void);
++extern int pm_sleep_fs_sync(void);
+ extern void pm_report_hw_sleep_time(u64 t);
+ extern void pm_report_max_hw_sleep(u64 t);
+ void pm_restrict_gfp_mask(void);
+@@ -499,6 +501,8 @@ static inline void pm_restrict_gfp_mask(void) {}
+ static inline void pm_restore_gfp_mask(void) {}
+ 
+ static inline void ksys_sync_helper(void) {}
++static inline abort_sleep_during_fs_sync(void) {}
++static inline int pm_sleep_fs_sync(void) {}
+ 
+ #define pm_notifier(fn, pri)	do { (void)(fn); } while (0)
+ 
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index 2f66ab453823..651dcd768644 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -811,7 +811,10 @@ int hibernate(void)
+ 	if (error)
+ 		goto Restore;
+ 
+-	ksys_sync_helper();
++	error = pm_sleep_fs_sync();
++	if (error)
++		goto Restore;
++
+ 	if (filesystem_freeze_enabled)
+ 		filesystems_freeze();
+ 
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 3cf2d7e72567..38b1de295cfe 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -570,6 +570,76 @@ bool pm_sleep_transition_in_progress(void)
+ {
+ 	return pm_suspend_in_progress() || hibernation_in_progress();
+ }
++
++static bool pm_sleep_fs_sync_queued;
++static DEFINE_SPINLOCK(pm_sleep_fs_sync_lock);
++static DECLARE_COMPLETION(pm_sleep_fs_sync_complete);
++
++/**
++ * abort_sleep_during_fs_sync - Abort fs_sync to abort sleep early
++ *
++ * This function aborts the fs_sync stage of suspend/hibernate so that
++ * suspend/hibernate itself can be aborted early.
++ */
++void abort_sleep_during_fs_sync(void)
++{
++	spin_lock(&pm_sleep_fs_sync_lock);
++	complete(&pm_sleep_fs_sync_complete);
++	spin_unlock(&pm_sleep_fs_sync_lock);
++}
++
++static void sync_filesystems_fn(struct work_struct *work)
++{
++	ksys_sync_helper();
++
++	spin_lock(&pm_sleep_fs_sync_lock);
++	pm_sleep_fs_sync_queued = false;
++	complete(&pm_sleep_fs_sync_complete);
++	spin_unlock(&pm_sleep_fs_sync_lock);
++}
++static DECLARE_WORK(sync_filesystems, sync_filesystems_fn);
++
++/**
++ * pm_sleep_fs_sync - Trigger fs_sync with ability to abort
++ *
++ * Return 0 on successful file system sync, otherwise returns -EBUSY if file
++ * system sync was aborted.
++ */
++int pm_sleep_fs_sync(void)
++{
++	bool need_pm_sleep_fs_sync_requeue;
++
++Start_fs_sync:
++	spin_lock(&pm_sleep_fs_sync_lock);
++	reinit_completion(&pm_sleep_fs_sync_complete);
++	/*
++	 * Handle the case where a sleep immediately follows a previous sleep
++	 * that was aborted during fs_sync. In this case, wait for the previous
++	 * filesystem sync to finish. Then do another filesystem sync so any
++	 * subsequent filesystem changes are synced before sleeping.
++	 */
++	if (pm_sleep_fs_sync_queued) {
++		need_pm_sleep_fs_sync_requeue = true;
++	} else {
++		need_pm_sleep_fs_sync_requeue = false;
++		pm_sleep_fs_sync_queued = true;
++		schedule_work(&sync_filesystems);
++	}
++	spin_unlock(&pm_sleep_fs_sync_lock);
++
++	/*
++	 * Completion is triggered by fs_sync finishing or an abort sleep
++	 * signal, whichever comes first
++	 */
++	wait_for_completion(&pm_sleep_fs_sync_complete);
++	if (pm_wakeup_pending())
++		return -EBUSY;
++	if (need_pm_sleep_fs_sync_requeue)
++		goto Start_fs_sync;
++
++	return 0;
++}
++
+ #endif /* CONFIG_PM_SLEEP */
+ 
+ #ifdef CONFIG_PM_SLEEP_DEBUG
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index 4bb4686c1c08..c019a4396c1f 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -31,6 +31,7 @@
+ #include <linux/compiler.h>
+ #include <linux/moduleparam.h>
+ #include <linux/fs.h>
++#include <linux/workqueue.h>
+ 
+ #include "power.h"
+ 
+@@ -588,14 +589,16 @@ static int enter_state(suspend_state_t state)
+ 	if (state == PM_SUSPEND_TO_IDLE)
+ 		s2idle_begin();
+ 
++	pm_wakeup_clear(0);
+ 	if (sync_on_suspend_enabled) {
+ 		trace_suspend_resume(TPS("sync_filesystems"), 0, true);
+-		ksys_sync_helper();
++		error = pm_sleep_fs_sync();
+ 		trace_suspend_resume(TPS("sync_filesystems"), 0, false);
++		if (error)
++			goto Unlock;
+ 	}
+ 
+ 	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
+-	pm_wakeup_clear(0);
+ 	pm_suspend_clear_flags();
+ 	error = suspend_prepare(state);
+ 	if (error)
+-- 
+2.51.0.384.g4c02a37b29-goog
+
 
