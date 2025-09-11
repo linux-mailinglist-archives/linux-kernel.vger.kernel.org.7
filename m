@@ -1,200 +1,122 @@
-Return-Path: <linux-kernel+bounces-811499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BADDB529FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:31:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E7FB52A46
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DDA81892F19
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:32:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A110A03400
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4E033F3;
-	Thu, 11 Sep 2025 07:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vvOGN/QO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="t7uDXEcP";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vvOGN/QO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="t7uDXEcP"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13FB27AC54;
+	Thu, 11 Sep 2025 07:41:23 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0AD26563F
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D438F275B06;
+	Thu, 11 Sep 2025 07:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757575902; cv=none; b=aJBoS5AHn+gwbAxdE0j2ueJw/7Yf1sWXLipYauBd4MhQ27RnsQsgFxglHbd1A9Fp7GBv6+UkZRFm1ZhMKQODM6/HFOtA38ToR1IRHaL84S/ROvf+DQMKoRJc2prm7+gNriJFcjxQW4W1gsMmqv6UIDmISCe4a8Wk1LMzFzwmFJc=
+	t=1757576483; cv=none; b=L4mEuL5UJYVjktwRSG6gcvh43SNGiEqYBB0Tco7IZGhrKJUD7goCJ7H5wWECWBVcW2vFtlSYiIYHbT6BwIkr/j/ItOjau/jH+VsNy80A5SUVXef3pb0AKkAQDGG0GJB74HZe7H72rgAhUmAfji42ZOxlYFWR5Q224NAtqR3t2x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757575902; c=relaxed/simple;
-	bh=106kYwWz75JcHH+vZ8uGQM8hCJIay+/XEnSHUXFkcTs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a1bH/buh2/r4NihzADbAyN7C4yH6LFz7ck4ILHnH/wRlBstFY8nfUUlvAdNUQ/qEYG2IQvTXBocn97U+B9+hz194rrvzS+ahzWntMRfh0rALN6cluBxWcyql5Lywbe5INmr90EJQDrBkLvAOJ+cEz3C4fJzWqCFws0Dp3jv4IDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vvOGN/QO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=t7uDXEcP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vvOGN/QO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=t7uDXEcP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E0021684CB;
-	Thu, 11 Sep 2025 07:31:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757575897; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sDd+7jUWvK2el43OuqFvYUR8GI0VAjvKZfCbClbZiK4=;
-	b=vvOGN/QOT12vylhTU62fihOaKT6pxrCGpY1aosHVpOGcWvA3nL8lLcGMHuIl2w/FmA9+1y
-	kh2uaaBmul32l31BXAA/c4Y2pGwTWlKrfpFKRRJO381/ukXtjkuhNw8fow9NsYbxvxcUt2
-	KhEHNNLl4krobuGYzfWwXm7toVaQXwM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757575897;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sDd+7jUWvK2el43OuqFvYUR8GI0VAjvKZfCbClbZiK4=;
-	b=t7uDXEcPWkiNFSAiVOF6B1kGzSLk7jgNY5adqynZ550d4FdK4jcUzxuJ1UA6luDoxh1fSD
-	8L+C5Cs87QB79hDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757575897; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sDd+7jUWvK2el43OuqFvYUR8GI0VAjvKZfCbClbZiK4=;
-	b=vvOGN/QOT12vylhTU62fihOaKT6pxrCGpY1aosHVpOGcWvA3nL8lLcGMHuIl2w/FmA9+1y
-	kh2uaaBmul32l31BXAA/c4Y2pGwTWlKrfpFKRRJO381/ukXtjkuhNw8fow9NsYbxvxcUt2
-	KhEHNNLl4krobuGYzfWwXm7toVaQXwM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757575897;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sDd+7jUWvK2el43OuqFvYUR8GI0VAjvKZfCbClbZiK4=;
-	b=t7uDXEcPWkiNFSAiVOF6B1kGzSLk7jgNY5adqynZ550d4FdK4jcUzxuJ1UA6luDoxh1fSD
-	8L+C5Cs87QB79hDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BFFA213301;
-	Thu, 11 Sep 2025 07:31:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VyGfLdl6wmguXQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 11 Sep 2025 07:31:37 +0000
-Date: Thu, 11 Sep 2025 09:31:37 +0200
-Message-ID: <87ikhptpgm.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Rafael J. Wysocki <rafael@kernel.org>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: PM runtime auto-cleanup macros
-In-Reply-To: <878qimv24u.wl-tiwai@suse.de>
-References: <878qimv24u.wl-tiwai@suse.de>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1757576483; c=relaxed/simple;
+	bh=csZ+GoEnlez9E2uDU4rlu/nANlPIFDMYCGOgUvkeOHs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aNvBkTq0VIue1gIuRCW5RyqRyXyg+jlg+DLzCo8yKYNAxOiPWfgGS5hTit6s8GQMjwgJ7oBQWJtTv0RtuHJU/CDGfHmhNb5EY95TlplumD2IjLoTNuuM55Cty5K45047Kkhz2y3kgdcRMW3OkasCjavaFHYEzqjmdD/q2N5MniM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cMqHb3Nj8zYQtty;
+	Thu, 11 Sep 2025 15:41:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 001141A1755;
+	Thu, 11 Sep 2025 15:41:13 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAncY0XfcJorYmACA--.14632S4;
+	Thu, 11 Sep 2025 15:41:13 +0800 (CST)
+From: linan666@huaweicloud.com
+To: corbet@lwn.net,
+	song@kernel.org,
+	yukuai3@huawei.com,
+	linan122@huawei.com,
+	xni@redhat.com,
+	hare@suse.de
+Cc: martin.petersen@oracle.com,
+	bvanassche@acm.org,
+	filipe.c.maia@gmail.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	linan666@huaweicloud.com,
+	yangerkun@huawei.com,
+	yi.zhang@huawei.com
+Subject: [PATCH v4 0/2] make logical_block_size configurable
+Date: Thu, 11 Sep 2025 15:31:42 +0800
+Message-Id: <20250911073144.42160-1-linan666@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncY0XfcJorYmACA--.14632S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jr43WF15Jry7Cw4xtr47Arb_yoWDXFXE9a
+	1xXrZ3Kr1I9F4xZay5urs3AFyUKF48u3s7ZF43Kr43u34avr18GFWv9r98Jw1kCFyjqF1U
+	Gr1UJ3y8Ars8WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbDxFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw
+	0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
+	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrx
+	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
+	6r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
+	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUY2NKUUUU
+	U
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On Wed, 10 Sep 2025 16:00:17 +0200,
-Takashi Iwai wrote:
-> 
-> Hi,
-> 
-> while I worked on the code cleanups in the drivers with the recent
-> auto-cleanup macros, I noticed that pm_runtime_get*() and _put*() can
-> be also managed with the auto-cleanup gracefully, too.  Actually we
-> already defined the __free(pm_runtime_put) in commit bfa4477751e9, and
-> there is a (single) user of it in pci-sysfs.c.
-> 
-> Now I wanted to extend it to pm_runtime_put_autosuspend() as:
-> 
-> DEFINE_FREE(pm_runtime_put_autosuspend, struct device *,
->            if (_T) pm_runtime_put_autosuspend(_T))
-> 
-> Then one can use it like
-> 
-> 	ret = pm_runtime_resume_and_get(dev);
-> 	if (ret < 0)
-> 		return ret;
-> 	struct device *pmdev __free(pm_runtime_put_autosuspend) = dev;
-> 
-> that is similar as done in pci-sysfs.c.  So far, so good.
-> 
-> But, I find putting the line like above at each place a bit ugly.
-> So I'm wondering whether it'd be better to introduce some helper
-> macros, e.g.
-> 
-> #define pm_runtime_auto_clean(dev, var) \
-> 	struct device *var __free(pm_runtime_put) = (dev)
+From: Li Nan <linan122@huawei.com>
 
-It can be even simpler by assigning a temporary variable such as:
+v4:
+ patch 1: add fix tag.
+ patch 2:
+ - add documentation for sysfs.
+ - only support metadata format 1.x.
+ - do not call md_update_sb when writing sysfs. mddev->pers is NULL here.
+ - return directly before hold lock in lbs_store.
 
-#define pm_runtime_auto_clean(dev) \
-	struct device *__pm_runtime_var ## __LINE__ __free(pm_runtime_put) = (dev)
+v3:
+ - logical_block_size must not exceed PAGE_SIZE for bio device.
+ - Assign lim to mddev rather than to gendisk in mddev_stack_rdev_limits().
+ - Remove the patch that modifies the return value.
 
+v2: No new exported interfaces are introduced.
 
-Takashi
+Li Nan (2):
+  md: prevent adding disks with larger logical_block_size to active
+    arrays
+  md: allow configuring logical_block_size
 
-> 
-> #define pm_runtime_auto_clean_autosuspend(dev, var) \
-> 	struct device *var __free(pm_runtime_put_autosuspend) = (dev)
-> 
-> and the code will be like:
-> 
-> 	pm_runtime_get_sync(dev);
-> 	pm_runtime_auto_clean(dev, pmdev);
-> 
-> or
-> 	ret = pm_runtime_resume_and_get(dev);
-> 	if (ret < 0)
-> 		return ret;
-> 	pm_runtime_auto_clean_autosuspend(dev, pmdev);
-> 
-> Alternatively, we may define a class, e.g.
-> 
-> 	CLASS(pm_runtime_resume_and_get, pmdev);
-> 	if (pmdev.ret < 0)
-> 		return pmdev.ret;
-> 
-> but it'll be a bit more code to define the full class, and the get*()
-> and put*() combination would be fixed with this approach -- which is a
-> downside.
-> 
-> All above are an idea for now.  Let me know if I should go further
-> along with this, or there is already a better another approach.
-> 
-> (And the macros can be better named, sure :)
-> 
-> 
-> thanks,
-> 
-> Takashi
+ Documentation/admin-guide/md.rst |  7 +++
+ drivers/md/md.h                  |  1 +
+ include/uapi/linux/raid/md_p.h   |  3 +-
+ drivers/md/md-linear.c           |  1 +
+ drivers/md/md.c                  | 82 ++++++++++++++++++++++++++++++++
+ drivers/md/raid0.c               |  1 +
+ drivers/md/raid1.c               |  1 +
+ drivers/md/raid10.c              |  1 +
+ drivers/md/raid5.c               |  1 +
+ 9 files changed, 97 insertions(+), 1 deletion(-)
+
+-- 
+2.39.2
+
 
