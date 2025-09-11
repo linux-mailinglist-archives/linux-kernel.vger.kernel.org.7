@@ -1,106 +1,165 @@
-Return-Path: <linux-kernel+bounces-812166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453E7B533E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:38:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7998BB533F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 047CB566DD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:38:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FFA758753C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602B732BF4B;
-	Thu, 11 Sep 2025 13:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C910832ED28;
+	Thu, 11 Sep 2025 13:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngpVkeOr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="Fk3d5f5c"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F4E311958;
-	Thu, 11 Sep 2025 13:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757597897; cv=none; b=Thgbzo15b4i0e5po6xJWt6zHotxiQMRF4JLOgVcprQziSCo9ri6HQmozdhmOTJpUsbM/rWf4/QHB//VRWNTX923/UYDtOGqlSUG7G/NrDyflfcbYtYW2MCLc7pWDUzELLD+toB01qGtLCFsHWyutHfHThMBgXvKrm9tCbxVTIOQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757597897; c=relaxed/simple;
-	bh=JHwWqnTYn3Fug9+bvZh4zonn/Ba9kH7IhAH8TdW5lkM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=aaYHjCSXnMdApGeCokGSd+C1UFQdSXc6uSjtE1zV704yC3Do1PgF8aXRRDqvRV0dOaI3xBTKbnDohH7HqDekDix5gWLgIJ74i6a6hJs9TXhM/6iYotNUzHgPzlVx5ktggcoZevSFdbPpLyOUUw8HB1uIWSErcE5mi0/mImsnOok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngpVkeOr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC7FEC4CEF0;
-	Thu, 11 Sep 2025 13:38:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757597897;
-	bh=JHwWqnTYn3Fug9+bvZh4zonn/Ba9kH7IhAH8TdW5lkM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ngpVkeOrZI/HZin0pxo06kf9Fz4kB7zHNNeZ6SM0o/jGOSnc5/k5UNUZTDJO3X2RV
-	 SnEyaZiddFF3Q88VmQ3HA6gm96mFYTv97rj5cokh1yFeCd5gsq8rZbliqX0+tOkYjN
-	 rN0HOQnKmFyoa/+A5gjK28QDyWBQRblo0Bs+46poybkP7IoN9qHZ2q5wto9Yc4pnFA
-	 8Lrjstp75JQn2X8pg8eIOSwp/3gRdbbwYeFA+GBfC2qnKv7zWfhP0w64NE/n/XnMvj
-	 mZlG/5WVFq3RXCYlD+gMrT7HxPWwruR+BJXCfBba6kEBjUUMsMohkXJbpVPRf3u3PL
-	 5cnkkMcZLvPQg==
-Date: Thu, 11 Sep 2025 22:38:13 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Vladimir Riabchun <ferr.lambarginio@gmail.com>
-Cc: rostedt@goodmis.org, mhiramat@kernel.org, mark.rutland@arm.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] ftrace: Fix softlockup in ftrace_module_enable
-Message-Id: <20250911223813.58c894b4c8ce8e3eba298c71@kernel.org>
-In-Reply-To: <aMLPm__QGrQCwz1t@vova-pc>
-References: <aMLPm__QGrQCwz1t@vova-pc>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8713631B131;
+	Thu, 11 Sep 2025 13:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757597986; cv=pass; b=BS/UwxN/rGv4iy/M9bK7PaIC+VXoISyihRUyYNIUeU3XY3bDcvICS57/gq5TYmE23mdkdWDpQ8U4tCx2BDslFwlZ7RRFkB6P16r/IuJs2EI8CHFLLZjt5mrx8AD34mMovq5q/AA6Dl0FTDCSJIPrx25ZRq5FtyXGk3tudr3sECw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757597986; c=relaxed/simple;
+	bh=j8lpntQzzYMtk7wMPyC9pfzz7cSxvnQauwFcEWCrz+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PJHudjNn0ZVehifHiMEOA6R8YFRlzvXYTLFvtuiNy1cFHz061kS4Piu6WXFgy3vBMkyBMVE/+RjUwy5q0KmmIzvb2e9aSPvWgs7y3MMkZb9RljlbHp/52ruMX1Zck2RWcPrB3zA+aAkvh/XNF+x4VNidmJpnVk99QD5iy9Zvrn8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=Fk3d5f5c; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757597924; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cW8WQVw54kCwOrp4Z6nOM5zB+0ttwfZp2WlQWstN3VR5HDOvUIUqj7OMd52M9joD6VV4KN+dfh1dQl0/5irEs3WahGrue0xzDie3hjaV5tdBCW5k0AttByOZuRIZk3wFOzjsTr7EerdMeKTQT6Q0jEdxIQCRmWwkyus6WmtY4rc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757597924; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=z0wfAw1RoyH3XxGnHu3OjGHYgzFrel7esRCkMh235Uo=; 
+	b=OeyfDXnfBQFt2RGO4gMm6yb7HyyWhJFSbXpukrZivXBHUSu4zZB8tX0p+rGZvOotIcQlOG+e+z+/2AUnulQ/1bXPqaS4dqL3N5WfURJHVehrqpu51EIbJ/iUuIEJYOINb4anVnFgKEZp2BKvmfJNvG1rj5/t+jyUxszFxqMpZ4w=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757597924;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=z0wfAw1RoyH3XxGnHu3OjGHYgzFrel7esRCkMh235Uo=;
+	b=Fk3d5f5c7xQh1L26LGxVS1MYZeolPRgvuj4odZIpMebZ02Z5jpCxFefRidPAF1ey
+	NwGxrrIocLa0JWk6u1Dpzl1zGCrU4lt1loeAoSLF2sMV/6OmrnCFottPBZbgLe1Y1W+
+	P4w+y0nD1DpQDK/sWlie56qNQMIlY8RyUyzFaKLM=
+Received: by mx.zohomail.com with SMTPS id 175759792104776.9989768199938;
+	Thu, 11 Sep 2025 06:38:41 -0700 (PDT)
+Message-ID: <f4a18a08-516a-4a0b-a477-1e9f5269f1d8@collabora.com>
+Date: Thu, 11 Sep 2025 10:38:23 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 01/14] media: dt-bindings: Convert MediaTek mt8173-mdp
+ bindings to YAML
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+ andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
+ broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
+ conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
+ edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
+ jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
+ krzk+dt@kernel.org, kuba@kernel.org,
+ kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
+ linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
+ maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
+ mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
+ p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
+ sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
+ tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-2-ariel.dalessandro@collabora.com>
+ <20250821-silky-slug-of-novelty-e4bb64@kuoka>
+ <d286ec0b-c8dc-4103-9aa3-2f40e0ade4a3@collabora.com>
+ <5421cfe7-dfe0-4bb8-8722-6f449cd365be@kernel.org>
+Content-Language: en-US
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+In-Reply-To: <5421cfe7-dfe0-4bb8-8722-6f449cd365be@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Thu, 11 Sep 2025 15:33:15 +0200
-Vladimir Riabchun <ferr.lambarginio@gmail.com> wrote:
+Krzysztof,
 
-> A soft lockup was observed when loading amdgpu module,
-> this is the same issue that was fixed in
-> commit d0b24b4e91fc ("ftrace: Prevent RCU stall on PREEMPT_VOLUNTARY
-> kernels") and commit 42ea22e754ba ("ftrace: Add cond_resched() to
-> ftrace_graph_set_hash()").
+On 9/9/25 3:32 AM, Krzysztof Kozlowski wrote:
+> On 08/09/2025 19:52, Ariel D'Alessandro wrote:
+>> Krzysztof,
+>>
+>> On 8/21/25 3:46 AM, Krzysztof Kozlowski wrote:
+>>> On Wed, Aug 20, 2025 at 02:12:49PM -0300, Ariel D'Alessandro wrote:
+
+[...]
+
+>>>> +          - enum:
+>>>> +              - mediatek,mt8173-mdp-rdma
+>>>> +              - mediatek,mt8173-mdp-rsz
+>>>> +              - mediatek,mt8173-mdp-wdma
+>>>> +              - mediatek,mt8173-mdp-wrot
+>>>> +      - items:
+>>>> +          - enum:
+>>>> +              - mediatek,mt8173-mdp-rdma
+>>>> +              - mediatek,mt8173-mdp-rsz
+>>>> +              - mediatek,mt8173-mdp-wdma
+>>>> +              - mediatek,mt8173-mdp-wrot
+>>>> +          - const: mediatek,mt8173-mdp
+>>>
+>>> This makes no sense. How devices can be compatible and can not be
+>>> compatible.
+>>
+>> According to the driver source code (and the previous txt mt8173-mdp
+>> bindings), there must be a "controller node" with compatible
+>> `mediatek,mt8173-mdp`. Then its sibling nodes (including itself) should
 > 
-> Fix it the same way by adding cond_resched() in ftrace_module_enable.
+> But you did not define "mediatek,mt8173-mdp" here, so what are you
+> talking about?
 > 
+> I talk here about "wrot" and others, I thought it is obvious from the
+> mistake in the schema.
 
-Looks good to me.
+Ack.
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+[...]
+
+>>>> +
+>>>> +  - if:
+>>>> +      properties:
+>>>> +        compatible:
+>>>> +          contains:
+>>>> +            const: mediatek,mt8173-mdp
+>>>
+>>> This makes no sense either.
+>>
+>> Same question above about compatibles.
+> 
+> How same question? Do you understand this code? It is nothing the same -
+> you have here contains!
+
+
+Ack. Will resubmit properly in v2.
 
 Thanks,
 
-> Signed-off-by: Vladimir Riabchun <ferr.lambarginio@gmail.com>
-> ---
->  kernel/trace/ftrace.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index a69067367c29..23c4d37c7bcd 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -7526,6 +7526,9 @@ void ftrace_module_enable(struct module *mod)
->  
->  	do_for_each_ftrace_rec(pg, rec) {
->  		int cnt;
-> +
-> +		cond_resched();
-> +
->  		/*
->  		 * do_for_each_ftrace_rec() is a double loop.
->  		 * module text shares the pg. If a record is
-> -- 
-> 2.43.0
-> 
-
-
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Ariel D'Alessandro
+Software Engineer
+
+Collabora Ltd.
+Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
+Registered in England & Wales, no. 5513718
+
 
