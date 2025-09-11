@@ -1,104 +1,166 @@
-Return-Path: <linux-kernel+bounces-811269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B2DB526BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:57:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5F3B526CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 05:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C12AE7ADCC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:56:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 792414671A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE88E22578A;
-	Thu, 11 Sep 2025 02:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1933201278;
+	Thu, 11 Sep 2025 03:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="WlYgDmVJ"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NBM/i83s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1B933D8;
-	Thu, 11 Sep 2025 02:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F4586329;
+	Thu, 11 Sep 2025 03:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757559464; cv=none; b=GmOre5Nhjw8mq6brkBvMbf8FJJEr9QxLfCLdaGcS5zebQf8EiXDfuJubpipK+rHK0LS9w/7TbJPq0PLXb0le7MtW5wBRkLJgFd9RYcChPIdpQ/XJw6M9IUnoqupTMWtpANFdqICXaB8IjJV02/fDKfIryQdz+gGcGSZ9WB9Nwf4=
+	t=1757559772; cv=none; b=Le9ZW6SEngmqi5t9pq0c+VqHXAX9hpEiGT2x9X5j6iFPCkiCo0Xd2ndnm0/S18XzK4p4EzzZh1Fjfa1e5HIZkLlIOA1LLCqd/vK1qkZz3bvjuEUARfNp3jEFenJXzTLx1ZS7+kcKlyBOyOCZp3hU6VxSxWjeHEImsOQgy6pC0F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757559464; c=relaxed/simple;
-	bh=IWC4gv/+MV4wQpmWIljhamgnPDMr1J6qUiVNr3movps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ezER38L+eZeh/jSlbjFwNy5QA1mFeI2fDAoe0ouB7HgVh1W3anz8sjSO6qLwaEfnLcvet8gOTglJaZ5GeESIX0uQy2iAYX2VszwtdNZWo7npH8uurkbWx8gAHP9/P9OW7cyoWutHmSRqNXjg1EPORKBS1/mJSzL0I7m4fVdmzAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=WlYgDmVJ; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=Raijf0pxSNsl3FesVHkWVDpo58+B3Fa1eBdInzF1Pzo=;
-	b=WlYgDmVJKeOz2HCf2T+/k5D8y+gVK/8GI5wnA3CJUtFKLCw3FKtT0HQ+SMWNbN
-	r1wUJRj7/OCzAdF3qFfo7/QL143fSqZlCBNUoLAN0RUyGDl9hrO6ejStoJN9kwpN
-	2v5r3juk1e+SmN/7wYQu30AYMQ0qkRkmT26/xaXEquwfs=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgAHe3scOsJocw1PBA--.47548S3;
-	Thu, 11 Sep 2025 10:55:27 +0800 (CST)
-Date: Thu, 11 Sep 2025 10:55:24 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Joy Zou <joy.zou@nxp.com>,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, richardcochran@gmail.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-	frieder.schrempf@kontron.de, primoz.fiser@norik.com,
-	othacehe@gnu.org, Markus.Niebel@ew.tq-group.com,
-	alexander.stein@ew.tq-group.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com,
-	netdev@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v10 0/6] Add i.MX91 platform support
-Message-ID: <aMI6HNACh3y1UWhW@dragon>
-References: <20250901103632.3409896-1-joy.zou@nxp.com>
- <175694281723.1237656.10367505965534451710.git-patchwork-notify@kernel.org>
- <aMI0PJtHJyPom68X@dragon>
- <aMI1ljdUkC3qxGU9@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1757559772; c=relaxed/simple;
+	bh=LaA/VWmGiLwdH1UFM3vge6MrAkXvw9+Tei3RlIykXfY=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=XQ4qJW9euO4osI8+Jls1zCh5WSP64xbzEhs+pCCTQNCbCbtJsfFMpCFLT867Lz4QWSS8I4YYg9DpFAkBzrB/O3dcOrIuc9tDmZhsyKK4qZBuQQdp9lLiyaxnbMo7n/yTF3mTfmI18dyrWzDP3l0cBes8f0G6695uF7GA6ZnLHVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NBM/i83s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43332C4CEEB;
+	Thu, 11 Sep 2025 03:02:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1757559771;
+	bh=LaA/VWmGiLwdH1UFM3vge6MrAkXvw9+Tei3RlIykXfY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NBM/i83sCLCRdTKnOz7AOrvq1vtPk5ndjiixThdhabcRdtLf4QwKK+7OgeZLFF0oF
+	 c3sJncrmw60CBlvngEowyiRC1G0LCAUOFGwoWk31rby6GKm82KhKRw1qjzw9DXFpb1
+	 1uurkySbAvpOs5GDsV7D0gOUNaYAVATofdnsGCQ0=
+Date: Wed, 10 Sep 2025 20:02:50 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.17-rc6
+Message-Id: <20250910200250.b110da062c9561aa092c479f@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMI1ljdUkC3qxGU9@lizhi-Precision-Tower-5810>
-X-CM-TRANSID:Mc8vCgAHe3scOsJocw1PBA--.47548S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Jw1DAFWDKryUWw18Wr18uFg_yoWxAwbEvF
-	4UZw4kCws8GF4UK3Wktrn3AwnYya47Xa4xXr1UWw43Z3Z5ArWkXFWFgFWkJFn5KFWkJFna
-	yr9IqrWq9rWa9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8S1v3UUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCwXFZWjCG0lVNgAAs1
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10, 2025 at 10:36:06PM -0400, Frank Li wrote:
-> On Thu, Sep 11, 2025 at 10:30:20AM +0800, Shawn Guo wrote:
-> > On Wed, Sep 03, 2025 at 11:40:17PM +0000, patchwork-bot+netdevbpf@kernel.org wrote:
-> > > Hello:
-> > >
-> > > This series was applied to netdev/net-next.git (main)
-> > > by Jakub Kicinski <kuba@kernel.org>:
-> >
-> > Jakub,
-> >
-> > Can you stop applying DTS changes via net tree?
-> 
-> shawn:
-> 	Suppose Jaku only pick patch 6.
-> 
->         - [v10,6/6] net: stmmac: imx: add i.MX91 support
->           https://git.kernel.org/netdev/net-next/c/59aec9138f30
-> 
-> other patches is "(no matching commit)"
 
-Ah, sorry for missing that!  Thanks for pointing it out, Frank!
+Linus, please merge this batch of hotfixes, thanks.
 
-Shawn
+
+The following changes since commit e6b9dce0aeeb91dfc0974ab87f02454e24566182:
+
+  Merge tag 'sound-6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound (2025-09-02 13:38:07 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-09-10-20-00
+
+for you to fetch changes up to a68172d95c2845d2b5455b072b4ff51ba32650e9:
+
+  MAINTAINERS: add tree entry to numa memblocks and emulation block (2025-09-08 23:45:12 -0700)
+
+----------------------------------------------------------------
+20 hotfixes.  15 are cc:stable and the remainder address post-6.16 issues
+or aren't considered necessary for -stable kernels.  14 of these fixes are
+for MM.
+
+This includes
+
+- a 3-patch kexec series from Breno that fixes a recently introduced
+  use-uninitialized bug,
+
+- e 2-patch DAMON series from Quanmin Yan that avoids div-by-zero
+  crashes which can occur if the operator uses poorly-chosen insmod
+  parameters.
+
+----------------------------------------------------------------
+Breno Leitao (3):
+      arm64: kexec: initialize kexec_buf struct in load_other_segments()
+      riscv: kexec: initialize kexec_buf struct
+      s390: kexec: initialize kexec_buf struct
+
+Carlos Llamas (1):
+      mm/mremap: fix regression in vrm->new_addr check
+
+Jeongjun Park (1):
+      mm/hugetlb: add missing hugetlb_lock in __unmap_hugepage_range()
+
+Jinjiang Tu (1):
+      mm/memory_hotplug: fix hwpoisoned large folio handling in do_migrate_range()
+
+Kyle Meyer (1):
+      mm/memory-failure: fix redundant updates for already poisoned pages
+
+Mark Tinguely (1):
+      ocfs2: fix recursive semaphore deadlock in fiemap call
+
+Miaohe Lin (1):
+      mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page)) when unpoison memory
+
+Mike Rapoport (Microsoft) (2):
+      init/main.c: fix boot time tracing crash
+      MAINTAINERS: add tree entry to numa memblocks and emulation block
+
+Nathan Chancellor (1):
+      compiler-clang.h: define __SANITIZE_*__ macros only when undefined
+
+Quanmin Yan (2):
+      mm/damon/lru_sort: avoid divide-by-zero in damon_lru_sort_apply_parameters()
+      mm/damon/reclaim: avoid divide-by-zero in damon_reclaim_apply_parameters()
+
+Sang-Heon Jeon (1):
+      mm/damon/core: set quota->charged_from to jiffies at first charge window
+
+Stanislav Fort (1):
+      mm/damon/sysfs: fix use-after-free in state_show()
+
+Uladzislau Rezki (Sony) (1):
+      mm/vmalloc, mm/kasan: respect gfp mask in kasan_populate_vmalloc()
+
+Vlad Dumitrescu (1):
+      percpu: fix race on alloc failed warning limit
+
+Wei Yang (1):
+      mm/khugepaged: fix the address passed to notifier on testing young
+
+wangzijie (1):
+      proc: fix type confusion in pde_set_flags()
+
+ MAINTAINERS                            |  1 +
+ arch/arm64/kernel/machine_kexec_file.c |  2 +-
+ arch/riscv/kernel/kexec_elf.c          |  4 ++--
+ arch/riscv/kernel/kexec_image.c        |  2 +-
+ arch/riscv/kernel/machine_kexec_file.c |  2 +-
+ arch/s390/kernel/kexec_elf.c           |  2 +-
+ arch/s390/kernel/kexec_image.c         |  2 +-
+ arch/s390/kernel/machine_kexec_file.c  |  6 +++---
+ fs/ocfs2/extent_map.c                  | 10 +++++++++-
+ fs/proc/generic.c                      |  3 ++-
+ include/linux/compiler-clang.h         | 29 ++++++++++++++++++++++++-----
+ include/linux/kasan.h                  |  6 +++---
+ init/main.c                            |  2 +-
+ mm/damon/core.c                        |  4 ++++
+ mm/damon/lru_sort.c                    |  5 +++++
+ mm/damon/reclaim.c                     |  5 +++++
+ mm/damon/sysfs.c                       | 14 +++++++++-----
+ mm/hugetlb.c                           |  9 ++++++---
+ mm/kasan/shadow.c                      | 31 ++++++++++++++++++++++++-------
+ mm/khugepaged.c                        |  4 ++--
+ mm/memory-failure.c                    | 20 +++++++++-----------
+ mm/memory_hotplug.c                    | 10 ++++++++--
+ mm/mremap.c                            |  9 ++++++---
+ mm/percpu.c                            | 20 ++++++++++++--------
+ mm/vmalloc.c                           |  8 ++++----
+ 25 files changed, 144 insertions(+), 66 deletions(-)
 
 
