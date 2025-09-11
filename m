@@ -1,84 +1,59 @@
-Return-Path: <linux-kernel+bounces-812348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D815B536B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:59:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE446B536BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71C13ABBFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:59:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFC253BA6D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C433469F5;
-	Thu, 11 Sep 2025 14:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970BC34DCF3;
+	Thu, 11 Sep 2025 14:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fw5gs5hL"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4ppPzU/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5863451BE;
-	Thu, 11 Sep 2025 14:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2674345735;
+	Thu, 11 Sep 2025 14:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757602639; cv=none; b=YyzGdFkwaZdeJYsh/n83SUQ1V3kjxO97MoxN1tvBBh7RrsdL97a1WYxpYXa2oVC9Lbn0a3gbK1QmvXzbinqh6LjmvAr5+MEDY+2Er8XCEfbtW5zv6uin4qaVZXivsCQItoonLBLP2+Xu+zsvRa11twwhbMuqHYdSUaKyTM86MZo=
+	t=1757602708; cv=none; b=Ac47e8QUtOJGCb5q/AR1plpdgGT8osWRJiDZ8IQ/L8tc9Fhbwnj3sdR3t9+Oen5N43DF4cyxon4beh+++2Eye4tdbBmcYVbJkyCxNdlTqAYaxcNCKnngKraaeVmPc0bnoeY11e5u2XKd9RoKyheKtqlzgZjD17D9iEeWv99/IBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757602639; c=relaxed/simple;
-	bh=nuUixDWHzXlSRF6SGQOXJrNKnjPnOA0pJzhu+2XeG7k=;
+	s=arc-20240116; t=1757602708; c=relaxed/simple;
+	bh=HeodYYa2ARM+3jXZTHDptckWgA9wcPV5Pp4/+zghwa0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UkvGp+PztlEMDO75ohyMHsBMKFYIQy9MpHzY7EJ9AztNhtXia1M2QCzj0WJKrn8KZCrxNKdGk0Zkt7lmZtVyL0CilYp4cAcS5K/85/xcjbtiZp8CpQ2KOyy55NMju2SsqmUvEPKgYvehdap8unuwQQYHi5cyV1gmzVTiXHuAbQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fw5gs5hL; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BBeGAk009402;
-	Thu, 11 Sep 2025 14:57:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=MAtZA5hl/c34uXdQAh7SPzJG+/4x9c
-	Dfa5783pZG3Fs=; b=fw5gs5hLoAYfkpf4SDE1XrW/it219AYlXtOyLf71WSiwM9
-	UAvxAj5wZIXJuPzMWt/YYagCBnzck6U+G9r9rSsKXrXEom/3cqix+mbBrBK8vszU
-	7Qk9s/UhCqV+0OOMcSAaMRqbKwMkfHBXbSrDpgwVjoCGd/Y4S0jWAa8b7wFL7muT
-	BDH9pUahoy0iUCBKrVFNAusj8JSZd+YbdVtHVgI9+suD7FsKmz1crfIiINYZJWH8
-	wwi6RbBCzz4gDKAGt4OOghsNyXpG+GQ1JFYpqFJYxAXZIU1KUtsB/VVENK549KaU
-	HFrZ3WqmK+SECi4HsHPsyE6VE2I18yGOAO0RPUgg==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffne6q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 14:57:12 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58BDIEwo007965;
-	Thu, 11 Sep 2025 14:57:06 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109pxbke-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 14:57:06 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58BEv2N946793084
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Sep 2025 14:57:02 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1858720043;
-	Thu, 11 Sep 2025 14:57:02 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EB5A320040;
-	Thu, 11 Sep 2025 14:57:01 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.133])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 11 Sep 2025 14:57:01 +0000 (GMT)
-Date: Thu, 11 Sep 2025 16:56:59 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Juergen Christ <jchrist@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, Sven Schnelle <svens@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: Re: [PATCH 1/3] Compiler Attributes: Add __assume macro
-Message-ID: <20250911145659.8894Dea-hca@linux.ibm.com>
-References: <20250910151216.646600-1-hca@linux.ibm.com>
- <20250910151216.646600-2-hca@linux.ibm.com>
- <20250911013243.GA292340@ax162>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rvi+FjdsnuUui9uc27dlPjEpqA22WrZQLYsCWdteam/C+d39tJ0UlvPekaEe3vSpy1J9DBZFkoykWYvVnpdsMF95U89b/mHqc/UYe2J9Lo2A3CW6sMPEhF+b1V0iJ24PL8400QWhb2RPsRvgbf97TZJCMV2UnMdoOS8d1i1xMf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4ppPzU/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0211C4CEF0;
+	Thu, 11 Sep 2025 14:58:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757602707;
+	bh=HeodYYa2ARM+3jXZTHDptckWgA9wcPV5Pp4/+zghwa0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N4ppPzU/92e5jZEtYxQNnLuvVF4YdjiL4YbwnvjtjiIycgyZYLN5zlWHBq8nJVmqF
+	 SOxopzS4DbaUTOTh0oiaJgH5oQa+1/6RNfyYdFs2eexO3SOTRBBZinG1/pxHmQXNp6
+	 nwcQ8xqMeu2KACfIyIuaI18EDltZX6IOC9wPpnFJj1X88p8d4g9Zipamjb7jIDjQIl
+	 WuyN8unPafOXY3SDoPZDNj0Yb8VEZ0RVar3YwXdirG3i2T2SAm8bA4c45KJMjN5N8M
+	 toG6ci2Kl/h83ydrEq0j7Uifr3Kh+qCygXA8weT7KpgViBiNHB7lkHcuHUC/BIRgrj
+	 3UgtRHcMT2SBQ==
+Date: Thu, 11 Sep 2025 15:58:22 +0100
+From: Will Deacon <will@kernel.org>
+To: Qinxin Xia <xiaqinxin@huawei.com>
+Cc: robin.murphy@arm.com, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	yangyicong@huawei.com, wangzhou1@hisilicon.com,
+	prime.zeng@hisilicon.com, xuwei5@huawei.com, fanghao11@huawei.com,
+	jonathan.cameron@huawei.com, linuxarm@huawei.com
+Subject: Re: [PATCH 1/2] iommu/debug: Add IOMMU page table dump debug facility
+Message-ID: <aMLjjl4nsBuQML3Y@willie-the-truck>
+References: <20250814093005.2040511-1-xiaqinxin@huawei.com>
+ <20250814093005.2040511-2-xiaqinxin@huawei.com>
+ <aMAmWQJy_G50xoBf@willie-the-truck>
+ <534119b8-8221-4991-b308-05e8d5918aca@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,131 +62,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250911013243.GA292340@ax162>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 7pxY6FnKke9qpM1WTK9cKy0oyboCv-8v
-X-Proofpoint-GUID: 7pxY6FnKke9qpM1WTK9cKy0oyboCv-8v
-X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c2e348 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=mDV3o1hIAAAA:8 a=Twlkf-z8AAAA:8
- a=NEAV23lmAAAA:8 a=VnNF1IyMAAAA:8 a=B-tQutbZQLmHDA95ir0A:9 a=CjuIK1q_8ugA:10
- a=ppDDjHLidN0A:10 a=yTjAz9eSMYQA:10 a=-74SuR6ZdpOK_LpdRCUo:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfXwjYRAYta6tab
- 7ieBhpuuaCIwsw1dfDxy6ZXIg0Va9rWiXz6ecrHrVTUWrnK0O48mZdzjJtR6zO/sQdhxsHCDfRL
- xnP/MIT+QbhwEFcg/zJIHflsti77YHh3XWbySOjPiLpZ1mpumuohjBMD4lWyPXP9ZNDQWXEqg7L
- 1Xf68euINx0q/TTsPQAmzhqthUL1cjnZ1mG/978y4HKIuCbpiMVbBukQQcTmBifVEMfozSUw6d6
- MyxPpJXM8hPomGiI4BnMNYaiNCZIPYMVwDgXWxLFSTyyIW35AB7Fwj7pzwA+u8yEGUvdQJGvqZe
- CIYtYvE1VRl7OY02HHZ5cpGdTxOMPhS/bwHpJY/6a9mUEHeqAy/WAV2xPrE95Hsh0i2o1MCYsn1
- e/SRKl+v
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-11_01,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
+In-Reply-To: <534119b8-8221-4991-b308-05e8d5918aca@huawei.com>
 
-On Wed, Sep 10, 2025 at 06:32:43PM -0700, Nathan Chancellor wrote:
-> > + *
-> > + * Optional: only supported since GCC >= 13.1, clang >= 12.0
-> > + *
-> > + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html#index-assume-statement-attribute
-> > + * clang: https://clang.llvm.org/docs/AttributeReference.html#assume
+On Wed, Sep 10, 2025 at 10:58:09AM +0800, Qinxin Xia wrote:
 > 
-> Looking at this link sent me down a bit of a rabbit hole :) Prior to
-> Clang 19.1.0 [2], assume was an OpenMP attribute, which has completely
-> different semantics and errors out when used in the way the series does:
 > 
->   In file included from kernel/bounds.c:13:
->   In file included from include/linux/log2.h:12:
->   In file included from include/linux/bitops.h:67:
->   arch/s390/include/asm/bitops.h:173:12: error: expected string literal as argument of '__assume__' attribute
->     173 |                 __assume(bit <= 64);
->         |                          ^
-> 
-> Unfortunately, I think __assume will need to be handled in the compiler
-> specific headers :/
-> 
-> [1]: https://clang.llvm.org/docs/AttributeReference.html#id13
-> [2]: https://github.com/llvm/llvm-project/commit/c44fa3e8a9a44c2e9a575768a3c185354b9f6c17
+> On 2025/9/9 21:06:33, Will Deacon <will@kernel.org> wrote:
+> > On Thu, Aug 14, 2025 at 05:30:04PM +0800, Qinxin Xia wrote:
+> > > +/**
+> > > + * iova_info_dump - dump iova alloced
+> > > + * @s - file structure used to generate serialized output
+> > > + * @iovad: - iova domain in question.
+> > > + */
+> > > +static int iommu_iova_info_dump(struct seq_file *s, struct iommu_domain *domain)
+> > > +{
+> > > +	struct iova_domain *iovad;
+> > > +	unsigned long long pfn;
+> > > +	unsigned long i_shift;
+> > > +	struct rb_node *node;
+> > > +	unsigned long flags;
+> > > +	size_t prot_size;
+> > > +
+> > > +	iovad = iommu_domain_to_iovad(domain);
+> > > +	if (!iovad)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	i_shift = iova_shift(iovad);
+> > > +
+> > > +	/* Take the lock so that no other thread is manipulating the rbtree */
+> > > +	spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
+> > > +	assert_spin_locked(&iovad->iova_rbtree_lock);
+> > > +
+> > > +	for (node = rb_first(&iovad->rbroot); node; node = rb_next(node)) {
+> > > +		struct iova *iova = rb_entry(node, struct iova, node);
+> > > +
+> > > +		if (iova->pfn_hi <= iova->pfn_lo)
+> > > +			continue;
+> > > +
+> > > +		for (pfn = iova->pfn_lo; pfn <= iova->pfn_hi; ) {
+> > > +			prot_size = domain->ops->dump_iova_prot(s, domain, pfn << i_shift);
+> > > +			pfn = ((pfn << i_shift) + prot_size) >> i_shift;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
+> > 
+> > Why is the IOVA rbtree lock sufficient for serialising the page-table
+> > accesses made by ->dump_iova_prot()? I don't see anything here that
+> > prevents the walker walking into page-table pages that are e.g. being
+> > freed or manipulated concurrently.
+> > 
+>  Thank you for catching this critical race condition.I will fix this in
+>  next version. And,Jason suggests putting io_ptdump on top of iommu pt.
+>  What do you think?
 
-Thank you for having look. This is quite surprising. So after looking into the
-various header files it might be acceptable to add this to compiler_types.h,
-since there seem to be a few similar constructs.
+I guess it depends on whether or not you want to tie this debug feature
+to drivers that support the new page-table stuff.
 
-Maybe something like this(?):
-
-From d9d67807e6854666507e55d9ac0c7b4ec659aa99 Mon Sep 17 00:00:00 2001
-From: Heiko Carstens <hca@linux.ibm.com>
-Date: Wed, 10 Sep 2025 14:18:07 +0200
-Subject: [PATCH] compiler_types: Add __assume macro
-
-Make the statement attribute "assume" with a new __assume macro available.
-
-This allows compilers to generate better code, however code which makes use
-of __assume must be written as if the compiler ignores the hint. Otherwise
-this may lead to subtle bugs if code is compiled with compilers which do
-not support the attribute.
-
-Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
----
- include/linux/compiler_types.h | 20 ++++++++++++++++++++
- init/Kconfig                   | 10 ++++++++++
- 2 files changed, 30 insertions(+)
-
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 16755431fc11..38a52a792e48 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -329,6 +329,26 @@ struct ftrace_likely_data {
- #define __no_sanitize_or_inline __always_inline
- #endif
- 
-+/*
-+ * Beware: Code which makes use of __assume must be written as if the compiler
-+ * ignores the hint. Otherwise this may lead to subtle bugs if code is compiled
-+ * with compilers which do not support the attribute.
-+ * Using this attribute requires careful analysis, since in some cases it may
-+ * generate worse code (see clang documentation).
-+ *
-+ * Optional: only supported since gcc >= 13
-+ * Optional: only supported since clang >= 19
-+ *
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html#index-assume-statement-attribute
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#id13
-+ *
-+ */
-+#ifdef CONFIG_CC_HAS_ASSUME
-+# define __assume(expr)			__attribute__((__assume__(expr)))
-+#else
-+# define __assume(expr)
-+#endif
-+
- /*
-  * Optional: only supported since gcc >= 15
-  * Optional: only supported since clang >= 18
-diff --git a/init/Kconfig b/init/Kconfig
-index e3eb63eadc87..5882c5e74047 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -112,6 +112,16 @@ config TOOLS_SUPPORT_RELR
- config CC_HAS_ASM_INLINE
- 	def_bool $(success,echo 'void foo(void) { asm inline (""); }' | $(CC) -x c - -c -o /dev/null)
- 
-+config CC_HAS_ASSUME
-+	bool
-+	# clang needs to be at least 19.1.0 since the meaning of the assume
-+	# attribute changed:
-+	# https://github.com/llvm/llvm-project/commit/c44fa3e8a9a44c2e9a575768a3c185354b9f6c17
-+	default y if CC_IS_CLANG && CLANG_VERSION >= 190100
-+	# supported since gcc 13.1.0
-+	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106654
-+	default y if CC_IS_GCC && GCC_VERSION >= 130100
-+
- config CC_HAS_NO_PROFILE_FN_ATTR
- 	def_bool $(success,echo '__attribute__((no_profile_instrument_function)) int x();' | $(CC) -x c - -c -o /dev/null -Werror)
- 
--- 
-2.48.1
+Will
 
