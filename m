@@ -1,560 +1,258 @@
-Return-Path: <linux-kernel+bounces-812637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53117B53AC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:52:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB13B53AC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7613587921
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:52:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 306461C84AD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1392A3680A5;
-	Thu, 11 Sep 2025 17:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3798235FC30;
+	Thu, 11 Sep 2025 17:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FT7G3mCG"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bkf3Wnkq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096A3362999;
-	Thu, 11 Sep 2025 17:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14338362092;
+	Thu, 11 Sep 2025 17:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757613151; cv=none; b=dY3hc0J9qbPfOgqidjLHdn8whzNZU5mvgfVornRaxzBJRsddT2Y/1ytRHtw2InFSfLqMUtdut/CMgmkOkaj3r5d5Xrw8BZu/CGec2uAgoO1QzOIy7o/6GSNS1pyGkdV6v4HAyy8pjMt2WmSou/l7aDFugAuTJrvY3M/XTJ8zbCI=
+	t=1757613187; cv=none; b=bZuhp0aLC7yp5KBNAfdTw8x8Eh5X3jZ05/ymr7UVdUYkzRE6aFGi/6bm/wO8fyOwatEzZZw1Z29o6OX0SjUr67YZ63/ue5AOgmiQ6Aioa/mupdmaZs+XEEupB2MndnvqAD0XCZ8IhJXZnOe+74wkrFW0g7a5eBIyTiR7mB1f354=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757613151; c=relaxed/simple;
-	bh=pv0Le1I/8kyb8OOojFvMK4r7sqInuLMNvSNzwHoyIxI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q26+dEwR0TR9WAeXuMkA9hgea2OTo1UtVl/Z4C5svuNQqpHFNKt/JDAJiQhTHjcuZ6piNpwdBWoTFaNTVJ4c6BRzSmU5u9UyioN04WO7EWhlVf9lBcKJ8Xe0K+efdt15CtilDFWr3VLOrVOVPkjNF2yimTePT9FjbvnR47gvGNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FT7G3mCG; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BHBfAi025903;
-	Thu, 11 Sep 2025 17:52:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=czilZ
-	+lB3YW1FJdBSp8ullY1EEqC9yv4cN9ifpNvlY4=; b=FT7G3mCGFi/TQS83fHQMz
-	IXxZ7xXP6gdJinV+07g+zZ5bcXJf+nMqwxWvWgtVWzAaMaprMUXjGkMGsxyWnfp4
-	I4T4zxR3r5uRfELk1BN8vkZFNpIq8ZrN0cRk9NvwF4NlVdJPhKnSJDbRi3S5s0HY
-	PPJl/OHhjQYrwBcfmsdr+rNtVZubwO3n/wuvp54k5QtRI0NQHx40GUCBZCKS6FfS
-	LHuAG3d/YIkGwtNdoK6vJXPE5IbxvAsVbSS11RUoLG2DxcsDO+WPV8lEGkHFzSIe
-	CWCR1xaetUxOoog5t8JwtAHcPjwpEd3PfKSWV4RVgbf05hQqkjafuloB5YJqWiZG
-	g==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49226sxte4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Sep 2025 17:52:20 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58BG8Mgj032957;
-	Thu, 11 Sep 2025 17:52:19 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 490bddrae8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Sep 2025 17:52:19 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58BHqHCZ031675;
-	Thu, 11 Sep 2025 17:52:18 GMT
-Received: from thromatk-ol10.osdevelopmeniad.oraclevcn.com (thromatk-ol10.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.254.168])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 490bddraaw-2;
-	Thu, 11 Sep 2025 17:52:18 +0000
-From: Tom Hromatka <tom.hromatka@oracle.com>
-To: tom.hromatka@oracle.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        bpf@vger.kernel.org
-Cc: kees@kernel.org, luto@amacapital.net, wad@chromium.org, corbet@lwn.net,
-        shuah@kernel.org, brauner@kernel.org
-Subject: [PATCH v2 1/1] seccomp: Add SECCOMP_CLONE_FILTER operation
-Date: Thu, 11 Sep 2025 17:50:33 +0000
-Message-ID: <20250911175215.147938-2-tom.hromatka@oracle.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250911175215.147938-1-tom.hromatka@oracle.com>
-References: <20250911175215.147938-1-tom.hromatka@oracle.com>
+	s=arc-20240116; t=1757613187; c=relaxed/simple;
+	bh=Z2+nBVkWPIG88TqQQAQmMSXJogs17OhTvk+WeLYH5XY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ec+DqISJgnY5v2YF+wVZwncqjcsdpNh0jWwX2oqK+g96WXV4/qijORmVhmEbCgkceOdAtdNqrVvLyy20JcfPKvA2WNMp2A6+n3DZYDP0XsndTt33O7m5jo8gagIdl/mV5++eeED2oKHqV4Lwn6INe+35g2FQYviu2brH2aM03Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bkf3Wnkq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 520F5C4CEF0;
+	Thu, 11 Sep 2025 17:53:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757613186;
+	bh=Z2+nBVkWPIG88TqQQAQmMSXJogs17OhTvk+WeLYH5XY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bkf3WnkqmhSBMwSLyzsGZ4azoGtNd8x/AeMvYcXme2KsLCIEMQZtg0JCCc0qUpn1v
+	 z+u3JV55OoKd/cRJ6z1iBNauxJ8IY3vgnqPeeCjoP6Me9/aABeN2uwINlWrmbuDTwg
+	 2ZAEVKEL4LaW+BUqXN5EXd9Z3vxEV7T36Ngf2dwKRUpV2qo0xtn+0oBYPXaDxpFMKo
+	 oi5aJWCkp7UljPT7nxxCFxB4+IUEG/RoY+2H0P0xN4n5nIPexb1NlE92bPoInX0VtG
+	 r4ZnCaWOYjkUaGV2sCttM3XsoIt94mqYpPGnYpbPB5uyczrJ7QqVvd3/6z+a1xgSi3
+	 HCnY4YKUgLeQA==
+Date: Thu, 11 Sep 2025 10:51:45 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Alexander Potapenko <glider@google.com>
+Cc: Marco Elver <elver@google.com>, kasan-dev@googlegroups.com,
+	Dmitry Vyukov <dvyukov@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] kmsan: Fix out-of-bounds access to shadow memory
+Message-ID: <20250911175145.GA1376@sol>
+References: <20250829164500.324329-1-ebiggers@kernel.org>
+ <20250910194921.GA3153735@google.com>
+ <CAG_fn=W_7o6ANs94GwoYjyjvY5kSFYHB6DwfE+oXM7TP1eP5dw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-11_02,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
- bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509110159
-X-Authority-Analysis: v=2.4 cv=QeRmvtbv c=1 sm=1 tr=0 ts=68c30c54 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=yJojWOMRYYMA:10 a=R4ZDeqtCAAAA:20 a=yPCof4ZbAAAA:8 a=k8PFyzEPRq4tZizcb9gA:9
- a=bA3UWDv6hWIuX7UZL3qL:22
-X-Proofpoint-ORIG-GUID: yxvFpcMZ9HW3T9yT4eVCrcdkpVxG2xVQ
-X-Proofpoint-GUID: yxvFpcMZ9HW3T9yT4eVCrcdkpVxG2xVQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE1OCBTYWx0ZWRfX/uhv1fph5RL0
- +h1KYyjgfBTJruu8S24HscjkIWRYN1+KnxEBmhps0YaPNqaPmb9sbJqmq9lVcGZH+xPyEC1mvba
- VUoCnlanrEmoeqeZZ+XyDlP2WY7PmsOFq1id70xofsiCoBHGCPEcSA3Soy4vqve7C3nUutcOpZD
- hBOfeMXBDPC5nUfL40p1zfDd4LPgbWeeTTeGXfNbjDb3dy9Gt+bZ5uH4QyHmTqFVw29ibLgtVnn
- FC21sez0pdK58Sn/T/ECpKpTCB4RpQeJ2N/LKOrNORDjQBlBj8Dvib0LZUlCB+sHCbtFI6C1Vkl
- aO/0iI6yKPvyMcQUiAxJtexzC4K4xoh/sQ7fftLq4tjTAV1Ua+pkjI4UoptoWLYk7ylQcxSZk1d
- JPm1nx6G
+In-Reply-To: <CAG_fn=W_7o6ANs94GwoYjyjvY5kSFYHB6DwfE+oXM7TP1eP5dw@mail.gmail.com>
 
-Add an operation, SECCOMP_CLONE_FILTER, that can copy the seccomp filters
-from another process to the current process.
+On Thu, Sep 11, 2025 at 11:09:17AM +0200, Alexander Potapenko wrote:
+> On Wed, Sep 10, 2025 at 9:49 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > On Fri, Aug 29, 2025 at 09:45:00AM -0700, Eric Biggers wrote:
+> > > Running sha224_kunit on a KMSAN-enabled kernel results in a crash in
+> > > kmsan_internal_set_shadow_origin():
+> > >
+> > >     BUG: unable to handle page fault for address: ffffbc3840291000
+> > >     #PF: supervisor read access in kernel mode
+> > >     #PF: error_code(0x0000) - not-present page
+> > >     PGD 1810067 P4D 1810067 PUD 192d067 PMD 3c17067 PTE 0
+> > >     Oops: 0000 [#1] SMP NOPTI
+> > >     CPU: 0 UID: 0 PID: 81 Comm: kunit_try_catch Tainted: G                 N  6.17.0-rc3 #10 PREEMPT(voluntary)
+> > >     Tainted: [N]=TEST
+> > >     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
+> > >     RIP: 0010:kmsan_internal_set_shadow_origin+0x91/0x100
+> > >     [...]
+> > >     Call Trace:
+> > >     <TASK>
+> > >     __msan_memset+0xee/0x1a0
+> > >     sha224_final+0x9e/0x350
+> > >     test_hash_buffer_overruns+0x46f/0x5f0
+> > >     ? kmsan_get_shadow_origin_ptr+0x46/0xa0
+> > >     ? __pfx_test_hash_buffer_overruns+0x10/0x10
+> > >     kunit_try_run_case+0x198/0xa00
+> >
+> > Any thoughts on this patch from the KMSAN folks?  I'd love to add
+> > CONFIG_KMSAN=y to my crypto subsystem testing, but unfortunately the
+> > kernel crashes due to this bug :-(
+> >
+> > - Eric
+> 
+> Sorry, I was out in August and missed this email when digging through my inbox.
+> 
+> Curiously, I couldn't find any relevant crashes on the KMSAN syzbot
+> instance, but the issue is legit.
+> Thank you so much for fixing this!
+> 
+> Any chance you can add a test case for it to mm/kmsan/kmsan_test.c?
 
-I roughly reproduced the Docker seccomp filter [1] and timed how long it
-takes to build it (via libseccomp) and attach it to a process.  After
-1000 runs, on average it took 3,720,000 TSC ticks (or ~1430 microseconds)
-on an AMD EPYC 9J14 running at 2596 MHz.  The median build/load time was
-3,704,000 TSC ticks.
+Unfortunately most of the KMSAN test cases already fail on upstream,
+which makes it difficult to develop new ones:
 
-On the same system, I preloaded the above Docker seccomp filter onto a
-process.  (Note that I opened a pidfd to the reference process and left
-the pidfd open for the entire run.)  I then cloned the filter using the
-feature in this patch to 1000 new processes.  On average, it took 1,900
-TSC ticks (or ~0.7 microseconds) to copy the filter to the new processes.
-The median clone time was 1,716 TSC ticks.
+[    1.322395] KTAP version 1
+[    1.322899] 1..1
+[    1.323644]     KTAP version 1
+[    1.324142]     # Subtest: kmsan
+[    1.324650]     # module: kmsan_test
+[    1.324667]     1..24
+[    1.325990]     # test_uninit_kmalloc: uninitialized kmalloc test (UMR report)
+[    1.327078] *ptr is true
+[    1.327525]     # test_uninit_kmalloc: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:173
+                   Expected report_matches(&expect) to be true, but is false
+[    1.330117]     not ok 1 test_uninit_kmalloc
+[    1.330474]     # test_init_kmalloc: initialized kmalloc test (no reports)
+[    1.332129] *ptr is false
+[    1.333384]     ok 2 test_init_kmalloc
+[    1.333729]     # test_init_kzalloc: initialized kzalloc test (no reports)
+[    1.335285] *ptr is false
+[    1.339418]     ok 3 test_init_kzalloc
+[    1.339791]     # test_uninit_stack_var: uninitialized stack variable (UMR report)
+[    1.341484] cond is false
+[    1.341927]     # test_uninit_stack_var: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:211
+                   Expected report_matches(&expect) to be true, but is false
+[    1.344844]     not ok 4 test_uninit_stack_var
+[    1.345262]     # test_init_stack_var: initialized stack variable (no reports)
+[    1.347083] cond is true
+[    1.347847]     ok 5 test_init_stack_var
+[    1.348145]     # test_params: uninit passed through a function parameter (UMR report)
+[    1.349926] arg1 is false
+[    1.350338] arg2 is false
+[    1.350746] arg is false
+[    1.351154] arg1 is false
+[    1.351561] arg2 is true
+[    1.351987]     # test_params: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:262
+                   Expected report_matches(&expect) to be true, but is false
+[    1.354751]     not ok 6 test_params
+[    1.355229]     # test_uninit_multiple_params: uninitialized local passed to fn (UMR report)
+[    1.357056] signed_sum3(a, b, c) is true
+[    1.357677]     # test_uninit_multiple_params: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:282
+                   Expected report_matches(&expect) to be true, but is false
+[    1.360393]     not ok 7 test_uninit_multiple_params
+[    1.360676]     # test_uninit_kmsan_check_memory: kmsan_check_memory() called on uninit local (UMR report)
+[    1.362916]     # test_uninit_kmsan_check_memory: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:309
+                   Expected report_matches(&expect) to be true, but is false
+[    1.365946]     not ok 8 test_uninit_kmsan_check_memory
+[    1.366415]     # test_init_kmsan_vmap_vunmap: pages initialized via vmap (no reports)
+[    1.368805]     ok 9 test_init_kmsan_vmap_vunmap
+[    1.369223]     # test_init_vmalloc: vmalloc buffer can be initialized (no reports)
+[    1.371106] buf[0] is true
+[    1.371937]     ok 10 test_init_vmalloc
+[    1.372396]     # test_uaf: use-after-free in kmalloc-ed buffer (UMR report)
+[    1.374021] value is true
+[    1.374463]     # test_uaf: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:378
+                   Expected report_matches(&expect) to be true, but is false
+[    1.376867]     not ok 11 test_uaf
+[    1.377229]     # test_percpu_propagate: uninit local stored to per_cpu memory (UMR report)
+[    1.378951] check is false
+[    1.379432]     # test_percpu_propagate: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:396
+                   Expected report_matches(&expect) to be true, but is false
+[    1.382201]     not ok 12 test_percpu_propagate
+[    1.382625]     # test_printk: uninit local passed to pr_info() (UMR report)
+[    1.384329] ffffc900002bfcd4 contains 0
+[    1.384933]     # test_printk: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:418
+                   Expected report_matches(&expect) to be true, but is false
+[    1.387474]     not ok 13 test_printk
+[    1.387824]     # test_init_memcpy: memcpy()ing aligned initialized src to aligned dst (no reports)
+[    1.390061]     ok 14 test_init_memcpy
+[    1.390327]     # test_memcpy_aligned_to_aligned: memcpy()ing aligned uninit src to aligned dst (UMR report)
+[    1.392359]     # test_memcpy_aligned_to_aligned: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:459
+                   Expected report_matches(&expect) to be true, but is false
+[    1.395181]     not ok 15 test_memcpy_aligned_to_aligned
+[    1.395467]     # test_memcpy_aligned_to_unaligned: memcpy()ing aligned uninit src to unaligned dst (UMR report)
+[    1.397845]     # test_memcpy_aligned_to_unaligned: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:483
+                   Expected report_matches(&expect) to be true, but is false
+[    1.400221]     # test_memcpy_aligned_to_unaligned: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:486
+                   Expected report_matches(&expect) to be true, but is false
+[    1.403059]     not ok 16 test_memcpy_aligned_to_unaligned
+[    1.403437]     # test_memcpy_initialized_gap: unaligned 4-byte initialized value gets a nonzero origin after memcpy() - (2 UMR reports)
+[    1.406077]     # test_memcpy_initialized_gap: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:532
+                   Expected report_matches(&expect) to be true, but is false
+[    1.408340]     # test_memcpy_initialized_gap: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:538
+                   Expected report_matches(&expect) to be true, but is false
+[    1.411063]     not ok 17 test_memcpy_initialized_gap
+[    1.411338]     # test_memset16: memset16() should initialize memory
+[    1.413393]     ok 18 test_memset16
+[    1.413651]     # test_memset32: memset32() should initialize memory
+[    1.415427]     ok 19 test_memset32
+[    1.415739]     # test_memset64: memset64() should initialize memory
+[    1.417513]     ok 20 test_memset64
+[    1.417783]     # test_long_origin_chain: origin chain exceeding KMSAN_MAX_ORIGIN_DEPTH (UMR report)
+[    1.419805]     # test_long_origin_chain: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:584
+                   Expected report_matches(&expect) to be true, but is false
+[    1.422415]     not ok 21 test_long_origin_chain
+[    1.422752]     # test_stackdepot_roundtrip: testing stackdepot roundtrip (no reports)
+[    1.424598]  kunit_try_run_case+0x19d/0xa50
+[    1.425243]  kunit_generic_run_threadfn_adapter+0x62/0xe0
+[    1.426252]  kthread+0x8cd/0xb40
+[    1.426747]  ret_from_fork+0x189/0x2b0
+[    1.427320]  ret_from_fork_asm+0x1a/0x30
+[    1.428245]     ok 22 test_stackdepot_roundtrip
+[    1.428519]     # test_unpoison_memory: unpoisoning via the instrumentation vs. kmsan_unpoison_memory() (2 UMR reports)
+[    1.430771] =====================================================
+[    1.431682] BUG: KMSAN: uninit-value in test_unpoison_memory+0x146/0x3e0
+[    1.432705]  test_unpoison_memory+0x146/0x3e0
+[    1.433356]  kunit_try_run_case+0x19d/0xa50
+[    1.433979]  kunit_generic_run_threadfn_adapter+0x62/0xe0
+[    1.434773]  kthread+0x8cd/0xb40
+[    1.435263]  ret_from_fork+0x189/0x2b0
+[    1.435846]  ret_from_fork_asm+0x1a/0x30
 
-This is approximately a 1900x performance improvement for those container
-managers that are using the exact same seccomp filter across all of their
-containers.
+[    1.436692] Local variable a created at:
+[    1.437270]  test_unpoison_memory+0x41/0x3e0
+[    1.437903]  kunit_try_run_case+0x19d/0xa50
 
-[1] https://raw.githubusercontent.com/moby/moby/refs/heads/master/profiles/seccomp/default.json
+[    1.438766] Bytes 0-2 of 3 are uninitialized
+[    1.439433] Memory access of size 3 starts at ffffc90000347cd5
 
-Signed-off-by: Tom Hromatka <tom.hromatka@oracle.com>
----
- .../userspace-api/seccomp_filter.rst          |  10 ++
- include/uapi/linux/seccomp.h                  |   1 +
- kernel/seccomp.c                              |  48 ++++++
- samples/seccomp/.gitignore                    |   1 +
- samples/seccomp/Makefile                      |   2 +-
- samples/seccomp/clone-filter.c                | 150 ++++++++++++++++++
- tools/include/uapi/linux/seccomp.h            |   1 +
- tools/testing/selftests/seccomp/seccomp_bpf.c | 114 +++++++++++++
- 8 files changed, 326 insertions(+), 1 deletion(-)
- create mode 100644 samples/seccomp/clone-filter.c
+[    1.440517] CPU: 3 UID: 0 PID: 99 Comm: kunit_try_catch Tainted: G                 N  6.17.0-rc5-00110-ge59a039119c3 #3 PREEMPT(none) 
+[    1.442247] Tainted: [N]=TEST
+[    1.442725] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
+[    1.444376] =====================================================
+[    1.445263] Disabling lock debugging due to kernel taint
+[    1.446103] =====================================================
+[    1.447007] BUG: KMSAN: uninit-value in test_unpoison_memory+0x23f/0x3e0
+[    1.447996]  test_unpoison_memory+0x23f/0x3e0
+[    1.448650]  kunit_try_run_case+0x19d/0xa50
+[    1.449319]  kunit_generic_run_threadfn_adapter+0x62/0xe0
+[    1.450122]  kthread+0x8cd/0xb40
+[    1.450611]  ret_from_fork+0x189/0x2b0
+[    1.451181]  ret_from_fork_asm+0x1a/0x30
 
-diff --git a/Documentation/userspace-api/seccomp_filter.rst b/Documentation/userspace-api/seccomp_filter.rst
-index cff0fa7f3175..ef1797d093f6 100644
---- a/Documentation/userspace-api/seccomp_filter.rst
-+++ b/Documentation/userspace-api/seccomp_filter.rst
-@@ -289,6 +289,16 @@ above in this document: all arguments being read from the tracee's memory
- should be read into the tracer's memory before any policy decisions are made.
- This allows for an atomic decision on syscall arguments.
- 
-+Cloning an Existing Seccomp Filter
-+==================================
-+
-+Constructing and loading a complex seccomp filter can often take a non-trivial
-+amount of time. If a user wants to use the same seccomp filter across more
-+than one process, it can be cloned to new processes via the
-+``SECCOMP_CLONE_FILTER`` operation. Note that the clone will only succeed if
-+the destination process does not have any seccomp filters already applied to
-+it. See ``samples/seccomp/clone-filter.c`` for an example.
-+
- Sysctls
- =======
- 
-diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-index dbfc9b37fcae..b0917e333b4b 100644
---- a/include/uapi/linux/seccomp.h
-+++ b/include/uapi/linux/seccomp.h
-@@ -16,6 +16,7 @@
- #define SECCOMP_SET_MODE_FILTER		1
- #define SECCOMP_GET_ACTION_AVAIL	2
- #define SECCOMP_GET_NOTIF_SIZES		3
-+#define SECCOMP_CLONE_FILTER		4
- 
- /* Valid flags for SECCOMP_SET_MODE_FILTER */
- #define SECCOMP_FILTER_FLAG_TSYNC		(1UL << 0)
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index 3bbfba30a777..efc7ae1d5505 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -2079,6 +2079,49 @@ static long seccomp_get_notif_sizes(void __user *usizes)
- 	return 0;
- }
- 
-+static long seccomp_clone_filter(void __user *pidfd)
-+{
-+	struct seccomp new_seccomp;
-+	struct task_struct *task;
-+	unsigned int flags;
-+
-+	if (!task_no_new_privs(current) &&
-+	    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
-+		return -EACCES;
-+
-+	task = pidfd_get_task((intptr_t)pidfd, &flags);
-+	if (IS_ERR(task))
-+		return -ESRCH;
-+
-+	spin_lock_irq(&task->sighand->siglock);
-+	if (atomic_read(&task->seccomp.filter_count) == 0) {
-+		spin_unlock_irq(&task->sighand->siglock);
-+		put_task_struct(task);
-+		return -EINVAL;
-+	}
-+
-+	get_seccomp_filter(task);
-+	new_seccomp = task->seccomp;
-+	spin_unlock_irq(&task->sighand->siglock);
-+
-+	spin_lock_irq(&current->sighand->siglock);
-+	/* Fail the clone operation if this process already has filters */
-+	if (atomic_read(&current->seccomp.filter_count) > 0) {
-+		spin_unlock_irq(&current->sighand->siglock);
-+		__seccomp_filter_release(new_seccomp.filter);
-+		put_task_struct(task);
-+		return -EINVAL;
-+	}
-+
-+	/* no barriers - only current->seccomp.filter is read locklessly */
-+	current->seccomp = new_seccomp;
-+	set_task_syscall_work(current, SECCOMP);
-+	spin_unlock_irq(&current->sighand->siglock);
-+	put_task_struct(task);
-+
-+	return 0;
-+}
-+
- /* Common entry point for both prctl and syscall. */
- static long do_seccomp(unsigned int op, unsigned int flags,
- 		       void __user *uargs)
-@@ -2100,6 +2143,11 @@ static long do_seccomp(unsigned int op, unsigned int flags,
- 			return -EINVAL;
- 
- 		return seccomp_get_notif_sizes(uargs);
-+	case SECCOMP_CLONE_FILTER:
-+		if (flags != 0)
-+			return -EINVAL;
-+
-+		return seccomp_clone_filter(uargs);
- 	default:
- 		return -EINVAL;
- 	}
-diff --git a/samples/seccomp/.gitignore b/samples/seccomp/.gitignore
-index a6df0da77c5d..b404cba5bb69 100644
---- a/samples/seccomp/.gitignore
-+++ b/samples/seccomp/.gitignore
-@@ -3,3 +3,4 @@
- /bpf-fancy
- /dropper
- /user-trap
-+/clone-filter
-diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
-index c85ae0ed8342..d38977f41b86 100644
---- a/samples/seccomp/Makefile
-+++ b/samples/seccomp/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--userprogs-always-y += bpf-fancy dropper bpf-direct user-trap
-+userprogs-always-y += bpf-fancy dropper bpf-direct user-trap clone-filter
- 
- bpf-fancy-objs := bpf-fancy.o bpf-helper.o
- 
-diff --git a/samples/seccomp/clone-filter.c b/samples/seccomp/clone-filter.c
-new file mode 100644
-index 000000000000..c7d520bf61cf
---- /dev/null
-+++ b/samples/seccomp/clone-filter.c
-@@ -0,0 +1,150 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Seccomp filter example for cloning a filter
-+ *
-+ * Copyright (c) 2025 Oracle and/or its affiliates.
-+ * Author: Tom Hromatka <tom.hromatka@oracle.com>
-+ *
-+ * The code may be used by anyone for any purpose,
-+ * and can serve as a starting point for developing
-+ * applications that reuse the same seccomp filter
-+ * across many processes.
-+ */
-+#include <linux/seccomp.h>
-+#include <linux/filter.h>
-+#include <sys/syscall.h>
-+#include <sys/prctl.h>
-+#include <sys/wait.h>
-+#include <stdbool.h>
-+#include <signal.h>
-+#include <stddef.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <stdio.h>
-+#include <errno.h>
-+
-+#define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
-+
-+static int seccomp(unsigned int op, unsigned int flags, void *args)
-+{
-+	errno = 0;
-+	return syscall(__NR_seccomp, op, flags, args);
-+}
-+
-+static int install_filter(void)
-+{
-+	struct sock_filter deny_filter[] = {
-+		BPF_STMT(BPF_LD|BPF_W|BPF_ABS,
-+			offsetof(struct seccomp_data, nr)),
-+		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_getppid, 0, 1),
-+		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ERRNO | ESRCH),
-+		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
-+	};
-+	struct sock_fprog deny_prog = {
-+		.len = (unsigned short)ARRAY_SIZE(deny_filter),
-+		.filter = deny_filter,
-+	};
-+
-+	return seccomp(SECCOMP_SET_MODE_FILTER, 0, &deny_prog);
-+}
-+
-+static int clone_filter(pid_t ref_pid)
-+{
-+	int ref_pidfd, ret;
-+
-+	ref_pidfd = syscall(SYS_pidfd_open, ref_pid, 0);
-+	if (ref_pidfd < 0)
-+		return -errno;
-+
-+	ret = seccomp(SECCOMP_CLONE_FILTER, 0, (void *)(intptr_t)ref_pidfd);
-+
-+	close(ref_pidfd);
-+
-+	return ret;
-+}
-+
-+static void do_ref_filter(void)
-+{
-+	int ret;
-+
-+	ret = install_filter();
-+	if (ret) {
-+		perror("Failed to install ref filter\n");
-+		exit(1);
-+	}
-+
-+	while (true)
-+		sleep(1);
-+}
-+
-+static void do_child_process(pid_t ref_pid)
-+{
-+	pid_t res;
-+	int ret;
-+
-+	ret = clone_filter(ref_pid);
-+	if (ret != 0) {
-+		perror("Failed to clone filter. Installing filter from scratch\n");
-+
-+		ret = install_filter();
-+		if (ret != 0) {
-+			perror("Filter install failed\n");
-+			exit(ret);
-+		}
-+	}
-+
-+	res = syscall(__NR_getpid);
-+	if (res < 0) {
-+		perror("getpid() unexpectedly failed\n");
-+		exit(errno);
-+	}
-+
-+	res = syscall(__NR_getppid);
-+	if (res > 0) {
-+		perror("getppid() unexpectedly succeeded\n");
-+		exit(1);
-+	}
-+
-+	exit(0);
-+}
-+
-+int main(void)
-+{
-+	pid_t ref_pid = -1, child_pid = -1;
-+	int ret = -EINVAL, status;
-+
-+	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+	if (ret) {
-+		perror("set no new privs unexpectedly failed\n");
-+		exit(errno);
-+	}
-+
-+	ref_pid = fork();
-+	if (ref_pid < 0)
-+		exit(errno);
-+	else if (ref_pid == 0)
-+		do_ref_filter();
-+
-+	child_pid = fork();
-+	if (child_pid < 0)
-+		goto out;
-+	else if (child_pid == 0)
-+		do_child_process(ref_pid);
-+
-+	waitpid(child_pid, &status, 0);
-+	if (WEXITSTATUS(status) != 0) {
-+		perror("child process failed");
-+		ret = WEXITSTATUS(status);
-+		goto out;
-+	}
-+
-+	ret = 0;
-+
-+out:
-+	if (ref_pid != -1)
-+		kill(ref_pid, SIGKILL);
-+	if (child_pid != -1)
-+		kill(child_pid, SIGKILL);
-+
-+	exit(ret);
-+}
-diff --git a/tools/include/uapi/linux/seccomp.h b/tools/include/uapi/linux/seccomp.h
-index dbfc9b37fcae..b0917e333b4b 100644
---- a/tools/include/uapi/linux/seccomp.h
-+++ b/tools/include/uapi/linux/seccomp.h
-@@ -16,6 +16,7 @@
- #define SECCOMP_SET_MODE_FILTER		1
- #define SECCOMP_GET_ACTION_AVAIL	2
- #define SECCOMP_GET_NOTIF_SIZES		3
-+#define SECCOMP_CLONE_FILTER		4
- 
- /* Valid flags for SECCOMP_SET_MODE_FILTER */
- #define SECCOMP_FILTER_FLAG_TSYNC		(1UL << 0)
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index fc4910d35342..53ea2610dcf8 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -178,6 +178,10 @@ struct seccomp_data {
- #define SECCOMP_GET_NOTIF_SIZES 3
- #endif
- 
-+#ifndef SECCOMP_CLONE_FILTER
-+#define SECCOMP_CLONE_FILTER 4
-+#endif
-+
- #ifndef SECCOMP_FILTER_FLAG_TSYNC
- #define SECCOMP_FILTER_FLAG_TSYNC (1UL << 0)
- #endif
-@@ -5221,6 +5225,116 @@ TEST_F(URETPROBE, uretprobe_default_block_with_uretprobe_syscall)
- 	ASSERT_EQ(0, run_probed_with_filter(&prog));
- }
- 
-+TEST(clone_filter)
-+{
-+	struct sock_filter deny_filter[] = {
-+		BPF_STMT(BPF_LD|BPF_W|BPF_ABS,
-+			offsetof(struct seccomp_data, nr)),
-+		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_getppid, 0, 1),
-+		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ERRNO | ESRCH),
-+		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
-+	};
-+	struct sock_fprog deny_prog = {
-+		.len = (unsigned short)ARRAY_SIZE(deny_filter),
-+		.filter = deny_filter,
-+	};
-+
-+	pid_t child_pid, self_pid, res;
-+	int child_pidfd, ret, status;
-+	int pipe_c2p[2], pipe_p2c[2];
-+	ssize_t bytes_read;
-+	char buf = ' ';
-+
-+	/* Setup two pipes for communicating between parent and child */
-+	ASSERT_EQ(0, pipe(pipe_c2p));
-+	ASSERT_EQ(0, pipe(pipe_p2c));
-+
-+	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+	ASSERT_EQ(0, ret) {
-+		TH_LOG("Kernel does not support PR_SET_NO_NEW_PRIVS!");
-+	}
-+
-+	self_pid = getpid();
-+
-+	child_pid = fork();
-+	ASSERT_GE(child_pid, 0);
-+
-+	if (child_pid == 0) {
-+		EXPECT_EQ(0, close(pipe_c2p[0]));
-+		EXPECT_EQ(0, close(pipe_p2c[1]));
-+
-+		ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
-+		ASSERT_EQ(0, prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &deny_prog));
-+
-+		res = syscall(__NR_getppid);
-+		EXPECT_EQ(res, -1);
-+		EXPECT_EQ(errno, ESRCH);
-+
-+		/* Tell the parent that our filter is ready to be cloned */
-+		EXPECT_EQ(1, write(pipe_c2p[1], ".", 1));
-+
-+		/* Wait for the parent to tell us we can exit */
-+		bytes_read = read(pipe_p2c[0], &buf, 1);
-+		EXPECT_EQ(bytes_read, 1);
-+		EXPECT_EQ(0, close(pipe_c2p[1]));
-+		EXPECT_EQ(0, close(pipe_p2c[0]));
-+		_exit(0);
-+	}
-+
-+	ASSERT_EQ(0, close(pipe_p2c[0]));
-+	ASSERT_EQ(0, close(pipe_c2p[1]));
-+
-+	/* Wait for the child pid to load its filter */
-+	bytes_read = read(pipe_c2p[0], &buf, 1);
-+	ASSERT_EQ(bytes_read, 1);
-+
-+	child_pidfd = syscall(SYS_pidfd_open, child_pid, 0);
-+	EXPECT_GE(child_pidfd, 0);
-+
-+	/* Invalid flags provided */
-+	ret = seccomp(SECCOMP_CLONE_FILTER, -1, (void *)(intptr_t)child_pidfd);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(errno, EINVAL);
-+
-+	/* Invalid pidfd provided */
-+	errno = 0;
-+	ret = seccomp(SECCOMP_CLONE_FILTER, 0, (void *)(intptr_t)123456);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(errno, ESRCH);
-+
-+	errno = 0;
-+	res = syscall(__NR_getppid);
-+	EXPECT_GE(res, 0);
-+	EXPECT_EQ(errno, 0);
-+
-+	ret = seccomp(SECCOMP_CLONE_FILTER, 0, (void *)(intptr_t)child_pidfd);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(errno, 0);
-+
-+	/* Cloning another set of filters is not currently allowed */
-+	ret = seccomp(SECCOMP_CLONE_FILTER, 0, (void *)(intptr_t)child_pidfd);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(errno, EINVAL);
-+
-+	res = syscall(__NR_getppid);
-+	EXPECT_EQ(res, -1);
-+	EXPECT_EQ(errno, ESRCH);
-+
-+	res = syscall(__NR_getpid);
-+	EXPECT_EQ(res, self_pid);
-+
-+	close(child_pidfd);
-+
-+	/* Tell the child it can exit */
-+	ASSERT_EQ(1, write(pipe_p2c[1], ".", 1));
-+
-+	ASSERT_EQ(child_pid, waitpid(child_pid, &status, 0));
-+	ASSERT_EQ(true, WIFEXITED(status));
-+
-+	ASSERT_EQ(0, close(pipe_p2c[1]));
-+	ASSERT_EQ(0, close(pipe_c2p[0]));
-+}
-+
- /*
-  * TODO:
-  * - expand NNP testing
--- 
-2.47.3
+[    1.452010] Local variable b created at:
+[    1.452894]  test_unpoison_memory+0x56/0x3e0
+[    1.453537]  kunit_try_run_case+0x19d/0xa50
 
+[    1.454407] Bytes 0-2 of 3 are uninitialized
+[    1.455043] Memory access of size 3 starts at ffffc90000347cd1
+
+[    1.456182] CPU: 3 UID: 0 PID: 99 Comm: kunit_try_catch Tainted: G    B            N  6.17.0-rc5-00110-ge59a039119c3 #3 PREEMPT(none) 
+[    1.457925] Tainted: [B]=BAD_PAGE, [N]=TEST
+[    1.458545] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
+[    1.460239] =====================================================
+[    1.461617]     ok 23 test_unpoison_memory
+[    1.462056]     # test_copy_from_kernel_nofault: testing copy_from_kernel_nofault with uninitialized memory
+[    1.464122] ret is false
+[    1.464538]     # test_copy_from_kernel_nofault: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:656
+                   Expected report_matches(&expect) to be true, but is false
+[    1.467250]     not ok 24 test_copy_from_kernel_nofault
+[    1.482563] # kmsan: pass:11 fail:13 skip:0 total:24
+[    1.483790] # Totals: pass:11 fail:13 skip:0 total:24
+[    1.484532] not ok 1 kmsan
 
