@@ -1,550 +1,315 @@
-Return-Path: <linux-kernel+bounces-811734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1E1B52D2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:26:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C86B52D34
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA41516153A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:26:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E1AB7B3546
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D772EA462;
-	Thu, 11 Sep 2025 09:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E4A2EA73F;
+	Thu, 11 Sep 2025 09:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="ODKH0lVE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LDduIdzN"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="THHGlCXu"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2117.outbound.protection.outlook.com [40.107.255.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759292E9EDF;
-	Thu, 11 Sep 2025 09:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757582774; cv=none; b=A8+/OA/EqOB1B7PvMoYY1/Ve11O9LQ1OnXc11v1oFNZGc5ryJ9ksnWSICjwPckkOwiVIKIJLaMfF2pRjcxahnR+6zXL8N6860IuLKB9NWuvjPPKTzPYGu+TV7MwH75sBBkIkoZXH4zcOmKN9/T2CjuRpraTruAjeXL658tyoDPI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757582774; c=relaxed/simple;
-	bh=K+b9lYsKgwPBEZLrO89rsK6poRl0+QIt1SDns//ju6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ER4VP8zUiIJJyz3PZwhlyZ65o0SE3YzZaa9YafT/niiqheBDPLQWe9Bwp1RoXvrkiHu+Qtaa0+N1ZbzO8RkY+mnFqvlWAHEsHECLC9n4dAv2+A9atUTkJw/6tRqi+Wwdj8wTqRde44dd0OQlm1s+BijuPkhH6w19/YSU29Z3r28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=ODKH0lVE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LDduIdzN; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id F21047A001E;
-	Thu, 11 Sep 2025 05:26:10 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Thu, 11 Sep 2025 05:26:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1757582770; x=1757669170; bh=DJYzLFKfHM
-	lCWVvTixCw6+fqr/WXFMRu6AQWZTQqxwE=; b=ODKH0lVErnPnR7NxCH0avYOpFX
-	XjZqwPhUkBocQrc1HxqNvcoNPAsTg8DtQh4GaacvXRkk/SRAa73YGencoqxe+AzK
-	ftrytTCdEuTcyGZLf5T1lS0u4gSR8dRFWZ3PZL0Y1D0mpZwG1/7by1IR3L19IIAI
-	hpQTQzT630SA1617oPE9q2uvgqsArOBFAnrll1PHqON7Pp0RV/a5Wp1A/4wuIboj
-	M8zsubKpWK8TSS4Buc7cVQ3W/SeS+fJpk9us4Ep/3Kfl5yd8jTsBbFUndvPRFBZ5
-	17DT+KrsugGlh4P5Xs8BBzXlukEw5KzzC3/NluR8CytFaWUGNZDofvaTXH9w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757582770; x=1757669170; bh=DJYzLFKfHMlCWVvTixCw6+fqr/WXFMRu6AQ
-	WZTQqxwE=; b=LDduIdzN2x0ATkTOWVhzFHHnnu1DGjLVeUSBjrHTr2X4cepa6ga
-	m6CiLWjnUPGzd1ds0oCyahfjF3R4CK0fJKN7nIHT+K8VC3O93xz46rbNx2wg2+O6
-	h7JPmetptLzAUo6kdX1hdsgcBtwClh8KwQXMSYr/9DUOTgikfwR1YBfCrlO/VXMa
-	30JFCijJJLFS8gPoy0bR7KQ4q5OjhcZZtekLO9ps++1Ochu4rPyBTeNAz3oVkRhY
-	M4BVomw/jNMPNIEpCauaJa2o/paNDpbUQ6G6sKwpBmfiQs5ui9zcX1UWkQH4RmD1
-	ZMUQf1CYA3VANYvdBxmlw4YFlv0FgoSHYmw==
-X-ME-Sender: <xms:sJXCaPBIpXSGg7R6w11uO2HG6eahfRi3W9JhbfkC6n7LgFF0w9HOSA>
-    <xme:sJXCaAi_A_mnQkwJvcjEV_wv2ZXq4f20BMpx7-zE2QMGvyuUUtRYyeo3EvayPaY2B
-    8caGj3YykxUgiUwP8k>
-X-ME-Received: <xmr:sJXCaBPZYT6gtfGUfXeao4ajOuCaZoaymte7W4SZfaiEhO4l37m1KtrD9NWUJ7jBIiIDOuAL5_u1sU2tkONXEi_z_Sr2vwFNGTw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvheektdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpeflrghnnhgvucfi
-    rhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepgfdvff
-    evleegudejfeefheehkeehleehfefgjefffeetudegtefhuedufeehfeetnecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrghurd
-    hnvghtpdhnsggprhgtphhtthhopedvfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepshhvvghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinh
-    hugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrghlsghi
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvih
-    hgrdhiohdprhgtphhtthhopehnvggrlhesghhomhhprgdruggvvhdprhgtphhtthhopehv
-    khhouhhlsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:sJXCaPaQfQ8LIBwoQzLV0ENwj57RQqX46GN6LRU9gxqJbnyZakHsAg>
-    <xmx:sJXCaO_ibK-UTeLxPNdkTc6n1iJpGfS7cngyXu2Ybo1KODSq-pficA>
-    <xmx:sJXCaK2INVTJ02ymTBE3OTB84K8_J-s6pG7-6VyYLz2LW830qeoEcw>
-    <xmx:sJXCaP3rXCENuJ2Ygf5nlFuDSFluL0nXCkl0tPzsTo6vVLWB6KYQbw>
-    <xmx:spXCaPjqXEXtRIcQAHJS4CSZnUrvzR5kUJZBHpsv538pyFYoaxMTSrkM>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 11 Sep 2025 05:26:08 -0400 (EDT)
-Date: Thu, 11 Sep 2025 11:26:06 +0200
-From: Janne Grunau <j@jannau.net>
-To: Sven Peter <sven@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
-	Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	Hector Martin <marcan@marcan.st>
-Subject: Re: [PATCH v2 15/22] usb: typec: tipd: Handle mode transitions for
- CD321x
-Message-ID: <20250911092606.GE89417@robin.jannau.net>
-References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
- <20250906-atcphy-6-17-v2-15-52c348623ef6@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8C222126D;
+	Thu, 11 Sep 2025 09:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.117
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757582799; cv=fail; b=X3vw5xupiG+XjLy0IZ6JKNbWTIBK/F9vAT9Ru32CINP+4uCFlEIGB4blXgozkxmxTi2+di/OpxqwxnmdeKK0wFmhknxoWWqG16zXxLQhyCD/nB31jJ/VF2cXWVLgQJmd1jSlfzIfBI6hCuMGHpHNzYzxd1XM83LJPJ46CufM5Ss=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757582799; c=relaxed/simple;
+	bh=F1mojV1QRje5qK4gtwMlZK6B4ewfsktQR4HhPq0xMLk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ulCgpMhpZ4GSUBUD1FWke+GS0sxgYwI2JvUfNIOJ43teNXoaeSL2pmtl47pEg+O90Px0dyfCztbsrrDemGA/R0FlGjAmgwhe6i6sey3Z9d69eWE2/soiCzRnLO9ENyJFdOD0EmYkjFrXvHfL5s+M4vM45E0yXMP3VThcAoZMRhw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=THHGlCXu; arc=fail smtp.client-ip=40.107.255.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zVqiE8qodyznrED14QiOexcCgbUz90kslW4vxybxF0H0OCY4A4mRV68tnUDmAcipUiOHVEwOYc82WMnrXRW4kDXkg89hyzq4BdCC/dkGeuxmyIk06Di+/Qh8+Or9cx09FABAYU4b1C01g5EEluz+mqxVoXHqNiWXM6Ujf0Ddj6abBb1SncEOzgRHEFJmvITJVOsboCz+g1FYZIaG44Sc0kOj8b+YyR+/Bd5OyNBJJz5Rd7DcrAUCxZqrjqu2qIGn1wefArYcbU4rozzfHRA2nxcQJXaw5zddH2FTY4UfRgWIJ9EWJnbYTrFvtNs43Hi9vahZ2atUirsbiV7ONeWSng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TBK23OXsywbgw4hVPUHA5LcDKuySojQzSE8m3JGbyWo=;
+ b=MdcQzeTSVW9lz095en1Z1eLFHBfeNDRqyEJW/hZ+MaqfCWTSEU+TQH/We2v7DYo/JJFUWIY5nvE+k33CgOOqG3EMw5KUTkeIf19z+Bl7eSanROHhAp7VQKPYRxkQnDyPLoxM8lP+tgcEBl2p689n5IADwnMR28yNuvPBkMb7jX0hwzchk1HQvoiABPVtxZ8ZdnLyRuh5wZnQlfU9zwHqXnZOPtL5eiDhBWvW6EdLbg0IUfkIC+06GvYRUt9ByD03cHb5jw9A/t9m5cdwA0sonVWieHOLhfdZdyQfDU4YxBPUhMfQ2iOA3yQnrxA5ybcIuFexRWIDsCElmFSgY8HuFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TBK23OXsywbgw4hVPUHA5LcDKuySojQzSE8m3JGbyWo=;
+ b=THHGlCXuSMHLnGrxypQ6yWrgIzlZPIYT7B6SXRlDMomSS6ZF58as7JLQLmnDts7Di7IaXx+kWQSziD/WIMIHCEU0dG4qe9dwhrbOqT1ch7wwbD8eS/C840p6aP6053o7zzH1pbKq8R8joQa3+oY30EY3iGSHKdFmRxjp6qkRdpc=
+Received: from OSQP153MB1330.APCP153.PROD.OUTLOOK.COM (2603:1096:604:372::16)
+ by TYZP153MB0692.APCP153.PROD.OUTLOOK.COM (2603:1096:400:25e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.15; Thu, 11 Sep
+ 2025 09:26:31 +0000
+Received: from OSQP153MB1330.APCP153.PROD.OUTLOOK.COM
+ ([fe80::2b00:49bb:7d41:c2dc]) by OSQP153MB1330.APCP153.PROD.OUTLOOK.COM
+ ([fe80::2b00:49bb:7d41:c2dc%6]) with mapi id 15.20.9115.010; Thu, 11 Sep 2025
+ 09:26:30 +0000
+From: Meetakshi Setiya <msetiya@microsoft.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Linux Documentation
+	<linux-doc@vger.kernel.org>, Linux DAMON <damon@lists.linux.dev>, Linux
+ Memory Management List <linux-mm@kvack.org>, Linux Power Management
+	<linux-pm@vger.kernel.org>, Linux Block Devices
+	<linux-block@vger.kernel.org>, Linux BPF <bpf@vger.kernel.org>, Linux Kernel
+ Workflows <workflows@vger.kernel.org>, Linux KASAN
+	<kasan-dev@googlegroups.com>, Linux Devicetree <devicetree@vger.kernel.org>,
+	Linux fsverity <fsverity@lists.linux.dev>, Linux MTD
+	<linux-mtd@lists.infradead.org>, Linux DRI Development
+	<dri-devel@lists.freedesktop.org>, Linux Kernel Build System
+	<linux-kbuild@vger.kernel.org>, Linux Networking <netdev@vger.kernel.org>,
+	Linux Sound <linux-sound@vger.kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Jonathan Corbet
+	<corbet@lwn.net>, SeongJae Park <sj@kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, Lorenzo
+ Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
+	<Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
+	<rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
+	<mhocko@suse.com>, Huang Rui <ray.huang@amd.com>, "Gautham R. Shenoy"
+	<gautham.shenoy@amd.com>, Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>, Jens Axboe <axboe@kernel.dk>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Andrii
+ Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
+ Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
+	<yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
+ Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
+	<haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Dwaipayan Ray
+	<dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joe
+ Perches <joe@perches.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>, Andrey Konovalov
+	<andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino
+	<vincenzo.frascino@arm.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Eric
+ Biggers <ebiggers@kernel.org>, "tytso@mit.edu" <tytso@mit.edu>, Richard
+ Weinberger <richard@nod.at>, Zhihao Cheng <chengzhihao1@huawei.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Nathan Chancellor
+	<nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, Ingo Molnar
+	<mingo@redhat.com>, Will Deacon <will@kernel.org>, Boqun Feng
+	<boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Shay Agroskin <shayagr@amazon.com>, Arthur Kiyanovski
+	<akiyano@amazon.com>, David Arinzon <darinzon@amazon.com>, Saeed Bishara
+	<saeedb@amazon.com>, Andrew Lunn <andrew@lunn.ch>, Alexandru Ciobotaru
+	<alcioa@amazon.com>, The AWS Nitro Enclaves Team
+	<aws-nitro-enclaves-devel@amazon.com>, Jesper Dangaard Brouer
+	<hawk@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Ranganath V N <vnranganath.20@gmail.com>, Steven French
+	<Steven.French@microsoft.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, "Martin K. Petersen"
+	<martin.petersen@oracle.com>, Bart Van Assche <bvanassche@acm.org>,
+	=?iso-8859-1?Q?Thomas_Wei=DFschuh?= <linux@weissschuh.net>, Masahiro Yamada
+	<masahiroy@kernel.org>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [EXTERNAL] [PATCH v2 10/13] Documentation: smb: smbdirect:
+ Convert KSMBD docs link
+Thread-Topic: [EXTERNAL] [PATCH v2 10/13] Documentation: smb: smbdirect:
+ Convert KSMBD docs link
+Thread-Index: AQHcIf3l00Mre1nk0UWLjBtxz9dfZLSNt5un
+Date: Thu, 11 Sep 2025 09:26:30 +0000
+Message-ID:
+ <OSQP153MB133044C12B6FFB86DF108725BF09A@OSQP153MB1330.APCP153.PROD.OUTLOOK.COM>
+References: <20250910024328.17911-1-bagasdotme@gmail.com>
+ <20250910024328.17911-11-bagasdotme@gmail.com>
+In-Reply-To: <20250910024328.17911-11-bagasdotme@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-09-11T09:26:29.396Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=1;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSQP153MB1330:EE_|TYZP153MB0692:EE_
+x-ms-office365-filtering-correlation-id: 3ed9e36f-e82c-4f44-c11d-08ddf1154a8b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|10070799003|366016|376014|7416014|921020|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?mBGWFTSdoxNR/lbkIR4Da4kAYHa7ahZ6YLFDpVQrpGkWnct1CUpv6frV9F?=
+ =?iso-8859-1?Q?YefFV1I20zaV7aTiNolrmYyUTiO7QB0TC/yBs9DHs+PG/LUsjYw9ip83i7?=
+ =?iso-8859-1?Q?EEqcpIEWT8MM2coNRzuzYEcqMgeNgJoADT1kuG5OMOxI1c7zLJpJnrUsGz?=
+ =?iso-8859-1?Q?ORPLPnPmdKwKdhy9QVkf30jDeVaM5ZQXOA5BJ+PXHeu7cYLC7i6Sdpijx1?=
+ =?iso-8859-1?Q?qVK8Q5A3K4k2vEaxdkwws1wYnBkSjJ8m7SNdkPMhXlPAAu2HZa3QSZx67z?=
+ =?iso-8859-1?Q?3Bq0As8R1ropE86mEAoA0+iUBLxxSaNCnChCTWP7H24WPUIlAMkH6KLGZ7?=
+ =?iso-8859-1?Q?bDIyNqFJ6oMD/MzMDCt8IW/Qlshf9HBqgszA6vvVUsA5ujLnYmfXiA7RxS?=
+ =?iso-8859-1?Q?tpSgc38qmp8Yf797+C2yfkuermU8H+ThlDEXnJ5EckFLGnB/ZHpqz+e7Aa?=
+ =?iso-8859-1?Q?A8vM20s0yMgcqf9CbsNYpvVcsY5qqp7+EsUK6ea3xcxRYOhmqgXD3M5yvS?=
+ =?iso-8859-1?Q?CZl2hQrRnzybM8dTMwxZyhqf8ScNC3r8fbC4PvXqFIRcsbsDeA+dM3uufo?=
+ =?iso-8859-1?Q?xG6IclfbR/wcptNl55AFOtqWFy/rpETPm7Kg0Ndf9klt1KUGSDnE1Ukp2b?=
+ =?iso-8859-1?Q?0mIMFRD1+wjIS+quDiqG/nAe2vQQFDV7DVWRxi3FG60leUAujbLIZ5mmzl?=
+ =?iso-8859-1?Q?Mo3hdvWsHOKdytIkmPhD6JK/4Z65aQmmqVoyVONcMRLQ/kOZ2ng4fPc3un?=
+ =?iso-8859-1?Q?MfmimQ3WorMOHs5FYbdPLCpTT5oVILsdd/XVorFdjPgZYUSFwJE/IyC0ZZ?=
+ =?iso-8859-1?Q?LwkPMJPAoOt5edepJxpsrnjW/wLkuo+63/yBwvpeE3u6ajkuGrNOMkaNpn?=
+ =?iso-8859-1?Q?p47gG/91oxU13IiyAwKhMEziA0NYKLShdRM1BmJ3Mnt9HRW2uxztU1+dAb?=
+ =?iso-8859-1?Q?z3JkHj2xNZitl16GYp3MWkET0pgqg6GDDjwrisTyBWPdU3xqov5NDxrkkE?=
+ =?iso-8859-1?Q?9DxiZPXKNxrFpCv92Kgw3A0UVjjVxEV+ztwilOQyUeSYXYeHLJkH13hlpE?=
+ =?iso-8859-1?Q?yvsDjHz4lIFTPiDWqDLkZLAz5VMZ/h06zRS7p+cDaY08K/8bm5Vudz7rYo?=
+ =?iso-8859-1?Q?pC5SABvJqX8GTzUNq5pNN9cYbtCCOkvZsunoyPiFfmj7c2eyHr+Q+NV44j?=
+ =?iso-8859-1?Q?kBkw7jh0whjzxzLrbUmI4CD2Kp9CEFZ2xIJ4kQoI0riWZ74GyvB11Yy3bd?=
+ =?iso-8859-1?Q?VKiJD+9c/J8eGG1T/s4LjlO1kYpW2sEjQhtgd/UFkS0UOo5qPa6Gj1Xz0C?=
+ =?iso-8859-1?Q?4wQ9/GvQN3ru8ws+yc1TUZsuRKX2byIiYTkfG9lZ+9f/KDYyEjtO8C1nY6?=
+ =?iso-8859-1?Q?TtD3A5GBQhIEAxGjdsy4Yr8aO3d6jd/RqYr3X8iDZzknixGduJaHyndJvj?=
+ =?iso-8859-1?Q?a+WRo4EiikWBXt2IkSQVLWkGiT32phDB0AlaOJdH02UPcZDr9xTDZU1WKh?=
+ =?iso-8859-1?Q?Y2mozr2vdoxTb/li2MnmOG?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSQP153MB1330.APCP153.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(376014)(7416014)(921020)(38070700021);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?j4kHAkDUeD6Kepjp54gD2pRReXc3fZLHne+imB/QQoWmrH60eLudcMJ2+1?=
+ =?iso-8859-1?Q?hEi4BUaLwtassZEuzaizG6Zr1att6tPtPudpYVWYrMe9OvjevKC1MPmS/d?=
+ =?iso-8859-1?Q?dKyhPvAYh5NIHgoVCVBuNK5ffRCD61c+u86quLp63raBxmrfk7/zWjzAn7?=
+ =?iso-8859-1?Q?1/JAE5NiCV4YOt8Bh/IE0oSfVeD4GJrKY9AGvW7zsoeWPEaA+PUzTzcFWP?=
+ =?iso-8859-1?Q?GIZURXawycmjsXaXLipx1NWz5yL9zlmjh17egPbviAg1nHFLuPt75xaos3?=
+ =?iso-8859-1?Q?Kx7eXhA5cOzV60Xl3KJvEenbxFQe6VhB9lo6frZv52S0qFQqF7zZypfREq?=
+ =?iso-8859-1?Q?yyONhdDxAphIasOqe4hd4xtgqYDWs25+0fSQHqlYqFXeUvZD69IDJhgCsj?=
+ =?iso-8859-1?Q?LCyZfiyyqZofo94QPVDJHKkHcB0H+IBLzEN55qCmT1sKThaaxWnK49A8lW?=
+ =?iso-8859-1?Q?FgiQad8xVs13fAIGiF4HMOV46AjkjHwZ5DuznCzR99yUs4Uj51YbwwDx+5?=
+ =?iso-8859-1?Q?SyVcwYoEzBu6aIfSpICH32C2dQI1DMZtzz1sTi3A0XMilUKm96ACIajnLN?=
+ =?iso-8859-1?Q?OmAmJNSRdufr2LK8gJEIRRtlyJHU0ljSs2IwBSGeSplmJZAv2qCixFm78L?=
+ =?iso-8859-1?Q?k7DDRh8myW8cCSRRwpmFkmfiQG6o1e8NlFOljR5S2dQaXaQtNTGyNm1EWa?=
+ =?iso-8859-1?Q?V+2oy4M1QSAdKdyAG6A4scQCOPJA7tAdQzmPmZOTgtnOBn0cU+PFRwSIBY?=
+ =?iso-8859-1?Q?WtZOTUO7WbX2r8Iy0XbJ/sBMQnmCm9iu40EOQrDGTPBRJCWRWVKk1hhpqE?=
+ =?iso-8859-1?Q?0cULcOpjftDD8Gdx5Bc7OdDxQgKG8SZmIev+rU4q83Hv6rsELEtUupEEW0?=
+ =?iso-8859-1?Q?IP66mjE2MFiTU4Ux9VyFUEg9msyiI1WG9JJxRNJJ9OZuox6ejVurSJBL/k?=
+ =?iso-8859-1?Q?4CxWn44FMqdHHMGsZPw8pQQCQL7scobgIISBjImAvp1CyWHvSPE1nQWtGO?=
+ =?iso-8859-1?Q?kG4RrCl8TO9VItEOhdAG0GbJTJuiw7xu/DA220cXhKHz7lzkZCgkWbuEeR?=
+ =?iso-8859-1?Q?2wbS9JHNdthL1RjVa6Pd1jQ/Pkv1QIvcTXhq5HzK9QhiKe8MfVp0+TauJb?=
+ =?iso-8859-1?Q?aXr/f2FncE8Zndf0bPTB8qqhKpW0ow/o5Ln7MQdLWrlybVx2UJcN6U7doM?=
+ =?iso-8859-1?Q?z9ShcgL+KCt6U5Qgnqklw6AOiwwTJoXSiirIP/w8AfH+XTWTOx1+CivlI1?=
+ =?iso-8859-1?Q?gQyfvDtb0BLZ8B8zEw0+XWqtrl9EjStuULlLYgnTCjUVFIKTYTQ1M1vyhl?=
+ =?iso-8859-1?Q?Ufi9RHy6c0QTPKAB4B75qCsdNNTHY0p+xtpiDt6jRxeYupf7boep0jvrb7?=
+ =?iso-8859-1?Q?xQLhSVa8OLV0TQzzmDQdO4+sAHvEFZ4cpiw6egt5Wpt94JWroS8pNQJVvg?=
+ =?iso-8859-1?Q?ISfbBgmOTFUbvz6ydDY3WqjgL1DIG8oP45KWiVyww+hOZcOQ4+u0s49Roo?=
+ =?iso-8859-1?Q?bLU6EzLRJeSkCOvNLtuRbt25B4f5SPXgZgFZsCML2q3cuXDpx31FFlEgqn?=
+ =?iso-8859-1?Q?CjafVAwQM/cPx18NRnGmSrcIFHY//TeBh4NGMesYHG3FOc96sUW0ILj8qK?=
+ =?iso-8859-1?Q?1CBMihiV0Xoxw=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250906-atcphy-6-17-v2-15-52c348623ef6@kernel.org>
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSQP153MB1330.APCP153.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ed9e36f-e82c-4f44-c11d-08ddf1154a8b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2025 09:26:30.3194
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: U/Q8DJoatsv2sSbzzxhnTu+diP/JdGZvQa8EpnmBnmF4xCP5rfCXyVfhnTj1QLr+6Ma0IZQMVGeQWUBCJlsc0g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZP153MB0692
 
-On Sat, Sep 06, 2025 at 03:43:28PM +0000, Sven Peter wrote:
-> From: Hector Martin <marcan@marcan.st>
-> 
-> On Apple Silicon machines there is no control over which alt mode is
-> chosen. The CD321x' firmware negotiates the target mode on its own and
-> only lets the main CPU know after the mode has already been chosen.
-> Especially after plugging a new cable in this can result to quick mode
-> changes from e.g. power only -> USB3 only -> USB3+DisplayPort in a short
-> time. It is not possile to influence this in any way and we also do not
-> get direct access to the PDOs or VDOs exchanged via USB PD.
-> 
-> Additionally, mode changes must be tightly synchronized between DWC3 and
-> the Type C PHY and most mode changes require a full reset of DWC3 to
-> make the port work correctly.
-> On the machines the usb role change is used to reset the controller.
-> The role change is additionally done synchronously from the callback
-> instead of relying on a workqueue as usual in order to avoid any races
-> which can, in the worst case, result in resetting the entire SoC if
-> Type-C PHY and DWC3 are out of sync.
+Reviewed-by: Meetakshi Setiya <msetiya@microsoft.com>
 
-This paragraph needs to be update considering the dwc3 apple glue
-driver.
+Thanks
+Meetakshi
 
-> To be able to control all this we trigger the entire process in the
-> correct order directly from the TIPD driver and de-bounce any mode
-> changes to avoid tearing down and re-setting DWC3 back up multiple times
-> any time a new connection is made.
-> 
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Co-developed-by: Sven Peter <sven@kernel.org>
-> Signed-off-by: Sven Peter <sven@kernel.org>
-> ---
->  drivers/usb/typec/tipd/core.c | 297 +++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 293 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
-> index b558fc5ecbc35a9dabbf33c444f38173740af7c3..95218e8be65dbbb594465961b1fda76eed1e266c 100644
-> --- a/drivers/usb/typec/tipd/core.c
-> +++ b/drivers/usb/typec/tipd/core.c
-> @@ -17,6 +17,7 @@
->  #include <linux/usb/typec.h>
->  #include <linux/usb/typec_altmode.h>
->  #include <linux/usb/typec_dp.h>
-> +#include <linux/usb/typec_mux.h>
->  #include <linux/usb/typec_tbt.h>
->  #include <linux/usb/role.h>
->  #include <linux/workqueue.h>
-> @@ -120,6 +121,9 @@ struct tps6598x_intel_vid_status_reg {
->  #define TPS_TASK_TIMEOUT		1
->  #define TPS_TASK_REJECTED		3
->  
-> +/* Debounce delay for mode changes, in milliseconds */
-> +#define CD321X_DEBOUNCE_DELAY_MS 500
-> +
->  enum {
->  	TPS_MODE_APP,
->  	TPS_MODE_BOOT,
-> @@ -145,6 +149,7 @@ struct tipd_data {
->  	irq_handler_t irq_handler;
->  	u64 irq_mask1;
->  	size_t tps_struct_size;
-> +	void (*remove)(struct tps6598x *tps);
->  	int (*register_port)(struct tps6598x *tps, struct fwnode_handle *node);
->  	void (*unregister_port)(struct tps6598x *tps);
->  	void (*trace_data_status)(u32 status);
-> @@ -155,6 +160,7 @@ struct tipd_data {
->  	int (*switch_power_state)(struct tps6598x *tps, u8 target_state);
->  	bool (*read_data_status)(struct tps6598x *tps);
->  	int (*reset)(struct tps6598x *tps);
-> +	int (*connect)(struct tps6598x *tps, u32 status);
->  };
->  
->  struct tps6598x {
-> @@ -183,6 +189,17 @@ struct tps6598x {
->  	const struct tipd_data *data;
->  };
->  
-> +struct cd321x_status {
-> +	u32 status;
-> +	u32 pwr_status;
-> +	u32 data_status;
-> +	u32 status_changed;
-> +	struct usb_pd_identity partner_identity;
-> +	struct tps6598x_dp_sid_status_reg dp_sid_status;
-> +	struct tps6598x_intel_vid_status_reg intel_vid_status;
-> +	struct tps6598x_usb4_status_reg usb4_status;
-> +};
-> +
->  struct cd321x {
->  	struct tps6598x tps;
->  
-> @@ -192,6 +209,13 @@ struct cd321x {
->  
->  	struct typec_altmode *port_altmode_dp;
->  	struct typec_altmode *port_altmode_tbt;
-> +
-> +	struct typec_mux *mux;
-> +	struct typec_mux_state state;
-> +
-> +	struct cd321x_status update_status;
-> +	struct delayed_work update_work;
-> +	struct usb_pd_identity cur_partner_identity;
->  };
->  
->  static enum power_supply_property tps6598x_psy_props[] = {
-> @@ -613,9 +637,229 @@ static void tps6598x_handle_plug_event(struct tps6598x *tps, u32 status)
->  	}
->  }
->  
-> +static void cd321x_typec_update_mode(struct tps6598x *tps, struct cd321x_status *st)
-> +{
-> +	struct cd321x *cd321x = container_of(tps, struct cd321x, tps);
-> +
-> +	if (!(st->data_status & TPS_DATA_STATUS_DATA_CONNECTION)) {
-> +		if (cd321x->state.mode == TYPEC_STATE_SAFE)
-> +			return;
-> +		cd321x->state.alt = NULL;
-> +		cd321x->state.mode = TYPEC_STATE_SAFE;
-> +		cd321x->state.data = NULL;
-> +		typec_mux_set(cd321x->mux, &cd321x->state);
-> +	} else if (st->data_status & TPS_DATA_STATUS_DP_CONNECTION) {
-> +		struct typec_displayport_data dp_data;
-> +		unsigned long mode;
-> +
-> +		switch (TPS_DATA_STATUS_DP_SPEC_PIN_ASSIGNMENT(st->data_status)) {
-> +		case TPS_DATA_STATUS_DP_SPEC_PIN_ASSIGNMENT_A:
-> +			mode = TYPEC_DP_STATE_A;
-> +			break;
-> +		case TPS_DATA_STATUS_DP_SPEC_PIN_ASSIGNMENT_B:
-> +			mode = TYPEC_DP_STATE_B;
-> +			break;
-> +		case TPS_DATA_STATUS_DP_SPEC_PIN_ASSIGNMENT_C:
-> +			mode = TYPEC_DP_STATE_C;
-> +			break;
-> +		case TPS_DATA_STATUS_DP_SPEC_PIN_ASSIGNMENT_D:
-> +			mode = TYPEC_DP_STATE_D;
-> +			break;
-> +		case TPS_DATA_STATUS_DP_SPEC_PIN_ASSIGNMENT_E:
-> +			mode = TYPEC_DP_STATE_E;
-> +			break;
-> +		case TPS_DATA_STATUS_DP_SPEC_PIN_ASSIGNMENT_F:
-> +			mode = TYPEC_DP_STATE_F;
-> +			break;
-> +		default:
-> +			dev_err(tps->dev, "Invalid DP pin assignment\n");
-> +			return;
-> +		}
-> +
-> +		if (cd321x->state.alt == cd321x->port_altmode_dp &&
-> +		   cd321x->state.mode == mode) {
-> +			return;
-> +		}
-> +
-> +		dp_data.status = le32_to_cpu(st->dp_sid_status.status_rx);
-> +		dp_data.conf = le32_to_cpu(st->dp_sid_status.configure);
-> +		cd321x->state.alt = cd321x->port_altmode_dp;
-> +		cd321x->state.data = &dp_data;
+________________________________________
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+Sent: 10 September 2025 08:13
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; Linux Documen=
+tation <linux-doc@vger.kernel.org>; Linux DAMON <damon@lists.linux.dev>; Li=
+nux Memory Management List <linux-mm@kvack.org>; Linux Power Management <li=
+nux-pm@vger.kernel.org>; Linux Block Devices <linux-block@vger.kernel.org>;=
+ Linux BPF <bpf@vger.kernel.org>; Linux Kernel Workflows <workflows@vger.ke=
+rnel.org>; Linux KASAN <kasan-dev@googlegroups.com>; Linux Devicetree <devi=
+cetree@vger.kernel.org>; Linux fsverity <fsverity@lists.linux.dev>; Linux M=
+TD <linux-mtd@lists.infradead.org>; Linux DRI Development <dri-devel@lists.=
+freedesktop.org>; Linux Kernel Build System <linux-kbuild@vger.kernel.org>;=
+ Linux Networking <netdev@vger.kernel.org>; Linux Sound <linux-sound@vger.k=
+ernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>; Borislav Petkov <bp@alien8.de>; P=
+eter Zijlstra <peterz@infradead.org>; Josh Poimboeuf <jpoimboe@kernel.org>;=
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>; Jonathan Corbet <corbet@l=
+wn.net>; SeongJae Park <sj@kernel.org>; Andrew Morton <akpm@linux-foundatio=
+n.org>; David Hildenbrand <david@redhat.com>; Lorenzo Stoakes <lorenzo.stoa=
+kes@oracle.com>; Liam R. Howlett <Liam.Howlett@oracle.com>; Vlastimil Babka=
+ <vbabka@suse.cz>; Mike Rapoport <rppt@kernel.org>; Suren Baghdasaryan <sur=
+enb@google.com>; Michal Hocko <mhocko@suse.com>; Huang Rui <ray.huang@amd.c=
+om>; Gautham R. Shenoy <gautham.shenoy@amd.com>; Mario Limonciello <mario.l=
+imonciello@amd.com>; Perry Yuan <perry.yuan@amd.com>; Jens Axboe <axboe@ker=
+nel.dk>; Alexei Starovoitov <ast@kernel.org>; Daniel Borkmann <daniel@iogea=
+rbox.net>; Andrii Nakryiko <andrii@kernel.org>; Martin KaFai Lau <martin.la=
+u@linux.dev>; Eduard Zingerman <eddyz87@gmail.com>; Song Liu <song@kernel.o=
+rg>; Yonghong Song <yonghong.song@linux.dev>; John Fastabend <john.fastaben=
+d@gmail.com>; KP Singh <kpsingh@kernel.org>; Stanislav Fomichev <sdf@fomich=
+ev.me>; Hao Luo <haoluo@google.com>; Jiri Olsa <jolsa@kernel.org>; Dwaipaya=
+n Ray <dwaipayanray1@gmail.com>; Lukas Bulwahn <lukas.bulwahn@gmail.com>; J=
+oe Perches <joe@perches.com>; Andrey Ryabinin <ryabinin.a.a@gmail.com>; Ale=
+xander Potapenko <glider@google.com>; Andrey Konovalov <andreyknvl@gmail.co=
+m>; Dmitry Vyukov <dvyukov@google.com>; Vincenzo Frascino <vincenzo.frascin=
+o@arm.com>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@ker=
+nel.org>; Conor Dooley <conor+dt@kernel.org>; Eric Biggers <ebiggers@kernel=
+.org>; tytso@mit.edu <tytso@mit.edu>; Richard Weinberger <richard@nod.at>; =
+Zhihao Cheng <chengzhihao1@huawei.com>; Maarten Lankhorst <maarten.lankhors=
+t@linux.intel.com>; Maxime Ripard <mripard@kernel.org>; Thomas Zimmermann <=
+tzimmermann@suse.de>; David Airlie <airlied@gmail.com>; Simona Vetter <simo=
+na@ffwll.ch>; Nathan Chancellor <nathan@kernel.org>; Nicolas Schier <nicola=
+s.schier@linux.dev>; Ingo Molnar <mingo@redhat.com>; Will Deacon <will@kern=
+el.org>; Boqun Feng <boqun.feng@gmail.com>; Waiman Long <longman@redhat.com=
+>; David S. Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com=
+>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; Simon=
+ Horman <horms@kernel.org>; Shay Agroskin <shayagr@amazon.com>; Arthur Kiya=
+novski <akiyano@amazon.com>; David Arinzon <darinzon@amazon.com>; Saeed Bis=
+hara <saeedb@amazon.com>; Andrew Lunn <andrew@lunn.ch>; Alexandru Ciobotaru=
+ <alcioa@amazon.com>; The AWS Nitro Enclaves Team <aws-nitro-enclaves-devel=
+@amazon.com>; Jesper Dangaard Brouer <hawk@kernel.org>; Bagas Sanjaya <baga=
+sdotme@gmail.com>; Laurent Pinchart <laurent.pinchart@ideasonboard.com>; Ra=
+nganath V N <vnranganath.20@gmail.com>; Steven French <Steven.French@micros=
+oft.com>; Meetakshi Setiya <msetiya@microsoft.com>; Greg Kroah-Hartman <gre=
+gkh@linuxfoundation.org>; Martin K. Petersen <martin.petersen@oracle.com>; =
+Bart Van Assche <bvanassche@acm.org>; Thomas Wei=DFschuh <linux@weissschuh.=
+net>; Masahiro Yamada <masahiroy@kernel.org>; Mauro Carvalho Chehab <mcheha=
+b+huawei@kernel.org>; Jani Nikula <jani.nikula@intel.com>
+Subject: [EXTERNAL] [PATCH v2 10/13] Documentation: smb: smbdirect: Convert=
+ KSMBD docs link
 
-&dp_data points to the stack. As it's no longer used after the
-typec_mux_set call set cd321x->state.data to NULL to clear the dangling
-pointer.
+Convert KSMBD docs link to internal link.
 
-> +		cd321x->state.mode = mode;
-> +		typec_mux_set(cd321x->mux, &cd321x->state);
-> +	} else if (st->data_status & TPS_DATA_STATUS_TBT_CONNECTION) {
-> +		struct typec_thunderbolt_data tbt_data;
-> +
-> +		if (cd321x->state.alt == cd321x->port_altmode_tbt &&
-> +		   cd321x->state.mode == TYPEC_TBT_MODE)
-> +			return;
-> +
-> +		tbt_data.cable_mode = le16_to_cpu(st->intel_vid_status.cable_mode);
-> +		tbt_data.device_mode = le16_to_cpu(st->intel_vid_status.device_mode);
-> +		tbt_data.enter_vdo = le16_to_cpu(st->intel_vid_status.enter_vdo);
-> +		cd321x->state.alt = cd321x->port_altmode_tbt;
-> +		cd321x->state.mode = TYPEC_TBT_MODE;
-> +		cd321x->state.data = &tbt_data;
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Documentation/filesystems/smb/smbdirect.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-same issue as with dp_data
+diff --git a/Documentation/filesystems/smb/smbdirect.rst b/Documentation/fi=
+lesystems/smb/smbdirect.rst
+index ca6927c0b2c084..6258de919511fa 100644
+--- a/Documentation/filesystems/smb/smbdirect.rst
++++ b/Documentation/filesystems/smb/smbdirect.rst
+@@ -76,8 +76,8 @@ Installation
+ Setup and Usage
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-> +		typec_mux_set(cd321x->mux, &cd321x->state);
-> +	} else if (st->data_status & CD321X_DATA_STATUS_USB4_CONNECTION) {
-> +		struct enter_usb_data eusb_data;
-> +
-> +		if (cd321x->state.alt == NULL && cd321x->state.mode == TYPEC_MODE_USB4)
-> +			return;
-> +
-> +		eusb_data.eudo = le32_to_cpu(st->usb4_status.eudo);
-> +		eusb_data.active_link_training =
-> +			!!(st->data_status & TPS_DATA_STATUS_ACTIVE_LINK_TRAIN);
-> +
-> +		cd321x->state.alt = NULL;
-> +		cd321x->state.data = &eusb_data;
+-- Set up and start a KSMBD server as described in the `KSMBD documentation
+-  <https://www.kernel.org/doc/Documentation/filesystems/smb/ksmbd.rst>`_.
++- Set up and start a KSMBD server as described in the :doc:`KSMBD document=
+ation
++  <ksmbd>`.
+   Also add the "server multi channel support =3D yes" parameter to ksmbd.c=
+onf.
 
-and again
-
-> +		cd321x->state.mode = TYPEC_MODE_USB4;
-> +		typec_mux_set(cd321x->mux, &cd321x->state);
-> +	} else {
-> +		if (cd321x->state.alt == NULL && cd321x->state.mode == TYPEC_STATE_USB)
-> +			return;
-> +		cd321x->state.alt = NULL;
-> +		cd321x->state.mode = TYPEC_STATE_USB;
-> +		cd321x->state.data = NULL;
-> +		typec_mux_set(cd321x->mux, &cd321x->state);
-> +	}
-> +}
-> +
-> +static void cd321x_update_work(struct work_struct *work)
-> +{
-> +	struct cd321x *cd321x = container_of(to_delayed_work(work),
-> +					    struct cd321x, update_work);
-> +	struct tps6598x *tps = &cd321x->tps;
-> +	struct cd321x_status st;
-> +
-> +	guard(mutex)(&tps->lock);
-> +
-> +	st = cd321x->update_status;
-> +	cd321x->update_status.status_changed = 0;
-> +
-> +	bool old_connected = !!tps->partner;
-> +	bool new_connected = st.status & TPS_STATUS_PLUG_PRESENT;
-> +	bool was_disconnected = st.status_changed & TPS_STATUS_PLUG_PRESENT;
-> +
-> +	bool usb_connection = st.data_status &
-> +			      (TPS_DATA_STATUS_USB2_CONNECTION | TPS_DATA_STATUS_USB3_CONNECTION);
-> +
-> +	enum usb_role old_role = usb_role_switch_get_role(tps->role_sw);
-> +	enum usb_role new_role = USB_ROLE_NONE;
-> +	enum typec_pwr_opmode pwr_opmode = TYPEC_PWR_MODE_USB;
-> +	enum typec_orientation orientation = TYPEC_ORIENTATION_NONE;
-> +
-> +	if (usb_connection) {
-> +		if (tps->data_status & TPS_DATA_STATUS_USB_DATA_ROLE)
-> +			new_role = USB_ROLE_DEVICE;
-> +		else
-> +			new_role = USB_ROLE_HOST;
-> +	}
-> +
-> +	if (new_connected) {
-> +		pwr_opmode = TPS_POWER_STATUS_PWROPMODE(st.pwr_status);
-> +		orientation = TPS_STATUS_TO_UPSIDE_DOWN(st.status) ?
-> +			TYPEC_ORIENTATION_REVERSE : TYPEC_ORIENTATION_NORMAL;
-> +	}
-> +
-> +	bool is_pd = pwr_opmode == TYPEC_PWR_MODE_PD;
-> +	bool partner_changed = old_connected && new_connected &&
-> +		(was_disconnected ||
-> +		 (is_pd && memcmp(&st.partner_identity,
-> +				  &cd321x->cur_partner_identity, sizeof(struct usb_pd_identity))));
-> +
-> +	/* If we are switching from an active role, transition to USB_ROLE_NONE first */
-> +	if (old_role != USB_ROLE_NONE && (new_role != old_role || was_disconnected))
-> +		usb_role_switch_set_role(tps->role_sw, USB_ROLE_NONE);
-> +
-> +	/* Process partner disconnection or change */
-> +	if (!new_connected || partner_changed) {
-> +		if (!IS_ERR(tps->partner))
-> +			typec_unregister_partner(tps->partner);
-> +		tps->partner = NULL;
-> +	}
-> +
-> +	/* If there was a disconnection, set PHY to off */
-> +	if (!new_connected || was_disconnected) {
-> +		cd321x->state.alt = NULL;
-> +		cd321x->state.mode = TYPEC_STATE_SAFE;
-> +		cd321x->state.data = NULL;
-> +		typec_set_mode(tps->port, TYPEC_STATE_SAFE);
-> +	}
-> +
-> +	/* Update Type-C properties */
-> +	typec_set_pwr_opmode(tps->port, pwr_opmode);
-> +	typec_set_pwr_role(tps->port, TPS_STATUS_TO_TYPEC_PORTROLE(st.status));
-> +	typec_set_vconn_role(tps->port, TPS_STATUS_TO_TYPEC_VCONN(st.status));
-> +	typec_set_orientation(tps->port, orientation);
-> +	typec_set_data_role(tps->port, TPS_STATUS_TO_TYPEC_DATAROLE(st.status));
-> +	power_supply_changed(tps->psy);
-> +
-> +	/* If the plug is disconnected, we are done */
-> +	if (!new_connected)
-> +		return;
-> +
-> +	/* Set up partner if we were previously disconnected (or changed). */
-> +	if (!tps->partner) {
-> +		struct typec_partner_desc desc;
-> +
-> +		desc.usb_pd = is_pd;
-> +		desc.accessory = TYPEC_ACCESSORY_NONE; /* XXX: handle accessories */
-> +		desc.identity = NULL;
-> +
-> +		if (desc.usb_pd)
-> +			desc.identity = &st.partner_identity;
-> +
-> +		tps->partner = typec_register_partner(tps->port, &desc);
-> +		if (IS_ERR(tps->partner))
-> +			dev_warn(tps->dev, "%s: failed to register partnet\n", __func__);
-> +
-> +		if (desc.identity) {
-> +			typec_partner_set_identity(tps->partner);
-> +			cd321x->cur_partner_identity = st.partner_identity;
-> +		}
-> +	}
-> +
-> +	/* Update the TypeC MUX/PHY state */
-> +	cd321x_typec_update_mode(tps, &st);
-> +
-> +	/* Launch the USB role switch */
-> +	usb_role_switch_set_role(tps->role_sw, new_role);
-> +
-> +	power_supply_changed(tps->psy);
-> +}
-> +
-> +static void cd321x_queue_status(struct tps6598x *tps)
-> +{
-> +	struct cd321x *cd321x = container_of(tps, struct cd321x, tps);
-> +
-> +	cd321x->update_status.status_changed |= cd321x->update_status.status ^ tps->status;
-> +
-> +	cd321x->update_status.status = tps->status;
-> +	cd321x->update_status.pwr_status = tps->pwr_status;
-> +	cd321x->update_status.data_status = tps->data_status;
-> +
-> +	cd321x->update_status.partner_identity = tps->partner_identity;
-> +	cd321x->update_status.dp_sid_status = cd321x->dp_sid_status;
-> +	cd321x->update_status.intel_vid_status = cd321x->intel_vid_status;
-> +	cd321x->update_status.usb4_status = cd321x->usb4_status;
-> +}
-> +
-> +static int cd321x_connect(struct tps6598x *tps, u32 status)
-> +{
-> +	struct cd321x *cd321x = container_of(tps, struct cd321x, tps);
-> +
-> +	tps->status = status;
-> +	cd321x_queue_status(tps);
-> +	schedule_delayed_work(&cd321x->update_work, msecs_to_jiffies(CD321X_DEBOUNCE_DELAY_MS));
-> +
-> +	return 0;
-> +}
-> +
->  static irqreturn_t cd321x_interrupt(int irq, void *data)
->  {
->  	struct tps6598x *tps = data;
-> +	struct cd321x *cd321x = container_of(tps, struct cd321x, tps);
->  	u64 event = 0;
->  	u32 status;
->  	int ret;
-> @@ -652,9 +896,15 @@ static irqreturn_t cd321x_interrupt(int irq, void *data)
->  		if (!tps->data->read_data_status(tps))
->  			goto err_unlock;
->  
-> -	/* Handle plug insert or removal */
-> -	if (event & APPLE_CD_REG_INT_PLUG_EVENT)
-> -		tps6598x_handle_plug_event(tps, status);
-> +	tps->status = status;
-> +	cd321x_queue_status(tps);
-> +
-> +	/*
-> +	 * Cancel pending work if not already running.
-> +	 * We will requeue the work after CD321X_DEBOUNCE_DELAY_MS regardless.
-> +	 */
-> +	cancel_delayed_work(&cd321x->update_work);
-
-Should the work be canceled before updating tps->status and calling
-cd321x_queue_status()? If so the status updates and rescheduling the
-work can be handled by calling cd321x_connect().
-
-> +	schedule_delayed_work(&cd321x->update_work, msecs_to_jiffies(CD321X_DEBOUNCE_DELAY_MS));
->  
->  err_unlock:
->  	mutex_unlock(&tps->lock);
-> @@ -1014,6 +1264,13 @@ cd321x_register_port(struct tps6598x *tps, struct fwnode_handle *fwnode)
->  	struct cd321x *cd321x = container_of(tps, struct cd321x, tps);
->  	int ret;
->  
-> +	/*
-> +	 * This is only called from _probe such that update_work can be
-> +	 * initialized and then scheduled for the first time to handle
-> +	 * plugs already connected at boot time.
-> +	 */
-
-this comment seems to be outdated and at the wrong place
-
-> +	INIT_DELAYED_WORK(&cd321x->update_work, cd321x_update_work);
-> +
->  	ret = tps6598x_register_port(tps, fwnode);
->  	if (ret)
->  		return ret;
-> @@ -1022,10 +1279,26 @@ cd321x_register_port(struct tps6598x *tps, struct fwnode_handle *fwnode)
->  	if (ret)
->  		goto err_unregister_port;
->  
-> +	cd321x->mux = fwnode_typec_mux_get(fwnode);
-> +	if (IS_ERR(cd321x->mux)) {
-> +		ret = PTR_ERR(cd321x->mux);
-> +		goto err_unregister_altmodes;
-> +	}
-> +
-> +	cd321x->state.alt = NULL;
-> +	cd321x->state.mode = TYPEC_STATE_SAFE;
-> +	cd321x->state.data = NULL;
->  	typec_set_mode(tps->port, TYPEC_STATE_SAFE);
->  
->  	return 0;
->  
-> +err_unregister_altmodes:
-> +	if (cd321x->port_altmode_dp)
-> +		typec_unregister_altmode(cd321x->port_altmode_dp);
-
-typec_unregister_altmode() is ERR / NULL safe so the if is not needed
-
-> +	if (cd321x->port_altmode_tbt)
-> +		typec_unregister_altmode(cd321x->port_altmode_tbt);
-> +	cd321x->port_altmode_dp = NULL;
-> +	cd321x->port_altmode_tbt = NULL;
->  err_unregister_port:
->  	typec_unregister_port(tps->port);
->  	return ret;
-> @@ -1042,6 +1315,8 @@ cd321x_unregister_port(struct tps6598x *tps)
->  {
->  	struct cd321x *cd321x = container_of(tps, struct cd321x, tps);
->  
-> +	if (cd321x->mux)
-> +		typec_mux_put(cd321x->mux);
-
-typec_mux_put is ERR / NULL safe so the if is not needed
-for consistency with port_altmode_* the dangling pointer should be
-cleared to NULL
-
-Janne
+ - On the client, mount the share with `rdma` mount option to use SMB Direc=
+t
+--
+An old man doll... just what I always wanted! - Clara
 
